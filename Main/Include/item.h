@@ -24,7 +24,6 @@ struct itemdatabase
   bool AllowRandomInstantiation() const;
   ushort Config;
   ushort Possibility;
-  long Score;
   bool IsDestroyable;
   bool CanBeWished;
   bool IsMaterialChangeable;
@@ -239,7 +238,6 @@ class item : public object
   virtual bool CanOpenLockType(ushort) const { return false; }
   virtual bool IsWhip() const { return false; }
   DATA_BASE_VALUE(ushort, Config);
-  virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
   DATA_BASE_BOOL(IsMaterialChangeable);
   DATA_BASE_VALUE(uchar, WeaponCategory);

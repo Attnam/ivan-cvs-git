@@ -12,7 +12,7 @@
  *
  * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
 
-#define IVAN_VERSION "0.420"
+#define IVAN_VERSION "0.430"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -520,5 +520,9 @@
 #define KEY_LEFT_INDEX 3
 #define KEY_RIGHT_INDEX 4
 #define KEY_DOWN_INDEX 6
+
+#define NO_ACTION 0
+#define SUCCESS 1
+#define BLOCKED 2
 
 #endif

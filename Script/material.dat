@@ -1285,9 +1285,9 @@ flesh
 		AttachedGod = MORTIFER;
 	}
 
-	Config POLAR_BEAR_FLESH;
+	Config BEAR_FLESH;
 	{
-		NameStem = "raw polar bear flesh";
+		NameStem = "raw bear flesh";
 		AttachedGod = MORTIFER;
 	}
 
@@ -1514,6 +1514,28 @@ flesh
 		Effect = EFFECT_POISON;
 		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
+	}
+
+	Config HEDGEHOG_FLESH;
+	{
+		NameStem = "hedgehog flesh";
+		AttachedGod = MORTIFER;
+	}
+
+	Config MUTANT_BUNNY_FLESH;
+	{
+		NameStem = "mutant bunny flesh";
+		Effect = EFFECT_POLYMORPH;
+		EffectStrength = 6;
+		Emitation = rgb24(140, 100, 100);
+		ConsumeWisdomLimit = 8;
+		AttachedGod = SCABIES;
+	}
+
+	Config HATTIFATTENER_FLESH;
+	{
+		NameStem = "hattifattener flesh";
+		AttachedGod = MORTIFER;
 	}
 }
 

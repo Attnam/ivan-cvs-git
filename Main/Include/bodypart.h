@@ -453,7 +453,6 @@ class ITEM
   virtual void Load(inputfile&);
   virtual void AddConsumeEndMessage(character*) const;
   virtual void GenerateLeftOvers(character*);
-  virtual long GetScore() const;
   virtual bool IsDestroyable() const;
   virtual ulong GetTruePrice() const;
   virtual ushort GetMaterials() const { return 2; }
@@ -553,6 +552,14 @@ class ITEM
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
+);
+
+class ITEM
+(
+  hattifattenertorso,
+  normaltorso,
+ public:
+  virtual ushort GetSpecialFlags() const { return ST_LIGHTNING; }
 );
 
 #endif

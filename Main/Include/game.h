@@ -136,6 +136,7 @@ class game
   static vector2d GetDirectionVectorForKey(int);
   static festring SaveName(const festring& = CONST_S(""));
   static bool EyeHandler(long, long);
+  static bool WalkabilityHandler(long, long);
   static void ShowLevelMessage();
   static float GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
@@ -268,8 +269,9 @@ class game
 #endif
   static bool WizardModeIsReallyActive() { return WizardMode; }
   static void CreateBone();
-  static bool QuestMonsterFound() { return QuestMonsterFoundBool; }
-  static void SetQuestMonsterFound(bool What) { QuestMonsterFoundBool = What; }
+  static ushort GetQuestMonstersFound() { return QuestMonstersFound; }
+  static void SignalQuestMonsterFound() { ++QuestMonstersFound; }
+  static void SetQuestMonstersFound(ushort What) { QuestMonstersFound = What; }
   static bool PrepareRandomBone(ushort);
   static boneidmap& GetBoneItemIDMap() { return BoneItemIDMap; }
   static boneidmap& GetBoneCharacterIDMap() { return BoneCharacterIDMap; }
@@ -280,6 +282,7 @@ class game
   static void SetTooGreatDangerFound(bool What) { TooGreatDangerFoundBool = What; }
   static void CreateBusyAnimationCache();
   static long GetScore();
+  static void SetMoveType(uchar What) { MoveType = What; }
  private:
   static const char* const Alignment[];
   static god** God;
@@ -349,11 +352,12 @@ class game
   static bool WizardMode;
   static uchar SeeWholeMapCheatMode;
   static bool GoThroughWallsCheat;
-  static bool QuestMonsterFoundBool;
+  static ushort QuestMonstersFound;
   static boneidmap BoneItemIDMap;
   static boneidmap BoneCharacterIDMap;
   static bool TooGreatDangerFoundBool;
   static bitmap* BusyAnimationCache[48];
+  static uchar MoveType;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -6,19 +6,44 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a bug which caused female cowards of Attnam to scream impolite
+	  personal pronouns if their pursuer wasn't seen by the player
+	* Hattifattener added to char.pcx by Kahvi
+	* Cactus added to item.pcx (a completely wrong place) by Kahvi
+	* New monsters added:
+	  * Giant dark frog, giant light frog, giant carnivorous plant, black bear,
+	    grizzly bear and cave bear
+	  * Hedgehog, of which spines do damage to unarmed attackers
+	  * Hattifattener, which walks around randomly and shoots lightning bolts at
+	    unexpectable directions and explodes in a large burst of electricity when dies
+	  * Adult male and female carnivorous mutant bunnies, which are generated in pairs,
+	    seek food and bunnies of opposite sex aggressively, mate and produce babies
+	  * Baby male and female carnivorous mutant bunnies, which find food to grow big
+	* level::FindRoute now uses real A-star pathfinding
+	* Sober monsters with intelligence of at least ten now use the new pathfinding
+	  when the old one isn't sufficient and are capable of some slight teamwork
+	  (ie. calling for nearby friends' attention if they detect an enemy)
+	* The AI will now kick down locked doors if it can and presumes an enemy is
+	  hiding behind them
+	* Genetrix vesana now spawns more and more powerful plants as time passes
+	* Decreased global danger values, monster amounts and and spawn rates considerably
+
 July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added CanBeSeen checks to Elpuri's code. 
 	* Added weird reference to Ivan's talk
-	
+
 July 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Elpuri goes through walls and destroys them
-	
+
 July 22 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Score system simplified
-	
+
 July 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Removed some ambiguous material definitions

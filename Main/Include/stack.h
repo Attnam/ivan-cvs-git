@@ -55,7 +55,6 @@ class stack
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
   void BeKicked(character*, ushort, uchar);
-  long GetScore() const;
   void Polymorph(character*);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;

@@ -459,7 +459,6 @@ class ITEM
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void BlowEffect(character*);
-  virtual ushort GetRange() const { return 400; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
 );
@@ -505,7 +504,6 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort);
   virtual void GenerateLeftOvers(character*);
-  virtual long GetScore() const;
   virtual bool AllowContentEmitation() const { return false; }
   virtual bool IsDestroyable() const;
   virtual short GetOfferValue(uchar) const;
@@ -641,7 +639,6 @@ class ITEM
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void FinalProcessForBone();
-  virtual ushort GetRange() const { return 200; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
   virtual void VirtualConstructor(bool);

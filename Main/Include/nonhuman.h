@@ -153,7 +153,7 @@ class CHARACTER
 
 class CHARACTER
 (
-  polarbear,
+  bear,
   nonhumanoid,
   ;
 );
@@ -200,7 +200,7 @@ class CHARACTER
   unicorn,
   nonhumanoid,
  public:
-  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
 );
 
@@ -255,7 +255,7 @@ class CHARACTER
   chameleon,
   nonhumanoid,
  public:
-  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetSkinColor() const;
@@ -268,10 +268,11 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Hit(character*, vector2d, uchar, bool);
-  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual void SetWayPoints(const std::vector<vector2d>&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool IsSpy() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
@@ -398,6 +399,8 @@ class ABSTRACT_CHARACTER
   virtual bool CanMoveOn(const square*) const;
   virtual void PutTo(vector2d);
   virtual void Remove();
+  virtual bool CreateRoute();
+  virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual void CreateCorpse(lsquare*);
@@ -428,10 +431,57 @@ class CHARACTER
 (
   genetrixvesana,
   largecreature,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
+  virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
   virtual bool MustBeRemovedFromBone() const;
+  ulong TurnsExisted;
+);
+
+class CHARACTER
+(
+  hedgehog,
+  nonhumanoid,
+ public:
+  virtual void SpecialBodyDefenceEffect(character*, bodypart*, uchar);
+);
+
+class CHARACTER
+(
+  bunny,
+  nonhumanoid,
+ public:
+  virtual bool CheckIfSatiated() { return GetNP() > BLOATED_LEVEL; }
+  virtual void SignalNaturalGeneration();
+  virtual bool IsBunny() const { return true; }
+ protected:
+  bool CheckForMatePartner();
+  ushort RandomizeBabyAttribute(ushort);
+  virtual void GetAICommand();
+);
+
+class CHARACTER
+(
+  vladimir,
+  largecreature,
+ public:
+  virtual bool MustBeRemovedFromBone() const;
+);
+
+class CHARACTER
+(
+  hattifattener,
+  nonhumanoid,
+ public:
+  bool Hit(character*, vector2d, uchar, bool) { return false; }
+ protected:
+  virtual void GetAICommand();
+  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual void CreateCorpse(lsquare*);
 );
 
 #endif

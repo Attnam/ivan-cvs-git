@@ -698,21 +698,6 @@ leg::~leg()
   delete GetBoot();
 }
 
-long corpse::GetScore() const
-{
-  long Score = 0;
-
-  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart)
-	Score += BodyPart->GetScore();
-    }
-
-  return Score;
-}
-
 bool corpse::IsDestroyable() const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
@@ -967,7 +952,7 @@ void arm::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
 {
   item* Wielded = GetWielded();
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -1106,7 +1091,7 @@ void arm::InitSpecialAttributes()
 {
   bodypart::InitSpecialAttributes();
 
-  if(!Master->IsPlayer() || Master->IsInitializing())
+  if(!Master->IsHuman() || Master->IsInitializing())
     {
       Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
       Dexterity = Master->GetDefaultDexterity() * (100 + Master->GetAttributeBonus()) / 100;
@@ -1124,7 +1109,7 @@ void leg::InitSpecialAttributes()
 {
   bodypart::InitSpecialAttributes();
 
-  if(!Master->IsPlayer() || Master->IsInitializing())
+  if(!Master->IsHuman() || Master->IsInitializing())
     {
       Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
       Agility = Master->GetDefaultAgility() * (100 + Master->GetAttributeBonus()) / 100;

@@ -689,7 +689,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-bool lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, uchar Direction, bool Critical, bool ForceHit)
+bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, float KickDamage, float KickToHitValue, short Success, uchar Direction, bool Critical, bool ForceHit)
 {
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->KickSquare(Kicker, this);
@@ -711,7 +711,7 @@ bool lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float Ki
 
   if(GetCharacter())
     {
-      GetCharacter()->BeKicked(Kicker, Boot, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
+      GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
       return true;
     }
   else
@@ -745,7 +745,7 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
   NewGround->SetLSquareUnder(this);
   NewDrawRequested = true;
   SendMemorizedUpdateRequest();
-  GetLevel()->SetWalkability(Pos, GetWalkability());
+  GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 
   if(NewGround->IsAnimated())
     IncAnimatedEntities();
@@ -761,7 +761,7 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   OLTerrain = NewOver;
   NewDrawRequested = true;
   SendMemorizedUpdateRequest();
-  GetLevel()->SetWalkability(Pos, GetWalkability());
+  GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
   CalculateBorderPartners();
 
   if(WasUsingBorderTiles || (NewOver && NewOver->UseBorderTiles()))
@@ -780,7 +780,7 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
 {
   SetGLTerrain(NewGround);
   SetOLTerrain(NewOver);
-  GetLevel()->SetWalkability(Pos, GetWalkability());
+  GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 }
 
 void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!

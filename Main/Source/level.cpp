@@ -17,6 +17,7 @@ const character* node::SpecialMover;
 vector2d node::To;
 uchar** node::WalkabilityMap;
 ushort node::XSize, node::YSize;
+nodequeue* node::NodeQueue;
 
 level::~level()
 {
@@ -235,15 +236,16 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Alloc2D(NodeMap, XSize, YSize);
-
   Alloc2D(WalkabilityMap, XSize, YSize);
 
   Map = reinterpret_cast<lsquare***>(area::Map);
+
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      NodeMap[x][y] = new node(x,y, Map[x][y]);
+      NodeMap[x][y] = new node(x, y, Map[x][y]);
 
   ushort Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
+
   switch(Type)
     {
     case 0:
@@ -623,7 +625,7 @@ void level::Load(inputfile& SaveFile)
     for(y = 0; y < YSize; ++y)
       {
 	NodeMap[x][y] = new node(x, y, Map[x][y]);
-	WalkabilityMap[x][y] = Map[x][y]->GetWalkability();
+	WalkabilityMap[x][y] = Map[x][y]->GetTheoreticalWalkability();
 	Map[x][y]->CalculateBorderPartners();
       }
 
@@ -645,12 +647,12 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
 
-  for(ushort c = 0; c < HowMany; ++c)
+  for(ushort c1 = 0; c1 < HowMany; ++c1)
     {
-      Pos = vector2d(0,0);
+      Pos = vector2d(0, 0);
       character* Char = protosystem::BalancedCreateMonster();
 
-      for(ushort cc = 0; cc < 30; ++cc)
+      for(ushort c2 = 0; c2 < 30; ++c2)
 	{
 	  Pos = GetRandomSquare(Char);
 			
@@ -659,7 +661,12 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 	}
 
       if(!(Pos.X == 0 && Pos.Y == 0))
-	Char->PutTo(Pos);
+	{
+	  Char->PutTo(Pos);
+	  Char->SignalNaturalGeneration();
+	}
+      else
+	delete Char;
     }
 }
 
@@ -1519,7 +1526,7 @@ bool level::PreProcessForBone()
 
   /* Gum solution */
 
-  game::SetQuestMonsterFound(false);
+  game::SetQuestMonstersFound(0);
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
@@ -1527,9 +1534,10 @@ bool level::PreProcessForBone()
 
   uchar DungeonIndex = GetDungeon()->GetIndex();
 
-  return   game::QuestMonsterFound()
+  return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 2)
+      &&  (game::GetQuestMonstersFound()
       || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
-      &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != IVAN_LEVEL && Index != DARK_LEVEL)));
+      &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));
 }
 
 bool level::PostProcessForBone()
@@ -1745,100 +1753,6 @@ void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNo
 		return;
 	      break;
 	    }
-	}
-    }
-}
-
-uchar node::CalculateNextNodes()
-{
-  uchar ClosestNodeIndex = 8;
-  for(ushort c = 0; c < 8; ++c)
-    {
-      vector2d NodePos = Pos + game::GetMoveVector(c);
-      if(NodePos.X >= 0 && NodePos.Y >= 0 && NodePos.X < XSize && NodePos.Y < YSize)
-	{
-	  node* Node = NodeMap[NodePos.X][NodePos.Y];
-
-	  if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanMoveOn(Square))))
-	    {
-	      Link[c] = Node;
-	      ushort Distance = To.X - NodePos.X;
-	      if(Distance < NodePos.X - To.X)
-		Distance = NodePos.X - To.X;
-
-	      if(Distance < NodePos.Y - To.Y)
-		Distance = NodePos.Y - To.Y;
-
-	      if(Distance < To.Y - NodePos.Y)
-		Distance = To.Y - NodePos.Y;
-	      Node->Distance = Distance;
-	      Node->Processed = true;
-	      Node->Last = this;
-	      Node->Index = c;
-	      if(ClosestNodeIndex == 8 || Distance < Link[ClosestNodeIndex]->Distance)
-		ClosestNodeIndex = c;
-	    }
-	  else
-	    Link[c] = 0;
-	}
-      else
-	Link[c] = 0;
-    }
-  
-  return ClosestNodeIndex;
-}
-
-uchar node::BackingFrom(uchar BackingFromIndex)
-{
-  Link[BackingFromIndex] = 0;
-  uchar ClosestNodeIndex = 8;
-  for(ushort c = 0; c < 8; ++c)
-    {
-      if(Link[c] && (ClosestNodeIndex == 8 || Link[c]->Distance < Link[ClosestNodeIndex]->Distance))
-	ClosestNodeIndex = c; 
-    }
-
-  return ClosestNodeIndex;
-}
-
-
-node* level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, const character* SpecialMover)
-{
-  node::NodeMap = NodeMap;
-  node::RequiredWalkability = RequiredWalkability;
-  node::SpecialMover = SpecialMover;
-  node::To = To;
-  node::WalkabilityMap = WalkabilityMap;
-  node::XSize = XSize;
-  node::YSize = YSize;
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      NodeMap[x][y]->Processed = false;
-
-  node* Node = NodeMap[From.X][From.Y]; 
-  Node->Last = 0; 
-  Node->Processed = true;
-	  
-  uchar NodeIndex = Node->CalculateNextNodes();
-  if(NodeIndex == 8)
-    return 0;
-
-  while(true)
-    {
-      if(NodeIndex == 8)
-	{
-	  if(!Node->Last)
-	    return 0;
-	  NodeIndex = Node->Last->BackingFrom(Node->Index);
-	  Node = Node->Last;
-	}
-      else
-	{
-	  Node = Node->Link[NodeIndex];
-	  if(Node->Pos == To)
-	    return Node;
-	  NodeIndex = Node->CalculateNextNodes();
-	  Node->Last->Next = Node;
 	}
     }
 }
@@ -2059,4 +1973,107 @@ void level::GenerateGlacier()
   
       break; // Doesen't yet check path in any way 
     }
+}
+
+bool nodepointerstorer::operator<(const nodepointerstorer& N) const
+{
+  /* In the non-euclidean geometry of IVAN, certain very curved paths are as long as straight ones.
+     However, they are so ugly that it is best to prefer routes with as few diagonal moves as
+     possible without lengthening the travel. */
+
+  if(Node->TotalDistanceEstimate != N.Node->TotalDistanceEstimate)
+    return Node->TotalDistanceEstimate > N.Node->TotalDistanceEstimate;
+  else
+    return Node->Diagonals > N.Node->Diagonals;
+}
+
+void node::CalculateNextNodes()
+{
+  static ushort TryOrder[8] = { 1, 3, 4, 6, 0, 2, 5, 7 };
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      vector2d NodePos = Pos + game::GetMoveVector(TryOrder[d]);
+
+      if(NodePos.X >= 0 && NodePos.Y >= 0 && NodePos.X < XSize && NodePos.Y < YSize)
+	{
+	  node* Node = NodeMap[NodePos.X][NodePos.Y];
+
+	  if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanTheoreticallyMoveOn(Node->Square)) || NodePos == To))
+	    {
+	      Node->Processed = true;
+	      Node->Distance = Distance + 1;
+	      Node->Diagonals = Diagonals;
+
+	      if(d >= 4)
+		++Node->Diagonals;
+
+	      Node->Last = this;
+
+	      /* We use the heuristic max(abs(distance.x), abs(distance.y)) here,
+	         which is exact in the current geometry if the path is open */
+
+	      long Remaining = To.X - NodePos.X;
+
+	      if(Remaining < NodePos.X - To.X)
+		Remaining = NodePos.X - To.X;
+
+	      if(Remaining < NodePos.Y - To.Y)
+		Remaining = NodePos.Y - To.Y;
+
+	      if(Remaining < To.Y - NodePos.Y)
+		Remaining = To.Y - NodePos.Y;
+
+	      Node->Remaining = Remaining;
+	      Node->TotalDistanceEstimate = Node->Distance + Node->Remaining;
+	      NodeQueue->push(nodepointerstorer(Node));
+	    }
+	}
+    }
+}
+
+/* Finds the shortest (but possibly not the shortest-looking) path between From and To
+   if such exists. Returns a pointer to the node associated with the last square or zero if
+   a route can't be found. Calling FindRoute again may invalidate the node, so you must
+   store the path in another format ASAP. */
+
+node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Illegal, uchar RequiredWalkability, const character* SpecialMover)
+{
+  node::NodeMap = NodeMap;
+  node::RequiredWalkability = RequiredWalkability;
+  node::SpecialMover = SpecialMover;
+  node::To = To;
+  node::WalkabilityMap = WalkabilityMap;
+  node::XSize = XSize;
+  node::YSize = YSize;
+
+  if(!Illegal.empty() && Illegal.find(To) != Illegal.end())
+    return 0;
+
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      NodeMap[x][y]->Processed = false;
+
+  node* Node = NodeMap[From.X][From.Y]; 
+  Node->Last = 0; 
+  Node->Processed = true;
+  Node->Distance = 0;
+  Node->Diagonals = 0;
+  nodequeue NodeQueue;
+  NodeQueue.push(nodepointerstorer(Node));
+  node::NodeQueue = &NodeQueue;
+
+  while(!NodeQueue.empty())
+    {
+      Node = NodeQueue.top().Node;
+      NodeQueue.pop();
+
+      if(Node->Pos == To)
+	return Node;
+
+      if(Illegal.empty() || Illegal.find(Node->Pos) == Illegal.end())
+	Node->CalculateNextNodes();
+    }
+
+  return 0;
 }

@@ -87,7 +87,7 @@ struct glterraindatabase
   bool CreateDivineConfigurations;
   bool ShowMaterial;
   uchar AttachedGod;
-  uchar Walkability; 
+  uchar Walkability;
 };
 
 class glterrainprototype
@@ -149,6 +149,7 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_BOOL(ShowMaterial);
   DATA_BASE_VALUE(uchar, Walkability);
   virtual uchar GetAttachedGod() const;
+  virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
  protected:
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
@@ -194,7 +195,7 @@ struct olterraindatabase
   bool IsSafeToCreateDoor;
   vector2d OpenBitmapPos;
   bool CreateLockConfigurations;
-  uchar Walkability; 
+  uchar Walkability;
   bool IsAlwaysTransparent;
   bool UseBorderTiles;
   ushort BorderTilePriority;
@@ -298,6 +299,7 @@ class olterrain : public lterrain, public oterrain
   virtual bool IsTransparent() const;
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
+  virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
  protected:
   virtual vector2d GetBitmapPos(ushort) const;
   virtual void ModifyAnimationFrames(ushort&) const;

@@ -117,8 +117,9 @@ festring game::DefaultPolymorphTo;
 bool game::WizardMode;
 uchar game::SeeWholeMapCheatMode;
 bool game::GoThroughWallsCheat;
-bool game::QuestMonsterFoundBool;
+ushort game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[48];
+uchar game::MoveType;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
@@ -131,6 +132,8 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
 }
+
+#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -168,7 +171,6 @@ bool game::Init(const festring& Name)
 #ifdef __DJGPP__
   mkdir("Bones", S_IWUSR);
 #endif
-
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -707,6 +709,11 @@ vector2d game::GetDirectionVectorForKey(int Key)
 bool game::EyeHandler(long X, long Y)
 {
   return CurrentLSquareMap[X][Y]->IsTransparent();
+}
+
+bool game::WalkabilityHandler(long X, long Y)
+{
+  return (CurrentLSquareMap[X][Y]->GetTheoreticalWalkability() & MoveType) != 0;
 }
 
 float game::GetMinDifficulty()
@@ -1782,7 +1789,7 @@ void game::UpdatePlayerAttributeAverage()
     }
 }
 
-void game::CallForAttention(vector2d Pos, ushort Range)
+void game::CallForAttention(vector2d Pos, ushort RangeSquare)
 {
   for(ushort c = 0; c < GetTeams(); ++c)
     {
@@ -1792,8 +1799,8 @@ void game::CallForAttention(vector2d Pos, ushort Range)
 	    {
 	      ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
 
-	      if(ThisDistance <= Range)
-		(*i)->SetWayPoint(Pos);
+	      if(ThisDistance <= RangeSquare && !(*i)->IsGoingSomeWhere())
+		(*i)->SetGoingTo(Pos);
 	    }
     }
 }

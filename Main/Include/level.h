@@ -6,6 +6,8 @@
 #endif
 
 #include <vector>
+#include <queue>
+#include <set>
 
 #include "area.h"
 #include "festring.h"
@@ -18,26 +20,37 @@ class olterrain;
 class dungeon;
 class lsquare;
 class room;
+struct node;
+
+struct nodepointerstorer
+{
+  nodepointerstorer(node* Node) : Node(Node) { }
+  bool operator<(const nodepointerstorer&) const;
+  node* Node;
+};
+
+typedef std::priority_queue<nodepointerstorer> nodequeue;
 
 struct node
 {
-  node(ushort x, ushort y, lsquare* Lsquare) : Pos(x,y), Square(Lsquare) { }
-  node* Link[8];
-  ushort Distance;
-  vector2d Pos;
-  uchar CalculateNextNodes();
+  node(ushort x, ushort y, lsquare* Square) : Pos(x, y), Square(Square) { }
+  bool InNodeQueue;
   bool Processed;
+  ulong Distance;
+  ulong Remaining;
+  ulong TotalDistanceEstimate;
+  void CalculateNextNodes();
+  vector2d Pos;
   static node*** NodeMap;
   static uchar RequiredWalkability;
   static const character* SpecialMover;
   static vector2d To;
   static uchar** WalkabilityMap;
-  node* Last;
-  node* Next;
-  lsquare* Square;
-  uchar BackingFrom(uchar);
-  uchar Index;
   static ushort XSize, YSize;
+  static nodequeue* NodeQueue;
+  node* Last;
+  lsquare* Square;
+  ulong Diagonals;
 };
 
 struct explosion
@@ -124,7 +137,7 @@ class level : public area
   void GenerateGlacier();
   void CreateTunnelNetwork(ushort, ushort, ushort, ushort, vector2d);
   void SetWalkability(vector2d Pos, uchar What) { WalkabilityMap[Pos.X][Pos.Y] = What; }
-  node* FindRoute(vector2d, vector2d, uchar, const character* = 0);
+  node* FindRoute(vector2d, vector2d, const std::set<vector2d>&, uchar, const character* = 0);
   void AddToAttachQueue(vector2d);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;

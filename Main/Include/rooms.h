@@ -29,6 +29,7 @@ class ROOM
   virtual bool AllowSpoil(const item*) const;
   virtual bool AllowKick(const character*,const lsquare*) const;
   virtual void HostileAction(character*) const;
+  virtual bool AllowFoodSearch() const { return false; }
 );
 
 class ROOM
@@ -55,6 +56,7 @@ class ROOM
   virtual bool AllowKick(const character*,const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual bool AllowAltarPolymorph() const { return false; }
+  virtual bool AllowFoodSearch() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;
@@ -88,6 +90,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;
+  virtual bool AllowFoodSearch() const { return false; }
 );
 
 #endif

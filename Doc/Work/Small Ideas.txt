@@ -351,7 +351,7 @@ Fish. (from JM)
 Floods. (from JM)
 Wand's explosive effect strength should depend on its charges.
 Alpha halos to some other items, too.
-Arm m-color 3 should be allocated for gauntlets.
+*Arm m-color 3 should be allocated for gauntlets.
 Shirt of the Golden Eagle shouldn't emit light unless it's worn.
 Using the lookmode while polymorphed into a floating eye should have a special effect.
 Raining frogs.
@@ -414,4 +414,5 @@ Go should stop if the player teleports.
 Ability to absorb specific elemental damage.
 Corpse which makes you sober.
 Ivan should buy vodka from player.
+Big t and p should work when controlling containers.
 There could be possibility to revive pet by praying (from shvagier (?))

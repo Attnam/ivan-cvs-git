@@ -72,11 +72,11 @@ Dungeon ELPURI_CAVE;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
 		DifficultyBase = 50;
-		DifficultyDelta = 15;
+		DifficultyDelta = 10;
 		MonsterAmountBase = 10;
-		MonsterAmountDelta = 4;
-		MonsterGenerationIntervalBase = 100;
-		MonsterGenerationIntervalDelta = -10;
+		MonsterAmountDelta = 3;
+		MonsterGenerationIntervalBase = 135;
+		MonsterGenerationIntervalDelta = -15;
 		CanGenerateBone = true;
 		ItemMinPriceBase = 20;
 		ItemMinPriceDelta = 10;
@@ -401,13 +401,19 @@ Dungeon ELPURI_CAVE;
 			Square, Random;
 			{
 				Character = frog(DARK);
-				Times = 10;
+				Times = 9;
 			}
 
 			Square, Random;
 			{
 				Character = frog(GREATER_DARK);
-				Times = 5;
+				Times = 6;
+			}
+
+			Square, Random;
+			{
+				Character = frog(GIANT_DARK);
+				Times = 3;
 			}
 
 			Square, Random;
@@ -468,8 +474,8 @@ Dungeon ELPURI_CAVE;
 	Level 7;
 	{
 		IgnoreDefaultSpecialSquares = true;
-		DifficultyBase = 65;
-		MonsterAmountBase = 14;
+		DifficultyBase = 60;
+		MonsterAmountBase = 13;
 		ItemMinPriceBase = 45;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -483,8 +489,8 @@ Dungeon ELPURI_CAVE;
 	Level 8;
 	{
 		IgnoreDefaultSpecialSquares = true;
-		DifficultyBase = 80;
-		MonsterAmountBase = 18;
+		DifficultyBase = 70;
+		MonsterAmountBase = 16;
 		ItemMinPriceBase = 70;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -651,7 +657,7 @@ Dungeon ATTNAM;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character = polarbear;
+			Character = bear(POLAR_BEAR);
 			Times = 5;
 		}
 
@@ -911,6 +917,7 @@ Dungeon ATTNAM;
 					d = dolphin;
 					l = frog(LIGHT);
 					f = frog(GREATER_LIGHT);
+					i = frog(GIANT_LIGHT);
 					s = femaleslave(ATTNAM);
 					1 = petrusswife(1);
 					2 = petrusswife(2);
@@ -929,7 +936,7 @@ Dungeon ATTNAM;
 				#k.#....###...........###....#..#
 				#k.#....#e.............e#....#..#
 				#k.###..#....sPs.s.s....#..###..#
-				#k...#..#..l....f....l..#..#....#
+				#k...#..#..f....i....f..#..#....#
 				#k...#..#e.............e#..#....#
 				###..#..###...........###..#..###
 				..#..###..#...........#..###..#..
@@ -1011,7 +1018,7 @@ Dungeon ATTNAM;
 					e == Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
 					u == Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
 					v == Random { MinPrice = 500; MaxPrice = 2000; Category = ANY_CATEGORY; }
-					p == lump { MainMaterial = POLAR_BEAR_FLESH { Volume = 20000; } }
+					p == lump { MainMaterial = BEAR_FLESH { Volume = 20000; } }
 					l == lantern;
 					2 == lantern { SideStackIndex = DOWN; }
 					3 == lantern { SideStackIndex = RIGHT; }
@@ -1427,7 +1434,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		DifficultyDelta = 15;
 		MonsterAmountDelta = 0;
 		MonsterGenerationIntervalBase = 200;
-		MonsterGenerationIntervalDelta = -50;
+		MonsterGenerationIntervalDelta = -25;
 		CanGenerateBone = true;
 		ItemMinPriceBase = 0;
 		ItemMinPriceDelta = 5;
@@ -1493,6 +1500,30 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Character = carnivorousplant;
 			Times = 2;
+		}
+
+		Square, Random;
+		{
+			Character = hedgehog;
+			Times = 2;
+		}
+
+		Square, Random;
+		{
+			Character = bunny(ADULT_MALE);
+			Times = 2;
+		}
+
+		Square, Random;
+		{
+			Character = bunny(ADULT_FEMALE);
+			Times = 2;
+		}
+
+		Square, Random;
+		{
+			Items == Random { Category = FOOD; }
+			Times = 100;
 		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1633,15 +1664,23 @@ Dungeon UNDER_WATER_TUNNEL;
 	Level 3;
 	{
 		Rooms = 17:30;
-		Size = 160, 25;
+		Size = 64, 36;
 		MonsterAmountBase = 15;
 		LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
 		AmbientLight = rgb24(50, 50, 50);
 		FillSquare = solidterrain(DARK_GRASS_TERRAIN), STONE earth;
+		DifficultyBase = 100;
+		DifficultyDelta = 0;
+		MonsterAmountBase = 25;
+		MonsterGenerationIntervalBase = 60;
+		MonsterGenerationIntervalDelta = 0;
+		ItemMinPriceBase = 70;
+		ItemMinPriceDelta = 0;
 
 		RoomDefault
 		{
 			Size = 8:17,8:17;
+			Pos = 2:XSize-5,2:YSize-5;
 			GenerateLanterns = false;
 			Shape = ROUND_CORNERS;
 			WallSquare = solidterrain(DARK_GRASS_TERRAIN), STONE earth;

@@ -23,6 +23,7 @@ class material;
 class item;
 class smoke;
 class gas;
+class bodypart;
 
 typedef std::vector<item*> itemvector;
 
@@ -68,7 +69,7 @@ class lsquare : public square
   bool Engrave(const festring& What) { Engraved = What; return true; }
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
-  bool BeKicked(character*, item*, float, float, short, uchar, bool, bool);
+  bool BeKicked(character*, item*, bodypart*, float, float, short, uchar, bool, bool);
   uchar GetDivineMaster() const;
   void Draw();
   void UpdateMemorized();
@@ -161,6 +162,7 @@ class lsquare : public square
   void SetIsFreezed(bool What) { Freezed = What; }
   bool IsDangerousForAIToBreathe(const character*) const;
   uchar GetWalkability() const { return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); }
+  uchar GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual uchar GetSquareWalkability() const { return GetWalkability(); }
   void CalculateBorderPartners();
   void RequestForBorderPartnerUpdates();

@@ -55,7 +55,6 @@ class action
   virtual ulong GetVolume() const { return 0; }
   virtual ulong GetWeight() const { return 0; }
   virtual ulong GetEmitation() const { return 0; }
-  virtual long GetScore() const { return 0; }
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
   virtual bool CanBeTalkedTo() const { return true; }

@@ -3,7 +3,7 @@
 
 /* Configuration defines */
 
-#define MATERIAL_ID 4096
+#define MATERIAL_ID (1 << 12)
 
 #define IRON (MATERIAL_ID + 1)
 #define VALPURIUM (MATERIAL_ID + 2)
@@ -55,7 +55,7 @@
 #define TEAK_WOOD (MATERIAL_ID + 48)
 #define EBONY_WOOD (MATERIAL_ID + 49)
 
-#define ORGANIC_SUBSTANCE_ID (4096 << 1)
+#define ORGANIC_SUBSTANCE_ID (2 << 12)
 
 #define BANANA_FLESH (ORGANIC_SUBSTANCE_ID + 1)
 #define SCHOOL_FOOD (ORGANIC_SUBSTANCE_ID + 2)
@@ -68,7 +68,7 @@
 #define BREAD (ORGANIC_SUBSTANCE_ID + 9)
 #define HOLY_BANANA_FLESH (ORGANIC_SUBSTANCE_ID + 10)
 
-#define GAS_ID (4096 * 3)
+#define GAS_ID (3 << 12)
 
 #define AIR (GAS_ID + 1)
 #define MAGICAL_AIR (GAS_ID + 2)
@@ -79,7 +79,7 @@
 #define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 
-#define LIQUID_ID (4096 << 2)
+#define LIQUID_ID (4 << 12)
 
 #define OMMEL_URINE (LIQUID_ID + 1)
 #define PEPSI (LIQUID_ID + 2)
@@ -93,7 +93,7 @@
 #define VODKA (LIQUID_ID + 10)
 #define TROLL_BLOOD (LIQUID_ID + 11)
 
-#define FLESH_ID (4096 * 5)
+#define FLESH_ID (5 << 12)
 
 #define GOBLINOID_FLESH (FLESH_ID + 1)
 #define PORK (FLESH_ID + 2)
@@ -102,7 +102,7 @@
 #define ELPURI_FLESH (FLESH_ID + 5)
 #define HUMAN_FLESH (FLESH_ID + 6)
 #define DOLPHIN_FLESH (FLESH_ID + 7)
-#define POLAR_BEAR_FLESH (FLESH_ID + 8)
+#define BEAR_FLESH (FLESH_ID + 8)
 #define WOLF_FLESH (FLESH_ID + 9)
 #define DOG_FLESH (FLESH_ID + 10)
 #define ENNER_BEAST_FLESH (FLESH_ID + 11)
@@ -133,8 +133,11 @@
 #define MOOSE_FLESH (FLESH_ID + 36)
 #define MAGPIE_FLESH (FLESH_ID + 37)
 #define SKUNK_FLESH (FLESH_ID + 38)
+#define HEDGEHOG_FLESH (FLESH_ID + 39)
+#define MUTANT_BUNNY_FLESH (FLESH_ID + 40)
+#define HATTIFATTENER_FLESH (FLESH_ID + 41)
 
-#define POWDER_ID (4096 * 6)
+#define POWDER_ID (6 << 12)
 
 #define GUN_POWDER (POWDER_ID + 1)
 #define SNOW (POWDER_ID + 2)
@@ -227,8 +230,10 @@
 
 #define DARK 1
 #define GREATER_DARK 2
-#define LIGHT 3
-#define GREATER_LIGHT 4
+#define GIANT_DARK 3
+#define LIGHT 4
+#define GREATER_LIGHT 5
+#define GIANT_LIGHT 6
 
 #define WARRIOR 1
 #define WAR_LORD 2
@@ -241,6 +246,11 @@
 #define CONICAL 1
 #define FLAT 2
 
+#define BLACK_BEAR 1
+#define GRIZZLY_BEAR 2
+#define CAVE_BEAR 3
+#define POLAR_BEAR 4
+
 #define TORTURING_CHIEF 1
 #define WHIP_CHAMPION 2
 #define WAR_LADY 3
@@ -251,6 +261,7 @@
 #define PATRIARCH 3
 
 #define GREATER 1
+#define GIANT 2
 
 #define SLAUGHTERER 1
 #define SQUAD_LEADER 2
@@ -262,6 +273,13 @@
 #define BATTLE_MAGE 2
 #define ELDER 3
 #define ARCH_MAGE 4
+
+/* Least significant bit defines sex */
+
+#define BABY_MALE 2
+#define BABY_FEMALE 3
+#define ADULT_MALE 4
+#define ADULT_FEMALE 5
 
 #define PARQUET 1
 #define FLOOR 2
@@ -278,9 +296,8 @@
 #define BRICK_PROPAGANDA 2
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
-/*#define EARTH 5*/
-#define STONE_WALL 6
-#define ICE_WALL 7
+#define STONE_WALL 5
+#define ICE_WALL 6
 
 #define PINE 1
 #define FIR 2

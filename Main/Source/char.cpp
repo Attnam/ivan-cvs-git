@@ -252,7 +252,7 @@ ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 bool character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -295,7 +295,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -378,7 +378,7 @@ void character::Hunger()
   CheckStarvationDeath("starved to death");
 }
 
-ushort character::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar GivenDir, bool Critical, bool ForceHit)
+ushort character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar GivenDir, bool Critical, bool ForceHit)
 {
   uchar Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
   float DodgeValue = GetDodgeValue();
@@ -392,8 +392,8 @@ ushort character::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float
   if(!CanBeSeenBy(Enemy))
     DodgeValue *= 2;
 
-  WayPoint = Enemy->GetPos();
-  Enemy->WayPoint = GetPos();
+  SetGoingTo(Enemy->GetPos());
+  Enemy->SetGoingTo(GetPos());
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
@@ -481,6 +481,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float
 
   if(Weapon && DoneDamage < TrueDamage)
     Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
+
+  if(Enemy->AttackIsBlockable(Type))
+    SpecialBodyDefenceEffect(Enemy, EnemyBodyPart, Type);
 
   if(!Succeeded)
     {
@@ -711,12 +714,20 @@ void character::GetAICommand()
   EditAP(-1000);
 }
 
-/* TPos = Target Pos */
-
-bool character::MoveTowards(vector2d TPos)
+bool character::MoveTowardsTarget()
 {
-  vector2d MoveTo[3];
   vector2d Pos = GetPos();
+  vector2d TPos;
+
+  if(!Route.empty())
+    {
+      TPos = Route.back();
+      Route.pop_back();
+    }
+  else
+    TPos = GoingTo;
+
+  vector2d MoveTo[3];
 
   if(TPos.X < Pos.X)
     {
@@ -752,7 +763,10 @@ bool character::MoveTowards(vector2d TPos)
 	}
 
       if(TPos.Y == Pos.Y)
-	return false;
+	{
+	  TerminateGoingTo();
+	  return false;
+	}
 
       if(TPos.Y > Pos.Y)
 	{
@@ -786,9 +800,11 @@ bool character::MoveTowards(vector2d TPos)
 	}
     }
 
-  if(TryMove(ApplyStateModification(MoveTo[0]))) return true;
+  vector2d ModifiedMoveTo = ApplyStateModification(MoveTo[0]);
 
-  if(Pos.IsAdjacent(TPos))
+  if(TryMove(ModifiedMoveTo)) return true;
+
+  if(Pos.IsAdjacent(GoingTo))
     return false;
 
   if(RAND() & 1)
@@ -801,6 +817,11 @@ bool character::MoveTowards(vector2d TPos)
       if(TryMove(ApplyStateModification(MoveTo[2]))) return true;
       if(TryMove(ApplyStateModification(MoveTo[1]))) return true;
     }
+
+  Illegal.insert(Pos + ModifiedMoveTo);
+
+  if(CreateRoute())
+    return true;
 
   return false;
 }
@@ -816,7 +837,7 @@ ushort character::CalculateNewSquaresUnder(lsquare** NewSquare, vector2d Pos) co
     return 0;
 }
 
-bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
+bool character::TryMove(vector2d MoveVector, bool Important)
 {
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   character* Pet[MAX_SQUARES_UNDER];
@@ -877,7 +898,7 @@ bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
 
 	  if(Neutrals == 1)
 	    {
-	      if(!IsPlayer() && !Pets && DisplaceAllowed && CanMoveOn(MoveToSquare[0]))
+	      if(!IsPlayer() && !Pets && Important && CanMoveOn(MoveToSquare[0]))
 		return HandleCharacterBlockingTheWay(Neutral[0], NeutralPos[0], Direction);
 	      else
 		return IsPlayer() && Hit(Neutral[0], NeutralPos[0], Direction);
@@ -892,13 +913,17 @@ bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
 	      return false;
 
 	  if(Pets == 1)
-	    return DisplaceAllowed && (CanMoveOn(MoveToSquare[0]) || (IsPlayer() && game::GoThroughWallsCheatIsActive())) && Displace(Pet[0]);
+	    return Important && (CanMoveOn(MoveToSquare[0]) || (IsPlayer() && game::GoThroughWallsCheatIsActive())) && Displace(Pet[0]);
 	  else if(Pets)
 	    return false;
 
 	  if(CanMoveOn(MoveToSquare[0]) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
 	    {
 	      Move(MoveTo);
+
+	      if(GetPos() == GoingTo)
+		TerminateGoingTo();
+
 	      return true;
 	    }
 	  else
@@ -906,18 +931,44 @@ bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
 	      {
 		olterrain* Terrain = MoveToSquare[c]->GetOLTerrain();
 
-		if(IsPlayer() && Terrain && Terrain->CanBeOpened())
+		if(Terrain && Terrain->CanBeOpened())
 		  {
 		    if(CanOpen())
 		      {
 			if(Terrain->IsLocked())
 			  {
-			    ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
-			    return false;
+			    if(IsPlayer())
+			      {
+				ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
+				return false;
+			      }
+			    else if(Important && CheckKick())
+			      {
+				room* Room = MoveToSquare[c]->GetRoom();
+
+				if(!Room || Room->AllowKick(this, MoveToSquare[c]))
+				  {
+				    short HP = Terrain->GetHP();
+
+				    if(CanBeSeenByPlayer())
+				      ADD_MESSAGE("%s kicks %s.", CHAR_NAME(DEFINITE), Terrain->CHAR_NAME(DEFINITE));
+
+				    Kick(MoveToSquare[c], Direction);
+				    olterrain* NewTerrain = MoveToSquare[c]->GetOLTerrain();
+
+				    if(NewTerrain == Terrain && Terrain->GetHP() == HP) // BUG!
+				      {
+					Illegal.insert(MoveTo);
+					CreateRoute();
+				      }
+
+				    return true;
+				  }
+			      }
 			  }
 			else
 			  {
-			    if(game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
+			    if(!IsPlayer() || game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
 			      {
 				OpenPos(MoveToSquare[c]->GetPos());
 				return true;
@@ -928,8 +979,17 @@ bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
 		      }
 		    else
 		      {
-			ADD_MESSAGE("This monster type cannot open doors.");
-			return false;
+			if(IsPlayer())
+			  {
+			    ADD_MESSAGE("This monster type cannot open doors.");
+			    return false;
+			  }
+			else if(Important)
+			  {
+			    Illegal.insert(MoveTo);
+			    CreateRoute();
+			    return true;
+			  }
 		      }
 		  }
 	      }
@@ -1528,7 +1588,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << TemporaryState << EquipmentState << Money << WayPoint << RegenerationCounter;
+  SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile << IsEnabled() << Polymorphed << HomeData;
 
   for(c = 0; c < BodyParts; ++c)
@@ -1577,7 +1637,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> WayPoint >> RegenerationCounter;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!ReadType<bool>(SaveFile))
     Disable();
@@ -1656,21 +1716,6 @@ bool character::ClosePos(vector2d APos)
   return GetNearLSquare(APos)->Close(this);
 }
 
-long character::GetStatScore() const
-{
-  long SkillScore = 0;
-
-  for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
-    SkillScore += GetCWeaponSkill(c)->GetHits();
-
-  return (SkillScore << 1) + (long(game::GetAveragePlayerArmStrength() + game::GetAveragePlayerLegStrength() + game::GetAveragePlayerDexterity() + game::GetAveragePlayerAgility()) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 50;
-}
-
-long character::GetScore() const
-{
-  return game::GetScore(); // (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + GetStuffScore() + game::GodScore();
-}
-
 void character::AddScoreEntry(const festring& Description, float Multiplier, bool AddEndLevel) const
 {
   if(!game::WizardModeIsReallyActive())
@@ -1682,7 +1727,7 @@ void character::AddScoreEntry(const festring& Description, float Multiplier, boo
       if(AddEndLevel)
 	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()));
 
-      HScore.Add(long(GetScore() * Multiplier), Desc);
+      HScore.Add(long(game::GetScore() * Multiplier), Desc);
       HScore.Save();
     }
 }
@@ -1716,7 +1761,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 	NewMsg << " while" << PolyMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
-	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), GetScore());
+	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), game::GetScore());
 
       Die(Murderer, NewMsg, ForceMsg);
       return true;
@@ -1923,9 +1968,9 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   return true;
 }
 
-void character::BeKicked(character* Kicker, item* Boot, vector2d HitPos, float KickDamage, float ToHitValue, short Success, uchar Direction, bool Critical, bool ForceHit)
+void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, vector2d HitPos, float KickDamage, float ToHitValue, short Success, uchar Direction, bool Critical, bool ForceHit)
 {
-  switch(TakeHit(Kicker, Boot, HitPos, KickDamage, ToHitValue, Success, KICK_ATTACK, Direction, Critical, ForceHit))
+  switch(TakeHit(Kicker, Boot, Leg, HitPos, KickDamage, ToHitValue, Success, KICK_ATTACK, Direction, Critical, ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -2115,6 +2160,9 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 
   if(NearestChar)
     {
+      if(GetAttribute(INTELLIGENCE) >= 10 || IsSpy())
+	game::CallForAttention(GetPos(), 100);
+
       if(SpecialEnemySightedReaction(NearestChar))
 	return true;
 
@@ -2127,32 +2175,32 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	}
 
       if(!IsRetreating())
-	WayPoint = NearestChar->GetPos();
+	SetGoingTo(NearestChar->GetPos());
       else
-	WayPoint = (Pos << 1) - NearestChar->GetPos();
+	SetGoingTo((Pos << 1) - NearestChar->GetPos());
 
-      return MoveTowards(WayPoint);
+      return MoveTowardsTarget();
     }
   else
     {
-      if(!GetTeam()->GetLeader() && WayPoint.X != -1)
+      if(!GetTeam()->GetLeader() && IsGoingSomeWhere())
 	{
-	  if(!MoveTowards(WayPoint))
+	  if(!MoveTowardsTarget())
 	    {
-	      WayPoint.X = -1;
+	      TerminateGoingTo();
 	      return false;
 	    }
 	  else
 	    {
-	      if(GetPos() == WayPoint)
-		WayPoint.X = -1;
+	      if(GetPos() == GoingTo)
+		TerminateGoingTo();
 
 	      return true;
 	    }
 	}
       else
 	{
-	  if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && WayPoint.X == -1)) && HostileCharsNear)
+	  if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && !IsGoingSomeWhere())) && HostileCharsNear)
 	    {
 	      if(CheckDoors && CheckForDoors())
 		return true;
@@ -2199,7 +2247,7 @@ bool character::CheckForUsefulItemsOnGround()
 	if(TryToEquip(ItemVector[c]))
 	  return true;
 
-	if(UsesNutrition() && GetHungerState() < SATIATED && TryToConsume(ItemVector[c]))
+	if(UsesNutrition() && !CheckIfSatiated() && TryToConsume(ItemVector[c]))
 	  return true;
       }
 
@@ -2213,18 +2261,18 @@ bool character::FollowLeader()
 
   if(GetTeam()->GetLeader()->CanBeSeenBy(this))
     {
-      vector2d Distance = GetPos() - WayPoint;
+      vector2d Distance = GetPos() - GoingTo;
 
       if(abs(short(Distance.X)) <= 2 && abs(short(Distance.Y)) <= 2)
 	return false;
       else
-	return MoveTowards(WayPoint);
+	return MoveTowardsTarget();
     }
   else
-    if(WayPoint.X != -1)
-      if(!MoveTowards(WayPoint))
+    if(IsGoingSomeWhere())
+      if(!MoveTowardsTarget())
 	{
-	  WayPoint.X = -1;
+	  TerminateGoingTo();
 	  return false;
 	}
       else
@@ -2235,8 +2283,10 @@ bool character::FollowLeader()
 
 void character::SeekLeader()
 {
-  if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->CanBeSeenBy(this))
-    WayPoint = GetTeam()->GetLeader()->GetPos();
+  character* Leader = GetTeam()->GetLeader();
+
+  if(Leader && Leader->CanBeSeenBy(this))
+    SetGoingTo(Leader->GetPos());
 }
 
 ushort character::GetMoveEase() const
@@ -2936,7 +2986,7 @@ festring character::GetPersonalPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("you");
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("it");
   else if(GetSex() == MALE)
     return CONST_S("he");
@@ -2948,7 +2998,7 @@ festring character::GetPossessivePronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("your");
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("its");
   else if(GetSex() == MALE)
     return CONST_S("his");
@@ -2960,7 +3010,7 @@ festring character::GetObjectPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("you");
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("it");
   else if(GetSex() == MALE)
     return CONST_S("him");
@@ -3035,7 +3085,9 @@ bool character::CheckKick() const
 {
   if(!CanKick())
     {
-      ADD_MESSAGE("This race can't kick.");
+      if(IsPlayer())
+	ADD_MESSAGE("This race can't kick.");
+
       return false;
     }
   else
@@ -5086,6 +5138,12 @@ float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
   if(!CanBeSeenBy(Enemy, true))
     Danger *= 5.0f;
 
+  if(GetAttribute(INTELLIGENCE) >= 10 && !IsPlayer())
+    Danger *= 1.25f;
+
+  if(Enemy->GetAttribute(INTELLIGENCE) >= 10 && !Enemy->IsPlayer())
+    Danger *= 0.80f;
+
   return Limit(Danger, -100.0f, 100.0f);
 }
 
@@ -5778,23 +5836,15 @@ bool character::CheckTalk()
   return true;
 }
 
-long character::GetStuffScore() const
-{
-  long Score = GetStack()->GetScore();
-
-  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      Score += GetEquipment(c)->GetScore();
-
-  if(GetAction())
-    Score += GetAction()->GetScore();
-
-  return Score;
-}
-
 bool character::MoveTowardsHomePos()
 {
-  return HomeDataIsValid() && (MoveTowards(HomeData->Pos) || (!GetPos().IsAdjacent(HomeData->Pos) && MoveRandomly()));
+  if(HomeDataIsValid())
+    {
+      SetGoingTo(HomeData->Pos);
+      return MoveTowardsTarget() || (!GetPos().IsAdjacent(HomeData->Pos) && MoveRandomly());
+    }
+  else
+    return false;
 }
 
 bool character::TryToChangeEquipment(ushort Chosen)
@@ -6340,7 +6390,7 @@ bool character::PreProcessForBone()
   if(MustBeRemovedFromBone())
     return false;
   else if(IsUnique() && !CanBeGenerated())
-    game::SetQuestMonsterFound(true);
+    game::SignalQuestMonsterFound();
 
   RestoreLivingHP();
   ResetStates();
@@ -6550,6 +6600,11 @@ bool character::IsOver(vector2d Pos) const
   return false;
 }
 
+bool character::CanTheoreticallyMoveOn(const lsquare* LSquare) const
+{
+  return (GetMoveType() & LSquare->GetTheoreticalWalkability()) != 0;
+}
+
 bool character::CanMoveOn(const lsquare* LSquare) const
 {
   return (GetMoveType() & LSquare->GetWalkability()) != 0;
@@ -6629,4 +6684,180 @@ void character::SignalStepFrom(lsquare** OldSquareUnder)
 ulong character::GetSumOfAttributes() const
 {
   return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + (GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY)) * 2;
+}
+
+void character::IntelligenceAction(ushort Difficulty)
+{
+  EditAP(-20000 * Difficulty / APBonus(GetAttribute(INTELLIGENCE)));
+  EditExperience(INTELLIGENCE, 5 * Difficulty);
+}
+
+bool character::CreateRoute()
+{
+  Route.clear();
+
+  if(GetAttribute(INTELLIGENCE) >= 10 && !StateIsActivated(CONFUSED))
+    {
+      vector2d Pos = GetPos();
+      game::SetMoveType(GetMoveType());
+      node* Node;
+
+      for(ushort c = 0; c < game::GetTeams(); ++c)
+	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	  {
+	    character* Char = *i;
+
+	    if(Char->IsEnabled()
+	    && !Char->Route.empty()
+	    && Char->GetMoveType() & GetMoveType() == Char->GetMoveType())
+	      {
+		vector2d CharGoingTo = Char->Route[0];
+		vector2d iPos = Char->Route.back();
+
+		if((GoingTo - CharGoingTo).GetLengthSquare() <= 100
+		&& (Pos - iPos).GetLengthSquare() <= 100
+		&& femath::DoLine(CharGoingTo.X, CharGoingTo.Y, GoingTo.X, GoingTo.Y, game::WalkabilityHandler)
+		&& femath::DoLine(Pos.X, Pos.Y, iPos.X, iPos.Y, game::WalkabilityHandler))
+		  {
+		    if(!Illegal.empty() && Illegal.find(Char->Route.back()) != Illegal.end())
+		      continue;
+
+		    Node = GetLevel()->FindRoute(CharGoingTo, GoingTo, Illegal, GetMoveType());
+
+		    if(Node)
+		      while(Node->Last)
+			{
+			  Route.push_back(Node->Pos);
+			  Node = Node->Last;
+			}
+		    else
+		      {
+			Route.clear();
+			continue;
+		      }
+
+		    Route.insert(Route.end(), Char->Route.begin(), Char->Route.end());
+		    Node = GetLevel()->FindRoute(Pos, iPos, Illegal, GetMoveType());
+
+		    if(Node)
+		      while(Node->Last)
+			{
+			  Route.push_back(Node->Pos);
+			  Node = Node->Last;
+			}
+		    else
+		      {
+			Route.clear();
+			continue;
+		      }
+
+		    IntelligenceAction(1);
+		    return true;
+		  }
+	      }
+	  }
+
+      Node = GetLevel()->FindRoute(Pos, GoingTo, Illegal, GetMoveType());
+
+      if(Node)
+	while(Node->Last)
+	  {
+	    Route.push_back(Node->Pos);
+	    Node = Node->Last;
+	  }
+      else
+	TerminateGoingTo();
+
+      IntelligenceAction(5);
+      return true;
+    }
+  else
+    return false;
+}
+
+void character::SetGoingTo(vector2d What)
+{
+  if(GoingTo != What)
+    {
+      GoingTo = What;
+      Route.clear();
+      Illegal.clear();
+    }
+}
+
+void character::TerminateGoingTo()
+{
+  GoingTo.X = -1;
+  Route.clear();
+  Illegal.clear();
+}
+
+bool character::CheckForFood(ushort Radius)
+{
+  if(StateIsActivated(PANIC) || !UsesNutrition())
+    return false;
+
+  vector2d Pos = GetPos();
+  short x, y;
+
+  for(ushort r = 1; r <= Radius; ++r)
+    {
+      x = Pos.X - r;
+
+      if(x >= 0)
+	for(y = Pos.Y - r; y <= Pos.Y + r; ++y)
+	  if(CheckForFoodInSquare(vector2d(x, y)))
+	    return true;
+
+      x = Pos.X + r;
+
+      if(x < GetLevel()->GetXSize())
+	for(y = Pos.Y - r; y <= Pos.Y + r; ++y)
+	  if(CheckForFoodInSquare(vector2d(x, y)))
+	    return true;
+
+      y = Pos.Y - r;
+
+      if(y >= 0)
+	for(x = Pos.X - r; x <= Pos.X + r; ++x)
+	  if(CheckForFoodInSquare(vector2d(x, y)))
+	    return true;
+
+      y = Pos.Y + r;
+
+      if(y < GetLevel()->GetYSize())
+	for(x = Pos.X - r; x <= Pos.X + r; ++x)
+	  if(CheckForFoodInSquare(vector2d(x, y)))
+	    return true;
+    }
+
+  return false;
+}
+
+bool character::CheckForFoodInSquare(vector2d Pos)
+{
+  level* Level = GetLevel();
+
+  if(Level->IsValidPos(Pos))
+    {
+      lsquare* Square = Level->GetLSquare(Pos);
+
+      for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
+	if(i->CanBeSeenBy(this) && i->IsPickable(this) && i->IsConsumable(this) && i->CanBeEatenByAI(this) && (!Square->GetRoom() || Square->GetRoom()->AllowFoodSearch()))
+	  {
+	    SetGoingTo(Pos);
+	    return MoveTowardsTarget();
+	  }
+    }
+
+  return false;
+}
+
+void character::SetConfig(ushort NewConfig, ushort SpecialFlags)
+{
+  InstallDataBase(NewConfig);
+  CalculateAll();
+
+  if(!(SpecialFlags & NO_PIC_UPDATE))
+    UpdatePictures();
 }

@@ -940,7 +940,7 @@ void whistle::BlowEffect(character* Whistler)
   else 
     ADD_MESSAGE("You hear a whistle playing.");
 
-  game::CallForAttention(GetPos(), GetRange());
+  game::CallForAttention(GetPos(), 400);
 }
 
 struct distancepair
@@ -982,7 +982,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
   for(ushort c = 0; c < 10 && c < ToSort.size(); ++c)
     ToSort[c].Char->TeleportNear(Whistler);
 
-  game::CallForAttention(GetPos(), GetRange());
+  game::CallForAttention(GetPos(), 400);
 }
 
 void itemcontainer::VirtualConstructor(bool Load)
@@ -1909,11 +1909,6 @@ bool encryptedscroll::Read(character*)
   return false;
 }
 
-long itemcontainer::GetScore() const
-{
-  return item::GetScore() + GetContained()->GetScore();
-}
-
 bool horn::Apply(character* Blower) 
 {
   if(LastUsed == 0 || game::GetTicks() - LastUsed >= 2500)
@@ -1963,7 +1958,7 @@ bool horn::Apply(character* Blower)
 	ADD_MESSAGE("You hear a horn being blown.");
     }
 
-  game::CallForAttention(GetPos(), 30 * 30);
+  game::CallForAttention(GetPos(), 900);
   Blower->EditAP(-1000);
   return true;
 }
@@ -2426,11 +2421,6 @@ void horn::FinalProcessForBone()
   LastUsed = 0;
 }
 
-
-
-
-
-
 bool charmlyre::Apply(character* Charmer)
 {
   if(LastUsed != 0 && game::GetTicks() - LastUsed < 10000)
@@ -2483,7 +2473,7 @@ bool charmlyre::Apply(character* Charmer)
     }
 
   Charmer->EditAP(-1000);
-  game::CallForAttention(GetPos(), GetRange());
+  game::CallForAttention(GetPos(), 100);
   return true;
 }
 

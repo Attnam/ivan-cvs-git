@@ -297,7 +297,6 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
 {
   ADD_MEMBER(Possibility);
-  ADD_MEMBER(Score);
   ADD_MEMBER(IsDestroyable);
   ADD_MEMBER(CanBeWished);
   ADD_MEMBER(IsMaterialChangeable);

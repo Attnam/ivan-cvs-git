@@ -172,6 +172,7 @@ class CHARACTER
   virtual bool CompleteRiseFromTheDead();
   virtual void FinalProcessForBone();
   virtual void BeTalkedTo();
+  virtual bool IsHuman() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -411,7 +412,7 @@ class CHARACTER
   mistress,
   humanoid,
  public:
-  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
 );
 

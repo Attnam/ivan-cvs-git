@@ -10,7 +10,6 @@
 item
 {
 	Possibility = 0;
-	Score = 0;
 	IsDestroyable = true;
 	CanBeWished = true;
 	IsMaterialChangeable = true;
@@ -679,7 +678,6 @@ holybanana /* materialcontainer->banana-> */
 	StrengthModifier = 150;
 	FormModifier = 250;
 	DefaultSize = 30;
-	Score = 500;
 	Price = 1000;
 	Adjective = "holy";
 	PostFix = "of Oily Orpiv";
@@ -704,7 +702,6 @@ justifier /* meleeweapon-> */
 	BitmapPos = 0, 64;
 	FormModifier = 275;
 	StrengthModifier = 275;
-	Score = 2500;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
 	NameSingular = "broadsword";
@@ -732,7 +729,6 @@ neercseulb /* meleeweapon-> */
 	FormModifier = 250;
 	DefaultSize = 100;
 	Possibility = 0;
-	Score = 1000;
 	CanBeWished = false;
 	BitmapPos = 0, 32;
 	WeaponCategory = BLUNT_WEAPONS;
@@ -893,7 +889,6 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	DefaultSize = 60;
 	BitmapPos = 16, 112;
 	Possibility = 0;
-	Score = 4000;
 	CanBeWished = false;
 	IsDestroyable = false;
 	IsMaterialChangeable = false;
@@ -1035,7 +1030,6 @@ leftnutofpetrus /* nut-> */
 	Category = MISC;
 	DefaultMainVolume = 500;
 	StrengthModifier = 2500;
-	Score = 5000;
 	IsDestroyable = false;
 	BaseEmitation = rgb24(166, 112, 112);
 	Adjective = "left";
@@ -1102,7 +1096,6 @@ cheapcopyofleftnutofpetrus /* nut-> */
 {
 	DefaultSize = 10;
 	Possibility = 10;
-	Score = 1;
 	Price = 50;
 	Category = MISC;
 	DefaultMainVolume = 500;
@@ -1235,7 +1228,7 @@ wand
 
 	Config WAND_OF_DOOR_CREATION;
 	{
-		Possibility = 40;
+		Possibility = 20;
 		Price = 250;
 		PostFix = "of door creation";
 		MainMaterialConfig == OAK_WOOD;
@@ -1264,7 +1257,7 @@ wand
 
 	Config WAND_OF_CLONING;
 	{
-		Possibility = 20;
+		Possibility = 10;
 		Price = 1000;
 		IsPolymorphSpawnable = false;
 		PostFix = "of cloning";
@@ -1560,9 +1553,9 @@ key
 	WieldedBitmapPos = 160, 368;
 	IsAbstract = true;
 
-	Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
-	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
-	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
+	Config ROUND_LOCK; { Adjective = "round"; Possibility = 15; }
+	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 15; }
+	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 15; }
 	Config HEXAGONAL_LOCK; { Adjective = "hexagonal"; }
 }
 
@@ -1847,7 +1840,7 @@ ring
 
 	Config RING_OF_INFRA_VISION;
 	{
-		Possibility = 30;
+		Possibility = 10;
 		PostFix = "of infravision";
 		MainMaterialConfig == SILVER;
 		GearStates = INFRA_VISION;
@@ -1890,7 +1883,7 @@ ring
 
 	Config RING_OF_POISON_RESISTANCE;
 	{
-		Possibility = 40;
+		Possibility = 30;
 		PoisonResistance = 2;
 		PostFix = "of poison resistance";
 		MainMaterialConfig == TIN;
@@ -2059,7 +2052,6 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	Possibility = 0;
 	CanBeWished = false;
 	DefaultSize = 60;
-	Score = 2000;
 	IsDestroyable = false;
 	Category = MISC;
 	StrengthModifier = 150;
@@ -2477,7 +2469,6 @@ mjolak /* meleeweapon-> */
 	Alias == "Mjolak";
 	CanBeCloned = false;
 	Price = 750;
-	Score = 750;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 256;
 
@@ -2511,7 +2502,6 @@ vermis /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 500;
-	Score = 750;
 	AttachedGod = SOPHOS;
 	WieldedBitmapPos = 160, 96;
 
@@ -2544,7 +2534,6 @@ turox /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 250;
-	Score = 750;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 192;
 
@@ -2763,7 +2752,6 @@ saalthul
 	MainMaterialConfig == MITHRIL;
 	SecondaryMaterialConfig == MITHRIL;
 	Roundness = 10;
-	Score = 500;
 	Price = 500;
 	GearStates = INVISIBLE;
 	ArticleMode = DEFINITE_ARTICLE;
@@ -2883,4 +2871,9 @@ largecorpse /* corpse -> */
 
 ennerhead /* head-> */
 {
+}
+
+hattifattenertorso /* normaltorso-> */
+{
+	AttachedGod = NONE;
 }

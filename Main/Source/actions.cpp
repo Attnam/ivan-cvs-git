@@ -559,29 +559,6 @@ ulong study::GetEmitation() const
   return *Literature ? Literature->GetEmitation() : 0;
 }
 
-long consume::GetScore() const
-{
-  return *Consuming ? Consuming->GetScore() : 0;
-}
-
-long dig::GetScore() const
-{
-  long Score = 0;
-
-  if(*RightBackup)
-    Score += RightBackup->GetScore();
-
-  if(*LeftBackup)
-    Score += LeftBackup->GetScore();
-
-  return Score;
-}
-
-long study::GetScore() const
-{
-  return *Literature ? Literature->GetScore() : 0;
-}
-
 bool go::TryDisplace()
 {
   Terminate(false);

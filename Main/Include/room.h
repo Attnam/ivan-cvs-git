@@ -66,6 +66,7 @@ class room
   bool CheckKickSquare(const character*, const lsquare*) const;
   virtual void HostileAction(character*) const { }
   virtual bool AllowAltarPolymorph() const { return true; }
+  virtual bool AllowFoodSearch() const { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
   vector2d Pos;

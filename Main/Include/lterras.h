@@ -54,6 +54,7 @@ class OLTERRAIN
   virtual void HasBeenHitByItem(character*, item*, ushort);
   virtual bool IsTransparent() const;
   virtual uchar GetWalkability() const;
+  virtual uchar GetTheoreticalWalkability() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool AddAdjective(festring&, bool) const;

@@ -214,16 +214,6 @@ void stack::BeKicked(character* Kicker, ushort KickDamage, uchar Direction)
     ADD_MESSAGE("Your weak kick has no effect.");
 }
 
-long stack::GetScore() const
-{
-  long Score = 0;
-
-  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    Score += i->GetScore();
-
-  return Score;
-}
-
 void stack::Polymorph(character* Polymorpher)
 {
   itemvector ItemVector;

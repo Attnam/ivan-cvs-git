@@ -3,6 +3,7 @@
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
 void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 vector2d door::GetBitmapPos(ushort Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
+uchar door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
@@ -112,8 +113,8 @@ void door::BeKicked(character* Kicker, ushort KickDamage, uchar)
 
       if(KickDamage <= GetStrengthValue())
 	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("Your weak kick has no chance to affect this door.");
+	  if(CanBeSeenByPlayer() && (Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer()))
+	    ADD_MESSAGE("%s weak kick has no chance to affect this door.", Kicker->CHAR_POSSESSIVE_PRONOUN);
 	  
 	  return;
 	}
@@ -150,7 +151,7 @@ void door::BeKicked(character* Kicker, ushort KickDamage, uchar)
 	      if(GetRoom())
 		GetRoom()->DestroyTerrain(Kicker);
 	    }
-	  else
+	  else if(Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer())
 	    ADD_MESSAGE("The door won't budge!");
 	}
 
@@ -515,13 +516,13 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage, uchar)
 	      if(RAND() & 1)
 		{
 		  if(CanBeSeenByPlayer())
-		    ADD_MESSAGE("The broken door opens from the force of your kick.");
+		    ADD_MESSAGE("The broken door opens from the force of the kick.");
 
 		  MakeWalkable();
 		}
 	      else if(CanBeSeenByPlayer())
 		{
-		  ADD_MESSAGE("The lock breaks from the force of your kick.");
+		  ADD_MESSAGE("The lock breaks from the force of the kick.");
 
 		  if(GetRoom())
 		    GetRoom()->DestroyTerrain(Kicker);
@@ -532,7 +533,7 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage, uchar)
 	    }
 	}
 
-      if(CanBeSeenByPlayer())
+      if(CanBeSeenByPlayer() && (Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer()))
 	ADD_MESSAGE("The broken door won't budge!");
     }
 }

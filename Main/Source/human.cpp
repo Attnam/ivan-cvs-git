@@ -1312,13 +1312,17 @@ bool humanoid::CheckKick() const
 {
   if(!CanKick())
     {
-      ADD_MESSAGE("This race can't kick.");
+      if(IsPlayer())
+	ADD_MESSAGE("This race can't kick.");
+
       return false;
     }
 
   if(GetLegs() < 2)
     {
-      ADD_MESSAGE("How are you you going to do that with %s?", GetLegs() ? "one leg" : "no legs");
+      if(IsPlayer())
+	ADD_MESSAGE("How are you you going to do that with %s?", GetLegs() ? "one leg" : "no legs");
+
       return false;
     }
   else
@@ -1710,7 +1714,7 @@ void humanoid::Bite(character* Enemy, vector2d HitPos, uchar Direction, bool For
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 30);
-  Enemy->TakeHit(this, 0, HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
+  Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
 void humanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
@@ -1719,7 +1723,7 @@ void humanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
 
-  if(Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
+  if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
       KickLeg->EditExperience(LEG_STRENGTH, 40);
       KickLeg->EditExperience(AGILITY, 20);
@@ -1980,6 +1984,9 @@ void hunter::CreateBodyParts(ushort SpecialFlags)
 
 bool humanoid::EquipmentEasilyRecognized(ushort Index) const
 {
+  if(IsPet())
+    return true;
+
   switch(Index)
     {
     case AMULET_INDEX:
@@ -2690,7 +2697,9 @@ void bananagrower::GetAICommand()
 
   if(!HasBeenOnLandingSite)
     {
-      if(MoveTowards(vector2d(45, 45)))
+      SetGoingTo(vector2d(45, 45));
+
+      if(MoveTowardsTarget())
 	return;
     }
   else if(GetPos().X == 54)
@@ -2720,7 +2729,9 @@ void bananagrower::GetAICommand()
     }
   else
     {
-      if(MoveTowards(vector2d(54, 45)))
+      SetGoingTo(vector2d(54, 45));
+
+      if(MoveTowardsTarget())
 	return;
     }
 
@@ -2799,7 +2810,7 @@ void encourager::GetAICommand()
 	      if(Char && Char->IsBananaGrower() && Hit(Char, Square->GetPos(), NotDiagonal[d], true))
 		{
 		  LastHit = game::GetTicks();
-		  WayPoint = vector2d(-1, -1);
+		  TerminateGoingTo();
 		  return;
 		}
 	    }
@@ -2855,9 +2866,9 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-ushort mistress::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
+ushort mistress::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
 {
-  ushort Return = humanoid::TakeHit(Enemy, Weapon, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  ushort Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
   if(Return == HAS_HIT && Critical)
     {
@@ -2923,7 +2934,7 @@ void guard::GetAICommand()
       return;
     }
 
-  if(WayPoints.size() && WayPoint.X == -1)
+  if(WayPoints.size() && !IsGoingSomeWhere())
     {
       if(GetPos() == WayPoints[NextWayPoint])
 	if(NextWayPoint < WayPoints.size() - 1)
@@ -2931,7 +2942,7 @@ void guard::GetAICommand()
 	else
 	  NextWayPoint = 0;
 
-      WayPoint = WayPoints[NextWayPoint];
+      GoingTo = WayPoints[NextWayPoint];
     }
 
   StandIdleAI();
@@ -3041,8 +3052,13 @@ void darkmage::GetAICommand()
 	}
     }
 
-  if(NearestEnemy && ((GetConfig() != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3 && MoveTowards((Pos << 1) - NearestEnemy->GetPos()))
-    return;
+  if(NearestEnemy && ((GetConfig() != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3)
+    {
+      SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
+
+      if(MoveTowardsTarget())
+	return;
+    }
 
   if(NearestEnemy && NearestEnemy->IsSmall() && NearestEnemy->GetPos().IsAdjacent(Pos) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
     return;

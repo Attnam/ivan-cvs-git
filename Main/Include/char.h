@@ -218,13 +218,12 @@ class character : public entity, public id
   bool IsPlayer() const { return Player; }
   bool Engrave(const festring&);
   void AddScoreEntry(const festring&, float = 1, bool = true) const;
-  long GetScore() const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
   stack* GetStack() const { return Stack; }
   uchar GetBurdenState() const { return BurdenState; }
   bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
-  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
   ushort GetLOSRange() const;
   ushort GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
   ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
@@ -251,7 +250,7 @@ class character : public entity, public id
   void Vomit(ushort);
   virtual void Be();
   bool Polymorph(character*, ushort);
-  void BeKicked(character*, item*, vector2d, float, float, short, uchar, bool, bool);
+  void BeKicked(character*, item*, bodypart*, vector2d, float, float, short, uchar, bool, bool);
   void FallTo(character*, vector2d);
   bool CheckCannibalism(const material*) const;
   void ActivateTemporaryState(ulong What) { TemporaryState |= What; }
@@ -274,7 +273,6 @@ class character : public entity, public id
   void SetMoney(ulong What) { Money = What; }
   void EditMoney(long What) { Money += What; }
   bool Displace(character*, bool = false);
-  long GetStatScore() const;
   bool CheckStarvationDeath(const festring&);
   void ShowNewPosInfo() const;
   void Hostility(character*);
@@ -483,6 +481,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
   DATA_BASE_VALUE(uchar, MoveType);
+  DATA_BASE_BOOL(DestroysWalls);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -548,6 +547,7 @@ class character : public entity, public id
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
   void StartReading(item*, ulong);
   void DexterityAction(ushort);
+  void IntelligenceAction(ushort);
   virtual void SWeaponSkillTick() { }
   void PrintBeginInvisibilityMessage() const;
   void PrintEndInvisibilityMessage() const;
@@ -666,8 +666,7 @@ class character : public entity, public id
   ushort GetCondition() const;
   void UpdatePictures();
   bool CanHeal() const;
-  vector2d GetWaypoint() const { return WayPoint; }
-  void SetWayPoint(vector2d What) { WayPoint = What; }
+  void SetGoingTo(vector2d);
   void ReceiveFluidSpill(material*, ushort);
   uchar GetRelation(const character*) const;
   void CalculateAttributeBonuses();
@@ -700,7 +699,7 @@ class character : public entity, public id
   virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar) { return false; }
   virtual festring& ProcessMessage(festring&) const;
   virtual bool IsHumanoid() const { return false; }
-  long GetStuffScore() const;
+  virtual bool IsHuman() const { return false; }
   bool IsOnGround() const;
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
   virtual bool MoveTowardsHomePos();
@@ -773,6 +772,7 @@ class character : public entity, public id
   bool SquareUnderCanBeSeenByPlayer(bool) const;
   bool SquareUnderCanBeSeenBy(const character*, bool) const;
   ushort GetDistanceSquareFrom(const character*) const;
+  virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
   virtual bool CanMoveOn(const lsquare*) const;
   virtual bool CanMoveOn(const square*) const;
   bool CanMoveOn(const olterrain*) const;
@@ -789,8 +789,18 @@ class character : public entity, public id
   square* GetNaturalNeighbourSquare(ushort Index) const { return character::GetNeighbourSquare(Index); }
   lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
   void SignalStepFrom(lsquare**);
+  virtual void SpecialBodyDefenceEffect(character*, bodypart*, uchar) { }
   virtual ulong GetSumOfAttributes() const;
-  DATA_BASE_BOOL(DestroysWalls);
+  bool IsGoingSomeWhere() const { return GoingTo.X != -1; }
+  virtual bool CreateRoute();
+  void TerminateGoingTo();
+  virtual bool IsSpy() const { return false; }
+  bool CheckForFood(ushort);
+  bool CheckForFoodInSquare(vector2d);
+  virtual bool CheckIfSatiated() { return GetNP() > SATIATED_LEVEL; }
+  virtual void SignalNaturalGeneration() { }
+  virtual bool IsBunny() const { return false; }
+  void SetConfig(ushort, ushort = 0);
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;
@@ -825,7 +835,7 @@ class character : public entity, public id
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
   virtual void GetAICommand();
-  bool MoveTowards(vector2d);
+  bool MoveTowardsTarget();
   virtual const char* FirstPersonUnarmedHitVerb() const;
   virtual const char* FirstPersonCriticalUnarmedHitVerb() const;
   virtual const char* ThirdPersonUnarmedHitVerb() const;
@@ -851,7 +861,7 @@ class character : public entity, public id
   ulong TemporaryState;
   ushort TemporaryStateCounter[STATES];
   team* Team;
-  vector2d WayPoint;
+  vector2d GoingTo;
   ulong Money;
   std::list<character*>::iterator TeamIterator;
   characterslot* BodyPartSlot;
@@ -888,6 +898,8 @@ class character : public entity, public id
   ulong ID;
   bool PictureUpdatesForbidden;
   ushort SquaresUnder;
+  std::vector<vector2d> Route;
+  std::set<vector2d> Illegal;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

@@ -46,6 +46,8 @@ bodypart* largecreature::MakeBodyPart(ushort) const { return new largetorso(0, N
 lsquare* largecreature::GetNeighbourLSquare(ushort Index) const { return static_cast<lsquare*>(GetNeighbourSquare(Index)); }
 wsquare* largecreature::GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetNeighbourSquare(Index)); }
 
+bodypart* hattifattener::MakeBodyPart(ushort) const { return new hattifattenertorso(0, NO_MATERIALS); }
+
 bool elpuri::Hit(character* Enemy, vector2d, uchar, bool ForceHit)
 {
   character* EnemyHit[MAX_NEIGHBOUR_SQUARES];
@@ -209,7 +211,7 @@ void nonhumanoid::Bite(character* Enemy, vector2d HitPos, uchar Direction, bool 
   EditAP(-GetBiteAPCost());
   EditExperience(ARM_STRENGTH, 20);
   EditExperience(AGILITY, 40);
-  Enemy->TakeHit(this, 0, HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
+  Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
 void nonhumanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
@@ -217,7 +219,7 @@ void nonhumanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
   EditNP(-50);
   EditAP(-GetKickAPCost());
 
-  if(Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
+  if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
       EditExperience(LEG_STRENGTH, 40);
       EditExperience(AGILITY, 20);
@@ -298,7 +300,7 @@ void nonhumanoid::UnarmedHit(character* Enemy, vector2d HitPos, uchar Direction,
   EditNP(-50);
   EditAP(-GetUnarmedAPCost());
 
-  switch(Enemy->TakeHit(this, 0, HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -526,6 +528,8 @@ ushort wolf::GetSkinColor() const
 
 void genetrixvesana::GetAICommand()
 {
+  ++TurnsExisted;
+
   if(!(RAND() % 40))
     {
       ushort NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
@@ -541,7 +545,19 @@ void genetrixvesana::GetAICommand()
 
 		    if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
 		      {
-			character* NewPlant = new carnivorousplant(RAND() & 3 ? 0 : GREATER);
+			character* NewPlant;
+			ulong RandomValue = RAND() % TurnsExisted;
+
+			if(RandomValue < 100)
+			  NewPlant = new carnivorousplant;
+			else if(RandomValue < 1000)
+			  NewPlant = new carnivorousplant(GREATER);
+			else
+			  NewPlant = new carnivorousplant(GIANT);
+
+			for(ushort c = 2; c < TurnsExisted / 500; ++c)
+			  NewPlant->EditAllAttributes(1);
+
 			NewPlant->SetTeam(GetTeam());
 			NewPlant->PutTo(LSquare->GetPos());
 			--NumberOfPlants;
@@ -567,8 +583,10 @@ ushort carnivorousplant::GetTorsoSpecialColor() const // the flower
 {
   if(!GetConfig())
     return MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100);
-  else
+  else if(GetConfig() == GREATER)
     return MakeRGB16(RAND() % 100, RAND() % 100, 125 + RAND() % 125);
+  else
+    return MakeRGB16(125 + RAND() % 125, 125 + RAND() % 125, RAND() % 100);
 }
 
 void ostrich::GetAICommand()
@@ -601,7 +619,9 @@ void ostrich::GetAICommand()
 
   if(!HasBeenOnLandingSite)
     {
-      if(MoveTowards(vector2d(45, 45)))
+      SetGoingTo(vector2d(45, 45));
+
+      if(MoveTowardsTarget())
 	return;
     }
   else if(GetPos().Y == 54)
@@ -635,7 +655,9 @@ void ostrich::GetAICommand()
     }
   else
     {
-      if(MoveTowards(vector2d(45, 54)))
+      SetGoingTo(vector2d(45, 54));
+
+      if(MoveTowardsTarget())
 	return;
     }
 
@@ -716,7 +738,7 @@ void mommo::CreateCorpse(lsquare* Square)
 
 void carnivorousplant::CreateCorpse(lsquare* Square)
 {
-  ushort Amount = !GetConfig() ? (RAND() % 7 ? 0 : 1) : (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3)));
+  ushort Amount = !GetConfig() ? (RAND() % 7 ? 0 : 1) : GetConfig() == GREATER ? (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3))) : (!(RAND() % 3) ? 0 : (RAND() % 3 ? 1 : (RAND() % 3 ? 2 : 3)));
 
   for(ushort c = 0; c < Amount; ++c)
     Square->AddItem(new kiwi);
@@ -758,7 +780,7 @@ void floatingeye::VirtualConstructor(bool Load)
 
 void floatingeye::GetAICommand()
 {
-  if(WayPoints.size() && WayPoint.X == -1)
+  if(WayPoints.size() && !IsGoingSomeWhere())
     {
       if(GetPos() == WayPoints[NextWayPoint])
 	if(NextWayPoint < WayPoints.size() - 1)
@@ -766,7 +788,7 @@ void floatingeye::GetAICommand()
 	else
 	  NextWayPoint = 0;
 
-      WayPoint = WayPoints[NextWayPoint];
+      GoingTo = WayPoints[NextWayPoint];
     }
 
   SeekLeader();
@@ -794,7 +816,7 @@ bool floatingeye::Hit(character* Enemy, vector2d, uchar, bool)
   return true;
 }
 
-ushort floatingeye::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
+ushort floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
 {
   if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(150 + RAND() % 150)) /* Changes for fainting 2 out of 3 */
     {
@@ -804,7 +826,7 @@ ushort floatingeye::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, flo
       return HAS_FAILED;
     }
   else
-    return nonhumanoid::TakeHit(Enemy, Weapon, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+    return nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 }
 
 void elpuri::CreateCorpse(lsquare* Square)
@@ -847,9 +869,9 @@ bool chameleon::SpecialEnemySightedReaction(character*)
   return false;
 }
 
-ushort chameleon::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
+ushort chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
 {
-  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
     {
@@ -1154,9 +1176,9 @@ void skunk::GetAICommand()
   nonhumanoid::GetAICommand();
 }
 
-ushort unicorn::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
+ushort unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
 {
-  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
   if(Return != HAS_DIED)
     {
@@ -1393,6 +1415,22 @@ bool largecreature::IsFreeForMe(square* Square) const
   return true;
 }
 
+bool largecreature::CanTheoreticallyMoveOn(const lsquare* LSquare) const
+{
+  vector2d Pos = LSquare->GetPos();
+  level* Level = LSquare->GetLevel();
+
+  for(ushort c = 0; c < 4; ++c)
+    {
+      vector2d SquarePos = Pos + game::GetLargeMoveVector(12 + c);
+
+      if(!Level->IsValidPos(SquarePos) || !(GetMoveType() & Level->GetLSquare(SquarePos)->GetTheoreticalWalkability()))
+	return false;
+    }
+
+  return true;
+}
+
 bool largecreature::CanMoveOn(const lsquare* LSquare) const
 {
   vector2d Pos = LSquare->GetPos();
@@ -1457,4 +1495,258 @@ void largecreature::LoadSquaresUnder()
 {
   for(ushort c = 0; c < 4; ++c)
     SquareUnder[c] = game::GetSquareInLoad()->GetArea()->GetSquare(game::GetSquareInLoad()->GetPos() + game::GetLargeMoveVector(12 + c));
+}
+
+bool vladimir::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != IVAN_TEAM || GetDungeon()->GetIndex() != ELPURI_CAVE|| GetLevel()->GetIndex() != IVAN_LEVEL;
+}
+
+void hattifattener::GetAICommand()
+{
+  if(!(RAND() % 7))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s emits a lightning bolt!", CHAR_DESCRIPTION(DEFINITE));
+
+      GetLevel()->LightningBeam(this, "killed by a hattifattener's lightning", GetPos(), WHITE, BEAM_LIGHTNING, RAND() & 7, 1 + (RAND() & 7));
+      EditAP(-1000);
+      return;
+    }
+
+  SeekLeader();
+
+  if(FollowLeader())
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}
+
+void hattifattener::CreateCorpse(lsquare* Square)
+{
+  level* Level = Square->GetLevel();
+
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, Level->GetBorder(), Square->GetPos(), 2);
+  Level->LightningVisualizer(Rect, WHITE);
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      Level->GetLSquare(x, y)->Lightning(this, "killed by electricity released by a dying hattifattener", YOURSELF);
+
+  SendToHell();
+}
+
+void hedgehog::SpecialBodyDefenceEffect(character* Enemy, bodypart* BodyPart, uchar Type)
+{   
+  if(Type != WEAPON_ATTACK && RAND() & 1)
+    {
+      if(Enemy->IsPlayer())
+	ADD_MESSAGE("%s spines jab your %s!", CHAR_POSSESSIVE_PRONOUN, BodyPart->GetBodyPartName().CStr());
+      else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s spines jab %s!", CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_NAME(DEFINITE));
+
+      Enemy->ReceiveBodyPartDamage(this, 1 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart->GetBodyPartIndex(), YOURSELF, false, false, true, false);
+    }
+}
+
+void genetrixvesana::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << TurnsExisted;
+}
+
+void genetrixvesana::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> TurnsExisted;
+}
+
+void genetrixvesana::VirtualConstructor(bool)
+{
+  TurnsExisted = 0;
+}
+
+bool largecreature::CreateRoute()
+{
+  Route.clear();
+
+  if(GetAttribute(INTELLIGENCE) >= 10 && !StateIsActivated(CONFUSED))
+    {
+      node* Node = GetLevel()->FindRoute(GetPos(), GoingTo, Illegal, 0, this);
+
+      if(Node)
+	while(Node->Last)
+	  {
+	    Route.push_back(Node->Pos);
+	    Node = Node->Last;
+	  }
+      else
+	TerminateGoingTo();
+
+      IntelligenceAction(5);
+      return true;
+    }
+  else
+    return false;
+}
+
+void bunny::GetAICommand()
+{
+  if(GetConfig() < 4 && GetNP() > (SATIATED_LEVEL + BLOATED_LEVEL) >> 1)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s looks more mature.", CHAR_NAME(DEFINITE));
+
+      GetTorso()->SetSize(GetTorso()->GetSize() << 1);
+      Strength <<= 1;
+      Agility <<= 1;
+
+      for(ushort c = 0; c < BASE_ATTRIBUTES; ++c)
+	BaseAttribute[c] <<= 1;
+
+      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() << 1);
+      SetConfig(GetConfig() + 2);
+      RestoreHP();
+    }
+
+  SeekLeader();
+
+  if(FollowLeader())
+    return;
+
+  if(CheckForEnemies(true, true))
+    return;
+
+  if(CheckForUsefulItemsOnGround())
+    return;
+
+  if(CheckForDoors())
+    return;
+
+  if(CheckForFood(5))
+    return;
+
+  if(CheckForMatePartner())
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}
+
+void bunny::SignalNaturalGeneration()
+{
+  character* Partner = new bunny(GetConfig()^1);
+  Partner->SetTeam(GetTeam());
+  Partner->PutNear(GetPos());
+}
+
+bool bunny::CheckForMatePartner()
+{
+  if(GetConfig() == ADULT_MALE)
+    {
+      character* BestPartner = 0;
+      float BestPartnerDanger = 0;
+      vector2d Pos = GetPos();
+
+      for(ushort c = 0; c < game::GetTeams(); ++c)
+	if(GetTeam()->GetRelation(game::GetTeam(c)) != HOSTILE)
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    if((*i)->IsEnabled() && (*i)->IsBunny() && (*i)->GetConfig() == ADULT_FEMALE && (*i)->GetNP() > SATIATED_LEVEL)
+	      {
+		float Danger = (*i)->GetRelativeDanger(this, true);
+
+		if(Danger > BestPartnerDanger)
+		  {
+		    BestPartner = *i;
+		    BestPartnerDanger = Danger;
+		  }
+	      }
+
+      if(BestPartner && !GetPos().IsAdjacent(BestPartner->GetPos()))
+	{
+	  SetGoingTo(BestPartner->GetPos());
+	  MoveTowardsTarget();
+	  return true;
+	}
+    }
+
+  if(GetConfig() == ADULT_FEMALE && GetNP() > SATIATED_LEVEL)
+    {
+      for(ushort d = 0; d < GetNeighbourSquares(); ++d)
+	{
+	  lsquare* Square = GetNeighbourLSquare(d);
+
+	  if(Square)
+	    {
+	      character* Father = Square->GetCharacter();
+
+	      if(Father && Father->IsBunny() && Father->GetConfig() == ADULT_MALE && GetRelation(Father) != HOSTILE)
+		{
+		  if(CanBeSeenByPlayer())
+		    {
+		      if(Father->IsPlayer())
+			ADD_MESSAGE("You have much fun with %s.", CHAR_NAME(DEFINITE));
+		      else if(Father->CanBeSeenByPlayer())
+			ADD_MESSAGE("%s and %s seem to have much fun together.", Father->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+		      else
+			ADD_MESSAGE("%s seems to have much fun.", CHAR_NAME(DEFINITE));
+		    }
+		  else
+		    {
+		      if(Father->IsPlayer())
+			ADD_MESSAGE("You have much fun with something.");
+		      else if(Father->CanBeSeenByPlayer())
+			ADD_MESSAGE("%s seems to have much fun.", Father->CHAR_NAME(DEFINITE));
+		    }
+
+		  bunny* Baby = new bunny(BABY_MALE + (RAND() & 1));
+		  Baby->Strength = RandomizeBabyAttribute(Strength + static_cast<bunny*>(Father)->Strength);
+		  Baby->Agility = RandomizeBabyAttribute(Agility + static_cast<bunny*>(Father)->Agility);
+
+		  if(Baby->GetConfig() == BABY_MALE)
+		    {
+		      Baby->Strength <<= 2;
+		      Baby->Agility <<= 2;
+		    }
+		  else
+		    {
+		      Baby->Strength <<= 1;
+		      Baby->Agility *= 6;
+		    }
+
+		  Baby->Strength /= 3;
+		  Baby->Agility /= 5;
+
+		  for(ushort c = 0; c < BASE_ATTRIBUTES; ++c)
+		    Baby->BaseAttribute[c] = RandomizeBabyAttribute(BaseAttribute[c] + static_cast<bunny*>(Father)->BaseAttribute[c]);
+
+		  Baby->CalculateAll();
+		  Baby->RestoreHP();
+		  Baby->SetTeam(GetTeam());
+		  Baby->PutNear(GetPos());
+
+		  if(Baby->CanBeSeenByPlayer())
+		    ADD_MESSAGE("%s is born.", Baby->CHAR_NAME(INDEFINITE));
+
+		  EditNP(-10000);
+		  Father->EditAP(-3000);
+		  EditAP(-5000);
+		  return true;
+		}
+	    }
+	}
+    }
+
+  return false;
+}
+
+ushort bunny::RandomizeBabyAttribute(ushort SumA)
+{
+  return Limit<short>((SumA & 3 ? (SumA >> 2) + (RAND() % (SumA & 3) ? 1 : 0) : SumA >> 2) + (RAND() & 1) - (RAND() & 1), 0, 100);
 }
