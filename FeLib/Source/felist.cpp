@@ -232,7 +232,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  Entry[c].Bitmap[globalwindowhandler::GetTick() % Entry[c].Bitmap.size()]->MaskedBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);
 
 	  if(Selectable && Entry[c].Selectable && Selected == i)
-	      FONT->PrintfUnshaded(Buffer, Pos.X + 38, LastFillBottom + 5, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	      FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
 	  else
 	      FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
 
@@ -243,7 +243,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
 	  if(Selectable && Entry[c].Selectable && Selected == i)
-	      FONT->PrintfUnshaded(Buffer, Pos.X + 14, LastFillBottom + 1, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	      FONT->PrintfShade(Buffer, Pos.X + 13, LastFillBottom, Entry[c].Color, "%s", Str.c_str());
 	  else
 	      FONT->Printf(Buffer, Pos.X + 13, LastFillBottom, Entry[c].Color, "%s", Str.c_str());
 
@@ -309,6 +309,15 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 
       FONT->Printf(DOUBLEBUFFER, Pos.X + 13, LastBottom, Color, "%s", Entry[c + Selected].String.c_str());
     }
+}
+
+void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, ushort Color, ushort PageLength)
+{
+  if(PageLength < 2)
+    return;
+
+  for(ushort c = 0; c < PageLength; ++c)
+    Font->CreateFontCache(MAKE_RGB((GET_RED(Color) + GET_RED(Color) * 3 * c / (PageLength - 1)) >> 2, (GET_GREEN(Color) + GET_GREEN(Color) * 3 * c / (PageLength - 1)) >> 2, (GET_BLUE(Color) + GET_BLUE(Color) * 3 * c / (PageLength - 1)) >> 2));
 }
 
 void felist::Empty()

@@ -114,9 +114,9 @@ struct characterdatabase
   uchar ArticleMode;
   bool IsAbstract;
   bool IsPolymorphable;
-  ulong UnarmedStrength;
-  ulong BiteStrength;
-  ulong KickStrength;
+  ulong BaseUnarmedStrength;
+  ulong BaseBiteStrength;
+  ulong BaseKickStrength;
   uchar AttackStyle;
   bool CanUseEquipment;
   bool CanKick;
@@ -180,7 +180,7 @@ class character : public entity, public id
   virtual bool HasHeadOfElpuri() const;
   virtual bool HasGoldenEagleShirt() const;
   virtual bool HasPetrussNut() const;
-  virtual bool IsPlayer() const { return Player; }
+  bool IsPlayer() const { return Player; }
   virtual bool Apply();
   virtual bool Close();
   virtual bool Eat();
@@ -217,15 +217,14 @@ class character : public entity, public id
   virtual bool WizardMode();
   virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
   virtual long GetScore() const;
-  virtual long GetAP() const { return AP; }
-  virtual long GetNP() const { return NP; }
-  virtual short GetHP() const;
+  long GetAP() const { return AP; }
+  long GetNP() const { return NP; }
+  //virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState(ulong = 0) const;
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
   virtual ulong CurrentDanger() const;
   virtual ulong MaxDanger() const;
-  virtual ushort GetEmitation() const;
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual ushort ESPRange() const;
@@ -246,10 +245,10 @@ class character : public entity, public id
   virtual void ReceiveOmleUrine(long);
   virtual void ReceivePepsi(long);
   virtual void ReceivePoison(long);
-  virtual void Regenerate(ushort = 1);
-  virtual void SetAP(long What) { AP = What; }
-  virtual void SetIsPlayer(bool What) { Player = What; }
-  virtual void SetNP(long);
+  void Regenerate();
+  void SetAP(long What) { AP = What; }
+  void SetIsPlayer(bool What) { Player = What; }
+  void SetNP(long);
   virtual void SpillBlood(uchar);
   virtual void SpillBlood(uchar, vector2d);
   virtual void Vomit(ushort);
@@ -259,15 +258,15 @@ class character : public entity, public id
   virtual void BeKicked(character*, float, float, short, bool);
   virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(ushort) const;
-  virtual void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
-  virtual void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
-  virtual void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
-  virtual void DeActivateEquipmentState(ushort What) { EquipmentState &= ~What; }
-  virtual bool TemporaryStateIsActivated(ushort What) const { return TemporaryState & What ? true : false; }	
-  virtual bool EquipmentStateIsActivated(ushort What) const { return EquipmentState & What ? true : false; }
-  virtual bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
+  void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
+  void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
+  void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
+  void DeActivateEquipmentState(ushort What) { EquipmentState &= ~What; }
+  bool TemporaryStateIsActivated(ushort What) const { return TemporaryState & What != 0; }	
+  bool EquipmentStateIsActivated(ushort What) const { return EquipmentState & What != 0; }
+  bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
   virtual void Faint();
-  virtual void SetTemporaryStateCounter(ushort, ushort);
+  void SetTemporaryStateCounter(ushort, ushort);
   virtual void DeActivateVoluntaryAction(const std::string& = "");
   virtual void ActionAutoTermination();
   virtual team* GetTeam() const { return Team; }
@@ -276,9 +275,9 @@ class character : public entity, public id
   virtual bool RestUntilHealed();
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
-  virtual short GetMaxHP() const;
+  //virtual short GetMaxHP() const;
   virtual uchar GetMoveEase() const;
-  virtual float CalculateDodgeValue() const;
+  virtual float GetDodgeValue() const;
   virtual bool RaiseGodRelations();
   virtual bool LowerGodRelations();
   virtual bool GainDivineKnowledge();
@@ -309,8 +308,8 @@ class character : public entity, public id
   virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual void TestWalkability();
-  virtual void EditAP(long What) { AP += What; if(AP > 1200) AP = 1200; }
-  virtual void EditNP(long What) { NP += What; }
+  void EditAP(long What) { AP += What; if(AP > 1200) AP = 1200; }
+  void EditNP(long What) { NP += What; }
   virtual void SetSize(ushort);
   virtual ushort GetSize() const;
   torso* GetTorso() const { return static_cast<torso*>(*BodyPartSlot[TORSOINDEX]); }
@@ -339,7 +338,6 @@ class character : public entity, public id
   virtual std::string PossessivePronoun() const;
   virtual std::string ObjectPronoun() const;
   virtual bool BodyPartCanBeSevered(ushort) const;
-  //virtual std::string GetName(uchar) const;
   virtual void AddName(std::string&, uchar) const;
   virtual void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
@@ -362,8 +360,8 @@ class character : public entity, public id
   virtual uchar CloseMultiplier() const { return 2; }
   virtual bool CheckThrow() const { return true; }  
   virtual bool CheckOffer() const { return true; }
-  virtual ushort GetTemporaryStateCounter(ushort) const;
-  virtual void EditTemporaryStateCounter(ushort, short);
+  ushort GetTemporaryStateCounter(ushort) const;
+  void EditTemporaryStateCounter(ushort, short);
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
@@ -476,9 +474,9 @@ class character : public entity, public id
   virtual DATABASEVALUE(const std::string&, PostFix);
   virtual DATABASEVALUE(uchar, ArticleMode);
   virtual DATABASEBOOL(IsPolymorphable);
-  virtual DATABASEVALUE(ulong, UnarmedStrength);
-  virtual DATABASEVALUE(ulong, BiteStrength);
-  virtual DATABASEVALUE(ulong, KickStrength);
+  virtual DATABASEVALUE(ulong, BaseUnarmedStrength);
+  virtual DATABASEVALUE(ulong, BaseBiteStrength);
+  virtual DATABASEVALUE(ulong, BaseKickStrength);
   virtual DATABASEVALUE(uchar, AttackStyle);
   virtual DATABASEBOOL(CanUseEquipment);
   virtual DATABASEBOOL(CanKick);
@@ -496,7 +494,7 @@ class character : public entity, public id
   virtual void SpecialBiteEffect(character*) { }
   virtual float GetAttackStrengthDanger() const = 0;
   virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
-  virtual bool EditAttribute(ushort Identifier, short Value) { return RawEditAttribute(BaseAttribute[Identifier], Value); }
+  virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort Identifier, long Value) { BaseExperience[Identifier] += Value; }
   virtual bool CheckForAttributeIncrease(ushort&, long&, bool = false);
   virtual bool CheckForAttributeDecrease(ushort&, long&, bool = false);
@@ -515,18 +513,16 @@ class character : public entity, public id
   virtual ushort GetRandomStepperBodyPart() const { return TORSOINDEX; }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  virtual void EditVolume(long);
-  virtual void EditWeight(long);
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
   virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, short, uchar);
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
   virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
   virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
-  virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
+  gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
-  virtual long CalculateStateAPGain(long) const;
-  virtual long CalculateMoveAPRequirement(uchar Difficulty) const { return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20; }
+  long GetStateAPGain(long) const;
+  virtual long GetMoveAPRequirement(uchar Difficulty) const { return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20; }
   virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
@@ -534,7 +530,7 @@ class character : public entity, public id
   virtual void BeginTemporaryState(ushort, ushort);
   virtual void GainIntrinsic(ushort What) { BeginTemporaryState(What, 0); }
   virtual void LoseIntrinsic(ushort);
-  virtual void HandleStates();
+  void HandleStates();
   virtual void PrintBeginPolymorphControlMessage() const;
   virtual void PrintEndPolymorphControlMessage() const;
   virtual void PrintBeginLifeSaveMessage() const;
@@ -596,9 +592,9 @@ class character : public entity, public id
   void PrintBeginPolymorphMessage() const;
   void DisplayStethoscopeInfo(character*) const;
   virtual bool CanUseStethoscope(bool) const;
-  virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS ? true : false; }
-  virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS ? true : false; }
-  virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD ? true : false; }
+  virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS != 0; }
+  virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS != 0; }
+  virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD != 0; }
   virtual void AddAttackInfo(felist&) const = 0;
   level* GetLevelUnder() const { return static_cast<level*>(SquareUnder->GetAreaUnder()); }
   area* GetAreaUnder() const { return SquareUnder->GetAreaUnder(); }
@@ -615,9 +611,25 @@ class character : public entity, public id
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
   wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(SquareUnder); }
+  virtual void SignalVolumeAndWeightChange();
+  void CalculateVolumeAndWeight();
+  ulong GetVolume() const { return Volume; }
+  ulong GetBodyVolume() const { return BodyVolume; }
+  ulong GetWeight() const { return Weight; }
+  ulong GetCarriedWeight() const { return CarriedWeight; }
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
+  void CalculateEmitation();
+  void CalculateAll();
+  void CalculateHP();
+  void CalculateMaxHP();
+  short GetHP() const { return HP; }
+  short GetMaxHP() const { return MaxHP; }
+  void CalculateBodyPartMaxHPs();
+  bool IsInitializing() const { return Initializing; }
  protected:
   virtual void SpecialTurnHandler() { }
-  virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
+  virtual uchar GetAllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool);
   virtual void LoadDataBaseStats();
@@ -700,6 +712,13 @@ class character : public entity, public id
   static bool StateIsSecret[];
   square* SquareUnder;
   static prototype character_ProtoType;
+  ulong Volume;
+  ulong Weight;
+  ulong CarriedWeight;
+  ulong BodyVolume;
+  short HP;
+  short MaxHP;
+  bool Initializing;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

@@ -1,7 +1,8 @@
-/ partly done, or done but needs checking/balancing
-// done
 * high priority
-(r) rejected, will not be done
+// done
+/ partly done or needs testing/balancing
+(r) rejected
+(s) suspended
 
 //Image flipping (more).
 Lowscore.
@@ -57,7 +58,7 @@ Full backpacks should decrease AV, but they would also increase the chance of it
 Explosion animation.
 *Cube-like screenshot system.
 Atavus should do something special on Christmas.
-A graphical equipment screen. (from JM)
+//A graphical equipment screen. (from JM)
 Gurus.
 Meditation command.
 Opening a banana should remove its peals.
@@ -75,10 +76,10 @@ Karateka.
 Chance-value correlation to change material scrolls.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
-*WMap terrain height should be shown in WMode.
+//*WMap terrain height should be shown in WMode.
 Special "enemy sighted" rections.
 Vampires should be able to polymorph into a bat.
-Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
+(s) Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
 //*Weapon skills should affect attack AP costs as in ADOM.
 Throw remake using linear extrapolation.
 Throw flipping.
@@ -155,7 +156,7 @@ Explosion level.
 Mirages.
 Mirrors.
 //Breaking LTerrain in two parts.
-Worldmap LOS disabling.
+//Worldmap LOS disabling.
 //Symbolic inventory.
 //Symbolic god menu.
 //Lists, especially message history, should look better.
@@ -164,7 +165,7 @@ Something special should happen if the player is polymorphed into a chicken and 
 Allergies.
 Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
 //*Copper, bronze, wooden weapons.
-Nuts could be bodyparts. Or perhaps not.
+(r) Nuts could be bodyparts. Or perhaps not.
 //Tame symbol.
 Potion effect from fountain.
 Bananas should have black dots when spoiled.
@@ -266,3 +267,4 @@ We could show a scroll bar during reading, digging etc. that would show the rema
 Look stretch config option.
 If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
 Bodyparts should be rotated when they are severed.
+Weight should be the fundamental character of materials, not volume?

@@ -111,7 +111,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 {
   DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
   uchar Dir = Type == BITEATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
-  float DodgeValue = CalculateDodgeValue();
+  float DodgeValue = GetDodgeValue();
 
   if(Critical)
     {
@@ -204,7 +204,7 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 
   while(SVQueue.size())
     {
-      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetVolume() * 100 / (DodgeValue * GetVolume()));
+      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetBodyPartVolume() * 100 / (DodgeValue * GetBodyVolume()));
 
       if(ToHitPercentage < 1)
 	ToHitPercentage = 1;
@@ -236,42 +236,42 @@ void character::Be()
       if(!IsEnabled())
 	return;
 
-      if(GetHP() < GetMaxHP() / 3)
+      if(HP < MaxHP / 3)
 	SpillBlood(RAND() & 1);
-
-      if(IsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50))
-	Faint();
 
       ushort c;
 
-      for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
-	if(GetCategoryWeaponSkill(c)->Tick(1) && IsPlayer())
-	  GetCategoryWeaponSkill(c)->AddLevelDownMessage();
+      for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
+	if(CategoryWeaponSkill[c]->Tick() && IsPlayer())
+	  CategoryWeaponSkill[c]->AddLevelDownMessage();
 
       Regenerate();
       CharacterSpeciality();
 
       if(IsPlayer())
 	{
-	  if(!GetAction() || GetAction()->AllowFoodConsumption())
+	  if(GetHungerState() == VERYHUNGRY && !(RAND() % 50))
+	    Faint();
+
+	  if(!Action || Action->AllowFoodConsumption())
 	    Hunger();
 	}
 
-      if(GetAction() && GetAP() >= 1000)
+      if(Action && AP >= 1000)
 	ActionAutoTermination();
 
-      if(GetAction() && GetAP() >= 1000)
+      if(Action && AP >= 1000)
 	{
-	  GetAction()->Handle();
+	  Action->Handle();
 
 	  if(!IsEnabled())
 	    return;
 	}
       else
-	EditAP(CalculateStateAPGain(100));
+	AP += GetStateAPGain(100);
     }
 
-  if(GetAP() >= 1000)
+  if(AP >= 1000)
     {
       ApplyExperience();
       SpecialTurnHandler();
@@ -298,7 +298,7 @@ void character::Be()
 	}
       else
 	{
-	  if(!GetAction() && !game::IsInWilderness())
+	  if(!Action && !game::IsInWilderness())
 	    GetAICommand();
 	}
     }
@@ -491,7 +491,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
       if(!TeleportMove)
 	{
-	  EditAP(CalculateMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
+	  EditAP(GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
 	  EditNP(-10 * GetSquareUnder()->GetEntryDifficulty());
 	  EditExperience(AGILITY, 5 * GetSquareUnder()->GetEntryDifficulty());
 	}
@@ -756,19 +756,18 @@ bool character::PickUp()
 	  {
 	    item* Item = GetStackUnder()->DrawContents(this, "What do you want to pick up?");
 
-	    if(Item)
-		if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item)))
+	    if(Item && (!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item))))
+	      {
+		if(Item->CheckPickUpEffect(this))
 		  {
-		    if(Item->CheckPickUpEffect(this))
-		      {
-			ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
-			Item->MoveTo(GetStack());
-			Item->CheckPickUpEffect(this);
-			ToBeReturned = true;
-		      }
-		    else
-		      return false;
+		    ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
+		    Item->MoveTo(GetStack());
+		    Item->CheckPickUpEffect(this);
+		    ToBeReturned = true;
 		  }
+		else
+		  return false;
+	      }
 
 	    if(!Item || !GetStackUnder()->GetVisibleItems())
 	      break;
@@ -1104,6 +1103,8 @@ bool character::NOP()
 {
   EditExperience(AGILITY, -10);
   EditAP(-1000);
+  EditExperience(PERCEPTION, 100000);
+  EditExperience(ENDURANCE, 100000);
   return true;
 }
 
@@ -1117,17 +1118,19 @@ void character::ApplyExperience()
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel tougher than anything!");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks tougher.", CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks tougher.", CHARNAME(DEFINITE));
+
+      CalculateBodyPartMaxHPs();
     }
   else if(CheckForAttributeDecrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel less healthy.");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
+
+      CalculateBodyPartMaxHPs();
     }
 
   /* Should LOS be updated? */
@@ -1172,40 +1175,40 @@ void character::ApplyExperience()
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel very confident of your appearance.");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
+      else if(CanBeSeenByPlayer())
+	{
 	  if(GetAttribute(CHARISMA) <= 15)
 	    ADD_MESSAGE("%s looks less ugly.", CHARNAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("%s looks more attractive.", CHARNAME(DEFINITE));
+	}
     }
   else if(CheckForAttributeDecrease(BaseAttribute[CHARISMA], BaseExperience[CHARISMA]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel somehow disliked.");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
+      else if(CanBeSeenByPlayer())
+	{
 	  if(GetAttribute(CHARISMA) < 15)
 	    ADD_MESSAGE("%s looks more ugly.", CHARNAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("%s looks less attractive.", CHARNAME(DEFINITE));
+	}
     }
 
   if(CheckForAttributeIncrease(BaseAttribute[MANA], BaseExperience[MANA]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel magical forces coursing through your body!");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("You notice an odd glow around %s.", CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("You notice an odd glow around %s.", CHARNAME(DEFINITE));
     }
   else if(CheckForAttributeDecrease(BaseAttribute[MANA], BaseExperience[MANA]))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel your magical abilities withering slowly.");
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("You notice strange vibrations in the air around %s. But they disappear rapidly.", CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("You notice strange vibrations in the air around %s. But they disappear rapidly.", CHARNAME(DEFINITE));
     }
 }
 
@@ -1302,7 +1305,7 @@ uchar character::GetBurdenState(ulong Mass) const
 {
   ulong SumOfMasses;
   if(!Mass)
-    SumOfMasses = GetWeight();
+    SumOfMasses = GetCarriedWeight();
   else
     SumOfMasses = Mass;
   if(SumOfMasses > ulong(7500 * GetCarryingStrength()))
@@ -1395,7 +1398,7 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << AssignedName << PolymorphBackup;
 
-  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     SaveFile << GetCategoryWeaponSkill(c);
 
   SaveFile << StuckTo << StuckToBodyPart;
@@ -1416,15 +1419,7 @@ void character::Load(inputfile& SaveFile)
   SetHasBe(ReadType<bool>(SaveFile));
 
   for(c = 0; c < GetBodyParts(); ++c)
-    {
-      SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
-
-      if(*BodyPartSlot[c])
-	{
-	  EditVolume(BodyPartSlot[c]->GetVolume());
-	  EditWeight(BodyPartSlot[c]->GetCarriedWeight());
-	}
-    }
+    SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
 
   if(HomeRoom)
     if(ReadType<bool>(SaveFile))
@@ -1433,11 +1428,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> Action;
 
   if(Action)
-    {
-      Action->SetActor(this);
-      EditVolume(Action->GetVolume());
-      EditWeight(Action->GetWeight());
-    }
+    Action->SetActor(this);
 
   for(c = 0; c < STATES; ++c)
     SaveFile >> TemporaryStateCounter[c];
@@ -1450,7 +1441,7 @@ void character::Load(inputfile& SaveFile)
 
   SaveFile >> AssignedName >> PolymorphBackup;
 
-  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
 
   SaveFile >> StuckTo >> StuckToBodyPart;
@@ -1493,6 +1484,7 @@ bool character::RaiseStats()
   for(c = 0; c < BASEATTRIBUTES; ++c)
     BaseAttribute[c] += 10;
 
+  CalculateBodyPartMaxHPs();
   RestoreHP();
   game::SendLOSUpdateRequest();
   return false;
@@ -1509,6 +1501,7 @@ bool character::LowerStats()
   for(c = 0; c < BASEATTRIBUTES; ++c)
     BaseAttribute[c] -= 10;
 
+  CalculateBodyPartMaxHPs();
   RestoreHP();
   game::SendLOSUpdateRequest();
   return false;
@@ -1529,20 +1522,6 @@ bool character::SeeWholeMap()
 {
   game::SeeWholeMap();
   return false;
-}
-
-ushort character::GetEmitation() const
-{
-  ushort Emitation = GetBaseEmitation();
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->GetEmitation() > Emitation)
-      Emitation = GetBodyPart(c)->GetEmitation();
-
-  if(GetStack()->GetEmitation() > Emitation)
-    Emitation = GetStack()->GetEmitation();
-
-  return Emitation;
 }
 
 bool character::WalkThroughWalls()
@@ -1621,7 +1600,7 @@ bool character::MoveRandomly()
 
 bool character::TestForPickup(item* ToBeTested) const
 {
-  if(GetBurdenState(ToBeTested->GetWeight() + GetWeight()) != UNBURDENED)
+  if(GetBurdenState(ToBeTested->GetWeight() + GetCarriedWeight()) != UNBURDENED)
     return false;
 
   return true;
@@ -1779,7 +1758,7 @@ long character::GetStatScore() const
 {
   long SkillScore = 0;
 
-  for(ushort c = 0; c < AllowedWeaponSkillCategories(); ++c)
+  for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     SkillScore += GetCategoryWeaponSkill(c)->GetHits();
 
   return (SkillScore >> 2) + (GetAttribute(ARMSTRENGTH) + GetAttribute(LEGSTRENGTH) + GetAttribute(DEXTERITY) + GetAttribute(AGILITY) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 40;
@@ -2643,10 +2622,10 @@ bool character::Go()
 	++OKDirectionsCounter;
     }
 
-  Go->SetWalkingInOpen(OKDirectionsCounter > 2 ? true : false);
+  Go->SetWalkingInOpen(OKDirectionsCounter > 2);
   SetAction(Go);
   Go->Handle();
-  return GetAction() ? true : false;
+  return GetAction() != 0;
 }
 
 void character::GoOn(go* Go)
@@ -2975,33 +2954,13 @@ bool character::SecretKnowledge()
   return false;
 }
 
-short character::GetHP() const
-{
-  short HP = 0;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      HP += GetBodyPart(c)->GetHP();
-
-  return HP;
-}
-
-short character::GetMaxHP() const
-{
-  short HP = 0;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      HP += GetBodyPart(c)->GetMaxHP();
-
-  return HP;
-}
-
 void character::RestoreHP()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+      GetBodyPart(c)->RestoreHP();
+
+  HP = MaxHP;
 }
 
 void character::BlockDamageType(uchar Type)
@@ -3314,7 +3273,7 @@ void character::SetBodyPart(ushort Index, bodypart* What)
 
 bool character::CanConsume(material* Material) const
 {
-  return GetConsumeFlags() & Material->GetConsumeType() ? true : false;
+  return GetConsumeFlags() & Material->GetConsumeType() != 0;
 }
 
 void character::SetTemporaryStateCounter(ushort State, ushort What)
@@ -3381,11 +3340,11 @@ bool character::ScrollMessagesUp()
   return false;
 }
 
-void character::Regenerate(ushort Ticks)
+void character::Regenerate()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      GetBodyPart(c)->Regenerate(Ticks);
+      GetBodyPart(c)->Regenerate();
 }
 
 void character::PrintInfo() const
@@ -3401,6 +3360,7 @@ void character::PrintInfo() const
       Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHTGRAY);
       Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHTGRAY);
       Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
+      Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight(), LIGHTGRAY);
       Info.AddEntry(std::string("Total weight: ") + GetWeight(), LIGHTGRAY);
 
       for(c = 0; c < GetBodyParts(); ++c)
@@ -3657,24 +3617,26 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   character* Char = Cloner(0, false, true);
   Char->Load(SaveFile);
+  Char->CalculateAll();
   return Char;
 }
 
 void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 {
+  Initializing = true;
   BodyPartSlot = new characterslot[GetBodyParts()];
   OriginalBodyPartID = new ulong[GetBodyParts()];
-  CategoryWeaponSkill = new gweaponskill*[AllowedWeaponSkillCategories() + 1];
+  CategoryWeaponSkill = new gweaponskill*[GetAllowedWeaponSkillCategories() + 1];
 
   ushort c;
 
   for(c = 0; c < GetBodyParts(); ++c)
     BodyPartSlot[c].SetMaster(this);
 
-  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     CategoryWeaponSkill[c] = new gweaponskill(c);
 
-  CategoryWeaponSkill[AllowedWeaponSkillCategories()] = 0;
+  CategoryWeaponSkill[GetAllowedWeaponSkillCategories()] = 0;
 
   if(!Load)
     {
@@ -3699,8 +3661,11 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
       if(CreateEquipment)
 	CreateInitialEquipment();
 
+      CalculateAll();
       RestoreHP();
     }
+
+  Initializing = false;
 }
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
@@ -4079,7 +4044,7 @@ void character::DrawPanel() const
     }
 }
 
-float character::CalculateDodgeValue() const
+float character::GetDodgeValue() const
 {
   float DV = float(GetMoveEase()) * GetAttribute(AGILITY) / (sqrt(GetSize()) * 20);
   return DV > 1 ? DV : 1;
@@ -4113,22 +4078,6 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
       ABORT("Unknown reaping effect destroyed dungeon!");
       return false;
     }
-}
-
-void character::EditVolume(long What)
-{
-  Volume += What;
-
-  if(GetMotherEntity())
-    GetMotherEntity()->EditVolume(What);
-}
-
-void character::EditWeight(long What)
-{
-  Weight += What;
-
-  if(GetMotherEntity())
-    GetMotherEntity()->EditWeight(What);
 }
 
 ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, float WeaponToHitValue, float BlockerToHitValue, ushort Damage, short Success, uchar Type)
@@ -4172,7 +4121,7 @@ bool character::ShowWeaponSkills()
 
   bool Something = false;
 
-  for(ushort c = 0; c < AllowedWeaponSkillCategories(); ++c)
+  for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     if(GetCategoryWeaponSkill(c)->GetHits())
       {
 	std::string Buffer;
@@ -4205,7 +4154,7 @@ bool character::ShowWeaponSkills()
   return false;
 }
 
-long character::CalculateStateAPGain(long BaseAPGain) const
+long character::GetStateAPGain(long BaseAPGain) const
 {
   if(StateIsActivated(HASTE))
     BaseAPGain <<= 1;
@@ -4920,16 +4869,6 @@ void character::InstallDataBase()
   ::database<character>::InstallDataBase(this);
 }
 
-/*lsquare* character::GetLSquareUnder() const
-{
-  return static_cast<lsquare*>(SquareUnder);
-}
-
-wsquare* character::GetWSquareUnder() const
-{
-  return static_cast<wsquare*>(SquareUnder);
-}*/
-
 void character::PrintBeginTeleportMessage() const
 {
 
@@ -4983,6 +4922,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHTGRAY);
   Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHTGRAY);
   Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
+  Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHTGRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHTGRAY);
   Info.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
 }
@@ -4993,4 +4933,133 @@ bool character::CanUseStethoscope(bool PrintReason) const
     ADD_MESSAGE("This type of monster can't use a stethoscope.");
 
   return false;
+}
+
+void character::CalculateVolumeAndWeight()
+{
+  Volume = Stack->GetVolume();
+  Weight = Stack->GetWeight();
+
+  if(Action)
+    {
+      Volume += Action->GetVolume();
+      Weight += Action->GetWeight();
+    }
+
+  BodyVolume = 0;
+  CarriedWeight = Weight;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      {
+	BodyVolume += GetBodyPart(c)->GetBodyPartVolume();
+	Volume += GetBodyPart(c)->GetVolume();
+	CarriedWeight += GetBodyPart(c)->GetCarriedWeight();
+	Weight += GetBodyPart(c)->GetWeight();
+      }
+}
+
+void character::SignalVolumeAndWeightChange()
+{
+  CalculateVolumeAndWeight();
+
+  if(MotherEntity)
+    MotherEntity->SignalVolumeAndWeightChange();
+}
+
+void character::SignalEmitationIncrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate > Emitation)
+    {
+      Emitation = EmitationUpdate;
+
+      if(MotherEntity)
+	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+      else if(SquareUnder && !game::IsInWilderness())
+	GetLSquareUnder()->SignalEmitationIncrease(EmitationUpdate);
+    }
+}
+
+void character::SignalEmitationDecrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate == Emitation)
+    {
+      CalculateEmitation();
+
+      if(EmitationUpdate != Emitation)
+	{
+	  if(MotherEntity)
+	    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+	  else if(SquareUnder && !game::IsInWilderness())
+	    GetLSquareUnder()->SignalEmitationDecrease(EmitationUpdate);
+	}
+    }
+}
+
+void character::CalculateEmitation()
+{
+  Emitation = GetBaseEmitation();
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c) && GetBodyPart(c)->GetEmitation() > Emitation)
+      Emitation = GetBodyPart(c)->GetEmitation();
+
+  if(Stack->GetEmitation() > Emitation)
+    Emitation = Stack->GetEmitation();
+
+  if(Action && Action->GetEmitation() > Emitation)
+    Emitation = Action->GetEmitation();
+}
+
+void character::CalculateAll()
+{
+  CalculateVolumeAndWeight();
+  CalculateEmitation();
+  CalculateHP();
+  CalculateBodyPartMaxHPs();
+}
+
+void character::CalculateHP()
+{
+  HP = 0;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      HP += GetBodyPart(c)->GetHP();
+}
+
+void character::CalculateMaxHP()
+{
+  MaxHP = 0;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      MaxHP += GetBodyPart(c)->GetMaxHP();
+}
+
+void character::CalculateBodyPartMaxHPs()
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->CalculateMaxHP();
+
+  CalculateMaxHP();
+}
+
+bool character::EditAttribute(ushort Identifier, short Value)
+{
+  if(RawEditAttribute(BaseAttribute[Identifier], Value))
+    {
+      if(!Initializing)
+	{
+	  if(Identifier == ENDURANCE)
+	    CalculateBodyPartMaxHPs();
+	  else if(Identifier == PERCEPTION)
+	    ;
+	}
+
+      return true;
+    }
+  else
+    return false;
 }

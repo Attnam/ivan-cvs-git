@@ -190,7 +190,7 @@ class ITEM
   bodyarmor,
  public:
   virtual ushort GetStrengthValue() const { return 100; }
-  virtual short CalculateOfferValue(char) const { return 750; }
+  virtual short GetOfferValue(char) const { return 750; }
   virtual bool IsGoldenEagleShirt() const { return true; };
   virtual bool IsConsumable(const character*) const { return false; }
 );
@@ -218,7 +218,7 @@ class ITEM
   item,
  public:
   virtual item* BetterVersion() const { return new banana; }
-  virtual bool GetStepOnEffect(character *);
+  virtual bool StepOnEffect(character *);
 );
 
 class ITEM
@@ -227,7 +227,7 @@ class ITEM
   item,
  public:
   virtual item* BetterVersion() const;
-  virtual bool GetStepOnEffect(character*);
+  virtual bool StepOnEffect(character*);
 );
 
 class ABSTRACT_ITEM
@@ -543,7 +543,7 @@ class ITEM
   virtual void Load(inputfile&);
   virtual uchar GetCharged() const { return Charged; }
   virtual void SetCharged(bool What) { Charged = What; }
-  virtual bool GetStepOnEffect(character *);
+  virtual bool StepOnEffect(character *);
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual bool IsVisible() const { return Visible; }
@@ -676,13 +676,14 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
-  character* GetMaster() const;
+  character* GetMaster() const { return Master; }
   humanoid* GetHumanoidMaster() const;
+  void SetMaster(character* What) { Master = What; }
   virtual ushort GetStrengthValue() const;
-  short GetMaxHP() const;
-  void SetHP(short What) { HP = What; }
+  short GetMaxHP() const { return MaxHP; }
+  void SetHP(short);
   short GetHP() const { return HP; }
-  void EditHP(short What) { HP += What; }
+  void EditHP(short);
   virtual ushort GetTotalResistance(uchar) const = 0;
   virtual bool ReceiveDamage(character*, short, uchar);
   const std::string& GetOwnerDescription() const { return OwnerDescription; }
@@ -692,7 +693,7 @@ class ABSTRACT_ITEM
   ulong GetRegenerationCounter() const { return RegenerationCounter; }
   void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
   void EditRegenerationCounter(long What) { RegenerationCounter += What; }
-  void Regenerate(ushort);
+  void Regenerate();
   virtual ushort DangerWeight() const = 0;
   virtual ushort Danger(ulong, bool) const;
   virtual void DropEquipment() { }
@@ -708,10 +709,18 @@ class ABSTRACT_ITEM
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
   virtual void InitSpecialAttributes() { }
-  void LoadGearSlot(inputfile&, gearslot&);
   void SignalEquipmentAdd(gearslot*);
   void SignalEquipmentRemoval(gearslot*);
   virtual void Mutate();
+  ulong GetBodyPartVolume() const { return BodyPartVolume; }
+  ulong GetCarriedWeight() const { return CarriedWeight; }
+  virtual item* GetEquipment(ushort) const { return 0; }
+  virtual ushort GetEquipmentSlots() const { return 0; }
+  virtual void CalculateVolumeAndWeight();
+  virtual void CalculateEmitation();
+  virtual void CalculateMaxHP();
+  virtual void SignalVolumeAndWeightChange();
+  void RestoreHP() { HP = MaxHP; }
  protected:
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
@@ -732,8 +741,12 @@ class ABSTRACT_ITEM
   std::vector<ushort> ColorD;
   std::vector<uchar> SpecialFlags;
   short HP;
+  short MaxHP;
   bool Unique;
   ulong RegenerationCounter;
+  ulong CarriedWeight;
+  ulong BodyPartVolume;
+  character* Master;
 );
 
 class ITEM
@@ -745,23 +758,26 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
-  virtual void SetHelmet(item* What) { HelmetSlot.PutInItem(What); }
-  virtual item* GetHelmet() const { return *HelmetSlot; }
-  virtual void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
-  virtual item* GetAmulet() const { return *AmuletSlot; }
+  void SetHelmet(item* What) { HelmetSlot.PutInItem(What); }
+  item* GetHelmet() const { return *HelmetSlot; }
+  void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
+  item* GetAmulet() const { return *AmuletSlot; }
   virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
-  virtual float CalculateBiteToHitValue() const { return 1.0f; }
-  virtual float CalculateBiteStrength() const;
-  virtual long CalculateBiteAPCost() const;
-  virtual ushort GetEmitation() const;
+  float GetBiteToHitValue() const { return 1.0f; }
+  float GetBiteStrength() const;
+  long GetBiteAPCost() const;
   virtual void InitSpecialAttributes();
+  virtual item* GetEquipment(ushort) const;
+  virtual ushort GetEquipmentSlots() const { return 2; }
+  ulong GetBaseBiteStrength() const { return BaseBiteStrength; }
+  void SetBaseBiteStrength(ulong What) { BaseBiteStrength = What; }
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
   gearslot AmuletSlot;
-  DATAVALUE(ulong, BiteStrength);
+  ulong BaseBiteStrength;
 );
 
 class ABSTRACT_ITEM
@@ -794,14 +810,15 @@ class ITEM
   virtual void Load(inputfile&);
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
   virtual ushort GetTotalResistance(uchar) const;
-  virtual void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
-  virtual item* GetBodyArmor() const { return *BodyArmorSlot; }
-  virtual void SetCloak(item* What) { CloakSlot.PutInItem(What); }
-  virtual item* GetCloak() const { return *CloakSlot; }
-  virtual void SetBelt(item* What) { BeltSlot.PutInItem(What); }
-  virtual item* GetBelt() const { return *BeltSlot; }
+  void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
+  item* GetBodyArmor() const { return *BodyArmorSlot; }
+  void SetCloak(item* What) { CloakSlot.PutInItem(What); }
+  item* GetCloak() const { return *CloakSlot; }
+  void SetBelt(item* What) { BeltSlot.PutInItem(What); }
+  item* GetBelt() const { return *BeltSlot; }
   virtual void DropEquipment();
-  virtual ushort GetEmitation() const;
+  virtual item* GetEquipment(ushort) const;
+  virtual ushort GetEquipmentSlots() const { return 3; }
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -818,36 +835,39 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
-  virtual float CalculateWieldedStrength() const;
-  virtual float CalculateWieldedToHitValue() const;
-  virtual void SetWielded(item* What) { WieldedSlot.PutInItem(What); }
-  virtual item* GetWielded() const { return *WieldedSlot; }
-  virtual void SetGauntlet(item* What) { GauntletSlot.PutInItem(What); }
-  virtual item* GetGauntlet() const { return *GauntletSlot; }
-  virtual void SetRing(item* What) { RingSlot.PutInItem(What); }
-  virtual item* GetRing() const { return *RingSlot; }
+  float GetWieldedStrength() const;
+  float GetWieldedToHitValue() const;
+  void SetWielded(item* What) { WieldedSlot.PutInItem(What); }
+  item* GetWielded() const { return *WieldedSlot; }
+  void SetGauntlet(item* What) { GauntletSlot.PutInItem(What); }
+  item* GetGauntlet() const { return *GauntletSlot; }
+  void SetRing(item* What) { RingSlot.PutInItem(What); }
+  item* GetRing() const { return *RingSlot; }
   virtual ushort DangerWeight() const;
   virtual void DropEquipment();
-  virtual float CalculateUnarmedToHitValue() const;
-  virtual float CalculateUnarmedStrength() const;
+  float GetUnarmedToHitValue() const;
+  float GetUnarmedStrength() const;
   virtual void Hit(character*, float, float);
-  virtual ushort GetAttribute(ushort) const;
-  virtual bool EditAttribute(ushort, short);
-  virtual void EditExperience(ushort, long);
+  ushort GetAttribute(ushort) const;
+  bool EditAttribute(ushort, short);
+  void EditExperience(ushort, long);
   virtual void ApplyExperience();
   virtual void RaiseStats();
   virtual void LowerStats();
-  virtual void SetStrength(ushort What) { Strength = What; }
-  virtual void SetDexterity(ushort What) { Dexterity = What; }
-  virtual ushort GetEmitation() const;
+  void SetStrength(ushort What) { Strength = What; }
+  void SetDexterity(ushort What) { Dexterity = What; }
   virtual void InitSpecialAttributes();
   virtual void Mutate();
-  virtual ushort GetDexterity() const { return Dexterity; }
-  virtual ushort GetStrength() const { return Strength; }
+  ushort GetDexterity() const { return Dexterity; }
+  ushort GetStrength() const { return Strength; }
   virtual arm* GetPairArm() const = 0;
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const = 0;
-  virtual long CalculateWieldedAPCost() const;
-  virtual long CalculateUnarmedAPCost() const;
+  long GetWieldedAPCost() const;
+  long GetUnarmedAPCost() const;
+  virtual item* GetEquipment(ushort) const;
+  virtual ushort GetEquipmentSlots() const { return 3; }
+  ulong GetBaseUnarmedStrength() const { return BaseUnarmedStrength; }
+  void SetBaseUnarmedStrength(ulong What) { BaseUnarmedStrength = What; }
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -857,7 +877,7 @@ class ABSTRACT_ITEM
   ushort Dexterity;
   long StrengthExperience;
   long DexterityExperience;
-  DATAVALUE(ulong, UnarmedStrength);
+  ulong BaseUnarmedStrength;
 );
 
 class ITEM
@@ -907,26 +927,29 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
-  virtual void SetBoot(item* What) { BootSlot.PutInItem(What); }
-  virtual item* GetBoot() const { return *BootSlot; }
+  void SetBoot(item* What) { BootSlot.PutInItem(What); }
+  item* GetBoot() const { return *BootSlot; }
   virtual ushort DangerWeight() const;
   virtual void DropEquipment();
-  virtual float CalculateKickToHitValue() const;
-  virtual float CalculateKickStrength() const;
-  virtual ushort GetAttribute(ushort) const;
-  virtual bool EditAttribute(ushort, short);
-  virtual void EditExperience(ushort, long);
+  float GetKickToHitValue() const;
+  float GetKickStrength() const;
+  ushort GetAttribute(ushort) const;
+  bool EditAttribute(ushort, short);
+  void EditExperience(ushort, long);
   virtual void ApplyExperience();
   virtual void RaiseStats();
   virtual void LowerStats();
-  virtual void SetStrength(ushort What) { Strength = What; }
-  virtual void SetAgility(ushort What) { Agility = What; }
-  virtual ushort GetAgility() const { return Agility; }
-  virtual ushort GetStrength() const { return Strength; }
-  virtual ushort GetEmitation() const;
+  void SetStrength(ushort What) { Strength = What; }
+  void SetAgility(ushort What) { Agility = What; }
+  ushort GetAgility() const { return Agility; }
+  ushort GetStrength() const { return Strength; }
   virtual void InitSpecialAttributes();
   virtual void Mutate();
-  virtual long CalculateKickAPCost() const;
+  long GetKickAPCost() const;
+  virtual item* GetEquipment(ushort) const;
+  virtual ushort GetEquipmentSlots() const { return 1; }
+  ulong GetBaseKickStrength() const { return BaseKickStrength; }
+  void SetBaseKickStrength(ulong What) { BaseKickStrength = What; }
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -934,7 +957,7 @@ class ABSTRACT_ITEM
   ushort Agility;
   long StrengthExperience;
   long AgilityExperience;
-  DATAVALUE(ulong, KickStrength);
+  ulong BaseKickStrength;
 );
 
 class ITEM
@@ -975,17 +998,17 @@ class ITEM
  public:
   virtual ~corpse();
   virtual bool Consume(character*, long);
-  virtual ushort GetEmitation() const;
+  //virtual ushort GetEmitation() const;
   virtual bool IsConsumable(const character*) const;
-  virtual short CalculateOfferValue(char) const;
+  virtual short GetOfferValue(char) const;
   virtual float GetWeaponStrength() const;
   virtual bool IsBadFoodForAI(character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
-  virtual void SetMainMaterial(material*);
+  /*virtual void SetMainMaterial(material*);
   virtual void ChangeMainMaterial(material*);
   virtual void SetContainedMaterial(material*);
-  virtual void ChangeContainedMaterial(material*);
+  virtual void ChangeContainedMaterial(material*);*/
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual character* GetDeceased() const { return Deceased; }
   virtual void SetDeceased(character*);
@@ -1002,6 +1025,8 @@ class ITEM
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
   virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
+  virtual void CalculateVolumeAndWeight();
+  virtual void CalculateEmitation();
  protected:
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColorA(ushort) const;
@@ -1078,6 +1103,7 @@ class ITEM
   virtual ulong GetStorageVolume() const { return StorageVolume; }
   virtual bool Polymorph(stack*);
   virtual bool FitsIn(item*) const;
+  virtual void CalculateVolumeAndWeight();
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
@@ -1095,7 +1121,7 @@ class ITEM
  public:
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual bool GetStepOnEffect(character*);
+  virtual bool StepOnEffect(character*);
   virtual bool TryToUnstuck(character*, ushort, vector2d);
   virtual bool CheckPickUpEffect(character*);
   virtual bool IsPickable(character*) const;
@@ -1148,4 +1174,5 @@ class ITEM
  virtual bool ListenTo(lsquare*,character*);
 );
 #endif
+
 

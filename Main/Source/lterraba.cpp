@@ -22,8 +22,8 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
       vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
-      GetLevelUnder()->FastAddCharacter(Pos, Who);
-      GetLevelUnder()->Luxify();
+      GetLevelUnder()->AddCharacter(Pos, Who);
+      //GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -77,8 +77,8 @@ bool olterrain::GoDown(character* Who) const // Try to go down
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
       vector2d Pos = GetLevelUnder()->RandomSquare(Who, true);
-      GetLevelUnder()->FastAddCharacter(Pos, Who);
-      GetLevelUnder()->Luxify();
+      GetLevelUnder()->AddCharacter(Pos, Who);
+      //GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -97,7 +97,7 @@ bool olterrain::GoDown(character* Who) const // Try to go down
 
 void lterrain::Load(inputfile& SaveFile)
 {
-  SquareUnder = game::GetSquareInLoad();
+  LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
   object::Load(SaveFile);
 }
 
@@ -129,7 +129,7 @@ void olterrain::Load(inputfile& SaveFile)
 
 vector2d lterrain::GetPos() const
 {
-  return GetLSquareUnder()->GetPos();
+  return LSquareUnder->GetPos();
 }
 
 bool lterrain::SitOn(character* Sitter)
@@ -153,6 +153,7 @@ glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   glterrain* Terrain = Cloner(0, false, true);
   Terrain->Load(SaveFile);
+  Terrain->CalculateAll();
   return Terrain;
 }
 
@@ -160,6 +161,7 @@ olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   olterrain* Terrain = Cloner(0, false, true);
   Terrain->Load(SaveFile);
+  Terrain->CalculateAll();
   return Terrain;
 }
 
@@ -177,8 +179,14 @@ void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load
 
   VirtualConstructor(Load);
 
-  if(CallGenerateMaterials)
-    UpdatePictures();
+  if(!Load)
+    {
+      if(CallGenerateMaterials)
+	{
+	  UpdatePictures();
+	  CalculateAll();
+	}
+    }
 }
 
 glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
@@ -193,7 +201,7 @@ olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cl
 
 bool lterrain::CanBeSeenByPlayer() const
 {
-  return GetSquareUnder()->CanBeSeenByPlayer();
+  return LSquareUnder->CanBeSeenByPlayer();
 }
 
 bool lterrain::CanBeSeenBy(character* Who) const
@@ -201,7 +209,7 @@ bool lterrain::CanBeSeenBy(character* Who) const
   if(Who->IsPlayer())
     return CanBeSeenByPlayer();
   else
-    return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+    return LSquareUnder->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
 
 void glterrain::InstallDataBase()
@@ -220,12 +228,24 @@ void olterrain::ShowRestMessage(character*) const
     ADD_MESSAGE("%s", GetRestMessage().c_str());
 }
 
-/*lsquare* lterrain::GetLSquareUnder() const
+void lterrain::SignalEmitationIncrease(ushort EmitationUpdate)
 {
-  return static_cast<lsquare*>(SquareUnder);
+  if(EmitationUpdate > Emitation)
+    {
+      Emitation = EmitationUpdate;
+
+      if(LSquareUnder)
+	LSquareUnder->SignalEmitationIncrease(EmitationUpdate);
+    }
 }
 
-level* lterrain::GetLevelUnder() const
-{ 
-  return static_cast<level*>(SquareUnder->GetAreaUnder());
-}*/
+void lterrain::SignalEmitationDecrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate == Emitation)
+    {
+      CalculateEmitation();
+
+      if(EmitationUpdate != Emitation && LSquareUnder)
+	LSquareUnder->SignalEmitationDecrease(EmitationUpdate);
+    }
+}

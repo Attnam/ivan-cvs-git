@@ -25,18 +25,18 @@ class god;
 class object : public entity, public id
 {
  public:
-  object() : entity(false), MainMaterial(0), AnimationFrames(1), Emitation(0) { }
+  object() : entity(false), MainMaterial(0), AnimationFrames(1) { }
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void InitMaterials(material*, bool = true);
   void UpdatePictures();
-  virtual material* GetMainMaterial() const { return MainMaterial; }
+  material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  virtual void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
-  virtual void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
+  void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
+  void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
   virtual void SetSecondaryMaterial(material*);
@@ -56,8 +56,6 @@ class object : public entity, public id
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
   bool IsAnimated() const { return AnimationFrames > 1; }
   virtual void CalculateEmitation();
-  virtual ushort GetEmitation() const { return Emitation; }
-  void SetEmitation(ushort What) { Emitation = What; }
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
@@ -103,7 +101,6 @@ class object : public entity, public id
   ushort Config;
   uchar VisualEffects;
   ushort AnimationFrames;
-  ushort Emitation;
 };
 
 #endif

@@ -26,9 +26,9 @@ void weaponskill::Load(inputfile& SaveFile)
   SaveFile >> Level >> Hits >> HitCounter;
 }
 
-bool weaponskill::Tick(ushort Ticks)
+bool weaponskill::Tick()
 {
-  HitCounter += Ticks;
+  ++HitCounter;
   bool LevelChange = false;
 
   while(HitCounter >= GetUnuseTickMap(Level))

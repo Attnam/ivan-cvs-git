@@ -19,7 +19,7 @@
 #include "save.h"
 #include "database.h"
 
-item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()), CarriedWeight(0)
+item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
 {
 }
 
@@ -41,13 +41,13 @@ bool item::IsDrinkable(const character* Eater) const
   return IsConsumable(Eater) && GetConsumeMaterial()->IsLiquid();
 }
 
-short item::CalculateOfferValue(char GodAlignment) const
+short item::GetOfferValue(char GodAlignment) const
 {
   long OfferValue = 0;
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      OfferValue += GetMaterial(c)->CalculateOfferValue(GodAlignment);
+      OfferValue += GetMaterial(c)->GetOfferValue(GodAlignment);
 
   return short(OfferValue * (GetOfferModifier() / 250));
 }
@@ -217,24 +217,24 @@ ushort item::GetStrengthValue() const
 
 void item::RemoveFromSlot()
 {
-  if(GetSlot())
+  if(Slot)
     {
-      GetSlot()->Empty();
-      SetSlot(0);
+      Slot->Empty();
+      Slot = 0;
     }
 }
 
 void item::MoveTo(stack* Stack)
 {
-  if(GetSlot())
-    GetSlot()->MoveItemTo(Stack);
+  if(Slot)
+    Slot->MoveItemTo(Stack);
   else
     Stack->AddItem(this);
 }
 
 void item::DonateSlotTo(item* Item)
 {
-  slot* Slot = GetSlot();
+  slot* Slot = this->Slot;
   RemoveFromSlot();
   Item->PlaceToSlot(Slot);
 }
@@ -318,12 +318,13 @@ item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   item* Item = Cloner(0, false, true);
   Item->Load(SaveFile);
+  Item->CalculateAll();
   return Item;
 }
 
 void item::LoadDataBaseStats()
 {
-  SetEmitation(GetBaseEmitation());
+  //SetEmitation(GetBaseEmitation());
   SetSize(GetDefaultSize());
 }
 
@@ -342,8 +343,14 @@ void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
 
   VirtualConstructor(Load);
 
-  if(CallGenerateMaterials)
-    UpdatePictures();
+  if(!Load)
+    {
+      if(CallGenerateMaterials)
+	{
+	  UpdatePictures();
+	  CalculateAll();
+	}
+    }
 }
 
 itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
@@ -362,30 +369,6 @@ bool item::ShowMaterial() const
 std::string item::GetConsumeVerb() const
 {
   return GetConsumeMaterial()->GetConsumeVerb();
-}
-
-void item::EditVolume(long What)
-{
-  Volume += What;
-
-  if(GetSlot())
-    GetSlot()->EditVolume(What);
-}
-
-void item::EditWeight(long What)
-{
-  Weight += What;
-
-  if(GetSlot())
-    GetSlot()->EditWeight(What);
-}
-
-void item::EditCarriedWeight(long What)
-{
-  CarriedWeight += What;
-
-  if(GetSlot())
-    GetSlot()->EditCarriedWeight(What);
 }
 
 ulong item::GetBlockModifier(const character* User) const
@@ -422,25 +405,50 @@ void item::InstallDataBase()
   ::database<item>::InstallDataBase(this);
 }
 
-/*square* item::GetSquareUnder() const
+void item::SignalVolumeAndWeightChange()
 {
+  CalculateVolumeAndWeight();
+
   if(Slot)
-    return Slot->GetSquareUnder();
-  else
-    return 0;
-}*/
-
-/*lsquare* item::GetLSquareUnder() const
-{
-  return static_cast<lsquare*>(Slot->GetSquareUnder());
+    Slot->SignalVolumeAndWeightChange();
 }
 
-level* item::GetLevelUnder() const
-{ 
-  return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder());
+void item::CalculateVolumeAndWeight()
+{
+  Volume = Weight = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      {
+	Volume += GetMaterial(c)->GetVolume();
+	Weight += GetMaterial(c)->GetWeight();
+      }
 }
 
-vector2d item::GetPos() const
+void item::SignalEmitationIncrease(ushort EmitationUpdate)
 {
-  return GetSquareUnder()->GetPos();
-}*/
+  if(EmitationUpdate > Emitation)
+    {
+      Emitation = EmitationUpdate;
+
+      if(Slot)
+	Slot->SignalEmitationIncrease(EmitationUpdate);
+    }
+}
+
+void item::SignalEmitationDecrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate == Emitation)
+    {
+      CalculateEmitation();
+
+      if(EmitationUpdate != Emitation && Slot)
+	Slot->SignalEmitationDecrease(EmitationUpdate);
+    }
+}
+
+void item::CalculateAll()
+{
+  CalculateVolumeAndWeight();
+  CalculateEmitation();
+}

@@ -72,7 +72,7 @@ ulong iosystem::CountChars(char cSF, const std::string& sSH)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected, const std::string& SmallText)
+int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -99,7 +99,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	{
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, Pos.X - (HYVINEPAGURUPRINTF.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, Pos.X - (HYVINEPAGURUPRINTF.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, RED, "%s", HYVINEPAGURUPRINTF.c_str());
 	}
 
       sCopyOfMS = sMS;
@@ -109,13 +109,16 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 
+	  ushort XPos = Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2);
+	  ushort YPos = Pos.Y - CountChars('\r', sMS) * 25 + i * 50;
+
 	  if(i == iSelected)
 	    {
-	      FONT->PrintfUnshaded(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, BLACK, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
-	      FONT->PrintfUnshaded(&Buffer, Pos.X + 1 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y + 1 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	      Buffer.Fill(XPos, YPos, (HYVINEPAGURUPRINTF.length() + 3) * 8, 8, 0);
+	      FONT->PrintfShade(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	    }
 	  else
-	    FONT->Printf(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    FONT->Printf(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
 
       sCopyOfMS = SmallText;
@@ -124,7 +127,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	{
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, 2, RES.Y - CountChars('\r', SmallText) * 10 + i * 10, ColorNotSelected, "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, 2, RES.Y - CountChars('\r', SmallText) * 10 + i * 10, Color, "%s", HYVINEPAGURUPRINTF.c_str());
 	}
 
       int k;

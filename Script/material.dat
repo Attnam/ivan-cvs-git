@@ -7,7 +7,7 @@ material
 	/* Obligatory: StrengthValue */
 	/* Obligatory: ConsumeType */
 	/* Obligatory: Density */
-	/* Obligatory: OfferValue */
+	/* Obligatory: OfferModifier */
 	/* Obligatory: Color */
 	PriceModifier = 0;
 	IsSolid = false;
@@ -35,7 +35,7 @@ material
 		StrengthValue = 100;
 		ConsumeType = METAL;
 		Density = 8000;
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(96, 96, 96);
 		PriceModifier = 40;
 		IsSolid = true;
@@ -49,7 +49,7 @@ material
 		StrengthValue = 400;
 		ConsumeType = METAL;
 		Density = 3000;
-		OfferValue = 100;
+		OfferModifier = 100;
 		Color = rgb(232, 232, 232);
 		PriceModifier = 40;
 		IsSolid = true;
@@ -65,7 +65,7 @@ material
 		StrengthValue = 60;
 		ConsumeType = MINERAL; 
 		Density = 3000;
-		OfferValue = 5; 
+		OfferModifier = 5; 
 		IsSolid = true; 
 		Color = rgb(80, 80, 80);
 		NameStem = "stone";
@@ -76,7 +76,7 @@ material
 		StrengthValue = 40;
 		ConsumeType = MINERAL;
 		Density = 2500;
-		OfferValue = 1;
+		OfferModifier = 1;
 		Color = rgb(112, 112, 112);
 		NameStem = "gravel";
 	}
@@ -86,7 +86,7 @@ material
 		StrengthValue = 20;
 		ConsumeType = MINERAL;
 		Density = 2500;
-		OfferValue = 2;
+		OfferModifier = 2;
 		Color = rgb(111, 74, 37);
 		NameStem = "moraine";
 	}
@@ -96,7 +96,7 @@ material
 		StrengthValue = 30;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsSolid = true;
 		Color = rgb(140, 96, 48);
 		NameStem = "wood";
@@ -107,7 +107,7 @@ material
 	{
 		StrengthValue = 30;
 		Density = 2000;
-		OfferValue = 5;
+		OfferModifier = 5;
 		ConsumeType = BONY;
 		IsSolid = true;
 		Color = rgb(180, 180, 180);
@@ -121,7 +121,7 @@ material
 		StrengthValue = 30;
 		ConsumeType = MINERAL;
 		Density = 2500;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsSolid = true;
 		Color = rgb(180, 180, 255);
 		NameStem = "glass";
@@ -133,7 +133,7 @@ material
 		StrengthValue = 15;
 		ConsumeType = MISC_ORGANIC;
 		Density = 600;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsSolid = true;
 		Color = rgb(200, 200, 200);
 		IsFlammable = true;
@@ -146,7 +146,7 @@ material
 		StrengthValue = 5;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsSolid = true;
 		Color = rgb(80, 80, 176);
 		IsFlammable = true;
@@ -159,7 +159,7 @@ material
 		StrengthValue = 200;
 		ConsumeType = METAL;
 		Density = 5000;
-		OfferValue = 25;
+		OfferModifier = 25;
 		IsSolid = true;
 		Color = rgb(224, 224, 224);
 		PriceModifier = 5000;
@@ -171,7 +171,7 @@ material
 		StrengthValue = 50;
 		ConsumeType = MINERAL;
 		Density = 3000;
-		OfferValue = 7;
+		OfferModifier = 7;
 		IsSolid = true;
 		Color = rgb(200, 200, 200);
 		NameStem = "marble";
@@ -182,7 +182,7 @@ material
 		StrengthValue = 30;
 		ConsumeType = METAL;
 		Density = 20000;
-		OfferValue = 50;
+		OfferModifier = 50;
 		IsSolid = true;
 		Color = rgb(224, 224, 0);
 		CanBeWished = false;
@@ -197,7 +197,7 @@ material
 		StrengthValue = 2;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
-		OfferValue = 2;
+		OfferModifier = 2;
 		Color = rgb(32, 96, 32);
 		IsFlammable = true;
 		NameStem = "grass";
@@ -210,7 +210,7 @@ material
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 10;
+		OfferModifier = 10;
 		IsSolid = true;
 		Color = rgb(111, 64, 37);
 		IsFlammable = true;
@@ -224,7 +224,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(0, 160, 0);
 		IsFlammable = true;
 		NameStem = "leaf";
@@ -236,7 +236,7 @@ material
 		StrengthValue = 5;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsSolid = true;
 		IsFlammable = true;
 		Color = rgb(176, 0, 0);
@@ -249,7 +249,7 @@ material
 		StrengthValue = 5;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 10;
+		OfferModifier = 10;
 		IsSolid = true;
 		Color = rgb(0, 160, 0);
 		IsFlammable = true;
@@ -262,7 +262,7 @@ material
 		StrengthValue = 50;
 		ConsumeType = MINERAL;
 		Density = 2000;
-		OfferValue = 10;
+		OfferModifier = 10;
 		IsSolid = true;
 		Color = rgb(128, 0, 0);
 		NameStem = "sulfur";
@@ -273,7 +273,7 @@ material
 		StrengthValue = 5;
 		ConsumeType = MINERAL;
 		Density = 250;
-		OfferValue = 5;
+		OfferModifier = 5;
 		Color = rgb(30, 30, 30);
 		CanBeWished = false;
 		IsExplosive = true;
@@ -288,7 +288,7 @@ material
 		StrengthValue = 10;
 		ConsumeType = PROCESSED;
 		Density = 250;
-		OfferValue = 7;
+		OfferModifier = 7;
 		NutritionValue = 200;
 		Color = rgb(180, 96, 64);
 		PriceModifier = 600;
@@ -301,7 +301,7 @@ material
 		StrengthValue = 200;
 		ConsumeType = MISC_ORGANIC;
 		Density = 2000;
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(180, 180, 180);
 		NameStem = "unicorn horn";
 	}
@@ -311,7 +311,7 @@ material
 		StrengthValue = 300;
 		ConsumeType = MINERAL;
 		Density = 3500;
-		OfferValue = 50;
+		OfferModifier = 50;
 		IsSolid = true;
 		Color = rgb(240, 240, 240);
 		PriceModifier = 30000;
@@ -324,7 +324,7 @@ material
 		StrengthValue = 50;
 		ConsumeType = METAL;
 		Density = 10500;
-		OfferValue = 30;
+		OfferModifier = 30;
 		IsSolid = true;
 		Color = rgb(200, 200, 200);
 		CanBeWished = false;
@@ -337,7 +337,7 @@ material
 		StrengthValue = 250;
 		ConsumeType = MINERAL;
 		Density = 3500;
-		OfferValue = 50;
+		OfferModifier = 50;
 		IsSolid = true;
 		Color = rgb(96, 96, 200);
 		PriceModifier = 20000;
@@ -350,7 +350,7 @@ material
 		StrengthValue = 250;
 		ConsumeType = MINERAL;
 		Density = 3500;
-		OfferValue = 50;
+		OfferModifier = 50;
 		IsSolid = true;
 		Color = rgb(180, 0, 0);
 		PriceModifier = 24000;
@@ -363,7 +363,7 @@ material
 		StrengthValue = 80;
 		ConsumeType = METAL;
 		Density = 8300;
-		OfferValue = 10;
+		OfferModifier = 10;
 		IsSolid = true;
 		Color = rgb(150, 100, 50);
 		PriceModifier = 30;
@@ -375,7 +375,7 @@ material
 		StrengthValue = 60;
 		ConsumeType = METAL;
 		Density = 9000; /* rounded from 8920 */
-		OfferValue = 10;
+		OfferModifier = 10;
 		IsSolid = true;
 		Color = rgb(96, 64, 32);
 		PriceModifier = 20;
@@ -387,7 +387,7 @@ material
 		StrengthValue = 50;
 		ConsumeType = METAL;
 		Density = 7300; 
-		OfferValue = 8;
+		OfferModifier = 8;
 		IsSolid = true;
 		Color = rgb(100, 100, 100);
 		PriceModifier = 15;
@@ -399,7 +399,7 @@ material
 		StrengthValue = 175;
 		ConsumeType = METAL;
 		Density =  7850;
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(128, 128, 128);
 		PriceModifier = 40;
 		IsSolid = true;
@@ -417,7 +417,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 5;
 		Density = 1200;
 		ConsumeType = FRUIT;
-		OfferValue = 10;
+		OfferModifier = 10;
 		NutritionValue = 200;
 		Color = rgb(240, 240, 0);
 		PriceModifier = 600;
@@ -430,7 +430,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 5;
 		ConsumeType = MEAT;
 		Density = 1500;
-		OfferValue = 20;
+		OfferModifier = 20;
 		Alignment = EVIL;
 		NutritionValue = 100;
 		Color = rgb(111, 74, 37);
@@ -447,7 +447,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 1;
+		OfferModifier = 1;
 		Color = rgb(224, 224, 0);
 		NameStem = "banana peal";
 		Flexibility = 10;
@@ -460,7 +460,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 5;
 		ConsumeType = FRUIT;
 		Density = 1200;
-		OfferValue = 11;
+		OfferModifier = 11;
 		NutritionValue = 150;
 		Color = rgb(160, 112, 32);
 		PriceModifier = 600;
@@ -473,7 +473,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 10;
 		ConsumeType = FRUIT;
 		Density = 1200;
-		OfferValue = 12;
+		OfferModifier = 12;
 		NutritionValue = 150;
 		Color = rgb(192, 112, 96);
 		PriceModifier = 600;
@@ -486,7 +486,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(111, 64, 37);
 		IsFlammable = true;
 		NameStem = "fiber";
@@ -500,7 +500,7 @@ gas
 	{
 		StrengthValue = 1;
 		Density = 1;
-		OfferValue = 0;
+		OfferModifier = 0;
 		Color = rgb(180, 180, 255);
 		ConsumeType = GAS;
 		NameStem = "air";
@@ -520,7 +520,7 @@ liquid
 	Config OMLEURINE;
 	{
 		StrengthValue = 1;
-		OfferValue = 100;
+		OfferModifier = 100;
 		Color = rgb(160, 160, 0);
 		CanBeWished = false;
 		NutritionValue = 30;
@@ -537,7 +537,7 @@ liquid
 	{
 		StrengthValue = 200;
 		Density = 1500;
-		OfferValue = 50;
+		OfferModifier = 50;
 		Alignment = EVIL;
 		NutritionValue = 400;
 		Color = rgb(48, 48, 48);
@@ -551,7 +551,7 @@ liquid
 	Config WATER;
 	{
 		StrengthValue = 1;
-		OfferValue = 1;
+		OfferModifier = 1;
 		NutritionValue = 10;
 		Color = rgb(144, 144, 240);
 		NameStem = "water";
@@ -561,7 +561,7 @@ liquid
 	Config HEALINGLIQUID;
 	{
 		StrengthValue = 1;
-		OfferValue = 70;
+		OfferModifier = 70;
 		NutritionValue = 30;
 		Color = rgb(180, 0, 0);
 		PriceModifier = 2500;
@@ -575,7 +575,7 @@ liquid
 	Config BLOOD;
 	{
 		StrengthValue = 200;
-		OfferValue = 50;
+		OfferModifier = 50;
 		NutritionValue = 10;
 		Color = rgb(160, 0, 0);
 		CanBeWished = false;
@@ -589,7 +589,7 @@ liquid
 	{
 		StrengthValue = 2;
 		Density = 400;
-		OfferValue = 1;
+		OfferModifier = 1;
 		NutritionValue = 100;
 		Color = rgb(0, 128, 0);
 		Color = rgb(111, 74, 37);
@@ -604,7 +604,7 @@ flesh
 	StrengthValue = 10;
 	ConsumeType = MEAT;
 	Density = 1200;
-	OfferValue = 15;
+	OfferModifier = 15;
 	NutritionValue = 200;
 	Color = rgb(160, 32, 16);
 	IsAlive = true;
@@ -613,7 +613,7 @@ flesh
 
 	Config GOBLINOIDFLESH;
 	{
-		OfferValue = 10;
+		OfferModifier = 10;
 		Color = rgb(0, 128, 0);
 		PriceModifier = 600;
 		NameStem = "green flesh";
@@ -621,7 +621,7 @@ flesh
 
 	Config PORK;
 	{
-		OfferValue = 20;
+		OfferModifier = 20;
 		NutritionValue = 400;
 		PriceModifier = 1250;
 		NameStem = "pork";
@@ -629,7 +629,7 @@ flesh
 
 	Config BEEF;
 	{
-		OfferValue = 20;
+		OfferModifier = 20;
 		NutritionValue = 400;
 		PriceModifier = 1250;
 		NameStem = "beef";
@@ -637,7 +637,7 @@ flesh
 
 	Config FROGFLESH;
 	{
-		OfferValue = 500;
+		OfferModifier = 500;
 		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
@@ -649,7 +649,7 @@ flesh
 
 	Config ELPURIFLESH;
 	{
-		OfferValue = 500;
+		OfferModifier = 500;
 		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
@@ -658,14 +658,14 @@ flesh
 		HitMessage = HM_FROGFLESH;
 		StrengthValue = 30;
 		Density = 2400;
-		OfferValue = 1;
+		OfferModifier = 1;
 		NameStem = "Elpuri's flesh";
 		Article = "an";
 	}
 
 	Config HUMANFLESH;
 	{
-		OfferValue = 30;
+		OfferModifier = 30;
 		Alignment = EVIL;
 		NameStem = "human flesh";
 	}
@@ -683,14 +683,14 @@ flesh
 
 	Config WOLFFLESH;
 	{
-		OfferValue = 15;
+		OfferModifier = 15;
 		PriceModifier = 600;
 		NameStem = "wolf flesh";
 	}
 
 	Config DOGFLESH;
 	{
-		OfferValue = 15;
+		OfferModifier = 15;
 		PriceModifier = 600;
 		Alignment = EVIL;
 		NameStem = "dog flesh";
@@ -700,7 +700,7 @@ flesh
 	{
 		StrengthValue = 30;
 		Density = 1800;
-		OfferValue = 5;
+		OfferModifier = 5;
 		IsBadFoodForAI = true;
 		NameStem = "enner beast flesh";
 		Article = "an";
@@ -708,38 +708,38 @@ flesh
 
 	Config SPIDERFLESH;
 	{
-		OfferValue = 4;
+		OfferModifier = 4;
 		NameStem = "spider flesh";
 	}
 
 	Config JACKALFLESH;
 	{
-		OfferValue = 6;
+		OfferModifier = 6;
 		NameStem = "jackal flesh";
 	}
 
 	Config DONKEYFLESH;
 	{
-		OfferValue = 6;
+		OfferModifier = 6;
 		NameStem = "donkey flesh";
 	}
 
 	Config BATFLESH;
 	{
-		OfferValue = 7;
+		OfferModifier = 7;
 		NameStem = "bat flesh";
 	}
 
 	Config WEREWOLFFLESH;
 	{
-		OfferValue = 13;
+		OfferModifier = 13;
 		NameStem = "werewolf flesh";
 		Effect = ELYCANTHROPY;
 	}
 
 	Config KOBOLDFLESH;
 	{
-		OfferValue = 14;
+		OfferModifier = 14;
 		NutritionValue = 100;
 		IsBadFoodForAI = true;
 		NameStem = "kobold flesh";
@@ -750,25 +750,25 @@ flesh
 
 	Config GIBBERLINGFLESH;
 	{
-		OfferValue = 12;
+		OfferModifier = 12;
 		NameStem = "gibberling flesh";
 	}
 
 	Config CATFLESH;
 	{
-		OfferValue = 12;
+		OfferModifier = 12;
 		NameStem = "cat flesh";
 	}
 
 	Config RATFLESH;
 	{
-		OfferValue = 8;
+		OfferModifier = 8;
 		NameStem = "rat flesh";
 	}
 
 	Config ANGELFLESH;
 	{
-		OfferValue = 8;
+		OfferModifier = 8;
 		NameStem = "angel flesh";
 	}
 
@@ -790,7 +790,7 @@ flesh
 
 	Config BLACKUNICORNFLESH;
 	{
-		OfferValue = 35;
+		OfferModifier = 35;
 		Color = rgb(48, 48, 48);
 		/* Slightly strange. This means that the good gods like to receive this sacrifice */
 		Alignment = GOOD;
@@ -799,14 +799,14 @@ flesh
 
 	Config GRAYUNICORNFLESH;
 	{
-		OfferValue = 35;
+		OfferModifier = 35;
 		Color = rgb(112, 112, 112);
 		NameStem = "gray unicorn flesh";
 	}
 
 	Config WHITEUNICORNFLESH;
 	{
-		OfferValue = 35;
+		OfferModifier = 35;
 		Color = rgb(160, 160, 160);
 		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
 		Alignment = EVIL;

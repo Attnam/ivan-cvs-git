@@ -102,7 +102,7 @@ inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 
 inline inputfile& operator>>(inputfile& SaveFile, bool& Value)
 {
-  Value = SaveFile.Get() ? true : false;
+  Value = SaveFile.Get() != 0;
   return SaveFile;
 }
 

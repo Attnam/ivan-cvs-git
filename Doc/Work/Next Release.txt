@@ -1,3 +1,9 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
 //Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
 Nostotekoäly.
 //Kick ja bite toimimaan, jos kädet irti. (timo)
@@ -82,3 +88,4 @@ Genie's strength.
 Items inside chests carried by player at death should be shown.
 Consummo's pray effect. (hex)
 "You didn't manage to get onto the high score list" message.
+Glitter effect.

@@ -225,7 +225,7 @@ void worldmap::GenerateClimate()
     {
       game::BusyAnimation();
       float DistanceFromEquator = fabs(float(y) / YSize - 0.5f);
-      bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
+      bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45);
 
       for(ushort x = 0; x < XSize; ++x)
 	{

@@ -27,7 +27,7 @@ struct materialdatabase
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
-  ushort OfferValue;
+  ushort OfferModifier;
   ushort Color;
   ulong PriceModifier;
   bool IsSolid;
@@ -98,11 +98,11 @@ class material
   virtual bool Be() { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void AddConsumeEndMessage(character*) const;
-  long CalculateOfferValue(char GodAlignment) const;
+  long GetOfferValue(char GodAlignment) const;
   DATABASEVALUE(ushort, StrengthValue);
   DATABASEVALUE(ushort, ConsumeType);
   DATABASEVALUE(ushort, Density);
-  DATABASEVALUE(ushort, OfferValue);
+  DATABASEVALUE(ushort, OfferModifier);
   DATABASEVALUE(ushort, Color);
   DATABASEVALUE(ulong, PriceModifier);
   DATABASEBOOL(IsSolid);

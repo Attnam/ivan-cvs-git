@@ -32,8 +32,8 @@ class wsquare : public square
   gwterrain* GetGWTerrain() const { return GWTerrain; }
   owterrain* GetOWTerrain() const { return OWTerrain; }
   void ChangeWTerrain(gwterrain*, owterrain*);
-  worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
-  void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
+  worldmap* GetWorldMapUnder() const { return static_cast<worldmap*>(AreaUnder); }
+  void SetWorldMapUnder(worldmap* What) { AreaUnder = What; }
   void UpdateMemorizedDescription(bool = false);
   virtual gterrain* GetGTerrain() const;
   virtual oterrain* GetOTerrain() const;

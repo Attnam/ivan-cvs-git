@@ -6,6 +6,7 @@
 #include "colorbit.h"
 #include "config.h"
 #include "save.h"
+#include "felist.h"
 
 #ifdef WIN32
 #include "resource.h"
@@ -49,6 +50,16 @@ void igraph::Init()
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
 #endif
       graphics::LoadDefaultFont(GAME_DIR + "Graphics/Font.pcx");
+
+      FONT->CreateFontCache(RED);
+      FONT->CreateFontCache(GREEN);
+      FONT->CreateFontCache(BLUE);
+      FONT->CreateFontCache(YELLOW);
+      FONT->CreateFontCache(WHITE);
+      FONT->CreateFontCache(LIGHTGRAY);
+      FONT->CreateFontCache(DARKGRAY);
+      felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
+      felist::CreateQuickDrawFontCaches(FONT, LIGHTGRAY, 8);
 
       ushort c;
 

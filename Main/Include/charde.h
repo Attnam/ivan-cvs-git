@@ -78,12 +78,12 @@ class ABSTRACT_CHARACTER
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  virtual float CalculateRightAttackStrength() const;
-  virtual float CalculateLeftAttackStrength() const;
-  virtual float CalculateRightToHitValue() const;
-  virtual float CalculateLeftToHitValue() const;
-  virtual long CalculateRightAPCost() const;
-  virtual long CalculateLeftAPCost() const;
+  virtual float GetRightAttackStrength() const;
+  virtual float GetLeftAttackStrength() const;
+  virtual float GetRightToHitValue() const;
+  virtual float GetLeftToHitValue() const;
+  virtual long GetRightAPCost() const;
+  virtual long GetLeftAPCost() const;
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
@@ -116,7 +116,7 @@ class ABSTRACT_CHARACTER
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
   virtual bool AddSpecialSkillInfo(felist&) const;
   virtual bool CheckBalance(float);
-  virtual long CalculateMoveAPRequirement(uchar) const;
+  virtual long GetMoveAPRequirement(uchar) const;
   virtual bool EquipmentHasNoPairProblems(ushort) const;
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
@@ -152,7 +152,7 @@ class ABSTRACT_CHARACTER
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
-  virtual uchar AllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
+  virtual uchar GetAllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
   std::vector<sweaponskill*> SingleWeaponSkill;
   sweaponskill* CurrentRightSingleWeaponSkill;
   sweaponskill* CurrentLeftSingleWeaponSkill;
@@ -165,15 +165,15 @@ class ABSTRACT_CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual float CalculateUnarmedStrength() const;
-  virtual float CalculateKickStrength() const;
-  virtual float CalculateBiteStrength() const;
-  virtual float CalculateUnarmedToHitValue() const;
-  virtual float CalculateKickToHitValue() const;
-  virtual float CalculateBiteToHitValue() const;
-  virtual long CalculateUnarmedAPCost() const;
-  virtual long CalculateKickAPCost() const;
-  virtual long CalculateBiteAPCost() const;
+  virtual float GetUnarmedStrength() const;
+  virtual float GetKickStrength() const;
+  virtual float GetBiteStrength() const;
+  virtual float GetUnarmedToHitValue() const;
+  virtual float GetKickToHitValue() const;
+  virtual float GetBiteToHitValue() const;
+  virtual long GetUnarmedAPCost() const;
+  virtual long GetKickAPCost() const;
+  virtual long GetBiteAPCost() const;
   virtual void Kick(lsquare*);
   virtual void AddInfo(felist&) const;
   virtual bool Hit(character*);
@@ -361,7 +361,7 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  virtual float CalculateUnarmedStrength() const;
+  virtual float GetUnarmedStrength() const;
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
@@ -800,3 +800,4 @@ class CHARACTER
 );
 
 #endif
+

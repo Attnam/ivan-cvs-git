@@ -33,20 +33,34 @@ void stackslot::FastEmpty()
 
 void characterslot::Empty()
 {
-  /* add light update */
-
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
+  static_cast<bodypart*>(Item)->SetMaster(0);
   Item = 0;
   GetMaster()->CalculateEquipmentState();
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
+
+  if(!GetMaster()->IsInitializing())
+    {
+      GetMaster()->CalculateHP();
+      GetMaster()->CalculateMaxHP();
+    }
 }
 
 void characterslot::FastEmpty()
 {
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
+  static_cast<bodypart*>(Item)->SetMaster(0);
   Item = 0;
   GetMaster()->CalculateEquipmentState();
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
+
+  if(!GetMaster()->IsInitializing())
+    {
+      GetMaster()->CalculateHP();
+      GetMaster()->CalculateMaxHP();
+    }
 }
 
 void stackslot::MoveItemTo(stack* Stack)
@@ -62,20 +76,20 @@ void characterslot::MoveItemTo(stack* Stack)
 
 void gearslot::Empty()
 {
-  /* add light update? */
-
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
   Item = 0;
   GetBodyPart()->SignalEquipmentRemoval(this);
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
 }
 
 void gearslot::FastEmpty()
 {
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
   Item = 0;
   GetBodyPart()->SignalEquipmentRemoval(this);
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
 }
 
 void gearslot::MoveItemTo(stack* Stack)
@@ -92,18 +106,18 @@ void gearslot::Init(bodypart* BodyPart, uchar Index)
 
 void actionslot::Empty()
 {
-  /* add light update? */
-
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
   Item = 0;
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
 }
 
 void actionslot::FastEmpty()
 {
-  EditVolume(-Item->GetVolume());
-  EditWeight(-Item->GetWeight());
+  ushort Emitation = Item->GetEmitation();
   Item = 0;
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emitation);
 }
 
 void actionslot::MoveItemTo(stack* Stack)
@@ -154,45 +168,24 @@ bool stackslot::IsOnGround() const
   return GetMotherStack()->IsOnGround();
 }
 
-void stackslot::EditVolume(long What)
+void stackslot::SignalVolumeAndWeightChange()
 {
-  GetMotherStack()->EditVolume(What);
+  GetMotherStack()->SignalVolumeAndWeightChange();
 }
 
-void stackslot::EditWeight(long What)
+void characterslot::SignalVolumeAndWeightChange()
 {
-  GetMotherStack()->EditWeight(What);
+  GetMaster()->SignalVolumeAndWeightChange();
 }
 
-void characterslot::EditVolume(long What)
+void gearslot::SignalVolumeAndWeightChange()
 {
-  GetMaster()->EditVolume(What);
+  GetBodyPart()->SignalVolumeAndWeightChange();
 }
 
-void characterslot::EditCarriedWeight(long What)
+void actionslot::SignalVolumeAndWeightChange()
 {
-  GetMaster()->EditWeight(What);
-}
-
-void gearslot::EditVolume(long What)
-{
-  GetBodyPart()->EditVolume(What);
-}
-
-void gearslot::EditWeight(long What)
-{
-  GetBodyPart()->EditWeight(What);
-  GetBodyPart()->EditCarriedWeight(What);
-}
-
-void actionslot::EditVolume(long What)
-{
-  GetAction()->EditVolume(What);
-}
-
-void actionslot::EditWeight(long What)
-{
-  GetAction()->EditWeight(What);
+  GetAction()->GetActor()->SignalVolumeAndWeightChange();
 }
 
 void slot::PutInItem(item* What)
@@ -202,8 +195,28 @@ void slot::PutInItem(item* What)
   if(Item)
     {
       Item->SetSlot(this);
-      EditVolume(Item->GetVolume());
-      EditWeight(Item->GetWeight());
+      SignalVolumeAndWeightChange();
+      SignalEmitationIncrease(Item->GetEmitation());
+    }
+}
+
+void characterslot::PutInItem(item* What)
+{
+  Item = What;
+
+  if(Item)
+    {
+      Item->SetSlot(this);
+      SignalVolumeAndWeightChange();
+      SignalEmitationIncrease(Item->GetEmitation());
+      static_cast<bodypart*>(Item)->SetMaster(GetMaster());
+
+      if(!GetMaster()->IsInitializing())
+	{
+	  static_cast<bodypart*>(Item)->CalculateMaxHP();
+	  GetMaster()->CalculateHP();
+	  GetMaster()->CalculateMaxHP();
+	}
     }
 }
 
@@ -214,8 +227,8 @@ void gearslot::PutInItem(item* What)
   if(Item)
     {
       Item->SetSlot(this);
-      EditVolume(Item->GetVolume());
-      EditWeight(Item->GetWeight());
+      SignalVolumeAndWeightChange();
+      SignalEmitationIncrease(Item->GetEmitation());
       GetBodyPart()->SignalEquipmentAdd(this);
     }
 }
@@ -238,4 +251,52 @@ square* gearslot::GetSquareUnder() const
 square* actionslot::GetSquareUnder() const
 {
   return GetAction()->GetActor()->GetSquareUnder();
+}
+
+void stackslot::SignalEmitationIncrease(ushort Emitation)
+{
+  GetMotherStack()->SignalEmitationIncrease(Emitation);
+}
+
+void characterslot::SignalEmitationIncrease(ushort Emitation)
+{
+  GetMaster()->SignalEmitationIncrease(Emitation);
+}
+
+void gearslot::SignalEmitationIncrease(ushort Emitation)
+{
+  GetBodyPart()->SignalEmitationIncrease(Emitation);
+}
+
+void actionslot::SignalEmitationIncrease(ushort Emitation)
+{
+  GetAction()->GetActor()->SignalEmitationIncrease(Emitation);
+}
+
+void stackslot::SignalEmitationDecrease(ushort Emitation)
+{
+  GetMotherStack()->SignalEmitationDecrease(Emitation);
+}
+
+void characterslot::SignalEmitationDecrease(ushort Emitation)
+{
+  GetMaster()->SignalEmitationDecrease(Emitation);
+}
+
+void gearslot::SignalEmitationDecrease(ushort Emitation)
+{
+  GetBodyPart()->SignalEmitationDecrease(Emitation);
+}
+
+void actionslot::SignalEmitationDecrease(ushort Emitation)
+{
+  GetAction()->GetActor()->SignalEmitationDecrease(Emitation);
+}
+
+void characterslot::Load(inputfile& SaveFile)
+{
+  slot::Load(SaveFile);
+
+  if(Item)
+    static_cast<bodypart*>(Item)->SetMaster(GetMaster());
 }

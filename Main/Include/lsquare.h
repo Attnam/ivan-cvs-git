@@ -50,7 +50,7 @@ class lsquare : public square
   stack* GetStack() const { return Stack; }
   void AlterLuminance(vector2d, ushort);
   void Emitate();
-  void ReEmitate();
+  void ReEmitate(ushort);
   stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
   void Clean();
   bool Open(character*);
@@ -125,7 +125,7 @@ class lsquare : public square
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
-  ushort CalculateEmitation() const;
+  void CalculateEmitation();
   std::vector<emitter> Emitter;
   stack* Stack;
   stack* SideStack[4];

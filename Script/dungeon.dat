@@ -407,8 +407,8 @@ Dungeon 1;
 		Description=Attnam;
 		FillSquare=solidterrain(GRASSTERRAIN),empty;
 
-		Variable XSize = 61;
-		Variable YSize = 62;
+		Variable XSize = 161;
+		Variable YSize = 162;
 
 		Size=XSize, YSize;
 		GenerateMonsters=false;
@@ -456,25 +456,25 @@ Dungeon 1;
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=hunter;
-			Times=10;
+			Times=100;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=polarbear;
-			Times=5;
+			Times=50;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
-			Times=5;
+			Times=50;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=housewife;
-			Times=5;
+			Times=50;
 		}
 
 		Square, Pos 30,61;

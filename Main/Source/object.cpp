@@ -36,6 +36,7 @@ void object::Load(inputfile& SaveFile)
 void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
 {
   InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
+  SignalVolumeAndWeightChange();
 
   if(CallUpdatePictures)
     UpdatePictures();
@@ -45,6 +46,7 @@ void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMat
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
+  SignalVolumeAndWeightChange();
 
   if(CallUpdatePictures)
     UpdatePictures();
@@ -55,6 +57,7 @@ void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMat
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
   InitMaterial(ThirdMaterial, ThirdNewMaterial, ThirdDefaultVolume);
+  SignalVolumeAndWeightChange();
 
   if(CallUpdatePictures)
     UpdatePictures();
@@ -73,11 +76,14 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
 	Material->SetVolume(DefaultVolume);
 
       Material->SetMotherEntity(this);
-      EditVolume(NewMaterial->GetVolume());
-      EditWeight(NewMaterial->GetWeight());
+      SignalEmitationIncrease(Material->GetEmitation());
+      //SignalVolumeAndWeightChange(); // this could be optimized
 
-      if(NewMaterial->GetEmitation() > Emitation)
-	Emitation = NewMaterial->GetEmitation();
+      /*EditVolume(NewMaterial->GetVolume());
+      EditWeight(NewMaterial->GetWeight());*/
+
+      /*if(NewMaterial->GetEmitation() > Emitation)
+	Emitation = NewMaterial->GetEmitation();*/
     }
 }
 
@@ -109,22 +115,25 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 	    ABORT("Singularity spawn detected!");
 
       NewMaterial->SetMotherEntity(this);
-      EditVolume(NewMaterial->GetVolume());
-      EditWeight(NewMaterial->GetWeight());
+      SignalEmitationIncrease(NewMaterial->GetEmitation());
+      /*EditVolume(NewMaterial->GetVolume());
+      EditWeight(NewMaterial->GetWeight());*/
 
-      if(NewMaterial->GetEmitation() > Emitation)
-	Emitation = NewMaterial->GetEmitation();
+      /*if(NewMaterial->GetEmitation() > Emitation)
+	Emitation = NewMaterial->GetEmitation();*/
     }
 
   if(OldMaterial)
-    {
-      EditVolume(-OldMaterial->GetVolume());
-      EditWeight(-OldMaterial->GetWeight());
+    SignalEmitationDecrease(OldMaterial->GetEmitation());
+    //{
+      /*EditVolume(-OldMaterial->GetVolume());
+      EditWeight(-OldMaterial->GetWeight());*/
 
-      if(OldMaterial->GetEmitation() == Emitation)
-	CalculateEmitation();
-    }
+      /*if(OldMaterial->GetEmitation() == Emitation)
+	CalculateEmitation();*/
+    //}
 
+  SignalVolumeAndWeightChange();
   UpdatePictures();
   return OldMaterial;
 }
@@ -206,24 +215,6 @@ void object::AddLumpyPostFix(std::string& String) const
     GetMainMaterial()->AddName(String << " of ");
 }
 
-void object::CalculateEmitation()
-{
-  Emitation = GetBaseEmitation();
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)
-      Emitation = GetMaterial(c)->GetEmitation();
-}
-
-bool object::CalculateHasBe() const
-{
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->HasBe())
-      return true;
-
-  return false;
-}
-
 void object::SetSecondaryMaterial(material*)
 {
   ABORT("Illegal object::SetSecondaryMaterial call!");
@@ -282,8 +273,8 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
   if(Material)
     {
       Material->SetMotherEntity(this);
-      Volume += Material->GetVolume();
-      Weight += Material->GetWeight();
+      /*Volume += Material->GetVolume();
+      Weight += Material->GetWeight();*/
 
       if(Material->GetEmitation() > Emitation)
 	Emitation = Material->GetEmitation();
@@ -338,4 +329,22 @@ bool object::AddEmptyAdjective(std::string& String, bool Articled) const
       String << (Articled ? "an empty " : "empty ");
       return true;
     }
+}
+
+void object::CalculateEmitation()
+{
+  Emitation = GetBaseEmitation();
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)
+      Emitation = GetMaterial(c)->GetEmitation();
+}
+
+bool object::CalculateHasBe() const
+{
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->HasBe())
+      return true;
+
+  return false;
 }

@@ -27,20 +27,17 @@ class entity
   bool HasBe() const { return HasBeBool; }
   void SetHasBe(bool);
   bool IsEnabled() const { return Exists() && HasBe(); }
-  ulong GetVolume() const { return Volume; }
-  void SetVolume(ulong What) { Volume = What; }
-  virtual void EditVolume(long What) { Volume += What; }
-  ulong GetWeight() const { return Weight; }
-  void SetWeight(ulong What) { Weight = What; }
-  virtual void EditWeight(long What) { Weight += What; }
   virtual square* GetSquareUnder() const = 0;
+  virtual void SignalVolumeAndWeightChange() { }
+  ushort GetEmitation() const { return Emitation; }
+  virtual void SignalEmitationIncrease(ushort) { }
+  virtual void SignalEmitationDecrease(ushort) { }
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool InPool;
   bool ExistsBool;
   bool HasBeBool;
-  ulong Volume;
-  ulong Weight;
+  ushort Emitation;
 };
 
 #endif

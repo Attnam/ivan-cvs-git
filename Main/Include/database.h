@@ -6,7 +6,7 @@
 #endif
 
 #include <string>
-#include <typeinfo>
+
 class inputfile;
 
 template <class type> class database
@@ -36,7 +36,7 @@ template <class type> void database<type>::InstallDataBase(type* Instance)
       if(i != Configs.end())
 	Instance->DataBase = &i->second;
       else
-	ABORT("Undefined %s configuration #%d sought!", typeid(type).name(), Instance->Config);
+	ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassId().c_str(), Instance->Config);
     }
 }
 

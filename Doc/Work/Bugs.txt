@@ -1,12 +1,16 @@
-* = suspended
+* high priority
+// fixed
+/ partly fixed or needs still testing
+(r) rejected
+(s) suspended
 
-*Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
-*Item's GetSquareUnder() doesn't work.
-*Alt+Enter twice.
-*Alt+Enter in config screen.
-*Picking sale items after polymorphing and killing the shopkeeper crashes.
+(s) Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+//Item's GetSquareUnder() doesn't work.
+(s) Alt+Enter twice.
+(s) Alt+Enter in config screen.
+(s) Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
-WMode bug. (what is this?)
+(r) WMode bug. (what was this?)
 Screenshots don't work in the DOS port. (do they in Linux?)
 The White Screen Bug.
 DarkLevel monsters.
@@ -25,8 +29,12 @@ Boot of speed in hand.
 //Can a player controlled carnivorous plant move?
 If an Attnamian severs a bodypart which hits the player, the city shouldn't become mad!
 Multiple message boxes.
-It is possible to protect items from explosions by putting them in hand digging, or eating them (very low priority).
+It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 Chests.
 Petrus's wives' corpses use indefinite article.
 Entering a dungeon and loading an autosave saves some time.
 Skeletons are probably seen by infravision.
+//ESP + Wmode look bugs.
+Wishing for ring of teleport bugs.
+Teleportation in Attnam bugs.
+Corpse + loricatus.

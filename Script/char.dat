@@ -53,9 +53,9 @@ character
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
 	/* At least one of the following three is obligatory: */
-	/* UnarmedStrength */
-	/* BiteStrength, if not defined then equals UnarmedStrength / 2 */
-	/* KickStrength, if not defined then equals UnarmedStrength * 2 */
+	/* BaseUnarmedStrength */
+	/* BaseBiteStrength, if not defined then equals BaseUnarmedStrength / 2 */
+	/* BaseKickStrength, if not defined then equals BaseUnarmedStrength * 2 */
 	AttackStyle = USE_ARMS;
 	CanUseEquipment = false;
 	CanKick = false;
@@ -81,7 +81,7 @@ humanoid
 	GroinBonePercentile = 40;
 	LegBonePercentile = 30;
 	IsAbstract = true;
-	UnarmedStrength = 2500;
+	BaseUnarmedStrength = 2500;
 	Sex = MALE;
 	CanUseEquipment = true;
 	CanKick = true;
@@ -272,7 +272,7 @@ oree
 	NameSingular = "Blood Daemon King";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
-	BiteStrength = 30000;
+	BaseBiteStrength = 30000;
 	CanBeWished = false;
 	Alias == "Oree";
 	ClassStates = INFRAVISION;
@@ -327,7 +327,7 @@ ennerbeast
 	AdjectiveArticle = "an";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
-	BiteStrength = 100000;
+	BaseBiteStrength = 100000;
 	CanUseEquipment = false;
 	CanBeWished = false;
 	LegBitmapPos = 16, 48;
@@ -348,7 +348,7 @@ frog
 	NameSingular = "frog";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanSwim = true;
 }
 
@@ -417,7 +417,7 @@ billswill
 	NameSingular = "mass";
 	NamePlural = "masses";
 	PostFix = "of Bill's will";
-	UnarmedStrength = 20000;
+	BaseUnarmedStrength = 20000;
 	CanBeGenerated = true;
 	ClassStates = ESP;
 }
@@ -487,7 +487,7 @@ mommo
 	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 
 	Config CONICAL;
@@ -562,7 +562,7 @@ wolf
 	NameSingular = "wolf";
 	NamePlural = "wolves";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 15000;
+	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
 }
 
@@ -584,7 +584,7 @@ dog
 	SkinColor = rgb(111, 74, 37);
 	NameSingular = "dog";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 10000;
+	BaseBiteStrength = 10000;
 	CanBeGenerated = true;
 }
 
@@ -607,7 +607,7 @@ spider
 	SkinColor = rgb(48, 48, 48);
 	NameSingular = "spider";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
 }
@@ -629,7 +629,7 @@ jackal
 	SkinColor = rgb(255, 255, 255);
 	NameSingular = "jackal";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 10000;
+	BaseBiteStrength = 10000;
 	CanBeGenerated = true;
 }
 
@@ -651,7 +651,7 @@ donkey
 	Adjective = "mutant";
 	NameSingular = "donkey";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 2500;
+	BaseBiteStrength = 2500;
 	CanBeGenerated = true;
 }
 
@@ -725,7 +725,7 @@ polarbear
 	Adjective = "polar";
 	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 10000;
+	BaseBiteStrength = 10000;
 }
 
 dolphin
@@ -754,7 +754,7 @@ dolphin
 	PostFix = "in season";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
-	BiteStrength = 5000;
+	BaseBiteStrength = 5000;
 }
 
 lightfrog
@@ -1021,7 +1021,7 @@ bat
 	SkinColor = rgb(48, 48, 48);
 	NameSingular = "bat";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 15000;
+	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
 }
@@ -1108,7 +1108,7 @@ werewolfwolf
 	NamePlural = "werewolves";
 	AttackStyle = USE_HEAD;
 	Sex = UNDEFINED;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanUseEquipment = false;
 	CanBeWished = false;
 	ClassStates = INFRAVISION;
@@ -1190,7 +1190,7 @@ largecat
 	Adjective = "large";
 	NameSingular = "cat";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 }
 
@@ -1213,7 +1213,7 @@ largerat
 	Adjective = "large";
 	NameSingular = "rat";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 20000;
+	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 }
 
@@ -1302,8 +1302,8 @@ mammoth
 	SkinColor = rgb(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	KickStrength = 10000;
-	BiteStrength = 5000;
+	BaseKickStrength = 10000;
+	BaseBiteStrength = 5000;
 	CanBeGenerated = true;
 	CanKick = true;
 }
@@ -1324,8 +1324,8 @@ unicorn
 	TotalSize = 200;
 	NameSingular = "unicorn";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	KickStrength = 10000;
-	BiteStrength = 5000;
+	BaseKickStrength = 10000;
+	BaseBiteStrength = 5000;
 	CanBeGenerated = true;
 	CanKick = true;
 	IsAbstract = true;
@@ -1392,7 +1392,7 @@ lion
 	SkinColor = rgb(200, 200, 112);
 	NameSingular = "lion";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 15000;
+	BaseBiteStrength = 15000;
 }
 
 carnivorousplant
@@ -1413,7 +1413,7 @@ carnivorousplant
 	Adjective = "carnivorous";
 	NameSingular = "plant";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 2500;
+	BaseBiteStrength = 2500;
 	SkinColor = rgb(111, 64, 37);
 	TorsoMainColor = rgb(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
@@ -1438,8 +1438,8 @@ buffalo
 	TorsoMainColor = rgb(120, 120, 120); /* the horns */
 	NameSingular = "buffalo";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	KickStrength = 10000;
-	BiteStrength = 5000;
+	BaseKickStrength = 10000;
+	BaseBiteStrength = 5000;
 	CanKick = true;
 }
 
@@ -1460,7 +1460,7 @@ snake
 	SkinColor = rgb(130, 0, 0);
 	NameSingular = "snake";
 	AttackStyle = USE_HEAD;
-	BiteStrength = 5000;
+	BaseBiteStrength = 5000;
 	CanKick = false;
 	StandVerb = "lying";
 }

@@ -1,3 +1,5 @@
+#include <ctime>
+
 #include "whandler.h"
 #include "graphics.h"
 
@@ -19,14 +21,12 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
       }
 }
 
-#ifdef __DJGPP__
-
-#include <unistd.h>
-
 void globalwindowhandler::UpdateTick()
 {
-  Tick = uclock() * 10 / UCLOCKS_PER_SEC;
+  Tick = clock() * 10 / CLOCKS_PER_SEC;
 }
+
+#ifdef __DJGPP__
 
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 {
@@ -67,7 +67,6 @@ int globalwindowhandler::ReadKey()
 #else
 
 #include <algorithm>
-#include <ctime>
 
 #include "error.h"
 #include "bitmap.h"
@@ -75,11 +74,6 @@ int globalwindowhandler::ReadKey()
 std::vector<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
-
-void globalwindowhandler::UpdateTick()
-{
-  Tick = clock() * 10 / CLOCKS_PER_SEC;
-}
 
 #ifdef WIN32
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];

@@ -6,6 +6,7 @@
 #endif
 
 #include <string>
+#include <map>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -13,6 +14,8 @@
 class outputfile;
 class inputfile;
 class bitmap;
+
+typedef std::map<ushort, std::pair<bitmap*, bitmap*> > fontcache;
 
 class colorizablebitmap
 {
@@ -31,8 +34,8 @@ class colorizablebitmap
   void MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ushort* Color) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
   void MaskedBlit(bitmap* Bitmap, ushort* Color) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Color); }
 
-  ushort Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
-  ushort PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
+  void Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
+  void PrintfShade(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   bitmap* Colorize(ushort*, uchar = 255, uchar* = 0) const;
   bitmap* Colorize(vector2d, vector2d, ushort*, uchar = 255, uchar* = 0) const;
   ushort GetXSize() const { return XSize; }
@@ -58,10 +61,12 @@ class colorizablebitmap
   void Roll(ushort X, ushort Y, vector2d BlitSize, vector2d Move) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
   void Roll(vector2d Pos, vector2d BlitSize, vector2d Move) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
 
+  void CreateFontCache(ushort);
  protected:
   ushort XSize, YSize;
   uchar* Palette;
   uchar* PaletteBuffer;
+  fontcache FontCache;
 };
 
 #endif

@@ -1,3 +1,26 @@
+July 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* typeid calls replaced with GetClassId()s, thus making the script error messages of a
+	  gcc compiled binary a bit less bizarre
+	* Weight and Volume cache system remade
+	* Equipment no longer increases HP
+	* Corpses' weights now work
+	* Emitation cache system added
+	* Fixed some light system related minor problems
+	* If reading is terminated because the light level drops, the game now prints a message
+	  explaining what has happened
+	* Scroll of create monster creates only one monster again (although I am not positively
+	  sure whether that horde of monsters appearing was a bug or feature...)
+	* Corrected a bug that caused that caused ESP-seen people on never seen squares to
+	  darken after they were 'l'ooked at
+	* HP and MaxHP of characters cached
+	* Master and MaxHP of bodyparts cached
+	* Added parentheses around the MAKE_RGB macro, because conditional expressions of the form
+	  if(Color == MAKE_RGB(R, G, B)) caused a syntax error without it
+	* Added a powerful colorized font cache system
+	* Optimized weaponskill::Tick(), Regenerate functions, MainMaterial handling routines,
+	  gear retrieval functions, and so on...
+
 July 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added rect struct to femath.h which can be easily used to define rectangles in 2D-space

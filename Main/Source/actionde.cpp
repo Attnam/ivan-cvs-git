@@ -365,8 +365,15 @@ void dig::VirtualConstructor(bool)
 
 void read::Handle()
 {
-  if(!*Literature || (GetActor()->GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat()))
+  if(!*Literature)
     {
+      Terminate(false);
+      return;
+    }
+
+  if(GetActor()->GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
+    {
+      ADD_MESSAGE("It is too dark to read now.");
       Terminate(false);
       return;
     }
@@ -475,3 +482,73 @@ void read::VirtualConstructor(bool)
   Literature.Init(this);
 }
 
+/* These function are really lame */
+
+ulong consume::GetVolume() const
+{
+  return *Consuming ? Consuming->GetVolume() : 0;
+}
+
+ulong consume::GetWeight() const
+{
+  return *Consuming ? Consuming->GetWeight() : 0;
+}
+
+ulong dig::GetVolume() const
+{
+  ulong Volume = 0;
+
+  if(*RightBackup)
+    Volume += RightBackup->GetVolume();
+
+  if(*LeftBackup)
+    Volume += LeftBackup->GetVolume();
+
+  return Volume;
+}
+
+ulong dig::GetWeight() const
+{
+  ulong Weight = 0;
+
+  if(*RightBackup)
+    Weight += RightBackup->GetWeight();
+
+  if(*LeftBackup)
+    Weight += LeftBackup->GetWeight();
+
+  return Weight;
+}
+
+ulong read::GetVolume() const
+{
+  return *Literature ? Literature->GetVolume() : 0;
+}
+
+ulong read::GetWeight() const
+{
+  return *Literature ? Literature->GetWeight() : 0;
+}
+
+ushort consume::GetEmitation() const
+{
+  return *Consuming ? Consuming->GetEmitation() : 0;
+}
+
+ushort dig::GetEmitation() const
+{
+  ushort Emitation = 0;
+
+  if(*RightBackup && RightBackup->GetEmitation() > Emitation)
+    Emitation = RightBackup->GetEmitation();
+
+  if(*LeftBackup && LeftBackup->GetEmitation() > Emitation)
+    Emitation = LeftBackup->GetEmitation();
+
+  return Emitation;
+}
+
+ushort read::GetEmitation() const
+{
+  return *Literature ? Literature->GetEmitation() : 0;
+}

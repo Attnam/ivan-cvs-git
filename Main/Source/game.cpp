@@ -71,6 +71,7 @@ ushort game::CurrentEmitterEmitation;
 long game::CurrentEmitterPosX;
 long game::CurrentEmitterPosY;
 vector2d game::CurrentEmitterPos;
+bool game::Generating = false;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -539,7 +540,7 @@ uchar game::Load(const std::string& SaveName)
 
   if(Version != SAVEFILE_VERSION)
     {
-      if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+      if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", LIGHTGRAY))
 	  return NEWGAME;
       else
 	  return BACK;
@@ -1079,7 +1080,7 @@ bool game::HandleQuitMessage()
       if(IsInGetCommand())
 	{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+	  switch(iosystem::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHTGRAY))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1103,7 +1104,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(iosystem::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+	if(iosystem::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHTGRAY))
 #endif
 	  {
 	    RemoveSaves();
@@ -1236,8 +1237,10 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
   while(true)
     {
-      if(!GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() && !GetSeeWholeMapCheat())
-	DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
+      square* Square = GetCurrentArea()->GetSquare(CursorPos);
+
+      if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheat())
+	DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 

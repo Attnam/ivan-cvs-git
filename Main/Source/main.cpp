@@ -58,7 +58,7 @@ int Main(int argc, char **argv)
 #endif
 
   protosystem::GenerateCodeNameMaps();
-  femath::SetSeed(time(0));
+  femath::SetSeed(time(0));;
   game::InitGlobalValueMap();
   databasesystem::Initialize();
   game::InitLuxTable();
@@ -76,7 +76,7 @@ int Main(int argc, char **argv)
 #endif
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, std::string("IVAN v. ") + VERSION + "\rBuild " + __DATE__ + "\r"))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHTGRAY, std::string("IVAN v. ") + VERSION + "\rBuild " + __DATE__ + "\r"))
       {
       case 0:
 	if(game::Init())

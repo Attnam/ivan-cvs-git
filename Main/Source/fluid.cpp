@@ -107,8 +107,3 @@ inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
 
   return SaveFile;
 }
-
-ushort fluid::GetEmitation() const
-{
-  return 0;//GetMaterial()->GetEmitation();
-}

@@ -30,7 +30,7 @@ typedef std::vector<item*> itemvector;
 class stack
 {
  public:
-  stack(square* = 0, entity* = 0, uchar = CENTER);
+  stack(square*, entity*, uchar);
   ~stack();
   void Load(inputfile&);
   void Draw(bitmap*, vector2d, ushort, bool, bool, bool) const;
@@ -51,9 +51,8 @@ class stack
   item* DrawContents(stack*, character*, const std::string&, const std::string&, const std::string&, bool (*)(item*, character*) = 0) const;
   item* DrawContents(stack*, character*, const std::string&, const std::string&, const std::string&, bool, bool (*)(item*, character*) = 0) const;
   item* MoveItem(stackiterator, stack*);
-  ushort GetEmitation() const;
   vector2d GetPos() const;
-  void Clean(bool = true);
+  void Clean(bool = false);
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const;
@@ -76,27 +75,26 @@ class stack
   bool TryKey(item*, character*);
   bool Open(character*);
   void MoveAll(stack*);
-
+  void SignalVolumeAndWeightChange();
+  void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
-  void SetVolume(ulong What) { Volume = What; }
   ulong GetWeight() const { return Weight; }
-  void SetWeight(ulong What) { Weight = What; }
-
-  void EditVolume(long);
-  void EditWeight(long);
-
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   area* GetAreaUnder() const { return GetSquareUnder()->GetAreaUnder(); }
   square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
+  ushort GetEmitation() const { return Emitation; }
+  void SignalEmitationIncrease(ushort);
+  void SignalEmitationDecrease(ushort);
+  void CalculateEmitation();
  private:
   stacklist* Item;
   square* MotherSquare;
   uchar SquarePosition;
-
   ulong Volume;
   ulong Weight;
   entity* MotherEntity;
+  ushort Emitation;
 };
 
 #endif

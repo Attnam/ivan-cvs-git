@@ -128,7 +128,7 @@ class item : public object
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
-  virtual short CalculateOfferValue(char) const;
+  virtual short GetOfferValue(char) const;
   virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
@@ -137,7 +137,7 @@ class item : public object
   virtual bool Zap(character*, vector2d, uchar) { return false; }
   virtual bool Polymorph(stack*);
   virtual bool CheckPickUpEffect(character*) { return true; }
-  virtual bool GetStepOnEffect(character*) { return false; }
+  virtual bool StepOnEffect(character*) { return false; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
   virtual bool IsBadFoodForAI(character*) const;
@@ -265,12 +265,7 @@ class item : public object
   virtual uchar GetVisualEffects() const { return VisualEffects; }
   virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
-  virtual void EditVolume(long);
-  virtual void EditWeight(long);
-  virtual void EditCarriedWeight(long);
   virtual ulong GetBlockModifier(const character*) const;
-  virtual ulong GetCarriedWeight() const { return CarriedWeight; }
-  virtual void SetCarriedWeight(ulong What) { CarriedWeight = What; }
   virtual bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
@@ -285,6 +280,13 @@ class item : public object
   vector2d GetPos() const { return Slot->GetSquareUnder()->GetPos(); }
   square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos)); }
+  virtual void SignalVolumeAndWeightChange();
+  virtual void CalculateVolumeAndWeight();
+  ulong GetVolume() const { return Volume; }
+  ulong GetWeight() const { return Weight; }
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
+  virtual void CalculateAll();
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
@@ -298,8 +300,9 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
-  ulong CarriedWeight;
   static prototype item_ProtoType;
+  ulong Volume;
+  ulong Weight;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

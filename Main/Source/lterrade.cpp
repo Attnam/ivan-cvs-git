@@ -125,12 +125,12 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
       GetLevelUnder()->GetSquare(GetLevelUnder()->GetDownStairs())->KickAnyoneStandingHereAway();
-      GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetDownStairs(), Who);
+      GetLevelUnder()->AddCharacter(GetLevelUnder()->GetDownStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetDownStairs()), *c);
+	GetLevelUnder()->AddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetDownStairs()), *c);
 
-      GetLevelUnder()->Luxify();
+      //GetLevelUnder()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
@@ -193,12 +193,12 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
       GetLevelUnder()->GetSquare(GetLevelUnder()->GetUpStairs())->KickAnyoneStandingHereAway();
-      GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetUpStairs(), Who);
+      GetLevelUnder()->AddCharacter(GetLevelUnder()->GetUpStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	GetLevelUnder()->FastAddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetUpStairs()), *c);
+	GetLevelUnder()->AddCharacter(GetLevelUnder()->GetNearestFreeSquare(*c, GetLevelUnder()->GetUpStairs()), *c);
 
-      GetLevelUnder()->Luxify();
+      //GetLevelUnder()->Luxify();
       game::ShowLevelMessage();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
@@ -500,9 +500,9 @@ void fountain::DryOut()
   ChangeContainedMaterial(0);
   UpdatePictures();
 
-  if(GetSquareUnder())
+  if(GetLSquareUnder())
     {
-      GetSquareUnder()->SetDescriptionChanged(true);
+      GetLSquareUnder()->SetDescriptionChanged(true);
 
       if(CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorizedDescription();

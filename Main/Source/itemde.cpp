@@ -94,6 +94,8 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 	    }
 	  else if(Monster->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHARNAME(INDEFINITE));
+
+	  return;
 	}
       else
 	delete Monster;
@@ -401,7 +403,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
   return false;
 }
 
-bool brokenbottle::GetStepOnEffect(character* Stepper)
+bool brokenbottle::StepOnEffect(character* Stepper)
 {
   if(!(RAND() % 10))
     {
@@ -889,7 +891,7 @@ bool banana::Zap(character*, vector2d, uchar)
   return true;
 }
 
-bool bananapeals::GetStepOnEffect(character* Stepper)
+bool bananapeals::StepOnEffect(character* Stepper)
 {
   if(!(RAND() % 3))
     {
@@ -1027,16 +1029,16 @@ ushort bodypart::GetStrengthValue() const
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
 }
 
-short bodypart::GetMaxHP() const
+/*short bodypart::GetMaxHP() const
 {
   if(GetMaster())
     {
       short HP = 0;
 
       if(GetMainMaterial()->IsAlive())
-	HP = GetVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
+	HP = GetBodyPartVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
       else
-	HP = GetVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
+	HP = GetBodyPartVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
 
       if(HP < 1)
 	HP = 1;
@@ -1045,7 +1047,7 @@ short bodypart::GetMaxHP() const
     }
   else
     return 0;
-}
+}*/
 
 ushort head::GetTotalResistance(uchar Type) const
 {
@@ -1136,82 +1138,81 @@ ushort leg::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-void bodypart::LoadGearSlot(inputfile& SaveFile, gearslot& GearSlot)
+/*void bodypart::LoadGearSlot(inputfile& SaveFile, gearslot& GearSlot)
 {
-  SaveFile >> GearSlot;
+  SaveFile >> GearSlot;*/
 
-  if(*GearSlot)
+  /*if(*GearSlot)
     {
       EditVolume(GearSlot->GetVolume());
       EditWeight(GearSlot->GetWeight());
       EditCarriedWeight(GearSlot->GetWeight());
-    }
-}
+    }*/
+//}
 
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BiteStrength;
-  SaveFile << HelmetSlot;
-  SaveFile << AmuletSlot;
+  SaveFile << BaseBiteStrength;
+  SaveFile << HelmetSlot << AmuletSlot;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BiteStrength;
-  LoadGearSlot(SaveFile, HelmetSlot);
-  LoadGearSlot(SaveFile, AmuletSlot);
+  SaveFile >> BaseBiteStrength;
+  SaveFile >> HelmetSlot >> AmuletSlot;
+  /*LoadGearSlot(SaveFile, HelmetSlot);
+  LoadGearSlot(SaveFile, AmuletSlot);*/
 }
 
 void humanoidtorso::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BodyArmorSlot;
-  SaveFile << CloakSlot;
-  SaveFile << BeltSlot;
+  SaveFile << BodyArmorSlot << CloakSlot << BeltSlot;
 }
 
 void humanoidtorso::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  LoadGearSlot(SaveFile, BodyArmorSlot);
+  SaveFile >> BodyArmorSlot >> CloakSlot >> BeltSlot;
+  /*LoadGearSlot(SaveFile, BodyArmorSlot);
   LoadGearSlot(SaveFile, CloakSlot);
-  LoadGearSlot(SaveFile, BeltSlot);
+  LoadGearSlot(SaveFile, BeltSlot);*/
 }
 
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << UnarmedStrength;
+  SaveFile << BaseUnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
-  SaveFile << WieldedSlot;
-  SaveFile << GauntletSlot;
-  SaveFile << RingSlot;
+  SaveFile << WieldedSlot << GauntletSlot << RingSlot;
 }
 
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> UnarmedStrength;
+  SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
-  LoadGearSlot(SaveFile, WieldedSlot);
+  SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
+  /*LoadGearSlot(SaveFile, WieldedSlot);
   LoadGearSlot(SaveFile, GauntletSlot);
-  LoadGearSlot(SaveFile, RingSlot);
+  LoadGearSlot(SaveFile, RingSlot);*/
 }
 
 void leg::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << KickStrength << Strength << StrengthExperience << Agility << AgilityExperience;
+  SaveFile << BaseKickStrength << Strength << StrengthExperience << Agility << AgilityExperience;
   SaveFile << BootSlot;
 }
 
 void leg::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> KickStrength >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
-  LoadGearSlot(SaveFile, BootSlot);
+  SaveFile >> BaseKickStrength >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
+  SaveFile >> BootSlot;
+  //LoadGearSlot(SaveFile, BootSlot);
 }
 
 bool torso::ReceiveDamage(character* Damager, short Damage, uchar Type)
@@ -1288,7 +1289,7 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
   return false;
 }
 
-bool mine::GetStepOnEffect(character* Stepper)
+bool mine::StepOnEffect(character* Stepper)
 {
   if(GetCharged())
     {
@@ -1381,22 +1382,22 @@ bool key::Apply(character* User)
   return true;
 }
 
-float arm::CalculateUnarmedStrength() const
+float arm::GetUnarmedStrength() const
 {
-  return GetUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
+  return GetBaseUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
-float arm::CalculateUnarmedToHitValue() const
+float arm::GetUnarmedToHitValue() const
 {
   return ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 100;
 }
 
-long arm::CalculateUnarmedAPCost() const
+long arm::GetUnarmedAPCost() const
 {
   return long(GetMaster()->GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(Dexterity) - 200) * 500 / GetMaster()->GetMoveEase());
 }
 
-float arm::CalculateWieldedStrength() const
+float arm::GetWieldedStrength() const
 {
   if(GetWielded()->IsShield(GetMaster()))
     return 0;
@@ -1410,7 +1411,7 @@ float arm::CalculateWieldedStrength() const
   return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus();
 }
 
-float arm::CalculateWieldedToHitValue() const
+float arm::GetWieldedToHitValue() const
 {
   arm* PairArm = GetPairArm();
   float Weight = GetWielded()->GetWeight();
@@ -1442,7 +1443,7 @@ float arm::CalculateWieldedToHitValue() const
   return Bonus * ThisToHit;
 }
 
-long arm::CalculateWieldedAPCost() const
+long arm::GetWieldedAPCost() const
 {
   arm* PairArm = GetPairArm();
   float SkillPenalty = GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSingleWeaponSkill()->GetAPBonus() * 100 / GetMaster()->GetMoveEase();
@@ -1461,34 +1462,34 @@ long arm::CalculateWieldedAPCost() const
   return long(SkillPenalty * ((float(Dexterity) - 200) * 5 - GetWielded()->GetWeight() / 50));
 }
 
-float head::CalculateBiteStrength() const
+float head::GetBiteStrength() const
 {
-  return GetBiteStrength() * 10 * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetEffectBonus();
+  return GetBaseBiteStrength() * 10 * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetEffectBonus();
 }
 
-long head::CalculateBiteAPCost() const
+long head::GetBiteAPCost() const
 {
   return long(GetMaster()->GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetMaster()->GetAttribute(AGILITY)) - 200) * 500 / GetMaster()->GetMoveEase());
 }
 
-float leg::CalculateKickStrength() const
+float leg::GetKickStrength() const
 {
-  return GetKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus();
+  return GetBaseKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus();
 }
 
-float leg::CalculateKickToHitValue() const
+float leg::GetKickToHitValue() const
 {
   return ((Agility << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 200;
 }
 
-long leg::CalculateKickAPCost() const
+long leg::GetKickAPCost() const
 {
   return long(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(Agility) - 200) * 1000 / GetMaster()->GetMoveEase());
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
 {
-  return Slot->IsCharacterSlot() ? static_cast<humanoid*>(static_cast<characterslot*>(Slot)->GetMaster()) : 0;
+  return static_cast<humanoid*>(Master);
 }
 
 ushort belt::GetFormModifier() const
@@ -1496,10 +1497,10 @@ ushort belt::GetFormModifier() const
   return 50 * GetMainMaterial()->GetFlexibility();
 }
 
-character* bodypart::GetMaster() const
+/*character* bodypart::GetMaster() const
 {
-  return Slot->IsCharacterSlot() ? static_cast<characterslot*>(Slot)->GetMaster() : 0;
-}
+  return Slot && Slot->IsCharacterSlot() ? static_cast<characterslot*>(Slot)->GetMaster() : 0;
+}*/
 
 bool pickaxe::IsAppliable(const character* Who) const
 {
@@ -1529,13 +1530,13 @@ void corpse::Load(inputfile& SaveFile)
   item::Load(SaveFile);
   SaveFile >> Deceased;
   Deceased->SetMotherEntity(this);
-  EditVolume(Deceased->GetVolume());
-  EditWeight(Deceased->GetWeight());
+  /*EditVolume(Deceased->GetVolume());
+  EditWeight(Deceased->GetWeight());*/
 }
 
 void corpse::AddPostFix(std::string& String) const
 {
-  String << "of ";
+  String << " of ";
   GetDeceased()->AddName(String, INDEFINITE);
 }
 
@@ -1551,10 +1552,10 @@ void corpse::GenerateLeftOvers(character* Eater)
   SendToHell();
 }
 
-ushort corpse::GetEmitation() const
+/*ushort corpse::GetEmitation() const
 {
   return GetDeceased()->GetEmitation();
-}
+}*/
 
 bool corpse::IsConsumable(const character* Eater) const
 {
@@ -1565,13 +1566,13 @@ bool corpse::IsConsumable(const character* Eater) const
   return false;
 }
 
-short corpse::CalculateOfferValue(char GodAlignment) const
+short corpse::GetOfferValue(char GodAlignment) const
 {
   short OfferValue = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
-      OfferValue += GetDeceased()->GetBodyPart(c)->CalculateOfferValue(GodAlignment);
+      OfferValue += GetDeceased()->GetBodyPart(c)->GetOfferValue(GodAlignment);
 
   return OfferValue;
 }
@@ -1601,7 +1602,7 @@ corpse::~corpse()
     GetDeceased()->SendToHell();
 }
 
-void corpse::SetMainMaterial(material* NewMaterial)
+/*void corpse::SetMainMaterial(material* NewMaterial)
 {
   GetDeceased()->SetMainMaterial(NewMaterial);
 }
@@ -1619,7 +1620,7 @@ void corpse::SetContainedMaterial(material* NewMaterial)
 void corpse::ChangeContainedMaterial(material* NewMaterial)
 {
   GetDeceased()->ChangeContainedMaterial(NewMaterial);
-}
+}*/
 
 ushort corpse::GetMaterialColorA(ushort) const
 {
@@ -1655,31 +1656,32 @@ void corpse::SetDeceased(character* What)
 {
   Deceased = What;
   Deceased->SetMotherEntity(this);
-  EditVolume(Deceased->GetVolume());
-  EditWeight(Deceased->GetWeight());
+  /*EditVolume(Deceased->GetVolume());
+  EditWeight(Deceased->GetWeight());*/
+  SignalVolumeAndWeightChange();
   UpdatePictures();
 }
 
-void bodypart::Regenerate(ushort Turns)
+void bodypart::Regenerate()
 {
   if(GetMainMaterial()->IsAlive())
     {
-      ulong RegenerationBonus = ulong(GetMaxHP()) * GetMaster()->GetAttribute(ENDURANCE) * Turns;
+      ulong RegenerationBonus = ulong(MaxHP) * Master->GetAttribute(ENDURANCE);
 
-      if(GetMaster()->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
+      if(Master->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
 	RegenerationBonus *= GetMaster()->GetSquareUnder()->GetRestModifier();
 
-      EditRegenerationCounter(RegenerationBonus);
+      RegenerationCounter += RegenerationBonus;
 
-      while(GetRegenerationCounter() > 100000)
+      while(RegenerationCounter > 100000)
 	{
-	  if(GetHP() < GetMaxHP())
+	  if(HP < MaxHP)
 	    {
 	      EditHP(1);
-	      GetMaster()->EditExperience(ENDURANCE, 100);
+	      Master->EditExperience(ENDURANCE, 100);
 	    }
 
-	  EditRegenerationCounter(-100000);
+	  RegenerationCounter -= 100000;
 	}
     }
 }
@@ -2109,6 +2111,7 @@ void bodypart::VirtualConstructor(bool Load)
   materialcontainer::VirtualConstructor(Load);
   SetUnique(false);
   SetRegenerationCounter(0);
+  SetMaster(0);
 }
 
 void head::VirtualConstructor(bool Load)
@@ -2237,7 +2240,7 @@ void chest::VirtualConstructor(bool Load)
     {
       StorageVolume = 1000;
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
-      SetIsLocked(RAND() % 3 ? true : false);
+      SetIsLocked(RAND() % 3 != 0);
       uchar ItemNumber = RAND() % 5;
 
       for(ushort c = 0; c < ItemNumber; ++c)
@@ -2630,7 +2633,7 @@ const std::string& key::GetAdjective() const
   return game::GetLockDescription(LockType);
 }
 
-ushort head::GetEmitation() const
+/*ushort head::GetEmitation() const
 {
   ushort Emitation = item::GetEmitation();
 
@@ -2683,25 +2686,25 @@ ushort leg::GetEmitation() const
     Emitation = GetBoot()->GetEmitation();
 
   return Emitation;
-}
+}*/
 
 void head::InitSpecialAttributes()
 {
-  SetBiteStrength(GetMaster()->GetBiteStrength());
+  SetBaseBiteStrength(GetMaster()->GetBaseBiteStrength());
 }
 
 void arm::InitSpecialAttributes()
 {
   SetStrength(GetMaster()->GetDefaultArmStrength());
   SetDexterity(GetMaster()->GetDefaultDexterity());
-  SetUnarmedStrength(GetMaster()->GetUnarmedStrength());
+  SetBaseUnarmedStrength(GetMaster()->GetBaseUnarmedStrength());
 }
 
 void leg::InitSpecialAttributes()
 {
   SetStrength(GetMaster()->GetDefaultLegStrength());
   SetAgility(GetMaster()->GetDefaultAgility());
-  SetKickStrength(GetMaster()->GetKickStrength());
+  SetBaseKickStrength(GetMaster()->GetBaseKickStrength());
 }
 
 std::string corpse::GetConsumeVerb() const
@@ -2768,7 +2771,7 @@ void beartrap::VirtualConstructor(bool Load)
     }
 }
 
-bool beartrap::GetStepOnEffect(character* Stepper)
+bool beartrap::StepOnEffect(character* Stepper)
 {
   SetIsVisible(true);
   if(IsActivated)
@@ -3059,3 +3062,130 @@ bool stethoscope::ListenTo(lsquare* Square, character* Listener)
   Char->DisplayStethoscopeInfo(Listener);
   return true;
 }
+
+void chest::CalculateVolumeAndWeight()
+{
+  item::CalculateVolumeAndWeight();
+  Volume += Contained->GetVolume();
+  Weight += Contained->GetWeight();
+}
+
+void corpse::CalculateVolumeAndWeight()
+{
+  Volume = Deceased->GetVolume();
+  Weight = Deceased->GetWeight();
+}
+
+item* head::GetEquipment(ushort Index) const
+{
+  switch(Index)
+    {
+    case 0: return GetHelmet();
+    case 1: return GetAmulet();
+    default: return 0;
+    }
+}
+
+item* humanoidtorso::GetEquipment(ushort Index) const
+{
+  switch(Index)
+    {
+    case 0: return GetBodyArmor();
+    case 1: return GetCloak();
+    case 2: return GetBelt();
+    default: return 0;
+    }
+}
+
+item* arm::GetEquipment(ushort Index) const
+{
+  switch(Index)
+    {
+    case 0: return GetWielded();
+    case 1: return GetGauntlet();
+    case 2: return GetRing();
+    default: return 0;
+    }
+}
+
+item* leg::GetEquipment(ushort Index) const
+{
+  if(!Index)
+    return GetBoot();
+  else
+    return 0;
+}
+
+void bodypart::CalculateVolumeAndWeight()
+{
+  item::CalculateVolumeAndWeight();
+  CarriedWeight = 0;
+  BodyPartVolume = Volume;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      {
+	Volume += GetEquipment(c)->GetVolume();
+	CarriedWeight += GetEquipment(c)->GetWeight();
+      }
+
+  Weight += CarriedWeight;
+}
+
+void corpse::CalculateEmitation()
+{
+  Emitation = Deceased->GetEmitation();
+}
+
+void bodypart::CalculateEmitation()
+{
+  item::CalculateEmitation();
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->GetEmitation() > Emitation)
+      Emitation = GetEquipment(c)->GetEmitation();
+}
+
+void bodypart::CalculateMaxHP()
+{
+  MaxHP = 0;
+
+  if(GetMaster())
+    {
+      if(GetMainMaterial()->IsAlive())
+	MaxHP = GetBodyPartVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
+      else
+	MaxHP = GetBodyPartVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
+
+      if(MaxHP < 1)
+	MaxHP = 1;
+    }
+}
+
+void bodypart::SignalVolumeAndWeightChange()
+{
+  item::SignalVolumeAndWeightChange();
+
+  if(GetMaster() && !GetMaster()->IsInitializing())
+    {
+      CalculateMaxHP();
+      GetMaster()->CalculateMaxHP();
+    }
+}
+
+void bodypart::SetHP(short What)
+{
+  HP = What;
+
+  if(GetMaster())
+    GetMaster()->CalculateHP();
+}
+
+void bodypart::EditHP(short What)
+{
+  HP += What;
+
+  if(GetMaster())
+    GetMaster()->CalculateHP();
+}
+

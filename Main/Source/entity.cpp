@@ -5,7 +5,7 @@
 #include "materba.h"
 #include "proto.h"
 
-entity::entity(bool HasBeBool) : ExistsBool(true), HasBeBool(HasBeBool), Volume(0), Weight(0)
+entity::entity(bool HasBeBool) : ExistsBool(true), HasBeBool(HasBeBool), Emitation(0)
 {
   if(HasBeBool)
     PoolIterator = pool::Add(this);

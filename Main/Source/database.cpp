@@ -1,5 +1,3 @@
-#include <typeinfo>
-
 #include "database.h"
 #include "charba.h"
 #include "itemba.h"
@@ -20,7 +18,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       ushort Index = protocontainer<type>::SearchCodeName(Word);
 
       if(!Index)
-	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), typeid(type).name(), SaveFile.TellLine());
+	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
       typename type::prototype* Proto = protocontainer<type>::ProtoData[Index];
 
@@ -30,7 +28,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       Proto->DataBase.InitDefaults();
 
       if(SaveFile.ReadWord() != "{")
-	ABORT("Bracket missing in %s datafile line %d!", typeid(type).name(), SaveFile.TellLine());
+	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
@@ -41,18 +39,18 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	      TempDataBase.InitDefaults();
 
 	      if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in %s datafile line %d!", typeid(type).name(), SaveFile.TellLine());
+		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 		if(!AnalyzeData(SaveFile, Word, &TempDataBase))
-		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), typeid(*Proto).name(), ConfigNumber, SaveFile.TellLine());
+		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId().c_str(), ConfigNumber, SaveFile.TellLine());
 
 	      Proto->Config[ConfigNumber] = TempDataBase;
 	      continue;
 	    }
 
 	  if(!AnalyzeData(SaveFile, Word, &Proto->DataBase))
-	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), typeid(*Proto).name(), SaveFile.TellLine());
+	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId().c_str(), SaveFile.TellLine());
 	}
 
       if(Proto->DataBase.CreateDivineConfigurations)
@@ -183,9 +181,9 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(IsAbstract);
   ANALYZEDATA(IsPolymorphable);
-  ANALYZEDATA(UnarmedStrength);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(BiteStrength, UnarmedStrength, DataBase->UnarmedStrength / 2);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(KickStrength, UnarmedStrength, DataBase->UnarmedStrength * 2);
+  ANALYZEDATA(BaseUnarmedStrength);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase->BaseUnarmedStrength / 2);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase->BaseUnarmedStrength * 2);
   ANALYZEDATA(AttackStyle);
   ANALYZEDATA(CanUseEquipment);
   ANALYZEDATA(CanKick);
@@ -334,7 +332,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(StrengthValue);
   ANALYZEDATA(ConsumeType);
   ANALYZEDATA(Density);
-  ANALYZEDATA(OfferValue);
+  ANALYZEDATA(OfferModifier);
   ANALYZEDATA(Color);
   ANALYZEDATA(PriceModifier);
   ANALYZEDATA(IsSolid);

@@ -195,7 +195,7 @@ void god::PrintRelation() const
 
 bool god::ReceiveOffer(item* Sacrifice)
 {
-  short OfferValue = Sacrifice->CalculateOfferValue(BasicAlignment());
+  short OfferValue = Sacrifice->GetOfferValue(BasicAlignment());
 
   if(abs(OfferValue) > 5)
     {
@@ -206,7 +206,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	}
 
       AdjustRelation(OfferValue);
-      game::ApplyDivineAlignmentBonuses(this, OfferValue > 0 ? true : false);
+      game::ApplyDivineAlignmentBonuses(this, OfferValue > 0);
 
       if(OfferValue > 0)
 	ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);

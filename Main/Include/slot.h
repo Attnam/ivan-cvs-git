@@ -29,22 +29,19 @@ class slot
   slot() : Item(0) { }
   virtual void Empty() = 0;
   virtual void FastEmpty() = 0;
-  void Save(outputfile&) const;
-  void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   item* GetItem() const { return Item; }
   item* operator->() const { return Item; }
   item* operator*() const { return Item; }
   virtual void MoveItemTo(stack*) = 0;
-  virtual bool IsStackSlot() const { return false; }
-  virtual bool IsCharacterSlot() const { return false; }
-  virtual bool IsGearSlot() const { return false; }
   virtual void AddFriendItem(item*) const = 0;
   virtual bool IsOnGround() const { return false; }
-  virtual void EditVolume(long) = 0;
-  virtual void EditWeight(long) = 0;
   virtual void PutInItem(item*);
-  virtual void EditCarriedWeight(long) { }
   virtual square* GetSquareUnder() const = 0;
+  virtual void SignalVolumeAndWeightChange() = 0;
+  virtual void SignalEmitationIncrease(ushort) = 0;
+  virtual void SignalEmitationDecrease(ushort) = 0;
  protected:
   item* Item;
 };
@@ -59,12 +56,12 @@ class stackslot : public slot
   std::list<stackslot*>::iterator GetStackIterator() const { return StackIterator; }
   void SetStackIterator(std::list<stackslot*>::iterator What) { StackIterator = What; }
   virtual void MoveItemTo(stack*);
-  virtual bool IsStackSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   virtual bool IsOnGround() const;
-  virtual void EditVolume(long);
-  virtual void EditWeight(long);
   virtual square* GetSquareUnder() const;
+  virtual void SignalVolumeAndWeightChange();
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;
@@ -91,12 +88,13 @@ class characterslot : public slot
   character* GetMaster() const { return Master; }
   void SetMaster(character* What) { Master = What; }
   virtual void MoveItemTo(stack*);
-  virtual bool IsCharacterSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
-  virtual void EditVolume(long);
-  virtual void EditWeight(long) { }
-  virtual void EditCarriedWeight(long);
   virtual square* GetSquareUnder() const;
+  virtual void SignalVolumeAndWeightChange();
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
+  virtual void PutInItem(item*);
+  virtual void Load(inputfile&);
  protected:
   character* Master;
 };
@@ -121,15 +119,15 @@ class gearslot : public slot
   bodypart* GetBodyPart() const { return BodyPart; }
   void SetBodyPart(bodypart* What) { BodyPart = What; }
   virtual void MoveItemTo(stack*);
-  virtual bool IsGearSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   void Init(bodypart*, uchar);
-  virtual void EditVolume(long);
-  virtual void EditWeight(long);
   virtual uchar GetEquipmentIndex() const { return EquipmentIndex; }
   virtual void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
   virtual void PutInItem(item*);
   virtual square* GetSquareUnder() const;
+  virtual void SignalVolumeAndWeightChange();
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;
@@ -158,9 +156,10 @@ class actionslot : public slot
   virtual bool IsActionSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   void Init(action*);
-  virtual void EditVolume(long);
-  virtual void EditWeight(long);
   virtual square* GetSquareUnder() const;
+  virtual void SignalVolumeAndWeightChange();
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
  protected:
   action* Action;
 };

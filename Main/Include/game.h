@@ -167,6 +167,8 @@ class game
   static void SetCurrentEmitterEmitation(ushort What) { CurrentEmitterEmitation = What; }
   static void SetCurrentEmitterPos(vector2d);
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
+  static bool IsGenerating() { return Generating; }
+  static void SetIsGenerating(bool What) { Generating = What; }
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -208,6 +210,7 @@ class game
   static long CurrentEmitterPosX;
   static long CurrentEmitterPosY;
   static vector2d CurrentEmitterPos;
+  static bool Generating;
 };
 
 #endif

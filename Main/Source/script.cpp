@@ -1,5 +1,3 @@
-#include <typeinfo>
-
 #include "script.h"
 #include "lterraba.h"
 #include "charba.h"
@@ -30,7 +28,7 @@ template <class type> void datamembertemplate<type>::SetBase(datamemberbase* Wha
 {
   /* No type checking here, since only scriptwithbase<basetype>::SetBase uses this */
 
-  Base = (datamembertemplate<type>*)What;
+  Base = static_cast<datamembertemplate<type>*>(What);
 }
 
 template <class type> bool datamember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap& ValueMap, bool RequireIdentifier)
@@ -391,7 +389,7 @@ template <class type> void contentmap<type>::DeleteContents()
 template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 {
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in %s content map script line %d!", typeid(type).name(), SaveFile.TellLine());
+    ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
   std::map<char, contentscript<type>*> SymbolMap;
 
@@ -402,7 +400,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
       if(Word == "Types")
 	{
 	  if(SaveFile.ReadWord() != "{")
-	    ABORT("Missing bracket in %s content map script line %d!", typeid(type).name(), SaveFile.TellLine());
+	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
 	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	    {
@@ -423,7 +421,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!LoadData(SaveFile, Word))
-	ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), typeid(type).name(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
     }
 
   if(!ContentScriptMap)
@@ -432,7 +430,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
     DeleteContents();
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Missing bracket in %s content map script line %d!", typeid(type).name(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
   for(ushort y = 0; y < GetSize()->Y; ++y)
     for(ushort x = 0; x < GetSize()->X; ++x)
@@ -444,11 +442,11 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 	if(Iterator != SymbolMap.end())
 	  ContentScriptMap[x][y] = Iterator->second;
 	else
-	  ABORT("Illegal content %c in %s content map line %d!", Char, typeid(type).name(), SaveFile.TellLine());
+	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
       }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Missing bracket in %s content map script line %d!", typeid(type).name(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 }
 
 roomscript::roomscript()

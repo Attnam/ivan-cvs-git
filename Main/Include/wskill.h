@@ -16,7 +16,7 @@ class weaponskill
 {
  public:
   weaponskill();
-  bool Tick(ushort);
+  bool Tick();
   uchar GetLevel() const { return Level; }
   ulong GetHits() const { return Hits; }
   ulong GetHitCounter() const { return HitCounter; }
@@ -44,7 +44,7 @@ class gweaponskill : public weaponskill
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-  std::string Name() const { return SkillName[Index]; }
+  const std::string& Name() const { return SkillName[Index]; }
   float GetEffectBonus() const { return 1.0f + 0.10f * Level; }
   float GetAPBonus() const { return 1.0f - 0.05f * Level; }
   void AddLevelUpMessage() const;

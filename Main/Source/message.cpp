@@ -43,7 +43,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   if(Buffer == LastMessage)
     {
-      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.LastEntryIndex()) == 0xFFFF)
+      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.LastEntryIndex()) == WHITE)
 	MessageHistory.Pop();
 
       ++Times;
@@ -51,7 +51,7 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      for(c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == 0xFFFF; --c)
+      for(c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
 	MessageHistory.SetColor(c, LIGHTGRAY);
 
       Times = 1;
@@ -103,7 +103,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 	  Buffer.erase(0, Pos + 1);
 	}
 
-      MessageHistory.AddEntry(Temp, 0xFFFF);
+      MessageHistory.AddEntry(Temp, WHITE);
     }
 
   MessageHistory.SetSelected(MessageHistory.Length() > 8 ? MessageHistory.Length() - 8 : 0);

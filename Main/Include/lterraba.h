@@ -56,7 +56,7 @@ struct terraindatabase
 class lterrain : public object
 {
  public:
-  lterrain() : SquareUnder(0) { }
+  lterrain() : LSquareUnder(0) { }
   virtual void Load(inputfile&);
   virtual bool Open(character*) { return false; }
   virtual bool Close(character*) { return false; }
@@ -74,14 +74,17 @@ class lterrain : public object
   virtual bool CanBeSeenBy(character*) const;
   virtual const std::string& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-  virtual square* GetSquareUnder() const { return SquareUnder; }
-  void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
-  level* GetLevelUnder() const { return static_cast<level*>(SquareUnder->GetAreaUnder()); }
+  virtual square* GetSquareUnder() const { return LSquareUnder; }
+  void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
+  lsquare* GetLSquareUnder() const { return LSquareUnder; }
+  level* GetLevelUnder() const { return LSquareUnder->GetLevelUnder(); }
+  void CalculateAll() { CalculateEmitation(); }
+  virtual void SignalEmitationIncrease(ushort);
+  virtual void SignalEmitationDecrease(ushort);
  protected:
   void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }
-  square* SquareUnder;
+  lsquare* LSquareUnder;
 };
 
 struct glterraindatabase : public terraindatabase

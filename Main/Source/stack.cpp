@@ -13,14 +13,14 @@
 #include "save.h"
 #include "config.h"
 
-stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition) : MotherSquare(MotherSquare), SquarePosition(SquarePosition), Volume(0), Weight(0), MotherEntity(MotherEntity)
+stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition) : MotherSquare(MotherSquare), SquarePosition(SquarePosition), MotherEntity(MotherEntity), Volume(0), Weight(0), Emitation(0)
 {
   Item = new stacklist;
 }
 
 stack::~stack()
 {
-  Clean(false);
+  Clean(true);
   delete Item;
 }
 
@@ -68,8 +68,8 @@ void stack::AddItem(item* ToBeAdded)
 
   if(GetSquareTrulyUnder())
     {
-      if(!game::IsInWilderness())
-	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
+      /*if(!game::IsInWilderness())
+	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());*/
 
       if(SquarePosition != HIDDEN)
 	{
@@ -98,12 +98,14 @@ void stack::FastAddItem(item* ToBeAdded)
 
 void stack::RemoveItem(stackiterator Iterator)
 {
-  ushort IEmit = GetEmitation();
   bool WasAnimated = (**Iterator)->IsAnimated();
-  EditVolume(-(**Iterator)->GetVolume());
-  EditWeight(-(**Iterator)->GetWeight());
+  /*EditVolume(-(**Iterator)->GetVolume());
+  EditWeight(-(**Iterator)->GetWeight());*/
+  ushort Emit = (**Iterator)->GetEmitation();
   delete *Iterator;
   Item->erase(Iterator);
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emit);
 
   if(GetSquareUnder() && SquarePosition != HIDDEN)
     {
@@ -115,8 +117,8 @@ void stack::RemoveItem(stackiterator Iterator)
 
   if(GetSquareTrulyUnder())
     {
-      if(!game::IsInWilderness())
-	GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
+      /*if(!game::IsInWilderness())
+	GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);*/
 
       if(SquarePosition != HIDDEN)
 	{
@@ -137,21 +139,24 @@ void stack::FastRemoveItem(stackiterator Iterator)
   if(SquarePosition != HIDDEN && (**Iterator)->IsAnimated() && GetSquareTrulyUnder())
     GetSquareTrulyUnder()->DecAnimatedEntities();
 
-  EditVolume(-(**Iterator)->GetVolume());
-  EditWeight(-(**Iterator)->GetWeight());
+  /*EditVolume(-(**Iterator)->GetVolume());
+  EditWeight(-(**Iterator)->GetWeight());*/
+  ushort Emit = (**Iterator)->GetEmitation();
   delete *Iterator;
   Item->erase(Iterator);
+  SignalVolumeAndWeightChange();
+  SignalEmitationDecrease(Emit);
 }
 
-void stack::Clean(bool EditVolumes)
+void stack::Clean(bool LastClean)
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
-      if(EditVolumes)
+      /*if(EditVolumes)
 	{
 	  EditVolume(-(**i)->GetVolume());
 	  EditWeight(-(**i)->GetWeight());
-	}
+	}*/
 
       if(SquarePosition != HIDDEN && (**i)->IsAnimated() && GetSquareTrulyUnder())
 	GetSquareTrulyUnder()->DecAnimatedEntities();
@@ -161,6 +166,12 @@ void stack::Clean(bool EditVolumes)
     }
 
   Item->clear();
+
+  if(!LastClean)
+    {
+      Volume = Weight = 0;
+      SignalVolumeAndWeightChange();
+    }
 }
 
 item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
@@ -202,17 +213,6 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
   return Item;
 }
 
-ushort stack::GetEmitation() const
-{
-  ushort Emitation = 0;
-
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->GetEmitation() > Emitation)
-      Emitation = (**i)->GetEmitation();
-
-  return Emitation;
-}
-
 void stack::Save(outputfile& SaveFile) const
 {
   SaveFile << *Item << SquarePosition;
@@ -221,14 +221,20 @@ void stack::Save(outputfile& SaveFile) const
 void stack::Load(inputfile& SaveFile)
 {
   SaveFile >> *Item >> SquarePosition;
+  Volume = Weight = 0;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
       (*i)->SetStackIterator(i);
       (*i)->SetMotherStack(this);
-      EditVolume((**i)->GetVolume());
-      EditWeight((**i)->GetWeight());
+      /*EditVolume((**i)->GetVolume());
+      EditWeight((**i)->GetWeight());*/
+      Volume += (**i)->GetVolume();
+      Weight += (**i)->GetWeight();
     }
+
+  /*CalculateVolume();
+  CalculateWeight();*/
 }
 
 vector2d stack::GetPos() const
@@ -305,7 +311,7 @@ void stack::CheckForStepOnEffect(character* Stepper)
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists())
-      ItemVector[c]->GetStepOnEffect(Stepper);
+      ItemVector[c]->StepOnEffect(Stepper);
 }
 
 square* stack::GetSquareTrulyUnder() const
@@ -453,7 +459,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
 
 void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
-  bool UseSorterFunction = SorterFunction ? true : false;
+  bool UseSorterFunction = SorterFunction != 0;
   bool DescDrawn = false;
 
   for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
@@ -506,7 +512,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 
 item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (*SorterFunction)(item*, character*)) const
 {
-  bool UseSorterFunction = SorterFunction ? true : false;
+  bool UseSorterFunction = SorterFunction != 0;
 
   for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
     for(stackiterator i = Item->begin(); i != Item->end(); ++i)
@@ -555,7 +561,7 @@ void stack::MoveAll(stack* ToStack)
     MoveItem(GetBottomSlot(), ToStack);
 }
 
-void stack::EditVolume(long What)
+/*void stack::EditVolume(long What)
 {
   Volume += What;
 
@@ -569,7 +575,7 @@ void stack::EditWeight(long What)
 
   if(GetMotherEntity())
     GetMotherEntity()->EditWeight(What);
-}
+}*/
 
 ushort stack::GetVisibleItems() const
 {
@@ -598,3 +604,58 @@ square* stack::GetSquareUnder() const
   else
     return MotherSquare;
 }
+
+void stack::SignalVolumeAndWeightChange()
+{
+  CalculateVolumeAndWeight();
+
+  if(MotherEntity)
+    MotherEntity->SignalVolumeAndWeightChange();
+}
+
+void stack::CalculateVolumeAndWeight()
+{
+  Volume = Weight = 0;
+
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    {
+      Volume += (**i)->GetVolume();
+      Weight += (**i)->GetWeight();
+    }
+}
+
+void stack::SignalEmitationIncrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate > Emitation)
+    {
+      Emitation = EmitationUpdate;
+
+      if(MotherEntity)
+	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+      else
+	GetLSquareTrulyUnder()->SignalEmitationIncrease(EmitationUpdate);
+    }
+}
+
+void stack::SignalEmitationDecrease(ushort EmitationUpdate)
+{
+  if(EmitationUpdate == Emitation)
+    {
+      CalculateEmitation();
+
+      if(EmitationUpdate != Emitation && MotherEntity)
+	MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+      else
+	GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
+    }
+}
+
+void stack::CalculateEmitation()
+{
+  Emitation = 0;
+
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    if((**i)->GetEmitation() > Emitation)
+      Emitation = (**i)->GetEmitation();
+}
+

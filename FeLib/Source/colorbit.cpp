@@ -48,6 +48,12 @@ colorizablebitmap::~colorizablebitmap()
 {
   delete [] Palette;
   delete [] PaletteBuffer;
+
+  for(fontcache::iterator i = FontCache.begin(); i != FontCache.end(); ++i)
+    {
+      delete i->second.first;
+      delete i->second.second;
+    }
 }
 
 /*
@@ -142,8 +148,10 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	  if(Buffer[x] >= 192)
 	    {
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
-	      float Gradient = float(Buffer[x] % 16) / 8 - 1.0f;
-	      ((ushort*)DestBuffer)[x] = MAKE_RGB(uchar(GET_RED(ThisColor) * Gradient), uchar(GET_GREEN(ThisColor) * Gradient), uchar(GET_BLUE(ThisColor) * Gradient));
+	      float Gradient = float(Buffer[x] % 16) / 8;
+	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
+	      ((ushort*)DestBuffer)[x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      //((ushort*)DestBuffer)[x] = MAKE_RGB(uchar(GET_RED(ThisColor) * Gradient), uchar(GET_GREEN(ThisColor) * Gradient), uchar(GET_BLUE(ThisColor) * Gradient));
 
 	      if(UseAlpha)
 		((uchar*)AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
@@ -208,7 +216,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
   return Bitmap;
 }
 
-ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
 {
   char Buffer[256];
 
@@ -217,20 +225,31 @@ ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Colo
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
-  ushort ShadeCol = MAKE_SHADE_COL(Color);
+  fontcache::iterator Iterator = FontCache.find(Color);
 
-  for(ushort c = 0; c < strlen(Buffer); ++c)
+  if(Iterator == FontCache.end())
     {
-      ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
-      MaskedBlit(Bitmap, FX, FY, X + (c << 3) + 1, Y + 1, 8, 8, &ShadeCol);
-      MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
+      ushort ShadeCol = MAKE_SHADE_COL(Color);
+
+      for(ushort c = 0; c < strlen(Buffer); ++c)
+	{
+	  ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
+	  MaskedBlit(Bitmap, FX, FY, X + (c << 3) + 1, Y + 1, 8, 8, &ShadeCol);
+	  MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
+	}
+    }
+  else
+    {
+      for(ushort c = 0; c < strlen(Buffer); ++c)
+	Iterator->second.first->MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 9, 9);
     }
 
-  return strlen(Buffer);
+  //return strlen(Buffer);
 }
 
-ushort colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
 {
+  ++X; ++Y;
   char Buffer[256];
 
   va_list AP;
@@ -238,13 +257,22 @@ ushort colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ush
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
-  for(ushort c = 0; c < strlen(Buffer); ++c)
+  fontcache::iterator Iterator = FontCache.find(Color);
+
+  if(Iterator == FontCache.end())
     {
-      ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
-      MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
+      Color = MAKE_SHADE_COL(Color);
+
+      for(ushort c = 0; c < strlen(Buffer); ++c)
+	MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8, &Color);
+    }
+  else
+    {
+      for(ushort c = 0; c < strlen(Buffer); ++c)
+	Iterator->second.second->MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8);
     }
 
-  return strlen(Buffer);
+  //return strlen(Buffer);
 }
 
 void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip)
@@ -354,4 +382,19 @@ void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, sh
       PaletteBuffer[y * XSize + x] = TempBuffer[(y - Y) * Width + x - X];
 
   delete [] TempBuffer;
+}
+
+void colorizablebitmap::CreateFontCache(ushort Color)
+{
+  if(FontCache.find(Color) != FontCache.end())
+    return;
+
+  ushort ShadeColor = MAKE_SHADE_COL(Color);
+  bitmap* Font = new bitmap(XSize, YSize);
+  Font->Fill(0, 0, 1, YSize, DEFAULTTRANSPARENT);
+  Font->Fill(0, 0, XSize, 1, DEFAULTTRANSPARENT);
+  bitmap* ShadeFont = Colorize(&ShadeColor);
+  ShadeFont->Blit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1);
+  MaskedBlit(Font, &Color);
+  FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, ShadeFont);
 }

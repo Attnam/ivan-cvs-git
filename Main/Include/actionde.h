@@ -48,6 +48,9 @@ class ACTION
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return Description; }
   virtual void SetDescription(const std::string& What) { Description = What; }
+  virtual ulong GetVolume() const;
+  virtual ulong GetWeight() const;
+  virtual ushort GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   std::string Description;
@@ -92,6 +95,9 @@ class ACTION
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return "digging"; }
+  virtual ulong GetVolume() const;
+  virtual ulong GetWeight() const;
+  virtual ushort GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;
@@ -134,6 +140,9 @@ class ACTION
   virtual std::string GetDescription() const { return "reading"; }
   virtual ushort GetCounter() const { return Counter; }
   virtual void SetCounter(ushort What) { Counter = What; }
+  virtual ulong GetVolume() const;
+  virtual ulong GetWeight() const;
+  virtual ushort GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot Literature;

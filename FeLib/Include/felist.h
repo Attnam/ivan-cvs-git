@@ -66,6 +66,7 @@ class felist
   void EditSelected(short What) { Selected += What; }
   bool DrawPage(bitmap*) const;
   void Pop() { Entry.pop_back(); }
+  static void CreateQuickDrawFontCaches(colorizablebitmap*, ushort, ushort);
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;

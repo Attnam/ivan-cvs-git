@@ -96,28 +96,28 @@ void material::AddConsumeEndMessage(character* Eater) const
     }
 }
 
-long material::CalculateOfferValue(char GodAlignment) const
+long material::GetOfferValue(char GodAlignment) const
 {
   long Value = 0;
 
   if(GetAlignment() == EVIL)
     {
       if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-	Value += GetVolume() * GetOfferValue();
+	Value += GetVolume() * GetOfferModifier();
       else
 	if(GodAlignment == GOOD)
-	  Value -= GetVolume() * GetOfferValue();
+	  Value -= GetVolume() * GetOfferModifier();
     }
   else if(GetAlignment() == GOOD)
     {
       if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-	Value += GetVolume() * GetOfferValue();
+	Value += GetVolume() * GetOfferModifier();
       else
 	if(GodAlignment == EVIL)
-	  Value -= GetVolume() * GetOfferValue();
+	  Value -= GetVolume() * GetOfferModifier();
     }
   else
-    Value += GetVolume() * GetOfferValue();
+    Value += GetVolume() * GetOfferModifier();
 
   return Value;
 }
@@ -186,16 +186,11 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
 
 void material::SetVolume(ulong What)
 {
-  ulong OldVolume = Volume;
-  ulong OldWeight = Weight;
   Volume = What;
   CalculateWeight();
 
   if(MotherEntity)
-    {
-      MotherEntity->EditVolume(long(Volume) - OldVolume);
-      MotherEntity->EditWeight(long(Weight) - OldWeight);
-    }
+    MotherEntity->SignalVolumeAndWeightChange();
 }
 
 void material::SetConfig(ushort NewConfig)
@@ -214,3 +209,4 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
       CalculateWeight();
     }
 }
+

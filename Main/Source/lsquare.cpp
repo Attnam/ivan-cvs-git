@@ -21,7 +21,7 @@
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true)
 {
-  Stack = new stack(this);
+  Stack = new stack(this, 0, CENTER);
   SideStack[DOWN] = new stack(this, 0, DOWN);
   SideStack[LEFT] = new stack(this, 0, LEFT);
   SideStack[UP] = new stack(this, 0, UP);
@@ -43,19 +43,27 @@ lsquare::~lsquare()
 
 void lsquare::SignalEmitationIncrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation)
-    Emitate();
+  if(EmitationUpdate > Emitation && !game::IsGenerating())
+    {
+      CalculateEmitation();
+      Emitate();
+    }
 }
 
 void lsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && EmitationUpdate != CalculateEmitation())
-    ReEmitate();
+  if(EmitationUpdate == Emitation && !game::IsGenerating())
+    {
+      CalculateEmitation();
+
+      if(EmitationUpdate != Emitation)
+	ReEmitate(EmitationUpdate);
+    }
 }
 
-ushort lsquare::CalculateEmitation() const
+void lsquare::CalculateEmitation()
 {
-  ushort Emitation = GetStack()->GetEmitation();
+  Emitation = GetStack()->GetEmitation();
 
   #define NE(D, S) GetNearLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
 
@@ -86,8 +94,6 @@ ushort lsquare::CalculateEmitation() const
 
   if(TemporaryEmitation > Emitation)
     Emitation = TemporaryEmitation;
-
-  return Emitation;
 }
 
 void lsquare::UpdateMemorized()
@@ -163,8 +169,6 @@ void lsquare::Draw()
 
 void lsquare::Emitate()
 {
-  SetEmitation(CalculateEmitation());
-
   if(GetEmitation() < LIGHT_BORDER)
     return;
 
@@ -186,11 +190,8 @@ void lsquare::Emitate()
 	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
-void lsquare::ReEmitate()
+void lsquare::ReEmitate(ushort OldEmitation)
 {
-  ushort OldEmitation = GetEmitation();
-  SetEmitation(CalculateEmitation());
-
   if(OldEmitation < LIGHT_BORDER)
     return;
 
@@ -253,8 +254,13 @@ void lsquare::NoxifyEmitter(vector2d Dir)
   for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
     if(i->Pos == Dir)
       {
-	if(!Luminance || Luminance != i->DilatedEmitation || !OLTerrain->IsWalkable())
+	if(!Luminance || Luminance != i->DilatedEmitation)
 	  i->DilatedEmitation = 0;
+	else if(!OLTerrain->IsWalkable())
+	  {
+	    i->DilatedEmitation = 0;
+	    NewDrawRequested = true;
+	  }
 	else
 	  {
 	    ushort OldLuminance = Luminance;
@@ -273,8 +279,9 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 
 		if(GetLastSeen() == game::GetLOSTurns())
 		  {
-		    UpdateMemorized();
-		    UpdateMemorizedDescription();
+		    game::SendLOSUpdateRequest();
+		    /*UpdateMemorized();
+		    UpdateMemorizedDescription();*/
 		  }
 	      }
 	  }
@@ -354,8 +361,15 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 	if(NewLuminance >= LIGHT_BORDER)
 	  {
-	    if(NewLuminance != Luminance && OLTerrain->IsWalkable())
+	    if(NewLuminance != Luminance)
 	      {
+		if(!OLTerrain->IsWalkable())
+		  {
+		    i->DilatedEmitation = NewLuminance;
+		    NewDrawRequested = true;
+		    return;
+		  }
+
 		ushort OldLuminance = Luminance;
 		i->DilatedEmitation = NewLuminance;
   		CalculateLuminance();
@@ -372,10 +386,11 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 		    if(GetLastSeen() == game::GetLOSTurns())
 		      {
+			game::SendLOSUpdateRequest();
 			/* Bug bug bug! */
 
-			UpdateMemorized();
-			UpdateMemorizedDescription();
+			/*UpdateMemorized();
+			UpdateMemorizedDescription();*/
 		      }
 		  }
 	      }
@@ -384,8 +399,13 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	  }
 	else
 	  {
-	    if(!Luminance || Luminance != i->DilatedEmitation || !OLTerrain->IsWalkable())
+	    if(!Luminance || Luminance != i->DilatedEmitation)
 	      Emitter.erase(i);
+	    else if(!OLTerrain->IsWalkable())
+	      {
+		Emitter.erase(i);
+		NewDrawRequested = true;
+	      }
 	    else
 	      {
 		ushort OldLuminance = Luminance;
@@ -404,8 +424,9 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 		    if(GetLastSeen() == game::GetLOSTurns())
 		      {
-			UpdateMemorized();
-			UpdateMemorizedDescription();
+			game::SendLOSUpdateRequest();
+			/*UpdateMemorized();
+			UpdateMemorizedDescription();*/
 		      }
 		  }
 	      }
@@ -418,8 +439,15 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
   if(NewLuminance >= LIGHT_BORDER)
     {
-      if(NewLuminance > Luminance && OLTerrain->IsWalkable())
+      if(NewLuminance > Luminance)
 	{
+	  if(!OLTerrain->IsWalkable())
+	    {
+	      Emitter.push_back(emitter(Dir, NewLuminance));
+	      NewDrawRequested = true;
+	      return;
+	    }
+
 	  ushort OldLuminance = Luminance;
 	  Emitter.push_back(emitter(Dir, NewLuminance));
   	  CalculateLuminance();
@@ -436,8 +464,9 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 	      if(GetLastSeen() == game::GetLOSTurns())
 		{
-		  UpdateMemorized();
-		  UpdateMemorizedDescription();
+		  game::SendLOSUpdateRequest();
+		  /*UpdateMemorized();
+		  UpdateMemorizedDescription();*/
 		}
 	    }
 	}
@@ -715,7 +744,7 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
 
   delete GetGLTerrain();
   GLTerrain = NewGround;
-  NewGround->SetSquareUnder(this);
+  NewGround->SetLSquareUnder(this);
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
@@ -731,7 +760,7 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
 
   delete GetOLTerrain();
   OLTerrain = NewOver;
-  NewOver->SetSquareUnder(this);
+  NewOver->SetLSquareUnder(this);
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
@@ -749,7 +778,7 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
 void lsquare::SetGLTerrain(glterrain* NewGround)
 {
   GLTerrain = NewGround;
-  NewGround->SetSquareUnder(this);
+  NewGround->SetLSquareUnder(this);
 
   if(NewGround->IsAnimated())
     IncAnimatedEntities();
@@ -758,7 +787,7 @@ void lsquare::SetGLTerrain(glterrain* NewGround)
 void lsquare::SetOLTerrain(olterrain* NewOver)
 {
   OLTerrain = NewOver;
-  NewOver->SetSquareUnder(this);
+  NewOver->SetLSquareUnder(this);
 
   if(NewOver->IsAnimated())
     IncAnimatedEntities();
@@ -1166,22 +1195,6 @@ void lsquare::SetLastSeen(ulong What)
   if(LastSeen == What)
     return;
 
-  if(Luminance < LIGHT_BORDER)
-    {
-      short XDist = Pos.X - game::GetPlayer()->GetPos().X;
-
-      if(XDist < -1 || XDist > 1)
-	return;
-
-      short YDist = Pos.Y - game::GetPlayer()->GetPos().Y;
-
-      if(YDist < -1 || YDist > 1)
-	return;
-    }
-
-  if(!LastSeen)
-    Memorized = new bitmap(16, 16);
-
   if(LastSeen < What - 1)
     NewDrawRequested = true;
 
@@ -1202,6 +1215,22 @@ void lsquare::SetLastSeen(ulong What)
 	}
     }
 
+  if(Luminance < LIGHT_BORDER)
+    {
+      short XDist = Pos.X - game::GetPlayer()->GetPos().X;
+
+      if(XDist < -1 || XDist > 1)
+	return;
+
+      short YDist = Pos.Y - game::GetPlayer()->GetPos().Y;
+
+      if(YDist < -1 || YDist > 1)
+	return;
+    }
+
+  if(!LastSeen)
+    Memorized = new bitmap(16, 16);
+
   UpdateMemorized();
   UpdateMemorizedDescription();
   LastSeen = What;
@@ -1219,8 +1248,9 @@ void lsquare::DrawMemorized()
 	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen ? true : false, true);
+	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);
 
       NewDrawRequested = false;
     }
 }
+

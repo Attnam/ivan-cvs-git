@@ -764,8 +764,9 @@ void level::Luxify()
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       {
-	Map[x][y]->CalculateLuminance();
+	Map[x][y]->CalculateEmitation();
 	Map[x][y]->Emitate();
+	Map[x][y]->CalculateLuminance();
       }
 }
 

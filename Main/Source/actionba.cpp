@@ -33,30 +33,8 @@ actionprototype::actionprototype(action* (*Cloner)(bool), const std::string& Cla
   Index = protocontainer<action>::Add(this);
 }
 
-void action::EditVolume(long What)
-{
-  Volume += What;
-
-  if(GetActor())
-    GetActor()->EditVolume(What);
-}
-
-void action::EditWeight(long What)
-{
-  Weight += What;
-
-  if(GetActor())
-    GetActor()->EditWeight(What);
-}
-
 void action::LoadActionSlot(inputfile& SaveFile, actionslot& ActionSlot)
 {
   SaveFile >> ActionSlot;
   ActionSlot.SetAction(this);
-
-  if(*ActionSlot)
-    {
-      EditVolume(ActionSlot->GetVolume());
-      EditWeight(ActionSlot->GetWeight());
-    }
 }

@@ -1,3 +1,9 @@
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
 Long range weapons.
 Tutorial.
 Sid Meier.

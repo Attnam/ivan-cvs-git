@@ -34,7 +34,7 @@ class action
 {
  public:
   typedef actionprototype prototype;
-  action(donothing) : Actor(0), Volume(0), Weight(0), DNDMode(false) { }
+  action(donothing) : Actor(0), DNDMode(false) { }
   virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
@@ -52,21 +52,15 @@ class action
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual std::string GetDescription() const = 0;
-  void EditVolume(long);
-  void EditWeight(long);
   void LoadActionSlot(inputfile&, actionslot&);
-
-  ulong GetVolume() const { return Volume; }
-  void SetVolume(ulong What) { Volume = What; }
-  ulong GetWeight() const { return Weight; }
-  void SetWeight(ulong What) { Weight = What; }
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
+  virtual ulong GetVolume() const { return 0; }
+  virtual ulong GetWeight() const { return 0; }
+  virtual ushort GetEmitation() const { return 0; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;
-  ulong Volume;
-  ulong Weight;
   bool DNDMode;
 };
 

@@ -75,7 +75,7 @@ class graphics
   static struct vesainfo
   {
     void Retrieve();
-    bool   CheckSupport() {return Version == 0x0200 ? true : false;};
+    bool   CheckSupport() { return Version == 0x0200; }
     ulong Signature		PACKED;
     ushort Version		PACKED;
     ulong OEMString		PACKED;
@@ -87,7 +87,7 @@ class graphics
   static struct modeinfo
   {
     void Retrieve(ushort);
-    bool   CheckSupport() {return Attribs1 & 1 ? true : false;};
+    bool   CheckSupport() { return Attribs1 & 1 != 0; }
     ushort Attribs1		PACKED;
     uchar  AWindowAttribs	PACKED;
     uchar  BWindowAttribs	PACKED;

@@ -22,7 +22,7 @@
 #define GET_GREEN(Color) (((Color) >> 3) & 0xFC)
 #define GET_BLUE(Color) (((Color) << 3) & 0xF8)
 
-#define MAKE_RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
+#define MAKE_RGB(Red, Green, Blue) (((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F))
 #define MAKE_SHADE_COL(Color) MAKE_RGB(GET_RED(Color) / 3, GET_GREEN(Color) / 3, GET_BLUE(Color) / 3)
 
 #define NONE 0

@@ -26,7 +26,7 @@ template <class type> class protocontainer
   static ushort SearchCodeName(const std::string&);
   static const valuemap& GetCodeNameMap() { return CodeNameMap; }
   static void GenerateCodeNameMap();
-  static const std::string& GetClassName(ushort Index) { return ProtoData[Index]->GetGetClassId(); }
+  static const std::string& GetMainClassId() { return ProtoData[1]->GetClassId(); }
  private:
   static std::vector<prototype*> ProtoData;
   static valuemap CodeNameMap;

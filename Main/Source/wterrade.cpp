@@ -34,10 +34,10 @@ bool attnam::GoDown(character* Who) const
   game::SetWorldMap(0);
   game::GetDungeon(1)->PrepareLevel(0);
   game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
-  game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
+  game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
   for(ushort c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
+    game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
@@ -70,10 +70,10 @@ bool elpuricave::GoDown(character* Who) const
   game::SetWorldMap(0);
   game::GetDungeon(0)->PrepareLevel(0);
   game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
-  game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
+  game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 
   for(ushort c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
+    game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();

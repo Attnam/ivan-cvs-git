@@ -77,12 +77,16 @@ void dungeon::PrepareLevel(ushort Index)
       Level[Index] = new level;
       Level[Index]->SetLevelScript(GetLevelScript(Index));
       game::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+      game::SetIsGenerating(true);
       Level[Index]->Generate();
       Generated[Index] = true;
       game::BusyAnimation();
 
       if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
+
+      game::SetIsGenerating(false);
+      Level[Index]->Luxify();
     }
 }
 
