@@ -431,3 +431,5 @@ Invisible creatures carrying a light source should be revealed.
 Wielded wands should sometimes break in fights.
 *Dropping multiple items should be made more convenient.
 Bottles should break more easily when kicked.
+IVAN's linux version should be distributed in rpm form, too.
+There should be an "unusable" state for bodyparts about to be severed.

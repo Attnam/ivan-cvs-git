@@ -44,7 +44,7 @@ Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 //Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
 *Nimivälimuisti.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
-Charba.cpp:n resplittaus (kontrollit erilleen?).
+//Charba.cpp:n resplittaus (kontrollit erilleen?).
 Kirjallisen yliluonnollisuuden epäfunktioittaminen.
 //Säiliöluokat.
 Piirron deasmaus.
@@ -58,3 +58,4 @@ Potentiaali konfiguraatioiden eksplisiittiseen periyttämiseen.
 Eliöiden totuusjäsenten yhteensulauttaminen.
 Vektoripakkaus?
 Leikisti aktiivin 1. partisiipissa olevien data-arvojen muokkaus kykylauseiksi.
+Hidastinten kirjastoiminen.

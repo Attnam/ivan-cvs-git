@@ -1,0 +1,85 @@
+//Porting IGOR to linux and adding it to CVS.
+
+Porting IvanMap to linux and adding it to CVS.
+
+Creating a tool to combine high score files.
+
+Script precompiler.
+
+Febot engine for the Holy Haven of Gurus.
+
+//Documenting graphics formats.
+
+Documenting script.
+
+Documenting FeLib.
+
+Documenting IVAN. (haha)
+
+In-game manual.
+
+Monster memory.
+
+Mouse interface.
+
+Removing asm from FeLib.
+
+Support for multiple resolutions.
+
+Ego-item engine.
+
+Ego-monster engine.
+
+Races.
+
+Multi-tiled creature engine.
+
+Blessed/uncursed/cursed item statuses.
+
+Identify system.
+
+Magic system.
+
+Fire effects.
+
+Fluid system that handles special material effects, eg. molten metals.
+
+Corrosion for materials.
+
+Dividing physical damage to slashing, blunt, piercing etc. damage.
+
+Unusable state for bodyparts.
+
+Long range weapons including bow.
+
+More flexible throw using linear extrapolation.
+
+Support for multiple items flying at the same time.
+
+Breaking different wands should cause different effects.
+
+New tunnel generation algorithm.
+
+New AI route algorithm.
+
+Sight direction.
+
+Monsters generating in groups.
+
+Making AI capable of using wands and scrolls and throwing items.
+
+More commands for team members like "guard", "flee" and "unequip".
+
+Renewed value-based god system.
+
+Different holy water effects for each god.
+
+Different angels for each god.
+
+Bonefile system.
+
+Support for colored messages.
+
+Armor pictures of humanoids.
+
+Blindness.
