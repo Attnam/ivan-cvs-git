@@ -140,3 +140,4 @@ Skeletons can be poisoned.
 //Spiders can lock doors.
 If multiple chests are stacked, only the top one can be opened with key.
 Add monsters seem to be able to apply.
+(this may not be a bug, but it is a problem) Go and heal commands might be too fast on a very fast machine (> 1 GHz or something like that)

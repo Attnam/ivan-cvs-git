@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 12 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Wrong version number in configure.in of igor corrected
+
+	
 February 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected some bugs in Igor's Linux port

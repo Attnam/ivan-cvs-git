@@ -83,4 +83,4 @@ Eddies in space-time continuum
 
 Mutated giant mushroom
 	
-	Most of the time stand idle and sometimes teleport from place to place. Sometimes shoot spores at player
+	Most of the time stand idle and sometimes teleport from place to place. Sometimes shoot spores at player. Sometimes the spores could grow to be mushrooms. (not too often though, so the level wouldn't be filled with mushrooms.)

@@ -4,7 +4,7 @@ AC_CANONICAL_TARGET
 AC_CONFIG_SRCDIR(Source/igor.cpp)
 AM_INIT_AUTOMAKE([foreign])
 AM_PROG_AS 
-AM_INIT_AUTOMAKE([foreign], igor,0.1)
+AM_INIT_AUTOMAKE([foreign], igor,1.203)
 AC_PROG_CC
 
 AC_PROG_CXX
