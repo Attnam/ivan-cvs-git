@@ -3978,7 +3978,7 @@ uchar mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHi
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!");
+	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!\"");
     }
 
   return Return;
@@ -4060,7 +4060,7 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
       else
-	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!");
+	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!\"");
     }
 
   return Success;

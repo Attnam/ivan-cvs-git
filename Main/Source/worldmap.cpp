@@ -248,6 +248,9 @@ void worldmap::Generate()
       SetEntryPos(ATTNAM, AttnamPos);
       RevealEnvironment(AttnamPos, 1);
       SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
+
+      GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+
       GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
       SetEntryPos(NEW_ATTNAM, NewAttnamPos);
       GetWSquare(TunnelEntry)->ChangeOWTerrain(new underwatertunnel);

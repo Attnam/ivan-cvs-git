@@ -134,6 +134,30 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
+
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 22;
+	DefaultAgility = 22;
+	DefaultEndurance = 22;
+	DefaultPerception = 20;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = MITHRIL helmet(FULL_HELMET);
+	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	Cloak = PHOENIX_FEATHER cloak { Enchantment = 1; }
+	Belt = NYMPH_HAIR belt;
+	RightWielded = mjolak { Enchantment = 2; }
+	RightRing = ring(RING_OF_INFRA_VISION);
+	RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 1; }
+	RightBoot = NYMPH_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 1; }
+	KnownCWeaponSkills = { 2, MACES, SHIELDS; }
+	CWeaponSkillHits = { 2, 200, 75; }
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;
+	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }
 }
 
 petrus
@@ -821,7 +845,7 @@ elpuri
 	DefaultArmStrength = 70;
 	DefaultAgility = 25;
 	DefaultEndurance = 20;
-	DefaultPerception = 50;
+	DefaultPerception = 40;
 	DefaultIntelligence = 40;
 	DefaultWisdom = 30;
 	DefaultCharisma = 2;
@@ -830,7 +854,7 @@ elpuri
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
-	TotalVolume = 600000;
+	TotalVolume = 500000;
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 250;
 	NameSingular = "Master Dark Frog";

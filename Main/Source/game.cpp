@@ -272,7 +272,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new angel(SILVA));
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
