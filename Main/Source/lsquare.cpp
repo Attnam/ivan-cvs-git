@@ -855,6 +855,8 @@ overterrain* levelsquare::GetOverTerrain() const
   return OverLevelTerrain;
 }
 
+#include "charde.h"
+
 void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
   if(SquareScript->GetCharacter(false))
@@ -1011,14 +1013,14 @@ void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTer
 
 void levelsquare::PolymorphEverything(character* Zapper)
 {
-  character* Character;			
+  character* Character;
 
   if((Character = GetCharacter()))
     {
-      Character->Polymorph(protosystem::CreateMonster(false), 5000 + RAND() % 5000);
-
       if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
+
+      Character->Polymorph(protosystem::CreateMonster(false), 5000 + RAND() % 5000);
     }
 
   GetStack()->Polymorph();

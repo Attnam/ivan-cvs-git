@@ -115,11 +115,11 @@ class CHARACTER
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+  virtual void CreateInitialEquipment();
 protected:
-	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("human")
 );
-                      
+
 class CHARACTER
 (
 	petrus,
@@ -159,11 +159,11 @@ public:
 	virtual void SetStoryState(uchar What) { StoryState = What; }
 	virtual bool HasInfraVision() const { return true; }
 	virtual bool CanBeDisplaced() const { return false; }
+	virtual void CreateInitialEquipment();
 protected:
 	virtual std::string NameSingular() const RET("Petrus, the High Priest of the Great Frog")
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
-	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(20000)
 	virtual void GetAICommand();
 	ushort HealTimer;
@@ -299,11 +299,11 @@ public:
 	virtual void BeTalkedTo(character*);
 	virtual bool HasInfraVision() const { return true; }
 	virtual bool CanBeDisplaced() const { return false; }
+  virtual void CreateInitialEquipment();
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + "vomits blood for one last time and then dies."; }
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Blood Daemon King")
-	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(30000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBloodVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBloodVerb(Critical))
@@ -326,10 +326,10 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
+  virtual void CreateInitialEquipment();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(128,0)
 	virtual std::string NameSingular() const RET("dark knight")
-	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(5000)
 );
 
@@ -475,12 +475,12 @@ public:
 	virtual void SpillBlood(uchar, vector2d) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual void BeTalkedTo(character*);
+  virtual void CreateInitialEquipment();
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual vector2d GetBitmapPos() const RETV(112,0)
 	virtual std::string NameSingular() const RET("skeleton")
 	virtual void CreateCorpse();
-	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(1000)
 );
 
@@ -500,10 +500,10 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 25000; else return 0; }
 	virtual void BeTalkedTo(character*);
+  virtual void CreateInitialEquipment();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(144,0)
 	virtual std::string NameSingular() const RET("goblin")
-	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(2000)
 );
 
@@ -1026,8 +1026,8 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual uchar GetSex() const RET(FEMALE)
+  virtual void CreateInitialEquipment();
 protected:
-	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("female slave")
 	virtual float GetMeleeStrength() const RET(500)
 	virtual void GetAICommand() { StandIdleAI(); }
@@ -1151,9 +1151,9 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual uchar GetSex() const RET(FEMALE)
 	virtual float GetMeleeStrength() const RET(5000)
+  virtual void CreateInitialEquipment();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(352,0)
-	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("mistress")
 );
 
@@ -1208,9 +1208,9 @@ class CHARACTER
 public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
+  virtual void CreateInitialEquipment();
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies yelling like a tortured hyena."; }
-	virtual void CreateInitialEquipment();
 	virtual vector2d GetBitmapPos() const RETV(480,0)
 	virtual std::string NameSingular() const RET("kobold")
 	virtual float GetMeleeStrength() const RET(2000)
@@ -1353,9 +1353,9 @@ public:
 	virtual uchar GetMaster() const { return Master; }
 	virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
+  virtual void CreateInitialEquipment();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(400,0)
-	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("kamikaze dwarf")
 	uchar Master;
 );
@@ -1383,61 +1383,58 @@ protected:
 
 class CHARACTER
 (
- unicorn,
- character,
- RandomizeFleshMaterial(),
-{
-  SetSize(200);
-  SetAgility(50);
-  SetStrength(4);
-  SetEndurance(5);
-  SetPerception(30);
-},
- public:
- virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 300000; else return 0; }
- virtual vector2d GetBitmapPos() const RETV(544, 0)
- virtual std::string NameSingular() const;
- virtual float GetMeleeStrength() const RET(1200)
- virtual std::string TalkVerb() const { return "neigh"; }
- virtual void SetAlignment(uchar What) { Alignment = What; }
- virtual uchar GetAlignment() const { return Alignment; }
- virtual void Load(inputfile&);
- virtual void Save(outputfile&) const;
- virtual void RandomizeFleshMaterial();
- protected:
- uchar Alignment;
- );
+  unicorn,
+  character,
+  RandomizeFleshMaterial(),
+  {
+    SetSize(200);
+    SetAgility(40);
+    SetStrength(10);
+    SetEndurance(25);
+    SetPerception(18);
+  },
+public:
+  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 200000; else return 0; }
+  virtual vector2d GetBitmapPos() const RETV(544, 0)
+  virtual std::string NameSingular() const;
+  virtual float GetMeleeStrength() const RET(5000)
+  virtual std::string TalkVerb() const { return "neighs"; }
+  virtual void SetAlignment(uchar What) { Alignment = What; }
+  virtual uchar GetAlignment() const { return Alignment; }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual void RandomizeFleshMaterial();
+protected:
+  uchar Alignment;
+);
 
 class CHARACTER
 (
-	genie,
-	character,
-	InitMaterials(new air),
-	{
-		SetSize(220);
-		SetAgility(40);
-		SetStrength(40);
-		SetEndurance(40);
-		SetPerception(60);
-	},
+  genie,
+  humanoid,
+  InitMaterials(3, new air, new air, new air),
+  {
+    SetSize(250);
+    SetAgility(30);
+    SetStrength(30);
+    SetEndurance(30);
+    SetPerception(18);
+  },
 public:
-	virtual void SpillBlood(uchar) {}
-	virtual void SpillBlood(uchar, vector2d) {}
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
-	virtual void BeTalkedTo(character*);
-	virtual bool HasInfraVision() const { return true; }
-	virtual std::string StandVerb() const { return "floating"; }
+  virtual void SpillBlood(uchar) {}
+  virtual void SpillBlood(uchar, vector2d) {}
+  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 200000; else return 0; }
+  virtual void BeTalkedTo(character*);
+  virtual std::string StandVerb() const { return "floating"; }
+  virtual void CreateInitialEquipment();
 protected:
-	virtual vector2d GetBitmapPos() const RETV(48,0)
-	virtual std::string NameSingular() const RET("pure mass of Bill's will")
-	virtual std::string NamePlural() const RET("pure masses of Bill's will")
-	virtual void CreateCorpse() {}
-	virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
-	virtual float GetMeleeStrength() const RET(20000)
-	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPSIVerb(Critical))
-	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPSIVerb(Critical))
-	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPSIVerb(Critical))
+  virtual vector2d GetBitmapPos() const RETV(416,0)
+  virtual std::string NameSingular() const RET("genie")
+  virtual void CreateCorpse() {}
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
+  virtual float GetMeleeStrength() const RET(20000)
 );
+
 #endif
 
 

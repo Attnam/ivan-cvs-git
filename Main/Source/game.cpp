@@ -2,7 +2,7 @@
 #include <ctime>
 
 #ifdef WIN32
-#include <direct.h>// Needed for _mkdir
+#include <direct.h>	// Needed for _mkdir
 #include <windows.h>
 #endif
 
@@ -271,9 +271,9 @@ void game::DeInit()
 void game::Run()
 {
   while(GetRunning())
-    {
+    {	
       if(!InWilderness)
-	GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();// Temporary
+	GetCurrentDungeon()->GetLevel(Current)->HandleCharacters(); // Temporary
 
       try { objectpool::Be(); }
       catch(quitrequest) { }
@@ -928,7 +928,7 @@ void game::DoGoodDeed(ushort Amount)
 {
   if(!Amount)
     return;
-
+	
   for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
@@ -1223,8 +1223,5 @@ std::string game::GetVerbalPlayerAlignment()
     return std::string("very chaotic");
 
   return std::string("extremely chaotic");
-
-  int esko = 2;
 }
-
 

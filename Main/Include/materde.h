@@ -133,7 +133,7 @@ public:
 	virtual ushort GetHitValue() const				{ return 0; }
 	virtual ushort GetDensity() const				{ return 1; }
 	virtual ushort OfferValue() const				{ return 0; }
-	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ushort GetColor() const;
 protected:
 	virtual std::string NameStem() const	{ return "air"; }
 	virtual std::string Article() const { return "an"; }
@@ -896,69 +896,59 @@ protected:
 
 class MATERIAL
 (
- unicornflesh,
- flesh,
-
+  unicornflesh,
+  flesh,
 public:
-	virtual ushort OfferValue() const { return 35; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
-	virtual ulong RawPrice() const { return GetVolume() >> 4; }
+  virtual ushort OfferValue() const { return 35; }
+  virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
-	virtual std::string NameStem() const	{ return "unicorn flesh"; }  
- );
+  virtual std::string NameStem() const	{ return "unicorn flesh"; }  
+);
 
 class MATERIAL
 (
 	unicornhorn,
 	material,
 public:
-	virtual ushort GetHitValue() const				{ return 110; }
+	virtual ushort GetHitValue() const				{ return 125; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
-	virtual ushort GetDensity() const				{ return 5000; }
+	virtual ushort GetDensity() const				{ return 2000; }
 	virtual ushort OfferValue() const				{ return 10; }
-	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
 	virtual ulong RawPrice() const { return GetVolume() >> 8; }
-	virtual bool CanBeDigged() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "unicorn horn"; }
 );
+
 class MATERIAL
 (
- blackunicornflesh,
- flesh,
- virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
- virtual uchar Alignment() const { return EVIL; }
+  blackunicornflesh,
+  flesh,
+  virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual uchar Alignment() const { return EVIL; }
 protected:
- virtual std::string NameStem() const	{ return "black unicorn flesh"; } 
+  virtual std::string NameStem() const	{ return "black unicorn flesh"; } 
 );
 
 class MATERIAL
 (
- grayunicornflesh,
- flesh,
- virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
- virtual uchar Alignment() const { return NEUTRAL; }
+  grayunicornflesh,
+  flesh,
+  virtual ushort GetColor() const { return MAKE_RGB(96, 96, 96); }
+  virtual uchar Alignment() const { return NEUTRAL; }
 protected:
- virtual std::string NameStem() const	{ return "gray unicorn flesh"; } 
+  virtual std::string NameStem() const	{ return "gray unicorn flesh"; } 
 );
 
 class MATERIAL
 (
- whiteunicornflesh,
- flesh,
- virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
- virtual uchar Alignment() const { return GOOD; }
+  whiteunicornflesh,
+  flesh,
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
+  virtual uchar Alignment() const { return GOOD; }
 protected:
- virtual std::string NameStem() const	{ return "white unicorn flesh"; } 
+  virtual std::string NameStem() const	{ return "white unicorn flesh"; } 
 );
 
 #endif
-
-
-
-
-
-
-
-

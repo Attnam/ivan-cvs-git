@@ -11,8 +11,8 @@
 
 void shop::HandleInstantiatedCharacter(character* Character)
 {
+  room::HandleInstantiatedCharacter(Character);
   Master = Character;
-  Character->SetHomeRoom(Index);
 }
 
 void shop::Enter(character* Customer)
@@ -150,8 +150,8 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
 void temple::HandleInstantiatedCharacter(character* Character)
 {
+  room::HandleInstantiatedCharacter(Character);
   Master = Character;
-  Character->SetHomeRoom(Index);
 }
 
 void temple::Enter(character* Pilgrim)

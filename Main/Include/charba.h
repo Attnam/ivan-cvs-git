@@ -196,8 +196,8 @@ class character : public object
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
   virtual bool SetTorsoArmor(item*) RET(false)
-    virtual bool CanKick() const RET(false)
-    virtual void BeKicked(ushort, bool, uchar, character*);
+  virtual bool CanKick() const RET(false)
+  virtual void BeKicked(ushort, bool, uchar, character*);
   virtual void FallTo(vector2d, bool);
   virtual bool CheckCannibalism(ushort);
   virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
@@ -272,6 +272,7 @@ class character : public object
   virtual uchar RandomizeReply(uchar, bool*);
   virtual ushort Frequency() const { return 10000; }
   virtual ushort DangerLevel();
+  virtual void CreateInitialEquipment() {}
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -281,7 +282,6 @@ class character : public object
   virtual void StandIdleAI();
   virtual void CreateCorpse();
   virtual std::string DeathMessage() { return Name(DEFINITE) + " is slain."; }
-  virtual void CreateInitialEquipment() {}
   virtual void SetDefaultStats() = 0;
   virtual void GetPlayerCommand();
   virtual void GetAICommand();

@@ -844,8 +844,10 @@ void guard::BeTalkedTo(character* Talker)
       if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
       else
-	ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
-      ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't make anything suspicious here.\"");
+        {
+	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
+          ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't make anything suspicious here.\"");
+        }
       break;
     }
 }
@@ -909,7 +911,7 @@ void priest::BeTalkedTo(character* Talker)
 
 void oree::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink Pepsi!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void darkknight::BeTalkedTo(character*)
@@ -1104,8 +1106,8 @@ void hunter::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
     case 3:
-      ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
-      ADD_MESSAGE("I am now the only child in the family.\"");
+      ADD_MESSAGE("\"I saw a communist visiting the city a few days past.");
+      ADD_MESSAGE("I'm now organising a party to seek and hunt him down.\"");
       break;
     }
 }
@@ -1324,9 +1326,9 @@ void librarian::BeTalkedTo(character* Talker)
       return;
     }
 
-  static bool Said[9];
+  static bool Said[10];
 
-  switch(RandomizeReply(9, Said))
+  switch(RandomizeReply(10, Said))
     {
     case 0:
       if(game::GetPetrus() && !game::GetPetrus()->GetStoryState())
@@ -1401,7 +1403,7 @@ void librarian::BeTalkedTo(character* Talker)
 	}
     case 6:
       ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog.");
-      ADD_MESSAGE("The High Priest is he who holds the Shirt of the Golden Eagle and kills the last Überpriest.\"");
+      ADD_MESSAGE("The High Priest is he who holds the Shirt of the Golden Eagle and kills the last High Priest.\"");
       break;
     case 7:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
@@ -1413,14 +1415,27 @@ void librarian::BeTalkedTo(character* Talker)
       else
 	{
 	  ADD_MESSAGE("\"They say thou should keep all the artifacts thou find.");
-	  ADD_MESSAGE("They shall make thee famous after thine retirement.\"");
+	  ADD_MESSAGE("They shalt make thee famous after thine retirement.\"");
 	  break;
 	}
     case 8:
-      ADD_MESSAGE("\"If thou shall ever encounter an Enner Beast, know this: It is a horrible foe.");
+      ADD_MESSAGE("\"If thou shalt ever encounter an Enner Beast, know this: It is a horrible foe.");
       ADD_MESSAGE("It may shatter thine items and armor with its scream that penetrates iron and stone.");
       ADD_MESSAGE("Thou should not engage it in melee. Kill it from afar.\"");
       break;
+    case 9:
+      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
+	{
+	  ADD_MESSAGE("\"Thou areth not alone in thine attempth to defeat Elpuri.");
+	  ADD_MESSAGE("A brave adventurer named Ivan also dived into its cave not long ago.\"");
+	  break;
+	}
+      else
+	{
+	  ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers.");
+	  ADD_MESSAGE("But thou must remember: unlike lawfuls, they shalt not help thee when things go bad.\"");
+	  break;
+	}
     }
 }
 
@@ -1683,9 +1698,29 @@ void angel::BeTalkedTo(character* Talker)
 void kamikazedwarf::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(Master)->Name().c_str());
-  else
-    ADD_MESSAGE("\"Would you like me to teach you the best suicidal bombing tactics?\"");
+    {
+      ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(Master)->Name().c_str());
+      return;
+    }
+
+  static bool Said[4];
+
+  switch(RandomizeReply(4, Said))
+    {
+    case 0:
+      ADD_MESSAGE("\"Would you like me to teach you the best suicidal bombing tactics?\"");
+      break;
+    case 1:
+      ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      break;
+    case 2:
+      ADD_MESSAGE("%s praises %s with numerous hymns.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
+      ADD_MESSAGE("%s is obviously a very devoted follower.", game::PersonalPronoun(GetSex()));
+      break;
+    case 3:
+      ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
+      break;
+    }
 }
 
 void kamikazedwarf::CreateInitialEquipment()
@@ -1826,4 +1861,18 @@ void kamikazedwarf::GetAICommand()
     StandIdleAI();
   else
     character::GetAICommand();
+}
+
+void genie::BeTalkedTo(character* Talker)
+{
+  /*if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    ADD_MESSAGE("\"Need brain!!\"");
+  else
+    ADD_MESSAGE("\"Need brain, but not your brain.\"");*/
+}
+
+void genie::CreateInitialEquipment()
+{
+  /*SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
+  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));*/
 }

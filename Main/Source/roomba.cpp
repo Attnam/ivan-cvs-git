@@ -2,7 +2,8 @@
 #include "save.h"
 #include "lterrade.h"
 #include "error.h"
-#include "charba.h"
+#include "charde.h"
+#include "itemde.h"
 
 room::room(bool SetStats) : Master(0)
 {
@@ -36,4 +37,10 @@ void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
 void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
+
+  if(Character->GetType() == kamikazedwarf::StaticType())
+    {
+      ((kamikazedwarf*)Character)->SetMaster(DivineOwner);
+      ((holybook*)Character->GetWielded())->SetOwnerGod(DivineOwner);
+    }
 }
