@@ -433,6 +433,7 @@ class CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual ulong GetBaseEmitation() const;
   virtual bool CanCreateBodyPart(ushort) const;
+  virtual const std::string& GetStandVerb() const { return character::GetStandVerb(); }
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;
@@ -470,6 +471,7 @@ class CHARACTER
   virtual bool BodyPartIsVital(ushort) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool CanCreateBodyPart(ushort) const;
+  virtual const std::string& GetStandVerb() const { return character::GetStandVerb(); }
  protected:
   virtual void CreateCorpse(lsquare*) { SendToHell(); }
 );

@@ -136,29 +136,6 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
-	/*Inventory == thunderhammer;*/
-
-	/*DefaultArmStrength = 25;
-	DefaultLegStrength = 25;
-	DefaultDexterity = 20;
-	DefaultAgility = 20;
-	DefaultEndurance = 20;
-	DefaultPerception = 10;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = MITHRIL helmet;
-	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL);
-	Cloak = PHOENIX_FEATHER cloak;
-	Belt = STEEL belt;
-	RightWielded = saalthul;
-	LeftWielded = saalthul;
-	RightGauntlet = PHOENIX_FEATHER gauntlet;
-	RightBoot = MITHRIL boot;
-	KnownCWeaponSkills = { 7, SMALL_SWORDS, LARGE_SWORDS, BLUNT_WEAPONS, AXES, POLE_ARMS, WHIPS, SHIELDS; }
-	CWeaponSkillHits = { 7, 2000, 2000, 2000, 2000, 2000, 2000, 2000; }
-	Inventory = { 5, mjolak, turox, vermis, whipofthievery, shield { MainMaterial = VALPURIUM; } }*/
 }
 
 petrus
@@ -2268,6 +2245,7 @@ angel
 	HostileReplies == "\"With the power of @Gd, I shall slay thee, sinner!\"";
 	FriendlyReplies == "\"@Gd be with you, mortal.\"";
 	DeathMessage = "@Dd leaves this mortal plane behind.";
+	StandVerb = "flying";
 }
 
 kamikazedwarf
