@@ -74,7 +74,7 @@ class ITEM
  public:
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual void Be() { }
+  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -88,7 +88,7 @@ class ITEM
   virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual void Be() { }
+  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -165,7 +165,7 @@ class ITEM
   virtual bool IsGorovitsFamilyRelic() const { return true; }
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual void Be() { }
+  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -179,7 +179,7 @@ class ITEM
   virtual bool IsGorovitsFamilyRelic() const { return true; }
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual void Be() { }
+  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -246,7 +246,7 @@ class ITEM
   goldeneagleshirt,
   bodyarmor,
  public:
-  virtual void Be() { }
+  //virtual void Be() { }
   virtual bool IsGoldenEagleShirt() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
   virtual bool AllowAlphaEverywhere() const { return true; }

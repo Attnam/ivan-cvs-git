@@ -3196,12 +3196,23 @@ void darkmage::GetAICommand()
 
 	  break;
 	case ARCH_MAGE:
-	  switch(RAND() % 20)
+	  switch(3)//RAND() % 20)
 	    {
 	    case 0:
 	    case 1:
 	    case 2: Square->DrawParticles(RED); Square->FireBall(Beam); break;
-	    case 3: NearestEnemy->DuplicateToNearestSquare(this, CHANGE_TEAM); break;
+	    case 3:
+	      {
+		character* Char = NearestEnemy->DuplicateToNearestSquare(this, CHANGE_TEAM|MIRROR|(1000 << LE_BASE_SHIFT)|(1000 << LE_RAND_SHIFT));
+
+		if(Char)
+		  {
+		    if(Char->CanBeSeenByPlayer())
+		      ADD_MESSAGE("%s materializes!", Char->CHAR_NAME(INDEFINITE));
+
+		    break;
+		  }
+	      }
 	    case 4:
 	    case 5: Square->DrawParticles(RED); Square->Slow(Beam); break;
 	    case 6: Square->DrawParticles(RED); Square->Teleport(Beam); break;
@@ -3227,7 +3238,7 @@ void darkmage::GetAICommand()
 		    Golem->PutTo(Where);
 
 		    if(Golem->CanBeSeenByPlayer())
-		      ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(DEFINITE));
+		      ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
 
 		    Golem->GetLSquareUnder()->DrawParticles(RED); 
 		  }

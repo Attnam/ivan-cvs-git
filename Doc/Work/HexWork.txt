@@ -1,0 +1,27 @@
+Pakkausalgoritmi
+Savefilet nousee nykyään kymmeniin megoihin, maailmankartan levelittämisen
+jälkeen satoihin. Onneksi hexaeditointi osoittaa joidenkin savejen tavujen
+(0 ja 255) ja eräiden niiden ryhmien olevan hyvin toistuvia. Tee
+pakkausalgoritmi, joka hyödyntää tätä. Kovin monimutkainen sen ei tarvitse
+olla, koska senhän pitää yhtä aikaa olla nopea (ehdotan, että autosaveja
+ei kuitenkaan pakata, vaan vain levelistä ja gamesta poistettaessa tehdyt).
+Esimerkiksi voit tehdä taulukon käytetyistä tavuista ja yhdistelmistä ja
+korvata ne lyhyemmillä bittijonoilla tai käyttää niihin RLE-pakkausta.
+Luulen, että std::map/std::set voi olla hyödyllistä muistuttaa mieleen.
+FeLibin tiedostoluokkien käyttö on mahdollista, muttei pakollista, koska
+pakkaus on erillinen toimitus. Voit tehdä omaan ohjelmaan testin tai
+rakentaa suoraan savesysteemiin.
+
+Nimigeneraatioalgoritmi (copypaste viime vuoden assignmentista)
+Tätä varten luot erillisen ohjelman nimeltä Intelligent Random Imitation
+Name Assembler (IRINA), joka analysoi tiedoston, jossa on nimiä ja luo
+niiden perusteella databasen, jonka avulla voi nopeasti luoda lisää
+samankaltaisia. Ivan sitten lataa tuon databasen. Irinan kannattanee pystyä
+myös tulostamaan noita uusia nimiä suoraan kehotteeseen, jotta voit testata
+tuota ennen Ivaniin liittämistä. Algoritmit saat päättää itse, mutta jos et
+parempaa keksi niin ehdotan Markovin ketjuja, eli tietty kirjain seuraa
+tiettyä N kirjaimen jonoa aina tietyllä todennäköisyydellä, ja N on
+käyttäjän antama tai ehkä satunnainen. Databasen luominen saa olla miten
+hidasta vain, mutta sen lataaminen ja nimien tuottaminen siitä on syytä olla
+kohtuullisen tehokasta. Pääalgoritmit pitäisi tulla FeLibiin jotta molemmat
+ohjelmat pystyy käyttämään niitä.

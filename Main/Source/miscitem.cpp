@@ -2827,7 +2827,26 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
 	if(!Item.empty())
 	  {
-	    int MaterialConfig = Item[0]->GetMainMaterial()->GetConfig();
+	    material* Main = Item[0]->GetMainMaterial();
+	    material* Sec = Item[0]->GetSecondaryMaterial();
+	    bool MainPossible = Main->IsGolemMaterial();
+	    bool SecPossible = Sec && Sec->GetVolume()
+			    && Sec->IsGolemMaterial()
+			    && !Sec->IsSameAs(Main);
+
+	    if(!MainPossible && !SecPossible)
+	      {
+		ADD_MESSAGE("You can't use that for golem creation.");
+		continue;
+	      }
+
+	    if(MainPossible && SecPossible)
+	      if(game::BoolQuestion(CONST_S("Use main material? [Y/n]"), YES))
+		SecPossible = false;
+	      else
+		MainPossible = false;
+
+	    int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
 	    golem* Golem = new golem(MaterialConfig);
 	    vector2d Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
 	    Item[0]->RemoveFromSlot();
@@ -2845,7 +2864,7 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 		Golem->PutTo(Where);
 
 		if(Golem->CanBeSeenByPlayer())
-		  ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(DEFINITE));
+		  ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
 
 		Golem->GetLSquareUnder()->DrawParticles(RED);
 	      }
