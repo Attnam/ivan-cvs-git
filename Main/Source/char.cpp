@@ -3236,7 +3236,7 @@ void character::Regenerate()
 
       EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, (BodyPart->GetMaxHP() << 5) / BodyPart->GetHP(), 1 << 12);
+      EditExperience(ENDURANCE, (BodyPart->GetMaxHP() << 1) / BodyPart->GetHP(), 1 << 20);
     }
 }
 
@@ -7517,6 +7517,10 @@ void character::RegenerateStamina()
 
   if(Stamina > MaxStamina)
     Stamina = MaxStamina;
+
+  if(IsPlayer() && StateIsActivated(PANIC)
+  && GetTirednessState() != FAINTING)
+    game::SetPlayerIsRunning(true);
 }
 
 void character::BeginPanic()
@@ -7786,5 +7790,5 @@ void character::SignalDisappearance()
 
 bool character::HornOfFearWorks() const
 {
-  return CanHear() && GetPanicLevel() >= RAND() % 33;
+  return CanHear() && GetPanicLevel() > RAND() % 33;
 }

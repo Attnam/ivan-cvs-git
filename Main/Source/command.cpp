@@ -1564,6 +1564,14 @@ bool commandsystem::Possess(character* Char)
 
 bool commandsystem::ToggleRunning(character*)
 {
+  if(game::PlayerIsRunning()
+  && PLAYER->StateIsActivated(PANIC)
+  && PLAYER->GetTirednessState() != FAINTING)
+    {
+      ADD_MESSAGE("You are too scared to move at normal pace.");
+      return false;
+    }
+
   game::SetPlayerIsRunning(!game::PlayerIsRunning());
   return false;
 }
