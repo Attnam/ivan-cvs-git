@@ -448,12 +448,12 @@ bool fountain::Drink(character* Drinker)
 			    if(Monster->IsPet())
 			      {
 				if(Monster->CanBeSeenByPlayer())
-				  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+				  ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
 			      }
 			    else
 			      {
 				if(Monster->CanBeSeenByPlayer())
-				  ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
+				  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
 			      }
 			  }
 			else
