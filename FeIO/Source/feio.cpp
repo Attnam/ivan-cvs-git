@@ -135,10 +135,10 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
 		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
-
+		
 		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 8 || LastKey == 13))
 			LastKey = GETKEY();
-
+		
 		if(LastKey == 8)
 		{
 			if(Input.length())
@@ -151,7 +151,12 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 			if(Input.length() >= MinLetters)
 				break;
 			else
+			{
+				FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 50, Color, "Too short!");
+				graphics::BlitDBToScreen();
+				GETKEY();
 				continue;
+			}
 
 		if(Input.length() <= MaxLetters)
 			Input += LastKey;

@@ -531,18 +531,23 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 	return false;	
 }
 
-bool platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 {
-	if (IsShown)
-		ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
+	if(rand() % 20 + GetArmorValue() * 2 < Strength * 5 + rand() % 20)
+	{
+		if (IsShown)
+			ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
 
-	ItemStack->RemoveItem(ItemStack->SearchItem(this));
-	item* Plate = new brokenplatemail(false);
-	Plate->InitMaterials(GetMaterial(0));
-	ItemStack->AddItem(Plate);
-	SetMaterial(0,0);
-	SetExists(false);
-	return true;
+		ItemStack->RemoveItem(ItemStack->SearchItem(this));
+		item* Plate = new brokenplatemail(false);
+		Plate->InitMaterials(GetMaterial(0));
+		ItemStack->AddItem(Plate);
+		SetMaterial(0,0);
+		SetExists(false);
+		return true;
+	}
+	else
+		return false;
 }
 
 void brokenbottle::GetStepOnEffect(character* Stepper)

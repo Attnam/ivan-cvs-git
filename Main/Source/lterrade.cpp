@@ -378,3 +378,15 @@ void pool::SitOn(character*)
 {
 	ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
 }
+
+void stairsup::StepOn(character* Stepper)
+{
+	if(Stepper->GetIsPlayer()) 
+		ADD_MESSAGE("There is stairway leading upwards here.");
+}
+
+void stairsdown::StepOn(character* Stepper)
+{
+	if(Stepper->GetIsPlayer()) 
+		ADD_MESSAGE("There is stairway leading downwards here.");
+}

@@ -150,6 +150,7 @@ public:
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
 	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
+	virtual void StepOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "stairway upwards"; }
 	virtual std::string NamePlural() const					{ return "stairways upwards"; }
@@ -168,6 +169,7 @@ public:
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
 	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
+	virtual void StepOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "stairway downwards"; }
 	virtual std::string NamePlural() const					{ return "stairways downwards"; }

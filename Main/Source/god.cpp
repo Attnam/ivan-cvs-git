@@ -446,7 +446,7 @@ void silva::PrayBadEffect()
 void loricatus::PrayGoodEffect()
 {
 	std::string OldName;
-
+	
 	if(game::GetPlayer()->GetWielded())
 		if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
 		{
@@ -458,6 +458,23 @@ void loricatus::PrayGoodEffect()
 			ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	else
 		ADD_MESSAGE("You feel a slight tingling in your hands.");
+	for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); c++)
+	{
+		if(game::GetPlayer()->GetStack()->GetItem(c)->GetType() == brokenplatemail::StaticType())
+		{
+			bool Worn = false;
+			ushort JustCreated;
+
+			if(game::GetPlayer()->GetTorsoArmor())
+				Worn = true;
+
+			game::GetPlayer()->GetStack()->RemoveItem(c);			
+			JustCreated = game::GetPlayer()->GetStack()->AddItem(new platemail);
+			if(Worn)
+				game::GetPlayer()->SetTorsoArmor(game::GetPlayer()->GetStack()->GetItem(c));
+			ADD_MESSAGE("Loricatus fixes your broken torso armor.");
+		}
+	}
 }
 
 void loricatus::PrayBadEffect()
