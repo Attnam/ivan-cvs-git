@@ -25,7 +25,7 @@ void can::PositionedDrawToTileBuffer(uchar) const
 
 item* can::TryToOpen(character* Opener, stack* Stack)
 {
-	if(Opener->GetStrength() >= RAND() % 10 + 1)
+	if(Opener->GetStrength() > RAND() % 30)
 	{
 		item* Item = new lump(GetMaterial(1));
 		Stack->AddItem(Item);
@@ -45,7 +45,7 @@ item* can::TryToOpen(character* Opener, stack* Stack)
 	else
 	{
 		if(Opener->GetIsPlayer())
-			ADD_MESSAGE("The can is shut tight and you are too weak.");
+			ADD_MESSAGE("The can is shut tight.");
 
 		return 0;
 	}
@@ -111,6 +111,9 @@ bool potion::Consume(character* Eater, float Amount)
 
 		GetSquareUnder()->SendNewDrawRequest();
 		GetSquareUnder()->SendMemorizedUpdateRequest();
+
+		if(GetSquareUnder()->CanBeSeen())
+			GetSquareUnder()->UpdateMemorized();
 	}
 
 	return false;

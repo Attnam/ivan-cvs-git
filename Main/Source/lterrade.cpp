@@ -25,12 +25,13 @@ bool door::Open(character* Opener)
 		{
 			if(Opener->GetIsPlayer())
 				ADD_MESSAGE("The door is locked.");
-			
-			
-			return true;
+
+			return false;
 		}
 		else if(RAND() % 20 < Opener->GetStrength())
 		{
+			MakeWalkable();
+
 			if(Opener->GetIsPlayer())
 				ADD_MESSAGE("You open the door.");
 			else if(GetLevelSquareUnder()->CanBeSeen())
@@ -40,30 +41,30 @@ bool door::Open(character* Opener)
 				else
 					ADD_MESSAGE("Something opens the door.");
 			}
+
+			return true;
 		}
 		else
 		{
 			if(Opener->GetIsPlayer())
 				ADD_MESSAGE("The door resists.");
 			else if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
+				if(Opener->GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
+
 			return true;
 		}
-
 	}
 	else
 	{
-		if(Opener == game::GetPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
+		if(Opener->GetIsPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
 		return false;
 	}
-
-	MakeWalkable();
-	return true;
 }
 
 bool door::Close(character* Closer)
 {
-	if(Closer == game::GetPlayer())
+	if(Closer->GetIsPlayer())
 		if(GetIsWalkable())
 			ADD_MESSAGE("You close the door.");
 		else
@@ -137,7 +138,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 	}
 	else
 	{
-		if(Who == game::GetPlayer())
+		if(Who->GetIsPlayer())
 		{
 			std::vector<character*> TempPlayerGroup;
 
@@ -229,7 +230,7 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	}
 	else
 	{
-		if(Who == game::GetPlayer())
+		if(Who->GetIsPlayer())
 			ADD_MESSAGE("You are at the bottom.");
 
 		return false;
@@ -240,31 +241,38 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
 	if(!GetIsWalkable()) 
 	{
-		if(Strength > RAND() % 30)
+		if(!IsLocked && Strength > RAND() % 20)
 		{
 			if(ShowOnScreen) ADD_MESSAGE("The door opens.");
 			MakeWalkable();
-			IsLocked = false;
 		}
-		else
+		else if(Strength > RAND() % 40)
 		{
 			//if(ShowOnScreen) ADD_MESSAGE("The door breaks.");
 			bool NewLockedStatus;
+
 			if(IsLocked && RAND() % 2) // _can't really think of a good formula for this... 
 			{			//Strength isn't everything
-				if(ShowOnScreen) ADD_MESSAGE("The lock breaks.");
+				if(ShowOnScreen)
+					ADD_MESSAGE("The lock breaks and the door is damaged.");
+
 				NewLockedStatus = false;
 			}
 			else
 			{
 				if(ShowOnScreen)
 					ADD_MESSAGE("The door is damaged.");
+
 				NewLockedStatus = IsLocked;
 			}
+
 			brokendoor* Temp;
 			GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
 			Temp->SetIsLocked(NewLockedStatus);
 		}
+		else
+			if(ShowOnScreen)
+				ADD_MESSAGE("The door won't budge!");
 
 		// The door may have been destroyed here, so don't do anything!
 	}
@@ -397,12 +405,12 @@ std::string door::Name(uchar Case) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
-			return std::string(IsOpen ? "open " : "closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+			return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string(IsOpen ? "the open " : "the closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+				return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
 			else
-				return std::string(IsOpen ? "an open " : "a closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+				return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
 	else
 		if(!(Case & DEFINEBIT))
 			return GetMaterial(0)->Name()  + " " + NamePlural();
@@ -517,36 +525,39 @@ void fountain::DryOut()
 
 void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
-	if(!GetIsWalkable()) 
-	{
-		if(IsLocked) 
+	if(!GetIsWalkable())
+		if(IsLocked)
 		{
-			if(Strength > RAND() % 50)
+			if(Strength > RAND() % 30)
 			{
 				if(ShowOnScreen)
 					ADD_MESSAGE("The doors opens from the force of your kick.");
+
 				IsLocked = false;
 				MakeWalkable();
 			}
 			else if(Strength > RAND() % 20)
 			{
-				ADD_MESSAGE("The lock breaks from the force of your kick.");
+				if(ShowOnScreen)
+					ADD_MESSAGE("The lock breaks from the force of your kick.");
+
 				IsLocked = false;
 			}
 			else
-				ADD_MESSAGE("The door won't budge!");
+				if(ShowOnScreen)
+					ADD_MESSAGE("The door won't budge!");
 		}
 		else
-			if(Strength > RAND() % 100)
+			if(Strength > RAND() % 20)
 			{
-				ADD_MESSAGE("The broken door opens.");
+				if(ShowOnScreen)
+					ADD_MESSAGE("The broken door opens.");
+
 				MakeWalkable();
 			}
 			else
-			{
-				ADD_MESSAGE("The door resists.");
-			}
-	}
+				if(ShowOnScreen)
+					ADD_MESSAGE("The door resists.");
 }
 
 bool door::ReceiveStrike()
@@ -604,7 +615,10 @@ bool altar::Polymorph(character*)
 	GetSquareUnder()->SetDescriptionChanged(true);
 
 	if(GetSquareUnder()->CanBeSeen())
+	{
 		GetSquareUnder()->UpdateMemorizedDescription();
+		GetSquareUnder()->UpdateMemorized();
+	}			
 
 	return true;	
 }

@@ -27,7 +27,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 	else
 		if(!game::GetCurrent() && game::GetWizardMode())
 		{
-			if(Who == game::GetPlayer())
+			if(Who->GetIsPlayer())
 			{
 				std::vector<character*> TempPlayerGroup;
 
@@ -62,7 +62,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 		}
 		else
 		{
-			if(Who == game::GetPlayer())
+			if(Who->GetIsPlayer())
 				ADD_MESSAGE("You can't go up.");
 
 			return false;
@@ -86,7 +86,7 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
 	}
 	else
 	{
-		if(Who == game::GetPlayer())
+		if(Who->GetIsPlayer())
 			ADD_MESSAGE("You can't go down.");
 
 		return false;
@@ -119,7 +119,7 @@ void overlevelterrain::DrawToTileBuffer() const
 
 bool levelterrain::Open(character* Opener)
 {
-	if(Opener == game::GetPlayer())
+	if(Opener->GetIsPlayer())
 		ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
 
 	return false;
@@ -127,7 +127,7 @@ bool levelterrain::Open(character* Opener)
 
 bool levelterrain::Close(character* Closer)
 {
-	if(Closer == game::GetPlayer())
+	if(Closer->GetIsPlayer())
 		ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
 
 	return false;

@@ -56,7 +56,7 @@ void pepsi::HitEffect(character* Enemy)
 void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	if(Amount >= Volume)
-		if(Eater == game::GetPlayer())
+		if(Eater->GetIsPlayer())
 			ADD_MESSAGE("You feel like a hippie.");
 		else
 			if(GetMotherObject()->GetLevelSquareUnder()->CanBeSeen())

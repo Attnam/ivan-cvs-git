@@ -134,7 +134,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 		SetHP(GetHP() - Damage);
 
-		if(GetTorsoArmor() && RAND() % 2 && GetTorsoArmor()->ImpactDamage(float(Enemy->GetAttackStrength()) / 10000 + RAND() % 10 - RAND() % 10, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
+		if(GetTorsoArmor() && RAND() % 2 && GetTorsoArmor()->ImpactDamage(Enemy->GetStrength(), GetLevelSquareUnder()->CanBeSeen(), GetStack()))
 			SetTorsoArmor(GetStack()->GetItem(GetStack()->GetItems() - 1));
 
 		SpillBlood(3 + RAND() % 3);
@@ -1754,7 +1754,7 @@ bool character::Look()
 				}
 
 				if(game::GetWizardMode())
-					ADD_MESSAGE("(danger: %d)", Character->MaxDanger());
+					ADD_MESSAGE("(danger: %d)", Character->CurrentDanger());
 			}
 		}
 		else
@@ -2725,11 +2725,11 @@ bool character::CheckForDoors()
 		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverLevelTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
 		{
-			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
+			/*if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
 				if(GetLevelSquareUnder()->CanBeSeen())
 					ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
 				else
-					ADD_MESSAGE("Something opens the door.");
+					ADD_MESSAGE("Something opens the door.");*/
 
 			return true;
 		})

@@ -66,6 +66,9 @@ ushort stack::AddItem(item* ToBeAdded)
 
 		GetSquareTrulyUnder()->SendNewDrawRequest();
 		GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+
+		if(GetSquareTrulyUnder()->CanBeSeen())
+			GetSquareTrulyUnder()->UpdateMemorized();
 	}
 
 	return GetItems() - 1;
@@ -122,6 +125,9 @@ item* stack::RemoveItem(ushort Index)
 
 			GetSquareTrulyUnder()->SendNewDrawRequest();
 			GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+
+			if(GetSquareTrulyUnder()->CanBeSeen())
+				GetSquareTrulyUnder()->UpdateMemorized();
 		}
 
 		return Removed;
@@ -181,6 +187,9 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
 
 			if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
 				GetSquareUnder()->UpdateMemorizedDescription();
+
+			if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+				GetSquareTrulyUnder()->UpdateMemorized();
 		}
 		else
 		{
@@ -201,6 +210,9 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
 
 			if(MoveTo->GetSquareUnder() && MoveTo->GetSquareUnder()->CanBeSeen())
 				MoveTo->GetSquareUnder()->UpdateMemorizedDescription();
+
+			if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+				GetSquareTrulyUnder()->UpdateMemorized();
 		}
 
 	return MoveTo->GetItem(ToBeReturned);
