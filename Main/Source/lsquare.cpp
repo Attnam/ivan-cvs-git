@@ -336,6 +336,8 @@ void levelsquare::Save(outputfile& SaveFile) const
 
 void levelsquare::Load(inputfile& SaveFile)
 {
+	game::SetSquareInLoad(this);
+
 	GetStack()->Load(SaveFile); // This must be before square::Load!
 
 	square::Load(SaveFile);

@@ -121,7 +121,7 @@ ushort character::CalculateArmorModifier() const
 
 uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, character* Enemy)
 {
-	DeActivateVoluntaryStates();
+	DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
 
 	if(!(rand() % 20))
 	{
@@ -139,7 +139,8 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 
 		if(rand() % 4) SpillBlood(rand() % 3);
 
-		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE))) { return HAS_DIED; }
+		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
+			return HAS_DIED;
 
 		return HAS_HIT;
 	}
@@ -169,7 +170,8 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 
 			SetHP(GetHP() - Damage);
 
-			if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE))) { return HAS_DIED; }
+			if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
+				return HAS_DIED;
 
 			return HAS_HIT;
 		}
@@ -432,7 +434,7 @@ bool character::ConsumeItem(item* ToBeEaten, stack* ItemsStack)
 		{
 			SetConsumingCurrently(ToBeEaten);
 			ActivateState(EATING);
-			StateCounter[EATING] = 100;
+			StateCounter[EATING] = 500;
 			return true;
 		}
 	}
@@ -1315,11 +1317,12 @@ bool character::RaiseStats()
 {
 	if(game::GetWizardMode())
 	{
-	Strength += 10;   // I won't touch these just in case we'd do something
-	Endurance += 10;  // really odd with GetStrength() etc.
-	Agility += 10;
-	Perception += 10;
-	HP = Endurance << 1;
+		Strength += 10;   // I won't touch these just in case we'd do something
+		Endurance += 10;  // really odd with GetStrength() etc.
+		Agility += 10;
+		Perception += 10;
+		HP = Endurance << 1;
+		game::GetCurrentArea()->UpdateLOS();
 	}
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
@@ -1336,6 +1339,7 @@ bool character::LowerStats()
 		Agility -= 10;
 		Perception -= 10;
 		HP = Endurance << 1;
+		game::GetCurrentArea()->UpdateLOS();
 	}
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
@@ -1616,16 +1620,18 @@ void character::SpillBlood(uchar HowMuch)
 	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),5,40);
 }
 
-void character::ReceiveSchoolFoodEffect(long)
+void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 {
 	if(GetIsPlayer())
-		ADD_MESSAGE("Yuck! This stuff tastes like vomit and old mousepads.");
+		ADD_MESSAGE("Yuck! This stuff feels like vomit and old mousepads.");
 
-	SetHP(GetHP() - 1 - rand() % 5);
-	Vomit(2);
-	CheckDeath("was poisoned by school food");
+	SetHP(GetHP() - SizeOfEffect / 100);
+	Vomit(SizeOfEffect / 250);
 
-	if(!(rand() % 5))
+	if(CheckDeath("was poisoned by school food"))
+		return;
+
+	if(!(rand() % 5) && SizeOfEffect / 500)
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
@@ -1633,7 +1639,7 @@ void character::ReceiveSchoolFoodEffect(long)
 			if(SquareUnder->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
-		SetEndurance(GetEndurance() + 1 + rand() % 5);
+		SetEndurance(GetEndurance() + SizeOfEffect / 500);
 	}
 }
 
@@ -1642,7 +1648,7 @@ void character::ReceiveNutrition(long SizeOfEffect)
 	SetNP(GetNP() + SizeOfEffect);
 }
 
-void character::ReceiveOmleUrineEffect(long)
+void character::ReceiveOmleUrineEffect(long SizeOfEffect)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
@@ -1656,11 +1662,19 @@ void character::ReceiveOmleUrineEffect(long)
 
 void character::ReceivePepsiEffect(long SizeOfEffect)
 {
+	if(GetIsPlayer())
+		ADD_MESSAGE("Urgh. You feel your guruism fading away.");
+
 	SetHP(GetHP() - short(sqrt(SizeOfEffect / 20)));
-	CheckDeath("was poisoned by pepsi");
+
 	if(short(GetPerception() - short(sqrt(SizeOfEffect / 20))) > 0)
 		SetPerception(GetPerception() - short(sqrt(SizeOfEffect / 20)));
-	else SetPerception(1);
+	else
+		SetPerception(1);
+
+	if(CheckDeath("was poisoned by pepsi"))
+		return;
+
 	if(GetIsPlayer())
 		game::DoEvilDeed(SizeOfEffect / 10);
 }
@@ -1668,11 +1682,13 @@ void character::ReceivePepsiEffect(long SizeOfEffect)
 void character::Darkness(long SizeOfEffect)
 {
 	ushort x = 30 + rand() % SizeOfEffect;
+
 	if(GetIsPlayer())
 		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
 	else
 		if(SquareUnder->CanBeSeen())
 			ADD_MESSAGE("Suddenly %s looks like a navastater.", CNAME(DEFINITE));
+
 	if(GetStrength() - x / 30 > 1) SetStrength(GetStrength() - x / 30); // Old comment was about eating... This
 	else SetStrength(1);                                        // can happen with drinkin, hitting etc.
 	if(GetEndurance() - x / 30 > 1) SetEndurance(GetEndurance() - x / 30);
@@ -1858,7 +1874,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 		if(game::GetWizardMode())
 			ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 	}
-	Thingy->ImpactDamage(Speed, GetSquareUnder()->CanBeSeen(), GetLevelSquareUnder()->GetStack());
+
 	SpillBlood(1 + rand() % 1);
 	CheckDeath(std::string("died by thrown ") + Thingy->CNAME(INDEFINITE) );
 }
@@ -1947,6 +1963,7 @@ bool character::Apply()
 	{
 		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
 			return false;
+
 		if(!GetWielded()->GetExists()) 
 			SetWielded(0);
 	}
@@ -2018,6 +2035,8 @@ bool character::Polymorph()
 	if(NewForm->CanWear())
 		NewForm->SetTorsoArmor(GetTorsoArmor());
 
+	NewForm->SetTeam(GetTeam());
+
 	if(GetIsPlayer())
 	{
 		ADD_MESSAGE("Your body glows in a crimson ligth. You transform into %s!", NewForm->CNAME(INDEFINITE));
@@ -2025,7 +2044,6 @@ bool character::Polymorph()
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
 		NewForm->SetStateCounter(POLYMORPHED, 1000);
-		//Team should be changed
 	}
 	else
 		SetExists(false);
@@ -2085,12 +2103,11 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 void character::FallTo(vector2d Where, bool OnScreen)
 {
 	SetAP(GetAP() - 500);
+
 	if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(Where)->GetCharacter())
 	{
 		Move(Where, true);
 	}
-
-
 
 	if(!game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
 	{
@@ -2101,9 +2118,12 @@ void character::FallTo(vector2d Where, bool OnScreen)
 			else
 				ADD_MESSAGE("%s hits %s head on the wall.", Name(DEFINITE).c_str(), game::PossessivePronoun(GetSex()));
 		}
+
 		SetHP(GetHP() - rand() % 2);
 		CheckDeath("killed by hitting a wall");
-	}	
+	}
+
+	// Place code that handles characters bouncing to each other here
 }
 
 bool character::CheckCannibalism(ushort What)
@@ -2151,7 +2171,15 @@ void character::Faint()
 void character::FaintHandler()
 {
 	if(!(StateCounter[FAINTED]--))
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You wake up.");
+		else
+			if(GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s wakes up.", CNAME(DEFINITE));
+
 		EndFainted();
+	}
 }
 
 void character::EatHandler()
@@ -2163,6 +2191,12 @@ void character::EatHandler()
 		if(!ToBeDeleted)
 			ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
 
+		if(GetIsPlayer())
+			ADD_MESSAGE("You finish eating %s.", ToBeDeleted->CNAME(DEFINITE));
+		else
+			if(GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), ToBeDeleted->CNAME(DEFINITE));
+
 		EndEating();
 
 		delete ToBeDeleted;
@@ -2171,7 +2205,10 @@ void character::EatHandler()
 	if(StateIsActivated(EATING) && !(StateCounter[EATING]--))
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("You have eaten for a long time now.");
+			ADD_MESSAGE("You have eaten for a long time now. You stop eating.");
+		else
+			if(GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
 		EndEating();
 	}
@@ -2180,33 +2217,23 @@ void character::EatHandler()
 void character::PolymorphHandler()
 {
 	if(!(StateCounter[POLYMORPHED]--))
+	{
+		ADD_MESSAGE("You return to your true form.");
+
 		EndPolymorph();
+	}
 }
 
 void character::EndFainted()
 {
 	if(StateIsActivated(FAINTED))
-	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("You wake up.");
-		else
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s wakes up.", CNAME(DEFINITE));
-
 		DeActivateState(FAINTED);
-	}
 }
 
 void character::EndEating()
 {
 	if(StateIsActivated(EATING))
 	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("You finish consuming %s.", GetConsumingCurrently()->CNAME(DEFINITE));
-		else
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s finishes consuming %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
-
 		DeActivateState(EATING);
 
 		SetConsumingCurrently(0);
@@ -2217,8 +2244,6 @@ void character::EndPolymorph()
 {
 	if(StateIsActivated(POLYMORPHED))
 	{
-		ADD_MESSAGE("You return to your true form.");
-
 		SetExists(false);
 
 		GetSquareUnder()->RemoveCharacter();
@@ -2240,8 +2265,14 @@ bool character::CanMove()
 		return true;
 }
 
-void character::DeActivateVoluntaryStates()
+void character::DeActivateVoluntaryStates(std::string Reason)
 {
+	if(StateIsActivated(EATING) && Reason != "")
+		ADD_MESSAGE("%s.", Reason.c_str());
+
+	if(StateIsActivated(EATING))
+		ADD_MESSAGE("You stop eating.");
+
 	EndEating();
 }
 
@@ -2257,7 +2288,7 @@ void character::StateAutoDeactivation()
 		if(Character && ((GetIsPlayer() && Character->SquareUnder->CanBeSeen()) || (!GetIsPlayer() && Character->SquareUnder->CanBeSeenFrom(GetPos()))))
 			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 			{
-				DeActivateVoluntaryStates();
+				DeActivateVoluntaryStates(Character->Name(DEFINITE) + " seems to be hostile");
 				return;
 			}
 	});

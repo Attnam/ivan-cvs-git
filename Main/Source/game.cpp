@@ -964,20 +964,6 @@ void game::Hostility(team* Attacker, team* Defender)
 			}
 }
 
-/*team* game::CreateNewTeam()
-{
-	team* NewTeam = new team;
-
-	NewTeam->SetID(Team.size());
-
-	for(ushort c = 0; c < Team.size(); ++c)
-		GetTeam(c)->SetRelation(NewTeam, NEUTRAL);
-
-	Team.push_back(NewTeam);
-
-	return NewTeam;
-}*/
-
 void game::CreateTeams()
 {
 	ushort c;

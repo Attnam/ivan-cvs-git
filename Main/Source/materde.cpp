@@ -29,7 +29,9 @@ void darkfrogflesh::HitEffect(character* Enemy)
 
 void omleurine::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveOmleUrineEffect(Volume > Amount ? Amount : Volume);
+	if(Amount >= Volume)
+		Eater->ReceiveOmleUrineEffect(Volume > Amount ? Amount : Volume);
+
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -53,13 +55,16 @@ void pepsi::HitEffect(character* Enemy)
 
 void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->SetTeam(game::GetPlayer()->GetTeam());
+	if(Amount >= Volume)
+	{
+		Eater->SetTeam(game::GetPlayer()->GetTeam());
 
-	if(Eater == game::GetPlayer())
-		ADD_MESSAGE("You feel like a hippie.");
-	else
-		//if(GetLevelSquareUnder()->CanBeSeen()) // This is commented because it may crash
-			ADD_MESSAGE("%s barks to you happily.", Eater->CNAME(DEFINITE));
+		if(Eater == game::GetPlayer())
+			ADD_MESSAGE("You feel like a hippie.");
+		else
+			//if(GetLevelSquareUnder()->CanBeSeen()) // This is commented because it may crash
+				ADD_MESSAGE("%s barks to you happily.", Eater->CNAME(DEFINITE));
+	}
 
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);

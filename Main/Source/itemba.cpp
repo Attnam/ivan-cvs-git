@@ -102,15 +102,12 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 		}
 		else
 		{
-			vector2d OldPos = Pos;
 			Pos += game::GetMoveVector(Direction);
 			Speed *= 0.7f;
 			if(Speed < 0.5)
 				break;
 			Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 			clock_t StartTime = clock();
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->ReEmitate();
-			game::GetCurrentLevel()->GetLevelSquare(OldPos)->ReEmitate();
 			game::DrawEverything(false);
 			Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
 
@@ -120,7 +117,10 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 					game::GetPlayer()->GetTeam()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->GetTeam());
 
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
-					break;	
+				{
+					Breaks = true;
+					break;
+				}
 			}
 
 			while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);

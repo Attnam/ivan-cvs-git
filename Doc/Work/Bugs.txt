@@ -1,29 +1,20 @@
 Sokeaksi tuleminen pepsistä bugittaa.
-Stackien potkiminen.
 Savekansion autoluonti.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
 The Lone Black Man of the Mountain Bug.
-StringQuestion is drawn over the messages.
-Dying in the worldmap crashes the game.
 Fullscreen + F10.
-Ligths go off when polymorph happens.
 Ligths should be updated when terrain changes.
 Material volume is undefined in script created instances.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 Show messages may show the same page twice. (not sure if this exists anymore)
 Various graphics have become buggy after the Material Color Change.
 "You can't apply something that you wield!"
-Game crashes when a brokable item hits a monster.
 Felist crashes when an empty list ougth to be drawn.
 Dark frog effect is far too high.
 "The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
-Screen isn't updated after an item on the ground has been eaten.
-Kicking has a strange bug with direction! A poleaxe flew inside a wall once. And you could kick it further there! Could not reproduce the problem.
 Farmers can be born inside walls.
-Throwing things outside Attnam's borders results in a horrible crash.
 Residents of Attnam grunt when talked to.
-Omle urine effect is applied twice.
 Single weapon skill's name isn't updated when the name of the item changes.
-Increasing perception in Wizard Mode doesn't update LOS correctly.
 Doggie eating message is shown even if not on LOS.
+Polymorphing one of the residents of Attnam should be a hostile action.
