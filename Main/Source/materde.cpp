@@ -21,7 +21,7 @@ void organicsubstance::Be()
 {
   if(MotherEntity->AllowSpoil())
     {
-      if(++SpoilCounter < GetSpoilModifier())
+      if((SpoilCounter += 25) < GetSpoilModifier())
 	{
 	  if(SpoilCounter << 1 >= GetSpoilModifier())
 	    {
@@ -101,15 +101,15 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount, float NPModifie
       if(Eater->IsPlayer() && GetSpoilLevel() <= 5)
 	ADD_MESSAGE("Ugh. This stuff is slightly spoiled.");
 
-      Eater->BeginTemporaryState(CONFUSED, Max<ushort>(Amount * GetSpoilLevel() * NPModifier / 250000, 1));
+      Eater->BeginTemporaryState(CONFUSED, Amount * GetSpoilLevel() * NPModifier / 25000);
     }
 
-  if(GetSpoilLevel() > 5)
+  if(GetSpoilLevel() > 4)
     {
       if(Eater->IsPlayer())
 	ADD_MESSAGE("Ugh. This stuff is terribly spoiled!");
 
-      Eater->BeginTemporaryState(POISONED, Max<ushort>(Amount * (GetSpoilLevel() - 5) * NPModifier / 50000, 1));
+      Eater->BeginTemporaryState(POISONED, Amount * (GetSpoilLevel() - 4) * NPModifier / 25000);
     }
 
   SetVolume(Volume - Amount);

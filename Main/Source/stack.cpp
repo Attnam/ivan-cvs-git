@@ -447,7 +447,7 @@ ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Vi
 	  ushort Amount = PileVector[p].size();
 
 	  if(Amount > 1)
-	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
+	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
 	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	  return 0xFFFF;

@@ -537,12 +537,16 @@ void petrus::BeTalkedTo()
 				"and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
 				"greatest armor in existence - the Shirt of the Golden Eagle. Elpuri cannot wear\n"
 				"it but he who can is now nearly immortal.\"\n\n"
-				"\"We want you to dive into the cave of gloom and slay the vile frog. Bring Us its head\n"
-				"and We reward thee with freedom. Shouldst thou also find the Shirt, We'll knight thee.\n"
-				"Good luck, and return when thou hast succeeded.\"");
+				"\"We have marked the location of the gloomy cave on thy world map. We want you to dive\n"
+				"into it and slay the vile frog. Bring Us its head and We reward thee with freedom.\n"
+				"Shouldst thou also find the Shirt, We'll knight thee. Good luck, and return when\n"
+				"thou hast succeeded.\"");
 
 	      game::LoadWorldMap();
-	      game::GetWorldMap()->GetWSquare(game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE))->ChangeOWTerrain(new elpuricave);
+
+	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
 	      game::SaveWorldMap();
 	      GetAreaUnder()->SendNewDrawRequest();
 	      ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");

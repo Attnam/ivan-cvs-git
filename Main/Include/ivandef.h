@@ -643,4 +643,6 @@
 
 #define MAX_PRICE 4294967295UL
 
+#define PERMANENT 0xFFFF
+
 #endif

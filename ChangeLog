@@ -1,3 +1,16 @@
+December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a design flaw in the state system that occasionally caused odd permanent
+	  states to be activated
+	* The counter of the confuse effect of spoiled items was usually rounded to zero so
+	  I increased the effect a bit
+	* Esc now works in scroll bar questions
+	* Area around Attnam is now revealed when the game begins and gloomy cave's
+	  environment is uncovered when the Elpuri quest is given
+	* Chameleon added to char.pcx by Kahvi
+	* Better helmet added to item.pcx by Kahvi and slightly made smaller by me
+	* Snake's agility decreased
+
 December 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* quit key changed from q to Q

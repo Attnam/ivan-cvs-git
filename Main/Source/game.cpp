@@ -1066,11 +1066,11 @@ long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
   return Return;
 }
 
-long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
+long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
-  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, TopicColor, Color1, Color2, false, Handler);
+  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, false, Handler);
   DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }

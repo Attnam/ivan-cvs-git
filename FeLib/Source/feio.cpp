@@ -286,7 +286,7 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
   return atoi(Input.c_str());
 }
 
-long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
+long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
 {
   long BarValue = StartValue;
   std::string Input;
@@ -341,8 +341,14 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
       DOUBLE_BUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
+      while(!isdigit(LastKey) && LastKey != KEY_ESC && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
 	LastKey = GET_KEY(false);
+
+      if(LastKey == KEY_ESC)
+	{
+	  BarValue = AbortValue;
+	  break;
+	}
 
       if(LastKey == KEY_BACK_SPACE)
 	{

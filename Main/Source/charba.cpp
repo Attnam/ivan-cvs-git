@@ -831,7 +831,7 @@ bool character::PickUp()
       ushort Amount = PileVector[0].size();
 
       if(Amount > 1)
-	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
+	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
       if(!Amount)
 	return false;
@@ -3922,7 +3922,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
       if(TemporaryState)
 	for(c = 0; c < STATES; ++c)
 	  if(TemporaryState & (1 << c))
-	    TemporaryStateCounter[c] = 0;
+	    TemporaryStateCounter[c] = PERMANENT;
 
       CreateBodyParts(SpecialFlags & NO_PIC_UPDATE);
 
@@ -4316,7 +4316,7 @@ void character::DrawPanel(bool AnimationDraw) const
 
   for(ushort c = 0; c < STATES; ++c)
     if(!StateIsSecret[c] && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & EquipmentState || !TemporaryStateCounter[c] ? BLUE : WHITE, "%s", StateDescription[c].c_str());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateDescription[c].c_str());
 
   if(GetHungerState() == STARVING)
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Starving");
@@ -4541,6 +4541,9 @@ void character::CalculateEquipmentState()
 
 void character::BeginTemporaryState(ushort State, ushort Counter)
 {
+  if(!Counter)
+    return;
+
   ushort Index;
 
   if(State == POLYMORPHED)
@@ -4555,7 +4558,7 @@ void character::BeginTemporaryState(ushort State, ushort Counter)
 
   if(TemporaryStateIsActivated(State))
     {
-      if(GetTemporaryStateCounter(State))
+      if(GetTemporaryStateCounter(State) != PERMANENT)
 	EditTemporaryStateCounter(State, Counter);
     }
   else
@@ -4580,7 +4583,7 @@ void character::HandleStates()
 
   for(ushort c = 0; c < STATES; ++c)
     {
-      if(TemporaryState & (1 << c) && TemporaryStateCounter[c])
+      if(TemporaryState & (1 << c) && TemporaryStateCounter[c] != PERMANENT)
 	{
 	  if(!--TemporaryStateCounter[c])
 	    {

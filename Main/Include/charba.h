@@ -551,7 +551,7 @@ class character : public entity, public id
   virtual void SignalEquipmentRemoval(ushort);
   ushort GetConfig() const { return Config; }
   virtual void BeginTemporaryState(ushort, ushort);
-  virtual void GainIntrinsic(ushort What) { BeginTemporaryState(What, 0); }
+  virtual void GainIntrinsic(ushort What) { BeginTemporaryState(What, PERMANENT); }
   virtual void LoseIntrinsic(ushort);
   void HandleStates();
   virtual void PrintBeginPolymorphControlMessage() const;
@@ -790,7 +790,7 @@ class character : public entity, public id
   long NP, AP;
   bool Player;
   ushort TemporaryState;
-  short TemporaryStateCounter[STATES];
+  ushort TemporaryStateCounter[STATES];
   team* Team;
   vector2d WayPoint;
   ulong Money;

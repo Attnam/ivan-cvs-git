@@ -217,7 +217,7 @@ class game
   static uchar CalculateRoughDirection(vector2d);
   static void SetCurrentEmitterEmitation(ulong What) { CurrentEmitterEmitation = What; }
   static void SetCurrentEmitterPos(vector2d);
-  static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
+  static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
   static void CalculateNextDanger();

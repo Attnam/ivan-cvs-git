@@ -246,6 +246,7 @@ void worldmap::Generate()
 
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
+      RevealEnvironment(AttnamPos, 1);
       SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
       GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
       SetEntryPos(NEW_ATTNAM, NewAttnamPos);
@@ -555,4 +556,13 @@ wsquare* worldmap::GetNeighbourWSquare(vector2d Pos, ushort Index) const
     return 0;
 }
 
+void worldmap::RevealEnvironment(vector2d Pos, ushort Radius)
+{
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, Border, Pos, Radius);
+  ulong LastSeen = Max<ulong>(game::GetLOSTurns(), 1);
 
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      Map[x][y]->SetLastSeen(LastSeen);
+}
