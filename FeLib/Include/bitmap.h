@@ -6,6 +6,7 @@
 #endif
 
 #include <list>
+#include <string>
 
 #include "vector2d.h"
 #include "felibdef.h"
