@@ -1,7 +1,9 @@
 #ifndef __STROVER_H__
 #define __STROVER_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <cstdio>
 #include <string>
@@ -35,11 +37,11 @@ inline std::string operator+ (const char* CString, std::string CppString)
 	return std::string(CString) + CppString;
 }
 
-inline std::string& operator+ (std::string& CppString, const unsigned long& Int)
+inline std::string& operator+ (std::string& CppString, const ulong& Int)
 {
 	char Buffer[12];
 
-	sprintf(Buffer, "%d", Int);
+	sprintf(Buffer, "%d", int(Int));
 
 	CppString += Buffer;
 

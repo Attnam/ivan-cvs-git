@@ -128,7 +128,6 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 		if(Active && KeyBuffer.Length())
 		{
 			int Key =  KeyBuffer.Remove(0);
-			int BackUp = Key;
 
 			HKL MappedVirtualKey = LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE );
 

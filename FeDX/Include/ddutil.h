@@ -53,7 +53,7 @@ protected:
 
 public:
     CDisplay();
-    ~CDisplay();
+    virtual ~CDisplay();
 
     // Access functions
     HWND                 GetHWnd()           { return m_hWnd; }

@@ -1,7 +1,9 @@
 #ifndef __CONT_H__
 #define __CONT_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <vector>
 #include <string>
@@ -71,3 +73,6 @@ inline inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 }
 
 #endif
+
+
+

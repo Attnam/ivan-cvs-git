@@ -79,14 +79,14 @@ worldmap* worldmapterrain::GetWorldMapUnder() const
 	return GetWorldMapSquareUnder()->GetWorldMapUnder();
 }
 
-bool overworldmapterrain::GoUp(character* Who) const
+bool overworldmapterrain::GoUp(character*) const
 {
 	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
 
 	return false;
 }
 
-bool overworldmapterrain::GoDown(character* Who) const
+bool overworldmapterrain::GoDown(character*) const
 {
 	ADD_MESSAGE("There seems to be nothing of interest here.");
 

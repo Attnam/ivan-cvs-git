@@ -4,13 +4,6 @@
 #include "colorbit.h"
 #include "error.h"
 #include "bitmap.h"
-
-#ifdef WIN32
-#include "ddutil.h"
-#else
-#include "SDL.h"
-#endif
-
 #include "graphics.h"
 
 colorizablebitmap::colorizablebitmap(std::string FileName)

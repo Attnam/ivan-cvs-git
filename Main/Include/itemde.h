@@ -1,7 +1,9 @@
 #ifndef __ITEMDE_H__
 #define __ITEMDE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "itemba.h"
 #include "materde.h"
@@ -1109,3 +1111,6 @@ protected:
 );
 
 #endif
+
+
+

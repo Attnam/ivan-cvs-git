@@ -493,7 +493,7 @@ bool character::ConsumeItem(item* ToBeEaten, stack* ItemsStack)
 {
 	if(ConsumeItemType(ToBeEaten->GetConsumeType()))
 	{
-		if(ToBeEaten = ToBeEaten->PrepareForConsuming(this, ItemsStack))
+		if((ToBeEaten = ToBeEaten->PrepareForConsuming(this, ItemsStack)))
 		{
 			SetConsumingCurrently(ToBeEaten);
 			ActivateState(CONSUMING);
@@ -549,8 +549,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 {
 	if(GetBurdenState() || TeleportMove)
 	{
-		square* OldSquareUnder = GetSquareUnder();
-
 		game::GetCurrentArea()->MoveCharacter(GetPos(), MoveTo);
 
 		if(GetIsPlayer())
@@ -717,7 +715,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		{
 			character* Character;
 
-			if(Character = game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter())
+			if((Character = game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()))
 				if(GetIsPlayer())
 					if(GetTeam() != Character->GetTeam())
 						return Hit(Character);
@@ -1653,7 +1651,7 @@ bool character::ShowKeyLayout()
 
 bool character::Look()
 {
-	int Key;
+	int Key = 0;
 	std::string OldMemory;
 	vector2d CursorPos = GetPos();
 	game::DrawEverythingNoBlit();
@@ -1907,7 +1905,7 @@ void character::ReceiveNutrition(long SizeOfEffect)
 	SetNP(GetNP() + SizeOfEffect * 2);
 }
 
-void character::ReceiveOmleUrineEffect(long SizeOfEffect)
+void character::ReceiveOmleUrineEffect(long)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
@@ -1975,7 +1973,7 @@ void character::Darkness(long SizeOfEffect)
 
 bool character::Kick()
 {
-	uchar Direction;
+	uchar Direction = 0;
 
 	if(!CanKick())
 	{
@@ -2234,7 +2232,7 @@ void character::GetPlayerCommand()
 	}
 }
 
-void character::Vomit(ushort HowMuch)
+void character::Vomit(ushort)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You vomit.");
@@ -2499,7 +2497,7 @@ void character::FaintHandler()
 
 void character::ConsumeHandler()
 {
-	if((++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
+	if(ulong(++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You finish %s %s.", GetConsumingCurrently()->GetConsumeVerb().c_str(), GetConsumingCurrently()->CNAME(DEFINITE));
@@ -3200,7 +3198,7 @@ void character::ChangeTeam(team* What)
 	SetTeamIterator(GetTeam()->Add(this));
 }
 
-void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
+void character::ReceiveKoboldFleshEffect(long)
 {
 	if(!(RAND() % 3))
 	{

@@ -1,7 +1,9 @@
 #ifndef __VECTOR2D_H__
 #define __VECTOR2D_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "typedef.h"
 
@@ -32,3 +34,6 @@ public:
 };
 
 #endif
+
+
+

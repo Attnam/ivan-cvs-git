@@ -1,7 +1,9 @@
 #ifndef __WSQUARE_H__
 #define __WSQUARE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -45,3 +47,6 @@ protected:
 };
 
 #endif
+
+
+

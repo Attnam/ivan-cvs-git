@@ -1,7 +1,9 @@
 #ifndef __WHANDLER_H__
 #define __WHANDLER_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define GETKEY globalwindowhandler::GetKey
 #define READKEY globalwindowhandler::ReadKey
@@ -46,3 +48,6 @@ private:
 };
 
 #endif
+
+
+

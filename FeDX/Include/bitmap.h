@@ -1,7 +1,9 @@
 #ifndef __BITMAP_H__
 #define __BITMAP_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define MIRROR 1
 #define FLIP 2
@@ -50,9 +52,13 @@ public:
 	void CreateOutlineBitmap(bitmap*, ushort);
 	void FadeToScreen();
 protected:
-	ushort** Data;
 	ushort XSize, YSize;
+	ushort** Data;
 	uchar** AlphaMap;
 };
 
 #endif
+
+
+
+

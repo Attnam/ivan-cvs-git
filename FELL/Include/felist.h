@@ -1,7 +1,9 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 #include <vector>
@@ -57,3 +59,6 @@ inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 }
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __POOL_H__
 #define __POOL_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <list>
 
@@ -19,3 +21,6 @@ private:
 };
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __WSKILL_H__
 #define __WSKILL_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define WEAPON_SKILL_GATEGORIES	13
 
@@ -121,3 +123,6 @@ inline inputfile& operator>>(inputfile& SaveFile, sweaponskill*& WeaponSkill)
 }
 
 #endif
+
+
+

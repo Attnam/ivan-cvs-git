@@ -1,7 +1,9 @@
 #ifndef __SAVE_H__
 #define __SAVE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <fstream>
 #include <vector>
@@ -208,3 +210,6 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
 }	
 
 #endif
+
+
+

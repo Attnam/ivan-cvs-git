@@ -1,7 +1,9 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define DOUBLEBUFFER	graphics::GetDoubleBuffer()
 #define XRES		graphics::GetXRes()
@@ -81,3 +83,6 @@ private:
 };
 
 #endif
+
+
+

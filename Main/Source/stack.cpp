@@ -14,7 +14,7 @@
 #include "area.h"
 #include "femath.h"
 
-stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Item(0), Items(0), NonExistent(0)
+stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0), SquarePosition(SquarePosition)
 {
 }
 
@@ -159,7 +159,7 @@ void stack::Clean()
 
 item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack MoveTo
 {
-	ushort ToBeReturned;
+	ushort ToBeReturned = 0;
 
 	if(this == MoveTo)
 		return GetItem(Index);

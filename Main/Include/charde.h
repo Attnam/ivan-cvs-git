@@ -1,7 +1,9 @@
 #ifndef __CHARDE_H__
 #define __CHARDE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "charba.h"
 #include "graphics.h"
@@ -1356,3 +1358,6 @@ protected:
 );
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __LTERRADE_H__
 #define __LTERRADE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "lterraba.h"
 
@@ -406,3 +408,6 @@ protected:
 
 
 #endif
+
+
+

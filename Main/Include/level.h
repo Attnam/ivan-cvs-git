@@ -1,7 +1,9 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 #include <vector>
@@ -82,3 +84,6 @@ protected:
 };
 
 #endif
+
+
+

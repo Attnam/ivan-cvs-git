@@ -1,7 +1,9 @@
 #ifndef __MATERBA_H__
 #define __MATERBA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define GOOD 0
 #define NEUTRAL 1
@@ -100,14 +102,14 @@ protected:
 
 	#define MATERIAL_PROTOINSTALLER(name, base)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) { }\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
 	const material* const name::GetPrototype() { return protocontainer<material>::GetProto(StaticType()); }\
@@ -138,3 +140,6 @@ protected:\
 }; MATERIAL_PROTOINSTALLER(name, base)
 
 #endif
+
+
+

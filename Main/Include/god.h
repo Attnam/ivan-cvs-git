@@ -1,7 +1,9 @@
 #ifndef __GOD_H__
 #define __GOD_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define GOD_NAME Name().c_str()
 
@@ -283,3 +285,6 @@ protected:
 };
 
 #endif
+
+
+

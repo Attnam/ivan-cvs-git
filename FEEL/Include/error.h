@@ -1,7 +1,9 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define ABORT globalerrorhandler::Abort
 
@@ -34,3 +36,6 @@ private:
 };
 
 #endif
+
+
+

@@ -366,7 +366,7 @@ void petrus::GetAICommand()
 	character* Char;
 
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	if((Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()))
 	{
 		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
 		{
@@ -542,7 +542,6 @@ void humanoid::CharacterSpeciality()
 		{
 			SingleWeaponSkill.erase(i);
 			i = SingleWeaponSkill.begin();
-			std::vector<sweaponskill*>::iterator p = SingleWeaponSkill.end();
 			continue;
 		}
 
@@ -614,7 +613,7 @@ void humanoid::SetWielded(item* Something)
 
 	SetCurrentSingleWeaponSkill(0);
 
-	if(Wielded = Something)
+	if((Wielded = Something))
 	{
 		for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
 			if((*i)->GetID() == Wielded->GetID())

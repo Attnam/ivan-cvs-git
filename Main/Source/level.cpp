@@ -611,7 +611,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
-				if(CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y))
+				if((CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y)))
 				{
 					character* Char = CharacterScript->Instantiate();
 
@@ -632,7 +632,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
-				if(ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y))
+				if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
 					Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
 	}
 
@@ -645,7 +645,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		for(ushort x = 0; x < RoomScript->GetGroundTerrainMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetGroundTerrainMap()->GetSize()->Y; ++y)
-				if(GroundTerrainScript = RoomScript->GetGroundTerrainMap()->GetContentScript(x, y))
+				if((GroundTerrainScript = RoomScript->GetGroundTerrainMap()->GetContentScript(x, y)))
 					Map[XPos + x][YPos + y]->ChangeGroundLevelTerrain(GroundTerrainScript->Instantiate());
 	}
 
@@ -658,7 +658,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		for(ushort x = 0; x < RoomScript->GetOverTerrainMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetOverTerrainMap()->GetSize()->Y; ++y)
-				if(OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y))
+				if((OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y)))
 				{
 					overlevelterrain* Terrain = OverTerrainScript->Instantiate();
 					Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(Terrain);
@@ -951,7 +951,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 
 	ushort Radius = 8 - Size;
 	ushort RadiusSquare = Radius * Radius;
-	ushort PlayerDamage;
+	ushort PlayerDamage = 0;
 	bool PlayerHurt = false;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,

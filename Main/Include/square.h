@@ -1,7 +1,9 @@
 #ifndef __SQUARE_H__
 #define __SQUARE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -70,3 +72,6 @@ inline outputfile& operator<<(outputfile& SaveFile, square* Square)
 }
 
 #endif
+
+
+

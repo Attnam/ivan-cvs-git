@@ -1,7 +1,9 @@
 #ifndef __STACK_H__
 #define __STACK_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define DOWN 0
 #define LEFT 1
@@ -77,3 +79,6 @@ private:
 };
 
 #endif
+
+
+

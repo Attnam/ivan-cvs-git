@@ -1,7 +1,9 @@
 #ifndef __COMMAND_H__
 #define __COMMAND_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -26,3 +28,6 @@ private:
 };
 
 #endif
+
+
+

@@ -596,11 +596,11 @@ HRESULT _DbgOut( TCHAR* strFile, DWORD dwLine, HRESULT hr, TCHAR* strMsg )
 //-----------------------------------------------------------------------------
 // Name: DXUtil_Trace()
 // Desc: Outputs to the debug stream a formatted string with a variable-
-//       argument felist.
+//       argument list.
 //-----------------------------------------------------------------------------
+#if defined(DEBUG) | defined(_DEBUG)
 VOID DXUtil_Trace( TCHAR* strMsg, ... )
 {
-#if defined(DEBUG) | defined(_DEBUG)
     TCHAR strBuffer[512];
     
     va_list args;
@@ -609,5 +609,7 @@ VOID DXUtil_Trace( TCHAR* strMsg, ... )
     va_end(args);
 
     OutputDebugString( strBuffer );
-#endif
 }
+#else
+VOID DXUtil_Trace(TCHAR*, ... ) { }
+#endif

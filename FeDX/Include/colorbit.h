@@ -1,7 +1,9 @@
 #ifndef __COLORBIT_H__
 #define __COLORBIT_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -29,3 +31,6 @@ protected:
 };
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __AREA_H__
 #define __AREA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define FORBIDDEN		1
 #define ON_POSSIBLE_ROUTE	2
@@ -55,3 +57,6 @@ inline outputfile& operator<<(outputfile& SaveFile, area* Area)
 }
 
 #endif
+
+
+

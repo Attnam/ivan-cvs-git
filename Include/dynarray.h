@@ -1,7 +1,9 @@
 #ifndef __DYNARRAY_H__
 #define __DYNARRAY_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "typedef.h"
 
@@ -174,3 +176,6 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Resi
 }
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __FEIO_H__
 #define __FEIO_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -24,3 +26,6 @@ private:
 };
 
 #endif
+
+
+

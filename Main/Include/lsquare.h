@@ -1,7 +1,9 @@
 #ifndef __LSQUARE_H__
 #define __LSQUARE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -123,3 +125,6 @@ protected:
 };
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __TEAM_H__
 #define __TEAM_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define HOSTILE 0
 #define NEUTRAL 1
@@ -20,7 +22,7 @@ class team
 {
 public:
 	team() : Leader(0) {}
-	team(ushort ID) : ID(ID), Leader(0) {}
+	team(ushort ID) : Leader(0), ID(ID) {}
 	void SetRelation(team*, uchar);
 	uchar GetRelation(team*);
 	void Hostility(team*);
@@ -56,3 +58,6 @@ inline inputfile& operator>>(inputfile& SaveFile, team*& Team)
 }
 
 #endif
+
+
+

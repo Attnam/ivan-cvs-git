@@ -1,7 +1,9 @@
 #ifndef __MESSAGE_H__
 #define __MESSAGE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define ADD_MESSAGE globalmessagingsystem::AddMessage
 #define DRAW_MESSAGES globalmessagingsystem::Draw
@@ -27,3 +29,6 @@ private:
 };
 
 #endif
+
+
+

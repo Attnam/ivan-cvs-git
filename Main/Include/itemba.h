@@ -1,7 +1,9 @@
 #ifndef __ITEMBA_H__
 #define __ITEMBA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define ITEM_OUTLINE_COLOR	GREEN
 
@@ -100,14 +102,14 @@ protected:
 
 	#define ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) {}\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
 	name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); }\
@@ -150,3 +152,6 @@ public:\
 };
 
 #endif
+
+
+

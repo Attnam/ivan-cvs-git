@@ -96,8 +96,10 @@ long femath::Rand()
 
 /* Why the f*ck these _insane_ warnings didn't appear in game.cpp??? */
 
+#ifdef VC
 #pragma warning(disable : 4244)
 #pragma warning(disable : 4018)
+#endif
 
 bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*Proc)(vector2d, vector2d))
 {
@@ -120,7 +122,7 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 											\
 		while(PriC PriCond PriC##2)						\
 		{									\
-			if(GetHypotSquare((X - X1), (Y - Y1)) > MaxDistance ||		\
+			if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance ||	\
 			   !Proc(vector2d(X, Y), vector2d(X1, Y1)))			\
 				return false;						\
 											\

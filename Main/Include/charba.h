@@ -1,7 +1,9 @@
 #ifndef __CHARBA_H__
 #define __CHARBA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define HAS_HIT 0
 #define HAS_BLOCKED 1
@@ -195,7 +197,7 @@ public:
 	virtual void Be();
 	virtual bool Zap();
 	virtual bool Polymorph(character*);
-	virtual bool SetTorsoArmor(item* What) RET(false)
+	virtual bool SetTorsoArmor(item*) RET(false)
 	virtual bool CanKick() const RET(false)
 	virtual void BeKicked(ushort, bool, uchar, character*);
 	virtual void FallTo(vector2d, bool);
@@ -338,14 +340,14 @@ protected:
 
 	#define CHARACTER_PROTOINSTALLER(name, base, initmaterials, setstats)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) {}\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
 	name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
@@ -390,3 +392,6 @@ public:\
 };
 
 #endif
+
+
+

@@ -10,7 +10,7 @@
 #include "config.h"
 #include "bitmap.h"
 
-int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
+int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 {
 	/* You are not expected to understand this */
 

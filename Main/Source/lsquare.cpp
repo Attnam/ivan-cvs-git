@@ -19,7 +19,7 @@
 #include "config.h"
 #include "femath.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0), TemporaryEmitation(0)
+levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0), TemporaryEmitation(0)
 {
 	Stack = new stack(this);
 
@@ -287,7 +287,7 @@ void levelsquare::Emitate()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
-		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
 	})
 }
@@ -309,7 +309,7 @@ void levelsquare::ReEmitate()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
-		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
 	})
 }
@@ -325,7 +325,7 @@ void levelsquare::Noxify()
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
-		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
+		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
 	})
 }
@@ -780,14 +780,14 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 	return true;
 }
 
-bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
+bool levelsquare::Dig(character*, item*) // early prototype. Probably should include more checking with levelterrains etc
 {
 	ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
 	ChangeOverLevelTerrainAndUpdateLights(new empty);
 	return true;
 }
 
-bool levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
+bool levelsquare::CanBeDigged(character*, item*) const
 {
 	if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
 	{
@@ -1014,7 +1014,7 @@ void levelsquare::PolymorphEverything(character* Zapper)
 {
 	character* Character;			
 
-	if(Character = GetCharacter())
+	if((Character = GetCharacter()))
 	{
 		if(Character != Zapper)
 			Zapper->Hostility(Character);

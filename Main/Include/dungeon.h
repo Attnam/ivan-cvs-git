@@ -1,7 +1,9 @@
 #ifndef __DUNGEON_H__
 #define __DUNGEON_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -71,3 +73,6 @@ inline inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 }
 
 #endif
+
+
+

@@ -46,13 +46,13 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
 
 			if(Pressed > 64 && Pressed < 91)
 			{
-				Return = Pressed - 65 + Min < Entry.size() ? Pressed - 65 + Min : 0xFFFF;
+				Return = Pressed - 65 + Min < long(Entry.size()) ? Pressed - 65 + Min : 0xFFFF;
 				break;
 			}
 
 			if(Pressed > 96 && Pressed < 123)
 			{
-				Return = Pressed - 97 + Min < Entry.size() ? Pressed - 97 + Min : 0xFFFF;
+				Return = Pressed - 97 + Min < long(Entry.size()) ? Pressed - 97 + Min : 0xFFFF;
 				break;
 			}
 

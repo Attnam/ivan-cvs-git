@@ -1,7 +1,9 @@
 #ifndef __LTERRABA_H__
 #define __LTERRABA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "bitmap.h"
 #include "object.h"
@@ -86,14 +88,14 @@ public:
 
 	#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false, false, false))) {}\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
 	name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
@@ -151,3 +153,6 @@ LEVELTERRAIN(\
 );
 
 #endif
+
+
+

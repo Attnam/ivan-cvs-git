@@ -194,7 +194,7 @@ HRESULT CDisplay::CreateSurfaceFromText( CSurface** ppSurface,
                                          COLORREF crBackground, COLORREF crForeground )
 {
     HDC                  hDC  = NULL;
-    LPDIRECTDRAWSURFACE7 pDDS = NULL;
+//    LPDIRECTDRAWSURFACE7 pDDS = NULL;
     HRESULT              hr;
     DDSURFACEDESC2       ddsd;
     SIZE                 sizeText;
@@ -605,28 +605,6 @@ HRESULT CSurface::Create( LPDIRECTDRAW7 pDD, DDSURFACEDESC2* pddsd )
 {
     HRESULT hr;
 
-	HRESULT hra[] = {DDERR_INCOMPATIBLEPRIMARY,
-DDERR_INVALIDCAPS ,
-DDERR_INVALIDOBJECT, 
-DDERR_INVALIDPARAMS ,
-DDERR_INVALIDPIXELFORMAT ,
-DDERR_NOALPHAHW ,
-DDERR_NOCOOPERATIVELEVELSET ,
-DDERR_NODIRECTDRAWHW ,
-DDERR_NOEMULATION ,
-DDERR_NOEXCLUSIVEMODE ,
-DDERR_NOFLIPHW ,
-DDERR_NOMIPMAPHW ,
-DDERR_NOZBUFFERHW ,
-DDERR_OUTOFMEMORY ,
-DDERR_OUTOFVIDEOMEMORY ,
-DDERR_PRIMARYSURFACEALREADYEXISTS ,
-DDERR_UNSUPPORTEDMODE };
-
-	char Buffer[256];
-
-	sprintf(Buffer, "Alloc bit %d, %d", pddsd->dwWidth, pddsd->dwHeight);
-
     // Create the DDraw surface
     if( FAILED( hr = pDD->CreateSurface( pddsd, &m_pdds, NULL ) ) )
         return hr;
@@ -834,7 +812,7 @@ DWORD CSurface::ConvertGDIColor( COLORREF dwGDIColor )
     if( m_pdds == NULL )
 	    return 0x00000000;
 
-    COLORREF       rgbT;
+    COLORREF       rgbT = 0;
     HDC            hdc;
     DWORD          dw = CLR_INVALID;
     DDSURFACEDESC2 ddsd;

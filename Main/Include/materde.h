@@ -1,7 +1,9 @@
 #ifndef __MATERDE_H__
 #define __MATERDE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "materba.h"
 #include "graphics.h"
@@ -847,3 +849,6 @@ protected:
 );
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __WTERRABA_H__
 #define __WTERRABA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "vector2d.h"
 #include "terra.h"
@@ -50,14 +52,14 @@ public:
 
 	#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false))) {}\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	void name::SetDefaultStats() { setstats }\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
@@ -110,3 +112,6 @@ WORLDMAPTERRAIN(\
 );
 
 #endif
+
+
+

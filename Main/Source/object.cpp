@@ -314,7 +314,7 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 			Picture = igraph::AddUser(GraphicId).Bitmap;
 		}
 
-	if(Material[Index] = NewMaterial)
+	if((Material[Index] = NewMaterial))
 	{
 		Material[Index]->SetMotherObject(this);
 

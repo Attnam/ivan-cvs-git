@@ -1,7 +1,9 @@
 #ifndef __HSCORE_H__
 #define __HSCORE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 #include <vector>
@@ -24,3 +26,6 @@ private:
 };
 
 #endif
+
+
+

@@ -268,7 +268,7 @@ void cathedral::KickSquare(character* Kicker, levelsquare* Square)
 	}
 }
 
-bool cathedral::ConsumeItem(character* HungryMan, item* Food)
+bool cathedral::ConsumeItem(character* HungryMan, item*)
 {
 	if(game::GetTeam(2)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
 		return true;

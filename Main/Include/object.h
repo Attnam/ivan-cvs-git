@@ -1,7 +1,9 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define CNAME(Case) Name(Case).c_str()
 
@@ -92,3 +94,6 @@ protected:
 };
 
 #endif
+
+
+

@@ -467,7 +467,7 @@ bool bitmap::ChangeAlpha(char Amount)
 
 	if(Amount > 0)
 	{
-		for(ulong c = 0; c < XSize * YSize; ++c)
+		for(ulong c = 0; c < ulong(XSize * YSize); ++c)
 			if(AlphaMap[0][c] < 255 - Amount)
 			{
 				AlphaMap[0][c] += Amount;
@@ -481,7 +481,7 @@ bool bitmap::ChangeAlpha(char Amount)
 				}
 	}
 	else
-		for(ulong c = 0; c < XSize * YSize; ++c)
+		for(ulong c = 0; c < ulong(XSize * YSize); ++c)
 			if(AlphaMap[0][c] > -Amount)
 			{
 				AlphaMap[0][c] += Amount;

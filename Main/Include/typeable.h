@@ -1,7 +1,9 @@
 #ifndef __TYPEABLE_H__
 #define __TYPEABLE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <string>
 
@@ -23,3 +25,6 @@ protected:
 };
 
 #endif
+
+
+

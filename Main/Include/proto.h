@@ -1,7 +1,9 @@
 #ifndef __PROTO_H__
 #define __PROTO_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <vector>
 #include <map>
@@ -92,3 +94,6 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 }
 
 #endif
+
+
+

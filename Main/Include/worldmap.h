@@ -1,7 +1,9 @@
 #ifndef __WORLDMAP_H__
 #define __WORLDMAP_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <deque>
 #include <string>
@@ -74,3 +76,6 @@ inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
 }
 
 #endif
+
+
+

@@ -145,8 +145,6 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 
 char inputfile::ReadLetter(bool AbortOnEOF)
 {
-	uchar Mode = 0;
-
 	for(;;)
 	{
 		if(GetBuffer().eof())

@@ -13,7 +13,7 @@
 #include "graphics.h"
 #include "config.h"
 
-worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0)
+worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GroundWorldMapTerrain(0), OverWorldMapTerrain(0)
 {
 }
 

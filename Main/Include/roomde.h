@@ -1,7 +1,9 @@
 #ifndef __ROOMDE_H__
 #define __ROOMDE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "roomba.h"
 
@@ -63,3 +65,6 @@ protected:
 );
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __WTERRADE_H__
 #define __WTERRADE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "wterraba.h"
 
@@ -141,3 +143,6 @@ class OVERWORLDMAPTERRAIN
 );
 
 #endif
+
+
+

@@ -1,7 +1,9 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define DIRECTION_COMMAND_KEYS	8
 
@@ -196,3 +198,6 @@ private:
 };
 
 #endif
+
+
+

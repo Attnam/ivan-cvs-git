@@ -171,7 +171,7 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
 	return true;
 }
 
-item* item::PrepareForConsuming(character*, stack* Stack)
+item* item::PrepareForConsuming(character*, stack*)
 {
 	return this;
 }

@@ -1,7 +1,9 @@
 #ifndef __ROOMBA_H__
 #define __ROOMBA_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include <vector>
 
@@ -19,6 +21,7 @@ class room : public typeable
 {
 public:
 	room(bool);
+	virtual ~room() {}
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual void Enter(character*) {}
@@ -52,14 +55,14 @@ protected:
 
 	#define ROOM_PROTOINSTALLER(name, base, setstats)\
 	\
-	class name##_protoinstaller\
+	static class name##_protoinstaller\
 	{\
 	public:\
 		name##_protoinstaller() : Index(protocontainer<room>::Add(new name)) { }\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
-	} static name##_ProtoInstaller;\
+	} name##_ProtoInstaller;\
 	\
 	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
 	void name::SetDefaultStats() { setstats }\
@@ -90,3 +93,6 @@ protected:\
 }; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
+
+
+

@@ -220,7 +220,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 		GetLevelSquareUnder()->SpillFluid(5, GetMaterial(1)->GetColor());
 	Remains->InitMaterials(GetMaterial(0));
 	SetMaterial(0,0);
-	ushort Index = ItemStack->AddItem(Remains);
+	ItemStack->AddItem(Remains);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	SetExists(false);
@@ -326,7 +326,7 @@ bool wand::Apply(character* Terrorist, stack* MotherStack)
 	return true;
 }
 
-bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
+bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
 {
 	if(GetCharges() <= GetTimesUsed())
 	{
@@ -478,7 +478,7 @@ item* brokenbottle::BetterVersion(void) const
 	 return P;
 }
 
-bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
+bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
 {
 	if(GetCharges() <= GetTimesUsed())
 	{
@@ -713,7 +713,7 @@ bool holybook::Read(character* Reader)
 
 ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 100000; default: return 0; } }
 
-bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
+bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
 	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("%s catches fire and explodes!", CNAME(DEFINITE));
@@ -724,7 +724,7 @@ bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfE
 	return true;
 }
 
-bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
+bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
 	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("%s explodes in the heat!", CNAME(DEFINITE));
@@ -790,7 +790,7 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 	}
 }
 
-void wandofpolymorph::BeamEffect(character* Zapper, uchar Direction, levelsquare* LevelSquare)
+void wandofpolymorph::BeamEffect(character* Zapper, uchar, levelsquare* LevelSquare)
 {
 	LevelSquare->PolymorphEverything(Zapper);
 }

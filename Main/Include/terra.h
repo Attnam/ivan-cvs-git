@@ -1,7 +1,9 @@
 #ifndef __TERRAIN_H__
 #define __TERRAIN_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "typeable.h"
 
@@ -28,3 +30,6 @@ public:
 };
 
 #endif
+
+
+

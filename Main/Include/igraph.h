@@ -1,7 +1,9 @@
 #ifndef __IGRAPH_H__
 #define __IGRAPH_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #define RAW_TYPES	3
 
@@ -117,3 +119,6 @@ inline inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 }
 
 #endif
+
+
+

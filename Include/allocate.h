@@ -1,7 +1,9 @@
 #ifndef __ALLOCATE_H__
 #define __ALLOCATE_H__
 
+#ifdef VC
 #pragma warning(disable : 4786)
+#endif
 
 #include "typedef.h"
 
@@ -127,3 +129,6 @@ template <class Type> inline void Fill3D(Type*** Map, ulong CornerXPos, ulong Co
 }
 
 #endif
+
+
+

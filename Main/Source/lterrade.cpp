@@ -587,7 +587,7 @@ bool brokendoor::ReceiveStrike()
 	return true;
 }
 
-bool altar::Polymorph(character* Zapper)
+bool altar::Polymorph(character*)
 {
 	uchar OldGod;
 
