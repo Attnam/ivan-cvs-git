@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -316,9 +316,7 @@ playerkind
 	DefaultCharisma = 10;
 	DefaultMana = 10;
 	DefaultMoney = 45;
-	/*HeadBitmapPos = 96, 416;*/
 	TorsoBitmapPos = 32, 416;
-	/*ArmBitmapPos = 64, 416;*/
 	LegBitmapPos = 0, 416;
 	TotalVolume = 80000;
 	TotalSize = 175;
@@ -326,166 +324,7 @@ playerkind
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	DisplacePriority = 2;
-		/*NaturalSparkleFlags = SKIN_COLOR;
-	HairColor = rgb16(40, 40, 40);*/
-	/* Replies overridden */
-	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
-	/*Inventory == belt(BELT_OF_LEVITATION);*/
-	/*Inventory = { 3, holybanana { Times = 5; }, can { SecondaryMaterial = PEA_SOUP; Times = 5; }, wand(WAND_OF_INVISIBILITY); }*/
-	/*KnownCWeaponSkills == UNARMED;
-	CWeaponSkillHits == 100;*/
-	/*Inventory == potion { Times = 50; }*/
-
-/*
-	Helmet = MITHRIL helmet(FULL_HELMET);
-	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 3; }
-	RightWielded = MITHRIL flamingsword { Enchantment = 5; }
-	LeftWielded = MITHRIL shield { Enchantment = 3; }
-	Belt = STEEL belt;
-	Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
-	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 3; }
-	RightBoot = METEORIC_STEEL boot { Enchantment = 3; }
-	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 2, 1000, 1000; }
-	RightSWeaponSkillHits = 500;
-	LeftSWeaponSkillHits = 500;
-	Inventory == itemcontainer(SMALL_CHEST) { ItemsInside = { 6, wand(WAND_OF_TELEPORTATION) { Times = 3; }, wand(WAND_OF_MIRRORING) { Times = 3; }, scrollofgolemcreation { Times = 2; }, wand(WAND_OF_STRIKING) { Times = 3; }, wand(WAND_OF_SLOW) { Times = 3; }, wand(WAND_OF_HASTE) { Times = 3; } } }
-*/
-	/*Config 1;
-	{
-		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
-		CWeaponSkillHits = { 3, 500, 250, 250; }
-		AttackStyle = USE_ARMS|USE_LEGS;
-	}
-
-	Config 2;
-	{
-		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 0; }
-		RightBoot = METEORIC_STEEL boot { Enchantment = 0; }
-		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
-		CWeaponSkillHits = { 3, 500, 250, 250; }
-		AttackStyle = USE_ARMS|USE_LEGS;
-	}
-
-	Config 3;
-	{
-		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 1; }
-		RightBoot = METEORIC_STEEL boot { Enchantment = 1; }
-		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
-		CWeaponSkillHits = { 3, 500, 250, 250; }
-		AttackStyle = USE_ARMS|USE_LEGS;
-	}
-
-	Config 4;
-	{
-		RightGauntlet = DRAGON_HIDE gauntlet { Enchantment = 6; }
-		RightBoot = ADAMANT boot(BOOT_OF_KICKING) { Enchantment = 6; }
-		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
-		CWeaponSkillHits = { 3, 1000, 500, 500; }
-		AttackStyle = USE_ARMS|USE_LEGS;
-	}
-
-	Config 5;
-	{
-		RightWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER);
-		LeftWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER);
-		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
-		CWeaponSkillHits = { 1, 500; }
-		RightSWeaponSkillHits = 250;
-		LeftSWeaponSkillHits = 250;
-	}
-
-	Config 6;
-	{
-		RightWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER) { Enchantment = 1; }
-		LeftWielded = METEORIC_STEEL METEORIC_STEEL meleeweapon(DAGGER) { Enchantment = 1; }
-		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
-		CWeaponSkillHits = { 1, 500; }
-		RightSWeaponSkillHits = 250;
-		LeftSWeaponSkillHits = 250;
-	}
-
-	Config 7;
-	{
-		RightWielded = DIAMOND DIAMOND meleeweapon(DAGGER) { Enchantment = 6; }
-		LeftWielded = DIAMOND DIAMOND meleeweapon(DAGGER) { Enchantment = 6; }
-		KnownCWeaponSkills = { 1, SMALL_SWORDS; }
-		CWeaponSkillHits = { 1, 1000; }
-		RightSWeaponSkillHits = 500;
-		LeftSWeaponSkillHits = 500;
-	}
-
-	Config 8;
-	{
-		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
-		LeftWielded = STEEL shield;
-		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-		CWeaponSkillHits = { 2, 250, 250; }
-		RightSWeaponSkillHits = 250;
-		LeftSWeaponSkillHits = 250;
-	}
-
-	Config 9;
-	{
-		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
-		LeftWielded = STEEL shield { Enchantment = 1; }
-		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-		CWeaponSkillHits = { 2, 250, 250; }
-		RightSWeaponSkillHits = 250;
-		LeftSWeaponSkillHits = 250;
-	}
-
-	Config 10;
-	{
-		RightWielded = MITHRIL MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 6; }
-		LeftWielded = OCTIRON shield { Enchantment = 6; }
-		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-		CWeaponSkillHits = { 2, 500, 500; }
-		RightSWeaponSkillHits = 500;
-		LeftSWeaponSkillHits = 500;
-	}
-
-	Config 11;
-	{
-		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SCIMITAR);
-		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
-		CWeaponSkillHits = { 1, 250; }
-		RightSWeaponSkillHits = 250;
-	}
-
-	Config 12;
-	{
-		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 1; }
-		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
-		CWeaponSkillHits = { 1, 250; }
-		RightSWeaponSkillHits = 250;
-	}
-
-	Config 13;
-	{
-		RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 6; }
-		KnownCWeaponSkills = { 1, LARGE_SWORDS; }
-		CWeaponSkillHits = { 1, 500; }
-		RightSWeaponSkillHits = 500;
-	}*/
-
-	/*Inventory = { 4
-	,COPPER itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } }
-	,BRONZE itemcontainer(CHEST) 
-				{Parameters = 0; 
-					ItemsInside = { 5,	Random { MinPrice = 1000; },
-															Random { MinPrice = 1000; },
-															stone { Chance = 75; },
-															stone { Chance = 75; },
-															stone { Chance = 75; } } 
-				}
-	,IRON itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 2000; }, Random { MinPrice = 2000; } } }
-	,ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = 0; ItemsInside = { 2, Random { MinPrice = 3000; }, Random { MinPrice = 3000; } } }
-	}*/
-	/*Inventory == Random { MinPrice = 200; Category = POTION; Times = 10; }*/
-	/*Inventory = { 2, ring(RING_OF_TELEPORT_CONTROL), wand(WAND_OF_TELEPORTATION) { Times = 5; } }*/
-	/*Inventory = { 2, IRON BANANA_FLESH meleeweapon(HALBERD), IRON BANANA_FLESH meleeweapon(TWO_HANDED_SWORD); }*/
-	Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = 3; }
+	Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; }
 }
 
 petrus
@@ -1839,12 +1678,6 @@ canine
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	AttackStyle = USE_HEAD;
 	KnownCWeaponSkills == BITE;
-	ScienceTalkPossibility = 1;
-	ScienceTalkIntelligenceModifier = 1;
-	ScienceTalkWisdomModifier = 2;
-	ScienceTalkIntelligenceRequirement = 3;
-	ScienceTalkWisdomRequirement = 3;
-	ScienceTalkName == "bones";
 }
 
 wolf
@@ -1898,74 +1731,36 @@ dog
 	AttachedGod = SILVA;
 	Alias == "dog";
 	DeathMessage = "@Dd is killed.";
-	/*ScienceTalkAdjectiveAttribute =
+	ScienceTalkAdjectiveAttribute =
 	{
-		50,
-		"applied", "theoretical", "classical", "the future of", "queer",
-		"practical", "the secrets of", "ancient", "empirical", "statistical",
-		"the axioms of", "forbidden", "popular", "obscene", "ceremonial",
-		"environmental", "the code of", "modern", "hard", "unorthodox",
-		"the principle of", "oral", "commercial", "slippery", "scientific",
-
-		"the theory of", "educational", "recreational", "phallic", "gothic",
-		"motorized",  "tropical", "the purpose of", "happy", "political",
-		"the history of", "creative uses of", "chaotic", "erotic", "arctic",
-		"experimental", "lewd", "clinical", "electrical", "nymphomaniacal",
-		"intellectual",  "the origin of", "hot", "frictionless", "lesbian";
+		16,
+		"arf", "r-ruff", "bark", "woof", "rowf",
+		"yip", "yap", "yelp", "[fart]", "snarl",
+		"bow-wow", "AHROUFF", "WOOF", "BARK", "grrrrrrr",
+		"aaaaoooooooooooo";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
-		4,
-		"New Age", "last century", "horseback", "pagan";
+		16,
+		"arf", "r-ruff", "bark", "woof", "rowf",
+		"yip", "yap", "yelp", "[fart]", "snarl",
+		"bow-wow", "AHROUFF", "WOOF", "BARK", "grrrrrrr",
+		"aaaaoooooooooooo";
 	}
-	ScienceTalkPrefix =
-	{
-		19,
-		"", "", "", "", "",
-		"", "", "", "", "",
-		"ethno", "mega", "neo", "necro", "aero",
-		"pyro", "caco", "sado", "hetero";
-	}
+	ScienceTalkPrefix == "";
 	ScienceTalkName =
 	{
-		48,
-		"impalement", "bondage", "slavery", "torture", "disembowelment",
-		"whipmaking", "orgies", "herecy", "brazen bulls", "necrophilia",
-		"masochism", "dentistry", "swedish", "feminism", "licking",
-		"mushrooms", "rock", "nefasim", "birth-control", "fetishism",
-		"testicle crushing", "pleasures", "anatomy", "pain", "sin",
-
-		"bananas", "bestiality", "agony", "Kama Sutra", "spanking",
-		"piercings", "adultery", "frotteurism", "thumbscrews", "egoism",
-		"beer", "castration", "watersports", "scaphism", "seduction",
-		"iron maidens", "fisting", "drugs", "lingerie", "tablillas",
-		"poker", "reproduction", "sake";
-	}*/
-	/*ScienceTalkAdjectiveAttribute =
-	{
-		4,
-		"", "the secrets of", "the uses of", "clinical";
+		16,
+		"arf", "r-ruff", "bark", "woof", "rowf",
+		"yip", "yap", "yelp", "[fart]", "snarl",
+		"bow-wow", "AHROUFF", "WOOF", "BARK", "grrrrrrr",
+		"aaaaoooooooooooo";
 	}
-	ScienceTalkSubstantiveAttribute =
-	{
-		2,
-		"mass", "nerd";
-	}
-	ScienceTalkPrefix =
-	{
-		3,
-		"", "sado", "necro";
-	}
-	ScienceTalkName =
-	{
-		3,
-		"Kama Sutra", "the Art", "the method";
-	}*/
-	/*ScienceTalkPossibility = 100;
+	ScienceTalkPossibility = 90;
 	ScienceTalkIntelligenceModifier = 1;
-	ScienceTalkWisdomModifier = 1;
-	ScienceTalkIntelligenceRequirement = 1;
-	ScienceTalkWisdomRequirement = 1;*/
+	ScienceTalkWisdomModifier = 2;
+	ScienceTalkIntelligenceRequirement = 3;
+	ScienceTalkWisdomRequirement = 4;
 }
 
 spider
@@ -2002,7 +1797,7 @@ spider
 		TorsoBitmapPos = 272, 0;
 		BaseBiteStrength = 400;
 		CWeaponSkillHits == 50;
-		TotalVolume = 250;
+		TotalVolume = 500;
 		TotalSize = 10;
 		HostileReplies == "@Dd isn't interested in negotiation with you.";
 		FriendlyReplies == "@Dd ignores your small talk.";
@@ -2012,7 +1807,7 @@ spider
 	{
 		DefaultArmStrength = 4;
 		DefaultAgility = 10;
-		DefaultEndurance = 8;
+		DefaultEndurance = 12;
 		DefaultPerception = 15;
 		DefaultIntelligence = 4;
 		DefaultWisdom = 4;
@@ -2021,7 +1816,7 @@ spider
 		TorsoBitmapPos = 256, 0;
 		BaseBiteStrength = 400;
 		CWeaponSkillHits == 50;
-		TotalVolume = 10000;
+		TotalVolume = 5000;
 		TotalSize = 50;
 		HostileReplies == "@Dd stridulates wildly, producing a small creaking noise.";
 		FriendlyReplies == "@Dd stridulates softly, producing a barely audible but quite confortable noise.";
@@ -2740,6 +2535,54 @@ mistress
 		"\"Ever participated in the weekly orgy at Nefas's High Temple? I guess not. You wouldn't have survived.\"",
 		"\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
 	}
+	ScienceTalkAdjectiveAttribute =
+	{
+		50,
+		"applied", "theoretical", "classical", "the future of", "queer",
+		"practical", "the secrets of", "ancient", "empirical", "statistical",
+		"the axioms of", "forbidden", "popular", "obscene", "ceremonial",
+		"environmental", "the code of", "modern", "hard", "unorthodox",
+		"the principle of", "oral", "commercial", "slippery", "scientific",
+
+		"the theory of", "educational", "recreational", "phallic", "gothic",
+		"motorized",  "tropical", "the purpose of", "happy", "political",
+		"the history of", "creative uses of", "chaotic", "erotic", "arctic",
+		"experimental", "lewd", "clinical", "electrical", "nymphomaniacal",
+		"intellectual", "the origin of", "hot", "frictionless", "lesbian";
+	}
+	ScienceTalkSubstantiveAttribute =
+	{
+		4,
+		"New Age", "last century", "horseback", "pagan";
+	}
+	ScienceTalkPrefix =
+	{
+		19,
+		"", "", "", "", "",
+		"", "", "", "", "",
+		"ethno", "mega", "neo", "necro", "aero",
+		"pyro", "caco", "sado", "hetero";
+	}
+	ScienceTalkName =
+	{
+		49,
+		"impalement", "bondage", "slavery", "torture", "disembowelment",
+		"whipmaking", "orgies", "herecy", "brazen bulls", "necrophilia",
+		"masochism", "dentistry", "swedish", "feminism", "licking",
+		"mushrooms", "rock", "nefasim", "birth-control", "fetishes",
+		"testicle crushing", "pleasures", "anatomy", "pain", "sin",
+
+		"bananas", "bestiality", "agony", "Kama Sutra", "spanking",
+		"piercings", "adultery", "frottage", "thumbscrews", "egoism",
+		"beer", "castration", "watersports", "scaphism", "seduction",
+		"iron maidens", "fisting", "drugs", "lingerie", "tablillas",
+		"poker", "reproduction", "sake", "idolatry";
+	}
+	ScienceTalkPossibility = 95;
+	ScienceTalkIntelligenceModifier = 1;
+	ScienceTalkWisdomModifier = 1;
+	ScienceTalkIntelligenceRequirement = 5;
+	ScienceTalkWisdomRequirement = 5;
 
 	Config TORTURING_CHIEF;
 	{

@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -897,6 +897,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define DISALLOW_MSG 8
 #define IGNORE_UNCONSCIOUSNESS 16
 #define IGNORE_TRAPS 32
+#define FORBID_REINCARNATION 64
 
 /* character flags */
 

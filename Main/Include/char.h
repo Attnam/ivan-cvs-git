@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -1007,6 +1007,7 @@ class character : public entity, public id
   virtual const char* GetRunDescriptionLine(int) const;
   void VomitAtRandomDirection(int);
   virtual truth SpecialSaveLife() { return false; }
+  void RemoveLifeSavers();
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

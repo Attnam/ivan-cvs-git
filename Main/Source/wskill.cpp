@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 

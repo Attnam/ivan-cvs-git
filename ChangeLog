@@ -1,11 +1,28 @@
-------------------------------------------------------------------------------------
+/* 
+ * NOTICE!!!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
+ */
 
->>> NOTICE!!! <<<
+August 29 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
-This file contains SPOILERS, which might ruin your IVAN experience totally. The file
-is also provided AS IS and is probably completely unreadable.
-
-------------------------------------------------------------------------------------
+	* My sincerest apologies for not updating ChangeLog for a loooooooooong
+	  while. Henceforth, however, I wow to resume this healthful habit
+	* Mistresses and dogs now have unique random science talk particles
+	* For in-house testing sessions, there's now a BONUS_LIVES #define in
+	  define.dat which determines how many bonus amulets of life saving
+		the player gets when he starts a game
+	* Disabled the time test in the panel
+	* Spiders' flesh and blood are now poisonous
+	* The game no longer crashes if an NPC wearing a belt of levitation steps
+	  over another belt floating near the edge of a lake or pool
+	* Corrected some small problems in certain god effect messages
+	* Pets are now killed when generating bonefiles even if they have
+	  lifesaving
+	* Corrected a typo in the standard file copyright notice (oops :)
 
 August 25 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
@@ -26,12 +43,10 @@ August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 August 20 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* more webs
-	
 
 August 19 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* webs added... atleast some fraction of them
-
 
 August 17 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
@@ -61,8 +76,7 @@ July 14 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
 July 14 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
-	* Vladimir works better, but far from perfect
-	
+	* Vladimir works better, but far from perfect	
 
 July 13 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 

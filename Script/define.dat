@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -912,5 +912,7 @@
 /*************************/
 /* End of DataBase flags */
 /*************************/
+
+#define BONUS_LIVES 0
 
 ; /* this line must be here */

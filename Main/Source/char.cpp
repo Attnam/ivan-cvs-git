@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -1254,15 +1254,20 @@ void character::Die(const character* Killer, const festring& Msg, ulong DeathFla
   else if(DeathFlags & FORCE_MSG)
     ADD_MESSAGE("You sense the death of something.");
 
-  if(StateIsActivated(LIFE_SAVED)
-     && CanMoveOn(!game::IsInWilderness() ? GetSquareUnder() : PLAYER->GetSquareUnder()))
+  if(!(DeathFlags & FORBID_REINCARNATION))
   {
-    SaveLife();
-    return;
-  }
+    if(StateIsActivated(LIFE_SAVED)
+       && CanMoveOn(!game::IsInWilderness() ? GetSquareUnder() : PLAYER->GetSquareUnder()))
+    {
+      SaveLife();
+      return;
+    }
 
-  if(SpecialSaveLife())
-    return;
+    if(SpecialSaveLife())
+      return;
+  }
+  else if(StateIsActivated(LIFE_SAVED))
+    RemoveLifeSavers();
 
   Flags |= C_IN_NO_MSG_MODE;
   character* Ghost = 0;
@@ -4077,7 +4082,7 @@ void character::DrawPanel(truth AnimationDraw) const
   }
 
   /* test */
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "T: %ld", game::GetTimeSpent());
+  //FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "T: %ld", game::GetTimeSpent());
 }
 
 void character::CalculateDodgeValue()
@@ -6669,7 +6674,7 @@ truth character::PreProcessForBone()
 {
   if(IsPet() && IsEnabled())
   {
-    Die();
+    Die(0, CONST_S(""), FORBID_REINCARNATION);
     return true;
   }
 
@@ -8485,9 +8490,9 @@ truth character::CheckApply() const
 
 void character::EndLevitation()
 {
-  if(!IsFlying())
+  if(!IsFlying() && !GetLSquareUnder()->IsFreezed())
   {
-    if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
+    if(!game::IsInWilderness())
       SignalStepFrom(0);
 
     TestWalkability();
@@ -8801,7 +8806,10 @@ void character::AddRandomScienceName(festring& String) const
       Attribute.Insert(0, "the ", 4);
   }
 
-  if(islower(Science[0]) && Science.Find(' ') == festring::NPos && Science.Find("phobia") == festring::NPos)
+  if(islower(Science[0])
+     && Science.Find(' ') == festring::NPos
+     && Science.Find('-') == festring::NPos
+     && Science.Find("phobia") == festring::NPos)
   {
     Prefix = GetScienceTalkPrefix().GetRandomElement();
 
@@ -9231,4 +9239,18 @@ void character::VomitAtRandomDirection(int Amount)
     Vomit(Where->GetPos(), Amount);
   else
     Vomit(GetPos(), Amount);
+}
+
+void character::RemoveLifeSavers()
+{
+  for(int c = 0; c < GetEquipments(); ++c)
+  {
+    item* Equipment = GetEquipment(c);
+
+    if(Equipment && Equipment->IsInCorrectSlot(c) && Equipment->GetGearStates() & LIFE_SAVED)
+    {
+      Equipment->SendToHell();
+      Equipment->RemoveFromSlot();
+    }
+  }
 }

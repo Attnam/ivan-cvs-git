@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -508,7 +508,7 @@ void nonhumanoid::CalculateBiteAttackInfo()
 
 void dog::BeTalkedTo()
 {
-  if(RAND() % 25)
+  if(RAND_N(5))
   {
     if(GetRelation(PLAYER) != HOSTILE)
     {
@@ -526,8 +526,10 @@ void dog::BeTalkedTo()
     else
       character::BeTalkedTo();
   }
-  else
+  else if(RAND_N(5))
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");
+  else
+    ADD_MESSAGE("\"Meow.\"");
 }
 
 col16 wolf::GetSkinColor() const

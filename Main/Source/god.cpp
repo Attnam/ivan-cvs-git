@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -37,7 +37,7 @@ void god::Pray()
 	character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
 
 	if(Angel)
-	  ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
+	  ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_DESCRIPTION(DEFINITE));
       }
       else if(Relation > 100 && !(RAND() % 20))
       {
@@ -103,7 +103,7 @@ void god::Pray()
 	character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
 	if(Angel)
-	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
+	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
       }
     }
 }
@@ -183,7 +183,7 @@ truth god::PlayerVomitedOnAltar(liquid* Liquid)
     character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
     if(Angel)
-      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
   }
 
   return true;
@@ -217,7 +217,7 @@ character* god::CreateAngel(team* Team, int LifeBase)
 	Angel->SetTeam(Team);
 	Angel->SetGenerationDanger(ANGEL_GENERATION_DANGER);
 	Angel->PutTo(TryToCreate);
-	ADD_MESSAGE("Suddenly %s appears!", Angel->CHAR_NAME(INDEFINITE));
+	ADD_MESSAGE("Suddenly %s appears!", Angel->CHAR_DESCRIPTION(INDEFINITE));
 	return Angel;
       }
       else
@@ -295,7 +295,7 @@ truth god::ReceiveOffer(item* Sacrifice)
       character* Angel = CreateAngel(PLAYER->GetTeam());
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_DESCRIPTION(DEFINITE));
     }
 
     return true;

@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -1583,6 +1583,8 @@ liquid
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
 		CategoryFlags = IS_BLOOD;
+		Effect = EFFECT_POISON;
+		EffectStrength = 1000;
 	}
 
 	Config VOMIT;
@@ -1848,6 +1850,9 @@ flesh
 	{
 		NameStem = "spider flesh";
 		AttachedGod = MORTIFER;
+		Effect = EFFECT_POISON;
+		EffectStrength = 100;
+		ConsumeWisdomLimit = 3;
 	}
 
 	Config JACKAL_FLESH;

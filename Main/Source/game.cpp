@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -2508,7 +2508,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(/*!WizardModeIsActive() && */!IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
   {
     int BoneIndex;
     festring BoneName;
@@ -2533,7 +2533,7 @@ void game::CreateBone()
 
 truth game::PrepareRandomBone(int LevelIndex)
 {
-  if(/*WizardModeIsActive() || */GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+  if(WizardModeIsActive() || GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
     return false;
 
   int BoneIndex;

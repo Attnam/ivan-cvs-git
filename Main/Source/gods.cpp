@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -194,18 +194,18 @@ void dulcis::PrayGoodEffect()
 	  if(PLAYER->GetRelativeDanger(Char) > 2.0)
 	  {
 	    if(Char->GetTeam() == PLAYER->GetTeam())
-	      ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_DESCRIPTION(DEFINITE));
 	    else if(Char->GetRelation(PLAYER) == HOSTILE)
-	      ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("%s stops fighting.", Char->CHAR_DESCRIPTION(DEFINITE));
 	    else
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_DESCRIPTION(DEFINITE));
 
 	    Char->ChangeTeam(PLAYER->GetTeam());
 	  }
 	  else
-	    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
+	    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_DESCRIPTION(DEFINITE));
 	else
-	  ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
+	  ADD_MESSAGE("%s seems not affected.", Char->CHAR_DESCRIPTION(DEFINITE));
     }
   }
 }
@@ -706,7 +706,7 @@ void valpurus::Pray()
       character* Angel = CreateAngel(PLAYER->GetTeam());
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_DESCRIPTION(DEFINITE));
     }
   }
   else if(Relation < 0 || (!TryToAttachBodyPart(PLAYER) && !TryToHardenBodyPart(PLAYER)))
@@ -723,7 +723,7 @@ void valpurus::Pray()
       character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
     }
   }
 }
@@ -744,7 +744,7 @@ void mortifer::Pray()
       character* Angel = CreateAngel(PLAYER->GetTeam());
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_DESCRIPTION(DEFINITE));
     }
   }
   else
@@ -761,7 +761,7 @@ void mortifer::Pray()
       character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
       if(Angel)
-	ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_DESCRIPTION(DEFINITE));
     }
   }
 }
@@ -880,7 +880,7 @@ void scabies::PrayGoodEffect()
 
     if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
     {
-      ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
       Square->SpillFluid(PLAYER, liquid::Spawn(POISON_LIQUID, 500));
       Success = true;
     }

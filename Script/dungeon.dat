@@ -5,8 +5,8 @@
  *  Released under the GNU General
  *  Public License
  *
- *  See LICENSING which should included
- *  with this file for more details
+ *  See LICENSING which should be included
+ *  along with this file for more details
  *
  */
 
@@ -2563,7 +2563,7 @@ Dungeon NEW_ATTNAM;
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-	Levels = 5;
+	Levels = 4;
 	Description = "underwater tunnel";
 	ShortDescription = "UT";
 
@@ -2873,11 +2873,11 @@ Dungeon UNDER_WATER_TUNNEL;
 					EntryIndex = STAIRS_UP;
 			}
 
-			/*Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+			Square, Random IN_ROOM|HAS_NO_OTERRAIN;
 			{
 					OTerrain = stairs(STAIRS_DOWN);
 					EntryIndex = STAIRS_DOWN;
-			}*/
+			}
 		}
 
 		Square, Random HAS_NO_OTERRAIN;
@@ -2931,7 +2931,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		}
 	}
 
-	Level SPIDER_LEVEL;
+	/*Level SPIDER_LEVEL;
 	{
-	}
+	}*/
 }
