@@ -4,7 +4,6 @@
 #include "bitmap.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
-//bool globalwindowhandler::KeyPressed = false;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
 bool globalwindowhandler::InGetKey = false;
 
@@ -69,7 +68,6 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				return 0;
 			}
 
-			//KeyPressed = true;
 			KeyBuffer.Add(wParam);
 
 			return 0;
@@ -81,9 +79,6 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 			if(Index != 0xFFFF)
 				KeyBuffer.Remove(Index);
-
-			//if(!KeyBuffer.Length())
-			//	KeyPressed = false;
 
 			return 0;
 		}
@@ -99,7 +94,6 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			KeyBuffer.Remove(0);	// Shift-key == 0x10
 						// So what?
 
-	//KeyPressed = false;
 	InGetKey = true;
 
 	MSG msg;

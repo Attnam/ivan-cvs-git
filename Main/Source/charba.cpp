@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include "script.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -343,11 +343,12 @@ bool character::Drop()
 		if(GetStack()->GetItem(Index) == GetWielded())
 			ADD_MESSAGE("You can't drop something you wield!");
 		else
-		{
-			GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
+			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index)))
+			{
+				GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
 
-			return true;
-		}
+				return true;
+			}
 
         return false;
 }
@@ -360,7 +361,7 @@ bool character::Consume()
 
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 		{
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst ifyou eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(Index), GetLevelSquareUnder()->GetStack()))
@@ -384,7 +385,7 @@ bool character::Consume()
 			if(!CheckIfConsumable(Index))
 				return false;
 
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst ifyou eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetStack()->GetItem(Index), GetStack()))
@@ -490,6 +491,8 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 {
 	if(GetBurdenState() || TeleportMove)
 	{
+		square* OldSquareUnder = GetSquareUnder();
+
 		game::GetCurrentArea()->MoveCharacter(GetPos(), MoveTo);
 
 		if(GetIsPlayer())
@@ -509,7 +512,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 				if(GetLevelSquareUnder()->GetStack()->GetItems() > 0)
 				{
-					if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
+					if(GetLevelSquareUnder()->GetStack()->GetItems() > 1)
 						ADD_MESSAGE("Several items are lying here.");
 					else
 						ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
@@ -520,7 +523,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 			}
 		}
 
-		GetSquareUnder()->StepOn(this);
+		GetSquareUnder()->StepOn(this, OldSquareUnder);
 
 		SetNP(GetNP() - 1);
 		SetAgilityExperience(GetAgilityExperience() + 10);
@@ -754,15 +757,10 @@ bool character::PickUp()
 {
 	bool ToBeReturned = false;
 
-	if (GetLevelSquareUnder()->GetStack()->GetItems() > 0)
-	{
-		if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
+	if(GetLevelSquareUnder()->GetStack()->GetItems() > 0)
+		if(GetLevelSquareUnder()->GetStack()->GetItems() > 1)
 		{
 			ushort Index;
-
-			bitmap Backup(800, 600);
-
-			DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, 800, 600);
 
 			for(;;)
 			{
@@ -770,25 +768,28 @@ bool character::PickUp()
 
 				if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 					if(GetLevelSquareUnder()->GetStack()->GetItem(Index))
-					{
-						ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
-						GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack())->CheckPickUpEffect(this);
-						ToBeReturned = true;
-					}
+						if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(Index)))
+						{
+							ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
+							GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack())->CheckPickUpEffect(this);
+							ToBeReturned = true;
+						}
 
-				if(Index == 0xFFFD || !GetLevelSquareUnder()->GetStack()->GetItems())
+				if(Index & 0x8000 || !GetLevelSquareUnder()->GetStack()->GetItems())
 					break;
 
-				Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, 800, 600);
+				game::DrawEverythingNoBlit();
 			}
 		}
 		else
 		{
-			ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
-			GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack())->CheckPickUpEffect(this);
-			return true;
+			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(0)))
+			{
+				ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
+				GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack())->CheckPickUpEffect(this);
+				return true;
+			}
 		}
-	}
 	else
 		ADD_MESSAGE("There is nothing here to pick up, %s!", game::Insult());
 
@@ -838,7 +839,7 @@ void character::Die()
 		{
 			game::DrawEverything(false);
 
-			if(!game::BoolQuestion("Do you want to do this, cheater? [y/N]", 2, 'y'))
+			if(!game::BoolQuestion("Do you want to do this, cheater? [y/n]", 2))
 			{
 				SetHP(GetMaxHP());
 				SetNP(1000);
@@ -852,14 +853,17 @@ void character::Die()
 
 	SetExists(false);
 
+	if(HomeRoom)
+		GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(0);
+
 	if(GetIsPlayer())
 	{
 		game::DrawEverything(false);
 
-		if(game::BoolQuestion("Do you want to see your inventory? [y/N]", 2))
+		if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
 			GetStack()->DrawContents("Your inventory");
 
-		if(game::BoolQuestion("Do you want to see your message history? [y/N]", 2))
+		if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 			DrawMessageHistory();
 	}
 
@@ -1252,7 +1256,9 @@ bool character::Dip()
 			}
 		}
 	}
+
 	ADD_MESSAGE("Invalid selection!");
+
         return false;
 }
 
@@ -1267,7 +1273,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << State << Money;
+	SaveFile << State << Money << HomeRoom;
 
 	if(StateIsActivated(EATING))
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
@@ -1333,7 +1339,10 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
 	SaveFile >> HP >> NP >> AP;
 	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> State >> Money;
+	SaveFile >> State >> Money >> HomeRoom;
+
+	if(HomeRoom)
+		GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
 
 	SaveFile >> Index;
 
@@ -1492,7 +1501,7 @@ ushort character::GetEmitation() const
 
 void character::SetSquareUnder(square* Square)
 {
-	typeable::SetSquareUnder(Square);
+	object::SetSquareUnder(Square);
 	Stack->SetSquareUnder(Square);
 }
 
@@ -1545,10 +1554,10 @@ bool character::Look()
 				DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 				CursorPos += game::GetMoveVector(c);
 
-				if (short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
-				if (short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentArea()->GetXSize()-1;
-				if (short(CursorPos.Y) > game::GetCurrentArea()->GetYSize()-1)	CursorPos.Y = 0;
-				if (short(CursorPos.Y) < 0)					CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
+				if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
+				if(short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentArea()->GetXSize()-1;
+				if(short(CursorPos.Y) > game::GetCurrentArea()->GetYSize()-1)	CursorPos.Y = 0;
+				if(short(CursorPos.Y) < 0)					CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
 			}
 
 			if(GetIsPlayer())
@@ -2022,7 +2031,7 @@ void character::GetPlayerCommand()
 				ValidKeyPressed = true;
 			}
 
-		if (!ValidKeyPressed)
+		if(!ValidKeyPressed)
 			ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
 	}
 }
@@ -2376,7 +2385,6 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 			ADD_MESSAGE("You stop digging.");
 			SetAP(750);
 		}
-
 	}
 
 	EndEating();

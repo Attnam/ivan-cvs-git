@@ -68,6 +68,7 @@ public:
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
 	virtual void Kick(ushort, bool, uchar) {}
+	virtual bool IsDoor() const { return false; }
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

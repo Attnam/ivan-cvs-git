@@ -2,13 +2,16 @@
 #define __LEVEL_H__
 
 #include <string>
+#include <vector>
 
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
 
 #include "area.h"
+#include "roomba.h"
 
+class room;
 class levelsquare;
 class character;
 class area;
@@ -23,7 +26,7 @@ class roomscript;
 class level : public area
 {
 public:
-	level() {}
+	level() : Room(1, 0) {}
 	virtual ~level() {}
 	virtual void Generate(levelscript*);
 	virtual vector2d RandomSquare(bool, bool = false) const;
@@ -64,6 +67,9 @@ public:
 	virtual void MoveCharacter(vector2d, vector2d);
 	virtual ushort GetLOSModifier() const;
 	virtual ushort CalculateMinimumEmitationRadius(ushort) const;
+	virtual room* GetRoom(uchar Index) const { return Room[Index]; }
+	virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
+	virtual void AddRoom(room*);
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;
@@ -71,6 +77,7 @@ protected:
 	dynarray<vector2d, uchar> KeyPoint, Door;
 	vector2d UpStairs, DownStairs, WorldMapEntry;
 	ushort Population;
+	std::vector<room*> Room;
 };
 
 #endif

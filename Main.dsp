@@ -186,6 +186,14 @@ SOURCE=.\Main\Source\proto.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\roomba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\roomde.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\script.cpp
 # End Source File
 # Begin Source File
@@ -311,6 +319,14 @@ SOURCE=.\Main\Include\pool.h
 # Begin Source File
 
 SOURCE=.\Main\Include\proto.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\roomba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\roomde.h
 # End Source File
 # Begin Source File
 

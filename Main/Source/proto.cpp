@@ -9,6 +9,7 @@ std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData;
 std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData;
 std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData;
 std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData;
+std::vector<room*>			protocontainer<room>::ProtoData;
 std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
@@ -16,12 +17,14 @@ std::map<std::string, ushort>		protocontainer<groundlevelterrain>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<overlevelterrain>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<groundworldmapterrain>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<overworldmapterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
 #include "materde.h"
 #include "itemde.h"
 #include "charde.h"
 #include "lterrade.h"
 #include "wterrade.h"
+#include "roomde.h"
 
 #include "error.h"
 

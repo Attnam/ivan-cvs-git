@@ -199,6 +199,7 @@ class CHARACTER
 		SetTorsoType(8);
 	},
 public:
+	virtual void GetAICommand();
 	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }

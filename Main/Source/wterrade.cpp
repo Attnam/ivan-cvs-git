@@ -13,7 +13,6 @@
 bool attnam::GoDown(character* Who) const
 {
 	iosystem::TextScreen("Entering dungeon...\n\nThis may take some time, please wait.", WHITE, false);
-	game::GetDungeon(1)->SetWorldMapPos(SquareUnder->GetPos());
 	game::GetWorldMap()->RemoveCharacter(Who->GetPos());
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(1);
@@ -40,7 +39,6 @@ bool attnam::GoDown(character* Who) const
 bool elpuricave::GoDown(character* Who) const
 {
 	iosystem::TextScreen("Entering dungeon...\n\nThis may take some time, please wait.", WHITE, false);
-	game::GetDungeon(0)->SetWorldMapPos(SquareUnder->GetPos());
 	game::GetWorldMap()->RemoveCharacter(Who->GetPos());
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(0);

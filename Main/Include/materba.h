@@ -48,8 +48,8 @@ class inputfile;
 class material : public typeable
 {
 public:
-	material() : Volume(0) {}
-	virtual ~material()					{}
+	material() : Volume(0), MotherObject(0) {}
+	virtual ~material() {}
 	virtual std::string Name(uchar Case = 0) const;
 	virtual ushort GetHitValue() const = 0;
 	virtual uchar GetConsumeType() const			{ return ODD; }
@@ -77,11 +77,14 @@ public:
 	virtual bool CanBeWished() const { return true; }
 	virtual material* CreateWishedMaterial(ulong) const;
 	virtual bool IsFlesh() { return false; }
+	virtual object* GetMotherObject() const { return MotherObject; }
+	virtual void SetMotherObject(object* What) { MotherObject = What; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }
 	virtual void NormalFoodEffect(character*, float, float);
 	ulong Volume;
+	object* MotherObject;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

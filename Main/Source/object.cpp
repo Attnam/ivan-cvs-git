@@ -5,8 +5,9 @@
 #include "pool.h"
 #include "save.h"
 #include "game.h"
+#include "lsquare.h"
 
-object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0)
+object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), SquareUnder(0)
 {
 	GraphicId.Color = new ushort[4];
 
@@ -41,9 +42,15 @@ void object::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 
+	SquareUnder = game::GetSquareInLoad();
+
 	game::PopObjectID(ID);
 
 	SaveFile >> Material >> Size >> GraphicId >> ID;
+
+	for(ushort c = 0; c < Material.size(); ++c)
+		if(Material[c])
+			Material[c]->SetMotherObject(this);
 
 	PreserveBit.resize(Material.size(), false);
 
@@ -61,11 +68,16 @@ void object::InitMaterials(ushort Materials, ...)
 		Material.push_back(va_arg(AP, material*));
 		PreserveBit.push_back(false);
 
-		if(Material[c] && !Material[c]->GetVolume())
-			Material[c]->SetVolume(GetDefaultVolume(c));
+		if(Material[c])
+		{
+			Material[c]->SetMotherObject(this);
 
-		if(c < 4 && Material[c])
-			GraphicId.Color[c] = Material[c]->GetColor();
+			if(!Material[c]->GetVolume())
+				Material[c]->SetVolume(GetDefaultVolume(c));
+
+			if(c < 4)
+				GraphicId.Color[c] = Material[c]->GetColor();
+		}
 	}
 
 	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
@@ -81,6 +93,8 @@ void object::InitMaterials(material* FirstMaterial)
 
 	if(Material[0])
 	{
+		Material[0]->SetMotherObject(this);
+
 		GraphicId.Color[0] = Material[0]->GetColor();
 
 		if(!Material[0]->GetVolume())
@@ -295,10 +309,13 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 			Picture = igraph::AddUser(GraphicId).Bitmap;
 		}
 
-	Material[Index] = NewMaterial;
+	if(Material[Index] = NewMaterial)
+	{
+		Material[Index]->SetMotherObject(this);
 
-	if(Material[Index] && !Material[Index]->GetVolume())
-		Material[Index]->SetVolume(GetDefaultVolume(Index));
+		if(!Material[Index]->GetVolume())
+			Material[Index]->SetVolume(GetDefaultVolume(Index));
+	}
 }
 
 void object::ChangeMaterial(uchar Index, material* NewMaterial)
@@ -317,16 +334,17 @@ void object::UpdatePicture()
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
-void object::SetSquareUnder(square* Square)
-{
-	SquareUnder = Square;
-
-	for(ushort c = 0; c < Material.size(); ++c)
-		if(Material[c])
-			Material[c]->SetSquareUnder(Square);
-}
-
 void object::PreserveMaterial(ushort Index)
 {
 	PreserveBit[Index] = true;
+}
+
+levelsquare* object::GetLevelSquareUnder() const
+{
+	return (levelsquare*)SquareUnder;
+}
+
+void object::SetLevelSquareUnder(levelsquare* What)
+{
+	SquareUnder = What;
 }

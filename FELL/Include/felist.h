@@ -27,7 +27,7 @@ public:
 	void AddEntry(std::string, ushort);
 	void AddDescription(std::string Str, ushort Color = 0xFFFF) { Description.push_back(felistentry(Str, Color)); }
 	void DrawDescription() const;
-	ushort Draw() const;
+	ushort Draw(bool = true) const;
 	void Empty();
 	std::string GetEntry(ushort Index) { return Entry[Index].String; }
 	ushort Length() const { return Entry.size(); }

@@ -115,10 +115,7 @@ void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
 	GroundWorldMapTerrain = What;
 
 	if(What)
-	{
-		What->SetAreaUnder(GetAreaUnder());
-		What->SetSquareUnder(this);
-	}
+		What->SetWorldMapSquareUnder(this);
 }
 
 void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
@@ -126,10 +123,7 @@ void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
 	OverWorldMapTerrain = What;
 
 	if(What)
-	{
-		What->SetAreaUnder(GetAreaUnder());
-		What->SetSquareUnder(this);
-	}
+		What->SetWorldMapSquareUnder(this);
 }
 
 void worldmapsquare::UpdateMemorizedDescription(bool)

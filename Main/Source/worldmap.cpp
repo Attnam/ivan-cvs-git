@@ -10,6 +10,7 @@
 #include "proto.h"
 #include "error.h"
 #include "save.h"
+#include "dungeon.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -160,7 +161,9 @@ void worldmap::Generate()
 			continue;
 
 		GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
+		game::GetDungeon(1)->SetWorldMapPos(AttnamPos);
 		GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
+		game::GetDungeon(0)->SetWorldMapPos(ElpuriCavePos);
 
 		GetWorldMapSquare(AttnamPos)->AddCharacter(game::GetPlayer());
 

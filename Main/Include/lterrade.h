@@ -115,6 +115,7 @@ public:
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual bool GetIsWalkable() const { return IsOpen; }
+	virtual bool IsDoor() const { return true; }
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }

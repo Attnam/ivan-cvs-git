@@ -54,7 +54,7 @@ void groundworldmapterrain::DrawToTileBuffer() const
 
 	std::priority_queue<prioritypair> Neighbour;
 
-	DO_FOR_SQUARES_AROUND(GetWorldMapSquareUnder()->GetPos().X, GetWorldMapSquareUnder()->GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
 	{
 		groundworldmapterrain* DoNeighbour = GetWorldMapUnder()->GetWorldMapSquare(DoX, DoY)->GetGroundWorldMapTerrain();
 
@@ -74,24 +74,28 @@ void overworldmapterrain::DrawToTileBuffer() const
 	igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
-worldmapsquare* worldmapterrain::GetWorldMapSquareUnder() const
-{
-	return (worldmapsquare*)SquareUnder;
-}
-
 worldmap* worldmapterrain::GetWorldMapUnder() const
 {
-	return (worldmap*)AreaUnder;
+	return GetWorldMapSquareUnder()->GetWorldMapUnder();
 }
 
 bool overworldmapterrain::GoUp(character* Who) const
 {
 	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
-		return false;
+
+	return false;
 }
 
 bool overworldmapterrain::GoDown(character* Who) const
 {
 	ADD_MESSAGE("There seems to be nothing of interest here.");
-		return false;
+
+	return false;
+}
+
+void worldmapterrain::Load(inputfile& SaveFile)
+{
+	typeable::Load(SaveFile);
+
+	WorldMapSquareUnder = (worldmapsquare*)game::GetSquareInLoad();
 }

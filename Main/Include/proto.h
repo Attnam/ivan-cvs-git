@@ -16,6 +16,7 @@ class groundlevelterrain;
 class overlevelterrain;
 class groundworldmapterrain;
 class overworldmapterrain;
+class room;
 class outputfile;
 class inputfile;
 

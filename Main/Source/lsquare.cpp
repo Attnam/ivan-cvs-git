@@ -15,7 +15,7 @@
 #include "team.h"
 #include "femath.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
+levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0)
 {
 	Stack = new stack(this);
 
@@ -508,12 +508,15 @@ void levelsquare::Save(outputfile& SaveFile) const
 		GetFluidBuffer()->Save(SaveFile);
 
 	SaveFile << Emitation << DivineOwner;
-	SaveFile << Engraved;
+	SaveFile << Engraved << Room;
 }
 
 void levelsquare::Load(inputfile& SaveFile)
 {
 	game::SetSquareInLoad(this);
+
+	if(GetPos().X == 7 && GetPos().Y == 31)
+		int esko = 2;
 
 	GetStack()->Load(SaveFile); // This must be before square::Load!
 
@@ -548,7 +551,7 @@ void levelsquare::Load(inputfile& SaveFile)
 	}
 
 	SaveFile >> Emitation >> DivineOwner;
-	SaveFile >> Engraved;
+	SaveFile >> Engraved >> Room;
 }
 
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -910,7 +913,7 @@ void levelsquare::DrawCheat()
 	}
 }
 
-void levelsquare::ApplyScript(squarescript* SquareScript)
+void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
 	Clean();
 
@@ -922,6 +925,9 @@ void levelsquare::ApplyScript(squarescript* SquareScript)
 			Char->SetTeam(game::GetTeam(*GetLevelUnder()->GetLevelScript()->GetTeamDefault()));
 
 		FastAddCharacter(Char);
+
+		if(Room)
+			Room->HandleInstantiatedCharacter(Char);
 	}
 
 	if(SquareScript->GetItem(false))
@@ -931,7 +937,14 @@ void levelsquare::ApplyScript(squarescript* SquareScript)
 		ChangeGroundLevelTerrain(SquareScript->GetGroundTerrain()->Instantiate());
 
 	if(SquareScript->GetOverTerrain(false))
-		ChangeOverLevelTerrain(SquareScript->GetOverTerrain()->Instantiate());
+	{
+		overlevelterrain* Terrain = SquareScript->GetOverTerrain()->Instantiate();
+
+		ChangeOverLevelTerrain(Terrain);
+
+		if(Room)
+			Room->HandleInstantiatedOverLevelTerrain(Terrain);
+	}
 
 	if(SquareScript->GetIsUpStairs(false) && *SquareScript->GetIsUpStairs())
 		GetLevelUnder()->SetUpStairs(Pos);
@@ -986,8 +999,11 @@ void levelsquare::MoveCharacter(levelsquare* To)
 	}
 }
 
-void levelsquare::StepOn(character* Stepper)
+void levelsquare::StepOn(character* Stepper, square* ComingFrom)
 {
+	if(Room && ((levelsquare*)ComingFrom)->GetRoom() != Room)
+		GetLevelUnder()->GetRoom(Room)->Enter(Stepper);
+
 	GetGroundLevelTerrain()->StepOn(Stepper);
 	GetOverLevelTerrain()->StepOn(Stepper);
 	GetStack()->CheckForStepOnEffect(Stepper);

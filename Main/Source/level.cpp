@@ -10,6 +10,7 @@
 #include "proto.h"
 #include "save.h"
 #include "script.h"
+#include "roomde.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -302,7 +303,7 @@ void level::Generate(levelscript* GenLevelScript)
 		else
 			Pos = *Square->GetPosScript()->GetVector();
 
-		Map[Pos.X][Pos.Y]->ApplyScript(Square);
+		Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
 	}
 }
 
@@ -391,6 +392,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 				return false;
 	}
 
+	room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Clone();
+	RoomClass->SetPos(vector2d(XPos, YPos));
+	RoomClass->SetSize(vector2d(Width, Height));
+
+	AddRoom(RoomClass);
+
 	{
 	for(ushort x = XPos; x < XPos + Width; ++x)
 	{
@@ -411,6 +418,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][YPos]->SetDivineOwner(*RoomScript->GetDivineOwner());
 			Map[x][YPos + Height - 1]->SetDivineOwner(*RoomScript->GetDivineOwner());
 		}
+
+		Map[x][YPos]->SetRoom(RoomClass->GetIndex());
+		Map[x][YPos + Height - 1]->SetRoom(RoomClass->GetIndex());
 	}
 	}
 
@@ -432,6 +442,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[XPos][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
 			Map[XPos + Width - 1][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
 		}
+
+		Map[XPos][y]->SetRoom(RoomClass->GetIndex());
+		Map[XPos + Width - 1][y]->SetRoom(RoomClass->GetIndex());
 	}
 
 	for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
@@ -443,6 +456,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 			if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
 				Map[x][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
+
+			Map[x][y]->SetRoom(RoomClass->GetIndex());
 		}
 
 	if(*RoomScript->GetAltarPossible() && !(rand() % 4))
@@ -540,7 +555,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 		else
 			Pos = *Square->GetPosScript()->GetVector();
 
-		Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square);
+		Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square, RoomClass);
 	}
 
 	if(RoomScript->GetCharacterMap(false))
@@ -642,6 +657,8 @@ void level::Save(outputfile& SaveFile) const
 {
 	area::Save(SaveFile);
 
+	SaveFile << Room;
+
 	{
 	for(ulong c = 0; c < XSizeTimesYSize; ++c)
 		Map[0][c]->Save(SaveFile);
@@ -670,9 +687,13 @@ void level::Load(inputfile& SaveFile)
 
 	Map = (levelsquare***)area::Map;
 
+	SaveFile >> Room;
+
 	for(ushort x = 0; x < XSize; ++x)
 		for(ulong y = 0; y < YSize; ++y)
 		{
+			if(x == 7 && y == 31)
+				int esko = 2;
 			Map[x][y] = new levelsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);
 		}
@@ -806,4 +827,10 @@ ushort level::CalculateMinimumEmitationRadius(ushort Emitation) const
 {
 	ushort Ambient = *LevelScript->GetAmbientLight();
 	return sqrt(float(Emitation << 7) / (Ambient < LIGHT_BORDER ? LIGHT_BORDER : Ambient) - 128);
+}
+
+void level::AddRoom(room* NewRoom)
+{
+	NewRoom->SetIndex(Room.size());
+	Room.push_back(NewRoom);
 }

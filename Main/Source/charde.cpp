@@ -123,11 +123,12 @@ bool humanoid::Drop()
 		else if(GetStack()->GetItem(Index) == Armor.Torso)
 			ADD_MESSAGE("You can't drop something you wear!");
 		else
-		{
-			GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
+			if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index)))
+			{
+				GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
 
-			return true;
-		}
+				return true;
+			}
 
 	return false;
 }
@@ -764,4 +765,15 @@ void perttu::AddHitMessage(character* Enemy, const bool Critical) const
 		else
 			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
+}
+
+void shopkeeper::GetAICommand()
+{
+	if(CheckForEnemies())
+		return;
+
+	if(CheckForDoors())
+		return;
+
+	CheckForUsefulItemsOnGround();
 }

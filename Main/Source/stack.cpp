@@ -238,7 +238,7 @@ ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the item
 		ItemNames.AddEntry(Buffer, RED);
 	}
 
-	return ItemNames.Draw();
+	return ItemNames.Draw(false);
 }
 
 ushort stack::GetEmitation() const // Calculates the biggest light emmision of the levelsquare...

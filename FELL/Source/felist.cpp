@@ -4,7 +4,7 @@
 #include "whandler.h"
 #include "colorbit.h"
 
-ushort felist::Draw() const
+ushort felist::Draw(bool BlitBackroundAfterwards) const
 {
 	if(!Entry.size())
 		return 0xFFFF;
@@ -39,35 +39,40 @@ ushort felist::Draw() const
 			if(Pressed > 64 && Pressed < 91)
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
+				if(BlitBackroundAfterwards)
+					graphics::BlitDBToScreen();
 				return Pressed - 65 + Min < Entry.size() ? Pressed - 65 + Min : 0xFFFF;
 			}
 
 			if(Pressed > 96 && Pressed < 123)
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
+				if(BlitBackroundAfterwards)
+					graphics::BlitDBToScreen();
 				return Pressed - 97 + Min < Entry.size() ? Pressed - 97 + Min : 0xFFFF;
 			}
 
 			if(Pressed == '-')
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
+				if(BlitBackroundAfterwards)
+					graphics::BlitDBToScreen();
 				return 0xFFFE;
 			}
 
 			if(Pressed == 0x1B || (Pressed == 0x20 && c == Entry.size() - 1))
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
+				if(BlitBackroundAfterwards)
+					graphics::BlitDBToScreen();
 				return 0xFFFD;
 			}
 
 			if(c == Entry.size() - 1)
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
+				if(BlitBackroundAfterwards)
+					graphics::BlitDBToScreen();
 				return 0xFFFF;
 			}
 			else

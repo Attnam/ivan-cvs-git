@@ -11,14 +11,18 @@ class worldmap;
 class worldmapterrain : public typeable
 {
 public:
+	worldmapterrain() : WorldMapSquareUnder(0) {}
 	virtual vector2d GetPos() const;
-	virtual worldmapsquare* GetWorldMapSquareUnder() const;
+	virtual worldmapsquare* GetWorldMapSquareUnder() const { return WorldMapSquareUnder; }
+	virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
 	virtual worldmap* GetWorldMapUnder() const;
 	virtual std::string Name(uchar = 0) const;
+	virtual void Load(inputfile&);
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }
 	virtual vector2d GetBitmapPos() const = 0;
+	worldmapsquare* WorldMapSquareUnder;
 };
 
 class groundworldmapterrain : public worldmapterrain, public groundterrain

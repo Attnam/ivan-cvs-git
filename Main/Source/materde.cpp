@@ -62,7 +62,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 		if(Eater == game::GetPlayer())
 			ADD_MESSAGE("You feel like a hippie.");
 		else
-			if(GetLevelSquareUnder()->CanBeSeen())
+			if(GetMotherObject()->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s barks to you happily.", Eater->CNAME(DEFINITE));
 	}
 

@@ -510,6 +510,23 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
+		if(Word == "Type")
+		{
+			if(!Type)
+				Type = new ushort;
+ 
+			SaveFile.ReadWord();
+			Word = SaveFile.ReadWord();
+			SaveFile.ReadWord();
+
+			*Type = protocontainer<room>::SearchCodeName(Word);
+
+			if(!*Type)
+				ABORT("Odd room type %s encountered in room script!", Word.c_str());
+
+			continue;
+		}
+
 		ABORT("Odd script term %s encountered in room script!", Word.c_str());
 	}
 }

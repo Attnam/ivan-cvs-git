@@ -24,8 +24,10 @@ class material;
 class outputfile;
 class inputfile;
 class bitmap;
+class levelsquare;
+class square;
 
-class object : virtual public typeable // This must be virtual and I have NO idea why!
+class object : public typeable
 {
 public:
 	object(bool);
@@ -56,9 +58,12 @@ public:
 	virtual void SetID(ulong What) { ID = What; }
 	virtual void DrawToTileBuffer() const = 0;
 	virtual bitmap* GetPicture() const { return Picture; }
-	virtual void SetSquareUnder(square*);
 	virtual ulong GetDefaultVolume(ushort Index) const = 0;
 	virtual void PreserveMaterial(ushort);
+	virtual square* GetSquareUnder() const { return SquareUnder; }
+	virtual void SetSquareUnder(square* What) { SquareUnder = What; }
+	virtual levelsquare* GetLevelSquareUnder() const;
+	virtual void SetLevelSquareUnder(levelsquare*);
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const { return NameSingular() + "s"; }
@@ -79,6 +84,7 @@ protected:
 	bitmap* Picture;
 	graphic_id GraphicId;
 	ulong ID;
+	square* SquareUnder;
 };
 
 #endif

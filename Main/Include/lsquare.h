@@ -21,6 +21,7 @@ class square;
 class item;
 class outputfile;
 class inputfile;
+class room;
 
 /* Presentation of the levelsquare class */
 
@@ -80,13 +81,15 @@ public:
 	virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
 	virtual void ChangeOverLevelTerrain(overlevelterrain*);
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
-	virtual void ApplyScript(squarescript*);
+	virtual void ApplyScript(squarescript*, room*);
 	virtual bool CanBeSeen() const;
 	virtual bool CanBeSeenFrom(vector2d, ulong) const;
 	virtual void MoveCharacter(levelsquare*);
 	virtual bool CanBeSeenIgnoreDarkness() const;
 	virtual ushort GetRawLuminance() const;
-	virtual void StepOn(character*);
+	virtual void StepOn(character*, square*);
+	virtual uchar GetRoom() const { return Room; }
+	virtual void SetRoom(uchar What) { Room = What; }
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;
@@ -107,6 +110,7 @@ protected:
 	uchar DivineOwner;
 	bool Fluided;
 	bitmap* FluidBuffer;
+	uchar Room;
 };
 
 #endif

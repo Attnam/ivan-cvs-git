@@ -39,6 +39,7 @@ Dungeon 0;
 			DivineOwner=0;
 			GenerateTunnel=true;
 			GenerateLamps=true;
+			Type=normalroom;
 		}
 	}
 
@@ -271,6 +272,7 @@ Dungeon 1;
 			DivineOwner=0;
 			GenerateTunnel=false;
 			GenerateLamps=true;
+			Type=normalroom;
 		}
 
 		Square, Random { Walkable=true; }
@@ -561,6 +563,7 @@ Dungeon 1;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=9;
+			Type=shop;
 			
 			Square, Pos 5, 0;
 			{
@@ -590,7 +593,7 @@ Dungeon 1;
 				}
 			}
 			{
-			    tsplc
+			    tsp.c
 			    blLcl
 			    tbbbL		
 			}

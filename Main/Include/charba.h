@@ -234,6 +234,8 @@ public:
 	virtual bool GainDivineKnowledge();
 	virtual ulong GetMoney() const { return Money; }
 	virtual void SetMoney(ulong What) { Money = What; }
+	virtual void SetHomeRoom(uchar What) { HomeRoom = What; }
+	virtual uchar GetHomeRoom() const { return HomeRoom; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -289,6 +291,7 @@ protected:
 		} Digging;
 	} StateVariables;
 	ulong Money;
+	uchar HomeRoom;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
