@@ -284,9 +284,9 @@ bool character::GoDown()
 bool character::Open()
 {
 	if(GetStack()->GetItems())
-		ADD_MESSAGE("Where is this famous door you wish to open? Press i for inventory.");
+		ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key, space or i]");
 	else
-		ADD_MESSAGE("Where is this famous door you wish to open?");
+		ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key or space]");
 
 	DRAW_MESSAGES();
 
@@ -312,7 +312,7 @@ bool character::Open()
 
 bool character::Close()
 {
-	ADD_MESSAGE("Where is this door you wish to close?");
+	ADD_MESSAGE("Where is this door you wish to close? [press a direction key or space]");
 
 	DRAW_MESSAGES();
 
@@ -1036,7 +1036,7 @@ void character::BeTalkedTo(character*)
 bool character::Talk()
 {
 	int k;
-	ADD_MESSAGE("To whom do you wish to talk to?");
+	ADD_MESSAGE("To whom do you wish to talk to? [press a direction key or space]");
 
 	DRAW_MESSAGES();
 
@@ -1914,7 +1914,7 @@ bool character::Kick()
 		return false;
 	}
 
-	ADD_MESSAGE("In what direction do you wish to kick?");
+	ADD_MESSAGE("In what direction do you wish to kick? [press a direction key or space]");
 	game::DrawEverything();
 	vector2d KickPos = game::AskForDirectionVector();
 
@@ -2052,7 +2052,7 @@ bool character::Throw()
 			return false;
 		}
 
-		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?", 8, false);
+		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?  [press a direction key or space]", 8, false);
 
 		if(Answer == 0xFF)
 			return false;
@@ -2230,7 +2230,7 @@ bool character::Zap()
 			return false;
 		}
 
-		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap? Press . to zap yourself.", 8, false, true);
+		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap?  [press a direction key, space or .]", 8, false, true);
 
 		if(Answer == 0xFF)
 			return false;
