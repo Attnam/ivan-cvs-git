@@ -733,9 +733,9 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
   return false;
 }
 
-/* Returns true if something was cloned. Max is the cap of items to be cloned */
+/* Returns true if something was duplicated. Max is the cap of items to be affected */
 
-bool stack::Clone(int Max)
+bool stack::Duplicate(int Max, ulong Flags)
 {
   if(!GetItems())
     return false;
@@ -745,7 +745,7 @@ bool stack::Clone(int Max)
   int p = 0;
 
   for(uint c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->Exists() && ItemVector[c]->DuplicateToStack(this) && ++p == Max)
+    if(ItemVector[c]->Exists() && ItemVector[c]->DuplicateToStack(this, Flags) && ++p == Max)
       break;
 
   return p > 0;
@@ -1134,4 +1134,10 @@ bool stack::DetectMaterial(const material* Material) const
       return true;
 
   return false;
+}
+
+void stack::SetLifeExpectancy(int Base, int RandPlus)
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->SetLifeExpectancy(Base, RandPlus);
 }

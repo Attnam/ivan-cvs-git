@@ -1245,6 +1245,108 @@ Dungeon ATTNAM;
 			WallSquare = solidterrain(SNOW_TERRAIN), FIR_WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
+
+		Square, Random;
+		{
+			Character = communist { Team = IVAN_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = vladimir { Team = IVAN_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = imperialist { Team = ATTNAM_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = mistress(QUEEN) { Team = ATTNAM_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = genetrixvesana { Team = ATTNAM_TEAM; }
+			Times = 10;
+		}
+
+		Square, Random;
+		{
+			Character = golem(VALPURIUM) { Team = ATTNAM_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = kobold(PATRIARCH) { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = goblin(KING) { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = ennerbeast { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = eddy { Team = MONSTER_TEAM; }
+			Times = 25;
+		}
+
+		Square, Random;
+		{
+			Character = skunk { Team = MONSTER_TEAM; }
+			Times = 50;
+		}
+
+		Square, Random;
+		{
+			Character = orc(MARSHAL) { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = darkknight(GRAND_MASTER) { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = oree { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = elpuri { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
+
+		Square, Random;
+		{
+			Character = darkmage(ARCH_MAGE) { Team = MONSTER_TEAM; }
+			Times = 10;
+		}
+
+		Square, Random;
+		{
+			Character = skeleton(WAR_LORD) { Team = MONSTER_TEAM; }
+			Times = 3;
+		}
 	}
 }
 

@@ -701,6 +701,7 @@ holybanana /* materialcontainer->banana-> */
 	SecondaryMaterialConfig == HOLY_BANANA_FLESH;
 	BaseEmitation = rgb24(160, 140, 110);
 	CanBeCloned = false;
+	CanBeMirrored = true; /* will create a peel */
 	AllowEquip = true;
 }
 
@@ -726,6 +727,7 @@ justifier /* meleeweapon-> */
 	Alias == "Justifier";
 	Roundness = 20;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	CanBeBroken = false;
 	DefaultEnchantment = 16;
 	CanBeEnchanted = false;
@@ -759,6 +761,7 @@ neercseulb /* meleeweapon-> */
 	Roundness = 35;
 	IsTwoHanded = true;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	CanBeBroken = false;
 	DefaultEnchantment = 6;
 	AttachedGod = MORTIFER;
@@ -919,6 +922,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsPolymorphable = false;
 	CanBeBroken = false;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	DefaultEnchantment = 10;
 	InElasticityPenaltyModifier = 30;
 	CanBeEnchanted = false;
@@ -1202,7 +1206,7 @@ wand
 		BeamRange = 5;
 		MinCharges = 3;
 		MaxCharges = 6;
-		BeamColor = GREEN;
+		BeamColor = BLUE;
 		BeamEffect = BEAM_TELEPORT;
 		AttachedGod = SOPHOS;
 		BreakEffectRangeSquare = 9;
@@ -1281,17 +1285,17 @@ wand
 
 	Config WAND_OF_CLONING;
 	{
-		Possibility = 10;
-		Price = 1000;
+		Possibility = 5;
+		Price = 2000;
 		IsPolymorphSpawnable = false;
 		PostFix = "of cloning";
-		MainMaterialConfig == MARBLE;
+		MainMaterialConfig == RUBY;
 		BeamRange = 5;
 		MinCharges = 1;
 		MaxCharges = 3;
 		CanBeCloned = false;
 		BeamColor = PINK;
-		BeamEffect = BEAM_CLONE;
+		BeamEffect = BEAM_DUPLICATE;
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
 	}
@@ -1325,6 +1329,23 @@ wand
 		BeamEffect = BEAM_ACID_RAIN;
 		AttachedGod = SCABIES;
 		BreakEffectRangeSquare = 1;
+	}
+
+	Config WAND_OF_MIRRORING;
+	{
+		Possibility = 15;
+		Price = 1000;
+		IsPolymorphSpawnable = false;
+		PostFix = "of mirroring";
+		MainMaterialConfig == SAPPHIRE;
+		BeamRange = 5;
+		MinCharges = 1;
+		MaxCharges = 3;
+		CanBeCloned = false;
+		BeamColor = PINK;
+		BeamEffect = BEAM_DUPLICATE; /* difference from cloning overridden */
+		AttachedGod = INFUSCOR;
+		BreakEffectRangeSquare = 0;
 	}
 }
 
@@ -2670,6 +2691,7 @@ mjolak /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	Alias == "Mjolak";
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	Price = 750;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 256;
@@ -2703,6 +2725,7 @@ vermis /* meleeweapon-> */
 	Alias == "Vermis";
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	Price = 500;
 	AttachedGod = SOPHOS;
 	WieldedBitmapPos = 160, 96;
@@ -2735,6 +2758,7 @@ turox /* meleeweapon-> */
 	Alias == "Turox";
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	Price = 250;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 192;
@@ -2962,6 +2986,7 @@ saalthul
 	GearStates = INVISIBLE;
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
+	CanBeMirrored = true;
 	Alias == "Saal'thul";
 	AttachedGod = CLEPTIA;
 	WieldedBitmapPos = 160, 32;

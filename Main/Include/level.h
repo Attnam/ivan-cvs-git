@@ -76,6 +76,84 @@ struct explosion
   bool HurtNeutrals;
 };
 
+struct beamdata
+{
+  beamdata(character*, const festring&, int, ulong);
+  beamdata(character*, const festring&, vector2d, color16, int, int, int, ulong);
+  character* Owner;
+  festring DeathMsg;
+  vector2d StartPos;
+  color16 BeamColor;
+  int BeamEffect;
+  int Direction;
+  int Range;
+  ulong SpecialParameters;
+};
+
+inline beamdata::beamdata
+(
+  character* Owner,
+  const festring& DeathMsg,
+  int Direction,
+  ulong SpecialParameters
+) :
+  Owner(Owner),
+  DeathMsg(DeathMsg),
+  Direction(Direction),
+  SpecialParameters(SpecialParameters)
+{ }
+
+inline beamdata::beamdata
+(
+  character* Owner,
+  const festring& DeathMsg,
+  vector2d StartPos,
+  color16 BeamColor,
+  int BeamEffect,
+  int Direction,
+  int Range,
+  ulong SpecialParameters
+) :
+  Owner(Owner),
+  DeathMsg(DeathMsg),
+  StartPos(StartPos),
+  BeamColor(BeamColor),
+  BeamEffect(BeamEffect),
+  Direction(Direction),
+  Range(Range),
+  SpecialParameters(SpecialParameters)
+{ }
+
+/*struct duplicatedata : public beamdata
+{
+  duplicatedata(character*, const festring&, vector2d, color16, int, int, int, ulong);
+  ulong Flags;
+};
+
+inline duplicatedata::duplicatedata
+(
+  character* Owner,
+  const festring& DeathMsg,
+  vector2d StartPos,
+  color16 BeamColor,
+  int BeamEffect,
+  int Direction,
+  int Range,
+  ulong Flags
+) :
+  beamdata
+  (
+    Owner,
+    DeathMsg,
+    StartPos,
+    BeamColor,
+    BeamEffect,
+    Direction,
+    Range
+  ),
+  Flags(Flags)
+{ }*/
+
 class level : public area
 {
  public:
@@ -116,10 +194,10 @@ class level : public area
   vector2d GetEntryPos(const character*, int) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, const roomscript*, room*, vector2d, vector2d);
   void Reveal();
-  static void (level::*GetBeam(int))(character*, const festring&, vector2d, color16, int, int, int);
-  void ParticleBeam(character*, const festring&, vector2d, color16, int, int, int);
-  void LightningBeam(character*, const festring&, vector2d, color16, int, int, int);
-  void ShieldBeam(character*, const festring&, vector2d, color16, int, int, int);
+  static void (level::*GetBeam(int))(beamdata&);
+  void ParticleBeam(beamdata&);
+  void LightningBeam(beamdata&);
+  void ShieldBeam(beamdata&);
   dungeon* GetDungeon() const { return Dungeon; }
   void SetDungeon(dungeon* What) { Dungeon = What; }
   int GetIndex() const { return Index; }

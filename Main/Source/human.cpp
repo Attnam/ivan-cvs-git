@@ -361,7 +361,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	      SecondArm = GetRightArm();
 	    }
 
-	  int Strength = GetAttribute(ARM_STRENGTH);
+	  int Strength = Max(GetAttribute(ARM_STRENGTH), 1);
 
 	  if(FirstArm && FirstArm->GetDamage())
 	    {
@@ -1527,22 +1527,13 @@ bool humanoid::TryToRiseFromTheDead()
   for(c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c))
       {
-	/* Let's search for the original bodypart */
+	bodypart* BodyPart = SearchForOriginalBodyPart(c);
 
-	for(stackiterator i1 = GetStackUnder()->GetBottom(); i1.HasItem(); ++i1)
+	if(BodyPart)
 	  {
-	    for(std::list<ulong>::iterator i2 = OriginalBodyPartID[c].begin(); i2 != OriginalBodyPartID[c].end(); ++i2)
-	      if(i1->GetID() == *i2)
-		{
-		  item* Item = *i1;
-		  Item->RemoveFromSlot();
-		  AttachBodyPart(static_cast<bodypart*>(Item));
-		  GetBodyPart(c)->SetHP(1);
-		  break;
-		}
-
-	    if(GetBodyPart(c))
-	      break;
+	    BodyPart->RemoveFromSlot();
+	    AttachBodyPart(BodyPart);
+	    BodyPart->SetHP(1);
 	  }
       }
 
@@ -2303,20 +2294,34 @@ leg* humanoid::GetRandomLeg() const
     return GetLeftLeg();
 }
 
-item* skeleton::SevereBodyPart(int BodyPartIndex)
+item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
 {
-  item* Bone;
-
-  if(BodyPartIndex == HEAD_INDEX)
-    Bone = new skull(0, NO_MATERIALS);
-  else
-    Bone = new bone(0, NO_MATERIALS);
+  if(BodyPartIndex == RIGHT_ARM_INDEX)
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
+  else if(BodyPartIndex == LEFT_ARM_INDEX)
+    EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, 0);
 
   item* BodyPart = GetBodyPart(BodyPartIndex);
-  Bone->InitMaterials(BodyPart->GetMainMaterial());
-  BodyPart->DropEquipment();
-  BodyPart->RemoveFromSlot();
-  BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+  item* Bone = 0;
+
+  if(!ForceDisappearance)
+    {
+      if(BodyPartIndex == HEAD_INDEX)
+	Bone = new skull(0, NO_MATERIALS);
+      else
+	Bone = new bone(0, NO_MATERIALS);
+
+      Bone->InitMaterials(BodyPart->GetMainMaterial());
+      BodyPart->DropEquipment();
+      BodyPart->RemoveFromSlot();
+      BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+    }
+  else
+    {
+      BodyPart->DropEquipment();
+      BodyPart->RemoveFromSlot();
+    }
+
   BodyPart->SendToHell();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
@@ -2435,14 +2440,14 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, double ToHitVal
     Vector.push_back(std::pair<double, int>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
 }
 
-item* humanoid::SevereBodyPart(int BodyPartIndex)
+item* humanoid::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
 {
   if(BodyPartIndex == RIGHT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
   else if(BodyPartIndex == LEFT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, 0);
 
-  return character::SevereBodyPart(BodyPartIndex);
+  return character::SevereBodyPart(BodyPartIndex, ForceDisappearance);
 }
 
 humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
@@ -3110,7 +3115,13 @@ void darkmage::GetAICommand()
       NearestEnemy = 0;
     }
 
-  festring DeathMsg = CONST_S("killed by the spells of ") + GetName(INDEFINITE);
+  beamdata Beam
+  (
+    this,
+    CONST_S("killed by the spells of ") + GetName(INDEFINITE),
+    YOURSELF,
+    0
+  );
 
   if(NearestEnemy)
     {
@@ -3124,18 +3135,18 @@ void darkmage::GetAICommand()
 	{
 	case APPRENTICE:
 	  Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
-	  Square->Lightning(this, DeathMsg, YOURSELF);
+	  Square->Lightning(Beam);
 	  break;
 	case BATTLE_MAGE:
 	  if(RAND() % 20)
 	    {
 	      Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
-	      Square->Lightning(this, DeathMsg, YOURSELF);
+	      Square->Lightning(Beam);
 	    }
 	  else
 	    {
 	      Square->DrawParticles(RED);
-	      Square->LowerEnchantment(this, DeathMsg, YOURSELF);
+	      Square->LowerEnchantment(Beam);
 	    }
 
 	  break;
@@ -3144,16 +3155,16 @@ void darkmage::GetAICommand()
 	    {
 	    case 0:
 	    case 1:
-	    case 2: Square->DrawParticles(RED); Square->Strike(this, DeathMsg, YOURSELF); break;
-	    case 3: Square->DrawParticles(RED); Square->FireBall(this, DeathMsg, YOURSELF); break;
+	    case 2: Square->DrawParticles(RED); Square->Strike(Beam); break;
+	    case 3: Square->DrawParticles(RED); Square->FireBall(Beam); break;
 	    case 4:
 	    case 5:
-	    case 6: Square->DrawParticles(RED); Square->Slow(this, DeathMsg, YOURSELF); break;
-	    case 7: Square->DrawParticles(RED); Square->Teleport(this, DeathMsg, YOURSELF); break;
+	    case 6: Square->DrawParticles(RED); Square->Slow(Beam); break;
+	    case 7: Square->DrawParticles(RED); Square->Teleport(Beam); break;
 	    case 8:
 	    case 9:
-	    case 10: Square->DrawParticles(RED); Square->LowerEnchantment(this, DeathMsg, YOURSELF); break;
-	    default: Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF); Square->Lightning(this, DeathMsg, YOURSELF); break;
+	    case 10: Square->DrawParticles(RED); Square->LowerEnchantment(Beam); break;
+	    default: Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF); Square->Lightning(Beam); break;
 	    }
 
 	  break;
@@ -3162,14 +3173,14 @@ void darkmage::GetAICommand()
 	    {
 	    case 0:
 	    case 1:
-	    case 2: Square->DrawParticles(RED); Square->FireBall(this, DeathMsg, YOURSELF); break;
-	    case 3: NearestEnemy->CloneToNearestSquare(this, true); break;
+	    case 2: Square->DrawParticles(RED); Square->FireBall(Beam); break;
+	    case 3: NearestEnemy->DuplicateToNearestSquare(this, CHANGE_TEAM); break;
 	    case 4:
-	    case 5: Square->DrawParticles(RED); Square->Slow(this, DeathMsg, YOURSELF); break;
-	    case 6: Square->DrawParticles(RED); Square->Teleport(this, DeathMsg, YOURSELF); break;
+	    case 5: Square->DrawParticles(RED); Square->Slow(Beam); break;
+	    case 6: Square->DrawParticles(RED); Square->Teleport(Beam); break;
 	    case 7:
 	    case 8:
-	    case 9: Square->DrawParticles(RED); Square->LowerEnchantment(this, DeathMsg, YOURSELF); break;
+	    case 9: Square->DrawParticles(RED); Square->LowerEnchantment(Beam); break;
 	    case 10:
 	      {
 		golem* Golem = new golem(RAND() % 3 ? ARCANITE : OCTIRON);
@@ -3196,7 +3207,7 @@ void darkmage::GetAICommand()
 
 		break;
 	      }
-	    default: Square->DrawParticles(RED); Square->Strike(this, DeathMsg, YOURSELF); break;
+	    default: Square->DrawParticles(RED); Square->Strike(Beam); break;
 	    }
 
 	  break;
@@ -3220,19 +3231,19 @@ void darkmage::GetAICommand()
 	{
 	case APPRENTICE:
 	case BATTLE_MAGE:
-	  Square->Haste(this, DeathMsg, YOURSELF);
+	  Square->Haste(Beam);
 	  break;
 	case ARCH_MAGE:
 	  if(!(RAND() & 31))
 	    {
-	      RandomFriend->CloneToNearestSquare(this, true);
+	      RandomFriend->DuplicateToNearestSquare(this, CHANGE_TEAM);
 	      return;
 	    }
 	case ELDER:
 	  if(RAND() & 1)
-	    Square->Invisibility(this, DeathMsg, YOURSELF);
+	    Square->Invisibility(Beam);
 	  else
-	    Square->Haste(this, DeathMsg, YOURSELF);
+	    Square->Haste(Beam);
 
 	  break;
 	}
@@ -3839,7 +3850,16 @@ void necromancer::GetAICommand()
 	  else
 	    {
 	      Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
-	      Square->Lightning(this, CONST_S("killed by the spells of ") + GetName(INDEFINITE), YOURSELF);
+
+	      beamdata Beam
+	      (
+		this,
+		CONST_S("killed by the spells of ") + GetName(INDEFINITE),
+		YOURSELF,
+		0
+	      );
+
+	      Square->Lightning(Beam);
 	      Interrupt = true;
 	    }
 
@@ -3893,6 +3913,9 @@ bool necromancer::TryToRaiseZombie()
 {
   for(int c = 0; c < game::GetTeams(); ++c)
     for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      {
+      character* Char = *i;
+
       if(!(*i)->IsEnabled() && (*i)->GetMotherEntity() && (*i)->GetMotherEntity()->Exists() && (GetConfig() == MASTER_NECROMANCER || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
 	{
 	  character* Zombie = (*i)->GetMotherEntity()->TryNecromancy(this);
@@ -3908,6 +3931,7 @@ bool necromancer::TryToRaiseZombie()
 	      return true;
 	    }
 	}
+      }
 
   return false;
 }
@@ -4140,6 +4164,9 @@ void imperialist::BeTalkedTo()
 
 character* humanoid::CreateZombie() const
 {
+  if(!TorsoIsAlive())
+    return 0;
+
   zombie* Zombie = new zombie;
   int c;
 
@@ -4147,16 +4174,28 @@ character* humanoid::CreateZombie() const
     {
       bodypart* BodyPart = GetBodyPart(c);
 
+      if(!BodyPart)
+	{
+	  BodyPart = SearchForOriginalBodyPart(c);
+
+	  if(BodyPart)
+	    {
+	      BodyPart->RemoveFromSlot();
+	      BodyPart->SendToHell();
+	    }
+	}
+
       if(BodyPart)
 	{
 	  bodypart* ZombieBodyPart = Zombie->GetBodyPart(c);
 
 	  if(!ZombieBodyPart)
-	    {
-	      ZombieBodyPart = Zombie->CreateBodyPart(c);
-	      ZombieBodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND() % 1000);
-	    }
+	    ZombieBodyPart = Zombie->CreateBodyPart(c);
 
+	  material* M = BodyPart->GetMainMaterial()->Duplicate();
+	  M->SetSpoilCounter(2000 + RAND() % 1000);
+	  M->SetSkinColor(Zombie->GetSkinColor());
+	  ZombieBodyPart->ChangeMainMaterial(M);
 	  ZombieBodyPart->CopyAttributes(BodyPart);
 	}
       else if(!Zombie->BodyPartIsVital(c))
@@ -4178,6 +4217,7 @@ character* humanoid::CreateZombie() const
   Zombie->RestoreHP();
   Zombie->RestoreStamina();
   Zombie->SetDescription(GetZombieDescription());
+  Zombie->GenerationDanger = GenerationDanger;
   return Zombie;
 }
 
@@ -4246,7 +4286,6 @@ void humanoid::DropRandomNonVitalBodypart()
 void humanoid::DropBodyPart(int Index)
 {
   festring NameOfDropped = GetBodyPart(Index)->GetBodyPartName();
-
   item* Dropped = SevereBodyPart(Index);
   
   if(Dropped)
@@ -4255,12 +4294,14 @@ void humanoid::DropBodyPart(int Index)
 	GetStack()->AddItem(Dropped);
       else
 	GetStackUnder()->AddItem(Dropped);
+
       Dropped->DropEquipment();
+
       if(IsPlayer())
 	{
 	  ADD_MESSAGE("Your %s drops to the ground.", NameOfDropped.CStr());
 	  game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
-	  DeActivateVoluntaryAction(CONST_S(""));
+	  DeActivateVoluntaryAction();
 	}
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s's %s drops to the ground.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
@@ -4271,9 +4312,16 @@ void humanoid::DropBodyPart(int Index)
 	{
 	  ADD_MESSAGE("Your %s disappears.", NameOfDropped.CStr());
 	  game::AskForKeyPress(CONST_S("Bodypart destroyed! [press any key to continue]"));
-	  DeActivateVoluntaryAction(CONST_S(""));
+	  DeActivateVoluntaryAction();
 	}
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());      
     }
+}
+
+void humanoid::DuplicateEquipment(character* Receiver, ulong Flags)
+{
+  character::DuplicateEquipment(Receiver, Flags);
+  EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, GetRightWielded());
+  EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, GetLeftWielded());
 }

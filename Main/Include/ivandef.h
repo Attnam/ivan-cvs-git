@@ -474,7 +474,7 @@ struct databasebase { int Config; };
 #define BEAM_SLOW 5
 #define BEAM_RESURRECT 6
 #define BEAM_INVISIBILITY 7
-#define BEAM_CLONE 8
+#define BEAM_DUPLICATE 8
 #define BEAM_LIGHTNING 9
 #define BEAM_DOOR_CREATION 10
 #define BEAM_ACID_RAIN 11
@@ -713,5 +713,15 @@ struct databasebase { int Config; };
 
 #define DEFAULT_GENERATION_DANGER 0.05
 #define ANGEL_GENERATION_DANGER 0.10
+
+/* Duplication flags */
+
+#define MIRROR_IMAGE 1
+#define IGNORE_PROHIBITIONS 2
+#define CHANGE_TEAM 4
+#define LE_BASE_SHIFT 3
+#define LE_BASE_RANGE 0x7FFF
+#define LE_RAND_SHIFT 18
+#define LE_RAND_RANGE 0x3FFF
 
 #endif

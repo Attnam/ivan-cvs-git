@@ -59,7 +59,7 @@ class ABSTRACT_ITEM
   void RandomizePosition();
   void ResetPosition() { SpecialFlags &= ~0x7; }
   virtual void SignalSpoil(material*);
-  virtual bool IsVeryCloseToSpoiling() const;
+  bool IsVeryCloseToSpoiling() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   bool IsAlive() const;
   virtual long GetTruePrice() const;
@@ -110,6 +110,8 @@ class ABSTRACT_ITEM
   virtual material* RemoveMaterial(material*);
   virtual void CopyAttributes(const bodypart*) { }
   virtual void DestroyBodyPart(stack*);
+  bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
+  virtual void SetLifeExpectancy(int, int);
  protected:
   virtual bool AllowFluids() const { return true; }
   virtual bool IsSparkling(int) const;
@@ -472,7 +474,6 @@ class ITEM
   virtual double GetWeaponStrength() const;
   virtual bool CanBeEatenByAI(const character*) const;
   virtual int GetStrengthValue() const;
-  virtual void Be() { }
   character* GetDeceased() const { return Deceased; }
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
@@ -498,6 +499,9 @@ class ITEM
   virtual void Cannibalize();
   virtual material* GetConsumeMaterial(const character*, materialpredicate) const;
   virtual bool DetectMaterial(const material*) const;
+  virtual void SetLifeExpectancy(int, int);
+  virtual void Be();
+  virtual void SignalDisappearance();
  protected:
   virtual bool IsSparkling(int) const;
   virtual void GenerateMaterials() { }

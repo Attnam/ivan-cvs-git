@@ -110,7 +110,7 @@ class stack
   color24 GetSideEmitation(int);
   bool CanBeSeenBy(const character*, int) const;
   bool IsDangerousForAIToStepOn(const character*) const;
-  bool Clone(int);
+  bool Duplicate(int, ulong = 0);
   void MoveItemsTo(stack*);
   void MoveItemsTo(slot*);
   item* GetBottomItem(const character*, bool) const;
@@ -138,6 +138,7 @@ class stack
   void UnFreeze() { Flags &= ~FREEZED; }
   void DropSideItems();
   bool DetectMaterial(const material*) const;
+  void SetLifeExpectancy(int, int);
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;

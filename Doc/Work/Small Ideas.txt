@@ -468,3 +468,4 @@ Living mud.
 Scroll of omnipotence.
 Unicorn horn item.
 New snake types.
+Blink dog drool should blink and teleport around.

@@ -211,7 +211,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  bool CheckDeath(const festring&, const character* = 0, bool = false, bool = false, bool = true);
+  bool CheckDeath(const festring&, const character* = 0, bool = false, bool = false, bool = true, bool = true);
   bool DodgesFlyingItem(item*, double);
   virtual bool Hit(character*, vector2d, int, bool = false) = 0;
   bool OpenPos(vector2d);
@@ -242,7 +242,7 @@ class character : public entity, public id
   //virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
-  void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true);
+  void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true, bool = true);
   void HasBeenHitByItem(character*, item*, int, double, int);
   void Hunger();
   void Move(vector2d, bool, bool = false);
@@ -270,7 +270,7 @@ class character : public entity, public id
   bool StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
   virtual bool Faint(int, bool = false);
   void SetTemporaryStateCounter(long, int);
-  void DeActivateVoluntaryAction(const festring&);
+  void DeActivateVoluntaryAction(const festring& = CONST_S(""));
   void ActionAutoTermination();
   team* GetTeam() const { return Team; }
   void SetTeam(team*);
@@ -364,7 +364,7 @@ class character : public entity, public id
   void AddKoboldFleshHitMessage() const;
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
-  virtual item* SevereBodyPart(int);
+  virtual item* SevereBodyPart(int, bool = false);
   virtual bool TryToRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
@@ -643,7 +643,7 @@ class character : public entity, public id
   virtual bool SpecialBiteEffect(character*, vector2d, int, int, bool) { return false; }
   bool HitEffect(character*, item*, vector2d, int, int, int, bool);
   void WeaponSkillHit(item*, int, int);
-  character* Duplicate() const;
+  character* Duplicate(ulong = 0);
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   bool TryToEquip(item*);
   bool TryToConsume(item*);
@@ -653,7 +653,7 @@ class character : public entity, public id
   void PrintBeginPanicMessage() const;
   void PrintEndPanicMessage() const;
   void CheckPanic(int);
-  character* CloneToNearestSquare(character*, bool) const;
+  character* DuplicateToNearestSquare(character*, ulong = 0);
   void SignalSpoil();
   void SignalSpoilLevelChange();
   virtual bool UseMaterialAttributes() const = 0;
@@ -812,7 +812,7 @@ class character : public entity, public id
   ulong GetLastAcidMsgMin() const { return LastAcidMsgMin; }
   void SetLastAcidMsgMin(ulong What) { LastAcidMsgMin = What; }
   virtual bool AllowSpoil() const { return false; }
-  void Spoil(corpse*);
+  void Disappear(corpse*, const char*, bool (bodypart::*)() const);
   void ResetSpoiling();
   virtual character* GetLeader() const;
   int GetMoveType() const;
@@ -834,6 +834,7 @@ class character : public entity, public id
   void PrintEndLeprosyMessage() const;
   void SignalGeneration();
   void CheckIfSeen();
+  void SignalSeen();
   bool HasBeenSeen() const;
   int GetPolymorphIntelligenceRequirement(const character*) const;
   void RemoveAllItems();
@@ -856,6 +857,10 @@ class character : public entity, public id
   void ReceiveWhiteUnicorn(long);
   void DecreaseStateCounter(long, int);
   bool IsImmuneToLeprosy() const;
+  bodypart* SearchForOriginalBodyPart(int) const;
+  void SetLifeExpectancy(int, int);
+  virtual void DuplicateEquipment(character*, ulong);
+  virtual void SignalDisappearance();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -15,6 +15,7 @@ rain::~rain()
 
 void rain::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
 {
+  return;
   long Volume = Liquid->GetVolume();
   int Drops = this->Drops;
 

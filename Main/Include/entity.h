@@ -44,6 +44,7 @@ class entity
   virtual void SignalRustLevelChange() { }
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
+  virtual void SignalDisappearance() { }
  protected:
   color24 Emitation;
   ulong Flags;

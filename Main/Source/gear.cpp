@@ -391,7 +391,7 @@ void meleeweapon::AddPostFix(festring& String) const
 
 void meleeweapon::Be()
 {
-  MainMaterial->Be();
+  item::Be();
 
   if(Exists() && SecondaryMaterial->GetVolume())
     SecondaryMaterial->Be();
@@ -474,14 +474,24 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitP
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      festring DeathMSG;
+      beamdata Beam
+      (
+	Hitter,
+	"",
+	Hitter->GetPos(),
+	WHITE,
+	BEAM_LIGHTNING,
+	Direction,
+	4,
+	0
+      );
 
       if(Hitter->IsPlayer())
-	DeathMSG = CONST_S("electrocuted ") + Hitter->GetObjectPronoun(false) + CONST_S("self with a thunder hammer");
+	Beam.DeathMsg = CONST_S("electrocuted ") + Hitter->GetObjectPronoun(false) + CONST_S("self with a thunder hammer");
       else
-        DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
+        Beam.DeathMsg = CONST_S("killed by ") + Hitter->GetKillName();
 
-      GetLevel()->LightningBeam(Hitter, DeathMSG, Hitter->GetPos(), WHITE, BEAM_LIGHTNING, Direction, 4);
+      GetLevel()->LightningBeam(Beam);
       return true;
     }
   else
@@ -832,6 +842,8 @@ material* meleeweapon::RemoveMaterial(material* Material)
 
 material* meleeweapon::RemoveMainMaterial()
 {
+  bool Equipped = PLAYER->Equips(this);
+
   if(SecondaryMaterial->GetVolume())
     {
       item* Lump = SecondaryMaterial->CreateNaturalForm(SecondaryMaterial->GetVolume());
@@ -841,6 +853,9 @@ material* meleeweapon::RemoveMainMaterial()
     }
   else
     RemoveFromSlot();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 
   SendToHell();
   return 0;
@@ -883,7 +898,11 @@ void meleeweapon::CalculateEmitation()
 
 bool meleeweapon::CalculateHasBe() const
 {
-  return (MainMaterial && MainMaterial->HasBe()) || (SecondaryMaterial && SecondaryMaterial->GetVolume() && SecondaryMaterial->HasBe());
+  return LifeExpectancy
+      || (MainMaterial && MainMaterial->HasBe())
+      || (SecondaryMaterial
+       && SecondaryMaterial->GetVolume()
+       && SecondaryMaterial->HasBe());
 }
 
 void decosadshirt::Be()

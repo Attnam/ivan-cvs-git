@@ -65,6 +65,7 @@ struct materialdatabase : public databasebase
   int HardenedMaterial;
   int IntelligenceRequirement;
   bool IsScary;
+  bool CanBeMirrored;
 };
 
 class materialprototype
@@ -185,6 +186,7 @@ class material
   DATA_BASE_BOOL(IsWarm);
   DATA_BASE_VALUE(int, BreatheWisdomLimit);
   DATA_BASE_BOOL(IsScary);
+  DATA_BASE_BOOL(CanBeMirrored);
   virtual void SetRustLevel(int) { }
   virtual int GetRustLevel() const { return NOT_RUSTED; }
   virtual int GetRustData() const { return NOT_RUSTED; }

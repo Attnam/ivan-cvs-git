@@ -385,6 +385,8 @@ bool fluid::imagedata::Fade()
 
 void fluid::imagedata::Animate(bitmap* Bitmap, vector2d Pos, color24 Luminance, int CurrentFlags) const
 {
+  return;
+
   if(!AlphaSum)
     return;
 

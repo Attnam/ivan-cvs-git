@@ -576,7 +576,11 @@ void lsquare::AddCharacter(character* Guy)
   SignalEmitationIncrease(Guy->GetEmitation());
   Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
-  Guy->CheckIfSeen();
+
+  if(Guy->IsPlayer()
+  || (Guy->CanBeSeenByPlayer(true) && CanBeSeenByPlayer()))
+    Guy->SignalSeen();
+  //Guy->CheckIfSeen();
 }
 
 void lsquare::Clean()
@@ -780,12 +784,29 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
 
 void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
 {
-  SetGLTerrain(NewGround);
-  SetOLTerrain(NewOver);
+  GLTerrain = NewGround;
+  NewGround->SetLSquareUnder(this);
+
+  if(NewGround->IsAnimated())
+    IncAnimatedEntities();
+
+  OLTerrain = NewOver;
+
+  if(NewOver)
+    {
+      NewOver->SetLSquareUnder(this);
+
+      if(NewOver->IsAnimated())
+	IncAnimatedEntities();
+
+      if(!NewOver->IsTransparent())
+	Flags &= ~IS_TRANSPARENT;
+    }
+
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 }
 
-void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
+/*void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
 {
   GLTerrain = NewGround;
   NewGround->SetLSquareUnder(this);
@@ -808,7 +829,7 @@ void lsquare::SetOLTerrain(olterrain* NewOver) // NOTICE WALKABILITY CHANGE!!
       if(!NewOver->IsTransparent())
 	Flags &= ~IS_TRANSPARENT;
     }
-}
+}*/
 
 void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
 {
@@ -1284,19 +1305,19 @@ vector2d lsquare::DrawLightning(vector2d StartPos, long Color, int Direction, bo
   return StartPos;
 }
 
-bool lsquare::Polymorph(character* Zapper, const festring&, int)
+bool lsquare::Polymorph(const beamdata& Beam)
 {
-  GetStack()->Polymorph(Zapper);
+  GetStack()->Polymorph(Beam.Owner);
 
   if(GetOLTerrain())
-    GetOLTerrain()->Polymorph(Zapper);
+    GetOLTerrain()->Polymorph(Beam.Owner);
 
   character* Character = GetCharacter();
 
   if(Character)
     {
-      if(Zapper && Character->GetTeam() != Zapper->GetTeam())
-	Zapper->Hostility(Character);
+      if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+	Beam.Owner->Hostility(Character);
 
       Character->PolymorphRandomly(1, 999999, 500 + RAND() % 500);
     }
@@ -1304,10 +1325,10 @@ bool lsquare::Polymorph(character* Zapper, const festring&, int)
   return false;
 }
 
-bool lsquare::Strike(character* Zapper, const festring& DeathMsg, int Direction) 
+bool lsquare::Strike(const beamdata& Beam) 
 {
   int Damage = 50 + RAND() % 21 - RAND() % 21;
-  GetStack()->ReceiveDamage(Zapper, Damage, ENERGY, Direction);
+  GetStack()->ReceiveDamage(Beam.Owner, Damage, ENERGY, Beam.Direction);
 
   character* Char = GetCharacter();
 
@@ -1318,48 +1339,48 @@ bool lsquare::Strike(character* Zapper, const festring& DeathMsg, int Direction)
       else if(Char->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
 
-      if(Zapper)
-	Zapper->Hostility(Char);
+      if(Beam.Owner)
+	Beam.Owner->Hostility(Char);
 
-      Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
-      Char->CheckDeath(DeathMsg, Zapper);
+      Char->ReceiveDamage(Beam.Owner, Damage, ENERGY, ALL);
+      Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
     }
 
   if(GetOLTerrain())
-    GetOLTerrain()->ReceiveDamage(Zapper, Damage, ENERGY);
+    GetOLTerrain()->ReceiveDamage(Beam.Owner, Damage, ENERGY);
 
   return false;
 }
 
-bool lsquare::FireBall(character* Who, const festring& DeathMsg, int) 
+bool lsquare::FireBall(const beamdata& Beam) 
 { 
   if(!IsFlyable() || GetCharacter())
     {
-      GetLevel()->Explosion(Who, DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
+      GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
       return true;
     }
 
   return false;
 }
 
-bool lsquare::Teleport(character* Teleporter, const festring&, int) 
+bool lsquare::Teleport(const beamdata& Beam) 
 { 
   if(GetCharacter())
     {
-      if(Teleporter && Character->GetTeam() != Teleporter->GetTeam())
-	Teleporter->Hostility(GetCharacter());
+      if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+	Beam.Owner->Hostility(GetCharacter());
 
       GetCharacter()->TeleportRandomly();
     }
 
   if(RoomIndex)
-    GetLevel()->GetRoom(RoomIndex)->TeleportSquare(Teleporter, this);
+    GetLevel()->GetRoom(RoomIndex)->TeleportSquare(Beam.Owner, this);
 
   GetStack()->TeleportRandomly();
   return false;
 }
 
-bool lsquare::Haste(character*, const festring&, int)
+bool lsquare::Haste(const beamdata&)
 {
   character* Dude = GetCharacter();
 
@@ -1369,14 +1390,14 @@ bool lsquare::Haste(character*, const festring&, int)
   return false;
 }
 
-bool lsquare::Slow(character* Slower, const festring&, int)
+bool lsquare::Slow(const beamdata& Beam)
 {
   character* Dude = GetCharacter();
 
   if(Dude)
     {
-      if(Slower)
-	Slower->Hostility(Dude);
+      if(Beam.Owner)
+	Beam.Owner->Hostility(Dude);
 
       Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
     }
@@ -1384,17 +1405,17 @@ bool lsquare::Slow(character* Slower, const festring&, int)
   return false;
 }
 
-bool lsquare::Resurrect(character* Summoner, const festring&, int)
+bool lsquare::Resurrect(const beamdata& Beam)
 {
   if(GetCharacter())
-    return GetCharacter()->RaiseTheDead(Summoner);
-  else if(GetStack()->RaiseTheDead(Summoner))
+    return GetCharacter()->RaiseTheDead(Beam.Owner);
+  else if(GetStack()->RaiseTheDead(Beam.Owner))
     return true;
   else
     return false;
 }
 
-bool lsquare::Invisibility(character*, const festring&, int) 
+bool lsquare::Invisibility(const beamdata&) 
 {
   if(GetCharacter())
     GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
@@ -1402,24 +1423,24 @@ bool lsquare::Invisibility(character*, const festring&, int)
   return false;
 }
 
-bool lsquare::Clone(character* Zapper, const festring&, int)
+bool lsquare::Duplicate(const beamdata& Beam)
 {
-  bool ClonedSomething = false;
+  bool DuplicatedSomething = false;
   character* Character = GetCharacter();
 
   if(Character)
-    ClonedSomething = !!Character->CloneToNearestSquare(Zapper, false);
+    DuplicatedSomething = !!Character->DuplicateToNearestSquare(Beam.Owner, Beam.SpecialParameters);
 
-  if(GetStack()->Clone(ClonedSomething ? 4 : 5))
-    ClonedSomething = true;
+  if(GetStack()->Duplicate(DuplicatedSomething ? 4 : 5, Beam.SpecialParameters))
+    DuplicatedSomething = true;
 
-  return ClonedSomething;
+  return DuplicatedSomething;
 }
 
-bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, int Direction)
+bool lsquare::Lightning(const beamdata& Beam)
 {
   int Damage = 20 + RAND() % 6 - RAND() % 6;
-  GetStack()->ReceiveDamage(Zapper, Damage, ELECTRICITY, Direction);
+  GetStack()->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, Beam.Direction);
 
   character* Char = GetCharacter();
 
@@ -1430,20 +1451,20 @@ bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, int Directi
       else if(Char->CanBeSeenByPlayer())
 	ADD_MESSAGE("A massive burst of electricity runs through %s!", Char->CHAR_NAME(DEFINITE));
 
-      if(Zapper)
-	Zapper->Hostility(Char);
+      if(Beam.Owner)
+	Beam.Owner->Hostility(Char);
 
-      Char->ReceiveDamage(Zapper, Damage, ELECTRICITY, ALL);
-      Char->CheckDeath(DeathMsg, Zapper);
+      Char->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, ALL);
+      Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
     }
 
   if(GetOLTerrain())
-    GetOLTerrain()->ReceiveDamage(Zapper, Damage, ELECTRICITY);
+    GetOLTerrain()->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY);
 
   return false;
 }
 
-bool lsquare::DoorCreation(character* Creator, const festring&, int)
+bool lsquare::DoorCreation(const beamdata& Beam)
 {
   if((!GetOLTerrain()
   ||  GetOLTerrain()->IsSafeToCreateDoor())
@@ -1452,8 +1473,8 @@ bool lsquare::DoorCreation(character* Creator, const festring&, int)
   || (Pos.X > 0 && Pos.Y > 0
   &&  Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
     {
-      if(Creator && GetRoom())
-	GetRoom()->HostileAction(Creator);
+      if(Beam.Owner && GetRoom())
+	GetRoom()->HostileAction(Beam.Owner);
 
       door* Door = new door(0, NO_MATERIALS);
       Door->InitMaterials(MAKE_MATERIAL(STEEL));
@@ -1468,23 +1489,24 @@ bool lsquare::DoorCreation(character* Creator, const festring&, int)
   return false;
 }
 
-bool (lsquare::*lsquare::GetBeamEffect(int I))(character*, const festring&, int)
+bool (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
 {
-  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const festring&, int)
-  = { &lsquare::Polymorph,
-      &lsquare::Strike,
-      &lsquare::FireBall,
-      &lsquare::Teleport,
-      &lsquare::Haste,
-      &lsquare::Slow,
-      &lsquare::Resurrect,
-      &lsquare::Invisibility,
-      &lsquare::Clone,
-      &lsquare::Lightning,
-      &lsquare::DoorCreation,
-      &lsquare::AcidRain
-    };
+  &lsquare::Polymorph,
+  &lsquare::Strike,
+  &lsquare::FireBall,
+  &lsquare::Teleport,
+  &lsquare::Haste,
+  &lsquare::Slow,
+  &lsquare::Resurrect,
+  &lsquare::Invisibility,
+  &lsquare::Duplicate,
+  &lsquare::Lightning,
+  &lsquare::DoorCreation,
+  &lsquare::AcidRain
+};
 
+bool (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
+{
   return BeamEffect[I];
 }
 
@@ -1533,11 +1555,11 @@ int lsquare::GetSpoiledItems() const
   return GetStack()->GetSpoiledItems();
 }
 
-bool lsquare::LowerEnchantment(character* Zapper, const festring&, int)
+bool lsquare::LowerEnchantment(const beamdata& Beam)
 {
   character* Char = GetCharacter();
   itemvector AllItems;
-  SortAllItems(AllItems, Zapper, &item::IsEnchantable);
+  SortAllItems(AllItems, Beam.Owner, &item::IsEnchantable);
   item* RandomItem;
 
   if(!AllItems.empty())
@@ -1550,7 +1572,8 @@ bool lsquare::LowerEnchantment(character* Zapper, const festring&, int)
       if(Char->IsPlayer())
 	ADD_MESSAGE("%s glows blue for a moment!", RandomItem->CHAR_NAME(DEFINITE));
 
-      Zapper->Hostility(Char);
+      if(Beam.Owner)
+	Beam.Owner->Hostility(Char);
     }
 
   if(RandomItem->GetEnchantment() > -5)
@@ -1796,7 +1819,8 @@ void lsquare::CalculateBorderPartners()
 	{
 	  olterrain* Terrain = Square->GetOLTerrain();
 
-	  if(Terrain && Terrain->UseBorderTiles() && Terrain->GetBorderTilePriority() > Priority)
+	  if(Terrain && Terrain->UseBorderTiles()
+	  && Terrain->GetBorderTilePriority() > Priority)
 	    {
 	      BorderPartner[Index].Terrain = Terrain;
 	      BorderPartner[Index].SquareIndex = 7 - d;
@@ -2305,14 +2329,14 @@ void lsquare::CreateMemorized()
   FowMemorized->ActivateFastFlag();
 }
 
-bool lsquare::AcidRain(character* Who, const festring&, int Dir) 
+bool lsquare::AcidRain(const beamdata& Beam) 
 { 
-  if(!IsFlyable() || GetCharacter() || Dir == YOURSELF)
+  if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
     {
       int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
       lsquare** Stack = GetLevel()->GetSquareStack();
       vector2d Speed = vector2d(512, 512);
-      int Team = Who ? Who->GetTeam()->GetID() : MONSTER_TEAM;
+      int Team = Beam.Owner ? Beam.Owner->GetTeam()->GetID() : MONSTER_TEAM;
 
       for(int c = 0; c < StackSize; ++c)
 	{
@@ -2320,8 +2344,8 @@ bool lsquare::AcidRain(character* Who, const festring&, int Dir)
 	  Stack[c]->Flags &= ~IN_SQUARE_STACK;
 	}
 
-      if(Who && Character && Character->GetTeam() != Who->GetTeam())
-	Who->Hostility(Character);
+      if(Beam.Owner && Character && Character->GetTeam() != Beam.Owner->GetTeam())
+	Beam.Owner->Hostility(Character);
 
       return true;
     }

@@ -394,6 +394,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsTwoHanded);
   ADD_MEMBER(CreateDivineConfigurations);
   ADD_MEMBER(CanBeCloned);
+  ADD_MEMBER(CanBeMirrored);
   ADD_MEMBER(BeamRange);
   ADD_MEMBER(CanBeBroken);
   ADD_MEMBER(WallBitmapPos);
@@ -545,6 +546,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(HardenedMaterial);
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(IsScary);
+  ADD_MEMBER(CanBeMirrored);
 }
 
 template <class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)
@@ -607,6 +609,8 @@ template<> void databasecreator<item>::CheckDefaults(const festring& Word, item:
     DataBase.WallBitmapPos = DataBase.BitmapPos;
   else if(Word == "MaterialConfigChances")
     DataBase.MaterialConfigChanceSum = femath::SumArray(DataBase.MaterialConfigChances);
+  else if(Word == "CanBeCloned")
+    DataBase.CanBeMirrored = DataBase.CanBeCloned;
 }
 
 template<> void databasecreator<glterrain>::CheckDefaults(const festring& Word, glterrain::database& DataBase)

@@ -3127,6 +3127,7 @@ imperialist
 	Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 1; }
 	RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
 	LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
+	LeftRing = ring(RING_OF_INFRA_VISION);
 	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
 	RightBoot = MITHRIL boot(BOOT_OF_KICKING) { Enchantment = 3; }
 	KnownCWeaponSkills = { 2, WHIPS, KICK; }

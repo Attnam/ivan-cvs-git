@@ -73,6 +73,7 @@ class MATERIAL
   virtual bool IsFlesh() const { return true; }
   bool IsInfectedByLeprosy() const { return InfectedByLeprosy; }
  protected:
+  virtual void VirtualConstructor(bool);
   color16 SkinColor;
   bool SkinColorSparkling;
   bool InfectedByLeprosy;

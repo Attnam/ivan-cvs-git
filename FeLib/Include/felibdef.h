@@ -139,11 +139,6 @@ inline int GetMinColor24(color24 Color)
 #define KEY_SPACE ' '
 #define KEY_NUMPAD_5 2
 
-#define NONE 0
-#define MIRROR 1
-#define FLIP 2
-#define ROTATE_90 4
-
 #define NO_FLAME 0xFFFF
 
 #ifdef GCC

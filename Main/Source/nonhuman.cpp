@@ -1551,7 +1551,19 @@ void hattifattener::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s emits a lightning bolt!", CHAR_DESCRIPTION(DEFINITE));
 
-      GetLevel()->LightningBeam(this, "killed by a hattifattener's lightning", GetPos(), WHITE, BEAM_LIGHTNING, RAND() & 7, 1 + (RAND() & 7));
+      beamdata Beam
+      (
+	this,
+	"killed by a hattifattener's lightning",
+	GetPos(),
+	WHITE,
+	BEAM_LIGHTNING,
+	RAND() & 7,
+	1 + (RAND() & 7),
+	0
+      );
+
+      GetLevel()->LightningBeam(Beam);
       EditAP(-1000);
       return;
     }
@@ -1581,7 +1593,17 @@ void hattifattener::CreateCorpse(lsquare* Square)
   Level->LightningVisualizer(Stack, WHITE);
 
   for(c = 0; c < Stack.Size; ++c)
-    Stack[c]->Lightning(this, CONST_S("killed by electricity released by a dying hattifattener"), YOURSELF);
+    {
+      beamdata Beam
+      (
+	this,
+	CONST_S("killed by electricity released by a dying hattifattener"),
+	YOURSELF,
+	0
+      );
+
+      Stack[c]->Lightning(Beam);
+    }
 
   SendToHell();
 }

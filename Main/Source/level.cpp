@@ -1242,13 +1242,15 @@ void level::Reveal()
       Map[x][y]->Reveal(Tick);
 }
 
-void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int Range)
+void level::ParticleBeam(beamdata& Beam)
 {
-  if(Direction != YOURSELF)
+  vector2d CurrentPos = Beam.StartPos;
+
+  if(Beam.Direction != YOURSELF)
     {
-      for(int Length = 0; Length < Range; ++Length)
+      for(int Length = 0; Length < Beam.Range; ++Length)
 	{
-	  CurrentPos += game::GetMoveVector(Direction);
+	  CurrentPos += game::GetMoveVector(Beam.Direction);
 
 	  if(!IsValidPos(CurrentPos))
 	    break;
@@ -1257,14 +1259,14 @@ void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2
 
 	  if(!CurrentSquare->IsFlyable())
 	    {
-	      (CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+	      (CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
 	      break;
 	    }
 	  else
 	    {
-	      CurrentSquare->DrawParticles(BeamColor);
+	      CurrentSquare->DrawParticles(Beam.BeamColor);
 
-	      if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+	      if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
 		break;
 	    }
 	}
@@ -1272,29 +1274,31 @@ void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2
   else
     {
       lsquare* Where = GetLSquare(CurrentPos);
-      Where->DrawParticles(BeamColor);
-      (Where->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      Where->DrawParticles(Beam.BeamColor);
+      (Where->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
     }
 }
 
 /* Note: You will most likely need some help from supernatural entities to comprehend this code. Sorry. */
 
-void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int Range)
+void level::LightningBeam(beamdata& Beam)
 {
-  if(Direction == YOURSELF)
+  vector2d CurrentPos = Beam.StartPos;
+
+  if(Beam.Direction == YOURSELF)
     {
       lsquare* Where = GetLSquare(CurrentPos);
 
       for(int c = 0; c < 4; ++c)
-	Where->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF);
+	Where->DrawLightning(vector2d(8, 8), Beam.BeamColor, YOURSELF);
 
-      (Where->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      (Where->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
       return;
     }
 
   vector2d StartPos;
 
-  switch(Direction)
+  switch(Beam.Direction)
     {
     case 0: StartPos = vector2d(15, 15); break;
     case 1: StartPos = vector2d(RAND() & 15, 15); break;
@@ -1306,9 +1310,9 @@ void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector
     case 7: StartPos = vector2d(0, 0); break;
     }
 
-  for(int Length = 0; Length < Range; ++Length)
+  for(int Length = 0; Length < Beam.Range; ++Length)
     {
-      CurrentPos += game::GetMoveVector(Direction);
+      CurrentPos += game::GetMoveVector(Beam.Direction);
 
       if(!IsValidPos(CurrentPos))
 	break;
@@ -1317,92 +1321,92 @@ void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector
 
       if(!CurrentSquare->IsFlyable())
 	{
-	  if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+	  if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
 	    break;
 
 	  bool W1, W2;
 
-	  switch(Direction)
+	  switch(Beam.Direction)
 	    {
 	    case 0:
 	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->IsFlyable();
 	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->IsFlyable();
 
 	      if(W1 == W2)
-		Direction = 7;
+		Beam.Direction = 7;
 	      else if(W1)
 		{
 		  ++CurrentPos.Y;
-		  Direction = 2;
+		  Beam.Direction = 2;
 		}
 	      else
 		{
 		  ++CurrentPos.X;
-		  Direction = 5;
+		  Beam.Direction = 5;
 		}
 
 	      break;
-	    case 1: Direction = 6; StartPos.Y = 0; break;
+	    case 1: Beam.Direction = 6; StartPos.Y = 0; break;
 	    case 2:
 	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->IsFlyable();
 	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->IsFlyable();
 
 	      if(W1 == W2)
-		Direction = 5;
+		Beam.Direction = 5;
 	      else if(W1)
 		{
 		  ++CurrentPos.Y;
-		  Direction = 0;
+		  Beam.Direction = 0;
 		}
 	      else
 		{
 		  --CurrentPos.X;
-		  Direction = 7;
+		  Beam.Direction = 7;
 		}
 
 	      break;
-	    case 3: Direction = 4; StartPos.X = 0; break;
-	    case 4: Direction = 3; StartPos.X = 15; break;
+	    case 3: Beam.Direction = 4; StartPos.X = 0; break;
+	    case 4: Beam.Direction = 3; StartPos.X = 15; break;
 	    case 5:
 	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->IsFlyable();
 	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->IsFlyable();
 
 	      if(W1 == W2)
-		Direction = 2;
+		Beam.Direction = 2;
 	      else if(W1)
 		{
 		  --CurrentPos.Y;
-		  Direction = 7;
+		  Beam.Direction = 7;
 		}
 	      else
 		{
 		  ++CurrentPos.X;
-		  Direction = 0;
+		  Beam.Direction = 0;
 		}
 
 	      break;
-	    case 6: Direction = 1; StartPos.Y = 15; break;
+	    case 6: Beam.Direction = 1; StartPos.Y = 15; break;
 	    case 7:
 	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->IsFlyable();
 	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->IsFlyable();
 
 	      if(W1 == W2)
-		Direction = 0;
+		Beam.Direction = 0;
 	      else if(W1)
 		{
 		  --CurrentPos.Y;
-		  Direction = 5;
+		  Beam.Direction = 5;
 		}
 	      else
 		{
 		  --CurrentPos.X;
-		  Direction = 2;
+		  Beam.Direction = 2;
 		}
 
 	      break;
 	    }
 
-	  switch(Direction)
+	  switch(Beam.Direction)
 	    {
 	    case 0: StartPos = vector2d(15, 15); break;
 	    case 2: StartPos = vector2d(0, 15); break;
@@ -1412,19 +1416,19 @@ void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector
 	}
       else
 	{
-	  StartPos = CurrentSquare->DrawLightning(StartPos, BeamColor, Direction);
+	  StartPos = CurrentSquare->DrawLightning(StartPos, Beam.BeamColor, Beam.Direction);
 
-	  if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+	  if((CurrentSquare->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam))
 	    break;
 	}
     }
 }
 
-void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int)
+void level::ShieldBeam(beamdata& Beam)
 {
   vector2d Pos[3];
 
-  switch(Direction)
+  switch(Beam.Direction)
     {
     case 0:
       Pos[0] = vector2d(-1, 0);
@@ -1467,16 +1471,16 @@ void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d 
       Pos[2] = vector2d(0, 1);
       break;
     case 8:
-      GetLSquare(CurrentPos)->DrawParticles(BeamColor);
-      (GetLSquare(CurrentPos)->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      GetLSquare(Beam.StartPos)->DrawParticles(Beam.BeamColor);
+      (GetLSquare(Beam.StartPos)->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
       return;
     }
 
   for(int c = 0; c < 3; ++c)
-    if(IsValidPos(CurrentPos + Pos[c]))
+    if(IsValidPos(Beam.StartPos + Pos[c]))
       {
-	GetLSquare(CurrentPos + Pos[c])->DrawParticles(BeamColor);
-	(GetLSquare(CurrentPos + Pos[c])->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+	GetLSquare(Beam.StartPos + Pos[c])->DrawParticles(Beam.BeamColor);
+	(GetLSquare(Beam.StartPos + Pos[c])->*lsquare::GetBeamEffect(Beam.BeamEffect))(Beam);
       }
 }
 
@@ -1493,9 +1497,15 @@ inputfile& operator>>(inputfile& SaveFile, level*& Level)
   return SaveFile;
 }
 
-void (level::*level::GetBeam(int I))(character*, const festring&, vector2d, color16, int, int, int)
+void (level::*Beam[BEAM_STYLES])(beamdata&) =
 {
-  static void (level::*Beam[BEAM_STYLES])(character*, const festring&, vector2d, color16, int, int, int) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+  &level::ParticleBeam,
+  &level::LightningBeam,
+  &level::ShieldBeam
+};
+
+void (level::*level::GetBeam(int I))(beamdata&)
+{
   return Beam[I];
 }
 

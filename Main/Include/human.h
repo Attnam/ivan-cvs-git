@@ -116,7 +116,7 @@ class ABSTRACT_CHARACTER
   virtual void CreateInitialEquipment(int);
   virtual festring GetBodyPartName(int, bool = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, double) const;
-  virtual item* SevereBodyPart(int);
+  virtual item* SevereBodyPart(int, bool = false);
   virtual int GetSWeaponSkillLevel(const item*) const;
   virtual bool UseMaterialAttributes() const;
   virtual void CalculateDodgeValue();
@@ -146,6 +146,7 @@ class ABSTRACT_CHARACTER
   virtual void LeprosyHandler();
   virtual void DropRandomNonVitalBodypart();
   virtual void DropBodyPart(int);
+  virtual void DuplicateEquipment(character*, ulong);
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
@@ -297,7 +298,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo();
-  virtual item* SevereBodyPart(int);
+  virtual item* SevereBodyPart(int, bool = false);
   virtual bool BodyPartIsVital(int) const;
   virtual long GetBodyPartVolume(int) const;
  protected:

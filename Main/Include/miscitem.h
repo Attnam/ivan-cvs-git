@@ -275,9 +275,10 @@ class ITEM
   virtual bool Zap(character*, vector2d, int);
   virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
   virtual long GetPrice() const;
-  void BreakEffect(character*, const festring&);
  protected:
   virtual void VirtualConstructor(bool);
+  void BreakEffect(character*, const festring&);
+  ulong GetSpecialParameters() const;
   int Charges;
   int TimesUsed;
 );
@@ -505,6 +506,7 @@ class ITEM
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone();
   virtual material* RemoveMaterial(material*);
+  virtual void SetLifeExpectancy(int, int);
  protected:
   virtual color16 GetMaterialColorB(int) const;
   virtual void VirtualConstructor(bool);

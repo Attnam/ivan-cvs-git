@@ -77,6 +77,7 @@ struct itemdatabase : public databasebase
   bool IsTwoHanded;
   bool CreateDivineConfigurations;
   bool CanBeCloned;
+  bool CanBeMirrored;
   int BeamRange;
   bool CanBeBroken;
   vector2d WallBitmapPos;
@@ -299,6 +300,7 @@ class item : public object
   DATA_BASE_VALUE(long, StorageVolume);
   DATA_BASE_VALUE(int, MaxGeneratedContainedItems);
   virtual DATA_BASE_BOOL(CanBeCloned);
+  virtual DATA_BASE_BOOL(CanBeMirrored);
   DATA_BASE_VALUE(int, BeamRange);
   DATA_BASE_BOOL(CanBeUsedBySmith);
   DATA_BASE_VALUE(int, DamageDivider);
@@ -357,7 +359,7 @@ class item : public object
   void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
   void SpecialGenerationHandler();
-  item* Duplicate();
+  item* Duplicate(ulong = 0);
   virtual void SetIsActive(bool) { }
   int GetBaseMinDamage() const;
   int GetBaseMaxDamage() const;
@@ -367,7 +369,7 @@ class item : public object
   long GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
-  item* DuplicateToStack(stack*);
+  item* DuplicateToStack(stack*, ulong = 0);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual long GetTotalExplosivePower() const { return 0; }
   virtual void Break(character*, int = YOURSELF);
@@ -466,7 +468,9 @@ class item : public object
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }
   virtual bool IsLanternOnWall() const { return false; }
-  virtual void DestroyBodyPart(stack*) { }
+  virtual void DestroyBodyPart(stack*) { SendToHell(); }
+  virtual void SetLifeExpectancy(int, int);
+  int NeedsBe() const { return !!LifeExpectancy; }
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;
@@ -487,6 +491,7 @@ class item : public object
   std::vector<ulong> CloneMotherID;
   fluid** Fluid;
   int SquaresUnder;
+  int LifeExpectancy;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

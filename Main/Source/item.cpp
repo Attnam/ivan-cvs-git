@@ -7,7 +7,7 @@ itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(int, int), con
 
 bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-item::item(donothing) : Slot(0), CloneMotherID(0), Fluid(0) { }
+item::item(donothing) : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0) { }
 bool item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 int item::GetBaseMinDamage() const { return int(sqrt(GetWeaponStrength() / 20000.) * 0.75); }
@@ -35,7 +35,7 @@ void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMateria
 void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), CUP); }
 
-item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), CloneMotherID(Item.CloneMotherID), Fluid(0), SquaresUnder(Item.SquaresUnder)
+item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), CloneMotherID(Item.CloneMotherID), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
@@ -260,7 +260,7 @@ void item::Save(outputfile& SaveFile) const
   object::Save(SaveFile);
   SaveFile << (ushort)GetConfig();
   SaveFile << (uchar)Flags;
-  SaveFile << Size << ID << CloneMotherID;
+  SaveFile << Size << ID << CloneMotherID << LifeExpectancy;
 
   if(Fluid)
     {
@@ -278,7 +278,11 @@ void item::Load(inputfile& SaveFile)
   object::Load(SaveFile);
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<uchar>(SaveFile) & ~ENTITY_FLAGS;
-  SaveFile >> Size >> ID >> CloneMotherID;
+  SaveFile >> Size >> ID >> CloneMotherID >> LifeExpectancy;
+
+  if(LifeExpectancy)
+    Enable();
+
   game::AddItemID(this, ID);
 
   if(ReadType<bool>(SaveFile))
@@ -527,12 +531,19 @@ void item::WeaponSkillHit(int Hits)
 
 /* Returns 0 if item cannot be cloned */
 
-item* item::Duplicate()
+item* item::Duplicate(ulong Flags)
 {
-  if(!CanBeCloned())
+  if(!(Flags & IGNORE_PROHIBITIONS)
+  && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
+   || (Flags & MIRROR_IMAGE && !CanBeMirrored())))
     return 0;
 
   item* Clone = RawDuplicate();
+
+  if(Flags & MIRROR_IMAGE)
+    Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
+			     Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
+
   CloneMotherID.push_back(ID);
   game::RemoveItemID(ID);
   ID = game::CreateNewItemID(this);
@@ -641,13 +652,17 @@ void item::SignalSpoil(material*)
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s spoils completely.", CHAR_NAME(DEFINITE));
 
+  bool Equipped = PLAYER->Equips(this);
   RemoveFromSlot();
   SendToHell();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
 }
 
-item* item::DuplicateToStack(stack* CurrentStack)
+item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
 {
-  item* Duplicated = Duplicate();
+  item* Duplicated = Duplicate(Flags);
 
   if(!Duplicated)
     return 0;
@@ -696,6 +711,22 @@ void item::Break(character* Breaker, int)
 void item::Be()
 {
   MainMaterial->Be();
+
+  if(Exists() && LifeExpectancy)
+    if(LifeExpectancy == 1)
+      {
+	if(CanBeSeenByPlayer())
+	  ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+	bool Equipped = PLAYER->Equips(this);
+	RemoveFromSlot();
+	SendToHell();
+
+	if(Equipped)
+	  game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+      }
+    else
+      --LifeExpectancy;
 }
 
 int item::GetOfferValue(int Receiver) const
@@ -1338,4 +1369,10 @@ bool item::Read(character* Reader)
 bool item::CanBeHardened(const character*) const
 {
   return MainMaterial->GetHardenedMaterial() != NONE;
+}
+
+void item::SetLifeExpectancy(int Base, int RandPlus)
+{
+  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  Enable();
 }

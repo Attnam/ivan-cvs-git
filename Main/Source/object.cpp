@@ -91,9 +91,12 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
   material* OldMaterial = Material;
   Material = NewMaterial;
 
-  if((!OldMaterial || !OldMaterial->HasBe()) && NewMaterial && NewMaterial->HasBe())
+  if((!OldMaterial || !OldMaterial->HasBe())
+  && NewMaterial && NewMaterial->HasBe())
     Enable();
-  else if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()) && !CalculateHasBe())
+  else if(OldMaterial && OldMaterial->HasBe()
+       && (!NewMaterial || !NewMaterial->HasBe())
+       && !CalculateHasBe())
     Disable();
 
   if(NewMaterial)

@@ -28,7 +28,10 @@ void organic::Be()
 		}
 	    }
 	  else
-	    MotherEntity->SignalSpoil(this);
+	    {
+	      SpoilLevel = 8;
+	      MotherEntity->SignalSpoil(this);
+	    }
 	}
 
       SpoilCheckCounter = 0;
@@ -49,12 +52,22 @@ void organic::Load(inputfile& SaveFile)
 
 void organic::VirtualConstructor(bool Load)
 {
-  SpoilLevel = SpoilCheckCounter = 0;
+  if(!Load)
+    {
+      SpoilLevel = SpoilCheckCounter = 0;
+      SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
+    }
+}
+
+void flesh::VirtualConstructor(bool Load)
+{
+  organic::VirtualConstructor(Load);
 
   if(!Load)
-    SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
-  else
-    SpoilCounter = 0;
+    {
+      SkinColorSparkling = InfectedByLeprosy = false;
+      SkinColor = GetColor();
+    }
 }
 
 void flesh::Save(outputfile& SaveFile) const

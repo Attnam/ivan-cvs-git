@@ -51,6 +51,7 @@ material
 	HardenedMaterial = NONE;
 	IntelligenceRequirement = 0;
 	IsScary = false;
+	CanBeMirrored = true;
 }
 
 solid
@@ -831,6 +832,7 @@ organic /* substances that spoil but are not flesh */
 		CanBeWished = false;
 		AttachedGod = SCABIES;
 		PriceModifier = 600;
+		CanBeMirrored = false;
 	}
 
 	Config BANANA_PEEL;
@@ -946,6 +948,7 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_HOLY_BANANA;
 		CanBeWished = false;
 		IsWarm = true;
+		CanBeMirrored = false;
 	}
 
 	Config CARROT_FLESH;
@@ -1092,6 +1095,7 @@ liquid
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
 		IsWarm = true;
+		CanBeMirrored = false;
 	}
 
 	Config PEPSI;

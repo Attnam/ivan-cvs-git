@@ -494,6 +494,7 @@ void corpse::Load(inputfile& SaveFile)
   item::Load(SaveFile);
   SaveFile >> Deceased;
   Deceased->SetMotherEntity(this);
+  Enable();
 }
 
 void corpse::AddPostFix(festring& String) const
@@ -595,6 +596,7 @@ void corpse::SetDeceased(character* What)
   SignalVolumeAndWeightChange();
   SignalEmitationIncrease(Deceased->GetEmitation());
   UpdatePictures();
+  Enable();
 }
 
 void head::DropEquipment()
@@ -960,6 +962,9 @@ int arm::GetAttribute(int Identifier) const
 
 bool arm::EditAttribute(int Identifier, int Value)
 {
+  if(!Master)
+    return false;
+
   if(Identifier == ARM_STRENGTH)
     return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == DEXTERITY)
@@ -973,6 +978,9 @@ bool arm::EditAttribute(int Identifier, int Value)
 
 void arm::EditExperience(int Identifier, double Value, double Speed)
 {
+  if(!Master)
+    return;
+
   if(Identifier == ARM_STRENGTH)
     {
       if(!UseMaterialAttributes())
@@ -1044,6 +1052,9 @@ int leg::GetAttribute(int Identifier) const
 
 bool leg::EditAttribute(int Identifier, int Value)
 {
+  if(!Master)
+    return false;
+
   if(Identifier == LEG_STRENGTH)
     return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == AGILITY)
@@ -1057,6 +1068,9 @@ bool leg::EditAttribute(int Identifier, int Value)
 
 void leg::EditExperience(int Identifier, double Value, double Speed)
 {
+  if(!Master)
+    return;
+
   if(Identifier == LEG_STRENGTH)
     {
       if(!UseMaterialAttributes())
@@ -1614,7 +1628,12 @@ bool bodypart::IsVeryCloseToSpoiling() const
 
 void corpse::SignalSpoil(material*)
 {
-  GetDeceased()->Spoil(this);
+  GetDeceased()->Disappear(this, "spoil", &bodypart::IsVeryCloseToSpoiling);
+}
+
+void corpse::SignalDisappearance()
+{
+  GetDeceased()->Disappear(this, "disappear", &bodypart::IsVeryCloseToDisappearance);
 }
 
 bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -1658,6 +1677,9 @@ void bodypart::Be()
 {
   if(Master)
     {
+      if(IsEnabled())
+	int esko = 2;
+
       if(HP < MaxHP && ++SpillBloodCounter >= 4)
 	{
 	  if(Master->IsEnabled())
@@ -1674,8 +1696,14 @@ void bodypart::Be()
 	  SpillBloodCounter = 0;
 	}
 
-      if(Master->AllowSpoil())
-	item::Be();
+      if(Master->AllowSpoil() || !Master->IsEnabled())
+	MainMaterial->Be();
+
+      if(Exists() && LifeExpectancy)
+	if(LifeExpectancy == 1)
+	  Master->SignalDisappearance();
+	else
+	  --LifeExpectancy;
     }
   else
     {
@@ -2357,7 +2385,7 @@ character* corpse::TryNecromancy(character* Summoner)
     {
       vector2d Pos = GetPos();
       RemoveFromSlot();
-      Zombie->PutToOrNear(Pos); 
+      Zombie->PutToOrNear(Pos);
       
       if(Summoner)
 	Zombie->ChangeTeam(Summoner->GetTeam());
@@ -2991,4 +3019,29 @@ void dogtorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int, bool A
     P->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
     P->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void corpse::SetLifeExpectancy(int Base, int RandPlus)
+{
+  //LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  Deceased->SetLifeExpectancy(Base, RandPlus);
+}
+
+void corpse::Be()
+{
+  for(int c = 0; c < Deceased->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = Deceased->GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->Be();
+    }
+}
+
+void bodypart::SetLifeExpectancy(int Base, int RandPlus)
+{
+  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+
+  if(!Master)
+    Enable();
 }

@@ -129,8 +129,8 @@ class lsquare : public square
   void ChangeGLTerrain(glterrain*);
   void ChangeOLTerrain(olterrain*);
   void SetLTerrain(glterrain*, olterrain*);
-  void SetGLTerrain(glterrain*);
-  void SetOLTerrain(olterrain*);
+  /*void SetGLTerrain(glterrain*);
+  void SetOLTerrain(olterrain*);*/
   void ApplyScript(const squarescript*, room*);
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, long, bool = false) const ;
@@ -160,19 +160,19 @@ class lsquare : public square
   void KickAnyoneStandingHereAway();
   bool IsDark() const;
   void AddItem(item*);
-  static bool (lsquare::*GetBeamEffect(int))(character*, const festring&, int);
-  bool Polymorph(character*, const festring&, int);
-  bool Strike(character*, const festring&, int);
-  bool FireBall(character*, const festring&, int);
-  bool Teleport(character*, const festring&, int);
-  bool Haste(character*, const festring&, int);
-  bool Slow(character*, const festring&, int);
-  bool Resurrect(character*, const festring&, int);
-  bool Invisibility(character*, const festring&, int);
-  bool Clone(character*, const festring&, int);
-  bool Lightning(character*, const festring&, int);
-  bool DoorCreation(character*, const festring&, int);
-  bool AcidRain(character*, const festring&, int);
+  static bool (lsquare::*GetBeamEffect(int))(const beamdata&);
+  bool Polymorph(const beamdata&);
+  bool Strike(const beamdata&);
+  bool FireBall(const beamdata&);
+  bool Teleport(const beamdata&);
+  bool Haste(const beamdata&);
+  bool Slow(const beamdata&);
+  bool Resurrect(const beamdata&);
+  bool Invisibility(const beamdata&);
+  bool Duplicate(const beamdata&);
+  bool Lightning(const beamdata&);
+  bool DoorCreation(const beamdata&);
+  bool AcidRain(const beamdata&);
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
@@ -180,7 +180,7 @@ class lsquare : public square
   void GetHitByExplosion(const explosion*);
   int GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, sorter = 0);
-  bool LowerEnchantment(character*, const festring&, int);
+  bool LowerEnchantment(const beamdata&);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
   bool IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }

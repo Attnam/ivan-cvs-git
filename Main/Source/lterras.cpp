@@ -477,8 +477,8 @@ bool fountain::Drink(character* Drinker)
 		    else
 		      game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
 
-		      
 		    olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
+
 		    if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
 		      {
 			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
@@ -1193,5 +1193,5 @@ void door::BeDestroyed()
 
 bool fountain::IsFountainWithWater() const
 {
-  return GetSecondaryMaterial();
+  return !!GetSecondaryMaterial();
 }

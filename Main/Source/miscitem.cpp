@@ -1342,8 +1342,20 @@ bool wand::Zap(character* Zapper, vector2d, int Direction)
     }
 
   Zapper->EditExperience(PERCEPTION, 100, 1 << 10);
-  festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
-  (GetLevel()->*level::GetBeam(GetBeamStyle()))(Zapper, DeathMSG, Zapper->GetPos(), GetBeamColor(), GetBeamEffect(), Direction, GetBeamRange());
+
+  beamdata Beam
+  (
+    Zapper,
+    CONST_S("killed by ") + GetName(INDEFINITE),
+    Zapper->GetPos(),
+    GetBeamColor(),
+    GetBeamEffect(),
+    Direction,
+    GetBeamRange(),
+    GetSpecialParameters()
+  );
+
+  (GetLevel()->*level::GetBeam(GetBeamStyle()))(Beam);
   ++TimesUsed;
   return true;
 }
@@ -1455,7 +1467,7 @@ void potion::Break(character* Breaker, int Dir)
 
 void materialcontainer::Be()
 {
-  MainMaterial->Be();
+  item::Be();
 
   if(Exists() && SecondaryMaterial)
     SecondaryMaterial->Be();
@@ -2053,8 +2065,16 @@ void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
   fearray<lsquare*> Stack(SquareStack, StackSize);
   (Level->*level::GetBeamEffectVisualizer(GetBeamStyle()))(Stack, GetBeamColor());
 
+  beamdata Beam
+  (
+    Terrorist,
+    DeathMsg,
+    YOURSELF,
+    GetSpecialParameters()
+  );
+
   for(c = 0; c < Stack.Size; ++c)
-    (Stack[c]->*lsquare::GetBeamEffect(GetBeamEffect()))(Terrorist, DeathMsg, YOURSELF);
+    (Stack[c]->*lsquare::GetBeamEffect(GetBeamEffect()))(Beam);
 
   SendToHell();
 }
@@ -2167,8 +2187,20 @@ bool holybanana::Zap(character* Zapper, vector2d, int Direction)
     {
       ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
       Zapper->EditExperience(PERCEPTION, 10, 1 << 10);
-      festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
-      (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Zapper, DeathMSG, Zapper->GetPos(), YELLOW, BEAM_FIRE_BALL, Direction, 50);
+
+      beamdata Beam
+      (
+	Zapper,
+	CONST_S("killed by ") + GetName(INDEFINITE),
+	Zapper->GetPos(),
+	YELLOW,
+	BEAM_FIRE_BALL,
+	Direction,
+	50,
+	0
+      );
+
+      (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Beam);
       ++TimesUsed;
     }
   else
@@ -2430,6 +2462,8 @@ material* materialcontainer::RemoveMaterial(material* Material)
 
 material* materialcontainer::RemoveMainMaterial()
 {
+  bool Equipped = PLAYER->Equips(this);
+
   if(!SecondaryMaterial)
     RemoveFromSlot();
   else if(SecondaryMaterial->IsLiquid())
@@ -2455,6 +2489,10 @@ material* materialcontainer::RemoveMainMaterial()
     }
 
   SendToHell();
+
+  if(Equipped)
+    game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+
   return 0;
 }
 
@@ -2496,7 +2534,8 @@ void materialcontainer::CalculateEmitation()
 
 bool materialcontainer::CalculateHasBe() const
 {
-  return (MainMaterial && MainMaterial->HasBe())
+  return LifeExpectancy
+      || (MainMaterial && MainMaterial->HasBe())
       || (SecondaryMaterial && SecondaryMaterial->HasBe());
 }
 
@@ -2664,4 +2703,22 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+}
+
+void itemcontainer::SetLifeExpectancy(int Base, int RandPlus)
+{
+  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  Enable();
+  Contained->SetLifeExpectancy(Base, RandPlus);
+}
+
+ulong wand::GetSpecialParameters() const
+{
+  switch(GetConfig())
+    {
+    case WAND_OF_MIRRORING:
+      return MIRROR_IMAGE|(2000 << LE_BASE_SHIFT);//MIRROR_IMAGE|(10000 << LE_BASE_SHIFT)|(10000 << LE_RAND_SHIFT);
+    }
+
+  return 0;
 }

@@ -306,7 +306,6 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
 
   HomeData = Char.HomeData ? new homedata(*Char.HomeData) : 0;
   ID = game::CreateNewCharacterID(this);
-  Initializing = InNoMsgMode = false;
 }
 
 character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER)
@@ -603,14 +602,15 @@ void character::Be()
     }
   else
     {
-      if(HP != MaxHP || AllowSpoil())
-	for(int c = 0; c < BodyParts; ++c)
-	  {
-	    bodypart* BodyPart = GetBodyPart(c);
+      bool ForceBe = HP != MaxHP || AllowSpoil();
 
-	    if(BodyPart)
-	      BodyPart->Be();
-	  }
+      for(int c = 0; c < BodyParts; ++c)
+	{
+	  bodypart* BodyPart = GetBodyPart(c);
+
+	  if(BodyPart && (ForceBe || BodyPart->NeedsBe()))
+	    BodyPart->Be();
+	}
 
       HandleStates();
 
@@ -1156,7 +1156,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::Die(const character* Killer, const festring& Msg, bool ForceMsg, bool AllowCorpse)
+void character::Die(const character* Killer, const festring& Msg, bool ForceMsg, bool AllowCorpse, bool AllowMsg)
 {
   /* Note: This function musn't delete any objects, since one of these may be
      the one currently processed by pool::Be()! */
@@ -1191,7 +1191,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	    }
 	}
     }
-  else if(CanBeSeenByPlayer())
+  else if(CanBeSeenByPlayer() && AllowMsg)
     ProcessAndAddMessage(GetDeathMessage());
   else if(ForceMsg)
     ADD_MESSAGE("You sense the death of something.");
@@ -1216,7 +1216,13 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	}
     }
 
-  Remove();
+  if(IsPlayer() || !game::IsInWilderness())
+    Remove();
+  else
+    {
+      charactervector& V = game::GetWorldMap()->GetPlayerGroup();
+      V.erase(std::find(V.begin(), V.end(), this));
+    }
 
   if(!game::IsInWilderness())
     {
@@ -1705,7 +1711,7 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, bo
   if(!game::WizardModeIsReallyActive())
     {
       highscore HScore;
-      festring Desc = PLAYER->GetAssignedName();
+      festring Desc = game::GetPlayerName();
       Desc << ", " << Description;
 
       if(AddEndLevel)
@@ -1716,7 +1722,7 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, bo
     }
 }
 
-bool character::CheckDeath(const festring& Msg, const character* Murderer, bool ForceMsg, bool ForceDeath, bool AllowCorpse)
+bool character::CheckDeath(const festring& Msg, const character* Murderer, bool ForceMsg, bool ForceDeath, bool AllowCorpse, bool AllowMsg)
 {
   if(!IsEnabled())
     return true;
@@ -1753,7 +1759,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), game::GetScore());
 
-      Die(Murderer, NewMsg, ForceMsg, AllowCorpse);
+      Die(Murderer, NewMsg, ForceMsg, AllowCorpse, AllowMsg);
       return true;
     }
   else
@@ -1930,6 +1936,7 @@ bool character::Polymorph(character* NewForm, int Counter)
   NewForm->SetMoney(GetMoney());
   DonateEquipmentTo(NewForm);
   NewForm->ChangeTeam(GetTeam());
+  NewForm->GenerationDanger = GenerationDanger;
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
@@ -2134,6 +2141,9 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	{
+	character* Char = *i;
+
 	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	  {
 	    long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
@@ -2147,6 +2157,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 		NearestDistance = ThisDistance;
 	      }
 	  }
+	}
 
   if(NearestChar)
     {
@@ -2583,6 +2594,9 @@ void character::GoOn(go* Go, bool FirstStep)
 
 void character::SetTeam(team* What)
 {
+  if(Team)
+    int esko = 2;
+
   Team = What;
   SetTeamIterator(What->Add(this));
 }
@@ -2959,11 +2973,20 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 
 /* Returns 0 if bodypart disappears */
 
-item* character::SevereBodyPart(int BodyPartIndex)
+item* character::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
-  if(BodyPartsDisappearWhenSevered() || StateIsActivated(POLYMORPHED) || game::AllBodyPartsVanish())
+  if(StuckToBodyPart == BodyPartIndex)
+    {
+      StuckToBodyPart = NONE_INDEX;
+      StuckTo = 0;
+    }
+
+  if(ForceDisappearance
+  || BodyPartsDisappearWhenSevered()
+  || StateIsActivated(POLYMORPHED)
+  || game::AllBodyPartsVanish())
     {
       BodyPart->RemoveFromSlot();
 
@@ -2989,13 +3012,6 @@ item* character::SevereBodyPart(int BodyPartIndex)
       CalculateAttributeBonuses();
       CalculateBattleInfo();
       BodyPart->Enable();
-
-      if(StuckToBodyPart == BodyPartIndex)
-	{
-	  StuckToBodyPart = NONE_INDEX;
-	  StuckTo = 0;
-	}
-
       return BodyPart;
     }
 }
@@ -3528,15 +3544,6 @@ bool character::TeleportNear(character* Caller)
 
 void character::ReceiveHeal(long Amount)
 {
-  /*if(Amount >= 100 && StateIsActivated(PARASITIZED))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
-
-      DeActivateTemporaryState(PARASITIZED);
-      Amount -= 100;
-    }*/
-
   int c;
 
   for(c = 0; c < Amount / 10; ++c)
@@ -3659,7 +3666,8 @@ void character::AddFrogFleshConsumeEndMessage() const
 
 void character::ReceiveKoboldFlesh(long)
 {
-  /* As it is commonly known, the possibility of fainting per 500 cubic centimeters of kobold flesh is exactly 5%. */
+  /* As it is commonly known, the possibility of fainting per 500 cubic
+     centimeters of kobold flesh is exactly 5%. */
 
   if(!(RAND() % 20))
     {
@@ -3690,7 +3698,8 @@ void character::AddBoneConsumeEndMessage() const
     ADD_MESSAGE("%s barks happily.", CHAR_NAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
 }
 
-/* Returns true if character manages to unstuck himself (from all traps). vector2d is the direction which the character has tried to escape to. */
+/* Returns true if character manages to unstuck himself (from all traps).
+   vector2d is the direction which the character has tried to escape to. */
 
 bool character::TryToUnstuck(vector2d Direction)
 {
@@ -4219,40 +4228,6 @@ void character::EndPolymorph()
   Char->SetPolymorphed(false);
   GetStack()->MoveItemsTo(Char->GetStack());
   DonateEquipmentTo(Char);
-  /*item* Found;
-  int c;
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Item = GetEquipment(c);
-
-      if(Item)
-	{
-	  if(Char->CanUseEquipment(c))
-	    {
-	      Item->RemoveFromSlot();
-	      Char->SetEquipment(c, Item);
-	    }
-	  else
-	    Item->MoveTo(IsPlayer() ? Char->GetStack() : Char->GetStackUnder());
-	}
-    }
-  if(IsPlayer())
-    for(c = 0; c < Char->GetEquipmentSlots(); ++c)
-      {
-	if(!Char->GetEquipment(c))
-	  {
-	    Found = Char->SearchForItem(game::GetEquipmentOfOriginalCharacter()[c]);
-	    if(Found)
-	      {
-		if(Char->CanUseEquipment(c))
-		  {
-		    Found->RemoveFromSlot();
-		    Char->SetEquipment(c, Found);
-		  }
-	      }
-	  }
-      }*/
-
   Char->SetMoney(GetMoney());
   Char->ChangeTeam(GetTeam());
 
@@ -4350,7 +4325,9 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 	      NewForm = protosystem::CreateMonster(Temp);
 
 	      if(NewForm)
-		if(NewForm->GetPolymorphIntelligenceRequirement(this) > GetAttribute(INTELLIGENCE))
+		if(NewForm->GetPolymorphIntelligenceRequirement(this)
+		 > GetAttribute(INTELLIGENCE)
+		&& !game::WizardModeIsActive())
 		  {
 		    ADD_MESSAGE("You feel your mind isn't yet powerful enough to call forth the form of %s.", NewForm->CHAR_NAME(INDEFINITE));
 		    delete NewForm;
@@ -5262,17 +5239,26 @@ void character::WeaponSkillHit(item* Weapon, int Type, int Hits)
     }
 }
 
-/* returns 0 if character cannot be cloned */
+/* Returns 0 if character cannot be duplicated */
 
-character* character::Duplicate() const
+character* character::Duplicate(ulong Flags)
 {
-  if(!CanBeCloned())
+  if(!(Flags & IGNORE_PROHIBITIONS) && !CanBeCloned())
     return 0;
 
   character* Char = RawDuplicate();
+
+  if(Flags & MIRROR_IMAGE)
+    {
+      DuplicateEquipment(Char, Flags & ~IGNORE_PROHIBITIONS);
+      Char->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
+			      Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
+    }
+
   Char->CalculateAll();
   Char->CalculateEmitation();
   Char->UpdatePictures();
+  Char->Initializing = Char->InNoMsgMode = false;
   return Char;
 }
 
@@ -5423,14 +5409,14 @@ void character::CheckPanic(int Ticks)
 
 /* returns 0 if fails else the newly created character */
 
-character* character::CloneToNearestSquare(character* Cloner, bool ChangeTeam) const
+character* character::DuplicateToNearestSquare(character* Cloner, ulong Flags)
 {
-  character* NewlyCreated = Duplicate();
+  character* NewlyCreated = Duplicate(Flags);
 
   if(!NewlyCreated)
     return 0;
 
-  if(ChangeTeam)
+  if(Flags & CHANGE_TEAM)
     NewlyCreated->ChangeTeam(Cloner->GetTeam());
 
   NewlyCreated->PutNear(GetPos());
@@ -5442,7 +5428,7 @@ void character::SignalSpoil()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoil(0);
   else
-    Spoil(0);
+    Disappear(0, "spoil", &bodypart::IsVeryCloseToSpoiling);
 }
 
 bool character::CanHeal() const
@@ -6453,14 +6439,6 @@ bool character::PostProcessForBone()
 	return false;
       else
 	SignalGeneration();
-
-      /*configid ConfigID(GetType(), GetConfig());
-      const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-
-      if(DangerID.Flags & HAS_BEEN_GENERATED)
-	return false;
-      else
-	game::SignalGeneration(ConfigID);*/
     }
 
   GetStack()->PostProcessForBone();
@@ -6996,72 +6974,6 @@ bool character::IsAlly(const character* Char) const
   return Char->GetTeam()->GetID() == GetTeam()->GetID();
 }
 
-void character::Spoil(corpse* Corpse)
-{
-  bool TorsoSpoiled = false;
-  bool CanBeSeen = Corpse ? Corpse->CanBeSeenByPlayer() : IsPlayer() || CanBeSeenByPlayer();
-
-  if(GetTorso()->IsVeryCloseToSpoiling())
-    {
-      if(CanBeSeen)
-	if(Corpse)
-	  ADD_MESSAGE("%s spoils.", Corpse->CHAR_NAME(DEFINITE));
-	else if(IsPlayer())
-	  ADD_MESSAGE("You spoil.");
-	else
-	  ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
-
-      TorsoSpoiled = true;
-    }
-
-  for(int c = 1; c < GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	if(BodyPart->IsVeryCloseToSpoiling())
-	  {
-	    if(!TorsoSpoiled && CanBeSeen)
-	      if(IsPlayer())
-		ADD_MESSAGE("Your %s spoils.", GetBodyPartName(c).CStr());
-	      else
-		ADD_MESSAGE("The %s of %s spoils.", GetBodyPartName(c).CStr(), CHAR_NAME(DEFINITE));
-
-	    BodyPart->DropEquipment();
-	    item* BodyPart = SevereBodyPart(c);
-
-	    if(BodyPart)
-	      BodyPart->SendToHell();
-	  }
-	else if(TorsoSpoiled)
-	  {
-	    BodyPart->DropEquipment();
-	    item* BodyPart = SevereBodyPart(c);
-
-	    if(BodyPart)
-	      if(Corpse)
-		Corpse->GetSlot()->AddFriendItem(BodyPart);
-	      else if(!game::IsInWilderness())
-		GetStackUnder()->AddItem(BodyPart);
-	      else
-		BodyPart->SendToHell();
-	  }
-    }
-
-  if(TorsoSpoiled)
-    {
-      if(Corpse)
-	{
-	  Corpse->RemoveFromSlot();
-	  Corpse->SendToHell();
-	}
-      else
-	CheckDeath(CONST_S("spoiled"), 0, false, true, false);
-    }
-  else
-    CheckDeath(CONST_S("spoiled"));
-}
-
 void character::ResetSpoiling()
 {
   for(int c = 0; c < GetBodyParts(); ++c)
@@ -7359,6 +7271,11 @@ void character::CheckIfSeen()
 {
   if(IsPlayer() || CanBeSeenByPlayer())
     const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
+}
+
+void character::SignalSeen()
+{
+  const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
 }
 
 int character::GetPolymorphIntelligenceRequirement(const character* Polymorpher) const
@@ -7709,4 +7626,116 @@ void character::LeprosyHandler()
   EditExperience(CHARISMA, -25, 1 << 1);
 }
 
+bodypart* character::SearchForOriginalBodyPart(int I) const
+{
+  for(stackiterator i1 = GetStackUnder()->GetBottom(); i1.HasItem(); ++i1)
+    {
+      for(std::list<ulong>::iterator i2 = OriginalBodyPartID[I].begin();
+	  i2 != OriginalBodyPartID[I].end(); ++i2)
+	if(i1->GetID() == *i2)
+	  return static_cast<bodypart*>(*i1);
+    }
 
+  return 0;
+}
+
+void character::SetLifeExpectancy(int Base, int RandPlus)
+{
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->SetLifeExpectancy(Base, RandPlus);
+    }
+}
+
+/* Receiver should be a fresh duplicate of this */
+
+void character::DuplicateEquipment(character* Receiver, ulong Flags)
+{
+  for(int c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	{
+	  item* Duplicate = Equipment->Duplicate(Flags);
+	  Receiver->SetEquipment(c, Duplicate);
+	}
+    }
+}
+
+void character::Disappear(corpse* Corpse, const char* Verb, bool (bodypart::*ClosePredicate)() const)
+{
+  bool TorsoDisappeared = false;
+  bool CanBeSeen = Corpse ? Corpse->CanBeSeenByPlayer() : IsPlayer() || CanBeSeenByPlayer();
+
+  if((GetTorso()->*ClosePredicate)())
+    {
+      if(CanBeSeen)
+	if(Corpse)
+	  ADD_MESSAGE("%s %ss.", Corpse->CHAR_NAME(DEFINITE), Verb);
+	else if(IsPlayer())
+	  ADD_MESSAGE("You %s.", Verb);
+	else
+	  ADD_MESSAGE("%s %ss.", CHAR_NAME(DEFINITE), Verb);
+
+      TorsoDisappeared = true;
+    }
+
+  for(int c = 1; c < GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	if((BodyPart->*ClosePredicate)())
+	  {
+	    if(!TorsoDisappeared && CanBeSeen)
+	      if(IsPlayer())
+		ADD_MESSAGE("Your %s %ss.", GetBodyPartName(c).CStr(), Verb);
+	      else
+		ADD_MESSAGE("The %s of %s %ss.", GetBodyPartName(c).CStr(), CHAR_NAME(DEFINITE), Verb);
+
+	    BodyPart->DropEquipment();
+	    item* BodyPart = SevereBodyPart(c);
+
+	    if(BodyPart)
+	      BodyPart->SendToHell();
+	  }
+	else if(TorsoDisappeared)
+	  {
+	    BodyPart->DropEquipment();
+	    item* BodyPart = SevereBodyPart(c);
+
+	    if(BodyPart)
+	      if(Corpse)
+		Corpse->GetSlot()->AddFriendItem(BodyPart);
+	      else if(!game::IsInWilderness())
+		GetStackUnder()->AddItem(BodyPart);
+	      else
+		BodyPart->SendToHell();
+	  }
+    }
+
+  if(TorsoDisappeared)
+    {
+      if(Corpse)
+	{
+	  Corpse->RemoveFromSlot();
+	  Corpse->SendToHell();
+	}
+      else
+	CheckDeath(festring(Verb) + "ed", 0, false, true, false, false);
+    }
+  else
+    CheckDeath(festring(Verb) + "ed", 0, false, false, true, false);
+}
+
+void character::SignalDisappearance()
+{
+  if(GetMotherEntity())
+    GetMotherEntity()->SignalDisappearance();
+  else
+    Disappear(0, "disappear", &bodypart::IsVeryCloseToDisappearance);
+}

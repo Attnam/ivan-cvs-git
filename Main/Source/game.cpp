@@ -219,7 +219,6 @@ bool game::Init(const festring& Name)
 	GetCurrentArea()->SendNewDrawRequest();
 	SendLOSUpdateRequest();
 	ADD_MESSAGE("Game loaded successfully.");
-	PlayerName = PLAYER->GetAssignedName();
 	return true;
       }
     case NEW_GAME:
@@ -263,7 +262,7 @@ bool game::Init(const festring& Name)
 	InitScript();
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new playerkind);
+	SetPlayer(new darkknight(ELITE));
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -380,6 +379,99 @@ void game::Run()
 		CurrentLevel->DisableGlobalRain();
 
 	      GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
+
+	      {
+		item* Item;
+
+		if(!RAND_N(2))
+		  Item = new wand(1 + RAND_N(12));
+		else if(!RAND_N(2))
+		  {
+		    Item = new beartrap;
+		    Item->SetIsActive(true);
+		    Item->SetTeam(MONSTER_TEAM);
+		  }
+		else if(!RAND_N(2))
+		  {
+		    Item = new mine;
+		    Item->SetIsActive(true);
+		    Item->SetTeam(MONSTER_TEAM);
+		  }
+		else
+		  Item = new holybanana;
+
+		CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(Item);
+	      }
+
+	      if(!RAND_N(10))
+		{
+		  character* Char = protosystem::CreateMonster(0, 1000000);
+		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+		  Char->ChangeTeam(GetTeam(RAND() % Teams));
+		}
+
+	      if(!RAND_N(5))
+		{
+		  character* Char;
+
+		  if(!RAND_N(5))
+		    Char = new darkmage(1 + RAND_N(4));
+		  else if(!RAND_N(5))
+		    Char = new necromancer(1 + RAND_N(2));
+		  else if(!RAND_N(5))
+		    Char = new chameleon;
+		  else if(!RAND_N(5))
+		    Char = new kamikazedwarf(1 + RAND_N(GODS));
+		  else if(!RAND_N(5))
+		    Char = new mommo(1 + RAND_N(2));
+		  else if(!RAND_N(3))
+		    Char = new bunny(RAND_2 ? ADULT_MALE : ADULT_FEMALE);
+		  else if(!RAND_N(3))
+		    Char = new eddy;
+		  else if(!RAND_N(3))
+		    Char = new magicmushroom;
+		  else if(!RAND_N(5))
+		    Char = new mushroom;
+		  else if(!RAND_N(3))
+		    Char = new blinkdog;
+		  else if(!RAND_N(5))
+		    Char = new tourist(1 + RAND_N(3));
+		  else if(!RAND_N(5))
+		    Char = new hattifattener;
+		  else if(!RAND_N(5))
+		    Char = new genetrixvesana;
+		  else if(!RAND_N(5))
+		    Char = new skunk;
+		  else if(!RAND_N(5))
+		    Char = new ennerbeast;
+		  else if(!RAND_N(5))
+		    Char = new werewolfhuman;
+		  else if(!RAND_N(5))
+		    Char = new unicorn(1 + RAND_N(3));
+		  else if(!RAND_N(5))
+		    Char = new floatingeye;
+		  else if(!RAND_N(5))
+		    Char = new zombie;
+		  else if(!RAND_N(5))
+		    Char = new magpie;
+		  else if(!RAND_N(5))
+		    Char = new elpuri;
+		  else if(!RAND_N(5))
+		    Char = new vladimir;
+		  else if(!RAND_N(5))
+		    Char = new billswill;
+		  else if(!RAND_N(5))
+		    Char = new ghost;
+		  else if(!RAND_N(5))
+		    Char = new dolphin;
+		  else if(!RAND_N(5))
+		    Char = new cossack;
+		  else
+		    Char = new invisiblestalker;
+
+		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+		  Char->SetTeam(GetTeam(RAND() % Teams));
+		}
 	    }
 	}
 
@@ -596,7 +688,7 @@ bool game::Save(const festring& SaveName)
   else
     GetCurrentDungeon()->SaveLevel(SaveName, CurrentLevelIndex, false);
 
-  SaveFile << PLAYER->GetPos();
+  SaveFile << PLAYER->GetPos() << PlayerName;
   msgsystem::Save(SaveFile);
   SaveFile << DangerMap << NextDangerIDType << NextDangerIDConfigIndex;
   SaveFile << DefaultPolymorphTo << DefaultSummonMonster;
@@ -667,7 +759,7 @@ int game::Load(const festring& SaveName)
     }
 
   vector2d Pos;
-  SaveFile >> Pos;
+  SaveFile >> Pos >> PlayerName;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
   msgsystem::Load(SaveFile);
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
@@ -1702,31 +1794,31 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       SendLOSUpdateRequest();
       UpdateCamera();
       GetCurrentLevel()->UpdateLOS();
-      Player->SignalStepFrom(0);
-
-      for(c = 0; c < Group.size(); ++c)
-	Group[c]->SignalStepFrom(0);
 
       /* Gum solution! */
 
       if(New && CurrentDungeonIndex == ATTNAM && Area == 0)
 	{
-	  GlobalRainLiquid = new powder(SNOW);
+	  GlobalRainLiquid = new liquid(SULPHURIC_ACID);
 	  GlobalRainSpeed = vector2d(-64, 128);
 	  CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
 	}
 
       if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
 	{
-	  GlobalRainLiquid = new liquid(WATER);
+	  GlobalRainLiquid = new liquid(SULPHURIC_ACID);
 	  GlobalRainSpeed = vector2d(256, 512);
 	  CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
 	}
 
+      Generating = false;
+      Player->SignalStepFrom(0);
+
+      for(c = 0; c < Group.size(); ++c)
+	Group[c]->SignalStepFrom(0);
+
       if(ivanconfig::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
-
-      Generating = false;
     }
   else
     {
@@ -2472,8 +2564,8 @@ bool game::TryToEnterSumoArena()
     return false;
 
   SumoWrestling = true;
-  character* MirrorPlayer = PLAYER->Duplicate();
-  character* MirrorSumo = Sumo->Duplicate();
+  character* MirrorPlayer = PLAYER->Duplicate(IGNORE_PROHIBITIONS);
+  character* MirrorSumo = Sumo->Duplicate(IGNORE_PROHIBITIONS);
   SetPlayer(MirrorPlayer);
   charactervector Spectators;
 
