@@ -63,3 +63,4 @@ Water potions.
 Pressing the corner X should ask whether one wants to save the game.
 There should be two modes of SeeWholeMapCheat: one like the cheat now and one with light levels enabled everywhere.
 Slave market.
+The game should warn if 16-bit mode is not enabled in windowed mode.

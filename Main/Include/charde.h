@@ -809,7 +809,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 150000; else return 0; }
 	virtual void GetAICommand() {}
 	virtual std::string StandVerb() const { return "swimming"; }
 protected:
