@@ -564,13 +564,14 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void BeTalkedTo();
   virtual festring& ProcessMessage(festring&) const;
-  festring GetProfessionDescription() const;
   virtual bool IsBananaGrower() const { return true; }
+  festring GetProfession() const { return Profession; }
  protected:
   virtual bool HandleCharacterBlockingTheWay(character*, vector2d, int);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
-  int Profession;
+  void RandomizeProfession();
+  festring Profession;
   bool HasDroppedBananas;
   bool FeedingSumo;
 );

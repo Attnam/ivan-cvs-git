@@ -21,7 +21,6 @@
 
 #include "vector2d.h"
 #include "rect.h"
-#include "fearray.h"
 
 #define RAND femath::Rand
 #define RAND_N femath::RandN
@@ -36,6 +35,7 @@
 
 class outputfile;
 class inputfile;
+template <class type> struct fearray;
 
 class femath
 {

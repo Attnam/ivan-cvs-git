@@ -385,6 +385,7 @@ Dungeon ELPURI_CAVE;
 	{
 		Rooms = 1;
 		IgnoreDefaultSpecialSquares = true;
+		MonsterAmountBase = 20;
 
 		Room
 		{
@@ -406,9 +407,16 @@ Dungeon ELPURI_CAVE;
 
 			Square, BoundedRandom 35, 1, 58, 58, 0;
 			{
+				Character = veterankamikazedwarf;
 				OTerrain = stairs(STAIRS_DOWN);
 				EntryIndex = STAIRS_DOWN;
 			}
+		}
+
+		Square, Random;
+		{
+			Character = zombie;
+			Times = 30;
 		}
 	}
 
@@ -2776,7 +2784,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		ItemMinPriceDelta = 0;
 		EnchantmentMinusChanceBase = 0;
 		EnchantmentMinusChanceDelta = 0;
-		EnchantmentPlusChanceBase = 50;
+		EnchantmentPlusChanceBase = 40;
 		EnchantmentPlusChanceDelta = 0;
 		BackGroundType = BLUE_FRACTAL;
 

@@ -266,7 +266,7 @@ void festring::Resize(sizetype N, char C)
     }
 }
 
-festring::sizetype festring::Find(char Char, sizetype Pos)
+festring::sizetype festring::Find(char Char, sizetype Pos) const
 {
   char* Ptr = Data;
 
@@ -281,7 +281,7 @@ festring::sizetype festring::Find(char Char, sizetype Pos)
   return NPos;
 }
 
-festring::sizetype festring::Find(const char* CStr, sizetype Pos, sizetype N)
+festring::sizetype festring::Find(const char* CStr, sizetype Pos, sizetype N) const
 {
   if(N)
     {
@@ -309,7 +309,7 @@ festring::sizetype festring::Find(const char* CStr, sizetype Pos, sizetype N)
   return NPos;
 }
 
-festring::sizetype festring::FindLast(char Char, sizetype Pos)
+festring::sizetype festring::FindLast(char Char, sizetype Pos) const
 {
   char* Ptr = Data;
 

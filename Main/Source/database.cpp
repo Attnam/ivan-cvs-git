@@ -372,6 +372,14 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsImmuneToItemTeleport);
   ADD_MEMBER(AlwaysUseMaterialAttributes);
   ADD_MEMBER(IsEnormous);
+  ADD_MEMBER(ScienceTalkAttribute);
+  ADD_MEMBER(ScienceTalkPrefix);
+  ADD_MEMBER(ScienceTalkName);
+  ADD_MEMBER(ScienceTalkPossibility);
+  ADD_MEMBER(ScienceTalkIntelligenceModifier);
+  ADD_MEMBER(ScienceTalkWisdomModifier);
+  ADD_MEMBER(ScienceTalkIntelligenceRequirement);
+  ADD_MEMBER(ScienceTalkWisdomRequirement);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

@@ -194,6 +194,14 @@ struct characterdatabase : public databasebase
   bool IsImmuneToItemTeleport;
   bool AlwaysUseMaterialAttributes;
   bool IsEnormous;
+  fearray<festring> ScienceTalkAttribute;
+  fearray<festring> ScienceTalkPrefix;
+  fearray<festring> ScienceTalkName;
+  int ScienceTalkPossibility;
+  int ScienceTalkIntelligenceModifier;
+  int ScienceTalkWisdomModifier;
+  int ScienceTalkIntelligenceRequirement;
+  int ScienceTalkWisdomRequirement;
 };
 
 class characterprototype
@@ -515,6 +523,14 @@ class character : public entity, public id
   DATA_BASE_BOOL(IsImmuneToItemTeleport);
   DATA_BASE_BOOL(AlwaysUseMaterialAttributes);
   DATA_BASE_BOOL(IsEnormous);
+  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkAttribute);
+  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkPrefix);
+  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkName);
+  DATA_BASE_VALUE(int, ScienceTalkPossibility);
+  DATA_BASE_VALUE(int, ScienceTalkIntelligenceModifier);
+  DATA_BASE_VALUE(int, ScienceTalkWisdomModifier);
+  DATA_BASE_VALUE(int, ScienceTalkIntelligenceRequirement);
+  DATA_BASE_VALUE(int, ScienceTalkWisdomRequirement);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(bool = false);
   bool TeleportNear(character*);
@@ -947,8 +963,10 @@ class character : public entity, public id
   void ConfusedSituationDangerModifier(double&) const;
   void ParasitizedSituationDangerModifier(double&) const;
   void LeprosySituationDangerModifier(double&) const;
+  bool TryToTalkAboutScience();
   bool IsUsingWeaponOfCategory(int) const;
   virtual bool IsKamikazeDwarf() const { return false; }
+  void AddRandomScienceName(festring&) const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1063,6 +1081,7 @@ class character : public entity, public id
   double GenerationDanger;
   ulong CommandFlags;
   bool HasBeenWarned;
+  int ScienceTalks;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

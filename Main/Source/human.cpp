@@ -2577,7 +2577,8 @@ void bananagrower::BeTalkedTo()
     ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
   else if(!game::TweraifIsFree())
     {
-      if(GetRelation(PLAYER) != HOSTILE && !Profession && !(RAND() % 7))
+      if(GetRelation(PLAYER) != HOSTILE
+      && Profession.Find("president", 0) != festring::NPos && !(RAND() % 7))
 	ADD_MESSAGE("\"I'm glad Petrus spared my life even though I was the president.\"");
 
       ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 6)]);
@@ -2586,39 +2587,42 @@ void bananagrower::BeTalkedTo()
     ProcessAndAddMessage(GetFriendlyReplies()[6 + RandomizeReply(Said, 3)]);
 }
 
-festring bananagrower::GetProfessionDescription() const
+void bananagrower::RandomizeProfession()
 {
-  festring String;
-
-  switch(Profession)
+  switch(RAND_N(12))
     {
     case 0:
-      String = CONST_S("the president of Tweraif");
+      Profession = CONST_S("the president of Tweraif");
       break;
     case 1:
-      String = CONST_S("a diplomat");
+      Profession = CONST_S("a diplomat");
       break;
     case 2:
-      String = CONST_S("a teacher");
+      Profession = CONST_S("a teacher");
       break;
     case 3:
-      String = CONST_S("a philosopher");
+      Profession = CONST_S("a philosopher");
       break;
     case 4:
-      String = CONST_S("a journalist");
+      Profession = CONST_S("a journalist");
       break;
     case 5:
-      String = CONST_S("an alchemist");
+      Profession = CONST_S("an alchemist");
       break;
     case 6:
-      String = CONST_S("a renown mathematician");
+      Profession = CONST_S("a renown mathematician");
       break;
     case 7:
-      String = CONST_S("a priest of Silva");
+      Profession = CONST_S("a priest of Silva");
+      break;
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+      Profession = CONST_S("a professor of ");
+      AddRandomScienceName(Profession);
       break;
     }
-
-  return String;
 }
 
 void bananagrower::VirtualConstructor(bool Load)
@@ -2628,7 +2632,7 @@ void bananagrower::VirtualConstructor(bool Load)
   if(!Load)
     {
       Stamina = MaxStamina / 5;
-      Profession = RAND() & 7;
+      RandomizeProfession();
       HasDroppedBananas = FeedingSumo = false;
     }
 }
@@ -2833,7 +2837,7 @@ void bananagrower::GetAICommand()
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Move(Where, true);
-      Profession = RAND() & 7;
+      RandomizeProfession();
       RestoreBodyParts();
       RestoreHP();
       Stamina = MaxStamina / 5;
@@ -2888,8 +2892,8 @@ bool bananagrower::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, 
 festring& bananagrower::ProcessMessage(festring& Msg) const
 {
   character::ProcessMessage(Msg);
-  SEARCH_N_REPLACE("@pd", GetProfessionDescription());
-  SEARCH_N_REPLACE("@Pd", GetProfessionDescription().CapitalizeCopy());
+  SEARCH_N_REPLACE("@pd", GetProfession());
+  SEARCH_N_REPLACE("@Pd", GetProfession().CapitalizeCopy());
   return Msg;
 }
 

@@ -123,6 +123,109 @@ character
 	IsImmuneToItemTeleport = false;
 	AlwaysUseMaterialAttributes = false;
 	IsEnormous = false;
+	ScienceTalkAttribute =
+	{
+		140,
+		"", "applied", "recent", "dark", "linear",
+		"molecular", "theoretical", "classical", "the future of", "queer",
+		"multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
+		"higher", "primary", "secondary", "tertiary", "probabilistic",
+		"elementary", "practical", "artificial", "existential", "quantum",
+
+		"modern", "ancient", "empirical", "statistical", "the axioms of",
+		"hypothetical", "organic", "the principle of", "revolutionary", "dialectical",
+		"communal", "general", "special", "the theory of", "elliptical",
+		"heuristical", "urban", "spontaneous", "forbidden", "invisible",
+		"popular", "the current state of", "liberal", "new age", "ceremonial",
+
+		"good", "bad", "environmental", "the code of", "horseback",
+		"explosive", "educational", "recreational", "democratic", "military",
+		"scientific", "social", "motorized", "genetic", "mass",
+		"replaceable", "atomic", "advanced", "amphibious", "neolithic",
+		"jurassic", "synthetic", "integrated", "chaotic", "strategic",
+
+		"tropical", "corrupted", "diplomatic", "political", "experimental",
+		"happy", "concentration", "natural", "heroic", "hexagonal",
+		"wrong", "orthogonal", "paraller", "infinite", "the solvability of",
+		"last century", "orthodox", "the history of", "soft", "hard",
+		"space", "comical", "collective", "optical", "intellectual",
+
+		"creative uses of", "global", "the origin of", "royal", "clinical",
+		"evolutionary", "tachyon", "singularity", "psi", "plasma",
+		"neutronium", "antimatter", "hypnotic", "polymorphic", "controlled",
+		"doctrine:", "frictionless", "the conservation of", "ideal", "crystal",
+		"retroviral", "orbital", "nonlinear", "the secrets of", "self-aware",
+
+		"sentient", "silksteel", "superstring", "temporal", "transcendent",
+		"unified", "the threshold of", "finite", "postmodern", "selective",
+		"arctic", "the proofs of", "mortal", "teleological", "illegitimate";
+	}
+	ScienceTalkPrefix =
+	{
+		38,
+		"", "", "", "", "",
+		"macro", "nano", "neuro", "semi", "hemi",
+		"cryo", "eroto", "ethno", "hyper", "trans",
+		"bio", "beta", "gamma", "geo", "mega",
+		"radio", "cosmo", "post", "photo", "tele",
+
+		"meta", "neo", "para", "micro", "necro",
+		"super", "auto", "laser", "ego", "eco",
+		"gyro", "sub", "multi";
+	}
+	ScienceTalkName =
+	{
+		182,
+		"sanitation", "relativity", "physics", "mathematics", "philosophy",
+		"numerology", "slavery", "mechanics", "magicks", "architecture",
+		"archaeology", "logic", "fiction", "questions", "theology",
+		"alchemy", "valpurism", "analysis", "gastronomy", "oceanography",
+		"astronomy", "astrology", "anthropology", "ethics", "linguistics",
+
+		"psychology", "methods", "choreography", "music", "semiotics",
+		"culture", "forestry", "engineering", "journalism", "agriculture",
+		"ergonomics", "sagas", "pedagogy", "apiculture", "aquaculture",
+		"horticulture", "silviculture", "law", "dentistry", "surgery",
+		"hematology", "cardiology", "pharmacy", "dogmatics", "cartography",
+
+		"gerontology", "formalism", "feminism", "communism", "stenography",
+		"cricket", "rhetorics", "navigation", "sculpture", "literature",
+		"shamanism", "painting", "utilitarism", "grammar", "arithmetic",
+		"algebra", "marxism", "capitalism", "behaviorism", "causality",
+		"folklore", "legends", "animism", "spiritualism", "idolatry",
+
+		"herecy", "programming", "gaming", "spheres", "curves",
+		"shapes", "speciesism", "feudalism", "bananas", "poker",
+		"meteorology", "pornography", "waves", "legends", "torture",
+		"accidents", "activity", "theathre", "runes", "writing",
+		"masonry", "pottery", "religions", "burial", "working",
+
+		"constructions", "currency", "riding", "federalism", "monarchy",
+		"medicine", "tradition", "chivalry", "righteousness", "banking",
+		"gravity", "metallurgy", "magnetism", "nationalism", "industry",
+		"pollution", "espionage", "corporations", "particles", "transportation",
+		"refining", "combustion", "parts", "steel", "materials",
+
+		"flight", "broomsticks", "rocketry", "fission", "fusion",
+		"power", "computers", "conductors", "fibers", "defence",
+		"weapons", "colonization", "civilizations", "anarchy", "fruits",
+		"camping", "resistance", "chauvinism", "simulation", "universes",
+		"diseases", "taxonomy", "taxidermy", "viruses", "bacteria",
+
+		"travel", "meditation", "systems", "algorithms", "death",
+		"balls", "states", "levitation", "tubes", "structures",
+		"virtue", "immortality", "elevators", "everything", "paradigms",
+		"armours", "trance", "afterlife", "eudaimoia", "splicing",
+		"flexibility", "initiative", "loyalty", "mobility", "surfaces",
+
+		"energy", "momentum", "materialism", "interfaces", "software",
+		"alloys", "equations";
+	}
+  ScienceTalkPossibility = 0;
+  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
+  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomModifier */
+  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceRequirement */
+  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomRequirement */
 }
 
 humanoid
@@ -424,6 +527,17 @@ farmer
 		"\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
 	}
 	AttachedGod = SEGES;
+	ScienceTalkPossibility = 33;
+	ScienceTalkIntelligenceModifier = 5;
+	ScienceTalkWisdomModifier = 10;
+	ScienceTalkIntelligenceRequirement = 10;
+	ScienceTalkWisdomRequirement = 10;
+	ScienceTalkName =
+	{
+		10,
+		"agriculture", "apiculture", "aquaculture", "horticulture", "silviculture",
+		"herbalism", "plants", "breeding", "snow", "forestry";
+	}
 }
 
 guard
@@ -1065,7 +1179,13 @@ ennerbeast
 frog
 {
 	HostileReplies == "@Dd croaks angrily.";
-	FriendlyReplies == "@Dd croaks happily.";
+	FriendlyReplies =
+	{
+		3,
+		"@Dd frolics in religious ecstasy.",
+		"@Dd croaks with pious joy.",
+		"@Dd jumps up and down in enlightened trance.";
+	}
 	NameSingular = "frog";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
@@ -1096,6 +1216,12 @@ frog
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 100;
 		AttachedGod = SCABIES;
+		ScienceTalkPossibility = 25;
+		ScienceTalkIntelligenceModifier = 10;
+		ScienceTalkWisdomModifier = 5;
+		ScienceTalkIntelligenceRequirement = 10;
+		ScienceTalkWisdomRequirement = 5;
+		FriendlyReplies == "@Dd croaks happily.";
 	}
 
 	Config GREATER_DARK;
@@ -1119,6 +1245,12 @@ frog
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 200;
 		AttachedGod = SCABIES;
+		ScienceTalkPossibility = 50;
+		ScienceTalkIntelligenceModifier = 25;
+		ScienceTalkWisdomModifier = 10;
+		ScienceTalkIntelligenceRequirement = 15;
+		ScienceTalkWisdomRequirement = 10;
+		FriendlyReplies == "@Dd croaks happily.";
 	}
 
 	Config GIANT_DARK;
@@ -1144,6 +1276,12 @@ frog
 		AttachedGod = SCABIES;
 		IsPolymorphable = false;
 		IsEnormous = true;
+		ScienceTalkPossibility = 75;
+		ScienceTalkIntelligenceModifier = 50;
+		ScienceTalkWisdomModifier = 25;
+		ScienceTalkIntelligenceRequirement = 20;
+		ScienceTalkWisdomRequirement = 15;
+		FriendlyReplies == "@Dd croaks happily.";
 	}
 
 	Config LIGHT;
@@ -1163,6 +1301,11 @@ frog
 		Adjective = "light";
 		CWeaponSkillHits == 100;
 		AttachedGod = VALPURUS;
+		ScienceTalkPossibility = 25;
+		ScienceTalkIntelligenceModifier = 2;
+		ScienceTalkWisdomModifier = 5;
+		ScienceTalkIntelligenceRequirement = 5;
+		ScienceTalkWisdomRequirement = 15;
 	}
 
 	Config GREATER_LIGHT;
@@ -1183,6 +1326,11 @@ frog
 		Adjective = "greater light";
 		CWeaponSkillHits == 200;
 		AttachedGod = VALPURUS;
+		ScienceTalkPossibility = 50;
+		ScienceTalkIntelligenceModifier = 5;
+		ScienceTalkWisdomModifier = 10;
+		ScienceTalkIntelligenceRequirement = 10;
+		ScienceTalkWisdomRequirement = 20;
 	}
 
 	Config GIANT_LIGHT;
@@ -1206,6 +1354,11 @@ frog
 		IsPolymorphable = false;
 		ClassStates = TELEPORT_CONTROL;
 		IsEnormous = true;
+		ScienceTalkPossibility = 75;
+		ScienceTalkIntelligenceModifier = 10;
+		ScienceTalkWisdomModifier = 25;
+		ScienceTalkIntelligenceRequirement = 15;
+		ScienceTalkWisdomRequirement = 25;
 	}
 }
 
@@ -1660,6 +1813,12 @@ dog
 	AttachedGod = SILVA;
 	Alias == "dog";
 	DeathMessage = "@Dd is killed.";
+	ScienceTalkPossibility = 1;
+	ScienceTalkIntelligenceModifier = 1;
+	ScienceTalkWisdomModifier = 2;
+	ScienceTalkIntelligenceRequirement = 3;
+	ScienceTalkWisdomRequirement = 3;
+	ScienceTalkName == "bones";
 }
 
 spider
@@ -1819,6 +1978,20 @@ communist /* Ivan */
 	AttachedGod = LORICATUS;
 	ConstantCommandFlags = FLEE_FROM_ENEMIES;
 	IsEnormous = true;
+	ScienceTalkName =
+	{
+		21,
+		"materialism", "marxism", "leninism", "stalinism", "socialism",
+		"castroism", "maoism", "trotskyism", "anticapitalism", "agriculture",
+		"communism", "atheism", "hoxhaism", "class struggles", "socialist art",
+		"communitarianism", "bolshevism", "sickle smithing", "ballistics", "weaponry",
+		"distillation of vodka";
+	}
+	ScienceTalkPossibility = 25;
+	ScienceTalkIntelligenceModifier = 10;
+	ScienceTalkWisdomModifier = 25;
+	ScienceTalkIntelligenceRequirement = 3;
+	ScienceTalkWisdomRequirement = 3;
 }
 
 hunter
@@ -1961,6 +2134,11 @@ dolphin
 	FleshMaterial = DOLPHIN_FLESH;
 	AttachedGod = SOPHOS;
 	ForceVomitMessage = "You push your fin down to your throat and vomit.";
+	ScienceTalkPossibility = 100;
+	ScienceTalkIntelligenceModifier = 1000;
+	ScienceTalkWisdomModifier = 1000;
+	ScienceTalkIntelligenceRequirement = 50;
+	ScienceTalkWisdomRequirement = 50;
 }
 
 slave
@@ -2231,6 +2409,11 @@ librarian
 	IsExtraCoward = true;
 	AttachedGod = SOPHOS;
 	PolymorphIntelligenceRequirement = 20;
+	ScienceTalkPossibility = 25;
+	ScienceTalkIntelligenceModifier = 100;
+	ScienceTalkWisdomModifier = 25;
+	ScienceTalkIntelligenceRequirement = 20;
+	ScienceTalkWisdomRequirement = 10;
 }
 
 zombie
@@ -2775,6 +2958,11 @@ angel
 	MoveType = FLY;
 	UsesNutrition = false;
 	IsPolymorphable = false;
+	ScienceTalkPossibility = 25;
+	ScienceTalkIntelligenceModifier = 25;
+	ScienceTalkWisdomModifier = 100;
+	ScienceTalkIntelligenceRequirement = 10;
+	ScienceTalkWisdomRequirement = 20;
 }
 
 kamikazedwarf
@@ -3147,6 +3335,17 @@ orc
 	AttachedGod = CRUENTUS;
 	WieldedPosition = -1, -1;
 	DangerModifier = 75;
+	ScienceTalkPossibility = 25;
+	ScienceTalkIntelligenceModifier = 1;
+	ScienceTalkWisdomModifier = 1;
+	ScienceTalkIntelligenceRequirement = 3;
+	ScienceTalkWisdomRequirement = 3;
+	ScienceTalkName =
+	{
+		10,
+		"killing", "murder", "rape", "torture", "burns",
+		"cannibalism", "slaughtering", "malice", "axes", "blood";
+	}
 
 	Config SLAUGHTERER;
 	{
@@ -3359,6 +3558,11 @@ bananagrower
 		"\"Kill Petrus for us, too!\"";
 	}
 	AutomaticallySeen = true;
+	ScienceTalkPossibility = 10;
+	ScienceTalkIntelligenceModifier = 10;
+	ScienceTalkWisdomModifier = 25;
+	ScienceTalkIntelligenceRequirement = 5;
+	ScienceTalkWisdomRequirement = 10;
 }
 
 imperialist
@@ -3508,7 +3712,7 @@ elder
 	DefaultAgility = 15;
 	DefaultEndurance = 7;
 	DefaultPerception = 21;
-	DefaultIntelligence = 20;
+	DefaultIntelligence = 25;
 	DefaultWisdom = 40;
 	DefaultCharisma = 20;
 	DefaultMana = 20;
@@ -3544,6 +3748,11 @@ elder
 		"\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"";
 	}
 	AutomaticallySeen = true;
+	ScienceTalkPossibility = 75;
+	ScienceTalkIntelligenceModifier = 50;
+	ScienceTalkWisdomModifier = 100;
+	ScienceTalkIntelligenceRequirement = 10;
+	ScienceTalkWisdomRequirement = 15;
 }
 
 encourager
@@ -3820,6 +4029,11 @@ darkmage
 		LeftSWeaponSkillHits = 20;
 		PolymorphIntelligenceRequirement = 5;
 		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 5; } }
+		ScienceTalkPossibility = 25;
+		ScienceTalkIntelligenceModifier = 10;
+		ScienceTalkWisdomModifier = 5;
+		ScienceTalkIntelligenceRequirement = 10;
+		ScienceTalkWisdomRequirement = 5;
 	}
 
 	Config BATTLE_MAGE;
@@ -3851,6 +4065,11 @@ darkmage
 		LeftSWeaponSkillHits = 50;
 		PolymorphIntelligenceRequirement = 20;
 		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
+		ScienceTalkPossibility = 50;
+		ScienceTalkIntelligenceModifier = 25;
+		ScienceTalkWisdomModifier = 10;
+		ScienceTalkIntelligenceRequirement = 20;
+		ScienceTalkWisdomRequirement = 10;
 	}
 
 	Config ELDER;
@@ -3884,6 +4103,11 @@ darkmage
 		LeftSWeaponSkillHits = 100;
 		PolymorphIntelligenceRequirement = 35;
 		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 50; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 50; } }
+		ScienceTalkPossibility = 100;
+		ScienceTalkIntelligenceModifier = 100;
+		ScienceTalkWisdomModifier = 50;
+		ScienceTalkIntelligenceRequirement = 35;
+		ScienceTalkWisdomRequirement = 25;
 	}
 
 	Config ARCH_MAGE;
@@ -4413,6 +4637,11 @@ necromancer
 		GauntletColor = rgb16(150, 150, 100);
 		PolymorphIntelligenceRequirement = 5;
 		Inventory = { 3, skull, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 5; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 1; } }
+		ScienceTalkPossibility = 10;
+		ScienceTalkIntelligenceModifier = 5;
+		ScienceTalkWisdomModifier = 2;
+		ScienceTalkIntelligenceRequirement = 10;
+		ScienceTalkWisdomRequirement = 5;
 	}
 
 	Config MASTER_NECROMANCER;
@@ -4443,6 +4672,11 @@ necromancer
 		GauntletColor = rgb16(100, 100, 200);
 		PolymorphIntelligenceRequirement = 20;
 		Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }
+		ScienceTalkPossibility = 50;
+		ScienceTalkIntelligenceModifier = 50;
+		ScienceTalkWisdomModifier = 25;
+		ScienceTalkIntelligenceRequirement = 20;
+		ScienceTalkWisdomRequirement = 10;
 	}
 }
 
@@ -4684,6 +4918,11 @@ archangel
 	Belt = ANGEL_HAIR belt { Enchantment = 4; }
 	RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
 	IsImmuneToItemTeleport = true;
+	ScienceTalkPossibility = 100;
+	ScienceTalkIntelligenceModifier = 50;
+	ScienceTalkWisdomModifier = 250;
+	ScienceTalkIntelligenceRequirement = 20;
+	ScienceTalkWisdomRequirement = 40;
 
 	Config VALPURUS;
 	{
@@ -4814,6 +5053,7 @@ mysticfrog
 	CWeaponSkillHits == 100;
 	IsPolymorphable = false;
 	IsAbstract = true;
+	ScienceTalkPossibility = 100;
 
 	Config DARK;
 	{
@@ -4831,6 +5071,11 @@ mysticfrog
 		DayRequirementForGeneration = 16;
 		Frequency = 250;
 		PolymorphIntelligenceRequirement = 25;
+		ScienceTalkIntelligenceModifier = 100;
+		ScienceTalkWisdomModifier = 50;
+		ScienceTalkIntelligenceRequirement = 25;
+		ScienceTalkWisdomRequirement = 15;
+		FriendlyReplies == "@Dd croaks happily.";
 	}
 
 	Config LIGHT;
@@ -4843,5 +5088,9 @@ mysticfrog
 		ClassStates = TELEPORT_CONTROL|INVISIBLE|ESP;
 		AttachedGod = VALPURUS;
 		PolymorphIntelligenceRequirement = 15;
+		ScienceTalkIntelligenceModifier = 25;
+		ScienceTalkWisdomModifier = 50;
+		ScienceTalkIntelligenceRequirement = 20;
+		ScienceTalkWisdomRequirement = 30;
 	}
 }

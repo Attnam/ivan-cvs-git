@@ -1743,6 +1743,7 @@ liquid
 		NameStem = "sweat";
 		Alpha = 175;
 		AttachedGod = SILVA;
+		RustModifier = 10;
 	}
 }
 

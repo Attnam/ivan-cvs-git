@@ -2012,67 +2012,6 @@ bool blinkdog::SummonFriend()
   return true;
 }
 
-const char* DolphinTalkAttribute[] =
-{
-  "quantum",
-  "applied",
-  "cosmic",
-  "dark",
-  "linear",
-  "molecular",
-  "theoretical",
-  "classical",
-  "the future of"
-};
-
-const char* DolphinTalkScience[] =
-{
-  "necromancy",
-  "relativity",
-  "physics",
-  "artificial intelligence",
-  "mathematics",
-  "philosophy",
-  "biology",
-  "politics",
-  "mechanics",
-  "magicks",
-  "existential questions",
-  "architecture",
-  "archaeology",
-  "logic",
-  "fiction",
-  "economics",
-  "theology",
-  "alchemy"
-};
-
-void dolphin::BeTalkedTo()
-{
-  if(GetRelation(PLAYER) != HOSTILE
-  && PLAYER->GetAttribute(INTELLIGENCE) >= 20)
-    {
-      const char* Attribute = DolphinTalkAttribute[RAND() % (sizeof(DolphinTalkAttribute) / sizeof(const char*))];
-      const char* Science = DolphinTalkScience[RAND() % (sizeof(DolphinTalkScience) / sizeof(const char*))];
-      const char* Prefix;
-
-      if(RAND() % 3)
-	Prefix = "";
-      else if(RAND() % 3)
-	Prefix = "meta";
-      else if(RAND() % 3)
-	Prefix = "neo";
-      else if(RAND() % 3)
-	Prefix = RAND_2 ? "micro" : "macro";
-      else
-	Prefix = "neuro";
-
-      ADD_MESSAGE("You have a rather pleasant about %s %s%s with %s.", Attribute, Prefix, Science, CHAR_NAME(DEFINITE));
-    }
-  else
-    character::BeTalkedTo();
-}
-
 void blinkdog::VirtualConstructor(bool Load)
 {
   dog::VirtualConstructor(Load);

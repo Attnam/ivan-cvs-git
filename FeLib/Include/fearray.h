@@ -16,7 +16,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
+#include "femath.h"
 
 template <class type> struct fearray
 {
@@ -31,6 +31,7 @@ template <class type> struct fearray
   void Allocate(sizetype);
   void Add(const type&);
   void Clear();
+  const type& GetRandomElement() const { return Data[RAND_N(Size)]; }
   type* Data;
   sizetype Size;
 };

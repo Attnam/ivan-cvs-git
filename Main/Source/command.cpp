@@ -499,9 +499,9 @@ bool commandsystem::Talk(character* Char)
   return false;
 }
 
-#include "igraph.h"
+/*#include "igraph.h"
 #include "graphics.h"
-#include "whandler.h"
+#include "whandler.h"*/
 
 bool commandsystem::NOP(character* Char)
 {

@@ -60,11 +60,11 @@ class festring
   void Empty();
   void Assign(sizetype, char);
   void Resize(sizetype, char = ' ');
-  sizetype Find(char, sizetype = 0);
-  sizetype Find(const char* CStr, sizetype Pos = 0) { return Find(CStr, Pos, strlen(CStr)); }
-  sizetype Find(const char*, sizetype, sizetype);
-  sizetype Find(const festring& S, sizetype Pos = 0) { return Find(S.Data, Pos, S.Size); }
-  sizetype FindLast(char, sizetype = NPos);
+  sizetype Find(char, sizetype = 0) const;
+  sizetype Find(const char* CStr, sizetype Pos = 0) const { return Find(CStr, Pos, strlen(CStr)); }
+  sizetype Find(const char*, sizetype, sizetype) const;
+  sizetype Find(const festring& S, sizetype Pos = 0) const { return Find(S.Data, Pos, S.Size); }
+  sizetype FindLast(char, sizetype = NPos) const;
   void Erase(sizetype, sizetype);
   void Insert(sizetype Pos, const char* CStr) { Insert(Pos, CStr, strlen(CStr)); }
   void Insert(sizetype, const char*, sizetype);

@@ -23,7 +23,6 @@
 #include <map>
 #include <set>
 
-#include "rect.h"
 #include "error.h"
 #include "festring.h"
 #include "fearray.h"

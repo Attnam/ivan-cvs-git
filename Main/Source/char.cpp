@@ -301,7 +301,7 @@ bool character::BodyPartCanBeSevered(int I) const { return !!I; }
 bool character::HasBeenSeen() const { return !!(DataBase->Flags & HAS_BEEN_SEEN); }
 bool character::IsTemporary() const { return !!GetTorso()->GetLifeExpectancy(); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), HasBeenWarned(false)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), HasBeenWarned(false), ScienceTalks(Char.ScienceTalks)
 {
   Stack = new stack(0, this, HIDDEN);
 
@@ -347,7 +347,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   ID = game::CreateNewCharacterID(this);
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER), HasBeenWarned(false)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER), HasBeenWarned(false), ScienceTalks(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -1625,7 +1625,7 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile << BaseExperience[c];
 
-  SaveFile << NP << AP << Stamina << GenerationDanger;
+  SaveFile << NP << AP << Stamina << GenerationDanger << ScienceTalks;
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
   SaveFile << IsEnabled() << Polymorphed << HomeData << BlocksSinceLastTurn << CommandFlags;
 
@@ -1674,7 +1674,7 @@ void character::Load(inputfile& SaveFile)
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile >> BaseExperience[c];
 
-  SaveFile >> NP >> AP >> Stamina >> GenerationDanger;
+  SaveFile >> NP >> AP >> Stamina >> GenerationDanger >> ScienceTalks;;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!ReadType<bool>(SaveFile))
@@ -3941,6 +3941,11 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
+  ++PanelPosY;
+
+  int D = int(game::GetGameSituationDanger() * 1000);
+  int E = Max(255 - D / 4, 0);
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, MakeRGB16(255, E, E), "Dan: %d", D);
   ++PanelPosY;
 
   if(game::IsInWilderness())
@@ -8327,9 +8332,13 @@ bool character::IssuePetCommands()
 
 bool character::ChatIdly()
 {
-  BeTalkedTo();
+  if(!TryToTalkAboutScience())
+    {
+      BeTalkedTo();
+      PLAYER->EditExperience(CHARISMA, 75, 1 << 7);
+    }
+
   PLAYER->EditAP(-1000);
-  PLAYER->EditExperience(CHARISMA, 75, 1 << 7);
   return true;
 }
 
@@ -8723,7 +8732,8 @@ void character::PoisonedSituationDangerModifier(double& Danger) const
 
 void character::PolymorphingSituationDangerModifier(double& Danger) const
 {
-  Danger *= 1.5;
+  if(!StateIsActivated(POLYMORPH_CONTROL))
+    Danger *= 1.5;
 }
 
 void character::PanicSituationDangerModifier(double& Danger) const
@@ -8746,8 +8756,62 @@ void character::LeprosySituationDangerModifier(double& Danger) const
   Danger *= 1.5;
 }
 
+void character::AddRandomScienceName(festring& String) const
+{
+  const festring& Attribute = GetScienceTalkAttribute().GetRandomElement();
+  const festring& Prefix = GetScienceTalkPrefix().GetRandomElement();
+  const char* Science = GetScienceTalkName().GetRandomElement().CStr();
+  int L = Prefix.GetSize();
+
+  if(L && Prefix[L - 1] == Science[0])
+    ++Science;
+
+  if(!Attribute.IsEmpty() && !RAND_N(3))
+    {
+      const festring& OtherAttribute = GetScienceTalkAttribute().GetRandomElement();
+
+      if(!OtherAttribute.IsEmpty() && OtherAttribute.Find("the ", 0, 4))
+	String << Attribute << ' ' << OtherAttribute << ' ';
+    }
+  else
+    {
+      String << Attribute;
+
+      if(!Attribute.IsEmpty())
+	String << ' ';
+    }
+
+  String << Prefix << Science;
+}
+
+bool character::TryToTalkAboutScience()
+{
+  if(GetRelation(PLAYER) == HOSTILE
+  || GetScienceTalkPossibility() <= RAND_N(100)
+  || PLAYER->GetAttribute(INTELLIGENCE) < GetScienceTalkIntelligenceRequirement()
+  || PLAYER->GetAttribute(WISDOM) < GetScienceTalkWisdomRequirement())
+    return false;
+
+  festring Science;
+
+  if(RAND_N(5))
+    AddRandomScienceName(Science);
+  else
+    {
+      Science = "the relation of ";
+      AddRandomScienceName(Science);
+      Science << " and ";
+      AddRandomScienceName(Science);
+    }
+
+  ADD_MESSAGE("You have a rather pleasant chat about %s with %s.", Science.CStr(), CHAR_NAME(DEFINITE));
+  PLAYER->EditExperience(INTELLIGENCE, 1000, 50. * GetScienceTalkIntelligenceModifier() / ++ScienceTalks);
+  PLAYER->EditExperience(WISDOM, 1000, 50. * GetScienceTalkWisdomModifier() / ++ScienceTalks);
+  return true;
+}
+
 bool character::IsUsingWeaponOfCategory(int Category) const
 {
   return ((GetMainWielded() && GetMainWielded()->GetWeaponCategory() == Category)
-	  || (GetSecondaryWielded() && GetSecondaryWielded()->GetWeaponCategory() == Category));
+       || (GetSecondaryWielded() && GetSecondaryWielded()->GetWeaponCategory() == Category));
 }

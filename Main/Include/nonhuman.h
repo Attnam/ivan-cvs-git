@@ -174,8 +174,6 @@ class CHARACTER
 (
   dolphin,
   nonhumanoid,
- public:
-  virtual void BeTalkedTo();
  protected:
   virtual int GetSpecialBodyPartFlags(int) const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }

@@ -825,14 +825,15 @@ int game::Load(const festring& SaveName)
     {
       SetCurrentArea(LoadWorldMap(SaveName));
       CurrentWSquareMap = WorldMap->GetMap();
+      igraph::CreateBackGround(GRAY_FRACTAL);
     }
   else
     {
       SetCurrentArea(CurrentLevel = GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex));
       CurrentLSquareMap = CurrentLevel->GetMap();
+      igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
     }
 
-  igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
   vector2d Pos;
   SaveFile >> Pos >> PlayerName;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
