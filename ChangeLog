@@ -8,6 +8,10 @@ is also provided AS IS and is probably completely unreadable.
 ------------------------------------------------------------------------------------
 August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* When multi-squared monsters enters a square with a door. The door is destroyed.
+
+August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* typo corrected "blah are/is too large to big up" -> pick up
 	
 August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>

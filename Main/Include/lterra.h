@@ -300,6 +300,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
   virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
+  virtual void BeDestroyed() { Break(); }
  protected:
   virtual vector2d GetBitmapPos(ushort) const;
   virtual void ModifyAnimationFrames(ushort&) const;

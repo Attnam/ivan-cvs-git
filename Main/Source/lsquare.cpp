@@ -916,7 +916,7 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 	    ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
 
 	  Stepper->EditAP(-100);
-	  OLTerrain->Break();
+	  OLTerrain->BeDestroyed();
 	}
     }
 

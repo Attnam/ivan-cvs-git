@@ -1139,3 +1139,8 @@ vector2d earth::GetBitmapPos(ushort Index) const
 {
   return olterrain::GetBitmapPos(Index) + vector2d(PictureIndex * 48, 0);
 }
+
+void door::BeDestroyed()
+{
+  olterrain::Break();
+}
