@@ -41,3 +41,4 @@ The bone file code doesn't handle shelves correctly. (but there are never shelve
 The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
 The head of Ivan is left in bone levels.
 "You faint. You hit the floating eye! It is not hurt."
+Kamikaze dwarves die smiling even if headless.

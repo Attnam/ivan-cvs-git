@@ -81,3 +81,6 @@ Player-creatable magic.
 Noble ranks.
 Pyramids.
 Temperatures.
+"Saveload" spell.
+Master Mind Lemming.
+Remove soul spell.
