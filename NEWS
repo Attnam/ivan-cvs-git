@@ -1,7 +1,16 @@
 Version 0.401
 -------------
 
-
+- added lightning effects
+- added several new artifact and regular weapons
+- added floating eye
+- it is now much easier to gather nutrition
+- many abuses prohibited
+- explosions are now stopped by walls
+- corrected a fatal bug in the door breaking code
+- corrected many non-fatal bugs
+- decreased IVAN's RAM usage greatly
+- doubled IVAN's compile speed
 
 Version 0.40
 ------------
