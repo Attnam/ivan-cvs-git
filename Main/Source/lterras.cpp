@@ -408,10 +408,20 @@ bool fountain::Drink(character* Drinker)
 		      {
 			Created = true;
 			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
-			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+			if(rand() % 5)
+			  {
+			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 
-			if(Monster->CanBeSeenByPlayer())
-			  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+			    if(Monster->CanBeSeenByPlayer())
+			      ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+			  }
+			else
+			  {
+			    Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
+
+			    if(Monster->CanBeSeenByPlayer())
+			      ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), festring::CapitalizeCopy(Monster->GetPersonalPronoun()).c_str());
+			  }
 
 			break;
 		      }
