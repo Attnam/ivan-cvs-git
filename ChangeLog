@@ -1,5 +1,9 @@
 July 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Compiles again under gcc 3.04
+
+July 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* SecretKnowledge command now offers information about the attack capabilities of every character
 	* DO_FOR_SQUARES_AROUND macros have been replaced with loops using various GetNeighbourSquare()
 	  functions

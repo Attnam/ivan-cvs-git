@@ -20,6 +20,7 @@ class wterrain
 {
  public:
   wterrain() : WSquareUnder(0), AnimationFrames(1) { }
+  virtual ~wterrain() { }
   virtual void Load(inputfile&);
   virtual vector2d GetPos() const;
   virtual wsquare* GetWSquareUnder() const { return WSquareUnder; }
