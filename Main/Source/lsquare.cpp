@@ -710,32 +710,38 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 						SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
 					else
 						SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-				for(uchar c = 0; c < 4; ++c)
-				{
-					if(GetSideStack(c)->GetItems() == 1)
-					{
-						if(!Anything)
-							SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-						SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
-					}
-					else
-					if(GetSideStack(c)->GetItems() > 1)
-					{
-						if(!Anything)
-							SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-						SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
-					}
-				}
-
-				if(!Anything)
-					SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 			}
 			else
 			{
-				SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
+				uchar HasItems = 0;
+				bool HasManyItems = false;
+
+				for(uchar c = 0; c < 4; ++c)
+					if(GetSideStack(c)->GetItems())
+					{
+						if(++HasItems > 1)
+							break;
+
+						if(GetSideStack(c)->GetItems() > 1)
+						{
+							HasManyItems = true;
+							break;
+						}
+					}
+
+				if(HasItems > 1 || HasManyItems)
+					SetMemorizedDescription("many items on " + GetOverLevelTerrain()->Name(INDEFINITE));
+				else if(HasItems == 1)
+					for(uchar c = 0; c < 4; ++c)
+					{
+						if(GetSideStack(c)->GetItems())
+						{
+							SetMemorizedDescription(GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on " + GetOverLevelTerrain()->Name(INDEFINITE));
+							break;
+						}
+					}
+				else
+					SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
 			}
 		else
 			SetMemorizedDescription("darkness");

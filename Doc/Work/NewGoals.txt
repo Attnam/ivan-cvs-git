@@ -8,6 +8,7 @@ D-score bug with polymorph (Timo)
 D-money is temporarily lost in polymorph (Timo)
 D-altar of level 10 bugs (Timo)
  -you can identify monsters in the dark by chatting with them (Timo)
+ -lamps on walls break incorrectly (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features
@@ -32,6 +33,8 @@ D-removing the polymorph feature that multiplies items (Timo)
 D-adding autosave interval option (Hex)
  -making plate mails much less fragile when they are kicked (Hex)
 D-adding infravision to some monsters (Timo)
+ -prohibiting saveload possibility caused by the nature of the corner X (Timo)
+ -"there is something leading downwards here" message (Hex)
 
 -fixing buggy graphics that are buggy due to code
 D-can (Timo)
@@ -51,7 +54,6 @@ D-many items and some terrains (Tuukka)
 -creating new graphics (to make Attnam a little less ugly)
  -grass (Tuukka)
  -pine and spruce (Tuukka)
- -new Avatar (Tuukka)
  -others that may be needed (Tuukka)
 
 -a lot of testing (everyone that can be forced to do it)

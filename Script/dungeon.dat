@@ -310,77 +310,77 @@ Dungeon 1;
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=hunter;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=polarbear;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=polarbear;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=polarbear;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=polarbear;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=farmer;
+			Character=polarbear;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
@@ -406,6 +406,11 @@ Dungeon 1;
 		Square, Random { Walkable=true; InRoom=false;  }
 		{
 			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; InRoom=false;  }
+		{
+			Character=ivan;
 		}
 
 		Square, Pos 23,47;
@@ -571,23 +576,28 @@ Dungeon 1;
 
 		Room 1;
 		{
-			Pos=25,37;
+			Pos=25,38;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=floor,wall;
+			WallSquare=ground,wall;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=10;
 			Type=shop;
 			
-			Square, Pos 5, 0;
+			Square, Pos 1, 4;
 			{
 				GroundTerrain = parquet;
 				OverTerrain = door;
 			}
 
-			Square, Pos 4, 1;
+			Square, Pos 1, 1;
+			{
+				Character = slave;
+			}
+
+			Square, Pos 2, 3;
 			{
 				Character = shopkeeper;
 			}
@@ -600,7 +610,7 @@ Dungeon 1;
 				Types
 				{
 					t = scrollofteleport;
-					s = spear;
+					s = stone spear;
 					p = pickaxe;
 					l = lamp;
 					c = scrollofchangematerial;
@@ -612,9 +622,9 @@ Dungeon 1;
 				}
 			}
 			{
-			    tsp.b
-			    PlLcl
-			    tbCbL		
+			    .spbt
+			    blLcP
+			    L.Clt
 			}
 		}
 
@@ -622,7 +632,7 @@ Dungeon 1;
 		{
 			Pos=41,41;
 			Size=5,5;
-			WallSquare=floor,gold wall;
+			WallSquare=ground,gold wall;
 			GenerateDoor=false;
 			DivineOwner=2;
 			Type=temple;
@@ -648,7 +658,7 @@ Dungeon 1;
 		{
 			Pos=2,41;
 			Size=5,5;
-			WallSquare=floor,marble wall;
+			WallSquare=ground,marble wall;
 			GenerateDoor=false;
 			DivineOwner=4;
 			Type=temple;
@@ -674,7 +684,7 @@ Dungeon 1;
 		{
 			Pos=41,2;
 			Size=5,5;
-			WallSquare=floor,bananaflesh wall;
+			WallSquare=ground,bananaflesh wall;
 			GenerateDoor=false;
 			DivineOwner=6;
 			Type=temple;
@@ -700,7 +710,7 @@ Dungeon 1;
 		{
 			Pos=2,2;
 			Size=5,5;
-			WallSquare=floor,parchment wall;
+			WallSquare=ground,parchment wall;
 			GenerateDoor=false;
 			DivineOwner=7;
 			Type=temple;

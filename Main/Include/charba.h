@@ -6,10 +6,10 @@
 #define HAS_DODGED 2
 #define HAS_DIED 3
 
-#define NUMBER_OF_HUMAN_ARMS	7
-#define NUMBER_OF_HUMAN_HEADS	12
-#define NUMBER_OF_HUMAN_LEGS	6
-#define NUMBER_OF_HUMAN_TORSOS	9
+#define NUMBER_OF_HUMAN_ARMS	9
+#define NUMBER_OF_HUMAN_HEADS	14
+#define NUMBER_OF_HUMAN_LEGS	7
+#define NUMBER_OF_HUMAN_TORSOS	13
 
 #define HUNGERLEVEL 		200
 #define CRITICALHUNGERLEVEL 	60
@@ -74,7 +74,7 @@ public:
 	virtual bool ReadItem(int, stack*);
 	virtual bool TestForPickup(item*) const;
 	virtual bool ThrowItem(uchar, item*);
-	virtual bool TryMove(vector2d);
+	virtual bool TryMove(vector2d, bool = true);
 	virtual bool HasHeadOfElpuri() const;
 	virtual bool HasMaakotkaShirt() const;
 	virtual bool HasPerttusNut() const;
@@ -248,6 +248,7 @@ public:
 	virtual void KickHit() {}
 	virtual bool HasInfraVision() const { return false; }
 	virtual bool SetAutosaveInterval();
+	virtual uchar CriticalModifier() const { return 20; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

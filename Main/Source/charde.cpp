@@ -63,15 +63,23 @@ void oree::CreateInitialEquipment()
 
 void swatcommando::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+	if(rand() % 20)
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 5 ? (item*)(new longsword) : rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+	else
+	{
+		item* DoomsDay = new longsword;
+		DoomsDay->InitMaterials(3, new mithril, new iron, new darkfrogflesh);
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(DoomsDay)));
+	}
+
 	GetStack()->FastAddItem(new lamp);
-	GetStack()->FastAddItem(new chainmail(new mithril));
+	GetStack()->FastAddItem(new chainmail(rand() % 5 ? (material*)new iron : (material*)new mithril));
 }
 
 void fallenvalpurist::CreateInitialEquipment()
 {
 	if(rand() % 10)
-		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)(new axe) : (item*)(new pickaxe))));
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)new axe : (item*)new pickaxe)));
 	else
 	{
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
@@ -84,7 +92,7 @@ void fallenvalpurist::CreateInitialEquipment()
 
 void froggoblin::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)(new spear) : (item*)(new poleaxe))));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)new spear : (item*)new poleaxe)));
 }
 
 void cityguard::CreateInitialEquipment()
@@ -281,7 +289,7 @@ void golem::MoveRandomly()
 	}
 	else
 		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
-			TryMove(GetPos() + game::GetMoveVector(ToTry));
+			TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 }
 
 void ennerbeast::GetAICommand()
@@ -660,7 +668,11 @@ void perttu::BeTalkedTo(character* Talker)
 
 			if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
 			{
-				iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+				iosystem::TextScreen(	"Champion of Law!\n\n"
+							"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
+							"Oree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
+							"the Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+
 				game::GetCurrentArea()->SendNewDrawRequest();
 				game::TriggerQuestForMaakotkaShirt();
 				StoryState = 2;
@@ -705,7 +717,11 @@ void farmer::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 400 / 100)
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
 	{
 	case 0:
 		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because summer lasts two weeks.\"");
@@ -730,7 +746,11 @@ void cityguard::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 400 / 100)
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
 	{
 	case 0:
 		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", CNAME(DEFINITE));
@@ -755,7 +775,11 @@ void shopkeeper::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 400 / 100)
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
 	{
 	case 0:
 		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CNAME(DEFINITE));
@@ -803,7 +827,11 @@ void swatcommando::BeTalkedTo(character*)
 
 void ennerbeast::BeTalkedTo(character*)
 {
-	switch(rand() % 400 / 100)
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
 	{
 	case 0:
 		ADD_MESSAGE("\"Fishing is fun! Do you fish?\"");
@@ -896,4 +924,188 @@ void humanoid::KickHit()
 {
 	if(GetCategoryWeaponSkill(UNARMED)->AddHit())
 		GetCategoryWeaponSkill(UNARMED)->AddLevelUpMessage();
+}
+
+void ivan::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"You capitalist! Lenin want Ivan kill capitalists!\"");
+		return;
+	}
+
+	if(GetTeam() == Talker->GetTeam() || Talker->Danger() < 50000)
+	{
+		static uchar LastSaid = 0xFF, ToSay;
+		while((ToSay = rand() % 11) == LastSaid);
+		LastSaid = ToSay;
+
+		switch(ToSay)
+		{
+		case 0:
+			ADD_MESSAGE("\"Da, Ivan like killing.\"");
+			break;
+		case 1:
+			ADD_MESSAGE("\"Ivan ruski specialist.\"");
+			break;
+		case 2:
+			ADD_MESSAGE("\"Ivan work. Else Ivan get stapled.\"");
+			break;
+		case 3:
+			ADD_MESSAGE("\"Party mean big weapons. Ivan like big weapons. Ivan kill for Party.\"");
+			break;
+		case 4:
+			ADD_MESSAGE("\"CCCP roxxx.\"");
+			break;
+		case 5:
+			ADD_MESSAGE("\"Ivan like throw ladas. You want compete?\"");
+			break;
+		case 6:
+			ADD_MESSAGE("\"Why is AK not invented?\"");
+			break;
+		case 7:
+			ADD_MESSAGE("\"Ivan like Attnam. Perttu communist too.\"");
+			break;
+		case 8:
+			ADD_MESSAGE("\"Ivan buy kyber eyes. Ivan see in dark.\"");
+			break;
+		case 9:
+			ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. Ivan like.\"");
+			break;
+		case 10:
+			if(GetTeam() == Talker->GetTeam())
+				ADD_MESSAGE("\"We both good proles. We do good work.\"");
+			else
+				ADD_MESSAGE("\"Go away, you weak. Be back when learned killing.\"");
+			break;
+		}
+	}
+	else
+	{
+		ADD_MESSAGE("Ivan seems to be very friendly. \"You make good communist. Ivan go with you!\"");
+		SetTeam(Talker->GetTeam());
+	}
+}
+
+void ivan::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace(new iron))));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail)));
+}
+
+void hunter::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		return;
+	}
+
+	static uchar LastSaid = 0xFF, ToSay;
+	while((ToSay = rand() % 4) == LastSaid);
+	LastSaid = ToSay;
+
+	switch(ToSay)
+	{
+	case 0:
+		ADD_MESSAGE("\"A man is not a man unless he has lost his right arm in a battle against a polar bear.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"Ah! So much to hunt here! Bears, ogres, slaves, farmers...\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
+		ADD_MESSAGE("I am now the only child in the family.\"");
+		break;
+	}
+}
+
+void hunter::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear(new iron))));
+}
+
+void slave::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Yikes!\"");
+		return;
+	}
+
+	character* Master;
+
+	if(HomeRoom && (Master = GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
+	{
+		if(Talker->GetMoney() >= 50)
+		{
+			ADD_MESSAGE("\"Do you want to buy me? 50 squirrels. I work very hard.\"");
+
+			if(game::BoolQuestion("Do you want to buy him? [y/N]"))
+			{
+				Talker->SetMoney(Talker->GetMoney() - 50);
+				Master->SetMoney(Master->GetMoney() + 50);
+				SetTeam(Talker->GetTeam());
+				SetHomeRoom(0);
+			}
+		}
+		else
+		{
+			ADD_MESSAGE("\"Don't touch me! Master does not want people to touch sale items.");
+			ADD_MESSAGE("\"I'm worth 50 squirrels, ye know!\"");
+		}
+
+		return;
+	}
+
+	if(GetTeam() == Talker->GetTeam())
+	{
+		static uchar LastSaid = 0xFF, ToSay;
+		while((ToSay = rand() % 4) == LastSaid);
+		LastSaid = ToSay;
+
+		switch(ToSay)
+		{
+		case 0:
+			ADD_MESSAGE("\"Whatever the master wants.\"");
+			break;
+		case 1:
+			ADD_MESSAGE("\"Work work work all day long. No, that was not a complain! Don't punish!\"");
+			break;
+		case 2:
+			ADD_MESSAGE("\"I love all my masters. At least when the whip is being washed.\"");
+			break;
+		case 3:
+			ADD_MESSAGE("\"I would like to be like Ivan. Ivan is a good worker.\"");
+			break;
+		}
+	}
+	else
+		ADD_MESSAGE("\"I'm free! Rejoice!\"");
+}
+
+void slave::GetAICommand()
+{
+	SeekLeader();
+
+	if(CheckForEnemies())
+		return;
+
+	if(CheckForDoors())
+		return;
+
+	if(CheckForUsefulItemsOnGround())
+		return;
+
+	if(FollowLeader())
+		return;
+
+	if(!HomeRoom || !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
+	{
+		HomeRoom = 0;
+		MoveRandomly();
+	}
 }

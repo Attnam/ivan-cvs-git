@@ -358,7 +358,7 @@ std::string door::Name(uchar Case) const
 			if(!(Case & INDEFINEBIT))
 				return std::string(IsOpen ? "the open " : "the closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
 			else
-				return std::string(IsOpen ? "open " : "closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+				return std::string(IsOpen ? "an open " : "a closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
 	else
 		if(!(Case & DEFINEBIT))
 			return GetMaterial(0)->Name()  + " " + NamePlural();

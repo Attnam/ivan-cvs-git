@@ -151,7 +151,7 @@ class ITEM
 (
 	longsword,
 	meleeweapon,
-	InitMaterials(3, new iron, new iron, 0),
+	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
 	{
 		SetSize(150);
 	},
@@ -171,12 +171,12 @@ class ITEM
 (
 	twohandedsword,
 	longsword,
-	InitMaterials(3, new iron, new iron, 0),
+	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
 	{
 		SetSize(175);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(3)
 	virtual std::string NameSingular() const RET("two-handed sword")
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float OfferModifier() const RET(0.25)
@@ -195,7 +195,7 @@ class ITEM
 		SetSize(175);
 	},
 public:
-	virtual ushort Possibility() const RET(1)
+	virtual ushort Possibility() const RET(0)
 	virtual std::string NameSingular() const RET("curved two-handed sword")
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,16)
@@ -231,7 +231,7 @@ class ITEM
 (
 	axe,
 	meleeweapon,
-	InitMaterials(3, rand() % 5 ? (material*)new stone : (material*)new iron, new wood, 0),
+	InitMaterials(3, rand() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(125);
 	},
@@ -251,7 +251,7 @@ class ITEM
 (
 	pickaxe,
 	axe,
-	InitMaterials(3, new iron, new wood, 0),
+	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(150);
 	},
@@ -271,7 +271,7 @@ class ITEM
 (
 	spear,
 	meleeweapon,
-	InitMaterials(3, rand() % 5 ? (material*)new stone : (material*)new iron, new wood, 0),
+	InitMaterials(3, rand() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(200);
 	},
@@ -619,7 +619,7 @@ class ITEM
 (
 	poleaxe,
 	axe,
-	InitMaterials(3, new iron, new wood, 0),
+	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(225);
 	},
@@ -637,7 +637,7 @@ class ITEM
 (
 	spikedmace,
 	meleeweapon,
-	InitMaterials(3, new iron, new wood, 0),
+	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(150);
 	},

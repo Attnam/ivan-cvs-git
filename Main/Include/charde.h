@@ -150,8 +150,8 @@ class CHARACTER
 		SetSize(170);
 		SetAgility(10);
 		SetStrength(10);
-		SetEndurance(10);
-		SetPerception(12);
+		SetEndurance(15);
+		SetPerception(18);
 		SetArmType(rand() % 7);
 		SetHeadType(4 + rand() % 3);
 		SetLegType(rand() % 3);
@@ -174,9 +174,9 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(180);
-		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
+		SetAgility(15);
+		SetStrength(30);
+		SetEndurance(30);
 		SetPerception(21);
 		SetArmType(5);
 		SetHeadType(7);
@@ -228,7 +228,7 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(180);
-		SetAgility(20);
+		SetAgility(10);
 		SetStrength(20);
 		SetEndurance(20);
 		SetPerception(18);
@@ -383,7 +383,6 @@ class CHARACTER
 		SetPerception(30);
 	},
 public:
-	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual ushort Possibility() const RET(0)
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual bool Charmable() const RET(false)
@@ -392,6 +391,7 @@ public:
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual void BeTalkedTo(character*);
 protected:
+	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual vector2d GetBitmapPos() const RETV(64,0)
 	virtual std::string NameSingular() const RET("Elpuri the Dark Frog")
 	virtual void CreateCorpse();
@@ -441,7 +441,6 @@ class CHARACTER
 		SetPerception(15);
 	},
 public:
-	virtual std::string DeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual ushort Possibility() const RET(50)
 	virtual bool CanWield() const RET(true)
 	virtual bool CanKick() const RET(true)
@@ -450,6 +449,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
+	virtual std::string DeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual vector2d GetBitmapPos() const RETV(112,0)
 	virtual std::string NameSingular() const RET("fallen valpurist")
 	virtual void CreateCorpse();
@@ -550,7 +550,6 @@ class CHARACTER
 		SetPerception(12);
 	},
 public:
-	virtual std::string DeathMessage() { return "The Holy Words of " + Name(DEFINITE) + " fly away and the monster collapses."; }
 	virtual ushort Possibility() const RET(20)
 	virtual ushort CalculateArmorModifier() const;
 	virtual void MoveRandomly();
@@ -563,6 +562,7 @@ public:
 	virtual bool CheckForUsefulItemsOnGround() { return false; }
 	virtual bool CanKick() const RET(true)
 protected:
+	virtual std::string DeathMessage() { return "The Holy Words of " + Name(DEFINITE) + " fly away and the monster collapses."; }
 	virtual std::string NameSingular() const RET("golem")
 	virtual vector2d GetBitmapPos() const RETV(256,0)
 	virtual float GetMeleeStrength() const;
@@ -697,6 +697,153 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(1000)
 	virtual std::string TalkVerb() const { return "neighs"; }
+);
+
+class CHARACTER
+(
+	ivan,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(230);
+		SetAgility(20);
+		SetStrength(30);
+		SetEndurance(50);
+		SetPerception(18);
+		SetArmType(7);
+		SetHeadType(12);
+		SetLegType(5);
+		SetTorsoType(9);
+	},
+public:
+	virtual void CreateInitialEquipment();
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 120000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
+	virtual bool HasInfraVision() const { return true; }
+	virtual uchar CriticalModifier() const { return 4; }
+protected:
+	virtual std::string DeathMessage() { return "Ivan falls groaning bravely: \"Party revenges Ivan!\""; }
+	virtual std::string NameSingular() const RET("Ivan")
+	virtual float GetMeleeStrength() const RET(2000)
+);
+
+class CHARACTER
+(
+	hunter,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetArmType(8);
+		SetHeadType(13);
+		SetLegType(6);
+		SetTorsoType(12);
+	},
+public:
+	virtual void CreateInitialEquipment();
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual void BeTalkedTo(character*);
+protected:
+	virtual std::string NameSingular() const RET("hunter")
+	virtual float GetMeleeStrength() const RET(2000)
+);
+
+class CHARACTER
+(
+	polarbear,
+	character,
+	InitMaterials(new polarbearflesh),
+	{
+		SetSize(250);
+		SetAgility(10);
+		SetStrength(30);
+		SetEndurance(30);
+		SetPerception(24);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
+protected:
+	virtual std::string NameSingular() const RET("polar bear")
+	virtual float GetMeleeStrength() const RET(10000)
+	virtual vector2d GetBitmapPos() const RETV(336,0)
+	virtual std::string TalkVerb() const { return "growls"; }
+);
+
+class CHARACTER
+(
+	dolphin,
+	character,
+	InitMaterials(new dolphinflesh),
+	{
+		SetSize(300);
+		SetAgility(30);
+		SetStrength(10);
+		SetEndurance(10);
+		SetPerception(30);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
+protected:
+	virtual std::string NameSingular() const RET("female dolphin in season")
+	virtual float GetMeleeStrength() const RET(1000)
+	virtual vector2d GetBitmapPos() const RETV(320,0)
+	virtual std::string TalkVerb() const { return "is silent"; }
+);
+
+class CHARACTER
+(
+	lightfrog,
+	frog,
+	InitMaterials(new lightfrogflesh),
+	{
+		SetSize(15);
+		SetAgility(30);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(18);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
+	virtual ulong GetBloodColor() const RET(WHITE)
+protected:
+	virtual vector2d GetBitmapPos() const RETV(80,0)
+	virtual std::string NameSingular() const RET("light frog")
+);
+
+class CHARACTER
+(
+	slave,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(160);
+		SetAgility(10);
+		SetStrength(20);
+		SetEndurance(10);
+		SetPerception(12);
+		SetArmType(0);
+		SetHeadType(0);
+		SetLegType(6);
+		SetTorsoType(0);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual void GetAICommand();
+protected:
+	virtual std::string NameSingular() const RET("slave")
+	virtual float GetMeleeStrength() const RET(1000)
 );
 
 #endif

@@ -170,7 +170,6 @@ class MATERIAL
 	goblinoidflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
 protected:
@@ -182,7 +181,6 @@ class MATERIAL
 	pork,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
@@ -196,7 +194,6 @@ class MATERIAL
 	beef,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
@@ -225,17 +222,25 @@ protected:
 
 class MATERIAL
 (
-	darkfrogflesh,
+	frogflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 50; }
 	virtual uchar Alignment() const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 	virtual short NutritionValue() const			{ return 1000; }
 	virtual bool GetIsBadFoodForAI() const { return true; }
+protected:
+	virtual std::string NameStem() const	{ return "frog flesh"; }
+);
+
+class MATERIAL
+(
+	darkfrogflesh,
+	frogflesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 protected:
 	virtual std::string NameStem() const	{ return "dark frog flesh"; }
 );
@@ -248,7 +253,6 @@ public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual ushort GetDensity() const				{ return 2400; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 protected:
 	virtual std::string NameStem() const	{ return "Elpuri's flesh"; }
 	virtual std::string Article() const { return "an"; }
@@ -338,7 +342,6 @@ class MATERIAL
 	humanflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 30; }
 	virtual uchar Alignment() const				{ return EVIL; }
 	virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); }
@@ -380,7 +383,6 @@ class MATERIAL
 	wolfflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 15; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 	virtual short NutritionValue() const			{ return 400; }
@@ -455,7 +457,6 @@ class MATERIAL
 	spiderflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 4; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 protected:
@@ -467,7 +468,6 @@ class MATERIAL
 	jackalflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 6; }
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
@@ -480,7 +480,6 @@ class MATERIAL
 	donkeyflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType() const		{ return MEAT; }
 	virtual ushort OfferValue() const			{ return 6; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 	virtual short NutritionValue() const			{ return 400; }
@@ -580,6 +579,36 @@ public:
 	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
 protected:
 	virtual std::string NameStem() const	{ return "leather"; }
+);
+
+class MATERIAL
+(
+	lightfrogflesh,
+	frogflesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
+protected:
+	virtual std::string NameStem() const	{ return "light frog flesh"; }
+);
+
+class MATERIAL
+(
+	dolphinflesh,
+	flesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+protected:
+	virtual std::string NameStem() const	{ return "dolphin flesh"; }
+);
+
+class MATERIAL
+(
+	polarbearflesh,
+	flesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
+protected:
+	virtual std::string NameStem() const	{ return "polar bear flesh"; }
 );
 	
 #endif

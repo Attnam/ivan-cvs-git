@@ -259,10 +259,10 @@ ushort brokenplatemail::GetArmorValue() const
 bool wand::Apply(character* StupidPerson, stack* MotherStack)
 {
 	if(StupidPerson->GetIsPlayer())
-		ADD_MESSAGE("The wand brakes in two and then explodes.");
+		ADD_MESSAGE("The wand breaks in two and then explodes.");
 	else
 		if(StupidPerson->GetLevelSquareUnder()->CanBeSeen())
-			ADD_MESSAGE("%s brakes a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
+			ADD_MESSAGE("%s breaks a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
 
 	MotherStack->RemoveItem(MotherStack->SearchItem(this));
 	SetExists(false);	
@@ -272,11 +272,11 @@ bool wand::Apply(character* StupidPerson, stack* MotherStack)
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
-		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby"));
 	})
 
 	StupidPerson->ReceiveFireDamage(10);
-	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
+	StupidPerson->CheckDeath(std::string("killed by an exploding ") + Name(UNARTICLED));
 	return true;
 }
 

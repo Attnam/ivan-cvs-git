@@ -15,14 +15,14 @@ void schoolfood::HitEffect(character* Enemy)
 	Enemy->ReceiveSchoolFoodEffect(Volume);
 }
 
-void darkfrogflesh::EatEffect(character* Eater, float Amount, float NPModifier)
+void frogflesh::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	Eater->Darkness(Volume > Amount ? Amount : Volume);
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
 
-void darkfrogflesh::HitEffect(character* Enemy)
+void frogflesh::HitEffect(character* Enemy)
 {
 	Enemy->Darkness(Volume);
 }

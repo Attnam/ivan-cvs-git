@@ -119,7 +119,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 {
 	DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
 
-	if(!(rand() % 20)) // Test whether critical hit or not
+	if(!(rand() % Enemy->CriticalModifier()))
 	{
 		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 3 ? 2 : 1);
 
@@ -667,7 +667,7 @@ void character::MoveTowards(vector2d TPos)
 	}
 }
 
-bool character::TryMove(vector2d MoveTo)
+bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 {
 	if(!game::GetInWilderness())
 		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
@@ -679,15 +679,18 @@ bool character::TryMove(vector2d MoveTo)
 					if(GetTeam() != Character->GetTeam())
 						return Hit(Character);
 					else
-					{
-						Displace(Character);
-						return true;
-					}
+						if(DisplaceAllowed)
+						{
+							Displace(Character);
+							return true;
+						}
+						else
+							return false;
 				else
 					if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 						return Hit(Character);
 					else
-						if(GetTeam() == Character->GetTeam())
+						if(GetTeam() == Character->GetTeam() && DisplaceAllowed)
 							return Displace(Character);
 						else
 							return false;
@@ -1328,6 +1331,12 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
 	SaveFile << State << Money << HomeRoom << WayPoint;
 
+	if(HomeRoom)
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
+			SaveFile << bool(true);
+		else
+			SaveFile << bool(false);
+
 	if(StateIsActivated(CONSUMING))
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
 	else
@@ -1395,7 +1404,14 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> State >> Money >> HomeRoom >> WayPoint;
 
 	if(HomeRoom)
-		GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
+	{
+		bool Master;
+
+		SaveFile >> Master;
+
+		if(Master)
+			GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
+	}
 
 	SaveFile >> Index;
 
@@ -1702,7 +1718,7 @@ void character::MoveRandomly()
 		ushort ToTry = rand() % 8;
 
 		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
-			OK = TryMove(GetPos() + game::GetMoveVector(ToTry));
+			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
 
@@ -2171,7 +2187,7 @@ bool character::Apply()
 		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
 			return false;
 
-		if(!GetWielded()->GetExists()) 
+		if(GetWielded() && !GetWielded()->GetExists()) 
 			SetWielded(0);
 
 		return true;
