@@ -11,8 +11,8 @@ colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
-std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
-std::string igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
+std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
+std::string igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
 tilemap igraph::TileMap;
 
 void igraph::Init()

@@ -7,6 +7,26 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected some bugs concerning the new kill lists
+	* The massacre lists now show the total amounts of killed monsters in each
+	  category
+	* The player's representation in the game screen is now influenced by his armor
+	* Some graphics needed to make the latter possible added to humanoid.pcx by me
+	* Gas mask added to item.pcx by Kahvi
+	* Steam tank added to char.pcx by Kahvi
+	* Smokes are now in effect.pcx as they should
+	* Ivan now wears the Gorovits family gas mask
+	* Ivan now never willingly drops one of the family items and equips them always
+	  when they are taken from him and he founds them afterwards, even if he has
+	  got something better by then
+	* Corrected a small bug in the reply randomization system
+	* Added proper replies for player clones
+	* Reimplemented the old Mersenne Twister RNG with seed save ability
+	* Disabled Mondedr again
+	* Eddies and mommos are now animated in the SecretKnowledge screens, too
+
 March 22 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a few gcc warnings

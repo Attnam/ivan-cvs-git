@@ -8,7 +8,7 @@ Inhandspics of broken weapons. (lp)
 Hit symbol.
 (r) Village Elder.
 //Thief.
-Black Mage.
+//Black Mage.
 //Grave digger.
 //Short sword + broken picture.
 //Dagger + broken picture.
@@ -17,7 +17,7 @@ Black Mage.
 //Broken shield.
 //Morning star + broken picture.
 //Flail + broken picture.
-Quarterstaff + broken picture.
+//Quarterstaff + broken picture.
 Scimitar + broken picture.
 Katana + broken picture.
 Broadsword + broken picture.
@@ -37,7 +37,7 @@ Forge.
 //Anvil. (lp)
 //Levitating ostrich.
 //M-color for boots. (hp)
-Animation for mommos.
+//Animation for mommos.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.

@@ -1245,6 +1245,7 @@ void bodypart::SignalVolumeAndWeightChange()
     {
       CalculateMaxHP();
       GetMaster()->CalculateMaxHP();
+      GetMaster()->SignalBodyPartVolumeAndWeightChange();
     }
 }
 
@@ -2523,7 +2524,6 @@ uchar corpse::GetArticleMode() const
 {
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
-
 
 bool corpse::IsStupidToConsume() const
 {

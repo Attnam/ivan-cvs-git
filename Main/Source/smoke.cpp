@@ -22,7 +22,7 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
     {
       Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
       Picture[c]->CreateAlphaMap(Alpha);
-      igraph::GetRawGraphic(GR_OLTERRAIN)->MaskedBlit(Picture[c], 16 + (c << 4), 16, 0, 0, 16,16, &Color);
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture[c], c << 4, 32, 0, 0, 16,16, &Color);
     }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);

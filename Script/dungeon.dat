@@ -235,7 +235,7 @@ Dungeon ELPURI_CAVE;
 				Pos = 3,3;
 				Types
 				{
-					# = STEEL wall(BRICK_OLD);
+					# = METEORIC_STEEL wall(BRICK_OLD);
 				}
 			}
 			{

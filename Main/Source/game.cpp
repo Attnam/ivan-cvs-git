@@ -77,6 +77,9 @@ uchar game::StoryState;
 massacremap game::PlayerMassacreMap;
 massacremap game::PetMassacreMap;
 massacremap game::MiscMassacreMap;
+ulong game::PlayerMassacreAmount = 0;
+ulong game::PetMassacreAmount = 0;
+ulong game::MiscMassacreAmount = 0;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -219,7 +222,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new petrus);
+	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -240,6 +243,7 @@ bool game::Init(const std::string& Name)
 	PlayerMassacreMap.clear();
 	PetMassacreMap.clear();
 	MiscMassacreMap.clear();
+	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -489,10 +493,14 @@ bool game::Save(const std::string& SaveName)
   SaveFile << ushort(SAVE_FILE_VERSION);
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
-  SaveFile << LOSTurns << femath::GetSeed();
+  SaveFile << LOSTurns;
+  ulong Seed = RAND();
+  femath::SetSeed(Seed);
+  SaveFile << Seed;
   SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
   SaveFile << Teams << Dungeons << StoryState;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
+  SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
   ushort c;
 
   for(c = 1; c < Dungeons; ++c)
@@ -536,10 +544,11 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheat;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
-  femath::SetSeed(ReadType<ulonglong>(SaveFile));
+  femath::SetSeed(ReadType<ulong>(SaveFile));
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
   SaveFile >> Teams >> Dungeons >> StoryState;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
+  SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   ushort c;
 
   Dungeon = new dungeon*[Dungeons];
@@ -1200,10 +1209,10 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       else if(KeyHandler)
 	KeyHandler(CursorPos, Key);
 
-      if(CursorPos.X < GetCamera().X + 2 || CursorPos.X >= GetCamera().X + GetScreenSize().X - 2)
+      if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenSize().X - 3)
 	UpdateCameraXWithPos(CursorPos.X);
 
-      if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y >= GetCamera().Y + GetScreenSize().Y - 2)
+      if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenSize().Y - 3)
 	UpdateCameraYWithPos(CursorPos.Y);
 
       FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.c_str());
@@ -1918,13 +1927,25 @@ void game::SignalDeath(const character* Ghost, const character* Murderer)
   massacremap* MassacreMap;
 
   if(!Murderer)
-    MassacreMap = &MiscMassacreMap;
+    {
+      ++MiscMassacreAmount;
+      MassacreMap = &MiscMassacreMap;
+    }
   else if(Murderer->IsPlayer())
-    MassacreMap = &PlayerMassacreMap;
+    {
+      ++PlayerMassacreAmount;
+      MassacreMap = &PlayerMassacreMap;
+    }
   else if(Murderer->GetTeam()->GetID() == PLAYER_TEAM)
-    MassacreMap = &PetMassacreMap;
+    {
+      ++PetMassacreAmount;
+      MassacreMap = &PetMassacreMap;
+    }
   else
-    MassacreMap = &MiscMassacreMap;
+    {
+      ++MiscMassacreAmount;
+      MassacreMap = &MiscMassacreMap;
+    }
 
   configid CI(Ghost->GetType(), Ghost->GetConfig());
   massacremap::iterator i = MassacreMap->find(CI);
@@ -1937,9 +1958,9 @@ void game::SignalDeath(const character* Ghost, const character* Murderer)
 
 void game::DisplayMassacreLists()
 {
-  DisplayMassacreList(PlayerMassacreMap, "Creatures killed directly by you");
-  DisplayMassacreList(PetMassacreMap, "Creatures killed by your allies");
-  DisplayMassacreList(MiscMassacreMap, "Creatures killed by other reasons during your adventure");
+  DisplayMassacreList(PlayerMassacreMap, "directly by you.", PlayerMassacreAmount);
+  DisplayMassacreList(PetMassacreMap, "by your allies.", PetMassacreAmount);
+  DisplayMassacreList(MiscMassacreMap, "by some other reason.", MiscMassacreAmount);
 }
 
 struct massacresetentry
@@ -1950,9 +1971,11 @@ struct massacresetentry
   std::vector<bitmap*> Picture;
 };
 
-void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string& Topic)
+void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string& Reason, ulong Amount)
 {
   std::multiset<massacresetentry> MassacreSet;
+  std::string FirstPronoun;
+  bool First = true;
 
   for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
     {
@@ -1971,16 +1994,59 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
 	  Entry.String << i1->second << " " << Entry.Key;
 	}
 
+      if(First)
+	{
+	  FirstPronoun = Victim->GetSex() == UNDEFINED ? "it" : Victim->GetSex() == MALE ? "he" : "she";
+	  First = false;
+	}
+
       MassacreSet.insert(Entry);
       delete Victim;
     }
 
-  felist List(Topic);
+  ulong Total = PlayerMassacreAmount + PetMassacreAmount + MiscMassacreAmount;
+  std::string MainTopic;
+
+  if(Total == 1)
+    MainTopic << "One creature perished during your adventure.";
+  else
+    MainTopic << Total << " creatures perished during your adventure.";
+
+  felist List(MainTopic);
   game::SetStandardListAttributes(List);
   List.SetPageLength(15);
+  List.AddDescription("");
+  std::string SideTopic;
+
+  if(Amount != Total)
+    {
+      SideTopic = "The following ";
+
+      if(Amount == 1)
+	SideTopic << "one was killed " << Reason;
+      else
+	SideTopic << Amount << " were killed " << Reason;
+    }
+  else
+    {
+      if(Amount == 1)
+	{
+	  festring::Capitalize(FirstPronoun);
+	  SideTopic << FirstPronoun << " was killed " << Reason;
+	}
+      else
+	SideTopic << "They were all killed " << Reason;
+    }
+
+  List.AddDescription(SideTopic);
 
   for(std::multiset<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
-    List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture);
+    {
+      List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture);
+
+      for(ushort c = 0; c < i2->Picture.size(); ++c)
+	delete i2->Picture[c];
+    }
 
   List.Draw();
 }

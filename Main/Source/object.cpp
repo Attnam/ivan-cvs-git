@@ -173,7 +173,7 @@ void object::UpdatePictures()
       if(Sparkling)
 	{
 	  static ushort SeedModifier = 1;
-	  ulonglong OldSeed = femath::GetSeed(); 
+	  femath::SaveSeed();
 	  vector2d BPos = GetBitmapPos(0);
 	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
@@ -182,7 +182,7 @@ void object::UpdatePictures()
 
 	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(BPos, vector2d(16, 16), MColorSparkling);
 	  SparkleTime = ((RAND() & 3) << 5) + (RAND() & 0xF);
-	  femath::SetSeed(OldSeed);
+	  femath::LoadSeed();
 
 	  if(AnimationFrames <= 128)
 	    AnimationFrames = 128;

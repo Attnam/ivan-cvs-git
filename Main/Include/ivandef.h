@@ -141,7 +141,7 @@
 
 #define TRANSPARENT_COLOR 0xF81F // pink
 
-#define RAW_TYPES 5
+#define RAW_TYPES 6
 
 #define GR_GLTERRAIN 0
 #define GR_OLTERRAIN 1

@@ -1280,7 +1280,7 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 {
   ushort* FlameLowestPoint = new ushort[XSize];
   ushort x,y, Top, MaxDist, RelPos;
-  ulonglong OldSeed = femath::GetSeed();
+  femath::SaveSeed();
   femath::SetSeed((Frame & 15) + 1); /* We want flame animation loops to be same in every session */
 
   for(x = 0; x < XSize; ++x)
@@ -1317,7 +1317,7 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 	}
     }
 
-  femath::SetSeed(OldSeed);
+  femath::LoadSeed();
 }
 
 void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
@@ -1339,9 +1339,9 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
     }
 }
 
-void bitmap::CreateFlies(ulonglong Seed, ushort Frame, uchar FlyAmount)
+void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
 {
-  ulonglong OldSeed = femath::GetSeed();
+  femath::SaveSeed();
   femath::SetSeed(Seed);
 
   for(uchar c = 0; c < FlyAmount; ++c)
@@ -1359,12 +1359,12 @@ void bitmap::CreateFlies(ulonglong Seed, ushort Frame, uchar FlyAmount)
       SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(0, 0, 0));
     }
 
-  femath::SetSeed(OldSeed);
+  femath::LoadSeed();
 }
 
-void bitmap::CreateLightning(ulonglong Seed, ushort Color)
+void bitmap::CreateLightning(ulong Seed, ushort Color)
 {
-  ulonglong OldSeed = femath::GetSeed();
+  femath::SaveSeed();
   femath::SetSeed(Seed);
   vector2d StartPos;
   vector2d Direction(0, 0);
@@ -1408,7 +1408,7 @@ void bitmap::CreateLightning(ulonglong Seed, ushort Color)
     }
   while(!CreateLightning(StartPos, Direction, NO_LIMIT, Color));
 
-  femath::SetSeed(OldSeed);
+  femath::LoadSeed();
 }
 
 bool bitmap::CreateLightning(vector2d StartPos, vector2d Direction, ushort MaxLength, ushort Color)

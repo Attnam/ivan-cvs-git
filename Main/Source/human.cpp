@@ -977,7 +977,7 @@ ushort humanoid::GetSize() const
   return Size;
 }
 
-ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
+ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize) const
 {
   switch(Index)
     {
@@ -1507,7 +1507,7 @@ bool humanoid::HandleNoBodyPart(ushort Index)
     }
 }
 
-vector2d humanoid::GetBodyPartBitmapPos(ushort Index)
+vector2d humanoid::GetBodyPartBitmapPos(ushort Index) const
 {
   switch(Index)
     {
@@ -1524,7 +1524,7 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index)
     }
 }
 
-ushort humanoid::GetBodyPartColorB(ushort Index)
+ushort humanoid::GetBodyPartColorB(ushort Index) const
 {
   switch(Index)
     {
@@ -1541,7 +1541,7 @@ ushort humanoid::GetBodyPartColorB(ushort Index)
     }
 }
 
-ushort humanoid::GetBodyPartColorC(ushort Index)
+ushort humanoid::GetBodyPartColorC(ushort Index) const
 {
   switch(Index)
     {
@@ -1558,7 +1558,7 @@ ushort humanoid::GetBodyPartColorC(ushort Index)
     }
 }
 
-ushort humanoid::GetBodyPartColorD(ushort Index)
+ushort humanoid::GetBodyPartColorD(ushort Index) const
 {
   switch(Index)
     {
@@ -1967,7 +1967,7 @@ void humanoid::DetachBodyPart()
 {
   uchar ToBeDetached;
 
-  switch(game::KeyQuestion("What limb do you wish to detach? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg?", KEY_ESC, 4, 'l','r','L','R'))
+  switch(game::KeyQuestion("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?", KEY_ESC, 5, 'l','r','L','R', 'h'))
     {
     case 'l':
       ToBeDetached = LEFT_ARM_INDEX;
@@ -1980,6 +1980,9 @@ void humanoid::DetachBodyPart()
       break;
     case 'R':
       ToBeDetached = RIGHT_LEG_INDEX;
+      break;
+    case 'h':
+      ToBeDetached = HEAD_INDEX;
       break;
     default:
       return;
@@ -1995,6 +1998,8 @@ void humanoid::DetachBodyPart()
     }
   else
     ADD_MESSAGE("That bodypart has already been detached.");
+
+  CheckDeath("Removed one of his vital bodyparts.", 0);
 }
 
 void angel::GetAICommand()
@@ -3291,4 +3296,108 @@ head* humanoid::Behead()
     SevereBodyPart(HEAD_INDEX);
 
   return Head;
+}
+
+vector2d human::GetBodyPartBitmapPos(ushort Index) const
+{
+  bool NoChainMailGraphics = !GetBodyArmor() || (GetBodyArmor()->GetConfig()&~BROKEN) != CHAIN_MAIL;
+
+  switch(Index)
+    {
+    case TORSO_INDEX: return vector2d(GetBelt() ? 32 : 48, NoChainMailGraphics ? GetCloak() ? 320 : 288 : GetCloak() ? 336 : 304);
+    case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? 112 : 160 : 0);
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return vector2d(64, NoChainMailGraphics ? 288 : 304);
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return vector2d(0, NoChainMailGraphics ? 288 : 304);
+    default:
+      ABORT("Weird bodypart BitmapPos request for a human!");
+      return vector2d();
+    }
+}
+
+ushort human::GetBodyPartColorA(ushort Index) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case HEAD_INDEX:
+    case GROIN_INDEX: return GetSkinColor();
+    case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case LEFT_LEG_INDEX: return GetLeftBoot() ? GetLeftBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
+    default:
+      ABORT("Weird bodypart color B request for a human!");
+      return 0;
+    }
+}
+
+ushort human::GetBodyPartColorB(ushort Index) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->GetColor() : 0;
+    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : 0;
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetClothColor();
+    default:
+      ABORT("Weird bodypart color B request for a human!");
+      return 0;
+    }
+}
+
+ushort human::GetBodyPartColorC(ushort Index) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->GetColor() : 0;
+    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : GetHairColor();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX:
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return 0;
+    default:
+      ABORT("Weird bodypart color C request for a humanoid!");
+      return 0;
+    }
+}
+
+void human::SignalEquipmentAdd(ushort EquipmentIndex)
+{
+  humanoid::SignalEquipmentAdd(EquipmentIndex);
+  UpdatePictures();
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+void human::SignalEquipmentRemoval(ushort EquipmentIndex)
+{
+  humanoid::SignalEquipmentRemoval(EquipmentIndex);
+  UpdatePictures();
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+void human::SignalBodyPartVolumeAndWeightChange()
+{
+  UpdatePictures();
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+bool communist::BoundToUse(const item* Item, ushort Index) const
+{
+  return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(Index);
+}
+
+void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+{
+  /* The order is unique. */
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }

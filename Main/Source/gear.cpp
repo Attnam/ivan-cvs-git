@@ -40,9 +40,12 @@ ushort ring::GetMaterialColorB(ushort) const { return MakeRGB16(200, 200, 200); 
 bool amulet::IsInCorrectSlot(ushort Index) const { return Index == AMULET_INDEX; }
 ushort amulet::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 
+bool helmet::IsGorovitsFamilyRelic() const { return Config == GOROVITS_FAMILY_GAS_MASK; }
 ulong helmet::GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
 bool helmet::IsInCorrectSlot(ushort Index) const { return Index == HELMET_INDEX; }
-ushort helmet::GetMaterialColorB(ushort) const { return MakeRGB16(140, 70, 70); }
+uchar helmet::GetAlphaB(ushort) const { return Config != GOROVITS_FAMILY_GAS_MASK ? 255 : 255; }
+ushort helmet::GetMaterialColorB(ushort) const { return Config != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
+ushort helmet::GetMaterialColorC(ushort) const { return MakeRGB16(180, 200, 180); }
 
 bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
 {

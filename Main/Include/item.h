@@ -393,6 +393,7 @@ class item : public object
   virtual bool IsSparkling() const;
   virtual bool IsStupidToConsume() const;
   virtual head* Behead() { return 0; }
+  virtual bool IsGorovitsFamilyRelic() const { return false; }
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

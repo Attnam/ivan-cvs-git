@@ -147,6 +147,8 @@ class ITEM
 (
   gorovitshammer,
   meleeweapon,
+ public:
+  virtual bool IsGorovitsFamilyRelic() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
@@ -158,6 +160,8 @@ class ITEM
 (
   gorovitssickle,
   meleeweapon,
+ public:
+  virtual bool IsGorovitsFamilyRelic() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
@@ -313,11 +317,14 @@ class ITEM
   helmet,
   armor,
  public:
+  virtual bool IsGorovitsFamilyRelic() const;
   virtual ulong GetPrice() const;
   virtual bool IsHelmet(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
  protected:
+  virtual uchar GetAlphaB(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const;
+  virtual ushort GetMaterialColorC(ushort) const;
 );
 
 class ITEM 

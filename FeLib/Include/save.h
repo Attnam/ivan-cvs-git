@@ -337,6 +337,7 @@ template <class type1, class type2> inline outputfile& operator<<(outputfile& Sa
 
 template <class type1, class type2> inline inputfile& operator>>(inputfile& SaveFile, std::map<type1, type2>& Map)
 {
+  Map.clear();
   ulong Size;
   SaveFile >> Size;
 
@@ -362,6 +363,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, const 
 
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::set<type>& Set)
 {
+  Set.clear();
   ulong Size;
   SaveFile >> Size;
 

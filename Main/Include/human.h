@@ -145,11 +145,11 @@ class ABSTRACT_CHARACTER
   virtual head* Behead();
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort);
-  virtual ushort GetBodyPartColorB(ushort);
-  virtual ushort GetBodyPartColorC(ushort);
-  virtual ushort GetBodyPartColorD(ushort);
-  virtual ulong GetBodyPartSize(ushort, ushort);
+  virtual vector2d GetBodyPartBitmapPos(ushort) const;
+  virtual ushort GetBodyPartColorB(ushort) const;
+  virtual ushort GetBodyPartColorC(ushort) const;
+  virtual ushort GetBodyPartColorD(ushort) const;
+  virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual const std::string& GetDeathMessage() const;
@@ -162,8 +162,17 @@ class CHARACTER
 (
   human,
   humanoid,
+ public:
+  virtual void SignalBodyPartVolumeAndWeightChange();
+  virtual void SignalEquipmentAdd(ushort);
+  virtual void SignalEquipmentRemoval(ushort);
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
  protected:
   virtual void VirtualConstructor(bool);
+  virtual vector2d GetBodyPartBitmapPos(ushort) const;
+  virtual ushort GetBodyPartColorA(ushort) const;
+  virtual ushort GetBodyPartColorB(ushort) const;
+  virtual ushort GetBodyPartColorC(ushort) const;
 );
 
 class CHARACTER
@@ -295,6 +304,7 @@ class CHARACTER
  public:
   virtual bool MoveRandomly();
   virtual void BeTalkedTo();
+  virtual bool BoundToUse(const item*, ushort) const;
  protected:
   virtual bool ShowClassDescription() const;
 );

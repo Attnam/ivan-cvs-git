@@ -2095,7 +2095,7 @@ bool character::ChangeRandomStat(short HowMuch)
   return false;
 }
 
-ushort character::RandomizeReply(ulong Said, ushort Replies)
+ushort character::RandomizeReply(ulong& Said, ushort Replies)
 {
   bool NotSaid = false;
 
@@ -2633,12 +2633,12 @@ void character::Regenerate()
 
   RegenerationCounter += RegenerationBonus;
 
-  while(RegenerationCounter > 600000)
+  while(RegenerationCounter > 1000000)
     {
       if(!HealHitPoint())
 	break;
 
-      RegenerationCounter -= 600000;
+      RegenerationCounter -= 1000000;
       EditExperience(ENDURANCE, Max(5000 / MaxHP, 1));
     }
 }
@@ -2711,7 +2711,7 @@ void character::SetSize(ushort Size)
       GetBodyPart(c)->SetSize(GetBodyPartSize(c, Size));
 }
 
-ulong character::GetBodyPartSize(ushort Index, ushort TotalSize)
+ulong character::GetBodyPartSize(ushort Index, ushort TotalSize) const
 {
   if(Index == TORSO_INDEX)
     return TotalSize;
@@ -2785,7 +2785,7 @@ bodypart* character::CreateBodyPart(ushort Index, ushort SpecialFlags)
   return BodyPart;
 }
 
-vector2d character::GetBodyPartBitmapPos(ushort Index)
+vector2d character::GetBodyPartBitmapPos(ushort Index) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoBitmapPos();
@@ -2796,7 +2796,7 @@ vector2d character::GetBodyPartBitmapPos(ushort Index)
     }
 }
 
-ushort character::GetBodyPartColorA(ushort Index)
+ushort character::GetBodyPartColorA(ushort Index) const
 {
   if(Index < GetBodyParts())
     return GetSkinColor();
@@ -2807,7 +2807,7 @@ ushort character::GetBodyPartColorA(ushort Index)
     }
 }
 
-ushort character::GetBodyPartColorB(ushort Index)
+ushort character::GetBodyPartColorB(ushort Index) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoMainColor();
@@ -2818,7 +2818,7 @@ ushort character::GetBodyPartColorB(ushort Index)
     }
 }
 
-ushort character::GetBodyPartColorC(ushort Index)
+ushort character::GetBodyPartColorC(ushort Index) const
 {
   if(Index == TORSO_INDEX)
     return 0; // reserved for future use
@@ -2829,7 +2829,7 @@ ushort character::GetBodyPartColorC(ushort Index)
     }
 }
 
-ushort character::GetBodyPartColorD(ushort Index)
+ushort character::GetBodyPartColorD(ushort Index) const
 {
   if(Index == TORSO_INDEX)
     return GetTorsoSpecialColor();
@@ -4375,15 +4375,15 @@ void character::EditExperience(ushort Identifier, long Value)
   BaseExperience[Identifier] += Value;
 }
 
-bool character::ActivateRandomState(ushort Time, ulonglong Seed)
+bool character::ActivateRandomState(ushort Time, ulong Seed)
 {
-  ulonglong OldSeed = femath::GetSeed();
+  femath::SaveSeed();
 
   if(Seed)
     femath::SetSeed(Seed);
 
   ulong ToBeActivated = GetRandomNotActivatedState(false);
-  femath::SetSeed(OldSeed);
+  femath::LoadSeed();
 
   if(ToBeActivated == 0)
     return false;
@@ -4585,6 +4585,7 @@ character* character::Duplicate() const
 
   character* Char = RawDuplicate();
   Char->CalculateAll();
+  Char->UpdatePictures();
   return Char;
 }
 
@@ -4596,9 +4597,13 @@ bool character::TryToEquip(item* Item)
   for(ushort e = 0; e < GetEquipmentSlots(); ++e)
     if(GetBodyPartOfEquipment(e) && (!EquipmentSorter(e) || EquipmentSorter(e)(Item, this)))
       {
+	item* OldEquipment = GetEquipment(e);
+
+	if(BoundToUse(OldEquipment, e))
+	  continue;
+
 	msgsystem::DisableMessages();
 	float Danger = GetRelativeDanger(PLAYER);
-	item* OldEquipment = GetEquipment(e);
 
 	if(OldEquipment)
 	  OldEquipment->RemoveFromSlot();
@@ -4616,7 +4621,7 @@ bool character::TryToEquip(item* Item)
 
 	if(OldEquipment)
 	  {
-	    if(NewDanger > Danger)
+	    if(NewDanger > Danger || BoundToUse(Item, e))
 	      {
 		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
 		  {
@@ -4636,7 +4641,7 @@ bool character::TryToEquip(item* Item)
 	  }
 	else
 	  {
-	    if(NewDanger > Danger || (NewDanger == Danger && e != RIGHT_WIELDED_INDEX && e != LEFT_WIELDED_INDEX))
+	    if(NewDanger > Danger || (NewDanger == Danger && e != RIGHT_WIELDED_INDEX && e != LEFT_WIELDED_INDEX) || BoundToUse(Item, e))
 	      {
 		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
 		  {

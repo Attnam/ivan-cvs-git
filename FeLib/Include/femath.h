@@ -37,11 +37,10 @@ template <class type> inline void Swap(type& X, type& Y)
 
 class femath
 {
-public: 
-  static ulong Rand();
+public:
+  static long Rand();
+  static void SetSeed(ulong);
   static long RandN(long N) { return Rand() % N; }
-  static ulonglong GetSeed() { return Seed; }
-  static void SetSeed(ulonglong What) { Seed = What; }
   static bool DoLine(long, long, long, long, bool (*Proc)(long, long));
   static ushort WeightedRand(long*, ushort);
   static ushort WeightedRand(const std::vector<long>&);
@@ -49,8 +48,13 @@ public:
   static void CalculateEnvironmentRectangle(rect&, const rect&, vector2d, ushort);
   static bool Clip(ushort&, ushort&, ushort&, ushort&, ushort&, ushort&, ushort, ushort, ushort, ushort);
   static bool CompareBits(const void*, const void*, ushort);
+  static void SaveSeed();
+  static void LoadSeed();
 protected:
-  static ulonglong Seed;
+  static ulong mt[];
+  static long mti;
+  static ulong mtb[];
+  static long mtib;
 };
 
 struct interval

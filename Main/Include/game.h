@@ -259,7 +259,7 @@ class game
   static void SetDefaultPolymorphTo(const std::string What) { DefaultPolymorphTo = What; }
   static void SignalDeath(const character*, const character*);
   static void DisplayMassacreLists();
-  static void DisplayMassacreList(const massacremap&, const std::string&);
+  static void DisplayMassacreList(const massacremap&, const std::string&, ulong);
   static bool MassacreListsEmpty();
  private:
   static std::string Alignment[];
@@ -328,6 +328,9 @@ class game
   static massacremap PlayerMassacreMap;
   static massacremap PetMassacreMap;
   static massacremap MiscMassacreMap;
+  static ulong PlayerMassacreAmount;
+  static ulong PetMassacreAmount;
+  static ulong MiscMassacreAmount;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -132,16 +132,22 @@ human
 	DefaultCharisma = 10;
 	DefaultMana = 10;
 	DefaultMoney = 200;
-	HeadBitmapPos = 96, 0;
-	TorsoBitmapPos = 32, 0;
-	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 16;
+	/* BitmapPoses overridden */
 	TotalVolume = 80000;
 	TotalSize = 175;
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
 	AttachedGod = SEGES;
+	HostileReplies == "@Dd seems extremely irritated. \"Vanish, you foul mirror image!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"Hey, those clothes are mine! Give them back!\"",
+		"\"What, you summoned me? What a coincidence, I remember summoning you, too.\"",
+		"\"I'm leading this party, not you, Mr. copy guy!\"",
+		"\"Oh, how I hate bananas. I Hate Them! I HATE THEM SO MUCH!!!\"";
+	}
 }
 
 petrus
@@ -257,7 +263,7 @@ guard
 	HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
 	AttachedGod = LEGIFER;
 
-	Config REAPER;
+	/*Config REAPER;
 	{
 		AttributeBonus = 200;
 		IsCharmable = false;
@@ -319,7 +325,7 @@ guard
 			"\"Some day we`ll slay Petrus and his armies, untill then, get out of my sight.\"",
 			
 		}
-	}
+	}*/
 
 	Config ROOKIE;
 	{
@@ -544,7 +550,7 @@ shopkeeper
 		}
 	}
 
-	Config MONDEDR;
+	/*Config MONDEDR;
 	{
 		DefaultName = "???";
 		FriendlyReplies =
@@ -552,7 +558,7 @@ shopkeeper
 			1,
 			"???";
 		}
-	}
+	}*/
 }
 
 priest
@@ -912,7 +918,7 @@ frog
 
 elpuri
 {
-	DefaultArmStrength = 70;
+	DefaultArmStrength = 75;
 	DefaultAgility = 20;
 	DefaultEndurance = 20;
 	DefaultPerception = 40;
@@ -924,7 +930,7 @@ elpuri
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
-	TotalVolume = 500000;
+	TotalVolume = 750000;
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 250;
 	NameSingular = "Master Dark Frog";
@@ -1474,7 +1480,7 @@ communist /* Ivan */
 	NameSingular = "communist";
 	Alias == "Ivan";
 	ClassStates = INFRA_VISION;
-	Helmet = IRON helmet { Enchantment = 1; }
+	Helmet = helmet(GOROVITS_FAMILY_GAS_MASK);
 	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
 	BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 	Belt = NYMPH_HAIR belt { Enchantment = 1; }
@@ -1632,7 +1638,7 @@ slave
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 16;
+	LegBitmapPos = 0, 288;
 	TotalVolume = 60000;
 	TotalSize = 160;
 	NameSingular = "slave";
@@ -1943,7 +1949,7 @@ bat
 {
 	DefaultArmStrength = 2;
 	DefaultAgility = 40;
-	DefaultEndurance = 10;
+	DefaultEndurance = 8;
 	DefaultPerception = 24;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
@@ -2932,7 +2938,7 @@ bananagrower
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 16;
+	LegBitmapPos = 0, 288;
 	Inventory = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
 	IsCharmable = false; /* AI will go insane if he leaves New Attnam */
 	HostileReplies == "\"Banana POWER!\"";
@@ -3138,7 +3144,7 @@ elder
 	HeadBitmapPos = 96, 224;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 16;
+	LegBitmapPos = 0, 288;
 	IsUnique = true;
 	DefaultName = "Kaethos";
 	IsCharmable = false;
@@ -3177,7 +3183,7 @@ encourager
 	HeadBitmapPos = 96, 240;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 16;
+	LegBitmapPos = 0, 288;
 	TotalVolume = 90000;
 	TotalSize = 170;
 	NameSingular = "banana grower encourager";
@@ -3575,8 +3581,8 @@ twoheadedmoose
 magpie
 {
 	DefaultArmStrength = 2;
-	DefaultAgility = 35;
-	DefaultEndurance = 10;
+	DefaultAgility = 40;
+	DefaultEndurance = 8;
 	DefaultPerception = 20;
 	DefaultIntelligence = 6;
 	DefaultWisdom = 5;
@@ -3601,7 +3607,6 @@ magpie
 	CWeaponSkillHits == 50;
 	PanicLevel = 75;
 	FleshMaterial = MAGPIE_FLESH;
-	DangerModifier = 50;
 	AttachedGod = CLEPTIA;
 }
 

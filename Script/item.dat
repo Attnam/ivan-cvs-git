@@ -2217,6 +2217,26 @@ helmet
 		Price = 20;
 		AffectsCharisma = false;
 	}
+
+	Config GOROVITS_FAMILY_GAS_MASK;
+	{
+		DefaultSize = 50;
+		DefaultMainVolume = 300;
+		StrengthModifier = 125;
+		FormModifier = 20;
+		BitmapPos = 64, 400;
+		Possibility = 0;
+		Adjective = "Gorovits family";
+		NameSingular = "gas mask";
+		MainMaterialConfig == KEVLAR;
+		MaterialConfigChances == 100;
+		Price = 50;
+		AttachedGod = LORICATUS;
+		CanBeBroken = false;
+		CanBeWished = false;
+		ArticleMode = DEFINITE_ARTICLE;
+		GearStates = GAS_IMMUNITY;
+	}
 }
 
 stethoscope

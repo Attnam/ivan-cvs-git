@@ -417,7 +417,7 @@ material
 	{
 		StrengthValue = 140;
 		ConsumeType = CT_PLASTIC;
-		Density = 1400;
+		Density = 1500;
 		Color = rgb16(144, 95, 32);
 		NameStem = "kevlar";
 		Flexibility = 15;
@@ -567,6 +567,7 @@ material
 		IsMetal = true;
 		AttachedGod = SOPHOS;
 		Flexibility = 3;
+		CanBeWished = false;
 	}
 
 	Config ILLITHIUM;
@@ -581,6 +582,7 @@ material
 		NameStem = "illithium";
 		IsMetal = true;
 		AttachedGod = LEGIFER;
+		CanBeWished = false;
 	}
 
 	Config ADAMANT;
@@ -597,6 +599,7 @@ material
 		IsMetal = true;
 		AttachedGod = LORICATUS;
 		IsSparkling = true;
+		CanBeWished = false;
 	}
 
 	Config SWAMP;

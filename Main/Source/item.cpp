@@ -774,11 +774,9 @@ ulong item::GetTruePrice() const
 bool item::IsSparkling() const
 {
   for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      {
-	if(GetMaterial(c)->IsSparkling())
-	  return true;
-      }
+    if(GetMaterial(c) && GetMaterial(c)->IsSparkling())
+      return true;
+
   return false;
 }
 

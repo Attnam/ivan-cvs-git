@@ -267,7 +267,7 @@ class character : public entity, public id
   void SetTeamIterator(std::list<character*>::iterator);
   void ReceiveKoboldFlesh(long);
   bool ChangeRandomStat(short);
-  ushort RandomizeReply(ulong, ushort);
+  ushort RandomizeReply(ulong&, ushort);
   virtual void CreateInitialEquipment(ushort);
   void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
@@ -574,6 +574,7 @@ class character : public entity, public id
   ushort GetRandomNonVitalBodyPart();
   void TeleportSomePartsAway(ushort);
   virtual void SignalVolumeAndWeightChange();
+  virtual void SignalBodyPartVolumeAndWeightChange() { }
   void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
   ulong GetBodyVolume() const { return BodyVolume; }
@@ -590,7 +591,7 @@ class character : public entity, public id
   void CalculateBodyPartMaxHPs(bool = true);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
-  bool ActivateRandomState(ushort, ulonglong = 0);
+  bool ActivateRandomState(ushort, ulong = 0);
   ulong GetRandomNotActivatedState(bool) const;
   bool GainRandomInstric();
   virtual void CalculateBattleInfo() = 0;
@@ -716,6 +717,7 @@ class character : public entity, public id
   bool CanMove() const { return CanWalk() || CanFly() || CanSwim(); }
   void ShowAdventureInfo() const;
   void DrawBodyPartVector(std::vector<bitmap*>&) const;
+  virtual bool BoundToUse(const item*, ushort) const { return false; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
@@ -724,12 +726,12 @@ class character : public entity, public id
   virtual void VirtualConstructor(bool) { }
   void LoadDataBaseStats();
   void InstallDataBase();
-  virtual vector2d GetBodyPartBitmapPos(ushort);
-  virtual ushort GetBodyPartColorA(ushort);
-  virtual ushort GetBodyPartColorB(ushort);
-  virtual ushort GetBodyPartColorC(ushort);
-  virtual ushort GetBodyPartColorD(ushort);
-  virtual ulong GetBodyPartSize(ushort, ushort);
+  virtual vector2d GetBodyPartBitmapPos(ushort) const;
+  virtual ushort GetBodyPartColorA(ushort) const;
+  virtual ushort GetBodyPartColorB(ushort) const;
+  virtual ushort GetBodyPartColorC(ushort) const;
+  virtual ushort GetBodyPartColorD(ushort) const;
+  virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   void UpdateBodyPartPicture(ushort);
   ushort ChooseBodyPartToReceiveHit(float, float);

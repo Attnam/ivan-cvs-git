@@ -452,7 +452,6 @@ bool commandsystem::NOP(character* Char)
   Char->EditExperience(DEXTERITY, -10);
   Char->EditExperience(AGILITY, -10);
   Char->EditAP(-Char->GetStateAPGain(1000));
-  game::DisplayMassacreLists();
   return true;
 }
 
@@ -1073,7 +1072,6 @@ bool commandsystem::SecretKnowledge(character* Char)
     {
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
-      bitmap Pic(16, 16);
 
       switch(Chosen)
 	{
@@ -1084,10 +1082,10 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Pic.ClearToColor(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false, false);
+	      std::vector<bitmap*> Picture;
+	      Character[c]->DrawBodyPartVector(Picture);
 	      Character[c]->AddAttributeInfo(Entry);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	    }
 
 	  PageLength = 15;
@@ -1099,9 +1097,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Pic.ClearToColor(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false, false);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
+	      std::vector<bitmap*> Picture;
+	      Character[c]->DrawBodyPartVector(Picture);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	      Character[c]->AddAttackInfo(List);
 	    }
 
@@ -1118,9 +1116,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry << int(Character[c]->GetDodgeValue());
 	      Entry.resize(57, ' ');
 	      Entry << Character[c]->GetMaxHP();
-	      Pic.ClearToColor(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false, false);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
+	      std::vector<bitmap*> Picture;
+	      Character[c]->DrawBodyPartVector(Picture);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	      Character[c]->AddDefenceInfo(List);
 	    }
 
@@ -1147,9 +1145,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      else
 		Entry << "-         -";
 
-	      Pic.ClearToColor(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false, false);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
+	      std::vector<bitmap*> Picture;
+	      Character[c]->DrawBodyPartVector(Picture);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	    }
 
 	  PageLength = 15;
