@@ -149,3 +149,4 @@ Does using a two-handed weapon yield exp to only one arm?
 //Dark wizards are too hard.
 //TOO MANY KAMIKAZE DWARFS.
 "XXXX, killed by a werewolf polymorphed into a werewolf"
+Go-command shouldn't walk to squares with smoke.
