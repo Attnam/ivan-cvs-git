@@ -1753,7 +1753,7 @@ liquid
     NameStem = "mustard gas in liquid form";
     Alpha = 150;
     AttachedGod = CRUENTUS;
-    Effect = MUSTARD_GAS_LIQUID;
+    Effect = EFFECT_MUSTARD_GAS_LIQUID;
     EffectStrength = 100;
   }
 }

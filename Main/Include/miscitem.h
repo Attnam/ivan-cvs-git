@@ -597,6 +597,31 @@ ITEM(scrollofgolemcreation, scroll)
 ITEM(gasgrenade, materialcontainer)
 {
  protected:
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int);
+};
+
+ITEM(holyhandgrenade, item)
+{
+ public:
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth CalculateHasBe() const;
+  virtual void Explode();
+  virtual void Be();
+  virtual v2 GetBitmapPos(int) const;
+  virtual int GetClassAnimationFrames() const;
+  virtual alpha GetOutlineAlpha(int) const;
+  virtual col16 GetOutlineColor(int) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void PreProcessForBone();
+  virtual void PostConstruct();
+  virtual truth AllowAlphaEverywhere() const { return true; }
+  virtual col16 GetMaterialColorB(int) const;
+ protected:
+  ulong PinPulledTick;
+  int Count;
+  ulong PinPullerID;
 };
 #endif

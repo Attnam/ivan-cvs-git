@@ -2875,7 +2875,8 @@ void itemcontainer::Disappear()
 
 truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if(Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(5 / Damage + 1))))
+  if(Type & THROW || 
+     (Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (!(RAND_N(10 / Damage + 1)))))
   {
     if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
@@ -2890,4 +2891,129 @@ truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
   }
 
   return false;
+}
+
+truth holyhandgrenade::Apply(character* Applier) 
+{
+  if(PinPulledTick)
+  {
+    ADD_MESSAGE("The pin of %s has already been removed.", CHAR_NAME(DEFINITE));
+    return false;
+  }
+
+  if(Applier->IsPlayer()) {
+    ADD_MESSAGE("You pull the pin off the grenade.");
+  }
+
+  PinPulledTick = game::GetTick();
+  Count = 0;
+  PinPullerID = Applier->GetID();
+  Enable();
+  UpdatePictures();
+  return true;
+}
+
+truth holyhandgrenade::CalculateHasBe() const
+{
+  return PinPulledTick;
+}
+
+void holyhandgrenade::Be() {
+  item::Be();
+  if(3 * (game::GetTick() - PinPulledTick) > Count * 100) 
+  {
+    ++Count;
+    festring Msg = "A voice loudly declares: \"";
+    switch(Count)
+    {
+     case 1:
+      Msg << "ONE";
+      break;
+     case 2:
+      Msg << "TWO";
+      break;
+     case 3:
+      Msg << "THREE";
+      break;
+    }
+    Msg << "\".";
+    ADD_MESSAGE(Msg.CStr());
+    if(Count == 3) {
+      Explode();
+    }
+  }
+}
+
+void holyhandgrenade::Explode()
+{
+  character* Damager = game::SearchCharacter(PinPullerID);
+  festring DeathMsg = CONST_S("killed by an explosion of ");
+  AddName(DeathMsg, INDEFINITE);
+
+  if(Damager)
+    DeathMsg << " caused @bk";
+
+  if(GetSquareUnder()->CanBeSeenByPlayer(true))
+    ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+
+  lsquare* Square = GetLSquareUnder();
+  RemoveFromSlot();
+  SendToHell();
+  Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 300);  
+}
+
+v2 holyhandgrenade::GetBitmapPos(int Frame) const
+{
+  return PinPulledTick ? v2(96, 64) : v2(96, 32);
+}
+
+int holyhandgrenade::GetClassAnimationFrames() const 
+{ 
+  return 32; 
+}
+
+alpha holyhandgrenade::GetOutlineAlpha(int Frame) const
+{
+  if(!PinPulledTick)
+    return 0;
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+col16 holyhandgrenade::GetOutlineColor(int) const
+{ 
+  return MakeRGB16(0, 255, 0); 
+}
+
+void holyhandgrenade::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << PinPulledTick << Count << PinPullerID;
+}
+
+void holyhandgrenade::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> PinPulledTick >> Count >> PinPullerID;
+}
+
+void holyhandgrenade::PreProcessForBone()
+{
+  if(PinPulledTick)
+  {
+    RemoveFromSlot();
+    SendToHell();
+  }
+}
+
+void holyhandgrenade::PostConstruct()
+{
+  PinPulledTick = 0;
+  Count = 0;
+  PinPullerID = 0;
+}
+
+col16 holyhandgrenade::GetMaterialColorB(int) const 
+{ 
+  return MakeRGB16(200, 10, 10); 
 }

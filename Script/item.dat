@@ -3467,14 +3467,31 @@ gasgrenade
   DefaultSize = 15;
   Category = MISC;
   BitmapPos = 110, 32;
-  DefaultMainVolume = 200;
+  DefaultMainVolume = 50;
   NameSingular = "gas grenade";
   FormModifier = 15;
   AttachedGod = CRUENTUS;
-  Possibility = 10;
+  Possibility = 75;
   Price = 50;
   MainMaterialConfig == IRON;
-  SecondaryMaterialConfig == MUSTARD_GAS; /* Needs to be a gas. */
+  SecondaryMaterialConfig = { 4, MUSTARD_GAS, SKUNK_SMELL, FART, MAGIC_VAPOUR; }
+  MaterialConfigChances = { 4, 50, 10, 1, 10; }
   Adjective = "dwarven";
+  Alias == "gas grenade";
+}
+
+holyhandgrenade 
+{
+  DefaultSize = 15;
+  Category = MISC;
+  DefaultMainVolume = 200;
+  NameSingular = "handgrenade of Antioch";
+  NamePlural = "handgrenades of Antioch";
+  FormModifier = 15;
+  AttachedGod = VALPURUS;
+  Possibility = 5;
+  Price = 500;
+  MainMaterialConfig == VALPURIUM;
+  Adjective = "holy";
   Alias == "gas grenade";
 }
