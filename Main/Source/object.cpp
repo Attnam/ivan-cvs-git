@@ -58,6 +58,9 @@ void object::InitMaterials(ushort Materials, ...)
 	{
 		Material.push_back(va_arg(AP, material*));
 
+		if(Material[c])
+			Material[c]->SetVolume(GetDefaultVolume(c));
+
 		if(c < 4 && Material[c])
 			GraphicId.Color[c] = Material[c]->GetColor();
 	}
@@ -268,6 +271,9 @@ void object::EraseMaterials()
 
 void object::SetMaterial(uchar Index, material* NewMaterial)
 {
+	if(Index >= Material.size())
+		Material.resize(Index + 1, 0);
+
 	if(Index < 4)
 		if((Material[Index] && NewMaterial && Material[Index]->GetColor() != NewMaterial->GetColor()) || (!Material[Index] && NewMaterial && NewMaterial->GetColor()) || (Material[Index] && !NewMaterial && Material[Index]->GetColor()))
 		{
@@ -277,6 +283,9 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 		}
 
 	Material[Index] = NewMaterial;
+
+	if(Material[Index] && !Material[Index]->GetVolume())
+		Material[Index]->SetVolume(GetDefaultVolume(Index));
 }
 
 void object::ChangeMaterial(uchar Index, material* NewMaterial)

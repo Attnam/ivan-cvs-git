@@ -493,7 +493,6 @@ protected:
 	virtual std::string NameStem() const	{ return "marble"; }
 );
 
-
 class MATERIAL
 (
 	gold,

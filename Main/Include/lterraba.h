@@ -42,6 +42,7 @@ public:
 	virtual void HandleVisualEffects();
 	virtual void Save(outputfile&) const;
 	virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
 protected:
 	uchar VisualFlags;
 };

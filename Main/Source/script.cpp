@@ -64,15 +64,22 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 
 	ushort Index;
 
-	if(Index = protocontainer<material>::SearchCodeName(Word))
-	{
-		if(!MaterialType)
-			MaterialType = new ushort;
+	for(ushort c = 0;; ++c)
+		if(Index = protocontainer<material>::SearchCodeName(Word))
+		{
+			if(c < MaterialType.size())
+				*MaterialType[c] = Index;
+			else
+			{
+				ushort* NewIndex = new ushort;
+				*NewIndex = Index;
+				MaterialType.push_back(NewIndex);
+			}
 
-		*MaterialType = Index;
-
-		Word = SaveFile.ReadWord();
-	}
+			Word = SaveFile.ReadWord();
+		}
+		else
+			break;
 
 	if(Index = protocontainer<type>::SearchCodeName(Word))
 	{
@@ -93,15 +100,21 @@ template <class type> type* contentscript<type>::Instantiate() const
 	if(!ContentType)
 		ABORT("Illegal content script instantiation of %s!", typeid(type).name());
 
-	type* Instance;
+	type* Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
 
-	if(MaterialType)
+	for(ushort c = 0; c < MaterialType.size(); ++c)
+		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialType[c])->Clone(0));
+
+	/*if(MaterialType.size())
 	{
 		Instance = protocontainer<type>::GetProto(*ContentType)->Clone(false);
-		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
+		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType[0])->Clone(0));
+
+		for(ushort c = 1; c < MaterialType.size(); ++c)
+			Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialType[c])->Clone(0));
 	}
 	else
-		Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
+		Instance = protocontainer<type>::GetProto(*ContentType)->Clone();*/
 
 	return Instance;
 }

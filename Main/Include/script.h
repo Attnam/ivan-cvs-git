@@ -72,15 +72,28 @@ protected:
 template <class type> class contentscript : public script
 {
 public:
-	contentscript() : MaterialType(0), ContentType(0) {}
+	contentscript() : ContentType(0) {}
 	void ReadFrom(inputfile&);
-	ushort* GetMaterialType(bool AOE = true) const { SCRIPT_RETURN(MaterialType) }
+	ushort* GetMaterialType(ushort, bool = true) const;
 	ushort* GetContentType(bool AOE = true) const { SCRIPT_RETURN(ContentType) }
 	type* Instantiate() const;
 protected:
-	ushort* MaterialType;
+	std::vector<ushort*> MaterialType;
 	ushort* ContentType;
 };
+
+template <class type> ushort* contentscript<type>::GetMaterialType(ushort Index, bool AOE) const
+{
+	if(Index < MaterialType.size())
+		return MaterialType[Index];
+	else
+	{
+		if(AOE)
+			ABORT("Undefined script member MaterialType[%d] sought!", Index);
+
+		return 0;
+	}
+}
 
 class squarescript : public script
 {

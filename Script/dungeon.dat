@@ -351,9 +351,15 @@ Dungeon 1;
 			Character=farmer;
 		}
 
+		Square, Pos 30,63;
+		{
+			Item=potion;
+		}
+
 		Square, Pos 31,63;
 		{
 			IsWorldMapEntry=true;
+			Item=glass potion;
 		}
 
 		Room 0;

@@ -87,6 +87,7 @@ class CHARACTER
 public:
 	virtual ulong Danger() const RET(0)
 	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("human")
 	virtual std::string NamePlural() const RET("humans")
@@ -123,6 +124,7 @@ public:
 	virtual bool Charmable() const RET(false)
 	virtual ushort Possibility() const RET(0)
 	virtual bool Polymorph() RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual std::string NamePlural() const RET("Perttus, the Überpriests of the Great Frog")
@@ -152,6 +154,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("farmer")
 	virtual std::string NamePlural() const RET("farmers")
@@ -178,6 +181,7 @@ public:
 	virtual ushort Possibility() const RET(0)
 	virtual void GetAICommand() { SoldierAICommand(); }
 	virtual void CreateInitialEquipment();
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("city guard")
 	virtual std::string NamePlural() const RET("city guards")
@@ -202,6 +206,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("shopkeeper")
 	virtual std::string NamePlural() const RET("shopkeepers")
@@ -230,6 +235,7 @@ public:
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
 	virtual ulong GetBloodColor() const RET(MAKE_RGB(255,255,255))
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
@@ -260,6 +266,7 @@ public:
 	virtual ulong Danger() const RET(750)
 	virtual bool Charmable() const RET(false)
 	virtual bool CanKick() const RET(true)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(128,0)
 	virtual std::string NameSingular() const RET("Bill's SWAT commando")
@@ -287,6 +294,7 @@ public:
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(96,0)
 	virtual std::string NameSingular() const RET("Enner Beast")
@@ -322,6 +330,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(25)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 1000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(80,0)
 	virtual std::string NameSingular() const RET("dark frog")
@@ -347,6 +356,7 @@ public:
 	virtual ulong Danger() const RET(5000)
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 8000000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(64,0)
 	virtual std::string NameSingular() const RET("Elpuri the Dark Frog")
@@ -370,7 +380,8 @@ public:
 	virtual ushort Possibility() const RET(50)
 	virtual void SpillBlood(uchar) {}
 	virtual ulong Danger() const RET(75)
-	virtual bool Charmable() const RET(false)	
+	virtual bool Charmable() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }	
 protected:
 	virtual vector2d GetBitmapPos() const RETV(48,0)
 	virtual std::string NameSingular() const RET("pure mass of Bill's will")
@@ -402,6 +413,7 @@ public:
 	virtual ulong Danger() const RET(25)
 	virtual bool CanKick() const RET(true)
 	virtual void SpillBlood(uchar) {}
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(112,0)
 	virtual std::string NameSingular() const RET("fallen valpurist")
@@ -427,6 +439,7 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(25)
 	virtual bool CanKick() const RET(true)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 25000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(144,0)
 	virtual std::string NameSingular() const RET("frog-goblin hybrid")
@@ -462,6 +475,7 @@ public:
 	virtual ushort Possibility() const RET(25)
 	virtual ulong Danger() const RET(250)
 	virtual ulong GetBloodColor() const RET(MAKE_RGB(7,155,0))
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 250000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("conical mommo slime")
 	virtual std::string NamePlural() const RET("conical mommo slimes")
@@ -485,6 +499,7 @@ public:
 	virtual ushort Possibility() const RET(75)
 	virtual ulong Danger() const RET(75)
 	virtual ulong GetBloodColor() const RET(MAKE_RGB(7,155,0))
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 150000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("flat mommo slime")
 	virtual std::string NamePlural() const RET("flat mommo slimes")
@@ -512,6 +527,7 @@ public:
 	virtual ulong Danger() const;
 	virtual void DrawToTileBuffer() const;
 	virtual void SpillBlood(uchar) {}
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("golem")
 	virtual std::string NamePlural() const RET("golems")
@@ -534,6 +550,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(40)
 	virtual ulong Danger() const RET(20)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual std::string NameSingular() const RET("wolf")
 	virtual std::string NamePlural() const RET("wolves")
@@ -561,6 +578,7 @@ public:
 	virtual ulong Danger() const RET(10)
 	virtual bool Catches(item*, float);
 	virtual bool ConsumeItemType(uchar) const;
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(240,0)
 	virtual std::string NameSingular() const RET("dog")
@@ -586,6 +604,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(5)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(272,0)
 	virtual std::string NameSingular() const RET("spider")
@@ -612,6 +631,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(6)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 20000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(304,0)
 	virtual std::string NameSingular() const RET("jackal")
@@ -637,6 +657,7 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong Danger() const RET(6)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(288,0)
 	virtual std::string NameSingular() const RET("donkey")

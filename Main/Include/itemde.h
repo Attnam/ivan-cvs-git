@@ -20,7 +20,7 @@ class ITEM
 (
 	banana,
 	item,
-	InitMaterials(2, new bananapeal(30), new bananaflesh(150)),
+	InitMaterials(2, new bananapeal, new bananaflesh),
 	{
 		SetSize(20);
 	},
@@ -35,6 +35,7 @@ public:
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,112)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 30; case 1: return 150; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(25)
 );
@@ -56,6 +57,7 @@ public:
 	virtual long Score() const RET(250)
 	virtual vector2d GetBitmapPos() const RETV(0,112)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; case 1: return 300; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(35)
 );
@@ -79,6 +81,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,192)
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 850; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -103,6 +106,7 @@ public:
 	virtual float OfferModifier() const RET(0.5)
 	virtual item* PrepareForConsuming(character*, stack*);
 	virtual vector2d GetBitmapPos() const;
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 600; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
@@ -129,6 +133,7 @@ public:
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,48)
 	virtual bool CanBeWished() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(10)
 );
@@ -149,6 +154,7 @@ public:
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual uchar GetWeaponCategory() const { return SMALL_SWORDS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2500; case 1: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -168,6 +174,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float OfferModifier() const RET(0.25)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(125)
 );
@@ -186,6 +193,7 @@ public:
 	virtual std::string NamePlural() const RET("curved two-handed swords")
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,16)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -208,6 +216,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,64)
 	virtual bool CanBeWished() const RET(false)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6500; case 1: return 300; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(400)
 );
@@ -228,6 +237,7 @@ public:
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(16,256)
 	virtual uchar GetWeaponCategory() const { return AXES; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 450; case 1: return 900; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -248,6 +258,7 @@ public:
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,96)
 	virtual bool Apply(character*, stack*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 1050; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -269,6 +280,7 @@ public:
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(16,144)
 	virtual uchar GetWeaponCategory() const { return SPEARS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 150; case 1: return 1500; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -300,6 +312,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,128)
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
 );
 
 class ITEM
@@ -317,6 +330,7 @@ public:
 	virtual std::string NamePlural() const RET("chain mails")
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,96)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
 );
 
 class ABSTRACT_ITEM
@@ -346,6 +360,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
 	virtual ushort GetEmitation() const RET(333)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 );
 
 class ITEM
@@ -365,6 +380,7 @@ public:
 	virtual float OfferModifier() const RET(0.01f)
 	virtual vector2d GetBitmapPos() const RETV(16,192)
 	virtual bool CanBeWished() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 	virtual float NPModifier() const { return 0.01f; }
@@ -391,6 +407,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,144)
 	virtual bool ReceiveSound(float, bool, stack*);
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 1500; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
@@ -412,6 +429,7 @@ public:
 	virtual float OfferModifier() const RET(0)
 	virtual long Score() const RET(-1)
 	virtual vector2d GetBitmapPos() const RETV(0,128)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
@@ -431,6 +449,7 @@ public:
 	virtual item* BetterVersion() const;
 	virtual float OfferModifier() const RET(0)
 	virtual vector2d GetBitmapPos() const RETV(16,160)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(60)
 );
@@ -460,6 +479,7 @@ public:
 	virtual float OfferModifier() const RET(5)
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
 );
 
 class ITEM
@@ -477,6 +497,7 @@ public:
 	virtual float OfferModifier() const RET(5)
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
 );
 
 class ITEM
@@ -494,6 +515,7 @@ public:
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual bool CanBeWished() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(10)
 );
@@ -516,6 +538,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,0)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 25000; default: return 0; } }
 );
 
 class ITEM
@@ -532,6 +555,7 @@ public:
 	virtual std::string NamePlural() const RET("nuts")
 	virtual float OfferModifier() const RET(10)
 	virtual vector2d GetBitmapPos() const RETV(0,0)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(10)
 );
@@ -554,6 +578,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,208)
 	virtual item* CreateWishedItem() const;
 	virtual bool Destroyable() const { return false; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 150; default: return 0; } }
 );
 
 class ITEM
@@ -575,6 +600,7 @@ public:
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType());
 	virtual vector2d GetBitmapPos() const RETV(16,240)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -593,6 +619,7 @@ public:
 	virtual std::string NamePlural() const RET("poleaxes")
 	virtual float OfferModifier() const RET(0.25f)
 	virtual vector2d GetBitmapPos() const RETV(0,80)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; case 1: return 3000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -613,6 +640,7 @@ public:
 	virtual float OfferModifier() const RET(0.125f)
 	virtual vector2d GetBitmapPos() const RETV(0,32)
 	virtual uchar GetWeaponCategory() const { return MACES; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; case 1: return 3000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(75)
 );
@@ -635,6 +663,7 @@ public:
 	virtual long Score() const RET(1000)
 	virtual vector2d GetBitmapPos() const RETV(0,32)
 	virtual bool CanBeWished() const RET(false)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15000; case 1: return 8000; case 2: return 1000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -657,6 +686,7 @@ public:
 	virtual float OfferModifier() const RET(0.125)
 	virtual vector2d GetBitmapPos() const RETV(0,272)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 );
@@ -677,6 +707,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Read(character*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
 );
 
 class ITEM
@@ -693,6 +724,7 @@ public:
 	virtual std::string NamePlural() const RET("cheap copies of the left nut of Perttu")
 	virtual long Score() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(16,208)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 150; default: return 0; } }
 );
 
 class ABSTRACT_ITEM
@@ -727,6 +759,7 @@ public:
 	virtual float OfferModifier() const RET(30)
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual bool Zap(character*, vector2d, uchar);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
 );
 
 class ITEM
@@ -743,6 +776,7 @@ public:
 	virtual std::string NamePlural() const RET("arrows")
 	virtual float OfferModifier() const RET(0.5f)
 	virtual vector2d GetBitmapPos() const RETV(16,80)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(70)
 );
@@ -763,6 +797,7 @@ public:
 	virtual long Score() const RET(250);
 	virtual vector2d GetBitmapPos() const RETV(0,176)
 	virtual bool CanBeWished() const RET(true)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 7000; default: return 0; } }
 );
 
 class ITEM
@@ -780,6 +815,7 @@ public:
 	virtual item* BetterVersion() const { item* P = new lamp(new glass(50)); return P; }
 	virtual float OfferModifier() const RET(0)
 	virtual vector2d GetBitmapPos() const RETV(0,304)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 70; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(55)
 );
@@ -799,6 +835,7 @@ public:
 	virtual float OfferModifier() const RET(40)
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 205; default: return 0; } }
 );
 
 class ITEM
@@ -817,6 +854,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
 	virtual void CheckPickUpEffect(character*);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -837,6 +875,7 @@ public:
 	virtual float OfferModifier() const RET(10)
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual bool Zap(character*, vector2d, uchar);
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
 );
 
 class ITEM
@@ -853,6 +892,7 @@ public:
 	virtual std::string NamePlural() const RET("broken plate mails")
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(16,128)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(10)
 );

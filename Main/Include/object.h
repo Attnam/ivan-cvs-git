@@ -57,6 +57,7 @@ public:
 	virtual void DrawToTileBuffer() const = 0;
 	virtual bitmap* GetPicture() const { return Picture; }
 	virtual void SetSquareUnder(square*);
+	virtual ulong GetDefaultVolume(ushort Index) const = 0;
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;
