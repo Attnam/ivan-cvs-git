@@ -293,7 +293,6 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_BOOL(IsAlwaysTransparent);
   DATA_BASE_BOOL(CreateWindowConfigurations);
   DATA_BASE_VALUE(vector2d, WindowBitmapPos);
-  DATA_BASE_BOOL(ShowThingsUnder);
   DATA_BASE_VALUE(const fearray<contentscript<item> >&, LeftOverItems);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
@@ -313,6 +312,7 @@ class olterrain : public lterrain, public oterrain
   virtual void ReceiveAcid(material*, long);
   virtual void SignalRustLevelChange();
   virtual bool IsFountainWithWater() const { return false; }
+  bool ShowThingsUnder() const;
  protected:
   virtual vector2d GetBitmapPos(int) const;
   virtual void ModifyAnimationFrames(int&) const;

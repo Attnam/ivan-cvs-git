@@ -514,3 +514,8 @@ void olterraindatabase::InitDefaults(const olterrainprototype* NewProtoType, int
   ProtoType = NewProtoType;
   Config = NewConfig;
 }
+
+bool olterrain::ShowThingsUnder() const
+{
+  return DataBase->ShowThingsUnder || IsTransparent();
+}

@@ -162,6 +162,9 @@ void lsquare::UpdateMemorized()
 
 void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool RealDraw) const
 {
+  if(this->Pos == vector2d(25, 15))
+    int esko = esko = 2;
+
   if(RealDraw && !AnimatedEntities && Memorized && !game::GetSeeWholeMapCheatMode())
     {
       Memorized->LuminanceBlit(Bitmap, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);

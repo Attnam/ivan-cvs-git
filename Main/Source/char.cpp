@@ -3745,8 +3745,8 @@ void character::ReceiveOmmelUrine(long Amount)
 
 void character::ReceiveOmmelCerumen(long Amount)
 {
-  EditExperience(INTELLIGENCE, Amount, 1 << 13);
-  EditExperience(WISDOM, Amount, 1 << 13);
+  EditExperience(INTELLIGENCE, Amount, 1 << 14);
+  EditExperience(WISDOM, Amount, 1 << 14);
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
@@ -3773,7 +3773,7 @@ void character::ReceiveOmmelTears(long Amount)
 
 void character::ReceiveOmmelSnot(long Amount)
 {
-  EditExperience(ENDURANCE, Amount, 1 << 13);
+  EditExperience(ENDURANCE, Amount, 1 << 14);
   RestoreLivingHP();
 
   if(IsPlayer())

@@ -119,9 +119,9 @@ bool commandsystem::GoUp(character* Char)
       return false;
     }
 
-  if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() >= 1)
+  /*if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() >= 1)
     if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() - 1, RANDOM, true))
-      return true;
+      return true;*/
 
   oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
 
@@ -159,9 +159,9 @@ bool commandsystem::GoDown(character* Char)
       return false;
     }
 
-  if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() < game::GetLevels() - 1)
+  /*if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() < game::GetLevels() - 1)
     if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() + 1, RANDOM, true))
-      return true;
+      return true;*/
 
   oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
 
