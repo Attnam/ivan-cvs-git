@@ -70,7 +70,7 @@ bool dog::Catches(item* Thingy)
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	      ChangeTeam(game::GetPlayer()->GetTeam());
+	      ChangeTeam(PLAYER->GetTeam());
 	    }
 	}
       else if(IsPlayer())
@@ -97,7 +97,7 @@ bool largecat::Catches(item* Thingy)
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	      ChangeTeam(game::GetPlayer()->GetTeam());
+	      ChangeTeam(PLAYER->GetTeam());
 	    }
 	}
       else if(IsPlayer())
@@ -134,6 +134,9 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 
 void carnivorousplant::GetAICommand()
 {
+  character* CharNear[8];
+  ushort CharIndex = 0;
+
   for(ushort d = 0; d < 8; ++d)
     {
       square* Square = GetNeighbourSquare(d);
@@ -142,10 +145,13 @@ void carnivorousplant::GetAICommand()
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && (GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED)) && Hit(Char))
-	    return;
+	  if(Char && (GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED)))
+	    CharNear[CharIndex++] = Char;
 	}
     }
+
+  if(CharIndex)
+    Hit(CharNear[RAND() % CharIndex]);
 
   EditAP(-1000);
 }
@@ -1138,5 +1144,7 @@ bool chameleon::SpecialEnemySightedReaction(character*)
       NewForm->GainIntrinsic(POLYMORPH);
       return true;
     }
+
   return false;
 }
+

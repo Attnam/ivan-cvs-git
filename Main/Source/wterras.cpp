@@ -60,7 +60,7 @@ bool attnam::Enter(bool DirectionUp) const
   if(!owterrain::Enter(DirectionUp))
     return false;
 
-  if(game::GetPlayer()->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(ATTNAM_TEAM)->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE && game::GetStoryState() < 2)
+  if(PLAYER->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(ATTNAM_TEAM)->GetRelation(PLAYER->GetTeam()) != HOSTILE && game::GetStoryState() < 2)
     {
       game::GetCurrentLevel()->GetLSquare(30, 54)->KickAnyoneStandingHereAway();
       game::GetPetrus()->Move(vector2d(30, 54), true);

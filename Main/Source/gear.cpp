@@ -621,7 +621,7 @@ bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 	  game::GetGod(10)->AdjustRelation(10);
 	}
 
-      ushort CurrentDanger = ushort(Enemy->GetRelativeDanger(game::GetPlayer()) * 100);
+      ushort CurrentDanger = ushort(Enemy->GetRelativeDanger(PLAYER) * 100);
       Enemy->PolymorphRandomly(CurrentDanger / 4, CurrentDanger, 100 + RAND() % 400);
       return true;
     }
@@ -644,3 +644,4 @@ bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter
   else
     return !(RAND() % 20);
 } 
+

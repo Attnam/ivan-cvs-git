@@ -258,7 +258,7 @@ void worldmap::Generate()
       SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
       GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);
       SetEntryPos(UNDER_WATER_TUNNEL_EXIT, TunnelExit);
-      GetWSquare(NewAttnamPos)->AddCharacter(game::GetPlayer());
+      GetWSquare(NewAttnamPos)->AddCharacter(PLAYER);
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();
       break;

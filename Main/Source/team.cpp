@@ -34,7 +34,7 @@ void team::Hostility(team* Enemy)
 
       game::Hostility(this, Enemy);
 
-      if(this == game::GetPlayer()->GetTeam())
+      if(this == PLAYER->GetTeam())
 	{
 	  if(Enemy->GetID() == ATTNAM_TEAM)
 	    {

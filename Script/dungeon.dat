@@ -1322,7 +1322,6 @@ Dungeon NEW_ATTNAM;
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain = boulder;
-			Items == amulet(AMULET_OF_LIFE_SAVING);
 			Times = 25;
 		}
 

@@ -11,6 +11,8 @@
 #include "vector2d.h"
 #include "felibdef.h"
 
+#define PLAYER game::GetPlayer()
+
 class area;
 class level;
 class dungeon;
@@ -25,6 +27,7 @@ class worldmap;
 class god;
 class square;
 class bitmap;
+struct explosion;
 
 typedef std::map<std::string, long> valuemap;
 
@@ -236,6 +239,11 @@ class game
   static std::string GetHomeDir();
   static std::string GetSaveDir();
   static std::string GetGameDir();
+  static bool ExplosionHandler(long, long);
+  static ulong CreateNewExplosionID() { return NextExplosionID++; }
+  static void SetCurrentExplosion(const explosion* What) { CurrentExplosion = What; }
+  static bool PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
+  static void SetPlayerWasHurtByExplosion(bool What) { PlayerHurtByExplosion = What; }
  private:
   static std::string Alignment[];
   static god** God;
@@ -262,6 +270,7 @@ class game
   static dungeon** Dungeon;
   static ulong NextCharacterID;
   static ulong NextItemID;
+  static ulong NextExplosionID;
   static team** Team;
   static ulong LOSTurns;
   static bool LOSUpdateRequested;
@@ -290,6 +299,8 @@ class game
   static uchar Dungeons;
   static uchar StoryState;
   static bool InGetCommand;
+  static const explosion* CurrentExplosion;
+  static bool PlayerHurtByExplosion;
 };
 
 #endif

@@ -15,7 +15,7 @@ void god::Pray()
 	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, true);
-	game::GetPlayer()->EditExperience(WISDOM, 250);
+	PLAYER->EditExperience(WISDOM, 250);
 
 	if(Relation > 500 && !(RAND() % 100))
 	  {
@@ -23,7 +23,7 @@ void god::Pray()
 
 	    if(Angel)
 	      {
-		Angel->SetTeam(game::GetPlayer()->GetTeam());
+		Angel->SetTeam(PLAYER->GetTeam());
 		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
@@ -34,7 +34,7 @@ void god::Pray()
 	PrayBadEffect();
 	AdjustTimer(10000);
 	game::ApplyDivineAlignmentBonuses(this, false);
-	game::GetPlayer()->EditExperience(WISDOM, -250);
+	PLAYER->EditExperience(WISDOM, -250);
       }
   else
     if(Relation > RAND_N(500))
@@ -44,7 +44,7 @@ void god::Pray()
 	AdjustTimer(25000);
 	AdjustRelation(-50);
 	game::ApplyDivineAlignmentBonuses(this, false);
-	game::GetPlayer()->EditExperience(WISDOM, -250);
+	PLAYER->EditExperience(WISDOM, -250);
       }
     else
       {
@@ -53,7 +53,7 @@ void god::Pray()
 	AdjustTimer(50000);
 	AdjustRelation(-100);
 	game::ApplyDivineAlignmentBonuses(this, false);
-	game::GetPlayer()->EditExperience(WISDOM, -500);
+	PLAYER->EditExperience(WISDOM, -500);
 
 	if(Relation < -500 && !(RAND() % 50))
 	  {
@@ -104,9 +104,9 @@ void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
 void god::AdjustRelation(short Amount)
 {
   if(Amount < 0)
-    Amount = Amount * 100 / (100 + game::GetPlayer()->GetAttribute(WISDOM));
+    Amount = Amount * 100 / (100 + PLAYER->GetAttribute(WISDOM));
   else
-    Amount = Amount * (100 + game::GetPlayer()->GetAttribute(WISDOM)) / 100;
+    Amount = Amount * (100 + PLAYER->GetAttribute(WISDOM)) / 100;
 
   Relation += Amount;
 
@@ -132,8 +132,8 @@ void god::PlayerVomitedOnAltar()
 {
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
   AdjustRelation(-200);
-  game::GetPlayer()->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
-  game::GetPlayer()->CheckDeath("chocked to death by own vomit", 0);
+  PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
+  PLAYER->CheckDeath("chocked to death by own vomit", 0);
 
   if(!(RAND() % 50))
     {
@@ -153,7 +153,7 @@ character* god::CreateAngel()
 
   for(ushort c = 0; c < 100; ++c)
     {
-      TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+      TryToCreate = PLAYER->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       angel* Angel = new angel(GetType());
 
       if(game::GetCurrentArea()->IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
@@ -215,9 +215,9 @@ bool god::ReceiveOffer(item* Sacrifice)
       game::ApplyDivineAlignmentBonuses(this, OfferValue > 0);
 
       if(OfferValue > 0)
-	game::GetPlayer()->EditExperience(WISDOM, 50);
+	PLAYER->EditExperience(WISDOM, 50);
       else
-	game::GetPlayer()->EditExperience(WISDOM, -50);
+	PLAYER->EditExperience(WISDOM, -50);
 
       if(OfferValue > 0)
 	ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);
@@ -232,7 +232,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 	  if(Angel)
 	    {
-	      Angel->SetTeam(game::GetPlayer()->GetTeam());
+	      Angel->SetTeam(PLAYER->GetTeam());
 	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	    }
 	}
@@ -269,3 +269,4 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
+

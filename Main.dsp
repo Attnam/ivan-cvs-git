@@ -139,32 +139,12 @@ PostBuild_Cmds=copy Main\FastDebug\Main.exe IVAN.exe
 # Begin Source File
 
 SOURCE=.\Main\Source\action.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\actions.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -173,17 +153,7 @@ SOURCE=.\Main\Source\actset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\area.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -192,32 +162,12 @@ SOURCE=.\Main\Source\areaset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\bodypart.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\char.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -230,17 +180,7 @@ SOURCE=.\Main\Source\charsset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\command.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -249,17 +189,7 @@ SOURCE=.\Main\Source\config.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\cont.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -268,17 +198,7 @@ SOURCE=.\Main\Source\coreset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\database.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -291,17 +211,7 @@ SOURCE=.\Main\Source\dungeon.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\entity.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -314,47 +224,17 @@ SOURCE=.\Main\Source\game.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\gear.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\god.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\gods.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -363,17 +243,7 @@ SOURCE=.\Main\Source\godset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\human.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -386,17 +256,7 @@ SOURCE=.\Main\Source\igraph.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\item.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -405,17 +265,7 @@ SOURCE=.\Main\Source\itemset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\level.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -424,47 +274,17 @@ SOURCE=.\Main\Source\levelset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\lsquare.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\lterra.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\lterras.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -473,32 +293,12 @@ SOURCE=.\Main\Source\main.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\materia.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\materias.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -511,32 +311,12 @@ SOURCE=.\Main\Source\message.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\miscitem.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\nonhuman.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -545,62 +325,22 @@ SOURCE=.\Main\Source\object.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\pool.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\proto.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\room.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\rooms.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -609,32 +349,12 @@ SOURCE=.\Main\Source\roomset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\script.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\slot.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -643,62 +363,22 @@ SOURCE=.\Main\Source\slotset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\square.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\stack.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\team.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\terra.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -707,17 +387,7 @@ SOURCE=.\Main\Source\wmapset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\worldmap.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -726,47 +396,17 @@ SOURCE=.\Main\Source\wskill.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\wsquare.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\wterra.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\wterras.cpp
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -968,15 +608,6 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Target
 # End Project

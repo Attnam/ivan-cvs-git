@@ -148,6 +148,7 @@ character::~character()
 void character::Hunger() 
 {
   uchar OldState = GetHungerState();
+
   switch(GetBurdenState())
     {
     case UNBURDENED:
@@ -165,10 +166,9 @@ void character::Hunger()
       EditExperience(AGILITY, -2);
       break;
     }
-  if(OldState == HUNGRY && GetHungerState() == STARVING)
-    {
-      DeActivateVoluntaryAction("You are getting extremely hungry.");
-    }
+
+  if(OldState != STARVING && GetHungerState() == STARVING)
+    DeActivateVoluntaryAction("You are getting extremely hungry.");
 
   if(GetHungerState() == HUNGRY || GetHungerState() == STARVING)
     {
@@ -343,7 +343,7 @@ void character::Be()
       if(!IsEnabled())
 	return;
 
-      if(GetTeam() == game::GetPlayer()->GetTeam())
+      if(GetTeam() == PLAYER->GetTeam())
 	{
 	  for(ushort c = 0; c < AllowedWeaponSkillCategories; ++c)
 	    if(CWeaponSkill[c]->Tick() && IsPlayer())
@@ -629,7 +629,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 			    }
 			  else
 			    {
-			      if(game::BoolQuestion("Do you want to open " + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(game::GetPlayer()->GetPos(), MoveTo)))
+			      if(game::BoolQuestion("Do you want to open " + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveTo)))
 				{
 				  OpenPos(MoveTo);
 				  return true;
@@ -656,7 +656,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
 		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!");
-		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
+		  PLAYER->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
 		  game::End();
 		  return true;
 		}
@@ -696,10 +696,9 @@ void character::CreateCorpse(lsquare* Square)
   Disable();
 }
 
-/* returns true if the character really dies */
-void character::Die(const std::string& Msg,bool ForceMsg)
+void character::Die(const std::string& Msg, bool ForceMsg)
 {
-  // Note for programmers: This function MUST NOT delete any objects in any case! 
+  // Note: This function MUST NOT delete any objects in any case! 
 
   if(!IsEnabled())
     return;
@@ -833,7 +832,6 @@ void character::Die(const std::string& Msg,bool ForceMsg)
       game::TextScreen("Unfortunately you died during your journey. The high priest is not happy.");
       game::End();
     }
-  return;
 }
 
 void character::AddMissMessage(const character* Enemy) const
@@ -1328,7 +1326,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
   if(!game::WizardModeIsActive())
     {
       highscore HScore;
-      std::string Desc = game::GetPlayer()->GetAssignedName();
+      std::string Desc = PLAYER->GetAssignedName();
       Desc << ", " << Description;
 
       if(AddEndLevel)
@@ -1351,7 +1349,7 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
-      Die(Msg,ForceMsg);
+      Die(Msg, ForceMsg);
       return true;
     }
   else
@@ -1362,7 +1360,7 @@ bool character::CheckStarvationDeath(const std::string& Msg)
 {
   if(GetNP() < 1)
     {
-      Die(Msg,false);
+      Die(Msg);
       return true;
     }
   else
@@ -2094,11 +2092,11 @@ void character::DisplayInfo(std::string& Msg)
     {
       Msg << " " << festring::CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << festring::CapitalizeCopy(GetPersonalPronoun());
 
-      if(GetTeam() == game::GetPlayer()->GetTeam())
+      if(GetTeam() == PLAYER->GetTeam())
 	Msg << " is tame";
       else
 	{
-	  uchar Relation = GetRelation(game::GetPlayer());
+	  uchar Relation = GetRelation(PLAYER);
 
 	  if(Relation == HOSTILE)
 	    Msg << " is hostile";
@@ -2144,7 +2142,7 @@ void character::TestWalkability()
 	      GetSquareUnder()->RemoveCharacter();
 	      SendToHell();
 	      game::AskForKeyPress(GetSquareUnder()->DeathMessage(this) + ".");
-	      game::GetPlayer()->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
+	      PLAYER->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
 	      game::End();
 	    }
 	  else
@@ -2152,7 +2150,7 @@ void character::TestWalkability()
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterDeathVerb(this).c_str());
 
-	      Die("",false);
+	      Die();
 	    }
 	}
     }
@@ -3544,7 +3542,7 @@ void character::PrintEndLycanthropyMessage() const
 
 void character::PrintBeginInvisibilityMessage() const
 {
-  if((game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm()) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
+  if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()) || (PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You seem somehow transparent.");
@@ -3562,7 +3560,7 @@ void character::PrintBeginInvisibilityMessage() const
 
 void character::PrintEndInvisibilityMessage() const
 {
-  if((game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm()) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
+  if((PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()) || (PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5))
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your notice your transparency has ended.");
@@ -3817,15 +3815,15 @@ void character::DexterityAction(ushort Difficulty)
 
 bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
-  bool InfraSeen = game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm();
+  bool InfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
   bool Visible = !StateIsActivated(INVISIBLE) || InfraSeen;
 
-  if((game::IsInWilderness() && Visible) || (!IgnoreESP && game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).GetLengthSquare() <= game::GetPlayer()->GetESPRangeSquare())))
+  if((game::IsInWilderness() && Visible) || (!IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - game::GetPlayer()->GetPos()).GetLengthSquare() <= game::GetPlayer()->GetLOSRangeSquare() && femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
+    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetLOSRangeSquare() && femath::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -3986,7 +3984,7 @@ void character::EndESP()
 
 void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
-  if((game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (game::GetPlayer()->GetPos() - GetPos()).GetLengthSquare() <= game::GetPlayer()->GetESPRangeSquare()) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm()))
+  if((PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (PLAYER->GetPos() - GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare()) || (PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()))
     Luminance = configuration::GetContrastLuminance();
 
   DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
@@ -3999,7 +3997,7 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAl
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
     }
   
-  if(GetTeam() == game::GetPlayer()->GetTeam() && !IsPlayer())
+  if(GetTeam() == PLAYER->GetTeam() && !IsPlayer())
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 
   if(CanFly())
@@ -4522,7 +4520,7 @@ bool character::TryToEquip(item* Item)
     if(GetBodyPartOfEquipment(e) && (!EquipmentSorter(e) || EquipmentSorter(e)(Item, this)))
       {
 	msgsystem::DisableMessages();
-	float Danger = GetRelativeDanger(game::GetPlayer());
+	float Danger = GetRelativeDanger(PLAYER);
 	item* OldEquipment = GetEquipment(e);
 
 	if(OldEquipment)
@@ -4530,7 +4528,7 @@ bool character::TryToEquip(item* Item)
 
 	Item->RemoveFromSlot();
 	SetEquipment(e, Item);
-	float NewDanger = GetRelativeDanger(game::GetPlayer());
+	float NewDanger = GetRelativeDanger(PLAYER);
 	Item->RemoveFromSlot();
 	GetStackUnder()->AddItem(Item);
 
@@ -4948,7 +4946,7 @@ void character::BeTalkedTo()
 {
   static ulong Said;
 
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
   else
     ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size())]);
@@ -5378,5 +5376,28 @@ bool character::CheckThrow() const
     }
 
   return true;
+}
+
+void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
+{
+  uchar DamageDirection = GetPos() == Explosion.Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion.Pos);
+
+  if(Explosion.Terrorist)
+    Explosion.Terrorist->Hostility(this);
+
+  GetTorso()->SpillBlood((8 - Explosion.Size + RAND() % (8 - Explosion.Size)) >> 1);
+  vector2d SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
+
+  if(GetArea()->IsValidPos(SpillPos))
+    GetTorso()->SpillBlood((8 - Explosion.Size + RAND() % (8 - Explosion.Size)) >> 1, SpillPos);
+
+  if(IsPlayer())
+    ADD_MESSAGE("You are hit by the explosion!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s is hit by the explosion.", CHAR_NAME(DEFINITE));
+  
+  ReceiveDamage(Explosion.Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
+  ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
+  CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
 }
 

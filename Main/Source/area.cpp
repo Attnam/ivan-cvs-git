@@ -66,9 +66,9 @@ void area::AddCharacter(vector2d Pos, character* Guy)
 void area::UpdateLOS()
 {
   game::LOSTurn();
-  ushort Radius = game::GetPlayer()->GetLOSRange();
+  ushort Radius = PLAYER->GetLOSRange();
   ulong RadiusSquare = Radius * Radius;
-  vector2d Pos = game::GetPlayer()->GetPos();
+  vector2d Pos = PLAYER->GetPos();
 
   ushort MaxDist = Pos.X;
 
@@ -94,7 +94,7 @@ void area::UpdateLOS()
       if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
 
-  if(game::GetPlayer()->StateIsActivated(INFRA_VISION) && !game::IsInWilderness())
+  if(PLAYER->StateIsActivated(INFRA_VISION) && !game::IsInWilderness())
     for(ushort c = 0; c < game::GetTeams(); ++c)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
@@ -200,3 +200,4 @@ void area::SetEntryPos(uchar Index, vector2d Pos)
 {
   EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
 }
+

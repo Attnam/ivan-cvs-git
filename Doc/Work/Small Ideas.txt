@@ -422,5 +422,6 @@ Lightning and metal items should interact somehow.
 Skis.
 Footprints.
 Polymorph question should default to the monster that the player last polymorphed to.
+Carnivorous plant seeds.
 Town hit by "zombie-plague"
-Panicing should be more probable when friends around the character have panicked.
+Panicking should be more probable when friends around the character have panicked.

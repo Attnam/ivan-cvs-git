@@ -418,13 +418,13 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 
 void petrus::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       ADD_MESSAGE("Heretic! Dev/null is a place not worthy to receive thee!");
       return;
     }
 
-  if(game::GetPlayer()->HasGoldenEagleShirt())
+  if(PLAYER->HasGoldenEagleShirt())
     {
       ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Mayst thou be blessed by Valpurus for the rest of thy life! And thou possess the Shirt of the Golden Eagle, the symbol of Our status! Return it now, please.\"");
 
@@ -449,12 +449,12 @@ void petrus::BeTalkedTo()
 	  GetHead()->UpdatePictures();
 	  GetSquareUnder()->SendNewDrawRequest();
 	  game::AskForKeyPress("You are attacked! [press any key to continue]");
-	  game::GetPlayer()->GetTeam()->Hostility(GetTeam());
+	  PLAYER->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
     }
 
-  if(game::GetPlayer()->HasHeadOfElpuri())
+  if(PLAYER->HasHeadOfElpuri())
     {
       game::TextScreen(	"You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
 			"You spend the next months in Attnam as an honored hero and when the\n"
@@ -468,7 +468,7 @@ void petrus::BeTalkedTo()
     {
       if(!game::GetStoryState())
 	{
-	  if(game::GetPlayer()->HasEncryptedScroll())
+	  if(PLAYER->HasEncryptedScroll())
 	    {
 	      game::TextScreen( "You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
 				"Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
@@ -532,23 +532,23 @@ void petrus::BeTalkedTo()
 
 void priest::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       ADD_MESSAGE("\"Sinner! My hands shall pour Dinive Wrath upon thee!\"");
       return;
     }
 
-  if(game::GetPlayer()->TemporaryStateIsActivated(POISONED))
+  if(PLAYER->TemporaryStateIsActivated(POISONED))
     {
-      if(game::GetPlayer()->GetMoney() >= 25)
+      if(PLAYER->GetMoney() >= 25)
 	{
 	  ADD_MESSAGE("\"You seem to be rather ill. I could give you a small dose of antidote for 25 gold pieces.\"");
 
 	  if(game::BoolQuestion("Do you agree? [y/N]"))
 	    {
 	      ADD_MESSAGE("You feel better.");
-	      game::GetPlayer()->DeActivateTemporaryState(POISONED);
-	      game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - 25);
+	      PLAYER->DeActivateTemporaryState(POISONED);
+	      PLAYER->SetMoney(PLAYER->GetMoney() - 25);
 	      SetMoney(GetMoney() + 25);
 	      return;
 	    }
@@ -557,61 +557,61 @@ void priest::BeTalkedTo()
 	ADD_MESSAGE("\"You seem to be rather ill. Get 25 gold pieces and I'll fix that.\"");
     }
 
-  for(ushort c = 0; c < game::GetPlayer()->GetBodyParts(); ++c)
-    if(!game::GetPlayer()->GetBodyPart(c) && game::GetPlayer()->CanCreateBodyPart(c))
+  for(ushort c = 0; c < PLAYER->GetBodyParts(); ++c)
+    if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
       {
 	bool HasOld = false;
 
-	for(std::list<ulong>::const_iterator i = game::GetPlayer()->GetOriginalBodyPartID(c).begin(); i != game::GetPlayer()->GetOriginalBodyPartID(c).end(); ++i)
+	for(std::list<ulong>::const_iterator i = PLAYER->GetOriginalBodyPartID(c).begin(); i != PLAYER->GetOriginalBodyPartID(c).end(); ++i)
 	  {
-	    bodypart* OldBodyPart = static_cast<bodypart*>(game::GetPlayer()->SearchForItemWithID(*i));
+	    bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItemWithID(*i));
 
 	    if(OldBodyPart)
 	      {
 		HasOld = true;
 
-		if(game::GetPlayer()->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
+		if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 		  {
 		    if(!OldBodyPart->IsAlive())
-		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).c_str(), game::GetPlayer()->GetBodyPartName(c).c_str());
+		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).c_str(), PLAYER->GetBodyPartName(c).c_str());
 		    else
 		      {
-			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 
 			if(game::BoolQuestion("Do you agree? [y/N]"))
 			  {
 			    OldBodyPart->SetHP(1);
-			    game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			    PLAYER->SetMoney(PLAYER->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 			    SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 			    OldBodyPart->RemoveFromSlot();
-			    game::GetPlayer()->AttachBodyPart(OldBodyPart);
+			    PLAYER->AttachBodyPart(OldBodyPart);
 			    return;
 			  }
 		      }
 		  }
 		else
-		  ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and I'll help you too.\"", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+		  ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 	      }
 	  }
 
-	if(game::GetPlayer()->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR)
+	if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR)
 	  {
 	    if(HasOld)
 	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 	    else
-	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 
 	    if(game::BoolQuestion("Agreed? [y/N]"))
 	      {
-		game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+		PLAYER->SetMoney(PLAYER->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
-		game::GetPlayer()->CreateBodyPart(c);
-		game::GetPlayer()->GetBodyPart(c)->SetHP(1);
+		PLAYER->CreateBodyPart(c);
+		PLAYER->GetBodyPart(c)->SetHP(1);
 		return;
 	      }
 	  }
 	else if(!HasOld)
-	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %dgp first.\"", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %dgp first.\"", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
       }
 
   if(!GetHomeRoom())
@@ -625,17 +625,17 @@ void skeleton::BeTalkedTo()
   if(GetHead())
     character::BeTalkedTo();
   else
-    ADD_MESSAGE("The headless %s remains silent.", game::GetPlayer()->CHAR_DESCRIPTION(UNARTICLED));
+    ADD_MESSAGE("The headless %s remains silent.", PLAYER->CHAR_DESCRIPTION(UNARTICLED));
 }
 
 void communist::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) != HOSTILE && GetTeam() != game::GetPlayer()->GetTeam() && game::GetPlayer()->GetRelativeDanger(this, true) > 0.5f)
+  if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5f)
     {
-      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), game::GetPlayer()->GetAssignedName().c_str(), CHAR_NAME(UNARTICLED), game::GetPlayer()->GetAssignedName().c_str());
-      ChangeTeam(game::GetPlayer()->GetTeam());
+      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().c_str(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().c_str());
+      ChangeTeam(PLAYER->GetTeam());
     }
-  else if(GetTeam() != game::GetPlayer()->GetTeam() && !(RAND() % 5))
+  else if(GetTeam() != PLAYER->GetTeam() && !(RAND() % 5))
     ADD_MESSAGE("You weak. Learn killing and come back.");
   else
     character::BeTalkedTo();
@@ -643,7 +643,7 @@ void communist::BeTalkedTo()
 
 void hunter::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) != HOSTILE && GetMainWielded() && !(RAND() % 10))
+  if(GetRelation(PLAYER) != HOSTILE && GetMainWielded() && !(RAND() % 10))
     ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", GetMainWielded()->CHAR_NAME(UNARTICLED), GetMainWielded()->CHAR_NAME(UNARTICLED));
   else
     character::BeTalkedTo();
@@ -651,7 +651,7 @@ void hunter::BeTalkedTo()
 
 void slave::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       ADD_MESSAGE("\"Yikes!\"");
       return;
@@ -663,15 +663,15 @@ void slave::BeTalkedTo()
     {
       character* Master = Room->GetMaster();
 
-      if(game::GetPlayer()->GetMoney() >= 50)
+      if(PLAYER->GetMoney() >= 50)
 	{
 	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
 
 	  if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 	    {
-	      game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - 50);
+	      PLAYER->SetMoney(PLAYER->GetMoney() - 50);
 	      Master->SetMoney(Master->GetMoney() + 50);
-	      ChangeTeam(game::GetPlayer()->GetTeam());
+	      ChangeTeam(PLAYER->GetTeam());
 	      RemoveHomeData();
 	    }
 	}
@@ -681,9 +681,9 @@ void slave::BeTalkedTo()
       return;
     }
 
-  if(GetTeam() == game::GetPlayer()->GetTeam())
+  if(GetTeam() == PLAYER->GetTeam())
     {
-      if((game::GetPlayer()->GetMainWielded() && game::GetPlayer()->GetMainWielded()->IsWhip()) || (game::GetPlayer()->GetSecondaryWielded() && game::GetPlayer()->GetSecondaryWielded()->IsWhip()))
+      if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->IsWhip()) || (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->IsWhip()))
 	ADD_MESSAGE("\"Don't hit me! I work! I obey! I don't think!\"");
       else
 	character::BeTalkedTo();
@@ -723,7 +723,7 @@ void slave::GetAICommand()
 
 void librarian::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       ADD_MESSAGE("\"The pen is mightier than the sword! Fall, unlearned one!\"");
       return;
@@ -825,7 +825,7 @@ bool communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       if(RAND() % 5)
 	{
@@ -1487,13 +1487,13 @@ bool humanoid::HandleNoBodyPart(ushort Index)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The headless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die("",false);
+      Die();
       return false;
     case GROIN_INDEX:
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die("",false);
+      Die();
       return false;
     case TORSO_INDEX:
       ABORT("The corpse does not have a torso.");
@@ -2483,7 +2483,7 @@ ulong angel::GetBaseEmitation() const
 
 void bananagrower::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) != HOSTILE && !Profession && !(RAND() % 10))
+  if(GetRelation(PLAYER) != HOSTILE && !Profession && !(RAND() % 10))
     ADD_MESSAGE("\"I'm glad that Petrus spared my life even though I was the president.\"");
   else
     character::BeTalkedTo();
@@ -2549,7 +2549,7 @@ void bananagrower::Load(inputfile& SaveFile)
 
 void smith::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE)
     {
       ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who the hell else are you talkin' to? You talkin' to me? Well I'm the only one here. Who do you think you're talking to? Oh yeah? Huh? Ok.\"");
       return;
@@ -2562,32 +2562,32 @@ void smith::BeTalkedTo()
     }
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(game::GetPlayer()->GetBodyPart(c))
+    if(PLAYER->GetBodyPart(c))
       {
-	if(!game::GetPlayer()->GetBodyPart(c)->GetMainMaterial()->IsMetal())
+	if(!PLAYER->GetBodyPart(c)->GetMainMaterial()->IsMetal())
 	  continue;
 	
-	if(game::GetPlayer()->GetBodyPart(c)->GetHP() >= game::GetPlayer()->GetBodyPart(c)->GetMaxHP())
+	if(PLAYER->GetBodyPart(c)->GetHP() >= PLAYER->GetBodyPart(c)->GetMaxHP())
 	  continue;
 
-	if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= game::GetPlayer()->GetBodyPart(c)->GetMainMaterial()->GetStrengthValue())
+	if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= PLAYER->GetBodyPart(c)->GetMainMaterial()->GetStrengthValue())
 	  {
-	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", game::GetPlayer()->GetBodyPart(c)->GetBodyPartName().c_str(), GetMainWielded()->CHAR_NAME(UNARTICLED));
+	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", PLAYER->GetBodyPart(c)->GetBodyPartName().c_str(), GetMainWielded()->CHAR_NAME(UNARTICLED));
 	    continue;
 	  }
 
-	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", game::GetPlayer()->GetBodyPart(c)->GetBodyPartName().c_str()); 
+	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", PLAYER->GetBodyPart(c)->GetBodyPartName().c_str()); 
 	
 	if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	  {
-	    game::GetPlayer()->GetBodyPart(c)->RestoreHP();
-	    game::GetPlayer()->EditMoney(-25);
+	    PLAYER->GetBodyPart(c)->RestoreHP();
+	    PLAYER->EditMoney(-25);
 	  }	
       }
 
-  if(game::GetPlayer()->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
+  if(PLAYER->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
     {
-      item* Item = game::GetPlayer()->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::FixableBySmithSorter);
+      item* Item = PLAYER->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::FixableBySmithSorter);
 
       if(!Item)
 	return;
@@ -2604,7 +2604,7 @@ void smith::BeTalkedTo()
 	  return;
 	}
 
-      if(game::GetPlayer()->GetMoney() < Item->GetFixPrice())
+      if(PLAYER->GetMoney() < Item->GetFixPrice())
 	{
 	  ADD_MESSAGE("\"Getting that fixed costs you %d gold pieces. Get the money and we'll talk.\"", Item->GetFixPrice());
 	  return;
@@ -2615,7 +2615,7 @@ void smith::BeTalkedTo()
       if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	{
 	  Item->Fix();
-	  game::GetPlayer()->EditMoney(-Item->GetFixPrice());
+	  PLAYER->EditMoney(-Item->GetFixPrice());
 	  ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));
 	}
     }
@@ -3098,3 +3098,4 @@ const std::string& humanoid::GetStandVerb() const
   static std::string HasntFeet = "crawling";
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
+

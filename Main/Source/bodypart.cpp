@@ -2438,7 +2438,7 @@ bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
 
 bool bodypart::CanBeEatenByAI(const character* Who) const
 {
-  return item::CanBeEatenByAI(Who) && !(Who->GetTeam()->GetID() == game::GetPlayer()->GetTeam()->GetID() && game::GetPlayer()->HasHadBodyPart(this));
+  return item::CanBeEatenByAI(Who) && !(Who->GetTeam()->GetID() == PLAYER->GetTeam()->GetID() && PLAYER->HasHadBodyPart(this));
 }
 
 ushort bodypart::GetConditionColor() const
@@ -2508,3 +2508,4 @@ uchar corpse::GetArticleMode() const
 {
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
+

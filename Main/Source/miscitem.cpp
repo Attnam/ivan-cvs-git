@@ -487,7 +487,7 @@ void holybook::FinishReading(character* Reader)
 	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GOD_NAME);
 	  GetMasterGod()->AdjustRelation(75);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
-	  game::GetPlayer()->EditExperience(WISDOM, 250);
+	  PLAYER->EditExperience(WISDOM, 250);
 
 	  if(!(RAND() % 3))
 	    {
@@ -529,7 +529,7 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 
 bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if((Type == FIRE || Type == ENERGY) && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
+  if((Type == FIRE || Type == ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
     {
       std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -1538,7 +1538,7 @@ void potion::Break()
   if(GetContainedMaterial()) 
     Remains->GetLSquareUnder()->SpillFluid(0, GetContainedMaterial()->Clone(), 70);
 
-  if(game::GetPlayer()->Equips(Remains))
+  if(PLAYER->Equips(Remains))
     game::AskForKeyPress("Equipment broken! [press any key to continue]");
 }
 

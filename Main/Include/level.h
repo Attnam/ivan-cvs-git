@@ -18,6 +18,18 @@ class dungeon;
 class lsquare;
 class room;
 
+struct explosion
+{
+  character* Terrorist;
+  std::string DeathMsg;
+  vector2d Pos;
+  ulong ID;
+  ushort Strength;
+  ushort RadiusSquare;
+  uchar Size;
+  bool HurtNeutrals;
+};
+
 class level : public area
 {
  public:
@@ -68,6 +80,8 @@ class level : public area
   void SetDungeon(dungeon* What) { Dungeon = What; }
   uchar GetIndex() const { return Index; }
   void SetIndex(uchar What) { Index = What; }
+  bool DrawExplosion(const explosion&) const;
+  ushort TriggerExplosions(ushort);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
@@ -81,6 +95,8 @@ class level : public area
   uchar Difficulty;
   dungeon* Dungeon;
   uchar Index;
+  std::vector<explosion> ExplosionQueue;
+  std::vector<bool> PlayerHurt;
 };
 
 outputfile& operator<<(outputfile&, level*);

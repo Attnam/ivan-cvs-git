@@ -210,7 +210,7 @@ class character : public entity, public id
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   virtual void ReceiveDarkness(long);
-  void Die(const std::string&, bool = false);
+  void Die(const std::string& = "", bool = false);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
@@ -681,6 +681,7 @@ class character : public entity, public id
   virtual void RaiseStats();
   virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
+  void GetHitByExplosion(const explosion&, ushort);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

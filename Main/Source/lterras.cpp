@@ -230,7 +230,7 @@ bool throne::SitOn(character* Sitter)
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
       game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!");
-      game::GetPlayer()->AddScoreEntry("became the new high priest of the Great Frog", 5, false);
+      PLAYER->AddScoreEntry("became the new high priest of the Great Frog", 5, false);
       game::End();
       return true;
     }
@@ -543,7 +543,7 @@ bool altar::SitOn(character* Sitter)
 	{
 	  GetMasterGod()->AdjustRelation(2);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true, 1);
-	  game::GetPlayer()->EditExperience(WISDOM, 10);
+	  PLAYER->EditExperience(WISDOM, 10);
 	}
     }
   else
@@ -553,13 +553,13 @@ bool altar::SitOn(character* Sitter)
 
 	if(Angel)
 	  {
-	    Angel->SetTeam(game::GetPlayer()->GetTeam());
+	    Angel->SetTeam(PLAYER->GetTeam());
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	  }
 
 	GetMasterGod()->AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
-	game::GetPlayer()->EditExperience(WISDOM, 250);
+	PLAYER->EditExperience(WISDOM, 250);
       }
 
   Sitter->EditAP(-1000);
@@ -774,7 +774,7 @@ bool link::Enter(bool DirectionUp) const
     }
 
   if(Config == OREE_LAIR_EXIT)
-    if(game::GetPlayer()->HasGoldenEagleShirt())
+    if(PLAYER->HasGoldenEagleShirt())
       {
 	ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 

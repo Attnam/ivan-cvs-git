@@ -128,6 +128,7 @@ class lsquare : public square
   uchar GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
+  void GetHitByExplosion(const explosion&);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -143,7 +144,7 @@ class lsquare : public square
   fluid* Fluid;
   bitmap* Memorized;
   bool MemorizedUpdateRequested;
+  ulong LastExplosionID;
 };
 
 #endif
-

@@ -60,6 +60,7 @@ dungeon** game::Dungeon;
 uchar game::CurrentDungeonIndex;
 ulong game::NextCharacterID = 1;
 ulong game::NextItemID = 1;
+ulong game::NextExplosionID = 1;
 team** game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
@@ -108,6 +109,8 @@ valuemap game::GlobalValueMap;
 dangermap game::DangerMap;
 configid game::NextDangerId;
 characteridmap game::CharacterIDMap;
+const explosion* game::CurrentExplosion;
+bool game::PlayerHurtByExplosion;
 
 vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
@@ -493,7 +496,7 @@ bool game::Save(const std::string& SaveName)
   else
     GetCurrentDungeon()->SaveLevel(SaveName, CurrentLevelIndex, false);
 
-  SaveFile << game::GetPlayer()->GetPos();
+  SaveFile << PLAYER->GetPos();
   msgsystem::Save(SaveFile);
   SaveFile << DangerMap << NextDangerId;
   return true;
@@ -560,7 +563,7 @@ std::string game::SaveName(const std::string& Base)
   std::string SaveName = GetSaveDir();
 
   if(!Base.length())
-    SaveName << game::GetPlayer()->GetAssignedName();
+    SaveName << PLAYER->GetAssignedName();
   else
     SaveName << Base;
 
@@ -1335,8 +1338,8 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	  {
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
-	    if(Square->GetOTerrain()->IsWalkable() && Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
+	    if(Square->GetOTerrain()->IsWalkable() && Stack->GetVisibleItems(PLAYER))
+	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1878,3 +1881,11 @@ std::string game::GetGameDir()
   return "";
 #endif
 }
+
+bool game::ExplosionHandler(long X, long Y)
+{
+  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
+  Square->GetHitByExplosion(*CurrentExplosion);
+  return Square->GetOLTerrain()->IsWalkable();
+}
+

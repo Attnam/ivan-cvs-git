@@ -1,6 +1,6 @@
 /* Compiled through levelset.cpp */
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0)
 {
   Stack = new stack(this, 0, CENTER, false);
   SideStack[DOWN] = new stack(this, 0, DOWN, false);
@@ -94,14 +94,14 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
 
   if(OLTerrain->IsWalkable())
     {
-      Stack->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       for(ushort c = 0; c < 4; ++c)
 	{
 	  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
 	  if(Stack)
-	    Stack->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 	}
     }
 }
@@ -513,7 +513,7 @@ void lsquare::CalculateLuminance()
     }
   else
     for(ushort c = 0; c < Emitter.size(); ++c)
-      if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
+      if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(PLAYER->GetPos()))
 	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
 }
 
@@ -581,7 +581,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  Anything = true;
 		}
 
-	      ushort VisibleItems = GetStack()->GetItems(game::GetPlayer(), Cheat);
+	      ushort VisibleItems = GetStack()->GetItems(PLAYER, Cheat);
 
 	      if(VisibleItems)
 		{
@@ -589,7 +589,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		    MemorizedDescription << " and ";
 
 		  if(VisibleItems == 1)
-		    GetStack()->GetBottomItem(game::GetPlayer(), Cheat)->AddName(MemorizedDescription, INDEFINITE);
+		    GetStack()->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
 		  else
 		    MemorizedDescription = "many items";
 
@@ -607,7 +607,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
 		  if(Stack)
-		    Items += Stack->GetItems(game::GetPlayer(), Cheat);
+		    Items += Stack->GetItems(PLAYER, Cheat);
 		}
 
 	      if(Items > 1)
@@ -620,8 +620,8 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		    {
 		      stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-		      if(Stack && Stack->GetItems(game::GetPlayer(), Cheat))
-			Stack->GetBottomItem(game::GetPlayer(), Cheat)->AddName(MemorizedDescription, INDEFINITE);
+		      if(Stack && Stack->GetItems(PLAYER, Cheat))
+			Stack->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
 		    }
 
 		  MemorizedDescription << " on the wall";
@@ -1044,12 +1044,12 @@ void lsquare::SetLastSeen(ulong What)
 
   if(IsDark())
     {
-      short XDist = Pos.X - game::GetPlayer()->GetPos().X;
+      short XDist = Pos.X - PLAYER->GetPos().X;
 
       if(XDist < -1 || XDist > 1)
 	return;
 
-      short YDist = Pos.Y - game::GetPlayer()->GetPos().Y;
+      short YDist = Pos.Y - PLAYER->GetPos().Y;
 
       if(YDist < -1 || YDist > 1)
 	return;
@@ -1414,3 +1414,31 @@ bool (lsquare::*lsquare::GetBeamEffect(ushort Index))(character*, const std::str
   static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar) = { &lsquare::Polymorph, &lsquare::Strike, &lsquare::FireBall, &lsquare::Teleport, &lsquare::Haste, &lsquare::Slow, &lsquare::Resurrect, &lsquare::Invisibility, &lsquare::Clone, &lsquare::Lightning, &lsquare::DoorCreation };
   return BeamEffect[Index];
 }
+
+void lsquare::GetHitByExplosion(const explosion& Explosion)
+{
+  if(Explosion.ID == LastExplosionID)
+    return;
+
+  LastExplosionID = Explosion.ID;
+  ushort DistanceSquare = (Pos - Explosion.Pos).GetLengthSquare();
+
+  if(DistanceSquare > Explosion.RadiusSquare)
+    return;
+
+  ushort Damage = Explosion.Strength / (DistanceSquare + 1);
+
+  if(Character && (Explosion.HurtNeutrals || (Explosion.Terrorist && Character->GetRelation(Explosion.Terrorist) == HOSTILE)))
+    if(Character->IsPlayer())
+      game::SetPlayerWasHurtByExplosion(true);
+    else
+      Character->GetHitByExplosion(Explosion, Damage);
+
+  GetStack()->ReceiveDamage(Explosion.Terrorist, Damage >> 1, FIRE);
+  GetStack()->ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
+  olterrain* Terrain = GetOLTerrain();
+  Terrain->ReceiveDamage(Explosion.Terrorist, Damage >> 1, FIRE);
+  Terrain = GetOLTerrain(); // might have changed
+  Terrain->ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
+}
+

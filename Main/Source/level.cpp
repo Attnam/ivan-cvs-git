@@ -684,7 +684,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 	{
 	  Pos = GetRandomSquare(Char);
 			
-	  if(!ConsiderPlayer || abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 || abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6)
+	  if(!ConsiderPlayer || abs(short(Pos.X) - PLAYER->GetPos().X) > 6 || abs(short(Pos.Y) - PLAYER->GetPos().Y) > 6)
 	    break;
 	}
 
@@ -780,150 +780,167 @@ room* level::GetRoom(ushort Index) const
 
 void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
 {
-  if(!GetSquare(Pos)->CanBeSeenByPlayer())
-    ADD_MESSAGE("You hear an explosion.");
-
-  ushort EmitChange = Min(150 + Strength, 255);
-  GetLSquare(Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
   static ushort StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
-  static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
-
+  ushort c;
   uchar Size = 6;
 
-  for(ushort c = 0; c < 6; ++c)
+  for(c = 0; c < 6; ++c)
     if(Strength >= StrengthLimit[c])
       {
         Size = c;
         break;
       }
 
-  vector2d BPos = game::CalculateScreenCoordinates(Pos) - vector2d((6 - Size) << 4, (6 - Size) << 4);
-  vector2d SizeVect(16 + ((6 - Size) << 5), 16 + ((6 - Size) << 5)), OldSizeVect = SizeVect;
-  vector2d PicPos = StrengthPicPos[Size];
+  ExplosionQueue.resize(ExplosionQueue.size() + 1);
+  PlayerHurt.resize(PlayerHurt.size() + 1);
+  explosion& E = ExplosionQueue.back();
+  E.Terrorist = Terrorist;
+  E.DeathMsg = DeathMsg;
+  E.Pos = Pos;
+  E.ID = game::CreateNewExplosionID();
+  E.Strength = Strength;
+  E.RadiusSquare = (8 - Size) * (8 - Size);
+  E.Size = Size;
+  E.HurtNeutrals = HurtNeutrals;
 
-  while(true)
+  if(ExplosionQueue.size() == 1)
     {
-      if(short(BPos.X) < 0)
-	if(short(BPos.X) + SizeVect.X <= 0)
-	  break;
-	else
-	  {
-	    PicPos.X -= BPos.X;
-	    SizeVect.X += BPos.X;
-	    BPos.X = 0;
-	  }
+      ushort Explosions = 0;
 
-      if(short(BPos.Y) < 0)
-	if(short(BPos.Y) + SizeVect.Y <= 0)
-	  break;
-	else
-	  {
-	    PicPos.Y -= BPos.Y;
-	    SizeVect.Y += BPos.Y;
-	    BPos.Y = 0;
-	  }
-
-      if(BPos.X >= RES.X || BPos.Y >= RES.Y)
-	break;
-
-      if(BPos.X + SizeVect.X > RES.X)
-	SizeVect.X = RES.X - BPos.X;
-
-      if(BPos.Y + SizeVect.Y > RES.Y)
-	SizeVect.Y = RES.Y - BPos.Y;
-
-      game::DrawEverythingNoBlit();
-      uchar Flags = RAND() & 7;
-
-      if(!Flags || SizeVect != OldSizeVect)
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
-      else
+      while(Explosions != ExplosionQueue.size())
 	{
-	  bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
-	  igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
-	  ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
+	  for(c = Explosions; c != ExplosionQueue.size(); c = TriggerExplosions(c));
+	  ushort NewExplosions = c;
+
+	  for(c = Explosions; c < NewExplosions; ++c)
+	    if(PlayerHurt[c])
+	      PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c].Strength / ((PLAYER->GetPos() - ExplosionQueue[c].Pos).GetLengthSquare() + 1));
+
+	  Explosions = NewExplosions;
 	}
 
+      ExplosionQueue.clear();
+      PlayerHurt.clear();
+    }
+}
+
+bool level::DrawExplosion(const explosion& Explosion) const
+{
+  static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
+  vector2d BPos = game::CalculateScreenCoordinates(Explosion.Pos) - vector2d((6 - Explosion.Size) << 4, (6 - Explosion.Size) << 4);
+  vector2d SizeVect(16 + ((6 - Explosion.Size) << 5), 16 + ((6 - Explosion.Size) << 5));
+  vector2d OldSizeVect = SizeVect;
+  vector2d PicPos = StrengthPicPos[Explosion.Size];
+
+  if(short(BPos.X) < 0)
+    if(short(BPos.X) + SizeVect.X <= 0)
+      return false;
+    else
+      {
+	PicPos.X -= BPos.X;
+	SizeVect.X += BPos.X;
+	BPos.X = 0;
+      }
+
+  if(short(BPos.Y) < 0)
+    if(short(BPos.Y) + SizeVect.Y <= 0)
+      return false;
+    else
+      {
+	PicPos.Y -= BPos.Y;
+	SizeVect.Y += BPos.Y;
+	BPos.Y = 0;
+      }
+
+  if(BPos.X >= RES.X || BPos.Y >= RES.Y)
+    return false;
+
+  if(BPos.X + SizeVect.X > RES.X)
+    SizeVect.X = RES.X - BPos.X;
+
+  if(BPos.Y + SizeVect.Y > RES.Y)
+    SizeVect.Y = RES.Y - BPos.Y;
+
+  uchar Flags = RAND() & 7;
+
+  if(!Flags || SizeVect != OldSizeVect)
+    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
+  else
+    {
+      bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
+      igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
+      ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
+    }
+
+  return true;
+}
+
+ushort level::TriggerExplosions(ushort MinIndex)
+{
+  ushort LastExplosion = ExplosionQueue.size();
+  ushort NotSeen = 0;
+  ushort c;
+
+  for(c = MinIndex; c < LastExplosion; ++c)
+    {
+      ushort EmitChange = Min(150 + ExplosionQueue[c].Strength, 255);
+      GetLSquare(ExplosionQueue[c].Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
+
+      if(!GetSquare(ExplosionQueue[c].Pos)->CanBeSeenByPlayer())
+	++NotSeen;
+    }
+
+  if(NotSeen)
+    if(NotSeen == 1)
+      ADD_MESSAGE("You hear an explosion.");
+    else
+      ADD_MESSAGE("You hear explosions.");
+
+  game::DrawEverythingNoBlit();
+  bool Drawn = false;
+
+  for(c = MinIndex; c < LastExplosion; ++c)
+    {
+      GetLSquare(ExplosionQueue[c].Pos)->SetTemporaryEmitation(0);
+
+      if(DrawExplosion(ExplosionQueue[c]))
+	Drawn = true;
+    }
+
+  if(Drawn)
+    {
       graphics::BlitDBToScreen();
       game::GetCurrentArea()->SendNewDrawRequest();
       clock_t StartTime = clock();
       while(clock() - StartTime < 0.3f * CLOCKS_PER_SEC);
-      break;
     }
 
-  GetLSquare(Pos)->SetTemporaryEmitation(0);
-
-  ushort Radius = 8 - Size;
-  ushort RadiusSquare = Radius * Radius;
-  ushort PlayerDamage = 0;
-  bool PlayerHurt = false;
-
-  rect Rect;
-  femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Pos, Radius);
-
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      {
-	ushort DistanceSquare = HypotSquare(Pos.X - x, Pos.Y - y);
-
-	if(DistanceSquare <= RadiusSquare)
-	  {
-	    lsquare* Square = GetLSquare(x, y);
-	    character* Char = Square->GetCharacter();
-	    ushort Damage = Strength / (DistanceSquare + 1);
-	    uchar DamageDirection = vector2d(x, y) == Pos ? RANDOM_DIR : game::CalculateRoughDirection(vector2d(x, y) - Pos);
-
-	    if(Char && (HurtNeutrals || (Terrorist && Char->GetRelation(Terrorist) == HOSTILE)))
-	      if(Char->IsPlayer())
-		{
-		  PlayerDamage = Damage;
-		  PlayerHurt = true;
-		}
-	      else
-		{
-		  if(Terrorist)
-		    Terrorist->Hostility(Char);
-
-		  Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) >> 1);
-		  vector2d SpillDirection = vector2d(x, y) + game::GetMoveVector(DamageDirection);
-
-		  if(IsValidPos(SpillDirection))
-		    Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) >> 1, SpillDirection);
-
-		  if(Char->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s is hit by the explosion.", Char->CHAR_NAME(DEFINITE));
-
-		  Char->ReceiveDamage(Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
-		  Char->ReceiveDamage(Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-		  Char->CheckDeath(DeathMsg, Terrorist);
-		}
-
-	    Square->GetStack()->ReceiveDamage(Terrorist, Damage >> 1, FIRE);
-	    Square->GetStack()->ReceiveDamage(Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
-	    olterrain* Terrain = Square->GetOLTerrain();
-	    Terrain->ReceiveDamage(Terrorist, Damage >> 1, FIRE);
-	    Terrain = Square->GetOLTerrain(); // might have changed
-	    Terrain->ReceiveDamage(Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
-	  }
-      }
-
-  if(PlayerHurt)
+  for(c = MinIndex; c < LastExplosion; ++c)
     {
-      uchar DamageDirection = game::GetPlayer()->GetPos() == Pos ? RANDOM_DIR : game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
+      explosion Explosion(ExplosionQueue[c]);
+      ushort Radius = 8 - Explosion.Size;
+      game::SetCurrentExplosion(&Explosion);
+      game::SetPlayerWasHurtByExplosion(false);
 
-      if(Terrorist)
-	Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
+      rect Rect;
+      femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Explosion.Pos, Radius);
 
-      game::GetPlayer()->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) >> 1);
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	{
+	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, x, Rect.Y1, game::ExplosionHandler);
+	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, x, Rect.Y2, game::ExplosionHandler);
+	}
 
-      if(IsValidPos(game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection)))
-	game::GetPlayer()->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) >> 1, game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection));
+      for(ushort y = Rect.Y1 + 1; y < Rect.Y2; ++y)
+	{
+	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, Rect.X1, y, game::ExplosionHandler);
+	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, Rect.X2, y, game::ExplosionHandler);
+	}
 
-      ADD_MESSAGE("You are hit by the explosion!");
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-      game::GetPlayer()->CheckDeath(DeathMsg, Terrorist);
+      PlayerHurt[c] = game::PlayerWasHurtByExplosion();
     }
+
+  return LastExplosion;
 }
 
 bool level::CollectCreatures(std::vector<character*>& CharacterArray, character* Leader, bool AllowHostiles)
@@ -1362,3 +1379,4 @@ void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vect
   static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
   return Beam[Index];
 }
+

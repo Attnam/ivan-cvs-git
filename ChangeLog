@@ -6,6 +6,13 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+January 19 2003 Timo Kiviluoto <heikki.sairanen@phpoint.net>
+
+	* Explosions are now stopped by walls
+	* Added PLAYER macro which expands to game::GetPlayer()
+	* Removed the 3 letter limit of DefaultName, too
+
 January 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Fountains should never give permanent lycanthropy-state.
@@ -18,7 +25,7 @@ January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Lycanthropy cannot be randomly activated anymore. 
 	
-January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+January 18 2003 Timo Kiviluoto <heikki.sairanen@phpoint.net>
 
 	* Corrected some bugs in the Win SDL port
 	* The DOS port compiles again
@@ -36,7 +43,7 @@ January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Handling Home,save and data directories changed
 	* chameleon whip added
 	* whip of thievery can be cloned
-	
+
 January 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Fixed a bug that sometimes prevented Haedlac from being teleported to aid

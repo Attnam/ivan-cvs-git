@@ -210,10 +210,10 @@ void configuration::ShowConfigScreen()
 
 void configuration::SetDefaultName(const std::string& What)
 {
-  if(What.length() < 3)
-    DefaultName.resize(0);
-  else
+  if(What.length())
     DefaultName = What;
+  else
+    DefaultName.resize(0);
 }
 
 void configuration::SetAutoSaveInterval(long What)

@@ -53,7 +53,7 @@ character* protosystem::BalancedCreateMonster()
 			  break;
 		      }
 
-		    if(c < 100 && game::GetPlayer()->GetMaxHP() < i->second.HPRequirementForGeneration)
+		    if(c < 100 && PLAYER->GetMaxHP() < i->second.HPRequirementForGeneration)
 		      break;
 
 		    if(c < 100 && !i->second.IsUnique && RAND() % 3)
@@ -64,7 +64,7 @@ character* protosystem::BalancedCreateMonster()
 
 		    character* Monster = Proto->Clone(i->first);
 
-		     if(c >= 100 || (Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && (i->second.IsUnique || game::GetPlayer()->GetTimeToKill(Monster, true) < 100000)))
+		     if(c >= 100 || (Monster->GetTimeToKill(PLAYER, true) > 10000 && (i->second.IsUnique || PLAYER->GetTimeToKill(Monster, true) < 100000)))
 		      {
 			game::SignalGeneration(ChosenType, i->first);
 			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -171,7 +171,7 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 
 		    if(MinDanger > 0 || MaxDanger < 10000)
 		      {
-			ushort Danger = ushort(Monster->GetRelativeDanger(game::GetPlayer()) * 100.0f);
+			ushort Danger = ushort(Monster->GetRelativeDanger(PLAYER) * 100.0f);
 
 			if(Danger < MinDanger || Danger > MaxDanger)
 			  {

@@ -360,7 +360,7 @@ ulong item::GetBlockModifier() const
 
 bool item::CanBeSeenByPlayer() const
 {
-  return CanBeSeenBy(game::GetPlayer());
+  return CanBeSeenBy(PLAYER);
 }
 
 bool item::CanBeSeenBy(const character* Who) const
@@ -552,7 +552,7 @@ void item::SignalSpoil(material*)
 
 bool item::CarriedByPlayer() const
 {
-  return CarriedBy(game::GetPlayer());
+  return CarriedBy(PLAYER);
 }
 
 bool item::CarriedBy(const character* Who) const
@@ -595,7 +595,7 @@ void item::Break()
   DonateSlotTo(Broken);
   SendToHell();
 
-  if(game::GetPlayer()->Equips(Broken))
+  if(PLAYER->Equips(Broken))
     game::AskForKeyPress("Equipment broken! [press any key to continue]");
 }
 
@@ -726,3 +726,4 @@ bool item::IsBroken() const
 {
   return (Config & BROKEN) != 0;
 }
+
