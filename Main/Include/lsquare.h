@@ -70,6 +70,7 @@ public:
 	virtual level* CMotherLevel(void) const { return MotherLevel; }
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
+	virtual void HandleFluids(void);
 private:
 	level* MotherLevel;
 	ushort CalculateEmitation(void) const;
@@ -89,6 +90,7 @@ private:
 	std::string Engraved, RememberedItems;
 	uchar DivineOwner;
 	bool Fluided;
+	ushort TimeFromSpill;
 };
 
 #endif

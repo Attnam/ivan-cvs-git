@@ -87,8 +87,9 @@ void levelsquare::DrawToTileBuffer(void) const
 	GroundTerrain->DrawToTileBuffer();
 
 	if(Fluided)
-		game::CCurrentLevel()->CFluidBuffer()->MaskedBlit(igraph::CTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16);
-
+	{
+		game::CCurrentLevel()->CFluidBuffer()->MaskedBlit(igraph::CTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
+	}
 	OverTerrain->DrawToTileBuffer();
 	CStack()->PositionedDrawToTileBuffer();
 
@@ -371,7 +372,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	if(!Fluided)
 	{
 		Fluided = true;
-
+		TimeFromSpill = 0;
 		CMotherLevel()->CFluidBuffer()->ClearToColor(Pos.X << 4, Pos.Y << 4, 16, 16, 0xF81F);
 	}
 
@@ -554,4 +555,16 @@ char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) cons
 		return 2;
 	}
 	return COverTerrain()->CanBeDigged();
+}
+
+
+
+void levelsquare::HandleFluids(void)
+{
+	if(TimeFromSpill > 255)
+		Fluided = false;
+	else
+		TimeFromSpill++;
+	if(Fluided)
+		UpdateMemorizedAndDraw();
 }

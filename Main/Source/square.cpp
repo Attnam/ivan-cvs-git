@@ -95,3 +95,4 @@ void square::ChangeTerrain(groundterrain* NewGround, overterrain* NewOver)
 	SOverTerrain(NewOver);
 	COverTerrain()->SSquareUnder(this);
 }
+

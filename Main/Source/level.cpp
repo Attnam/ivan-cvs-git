@@ -551,9 +551,10 @@ void level::HandleCharacters(void)
 		for(ushort y = 0; y < YSize; y++)
 		{
 			Map[x][y]->HandleCharacters();
-
+			
 			Population += Map[x][y]->CPopulation();
 
+			Map[x][y]->HandleFluids();
 			if(!game::CRunning())
 				return;
 		}

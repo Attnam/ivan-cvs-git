@@ -29,6 +29,7 @@
 #define GET_GREEN(Color)	((Color >> 3) & 0xFC)
 #define GET_BLUE(Color)		((Color << 3) & 0xF8)
 
+#define PINK 0xF81F
 class bitmap;
 
 class igraph
