@@ -412,4 +412,5 @@ Library improvement - When walking towards the book cases should show the invent
 Wand of change material (change everything in wand path to material of the wand).
 Go should stop if the player teleports.
 Ability to absorb specific elemental damage.
+Corpse which makes you sober.
 Ivan should buy vodka from player.

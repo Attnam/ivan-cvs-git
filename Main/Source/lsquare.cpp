@@ -1782,6 +1782,10 @@ void lsquare::RequestForBorderPartnerUpdates()
 	lsquare* Square = GetNeighbourLSquare(d);
 
 	if(Square)
-	  Square->CalculateBorderPartners();
+	  {
+	    Square->CalculateBorderPartners();
+	    Square->NewDrawRequested = true;
+	    Square->MemorizedUpdateRequested = true;
+	  }
       }
 }

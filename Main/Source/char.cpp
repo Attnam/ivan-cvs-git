@@ -4360,11 +4360,13 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
   bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
   bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-  return ((game::IsInWilderness() && Visible)
-      || (MayBeESPSeen && (Theoretically
-      || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare()))) && true
-      || (!Visible && false || Theoretically
-      || SquareUnderCanBeSeenByPlayer(MayBeInfraSeen));
+  if((game::IsInWilderness() && Visible)
+  || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
+    return true;
+  else if(!Visible)
+    return false;
+  else
+    return Theoretically || SquareUnderCanBeSeenByPlayer(MayBeInfraSeen);
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
