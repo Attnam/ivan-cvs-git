@@ -567,6 +567,10 @@ You should get a bonus to your carrying capacity equal to your arms' weight (or 
 More funny and strange features, less swift and deadly ways to die. (from Timofei Shatrov)
 Extra blood mode.
 Code improvement: char.cpp could be split in two.
+Aligned monsters could occasionally be generated on an altar.
+Spam scrolls in dungeons.
+Carpenter, stoneworker & jeweller in Attnam.
+Maybe the item's volume could be accounted when determining SoCM intelligence requirement?
 Trapped chests.
 "Are you sure you want to step on the mine?"/"Allow stepping on discovered mines?"
 Ways to cure pet leprosy.
