@@ -60,6 +60,7 @@ public:
 	void Kick(ushort, bool, uchar);
 	long Score() const;
 	bool Polymorph();
+	void ReceiveSound(float);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;

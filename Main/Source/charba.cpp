@@ -41,7 +41,7 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 	ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 20000);
 
 	SetHP(HP - Damage);
-
+	GetStack()->ReceiveSound(ScreamStrength);
 	CheckDeath("killed by an Enner Beast's scream");
 }
 

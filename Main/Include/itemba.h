@@ -66,6 +66,7 @@ public:
 	virtual bool Zap(vector2d, uchar);
 	virtual bool CanBeZapped() const { return false; }
 	virtual bool Polymorph(stack*);
+	virtual bool ReceiveSound(float, bool, stack*) {return false;}
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

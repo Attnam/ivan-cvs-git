@@ -390,3 +390,9 @@ bool stack::Polymorph()
 
 	return true;
 }
+
+void stack::ReceiveSound(float Strength)
+{
+	for(int x = 0; x < GetItems(); x++) // PROBLEM!!! This probably has the same problems as kick... So...
+		GetItem(x)->ReceiveSound(Strength, GetSquareUnder()->CanBeSeen(), this);
+}

@@ -59,11 +59,12 @@ bool ennerbeast::Hit(character*)
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 100,
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
-
+		float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare<float>(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
 		if(Char && Char != this)
-			Char->ReceiveSound(Message, rand() % 26 - rand() % 26, GetMeleeStrength() * GetStrength() / GetHypotSquare<float>(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
-
-
+			Char->ReceiveSound(Message, rand() % 26 - rand() % 26,ScreamStrength);
+		game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
+		for(int x = 0; x < 4; x++)
+			game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
 	});
 
 	SetStrengthExperience(GetStrengthExperience() + 100);

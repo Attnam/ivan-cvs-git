@@ -383,3 +383,16 @@ vector2d can::GetBitmapPos() const
 	else
 		RETV(144,304)
 }
+
+bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
+{
+	if(rand() % 5 && Strength > 5 + rand() % 10)
+	{
+		ImpactDamage(ushort(Strength), Shown, ItemsStack);
+		if(Shown)
+			ADD_MESSAGE("The lamp is destroyed by the sound.");
+		return true;
+	}
+	return false;
+	
+}

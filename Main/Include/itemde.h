@@ -75,6 +75,7 @@ public:
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,192)
 	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual bool ReceiveSound(float, bool, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
