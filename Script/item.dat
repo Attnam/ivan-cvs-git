@@ -3157,3 +3157,12 @@ scrollofhardenmaterial /* scroll-> */
 	AttachedGod = LORICATUS;
 	ReadDifficulty = 500;
 }
+
+scrollofgolemcreation /* scroll-> */
+{
+	Possibility = 125;
+	Price = 250;
+	PostFix = "of golem creation";
+	AttachedGod = SOPHOS;
+	ReadDifficulty = 100;
+}
