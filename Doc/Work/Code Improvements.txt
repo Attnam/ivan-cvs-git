@@ -37,3 +37,4 @@ Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
 *Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
 Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
+Värimakrojen sisärivittäminen.

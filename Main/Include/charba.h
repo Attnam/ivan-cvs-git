@@ -123,6 +123,7 @@ struct characterdatabase
   bool CanBeWished;
   std::vector<std::string> Alias;
   bool CreateDivineConfigurations;
+  bool CreateSolidMaterialConfigurations;
 };
 
 class characterprototype
@@ -142,6 +143,7 @@ class characterprototype
   PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
   const std::string& GetClassId() const { return ClassId; }
+  void CreateSpecialConfigurations();
  protected:
   ushort Index;
   characterdatabase DataBase;
@@ -480,6 +482,7 @@ class character : public entity, public id
   virtual DATABASEVALUE(ushort, ClassStates);
   virtual DATABASEBOOL(CanBeWished);
   virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
+  virtual DATABASEBOOL(CreateSolidMaterialConfigurations);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -635,8 +638,9 @@ class character : public entity, public id
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
  protected:
+  virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
-  void Initialize(uchar, bool, bool);
+  void Initialize(ushort, bool, bool);
   virtual void VirtualConstructor(bool) { }
   virtual void LoadDataBaseStats();
   void InstallDataBase();
@@ -653,7 +657,7 @@ class character : public entity, public id
   virtual void UpdateBodyPartPictures();
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts();
-  virtual material* CreateBodyPartFlesh(ushort, ulong) const = 0;
+  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
   virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual bool ShowClassDescription() const { return true; }

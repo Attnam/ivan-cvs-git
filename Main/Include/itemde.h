@@ -885,6 +885,7 @@ class ABSTRACT_ITEM
   bool PairArmAllowsMelee() const;
   void AddAttackInfo(felist&) const;
   virtual void SignalVolumeAndWeightChange();
+  bool DualWieldIsActive() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;

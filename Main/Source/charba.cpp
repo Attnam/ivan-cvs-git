@@ -145,6 +145,8 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
       return HASHIT;
     }
 
+  /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
+
   if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) >= 100)
     {
       ushort Damage = ushort(AttackStrength * (100 + Success) / 5000000) + (RAND() % 3 ? 1 : 0);
@@ -207,12 +209,12 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 
   while(SVQueue.size())
     {
-      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetBodyPartVolume() * 100 / (DodgeValue * GetBodyVolume()));
+      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetBodyPartVolume() / (DodgeValue * GetBodyVolume()));
 
       if(ToHitPercentage < 1)
 	ToHitPercentage = 1;
-      else if(ToHitPercentage > 99)
-	ToHitPercentage = 99;
+      else if(ToHitPercentage > 95)
+	ToHitPercentage = 95;
 
       if(ToHitPercentage > RAND() % 100)
 	return SVQueue.top().BodyPart;
@@ -2861,11 +2863,6 @@ void character::TestWalkability()
     }
 }
 
-material* character::CreateBodyPartBone(ushort, ulong Volume) const
-{
-  return MAKE_MATERIAL(BONE, Volume);
-}
-
 ushort character::GetSize() const
 {
   if(GetTorso())
@@ -2963,13 +2960,13 @@ bool character::SecretKnowledge()
 {
   felist List("Knowledge of the ancients", WHITE, 0);
 
-  List.AddEntry("Character attacks", LIGHTGRAY);
-  //List.AddEntry("Character attacks");
+  List.AddEntry("Character attack info", LIGHTGRAY);
+  List.AddEntry("Character defence info", LIGHTGRAY);
 
   ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16));
   List.Empty();
 
-  if(Chosen < 1)
+  if(Chosen < 2)
     {
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
@@ -2991,9 +2988,44 @@ bool character::SecretKnowledge()
 	    }
 
 	  break;
+	case 1:
+	  List.AddDescription("                                                  DV        HP        AV");
+
+	  for(c = 0; c < Character.size(); ++c)
+	    {
+	      std::string Entry;
+	      Character[c]->AddName(Entry, UNARTICLED);
+	      Entry.resize(47, ' ');
+	      Entry << int(Character[c]->GetDodgeValue());
+	      Entry.resize(57, ' ');
+	      Entry << Character[c]->GetMaxHP();
+	      Pic.Fill(TRANSPARENTCOL);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
+
+	      for(ushort b = 0; b < Character[c]->GetBodyParts(); ++b)
+		{
+		  bodypart* BodyPart = Character[c]->GetBodyPart(b);
+
+		  if(BodyPart)
+		    {
+		      std::string Entry = "   ";
+		      BodyPart->AddName(Entry, UNARTICLED);
+		      Entry.resize(60, ' ');
+		      Entry << BodyPart->GetMaxHP();
+		      Entry.resize(70, ' ');
+		      Entry << BodyPart->GetTotalResistance(PHYSICALDAMAGE);
+		      List.AddEntry(Entry, LIGHTGRAY);
+		    }
+		}
+	    }
+
+	  break;
 	}
 
-      List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16), false);
+      List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
+      List.PrintToFile(GAME_DIR + "secret" + Chosen + ".txt");
+      ADD_MESSAGE("Info written also to %ssecret%d.txt.", GAME_DIR.c_str(), Chosen);
 
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
@@ -3669,7 +3701,7 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
   return Char;
 }
 
-void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
+void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
 {
   Initializing = true;
   CalculateBodyParts();
@@ -4116,7 +4148,7 @@ void character::DrawPanel(bool AnimationDraw) const
 
 void character::CalculateDodgeValue()
 {
-  DodgeValue = float(GetMoveEase()) * GetAttribute(AGILITY) / (sqrt(GetSize()) * 20);
+  DodgeValue = float(GetMoveEase()) * GetAttribute(AGILITY) / (sqrt(GetSize()) * 10);
 
   if(DodgeValue < 1)
     DodgeValue = 1;
@@ -4178,7 +4210,7 @@ bool character::ShowWeaponSkills()
   felist List("Your experience in weapon categories", WHITE, 0);
 
   List.AddDescription("");
-  List.AddDescription("Category name                 Level     Points    To next level");
+  List.AddDescription("Category name                 Level     Points    Needed    AS/THV    APC");
 
   bool Something = false;
 
@@ -4186,21 +4218,25 @@ bool character::ShowWeaponSkills()
     if(GetCategoryWeaponSkill(c)->GetHits())
       {
 	std::string Buffer;
-
 	Buffer += GetCategoryWeaponSkill(c)->Name();
 	Buffer.resize(30, ' ');
-
 	Buffer += GetCategoryWeaponSkill(c)->GetLevel();
 	Buffer.resize(40, ' ');
-
 	Buffer += GetCategoryWeaponSkill(c)->GetHits();
 	Buffer.resize(50, ' ');
 
 	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-	  List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), LIGHTGRAY);
+	  Buffer += (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits());
 	else
-	  List.AddEntry(Buffer + '-', LIGHTGRAY);
+	  Buffer += '-';
 
+	Buffer.resize(60, ' ');
+	Buffer += int(GetCategoryWeaponSkill(c)->GetEffectBonus() * 100 - 100);
+	Buffer += '%';
+	Buffer.resize(70, ' ');
+	Buffer += int(GetCategoryWeaponSkill(c)->GetAPBonus() * 100 - 100);
+	Buffer += '%';
+	List.AddEntry(Buffer, LIGHTGRAY);
 	Something = true;
       }
 
@@ -4316,6 +4352,9 @@ void character::BeginTemporaryState(ushort State, ushort Counter)
 
 void character::HandleStates()
 {
+  if(!TemporaryState && !EquipmentState)
+    return;
+
   for(ushort c = 0; c < STATES; ++c)
     {
       if(TemporaryState & (1 << c) && TemporaryStateCounter[c])
@@ -5249,4 +5288,38 @@ ushort character::GetRandomNotActivatedState()
   return OKStates[RAND() % NumberOfOKStates];
 }
 
+void characterprototype::CreateSpecialConfigurations()
+{
+  if(DataBase.CreateSolidMaterialConfigurations)
+    for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+      {
+	const material::databasemap& MaterialConfig = protocontainer<material>::GetProto(c)->GetConfig();
 
+	for(material::databasemap::const_iterator i = MaterialConfig.begin(); i != MaterialConfig.end(); ++i)
+	  if(i->second.IsSolid && Config.find(i->first) == Config.end())
+	    {
+	      character::database TempDataBase(DataBase);
+	      TempDataBase.InitDefaults();
+	      Config[i->first] = TempDataBase;
+	    }
+      }
+}
+
+material* character::CreateBodyPartBone(ushort, ulong Volume) const
+{
+  if(!CreateSolidMaterialConfigurations())
+    return MAKE_MATERIAL(BONE, Volume);
+  else
+    return MAKE_MATERIAL(Config, Volume);
+}
+
+material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
+{
+  if(CreateSolidMaterialConfigurations())
+    return MAKE_MATERIAL(Config, Volume);
+  else
+    {
+      ABORT("Character materialization error detected!");
+      return 0;
+    }
+}

@@ -63,6 +63,8 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 		Proto->Config[c] = TempDataBase;
 	      }
 	}
+
+      Proto->CreateSpecialConfigurations();
     }
 }
 
@@ -192,6 +194,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(CanBeWished);
   ANALYZEDATA(Alias);
   ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(CreateSolidMaterialConfigurations);
 
   return Found;
 }
@@ -361,6 +364,13 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
 void databasesystem::Initialize()
 {
   {
+    /* Must be before character */
+
+    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
+    database<material>::ReadFrom(ScriptFile);
+  }
+
+  {
     inputfile ScriptFile(GAME_DIR + "Script/char.dat");
     database<character>::ReadFrom(ScriptFile);
   }
@@ -378,10 +388,5 @@ void databasesystem::Initialize()
   {
     inputfile ScriptFile(GAME_DIR + "Script/olterra.dat");
     database<olterrain>::ReadFrom(ScriptFile);
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
-    database<material>::ReadFrom(ScriptFile);
   }
 }

@@ -250,26 +250,6 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
   return 0;
 }
 
-material* protosystem::CreateRandomSolidMaterial(ulong Volume)
-{
-  for(ushort c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1);; c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1))
-    {
-      const material::prototype* Proto = protocontainer<material>::GetProto(c);
-      const material::databasemap& Config = Proto->GetConfig();
-
-      uchar j = 0, r = RAND() % Config.size();
-
-      for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i, ++j)
-	if(j == r)
-	  {
-	    if(i->second.IsSolid)
-	      return Proto->Clone(i->first, Volume);
-
-	    break;
-	  }
-    }
-}
-
 void protosystem::GenerateCodeNameMaps()
 {
   protocontainer<action>::GenerateCodeNameMap();
@@ -295,7 +275,10 @@ void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
 	Character.push_back(Proto->Clone());
 
       for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	{
+	ushort p = i->first;
 	Character.push_back(Proto->Clone(i->first));
+	}
     }
 }
 

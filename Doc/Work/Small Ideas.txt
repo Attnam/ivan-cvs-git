@@ -269,3 +269,4 @@ If an invisible monster hits another monster, the latter should set the hitter's
 Bodyparts should be rotated when they are severed.
 Weight should be the fundamental character of materials, not volume?
 Kicking should do more damage if metal boots are worn.
+Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.

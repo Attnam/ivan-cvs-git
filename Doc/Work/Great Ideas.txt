@@ -43,3 +43,4 @@ Script event system.
 Intergame pets.
 Player god.
 Different holy water effects for each god.
+Camera.

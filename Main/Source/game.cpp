@@ -231,7 +231,12 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new darkknight(0, false));
+	Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
+	Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
+	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);
+	Player->CalculateAll();
+
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -1184,7 +1189,7 @@ void game::BusyAnimation(bitmap* Buffer)
 
   if(!ElpuriLoaded)
     {
-      ushort Color = MAKE_RGB(48, 48, 48);
+      ushort Color = MAKE_RGB(60, 60, 60);
       igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
       ElpuriLoaded = true;
     }

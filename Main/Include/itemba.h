@@ -98,6 +98,7 @@ class itemprototype
   PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
   PROTODATABASEBOOL(IsAbstract);
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
+  void CreateSpecialConfigurations() { }
  protected:
   ushort Index;
   itemdatabase DataBase;
@@ -290,7 +291,7 @@ class item : public object
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
-  void Initialize(uchar, bool, bool);
+  void Initialize(ushort, bool, bool);
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual bool ShowMaterial() const;

@@ -327,7 +327,7 @@ void item::LoadDataBaseStats()
   SetSize(GetDefaultSize());
 }
 
-void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
+void item::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
 {
   if(!Load)
     {

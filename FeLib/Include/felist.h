@@ -67,6 +67,7 @@ class felist
   bool DrawPage(bitmap*) const;
   void Pop() { Entry.pop_back(); }
   static void CreateQuickDrawFontCaches(colorizablebitmap*, ushort, ushort);
+  void PrintToFile(const std::string&);
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;

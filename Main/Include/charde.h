@@ -143,7 +143,7 @@ class ABSTRACT_CHARACTER
   virtual ushort GetBodyPartColorB(ushort, ushort);
   virtual ushort GetBodyPartColorC(ushort, ushort);
   virtual ushort GetBodyPartColorD(ushort, ushort);
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(HUMANFLESH, Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
@@ -441,9 +441,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual std::string GetDeathMessage() { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
-  virtual bool ShowMaterial() const { return true; }
 );
 
 class CHARACTER

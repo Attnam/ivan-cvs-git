@@ -393,7 +393,7 @@
 #define DIR_ERROR 0xFF
 #define DIR_ERROR_VECTOR vector2d(666, 666)
 
-#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 0.10f
+#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0f
 
 #define HELMETINDEX 0
 #define AMULETINDEX 1
@@ -463,7 +463,5 @@
 
 /* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
-
-
 
 #endif

@@ -82,7 +82,7 @@ class lterrain : public object
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
  protected:
-  void Initialize(uchar, bool, bool);
+  void Initialize(ushort, bool, bool);
   virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;
 };
@@ -105,6 +105,7 @@ class glterrainprototype
   const glterraindatabase* GetDataBase() const { return &DataBase; }
   const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
   const glterrainprototype* GetBase() const { return Base; }
+  void CreateSpecialConfigurations() { }
  protected:
   ushort Index;
   glterraindatabase DataBase;
@@ -180,6 +181,7 @@ class olterrainprototype
   const olterraindatabase* GetDataBase() const { return &DataBase; }
   const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
   const olterrainprototype* GetBase() const { return Base; }
+  void CreateSpecialConfigurations() { }
  protected:
   ushort Index;
   olterraindatabase DataBase;

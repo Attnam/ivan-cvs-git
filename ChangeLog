@@ -1,7 +1,20 @@
+July 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Single weapon skill's LevelDownMessage is now printed correctly when the item is
+	  wielded
+	* Doubled all dodge values
+	* Added "character defence values" option to SecretKnowledge
+	* SecretKnowledge now writes the shown information to a file afterwards
+	* Added CreateSolidMaterialConfigurations character database boolean that can be
+	  used to easily add golem-like monsters
+	* SecretKnowledge now shows all possible golems as separate entries
+	* Attack info of nonliving bodyparts is calculated correctly at last
+	* Strength no longer affects THV, as it made golems far too powerful
+	* Halved the AP cost of biting
+
 July 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* void globalwindowhandler::UpdateTick() changed to return Tick
-
 
 July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

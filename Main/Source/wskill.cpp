@@ -124,7 +124,7 @@ void sweaponskill::Load(inputfile& SaveFile)
 
 bool gweaponskill::Tick()
 {
-  if(HitCounter++ >= UnuseTickMap[Level])
+  if(Hits && HitCounter++ >= UnuseTickMap[Level])
     {
       HitCounter -= UnuseTickMap[Level];
 

@@ -182,10 +182,10 @@ void humanoid::Load(inputfile& SaveFile)
 bool golem::MoveRandomly()
 {
   if(!(RAND() % 500))
-  {
-    Engrave("Golem Needs Master");
-    return true;
-  }
+    {
+      Engrave("Golem Needs Master");
+      return true;
+    }
   else
     return character::MoveRandomly();
 }
@@ -406,35 +406,51 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 
   if(CurrentRightSingleWeaponSkill && CurrentRightSingleWeaponSkill->GetHits())
     {
-      List.AddEntry("", RED);
-      std::string Buffer = "current right single weapon skill:  ";
+      List.AddEntry("", LIGHTGRAY);
+      std::string Buffer = "right single weapon skill:  ";
+      Buffer.resize(30, ' ');
       Buffer += CurrentRightSingleWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
       Buffer += CurrentRightSingleWeaponSkill->GetHits();
       Buffer.resize(50, ' ');
 
       if(CurrentRightSingleWeaponSkill->GetLevel() != 10)
-	List.AddEntry(Buffer + (CurrentRightSingleWeaponSkill->GetLevelMap(CurrentRightSingleWeaponSkill->GetLevel() + 1) - CurrentRightSingleWeaponSkill->GetHits()), RED);
+	Buffer += (CurrentRightSingleWeaponSkill->GetLevelMap(CurrentRightSingleWeaponSkill->GetLevel() + 1) - CurrentRightSingleWeaponSkill->GetHits());
       else
-	List.AddEntry(Buffer + '-', RED);
+	Buffer += '-';
 
+      Buffer.resize(60, ' ');
+      Buffer += int(CurrentRightSingleWeaponSkill->GetEffectBonus() * 100 - 100);
+      Buffer += '%';
+      Buffer.resize(70, ' ');
+      Buffer += int(CurrentRightSingleWeaponSkill->GetAPBonus() * 100 - 100);
+      Buffer += '%';
+      List.AddEntry(Buffer, LIGHTGRAY);
       Something = true;
     }
 
   if(CurrentLeftSingleWeaponSkill && CurrentLeftSingleWeaponSkill->GetHits())
     {
-      List.AddEntry("", RED);
-      std::string Buffer = "current left single weapon skill:  ";
+      List.AddEntry("", LIGHTGRAY);
+      std::string Buffer = "left single weapon skill:  ";
+      Buffer.resize(30, ' ');
       Buffer += CurrentLeftSingleWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
       Buffer += CurrentLeftSingleWeaponSkill->GetHits();
       Buffer.resize(50, ' ');
 
       if(CurrentLeftSingleWeaponSkill->GetLevel() != 10)
-	List.AddEntry(Buffer + (CurrentLeftSingleWeaponSkill->GetLevelMap(CurrentLeftSingleWeaponSkill->GetLevel() + 1) - CurrentLeftSingleWeaponSkill->GetHits()), RED);
+	Buffer += (CurrentLeftSingleWeaponSkill->GetLevelMap(CurrentLeftSingleWeaponSkill->GetLevel() + 1) - CurrentLeftSingleWeaponSkill->GetHits());
       else
-	List.AddEntry(Buffer + '-', RED);
+	Buffer += '-';
 
+      Buffer.resize(60, ' ');
+      Buffer += int(CurrentLeftSingleWeaponSkill->GetEffectBonus() * 100 - 100);
+      Buffer += '%';
+      Buffer.resize(70, ' ');
+      Buffer += int(CurrentLeftSingleWeaponSkill->GetAPBonus() * 100 - 100);
+      Buffer += '%';
+      List.AddEntry(Buffer, LIGHTGRAY);
       Something = true;
     }
 
@@ -2323,7 +2339,7 @@ void nonhumanoid::CalculateUnarmedStrength()
 
 void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  UnarmedToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
+  UnarmedToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
 }
 
 void nonhumanoid::CalculateUnarmedAPCost()
@@ -2338,7 +2354,7 @@ void nonhumanoid::CalculateKickStrength()
 
 void nonhumanoid::CalculateKickToHitValue()
 {
-  KickToHitValue = ((GetAttribute(AGILITY) << 2) + GetAttribute(LEGSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
+  KickToHitValue = ((GetAttribute(AGILITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
 void nonhumanoid::CalculateKickAPCost()
@@ -2353,12 +2369,12 @@ void nonhumanoid::CalculateBiteStrength()
 
 void nonhumanoid::CalculateBiteToHitValue()
 {
-  BiteToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
+  BiteToHitValue = ((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
 void nonhumanoid::CalculateBiteAPCost()
 {
-  BiteAPCost = long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 1000 / GetMoveEase());
+  BiteAPCost = long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -2968,14 +2984,6 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
   return Damage;
 }
 
-material* golem::CreateBodyPartFlesh(ushort Index, ulong Volume) const
-{
-  if(Index == TORSOINDEX)
-    return protosystem::CreateRandomSolidMaterial(Volume);
-  else
-    return GetTorso()->GetMainMaterial()->Clone(Volume);
-}
-
 bool humanoid::CanWield() const
 {
   return CanUseEquipment(RIGHTWIELDEDINDEX) || CanUseEquipment(LEFTWIELDEDINDEX);
@@ -3047,7 +3055,7 @@ bool humanoid::EquipmentEasilyRecognized(ushort Index) const
   return true;
 }
 
-void humanoid::VirtualConstructor(bool Load)
+void humanoid::VirtualConstructor(bool)
 {
   SetCurrentRightSingleWeaponSkill(0);
   SetCurrentLeftSingleWeaponSkill(0);
@@ -3132,12 +3140,21 @@ void humanoid::CharacterSpeciality()
   for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
     {
       if((*i)->Tick() && IsPlayer())
-	for(stackiterator j = GetStack()->GetBottomSlot(); j != GetStack()->GetSlotAboveTop(); ++j)
-	  if((*i)->GetID() == (**j)->GetID())
-	    {
-	      (*i)->AddLevelDownMessage((**j)->GetName(UNARTICLED));
-	      break;
-	    }
+	{
+	  for(stackiterator j = GetStack()->GetBottomSlot(); j != GetStack()->GetSlotAboveTop(); ++j)
+	    if((*i)->GetID() == (**j)->GetID())
+	      {
+		(*i)->AddLevelDownMessage((**j)->GetName(UNARTICLED));
+		break;
+	      }
+
+	  for(ushort c = 0; c < EquipmentSlots(); ++c)
+	    if(GetEquipment(c) && GetEquipment(c)->GetID() == (*i)->GetID())
+	      {
+		(*i)->AddLevelDownMessage(GetEquipment(c)->GetName(UNARTICLED));
+		break;
+	      }
+	}
 
       if(!(*i)->GetHits() && *i != GetCurrentRightSingleWeaponSkill() && *i != GetCurrentLeftSingleWeaponSkill())
 	{
@@ -3436,7 +3453,7 @@ void humanoid::AddAttackInfo(felist& List) const
       Entry << int(KickLeg->GetKickToHitValue());
       Entry.resize(70, ' ');
       Entry << -KickLeg->GetKickAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 
   if(IsUsingHead())
@@ -3448,7 +3465,7 @@ void humanoid::AddAttackInfo(felist& List) const
       Entry << int(GetHead()->GetBiteToHitValue());
       Entry.resize(70, ' ');
       Entry << -GetHead()->GetBiteAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 }
 
@@ -3463,7 +3480,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetUnarmedToHitValue());
       Entry.resize(70, ' ');
       Entry << -GetUnarmedAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 
   if(IsUsingLegs())
@@ -3475,7 +3492,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetKickToHitValue());
       Entry.resize(70, ' ');
       Entry << -GetKickAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 
   if(IsUsingHead())
@@ -3487,7 +3504,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetBiteToHitValue());
       Entry.resize(70, ' ');
       Entry << -GetBiteAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 }
 
@@ -3536,4 +3553,12 @@ void nonhumanoid::CalculateBiteAttackInfo()
 leg* humanoid::GetKickLeg() const
 {
   return GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength() ? static_cast<leg*>(GetRightLeg()) : static_cast<leg*>(GetLeftLeg());
+}
+
+material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
+{
+  if(!CreateSolidMaterialConfigurations())
+    return MAKE_MATERIAL(HUMANFLESH, Volume);
+  else
+    return MAKE_MATERIAL(Config, Volume);
 }

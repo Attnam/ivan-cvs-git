@@ -1343,17 +1343,17 @@ bool key::Apply(character* User)
 
 float arm::GetUnarmedStrength() const
 {
-  return GetBaseUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
+  return GetBaseUnarmedStrength() * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
 float arm::GetUnarmedToHitValue() const
 {
-  return ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 100;
+  return ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 100;
 }
 
 long arm::GetUnarmedAPCost() const
 {
-  return long(GetMaster()->GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(Dexterity) - 200) * 500 / GetMaster()->GetMoveEase());
+  return long(GetMaster()->GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMaster()->GetMoveEase());
 }
 
 void arm::CalculateAttackStrength()
@@ -1397,15 +1397,10 @@ float arm::GetWieldedStrength() const
   if(GetWielded()->IsShield(Master))
     return 0;
 
-  float HitStrength = Strength;
+  float HitStrength = GetAttribute(ARMSTRENGTH);
 
-  if(GetWielded()->IsTwoHanded())
-    {
-      arm* PairArm = GetPairArm();
-
-      if(PairArm && !PairArm->GetWielded())
-	HitStrength += PairArm->Strength;
-    }
+  if(DualWieldIsActive())
+    HitStrength += GetPairArm()->GetAttribute(ARMSTRENGTH);
 
   return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus();
 }
@@ -1419,14 +1414,14 @@ float arm::GetWieldedToHitValue() const
     Weight = 500;
 
   float Bonus = GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() / (100 + (Weight - 500) / 25);
-  float ThisToHit = ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION));
+  float ThisToHit = ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION));
 
   if(PairArm)
     {
       if(!PairArm->GetWielded())
 	{
 	  if(GetWielded()->IsTwoHanded())
-	    return Bonus * (ThisToHit + ((PairArm->Dexterity << 2) + PairArm->Strength + GetMaster()->GetAttribute(PERCEPTION))) / 2;
+	    return Bonus * (ThisToHit + ((PairArm->GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION))) / 2;
 	}
       else
 	{
@@ -1452,13 +1447,13 @@ long arm::GetWieldedAPCost() const
       if(!PairArm->GetWielded())
 	{
 	  if(GetWielded()->IsTwoHanded())
-	    return long(SkillPenalty * ((float(Dexterity + PairArm->Dexterity) - 400) * 2.5f - GetWielded()->GetWeight() / 50));
+	    return long(SkillPenalty * ((float(GetAttribute(DEXTERITY) + PairArm->GetAttribute(DEXTERITY)) - 400) * 2.5f - GetWielded()->GetWeight() / 50));
 	}
       else
-	return long(SkillPenalty * ((float(Dexterity) - 200) * 5 - (GetWielded()->GetWeight() + GetPairArm()->GetWielded()->GetWeight()) / 50));
+	return long(SkillPenalty * ((float(GetAttribute(DEXTERITY)) - 200) * 5 - (GetWielded()->GetWeight() + GetPairArm()->GetWielded()->GetWeight()) / 50));
     }
 
-  return long(SkillPenalty * ((float(Dexterity) - 200) * 5 - GetWielded()->GetWeight() / 50));
+  return long(SkillPenalty * ((float(GetAttribute(DEXTERITY)) - 200) * 5 - GetWielded()->GetWeight() / 50));
 }
 
 void head::CalculateAttackStrength()
@@ -1473,17 +1468,17 @@ void head::CalculateAPCost()
 
 void leg::CalculateAttackStrength()
 {
-  KickStrength = GetBaseKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus();
+  KickStrength = GetBaseKickStrength() * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus();
 }
 
 void leg::CalculateToHitValue()
 {
-  KickToHitValue = ((Agility << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 200;
+  KickToHitValue = ((GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 200;
 }
 
 void leg::CalculateAPCost()
 {
-  KickAPCost = long(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(Agility) - 200) * 1000 / GetMaster()->GetMoveEase());
+  KickAPCost = long(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMaster()->GetMoveEase());
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -1629,6 +1624,9 @@ void corpse::SetDeceased(character* What)
 
 void bodypart::Regenerate()
 {
+  if(HP == MaxHP)
+    return;
+
   if(MainMaterial->IsAlive())
     {
       ulong RegenerationBonus = ulong(MaxHP) * Master->GetAttribute(ENDURANCE);
@@ -2280,9 +2278,8 @@ bool arm::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -2290,9 +2287,8 @@ bool arm::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -2301,9 +2297,8 @@ bool arm::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels quite dextrous.", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -2311,9 +2306,8 @@ bool arm::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels clumsy.", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -2329,9 +2323,8 @@ bool leg::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
 
       GetMaster()->CalculateBurdenState();
       Edited = true;
@@ -2340,9 +2333,8 @@ bool leg::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
 
       GetMaster()->CalculateBurdenState();
       Edited = true;
@@ -2352,9 +2344,8 @@ bool leg::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels very agile!", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -2362,9 +2353,8 @@ bool leg::ApplyExperience()
     {
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels slower.", CHARNAME(UNARTICLED));
-      else
-	if(game::IsInWilderness() || CanBeSeenByPlayer())
-	  ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
 
       Edited = true;
     }
@@ -3145,13 +3135,11 @@ void arm::AddAttackInfo(felist& List) const
 	{
 	  GetWielded()->AddName(Entry, UNARTICLED);
 
-	  if(GetWielded()->IsTwoHanded() && GetPairArm() && !GetPairArm()->GetWielded())
-	    Entry << " (b)";
-	  else
-	    Entry << " (r)";
+	  if(DualWieldIsActive())
+	    Entry << " (dual wield)";
 	}
       else
-	Entry << "melee attack (r)";
+	Entry << "melee attack";
 
       Entry.resize(50, ' ');
       Entry << int(GetAttackStrength() / 50000);
@@ -3159,7 +3147,7 @@ void arm::AddAttackInfo(felist& List) const
       Entry << int(GetToHitValue());
       Entry.resize(70, ' ');
       Entry << -GetAPCost();
-      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+      List.AddEntry(Entry, LIGHTGRAY);
     }
 }
 
@@ -3178,3 +3166,13 @@ void bodypart::CalculateAttackInfo()
   CalculateAPCost();
 }
 
+bool arm::DualWieldIsActive() const
+{
+  if(GetWielded()->IsTwoHanded())
+    {
+      arm* PairArm = GetPairArm();
+      return PairArm && !PairArm->GetWielded();
+    }
+  else
+    return false;
+}

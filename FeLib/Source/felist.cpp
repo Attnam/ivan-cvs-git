@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "felist.h"
 #include "graphics.h"
 #include "bitmap.h"
@@ -386,3 +388,25 @@ inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
   return SaveFile;
 }
 
+void felist::PrintToFile(const std::string& FileName)
+{
+  std::ofstream SaveFile(FileName.c_str(), std::ios::out);
+
+  if(!SaveFile.is_open())
+    return;
+
+  ushort c;
+
+  for(c = 0; c < Description.size(); ++c)
+    SaveFile << Description[c].String << std::endl;
+
+  SaveFile << std::endl;
+
+  for(c = 0; c < Entry.size(); ++c)
+    {
+      if(Entry[c].Bitmap.size())
+	SaveFile << "   ";
+
+      SaveFile << Entry[c].String << std::endl;
+    }
+}

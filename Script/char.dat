@@ -296,7 +296,6 @@ darkknight
 	LegBitmapPos = 0, 48;
 	ClothColor = rgb(0, 0, 100);
 	EyeColor = rgb(200, 0, 0);
-	CapColor = rgb(30, 30, 30);
 	TotalVolume = 110000;
 	TotalSize = 200;
 	CanRead = true;
@@ -321,7 +320,6 @@ ennerbeast
 	TotalVolume = 30000;
 	TorsoBitmapPos = 96, 0;
 	TotalSize = 150;
-	/*SkinColor = rgb(112, 112, 64);*/
 	Adjective = "enner";
 	NameSingular = "beast";
 	AdjectiveArticle = "an";
@@ -337,8 +335,6 @@ ennerbeast
 	HairColor = rgb(64, 20, 0);
 	ClothColor = rgb(0, 0, 100);
 	LegMainColor = rgb(64, 20, 0);
-
-	/* define colors */
 }
 
 frog
@@ -366,7 +362,7 @@ darkfrog
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
-	SkinColor = rgb(48, 48, 48);
+	SkinColor = rgb(60, 60, 60);
 	Adjective = "dark";
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
@@ -542,6 +538,8 @@ golem
 	ArmBitmapPos = 64, 256;
 	LegBitmapPos = 0, 256;
 	CanUseEquipment = false;
+	CreateSolidMaterialConfigurations = true;
+	IsAbstract = true;
 }
 
 wolf
@@ -717,7 +715,7 @@ polarbear
 	DefaultWisdom = 7;
 	DefaultCharisma = 15;
 	DefaultMana = 0;
-	TotalVolume = 500000;
+	TotalVolume = 400000;
 	TorsoBitmapPos = 336, 0;
 	TalkVerb = "growls";
 	TotalSize = 250;
@@ -788,7 +786,6 @@ slave
 	DefaultMana = 5;
 	SkinColor = rgb(128, 80, 48);
 	HairColor = rgb(80, 48, 32);
-	/*EyeColor = rgb(64, 48, 24);*/
 	ClothColor = rgb(56, 48, 20);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
@@ -911,7 +908,6 @@ femaleslave
 	Sex = FEMALE;
 	SkinColor = rgb(160, 100, 64);
 	HairColor = rgb(80, 48, 32);
-	/*EyeColor = rgb(64, 48, 24);*/
 	HeadBitmapPos = 112, 80;
 	TorsoBitmapPos = 32, 208;
 	ArmBitmapPos = 64, 208;
@@ -1295,7 +1291,7 @@ mammoth
 	DefaultWisdom = 7;
 	DefaultCharisma = 10;
 	DefaultMana = 0;
-	TotalVolume = 500000;
+	TotalVolume = 5000000;
 	TorsoBitmapPos = 528, 0;
 	TalkVerb = "roars";
 	TotalSize = 500;

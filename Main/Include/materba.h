@@ -63,6 +63,7 @@ class materialprototype
   const materialdatabase* GetDataBase() const { return &DataBase; }
   const materialprototype* GetBase() const { return Base; }
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
+  void CreateSpecialConfigurations() { }
  protected:
   ushort Index;
   materialdatabase DataBase;

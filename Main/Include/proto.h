@@ -55,7 +55,6 @@ class protosystem
   static character* CreateMonster(bool = true);
   static character* CreateMonster(const std::string&, bool, bool = true);
   static item* CreateItem(const std::string&, bool = true);
-  static material* CreateRandomSolidMaterial(ulong);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
   static void GenerateCodeNameMaps();
   static void CreateEveryCharacter(std::vector<character*>&);

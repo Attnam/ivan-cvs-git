@@ -163,7 +163,7 @@ olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
   return Terrain;
 }
 
-void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
+void lterrain::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
 {
   if(!Load)
     {
