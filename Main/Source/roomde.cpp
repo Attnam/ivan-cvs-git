@@ -299,14 +299,12 @@ bool cathedral::ConsumeItem(character* HungryMan, item*)
 void cathedral::Save(outputfile& SaveFile) const
 {
   room::Save(SaveFile);
-
   SaveFile << Entered;
 }
 
 void cathedral::Load(inputfile& SaveFile)
 {
   room::Load(SaveFile);
-
   SaveFile >> Entered;
 }
 
@@ -349,7 +347,6 @@ void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
   if(Teleporter->IsPlayer() && Square->GetStack()->GetItems())
     {
       ADD_MESSAGE("You have done unnatural things to the property of the Cathedral!");
-
       Teleporter->GetTeam()->Hostility(game::GetTeam(2));
     }
 }

@@ -75,7 +75,7 @@ class room
 
 #define ROOM_PROTOTYPE(name)\
   \
-  static class name##_prototype : public roomprototype\
+  class name##_prototype : public roomprototype\
   {\
    public:\
     virtual room* Clone() const { return new name; }\

@@ -271,14 +271,15 @@ long stack::Score() const
 void stack::SetSquareUnder(square* Square)
 {
   SquareUnder = Square;
+
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    (**i)->SetSquareUnder(Square);
 }
 
 void stack::Polymorph()
 {
   itemvector ItemVector;
-
   FillItemVector(ItemVector);
-
   ushort p = 0;
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
@@ -480,7 +481,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 		CatDescDrawn = true;
 	      }
 
-	    std::string Buffer = (**i)->Name(INDEFINITE);
+	    std::string Buffer = (**i)->GetName(INDEFINITE);
 
 	    if(Buffer.length() > 44)
 	      {
@@ -499,7 +500,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 	    if(!SelectItem)
 	      Buffer = "   " + Buffer;
 
-	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture(0));
+	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture());
 	  }
     }
 }
@@ -526,19 +527,20 @@ bool stack::RaiseTheDead(character* Summoner)
   return false;
 }
 
-bool stack::TryKey(key* Key, character* Applier)
+bool stack::TryKey(item* Key, character* Applier)
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
       if((**i)->TryKey(Key, Applier))
 	return true;
-    }  
+    }
+
   return false;
 }
 
 bool stack::Open(character*)
 {
-  
+  return false;
 
 
 

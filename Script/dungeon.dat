@@ -66,7 +66,7 @@ Dungeon 0;
 
 		Square, Random { Walkable=false; }
 		{
-			Item = astone;
+			Item = stone;
 			Times = 25+rand%25;
 		}
 
@@ -212,7 +212,7 @@ Dungeon 0;
 					s = wandofstriking;
 					a = lantern;
 					l = BREAD loaf;
-					t = scrollofteleport;
+					t = scrollofteleportation;
 					g = IRON can { ContainedMaterial = GOBLINOIDFLESH; }
 					p = IRON poleaxe;
 					B = BEEF loaf;
@@ -633,11 +633,11 @@ Dungeon 1;
 					s = IRON spear;
 					c = chainmail;
 					e = backpack;
-					g = GOLD astone;
-					i = SILVER astone;
-					h = SAPPHIRE astone;
-					r = RUBY astone;
-					d = DIAMOND astone;
+					g = GOLD stone;
+					i = SILVER stone;
+					h = SAPPHIRE stone;
+					r = RUBY stone;
+					d = DIAMOND stone;
 				}
 			}
 			{
@@ -782,7 +782,7 @@ Dungeon 1;
 				Size=5,3;
 				Types
 				{
-					t = scrollofteleport;
+					t = scrollofteleportation;
 					s = STONE spear;
 					p = pickaxe;
 					A = pineapple;
@@ -927,6 +927,7 @@ Dungeon 1;
 			WallSquare=grassterrain, WOOD wall;
 			DoorSquare=floor, door;
 		}
+
 		Room 9;
 		{
 			Pos=22,54;
@@ -957,7 +958,7 @@ Dungeon 1;
 				Size=5,3;
 				Types
 				{
-					t = scrollofteleport;
+					t = scrollofteleportation;
 					c = scrollofcreatemonster;
 					C = scrollofcharging;
 					h = holybook;
@@ -968,6 +969,7 @@ Dungeon 1;
 			    c...h
 			    t...h
 			}
+
 			OTerrainMap
 			{
 				Pos=1,1;

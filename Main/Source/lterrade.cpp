@@ -337,7 +337,7 @@ bool throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
+      game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
       game::RemoveSaves();
 
       if(!game::GetWizardMode())
@@ -377,7 +377,7 @@ void altar::ReceiveVomit(character* Who)
     game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerVomitedOnAltar();
 }
 
-std::string door::Adjective(bool Articled) const
+std::string door::GetAdjective(bool Articled) const
 {
   std::string Adj;
 
@@ -860,39 +860,36 @@ void door::SetParameters(uchar Param)
   SetIsLocked(Param & LOCKED);
 }
 
-bool door::TryKey(key* Thingy, character* Applier)
+bool door::TryKey(item* Thingy, character* Applier)
 {
-  if(Thingy->CanOpenDoors())
+  if(Opened)
+    return false;
+
+  if(Thingy->CanOpenLockType(GetLockType()))
     {
-      if(Opened)
-	return false;
-
-      if(Thingy->FitsLockType(GetLockType()))
+      if(Applier->IsPlayer())
 	{
-	  if(Applier->IsPlayer())
-	    {
-	      if(IsLocked())
-		ADD_MESSAGE("You unlock the door.");
-	      else
-		ADD_MESSAGE("You lock the door.");
-	    }
-	  else if(Applier->GetLSquareUnder()->CanBeSeen())
-	    {
-	      if(IsLocked())
-		ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
-	      else
-		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
-	    }
-
-	  SetIsLocked(!IsLocked());
+	  if(IsLocked())
+	    ADD_MESSAGE("You unlock the door.");
+	  else
+	    ADD_MESSAGE("You lock the door.");
 	}
-      else
+      else if(Applier->GetLSquareUnder()->CanBeSeen())
 	{
-	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
+	  if(IsLocked())
+	    ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
+	  else
+	    ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
 	}
+
+      SetIsLocked(!IsLocked());
       return true;
     }
   else
-    return false;
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
+
+      return false;
+    }
 }

@@ -38,6 +38,7 @@ template <class type> class database;
 
 struct characterdatabase
 {
+  void InitDefaults() { IsAbstract = false; }
   ushort DefaultAgility;
   ushort DefaultStrength;
   ushort DefaultEndurance;
@@ -102,6 +103,14 @@ struct characterdatabase
   uchar LeftLegBonePercentile;
   bool IsNameable;
   ushort BaseEmitation;
+  std::string Article;
+  std::string Adjective;
+  std::string AdjectiveArticle;
+  std::string NameSingular;
+  std::string NamePlural;
+  std::string PostFix;
+  uchar ArticleMode;
+  bool IsAbstract;
 };
 
 class characterprototype
@@ -109,6 +118,7 @@ class characterprototype
  public:
   friend class database<character>;
   characterprototype(characterprototype*);
+  virtual ~characterprototype() { }
   virtual character* Clone(ushort = 0, bool = true, bool = false) const = 0;
   character* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -117,7 +127,7 @@ class characterprototype
   const characterprototype* GetBase() const { return Base; }
   DATABASEVALUE(ushort, Frequency);
   DATABASEBOOL(CanBeGenerated);
-  virtual bool IsConcrete() const = 0;
+  DATABASEBOOL(IsAbstract);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
@@ -337,7 +347,7 @@ class character : public entity, public id
   virtual std::string PossessivePronoun() const;
   virtual std::string ObjectPronoun() const;
   virtual bool BodyPartCanBeSevered(ushort) const;
-  virtual std::string Name(uchar) const;
+  virtual std::string GetName(uchar) const;
   virtual void ReceiveHeal(long);
   virtual void Haste(ushort);
   virtual void EndHaste();
@@ -475,11 +485,19 @@ class character : public entity, public id
   DATABASEVALUE(uchar, LeftLegBonePercentile);
   DATABASEBOOL(IsNameable);
   DATABASEVALUE(ushort, BaseEmitation);
+  DATABASEVALUE(std::string, Article);
+  DATABASEVALUE(std::string, Adjective);
+  DATABASEVALUE(std::string, AdjectiveArticle);
+  DATABASEVALUE(std::string, NameSingular);
+  DATABASEVALUE(std::string, NamePlural);
+  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(uchar, ArticleMode);
 
   virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
+  static character* Clone(ushort, bool, bool) { return 0; }
  protected:
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }
@@ -503,7 +521,7 @@ class character : public entity, public id
   virtual material* CreateBodyPartFlesh(ushort, ulong) const = 0;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
   virtual uchar BodyParts() const { return 1; }
-  virtual std::string MaterialDescription(bool) const;
+  virtual std::string GetMaterialDescription(bool) const;
   virtual bool ShowClassDescription() const { return true; }
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -512,7 +530,7 @@ class character : public entity, public id
   virtual bool FollowLeader();
   virtual void StandIdleAI();
   virtual void CreateCorpse();
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " is slain."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is slain."; }
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
@@ -552,22 +570,21 @@ class character : public entity, public id
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
-#define CHARACTER_PROTOTYPE(name, cloner, baseproto, concrete)\
+#define CHARACTER_PROTOTYPE(name, baseproto)\
   \
-  static class name##_prototype : public characterprototype\
+  class name##_prototype : public characterprototype\
   {\
    public:\
     name##_prototype(characterprototype* Base) : characterprototype(Base) { }\
-    virtual character* Clone(ushort Config, bool CreateEquipment, bool Load) const { return cloner; }\
+    virtual character* Clone(ushort Config, bool CreateEquipment, bool Load) const { return name::Clone(Config, CreateEquipment, Load); }\
     virtual std::string ClassName() const { return #name; }\
-    virtual bool IsConcrete() const { return concrete; }\
   } name##_ProtoType(baseproto);\
   \
   const character::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define CHARACTER_PROTOTYPE(name, cloner, baseproto, concrete)
+#define CHARACTER_PROTOTYPE(name, baseproto)
 
 #endif
 
@@ -579,8 +596,9 @@ name : public base\
   name(ushort Config = 0, bool CreateEquipment = true, bool Load = false) : base(donothing()) { Initialize(Config, CreateEquipment, Load); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const;\
+  static character* Clone(ushort Config, bool CreateEquipment, bool Load) { return new name(Config, CreateEquipment, Load); }\
   data\
-}; CHARACTER_PROTOTYPE(name, new name(Config, CreateEquipment, Load), &base##_ProtoType, true);
+}; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
@@ -589,8 +607,9 @@ name : public base\
  public:\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const;\
+  static character* Clone(ushort, bool, bool) { return 0; }\
   data\
-}; CHARACTER_PROTOTYPE(name, 0, &base##_ProtoType, false);
+}; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
 

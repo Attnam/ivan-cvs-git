@@ -400,3 +400,30 @@ void ReadData(std::string& String, inputfile& SaveFile, const valuemap&)
 
   SaveFile.ReadWord();
 }
+
+void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+{
+  Vector.clear();
+  std::string Word;
+  SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    {
+      Vector.push_back(SaveFile.ReadNumber(ValueMap));
+      return;
+    }
+
+  if(Word != "{")
+    ABORT("Array syntax error \"%s\" found!", Word.c_str());
+
+  ushort Size = SaveFile.ReadNumber(ValueMap);
+
+  for(ushort c = 0; c < Size; ++c)
+    Vector.push_back(SaveFile.ReadNumber(ValueMap));
+
+  if(SaveFile.ReadWord() != "}")
+    ABORT("Illegal array terminator \"%s\" encountered!", Word.c_str());
+}

@@ -155,11 +155,14 @@ class game
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
-  static void AnimationController();
+  static bool AnimationController();
   static gamescript* GetGameScript() { return GameScript; }
   static void InitScript();
   static const valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
+  static void SetAnimationControllerActive(bool What) { AnimationControllerActive = What; }
+  static bool AnimationControllerIsActive() { return AnimationControllerActive; }
+  static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -195,6 +198,7 @@ class game
   static vector2d ScreenSize;
   static gamescript* GameScript;
   static valuemap GlobalValueMap;
+  static bool AnimationControllerActive;
 };
 
 #endif

@@ -6,7 +6,7 @@
 std::vector<item::prototype*> protocontainer<item>::ProtoData;
 valuemap protocontainer<item>::CodeNameMap;
 
-ITEM_PROTOTYPE(item, 0, 0, false);
+ITEM_PROTOTYPE(item, 0);
 
 #include "femath.h"
 #include "itemde.h"
@@ -30,6 +30,7 @@ ITEM_PROTOTYPE(item, 0, 0, false);
 #include "felist.h"
 #include "save.h"
 #include "team.h"
+
 item* can::TryToOpen(character* Opener)
 {
   if(Opener->GetStrength() > RAND() % 30)
@@ -157,7 +158,7 @@ bool scrollofcreatemonster::Read(character* Reader)
   return true;
 }
 
-bool scrollofteleport::Read(character* Reader)
+bool scrollofteleportation::Read(character* Reader)
 {
   if(Reader->IsPlayer())
     ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
@@ -209,7 +210,7 @@ material* lump::CreateDipMaterial()
 
 item* can::PrepareForConsuming(character* Consumer)
 {
-  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + Name(DEFINITE) + " before eating it? [Y/n]", 'y'))
+  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", 'y'))
     return TryToOpen(Consumer);
   else
     return 0;
@@ -264,7 +265,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer())
     DeathMsg = "exploded himself by breaking a wand";
   else
-    DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
+    DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
   Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
   return true;
@@ -580,9 +581,9 @@ bool backpack::Apply(character* Terrorist)
       std::string DeathMsg;
 
       if(Terrorist->IsPlayer())
-	DeathMsg = "exploded himself with " + Name(INDEFINITE);
+	DeathMsg = "exploded himself with " + GetName(INDEFINITE);
       else
-	DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
+	DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
       Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
@@ -644,9 +645,9 @@ bool wand::ReceiveDamage(character* Damager, short, uchar Type)
       std::string DeathMsg = "explosion of ";
 
       if(Damager)
-	DeathMsg += Name(INDEFINITE) + " caused by " + Damager->Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
       else
-	DeathMsg += Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE);
 
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -668,9 +669,9 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
       std::string DeathMsg = "explosion of ";
 
       if(Damager)
-	DeathMsg += Name(INDEFINITE) + " caused by " + Damager->Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
       else
-	DeathMsg += Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE);
 
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -685,7 +686,7 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
   return false;
 }
 
-std::string wand::PostFix() const
+std::string wand::GetPostFix() const
 {
   if(!TimesUsed)
     return "";
@@ -1286,9 +1287,9 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
       std::string DeathMsg = "explosion of ";
 
       if(Damager)
-	DeathMsg += Name(INDEFINITE) + " caused by " + Damager->Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
       else
-	DeathMsg += Name(INDEFINITE);
+	DeathMsg += GetName(INDEFINITE);
 
       if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -1387,6 +1388,7 @@ bool key::Apply(character* User)
 
       User->EditAP(500);
     }
+
   return true;
 }
 
@@ -1444,7 +1446,7 @@ void arm::Be()
 	    for(stackiterator j = Master->GetStack()->GetBottomSlot(); j != Master->GetStack()->GetSlotAboveTop(); ++j)
 	      if((*i)->GetID() == (**j)->GetID())
 		{
-		  (*i)->AddLevelDownMessage((**j)->Name(UNARTICLED));
+		  (*i)->AddLevelDownMessage((**j)->GetName(UNARTICLED));
 		  break;
 		}
 	}
@@ -1535,7 +1537,7 @@ void key::Load(inputfile& SaveFile)
   SaveFile >> LockType;
 }
 
-void can::GenerateMaterials()
+/*void can::GenerateMaterials()
 {
   static ushort Possibility[] = { 50, 10 };
 
@@ -1717,7 +1719,7 @@ void brokenplatemail::GenerateMaterials()
     }
 }
 
-void astone::GenerateMaterials()
+void stone::GenerateMaterials()
 {
   static ushort Possibility[] = { 30, 20, 15, 10, 5 };
 
@@ -1793,7 +1795,7 @@ void belt::GenerateMaterials()
     case 1: InitMaterials(MAKE_MATERIAL(CLOTH)); break;
     case 2: InitMaterials(MAKE_MATERIAL(FABRIC)); break;
     }
-}
+}*/
 
 /*void helmet::GenerateMaterials()
 {
@@ -1822,9 +1824,9 @@ void corpse::Load(inputfile& SaveFile)
   SaveFile >> Deceased;
 }
 
-std::string corpse::PostFix() const
+std::string corpse::GetPostFix() const
 {
-  return "of " + GetDeceased()->Name(INDEFINITE);
+  return "of " + GetDeceased()->GetName(INDEFINITE);
 }
 
 bool corpse::Consume(character* Eater, long Amount)
@@ -2117,7 +2119,7 @@ void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
     {
       List.AddEntry("", RED);
 
-      std::string Buffer = "current " + Name(UNARTICLED) + " single weapon skill:  ";
+      std::string Buffer = "current " + GetName(UNARTICLED) + " single weapon skill:  ";
 
       Buffer += CurrentSingleWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -2563,9 +2565,9 @@ void wandofresurrection::VirtualConstructor(bool Load)
     SetCharges(1 + RAND() % 2);
 }
 
-std::string platemail::NameSingular() const
+std::string platemail::GetNameSingular() const
 {
-  if(GetMaterial(0) && GetMaterial(0)->IsFlexible()) 
+  if(GetMainMaterial() && GetMainMaterial()->IsFlexible()) 
     return "armor";
   else
     return "plate mail"; 
@@ -2592,9 +2594,9 @@ void magicalwhistle::BlowEffect(character* Whistler)
   const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
 
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
-    if(Whistler != (*i)) (*i)->TeleportNear(Whistler);
+    if(Whistler != *i)
+      (*i)->TeleportNear(Whistler);
 }
-
 
 void chest::VirtualConstructor(bool Load)
 {
@@ -2603,9 +2605,9 @@ void chest::VirtualConstructor(bool Load)
   Contained = new stack;
 }
 
-bool chest::TryKey(key* Key, character* Applier)
+bool chest::TryKey(item* Key, character* Applier)
 {
-  if(Key->FitsLockType(GetLockType()))
+  if(Key->CanOpenLockType(GetLockType()))
     {
       Lock();
 
@@ -2621,4 +2623,23 @@ bool chest::TryKey(key* Key, character* Applier)
       else
 	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHARNAME(DEFINITE), Key->CHARNAME(DEFINITE));
     }
+
+  return true;
+}
+
+void materialcontainer::GenerateMaterials()
+{
+  ushort Chosen = RandomizeMaterialConfiguration();
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
+  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+  UpdatePictures();
+}
+
+void meleeweapon::GenerateMaterials()
+{
+  ushort Chosen = RandomizeMaterialConfiguration();
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
+  InitChosenMaterial(SecondaryMaterial, GetSecondaryMaterialConfig(), GetDefaultSecondaryVolume(), Chosen);
+  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+  UpdatePictures();
 }

@@ -55,7 +55,7 @@ class action
 
 #define ACTION_PROTOTYPE(name)\
   \
-  static class name##_prototype : public actionprototype\
+  class name##_prototype : public actionprototype\
   {\
    public:\
     virtual action* Clone() const { return new name; }\

@@ -104,12 +104,12 @@ class lsquare : public square
   virtual void RemoveFluid();
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual void TeleportEverything(character*);
-  virtual bool ReceiveApply(item*, character*);
+  //virtual bool ReceiveApply(item*, character*);
   virtual bool DipInto(item*, character*);
   virtual void DrawCharacterSymbols(vector2d, ushort);
   virtual bool LockEverything(character*);
   virtual bool RaiseTheDead(character*);
-  virtual bool TryKey(key*, character*);
+  virtual bool TryKey(item*, character*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

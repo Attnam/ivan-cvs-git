@@ -25,20 +25,20 @@ std::string wterrain::Name(uchar Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & ARTICLEBIT))
-      return NameStem();
+      return GetNameStem();
     else
       if(!(Case & INDEFINEBIT))
-	return "the " + NameStem();
+	return "the " + GetNameStem();
       else
-	return Article() + " " + NameStem();
+	return GetArticle() + " " + GetNameStem();
   else
     if(!(Case & ARTICLEBIT))
-      return NameStem() + " terrains";
+      return GetNameStem() + " terrains";
     else
       if(!(Case & INDEFINEBIT))
-	return "the " + NameStem() + " terrains";
+	return "the " + GetNameStem() + " terrains";
       else
-	return NameStem() + " terrains";
+	return GetNameStem() + " terrains";
 }
 
 vector2d wterrain::GetPos() const

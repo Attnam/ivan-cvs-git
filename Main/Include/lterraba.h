@@ -43,18 +43,17 @@ class lterrain : public object
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool Polymorph(character*) { return false; }
-  virtual bool ReceiveApply(item*, character*) { return false; }
+  //virtual bool ReceiveApply(item*, character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
   virtual void DrawToTileBuffer(bool) const;
-  virtual bool TryKey(key*, character*) { return false; }
+  virtual bool TryKey(item*, character*) { return false; }
  protected:
   virtual void GenerateMaterials() = 0;
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }
   virtual ulong GetDefaultMainVolume() const { return 10000000; }
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRLTERRAIN; }
   virtual bool ShowMaterial() const { return true; }
   uchar VisualFlags;
 };
@@ -80,6 +79,8 @@ class glterrain : public lterrain, public gterrain
   virtual ushort GetEntryAPRequirement() const { return 1000; }
   virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+ protected:
+  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
 };
 
 class olterrainprototype
@@ -121,7 +122,9 @@ class olterrain : public lterrain, public oterrain
   virtual bool IsSafeToDestroy() const { return false; }
   virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual bool IsEmpty() const { return false; }
  protected:
+  virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }
   short HP;
 };
 
@@ -129,7 +132,7 @@ class olterrain : public lterrain, public oterrain
 
 #define LTERRAIN_PROTOTYPE(name, protobase)\
   \
-  static class name##_prototype : public protobase::prototype\
+  class name##_prototype : public protobase::prototype\
   {\
    public:\
     virtual protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) const { return new name(Config, CallGenerateMaterials, Load); }\

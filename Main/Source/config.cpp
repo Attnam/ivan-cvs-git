@@ -125,8 +125,12 @@ void configuration::EditContrast(char Change)
 void configuration::ShowConfigScreen()
 {
   vector2d QuestionPos = game::IsRunning() ? vector2d(16, 6) : vector2d(30, 46);
-  ushort Chosen = 0;
+  ushort Chosen;
   bool BoolChange = false;
+
+  felist List("Which setting do you wish to configure?", WHITE);
+  List.AddDescription("");
+  List.AddDescription("Setting                                    Value");
 
   while(true)
     {
@@ -136,10 +140,7 @@ void configuration::ShowConfigScreen()
 	  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
 	}
 
-      felist List("Which setting do you wish to configure?", WHITE);
-      List.SetSelected(Chosen);
-      List.AddDescription("");
-      List.AddDescription("Setting                                    Value");
+      List.Empty();
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
       List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);

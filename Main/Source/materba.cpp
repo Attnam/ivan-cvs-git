@@ -5,7 +5,7 @@
 #include "save.h"
 #include "proto.h"
 
-std::string material::Name(bool Articled, bool Adjective) const
+std::string material::GetName(bool Articled, bool Adjective) const
 {
   std::string Name = Articled ? GetArticle() + " " : "";
   Name += Adjective ? GetAdjectiveStem() : GetNameStem();
@@ -48,7 +48,7 @@ void material::Effect(character* Eater, long Amount)
     }
 }
 
-void material::EatEffect(character* Eater, long Amount, float NPModifier)
+void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
@@ -137,6 +137,9 @@ materialprototype::materialprototype(materialprototype* Base) : Base(Base)
 
 void material::InstallDataBase()
 {
+  if(!Config)
+    return; // loading
+
   const material::databasemap& Configs = GetProtoType()->GetConfig();
   material::databasemap::const_iterator i = Configs.find(Config);
 
@@ -148,6 +151,9 @@ void material::InstallDataBase()
 
 material* material::MakeMaterial(ushort Config)
 {
+  if(!Config)
+    return 0;
+
   switch(Config >> 12)
     {
     case FIRSTMATERIAL >> 12: return new material(Config);
@@ -163,6 +169,9 @@ material* material::MakeMaterial(ushort Config)
 
 material* material::MakeMaterial(ushort Config, ulong Volume)
 {
+  if(!Config)
+    return 0;
+
   switch(Config >> 12)
     {
     case FIRSTMATERIAL >> 12: return new material(Config, Volume);

@@ -223,7 +223,7 @@ Skeleton bone flight.
 Mutant monster.
 WhatToLoad menu could show danger level & dungeon level.
 Pocket pick-axe.
-Aliases for wishing.
+*Aliases for wishing.
 Dipping to oceans.
 If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
 Moving diagonally should use sqrt(2) times more AP.
@@ -237,3 +237,5 @@ Material colored cursor.
 Alphablit to bottles.
 Wand levels.
 Talking to oneself should abuse intelligence.
+*If you are illiterate you shouldn't be able to read engraved messages.
+Chatting shouldn't be possible if you aren't intelligent.

@@ -178,18 +178,18 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(vector2d, v
   return true;
 }
 
-ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
+ushort femath::WeightedRand(const std::vector<long>& Possibility)
 {
   ushort c;
   ulong TotalPossibility = 0;
 
-  for(c = 0; c < Elements; ++c)
+  for(c = 0; c < Possibility.size(); ++c)
     TotalPossibility += Possibility[c];
 
   ulong Chosen = RAND() % TotalPossibility;
   TotalPossibility = 0;
 
-  for(c = 0; c < Elements; ++c)
+  for(c = 0; c < Possibility.size(); ++c)
     {
       TotalPossibility += Possibility[c];
 

@@ -55,3 +55,4 @@ OfferModifiers. (timo)
 NPModifiers. (timo)
 1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
 Dipping to corpses, containers etc.
+Aliases.

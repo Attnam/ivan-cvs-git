@@ -48,6 +48,7 @@ class object : public entity, public id
   virtual uchar GetMaterials() const { return 1; }
   virtual material* GetMaterial(ushort Index) const { return Index ? 0 : MainMaterial; }
   virtual bool IsAnimated() const { return false; }
+  virtual const std::vector<bitmap*>& GetPicture() const { return Picture; }
   virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ushort GetBaseEmitation() const { return 0; }
   virtual ushort GetType() const = 0;
@@ -68,7 +69,7 @@ class object : public entity, public id
   virtual ushort GetMaterialColor1(ushort) const { return 0; }
   virtual ushort GetMaterialColor2(ushort) const { return 0; }
   virtual ushort GetMaterialColor3(ushort) const { return 0; }
-  virtual std::string MaterialDescription(bool) const;
+  virtual std::string GetMaterialDescription(bool) const;
   virtual std::string ContainerPostFix() const;
   virtual std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;

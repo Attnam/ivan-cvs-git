@@ -25,6 +25,7 @@ template <class type> class database;
 
 struct materialdatabase
 {
+  void InitDefaults() { }
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
@@ -55,6 +56,7 @@ class materialprototype
  public:
   friend class database<material>;
   materialprototype(materialprototype*);
+  virtual ~materialprototype() { }
   material* Clone(ushort, ulong) const;
   virtual material* Clone(ushort) const = 0;
   material* CloneAndLoad(inputfile&) const;
@@ -80,7 +82,7 @@ class material
   material(ushort Config) : Volume(0), MotherEntity(0), Config(Config) { InstallDataBase(); }
   material(donothing) : Volume(0), MotherEntity(0), Config(0) { }
   virtual ~material() { }
-  virtual std::string Name(bool = false, bool = true) const;
+  virtual std::string GetName(bool = false, bool = true) const;
   virtual ulong GetVolume() const { return Volume; }
   virtual ulong GetWeight() const { return ulong(float(Volume) * GetDensity() / 1000); }
   virtual ushort TakeDipVolumeAway();
@@ -88,7 +90,7 @@ class material
   virtual void Load(inputfile&);
   virtual void SetVolume(ulong What) { Volume = What; }
   virtual void Effect(character*, long);
-  virtual void EatEffect(character*, long, float = 1.0);
+  virtual void EatEffect(character*, ulong, float = 1.0);
   virtual void HitEffect(character*);
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   virtual entity* GetMotherEntity() const { return MotherEntity; }
@@ -146,7 +148,7 @@ class material
 
 #define MATERIAL_PROTOTYPE(name, baseproto)\
   \
-  static class name##_prototype : public materialprototype\
+  class name##_prototype : public materialprototype\
   {\
    public:\
     name##_prototype(materialprototype* Base) : materialprototype(Base) { }\

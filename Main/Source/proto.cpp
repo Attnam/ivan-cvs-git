@@ -29,7 +29,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
 
-	  if(Proto->IsConcrete() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
+	  if(!Proto->IsAbstract() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
 	    {
 	      character* Monster = Proto->Clone(0, CreateItems);
 	      float Danger = Monster->MaxDanger();
@@ -55,13 +55,13 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
       ushort c;
 
       for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-	if(protocontainer<item>::GetProto(c)->IsConcrete())
+	if(!protocontainer<item>::GetProto(c)->IsAbstract())
 	  SumOfPossibilities += protocontainer<item>::GetProto(c)->GetPossibility();
 			
       RandomOne = 1 + RAND() % (SumOfPossibilities);
 		
       for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-	if(protocontainer<item>::GetProto(c)->IsConcrete())
+	if(!protocontainer<item>::GetProto(c)->IsAbstract())
 	  {
 	    Counter += protocontainer<item>::GetProto(c)->GetPossibility();
 
@@ -82,7 +82,7 @@ character* protosystem::CreateMonster(bool CreateItems)
 
       const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
 
-      if(Proto->IsConcrete() && Proto->CanBeGenerated())
+      if(!Proto->IsAbstract() && Proto->CanBeGenerated())
 	{
 	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(0, CreateItems);
 	  Monster->SetTeam(game::GetTeam(1));
@@ -94,13 +94,9 @@ character* protosystem::CreateMonster(bool CreateItems)
 item* protosystem::CreateItem(const std::string& What, bool Output)
 {
   for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->IsConcrete())
+    if(protocontainer<item>::GetProto(c)->IsAbstract())
       {
-	/* "Temporary" gum solution! */
-
-	item* Temp = protocontainer<item>::GetProto(c)->Clone(0, false);
-
-	if(Temp->NameSingular() == What)
+	if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
 	  if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
 	    return protocontainer<item>::GetProto(c)->Clone();
 	  else if(Output)

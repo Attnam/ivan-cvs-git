@@ -2,44 +2,43 @@
 #include "game.h"
 #include "godba.h"
 
-std::string id::NameSingular(bool Articled) const
+std::string id::GetNameSingular(bool Articled) const
 {
   if(Articled)
-    return Article() + " " + NameSingular();
+    return GetArticle() + " " + GetNameSingular();
   else
-    return NameSingular();
+    return GetNameSingular();
 }
 
-std::string id::DivineMasterDescription(uchar DivineMaster) const
+std::string id::GetDivineMasterDescription(uchar DivineMaster) const
 {
-  return "of " + game::GetGod(DivineMaster)->Name();
+  return DivineMaster ? "of " + game::GetGod(DivineMaster)->Name() : "";
 }
 
-std::string id::Name(uchar Case) const
+std::string id::GetName(uchar Case) const
 {
   std::string Name;
-  bool Articled = !(Case & PLURAL) && (Case & ARTICLEBIT) && (Case & INDEFINEBIT) && ShowArticle();
+  bool Articled;
 
-  if((Case & ARTICLEBIT) && (ForceDefiniteArticle() || !(Case & INDEFINEBIT)) && ShowArticle())
+  if((Case & ARTICLEBIT) && (GetArticleMode() == DEFINITEARTICLE || (GetArticleMode() == NORMALARTICLE && !(Case & INDEFINEBIT))))
     {
       Name += "the ";
       Articled = false;
     }
+  else
+    Articled = !(Case & PLURAL) && (Case & ARTICLEBIT) && (Case & INDEFINEBIT) && GetArticleMode() != NOARTICLE;
 
-  if(ShowAdjective())
+  std::string AF = GetAdjective(Articled);
+
+  if(AF != "")
     {
-      std::string AF = Adjective(Articled);
-
-      if(AF != "")
-	{
-	  Name += AF + " ";
-	  Articled = false;
-	}
+      Name += AF + " ";
+      Articled = false;
     }
 
   if(ShowMaterial())
     {
-      std::string MD = MaterialDescription(Articled);
+      std::string MD = GetMaterialDescription(Articled);
 
       if(MD != "")
 	{
@@ -48,15 +47,25 @@ std::string id::Name(uchar Case) const
 	}
     }
 
-  Name += Case & PLURAL ? NamePlural() : NameSingular(Articled);
+  Name += Case & PLURAL ? GetNamePlural() : GetNameSingular(Articled);
 
-  if(ShowPostFix())
-    {
-      std::string PoF = PostFix();
+  std::string PoF = GetPostFix();
 
-      if(PoF != "")
-	Name += " " + PoF;
-    }
+  if(PoF != "")
+    Name += " " + PoF;
 
   return Name;
+}
+
+std::string id::GetAdjective(bool Articled) const
+{
+  if(GetAdjective() != "")
+    {
+      if(Articled)
+	return GetAdjectiveArticle() + " " + GetAdjective();
+      else
+	return GetAdjective();
+    }
+  else
+    return "";
 }

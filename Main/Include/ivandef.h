@@ -119,14 +119,19 @@
 #define INDEFINEBIT 4
 #define INDEFINITE 6
 
+#define NORMALARTICLE 0
+#define NOARTICLE 1
+#define DEFINITEARTICLE 2
+
 #define TRANSPARENTCOL 0xF81F // pink
 
-#define RAW_TYPES 4
+#define RAW_TYPES 5
 
-#define GRLTERRAIN 0
-#define GRITEM 1
-#define GRCHARACTER 2
-#define GRHUMANOID 3
+#define GRGLTERRAIN 0
+#define GROLTERRAIN 1
+#define GRITEM 2
+#define GRCHARACTER 3
+#define GRHUMANOID 4
 
 #define GRAPHIC_TYPES 5
 

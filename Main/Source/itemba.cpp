@@ -411,3 +411,31 @@ void item::InstallDataBase()
     }
 }
 
+bool item::ShowMaterial() const
+{
+  if(GetMainMaterialConfig().size() == 1)
+    return GetMainMaterial()->GetConfig() != GetMainMaterialConfig()[0];
+  else
+    return true;
+}
+
+void item::GenerateMaterials()
+{
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
+  UpdatePictures();
+}
+
+ushort item::RandomizeMaterialConfiguration()
+{
+  return GetMaterialConfigChances().size() > 1 ? femath::WeightedRand(GetMaterialConfigChances()) : 0;
+}
+
+void item::InitChosenMaterial(material*& Material, const std::vector<long>& MaterialConfig, ulong DefaultVolume, ushort Chosen)
+{
+  if(MaterialConfig.size() == 1)
+    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[0]), DefaultVolume);
+  else if(MaterialConfig.size() == GetMaterialConfigChances().size())
+    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
+  else
+    ABORT("MaterialConfig array of illegal size detected!");
+}

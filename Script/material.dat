@@ -34,7 +34,7 @@ material
 		ConsumeType = METAL;
 		Density = 8000;
 		OfferValue = 10;
-		Color = rgb(56, 56, 56);
+		Color = rgb(96, 96, 96);
 		PriceModifier = 40;
 		IsSolid = true;
 		PriceModifier = 40;
@@ -48,11 +48,11 @@ material
 		ConsumeType = METAL;
 		Density = 3000;
 		OfferValue = 100;
-		Color = rgb(192, 192, 192);
+		Color = rgb(232, 232, 232);
 		PriceModifier = 40;
 		IsSolid = true;
 		CanBeWished = false;
-		Emitation = 320;
+		Emitation = 300;
 		PriceModifier = 160000;
 		Alignment = GOOD;
 		NameStem = "valpurium";
@@ -65,7 +65,7 @@ material
 		Density = 3000;
 		OfferValue = 5; 
 		IsSolid = true; 
-		Color = rgb(56, 56, 56);
+		Color = rgb(80, 80, 80);
 		NameStem = "stone";
 	}
 
@@ -75,7 +75,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 2500;
 		OfferValue = 1;
-		Color = rgb(72, 72, 72);
+		Color = rgb(112, 112, 112);
 		NameStem = "gravel";
 	}
 
@@ -96,7 +96,7 @@ material
 		Density = 500;
 		OfferValue = 5;
 		IsSolid = true;
-		Color = rgb(140, 100, 60);
+		Color = rgb(140, 96, 48);
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
 	}
@@ -108,7 +108,7 @@ material
 		OfferValue = 5;
 		ConsumeType = BONY;
 		IsSolid = true;
-		Color = rgb(144, 144, 144);
+		Color = rgb(180, 180, 180);
 		NutritionValue = 20;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
@@ -121,7 +121,7 @@ material
 		Density = 2500;
 		OfferValue = 5;
 		IsSolid = true;
-		Color = rgb(128, 128, 255);
+		Color = rgb(180, 180, 255);
 		NameStem = "glass";
 	}
 
@@ -132,7 +132,7 @@ material
 		Density = 600;
 		OfferValue = 5;
 		IsSolid = true;
-		Color = rgb(176, 176, 176);
+		Color = rgb(200, 200, 200);
 		IsFlammable = true;
 		NameStem = "parchment";
 	}
@@ -144,7 +144,7 @@ material
 		Density = 100;
 		OfferValue = 5;
 		IsSolid = true;
-		Color = rgb(64, 64, 160);
+		Color = rgb(80, 80, 176);
 		IsFlammable = true;
 		NameStem = "cloth";
 	}
@@ -156,7 +156,7 @@ material
 		Density = 5000;
 		OfferValue = 25;
 		IsSolid = true;
-		Color = rgb(184, 184, 184);
+		Color = rgb(224, 224, 224);
 		PriceModifier = 5000;
 		NameStem = "mithril";
 	}
@@ -168,7 +168,7 @@ material
 		Density = 3000;
 		OfferValue = 7;
 		IsSolid = true;
-		Color = rgb(160, 160, 160);
+		Color = rgb(200, 200, 200);
 		NameStem = "marble";
 	}
 
@@ -179,7 +179,7 @@ material
 		Density = 20000;
 		OfferValue = 50;
 		IsSolid = true;
-		Color = rgb(200, 200, 0);
+		Color = rgb(224, 224, 0);
 		CanBeWished = false;
 		PriceModifier = 20000;
 		NameStem = "gold";
@@ -279,10 +279,10 @@ material
 	{
 		StrengthValue = 10;
 		ConsumeType = PROCESSED;
-		Density = 200;
+		Density = 250;
 		OfferValue = 7;
 		NutritionValue = 200;
-		Color = rgb(200, 110, 60);
+		Color = rgb(180, 96, 64);
 		PriceModifier = 600;
 		NameStem = "bread";
 	}
@@ -305,7 +305,7 @@ material
 		Density = 3500;
 		OfferValue = 50;
 		IsSolid = true;
-		Color = rgb(180, 180, 180);
+		Color = rgb(240, 240, 240);
 		PriceModifier = 30000;
 		NameStem = "diamond";
 	}
@@ -317,7 +317,7 @@ material
 		Density = 10500;
 		OfferValue = 30;
 		IsSolid = true;
-		Color = rgb(160, 160, 160);
+		Color = rgb(200, 200, 200);
 		CanBeWished = false;
 		PriceModifier = 15000;
 		NameStem = "silver";
@@ -342,7 +342,7 @@ material
 		Density = 3500;
 		OfferValue = 50;
 		IsSolid = true;
-		Color = rgb(200, 60, 60);
+		Color = rgb(180, 0, 0);
 		PriceModifier = 24000;
 		NameStem = "ruby";
 	}
@@ -378,7 +378,7 @@ material
 		Density = 7300; 
 		OfferValue = 8;
 		IsSolid = true;
-		Color = rgb(56, 56, 56);
+		Color = rgb(100, 100, 100);
 		PriceModifier = 15;
 		NameStem = "tin";
 	}
@@ -393,7 +393,7 @@ organicsubstance
 		ConsumeType = FRUIT;
 		OfferValue = 10;
 		NutritionValue = 200;
-		Color = rgb(200, 200, 0);
+		Color = rgb(240, 240, 0);
 		IsAlive = true;
 		PriceModifier = 600;
 		NameStem = "banana flesh";
@@ -422,7 +422,7 @@ organicsubstance
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		OfferValue = 1;
-		Color = rgb(176, 176, 0);
+		Color = rgb(224, 224, 0);
 		IsAlive = true;
 		NameStem = "banana peal";
 	}
@@ -461,7 +461,7 @@ gas
 		StrengthValue = 0;
 		Density = 1;
 		OfferValue = 0;
-		Color = rgb(112, 112, 200);
+		Color = rgb(180, 180, 255);
 		ConsumeType = GAS;
 		NameStem = "air";
 		Article = "an";
@@ -472,15 +472,15 @@ liquid
 {
 	ConsumeType = LIQUID;
 	CanBeWished = false;
+	Density = 1000;
+	IsAlive = true;
 
 	Config OMLEURINE;
 	{
 		StrengthValue = 1;
-		Density = 1000;
 		OfferValue = 100;
-		Color = rgb(128, 128, 0);
+		Color = rgb(160, 160, 0);
 		CanBeWished = false;
-		IsAlive = true;
 		NutritionValue = 30;
 		PriceModifier = 2500;
 		NameStem = "Omle urine";
@@ -508,20 +508,18 @@ liquid
 	Config WATER;
 	{
 		StrengthValue = 1;
-		Density = 1000;
 		OfferValue = 1;
 		NutritionValue = 10;
-		Color = rgb(64, 64, 192);
+		Color = rgb(144, 144, 240);
 		NameStem = "water";
 	}
 
 	Config HEALINGLIQUID;
 	{
 		StrengthValue = 1;
-		Density = 1100;
 		OfferValue = 70;
 		NutritionValue = 30;
-		Color = rgb(128, 0, 0);
+		Color = rgb(180, 0, 0);
 		PriceModifier = 2500;
 		NameStem = "healing liquid";
 		Effect = EHEAL;
@@ -532,13 +530,11 @@ liquid
 	Config BLOOD;
 	{
 		StrengthValue = 200;
-		Density = 1000;
 		OfferValue = 50;
 		NutritionValue = 10;
 		Color = rgb(160, 0, 0);
 		CanBeWished = false;
 		Alignment = EVIL;
-		IsAlive = true;
 		NameStem = "blood";
 	}
 
@@ -549,9 +545,6 @@ liquid
 		OfferValue = 1;
 		NutritionValue = 100;
 		Color = rgb(0, 128, 0);
-		IsAlive = true;
-		NameStem = "slime";
-
 		Color = rgb(111, 74, 37);
 		NameStem = "brown slime";
 	}
@@ -564,14 +557,14 @@ flesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(64, 64, 64);
+	Color = rgb(160, 32, 16);
 	IsAlive = true;
 	NameStem = "flesh";
 
 	Config GOBLINOIDFLESH;
 	{
 		OfferValue = 10;
-		/*Color = rgb(0, 128, 0);*/
+		Color = rgb(0, 128, 0);
 		PriceModifier = 600;
 		NameStem = "green flesh";
 	}
@@ -580,7 +573,6 @@ flesh
 	{
 		OfferValue = 20;
 		NutritionValue = 400;
-		Color = rgb(128, 128, 128);
 		PriceModifier = 1250;
 		NameStem = "pork";
 	}
@@ -589,7 +581,6 @@ flesh
 	{
 		OfferValue = 20;
 		NutritionValue = 400;
-		Color = rgb(128, 128, 128);
 		PriceModifier = 1250;
 		NameStem = "beef";
 	}

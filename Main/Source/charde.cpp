@@ -6,7 +6,7 @@
 std::vector<character::prototype*> protocontainer<character>::ProtoData;
 valuemap protocontainer<character>::CodeNameMap;
 
-CHARACTER_PROTOTYPE(character, 0, 0, false);
+CHARACTER_PROTOTYPE(character, 0);
 
 #include "femath.h"
 #include "itemde.h"
@@ -154,7 +154,7 @@ bool ennerbeast::Hit(character*)
 	    ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
 
 	Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, 8, true);
-	Char->CheckDeath("killed by " + Name(INDEFINITE) + "'s scream");
+	Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
       }
 
     game::GetCurrentLevel()->GetLSquare(XPointer, YPointer)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
@@ -174,7 +174,7 @@ void skeleton::CreateCorpse()
   ushort Amount = 2 + RAND() % 4;
 
   for(ushort c = 0; c < Amount; ++c)
-    GetLSquareUnder()->GetStack()->AddItem(new abone);
+    GetLSquareUnder()->GetStack()->AddItem(new bone);
 
   SetExists(false);
 }
@@ -471,7 +471,7 @@ void humanoid::MainHit(character* Enemy)
       if(GetMainWielded())
 	{
 	  if(GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && IsPlayer())
-	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
+	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->GetName(UNARTICLED));
 
 	  GetMainWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
 	}
@@ -495,7 +495,7 @@ void humanoid::SecondaryHit(character* Enemy)
       if(GetSecondaryWielded())
 	{
 	  if(GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && IsPlayer())
-	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
+	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->GetName(UNARTICLED));
 
 	  GetSecondaryWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
 	}
@@ -578,7 +578,7 @@ void petrus::BeTalkedTo(character* Talker)
 
       if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
 	{
-	  iosystem::TextScreen("Thou hast slain the Blood Daemon King, and Petrus is happy!\n\nYou are victorious!");
+	  game::TextScreen("Thou hast slain the Blood Daemon King, and Petrus is happy!\n\nYou are victorious!");
 	  game::RemoveSaves();
 
 	  if(!game::GetWizardMode())
@@ -619,10 +619,10 @@ void petrus::BeTalkedTo(character* Talker)
 
 	  if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
 	    {
-	      iosystem::TextScreen(	"Champion of Law!\n\n"
-					"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
-					"Oree the Blood Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
-					"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
+	      game::TextScreen(	"Champion of Law!\n\n"
+				"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
+				"Oree the Blood Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
+				"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
 
 	      game::GetCurrentArea()->SendNewDrawRequest();
 	      game::TriggerQuestForGoldenEagleShirt();
@@ -631,7 +631,7 @@ void petrus::BeTalkedTo(character* Talker)
 	    }
 	}
 
-      iosystem::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
+      game::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
       game::RemoveSaves();
 
       if(!game::GetWizardMode())
@@ -646,7 +646,7 @@ void petrus::BeTalkedTo(character* Talker)
   else
     if(!StoryState)
       {
-	iosystem::TextScreen(	"Petrus raises his hand as a salutation, and talks:\n"
+	game::TextScreen(	"Petrus raises his hand as a salutation, and talks:\n"
 				"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
 				"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
 				"Valpurus hast told that this vile beast can be found in a nearby cave.\n"
@@ -1707,7 +1707,7 @@ void unicorn::Load(inputfile& SaveFile)
   SaveFile >> Alignment;
 }
 
-std::string unicorn::NameSingular() const
+/*std::string unicorn::NameSingular() const
 {
   switch(Alignment)
     {
@@ -1721,7 +1721,7 @@ std::string unicorn::NameSingular() const
 
   ABORT("Unicorns do not exist.");
   return "";
-}
+}*/
 
 void kamikazedwarf::GetAICommand()
 {
@@ -1763,10 +1763,10 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 void unicorn::CreateInitialEquipment()
 {
   if(RAND() % 2)
-    GetStack()->FastAddItem(new astone);
+    GetStack()->FastAddItem(new stone);
 
   if(RAND() % 2)
-    GetStack()->FastAddItem(new astone);
+    GetStack()->FastAddItem(new stone);
 }
 
 ushort humanoid::GetSize() const
@@ -2391,12 +2391,12 @@ void kamikazedwarf::SetDivineMaster(uchar Master)
 void humanoid::AddInfo(felist& Info) const
 {
   if(GetMainWielded())
-    Info.AddEntry("Main wielded: " + GetMainWielded()->Name(INDEFINITE), LIGHTGRAY);
+    Info.AddEntry("Main wielded: " + GetMainWielded()->GetName(INDEFINITE), LIGHTGRAY);
   else
     Info.AddEntry("Main wielded: nothing", LIGHTGRAY);
 
   if(GetSecondaryWielded())
-    Info.AddEntry(std::string("Secondary wielded: ") + GetSecondaryWielded()->Name(INDEFINITE), LIGHTGRAY);
+    Info.AddEntry(std::string("Secondary wielded: ") + GetSecondaryWielded()->GetName(INDEFINITE), LIGHTGRAY);
   else
     Info.AddEntry("Secondary wielded: nothing", LIGHTGRAY);
 

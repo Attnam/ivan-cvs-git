@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <vector>
+
 #include "typedef.h"
 #include "vector2d.h"
 
@@ -216,7 +218,7 @@ public:
   static long Rand();
   static void SetSeed(ulong);
   static bool DoLine(long, long, long, long, bool (*Proc)(vector2d, vector2d));
-  static ushort WeightedRand(ushort, ushort*);
+  static ushort WeightedRand(const std::vector<long>&);
   static float CalculateAngle(vector2d);
 protected:
   static ulong mt[N1];

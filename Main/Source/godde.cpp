@@ -355,7 +355,7 @@ void loricatus::PrayGoodEffect()
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	std::string OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
+	std::string OldName = game::GetPlayer()->GetMainWielded()->GetName(UNARTICLED);
 	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
@@ -373,7 +373,7 @@ void loricatus::PrayBadEffect()
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
+	OldName = game::GetPlayer()->GetMainWielded()->GetName(UNARTICLED);
 	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(BANANAFLESH));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
       }
@@ -649,7 +649,7 @@ void infuscor::PrayGoodEffect()
   ADD_MESSAGE("Suddenly five scrolls appear from nothing!");
 
   for(ushort c = 0; c < 5; ++c)
-    game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleport);
+    game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleportation);
 }
 
 void cruentus::PrayGoodEffect()

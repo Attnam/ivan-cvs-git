@@ -75,7 +75,8 @@ class stack
   item* SearchChosen(ushort&, ushort, character*, bool (*)(item*, character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
   bool RaiseTheDead(character*);
-  bool TryKey(key*, character*);
+  bool TryKey(item*, character*);
+  bool Open(character*);
  private:
   stacklist* Item;
   square* SquareUnder;

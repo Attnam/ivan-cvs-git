@@ -74,7 +74,7 @@ class god
 
 #define GOD_PROTOTYPE(name)\
   \
-  static class name##_prototype : public godprototype\
+  class name##_prototype : public godprototype\
   {\
    public:\
     virtual god* Clone() const { return new name; }\

@@ -25,6 +25,8 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       if(Proto->Base)
 	Proto->DataBase = Proto->Base->DataBase;
 
+      Proto->DataBase.InitDefaults();
+
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in the data script of %s!", typeid(type).name());
 
@@ -63,6 +65,15 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
   \
   if(Word == #defaultdata)\
     DataBase->data = DataBase->defaultdata;\
+}
+
+#define ANALYZEDATAWITHCOMPLEXDEFAULT(data, defaultdata, statement)\
+{\
+  if(Word == #data)\
+    ReadData(DataBase->data, SaveFile, ValueMap);\
+  \
+  if(Word == #defaultdata)\
+    DataBase->data = statement;\
 }
 
 void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database* DataBase)
@@ -133,6 +144,14 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATAWITHDEFAULT(LeftLegBonePercentile, LegBonePercentile);
   ANALYZEDATA(IsNameable);
   ANALYZEDATA(BaseEmitation);
+  ANALYZEDATA(Article);
+  ANALYZEDATA(Adjective);
+  ANALYZEDATA(AdjectiveArticle);
+  ANALYZEDATA(NameSingular);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATA(PostFix);
+  ANALYZEDATA(ArticleMode);
+  ANALYZEDATA(IsAbstract);
 }
 
 void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
@@ -169,6 +188,18 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(BitmapPos);
   ANALYZEDATA(Price);
   ANALYZEDATA(BaseEmitation);
+  ANALYZEDATA(Article);
+  ANALYZEDATA(Adjective);
+  ANALYZEDATA(AdjectiveArticle);
+  ANALYZEDATA(NameSingular);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATA(PostFix);
+  ANALYZEDATA(ArticleMode);
+  ANALYZEDATA(MainMaterialConfig);
+  ANALYZEDATA(SecondaryMaterialConfig);
+  ANALYZEDATA(ContainedMaterialConfig);
+  ANALYZEDATA(MaterialConfigChances);
+  ANALYZEDATA(IsAbstract);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

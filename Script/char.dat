@@ -40,6 +40,13 @@ character
 	BaseEmitation = 0;
 	/* Obligatory: TorsoBitmapPos */
 	TorsoBonePercentile = 30;
+	Article = "a";
+	Adjective = "";
+	AdjectiveArticle = "a";
+	/* Obligatory: NameSingular */
+	/* NameSingular + "s" by default: NamePlural */
+	ArticleMode = NORMALARTICLE;
+	IsAbstract = true; /* This is false by default and does not inherit! */
 }
 
 humanoid
@@ -62,6 +69,7 @@ humanoid
 	GroinBonePercentile = 40;
 	LegBonePercentile = 30;
 	MeleeStrength = 1000;
+	IsAbstract = true;
 }
 
 human
@@ -78,6 +86,7 @@ human
 	TotalVolume = 60000;
 	TotalSize = 150;
 	CanRead = true;
+	NameSingular = "human";
 }
 
 petrus
@@ -102,6 +111,7 @@ petrus
 	TotalSize = 225;
 	BaseEmitation = 333;
 	CanRead = true;
+	NameSingular = "High Priest of the Great Frog";
 }
 
 farmer
@@ -116,6 +126,7 @@ farmer
 	TotalVolume = 30000;
 	TotalSize = 170;
 	MeleeStrength = 1000;
+	NameSingular = "farmer";
 }
 
 guard
@@ -133,6 +144,7 @@ guard
 	MeleeStrength = 2000;
 	TotalSize = 180;
 	CanRead = true;
+	NameSingular = "guard";
 }
 
 shopkeeper
@@ -151,6 +163,7 @@ shopkeeper
 	TotalVolume = 100000;
 	MeleeStrength = 2000;
 	TotalSize = 160;
+	NameSingular = "shopkeeper";
 }
 
 priest
@@ -170,6 +183,7 @@ priest
 	TotalSize = 180;
 	MeleeStrength = 1000;
 	CanRead = true;
+	NameSingular = "priest";
 }
 
 oree
@@ -194,6 +208,7 @@ oree
 	MeleeStrength = 30000;
 	TotalSize = 225;
 	CanRead = true;
+	NameSingular = "Blood Daemon King";
 }
 
 darkknight
@@ -215,6 +230,7 @@ darkknight
 	MeleeStrength = 5000;
 	TotalSize = 200;
 	CanRead = true;
+	NameSingular = "dark knight";
 }
 
 ennerbeast
@@ -230,6 +246,17 @@ ennerbeast
 	MeleeStrength = 100000;
 	TotalSize = 150;
 	SkinColor = rgb(112, 112, 64);
+	NameSingular = "enner beast";
+	Article = "an";
+}
+
+frog
+{
+	CanOpen = false;
+	MeleeStrength = 20000;
+	TalkVerb = "croaks";
+	NameSingular = "frog";
+	IsAbstract = true;
 }
 
 darkfrog
@@ -238,15 +265,13 @@ darkfrog
 	DefaultStrength = 5;
 	DefaultEndurance = 5;
 	DefaultPerception = 18;
-	CanOpen = false;
 	BloodColor = rgb(0, 0, 0);
 	HasInfraVision = true;
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
-	MeleeStrength = 20000;
-	TalkVerb = "croaks";
 	SkinColor = rgb(48, 48, 48);
+	Adjective = "dark";
 }
 
 elpuri
@@ -265,8 +290,8 @@ elpuri
 	TotalVolume = 277500;
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 300;
-	MeleeStrength = 20000;
-	TalkVerb = "croaks";
+	CanOpen = true;
+	NameSingular = "Master Dark Frog";
 }
 
 billswill
@@ -283,6 +308,8 @@ billswill
 	TorsoBitmapPos = 48, 0;
 	MeleeStrength = 20000;
 	TotalSize = 100;
+	NameSingular = "pure mass of Bill's will";
+	NamePlural = "pure masses of Bill's will";
 }
 
 skeleton
@@ -302,6 +329,7 @@ skeleton
 	TotalVolume = 60000;
 	MeleeStrength = 1000;
 	TotalSize = 150;
+	NameSingular = "skeleton";
 }
 
 goblin
@@ -322,6 +350,18 @@ goblin
 	TorsoBitmapPos = 144, 0;
 	MeleeStrength = 2000;
 	TotalSize = 100;
+	NameSingular = "goblin";
+}
+
+mommo
+{
+	CanOpen = "false";
+	StandVerb = "bubbling";
+	MeleeStrength = 20000;
+	TalkVerb = "vibrates oddly";
+	BloodColor = rgb(7, 155, 0);
+	NameSingular = "mommo slime";
+	IsAbstract = true;
 }
 
 conicalmommo
@@ -330,13 +370,10 @@ conicalmommo
 	DefaultStrength = 4;
 	DefaultEndurance = 50;
 	DefaultPerception = 9;
-	BloodColor = rgb(7, 155, 0);
 	TotalVolume = 250000;
 	TorsoBitmapPos = 176, 0;
 	TotalSize = 100;
-	StandVerb = "bubbling";
-	MeleeStrength = 20000;
-	TalkVerb = "vibrates oddly";
+	Adjective = "conical";
 }
 
 flatmommo
@@ -345,13 +382,10 @@ flatmommo
 	DefaultStrength = 2;
 	DefaultEndurance = 25;
 	DefaultPerception = 9;
-	BloodColor = rgb(7, 155, 0);
 	TotalVolume = 150000;
 	TorsoBitmapPos = 192, 0;
 	TotalSize = 75;
-	StandVerb = "bubbling";
-	MeleeStrength = 20000;
-	TalkVerb = "vibrates oddly";
+	Adjective = "flat";
 }
 
 golem
@@ -363,7 +397,8 @@ golem
 	TotalVolume = 100000;
 	TorsoBitmapPos = 256, 0;
 	TotalSize = 250;
-	MeleeStrength = 0; /* Not used */
+	/* MeleeStrength depends on material */
+	NameSingular = "golem";
 }
 
 wolf
@@ -378,6 +413,8 @@ wolf
 	TalkVerb = "howls";
 	TotalSize = 100;
 	SkinColor = rgb(64, 64, 64);
+	NameSingular = "wolf";
+	NamePlural = "wolves";
 }
 
 dog
@@ -393,6 +430,7 @@ dog
 	TotalSize = 70;
 	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
 	SkinColor = rgb(111, 74, 37);
+	NameSingular = "dog";
 }
 
 spider
@@ -410,6 +448,7 @@ spider
 	TalkVerb = "says nothing";
 	TotalSize = 10;
 	SkinColor = rgb(160, 160, 160);
+	NameSingular = "spider";
 }
 
 jackal
@@ -424,6 +463,7 @@ jackal
 	TalkVerb = "howls";
 	TotalSize = 80;
 	SkinColor = rgb(224, 224, 224);
+	NameSingular = "jackal";
 }
 
 donkey
@@ -438,6 +478,7 @@ donkey
 	TalkVerb = "neighs";
 	TotalSize = 150;
 	SkinColor = rgb(80, 80, 80);
+	NameSingular = "mutant donkey";
 }
 
 communist
@@ -460,6 +501,7 @@ communist
 	MeleeStrength = 5000;
 	TotalSize = 230;
 	CanRead = true;
+	NameSingular = "communist";
 }
 
 hunter
@@ -477,6 +519,7 @@ hunter
 	TotalVolume = 80000;
 	MeleeStrength = 2000;
 	TotalSize = 180;
+	NameSingular = "hunter";
 }
 
 polarbear
@@ -492,6 +535,7 @@ polarbear
 	TalkVerb = "growls";
 	TotalSize = 250;
 	SkinColor = rgb(128, 128, 128);
+	NameSingular = "polar bear";
 }
 
 dolphin
@@ -512,6 +556,7 @@ dolphin
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
 	SkinColor = rgb(64, 64, 64);
+	NameSingular = "female dolphin";
 }
 
 lightfrog
@@ -525,10 +570,8 @@ lightfrog
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
-	CanOpen = false;
-	MeleeStrength = 20000;
-	TalkVerb = "croaks";
 	SkinColor = rgb(32, 88, 32);
+	Adjective = "light";
 }
 
 slave
@@ -548,6 +591,7 @@ slave
 	TotalVolume = 60000;
 	TotalSize = 160;
 	MeleeStrength = 1000;
+	NameSingular = "slave";
 }
 
 petrusswife
@@ -566,41 +610,49 @@ petrusswife
 	MeleeStrength = 500;
 	TotalSize = 170;
 	CanRead = true;
+	NameSingular = "Petrus's wife";
+	ArticleMode = NOARTICLE;
 
 	Config 1;
 	{
 		HairColor = rgb(0, 0, 0);
 		HeadBitmapPos = 112, 0;
+		PostFix = "number 1";
 	}
 
 	Config 2;
 	{
 		HairColor = rgb(0, 0, 0);
 		HeadBitmapPos = 112, 16;
+		PostFix = "number 2";
 	}
 
 	Config 3;
 	{
 		HairColor = rgb(60, 48, 24);
 		HeadBitmapPos = 112, 0;
+		PostFix = "number 3";
 	}
 
 	Config 4;
 	{
 		HairColor = rgb(200, 96, 0);
 		HeadBitmapPos = 112, 32;
+		PostFix = "number 4";
 	}
 
 	Config 5;
 	{
 		HairColor = rgb(80, 64, 32);
 		HeadBitmapPos = 112, 48;
+		PostFix = "number 5";
 	}
 
 	Config 6;
 	{
 		HairColor = rgb(144, 0, 0);
 		HeadBitmapPos = 112, 64;
+		PostFix = "number 6";
 	}
 }
 
@@ -622,6 +674,7 @@ housewife
 	MeleeStrength = 500;
 	TotalSize = 160;
 	CanRead = true;
+	NameSingular = "housewife";
 }
 
 femaleslave
@@ -640,6 +693,7 @@ femaleslave
 	TotalVolume = 40000;
 	MeleeStrength = 500;
 	TotalSize = 170;
+	NameSingular = "female slave";
 }
 
 librarian
@@ -659,6 +713,7 @@ librarian
 	MeleeStrength = 500;
 	TotalSize = 170;
 	CanRead = true;
+	NameSingular = "librarian";
 }
 
 zombie
@@ -679,6 +734,7 @@ zombie
 	LegBitmapPos = 0, 160;
 	TotalVolume = 50000;
 	TotalSize = 160;
+	NameSingular = "zombie";
 }
 
 imp
@@ -699,6 +755,8 @@ imp
 	TotalVolume = 40000;
 	MeleeStrength = 20000;
 	TotalSize = 100;
+	NameSingular = "imp";
+	Article = "an";
 }
 
 bat
@@ -717,6 +775,7 @@ bat
 	TalkVerb = "squeaks";
 	TotalSize = 20;
 	SkinColor = rgb(48, 48, 48);
+	NameSingular = "bat";
 }
 
 mistress
@@ -739,6 +798,7 @@ mistress
 	TorsoBitmapPos = 352, 0;
 	TotalSize = 180;
 	CanRead = true;
+	NameSingular = "mistress";
 }
 
 /*werewolf
@@ -795,6 +855,7 @@ kobold
 	MeleeStrength = 2000;
 	TotalSize = 90;
 	SkinColor = rgb(30, 100, 110);
+	NameSingular = "kobold";
 }
 
 gibberling
@@ -816,6 +877,7 @@ gibberling
 	MeleeStrength = 10000;
 	TotalSize = 90;
 	SkinColor = rgb(100, 100, 200);
+	NameSingular = "gibberling";
 }
 
 largecat
@@ -830,6 +892,7 @@ largecat
 	TalkVerb = "mews";
 	TotalSize = 60;
 	SkinColor = rgb(50, 50, 50);
+	NameSingular = "large cat";
 }
 
 largerat
@@ -845,6 +908,7 @@ largerat
 	TalkVerb = "squeaks";
 	TotalSize = 30;
 	SkinColor = rgb(180, 100, 40);
+	NameSingular = "large rat";
 }
 
 angel
@@ -863,6 +927,13 @@ angel
 	TotalSize = 180;
 	CanRead = true;
 	SkinColor = rgb(200, 200, 200);
+	NameSingular = "angel";
+	Article = "an";
+}
+
+dwarf
+{
+	IsAbstract = true;
 }
 
 kamikazedwarf
@@ -883,6 +954,7 @@ kamikazedwarf
 	TotalVolume = 60000;
 	TotalSize = 130;
 	CanRead = true;
+	NameSingular = "kamikaze dwarf";
 }
 
 mammoth
@@ -897,6 +969,7 @@ mammoth
 	TalkVerb = "roars";
 	TotalSize = 500;
 	SkinColor = rgb(100, 130, 160);
+	NameSingular = "mammoth";
 }
 
 unicorn
@@ -910,20 +983,24 @@ unicorn
 	TotalVolume = 200000;
 	TorsoBitmapPos = 544, 0;
 	TotalSize = 200;
+	NameSingular = "unicorn";
 
 	Config GOOD;
 	{
 		SkinColor = rgb(48, 48, 48);
+		Adjective = "white";
 	}
 
 	Config NEUTRAL;
 	{
 		SkinColor = rgb(112, 112, 112);
+		Adjective = "gray";
 	}
 
 	Config EVIL;
 	{
 		SkinColor = rgb(160, 160, 160);
+		Adjective = "black";
 	}
 }
 
@@ -940,6 +1017,7 @@ genie
 	MeleeStrength = 5000;
 	TotalSize = 250;
 	CanRead = true;
+	NameSingular = "genie";
 }
 
 lion
@@ -954,6 +1032,7 @@ lion
 	TalkVerb = "growls";
 	TotalSize = 200;
 	SkinColor = rgb(192, 160, 112);
+	NameSingular = "lion";
 }
 
 carnivorousplant
@@ -969,6 +1048,7 @@ carnivorousplant
 	TalkVerb = "is silent";
 	TotalSize = 250;
 	SkinColor = rgb(0, 160, 0);
+	NameSingular = "carnivorous plant";
 }
 
 buffalo
@@ -983,4 +1063,5 @@ buffalo
 	TalkVerb = "snarls";
 	TotalSize = 250;
 	SkinColor = rgb(60, 55, 50);
+	NameSingular = "buffalo";
 }

@@ -139,19 +139,19 @@ ushort object::GetMaterialColor0(ushort) const
     return 0;
 }
 
-std::string object::MaterialDescription(bool Articled) const
+std::string object::GetMaterialDescription(bool Articled) const
 {
-  return GetMainMaterial()->Name(Articled);
+  return GetMainMaterial()->GetName(Articled);
 }
 
 std::string object::ContainerPostFix() const
 {
-  return "full of " + GetContainedMaterial()->Name();
+  return GetContainedMaterial() ? "full of " + GetContainedMaterial()->GetName() : "";
 }
 
 std::string object::LumpyPostFix() const
 {
-  return "of " + GetMainMaterial()->Name();
+  return GetMainMaterial() ? "of " + GetMainMaterial()->GetName() : "";
 }
 
 ulong object::GetWeight() const

@@ -19,9 +19,9 @@ class bitmap;
 struct felistentry
 {
   felistentry() { }
-  felistentry(const std::string& String, ushort Color, bool Selectable) : Bitmap(0), String(String), Color(Color), Selectable(Selectable) { }
-  felistentry(bitmap* Bitmap, const std::string& String, ushort Color, bool Selectable) : Bitmap(Bitmap), String(String), Color(Color), Selectable(Selectable) { }
-  bitmap* Bitmap;
+  felistentry(const std::string& String, ushort Color, bool Selectable) : String(String), Color(Color), Selectable(Selectable) { }
+  felistentry(const std::vector<bitmap*>&, const std::string&, ushort, bool);
+  std::vector<bitmap*> Bitmap;
   std::string String;
   ushort Color;
   bool Selectable;
@@ -48,9 +48,11 @@ class felist
   ~felist();
   void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
   void AddEntryToPos(const std::string&, ushort, ushort, bitmap* = 0, bool = true);
+  void AddEntry(const std::string&, ushort, const std::vector<bitmap*>&, bool = true);
+  void AddEntryToPos(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
   void RemoveEntryFromPos(ushort);
   void AddDescription(const std::string&, ushort = 0xFFFF);
-  ushort Draw(vector2d, ushort, ushort = 20, bool = true, bool = true, bool = true, bool = false) const;
+  ushort Draw(vector2d, ushort, ushort = 20, bool = true, bool = true, bool = true, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
   std::string GetEntry(ushort Index) const { return Entry[Index].String; }
@@ -63,12 +65,18 @@ class felist
   ushort GetSelected() const { return Selected; }
   void SetSelected(ushort What) { Selected = What; }
   void EditSelected(short What) { Selected += What; }
+  bool DrawPage(bitmap*) const;
  protected:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;
   std::vector<felistdescription> Description;
+  vector2d Pos;
   ushort Maximum;
   ushort Selected;
+  ushort Width;
+  ushort PageLength;
+  ushort BackColor;
+  bool Selectable;
   bool InverseMode;
 };
 

@@ -29,8 +29,8 @@ class wterrain
   virtual bool IsAnimated() const { return false; }
  protected:
   virtual void VirtualConstructor() { }
-  virtual std::string NameStem() const = 0;
-  virtual std::string Article() const { return "a"; }
+  virtual std::string GetNameStem() const = 0;
+  virtual std::string GetArticle() const { return "a"; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
   virtual ushort GetType() const = 0;
   wsquare* WSquareUnder;
@@ -86,7 +86,7 @@ class owterrain : public wterrain, public oterrain
 
 #define WTERRAIN_PROTOTYPE(name, protobase)\
   \
-  static class name##_prototype : public protobase::prototype\
+  class name##_prototype : public protobase::prototype\
   {\
    public:\
     virtual protobase* Clone() const { return new name; }\

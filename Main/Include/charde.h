@@ -129,7 +129,7 @@ class ABSTRACT_CHARACTER
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
   virtual uchar BodyParts() const { return 7; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies screaming."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
   gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
 );
 
@@ -144,7 +144,7 @@ class CHARACTER
   virtual void SetTotalSize(ushort What) { TotalSize = What; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual std::string NameSingular() const { return "human"; }
+  //virtual std::string NameSingular() const { return "human"; }
   ushort TotalSize;
 );
 
@@ -176,7 +176,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
-  virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
+  //virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
   virtual void CreateCorpse();
   virtual std::string GetDeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
   virtual void GetAICommand();
@@ -203,7 +203,7 @@ class CHARACTER
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + RAND() % 2) * 16); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, (RAND() % 2) * 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0,(RAND() % 3) * 16); }
-  virtual std::string NameSingular() const { return "farmer"; }
+  //virtual std::string NameSingular() const { return "farmer"; }
 );
 
 class CHARACTER
@@ -227,7 +227,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 80); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 64); }
   virtual ulong TotalVolume() const { return 60000; }
-  virtual std::string NameSingular() const { return "guard"; }
+  //virtual std::string NameSingular() const { return "guard"; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ushort TotalSize() const { return 180; }
 );
@@ -256,7 +256,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 32); }
   virtual ulong TotalVolume() const { return 100000; }
-  virtual std::string NameSingular() const { return "shopkeeper"; }
+  //virtual std::string NameSingular() const { return "shopkeeper"; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ushort TotalSize() const { return 160; }
 );
@@ -284,7 +284,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 32); }
   virtual ulong TotalVolume() const { return 100000; }
-  virtual std::string NameSingular() const { return "priest"; }
+  //virtual std::string NameSingular() const { return "priest"; }
   virtual ushort TotalSize() const { return 180; }
 );
 
@@ -323,8 +323,8 @@ class CHARACTER
 
   virtual ulong TotalVolume() const { return 110000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + "vomits blood for one last time and then dies."; }
-  virtual std::string NameSingular() const { return "Blood Daemon King"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + "vomits blood for one last time and then dies."; }
+  //virtual std::string NameSingular() const { return "Blood Daemon King"; }
   //virtual float GetMeleeStrength() const { return 30000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBloodVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBloodVerb(Critical); }
@@ -355,7 +355,7 @@ class CHARACTER
   virtual ushort EyeColor() const { return MAKE_RGB(100, 0, 0); }
   virtual ulong TotalVolume() const { return 110000; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(128,0); }
-  virtual std::string NameSingular() const { return "dark knight"; }
+  //virtual std::string NameSingular() const { return "dark knight"; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 200; }
 );
@@ -380,12 +380,12 @@ class CHARACTER
   virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }
  protected:
   //virtual void CreateHead();
-  virtual std::string Article() const { return "an"; }
+  //virtual std::string GetArticle() const { return "an"; }
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNERBEASTFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(96,0); }
-  virtual std::string NameSingular() const { return "enner beast"; }
+  //virtual std::string NameSingular() const { return "enner beast"; }
   //virtual float GetMeleeStrength() const { return 100000; }
   virtual void GetAICommand();
   virtual ushort TotalSize() const { return 150; }
@@ -422,7 +422,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 2500; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROGFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(80,0); }
-  virtual std::string NameSingular() const { return "dark frog"; }
+  //virtual std::string NameSingular() const { return "dark frog"; }
   virtual ushort TotalSize() const { return 25; }
 );
 
@@ -453,9 +453,9 @@ class CHARACTER
   virtual void CreateCorpse();
   virtual ulong TotalVolume() const { return 277500; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ELPURIFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + PossessivePronoun() + " head."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans horribly and drops " + PossessivePronoun() + " head."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(64,0); }
-  virtual std::string NameSingular() const { return "Master Dark Frog"; }
+  //virtual std::string NameSingular() const { return "Master Dark Frog"; }
   virtual ushort TotalSize() const { return 300; }
 );
 
@@ -481,10 +481,10 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 500000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(48,0); }
-  virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
-  virtual std::string NamePlural() const { return "pure masses of Bill's will"; }
+  //virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
+  //virtual std::string NamePlural() const { return "pure masses of Bill's will"; }
   virtual void CreateCorpse() { SetExists(false); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonPSIVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonPSIVerb(Critical); }
@@ -518,8 +518,8 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 96); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 80); }
   virtual ulong TotalVolume() const { return 60000; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
-  virtual std::string NameSingular() const { return "skeleton"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
+  //virtual std::string NameSingular() const { return "skeleton"; }
   virtual void CreateCorpse();
   //virtual float GetMeleeStrength() const { return 1000; }
   virtual ushort TotalSize() const { return 150; }
@@ -550,7 +550,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 25000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GOBLINOIDFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(144,0); }
-  virtual std::string NameSingular() const { return "goblin"; }
+  //virtual std::string NameSingular() const { return "goblin"; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ushort TotalSize() const { return 100; }
 );
@@ -564,7 +564,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanOpen() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BROWNSLIME, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " turns into lifeless goo."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " turns into lifeless goo."; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBrownSlimeVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBrownSlimeVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBrownSlimeVerb(Critical); }
@@ -586,7 +586,7 @@ class CHARACTER
   virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
  protected:
   virtual ulong TotalVolume() const { return 250000; }
-  virtual std::string NameSingular() const { return "conical mommo slime"; }
+  //virtual std::string NameSingular() const { return "conical mommo slime"; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(176,0); }
   virtual ushort TotalSize() const { return 100; }
 );
@@ -605,7 +605,7 @@ class CHARACTER
   virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
  protected:
   virtual ulong TotalVolume() const { return 150000; }
-  virtual std::string NameSingular() const { return "flat mommo slime"; }
+  //virtual std::string NameSingular() const { return "flat mommo slime"; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(192,0); }
   virtual ushort TotalSize() const { return 75; }
 );
@@ -629,8 +629,8 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 100000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return protosystem::CreateRandomSolidMaterial(Volume); }
-  virtual std::string GetDeathMessage() { return "The Holy Words of " + Name(DEFINITE) + " fly away and the monster collapses."; }
-  virtual std::string NameSingular() const { return "golem"; }
+  virtual std::string GetDeathMessage() { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
+  //virtual std::string NameSingular() const { return "golem"; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(256,0); }
   //virtual float GetMeleeStrength() const;
   virtual ushort TotalSize() const { return 250; }
@@ -650,8 +650,8 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WOLFFLESH, Volume); }
-  virtual std::string NameSingular() const { return "wolf"; }
-  virtual std::string NamePlural() const { return "wolves"; }
+  //virtual std::string NameSingular() const { return "wolf"; }
+  //virtual std::string NamePlural() const { return "wolves"; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(224,0); }
   //virtual float GetMeleeStrength() const { return 7500; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -677,7 +677,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOGFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(240,0); }
-  virtual std::string NameSingular() const { return "dog"; }
+  //virtual std::string NameSingular() const { return "dog"; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
@@ -704,7 +704,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 100; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SPIDERFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(272,0); }
-  virtual std::string NameSingular() const { return "spider"; }
+  //virtual std::string NameSingular() const { return "spider"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -728,7 +728,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 20000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(JACKALFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(304,0); }
-  virtual std::string NameSingular() const { return "jackal"; }
+  //virtual std::string NameSingular() const { return "jackal"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }                                                                                                                                                                                                                                                                                          //Jackals are unoriginal
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -750,9 +750,9 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DONKEYFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " neighs one last time and then dies."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " neighs one last time and then dies."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(288,0); }
-  virtual std::string NameSingular() const { return "mutant donkey"; }
+  //virtual std::string NameSingular() const { return "mutant donkey"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -789,8 +789,8 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 112); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0,0); }
   virtual ulong TotalVolume() const { return 120000; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " falls groaning bravely: \"Party revenges " + Name(UNARTICLED) + "\"!"; }
-  virtual std::string NameSingular() const { return "communist"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
+  //virtual std::string NameSingular() const { return "communist"; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 230; }
   virtual bool ShowClassDescription() const { return false; }
@@ -818,7 +818,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 128); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 96); }
   virtual ulong TotalVolume() const { return 80000; }
-  virtual std::string NameSingular() const { return "hunter"; }
+  //virtual std::string NameSingular() const { return "hunter"; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ushort TotalSize() const { return 180; }
 );
@@ -838,8 +838,8 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 500000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(POLARBEARFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " groans terribly and falls dead to the ground."; }
-  virtual std::string NameSingular() const { return "polar bear"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans terribly and falls dead to the ground."; }
+  //virtual std::string NameSingular() const { return "polar bear"; }
   //virtual float GetMeleeStrength() const { return 10000; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(336,0); }
   virtual std::string TalkVerb() const { return "growls"; }
@@ -867,7 +867,7 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 150000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHINFLESH, Volume); }
-  virtual std::string NameSingular() const { return "female dolphin in season"; }
+  //virtual std::string NameSingular() const { return "female dolphin in season"; }
   //virtual float GetMeleeStrength() const { return 1000; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(320,0); }
   virtual std::string TalkVerb() const { return "peeps passionately to you"; }
@@ -892,7 +892,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 2500; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROGFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(80,0); }
-  virtual std::string NameSingular() const { return "light frog"; }
+  //virtual std::string NameSingular() const { return "light frog"; }
   virtual ushort TotalSize() const { return 25; }
 );
 
@@ -919,7 +919,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0,16); }
   virtual ulong TotalVolume() const { return 60000; }
-  virtual std::string NameSingular() const { return "slave"; }
+  //virtual std::string NameSingular() const { return "slave"; }
   virtual ushort TotalSize() const { return 160; }
 );
 
@@ -945,10 +945,11 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 160); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 112); }
   virtual ulong TotalVolume() const { return 50000; }
-  virtual std::string NameSingular() const { return "Petrus's wife"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife"; }
   //virtual float GetMeleeStrength() const { return 500; }
   virtual ushort TotalSize() const { return 170; }
-  virtual bool ShowArticle() const { return false; }
+  //virtual bool ShowArticle() const { return false; }
+  //virtual uchar GetArticleMode() const { return NOARTICLE; }
 );
 
 /*class CHARACTER
@@ -961,7 +962,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 0); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
 );
 
 class CHARACTER
@@ -974,7 +975,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 16); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
 );
 
 class CHARACTER
@@ -987,7 +988,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112,0); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
 );
 
 class CHARACTER
@@ -1000,7 +1001,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(200, 96, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112,48); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
 );
 
 class CHARACTER
@@ -1013,7 +1014,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(80, 64, 32); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112,64); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
 );
 
 class CHARACTER
@@ -1026,7 +1027,7 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112,80); }
-  virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
+  //virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
 );*/
 
 class CHARACTER
@@ -1052,7 +1053,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 160); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 112); }
   virtual ulong TotalVolume() const { return 70000; }
-  virtual std::string NameSingular() const { return "housewife"; }
+  //virtual std::string NameSingular() const { return "housewife"; }
   //virtual float GetMeleeStrength() const { return 500; }
   virtual ushort TotalSize() const { return 160; }
 );
@@ -1079,7 +1080,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 208); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 144); }
   virtual ulong TotalVolume() const { return 40000; }
-  virtual std::string NameSingular() const { return "female slave"; }
+  //virtual std::string NameSingular() const { return "female slave"; }
   //virtual float GetMeleeStrength() const { return 500; }
   virtual void GetAICommand() { StandIdleAI(); }
   virtual ushort TotalSize() const { return 170; }
@@ -1106,7 +1107,7 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
   virtual ulong TotalVolume() const { return 80000; }
-  virtual std::string NameSingular() const { return "librarian"; }
+  //virtual std::string NameSingular() const { return "librarian"; }
   //virtual float GetMeleeStrength() const { return 500; }
   virtual void GetAICommand() { StandIdleAI(); }
   virtual ushort TotalSize() const { return 170; }
@@ -1137,8 +1138,8 @@ class CHARACTER
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 224); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 160); }
   virtual ulong TotalVolume() const { return 50000; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " is slain (again)."; }
-  virtual std::string NameSingular() const { return "zombie"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is slain (again)."; }
+  //virtual std::string NameSingular() const { return "zombie"; }
   virtual ushort TotalSize() const { return 160; }
 );
 
@@ -1163,10 +1164,10 @@ class CHARACTER
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 112); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 32); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(16, 80); }
-  virtual std::string Article() const { return "an"; }
+  //virtual std::string GetArticle() const { return "an"; }
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SULFUR, Volume); }
-  virtual std::string NameSingular() const { return "imp"; }
+  //virtual std::string NameSingular() const { return "imp"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual ushort TotalSize() const { return 100; }
 );
@@ -1190,7 +1191,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 1000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BATFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(464,0); }
-  virtual std::string NameSingular() const { return "bat"; }
+  //virtual std::string NameSingular() const { return "bat"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "squeaks"; }
   virtual ushort TotalSize() const { return 20; }
@@ -1222,7 +1223,7 @@ class CHARACTER
   virtual vector2d GetLegBitmapPos() const { return vector2d(16, 32); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(352,0); }
-  virtual std::string NameSingular() const { return "mistress"; }
+  //virtual std::string NameSingular() const { return "mistress"; }
   virtual ushort TotalSize() const { return 180; }
 );
 
@@ -1263,7 +1264,7 @@ class CHARACTER
   virtual vector2d GetLegBitmapPos() const { return IsWolf ? vector2d(0, 192) : vector2d(0, 176); }
   virtual ulong TotalVolume() const { return 80000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WEREWOLFFLESH, Volume); }
-  virtual std::string NameSingular() const { return "werewolf"; }
+  virtual std::string GetNameSingular() const { return "werewolf"; }
   //virtual float GetMeleeStrength() const;
   virtual std::string TalkVerb() const { return IsWolf ? "howls" : "screams"; }
   virtual ushort TotalSize() const { return 170; }
@@ -1295,8 +1296,8 @@ class CHARACTER
   virtual vector2d GetLegBitmapPos() const { return vector2d(16, 112); }
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLDFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies yelling like a tortured hyena."; }
-  virtual std::string NameSingular() const { return "kobold"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
+  //virtual std::string NameSingular() const { return "kobold"; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ushort TotalSize() const { return 90; }
 );
@@ -1324,7 +1325,7 @@ class CHARACTER
   virtual vector2d GetLegBitmapPos() const { return vector2d(16, 128); }
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GIBBERLINGFLESH, Volume); }
-  virtual std::string NameSingular() const { return "gibberling"; }
+  //virtual std::string NameSingular() const { return "gibberling"; }
   //virtual float GetMeleeStrength() const { return 10000; }
   virtual ushort TotalSize() const { return 90; }
 );
@@ -1345,7 +1346,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 15000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(CATFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(496,0); }
-  virtual std::string NameSingular() const { return "large cat"; }
+  //virtual std::string NameSingular() const { return "large cat"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "mews"; }
   virtual ushort TotalSize() const { return 60; }
@@ -1367,7 +1368,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 2000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(RATFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(512,0); }
-  virtual std::string NameSingular() const { return "large rat"; }
+  //virtual std::string NameSingular() const { return "large rat"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "squeaks"; }
   virtual ushort TotalSize() const { return 30; }
@@ -1396,15 +1397,14 @@ class CHARACTER
   virtual bool CanFly() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 60000; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(432,0); }
-  virtual std::string NameSingular() const { return "angel"; }
+  //virtual std::string NameSingular() const { return "angel"; }
   //virtual float GetMeleeStrength() const { return 10000; }
   virtual void CreateCorpse() { SetExists(false); }
   virtual ushort TotalSize() const { return 180; }
-  virtual std::string Article() const { return "an"; }
-  virtual bool ShowPostFix() const { return true; }
-  virtual std::string PostFix() const { return DivineMasterDescription(DivineMaster); }
+  //virtual std::string GetArticle() const { return "an"; }
+  virtual std::string GetPostFix() const { return GetDivineMasterDescription(DivineMaster); }
   uchar DivineMaster;
 );
 
@@ -1453,8 +1453,8 @@ class CHARACTER
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(111, 74, 37); }
   virtual ulong TotalVolume() const { return 60000; }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies smiling."; }
-  virtual std::string NameSingular() const { return "kamikaze dwarf"; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies smiling."; }
+  //virtual std::string NameSingular() const { return "kamikaze dwarf"; }
   virtual ushort TotalSize() const { return 130; }
   uchar DivineMaster;
 );
@@ -1473,7 +1473,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 5000000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(MAMMOTHFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(528,0); }
-  virtual std::string NameSingular() const { return "mammoth"; }
+  //virtual std::string NameSingular() const { return "mammoth"; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual std::string TalkVerb() const { return "roars"; }
   virtual ushort TotalSize() const { return 500; }
@@ -1503,7 +1503,7 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 200000; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(544, 0); }
-  virtual std::string NameSingular() const;
+  //virtual std::string NameSingular() const;
   virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual ushort TotalSize() const { return 200; }
   uchar Alignment;
@@ -1529,9 +1529,9 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 200000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); } // temporary
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(416,0); }
-  virtual std::string NameSingular() const { return "genie"; }
+  //virtual std::string NameSingular() const { return "genie"; }
   virtual void CreateCorpse() { SetExists(false); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 250; }
 );
@@ -1549,9 +1549,9 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 150000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LIONFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " growls."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " growls."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(576,0); }
-  virtual std::string NameSingular() const { return "lion"; }
+  //virtual std::string NameSingular() const { return "lion"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -1575,9 +1575,9 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 20000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LEAF, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " howls."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " howls."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(0,16); }
-  virtual std::string NameSingular() const { return "carnivorous plant"; }
+  //virtual std::string NameSingular() const { return "carnivorous plant"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
@@ -1601,9 +1601,9 @@ class CHARACTER
  protected:
   virtual ulong TotalVolume() const { return 200000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BUFFALOFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return Name(DEFINITE) + " snarls one last time."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " snarls one last time."; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(16,16); }
-  virtual std::string NameSingular() const { return "buffalo"; }
+  //virtual std::string NameSingular() const { return "buffalo"; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }

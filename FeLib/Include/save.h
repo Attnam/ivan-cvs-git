@@ -87,6 +87,7 @@ inline void ReadData(long& Type, inputfile& SaveFile, const valuemap& ValueMap) 
 inline void ReadData(ulong& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
 inline void ReadData(vector2d& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadVector2d(ValueMap); }
 void ReadData(std::string&, inputfile&, const valuemap&);
+void ReadData(std::vector<long>&, inputfile&, const valuemap&);
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {

@@ -497,7 +497,12 @@ bool lsquare::Open(character* Opener)
 {
   if(!GetOLTerrain()->Open(Opener) && !GetStack()->Open(Opener))
     if(Opener->IsPlayer())
-      ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
+      {
+	ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
+	return false;
+      }
+
+  return true;
 }
 
 bool lsquare::Close(character* Closer)
@@ -673,9 +678,9 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	  {
 	    bool Anything = false;
 
-	    if(GetOLTerrain()->NameSingular() != "")
+	    if(!GetOLTerrain()->IsEmpty())
 	      {
-		SetMemorizedDescription(GetOLTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetOLTerrain()->GetName(INDEFINITE));
 		Anything = true;
 	      }
 
@@ -683,24 +688,24 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	      {
 		if(Anything)
 		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomItem()->Name(INDEFINITE)));
+		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomItem()->GetName(INDEFINITE)));
 		  else
 		    SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
 		else
 		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(std::string(GetStack()->GetBottomItem()->Name(INDEFINITE)));
+		    SetMemorizedDescription(std::string(GetStack()->GetBottomItem()->GetName(INDEFINITE)));
 		  else
 		    SetMemorizedDescription("many items");
 
 		Anything = true;
 
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->GetName(INDEFINITE));
 	      }
 	    else
 	      if(Anything)
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->GetName(INDEFINITE));
 	      else
-		SetMemorizedDescription(GetGLTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetGLTerrain()->GetName(INDEFINITE));
 	  }
 	else
 	  {
@@ -721,18 +726,18 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		}
 
 	    if(HasItems > 1 || HasManyItems)
-	      SetMemorizedDescription("many items on " + GetOLTerrain()->Name(INDEFINITE));
+	      SetMemorizedDescription("many items on " + GetOLTerrain()->GetName(INDEFINITE));
 	    else if(HasItems == 1)
 	      for(ushort c = 0; c < 4; ++c)
 		{
 		  if(GetSideStack(c)->GetItems())
 		    {
-		      SetMemorizedDescription(GetSideStack(c)->GetBottomItem()->Name(INDEFINITE) + " on " + GetOLTerrain()->Name(INDEFINITE));
+		      SetMemorizedDescription(GetSideStack(c)->GetBottomItem()->GetName(INDEFINITE) + " on " + GetOLTerrain()->GetName(INDEFINITE));
 		      break;
 		    }
 		}
 	    else
-	      SetMemorizedDescription(GetOLTerrain()->Name(INDEFINITE));
+	      SetMemorizedDescription(GetOLTerrain()->GetName(INDEFINITE));
 	  }
       else
 	SetMemorizedDescription("darkness");
@@ -1062,9 +1067,7 @@ void lsquare::DrawParticles(ushort Color, uchar)
     return;
 
   clock_t StartTime = clock();
-
   vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
-
   game::DrawEverythingNoBlit();
 
   for(ushort c = 0; c < 10; ++c)
@@ -1160,7 +1163,7 @@ void lsquare::TeleportEverything(character* Teleporter)
   Teleporter->EditNP(-50);
 }
 
-bool lsquare::ReceiveApply(item* Thingy, character* Applier)
+/*bool lsquare::ReceiveApply(item* Thingy, character* Applier)
 {
   if(GetGLTerrain()->ReceiveApply(Thingy, Applier) || GetOLTerrain()->ReceiveApply(Thingy,Applier) || GetStack()->ReceiveApply(Thingy, Applier))
     {
@@ -1172,7 +1175,7 @@ bool lsquare::ReceiveApply(item* Thingy, character* Applier)
 	ADD_MESSAGE("You cannot apply that on this!");
       return false;
     }
-}
+}*/
 
 bool lsquare::DipInto(item* Thingy, character* Dipper)
 {
@@ -1231,7 +1234,7 @@ bool lsquare::RaiseTheDead(character* Summoner)
   return false;
 }
 
-bool lsquare::TryKey(key* Key, character* Applier)
+bool lsquare::TryKey(item* Key, character* Applier)
 {
   if(GetOLTerrain()->TryKey(Key,Applier) || GetStack()->TryKey(Key, Applier))
     {
@@ -1241,6 +1244,7 @@ bool lsquare::TryKey(key* Key, character* Applier)
     {
       if(Applier->IsPlayer()) 
 	ADD_MESSAGE("There's no keyhole here!");
+
       return false;
     }
 }

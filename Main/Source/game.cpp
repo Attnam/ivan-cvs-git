@@ -23,7 +23,6 @@
 #include "itemba.h"
 #include "godba.h"
 #include "strover.h"
-#include "felist.h"
 #include "whandler.h"
 #include "lsquare.h"
 #include "lterraba.h"
@@ -62,6 +61,7 @@ ulong game::NextItemID = 0;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
+bool game::AnimationControllerActive = true;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -149,6 +149,10 @@ void game::InitScript()
   GameScript->SetValueMap(GetGlobalValueMap());
   GameScript->ReadFrom(ScriptFile);
 }
+
+#include "materde.h"
+#include "itemde.h"
+#include "stack.h"
 
 void game::Init(const std::string& Name)
 {
@@ -246,6 +250,15 @@ void game::Init(const std::string& Name)
 	dog* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+
+	for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+	  {
+	    const material::prototype* Proto = protocontainer<material>::GetProto(c);
+	    const material::databasemap& Config = Proto->GetConfig();
+
+	    for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	      Player->GetStack()->AddItem(new oillamp(MAKE_MATERIAL(i->first)));
+	  }
 
 	ADD_MESSAGE("Game generated successfully.");
 	break;
@@ -1454,10 +1467,15 @@ void game::LookHandler(vector2d CursorPos)
     ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 }
 
-void game::AnimationController()
+bool game::AnimationController()
 {
-  if(IsRunning() && IsInGetCommand())
-    game::DrawEverything();
+  if(IsRunning() && AnimationControllerIsActive())
+    {
+      game::DrawEverythingNoBlit();
+      return true;
+    }
+  else
+    return false;
 }
 
 void game::InitGlobalValueMap()
@@ -1475,3 +1493,9 @@ void game::InitGlobalValueMap()
     }
 }
 
+void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
+{
+  SetAnimationControllerActive(false);
+  iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
+  SetAnimationControllerActive(true);
+}

@@ -76,7 +76,7 @@ void dungeon::PrepareLevel(ushort Index)
     {
       Level[Index] = new level;
       Level[Index]->SetLevelScript(GetLevelScript(Index));
-      iosystem::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+      game::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
       Level[Index]->Generate();
       Generated[Index] = true;
       game::BusyAnimation();

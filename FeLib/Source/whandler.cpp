@@ -1,11 +1,26 @@
 #include "whandler.h"
+#include "graphics.h"
+
+controlvector globalwindowhandler::ControlLoop;
+
+void globalwindowhandler::InstallControlLoop(bool (*What)())
+{
+  ControlLoop.push_back(What);
+}
+
+void globalwindowhandler::DeInstallControlLoop(bool (*What)())
+{
+  for(controlvector::iterator i = ControlLoop.begin(); i != ControlLoop.end(); ++i)
+    if(*i == What)
+      {
+	ControlLoop.erase(i);
+	return;
+      }
+}
 
 #ifdef __DJGPP__
 
 #include <unistd.h>
-
-ulong globalwindowhandler::Tick = 0;
-void (*globalwindowhandler::ControlLoop)() = 0;
 
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 {
@@ -13,11 +28,12 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
     while(kbhit()) getkey();
 
   while(!kbhit())
-    if(ControlLoop)
+    if(ControlLoop.size())
       {
-	ControlLoop();
-	++Tick;
-	usleep(50000);
+	for(ushort c = 0; c < ControlLoop.size(); ++c)
+	  ControlLoop[c]();
+
+	graphics::BlitDBToScreen();
       }
 
   return getkey();			
@@ -31,17 +47,26 @@ int globalwindowhandler::ReadKey()
     return 0;
 }
 
+ulong globalwindowhandler::GetTick()
+{
+  return uclock() * 20 / UCLOCKS_PER_SEC;
+}
+
 #else
 
-#include "graphics.h"
+#include <ctime>
+
 #include "error.h"
 #include "bitmap.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
-void (*globalwindowhandler::ControlLoop)() = 0;
-ulong globalwindowhandler::Tick = 0;
+
+ulong globalwindowhandler::GetTick()
+{
+  return clock() * 20 / CLOCKS_PER_SEC;
+}
 
 #ifdef WIN32
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -189,11 +214,18 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  }
       else
 	{
-	  if(ControlLoop)
+	  if(Active && ControlLoop.size())
 	    {
-	      ControlLoop();
-	      ++Tick;
-	      Sleep(50);
+	      bool Draw = false;
+
+	      for(ushort c = 0; c < ControlLoop.size(); ++c)
+		if(ControlLoop[c]())
+		  Draw = true;
+
+	      if(Draw)
+		graphics::BlitDBToScreen();
+
+	      Sleep(10);
 	    }
 	  else
 	    WaitMessage();
@@ -301,11 +333,18 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  ProcessMessage(event);
 	else
 	  {
-	    if(ControlLoop)
+	    if(SDL_APPACTIVE && ControlLoop.size())
 	      {
-		ControlLoop();
-		++Tick;
-		SDL_Delay(50);
+		bool Draw = false;
+
+		for(ushort c = 0; c < ControlLoop.size(); ++c)
+		  if(ControlLoop[c]())
+		    Draw = true;
+
+		if(Draw)
+		  graphics::BlitDBToScreen();
+
+		SDL_Delay(10);
 	      }
 	    else
 	      {

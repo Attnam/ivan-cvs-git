@@ -5,8 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <vector>
+
 #define GETKEY globalwindowhandler::GetKey
 #define READKEY globalwindowhandler::ReadKey
+
+typedef std::vector<bool (*)()> controlvector;
 
 #ifdef __DJGPP__
 
@@ -19,11 +23,11 @@ class globalwindowhandler
  public:
   static int GetKey(bool = true, bool = false);
   static int ReadKey();
-  static ulong GetTick() { return Tick; }
-  static void SetControlLoop(void (*What)()) { ControlLoop = What; }
+  static ulong GetTick();
+  static void InstallControlLoop(bool (*)());
+  static void DeInstallControlLoop(bool (*)());
  protected:
-  static void (*ControlLoop)();
-  static ulong Tick;
+  static controlvector ControlLoop;
 };
 
 #else
@@ -57,16 +61,16 @@ class globalwindowhandler
   static int ReadKey();
   static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
   static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
-  static void SetControlLoop(void (*What)()) { ControlLoop = What; }
+  static void InstallControlLoop(bool (*)());
+  static void DeInstallControlLoop(bool (*)());
   static void SetInitialized(bool What) { Initialized = What; }
   static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
-  static ulong GetTick() { return Tick; }
+  static ulong GetTick();
  private:
   static dynarray<int> KeyBuffer;
   static bool Initialized;
   static bool (*QuitMessageHandler)();
-  static void (*ControlLoop)();
-  static ulong Tick;
+  static controlvector ControlLoop;
 #ifdef WIN32
   static bool Active;
   static char KeyboardLayoutName[KL_NAMELENGTH];

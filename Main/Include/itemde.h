@@ -11,6 +11,8 @@
 #include "wskill.h"
 #include "slot.h"
 
+class felist;
+
 class ABSTRACT_ITEM
 (
   materialcontainer,
@@ -32,6 +34,7 @@ class ABSTRACT_ITEM
   virtual uchar GetMaterials() const { return 2; }
   virtual material* GetMaterial(ushort) const;
  protected:
+  virtual void GenerateMaterials();
   virtual ushort GetMaterialColor1(ushort) const;
   material* ContainedMaterial;
 );
@@ -53,12 +56,12 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual bool IsAnimated() const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "banana"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BANANAPEAL), MAKE_MATERIAL(BANANAFLESH)); }
+  //virtual std::string NameSingular() const { return "banana"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BANANAPEAL), MAKE_MATERIAL(BANANAFLESH)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetAnimationFrames() const { return 20; }
   virtual ushort GetMaterialColor0(ushort) const;
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
   uchar Charges;
 );
 
@@ -69,12 +72,11 @@ class ITEM
  public:
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "banana of Liukas Vipro"; }
-  virtual std::string NamePlural() const { return "bananas of Liukas Vipro"; }
-  virtual std::string Adjective() const { return "holy"; }
-  virtual bool ShowAdjective() const { return true; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
-  virtual bool ForceDefiniteArticle() const { return true; }
+  //virtual std::string NameSingular() const { return "banana of Liukas Vipro"; }
+  //virtual std::string NamePlural() const { return "bananas of Liukas Vipro"; }
+  //virtual std::string GetAdjective() const { return "holy"; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
 );
 
 class ITEM
@@ -89,8 +91,8 @@ class ITEM
   virtual void Load(inputfile&);
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string NameSingular() const { return "lantern"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
+  //virtual std::string NameSingular() const { return "lantern"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, OnWall ? 192 : 256); }
   bool OnWall;
@@ -102,18 +104,16 @@ class ITEM
   materialcontainer,
  public:
   virtual item* TryToOpen(character*);
-  virtual std::string NameSingular() const { return "can"; }
+  //virtual std::string NameSingular() const { return "can"; }
   virtual item* PrepareForConsuming(character*);
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual item* BetterVersion() const;
   virtual bool IsOpenable(character*) const { return true; }
  protected:
-  virtual void GenerateMaterials();
-  virtual std::string PostFix() const { return ContainerPostFix(); }
-  virtual bool ShowPostFix() const { return GetContainedMaterial() ? true : false; }
-  virtual std::string Adjective() const { return "empty"; }
-  virtual std::string AdjectiveArticle() const { return "an"; }
-  virtual bool ShowAdjective() const { return GetContainedMaterial() ? false : true; }
+  //virtual void GenerateMaterials();
+  virtual std::string GetPostFix() const { return ContainerPostFix(); }
+  virtual std::string GetAdjective() const { return !GetContainedMaterial() ? "empty" : ""; }
+  virtual std::string GetAdjectiveArticle() const { return "an"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
 );
 
@@ -124,13 +124,12 @@ class ITEM
  public:
   virtual void ReceiveHitEffect(character*, character*);
   virtual material* CreateDipMaterial();
-  virtual std::string NameSingular() const { return "lump"; }
+  //virtual std::string NameSingular() const { return "lump"; }
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
   virtual bool IsDipDestination(character*) const { return true; }
  protected:
-  virtual void GenerateMaterials();
-  virtual std::string PostFix() const { return LumpyPostFix(); }
-  virtual bool ShowPostFix() const { return true; }
+  //virtual void GenerateMaterials();
+  virtual std::string GetPostFix() const { return LumpyPostFix(); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -155,6 +154,7 @@ class ABSTRACT_ITEM
   virtual uchar GetMaterials() const { return 3; }
   virtual material* GetMaterial(ushort) const;
  protected:
+  virtual void GenerateMaterials();
   virtual ushort GetMaterialColor1(ushort) const;
   material* SecondaryMaterial;
   material* ContainedMaterial;
@@ -165,8 +165,8 @@ class ITEM
   longsword,
   meleeweapon,
  protected:
-  virtual std::string NameSingular() const { return "long sword"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "long sword"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -174,8 +174,8 @@ class ITEM
   twohandedsword,
   longsword,
  protected:
-  virtual std::string NameSingular() const { return "two-handed sword"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "two-handed sword"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -183,9 +183,8 @@ class ITEM
   curvedtwohandedsword,
   twohandedsword,
  protected:
-  virtual void GenerateMaterials();
-  virtual std::string Adjective() const { return "curved"; }
-  virtual bool ShowAdjective() const { return true; }
+  //virtual void GenerateMaterials();
+  //virtual std::string GetAdjective() const { return "curved"; }
 );
 
 class ITEM
@@ -195,12 +194,11 @@ class ITEM
  public:
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "broadsword \"Valpurus's Justifier\""; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0); }
-  virtual std::string Adjective() const { return "holy"; }
-  virtual bool ShowAdjective() const { return true; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != VALPURIUM; }
-  virtual bool ForceDefiniteArticle() const { return true; }
+  //virtual std::string NameSingular() const { return "broadsword \"Valpurus's Justifier\""; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0); }
+  //virtual std::string GetAdjective() const { return "holy"; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != VALPURIUM; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
 );
 
 class ITEM
@@ -208,9 +206,9 @@ class ITEM
   axe,
   meleeweapon,
  protected:
-  virtual void GenerateMaterials();
-  virtual std::string NameSingular() const { return "axe"; }
-  virtual std::string Article() const { return "an"; }
+  //virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "axe"; }
+  //virtual std::string GetArticle() const { return "an"; }
 );
 
 class ITEM
@@ -221,8 +219,8 @@ class ITEM
   virtual bool Apply(character*);
   virtual bool IsAppliable(character*) const;
  protected:
-  virtual std::string NameSingular() const { return "pick-axe"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "pick-axe"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -230,8 +228,8 @@ class ITEM
   spear,
   meleeweapon,
  protected:
-  virtual std::string NameSingular() const { return "spear"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "spear"; }
+  //virtual void GenerateMaterials();
 );
 
 class ABSTRACT_ITEM
@@ -240,7 +238,7 @@ class ABSTRACT_ITEM
   item,
  public:
   virtual ulong Price() const;
-  virtual uchar GetCategory() const { return BODYARMOR; }
+  //virtual uchar GetCategory() const { return BODYARMOR; }
   virtual bool IsBodyArmor(character*) const { return true; }
 );
 
@@ -251,8 +249,8 @@ class ITEM
  public:
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string NameSingular() const;
-  virtual void GenerateMaterials();
+  virtual std::string GetNameSingular() const;
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -260,8 +258,8 @@ class ITEM
   chainmail,
   bodyarmor,
  protected:
-  virtual std::string NameSingular() const { return "chain mail"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "chain mail"; }
+  //virtual void GenerateMaterials();
 );
 
 class ABSTRACT_ITEM
@@ -282,10 +280,10 @@ class ITEM
   virtual bool IsConsumable(character*) const { return false; }
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "Shirt of the Golden Eagle"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(CLOTH)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != CLOTH; }
-  virtual bool ForceDefiniteArticle() const { return true; }
+  //virtual std::string NameSingular() const { return "Shirt of the Golden Eagle"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(CLOTH)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != CLOTH; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
 );
 
 class ITEM
@@ -302,13 +300,11 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string NameSingular() const { return "bottle"; }
-  virtual void GenerateMaterials();
-  virtual std::string PostFix() const { return ContainerPostFix(); }
-  virtual bool ShowPostFix() const { return GetContainedMaterial() ? true : false; }
-  virtual std::string Adjective() const { return "empty"; }
-  virtual std::string AdjectiveArticle() const { return "an"; }
-  virtual bool ShowAdjective() const { return GetContainedMaterial() ? false : true; }
+  //virtual std::string NameSingular() const { return "bottle"; }
+  //virtual void GenerateMaterials();
+  virtual std::string GetPostFix() const { return ContainerPostFix(); }
+  virtual std::string GetAdjective() const { return !GetContainedMaterial() ? "empty" : ""; }
+  virtual std::string GetAdjectiveArticle() const { return "an"; }
 );
 
 class ITEM
@@ -319,9 +315,9 @@ class ITEM
   virtual item* BetterVersion() const { return new banana; }
   virtual bool GetStepOnEffect(character *);
  protected:
-  virtual std::string NameSingular() const { return "banana peal"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BANANAPEAL)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
+  //virtual std::string NameSingular() const { return "banana peal"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BANANAPEAL)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BANANAPEAL; }
 );
 
 class ITEM
@@ -332,10 +328,9 @@ class ITEM
   virtual item* BetterVersion() const;
   virtual bool GetStepOnEffect(character*);
  protected:
-  virtual std::string NameSingular() const { return "bottle"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
-  virtual std::string Adjective() const { return "broken"; }
-  virtual bool ShowAdjective() const { return true; }
+  //virtual std::string NameSingular() const { return "bottle"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
+  //virtual std::string GetAdjective() const { return "broken"; }
 );
 
 class ABSTRACT_ITEM
@@ -347,7 +342,7 @@ class ABSTRACT_ITEM
   virtual bool IsReadable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
 );
 
 class ITEM
@@ -357,19 +352,19 @@ class ITEM
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of create monster"; }
-  virtual std::string NamePlural() const { return "scrolls of create monster"; }
+  //virtual std::string NameSingular() const { return "scroll of create monster"; }
+  //virtual std::string NamePlural() const { return "scrolls of create monster"; }
 );
 
 class ITEM
 (
-  scrollofteleport,
+  scrollofteleportation,
   scroll,
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of teleportation"; }
-  virtual std::string NamePlural() const { return "scrolls of teleportation"; }
+  //virtual std::string NameSingular() const { return "scroll of teleportation"; }
+  //virtual std::string NamePlural() const { return "scrolls of teleportation"; }
 );
 
 class ITEM
@@ -379,8 +374,8 @@ class ITEM
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of charging"; }
-  virtual std::string NamePlural() const { return "scrolls of charging"; }
+  //virtual std::string NameSingular() const { return "scroll of charging"; }
+  //virtual std::string NamePlural() const { return "scrolls of charging"; }
 );
 
 class ITEM
@@ -388,8 +383,8 @@ class ITEM
   nut,
   item,
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(HUMANFLESH)); }
-  virtual std::string NameSingular() const { return "nut"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(HUMANFLESH)); }
+  //virtual std::string NameSingular() const { return "nut"; }
 );
 
 class ITEM
@@ -401,21 +396,21 @@ class ITEM
   virtual bool IsConsumable(character*) const { return false; }
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "left nut of Petrus"; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != HUMANFLESH; }
-  virtual bool ForceDefiniteArticle() const { return true; }
+  //virtual std::string NameSingular() const { return "left nut of Petrus"; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != HUMANFLESH; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
 );
 
 class ITEM
 (
-  abone,
+  bone,
   item,
  public:
   virtual bool DogWillCatchAndConsume() const { return GetConsumeMaterial()->GetConfig() == BONE; }
  protected:
-  virtual std::string NameSingular() const { return "bone"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BONE)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BONE; }
+  //virtual std::string NameSingular() const { return "bone"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BONE)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != BONE; }
 
 );
 
@@ -424,8 +419,8 @@ class ITEM
   poleaxe,
   axe,
  protected:
-  virtual void GenerateMaterials();
-  virtual std::string NameSingular() const { return "poleaxe"; }
+  //virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "poleaxe"; }
 );
 
 class ITEM
@@ -433,8 +428,8 @@ class ITEM
   spikedmace,
   meleeweapon,
  protected:
-  virtual std::string NameSingular() const { return "spiked mace"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "spiked mace"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -444,13 +439,12 @@ class ITEM
  public:
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "mace \"Neerc Se-Ulb\""; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(FROGFLESH)); }
-  virtual std::string Adjective() const { return "ancient"; }
-  virtual std::string AdjectiveArticle() const { return "an"; }
-  virtual bool ShowAdjective() const { return true; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != DIAMOND; }
-  virtual bool ForceDefiniteArticle() const { return true; }
+  //virtual std::string NameSingular() const { return "mace \"Neerc Se-Ulb\""; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(FROGFLESH)); }
+  //virtual std::string GetAdjective() const { return "ancient"; }
+  //virtual std::string GetAdjectiveArticle() const { return "an"; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != DIAMOND; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
 );
 
 class ITEM
@@ -460,11 +454,10 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial() ? GetMainMaterial()->RawPrice() : 0; }
  protected:
-  virtual std::string NameSingular() const { return "loaf"; }
-  virtual std::string NamePlural() const { return "loaves"; }
-  virtual void GenerateMaterials();
-  virtual std::string PostFix() const { return LumpyPostFix(); }
-  virtual bool ShowPostFix() const { return true; }
+  //virtual std::string NameSingular() const { return "loaf"; }
+  //virtual std::string NamePlural() const { return "loaves"; }
+  //virtual void GenerateMaterials();
+  virtual std::string GetPostFix() const { return LumpyPostFix(); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -475,8 +468,8 @@ class ITEM
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of wishing"; }
-  virtual std::string NamePlural() const { return "scrolls of wishing"; }
+  //virtual std::string NameSingular() const { return "scroll of wishing"; }
+  //virtual std::string NamePlural() const { return "scrolls of wishing"; }
 );
 
 class ITEM
@@ -484,11 +477,10 @@ class ITEM
   cheapcopyofleftnutofpetrus,
   nut,
  protected:
-  virtual std::string NameSingular() const { return "copy of the left nut of Petrus"; }
-  virtual std::string NamePlural() const { return "copies of the left nut of Petrus"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
-  virtual std::string Adjective() const { return "cheap"; }
-  virtual bool ShowAdjective() const { return true; }
+  //virtual std::string NameSingular() const { return "copy of the left nut of Petrus"; }
+  //virtual std::string NamePlural() const { return "copies of the left nut of Petrus"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
+  //virtual std::string GetAdjective() const { return "cheap"; }
 );
 
 class ABSTRACT_ITEM
@@ -513,8 +505,7 @@ class ABSTRACT_ITEM
  protected:
   virtual ushort GetBeamColor() const = 0;
   virtual void VirtualConstructor(bool);
-  virtual std::string wand::PostFix() const;
-  virtual bool ShowPostFix() const { return true; }
+  virtual std::string GetPostFix() const;
   uchar Charges;
   uchar TimesUsed;
 );
@@ -528,9 +519,9 @@ class ITEM
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
   virtual ushort GetBeamColor() const { return BLUE; }
-  virtual std::string NameSingular() const { return "wand of polymorph"; }
-  virtual std::string NamePlural() const { return "wands of polymorph"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
+  //virtual std::string NameSingular() const { return "wand of polymorph"; }
+  //virtual std::string NamePlural() const { return "wands of polymorph"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GLASS)); }
   virtual void VirtualConstructor(bool);
 );
 
@@ -541,8 +532,7 @@ class ITEM
  public:
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
  protected:
-  virtual std::string Adjective() const { return "broken"; }
-  virtual bool ShowAdjective() const { return true; }
+  //virtual std::string GetAdjective() const { return "broken"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, OnWall ? 208 : 304); }
 );
 
@@ -553,8 +543,8 @@ class ITEM
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of change material"; }
-  virtual std::string NamePlural() const { return "scrolls of change material"; }
+  //virtual std::string NameSingular() const { return "scroll of change material"; }
+  //virtual std::string NamePlural() const { return "scrolls of change material"; }
 );
 
 class ITEM
@@ -566,10 +556,10 @@ class ITEM
   virtual bool IsConsumable(character*) const { return false; }
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "Avatar of Valpurus"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(VALPURIUM)); }
-  virtual bool ForceDefiniteArticle() const { return true; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != VALPURIUM; }
+  //virtual std::string NameSingular() const { return "Avatar of Valpurus"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(VALPURIUM)); }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != VALPURIUM; }
 );
 
 class ITEM
@@ -581,9 +571,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of striking"; }
-  virtual std::string NamePlural() const { return "wands of striking"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(MARBLE)); }
+  //virtual std::string NameSingular() const { return "wand of striking"; }
+  //virtual std::string NamePlural() const { return "wands of striking"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(MARBLE)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return WHITE; }
 );
@@ -591,12 +581,13 @@ class ITEM
 class ITEM
 (
   brokenplatemail,
-  bodyarmor,
+  platemail,
+ public:
+  virtual bool ReceiveDamage(character*, short, uchar) { return false; }
  protected:
-  virtual std::string NameSingular() const { return "plate mail"; }
-  virtual void GenerateMaterials();
-  virtual std::string Adjective() const { return "broken"; }
-  virtual bool ShowAdjective() const { return true; }
+  //virtual std::string NameSingular() const { return "plate mail"; }
+  //virtual void GenerateMaterials();
+  //virtual std::string GetAdjective() const { return "broken"; }
 );
 
 class ITEM
@@ -606,9 +597,9 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
  protected:
-  virtual std::string NameSingular() const { return "kiwi"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(KIWIFLESH)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != KIWIFLESH; }
+  //virtual std::string NameSingular() const { return "kiwi"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(KIWIFLESH)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != KIWIFLESH; }
 );
 
 class ITEM
@@ -618,9 +609,9 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
  protected:
-  virtual std::string NameSingular() const { return "pineapple"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PINEAPPLEFLESH)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PINEAPPLEFLESH; }
+  //virtual std::string NameSingular() const { return "pineapple"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PINEAPPLEFLESH)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PINEAPPLEFLESH; }
 );
 
 class ITEM
@@ -628,9 +619,9 @@ class ITEM
   palmbranch,
   item,
  protected:
-  virtual std::string NameSingular() const { return "palm branch"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PALMLEAF)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PALMLEAF; }
+  //virtual std::string NameSingular() const { return "palm branch"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PALMLEAF)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PALMLEAF; }
 );
 
 class ITEM
@@ -640,8 +631,8 @@ class ITEM
  public:
   virtual bool IsWhip() const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "whip"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(LEATHER), MAKE_MATERIAL(WOOD), 0); }
+  //virtual std::string NameSingular() const { return "whip"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(LEATHER), MAKE_MATERIAL(WOOD), 0); }
   virtual ushort GetFormModifier() const;
 );
 
@@ -655,10 +646,9 @@ class ITEM
   virtual bool IsAppliable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(LEATHER), MAKE_MATERIAL(GUNPOWDER)); }
-  virtual std::string PostFix() const { return ContainerPostFix(); }
-  virtual bool ShowPostFix() const { return true; }
-  virtual std::string NameSingular() const { return "backpack"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(LEATHER), MAKE_MATERIAL(GUNPOWDER)); }
+  virtual std::string GetPostFix() const { return ContainerPostFix(); }
+  //virtual std::string NameSingular() const { return "backpack"; }
 );
 
 class ITEM
@@ -675,12 +665,11 @@ class ITEM
   virtual bool IsReadable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetMaterialColor0(ushort) const;
-  virtual std::string NameSingular() const { return "holy book"; }
-  virtual std::string PostFix() const { return DivineMasterDescription(DivineMaster); }
-  virtual bool ShowPostFix() const { return true; }
+  //virtual std::string NameSingular() const { return "holy book"; }
+  virtual std::string GetPostFix() const { return GetDivineMasterDescription(DivineMaster); }
   virtual bool ShowMaterial() const { return false; }
   uchar DivineMaster;
 );
@@ -690,9 +679,9 @@ class ITEM
   fiftymillionroubles,
   item,
  protected:
-  virtual std::string NameSingular() const { return "pile of 50 million roubles"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PARCHMENT; }
+  //virtual std::string NameSingular() const { return "pile of 50 million roubles"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(PARCHMENT)); }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != PARCHMENT; }
 );
 
 class ITEM
@@ -708,22 +697,22 @@ class ITEM
   virtual bool Apply(character*);
   virtual bool IsAppliable(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "oil lamp"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
+  //virtual std::string NameSingular() const { return "oil lamp"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
   virtual void VirtualConstructor(bool);
-  virtual std::string Article() const { return "an"; }
+  //virtual std::string GetArticle() const { return "an"; }
   bool InhabitedByGenie;
 );
 
 class ITEM
 (
-  astone,
+  stone,
   item,
  public:
-  virtual std::string NameSingular() const { return "stone"; }
+  //virtual std::string NameSingular() const { return "stone"; }
   virtual ulong Price() const { return GetMainMaterial()->RawPrice() * 2; }
  protected:
-  virtual void GenerateMaterials();
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -734,9 +723,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of fireballs"; }
-  virtual std::string NamePlural() const { return "wands of fireballs"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(MARBLE)); }
+  //virtual std::string NameSingular() const { return "wand of fireballs"; }
+  //virtual std::string NamePlural() const { return "wands of fireballs"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(MARBLE)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return YELLOW; }
 );
@@ -748,8 +737,8 @@ class ITEM
  public:
   virtual bool Read(character*);
  protected:
-  virtual std::string NameSingular() const { return "scroll of taming"; }
-  virtual std::string NamePlural() const { return "scrolls of taming"; }
+  //virtual std::string NameSingular() const { return "scroll of taming"; }
+  //virtual std::string NamePlural() const { return "scrolls of taming"; }
 );
 
 class ITEM
@@ -760,9 +749,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of teleportation"; }
-  virtual std::string NamePlural() const { return "wands of teleportation"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
+  //virtual std::string NameSingular() const { return "wand of teleportation"; }
+  //virtual std::string NamePlural() const { return "wands of teleportation"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
@@ -780,10 +769,10 @@ class ITEM
   virtual bool IsChargeable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string NameSingular() const { return "mine"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(GUNPOWDER)); }
+  //virtual std::string NameSingular() const { return "mine"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(GUNPOWDER)); }
   virtual void VirtualConstructor(bool);
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != IRON; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != IRON; }
   bool Charged;
 );
 
@@ -795,9 +784,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of haste"; }
-  virtual std::string NamePlural() const { return "wands of haste"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
+  //virtual std::string NameSingular() const { return "wand of haste"; }
+  //virtual std::string NamePlural() const { return "wands of haste"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return RED; }
 );
@@ -810,9 +799,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of slow"; }
-  virtual std::string NamePlural() const { return "wands of slow"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
+  //virtual std::string NameSingular() const { return "wand of slow"; }
+  //virtual std::string NamePlural() const { return "wands of slow"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
@@ -829,10 +818,10 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool CanOpenDoors() const { return true; }
-  virtual bool FitsLockType(uchar What) const { return What == LockType; }
+  virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
  protected:
-  virtual std::string NameSingular() const { return "key"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
+  //virtual std::string NameSingular() const { return "key"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
   virtual void VirtualConstructor(bool);
   uchar LockType;
 );
@@ -844,8 +833,8 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the shield can be calculated somehow
  protected:
-  virtual std::string NameSingular() const { return "shield"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "shield"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -856,8 +845,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the cloak can be calculated somehow
   virtual bool IsCloak(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "cloak"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "cloak"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -868,8 +857,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
   virtual bool IsBoot(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "boot"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "boot"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -880,8 +869,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
   virtual bool IsGauntlet(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "gauntlet"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "gauntlet"; }
+  //virtual void GenerateMaterials();
 );
 
 class ITEM
@@ -892,8 +881,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsBelt(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "belt"; }
-  virtual void GenerateMaterials();
+  //virtual std::string NameSingular() const { return "belt"; }
+  //virtual void GenerateMaterials();
   virtual ushort GetFormModifier() const; 
 );
 
@@ -905,8 +894,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsRing(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "ring"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND)); }
+  //virtual std::string NameSingular() const { return "ring"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND)); }
 );
 
 class ITEM
@@ -917,8 +906,8 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsAmulet(character*) const { return true; }
  protected:
-  virtual std::string NameSingular() const { return "amulet"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
+  //virtual std::string NameSingular() const { return "amulet"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
 );
 
 class ABSTRACT_ITEM
@@ -963,13 +952,12 @@ class ABSTRACT_ITEM
   virtual std::vector<ushort>& GetColor2Vector() { return Color2; }
   virtual std::vector<ushort>& GetColor3Vector() { return Color3; }
  protected:
-  virtual void GenerateMaterials() { }
+  //virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
   virtual ushort GetAnimationFrames() const { return AnimationFrames; }
-  virtual std::string PostFix() const { return GetOwnerDescription(); }
-  virtual bool ShowPostFix() const { return !GetMaster(); }
+  virtual std::string GetPostFix() const { return GetOwnerDescription(); }
   virtual bool ShowMaterial() const { return false; }
-  virtual bool ForceDefiniteArticle() const { return Unique; }
+  virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
   virtual ushort GetMaterialColor0(ushort) const;
   virtual ushort GetMaterialColor1(ushort Frame) const { return Color1[Frame]; }
   virtual ushort GetMaterialColor2(ushort Frame) const { return Color2[Frame]; }
@@ -1005,7 +993,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual std::string NameSingular() const { return "head"; }
+  //virtual std::string NameSingular() const { return "head"; }
   gearslot HelmetSlot;
   gearslot AmuletSlot;
 );
@@ -1019,7 +1007,7 @@ class ABSTRACT_ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual bool ReceiveDamage(character*, short, uchar);
-  virtual std::string NameSingular() const { return "torso"; }
+  //virtual std::string NameSingular() const { return "torso"; }
 );
 
 class ITEM
@@ -1103,7 +1091,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STRIGHTARM; }
-  virtual std::string NameSingular() const { return "right arm"; }
+  //virtual std::string NameSingular() const { return "right arm"; }
 );
 
 class ITEM
@@ -1114,7 +1102,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STLEFTARM; }
-  virtual std::string NameSingular() const { return "left arm"; }
+  //virtual std::string NameSingular() const { return "left arm"; }
 );
 
 class ITEM
@@ -1127,7 +1115,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STGROIN; }
-  virtual std::string NameSingular() const { return "groin"; }
+  //virtual std::string NameSingular() const { return "groin"; }
 );
 
 class ABSTRACT_ITEM
@@ -1157,7 +1145,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STRIGHTLEG; }
-  virtual std::string NameSingular() const { return "right leg"; }
+  //virtual std::string NameSingular() const { return "right leg"; }
 );
 
 class ITEM
@@ -1168,7 +1156,7 @@ class ITEM
   virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STLEFTLEG; }
-  virtual std::string NameSingular() const { return "left leg"; }
+  //virtual std::string NameSingular() const { return "left leg"; }
 );
 
 class ITEM
@@ -1180,10 +1168,10 @@ class ITEM
   virtual bool IsConsumable(character*) const { return false; }
   virtual bool Polymorph(stack*) { return false; }
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(ELPURIFLESH)); }
-  virtual std::string NameSingular() const { return "head of Elpuri"; }
-  virtual bool ForceDefiniteArticle() const { return true; }
-  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != ELPURIFLESH; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(ELPURIFLESH)); }
+  //virtual std::string NameSingular() const { return "head of Elpuri"; }
+  //virtual uchar GetArticleMode() const { return DEFINITEARTICLE; }
+  //virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != ELPURIFLESH; }
 );
 
 class ITEM
@@ -1223,13 +1211,12 @@ class ITEM
   virtual material* GetMaterial(ushort) const;
   virtual bool RaiseTheDead(character*);
  protected:
-  virtual std::string NameSingular() const { return "corpse"; }
-  virtual void GenerateMaterials() { }
+  //virtual std::string NameSingular() const { return "corpse"; }
+  //virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColor0(ushort) const;
   virtual ushort GetMaterialColor1(ushort) const;
   virtual bool ShowMaterial() const { return false; }
-  virtual std::string PostFix() const;
-  virtual bool ShowPostFix() const { return true; }
+  virtual std::string GetPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual ushort GetSize() const;
   character* Deceased;
@@ -1243,9 +1230,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of locking"; }
-  virtual std::string NamePlural() const { return "wands of locking"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(COPPER)); }
+  //virtual std::string NameSingular() const { return "wand of locking"; }
+  //virtual std::string NamePlural() const { return "wands of locking"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(COPPER)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return WHITE; }
 );
@@ -1258,9 +1245,9 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual std::string NameSingular() const { return "wand of resurrection"; }
-  virtual std::string NamePlural() const { return "wands of resurrection"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BONE)); }
+  //virtual std::string NameSingular() const { return "wand of resurrection"; }
+  //virtual std::string NamePlural() const { return "wands of resurrection"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(BONE)); }
   virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return BLACK; }
 );
@@ -1270,9 +1257,9 @@ class ITEM
   ringoffireresistance,
   ring,
  protected:
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
-  virtual std::string NameSingular() const { return "ring of fire resistance"; }
-  virtual std::string NamePlural() const { return "rings of fire resistance"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
+  //virtual std::string NameSingular() const { return "ring of fire resistance"; }
+  //virtual std::string NamePlural() const { return "rings of fire resistance"; }
 );
 
 class ITEM
@@ -1282,9 +1269,9 @@ class ITEM
  public: 
   virtual bool SavesLifeWhenWorn() const { return true; }
   protected:
-  virtual std::string NameSingular() const { return "amulet of life saving"; }
-  virtual std::string NamePlural() const { return "amulets of life saving"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
+  //virtual std::string NameSingular() const { return "amulet of life saving"; }
+  //virtual std::string NamePlural() const { return "amulets of life saving"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
 );
 
 class ITEM
@@ -1296,8 +1283,8 @@ class ITEM
   virtual bool IsAppliable(character*) const { return true; }
   virtual void BlowEffect(character*);
  protected:
-  virtual std::string NameSingular() const { return "whistle"; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(TIN)); }
+  //virtual std::string NameSingular() const { return "whistle"; }
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(TIN)); }
 );
 
 class ITEM
@@ -1307,26 +1294,29 @@ class ITEM
  public:
   virtual void BlowEffect(character*);
  protected:
-  virtual std::string NameSingular() const { return "super whistle"; }
-  virtual std::string Adjective() const { return "magical"; }
+  //virtual std::string NameSingular() const { return "super whistle"; }
+  //virtual std::string GetAdjective() const { return "magical"; }
 );
 
 class ITEM
 (
- chest,
- item,
+  chest,
+  item,
  public: 
-  virtual item* TryToOpen(character*);
+  //virtual item* TryToOpen(character*);
   virtual bool IsOpenable(character*) const { return true; }
-  virtual bool TryKey(key*, character*);
-  virtual bool Lock() { Locked = true; }
+  virtual bool TryKey(item*, character*);
+  virtual void Lock() { Locked = true; }
+  virtual uchar GetLockType() const { return LockType; }
  protected:
-  virtual std::string NameSingular() const { return "chest"; }
-  virtual ulong StorageVolume;
+  //virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(WOOD)); }
+  //virtual std::string NameSingular() const { return "chest"; }
   virtual void VirtualConstructor(bool);
+  ulong StorageVolume;
   stack* Contained;
   uchar LockType;
   bool Locked;
 );
+
 #endif
 

@@ -35,6 +35,7 @@ class material;
 class datamemberbase
 {
  public:
+  virtual ~datamemberbase() { }
   void SetIdentifier(const std::string& What) { Identifier = What; }
   virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true) = 0;
   virtual void SetBase(datamemberbase*) = 0;
@@ -45,7 +46,7 @@ class datamemberbase
 template <class type> class datamembertemplate : public datamemberbase
 {
  public:
-  ~datamembertemplate();
+  virtual ~datamembertemplate();
   datamembertemplate() : Base(0), Member(0) { }
   type* GetMember(bool) const;
   void SetMember(type* What) { Member = What; }
