@@ -473,6 +473,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
 	    if(IsValidScript(CharacterScript = CharacterMap->GetContentScript(x, y)))
 	      {
 		character* Char = CharacterScript->Instantiate();
+		Char->SetGenerationDanger(Difficulty);
 
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
@@ -723,7 +724,14 @@ void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
       if(Pos.X || Pos.Y)
 	{
 	  Char->PutTo(Pos);
+	  Char->SetGenerationDanger(Difficulty);
+	  Char->SignalGeneration();
 	  Char->SignalNaturalGeneration();
+	  ivantime Time;
+	  game::GetTime(Time);
+
+	  if(Time.Day > 10)
+	    Char->EditAllAttributes(Time.Day - 10);
 	}
       else
 	delete Char;
@@ -1632,9 +1640,9 @@ void level::GenerateDungeon(int Index)
     {
       MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
       IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
-      Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
     }
 
+  Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   long Counter = 0;

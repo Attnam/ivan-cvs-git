@@ -168,6 +168,7 @@ character* god::CreateAngel()
 
 	  if(Angel->CanMoveOn(Square) && Angel->IsFreeForMe(Square))
 	    {
+	      Angel->SetGenerationDanger(ANGEL_GENERATION_DANGER);
 	      Angel->PutTo(TryToCreate);
 	      ADD_MESSAGE("Suddenly %s appears!", Angel->CHAR_NAME(INDEFINITE));
 	      return Angel;

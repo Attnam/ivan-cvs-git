@@ -264,7 +264,7 @@ bool game::Init(const festring& Name)
 	InitScript();
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new playerkind);
+	SetPlayer(new orc(SLAUGHTERER));
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -791,6 +791,11 @@ double game::GetMinDifficulty()
 {
   double Base = double(CurrentLevel->GetDifficulty()) / 5000;
   long MultiplierExponent = 0;
+  ivantime Time;
+  GetTime(Time);
+
+  if(Time.Day > 5)
+    Base += 0.001 * (Time.Day - 5);
 
   for(;;)
     {
@@ -2340,6 +2345,7 @@ character* game::CreateGhost()
   protosystem::CreateEveryNormalEnemy(EnemyVector);
   ghost* Ghost = new ghost;
   Ghost->SetTeam(GetTeam(MONSTER_TEAM));
+  Ghost->SetGenerationDanger(CurrentLevel->GetDifficulty());
   Ghost->SetOwnerSoul(PlayerName);
   Ghost->SetIsActive(false);
   Ghost->EditAllAttributes(-4);
@@ -2373,8 +2379,8 @@ long game::GetScore()
     {
       character* Char = protocontainer<character>::GetProto(i->first.Type)->Clone(i->first.Config);
       int SumOfAttributes = Char->GetSumOfAttributes();
+      Counter += sqrt(i->second) * SumOfAttributes * SumOfAttributes * Char->GetGenerationDanger() / DEFAULT_GENERATION_DANGER;
       delete Char;
-      Counter += sqrt(i->second) * SumOfAttributes * SumOfAttributes;
     }
 
   return long(0.01 * Counter);
@@ -2753,6 +2759,7 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
       std::sort(CharacterDrawVector.begin(), CharacterDrawVector.end(), NameOrderer);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
       uint c;
+
       for(c = 0; c < CharacterDrawVector.size(); ++c)
 	List.AddEntry(CharacterDrawVector[c]->GetName(UNARTICLED), LIGHT_GRAY, 0, c);
 

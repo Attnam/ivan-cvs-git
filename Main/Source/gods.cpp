@@ -823,7 +823,7 @@ void nefas::PrayGoodEffect()
 	      }
 	  }
     }
-  else if(RAND() & 4)
+  else if(RAND() & 7)
     {
       mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
       vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());

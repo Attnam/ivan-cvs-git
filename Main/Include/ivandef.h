@@ -696,4 +696,13 @@ struct databasebase { int Config; };
 
 #define DEPENDS_ON_DANGER 0xFFFF
 
+/* Tiredness states */
+
+#define FAINTING 0
+#define EXHAUSTED 1
+#define UNTIRED 2
+
+#define DEFAULT_GENERATION_DANGER 0.05
+#define ANGEL_GENERATION_DANGER 0.10
+
 #endif

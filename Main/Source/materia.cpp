@@ -110,6 +110,9 @@ material* material::EatEffect(character* Eater, long Amount)
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / 1000);
 
+  if(IsLiquid())
+    Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
+
   if(Volume != Amount)
     {
       EditVolume(-Amount);

@@ -478,6 +478,7 @@ character* contentscript<character>::Instantiate(int SpecialFlags) const
     Instance->SetWayPoints(*WayPoint);
 
   Instance->RestoreHP();
+  Instance->RestoreStamina();
   return Instance;
 }
 

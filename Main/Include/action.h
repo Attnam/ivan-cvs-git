@@ -51,6 +51,7 @@ class action
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
   virtual bool CanBeTalkedTo() const { return true; }
+  virtual bool IsFaint() const { return false; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

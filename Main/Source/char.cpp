@@ -143,8 +143,8 @@ statedata StateData[STATES] =
     NO_FLAGS,
     &character::PrintBeginPanicMessage,
     &character::PrintEndPanicMessage,
-    0,
-    0,
+    &character::BeginPanic,
+    &character::EndPanic,
     0,
     0
   }, {
@@ -269,7 +269,7 @@ festring character::GetZombieDescription() const { return " of " + GetName(INDEF
 bool character::BodyPartCanBeSevered(int I) const { return !!I; }
 bool character::HasBeenSeen() const { return !!(DataBase->Flags & HAS_BEEN_SEEN); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger)
 {
   Stack = new stack(0, this, HIDDEN);
 
@@ -309,7 +309,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -343,19 +343,19 @@ void character::Hunger()
 
   switch(GetBurdenState())
     {
-    case UNBURDENED:
-      EditNP(-1);
+    case OVER_LOADED:
+    case STRESSED:
+      EditNP(-8);
+      EditExperience(LEG_STRENGTH, 100, 1 << 2);
+      EditExperience(AGILITY, -50, 1 << 2);
       break;
     case BURDENED:
       EditNP(-2);
       EditExperience(LEG_STRENGTH, 50, 1 << 1);
       EditExperience(AGILITY, -25, 1 << 1);
       break;
-    case STRESSED:
-    case OVER_LOADED:
-      EditNP(-8);
-      EditExperience(LEG_STRENGTH, 100, 1 << 2);
-      EditExperience(AGILITY, -50, 1 << 2);
+    case UNBURDENED:
+      EditNP(-1);
       break;
     }
 
@@ -406,6 +406,22 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
   if(Enemy->StateIsActivated(CONFUSED))
     ToHitValue *= 0.75;
+
+  switch(Enemy->GetTirednessState())
+    {
+    case FAINTING:
+      ToHitValue *= 0.50;
+    case EXHAUSTED:
+      ToHitValue *= 0.75;
+    }
+
+  switch(GetTirednessState())
+    {
+    case FAINTING:
+      DodgeValue *= 0.50;
+    case EXHAUSTED:
+      DodgeValue *= 0.75;
+    }
 
   if(!ForceHit)
     {
@@ -643,6 +659,7 @@ void character::Be()
     {
       //ApplyExperience();
       SpecialTurnHandler();
+      BlocksSinceLastTurn = 0;
 
       if(IsPlayer())
 	{
@@ -699,9 +716,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
   if(!TeleportMove && IsStuck() && !TryToUnstuck(MoveTo - GetPos()))
     return;
 
-  if(Run && !IsPlayer()
-  && (Stamina <= 1000 / GetAttribute(LEG_STRENGTH)
-   || (!StateIsActivated(PANIC) && Stamina <= MaxStamina >> 2)))
+  if(Run && !IsPlayer() && TorsoIsAlive()
+  && (Stamina <= 10000 / Max(GetAttribute(LEG_STRENGTH), 1)
+   || (!StateIsActivated(PANIC) && Stamina < MaxStamina >> 2)))
     Run = false;
 
   SetStuckTo(0);
@@ -726,8 +743,24 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
 	    {
 	      EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) >> 1);
 	      EditNP(-24 * GetSquareUnder()->GetEntryDifficulty());
-	      EditExperience(AGILITY, 100, GetSquareUnder()->GetEntryDifficulty() << 7);
-	      EditStamina(-1000 / GetAttribute(LEG_STRENGTH), true);
+	      EditExperience(AGILITY, 75, GetSquareUnder()->GetEntryDifficulty() << 7);
+	      int Base = 10000;
+
+	      if(IsPlayer())
+		switch(GetHungerState())
+		  {
+		    case SATIATED:
+		      Base = 11000;
+		      break;
+		    case BLOATED:
+		      Base = 12500;
+		      break;
+		    case OVER_FED:
+		      Base = 15000;
+		      break;
+		  }
+
+	      EditStamina(-Base / Max(GetAttribute(LEG_STRENGTH), 1), true);
 	    }
 	  else
 	    {
@@ -759,7 +792,7 @@ void character::GetAICommand()
   if(FollowLeader(GetLeader()))
     return;
 
-  if(CheckForEnemies(true, true))
+  if(CheckForEnemies(true, true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
@@ -975,7 +1008,11 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
 		return false;
 
 	  if(Pets == 1)
-	    return Important && (CanMoveOn(MoveToSquare[0]) || (IsPlayer() && game::GoThroughWallsCheatIsActive())) && Displace(Pet[0]);
+	    return Important
+		&& (CanMoveOn(MoveToSquare[0])
+		 || (IsPlayer()
+		  && game::GoThroughWallsCheatIsActive()))
+		&& Displace(Pet[0]);
 	  else if(Pets)
 	    return false;
 
@@ -1146,6 +1183,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	      RestoreBodyParts();
 	      ResetSpoiling();
 	      RestoreHP();
+	      RestoreStamina();
 	      ResetStates();
 	      SetNP(SATIATED_LEVEL);
 	      SendNewDrawRequest();
@@ -1170,8 +1208,12 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
   if(IsPlayer())
     {
       game::RemoveSaves();
-      Ghost = game::CreateGhost();
-      Ghost->Disable();
+
+      if(!game::IsInWilderness())
+	{
+	  Ghost = game::CreateGhost();
+	  Ghost->Disable();
+	}
     }
 
   Remove();
@@ -1263,9 +1305,14 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
   if(IsPlayer())
     {
       AddScoreEntry(Msg);
-      Ghost->PutTo(GetPos());
-      Ghost->Enable();
-      game::CreateBone();
+
+      if(!game::IsInWilderness())
+	{
+	  Ghost->PutTo(GetPos());
+	  Ghost->Enable();
+	  game::CreateBone();
+	}
+
       game::TextScreen(CONST_S("Unfortunately you died during your journey. The high priest is not happy."));
       game::End();
     }
@@ -1507,9 +1554,9 @@ void character::Save(outputfile& SaveFile) const
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile << BaseExperience[c];
 
-  SaveFile << NP << AP << Stamina;
+  SaveFile << NP << AP << Stamina << GenerationDanger;
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
-  SaveFile << IsEnabled() << Polymorphed << HomeData;
+  SaveFile << IsEnabled() << Polymorphed << HomeData << BlocksSinceLastTurn;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1556,13 +1603,13 @@ void character::Load(inputfile& SaveFile)
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile >> BaseExperience[c];
 
-  SaveFile >> NP >> AP >> Stamina;
+  SaveFile >> NP >> AP >> Stamina >> GenerationDanger;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> GoingTo >> RegenerationCounter >> Route >> Illegal;
 
   if(!ReadType<bool>(SaveFile))
     Disable();
 
-  SaveFile >> Polymorphed >> HomeData;
+  SaveFile >> Polymorphed >> HomeData >> BlocksSinceLastTurn;
 
   for(c = 0; c < BodyParts; ++c)
     {
@@ -1985,7 +2032,7 @@ void character::StandIdleAI()
 {
   SeekLeader(GetLeader());
 
-  if(CheckForEnemies(true, true))
+  if(CheckForEnemies(true, true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
@@ -2074,7 +2121,7 @@ void character::ActionAutoTermination()
 	  }
 }
 
-bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveRandomly)
+bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveRandomly, bool RunTowardsTarget)
 {
   if(!IsEnabled())
     return false;
@@ -2133,7 +2180,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 
       if(!Leader && IsGoingSomeWhere())
 	{
-	  if(!MoveTowardsTarget(false))
+	  if(!MoveTowardsTarget(RunTowardsTarget))
 	    {
 	      TerminateGoingTo();
 	      return false;
@@ -2517,7 +2564,7 @@ void character::GoOn(go* Go, bool FirstStep)
 
   square* BeginSquare = GetSquareUnder();
 
-  if(!TryMove(MoveVector, false, game::PlayerIsRunning())
+  if(!TryMove(MoveVector, true, game::PlayerIsRunning())
   || BeginSquare == GetSquareUnder()
   || (CurrentRoomIndex && (OldRoomIndex != CurrentRoomIndex)))
     {
@@ -3457,6 +3504,7 @@ void character::Initialize(int NewConfig, int SpecialFlags)
 
       CalculateAll();
       RestoreHP();
+      RestoreStamina();
     }
 
   Initializing = InNoMsgMode = false;
@@ -3687,6 +3735,7 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 
@@ -3735,7 +3784,15 @@ void character::DrawPanel(bool AnimationDraw) const
       break;
     case BURDENED:
       FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Burdened");
-    case UNBURDENED:
+    }
+
+  switch(GetTirednessState())
+    {
+    case FAINTING:
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, RED, "Fainting");
+      break;
+    case EXHAUSTED:
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Exhausted");
       break;
     }
 
@@ -3783,7 +3840,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
     {
       item* Blocker = Arm->GetWielded();
 
-      if(RAND() % int(100 + WeaponToHitValue / BlockValue * (100 + Success)) < 100)
+      if(RAND() % int(100 + WeaponToHitValue / BlockValue / (1 << BlocksSinceLastTurn) * (100 + Success)) < 100)
 	{
 	  int NewDamage = BlockStrength < Damage ? Damage - BlockStrength : 0;
 
@@ -3808,6 +3865,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 	  long DexExp = Weight ? Limit(500L / Weight, 50L, 200L) : 200;
 	  Arm->EditExperience(ARM_STRENGTH, StrExp, 1 << 8);
 	  Arm->EditExperience(DEXTERITY, DexExp, 1 << 8);
+	  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
 
 	  if(Arm->TwoHandWieldIsActive())
 	    {
@@ -3821,6 +3879,9 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 
 	  if(Weapon)
 	    Weapon->ReceiveDamage(Enemy, Damage - NewDamage, PHYSICAL_DAMAGE);
+
+	  if(BlocksSinceLastTurn < 16)
+	    ++BlocksSinceLastTurn;
 
 	  return NewDamage;
 	}
@@ -4254,6 +4315,7 @@ void character::SaveLife()
   RestoreBodyParts();
   ResetSpoiling();
   RestoreHP();
+  RestoreStamina();
   ResetStates();
 
   if(GetNP() < SATIATED_LEVEL)
@@ -4723,6 +4785,16 @@ void character::DisplayStethoscopeInfo(character*) const
   for(int c = 0; c < STATES; ++c)
     if(StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
       Info.AddEntry(StateData[c].Description, LIGHT_GRAY);
+
+  switch(GetTirednessState())
+    {
+    case FAINTING:
+      Info.AddEntry("Fainting", RED);
+      break;
+    case EXHAUSTED:
+      Info.AddEntry("Exhausted", LIGHT_GRAY);
+      break;
+    }
 
   game::SetStandardListAttributes(Info);
   Info.Draw();
@@ -6194,6 +6266,7 @@ bool character::EditAllAttributes(int Amount)
 
   CalculateAll();
   RestoreHP();
+  RestoreStamina();
 
   if(IsPlayer())
     {
@@ -7246,6 +7319,26 @@ void character::PrintEndLeprosyMessage() const
     ADD_MESSAGE("You feel that you're OK."); // CHANGE OR DIE
 }
 
+/* Eka kunnon tauti. Vain humanoideille ja vain pysyvänä. Oliot, joilla on
+spitaali, tiputtaa joskus raajojaan (mahd vaikka 1/(5000*endurance)
+tikissä), ja erityisesti jos niillä lyödään tai potkitaan
+(1/(50*endurance)). Se myös alentaa strengthejä, agilityä, dexterityä,
+endurancea ja karismaa pikkuhiljaa (-2 ekspaa joka tikki). Bakteeri myös
+skannaa alati viereisiä olioita ja leviää mahdollisuudella 1/(1000*terveen
+end.) per tikki tai 1/(100*terveen end.) jos toinen on hostile (taistelu
+menossa, saastunut veri roiskuu yms). Huomaa, että irronneen raajan pitää
+olla lihaa, eli rautajalka ei putoa. Lisäksi tauti ei tartu jollei torso ole
+elävä (kuten vaikka golemeilla ja skeletoneilla). Parhaimpien
+nimellisten NPC:eiden pitää olla myös immuuneja, mutta on ihan ok jos joku
+farmeri hajoaa tämän vuoksi kappaleiksi. Papit ja tietyt jumalat (ainakin
+Seges) voi ihmeparantaa taudin. Scabies laukaisee tämän joka kymmenennellä
+rukouksella jokaiselle ei-immuunille viholliselle levelissä. Zombeilla voisi
+ehkä myös olla spitaali suurella todennäköisyydellä? Laita myös
+materias.h:ssa lihaan booli, onko se saastunut. Kun state (de)aktivoidaan,
+tämä päivitetään joka bodypartille. Jos lihaa syödään, tartunta tulee jos
+RAND() % (100000 / Amount) == 0. Jos spitaalinen raaja laitetaan paikalleen
+jo parantuneeseen ruumiiseen, tauti puhkeaa taas. */
+
 void character::LeprosyHandler()
 {
 
@@ -7299,10 +7392,10 @@ int character::CalculateWeaponSkillHits(const character* Enemy) const
     {
       configid ConfigID(GetType(), GetConfig());
       const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-      return int(DangerID.EquippedDanger * 2000);
+      return Min(int(DangerID.EquippedDanger * 2000), 1000);
     }
   else
-    return int(GetRelativeDanger(Enemy, true) * 2000);
+    return Min(int(GetRelativeDanger(Enemy, true) * 2000), 1000);
 }
 
 /* Target mustn't have any equipment */
@@ -7369,7 +7462,7 @@ void character::DonateEquipmentTo(character* Character)
     }
 }
 
-void character::ReceivePeaSoup(long SizeOfEffect)
+void character::ReceivePeaSoup(long)
 {
   lsquare* Square = GetLSquareUnder();
 
@@ -7380,17 +7473,38 @@ void character::ReceivePeaSoup(long SizeOfEffect)
 void character::AddPeaSoupConsumeEndMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Mmmh, tasty.");
+    ADD_MESSAGE("Mmmh! The soup is very tasty. You hear a small puff.");
+  else if(CanBeSeenByPlayer()) // change someday
+    ADD_MESSAGE("You hear a small puff.");
 }
 
 void character::CalculateMaxStamina()
 {
-  MaxStamina = GetAttribute(ENDURANCE) * 1000;
+  MaxStamina = TorsoIsAlive() ? GetAttribute(ENDURANCE) * 10000 : 0;
 }
 
 void character::EditStamina(int Amount, bool CanCauseFaint)
 {
-  /*Stamina += Amount;
+  if(!TorsoIsAlive())
+    return;
+
+  int FaintStamina = MaxStamina >> 3;
+
+  if(!CanCauseFaint && Amount < 0)
+    {
+      if(Stamina > FaintStamina)
+	{
+	  Stamina += Amount;
+
+	  if(Stamina < FaintStamina)
+	    Stamina = FaintStamina;
+	}
+
+      return;
+    }
+
+  int OldStamina = Stamina;
+  Stamina += Amount;
 
   if(Stamina > MaxStamina)
     Stamina = MaxStamina;
@@ -7398,33 +7512,103 @@ void character::EditStamina(int Amount, bool CanCauseFaint)
     {
       Stamina = 0;
       Faint(250 + RAND() % 250);
-    }*/
+    }
+  else if(IsPlayer())
+    {
+      if(OldStamina >= MaxStamina >> 2 && Stamina < MaxStamina >> 2)
+	ADD_MESSAGE("You are getting a little tired.");
+      else if(OldStamina >= FaintStamina && Stamina < FaintStamina)
+	{
+	  ADD_MESSAGE("You are seriously out of breath!");
+	  game::SetPlayerIsRunning(false);
+	}
+    }
 }
 
 void character::RegenerateStamina()
 {
-  if(GetBurdenState() != UNBURDENED)
-    return;
+  int Bonus = 1;
 
-  if(!IsPlayer())
+  if(Action)
     {
-      Stamina += 10;
-      return;
+      if(Action->IsRest())
+	{
+	  if(SquaresUnder == 1)
+	    Bonus = GetSquareUnder()->GetRestModifier() << 1;
+	  else
+	    {
+	      int Lowest = GetSquareUnder(0)->GetRestModifier();
+
+	      for(int c = 1; c < GetSquaresUnder(); ++c)
+		{
+		  int Mod = GetSquareUnder(c)->GetRestModifier();
+
+		  if(Mod < Lowest)
+		    Lowest = Mod;
+		}
+
+	      Bonus = Lowest << 1;
+	    }
+	}
+      else if(Action->IsFaint())
+	Bonus = 2;
     }
+
+  int Plus1 = 100;
 
   switch(GetHungerState())
     {
-    case STARVING:
-      Stamina += 1;
+    case OVER_LOADED:
+      Plus1 = 25;
       break;
-    case VERY_HUNGRY:
-      Stamina += 4;
+    case STRESSED:
+      Plus1 = 50;
       break;
-    case HUNGRY:
-      Stamina += 7;
-      break;
-    default:
-      Stamina += 10;
+    case BURDENED:
+      Plus1 = 75;
       break;
     }
+
+  int Plus2 = 100;
+
+  if(IsPlayer())
+    switch(GetHungerState())
+      {
+      case STARVING:
+	Plus2 = 25;
+	break;
+      case VERY_HUNGRY:
+	Plus2 = 50;
+	break;
+      case HUNGRY:
+	Plus2 = 75;
+	break;
+      }
+
+  Stamina += Plus1 * Plus2 * Bonus / 1000;
+
+  if(Stamina > MaxStamina)
+    Stamina = MaxStamina;
+}
+
+void character::BeginPanic()
+{
+  if(IsPlayer() && GetTirednessState() != FAINTING)
+    game::SetPlayerIsRunning(true);
+}
+
+void character::EndPanic()
+{
+  if(IsPlayer())
+    game::SetPlayerIsRunning(false);
+}
+
+int character::GetTirednessState() const
+{
+  if(Stamina >= MaxStamina >> 2)
+    return UNTIRED;
+  else if(Stamina >= MaxStamina >> 3)
+    return EXHAUSTED;
+  else
+    return FAINTING;
 }

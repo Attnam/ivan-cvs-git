@@ -102,3 +102,4 @@ Avalanches & landslides.
 Strange drool jokes.
 Languages.
 Moksa state.
+Smells that could be used for tracking monsters.

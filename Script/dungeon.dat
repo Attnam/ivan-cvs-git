@@ -606,6 +606,7 @@ Dungeon ELPURI_CAVE;
 		Items = 0;
 		IgnoreDefaultSpecialSquares = true;
 		CanGenerateBone = false;
+		DifficultyBase = 80;
 
 		Room
 		{
@@ -677,6 +678,8 @@ Dungeon ATTNAM;
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
 		CanGenerateBone = false;
+		DifficultyBase = 150;
+		DifficultyDelta = 0;
 
 		RoomDefault
 		{
@@ -1265,6 +1268,8 @@ Dungeon NEW_ATTNAM;
 		IgnoreDefaultSpecialSquares = false;
 		AutoReveal = true;
 		CanGenerateBone = false;
+		DifficultyBase = 50;
+		DifficultyDelta = 0;
 
 		RoomDefault
 		{
@@ -1706,6 +1711,8 @@ Dungeon NEW_ATTNAM;
 		LOSModifier = 32;
 		IgnoreDefaultSpecialSquares = false;
 		CanGenerateBone = false;
+		DifficultyBase = 50;
+		DifficultyDelta = 0;
 
 		Room
 		{

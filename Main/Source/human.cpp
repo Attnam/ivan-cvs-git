@@ -87,7 +87,7 @@ bool ennerbeast::Hit(character* Enemy, vector2d, int, bool)
 
   EditNP(-100);
   EditAP(-1000000 / GetCWeaponSkill(BITE)->GetBonus());
-  EditStamina(-100, false);
+  EditStamina(-1000, false);
   return true;
 }
 
@@ -163,7 +163,7 @@ void ennerbeast::GetAICommand()
   if(StateIsActivated(PANIC) || !(RAND() % 3))
     Hit(0, vector2d(0, 0), YOURSELF);
 
-  if(CheckForEnemies(false, false))
+  if(CheckForEnemies(false, false, true))
     return;
 
   if(FollowLeader(GetLeader()))
@@ -377,7 +377,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 
 	  EditNP(-50);
 	  EditAP(-Max(FirstAPCost, SecondAPCost));
-	  EditStamina(-1000 / Strength, false);
+	  EditStamina(-10000 / Strength, false);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -768,7 +768,7 @@ void slave::GetAICommand()
 {
   SeekLeader(GetLeader());
 
-  if(CheckForEnemies(true, true))
+  if(CheckForEnemies(true, true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
@@ -1747,6 +1747,7 @@ void humanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool Force
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 100, 1 << 9);
+  EditStamina(-1000, false);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -1755,7 +1756,7 @@ void humanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
   leg* KickLeg = GetRandomLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  EditStamina(-1000 / GetAttribute(LEG_STRENGTH), false);
+  EditStamina(-10000 / GetAttribute(LEG_STRENGTH), false);
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
@@ -2680,7 +2681,7 @@ void bananagrower::GetAICommand()
       return;
     }
 
-  if(CheckForEnemies(false, false))
+  if(CheckForEnemies(false, false, true, true))
     return;
 
   if(!IsEnabled())
@@ -2761,6 +2762,7 @@ void bananagrower::GetAICommand()
       Profession = RAND() & 7;
       RestoreBodyParts();
       RestoreHP();
+      RestoreStamina();
       ResetStates();
       TemporaryState = 0;
 
@@ -2828,7 +2830,7 @@ void elder::CreateBodyParts(int SpecialFlags)
 
 void encourager::GetAICommand()
 {
-  if(CheckForEnemies(true, true))
+  if(CheckForEnemies(true, true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
@@ -3176,6 +3178,7 @@ void darkmage::GetAICommand()
 		  }
 		else
 		  {
+		    Golem->SetGenerationDanger(GetGenerationDanger());
 		    Golem->SetTeam(GetTeam());
 		    Golem->PutTo(Where);
 
@@ -3908,7 +3911,7 @@ void necromancer::RaiseSkeleton()
   /* Gum solution */
 
   const database* WarLordDataBase;
-  databasecreator<character>::FindDataBase(DataBase, &skeleton_ProtoType, WAR_LORD);
+  databasecreator<character>::FindDataBase(WarLordDataBase, &skeleton_ProtoType, WAR_LORD);
   skeleton* Skeleton;
 
   if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
@@ -3935,6 +3938,7 @@ void necromancer::RaiseSkeleton()
 	ADD_MESSAGE("%s casts a spell, but you notice no effect.", CHAR_NAME(DEFINITE));
     }
 
+  Skeleton->SetGenerationDanger(GetGenerationDanger());
   Skeleton->SetTeam(GetTeam());
   EditAP(-4000 / GetConfig());
 }
@@ -4166,6 +4170,7 @@ character* humanoid::CreateZombie() const
 	 BASE_ATTRIBUTES * sizeof(*BaseExperience));
   Zombie->CalculateAll();
   Zombie->RestoreHP();
+  Zombie->RestoreStamina();
   Zombie->SetDescription(GetZombieDescription());
   return Zombie;
 }

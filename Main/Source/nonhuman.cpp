@@ -212,6 +212,7 @@ void nonhumanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool Fo
   EditAP(-GetBiteAPCost());
   EditExperience(ARM_STRENGTH, 50, 1 << 8);
   EditExperience(AGILITY, 100, 1 << 8);
+  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
   Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -219,6 +220,7 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetKickAPCost());
+  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
 
   if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
@@ -303,6 +305,7 @@ void nonhumanoid::UnarmedHit(character* Enemy, vector2d HitPos, int Direction, b
 {
   EditNP(-50);
   EditAP(-GetUnarmedAPCost());
+  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
 
   switch(Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
@@ -598,6 +601,7 @@ void genetrixvesana::GetAICommand()
 			for(int c = 3; c < TurnsExisted / 500; ++c)
 			  NewPlant->EditAllAttributes(1);
 
+			NewPlant->SetGenerationDanger(GetGenerationDanger());
 			NewPlant->SetTeam(GetTeam());
 			NewPlant->PutTo(LSquare->GetPos());
 			--NumberOfPlants;
@@ -637,7 +641,7 @@ void ostrich::GetAICommand()
       return;
     }
 
-  if(CheckForEnemies(false, false))
+  if(CheckForEnemies(false, false, true, true))
     return;
 
   if(!IsEnabled())
@@ -694,6 +698,7 @@ void ostrich::GetAICommand()
 
       Move(Where, true);
       RestoreHP();
+      RestoreStamina();
       ResetStates();
       TemporaryState = 0;
 
@@ -842,7 +847,7 @@ void floatingeye::GetAICommand()
 
   SeekLeader(GetLeader());
 
-  if(CheckForEnemies(false, false))
+  if(CheckForEnemies(false, false, true))
     return;
 
   if(FollowLeader(GetLeader()))
@@ -995,6 +1000,7 @@ void mushroom::GetAICommand()
 	  mushroom* Child = static_cast<mushroom*>(GetProtoType()->Clone(GetConfig()));
 	  Child->SetSpecies(Species);
 	  Child->SetTeam(GetTeam());
+	  Child->SetGenerationDanger(GetGenerationDanger());
 	  Child->PutTo(CradleSquare->GetPos());
 
 	  for(int c = 0; c < BASE_ATTRIBUTES; ++c)
@@ -1649,6 +1655,7 @@ void bunny::GetAICommand()
       GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() << 1);
       SetConfig(GetConfig() + 2);
       RestoreHP();
+      RestoreStamina();
     }
 
   SeekLeader(GetLeader());
@@ -1656,7 +1663,7 @@ void bunny::GetAICommand()
   if(FollowLeader(GetLeader()))
     return;
 
-  if(CheckForEnemies(true, true))
+  if(CheckForEnemies(true, true, true))
     return;
 
   if(CheckForUsefulItemsOnGround())
@@ -1681,6 +1688,7 @@ void bunny::SignalNaturalGeneration()
 {
   character* Partner = new bunny(GetConfig()^1);
   Partner->SetTeam(GetTeam());
+  Partner->SetGenerationDanger(GetGenerationDanger());
   Partner->PutNear(GetPos());
 }
 
@@ -1765,7 +1773,9 @@ bool bunny::CheckForMatePartner()
 
 		  Baby->CalculateAll();
 		  Baby->RestoreHP();
+		  Baby->RestoreStamina();
 		  Baby->SetTeam(GetTeam());
+		  Baby->SetGenerationDanger(GetGenerationDanger());
 		  Baby->PutNear(GetPos());
 
 		  if(Baby->CanBeSeenByPlayer())
@@ -1843,7 +1853,7 @@ void mommo::GetAICommand()
 {
   SeekLeader(GetLeader());
 
-  if(CheckForEnemies(false, false))
+  if(CheckForEnemies(false, false, true))
     return;
 
   if(!(RAND() % 10))
@@ -1964,6 +1974,7 @@ void blinkdog::SummonFriend()
 {
   blinkdog* Buddy = new blinkdog;
   Buddy->SetTeam(GetTeam());
+  Buddy->SetGenerationDanger(GetGenerationDanger());
   Buddy->PutNear(GetPos());
 
   if(CanBeSeenByPlayer())

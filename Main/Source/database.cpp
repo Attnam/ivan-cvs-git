@@ -688,6 +688,7 @@ template <class type> inline void databasecreator<type>::FindDataBase(const data
   DataBase = 0;
 }
 
+template void databasecreator<character>::FindDataBase(const database*&, const prototype*, int);
 template void databasecreator<material>::FindDataBase(const database*&, const prototype*, int);
 
 template <class type> inline void databasecreator<type>::InstallDataBase(type* Instance, int Config)

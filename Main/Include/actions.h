@@ -23,6 +23,7 @@ class ACTION
   virtual const char* GetDescription() const;
   virtual const char* GetDeathExplanation() const;
   virtual bool CanBeTalkedTo() const { return false; }
+  virtual bool IsFaint() const { return true; }
  protected:
   int Counter;
 );

@@ -310,6 +310,7 @@ class character : public entity, public id
   void ChangeSecondaryMaterial(material*, int = 0);
   void RestoreHP();
   void RestoreLivingHP();
+  void RestoreStamina() { Stamina = MaxStamina; }
   virtual bool ReceiveDamage(character*, int, int, int = ALL, int = 8, bool = false, bool = false, bool = false, bool = true);
   virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, bool = false, bool = false, bool = true, bool = false);
   virtual bool BodyPartIsVital(int) const { return true; }
@@ -845,6 +846,13 @@ class character : public entity, public id
   void CalculateMaxStamina();
   void EditStamina(int, bool);
   void RegenerateStamina();
+  void BeginPanic();
+  void EndPanic();
+  int GetTirednessState() const;
+  int GetStamina() const { return Stamina; }
+  int GetMaxStamina() const { return MaxStamina; }
+  void SetGenerationDanger(double What) { GenerationDanger = What; }
+  double GetGenerationDanger() const { return GenerationDanger; }
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -873,7 +881,7 @@ class character : public entity, public id
   void SeekLeader(const character*);
   virtual bool CheckForUsefulItemsOnGround();
   bool CheckForDoors();
-  bool CheckForEnemies(bool, bool, bool = true);
+  bool CheckForEnemies(bool, bool, bool, bool = false);
   bool FollowLeader(character*);
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
@@ -954,6 +962,8 @@ class character : public entity, public id
   ulong LastAcidMsgMin;
   int Stamina;
   int MaxStamina;
+  int BlocksSinceLastTurn;
+  double GenerationDanger;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

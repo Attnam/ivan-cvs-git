@@ -83,7 +83,6 @@ character* protosystem::BalancedCreateMonster()
 	    || (Monster->GetTimeToKill(PLAYER, true) > 5000
 	     && PLAYER->GetTimeToKill(Monster, true) < 75000))))
 	    {
-	      Monster->SignalGeneration();
 	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 	      return Monster;
 	    }

@@ -824,6 +824,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   if(CharacterScript)
     {
       character* Char = CharacterScript->Instantiate();
+      Char->SetGenerationDanger(GetLevel()->GetDifficulty());
 
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
