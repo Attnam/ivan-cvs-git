@@ -751,6 +751,7 @@ class character : public entity, public id
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
   virtual bool CanBeRaisedFromTheDead(corpse*) const { return true; }
+  virtual bool HasRepairableBodyParts() const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

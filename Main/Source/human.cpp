@@ -3428,6 +3428,7 @@ void golem::BeTalkedTo()
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s engraves something.", CHAR_NAME(DEFINITE));
 }
+
 #ifdef WIZARD
 
 void humanoid::AddAttributeInfo(festring& Entry) const

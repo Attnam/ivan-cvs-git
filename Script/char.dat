@@ -1228,7 +1228,7 @@ golem
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
 	PanicLevel = 10;
-	HostileReplies == "Yes, master. Golem kill human. Golem then return."; // No quotes! (golem engraves)
+	HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
 	FriendlyReplies == "Yes, master?";
 	/* FleshMaterial overridden */
 	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";

@@ -2209,7 +2209,11 @@ void character::ShowNewPosInfo() const
 	}
 		
       if(GetNearLSquare(GetPos())->GetEngraved().GetSize())
-	ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
+	{
+	  if(CanRead())
+	    ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
+	  else
+	    ADD_MESSAG("Something has been engraved here.");
     }
 }
 
@@ -5833,4 +5837,15 @@ void character::AddHolyBananaConsumeEndMessage() const
     ADD_MESSAGE("You feel a mysterious strengthening fire coursing through your body.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("For a moment %s is surrounded by a swirling fire aura.", CHAR_NAME(DEFINITE));
+}
+
+bool character::HasRepairableBodyParts() const
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      {
+	if(!GetBodyPart(c)->IsRepairable())
+	  return true;
+      }
+  return false;
 }

@@ -2262,3 +2262,8 @@ void leg::AddAttackInfo(felist& List) const
   Entry << GetKickAPCost();
   List.AddEntry(Entry, LIGHT_GRAY);
 }
+
+bool bodypart::IsRepairable() const
+{
+  return !IsAlive() && GetHP() < GetMaxHP();
+}

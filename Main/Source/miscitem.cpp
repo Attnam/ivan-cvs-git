@@ -1822,7 +1822,8 @@ void itemcontainer::GenerateLeftOvers(character*)
 
 bool scrollofrepair::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
+
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
     {
       ADD_MESSAGE("You have nothing to repair.");
       return false;
@@ -1834,38 +1835,51 @@ bool scrollofrepair::Read(character* Reader)
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
     ADD_MESSAGE("You have lost whatever you wished to repair.");
   else
-    while(true)
-      {
-	itemvector Item;
-	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
-
-	if(!Item.empty())
+    {
+      for(ushort c = 0; c < Reader->GetBodyParts(); ++c)
+	if(Reader->GetBodyPart(c))
 	  {
-	    if(Item[0]->HandleInPairs() && Item.size() == 1)
+	    if(Reader->GetBodyPart(c)->IsRepairable() && game::BoolQuestion("Would you like to repair your " + Reader->GetBodyPart(c)->GetBodyPartName() + "? [y/N]"))
 	      {
-		ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
-
-		if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
-		  continue;
+		Reader->GetBodyPart(c)->RestoreHP();
+		RemoveFromSlot();
+		SendToHell();  
+		return;
 	      }
-
-	    if(Item.size() == 1)
-	      ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item[0]->CHAR_NAME(DEFINITE));
-	    else
-	      ADD_MESSAGE("As you read the scroll, %s glow green and fix themselves.", Item[0]->CHAR_NAME(PLURAL));
-
-	    for(ushort c = 0; c < Item.size(); ++c)
-	      Item[c]->Fix();
-
-	    break;
 	  }
-	else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
-	  return;
-      }
+      
+      while(true)
+	{
+	  itemvector Item;
+	  Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
 
+	  if(!Item.empty())
+	    {
+	      if(Item[0]->HandleInPairs() && Item.size() == 1)
+		{
+		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+
+		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
+		    continue;
+		}
+
+	      if(Item.size() == 1)
+		ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item[0]->CHAR_NAME(DEFINITE));
+	      else
+		ADD_MESSAGE("As you read the scroll, %s glow green and fix themselves.", Item[0]->CHAR_NAME(PLURAL));
+
+	      for(ushort c = 0; c < Item.size(); ++c)
+		Item[c]->Fix();
+
+	      break;
+	    }
+	  else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
+	    return;
+	}
+    }
   RemoveFromSlot();
   SendToHell();  
 }
