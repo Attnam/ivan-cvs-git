@@ -35,19 +35,19 @@ angel		180
 bat		20	45	2	1	25	3000
 beholder
 genie
-gibberling
+gibberling	90	5	4	3	12	70000
 gnoll
-imp		50	25	10	7	12	15000
-kobold
-large cat	60
-large rat	30
+imp		50	25	10	7	12	15000		80000
+kobold		70	12	8	6	12	15000		90000
+large cat	60	23	8	6	20	15000		30000
+large rat	20	8	3	2	10	4000		3000
 lion		300							150000
 mammoth		500							5000000
 raven		60
 unicorn
-werewolf (h)	170
-werewolf (w)	120
-zombie		160
-mistress	180
+werewolf (h)	170	15	12	14	12	1000		80000
+werewolf (w)	120	25	22	24	20	9000		80000
+zombie		160	10	8	5	15	1000		1500
+mistress	180	20	25	50	10	1200		60000
 orc		160							50000
 troll		230							200000

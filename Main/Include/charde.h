@@ -1060,6 +1060,7 @@ public:
 	virtual void BeTalkedTo(character*);
 	virtual void SpillBlood(uchar, vector2d);
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual float GetMeleeStrength() const RET(1500)
 protected:
 	virtual std::string NameSingular() const RET("zombie")
 );
@@ -1124,6 +1125,7 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual uchar GetSex() const RET(FEMALE)
+	virtual float GetMeleeStrength() const RET(1200)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(352,0)
 	virtual void CreateInitialEquipment();
