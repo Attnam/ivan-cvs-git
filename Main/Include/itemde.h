@@ -227,6 +227,7 @@ class ABSTRACT_ITEM
   virtual ushort GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ushort GetInElasticityPenalty(ushort) const;
+  virtual short GetCarryingBonus() const;
  protected:
   virtual void AddPostFix(std::string&) const;
   virtual void VirtualConstructor(bool);

@@ -5831,7 +5831,8 @@ void character::CalculateAttributeBonuses()
       GetBodyPart(c)->CalculateAttributeBonuses();
 
   short BackupBonus[BASE_ATTRIBUTES];
-
+  short BackupCarryingBonus = CarryingBonus;
+  CarryingBonus = 0;
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     {
       BackupBonus[c] = AttributeBonus[c];
@@ -5862,6 +5863,9 @@ void character::CalculateAttributeBonuses()
 
       if(Equipment->AffectsMana())
 	AttributeBonus[MANA] += Equipment->GetEnchantment();
+      
+      if(Equipment->AffectsCarryingCapacity())
+	CarryingBonus += Equipment->GetCarryingBonus();
     }
 
     if(!Initializing && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
@@ -5872,6 +5876,9 @@ void character::CalculateAttributeBonuses()
 
     if(IsPlayer() && !Initializing && AttributeBonus[INTELLIGENCE] != BackupBonus[INTELLIGENCE])
       UpdateESPLOS();
+
+    if(!Initializing && CarryingBonus != BackupCarryingBonus)
+      CalculateBurdenState();
 }
 
 void character::ApplyEquipmentAttributeBonuses(item* Equipment)
@@ -5906,6 +5913,12 @@ void character::ApplyEquipmentAttributeBonuses(item* Equipment)
 
   if(Equipment->AffectsMana())
     AttributeBonus[MANA] += Equipment->GetEnchantment();
+
+  if(Equipment->AffectsCarryingCapacity())
+    {
+      CarryingBonus += Equipment->GetCarryingBonus();
+      CalculateBurdenState();
+    }
 }
 
 void character::ReceiveAntidote(long Amount)
@@ -5967,4 +5980,12 @@ void character::AddToInventory(const std::vector<contentscript<item> >& ItemVect
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
       GetStack()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+}
+
+void character::CalculateCarryingBonus()
+{
+  CarryingBonus = 0;
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      CarryingBonus += GetEquipment(c)->GetCarryingBonus();
 }

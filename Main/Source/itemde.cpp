@@ -4749,3 +4749,10 @@ bool mine::CheckPickUpEffect(character* Picker)
   return true;
 }
 
+short armor::GetCarryingBonus() const
+{
+  if(AffectsCarryingCapacity())
+    return Enchantment << 1;
+  else
+    return 0;
+}

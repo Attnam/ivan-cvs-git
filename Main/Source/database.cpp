@@ -296,6 +296,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(PriceIsProportionalToEnchantment);
   ANALYZE_DATA(InElasticityPenaltyModifier);
   ANALYZE_DATA(CanBeUsedBySmith);
+  ANALYZE_DATA(AffectsCarryingCapacity);
 
   return Found;
 }

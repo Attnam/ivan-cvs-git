@@ -1,5 +1,9 @@
 November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Belt of carrying added
+
+November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Pets shouldn't eat the player's bodyparts.
 	* Look stretch config option.
 	* If a mine in the inventory is active, it should be displayed somehow.

@@ -102,7 +102,7 @@ class ABSTRACT_CHARACTER
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
   virtual void Bite(character*);
-  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH), 1); }
+  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH), 1) + CarryingBonus; }
   virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
   virtual bool AddSpecialSkillInfo(felist&) const;
@@ -207,7 +207,7 @@ class ABSTRACT_CHARACTER
   virtual void Bite(character*);
   virtual bool RaiseStats();
   virtual bool LowerStats();
-  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH) << 1, 1); }
+  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH) << 1, 1) + CarryingBonus; }
   virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   virtual void CalculateUnarmedAttackInfo();

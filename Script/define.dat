@@ -433,6 +433,8 @@
 #define HELM_OF_BRILLIANCE 3
 #define HELM_OF_ATTRACTIVITY 4
 
+#define BELT_OF_CARRYING 1
+
 #define SMALL_CHEST 1
 #define CHEST 2
 #define LARGE_CHEST 3

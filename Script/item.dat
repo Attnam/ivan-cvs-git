@@ -1336,6 +1336,17 @@ belt /* armor-> */
 	MaterialConfigChances = { 5, 200, 100, 50, 20, 10; }
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
+
+	Config BELT_OF_CARRYING;
+	{
+		Possibility = 25;
+		PostFix = "of carrying";
+		AffectsCarryingCapacity = true;
+		Price = 100;
+		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
+	}
+	
 }
 
 ring

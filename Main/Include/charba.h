@@ -701,6 +701,7 @@ class character : public entity, public id
   virtual bool ShowBattleInfo() = 0;
   void AddOriginalBodyPartID(ushort, ulong);
   void AddToInventory(const std::vector<contentscript<item> >&, ushort);
+  virtual void CalculateCarryingBonus();
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -801,6 +802,7 @@ class character : public entity, public id
   bool InNoMsgMode;
   ulong RegenerationCounter;
   short AttributeBonus[BASE_ATTRIBUTES];
+  short CarryingBonus;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

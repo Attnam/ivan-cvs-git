@@ -101,6 +101,7 @@ struct itemdatabase
   bool PriceIsProportionalToEnchantment;
   uchar InElasticityPenaltyModifier;
   bool CanBeUsedBySmith;
+  bool AffectsCarryingCapacity;
 };
 
 class itemprototype
@@ -290,6 +291,7 @@ class item : public object
   DATA_BASE_BOOL(AffectsWisdom);
   DATA_BASE_BOOL(AffectsCharisma);
   DATA_BASE_BOOL(AffectsMana);
+  DATA_BASE_BOOL(AffectsCarryingCapacity);
   virtual DATA_BASE_VALUE(char, DefaultEnchantment);
   virtual DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
   virtual DATA_BASE_VALUE(uchar, MaxCharges);
@@ -368,6 +370,7 @@ class item : public object
   virtual void SignalSpoilLevelChange(material*);
   virtual void ResetSpoiling();
   virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort) { }
+  virtual short GetCarryingBonus() const { return 0; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
