@@ -813,8 +813,6 @@ void character::Die()
 
 	if(!Exists)
 		return;
-	if(!game::GetInWilderness())
-		CreateCorpse();
 
 	if(GetIsPlayer())
 	{
@@ -835,6 +833,8 @@ void character::Die()
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
+	if(!game::GetInWilderness())
+		CreateCorpse();
 
 	
 	GetSquareUnder()->RemoveCharacter();
@@ -862,6 +862,8 @@ void character::Die()
 			GetStack()->GetItem(0)->SetExists(false);
 			GetStack()->RemoveItem(0);
 		}
+
+
 	if(GetIsPlayer())
 	{
 		game::Quit();

@@ -630,7 +630,8 @@ void level::HandleCharacters()
 	}
 
 	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
-		GenerateNewMonsters(GetIdealPopulation() - Population);
+		if(!(rand() % (2 << (10 - game::GetCurrent()))))
+			GenerateNewMonsters(1);
 }
 
 void level::PutPlayer(bool)
@@ -754,19 +755,19 @@ void level::Draw() const
 			}
 }
 
-void level::GenerateNewMonsters(ushort HowMany)
+void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
 	vector2d Pos;
 
 	for(uchar c = 0; c < HowMany; ++c)
 	{
-                Pos = vector2d(0,0);
+		Pos = vector2d(0,0);
 
 		for(uchar cc = 0; cc < 30; ++c)
 		{
 			Pos = RandomSquare(true);
-
-			if(abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6 && !Map[Pos.X][Pos.Y]->Character)
+			
+			if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6) && !Map[Pos.X][Pos.Y]->Character)
 				break;
 		}
 
@@ -861,4 +862,9 @@ vector2d level::GetNearestFreeSquare(vector2d StartPos)
 void level::MoveCharacter(vector2d From, vector2d To)
 {
 	GetLevelSquare(From)->MoveCharacter(GetLevelSquare(To));
+}
+
+ushort level::GetIdealPopulation() const 
+{ 
+	return 10 + game::GetCurrent() * 4; 
 }

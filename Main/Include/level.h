@@ -41,8 +41,8 @@ public:
 	virtual void Load(inputfile&);
 	virtual void Luxify();
 	virtual ushort GetPopulation() const { return Population; }
-	virtual ushort GetIdealPopulation() const { return 25; }
-	virtual void GenerateNewMonsters(ushort);
+	virtual ushort GetIdealPopulation() const;
+	virtual void GenerateNewMonsters(ushort, bool = true);
 	virtual void AttachPos(vector2d);
 	virtual void CreateRandomTunnel();
 	virtual void CreateItems(ushort);
