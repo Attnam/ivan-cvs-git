@@ -1,3 +1,11 @@
+November 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Polymorph state causes polymorph less often (the frequency was ridiculous)
+	* Genetrix vesana level is now easier
+	* Shops are now bigger
+	* Nutrition values decreased
+	* Possibilities of broken bananas decreased greatly
+
 November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Monster amounts and generation intervals can now be defined in the script

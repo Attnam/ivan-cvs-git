@@ -70,7 +70,7 @@ void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 50000));
+  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 100000));
   Volume -= Amount;
 }
 

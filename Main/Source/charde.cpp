@@ -3537,7 +3537,7 @@ bool humanoid::CheckZap()
 
 void genetrixvesana::GetAICommand()
 {
-  if(!(RAND() % 20))
+  if(!(RAND() % 50))
     {
       ushort NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 

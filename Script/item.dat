@@ -461,6 +461,7 @@ banana /* materialcontainer-> */
 
 	Config BROKEN;
 	{
+		Possibility = 10;
 		BitmapPos = 32, 272;
 	}
 }
@@ -483,6 +484,7 @@ holybanana /* materialcontainer->banana-> */
 
 	Config BROKEN;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 272;
 		Price = 500;
 	}
@@ -1057,7 +1059,7 @@ holybook
 {
 	DefaultSize = 25;
 	InHandsPic = 160, 128;
-	Possibility = 25; /* this is for each config */
+	Possibility = 15; /* this is for each config */
 	Category = BOOK;
 	DefaultMainVolume = 2000;
 	StrengthModifier = 150;

@@ -178,7 +178,7 @@ Dungeon ELPURI_CAVE;
 
 		Room 2;
 		{
-			Size=5,7;
+			Size=5,9;
 			AltarPossible=false;
 			DivineMaster=mellis;
 			Type=shop;
@@ -189,7 +189,7 @@ Dungeon ELPURI_CAVE;
 			CharacterMap
 			{
 				Pos = 1, 1;
-				Size = 3, 5;
+				Size = 3, 7;
 
 				Types
 				{
@@ -200,7 +200,9 @@ Dungeon ELPURI_CAVE;
 			{
 				g.g
 				...
+				...
 				.s.
+				...
 				...
 				g.g
 			}
@@ -208,25 +210,28 @@ Dungeon ELPURI_CAVE;
 			ItemMap
 			{
 				Pos=1,1;
-				Size=3,5;
+				Size=3,7;
 
 				Types
 				{
 					g = { 2, IRON gauntlet, IRON gauntlet; }
 					b = { 2, IRON boot, IRON boot; }
-					a == Random { MinPrice = 100; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
-					d == Random { MinPrice = 100; MaxPrice = 10000; Category = RING|AMULET; }
-					w == Random { MinPrice = 100; MaxPrice = 10000; Category = WEAPON|SHIELD; }
+					a == Random { MinPrice = 200; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					d == Random { MinPrice = 200; MaxPrice = 10000; Category = RING|AMULET; }
+					w == Random { MinPrice = 200; MaxPrice = 10000; Category = WEAPON|SHIELD; }
 					e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
-					u == Random { MinPrice = 100; MaxPrice = 10000; Category = WAND|TOOL; }
+					u == Random { MinPrice = 200; MaxPrice = 10000; Category = WAND|TOOL; }
+					r == Random { MinPrice = 200; MaxPrice = 10000; Category = SCROLL|BOOK; }
 					s == wandofstriking;
 				}
 			}
 			{
 			    .g.
-			    ddb
+				ddb
+			    err
 			    e.w
 			    auw
+				auw
 			    .s.
 			}
 		}
@@ -846,8 +851,8 @@ Dungeon ATTNAM;
 
 		Room 1;
 		{
-			Pos=32,54;
-			Size=7,5;
+			Pos=32,53;
+			Size=8,6;
 			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
@@ -855,7 +860,7 @@ Dungeon ATTNAM;
 			DivineMaster=mellis;
 			Type=shop;
 			
-			Square, Pos 3, 4;
+			Square, Pos 3, 5;
 			{
 				GTerrain = solidterrain(PARQUET);
 				OTerrain = door;
@@ -866,7 +871,7 @@ Dungeon ATTNAM;
 				Character = slave;
 			}
 
-			Square, Pos 5, 1;
+			Square, Pos 6, 1;
 			{
 				Character = shopkeeper(ATTNAM);
 			}
@@ -874,7 +879,7 @@ Dungeon ATTNAM;
 			ItemMap
 			{
 				Pos=1,1;
-				Size=5,3;
+				Size=6,4;
 				Types
 				{
 					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
@@ -882,15 +887,17 @@ Dungeon ATTNAM;
 					w == Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
 					e == Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
 					u == Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
+					v == Random { MinPrice = 500; MaxPrice = 2000; Category = ANY_CATEGORY; }
 					f == WOLF_FLESH lump;
 					i == can { ContainedMaterial = POLAR_BEAR_FLESH; }
 					l == lantern;
 				}
 			}
 			{
-			    .aaa.
-			    edwww
-			    efilu
+			    .aaaa.
+			    eddwww
+				eefvuw 
+			    eeiluu
 			}
 		}
 
@@ -1000,8 +1007,8 @@ Dungeon ATTNAM;
 
 		Room 6;
 		{
-			Pos=22,54;
-			Size=7,5;
+			Pos=21,53;
+			Size=8,6;
 			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
@@ -1009,14 +1016,14 @@ Dungeon ATTNAM;
 			DivineMaster=sophos;
 			Type=library;
 			
-			Square, Pos 3, 4;
+			Square, Pos 3, 5;
 			{
 				GTerrain = solidterrain(PARQUET);
 				OTerrain = door;
 			}
 
 
-			Square, Pos 3, 2;
+			Square, Pos 4, 4;
 			{
 				Character = librarian;
 			}
@@ -1024,7 +1031,7 @@ Dungeon ATTNAM;
 			ItemMap
 			{
 				Pos=1,1;
-				Size=5,3;
+				Size=6,4;
 
 				Types
 				{
@@ -1032,24 +1039,26 @@ Dungeon ATTNAM;
 				}
 			}
 			{
-			    rrrrr
-			    r...r
-			    r...r
+			    rrrrrr
+			    r....r
+			    r....r
+				r....r
 			}
 
 			OTerrainMap
 			{
 				Pos=1,1;
-				Size=5,3;
+				Size=6,4;
 				Types
 				{
 					= = olterraincontainer(BOOK_CASE);
 				}
 			}
 			{
-				=====
-				=...=
-				=...=
+				======
+				=....=
+				=....=
+				=....=
 			}
 		}
 
@@ -1439,9 +1448,9 @@ Dungeon UNDER_WATER_TUNNEL;
 				}
 			}
 			{
-				ccc
+				.c.
 				cgc
-				ccc
+				.c.
 			}
 		}
 	}

@@ -355,7 +355,7 @@ The smith of Attnam should have a golden statue of a woman in his closet. (A Kal
 Wishing for a plate mail shouldn't yield a leather armor.
 //Kevlar.
 Money unit and its plural and symbol should be possible to define from config.
-*Scoll of harden material.
+*Scroll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
 Lookmode should show whether a creature is panicked.
@@ -370,3 +370,5 @@ Rings appearing in fountains. (shouldn't be hard with the new system...)
 Dragon scale material.
 Breaking different wands should cause different effects.
 Scroll of level teleport.
+Once implemented, game saga should show how many times the player has polymorphed.
+Buffalos shouldn't be able to throw items.

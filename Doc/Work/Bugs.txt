@@ -107,3 +107,6 @@ Golden plate mails are worth less than iron ones.
 The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
 Skulls are insanely heavy (8 kg).
 Carnivorous plants can be kicked around.
+Merka's money amount bugs?
+The dead are counted when calculating population.
+"The kamikaze dwarf manages to free heself from the bear trap."

@@ -4818,7 +4818,7 @@ void character::SaveLife()
 	  LifeSaver = GetEquipment(c);
 
       if(!LifeSaver)
-	ABORT("The Universe can only kill one once!");
+	ABORT("The Universe can only kill you once!");
 
       if(IsPlayer())
 	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHAR_NAME(UNARTICLED));
@@ -5152,7 +5152,7 @@ void character::PrintEndPolymorphMessage() const
 
 void character::PolymorphHandler()
 {
-  if(!(RAND() % 400))
+  if(!(RAND() % 1500))
     PolymorphRandomly(200 + RAND() % 800);
 }
 
