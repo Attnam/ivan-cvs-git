@@ -238,14 +238,16 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  if(PLAYER->HasAllBodyParts())
+  if(Relation > 500 + RAND_N(500))
     {
       item* Reward = new bodyarmor(PLATE_MAIL, NO_MATERIALS);
       Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
       ADD_MESSAGE("%s materializes before you.", Reward->CHAR_NAME(INDEFINITE));
       PLAYER->GetGiftStack()->AddItem(Reward);
+      AdjustTimer(45000);
+      AdjustRelation(-300);
     }
-  else
+  else if(!PLAYER->HasAllBodyParts())
     {
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
@@ -691,50 +693,6 @@ void valpurus::Pray()
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, true);
       PLAYER->EditExperience(WISDOM, 1000);
-
-      if(Relation > 500 && !(RAND() % 5))
-	{
-	  character* Angel = CreateAngel();
-
-	  if(Angel)
-	    {
-	      Angel->SetTeam(PLAYER->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	    }
-	}
-    }
-  else
-    {
-      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
-      PrayBadEffect();
-      AdjustTimer(50000);
-      AdjustRelation(-100);
-      game::ApplyDivineAlignmentBonuses(this, false);
-      PLAYER->EditExperience(WISDOM, -250);
-
-      if(Relation < -500 && !(RAND() % 25))
-	{
-	  character* Angel = CreateAngel();
-
-	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	    }
-	}
-    }
-}
-
-void atavus::Pray()
-{
-  if(!Timer && Relation > 500 + RAND_N(500))
-    {
-      ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
-      PrayGoodEffect();
-      AdjustTimer(50000);
-      AdjustRelation(-250);
-      game::ApplyDivineAlignmentBonuses(this, true);
-      PLAYER->EditExperience(WISDOM, 500);
 
       if(Relation > 500 && !(RAND() % 5))
 	{

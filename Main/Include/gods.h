@@ -48,7 +48,6 @@ class GOD
   virtual std::string GetName() const;
   virtual std::string GetDescription() const;
   virtual uchar GetAlignment() const;
-  virtual void Pray();
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
  protected:
