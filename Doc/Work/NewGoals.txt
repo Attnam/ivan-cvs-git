@@ -10,6 +10,7 @@ D-altar of level 10 bugs (Timo)
 D-you can identify monsters in the dark by chatting with them (Timo)
 D-lamps on walls break incorrectly (Timo)
 D-highlightion is incorrect when the score entry is discarded (Timo)
+ -the Great Name Bug which Perttu once found and which we probably forgot to fix (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features

@@ -141,5 +141,5 @@ std::string dungeon::GetLevelDescription(uchar Index)
 	if(GetLevel(Index)->GetLevelScript()->GetDescription(false))
 		return *GetLevel(Index)->GetLevelScript()->GetDescription();
 	else
-		return std::string("Level ") + (Index + 1);
+		return std::string("level ") + (Index + 1);
 }
