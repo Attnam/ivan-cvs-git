@@ -421,7 +421,6 @@ class character : public entity, public id
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
-
   DATABASEVALUE(ushort, DefaultArmStrength);
   DATABASEVALUE(ushort, DefaultLegStrength);
   DATABASEVALUE(ushort, DefaultDexterity);
@@ -577,7 +576,8 @@ class character : public entity, public id
   virtual void LycanthropyHandler();
   virtual void SaveLife();
   virtual void PolymorphRandomly(ushort);
-
+  virtual uchar GetNeededBodyParts() const;
+  virtual bool DetachBodyPart();
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);

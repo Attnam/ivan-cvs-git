@@ -129,6 +129,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckBalance(float);
   virtual long CalculateMoveAPRequirement(long) const;
   virtual bool EquipmentHasNoPairProblems(ushort) const;
+  virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
  protected:
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);

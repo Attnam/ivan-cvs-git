@@ -89,6 +89,7 @@ command* game::Command[] =
   new command(&character::Talk, "chat", 'C', false),
   new command(&character::Close, "close", 'c', false),
   new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
+  new command(&character::DetachBodyPart, "detach a limb", '0', true),
   new command(&character::Dip, "dip", 'D', true),
   new command(&character::Drop, "drop", 'd', false),
   new command(&character::Consume, "eat/drink", 'e', true),
@@ -1408,7 +1409,9 @@ void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*B
 }
 
 /* ... all the keys that are acceptable 
-   DefaultAnswer = REQUIRES_ANSWER if this question requires an answer */
+   DefaultAnswer = REQUIRES_ANSWER if this question requires an answer 
+   Not surprisingly KeyNumber is the number of keys at ...
+*/
 
 int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumber, ...)
 {

@@ -97,8 +97,8 @@
 #define LIFE_SAVED 16
 #define LYCANTHROPY 32
 
-#define HEAD 1
-#define TORSO 2
+#define TORSO 1
+#define HEAD 2
 #define RIGHTARM 4
 #define LEFTARM 8
 #define ARMS RIGHTARM|LEFTARM
@@ -441,5 +441,9 @@
 
 #define CONICALMOMMO 1
 #define FLATMOMMO 2
+
+
+/* Prices */
+#define PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR 50
 
 #endif

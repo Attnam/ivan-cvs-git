@@ -3649,7 +3649,7 @@ void character::CreateBodyPart(ushort Index)
   bodypart* BodyPart = MakeBodyPart(Index);
   BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
   BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
-  BodyPart->PlaceToSlot(GetBodyPartSlot(Index));
+  SetBodyPart(Index, BodyPart);
   BodyPart->InitSpecialAttributes();
   UpdateBodyPartPicture(Index);
 }
@@ -4691,4 +4691,20 @@ void character::PolymorphRandomly(ushort Time)
     NewForm = protosystem::CreateMonster(false);
 
   Polymorph(NewForm, Time);
+}
+
+/* Returns a uchar with flags that are true for the missing bodyparts */ 
+uchar character::GetNeededBodyParts() const
+{
+  uchar ToBeReturned = 0;
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(!GetBodyPart(c))
+      ToBeReturned |= (1 << c);
+  return ToBeReturned;
+}
+
+bool character::DetachBodyPart()
+{
+  ADD_MESSAGE("You haven't got any extra bodyparts.");
+  return false;
 }

@@ -691,6 +691,44 @@ void priest::BeTalkedTo(character* Talker)
       return;
     }
 
+  std::vector<ushort> Indexes;
+  uchar NeededBodyParts = Talker->GetNeededBodyParts();
+  /* Analize the whole byte, bit by bit */
+  uchar c;
+  for(c = 0; c < 8; ++c)
+    {
+      if(NeededBodyParts & (1 << c))
+	{
+	  Indexes.push_back(c);
+	}
+    }
+  if(!Indexes.empty())
+    {
+      for(c = 0; c < Indexes.size(); ++c)
+	{
+	  ushort OriginalID = Talker->GetOriginalBodyPartID(Indexes[c]);
+	  for(stackiterator ii = Talker->GetStack()->GetBottomSlot(); ii != Talker->GetStack()->GetSlotAboveTop(); ++ii)
+	    if(OriginalID == (**ii)->GetID())
+	      {
+		/* Now attach the old BodyPart (**ii) to slot Indexes[c] */
+		if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+		  {
+		    if(game::BoolQuestion("Would you like me to put your old " + (**ii)->GetNameSingular() + " back in exchange for " + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR + " gold? [y,N]"))
+		      {
+			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+			Talker->SetBodyPart(Indexes[c],(bodypart*)***ii);
+		      }
+		    else
+		      ADD_MESSAGE("\"Help yourself and get some money and we'll help you too.\"");
+		  }
+		return;
+	      }
+	}
+
+
+    }
+
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
@@ -3274,4 +3312,44 @@ void hunter::CreateBodyPart(ushort Index)
     character::CreateBodyPart(Index);
   else
     SetLeftArm(0);
+}
+
+bool humanoid::DetachBodyPart()
+{
+  uchar ToBeDetached;
+  switch(game::KeyQuestion("What limb do you wish to detach? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg?", KEYESC, 4, 'l','r','L','R'))
+    {
+    case 'l':
+      ToBeDetached = LEFTARMINDEX;
+      break;
+    case 'r':
+      ToBeDetached = RIGHTARMINDEX;
+      break;
+    case 'L':
+      ToBeDetached = LEFTLEGINDEX;
+      break;
+    case 'R':
+      ToBeDetached = RIGHTLEGINDEX;
+      break;
+    default:
+      return false;
+    }
+  bodypart* BodyPart = GetBodyPart(ToBeDetached);
+  if(BodyPart)
+    {
+      SevereBodyPart(ToBeDetached);
+      GetSquareUnder()->SendNewDrawRequest();
+
+      GetStack()->AddItem(BodyPart);
+
+      BodyPart->DropEquipment();
+
+      ADD_MESSAGE("Bodypart detached!");  
+      return true;
+    }
+  else
+    {
+      ADD_MESSAGE("That bodypart has already been detached.");
+      return false;
+    }
 }

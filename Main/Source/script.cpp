@@ -368,7 +368,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
       {
 	char Char = SaveFile.ReadLetter();
 
-	std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
+	typename std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
 
 	if(Iterator != SymbolMap.end())
 	  ContentScriptMap[x][y] = Iterator->second;
