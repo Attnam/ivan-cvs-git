@@ -504,7 +504,7 @@ ITEM(eddytorso, normaltorso)
 ITEM(largetorso, normaltorso)
 {
  public:
-  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*, truth));
   virtual int GetSquareIndex(v2) const;
   virtual void Draw(blitdata&) const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 4; }
@@ -516,7 +516,7 @@ ITEM(largetorso, normaltorso)
 ITEM(largecorpse, corpse)
 {
  public:
-  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*, truth));
   virtual int GetSquareIndex(v2) const;
   virtual void Draw(blitdata&) const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 4; }

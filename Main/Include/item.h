@@ -468,7 +468,7 @@ class item : public object
   void SetConfig(int, int = 0);
   god* GetMasterGod() const;
   idholder* GetCloneMotherID() const { return CloneMotherID; }
-  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*,truth));
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*, truth));
   virtual int GetSquareIndex(v2) const { return 0; }
   virtual void Draw(blitdata&) const;
   v2 GetLargeBitmapPos(v2, int) const;

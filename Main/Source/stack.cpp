@@ -800,7 +800,7 @@ truth stack::Duplicate(int Max, ulong Flags)
 
 /* Adds the item without any external update requests */
 
-void stack::AddElement(item* Item,truth)
+void stack::AddElement(item* Item, truth)
 {
   ++Items;
 

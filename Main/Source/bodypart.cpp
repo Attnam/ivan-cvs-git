@@ -2353,7 +2353,7 @@ void largecorpse::Draw(blitdata& BlitData) const
   LargeDraw(BlitData);
 }
 
-void largetorso::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*))
+void largetorso::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*, truth))
 {
   if(!Slot[0])
   {
@@ -2362,7 +2362,7 @@ void largetorso::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(
     level* Level = GetLevel();
 
     for(int c = 1; c < 4; ++c)
-      (Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this);
+      (Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this, false);
   }
   else
     for(int c = 1; c < 4; ++c)
@@ -2379,7 +2379,7 @@ int largetorso::GetSquareIndex(v2 Pos) const
   return RelativePos.X + (RelativePos.Y << 1);
 }
 
-void largecorpse::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*))
+void largecorpse::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*, truth))
 {
   if(!Slot[0])
   {
@@ -2388,7 +2388,7 @@ void largecorpse::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)
     level* Level = GetLevel();
 
     for(int c = 1; c < 4; ++c)
-      (Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this);
+      (Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this, false);
   }
   else
     for(int c = 1; c < 4; ++c)

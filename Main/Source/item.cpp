@@ -36,7 +36,7 @@ const char* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
-void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*,truth)) { Slot[0] = StackSlot; }
+void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*, truth)) { Slot[0] = StackSlot; }
 truth item::IsAnimated() const { return object::IsAnimated() || Fluid; }
 truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
 truth item::IsEatable(const character* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
