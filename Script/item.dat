@@ -166,7 +166,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	SecondaryMaterialConfig = { 6, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT; }
-	MaterialConfigChances = { 6, 750, 50, 25, 10, 50, 50; }
+	MaterialConfigChances = { 6, 750, 10, 25, 10, 25, 25; }
 	Roundness = 60;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;

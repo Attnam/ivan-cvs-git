@@ -497,4 +497,6 @@ He should be also able to call 112/911.  (from Henri Kiviluoto)
 The pictures of mirrored creatures should also be mirrored and their limbs swapped.
 Things less dense than a liquid should float in a square full of that liquid.
 Simple protection for changing highscore files. Needed if list of best scores is done.
-Death message for team member killing each other while confused should be "X killed by confused Y"
+If a creature has lost all its limbs, leprosy should drop its head.
+Good NPCs should try not to use ommel bone/tooth weapons.
+Death message for team member killing each other while confused should be "X killed by confused Y">>>>>>> 1.330

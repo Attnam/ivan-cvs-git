@@ -175,6 +175,9 @@ playerkind
 	/* Replies overridden */
 	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
 	/*Inventory == belt(BELT_OF_LEVITATION);*/
+	Inventory = { 3, holybanana { Times = 5; }, can { SecondaryMaterial = PEA_SOUP; Times = 5; }, wand(WAND_OF_INVISIBILITY); }
+	KnownCWeaponSkills == UNARMED;
+	CWeaponSkillHits == 100;
 }
 
 petrus
@@ -4215,9 +4218,9 @@ sumowrestler
 	DefaultArmStrength = 25;
 	DefaultLegStrength = 35;
 	DefaultDexterity = 15;
-	DefaultAgility = 8;
-	DefaultEndurance = 15;
-	DefaultPerception = 18;
+	DefaultAgility = 6;
+	DefaultEndurance = 12;
+	DefaultPerception = 15;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 15;
 	DefaultCharisma = 6;
@@ -4237,11 +4240,12 @@ sumowrestler
 	HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this)\"";
 	AttachedGod = SILVA;
 	KnownCWeaponSkills = { 2, UNARMED, KICK; }
-	CWeaponSkillHits = { 2, 1000, 1000; }
+	CWeaponSkillHits = { 2, 500, 500; }
 	AttackStyle = USE_ARMS|USE_LEGS;
 	IsUnique = true;
 	CanBeWished = true;
 	IsPolymorphable = false;
+	BaseUnarmedStrength = 100;
 	FriendlyReplies =
 	{
 		9, /* 6 first are used before the revolution */
