@@ -22,7 +22,7 @@ class GROUNDLEVELTERRAIN
 (
 	floor,
 	groundlevelterrain,
-	InitMaterials(new stone),
+	InitMaterials(new gravel),
 	{
 	},
 public:

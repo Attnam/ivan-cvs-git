@@ -59,3 +59,4 @@ There should be an option to show all text in the game in tengwar font.
 Scroll of charging.
 A priests of Attnam should kick the player if he vomits on their altars.
 Golems should drop lumps of their respective material when critically hit.
+Dolphin pools should be bigger.

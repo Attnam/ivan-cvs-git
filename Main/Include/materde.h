@@ -14,7 +14,7 @@ public:
 	virtual ushort GetDensity() const				{ return 8000; }
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
 	virtual ulong RawPrice() const { return GetVolume() >> 8; }
 protected:
 	virtual std::string NameStem() const	{ return "iron"; }
@@ -51,7 +51,7 @@ public:
 	virtual ushort GetDensity() const				{ return 3000; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
 protected:
 	virtual std::string NameStem() const	{ return "stone"; }
 );
@@ -686,7 +686,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 7; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(80, 80, 80); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(48, 48, 48); }
 	virtual short NutritionValue() const			{ return 500; }
 protected:
 	virtual std::string NameStem() const	{ return "bat flesh"; }
