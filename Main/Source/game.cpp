@@ -118,8 +118,8 @@ void game::Init(std::string Name)
 	FILE* Debug = fopen("Debug.txt", "w");
 	Turns = 0;
 	EMPTY_MESSAGES();
-	globalmessagingsystem::Format();
 	ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
+	globalmessagingsystem::Format();
 
 	fprintf(Debug, "Game: %d.", Counter);
 

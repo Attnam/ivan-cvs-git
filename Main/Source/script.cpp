@@ -6,6 +6,12 @@
 #include "lterraba.h"
 #include "charba.h"
 #include "allocate.h"
+#include "itemba.h"
+
+template contentscript<character>;
+template contentscript<item>;
+template contentscript<groundlevelterrain>;
+template contentscript<overlevelterrain>;
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
@@ -48,7 +54,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
 	}
 }
 
-void groundterrainscript::ReadFrom(inputfile& SaveFile)
+template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -67,136 +73,34 @@ void groundterrainscript::ReadFrom(inputfile& SaveFile)
 		Word = SaveFile.ReadWord();
 	}
 
-	if(Index = protocontainer<groundlevelterrain>::SearchCodeName(Word))
+	if(Index = protocontainer<type>::SearchCodeName(Word))
 	{
-		if(!TerrainType)
-			TerrainType = new ushort;
+		if(!ContentType)
+			ContentType = new ushort;
 
-		*TerrainType = Index;
+		*ContentType = Index;
 
 		Word = SaveFile.ReadWord();
 	}
 
 	if(Word != ";" && Word != ",")
-		ABORT("Script error in groundterrain script!");
+		ABORT("Script error in content script!");
 }
 
-groundlevelterrain* groundterrainscript::Instantiate() const
+template <class type> type* contentscript<type>::Instantiate() const
 {
-	if(!TerrainType)
-		ABORT("Illegal groundterrainscript instantiation!");
+	if(!ContentType)
+		ABORT("Illegal content script instantiation!");
 
-	groundlevelterrain* Instance;
+	type* Instance;
 
 	if(MaterialType)
 	{
-		Instance = protocontainer<groundlevelterrain>::GetProto(*TerrainType)->Clone(false);
+		Instance = protocontainer<type>::GetProto(*ContentType)->Clone(false);
 		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
 	}
 	else
-		Instance = protocontainer<groundlevelterrain>::GetProto(*TerrainType)->Clone();
-
-	return Instance;
-}
-
-void overterrainscript::ReadFrom(inputfile& SaveFile)
-{
-	std::string Word = SaveFile.ReadWord();
-
-	if(Word == "=")
-		Word = SaveFile.ReadWord();
-
-	ushort Index;
-
-	if(Index = protocontainer<material>::SearchCodeName(Word))
-	{
-		if(!MaterialType)
-			MaterialType = new ushort;
-
-		*MaterialType = Index;
-
-		Word = SaveFile.ReadWord();
-	}
-
-	if(Index = protocontainer<overlevelterrain>::SearchCodeName(Word))
-	{
-		if(!TerrainType)
-			TerrainType = new ushort;
-
-		*TerrainType = Index;
-
-		Word = SaveFile.ReadWord();
-	}
-
-	if(Word != ";" && Word != ",")
-		ABORT("Script error in overterrain script!");
-}
-
-overlevelterrain* overterrainscript::Instantiate() const
-{
-	if(!TerrainType)
-		ABORT("Illegal overterrainscript instantiation!");
-
-	overlevelterrain* Instance;
-
-	if(MaterialType)
-	{
-		Instance = protocontainer<overlevelterrain>::GetProto(*TerrainType)->Clone(false);
-		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
-	}
-	else
-		Instance = protocontainer<overlevelterrain>::GetProto(*TerrainType)->Clone();
-
-	return Instance;
-}
-
-void characterscript::ReadFrom(inputfile& SaveFile)
-{
-	std::string Word = SaveFile.ReadWord();
-
-	if(Word == "=")
-		Word = SaveFile.ReadWord();
-
-	ushort Index;
-
-	if(Index = protocontainer<material>::SearchCodeName(Word))
-	{
-		if(!MaterialType)
-			MaterialType = new ushort;
-
-		*MaterialType = Index;
-
-		Word = SaveFile.ReadWord();
-	}
-
-	if(Index = protocontainer<character>::SearchCodeName(Word))
-	{
-		if(!CharacterType)
-			CharacterType = new ushort;
-
-		*CharacterType = Index;
-
-		Word = SaveFile.ReadWord();
-	}
-
-	if(Word != ";" && Word != ",")
-		ABORT("Script error in character script!");
-}
-
-character* characterscript::Instantiate() const
-{
-	if(!CharacterType)
-		ABORT("Illegal characterscript instantiation!");
-
-	character* Instance;
-
-	if(MaterialType)
-	{
-		Instance = protocontainer<character>::GetProto(*CharacterType)->Clone(false);
-		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
-	}
-	else
-		Instance = protocontainer<character>::GetProto(*CharacterType)->Clone();
+		Instance = protocontainer<type>::GetProto(*ContentType)->Clone();
 
 	return Instance;
 }
@@ -220,10 +124,32 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 		{
+			if(Word == "Character")
+			{
+				if(!Character)
+					Character = new contentscript<character>;
+
+				Character->SetValueMap(ValueMap);
+				Character->ReadFrom(SaveFile);
+
+				continue;
+			}
+
+			if(Word == "Item")
+			{
+				if(!Item)
+					Item = new contentscript<item>;
+
+				Item->SetValueMap(ValueMap);
+				Item->ReadFrom(SaveFile);
+
+				continue;
+			}
+
 			if(Word == "GroundTerrain")
 			{
 				if(!GroundTerrain)
-					GroundTerrain = new groundterrainscript;
+					GroundTerrain = new contentscript<groundlevelterrain>;
 
 				GroundTerrain->SetValueMap(ValueMap);
 				GroundTerrain->ReadFrom(SaveFile);
@@ -234,21 +160,10 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 			if(Word == "OverTerrain")
 			{
 				if(!OverTerrain)
-					OverTerrain = new overterrainscript;
+					OverTerrain = new contentscript<overlevelterrain>;
 
 				OverTerrain->SetValueMap(ValueMap);
 				OverTerrain->ReadFrom(SaveFile);
-
-				continue;
-			}
-
-			if(Word == "Character")
-			{
-				if(!Character)
-					Character = new characterscript;
-
-				Character->SetValueMap(ValueMap);
-				Character->ReadFrom(SaveFile);
 
 				continue;
 			}
@@ -287,25 +202,25 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 	else
 	{
 		if(!GroundTerrain)
-			GroundTerrain = new groundterrainscript;
+			GroundTerrain = new contentscript<groundlevelterrain>;
 
 		GroundTerrain->SetValueMap(ValueMap);
 		GroundTerrain->ReadFrom(SaveFile);
 
 		if(!OverTerrain)
-			OverTerrain = new overterrainscript;
+			OverTerrain = new contentscript<overlevelterrain>;
 
 		OverTerrain->SetValueMap(ValueMap);
 		OverTerrain->ReadFrom(SaveFile);
 	}
 }
 
-void charactermap::ReadFrom(inputfile& SaveFile)
+template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 {
 	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in room script!");
+		ABORT("Bracket missing in content map script!");
 
-	std::map<char, characterscript*> SymbolMap;
+	std::map<char, contentscript<type>*> SymbolMap;
 
 	SymbolMap['.'] = 0;
 
@@ -338,39 +253,39 @@ void charactermap::ReadFrom(inputfile& SaveFile)
 
 			for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 			{
-				characterscript* CharacterScript = new characterscript;
+				contentscript<type>* ContentScript = new contentscript<type>;
 
-				CharacterScript->SetValueMap(ValueMap);
-				CharacterScript->ReadFrom(SaveFile);
+				ContentScript->SetValueMap(ValueMap);
+				ContentScript->ReadFrom(SaveFile);
 
-				SymbolMap[Word[0]] = CharacterScript;
+				SymbolMap[Word[0]] = ContentScript;
 			}
 
 			continue;
 		}
 	}
 
-	if(!CharacterScriptMap)
-		Alloc2D(CharacterScriptMap, GetSize()->X, GetSize()->Y);
+	if(!ContentScriptMap)
+		Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
 
 	if(SaveFile.ReadWord() != "{")
-		ABORT("Missing bracket in charactermap script!");
+		ABORT("Missing bracket in content map script!");
 
 	for(ushort y = 0; y < GetSize()->Y; ++y)
 		for(ushort x = 0; x < GetSize()->X; ++x)
 		{
 			char Char = SaveFile.ReadLetter();
 
-			std::map<char, characterscript*>::iterator Iterator = SymbolMap.find(Char);
+			std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
 
 			if(Iterator != SymbolMap.end())
-				CharacterScriptMap[x][y] = Iterator->second;
+				ContentScriptMap[x][y] = Iterator->second;
 			else
-				ABORT("Illegal character %c in charactermap!", Char);
+				ABORT("Illegal content %c in content map!", Char);
 		}
 
 	if(SaveFile.ReadWord() != "}")
-		ABORT("Missing bracket in charactermap script!");
+		ABORT("Missing bracket in content map script!");
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
@@ -415,10 +330,43 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 		if(Word == "CharacterMap")
 		{
 			if(!CharacterMap)
-				CharacterMap = new charactermap;
+				CharacterMap = new contentmap<character>;
 
 			CharacterMap->SetValueMap(ValueMap);
 			CharacterMap->ReadFrom(SaveFile);
+
+			continue;
+		}
+
+		if(Word == "ItemMap")
+		{
+			if(!ItemMap)
+				ItemMap = new contentmap<item>;
+
+			ItemMap->SetValueMap(ValueMap);
+			ItemMap->ReadFrom(SaveFile);
+
+			continue;
+		}
+
+		if(Word == "GroundTerrainMap")
+		{
+			if(!GroundTerrainMap)
+				GroundTerrainMap = new contentmap<groundlevelterrain>;
+
+			GroundTerrainMap->SetValueMap(ValueMap);
+			GroundTerrainMap->ReadFrom(SaveFile);
+
+			continue;
+		}
+
+		if(Word == "OverTerrainMap")
+		{
+			if(!OverTerrainMap)
+				OverTerrainMap = new contentmap<overlevelterrain>;
+
+			OverTerrainMap->SetValueMap(ValueMap);
+			OverTerrainMap->ReadFrom(SaveFile);
 
 			continue;
 		}

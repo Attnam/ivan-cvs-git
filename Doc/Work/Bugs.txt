@@ -13,3 +13,4 @@ The character replacement bug?
 Camera should be updated on level change.
 Lookmode + F4.
 Fullscreen + F10.
+Ligths go off when polymorph happens.

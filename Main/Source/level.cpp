@@ -549,11 +549,11 @@ bool level::MakeRoom(roomscript* RoomScript)
 		XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
 		YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
 
-		characterscript* CharacterScript;
+		contentscript<character>* CharacterScript;
 
 		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
-				if(CharacterScript = RoomScript->GetCharacterMap()->GetCharacterScript(x, y))
+				if(CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y))
 					Map[XPos + x][YPos + y]->FastAddCharacter(CharacterScript->Instantiate());
 	}
 
