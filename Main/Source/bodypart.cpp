@@ -246,16 +246,16 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 	if(HP == 1 && BHP > 1)
 	  {
 	    if(IsAlive())
-	      ADD_MESSAGE("Your %s bleeds very badly.", GetBodyPartName().c_str());
+	      ADD_MESSAGE("Your %s bleeds very badly.", GetBodyPartName().CStr());
 	    else
-	      ADD_MESSAGE("Your %s is in very bad condition.", GetBodyPartName().c_str());
+	      ADD_MESSAGE("Your %s is in very bad condition.", GetBodyPartName().CStr());
 	  }
 	else if(IsInBadCondition() && !IsInBadCondition(BHP))
 	  {
 	    if(IsAlive())
-	      ADD_MESSAGE("Your %s bleeds.", GetBodyPartName().c_str());
+	      ADD_MESSAGE("Your %s bleeds.", GetBodyPartName().CStr());
 	    else
-	      ADD_MESSAGE("Your %s is in bad condition.", GetBodyPartName().c_str());
+	      ADD_MESSAGE("Your %s is in bad condition.", GetBodyPartName().CStr());
 	  }
     }
 
@@ -470,7 +470,7 @@ void corpse::Load(inputfile& SaveFile)
   Deceased->SetMotherEntity(this);
 }
 
-void corpse::AddPostFix(std::string& String) const
+void corpse::AddPostFix(festring& String) const
 {
   String << " of ";
   GetDeceased()->AddName(String, INDEFINITE);
@@ -788,7 +788,7 @@ bool arm::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -797,7 +797,7 @@ bool arm::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -807,7 +807,7 @@ bool arm::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Dexterity, DexterityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -816,7 +816,7 @@ bool arm::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Dexterity, DexterityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -836,7 +836,7 @@ bool leg::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -846,7 +846,7 @@ bool leg::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -857,7 +857,7 @@ bool leg::ApplyExperience()
   if(GetMaster()->CheckForAttributeIncrease(Agility, AgilityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -866,7 +866,7 @@ bool leg::ApplyExperience()
   else if(GetMaster()->CheckForAttributeDecrease(Agility, AgilityExperience))
     {
       if(GetMaster()->IsPlayer())
-	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHAR_NAME(DEFINITE));
 
@@ -1106,9 +1106,9 @@ uchar bodypart::GetMaxAlpha(ushort) const
     return 255;
 }
 
-void bodypart::AddPostFix(std::string& String) const
+void bodypart::AddPostFix(festring& String) const
 {
-  if(OwnerDescription.length())
+  if(OwnerDescription.GetSize())
     String << ' ' << OwnerDescription;
 }
 
@@ -1406,7 +1406,7 @@ void arm::WieldedSkillHit()
       CalculateAttackInfo();
 
       if(Master->IsPlayer())
-	GetCurrentSWeaponSkill()->AddLevelUpMessage(GetWielded()->GetName(UNARTICLED));
+	GetCurrentSWeaponSkill()->AddLevelUpMessage(GetWielded()->CHAR_NAME(UNARTICLED));
     }
 }
 
@@ -1494,7 +1494,7 @@ void corpse::SignalSpoil(material*)
 	if(BodyPart->IsVeryCloseToSpoiling())
 	  {
 	    if(!TorsoSpoiled && CanBeSeenByPlayer())
-	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHAR_NAME(DEFINITE));
+	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).CStr(), GetDeceased()->CHAR_NAME(DEFINITE));
 
 	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
 
@@ -1920,7 +1920,7 @@ ushort bodypart::GetConditionColor() const
     return LIGHT_GRAY;
 }
 
-bool arm::CheckIfWeaponTooHeavy(const std::string& WeaponDescription) const
+bool arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
 {
   ushort HitStrength = GetAttribute(ARM_STRENGTH);
   ushort Requirement = GetWielded()->GetStrengthRequirement();
@@ -1933,36 +1933,36 @@ bool arm::CheckIfWeaponTooHeavy(const std::string& WeaponDescription) const
       if(HitStrength - Requirement < 10)
 	{
 	  if(HitStrength <= Requirement)
-	    ADD_MESSAGE("You cannot use %s. Wielding it with two hands requires %d strength.", WeaponDescription.c_str(), (Requirement >> 1) + 1);
+	    ADD_MESSAGE("You cannot use %s. Wielding it with two hands requires %d strength.", WeaponDescription, (Requirement >> 1) + 1);
 	  else if(HitStrength - Requirement < 4)
-	    ADD_MESSAGE("Using %s even with two hands is extremely difficult.", WeaponDescription.c_str());
+	    ADD_MESSAGE("Using %s even with two hands is extremely difficult.", WeaponDescription);
 	  else if(HitStrength - Requirement < 7)
-	    ADD_MESSAGE("You have much trouble using %s even with two hands.", WeaponDescription.c_str());
+	    ADD_MESSAGE("You have much trouble using %s even with two hands.", WeaponDescription);
 	  else
-	    ADD_MESSAGE("It is somewhat difficult to use %s even with two hands.", WeaponDescription.c_str());
+	    ADD_MESSAGE("It is somewhat difficult to use %s even with two hands.", WeaponDescription);
 
-	  return !game::BoolQuestion("Continue anyway? [y/N]");
+	  return !game::BoolQuestion(CONST_S("Continue anyway? [y/N]"));
 	}
     }
   else
     {
       if(HitStrength - Requirement < 10)
 	{
-	  std::string HandInfo;
+	  const char* HandInfo = "";
 
 	  if(GetWielded()->IsTwoHanded())
 	    HandInfo = " with one hand";
 
 	  if(HitStrength <= Requirement)
-	    ADD_MESSAGE("You cannot use %s. Wielding it%s requires %d strength.", WeaponDescription.c_str(), HandInfo.c_str(), Requirement + 1);
+	    ADD_MESSAGE("You cannot use %s. Wielding it%s requires %d strength.", WeaponDescription, HandInfo, Requirement + 1);
 	  else if(HitStrength - Requirement < 4)
-	    ADD_MESSAGE("Using %s%s is extremely difficult.", WeaponDescription.c_str(), HandInfo.c_str());
+	    ADD_MESSAGE("Using %s%s is extremely difficult.", WeaponDescription, HandInfo);
 	  else if(HitStrength - Requirement < 7)
-	    ADD_MESSAGE("You have much trouble using %s%s.", WeaponDescription.c_str(), HandInfo.c_str());
+	    ADD_MESSAGE("You have much trouble using %s%s.", WeaponDescription, HandInfo);
 	  else
-	    ADD_MESSAGE("It is somewhat difficult to use %s%s.", WeaponDescription.c_str(), HandInfo.c_str());
+	    ADD_MESSAGE("It is somewhat difficult to use %s%s.", WeaponDescription, HandInfo);
 
-	  return !game::BoolQuestion("Continue anyway? [y/N]");
+	  return !game::BoolQuestion(CONST_S("Continue anyway? [y/N]"));
 	}
     }
 
@@ -2090,7 +2090,7 @@ void arm::AddAttackInfo(felist& List) const
 {
   if(GetDamage())
     {
-      std::string Entry = "   ";
+      festring Entry = CONST_S("   ");
 
       if(GetWielded())
 	{
@@ -2102,11 +2102,11 @@ void arm::AddAttackInfo(felist& List) const
       else
 	Entry << "melee attack";
 
-      Entry.resize(50, ' ');
+      Entry.Resize(50, ' ');
       Entry << GetMinDamage() << '-' << GetMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(GetToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -2116,11 +2116,11 @@ void arm::AddDefenceInfo(felist& List) const
 {
   if(GetWielded())
     {
-      std::string Entry = "   ";
+      festring Entry = CONST_S("   ");
       GetWielded()->AddName(Entry, UNARTICLED);
-      Entry.resize(50, ' ');
+      Entry.Resize(50, ' ');
       Entry << int(GetBlockValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetBlockCapability();
       List.AddEntry(Entry, LIGHT_GRAY);
     }

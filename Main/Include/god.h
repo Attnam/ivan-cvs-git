@@ -5,14 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "typedef.h"
 
 class item;
 class character;
 class outputfile;
 class inputfile;
+class festring;
 class god;
 
 class godprototype
@@ -38,7 +37,7 @@ class god
   virtual const char* GetName() const = 0;
   virtual const char* GetDescription() const = 0;
   virtual uchar GetAlignment() const = 0;
-  std::string GetCompleteDescription() const;
+  festring GetCompleteDescription() const;
   void ApplyDivineTick();
   void AdjustRelation(god*, bool, short = 25);
   void AdjustRelation(short);

@@ -313,32 +313,32 @@ ushort stack::SearchItem(item* ToBeSearched) const
   return 0xFFFF;
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const festring& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   itemvector ReturnVector;
-  DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags|NO_MULTI_SELECT, SorterFunction);
+  DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), Flags|NO_MULTI_SELECT, SorterFunction);
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
-ushort stack::DrawContents(itemvector& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(itemvector& ReturnVector, const character* Viewer, const festring& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
-  return DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
+  return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   felist Contents(Topic);
 
   if(!(Flags & NO_SPECIAL_INFO))
     {
-      Contents.AddDescription("");
-      Contents.AddDescription(std::string("Overall weight: ") + (MergeStack ? GetWeight() + MergeStack->GetWeight() : GetWeight()) + " grams");
+      Contents.AddDescription(CONST_S(""));
+      Contents.AddDescription(CONST_S("Overall weight: ") + (MergeStack ? GetWeight() + MergeStack->GetWeight() : GetWeight()) + " grams");
     }
 
   if(Flags & NONE_AS_CHOICE)
-    Contents.AddEntry("none", LIGHT_GRAY, 0, igraph::GetTransparentTile());
+    Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, igraph::GetTransparentTile());
 
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, SorterFunction);
@@ -384,23 +384,24 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
   return 0;
 }
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const festring& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   std::vector<itemvector> PileVector;
   Pile(PileVector, Viewer, SorterFunction);
 
-  bool DrawDesc = Desc.length() != 0;
+  bool DrawDesc = Desc.GetSize() != 0;
   ulong LastCategory = 0;
+  festring Entry;
 
   for(ushort p = 0; p < PileVector.size(); ++p)
     {
       if(DrawDesc)
 	{
 	  if(!Contents.IsEmpty())
-	    Contents.AddEntry("", WHITE, 0, 0, false);
+	    Contents.AddEntry(CONST_S(""), WHITE, 0, 0, false);
 
 	  Contents.AddEntry(Desc, WHITE, 0, 0, false);
-	  Contents.AddEntry("", WHITE, 0, 0, false);
+	  Contents.AddEntry(CONST_S(""), WHITE, 0, 0, false);
 	  DrawDesc = false;
 	}
 
@@ -412,7 +413,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
 	  Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, 0, false);
 	}
 
-      std::string Entry;
+      Entry.Empty();
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
       Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), true, Item->AllowAlphaEverywhere());
     }
@@ -438,7 +439,7 @@ ushort stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, us
 	  ushort Amount = PileVector[p].size();
 
 	  if(Amount > 1)
-	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	    Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
 	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	  return 0xFFFF;
@@ -461,7 +462,7 @@ bool stack::TryKey(item* Key, character* Applier)
   if(!Applier->IsPlayer())
     return false;
 
-  item* ToBeOpened = DrawContents(Applier, "Where do you wish to use the key?", 0, &item::HasLockSorter);
+  item* ToBeOpened = DrawContents(Applier, CONST_S("Where do you wish to use the key?"), 0, &item::HasLockSorter);
 
   if(ToBeOpened == 0)
     return false;
@@ -474,7 +475,7 @@ bool stack::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", 0, &item::OpenableSorter);
+  item* ToBeOpened = DrawContents(Opener, CONST_S("What do you wish to open?"), 0, &item::OpenableSorter);
 
   if(ToBeOpened == 0)
     return false;
@@ -714,11 +715,11 @@ void stack::ReceiveFluidSpill(material* Liquid)
     i->ReceiveFluidSpill(Liquid);
 }
 
-bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName)
+bool stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
 {
   if(!GetItems())
     {
-      ADD_MESSAGE("There is nothing in %s.", ContainerName.c_str());
+      ADD_MESSAGE("There is nothing in %s.", ContainerName.CStr());
       return false;
     }
 
@@ -730,7 +731,7 @@ bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName
     {
       itemvector ToTake;
       game::DrawEverythingNoBlit();
-      DrawContents(ToTake, Opener, "What do you want to take from " + ContainerName + "?", REMEMBER_SELECTED);
+      DrawContents(ToTake, Opener, CONST_S("What do you want to take from ") + ContainerName + '?', REMEMBER_SELECTED);
 
       if(ToTake.empty())
 	break;
@@ -740,7 +741,7 @@ bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName
 	  for(ushort c = 0; c < ToTake.size(); ++c)
 	    ToTake[c]->MoveTo(Opener->GetStack());
 
-	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), ContainerName.c_str());
+	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr(), ContainerName.CStr());
 	  Success = true;
 	}
     }
@@ -748,11 +749,11 @@ bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName
   return Success;
 }
 
-bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, ulong StorageVolume, ulong ContainerID)
+bool stack::PutSomethingIn(character* Opener, const festring& ContainerName, ulong StorageVolume, ulong ContainerID)
 {
   if(!Opener->GetStack()->GetItems())
     {
-      ADD_MESSAGE("You have nothing to put in %s.", ContainerName.c_str());
+      ADD_MESSAGE("You have nothing to put in %s.", ContainerName.CStr());
       return false;
     }
 
@@ -764,14 +765,14 @@ bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, u
     {
       itemvector ToPut;
       game::DrawEverythingNoBlit();
-      Opener->GetStack()->DrawContents(ToPut, Opener, "What do you want to put in " + ContainerName + "?", REMEMBER_SELECTED);
+      Opener->GetStack()->DrawContents(ToPut, Opener, CONST_S("What do you want to put in ") + ContainerName + '?', REMEMBER_SELECTED);
 
       if(ToPut.empty())
 	break;
 
       if(ToPut[0]->GetID() == ContainerID)
 	{
-	  ADD_MESSAGE("You can't put %s inside itself!", ContainerName.c_str());
+	  ADD_MESSAGE("You can't put %s inside itself!", ContainerName.CStr());
 	  continue;
 	}
 
@@ -780,22 +781,22 @@ bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, u
       if(!Amount)
 	{
 	  if(ToPut.size() == 1)
-	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.c_str());
+	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.CStr());
 	  else
-	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.c_str());
+	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
 
 	  continue;
 	}
 
       if(Amount != ToPut.size())
-	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.c_str());
+	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.CStr());
 
       if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
 	{
 	  for(ushort c = 0; c < Amount; ++c)
 	    ToPut[c]->MoveTo(this);
 
-	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), ContainerName.c_str());
+	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).CStr(), ContainerName.CStr());
 	  Success = true;
 	}
     }

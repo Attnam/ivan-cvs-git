@@ -14,7 +14,7 @@
 
 int Main(int, char**)
 {
-  std::string OldDirectory;
+  festring OldDirectory;
   std::ifstream IConfigFile("igor.cfg");
 
   if(IConfigFile.is_open())
@@ -28,10 +28,10 @@ int Main(int, char**)
   IConfigFile.close();
   std::cout << "Where is the graphics directory? ";
 
-  if(OldDirectory.length())
+  if(OldDirectory.GetSize())
     std::cout << '[' << OldDirectory << "] ";
 
-  std::string Directory;
+  festring Directory;
   char ch;
 
   while((ch = getchar()) != '\n')
@@ -53,14 +53,14 @@ int Main(int, char**)
   DOUBLE_BUFFER->ClearToColor(0);
 
   colorizablebitmap* CBitmap;
-  felist List("Choose file to edit:");
-  List.AddEntry("Char.pcx", LIGHT_GRAY);
-  List.AddEntry("Humanoid.pcx", LIGHT_GRAY);
-  List.AddEntry("Item.pcx", LIGHT_GRAY);
-  List.AddEntry("GLTerra.pcx", LIGHT_GRAY);
-  List.AddEntry("OLTerra.pcx", LIGHT_GRAY);
+  felist List(CONST_S("Choose file to edit:"));
+  List.AddEntry(CONST_S("Char.pcx"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("Humanoid.pcx"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("Item.pcx"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("GLTerra.pcx"), LIGHT_GRAY);
+  List.AddEntry(CONST_S("OLTerra.pcx"), LIGHT_GRAY);
   ushort Selected;
-  std::string FileName;
+  festring FileName;
   List.SetPos(vector2d(300, 250));
   List.SetWidth(200);
 
@@ -70,11 +70,11 @@ int Main(int, char**)
 
   switch(Selected)
     {
-    case 0: FileName = "Char.pcx"; break;
-    case 1: FileName = "Humanoid.pcx"; break;
-    case 2: FileName = "Item.pcx"; break;
-    case 3: FileName = "GLTerra.pcx"; break;
-    case 4: FileName = "OLTerra.pcx"; break;
+    case 0: FileName = CONST_S("Char.pcx"); break;
+    case 1: FileName = CONST_S("Humanoid.pcx"); break;
+    case 2: FileName = CONST_S("Item.pcx"); break;
+    case 3: FileName = CONST_S("GLTerra.pcx"); break;
+    case 4: FileName = CONST_S("OLTerra.pcx"); break;
     }
 
   CBitmap = new colorizablebitmap(Directory + FileName);
@@ -213,3 +213,4 @@ int Main(int, char**)
 
   return 1;
 }
+

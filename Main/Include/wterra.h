@@ -18,11 +18,11 @@ class wterrain
   wsquare* GetWSquareUnder() const { return WSquareUnder; }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   worldmap* GetWorldMap() const { return GetWSquareUnder()->GetWorldMap(); }
-  void AddName(std::string&, uchar) const;
-  std::string GetName(uchar) const;
+  void AddName(festring&, uchar) const;
+  festring GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
-  virtual const char* GetNameStem() const = 0; // should be const std::string&
+  virtual const char* GetNameStem() const = 0; // should be const festring&
  protected:
   virtual void VirtualConstructor(bool) { }
   virtual bool LongerArticle() const { return false; }

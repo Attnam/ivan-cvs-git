@@ -16,7 +16,7 @@ void olterrain::InstallDataBase() { databasecreator<olterrain>::InstallDataBase(
 uchar glterrain::GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
 uchar olterrain::GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
 
-std::string olterrain::GetText() const { return ""; }
+festring olterrain::GetText() const { return ""; }
 
 void lterrain::Load(inputfile& SaveFile)
 {
@@ -57,9 +57,9 @@ vector2d lterrain::GetPos() const
 
 bool lterrain::SitOn(character* Sitter)
 {
-  if(GetSitMessage().length())
+  if(GetSitMessage().GetSize())
     {
-      ADD_MESSAGE("%s", GetSitMessage().c_str());
+      ADD_MESSAGE("%s", GetSitMessage().CStr());
       Sitter->EditAP(-1000);
       return true;
     }
@@ -129,8 +129,8 @@ bool lterrain::CanBeSeenBy(character* Who) const
 
 void olterrain::ShowRestMessage(character*) const
 {
-  if(GetRestMessage().length())
-    ADD_MESSAGE("%s", GetRestMessage().c_str());
+  if(GetRestMessage().GetSize())
+    ADD_MESSAGE("%s", GetRestMessage().CStr());
 }
 
 void lterrain::SignalEmitationIncrease(ulong EmitationUpdate)
@@ -243,5 +243,5 @@ void olterraindatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
 }

@@ -652,4 +652,3 @@ inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
   WorldMap->Load(SaveFile);
   return SaveFile;
 }
-

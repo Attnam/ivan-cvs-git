@@ -109,8 +109,8 @@ class ITEM
   virtual bool AllowSpoil() const { return false; } // temporary
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
  protected:
-  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(festring&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const;
 );
 
@@ -123,7 +123,7 @@ class ITEM
   virtual material* CreateDipMaterial();
   virtual bool IsDipDestination(const character*) const { return MainMaterial != 0; }
  protected:
-  virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -144,8 +144,8 @@ class ITEM
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
   virtual bool EffectIsGood() const;
  protected:
-  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(festring&, bool) const;
 );
 
 class ITEM
@@ -237,7 +237,7 @@ class ITEM
   loaf,
   item,
  protected:
-  virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -275,9 +275,9 @@ class ITEM
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, ushort);
   virtual bool Zap(character*, vector2d, uchar);
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual ulong GetPrice() const;
-  void BreakEffect(character*, const std::string&);
+  void BreakEffect(character*, const festring&);
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -337,7 +337,7 @@ class ITEM
   virtual ulong GetTotalExplosivePower() const;
   virtual void ReceiveFluidSpill(material*);
  protected:
-  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
+  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
 );
 
 class ITEM
@@ -420,7 +420,7 @@ class ITEM
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
  protected:
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
@@ -442,7 +442,7 @@ class ITEM
   virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
   virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
   uchar LockType;
 );
@@ -519,7 +519,7 @@ class ITEM
   virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
   stack* Contained;
   uchar LockType;
@@ -550,7 +550,7 @@ class ITEM
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
  protected:
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
@@ -631,4 +631,5 @@ class ITEM
   item,
   ;
 );
+
 #endif

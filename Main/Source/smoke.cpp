@@ -112,8 +112,8 @@ inputfile& operator>>(inputfile& SaveFile, smoke*& Smoke)
 
 void smoke::AddBreatheMessage() const
 {
-  if(Gas->GetBreatheMessage().length())
-    ADD_MESSAGE("%s", Gas->GetBreatheMessage().c_str());
+  if(Gas->GetBreatheMessage().GetSize())
+    ADD_MESSAGE("%s", Gas->GetBreatheMessage().CStr());
 }
 
 void smoke::Merge(gas* OtherGas)

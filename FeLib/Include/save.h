@@ -8,21 +8,21 @@
 #include <cstdio>
 #include <vector>
 #include <list>
-#include <string>
 #include <map>
 #include <set>
 
 #include "rect.h"
 #include "error.h"
+#include "festring.h"
 
-typedef std::map<std::string, long> valuemap;
+typedef std::map<festring, long> valuemap;
 
 /* fstream seems to bug with DJGPP, so we use FILE* here */
 
 class outputfile
 {
  public:
-  outputfile(const std::string&, bool = true);
+  outputfile(const festring&, bool = true);
   ~outputfile();
   void Put(char What) { fputc(What, Buffer); }
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
@@ -34,10 +34,10 @@ class outputfile
 class inputfile
 {
  public:
-  inputfile(const std::string&, const valuemap* = 0, bool = true);
+  inputfile(const festring&, const valuemap* = 0, bool = true);
   ~inputfile();
-  std::string ReadWord(bool = true);
-  void ReadWord(std::string&, bool = true);
+  festring ReadWord(bool = true);
+  void ReadWord(festring&, bool = true);
   char ReadLetter(bool = true);
   long ReadNumber(uchar = 0xFF, bool = false);
   vector2d ReadVector2d();
@@ -54,11 +54,11 @@ class inputfile
   long TellPos() { return ftell(Buffer); }
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
-  const std::string& GetFileName() const { return FileName; }
+  const festring& GetFileName() const { return FileName; }
   void UnGet(int Char) { ungetc(Char, Buffer); }
  private:
   FILE* Buffer;
-  std::string FileName;
+  festring FileName;
   const valuemap* ValueMap;
 };
 
@@ -84,14 +84,14 @@ inline void ReadData(long& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumb
 inline void ReadData(ulong& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
 inline void ReadData(vector2d& Type, inputfile& SaveFile) { Type = SaveFile.ReadVector2d(); }
 inline void ReadData(rect& Type, inputfile& SaveFile) { Type = SaveFile.ReadRect(); }
-void ReadData(std::string&, inputfile&);
+void ReadData(festring&, inputfile&);
 void ReadData(std::vector<long>&, inputfile&);
-void ReadData(std::vector<std::string>&, inputfile&);
+void ReadData(std::vector<festring>&, inputfile&);
 
 template <class container, class type> inline void ReadContainerData(container& Container, inputfile& SaveFile)
 {
   Container.clear();
-  std::string Word;
+  festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == "=")
@@ -105,7 +105,7 @@ template <class container, class type> inline void ReadContainerData(container& 
     }
 
   if(Word != "{")
-    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   ushort Size = SaveFile.ReadNumber();
 
@@ -116,7 +116,7 @@ template <class container, class type> inline void ReadContainerData(container& 
     }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile) { ReadContainerData<std::vector<type>, type>(Vector, SaveFile); }
@@ -246,8 +246,8 @@ inline inputfile& operator>>(inputfile& SaveFile, rect& Rect)
   return SaveFile;
 }
 
-outputfile& operator<<(outputfile&, const std::string&);
-inputfile& operator>>(inputfile&, std::string&);
+outputfile& operator<<(outputfile&, const festring&);
+inputfile& operator>>(inputfile&, festring&);
 
 template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, const std::pair<type1, type2>& Pair)
 {

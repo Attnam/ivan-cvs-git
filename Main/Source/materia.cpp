@@ -9,17 +9,18 @@ bool material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial-
 ulong material::GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
 const char* material::GetConsumeVerb() const { return "eating"; }
 
-void material::AddName(std::string& Name, bool Articled, bool Adjective) const
+void material::AddName(festring& Name, bool Articled, bool Adjective) const
 {
   if(Articled)
-    Name << GetArticle() << " ";
+    Name << GetArticle() << ' ';
 
   Name << (Adjective ? GetAdjectiveStem() : GetNameStem());
 }
 
-std::string material::GetName(bool Articled, bool Adjective) const
+festring material::GetName(bool Articled, bool Adjective) const
 {
-  std::string Name;
+  static festring Name;
+  Name.Empty();
   AddName(Name, Articled, Adjective);
   return Name;
 }

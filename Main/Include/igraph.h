@@ -6,7 +6,6 @@
 #endif
 
 #include <map>
-#include <string>
 
 #include "ivandef.h"
 #include "femath.h"
@@ -15,8 +14,9 @@ class bitmap;
 class colorizablebitmap;
 class outputfile;
 class inputfile;
+class festring;
 
-/* CompareBits doesn't like alignment of structure members */
+/* memcmp doesn't like alignment of structure members */
 
 #ifdef VC
 #pragma pack(1)
@@ -25,7 +25,7 @@ class inputfile;
 struct graphicid
 {
   graphicid() { }
-  bool operator<(const graphicid& GI) const { return femath::CompareBits(this, &GI, sizeof(graphicid)); }
+  bool operator<(const graphicid& GI) const { return memcmp(this, &GI, sizeof(graphicid)) < 0; }
   vector2d BitmapPos NO_ALIGNMENT;
   ushort Color[4] NO_ALIGNMENT;
   uchar Frame NO_ALIGNMENT;

@@ -47,7 +47,6 @@ public:
   static float CalculateAngle(vector2d);
   static void CalculateEnvironmentRectangle(rect&, const rect&, vector2d, ushort);
   static bool Clip(ushort&, ushort&, ushort&, ushort&, ushort&, ushort&, ushort, ushort, ushort, ushort);
-  static bool CompareBits(const void*, const void*, ushort);
   static void SaveSeed();
   static void LoadSeed();
 protected:

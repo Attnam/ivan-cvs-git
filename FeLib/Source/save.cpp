@@ -3,10 +3,10 @@
 #include "save.h"
 #include "femath.h"
 
-outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
+outputfile::outputfile(const festring& FileName, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "wb"))
 {
   if(AbortOnErr && !IsOpen())
-    ABORT("Can't open %s for output!", FileName.c_str());
+    ABORT("Can't open %s for output!", FileName.CStr());
 }
 
 outputfile::~outputfile()
@@ -15,10 +15,10 @@ outputfile::~outputfile()
     fclose(Buffer);
 }
 
-inputfile::inputfile(const std::string& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb")), FileName(FileName), ValueMap(ValueMap)
+inputfile::inputfile(const festring& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "rb")), FileName(FileName), ValueMap(ValueMap)
 {
   if(AbortOnErr && !IsOpen())
-    ABORT("File %s not found!", FileName.c_str());
+    ABORT("File %s not found!", FileName.CStr());
 }
 
 inputfile::~inputfile()
@@ -27,24 +27,24 @@ inputfile::~inputfile()
     fclose(Buffer);
 }
 
-std::string inputfile::ReadWord(bool AbortOnEOF)
+festring inputfile::ReadWord(bool AbortOnEOF)
 {
-  std::string ToReturn;
+  static festring ToReturn;
   ReadWord(ToReturn, AbortOnEOF);
   return ToReturn;
 }
 
-void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
+void inputfile::ReadWord(festring& Buffer, bool AbortOnEOF)
 {
   uchar Mode = 0;
-  Buffer.resize(0);
+  Buffer.Empty();
 
   for(;;)
     {
       if(Eof())
 	{
 	  if(AbortOnEOF)
-	    ABORT("Unexpected end of file %s!", FileName.c_str());
+	    ABORT("Unexpected end of file %s!", FileName.CStr());
 
 	  return;
 	}
@@ -61,7 +61,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      return;
 	    }
 
-	  Buffer += char(Char);
+	  Buffer << char(Char);
 	  continue;
 	}
 
@@ -75,7 +75,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      return;
 	    }
 
-	  Buffer += char(Char);
+	  Buffer << char(Char);
 	  continue;
 	}
 
@@ -99,7 +99,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 		      for(;;)
 			{
 			  if(Eof())
-			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
+			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
 
 			  Char = Get();
 
@@ -131,7 +131,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      if(Mode)
 		UnGet('/');
 	      else
-		Buffer += '/';
+		Buffer << '/';
 
 	      return;
 	    }
@@ -150,18 +150,18 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      for(;;)
 		{
 		  if(Eof())
-		    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
+		    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
 
 		  Char = Get();
 
 		  if(Char != '"')
 		    {
-		      Buffer += char(Char);
+		      Buffer << char(Char);
 		      OldChar = Char;
 		    }
 		  else if(OldChar == '\\')
 		    {
-		      Buffer[Buffer.length() - 1] = '"';
+		      Buffer[Buffer.GetSize() - 1] = '"';
 		      OldChar = 0;
 		    }
 		  else
@@ -169,7 +169,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 		}
 	    }
 
-	  Buffer += char(Char);
+	  Buffer << char(Char);
 	  return;
 	}
     }
@@ -182,7 +182,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
       if(Eof())
 	{
 	  if(AbortOnEOF)
-	    ABORT("Unexpected end of file %s!", FileName.c_str());
+	    ABORT("Unexpected end of file %s!", FileName.CStr());
 
 	  return 0;
 	}
@@ -209,7 +209,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 		      for(;;)
 			{
 			  if(Eof())
-			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
+			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
 
 			  Char = Get();
 
@@ -251,31 +251,32 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 {
   long Value = 0;
-  std::string Word;
+  static festring Word;
   bool NumberCorrect = false;
 
   for(;;)
     {
       ReadWord(Word);
+      char First = Word[0];
 
-      if(isdigit(Word[0]))
+      if(isdigit(First))
 	{
-	  Value = atoi(Word.c_str());
+	  Value = atoi(Word.CStr());
 	  NumberCorrect = true;
 	  continue;
 	}
 
-      if(Word.length() == 1)
+      if(Word.GetSize() == 1)
 	{
-	  if(Word[0] == ';' || Word[0] == ',' || Word[0] == ':')
+	  if(First == ';' || First == ',' || First == ':')
 	    {
 	      if(CallLevel != HIGHEST || PreserveTerminator)
-		UnGet(Word[0]);
+		UnGet(First);
 
 	      return Value;
 	    }
 
-	  if(Word[0] == ')')
+	  if(First == ')')
 	    {
 	      if((CallLevel != HIGHEST && CallLevel != 4) || PreserveTerminator)
 		UnGet(')');
@@ -286,7 +287,7 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 	  /* Convert this into an inline function! */
 
 	  #define CHECK_OP(op, cl)\
-	  if(Word[0] == #op[0])\
+	  if(First == #op[0])\
 	    if(cl < CallLevel)\
 	      {\
 		Value op##= ReadNumber(cl);\
@@ -295,7 +296,7 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 	      }\
 	    else\
 	      {\
-		UnGet(Word[0]);\
+		UnGet(First);\
 		return Value;\
 	      }
 
@@ -303,7 +304,7 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 	  CHECK_OP(*, 2); CHECK_OP(/, 2); CHECK_OP(%, 2);
 	  CHECK_OP(+, 3); CHECK_OP(-, 3);
 
-	  if(Word[0] == '(')
+	  if(First == '(')
 	    if(NumberCorrect)
 	      {
 		UnGet('(');
@@ -316,10 +317,10 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 		continue;
 	      }
 
-	  if(Word[0] == '=' && CallLevel == HIGHEST)
+	  if(First == '=' && CallLevel == HIGHEST)
 	    continue;
 
-	  if(Word[0] == '#') // for #defines
+	  if(First == '#') // for #defines
 	    {
 	      UnGet('#');
 	      return Value;
@@ -345,7 +346,7 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 	      Value = MakeRGB24(Red, Green, Blue);
 	    }
 	  else
-	    ABORT("Illegal RGB bit size %d in file %s, line %d!", Bits, FileName.c_str(), TellLine());
+	    ABORT("Illegal RGB bit size %d in file %s, line %d!", Bits, FileName.CStr(), TellLine());
 
 	  NumberCorrect = true;
 	  continue;
@@ -363,7 +364,7 @@ long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 	    }
 	}
 
-      ABORT("Odd numeric value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
+      ABORT("Odd numeric value \"%s\" encountered in file %s, line %d!", Word.CStr(), FileName.CStr(), TellLine());
     }
 }
 
@@ -387,14 +388,14 @@ rect inputfile::ReadRect()
 
 bool inputfile::ReadBool()
 {
-  std::string Word;
+  static festring Word;
   ReadWord(Word);
 
   if(Word == "=")
     ReadWord(Word);
 
   if(ReadWord() != ";")
-    ABORT("Bool value terminated incorrectly in file %s, line %d!", FileName.c_str(), TellLine());
+    ABORT("Bool value terminated incorrectly in file %s, line %d!", FileName.CStr(), TellLine());
 
   if(Word == "true" || Word == "1")
     return true;
@@ -402,22 +403,22 @@ bool inputfile::ReadBool()
   if(Word == "false" || Word == "0")
     return false;
 
-  ABORT("Odd bool value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
+  ABORT("Odd bool value \"%s\" encountered in file %s, line %d!", Word.CStr(), FileName.CStr(), TellLine());
   return false;
 }
 
-outputfile& operator<<(outputfile& SaveFile, const std::string& String)
+outputfile& operator<<(outputfile& SaveFile, const festring& String)
 {
-  uchar Length = String.length();
+  uchar Length = String.GetSize();
   SaveFile << Length;
 
   if(Length)
-    SaveFile.Write(String.c_str(), Length);
+    SaveFile.Write(String.CStr(), Length);
 
   return SaveFile;
 }
 
-inputfile& operator>>(inputfile& SaveFile, std::string& String)
+inputfile& operator>>(inputfile& SaveFile, festring& String)
 {
   char* RealBuffer, StackBuffer[1024];
   uchar Length;
@@ -429,10 +430,10 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
     {
       SaveFile.Read(RealBuffer, Length);
       RealBuffer[Length] = 0;
-      String = RealBuffer;
+      String << RealBuffer;
     }
   else
-    String.resize(0);
+    String.Empty();
 
   if(Length >= 1024)
     delete [] RealBuffer;
@@ -440,7 +441,7 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
   return SaveFile;
 }
 
-void ReadData(std::string& String, inputfile& SaveFile)
+void ReadData(festring& String, inputfile& SaveFile)
 {
   SaveFile.ReadWord(String);
 
@@ -453,7 +454,7 @@ void ReadData(std::string& String, inputfile& SaveFile)
 void ReadData(std::vector<long>& Vector, inputfile& SaveFile)
 {
   Vector.clear();
-  std::string Word;
+  static festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == "=")
@@ -466,7 +467,7 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile)
     }
 
   if(Word != "{")
-    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   ushort Size = SaveFile.ReadNumber();
 
@@ -474,13 +475,13 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile)
     Vector.push_back(SaveFile.ReadNumber());
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
-void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile)
+void ReadData(std::vector<festring>& Vector, inputfile& SaveFile)
 {
   Vector.clear();
-  std::string Word;
+  static festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == "=")
@@ -491,13 +492,13 @@ void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile)
       Vector.push_back(SaveFile.ReadWord());
 
       if(SaveFile.ReadWord() != ";")
-	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
       return;
     }
 
   if(Word != "{")
-    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
   ushort Size = SaveFile.ReadNumber();
 
@@ -507,11 +508,11 @@ void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile)
       SaveFile.ReadWord(Word);
 
       if(Word != "," && Word != ";")
-	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
     }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 ulong inputfile::TellLineOfPos(long Pos)

@@ -225,7 +225,7 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = reinterpret_cast<lsquare***>(area::Map);
-  const std::string* Msg = LevelScript->GetLevelMessage();
+  const festring* Msg = LevelScript->GetLevelMessage();
 
   if(Msg)
     LevelMessage = *Msg;
@@ -766,7 +766,7 @@ room* level::GetRoom(ushort Index) const
   return Room[Index];
 }
 
-void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
+void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
 {
   static ushort StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   ushort c;
@@ -1148,7 +1148,7 @@ void level::Reveal()
       }
 }
 
-void level::ParticleBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
 {
   if(Direction != YOURSELF)
     {
@@ -1185,7 +1185,7 @@ void level::ParticleBeam(character* BeamOwner, const std::string& DeathMsg, vect
 
 /* Note: You will most likely need some help from supernatural entities to comprehend this code. Sorry. */
 
-void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
 {
   if(Direction == YOURSELF)
     {
@@ -1326,7 +1326,7 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
     }
 }
 
-void level::ShieldBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar)
+void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar)
 {
   vector2d Pos[3];
 
@@ -1399,9 +1399,9 @@ inputfile& operator>>(inputfile& SaveFile, level*& Level)
   return SaveFile;
 }
 
-void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar)
+void (level::*level::GetBeam(ushort Index))(character*, const festring&, vector2d, ulong, uchar, uchar, uchar)
 {
-  static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+  static void (level::*Beam[BEAM_STYLES])(character*, const festring&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
   return Beam[Index];
 }
 
@@ -1519,4 +1519,3 @@ void level::LightningVisualizer(const rect& Rect, ushort BeamColor) const
   graphics::BlitDBToScreen();
   while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
 }
-

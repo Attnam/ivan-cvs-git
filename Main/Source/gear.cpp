@@ -17,7 +17,7 @@ short armor::GetCarryingBonus() const { return Enchantment << 1; }
 
 ulong bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 bool bodyarmor::IsInCorrectSlot(ushort Index) const { return Index == BODY_ARMOR_INDEX; }
-const std::string& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
+const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 
 ushort shield::GetBonus() const { return 100 + 10 * Enchantment; }
 
@@ -52,7 +52,7 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
   if(!BlockedByArmour && GetContainedMaterial())
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).c_str(), Enemy->CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       bool Success = GetContainedMaterial()->HitEffect(Enemy);
 
@@ -68,7 +68,7 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
 void meleeweapon::DipInto(material* Material, character* Dipper)
 {
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).c_str());
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
 
   ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
@@ -82,7 +82,7 @@ bool pickaxe::Apply(character* User)
       return false;
     }
 
-  uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
+  uchar Dir = game::DirectionQuestion(CONST_S("What direction do you want to dig? [press a direction key]"), false);
 
   vector2d Temp = game::GetMoveVector(Dir);
 
@@ -110,7 +110,7 @@ bool pickaxe::Apply(character* User)
       else
 	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
     else
-      ADD_MESSAGE(Terrain->GetDigMessage().c_str());
+      ADD_MESSAGE(Terrain->GetDigMessage().CStr());
 
   return false;
 }
@@ -233,7 +233,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      std::string DeathMSG = "killed by " + Hitter->GetKillName(); 
+      festring DeathMSG = CONST_S("killed by ") + Hitter->GetKillName(); 
       Enemy->GetLevel()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
       return true;
     }
@@ -296,13 +296,13 @@ bool whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitte
     return !(RAND() % 10);
 }
 
-void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
+void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
 
       if(!IsBroken() && !IsWhip())
 	Entry << ", " << GetStrengthValueDescription();
@@ -313,7 +313,7 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
       if(CWeaponSkillLevel || SWeaponSkillLevel)
 	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
-      Entry << "]";
+      Entry << ']';
     }
 }
 
@@ -333,7 +333,7 @@ void meleeweapon::SignalSpoil(material* Material)
     item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
 }
 
-void meleeweapon::AddPostFix(std::string& String) const
+void meleeweapon::AddPostFix(festring& String) const
 {
   item::AddPostFix(String);
 
@@ -475,7 +475,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      std::string DeathMSG = "killed by " + Hitter->GetKillName();
+      festring DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
       GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 10);
       return true;
     }
@@ -499,13 +499,13 @@ ushort belt::GetFormModifier() const
   return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
-void armor::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
+void armor::AddInventoryEntry(const character*, festring& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
     {
-      Entry << Amount << " ";
+      Entry << Amount << ' ';
       AddName(Entry, PLURAL);
     }
 
@@ -513,7 +513,7 @@ void armor::AddInventoryEntry(const character*, std::string& Entry, ushort Amoun
     Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << "]";
 }
 
-void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
+void shield::AddInventoryEntry(const character* Viewer, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -564,7 +564,7 @@ void armor::Load(inputfile& SaveFile)
   SaveFile >> Enchantment;
 }
 
-void armor::AddPostFix(std::string& String) const
+void armor::AddPostFix(festring& String) const
 {
   item::AddPostFix(String);
 

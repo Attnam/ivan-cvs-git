@@ -5,7 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <map>
 
 #include "vector2d.h"
@@ -13,15 +12,16 @@
 class outputfile;
 class inputfile;
 class bitmap;
+class festring;
 
 typedef std::map<ushort, std::pair<bitmap*, bitmap*> > fontcache;
 
 class colorizablebitmap
 {
  public:
-  colorizablebitmap(const std::string&);
+  colorizablebitmap(const festring&);
   ~colorizablebitmap();
-  void Save(const std::string&);
+  void Save(const festring&);
 
   void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
   void MaskedBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ushort*) const;

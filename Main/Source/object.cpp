@@ -297,20 +297,20 @@ ushort object::GetMaterialColorA(ushort) const
     return 0;
 }
 
-bool object::AddMaterialDescription(std::string& String, bool Articled) const
+bool object::AddMaterialDescription(festring& String, bool Articled) const
 {
   GetMainMaterial()->AddName(String, Articled);
-  String << " ";
+  String << ' ';
   return true;
 }
 
-void object::AddContainerPostFix(std::string& String) const
+void object::AddContainerPostFix(festring& String) const
 {
   if(GetContainedMaterial())
     GetContainedMaterial()->AddName(String << " full of ");
 }
 
-void object::AddLumpyPostFix(std::string& String) const
+void object::AddLumpyPostFix(festring& String) const
 {
   if(GetMainMaterial())
     GetMainMaterial()->AddName(String << " of ");
@@ -419,7 +419,7 @@ void object::SetConfig(ushort NewConfig)
   UpdatePictures();
 }
 
-bool object::AddEmptyAdjective(std::string& String, bool Articled) const
+bool object::AddEmptyAdjective(festring& String, bool Articled) const
 {
   if(GetContainedMaterial())
     return false;
@@ -452,4 +452,3 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
-

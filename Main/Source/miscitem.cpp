@@ -14,11 +14,11 @@ ushort lantern::GetMaterialColorB(ushort) const { return MakeRGB16(255, 255, 100
 ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB16(255, 255, 100); }
 ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB16(255, 255, 100); }
 
-bool can::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
+bool can::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
 
 bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
-bool potion::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
+bool potion::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 bool potion::EffectIsGood() const { return GetContainedMaterial() && GetContainedMaterial()->EffectIsGood(); }
 
 ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
@@ -31,11 +31,11 @@ ulong stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1
 ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
 
 ushort itemcontainer::GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
-void itemcontainer::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
+void itemcontainer::AddPostFix(festring& String) const { AddLockPostFix(String, LockType); }
 
-bool mine::AddAdjective(std::string& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
+bool mine::AddAdjective(festring& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
-bool beartrap::AddAdjective(std::string& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
+bool beartrap::AddAdjective(festring& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
 
 void potion::GenerateLeftOvers(character* Eater)
 {
@@ -125,7 +125,7 @@ bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByA
   if(!BlockedByArmour && RAND() & 1)
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).c_str(), Enemy->CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       bool Success = GetMainMaterial()->HitEffect(Enemy);
 
@@ -156,10 +156,10 @@ material* lump::CreateDipMaterial()
 
 bool wand::Apply(character* Terrorist)
 {
-  if(Terrorist->IsPlayer() && !game::BoolQuestion("Are you sure you want to break " + GetName(DEFINITE) + "? [y/N]")) 
+  if(Terrorist->IsPlayer() && !game::BoolQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
-  BreakEffect(Terrorist, "killed by breaking " + GetName(INDEFINITE));
+  BreakEffect(Terrorist, CONST_S("killed by breaking ") + GetName(INDEFINITE));
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -184,11 +184,11 @@ bool scrollofwishing::Read(character* Reader)
 
 void scrollofwishing::FinishReading(character* Reader)
 {
-  std::string Temp;
+  festring Temp;
 
   while(true)
     {
-      Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+      Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
       item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
 
       if(TempItem)
@@ -223,7 +223,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
       while(true)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, "What item do you wish to change?", NO_MULTI_SELECT|SELECT_PAIR);
+	  Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
 
 	  if(!Item.empty())
 	    {
@@ -237,11 +237,11 @@ void scrollofchangematerial::FinishReading(character* Reader)
 		{
 		  ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
 
-		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		    continue;
 		}
 
-	      std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+	      festring Temp = game::StringQuestion(CONST_S("What material do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
 	      material* TempMaterial = protosystem::CreateMaterial(Temp);
 
 	      if(TempMaterial)
@@ -287,7 +287,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	      else
 		game::DrawEverythingNoBlit();
 	    }
-	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	  else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
 	    return;
 	}
 
@@ -320,7 +320,7 @@ void brokenbottle::StepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s steps on sharp glass splinters.", Stepper->CHAR_NAME(DEFINITE));
 
       Stepper->ReceiveDamage(0, 1 + RAND() % 3, PHYSICAL_DAMAGE, LEGS);
-      Stepper->CheckDeath("stepped on a broken bottle", 0);
+      Stepper->CheckDeath(CONST_S("stepped on a broken bottle"), 0);
     }
 }
 
@@ -349,7 +349,7 @@ void potion::DipInto(material* Material, character* Dipper)
   /* Add alchemy */
 
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).c_str());
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
 
   ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
@@ -428,12 +428,12 @@ bool backpack::Apply(character* Terrorist)
       RemoveFromSlot();
       SendToHell();
 
-      std::string DeathMsg;
+      festring DeathMsg;
 
       if(Terrorist->IsPlayer())
-	DeathMsg = "exploded himself with " + GetName(INDEFINITE);
+	DeathMsg = CONST_S("exploded himself with ") + GetName(INDEFINITE);
       else
-	DeathMsg = "kamikazed by " + Terrorist->GetKillName();
+	DeathMsg = CONST_S("kamikazed by ") + Terrorist->GetKillName();
 
       Terrorist->DexterityAction(5);
       Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
@@ -489,7 +489,7 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
-      BreakEffect(Damager, "killed by an exploding " + GetName(UNARTICLED));
+      BreakEffect(Damager, CONST_S("killed by an exploding ") + GetName(UNARTICLED));
       return true;
     }
 
@@ -500,7 +500,7 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(Type & (FIRE|ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
     {
-      std::string DeathMsg = "killed by an explosion of ";
+      festring DeathMsg = CONST_S("killed by an explosion of ");
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
@@ -591,13 +591,13 @@ bool oillamp::Apply(character* Applier)
 		  Genie->SetTeam(Applier->GetTeam());
 		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
 
-		  if(game::BoolQuestion("Do you want to wish? [Y/n]", YES))
+		  if(game::BoolQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
 		    {
 		      ADD_MESSAGE("You may wish for an item.");
 
 		      while(true)
 			{
-			  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+			  festring Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
 			  item* TempItem = protosystem::CreateItem(Temp, Applier->IsPlayer());
 
 			  if(TempItem)
@@ -679,7 +679,7 @@ void scrollofcharging::FinishReading(character* Reader)
     while(true)
       {
 	itemvector Item;
-	Reader->SelectFromPossessions(Item, "Which item do you wish to charge?", NO_MULTI_SELECT|SELECT_PAIR, &item::ChargeableSorter);
+	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::ChargeableSorter);
 
 	if(!Item.empty())
 	  {
@@ -687,7 +687,7 @@ void scrollofcharging::FinishReading(character* Reader)
 	      {
 		ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
 
-		if(!game::BoolQuestion("Still continue? [y/N]"))
+		if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		  continue;
 	      }
 
@@ -697,7 +697,7 @@ void scrollofcharging::FinishReading(character* Reader)
 	    ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
 	    break;
 	  }
-	else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
 	  return;
       }
 
@@ -717,7 +717,7 @@ void bananapeels::StepOnEffect(character* Stepper)
       /* Do damage against any random bodypart except legs */
 
       Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
-      Stepper->CheckDeath("slipped on a banana peel", 0);
+      Stepper->CheckDeath(CONST_S("slipped on a banana peel"), 0);
       Stepper->EditAP(-500);
     }
 }
@@ -796,7 +796,7 @@ bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
     {
-      std::string DeathMsg = "killed by an explosion of ";
+      festring DeathMsg = CONST_S("killed by an explosion of ");
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
@@ -832,7 +832,7 @@ void mine::StepOnEffect(character* Stepper)
   GetLSquareUnder()->SendNewDrawRequest();
 
   if(Stepper->IsPlayer())
-    game::AskForKeyPress("Trap activated! [press any key to continue]");
+    game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
@@ -849,7 +849,7 @@ bool key::Apply(character* User)
 	  ADD_MESSAGE("This monster type cannot use keys.");
 	  return false;
 	}
-      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key]", false, true);
+      uchar Dir = game::DirectionQuestion(CONST_S("What door do you wish to lock or unlock? [press a direction key]"), false, true);
 
       if(Dir == DIR_ERROR)
 	return false;
@@ -1073,7 +1073,7 @@ bool itemcontainer::Open(character* Opener)
       return false;
     }
 
-  std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
+  festring Question = CONST_S("Do you want to (t)ake something from or (p)ut something in this container? [t,p]");
   bool Success;
 
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
@@ -1120,12 +1120,12 @@ itemcontainer::~itemcontainer()
   delete Contained;
 }
 
-bool key::AddAdjective(std::string& String, bool Articled) const
+bool key::AddAdjective(festring& String, bool Articled) const
 {
   if(Articled)
     String << "a ";
 
-  String << game::GetLockDescription(LockType);
+  String << game::GetLockDescription(LockType) << ' ';
   return true;
 }
 
@@ -1143,12 +1143,12 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
   if(!(RAND() % 3))
     {
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).c_str());
+	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE), 0);
+      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(DEFINITE), 0);
       return false;
     }
 
@@ -1215,7 +1215,7 @@ void beartrap::StepOnEffect(character* Stepper)
       Stepper->SetStuckToBodyPart(StepperBodyPart);
 
       if(Stepper->IsPlayer())
-	ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).c_str());
+	ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).CStr());
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
@@ -1224,10 +1224,10 @@ void beartrap::StepOnEffect(character* Stepper)
       GetLSquareUnder()->SendNewDrawRequest();
 
       if(Stepper->IsPlayer())
-	game::AskForKeyPress("Trap activated! [press any key to continue]");
+	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
       Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
-      Stepper->CheckDeath("died by stepping to " + GetName(INDEFINITE), 0);
+      Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0);
     }
 }
 
@@ -1236,7 +1236,7 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   if(Picker->IsStuck() && Picker->GetStuckTo()->GetID() == GetID())
     {
       if(Picker->IsPlayer())
-	ADD_MESSAGE("%s is tightly stuck to your %s.", CHAR_NAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).c_str());
+	ADD_MESSAGE("%s is tightly stuck to your %s.", CHAR_NAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).CStr());
 
       return false;
     }
@@ -1281,7 +1281,7 @@ bool stethoscope::Apply(character* Doctor)
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
-  uchar Dir = game::DirectionQuestion("What do you want to inspect? [press a direction key]", false,true);  
+  uchar Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);  
 
   if(Dir == DIR_ERROR)
     return false;
@@ -1330,7 +1330,7 @@ bool beartrap::CanBeSeenBy(const character* Viewer) const
 
 bool mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::BoolQuestion("Are you sure you want to plant " + GetName(DEFINITE) + "? [y/N]")) 
+  if(User->IsPlayer() && !game::BoolQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
   room* Room = GetRoom();
@@ -1356,7 +1356,7 @@ bool mine::Apply(character* User)
 
 bool beartrap::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::BoolQuestion("Are you sure you want to plant " + GetName(DEFINITE) + "? [y/N]")) 
+  if(User->IsPlayer() && !game::BoolQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
   room* Room = GetRoom();
@@ -1424,13 +1424,13 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
     }
 
   Zapper->EditExperience(PERCEPTION, 250);
-  std::string DeathMSG = "killed by " + GetName(INDEFINITE);
+  festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
   (GetLevel()->*level::GetBeam(GetBeamStyle()))(Zapper, DeathMSG, Zapper->GetPos(), GetBeamColor(), GetBeamEffect(), Direction, GetBeamRange());
   SetTimesUsed(GetTimesUsed() + 1);
   return true;
 }
 
-void wand::AddInventoryEntry(const character*, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
+void wand::AddInventoryEntry(const character*, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -1533,7 +1533,7 @@ void potion::Break(character* Breaker)
     Remains->GetLSquareUnder()->SpillFluid(0, GetContainedMaterial()->Clone(), 70);
 
   if(PLAYER->Equips(Remains))
-    game::AskForKeyPress("Equipment broken! [press any key to continue]");
+    game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
 }
 
 void materialcontainer::Be()
@@ -1572,7 +1572,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
       while(true)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, "Choose a weapon to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::WeaponSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::WeaponSorter);
 
 	  if(!Item.empty())
 	    {
@@ -1586,7 +1586,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 		{
 		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		    continue;
 		}
 
@@ -1610,7 +1610,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
 	      break;
 	    }
-	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	  else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
 	    return;
 	}
 
@@ -1642,7 +1642,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
       while(true)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, "Choose an armor to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::ArmorSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::ArmorSorter);
 
 	  if(!Item.empty())
 	    {
@@ -1656,7 +1656,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 		{
 		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		    continue;
 		}
 
@@ -1680,7 +1680,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
 	      break;
 	    }
-	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	  else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
 	    return;
 	}
 
@@ -1702,7 +1702,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type
 	  SetLockType(DAMAGED);
 
 	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().c_str());
+	    ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().CStr());
 
 	  return true;
 	}
@@ -1715,7 +1715,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type
 
 void itemcontainer::DrawContents(const character* Char)
 {
-  std::string Topic = "Contents of your " + GetName(UNARTICLED);
+  festring Topic = CONST_S("Contents of your ") + GetName(UNARTICLED);
   GetContained()->DrawContents(Char, Topic, NO_SELECT);
 
   for(stackiterator i = GetContained()->GetBottom(); i.HasItem(); ++i)
@@ -1813,7 +1813,7 @@ void scrollofrepair::FinishReading(character* Reader)
     while(true)
       {
 	itemvector Item;
-	Reader->SelectFromPossessions(Item, "Which item do you wish to repair?", NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
+	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
 
 	if(!Item.empty())
 	  {
@@ -1821,7 +1821,7 @@ void scrollofrepair::FinishReading(character* Reader)
 	      {
 		ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-		if(!game::BoolQuestion("Still continue? [y/N]"))
+		if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		  continue;
 	      }
 
@@ -1835,7 +1835,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
 	    break;
 	  }
-	else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
 	  return;
       }
 
@@ -2091,7 +2091,7 @@ void beartrap::Search(const character* Char, ushort Perception)
 
       if(Char->IsPlayer())
 	{
-	  game::AskForKeyPress("Trap found! [press any key to continue]");
+	  game::AskForKeyPress(CONST_S("Trap found! [press any key to continue]"));
 	  ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
 	}
     }
@@ -2109,7 +2109,7 @@ void mine::Search(const character* Char, ushort Perception)
 
       if(Char->IsPlayer())
 	{
-	  game::AskForKeyPress("Trap found! [press any key to continue]");
+	  game::AskForKeyPress(CONST_S("Trap found! [press any key to continue]"));
 	  ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
 	}
     }
@@ -2128,7 +2128,7 @@ void mine::SetIsActive(bool What)
   DiscoveredByTeam.clear();
 }
 
-void wand::BreakEffect(character* Terrorist, const std::string& DeathMsg)
+void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
 {
   vector2d Pos = GetPos();
   level* Level = GetLevel();
@@ -2174,7 +2174,7 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(Type & FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
-      std::string DeathMsg = "killed by an explosion of ";
+      festring DeathMsg = CONST_S("killed by an explosion of ");
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
@@ -2206,4 +2206,3 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
   return item::ReceiveDamage(Damager, Damage, Type);
 }
-

@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Arms are again shown correctly on the game screen
+	* Replaced std::string with festring, which is about twice as fast, compiles
+	  faster and doesn't crash randomly when compiled with VC++ 5.0
+	* Bill's wills and ghosts are no longer überpowerful in the DOS port
+	* Greater carnivorous plants are now tougher
+	* Key names again work correctly
+
 April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added carrots

@@ -9,9 +9,9 @@
 #include "save.h"
 #include "bitmap.h"
 
-felist msgsystem::MessageHistory("Message history", WHITE, 128);
-std::string msgsystem::LastMessage;
-std::string msgsystem::BigMessage;
+felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
+festring msgsystem::LastMessage;
+festring msgsystem::BigMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
 bool msgsystem::Enabled = true;
@@ -31,22 +31,22 @@ void msgsystem::AddMessage(const char* Format, ...)
   vsprintf(Message, Format, AP);
   va_end(AP);
 
-  std::string Buffer(Message);
+  festring Buffer(Message);
 
-  if(!Buffer.length())
+  if(!Buffer.GetSize())
     ABORT("Empty message request!");
 
-  festring::Capitalize(Buffer);
+  Buffer.Capitalize();
 
   /* Comment the first line and uncomment the second before the release! */
 
-  if(isalpha(Buffer[Buffer.length() - 1]))
+  if(isalpha(Buffer[Buffer.GetSize() - 1]))
     //Buffer << " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
-    Buffer << ".";
+    Buffer << '.';
 
   if(BigMessageMode)
     {
-      if(BigMessage.length())
+      if(BigMessage.GetSize())
 	BigMessage << ' ';
 
       BigMessage << Buffer;
@@ -71,20 +71,20 @@ void msgsystem::AddMessage(const char* Format, ...)
       LastMessage = Buffer;
     }
 
-  std::string Temp;
+  festring Temp;
   Temp << Begin;
 
   if(Begin != End)
-    Temp << "-" << End;
+    Temp << '-' << End;
 
   if(Times != 1)
     Temp << " (" << Times << "x)";
 
-  Temp << " ";
-  ushort Marginal = Temp.length();
+  Temp << ' ';
+  ushort Marginal = Temp.GetSize();
   Temp << Buffer;
 
-  std::vector<std::string> Chapter;
+  std::vector<festring> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
 
   for(ushort c = 0; c < Chapter.size(); ++c)
@@ -119,7 +119,7 @@ void msgsystem::DrawMessageHistory()
 void msgsystem::Format()
 {
   MessageHistory.Empty();
-  LastMessage.resize(0);
+  LastMessage.Empty();
   MessagesChanged = true;
 }
 
@@ -157,10 +157,10 @@ void msgsystem::LeaveBigMessageMode()
 {
   BigMessageMode = false;
 
-  if(BigMessage.length())
+  if(BigMessage.GetSize())
     {
-      AddMessage("%s", BigMessage.c_str());
-      BigMessage.resize(0);
+      AddMessage("%s", BigMessage.CStr());
+      BigMessage.Empty();
     }
 }
 
@@ -170,4 +170,3 @@ void msgsystem::Init()
   game::SetStandardListAttributes(MessageHistory);
   MessageHistory.AddFlags(INVERSE_MODE);
 }
-

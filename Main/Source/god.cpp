@@ -68,25 +68,17 @@ void god::Pray()
       }
 }
 
-std::string god::GetCompleteDescription() const
+festring god::GetCompleteDescription() const
 {
-  std::string Desc(game::GetAlignment(GetAlignment()));
-
-  Desc.resize(4, ' ');
-  Desc += GetName();
-  Desc.resize(20, ' ');
+  festring Desc(game::GetAlignment(GetAlignment()));
+  Desc.Resize(4, ' ');
+  Desc << GetName();
+  Desc.Resize(20, ' ');
 
   if(game::WizardModeIsActive())
-    {
-      Desc += Timer;
-      Desc += " - ";
-      Desc += Relation;
-    }
+    Desc << Timer << " - " << Relation;
   else
-    {
-      Desc += "the ";
-      Desc += GetDescription();
-    }
+    Desc << "the " << GetDescription();
 
   return Desc;
 }
@@ -133,7 +125,7 @@ void god::PlayerVomitedOnAltar()
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
   AdjustRelation(-200);
   PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
-  PLAYER->CheckDeath("choked to death by own vomit", 0);
+  PLAYER->CheckDeath(CONST_S("choked to death by own vomit"), 0);
 
   if(!(RAND() % 50))
     {
@@ -171,7 +163,7 @@ character* god::CreateAngel()
 
 void god::PrintRelation() const
 {
-  std::string VerbalRelation;
+  const char* VerbalRelation;
 
   if(GetRelation() == 1000)
     VerbalRelation = "greets you as a Champion of the Cause!";
@@ -191,7 +183,7 @@ void god::PrintRelation() const
     VerbalRelation = "is extremely angry.";
   else VerbalRelation = "hates you more than any other mortal.";
 
-  ADD_MESSAGE("%s %s", GetName(), VerbalRelation.c_str());
+  ADD_MESSAGE("%s %s", GetName(), VerbalRelation);
 }
 
 bool god::ReceiveOffer(item* Sacrifice)
@@ -269,4 +261,3 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
-

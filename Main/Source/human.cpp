@@ -68,7 +68,7 @@ bool ennerbeast::Hit(character*, bool)
 		  ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
 
 		Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
-		std::string DeathMsg = "killed by " + GetName(INDEFINITE) + "'s scream";
+		festring DeathMsg = CONST_S("killed by ") + GetName(INDEFINITE) + "'s scream";
 		Char->CheckDeath(DeathMsg, this);
 		msgsystem::LeaveBigMessageMode();
 	      }
@@ -211,9 +211,9 @@ bool petrus::HealFully(character* ToBeHealed)
 	DidSomething = true;
 
 	if(ToBeHealed->IsPlayer())
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().CStr());
 	else if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str(), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
+	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().CStr(), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
       }
 
   if(ToBeHealed->IsInBadCondition())
@@ -288,7 +288,7 @@ item* humanoid::GetSecondaryWielded() const
 
 bool humanoid::Hit(character* Enemy, bool ForceHit)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -372,20 +372,20 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 
   if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
-      List.AddEntry("", LIGHT_GRAY);
-      std::string Buffer = "right accustomization";
-      Buffer.resize(30, ' ');
+      List.AddEntry(CONST_S(""), LIGHT_GRAY);
+      festring Buffer = CONST_S("right accustomization");
+      Buffer.Resize(30, ' ');
       Buffer << CurrentRightSWeaponSkill->GetLevel();
-      Buffer.resize(40, ' ');
+      Buffer.Resize(40, ' ');
       Buffer << CurrentRightSWeaponSkill->GetHits();
-      Buffer.resize(50, ' ');
+      Buffer.Resize(50, ' ');
 
       if(CurrentRightSWeaponSkill->GetLevel() != 10)
 	Buffer << (CurrentRightSWeaponSkill->GetLevelMap(CurrentRightSWeaponSkill->GetLevel() + 1) - CurrentRightSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
-      Buffer.resize(60, ' ');
+      Buffer.Resize(60, ' ');
       Buffer << '+' << int(CurrentRightSWeaponSkill->GetBonus() - 100) << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
@@ -394,21 +394,21 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
   if(CurrentLeftSWeaponSkill && CurrentLeftSWeaponSkill->GetHits())
     {
       if(!Something)
-	List.AddEntry("", LIGHT_GRAY);
+	List.AddEntry(CONST_S(""), LIGHT_GRAY);
 
-      std::string Buffer = "left accustomization";
-      Buffer.resize(30, ' ');
+      festring Buffer = CONST_S("left accustomization");
+      Buffer.Resize(30, ' ');
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
-      Buffer.resize(40, ' ');
+      Buffer.Resize(40, ' ');
       Buffer << CurrentLeftSWeaponSkill->GetHits();
-      Buffer.resize(50, ' ');
+      Buffer.Resize(50, ' ');
 
       if(CurrentLeftSWeaponSkill->GetLevel() != 10)
 	Buffer << (CurrentLeftSWeaponSkill->GetLevelMap(CurrentLeftSWeaponSkill->GetLevel() + 1) - CurrentLeftSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
-      Buffer.resize(60, ' ');
+      Buffer.Resize(60, ' ');
       Buffer << '+' << int(CurrentLeftSWeaponSkill->GetBonus() - 100) << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
@@ -429,17 +429,17 @@ void petrus::BeTalkedTo()
     {
       ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Mayst thou be blessed by Valpurus for the rest of thy life! And thou possess the Shirt of the Golden Eagle, the symbol of Our status! Return it now, please.\"");
 
-      if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]", REQUIRES_ANSWER))
+      if(game::BoolQuestion(CONST_S("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]"), REQUIRES_ANSWER))
 	{
-	  game::TextScreen( "The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
-			    "Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
-			    "receive a small dukedom in the middle of tundra where you rule with justice till\n"
-			    "the end of your content life.\n\nYou are victorious!");
+	  game::TextScreen(CONST_S( "The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
+				    "Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
+				    "receive a small dukedom in the middle of tundra where you rule with justice till\n"
+				    "the end of your content life.\n\nYou are victorious!"));
 
 	  game::GetCurrentArea()->SendNewDrawRequest();
 	  game::DrawEverything();
 	  PLAYER->ShowAdventureInfo();
-	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and was raised to nobility", 4, false);
+	  AddScoreEntry(CONST_S("retrieved the Shirt of the Golden Eagle and was raised to nobility"), 4, false);
 	  game::End();
 	  return;
 	}
@@ -452,7 +452,7 @@ void petrus::BeTalkedTo()
 	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB16(255, 75, 50));
 	  GetHead()->UpdatePictures();
 	  GetSquareUnder()->SendNewDrawRequest();
-	  game::AskForKeyPress("You are attacked! [press any key to continue]");
+	  game::AskForKeyPress(CONST_S("You are attacked! [press any key to continue]"));
 	  PLAYER->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
@@ -460,15 +460,15 @@ void petrus::BeTalkedTo()
 
   if(PLAYER->HasHeadOfElpuri())
     {
-      game::TextScreen(	"You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
-			"You spend the next months in Attnam as an honored hero and when the\n"
-			"sea finally melts, you board the first ship, leaving your past forever\n"
-			"behind.\n\nYou are victorious!");
+      game::TextScreen(CONST_S(	"You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
+				"You spend the next months in Attnam as an honored hero and when the\n"
+				"sea finally melts, you board the first ship, leaving your past forever\n"
+				"behind.\n\nYou are victorious!"));
 
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
       PLAYER->ShowAdventureInfo();
-      AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
+      AddScoreEntry(CONST_S("defeated Elpuri and continued to further adventures"), 2, false);
       game::End();
     }
   else
@@ -477,47 +477,47 @@ void petrus::BeTalkedTo()
 	{
 	  if(PLAYER->RemoveEncryptedScroll())
 	    {
-	      game::TextScreen( "You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
-				"Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
-				"readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
-				"Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
-				"Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
-				"are some sentences actually concerning your mission:\n\n"
-				"\"Alas, I fear dirty tongues have spread lies to my Lord's ears. I assure all tales\n"
-				"of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
-				"The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
-				"not question the wisdom of the government's decisions. I will contribute what I can:\n"
-				"the ostriches will deliver an extra 10000 bananas to the capital and additionally the\n"
-				"slave that brought the message will henceforth be at Your disposal. I am certain this\n"
-				"satisfies the crown's needs.\"\n\n"
-				"\"Yours sincerely,\n"
-				"Richel Decos, the viceroy of New Attnam\"");
+	      game::TextScreen(CONST_S(	"You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
+					"Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
+					"readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
+					"Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
+					"Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
+					"are some sentences actually concerning your mission:\n\n"
+					"\"Alas, I fear dirty tongues have spread lies to my Lord's ears. I assure all tales\n"
+					"of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
+					"The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
+					"not question the wisdom of the government's decisions. I will contribute what I can:\n"
+					"the ostriches will deliver an extra 10000 bananas to the capital and additionally the\n"
+					"slave that brought the message will henceforth be at Your disposal. I am certain this\n"
+					"satisfies the crown's needs.\"\n\n"
+					"\"Yours sincerely,\n"
+					"Richel Decos, the viceroy of New Attnam\""));
 
-	      game::TextScreen( "You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
-				"wonder what shape your destiny is taking in his mind. Suddenly he seems to return\n"
-				"to this reality and talks to you.\n\n"
-				"\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
-				"We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
-				"medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
-				"vast riches seized from them. Our law says all such stolen valuables belong to \n"
-				"the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
-				"and even if such was provided, We couldn't send soldiers over the snow fields\n"
-				"ere spring.\"");
+	      game::TextScreen(CONST_S(	"You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
+					"wonder what shape your destiny is taking in his mind. Suddenly he seems to return\n"
+					"to this reality and talks to you.\n\n"
+					"\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
+					"We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
+					"medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
+					"vast riches seized from them. Our law says all such stolen valuables belong to \n"
+					"the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
+					"and even if such was provided, We couldn't send soldiers over the snow fields\n"
+					"ere spring.\""));
 
-	      game::TextScreen(	"\"However, since thou now servest Us, We ought to find thee something to do. Sir\n"
-				"Galladon hath told Us his agents witnessed thou leaving the dreaded underwater tunnel.\n"
-				"This means thou most likely hast defeated genetrix vesana and art a talented warrior.\n"
-				"We happen to have a task perfect for such a person. An evil dark frog named Elpuri who\n"
-				"hates Valpurus and Attnam more than anything hath taken control over an abandoned mine\n"
-				"nearby. It is pestering our fine city in many ways and reconnaissance has reported an\n"
-				"army of monsters gathering in the cave. Our guards are not trained to fight underground\n"
-				"and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
-				"greatest armor in existence - the Shirt of the Golden Eagle. Elpuri cannot wear\n"
-				"it but he who can is now nearly immortal.\"\n\n"
-				"\"We have marked the location of the gloomy cave on thy world map. We want you to dive\n"
-				"into it and slay the vile frog. Bring Us its head and We reward thee with freedom.\n"
-				"Shouldst thou also find the Shirt, We'll knight thee. Good luck, and return when\n"
-				"thou hast succeeded.\"");
+	      game::TextScreen(CONST_S(	"\"However, since thou now servest Us, We ought to find thee something to do. Sir\n"
+					"Galladon hath told Us his agents witnessed thou leaving the dreaded underwater tunnel.\n"
+					"This means thou most likely hast defeated genetrix vesana and art a talented warrior.\n"
+					"We happen to have a task perfect for such a person. An evil dark frog named Elpuri who\n"
+					"hates Valpurus and Attnam more than anything hath taken control over an abandoned mine\n"
+					"nearby. It is pestering our fine city in many ways and reconnaissance has reported an\n"
+					"army of monsters gathering in the cave. Our guards are not trained to fight underground\n"
+					"and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
+					"greatest armor in existence - the Shirt of the Golden Eagle. Elpuri cannot wear\n"
+					"it but he who can is now nearly immortal.\"\n\n"
+					"\"We have marked the location of the gloomy cave on thy world map. We want you to dive\n"
+					"into it and slay the vile frog. Bring Us its head and We reward thee with freedom.\n"
+					"Shouldst thou also find the Shirt, We'll knight thee. Good luck, and return when\n"
+					"thou hast succeeded.\""));
 
 	      game::LoadWorldMap();
 	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
@@ -550,7 +550,7 @@ void priest::BeTalkedTo()
 	{
 	  ADD_MESSAGE("\"You seem to be rather ill. I could give you a small dose of antidote for 25 gold pieces.\"");
 
-	  if(game::BoolQuestion("Do you agree? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you agree? [y/N]")))
 	    {
 	      ADD_MESSAGE("You feel better.");
 	      PLAYER->DeActivateTemporaryState(POISONED);
@@ -579,12 +579,12 @@ void priest::BeTalkedTo()
 		if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 		  {
 		    if(!OldBodyPart->IsAlive())
-		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).c_str(), PLAYER->GetBodyPartName(c).c_str());
+		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
 		    else
 		      {
-			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 
-			if(game::BoolQuestion("Do you agree? [y/N]"))
+			if(game::BoolQuestion(CONST_S("Do you agree? [y/N]")))
 			  {
 			    OldBodyPart->SetHP(1);
 			    PLAYER->SetMoney(PLAYER->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
@@ -596,7 +596,7 @@ void priest::BeTalkedTo()
 		      }
 		  }
 		else
-		  ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+		  ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 	      }
 	  }
 
@@ -605,9 +605,9 @@ void priest::BeTalkedTo()
 	    if(HasOld)
 	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 	    else
-	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 
-	    if(game::BoolQuestion("Agreed? [y/N]"))
+	    if(game::BoolQuestion(CONST_S("Agreed? [y/N]")))
 	      {
 		PLAYER->SetMoney(PLAYER->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
@@ -617,7 +617,7 @@ void priest::BeTalkedTo()
 	      }
 	  }
 	else if(!HasOld)
-	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %dgp first.\"", PLAYER->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %dgp first.\"", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
       }
 
   if(!GetHomeRoom())
@@ -638,7 +638,7 @@ void communist::BeTalkedTo()
 {
   if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5f)
     {
-      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().c_str(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().c_str());
+      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
       ChangeTeam(PLAYER->GetTeam());
     }
   else if(GetTeam() != PLAYER->GetTeam() && !(RAND() % 5))
@@ -673,7 +673,7 @@ void slave::BeTalkedTo()
 	{
 	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
 
-	  if(game::BoolQuestion("Do you want to buy him? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you want to buy him? [y/N]")))
 	    {
 	      PLAYER->SetMoney(PLAYER->GetMoney() - 50);
 	      Master->SetMoney(Master->GetMoney() + 50);
@@ -1094,7 +1094,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
       if(IsPlayer())
 	ADD_MESSAGE("You are not hurt.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
+	ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().CStr());
     }
 
   if(DamageTypeAffectsInventory(Type))
@@ -1285,19 +1285,7 @@ bool humanoid::CheckKick() const
 
   if(GetLegs() < 2)
     {
-      std::string LegNumber;
-
-      switch(GetLegs())
-	{
-	case 0: 
-	  LegNumber = "no legs";
-	  break;
-	case 1:
-	  LegNumber = "one leg";
-	  break;
-	}
-
-      ADD_MESSAGE("How are you you going to do that with %s?", LegNumber.c_str());
+      ADD_MESSAGE("How are you you going to do that with %s?", GetLegs() ? "one leg" : "no legs");
       return false;
     }
   else
@@ -1966,7 +1954,7 @@ void humanoid::SWeaponSkillTick()
 	  item* Item = SearchForItemWithID((*i)->GetID());
 
 	  if(Item)
-	    (*i)->AddLevelDownMessage(Item->GetName(UNARTICLED));
+	    (*i)->AddLevelDownMessage(Item->CHAR_NAME(UNARTICLED));
 	}
 
       if(!(*i)->GetHits() && *i != GetCurrentRightSWeaponSkill() && *i != GetCurrentLeftSWeaponSkill())
@@ -2018,9 +2006,9 @@ bool angel::AttachBodyPartsOfFriendsNear()
   if(HurtOne)
     {
       if(HurtOne->IsPlayer())
-	ADD_MESSAGE("%s puts your %s back to its place.", CHAR_DESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s puts your %s back to its place.", CHAR_DESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHAR_DESCRIPTION(DEFINITE), HurtOne->CHAR_DESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().c_str(), SeveredOne->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHAR_DESCRIPTION(DEFINITE), HurtOne->CHAR_DESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().CStr(), SeveredOne->GetBodyPartName().CStr());
 	
       SeveredOne->SetHP(1);
       SeveredOne->RemoveFromSlot();
@@ -2224,7 +2212,7 @@ void zombie::CreateBodyParts(ushort SpecialFlags)
       CreateBodyPart(c, SpecialFlags);
 }
 
-void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
+void humanoid::AddSpecialEquipmentInfo(festring& String, ushort Index) const
 {
   if((Index == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->TwoHandWieldIsActive()))
     String << " (in both hands)";
@@ -2260,9 +2248,12 @@ void humanoid::CreateInitialEquipment(ushort SpecialFlags)
     CurrentLeftSWeaponSkill->AddHit(GetLeftSWeaponSkillHits());
 }
 
-std::string humanoid::GetBodyPartName(ushort Index, bool Articled) const
+festring humanoid::GetBodyPartName(ushort Index, bool Articled) const
 {
-  std::string Article = Articled ? "a" : "";
+  festring Article;
+
+  if(Articled)
+    Article << 'a';
 
   switch(Index)
     {
@@ -2338,9 +2329,9 @@ humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRight
     SWeaponSkill[c] = new sweaponskill(*Humanoid.SWeaponSkill[c]);
 }
 
-const std::string& humanoid::GetDeathMessage() const
+const festring& humanoid::GetDeathMessage() const
 {
-  static std::string HeadlessDeathMsg = "@Dd dies without a sound.";
+  static festring HeadlessDeathMsg = CONST_S("@Dd dies without a sound.");
   return GetHead() || character::GetDeathMessage() != "@Dd dies screaming." ? character::GetDeathMessage() : HeadlessDeathMsg;
 }
 
@@ -2380,35 +2371,35 @@ void bananagrower::BeTalkedTo()
     character::BeTalkedTo();
 }
 
-std::string bananagrower::GetProfessionDescription() const
+festring bananagrower::GetProfessionDescription() const
 {
-  std::string String;
+  festring String;
 
   switch(Profession)
     {
     case 0:
-      String = "the president of Tweraif";
+      String = CONST_S("the president of Tweraif");
       break;
     case 1:
-      String = "a diplomat";
+      String = CONST_S("a diplomat");
       break;
     case 2:
-      String = "a teacher";
+      String = CONST_S("a teacher");
       break;
     case 3:
-      String = "a philosopher";
+      String = CONST_S("a philosopher");
       break;
     case 4:
-      String = "a journalist";
+      String = CONST_S("a journalist");
       break;
     case 5:
-      String = "an alchemist";
+      String = CONST_S("an alchemist");
       break;
     case 6:
-      String = "a renown mathematician";
+      String = CONST_S("a renown mathematician");
       break;
     case 7:
-      String = "a priest of Silva";
+      String = CONST_S("a priest of Silva");
       break;
     }
 
@@ -2463,13 +2454,13 @@ void smith::BeTalkedTo()
 
 	if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= PLAYER->GetBodyPart(c)->GetMainMaterial()->GetStrengthValue())
 	  {
-	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", PLAYER->GetBodyPart(c)->GetBodyPartName().c_str(), GetMainWielded()->CHAR_NAME(UNARTICLED));
+	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", PLAYER->GetBodyPart(c)->GetBodyPartName().CStr(), GetMainWielded()->CHAR_NAME(UNARTICLED));
 	    continue;
 	  }
 
-	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", PLAYER->GetBodyPart(c)->GetBodyPartName().c_str()); 
+	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", PLAYER->GetBodyPart(c)->GetBodyPartName().CStr()); 
 	
-	if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+	if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	  {
 	    PLAYER->GetBodyPart(c)->RestoreHP();
 	    PLAYER->EditMoney(-25);
@@ -2478,7 +2469,7 @@ void smith::BeTalkedTo()
 
   if(PLAYER->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
     {
-      item* Item = PLAYER->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::FixableBySmithSorter);
+      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::FixableBySmithSorter);
 
       if(!Item)
 	return;
@@ -2503,7 +2494,7 @@ void smith::BeTalkedTo()
 
       ADD_MESSAGE("\"I can fix your %s, but it'll cost you %d gold pieces.\"", Item->CHAR_NAME(UNARTICLED), Item->GetFixPrice());
 
-      if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	{
 	  Item->Fix();
 	  PLAYER->EditMoney(-Item->GetFixPrice());
@@ -2512,14 +2503,6 @@ void smith::BeTalkedTo()
     }
   else
     ADD_MESSAGE("\"Come back when you have some weapons or armor I can fix.\"");
-}
-
-void humanoid::AddSpecialMovePenaltyInfo(felist& Info) const
-{
-  if(!CanFly() && GetLegs() == 0)
-    Info.AddEntry("Penalty for having no legs: -50%", LIGHT_GRAY);
-  else if(!CanFly() && GetLegs() == 1)
-    Info.AddEntry("Penalty for having just one leg: -25%", LIGHT_GRAY);
 }
 
 void humanoid::CalculateDodgeValue()
@@ -2648,11 +2631,11 @@ bool bananagrower::HandleCharacterBlockingTheWay(character* Char)
   return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char));
 }
 
-std::string& bananagrower::ProcessMessage(std::string& Msg) const
+festring& bananagrower::ProcessMessage(festring& Msg) const
 {
   character::ProcessMessage(Msg);
   SEARCH_N_REPLACE("@pd", GetProfessionDescription());
-  SEARCH_N_REPLACE("@Pd", festring::CapitalizeCopy(GetProfessionDescription()));
+  SEARCH_N_REPLACE("@Pd", GetProfessionDescription().CapitalizeCopy());
   return Msg;
 }
 
@@ -2782,7 +2765,7 @@ bool petrusswife::SpecialEnemySightedReaction(character* Char)
   item* Weapon = Char->GetMainWielded();
 
   if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
-    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().c_str(), Weapon->GetNameSingular().c_str());
+    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().CStr(), Weapon->GetNameSingular().CStr());
 
   return false;
 }
@@ -2792,7 +2775,7 @@ bool housewife::SpecialEnemySightedReaction(character* Char)
   item* Weapon = Char->GetMainWielded();
 
   if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 5))
-    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().c_str(), Weapon->GetNameSingular().c_str());
+    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().CStr(), Weapon->GetNameSingular().CStr());
 
   return false;
 }
@@ -2853,10 +2836,10 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
 
 void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
-  Info.AddEntry(std::string("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(std::string("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(std::string("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
-  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 void zombie::CreateCorpse(lsquare* Square)
@@ -2898,9 +2881,9 @@ item* zombie::SevereBodyPart(ushort BodyPartIndex)
   return BodyPart;
 }
 
-const std::string& humanoid::GetStandVerb() const
+const festring& humanoid::GetStandVerb() const
 {
-  static std::string HasntFeet = "crawling";
+  static festring HasntFeet = CONST_S("crawling");
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
 
@@ -2952,7 +2935,7 @@ void darkmage::GetAICommand()
       NearestEnemy = 0;
     }
 
-  std::string DeathMsg = "killed by the spells of " + GetName(INDEFINITE);
+  festring DeathMsg = CONST_S("killed by the spells of ") + GetName(INDEFINITE);
 
   if(NearestEnemy)
     {
@@ -3247,7 +3230,7 @@ void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool Al
       GetBodyPart(c)->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
-std::string werewolfwolf::GetKillName() const
+festring werewolfwolf::GetKillName() const
 {
   if(GetPolymorphBackup() && GetPolymorphBackup()->GetType() == werewolfhuman_ProtoType.GetIndex())
     return GetName(INDEFINITE);
@@ -3257,15 +3240,15 @@ std::string werewolfwolf::GetKillName() const
 
 #ifdef WIZARD
 
-void humanoid::AddAttributeInfo(std::string& Entry) const
+void humanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.resize(45, ' ');
+  Entry.Resize(45, ' ');
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.resize(48, ' ');
+  Entry.Resize(48, ' ');
   Entry << GetAttribute(LEG_STRENGTH);
-  Entry.resize(51, ' ');
+  Entry.Resize(51, ' ');
   Entry << GetAttribute(DEXTERITY);
-  Entry.resize(54, ' ');
+  Entry.Resize(54, ' ');
   Entry << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }
@@ -3281,28 +3264,30 @@ void humanoid::AddAttackInfo(felist& List) const
 	GetLeftArm()->AddAttackInfo(List);
     }
 
+  festring Entry;
+
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
 
-      std::string Entry = "   kick attack";
-      Entry.resize(50, ' ');
+      Entry = CONST_S("   kick attack");
+      Entry.Resize(50, ' ');
       Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(KickLeg->GetKickToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << KickLeg->GetKickAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingHead())
     {
-      std::string Entry = "   bite attack";
-      Entry.resize(50, ' ');
+      Entry = CONST_S("   bite attack");
+      Entry.Resize(50, ' ');
       Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(GetHead()->GetBiteToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetHead()->GetBiteAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -3323,7 +3308,7 @@ void humanoid::DetachBodyPart()
 {
   uchar ToBeDetached;
 
-  switch(game::KeyQuestion("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?", KEY_ESC, 5, 'l','r','L','R', 'h'))
+  switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
     {
     case 'l':
       ToBeDetached = LEFT_ARM_INDEX;
@@ -3360,12 +3345,12 @@ void humanoid::DetachBodyPart()
   else
     ADD_MESSAGE("That bodypart has already been detached.");
 
-  CheckDeath("removed one of his vital bodyparts", 0);
+  CheckDeath(CONST_S("removed one of his vital bodyparts"), 0);
 }
 
 #else
 
-void humanoid::AddAttributeInfo(std::string&) const { }
+void humanoid::AddAttributeInfo(festring&) const { }
 void humanoid::AddAttackInfo(felist&) const { }
 void humanoid::AddDefenceInfo(felist&) const { }
 void humanoid::DetachBodyPart() { }

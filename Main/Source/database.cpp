@@ -9,14 +9,14 @@ databasecreator<material>::databasemembermap databasecreator<material>::DataBase
 template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 {
   typedef typename type::prototype prototype;
-  std::string Word;
+  festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       ushort Index = protocontainer<type>::SearchCodeName(Word);
 
       if(!Index)
-	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	ABORT("Odd term %s encountered in %s datafile line %d!", Word.CStr(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
       prototype* Proto = protocontainer<type>::ProtoData[Index];
       Proto->Config.insert(std::pair<ushort, database>(0, Proto->Base ? database(Proto->Base->Config.begin()->second) : database()));
@@ -39,14 +39,14 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 		if(!AnalyzeData(SaveFile, Word, TempDataBase))
-		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId(), ConfigNumber, SaveFile.TellLine());
+		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.CStr(), Proto->GetClassId(), ConfigNumber, SaveFile.TellLine());
 
 	      Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, TempDataBase));
 	      continue;
 	    }
 
 	  if(!AnalyzeData(SaveFile, Word, DataBase))
-	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId(), SaveFile.TellLine());
+	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.CStr(), Proto->GetClassId(), SaveFile.TellLine());
 	}
 
       if(DataBase.CreateDivineConfigurations)
@@ -72,14 +72,14 @@ template <class database, class member> struct databasemember : public databasem
   member Member;
 };
 
-template <class database, class member> void AddMember(std::map<std::string, databasememberbase<database>*>& Map, const char* Str, member Member)
+template <class database, class member> void AddMember(std::map<festring, databasememberbase<database>*>& Map, const char* Str, member Member)
 {
-  Map.insert(std::pair<std::string, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
+  Map.insert(std::pair<festring, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
 }
 
 /* Explicit instantiations seem to increases compile speed greatly here... */
 
-#define INST_ADD_MEMBER(type, member) template void AddMember<type##database, member type##database::*>(std::map<std::string, databasememberbase<type##database>*>&, const char*, member type##database::*)
+#define INST_ADD_MEMBER(type, member) template void AddMember<type##database, member type##database::*>(std::map<festring, databasememberbase<type##database>*>&, const char*, member type##database::*)
 
 INST_ADD_MEMBER(character, bool);
 INST_ADD_MEMBER(character, uchar);
@@ -87,8 +87,8 @@ INST_ADD_MEMBER(character, short);
 INST_ADD_MEMBER(character, ushort);
 INST_ADD_MEMBER(character, ulong);
 INST_ADD_MEMBER(character, vector2d);
-INST_ADD_MEMBER(character, std::string);
-INST_ADD_MEMBER(character, std::vector<std::string>);
+INST_ADD_MEMBER(character, festring);
+INST_ADD_MEMBER(character, std::vector<festring>);
 INST_ADD_MEMBER(character, contentscript<item>);
 INST_ADD_MEMBER(character, std::vector<long>);
 INST_ADD_MEMBER(character, std::list<contentscript<item> >);
@@ -100,8 +100,8 @@ INST_ADD_MEMBER(item, ushort);
 INST_ADD_MEMBER(item, long);
 INST_ADD_MEMBER(item, ulong);
 INST_ADD_MEMBER(item, vector2d);
-INST_ADD_MEMBER(item, std::string);
-INST_ADD_MEMBER(item, std::vector<std::string>);
+INST_ADD_MEMBER(item, festring);
+INST_ADD_MEMBER(item, std::vector<festring>);
 INST_ADD_MEMBER(item, std::vector<long>);
 
 INST_ADD_MEMBER(glterrain, bool);
@@ -109,7 +109,7 @@ INST_ADD_MEMBER(glterrain, uchar);
 INST_ADD_MEMBER(glterrain, ushort);
 INST_ADD_MEMBER(glterrain, ulong);
 INST_ADD_MEMBER(glterrain, vector2d);
-INST_ADD_MEMBER(glterrain, std::string);
+INST_ADD_MEMBER(glterrain, festring);
 INST_ADD_MEMBER(glterrain, std::vector<long>);
 
 INST_ADD_MEMBER(olterrain, bool);
@@ -117,14 +117,14 @@ INST_ADD_MEMBER(olterrain, uchar);
 INST_ADD_MEMBER(olterrain, ushort);
 INST_ADD_MEMBER(olterrain, ulong);
 INST_ADD_MEMBER(olterrain, vector2d);
-INST_ADD_MEMBER(olterrain, std::string);
+INST_ADD_MEMBER(olterrain, festring);
 INST_ADD_MEMBER(olterrain, std::vector<long>);
 
 INST_ADD_MEMBER(material, bool);
 INST_ADD_MEMBER(material, uchar);
 INST_ADD_MEMBER(material, ushort);
 INST_ADD_MEMBER(material, ulong);
-INST_ADD_MEMBER(material, std::string);
+INST_ADD_MEMBER(material, festring);
 
 #define ADD_MEMBER(data) AddMember(DataBaseMemberMap, #data, &database::data);
 
@@ -435,7 +435,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(EffectIsGood);
 }
 
-template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const std::string& Word, database& DataBase)
+template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)
 {
   typename databasemembermap::iterator i = DataBaseMemberMap.find(Word);
 
@@ -449,7 +449,7 @@ template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile
     return false;
 }
 
-template<> void databasecreator<character>::CheckDefaults(const std::string& Word, character::database& DataBase)
+template<> void databasecreator<character>::CheckDefaults(const festring& Word, character::database& DataBase)
 {
   if(Word == "ArmBitmapPos")
     DataBase.RightArmBitmapPos = DataBase.LeftArmBitmapPos = DataBase.ArmBitmapPos;
@@ -472,7 +472,7 @@ template<> void databasecreator<character>::CheckDefaults(const std::string& Wor
     DataBase.Alias.push_back(DataBase.DefaultName);
 }
 
-template<> void databasecreator<item>::CheckDefaults(const std::string& Word, item::database& DataBase)
+template<> void databasecreator<item>::CheckDefaults(const festring& Word, item::database& DataBase)
 {
   if(Word == "NameSingular")
     {
@@ -483,19 +483,19 @@ template<> void databasecreator<item>::CheckDefaults(const std::string& Word, it
     DataBase.WallBitmapPos = DataBase.BitmapPos;
 }
 
-template<> void databasecreator<glterrain>::CheckDefaults(const std::string& Word, glterrain::database& DataBase)
+template<> void databasecreator<glterrain>::CheckDefaults(const festring& Word, glterrain::database& DataBase)
 {
   if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
 }
 
-template<> void databasecreator<olterrain>::CheckDefaults(const std::string& Word, olterrain::database& DataBase)
+template<> void databasecreator<olterrain>::CheckDefaults(const festring& Word, olterrain::database& DataBase)
 {
   if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
 }
 
-template<> void databasecreator<material>::CheckDefaults(const std::string& Word, material::database& DataBase)
+template<> void databasecreator<material>::CheckDefaults(const festring& Word, material::database& DataBase)
 {
   if(Word == "NameStem")
     DataBase.AdjectiveStem = DataBase.NameStem;

@@ -177,42 +177,42 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
   return Monster;
 }
 
-template <class type> std::pair<ushort, ushort> CountCorrectNameLetters(const typename type::database& DataBase, const std::string& Identifier)
+template <class type> std::pair<ushort, ushort> CountCorrectNameLetters(const typename type::database& DataBase, const festring& Identifier)
 {
   std::pair<ushort, ushort> Result(0, 0);
 
-  if(!DataBase.NameSingular.empty())
+  if(!DataBase.NameSingular.IsEmpty())
     ++Result.second;
 
-  if(festring::IgnoreCaseFind(Identifier, " " + DataBase.NameSingular + " ") != std::string::npos)
-    Result.first += DataBase.NameSingular.length();
+  if(festring::IgnoreCaseFind(Identifier, " " + DataBase.NameSingular + ' ') != festring::NPos)
+    Result.first += DataBase.NameSingular.GetSize();
 
-  if(!DataBase.Adjective.empty())
+  if(!DataBase.Adjective.IsEmpty())
     ++Result.second;
 
-  if(DataBase.Adjective.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.Adjective + " ") != std::string::npos)
-    Result.first += DataBase.Adjective.length();
+  if(DataBase.Adjective.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase.Adjective + ' ') != festring::NPos)
+    Result.first += DataBase.Adjective.GetSize();
 
-  if(!DataBase.PostFix.empty())
+  if(!DataBase.PostFix.IsEmpty())
     ++Result.second;
 
-  if(DataBase.PostFix.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.PostFix + " ") != std::string::npos)
-    Result.first += DataBase.PostFix.length();
+  if(DataBase.PostFix.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase.PostFix + ' ') != festring::NPos)
+    Result.first += DataBase.PostFix.GetSize();
 
   for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase.Alias[c] + " ") != std::string::npos)
-      Result.first += DataBase.Alias[c].length();
+    if(festring::IgnoreCaseFind(Identifier, " " + DataBase.Alias[c] + ' ') != festring::NPos)
+      Result.first += DataBase.Alias[c].GetSize();
 
   return Result;
 }
 
-template <class type> std::pair<const typename type::prototype*, ushort> SearchForProto(const std::string& What, bool Output)
+template <class type> std::pair<const typename type::prototype*, ushort> SearchForProto(const festring& What, bool Output)
 {
   typedef typename type::prototype prototype;
   typedef typename type::databasemap databasemap;
 
-  std::string Identifier;
-  Identifier << " " << What << " ";
+  festring Identifier;
+  Identifier << ' ' << What << ' ';
   bool Illegal = false, Conflict = false;
   std::pair<const prototype*, ushort> Id(0, 0);
   std::pair<ushort, ushort> Best(0, 0);
@@ -225,7 +225,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!i->second.IsAbstract)
 	  {
-	    bool BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != std::string::npos;
+	    bool BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
 
 	    if(BrokenRequested != ((i->first & BROKEN) != 0))
 	      continue;
@@ -266,7 +266,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
   return Id;
 }
 
-character* protosystem::CreateMonster(const std::string& What, ushort SpecialFlags, bool Output)
+character* protosystem::CreateMonster(const festring& What, ushort SpecialFlags, bool Output)
 {
   std::pair<const character::prototype*, ushort> Id = SearchForProto<character>(What, Output);
 
@@ -276,7 +276,7 @@ character* protosystem::CreateMonster(const std::string& What, ushort SpecialFla
     return 0;
 }
 
-item* protosystem::CreateItem(const std::string& What, bool Output)
+item* protosystem::CreateItem(const festring& What, bool Output)
 {
   std::pair<const item::prototype*, ushort> Id = SearchForProto<item>(What, Output);
 
@@ -286,7 +286,7 @@ item* protosystem::CreateItem(const std::string& What, bool Output)
     return 0;
 }
 
-material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)
+material* protosystem::CreateMaterial(const festring& What, ulong Volume, bool Output)
 {
   for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
     {

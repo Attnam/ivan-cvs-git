@@ -3,44 +3,443 @@
 #include "error.h"
 
 char** festring::IntegerMap = 0;
-char festring::IntegerBuffer[12];
+char* festring::Emptyfestring = "";
+const festring::sizetype festring::NPos = festring::sizetype(-1);
+
+festring& festring::Append(const char* CStr, sizetype N)
+{
+  sizetype OldSize = Size;
+  sizetype NewSize = OldSize + N;
+  char* OldPtr = Data;
+
+  if(OwnsData && OldPtr && !REFS(OldPtr) && NewSize <= Reserved)
+    {
+      memcpy(OldPtr + OldSize, CStr, N);
+      Size = NewSize;
+    }
+  else
+    SlowAppend(CStr, N);
+
+  return *this;
+}
+
+festring& festring::operator=(const char* CStr)
+{
+  sizetype NewSize = strlen(CStr);
+  Size = NewSize;
+  char* Ptr = Data;
+
+  if(Ptr && OwnsData)
+    {
+      if(!REFS(Ptr) && NewSize <= Reserved)
+	{
+	  memcpy(Ptr, CStr, NewSize);
+	  return *this;
+	}
+
+      if(!REFS(Ptr)--)
+	delete [] &REFS(Ptr);
+    }
+
+  Data = const_cast<char*>(CStr);
+  OwnsData = false;
+  return *this;
+}
+
+festring& festring::operator=(const festring& Str)
+{
+  sizetype NewSize = Str.Size;
+  Size = NewSize;
+  char* Ptr = Data;
+  char* StrPtr = Str.Data;
+
+  if(Ptr && OwnsData)
+    {
+      if(!REFS(Ptr) && NewSize <= Reserved)
+	{
+	  if(StrPtr)
+	    memcpy(Ptr, StrPtr, NewSize);
+
+	  return *this;
+	}
+
+      if(!REFS(Ptr)--)
+	delete [] &REFS(Ptr);
+    }
+
+  if((Data = StrPtr) && (OwnsData = Str.OwnsData))
+    {
+      ++REFS(StrPtr);
+      Reserved = Str.Reserved;
+    }
+
+  return *this;
+}
+
+/* Size must be > 0 */
+
+festring& festring::Capitalize()
+{
+  if(!OwnsData)
+    CreateOwnData(Data, Size);
+  else if(REFS(Data))
+    {
+      --REFS(Data);
+      CreateOwnData(Data, Size);
+    }
+
+  if(*Data > 0x60 && *Data < 0x7B)
+    *Data ^= 0x20;
+
+  return *this;
+}
+
+void festring::CreateOwnData(const char* CStr, sizetype N)
+{
+  Size = N;
+  Reserved = N|FESTRING_PAGE;
+  char* Ptr = 4 + new char[Reserved + 5];
+  REFS(Ptr) = 0;
+  Data = Ptr;
+  memcpy(Ptr, CStr, N);
+  OwnsData = true;
+}
+
+void festring::SlowAppend(char Char)
+{
+  char* OldPtr = Data;
+
+  if(OldPtr)
+    {
+      sizetype OldSize = Size++;
+      sizetype NewSize = OldSize + 1;
+      ulong* DeletePtr = 0;
+
+      if(OwnsData && !REFS(OldPtr)--)
+	DeletePtr = &REFS(OldPtr);
+
+      Reserved = NewSize|FESTRING_PAGE;
+      char* NewPtr = 4 + new char[Reserved + 5];
+      REFS(NewPtr) = 0;
+      Data = NewPtr;
+      memcpy(NewPtr, OldPtr, OldSize);
+      NewPtr[OldSize] = Char;
+
+      if(DeletePtr)
+	delete [] DeletePtr;
+    }
+  else
+    {
+      Size = 1;
+      Reserved = FESTRING_PAGE;
+      char* Ptr = 4 + new char[FESTRING_PAGE + 5];
+      REFS(Ptr) = 0;
+      Ptr[0] = Char;
+      Data = Ptr;
+    }
+
+  OwnsData = true;
+}
+
+void festring::SlowAppend(const char* CStr, sizetype N)
+{
+  char* OldPtr = Data;
+
+  if(OldPtr)
+    {
+      sizetype OldSize = Size;
+      sizetype NewSize = OldSize + N;
+      Size = NewSize;
+      ulong* DeletePtr = 0;
+
+      if(OwnsData && !REFS(OldPtr)--)
+	DeletePtr = &REFS(OldPtr);
+
+      Reserved = NewSize|FESTRING_PAGE;
+      char* NewPtr = 4 + new char[Reserved + 5];
+      REFS(NewPtr) = 0;
+      Data = NewPtr;
+      memcpy(NewPtr, OldPtr, OldSize);
+      memcpy(NewPtr + OldSize, CStr, N);
+      OwnsData = true;
+
+      if(DeletePtr)
+	delete [] DeletePtr;
+    }
+  else
+    CreateOwnData(CStr, N);
+}
+
+void festring::Assign(sizetype N, char C)
+{
+  Size = N;
+  char* Ptr = Data;
+
+  if(OwnsData && Ptr)
+    {
+      if(!REFS(Ptr) && N <= Reserved)
+	{
+	  memset(Ptr, C, N);
+	  return;
+	}
+      else
+	delete [] &REFS(Ptr);
+    }
+
+  Reserved = N|FESTRING_PAGE;
+  Ptr = 4 + new char[Reserved + 5];
+  REFS(Ptr) = 0;
+  Data = Ptr;
+  memset(Ptr, C, N);
+  OwnsData = true;
+}
+
+void festring::Resize(sizetype N, char C)
+{
+  sizetype OldSize = Size;
+  char* OldPtr = Data;
+  char* NewPtr;
+  Size = N;
+
+  if(OldSize < N)
+    {
+      ulong* DeletePtr = 0;
+
+      if(OwnsData && OldPtr)
+	{
+	  if(!REFS(OldPtr))
+	    {
+	      if(N <= Reserved)
+		{
+		  memset(OldPtr + OldSize, C, N - OldSize);
+		  return;
+		}
+	      else
+		DeletePtr = &REFS(OldPtr);
+	    }
+	  else
+	    --REFS(OldPtr);
+	}
+
+      Reserved = N|FESTRING_PAGE;
+      NewPtr = 4 + new char[Reserved + 5];
+      REFS(NewPtr) = 0;
+      Data = NewPtr;
+      memcpy(NewPtr, OldPtr, OldSize);
+      memset(NewPtr + OldSize, C, N - OldSize);
+      OwnsData = true;
+
+      if(DeletePtr)
+	delete [] DeletePtr;
+    }
+  else
+    {
+      if(OwnsData && OldPtr)
+	if(!REFS(OldPtr))
+	  return;
+	else
+	  --REFS(OldPtr);
+
+      Reserved = N|FESTRING_PAGE;
+      NewPtr = 4 + new char[Reserved + 5];
+      REFS(NewPtr) = 0;
+      Data = NewPtr;
+      memcpy(NewPtr, OldPtr, N);
+      OwnsData = true;
+    }
+}
+
+festring::sizetype festring::Find(char Char, sizetype Pos)
+{
+  char* Ptr = Data;
+
+  if(Ptr)
+    {
+      char* Result = static_cast<char*>(memchr(Ptr + Pos, Char, Size - Pos));
+
+      if(Result)
+	return Result - Ptr;
+    }
+
+  return NPos;
+}
+
+festring::sizetype festring::Find(const char* CStr, sizetype Pos, sizetype N)
+{
+  if(N)
+    {
+      char* Ptr = Data;
+
+      if(Ptr)
+	{
+	  char Char = CStr[0];
+
+	  while(true)
+	    {
+	      char* Result = static_cast<char*>(memchr(Ptr + Pos, Char, Size - Pos));
+
+	      if(!Result)
+		return NPos;
+
+	      if(!memcmp(Result, CStr, N))
+		return Result - Ptr;
+	      else
+		Pos = Result - Ptr + 1;
+	    }
+	}
+    }
+
+  return NPos;
+}
+
+festring::sizetype festring::FindLast(char Char, sizetype Pos)
+{
+  char* Ptr = Data;
+
+  if(Ptr)
+    {
+      if(Pos >= Size)
+	Pos = Size - 1;
+
+      sizetype c;
+      for(c = Pos; c != NPos && Ptr[c] != Char; --c);
+      return c;
+    }
+  else
+    return NPos;
+}
+
+void festring::Erase(sizetype Pos, sizetype Length)
+{
+  char* OldPtr = Data;
+
+  if(OldPtr && Length)
+    {
+      sizetype OldSize = Size;
+
+      if(Pos < OldSize)
+	{
+	  bool MoveReq = Length < OldSize - Pos;
+
+	  if(OwnsData)
+	    {
+	      if(!REFS(OldPtr))
+		{
+		  if(MoveReq)
+		    {
+		      sizetype End = Pos + Length;
+		      memmove(OldPtr + Pos, OldPtr + End, OldSize - End);
+		      Size -= Length;
+		      return;
+		    }
+		}
+	      else
+		--REFS(OldPtr);
+	    }
+
+	  sizetype NewSize = MoveReq ? OldSize - Length : Pos;
+	  Size = NewSize;
+	  Reserved = NewSize|FESTRING_PAGE;
+	  char* Ptr = 4 + new char[Reserved + 5];
+	  REFS(Ptr) = 0;
+	  Data = Ptr;
+	  OwnsData = true;
+
+	  if(Pos)
+	    memcpy(Ptr, OldPtr, Pos);
+
+	  if(MoveReq)
+	    {
+	      sizetype End = Pos + Length;
+	      memcpy(Ptr + Pos, OldPtr + End, OldSize - End);
+	    }
+	}
+    }
+}
+
+void festring::Insert(sizetype Pos, const char* CStr, sizetype N)
+{
+  if(N)
+    {
+      sizetype OldSize = Size;
+
+      if(Pos < OldSize) // this implies Data != 0
+	{
+	  char* OldPtr = Data;
+	  ulong* DeletePtr = 0;
+	  sizetype NewSize = OldSize + N;
+	  Size = NewSize;
+
+	  if(OwnsData)
+	    {
+	      if(!REFS(OldPtr))
+		{
+		  if(NewSize <= Reserved)
+		    {
+		      char* Ptr = OldPtr + Pos;
+		      memmove(Ptr + N, Ptr, OldSize - Pos);
+		      memcpy(Ptr, CStr, N);
+		      return;
+		    }
+		  else
+		    DeletePtr = &REFS(OldPtr);
+		}
+	      else
+		--REFS(OldPtr);
+	    }
+
+	  Reserved = NewSize|FESTRING_PAGE;
+	  char* NewPtr = 4 + new char[Reserved + 5];
+	  REFS(NewPtr) = 0;
+	  Data = NewPtr;
+	  memcpy(NewPtr, OldPtr, Pos);
+	  memcpy(NewPtr + Pos, CStr, N);
+	  memcpy(NewPtr + Pos + N, OldPtr + Pos, OldSize - Pos);
+	  OwnsData = true;
+
+	  if(DeletePtr)
+	    delete [] DeletePtr;
+	}
+      else if(Pos == OldSize)
+	Append(CStr, N);
+      else
+	;//abort
+    }
+}
 
 /*
- * Creates map of char representations of numbers 0-999 used by IntegerToChar.
+ * Creates map of char representations of numbers 0-999 used by festring::Append(long).
  * Due to automatization, you don't need to explicitly call it.
  */
 
 void festring::InstallIntegerMap()
 {
-  if(!IntegerMap) // check if already installed
+  IntegerMap = Alloc2D<char>(1000, 3);
+  char Ones = '0', Tens = '0', Hundreds = '0';
+
+  for(ushort c = 0; c < 1000; ++c)
     {
-      IntegerMap = Alloc2D<char>(1000, 3);
-      char Ones = '0', Tens = '0', Hundreds = '0';
+      IntegerMap[c][0] = Hundreds;
+      IntegerMap[c][1] = Tens;
+      IntegerMap[c][2] = Ones;
 
-      for(ushort c = 0; c < 1000; ++c)
+      if(++Ones > '9')
 	{
-	  IntegerMap[c][0] = Hundreds;
-	  IntegerMap[c][1] = Tens;
-	  IntegerMap[c][2] = Ones;
+	  Ones = '0';
 
-	  if(++Ones > '9')
+	  if(++Tens > '9')
 	    {
-	      Ones = '0';
-
-	      if(++Tens > '9')
-		{
-		  Tens = '0';
-		  ++Hundreds;
-		}
+	      Tens = '0';
+	      ++Hundreds;
 	    }
 	}
-
-      atexit(DeInstallIntegerMap);
     }
+
+  atexit(DeInstallIntegerMap);
 }
 
 /*
- * Deletes the integer map used by IntegerToChar.
+ * Deletes the integer map used by festring::Append(long).
  * Due to automatization, you don't need to explicitly call it.
  */
 
@@ -52,30 +451,29 @@ void festring::DeInstallIntegerMap()
 
 /*
  * Displays numbers in the range [-2147483647, 2147483647].
- * Much faster than sprintf and (nonstandard) itoa,
- * but note that it uses a global buffer, so you must
- * process the result of the last call before the next use.
+ * Much faster than sprintf and (nonstandard) itoa.
  */
 
-char* festring::IntegerToChar(long Integer)
+festring& festring::Append(long Integer)
 {
   if(!IntegerMap)
     InstallIntegerMap();
 
+  char IntegerBuffer[12];
   char* BufferPtr = IntegerBuffer;
   bool Negative = false;
 
   if(Integer < 0)
     {
       if(Integer < -2147483647)
-	return strncpy(BufferPtr, "-Inf", 5);
+	return Append("-Inf", 4);
 
       *BufferPtr++ = '0';
       Integer = -Integer;
       Negative = true;
     }
   else if(Integer > 2147483647)
-    return strncpy(BufferPtr, "Inf", 4);
+    return Append("Inf", 3);
 
   bool ForceZeros = false;
 
@@ -115,6 +513,7 @@ char* festring::IntegerToChar(long Integer)
   *BufferPtr++ = IntegerMap[Integer][1];
   *BufferPtr++ = IntegerMap[Integer][2];
   *BufferPtr = 0;
+  char* EndPtr = BufferPtr;
 
   for(BufferPtr = IntegerBuffer; *BufferPtr == '0'; ++BufferPtr);
 
@@ -123,7 +522,7 @@ char* festring::IntegerToChar(long Integer)
   else if(!*BufferPtr) // check if the original Integer was zero
     --BufferPtr;
 
-  return BufferPtr;
+  return Append(BufferPtr, EndPtr - BufferPtr);
 }
 
 /*
@@ -131,26 +530,26 @@ char* festring::IntegerToChar(long Integer)
  * but words are left uncut if possible.
  */
 
-void festring::SplitString(std::string& Source, std::string& Result, strsize Length)
+void festring::SplitString(festring& Source, festring& Result, sizetype Length)
 {
-  if(Source.length() <= Length)
+  if(Source.GetSize() <= Length)
     {
-      Result += Source;
-      Source.resize(0);
+      Result << Source;
+      Source.Empty();
       return;
     }
 
-  strsize Pos = Source.find_last_of(' ', Length);
+  sizetype Pos = Source.FindLast(' ', Length);
 
-  if(Pos != std::string::npos)
+  if(Pos != NPos)
     {
-      Result.append(Source, 0, Pos);
-      Source.erase(0, Pos + 1);
+      Result.Append(Source, Pos);
+      Source.Erase(0, Pos + 1);
     }
   else
     {
-      Result.append(Source, 0, Length);
-      Source.erase(0, Length);
+      Result.Append(Source, Length);
+      Source.Erase(0, Length);
     }
 }
 
@@ -161,7 +560,7 @@ void festring::SplitString(std::string& Source, std::string& Result, strsize Len
  * except the first. It returns the number of created lines.
  */
 
-ushort festring::SplitString(const std::string& Source, std::vector<std::string>& StringVector, strsize Length, strsize Marginal)
+ushort festring::SplitString(const festring& Source, std::vector<festring>& StringVector, sizetype Length, sizetype Marginal)
 {
   if(!Length)
     ABORT("Illegal Length 0 passed to festring::SplitString()!");
@@ -169,47 +568,49 @@ ushort festring::SplitString(const std::string& Source, std::vector<std::string>
   if(Marginal >= Length)
     ABORT("Illegal festring::SplitString() call: Marginal must be less than Length!");
 
-  std::string CopyOfSource(Source);
+  festring CopyOfSource(Source);
 
   if(StringVector.empty())
-    StringVector.push_back(std::string());
+    StringVector.push_back(festring());
   else
-    StringVector[0].resize(0);
+    StringVector[0].Empty();
 
   SplitString(CopyOfSource, StringVector[0], Length);
   ushort Size = 1;
 
-  while(CopyOfSource.length())
+  while(CopyOfSource.GetSize())
     {
       if(StringVector.size() <= Size)
-	StringVector.push_back(std::string());
+	StringVector.push_back(festring());
 
-      std::string& String = StringVector[Size++];
-      String.assign(Marginal, ' ');
+      festring& String = StringVector[Size++];
+      String.Assign(Marginal, ' ');
       SplitString(CopyOfSource, String, Length - Marginal);
     }
 
   return Size;
 }
 
+char Capitalize(char Char) { return Char > 0x60 && Char < 0x7B ? Char ^ 0x20 : Char; }
+
 /*
  * Returns the position of the first occurance of What in Where
  * starting at Begin or after it, ignoring the case of letters.
- * If the search fails, std::string::npos is returned instead.
+ * If the search fails, festring::NPos is returned instead.
  */
 
-strsize festring::IgnoreCaseFind(const std::string& Where, const std::string& What, strsize Begin)
+festring::sizetype festring::IgnoreCaseFind(const festring& Where, const festring& What, sizetype Begin)
 {
-  if(What.empty())
+  if(What.IsEmpty())
    return Begin;
 
-  for(; Where.size() >= What.size() + Begin; ++Begin)
-    if(CapitalizeCopy(Where[Begin]) == CapitalizeCopy(What[0]))
+  for(; Where.GetSize() >= What.GetSize() + Begin; ++Begin)
+    if(::Capitalize(Where[Begin]) == ::Capitalize(What[0]))
       {
 	bool Equal = true;
 
-	for(strsize c = 1; c < What.size(); ++c)
-	  if(CapitalizeCopy(Where[Begin + c]) != CapitalizeCopy(What[c]))
+	for(sizetype c = 1; c < What.GetSize(); ++c)
+	  if(::Capitalize(Where[Begin + c]) != ::Capitalize(What[c]))
 	    {
 	      Equal = false;
 	      break;
@@ -219,32 +620,32 @@ strsize festring::IgnoreCaseFind(const std::string& Where, const std::string& Wh
 	  return Begin;
       }
 
-  return std::string::npos;
+  return NPos;
 }
 
 /* Replaces all occurances of What in Where after Begin with With */
 
-void festring::SearchAndReplace(std::string& Where, const std::string& What, const std::string& With, strsize Begin)
+void festring::SearchAndReplace(festring& Where, const festring& What, const festring& With, sizetype Begin)
 {
-  for(strsize Pos = Where.find(What, Begin); Pos != std::string::npos; Pos = Where.find(What, Pos))
+  for(sizetype Pos = Where.Find(What, Begin); Pos != NPos; Pos = Where.Find(What, Pos))
     {
-      Where.erase(Pos, What.length());
-      Where.insert(Pos, With);
+      Where.Erase(Pos, What.GetSize());
+      Where.Insert(Pos, With);
     }
 }
 
 /* Returns whether First is behind Second in alphabetical order, ignoring case */
 
-bool festring::IgnoreCaseCompare(const std::string& First, const std::string& Second)
+bool festring::IgnoreCaseCompare(const festring& First, const festring& Second)
 {
-  for(strsize Pos = 0; Pos < First.length() && Pos < Second.length(); ++Pos)
+  for(sizetype Pos = 0; Pos < First.GetSize() && Pos < Second.GetSize(); ++Pos)
     {
-      char Char1 = CapitalizeCopy(First[Pos]);
-      char Char2 = CapitalizeCopy(Second[Pos]);
+      char Char1 = ::Capitalize(First[Pos]);
+      char Char2 = ::Capitalize(Second[Pos]);
 
       if(Char1 != Char2)
 	return Char1 < Char2;
     }
 
-  return First.length() < Second.length();
+  return First.GetSize() < Second.GetSize();
 }

@@ -227,7 +227,7 @@ void nonhumanoid::Kick(lsquare* Square, bool ForceHit)
 
 bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -751,8 +751,8 @@ void genetrixvesana::CreateCorpse(lsquare* Square)
 
 void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
 {
-  Info.AddEntry(std::string("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
-  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
 void floatingeye::Save(outputfile& SaveFile) const
@@ -878,7 +878,7 @@ ushort chameleon::TakeHit(character* Enemy, item* Weapon, float Damage, float To
 
 bool eddy::Hit(character* Enemy, bool)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   Hostility(Enemy);
@@ -1021,7 +1021,7 @@ void mushroom::SetSpecies(ushort What)
 
 bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
   if(GetBurdenState() == OVER_LOADED)
@@ -1183,49 +1183,51 @@ void nonhumanoid::LowerStats()
   character::LowerStats();
 }
 
-void nonhumanoid::AddAttributeInfo(std::string& Entry) const
+void nonhumanoid::AddAttributeInfo(festring& Entry) const
 {
-  Entry.resize(45, ' ');
+  Entry.Resize(45, ' ');
   Entry << GetAttribute(ARM_STRENGTH);
-  Entry.resize(48, ' ');
+  Entry.Resize(48, ' ');
   Entry << "-  -  " << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
 }
 
 void nonhumanoid::AddAttackInfo(felist& List) const
 {
+  festring Entry;
+
   if(IsUsingArms())
     {
-      std::string Entry = "   unarmed attack";
-      Entry.resize(50, ' ');
+      Entry = CONST_S("   unarmed attack");
+      Entry.Resize(50, ' ');
       Entry << GetUnarmedMinDamage() << '-' << GetUnarmedMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(GetUnarmedToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetUnarmedAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingLegs())
     {
-      std::string Entry = "   kick attack";
-      Entry.resize(50, ' ');
+      Entry = CONST_S("   kick attack");
+      Entry.Resize(50, ' ');
       Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(GetKickToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetKickAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingHead())
     {
-      std::string Entry = "   bite attack";
-      Entry.resize(50, ' ');
+      Entry = CONST_S("   bite attack");
+      Entry.Resize(50, ' ');
       Entry << GetBiteMinDamage() << '-' << GetBiteMaxDamage();
-      Entry.resize(60, ' ');
+      Entry.Resize(60, ' ');
       Entry << int(GetBiteToHitValue());
-      Entry.resize(70, ' ');
+      Entry.Resize(70, ' ');
       Entry << GetBiteAPCost();
       List.AddEntry(Entry, LIGHT_GRAY);
     }
@@ -1235,7 +1237,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
 void nonhumanoid::RaiseStats() { }
 void nonhumanoid::LowerStats() { }
-void nonhumanoid::AddAttributeInfo(std::string&) const { }
+void nonhumanoid::AddAttributeInfo(festring&) const { }
 void nonhumanoid::AddAttackInfo(felist&) const { }
 
 #endif

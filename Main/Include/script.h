@@ -98,13 +98,13 @@ template <class type> inline scriptmember<type>& scriptmember<type>::operator=(c
 class script
 {
  public:
-  typedef std::map<const char*, scriptmemberbase script::*, festring::charcomparer> datamap;
+  typedef std::map<const char*, scriptmemberbase script::*, charcomparer> datamap;
   virtual ~script() { }
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile& SaveFile) const { SaveDataMap(GetDataMap(), SaveFile); }
   virtual void Load(inputfile& SaveFile) { LoadDataMap(GetDataMap(), SaveFile); }
  protected:
-  bool ReadMember(inputfile&, const std::string&);
+  bool ReadMember(inputfile&, const festring&);
   virtual scriptmemberbase* GetDataFromMap(const datamap&, const char*);
   virtual scriptmemberbase* GetData(const char* String) { return GetDataFromMap(GetDataMap(), String); }
   virtual const datamap& GetDataMap() const = 0;
@@ -175,7 +175,7 @@ class basecontentscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual scriptmemberbase* GetData(const char*);
-  virtual ushort SearchCodeName(const std::string&) const = 0;
+  virtual ushort SearchCodeName(const festring&) const = 0;
   virtual const char* GetClassId() const = 0;
   static datamap DataMap;
   SCRIPT_MEMBER(materialscript, MainMaterial);
@@ -193,7 +193,7 @@ template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
   type* BasicInstantiate(ushort) const;
-  virtual ushort SearchCodeName(const std::string&) const;
+  virtual ushort SearchCodeName(const festring&) const;
 };
 
 template <class type> class contentscript;
@@ -262,7 +262,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   SCRIPT_MEMBER(uchar, VisualEffects);
   SCRIPT_MEMBER(uchar, AttachedArea);
   SCRIPT_MEMBER(uchar, AttachedEntry);
-  SCRIPT_MEMBER(std::string, Text);
+  SCRIPT_MEMBER(festring, Text);
   SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
 };
 
@@ -363,7 +363,7 @@ class levelscript : public scriptwithbase
   std::list<roomscript> Room;
   SCRIPT_MEMBER_WITH_BASE(roomscript, RoomDefault);
   SCRIPT_MEMBER_WITH_BASE(squarescript, FillSquare);
-  SCRIPT_MEMBER_WITH_BASE(std::string, LevelMessage);
+  SCRIPT_MEMBER_WITH_BASE(festring, LevelMessage);
   SCRIPT_MEMBER_WITH_BASE(vector2d, Size);
   SCRIPT_MEMBER_WITH_BASE(interval, Items);
   SCRIPT_MEMBER_WITH_BASE(interval, Rooms);
@@ -371,7 +371,7 @@ class levelscript : public scriptwithbase
   SCRIPT_BOOL_WITH_BASE(IsOnGround);
   SCRIPT_MEMBER_WITH_BASE(uchar, TeamDefault);
   SCRIPT_MEMBER_WITH_BASE(ulong, AmbientLight);
-  SCRIPT_MEMBER_WITH_BASE(std::string, Description);
+  SCRIPT_MEMBER_WITH_BASE(festring, Description);
   SCRIPT_MEMBER_WITH_BASE(uchar, LOSModifier);
   SCRIPT_BOOL_WITH_BASE(IgnoreDefaultSpecialSquares);
   SCRIPT_MEMBER_WITH_BASE(short, DifficultyBase);
@@ -381,7 +381,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalBase);
   SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalDelta);
   SCRIPT_BOOL_WITH_BASE(AutoReveal);
-  SCRIPT_MEMBER_WITH_BASE(std::string, ShortDescription);
+  SCRIPT_MEMBER_WITH_BASE(festring, ShortDescription);
 };
 
 class dungeonscript : public script
@@ -403,8 +403,8 @@ class dungeonscript : public script
   std::list<std::pair<interval, levelscript> > RandomLevel;
   SCRIPT_MEMBER(levelscript, LevelDefault);
   SCRIPT_MEMBER(uchar, Levels);
-  SCRIPT_MEMBER(std::string, Description);
-  SCRIPT_MEMBER(std::string, ShortDescription);
+  SCRIPT_MEMBER(festring, Description);
+  SCRIPT_MEMBER(festring, ShortDescription);
 };
 
 class teamscript : public script

@@ -5,13 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <vector>
 
 #include "vector2d.h"
 
 class outputfile;
 class inputfile;
+class festring;
 
 class continent
 {
@@ -26,7 +26,7 @@ class continent
   ulong GetSize() const;
   uchar GetIndex() const { return Index; }
   void GenerateInfo();
-  std::string GetName() const { return Name; }
+  festring GetName() const { return Name; }
   ushort GetGTerrainAmount(ushort) const;
   vector2d GetRandomMember(ushort);
   vector2d GetMember(ushort) const;
@@ -34,7 +34,7 @@ class continent
   static ushort** TypeBuffer;
   static short** AltitudeBuffer;
   static uchar** ContinentBuffer;
-  std::string Name;
+  festring Name;
   std::vector<vector2d> Member;
   std::vector<long> GTerrainAmount;
   uchar Index;

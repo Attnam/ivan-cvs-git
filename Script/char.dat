@@ -933,6 +933,7 @@ billswill
 	AttachedGod = MELLIS;
 	BodyPartsDisappearWhenSevered = true;
 	CanTalk = true;
+	AttackStyle = USE_HEAD;
 }
 
 skeleton
@@ -2580,10 +2581,10 @@ carnivorousplant
 
 	Config GREATER;
 	{
-		AttributeBonus = 150;
+		AttributeBonus = 175;
 		TorsoBitmapPos = 96, 16;
 		Adjective = "greater carnivorous";
-		BaseBiteStrength = 400;
+		BaseBiteStrength = 500;
 		CWeaponSkillHits == 50;
 		TotalVolume = 20000;
 		TotalSize = 175;
@@ -2648,7 +2649,7 @@ snake
 	ClassStates = INFRA_VISION;
 	HasFeet = false;
 	FleshMaterial = SNAKE_FLESH;
-	DangerModifier = 33;
+	DangerModifier = 50;
 	CanOpen = false;
 	AttachedGod = MELLIS;
 }
@@ -3216,6 +3217,8 @@ floatingeye
 	AttachedGod = LEGIFER;
 	ClassStates = INFRA_VISION|SEARCHING|GAS_IMMUNITY;
 	CanAttack = false;
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 0;
 }
 
 eddy
@@ -3254,6 +3257,8 @@ eddy
 	AttachedGod = SOPHOS;
 	BodyPartsDisappearWhenSevered = true;
 	ClassStates = GAS_IMMUNITY;
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 0;
 }
 
 mushroom
@@ -3487,6 +3492,7 @@ ghost
 	AttachedGod = MORTIFER;
 	BodyPartsDisappearWhenSevered = true;
 	BaseBiteStrength = 1000;
+	AttackStyle = USE_HEAD;
 }
 
 twoheadedmoose

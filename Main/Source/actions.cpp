@@ -2,8 +2,8 @@
 
 const char* faint::GetDeathExplanation() const { return " while helpless"; }
 const char* faint::GetDescription() const { return "fainted"; }
-const char* consume::GetDescription() const { return Description.c_str(); }
-void consume::SetDescription(const std::string& What) { Description = What; }
+const char* consume::GetDescription() const { return Description.CStr(); }
+void consume::SetDescription(const festring& What) { Description = What; }
 const char* rest::GetDescription() const { return "resting"; }
 const char* dig::GetDescription() const { return "digging"; }
 const char* go::GetDescription() const { return "going"; }
@@ -71,7 +71,7 @@ void consume::Handle()
       {
 	ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
-	if(game::BoolQuestion(std::string("Continue ") + GetDescription() + "? [y/N]"))
+	if(game::BoolQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
 	  SetInDNDMode(true);
 	else
 	  {
@@ -104,9 +104,9 @@ void consume::Terminate(bool Finished)
   if(Finished)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish %s %s.", Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("You finish %s %s.", Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -116,9 +116,9 @@ void consume::Terminate(bool Finished)
   else if(*Consuming)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s %s.", Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("You stop %s %s.", Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -131,9 +131,9 @@ void consume::Terminate(bool Finished)
   else
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s.", Description.c_str());
+	ADD_MESSAGE("You stop %s.", Description.CStr());
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str());
+	ADD_MESSAGE("%s stops %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr());
     }
 
   action::Terminate(Finished);
@@ -241,7 +241,7 @@ void dig::Handle()
   if(Terrain->GetHP() <= 0)
     {
       if(Square->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s", Terrain->GetDigMessage().c_str());
+	ADD_MESSAGE("%s", Terrain->GetDigMessage().CStr());
 
       Terrain->Break();
 

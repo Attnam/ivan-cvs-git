@@ -36,7 +36,7 @@ class lterrain : public object
   virtual bool TryKey(item*, character*) { return false; }
   bool CanBeSeenByPlayer() const;
   bool CanBeSeenBy(character*) const;
-  virtual const std::string& GetSitMessage() const = 0;
+  virtual const festring& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
   virtual square* GetSquareUnderEntity() const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
@@ -61,12 +61,12 @@ struct glterraindatabase
   void InitDefaults(ushort) { }
   bool AllowRandomInstantiation() const { return true; }
   vector2d BitmapPos;
-  std::string Article;
-  std::string Adjective;
-  std::string AdjectiveArticle;
-  std::string NameSingular;
-  std::string NamePlural;
-  std::string PostFix;
+  festring Article;
+  festring Adjective;
+  festring AdjectiveArticle;
+  festring NameSingular;
+  festring NamePlural;
+  festring PostFix;
   uchar ArticleMode;
   std::vector<long> MainMaterialConfig;
   std::vector<long> SecondaryMaterialConfig;
@@ -77,7 +77,7 @@ struct glterraindatabase
   ushort MaterialColorB;
   ushort MaterialColorC;
   ushort MaterialColorD;
-  std::string SitMessage;
+  festring SitMessage;
   ulong DefaultMainVolume;
   ulong DefaultSecondaryVolume;
   ulong DefaultContainedVolume;
@@ -122,12 +122,12 @@ class glterrain : public lterrain, public gterrain
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
-  DATA_BASE_VALUE(const std::string&, Article);
-  DATA_BASE_VALUE(const std::string&, Adjective);
-  DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
-  DATA_BASE_VALUE(const std::string&, NameSingular);
-  DATA_BASE_VALUE(const std::string&, NamePlural);
-  DATA_BASE_VALUE(const std::string&, PostFix);
+  DATA_BASE_VALUE(const festring&, Article);
+  DATA_BASE_VALUE(const festring&, Adjective);
+  DATA_BASE_VALUE(const festring&, AdjectiveArticle);
+  DATA_BASE_VALUE(const festring&, NameSingular);
+  DATA_BASE_VALUE(const festring&, NamePlural);
+  DATA_BASE_VALUE(const festring&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
@@ -137,7 +137,7 @@ class glterrain : public lterrain, public gterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
-  virtual DATA_BASE_VALUE(const std::string&, SitMessage);
+  virtual DATA_BASE_VALUE(const festring&, SitMessage);
   DATA_BASE_VALUE(ulong, DefaultMainVolume);
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
@@ -154,12 +154,12 @@ struct olterraindatabase
   void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return true; }
   vector2d BitmapPos;
-  std::string Article;
-  std::string Adjective;
-  std::string AdjectiveArticle;
-  std::string NameSingular;
-  std::string NamePlural;
-  std::string PostFix;
+  festring Article;
+  festring Adjective;
+  festring AdjectiveArticle;
+  festring NameSingular;
+  festring NamePlural;
+  festring PostFix;
   uchar ArticleMode;
   std::vector<long> MainMaterialConfig;
   std::vector<long> SecondaryMaterialConfig;
@@ -170,17 +170,17 @@ struct olterraindatabase
   ushort MaterialColorB;
   ushort MaterialColorC;
   ushort MaterialColorD;
-  std::string SitMessage;
+  festring SitMessage;
   ulong DefaultMainVolume;
   ulong DefaultSecondaryVolume;
   ulong DefaultContainedVolume;
   bool CreateDivineConfigurations;
   bool ShowMaterial;
   uchar AttachedGod;
-  std::string DigMessage;
+  festring DigMessage;
   bool CanBeDestroyed;
   uchar RestModifier;
-  std::string RestMessage;
+  festring RestMessage;
   bool IsUpLink;
   ulong StorageVolume;
   uchar HPModifier;
@@ -239,12 +239,12 @@ class olterrain : public lterrain, public oterrain
   const database* GetDataBase() const { return DataBase; }
   virtual void ShowRestMessage(character*) const;
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
-  DATA_BASE_VALUE(const std::string&, Article);
-  DATA_BASE_VALUE(const std::string&, Adjective);
-  DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
-  DATA_BASE_VALUE(const std::string&, NameSingular);
-  DATA_BASE_VALUE(const std::string&, NamePlural);
-  DATA_BASE_VALUE(const std::string&, PostFix);
+  DATA_BASE_VALUE(const festring&, Article);
+  DATA_BASE_VALUE(const festring&, Adjective);
+  DATA_BASE_VALUE(const festring&, AdjectiveArticle);
+  DATA_BASE_VALUE(const festring&, NameSingular);
+  DATA_BASE_VALUE(const festring&, NamePlural);
+  DATA_BASE_VALUE(const festring&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
@@ -254,15 +254,15 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
-  virtual DATA_BASE_VALUE(const std::string&, SitMessage);
+  virtual DATA_BASE_VALUE(const festring&, SitMessage);
   DATA_BASE_VALUE(ulong, DefaultMainVolume);
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
-  virtual DATA_BASE_VALUE(const std::string&, DigMessage);
+  virtual DATA_BASE_VALUE(const festring&, DigMessage);
   virtual DATA_BASE_BOOL(CanBeDestroyed);
   virtual DATA_BASE_VALUE(uchar, RestModifier);
-  virtual DATA_BASE_VALUE(const std::string&, RestMessage);
+  virtual DATA_BASE_VALUE(const festring&, RestMessage);
   virtual DATA_BASE_BOOL(IsUpLink);
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   DATA_BASE_VALUE(uchar, HPModifier);
@@ -270,8 +270,8 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, ushort);
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
-  virtual void SetText(const std::string&) { }
-  virtual std::string GetText() const;
+  virtual void SetText(const festring&) { }
+  virtual festring GetText() const;
   virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
   ushort GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }

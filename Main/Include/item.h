@@ -44,12 +44,12 @@ struct itemdatabase
   vector2d BitmapPos;
   ulong Price;
   ulong BaseEmitation;
-  std::string Article;
-  std::string Adjective;
-  std::string AdjectiveArticle;
-  std::string NameSingular;
-  std::string NamePlural;
-  std::string PostFix;
+  festring Article;
+  festring Adjective;
+  festring AdjectiveArticle;
+  festring NameSingular;
+  festring NamePlural;
+  festring PostFix;
   uchar ArticleMode;
   std::vector<long> MainMaterialConfig;
   std::vector<long> SecondaryMaterialConfig;
@@ -57,7 +57,7 @@ struct itemdatabase
   std::vector<long> MaterialConfigChances;
   bool IsAbstract;
   bool IsPolymorphable;
-  std::vector<std::string> Alias;
+  std::vector<festring> Alias;
   uchar OKVisualEffects;
   bool CanBeGeneratedInContainer;
   uchar ForcedVisualEffects;
@@ -69,7 +69,7 @@ struct itemdatabase
   ushort BeamRange;
   bool CanBeBroken;
   vector2d WallBitmapPos;
-  std::string FlexibleNameSingular;
+  festring FlexibleNameSingular;
   uchar MinCharges;
   uchar MaxCharges;
   bool CanBePiled;
@@ -252,12 +252,12 @@ class item : public object
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   virtual DATA_BASE_VALUE(ulong, Price);
   virtual DATA_BASE_VALUE(ulong, BaseEmitation);
-  virtual DATA_BASE_VALUE(const std::string&, Article);
-  virtual DATA_BASE_VALUE(const std::string&, Adjective);
-  virtual DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
-  virtual DATA_BASE_VALUE(const std::string&, NameSingular);
-  virtual DATA_BASE_VALUE(const std::string&, NamePlural);
-  virtual DATA_BASE_VALUE(const std::string&, PostFix);
+  virtual DATA_BASE_VALUE(const festring&, Article);
+  virtual DATA_BASE_VALUE(const festring&, Adjective);
+  virtual DATA_BASE_VALUE(const festring&, AdjectiveArticle);
+  virtual DATA_BASE_VALUE(const festring&, NameSingular);
+  virtual DATA_BASE_VALUE(const festring&, NamePlural);
+  virtual DATA_BASE_VALUE(const festring&, PostFix);
   virtual DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
   DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
@@ -272,7 +272,7 @@ class item : public object
   DATA_BASE_BOOL(IsTwoHanded);
   DATA_BASE_BOOL(CanBeBroken);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
-  DATA_BASE_VALUE(const std::string&, FlexibleNameSingular);
+  DATA_BASE_VALUE(const festring&, FlexibleNameSingular);
   DATA_BASE_BOOL(CanBePiled);
   DATA_BASE_BOOL(AffectsArmStrength);
   DATA_BASE_BOOL(AffectsLegStrength);
@@ -312,7 +312,7 @@ class item : public object
   virtual bool IsPickable(character*) const { return true; }
   bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
-  std::string GetDescription(uchar) const;
+  festring GetDescription(uchar) const;
   virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
   square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
@@ -342,7 +342,7 @@ class item : public object
   ushort GetBaseMaxDamage() const;
   ushort GetBaseToHitValue() const;
   ushort GetBaseBlockValue() const;
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
@@ -375,8 +375,8 @@ class item : public object
   virtual short GetCarryingBonus() const { return 0; }
   virtual bool IsBanana() const { return false; }
   virtual bool IsEncryptedScroll() const { return false; }
-  const std::string& GetStrengthValueDescription() const;
-  const std::string& GetBaseToHitValueDescription() const;
+  const char* GetStrengthValueDescription() const;
+  const char* GetBaseToHitValueDescription() const;
   virtual bool IsInCorrectSlot(ushort) const;
   bool IsInCorrectSlot() const;
   ushort GetEquipmentIndex() const;

@@ -5,7 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <vector>
 
 #include "vector2d.h"
@@ -15,6 +14,7 @@ class outputfile;
 class inputfile;
 class colorizablebitmap;
 class bitmap;
+class festring;
 struct felistentry;
 struct felistdescription;
 
@@ -23,15 +23,15 @@ class felist
  public:
   felist();
   felist(const felist&);
-  felist(const std::string&, ushort = WHITE, ushort = 0);
+  felist(const festring&, ushort = WHITE, ushort = 0);
   ~felist();
-  void AddEntry(const std::string&, ushort, ushort = 0, bitmap* = 0, bool = true);
-  void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true, bool = false);
-  void AddDescription(const std::string&, ushort = WHITE);
+  void AddEntry(const festring&, ushort, ushort = 0, bitmap* = 0, bool = true);
+  void AddEntry(const festring&, ushort, ushort, const std::vector<bitmap*>&, bool = true, bool = false);
+  void AddDescription(const festring&, ushort = WHITE);
   ushort Draw();
   void QuickDraw(bitmap*, ushort) const;
   void Empty();
-  std::string GetEntry(ushort) const;
+  festring GetEntry(ushort) const;
   ushort GetColor(ushort) const;
   void SetColor(ushort, ushort);
   ushort GetLength() const;
@@ -45,7 +45,7 @@ class felist
   bool DrawPage(bitmap*) const;
   void Pop();
   static void CreateQuickDrawFontCaches(colorizablebitmap*, ushort, ushort);
-  void PrintToFile(const std::string&);
+  void PrintToFile(const festring&);
   void SetPos(vector2d What) { Pos = What; }
   void SetWidth(ushort What) { Width = What; }
   void SetPageLength(ushort What) { PageLength = What; }

@@ -48,14 +48,14 @@ class ACTION
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
-  virtual void SetDescription(const std::string&);
+  virtual void SetDescription(const festring&);
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;
   virtual long GetScore() const;
  protected:
   virtual void VirtualConstructor(bool);
-  std::string Description;
+  festring Description;
   actionslot Consuming;
   bool WasOnGround;
   bool Eaten;

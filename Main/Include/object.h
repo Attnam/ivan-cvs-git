@@ -84,15 +84,15 @@ class object : public entity, public id
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
   virtual ushort GetOutlineColor(ushort) const;
-  virtual bool AddMaterialDescription(std::string&, bool) const;
+  virtual bool AddMaterialDescription(festring&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
   virtual void InstallDataBase() = 0;
   virtual ushort GetClassAnimationFrames() const { return 1; }
-  void AddContainerPostFix(std::string&) const;
-  void AddLumpyPostFix(std::string&) const;
-  bool AddEmptyAdjective(std::string&, bool) const;
+  void AddContainerPostFix(festring&) const;
+  void AddLumpyPostFix(festring&) const;
+  bool AddEmptyAdjective(festring&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }

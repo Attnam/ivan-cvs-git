@@ -152,7 +152,7 @@ void graphics::SwitchMode()
 
 #endif
 
-void graphics::LoadDefaultFont(const std::string& FileName)
+void graphics::LoadDefaultFont(const festring& FileName)
 {
   DefaultFont = new colorizablebitmap(FileName);
 }

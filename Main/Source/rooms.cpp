@@ -27,7 +27,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	Customer->EditMoney(-Price);
 	GetMaster()->EditMoney(Price);
 	Customer->EditExperience(CHARISMA, Price);
@@ -57,7 +57,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  else
 	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	    {
 	      Customer->EditMoney(-Price);
 	      GetMaster()->EditMoney(+Price);
@@ -78,7 +78,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	}
     }
   else
-    if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
+    if(game::BoolQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
       {
 	Customer->Hostility(GetMaster());
 	return true;
@@ -97,7 +97,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	Customer->EditMoney(Price);
 	GetMaster()->EditMoney(-Price);
 	Customer->EditExperience(CHARISMA, Price);
@@ -130,7 +130,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  else
 	    ADD_MESSAGE("\"What a fine pile of %d %s. I'll pay %d gold pieces for them.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	    {
 	      Customer->SetMoney(Customer->GetMoney() + Price);
 	      GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
@@ -149,7 +149,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   else
     {
       ADD_MESSAGE("The shopkeeper doesn't see you, so you cannot trade with him.");
-      return game::BoolQuestion(std::string("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+      return game::BoolQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
     }
 }
 
@@ -160,7 +160,7 @@ void temple::Enter(character* Pilgrim)
       {
 	if(GetMaster()->GetRelation(Pilgrim) != HOSTILE && Pilgrim->CanBeSeenBy(GetMaster()))
 	  if(GetMaster()->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->GetName());
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().CStr(), game::GetGod(DivineMaster)->GetName());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->GetName());
       }
@@ -191,7 +191,7 @@ bool shop::ConsumeItem(character* Customer, item*, ushort)
       return false;
     }
   else
-    if(game::BoolQuestion("It's illegal to eat property of others. Are you sure you sure? [y/N]"))
+    if(game::BoolQuestion(CONST_S("It's illegal to eat property of others. Are you sure you sure? [y/N]")))
       {
 	Customer->Hostility(GetMaster());
 	return true;
@@ -223,7 +223,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
 
       ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
 
-      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	{
 	  Visitor->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 	  return true;
@@ -246,7 +246,7 @@ bool cathedral::DropItem(character* Visitor, item* Item, ushort)
 	  return false;
 	}
 
-      if(game::BoolQuestion("Do you wish to donate this item to the Cathedral? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you wish to donate this item to the Cathedral? [y/N]")))
 	return true;
     }
 
@@ -271,7 +271,7 @@ bool cathedral::ConsumeItem(character* HungryMan, item*, ushort)
     {
       ADD_MESSAGE("Eating the property of the Cathedral is forbidden.");
 
-      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	{
 	  HungryMan->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 	  return true;
@@ -296,13 +296,13 @@ void cathedral::Load(inputfile& SaveFile)
 bool cathedral::Drink(character* Thirsty) const
 {
   if(game::GetTeam(ATTNAM_TEAM)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
-    return game::BoolQuestion("Do you want to drink? [y/N]");
+    return game::BoolQuestion(CONST_S("Do you want to drink? [y/N]"));
 
   if(Thirsty->IsPlayer())
     {
       ADD_MESSAGE("Drinking property of the Cathedral is prohibited.");
 
-      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	{
 	  Thirsty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 	  return true;
@@ -344,7 +344,7 @@ bool cathedral::Dip(character* Thirsty) const
 
       ADD_MESSAGE("Stealing the precious water of the Cathedral is prohibited.");
 
-      if(game::BoolQuestion("Are you sure you want to dip? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Are you sure you want to dip? [y/N]")))
 	{
 	  Thirsty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 	  return true;
@@ -366,7 +366,7 @@ void library::Enter(character* Customer)
       {
 	if(GetMaster()->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(GetMaster()))
 	  if(GetMaster()->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks at you suspiciously. \"Feel free to open the shelves, but be quiet in the library!\" %s whispers.", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPersonalPronoun().c_str());
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Feel free to open the shelves, but be quiet in the library!\" %s whispers.", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPersonalPronoun().CStr());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }
@@ -385,7 +385,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
     {
       if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	  Customer->EditMoney(-Price);
 	  GetMaster()->EditMoney(Price);
 	  Customer->EditExperience(CHARISMA, Price);
@@ -416,7 +416,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  else
 	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	    {
 	      Customer->EditMoney(-Price);
 	      GetMaster()->EditMoney(Price);
@@ -437,7 +437,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	}
     }
   else
-    if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
+    if(game::BoolQuestion(CONST_S("Are you sure you want to commit this thievery? [y/N]")))
       {
 	Customer->Hostility(GetMaster());
 	return true;
@@ -456,7 +456,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
 	Customer->EditExperience(CHARISMA, Price);
@@ -489,7 +489,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  else
 	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-	  if(game::BoolQuestion(std::string("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
 	    {
 	      Customer->EditMoney(Price);
 	      GetMaster()->EditMoney(-Price);
@@ -508,7 +508,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
   else
     {
       ADD_MESSAGE("The librarian doesn't see you, so you cannot trade with him.");
-      return game::BoolQuestion(std::string("Still drop ") +  + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+      return game::BoolQuestion(CONST_S("Still drop ") +  + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
     }
 }
 
@@ -547,7 +547,7 @@ bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
 
       ADD_MESSAGE("That would be stealing.");
 
-      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	{
 	  Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
 	  return true;
@@ -559,7 +559,7 @@ bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
 
 bool landingsite::DropItem(character* Dropper, item* Item, ushort)
 {
-  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && (!Item->IsBanana() || game::BoolQuestion("Do you wish to donate this item to the town? [y/N]")));
+  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && (!Item->IsBanana() || game::BoolQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
 }
 
 void landingsite::KickSquare(character* Kicker, lsquare* Square)
@@ -586,7 +586,7 @@ bool landingsite::ConsumeItem(character* HungryMan, item* Item, ushort)
       if(Item->IsBanana())
 	ADD_MESSAGE("Eating this is forbidden.");
 
-      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	{
 	  HungryMan->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
 	  return true;
@@ -657,4 +657,3 @@ void library::HostileAction(character* Guilty) const
       Guilty->Hostility(GetMaster());
     }
 }
-

@@ -42,7 +42,7 @@ bool room::CheckDestroyTerrain(character* Infidel)
 
   ADD_MESSAGE("%s might not like this.", GetMaster()->CHAR_NAME(DEFINITE));
 
-  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
+  if(game::BoolQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
     {
       DestroyTerrain(Infidel);
       return true;
@@ -63,7 +63,7 @@ bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) cons
     {
       ADD_MESSAGE("That would be vandalism.");
 
-      if(!game::BoolQuestion("Do you still want to do this? [y/N]"))
+      if(!game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
 	return false;
     }
   return true;

@@ -59,9 +59,9 @@ class OLTERRAIN
   virtual void HasBeenHitByItem(character*, item*, ushort);
   virtual bool IsTransparent() const;
  protected:
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual bool AddAdjective(festring&, bool) const;
   virtual void Break();
   virtual vector2d GetBitmapPos(ushort) const;
   virtual void MakeWalkable();
@@ -169,8 +169,8 @@ class OLTERRAIN
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
-  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
-  virtual bool AddAdjective(std::string&, bool) const;
+  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(festring&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const;
   material* ContainedMaterial;
 );
@@ -221,12 +221,12 @@ class OLTERRAIN
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SetText(const std::string& What) { Text = What; }
-  virtual std::string GetText() const;
-  virtual void AddPostFix(std::string&) const;
+  virtual void SetText(const festring& What) { Text = What; }
+  virtual festring GetText() const;
+  virtual void AddPostFix(festring&) const;
   virtual void StepOn(character*);
  protected:
-  std::string Text;
+  festring Text;
 );
 
 #endif

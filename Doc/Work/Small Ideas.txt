@@ -364,4 +364,7 @@ Uring the lookmode while polymorphed into a floating eye should have a special e
 The starting puppy dies in every game. It should be named Kenny.
 If player uses heal command (h) when his/her HPs are at max, the game should wait for a player specified number of turns.
 //The starting puppy dies in every game. It should be named Kenny.
-
+Raining frogs.
+Zombies transporting vodka.
+Hangover state.
+Gods shouldn't like spoiled corpses.

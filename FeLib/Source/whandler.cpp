@@ -2,6 +2,7 @@
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
+#include "festring.h"
 
 bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 ushort globalwindowhandler::Controls = 0;
@@ -250,7 +251,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 #ifdef WIN32
 	  DOUBLE_BUFFER->Save("Scrshot.bmp");
 #else
-	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
+	  DOUBLE_BUFFER->Save(festring(getenv("HOME")) + "/Scrshot.bmp");
 #endif
 	  return;
 	case SDLK_e:

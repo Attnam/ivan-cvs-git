@@ -134,4 +134,3 @@ void area::SetEntryPos(uchar Index, vector2d Pos)
 {
   EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
 }
-

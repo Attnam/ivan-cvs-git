@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "typedef.h"
 
 class outputfile;
@@ -42,7 +40,7 @@ class cweaponskill : public weaponskill
   virtual ushort GetLevelMap(ushort) const;
   virtual ulong GetUnuseTickMap(ushort) const;
   virtual ushort GetUnusePenaltyMap(ushort) const;
-  const std::string& GetName() const;
+  const char* GetName() const;
   ushort GetBonus() const { return 100 + 10 * Level; }
   void AddLevelUpMessage() const;
   void AddLevelDownMessage() const;
@@ -69,8 +67,8 @@ class sweaponskill : public weaponskill
   virtual ulong GetUnuseTickMap(ushort) const;
   virtual ushort GetUnusePenaltyMap(ushort) const;
   ushort GetBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
-  void AddLevelUpMessage(const std::string&) const;
-  void AddLevelDownMessage(const std::string&) const;
+  void AddLevelUpMessage(const char*) const;
+  void AddLevelDownMessage(const char*) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void SetID(ulong What) { ID = What; }

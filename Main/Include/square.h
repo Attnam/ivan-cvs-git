@@ -5,12 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "area.h"
+#include "festring.h"
 
 class gterrain;
 class oterrain;
+class festring;
 
 class square
 {
@@ -28,16 +28,16 @@ class square
   area* GetArea() const { return AreaUnder; }
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
-  std::string GetMemorizedDescription() { return MemorizedDescription; }
-  void SetMemorizedDescription(const std::string& What) { MemorizedDescription = What; }
+  festring GetMemorizedDescription() { return MemorizedDescription; }
+  void SetMemorizedDescription(const festring& What) { MemorizedDescription = What; }
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
-  std::string SurviveMessage(character*) const;
-  std::string MonsterSurviveMessage(character*) const;
-  std::string DeathMessage(character*) const;
-  std::string MonsterDeathVerb(character*) const;
-  std::string ScoreEntry(character*) const;
+  const char* SurviveMessage(character*) const;
+  const char* MonsterSurviveMessage(character*) const;
+  const char* DeathMessage(character*) const;
+  const char* MonsterDeathVerb(character*) const;
+  const char* ScoreEntry(character*) const;
   bool IsFatalToStay() const;
   uchar GetEntryDifficulty() const;
   uchar GetRestModifier() const;
@@ -49,9 +49,9 @@ class square
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
   virtual bool SquareIsWalkable(const character* = 0) const = 0;
-  virtual void DisplaySmokeInfo(std::string&) const { }
+  virtual void DisplaySmokeInfo(festring&) const { }
  protected:
-  std::string MemorizedDescription;
+  festring MemorizedDescription;
   area* AreaUnder;
   character* Character;
   vector2d Pos;

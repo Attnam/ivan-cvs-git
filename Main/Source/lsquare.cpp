@@ -605,13 +605,13 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     {
       if(!IsDark() || Cheat)
 	{
-	  MemorizedDescription.resize(0);
+	  MemorizedDescription.Empty();
 
 	  if(!OLTerrain || OLTerrain->IsTransparent())
 	    {
 	      bool Anything = false;
 
-	      if(OLTerrain && OLTerrain->GetNameSingular().length())
+	      if(OLTerrain && OLTerrain->GetNameSingular().GetSize())
 		{
 		  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 		  Anything = true;
@@ -628,7 +628,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  if(PileVector.size() == 1)
 		    PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
 		  else
-		    MemorizedDescription = "many items";
+		    MemorizedDescription = CONST_S("many items");
 
 		  MemorizedDescription << " on ";
 		  Anything = true;
@@ -668,15 +668,15 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	    OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 
 	  if(Cheat)
-	    MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << ")";
+	    MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << ")";
 	}
       else if(CanBeFeltByPlayer())
 	{
-	  MemorizedDescription.resize(0);
+	  MemorizedDescription.Empty();
 	  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 	}
       else
-	MemorizedDescription = "darkness";
+	MemorizedDescription = CONST_S("darkness");
 
       DescriptionChanged = false;
     }
@@ -1291,7 +1291,7 @@ vector2d lsquare::DrawLightning(vector2d StartPos, ulong Color, uchar Direction,
   return StartPos;
 }
 
-bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
+bool lsquare::Polymorph(character* Zapper, const festring&, uchar)
 {
   GetStack()->Polymorph(Zapper);
 
@@ -1311,7 +1311,7 @@ bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Strike(character* Zapper, const std::string& DeathMsg, uchar Direction) 
+bool lsquare::Strike(character* Zapper, const festring& DeathMsg, uchar Direction) 
 {
   ushort Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
@@ -1347,7 +1347,7 @@ bool lsquare::Strike(character* Zapper, const std::string& DeathMsg, uchar Direc
   return false;
 }
 
-bool lsquare::FireBall(character* Who, const std::string& DeathMsg, uchar) 
+bool lsquare::FireBall(character* Who, const festring& DeathMsg, uchar) 
 { 
   if(!IsFlyable() || GetCharacter())
     {
@@ -1358,7 +1358,7 @@ bool lsquare::FireBall(character* Who, const std::string& DeathMsg, uchar)
   return false;
 }
 
-bool lsquare::Teleport(character* Teleporter, const std::string&, uchar) 
+bool lsquare::Teleport(character* Teleporter, const festring&, uchar) 
 { 
   if(GetCharacter())
     {
@@ -1375,7 +1375,7 @@ bool lsquare::Teleport(character* Teleporter, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Haste(character*, const std::string&, uchar)
+bool lsquare::Haste(character*, const festring&, uchar)
 {
   character* Dude = GetCharacter();
 
@@ -1385,7 +1385,7 @@ bool lsquare::Haste(character*, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Slow(character* Slower, const std::string&, uchar)
+bool lsquare::Slow(character* Slower, const festring&, uchar)
 {
   character* Dude = GetCharacter();
 
@@ -1400,7 +1400,7 @@ bool lsquare::Slow(character* Slower, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Resurrect(character* Summoner, const std::string&, uchar)
+bool lsquare::Resurrect(character* Summoner, const festring&, uchar)
 {
   if(GetCharacter())
     return GetCharacter()->RaiseTheDead(Summoner);
@@ -1410,7 +1410,7 @@ bool lsquare::Resurrect(character* Summoner, const std::string&, uchar)
     return false;
 }
 
-bool lsquare::Invisibility(character*, const std::string&, uchar) 
+bool lsquare::Invisibility(character*, const festring&, uchar) 
 {
   if(GetCharacter())
     GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
@@ -1418,7 +1418,7 @@ bool lsquare::Invisibility(character*, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Clone(character* Zapper, const std::string&, uchar)
+bool lsquare::Clone(character* Zapper, const festring&, uchar)
 {
   bool ClonedSomething = false;
   character* Character = GetCharacter();
@@ -1432,7 +1432,7 @@ bool lsquare::Clone(character* Zapper, const std::string&, uchar)
   return ClonedSomething;
 }
 
-bool lsquare::Lightning(character* Zapper, const std::string& DeathMsg, uchar Direction)
+bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, uchar Direction)
 {
   ushort Damage = 20 + RAND() % 6 - RAND() % 6;
   GetStack()->ReceiveDamage(Zapper, Damage, ELECTRICITY);
@@ -1468,7 +1468,7 @@ bool lsquare::Lightning(character* Zapper, const std::string& DeathMsg, uchar Di
   return false;
 }
 
-bool lsquare::DoorCreation(character* Creator, const std::string&, uchar)
+bool lsquare::DoorCreation(character* Creator, const festring&, uchar)
 {
   if((!GetOLTerrain() || GetOLTerrain()->IsSafeToCreateDoor()) && !GetCharacter())
     {
@@ -1516,9 +1516,9 @@ stack* lsquare::GetSecondSideStackUnderAttack(uchar Direction) const
     }
 }
 
-bool (lsquare::*lsquare::GetBeamEffect(ushort Index))(character*, const std::string&, uchar)
+bool (lsquare::*lsquare::GetBeamEffect(ushort Index))(character*, const festring&, uchar)
 {
-  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar) = { &lsquare::Polymorph, &lsquare::Strike, &lsquare::FireBall, &lsquare::Teleport, &lsquare::Haste, &lsquare::Slow, &lsquare::Resurrect, &lsquare::Invisibility, &lsquare::Clone, &lsquare::Lightning, &lsquare::DoorCreation };
+  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const festring&, uchar) = { &lsquare::Polymorph, &lsquare::Strike, &lsquare::FireBall, &lsquare::Teleport, &lsquare::Haste, &lsquare::Slow, &lsquare::Resurrect, &lsquare::Invisibility, &lsquare::Clone, &lsquare::Lightning, &lsquare::DoorCreation };
   return BeamEffect[Index];
 }
 
@@ -1564,7 +1564,7 @@ ushort lsquare::GetSpoiledItems() const
   return GetStack()->GetSpoiledItems();
 }
 
-bool lsquare::LowerEnchantment(character* Zapper, const std::string&, uchar)
+bool lsquare::LowerEnchantment(character* Zapper, const festring&, uchar)
 {
   character* Char = GetCharacter();
   itemvector AllItems;
@@ -1668,7 +1668,7 @@ uchar lsquare::GetDivineMaster() const
   return RoomIndex ? GetLevel()->GetRoom(RoomIndex)->GetDivineMaster() : 0;
 }
 
-void lsquare::DisplaySmokeInfo(std::string& Msg) const
+void lsquare::DisplaySmokeInfo(festring& Msg) const
 {
   if(Smoke.size() == 1)
     Msg << " A cloud of " << Smoke[0]->GetGas()->GetName(false, false) << " surrounds the square.";
@@ -1698,4 +1698,3 @@ bool lsquare::CanBeFeltByPlayer() const
 {
   return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
 }
-

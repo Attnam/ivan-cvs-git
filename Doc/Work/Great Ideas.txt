@@ -76,3 +76,5 @@ Random artifacts.
 Random demigods.
 On the world map, there should be a sign in the middle of nowhere with text "All your base are belong to us."
 Graphical statistics of kills per 100 turns etc. to endgame.
+Player-creatable magic.
+Noble ranks.

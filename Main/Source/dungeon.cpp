@@ -80,7 +80,7 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
       game::SetCurrentLevel(NewLevel);
 
       if(Visual)
-	game::TextScreen("Entering " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), WHITE, false, &game::BusyAnimation);
 
       game::SetIsGenerating(true);
       NewLevel->Generate(Index);
@@ -96,9 +96,9 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
     }
 }
 
-void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteAfterwards)
+void dungeon::SaveLevel(const festring& SaveName, ushort Number, bool DeleteAfterwards)
 {
-  outputfile SaveFile(SaveName + "." + Index + Number);
+  outputfile SaveFile(SaveName + '.' + Index + Number);
   SaveFile << Level[Number];
 
   if(DeleteAfterwards)
@@ -108,9 +108,9 @@ void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteA
     }
 }
 
-level* dungeon::LoadLevel(const std::string& SaveName, ushort Number)
+level* dungeon::LoadLevel(const festring& SaveName, ushort Number)
 {
-  inputfile SaveFile(SaveName + "." + Index + Number);
+  inputfile SaveFile(SaveName + '.' + Index + Number);
   SaveFile >> Level[Number];
   Level[Number]->SetDungeon(this);
   Level[Number]->SetIndex(Number);
@@ -140,7 +140,7 @@ ushort dungeon::GetLevels() const
   return *DungeonScript->GetLevels();
 }
 
-std::string dungeon::GetLevelDescription(ushort Index)
+festring dungeon::GetLevelDescription(ushort Index)
 {
   if(GetLevel(Index)->GetLevelScript()->GetDescription())
     return *GetLevel(Index)->GetLevelScript()->GetDescription();
@@ -148,7 +148,7 @@ std::string dungeon::GetLevelDescription(ushort Index)
     return *DungeonScript->GetDescription() + " level " + (Index + 1);
 }
 
-std::string dungeon::GetShortLevelDescription(ushort Index)
+festring dungeon::GetShortLevelDescription(ushort Index)
 {
   if(GetLevel(Index)->GetLevelScript()->GetShortDescription())
     return *GetLevel(Index)->GetLevelScript()->GetShortDescription();

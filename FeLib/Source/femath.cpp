@@ -334,20 +334,6 @@ bool femath::Clip(ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY
   return short(Width) > 0 && short(Height) > 0;
 }
 
-/* This allows ordering of POD objects whose structure members are not aligned */
-
-bool femath::CompareBits(const void* V1, const void* V2, ushort Size)
-{
-  const char* Ptr1 = reinterpret_cast<const char*>(V1);
-  const char* Ptr2 = reinterpret_cast<const char*>(V2);
-
-  for(ushort c = 0; c < Size; ++c, ++Ptr1, ++Ptr2)
-    if(*Ptr1 != *Ptr2)
-      return *Ptr1 < *Ptr2;
-
-  return false;
-}
-
 void femath::SaveSeed()
 {
   mtib = mti;
@@ -367,7 +353,7 @@ void femath::LoadSeed()
 void ReadData(interval& I, inputfile& SaveFile)
 {
   I.Min = SaveFile.ReadNumber(HIGHEST, true);
-  std::string Word;
+  festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == ";" || Word == ",")
@@ -375,7 +361,7 @@ void ReadData(interval& I, inputfile& SaveFile)
   else if(Word == ":")
     I.Max = Max(SaveFile.ReadNumber(), I.Min);
   else
-    ABORT("Odd interval terminator %s detected, file %s line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+    ABORT("Odd interval terminator %s detected, file %s line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 void ReadData(region& R, inputfile& SaveFile)

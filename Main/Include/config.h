@@ -5,15 +5,15 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "typedef.h"
+
+class festring;
 
 class configuration
 {
  public:
-  static const std::string& GetDefaultName() { return DefaultName; }
-  static void SetDefaultName(const std::string&);
+  static const festring& GetDefaultName() { return DefaultName; }
+  static void SetDefaultName(const festring&);
   static ushort GetAutoSaveInterval() { return AutoSaveInterval; }
   static void SetAutoSaveInterval(long);
   static void EditContrast(short);
@@ -41,12 +41,12 @@ class configuration
   static ulong ApplyContrastTo(ulong);
   static void SetLookZoom(bool What) { LookZoom = What; }
   static bool GetLookZoom() { return LookZoom; }
-  static const std::string& GetDefaultPetName() { return DefaultPetName; }
-  static void SetDefaultPetName(const std::string&);
+  static const festring& GetDefaultPetName() { return DefaultPetName; }
+  static void SetDefaultPetName(const festring&);
  private:
   static void ContrastHandler(long);
-  static std::string DefaultName;
-  static std::string DefaultPetName;
+  static festring DefaultName;
+  static festring DefaultPetName;
   static ushort AutoSaveInterval;
   static ushort Contrast;
   static bool AutoDropLeftOvers;

@@ -6,28 +6,29 @@
 #endif
 
 #include <vector>
-#include <string>
 
-#include "typedef.h"
+#include "festring.h"
+
+/* HIGH_SCORE_FILENAME defined in configure.in in Linux */
 
 #if (defined(WIN32) || defined(__DJGPP__)) && !defined(HIGH_SCORE_FILENAME)
-#define HIGH_SCORE_FILENAME "HScore.dat"
+#define HIGH_SCORE_FILENAME CONST_S("HScore.dat")
 #endif
 
-// HIGH_SCORE_FILENAME defined in configure.in in Linux
+class festring;
 
 class highscore
 {
  public:
-  highscore(const std::string& = HIGH_SCORE_FILENAME);
-  bool Add(long, const std::string&);
+  highscore(const festring& = HIGH_SCORE_FILENAME);
+  bool Add(long, const festring&);
   void Draw() const;
-  void Save(const std::string& = HIGH_SCORE_FILENAME) const;
-  void Load(const std::string& = HIGH_SCORE_FILENAME);
+  void Save(const festring& = HIGH_SCORE_FILENAME) const;
+  void Load(const festring& = HIGH_SCORE_FILENAME);
   bool LastAddFailed() const { return LastAdd == 100; }
   void AddToFile(highscore*) const;
  private:
-  std::vector<std::string> Entry;
+  std::vector<festring> Entry;
   std::vector<long> Score;
   uchar LastAdd;
 };

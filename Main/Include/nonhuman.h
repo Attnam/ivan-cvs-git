@@ -60,7 +60,7 @@ class ABSTRACT_CHARACTER
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual void RaiseStats();
   virtual void LowerStats();
-  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
  protected:
   ushort Strength;

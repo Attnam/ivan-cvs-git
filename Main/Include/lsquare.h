@@ -64,8 +64,8 @@ class lsquare : public square
   void Noxify();
   void NoxifyEmitter(vector2d);
   uchar CalculateBitMask(vector2d) const;
-  std::string GetEngraved() const { return Engraved; }
-  bool Engrave(const std::string& What) { Engraved = What; return true; }
+  festring GetEngraved() const { return Engraved; }
+  bool Engrave(const festring& What) { Engraved = What; return true; }
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
   void BeKicked(character*, item*, float, float, short, bool, bool);
@@ -120,18 +120,18 @@ class lsquare : public square
   void SpillFluid(character*, material*, ushort);
   bool IsDark() const;
   void AddItem(item*);
-  static bool (lsquare::*GetBeamEffect(ushort))(character*, const std::string&, uchar);
-  bool Polymorph(character*, const std::string&, uchar);
-  bool Strike(character*, const std::string&, uchar);
-  bool FireBall(character*, const std::string&, uchar);
-  bool Teleport(character*, const std::string&, uchar);
-  bool Haste(character*, const std::string&, uchar);
-  bool Slow(character*, const std::string&, uchar);
-  bool Resurrect(character*, const std::string&, uchar);
-  bool Invisibility(character*, const std::string&, uchar);
-  bool Clone(character*, const std::string&, uchar);
-  bool Lightning(character*, const std::string&, uchar);
-  bool DoorCreation(character*, const std::string&, uchar);
+  static bool (lsquare::*GetBeamEffect(ushort))(character*, const festring&, uchar);
+  bool Polymorph(character*, const festring&, uchar);
+  bool Strike(character*, const festring&, uchar);
+  bool FireBall(character*, const festring&, uchar);
+  bool Teleport(character*, const festring&, uchar);
+  bool Haste(character*, const festring&, uchar);
+  bool Slow(character*, const festring&, uchar);
+  bool Resurrect(character*, const festring&, uchar);
+  bool Invisibility(character*, const festring&, uchar);
+  bool Clone(character*, const festring&, uchar);
+  bool Lightning(character*, const festring&, uchar);
+  bool DoorCreation(character*, const festring&, uchar);
   stack* GetFirstSideStackUnderAttack(uchar) const;
   stack* GetSecondSideStackUnderAttack(uchar) const;
   uchar GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
@@ -141,7 +141,7 @@ class lsquare : public square
   void GetHitByExplosion(const explosion*);
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
-  bool LowerEnchantment(character*, const std::string&, uchar);
+  bool LowerEnchantment(character*, const festring&, uchar);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
   bool IsFlyable() const { return !OLTerrain || OLTerrain->IsWalkable(); }
@@ -150,7 +150,7 @@ class lsquare : public square
   virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
   void SignalSmokeAlphaChange(short);
   void ShowSmokeMessage() const;
-  virtual void DisplaySmokeInfo(std::string&) const;
+  virtual void DisplaySmokeInfo(festring&) const;
   bool IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
   bool IsDangerous(character*) const;
@@ -163,7 +163,7 @@ class lsquare : public square
   stack* Stack;
   stack* SideStack[4];
   ulong Emitation;
-  std::string Engraved;
+  festring Engraved;
   uchar RoomIndex;
   ulong TemporaryEmitation;
   fluid* Fluid;

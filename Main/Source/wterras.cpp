@@ -75,7 +75,7 @@ bool attnam::Enter(bool DirectionUp) const
     }
 
   if(configuration::GetAutoSaveInterval())
-    game::Save(game::GetAutoSaveFileName().c_str());
+    game::Save(game::GetAutoSaveFileName().CStr());
 
   return true;
 }

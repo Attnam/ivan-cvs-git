@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "vector2d.h"
 
 class level;
@@ -14,6 +12,7 @@ class outputfile;
 class inputfile;
 class dungeonscript;
 class levelscript;
+class festring;
 
 class dungeon
 {
@@ -22,8 +21,8 @@ class dungeon
   dungeon(uchar);
   ~dungeon();
   bool PrepareLevel(ushort, bool = true);
-  void SaveLevel(const std::string&, ushort, bool = true);
-  level* LoadLevel(const std::string&, ushort);
+  void SaveLevel(const festring&, ushort, bool = true);
+  level* LoadLevel(const festring&, ushort);
   level* GetLevel(ushort Index) const { return Level[Index]; }
   ushort GetLevels() const;
   void Save(outputfile&) const;
@@ -33,8 +32,8 @@ class dungeon
   const levelscript* GetLevelScript(ushort);
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
-  std::string GetLevelDescription(ushort);
-  std::string GetShortLevelDescription(ushort);
+  festring GetLevelDescription(ushort);
+  festring GetShortLevelDescription(ushort);
  private:
   void Initialize();
   const dungeonscript* DungeonScript;

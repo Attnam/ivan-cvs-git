@@ -2,7 +2,7 @@
 
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
 void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
-void door::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
+void door::AddPostFix(festring& String) const { AddLockPostFix(String, LockType); }
 vector2d door::GetBitmapPos(ushort Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
@@ -21,7 +21,7 @@ const char* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
 const char* liquidterrain::ScoreEntry() const { return "drowned"; }
 vector2d liquidterrain::GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
 
-std::string sign::GetText() const { return Text; }
+festring sign::GetText() const { return Text; }
 
 bool door::Open(character* Opener)
 {
@@ -232,11 +232,11 @@ bool throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!");
+      game::TextScreen(CONST_S("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!"));
       game::GetCurrentArea()->SendNewDrawRequest();
       game::DrawEverything();
       PLAYER->ShowAdventureInfo();
-      PLAYER->AddScoreEntry("became the new high priest of the Great Frog", 5, false);
+      PLAYER->AddScoreEntry(CONST_S("became the new high priest of the Great Frog"), 5, false);
       game::End();
       return true;
     }
@@ -273,7 +273,7 @@ void altar::ReceiveVomit(character* Who)
     GetMasterGod()->PlayerVomitedOnAltar();
 }
 
-bool door::AddAdjective(std::string& String, bool Articled) const
+bool door::AddAdjective(festring& String, bool Articled) const
 {
   if(Articled)
     String << (Opened ? "an open" : "a closed");
@@ -283,7 +283,7 @@ bool door::AddAdjective(std::string& String, bool Articled) const
   if(IsLocked())
     String << ", locked ";
   else
-    String << " ";
+    String << ' ';
 
   return true;
 }
@@ -312,7 +312,7 @@ bool fountain::Drink(character* Drinker)
 	    return false;
 	  else
 	    {
-	      if(!game::BoolQuestion("Do you want to drink from the fountain? [y/N]"))
+	      if(!game::BoolQuestion(CONST_S("Do you want to drink from the fountain? [y/N]")))
 		return false;
 	    }
 
@@ -344,7 +344,7 @@ bool fountain::Drink(character* Drinker)
 
 		  while(true)
 		    {
-		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+		      festring Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
 		      item* TempItem = protosystem::CreateItem(Temp, Drinker->IsPlayer());
 
 		      if(TempItem)
@@ -423,7 +423,7 @@ bool fountain::Drink(character* Drinker)
 			    Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
 
 			    if(Monster->CanBeSeenByPlayer())
-			      ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), festring::CapitalizeCopy(Monster->GetPersonalPronoun()).c_str());
+			      ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
 			  }
 
 			break;
@@ -734,11 +734,11 @@ void fountain::GenerateMaterials()
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
 }
 
-bool fountain::AddAdjective(std::string& String, bool Articled) const
+bool fountain::AddAdjective(festring& String, bool Articled) const
 {
   if(!GetContainedMaterial())
     {
-      String += Articled ? "a dried out " : "dried out ";
+      String << (Articled ? "a dried out " : "dried out ");
       return true;
     }
   else
@@ -778,7 +778,7 @@ bool link::Enter(bool DirectionUp) const
     {
       ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
 
-      if(!game::BoolQuestion("Continue? [y/N]"))
+      if(!game::BoolQuestion(CONST_S("Continue? [y/N]")))
 	return false;
     }
 
@@ -787,7 +787,7 @@ bool link::Enter(bool DirectionUp) const
       {
 	ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
-	if(!game::BoolQuestion("Continue anyway? [y/N]"))
+	if(!game::BoolQuestion(CONST_S("Continue anyway? [y/N]")))
 	  return false;
       }
     else
@@ -801,7 +801,7 @@ bool link::Enter(bool DirectionUp) const
     {
       ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
 
-      if(!game::BoolQuestion("Continue? [y/N]"))
+      if(!game::BoolQuestion(CONST_S("Continue? [y/N]")))
 	return false;
     }
 
@@ -856,7 +856,7 @@ void boulder::Break()
   olterrain::Break();
 }
 
-void sign::AddPostFix(std::string& String) const
+void sign::AddPostFix(festring& String) const
 {
   String << " with text \"" << Text << "\"";
 }
@@ -864,7 +864,7 @@ void sign::AddPostFix(std::string& String) const
 void sign::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("There's a sign here saying: \"%s\"", Text.c_str());
+    ADD_MESSAGE("There's a sign here saying: \"%s\"", Text.CStr());
 }
 
 void sign::Save(outputfile& SaveFile) const
@@ -902,10 +902,9 @@ bool olterraincontainer::Open(character* Opener)
   if(!Opener->IsPlayer())
     return false;
 
-  std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
   bool Success;
 
-  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
+  switch(game::KeyQuestion(CONST_S("Do you want to (t)ake something from or (p)ut something in this container? [t,p]"), KEY_ESC, 3, 't', 'p', KEY_ESC))
     {
     case 't':
       Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
@@ -1085,4 +1084,3 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
   ToBeDipped->DipInto(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway()), Who);
   return true;
 }
-

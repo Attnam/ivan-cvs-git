@@ -7,11 +7,11 @@
 
 #include <map>
 #include <vector>
-#include <string>
 
 #include "vector2d.h"
 #include "felibdef.h"
 #include "femath.h"
+#include "festring.h"
 
 #ifndef LIGHT_BORDER
 #define LIGHT_BORDER 80
@@ -35,9 +35,10 @@ class square;
 class wsquare;
 class lsquare;
 class bitmap;
+class festring;
 struct explosion;
 
-typedef std::map<std::string, long> valuemap;
+typedef std::map<festring, long> valuemap;
 
 struct homedata
 {
@@ -58,7 +59,7 @@ struct configid
 {
   configid() { }
   configid(ushort Type, ushort Config) : Type(Type), Config(Config) { }
-  bool operator<(const configid&) const;
+  bool operator<(const configid& CI) const { return memcmp(this, &CI, sizeof(configid)) < 0; }
   ushort Type NO_ALIGNMENT;
   ushort Config NO_ALIGNMENT;
 };
@@ -89,7 +90,7 @@ typedef std::map<configid, ushort> massacremap;
 class game
 {
  public:
-  static bool Init(const std::string& = "");
+  static bool Init(const festring& = CONST_S(""));
   static void DeInit();
   static void Run();
   static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
@@ -112,10 +113,10 @@ class game
   static void InitLuxTable();
   static void DeInitLuxTable();
   static const char* Insult();
-  static bool BoolQuestion(const std::string&, int = 0, int = 0);
+  static bool BoolQuestion(const festring&, int = 0, int = 0);
   static void DrawEverything();
-  static bool Save(const std::string& = SaveName(""));
-  static uchar Load(const std::string& = SaveName(""));
+  static bool Save(const festring& = SaveName(""));
+  static uchar Load(const festring& = SaveName(""));
   static bool IsRunning() { return Running; }
   static void SetIsRunning(bool What) { Running = What; }
   static bool EmitationHandler(long, long);
@@ -130,7 +131,7 @@ class game
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 10);
   static vector2d GetDirectionVectorForKey(int);
-  static std::string SaveName(const std::string& = "");
+  static festring SaveName(const festring& = CONST_S(""));
   static bool EyeHandler(long, long);
   static long GodScore();
   static void ShowLevelMessage();
@@ -140,8 +141,8 @@ class game
   static long GetBaseScore() { return BaseScore; }
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
-  static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
-  static uchar DirectionQuestion(const std::string&, bool = true, bool = false);
+  static festring GetAutoSaveFileName() { return AutoSaveFileName; }
+  static uchar DirectionQuestion(const festring&, bool = true, bool = false);
   static void RemoveSaves(bool = true);
   static bool IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(bool What) { InWilderness = What; }
@@ -157,8 +158,8 @@ class game
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoEvilDeed(ushort);
-  static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
-  static worldmap* LoadWorldMap(const std::string& = SaveName(""));
+  static void SaveWorldMap(const festring& = SaveName(""), bool = false);
+  static worldmap* LoadWorldMap(const festring& = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID() { return NextItemID++; }
@@ -166,8 +167,8 @@ class game
   static uchar GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool);
-  static long NumberQuestion(const std::string&, vector2d, ushort);
+  static festring StringQuestion(const festring&, vector2d, ushort, ushort, ushort, bool);
+  static long NumberQuestion(const festring&, vector2d, ushort);
   static void LOSTurn();
   static ulong GetLOSTurns() { return LOSTurns; }
   static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
@@ -176,27 +177,27 @@ class game
   static void SetPetrus(character* What) { Petrus = What; }
   static bool HandleQuitMessage();
   static uchar GetDirectionForVector(vector2d);
-  static std::string GetVerbalPlayerAlignment();
+  static const char* GetVerbalPlayerAlignment();
   static void CreateGods();
   static ushort GetScreenXSize() { return 42; }
   static ushort GetScreenYSize() { return 26; }
   static vector2d CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
   static void BusyAnimation();
   static void BusyAnimation(bitmap*);
-  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
+  static vector2d PositionQuestion(const festring&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
-  static int AskForKeyPress(const std::string&);
+  static int AskForKeyPress(const festring&);
   static bool AnimationController();
   static gamescript* GetGameScript() { return GameScript; }
   static void InitScript();
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
+  static void TextScreen(const festring&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
   static vector2d GetCursorPos() { return CursorPos; }
   static void SetCursorPos(vector2d What) { CursorPos = What; }
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
-  static int KeyQuestion(const std::string&, int, int, ...);
+  static int KeyQuestion(const festring&, int, int, ...);
   static void LookKeyHandler(vector2d, int);
   static void NameKeyHandler(vector2d, int);
   static const char* GetLockDescription(ushort Index) { return LockDescription[Index]; }
@@ -204,11 +205,11 @@ class game
   static uchar CalculateRoughDirection(vector2d);
   static void InstallCurrentEmitter(vector2d, ulong);
   static void InstallCurrentNoxifier(vector2d Pos) { CurrentEmitterPos = Pos; }
-  static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
+  static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "", const std::string& = "");
+  static int Menu(bitmap*, vector2d, const festring&, const festring&, ushort, const festring& = "", const festring& = "");
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static bool TryTravel(uchar, uchar, uchar, bool = false);
@@ -236,9 +237,9 @@ class game
   static void SetStoryState(uchar What) { StoryState = What; }
   static void SetIsInGetCommand(bool What) { InGetCommand = What; }
   static bool IsInGetCommand() { return InGetCommand; }
-  static std::string GetHomeDir();
-  static std::string GetSaveDir();
-  static std::string GetGameDir();
+  static festring GetHomeDir();
+  static festring GetSaveDir();
+  static festring GetGameDir();
   static bool ExplosionHandler(long, long);
   static ulong CreateNewExplosionID() { return NextExplosionID++; }
   static void SetCurrentExplosion(const explosion* What) { CurrentExplosion = What; }
@@ -248,11 +249,11 @@ class game
   static void SetCurrentLevel(level* What) { CurrentLevel = What; }
   static void SetCurrentWSquareMap(wsquare*** What) { CurrentWSquareMap = What; }
   static void SetCurrentLSquareMap(lsquare*** What) { CurrentLSquareMap = What; }
-  static const std::string& GetDefaultPolymorphTo() { return DefaultPolymorphTo; }
-  static void SetDefaultPolymorphTo(const std::string What) { DefaultPolymorphTo = What; }
+  static const festring& GetDefaultPolymorphTo() { return DefaultPolymorphTo; }
+  static void SetDefaultPolymorphTo(const festring& What) { DefaultPolymorphTo = What; }
   static void SignalDeath(const character*, const character*);
   static void DisplayMassacreLists();
-  static void DisplayMassacreList(const massacremap&, const std::string&, ulong);
+  static void DisplayMassacreList(const massacremap&, const char*, ulong);
   static bool MassacreListsEmpty();
 #ifdef WIZARD
   static void ActivateWizardMode() { WizardMode = true; }
@@ -282,7 +283,7 @@ class game
   static vector2d Camera;
   static long BaseScore;
   static ulong Ticks;
-  static std::string AutoSaveFileName;
+  static festring AutoSaveFileName;
   static bool InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
@@ -326,7 +327,7 @@ class game
   static level* CurrentLevel;
   static wsquare*** CurrentWSquareMap;
   static lsquare*** CurrentLSquareMap;
-  static std::string DefaultPolymorphTo;
+  static festring DefaultPolymorphTo;
   static massacremap PlayerMassacreMap;
   static massacremap PetMassacreMap;
   static massacremap MiscMassacreMap;

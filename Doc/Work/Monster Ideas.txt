@@ -134,5 +134,10 @@ Hydra
 
 	Attacks everyone around, like Elpuri.
 
+Wumpus
+
+	Appears randomly for a short time on mountanous areas. Pays you something if you catch it.
+
 Mummy
-	With the wrapping
+
+	With the wrapping.

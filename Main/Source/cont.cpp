@@ -41,8 +41,8 @@ void continent::GenerateInfo()
   for(ulong c = 0; c < Member.size(); ++c)
     ++GTerrainAmount[TypeBuffer[Member[c].X][Member[c].Y]];
 
-  Name = "number ";
-  Name += Index;
+  Name = CONST_S("number ");
+  Name << Index;
 }
 
 vector2d continent::GetRandomMember(ushort Type)

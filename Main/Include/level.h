@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "area.h"
+#include "festring.h"
 
 class levelscript;
 class roomscript;
@@ -21,7 +22,7 @@ class room;
 struct explosion
 {
   character* Terrorist;
-  std::string DeathMsg;
+  festring DeathMsg;
   vector2d Pos;
   ulong ID;
   ushort Strength;
@@ -54,8 +55,8 @@ class level : public area
   void CreateItems(ushort);
   bool MakeRoom(const roomscript*);
   void ParticleTrail(vector2d, vector2d);
-  std::string GetLevelMessage() { return LevelMessage; }
-  void SetLevelMessage(const std::string& What) { LevelMessage = What; }
+  festring GetLevelMessage() { return LevelMessage; }
+  void SetLevelMessage(const festring& What) { LevelMessage = What; }
   void SetLevelScript(const levelscript* What) { LevelScript = What; }
   bool IsOnGround() const;
   const levelscript* GetLevelScript() const { return LevelScript; }
@@ -65,7 +66,7 @@ class level : public area
   room* GetRoom(ushort) const;
   void SetRoom(ushort, room*);
   void AddRoom(room*);
-  void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
+  void Explosion(character*, const festring&, vector2d, ushort, bool = true);
   bool CollectCreatures(std::vector<character*>&, character*, bool);
   void ApplyLSquareScript(const squarescript*);
   virtual void Draw(bool) const;
@@ -73,10 +74,10 @@ class level : public area
   vector2d GetEntryPos(const character*, uchar) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, const roomscript*, room*, vector2d, vector2d);
   void Reveal();
-  static void (level::*GetBeam(ushort))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
-  void ParticleBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
-  void LightningBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
-  void ShieldBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
+  static void (level::*GetBeam(ushort))(character*, const festring&, vector2d, ulong, uchar, uchar, uchar);
+  void ParticleBeam(character*, const festring&, vector2d, ulong, uchar, uchar, uchar);
+  void LightningBeam(character*, const festring&, vector2d, ulong, uchar, uchar, uchar);
+  void ShieldBeam(character*, const festring&, vector2d, ulong, uchar, uchar, uchar);
   dungeon* GetDungeon() const { return Dungeon; }
   void SetDungeon(dungeon* What) { Dungeon = What; }
   uchar GetIndex() const { return Index; }
@@ -95,7 +96,7 @@ class level : public area
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
   lsquare*** Map;
   const levelscript* LevelScript;
-  std::string LevelMessage;
+  festring LevelMessage;
   std::vector<vector2d> Door;
   std::vector<room*> Room;
   uchar IdealPopulation;

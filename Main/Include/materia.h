@@ -5,11 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <map>
 
 #include "typedef.h"
 #include "ivandef.h"
+#include "festring.h"
 
 #define MAKE_MATERIAL material::MakeMaterial
 
@@ -19,6 +19,7 @@ class entity;
 class outputfile;
 class inputfile;
 class material;
+class festring;
 template <class type> class databasecreator;
 
 struct materialdatabase
@@ -36,9 +37,9 @@ struct materialdatabase
   bool IsAlive;
   bool IsFlammable;
   bool IsExplosive;
-  std::string NameStem;
-  std::string AdjectiveStem;
-  std::string Article;
+  festring NameStem;
+  festring AdjectiveStem;
+  festring Article;
   uchar Effect;
   uchar ConsumeEndMessage;
   uchar HitMessage;
@@ -54,7 +55,7 @@ struct materialdatabase
   ushort DigProductMaterial;
   ushort ConsumeWisdomLimit;
   uchar AttachedGod;
-  std::string BreatheMessage;
+  festring BreatheMessage;
   bool EffectIsGood;
 };
 
@@ -89,8 +90,8 @@ class material
   material(ushort NewConfig, ulong InitVolume, bool Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material(donothing) : MotherEntity(0) { }
   virtual ~material() { }
-  void AddName(std::string&, bool = false, bool = true) const;
-  std::string GetName(bool = false, bool = true) const;
+  void AddName(festring&, bool = false, bool = true) const;
+  festring GetName(bool = false, bool = true) const;
   ulong GetVolume() const { return Volume; }
   ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
@@ -119,9 +120,9 @@ class material
   DATA_BASE_BOOL(IsAlive);
   DATA_BASE_BOOL(IsFlammable);
   virtual DATA_BASE_BOOL(IsExplosive);
-  DATA_BASE_VALUE(const std::string&, NameStem);
-  DATA_BASE_VALUE(const std::string&, AdjectiveStem);
-  DATA_BASE_VALUE(const std::string&, Article);
+  DATA_BASE_VALUE(const festring&, NameStem);
+  DATA_BASE_VALUE(const festring&, AdjectiveStem);
+  DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(uchar, Effect);
   DATA_BASE_VALUE(uchar, ConsumeEndMessage);
   DATA_BASE_VALUE(uchar, HitMessage);
@@ -164,7 +165,7 @@ class material
   virtual void SetSpoilCounter(ushort) { }
   virtual bool IsStupidToConsume();
   void EditVolume(long What) { SetVolume(Volume + What); }
-  DATA_BASE_VALUE(const std::string&, BreatheMessage);
+  DATA_BASE_VALUE(const festring&, BreatheMessage);
   bool BreatheEffect(character*);
  protected:
   virtual void VirtualConstructor(bool) { }

@@ -8,12 +8,12 @@
 #include "bodypart.h"
 #include "script.h"
 
-#define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).c_str()
-#define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).c_str()
-#define CHAR_OBJECT_PRONOUN GetObjectPronoun(true).c_str()
-#define CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW GetPersonalPronoun(false).c_str()
-#define CHAR_POSSESSIVE_PRONOUN_THIRD_PERSON_VIEW GetPossessivePronoun(false).c_str()
-#define CHAR_OBJECT_PRONOUN_THIRD_PERSON_VIEW GetObjectPronoun(false).c_str()
+#define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).CStr()
+#define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).CStr()
+#define CHAR_OBJECT_PRONOUN GetObjectPronoun(true).CStr()
+#define CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW GetPersonalPronoun(false).CStr()
+#define CHAR_POSSESSIVE_PRONOUN_THIRD_PERSON_VIEW GetPossessivePronoun(false).CStr()
+#define CHAR_OBJECT_PRONOUN_THIRD_PERSON_VIEW GetObjectPronoun(false).CStr()
 
 class go;
 class team;
@@ -47,7 +47,7 @@ struct characterdatabase
   ulong BloodColor;
   bool CanBeGenerated;
   uchar CriticalModifier;
-  std::string StandVerb;
+  festring StandVerb;
   bool CanOpen;
   bool CanBeDisplaced;
   ushort Frequency;
@@ -84,12 +84,12 @@ struct characterdatabase
   ushort LegSpecialColor;
   bool IsNameable;
   ulong BaseEmitation;
-  std::string Article;
-  std::string Adjective;
-  std::string AdjectiveArticle;
-  std::string NameSingular;
-  std::string NamePlural;
-  std::string PostFix;
+  festring Article;
+  festring Adjective;
+  festring AdjectiveArticle;
+  festring NameSingular;
+  festring NamePlural;
+  festring PostFix;
   uchar ArticleMode;
   bool IsAbstract;
   bool IsPolymorphable;
@@ -102,7 +102,7 @@ struct characterdatabase
   bool CanTalk;
   ulong ClassStates;
   bool CanBeWished;
-  std::vector<std::string> Alias;
+  std::vector<festring> Alias;
   bool CreateDivineConfigurations;
   bool CreateGolemMaterialConfigurations;
   contentscript<item> Helmet;
@@ -127,13 +127,13 @@ struct characterdatabase
   bool CanBeCloned;
   std::list<contentscript<item> > Inventory;
   ushort DangerModifier;
-  std::string DefaultName;
-  std::vector<std::string> FriendlyReplies;
-  std::vector<std::string> HostileReplies;
+  festring DefaultName;
+  std::vector<festring> FriendlyReplies;
+  std::vector<festring> HostileReplies;
   bool CanZap;
   ushort FleshMaterial;
   bool HasFeet;
-  std::string DeathMessage;
+  festring DeathMessage;
   bool IgnoreDanger;
   ushort HPRequirementForGeneration;
   bool IsExtraCoward;
@@ -187,7 +187,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  bool CheckDeath(const std::string&, const character*, bool = false);
+  bool CheckDeath(const festring&, const character*, bool = false);
   bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, bool = false) = 0;
   bool OpenPos(vector2d);
@@ -200,8 +200,8 @@ class character : public entity, public id
   bool HasPetrussNut() const;
   bool RemoveEncryptedScroll();
   bool IsPlayer() const { return Player; }
-  bool Engrave(const std::string&);
-  void AddScoreEntry(const std::string&, float = 1, bool = true) const;
+  bool Engrave(const festring&);
+  void AddScoreEntry(const festring&, float = 1, bool = true) const;
   long GetScore() const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
@@ -214,12 +214,12 @@ class character : public entity, public id
   ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
   ushort GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
   void AddMissMessage(const character*) const;
-  void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, ushort) const;
+  void AddPrimitiveHitMessage(const character*, const festring&, const festring&, ushort) const;
   void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
-  void Die(const character* = 0, const std::string& = "", bool = false);
+  void Die(const character* = 0, const festring& = CONST_S(""), bool = false);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
@@ -247,7 +247,7 @@ class character : public entity, public id
   bool StateIsActivated(ulong What) const { return TemporaryState & What || EquipmentState & What; }
   virtual bool Faint(ushort, bool = false);
   void SetTemporaryStateCounter(ulong, ushort);
-  void DeActivateVoluntaryAction(const std::string&);
+  void DeActivateVoluntaryAction(const festring&);
   void ActionAutoTermination();
   team* GetTeam() const { return Team; }
   void SetTeam(team*);
@@ -259,7 +259,7 @@ class character : public entity, public id
   void EditMoney(long What) { Money += What; }
   bool Displace(character*, bool = false);
   long GetStatScore() const;
-  bool CheckStarvationDeath(const std::string&);
+  bool CheckStarvationDeath(const festring&);
   void ShowNewPosInfo() const;
   void Hostility(character*);
   stack* GetGiftStack() const;
@@ -270,7 +270,7 @@ class character : public entity, public id
   bool ChangeRandomStat(short);
   ushort RandomizeReply(ulong&, ushort);
   virtual void CreateInitialEquipment(ushort);
-  void DisplayInfo(std::string&);
+  void DisplayInfo(festring&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   void TestWalkability();
   void EditAP(long);
@@ -295,14 +295,14 @@ class character : public entity, public id
   virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartIsVital(ushort) const { return true; }
   void RestoreBodyParts();
-  std::string GetAssignedName() const { return AssignedName; }
-  void SetAssignedName(const std::string& What) { AssignedName = What; }
-  std::string GetDescription(uchar) const;
-  std::string GetPersonalPronoun(bool = true) const;
-  std::string GetPossessivePronoun(bool = true) const;
-  std::string GetObjectPronoun(bool = true) const;
+  const festring& GetAssignedName() const { return AssignedName; }
+  void SetAssignedName(const festring& What) { AssignedName = What; }
+  festring GetDescription(uchar) const;
+  festring GetPersonalPronoun(bool = true) const;
+  festring GetPossessivePronoun(bool = true) const;
+  festring GetObjectPronoun(bool = true) const;
   virtual bool BodyPartCanBeSevered(ushort) const;
-  void AddName(std::string&, uchar) const;
+  void AddName(festring&, uchar) const;
   void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
@@ -371,7 +371,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(ulong, BloodColor);
   DATA_BASE_BOOL(CanBeGenerated);
   DATA_BASE_VALUE(uchar, CriticalModifier);
-  virtual DATA_BASE_VALUE(const std::string&, StandVerb);
+  virtual DATA_BASE_VALUE(const festring&, StandVerb);
   DATA_BASE_BOOL(CanOpen);
   DATA_BASE_BOOL(CanBeDisplaced);
   DATA_BASE_BOOL(CanWalk);
@@ -406,12 +406,12 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(ushort, LegSpecialColor);
   DATA_BASE_BOOL(IsNameable);
   virtual DATA_BASE_VALUE(ulong, BaseEmitation); // devirtualize ASAP
-  DATA_BASE_VALUE(const std::string&, Article);
-  DATA_BASE_VALUE(const std::string&, Adjective);
-  DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
-  DATA_BASE_VALUE(const std::string&, NameSingular);
-  DATA_BASE_VALUE(const std::string&, NamePlural);
-  DATA_BASE_VALUE(const std::string&, PostFix);
+  DATA_BASE_VALUE(const festring&, Article);
+  DATA_BASE_VALUE(const festring&, Adjective);
+  DATA_BASE_VALUE(const festring&, AdjectiveArticle);
+  DATA_BASE_VALUE(const festring&, NameSingular);
+  DATA_BASE_VALUE(const festring&, NamePlural);
+  DATA_BASE_VALUE(const festring&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_BOOL(CanZap);
   DATA_BASE_BOOL(IsPolymorphable);
@@ -423,7 +423,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanKick);
   DATA_BASE_BOOL(CanTalk);
   DATA_BASE_VALUE(ulong, ClassStates);
-  DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
+  DATA_BASE_VALUE(const std::vector<festring>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
   DATA_BASE_VALUE(short, AttributeBonus);
   DATA_BASE_VALUE(const std::vector<long>&, KnownCWeaponSkills);
@@ -432,12 +432,12 @@ class character : public entity, public id
   DATA_BASE_VALUE(ushort, LeftSWeaponSkillHits);
   DATA_BASE_VALUE(uchar, PanicLevel);
   DATA_BASE_BOOL(CanBeCloned);
-  DATA_BASE_VALUE(const std::string&, DefaultName);
-  DATA_BASE_VALUE(const std::vector<std::string>&, FriendlyReplies);
-  DATA_BASE_VALUE(const std::vector<std::string>&, HostileReplies);
+  DATA_BASE_VALUE(const festring&, DefaultName);
+  DATA_BASE_VALUE(const std::vector<festring>&, FriendlyReplies);
+  DATA_BASE_VALUE(const std::vector<festring>&, HostileReplies);
   DATA_BASE_VALUE(ushort, FleshMaterial);
   virtual DATA_BASE_BOOL(HasFeet);
-  virtual DATA_BASE_VALUE(const std::string&, DeathMessage);
+  virtual DATA_BASE_VALUE(const festring&, DeathMessage);
   DATA_BASE_BOOL(IsExtraCoward);
   DATA_BASE_BOOL(SpillsBlood);
   DATA_BASE_BOOL(HasEyes);
@@ -479,7 +479,7 @@ class character : public entity, public id
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
   ushort CheckForBlockWithArm(character*, item*, arm*, float, ushort, short, uchar);
-  void AddBlockMessage(const character*, const item*, const std::string&, bool) const;
+  void AddBlockMessage(const character*, const item*, const festring&, bool) const;
   character* GetPolymorphBackup() const { return PolymorphBackup; }
   void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
   cweaponskill* GetCWeaponSkill(ushort Index) const { return CWeaponSkill[Index]; }
@@ -604,11 +604,11 @@ class character : public entity, public id
   float GetRelativeDanger(const character*, bool = false) const;
   float GetTimeToDie(const character*, ushort, float, bool, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
-  virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
-  virtual std::string GetBodyPartName(ushort, bool = false) const;
+  virtual void AddSpecialEquipmentInfo(festring&, ushort) const { }
+  virtual festring GetBodyPartName(ushort, bool = false) const;
   item* SearchForItemWithID(ulong) const;
   bool ContentsCanBeSeenBy(const character*) const;
-  std::string GetBeVerb() const;
+  festring GetBeVerb() const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
   virtual bool SpecialUnarmedEffect(character*, uchar, uchar, bool) { return false; }
   virtual bool SpecialKickEffect(character*, uchar, uchar, bool) { return false; }
@@ -647,9 +647,8 @@ class character : public entity, public id
   bool IsDead() const;
   void AddOriginalBodyPartID(ushort, ulong);
   void AddToInventory(const std::list<contentscript<item> >&, ushort);
-  virtual void AddSpecialMovePenaltyInfo(felist&) const { }
   bool HasHadBodyPart(const item*) const;
-  void ProcessAndAddMessage(std::string) const;
+  void ProcessAndAddMessage(festring) const;
   virtual bool CheckZap();
   void SetEndurance(ushort);
   void SetPerception(ushort);
@@ -663,13 +662,13 @@ class character : public entity, public id
   void PrintEndConfuseMessage() const;
   vector2d ApplyStateModification(vector2d) const;
   void AddConfuseHitMessage() const;
-  item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
-  void SelectFromPossessions(itemvector&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
+  item* SelectFromPossessions(const festring&, bool (*)(const item*, const character*) = 0);
+  void SelectFromPossessions(itemvector&, const festring&, uchar, bool (*)(const item*, const character*) = 0);
   bool EquipsSomething(bool (*)(const item*, const character*) = 0);
   bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
-  virtual std::string& ProcessMessage(std::string&) const;
+  virtual festring& ProcessMessage(festring&) const;
   virtual bool IsHumanoid() const { return false; }
   long GetStuffScore() const;
   bool IsOnGround() const;
@@ -682,8 +681,8 @@ class character : public entity, public id
   void ParasitizedHandler();
   bool CanFollow() const;
   bool LeftOversAreUnique() const;
-  virtual std::string GetKillName() const;
-  std::string GetPanelName() const;
+  virtual festring GetKillName() const;
+  festring GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(ushort) const { return 0; }
   bool HealHitPoint();
@@ -716,7 +715,7 @@ class character : public entity, public id
 #ifdef WIZARD
   virtual void RaiseStats();
   virtual void LowerStats();
-  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const = 0;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
@@ -778,7 +777,7 @@ class character : public entity, public id
   ulong Money;
   std::list<character*>::iterator TeamIterator;
   characterslot* BodyPartSlot;
-  std::string AssignedName;
+  festring AssignedName;
   action* Action;
   ushort Config;
   const database* DataBase;

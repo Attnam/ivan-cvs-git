@@ -16,11 +16,11 @@
 #endif
 
 #ifdef LINUX
-#define CONFIG_FILENAME (std::string(getenv("HOME")) + "/.ivan.conf").c_str()
+#define CONFIG_FILENAME (festring(getenv("HOME")) + "/.ivan.conf").CStr()
 #endif
 
-std::string configuration::DefaultName;
-std::string configuration::DefaultPetName = "Kenny";
+festring configuration::DefaultName;
+festring configuration::DefaultPetName = CONST_S("Kenny");
 ushort configuration::AutoSaveInterval = 100;
 ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
@@ -40,8 +40,8 @@ void configuration::Save()
   if(!SaveFile.is_open())
     return;
 
-  SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
-  SaveFile << "DefaultPetName = \"" << DefaultPetName << "\";\n";
+  SaveFile << "DefaultName = \"" << DefaultName.CStr() << "\";\n";
+  SaveFile << "DefaultPetName = \"" << DefaultPetName.CStr() << "\";\n";
   SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
   SaveFile << "Contrast = " << Contrast << ";\n";
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
@@ -60,7 +60,7 @@ void configuration::Load()
   if(!SaveFile.IsOpen())
     return;
 
-  std::string Word;
+  festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
@@ -134,9 +134,9 @@ void configuration::ShowConfigScreen()
   ushort Chosen;
   bool BoolChange = false;
 
-  felist List("Which setting do you wish to configure?");
-  List.AddDescription("");
-  List.AddDescription("Setting                                    Value");
+  felist List(CONST_S("Which setting do you wish to configure?"));
+  List.AddDescription(CONST_S(""));
+  List.AddDescription(CONST_S("Setting                                    Value"));
 
   while(true)
     {
@@ -147,22 +147,22 @@ void configuration::ShowConfigScreen()
 	}
 
       List.Empty();
-      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHT_GRAY);
-      List.AddEntry(std::string("Starting pet's default name:            ") + (DefaultPetName.length() ? DefaultPetName : "-"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Player's default name:                  ") + (DefaultName.GetSize() ? DefaultName : "-"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Starting pet's default name:            ") + (DefaultPetName.GetSize() ? DefaultPetName : "-"), LIGHT_GRAY);
 
       if(AutoSaveInterval)
-	List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHT_GRAY);
+	List.AddEntry(CONST_S("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHT_GRAY);
       else
-	List.AddEntry(std::string("Autosave interval:                      disabled"), LIGHT_GRAY);
+	List.AddEntry(CONST_S("Autosave interval:                      disabled"), LIGHT_GRAY);
 
-      List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHT_GRAY);
-      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(std::string("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Contrast:                               ") + Contrast + "/100", LIGHT_GRAY);
+      List.AddEntry(CONST_S("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
 
 #ifndef __DJGPP__
-      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
 #endif
 
       if(game::IsRunning())
@@ -174,20 +174,19 @@ void configuration::ShowConfigScreen()
       switch(Chosen)
 	{
 	case 0:
-	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
+	  SetDefaultName(iosystem::StringQuestion(CONST_S("Set new default name (3-20 letters):"), QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
 	  BoolChange = false;
 	  break;
 	case 1:
-	  SetDefaultPetName(iosystem::StringQuestion("Set new default name for the starting pet (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
+	  SetDefaultPetName(iosystem::StringQuestion(CONST_S("Set new default name for the starting pet (3-20 letters):"), QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
 	  BoolChange = false;
 	  break;
-
 	case 2:
-	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::IsRunning()));
+	  SetAutoSaveInterval(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"), QuestionPos, WHITE, !game::IsRunning()));
 	  BoolChange = false;
 	  break;
 	case 3:
-	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
+	  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
 	  BoolChange = false;
 	  break;
 	case 4:
@@ -221,20 +220,20 @@ void configuration::ShowConfigScreen()
     }
 }
 
-void configuration::SetDefaultName(const std::string& What)
+void configuration::SetDefaultName(const festring& What)
 {
-  if(What.length())
+  if(What.GetSize())
     DefaultName = What;
   else
-    DefaultName.resize(0);
+    DefaultName.Empty();
 }
 
-void configuration::SetDefaultPetName(const std::string& What)
+void configuration::SetDefaultPetName(const festring& What)
 {
-  if(What.length())
+  if(What.GetSize())
     DefaultPetName = What;
   else
-    DefaultPetName.resize(0);
+    DefaultPetName.Empty();
 }
 
 void configuration::SetAutoSaveInterval(long What)
@@ -276,4 +275,3 @@ ulong configuration::ApplyContrastTo(ulong L)
 {
   return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
 }
-

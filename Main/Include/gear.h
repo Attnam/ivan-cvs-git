@@ -28,7 +28,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetMaterials() const { return 3; }
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual void Be();
@@ -47,7 +47,7 @@ class ITEM
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
@@ -192,7 +192,7 @@ class ABSTRACT_ITEM
   item,
  public:
   virtual ulong GetPrice() const;
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsArmor(const character*) const { return true; }
@@ -205,7 +205,7 @@ class ABSTRACT_ITEM
   virtual short GetCarryingBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
  protected:
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
   char Enchantment;
 );
@@ -219,7 +219,7 @@ class ITEM
   virtual bool IsBodyArmor(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
  protected:
-  virtual const std::string& GetNameSingular() const;
+  virtual const festring& GetNameSingular() const;
 );
 
 class ITEM
@@ -243,7 +243,7 @@ class ITEM
  public:
   virtual ulong GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual ushort GetBonus() const;
 );
 

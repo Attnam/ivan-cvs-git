@@ -76,7 +76,7 @@ INST_SCRIPT_MEMBER(short);
 INST_SCRIPT_MEMBER(ushort);
 INST_SCRIPT_MEMBER(ulong);
 INST_SCRIPT_MEMBER(vector2d);
-INST_SCRIPT_MEMBER(std::string);
+INST_SCRIPT_MEMBER(festring);
 INST_SCRIPT_MEMBER(std::vector<vector2d>);
 INST_SCRIPT_MEMBER(rect);
 INST_SCRIPT_MEMBER(interval);
@@ -95,9 +95,9 @@ INST_SCRIPT_MEMBER(itemcontentmap);
 INST_SCRIPT_MEMBER(glterraincontentmap);
 INST_SCRIPT_MEMBER(olterraincontentmap);
 
-bool script::ReadMember(inputfile& SaveFile, const std::string& Word)
+bool script::ReadMember(inputfile& SaveFile, const festring& Word)
 {
-  scriptmemberbase* Data = GetData(Word.c_str());
+  scriptmemberbase* Data = GetData(Word.CStr());
 
   if(Data)
     {
@@ -142,7 +142,7 @@ void posscript::InitDataMap()
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word;
+  static festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == "Pos")
@@ -184,11 +184,11 @@ void materialscript::InitDataMap()
 
 void materialscript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word;
+  static festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word == "=")
-    Word = SaveFile.ReadWord();
+    SaveFile.ReadWord(Word);
 
   valuemap::const_iterator i = game::GetGlobalValueMap().find(Word);
 
@@ -202,7 +202,7 @@ void materialscript::ReadFrom(inputfile& SaveFile)
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     if(!ReadMember(SaveFile, Word))
-      ABORT("Odd script term %s encountered in material script line %d!", Word.c_str(), SaveFile.TellLine());
+      ABORT("Odd script term %s encountered in material script line %d!", Word.CStr(), SaveFile.TellLine());
 }
 
 material* materialscript::Instantiate() const
@@ -235,10 +235,11 @@ basecontentscript::basecontentscript() : ContentType(0), Config(0), Random(false
 
 void basecontentscript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word = SaveFile.ReadWord();
+  static festring Word;
+  SaveFile.ReadWord(Word);
 
   if(Word == "=" || Word == ",")
-    Word = SaveFile.ReadWord();
+    SaveFile.ReadWord(Word);
 
   valuemap::const_iterator i = game::GetGlobalValueMap().find(Word);
 
@@ -248,7 +249,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 	MainMaterialHolder.SetMember(new materialscript);
 
       MainMaterialHolder.GetMember()->SetConfig(i->second);
-      Word = SaveFile.ReadWord();
+      SaveFile.ReadWord(Word);
       i = game::GetGlobalValueMap().find(Word);
 
       if(i != game::GetGlobalValueMap().end())
@@ -257,14 +258,14 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 	    SecondaryMaterialHolder.SetMember(new materialscript);
 
 	  SecondaryMaterialHolder.GetMember()->SetConfig(i->second);
-	  Word = SaveFile.ReadWord();
+	  SaveFile.ReadWord(Word);
 	}
     }
 
   if(Word == "Random")
     {
       Random = true;
-      Word = SaveFile.ReadWord();
+      SaveFile.ReadWord(Word);
     }
   else
     {
@@ -272,15 +273,15 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
       ContentType = SearchCodeName(Word);
 
       if(ContentType || Word == "0")
-	Word = SaveFile.ReadWord();
+	SaveFile.ReadWord(Word);
       else
-	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
     }
 
   if(Word == "(")
     {
       Config = SaveFile.ReadNumber();
-      Word = SaveFile.ReadWord();
+      SaveFile.ReadWord(Word);
     }
   else
     Config = 0;
@@ -289,11 +290,11 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	if(!ReadMember(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.CStr(), GetClassId(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
 
 scriptmemberbase* basecontentscript::GetData(const char* String)
@@ -367,17 +368,17 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
 
 template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(ushort) const;
 
-template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& String) const
+template <class type> ushort contentscripttemplate<type>::SearchCodeName(const festring& String) const
 {
   return protocontainer<type>::SearchCodeName(String);
 }
 
 /* GCC 2.952 SUCKS!!! IT MUST BURN!!! */
 
-template ushort contentscripttemplate<character>::SearchCodeName(const std::string&) const;
-template ushort contentscripttemplate<item>::SearchCodeName(const std::string&) const;
-template ushort contentscripttemplate<glterrain>::SearchCodeName(const std::string&) const;
-template ushort contentscripttemplate<olterrain>::SearchCodeName(const std::string&) const;
+template ushort contentscripttemplate<character>::SearchCodeName(const festring&) const;
+template ushort contentscripttemplate<item>::SearchCodeName(const festring&) const;
+template ushort contentscripttemplate<glterrain>::SearchCodeName(const festring&) const;
+template ushort contentscripttemplate<olterrain>::SearchCodeName(const festring&) const;
 
 const char* contentscript<character>::GetClassId() const { return "character"; }
 const char* contentscript<item>::GetClassId() const { return "item"; }
@@ -511,7 +512,7 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
   if(AttachedEntry)
     Instance->SetAttachedEntry(*AttachedEntry);
 
-  const std::string* Text = GetText();
+  const festring* Text = GetText();
 
   if(Text)
     Instance->SetText(*Text);
@@ -538,7 +539,7 @@ void squarescript::InitDataMap()
 
 void squarescript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word;
+  static festring Word;
   SaveFile.ReadWord(Word);
 
   if(Word != "=")
@@ -550,7 +551,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	if(!ReadMember(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in square script line %d!", Word.c_str(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in square script line %d!", Word.CStr(), SaveFile.TellLine());
     }
   else
     {
@@ -584,16 +585,16 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
     ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
   SymbolMap.insert(std::pair<char, contenttype>('.', contenttype()));
-  std::string Word1, Word2;
+  static festring Word1, Word2;
 
-  for(Word1 = SaveFile.ReadWord(); Word1 != "}"; Word1 = SaveFile.ReadWord())
+  for(SaveFile.ReadWord(Word1); Word1 != "}"; Word1 = SaveFile.ReadWord())
     {
       if(Word1 == "Types")
 	{
 	  if(SaveFile.ReadWord() != "{")
 	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
-	  for(Word2 = SaveFile.ReadWord(); Word2 != "}"; Word2 = SaveFile.ReadWord())
+	  for(SaveFile.ReadWord(Word2); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
 	      std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<char, contenttype>(Word2[0], contenttype()));
 
@@ -607,7 +608,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	}
 
       if(!ReadMember(SaveFile, Word1))
-	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.c_str(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.CStr(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
     }
 
   vector2d Size = *GetSize();
@@ -688,7 +689,7 @@ void roomscript::ReadFrom(inputfile& SaveFile)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in room script line %d!", SaveFile.TellLine());
 
-  std::string Word;
+  static festring Word;
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
@@ -700,7 +701,7 @@ void roomscript::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in room script line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in room script line %d!", Word.CStr(), SaveFile.TellLine());
     }
 }
 
@@ -760,7 +761,7 @@ void levelscript::ReadFrom(inputfile& SaveFile)
 	}
     }
 
-  std::string Word;
+  static festring Word;
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
@@ -784,7 +785,7 @@ void levelscript::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in level script line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in level script line %d!", Word.CStr(), SaveFile.TellLine());
 
       if(Word == "Size")
 	{
@@ -872,7 +873,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in dungeon script line %d!", SaveFile.TellLine());
 
-  std::string Word;
+  static festring Word;
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
@@ -912,7 +913,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in dungeon script line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in dungeon script line %d!", Word.CStr(), SaveFile.TellLine());
     }
 }
 
@@ -961,7 +962,7 @@ void teamscript::ReadFrom(inputfile& SaveFile)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in team script line %d!", SaveFile.TellLine());
 
-  std::string Word;
+  static festring Word;
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
@@ -975,7 +976,7 @@ void teamscript::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in team script line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in team script line %d!", Word.CStr(), SaveFile.TellLine());
     }
 }
 
@@ -1002,7 +1003,7 @@ void gamescript::InitDataMap()
 
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word;
+  static festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
@@ -1028,7 +1029,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 	}
 
       if(!ReadMember(SaveFile, Word))
-	ABORT("Odd script term %s encountered in game script line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in game script line %d!", Word.CStr(), SaveFile.TellLine());
     }
 }
 

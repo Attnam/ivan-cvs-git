@@ -9,8 +9,6 @@
 #include "SDL.h"
 #endif
 
-#include <string>
-
 #include "typedef.h"
 #include "felibdef.h"
 
@@ -21,6 +19,7 @@
 
 class bitmap;
 class colorizablebitmap;
+class festring;
 
 class graphics
 {
@@ -39,7 +38,7 @@ class graphics
   static ushort GetResX() { return ResX; }
   static ushort GetResY() { return ResY; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
-  static void LoadDefaultFont(const std::string&);
+  static void LoadDefaultFont(const festring&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
  private:

@@ -43,9 +43,9 @@ class stack
   ushort GetVisibleItems(const character*) const;
   ushort GetItems(const character*, bool) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(itemvector&, const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(itemvector&, stack*, const character*, const std::string&, const std::string&, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  item* DrawContents(const character*, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(itemvector&, const character*, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
   item* MoveItem(stackslot*, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);
@@ -63,7 +63,7 @@ class stack
   void ReceiveDamage(character*, ushort, ushort);
   void TeleportRandomly(ushort = 0xFFFF);
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, const character*, const std::string&, uchar, bool (*)(const item*, const character*)) const;
+  void AddContentsToList(felist&, const character*, const festring&, uchar, bool (*)(const item*, const character*)) const;
   ushort SearchChosen(itemvector&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
   bool IsOnGround() const;
   bool RaiseTheDead(character*);
@@ -94,8 +94,8 @@ class stack
   void ReceiveFluidSpill(material*);
   static ushort GetSelected() { return Selected; }
   static void SetSelected(ushort What) { Selected = What; }
-  bool TakeSomethingFrom(character*, const std::string);
-  bool PutSomethingIn(character*, const std::string, ulong, ulong);
+  bool TakeSomethingFrom(character*, const festring&);
+  bool PutSomethingIn(character*, const festring&, ulong, ulong);
   bool IsVisible() const { return !MotherEntity; }
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;

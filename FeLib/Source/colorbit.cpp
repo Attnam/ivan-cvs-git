@@ -30,12 +30,12 @@ void colorizablebitmap::Roll(vector2d Pos, ushort Width, ushort Height, vector2d
 void colorizablebitmap::Roll(ushort X, ushort Y, vector2d BlitSize, vector2d Move) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
 void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, vector2d Move) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
 
-colorizablebitmap::colorizablebitmap(const std::string& FileName)
+colorizablebitmap::colorizablebitmap(const festring& FileName)
 {
-  inputfile File(FileName.c_str(), 0, false);
+  inputfile File(FileName.CStr(), 0, false);
 
   if(!File.IsOpen())
-    ABORT("Bitmap %s not found!", FileName.c_str());
+    ABORT("Bitmap %s not found!", FileName.CStr());
 
   File.SeekPosEnd(-768);
   Palette = new uchar[768];
@@ -79,7 +79,7 @@ colorizablebitmap::~colorizablebitmap()
 
 /* A lousy bitmap saver that uses the pcx format but doesn't do any compression. */
 
-void colorizablebitmap::Save(const std::string& FileName)
+void colorizablebitmap::Save(const festring& FileName)
 {
   char PCXHeader[128];
   memset(PCXHeader, 0, 128);

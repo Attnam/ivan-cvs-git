@@ -1,7 +1,7 @@
 /* Compiled through itemset.cpp */
 
-const std::string ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
-const std::string StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
+const char* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
+const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
 itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<item>::Add(this); }
 
@@ -380,12 +380,12 @@ bool item::CanBeSeenBy(const character* Who) const
   return (Who->IsPlayer() && game::GetSeeWholeMapCheatMode()) || (Slot && Slot->CanBeSeenBy(Who));
 }
 
-std::string item::GetDescription(uchar Case) const
+festring item::GetDescription(uchar Case) const
 {
   if(CanBeSeenByPlayer())
     return GetName(Case);
   else
-    return "something";
+    return CONST_S("something");
 }
 
 void item::SignalVolumeAndWeightChange()
@@ -457,13 +457,13 @@ item* item::Duplicate() const
   return Clone;
 }
 
-void item::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
+void item::AddInventoryEntry(const character*, festring& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
     {
-      Entry << Amount << " ";
+      Entry << Amount << ' ';
       AddName(Entry, PLURAL);
     }
 
@@ -511,10 +511,10 @@ void itemdatabase::InitDefaults(ushort Config)
 
   if(Config & BROKEN)
     {
-      if(Adjective.length())
-	Adjective.insert(0, "broken ");
+      if(Adjective.GetSize())
+	Adjective.Insert(0, "broken ");
       else
-	Adjective = "broken";
+	Adjective = CONST_S("broken");
 
       FormModifier >>= 2;
       StrengthModifier >>= 1;
@@ -523,7 +523,7 @@ void itemdatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
 }
 
 ulong item::GetNutritionValue() const
@@ -597,7 +597,7 @@ void item::Break(character* Breaker)
   SendToHell();
 
   if(PLAYER->Equips(Broken))
-    game::AskForKeyPress("Equipment broken! [press any key to continue]");
+    game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
 }
 
 void item::Be()
@@ -698,7 +698,7 @@ void item::ResetSpoiling()
       GetMaterial(c)->ResetSpoiling();
 }
 
-const std::string& item::GetBaseToHitValueDescription() const
+const char* item::GetBaseToHitValueDescription() const
 {
   if(GetBaseToHitValue() < 10)
     return ToHitValueDescription[Min<ushort>(GetBaseToHitValue(), 6)];
@@ -706,7 +706,7 @@ const std::string& item::GetBaseToHitValueDescription() const
     return ToHitValueDescription[7];
 }
 
-const std::string& item::GetStrengthValueDescription() const
+const char* item::GetStrengthValueDescription() const
 {
   ushort SV = GetStrengthValue();
 
@@ -782,24 +782,24 @@ bool item::IsStupidToConsume() const
 
 void item::AddAttackInfo(felist& List) const
 {
-  std::string Entry(40, ' ');
+  festring Entry(40, ' ');
   Entry << int(GetWeight());
-  Entry.resize(50, ' ');
+  Entry.Resize(50, ' ');
   Entry << int(GetSize());
-  Entry.resize(60, ' ');
+  Entry.Resize(60, ' ');
   Entry << int(GetStrengthRequirement());
-  Entry.resize(70, ' ');
+  Entry.Resize(70, ' ');
   Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
   List.AddEntry(Entry, LIGHT_GRAY);
 }
 
 void item::AddMiscellaneousInfo(felist& List) const
 {
-  std::string Entry(40, ' ');
+  festring Entry(40, ' ');
   Entry << int(GetTruePrice());
-  Entry.resize(55, ' ');
+  Entry.Resize(55, ' ');
   Entry << int(GetOfferValue(0));
-  Entry.resize(70, ' ');
+  Entry.Resize(70, ' ');
   Entry << int(GetNutritionValue());
   List.AddEntry(Entry, LIGHT_GRAY);
 }

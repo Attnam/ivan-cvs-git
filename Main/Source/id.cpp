@@ -4,15 +4,15 @@
 #include "festring.h"
 #include "ivandef.h"
 
-void id::AddNameSingular(std::string& String, bool Articled) const
+void id::AddNameSingular(festring& String, bool Articled) const
 {
   if(Articled)
-    String << GetArticle() << " ";
+    String << GetArticle() << ' ';
 
   String << GetNameSingular();
 }
 
-void id::AddName(std::string& Name, uchar Case) const
+void id::AddName(festring& Name, uchar Case) const
 {
   bool Articled;
 
@@ -38,14 +38,15 @@ void id::AddName(std::string& Name, uchar Case) const
   AddPostFix(Name);
 }
 
-std::string id::GetName(uchar Case) const
+festring id::GetName(uchar Case) const
 {
-  std::string Name;
+  static festring Name;
+  Name.Empty();
   AddName(Name, Case);
   return Name;
 }
 
-void id::AddName(std::string& Name, uchar Case, ushort Amount) const
+void id::AddName(festring& Name, uchar Case, ushort Amount) const
 {
   if(Amount == 1)
     AddName(Name, Case&~PLURAL);
@@ -59,34 +60,35 @@ void id::AddName(std::string& Name, uchar Case, ushort Amount) const
     }
 }
 
-std::string id::GetName(uchar Case, ushort Amount) const
+festring id::GetName(uchar Case, ushort Amount) const
 {
-  std::string Name;
+  static festring Name;
+  Name.Empty();
   AddName(Name, Case, Amount);
   return Name;
 }
 
-bool id::AddAdjective(std::string& String, bool Articled) const
+bool id::AddAdjective(festring& String, bool Articled) const
 {
-  if(GetAdjective().length())
+  if(GetAdjective().GetSize())
     {
       if(Articled)
-	String << GetAdjectiveArticle() << " ";
+	String << GetAdjectiveArticle() << ' ';
 
-      String << GetAdjective() << " ";
+      String << GetAdjective() << ' ';
       return true;
     }
   else
     return false;
 }
 
-void id::AddPostFix(std::string& String) const
+void id::AddPostFix(festring& String) const
 {
-  if(GetPostFix().length())
-    String << " " << GetPostFix();
+  if(GetPostFix().GetSize())
+    String << ' ' << GetPostFix();
 }
 
-void id::AddLockPostFix(std::string& String, uchar LockType) const
+void id::AddLockPostFix(festring& String, uchar LockType) const
 {
   /* doesn't yet support other locktype articles than "a" */
 
@@ -98,7 +100,7 @@ uchar id::GetArticleMode() const
   return NORMAL_ARTICLE;
 }
 
-bool id::AddActiveAdjective(std::string& String, bool Articled) const
+bool id::AddActiveAdjective(festring& String, bool Articled) const
 {
   String << (Articled ? "an active " : "active ");
   return true;

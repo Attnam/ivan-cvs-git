@@ -85,12 +85,12 @@ void bitmap::DrawRectangle(vector2d TopLeft, ushort Right, ushort Bottom, ushort
 void bitmap::DrawRectangle(ushort Left, ushort Top, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
 void bitmap::DrawRectangle(vector2d TopLeft, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
 
-bitmap::bitmap(const std::string& FileName) : AlphaMap(0)
+bitmap::bitmap(const festring& FileName) : AlphaMap(0)
 {
-  inputfile File(FileName.c_str(), 0, false);
+  inputfile File(FileName.CStr(), 0, false);
 
   if(!File.IsOpen())
-    ABORT("Bitmap %s not found!", FileName.c_str());
+    ABORT("Bitmap %s not found!", FileName.CStr());
 
   uchar Palette[768];
   File.SeekPosEnd(-768);
@@ -199,7 +199,7 @@ void bitmap::Load(inputfile& SaveFile)
     }
 }
 
-void bitmap::Save(const std::string& FileName) const
+void bitmap::Save(const festring& FileName) const
 {
   static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),

@@ -3,7 +3,7 @@
 gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<owterrain>::Add(this); }
 
-void wterrain::AddName(std::string& String, uchar Case) const
+void wterrain::AddName(festring& String, uchar Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & ARTICLE_BIT))
@@ -23,9 +23,10 @@ void wterrain::AddName(std::string& String, uchar Case) const
 	String << GetNameStem() << " terrains";
 }
 
-std::string wterrain::GetName(uchar Case) const
+festring wterrain::GetName(uchar Case) const
 {
-  std::string Name;
+  static festring Name;
+  Name.Empty();
   AddName(Name, Case);
   return Name;
 }

@@ -100,7 +100,7 @@ void sophos::PrayBadEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   PLAYER->TeleportSomePartsAway(1 + (RAND() & 1));
-  PLAYER->CheckDeath(std::string("shattered to pieces by the wrath of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("shattered to pieces by the wrath of ") + GetName(), 0);
 }
 
 void valpurus::PrayGoodEffect()
@@ -125,20 +125,20 @@ void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
   PLAYER->ReceiveDamage(0, 10, PHYSICAL_DAMAGE, HEAD, RAND() & 7);
-  PLAYER->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("faced the hammer of Justice from the hand of ") + GetName(), 0);
 }
 
 void legifer::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, std::string("killed accidentally by ") + GetName(), PLAYER->GetPos(), 40, false);
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed accidentally by ") + GetName(), PLAYER->GetPos(), 40, false);
 }
 
 void legifer::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GetName());
   PLAYER->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
-  PLAYER->CheckDeath(std::string("burned to death by the wrath of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("burned to death by the wrath of ") + GetName(), 0);
 }
 
 void dulcis::PrayGoodEffect()
@@ -178,7 +178,7 @@ void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GetName());
   PLAYER->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
-  PLAYER->CheckDeath(std::string("became insane by listening ") + GetName() + " too much", 0);
+  PLAYER->CheckDeath(CONST_S("became insane by listening ") + GetName() + " too much", 0);
 }
 
 void seges::PrayGoodEffect()
@@ -192,13 +192,13 @@ void seges::PrayGoodEffect()
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(OldBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GetName(), OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GetName(), OldBodyPart->GetBodyPartName().CStr());
 	}
       else
 	{
 	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
 	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
 	}
 
       return;
@@ -233,7 +233,7 @@ void seges::PrayBadEffect()
     {
       ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
       PLAYER->EditNP(-10000);
-      PLAYER->CheckStarvationDeath(std::string("starved by ") + GetName());
+      PLAYER->CheckStarvationDeath(CONST_S("starved by ") + GetName());
     }
   else
     ADD_MESSAGE("Seges tries to alter the contents of your stomach, but fails.");
@@ -254,7 +254,7 @@ void atavus::PrayGoodEffect()
     {
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().c_str());
+      ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().CStr());
     }
   else
     ADD_MESSAGE("Nothing happens.");
@@ -303,13 +303,13 @@ void silva::PrayGoodEffect()
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GetName(), OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back.", GetName(), OldBodyPart->GetBodyPartName().CStr());
 	}
       else
 	{
 	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
 	  NewBodyPart->SetHP(1);
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
 	}
 
       return;
@@ -391,7 +391,7 @@ void silva::PrayGoodEffect()
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
 
 		    Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-		    Char->CheckDeath("killed by an earthquake", 0);
+		    Char->CheckDeath(CONST_S("killed by an earthquake"), 0);
 		  }
 
 		Square->KickAnyoneStandingHereAway();
@@ -487,7 +487,7 @@ void loricatus::PrayGoodEffect()
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().c_str());
+      ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().CStr());
       return;
     }
 
@@ -509,7 +509,7 @@ void loricatus::PrayGoodEffect()
 
 	  if(StrengthValue > MainWielded->GetMainMaterial()->GetStrengthValue())
 	    {
-	      std::string Desc;
+	      festring Desc;
 	      item* SecondaryWielded;
 
 	      if(MainWielded->HandleInPairs() && (SecondaryWielded = PLAYER->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, PLAYER))
@@ -525,7 +525,7 @@ void loricatus::PrayGoodEffect()
 		}
 
 	      MainWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-	      ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.c_str());
+	      ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.CStr());
 	    }
 	  else
 	    {
@@ -554,7 +554,7 @@ void loricatus::PrayBadEffect()
   if(MainWielded)
     if(MainWielded->IsMaterialChangeable())
       {
-	std::string Desc;
+	festring Desc;
 	item* SecondaryWielded;
 
 	if(MainWielded->HandleInPairs() && (SecondaryWielded = PLAYER->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, PLAYER))
@@ -570,7 +570,7 @@ void loricatus::PrayBadEffect()
 	  }
 
 	MainWielded->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
-	ADD_MESSAGE("Your %s.", Desc.c_str());
+	ADD_MESSAGE("Your %s.", Desc.CStr());
       }
     else
       ADD_MESSAGE("%s emits strange light but remain unchanged.", MainWielded->CHAR_NAME(DEFINITE));
@@ -618,7 +618,7 @@ void mortifer::PrayBadEffect()
   PLAYER->EditAttribute(AGILITY, -1);
   PLAYER->EditAttribute(ARM_STRENGTH, -1);
   PLAYER->EditAttribute(ENDURANCE, -1);
-  PLAYER->CheckDeath(std::string("obliterated by the unholy power of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("obliterated by the unholy power of ") + GetName(), 0);
 }
 
 void mellis::PrayGoodEffect()
@@ -844,7 +844,7 @@ void nefas::PrayBadEffect()
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   PLAYER->ReceiveDamage(0, 2 + RAND() % 7, PHYSICAL_DAMAGE, HEAD);
   PLAYER->GetStackUnder()->AddItem(new brokenbottle);
-  PLAYER->CheckDeath(std::string("killed while enjoying the company of ") + GetName(), 0);
+  PLAYER->CheckDeath(CONST_S("killed while enjoying the company of ") + GetName(), 0);
 }
 
 void scabies::PrayGoodEffect()
@@ -859,14 +859,14 @@ void scabies::PrayGoodEffect()
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(1);
 	  OldBodyPart->Mutate();
-	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GetName(), OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GetName(), OldBodyPart->GetBodyPartName().CStr());
 	}
       else
 	{
 	  bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
 	  NewBodyPart->SetHP(1);
 	  NewBodyPart->Mutate();
-	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetBodyPartName().c_str()); 
+	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetBodyPartName().CStr()); 
 	}
 
       return;
@@ -958,7 +958,7 @@ void cruentus::PrayGoodEffect()
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(IRON));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s, which seems to be made of iron.", NewBodyPart->GetBodyPartName().c_str()); 
+      ADD_MESSAGE("You grow a new %s, which seems to be made of iron.", NewBodyPart->GetBodyPartName().CStr()); 
       return;
     }
 
@@ -1055,7 +1055,7 @@ void cruentus::PrayBadEffect()
     {
       ADD_MESSAGE("%s gets mad and hits you!", GetName());
       PLAYER->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() & 7);
-      PLAYER->CheckDeath(std::string("destroyed by ") + GetName(), 0);
+      PLAYER->CheckDeath(CONST_S("destroyed by ") + GetName(), 0);
     }
 }
 
@@ -1064,4 +1064,3 @@ void scabies::PlayerVomitedOnAltar()
   ADD_MESSAGE("%s feels that you are indeed her follower.", GetName()); 
   AdjustRelation(1);
 }
-

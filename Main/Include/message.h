@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "typedef.h"
 
 #define ADD_MESSAGE msgsystem::AddMessage
@@ -15,6 +13,7 @@ class felist;
 class outputfile;
 class inputfile;
 class bitmap;
+class festring;
 
 class msgsystem
 {
@@ -34,8 +33,8 @@ class msgsystem
   static void Init();
  private:
   static felist MessageHistory;
-  static std::string LastMessage;
-  static std::string BigMessage;
+  static festring LastMessage;
+  static festring BigMessage;
   static ushort Times;
   static ulong Begin, End;
   static bool Enabled;

@@ -5,12 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <map>
 
 #include "error.h"
 
 class inputfile;
+class festring;
 
 template <class database> struct databasememberbase
 {
@@ -21,13 +21,13 @@ template <class type> class databasecreator
 {
  public:
   typedef typename type::database database;
-  typedef std::map<std::string, databasememberbase<database>*> databasemembermap;
+  typedef std::map<festring, databasememberbase<database>*> databasemembermap;
   static void ReadFrom(inputfile&);
   static void InstallDataBase(type*);
   static void CreateDataBaseMemberMap();
  private:
-  static bool AnalyzeData(inputfile&, const std::string&, database&);
-  static void CheckDefaults(const std::string&, database&);
+  static bool AnalyzeData(inputfile&, const festring&, database&);
+  static void CheckDefaults(const festring&, database&);
   static databasemembermap DataBaseMemberMap;
 };
 

@@ -209,7 +209,7 @@ bool character::IsUsingArms() const { return (GetAttackStyle() & USE_ARMS) != 0;
 bool character::IsUsingLegs() const { return (GetAttackStyle() & USE_LEGS) != 0; }
 bool character::IsUsingHead() const { return (GetAttackStyle() & USE_HEAD) != 0; }
 void character::CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
-std::string character::GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
+festring character::GetBeVerb() const { return IsPlayer() ? CONST_S("are") : CONST_S("is"); }
 void character::SetEndurance(ushort What) { BaseAttribute[ENDURANCE] = What; }
 void character::SetPerception(ushort What) { BaseAttribute[PERCEPTION] = What; }
 void character::SetIntelligence(ushort What) { BaseAttribute[INTELLIGENCE] = What; }
@@ -217,7 +217,7 @@ void character::SetWisdom(ushort What) { BaseAttribute[WISDOM] = What; }
 void character::SetCharisma(ushort What) { BaseAttribute[CHARISMA] = What; }
 void character::SetMana(ushort What) { BaseAttribute[MANA] = What; }
 bool character::IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
-bool character::LeftOversAreUnique() const { return GetArticleMode() != NORMAL_ARTICLE || AssignedName.length(); }
+bool character::LeftOversAreUnique() const { return GetArticleMode() != NORMAL_ARTICLE || AssignedName.GetSize(); }
 bool character::HomeDataIsValid() const { return HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex() && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex(); }
 void character::SetHomePos(vector2d Pos) { HomeData->Pos = Pos; }
 const char* character::FirstPersonUnarmedHitVerb() const { return "hit"; }
@@ -341,7 +341,7 @@ void character::Hunger()
     }
 
   if(OldState != STARVING && GetHungerState() == STARVING)
-    DeActivateVoluntaryAction("You are getting extremely hungry.");
+    DeActivateVoluntaryAction(CONST_S("You are getting extremely hungry."));
 
   if(GetHungerState() == HUNGRY || GetHungerState() == STARVING)
     {
@@ -381,9 +381,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       EditExperience(PERCEPTION, 25);
 
       if(Enemy->CanBeSeenByPlayer())
-	DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
       else
-	DeActivateVoluntaryAction("The attack interupts you.");
+	DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
 
       return HAS_DODGED;
     }
@@ -442,9 +442,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       if(!TrueDamage || (Weapon && !Weapon->Exists()))
 	{
 	  if(Enemy->CanBeSeenByPlayer())
-	    DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
 	  else
-	    DeActivateVoluntaryAction("The attack interupts you.");
+	    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
 
 	  return HAS_BLOCKED;
 	}
@@ -462,22 +462,22 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   if(!Succeeded)
     {
       if(Enemy->CanBeSeenByPlayer())
-	DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
       else
-	DeActivateVoluntaryAction("The attack interupts you.");
+	DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
 
       return DID_NO_DAMAGE;
     }
 
-  std::string DeathMsg = "killed by " + Enemy->GetKillName();
+  festring DeathMsg = CONST_S("killed by ") + Enemy->GetKillName();
 
   if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
   if(Enemy->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
   else
-    DeActivateVoluntaryAction("The attack interupts you.");
+    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
 
   return HAS_HIT;
 }
@@ -823,12 +823,12 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 			{
 			  if(Terrain->IsLocked())
 			    {
-			      ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().c_str()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
+			      ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().CStr()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
 			      return false;
 			    }
 			  else
 			    {
-			      if(game::BoolQuestion("Do you want to open " + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveTo)))
+			      if(game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveTo)))
 				{
 				  OpenPos(MoveTo);
 				  return true;
@@ -850,15 +850,15 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	}
       else
 	{
-	  if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
+	  if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::BoolQuestion(CONST_S("Do you want to leave ") + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
 	    {
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
-		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!");
+		  game::TextScreen(CONST_S("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!"));
 		  game::GetCurrentArea()->SendNewDrawRequest();
 		  game::DrawEverything();
 		  ShowAdventureInfo();
-		  PLAYER->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
+		  PLAYER->AddScoreEntry(CONST_S("killed Petrus and became the Avatar of Chaos"), 3, false);
 		  game::End();
 		  return true;
 		}
@@ -903,7 +903,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::Die(const character* Killer, const std::string& Msg, bool ForceMsg)
+void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
 {
   // Note: This function MUST NOT delete any objects in any case! 
 
@@ -924,7 +924,7 @@ void character::Die(const character* Killer, const std::string& Msg, bool ForceM
 	{
 	  game::DrawEverything();
 
-	  if(!game::BoolQuestion("Do you want to do this, cheater? [y/n]", REQUIRES_ANSWER))
+	  if(!game::BoolQuestion(CONST_S("Do you want to do this, cheater? [y/n]"), REQUIRES_ANSWER))
 	    {
 	      RestoreBodyParts();
 	      RestoreHP();
@@ -1030,88 +1030,94 @@ void character::Die(const character* Killer, const std::string& Msg, bool ForceM
   if(IsPlayer())
     {
       AddScoreEntry(Msg);
-      game::TextScreen("Unfortunately you died during your journey. The high priest is not happy.");
+      game::TextScreen(CONST_S("Unfortunately you died during your journey. The high priest is not happy."));
       game::End();
     }
 }
 
 void character::AddMissMessage(const character* Enemy) const
 {
-  std::string Msg;
+  festring Msg;
 
   if(Enemy->IsPlayer())
     Msg = GetDescription(DEFINITE) + " misses you!";
   else if(IsPlayer())
-    Msg = "You miss " + Enemy->GetDescription(DEFINITE) + "!";
+    Msg = CONST_S("You miss ") + Enemy->GetDescription(DEFINITE) + '!';
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg = GetDescription(DEFINITE) + " misses " + Enemy->GetDescription(DEFINITE) + "!";
+    Msg = GetDescription(DEFINITE) + " misses " + Enemy->GetDescription(DEFINITE) + '!';
   else
     return;
 
-  ADD_MESSAGE("%s", Msg.c_str());
+  ADD_MESSAGE("%s", Msg.CStr());
 }
 
-void character::AddBlockMessage(const character* Enemy, const item* Blocker, const std::string& HitNoun, bool Partial) const
+void character::AddBlockMessage(const character* Enemy, const item* Blocker, const festring& HitNoun, bool Partial) const
 {
-  std::string Msg;
-  std::string BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
+  festring Msg;
+  festring BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
 
   if(IsPlayer())
-    Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << "!";
+    Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << '!';
   else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg << GetDescription(DEFINITE) << " manages" << BlockVerb << " with " << GetPossessivePronoun() << " " << Blocker->GetName(UNARTICLED) << "!";
+    Msg << GetDescription(DEFINITE) << " manages" << BlockVerb << " with " << GetPossessivePronoun() << ' ' << Blocker->GetName(UNARTICLED) << '!';
   else
     return;
 
-  ADD_MESSAGE("%s", Msg.c_str());
+  ADD_MESSAGE("%s", Msg.CStr());
 }
 
-void character::AddPrimitiveHitMessage(const character* Enemy, const std::string& FirstPersonHitVerb, const std::string& ThirdPersonHitVerb, ushort BodyPart) const
+void character::AddPrimitiveHitMessage(const character* Enemy, const festring& FirstPersonHitVerb, const festring& ThirdPersonHitVerb, ushort BodyPart) const
 {
-  std::string Msg;
-  std::string BodyPartDescription = BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()) ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
+  festring Msg;
+  festring BodyPartDescription;
+
+  if(BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()))
+    BodyPartDescription << " in the " << Enemy->GetBodyPartName(BodyPart);
 
   if(Enemy->IsPlayer())
-    Msg << GetDescription(DEFINITE) << " " << ThirdPersonHitVerb << " you" << BodyPartDescription << "!";
+    Msg << GetDescription(DEFINITE) << ' ' << ThirdPersonHitVerb << " you" << BodyPartDescription << '!';
   else if(IsPlayer())
-    Msg << "You " << FirstPersonHitVerb << " " << Enemy->GetDescription(DEFINITE) << BodyPartDescription << "!";
+    Msg << "You " << FirstPersonHitVerb << ' ' << Enemy->GetDescription(DEFINITE) << BodyPartDescription << '!';
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg << GetDescription(DEFINITE) << " " << ThirdPersonHitVerb << " " << Enemy->GetDescription(DEFINITE) + BodyPartDescription << "!";
+    Msg << GetDescription(DEFINITE) << ' ' << ThirdPersonHitVerb << ' ' << Enemy->GetDescription(DEFINITE) + BodyPartDescription << '!';
   else
     return;
 
-  ADD_MESSAGE("%s", Msg.c_str());
+  ADD_MESSAGE("%s", Msg.CStr());
 }
 
 void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, ushort BodyPart, bool Critical) const
 {
-  std::string Msg;
-  std::string BodyPartDescription = BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()) ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
+  festring Msg;
+  festring BodyPartDescription;
+
+  if(BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()))
+    BodyPartDescription << " in the " << Enemy->GetBodyPartName(BodyPart);
 
   if(Enemy->IsPlayer())
     {
       Msg << GetDescription(DEFINITE) << (Critical ? " critically hits you" : " hits you") << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg << " with " << GetPossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
+	Msg << " with " << GetPossessivePronoun() << ' ' << Weapon->GetName(UNARTICLED);
 
-      Msg << "!";
+      Msg << '!';
     }
   else if(IsPlayer())
-    Msg << "You " << (Critical ? "critically hit " : "hit ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription << "!";
+    Msg << "You " << (Critical ? "critically hit " : "hit ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription << '!';
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
     {
       Msg << GetDescription(DEFINITE) << (Critical ? " critically hits " : " hits ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg << " with " << GetPossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
+	Msg << " with " << GetPossessivePronoun() << ' ' << Weapon->GetName(UNARTICLED);
 
-      Msg << "!";
+      Msg << '!';
     }
   else
     return;
 
-  ADD_MESSAGE("%s", Msg.c_str());
+  ADD_MESSAGE("%s", Msg.CStr());
 }
 
 void character::ApplyExperience(bool Edited)
@@ -1483,7 +1489,7 @@ void character::Load(inputfile& SaveFile)
   InstallDataBase();
 }
 
-bool character::Engrave(const std::string& What)
+bool character::Engrave(const festring& What)
 {
   GetNearLSquare(GetPos())->Engrave(What);
   return true;
@@ -1535,12 +1541,12 @@ long character::GetScore() const
   return (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + GetStuffScore() + game::GodScore();
 }
 
-void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
+void character::AddScoreEntry(const festring& Description, float Multiplier, bool AddEndLevel) const
 {
   if(!game::WizardModeIsReallyActive())
     {
       highscore HScore;
-      std::string Desc = PLAYER->GetAssignedName();
+      festring Desc = PLAYER->GetAssignedName();
       Desc << ", " << Description;
 
       if(AddEndLevel)
@@ -1551,7 +1557,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
     }
 }
 
-bool character::CheckDeath(const std::string& Msg, const character* Murderer, bool ForceMsg)
+bool character::CheckDeath(const festring& Msg, const character* Murderer, bool ForceMsg)
 {
   if(!IsEnabled())
     return true;
@@ -1561,13 +1567,13 @@ bool character::CheckDeath(const std::string& Msg, const character* Murderer, bo
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
-      std::string NewMsg = Msg;
+      festring NewMsg = Msg;
 
       if(GetAction())
-	NewMsg += GetAction()->GetDeathExplanation();
+	NewMsg << GetAction()->GetDeathExplanation();
 
       if(IsPlayer() && game::WizardModeIsActive())
-	ADD_MESSAGE("Death message: %s.", NewMsg.c_str());
+	ADD_MESSAGE("Death message: %s.", NewMsg.CStr());
 
       Die(Murderer, NewMsg, ForceMsg);
       return true;
@@ -1576,7 +1582,7 @@ bool character::CheckDeath(const std::string& Msg, const character* Murderer, bo
     return false;
 }
 
-bool character::CheckStarvationDeath(const std::string& Msg)
+bool character::CheckStarvationDeath(const festring& Msg)
 {
   if(GetNP() < 1 && UsesNutrition())
     {
@@ -1609,15 +1615,15 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
   if(Succeeded)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
 
-  std::string DeathMsg = "killed by a flying " + Thingy->GetName(UNARTICLED);
+  festring DeathMsg = CONST_S("killed by a flying ") + Thingy->GetName(UNARTICLED);
 
   if(CheckDeath(DeathMsg, Thrower))
     return;
 
   if(Thrower->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction("The attack of " + Thrower->GetName(DEFINITE) + " interupts you.");
+    DeActivateVoluntaryAction(CONST_S("The attack of ") + Thrower->GetName(DEFINITE) + CONST_S(" interupts you."));
   else
-    DeActivateVoluntaryAction("The attack interupts you.");
+    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
 }
 
 bool character::DodgesFlyingItem(item* Item, float ToHitValue)
@@ -1713,7 +1719,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(IsPlayer())
     ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHAR_NAME(INDEFINITE));
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHAR_NAME(DEFINITE), GetPersonalPronoun().c_str(), NewForm->CHAR_NAME(INDEFINITE));
+    ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHAR_NAME(DEFINITE), GetPersonalPronoun().CStr(), NewForm->CHAR_NAME(INDEFINITE));
 
   InNoMsgMode = NewForm->InNoMsgMode = true;
   GetSquareUnder()->RemoveCharacter();
@@ -1818,11 +1824,11 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 	  if(IsPlayer()) 
 	    ADD_MESSAGE("You hit your head on the wall.");
 	  else if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
+	    ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 	}
 
       ReceiveDamage(GuiltyGuy, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD);
-      CheckDeath("killed by hitting a wall", GuiltyGuy);
+      CheckDeath(CONST_S("killed by hitting a wall"), GuiltyGuy);
     }
 
   // Place code that handles characters bouncing to each other here
@@ -1876,16 +1882,16 @@ bool character::Faint(ushort Counter, bool HungerFaint)
   return true;
 }
 
-void character::DeActivateVoluntaryAction(const std::string& Reason)
+void character::DeActivateVoluntaryAction(const festring& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
     {
       if(IsPlayer())
 	{
-	  if(Reason.length())
-	    ADD_MESSAGE("%s", Reason.c_str());
+	  if(Reason.GetSize())
+	    ADD_MESSAGE("%s", Reason.CStr());
 
-	  if(game::BoolQuestion(std::string("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
+	  if(game::BoolQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 	    GetAction()->SetInDNDMode(true);
 	  else
 	    GetAction()->Terminate(false);
@@ -1909,7 +1915,7 @@ void character::ActionAutoTermination()
 	      {
 		ADD_MESSAGE("%s seems to be hostile.", (*i)->CHAR_NAME(DEFINITE));
 
-		if(game::BoolQuestion(std::string("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
+		if(game::BoolQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 		  GetAction()->SetInDNDMode(true);
 		else
 		  GetAction()->Terminate(false);
@@ -2138,9 +2144,9 @@ void character::SetNP(long What)
   if(IsPlayer())
     {
       if(GetHungerState() == STARVING && OldGetHungerState != STARVING)
-	DeActivateVoluntaryAction("You are getting very hungry.");
+	DeActivateVoluntaryAction(CONST_S("You are getting very hungry."));
       else if(GetHungerState() == HUNGRY && OldGetHungerState != HUNGRY && OldGetHungerState != STARVING)
-	DeActivateVoluntaryAction("You are getting hungry.");
+	DeActivateVoluntaryAction(CONST_S("You are getting hungry."));
     }
 }
 
@@ -2166,7 +2172,7 @@ void character::ShowNewPosInfo() const
       GetStackUnder()->Pile(PileVector, this);
 
       if(PileVector.size() == 1)
-	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).c_str(), PileVector[0].size() == 1 ? "is" : "are");
+	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).CStr(), PileVector[0].size() == 1 ? "is" : "are");
       else
 	{
 	  ushort Items = 0;
@@ -2181,8 +2187,8 @@ void character::ShowNewPosInfo() const
 	    ADD_MESSAGE("A few items are lying here.");
 	}
 		
-      if(GetNearLSquare(GetPos())->GetEngraved().length())
-	ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().c_str());
+      if(GetNearLSquare(GetPos())->GetEngraved().GetSize())
+	ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
     }
 }
 
@@ -2335,13 +2341,13 @@ ushort character::RandomizeReply(ulong& Said, ushort Replies)
   return ToSay;
 }
 
-void character::DisplayInfo(std::string& Msg)
+void character::DisplayInfo(festring& Msg)
 {
   if(IsPlayer())
     Msg << " You are " << GetStandVerb() << " here.";
   else
     {
-      Msg << " " << festring::CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << festring::CapitalizeCopy(GetPersonalPronoun());
+      Msg << ' ' << GetName(INDEFINITE).CapitalizeCopy() << " is " << GetStandVerb() << " here. " << GetPersonalPronoun().CapitalizeCopy();
 
       if(GetTeam() == PLAYER->GetTeam())
 	Msg << " is tame";
@@ -2376,9 +2382,9 @@ void character::TestWalkability()
 	  if(Square && Square->SquareIsWalkable(this) && !Square->GetCharacter())
 	    {
 	      if(IsPlayer())
-		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this).c_str());
+		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this));
 	      else if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s.", GetSquareUnder()->MonsterSurviveMessage(this).c_str());
+		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterSurviveMessage(this));
 
 	      Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
 	      Alive = true;
@@ -2392,14 +2398,14 @@ void character::TestWalkability()
 	    {
 	      GetSquareUnder()->RemoveCharacter();
 	      SendToHell();
-	      game::AskForKeyPress(GetSquareUnder()->DeathMessage(this) + ".");
+	      game::AskForKeyPress(GetSquareUnder()->DeathMessage(this) + '.');
 	      PLAYER->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
 	      game::End();
 	    }
 	  else
 	    {
 	      if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterDeathVerb(this).c_str());
+		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterDeathVerb(this));
 
 	      Die();
 	    }
@@ -2468,7 +2474,7 @@ void character::TeleportRandomly()
     {
       while(true)
 	{
-	  vector2d PlayersInput = game::PositionQuestion("Where do you wish to teleport? [direction keys move cursor, space accepts]", GetPos(), 0, 0, false);
+	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
 
 	  if(GetNearLSquare(PlayersInput)->IsWalkable(this) || game::GoThroughWallsCheatIsActive())
 	    {
@@ -2566,7 +2572,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushor
 	    if(IsPlayer())
 	      ADD_MESSAGE("You are not hurt.");
 	    else if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
+	      ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().CStr());
 	  }
 
 	return 0;
@@ -2588,9 +2594,9 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushor
   if(BodyPart->ReceiveDamage(Damager, Damage, Type) && BodyPartCanBeSevered(BodyPartIndex))
     {
       if(IsPlayer())
-	ADD_MESSAGE("Your %s is severed off!", BodyPart->GetBodyPartName().c_str());
+	ADD_MESSAGE("Your %s is severed off!", BodyPart->GetBodyPartName().CStr());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().CStr(), BodyPart->GetBodyPartName().CStr());
 
       item* Severed = SevereBodyPart(BodyPartIndex);
       GetSquareUnder()->SendNewDrawRequest();
@@ -2613,7 +2619,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushor
 	ADD_MESSAGE("It vanishes.");
 
       if(IsPlayer())
-	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
+	game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
       else if(RAND() % 100 < GetPanicLevel() && !IsDead())
 	BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
     }
@@ -2687,61 +2693,61 @@ bool character::BodyPartCanBeSevered(ushort Index) const
     return true;
 }
 
-std::string character::GetDescription(uchar Case) const
+festring character::GetDescription(uchar Case) const
 {
   if(IsPlayer())
-    return "you";
+    return CONST_S("you");
   else if(CanBeSeenByPlayer())
     return GetName(Case);
   else
-    return "something";
+    return CONST_S("something");
 }
 
-std::string character::GetPersonalPronoun(bool PlayersView) const
+festring character::GetPersonalPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
-    return "you";
+    return CONST_S("you");
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
-    return "it";
+    return CONST_S("it");
   else if(GetSex() == MALE)
-    return "he";
+    return CONST_S("he");
   else
-    return "she";
+    return CONST_S("she");
 }
 
-std::string character::GetPossessivePronoun(bool PlayersView) const
+festring character::GetPossessivePronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
-    return "your";
+    return CONST_S("your");
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
-    return "its";
+    return CONST_S("its");
   else if(GetSex() == MALE)
-    return "his";
+    return CONST_S("his");
   else
-    return "her";
+    return CONST_S("her");
 }
 
-std::string character::GetObjectPronoun(bool PlayersView) const
+festring character::GetObjectPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
-    return "you";
+    return CONST_S("you");
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
-    return "it";
+    return CONST_S("it");
   else if(GetSex() == MALE)
-    return "him";
+    return CONST_S("him");
   else
-    return "her";
+    return CONST_S("her");
 }
 
-void character::AddName(std::string& String, uchar Case) const
+void character::AddName(festring& String, uchar Case) const
 {
-  if(!(Case & PLURAL) && AssignedName.length())
+  if(!(Case & PLURAL) && AssignedName.GetSize())
     {
       if(!ShowClassDescription())
 	String << AssignedName;
       else
 	{
-	  String << AssignedName << " ";
+	  String << AssignedName << ' ';
 	  id::AddName(String, (Case|ARTICLE_BIT)&~INDEFINE_BIT);
 	}
     }
@@ -2869,11 +2875,11 @@ void character::Regenerate()
 
 void character::PrintInfo() const
 {
-  felist Info("Information about " + GetName(DEFINITE));
+  felist Info(CONST_S("Information about ") + GetName(DEFINITE));
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
-      Info.AddEntry(std::string(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
+      Info.AddEntry(festring(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -2907,9 +2913,9 @@ bool character::RaiseTheDead(character*)
 	  CreateBodyPart(c)->SetHP(1);
 
 	  if(IsPlayer())
-	    ADD_MESSAGE("Suddenly you grow a new %s.", GetBodyPartName(c).c_str());
+	    ADD_MESSAGE("Suddenly you grow a new %s.", GetBodyPartName(c).CStr());
 	  else if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), GetBodyPartName(c).c_str());
+	    ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), GetBodyPartName(c).CStr());
 
 	  Useful = true;
 	}
@@ -3157,7 +3163,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
 
       InitSpecialAttributes();
 
-      if(!GetDefaultName().empty())
+      if(!GetDefaultName().IsEmpty())
 	SetAssignedName(GetDefaultName());
     }
 
@@ -3217,9 +3223,9 @@ void character::ReceiveHeal(long Amount)
 	return;
       NewBodyPart->SetHP(1);
       if(IsPlayer())
-	ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
+	ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
     }
 }
 
@@ -3267,7 +3273,7 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
   if(GetHungerState() == OVER_FED)
     {
-      DeActivateVoluntaryAction("You are about to choke on this stuff.");
+      DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
       Vomit(2 + RAND() % 3);
     }
 }
@@ -3295,7 +3301,7 @@ void character::ReceivePepsi(long SizeOfEffect)
   ReceiveDamage(0, SizeOfEffect / 100, POISON, TORSO);
   EditExperience(PERCEPTION, SizeOfEffect << 3);
 
-  if(CheckDeath("was poisoned by pepsi", 0))
+  if(CheckDeath(CONST_S("was poisoned by pepsi"), 0))
     return;
 
   if(IsPlayer())
@@ -3504,7 +3510,7 @@ void character::DrawPanel(bool AnimationDraw) const
 
   DOUBLE_BUFFER->Fill(19 + (game::GetScreenXSize() << 4), 0, RES_X - 19 - (game::GetScreenXSize() << 4), RES_Y, 0);
   DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenYSize() << 4), game::GetScreenXSize() << 4, 9, 0);
-  FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenYSize() << 4), WHITE, "%s", GetPanelName().c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenYSize() << 4), WHITE, "%s", GetPanelName().CStr());
 
   ushort PanelPosX = RES_X - 96;
   ushort PanelPosY = DrawStats(false);
@@ -3522,14 +3528,14 @@ void character::DrawPanel(bool AnimationDraw) const
   if(game::IsInWilderness())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Worldmap");
   else
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex())).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex()).CapitalizeCopy().CStr());
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Time: %d", game::GetTicks() / 10);
 
   ++PanelPosY;
 
   if(GetAction())
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring::CapitalizeCopy(GetAction()->GetDescription()).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring(GetAction()->GetDescription()).CapitalizeCopy().CStr());
 
   for(ushort c = 0; c < STATES; ++c)
     if(!(StateData[c].Flags & SECRET) && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
@@ -3928,7 +3934,7 @@ void character::EndPolymorph()
   else if(game::IsInWilderness())
     return; // fast gum solution, state ends when the player enters a dungeon
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s returns to %s true form.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
+    ADD_MESSAGE("%s returns to %s true form.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 
   if(StuckToBodyPart != NONE_INDEX)
     {
@@ -3999,7 +4005,7 @@ void character::SaveLife()
       if(IsPlayer())
 	ADD_MESSAGE("But wait! You glow briefly red and seem to be in a better shape!");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", GetPersonalPronoun().c_str());
+	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", GetPersonalPronoun().CStr());
 
       DeActivateTemporaryState(LIFE_SAVED);
     }
@@ -4017,14 +4023,14 @@ void character::SaveLife()
       if(IsPlayer())
 	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHAR_NAME(UNARTICLED));
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", GetPossessivePronoun().c_str(), LifeSaver->CHAR_NAME(UNARTICLED), GetPersonalPronoun().c_str());
+	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", GetPossessivePronoun().CStr(), LifeSaver->CHAR_NAME(UNARTICLED), GetPersonalPronoun().CStr());
 
       LifeSaver->RemoveFromSlot();
       LifeSaver->SendToHell();
     }
 
   if(IsPlayer())
-    game::AskForKeyPress("Life saved! [press any key to continue]");
+    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
 
   RestoreBodyParts();
   RestoreHP();
@@ -4042,13 +4048,13 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
 
   if(StateIsActivated(POLYMORPH_CONTROL))
     {
-      std::string Topic, Temp;
+      festring Topic, Temp;
 
       if(IsPlayer())
 	{
 	  while(!NewForm)
 	    {
-	      Topic = "What do you want to become?";
+	      Topic = CONST_S("What do you want to become?");
 
 	      if(game::GetDefaultPolymorphTo() != "")
 		Topic << " [" << game::GetDefaultPolymorphTo() << ']';
@@ -4224,7 +4230,7 @@ void character::PoisonedHandler()
   if(Damage)
     {
       ReceiveDamage(0, Damage, POISON, ALL, 8, false, false, false, false);
-      CheckDeath("died of acute poisoning", 0);
+      CheckDeath(CONST_S("died of acute poisoning"), 0);
     }
 }
 
@@ -4352,14 +4358,14 @@ void character::PrintEndTeleportControlMessage() const
 
 void character::DisplayStethoscopeInfo(character*) const
 {
-  felist Info("Information about " + GetName(DEFINITE));
+  felist Info(CONST_S("Information about ") + GetName(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
-  Info.AddEntry(std::string("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
-  Info.AddEntry(std::string("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
-  Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
-  Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-  Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
-  Info.AddEntry(std::string("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
+  Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
   game::SetStandardListAttributes(Info);
   Info.Draw();
 }
@@ -4415,16 +4421,16 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      SeveredBodyPart->DropEquipment();
 
 	      if(IsPlayer())
-		ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).c_str());
+		ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).CStr());
 	      else if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
+		ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().CStr(), GetBodyPartName(RandomBodyPart).CStr());
 	    }
 	  else
 	    {
 	      if(IsPlayer())
-		ADD_MESSAGE("Your %s disappears.", GetBodyPartName(RandomBodyPart).c_str());
+		ADD_MESSAGE("Your %s disappears.", GetBodyPartName(RandomBodyPart).CStr());
 	      else if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s %s dissappears.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
+		ADD_MESSAGE("%s %s dissappears.", GetPossessivePronoun().CStr(), GetBodyPartName(RandomBodyPart).CStr());
 	    }
 	}	
     }
@@ -4713,10 +4719,10 @@ float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
   return Limit(Danger, -100.0f, 100.0f);
 }
 
-std::string character::GetBodyPartName(ushort Index, bool Articled) const
+festring character::GetBodyPartName(ushort Index, bool Articled) const
 {
   if(Index == TORSO_INDEX)
-    return Articled ? "a torso" : "torso";
+    return Articled ? CONST_S("a torso") : CONST_S("torso");
   else
     {
       ABORT("Illegal character bodypart name request!");
@@ -5173,7 +5179,7 @@ bool character::HasHadBodyPart(const item* Item) const
   return GetPolymorphBackup() && GetPolymorphBackup()->HasHadBodyPart(Item);
 }
 
-std::string& character::ProcessMessage(std::string& Msg) const
+festring& character::ProcessMessage(festring& Msg) const
 {
   SEARCH_N_REPLACE("@nu", GetName(UNARTICLED));
   SEARCH_N_REPLACE("@ni", GetName(INDEFINITE));
@@ -5184,22 +5190,22 @@ std::string& character::ProcessMessage(std::string& Msg) const
   SEARCH_N_REPLACE("@pp", GetPersonalPronoun());
   SEARCH_N_REPLACE("@sp", GetPossessivePronoun());
   SEARCH_N_REPLACE("@op", GetObjectPronoun());
-  SEARCH_N_REPLACE("@Nu", festring::CapitalizeCopy(GetName(UNARTICLED)));
-  SEARCH_N_REPLACE("@Ni", festring::CapitalizeCopy(GetName(INDEFINITE)));
-  SEARCH_N_REPLACE("@Nd", festring::CapitalizeCopy(GetName(DEFINITE)));
-  SEARCH_N_REPLACE("@Du", festring::CapitalizeCopy(GetDescription(UNARTICLED)));
-  SEARCH_N_REPLACE("@Di", festring::CapitalizeCopy(GetDescription(INDEFINITE)));
-  SEARCH_N_REPLACE("@Dd", festring::CapitalizeCopy(GetDescription(DEFINITE)));
-  SEARCH_N_REPLACE("@Pp", festring::CapitalizeCopy(GetPersonalPronoun()));
-  SEARCH_N_REPLACE("@Sp", festring::CapitalizeCopy(GetPossessivePronoun()));
-  SEARCH_N_REPLACE("@Op", festring::CapitalizeCopy(GetObjectPronoun()));
+  SEARCH_N_REPLACE("@Nu", GetName(UNARTICLED).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Ni", GetName(INDEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Nd", GetName(DEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Du", GetDescription(UNARTICLED).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Di", GetDescription(INDEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Dd", GetDescription(DEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE("@Pp", GetPersonalPronoun().CapitalizeCopy());
+  SEARCH_N_REPLACE("@Sp", GetPossessivePronoun().CapitalizeCopy());
+  SEARCH_N_REPLACE("@Op", GetObjectPronoun().CapitalizeCopy());
   SEARCH_N_REPLACE("@Gd", GetMasterGod()->GetName());
   return Msg;
 }
 
-void character::ProcessAndAddMessage(std::string Msg) const
+void character::ProcessAndAddMessage(festring Msg) const
 {
-  ADD_MESSAGE("%s", ProcessMessage(Msg).c_str());
+  ADD_MESSAGE("%s", ProcessMessage(Msg).CStr());
 }
 
 void character::BeTalkedTo()
@@ -5274,14 +5280,14 @@ void character::AddConfuseHitMessage() const
     ADD_MESSAGE("This stuff is confusing.");
 }
 
-item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(const item*, const character*))
+item* character::SelectFromPossessions(const festring& Topic, bool (*SorterFunction)(const item*, const character*))
 {
   itemvector ReturnVector;
   SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, SorterFunction);
   return !ReturnVector.empty() ? ReturnVector[0] : 0;
 }
 
-void character::SelectFromPossessions(itemvector& ReturnVector, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*))
+void character::SelectFromPossessions(itemvector& ReturnVector, const festring& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*))
 {
   if(!CanUseEquipment())
     {
@@ -5293,11 +5299,11 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const std::strin
   bool InventoryPossible = GetStack()->SortedItems(this, SorterFunction);
 
   if(InventoryPossible)
-    List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
+    List.AddEntry(CONST_S("choose from inventory"), LIGHT_GRAY, 20, igraph::GetTransparentTile());
 
   bool Any = false, UseSorterFunction = (SorterFunction != 0);
   itemvector Item;
-  std::string Entry;
+  festring Entry;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
@@ -5305,7 +5311,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const std::strin
 	Item.push_back(GetEquipment(c));
 	Entry = GetEquipmentName(c);
 	Entry << ':';
-	Entry.resize(20, ' ');
+	Entry.Resize(20, ' ');
 	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	AddSpecialEquipmentInfo(Entry, c);
 	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
@@ -5408,7 +5414,7 @@ bool character::TryToChangeEquipment(ushort Chosen)
     {
       game::DrawEverythingNoBlit();
       itemvector ItemVector;
-      ushort Return = GetStack()->DrawContents(ItemVector, this, std::string("Choose ") + GetEquipmentName(Chosen) + ":", NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
+      ushort Return = GetStack()->DrawContents(ItemVector, this, CONST_S("Choose ") + GetEquipmentName(Chosen) + ':', NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
 
       if(Return == ESCAPED)
 	{
@@ -5458,7 +5464,7 @@ void character::ParasitizedHandler()
 	ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
       ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
-      CheckDeath("killed by a vile parasite", 0);
+      CheckDeath(CONST_S("killed by a vile parasite"), 0);
     }
 }
 
@@ -5467,7 +5473,7 @@ bool character::CanFollow() const
   return CanWalk() && !IsRetreating();
 }
 
-std::string character::GetKillName() const
+festring character::GetKillName() const
 {
   if(!GetPolymorphBackup())
     return GetName(INDEFINITE);
@@ -5475,9 +5481,9 @@ std::string character::GetKillName() const
     return GetPolymorphBackup()->GetName(INDEFINITE) + " polymorphed into " + GetName(INDEFINITE);
 }
 
-std::string character::GetPanelName() const
+festring character::GetPanelName() const
 {
-  std::string Name;
+  festring Name;
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
   return Name;
@@ -5550,7 +5556,7 @@ void character::SetBodyPart(ushort Index, bodypart* What)
 
 bool character::ConsumeItem(item* Item)
 {
-  if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
+  if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
     return false;
 
   if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this,Item, 1))
@@ -5689,7 +5695,7 @@ void characterdatabase::InitDefaults(ushort Config)
   /* TERRIBLE gum solution! */
 
   if(Config & DEVOUT)
-    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
+    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()).CapitalizeCopy();
 }
 
 void character::PrintBeginGasImmunityMessage() const
@@ -5706,9 +5712,9 @@ void character::PrintEndGasImmunityMessage() const
 
 void character::ShowAdventureInfo() const
 {
-  if(GetStack()->GetItems() && game::BoolQuestion("Do you want to see your inventory? [y/n]", REQUIRES_ANSWER))
+  if(GetStack()->GetItems() && game::BoolQuestion(CONST_S("Do you want to see your inventory? [y/n]"), REQUIRES_ANSWER))
     {
-      GetStack()->DrawContents(this, "Your inventory", NO_SELECT);
+      GetStack()->DrawContents(this, CONST_S("Your inventory"), NO_SELECT);
 
       for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
 	i->DrawContents(this);
@@ -5718,10 +5724,10 @@ void character::ShowAdventureInfo() const
 	  GetEquipment(c)->DrawContents(this);
     }
 
-  if(game::BoolQuestion("Do you want to see your message history? [y/n]", REQUIRES_ANSWER))
+  if(game::BoolQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
     msgsystem::DrawMessageHistory();
 
-  if(!game::MassacreListsEmpty() && game::BoolQuestion("Do you want to see your massacre history? [y/n]", REQUIRES_ANSWER))
+  if(!game::MassacreListsEmpty() && game::BoolQuestion(CONST_S("Do you want to see your massacre history? [y/n]"), REQUIRES_ANSWER))
     game::DisplayMassacreLists();
 }
 
@@ -5779,32 +5785,34 @@ void character::LowerStats()
   UpdateESPLOS();
 }
 
-void character::AddAttributeInfo(std::string& Entry) const
+void character::AddAttributeInfo(festring& Entry) const
 {
-  Entry.resize(57, ' ');
+  Entry.Resize(57, ' ');
   Entry << GetAttribute(ENDURANCE);
-  Entry.resize(60, ' ');
+  Entry.Resize(60, ' ');
   Entry << GetAttribute(PERCEPTION);
-  Entry.resize(63, ' ');
+  Entry.Resize(63, ' ');
   Entry << GetAttribute(INTELLIGENCE);
-  Entry.resize(66, ' ');
+  Entry.Resize(66, ' ');
   Entry << GetAttribute(WISDOM);
-  Entry.resize(69, ' ');
+  Entry.Resize(69, ' ');
   Entry << GetAttribute(CHARISMA);
-  Entry.resize(72, ' ');
+  Entry.Resize(72, ' ');
   Entry << GetAttribute(MANA);
 }
 
 void character::AddDefenceInfo(felist& List) const
 {
+  festring Entry;
+
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
-	std::string Entry = "   ";
+	Entry = CONST_S("   ");
 	Entry << GetBodyPart(c)->GetBodyPartName();
-	Entry.resize(60, ' ');
+	Entry.Resize(60, ' ');
 	Entry << GetBodyPart(c)->GetMaxHP();
-	Entry.resize(70, ' ');
+	Entry.Resize(70, ' ');
 	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICAL_DAMAGE);
 	List.AddEntry(Entry, LIGHT_GRAY);
       }

@@ -5,21 +5,20 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "vector2d.h"
 #include "felibdef.h"
 
 class bitmap;
 class outputfile;
 class inputfile;
+class festring;
 
 typedef void (*bitmapeditor)(bitmap*);
 
 class bitmap
 {
  public:
-  bitmap(const std::string&);
+  bitmap(const festring&);
   bitmap(bitmap*, uchar = 0, bool = true);
   bitmap(ushort, ushort);
   bitmap(vector2d);
@@ -28,7 +27,7 @@ class bitmap
   ~bitmap();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Save(const std::string&) const;
+  void Save(const festring&) const;
   void PutPixel(ushort X, ushort Y, ushort Color) { Image[Y][X] = Color; }
   void PutPixel(vector2d Pos, ushort Color) { Image[Pos.Y][Pos.X] = Color; }
   void SafePutPixelAndResetAlpha(ushort, ushort, ushort);

@@ -6,12 +6,12 @@
 
 #define HIGH_SCORE_VERSION 110 // Increment this if changes make highscores incompatible
 
-highscore::highscore(const std::string& File) : LastAdd(0xFF)
+highscore::highscore(const festring& File) : LastAdd(0xFF)
 {
   Load(File);
 }
 
-bool highscore::Add(long NewScore, const std::string& NewEntry)
+bool highscore::Add(long NewScore, const festring& NewEntry)
 {
   for(ushort c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -21,7 +21,7 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
 
 	if(Score.size() > 100)
 	  {
-	    Entry.resize(100, std::string());
+	    Entry.resize(100, festring());
 	    Score.resize(100);
 	  }
 
@@ -47,21 +47,21 @@ void highscore::Draw() const
 {
   if(Score.empty())
     {
-      iosystem::TextScreen("There are no entries yet. Play a game to correct this.");
+      iosystem::TextScreen(CONST_S("There are no entries yet. Play a game to correct this."));
       return;
     }
 
-  felist List("Adventurers' Hall of Fame");
-  std::string Desc;
+  felist List(CONST_S("Adventurers' Hall of Fame"));
+  festring Desc;
 
   for(ushort c = 0; c < Score.size(); ++c)
     {
-      Desc.resize(0);
-      Desc += c + 1;
-      Desc.resize(5, ' ');
-      Desc += Score[c];
-      Desc.resize(13, ' ');
-      Desc += Entry[c];
+      Desc.Empty();
+      Desc << c + 1;
+      Desc.Resize(5, ' ');
+      Desc << Score[c];
+      Desc.Resize(13, ' ');
+      Desc << Entry[c];
       List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHT_GRAY, 13);
     }
 
@@ -70,13 +70,13 @@ void highscore::Draw() const
   List.Draw();
 }
 
-void highscore::Save(const std::string& File) const
+void highscore::Save(const festring& File) const
 {
   outputfile HighScore(File);
   HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << LastAdd;
 }
 
-void highscore::Load(const std::string& File)
+void highscore::Load(const festring& File)
 {
   {
     inputfile HighScore(File, 0, false);

@@ -30,8 +30,8 @@ class ABSTRACT_ITEM
   void IncreaseHP() { ++HP; }
   virtual ushort GetTotalResistance(ushort) const = 0;
   virtual bool ReceiveDamage(character*, ushort, ushort);
-  const std::string& GetOwnerDescription() const { return OwnerDescription; }
-  void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
+  const festring& GetOwnerDescription() const { return OwnerDescription; }
+  void SetOwnerDescription(const festring& What) { OwnerDescription = What; }
   bool IsUnique() const { return Unique; }
   void SetIsUnique(bool What) { Unique = What; }
   virtual void DropEquipment() { }
@@ -58,7 +58,7 @@ class ABSTRACT_ITEM
   void CalculateAttackInfo();
   float GetTimeToDie(ushort, float, float, bool, bool) const;
   virtual float GetRoughChanceToHit(float, float) const;
-  const std::string& GetBodyPartName() const { return GetNameSingular(); }
+  const festring& GetBodyPartName() const { return GetNameSingular(); }
   void RandomizePosition();
   void ResetPosition() { SpecialFlags &= ~0x7; }
   virtual void SignalSpoil(material*);
@@ -94,7 +94,7 @@ class ABSTRACT_ITEM
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual bool ShowMaterial() const { return false; }
   virtual uchar GetArticleMode() const;
   virtual ushort GetMaterialColorA(ushort) const;
@@ -103,7 +103,7 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterialColorD(ushort) const { return ColorD; }
   virtual vector2d GetBitmapPos(ushort) const { return BitmapPos; }
   virtual uchar GetSpecialFlags() const { return SpecialFlags; }
-  std::string OwnerDescription;
+  festring OwnerDescription;
   vector2d BitmapPos;
   ushort ColorB;
   ushort ColorC;
@@ -267,7 +267,7 @@ class ABSTRACT_ITEM
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyDexterityPenalty(item*);
   virtual bool DamageArmor(character*, ushort, ushort);
-  bool CheckIfWeaponTooHeavy(const std::string&) const;
+  bool CheckIfWeaponTooHeavy(const char*) const;
   virtual void RaiseStats();
   virtual void LowerStats();
   void AddAttackInfo(felist&) const;
@@ -458,7 +458,7 @@ class ITEM
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaA(ushort) const;
   virtual bool ShowMaterial() const { return false; }
-  virtual void AddPostFix(std::string&) const;
+  virtual void AddPostFix(festring&) const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual ushort GetSize() const;
   virtual uchar GetArticleMode() const;

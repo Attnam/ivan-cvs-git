@@ -5,13 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "vector2d.h"
 
 class room;
 class olterrain;
 class lsquare;
+class festring;
 
 class roomprototype
 {

@@ -75,7 +75,7 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
-# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /D "WIZARD" /YX /FD /I /" " /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /Ob0 /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /D "WIZARD" /YX /FD /I /" " /c
 # SUBTRACT CPP /Gy
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
@@ -655,6 +655,15 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # End Target

@@ -101,7 +101,7 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 {
   if(DescriptionChanged || Cheat)
     {
-      MemorizedDescription.resize(0);
+      MemorizedDescription.Empty();
 
       if(OWTerrain)
 	{
@@ -114,8 +114,12 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 
       if(Cheat)
 	{
-	  std::string Continent = GetWorldMap()->GetContinentUnder(Pos) ? ", continent " + GetWorldMap()->GetContinentUnder(Pos)->GetName() : "";
-	  MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
+	  festring Continent;
+
+	  if(GetWorldMap()->GetContinentUnder(Pos))
+	    Continent << ", continent " << GetWorldMap()->GetContinentUnder(Pos)->GetName();
+
+	  MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
 	}
 
       DescriptionChanged = false;

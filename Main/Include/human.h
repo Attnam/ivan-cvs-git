@@ -112,15 +112,14 @@ class ABSTRACT_CHARACTER
   virtual void CalculateBodyParts();
   virtual void CalculateAllowedWeaponSkillCategories();
   virtual bool HasFeet() const;
-  virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
+  virtual void AddSpecialEquipmentInfo(festring&, ushort) const;
   virtual void CreateInitialEquipment(ushort);
-  virtual std::string GetBodyPartName(ushort, bool = false) const;
+  virtual festring GetBodyPartName(ushort, bool = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
   void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
   virtual item* SevereBodyPart(ushort);
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
-  virtual void AddSpecialMovePenaltyInfo(felist&) const;
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
   virtual bool IsHumanoid() const { return true; }
@@ -129,9 +128,9 @@ class ABSTRACT_CHARACTER
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(ushort) const;
   virtual bool HasHead() const { return GetHead() != 0; }
-  virtual const std::string& GetStandVerb() const;
+  virtual const festring& GetStandVerb() const;
   virtual head* Behead();
-  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
@@ -144,7 +143,7 @@ class ABSTRACT_CHARACTER
   virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
-  virtual const std::string& GetDeathMessage() const;
+  virtual const festring& GetDeathMessage() const;
   std::vector<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
@@ -402,7 +401,7 @@ class CHARACTER
   werewolfwolf,
   humanoid,
  public:
-  virtual std::string GetKillName() const;
+  virtual festring GetKillName() const;
 );
 
 class CHARACTER
@@ -431,7 +430,7 @@ class CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual ulong GetBaseEmitation() const;
   virtual bool CanCreateBodyPart(ushort) const;
-  virtual const std::string& GetStandVerb() const { return character::GetStandVerb(); }
+  virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;
@@ -465,7 +464,7 @@ class CHARACTER
   virtual bool BodyPartIsVital(ushort) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool CanCreateBodyPart(ushort) const;
-  virtual const std::string& GetStandVerb() const { return character::GetStandVerb(); }
+  virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
 );
 
 class CHARACTER
@@ -490,8 +489,8 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void BeTalkedTo();
-  virtual std::string& ProcessMessage(std::string&) const;
-  std::string GetProfessionDescription() const;
+  virtual festring& ProcessMessage(festring&) const;
+  festring GetProfessionDescription() const;
   virtual bool IsBananaGrower() const { return true; }
  protected:
   virtual bool HandleCharacterBlockingTheWay(character*);

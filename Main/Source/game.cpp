@@ -39,11 +39,6 @@
 
 class quitrequest { };
 
-bool configid::operator<(const configid& CI) const
-{
-  return femath::CompareBits(this, &CI, sizeof(configid));
-}
-
 uchar game::CurrentLevelIndex;
 long game::BaseScore;
 bool game::InWilderness = false;
@@ -85,7 +80,7 @@ bool game::InGetCommand = false;
 character* game::Petrus = 0;
 character* game::Haedlac = 0;
 
-std::string game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
+festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 const char* const game::LockDescription[] = { "round", "square", "triangular", "broken" };
 god** game::God;
@@ -112,7 +107,7 @@ area* game::CurrentArea;
 level* game::CurrentLevel;
 wsquare*** game::CurrentWSquareMap;
 lsquare*** game::CurrentLSquareMap;
-std::string game::DefaultPolymorphTo;
+festring game::DefaultPolymorphTo;
 bool game::WizardMode;
 uchar game::SeeWholeMapCheatMode;
 bool game::GoThroughWallsCheat;
@@ -135,16 +130,16 @@ void game::InitScript()
 
 //#include "confdef.h"
 
-bool game::Init(const std::string& Name)
+bool game::Init(const festring& Name)
 {
-  std::string PlayerName;
+  festring PlayerName;
 
-  if(!Name.length())
-    if(!configuration::GetDefaultName().length())
+  if(!Name.GetSize())
+    if(!configuration::GetDefaultName().GetSize())
       {
-	PlayerName = iosystem::StringQuestion("What is your name? (1-20 letters)", vector2d(30, 46), WHITE, 1, 20, true, true);
+	PlayerName = iosystem::StringQuestion(CONST_S("What is your name? (1-20 letters)"), vector2d(30, 46), WHITE, 1, 20, true, true);
 
-	if(!PlayerName.length())
+	if(!PlayerName.GetSize())
 	  return false;
       }
     else
@@ -161,7 +156,7 @@ bool game::Init(const std::string& Name)
 #endif
 
 #ifdef LINUX
-  mkdir(GetSaveDir().c_str(), S_IRWXU|S_IRWXG);
+  mkdir(GetSaveDir().CStr(), S_IRWXU|S_IRWXG);
 #endif
 
   switch(Load(SaveName(PlayerName)))
@@ -178,40 +173,40 @@ bool game::Init(const std::string& Name)
       }
     case NEW_GAME:
       {
-	iosystem::TextScreen( "You couldn't possibly have guessed this day would differ from any other.\n"
-			      "It began just as always. You woke up at dawn and drove off the giant spider\n"
-			      "resting on your face. On your way to work you had serious trouble avoiding\n"
-			      "the lions and pythons roaming wild around the village. After getting kicked\n"
-			      "by colony masters for being late you performed your twelve-hour routine of\n"
-			      "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
-			      "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
-			      "and trying to look happy when real food was distributed.\n\n"
-			      "Finally you were about to enjoy your free time by taking a quick dip in the\n"
-			      "nearby crocodile bay. However, at this point something unusual happened.\n"
-			      "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
-			      "colony, and were led directly to him.");
+	iosystem::TextScreen(CONST_S( "You couldn't possibly have guessed this day would differ from any other.\n"
+				      "It began just as always. You woke up at dawn and drove off the giant spider\n"
+				      "resting on your face. On your way to work you had serious trouble avoiding\n"
+				      "the lions and pythons roaming wild around the village. After getting kicked\n"
+				      "by colony masters for being late you performed your twelve-hour routine of\n"
+				      "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
+				      "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
+				      "and trying to look happy when real food was distributed.\n\n"
+				      "Finally you were about to enjoy your free time by taking a quick dip in the\n"
+				      "nearby crocodile bay. However, at this point something unusual happened.\n"
+				      "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
+				      "colony, and were led directly to him."));
 
-	iosystem::TextScreen( "\"I have a task for you, citizen\", said the viceroy picking his golden\n"
-			      "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
-			      "central government is about to raise taxes. I have sent appeals to high\n"
-			      "priest Petrus but received no response. I fear my enemies in Attnam are\n"
-			      "plotting against me and intercepting my messages before they reach him!\"\n\n"
-			      "\"That is why you must travel to Attnam with a letter I'll give you and\n"
-			      "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
-			      "between. Because it's winter, all Attnamian ships are trapped by ice and\n"
-			      "I have none. Therefore you must venture through the small underwater tunnel\n"
-			      "connecting our islands. It is infested with monsters, but since you have\n"
-			      "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
-			      "You have never been so happy! According to the mansion's traveling\n"
-			      "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
-			      "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
-			      "like the diamonds of the imperial treasury. Not that you would believe a\n"
-			      "word. The point is that tomorrow you can finally forget your home and\n"
-			      "face the untold adventures ahead.");
+	iosystem::TextScreen(CONST_S( "\"I have a task for you, citizen\", said the viceroy picking his golden\n"
+				      "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
+				      "central government is about to raise taxes. I have sent appeals to high\n"
+				      "priest Petrus but received no response. I fear my enemies in Attnam are\n"
+				      "plotting against me and intercepting my messages before they reach him!\"\n\n"
+				      "\"That is why you must travel to Attnam with a letter I'll give you and\n"
+				      "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
+				      "between. Because it's winter, all Attnamian ships are trapped by ice and\n"
+				      "I have none. Therefore you must venture through the small underwater tunnel\n"
+				      "connecting our islands. It is infested with monsters, but since you have\n"
+				      "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
+				      "You have never been so happy! According to the mansion's traveling\n"
+				      "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
+				      "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
+				      "like the diamonds of the imperial treasury. Not that you would believe a\n"
+				      "word. The point is that tomorrow you can finally forget your home and\n"
+				      "face the untold adventures ahead."));
 
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
-	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
+	iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
 	InitScript();
 	msgsystem::Format();
 	LOSTurns = 1;
@@ -239,7 +234,7 @@ bool game::Init(const std::string& Name)
 	PetMassacreMap.clear();
 	MiscMassacreMap.clear();
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
-	DefaultPolymorphTo.resize(0);
+	DefaultPolymorphTo.Empty();
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -427,7 +422,7 @@ const char* game::Insult() // convert to array
 
 /* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
 
-bool game::BoolQuestion(const std::string& String, int DefaultAnswer, int OtherKeyForTrue)
+bool game::BoolQuestion(const festring& String, int DefaultAnswer, int OtherKeyForTrue)
 {
   if(DefaultAnswer == NO)
     DefaultAnswer = 'n';
@@ -487,7 +482,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
     }
 }
 
-bool game::Save(const std::string& SaveName)
+bool game::Save(const festring& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << ushort(SAVE_FILE_VERSION);
@@ -524,7 +519,7 @@ bool game::Save(const std::string& SaveName)
   return true;
 }
 
-uchar game::Load(const std::string& SaveName)
+uchar game::Load(const festring& SaveName)
 {
   inputfile SaveFile(SaveName + ".sav", 0, false);
 
@@ -536,7 +531,7 @@ uchar game::Load(const std::string& SaveName)
 
   if(Version != SAVE_FILE_VERSION)
     {
-      if(!iosystem::Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", LIGHT_GRAY))
+      if(!iosystem::Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), CONST_S("Sorry, this save is incompatible with the new version.\rStart new game?\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
 	return NEW_GAME;
       else
 	return BACK;
@@ -589,22 +584,22 @@ uchar game::Load(const std::string& SaveName)
   return LOADED;
 }
 
-std::string game::SaveName(const std::string& Base)
+festring game::SaveName(const festring& Base)
 {
-  std::string SaveName = GetSaveDir();
+  festring SaveName = GetSaveDir();
 
-  if(!Base.length())
+  if(!Base.GetSize())
     SaveName << PLAYER->GetAssignedName();
   else
     SaveName << Base;
 
-  for(ushort c = 0; c < SaveName.length(); ++c)
+  for(ushort c = 0; c < SaveName.GetSize(); ++c)
     if(SaveName[c] == ' ')
       SaveName[c] = '_';
 
 #if defined(WIN32) || defined(__DJGPP__)
-  if(SaveName.length() > 13)
-    SaveName.resize(13);
+  if(SaveName.GetSize() > 13)
+    SaveName.Resize(13);
 #endif
 
   return SaveName;
@@ -762,13 +757,13 @@ float game::GetMinDifficulty()
 
 void game::ShowLevelMessage()
 {
-  if(CurrentLevel->GetLevelMessage().length())
-    ADD_MESSAGE(CurrentLevel->GetLevelMessage().c_str());
+  if(CurrentLevel->GetLevelMessage().GetSize())
+    ADD_MESSAGE(CurrentLevel->GetLevelMessage().CStr());
 
   CurrentLevel->SetLevelMessage("");
 }
 
-uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
+uchar game::DirectionQuestion(const festring& Topic, bool RequireAnswer, bool AcceptYourself)
 {
   while(true)
     {
@@ -790,13 +785,13 @@ void game::RemoveSaves(bool RealSavesAlso)
 {
   if(RealSavesAlso)
     {
-      remove((SaveName() + ".sav").c_str());
-      remove((SaveName() + ".wm").c_str());
+      remove(festring(SaveName() + ".sav").CStr());
+      remove(festring(SaveName() + ".wm").CStr());
     }
 
-  remove((AutoSaveFileName + ".sav").c_str());
-  remove((AutoSaveFileName + ".wm").c_str());
-  std::string File;
+  remove(festring(AutoSaveFileName + ".sav").CStr());
+  remove(festring(AutoSaveFileName + ".wm").CStr());
+  festring File;
 
   for(ushort i = 1; i < Dungeons; ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
@@ -807,16 +802,16 @@ void game::RemoveSaves(bool RealSavesAlso)
 	 * if it is written in a less odd way.
 	 */
 
-	File = SaveName() + "." + i;
-	File += c;
+	File = SaveName() + '.' + i;
+	File << c;
 
 	if(RealSavesAlso)
-	  remove(File.c_str());
+	  remove(File.CStr());
 
-	File = AutoSaveFileName + "." + i;
-	File += c;
+	File = AutoSaveFileName + '.' + i;
+	File << c;
 
-	remove(File.c_str());
+	remove(File.CStr());
       }
 }
 
@@ -879,7 +874,7 @@ void game::DoEvilDeed(ushort Amount)
     }
 }
 
-void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
+void game::SaveWorldMap(const festring& SaveName, bool DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + ".wm");
   SaveFile << WorldMap;
@@ -891,7 +886,7 @@ void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
     }
 }
 
-worldmap* game::LoadWorldMap(const std::string& SaveName)
+worldmap* game::LoadWorldMap(const festring& SaveName)
 {
   inputfile SaveFile(SaveName + ".wm");
   SaveFile >> WorldMap;
@@ -960,16 +955,16 @@ void game::CreateTeams()
     }
 }
 
-std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
+festring game::StringQuestion(const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0); // pos may be incorrect!
-  std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
+  festring Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
 
-long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
+long game::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
@@ -978,7 +973,7 @@ long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
   return Return;
 }
 
-long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
+long game::ScrollBarQuestion(const festring& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
@@ -1020,7 +1015,7 @@ bool game::HandleQuitMessage()
     {
       if(IsInGetCommand())
 	{
-	  switch(Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHT_GRAY))
+	  switch(Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), CONST_S("Do you want to save your game before quitting?\r"), CONST_S("Yes\rNo\rCancel\r"), LIGHT_GRAY))
 	    {
 	    case 0:
 	      Save();
@@ -1031,13 +1026,13 @@ bool game::HandleQuitMessage()
 	      DrawEverything();
 	      return false;
 	    default:
-	      GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
+	      GetPlayer()->AddScoreEntry(CONST_S("cowardly quit the game"), 0.75f);
 	      End(true, false);
 	      break;
 	    }
 	}
       else
-	if(!Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "You can't save at this point. Are you sure you still want to do this?\r", "Yes\rNo\r", LIGHT_GRAY))
+	if(!Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), CONST_S("You can't save at this point. Are you sure you still want to do this?\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
 	  RemoveSaves();
 	else
 	  {
@@ -1061,7 +1056,7 @@ uchar game::GetDirectionForVector(vector2d Vector)
   return DIR_ERROR;
 }
 
-std::string game::GetVerbalPlayerAlignment()
+const char* game::GetVerbalPlayerAlignment()
 {
   long Sum = 0;
 
@@ -1144,10 +1139,10 @@ void game::BusyAnimation(bitmap* Buffer)
     }
 }
 
-int game::AskForKeyPress(const std::string& Topic)
+int game::AskForKeyPress(const festring& Topic)
 {
   DrawEverythingNoBlit();
-  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
   int Key = GET_KEY();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
@@ -1160,7 +1155,7 @@ int game::AskForKeyPress(const std::string& Topic)
  * Both can be deactivated by passing 0 as parameter
  */  
 
-vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
+vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
   graphics::BlitDBToScreen();
@@ -1211,7 +1206,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
 	UpdateCameraYWithPos(CursorPos.Y);
 
-      FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.c_str());
+      FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.CStr());
       SetCursorPos(CursorPos);
       DrawEverything();
       Key = GET_KEY();
@@ -1227,7 +1222,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 void game::LookHandler(vector2d CursorPos)
 {
   square* Square = GetCurrentArea()->GetSquare(CursorPos);
-  std::string OldMemory;
+  festring OldMemory;
 
   if(GetSeeWholeMapCheatMode())
     {
@@ -1239,24 +1234,24 @@ void game::LookHandler(vector2d CursorPos)
 	GetCurrentLevel()->GetLSquare(CursorPos)->UpdateMemorizedDescription(true);
     }
 
-  std::string Msg;
+  festring Msg;
 
   if(Square->GetLastSeen() || GetSeeWholeMapCheatMode())
     {
       if(!IsInWilderness() && !Square->CanBeSeenByPlayer() && GetCurrentLevel()->GetLSquare(CursorPos)->CanBeFeltByPlayer())
-	Msg = "You feel here ";
+	Msg = CONST_S("You feel here ");
       else if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
-	Msg = "You see here ";
+	Msg = CONST_S("You see here ");
       else
-	Msg = "You remember here ";
+	Msg = CONST_S("You remember here ");
 
-      Msg << Square->GetMemorizedDescription() << ".";
+      Msg << Square->GetMemorizedDescription() << '.';
 
       if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
 	Square->DisplaySmokeInfo(Msg);
     }
   else
-    Msg = "You have never been here.";
+    Msg = CONST_S("You have never been here.");
 
   character* Character = Square->GetCharacter();
 
@@ -1266,7 +1261,7 @@ void game::LookHandler(vector2d CursorPos)
   if(!(RAND() % 10000))
     Msg << " You see here a frog eating a magnolia.";
 
-  ADD_MESSAGE("%s", Msg.c_str());
+  ADD_MESSAGE("%s", Msg.CStr());
 
   if(GetSeeWholeMapCheatMode())
     Square->SetMemorizedDescription(OldMemory);
@@ -1281,7 +1276,7 @@ bool game::AnimationController()
 void game::InitGlobalValueMap()
 {
   inputfile SaveFile(GetGameDir() + "Script/define.dat", &GlobalValueMap);
-  std::string Word;
+  festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
@@ -1289,11 +1284,11 @@ void game::InitGlobalValueMap()
 	ABORT("Illegal datafile define on line %d!", SaveFile.TellLine());
 
       SaveFile.ReadWord(Word);
-      GlobalValueMap.insert(std::pair<std::string, long>(Word, SaveFile.ReadNumber()));
+      GlobalValueMap.insert(std::pair<festring, long>(Word, SaveFile.ReadNumber()));
     }
 }
 
-void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
+void game::TextScreen(const festring& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
   globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
@@ -1305,7 +1300,7 @@ void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*B
    Not surprisingly KeyNumber is the number of keys at ...
 */
 
-int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumber, ...)
+int game::KeyQuestion(const festring& Message, int DefaultAnswer, int KeyNumber, ...)
 {
   int* Key = new int[KeyNumber];
   va_list Arguments;
@@ -1316,7 +1311,7 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
 
   va_end(Arguments);
   DrawEverythingNoBlit();
-  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Message.c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Message.CStr());
   graphics::BlitDBToScreen();
   int Return = 0;
 
@@ -1389,17 +1384,17 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
       if(Character && Character->CanBeSeenByPlayer())
 	{
 	  if(Character->GetTeam() != GetPlayer()->GetTeam())
-	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHAR_NAME(DEFINITE), Character->GetPersonalPronoun().c_str());
+	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHAR_NAME(DEFINITE), Character->GetPersonalPronoun().CStr());
 	  else if(Character->IsPlayer())
 	    ADD_MESSAGE("You can't rename yourself!");
 	  else if(!Character->IsNameable())
 	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHAR_NAME(DEFINITE), Character->CHAR_NAME(DEFINITE));
 	  else
 	    {
-	      std::string Topic = "What name will you give to " + Character->GetName(DEFINITE) + "?";
-	      std::string Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
+	      festring Topic = CONST_S("What name will you give to ") + Character->GetName(DEFINITE) + '?';
+	      festring Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
 
-	      if(Name.length())
+	      if(Name.GetSize())
 		Character->SetAssignedName(Name);
 	    }
 	}
@@ -1421,7 +1416,7 @@ void game::End(bool Permanently, bool AndGoToMenu)
       highscore HScore;
 
       if(HScore.LastAddFailed())
-	iosystem::TextScreen("You didn't manage to get onto the high score list.");
+	iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list."));
       else
 	HScore.Draw();
     }
@@ -1461,7 +1456,7 @@ uchar game::CalculateRoughDirection(vector2d Vector)
     return 4;
 }
 
-int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText1, const std::string& SmallText2)
+int game::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, ushort Color, const festring& SmallText1, const festring& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
   int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
@@ -1616,7 +1611,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       GetCurrentArea()->UpdateLOS();
 
       if(configuration::GetAutoSaveInterval())
-	Save(GetAutoSaveFileName().c_str());
+	Save(GetAutoSaveFileName().CStr());
     }
   else
     {
@@ -1631,7 +1626,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       GetCurrentArea()->UpdateLOS();
 
       if(configuration::GetAutoSaveInterval())
-	Save(GetAutoSaveFileName().c_str());
+	Save(GetAutoSaveFileName().CStr());
     }
 }
 
@@ -1856,10 +1851,10 @@ inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 
 /* The program can only create directories to the deepness of one, no more... */
 
-std::string game::GetHomeDir()
+festring game::GetHomeDir()
 {
 #ifdef LINUX
-  return std::string(getenv("HOME")) + "/";
+  return festring(getenv("HOME")) + "/";
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -1867,10 +1862,10 @@ std::string game::GetHomeDir()
 #endif
 }
 
-std::string game::GetSaveDir()
+festring game::GetSaveDir()
 {
 #ifdef LINUX
-  return std::string(getenv("HOME")) + "/IvanSave/";
+  return festring(getenv("HOME")) + "/IvanSave/";
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
@@ -1878,7 +1873,7 @@ std::string game::GetSaveDir()
 #endif
 }
 
-std::string game::GetGameDir()
+festring game::GetGameDir()
 {
 #ifdef LINUX
   return DATADIR "/ivan/";
@@ -1960,15 +1955,15 @@ void game::DisplayMassacreLists()
 struct massacresetentry
 {
   bool operator<(const massacresetentry& MSE) const { return festring::IgnoreCaseCompare(Key, MSE.Key); }
-  std::string Key;
-  std::string String;
+  festring Key;
+  festring String;
   std::vector<bitmap*> Picture;
 };
 
-void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string& Reason, ulong Amount)
+void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reason, ulong Amount)
 {
   std::set<massacresetentry> MassacreSet;
-  std::string FirstPronoun;
+  festring FirstPronoun;
   bool First = true;
 
   for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
@@ -1985,7 +1980,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
       else
 	{
 	  Victim->AddName(Entry.Key, PLURAL);
-	  Entry.String << i1->second << " " << Entry.Key;
+	  Entry.String << i1->second << ' ' << Entry.Key;
 	}
 
       if(First)
@@ -1999,7 +1994,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
     }
 
   ulong Total = PlayerMassacreAmount + PetMassacreAmount + MiscMassacreAmount;
-  std::string MainTopic;
+  festring MainTopic;
 
   if(Total == 1)
     MainTopic << "One creature perished during your adventure.";
@@ -2009,12 +2004,12 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
   felist List(MainTopic);
   game::SetStandardListAttributes(List);
   List.SetPageLength(15);
-  List.AddDescription("");
-  std::string SideTopic;
+  List.AddDescription(CONST_S(""));
+  festring SideTopic;
 
   if(Amount != Total)
     {
-      SideTopic = "The following ";
+      SideTopic = CONST_S("The following ");
 
       if(Amount == 1)
 	SideTopic << "one was killed " << Reason;
@@ -2025,7 +2020,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
     {
       if(Amount == 1)
 	{
-	  festring::Capitalize(FirstPronoun);
+	  FirstPronoun.Capitalize();
 	  SideTopic << FirstPronoun << " was killed " << Reason;
 	}
       else
