@@ -22,7 +22,7 @@
 		return member;\
 	else\
 		if(Base)\
-			return Base->Get##member##();\
+			return Base->Get##member##(AOE);\
 		else\
 		{\
 			if(AOE)\

@@ -11,3 +11,4 @@ Throwing a lamp at Perttu (most likely any monster) seems to crash the game.
 Dying in the worldmap crashes the game.
 The character replacement bug?
 Coming up from level eigth in WMode crashes if Maakotka Quest isn't yet triggered.
+Camera should be updated on level change.

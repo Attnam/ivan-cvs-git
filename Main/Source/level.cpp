@@ -297,6 +297,9 @@ void level::Generate(levelscript* GenLevelScript)
 
 	Map = (levelsquare***)area::Map;
 
+	if(LevelScript->GetLevelMessage(false))
+		LevelMessage = *LevelScript->GetLevelMessage();
+
 	/*const groundlevelterrain* const FillGroundTerrainProto = protocontainer<groundlevelterrain>::GetProto(LevelScript->GetFillSquare()->GetGroundTerrain()->GetTerrainType());
 	const material* const FillGroundMaterialProto = protocontainer<material>::GetProto(LevelScript->GetFillSquare()->GetGroundTerrain()->GetMaterialType(false));
 	const overlevelterrain* const FillOverTerrainProto = protocontainer<overlevelterrain>::GetProto(LevelScript->GetFillSquare()->GetOverTerrain()->GetTerrainType());
@@ -805,7 +808,7 @@ void level::HandleCharacters()
 		}
 	}
 
-	if(Population < GetIdealPopulation())// && LevelIndex != 9)
+	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())// && LevelIndex != 9)
 		GenerateNewMonsters(GetIdealPopulation() - Population);
 }
 

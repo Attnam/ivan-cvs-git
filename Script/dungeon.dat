@@ -23,7 +23,7 @@ Dungeon 0;
 			AltarPossible=true;
 			WallSquare=floor,wall;
 			FloorSquare=parquet,empty;
-			DoorSquare=floor,door;
+			DoorSquare=parquet,door;
 			GenerateDoor=true;
 			ReCalculate=true;
 		}
@@ -79,8 +79,9 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=pepsi floor,pepsi wall;
-			FloorSquare=pepsi parquet,air empty;
+			WallSquare=floor,pepsi wall;
+			FloorSquare=parquet,empty;
+			DoorSquare=parquet,pepsi door;
 
 			Square, Pos 3,3;
 			{
@@ -102,7 +103,7 @@ Dungeon 0;
 			Size=7,7;
 			AltarPossible=false;
 			WallSquare=pepsi floor,pepsi wall;
-			FloorSquare=pepsi parquet,air empty;
+			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 
 			Square, Pos 3,5;
@@ -135,7 +136,7 @@ Dungeon 1;
 
 	Level 0;
 	{
-		FillSquare=gravel floor,air empty;
+		FillSquare=floor,empty;
 		Size=64,64;
 		GenerateMonsters=false;
 		Rooms=0;
