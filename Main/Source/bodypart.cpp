@@ -37,7 +37,8 @@ uchar rightleg::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_LEG; }
 uchar leftleg::GetBodyPartIndex() const { return LEFT_LEG_INDEX; }
 uchar leftleg::GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
 
-vector2d eddytorso::GetBitmapPos(ushort Frame) const { return vector2d(64 + ((Frame&6) << 3), 32); }
+vector2d eddytorso::GetBitmapPos(ushort Frame) const { return torso::GetBitmapPos(Frame) + vector2d((Frame&0x6) << 3, 0); }
+vector2d mommotorso::GetBitmapPos(ushort Frame) const { return Frame >> 4 ? torso::GetBitmapPos(Frame) : torso::GetBitmapPos(Frame) + vector2d((Frame&0xE) << 3, 0); }
 
 void bodypart::Save(outputfile& SaveFile) const
 {

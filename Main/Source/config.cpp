@@ -29,7 +29,7 @@ ushort configuration::CharacterOutlineColor = MakeRGB16(48, 48, 48);
 ushort configuration::ItemOutlineColor = MakeRGB16(48, 48, 100);
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
-ulong configuration::ContrastLuminance = MakeRGB24(128, 128, 128);
+ulong configuration::ContrastLuminance = NORMAL_LUMINANCE;
 bool configuration::LookZoom = false;
 
 void configuration::Save()

@@ -108,6 +108,16 @@ class bitmap
   void AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags = 0, ushort MaskColor = TRANSPARENT_COLOR) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
   void AlphaBlit(bitmap* Bitmap, uchar Flags = 0, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags, MaskColor); }
 
+  void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+  void AlphaBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
   void DrawLine(ushort, ushort, ushort, ushort, ushort, bool = false);
   void DrawLine(vector2d From, ushort ToX, ushort ToY, ushort Color, bool Wide = false) { DrawLine(From.X, From.Y, ToX, ToY, Color, Wide); }
   void DrawLine(ushort FromX, ushort FromY, vector2d To, ushort Color, bool Wide = false) { DrawLine(FromX, FromY, To.X, To.Y, Color, Wide); }
@@ -126,20 +136,20 @@ class bitmap
   void StretchBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, char Stretch) const  { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
   void StretchBlit(bitmap* Bitmap, char Stretch) const { StretchBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Stretch); }
 
-  void PowerBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
-  void PowerBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const  { PowerBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
-  void PowerBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor = TRANSPARENT_COLOR) const { PowerBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
-
   void DrawRectangle(ushort, ushort, ushort, ushort, ushort, bool = false);
   void DrawRectangle(vector2d TopLeft, ushort Right, ushort Bottom, ushort Color, bool Wide = false) { DrawRectangle(TopLeft.X, TopLeft.Y, Right, Bottom, Color, Wide); }
   void DrawRectangle(ushort Left, ushort Top, vector2d BottomRight, ushort Color, bool Wide = false) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
   void DrawRectangle(vector2d TopLeft, vector2d BottomRight, ushort Color, bool Wide = false) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
+
+  void BlitAndCopyAlpha(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
+  void BlitAndCopyAlpha(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags = 0) const  { BlitAndCopyAlpha(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags); }
+  void BlitAndCopyAlpha(bitmap* Bitmap, uchar Flags = 0) const { BlitAndCopyAlpha(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags); }
 
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }

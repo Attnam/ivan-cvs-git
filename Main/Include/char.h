@@ -513,7 +513,6 @@ class character : public entity, public id
   bool CanBeSeenByPlayer(bool = false, bool = false) const;
   bool CanBeSeenBy(const character*, bool = false, bool = false) const;
   virtual void DetachBodyPart();
-  virtual bodypart* MakeBodyPart(ushort) const;
   void AttachBodyPart(bodypart*);
   virtual bool HasAllBodyParts() const;
   virtual bodypart* FindRandomOwnBodyPart(bool = false) const;
@@ -522,8 +521,8 @@ class character : public entity, public id
   virtual void PrintEndPoisonedMessage() const;
   bool IsWarm() const;
   void CalculateEquipmentState();
-  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool) const;
   god* GetMasterGod() const;
   void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
@@ -690,6 +689,7 @@ class character : public entity, public id
   bool AllowPoisoned() const { return IsAlive(); }
   bool AllowParasitized() const { return IsAlive(); }
  protected:
+  virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
   void Initialize(ushort, ushort);

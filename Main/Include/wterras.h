@@ -102,7 +102,7 @@ class OWTERRAIN
  public:
   virtual std::string GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const { }
+  virtual void Draw(bitmap*, vector2d, ulong, bool) const { }
 );
 
 class OWTERRAIN

@@ -92,9 +92,9 @@ bool door::Close(character* Closer)
   return true;
 }
 
-void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  olterrain::Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  olterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate);
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 

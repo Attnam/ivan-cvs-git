@@ -30,7 +30,7 @@ std::string wterrain::GetName(uchar Case) const
   return Name;
 }
 
-void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
+void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 
@@ -38,7 +38,7 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool A
     igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
 }
 
-void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
+void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 }

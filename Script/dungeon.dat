@@ -1040,12 +1040,12 @@ Dungeon ATTNAM;
 				Items == lantern { SideStackIndex = DOWN; }
 			}
 
-			Square, Pos 2, 5;
+			Square, Pos 1, 5;
 			{
 				Items == lantern { SideStackIndex = DOWN; }
 			}
 
-			Square, Pos 4, 5;
+			Square, Pos 5, 5;
 			{
 				Items == lantern { SideStackIndex = DOWN; }
 			}

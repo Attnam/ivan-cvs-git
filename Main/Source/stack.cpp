@@ -6,7 +6,7 @@ stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, b
 stack::~stack() { Clean(true); }
 square* stack::GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
 
-void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
+void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowOutline) const
 {
   if(!Items)
     return;
@@ -16,7 +16,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->CanBeSeenBy(Viewer) || game::SeeWholeMapCheatIsActive())
       {
-	i->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+	i->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 	++VisibleItems;
       }
 
@@ -26,7 +26,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(i->CanBeSeenBy(Viewer) || game::SeeWholeMapCheatIsActive())
-	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), MakeRGB24(128, 128, 128), false, AllowAnimate);
+	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());

@@ -50,7 +50,7 @@ class object : public entity, public id
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
   virtual god* GetMasterGod() const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;

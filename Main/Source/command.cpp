@@ -979,7 +979,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Pic.Fill(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      Character[c]->AddAttributeInfo(Entry);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	    }
@@ -994,7 +994,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Pic.Fill(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	      Character[c]->AddAttackInfo(List);
 	    }
@@ -1013,7 +1013,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry.resize(57, ' ');
 	      Entry << Character[c]->GetMaxHP();
 	      Pic.Fill(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	      Character[c]->AddDefenceInfo(List);
 	    }
@@ -1037,7 +1037,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 		Entry << '-';
 
 	      Pic.Fill(TRANSPARENT_COLOR);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	    }
 

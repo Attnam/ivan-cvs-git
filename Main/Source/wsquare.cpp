@@ -27,11 +27,11 @@ void wsquare::Draw()
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
       ulong RealLuminance = configuration::ApplyContrastTo(Luminance);
-      GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, false, true);
-      OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true, true);
+      GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+      OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
 
       NewDrawRequested = false;
     }

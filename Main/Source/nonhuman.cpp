@@ -16,6 +16,7 @@ std::string billswill::FirstPersonCriticalUnarmedHitVerb() const { return "emit 
 std::string billswill::ThirdPersonUnarmedHitVerb() const { return "emits psi waves at"; }
 std::string billswill::ThirdPersonCriticalUnarmedHitVerb() const { return "emits powerful psi waves at"; }
 
+bodypart* mommo::MakeBodyPart(ushort) const { return new mommotorso(0, NO_MATERIALS); }
 std::string mommo::FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
 std::string mommo::FirstPersonCriticalBiteVerb() const { return "vomit very acidous slime at"; }
 std::string mommo::ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }

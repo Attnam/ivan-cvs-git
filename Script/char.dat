@@ -1105,7 +1105,7 @@ mommo
 		DefaultWisdom = 2;
 		DefaultCharisma = 4;
 		TotalVolume = 300000;
-		TorsoBitmapPos = 176, 0;
+		TorsoBitmapPos = 128, 48;
 		TotalSize = 100;
 		Adjective = "conical";
 	}
@@ -1119,7 +1119,7 @@ mommo
 		DefaultWisdom = 3;
 		DefaultCharisma = 3;
 		TotalVolume = 150000;
-		TorsoBitmapPos = 192, 0;
+		TorsoBitmapPos = 128, 32;
 		TotalSize = 75;
 		Adjective = "flat";
 	}
@@ -3101,7 +3101,7 @@ eddy
 	DefaultCharisma = 1;
 	DefaultMana = 10;
 	TotalVolume = 150000; /* most of it is in some other dimension */
-	TorsoBitmapPos = 128, 16;
+	TorsoBitmapPos = 64, 32;
 	HostileReplies == "The @du twirls angrily.";
 	FriendlyReplies == "The @du twirls faster for a moment.";
 	TotalSize = 100;

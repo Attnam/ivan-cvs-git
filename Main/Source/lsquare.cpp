@@ -73,7 +73,7 @@ void lsquare::UpdateMemorized()
     {
       if(!IsDark())
 	{
-	  DrawStaticContents(Memorized, vector2d(0, 0), MakeRGB24(128, 128, 128), false);
+	  DrawStaticContents(Memorized, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
 	}
       else
@@ -85,23 +85,23 @@ void lsquare::UpdateMemorized()
 
 void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool RealDraw) const
 {
-  GLTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
+  GLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
 
   if(Fluid)
-    Fluid->Draw(Bitmap, Pos, Luminance, true, RealDraw);
+    Fluid->Draw(Bitmap, Pos, Luminance, RealDraw);
 	
-  OLTerrain->Draw(Bitmap, Pos, Luminance, true, RealDraw);
+  OLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
 
   if(OLTerrain->IsWalkable())
     {
-      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw, RealDraw);
 
       for(ushort c = 0; c < 4; ++c)
 	{
 	  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
 	  if(Stack)
-	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw, RealDraw);
 	}
     }
 }
@@ -118,14 +118,14 @@ void lsquare::Draw()
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
-	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true, true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 	}
       else
 	{
 	  DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
 	  if(Character && Character->CanBeSeenByPlayer())
-	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), false, true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
 	}
 
       NewDrawRequested = false;
@@ -1063,8 +1063,6 @@ void lsquare::SetLastSeen(ulong What)
   UpdateMemorizedDescription();
 }
 
-#include "char.h"
-
 void lsquare::DrawMemorized()
 {
   if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
@@ -1077,7 +1075,7 @@ void lsquare::DrawMemorized()
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
 
       NewDrawRequested = false;
     }

@@ -7,6 +7,13 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the new C++ alpha blit code
+	* Added an alpha halo to lanterns
+	* Wave animations for both mommos added and integrated
+	* A new whistle drawn
+
 February 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Removed asm

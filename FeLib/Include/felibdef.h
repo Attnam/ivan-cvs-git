@@ -47,6 +47,8 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define DARK_GRAY 0x528A
 #define BLACK 0x0000
 
+#define NORMAL_LUMINANCE 0x808080
+
 #define KEY_BACK_SPACE 0x08
 #define KEY_ESC 0x1B
 #define KEY_ENTER 0x0D

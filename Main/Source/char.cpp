@@ -3985,17 +3985,17 @@ void character::EndESP()
     GetArea()->SendNewDrawRequest();
 }
 
-void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
   if((PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (PLAYER->GetPos() - GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare()) || (PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()))
     Luminance = configuration::GetContrastLuminance();
 
-  DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(configuration::GetOutlineCharacters())
     {
       igraph::GetTileBuffer()->Fill(TRANSPARENT_COLOR);
-      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), MakeRGB24(128, 128, 128), false, AllowAnimate);
+      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, AllowAnimate);
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
     }
@@ -4007,9 +4007,9 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAl
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
 void character::PrintBeginTeleportMessage() const

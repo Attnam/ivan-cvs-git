@@ -1819,6 +1819,10 @@ eddytorso /* normaltorso-> */
 {
 }
 
+mommotorso /* normaltorso-> */
+{
+}
+
 whistle
 {
 	Possibility = 50;

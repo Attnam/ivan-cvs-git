@@ -33,7 +33,7 @@ class stack
   stack(square*, entity*, uchar, bool);
   ~stack();
   void Load(inputfile&);
-  void Draw(const character*, bitmap*, vector2d, ulong, bool, bool, bool) const;
+  void Draw(const character*, bitmap*, vector2d, ulong, bool, bool) const;
   void AddItem(item*);
   void RemoveItem(stackslot*);
   item* GetItem(ushort) const;

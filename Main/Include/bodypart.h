@@ -468,7 +468,16 @@ class ITEM
   normaltorso,
  public:
   virtual ushort GetClassAnimationFrames() const { return 8; }
-  //virtual void VirtualConstructor(bool);
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
+);
+
+class ITEM
+(
+  mommotorso,
+  normaltorso,
+ public:
+  virtual ushort GetClassAnimationFrames() const { return 64; }
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );

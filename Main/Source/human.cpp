@@ -1379,7 +1379,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	if(GetEquipment(c))
 	  {
 	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
-	    GetEquipment(c)->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), false, true);
+	    GetEquipment(c)->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
 	  }
       }
 
@@ -2065,54 +2065,54 @@ void angel::VirtualConstructor(bool Load)
   LastHealed = 0;
 }
 
-void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
   /* Order is important: Don't use a loop. */
 
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
   
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
-void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
   
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAlpha, AllowAnimate);
+    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate);
 }
 
 ushort angel::GetTorsoMainColor() const
@@ -2939,15 +2939,15 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate);
 
   if(GetRightArm())
     {
       ushort Color = MakeRGB16(0, 160, 0);
       bitmap* Temp = igraph::GetHumanoidRawGraphic()->Colorize(vector2d(160, 208), vector2d(16, 16), &Color, StateIsActivated(INVISIBLE) ? 150 : 255);
-      Temp->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      Temp->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
       delete Temp;
     }
 }

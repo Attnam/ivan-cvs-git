@@ -80,7 +80,16 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
+  virtual bool HasSpecialAnimation() const { return !IsBroken(); }
+  virtual ushort GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
+  virtual ushort GetMaterialColorA(ushort) const;
+  virtual ushort GetMaterialColorB(ushort) const;
+  virtual ushort GetMaterialColorC(ushort) const;
+  virtual ushort GetMaterialColorD(ushort) const;
   virtual uchar GetAlphaA(ushort) const { return 255; }
+  virtual uchar GetAlphaB(ushort) const;
+  virtual uchar GetAlphaC(ushort) const;
+  virtual uchar GetAlphaD(ushort) const;
   virtual uchar GetSpecialFlags() const;
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort) const;
@@ -460,6 +469,8 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void BlowEffect(character*);
   virtual ushort GetRange() const { return 400; }
+ protected:
+  virtual ushort GetMaterialColorB(ushort) const;
 );
 
 class ITEM

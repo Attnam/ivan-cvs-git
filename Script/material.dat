@@ -168,7 +168,7 @@ material
 		ConsumeType = CT_MINERAL;
 		Density = 3000;
 		IsGolemMaterial = true;
-		Color = rgb16(224, 224, 224);
+		Color = rgb16(210, 210, 210);
 		NameStem = "marble";
 	}
 

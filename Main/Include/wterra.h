@@ -51,7 +51,7 @@ class gwterrain : public wterrain, public gterrain
   typedef gwterrainprototype prototype;
   gwterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool) const;
   virtual uchar Priority() const = 0;
   virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
@@ -80,7 +80,7 @@ class owterrain : public wterrain, public oterrain
   typedef owterrainprototype prototype;
   owterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual uchar GetAttachedDungeon() const { return 0; }

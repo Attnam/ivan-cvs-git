@@ -12,6 +12,10 @@ ulong banana::GetPrice() const { return GetContainedMaterial()->GetRawPrice() + 
 uchar holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
 vector2d lantern::GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
+ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB24(255, 255, 240); }
+ushort lantern::GetMaterialColorB(ushort Frame) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorC(ushort Frame) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorD(ushort Frame) const { return MakeRGB24(255, 255, 140); }
 
 bool can::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
@@ -37,6 +41,8 @@ void holybook::AddPostFix(std::string& String) const { AddDivineMasterDescriptio
 ulong oillamp::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
 
 ulong stone::GetPrice() const { return (GetMainMaterial()->GetRawPrice() << 1) + item::GetPrice(); }
+
+ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
 
 ushort itemcontainer::GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
 void itemcontainer::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
@@ -2062,11 +2068,11 @@ bool stone::ShowMaterial() const
 
 short itemcontainer::GetOfferValue(char BasicAlignment) const
 {
-  ushort Sum = 0;
+  short Sum = 0;
+
   for(ushort c = 0; c < GetContained()->GetItems(); ++c)
-    {
-      Sum += GetContained()->GetItem(c)->GetOfferValue(BasicAlignment);
-    }
+    Sum += GetContained()->GetItem(c)->GetOfferValue(BasicAlignment);
+
   return item::GetOfferValue(BasicAlignment) + Sum;
 }
 
@@ -2075,6 +2081,24 @@ bool itemcontainer::IsDestroyable() const
   for(ushort c = 0; c < GetContained()->GetItems(); ++c)
     if(!GetContained()->GetItem(c)->IsDestroyable())
       return false;
+
   return true;
 }
 
+uchar lantern::GetAlphaB(ushort Frame) const
+{
+  Frame &= 31;
+  return (Frame * (31 - Frame) >> 1);
+}
+
+uchar lantern::GetAlphaC(ushort Frame) const
+{
+  Frame &= 31;
+  return (Frame * (31 - Frame) >> 2);
+}
+
+uchar lantern::GetAlphaD(ushort Frame) const
+{
+  Frame &= 31;
+  return (Frame * (31 - Frame) >> 3);
+}

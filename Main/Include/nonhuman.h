@@ -125,7 +125,10 @@ class CHARACTER
 (
   mommo,
   nonhumanoid,
+ public:
+  virtual bool IsAnimated() const { return true; }
  protected:
+  virtual bodypart* MakeBodyPart(ushort) const;
   virtual std::string FirstPersonBiteVerb() const;
   virtual std::string FirstPersonCriticalBiteVerb() const;
   virtual std::string ThirdPersonBiteVerb() const;
@@ -315,8 +318,9 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool = false);
   virtual void CreateCorpse(lsquare*) { SendToHell(); }
-  virtual bodypart* MakeBodyPart(ushort) const;
   virtual bool IsAnimated() const { return true; }
+ protected:
+  virtual bodypart* MakeBodyPart(ushort) const;
 );
 
 #endif
