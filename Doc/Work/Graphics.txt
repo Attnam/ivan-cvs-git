@@ -57,3 +57,4 @@ Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (m
 //Small, medium and large chests (one is probably already done...)
 The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
 Keys are hardly visible on wooden parquet
+Broken axe is nearly invisible on gravel floor

@@ -36,6 +36,7 @@ material
 	IsSparkling = false;
 	IsMetal = false;
 	EffectStrength = 100;
+	/* DigProductMaterial defaults to Config */
 
 	Config IRON;
 	{
@@ -95,6 +96,7 @@ material
 		Color = rgb16(111, 74, 37);
 		NameStem = "moraine";
 		CanBeWished = false;
+		DigProductMaterial = STONE;
 	}
 
 	Config WOOD;
@@ -106,6 +108,7 @@ material
 		Color = rgb16(140, 96, 48);
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
+		DigProductMaterial == 0;
 	}
 
 	Config GLASS;

@@ -240,6 +240,15 @@ decoration
 		PostFix = "covered with snow";
 		BitmapPos = 16, 352;
 	}
+	Config ANVIL;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You brake the anvil.";
+		MainMaterialConfig == IRON;
+		NameSingular = "anvil";
+		BitmapPos = 16, 432;
+	}
 }
 
 empty /* olterrain-> */

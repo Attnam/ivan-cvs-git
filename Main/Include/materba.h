@@ -23,7 +23,7 @@ template <class type> class database;
 
 struct materialdatabase
 {
-  void InitDefaults(ushort) { }
+  void InitDefaults(ushort Config) { DigProductMaterial = Config; }
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
@@ -52,6 +52,7 @@ struct materialdatabase
   bool IsSparkling;
   ushort EffectStrength;
   bool IsMetal;
+  ushort DigProductMaterial;
 };
 
 class materialprototype
@@ -156,6 +157,7 @@ class material
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
   virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI(); }
+  DATA_BASE_VALUE(ushort, DigProductMaterial);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

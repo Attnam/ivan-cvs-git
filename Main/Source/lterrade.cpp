@@ -940,7 +940,6 @@ void boulder::Break()
       GetLSquareUnder()->GetStack()->AddItem(Stone);
       
     }
-
   olterrain::Break();
 }
 
@@ -1015,4 +1014,23 @@ void olterraincontainer::SetItemsInside(const std::vector<contentscript<item> >&
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
       GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+}
+
+void wall::Break()
+{
+  ushort DigProduct = GetMainMaterial()->GetDigProductMaterial();
+  if(DigProduct)
+    {
+      material* StoneMaterial = MAKE_MATERIAL(DigProduct);
+      ushort HowManyParts = 1 + RAND() % 4;
+      for(ushort c = 0; c < HowManyParts; ++c)
+	{
+	  material* StonesMaterial = StoneMaterial->Clone();
+	  StonesMaterial->SetVolume(1000);
+	  item* Stone = new stone(0, NO_MATERIALS);
+	  Stone->InitMaterials(StonesMaterial);
+	  GetLSquareUnder()->GetStack()->AddItem(Stone);
+	}
+    }
+  olterrain::Break();
 }

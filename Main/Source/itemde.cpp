@@ -1238,7 +1238,7 @@ bool key::Apply(character* User)
 {
   if(User->IsPlayer())
     {
-      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key]", true);
+      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key]", false, true);
 
       if(Dir == DIR_ERROR)
 	return false;
@@ -3922,7 +3922,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	  SetLockType(DAMAGED);
 
 	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s's lock shatters to pieces.", GetNameSingular().c_str());
+	    ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().c_str());
 
 	  return true;
 	}

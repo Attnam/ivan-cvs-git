@@ -1,3 +1,13 @@
+December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* chests can now by unlocked from same square with key
+	* anvil added to smithy
+	* digging produces stones
+	
+December 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* "Chest's lock shatters to pieces" -> "The Chest's..."
+
 December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* There's some light in Attnam again
@@ -34,7 +44,7 @@ December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	  an item inside a strong-box inside another container
 	* Decreased the effect of haste and slow to balance boss battles
 
-December 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a fatal bug in the monster generation code
 	* Eating spoiled food now yields less messages

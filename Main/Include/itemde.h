@@ -1444,4 +1444,5 @@ class ITEM
   virtual bool IsEncryptedScroll() const { return true; }
 );
 
+
 #endif

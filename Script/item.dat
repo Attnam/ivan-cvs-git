@@ -784,6 +784,7 @@ scrollofcharging /* scroll-> */
 	Possibility = 25;
 	Price = 400;
 	PostFix = "of charging";
+	CanBeCloned = false;
 }
 
 nut
@@ -1427,7 +1428,7 @@ ring
 		Possibility = 30;
 		PostFix = "of teleportation";
 		GearStates = TELEPORT;
-		MainMaterialConfig == ANGEL_HAIR;
+		MainMaterialConfig == MITHRIL;
 		Alias == "ring of teleport";
 		Price = 250;
 	}
@@ -1455,7 +1456,7 @@ ring
 		Possibility = 40;
 		PoisonResistance = 1;
 		PostFix = "of poison resistance";
-		MainMaterialConfig == PHOENIX_FEATHER;
+		MainMaterialConfig == TIN;
 		Price = 250;
 	}
 
@@ -2114,3 +2115,4 @@ encryptedscroll /* scroll-> */
 	IsPolymorphable = false;
 	CanBeCloned = false;
 }
+

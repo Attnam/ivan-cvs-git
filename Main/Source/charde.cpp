@@ -3958,6 +3958,26 @@ void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, b
     }
 }
 
+uchar mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+{
+  humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue,Success, Type, Critical, ForceHit);
+  if(Critical && IsAlive())
+    {
+      if(IsPlayer())
+	{
+	  ADD_MESSAGE("Aahhh. The pain feels unbelievably good.");
+	}
+      else if(CanBeSeenByPlayer())
+	{
+	  ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
+	}
+      else
+	{
+	  ADD_MESSAGE("You hear a scream: \"Oh the delightful pain!");
+	}
+    }
+}
+
 void chameleon::GetAICommand()
 {
   if(HP != MaxHP || !(RAND() % 10))
@@ -4022,3 +4042,4 @@ void guard::GetAICommand()
 
   StandIdleAI();
 }
+

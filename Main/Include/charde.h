@@ -588,6 +588,8 @@ class CHARACTER
 (
   mistress,
   humanoid,
+ public:
+  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   ;
 );
 

@@ -570,6 +570,7 @@
 #define PALM 10
 #define SNOW_PINE 11
 #define SNOW_FIR 12
+#define ANVIL 13
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2

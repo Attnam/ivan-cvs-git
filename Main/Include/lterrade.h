@@ -15,6 +15,7 @@ class OLTERRAIN
   wall,
   olterrain,
  public:
+  virtual void Break();
   virtual bool IsWalkable() const { return false; }
 );
 
