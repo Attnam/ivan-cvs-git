@@ -36,15 +36,15 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
 	    for(ushort x = 0; x < 3; ++x)
 	      Change[x] = RAND() % Variation - RAND() % Variation;
 
-	    if(short(GetRed(Color) + Change[0]) < 0) Change[0] = -GetRed(Color);
-	    if(short(GetGreen(Color) + Change[1]) < 0) Change[1] = -GetGreen(Color);
-	    if(short(GetBlue(Color) + Change[2]) < 0) Change[2] = -GetBlue(Color);
+	    if(short(GetRed16(Color) + Change[0]) < 0) Change[0] = -GetRed16(Color);
+	    if(short(GetGreen16(Color) + Change[1]) < 0) Change[1] = -GetGreen16(Color);
+	    if(short(GetBlue16(Color) + Change[2]) < 0) Change[2] = -GetBlue16(Color);
 
-	    if(short(GetRed(Color) + Change[0]) > 255) Change[0] = 255 - GetRed(Color);
-	    if(short(GetGreen(Color) + Change[1]) > 255) Change[1] = 255 - GetGreen(Color);
-	    if(short(GetBlue(Color) + Change[2]) > 255) Change[2] = 255 - GetBlue(Color);
+	    if(short(GetRed16(Color) + Change[0]) > 255) Change[0] = 255 - GetRed16(Color);
+	    if(short(GetGreen16(Color) + Change[1]) > 255) Change[1] = 255 - GetGreen16(Color);
+	    if(short(GetBlue16(Color) + Change[2]) > 255) Change[2] = 255 - GetBlue16(Color);
 
-	    GetPicture()->PutPixel(Cords + game::GetMoveVector(d), MakeRGB(GetRed(Color) + Change[0], GetGreen(Color) + Change[1], GetBlue(Color) + Change[2]));
+	    GetPicture()->PutPixel(Cords + game::GetMoveVector(d), MakeRGB16(GetRed16(Color) + Change[0], GetGreen16(Color) + Change[1], GetBlue16(Color) + Change[2]));
 	    GetPicture()->SetAlpha(Cords + game::GetMoveVector(d), 50 + RAND() % 206);
 	  }
     }
@@ -76,7 +76,7 @@ void fluid::Load(inputfile& SaveFile)
   SaveFile >> Picture;
 }
 
-void fluid::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool) const
+void fluid::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool) const
 {
   if(AllowAlpha)
     Picture->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);

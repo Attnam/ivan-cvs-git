@@ -19,7 +19,7 @@ character
 	CanRead = false;
 	IsCharmable = true;
 	Sex = UNDEFINED;
-	BloodColor = rgb(75, 0, 0);
+	BloodColor = rgb16(75, 0, 0);
 	CanBeGenerated = false;
 	CriticalModifier = 20;
 	StandVerb = "standing";
@@ -73,11 +73,11 @@ character
 
 humanoid
 {
-	ClothColor = rgb(111, 74, 37);
-	SkinColor = rgb(230, 140, 100);
-	HairColor = rgb(160, 80, 0);
-	EyeColor = rgb(48, 8, 80);
-	BeltColor = rgb(48, 48, 48);
+	ClothColor = rgb16(111, 74, 37);
+	SkinColor = rgb16(230, 140, 100);
+	HairColor = rgb16(160, 80, 0);
+	EyeColor = rgb16(48, 8, 80);
+	BeltColor = rgb16(48, 48, 48);
 	TorsoSpecialColor = 0;
 	ArmSpecialColor = 0;
 	LegSpecialColor = 0;
@@ -140,9 +140,9 @@ petrus
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
-	HairColor = rgb(160, 160, 160);
-	ClothColor = rgb(48, 48, 48);
-	EyeColor = rgb(100, 60, 30);
+	HairColor = rgb16(160, 160, 160);
+	ClothColor = rgb16(48, 48, 48);
+	EyeColor = rgb16(100, 60, 30);
 	HeadBitmapPos = 96, 144;
 	TorsoBitmapPos = 32, 80;
 	ArmBitmapPos = 64, 16;
@@ -185,7 +185,7 @@ farmer
 	DefaultCharisma = 10;
 	DefaultMana = 5;
 	DefaultMoney = 20;
-	TorsoSpecialColor = rgb(0, 96, 0);
+	TorsoSpecialColor = rgb16(0, 96, 0);
 	TotalVolume = 30000;
 	TotalSize = 170;
 	NameSingular = "farmer";
@@ -209,8 +209,8 @@ guard
 	DefaultWisdom = 10;
 	DefaultCharisma = 15;
 	DefaultMana = 10;
-	ClothColor = rgb(0, 128, 128);
-	HairColor = rgb(100, 100, 100); /* horns */
+	ClothColor = rgb16(0, 128, 128);
+	HairColor = rgb16(100, 100, 100); /* horns */
 	HeadBitmapPos = 96, 112;
 	TorsoBitmapPos = 32, 128;
 	ArmBitmapPos = 64, 80;
@@ -241,7 +241,7 @@ shopkeeper
 	DefaultCharisma = 30;
 	DefaultMana = 10;
 	DefaultMoney = 3000;
-	TorsoSpecialColor = rgb(0, 96, 0);
+	TorsoSpecialColor = rgb16(0, 96, 0);
 	HeadBitmapPos = 96, 64;
 	TorsoBitmapPos = 32, 32;
 	ArmBitmapPos = 64, 16;
@@ -276,7 +276,7 @@ priest
 	DefaultCharisma = 20;
 	DefaultMana = 20;
 	CanSwim = true;
-	CapColor = rgb(180, 0, 80);
+	CapColor = rgb16(180, 0, 80);
 	HeadBitmapPos = 96, 128;
 	TorsoBitmapPos = 32, 16;
 	ArmBitmapPos = 64, 16;
@@ -318,9 +318,9 @@ oree
 	TorsoBitmapPos = 48, 160;
 	ArmBitmapPos = 80, 160;
 	LegBitmapPos = 16, 144;
-	ClothColor = rgb(30, 20, 0);
-	SkinColor = rgb(180, 0, 0);
-	EyeColor = rgb(100, 0, 0);
+	ClothColor = rgb16(30, 20, 0);
+	SkinColor = rgb16(180, 0, 0);
+	EyeColor = rgb16(100, 0, 0);
 	TotalVolume = 110000;
 	TotalSize = 225;
 	CanRead = true;
@@ -359,8 +359,8 @@ darkknight
 	TorsoBitmapPos = 32, 176;
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 48;
-	ClothColor = rgb(0, 0, 100);
-	EyeColor = rgb(200, 0, 0);
+	ClothColor = rgb16(0, 0, 100);
+	EyeColor = rgb16(200, 0, 0);
 	TotalVolume = 110000;
 	TotalSize = 200;
 	CanRead = true;
@@ -458,9 +458,9 @@ ennerbeast
 	TorsoBitmapPos = 32, 48;
 	ArmBitmapPos = 64, 48;
 	HeadBitmapPos = 112, 128;
-	HairColor = rgb(64, 20, 0);
-	ClothColor = rgb(0, 0, 100);
-	LegMainColor = rgb(64, 20, 0);
+	HairColor = rgb16(64, 20, 0);
+	ClothColor = rgb16(0, 0, 100);
+	LegMainColor = rgb16(64, 20, 0);
 	PanicLevel = 75;
 }
 
@@ -486,11 +486,11 @@ darkfrog
 	DefaultWisdom = 30;
 	DefaultCharisma = 5;
 	DefaultMana = 20;
-	BloodColor = rgb(0, 0, 0);
+	BloodColor = rgb16(0, 0, 0);
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
-	SkinColor = rgb(60, 60, 60);
+	SkinColor = rgb16(60, 60, 60);
 	Adjective = "dark";
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
@@ -565,9 +565,9 @@ skeleton
 	DefaultWisdom = 4;
 	DefaultCharisma = 3;
 	DefaultMana = 5;
-	SkinColor = rgb(160, 160, 160);
-	EyeColor = rgb(160, 0, 0);
-	ClothColor = rgb(111, 74, 37);
+	SkinColor = rgb16(160, 160, 160);
+	EyeColor = rgb16(160, 0, 0);
+	ClothColor = rgb16(111, 74, 37);
 	HeadBitmapPos = 96, 96;
 	TorsoBitmapPos = 32, 96;
 	ArmBitmapPos = 64, 96;
@@ -624,9 +624,9 @@ goblin
 	DefaultWisdom = 5;
 	DefaultCharisma = 5;
 	DefaultMana = 5;
-	SkinColor = rgb(0, 96, 0);
-	EyeColor = rgb(200, 200, 0);
-	ClothColor = rgb(48, 32, 24);
+	SkinColor = rgb16(0, 96, 0);
+	EyeColor = rgb16(200, 200, 0);
+	ClothColor = rgb16(48, 32, 24);
 	HeadBitmapPos = 96, 48;
 	TorsoBitmapPos = 32, 112;
 	ArmBitmapPos = 64, 144;
@@ -700,7 +700,7 @@ mommo
 	CanOpen = "false";
 	StandVerb = "bubbling";
 	TalkVerb = "vibrates oddly";
-	BloodColor = rgb(7, 155, 0);
+	BloodColor = rgb16(7, 155, 0);
 	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
@@ -753,7 +753,7 @@ golem
 	NameSingular = "golem";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	EyeColor = rgb(160, 0, 0);
+	EyeColor = rgb16(160, 0, 0);
 	HeadBitmapPos = 96, 256;
 	TorsoBitmapPos = 32, 256;
 	ArmBitmapPos = 64, 256;
@@ -781,7 +781,7 @@ wolf
 	TorsoBitmapPos = 224, 0;
 	TalkVerb = "howls";
 	TotalSize = 100;
-	SkinColor = rgb(64, 64, 64);
+	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "wolf";
 	NamePlural = "wolves";
 	AttackStyle = USE_HEAD;
@@ -806,7 +806,7 @@ dog
 	TalkVerb = "barks";
 	TotalSize = 70;
 	ConsumeFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
-	SkinColor = rgb(111, 74, 37);
+	SkinColor = rgb16(111, 74, 37);
 	NameSingular = "dog";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
@@ -825,13 +825,13 @@ spider
 	DefaultWisdom = 5;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	BloodColor = rgb(0, 0, 0);
+	BloodColor = rgb16(0, 0, 0);
 	CanOpen = false;
 	TotalVolume = 100;
 	TorsoBitmapPos = 272, 0;
 	TalkVerb = "says nothing";
 	TotalSize = 10;
-	SkinColor = rgb(64, 64, 64);
+	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "spider";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
@@ -855,7 +855,7 @@ jackal
 	TorsoBitmapPos = 304, 0;
 	TalkVerb = "howls";
 	TotalSize = 80;
-	SkinColor = rgb(255, 255, 255);
+	SkinColor = rgb16(255, 255, 255);
 	NameSingular = "jackal";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
@@ -878,7 +878,7 @@ donkey
 	TorsoBitmapPos = 288, 0;
 	TalkVerb = "neighs";
 	TotalSize = 150;
-	SkinColor = rgb(80, 80, 80);
+	SkinColor = rgb16(80, 80, 80);
 	Adjective = "mutant";
 	NameSingular = "donkey";
 	AttackStyle = USE_HEAD;
@@ -902,9 +902,9 @@ communist /* Ivan */
 	DefaultMana = 5;
 	CriticalModifier = 4;
 	IsNameable = false;
-	ArmSpecialColor = rgb(160, 0, 0);
-	BeltColor = rgb(32, 32, 32);
-	ClothColor = rgb(64, 56, 24);
+	ArmSpecialColor = rgb16(160, 0, 0);
+	BeltColor = rgb16(32, 32, 32);
+	ClothColor = rgb16(64, 56, 24);
 	HeadBitmapPos = 96, 176;
 	TorsoBitmapPos = 32, 144;
 	ArmBitmapPos = 64, 112;
@@ -940,8 +940,8 @@ hunter
 	DefaultWisdom = 10;
 	DefaultCharisma = 15;
 	DefaultMana = 5;
-	ClothColor = rgb(128, 80, 48);
-	BeltColor = rgb(144, 96, 60);
+	ClothColor = rgb16(128, 80, 48);
+	BeltColor = rgb16(144, 96, 60);
 	HeadBitmapPos = 96, 192;
 	TorsoBitmapPos = 32, 192;
 	ArmBitmapPos = 64, 128;
@@ -976,7 +976,7 @@ polarbear
 	TorsoBitmapPos = 336, 0;
 	TalkVerb = "growls";
 	TotalSize = 250;
-	SkinColor = rgb(240, 240, 240);
+	SkinColor = rgb16(240, 240, 240);
 	Adjective = "polar";
 	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
@@ -1004,8 +1004,8 @@ dolphin
 	TorsoBitmapPos = 320, 0;
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
-	SkinColor = rgb(144, 144, 144);
-	EyeColor = rgb(100, 100, 255);
+	SkinColor = rgb16(144, 144, 144);
+	EyeColor = rgb16(100, 100, 255);
 	Adjective = "female";
 	NameSingular = "dolphin";
 	PostFix = "in season";
@@ -1026,7 +1026,7 @@ lightfrog
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
-	SkinColor = rgb(32, 88, 32);
+	SkinColor = rgb16(32, 88, 32);
 	Adjective = "light";
 	CWeaponSkillHits == 100;
 }
@@ -1043,9 +1043,9 @@ slave
 	DefaultWisdom = 10;
 	DefaultCharisma = 10;
 	DefaultMana = 5;
-	SkinColor = rgb(128, 80, 48);
-	HairColor = rgb(80, 48, 32);
-	ClothColor = rgb(56, 48, 20);
+	SkinColor = rgb16(128, 80, 48);
+	HairColor = rgb16(80, 48, 32);
+	ClothColor = rgb16(56, 48, 20);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
@@ -1070,8 +1070,8 @@ petrusswife
 	DefaultCharisma = 80;
 	DefaultMana = 20;
 	Sex = FEMALE;
-	ClothColor = rgb(150, 0, 0);
-	BeltColor = rgb(180, 180, 0);
+	ClothColor = rgb16(150, 0, 0);
+	BeltColor = rgb16(180, 180, 0);
 	TorsoBitmapPos = 32, 160;
 	ArmBitmapPos = 64, 160;
 	LegBitmapPos = 0, 112;
@@ -1086,21 +1086,21 @@ petrusswife
 
 	Config 1;
 	{
-		HairColor = rgb(24, 24, 24);
+		HairColor = rgb16(24, 24, 24);
 		HeadBitmapPos = 112, 0;
 		PostFix = "number 1";
 	}
 
 	Config 2;
 	{
-		HairColor = rgb(24, 24, 24);
+		HairColor = rgb16(24, 24, 24);
 		HeadBitmapPos = 112, 16;
 		PostFix = "number 2";
 	}
 
 	Config 3;
 	{
-		HairColor = rgb(48, 40, 8);
+		HairColor = rgb16(48, 40, 8);
 		HeadBitmapPos = 112, 0;
 		PostFix = "number 3";
 	}
@@ -1108,21 +1108,21 @@ petrusswife
 	Config 4;
 	{
 		DefaultIntelligence = 7; /* she's blond */
-		HairColor = rgb(200, 96, 0);
+		HairColor = rgb16(200, 96, 0);
 		HeadBitmapPos = 112, 32;
 		PostFix = "number 4";
 	}
 
 	Config 5;
 	{
-		HairColor = rgb(60, 48, 24);
+		HairColor = rgb16(60, 48, 24);
 		HeadBitmapPos = 112, 48;
 		PostFix = "number 5";
 	}
 
 	Config 6;
 	{
-		HairColor = rgb(200, 0, 0);
+		HairColor = rgb16(200, 0, 0);
 		HeadBitmapPos = 112, 64;
 		PostFix = "number 6";
 	}
@@ -1141,9 +1141,9 @@ housewife
 	DefaultCharisma = 20;
 	DefaultMana = 10;
 	Sex = FEMALE;
-	TorsoMainColor = rgb(200, 200, 200);
-	ArmMainColor = rgb(100, 100, 100);
-	LegMainColor = rgb(180, 80, 0);
+	TorsoMainColor = rgb16(200, 200, 200);
+	ArmMainColor = rgb16(100, 100, 100);
+	LegMainColor = rgb16(180, 80, 0);
 	/* HairColor is random */
 	/* HeadBitmapPos is random */
 	TorsoBitmapPos = 32, 160;
@@ -1170,8 +1170,8 @@ femaleslave
 	DefaultCharisma = 25;
 	DefaultMana = 5;
 	Sex = FEMALE;
-	SkinColor = rgb(160, 100, 64);
-	HairColor = rgb(80, 48, 32);
+	SkinColor = rgb16(160, 100, 64);
+	HairColor = rgb16(80, 48, 32);
 	HeadBitmapPos = 112, 80;
 	TorsoBitmapPos = 32, 208;
 	ArmBitmapPos = 64, 208;
@@ -1195,9 +1195,9 @@ librarian
 	DefaultWisdom = 15;
 	DefaultCharisma = 10;
 	DefaultMana = 20;
-	HairColor = rgb(200, 200, 200);
-	ClothColor = rgb(48, 48, 48);
-	ArmMainColor = rgb(180, 180, 180);
+	HairColor = rgb16(200, 200, 200);
+	ClothColor = rgb16(48, 48, 48);
+	ArmMainColor = rgb16(180, 180, 180);
 	HeadBitmapPos = 96, 224;
 	TorsoBitmapPos = 32, 80;
 	ArmBitmapPos = 64, 16;
@@ -1222,9 +1222,9 @@ zombie
 	DefaultWisdom = 4;
 	DefaultCharisma = 3;
 	DefaultMana = 0;
-	SkinColor = rgb(0, 120, 120);
-	EyeColor = rgb(200, 200, 0);
-	ClothColor = rgb(56, 16, 96);
+	SkinColor = rgb16(0, 120, 120);
+	EyeColor = rgb16(200, 200, 0);
+	ClothColor = rgb16(56, 16, 96);
 	HeadBitmapPos = 112, 112;
 	TorsoBitmapPos = 32, 224;
 	ArmBitmapPos = 64, 224;
@@ -1249,9 +1249,9 @@ imp
 	DefaultWisdom = 10;
 	DefaultCharisma = 5;
 	DefaultMana = 10;
-	EyeColor = rgb(200, 200, 0);
-	ClothColor = rgb(111, 74, 37);
-	HairColor = rgb(100, 0, 0);
+	EyeColor = rgb16(200, 200, 0);
+	ClothColor = rgb16(111, 74, 37);
+	HairColor = rgb16(100, 0, 0);
 	HeadBitmapPos = 96, 16; 
 	TorsoBitmapPos = 48, 112;
 	ArmBitmapPos = 64, 32;
@@ -1285,7 +1285,7 @@ bat
 	TorsoBitmapPos = 464, 0;
 	TalkVerb = "squeaks";
 	TotalSize = 20;
-	SkinColor = rgb(64, 64, 64);
+	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "bat";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
@@ -1309,9 +1309,9 @@ mistress
 	DefaultCharisma = 40;
 	DefaultMana = 15;
 	Sex = FEMALE;
-	SkinColor = rgb(255, 212, 192);
-	HairColor = rgb(200, 200, 200);
-	ClothColor = rgb(35, 35, 35);
+	SkinColor = rgb16(255, 212, 192);
+	HairColor = rgb16(200, 200, 200);
+	ClothColor = rgb16(35, 35, 35);
 	HeadBitmapPos = 112, 240;
 	TorsoBitmapPos = 48, 96;
 	ArmBitmapPos = 80, 80;
@@ -1334,7 +1334,7 @@ mistress
 
 	Config TORTURINGCHIEF;
 	{
-		HairColor = rgb(200, 200, 0);
+		HairColor = rgb16(200, 200, 0);
 		AttributeBonus = 25;
 		BodyArmor = IRON bodyarmor(CHAINMAIL) { Enchantment = 2; }
 		RightBoot = IRON boot { Enchantment = 2; }
@@ -1349,7 +1349,7 @@ mistress
 
 	Config WHIPCHAMPION;
 	{
-		HairColor = rgb(200, 0, 0);
+		HairColor = rgb16(200, 0, 0);
 		AttributeBonus = 50;
 		BodyArmor = STEEL bodyarmor(CHAINMAIL) { Enchantment = 5; }
 		RightBoot = STEEL boot { Enchantment = 5; }
@@ -1364,7 +1364,7 @@ mistress
 
 	Config WARLADY;
 	{
-		HairColor = rgb(80, 64, 32);
+		HairColor = rgb16(80, 64, 32);
 		AttributeBonus = 75;
 		BodyArmor = MITHRIL bodyarmor(CHAINMAIL) { Enchantment = 8; }
 		RightBoot = MITHRIL boot { Enchantment = 8; }
@@ -1379,7 +1379,7 @@ mistress
 
 	Config QUEEN;
 	{
-		HairColor = rgb(35, 35, 35);
+		HairColor = rgb16(35, 35, 35);
 		AttributeBonus = 100;
 		BodyArmor = SAPPHIRE bodyarmor(CHAINMAIL) { Enchantment = 10; }
 		RightBoot = SAPPHIRE boot(BOOTOFSPEED) { Enchantment = 10; }
@@ -1407,8 +1407,8 @@ werewolfhuman
 	DefaultCharisma = 15;
 	DefaultMana = 15;
 	TotalVolume = 80000;
-	EyeColor = rgb(160, 0, 0);
-	ClothColor = rgb(114, 84, 52);
+	EyeColor = rgb16(160, 0, 0);
+	ClothColor = rgb16(114, 84, 52);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 0;
@@ -1438,9 +1438,9 @@ werewolfwolf
 	DefaultCharisma = 10;
 	DefaultMana = 0;
 	TotalVolume = 80000;
-	EyeColor = rgb(200, 200, 0);
-	ClothColor = rgb(114, 84, 52);
-	SkinColor = rgb(100, 100, 100);
+	EyeColor = rgb16(200, 200, 0);
+	ClothColor = rgb16(114, 84, 52);
+	SkinColor = rgb16(100, 100, 100);
 	HeadBitmapPos = 112, 144;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 240;
@@ -1470,11 +1470,11 @@ kobold
 	DefaultWisdom = 4;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	SkinColor = rgb(80, 144, 144);
-	EyeColor = rgb(200, 0, 0);
-	HairColor = rgb(35, 35, 35);
-	ClothColor = rgb(48, 48, 48);
-	LegMainColor = rgb(111, 74, 37);
+	SkinColor = rgb16(80, 144, 144);
+	EyeColor = rgb16(200, 0, 0);
+	HairColor = rgb16(35, 35, 35);
+	ClothColor = rgb16(48, 48, 48);
+	LegMainColor = rgb16(111, 74, 37);
 	HeadBitmapPos = 112, 208;
 	TorsoBitmapPos = 48, 176;
 	ArmBitmapPos = 64, 176;
@@ -1521,17 +1521,17 @@ gibberling
 	DefaultWisdom = 4;
 	DefaultCharisma = 5;
 	DefaultMana = 0;
-	SkinColor = rgb(100, 100, 200);
-	HairColor = rgb(50, 20, 80);
-	ClothColor = rgb(111, 74, 37);
-	EyeColor = rgb(50, 0, 0);
+	SkinColor = rgb16(100, 100, 200);
+	HairColor = rgb16(50, 20, 80);
+	ClothColor = rgb16(111, 74, 37);
+	EyeColor = rgb16(50, 0, 0);
 	HeadBitmapPos = 112, 96;
 	TorsoBitmapPos = 48, 144;
 	ArmBitmapPos = 80, 144;
 	LegBitmapPos = 16, 128;
 	TotalVolume = 30000;
 	TotalSize = 90;
-	SkinColor = rgb(100, 100, 200);
+	SkinColor = rgb16(100, 100, 200);
 	NameSingular = "gibberling";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
@@ -1556,7 +1556,7 @@ largecat
 	TorsoBitmapPos = 496, 0;
 	TalkVerb = "mews";
 	TotalSize = 60;
-	SkinColor = rgb(50, 50, 50);
+	SkinColor = rgb16(50, 50, 50);
 	Adjective = "large";
 	NameSingular = "cat";
 	AttackStyle = USE_HEAD;
@@ -1581,7 +1581,7 @@ largerat
 	TorsoBitmapPos = 512, 0;
 	TalkVerb = "squeaks";
 	TotalSize = 30;
-	SkinColor = rgb(180, 100, 40);
+	SkinColor = rgb16(180, 100, 40);
 	Adjective = "large";
 	NameSingular = "rat";
 	AttackStyle = USE_HEAD;
@@ -1614,9 +1614,9 @@ angel
 	Article = "an";
 	CanBeWished = false;
 	ClassStates = ESP;
-	SkinColor = rgb(200, 200, 200);
-	HairColor = rgb(180, 180, 0);
-	EyeColor = rgb(48, 48, 255);
+	SkinColor = rgb16(200, 200, 200);
+	HairColor = rgb16(180, 180, 0);
+	EyeColor = rgb16(48, 48, 255);
 	HeadBitmapPos = 112, 256;
 	TorsoBitmapPos = 48, 256;
 	ArmBitmapPos = 80, 256;
@@ -1649,8 +1649,8 @@ kamikazedwarf
 	TorsoBitmapPos = 48, 16;
 	ArmBitmapPos = 80, 0;
 	LegBitmapPos = 0, 208;
-	HairColor = rgb(144, 72, 0);
-	BeltColor = rgb(72, 56, 16);
+	HairColor = rgb16(144, 72, 0);
+	BeltColor = rgb16(72, 56, 16);
 	TotalVolume = 60000;
 	TotalSize = 130;
 	CanRead = true;
@@ -1676,7 +1676,7 @@ mammoth
 	TorsoBitmapPos = 528, 0;
 	TalkVerb = "roars";
 	TotalSize = 500;
-	SkinColor = rgb(100, 130, 160);
+	SkinColor = rgb16(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
 	BaseKickStrength = 20000;
@@ -1709,25 +1709,25 @@ unicorn
 	CanBeGenerated = true;
 	CanKick = true;
 	IsAbstract = true;
-	TorsoMainColor = rgb(200, 200, 200); /* the horn */
+	TorsoMainColor = rgb16(200, 200, 200); /* the horn */
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
 
 	Config GOOD;
 	{
-		SkinColor = rgb(200, 200, 200);
+		SkinColor = rgb16(200, 200, 200);
 		Adjective = "white";
 	}
 
 	Config NEUTRAL;
 	{
-		SkinColor = rgb(144, 144, 144);
+		SkinColor = rgb16(144, 144, 144);
 		Adjective = "gray";
 	}
 
 	Config EVIL;
 	{
-		SkinColor = rgb(80, 80, 80);
+		SkinColor = rgb16(80, 80, 80);
 		Adjective = "black";
 	}
 }
@@ -1750,7 +1750,7 @@ genie
 	TotalSize = 250;
 	CanRead = true;
 	NameSingular = "genie";
-	ClothColor = rgb(100, 100, 160);
+	ClothColor = rgb16(100, 100, 160);
 	HeadBitmapPos = 96, 272;
 	TorsoBitmapPos = 32, 272;
 	ArmBitmapPos = 64, 272;
@@ -1776,7 +1776,7 @@ lion
 	TorsoBitmapPos = 576, 0;
 	TalkVerb = "growls";
 	TotalSize = 200;
-	SkinColor = rgb(200, 200, 112);
+	SkinColor = rgb16(200, 200, 112);
 	NameSingular = "lion";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
@@ -1804,8 +1804,8 @@ carnivorousplant
 	NameSingular = "plant";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 5000;
-	SkinColor = rgb(111, 64, 37);
-	TorsoMainColor = rgb(0, 160, 0); /* the leaves */
+	SkinColor = rgb16(111, 64, 37);
+	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
 	CanWalk = false;
 	CanBeGenerated = true;
@@ -1828,8 +1828,8 @@ buffalo
 	TorsoBitmapPos = 16,16;
 	TalkVerb = "snarls";
 	TotalSize = 250;
-	SkinColor = rgb(90, 85, 80);
-	TorsoMainColor = rgb(120, 120, 120); /* the horns */
+	SkinColor = rgb16(90, 85, 80);
+	TorsoMainColor = rgb16(120, 120, 120); /* the horns */
 	NameSingular = "buffalo";
 	AttackStyle = USE_LEGS|USE_HEAD;
 	BaseKickStrength = 20000;
@@ -1855,7 +1855,7 @@ snake
 	TorsoBitmapPos = 384, 0;
 	TalkVerb = "hisses";
 	TotalSize = 250;
-	SkinColor = rgb(130, 0, 0);
+	SkinColor = rgb16(130, 0, 0);
 	NameSingular = "snake";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 10000;
@@ -1879,11 +1879,11 @@ orc
 	DefaultWisdom = 5;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	SkinColor = rgb(48, 48, 48);
-	EyeColor = rgb(200, 200, 0);
-	ClothColor = rgb(180, 120, 80);
-	BeltColor = rgb(72, 60, 24);
-	LegMainColor = rgb(96, 80, 48);
+	SkinColor = rgb16(48, 48, 48);
+	EyeColor = rgb16(200, 200, 0);
+	ClothColor = rgb16(180, 120, 80);
+	BeltColor = rgb16(72, 60, 24);
+	LegMainColor = rgb16(96, 80, 48);
 	HeadBitmapPos = 112, 192;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 80, 32;
@@ -1918,7 +1918,7 @@ orc
 
 	Config SQUADLEADER;
 	{
-		HairColor = rgb(200, 0, 0);
+		HairColor = rgb16(200, 0, 0);
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 48;
 		AttributeBonus = 50;
@@ -1934,10 +1934,10 @@ orc
 
 	Config OFFICER;
 	{
-		HairColor = rgb(200, 0, 0);
-		ClothColor = rgb(72, 72, 72);
-		LegMainColor = rgb(48, 48, 48);
-		LegSpecialColor = rgb(96, 64, 32);
+		HairColor = rgb16(200, 0, 0);
+		ClothColor = rgb16(72, 72, 72);
+		LegMainColor = rgb16(48, 48, 48);
+		LegSpecialColor = rgb16(96, 64, 32);
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 32;
 		ArmBitmapPos = 80, 16;
@@ -1955,10 +1955,10 @@ orc
 
 	Config GENERAL;
 	{
-		HairColor = rgb(200, 0, 200);
-		ClothColor = rgb(72, 72, 72);
-		LegMainColor = rgb(48, 48, 48);
-		LegSpecialColor = rgb(96, 64, 32);
+		HairColor = rgb16(200, 0, 200);
+		ClothColor = rgb16(72, 72, 72);
+		LegMainColor = rgb16(48, 48, 48);
+		LegSpecialColor = rgb16(96, 64, 32);
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 32;
 		ArmBitmapPos = 80, 16;
@@ -1987,8 +1987,8 @@ cossack
 	DefaultWisdom = 7;
 	DefaultCharisma = 7;
 	DefaultMana = 0;
-	BeltColor = rgb(48, 48, 48);
-	ClothColor = rgb(64, 56, 24);
+	BeltColor = rgb16(48, 48, 48);
+	ClothColor = rgb16(64, 56, 24);
 	HeadBitmapPos = 112, 224;
 	TorsoBitmapPos = 48, 80;
 	ArmBitmapPos = 64, 16;
@@ -2008,3 +2008,5 @@ cossack
 	RightBoot = LEATHER boot;
 	PanicLevel = 10;
 }
+
+

@@ -126,7 +126,7 @@ class ABSTRACT_CHARACTER
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   virtual uchar GetBodyParts() const { return HUMANOID_BODYPARTS; }
-  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
@@ -722,7 +722,7 @@ class ABSTRACT_CHARACTER
   dwarf,
   humanoid,
  public:
-  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DWARFFLESH, Volume); }
 );
@@ -803,7 +803,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
-  virtual ushort GetTorsoSpecialColor() const { return MakeRGB(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
+  virtual ushort GetTorsoSpecialColor() const { return MakeRGB16(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
   virtual void GetAICommand();
 );
 

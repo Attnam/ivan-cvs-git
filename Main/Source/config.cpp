@@ -24,11 +24,11 @@ ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
-ushort configuration::CharacterOutlineColor = MakeRGB(48, 48, 48);
-ushort configuration::ItemOutlineColor = MakeRGB(48, 48, 100);
+ushort configuration::CharacterOutlineColor = MakeRGB16(48, 48, 48);
+ushort configuration::ItemOutlineColor = MakeRGB16(48, 48, 100);
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
-ushort configuration::ContrastLuminance = 256;
+ulong configuration::ContrastLuminance = MakeRGB24(128, 128, 128);
 
 void configuration::Save()
 {
@@ -43,8 +43,8 @@ void configuration::Save()
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
-  SaveFile << "CharacterOutlineColor = " << GetRed(CharacterOutlineColor) << ", " << GetGreen(CharacterOutlineColor) << ", " << GetBlue(CharacterOutlineColor) << ";\n";
-  SaveFile << "ItemOutlineColor = " << GetRed(ItemOutlineColor) << ", " << GetGreen(ItemOutlineColor) << ", " << GetBlue(ItemOutlineColor) << ";\n";
+  SaveFile << "CharacterOutlineColor = " << GetRed16(CharacterOutlineColor) << ", " << GetGreen16(CharacterOutlineColor) << ", " << GetBlue16(CharacterOutlineColor) << ";\n";
+  SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
   SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
 }
@@ -87,7 +87,7 @@ void configuration::Load()
 	  uchar Green = SaveFile.ReadNumber();
 	  uchar Blue = SaveFile.ReadNumber();
 
-	  SetCharacterOutlineColor(MakeRGB(Red, Green, Blue));
+	  SetCharacterOutlineColor(MakeRGB16(Red, Green, Blue));
 	}
 
       if(Word == "ItemOutlineColor")
@@ -96,7 +96,7 @@ void configuration::Load()
 	  uchar Green = SaveFile.ReadNumber();
 	  uchar Blue = SaveFile.ReadNumber();
 
-	  SetItemOutlineColor(MakeRGB(Red, Green, Blue));
+	  SetItemOutlineColor(MakeRGB16(Red, Green, Blue));
 	}
 
       if(Word == "BeepOnCritical")
@@ -114,7 +114,8 @@ void configuration::EditContrast(short Change)
   if(short(Contrast) < 0) Contrast = 0;
   if(short(Contrast) > 200) Contrast = 200;
 
-  ContrastLuminance = (Contrast << 8) / 100;
+  ushort Element = Min((Contrast << 7) / 100, 255);
+  ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 
 void configuration::ShowConfigScreen()
@@ -153,7 +154,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
 #endif
 
-      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MakeRGB(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
+      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MakeRGB16(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
 
       switch(Chosen)
 	{
@@ -223,7 +224,8 @@ void configuration::SetContrast(short What)
   if(What > 200) What = 200;
 
   Contrast = What;
-  ContrastLuminance = (Contrast << 8) / 100;
+  ushort Element = Min((Contrast << 7) / 100, 255);
+  ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 
 void configuration::SwitchModeHandler()
@@ -243,3 +245,7 @@ void configuration::ContrastHandler(long Value)
     }
 }
 
+ulong configuration::ApplyContrastTo(ulong L)
+{
+  return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
+}

@@ -148,24 +148,25 @@ void olterrain::ShowRestMessage(character*) const
     ADD_MESSAGE("%s", GetRestMessage().c_str());
 }
 
-void lterrain::SignalEmitationIncrease(ushort EmitationUpdate)
+void lterrain::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      Emitation = EmitationUpdate;
+      game::AddLight(Emitation, EmitationUpdate);
 
       if(LSquareUnder)
 	LSquareUnder->SignalEmitationIncrease(EmitationUpdate);
     }
 }
 
-void lterrain::SignalEmitationDecrease(ushort EmitationUpdate)
+void lterrain::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
     {
+      ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation && LSquareUnder)
+      if(Backup != Emitation && LSquareUnder)
 	LSquareUnder->SignalEmitationDecrease(EmitationUpdate);
     }
 }
@@ -195,3 +196,4 @@ bool olterrain::Enter(bool DirectionUp) const
 
   return false;
 }
+

@@ -28,7 +28,7 @@ void stackslot::Empty()
 
 void characterslot::Empty()
 {
-  ushort Emitation = Item->GetEmitation();
+  ulong Emitation = Item->GetEmitation();
   static_cast<bodypart*>(Item)->SetMaster(0);
   Item = 0;
   GetMaster()->CalculateEquipmentState();
@@ -44,7 +44,7 @@ void characterslot::Empty()
 
 void gearslot::Empty()
 {
-  ushort Emitation = Item->GetEmitation();
+  ulong Emitation = Item->GetEmitation();
   Item = 0;
   GetBodyPart()->SignalEquipmentRemoval(this);
   SignalVolumeAndWeightChange();
@@ -59,7 +59,7 @@ void gearslot::Init(bodypart* BodyPart, uchar Index)
 
 void actionslot::Empty()
 {
-  ushort Emitation = Item->GetEmitation();
+  ulong Emitation = Item->GetEmitation();
   Item = 0;
   SignalVolumeAndWeightChange();
   SignalEmitationDecrease(Emitation);
@@ -192,42 +192,42 @@ square* actionslot::GetSquareUnder() const
   return GetAction()->GetActor()->GetSquareUnder();
 }
 
-void stackslot::SignalEmitationIncrease(ushort Emitation)
+void stackslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetMotherStack()->SignalEmitationIncrease(Emitation);
 }
 
-void characterslot::SignalEmitationIncrease(ushort Emitation)
+void characterslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetMaster()->SignalEmitationIncrease(Emitation);
 }
 
-void gearslot::SignalEmitationIncrease(ushort Emitation)
+void gearslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetBodyPart()->SignalEmitationIncrease(Emitation);
 }
 
-void actionslot::SignalEmitationIncrease(ushort Emitation)
+void actionslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetAction()->GetActor()->SignalEmitationIncrease(Emitation);
 }
 
-void stackslot::SignalEmitationDecrease(ushort Emitation)
+void stackslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetMotherStack()->SignalEmitationDecrease(Emitation);
 }
 
-void characterslot::SignalEmitationDecrease(ushort Emitation)
+void characterslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetMaster()->SignalEmitationDecrease(Emitation);
 }
 
-void gearslot::SignalEmitationDecrease(ushort Emitation)
+void gearslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetBodyPart()->SignalEmitationDecrease(Emitation);
 }
 
-void actionslot::SignalEmitationDecrease(ushort Emitation)
+void actionslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetAction()->GetActor()->SignalEmitationDecrease(Emitation);
 }

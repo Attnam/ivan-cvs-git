@@ -303,4 +303,3 @@ bool femath::Clip(ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY
 
   return short(Width) > 0 && short(Height) > 0;
 }
-

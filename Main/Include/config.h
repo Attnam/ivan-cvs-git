@@ -37,7 +37,8 @@ class configuration
   static void Load();
   static void ShowConfigScreen();
   static void SwitchModeHandler();
-  static ushort GetContrastLuminance() { return ContrastLuminance; }
+  static ulong GetContrastLuminance() { return ContrastLuminance; }
+  static ulong ApplyContrastTo(ulong);
  private:
   static void ContrastHandler(long);
   static std::string DefaultName;
@@ -50,7 +51,7 @@ class configuration
   static ushort ItemOutlineColor;
   static bool BeepOnCritical;
   static bool FullScreenMode;
-  static ushort ContrastLuminance;
+  static ulong ContrastLuminance;
 };
 
 #endif

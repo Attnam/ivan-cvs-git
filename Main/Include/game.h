@@ -194,7 +194,7 @@ class game
   static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);
-  static void SetCurrentEmitterEmitation(ushort What) { CurrentEmitterEmitation = What; }
+  static void SetCurrentEmitterEmitation(ulong What) { CurrentEmitterEmitation = What; }
   static void SetCurrentEmitterPos(vector2d);
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
@@ -206,6 +206,10 @@ class game
   static bool LeaveLevel(std::vector<character*>&, bool);
   static bool LeaveWorldMap(std::vector<character*>&);
   static void EnterArea(std::vector<character*>&, uchar, uchar);
+  static char CompareLights(ulong, ulong);
+  static char CompareLightToInt(ulong, uchar);
+  static void AddLight(ulong&, ulong);
+  static bool IsDark(ulong);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -243,7 +247,7 @@ class game
   static vector2d CursorPos;
   static bool Zoom;
   static std::string LockDescription[];
-  static ushort CurrentEmitterEmitation;
+  static ulong CurrentEmitterEmitation;
   static long CurrentEmitterPosX;
   static long CurrentEmitterPosY;
   static vector2d CurrentEmitterPos;

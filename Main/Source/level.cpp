@@ -824,10 +824,13 @@ ushort level::GetLOSModifier() const
   return *LevelScript->GetLOSModifier();
 }
 
-ushort level::CalculateMinimumEmitationRadius(ushort Emitation) const
+ushort level::CalculateMinimumEmitationRadius(ulong E) const
 {
-  ushort Ambient = *LevelScript->GetAmbientLight();
-  return ushort(sqrt(float(Emitation << 7) / (Ambient < LIGHT_BORDER ? LIGHT_BORDER : Ambient) - 128));
+  ulong A = *LevelScript->GetAmbientLight();
+  ushort RedRadius = ushort(sqrt(float(GetRed24(E) << 7) / Max<uchar>(GetRed24(A), LIGHT_BORDER)));
+  ushort GreenRadius = ushort(sqrt(float(GetGreen24(E) << 7) / Max<uchar>(GetGreen24(A), LIGHT_BORDER)));
+  ushort BlueRadius = ushort(sqrt(float(GetBlue24(E) << 7) / Max<uchar>(GetBlue24(A), LIGHT_BORDER)));
+  return Max(RedRadius, GreenRadius, BlueRadius);
 }
 
 void level::AddRoom(room* NewRoom)
@@ -849,15 +852,8 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
   if(!GetSquare(Pos)->CanBeSeenByPlayer())
     ADD_MESSAGE("You hear an explosion.");
 
-  ushort EmitChange = 300 + Strength * 2;
-
-  if(EmitChange > 511)
-    EmitChange = 511;
-
-  GetLSquare(Pos)->SetTemporaryEmitation(EmitChange);
-
-  ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
-
+  ushort EmitChange = Min(150 + Strength, 255);
+  GetLSquare(Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
   static ushort StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
 
@@ -910,12 +906,12 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
       uchar Flags = RAND() % 8;
 
       if(!Flags || SizeVect != OldSizeVect)
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos, BPos, SizeVect, ContrastLuminance);
+	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
       else
 	{
 	  bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
 	  igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
-	  ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos, SizeVect, ContrastLuminance);
+	  ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
 	}
 
       graphics::BlitDBToScreen();
@@ -1063,3 +1059,4 @@ vector2d level::GetEntryPos(const character* Char, uchar Index) const
   std::map<uchar, vector2d>::const_iterator i = EntryMap.find(Index);
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
+

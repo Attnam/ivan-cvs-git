@@ -52,7 +52,7 @@ class square
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(const character*, bool = false) const;
-  ushort GetLuminance() const { return Luminance; }
+  ulong GetLuminance() const { return Luminance; }
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
  protected:
@@ -63,7 +63,7 @@ class square
   bool NewDrawRequested;
   ulong LastSeen;
   ushort AnimatedEntities;
-  ushort Luminance;
+  ulong Luminance;
   bool DescriptionChanged;
 };
 

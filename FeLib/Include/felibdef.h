@@ -18,11 +18,16 @@
 #define PI 3.1415926535897932384626433832795f
 #endif
 
-inline ushort GetRed(ushort Color) { return Color >> 8 & 0xF8; }
-inline ushort GetGreen(ushort Color) { return Color >> 3 & 0xFC; }
-inline ushort GetBlue(ushort Color) { return Color << 3 & 0xF8; }
-inline ushort MakeRGB(ushort Red, ushort Green, ushort Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
-inline ushort MakeShadeColor(ushort Color) { return MakeRGB(GetRed(Color) / 3, GetGreen(Color) / 3, GetBlue(Color) / 3); }
+inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
+inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
+inline ushort GetBlue16(ushort Color) { return Color << 3 & 0xF8; }
+inline ushort MakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
+inline ushort MakeShadeColor(ushort Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
+
+inline ulong GetRed24(ulong Color) { return Color >> 16 & 0xFF; }
+inline ulong GetGreen24(ulong Color) { return Color >> 8 & 0xFF; }
+inline ulong GetBlue24(ulong Color) { return Color & 0xFF; }
+inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 & 0xFF0000) | (Green << 8 & 0xFF00) | (Blue & 0xFF); }
 
 #define NONE 0
 #define MIRROR 1
@@ -31,17 +36,17 @@ inline ushort MakeShadeColor(ushort Color) { return MakeRGB(GetRed(Color) / 3, G
 
 #define DEFAULTTRANSPARENT 0xF81F
 
-#define RED MakeRGB(255, 0, 0)
-#define GREEN MakeRGB(0, 255, 0)
-#define BLUE MakeRGB(0, 0, 255)
+#define RED MakeRGB16(255, 0, 0)
+#define GREEN MakeRGB16(0, 255, 0)
+#define BLUE MakeRGB16(0, 0, 255)
 
-#define YELLOW MakeRGB(255, 255, 0)
-#define PINK MakeRGB(255, 0, 255)
+#define YELLOW MakeRGB16(255, 255, 0)
+#define PINK MakeRGB16(255, 0, 255)
 
-#define WHITE MakeRGB(255, 255, 255)
-#define LIGHTGRAY MakeRGB(180, 180, 180)
-#define DARKGRAY MakeRGB(80, 80, 80)
-#define BLACK MakeRGB(0, 0, 0)
+#define WHITE MakeRGB16(255, 255, 255)
+#define LIGHTGRAY MakeRGB16(180, 180, 180)
+#define DARKGRAY MakeRGB16(80, 80, 80)
+#define BLACK MakeRGB16(0, 0, 0)
 
 #define KEYBACKSPACE 0x08
 #define KEYESC 0x1B

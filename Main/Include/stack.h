@@ -43,7 +43,7 @@ class stack
   stack(square*, entity*, uchar, bool);
   ~stack();
   void Load(inputfile&);
-  void Draw(const character*, bitmap*, vector2d, ushort, bool, bool, bool) const;
+  void Draw(const character*, bitmap*, vector2d, ulong, bool, bool, bool) const;
   void AddItem(item*);
   void RemoveItem(stackslot*);
   item* GetItem(ushort) const;
@@ -86,9 +86,9 @@ class stack
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   area* GetAreaUnder() const { return GetSquareUnder()->GetAreaUnder(); }
   square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
-  ushort GetEmitation() const { return Emitation; }
-  void SignalEmitationIncrease(ushort);
-  void SignalEmitationDecrease(ushort);
+  ulong GetEmitation() const { return Emitation; }
+  void SignalEmitationIncrease(ulong);
+  void SignalEmitationDecrease(ulong);
   void CalculateEmitation();
   bool CanBeSeenBy(const character*) const;
   bool IsDangerousForAIToStepOn(const character*) const;
@@ -109,7 +109,7 @@ class stack
   uchar SquarePosition;
   ulong Volume;
   ulong Weight;
-  ushort Emitation;
+  ulong Emitation;
   ushort Items;
   bool IgnoreVisibility;
 };

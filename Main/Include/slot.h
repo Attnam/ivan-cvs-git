@@ -34,8 +34,8 @@ class slot
   virtual void PutInItem(item*);
   virtual square* GetSquareUnder() const = 0;
   virtual void SignalVolumeAndWeightChange() = 0;
-  virtual void SignalEmitationIncrease(ushort) = 0;
-  virtual void SignalEmitationDecrease(ushort) = 0;
+  virtual void SignalEmitationIncrease(ulong) = 0;
+  virtual void SignalEmitationDecrease(ulong) = 0;
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const = 0;
   virtual void SignalAttackInfoChange() { }
@@ -54,8 +54,8 @@ class stackslot : public slot
   virtual bool IsOnGround() const;
   virtual square* GetSquareUnder() const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const;
   stack* GetMotherStack() const { return MotherStack; }
@@ -75,8 +75,8 @@ class characterslot : public slot
   virtual void AddFriendItem(item*) const;
   virtual square* GetSquareUnder() const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
   virtual bool CanBeSeenBy(const character*) const;
@@ -97,8 +97,8 @@ class gearslot : public slot
   virtual void PutInItem(item*);
   virtual square* GetSquareUnder() const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   virtual bool CanBeSeenBy(const character*) const;
   virtual void SignalAttackInfoChange();
  protected:
@@ -117,8 +117,8 @@ class actionslot : public slot
   void Init(action*);
   virtual square* GetSquareUnder() const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   virtual bool CanBeSeenBy(const character*) const;
  protected:
   action* Action;

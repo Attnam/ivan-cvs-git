@@ -653,7 +653,7 @@ class ITEM
     virtual ulong GetPrice() const { return armor::GetPrice() * 20 + item::GetPrice(); }
   virtual bool IsCloak(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(111, 64, 37); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 );
 
 class ITEM
@@ -693,7 +693,7 @@ class ITEM
  public:
   virtual bool IsRing(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(200, 200, 200); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(200, 200, 200); }
 );
 
 class ITEM
@@ -703,7 +703,7 @@ class ITEM
  public:
   virtual bool IsAmulet(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(111, 64, 37); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 );
 
 class ABSTRACT_ITEM
@@ -1203,7 +1203,7 @@ class ITEM
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void DrawContents(const character*);
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;
@@ -1354,3 +1354,4 @@ class ITEM
  public:
 );
 #endif
+

@@ -18,3 +18,10 @@ Imperialist
 	HeadBitmapPos = 96, 208;
 	ArmBitmapPos = 80, 112;
 	LegBitmapPos = 0, 0;
+
+Smith
+
+	TorsoBitmapPos = 48, 192; /* color tan */
+	HeadBitmapPos = 112, 160;
+	ArmBitmapPos = 64, 64;
+	LegBitmapPos = 0, 16; /* color dark brown */

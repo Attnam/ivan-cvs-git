@@ -41,7 +41,7 @@ void wsquare::Draw()
   if(NewDrawRequested || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-      ushort RealLuminance = Luminance * configuration::GetContrastLuminance() >> 8;
+      ulong RealLuminance = configuration::ApplyContrastTo(Luminance);
       GWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, false, true);
       OWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
 
@@ -153,6 +153,7 @@ void wsquare::SetLastSeen(ulong What)
 
 void wsquare::CalculateLuminance()
 {
-  Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
+  uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))), 255);
+  Luminance = MakeRGB24(Element, Element, Element);
 }
 

@@ -57,7 +57,7 @@ class action
   void SetInDNDMode(bool What) { DNDMode = What; }
   virtual ulong GetVolume() const { return 0; }
   virtual ulong GetWeight() const { return 0; }
-  virtual ushort GetEmitation() const { return 0; }
+  virtual ulong GetEmitation() const { return 0; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

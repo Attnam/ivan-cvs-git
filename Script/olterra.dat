@@ -71,7 +71,7 @@ wall
 		OKVisualEffects = MIRROR|FLIP|ROTATE;
 		DigMessage = "The ground is fairly easy to dig.";
 		MainMaterialConfig == MORAINE;
-		MaterialColorB = rgb(56, 56, 56);
+		MaterialColorB = rgb16(56, 56, 56);
 		Article = "an";
 		NameSingular = "earth";
 		BitmapPos = 0, 336;
@@ -89,7 +89,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb(0, 160, 0);
+		MaterialColorB = rgb16(0, 160, 0);
 		NameSingular = "pine";
 		BitmapPos = 16, 320;
 	}
@@ -101,7 +101,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb(0, 160, 0);
+		MaterialColorB = rgb16(0, 160, 0);
 		NameSingular = "spruce";
 		BitmapPos = 16, 352;
 	}
@@ -113,7 +113,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb(0, 160, 0);
+		MaterialColorB = rgb16(0, 160, 0);
 		Adjective = "lovely";
 		NameSingular = "linden";
 		BitmapPos = 32, 336;
@@ -139,7 +139,7 @@ decoration
 		NameSingular = "couch";
 		BitmapPos = 0, 400;
 		RestModifier = 2;
-		MaterialColorB = rgb(200, 200, 0);
+		MaterialColorB = rgb16(200, 200, 0);
 		SitMessage = "The couch is extremely soft and confortable. You relax well.";
 		RestMessage = "You rest well on the soft sofa.";
 	}
@@ -152,7 +152,7 @@ decoration
 		Adjective = "luxurious";
 		NameSingular = "double bed";
 		BitmapPos = 48, 304;
-		MaterialColorB = rgb(200, 200, 0);
+		MaterialColorB = rgb16(200, 200, 0);
 		ShowMaterial = false;
 		RestModifier = 5;
 		SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
@@ -203,7 +203,7 @@ link /* olterrain-> */
 	{
 		DigMessage = "The stairs are too hard to dig.";
 		MainMaterialConfig == STONE;
-		MaterialColorB = rgb(160, 64, 0);
+		MaterialColorB = rgb16(160, 64, 0);
 		NameSingular = "stairway";
 		PostFix = "upwards";
 		BitmapPos = 0, 192;
@@ -214,7 +214,7 @@ link /* olterrain-> */
 	{
 		DigMessage = "The stairs are too hard to dig.";
 		MainMaterialConfig == STONE;
-		MaterialColorB = rgb(160, 64, 0);
+		MaterialColorB = rgb16(160, 64, 0);
 		NameSingular = "stairway";
 		PostFix = "downwards";
 		BitmapPos = 0, 208;
@@ -237,7 +237,7 @@ throne /* olterrain-> */
 {
 	DigMessage = "The throne resists.";
 	MainMaterialConfig == GOLD;
-	MaterialColorB = rgb(200, 200, 0);
+	MaterialColorB = rgb16(200, 200, 0);
 	NameSingular = "throne";
 	BitmapPos = 0, 416;
 }
@@ -275,3 +275,5 @@ brokendoor /* olterrain->door-> */
 	Adjective = "broken";
 	/* BitmapPos depends on being open or not */
 }
+
+

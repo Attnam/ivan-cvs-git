@@ -41,58 +41,58 @@ lsquare::~lsquare()
   delete Memorized;
 }
 
-void lsquare::SignalEmitationIncrease(ushort EmitationUpdate)
+void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation && !game::IsGenerating())
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0 && !game::IsGenerating())
     {
       CalculateEmitation();
       Emitate();
     }
 }
 
-void lsquare::SignalEmitationDecrease(ushort EmitationUpdate)
+void lsquare::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && Emitation && !game::IsGenerating())
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation && !game::IsGenerating())
     {
+      ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation)
+      if(Backup != Emitation)
 	ReEmitate(EmitationUpdate);
     }
 }
 
 void lsquare::CalculateEmitation()
 {
-  Emitation = GetStack()->GetEmitation();
+  Emitation = Stack->GetEmitation();
 
   for(ushort c = 0; c < 4; ++c)
     {
       stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-      if(Stack && Stack->GetEmitation() > Emitation)
-	Emitation = Stack->GetEmitation();
+      if(Stack)
+	game::AddLight(Emitation, Stack->GetEmitation());
     }
 
-  if(GetCharacter() && GetCharacter()->GetEmitation() > Emitation)
-    Emitation = GetCharacter()->GetEmitation();
+  if(Character)
+    game::AddLight(Emitation, Character->GetEmitation());
 
-  if(GetGLTerrain() && GetGLTerrain()->GetEmitation() > Emitation)
-    Emitation = GetGLTerrain()->GetEmitation();
+  if(GLTerrain)
+    game::AddLight(Emitation, GLTerrain->GetEmitation());
 
-  if(GetOLTerrain() && GetOLTerrain()->GetEmitation() > Emitation)
-    Emitation = GetOLTerrain()->GetEmitation();
+  if(OLTerrain)
+    game::AddLight(Emitation, OLTerrain->GetEmitation());
 
-  if(TemporaryEmitation > Emitation)
-    Emitation = TemporaryEmitation;
+  game::AddLight(Emitation, TemporaryEmitation);
 }
 
 void lsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
-      if(Luminance >= LIGHT_BORDER)
+      if(!IsDark())
 	{
-	  DrawStaticContents(Memorized, vector2d(0, 0), 256, false);
+	  DrawStaticContents(Memorized, vector2d(0, 0), MakeRGB24(128, 128, 128), false);
 	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
 	}
       else
@@ -102,7 +102,7 @@ void lsquare::UpdateMemorized()
     }
 }
 
-void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool RealDraw) const
+void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool RealDraw) const
 {
   GLTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
 
@@ -131,9 +131,9 @@ void lsquare::Draw()
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
-      if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
+      if(!IsDark() || game::GetSeeWholeMapCheat())
 	{
-	  ushort RealLuminance = game::GetSeeWholeMapCheat() ? configuration::GetContrastLuminance() : Luminance * configuration::GetContrastLuminance() >> 8;
+	  ulong RealLuminance = game::GetSeeWholeMapCheat() ? configuration::GetContrastLuminance() : configuration::ApplyContrastTo(Luminance);
 	  DrawStaticContents(DOUBLEBUFFER, BitPos, RealLuminance, true);
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
@@ -153,10 +153,10 @@ void lsquare::Draw()
 
 void lsquare::Emitate()
 {
-  if(GetEmitation() < LIGHT_BORDER)
+  if(game::IsDark(GetEmitation()))
     return;
 
-  ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(Emitation);
+  ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(GetEmitation());
 
   if(!Radius)
     return;
@@ -174,9 +174,9 @@ void lsquare::Emitate()
 	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
-void lsquare::ReEmitate(ushort OldEmitation)
+void lsquare::ReEmitate(ulong OldEmitation)
 {
-  if(OldEmitation < LIGHT_BORDER)
+  if(game::IsDark(OldEmitation))
     return;
 
   ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(OldEmitation);
@@ -199,7 +199,7 @@ void lsquare::ReEmitate(ushort OldEmitation)
 
 void lsquare::Noxify()
 {
-  ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(Emitation);
+  ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(GetEmitation());
 
   if(!Radius)
     return;
@@ -238,7 +238,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
   for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
     if(i->Pos == Dir)
       {
-	if(!Luminance || Luminance != i->DilatedEmitation)
+	if(!Luminance || game::CompareLights(i->DilatedEmitation, Luminance) < 0)
 	  i->DilatedEmitation = 0;
 	else if(!OLTerrain->IsWalkable())
 	  {
@@ -250,7 +250,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 	  }
 	else
 	  {
-	    ushort OldLuminance = Luminance;
+	    ulong OldLuminance = Luminance;
 	    i->DilatedEmitation = 0;
 	    CalculateLuminance();
 
@@ -334,7 +334,7 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
   return BitMask;
 }
 
-void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
+void lsquare::AlterLuminance(vector2d Dir, ulong NewLuminance)
 {
   for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
     if(i->Pos == Dir)
@@ -342,7 +342,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	if(i->DilatedEmitation == NewLuminance)
 	  return;
 
-	if(NewLuminance >= LIGHT_BORDER)
+	if(!game::IsDark(NewLuminance))
 	  {
 	    if(NewLuminance != Luminance)
 	      {
@@ -357,7 +357,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		    return;
 		  }
 
-		ushort OldLuminance = Luminance;
+		ulong OldLuminance = Luminance;
 		i->DilatedEmitation = NewLuminance;
   		CalculateLuminance();
 
@@ -380,7 +380,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	  }
 	else
 	  {
-	    if(!Luminance || Luminance != i->DilatedEmitation)
+	    if(!Luminance || game::CompareLights(i->DilatedEmitation, Luminance) < 0)
 	      Emitter.erase(i);
 	    else if(!OLTerrain->IsWalkable())
 	      {
@@ -392,7 +392,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	      }
 	    else
 	      {
-		ushort OldLuminance = Luminance;
+		ulong OldLuminance = Luminance;
 		Emitter.erase(i);
 		CalculateLuminance();
 
@@ -417,9 +417,9 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
   /* Emitter was not found, add it. */
 
-  if(NewLuminance >= LIGHT_BORDER)
+  if(!game::IsDark(NewLuminance))
     {
-      if(NewLuminance > Luminance)
+      if(game::CompareLights(NewLuminance, Luminance) > 0)
 	{
 	  if(!OLTerrain->IsWalkable())
 	    {
@@ -432,7 +432,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	      return;
 	    }
 
-	  ushort OldLuminance = Luminance;
+	  ulong OldLuminance = Luminance;
 	  Emitter.push_back(emitter(Dir, NewLuminance));
   	  CalculateLuminance();
 
@@ -527,28 +527,22 @@ void lsquare::CalculateLuminance()
   if(OLTerrain->IsWalkable())
     {
       for(ushort c = 0; c < Emitter.size(); ++c)
-	if(Emitter[c].DilatedEmitation > Luminance)
-	  Luminance = Emitter[c].DilatedEmitation;
+	game::AddLight(Luminance, Emitter[c].DilatedEmitation);
     }
   else
     for(ushort c = 0; c < Emitter.size(); ++c)
       if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
-	if(Emitter[c].DilatedEmitation > Luminance)
-	  Luminance = Emitter[c].DilatedEmitation;
-
-  if(Luminance > 511)
-    Luminance = 511;
+	game::AddLight(Luminance, Emitter[c].DilatedEmitation);
 }
 
-ushort lsquare::GetRawLuminance() const
+ulong lsquare::GetRawLuminance() const
 {
-  ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
+  ulong Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
   for(ushort c = 0; c < Emitter.size(); ++c)
-    if(Emitter[c].DilatedEmitation > Luminance)
-      Luminance = Emitter[c].DilatedEmitation;
+    game::AddLight(Luminance, Emitter[c].DilatedEmitation);
 
-  return Luminance > 511 ? 511 : Luminance;
+  return Luminance;
 }
 
 void lsquare::AddCharacter(character* Guy)
@@ -591,7 +585,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 {
   if(DescriptionChanged || Cheat)
     {
-      if(GetLuminance() >= LIGHT_BORDER || Cheat)
+      if(!IsDark() || Cheat)
 	{
 	  MemorizedDescription.resize(0);
 
@@ -814,14 +808,14 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 {
-  return (IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && LastSeen == game::GetLOSTurns();
+  return (IgnoreDarkness || !IsDark()) && LastSeen == game::GetLOSTurns();
 }
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
   ulong Distance = (GetPos() - FromPos).Length();
 
-  if(Distance > MaxDistance || (!IgnoreDarkness && GetLuminance() < LIGHT_BORDER))
+  if(Distance > MaxDistance || (!IgnoreDarkness && IsDark()))
     return false;
   else
     {
@@ -842,7 +836,7 @@ void lsquare::MoveCharacter(lsquare* To)
 	ABORT("Overgrowth of square population detected!");
 
       character* Movee = Character;
-      ushort Emit = Movee->GetEmitation();
+      ulong Emit = Movee->GetEmitation();
       SetCharacter(0);
       To->Character = Movee;
       Movee->SetSquareUnder(To);
@@ -881,7 +875,8 @@ void lsquare::SwapCharacter(lsquare* With)
     else
       {
 	character* MoveeOne = Character, * MoveeTwo = With->Character;;
-	ushort EmitOne = MoveeOne->GetEmitation(), EmitTwo = MoveeTwo->GetEmitation();
+	ulong EmitOne = MoveeOne->GetEmitation();
+	ulong EmitTwo = MoveeTwo->GetEmitation();
 	SetCharacter(MoveeTwo);
 	With->SetCharacter(MoveeOne);
 	MoveeTwo->SetSquareUnder(this);
@@ -915,7 +910,7 @@ void lsquare::SwapCharacter(lsquare* With)
 
 void lsquare::ReceiveVomit(character* Who, ushort Amount)
 {
-  SpillFluid(Amount, MakeRGB(10, 230, 10), 5, 60);
+  SpillFluid(Amount, MakeRGB16(10, 230, 10), 5, 60);
   GetOLTerrain()->ReceiveVomit(Who);
 }
 
@@ -927,15 +922,13 @@ room* lsquare::GetRoomClass() const
     return 0;
 }
 
-void lsquare::SetTemporaryEmitation(ushort What)
+void lsquare::SetTemporaryEmitation(ulong What)
 {
-  ushort Old = TemporaryEmitation;
+  ulong Old = TemporaryEmitation;
+  TemporaryEmitation = 0;
+  SignalEmitationDecrease(Old);
   TemporaryEmitation = What;
-
-  if(What > Emitation)
-    SignalEmitationIncrease(What);
-  else if(What < Emitation)
-    SignalEmitationDecrease(Old);
+  SignalEmitationIncrease(What);
 }
 
 void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
@@ -945,7 +938,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   if(WasWalkable && !NewTerrain->IsWalkable())
     ForceEmitterNoxify();
 
-  ushort OldEmit = GetOLTerrain()->GetEmitation();
+  ulong OldEmit = GetOLTerrain()->GetEmitation();
   ChangeOLTerrain(NewTerrain);
   SignalEmitationIncrease(NewTerrain->GetEmitation());
   SignalEmitationDecrease(OldEmit);
@@ -1147,14 +1140,14 @@ void lsquare::SetLastSeen(ulong What)
 
   if(!OLTerrain->IsWalkable())
     {
-      ushort OldLuminance = Luminance;
+      ulong OldLuminance = Luminance;
       CalculateLuminance();
 
       if(OldLuminance != Luminance)
 	{
 	  NewDrawRequested = true;
 
-	  if((Luminance >= LIGHT_BORDER && OldLuminance < LIGHT_BORDER) || (OldLuminance >= LIGHT_BORDER && Luminance < LIGHT_BORDER))
+	  if(IsDark() != game::IsDark(OldLuminance))
 	    {
 	      MemorizedUpdateRequested = true;
 	      DescriptionChanged = true;
@@ -1162,7 +1155,7 @@ void lsquare::SetLastSeen(ulong What)
 	}
     }
 
-  if(Luminance < LIGHT_BORDER)
+  if(IsDark())
     {
       short XDist = Pos.X - game::GetPlayer()->GetPos().X;
 
@@ -1270,3 +1263,9 @@ inputfile& operator>>(inputfile& SaveFile, emitter& Emitter)
   SaveFile >> Emitter.Pos >> Emitter.DilatedEmitation;
   return SaveFile;
 }
+
+bool lsquare::IsDark() const
+{
+  return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
+}
+

@@ -108,7 +108,7 @@ struct characterdatabase
   uchar RightLegBonePercentile;
   uchar LeftLegBonePercentile;
   bool IsNameable;
-  ushort BaseEmitation;
+  ulong BaseEmitation;
   std::string Article;
   std::string Adjective;
   std::string AdjectiveArticle;
@@ -473,7 +473,7 @@ class character : public entity, public id
   virtual DATABASEVALUE(uchar, RightLegBonePercentile);
   virtual DATABASEVALUE(uchar, LeftLegBonePercentile);
   virtual DATABASEBOOL(IsNameable);
-  virtual DATABASEVALUE(ushort, BaseEmitation);
+  virtual DATABASEVALUE(ulong, BaseEmitation);
   virtual DATABASEVALUE(const std::string&, Article);
   virtual DATABASEVALUE(const std::string&, Adjective);
   virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
@@ -585,8 +585,8 @@ class character : public entity, public id
   virtual void PrintEndPoisonedMessage() const;
   virtual bool IsWarm() const;
   virtual void CalculateEquipmentState();
-  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
-  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
   void SetConfig(ushort);
   virtual god* GetMasterGod() const;
   virtual void PoisonedHandler();
@@ -627,8 +627,8 @@ class character : public entity, public id
   ulong GetBodyVolume() const { return BodyVolume; }
   ulong GetWeight() const { return Weight; }
   ulong GetCarriedWeight() const { return CarriedWeight; }
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   void CalculateEmitation();
   void CalculateAll();
   void CalculateHP();

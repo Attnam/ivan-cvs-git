@@ -449,7 +449,7 @@ void petrus::BeTalkedTo(character* Talker)
 
 	  /* And now we actually make his face change color ;-) */
 
-	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB(255, 75, 50));
+	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB16(255, 75, 50));
 	  GetHead()->UpdatePictures();
 	  GetSquareUnder()->SendNewDrawRequest();
 	  Talker->GetTeam()->Hostility(GetTeam());
@@ -1897,16 +1897,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   if(GetRightArm())
-    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   if(GetLeftArm())
-    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   if(GetTorso())
-    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
@@ -1914,13 +1914,13 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
     Color[c] = 0;
 
   if(GetGroin())
-    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   if(GetRightLeg())
-    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
@@ -3102,7 +3102,7 @@ void angel::VirtualConstructor(bool Load)
   SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
 }
 
-void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   /* Order is important: Don't use a loop. */
 
@@ -3128,7 +3128,7 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, boo
     GetHead()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 }
 
-void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   if(GetGroin())
     GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
@@ -3208,7 +3208,7 @@ void genie::CreateBodyParts(ushort SpecialFlags)
 
 ushort housewife::GetHairColor() const
 {
-  static ushort HouseWifeHairColor[] = { MakeRGB(48, 40, 8), MakeRGB(60, 48, 24),  MakeRGB(200, 0, 0) };
+  static ushort HouseWifeHairColor[] = { MakeRGB16(48, 40, 8), MakeRGB16(60, 48, 24),  MakeRGB16(200, 0, 0) };
   return HouseWifeHairColor[RAND() % 3];
 }
 
@@ -3646,3 +3646,4 @@ void dog::BeTalkedTo(character* Char)
   else
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");
 }
+

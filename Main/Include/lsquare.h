@@ -11,8 +11,8 @@
 #include "vector2d.h"
 #include "square.h"
 #include "level.h"
+#include "game.h"
 
-class game;
 class bitmap;
 class character;
 class stack;
@@ -29,10 +29,10 @@ class squarescript;
 
 struct emitter
 {
-  emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
+  emitter(vector2d Pos, ulong DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
   emitter() { }
   vector2d Pos;
-  ushort DilatedEmitation;
+  ulong DilatedEmitation;
 };
 
 outputfile& operator<<(outputfile&, const emitter&);
@@ -47,9 +47,9 @@ class lsquare : public square
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   stack* GetStack() const { return Stack; }
-  void AlterLuminance(vector2d, ushort);
+  void AlterLuminance(vector2d, ulong);
   void Emitate();
-  void ReEmitate(ushort);
+  void ReEmitate(ulong);
   stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
   void Clean();
   bool Open(character*);
@@ -57,9 +57,9 @@ class lsquare : public square
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
-  void SignalEmitationIncrease(ushort);
-  void SignalEmitationDecrease(ushort);
-  ushort GetEmitation() const { return Emitation; }
+  void SignalEmitationIncrease(ulong);
+  void SignalEmitationDecrease(ulong);
+  ulong GetEmitation() const { return Emitation; }
   void ForceEmitterNoxify();
   void ForceEmitterEmitation();
   void Noxify();
@@ -67,7 +67,7 @@ class lsquare : public square
   uchar CalculateBitMask(vector2d) const;
   std::string GetEngraved() const { return Engraved; }
   bool Engrave(const std::string& What) { Engraved = What; return true; }
-  void SetEmitation(ushort What) { Emitation = What; }
+  void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
   void BeKicked(character*, item*, float, float, short, bool);
   uchar GetDivineMaster() const { return DivineMaster; }
@@ -91,15 +91,15 @@ class lsquare : public square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void MoveCharacter(lsquare*);
-  ushort GetRawLuminance() const;
+  ulong GetRawLuminance() const;
   void StepOn(character*, square*);
   uchar GetRoom() const { return Room; }
   void SetRoom(uchar What) { Room = What; }
   void SwapCharacter(lsquare*);
   void ReceiveVomit(character*, ushort);
   room* GetRoomClass() const;
-  void SetTemporaryEmitation(ushort);
-  ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
+  void SetTemporaryEmitation(ulong);
+  ulong GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
   void DrawParticles(ushort, uchar);
   void PolymorphEverything(character*);
@@ -115,7 +115,7 @@ class lsquare : public square
   bool TryKey(item*, character*);
   void SetLastSeen(ulong);
   void CalculateLuminance();
-  void DrawStaticContents(bitmap*, vector2d, ushort, bool) const;
+  void DrawStaticContents(bitmap*, vector2d, ulong, bool) const;
   void DrawMemorized();
   bitmap* GetMemorized() const { return Memorized; }
   void SendMemorizedUpdateRequest();
@@ -125,6 +125,7 @@ class lsquare : public square
   bool CloneEverything(character*);
   stack* GetSideStackOfAdjacentSquare(ushort) const;
   void KickAnyoneStandingHereAway();
+  bool IsDark() const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -132,11 +133,11 @@ class lsquare : public square
   std::vector<emitter> Emitter;
   stack* Stack;
   stack* SideStack[4];
-  ushort Emitation;
+  ulong Emitation;
   std::string Engraved;
   uchar DivineMaster;
   uchar Room;
-  ushort TemporaryEmitation;
+  ulong TemporaryEmitation;
   fluid* Fluid;
   bitmap* Memorized;
   bool MemorizedUpdateRequested;

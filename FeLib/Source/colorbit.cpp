@@ -108,8 +108,8 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 	      float Gradient = float(PaletteElement % 16) / 8;
-	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+	      reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
 	    {
@@ -156,8 +156,8 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	      if(ThisColor != DEFAULTTRANSPARENT)
 		{
 		  float Gradient = float(Buffer[x] % 16) / 8;
-		  ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 		  if(UseAlpha)
 		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
@@ -210,8 +210,8 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	      if(ThisColor != DEFAULTTRANSPARENT)
 		{
 		  float Gradient = float(PaletteElement % 16) / 8;
-		  ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 		  if(UseAlpha)
 		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];

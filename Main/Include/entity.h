@@ -31,9 +31,9 @@ class entity
   bool IsEnabled() const { return Exists() && HasBe(); }
   virtual square* GetSquareUnder() const = 0;
   virtual void SignalVolumeAndWeightChange() { }
-  ushort GetEmitation() const { return Emitation; }
-  virtual void SignalEmitationIncrease(ushort) { }
-  virtual void SignalEmitationDecrease(ushort) { }
+  ulong GetEmitation() const { return Emitation; }
+  virtual void SignalEmitationIncrease(ulong) { }
+  virtual void SignalEmitationDecrease(ulong) { }
   virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
   virtual bool AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
@@ -41,7 +41,7 @@ class entity
   std::list<entity*>::iterator PoolIterator;
   bool ExistsBool;
   bool HasBeBool;
-  ushort Emitation;
+  ulong Emitation;
 };
 
 #endif

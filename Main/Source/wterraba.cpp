@@ -46,7 +46,7 @@ vector2d wterrain::GetPos() const
   return GetWSquareUnder()->GetPos();
 }
 
-void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
+void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 
@@ -54,7 +54,7 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool 
     igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
 }
 
-void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
+void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 }

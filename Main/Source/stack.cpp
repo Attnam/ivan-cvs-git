@@ -24,7 +24,7 @@ stack::~stack()
   Clean(true);
 }
 
-void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
+void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
 {
   if(!Items)
     return;
@@ -44,7 +44,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort L
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
-	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
+	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), MakeRGB24(128, 128, 128), false, AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
@@ -79,7 +79,7 @@ void stack::AddItem(item* ToBeAdded)
 void stack::RemoveItem(stackslot* Slot)
 {
   bool WasAnimated = (*Slot)->IsAnimated();
-  ushort Emit = (*Slot)->GetEmitation();
+  ulong Emit = (*Slot)->GetEmitation();
   RemoveElement(Slot);
   SignalVolumeAndWeightChange();
   SignalEmitationDecrease(Emit);
@@ -104,7 +104,7 @@ void stack::RemoveItem(stackslot* Slot)
 
 void stack::Clean(bool LastClean)
 {
-  ushort Emit = GetEmitation();
+  ulong Emit = GetEmitation();
   stackslot* Slot = Bottom;
   lsquare* SquareUnder = LastClean ? 0 : GetLSquareTrulyUnder();
 
@@ -162,9 +162,7 @@ void stack::Load(inputfile& SaveFile)
       SaveFile >> *Top;
       Volume += (*Top)->GetVolume();
       Weight += (*Top)->GetWeight();
-
-      if((*Top)->GetEmitation() > Emitation)
-	Emitation = (*Top)->GetEmitation();
+      game::AddLight(Emitation, (*Top)->GetEmitation());
     }
 }
 
@@ -337,7 +335,7 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, ShowSpecialInfo, SorterFunction);
 
   AddContentsToList(Contents, Viewer, ThisDesc, ShowSpecialInfo, SorterFunction);
-  ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
+  ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB16(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;
@@ -485,11 +483,11 @@ void stack::CalculateVolumeAndWeight()
     }
 }
 
-void stack::SignalEmitationIncrease(ushort EmitationUpdate)
+void stack::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      Emitation = EmitationUpdate;
+      game::AddLight(Emitation, EmitationUpdate);
 
       if(MotherEntity)
 	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
@@ -498,13 +496,14 @@ void stack::SignalEmitationIncrease(ushort EmitationUpdate)
     }
 }
 
-void stack::SignalEmitationDecrease(ushort EmitationUpdate)
+void stack::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
     {
+      ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation)
+      if(Backup != Emitation)
 	{
 	  if(MotherEntity)
 	    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
@@ -519,8 +518,7 @@ void stack::CalculateEmitation()
   Emitation = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->GetEmitation() > Emitation)
-      Emitation = i->GetEmitation();
+    game::AddLight(Emitation, i->GetEmitation());
 }
 
 bool stack::CanBeSeenBy(const character* Viewer) const
@@ -653,3 +651,4 @@ ulong stack::GetTotalExplosivePower() const
 
   return ExplosivePower;
 }
+

@@ -2807,8 +2807,8 @@ void bodypart::CalculateEmitation()
   item::CalculateEmitation();
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->GetEmitation() > Emitation)
-      Emitation = GetEquipment(c)->GetEmitation();
+    if(GetEquipment(c))
+      game::AddLight(Emitation, GetEquipment(c)->GetEmitation());
 }
 
 void bodypart::CalculateMaxHP()
@@ -3707,19 +3707,19 @@ bool meleeweapon::IsSparkling(ushort ColorIndex) const
 ushort justifier::GetOutlineColor(ushort Frame) const
 {
   Frame %= 32;
-  return MakeRGB(0, 135 + (Frame * (31 - Frame) >> 1), 0);
+  return MakeRGB16(0, 135 + (Frame * (31 - Frame) >> 1), 0);
 }
 
 ushort neercseulb::GetOutlineColor(ushort Frame) const
 {
   Frame %= 32;
-  return MakeRGB(135 + (Frame * (31 - Frame) >> 1), 0, 0);
+  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
 
 ushort goldeneagleshirt::GetOutlineColor(ushort Frame) const
 {
   Frame %= 32;
-  return MakeRGB(0, 75 + (Frame * (31 - Frame) >> 1), 0);
+  return MakeRGB16(0, 75 + (Frame * (31 - Frame) >> 1), 0);
 }
 
 void armor::Save(outputfile& SaveFile) const

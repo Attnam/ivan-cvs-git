@@ -1,3 +1,16 @@
+September 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added parentheses around several macros in ivandef.h
+	* Added MakeRGB24(), GetRed24(), GetGreen24() and GetBlue24() inline
+	  functions
+	* Renamed old color handling routines to MakeRGB16() etc.
+	* Added rgb24 function to script and renamed rgb to rgb16
+	* Emitation and luminance are 24 bit rgb values; lights may now be
+	  colored and they can be mixed dynamically
+	* Note: since rgb elements are in the range 0-255 instead of 0-511,
+	  old light values are converted to new ones like this:
+	  MakeRGB24(Light / 2, Light / 2, Light / 2)
+
 September 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Flies added
@@ -8,8 +21,7 @@ September 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Added MaxGeneratedContainedItems for chests' parameters
 	* deactivated Scabies temporarily
 	* Fixed msg when trying to put chest into the same chest
-	
-	
+
 September 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Capitalization functions of festring are now more flexible

@@ -281,7 +281,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
     }
 }
 
-void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance) const
 {
   if(!IsIndependent)
     {
@@ -295,7 +295,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
       return;
     }
 
-  if(Luminance == 256)
+  if(Luminance == MakeRGB24(128, 128, 128))
     {
       Blit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
       return;
@@ -311,7 +311,6 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-
   BlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance);
 }
 
@@ -415,7 +414,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
     }
 }
 
-void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance, ushort MaskColor) const
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
 {
   if(!IsIndependent)
     {
@@ -429,7 +428,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
       return;
     }
 
-  if(Luminance == 256)
+  if(Luminance == MakeRGB24(128, 128, 128))
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
       return;
@@ -823,7 +822,8 @@ void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
   for(ushort c = 0; c <= 5; ++c)
     {
       clock_t StartTime = clock();
-      Backup.MaskedBlit(DOUBLEBUFFER, ushort(255 - c * 50), 0);
+      ushort Element = 127 - c * 25;
+      Backup.MaskedBlit(DOUBLEBUFFER, MakeRGB24(Element, Element, Element), 0);
 
       if(BitmapEditor)
 	BitmapEditor(this);
@@ -881,9 +881,9 @@ void bitmap::FillWithGradient(ushort X, ushort Y, ushort Width, ushort Height, u
       {
 	float Multiplier = (float(x) / Width + float(y) / Height) / 2;
 
-	PutPixel(X + x, Y + y, MakeRGB(ushort(GetRed(Color1) * (1.0f - Multiplier) + GetRed(Color2) * Multiplier),
-					ushort(GetGreen(Color1) * (1.0f - Multiplier) + GetGreen(Color2) * Multiplier),
-					ushort(GetBlue(Color1) * (1.0f - Multiplier) + GetBlue(Color2) * Multiplier)));
+	PutPixel(X + x, Y + y, MakeRGB16(ushort(GetRed16(Color1) * (1.0f - Multiplier) + GetRed16(Color2) * Multiplier),
+					ushort(GetGreen16(Color1) * (1.0f - Multiplier) + GetGreen16(Color2) * Multiplier),
+					ushort(GetBlue16(Color1) * (1.0f - Multiplier) + GetBlue16(Color2) * Multiplier)));
       }
 }
 
@@ -989,7 +989,7 @@ void bitmap::DrawRectangle(ushort Left, ushort Top, ushort Right, ushort Bottom,
   DrawLine(Left, Bottom, Left, Top, Color, Wide);
 }
 
-void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance, ushort MaskColor) const
+void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
 {
   if(!IsIndependent)
     {
@@ -1003,7 +1003,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       return;
     }
 
-  if(Luminance == 256)
+  if(Luminance == MakeRGB24(128, 128, 128))
     {
       AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, 0, MaskColor);
       return;
@@ -1025,7 +1025,9 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   ushort** DestImage = Bitmap->GetImage();
   uchar** AlphaMap = GetAlphaMap();
 
-  Luminance -= 256;
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
 
   for(ushort y = 0; y < Height; ++y)
     {
@@ -1036,7 +1038,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
 	  {
-	    ushort Red = GetRed(*SrcPtr) + Luminance;
+	    ushort Red = GetRed16(*SrcPtr) + RedLuminance;
 
 	    if(Red & 0x8000)
 	      Red = 0;
@@ -1044,7 +1046,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Red > 0xFF)
 	      Red = 0xFF;
 
-	    ushort Green = GetGreen(*SrcPtr) + Luminance;
+	    ushort Green = GetGreen16(*SrcPtr) + GreenLuminance;
 
 	    if(Green & 0x8000)
 	      Green = 0;
@@ -1052,7 +1054,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Green > 0xFF)
 	      Green = 0xFF;
 
-	    ushort Blue = GetBlue(*SrcPtr) + Luminance;
+	    ushort Blue = GetBlue16(*SrcPtr) + BlueLuminance;
 
 	    if(Blue & 0x8000)
 	      Blue = 0;
@@ -1060,9 +1062,9 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Blue > 0xFF)
 	      Blue = 0xFF;
 
-	    *DestPtr = ((Red * (*AlphaPtr) + GetRed(*DestPtr) * (255 - (*AlphaPtr))) & 0xF800)
-		     | ((Green * (*AlphaPtr) + GetGreen(*DestPtr) * (255 - (*AlphaPtr))) >> 5 & 0x7E0)
-		     | ((Blue * (*AlphaPtr) + GetBlue(*DestPtr) * (255 - (*AlphaPtr))) >> 11);
+	    *DestPtr = ((Red * (*AlphaPtr) + GetRed16(*DestPtr) * (255 - (*AlphaPtr))) & 0xF800)
+		     | ((Green * (*AlphaPtr) + GetGreen16(*DestPtr) * (255 - (*AlphaPtr))) >> 5 & 0x7E0)
+		     | ((Blue * (*AlphaPtr) + GetBlue16(*DestPtr) * (255 - (*AlphaPtr))) >> 11);
 	  }
     }
 }
@@ -1100,11 +1102,11 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 		{
 		  MaxDist = FlameLowestPoint[x] - Top;
 		  RelPos = y - Top;
-		  PutPixel(x,y, MakeRGB((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
+		  PutPixel(x,y, MakeRGB16((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
 		}
 	    }
 	  else if(RAND() & 1)
-	    PutPixel(x,0, MakeRGB(0,255,0));
+	    PutPixel(x,0, MakeRGB16(0,255,0));
 	}
     }
 
@@ -1122,7 +1124,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
   for(ushort c = 1; c < Size; ++c)
     {
       uchar Lightness = 191 + (Size - c) * 64 / Size;
-      ushort RGB = MakeRGB(Lightness, Lightness, Lightness);
+      ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
       SafePutPixel(SparklePos.X + c, SparklePos.Y, RGB);
       SafePutPixel(SparklePos.X - c, SparklePos.Y, RGB);
       SafePutPixel(SparklePos.X, SparklePos.Y + c, RGB);
@@ -1145,7 +1147,7 @@ void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp))  * 3);
 
-      SafePutPixel(Where.X, Where.Y, MakeRGB(100,100,100));
+      SafePutPixel(Where.X, Where.Y, MakeRGB16(100,100,100));
     }
   femath::SetSeed(NewSeed);
 }

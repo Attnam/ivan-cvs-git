@@ -461,7 +461,7 @@ Dungeon ATTNAM;
 		ReCalculate=false;
 		OnGround=true;
 		TeamDefault=2;
-		AmbientLight=225;
+		AmbientLight=rgb24(115, 115, 115);
 		LOSModifier=48;
 		IgnoreDefaultSpecialSquares = false;
 

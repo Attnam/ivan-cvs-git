@@ -21,7 +21,7 @@ void BlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitLuminated(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void BlitLuminated(ulong, ulong, ulong, ulong, ushort, ushort, ulong);
 void MaskedBlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void MaskedBlitMirror(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void MaskedBlitFlip(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
@@ -30,7 +30,7 @@ void MaskedBlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushor
 void MaskedBlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void MaskedBlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void MaskedBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitLuminated(ulong, ulong, ulong, ulong, ushort, ushort, ushort, ushort);
+void MaskedBlitLuminated(ulong, ulong, ulong, ulong, ushort, ushort, ulong, ushort);
 void SimpleAlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, uchar, ushort);
 void AlphaBlitNoFlags(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
 void AlphaBlitMirror(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);

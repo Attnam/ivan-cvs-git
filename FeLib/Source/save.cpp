@@ -247,6 +247,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 {
   long Value = 0;
   std::string Word;
+  bool NumberCorrect = false;
 
   for(;;)
     {
@@ -255,6 +256,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       if(isdigit(Word[0]))
 	{
 	  Value = atoi(Word.c_str());
+	  NumberCorrect = true;
 	  continue;
 	}
 
@@ -273,6 +275,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	if(cl < CallLevel)\
 	  {\
 	    Value op##= ReadNumber(ValueMap, cl);\
+	    NumberCorrect = true;\
 	    continue;\
 	  }\
 	else\
@@ -286,23 +289,47 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       CHECK_OP(+, 3); CHECK_OP(-, 3);
 
       if(Word == "(")
-	{
-	  Value = ReadNumber(ValueMap, 4);
-	  continue;
-	}
+	if(NumberCorrect)
+	  {
+	    SeekPosCur(-1);
+	    return Value;
+	  }
+	else
+	  {
+	    Value = ReadNumber(ValueMap, 4);
+	    NumberCorrect = false;
+	    continue;
+	  }
 
       if(Word == "rand")
 	{
 	  Value = RAND();
+	  NumberCorrect = true;
 	  continue;
 	}
 
       if(Word == "rgb")
 	{
-	  ushort Red = ReadNumber(ValueMap);
-	  ushort Green = ReadNumber(ValueMap);
-	  ushort Blue = ReadNumber(ValueMap);
-	  Value = MakeRGB(Red, Green, Blue);
+	  ushort Bits = ReadNumber(ValueMap);
+
+	  if(Bits == 16)
+	    {
+	      ushort Red = ReadNumber(ValueMap);
+	      ushort Green = ReadNumber(ValueMap);
+	      ushort Blue = ReadNumber(ValueMap);
+	      Value = MakeRGB16(Red, Green, Blue);
+	    }
+	  else if(Bits == 24)
+	    {
+	      ulong Red = ReadNumber(ValueMap);
+	      ulong Green = ReadNumber(ValueMap);
+	      ulong Blue = ReadNumber(ValueMap);
+	      Value = MakeRGB24(Red, Green, Blue);
+	    }
+	  else
+	    ABORT("Illegal RGB bit size %d in file %s, line %d!", Bits, FileName.c_str(), TellLine());
+
+	  NumberCorrect = true;
 	  continue;
 	}
 
@@ -311,6 +338,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       if(Iterator != ValueMap.end())
 	{
 	  Value = Iterator->second;
+	  NumberCorrect = true;
 	  continue;
 	}
 

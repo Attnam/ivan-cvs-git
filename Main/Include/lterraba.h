@@ -79,8 +79,8 @@ class lterrain : public object
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   level* GetLevelUnder() const { return LSquareUnder->GetLevelUnder(); }
   virtual void CalculateAll() { CalculateEmitation(); }
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }

@@ -50,7 +50,7 @@ class ACTION
   virtual void SetDescription(const std::string& What) { Description = What; }
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
-  virtual ushort GetEmitation() const;
+  virtual ulong GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   std::string Description;
@@ -97,7 +97,7 @@ class ACTION
   virtual std::string GetDescription() const { return "digging"; }
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
-  virtual ushort GetEmitation() const;
+  virtual ulong GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;
@@ -142,7 +142,7 @@ class ACTION
   virtual void SetCounter(ushort What) { Counter = What; }
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
-  virtual ushort GetEmitation() const;
+  virtual ulong GetEmitation() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot Literature;

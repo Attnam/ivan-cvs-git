@@ -52,7 +52,7 @@ struct itemdatabase
   ulong DefaultContainedVolume;
   vector2d BitmapPos;
   ulong Price;
-  ushort BaseEmitation;
+  ulong BaseEmitation;
   std::string Article;
   std::string Adjective;
   std::string AdjectiveArticle;
@@ -241,7 +241,7 @@ class item : public object
   virtual DATABASEVALUE(ulong, DefaultContainedVolume);
   virtual DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
   virtual DATABASEVALUE(ulong, Price);
-  virtual DATABASEVALUE(ushort, BaseEmitation);
+  virtual DATABASEVALUE(ulong, BaseEmitation);
   virtual DATABASEVALUE(const std::string&, Article);
   virtual DATABASEVALUE(const std::string&, Adjective);
   virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
@@ -287,8 +287,8 @@ class item : public object
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
   ulong GetWeight() const { return Weight; }
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
+  virtual void SignalEmitationIncrease(ulong);
+  virtual void SignalEmitationDecrease(ulong);
   virtual void CalculateAll();
   virtual void DropEquipment() { }
   virtual bool DangerousToStepOn(const character*) const { return false; } 

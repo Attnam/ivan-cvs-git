@@ -54,7 +54,7 @@ class level : public area
   levelscript* GetLevelScript() const { return LevelScript; }
   virtual void MoveCharacter(vector2d, vector2d);
   virtual ushort GetLOSModifier() const;
-  ushort CalculateMinimumEmitationRadius(ushort) const;
+  ushort CalculateMinimumEmitationRadius(ulong) const;
   room* GetRoom(ushort) const;
   void SetRoom(ushort Index, room* What) { Room[Index] = What; }
   void AddRoom(room*);

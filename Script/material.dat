@@ -35,7 +35,7 @@ material
 		StrengthValue = 100;
 		ConsumeType = METAL;
 		Density = 8000;
-		Color = rgb(96, 96, 96);
+		Color = rgb16(96, 96, 96);
 		PriceModifier = 40;
 		IsSolid = true;
 		NameStem = "iron";
@@ -47,10 +47,10 @@ material
 		StrengthValue = 400;
 		ConsumeType = METAL;
 		Density = 3000;
-		Color = rgb(232, 232, 0);
+		Color = rgb16(232, 232, 0);
 		IsSolid = true;
 		CanBeWished = false;
-		Emitation = 300;
+		Emitation = rgb24(150, 150, 150);
 		PriceModifier = 50000;
 		Alignment = GOOD;
 		NameStem = "valpurium";
@@ -63,7 +63,7 @@ material
 		ConsumeType = MINERAL; 
 		Density = 3000;
 		IsSolid = true; 
-		Color = rgb(80, 80, 80);
+		Color = rgb16(80, 80, 80);
 		NameStem = "stone";
 	}
 
@@ -72,7 +72,7 @@ material
 		StrengthValue = 40;
 		ConsumeType = MINERAL;
 		Density = 2500;
-		Color = rgb(112, 112, 112);
+		Color = rgb16(112, 112, 112);
 		NameStem = "gravel";
 	}
 
@@ -81,7 +81,7 @@ material
 		StrengthValue = 20;
 		ConsumeType = MINERAL;
 		Density = 2500;
-		Color = rgb(111, 74, 37);
+		Color = rgb16(111, 74, 37);
 		NameStem = "moraine";
 	}
 
@@ -91,7 +91,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
-		Color = rgb(140, 96, 48);
+		Color = rgb16(140, 96, 48);
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
 	}
@@ -102,7 +102,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 2500;
 		IsSolid = true;
-		Color = rgb(180, 180, 255);
+		Color = rgb16(180, 180, 255);
 		NameStem = "glass";
 		Alpha = 150;
 	}
@@ -113,7 +113,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 600;
 		IsSolid = true;
-		Color = rgb(200, 200, 200);
+		Color = rgb16(200, 200, 200);
 		IsFlammable = true;
 		NameStem = "parchment";
 		Flexibility = 10;
@@ -125,7 +125,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
 		IsSolid = true;
-		Color = rgb(80, 80, 176);
+		Color = rgb16(80, 80, 176);
 		IsFlammable = true;
 		NameStem = "cloth";
 		Flexibility = 15;
@@ -137,7 +137,7 @@ material
 		ConsumeType = METAL;
 		Density = 5000;
 		IsSolid = true;
-		Color = rgb(224, 224, 224);
+		Color = rgb16(224, 224, 224);
 		PriceModifier = 5000;
 		NameStem = "mithril";
 		IsSparkling = true;
@@ -149,7 +149,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 3000;
 		IsSolid = true;
-		Color = rgb(200, 200, 200);
+		Color = rgb16(200, 200, 200);
 		NameStem = "marble";
 	}
 
@@ -159,7 +159,7 @@ material
 		ConsumeType = METAL;
 		Density = 20000;
 		IsSolid = true;
-		Color = rgb(224, 224, 0);
+		Color = rgb16(224, 224, 0);
 		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "gold";
@@ -173,7 +173,7 @@ material
 		StrengthValue = 2;
 		ConsumeType = MISC_ORGANIC;
 		Density = 100;
-		Color = rgb(32, 96, 32);
+		Color = rgb16(32, 96, 32);
 		IsFlammable = true;
 		NameStem = "grass";
 		AdjectiveStem = "grassy";
@@ -186,7 +186,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
-		Color = rgb(111, 64, 37);
+		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
 		NameStem = "leather";
 		Flexibility = 10;
@@ -198,7 +198,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
-		Color = rgb(0, 160, 0);
+		Color = rgb16(0, 160, 0);
 		IsFlammable = true;
 		NameStem = "leaf";
 		Flexibility = 10;
@@ -211,7 +211,7 @@ material
 		Density = 100;
 		IsSolid = true;
 		IsFlammable = true;
-		Color = rgb(176, 0, 0);
+		Color = rgb16(176, 0, 0);
 		NameStem = "fabric";
 		Flexibility = 10;
 	}
@@ -222,7 +222,7 @@ material
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
-		Color = rgb(0, 160, 0);
+		Color = rgb16(0, 160, 0);
 		IsFlammable = true;
 		NameStem = "palm leaf";
 		Flexibility = 10;
@@ -234,7 +234,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 2000;
 		IsSolid = true;
-		Color = rgb(128, 0, 0);
+		Color = rgb16(128, 0, 0);
 		NameStem = "sulfur";
 	}
 
@@ -243,7 +243,7 @@ material
 		StrengthValue = 5;
 		ConsumeType = MINERAL;
 		Density = 250;
-		Color = rgb(30, 30, 30);
+		Color = rgb16(30, 30, 30);
 		CanBeWished = false;
 		IsExplosive = true;
 		PriceModifier = 600;
@@ -256,7 +256,7 @@ material
 		StrengthValue = 200;
 		ConsumeType = MISC_ORGANIC;
 		Density = 2000;
-		Color = rgb(180, 180, 180);
+		Color = rgb16(180, 180, 180);
 		NameStem = "unicorn horn";
 	}
 
@@ -266,7 +266,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 3500;
 		IsSolid = true;
-		Color = rgb(240, 240, 240);
+		Color = rgb16(240, 240, 240);
 		PriceModifier = 10000;
 		NameStem = "diamond";
 		Alpha = 175;
@@ -280,7 +280,7 @@ material
 		ConsumeType = METAL;
 		Density = 10500;
 		IsSolid = true;
-		Color = rgb(200, 200, 200);
+		Color = rgb16(200, 200, 200);
 		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "silver";
@@ -293,7 +293,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 3500;
 		IsSolid = true;
-		Color = rgb(96, 96, 200);
+		Color = rgb16(96, 96, 200);
 		PriceModifier = 6000;
 		NameStem = "sapphire";
 		Alpha = 200;
@@ -307,7 +307,7 @@ material
 		ConsumeType = MINERAL;
 		Density = 3500;
 		IsSolid = true;
-		Color = rgb(180, 0, 0);
+		Color = rgb16(180, 0, 0);
 		PriceModifier = 8000;
 		NameStem = "ruby";
 		Alpha = 200;
@@ -321,7 +321,7 @@ material
 		ConsumeType = METAL;
 		Density = 8300;
 		IsSolid = true;
-		Color = rgb(150, 100, 50);
+		Color = rgb16(150, 100, 50);
 		PriceModifier = 30;
 		NameStem = "bronze";
 	}
@@ -332,7 +332,7 @@ material
 		ConsumeType = METAL;
 		Density = 9000; /* rounded from 8920 */
 		IsSolid = true;
-		Color = rgb(96, 64, 32);
+		Color = rgb16(96, 64, 32);
 		PriceModifier = 20;
 		NameStem = "copper";
 	}
@@ -343,7 +343,7 @@ material
 		ConsumeType = METAL;
 		Density = 7300; 
 		IsSolid = true;
-		Color = rgb(100, 100, 100);
+		Color = rgb16(100, 100, 100);
 		PriceModifier = 15;
 		NameStem = "tin";
 	}
@@ -353,7 +353,7 @@ material
 		StrengthValue = 175;
 		ConsumeType = METAL;
 		Density = 7500;
-		Color = rgb(128, 128, 128);
+		Color = rgb16(128, 128, 128);
 		IsSolid = true;
 		PriceModifier = 40;
 		NameStem = "steel";
@@ -371,7 +371,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 1200;
 		ConsumeType = FRUIT;
 		NutritionValue = 100;
-		Color = rgb(240, 240, 0);
+		Color = rgb16(240, 240, 0);
 		PriceModifier = 600;
 		NameStem = "banana flesh";
 		Flexibility = 5;
@@ -384,7 +384,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 1500;
 		Alignment = EVIL;
 		NutritionValue = 50;
-		Color = rgb(111, 74, 37);
+		Color = rgb16(111, 74, 37);
 		IsBadFoodForAI = true;
 		NameStem = "school food";
 		Effect = ESCHOOLFOOD;
@@ -398,7 +398,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		Color = rgb(224, 224, 0);
+		Color = rgb16(224, 224, 0);
 		NameStem = "banana peel";
 		Flexibility = 10;
 		IsAlive = false;
@@ -411,7 +411,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
-		Color = rgb(160, 112, 32);
+		Color = rgb16(160, 112, 32);
 		PriceModifier = 600;
 		NameStem = "kiwi flesh";
 		Flexibility = 5;
@@ -423,7 +423,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
-		Color = rgb(192, 112, 96);
+		Color = rgb16(192, 112, 96);
 		PriceModifier = 600;
 		NameStem = "pineapple flesh";
 		Flexibility = 5;
@@ -434,7 +434,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		Color = rgb(111, 64, 37);
+		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
 		NameStem = "fiber";
 		Flexibility = 10;
@@ -447,7 +447,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 2000;
 		ConsumeType = BONY;
 		IsSolid = true;
-		Color = rgb(180, 180, 180);
+		Color = rgb16(180, 180, 180);
 		NutritionValue = 50;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
@@ -460,7 +460,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = PROCESSED;
 		Density = 250;
 		NutritionValue = 100;
-		Color = rgb(180, 96, 64);
+		Color = rgb16(180, 96, 64);
 		PriceModifier = 600;
 		NameStem = "bread";
 		Flexibility = 5;
@@ -476,7 +476,7 @@ gas
 	{
 		StrengthValue = 1;
 		Density = 1;
-		Color = rgb(180, 180, 255);
+		Color = rgb16(180, 180, 255);
 		ConsumeType = GAS;
 		NameStem = "air";
 		Article = "an";
@@ -495,7 +495,7 @@ liquid
 	Config OMLEURINE;
 	{
 		StrengthValue = 1;
-		Color = rgb(160, 160, 0);
+		Color = rgb16(160, 160, 0);
 		CanBeWished = false;
 		NutritionValue = 50;
 		PriceModifier = 2500;
@@ -513,7 +513,7 @@ liquid
 		Density = 1500;
 		Alignment = EVIL;
 		NutritionValue = 50;
-		Color = rgb(48, 48, 48);
+		Color = rgb16(48, 48, 48);
 		IsBadFoodForAI = true;
 		NameStem = "pepsi";
 		Effect = EPEPSI;
@@ -525,7 +525,7 @@ liquid
 	{
 		StrengthValue = 1;
 		NutritionValue = 1;
-		Color = rgb(144, 144, 240);
+		Color = rgb16(144, 144, 240);
 		NameStem = "water";
 		Alpha = 150;
 	}
@@ -534,7 +534,7 @@ liquid
 	{
 		StrengthValue = 1;
 		NutritionValue = 25;
-		Color = rgb(180, 0, 0);
+		Color = rgb16(180, 0, 0);
 		PriceModifier = 1000;
 		NameStem = "healing liquid";
 		Effect = EHEAL;
@@ -547,7 +547,7 @@ liquid
 	{
 		StrengthValue = 200;
 		NutritionValue = 10;
-		Color = rgb(160, 0, 0);
+		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
 		Alignment = EVIL;
 		NameStem = "blood";
@@ -560,8 +560,8 @@ liquid
 		StrengthValue = 2;
 		Density = 400;
 		NutritionValue = 25;
-		Color = rgb(0, 128, 0);
-		Color = rgb(111, 74, 37);
+		Color = rgb16(0, 128, 0);
+		Color = rgb16(111, 74, 37);
 		NameStem = "brown slime";
 		Alpha = 200;
 		Flexibility = 10;
@@ -572,7 +572,7 @@ liquid
 		StrengthValue = 1;
 		Alignment = EVIL;
 		NutritionValue = 10;
-		Color = rgb(0, 128, 0);
+		Color = rgb16(0, 128, 0);
 		IsBadFoodForAI = true;
 		NameStem = "poison";
 		Effect = EPOISON;
@@ -584,7 +584,7 @@ liquid
 		StrengthValue = 1;
 		Alignment = EVIL;
 		NutritionValue = 8;
-		Color = rgb(50, 0, 0);
+		Color = rgb16(50, 0, 0);
 		IsBadFoodForAI = true;
 		NameStem = "Valdemar";
 		Effect = EPOISON;
@@ -598,7 +598,7 @@ flesh
 	ConsumeType = MEAT;
 	Density = 1200;
 	NutritionValue = 200;
-	Color = rgb(160, 32, 16);
+	Color = rgb16(160, 32, 16);
 	IsAlive = true;
 	NameStem = "flesh";
 	Flexibility = 5;
@@ -607,7 +607,7 @@ flesh
 
 	Config GOBLINOIDFLESH;
 	{
-		Color = rgb(0, 128, 0);
+		Color = rgb16(0, 128, 0);
 		PriceModifier = 600;
 		NameStem = "green flesh";
 		NutritionValue = 150;
@@ -651,7 +651,7 @@ flesh
 		Density = 2400;
 		NameStem = "Elpuri's flesh";
 		Article = "an";
-		Color = rgb(60, 60, 60);
+		Color = rgb16(60, 60, 60);
 	}
 
 	Config HUMANFLESH;
@@ -755,7 +755,7 @@ flesh
 
 	Config DAEMONFLESH;
 	{
-		Color = rgb(180, 0, 0);
+		Color = rgb16(180, 0, 0);
 		NameStem = "daemon flesh";
 	}
 
@@ -766,7 +766,7 @@ flesh
 
 	Config BLACKUNICORNFLESH;
 	{
-		Color = rgb(48, 48, 48);
+		Color = rgb16(48, 48, 48);
 		/* Slightly strange. This means that the good gods like to receive this sacrifice */
 		Alignment = GOOD;
 		NameStem = "black unicorn flesh";
@@ -774,13 +774,13 @@ flesh
 
 	Config GRAYUNICORNFLESH;
 	{
-		Color = rgb(112, 112, 112);
+		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
 	}
 
 	Config WHITEUNICORNFLESH;
 	{
-		Color = rgb(160, 160, 160);
+		Color = rgb16(160, 160, 160);
 		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
 		Alignment = EVIL;
 		NameStem = "white unicorn flesh";
@@ -806,3 +806,5 @@ flesh
 		NameStem = "orc flesh";
 	}
 }
+
+

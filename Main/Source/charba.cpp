@@ -1373,7 +1373,7 @@ bool character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
     {
-      if(GetLSquareUnder()->GetLuminance() >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
+      if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheat())
 	{
 	  if(ToBeRead->Read(this))
 	    {
@@ -1684,7 +1684,7 @@ bool character::ShowKeyLayout()
 	  }
     }
 
-  List.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
+  List.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
   return false;
 }
 
@@ -2660,7 +2660,7 @@ void character::ShowNewPosInfo() const
 
   if(!game::IsInWilderness())
     {
-      if(GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
+      if(GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheat())
 	ADD_MESSAGE("It's dark in here!");
 
       ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
@@ -2780,7 +2780,7 @@ void character::GoOn(go* Go)
 
   square* BeginSquare = GetSquareUnder();
 
-  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetStackUnder()->GetVisibleItems(this))
+  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->IsDark() || GetStackUnder()->GetVisibleItems(this))
     {
       Go->Terminate(false);
       return;
@@ -3025,7 +3025,7 @@ bool character::SecretKnowledge()
   List.AddEntry("Character defence info", LIGHTGRAY);
   List.AddEntry("Character danger values", LIGHTGRAY);
   List.AddEntry("Miscellaneous item info", LIGHTGRAY);
-  ushort Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
+  ushort Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB16(0, 0, 16));
   ushort c, PageLength = 20;
 
   if(Chosen & 0x8000)
@@ -3049,7 +3049,7 @@ bool character::SecretKnowledge()
 	      std::string Entry;
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Pic.Fill(TRANSPARENTCOL);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
 	      List.AddEntry(Entry, LIGHTGRAY, 0, &Pic);
 	      Character[c]->AddAttackInfo(List);
 	    }
@@ -3068,7 +3068,7 @@ bool character::SecretKnowledge()
 	      Entry.resize(57, ' ');
 	      Entry << Character[c]->GetMaxHP();
 	      Pic.Fill(TRANSPARENTCOL);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
 	      List.AddEntry(Entry, LIGHTGRAY, 0, &Pic);
 	      Character[c]->AddDefenceInfo(List);
 	    }
@@ -3087,7 +3087,7 @@ bool character::SecretKnowledge()
 	      Entry.resize(57, ' ');
 	      Entry << int(Character[c]->GetDangerModifier() * 100);
 	      Pic.Fill(TRANSPARENTCOL);
-	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
 	      List.AddEntry(Entry, LIGHTGRAY, 0, &Pic);
 	    }
 
@@ -3118,7 +3118,7 @@ bool character::SecretKnowledge()
 	delete Item[c];
     }
 
-  List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB(0, 0, 16), false);
+  List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB16(0, 0, 16), false);
   List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
   ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
   return false;
@@ -3412,7 +3412,7 @@ bool character::EquipmentScreen()
 	}
 
       game::DrawEverythingNoBlit();
-      Chosen = List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), true, false);
+      Chosen = List.Draw(vector2d(26, 42), 652, 20, MakeRGB16(0, 0, 16), true, false);
 
       if(Chosen >= GetEquipmentSlots())
 	break;
@@ -3623,7 +3623,7 @@ void character::PrintInfo() const
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHARNAME(DEFINITE));
   else
-    Info.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
+    Info.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
 }
 
 void character::CompleteRiseFromTheDead()
@@ -4409,7 +4409,7 @@ bool character::ShowWeaponSkills()
     Something = true;
 
   if(Something)
-    List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), false);
+    List.Draw(vector2d(26, 42), 652, 20, MakeRGB16(0, 0, 16), false);
   else
     ADD_MESSAGE("You are not experienced in any weapon skill yet!");
 
@@ -5049,7 +5049,7 @@ void character::EndESP()
     GetAreaUnder()->SendNewDrawRequest();
 }
 
-void character::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   if((game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (game::GetPlayer()->GetPos() - GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare()) || (game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm()))
     Luminance = configuration::GetContrastLuminance();
@@ -5059,7 +5059,7 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowA
   if(configuration::GetOutlineCharacters())
     {
       igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
+      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), MakeRGB24(128, 128, 128), false, AllowAnimate);
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
     }
@@ -5068,7 +5068,7 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowA
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 }
@@ -5150,7 +5150,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
   Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHTGRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHTGRAY);
-  Info.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
+  Info.Draw(vector2d(26, 42), 652, 30, MakeRGB16(0, 0, 16), false);
 }
 
 bool character::CanUseStethoscope(bool PrintReason) const
@@ -5263,11 +5263,11 @@ void character::SignalVolumeAndWeightChange()
     MotherEntity->SignalVolumeAndWeightChange();
 }
 
-void character::SignalEmitationIncrease(ushort EmitationUpdate)
+void character::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      Emitation = EmitationUpdate;
+      game::AddLight(Emitation, EmitationUpdate);
 
       if(MotherEntity)
 	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
@@ -5276,13 +5276,14 @@ void character::SignalEmitationIncrease(ushort EmitationUpdate)
     }
 }
 
-void character::SignalEmitationDecrease(ushort EmitationUpdate)
+void character::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
     {
+      ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation)
+      if(Backup != Emitation)
 	{
 	  if(MotherEntity)
 	    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
@@ -5297,14 +5298,13 @@ void character::CalculateEmitation()
   Emitation = GetBaseEmitation();
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->GetEmitation() > Emitation)
-      Emitation = GetBodyPart(c)->GetEmitation();
+    if(GetBodyPart(c))
+      game::AddLight(Emitation, GetBodyPart(c)->GetEmitation());
 
-  if(Stack->GetEmitation() > Emitation)
-    Emitation = Stack->GetEmitation();
+  game::AddLight(Emitation, Stack->GetEmitation());
 
-  if(Action && Action->GetEmitation() > Emitation)
-    Emitation = Action->GetEmitation();
+  if(Action)
+    game::AddLight(Emitation, Action->GetEmitation());
 }
 
 void character::CalculateAll()
@@ -5766,3 +5766,4 @@ bool character::CanHeal() const
 
   return false;
 }
+

@@ -198,10 +198,7 @@ void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
-
-  if(GetBaseEmitation() > Emitation)
-    Emitation = GetBaseEmitation();
-
+  game::AddLight(Emitation, GetBaseEmitation()); // what does this do?
   game::PopItemID(ID);
   SaveFile >> Cannibalised >> Size >> ID;
 }
@@ -407,24 +404,25 @@ void item::CalculateVolumeAndWeight()
       }
 }
 
-void item::SignalEmitationIncrease(ushort EmitationUpdate)
+void item::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate > Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      Emitation = EmitationUpdate;
+      game::AddLight(Emitation, EmitationUpdate);
 
       if(Slot)
 	Slot->SignalEmitationIncrease(EmitationUpdate);
     }
 }
 
-void item::SignalEmitationDecrease(ushort EmitationUpdate)
+void item::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(EmitationUpdate == Emitation && Emitation)
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
     {
+      ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(EmitationUpdate != Emitation && Slot)
+      if(Backup != Emitation && Slot)
 	Slot->SignalEmitationDecrease(EmitationUpdate);
     }
 }
@@ -617,3 +615,4 @@ void item::SignalAttackInfoChange()
   if(Slot)
     Slot->SignalAttackInfoChange();
 }
+

@@ -44,6 +44,7 @@
 #include "stack.h"
 #include "hell.h"
 #include "wsquare.h"
+#include "allocate.h"
 
 #define SAVEFILE_VERSION 110 // Increment this if changes make savefiles incompatible
 
@@ -67,7 +68,7 @@ ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
-ushort game::CurrentEmitterEmitation;
+ulong game::CurrentEmitterEmitation;
 long game::CurrentEmitterPosX;
 long game::CurrentEmitterPosY;
 vector2d game::CurrentEmitterPos;
@@ -147,8 +148,8 @@ int game::MoveCommandKey[] = { KEYHOME, KEYUP, KEYPAGEUP, KEYLEFT, KEYRIGHT, KEY
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 
 bool game::LOSUpdateRequested = false;
-ushort*** game::LuxTable;
-ushort* game::LuxTableSize;
+ushort*** game::LuxTable = 0;
+ushort* game::LuxTableSize = 0;
 bool game::Running;
 character* game::Player;
 vector2d game::Camera(0,0);
@@ -331,31 +332,14 @@ void game::Run()
 
 void game::InitLuxTable()
 {
-  static bool AlreadyInitialized = false;
-
-  if(!AlreadyInitialized)
+  if(!LuxTable)
     {
-      AlreadyInitialized = true;
-      LuxTable = new ushort**[0x200];
-      LuxTableSize = new ushort[0x200];
+      LuxTable = Alloc3D<ushort>(256, 33, 33);
 
-      for(ushort c = 0; c < 0x200; ++c)
-	{
-	  ushort MaxDist = c >= 160 ? ushort(2 * sqrt(c / 5 - 32)) : 0, MaxSize = (MaxDist << 1) + 1;
-	  LuxTableSize[c] = MaxSize;
-	  LuxTable[c] = new ushort*[MaxSize];
-
-	  for(long x = 0; x < MaxSize; ++x)
-	    {
-	      LuxTable[c][x] = new ushort[MaxSize];
-
-	      for(long y = 0; y < MaxSize; ++y)
-		{
-		  long xLSquare = abs((int)x - MaxDist), yLSquare = abs((int)y - MaxDist);
-		  LuxTable[c][x][y] = ushort(float(c) / (float(xLSquare * xLSquare + yLSquare * yLSquare) / 128 + 1));
-		}
-	    }
-	}
+      for(long c = 0; c < 0x100; ++c)
+	for(long x = 0; x < 33; ++x)
+	  for(long y = 0; y < 33; ++y)
+	    LuxTable[c][x][y] = ushort(c / (float(GetHypotSquare(x - 16, y - 16)) / 128 + 1));
 
       atexit(game::DeInitLuxTable);
     }
@@ -363,20 +347,8 @@ void game::InitLuxTable()
 
 void game::DeInitLuxTable()
 {
-  if(LuxTable)
-    {
-      for(ushort c = 0; c < 0x200; ++c)
-	{
-	  for(ushort x = 0; x < LuxTableSize[c]; ++x)
-	    delete [] LuxTable[c][x];
-
-	  delete [] LuxTable[c];
-	}
-
-      delete [] LuxTable;
-      delete [] LuxTableSize;
-      LuxTable = 0;
-    }
+  delete [] LuxTable;
+  LuxTable = 0;
 }
 
 bool game::WorldMapLOSHandler(long X, long Y)
@@ -605,13 +577,18 @@ std::string game::SaveName(const std::string& Base)
 
 bool game::EmitationHandler(long X, long Y)
 {
-  ushort Emit = CurrentEmitterEmitation;
-  ushort MaxSize = game::GetLuxTableSize()[Emit] >> 1;
+  ulong Emit;
 
-  if(X - CurrentEmitterPosX > MaxSize || CurrentEmitterPosX - X > MaxSize || Y - CurrentEmitterPosY > MaxSize || CurrentEmitterPosY - Y > MaxSize)
+  if(X - CurrentEmitterPosX > 16 || CurrentEmitterPosX - X > 16 || Y - CurrentEmitterPosY > 16 || CurrentEmitterPosY - Y > 16)
     Emit = 0;
   else
-    Emit = game::GetLuxTable()[Emit][X - CurrentEmitterPosX + MaxSize][Y - CurrentEmitterPosY + MaxSize];
+    {
+      Emit = CurrentEmitterEmitation;
+      uchar Red = LuxTable[GetRed24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
+      uchar Green = LuxTable[GetGreen24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
+      uchar Blue = LuxTable[GetBlue24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
+      Emit = MakeRGB24(Red, Green, Blue);
+    }
 
   GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->AlterLuminance(CurrentEmitterPos, Emit);
   return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
@@ -1201,7 +1178,7 @@ void game::BusyAnimation(bitmap* Buffer)
 
   if(!ElpuriLoaded)
     {
-      ushort Color = MakeRGB(60, 60, 60);
+      ushort Color = MakeRGB16(60, 60, 60);
       igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
       ElpuriLoaded = true;
     }
@@ -1219,10 +1196,10 @@ void game::BusyAnimation(bitmap* Buffer)
       ushort x;
 
       for(x = 0; x < 10; ++x)
-	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
+	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB16(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
 
       for(x = 0; x < 4; ++x)
-	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB(255 - 12 * x,0,0));
+	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB16(255 - 12 * x,0,0));
 
       if(Buffer == DOUBLEBUFFER)
 	graphics::BlitDBToScreen();
@@ -1695,3 +1672,34 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	Save(GetAutoSaveFileName().c_str());
     }
 }
+
+char game::CompareLights(ulong L1, ulong L2)
+{
+  if(GetRed24(L1) > GetRed24(L2) || GetGreen24(L1) > GetGreen24(L2) || GetBlue24(L1) > GetBlue24(L2))
+    return 1;
+  else if(GetRed24(L1) == GetRed24(L2) || GetGreen24(L1) == GetGreen24(L2) || GetBlue24(L1) == GetBlue24(L2))
+    return 0;
+  else
+    return -1;
+}
+
+char game::CompareLightToInt(ulong L, uchar Int)
+{
+  if(GetRed24(L) > Int || GetGreen24(L) > Int || GetBlue24(L) > Int)
+    return 1;
+  else if(GetRed24(L) == Int || GetGreen24(L) == Int || GetBlue24(L) == Int)
+    return 0;
+  else
+    return -1;
+}
+
+void game::AddLight(ulong& L1, ulong L2)
+{
+  L1 = MakeRGB24(Max(GetRed24(L1), GetRed24(L2)), Max(GetGreen24(L1), GetGreen24(L2)), Max(GetBlue24(L1), GetBlue24(L2)));
+}
+
+bool game::IsDark(ulong Light)
+{
+  return !Light || (GetRed24(Light) < LIGHT_BORDER && GetGreen24(Light) < LIGHT_BORDER && GetBlue24(Light) < LIGHT_BORDER);
+}
+

@@ -334,13 +334,11 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
 	SetHasBe(true);
 
       Material->SetMotherEntity(this);
-
-      if(Material->GetEmitation() > Emitation)
-	Emitation = Material->GetEmitation();
+      game::AddLight(Emitation, Material->GetEmitation());
     }
 }
 
-void object::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+void object::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   if(AllowAlpha)
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
@@ -397,8 +395,8 @@ void object::CalculateEmitation()
   Emitation = GetBaseEmitation();
 
   for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)
-      Emitation = GetMaterial(c)->GetEmitation();
+    if(GetMaterial(c))
+      game::AddLight(Emitation, GetMaterial(c)->GetEmitation());
 }
 
 bool object::CalculateHasBe() const

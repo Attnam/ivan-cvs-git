@@ -48,7 +48,7 @@ class object : public entity, public id
   material* GetMaterial(ushort Index) const { return const_cast<object*>(this)->GetMaterialReference(Index); }
   const std::vector<bitmap*>& GetPicture() const { return Picture; }
   bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
-  virtual ushort GetBaseEmitation() const { return 0; }
+  virtual ulong GetBaseEmitation() const { return 0; }
   virtual void SetParameters(uchar) { }
   virtual uchar GetOKVisualEffects() const { return 0; }
   uchar GetVisualEffects() const { return VisualEffects; }
@@ -59,7 +59,7 @@ class object : public entity, public id
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
-  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual god* GetMasterGod() const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;

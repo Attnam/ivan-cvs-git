@@ -102,14 +102,23 @@ void worldmap::Generate()
       GenerateClimate();
       SmoothClimate();
       CalculateContinents();
-      std::vector<continent*> PerfectForAttnam;
+      std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
-      for(ushort c = 1; c < Continent.size(); ++c)
-	if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
+      ushort c;
+
+      for(c = 1; c < Continent.size(); ++c)
+	if(Continent[c]->Size() > 50 && Continent[c]->Size() < 500 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
 	  PerfectForAttnam.push_back(Continent[c]);
 
       if(!PerfectForAttnam.size())
 	continue;
+
+      /*for(c = 1; c < Continent.size(); ++c)
+	if(Continent[c]->Size() > 10 && Continent[c]->Size() < 200 && Continent[c]->GetGTerrainAmount(jungle::StaticType()))
+	  PerfectForNewAttnam.push_back(Continent[c]);
+
+      if(!PerfectForNewAttnam.size())
+	continue;*/
 
       vector2d AttnamPos, ElpuriCavePos;
       ushort CounterOne;

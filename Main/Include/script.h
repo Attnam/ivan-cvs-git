@@ -300,7 +300,7 @@ class levelscript : public script
   DATAMEMBER(bool, ReCalculate);
   DATAMEMBER(bool, OnGround);
   DATAMEMBER(uchar, TeamDefault);
-  DATAMEMBER(ushort, AmbientLight);
+  DATAMEMBER(ulong, AmbientLight);
   DATAMEMBER(std::string, Description);
   DATAMEMBER(uchar, LOSModifier);
   DATAMEMBER(bool, IgnoreDefaultSpecialSquares);

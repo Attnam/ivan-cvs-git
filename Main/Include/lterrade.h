@@ -37,7 +37,7 @@ class OLTERRAIN
   empty,
   olterrain,
  public:
-  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const { }
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const { }
   virtual void UpdatePictures() { }
 );
 
@@ -113,7 +113,7 @@ class OLTERRAIN
   virtual void ReceiveVomit(character*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
-  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
   virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
 );

@@ -100,7 +100,7 @@ It should be possible to command party members to flee.
 Lanterns should dim over time. (from Antti)
 Oil lamps should use oil as their fuel.
 Oil could have other uses as well.
-*Tuukka's alternative walls should be integrated.
+//*Tuukka's alternative walls should be integrated.
 Fungi that grow around the player and paralyze him.
 Stat point based character generation? (from Antti)
 //Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
@@ -247,7 +247,7 @@ WoDC should clone its own material to created doors.
 One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
 Wishing for corpse should give something.
 In script, Square, Random's Walkability should default to true.
-Poison should spread from bodypart from bodypart. (from JM)
+Poison should spread from bodypart to bodypart. (from JM)
 Titles and bonuses. (from JM)
 Informative pictures to message panel. (from JM)
 If one the player mounts an ass and has a carrot in the inventory, it should be held automatically in front of the "vehicle" to increase speed.
@@ -272,7 +272,7 @@ Kicking should do more damage if metal boots are worn.
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
 Zombies should be able to continue even without a head, maybe even without a torso.
 Handling flying bear traps and kicking bear traps.
-*Calamus should haste the player.
+//*Calamus should haste the player.
 Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
 "Bang your head at" command.
@@ -324,4 +324,7 @@ Healing liquid should cure poison.
 Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
 There should be a one-way teleport at the bottom of the dungeon linked to the first level.
 Level teleport option to wizard mode.
-
+Lick command.
+Bulimia state.
+It should be possible to slip on a bloody floor.
+Fluids could spill also over character pictures.

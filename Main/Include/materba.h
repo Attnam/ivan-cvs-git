@@ -30,7 +30,7 @@ struct materialdatabase
   ushort Color;
   ulong PriceModifier;
   bool IsSolid;
-  ushort Emitation;
+  ulong Emitation;
   bool CanBeWished;
   uchar Alignment;
   ushort NutritionValue;
@@ -107,7 +107,7 @@ class material
   DATABASEVALUE(ushort, Color);
   DATABASEVALUE(ulong, PriceModifier);
   DATABASEBOOL(IsSolid);
-  DATABASEVALUE(ushort, Emitation);
+  DATABASEVALUE(ulong, Emitation);
   DATABASEBOOL(CanBeWished);
   DATABASEVALUE(uchar, Alignment);
   DATABASEVALUE(ushort, NutritionValue);

@@ -16,7 +16,7 @@ Black Mage.
 //Hammer and sickle + broken and in hands pictures.
 //Broken shield.
 Morning star + broken and in hands picture.
-Flail + broken and in hands picture.
+//Flail + broken and in hands picture.
 Staff + broken and in hands picture.
 //Skull.
 //Elpuri's head is of wrong color.
@@ -34,6 +34,7 @@ Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
 Teleport.
+Golden Eagle Shirt's animation is really gay.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
 Small, medium and large chests (one is probably already done...)

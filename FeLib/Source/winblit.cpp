@@ -290,8 +290,10 @@ void BlitMirrorFlipRotate90(ulong TrueSourceOffset, ulong TrueDestOffset, ulong 
   }
 }
 
-void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort Luminance)
+void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ulong Luminance)
 {
+  ushort Red, Green, Blue;
+
   __asm
   {
     pushad
@@ -299,11 +301,27 @@ void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourc
     mov ax, ds
     mov esi, TrueSourceOffset
     mov edi, TrueDestOffset
-    xor edx, edx
     mov es, ax
-    mov dx, Luminance
+
+    mov edx, Luminance
+    shr edx, 0x0F
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Red, dx
+
+    mov edx, Luminance
+    shr edx, 0x07
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Green, dx
+
+    mov edx, Luminance
+    shl edx, 0x01
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Blue, dx
+
     xor ecx, ecx
-    sub dx, 0x100
     cld
   BlitLuminated1:
     mov cx, Width
@@ -312,7 +330,7 @@ void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourc
     mov bx, ax
     and bx, 0x1F
     shl bx, 0x03
-    add bx, dx
+    add bx, Blue
     jns BlitLuminatedNext1
     xor bx, bx
     jmp BlitLuminatedNext2
@@ -328,7 +346,7 @@ void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourc
     mov bx, ax
     and bx, 0x3F
     shl bx, 0x02
-    add bx, dx
+    add bx, Green
     jns BlitLuminatedNext3
     xor bx, bx
     jmp BlitLuminatedNext4
@@ -344,7 +362,7 @@ void BlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourc
     mov bx, ax
     and bx, 0x1F
     shl bx, 0x03
-    add bx, dx
+    add bx, Red
     jns BlitLuminatedNext5
     xor bx, bx
     jmp BlitLuminatedNext6
@@ -677,8 +695,10 @@ void MaskedBlitMirrorFlipRotate90(ulong TrueSourceOffset, ulong TrueDestOffset, 
   }
 }
 
-void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort Luminance, ushort MaskColor)
+void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ulong Luminance, ushort MaskColor)
 {
+  ushort Red, Green, Blue;
+
   __asm
   {
     pushad
@@ -688,9 +708,26 @@ void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong Tru
     mov edi, TrueDestOffset
     xor edx, edx
     mov es, ax
-    mov dx, Luminance
+
+    mov edx, Luminance
+    shr edx, 0x0F
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Red, dx
+
+    mov edx, Luminance
+    shr edx, 0x07
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Green, dx
+
+    mov edx, Luminance
+    shl edx, 0x01
+    and edx, 0x1FE
+    sub edx, 0x100
+    mov Blue, dx
+
     xor ecx, ecx
-    sub dx, 0x100
     cld
   MaskedBlitLuminated1:
     mov cx, Width
@@ -701,7 +738,7 @@ void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong Tru
     mov bx, ax
     and bx, 0x1F
     shl bx, 0x03
-    add bx, dx
+    add bx, Blue
     jns MaskedBlitLuminatedNext1
     xor bx, bx
     jmp MaskedBlitLuminatedNext2
@@ -717,7 +754,7 @@ void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong Tru
     mov bx, ax
     and bx, 0x3F
     shl bx, 0x02
-    add bx, dx
+    add bx, Green
     jns MaskedBlitLuminatedNext3
     xor bx, bx
     jmp MaskedBlitLuminatedNext4
@@ -733,7 +770,7 @@ void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong Tru
     mov bx, ax
     and bx, 0x1F
     shl bx, 0x03
-    add bx, dx
+    add bx, Red
     jns MaskedBlitLuminatedNext5
     xor bx, bx
     jmp MaskedBlitLuminatedNext6

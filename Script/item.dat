@@ -74,7 +74,7 @@ lantern
 	StrengthModifier = 50;
 	FormModifier = 30;
 	Price = 50;
-	BaseEmitation = 300;
+	BaseEmitation = rgb24(150, 150, 150);
 	NameSingular = "lantern";
         MainMaterialConfig == GLASS;
 	Alias == "light";
@@ -343,6 +343,7 @@ banana /* materialcontainer-> */
 	MaxCharges = 6;
 	MinCharges = 6;
 	CanBePiled = true;
+	BaseEmitation = rgb24(166, 112, 112);
 
 	Config BROKEN;
 	{
@@ -539,7 +540,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsDestroyable = false;
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
-	BaseEmitation = 333;
+	BaseEmitation = rgb24(166, 166, 166);
 	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == CLOTH;
@@ -663,7 +664,7 @@ leftnutofpetrus /* nut-> */
 	StrengthModifier = 2500;
 	Score = 5000;
 	IsDestroyable = false;
-	BaseEmitation = 333;
+	BaseEmitation = rgb24(166, 166, 166);
 	Adjective = "left";
 	PostFix = "of Petrus";
 	ArticleMode = DEFINITEARTICLE;
@@ -812,6 +813,7 @@ kiwi
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWIFLESH;
 	Roundness = 80;
+	BaseEmitation = rgb24(112, 166, 112);
 }
 
 pineapple
@@ -827,6 +829,7 @@ pineapple
 	MainMaterialConfig == PINEAPPLEFLESH;
 	Roundness = 90;
 	IsTwoHanded = true;
+	BaseEmitation = rgb24(112, 112, 166);
 }
 
 palmbranch
@@ -935,7 +938,7 @@ oillamp
 	StrengthModifier = 50;
 	BitmapPos = 32, 48;
 	FormModifier = 30;
-	BaseEmitation = 256;
+	BaseEmitation = rgb24(128, 128, 128);
 	NameSingular = "lamp";
 	Adjective = "oil";
 	Article = "an";
@@ -1573,7 +1576,7 @@ flamingsword /* meleeweapon-> */
 	SecondaryMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 3, 150, 50, 10; }
 	Roundness = 10;
-	BaseEmitation = 320;
+	BaseEmitation = rgb24(160, 160, 160);
 	Price = 250;
 
 	Config BROKEN;
@@ -1744,4 +1747,5 @@ skull
 	Roundness = 20;
 	IsTwoHanded = true;
 }
+
 

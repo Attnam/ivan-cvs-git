@@ -342,7 +342,7 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
       for(ushort c2 = 0; c2 < Chapter.size(); ++c2)
 	{
 	  ushort Color = CurrentEntry.Color;
-	  Color = MakeRGB(GetRed(Color) - ((GetRed(Color) * 3 * Index / PageLength) >> 2), GetGreen(Color) - ((GetGreen(Color) * 3 * Index / PageLength) >> 2), GetBlue(Color) - ((GetBlue(Color) * 3 * Index / PageLength) >> 2));
+	  Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * Index / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * Index / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * Index / PageLength) >> 2));
 	  FONT->Printf(DOUBLEBUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[Chapter.size() - c2 - 1].c_str());
 	  Bottom -= 10;
 
@@ -358,7 +358,7 @@ void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, ushort Color, us
     return;
 
   for(ushort c = 0; c < PageLength; ++c)
-    Font->CreateFontCache(MakeRGB(GetRed(Color) - ((GetRed(Color) * 3 * c / PageLength) >> 2), GetGreen(Color) - ((GetGreen(Color) * 3 * c / PageLength) >> 2), GetBlue(Color) - ((GetBlue(Color) * 3 * c / PageLength) >> 2)));
+    Font->CreateFontCache(MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * c / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * c / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * c / PageLength) >> 2)));
 }
 
 void felist::Empty()

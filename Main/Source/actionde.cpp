@@ -386,14 +386,14 @@ void read::Handle()
       return;
     }
 
-  if(GetActor()->GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
+  if(GetActor()->GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheat())
     {
       ADD_MESSAGE("It is too dark to read now.");
       Terminate(false);
       return;
     }
 
-  if(GetActor()->GetLSquareUnder()->GetLuminance() < 225)
+  if(game::CompareLightToInt(GetActor()->GetLSquareUnder()->GetLuminance(), 115) < 0)
     GetActor()->EditExperience(PERCEPTION, -1);
 
   if(!Counter)
@@ -545,25 +545,26 @@ ulong read::GetWeight() const
   return *Literature ? Literature->GetWeight() : 0;
 }
 
-ushort consume::GetEmitation() const
+ulong consume::GetEmitation() const
 {
   return *Consuming ? Consuming->GetEmitation() : 0;
 }
 
-ushort dig::GetEmitation() const
+ulong dig::GetEmitation() const
 {
-  ushort Emitation = 0;
+  ulong Emitation = 0;
 
-  if(*RightBackup && RightBackup->GetEmitation() > Emitation)
-    Emitation = RightBackup->GetEmitation();
+  if(*RightBackup)
+    game::AddLight(Emitation, RightBackup->GetEmitation());
 
-  if(*LeftBackup && LeftBackup->GetEmitation() > Emitation)
-    Emitation = LeftBackup->GetEmitation();
+  if(*LeftBackup)
+    game::AddLight(Emitation, LeftBackup->GetEmitation());
 
   return Emitation;
 }
 
-ushort read::GetEmitation() const
+ulong read::GetEmitation() const
 {
   return *Literature ? Literature->GetEmitation() : 0;
 }
+
