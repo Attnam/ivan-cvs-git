@@ -61,5 +61,6 @@ inline ushort MakeShadeColor(ushort Color) { return MakeRGB(GetRed(Color) / 3, G
 #define ROTATE_90 4
 
 #define NOFLAME 0xFFFF
+
 #endif
 

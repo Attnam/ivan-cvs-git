@@ -53,8 +53,9 @@ void highscore::Draw() const
       Desc += Score[c];
       Desc.resize(13, ' ');
       Desc += Entry[c];
-      List.AddEntry(Desc, c == LastAdd ? RED : LIGHTGRAY);
+      List.AddEntry(Desc, c == LastAdd ? DARKGRAY : LIGHTGRAY, 13);
     }
+
   List.Draw(vector2d(10, 10), 780, 50, BLACK, false, false, false, true);
 }
 
@@ -82,8 +83,6 @@ void highscore::Load(const std::string& File)
   ushort HVersion;
   HighScore >> HVersion;
 
-  if(HVersion == 110)
+  if(HVersion == HIGHSCORE_VERSION)
     HighScore >> Score >> Entry >> LastAdd;
 }
-
-

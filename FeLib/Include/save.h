@@ -160,49 +160,49 @@ inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
 
 inline outputfile& operator<<(outputfile& SaveFile, long Value)
 {
-  SaveFile.Write((char*)&Value, sizeof(Value));
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, long& Value)
 {
-  SaveFile.Read((char*)&Value, sizeof(Value));
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
 {
-  SaveFile.Write((char*)&Value, sizeof(Value));
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
 {
-  SaveFile.Read((char*)&Value, sizeof(Value));
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, float Value)
 {
-  SaveFile.Write((char*)&Value, sizeof(Value));
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, float& Value)
 {
-  SaveFile.Read((char*)&Value, sizeof(Value));
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 inline outputfile& operator<<(outputfile& SaveFile, vector2d Vector)
 {
-  SaveFile.Write((char*)&Vector, sizeof(Vector));
+  SaveFile.Write(reinterpret_cast<char*>(&Vector), sizeof(Vector));
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, vector2d& Vector)
 {
-  SaveFile.Read((char*)&Vector, sizeof(Vector));
+  SaveFile.Read(reinterpret_cast<char*>(&Vector), sizeof(Vector));
   return SaveFile;
 }
 
@@ -212,8 +212,7 @@ inputfile& operator>>(inputfile&, std::string&);
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, const std::vector<type>& Vector)
 {
-  ulong Size = Vector.size();
-  SaveFile.Write((char*)&Size, sizeof(Size));
+  SaveFile << ulong(Vector.size());
 
   for(ulong c = 0; c < Vector.size(); ++c)
     SaveFile << Vector[c];
@@ -223,9 +222,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, const 
 
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vector<type>& Vector)
 {
-  ulong Size;
-  SaveFile.Read((char*)&Size, sizeof(Size));
-  Vector.resize(Size, type());
+  Vector.resize(ReadType<ulong>(SaveFile), type());
 
   for(ulong c = 0; c < Vector.size(); ++c)
     SaveFile >> Vector[c];
@@ -235,8 +232,7 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vec
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, const std::list<type>& List)
 {
-  ulong Size = List.size();
-  SaveFile.Write((char*)&Size, sizeof(Size));
+  SaveFile << ulong(List.size());
 
   for(typename std::list<type>::const_iterator i = List.begin(); i != List.end(); ++i)
     SaveFile << *i;
@@ -246,9 +242,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, const 
 
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::list<type>& List)
 {
-  ulong Size;
-  SaveFile.Read((char*)&Size, sizeof(Size));
-  List.resize(Size, type());
+  List.resize(ReadType<ulong>(SaveFile), type());
 
   for(typename std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
     SaveFile >> *i;
@@ -258,8 +252,7 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::lis
 
 template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, const std::map<type1, type2>& Map)
 {
-  ulong Size = Map.size();
-  SaveFile.Write((char*)&Size, sizeof(Size));
+  SaveFile << ulong(Map.size());
 
   for(typename std::map<type1, type2>::const_iterator i = Map.begin(); i != Map.end(); ++i)
     SaveFile << i->first << i->second;
@@ -270,7 +263,7 @@ template <class type1, class type2> inline outputfile& operator<<(outputfile& Sa
 template <class type1, class type2> inline inputfile& operator>>(inputfile& SaveFile, std::map<type1, type2>& Map)
 {
   ulong Size;
-  SaveFile.Read((char*)&Size, sizeof(Size));
+  SaveFile >> Size;
 
   for(ushort c = 0; c < Size; ++c)
     {
@@ -284,3 +277,4 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
 }
 
 #endif
+

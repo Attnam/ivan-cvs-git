@@ -35,6 +35,8 @@ class entity
   virtual void SignalEmitationIncrease(ushort) { }
   virtual void SignalEmitationDecrease(ushort) { }
   virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
+  virtual bool AllowSpoil() const { return false; }
+  virtual void SignalSpoil(material*) { }
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool ExistsBool;

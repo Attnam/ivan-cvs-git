@@ -13,7 +13,7 @@
 #include "save.h"
 #include "igraph.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), AnimatedEntities(0), DescriptionChanged(true)
 {
 }
 
@@ -24,12 +24,12 @@ square::~square()
 
 void square::Save(outputfile& SaveFile) const
 {
-  SaveFile << Character << LastSeen << DescriptionChanged << AnimatedEntities << MemorizedDescription;
+  SaveFile << Character << LastSeen << AnimatedEntities << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
 {
-  SaveFile >> Character >> LastSeen >> DescriptionChanged >> AnimatedEntities >> MemorizedDescription;
+  SaveFile >> Character >> LastSeen >> AnimatedEntities >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
@@ -129,11 +129,12 @@ uchar square::GetRestModifier() const
   return GetOTerrain()->GetRestModifier();
 }
 
-bool square::CanBeSeenBy(const character* Who) const
+bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
 {
   if(Who->IsPlayer())
-    return CanBeSeenByPlayer();
+    return CanBeSeenByPlayer(IgnoreDarkness);
   else
-    return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+    return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), IgnoreDarkness);
 }
+
 

@@ -358,12 +358,12 @@ Dungeon 0;
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineMaster=erado;
+			DivineMaster=mortifer;
 			GenerateFountains=false;
 
 			Square, Pos 3,1;
 			{
-				OTerrain = IRON altar(erado);
+				OTerrain = IRON altar(mortifer);
 			}
 
 			Square, Pos 3,3;
@@ -828,7 +828,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=solidterrain(GRASSTERRAIN),GOLD wall(BRICK_FINE);
 			GenerateDoor=false;
-			DivineMaster=venius;
+			DivineMaster=legifer;
 			Type=temple;
 
 			Square, Pos 2, 0;
@@ -839,7 +839,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = GOLD altar(venius);
+				OTerrain = GOLD altar(legifer);
 			}
 
 			Square, Pos 2, 3;
@@ -906,7 +906,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=solidterrain(GRASSTERRAIN),PARCHMENT wall(BRICK_FINE);
 			GenerateDoor=false;
-			DivineMaster=consummo;
+			DivineMaster=sophos;
 			Type=temple;
 
 			Square, Pos 2, 4;
@@ -917,7 +917,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = PARCHMENT altar(consummo);
+				OTerrain = PARCHMENT altar(sophos);
 			}
 
 			Square, Pos 2, 1;
@@ -935,7 +935,7 @@ Dungeon 1;
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineMaster=consummo;
+			DivineMaster=sophos;
 			Type=library;
 			
 			Square, Pos 3, 4;

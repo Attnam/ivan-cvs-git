@@ -1,3 +1,67 @@
+August 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* StringQuestion again shows a "Too short!" message when appropriate
+	* Names and descriptions of several gods changed
+	* Stack interface is now much simpler and its usage much easier,
+	  as in the following example:
+
+	  for(stackiterator i = Stack->GetBottom(); i.HasItem(); ++i)
+		{
+		  i->MemberFunctionOfItem();
+		  item* CurrentItem = *i;
+		}
+
+	* Corrected an enormous amount of bugs caused by the new item visibility
+	  system
+	* Added lsquare::GetSideStackOfAdjacentSquare() which allows much
+	  more convenient usage of side stacks
+	* Description of sidestacks is now shown on the squares above which
+	  they really are (because previously you could "see" lanterns through
+	  walls in lookmode)
+	* Level-leaving code now works little differently with ESP-monsters
+	  (they must now see the stairs before they can follow the player)
+	* Panel's level description is now always capitalized
+	* RaiseStats + ESP works correctly now
+	* Added "severed" adjective for severed bodyparts
+	* Item information shown in the inventory screen now depends on category
+	* festring is now a fully static class, not a namespace, since namespaces
+	  are evil
+	* festring::IntegerToChar() now calls festring::InstallIntegerMap()
+	  if it hasn't yet been done; manual initialization is thus no more necessary
+	* Added a couple of festring::SplitString() functions that make line
+	  cutting and chapter managing much easier
+	* felist now splits lines correctly
+	* Added ushort Marginal parameter for felist::AddEntry, which makes splitted
+	  lines occasionally better looking
+	* Corrected an outlook bug in the "You didn't get to the high score list" message
+	* Poison is now a lot less deadly
+	* Default outline colors may be a bit less ugly
+	* Lots of C-style casts converted to reinterpret_casts
+	* The whip of Cleptia is now derived from whip
+	* The player now starts with a copper spear and a leather helmet, so that
+	  he would suck a little less
+	* Stethoscope, skull and scalp pictures added to item.pcx by Kahvi
+	* Thief picture added to humanoid.pcx by Kahvi
+	* Critical hit message was not displayed correctly if the player was the hitter
+	  and this was fixed
+	* Created a more or less consistent system for broken items
+	* Integrated Kahvi's broken weapon pictures -> all normal weapons and bananas
+	  may now break both when blocking and hitting
+	* Changing material to air is now prohibited
+	* Bananas are now derived from meleeweapon so that they can be poisoned
+	* Food finally spoils
+	! Note: Due to spoil system, it is now illegal to send characters and items
+	  to hell in destructors, so be sure delete everything there
+	* Bone and bread are now organicsubstances so that they can spoil (albeit
+	  slower than other materials)
+	* Meleeweapons' name now shows if they are dipped into something
+	* Corrected a few small bugs in the Memorized and MemorizedDecription update
+	  request code
+	* Resurrection works again
+	* Prohibited unoriginal bodypart attachment during resurrection since limb
+	  images are not universally compatible
+	* Duplicating corpses now works
+
 August 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Monsters now panic more or less correctly
@@ -7,7 +71,7 @@ August 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* corrected funny (ok it's not very funny) spelling mistake. The text said before: "...ThOu HaSt SlAuGtHeReD pEtRuS..."
 	* Added panic. At the moment all monsters panic when their HPs reach 1 which will have to be tweaked.
-	
+
 August 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added parameter IgnoreVisibility to all stack::DrawContents and their calls

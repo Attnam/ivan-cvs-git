@@ -15,11 +15,13 @@ class MATERIAL
   organicsubstance,
   material,
  public:
-  virtual bool Be();
-  //virtual bool HasBe() const { return true; }
+  virtual void Be();
+  virtual bool HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool IsVeryCloseToSpoiling() const { return GetSpoilModifier() - SpoilCounter <= 10; }
  protected:
+  virtual void VirtualConstructor(bool) { SpoilCounter = 0; }
   ushort SpoilCounter;
 );
 
@@ -53,3 +55,4 @@ class MATERIAL
 );
 
 #endif
+

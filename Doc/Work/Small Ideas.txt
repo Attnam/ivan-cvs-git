@@ -214,7 +214,7 @@ Bananas should act as boomerangs when thrown.
 //*Satiated and bloated states.
 Zombies should spoil.
 Kicking bodyparts and corpses on the ground should spill blood.
-*Average based difficulty!
+//*Average based difficulty!
 //*Strength and weapon weight should affect attack speed!
 One must be able to use a stethoscope on doors.
 //Item list to lookmode.
@@ -272,7 +272,7 @@ Kicking should do more damage if metal boots are worn.
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
 Zombies should be able to continue even without a head, maybe even without a torso.
 Handling flying bear traps and kicking bear traps.
-Calamus should haste the player.
+*Calamus should haste the player.
 Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
 "Bang your head at" command.
@@ -280,7 +280,14 @@ Whips should sometimes remove the helmet of the target.
 //*Pictures to Equipment Screen.
 Page up should work correctly in felists.
 If a melee hit is blocker with a weapon, the attacking arm should take damage.
-Poison effect for snake flesh.
+*Poison effect for snake flesh.
 Wishing shouldn't perhaps be case sensitive.
 Werewolves should drop their equipment when they polymorph.
 Mistresses should not exchange their whips for any other weapons.
+Some monsters should be generated in groups.
+Monsters with multiple configs should advance in levels.
+Wings should be bodyparts.
+*Team waypoint setting when whistling.
+It shouldn't be possible to mutate nor resurrect non-living bodyparts.
+A special message should be printed when zapping a WoR at a bone or a skull.
+If the player is polymorphed into a monster that can't heal, the rest command should be disabled.

@@ -54,6 +54,12 @@ bool attnam::GoDown(character* Who) const
   if(configuration::GetAutoSaveInterval())
     game::Save(game::GetAutoSaveFileName().c_str());
 
+  /*character* Char = new goblin;
+  Char->GetBodyPart(1)->ChangeMainMaterial(MAKE_MATERIAL(DIAMOND));
+  Char->SetTeam(game::GetTeam(2));
+  game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Char, Who->GetPos()), Char);
+  Char->Die();*/
+
   return true;
 }
 

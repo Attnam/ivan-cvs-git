@@ -280,7 +280,7 @@ void scrollofwishing::FinishReading(character* Reader)
     }
 }
 
-bool lantern::ReceiveDamage(character*, ushort Damage, uchar)
+/*bool lantern::ReceiveDamage(character*, ushort Damage, uchar)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
     {
@@ -297,7 +297,7 @@ bool lantern::ReceiveDamage(character*, ushort Damage, uchar)
     }
 
   return false;
-}
+}*/
 
 bool potion::ReceiveDamage(character*, ushort Damage, uchar)
 {
@@ -340,7 +340,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?", true);
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
 
 	if(Item)
 	  {
@@ -393,7 +393,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool platemail::ReceiveDamage(character*, ushort Damage, uchar)
+/*bool platemail::ReceiveDamage(character*, ushort Damage, uchar)
 {
   if(Damage > GetStrengthValue() * 2 + RAND() % 11 - RAND() % 11)
     {
@@ -409,7 +409,7 @@ bool platemail::ReceiveDamage(character*, ushort Damage, uchar)
     }
 
   return false;
-}
+}*/
 
 bool brokenbottle::StepOnEffect(character* Stepper)
 {
@@ -462,7 +462,6 @@ ulong meleeweapon::Price() const
 ulong bodyarmor::Price() const
 {
   float ArmorModifier = GetStrengthValue() / 10;
-
   return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
 }
 
@@ -642,16 +641,6 @@ bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
     }
 
   return false;
-}
-
-void wand::AddPostFix(std::string& String) const
-{
-  String << " " << item::GetPostFix();
-
-  if(TimesUsed == 1)
-    String += " (used 1 time)";
-  else if(TimesUsed)
-    String += std::string(" (used ") + TimesUsed + " times)";
 }
 
 bool scroll::ReceiveDamage(character*, ushort, uchar Type)
@@ -874,13 +863,13 @@ void scrollofcharging::FinishReading(character* Reader)
 
 void banana::Save(outputfile& SaveFile) const
 {
-  materialcontainer::Save(SaveFile);
+  meleeweapon::Save(SaveFile);
   SaveFile << Charges;
 }
 
 void banana::Load(inputfile& SaveFile)
 {
-  materialcontainer::Load(SaveFile);
+  meleeweapon::Load(SaveFile);
   SaveFile >> Charges;
 }
 
@@ -892,9 +881,7 @@ bool banana::Zap(character*, vector2d, uchar)
       --Charges;
     }
   else
-    {
-      ADD_MESSAGE("Click!");
-    }
+    ADD_MESSAGE("Click!");
 
   return true;
 }
@@ -1209,12 +1196,12 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
 	  if(GetHP() == 1 && BHP >= 2)
 	    {
 	      game::Beep();
-	      ADD_MESSAGE("Your %s bleeds very badly.", CHARNAME(UNARTICLED));
+	      ADD_MESSAGE("Your %s bleeds very badly.", GetBodyPartName().c_str());
 	    }
 	  else if(GetHP() < GetMaxHP() / 3 && BHP >= GetMaxHP() / 3)
 	    {
 	      game::Beep();
-	      ADD_MESSAGE("Your %s bleeds.", CHARNAME(UNARTICLED));
+	      ADD_MESSAGE("Your %s bleeds.", GetBodyPartName().c_str());
 	    }
     }
 
@@ -1638,8 +1625,7 @@ ushort corpse::GetStrengthValue() const
 
 corpse::~corpse()
 {
-  if(GetDeceased())
-    GetDeceased()->SendToHell();
+  delete Deceased;
 }
 
 ushort corpse::GetMaterialColorA(ushort) const
@@ -1758,41 +1744,27 @@ void corpse::AddConsumeEndMessage(character* Eater) const
 
 head::~head()
 {
-  if(GetHelmet())
-    GetHelmet()->SendToHell();
-
-  if(GetAmulet())
-    GetAmulet()->SendToHell();
+  delete GetHelmet();
+  delete GetAmulet();
 }
 
 humanoidtorso::~humanoidtorso()
 {
-  if(GetBodyArmor())
-    GetBodyArmor()->SendToHell();
-
-  if(GetCloak())
-    GetCloak()->SendToHell();
-
-  if(GetBelt())
-    GetBelt()->SendToHell();
+  delete GetBodyArmor();
+  delete GetCloak();
+  delete GetBelt();
 }
 
 arm::~arm()
 {
-  if(GetWielded())
-    GetWielded()->SendToHell();
-
-  if(GetGauntlet())
-    GetGauntlet()->SendToHell();
-
-  if(GetRing())
-    GetRing()->SendToHell();
+  delete GetWielded();
+  delete GetGauntlet();
+  delete GetRing();
 }
 
 leg::~leg()
 {
-  if(GetBoot())
-    GetBoot()->SendToHell();
+  delete GetBoot();
 }
 
 long corpse::Score() const
@@ -1981,14 +1953,14 @@ bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
 
 bool corpse::RaiseTheDead(character* Summoner)
 {
-  RemoveFromSlot();
-
   if(Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
   GetLSquareUnder()->AddCharacter(GetDeceased());
+  RemoveFromSlot();
   GetDeceased()->SetHasBe(true);
   GetDeceased()->CompleteRiseFromTheDead();
+  GetDeceased()->SetMotherEntity(0);
   Deceased = 0;
   SendToHell();
   return true;
@@ -1996,7 +1968,7 @@ bool corpse::RaiseTheDead(character* Summoner)
 
 void banana::VirtualConstructor(bool Load)
 {
-  materialcontainer::VirtualConstructor(Load);
+  meleeweapon::VirtualConstructor(Load);
   SetAnimationFrames(20);
   SetCharges(6);
 }
@@ -2171,22 +2143,6 @@ void wandofresurrection::VirtualConstructor(bool Load)
     SetCharges(1 + (RAND() & 1));
 }
 
-const std::string& platemail::GetNameSingular() const
-{
-  /* Fast, but really unelegant... */
-
-  if(GetMainMaterial() && GetMainMaterial()->GetFlexibility() > 5)
-    {
-      static std::string Armor = "armor";
-      return Armor;
-    }
-  else
-    {
-      static std::string PlateMail = "plate mail";
-      return PlateMail;
-    }
-}
-
 bool whistle::Apply(character* Whistler) 
 {
   BlowEffect(Whistler);
@@ -2216,7 +2172,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
 void chest::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  Contained = new stack(0, this, HIDDEN);
+  Contained = new stack(0, this, HIDDEN, true);
 
   if(!Load)
     {
@@ -2540,7 +2496,7 @@ bool chest::TakeSomethingFrom(character* Opener)
       return false;
     }
 
-  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?", false);
+  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
 
   if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
@@ -2561,8 +2517,7 @@ bool chest::PutSomethingIn(character* Opener)
       return false;
     }
 
-  std::string Message = "What do you want to put in " + GetName(DEFINITE) + "?";
-  item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message, true);
+  item* ToBePut = Opener->GetStack()->DrawContents(Opener, "What do you want to put in " + GetName(DEFINITE) + "?");
 
   if(ToBePut)
     {
@@ -2603,7 +2558,7 @@ void chest::Load(inputfile& SaveFile)
 
 bool chest::Polymorph(stack* CurrentStack)
 {
-  GetContained()->MoveAll(CurrentStack);
+  GetContained()->MoveItemsTo(CurrentStack);
   item::Polymorph(CurrentStack);
   return true;
 }
@@ -2852,7 +2807,7 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 
 bool beartrap::IsPickable(character* Picker) const
 {
-  return Picker->GetStuckTo()->GetID() != GetID();
+  return !Picker->GetStuckTo() || Picker->GetStuckTo()->GetID() != GetID();
 }
 
 void bodypart::Mutate()
@@ -2951,11 +2906,11 @@ uchar lantern::GetSpecialFlags(ushort) const
 {
   switch(SquarePosition)
     {
-    case LEFT:
-      return ROTATE;
-    case UP:
-      return FLIP;
     case RIGHT:
+      return ROTATE;
+    case DOWN:
+      return FLIP;
+    case LEFT:
       return ROTATE|MIRROR;
     default:
       return 0;
@@ -3185,7 +3140,7 @@ bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPart
   if(RAND() & 1)
     {
       ADD_MESSAGE("BURN BURN BURN! FIX FIX FIX!");
-      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), FIRE, BodyPartIndex, Direction);
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), FIRE, BodyPartIndex, Direction) != 0;
     }
   else
     return false;
@@ -3286,7 +3241,7 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
       if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), ENERGY, BodyPartIndex, Direction);
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), ENERGY, BodyPartIndex, Direction) != 0;
     }
   else
     return false;
@@ -3296,8 +3251,9 @@ bool vermis::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
   if(RAND() & 1)
     {
-      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+
       Enemy->TeleportRandomly();
       return true;
     }
@@ -3320,12 +3276,12 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
     return false;
 }
 
-bool whipofcalamus::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
+bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
-  if(CalamusHelps(Enemy, Hitter))
+  if(CleptiaHelps(Enemy, Hitter))
     {
       if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s whip asks for the help of Calamus as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
       if(Hitter->IsPlayer())
 	game::GetGod(10)->AdjustRelation(10);
       Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
@@ -3397,7 +3353,7 @@ float arm::GetBlockChance(float EnemyToHitValue) const
 
 ushort arm::GetBlockCapability() const
 {
-  return GetWielded() ? GetWielded()->GetStrengthValue() : 0;
+  return GetWielded() ? GetWielded()->GetStrengthValue() * GetAttribute(ARMSTRENGTH) / 10 : 0;
 }
 
 void arm::WieldedSkillHit()
@@ -3490,20 +3446,20 @@ leftleg::leftleg(const leftleg& Leg) : leg(Leg)
 
 corpse::corpse(const corpse& Corpse) : item(Corpse)
 {
-  Deceased = 0;//new corpse(*Corpse.Deceased);
+  Deceased = Corpse.Deceased->Duplicate();
   Deceased->SetMotherEntity(this);
 }
 
 chest::chest(const chest& Chest) : item(Chest), StorageVolume(Chest.StorageVolume), LockType(Chest.LockType), Locked(Chest.Locked)
 {
-  Contained = new stack(0, this, HIDDEN);
+  Contained = new stack(0, this, HIDDEN, true);
 }
 
 oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
 {
 }
 
-bool whipofcalamus::CalamusHelps(const character* Enemy, const character* Hitter) const
+bool whipofcleptia::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
   if(!Hitter->GetMainWielded() || !Enemy->GetMainWielded())
     return false;
@@ -3513,9 +3469,213 @@ bool whipofcalamus::CalamusHelps(const character* Enemy, const character* Hitter
 	return false;
       else
 	{
-	  return (RAND() % (game::GetGod(10)->GetRelation() / 200 + 1));
+	  return (RAND() % (game::GetGod(10)->GetRelation() / 200 + 1)) != 0;
 	}
     }
   else
     return !(RAND() % 5);
+}
+
+void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List) const
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+  Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
+
+  uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+  uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+  if(CWeaponSkillLevel)
+    Entry << ", CS " << CWeaponSkillLevel;
+
+  if(SWeaponSkillLevel)
+    Entry << ", SS " << CWeaponSkillLevel;
+
+  Entry << "]";
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void armor::AddInventoryEntry(const character* Viewer, felist& List) const
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+  Entry << " [" << GetWeight() << "g, AV " << GetStrengthValue() << "]";
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void shield::AddInventoryEntry(const character* Viewer, felist& List) const
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+  Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
+
+  uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+  uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+  if(CWeaponSkillLevel)
+    Entry << ", CS " << CWeaponSkillLevel;
+
+  if(SWeaponSkillLevel)
+    Entry << ", SS " << CWeaponSkillLevel;
+
+  Entry << "]";
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void wand::AddInventoryEntry(const character* Viewer, felist& List) const
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+  Entry << " [" << GetWeight();
+
+  if(TimesUsed == 1)
+    Entry << ", used 1 time]";
+  else if(TimesUsed)
+    Entry << ", used " << TimesUsed << " times]";
+  else
+    Entry << "]";
+
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+void materialcontainer::SignalSpoil(material* Material)
+{
+  if(Material == GetMainMaterial())
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s becomes so spoiled that it cannot hold its contents anymore.", CHARNAME(DEFINITE));
+
+      if(GetContainedMaterial()->IsLiquid())
+	{
+	  if(!game::IsInWilderness())
+	    GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
+
+	  RemoveFromSlot();
+	}
+      else
+	{
+	  lump* Lump = new lump(0, false);
+	  Lump->InitMaterials(GetContainedMaterial());
+	  SetContainedMaterial(0);
+	  GetSlot()->DonateTo(Lump);
+	}
+
+      SendToHell();
+    }
+  else if(Material == GetContainedMaterial())
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The contents of %s spoil completely.", CHARNAME(DEFINITE));
+
+      ChangeContainedMaterial(0);
+
+      if(!game::IsInWilderness())
+	{
+	  GetLSquareUnder()->SendMemorizedUpdateRequest();
+	  GetLSquareUnder()->SendNewDrawRequest();
+	}
+    }
+}
+
+void banana::SignalSpoil(material* Material)
+{
+  if(Material == GetSecondaryMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The inside of %s spoils completely.", CHARNAME(DEFINITE));
+
+      item* Peals = new bananapeals(0, false);
+      Peals->InitMaterials(GetMainMaterial());
+      SetMainMaterial(0);
+      GetSlot()->DonateTo(Peals);
+      SendToHell();
+    }
+  else
+    item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
+}
+
+void meleeweapon::SignalSpoil(material* Material)
+{
+  if(Material == GetContainedMaterial())
+    {
+      ChangeContainedMaterial(0);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s seems cleaner now.", CHARNAME(DEFINITE));
+    }
+  else
+    item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
+}
+
+void meleeweapon::AddPostFix(std::string& String) const
+{
+  item::AddPostFix(String);
+
+  if(GetContainedMaterial())
+    {
+      String << " covered with ";
+      GetContainedMaterial()->AddName(String, false, false);
+    }
+}
+
+bool bodypart::AllowSpoil() const
+{
+  return !Master || !Master->IsEnabled();
+}
+
+void bodypart::SignalSpoil(material* Material)
+{
+  if(Material == GetContainedMaterial())
+    {
+      /* Bug: this isn't shown if the bpart is part of a player-carried corpse */
+
+      if(CarriedByPlayer())
+	ADD_MESSAGE("%s feels lighter.", CHARNAME(DEFINITE));
+
+      ChangeContainedMaterial(0);
+    }
+  else if(GetMaster())
+    GetMaster()->SignalSpoil();
+  else
+    item::SignalSpoil(Material);
+}
+
+bool bodypart::IsVeryCloseToSpoiling() const
+{
+  return GetMainMaterial()->IsVeryCloseToSpoiling();
+}
+
+void corpse::SignalSpoil(material*)
+{
+  bool TorsoSpoiled = false;
+
+  if(GetDeceased()->GetTorso()->IsVeryCloseToSpoiling())
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s spoils.", CHARNAME(DEFINITE));
+
+      TorsoSpoiled = true;
+    }
+
+  for(ushort c = 1; c < GetDeceased()->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+	if(BodyPart->IsVeryCloseToSpoiling())
+	  {
+	    if(!TorsoSpoiled && CanBeSeenByPlayer())
+	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHARNAME(DEFINITE));
+
+	    GetDeceased()->SevereBodyPart(c)->SendToHell();
+	  }
+	else if(TorsoSpoiled)
+	  GetSlot()->AddFriendItem(GetDeceased()->SevereBodyPart(c));
+    }
+
+  if(TorsoSpoiled)
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
 }

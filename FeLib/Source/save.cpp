@@ -258,9 +258,9 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  continue;
 	}
 
-      if(Word == ";" || Word == ",")
+      if(Word == ";" || Word == "," || Word == ")")
 	{
-	  if(CallLevel != 0xFF)
+	  if(CallLevel != 0xFF && (Word != ")" || CallLevel != 4))
 	    SeekPosCur(-1);
 
 	  return Value;
@@ -268,19 +268,18 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       /* Convert this into an inline function! */
 
-	#define CHECK_OP(op, cl)\
-	\
-	if(Word == #op)\
-		if(cl < CallLevel)\
-		{\
-			Value op##= ReadNumber(ValueMap, cl);\
-			continue;\
-		}\
-		else\
-		{\
-			SeekPosCur(-1);\
-			return Value;\
-		}
+      #define CHECK_OP(op, cl)\
+      if(Word == #op)\
+	if(cl < CallLevel)\
+	  {\
+	    Value op##= ReadNumber(ValueMap, cl);\
+	    continue;\
+	  }\
+	else\
+	  {\
+	    SeekPosCur(-1);\
+	    return Value;\
+	  }
 
       CHECK_OP(&, 1); CHECK_OP(|, 1); CHECK_OP(^, 1);
       CHECK_OP(*, 2); CHECK_OP(/, 2); CHECK_OP(%, 2);
@@ -291,9 +290,6 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  Value = ReadNumber(ValueMap, 4);
 	  continue;
 	}
-
-      if(Word == ")")
-	return Value;
 
       if(Word == "rand")
 	{

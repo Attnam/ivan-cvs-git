@@ -13,25 +13,26 @@
 #include "save.h"
 #include "config.h"
 
-stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition) : MotherSquare(MotherSquare), SquarePosition(SquarePosition), MotherEntity(MotherEntity), Volume(0), Weight(0), Emitation(0)
+stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility)
 {
-  Item = new stacklist;
 }
 
 stack::~stack()
 {
   Clean(true);
-  delete Item;
 }
 
 void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
 {
+  if(!Items)
+    return;
+
   ushort VisibleItems = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
       {
-	(**i)->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+	i->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 	++VisibleItems;
       }
 
@@ -39,9 +40,9 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort L
     {
       igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 
-      for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
-	  (**i)->Draw(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
+      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+	if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
+	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
@@ -53,166 +54,115 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort L
 
 void stack::AddItem(item* ToBeAdded)
 {
-  stackslot* StackSlot = new stackslot;
-  StackSlot->SetMotherStack(this);
-  StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
-  ToBeAdded->PlaceToSlot(StackSlot);
+  AddElement(ToBeAdded);
 
-  if(GetSquareUnder() && SquarePosition != HIDDEN)
+  if(SquarePosition == HIDDEN)
+    return;
+
+  lsquare* SquareUnder = GetLSquareTrulyUnder();
+
+  if(!SquareUnder)
+    return;
+
+  if(ToBeAdded->IsAnimated())
+    SquareUnder->IncAnimatedEntities();
+
+  if(!game::IsGenerating())
     {
-      GetSquareUnder()->SetDescriptionChanged(true);
-
-      if(GetSquareUnder()->CanBeSeenByPlayer())
-	GetLSquareUnder()->UpdateMemorizedDescription();
-    }
-
-  if(GetSquareTrulyUnder())
-    {
-      if(SquarePosition != HIDDEN)
-	{
-	  GetLSquareTrulyUnder()->SendNewDrawRequest();
-	  GetLSquareTrulyUnder()->SendMemorizedUpdateRequest();
-
-	  if(GetLSquareTrulyUnder()->CanBeSeenByPlayer())
-	    GetLSquareTrulyUnder()->UpdateMemorized();
-
-	  if(ToBeAdded->IsAnimated())
-	    GetSquareTrulyUnder()->IncAnimatedEntities();
-	}
+      SquareUnder->SendNewDrawRequest();
+      SquareUnder->SendMemorizedUpdateRequest();
     }
 }
 
-void stack::FastAddItem(item* ToBeAdded)
+void stack::RemoveItem(stackslot* Slot)
 {
-  stackslot* StackSlot = new stackslot;
-  StackSlot->SetMotherStack(this);
-  StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
-  ToBeAdded->PlaceToSlot(StackSlot);
-
-  if(SquarePosition != HIDDEN && ToBeAdded->IsAnimated() && GetSquareTrulyUnder())
-    GetSquareTrulyUnder()->IncAnimatedEntities();
-}
-
-void stack::RemoveItem(stackiterator Iterator)
-{
-  bool WasAnimated = (**Iterator)->IsAnimated();
-  ushort Emit = (**Iterator)->GetEmitation();
-  delete *Iterator;
-  Item->erase(Iterator);
+  bool WasAnimated = (*Slot)->IsAnimated();
+  ushort Emit = (*Slot)->GetEmitation();
+  RemoveElement(Slot);
   SignalVolumeAndWeightChange();
   SignalEmitationDecrease(Emit);
 
-  if(GetSquareUnder() && SquarePosition != HIDDEN)
+  if(SquarePosition == HIDDEN)
+    return;
+
+  lsquare* SquareUnder = GetLSquareTrulyUnder();
+
+  if(!SquareUnder)
+    return;
+
+  if(WasAnimated)
+    SquareUnder->DecAnimatedEntities();
+
+  if(!game::IsGenerating())
     {
-      GetSquareUnder()->SetDescriptionChanged(true);
-
-      if(GetSquareUnder()->CanBeSeenByPlayer())
-	GetLSquareUnder()->UpdateMemorizedDescription();
+      SquareUnder->SendNewDrawRequest();
+      SquareUnder->SendMemorizedUpdateRequest();
     }
-
-  if(GetSquareTrulyUnder())
-    {
-      if(SquarePosition != HIDDEN)
-	{
-	  GetLSquareTrulyUnder()->SendNewDrawRequest();
-	  GetLSquareTrulyUnder()->SendMemorizedUpdateRequest();
-
-	  if(GetLSquareTrulyUnder()->CanBeSeenByPlayer())
-	    GetLSquareTrulyUnder()->UpdateMemorized();
-
-	  if(WasAnimated)
-	    GetSquareTrulyUnder()->DecAnimatedEntities();
-	}
-    }
-}
-
-void stack::FastRemoveItem(stackiterator Iterator)
-{
-  if(SquarePosition != HIDDEN && (**Iterator)->IsAnimated() && GetSquareTrulyUnder())
-    GetSquareTrulyUnder()->DecAnimatedEntities();
-
-  ushort Emit = (**Iterator)->GetEmitation();
-  delete *Iterator;
-  Item->erase(Iterator);
-  SignalVolumeAndWeightChange();
-  SignalEmitationDecrease(Emit);
 }
 
 void stack::Clean(bool LastClean)
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+  ushort Emit = GetEmitation();
+  stackslot* Slot = Bottom;
+  lsquare* SquareUnder = LastClean ? 0 : GetLSquareTrulyUnder();
+
+  while(Slot)
     {
-      if(SquarePosition != HIDDEN && (**i)->IsAnimated() && GetSquareTrulyUnder())
-	GetSquareTrulyUnder()->DecAnimatedEntities();
+      if(SquarePosition != HIDDEN && (*Slot)->IsAnimated() && SquareUnder)
+	SquareUnder->DecAnimatedEntities();
 
-      (**i)->SendToHell();
-      delete *i;
+      if(LastClean)
+	delete **Slot;
+      else
+	(*Slot)->SendToHell();
+
+      stackslot* Rubbish = Slot;
+      Slot = Slot->Next;
+      delete Rubbish;
     }
-
-  Item->clear();
 
   if(!LastClean)
     {
-      Volume = Weight = 0;
+      Bottom = Top = 0;
+      Volume = Weight = Items = 0;
       SignalVolumeAndWeightChange();
+      SignalEmitationDecrease(Emit);
     }
 }
 
-item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
+item* stack::MoveItem(stackslot* Slot, stack* MoveTo)
 {
-  item* Item = ***Iterator;
-
-  if(MoveTo->GetLSquareTrulyUnder() == GetLSquareTrulyUnder())
-    {
-      MoveTo->FastAddItem(***Iterator);
-      FastRemoveItem(Iterator);
-
-      if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
-	{
-	  if(GetLSquareTrulyUnder())
-	    {
-	      GetLSquareTrulyUnder()->SendNewDrawRequest();
-	      GetLSquareTrulyUnder()->SendMemorizedUpdateRequest();
-	    }
-
-	  if(GetSquareUnder())
-	    GetSquareUnder()->SetDescriptionChanged(true);
-
-	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeenByPlayer())
-	    GetLSquareUnder()->UpdateMemorizedDescription();
-
-	  if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeenByPlayer())
-	    GetLSquareTrulyUnder()->UpdateMemorized();
-	}
-    }
-  else
-    {
-      MoveTo->AddItem(***Iterator);
-      RemoveItem(Iterator);
-    }
-
+  item* Item = **Slot;
+  Item->RemoveFromSlot();
+  MoveTo->AddItem(Item);
   return Item;
 }
 
 void stack::Save(outputfile& SaveFile) const
 {
-  SaveFile << *Item << SquarePosition;
+  SaveFile << SquarePosition << Items;
+
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    SaveFile << i.GetSlot();
 }
 
 void stack::Load(inputfile& SaveFile)
 {
-  SaveFile >> *Item >> SquarePosition;
-  Volume = Weight = Emitation = 0;
+  SaveFile >> SquarePosition >> Items;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+  for(ushort c = 0; c < Items; ++c)
     {
-      (*i)->SetStackIterator(i);
-      (*i)->SetMotherStack(this);
-      Volume += (**i)->GetVolume();
-      Weight += (**i)->GetWeight();
+      if(!c)
+	Bottom = Top = new stackslot(this, 0);
+      else
+	Top = Top->Next = new stackslot(this, Top);
 
-      if((**i)->GetEmitation() > Emitation)
-	Emitation = (**i)->GetEmitation();
+      SaveFile >> *Top;
+      Volume += (*Top)->GetVolume();
+      Weight += (*Top)->GetWeight();
+
+      if((*Top)->GetEmitation() > Emitation)
+	Emitation = (*Top)->GetEmitation();
     }
 }
 
@@ -225,24 +175,18 @@ bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(item*, c
 {
   if(SorterFunction == 0)
     {
-      for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->CanBeSeenBy(Viewer))
+      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+	if(IgnoreVisibility || i->CanBeSeenBy(Viewer))
 	  return true;
     }
   else
     {
-      for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if(SorterFunction(***i, Viewer) && (**i)->CanBeSeenBy(Viewer))
+      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+	if(SorterFunction(*i, Viewer) && (IgnoreVisibility || i->CanBeSeenBy(Viewer)))
 	  return true;
     }
 
   return false;
-}
-
-void stack::DeletePointers()
-{
-  while(GetItems())
-    FastRemoveItem(GetBottomSlot());
 }
 
 void stack::BeKicked(character* Kicker, ushort KickDamage)
@@ -255,7 +199,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 
       for(ushort c = 0; c < 1 + (RAND() & 1); ++c)
 	if(GetItems())
-	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
+	  GetTop()->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
     }
   else
     if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
@@ -266,8 +210,8 @@ long stack::Score() const
 {
   long Score = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    Score += (**i)->GetScore();
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    Score += i->GetScore();
 
   return Score;
 }
@@ -298,23 +242,23 @@ square* stack::GetSquareTrulyUnder() const
   switch(SquarePosition)
     {
     case DOWN:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, -1)))
-	return GetNearSquare(GetPos() + vector2d(0, -1));
-      else
-	return 0;
-    case LEFT:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(1, 0)))
-	return GetNearSquare(GetPos() + vector2d(1, 0));
-      else
-	return 0;
-    case UP:
       if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, 1)))
 	return GetNearSquare(GetPos() + vector2d(0, 1));
       else
 	return 0;
-    case RIGHT:
+    case LEFT:
       if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(-1, 0)))
 	return GetNearSquare(GetPos() + vector2d(-1, 0));
+      else
+	return 0;
+    case UP:
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, -1)))
+	return GetNearSquare(GetPos() + vector2d(0, -1));
+      else
+	return 0;
+    case RIGHT:
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(1, 0)))
+	return GetNearSquare(GetPos() + vector2d(1, 0));
       else
 	return 0;
     default:
@@ -344,22 +288,17 @@ void stack::TeleportRandomly()
 
 void stack::FillItemVector(itemvector& ItemVector) const
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    ItemVector.push_back(***i);
-}
-
-item* stack::GetBottomItem() const
-{
-  return ***GetBottomSlot();
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    ItemVector.push_back(*i);
 }
 
 item* stack::GetItem(ushort Index) const
 {
   ushort c = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i, ++c)
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i, ++c)
     if(c == Index)
-      return ***i;
+      return *i;
 
   return 0;
 }
@@ -368,58 +307,32 @@ ushort stack::SearchItem(item* ToBeSearched) const
 {
   ushort c = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i, ++c)
-    if(***i == ToBeSearched)
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i, ++c)
+    if(*i == ToBeSearched)
       return c;
 
   return 0xFFFF;
 }
 
-stackiterator stack::GetBottomSlot() const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
-  return Item->begin();
+  return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
 }
 
-stackiterator stack::GetSlotAboveTop() const
+/* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
+
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
-  return Item->end();
-}
+  felist Contents(Topic, WHITE, 0);
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
-{
-  return DrawContents(0, Viewer, Topic, "", "", true, IgnoreVisibility, SorterFunction);
-}
-
-/* For showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
-
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
-{
-  return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, IgnoreVisibility, SorterFunction);
-}
-
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
-{
-  return DrawContents(0, Viewer, Topic, "", "", SelectItem, IgnoreVisibility, SorterFunction);
-}
-
-/* MergeStack ignores always visibility */
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
-{
-  felist ItemNames(Topic, WHITE, 0);
-
-  ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + (GetWeight() + (MergeStack ? MergeStack->GetWeight() : 0)) + " grams");
-  ItemNames.AddDescription("");
-
-  std::string Buffer = "Icon  Name                                         Weight SV   Str";
-  Viewer->AddSpecialItemInfoDescription(Buffer);
-  ItemNames.AddDescription(Buffer);
+  Contents.AddDescription("");
+  Contents.AddDescription(std::string("Overall weight: ") + (GetWeight() + (MergeStack ? MergeStack->GetWeight() : 0)) + " grams");
 
   if(MergeStack)
-    MergeStack->AddContentsToList(ItemNames, Viewer, ThatDesc, SelectItem, false, SorterFunction);
+    MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, SelectItem, SorterFunction);
 
-  AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, IgnoreVisibility, SorterFunction);
-  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
+  AddContentsToList(Contents, Viewer, ThisDesc, SelectItem, SorterFunction);
+  ushort Chosen = Contents.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;
@@ -439,7 +352,7 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
   return Item;
 }
 
-void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const std::string& Desc, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
   bool DescDrawn = false;
@@ -448,46 +361,27 @@ void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const 
     {
       bool CatDescDrawn = false;
 
-      for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && ((**i)->CanBeSeenBy(Viewer) || IgnoreVisibility))
+      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+	if(i->GetCategory() == c && (!UseSorterFunction || SorterFunction(*i, Viewer)) && (IgnoreVisibility || i->CanBeSeenBy(Viewer)))
 	  {
 	    if(!DescDrawn && Desc.length())
 	      {
-		if(!ItemNames.IsEmpty())
-		  ItemNames.AddEntry("", WHITE, 0, false);
+		if(!Contents.IsEmpty())
+		  Contents.AddEntry("", WHITE, 0, 0, false);
 
-		ItemNames.AddEntry(Desc, WHITE, 0, false);
-		ItemNames.AddEntry("", WHITE, 0, false);
+		Contents.AddEntry(Desc, WHITE, 0, 0, false);
+		Contents.AddEntry("", WHITE, 0, 0, false);
 		DescDrawn = true;
 	      }
 
 	    if(!CatDescDrawn)
 	      {
-		ItemNames.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, false);
+		Contents.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, 0, false);
 		CatDescDrawn = true;
 	      }
 
 	    std::string Buffer;
-	    (**i)->AddName(Buffer, INDEFINITE);
-
-	    if(Buffer.length() > 44)
-	      {
-		Buffer[41] = Buffer[42] = Buffer[43] = '.';
-		Buffer[44] = ' ';
-	      }
-
-	    Buffer.resize(45,' ');
-	    Buffer += (**i)->GetWeight();
-	    Buffer.resize(52, ' ');
-	    Buffer += (**i)->GetStrengthValue();
-	    Buffer.resize(57, ' ');
-	    Buffer += ulong((**i)->GetWeaponStrength() / 100);
-	    Viewer->AddSpecialItemInfo(Buffer, ***i);
-
-	    if(!SelectItem)
-	      Buffer = "   " + Buffer;
-
-	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture());
+	    i->AddInventoryEntry(Viewer, Contents);
 	  }
     }
 }
@@ -497,32 +391,27 @@ item* stack::SearchChosen(ushort& Pos, ushort Chosen, const character* Viewer, b
   bool UseSorterFunction = SorterFunction != 0;
 
   for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
-    for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-      if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->CanBeSeenBy(Viewer) && Pos++ == Chosen)
-	return ***i;
+    for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+      if(i->GetCategory() == c && (!UseSorterFunction || SorterFunction(*i, Viewer)) && (IgnoreVisibility || i->CanBeSeenBy(Viewer)) && Pos++ == Chosen)
+	return *i;
 
   return 0;
 }
 
 bool stack::RaiseTheDead(character* Summoner)
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    {
-      if((**i)->RaiseTheDead(Summoner))
-	return true;
-    }
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->RaiseTheDead(Summoner))
+      return true;
 
   return false;
 }
 
 bool stack::TryKey(item* Key, character* Applier)
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->CanBeSeenBy(Applier))
-      {
-	if((**i)->TryKey(Key, Applier))
-	  return true;
-      }
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if((IgnoreVisibility || i->CanBeSeenBy(Applier)) && i->TryKey(Key, Applier))
+      return true;
 
   return false;
 }
@@ -537,18 +426,15 @@ bool stack::Open(character* Opener)
   return ToBeOpened->Open(Opener);
 }
 
-void stack::MoveAll(stack* ToStack)
-{
-  while(GetItems())
-    MoveItem(GetBottomSlot(), ToStack);
-}
-
 ushort stack::GetVisibleItems(const character* Viewer) const
 {
+  if(IgnoreVisibility)
+    return Items;
+
   ushort VisibleItems = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->CanBeSeenBy(Viewer))
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->CanBeSeenBy(Viewer))
       ++VisibleItems;
 
   return VisibleItems;
@@ -556,9 +442,9 @@ ushort stack::GetVisibleItems(const character* Viewer) const
 
 item* stack::GetBottomVisibleItem(const character* Viewer) const
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->CanBeSeenBy(Viewer))
-      return ***i;
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(IgnoreVisibility || i->CanBeSeenBy(Viewer))
+      return *i;
 
   return 0;
 }
@@ -583,10 +469,10 @@ void stack::CalculateVolumeAndWeight()
 {
   Volume = Weight = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     {
-      Volume += (**i)->GetVolume();
-      Weight += (**i)->GetWeight();
+      Volume += i->GetVolume();
+      Weight += i->GetWeight();
     }
 }
 
@@ -623,9 +509,9 @@ void stack::CalculateEmitation()
 {
   Emitation = 0;
 
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->GetEmitation() > Emitation)
-      Emitation = (**i)->GetEmitation();
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->GetEmitation() > Emitation)
+      Emitation = i->GetEmitation();
 }
 
 bool stack::CanBeSeenBy(const character* Viewer) const
@@ -633,13 +519,47 @@ bool stack::CanBeSeenBy(const character* Viewer) const
   if(MotherEntity)
     return MotherEntity->ContentsCanBeSeenBy(Viewer);
   else
-    return MotherSquare->CanBeSeenBy(Viewer);
+    return GetSquareTrulyUnder() == Viewer->GetSquareUnder() || GetSquareTrulyUnder()->CanBeSeenBy(Viewer);
 }
 
 bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 {
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->CanBeSeenBy(Stepper) && (**i)->DangerousToStepOn(Stepper))
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->CanBeSeenBy(Stepper) && i->DangerousToStepOn(Stepper))
       return true;
+
   return false;
+}
+
+void stack::AddElement(item* Item)
+{
+  ++Items;
+  (Top = (Bottom ? Top->Next : Bottom) = new stackslot(this, Top))->PutInItem(Item);
+}
+
+void stack::RemoveElement(stackslot* Slot)
+{
+  --Items;
+  (Slot->Last ? Slot->Last->Next : Bottom) = Slot->Next;
+  (Slot->Next ? Slot->Next->Last : Top) = Slot->Last;
+  delete Slot;
+}
+
+void stack::MoveItemsTo(stack* Stack)
+{
+  while(GetItems())
+    GetBottom()->MoveTo(Stack);
+}
+
+ushort stack::GetItems(const character* Char, bool ForceIgnoreVisibility) const
+{
+  return ForceIgnoreVisibility ? Items : GetVisibleItems(Char);
+}
+
+item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) const
+{
+  if(IgnoreVisibility || ForceIgnoreVisibility)
+    return Bottom ? **Bottom : 0;
+  else
+    return GetBottomVisibleItem(Char);
 }

@@ -11,6 +11,8 @@
 
 template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {
+  typedef typename type::database typedatabase;
+  typedef typename type::prototype typeprototype;
   std::string Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -20,13 +22,11 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       if(!Index)
 	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
-      typename type::prototype* Proto = protocontainer<type>::ProtoData[Index];
-      typename type::database DataBase;
+      typeprototype* Proto = protocontainer<type>::ProtoData[Index];
+      Proto->Config[0] = Proto->Base ? typedatabase(Proto->Base->Config.begin()->second) : typedatabase();
+      typedatabase& DataBase = Proto->Config.begin()->second;
 
-      if(Proto->Base)
-	DataBase = Proto->Base->Config.begin()->second;
-
-      DataBase.InitDefaults();
+      DataBase.InitDefaults(0);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
@@ -36,8 +36,8 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	  if(Word == "Config")
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber(game::GetGlobalValueMap());
-	      typename type::database TempDataBase(DataBase);
-	      TempDataBase.InitDefaults();
+	      typedatabase TempDataBase(Proto->ChooseBaseForConfig(ConfigNumber));
+	      TempDataBase.InitDefaults(ConfigNumber);
 
 	      if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
@@ -54,15 +54,13 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId().c_str(), SaveFile.TellLine());
 	}
 
-      Proto->Config[0] = DataBase;
-
       if(DataBase.CreateDivineConfigurations)
 	{
 	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
-		typename type::database TempDataBase(DataBase);
-		TempDataBase.InitDefaults();
+		typedatabase TempDataBase(DataBase);
+		TempDataBase.InitDefaults(c);
 		Proto->Config[c] = TempDataBase;
 	      }
 	}
@@ -275,6 +273,9 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(GearStates);
   ANALYZEDATA(IsTwoHanded);
   ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(CanBeBroken);
+  ANALYZEDATAWITHDEFAULT(WallBitmapPos, BitmapPos);
+  ANALYZEDATAWITHDEFAULT(FlexibleNameSingular, NameSingular);
 
   return Found;
 }
@@ -379,6 +380,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(Alpha);
   ANALYZEDATA(CreateDivineConfigurations);
   ANALYZEDATA(Flexibility);
+  ANALYZEDATA(SpoilModifier);
 
   return Found;
 }

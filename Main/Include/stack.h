@@ -5,7 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <list>
 #include <vector>
 #include <string>
 
@@ -13,44 +12,50 @@
 #include "vector2d.h"
 #include "ivandef.h"
 #include "lsquare.h"
+#include "slot.h"
 
 class item;
 class character;
 class bitmap;
 class outputfile;
 class inputfile;
-class stackslot;
 class felist;
 class entity;
 
-typedef std::list<stackslot*> stacklist;
-typedef std::list<stackslot*>::iterator stackiterator;
 typedef std::vector<item*> itemvector;
+
+class stackiterator
+{
+public:
+  stackiterator(stackslot* Slot) : Slot(Slot) { }
+  stackiterator& operator++() { Slot = Slot->Next; return *this; }
+  bool HasItem() const { return Slot != 0; }
+  item* operator->() const { return Slot->Item; }
+  item* operator*() const { return Slot->Item; }
+  const stackslot& GetSlot() const { return *Slot; }
+private:
+  stackslot* Slot;
+};
 
 class stack
 {
  public:
-  stack(square*, entity*, uchar);
+  stack(square*, entity*, uchar, bool);
   ~stack();
   void Load(inputfile&);
   void Draw(const character*, bitmap*, vector2d, ushort, bool, bool, bool) const;
   void AddItem(item*);
-  void FastAddItem(item*);
-  void RemoveItem(stackiterator);
-  void FastRemoveItem(stackiterator);
+  void RemoveItem(stackslot*);
   item* GetItem(ushort) const;
-  stackiterator GetBottomSlot() const;
-  stackiterator GetSlotAboveTop() const;
-  item* GetBottomItem() const;
-  item* GetBottomVisibleItem(const character*) const;
-  ushort GetItems() const { return Item->size(); }
+  stackiterator GetBottom() const { return stackiterator(Bottom); }
+  stackiterator GetTop() const { return stackiterator(Top); }
+  ushort GetItems() const { return Items; }
   ushort GetVisibleItems(const character*) const;
+  ushort GetItems(const character*, bool) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(const character*, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
-  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
-  item* stack::DrawContents(const character*, const std::string&, bool, bool, bool (*)(item*, const character*) = 0) const;
-  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool, bool, bool (*)(item*, const character*) = 0) const;
-  item* MoveItem(stackiterator, stack*);
+  item* DrawContents(const character*, const std::string&, bool = true, bool (*)(item*, const character*) = 0) const;
+  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool = true, bool (*)(item*, const character*) = 0) const;
+  item* MoveItem(stackslot*, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);
   void Save(outputfile&) const;
@@ -58,7 +63,6 @@ class stack
   square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(item*, const character*)) const;
-  void DeletePointers();
   void BeKicked(character*, ushort);
   long Score() const;
   void Polymorph();
@@ -68,13 +72,12 @@ class stack
   void ReceiveDamage(character*, ushort, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, const character*, const std::string&, bool, bool, bool (*)(item*, const character*)) const;
+  void AddContentsToList(felist&, const character*, const std::string&, bool, bool (*)(item*, const character*)) const;
   item* SearchChosen(ushort&, ushort, const character*, bool (*)(item*, const character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   bool Open(character*);
-  void MoveAll(stack*);
   void SignalVolumeAndWeightChange();
   void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
@@ -89,14 +92,23 @@ class stack
   void CalculateEmitation();
   bool CanBeSeenBy(const character*) const;
   bool IsDangerousForAIToStepOn(const character*) const;
+  void MoveItemsTo(stack*);
+  item* GetBottomVisibleItem(const character*) const;
+  item* GetBottomItem(const character*, bool) const;
  private:
-  stacklist* Item;
+  void AddElement(item*);
+  void RemoveElement(stackslot*);
+  stackslot* Bottom;
+  stackslot* Top;
   square* MotherSquare;
-  uchar SquarePosition;
   entity* MotherEntity;
+  uchar SquarePosition;
   ulong Volume;
   ulong Weight;
   ushort Emitation;
+  ushort Items;
+  bool IgnoreVisibility;
 };
 
 #endif
+

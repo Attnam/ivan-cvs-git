@@ -102,8 +102,8 @@ human
 {
 	DefaultArmStrength = 10;
 	DefaultLegStrength = 10;
-	DefaultDexterity = 15;
-	DefaultAgility = 15;
+	DefaultDexterity = 10;
+	DefaultAgility = 10;
 	DefaultEndurance = 10;
 	DefaultPerception = 10;
 	DefaultIntelligence = 10;
@@ -119,6 +119,8 @@ human
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
+	Helmet = LEATHER helmet;
+	RightWielded = COPPER meleeweapon(SPEAR);
 }
 
 petrus
@@ -154,7 +156,7 @@ petrus
 	CanBeWished = false;
 	Alias == "Petrus";
 	Amulet = amulet(AMULETOFLIFESAVING);
-	BodyArmor = DIAMOND platemail;
+	BodyArmor = DIAMOND bodyarmor(PLATEMAIL);
 	RightWielded = valpurusjustifier;
 	RightRing = ring(RINGOFFIRERESISTANCE);
 	LeftRing = ring(RINGOFPOISONRESISTANCE);
@@ -358,7 +360,7 @@ darkknight
 	{
 		AttributeBonus = -25;
 		Helmet = WOOD helmet;
-		BodyArmor = LEATHER platemail;
+		BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 		RightWielded = WOOD meleeweapon(LONGSWORD);
 		LeftWielded = WOOD shield;
 		Adjective = "rookie";
@@ -404,7 +406,7 @@ darkknight
 	{
 		AttributeBonus = 25;
 		Helmet = MITHRIL helmet;
-		BodyArmor = IRON platemail;
+		BodyArmor = IRON bodyarmor(PLATEMAIL);
 		RightWielded = IRON meleeweapon(CURVEDTWOHANDEDSWORD);
 		Adjective = "grand master";
 		CWeaponSkillHits == 1000;
@@ -581,7 +583,7 @@ skeleton
 	Config WARLORD;
 	{
 		AttributeBonus = 200;
-		BodyArmor = STEEL brokenplatemail;
+		BodyArmor = STEEL bodyarmor(BROKEN|PLATEMAIL);
 		RightWielded = STEEL flamingsword;
 		LeftWielded = STEEL shield;
 		KnownCWeaponSkills == LARGE_SWORDS;
@@ -636,7 +638,7 @@ goblin
 	{
 		AttributeBonus = 50;
 		Helmet = LEATHER helmet;
-		BodyArmor = LEATHER platemail;
+		BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 		RightWielded = IRON meleeweapon(AXE);
 		KnownCWeaponSkills == AXES;
 		CWeaponSkillHits == 50;
@@ -648,7 +650,7 @@ goblin
 	{
 		AttributeBonus = 75;
 		Helmet = BRONZE helmet;
-		BodyArmor = LEATHER platemail;
+		BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 		RightWielded = BRONZE meleeweapon(POLEAXE);
 		KnownCWeaponSkills == AXES;
 		CWeaponSkillHits == 100;
@@ -809,7 +811,7 @@ spider
 	TorsoBitmapPos = 272, 0;
 	TalkVerb = "says nothing";
 	TotalSize = 10;
-	SkinColor = rgb(48, 48, 48);
+	SkinColor = rgb(64, 64, 64);
 	NameSingular = "spider";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
@@ -895,7 +897,7 @@ communist /* Ivan */
 	ClassStates = INFRAVISION;
 	Helmet = IRON helmet;
 	Cloak = LEATHER cloak;
-	BodyArmor = IRON platemail;
+	BodyArmor = IRON bodyarmor(PLATEMAIL);
 	Belt = LEATHER belt;
 	RightWielded = IRON meleeweapon(SPIKEDMACE);
 	KnownCWeaponSkills = { 7, UNARMED, CLUBS, HAMMERS, MACES, FLAILS, AXES, HALBERDS; }
@@ -929,7 +931,7 @@ hunter
 	NameSingular = "hunter";
 	Helmet = LEATHER helmet;
 	Cloak = LEATHER cloak;
-	BodyArmor = LEATHER platemail;
+	BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 	RightWielded = meleeweapon(SPEAR);
 	RightGauntlet = LEATHER gauntlet;
 	LeftGauntlet = 0;
@@ -1262,7 +1264,7 @@ bat
 	TorsoBitmapPos = 464, 0;
 	TalkVerb = "squeaks";
 	TotalSize = 20;
-	SkinColor = rgb(48, 48, 48);
+	SkinColor = rgb(64, 64, 64);
 	NameSingular = "bat";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
@@ -1298,7 +1300,7 @@ mistress
 	CanRead = true;
 	NameSingular = "mistress";
 	CanBeGenerated = true;
-	BodyArmor = LEATHER platemail;
+	BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 	RightWielded = LEATHER whip;
 	LeftWielded = LEATHER whip;
 	KnownCWeaponSkills == WHIPS;
@@ -1349,7 +1351,7 @@ mistress
 		HairColor = rgb(35, 35, 35);
 		AttributeBonus = 100;
 		BodyArmor = DIAMOND bodyarmor(CHAINMAIL);
-		RightWielded = whipofcalamus;
+		RightWielded = whipofcleptia;
 		CWeaponSkillHits == 5000;
 		RightSWeaponSkillHits = 5000;
 		LeftSWeaponSkillHits = 5000;
@@ -1860,7 +1862,7 @@ orc
 	NameSingular = "orc";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	BodyArmor = LEATHER platemail;
+	BodyArmor = LEATHER bodyarmor(PLATEMAIL);
 	RightWielded = BRONZE meleeweapon(AXE);
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 20;

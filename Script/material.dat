@@ -103,19 +103,6 @@ material
 		AdjectiveStem = "wooden";
 	}
 
-	Config BONE;
-	{
-		StrengthValue = 30;
-		Density = 2000;
-		OfferModifier = 5;
-		ConsumeType = BONY;
-		IsSolid = true;
-		Color = rgb(180, 180, 180);
-		NutritionValue = 20;
-		NameStem = "bone";
-		ConsumeEndMessage = CEM_BONE;
-	}
-
 	Config GLASS;
 	{
 		StrengthValue = 30;
@@ -283,19 +270,6 @@ material
 		ExplosivePower = 4000;
 	}
 
-	Config BREAD;
-	{
-		StrengthValue = 10;
-		ConsumeType = PROCESSED;
-		Density = 250;
-		OfferModifier = 7;
-		NutritionValue = 200;
-		Color = rgb(180, 96, 64);
-		PriceModifier = 600;
-		NameStem = "bread";
-		Flexibility = 5;
-	}
-
 	Config UNICORNHORN;
 	{
 		StrengthValue = 200;
@@ -414,6 +388,7 @@ material
 organicsubstance /* substances that spoil but are not flesh */
 {
 	IsAlive = true;
+	SpoilModifier = 5000;
 
 	Config BANANAFLESH;
 	{
@@ -494,11 +469,42 @@ organicsubstance /* substances that spoil but are not flesh */
 		IsFlammable = true;
 		NameStem = "fiber";
 		Flexibility = 10;
+		SpoilModifier = 10000;
+	}
+
+	Config BONE;
+	{
+		StrengthValue = 30;
+		Density = 2000;
+		OfferModifier = 5;
+		ConsumeType = BONY;
+		IsSolid = true;
+		Color = rgb(180, 180, 180);
+		NutritionValue = 20;
+		NameStem = "bone";
+		ConsumeEndMessage = CEM_BONE;
+		SpoilModifier = 25000;
+	}
+
+	Config BREAD;
+	{
+		StrengthValue = 10;
+		ConsumeType = PROCESSED;
+		Density = 250;
+		OfferModifier = 7;
+		NutritionValue = 200;
+		Color = rgb(180, 96, 64);
+		PriceModifier = 600;
+		NameStem = "bread";
+		Flexibility = 5;
+		SpoilModifier = 10000;
 	}
 }
 
 gas
 {
+	CanBeWished = false;
+
 	Config AIR;
 	{
 		StrengthValue = 1;
@@ -626,6 +632,7 @@ flesh
 	IsAlive = true;
 	NameStem = "flesh";
 	Flexibility = 5;
+	SpoilModifier = 5000;
 
 	Config GOBLINOIDFLESH;
 	{
@@ -641,6 +648,7 @@ flesh
 		NutritionValue = 400;
 		PriceModifier = 1250;
 		NameStem = "pork";
+		SpoilModifier = 10000;
 	}
 
 	Config BEEF;
@@ -649,6 +657,7 @@ flesh
 		NutritionValue = 400;
 		PriceModifier = 1250;
 		NameStem = "beef";
+		SpoilModifier = 10000;
 	}
 
 	Config FROGFLESH;

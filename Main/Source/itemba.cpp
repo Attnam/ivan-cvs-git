@@ -235,7 +235,10 @@ void item::RemoveFromSlot()
 void item::MoveTo(stack* Stack)
 {
   if(Slot)
-    Slot->MoveItemTo(Stack);
+    {
+      RemoveFromSlot();
+      Stack->AddItem(this);
+    }
   else
     Stack->AddItem(this);
 }
@@ -262,7 +265,7 @@ std::string item::ItemCategoryName(uchar Category)
     case TOOL: return "Tools";
     case VALUABLE: return "Valuables";
     case MISC: return "Miscellaneous items";
-    default: return "Illegal items";
+    default: return "Warezzz";
     }
 }
 
@@ -285,14 +288,15 @@ ushort item::GetResistance(uchar Type) const
 
 void item::Be()
 {
-  ABORT("Illegal item::Be()!");
-
   for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && !GetMaterial(c)->Be() && RemoveMaterial(c))
+    if(GetMaterial(c))
       {
-	RemoveFromSlot();
-	SendToHell();
-	break;
+	GetMaterial(c)->Be();
+
+	/* Item may be destroyed. */
+
+	if(!IsEnabled())
+	  break;
       }
 }
 
@@ -330,6 +334,9 @@ void item::LoadDataBaseStats()
 
 void item::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
 {
+  if(dynamic_cast<meleeweapon*>(this) != 0 && NewConfig == SPIKEDMACE)
+    int esko = 2;
+
   if(!Load)
     {
       Config = NewConfig;
@@ -467,6 +474,63 @@ item* item::Duplicate() const
   return Clone;
 }
 
+void item::AddInventoryEntry(const character*, felist& List) const
+{
+  std::string Entry;
+  AddName(Entry, INDEFINITE);
+  Entry << " [" << GetWeight() << "g]";
+  List.AddEntry(Entry, LIGHTGRAY, 0, GetPicture());
+}
+
+const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
+{
+  if(!(ConfigNumber & BROKEN))
+    return Config.begin()->second;
+  else
+    {
+      item::databasemap::iterator i = Config.find(ConfigNumber&~BROKEN);
+
+      if(i != Config.end())
+	return i->second;
+      else
+	return Config.begin()->second;
+    }
+}
+
+bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
+{
+  if(CanBeBroken() && !(GetConfig() & BROKEN) && Type & (PHYSICALDAMAGE|SOUND|ENERGY) && Damage > GetStrengthValue() && RAND() % (100 * Damage / GetStrengthValue()) >= 100)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
+
+      item* Broken = RawDuplicate();
+      Broken->SetConfig(GetConfig() | BROKEN);
+      Broken->SetSize(Broken->GetSize() >> 1);
+      GetSlot()->DonateTo(Broken);
+      SendToHell();
+      return true;
+    }
+  else
+    return false;
+}
+
+void itemdatabase::InitDefaults(ushort Config)
+{
+  IsAbstract = false;
+
+  if(Config & BROKEN)
+    {
+      if(Adjective.length())
+	Adjective.insert(0, "broken ");
+      else
+	Adjective = "broken";
+
+      FormModifier >>= 2;
+      StrengthModifier >>= 1;
+    }
+}
+
 void item::AddMiscellaneousInfo(felist& List) const
 {
   std::string Entry = "   ";
@@ -482,4 +546,23 @@ void item::AddMiscellaneousInfo(felist& List) const
 ulong item::GetNutritionValue() const
 { 
   return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue(this) : 0; 
+}
+
+void item::SignalSpoil(material*)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s spoils completely.", CHARNAME(DEFINITE));
+
+  RemoveFromSlot();
+  SendToHell();
+}
+
+bool item::CarriedByPlayer() const
+{
+  return CarriedBy(game::GetPlayer());
+}
+
+bool item::CarriedBy(const character* Who) const
+{
+  return Who->SearchForItemWithID(GetID()) != 0;
 }

@@ -21,11 +21,12 @@ class outputfile;
 class inputfile;
 class slot;
 class item;
+class felist;
 template <class type> class database;
 
 struct itemdatabase
 {
-  void InitDefaults() { IsAbstract = false; }
+  void InitDefaults(ushort);
   ushort Possibility;
   vector2d InHandsPic;
   ulong OfferModifier;
@@ -75,6 +76,9 @@ struct itemdatabase
   ushort GearStates;
   bool IsTwoHanded;
   bool CreateDivineConfigurations;
+  bool CanBeBroken;
+  vector2d WallBitmapPos;
+  std::string FlexibleNameSingular;
 };
 
 class itemprototype
@@ -90,6 +94,7 @@ class itemprototype
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
+  const itemdatabase& ChooseBaseForConfig(ushort);
  protected:
   ushort Index;
   itemprototype* Base;
@@ -193,7 +198,7 @@ class item : public object
   virtual void Be();
   virtual bool RemoveMaterial(uchar) { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ReceiveDamage(character*, ushort, uchar) { return false; }
+  virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
@@ -249,6 +254,9 @@ class item : public object
   virtual DATABASEVALUE(uchar, Roundness);
   virtual DATABASEVALUE(ushort, GearStates);
   virtual DATABASEBOOL(IsTwoHanded);
+  virtual DATABASEBOOL(CanBeBroken);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, WallBitmapPos, ushort);
+  virtual DATABASEVALUE(const std::string&, FlexibleNameSingular);
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -283,8 +291,16 @@ class item : public object
   virtual void SpecialGenerationHandler() { }
   item* Duplicate() const;
   virtual void SetIsActive(bool) { }
+  ushort GetBaseMinDamage() const { return ushort(GetWeaponStrength() * 3 / 20000); }
+  ushort GetBaseMaxDamage() const { return ushort(GetWeaponStrength() * 5 / 20000 + 1); }
+  ushort GetBaseBlockValue(const character* Char) const { return ushort(12.5f * GetBlockModifier(Char) / (2500 + float(GetWeight() - 500))); }
+  virtual void AddInventoryEntry(const character*, felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
+  virtual void SignalSpoil(material*);
+  virtual bool AllowSpoil() const { return true; }
+  bool CarriedByPlayer() const;
+  bool CarriedBy(const character*) const;
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

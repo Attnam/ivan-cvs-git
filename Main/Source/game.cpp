@@ -175,7 +175,7 @@ bool game::Init(const std::string& Name)
   if(!Name.length())
     if(!configuration::GetDefaultName().length())
       {
-	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
+	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 200, true, true);
 
 	if(!PlayerName.length())
 	  return false;
@@ -234,7 +234,10 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new golem(VALPURIUM));
+
+	Player->GetStack()->AddItem(new wandofresurrection);
+
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -1358,7 +1361,7 @@ void game::InitGlobalValueMap()
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       if(Word != "#" || SaveFile.ReadWord() != "define")
-	ABORT("Illegal datafile define!");
+	ABORT("Illegal datafile define on line %d!", SaveFile.TellLine());
 
       SaveFile.ReadWord(Word);
       GlobalValueMap[Word] = SaveFile.ReadNumber(GlobalValueMap);
@@ -1427,7 +1430,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", false, false);
+	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1490,7 +1493,11 @@ void game::End(bool Permanently, bool AndGoToMenu)
   if(Permanently && !WizardModeActivated())
     {
       highscore HScore;
-      HScore.Draw();
+
+      if(HScore.LastAddFailed())
+	iosystem::TextScreen("You didn't manage to get onto the high score list.");
+      else
+	HScore.Draw();
     }
 
   if(AndGoToMenu)
@@ -1612,4 +1619,3 @@ void game::CalculateNextDanger()
   else
     ABORT("It is dangerous to go ice fishing in the summer.");
 }
-

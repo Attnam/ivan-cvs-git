@@ -110,8 +110,7 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
   if((!OldMaterial || !OldMaterial->HasBe()) && NewMaterial && NewMaterial->HasBe())
     SetHasBe(true);
-
-  if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
+  else if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
     SetHasBe(CalculateHasBe());
 
   if(NewMaterial)
@@ -318,6 +317,8 @@ void object::SetConfig(ushort NewConfig)
 {
   Config = NewConfig;
   InstallDataBase();
+  CalculateAll();
+  UpdatePictures();
 }
 
 bool object::AddEmptyAdjective(std::string& String, bool Articled) const

@@ -44,7 +44,6 @@ class lsquare : public square
   friend class level;
   lsquare(level*, vector2d);
   virtual ~lsquare();
-  void FastAddCharacter(character*);
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   stack* GetStack() const { return Stack; }
@@ -119,10 +118,11 @@ class lsquare : public square
   void DrawStaticContents(bitmap*, vector2d, ushort, bool) const;
   void DrawMemorized();
   bitmap* GetMemorized() const { return Memorized; }
-  void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
+  void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
   bool IsDangerousForAIToStepOn(const character*) const;
+  stack* GetSideStackOfAdjacentSquare(ushort) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -141,3 +141,4 @@ class lsquare : public square
 };
 
 #endif
+

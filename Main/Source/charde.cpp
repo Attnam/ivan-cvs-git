@@ -47,7 +47,7 @@ void oree::CreateInitialEquipment()
   humanoid::CreateInitialEquipment();
   can* Can = new can(0, false);
   Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330));
-  GetStack()->FastAddItem(Can);
+  GetStack()->AddItem(Can);
 }
 
 bool ennerbeast::Hit(character*)
@@ -118,18 +118,18 @@ void humanoid::Load(inputfile& SaveFile)
   SaveFile >> SWeaponSkill;
 
   if(GetRightWielded())
-    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if((*i)->GetID() == GetRightWielded()->GetID())
+    for(ushort c = 0; c < SWeaponSkill.size(); ++c)
+      if(SWeaponSkill[c]->GetID() == GetRightWielded()->GetID())
 	{
-	  SetCurrentRightSWeaponSkill(*i);
+	  SetCurrentRightSWeaponSkill(SWeaponSkill[c]);
 	  break;
 	}
 
   if(GetLeftWielded())
-    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-      if((*i)->GetID() == GetLeftWielded()->GetID())
+    for(ushort c = 0; c < SWeaponSkill.size(); ++c)
+      if(SWeaponSkill[c]->GetID() == GetLeftWielded()->GetID())
 	{
-	  SetCurrentLeftSWeaponSkill(*i);
+	  SetCurrentLeftSWeaponSkill(SWeaponSkill[c]);
 	  break;
 	}
 }
@@ -696,7 +696,7 @@ void oree::BeTalkedTo(character*)
 
 void darkknight::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s yells: \"For Erado I shall slay you!\"", CHARDESCRIPTION(DEFINITE));
+  ADD_MESSAGE("%s yells: \"For Mortifer I shall slay you!\"", CHARDESCRIPTION(DEFINITE));
 }
 
 void ennerbeast::BeTalkedTo(character*)
@@ -760,7 +760,7 @@ void golem::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
 
-void humanoid::AddSpecialItemInfo(std::string& Description, item* Item) const
+/*void humanoid::AddSpecialItemInfo(std::string& Description, item* Item) const
 {
   Description.resize(62, ' ');
   Description << GetCWeaponSkill(Item->GetWeaponCategory())->GetLevel();
@@ -785,7 +785,7 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description) const
   Description += "GS";
   Description.resize(72, ' ');
   Description += "SS";
-}
+}*/
 
 void communist::BeTalkedTo(character* Talker)
 {
@@ -849,7 +849,7 @@ void communist::BeTalkedTo(character* Talker)
 void communist::CreateInitialEquipment()
 {
   humanoid::CreateInitialEquipment();
-  GetStack()->FastAddItem(new fiftymillionroubles);
+  GetStack()->AddItem(new fiftymillionroubles);
 }
 
 void hunter::BeTalkedTo(character* Talker)
@@ -1160,7 +1160,7 @@ void librarian::BeTalkedTo(character* Talker)
 	}
       else
 	{
-	  ADD_MESSAGE("\"In this book they talk about Erado, the great chaos god. He hates us mortals more than anything and will respond only to Champions of Evil.\"");
+	  ADD_MESSAGE("\"In this book they talk about Mortifer, the great chaos god. He hates us mortals more than anything and will respond only to Champions of Evil.\"");
 	  break;
 	}
     case 6:
@@ -1262,10 +1262,10 @@ void mistress::CreateInitialEquipment()
   humanoid::CreateInitialEquipment();
 
   if(!(RAND() % 10))
-    GetStack()->FastAddItem(new banana);
+    GetStack()->AddItem(new banana);
 
   if(!(RAND() % 100))
-    GetStack()->FastAddItem(new holybanana);
+    GetStack()->AddItem(new holybanana);
 }
 
 void mistress::BeTalkedTo(character* Talker)
@@ -1291,7 +1291,7 @@ void angel::Load(inputfile& SaveFile)
 void angel::CreateInitialEquipment()
 {
   humanoid::CreateInitialEquipment();
-  GetStack()->FastAddItem(new holybook(GetConfig()));
+  GetStack()->AddItem(new holybook(GetConfig()));
 
   switch(GetMasterGod()->BasicAlignment())
     {
@@ -1312,7 +1312,7 @@ void angel::CreateInitialEquipment()
 	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, false);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
-	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
+	SetBodyArmor(new bodyarmor(BROKEN|PLATEMAIL, MAKE_MATERIAL(RUBY)));
 	GetCWeaponSkill(MACES)->AddHit(2000);
 	GetCurrentRightSWeaponSkill()->AddHit(2000);
 	break;
@@ -1358,7 +1358,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
 void kamikazedwarf::CreateInitialEquipment()
 {
   SetRightWielded(new holybook(GetConfig()));
-  GetStack()->FastAddItem(new backpack);
+  GetStack()->AddItem(new backpack);
   GetCWeaponSkill(UNCATEGORIZED)->AddHit(100);
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
@@ -1369,15 +1369,15 @@ bool kamikazedwarf::Hit(character* Enemy)
     return humanoid::Hit(Enemy);
   else
     {
-      for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
-	if((**i)->IsExplosive())
+      for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+	if(i->IsExplosive())
 	  {
 	    if(RAND() & 1)
 	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 	    else
 	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 
-	    if((**i)->Apply(this))
+	    if(i->Apply(this))
 	      return true;
 	  }
 
@@ -1477,10 +1477,10 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 void unicorn::CreateInitialEquipment()
 {
   if(RAND() & 1)
-    GetStack()->FastAddItem(new stone);
+    GetStack()->AddItem(new stone);
 
   if(RAND() & 1)
-    GetStack()->FastAddItem(new stone);
+    GetStack()->AddItem(new stone);
 }
 
 ushort humanoid::GetSize() const
@@ -1614,7 +1614,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
 	  Affected = true;
     }
   else
-    Affected = ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical, false);
+    Affected = ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical, false) != 0;
 
   if(!Affected)
     {
@@ -2058,33 +2058,15 @@ void humanoid::CompleteRiseFromTheDead()
   for(c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
-	stack* Stack = GetStackUnder();
-
 	/* Let's search for the original bodypart */
 
-	for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
-	  {
-	    if((**i)->GetID() == GetOriginalBodyPartID(c))
-	      {
-		item* Item = ***i;
-		Item->RemoveFromSlot();
-		SetBodyPart(c, (bodypart*)Item);
-		break;
-	      }
-	  }
-
-	/* If not found, take the first that fits */
-
-	if(!GetBodyPart(c))
-	  for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
+	for(stackiterator i = GetStackUnder()->GetBottom(); i.HasItem(); ++i)
+	  if(i->GetID() == GetOriginalBodyPartID(c))
 	    {
-	      if((**i)->GetBodyPartIndex() == c)
-		{
-		  item* Item = ***i;
-		  Item->RemoveFromSlot();
-		  SetBodyPart(c, (bodypart*)Item);
-		  break;
-		}
+	      item* Item = *i;
+	      Item->RemoveFromSlot();
+	      SetBodyPart(c, static_cast<bodypart*>(Item));
+	      break;
 	    }
       }
 
@@ -2110,7 +2092,10 @@ bool humanoid::HandleNoBodyPart(ushort Index)
       Die();
       return false;
     case GROININDEX:
-      CreateBodyPart(GROININDEX);
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHARNAME(DEFINITE));
+
+      Die();
       return true;
     case TORSOINDEX:
       ABORT("The corpse does not have a torso.");
@@ -2900,10 +2885,10 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
     return Damage;
 
   if(GetRightWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightArm()->GetToHitValue(), Damage, Success, Type);
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightArm()->GetToHitValue(), Damage, GetRightArm()->GetBlockCapability(), Success, Type);
 
   if(Damage && GetLeftWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, GetLeftArm()->GetToHitValue(), Damage, Success, Type);
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, GetLeftArm()->GetToHitValue(), Damage, GetLeftArm()->GetBlockCapability(), Success, Type);
 
   return Damage;
 }
@@ -2992,10 +2977,10 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
     {
-      for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-	if((*i)->GetID() == GetRightWielded()->GetID())
+      for(ushort c = 0; c < SWeaponSkill.size(); ++c)
+	if(SWeaponSkill[c]->GetID() == GetRightWielded()->GetID())
 	  {
-	    SetCurrentRightSWeaponSkill(*i);
+	    SetCurrentRightSWeaponSkill(SWeaponSkill[c]);
 	    break;
 	  }
 
@@ -3008,10 +2993,10 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
     }
   else if(EquipmentIndex == LEFTWIELDEDINDEX)
     {
-      for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
-	if((*i)->GetID() == GetLeftWielded()->GetID())
+      for(ushort c = 0; c < SWeaponSkill.size(); ++c)
+	if(SWeaponSkill[c]->GetID() == GetLeftWielded()->GetID())
 	  {
-	    SetCurrentLeftSWeaponSkill(*i);
+	    SetCurrentLeftSWeaponSkill(SWeaponSkill[c]);
 	    break;
 	  }
 
@@ -3048,21 +3033,12 @@ void humanoid::SWeaponSkillTick()
 {
   for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
     {
-      if((*i)->Tick())
+      if((*i)->Tick() && IsPlayer())
 	{
-	  for(stackiterator j = GetStack()->GetBottomSlot(); j != GetStack()->GetSlotAboveTop(); ++j)
-	    if((*i)->GetID() == (**j)->GetID())
-	      {
-		(*i)->AddLevelDownMessage((**j)->GetName(UNARTICLED));
-		break;
-	      }
+	  item* Item = SearchForItemWithID((*i)->GetID());
 
-	  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	    if(GetEquipment(c) && GetEquipment(c)->GetID() == (*i)->GetID())
-	      {
-		(*i)->AddLevelDownMessage(GetEquipment(c)->GetName(UNARTICLED));
-		break;
-	      }
+	  if(Item)
+	    (*i)->AddLevelDownMessage(Item->GetName(UNARTICLED));
 	}
 
       if(!(*i)->GetHits() && *i != GetCurrentRightSWeaponSkill() && *i != GetCurrentLeftSWeaponSkill())
@@ -3231,7 +3207,7 @@ bool snake::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmou
 {
   if(!BlockedByArmour)
     {
-      Char->BeginTemporaryState(POISONED, 500);
+      Char->BeginTemporaryState(POISONED, 400 + RAND() % 200);
       return true;
     }
   else
@@ -3301,7 +3277,7 @@ bool spider::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmo
 {
   if(!BlockedByArmour)
     {
-      Char->BeginTemporaryState(POISONED, 50);
+      Char->BeginTemporaryState(POISONED, 80 + RAND() % 40);
       return true;
     }
   else
@@ -3664,4 +3640,13 @@ humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRight
 std::string humanoid::GetDeathMessage() const
 {
   return GetName(DEFINITE) + (GetHead() ? " dies screaming." : " dies without a sound."); 
+}
+
+uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
+{
+  for(ushort c = 0; c < GetSWeaponSkills(); ++c)
+    if(GetSWeaponSkill(c)->GetID() == Item->GetID())
+      return GetSWeaponSkill(c)->GetLevel();
+
+  return 0;
 }

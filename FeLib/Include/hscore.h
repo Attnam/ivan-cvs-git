@@ -30,7 +30,7 @@ class highscore
   void Draw() const;
   void Save(const std::string& = HIGHSCORE_FILENAME) const;
   void Load(const std::string& = HIGHSCORE_FILENAME);
-  void ForgetLastAdd() { LastAdd = 101; }
+  bool LastAddFailed() const { return LastAdd == 100; }
  private:
   std::vector<std::string> Entry;
   std::vector<long> Score;
@@ -38,3 +38,4 @@ class highscore
 };
 
 #endif
+

@@ -57,9 +57,9 @@ worldmap::~worldmap()
 void worldmap::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
-  SaveFile.Write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-  SaveFile.Write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-  SaveFile.Write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+  SaveFile.Write(reinterpret_cast<char*>(TypeBuffer[0]), sizeof(ushort) * XSizeTimesYSize);
+  SaveFile.Write(reinterpret_cast<char*>(AltitudeBuffer[0]), sizeof(short) * XSizeTimesYSize);
+  SaveFile.Write(reinterpret_cast<char*>(ContinentBuffer[0]), sizeof(uchar) * XSizeTimesYSize);
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
@@ -74,9 +74,9 @@ void worldmap::Load(inputfile& SaveFile)
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
   AltitudeBuffer = Alloc2D<short>(XSize, YSize);
   ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
-  SaveFile.Read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-  SaveFile.Read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-  SaveFile.Read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+  SaveFile.Read(reinterpret_cast<char*>(TypeBuffer[0]), sizeof(ushort) * XSizeTimesYSize);
+  SaveFile.Read(reinterpret_cast<char*>(AltitudeBuffer[0]), sizeof(short) * XSizeTimesYSize);
+  SaveFile.Read(reinterpret_cast<char*>(ContinentBuffer[0]), sizeof(uchar) * XSizeTimesYSize);
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
@@ -428,16 +428,18 @@ void worldmap::RemoveEmptyContinents()
 void worldmap::Draw() const
 {
   if(!game::GetSeeWholeMapCheat())
-    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	{
+    {
+      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	  if(Map[x][y]->GetLastSeen())
 	    Map[x][y]->Draw();
-	}
+    }
   else
-    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	Map[x][y]->Draw();
+    {
+      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	  Map[x][y]->Draw();
+    }
 }
 
 void worldmap::CalculateLuminances()

@@ -198,12 +198,14 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 
       if(TooShort)
 	{
-	  FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 50, Color, "Too short!");
-	  DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 50, 81, 9, 0);
+	  FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 30, Color, "Too short!");
 	  TooShort = false;
 	}
 
       graphics::BlitDBToScreen();
+
+      if(TooShort)
+	DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 30, 81, 9, 0);
 		
       while(!(LastKey >= 0x20 || LastKey == KEYBACKSPACE || LastKey == KEYENTER || LastKey == KEYESC))
 	LastKey = GETKEY(false);

@@ -43,3 +43,4 @@ void AlphaBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ulong, ushor
 void DrawLine(ulong, ulong, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
 
 #endif
+

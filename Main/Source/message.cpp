@@ -63,54 +63,21 @@ void msgsystem::AddMessage(const char* Format, ...)
       LastMessage = Buffer;
     }
 
-  bool First = true;
+  std::string Temp;
+  Temp << Begin;
 
-  ushort LineLength = 80;
-  ushort Marginal = 0;
+  if(Begin != End)
+    Temp << "-" << End;
 
-  for(c = 0; Buffer.length(); ++c)
-    {
-      std::string Temp;
+  if(Times != 1)
+    Temp << " (" << Times << "x)";
 
-      if(First)
-	{
-	  Temp += Begin;
+  Temp << " ";
+  ushort Marginal = Temp.length();
+  Temp << Buffer;
 
-	  if(Begin != End)
-	    Temp += std::string("-") + End;
-
-	  if(Times != 1)
-	    Temp += std::string(" (") + Times + "x)";
-
-	  Temp += " ";
-	  Marginal = Temp.length();
-	  First = false;
-	}
-      else
-	Temp.resize(Marginal, ' ');
-
-      long Pos;
-
-      if(ushort(Buffer.length()) > LineLength - Marginal)
-	Pos = Buffer.find_last_of(' ', LineLength - Marginal);
-      else
-	Pos = Buffer.length();
-
-      if(Pos < 0)
-	{
-	  Temp += Buffer.substr(0, LineLength - Marginal);
-	  Buffer.erase(0, LineLength - Marginal);
-	}
-      else
-	{
-	  Temp += Buffer.substr(0, Pos);
-	  Buffer.erase(0, Pos + 1);
-	}
-
-      MessageHistory.AddEntry(Temp, WHITE);
-    }
-
-  MessageHistory.SetSelected(MessageHistory.Length() > 8 ? MessageHistory.Length() - 8 : 0);
+  MessageHistory.AddEntry(Temp, WHITE, Marginal);
+  MessageHistory.SetSelected(MessageHistory.Length() - 1);
 }
 
 void msgsystem::Draw()
@@ -143,7 +110,7 @@ void msgsystem::Load(inputfile& SaveFile)
 
 void msgsystem::ScrollDown()
 {
-  if(MessageHistory.GetSelected() < MessageHistory.Length() - 8)
+  if(MessageHistory.GetSelected() < MessageHistory.Length() - 1)
     MessageHistory.EditSelected(1);
 }
 

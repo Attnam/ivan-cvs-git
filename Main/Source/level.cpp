@@ -217,9 +217,7 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 	if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
 	  {
 	    FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
-
 	    FlagMap[From.X][From.Y] |= STILL_ON_POSSIBLE_ROUTE;
-
 	    ExpandStillPossibleRoute(From, Target, XMode);
 
 	    if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
@@ -390,7 +388,7 @@ void level::CreateItems(ushort Amount)
     {
       vector2d Pos = RandomSquare(0, true);
       item* Item = protosystem::BalancedCreateItem();
-      Map[Pos.X][Pos.Y]->Stack->FastAddItem(Item);
+      Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
       Item->SpecialGenerationHandler();
     }
 }
@@ -460,8 +458,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       if(AllowLanterns && x != XPos && x != XPos + Width - 1)
 	{
-	  GenerateLanterns(x, YPos, 2);
-	  GenerateLanterns(x, YPos + Height - 1, 0);
+	  GenerateLanterns(x, YPos, DOWN);
+	  GenerateLanterns(x, YPos + Height - 1, UP);
 	}
     }
 
@@ -474,8 +472,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       if(AllowLanterns)
 	{
-	  GenerateLanterns(XPos, y, 1);
-	  GenerateLanterns(XPos + Width - 1, y, 3);
+	  GenerateLanterns(XPos, y, RIGHT);
+	  GenerateLanterns(XPos + Width - 1, y, LEFT);
 	}
     }
 
@@ -633,7 +631,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
-		Map[XPos + x][YPos + y]->FastAddCharacter(Char);
+		Map[XPos + x][YPos + y]->AddCharacter(Char);
 		RoomClass->HandleInstantiatedCharacter(Char);
 	      }
 	}
@@ -651,7 +649,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  for(y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
 	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
-	      Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
+	      Map[XPos + x][YPos + y]->GetStack()->AddItem(ItemScript->Instantiate());
 	}
     }
 
@@ -700,7 +698,7 @@ void level::GenerateLanterns(ushort X, ushort Y, uchar SquarePos) const
     {
       lantern* Lantern = new lantern;
       Lantern->SignalSquarePositionChange(SquarePos);
-      Map[X][Y]->GetSideStack(SquarePos)->FastAddItem(Lantern);
+      Map[X][Y]->GetSideStack(SquarePos)->AddItem(Lantern);
     }
 }
 
@@ -773,10 +771,10 @@ void level::FiatLux()
       }
 }
 
-void level::FastAddCharacter(vector2d Pos, character* Guy)
+/*void level::FastAddCharacter(vector2d Pos, character* Guy)
 {
   Map[Pos.X][Pos.Y]->FastAddCharacter(Guy);
-}
+}*/
 
 void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
@@ -1023,7 +1021,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     for(ushort c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i))
+	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i) && Leader->GetSquareUnder()->CanBeSeenBy(*i, true))
 	    {
 	      ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	      return false;
@@ -1032,7 +1030,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader && Leader->CanBeSeenBy(*i))
+	if((*i)->IsEnabled() && *i != Leader && Leader->CanBeSeenBy(*i) && Leader->GetSquareUnder()->CanBeSeenBy(*i, true))
 	  {
 	    if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
 	      (*i)->GetAction()->Terminate(false);
@@ -1051,16 +1049,20 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 void level::Draw() const
 {
   if(!game::GetSeeWholeMapCheat())
-    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-	  Map[x][y]->Draw();
-	else
-	  Map[x][y]->DrawMemorized();
+    {
+      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	  if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
+	    Map[x][y]->Draw();
+	  else
+	    Map[x][y]->DrawMemorized();
+    }
   else
-    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	Map[x][y]->Draw();
+    {
+      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	  Map[x][y]->Draw();
+    }
 }
 
 lsquare* level::GetNeighbourLSquare(vector2d Pos, ushort Index) const

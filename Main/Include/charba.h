@@ -36,12 +36,11 @@ class go;
 class cweaponskill;
 class stackslot;
 class god;
-typedef std::list<stackslot*>::iterator stackiterator;
 template <class type> class database;
 
 struct characterdatabase
 {
-  void InitDefaults() { IsAbstract = false; }
+  void InitDefaults(ushort) { IsAbstract = false; }
   ushort DefaultArmStrength;
   ushort DefaultLegStrength;
   ushort DefaultDexterity;
@@ -165,6 +164,7 @@ class characterprototype
   const std::string& GetClassId() const { return ClassId; }
   void CreateSpecialConfigurations();
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
+  const characterdatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
  protected:
   ushort Index;
   characterprototype* Base;
@@ -240,7 +240,7 @@ class character : public entity, public id
   virtual long GetScore() const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
-  virtual stack* GetStack() const { return Stack; }
+  stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState() const { return BurdenState; }
   virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
@@ -306,8 +306,6 @@ class character : public entity, public id
   virtual uchar GetHomeRoom() const { return HomeRoom; }
   virtual bool Displace(character*);
   virtual bool Sit();
-  virtual void AddSpecialItemInfo(std::string&, item*) const { }
-  virtual void AddSpecialItemInfoDescription(std::string&) const { }
   virtual long GetStatScore() const;
   virtual bool CheckStarvationDeath(const std::string&);
   virtual void ShowNewPosInfo() const;
@@ -344,7 +342,7 @@ class character : public entity, public id
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
-  virtual bool ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartVital(ushort) const { return true; }
   virtual void RestoreBodyParts();
   virtual bool AssignName();
@@ -533,7 +531,7 @@ class character : public entity, public id
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
-  virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, short, uchar);
+  virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, ushort, short, uchar);
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
   virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
   virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
@@ -672,14 +670,17 @@ class character : public entity, public id
   virtual bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
   virtual void WeaponSkillHit(item*, uchar);
   virtual void AddDefenceInfo(felist&) const;
-  //virtual character* Duplicate(bool) const;
   character* Duplicate() const;
   room* GetRoomUnder() const { return GetLSquareUnder()->GetRoomClass(); }
   virtual bool TryToEquip(item*);
   virtual bool TryToConsume(item*);
+  void UpdateESPLOS() const;
+  virtual uchar GetCWeaponSkillLevel(const item*) const;
+  virtual uchar GetSWeaponSkillLevel(const item*) const { return 0; }
   virtual void PrintBeginPanicMessage() const;
   virtual void PrintEndPanicMessage() const;
   virtual void CheckPanic(ulong);
+  virtual void SignalSpoil();
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -816,3 +817,4 @@ name : public base\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
+

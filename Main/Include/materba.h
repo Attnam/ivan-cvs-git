@@ -23,7 +23,7 @@ template <class type> class database;
 
 struct materialdatabase
 {
-  void InitDefaults() { }
+  void InitDefaults(ushort) { }
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
@@ -49,6 +49,7 @@ struct materialdatabase
   uchar Alpha;
   bool CreateDivineConfigurations;
   uchar Flexibility;
+  ushort SpoilModifier;
 };
 
 class materialprototype
@@ -63,6 +64,7 @@ class materialprototype
   const materialprototype* GetBase() const { return Base; }
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
   void CreateSpecialConfigurations() { }
+  const materialdatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
  protected:
   ushort Index;
   materialprototype* Base;
@@ -94,8 +96,8 @@ class material
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   ulong RawPrice() const { return 0; }
   bool CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
-  bool HasBe() const { return false; }
-  virtual bool Be() { return true; }
+  virtual bool HasBe() const { return false; }
+  virtual void Be() { }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void AddConsumeEndMessage(character*) const;
   long GetOfferValue(char GodAlignment) const;
@@ -123,6 +125,7 @@ class material
   DATABASEVALUE(ulong, ExplosivePower);
   DATABASEVALUE(uchar, Alpha);
   DATABASEVALUE(uchar, Flexibility);
+  DATABASEVALUE(ushort, SpoilModifier);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
@@ -143,8 +146,10 @@ class material
   static material* Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
   bool IsTransparent() const { return GetAlpha() != 255; }
   virtual material* Duplicate() const { return new material(*this); }
-  virtual ulong GetTotalNutritionValue(const item*) const; 
+  virtual ulong GetTotalNutritionValue(const item*) const;
+  virtual bool IsVeryCloseToSpoiling() const { return false; }
  protected:
+  virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);
   void InstallDataBase();
   const database* DataBase;

@@ -18,5 +18,6 @@ Mace + broken and in hands picture.
 Flail + broken and in hands picture.
 Staff + broken and in hands picture.
 Skull.
+Elpuri's head is of wrong color.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

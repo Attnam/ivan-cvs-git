@@ -268,7 +268,6 @@ void door::MakeWalkable()
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->SetDescriptionChanged(true);
   GetLSquareUnder()->ForceEmitterEmitation();
   GetLSquareUnder()->CalculateLuminance();
 
@@ -285,7 +284,6 @@ void door::MakeNotWalkable()
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->SetDescriptionChanged(true);
   GetLSquareUnder()->ForceEmitterEmitation();
   GetLSquareUnder()->CalculateLuminance();
 
@@ -513,16 +511,8 @@ void fountain::DryOut()
 
   if(GetLSquareUnder())
     {
-      GetLSquareUnder()->SetDescriptionChanged(true);
-
-      if(CanBeSeenByPlayer())
-	GetLSquareUnder()->UpdateMemorizedDescription();
-
       GetLSquareUnder()->SendNewDrawRequest();
       GetLSquareUnder()->SendMemorizedUpdateRequest();
-
-      if(CanBeSeenByPlayer())
-	GetLSquareUnder()->UpdateMemorized();
     }
 }
 
@@ -612,14 +602,6 @@ bool altar::Polymorph(character*)
 
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->SetDescriptionChanged(true);
-
-  if(CanBeSeenByPlayer())
-    {
-      GetLSquareUnder()->UpdateMemorizedDescription();
-      GetLSquareUnder()->UpdateMemorized();
-    }
-
   return true;	
 }
 

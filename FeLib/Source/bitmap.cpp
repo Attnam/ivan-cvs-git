@@ -19,7 +19,7 @@ bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
 
   uchar Palette[768];
   File.SeekPosEnd(-768);
-  File.Read((char*)Palette, 768);
+  File.Read(reinterpret_cast<char*>(Palette), 768);
   File.SeekPosBeg(8);
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
@@ -116,12 +116,12 @@ void bitmap::Save(outputfile& SaveFile) const
   if(!IsIndependent)
     ABORT("Subbitmap save request detected!");
 
-  SaveFile.Write((char*)GetImage()[0], (XSize * YSize) << 1);
+  SaveFile.Write(reinterpret_cast<char*>(GetImage()[0]), (XSize * YSize) << 1);
 
   if(GetAlphaMap())
     {
       SaveFile << uchar(1);
-      SaveFile.Write((char*)GetAlphaMap()[0], XSize * YSize);
+      SaveFile.Write(reinterpret_cast<char*>(GetAlphaMap()[0]), XSize * YSize);
     }
   else
     SaveFile << uchar(0);
@@ -129,7 +129,7 @@ void bitmap::Save(outputfile& SaveFile) const
 
 void bitmap::Load(inputfile& SaveFile)
 {
-  SaveFile.Read((char*)GetImage()[0], (XSize * YSize) << 1);
+  SaveFile.Read(reinterpret_cast<char*>(GetImage()[0]), (XSize * YSize) << 1);
 
   uchar Alpha;
   SaveFile >> Alpha;
@@ -137,7 +137,7 @@ void bitmap::Load(inputfile& SaveFile)
   if(Alpha)
     {
       SetAlphaMap(Alloc2D<uchar>(YSize, XSize));
-      SaveFile.Read((char*)GetAlphaMap()[0], XSize * YSize);
+      SaveFile.Read(reinterpret_cast<char*>(GetAlphaMap()[0]), XSize * YSize);
     }
 }
 
@@ -718,19 +718,19 @@ void bitmap::Outline(ushort Color)
     {
       Buffer = ulong(&GetImage()[0][x]);
 
-      LastColor = *(ushort*)Buffer;
+      LastColor = *reinterpret_cast<ushort*>(Buffer);
 
       for(ushort y = 0; y < YSize - 1; ++y)
 	{
-	  NextColor = *(ushort*)(Buffer + (XSize << 1));
+	  NextColor = *reinterpret_cast<ushort*>(Buffer + (XSize << 1));
 
 	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
-	    *(ushort*)Buffer = Color;
+	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += XSize << 1;
 
 	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
-	    *(ushort*)Buffer = Color;
+	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
 	}
@@ -739,19 +739,19 @@ void bitmap::Outline(ushort Color)
   for(ushort y = 0; y < YSize; ++y)
     {
       Buffer = ulong(GetImage()[y]);
-      LastColor = *(ushort*)Buffer;
+      LastColor = *reinterpret_cast<ushort*>(Buffer);
 
       for(ushort x = 0; x < XSize - 1; ++x)
 	{
-	  NextColor = *(ushort*)(Buffer + 2);
+	  NextColor = *reinterpret_cast<ushort*>(Buffer + 2);
 
 	  if((LastColor == DEFAULTTRANSPARENT || !x) && NextColor != DEFAULTTRANSPARENT)
-	    *(ushort*)Buffer = Color;
+	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += 2;
 
 	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || x == XSize - 2))
-	    *(ushort*)Buffer = Color;
+	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
 	}
@@ -769,20 +769,20 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
     {
       ulong SrcBuffer = ulong(&GetImage()[0][x]);
       ulong DestBuffer = ulong(&Bitmap->GetImage()[0][x]);
-      ushort LastColor = *(ushort*)SrcBuffer;
+      ushort LastColor = *reinterpret_cast<ushort*>(SrcBuffer);
 
       for(ushort y = 0; y < YSize - 1; ++y)
 	{
-	  ushort NextColor = *(ushort*)(SrcBuffer + (XSize << 1));
+	  ushort NextColor = *reinterpret_cast<ushort*>(SrcBuffer + (XSize << 1));
 
 	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
-	    *(ushort*)DestBuffer = Color;
+	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += XSize << 1;
 	  DestBuffer += Bitmap->XSize << 1;
 
 	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
-	    *(ushort*)DestBuffer = Color;
+	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastColor = NextColor;
 	}
@@ -792,22 +792,22 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
     {
       ulong SrcBuffer = ulong(GetImage()[y]);
       ulong DestBuffer = ulong(Bitmap->GetImage()[y]);
-      ushort LastSrcColor = *(ushort*)SrcBuffer;
-      ushort LastDestColor = *(ushort*)DestBuffer;
+      ushort LastSrcColor = *reinterpret_cast<ushort*>(SrcBuffer);
+      ushort LastDestColor = *reinterpret_cast<ushort*>(DestBuffer);
 
       for(ushort x = 0; x < XSize - 1; ++x)
 	{
-	  ushort NextSrcColor = *(ushort*)(SrcBuffer + 2);
-	  ushort NextDestColor = *(ushort*)(DestBuffer + 2);
+	  ushort NextSrcColor = *reinterpret_cast<ushort*>(SrcBuffer + 2);
+	  ushort NextDestColor = *reinterpret_cast<ushort*>(DestBuffer + 2);
 
 	  if((LastSrcColor == DEFAULTTRANSPARENT || !x) && (NextSrcColor != DEFAULTTRANSPARENT || NextDestColor != DEFAULTTRANSPARENT))
-	    *(ushort*)DestBuffer = Color;
+	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += 2;
 	  DestBuffer += 2;
 
 	  if((LastSrcColor != DEFAULTTRANSPARENT || LastDestColor != DEFAULTTRANSPARENT) && (NextSrcColor == DEFAULTTRANSPARENT || x == XSize - 2))
-	    *(ushort*)DestBuffer = Color;
+	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastSrcColor = NextSrcColor;
 	  LastDestColor = NextDestColor;
@@ -1108,6 +1108,7 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 	    PutPixel(x,0, MakeRGB(0,255,0));
 	}
     }
+
   femath::SetSeed(NewSeed);
 }
 

@@ -36,3 +36,4 @@ template <class type> void database<type>::InstallDataBase(type* Instance)
 }
 
 #endif
+

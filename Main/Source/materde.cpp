@@ -17,12 +17,10 @@ MATERIAL_PROTOTYPE(material, 0);
 #include "lsquare.h"
 #include "save.h"
 
-#include "error.h"
-
-bool organicsubstance::Be()
+void organicsubstance::Be()
 {
-  ABORT("Illegal item::Be()!");
-  return true;
+  if(MotherEntity->AllowSpoil() && (SpoilCounter += 10) > GetSpoilModifier())
+    MotherEntity->SignalSpoil(this);
 }
 
 void organicsubstance::Save(outputfile& SaveFile) const
@@ -48,4 +46,3 @@ void flesh::Load(inputfile& SaveFile)
   organicsubstance::Load(SaveFile);
   SaveFile >> SkinColor;
 }
-

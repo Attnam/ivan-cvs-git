@@ -39,7 +39,6 @@ class square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
-  void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
   void KickAnyoneStandingHereAway();
   bool IsWalkable(character*) const;
   std::string SurviveMessage(character*) const;
@@ -51,7 +50,7 @@ class square
   ushort GetAnimatedEntities() const { return AnimatedEntities; }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
-  bool CanBeSeenBy(const character*) const;
+  bool CanBeSeenBy(const character*, bool = false) const;
   ushort GetLuminance() const { return Luminance; }
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
@@ -62,9 +61,9 @@ class square
   vector2d Pos;
   bool NewDrawRequested;
   ulong LastSeen;
-  bool DescriptionChanged;
   ushort AnimatedEntities;
   ushort Luminance;
+  bool DescriptionChanged;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, square* Square)

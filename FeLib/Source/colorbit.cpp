@@ -19,7 +19,7 @@ colorizablebitmap::colorizablebitmap(const std::string& FileName)
 
   File.SeekPosEnd(-768);
   Palette = new uchar[768];
-  File.Read((char*)Palette, 768);
+  File.Read(reinterpret_cast<char*>(Palette), 768);
   File.SeekPosBeg(8);
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
@@ -87,7 +87,7 @@ void colorizablebitmap::Save(const std::string& FileName)
       SaveFile.Put(Char);
     }
 
-  SaveFile.Write((char*)Palette, 768);
+  SaveFile.Write(reinterpret_cast<char*>(Palette), 768);
 }
 
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
@@ -95,7 +95,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
+  uchar* Buffer = reinterpret_cast<uchar*>(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
   ulong DestBuffer = ulong(Bitmap->GetImage()[DestY]);
 
   for(ushort y = 0; y < Height; ++y)
@@ -109,19 +109,19 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 	      float Gradient = float(PaletteElement % 16) / 8;
 	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[DestX + x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
 	    {
 	      ushort ThisColor = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 
 	      if(ThisColor != DEFAULTTRANSPARENT)
-		((ushort*)DestBuffer)[DestX + x] = ThisColor;
+		reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = ThisColor;
 	    }
 	}
 
       DestBuffer += (Bitmap->XSize << 1);
-      Buffer = (uchar*)(ulong(Buffer) + XSize);
+      Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 }
 
@@ -154,18 +154,18 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
 	      float Gradient = float(Buffer[x] % 16) / 8;
 	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 	      if(UseAlpha)
-		((uchar*)AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
+		reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
 	    }
 	  else
-	    ((ushort*)DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
+	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
 	}
 
       DestBuffer += (Bitmap->XSize << 1);
       AlphaMap += Bitmap->XSize;
-      Buffer = (uchar*)(ulong(Buffer) + XSize);
+      Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 
   return Bitmap;
@@ -174,7 +174,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, uchar BaseAlpha, uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
-  uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
+  uchar* Buffer = reinterpret_cast<uchar*>(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
   ulong DestBuffer = ulong(Bitmap->GetImage()[0]);
   ulong AlphaMap;
   bool UseAlpha;
@@ -202,18 +202,18 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 	      float Gradient = float(PaletteElement % 16) / 8;
 	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 	      if(UseAlpha)
-		((uchar*)AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
+		reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
 	    }
 	  else
-	    ((ushort*)DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
+	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 	}
 
       DestBuffer += (Bitmap->XSize << 1);
       AlphaMap += Bitmap->XSize;
-      Buffer = (uchar*)(ulong(Buffer) + XSize);
+      Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 
   return Bitmap;

@@ -183,3 +183,4 @@ outputfile& operator<<(outputfile&, bitmap*);
 inputfile& operator>>(inputfile&, bitmap*&);
 
 #endif
+

@@ -39,7 +39,7 @@ area::~area()
 void area::Save(outputfile& SaveFile) const
 {
   SaveFile << XSize << YSize;
-  SaveFile.Write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+  SaveFile.Write(reinterpret_cast<char*>(FlagMap[0]), sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::Load(inputfile& SaveFile)
@@ -50,7 +50,7 @@ void area::Load(inputfile& SaveFile)
   Border = rect(0, 0, XSize - 1, YSize - 1);
   Alloc2D(Map, XSize, YSize);
   Alloc2D(FlagMap, XSize, YSize);
-  SaveFile.Read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+  SaveFile.Read(reinterpret_cast<char*>(FlagMap[0]), sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::RemoveCharacter(vector2d Pos)

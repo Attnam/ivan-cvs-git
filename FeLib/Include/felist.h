@@ -20,11 +20,12 @@ class bitmap;
 struct felistentry
 {
   felistentry() { }
-  felistentry(const std::string& String, ushort Color, bool Selectable) : String(String), Color(Color), Selectable(Selectable) { }
-  felistentry(const std::vector<bitmap*>&, const std::string&, ushort, bool);
+  felistentry(const std::string& String, ushort Color, ushort Marginal, bool Selectable) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable) { }
+  felistentry(const std::vector<bitmap*>&, const std::string&, ushort, ushort, bool);
   std::vector<bitmap*> Bitmap;
   std::string String;
   ushort Color;
+  ushort Marginal;
   bool Selectable;
 };
 
@@ -47,8 +48,8 @@ class felist
  public:
   felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0) { AddDescription(Topic, TopicColor); }
   ~felist();
-  void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
-  void AddEntry(const std::string&, ushort, const std::vector<bitmap*>&, bool = true);
+  void AddEntry(const std::string&, ushort, ushort = 0, bitmap* = 0, bool = true);
+  void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
   void AddDescription(const std::string&, ushort = 0xFFFF);
   ushort Draw(vector2d, ushort, ushort = 20, ushort = MakeRGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;

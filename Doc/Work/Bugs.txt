@@ -4,7 +4,7 @@
 (r) rejected
 (s) suspended
 
-(s) Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+(r) Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 //Item's GetSquareUnder() doesn't work.
 (s) Alt+Enter twice.
 (s) Alt+Enter in config screen.
@@ -25,7 +25,7 @@ Can one eat a can MADE of bananaflesh?
 //Dos-prompt bug.
 //Walls & moving light.
 //The volume bug.
-Boot of speed in hand.
+*Boot of speed in hand.
 //Can a player controlled carnivorous plant move?
 If an Attnamian severs a bodypart which hits the player, the city shouldn't become mad!
 //Multiple message boxes.
@@ -40,27 +40,30 @@ Skeletons are probably seen by infravision.
 Corpse + loricatus.
 Chests and lanterns.
 //Visual bugs with close in Linux with the X-button.
-Unicorns can eat silver stones.
+//Unicorns can eat silver stones.
 Exp is gained even if bodypart is non-living, even though it affects nothing.
 //One can kick mines.
 new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
 //Doors close when they break.
-Can one block when fainted?
+//Can one block when fainted?
 Wand of resurrection doesn't work
-DonateSlotTo bugs.
+//DonateSlotTo bugs.
 RestoreBodyParts() may crash.
 AddScoreEntry bugs.
 When bear traps become visible, Memorized isn't updated.
 "You are hit by the explosion!" "You are not hurt." "Your torso bleeds."
 StuckTo bugs; it isn't cleared at least when the bodypart is severed, and saving crashes afterwards.
-Lamps can be seen through walls in lookmode.
+//Lamps can be seen through walls in lookmode.
 Oree dies. Oree looks slower.
 Digging doors doesn't work.
 //Eating kobolds is evil.
 (2x) you wake up.
 Your weak kick has no effect.
-Memorized doesn't update correctly.
+//Memorized doesn't update correctly.
 Splinter message has incorrect order.
-Kamikaze dwarves don't use backpacks correctly.
+//Kamikaze dwarves don't use backpacks correctly.
 Highscore of no entries doesn't work properly.
 //Carnivorous plants inside walls!
+Alpha + rotate doesn't work.
+Beartraps + groinless creatures.
+Zapping is possible without arms.

@@ -27,7 +27,7 @@ template <class type> class database;
 
 struct terraindatabase
 {
-  void InitDefaults() { IsAbstract = false; }
+  void InitDefaults(ushort) { IsAbstract = false; }
   vector2d BitmapPos;
   std::string Article;
   std::string Adjective;
@@ -78,7 +78,7 @@ class lterrain : public object
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   level* GetLevelUnder() const { return LSquareUnder->GetLevelUnder(); }
-  void CalculateAll() { CalculateEmitation(); }
+  virtual void CalculateAll() { CalculateEmitation(); }
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
  protected:
@@ -104,6 +104,7 @@ class glterrainprototype
   const glterrainprototype* GetBase() const { return Base; }
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
+  const glterraindatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
  protected:
   ushort Index;
   glterrainprototype* Base;
@@ -177,6 +178,7 @@ class olterrainprototype
   const olterrainprototype* GetBase() const { return Base; }
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
+  const olterraindatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
  protected:
   ushort Index;
   olterrainprototype* Base;

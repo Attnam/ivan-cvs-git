@@ -14,7 +14,7 @@ class GOD
   god,
  public:
   virtual std::string Name() const { return "Valpurus"; }
-  virtual std::string Description() const { return "king of gods"; }
+  virtual std::string Description() const { return "King of Gods"; }
   virtual uchar Alignment() const { return ALPP; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return GOOD; }
@@ -27,11 +27,11 @@ class GOD
 
 class GOD
 (
-  venius,
+  legifer,
   god,
  public:
-  virtual std::string Name() const { return "Venius"; }
-  virtual std::string Description() const { return "god of paladins and holy fire"; }
+  virtual std::string Name() const { return "Legifer"; }
+  virtual std::string Description() const { return "god of law and order"; }
   virtual uchar Alignment() const { return ALP; }
   virtual uchar BasicAlignment() const { return GOOD; }
   virtual std::string GetPriestMessage() const;
@@ -47,7 +47,7 @@ class GOD
   god,
  public:
   virtual std::string Name() const { return "Atavus"; }
-  virtual std::string Description() const { return "god of gifts"; }
+  virtual std::string Description() const { return "god of charity and munificence"; }
   virtual uchar Alignment() const { return ALP; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return GOOD; }
@@ -63,7 +63,7 @@ class GOD
   god,
  public:
   virtual std::string Name() const { return "Dulcis"; }
-  virtual std::string Description() const { return "goddess of music"; }
+  virtual std::string Description() const { return "goddess of love and art"; }
   virtual uchar Alignment() const { return AL; }
   virtual uchar BasicAlignment() const { return GOOD; }
   virtual ushort GetColor() const { return MakeRGB(160, 160, 0); }
@@ -91,11 +91,11 @@ class GOD
 
 class GOD
 (
-  consummo,
+  sophos,
   god,
  public:
-  virtual std::string Name() const { return "Consummo"; }
-  virtual std::string Description() const { return "god of knowledge, wisdom and understanding"; }
+  virtual std::string Name() const { return "Sophos"; }
+  virtual std::string Description() const { return "god of knowledge and magic"; }
   virtual uchar Alignment() const { return ALM; }
   virtual uchar BasicAlignment() const { return GOOD; }
   virtual std::string GetPriestMessage() const;
@@ -152,11 +152,11 @@ class GOD
 
 class GOD
 (
-  calamus,
+  cleptia,
   god,
  public:
-  virtual std::string Name() const { return "Calamus"; }
-  virtual std::string Description() const { return "god of assassins and thieves"; }
+  virtual std::string Name() const { return "Cleptia"; }
+  virtual std::string Description() const { return "goddess of assassins and thieves"; }
   virtual uchar Alignment() const { return ACP; }
   virtual uchar BasicAlignment() const { return EVIL; }
   virtual ushort GetColor() const { return MakeRGB(200, 0, 0); }
@@ -167,11 +167,11 @@ class GOD
 
 class GOD
 (
-  macellarius,
+  nefas,
   god,
  public:
-  virtual std::string Name() const { return "Macellarius"; }
-  virtual std::string Description() const { return "god of greed and forbidden pleasures"; }
+  virtual std::string Name() const { return "Nefas"; }
+  virtual std::string Description() const { return "goddess of forbidden pleasures"; }
   virtual uchar Alignment() const { return AC; }
   virtual uchar BasicAlignment() const { return EVIL; }
   virtual ushort GetColor() const { return MakeRGB(200, 0, 0); }
@@ -186,7 +186,7 @@ class GOD
   god,
  public:
   virtual std::string Name() const { return "Scabies"; }
-  virtual std::string Description() const { return "goddess of mutations, deseases and famine"; }
+  virtual std::string Description() const { return "goddess of mutations, disease and famine"; }
   virtual uchar Alignment() const { return AC; }
   virtual uchar BasicAlignment() const { return EVIL; }
   virtual void PlayerVomitedOnAltar();
@@ -229,11 +229,11 @@ class GOD
 
 class GOD
 (
-  erado,
+  mortifer,
   god,
  public:
-  virtual std::string Name() const { return "Erado"; }
-  virtual std::string Description() const { return "destroyer of worlds"; }
+  virtual std::string Name() const { return "Mortifer"; }
+  virtual std::string Description() const { return "Destroyer of Worlds"; }
   virtual uchar Alignment() const { return ACMM; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return EVIL; }

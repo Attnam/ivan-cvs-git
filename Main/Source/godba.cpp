@@ -75,7 +75,7 @@ std::string god::CompleteDescription() const
 
   Desc.resize(4, ' ');
   Desc += Name();
-  Desc.resize(17, ' ');
+  Desc.resize(20, ' ');
 
   if(game::WizardModeActivated())
     {
@@ -83,9 +83,13 @@ std::string god::CompleteDescription() const
       Desc += " - ";
       Desc += Relation;
     }
+  else
+    {
+      Desc += "the ";
+      Desc += Description();
+    }
 
-  Desc.resize(32, ' ');
-  return Desc + "the " + Description();
+  return Desc;
 }
 
 void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
@@ -157,7 +161,7 @@ character* god::CreateAngel()
 	  return Angel;
 	}
       else
-	delete Angel;
+	Angel->SendToHell();
     }
 
   return 0;
@@ -257,4 +261,3 @@ godprototype::godprototype(god* (*Cloner)(bool), const std::string& ClassId) : C
 {
   Index = protocontainer<god>::Add(this);
 }
-

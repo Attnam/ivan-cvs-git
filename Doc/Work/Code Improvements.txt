@@ -35,10 +35,13 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
 Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
-*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
+//*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
 Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
 //Värimakrojen sisärivittäminen.
 Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 //AP-hintojen negaatio.
-*Selitepohjainen ja itsetaipuva viestijärjestelmä.
+*Selitepohjainen ja itsetaipuva viestijärjestelmä. (<-nimivälimuisti)
 Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
+*Nimivälimuisti.
+Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
+Charba.cpp:n resplittaus (controllit erilleen?).

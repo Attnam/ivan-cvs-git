@@ -23,13 +23,13 @@ valuemap protocontainer<god>::CodeNameMap;
 #include "slot.h"
 #include "festring.h"
 
-void consummo::PrayGoodEffect()
+void sophos::PrayGoodEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! You teleport away!");
   game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true), true);
 }
 
-void consummo::PrayBadEffect()
+void sophos::PrayBadEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   game::GetPlayer()->TeleportSomePartsAway(RAND() % 2 + 1);
@@ -38,7 +38,7 @@ void consummo::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
+  ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
   game::GetPlayer()->GetGiftStack()->AddItem(new meleeweapon(CURVEDTWOHANDEDSWORD, MAKE_MATERIAL(VALPURIUM)));
 }
 
@@ -50,13 +50,13 @@ void valpurus::PrayBadEffect()
   game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name());
 }
 
-void venius::PrayGoodEffect()
+void legifer::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge firestorm engulfs everything around you.");
   game::GetCurrentLevel()->Explosion(game::GetPlayer(), "killed accidentally by " + Name(), game::GetPlayer()->GetPos(), 40, false);
 }
 
-void venius::PrayBadEffect()
+void legifer::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
@@ -147,7 +147,7 @@ void atavus::PrayGoodEffect()
 {
   if(game::GetPlayer()->HasAllBodyParts())
     {
-      item* Reward = new platemail(0, false);
+      item* Reward = new bodyarmor(PLATEMAIL, false);
       Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
       ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
       game::GetPlayer()->GetGiftStack()->AddItem(Reward);
@@ -457,13 +457,13 @@ void loricatus::PrayBadEffect()
     ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
 
-void calamus::PrayGoodEffect()
+void cleptia::PrayGoodEffect()
 {
   ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
   game::GetPlayer()->EditAttribute(AGILITY, 1);
 }
 
-void calamus::PrayBadEffect()
+void cleptia::PrayBadEffect()
 {
   if(game::GetPlayer()->GetAttribute(AGILITY) > 5)
     {
@@ -474,13 +474,13 @@ void calamus::PrayBadEffect()
     ADD_MESSAGE("Suprisingly you feel nothing.");
 }
 
-void erado::PrayGoodEffect()
+void mortifer::PrayGoodEffect()
 {
   ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
   game::GetPlayer()->GetGiftStack()->AddItem(new neercseulb);
 }
 
-void erado::PrayBadEffect()
+void mortifer::PrayBadEffect()
 {
   ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
 
@@ -507,13 +507,13 @@ void mellis::PrayGoodEffect()
 	{
 	  Cont = false;
 
-	  for(stackiterator i = game::GetPlayer()->GetStack()->GetBottomSlot(); i != game::GetPlayer()->GetStack()->GetSlotAboveTop(); ++i)
+	  for(stackiterator i = game::GetPlayer()->GetStack()->GetBottom(); i.HasItem(); ++i)
 	    {
-	      NewVersion = (**i)->BetterVersion();
+	      NewVersion = i->BetterVersion();
 
 	      if(NewVersion)
 		{
-		  item* ToBeDeleted = ***i;
+		  item* ToBeDeleted = *i;
 		  ToBeDeleted->RemoveFromSlot();
 		  game::GetPlayer()->GetStack()->AddItem(NewVersion);
 		  Success = true;
@@ -623,7 +623,7 @@ void atavus::Pray()
     }
 }
 
-void erado::Pray()
+void mortifer::Pray()
 {
   if(!Timer && Relation == 1000)
     {
@@ -671,7 +671,7 @@ void infuscor::PrayBadEffect()
   game::GetPlayer()->Faint();
 }
 
-void macellarius::PrayGoodEffect()
+void nefas::PrayGoodEffect()
 {
   ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
   potion* Reward = new potion(0, false);
@@ -680,7 +680,7 @@ void macellarius::PrayGoodEffect()
   ADD_MESSAGE("%s drops on the ground.", Reward->CHARNAME(DEFINITE));
 }
 
-void macellarius::PrayBadEffect()
+void nefas::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   game::GetPlayer()->ReceiveDamage(0, RAND() % 7, PHYSICALDAMAGE, HEAD);
@@ -760,7 +760,7 @@ void cruentus::PrayGoodEffect()
       return;
     }
 
-  ADD_MESSAGE("Cruentus recommends you to its master, Erado.");
+  ADD_MESSAGE("Cruentus recommends you to its master, Mortifer.");
   game::GetGod(16)->AdjustRelation(100);
 
 }
@@ -848,7 +848,7 @@ void cruentus::Pray()
     }
 }
 
-std::string venius::GetPriestMessage() const
+std::string legifer::GetPriestMessage() const
 {
   return "\"" + Name() + " is the Great Protector of all Law and Order. Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"";
 }
@@ -863,7 +863,7 @@ std::string seges::GetPriestMessage() const
   return "\"" + Name() + " brings Life, Health and Nutrition to all who follow Her. When thou call upon Her with an empty stomach, a miracle may indeed fill it.";
 }
 
-std::string consummo::GetPriestMessage() const
+std::string sophos::GetPriestMessage() const
 {
   return "\"The Wise bow before " + Name() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou may find thyself in an even worse situation!\"";
 }
@@ -878,4 +878,3 @@ std::string valpurus::GetPriestMessage() const
 {
   return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
 }
-

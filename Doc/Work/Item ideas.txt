@@ -1,3 +1,8 @@
+Misc:
+
+horn of bravery - cures panic of friendly creatures
+horn of fear - causes panic to enemies
+
 Weapons:
 
 hammer of thunderbolts - lightning animation, electricity damage

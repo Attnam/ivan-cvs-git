@@ -21,11 +21,11 @@
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true)
 {
-  Stack = new stack(this, 0, CENTER);
-  SideStack[DOWN] = new stack(this, 0, DOWN);
-  SideStack[LEFT] = new stack(this, 0, LEFT);
-  SideStack[UP] = new stack(this, 0, UP);
-  SideStack[RIGHT] = new stack(this, 0, RIGHT);
+  Stack = new stack(this, 0, CENTER, false);
+  SideStack[DOWN] = new stack(this, 0, DOWN, false);
+  SideStack[LEFT] = new stack(this, 0, LEFT, false);
+  SideStack[UP] = new stack(this, 0, UP, false);
+  SideStack[RIGHT] = new stack(this, 0, RIGHT, false);
 }
 
 lsquare::~lsquare()
@@ -65,23 +65,13 @@ void lsquare::CalculateEmitation()
 {
   Emitation = GetStack()->GetEmitation();
 
-  #define NE(D, S) GetNearLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
+  for(ushort c = 0; c < 4; ++c)
+    {
+      stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-  if(GetPos().X)
-    if(NE(vector2d(-1, 0), 1) > Emitation)
-      Emitation = NE(vector2d(-1, 0), 1);
-
-  if(GetPos().X < GetLevelUnder()->GetXSize() - 1)
-    if(NE(vector2d(1, 0), 3) > Emitation)
-      Emitation = NE(vector2d(1, 0), 3);
-
-  if(GetPos().Y)
-    if(NE(vector2d(0, -1), 2) > Emitation)
-      Emitation = NE(vector2d(0, -1), 2);
-
-  if(GetPos().Y < GetLevelUnder()->GetYSize() - 1)
-    if(NE(vector2d(0, 1), 0) > Emitation)
-      Emitation = NE(vector2d(0, 1), 0);
+      if(Stack && Stack->GetEmitation() > Emitation)
+	Emitation = Stack->GetEmitation();
+    }
 
   if(GetCharacter() && GetCharacter()->GetEmitation() > Emitation)
     Emitation = GetCharacter()->GetEmitation();
@@ -125,19 +115,13 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance,
     {
       Stack->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
-      #define NS(D, S) GetNearLSquare(GetPos() + D)->GetSideStack(S)
+      for(ushort c = 0; c < 4; ++c)
+	{
+	  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-      if(GetPos().X)
-	NS(vector2d(-1, 0), 1)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
-
-      if(GetPos().X < GetLevelUnder()->GetXSize() - 1)
-	NS(vector2d(1, 0), 3)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
-
-      if(GetPos().Y)
-	NS(vector2d(0, -1), 2)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
-
-      if(GetPos().Y < GetLevelUnder()->GetYSize() - 1)
-	NS(vector2d(0, 1), 0)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	  if(Stack)
+	    Stack->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	}
     }
 }
 
@@ -260,6 +244,9 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 	  {
 	    i->DilatedEmitation = 0;
 	    NewDrawRequested = true;
+
+	    if(LastSeen == game::GetLOSTurns())
+	      game::SendLOSUpdateRequest();
 	  }
 	else
 	  {
@@ -277,7 +264,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 		MemorizedUpdateRequested = true;
 		DescriptionChanged = true;
 
-		if(GetLastSeen() == game::GetLOSTurns())
+		if(LastSeen == game::GetLOSTurns())
 		  game::SendLOSUpdateRequest();
 	      }
 	  }
@@ -363,6 +350,10 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		  {
 		    i->DilatedEmitation = NewLuminance;
 		    NewDrawRequested = true;
+
+		    if(LastSeen == game::GetLOSTurns())
+		      game::SendLOSUpdateRequest();
+
 		    return;
 		  }
 
@@ -380,7 +371,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		    MemorizedUpdateRequested = true;
 		    DescriptionChanged = true;
 
-		    if(GetLastSeen() == game::GetLOSTurns())
+		    if(LastSeen == game::GetLOSTurns())
 		      game::SendLOSUpdateRequest();
 		  }
 	      }
@@ -395,6 +386,9 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	      {
 		Emitter.erase(i);
 		NewDrawRequested = true;
+
+		if(LastSeen == game::GetLOSTurns())
+		  game::SendLOSUpdateRequest();
 	      }
 	    else
 	      {
@@ -412,7 +406,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		    MemorizedUpdateRequested = true;
 		    DescriptionChanged = true;
 
-		    if(GetLastSeen() == game::GetLOSTurns())
+		    if(LastSeen == game::GetLOSTurns())
 		      game::SendLOSUpdateRequest();
 		  }
 	      }
@@ -431,6 +425,10 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	    {
 	      Emitter.push_back(emitter(Dir, NewLuminance));
 	      NewDrawRequested = true;
+
+	      if(LastSeen == game::GetLOSTurns())
+		game::SendLOSUpdateRequest();
+
 	      return;
 	    }
 
@@ -448,7 +446,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	      DescriptionChanged = true;
 	      MemorizedUpdateRequested = true;
 
-	      if(GetLastSeen() == game::GetLOSTurns())
+	      if(LastSeen == game::GetLOSTurns())
 		game::SendLOSUpdateRequest();
 	    }
 	}
@@ -464,7 +462,7 @@ bool lsquare::Open(character* Opener)
 
 bool lsquare::Close(character* Closer)
 {
-  if(!GetStack()->GetVisibleItems(Closer) && !Character)
+  if(!GetStack()->GetItems() && !Character)
     return GetOLTerrain()->Close(Closer);
   else
     {
@@ -514,14 +512,12 @@ void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Var
 {
   if(!Amount)
     return;
-
-  NewDrawRequested = true;
-  MemorizedUpdateRequested = true;
 	
   if(!GetFluid())
     SetFluid(new fluid(this));
 
   GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
+  SendMemorizedUpdateRequest();
 }
 
 void lsquare::CalculateLuminance()
@@ -569,7 +565,7 @@ void lsquare::AddCharacter(character* Guy)
     IncAnimatedEntities();
 }
 
-void lsquare::FastAddCharacter(character* Guy)
+/*void lsquare::FastAddCharacter(character* Guy)
 {
   if(Character)
     ABORT("Overgrowth of square population detected!");
@@ -579,7 +575,7 @@ void lsquare::FastAddCharacter(character* Guy)
 
   if(Guy->IsAnimated())
     IncAnimatedEntities();
-}
+}*/
 
 void lsquare::Clean()
 {
@@ -621,7 +617,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  Anything = true;
 		}
 
-	      ushort VisibleItems = GetStack()->GetVisibleItems(game::GetPlayer());
+	      ushort VisibleItems = GetStack()->GetItems(game::GetPlayer(), Cheat);
 
 	      if(VisibleItems)
 		{
@@ -629,7 +625,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		    MemorizedDescription << " and ";
 
 		  if(VisibleItems == 1)
-		    GetStack()->GetBottomVisibleItem(game::GetPlayer())->AddName(MemorizedDescription, INDEFINITE);
+		    GetStack()->GetBottomItem(game::GetPlayer(), Cheat)->AddName(MemorizedDescription, INDEFINITE);
 		  else
 		    MemorizedDescription = "many items";
 
@@ -640,44 +636,35 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		MemorizedDescription << " on ";
 
 	      GLTerrain->AddName(MemorizedDescription, INDEFINITE);
-	    }
-	  else
-	    {
-	      uchar HasItems = 0;
-	      bool HasManyItems = false;
+	      ushort Items = 0;
 
 	      for(ushort c = 0; c < 4; ++c)
-		if(SideStack[c]->GetVisibleItems(game::GetPlayer()))
-		  {
-		    if(++HasItems > 1)
-		      break;
-
-		    if(SideStack[c]->GetVisibleItems(game::GetPlayer()) > 1)
-		      {
-			HasManyItems = true;
-			break;
-		      }
-		  }
-
-	      if(HasItems > 1 || HasManyItems)
 		{
-		  MemorizedDescription << "many items on ";
-		  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+		  stack* Stack = GetSideStackOfAdjacentSquare(c);
+
+		  if(Stack)
+		    Items += Stack->GetItems(game::GetPlayer(), Cheat);
 		}
-	      else if(HasItems == 1)
+
+	      if(Items > 1)
+		MemorizedDescription << " and many items on the wall";
+	      else if(Items == 1)
 		{
+		  MemorizedDescription << " and ";
+
 		  for(ushort c = 0; c < 4; ++c)
-		    if(SideStack[c]->GetVisibleItems(game::GetPlayer()))
-		      {
-			SideStack[c]->GetBottomVisibleItem(game::GetPlayer())->AddName(MemorizedDescription, INDEFINITE);
-			MemorizedDescription << " on ";
-			OLTerrain->AddName(MemorizedDescription, INDEFINITE);
-			break;
-		      }
+		    {
+		      stack* Stack = GetSideStackOfAdjacentSquare(c);
+
+		      if(Stack && Stack->GetItems(game::GetPlayer(), Cheat))
+			Stack->GetBottomItem(game::GetPlayer(), Cheat)->AddName(MemorizedDescription, INDEFINITE);
+		    }
+
+		  MemorizedDescription << " on the wall";
 		}
-	      else
-		OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 	    }
+	  else
+	    OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 
 	  if(Cheat)
 	    MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << ")";
@@ -794,14 +781,14 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevelUnder()->GetLevelScript()->GetTeamDefault()));
 
-      FastAddCharacter(Char);
+      AddCharacter(Char);
 
       if(Room)
 	Room->HandleInstantiatedCharacter(Char);
     }
 
   if(SquareScript->GetItem(false))
-    GetStack()->FastAddItem(SquareScript->GetItem()->Instantiate());
+    GetStack()->AddItem(SquareScript->GetItem()->Instantiate());
 
   if(SquareScript->GetGTerrain(false))
     ChangeGLTerrain(SquareScript->GetGTerrain()->Instantiate());
@@ -828,7 +815,7 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 {
-  return (IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns();
+  return (IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && LastSeen == game::GetLOSTurns();
 }
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
@@ -967,15 +954,19 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   SignalEmitationDecrease(OldEmit);
 
   for(ushort c = 0; c < 4; ++c)
-    while(GetSideStack(c)->GetItems())
-      GetSideStack(c)->MoveItem(GetSideStack(c)->GetBottomSlot(), GetStack())->SignalSquarePositionChange(CENTER);
+    {
+      for(stackiterator i = GetSideStack(c)->GetBottom(); i.HasItem(); ++i)
+	i->SignalSquarePositionChange(CENTER);
+
+      GetSideStack(c)->MoveItemsTo(GetStack());
+    }
 
   if(WasWalkable != GetOLTerrain()->IsWalkable())
     {
       ForceEmitterEmitation();
       CalculateLuminance();
 
-      if(GetLastSeen() == game::GetLOSTurns())
+      if(LastSeen == game::GetLOSTurns())
 	game::SendLOSUpdateRequest();
     }
 }
@@ -1022,32 +1013,32 @@ void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, u
   switch(Direction)
     {
     case 0:
-      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
-      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 1:
-      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 2:
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
+      break;
+    case 3:
+      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
+      break;
+    case 4:
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
+      break;
+    case 5:
       GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
       GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
-    case 3:
-      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
-      break;
-    case 4:
-      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
-      break;
-    case 5:
-      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
-      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
-      break;
     case 6:
-      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 7:
-      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
-      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     }
 
@@ -1070,8 +1061,6 @@ void lsquare::RemoveFluid()
       fluid* Backup = GetFluid();
       SetFluid(0);
       SignalEmitationDecrease(Backup->GetEmitation());
-      SendNewDrawRequest();
-      SendMemorizedUpdateRequest();
     }
 }
 
@@ -1131,15 +1120,12 @@ bool lsquare::LockEverything(character*)
 
 bool lsquare::RaiseTheDead(character* Summoner)
 {
-  if(GetStack()->RaiseTheDead(Summoner))
-      return true;
-
   if(GetCharacter())
-    {
-      return GetCharacter()->RaiseTheDead(Summoner);
-    }
-
-  return false;
+    return GetCharacter()->RaiseTheDead(Summoner);
+  else if(GetStack()->RaiseTheDead(Summoner))
+    return true;
+  else
+    return false;
 }
 
 bool lsquare::TryKey(item* Key, character* Applier)
@@ -1210,9 +1196,9 @@ void lsquare::SetLastSeen(ulong What)
   if(!LastSeen)
     Memorized = new bitmap(16, 16);
 
+  LastSeen = What;
   UpdateMemorized();
   UpdateMemorizedDescription();
-  LastSeen = What;
 }
 
 void lsquare::DrawMemorized()
@@ -1237,3 +1223,27 @@ bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
   return GetStack()->IsDangerousForAIToStepOn(Who); 
 } 
+
+stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
+{
+  switch(Index)
+    {
+    case LEFT: return Pos.X ? GetNearLSquare(Pos + vector2d(-1, 0))->GetSideStack(RIGHT) : 0;
+    case RIGHT: return Pos.X < GetLevelUnder()->GetXSize() - 1 ? GetNearLSquare(Pos + vector2d(1, 0))->GetSideStack(LEFT) : 0;
+    case UP: return Pos.Y ? GetNearLSquare(Pos + vector2d(0, -1))->GetSideStack(DOWN) : 0;
+    case DOWN: return Pos.Y < GetLevelUnder()->GetYSize() - 1 ? GetNearLSquare(Pos + vector2d(0, 1))->GetSideStack(UP) : 0;
+    default: return 0;
+    }
+}
+
+void lsquare::SendMemorizedUpdateRequest()
+{
+  MemorizedUpdateRequested = true;
+  DescriptionChanged = true;
+
+  if(CanBeSeenByPlayer())
+    {
+      UpdateMemorized();
+      UpdateMemorizedDescription();
+    }
+}

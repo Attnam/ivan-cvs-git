@@ -32,7 +32,6 @@ class level : public area
   virtual ~level();
   void Generate();
   vector2d RandomSquare(character*, bool, bool = false) const;
-  void FastAddCharacter(vector2d, character*);
   void GenerateMonsters();
   lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }
