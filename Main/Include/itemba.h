@@ -88,6 +88,7 @@ public:
 	virtual std::string GetConsumeVerb() const { return std::string("eating"); }
 	virtual bool PolymorphSpawnable() const { return true; }
 	virtual bool IsExplosive() const { return false; }
+	virtual bool ReceiveFireDamage(character*, stack*, long) { return false; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -71,8 +71,6 @@ public:
 	virtual bool CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids();
-	virtual void SetGroundLevelTerrain(groundlevelterrain*);
-	virtual void SetOverLevelTerrain(overlevelterrain*);
 	virtual groundterrain* GetGroundTerrain() const;
 	virtual overterrain* GetOverTerrain() const;
 	virtual groundlevelterrain* GetGroundLevelTerrain() const { return GroundLevelTerrain; }

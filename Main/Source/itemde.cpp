@@ -748,3 +748,19 @@ bool holybook::Read(character* Reader)
 }
 
 ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 100000; default: return 0; } }
+
+bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
+{
+	MotherStack->RemoveItem(MotherStack->SearchItem(this));
+	SetExists(false);
+	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+	return true;
+}
+
+bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
+{
+	MotherStack->RemoveItem(MotherStack->SearchItem(this));
+	SetExists(false);
+	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+	return true;
+}

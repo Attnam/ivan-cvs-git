@@ -424,5 +424,5 @@ void fountain::Consume(character* Drinker)
 void fountain::DryOut()
 {
 	ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
-	GetLevelSquareUnder()->SetOverLevelTerrain(new empty);
+	GetLevelSquareUnder()->ChangeOverLevelTerrain(new empty);
 }

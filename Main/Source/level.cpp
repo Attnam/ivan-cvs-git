@@ -493,6 +493,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][y]->SetRoom(RoomClass->GetIndex());
 		}
 
+	if(*RoomScript->GetGenerateFountains() && !(RAND() % 10))
+	{
+		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
+		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new fountain);
+	}
+
 	if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
 	{
 		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
@@ -503,12 +509,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 		for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 			for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
 				Map[x][y]->SetDivineOwner(Owner);
-	}
-
-	if(*RoomScript->GetGenerateFountains() && !(RAND() % 7))
-	{
-		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
-		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new fountain);
 	}
 
 	if(*RoomScript->GetGenerateTunnel() && Door.Length())
@@ -698,7 +698,6 @@ void level::PutPlayer(bool)
 void level::PutPlayerAround(vector2d Pos)
 {
 	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable() && !Map[DoX][DoY]->GetCharacter()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
-
 	ABORT("Petrus is too popular!");
 }
 
@@ -869,8 +868,6 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 {
 	GetLevelSquare(Pos)->SetTemporaryEmitation(350);
 
-	game::DrawEverythingNoBlit(false);
-
 	ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
 	static ushort StrengthLimit[6] = { 150, 100, 75, 50, 25, 10 };
@@ -887,42 +884,58 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 
 	vector2d BPos = ((Pos - game::GetCamera() + vector2d(0,2)) << 4) - vector2d(16 * (6 - Size), 16 * (6 - Size));
 	vector2d SizeVect(16 + 32 * (6 - Size), 16 + 32 * (6 - Size));
+	vector2d PicPos = StrengthPicPos[Size];
 
-	if(short(BPos.X) < 0)
+	while(true)
 	{
-		StrengthPicPos[Size].X -= BPos.X;
-		SizeVect.X += BPos.X;
-		BPos.X = 0;
+		if(short(BPos.X) < 0)
+			if(short(BPos.X) + SizeVect.X < 0)
+				break;
+			else
+			{
+				PicPos.X -= BPos.X;
+				SizeVect.X += BPos.X;
+				BPos.X = 0;
+			}
+
+		if(short(BPos.Y) < 0)
+			if(short(BPos.Y) + SizeVect.Y < 0)
+				break;
+			else
+			{
+				PicPos.Y -= BPos.Y;
+				SizeVect.Y += BPos.Y;
+				BPos.Y = 0;
+			}
+
+		if(BPos.X > XRES || BPos.Y > YRES)
+			break;
+
+		if(BPos.X + SizeVect.X > XRES)
+			SizeVect.X = XRES - BPos.X;
+
+		if(BPos.Y + SizeVect.Y > YRES)
+			SizeVect.Y = YRES - BPos.Y;
+
+		DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
+		game::DrawEverythingNoBlit(false);
+		igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos.X, PicPos.Y, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+		graphics::BlitDBToScreen();
+		game::GetCurrentArea()->SendNewDrawRequest();
+		clock_t StartTime = clock();
+		while(clock() - StartTime < 0.3f * CLOCKS_PER_SEC);
+		break;
 	}
 
-	if(short(BPos.Y) < 0)
-	{
-		StrengthPicPos[Size].Y -= BPos.Y;
-		SizeVect.Y += BPos.Y;
-		BPos.Y = 0;
-	}
+	GetLevelSquare(Pos)->SetTemporaryEmitation(0);
 
-	if(BPos.X + SizeVect.X > XRES)
-		SizeVect.X = XRES - BPos.X;
-
-	if(BPos.Y + SizeVect.Y > YRES)
-		SizeVect.Y = YRES - BPos.Y;
-
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, StrengthPicPos[Size].X, StrengthPicPos[Size].Y, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
-
-	graphics::BlitDBToScreen();
-
-	clock_t StartTime = clock();
-
-	uchar Radius = log(Strength) / log(2);
+	uchar Radius = 8 - Size;
 	ushort PlayerDamage;
 	bool PlayerHurt = false;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
 	{
 		levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
-		Square->GetStack()->ReceiveFireDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
-
 		character* Char = Square->GetCharacter();
 
 		if(Char)
@@ -935,22 +948,18 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 			else
 			{
 				Terrorist->GetTeam()->Hostility(Char->GetTeam());
-				Char->ReceiveFireDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
+				Char->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
 				Char->CheckDeath(std::string("killed by an explosion"));
 			}
 		}
+
+		Square->GetStack()->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
 	})
-
-	game::GetCurrentArea()->SendNewDrawRequest();
-
-	GetLevelSquare(Pos)->SetTemporaryEmitation(0);
-
-	while(clock() - StartTime < 0.3f * CLOCKS_PER_SEC);
 
 	if(PlayerHurt)
 	{
 		Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
-		game::GetPlayer()->ReceiveFireDamage(PlayerDamage);
+		game::GetPlayer()->ReceiveFireDamage(Terrorist, PlayerDamage);
 		game::GetPlayer()->CheckDeath(std::string("killed by an explosion"));
 	}
 }

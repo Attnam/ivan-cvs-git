@@ -55,3 +55,6 @@ Script should have an initial blood level of square option.
 Check the load system.
 Balancing offervalues.
 Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
+Donkey should be named "an ass".
+Pet donkeys should be able to carry backpacks instead of the player.
+Full backpacks should decrease AV, but it would increase the chance of item breaking.

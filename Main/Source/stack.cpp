@@ -331,10 +331,8 @@ ushort stack::ConsumableItems(character* Eater)
 	ushort Counter = 0;
 
 	for(ushort c = 0; c < GetItems(); ++c)
-	{
 		if(GetItem(c)->Consumable(Eater))
 			++Counter;
-	}
 
 	return Counter;
 }
@@ -429,7 +427,7 @@ void stack::ReceiveSound(float Strength)
 
 void stack::StruckByWandOfStriking(void)
 {
-	for(int x = 0; x < GetItems(); ++x)
+	for(ushort x = 0; x < GetItems(); ++x)
 		GetItem(x)->StruckByWandOfStriking(this);
 }
 
@@ -477,6 +475,9 @@ void stack::ImpactDamage(ushort Strength, bool ShowOnScreen)
 			++c;
 }
 
-void stack::ReceiveFireDamage(long SizeOfEffect)
+void stack::ReceiveFireDamage(character* Burner, long SizeOfEffect)
 {
+	for(ushort c = 0; c < GetItems();)
+		if(!GetItem(c)->ReceiveFireDamage(Burner, this, SizeOfEffect))
+			++c;
 }

@@ -2156,7 +2156,7 @@ bool character::DodgesFlyingItem(item*, float Speed)
 		return true;
 }
 
-void character::ReceiveFireDamage(long SizeOfEffect)
+void character::ReceiveFireDamage(character* Burner, long SizeOfEffect)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("You burn.");
@@ -2169,7 +2169,7 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 	else
 		SetHP(GetHP() - SizeOfEffect);
 
-	GetStack()->ReceiveFireDamage(SizeOfEffect);
+	GetStack()->ReceiveFireDamage(Burner, SizeOfEffect);
 }
 
 void character::GetPlayerCommand()

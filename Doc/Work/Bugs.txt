@@ -2,3 +2,4 @@ Messagesystem may show an empty [Y/N] boolquestion, if many messages are display
 Ivan's engrave msg is still too long.
 Quitting via the corner X doesn't update hscores.
 Item's GetSquareUnder() doesn't work.
+The shopmaster bug.

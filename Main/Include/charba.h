@@ -166,7 +166,7 @@ public:
 	virtual void Move(vector2d, bool = false);
 	virtual void MoveRandomly();
 	virtual void ReceiveBulimiaDamage();
-	virtual void ReceiveFireDamage(long);
+	virtual void ReceiveFireDamage(character*, long);
 	virtual void ReceiveNutrition(long);
 	virtual void ReceiveOmleUrineEffect(long);
 	virtual void ReceivePepsiEffect(long);

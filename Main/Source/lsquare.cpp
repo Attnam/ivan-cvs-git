@@ -831,7 +831,11 @@ void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelter
 void levelsquare::ChangeGroundLevelTerrain(groundlevelterrain* NewGround)
 {
 	delete GetGroundLevelTerrain();
-	SetGroundLevelTerrain(NewGround);
+	GroundLevelTerrain = NewGround;
+
+	if(NewGround)
+		NewGround->SetSquareUnder(this);
+
 	NewDrawRequested = true;
 	MemorizedUpdateRequested = true;
 	DescriptionChanged = true;
@@ -840,26 +844,14 @@ void levelsquare::ChangeGroundLevelTerrain(groundlevelterrain* NewGround)
 void levelsquare::ChangeOverLevelTerrain(overlevelterrain* NewOver)
 {
 	delete GetOverLevelTerrain();
-	SetOverLevelTerrain(NewOver);
+	OverLevelTerrain = NewOver;
+
+	if(NewOver)
+		NewOver->SetSquareUnder(this);
+
 	NewDrawRequested = true;
 	MemorizedUpdateRequested = true;
 	DescriptionChanged = true;
-}
-
-void levelsquare::SetGroundLevelTerrain(groundlevelterrain* What)
-{
-	GroundLevelTerrain = What;
-
-	if(What)
-		What->SetSquareUnder(this);
-}
-
-void levelsquare::SetOverLevelTerrain(overlevelterrain* What)
-{
-	OverLevelTerrain = What;
-
-	if(What)
-		What->SetSquareUnder(this);
 }
 
 groundterrain* levelsquare::GetGroundTerrain() const

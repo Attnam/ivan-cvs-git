@@ -178,7 +178,7 @@ void venius::PrayGoodEffect()
 
 		if(Char && game::GetPlayer()->GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
 		{
-			Char->ReceiveFireDamage(20);
+			Char->ReceiveFireDamage(game::GetPlayer(), 20);
 			Char->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 		}
 	})
@@ -187,7 +187,7 @@ void venius::PrayGoodEffect()
 void venius::PrayBadEffect()
 {
 	ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
-	game::GetPlayer()->ReceiveFireDamage(20);
+	game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), 20);
 	game::GetPlayer()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 }
 

@@ -757,6 +757,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
 	virtual bool IsExplosive() const { return true; }
+	virtual bool ReceiveFireDamage(character*, stack*, long);
 protected:
 	virtual ushort GetFormModifier() const RET(80)
 	uchar Charge;
@@ -1039,6 +1040,7 @@ public:
 	virtual uchar GetConsumeMaterial() const { return 1; }
 	virtual bool Apply(character*, stack*);
 	virtual bool IsExplosive() const { return (GetMaterial(1) && GetMaterial(1)->IsExplosive()) ? true : false; }
+	virtual bool ReceiveFireDamage(character*, stack*, long);
 protected:
 	virtual std::string NameSingular() const RET("backpack")
 	virtual ushort GetFormModifier() const RET(20)

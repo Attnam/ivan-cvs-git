@@ -140,7 +140,7 @@ public:
 	virtual void HealFully(character*);
 	virtual void SetHealTimer(ushort What) { HealTimer = What; }
 	virtual ushort GetHealTimer() RET(HealTimer)
-	virtual void ReceiveFireDamage(long) {}
+	virtual void ReceiveFireDamage(character*, long) {}
 	virtual void Save(outputfile&) const;
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() RET(false)
