@@ -85,7 +85,7 @@ void worldmapsquare::Draw()
 
 		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
 
-		if(!game::GetOutlineCharacters())
+		if(!configuration::GetOutlineCharacters())
 		{
 			DrawCharacters();
 			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);

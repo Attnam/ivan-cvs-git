@@ -8,25 +8,32 @@
 class configuration
 {
 public:
+	static std::string GetDefaultName() { return DefaultName; }
+	static void SetDefaultName(std::string);
+	static ushort GetAutosaveInterval() { return AutosaveInterval; }
+	static void SetAutosaveInterval(long);
 	static void EditContrast(char);
 	static uchar GetContrast() { return Contrast; }
-	static void SetContrast(uchar What) { Contrast = What; }
+	static void SetContrast(long);
 	static bool GetBeepOnCritical() { return BeepOnCritical; }
 	static void SetBeepOnCritical(bool What) { BeepOnCritical = What; }
-	static std::string GetDefaultName() { return DefaultName; }
-	static void SetDefaultName(std::string What) { DefaultName = What; }
 	static bool GetAutodropLeftOvers() { return AutodropLeftOvers; }
 	static void SetAutodropLeftOvers(bool What) { AutodropLeftOvers = What; }
-	static ushort GetAutosaveInterval() { return AutosaveInterval; }
-	static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
+	static bool GetOutlineCharacters() { return OutlineCharacters; }
+	static void SetOutlineCharacters(bool What) { OutlineCharacters = What; }
+	static bool GetOutlineItems() { return OutlineItems; }
+	static void SetOutlineItems(bool What) { OutlineItems = What; }
 	static void Save();
 	static void Load();
+	static void ShowConfigScreen();
 private:
+	static std::string DefaultName;
+	static ushort AutosaveInterval;
 	static uchar Contrast;
 	static bool BeepOnCritical;
-	static std::string DefaultName;
 	static bool AutodropLeftOvers;
-	static ushort AutosaveInterval;
+	static bool OutlineCharacters;
+	static bool OutlineItems;
 };
 
 #endif

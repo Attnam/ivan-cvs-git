@@ -1105,7 +1105,6 @@ protected:
 	virtual float GetMeleeStrength() const RET(15000)
 );
 
-
 class CHARACTER
 (
 	bat,
@@ -1127,5 +1126,5 @@ protected:
 	virtual std::string NameSingular() const RET("bat")
 	virtual float GetMeleeStrength() const RET(5000)
 );
-#endif
 
+#endif

@@ -84,7 +84,7 @@ public:
 	virtual bool Apply();
 	virtual bool Close();
 	virtual bool Consume();
-	virtual bool DecreaseSoftContrast();
+	virtual bool DecreaseContrast();
 	virtual bool Dip();
 	virtual bool DrawMessageHistory();
 	virtual bool Drop();
@@ -93,7 +93,7 @@ public:
 	virtual bool GainAllItems();
 	virtual bool GoDown();
 	virtual bool GoUp();
-	virtual bool IncreaseSoftContrast();
+	virtual bool IncreaseContrast();
 	virtual bool Kick();
 	virtual bool Look();
 	virtual bool LowerStats();
@@ -250,14 +250,14 @@ public:
 	virtual void Hostility(character*);
 	virtual void KickHit() {}
 	virtual bool HasInfraVision() const { return false; }
-	virtual bool SetAutosaveInterval();
 	virtual uchar CriticalModifier() const { return 20; }
 	virtual std::string StandVerb() const { return "standing"; }
 	virtual stack* GetGiftStack() const;
 	virtual void MoveRandomlyInRoom();
-	virtual void GoHandler(void);
-	virtual void EndGoing(void);
-	virtual bool Go(void);
+	virtual void GoHandler();
+	virtual void EndGoing();
+	virtual bool Go();
+	virtual bool ShowConfigScreen();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

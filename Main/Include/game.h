@@ -106,8 +106,6 @@ public:
 	static uchar GetGodNumber() { return GodNumber; }
 	static long GetBaseScore() { return BaseScore; }
 	static void Turn(ushort Turn = 1) { Turns += Turn; }
-	//static float GetSoftContrast() { return SoftContrast; }
-	//static void EditSoftContrast(float E) { SoftContrast += E; if(SoftContrast < 0) SoftContrast = 0; if(SoftContrast > 2) SoftContrast = 2; }
 	static ulong GetTurns() { return Turns; }
 	static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
@@ -145,27 +143,18 @@ public:
 	static bool IsValidPos(vector2d);
 	static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort);
 	static long NumberQuestion(std::string, vector2d, ushort);
-	static void ToggleOutlineItems() { OutlineItems = !OutlineItems; }
-	static void ToggleOutlineCharacters() { OutlineCharacters = !OutlineCharacters; }
-	static bool GetOutlineItems() { return OutlineItems; }
-	static bool GetOutlineCharacters() { return OutlineCharacters; }
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
 	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static perttu* GetPerttu() { return Perttu; }
 	static void SetPerttu(perttu* What) { Perttu = What; }
-	//static ushort GetAutosaveInterval() { return AutosaveInterval; }
-	//static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
 	static bool HandleQuitMessage();
-	//static bool GetBeepOnCriticalMsg() { return BeepOnCriticalMsg; }
-	//static void SetBeepOnCriticalMsg(bool What) { BeepOnCriticalMsg = What; }
 	static void Beep();
 	static uchar GetDirectionForVector(vector2d);
 	static void SetInGetCommand(bool What) { InGetCommand = What; }
 	static bool GetInGetCommand() { return InGetCommand; }
 private:
-	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
 	static god* God[];
 	static ushort Current;
@@ -184,7 +173,6 @@ private:
 	static uchar GodNumber;
 	static long BaseScore;
 	static ulong Turns;
-	//static float SoftContrast;
 	static std::string AutoSaveFileName;
 	static command* Command[];
 	static bool InWilderness;
@@ -199,8 +187,6 @@ private:
 	static ulong LOSTurns;
 	static bool LOSUpdateRequested;
 	static perttu* Perttu;
-	//static ushort AutosaveInterval;
-	//static bool BeepOnCriticalMsg;
 	static bool InGetCommand;
 };
 

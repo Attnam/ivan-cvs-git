@@ -179,12 +179,12 @@ void levelsquare::Draw()
 			ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 			ushort RealLuminance = game::GetSeeWholeMapCheat() ? ContrastLuminance : ushort(float(Luminance) * configuration::GetContrast() / 100);
 
-			if(!game::GetOutlineItems())
+			if(!configuration::GetOutlineItems())
 			{
 				DrawTerrain();
 				DrawStacks();
 
-				if(!game::GetOutlineCharacters())
+				if(!configuration::GetOutlineCharacters())
 					if(GetStack()->GetItems() <= 1)
 					{
 						DrawCharacters();
@@ -245,7 +245,7 @@ void levelsquare::Draw()
 						igraph::GetTileBuffer()->ClearToColor(0xF81F);
 				}
 
-				if(!game::GetOutlineCharacters())
+				if(!configuration::GetOutlineCharacters())
 				{
 					if(DrawCharacters())
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);

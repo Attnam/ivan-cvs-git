@@ -56,7 +56,7 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::Talk, "chat", 'C', false),
 				new command(&character::Close, "close", 'c', false),
-				new command(&character::DecreaseSoftContrast, "decrease software gamma", 'B', true),
+				new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::Consume, "eat/drink", 'e', true),
@@ -66,7 +66,7 @@ command* game::Command[] = {	0,
 				new command(&character::Go, "go", 'g', false),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseSoftContrast, "increase software gamma", 'b', true),
+				new command(&character::IncreaseContrast, "increase contrast", 'b', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
 				new command(&character::LowerStats, "lower stats cheat", '2', true, true),
@@ -84,7 +84,7 @@ command* game::Command[] = {	0,
 				new command(&character::RestUntilHealed, "rest/heal", 'h', true),
 				new command(&character::Save, "save game", 's', true),
 				new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
-				new command(&character::SetAutosaveInterval, "set autosave frequency", 'f', true),
+				new command(&character::ShowConfigScreen, "show config screen", '\\', true),
 				new command(&character::ShowInventory, "show inventory", 'i', true),
 				new command(&character::ShowKeyLayout, "show key layout", '?', true),
 				new command(&character::DrawMessageHistory, "show message history", 'M', true),
@@ -116,9 +116,6 @@ bool KeyIsOK(char);
 std::string game::PlayerName;
 uchar game::GodNumber;
 ulong game::Turns;
-//float game::SoftContrast = 0.9f;
-bool game::OutlineItems = false, game::OutlineCharacters = false;
-//ushort game::AutosaveInterval = 100;
 
 void game::InitScript()
 {
@@ -152,7 +149,7 @@ void game::Init(std::string Name)
 		if(configuration::GetDefaultName() == "")
 		{
 			DOUBLEBUFFER->ClearToColor(0);
-			SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 20));
+			SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20));
 		}
 		else
 			SetPlayerName(configuration::GetDefaultName());
@@ -170,7 +167,7 @@ void game::Init(std::string Name)
 	else
 	{
 		iosystem::TextScreen(	"For many days you have wandered through a thick and gloomy forest.\n"
-					"Constantly you have had to fight against ultra-violent bears and frog\n"
+					"Constantly you have had to fight against ultra-violent bears and\n"
 					"goblins that roam freely in this area. Screams of Enner Beasts have\n"
 					"wailed in the distance and the cold air has almost freezed your body.\n"
 					"But now your eyes catch the destination: A small settlement of a few\n"
@@ -601,8 +598,8 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << /*SoftContrast << */InWilderness << NextObjectID;
-	SaveFile << OutlineItems << OutlineCharacters << LOSTurns;// << AutosaveInterval;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << InWilderness << NextObjectID;
+	SaveFile << LOSTurns;
 
 	time_t Time = time(0);
 	femath::SetSeed(Time);
@@ -634,8 +631,8 @@ bool game::Load(std::string SaveName)
 
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> /*SoftContrast >> */InWilderness >> NextObjectID;
-	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns;// >> AutosaveInterval;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> InWilderness >> NextObjectID;
+	SaveFile >> LOSTurns;
 
 	time_t Time;
 	SaveFile >> Time;
@@ -1120,14 +1117,14 @@ bool game::IsValidPos(vector2d Pos)
 std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters)
 {
 	EMPTY_MESSAGES();
-	game::DrawEverythingNoBlit();
+	DrawEverythingNoBlit();
 	return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters);
 }
 
 long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 {
 	EMPTY_MESSAGES();
-	game::DrawEverythingNoBlit();
+	DrawEverythingNoBlit();
 	return iosystem::NumberQuestion(Topic, Pos, Color);
 }
 
@@ -1182,6 +1179,7 @@ bool game::HandleQuitMessage()
 				return false;
 	}
 
+	configuration::Save();
 	return true;
 }
 

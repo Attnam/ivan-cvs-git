@@ -31,11 +31,10 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	iosystem::TextScreen(Buffer);
 
-	while(true)
-	{
-		elpuri Elpuri(true, false, false, false);
+	elpuri Elpuri(true, false, false, false);
 
-		switch(iosystem::Menu(Elpuri.GetPicture(), "Start Game\rContinue a game\rView Highscores\rQuit\r", BLUE, WHITE))
+	while(true)
+		switch(iosystem::Menu(Elpuri.GetPicture(), "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE))
 		{
 		case 0:
 			game::Init();
@@ -57,14 +56,16 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 			break;
 		}
 		case 2:
+			configuration::ShowConfigScreen();
+			break;
+		case 3:
 		{
 			highscore HScore;
 			HScore.Draw();
 			break;
 		}
-		case 3:
+		case 4:
 			configuration::Save();
 			return 0;
 		}
-	}
 }

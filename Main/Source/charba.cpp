@@ -1527,21 +1527,17 @@ bool character::SeeWholeMap()
 	return false;
 }
 
-bool character::IncreaseSoftContrast()
+bool character::IncreaseContrast()
 {
 	configuration::EditContrast(5);
-
 	game::GetCurrentArea()->SendNewDrawRequest();
-
 	return false;
 }
 
-bool character::DecreaseSoftContrast()
+bool character::DecreaseContrast()
 {
 	configuration::EditContrast(-5);
-
 	game::GetCurrentArea()->SendNewDrawRequest();
-
 	return false;
 }
 
@@ -2779,14 +2775,14 @@ void character::EndDig(void)
 
 bool character::OutlineCharacters()
 {
-	game::ToggleOutlineCharacters();
+	configuration::SetOutlineCharacters(!configuration::GetOutlineCharacters());
 	game::GetCurrentArea()->SendNewDrawRequest();
 	return false;
 }
 
 bool character::OutlineItems()
 {
-	game::ToggleOutlineItems();
+	configuration::SetOutlineItems(!configuration::GetOutlineItems());
 	game::GetCurrentArea()->SendNewDrawRequest();
 	return false;
 }
@@ -2994,26 +2990,6 @@ void character::Hostility(character* Enemy)
 	}
 }
 
-bool character::SetAutosaveInterval()
-{
-	long Interval = game::NumberQuestion("How many turns do you want the autosave interval be?", vector2d(7,7), WHITE);
-
-	if(Interval < 0)
-	{
-		ADD_MESSAGE("A negative number is not allowed.");
-		return false;
-	}
-
-	if(Interval > 65535)
-	{
-		ADD_MESSAGE("The maximum interval is 65535 turns.");
-		return false;
-	}
-
-	configuration::SetAutosaveInterval(Interval);
-	return false;
-}
-
 stack* character::GetGiftStack() const
 {
 	if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetRoomClass()->AllowDropGifts())
@@ -3054,12 +3030,12 @@ void character::SetHP(short What)
 		}
 }
 
-void character::EndGoing(void)
+void character::EndGoing()
 {
 	DeActivateState(GOING);
 }
 
-bool character::Go(void)
+bool character::Go()
 {
 	vector2d Temp;
 	if((Temp = game::AskForDirectionVector("What direction do you want to go?")) != vector2d(0,0))
@@ -3072,7 +3048,7 @@ bool character::Go(void)
 	return false;
 }
 
-void character::GoHandler(void)
+void character::GoHandler()
 {
 	levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
 	uchar OKDirectionsCounter = 0;
@@ -3080,9 +3056,7 @@ void character::GoHandler(void)
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
-		{
 			OKDirectionsCounter++;	
-		}
 	});
 
 	if((!MoveToSquare->GetOverTerrain()->GetIsWalkable()
@@ -3099,3 +3073,9 @@ void character::GoHandler(void)
 	}
 }
 
+bool character::ShowConfigScreen()
+{
+	configuration::ShowConfigScreen();
+	//game::GetCurrentArea()->SendNewDrawRequest();
+	return true;
+}

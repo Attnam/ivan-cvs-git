@@ -87,7 +87,7 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-			FONT->Printf(DOUBLEBUFFER, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 200+(i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+			FONT->Printf(DOUBLEBUFFER, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 175+(i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 		}
 
 		graphics::BlitDBToScreen();
@@ -168,7 +168,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 				continue;
 			}
 
-		if(Input.length() <= MaxLetters)
+		if(Input.length() < MaxLetters)
 			Input += LastKey;
 	}
 

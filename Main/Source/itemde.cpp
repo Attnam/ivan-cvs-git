@@ -133,27 +133,25 @@ bool scrollofcreatemonster::Read(character* Reader)
 {
 	vector2d TryToCreate;
 
-	for(;;) // Bug bug bug! This can cause an infinite loop if there's no walkable squares around.
+	for(uchar c = 0; c < 100; ++c)
 	{
-		TryToCreate = (Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS));
-		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable())
-			break;
+		TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+		{
+			game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster(5));
+
+			if(Reader->GetIsPlayer())
+				ADD_MESSAGE("As you read the scroll a monster appears.");
+			else
+				if(Reader->GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
+
+			return true;
+		}
 	}
 
-	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
-	{
-		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster(5));
-
-		if(Reader->GetIsPlayer())
-			ADD_MESSAGE("As you read the scroll a monster appears.");
-		else
-			if(Reader->GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
-	}
-	else
-		if(Reader->GetIsPlayer())
-			ADD_MESSAGE("You feel a lost soul fly by you.");
-
+	ADD_MESSAGE("You feel a lost soul fly by you.");
 	return true;
 }
 
