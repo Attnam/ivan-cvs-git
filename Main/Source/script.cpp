@@ -488,7 +488,6 @@ void contentscript<olterrain>::InitDataMap()
   INIT_MEMBER(AttachedEntry);
   INIT_MEMBER(Text);
   INIT_MEMBER(ItemsInside);
-  INIT_MEMBER(LockType);
 }
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
@@ -524,11 +523,6 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
-
-  const uchar* LockType = GetLockType();
-
-  if(LockType)
-    Instance->SetLockType(*LockType);
 
   return Instance;
 }

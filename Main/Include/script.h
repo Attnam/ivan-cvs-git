@@ -265,7 +265,6 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   SCRIPT_MEMBER(uchar, AttachedEntry);
   SCRIPT_MEMBER(festring, Text);
   SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
-  SCRIPT_MEMBER(uchar, LockType);
 };
 
 class squarescript : public script

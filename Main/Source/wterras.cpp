@@ -48,13 +48,4 @@ const char* underwatertunnelexit::GetNameStem() const { return "exit from an und
 vector2d underwatertunnelexit::GetBitmapPos(ushort) const { return vector2d(32, 64); }
 uchar underwatertunnelexit::GetAttachedDungeon() const { return UNDER_WATER_TUNNEL; }
 
-const char* mondedr::GetNameStem() const { return "very unattractive place"; }
-vector2d mondedr::GetBitmapPos(ushort) const { return vector2d(0, 64); }
-uchar mondedr::GetAttachedDungeon() const { return MONDEDR; }
-
-const char* foo::GetNameStem() const { return "foo"; }
-vector2d foo::GetBitmapPos(ushort) const { return vector2d(0, 64); }
-uchar foo::GetAttachedDungeon() const { return FOO; }
-
-
 uchar ocean::GetWalkability() const { return ANY_MOVE&~WALK; }

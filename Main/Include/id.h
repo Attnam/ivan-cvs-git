@@ -32,7 +32,6 @@ class id
   virtual void AddPostFix(festring&) const;
   virtual uchar GetArticleMode() const;
   virtual bool ShowMaterial() const { return false; }
-  virtual void AddLockPostFix(festring&, uchar) const;
   virtual bool AddActiveAdjective(festring&, bool) const;
 };
 

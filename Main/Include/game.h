@@ -202,7 +202,6 @@ class game
   static int KeyQuestion(const festring&, int, int, ...);
   static void LookKeyHandler(vector2d, int);
   static void NameKeyHandler(vector2d, int);
-  static const char* GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);
   static void InstallCurrentEmitter(vector2d, ulong);
@@ -316,7 +315,6 @@ class game
   static valuemap GlobalValueMap;
   static vector2d CursorPos;
   static bool Zoom;
-  static const char* const LockDescription[];
   static ushort** CurrentRedLuxTable;
   static ushort** CurrentGreenLuxTable;
   static ushort** CurrentBlueLuxTable;

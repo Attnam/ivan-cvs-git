@@ -374,6 +374,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(WieldedBitmapPos);
   ADD_MEMBER(IsQuestItem);
   ADD_MEMBER(IsGoodWithPlants);
+  ADD_MEMBER(CreateLockConfigurations);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -441,6 +442,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(HPModifier);
   ADD_MEMBER(IsSafeToCreateDoor);
   ADD_MEMBER(OpenBitmapPos);
+  ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(Walkability);
   ADD_MEMBER(IsAlwaysTransparent);
 }
@@ -568,6 +570,8 @@ void databasesystem::Initialize()
   }
 
   {
+    /* Must be before olterrain */
+
     inputfile ScriptFile(game::GetGameDir() + "Script/item.dat", &game::GetGlobalValueMap());
     databasecreator<item>::ReadFrom(ScriptFile);
   }

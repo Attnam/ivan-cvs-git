@@ -301,8 +301,6 @@
 #define TEAK 17
 #define DWARF_BIRCH 18
 
-#define DOOR_PRISON 1
-
 #define SNOW_BOULDER 4
 
 #define OREE_LAIR_ENTRY 3

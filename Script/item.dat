@@ -82,6 +82,7 @@ item
 	WieldedBitmapPos = 176, 0;
 	IsQuestItem = false;
 	IsGoodWithPlants = true;
+	CreateLockConfigurations = false; /* Can't be overridden by Configs */
 }
 
 materialcontainer
@@ -1540,8 +1541,10 @@ mine /*materialcontainer-> */
 
 key
 {
+	/* Bug: CreateLockConfigurations = true before key doesn't work! */
+
 	DefaultSize = 10;
-	Possibility = 100;
+	Possibility = 0;
 	Price = 50;
 	Category = TOOL;
 	DefaultMainVolume = 15;
@@ -1553,6 +1556,12 @@ key
 	Roundness = 10;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 368;
+	IsAbstract = true;
+
+	Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
+	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
+	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
+	Config HEXAGONAL_LOCK; { Adjective = "hexagonal"; }
 }
 
 shield /* armor-> */
@@ -2164,6 +2173,7 @@ itemcontainer
 	IsDestroyable = false;
 	AttachedGod = ATAVUS;
 	WieldedBitmapPos = 160, 144;
+	CreateLockConfigurations = true;
 
 	Config SMALL_CHEST;
 	{
@@ -2860,4 +2870,23 @@ wondersmellstaff
 		MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
 		MaterialConfigChances = { 3, 100, 50, 25; }
 	}
+}
+
+charmlyre
+{
+	DefaultMainVolume = 1500;
+	StrengthModifier = 50;
+	BitmapPos = 64, 368;
+	FormModifier = 20;
+	DefaultSize = 50;
+	Roundness = 50;
+	Possibility = 5;
+	Category = TOOL;
+	MainMaterialConfig == UNICORN_HORN;
+	NameSingular = "lyre";
+	PostFix = "of charm";
+	Price = 1500;
+	CanBePiled = false;
+	AttachedGod = DULCIS;
+	WieldedBitmapPos = 176, 352;
 }

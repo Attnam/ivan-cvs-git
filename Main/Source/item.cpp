@@ -5,6 +5,8 @@ const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy",
 
 itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
+bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
+
 item::item(donothing) : Slot(0), ItemFlags(0), CloneMotherID(0) { }
 void item::InstallDataBase(ushort Config) { databasecreator<item>::InstallDataBase(this, Config); }
 bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
@@ -857,4 +859,32 @@ void item::SetConfig(ushort NewConfig)
 god* item::GetMasterGod() const
 {
   return game::GetGod(GetConfig());
+}
+
+void itemprototype::CreateSpecialConfigurations()
+{
+  /* Gum solution */
+
+  if(Config.begin()->second.CreateLockConfigurations)
+    {
+      const item::databasemap& KeyConfig = key_ProtoType.GetConfig();
+
+      for(item::databasemap::const_iterator i1 = Config.begin(); !(i1->first & LOCK_BITS); ++i1)
+	{
+	  ushort NewConfig = i1->first | BROKEN_LOCK;
+	  itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
+	  TempDataBase.InitDefaults(NewConfig);
+	  TempDataBase.PostFix << "with a broken lock";
+	  TempDataBase.Possibility = 0;
+
+	  for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
+	    {
+	      ushort NewConfig = i1->first | i2->first;
+	      itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
+	      TempDataBase.InitDefaults(NewConfig);
+	      TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
+	      TempDataBase.Possibility = 0;
+	    }
+	}
+    }
 }

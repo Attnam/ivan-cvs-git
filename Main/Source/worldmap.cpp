@@ -97,6 +97,7 @@ void worldmap::Generate()
 {
   Alloc2D(OldAltitudeBuffer, XSize, YSize);
   Alloc2D(OldTypeBuffer, XSize, YSize);
+
   /*  vector2d Middle = vector2d(XSize, YSize);
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
@@ -105,9 +106,6 @@ void worldmap::Generate()
 	AltitudeBuffer[x][y] = 10000 / (DistanceFromMiddle + 3) - 1000 + RAND_N(500);
       }
       SmoothAltitute();*/
-
-
-
 
   while(true)
     {
@@ -258,9 +256,9 @@ void worldmap::Generate()
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
       RevealEnvironment(AttnamPos, 1);
+      GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
+      SetEntryPos(NEW_ATTNAM, NewAttnamPos);
       SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
-      GetWSquare(NewAttnamPos)->ChangeOWTerrain(new foo);
-      SetEntryPos(FOO, NewAttnamPos);
       GetWSquare(TunnelEntry)->ChangeOWTerrain(new underwatertunnel);
       SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
       GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);

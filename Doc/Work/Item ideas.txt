@@ -9,7 +9,8 @@ knuckles
 Weapons:
 
 baseball bat
-Machete
+steam-powered flamethrower
+machete
 
 Armor:
 

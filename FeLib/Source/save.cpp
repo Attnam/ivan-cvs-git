@@ -409,7 +409,7 @@ bool inputfile::ReadBool()
 
 outputfile& operator<<(outputfile& SaveFile, const festring& String)
 {
-  uchar Length = String.GetSize();
+  ushort Length = String.GetSize();
   SaveFile << Length;
 
   if(Length)
@@ -421,7 +421,7 @@ outputfile& operator<<(outputfile& SaveFile, const festring& String)
 inputfile& operator>>(inputfile& SaveFile, festring& String)
 {
   char* RealBuffer, StackBuffer[1024];
-  uchar Length;
+  ushort Length;
   SaveFile >> Length;
   RealBuffer = Length < 1024 ? StackBuffer : new char[Length + 1];
   String.Empty();

@@ -32,13 +32,14 @@ ulong stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1
 ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
 
 ushort itemcontainer::GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
-void itemcontainer::AddPostFix(festring& String) const { AddLockPostFix(String, LockType); }
 
 bool mine::AddAdjective(festring& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
 bool beartrap::AddAdjective(festring& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
 
 ushort carrot::GetMaterialColorB(ushort) const { return MakeRGB16(80, 100, 16); }
+
+ushort charmlyre::GetMaterialColorB(ushort) const { return MakeRGB16(150, 130, 110); }
 
 void potion::GenerateLeftOvers(character* Eater)
 {
@@ -862,18 +863,6 @@ bool key::Apply(character* User)
   return true;
 }
 
-void key::Save(outputfile& SaveFile) const
-{
-  item::Save(SaveFile);
-  SaveFile << LockType;
-}
-
-void key::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> LockType;
-}
-
 void materialcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -930,12 +919,6 @@ void oillamp::VirtualConstructor(bool Load)
 void mine::VirtualConstructor(bool)
 {
   Active = false; /* this must be false */
-}
-
-void key::VirtualConstructor(bool Load)
-{ 
-  if(!Load)
-    SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
 }
 
 bool whistle::Apply(character* Whistler) 
@@ -1005,9 +988,29 @@ void itemcontainer::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
       SetIsLocked(RAND() % 3 != 0);
       ulong ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
+
+      /* Terrible gum solution! */
+
+      if(!(GetConfig() & LOCK_BITS))
+	{
+	  ushort NormalLockTypes = 0;
+	  databasemap::const_iterator i;
+
+	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
+	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID))
+	      ++NormalLockTypes;
+
+	  ushort ChosenLock = RAND() % NormalLockTypes;
+
+	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
+	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
+	      {
+		SetConfig(i->first);
+		break;
+	      }
+	}
 
       for(ushort c = 0; c < ItemNumber; ++c)
 	{
@@ -1030,13 +1033,13 @@ void itemcontainer::VirtualConstructor(bool Load)
 
 bool itemcontainer::TryKey(item* Key, character* Applier)
 {
-  if(GetLockType() == DAMAGED)
+  if(GetConfig() & BROKEN_LOCK)
     {
       ADD_MESSAGE("The lock is broken.");
       return true;
     }
 
-  if(Key->CanOpenLockType(GetLockType()))
+  if(Key->CanOpenLockType(GetConfig()&LOCK_BITS))
     {
       if(IsLocked())
 	{
@@ -1108,14 +1111,14 @@ void itemcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   Contained->Save(SaveFile);
-  SaveFile << LockType << Locked;
+  SaveFile << Locked;
 }
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   Contained->Load(SaveFile);
-  SaveFile >> LockType >> Locked;
+  SaveFile >> Locked;
 }
 
 bool itemcontainer::Polymorph(character* Polymorpher, stack* CurrentStack)
@@ -1128,15 +1131,6 @@ bool itemcontainer::Polymorph(character* Polymorpher, stack* CurrentStack)
 itemcontainer::~itemcontainer()
 {
   delete Contained;
-}
-
-bool key::AddAdjective(festring& String, bool Articled) const
-{
-  if(Articled)
-    String << "a ";
-
-  String << game::GetLockDescription(LockType) << ' ';
-  return true;
 }
 
 /* Victim is the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
@@ -1441,7 +1435,7 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
   CopyMaterial(MC.ContainedMaterial, ContainedMaterial);
 }
 
-itemcontainer::itemcontainer(const itemcontainer& Container) : item(Container), LockType(Container.LockType), Locked(Container.Locked)
+itemcontainer::itemcontainer(const itemcontainer& Container) : item(Container), Locked(Container.Locked)
 {
   Contained = new stack(0, this, HIDDEN, true);
 }
@@ -1532,11 +1526,6 @@ bool materialcontainer::CanBePiledWith(const item* Item, const character* Viewer
       && Weapon->ContainedMaterial != 0
       && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
       && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
-}
-
-bool key::CanBePiledWith(const item* Item, const character* Viewer) const
-{
-  return item::CanBePiledWith(Item, Viewer) && LockType == static_cast<const key*>(Item)->LockType;
 }
 
 ulong itemcontainer::GetTruePrice() const
@@ -1737,7 +1726,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type
       if(IsLocked() && Damage > SV && RAND() % (100 * Damage / SV) >= 100)
 	{
 	  SetIsLocked(false);
-	  SetLockType(DAMAGED);
+	  SetConfig(GetConfig()&~LOCK_BITS|BROKEN_LOCK);
 
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The %s's lock shatters to pieces.", GetNameSingular().CStr());
@@ -1774,13 +1763,13 @@ void backpack::ReceiveFluidSpill(material* Liquid)
 
 void magicalwhistle::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
+  whistle::Save(SaveFile);
   SaveFile << LastUsed;
 }
 
 void magicalwhistle::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
+  whistle::Load(SaveFile);
   SaveFile >> LastUsed;
 }
 
@@ -2428,6 +2417,91 @@ void magicalwhistle::FinalProcessForBone()
 }
 
 void horn::FinalProcessForBone()
+{
+  item::FinalProcessForBone();
+  LastUsed = 0;
+}
+
+
+
+
+
+
+bool charmlyre::Apply(character* Charmer)
+{
+  if(LastUsed != 0 && game::GetTicks() - LastUsed < 10000)
+    {
+      if(Charmer->IsPlayer())
+	ADD_MESSAGE("You produce a highly alluring sound.");
+      else if(Charmer->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s plays %s and produces a highly alluring sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      else 
+	ADD_MESSAGE("You hear a lyre playing.");
+    }
+  else
+    {
+      LastUsed = game::GetTicks();
+
+      if(Charmer->IsPlayer())
+	ADD_MESSAGE("You produce a mesmerizing sound.");
+      else if(Charmer->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s plays %s and produces a mesmerizing sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      else 
+	ADD_MESSAGE("You hear a mesmerizing tune playing.");
+
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  square* Square = PLAYER->GetNeighbourSquare(d);
+
+	  if(Square)
+	    {
+	      character* Char = Square->GetCharacter();
+
+	      if(Char)
+		if(Char->IsCharmable())
+		  if(PLAYER->GetRelativeDanger(Char) > 4.0f)
+		    {
+		      if(Char->GetTeam() == PLAYER->GetTeam())
+			ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
+		      else if(Char->GetRelation(PLAYER) == HOSTILE)
+			ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
+		      else
+			ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
+
+		      Char->ChangeTeam(PLAYER->GetTeam());
+		    }
+		  else
+		    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
+		else
+		  ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
+	    }
+	}
+    }
+
+  Charmer->EditAP(-1000);
+  game::CallForAttention(GetPos(), GetRange());
+  return true;
+}
+
+void charmlyre::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void charmlyre::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void charmlyre::VirtualConstructor(bool Load)
+{
+  item::VirtualConstructor(Load);
+  LastUsed = 0;
+}
+
+void charmlyre::FinalProcessForBone()
 {
   item::FinalProcessForBone();
   LastUsed = 0;

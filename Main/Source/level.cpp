@@ -4,8 +4,8 @@
 #define ON_POSSIBLE_ROUTE 2
 #define STILL_ON_POSSIBLE_ROUTE 4
 #define PREFERRED 8
-#define ICE 16
-#define STONE 32
+#define ICE_TERRAIN 16
+#define STONE_TERRAIN 32
 
 level::level() : Room(1, static_cast<room*>(0)) { }
 void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
@@ -1991,7 +1991,7 @@ void level::GenerateGlacier()
       for(x = 0; x < XSize; ++x)
 	for(y = 0; y < YSize; ++y)
 	  if(FlagMap[x][y] != PREFERRED)
-	    FlagMap[x][y] |= RAND_2 ? ICE : STONE;
+	    FlagMap[x][y] |= RAND_2 ? ICE_TERRAIN : STONE_TERRAIN;
 
       for(x = 0; x < XSize; ++x)
 	{
@@ -2010,14 +2010,14 @@ void level::GenerateGlacier()
 		      if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
 			{
 			  ++SquaresAround;
-			  if(FlagMap[Pos.X][Pos.Y] & ICE)
+			  if(FlagMap[Pos.X][Pos.Y] & ICE_TERRAIN)
 			    ++IceAround;
 			}
 		    }
 		  if(IceAround > SquaresAround / 2)
-		    FlagMap[x][y] = ICE;
+		    FlagMap[x][y] = ICE_TERRAIN;
 		  else
-		    FlagMap[x][y] = STONE;
+		    FlagMap[x][y] = STONE_TERRAIN;
 		}
 	    }
 	}
@@ -2026,7 +2026,7 @@ void level::GenerateGlacier()
 	for(y = 0; y < YSize; ++y)
 	  if(!(FlagMap[x][y] & PREFERRED))
 	    {
-	      if(FlagMap[x][y] & ICE)
+	      if(FlagMap[x][y] & ICE_TERRAIN)
 		GetLSquare(x,y)->ChangeOLTerrain(new wall(ICE_WALL));
 	      else
 		GetLSquare(x,y)->ChangeOLTerrain(new wall(STONE_WALL));

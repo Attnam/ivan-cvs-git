@@ -379,7 +379,7 @@ Bear traps made of stronger materials should do more damage.
 If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
 Unarmed accustomization.
 (example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable).
-The game should ask player whether to unlock a door with a key or not.
+*The game should ask player whether to unlock a door with a key or not.
 Thunder hammer's power should be proportional to relation with Loricatus.
 The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
@@ -402,9 +402,13 @@ Ikiros should forge weapons from raw materials provided by the player.
 Kiss command.
 Cloak of fire resistance should protect items in the inventory from fire.
 Eyeglasses.
+[IGOR] Reload option.
+[IGOR] Copy picture.
 Shift + direction should act as go command.
 Flying monsters can fly over jungle...
 Jussi The tenant farmer wielding a hoe on some swamp.
 Snow pines should change to regular pines when kicked a few times.
 Library improvement - When walking towards the book cases should show the inventory (like with doors)
-Wand of change material (change everything in wand path to material of the wand)
+Wand of change material (change everything in wand path to material of the wand).
+Go should stop if the player teleports.
+Ability to absorb specific elemental damage.

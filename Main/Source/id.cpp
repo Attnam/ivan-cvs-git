@@ -88,13 +88,6 @@ void id::AddPostFix(festring& String) const
     String << ' ' << GetPostFix();
 }
 
-void id::AddLockPostFix(festring& String, uchar LockType) const
-{
-  /* Doesn't yet support other locktype articles than "a" */
-
-  String << " with a " << game::GetLockDescription(LockType) << " lock";
-}
-
 uchar id::GetArticleMode() const
 {
   return NORMAL_ARTICLE;

@@ -373,8 +373,6 @@
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
-#define MONDEDR 5
-#define FOO 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -481,6 +479,24 @@
 
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
+
+#define N_LOCK_ID 1024
+#define S_LOCK_ID 16384
+#define LOCK_DELTA 1024
+
+#define LOCK_BITS 0xFC00
+
+#define BROKEN_LOCK S_LOCK_ID
+
+/* Normal lock types, which can be randomized */
+
+#define ROUND_LOCK (N_LOCK_ID + LOCK_DELTA * 1)
+#define SQUARE_LOCK (N_LOCK_ID + LOCK_DELTA * 2)
+#define TRIANGULAR_LOCK (N_LOCK_ID + LOCK_DELTA * 3)
+
+/* Special lock types, which must be generated in the script */
+
+#define HEXAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 1)
 
 #define DESERT 1
 #define JUNGLE 2

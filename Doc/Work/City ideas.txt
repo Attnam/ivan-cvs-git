@@ -14,7 +14,7 @@ Mondedr - city of thieves and assassins (like Ankh-Morpork)
 terrain: swamp
 alignment: chaos, death, self, man
 
-Rihajad - desert city (like medieval Bagdad)
+Rihajab - desert city (like medieval Bagdad)
 terrain: desert
 alignment: order, man
 

@@ -16,6 +16,8 @@ void olterrain::InstallDataBase(ushort Config) { databasecreator<olterrain>::Ins
 uchar glterrain::GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
 uchar olterrain::GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
 
+bool olterraindatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
+
 festring olterrain::GetText() const { return ""; }
 
 void lterrain::Load(inputfile& SaveFile)
@@ -265,8 +267,35 @@ bool olterrain::CanBeDestroyed() const
   return DataBase->CanBeDestroyed && ((GetPos().X != 0 && GetPos().Y != 0 && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
 }
 
+extern itemprototype key_ProtoType;
+
+void olterrainprototype::CreateSpecialConfigurations()
+{
+  /* Gum solution */
+
+  if(Config.begin()->second.CreateLockConfigurations)
+    {
+      const item::databasemap& KeyConfig = key_ProtoType.GetConfig();
+
+      for(olterrain::databasemap::const_iterator i1 = Config.begin(); !(i1->first & LOCK_BITS); ++i1)
+	{
+	  ushort NewConfig = i1->first | BROKEN_LOCK;
+	  olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
+	  TempDataBase.InitDefaults(NewConfig);
+	  TempDataBase.PostFix << "with a broken lock";
+
+	  for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
+	    {
+	      ushort NewConfig = i1->first | i2->first;
+	      olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
+	      TempDataBase.InitDefaults(NewConfig);
+	      TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
+	    }
+	}
+    }
+}
+
 bool olterrain::IsTransparent() const
 {
   return IsAlwaysTransparent() || MainMaterial->IsTransparent();
 }
-

@@ -2,7 +2,6 @@
 
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
 void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
-void door::AddPostFix(festring& String) const { AddLockPostFix(String, LockType); }
 vector2d door::GetBitmapPos(ushort Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
@@ -162,13 +161,13 @@ void door::BeKicked(character* Kicker, ushort KickDamage)
 void door::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
-  SaveFile << Opened << Locked << LockType << BoobyTrap;
+  SaveFile << Opened << Locked << BoobyTrap;
 }
 
 void door::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
-  SaveFile >> Opened >> Locked >> LockType >> BoobyTrap;
+  SaveFile >> Opened >> Locked >> BoobyTrap;
 }
 
 void door::MakeWalkable()
@@ -281,13 +280,16 @@ void altar::ReceiveVomit(character* Who)
 
 bool door::AddAdjective(festring& String, bool Articled) const
 {
+  if(olterrain::AddAdjective(String, Articled))
+    Articled = false;
+
   if(Articled)
     String << (Opened ? "an open" : "a closed");
   else
     String << (Opened ? "open" : "closed");
 
   if(IsLocked())
-    String << ", locked ";
+    String << " locked ";
   else
     String << ' ';
 
@@ -599,11 +601,10 @@ void door::Break()
   else
     {
       bool Open = Opened;
-      brokendoor* Temp = new brokendoor(0, NO_MATERIALS);
+      brokendoor* Temp = new brokendoor(GetConfig(), NO_MATERIALS);
       Temp->InitMaterials(GetMainMaterial()->Clone());
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
-      Temp->SetLockType(LockType);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)
@@ -681,10 +682,30 @@ void door::VirtualConstructor(bool Load)
 
   if(!Load)
     {
+      /* Terrible gum solution! */
+
+      if(!(GetConfig() & LOCK_BITS))
+	{
+	  ushort NormalLockTypes = 0;
+	  databasemap::const_iterator i;
+
+	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
+	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID))
+	      ++NormalLockTypes;
+
+	  ushort ChosenLock = RAND() % NormalLockTypes;
+
+	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
+	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
+	      {
+		SetConfig(i->first);
+		break;
+	      }
+	}
+
       SetBoobyTrap(0);
       SetIsOpened(false);
       SetIsLocked(false);
-      SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
     }
 }
 
@@ -698,7 +719,7 @@ bool door::TryKey(item* Thingy, character* Applier)
   if(Opened)
     return false;
 
-  if(Thingy->CanOpenLockType(LockType))
+  if(Thingy->CanOpenLockType(GetConfig()&LOCK_BITS))
     {
       if(Applier->IsPlayer())
 	{
@@ -1066,7 +1087,7 @@ uchar door::GetWalkability() const
 
 bool door::IsTransparent() const
 {
-  return Opened || MainMaterial->IsTransparent() || GetConfig() == DOOR_PRISON;
+  return Opened || MainMaterial->IsTransparent();
 }
 
 bool liquidterrain::DipInto(item* ToBeDipped, character* Who)

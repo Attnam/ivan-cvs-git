@@ -65,19 +65,19 @@ Each god hates the three gods on the opposite side of the octagon and likes the
 two adjacent to him/her.
 
 
-			Valpurus	Sophos		Dulcis
+			Legifer		Valpurus	Sophos
 
-		Legifer						Seges
+		Atavus						Dulcis
 
-	Atavus								Loricatus
+	Silva								Seges
 
-	Silva								Mellis
+	Terra								Loricatus
 
-	Terra								Nefas
+	Mortifer							Mellis
 
-		Mortifer					Hetairia
+		Cruentus					Nefas
 
-			Cruentus	Infuscor	Cleptia
+			Infuscor	Cleptia		Hetairia
 
 
 List of all possible alignment combinations

@@ -436,18 +436,9 @@ class ITEM
   item,
  public:
   virtual bool Apply(character*);
-  void SetLockType(uchar What) { LockType = What; }
-  uchar GetLockType() const { return LockType; }
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
   virtual bool CanOpenDoors() const { return true; }
-  virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
-  virtual bool CanBePiledWith(const item*, const character*) const;
- protected:
-  virtual bool AddAdjective(festring&, bool) const;
-  virtual void VirtualConstructor(bool);
-  uchar LockType;
+  virtual bool CanOpenLockType(ushort AnotherLockType) const { return GetConfig() == AnotherLockType; }
 );
 
 class ITEM
@@ -499,8 +490,6 @@ class ITEM
   virtual bool TryKey(item*, character*);
   virtual bool HasLock() const { return true; }
   virtual void Lock() { Locked = true; }
-  virtual uchar GetLockType() const { return LockType; }
-  virtual void SetLockType(uchar What) { LockType = What; }
   virtual bool IsLocked() const { return Locked; }
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual stack* GetContained() const { return Contained; }
@@ -526,10 +515,8 @@ class ITEM
   virtual void FinalProcessForBone();
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
-  virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
   stack* Contained;
-  uchar LockType;
   bool Locked;
 );
 
@@ -642,6 +629,23 @@ class ITEM
   item,
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
+);
+
+class ITEM
+(
+  charmlyre,
+  item,
+ public:
+  virtual bool Apply(character*);
+  virtual bool IsAppliable(const character*) const { return true; }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual void FinalProcessForBone();
+  virtual ushort GetRange() const { return 200; }
+ protected:
+  virtual ushort GetMaterialColorB(ushort) const;
+  virtual void VirtualConstructor(bool);
+  ulong LastUsed;
 );
 
 #endif

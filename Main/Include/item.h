@@ -21,7 +21,7 @@ typedef std::vector<item*> itemvector;
 struct itemdatabase
 {
   void InitDefaults(ushort);
-  bool AllowRandomInstantiation() const { return true; }
+  bool AllowRandomInstantiation() const;
   ushort Config;
   ushort Possibility;
   long Score;
@@ -102,6 +102,7 @@ struct itemdatabase
   vector2d WieldedBitmapPos;
   bool IsQuestItem;
   bool IsGoodWithPlants;
+  bool CreateLockConfigurations;
 };
 
 class itemprototype
@@ -115,7 +116,7 @@ class itemprototype
   ushort GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
-  void CreateSpecialConfigurations() { }
+  void CreateSpecialConfigurations();
   const itemdatabase& ChooseBaseForConfig(ushort);
  private:
   ushort Index;
@@ -232,7 +233,7 @@ class item : public object
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  virtual bool CanOpenLockType(uchar) const { return false; }
+  virtual bool CanOpenLockType(ushort) const { return false; }
   virtual bool IsWhip() const { return false; }
   DATA_BASE_VALUE(ushort, Config);
   virtual DATA_BASE_VALUE(long, Score);

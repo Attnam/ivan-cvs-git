@@ -32,8 +32,8 @@
 #include "save.h"
 #include "miscitem.h"
 
-#define SAVE_FILE_VERSION 113 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 100 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 114 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 101 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -86,7 +86,6 @@ character* game::Petrus = 0;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
-const char* const game::LockDescription[] = { "round", "square", "triangular", "broken", "hexagonal" };
 god** game::God;
 
 const int game::MoveCommandKeyWithNumberPad[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };

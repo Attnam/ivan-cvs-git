@@ -48,7 +48,6 @@ class OLTERRAIN
   virtual void ReceiveDamage(character*, ushort, ushort);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
-  virtual void SetLockType(uchar What) { LockType = What; }
   virtual bool TryKey(item*, character*);
   virtual void SetParameters(uchar);
   virtual void Lock() { SetIsLocked(true); }
@@ -56,7 +55,6 @@ class OLTERRAIN
   virtual bool IsTransparent() const;
   virtual uchar GetWalkability() const;
  protected:
-  virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
   virtual bool AddAdjective(festring&, bool) const;
   virtual void Break();
@@ -68,7 +66,6 @@ class OLTERRAIN
   bool Opened;
   bool Locked;
   uchar BoobyTrap;
-  uchar LockType;
 );
 
 class OLTERRAIN

@@ -41,7 +41,7 @@ command* commandsystem::Command[] =
   new command(&Go, "go", 'g', false),
   new command(&GoDown, "go down/enter area", '>', true),
   new command(&GoUp, "go up", '<', true),
-  new command(&Kick, "kick", 'k', false),
+  new command(&Kick, "kick", 'K', false),
   new command(&Look, "look", 'L', true),
   new command(&AssignName, "name", 'n', false),
   new command(&Offer, "offer", 'f', false),

@@ -6,15 +6,29 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+July 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A small bug in save.cpp corrected
+	* A great bug in rooms.cpp corrected
+	* You can now easily add new lock types
+	* Disabled several of Hex's tests
+	* 'K' now kicks instead of 'k'
+	* Lyre picture added to item.pcx by Kahvi
+	* Animated enner beast head and lyre's wielded picture added to humanoid.pcx
+	  by Kahvi
+	* Impenetrable jungle terrain + border tiles added to olterra.pcx by Kahvi
+	* Added lyre of charm which can tame weak monsters
+
 July 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Support for keyboards without number pad added
 	* Some keys changed (because of the above change). Probably very annoying.
-	
+
 June 05 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Very basic worldmap tile types added. (much work needed still)
-	
+
 May 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
 
 	* The new path-finding (or actually checking whether a path exists...) algorithm added

@@ -426,6 +426,7 @@ guard
 		ClothColor = rgb16(144, 144, 200);
 		CanBeConfused = false;
 		ClothColorIsSparkling = true;
+		Inventory == key(HEXAGONAL_LOCK);
 		FriendlyReplies =
 		{
 			5,
@@ -743,7 +744,7 @@ ennerbeast
 	LegBitmapPos = 16, 48;
 	TorsoBitmapPos = 32, 48;
 	ArmBitmapPos = 64, 48;
-	HeadBitmapPos = 112, 128;
+	HeadBitmapPos = 112, 320;
 	HairColor = rgb16(64, 20, 0);
 	ClothColor = rgb16(0, 0, 100);
 	BootColor = rgb16(90, 50, 10);

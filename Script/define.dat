@@ -144,14 +144,6 @@
 #define VALUABLE 65536
 #define MISC 131072
 
-#define NUMBER_OF_LOCK_TYPES 3
-
-#define ROUND 0
-#define SQUARE 1
-#define TRIANGULAR 2
-#define DAMAGED 3
-#define HEXAGONAL 4
-
 #define GOOD 1
 #define NEUTRAL 2
 #define EVIL 3
@@ -560,9 +552,7 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
-/* -------------------------------- ADDED TERRAIN TYPES */
 #define DARK_GRASS_TERRAIN 7
-/*   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #define SAND_TERRAIN 8
 
 #define POOL 1
@@ -587,16 +577,12 @@
 #define SNOW_PINE 10
 #define SNOW_FIR 11
 #define ANVIL 12
-/* ------------------------------ ADDED DECORATIONS */
 #define SHARD 13
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #define CACTUS 14
 #define OAK 15
 #define BIRCH 16
 #define TEAK 17
 #define DWARF_BIRCH 18
-
-#define DOOR_PRISON 1
 
 #define SNOW_BOULDER 4
 
@@ -628,8 +614,6 @@
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
-#define MONDEDR 5
-#define FOO 6
 #define UNDER_WATER_TUNNEL_EXIT 128
 
 #define VESANA_LEVEL 2
@@ -692,6 +676,22 @@
 
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
+
+#define N_LOCK_ID 1024
+#define S_LOCK_ID 16384
+#define LOCK_DELTA 1024
+
+#define BROKEN_LOCK S_LOCK_ID
+
+/* Normal lock types, which can be randomized */
+
+#define ROUND_LOCK (N_LOCK_ID + LOCK_DELTA * 1)
+#define SQUARE_LOCK (N_LOCK_ID + LOCK_DELTA * 2)
+#define TRIANGULAR_LOCK (N_LOCK_ID + LOCK_DELTA * 3)
+
+/* Special lock types, which must be generated in the script */
+
+#define HEXAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 1)
 
 #define DESERT 1
 #define JUNGLE 2

@@ -3,7 +3,7 @@
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
  */
 
-Dungeons = 6;
+Dungeons = 4;
 Teams = 9;
 
 /*
@@ -762,8 +762,8 @@ Dungeon ATTNAM;
 					T = throne;
 					| = decoration(CARPET);
 					A = VALPURIUM altar(VALPURUS);
-					D = MARBLE door { LockType = HEXAGONAL; }
-					L = MARBLE door { Parameters = LOCKED; LockType = HEXAGONAL; }
+					D = MARBLE door(HEXAGONAL_LOCK);
+					L = MARBLE door(HEXAGONAL_LOCK) { Parameters = LOCKED; }
 					b = decoration(SNOW_FIR);
 					1 = decoration(POOL_CORNER) { VisualEffects = NONE; }
 					2 = decoration(POOL_CORNER) { VisualEffects = MIRROR; }
@@ -1552,6 +1552,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			EntryIndex = STAIRS_UP + 1;
 			AttachRequired = true;
 		}
+
 		Room
 		{
 			Pos = 2:XSize-5,2:YSize-5;
@@ -1795,42 +1796,5 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times = 10:30;
 		}
 
-	}
-}
-Dungeon MONDEDR;
-{
-	Levels = 1;
-
-	Level 0;
-	{
-		Description = "FOO";
-		ShortDescription = "Foo";
-		Size = 50, 50;
-		GenerateMonsters = false;
-		Items = 0;
-		IsOnGround = true;
-		TeamDefault = MONSTER_TEAM;
-		AmbientLight = rgb24(118, 118, 118);
-		LOSModifier = 48;
-	}
-}
-
-Dungeon FOO;
-{
-	Levels = 1;
-
-	Level 0;
-	{
-		Description = "FOO";
-		ShortDescription = "Foo";
-		Size = 50, 50;
-		GenerateMonsters = false;
-		Items = 0;
-		IsOnGround = true;
-		TeamDefault = MONSTER_TEAM;
-		AmbientLight = rgb24(118, 118, 118);
-		LOSModifier = 48;
-		Type = GLACIER;
-		CanGenerateBone = true;
 	}
 }

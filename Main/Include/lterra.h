@@ -156,7 +156,7 @@ class glterrain : public lterrain, public gterrain
 struct olterraindatabase
 {
   void InitDefaults(ushort);
-  bool AllowRandomInstantiation() const { return true; }
+  bool AllowRandomInstantiation() const;
   ushort Config;
   vector2d BitmapPos;
   festring Article;
@@ -191,6 +191,7 @@ struct olterraindatabase
   uchar HPModifier;
   bool IsSafeToCreateDoor;
   vector2d OpenBitmapPos;
+  bool CreateLockConfigurations;
   uchar Walkability; 
   bool IsAlwaysTransparent;
 };
@@ -206,7 +207,7 @@ class olterrainprototype
   ushort GetIndex() const { return Index; }
   const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
   const olterrainprototype* GetBase() const { return Base; }
-  void CreateSpecialConfigurations() { }
+  void CreateSpecialConfigurations();
   const olterraindatabase& ChooseBaseForConfig(ushort);
  private:
   ushort Index;
@@ -287,7 +288,6 @@ class olterrain : public lterrain, public oterrain
   virtual uchar GetAttachedGod() const;
   void SetConfig(ushort);
   god* GetMasterGod() const;
-  virtual void SetLockType(uchar) { }
   virtual DATA_BASE_VALUE(uchar, Walkability);
   DATA_BASE_BOOL(IsAlwaysTransparent);
   virtual bool IsTransparent() const;

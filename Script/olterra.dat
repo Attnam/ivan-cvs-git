@@ -41,6 +41,7 @@ olterrain
 	HPModifier = 100;
 	IsSafeToCreateDoor = false;
 	AttachedGod = NONE;
+	CreateLockConfigurations = false; /* Can't be overridden by Configs */
 	Walkability = ANY_MOVE;
 	IsAlwaysTransparent = true;
 }
@@ -283,8 +284,6 @@ decoration
 		HPModifier = 25;
 	}
 
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ADDED DECORATIONS */
-
 	Config SHARD;
 	{
 		OKVisualEffects = MIRROR;
@@ -374,15 +373,7 @@ door /* olterrain-> */
 	OpenBitmapPos = 0, 48;
 	/* PostFix depends on LockType */
 	HPModifier = 20;
-
-	Config DOOR_PRISON;
-	{
-		DigMessage = "You break the prison door.";
-		CanBeDestroyed = true;
-		MainMaterialConfig == IRON;
-		NameSingular = "prison door";
-		BitmapPos = 0, 80;
-	}
+	CreateLockConfigurations = true;
 }
 
 stairs /* olterrain-> */
@@ -484,15 +475,7 @@ brokendoor /* olterrain->door-> */
 	DigMessage = "You destroy the broken door.";
 	Adjective = "broken";
 	BitmapPos = 0, 160;
-
-	Config DOOR_PRISON;
-	{
-		DigMessage = "You break the broken prison door.";
-		CanBeDestroyed = true;
-		MainMaterialConfig == IRON;
-		NameSingular = "prison door";
-		BitmapPos = 0, 64;
-	}
+	CreateLockConfigurations = true;
 }
 
 boulder /* olterrain-> */
@@ -510,6 +493,7 @@ boulder /* olterrain-> */
 	{
 		BitmapPos = 64, 288;
 	}
+
 	Config 2;
 	{
 		BitmapPos = 64, 304;
