@@ -445,6 +445,10 @@
 #define AMULETOFLIFESAVING 1
 #define AMULETOFESP 2
 
+#define SMALLCHEST 1
+#define CHEST 2
+#define LARGECHEST 3
+
 #define ROOKIE 1
 #define VETERAN 2
 #define ELITE 3

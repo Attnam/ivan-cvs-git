@@ -161,6 +161,7 @@ class ITEM
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual ushort GetFlyAmount() const { return 5; }
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -1200,6 +1201,7 @@ class ITEM
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetPrice() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual void DrawContents(const character*);
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

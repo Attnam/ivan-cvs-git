@@ -1475,6 +1475,8 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
 	{
 	  if(Character->GetTeam() != GetPlayer()->GetTeam())
 	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHARNAME(DEFINITE), Character->GetPersonalPronoun().c_str());
+	  else if(Character->IsPlayer())
+	    ADD_MESSAGE("You can't rename yourself!");
 	  else if(!Character->IsNameable())
 	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHARNAME(DEFINITE), Character->CHARNAME(DEFINITE));
 	  else

@@ -654,25 +654,40 @@ void scabies::PrayGoodEffect()
       return;
     }
 
-  ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
-
-  for(ushort c = 0; c < 5; ++c)
+  if(!(RAND() % 50))
     {
-      can* Reward = new can(0, NOMATERIALS);
-      Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD));
-      game::GetPlayer()->GetGiftStack()->AddItem(Reward);
+      ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
+
+      for(ushort c = 0; c < 5; ++c)
+	{
+	  can* Reward = new can(0, NOMATERIALS);
+	  Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD));
+	  game::GetPlayer()->GetGiftStack()->AddItem(Reward);
+	}
     }
+
 }
 
 void scabies::PrayBadEffect()
 {
-  ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
-  material* SchoolFood = MAKE_MATERIAL(SCHOOLFOOD, 1000);
-  SchoolFood->EatEffect(game::GetPlayer(), 1000);
-  delete SchoolFood;
-  ADD_MESSAGE("You feel your muscles softening terribly...");
-  game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
-  game::GetPlayer()->EditAttribute(DEXTERITY, -1);
+  if(!(RAND() % 50))
+    {
+      ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
+      material* SchoolFood = MAKE_MATERIAL(SCHOOLFOOD, 1000);
+      SchoolFood->EatEffect(game::GetPlayer(), 1000);
+      delete SchoolFood;
+      ADD_MESSAGE("You feel your muscles softening terribly...");
+      game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
+      game::GetPlayer()->EditAttribute(DEXTERITY, -1);
+    }
+  else
+    {
+      
+
+
+
+
+    }
 }
 
 void infuscor::PrayGoodEffect()

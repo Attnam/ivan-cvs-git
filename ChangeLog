@@ -1,3 +1,15 @@
+September 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Flies added
+	* Items inside chests carrid by player at death shown
+	* 3 configurations added to chests: small, normal, large
+	* GCC define added to configure.in
+	* StorageVolume moved to script for chests
+	* Added MaxGeneratedContainedItems for chests' parameters
+	* deactivated Scabies temporarily
+	* Fixed msg when trying to put chest into the same chest
+	
+	
 September 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Capitalization functions of festring are now more flexible

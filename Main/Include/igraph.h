@@ -41,6 +41,8 @@ struct graphic_id
   vector2d SparklePos PACKED;
   uchar SparkleTime PACKED;
   ushort OutlineColor PACKED;
+  ulong FlySeed PACKED;
+  ushort FlyAmount PACKED;
 };
 
 #ifdef VC
@@ -52,6 +54,7 @@ inline outputfile& operator<<(outputfile& SaveFile, const graphic_id& Value)
   SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
   return SaveFile;
 }
+
 
 inline inputfile& operator>>(inputfile& SaveFile, graphic_id& Value)
 {

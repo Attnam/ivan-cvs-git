@@ -932,8 +932,15 @@ void character::Die(bool ForceMsg)
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", REQUIRES_ANSWER))
-	  GetStack()->DrawContents(this, "Your inventory", false);
+	  {
+	    GetStack()->DrawContents(this, "Your inventory", false);
+	    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+	      i->DrawContents(this);
 
+	    for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+	      if(GetEquipment(c))
+		GetEquipment(c)->DrawContents(this);
+	  }
       if(game::BoolQuestion("Do you want to see your message history? [y/n]", REQUIRES_ANSWER))
 	DrawMessageHistory();
 

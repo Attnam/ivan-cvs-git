@@ -1129,3 +1129,23 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
       SafePutPixel(SparklePos.X, SparklePos.Y - c, RGB);
     }
 }
+
+void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
+{
+  ulong NewSeed = RAND();
+  femath::SetSeed(Seed);
+  for(ushort c = 0; c < FlyAmount; ++c)
+    {
+      double Constant = double(RAND() % 10000) / 10000 * PI;
+      vector2d StartPos = vector2d(5 + RAND() % 6, 5 + RAND() % 6);
+      double Temp = (double(16 - Frame) * PI) / 16;
+      if(RAND() & 1)
+	Temp = -Temp;
+      vector2d Where;
+      Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
+      Where.Y = short(StartPos.Y + sin(2*(Constant + Temp))  * 3);
+
+      SafePutPixel(Where.X, Where.Y, MakeRGB(100,100,100));
+    }
+  femath::SetSeed(NewSeed);
+}

@@ -55,6 +55,8 @@ item
 	MinCharges = 0;
 	MaxCharges = 0;
 	CanBePiled = true;
+	StorageVolume = 0;
+	MaxGeneratedContainedItems = 0;
 }
 
 materialcontainer
@@ -683,6 +685,7 @@ bone
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
 	Roundness = 20;
+	IsTwoHanded = true;
 }
 
 loaf
@@ -1444,12 +1447,10 @@ chest
 {
 	MainMaterialConfig == WOOD;
 	NameSingular = "chest";
-	Possibility = 100;
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
 	IsTwoHanded = true;
 	FormModifier = 35;
-	DefaultSize = 100;
 	MainMaterialConfig == WOOD;
 	Roundness = 60;
 	DefaultMainVolume = 60000;
@@ -1457,6 +1458,37 @@ chest
 	CanBePiled = false;
 	Price = 100;
 	StrengthModifier = 50;
+
+	Config SMALLCHEST;
+	{
+		Adjective = "small";
+		DefaultSize = 50;
+		StorageVolume = 62500;
+		DefaultMainVolume = 7500;
+		Price = 75;
+		Possibility = 100;
+		MaxGeneratedContainedItems = 3;
+	}
+
+	Config CHEST;
+	{
+		StorageVolume = 500000;
+		DefaultMainVolume = 60000;
+		DefaultSize = 100;
+		Price = 150;
+		Possibility = 50;
+		MaxGeneratedContainedItems = 5;
+	}
+	Config LARGECHEST;
+	{
+		Adjective = "large";
+		DefaultSize = 200;
+		StorageVolume = 4000000;
+		DefaultMainVolume = 480000;
+		Price = 250;
+		Possibility = 10;
+		MaxGeneratedContainedItems = 10;
+	}
 }
 
 wandofdoorcreation /* wand-> */

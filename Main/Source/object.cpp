@@ -149,6 +149,8 @@ void object::UpdatePictures()
   uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
+  ulong FlySeed = 0;
+  ushort FlyAmount = GetFlyAmount(); 
   bool Sparkling = false;
 
   if(!(SpecialFlags & STFLAME))
@@ -164,7 +166,7 @@ void object::UpdatePictures()
 	  static ushort SeedModifier = 0;
 	  long NewSeed = RAND(); 
 	  vector2d BPos = GetBitmapPos(0);
-	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
+	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 1);
 
 	  if(++SeedModifier == 0x10)
 	    SeedModifier = 0;
@@ -175,6 +177,15 @@ void object::UpdatePictures()
 
 	  if(AnimationFrames < 128)
 	    AnimationFrames = 128;
+	}
+      if(FlyAmount)
+	{
+	  static ushort SeedModifier = 0;
+	  vector2d BPos = GetBitmapPos(0);
+	  FlySeed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 1;
+	  if(++SeedModifier == 0x10)
+	    SeedModifier = 0;
+	  AnimationFrames = 128;
 	}
     }
   else if(AnimationFrames < 16)
@@ -229,6 +240,8 @@ void object::UpdatePictures()
       GraphicId[c].SparklePos = Sparkling && c >= SparkleTime && c < SparkleTime + 16 ? SparklePos : BITMAP_ERROR_VECTOR;
       GraphicId[c].SparkleTime = SparkleTime;
       GraphicId[c].OutlineColor = GetOutlineColor(c);
+      GraphicId[c].FlySeed = FlySeed;
+      GraphicId[c].FlyAmount = FlyAmount;
       Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
     }
 }

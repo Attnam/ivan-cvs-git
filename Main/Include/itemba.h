@@ -82,6 +82,8 @@ struct itemdatabase
   uchar MinCharges;
   uchar MaxCharges;
   bool CanBePiled;
+  ulong StorageVolume;
+  ushort MaxGeneratedContainedItems;
 };
 
 class itemprototype
@@ -319,6 +321,9 @@ class item : public object
   void SignalAttackInfoChange();
   virtual float GetToHitValueBonus() const { return 1.0f; }
   virtual float GetAPBonus() const { return 1.0f; }
+  virtual void DrawContents(const character*) { }
+  virtual DATABASEVALUE(ulong, StorageVolume);
+  virtual DATABASEVALUE(ushort, MaxGeneratedContainedItems);
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

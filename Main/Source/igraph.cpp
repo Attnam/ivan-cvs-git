@@ -169,6 +169,9 @@ tile igraph::AddUser(graphic_id GI)
       if(GI.SparklePos != BITMAP_ERROR_VECTOR)
 	Bitmap->CreateSparkle(GI.SparklePos, GI.Frame - GI.SparkleTime);
 
+      if(GI.FlyAmount)
+	Bitmap->CreateFlies(GI.FlyAmount, GI.FlySeed, GI.Frame);
+
       if(GI.SpecialFlags & 0x7) /* Do we need rotating/flipping? */
 	{
 	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
@@ -196,3 +199,4 @@ void igraph::RemoveUser(graphic_id GI)
 	TileMap.erase(Iterator);
       }
 }
+

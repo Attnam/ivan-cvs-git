@@ -315,8 +315,13 @@ If the handle of a weapon is of the same material as the edge, change material s
 Stressed state should slowly decrease player's size.
 Being satiated or bloated should decrease move ease.
 If HP == MaxHP, healing liquid should increase MaxHP a bit.
+Frost weapons should gradually develop ice which would increase damage .
+Metal should look different from other materials. (the lighter parts should be even lighter and darker parts slightly darker to increase the contrast) 
+Corrosion for materials. 
+Acid blobs (needs corrosion) (might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
 Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
 There should be a one-way teleport at the bottom of the dungeon linked to the first level.
 Level teleport option to wizard mode.
+

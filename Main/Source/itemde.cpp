@@ -1962,7 +1962,7 @@ void chest::VirtualConstructor(bool Load)
       StorageVolume = 5000;
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
       SetIsLocked(RAND() % 3 != 0);
-      uchar ItemNumber = RAND() % 5;
+      ulong ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
       for(ushort c = 0; c < ItemNumber; ++c)
 	{
@@ -2306,7 +2306,7 @@ bool chest::TakeSomethingFrom(character* Opener)
   item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
 
-  if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
+  if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,ToBeTaken)))
     {
       ToBeTaken->MoveTo(Opener->GetStack());
       Opener->DexterityAction(Opener->OpenMultiplier() * 5);
@@ -2329,23 +2329,28 @@ bool chest::PutSomethingIn(character* Opener)
   if(ToBePut)
     {
       uchar RoomNumber = GetLSquareUnder()->GetRoom();
-
-      if((RoomNumber == 0 || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, this)))
+      if(ToBePut == this)
 	{
-	  if(FitsIn(ToBePut))
+	  ADD_MESSAGE("Why are you trying to put the item inside itself?");
+	  return false;
+	}
+      if(FitsIn(ToBePut))
+	{
+	  if((RoomNumber == 0 || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, ToBePut)))
 	    {
 	      ToBePut->MoveTo(GetContained());
 	      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
 	      return true;
 	    }
 	  else
-	    {
-	      ADD_MESSAGE("%s doesn't fit in %s.", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
-	      return false;
-	    }
+	    return false;
+	}
+      else
+	{
+	  ADD_MESSAGE("%s doesn't fit in %s.", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	  return false;
 	}
     }
-
   return false;
 }
 
@@ -3874,4 +3879,10 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
     }
 
   return false;
+}
+
+void chest::DrawContents(const character* Char)
+{
+  std::string Topic = "Contents of your " + GetName(UNARTICLED);
+  GetContained()->DrawContents(Char, Topic, false);
 }

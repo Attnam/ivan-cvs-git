@@ -279,6 +279,8 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(MaxCharges);
   ANALYZEDATA(MinCharges);
   ANALYZEDATA(CanBePiled);
+  ANALYZEDATA(StorageVolume);
+  ANALYZEDATA(MaxGeneratedContainedItems);
 
   return Found;
 }
