@@ -459,7 +459,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*Sor
 item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*), bool SelectItem) const
 {
   if(!GetItems()) return 0;
-  felist ItemNames(Topic, WHITE, 10, 0, SelectItem);
+  felist ItemNames(Topic, WHITE, 0);
 
   ItemNames.AddDescription("");
   ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + " grams");
@@ -503,7 +503,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*Sor
 	  }
     }
 
-  ushort Chosen = ItemNames.Draw(false);
+  ushort Chosen = ItemNames.Draw(vector2d(10, 42), 780, 10, SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;

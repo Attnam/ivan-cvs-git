@@ -528,7 +528,7 @@ void humanoid::CharacterSpeciality(ushort Turns)
 bool humanoid::ShowWeaponSkills()
 {
   {
-    felist List("Your experience in weapon categories", WHITE, 20, 0, false);
+    felist List("Your experience in weapon categories", WHITE, 0);
 
     List.AddDescription("");
     List.AddDescription("Category name                 Level     Points    To next level");
@@ -570,7 +570,7 @@ bool humanoid::ShowWeaponSkills()
 	  List.AddEntry(Buffer + '-', RED);
       }*/
 
-    List.Draw();
+    List.Draw(vector2d(10, 42), 780, 20, false);
   }
 
   return false;
@@ -2481,7 +2481,7 @@ bool humanoid::VirtualEquipmentScreen()
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
 
-      ushort Chosen = List.Draw(false, false, Fade);
+      ushort Chosen = List.Draw(vector2d(10, 42), 780, 20, true, false, false, Fade);
 
       if(Chosen >= EquipmentSlots())
 	break;

@@ -1799,7 +1799,7 @@ bool character::WalkThroughWalls()
 
 bool character::ShowKeyLayout()
 {
-  felist List("Keyboard Layout", WHITE, 30, 0, false);
+  felist List("Keyboard Layout", WHITE, 0);
 
   List.AddDescription("");
   List.AddDescription("Key       Description");
@@ -1813,7 +1813,7 @@ bool character::ShowKeyLayout()
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
 
-  List.Draw();
+  List.Draw(vector2d(10, 42), 780, 30, false);
 
   return false;
 }
@@ -1955,7 +1955,7 @@ bool character::OpenPos(vector2d APos)
 
 bool character::Pray()
 {
-  felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 20, 0, true);
+  felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 0);
 
   std::vector<uchar> KnownIndex;
 
@@ -1978,7 +1978,7 @@ bool character::Pray()
     else
       ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
 
-  ushort Select = Panthenon.Draw();
+  ushort Select = Panthenon.Draw(vector2d(10, 42), 780);
 
   if(Select & 0x8000)
     return false;
@@ -3713,7 +3713,7 @@ void character::Teleport()
 
 bool character::SecretKnowledge()
 {
-  felist List("Knowledge of the ancients:", WHITE, 10, 0, true);
+  felist List("Knowledge of the ancients:", WHITE, 0);
 
   std::string Buffer = "Name                                                 Weight       SV     Str";
   List.AddDescription(Buffer);
@@ -3733,7 +3733,7 @@ bool character::SecretKnowledge()
 	delete Item;
       }
 
-  List.Draw(false);
+  List.Draw(vector2d(10, 42), 780, 10);
   return false;
 }
 

@@ -16,3 +16,4 @@ Do slimes slip down on banana peals?
 Hex's buggy messages.
 Pressing esc in stringquestion crashes game!!!
 Backround problem with config screen.
+Wishing for head crashes.

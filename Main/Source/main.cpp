@@ -10,9 +10,10 @@
 #include "hscore.h"
 #include "feio.h"
 #include "whandler.h"
-#include "charde.h"
 #include "config.h"
-#include "itemde.h"
+#include "game.h"
+#include "igraph.h"
+#include "graphics.h"
 
 const bool ValpuriIsAlive = true;
 

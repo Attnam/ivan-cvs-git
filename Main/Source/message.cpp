@@ -11,7 +11,7 @@
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
-felist globalmessagingsystem::MessageHistory("Message history", WHITE, 30, 100, false, true);
+felist globalmessagingsystem::MessageHistory("Message history", WHITE, 100, true);
 
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {
@@ -128,7 +128,7 @@ void globalmessagingsystem::Empty()
 
 void globalmessagingsystem::DrawMessageHistory()
 {
-  MessageHistory.Draw();
+  MessageHistory.Draw(vector2d(10, 42), 780, 30, false);
 }
 
 void globalmessagingsystem::Format()

@@ -304,7 +304,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
   struct _finddata_t Found;
   long hFile;
   int Check = 0;
-  felist Buffer("Choose a file and be sorry:", TopicColor, 30);
+  felist Buffer("Choose a file and be sorry:", TopicColor);
   hFile = _findfirst((DirectoryName + "*.sav").c_str(), &Found);
 
   if(hFile == -1L)
@@ -319,7 +319,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
       Check = _findnext(hFile, &Found);
     }
 
-  Check = Buffer.Draw(false, false, true);
+  Check = Buffer.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
 
   if(Check == 0xFFFF)
     return "";
@@ -331,7 +331,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
   DIR* dp;
   struct dirent* ep;
   std::string Buffer;
-  felist List("Choose a file and be sorry:", TopicColor, 30);
+  felist List("Choose a file and be sorry:", TopicColor);
   dp = opendir(DirectoryName.c_str());
   if(dp)
     {
@@ -350,7 +350,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	}
       else
 	{
-	  int Check = List.Draw(false, false, true);
+	  int Check = List.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
 
 	  if(Check == 0xFFFF)
 	    return "";
@@ -364,7 +364,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 #ifdef __DJGPP__
   struct ffblk Found;
   int Check = 0;
-  felist Buffer("Choose a file and be sorry:", TopicColor, 30);
+  felist Buffer("Choose a file and be sorry:", TopicColor);
   Check = findfirst((DirectoryName + "*.sav").c_str(), &Found, FA_HIDDEN | FA_ARCH);
 
   if(Check)
@@ -379,7 +379,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
       Check = findnext(&Found);
     }
 
-  Check = Buffer.Draw(false, false, true);
+  Check = Buffer.Draw(vector2d(10, 10), 780, 30, true, false, false, true);
 
   if(Check == 0xFFFF)
     return "";

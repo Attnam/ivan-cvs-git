@@ -5,6 +5,7 @@
 #include "whandler.h"
 #include "save.h"
 #include "colorbit.h"
+#include "felist.h"
 
 bool highscore::Add(long NewScore, std::string NewEntry)
 {
@@ -40,53 +41,25 @@ bool highscore::Add(long NewScore, std::string NewEntry)
 
 void highscore::Draw() const
 {
-  bitmap Buffer(XRES, YRES);
-  Buffer.Fill(0);
-
-  if(LastAdd == 100)
-    {
-        FONT->Printf(&Buffer, 30, 50,  WHITE, "You didn't manage to get onto the high score list");
-	Buffer.FadeToScreen();
-	GETKEY();
-	return;
-    }
-
-  FONT->Printf(&Buffer, 30, 30,  WHITE, "Adventurers' Hall of Fame");
-
-  ushort Min = 0;
+  felist List("Adventurers' Hall of Fame", WHITE, 0);
 
   for(ushort c = 0; c < Score.size(); ++c)
     {
-      if(c - Min == 50)
-	{
-	  Min += 50;
-	  FONT->Printf(&Buffer, 30, 560, WHITE, "-- Press ESC to exit, any other key for next page --");
-	  Buffer.FadeToScreen();
-
-	  if(GETKEY() == 0x1B)
-	    return;
-
-	  Buffer.Fill(0);
-	  FONT->Printf(&Buffer, 30, 30, WHITE, "Adventurers' Hall of Fame");
-	}
-
       std::string Desc;
       Desc += int(c + 1);
       Desc.resize(5, ' ');
       Desc += int(Score[c]);
       Desc.resize(13, ' ');
       Desc += Entry[c];
-      FONT->Printf(&Buffer, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : LIGHTGRAY, "%s", Desc.c_str());
+      List.AddEntry(Desc, c == LastAdd ? RED : LIGHTGRAY);
     }
 
-  Buffer.FadeToScreen();
-  GETKEY();
+  List.Draw(vector2d(10, 10), 780, 50, false, false, false, true);
 }
 
 void highscore::Save(std::string File) const
 {
   outputfile HighScore(File);
-
   HighScore << ushort(HIGHSCORE_VERSION) << Score << Entry << LastAdd;
 }
 
@@ -105,9 +78,7 @@ void highscore::Load(std::string File)
   }
 
   inputfile HighScore(File, false);
-
   ushort HVersion;
-
   HighScore >> HVersion;
 
   if(HVersion == 110)

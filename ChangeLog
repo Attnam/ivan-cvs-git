@@ -1,3 +1,8 @@
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* felist.cpp/h & files with felist calls: Added more parameters (pos and width etc.) for felits
+	* hscore.cpp: HScore draw uses felist now
+
 April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* All libraries united

@@ -4,6 +4,8 @@ done (or understood) by anyone else than the writer.
 
 *high priority
 //done
+(r) rejected
+(s) suspended
 
 *Funktioiden verkottaminen.
 Assistenttioperaattorien integrointi? (<- osoitinluokat)
@@ -13,18 +15,18 @@ Tilojen luokittaminen.
 Tasovaihdosten funktionaalisuuden kohotus.
 Syöntisallimusten liputtaminen.
 Karakterin atribuuttien kollektivointi.
-Tarkkailijoiden tuhoaminen?
-Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
+(r) Tarkkailijoiden tuhoaminen?
+//Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
 Dynarrayn eliminaatio.
 Osoitinluokat?
 Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
-Merkkijonoviittausten regularisoiminen.
+(r) Merkkijonoviittausten regularisoiminen.
 Merkkitaulukoiden hävittäminen.
 *Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
 MS-koodin poisajo grafiikkakirjastosta.
-Kirjastoniputus.
+//Kirjastoniputus.
 Esittelyjen uudelleenjärjesteleminen? (tosi tylsää)
 *Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.

@@ -10,29 +10,31 @@ felist::~felist()
     delete Entry[c].Bitmap;
 }
 
-ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, bool Fade) const
+ushort felist::Draw(vector2d Pos, ushort Width, ushort PageLength, bool Selectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade) const
 {
   if(!Entry.size())
     return 0xFFFF;
 
-  bitmap Buffer(XRES, YRES);
+  bitmap BackGround(XRES, YRES);
+  bitmap* Buffer;
 
   if(Fade)
-    Buffer.Fill(0);
+    {
+      Buffer = new bitmap(XRES, YRES, 0);
+      BackGround.Fill(0);
+    }
   else
-    DOUBLEBUFFER->Blit(&Buffer, 0, 0, 0, 0, XRES, YRES);
+    {
+      Buffer = DOUBLEBUFFER;
+      DOUBLEBUFFER->Blit(&BackGround, 0, 0, 0, 0, XRES, YRES);
+    }
 
-  bitmap* Bitmap = Fade ? &Buffer : DOUBLEBUFFER;
+  DrawDescription(Buffer, Pos, Width);
 
-  DrawDescription(Bitmap);
-
-  ushort Return;
-
-  ushort LastFillBottom = 66 + Description.size() * 10;
-
-  ushort Selected = this->Selected, Min, c, i;
-
-  Min = Selected - Selected % 20;
+  ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
+  ushort Selected = this->Selected;
+  ushort Min = Selected - Selected % PageLength;
+  ushort Return, c, i;
 
   for(c = 0, i = 0; i != Min; ++c)
     if(Entry[c].Selectable)
@@ -54,56 +56,56 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 
       if(Entry[c].Bitmap)
 	{
-          Bitmap->Fill(20, LastFillBottom, 758, 20, 128);
-	  Entry[c].Bitmap->MaskedBlit(Bitmap, 0, 0, 30, LastFillBottom, 16, 16);
+          Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, 128);
+	  Entry[c].Bitmap->MaskedBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);
 
 	  if(Selectable && Entry[c].Selectable && Selected == i)
-	      FONT->PrintfUnshaded(Bitmap, 55, LastFillBottom + 5, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	      FONT->PrintfUnshaded(Buffer, Pos.X + 38, LastFillBottom + 5, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
 	  else
-	      FONT->Printf(Bitmap, 54, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
+	      FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
 
 	  LastFillBottom += 20;
 	}
       else
 	{
-	  Bitmap->Fill(20, LastFillBottom, 758, 10, 128);
+	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, 128);
 
 	  if(Selectable && Entry[c].Selectable && Selected == i)
-	      FONT->PrintfUnshaded(Bitmap, 31, LastFillBottom + 1, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	      FONT->PrintfUnshaded(Buffer, Pos.X + 14, LastFillBottom + 1, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
 	  else
-	      FONT->Printf(Bitmap, 30, LastFillBottom, Entry[c].Color, "%s", Str.c_str());
+	      FONT->Printf(Buffer, Pos.X + 13, LastFillBottom, Entry[c].Color, "%s", Str.c_str());
 
 	  LastFillBottom += 10;
 	}
 
       if(c != Entry.size() - 1 && Entry[c].Selectable && i - Min == PageLength - 1)
 	{
-	  Bitmap->Fill(20, LastFillBottom, 758, 30, 128);
-	  FONT->Printf(Bitmap, 30, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
+	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, 128);
+	  FONT->Printf(Buffer, Pos.X + 13, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
 	  LastFillBottom += 30;
 	}
 
-      if(c == Entry.size() - 1 && (!Entry[c].Selectable || i - Min != PageLength - 1))
+      if(c == Entry.size() - 1)// && (!Entry[c].Selectable || i - Min != PageLength - 1))
 	{
-	  Bitmap->Fill(20, LastFillBottom, 758, 10, 128);
+	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, 128);
 	  LastFillBottom += 10;
 	}
 
       if(c == Entry.size() - 1 || (Entry[c].Selectable && i - Min == PageLength - 1))
 	{
-	  Bitmap->DrawLine(18, 44, 18, LastFillBottom + 1, DARKGRAY, true);
-	  Bitmap->DrawLine(779, 44, 779, LastFillBottom + 1, DARKGRAY, true);
-	  Bitmap->DrawLine(18, LastFillBottom + 1, 779, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + 1, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawLine(Pos.X + Width - 2, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawLine(Pos.X + 1, LastFillBottom + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
 
 	  if(Fade)
 	    {
 	      if(JustSelectMove)
 		{
-		  Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+		  Buffer->Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 		  graphics::BlitDBToScreen();
 		}
 	      else
-		Buffer.FadeToScreen();
+		Buffer->FadeToScreen();
 
 	      JustSelectMove = false;
 	    }
@@ -132,9 +134,7 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 
 		  if(Selected < Min)
 		    {
-		      if(!Fade)
-			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-
+		      BackGround.Blit(Buffer, 0, 0, 0, 0, XRES, YRES);
 		      Min -= PageLength;
 		    }
 		  else
@@ -150,9 +150,7 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 		    JustSelectMove = true;
 		  else
 		    {
-		      if(!Fade)
-			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-
+		      BackGround.Blit(Buffer, 0, 0, 0, 0, XRES, YRES);
 		      Min = Selected - Selected % PageLength;
 		    }
 		}
@@ -161,8 +159,8 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 		if(Entry[c].Selectable)
 		  ++i;
 
-	      DrawDescription(Bitmap);
-	      LastFillBottom = 66 + Description.size() * 10;
+	      DrawDescription(Buffer, Pos, Width);
+	      LastFillBottom = Pos.Y + 23 + Description.size() * 10;
 	      continue;
 	    }
 
@@ -174,9 +172,7 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 
 		  if(Selected > Min + PageLength - 1)
 		    {
-		      if(!Fade)
-			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-
+		      BackGround.Blit(Buffer, 0, 0, 0, 0, XRES, YRES);
 		      Min += PageLength;
 		    }
 		  else
@@ -190,14 +186,14 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 		{
 		  if(!Min)
 		    JustSelectMove = true;
-		  else if(!Fade)
-		    Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+		  else
+		    BackGround.Blit(Buffer, 0, 0, 0, 0, XRES, YRES);
 
 		  Selected = Min = i = c = 0;
 		}
 
-	      DrawDescription(Bitmap);
-	      LastFillBottom = 66 + Description.size() * 10;
+	      DrawDescription(Buffer, Pos, Width);
+	      LastFillBottom = Pos.Y + 23 + Description.size() * 10;
 	      continue;
 	    }
 
@@ -214,13 +210,11 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 	    }
 	  else
 	    {
-	      if(!Fade)
-		Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-
-	      DrawDescription(Bitmap);
+	      BackGround.Blit(Buffer, 0, 0, 0, 0, XRES, YRES);
+	      DrawDescription(Buffer, Pos, Width);
 	      Min += PageLength;
 	      Selected = Min;
-	      LastFillBottom = 66 + Description.size() * 10;
+	      LastFillBottom = Pos.Y + 23 + Description.size() * 10;
 	    }
 	}
 
@@ -231,27 +225,29 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
   if(!Fade)
     {
       if(DrawBackroundAfterwards)
-	Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+	BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 
-      if(BlitBackroundAfterwards)
+      if(BlitAfterwards)
 	graphics::BlitDBToScreen();
     }
+  else
+    delete Buffer;
 
   return Return;
 }
 
-void felist::DrawDescription(bitmap* Buffer) const
+void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width) const
 {
-  Buffer->DrawLine(18, 44, 779, 44, DARKGRAY, true);
-  Buffer->Fill(20, 46, 758, 20, 128);
+  Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 1, DARKGRAY, true);
+  Buffer->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20, 128);
 
   for(ushort c = 0; c < Description.size(); ++c)
     {
-      Buffer->Fill(20, 56 + c * 10, 758, 10, 128);
-      FONT->Printf(Buffer, 30, 56 + c * 10, Description[c].Color, Description[c].String.c_str());
+      Buffer->Fill(Pos.X + 3, Pos.Y + 13 + c * 10, Width - 6, 10, 128);
+      FONT->Printf(Buffer, Pos.X + 13, Pos.Y + 13 + c * 10, Description[c].Color, Description[c].String.c_str());
     }
 
-  Buffer->Fill(20, 56 + Description.size() * 10, 758, 10, 128);
+  Buffer->Fill(Pos.X + 3, Pos.Y + 13 + Description.size() * 10, Width - 6, 10, 128);
 }
 
 void felist::Empty()
@@ -277,16 +273,15 @@ void felist::AddEntry(std::string Str, ushort Color, bitmap* Bitmap, bool Select
 
 void felist::Save(outputfile& SaveFile) const
 {
-  SaveFile << Entry << Description << Maximum << InverseMode << Selectable << Selected;
+  SaveFile << Entry << Description << Maximum << InverseMode << Selected;
 }
 
 void felist::Load(inputfile& SaveFile) 
 {
-  SaveFile >> Entry >> Description >> Maximum >> InverseMode >> Selectable >> Selected;
+  SaveFile >> Entry >> Description >> Maximum >> InverseMode >> Selected;
 }
 
 void felist::AddDescription(std::string Str, ushort Color)
 {
   Description.push_back(felistdescription(Str, Color)); 
 }
-
