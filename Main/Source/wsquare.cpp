@@ -48,7 +48,7 @@ void wsquare::Draw(blitdata& BlitData)
     if(Character && Character->CanBeSeenByPlayer())
     {
       BlitData.Luminance = ivanconfig::GetContrastLuminance();
-      BlitData.CustomData = Character->GetSquareIndex(Pos)|ALLOW_ANIMATE;
+      BlitData.CustomData = Character->GetSquareIndex(Pos)|ALLOW_ANIMATE|ALLOW_ALPHA;
       Character->Draw(BlitData);
     }
 

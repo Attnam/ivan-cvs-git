@@ -43,7 +43,7 @@ void stack::Draw(const character* Viewer, blitdata& BlitData, int RequiredSquare
 
   if(RequiredSquarePosition == CENTER)
   {
-    truth PlusSymbol = VisibleItems > 1, Dangerous = IsDangerous(Viewer);
+    truth PlusSymbol = VisibleItems > 1, Dangerous = NeedDangerSymbol(Viewer);
 
     if(PlusSymbol || Dangerous)
     {
@@ -769,10 +769,10 @@ truth stack::CanBeSeenBy(const character* Viewer, int SquarePosition) const
   }
 }
 
-truth stack::IsDangerousForAIToStepOn(const character* Stepper) const
+truth stack::IsDangerous(const character* Stepper) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->IsDangerousForAI(Stepper) && i->CanBeSeenBy(Stepper))
+    if(i->IsDangerous(Stepper) && i->CanBeSeenBy(Stepper))
       return true;
 
   return false;
@@ -1033,10 +1033,10 @@ void stack::Search(const character* Char, int Perception)
 
 /* Used to determine whether the danger symbol should be shown */
 
-truth stack::IsDangerous(const character* Viewer) const
+truth stack::NeedDangerSymbol(const character* Viewer) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->IsDangerous() && i->CanBeSeenBy(Viewer))
+    if(i->NeedDangerSymbol() && i->CanBeSeenBy(Viewer))
       return true;
 
   return false;
@@ -1093,7 +1093,7 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, long VolumeModifier)
       long ItemVolume = ItemVector[c]->GetVolume();
       double Root = sqrt(ItemVolume);
 
-      if(Root > RAND() % 400 || Root > RAND() % 400)
+      if(Root > RAND() % 200 || Root > RAND() % 200)
       {
 	long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
 

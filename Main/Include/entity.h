@@ -65,6 +65,7 @@ class entity
   virtual int GetTrapType() const { return 0; }
   void AddFlags(ulong What) { Flags |= What; }
   void RemoveFlags(ulong What) { Flags &= ~What; }
+  virtual truth IsStuckTo(const character*) const { return false; }
  protected:
   col24 Emitation;
   ulong Flags;

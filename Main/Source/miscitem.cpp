@@ -33,9 +33,9 @@ truth potion::AddAdjective(festring& String, truth Articled) const { return AddE
 truth potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->GetInteractionFlags() & EFFECT_IS_GOOD; }
 truth potion::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
-truth bananapeels::IsDangerousForAI(const character* Stepper) const { return Stepper->HasALeg(); }
+truth bananapeels::IsDangerous(const character* Stepper) const { return Stepper->HasALeg(); }
 
-truth brokenbottle::IsDangerousForAI(const character* Stepper) const { return Stepper->HasALeg(); }
+truth brokenbottle::IsDangerous(const character* Stepper) const { return Stepper->HasALeg(); }
 
 long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
@@ -154,16 +154,15 @@ void scrollofwishing::FinishReading(character* Reader)
 
 void scrollofchangematerial::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->GetItems() && !Reader->EquipsSomething())
-  {
-    ADD_MESSAGE("You notice you have lost anything you wished to alter.");
-    return;
-  }
-
   for(;;)
   {
     itemvector Item;
-    Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR, &item::MaterialIsChangeable))
+    {
+      ADD_MESSAGE("You notice you haven't got anything to alter.");
+      return;
+    }
 
     if(Item.empty())
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
@@ -202,7 +201,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     else
       ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames.", Item[0]->CHAR_NAME(PLURAL));
 
-    if(TempMaterial->GetIntelligenceRequirement() + 10 > Reader->GetAttribute(INTELLIGENCE))
+    if(TempMaterial->GetIntelligenceRequirement() + 5 > Reader->GetAttribute(INTELLIGENCE) && !game::WizardModeIsActive())
     {
       ADD_MESSAGE("But your mind is not yet strong enough to summon enough %s for the change.", TempMaterial->GetName(false, false).CStr());
       delete TempMaterial;
@@ -217,7 +216,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     {
       if(!MainMaterial->IsSameAs(TempMaterial))
       {
-	ADD_MESSAGE("As you lift it again it looks greatly altered.");
+	ADD_MESSAGE("As the fire dies out it looks greatly altered.");
 
 	if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
 	  Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
@@ -225,13 +224,13 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	Item[0]->ChangeMainMaterial(TempMaterial);
       }
       else
-	ADD_MESSAGE("As you lift it again it looks unchanged.");
+	ADD_MESSAGE("As the fire dies out it looks unchanged.");
     }
     else
     {
       if(!MainMaterial->IsSameAs(TempMaterial))
       {
-	ADD_MESSAGE("As you lift them again they look greatly altered.");
+	ADD_MESSAGE("As the fire dies out they look greatly altered.");
 
 	if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
 	  for(uint c = 0; c < Item.size(); ++c)
@@ -243,7 +242,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	  Item[c]->ChangeMainMaterial(TempMaterial->SpawnMore());
       }
       else
-	ADD_MESSAGE("As you lift them again they look unchanged.");
+	ADD_MESSAGE("As the fire dies out they look unchanged.");
     }
 
     msgsystem::LeaveBigMessageMode();
@@ -557,7 +556,7 @@ col16 holybook::GetMaterialColorA(int) const
   return GetMasterGod()->GetColor();
 }
 
-truth scrollofcharging::Read(character* Reader)
+/*truth scrollofcharging::Read(character* Reader)
 {
   if(!Reader->GetStack()->SortedItems(Reader, &item::IsChargeable) && !Reader->EquipsSomething(&item::IsChargeable))
   {
@@ -569,37 +568,39 @@ truth scrollofcharging::Read(character* Reader)
     Reader->StartReading(this, GetReadDifficulty());
     return true;
   }
-}
+}*/
 
 void scrollofcharging::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsChargeable) && !Reader->EquipsSomething(&item::IsChargeable))
-    ADD_MESSAGE("You have lost whatever you wished to charge.");
-  else
-    for(;;)
+  for(;;)
+  {
+    itemvector Item;
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsChargeable))
     {
-      itemvector Item;
-      Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsChargeable);
-
-      if(!Item.empty())
-      {
-	if(Item[0]->HandleInPairs() && Item.size() == 1)
-	{
-	  ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
-
-	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	    continue;
-	}
-
-	for(uint c = 0; c < Item.size(); ++c)
-	  Item[c]->ChargeFully(Reader);
-
-	ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-	break;
-      }
-      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
+      ADD_MESSAGE("You notice you haven't got anything to charge.");
+      return;
     }
+
+    if(!Item.empty())
+    {
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+      {
+	ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
+
+	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+	  continue;
+      }
+
+      for(uint c = 0; c < Item.size(); ++c)
+	Item[c]->ChargeFully(Reader);
+
+      ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+      break;
+    }
+    else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
+  }
 
   RemoveFromSlot();
   SendToHell();
@@ -1079,7 +1080,7 @@ truth beartrap::TryToUnStick(character* Victim, v2)
   ulong TrapID = GetTrapID();
   int Modifier = GetBaseTrapDamage() * 40 / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
-  if(Modifier <= 1 || !RAND_N(Modifier))
+  if(!RAND_N(Max(Modifier, 2)))
   {
     Victim->RemoveTrap(TrapID);
     TrapData.VictimID = 0;
@@ -1093,7 +1094,7 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  if(!Modifier || !RAND_N(Modifier << 1))
+  if(!RAND_N(Max(Modifier << 1, 2)))
   {
     Victim->RemoveTrap(TrapID);
     TrapData.VictimID = 0;
@@ -1108,9 +1109,9 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  Modifier = Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH) * 3 / 20, 2);
+  Modifier = Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH) * 3 / 20;
 
-  if(!RAND_N(Modifier))
+  if(!RAND_N(Max(Modifier, 2)))
   {
     int BodyPart = Victim->RandomizeHurtBodyPart(TrapData.BodyParts);
 
@@ -1125,7 +1126,7 @@ truth beartrap::TryToUnStick(character* Victim, v2)
     return false;
   }
 
-  if(!RAND_N(Modifier << 1))
+  if(!RAND_N(Max(Modifier << 1, 2)))
   {
     int VictimBodyPart = Victim->RandomizeTryToUnStickBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
 
@@ -1551,7 +1552,7 @@ int materialcontainer::GetSparkleFlags() const
     | (SecondaryMaterial && SecondaryMaterial->IsSparkling() ? SPARKLING_B : 0);
 }
 
-truth scrollofenchantweapon::Read(character* Reader)
+/*truth scrollofenchantweapon::Read(character* Reader)
 {
   if(!Reader->GetStack()->SortedItems(Reader, &item::IsWeapon)
      && !Reader->EquipsSomething(&item::IsWeapon))
@@ -1564,67 +1565,66 @@ truth scrollofenchantweapon::Read(character* Reader)
     Reader->StartReading(this, GetReadDifficulty());
     return true;
   }
-}
+}*/
 
 void scrollofenchantweapon::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsWeapon)
-     && !Reader->EquipsSomething(&item::IsWeapon))
-    ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
-  else
+  for(;;)
   {
-    for(;;)
+    itemvector Item;
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsWeapon))
     {
-      itemvector Item;
-      Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsWeapon);
+      ADD_MESSAGE("You notice you haven't got anything to enchant.");
+      return;
+    }
 
-      if(!Item.empty())
+    if(!Item.empty())
+    {
+      if(!Item[0]->CanBeEnchanted())
       {
-	if(!Item[0]->CanBeEnchanted())
-	{
-	  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-	  break;
-	}
+	ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+	break;
+      }
 
-	if(Item[0]->HandleInPairs() && Item.size() == 1)
-	{
-	  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+      {
+	ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	    continue;
-	}
+	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+	  continue;
+      }
 
-	if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
-	{
-	  if(Item.size() == 1)
-	    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
-	  else
-	    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
-
-	  break;
-	}
-
+      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+      {
 	if(Item.size() == 1)
-	  ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
 	else
-	  ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
-
-	for(uint c = 0; c < Item.size(); ++c)
-	  Item[c]->EditEnchantment(1);
+	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
 
 	break;
       }
-      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
-    }
 
-    RemoveFromSlot();
-    SendToHell();
-    Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
+      if(Item.size() == 1)
+	ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+      else
+	ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+
+      for(uint c = 0; c < Item.size(); ++c)
+	Item[c]->EditEnchantment(1);
+
+      break;
+    }
+    else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
   }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
-truth scrollofenchantarmor::Read(character* Reader)
+/*truth scrollofenchantarmor::Read(character* Reader)
 {
   if(!Reader->GetStack()->SortedItems(Reader, &item::IsArmor)
      && !Reader->EquipsSomething(&item::IsArmor))
@@ -1637,64 +1637,63 @@ truth scrollofenchantarmor::Read(character* Reader)
     Reader->StartReading(this, GetReadDifficulty());
     return true;
   }
-}
+}*/
 
 void scrollofenchantarmor::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsArmor)
-     && !Reader->EquipsSomething(&item::IsArmor))
-    ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
-  else
+  for(;;)
   {
-    for(;;)
+    itemvector Item;
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsArmor))
     {
-      itemvector Item;
-      Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsArmor);
+      ADD_MESSAGE("You notice you haven't got anything to enchant.");
+      return;
+    }
 
-      if(!Item.empty())
+    if(!Item.empty())
+    {
+      if(!Item[0]->CanBeEnchanted())
       {
-	if(!Item[0]->CanBeEnchanted())
-	{
-	  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-	  break;
-	}
+	ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+	break;
+      }
 
-	if(Item[0]->HandleInPairs() && Item.size() == 1)
-	{
-	  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+      {
+	ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	    continue;
-	}
+	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+	  continue;
+      }
 
-	if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
-	{
-	  if(Item.size() == 1)
-	    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
-	  else
-	    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
-
-	  break;
-	}
-
+      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+      {
 	if(Item.size() == 1)
-	  ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
 	else
-	  ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
-
-	for(uint c = 0; c < Item.size(); ++c)
-	  Item[c]->EditEnchantment(1);
+	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
 
 	break;
       }
-      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
-    }
 
-    RemoveFromSlot();
-    SendToHell();
-    Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
+      if(Item.size() == 1)
+	ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+      else
+	ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+
+      for(uint c = 0; c < Item.size(); ++c)
+	Item[c]->EditEnchantment(1);
+
+      break;
+    }
+    else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
   }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
 truth itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int)
@@ -1784,7 +1783,7 @@ truth mine::CheckPickUpEffect(character*)
   return true;
 }
 
-truth scrollofrepair::Read(character* Reader)
+/*truth scrollofrepair::Read(character* Reader)
 {
   if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
   {
@@ -1794,11 +1793,11 @@ truth scrollofrepair::Read(character* Reader)
 
   Reader->StartReading(this, GetReadDifficulty());
   return true;
-}
+}*/
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
+  /*if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
     ADD_MESSAGE("You have lost whatever you wished to repair.");
   else
   {
@@ -1816,39 +1815,43 @@ void scrollofrepair::FinishReading(character* Reader)
 	  return;
 	}
       }
-    }
+    }*/
       
-    for(;;)
+  for(;;)
+  {
+    itemvector Item;
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsRepairable))
     {
-      itemvector Item;
-      Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsRepairable);
-
-      if(!Item.empty())
-      {
-	if(Item[0]->HandleInPairs() && Item.size() == 1)
-	{
-	  ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
-
-	  if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
-	    continue;
-	}
-
-	if(Item.size() == 1)
-	  ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
-	else
-	  ADD_MESSAGE("As you read the scroll, %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
-
-	for(uint c = 0; c < Item.size(); ++c)
-	{
-	  Item[c]->RemoveRust();
-	  Item[c]->Fix();
-	}
-
-	break;
-      }
-      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
+      ADD_MESSAGE("You notice you haven't got anything to repair.");
+      return;
     }
+
+    if(!Item.empty())
+    {
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+      {
+	ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
+
+	if(!game::TruthQuestion(CONST_S("Still continue? [y/N]")))
+	  continue;
+      }
+
+      if(Item.size() == 1)
+	ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
+      else
+	ADD_MESSAGE("As you read the scroll, %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
+
+      for(uint c = 0; c < Item.size(); ++c)
+      {
+	Item[c]->RemoveRust();
+	Item[c]->Fix();
+      }
+
+      break;
+    }
+    else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
   }
 
   RemoveFromSlot();
@@ -2701,16 +2704,15 @@ int beartrap::GetBaseTrapDamage() const
 
 void scrollofhardenmaterial::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->GetItems() && !Reader->EquipsSomething())
-  {
-    ADD_MESSAGE("You notice you have lost anything you wished to alter.");
-    return;
-  }
-
   for(;;)
   {
     itemvector Item;
-    Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"), NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened);
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"), NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened))
+    {
+      ADD_MESSAGE("You notice you haven't got anything to harden.");
+      return;
+    }
 
     if(Item.empty())
       if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
@@ -2757,7 +2759,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     material* TempMaterial = MAKE_MATERIAL(Config);
     int Intelligence = Reader->GetAttribute(INTELLIGENCE);
 
-    if(TempMaterial->GetIntelligenceRequirement() > Intelligence)
+    if(TempMaterial->GetIntelligenceRequirement() > Intelligence && !game::WizardModeIsActive())
     {
       delete TempMaterial;
       ADD_MESSAGE("But your mind is not yet strong enough to harden %s.", Item.size() == 1 ? "it" : "them");
@@ -2786,7 +2788,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 
     if(Item.size() == 1)
     {
-      ADD_MESSAGE("As you lift it again it looks much harder.");
+      ADD_MESSAGE("As the fire dies out it looks much harder.");
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
 	Item[0]->ChangeSecondaryMaterial(TempMaterial->SpawnMore());
@@ -2795,7 +2797,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
     }
     else
     {
-      ADD_MESSAGE("As you lift them again they look much harder.");
+      ADD_MESSAGE("As the fire dies out they look much harder.");
 
       if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
 	for(uint c = 0; c < Item.size(); ++c)
@@ -2834,7 +2836,7 @@ ulong wand::GetSpecialParameters() const
   return 0;
 }
 
-truth scrollofgolemcreation::Read(character* Reader)
+/*truth scrollofgolemcreation::Read(character* Reader)
 {
   if(!Reader->GetStack()->SortedItems(Reader, &item::IsDestroyable) && !Reader->EquipsSomething(&item::IsDestroyable))
   {
@@ -2846,71 +2848,73 @@ truth scrollofgolemcreation::Read(character* Reader)
     Reader->StartReading(this, GetReadDifficulty());
     return true;
   }
-}
+}*/
 
 void scrollofgolemcreation::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsDestroyable) && !Reader->EquipsSomething(&item::IsDestroyable))
-    ADD_MESSAGE("You have lost whatever you wished to change into a golem.");
-  else
-    for(;;)
+  for(;;)
+  {
+    itemvector Item;
+
+    if(!Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to use for golem creation?"), NO_MULTI_SELECT, &item::IsDestroyable))
     {
-      itemvector Item;
-      Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to use for golem creation?"), NO_MULTI_SELECT, &item::IsDestroyable);
-
-      if(!Item.empty())
-      {
-	material* Main = Item[0]->GetMainMaterial();
-	material* Sec = Item[0]->GetSecondaryMaterial();
-	truth MainPossible = Main->GetCategoryFlags() & IS_GOLEM_MATERIAL;
-	truth SecPossible = Sec && Sec->GetVolume()
-			    && Sec->GetCategoryFlags() & IS_GOLEM_MATERIAL
-			    && !Sec->IsSameAs(Main);
-
-	if(!MainPossible && !SecPossible)
-	{
-	  ADD_MESSAGE("You can't use that for golem creation.");
-	  continue;
-	}
-
-	if(MainPossible && SecPossible)
-	  if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
-	    SecPossible = false;
-	  else
-	    MainPossible = false;
-
-	int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
-	golem* Golem = golem::Spawn(MaterialConfig);
-	long Volume = MainPossible ? Sec && Sec->IsSameAs(Main)
-		      ? Main->GetVolume() + Sec->GetVolume()
-		      : Main->GetVolume() : Sec->GetVolume();
-	Golem->SetItemVolume(Volume);
-	v2 Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
-	Item[0]->RemoveFromSlot();
-	Item[0]->SendToHell();
-
-	if(Where == ERROR_V2)
-	{
-	  ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex, but nothing happens.", Item[0]->CHAR_NAME(DEFINITE));
-	  delete Golem;
-	}
-	else
-	{
-	  ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex.", Item[0]->CHAR_NAME(DEFINITE));
-	  Golem->SetTeam(Reader->GetTeam());
-	  Golem->PutTo(Where);
-
-	  if(Golem->CanBeSeenByPlayer())
-	    ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
-
-	  Golem->GetLSquareUnder()->DrawParticles(RED);
-	}
-
-	break;
-      }
-      else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
-	return;
+      ADD_MESSAGE("You notice you haven't got anything to change into a golem.");
+      return;
     }
+
+    if(!Item.empty())
+    {
+      material* Main = Item[0]->GetMainMaterial();
+      material* Sec = Item[0]->GetSecondaryMaterial();
+      truth MainPossible = Main->GetCategoryFlags() & IS_GOLEM_MATERIAL;
+      truth SecPossible = Sec && Sec->GetVolume()
+			  && Sec->GetCategoryFlags() & IS_GOLEM_MATERIAL
+			  && !Sec->IsSameAs(Main);
+
+      if(!MainPossible && !SecPossible)
+      {
+	ADD_MESSAGE("You can't use that for golem creation.");
+	continue;
+      }
+
+      if(MainPossible && SecPossible)
+	if(game::TruthQuestion(CONST_S("Use main material? [Y/n]"), YES))
+	  SecPossible = false;
+	else
+	  MainPossible = false;
+
+      int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
+      golem* Golem = golem::Spawn(MaterialConfig);
+      long Volume = MainPossible ? Sec && Sec->IsSameAs(Main)
+		    ? Main->GetVolume() + Sec->GetVolume()
+		    : Main->GetVolume() : Sec->GetVolume();
+      Golem->SetItemVolume(Volume);
+      v2 Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
+      Item[0]->RemoveFromSlot();
+      Item[0]->SendToHell();
+
+      if(Where == ERROR_V2)
+      {
+	ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex, but nothing happens.", Item[0]->CHAR_NAME(DEFINITE));
+	delete Golem;
+      }
+      else
+      {
+	ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-coled magical vortex.", Item[0]->CHAR_NAME(DEFINITE));
+	Golem->SetTeam(Reader->GetTeam());
+	Golem->PutTo(Where);
+
+	if(Golem->CanBeSeenByPlayer())
+	  ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
+
+	Golem->GetLSquareUnder()->DrawParticles(RED);
+      }
+
+      break;
+    }
+    else if(game::TruthQuestion(CONST_S("Really cancel read? [y/N]")))
+      return;
+  }
 
   RemoveFromSlot();
   SendToHell();

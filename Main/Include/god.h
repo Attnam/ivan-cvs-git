@@ -82,6 +82,7 @@ class god
   truth TryToHardenBodyPart(character*);
   virtual truth MutatesBodyParts() const { return false; }
   virtual int GetSex() const = 0;
+  void SignalRandomAltarGeneration(const std::vector<v2>&);
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;

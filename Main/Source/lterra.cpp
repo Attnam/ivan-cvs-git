@@ -359,20 +359,20 @@ truth olterrain::IsTransparent() const
   return IsAlwaysTransparent() || MainMaterial->IsTransparent();
 }
 
-void glterrain::Draw(blitdata& BlitData) const
+/*void glterrain::Draw(blitdata& BlitData) const
 {
   const int AF = GraphicData.AnimationFrames;
   const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
   GraphicData.Picture[F]->LuminanceBlit(BlitData);
-}
+}*/
 
-void olterrain::ModifyAnimationFrames(int& AF) const
+void glterrain::ModifyAnimationFrames(int& AF) const
 {
   if(UseBorderTiles())
     AF += AF << 3;
 }
 
-v2 olterrain::GetBitmapPos(int I) const
+v2 glterrain::GetBorderBitmapPos(v2 BasePos, int I) const
 {
   if(UseBorderTiles())
   {
@@ -392,10 +392,62 @@ v2 olterrain::GetBitmapPos(int I) const
       MV.X = T;
     }
 
-    return DataBase->BitmapPos + (MV << 4);
+    return BasePos + (MV << 4);
   }
   else
-    return DataBase->BitmapPos;
+    return BasePos;
+}
+
+void glterrain::Draw(blitdata& BlitData) const
+{
+  if(UseBorderTiles())
+  {
+    const int TrueAF = GraphicData.AnimationFrames / 9;
+    int PictureIndex = (BlitData.CustomData & SQUARE_INDEX_MASK) * TrueAF;
+
+    if(BlitData.CustomData & ALLOW_ANIMATE && TrueAF != 1)
+      PictureIndex += GET_TICK() & (TrueAF - 1);
+
+    GraphicData.Picture[PictureIndex]->LuminanceMaskedBlit(BlitData);
+  }
+  else
+  {
+    const int AF = GraphicData.AnimationFrames;
+    const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+    GraphicData.Picture[F]->LuminanceBlit(BlitData);
+  }
+}
+
+void olterrain::ModifyAnimationFrames(int& AF) const
+{
+  if(UseBorderTiles())
+    AF += AF << 3;
+}
+
+v2 olterrain::GetBorderBitmapPos(v2 BasePos, int I) const
+{
+  if(UseBorderTiles())
+  {
+    int Index = I ? 8 - (I + (I << 3)) / GraphicData.AnimationFrames : 8;
+    v2 MV = game::GetMoveVector(Index);
+
+    if(VisualEffects & MIRROR)
+      MV.X = -MV.X;
+
+    if(VisualEffects & FLIP)
+      MV.Y = -MV.Y;
+
+    if(VisualEffects & ROTATE)
+    {
+      const int T = MV.Y;
+      MV.Y = -MV.X;
+      MV.X = T;
+    }
+
+    return BasePos + (MV << 4);
+  }
+  else
+    return BasePos;
 }
 
 void olterrain::Draw(blitdata& BlitData) const
@@ -499,4 +551,24 @@ truth olterrain::ShowThingsUnder() const
 truth olterrain::WillBeDestroyedBy(const character* Char) const
 {
   return IsWall() && CanBeDestroyed() && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
+}
+
+v2 glterrain::GetBitmapPos(int I) const
+{
+  return GetBorderBitmapPos(DataBase->BitmapPos, I);
+}
+
+v2 olterrain::GetBitmapPos(int I) const
+{
+  return GetBorderBitmapPos(DataBase->BitmapPos, I);
+}
+
+truth glterrain::IsAnimated() const
+{
+  return GraphicData.AnimationFrames > (UseBorderTiles() ? 9 : 1);
+}
+
+truth olterrain::IsAnimated() const
+{
+  return GraphicData.AnimationFrames > (UseBorderTiles() ? 9 : 1);
 }

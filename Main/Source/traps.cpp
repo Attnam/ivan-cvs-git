@@ -37,7 +37,7 @@ truth web::TryToUnStick(character* Victim, v2)
   ulong TrapID = GetTrapID();
   int Modifier = 7 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
-  if(Modifier <= 1 || !RAND_N(Modifier))
+  if(!RAND_N(Max(Modifier, 2)))
   {
     Victim->RemoveTrap(TrapID);
     TrapData.VictimID = 0;
@@ -51,7 +51,7 @@ truth web::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  if(!Modifier || !RAND_N(Modifier << 1))
+  if(!RAND_N(Max(Modifier << 1, 2)))
   {
     Victim->RemoveTrap(TrapID);
     TrapData.VictimID = 0;
@@ -67,9 +67,9 @@ truth web::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  Modifier = Max(GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75, 2);
+  Modifier = GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75;
 
-  if(Victim->CanChokeOnWeb(this) && !RAND_N(Modifier << 3))
+  if(Victim->CanChokeOnWeb(this) && !RAND_N(Max(Modifier << 3, 2)))
   {
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to choke yourself on the web.");
@@ -81,7 +81,7 @@ truth web::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  if(!RAND_N(Modifier))
+  if(!RAND_N(Max(Modifier, 2)))
   {
     int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
 

@@ -33,7 +33,6 @@ const char* liquidterrain::MonsterSurviveMessage() const { return "manages to ge
 const char* liquidterrain::DeathMessage() const { return "you drown"; }
 const char* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
 const char* liquidterrain::ScoreEntry() const { return "drowned"; }
-v2 liquidterrain::GetBitmapPos(int Frame) const { return v2(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
 
 festring sign::GetText() const { return Text; }
 
@@ -1188,4 +1187,10 @@ void olterraincontainer::FinalProcessForBone()
 {
   olterrain::FinalProcessForBone();
   Contained->FinalProcessForBone();
+}
+
+v2 liquidterrain::GetBitmapPos(int F) const
+{
+  /* gum solution, should come from script */
+  return GetBorderBitmapPos(v2(64 + (F >> 1 & 3) * 48, 32 + (F >> 3 & 3) * 48), F);
 }

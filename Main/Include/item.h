@@ -269,6 +269,7 @@ class item : public object
   virtual truth IsEnchantable(const character*) const { return CanBeEnchanted(); }
   virtual truth IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
   virtual truth IsDecosAdShirt(const character*) const { return false; }
+  virtual truth MaterialIsChangeable(const character*) const { return true; }
   truth CanBeHardened(const character*) const;
   virtual truth HasLock(const character*) const { return false; }
   virtual truth IsOnGround() const;
@@ -400,8 +401,8 @@ class item : public object
   virtual void SignalEmitationDecrease(col24);
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
-  virtual truth IsDangerousForAI(const character*) const { return false; } 
-  virtual truth IsDangerous() const { return false; } 
+  virtual truth IsDangerous(const character*) const { return false; } 
+  virtual truth NeedDangerSymbol() const { return false; } 
   void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
   void SpecialGenerationHandler();
@@ -434,7 +435,7 @@ class item : public object
   virtual int GetInElasticityPenalty(int) const { return 0; }
   virtual truth IsFixableBySmith(const character*) const { return false; }
   virtual truth IsFixableByTailor(const character*) const { return false; }
-  long GetFixPrice() const;
+  virtual long GetFixPrice() const;
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
@@ -499,7 +500,7 @@ class item : public object
   void Destroy(character*, int);
   virtual truth AllowFluidBe() const { return true; }
   virtual truth IsRusted() const;
-  void RemoveRust();
+  virtual void RemoveRust();
   virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;

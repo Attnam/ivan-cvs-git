@@ -36,10 +36,10 @@ TRAP(web, trap)
   virtual void UnStick(int I) { TrapData.BodyParts &= ~(1 << I); }
   void SetStrength(int What) { Strength = What; }
   virtual void Draw(blitdata&) const;
-  virtual truth IsStuckToBodyPart(int) const;
+  truth IsStuckToBodyPart(int) const;
   virtual void ReceiveDamage(character*, int, int, int);
   virtual void Destroy();
-  virtual truth IsDangerousFor(const character* Char) const { return CanBeSeenBy(Char); }
+  virtual truth IsDangerous(const character* Char) const { return CanBeSeenBy(Char); }
   virtual truth CanBeSeenBy(const character*) const;
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();

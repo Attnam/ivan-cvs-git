@@ -14,6 +14,7 @@
 #define __FLUID_H__
 
 #include "lsquare.h"
+#include "trap.h"
 
 class bitmap;
 
@@ -55,7 +56,20 @@ class fluid : public entity
   const festring& GetLocationName() const { return LocationName; }
   truth IsInside() const { return Flags & FLUID_INSIDE; }
   truth UseImage() const;
+  virtual int GetTrapType() const { return Liquid->GetType() | FLUID_TRAP; }
+  virtual ulong GetTrapID() const { return TrapData.TrapID; }
+  virtual ulong GetVictimID() const { return TrapData.VictimID; }
+  virtual void AddTrapName(festring&, int) const;
+  virtual void UnStick() { TrapData.VictimID = 0; }
+  virtual void UnStick(int I) { TrapData.BodyParts &= ~(1 << I); }
+  void StepOnEffect(character*);
+  virtual truth TryToUnStick(character*, v2);
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
+  virtual truth IsStuckTo(const character*) const;
+  truth IsDangerous(const character*) const;
  protected:
+  trapdata TrapData;
   struct imagedata
   {
     imagedata(truth = true);

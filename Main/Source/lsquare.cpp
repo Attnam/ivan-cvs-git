@@ -44,6 +44,10 @@ lsquare::lsquare(level* LevelUnder, v2 Pos)
   GLTerrain(0), OLTerrain(0),
   Memorized(0), FowMemorized(0),
   Engraved(0),
+  GroundBorderPartnerTerrain(0),
+  GroundBorderPartnerInfo(0),
+  OverBorderPartnerTerrain(0),
+  OverBorderPartnerInfo(0),
   SquarePartEmitationTick(0),
   SquarePartLastSeen(0),
   Emitation(0),
@@ -75,6 +79,8 @@ lsquare::~lsquare()
   delete Memorized;
   delete FowMemorized;
   delete StaticContentCache.Bitmap;
+  delete [] GroundBorderPartnerTerrain;
+  delete [] OverBorderPartnerTerrain;
 
   for(smoke* S = Smoke; S;)
   {
@@ -218,6 +224,16 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
   if(!OLTerrain || OLTerrain->ShowThingsUnder())
     GLTerrain->Draw(BlitData);
 
+  int c;
+  int GroundPartners = GroundBorderPartnerInfo >> 24 & 7;
+
+  for(c = 0; c < GroundPartners; ++c)
+  {
+    BlitData.CustomData |= 8 - (GroundBorderPartnerInfo >> ((c << 1) + c) & 7);
+    GroundBorderPartnerTerrain[c]->Draw(BlitData);
+    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+  }
+
   truth StackDrawn = false;
 
   if(OLTerrain && !IsFlyable())
@@ -240,21 +256,23 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
   if(!StackDrawn && Flags & IS_TRANSPARENT)
     DrawStacks(BlitData);
 
-  int Partners = BorderPartnerInfo >> 24;
-
   for(const trap* T = Trap; T; T = T->Next)
     T->Draw(BlitData);
 
-  for(int c = 0; c < Partners; ++c)
+  int OverPartners = OverBorderPartnerInfo >> 24 & 7;
+
+  for(c = 0; c < OverPartners; ++c)
   {
-    BlitData.CustomData |= 8 - (BorderPartnerInfo >> ((c << 1) + c) & 7);
-    BorderPartnerTerrain[c]->Draw(BlitData);
+    BlitData.CustomData |= 8 - (OverBorderPartnerInfo >> ((c << 1) + c) & 7);
+    OverBorderPartnerTerrain[c]->Draw(BlitData);
     BlitData.CustomData &= ~SQUARE_INDEX_MASK;
   }
 }
 
 void lsquare::Draw(blitdata& BlitData) const
 {
+  //DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
+
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
   {
     if(!IsDark() || game::GetSeeWholeMapCheatMode())
@@ -272,7 +290,7 @@ void lsquare::Draw(blitdata& BlitData) const
       {
 	BlitData.CustomData |= Character->GetSquareIndex(Pos);
 
-	if(Character->GetMoveType() & FLY)
+	if(Character->IsFlying())
 	{
 	  for(const smoke* S = Smoke; S; S = S->Next)
 	    S->Draw(BlitData);
@@ -845,12 +863,17 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
   if(GLTerrain->IsAnimated())
     DecStaticAnimatedEntities();
 
+  truth WasUsingBorderTiles = GLTerrain->UseBorderTiles();
   delete GLTerrain;
   GLTerrain = NewGround;
   NewGround->SetLSquareUnder(this);
   Flags |= NEW_DRAW_REQUEST;
-  SendMemorizedUpdateRequest();
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
+  CalculateGroundBorderPartners();
+  SendMemorizedUpdateRequest();
+
+  if(WasUsingBorderTiles || NewGround->UseBorderTiles())
+    RequestForGroundBorderPartnerUpdates();
 
   if(NewGround->IsAnimated())
     IncStaticAnimatedEntities();
@@ -866,12 +889,12 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   OLTerrain = NewOver;
   Flags |= NEW_DRAW_REQUEST;
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
-  CalculateBorderPartners();
+  CalculateOverBorderPartners();
   CalculateIsTransparent();
   SendMemorizedUpdateRequest();
 
   if(WasUsingBorderTiles || (NewOver && NewOver->UseBorderTiles()))
-    RequestForBorderPartnerUpdates();
+    RequestForOverBorderPartnerUpdates();
 
   if(NewOver)
   {
@@ -1039,12 +1062,13 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
     }
   }
 
+  uint c;
   std::vector<trap*> TrapVector;
 
-  for(const trap* T = Trap; T; T = T->Next)
-    TrapVector.push_back(Trap);
+  for(trap* T = Trap; T; T = T->Next)
+    TrapVector.push_back(T);
 
-  for(uint c = 0; c < TrapVector.size(); ++c)
+  for(c = 0; c < TrapVector.size(); ++c)
     if(TrapVector[c]->Exists())
     {
       TrapVector[c]->StepOnEffect(Stepper);
@@ -1053,7 +1077,21 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 	return;
     }
 
-  if(!(Stepper->GetMoveType() & FLY))
+  std::vector<fluid*> FluidVector;
+
+  for(fluid* F = Fluid; F; F = F->Next)
+    FluidVector.push_back(F);
+
+  for(c = 0; c < FluidVector.size(); ++c)
+    if(FluidVector[c]->Exists())
+    {
+      FluidVector[c]->StepOnEffect(Stepper);
+
+      if(!Stepper->IsEnabled())
+	return;
+    }
+
+  if(!Stepper->IsFlying())
     GetStack()->CheckForStepOnEffect(Stepper);
 }
 
@@ -1270,16 +1308,17 @@ void lsquare::DrawMemorizedCharacter(blitdata& BlitData) const
   Flags |= STRONG_NEW_DRAW_REQUEST;
 }
 
-truth lsquare::IsDangerousForAIToStepOn(const character* Who) const
+truth lsquare::IsDangerous(const character* Who) const
 {
-  return (!(Who->GetMoveType() & FLY)
-	  && Stack->IsDangerousForAIToStepOn(Who))
-    || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who);
+  return ((!Who->IsFlying()
+	   && (Stack->IsDangerous(Who)
+	    || HasDangerousFluids(Who)))
+	  || IsDangerousToBreathe(Who) || HasDangerousTraps(Who));
 }
 
-truth lsquare::IsScaryForAIToStepOn(const character* Who) const
+truth lsquare::IsScary(const character* Who) const
 {
-  return IsScaryForAIToBreathe(Who);
+  return IsScaryToBreathe(Who);
 }
 
 stack* lsquare::GetStackOfAdjacentSquare(int I) const
@@ -1797,10 +1836,13 @@ void lsquare::ReceiveEarthQuakeDamage()
     GetOLTerrain()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
 }
 
-truth lsquare::IsDangerous(character* ToWhom) const
+/*truth lsquare::IsDangerous(character* ToWhom) const
 {
-  return (GetStack()->IsDangerous(ToWhom) || Smoke || HasDangerousTraps(ToWhom));
-}
+  return ((!Who->IsFlying()
+	   && (Stack->IsDangerous(Who)
+	    || HasDangerousFluids(Who)))
+	  || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who));
+}*/
 
 truth lsquare::CanBeFeltByPlayer() const
 {
@@ -1832,6 +1874,9 @@ void lsquare::PreProcessForBone()
     Character->Remove();
   }
 
+  for(fluid* F = Fluid; F; F = F->Next)
+    F->PreProcessForBone();
+
   for(trap* T = Trap; T; T = T->Next)
     T->PreProcessForBone();
 
@@ -1848,6 +1893,9 @@ void lsquare::PostProcessForBone(double& DangerSum, int& Enemies)
     Character->SendToHell();
     Character->Remove();
   }
+
+  for(fluid* F = Fluid; F; F = F->Next)
+    F->PostProcessForBone();
 
   for(trap* T = Trap; T; T = T->Next)
     T->PostProcessForBone();
@@ -1876,38 +1924,110 @@ void lsquare::DisplayEngravedInfo(festring& Buffer) const
   Buffer << " There is a message engraved here: \"" << Engraved << '\"';
 }
 
-truth lsquare::IsDangerousForAIToBreathe(const character* Who) const
+truth lsquare::IsDangerousToBreathe(const character* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
-    if(S->IsDangerousForAIToBreathe(Who))
+    if(S->IsDangerousToBreathe(Who))
       return true;
 
   return false;
 }
 
-truth lsquare::IsScaryForAIToBreathe(const character* Who) const
+truth lsquare::IsScaryToBreathe(const character* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
-    if(S->IsScaryForAIToBreathe(Who))
+    if(S->IsScaryToBreathe(Who))
       return true;
 
   return false;
 }
 
-struct borderpartner
+struct groundborderpartner
 {
+  truth operator<(const groundborderpartner& P) const { return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority(); }
+  glterrain* Terrain;
+  int SquareIndex;
+};
+
+/*truth BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
+{
+  return BP1.Terrain->GetBorderTilePriority() < BP2.Terrain->GetBorderTilePriority();
+}*/
+
+void lsquare::CalculateGroundBorderPartners()
+{
+  if(GroundBorderPartnerInfo & BORDER_PARTNER_ANIMATED)
+    DecStaticAnimatedEntities();
+
+  groundborderpartner BorderPartner[8];
+  int Index = 0;
+  int Priority = GLTerrain->GetBorderTilePriority();
+
+  for(int d = 0; d < 8; ++d)
+  {
+    lsquare* Square = NeighbourLSquare[d];
+
+    if(Square)
+    {
+      glterrain* Terrain = Square->GetGLTerrain();
+
+      if(Terrain && Terrain->UseBorderTiles()
+	 && Terrain->GetBorderTilePriority() > Priority)
+      {
+	BorderPartner[Index].Terrain = Terrain;
+	BorderPartner[Index].SquareIndex = 7 - d;
+	++Index;
+      }
+    }
+  }
+
+  GroundBorderPartnerInfo = 0;
+
+  if(!Index)
+  {
+    delete [] GroundBorderPartnerTerrain;
+    GroundBorderPartnerTerrain = 0;
+    return;
+  }
+
+  if(!GroundBorderPartnerTerrain)
+    GroundBorderPartnerTerrain = new glterrain*[8];
+
+  std::sort(BorderPartner, BorderPartner + Index);
+  truth Animated = false;
+
+  for(int c = 0; c < Index; ++c)
+  {
+    glterrain* T = BorderPartner[c].Terrain;
+    GroundBorderPartnerTerrain[c] = T;
+    GroundBorderPartnerInfo |= BorderPartner[c].SquareIndex << ((c << 1) + c);
+
+    if(T->IsAnimated())
+      Animated = true;
+  }
+
+  if(Animated)
+  {
+    GroundBorderPartnerInfo |= BORDER_PARTNER_ANIMATED;
+    IncStaticAnimatedEntities();
+  }
+
+  GroundBorderPartnerInfo |= Index << 24;
+}
+
+struct overborderpartner
+{
+  truth operator<(const overborderpartner& P) const { return Terrain->GetBorderTilePriority() < P.Terrain->GetBorderTilePriority(); }
   olterrain* Terrain;
   int SquareIndex;
 };
 
-truth BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
+void lsquare::CalculateOverBorderPartners()
 {
-  return BP1.Terrain->GetBorderTilePriority() < BP2.Terrain->GetBorderTilePriority();
-}
+  if(OverBorderPartnerInfo & BORDER_PARTNER_ANIMATED)
+    DecStaticAnimatedEntities();
 
-void lsquare::CalculateBorderPartners()
-{
-  borderpartner BorderPartner[8];
+  overborderpartner BorderPartner[8];
   int Index = 0;
   int Priority = OLTerrain ? OLTerrain->GetBorderTilePriority() : 0;
 
@@ -1929,19 +2049,41 @@ void lsquare::CalculateBorderPartners()
     }
   }
 
-  std::sort(BorderPartner, BorderPartner + Index, BorderPartnerOrderer);
-  BorderPartnerInfo = 0;
+  OverBorderPartnerInfo = 0;
+
+  if(!Index)
+  {
+    delete [] OverBorderPartnerTerrain;
+    OverBorderPartnerTerrain = 0;
+    return;
+  }
+
+  if(!OverBorderPartnerTerrain)
+    OverBorderPartnerTerrain = new olterrain*[8];
+
+  std::sort(BorderPartner, BorderPartner + Index);
+  truth Animated = false;
 
   for(int c = 0; c < Index; ++c)
   {
-    BorderPartnerTerrain[c] = BorderPartner[c].Terrain;
-    BorderPartnerInfo |= BorderPartner[c].SquareIndex << ((c << 1) + c);
+    olterrain* T = BorderPartner[c].Terrain;
+    OverBorderPartnerTerrain[c] = T;
+    OverBorderPartnerInfo |= BorderPartner[c].SquareIndex << ((c << 1) + c);
+
+    if(T->IsAnimated())
+      Animated = true;
   }
 
-  BorderPartnerInfo |= Index << 24;
+  if(Animated)
+  {
+    OverBorderPartnerInfo |= BORDER_PARTNER_ANIMATED;
+    IncStaticAnimatedEntities();
+  }
+
+  OverBorderPartnerInfo |= Index << 24;
 }
 
-void lsquare::RequestForBorderPartnerUpdates()
+void lsquare::RequestForGroundBorderPartnerUpdates()
 {
   if(!game::IsGenerating())
     for(int d = 0; d < 8; ++d)
@@ -1950,7 +2092,23 @@ void lsquare::RequestForBorderPartnerUpdates()
 
       if(Square)
       {
-	Square->CalculateBorderPartners();
+	Square->CalculateGroundBorderPartners();
+	Square->SendNewDrawRequest();
+	Square->SendMemorizedUpdateRequest();
+      }
+    }
+}
+
+void lsquare::RequestForOverBorderPartnerUpdates()
+{
+  if(!game::IsGenerating())
+    for(int d = 0; d < 8; ++d)
+    {
+      lsquare* Square = NeighbourLSquare[d];
+
+      if(Square)
+      {
+	Square->CalculateOverBorderPartners();
 	Square->SendNewDrawRequest();
 	Square->SendMemorizedUpdateRequest();
       }
@@ -1984,7 +2142,7 @@ struct fluidcomparer
   const liquid* Liquid;
 };
 
-void lsquare::AddFluid(liquid* ToBeAdded)
+fluid* lsquare::AddFluid(liquid* ToBeAdded)
 {
   fluid*& F = ListFind(Fluid, fluidcomparer(ToBeAdded));
 
@@ -2001,6 +2159,7 @@ void lsquare::AddFluid(liquid* ToBeAdded)
 
   SendNewDrawRequest();
   SendMemorizedUpdateRequest();
+  return F;
 }
 
 void lsquare::DisplayFluidInfo(festring& Msg) const
@@ -2057,7 +2216,12 @@ void lsquare::SpillFluid(character* Spiller, liquid* Liquid, truth ForceHit, tru
   }
 
   if(Liquid->GetVolume())
-    AddFluid(Liquid);
+  {
+    fluid* F = AddFluid(Liquid);
+
+    if(GetCharacter())
+      F->StepOnEffect(GetCharacter());
+  }
   else
     delete Liquid;
 }
@@ -2608,8 +2772,22 @@ void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Di
 truth lsquare::HasDangerousTraps(const character* Who) const
 {
   for(trap* T = Trap; T; T = T->Next)
-    if(T->IsDangerousFor(Who))
+    if(T->IsDangerous(Who))
       return true;
 
   return false;
+}
+
+truth lsquare::HasDangerousFluids(const character* Who) const
+{
+  for(const fluid* F = Fluid; F; F = F->Next)
+    if(F->IsDangerous(Who))
+      return true;
+
+  return false;
+}
+
+truth lsquare::HasNoBorderPartners() const
+{
+  return !(GroundBorderPartnerInfo >> 24) && !(OverBorderPartnerInfo >> 24);
 }

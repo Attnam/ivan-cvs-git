@@ -130,7 +130,7 @@ truth commandsystem::GoUp(character* Char)
   {
     if(game::IsInWilderness())
     {
-      if(!(Char->GetMoveType() & FLY))
+      if(!Char->IsFlying())
 	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
       else
 	ADD_MESSAGE("You fly around for some time.");
@@ -506,17 +506,6 @@ truth commandsystem::Talk(character* Char)
 
 truth commandsystem::NOP(character* Char)
 {
-  //((arm*)Char->GetBodyPart(RIGHT_ARM_INDEX))->EditExperience(ARM_STRENGTH, 500, 1 << 14);
-  /*Char->EditExperience(LEG_STRENGTH, 500, 1 << 14);
-  Char->EditExperience(DEXTERITY, 500, 1 << 14);
-  Char->EditExperience(AGILITY, 500, 1 << 14);
-  Char->EditExperience(ENDURANCE, 500, 1 << 14);
-  Char->EditExperience(PERCEPTION, 500, 1 << 14);
-  Char->EditExperience(INTELLIGENCE, 500, 1 << 14);
-  Char->EditExperience(WISDOM, 500, 1 << 14);
-  Char->EditExperience(CHARISMA, 500, 1 << 14);*/
-  //Char->EditAttribute(CHARISMA, 1);
-
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);
   Char->EditAP(-Char->GetStateAPGain(1000));
@@ -567,7 +556,7 @@ truth commandsystem::Dip(character* Char)
     return false;
   }
 
-  truth HasDipDestination = Char->GetStack()->SortedItems(Char, &item::IsDipDestination) || Char->EquipsSomething(&item::IsDipDestination);
+  truth HasDipDestination = Char->PossessesItem(&item::IsDipDestination);
   truth DipDestinationNear = false;
 
   for(int d = 0; d < 9; ++d)
@@ -893,7 +882,7 @@ truth commandsystem::Apply(character* Char)
   if(!Char->CheckApply())
     return false;
 
-  if(!Char->GetStack()->SortedItems(Char, &item::IsAppliable) && !Char->EquipsSomething(&item::IsAppliable))
+  if(!Char->PossessesItem(&item::IsAppliable))
   {
     ADD_MESSAGE("You have nothing to apply!");
     return false;
@@ -928,7 +917,7 @@ truth commandsystem::Zap(character* Char)
   if(!Char->CheckZap())
     return false;
 
-  if(!Char->GetStack()->SortedItems(Char, &item::IsZappable) && !Char->EquipsSomething(&item::IsZappable))
+  if(!Char->PossessesItem(&item::IsZappable))
   {
     ADD_MESSAGE("You have nothing to zap with, %s.", game::Insult());
     return false;
@@ -1213,13 +1202,13 @@ truth commandsystem::WizardMode(character* Char)
 
 truth commandsystem::RaiseStats(character* Char)
 {
-  Char->EditAllAttributes(10);
+  Char->EditAllAttributes(1);
   return false;
 }
 
 truth commandsystem::LowerStats(character* Char)
 {
-  Char->EditAllAttributes(-10);
+  Char->EditAllAttributes(-1);
   return false;
 }
 
@@ -1528,13 +1517,19 @@ truth commandsystem::Polymorph(character* Char)
 
 #endif
 
-truth commandsystem::ToggleRunning(character*)
+truth commandsystem::ToggleRunning(character* Char)
 {
   if(game::PlayerIsRunning()
      && PLAYER->StateIsActivated(PANIC)
      && PLAYER->GetTirednessState() != FAINTING)
   {
     ADD_MESSAGE("You are too scared to move at normal pace.");
+    return false;
+  }
+
+  if(!Char->CanMove())
+  {
+    ADD_MESSAGE("Well, well, aren't we funny today, eh?");
     return false;
   }
 

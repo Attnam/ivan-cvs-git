@@ -60,6 +60,7 @@ class object : public entity, public id
   void InitMaterial(material*&, material*, long);
   virtual truth DetectMaterial(const material*) const;
   virtual int GetSparkleFlags() const;
+  virtual void SignalMaterialChange() { }
  protected:
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, truth);

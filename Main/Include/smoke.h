@@ -44,8 +44,8 @@ class smoke : public entity
   void AddBreatheMessage() const;
   void Merge(gas*);
   const material* GetGas() const { return Gas; }
-  truth IsDangerousForAIToBreathe(const character*) const;
-  truth IsScaryForAIToBreathe(const character*) const;
+  truth IsDangerousToBreathe(const character*) const;
+  truth IsScaryToBreathe(const character*) const;
  protected:
   material* Gas;
   std::vector<bitmap*> Picture;

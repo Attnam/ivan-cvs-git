@@ -54,6 +54,7 @@ ITEM(bodypart, item)
   virtual void CalculateEmitation();
   void CalculateMaxHP(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   virtual void SignalVolumeAndWeightChange();
+  void FastRestoreHP();
   void RestoreHP();
   virtual void CalculateDamage() { }
   virtual void CalculateToHitValue() { }
@@ -87,7 +88,7 @@ ITEM(bodypart, item)
   virtual void Draw(blitdata&) const;
   void SetSparkleFlags(int);
   virtual int GetSpecialFlags() const;
-  truth IsRepairable() const;
+  virtual truth IsRepairable(const character*) const;
   truth IsWarm() const;
   truth UseMaterialAttributes() const;
   truth CanRegenerate() const;
@@ -121,11 +122,20 @@ ITEM(bodypart, item)
   virtual void SignalPossibleUsabilityChange() { UpdateFlags(); }
   void SetIsInfectedByLeprosy(truth);
   virtual int GetSparkleFlags() const;
+  virtual truth MaterialIsChangeable(const character*) const;
+  virtual void RemoveRust();
+  virtual item* Fix();
+  virtual long GetFixPrice() const;
+  virtual truth IsFixableBySmith(const character*) const;
+  virtual truth IsFixableByTailor(const character*) const;
+  virtual void SignalMaterialChange();
+  void SetNormalMaterial(int What) { NormalMaterial = What; }
+  virtual truth IsBroken() const { return HP < MaxHP; }
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
   virtual void AddPostFix(festring&) const;
-  virtual truth ShowMaterial() const { return false; }
+  virtual truth ShowMaterial() const;
   virtual int GetArticleMode() const;
   virtual col16 GetMaterialColorA(int) const;
   virtual col16 GetMaterialColorB(int) const { return ColorB; }
@@ -138,6 +148,7 @@ ITEM(bodypart, item)
   void UpdateFlags();
   truth MasterIsAnimated() const;
   void SignalAnimationStateChange(truth);
+  virtual truth AddAdjective(festring&, truth) const;
   festring OwnerDescription;
   character* Master;
   long CarriedWeight;
@@ -150,6 +161,7 @@ ITEM(bodypart, item)
   short HP;
   short MaxHP;
   short BloodMaterial;
+  short NormalMaterial;
   uchar SpillBloodCounter;
   uchar WobbleData;
 };

@@ -32,9 +32,7 @@ template <class type> class databasecreator;
 struct blitdata;
 
 typedef glterrain* (*glterrainspawner)(int, int);
-//typedef glterrain* (*glterraincloner)(const glterrain*);
 typedef olterrain* (*olterrainspawner)(int, int);
-//typedef olterrain* (*olterraincloner)(const olterrain*);
 
 struct lterraindatabase : public databasebase
 {
@@ -61,6 +59,8 @@ struct lterraindatabase : public databasebase
   truth IsAbstract;
   truth ShowMaterial;
   truth HasSecondaryMaterial;
+  truth UseBorderTiles;
+  int BorderTilePriority;
 };
 
 class lterrain : public object
@@ -158,7 +158,6 @@ class glterrain : public lterrain, public gterrain
   const database* GetDataBase() const { return DataBase; }
   DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(v2, BitmapPos, int);
   DATA_BASE_TRUTH(UsesLongArticle);
   DATA_BASE_VALUE(const festring&, Adjective);
   DATA_BASE_TRUTH(UsesLongAdjectiveArticle);
@@ -177,13 +176,19 @@ class glterrain : public lterrain, public gterrain
   virtual DATA_BASE_VALUE(const festring&, SitMessage);
   DATA_BASE_TRUTH(ShowMaterial);
   DATA_BASE_VALUE(int, Walkability);
+  DATA_BASE_TRUTH(UseBorderTiles);
+  DATA_BASE_VALUE(int, BorderTilePriority);
   virtual int GetAttachedGod() const;
   virtual int GetTheoreticalWalkability() const { return DataBase->Walkability; }
   void Draw(blitdata&) const;
+  virtual truth IsAnimated() const;
  protected:
   virtual void InstallDataBase(int);
   virtual int GetGraphicsContainerIndex() const;
   virtual const prototype* FindProtoType() const { return &ProtoType; }
+  virtual v2 GetBitmapPos(int) const;
+  v2 GetBorderBitmapPos(v2, int) const;
+  virtual void ModifyAnimationFrames(int&) const;
   static const prototype ProtoType;
   const database* DataBase;
 };
@@ -200,7 +205,6 @@ struct olterraindatabase : public lterraindatabase
   long StorageVolume;
   int HPModifier;
   v2 OpenBitmapPos;
-  int BorderTilePriority;
   v2 WindowBitmapPos;
   fearray<contentscript<item> > LeftOverItems;
   truth CreateDivineConfigurations;
@@ -208,7 +212,6 @@ struct olterraindatabase : public lterraindatabase
   truth IsUpLink;
   truth CreateLockConfigurations;  
   truth IsAlwaysTransparent;
-  truth UseBorderTiles;
   truth ShowThingsUnder;
   truth IsWall;
   truth CreateWindowConfigurations;
@@ -325,8 +328,10 @@ class olterrain : public lterrain, public oterrain
   virtual void PostProcessForBone() { }
   virtual void FinalProcessForBone() { }
   virtual void RestoreHP() { HP = CalculateMaxHP(); }
+  virtual truth IsAnimated() const;
  protected:
   virtual v2 GetBitmapPos(int) const;
+  v2 GetBorderBitmapPos(v2, int) const;
   virtual void ModifyAnimationFrames(int&) const;
   virtual void InstallDataBase(int);
   virtual int GetGraphicsContainerIndex() const;

@@ -43,6 +43,7 @@ character
 	CanBeGenerated = false;
 	CriticalModifier = 20;
 	StandVerb = "standing";
+	ForceCustomStandVerb = false;
 	CanOpen = true;
 	Frequency = 10000;
 	EnergyResistance = 0;
@@ -257,6 +258,9 @@ character
 	CanChoke = true;
 	IsImmuneToStickiness = false;
 	DisplacePriority = 0;
+	RunDescriptionLineOne = ""; /* if empty, IVAN determines this itself */
+	RunDescriptionLineTwo = "";
+	VomittingIsUnhealthy = true;
 }
 
 humanoid
@@ -1037,6 +1041,7 @@ oree
 	IsImmuneToItemTeleport = true;
 	AllowUnconsciousness = false;
 	DisplacePriority = 8;
+	VomittingIsUnhealthy = false;
 }
 
 darkknight
@@ -1238,6 +1243,7 @@ frog
 	MoveType = WALK|SWIM;
 	CanRead = true;
 	CanChoke = false;
+	StandVerb = "jumping about";
 
 	Config DARK;
 	{
@@ -1664,9 +1670,9 @@ mommo
 	DefaultMana = 0;
 	CanOpen = false;
 	StandVerb = "bubbling";
+	ForceCustomStandVerb = true;
 	HostileReplies == "@Dd vibrates in fury.";
 	FriendlyReplies == "@Dd vibrates oddly.";
-	BloodMaterial = BROWN_SLIME;
 	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
@@ -1675,53 +1681,61 @@ mommo
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
-	BaseEmitation = rgb24(90, 110, 90);
 	HasALeg = false;
-	FleshMaterial = BROWN_SLIME;
 	DeathMessage = "@Dd turns into lifeless goo.";
 	HasEyes = false;
 	HasHead = false;
 	AttachedGod = SCABIES;
 	ClassStates = GAS_IMMUNITY;
 	BiteCapturesBodyPart = false;
-	VomitMaterial = BROWN_SLIME;
 	IgnoreDanger = true;
-	ForceVomitMessage = "You spurt some brown slime from your body.";
+	ForceVomitMessage = "You spurt some slime from your body.";
 	CanChoke = false;
+	RunDescriptionLineOne = "Flowing";
+	RunDescriptionLineTwo = "ahead fast";
+	VomittingIsUnhealthy = false;
+	UsesNutrition = false;
+	IsImmuneToStickiness = true;
 
 	Config CONICAL;
-	{
-		DefaultArmStrength = 4;
-		DefaultAgility = 2;
-		DefaultPerception = 9;
-		DefaultIntelligence = 3;
-		DefaultWisdom = 2;
-		DefaultCharisma = 4;
-		TotalVolume = 300000;
-		TorsoBitmapPos = 176, 0;
-		TotalSize = 100;
-		Adjective = "conical";
-		HPRequirementForGeneration = 120;
-		DayRequirementForGeneration = 4;
-		Frequency = 1000;
-	}
-
-	Config FLAT;
 	{
 		DefaultArmStrength = 2;
 		DefaultAgility = 4;
 		DefaultPerception = 9;
-		DefaultIntelligence = 2;
+		DefaultIntelligence = 3;
 		DefaultWisdom = 3;
-		DefaultCharisma = 3;
+		DefaultCharisma = 4;
 		TotalVolume = 150000;
+		TorsoBitmapPos = 176, 0;
+		TotalSize = 100;
+		Adjective = "conical";
+		HPRequirementForGeneration = 120;
+		DayRequirementForGeneration = 6;
+		Frequency = 1000;
+		BloodMaterial = YELLOW_SLIME;
+		FleshMaterial = YELLOW_SLIME;
+		VomitMaterial = YELLOW_SLIME;
+	}
+
+	Config FLAT;
+	{
+		DefaultArmStrength = 4;
+		DefaultAgility = 2;
+		DefaultPerception = 9;
+		DefaultIntelligence = 2;
+		DefaultWisdom = 2;
+		DefaultCharisma = 3;
+		TotalVolume = 300000;
 		TorsoBitmapPos = 192, 0;
 		TotalSize = 75;
 		Adjective = "flat";
 		HPRequirementForGeneration = 80;
-		DayRequirementForGeneration = 3;
+		DayRequirementForGeneration = 4;
 		Frequency = 1500;
 		CanHear = false;
+		BloodMaterial = BROWN_SLIME;
+		FleshMaterial = BROWN_SLIME;
+		VomitMaterial = BROWN_SLIME;
 	}
 }
 
@@ -2943,6 +2957,7 @@ largecat
 	ClassStates = INFRA_VISION;
 	FleshMaterial = CAT_FLESH;
 	AttachedGod = SILVA;
+	DangerModifier = 50;
 }
 
 largerat
@@ -3357,6 +3372,8 @@ snake
 	CanOpen = false;
 	AttachedGod = MELLIS;
 	AutomaticallySeen = true;
+	RunDescriptionLineOne = "Crawling";
+	RunDescriptionLineTwo = "very fast";
 }
 
 orc
@@ -3971,6 +3988,7 @@ eddy
 	Frequency = 1000;
 	PanicLevel = 0;
 	StandVerb = "twirling";
+	ForceCustomStandVerb = true;
 	UsesNutrition = false;
 	SpillsBlood = false;
 	Sweats = false;
@@ -3985,6 +4003,7 @@ eddy
 	CanHear = false;
 	CanChoke = false;
 	IsImmuneToStickiness = true;
+	MoveType = ETHEREAL|FLY;
 }
 
 mushroom
@@ -4094,7 +4113,7 @@ darkmage
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
 		HPRequirementForGeneration = 150;
-		DayRequirementForGeneration = 6;
+		DayRequirementForGeneration = 7;
 		Frequency = 1500;
 		PanicLevel = 75;
 		Inventory == lantern;
@@ -4131,7 +4150,7 @@ darkmage
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 250;
-		DayRequirementForGeneration = 10;
+		DayRequirementForGeneration = 12;
 		Frequency = 1000;
 		PanicLevel = 25;
 		CWeaponSkillHits == 100;
@@ -4169,7 +4188,7 @@ darkmage
 		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
 		RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 5; }
 		HPRequirementForGeneration = 350;
-		DayRequirementForGeneration = 14;
+		DayRequirementForGeneration = 17;
 		Frequency = 500;
 		PanicLevel = 10;
 		CWeaponSkillHits == 200;
@@ -4219,7 +4238,7 @@ darkmage
 		RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
 		Inventory = { 9, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR), key(OCTAGONAL_LOCK); }
 		HPRequirementForGeneration = 450;
-		DayRequirementForGeneration = 18;
+		DayRequirementForGeneration = 22;
 		PanicLevel = 0;
 		CanBeConfused = false;
 		CWeaponSkillHits == 500;
@@ -4747,7 +4766,7 @@ necromancer
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 125;
-		DayRequirementForGeneration = 5;
+		DayRequirementForGeneration = 6;
 		Frequency = 1000;
 		PanicLevel = 0;
 		CWeaponSkillHits == 100;
@@ -4966,7 +4985,7 @@ veterankamikazedwarf
 	Adjective = "veteran";
 	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
 	HPRequirementForGeneration = 200;
-	DayRequirementForGeneration = 8;
+	DayRequirementForGeneration = 10;
 	Frequency = 200;
 	IsAbstract = true;
 	CreateDivineConfigurations = true;
@@ -5159,7 +5178,7 @@ mysticfrog
 		AttachedGod = INFUSCOR;
 		IgnoreDanger = true;
 		HPRequirementForGeneration = 400;
-		DayRequirementForGeneration = 16;
+		DayRequirementForGeneration = 20;
 		Frequency = 250;
 		PolymorphIntelligenceRequirement = 25;
 		ScienceTalkIntelligenceModifier = 100;

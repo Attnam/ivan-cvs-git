@@ -70,14 +70,14 @@ void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << WobbleData << HP;
-  SaveFile << OwnerDescription << BloodMaterial;
+  SaveFile << OwnerDescription << BloodMaterial << NormalMaterial;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> WobbleData >> HP;
-  SaveFile >> OwnerDescription >> BloodMaterial;
+  SaveFile >> OwnerDescription >> BloodMaterial >> NormalMaterial;
 }
 
 int bodypart::GetStrengthValue() const
@@ -1385,6 +1385,7 @@ void bodypart::SignalVolumeAndWeightChange()
   if(Master && !Master->IsInitializing())
   {
     CalculateMaxHP();
+    Master->CalculateHP();
     Master->CalculateMaxHP();
     Master->SignalBodyPartVolumeAndWeightChange();
     square* SquareUnder = GetSquareUnder();
@@ -2080,7 +2081,7 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
 {
   if(!IsUsable())
   {
-    ADD_MESSAGE("Your %s is not usable.", GetBodyPartName().CStr());
+    ADD_MESSAGE("%s %s is not usable.", Master->CHAR_POSSESSIVE_PRONOUN, GetBodyPartName().CStr());
     return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
   }
 
@@ -2095,13 +2096,13 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
     if(HitStrength - Requirement < 10)
     {
       if(HitStrength <= Requirement)
-	ADD_MESSAGE("You cannot use %s. Wielding it with two hands requires %d strength.", WeaponDescription, (Requirement >> 1) + 1);
+	ADD_MESSAGE("%s cannot use %s. Wielding it with two hands requires %d strength.", Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, (Requirement >> 1) + 1);
       else if(HitStrength - Requirement < 4)
-	ADD_MESSAGE("Using %s even with two hands is extremely difficult.", WeaponDescription);
+	ADD_MESSAGE("Using %s even with two hands is extremely difficult for %s.", WeaponDescription, Master->CHAR_DESCRIPTION(DEFINITE));
       else if(HitStrength - Requirement < 7)
-	ADD_MESSAGE("You have much trouble using %s even with two hands.", WeaponDescription);
+	ADD_MESSAGE("%s %s much trouble using %s even with two hands.", Master->CHAR_DESCRIPTION(DEFINITE), Master->IsPlayer() ? "have" : "has", WeaponDescription);
       else
-	ADD_MESSAGE("It is somewhat difficult to use %s even with two hands.", WeaponDescription);
+	ADD_MESSAGE("It is somewhat difficult for %s to use %s even with two hands.", Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription);
 
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
@@ -2110,25 +2111,25 @@ truth arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
   {
     if(HitStrength - Requirement < 10)
     {
-      const char* OtherHandInfo = "";
+      festring OtherHandInfo;
       const char* HandInfo = "";
 
       if(GetWielded()->IsTwoHanded())
       {
 	if(GetPairArm() && !GetPairArm()->IsUsable())
-	  OtherHandInfo = "Your other arm is unusable. ";
+	  OtherHandInfo = Master->GetPossessivePronoun() + " other arm is unusable. ";
 
 	HandInfo = " with one hand";
       }
 
       if(HitStrength <= Requirement)
-	ADD_MESSAGE("%sYou cannot use %s. Wielding it%s requires %d strength.", OtherHandInfo, WeaponDescription, HandInfo, Requirement + 1);
+	ADD_MESSAGE("%s%s cannot use %s. Wielding it%s requires %d strength.", OtherHandInfo.CStr(), Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(), WeaponDescription, HandInfo, Requirement + 1);
       else if(HitStrength - Requirement < 4)
-	ADD_MESSAGE("%sUsing %s%s is extremely difficult.", OtherHandInfo, WeaponDescription, HandInfo);
+	ADD_MESSAGE("%sUsing %s%s is extremely difficult for %s.", OtherHandInfo.CStr(), WeaponDescription, HandInfo, Master->CHAR_DESCRIPTION(DEFINITE));
       else if(HitStrength - Requirement < 7)
-	ADD_MESSAGE("%sYou have much trouble using %s%s.", OtherHandInfo, WeaponDescription, HandInfo);
+	ADD_MESSAGE("%s%s %s much trouble using %s%s.", OtherHandInfo.CStr(), Master->GetDescription(DEFINITE).CapitalizeCopy().CStr(), Master->IsPlayer() ? "have" : "has", WeaponDescription, HandInfo);
       else
-	ADD_MESSAGE("%sIt is somewhat difficult to use %s%s.", OtherHandInfo, WeaponDescription, HandInfo);
+	ADD_MESSAGE("%sIt is somewhat difficult for %s to use %s%s.", OtherHandInfo.CStr(), Master->CHAR_DESCRIPTION(DEFINITE), WeaponDescription, HandInfo);
 
       return !game::TruthQuestion(CONST_S("Continue anyway? [y/N]"));
     }
@@ -2316,9 +2317,9 @@ void corpse::FinalProcessForBone()
   Deceased->FinalProcessForBone();
 }
 
-truth bodypart::IsRepairable() const
+truth bodypart::IsRepairable(const character*) const
 {
-  return !CanRegenerate() && GetHP() < GetMaxHP();
+  return !CanRegenerate() && (GetHP() < GetMaxHP() || IsRusted());
 }
 
 truth corpse::SuckSoul(character* Soul, character* Summoner)
@@ -2942,7 +2943,8 @@ void bodypart::ReceiveAcid(material* Material, const festring& LocationName, lon
       }
 
       Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
-      Master->CheckDeath(CONST_S("dissolved by ") + Material->GetName(), 0);
+      ulong DeathFlags = Material->IsStuckTo(Master) ? IGNORE_TRAPS : 0;
+      Master->CheckDeath(CONST_S("dissolved by ") + Material->GetName(), 0, DeathFlags);
     }
   }
 }
@@ -2956,9 +2958,9 @@ void bodypart::TryToRust(long LiquidModifier)
     if(Master)
     {
       if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s rusts%s.", GetBodyPartName().CStr(), MoreMsg);
+	ADD_MESSAGE("Your %s rusts%s.", CHAR_NAME(UNARTICLED), MoreMsg);
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s of %s rusts%s.", GetBodyPartName().CStr(), Master->CHAR_NAME(DEFINITE), MoreMsg);
+	ADD_MESSAGE("The %s of %s rusts%s.", CHAR_NAME(UNARTICLED), Master->CHAR_NAME(DEFINITE), MoreMsg);
     }
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s rusts%s.", CHAR_NAME(DEFINITE), MoreMsg);
@@ -3258,10 +3260,17 @@ void bodypart::IncreaseHP()
   SignalPossibleUsabilityChange();
 }
 
+void bodypart::FastRestoreHP()
+{
+  HP = MaxHP;
+  SignalPossibleUsabilityChange();
+}
+
 void bodypart::RestoreHP()
 {
   HP = MaxHP;
   SignalPossibleUsabilityChange();
+  Master->CalculateHP();
 }
 
 void bodypart::SetIsUnique(truth What)
@@ -3310,4 +3319,63 @@ void bodypart::SignalAnimationStateChange(truth WasAnimated)
 	Square->IncAnimatedEntities();
     }
   }
+}
+
+truth bodypart::MaterialIsChangeable(const character*) const
+{
+  return !Master || !Master->BodyPartIsVital(GetBodyPartIndex()) || UseMaterialAttributes();
+}
+
+truth bodypart::AddAdjective(festring& String, truth Articled) const
+{
+  if(!Master)
+  {
+    if(Articled)
+      String << "a ";
+
+    String << "severed ";
+    return true;
+  }
+  else
+    return false;
+}
+
+void bodypart::RemoveRust()
+{
+  item::RemoveRust();
+  RestoreHP();
+}
+
+long bodypart::GetFixPrice() const
+{
+  return GetMaxHP() - GetHP() + GetMainMaterial()->GetRustLevel() * 25;
+}
+
+truth bodypart::IsFixableBySmith(const character*) const
+{
+  return (GetMainMaterial()->GetCategoryFlags() & IS_METAL
+	  && (GetHP() < GetMaxHP() || IsRusted()));
+}
+
+truth bodypart::IsFixableByTailor(const character*) const
+{
+  return (GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED
+	  && GetHP() < GetMaxHP());
+}
+
+item* bodypart::Fix()
+{
+  RestoreHP();
+  return this;
+}
+
+void bodypart::SignalMaterialChange()
+{
+  if(Master)
+    RestoreHP();
+}
+
+truth bodypart::ShowMaterial() const
+{
+  return MainMaterial->GetConfig() != NormalMaterial;
 }

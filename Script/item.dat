@@ -2373,7 +2373,7 @@ bodypart
 	IsAutoInitializable = false;
 	IsAbstract = true;
 	IsTwoHanded = true;
-	Adjective = "severed"; /* only used if severed */
+	/*Adjective = "severed";*/ /* only used if severed */
 	CanBeWished = false; /* temporary */
 	AttachedGod = NONE;
 	IsValuable = false;
@@ -2983,6 +2983,7 @@ vermis /* meleeweapon-> */
 	WieldedBitmapPos = 160, 96;
 	EnchantmentPlusChance = 2;
 	DamageFlags = PIERCE;
+	GearStates = TELEPORT|TELEPORT_CONTROL;
 
 	Config BROKEN;
 	{
@@ -2991,6 +2992,7 @@ vermis /* meleeweapon-> */
 		Price = 100;
 		WieldedBitmapPos = 176, 96;
 		EnchantmentPlusChance = 4;
+		GearStates = 0;
 	}
 }
 

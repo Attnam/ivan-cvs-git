@@ -118,7 +118,7 @@ class stack
   void CalculateEmitation();
   col24 GetSideEmitation(int);
   truth CanBeSeenBy(const character*, int) const;
-  truth IsDangerousForAIToStepOn(const character*) const;
+  truth IsDangerous(const character*) const;
   truth Duplicate(int, ulong = 0);
   void MoveItemsTo(stack*);
   void MoveItemsTo(slot*);
@@ -135,7 +135,7 @@ class stack
   int GetSpoiledItems() const;
   void SortAllItems(const sortdata&) const;
   void Search(const character*, int);
-  truth IsDangerous(const character*) const;
+  truth NeedDangerSymbol(const character*) const;
   void PreProcessForBone();
   void PostProcessForBone();
   void FinalProcessForBone();

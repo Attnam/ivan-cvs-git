@@ -205,11 +205,12 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 	     || ChosenDataBase->IsPolymorphSpawnable))
       {
 	item* Item = ChosenDataBase->ProtoType->Spawn(Config, SpecialFlags);
+	truth GodOK = !RequiredGod || Item->GetAttachedGod() == RequiredGod;
 
 	/* Optimization, GetTruePrice() may be rather slow */
 
-	if((MinPrice == 0 && MaxPrice == MAX_PRICE)
-	   || (Config & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE))
+	if(((MinPrice == 0 && MaxPrice == MAX_PRICE)
+	    || (Config & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE)) && GodOK)
 	  return Item;
 
 	long Price = Item->GetTruePrice();
@@ -217,8 +218,7 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 	if(Item->HandleInPairs())
 	  Price <<= 1;
 
-	if(Price >= MinPrice && Price <= MaxPrice
-	   && (!RequiredGod || Item->GetAttachedGod() == RequiredGod))
+	if(Price >= MinPrice && Price <= MaxPrice && GodOK)
 	  return Item;
 
 	delete Item;

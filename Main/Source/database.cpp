@@ -375,6 +375,10 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanChoke);
   ADD_MEMBER(IsImmuneToStickiness);
   ADD_MEMBER(DisplacePriority);
+  ADD_MEMBER(RunDescriptionLineOne);
+  ADD_MEMBER(RunDescriptionLineTwo);
+  ADD_MEMBER(ForceCustomStandVerb);
+  ADD_MEMBER(VomittingIsUnhealthy);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -508,6 +512,8 @@ void databasecreator<type>::CreateLTerrainDataBaseMemberMap()
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(Walkability);
   ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(UseBorderTiles);
+  ADD_MEMBER(BorderTilePriority);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -531,8 +537,6 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(OpenBitmapPos);
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(IsAlwaysTransparent);
-  ADD_MEMBER(UseBorderTiles);
-  ADD_MEMBER(BorderTilePriority);
   ADD_MEMBER(CreateWindowConfigurations);
   ADD_MEMBER(WindowBitmapPos);
   ADD_MEMBER(ShowThingsUnder);
@@ -554,16 +558,10 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Color);
   ADD_MEMBER(RainColor);
   ADD_MEMBER(PriceModifier);
-  //ADD_MEMBER(IsGolemMaterial);
   ADD_MEMBER(Emitation);
-  //ADD_MEMBER(CanBeWished);
   ADD_MEMBER(NutritionValue);
-  //ADD_MEMBER(IsAlive);
-  //ADD_MEMBER(IsFlammable);
-  //ADD_MEMBER(IsExplosive);
   ADD_MEMBER(NameStem);
   ADD_MEMBER(AdjectiveStem);
-  //ADD_MEMBER(UsesLongArticle);
   ADD_MEMBER(Effect);
   ADD_MEMBER(ConsumeEndMessage);
   ADD_MEMBER(HitMessage);
@@ -571,31 +569,18 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Alpha);
   ADD_MEMBER(Flexibility);
   ADD_MEMBER(SpoilModifier);
-  //ADD_MEMBER(IsSparkling);
   ADD_MEMBER(EffectStrength);
-  //ADD_MEMBER(IsMetal);
-  //ADD_MEMBER(CanHaveParasite);
   ADD_MEMBER(DigProductMaterial);
   ADD_MEMBER(ConsumeWisdomLimit);
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(BreatheMessage);
-  //ADD_MEMBER(EffectIsGood);
-  //ADD_MEMBER(IsWarm);
-  //ADD_MEMBER(UseMaterialAttributes);
-  //ADD_MEMBER(CanRegenerate);
-  ADD_MEMBER(BreatheWisdomLimit);
+  ADD_MEMBER(StepInWisdomLimit);
   ADD_MEMBER(RustModifier);
-  //ADD_MEMBER(IsBlood);
   ADD_MEMBER(Acidicity);
-  //ADD_MEMBER(IsImmuneToAcid);
   ADD_MEMBER(NaturalForm);
   ADD_MEMBER(HardenedMaterial);
   ADD_MEMBER(IntelligenceRequirement);
-  //ADD_MEMBER(IsScary);
-  //ADD_MEMBER(CanBeMirrored);
-  //ADD_MEMBER(AffectInside);
-  //ADD_MEMBER(IsValuable);
-  //ADD_MEMBER(CanBeTailored);
+  ADD_MEMBER(Stickiness);
 }
 
 #define ADD_BASE_VALUE(name)\

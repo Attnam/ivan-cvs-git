@@ -45,6 +45,8 @@ glterrain
 	ShowMaterial = true;
 	AttachedGod = NONE;
 	HasSecondaryMaterial = false;
+	UseBorderTiles = false;
+	BorderTilePriority = 0;
 }
 
 solidterrain /* glterrain-> */
@@ -58,6 +60,7 @@ solidterrain /* glterrain-> */
 		MainMaterialConfig == FIR_WOOD;
 		NameSingular = "floor";
 		BitmapPos = 32, 0;
+		BorderTilePriority = 100;
 	}
 
 	Config FLOOR;
@@ -122,14 +125,23 @@ solidterrain /* glterrain-> */
 liquidterrain /* glterrain-> */
 {
 	MainMaterialConfig == WATER;
-	BitmapPos = 16, 0;
+	/*BitmapPos = 16, 0;*/
 	IsAbstract = true;
-	ShowMaterial = false;
 	Walkability = SWIM|FLY|ETHEREAL;
+	ShowMaterial = false;
 
 	Config POOL;
 	{
 		NameSingular = "pool";
 		SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
+	}
+
+	Config UNDERGROUND_LAKE;
+	{
+		NameSingular = "underground lake";
+		UsesLongArticle = true;
+		/*SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";*/
+		UseBorderTiles = true;
+		BorderTilePriority = 10;
 	}
 }

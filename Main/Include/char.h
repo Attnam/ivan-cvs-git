@@ -99,6 +99,8 @@ struct characterdatabase : public databasebase
   truth AllowUnconsciousness;
   truth CanChoke;
   truth IsImmuneToStickiness;
+  truth ForceCustomStandVerb;
+  truth VomittingIsUnhealthy;
   int DefaultEndurance;
   int DefaultPerception;
   int DefaultIntelligence;
@@ -208,6 +210,8 @@ struct characterdatabase : public databasebase
   int ScienceTalkIntelligenceRequirement;
   int ScienceTalkWisdomRequirement;
   int DisplacePriority;
+  festring RunDescriptionLineOne;
+  festring RunDescriptionLineTwo;
 };
 
 class characterprototype
@@ -241,12 +245,9 @@ class character : public entity, public id
 {
  public:
   friend class databasecreator<character>;
-  //friend class characterprototype;
   friend class corpse;
   typedef characterprototype prototype;
   typedef characterdatabase database;
-  /*typedef characterspawner spawner;
-    typedef charactercloner cloner;*/
   character();
   character(const character&);
   virtual ~character();
@@ -297,7 +298,6 @@ class character : public entity, public id
   void ReceiveSchoolFood(long);
   void Regenerate();
   void SetAP(long What) { AP = What; }
-  //void SetIsPlayer(truth What) { Player = What; }
   void SetNP(long);
   void Vomit(v2, int, truth = true);
   virtual void Be();
@@ -312,7 +312,7 @@ class character : public entity, public id
   truth TemporaryStateIsActivated(long What) const { return TemporaryState & What; }	
   truth EquipmentStateIsActivated(long What) const { return EquipmentState & What; }
   truth StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual truth LoseConsciousness(int, truth = false);
+  truth LoseConsciousness(int, truth = false);
   void SetTemporaryStateCounter(long, int);
   void DeActivateVoluntaryAction(const festring& = CONST_S(""));
   void ActionAutoTermination();
@@ -547,6 +547,10 @@ class character : public entity, public id
   DATA_BASE_VALUE(festring, ForceVomitMessage);
   DATA_BASE_TRUTH(CanChoke);
   DATA_BASE_VALUE(int, DisplacePriority);
+  DATA_BASE_VALUE(const festring&, RunDescriptionLineOne);
+  DATA_BASE_VALUE(const festring&, RunDescriptionLineTwo);
+  DATA_BASE_TRUTH(ForceCustomStandVerb);
+  DATA_BASE_TRUTH(VomittingIsUnhealthy);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);
@@ -617,7 +621,7 @@ class character : public entity, public id
   truth CanBeSeenBy(const character*, truth = false, truth = false) const;
   void AttachBodyPart(bodypart*);
   truth HasAllBodyParts() const;
-  bodypart* FindRandomOwnBodyPart(truth = false) const;
+  bodypart* FindRandomOwnBodyPart(truth) const;
   bodypart* GenerateRandomBodyPart();
   void PrintBeginPoisonedMessage() const;
   void PrintEndPoisonedMessage() const;
@@ -718,7 +722,6 @@ class character : public entity, public id
   void SignalSpoilLevelChange();
   virtual truth UseMaterialAttributes() const = 0;
   truth IsPolymorphed() const { return Flags & C_POLYMORPHED; }
-  //void SetPolymorphed(truth What) { Polymorphed = What; }
   truth IsInBadCondition() const { return HP * 3 < MaxHP; }
   truth IsInBadCondition(int HP) const { return HP * 3 < MaxHP; }
   int GetCondition() const;
@@ -749,7 +752,7 @@ class character : public entity, public id
   v2 ApplyStateModification(v2) const;
   void AddConfuseHitMessage() const;
   item* SelectFromPossessions(const festring&, sorter = 0);
-  void SelectFromPossessions(itemvector&, const festring&, int, sorter = 0);
+  truth SelectFromPossessions(itemvector&, const festring&, int, sorter = 0);
   truth EquipsSomething(sorter = 0);
   truth CheckTalk();
   virtual truth CanCreateBodyPart(int) const { return true; }
@@ -808,7 +811,6 @@ class character : public entity, public id
   virtual truth PreProcessForBone();
   truth PostProcessForBone(double&, int&);
   truth PostProcessForBone();
-  truth HasRepairableBodyParts() const;
   virtual void FinalProcessForBone();
   virtual truth EditAllAttributes(int);
   virtual void SetSoulID(ulong);
@@ -997,6 +999,12 @@ class character : public entity, public id
   truth IsSwimming() const;
   truth IsAnimated() const;
   virtual truth IsPlayerKind() const { return false; }
+  truth HasBodyPart(sorter) const;
+  truth PossessesItem(sorter) const;
+  truth IsFlying() const { return GetMoveType() & FLY; }
+  virtual const char* GetRunDescriptionLine(int) const;
+  void VomitAtRandomDirection(int);
+  virtual truth SpecialSaveLife() { return false; }
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

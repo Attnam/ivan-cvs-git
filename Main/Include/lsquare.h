@@ -160,8 +160,8 @@ class lsquare : public square
   void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(int) const;
   lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
-  truth IsDangerousForAIToStepOn(const character*) const;
-  truth IsScaryForAIToStepOn(const character*) const;
+  truth IsDangerous(const character*) const;
+  truth IsScary(const character*) const;
   stack* GetStackOfAdjacentSquare(int) const;
   void KickAnyoneStandingHereAway();
   truth IsDark() const;
@@ -197,7 +197,6 @@ class lsquare : public square
   void DisplaySmokeInfo(festring&) const;
   truth IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
-  truth IsDangerous(character*) const;
   truth CanBeFeltByPlayer() const;
   void PreProcessForBone();
   void PostProcessForBone(double&, int&);
@@ -206,17 +205,19 @@ class lsquare : public square
   truth HasEngravings() const { return truth(Engraved); }
   void FinalProcessForBone();
   truth IsFreezed() const { return Flags & FREEZED; }
-  truth IsDangerousForAIToBreathe(const character*) const;
-  truth IsScaryForAIToBreathe(const character*) const;
+  truth IsDangerousToBreathe(const character*) const;
+  truth IsScaryToBreathe(const character*) const;
   int GetWalkability() const;
   int GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual int GetSquareWalkability() const { return GetWalkability(); }
-  void CalculateBorderPartners();
-  void RequestForBorderPartnerUpdates();
+  void CalculateGroundBorderPartners();
+  void RequestForGroundBorderPartnerUpdates();
+  void CalculateOverBorderPartners();
+  void RequestForOverBorderPartnerUpdates();
   void SpillFluid(character*, liquid*, truth = false, truth = true);
   void DisplayFluidInfo(festring&) const;
   void RemoveFluid(fluid*);
-  void AddFluid(liquid*);
+  fluid* AddFluid(liquid*);
   void DrawStacks(blitdata&) const;
   truth FluidIsVisible() const { return SmokeAlphaSum < 175; }
   void RemoveRain(rain*);
@@ -244,7 +245,7 @@ class lsquare : public square
   void Reveal(ulong, truth = false);
   void DestroyMemorized();
   void SwapMemorized(lsquare*);
-  truth HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
+  truth HasNoBorderPartners() const;
   lsquare* GetRandomAdjacentSquare() const;
   void SignalPossibleTransparencyChange();
   truth AddTrap(trap*);
@@ -253,6 +254,7 @@ class lsquare : public square
   void FillTrapVector(std::vector<trap*>&) const;
   void ReceiveTrapDamage(character*, int, int, int = YOURSELF);
   truth HasDangerousTraps(const character*) const;
+  truth HasDangerousFluids(const character*) const;
  protected:
   void ChangeLuminance(col24&, col24);
   void RemoveLuminance(col24&);
@@ -276,8 +278,10 @@ class lsquare : public square
   bitmap* Memorized;
   bitmap* FowMemorized;
   char* Engraved;
-  olterrain* BorderPartnerTerrain[8];
-  ulong BorderPartnerInfo;
+  glterrain** GroundBorderPartnerTerrain;
+  ulong GroundBorderPartnerInfo;
+  olterrain** OverBorderPartnerTerrain;
+  ulong OverBorderPartnerInfo;
   ulong SquarePartEmitationTick;
   ulong SquarePartLastSeen;
   col24 Emitation;

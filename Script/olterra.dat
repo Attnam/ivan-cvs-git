@@ -579,7 +579,6 @@ earth
 	IsSafeToCreateDoor = true;
 	Walkability = ETHEREAL;
 	IsAlwaysTransparent = false;
-	BorderTilePriority = 100;
 	OKVisualEffects = MIRROR|FLIP|ROTATE;
 	DigMessage = "The ground is fairly easy to dig.";
 	MainMaterialConfig == MORAINE;

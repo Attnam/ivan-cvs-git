@@ -517,4 +517,8 @@ Golems' wisdom shouldn't rise.
 "Psycho" state.
 The holy kiwi of Oily Orpiv.
 The holy pineapple of Oily Orpiv.
-If the player has a giant beard, Richel Decos shouldn't pay for him for wearing the ad shirt, since the banana logo can't be seen by anyone.
+If the player has a giant beard, Richel Decos shouldn't pay him for wearing the ad shirt, since the banana logo can't be seen by anyone.
+"Berserk" state.
+There should be a possibility that Vermis teleports away bodyparts it hits. It is not very useful as it is now.
+Boulders should cast small shadows in sunlight.
+Explosions should break pineapples and kiwis, leaving only some juice to the ground.

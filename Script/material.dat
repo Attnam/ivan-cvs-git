@@ -44,7 +44,7 @@ material
 	EffectStrength = 100;
 	/* DigProductMaterial defaults to Config */
 	/* Obligatory: AttachedGod */
-	BreatheWisdomLimit = NO_LIMIT;
+	StepInWisdomLimit = NO_LIMIT;
 	Acidicity = 0;
 	NaturalForm = lump;
 	HardenedMaterial = NONE;
@@ -54,6 +54,7 @@ material
 	CategoryFlags = 0;
 	BodyFlags = USE_MATERIAL_ATTRIBUTES;
 	InteractionFlags = CAN_DISSOLVE;
+	Stickiness = 0;
 }
 
 solid
@@ -69,7 +70,7 @@ solid
 		NameStem = "valpurium";
 		Flexibility = 4;
 		AttachedGod = VALPURUS;
-		IntelligenceRequirement = 60;
+		IntelligenceRequirement = 50;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_METAL|IS_SPARKLING;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -109,7 +110,7 @@ solid
 		Alpha = 150;
 		AttachedGod = LEGIFER;
 		HardenedMaterial = ILLITHIUM;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -124,7 +125,7 @@ solid
 		AttachedGod = SOPHOS;
 		PriceModifier = 100;
 		HardenedMaterial = SPIDER_SILK;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
 	}
@@ -139,7 +140,6 @@ solid
 		Flexibility = 15;
 		AttachedGod = DULCIS;
 		HardenedMaterial = ANGEL_HAIR;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
 	}
@@ -155,7 +155,7 @@ solid
 		Flexibility = 2;
 		AttachedGod = SOPHOS;
 		HardenedMaterial = OCTIRON;
-		IntelligenceRequirement = 30;
+		IntelligenceRequirement = 25;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -170,7 +170,7 @@ solid
 		NameStem = "marble";
 		AttachedGod = DULCIS;
 		NaturalForm = stone;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
@@ -187,7 +187,7 @@ solid
 		Flexibility = 3;
 		AttachedGod = MELLIS;
 		HardenedMaterial = RUBY;
-		IntelligenceRequirement = 35;
+		IntelligenceRequirement = 30;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -218,7 +218,6 @@ solid
 		Flexibility = 10;
 		AttachedGod = SILVA;
 		HardenedMaterial = HARDENED_LEATHER;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
 	}
@@ -260,7 +259,6 @@ solid
 		Flexibility = 10;
 		AttachedGod = SILVA;
 		HardenedMaterial = NYMPH_HAIR;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
 	}
@@ -275,7 +273,6 @@ solid
 		Flexibility = 3;
 		AttachedGod = LORICATUS;
 		HardenedMaterial = TIN;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -288,7 +285,7 @@ solid
 		NameStem = "unicorn horn";
 		AttachedGod = SEGES;
 		CommonFlags = Base|IS_VALUABLE;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 	}
 
 	Config DIAMOND;
@@ -302,7 +299,7 @@ solid
 		Alpha = 175;
 		AttachedGod = MELLIS;
 		NaturalForm = stone;
-		IntelligenceRequirement = 45;
+		IntelligenceRequirement = 40;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -318,7 +315,7 @@ solid
 		NameStem = "silver";
 		AttachedGod = MELLIS;
 		HardenedMaterial = SAPPHIRE;
-		IntelligenceRequirement = 35;
+		IntelligenceRequirement = 30;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_METAL|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -336,7 +333,7 @@ solid
 		AttachedGod = MELLIS;
 		NaturalForm = stone;
 		HardenedMaterial = DIAMOND;
-		IntelligenceRequirement = 40;
+		IntelligenceRequirement = 35;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -354,7 +351,7 @@ solid
 		AttachedGod = MELLIS;
 		NaturalForm = stone;
 		HardenedMaterial = DIAMOND;
-		IntelligenceRequirement = 40;
+		IntelligenceRequirement = 35;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -370,7 +367,6 @@ solid
 		NameStem = "bronze";
 		AttachedGod = LORICATUS;
 		HardenedMaterial = IRON;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
 	}
 
@@ -384,7 +380,6 @@ solid
 		NameStem = "copper";
 		AttachedGod = LORICATUS;
 		HardenedMaterial = BRONZE;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
 	}
 
@@ -398,7 +393,6 @@ solid
 		NameStem = "tin";
 		AttachedGod = LORICATUS;
 		HardenedMaterial = COPPER;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
 	}
 
@@ -411,7 +405,7 @@ solid
 		NameStem = "spider silk";
 		Flexibility = 20;
 		AttachedGod = SOPHOS;
-		IntelligenceRequirement = 45;
+		IntelligenceRequirement = 40;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|CAN_BE_TAILORED;
 		InteractionFlags = CAN_BURN;
@@ -426,7 +420,7 @@ solid
 		NameStem = "kevlar";
 		Flexibility = 15;
 		AttachedGod = LORICATUS;
-		IntelligenceRequirement = 50;
+		IntelligenceRequirement = 35;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|CAN_BE_TAILORED;
 	}
@@ -441,7 +435,7 @@ solid
 		Flexibility = 15;
 		AttachedGod = SILVA;
 		HardenedMaterial = PHOENIX_FEATHER;
-		IntelligenceRequirement = 15;
+		IntelligenceRequirement = 10;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
@@ -457,7 +451,7 @@ solid
 		NameStem = "hardened leather";
 		Flexibility = 7;
 		AttachedGod = SOPHOS;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		HardenedMaterial = TROLL_HIDE;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
@@ -473,7 +467,7 @@ solid
 		Flexibility = 5;
 		AttachedGod = SILVA;
 		HardenedMaterial = OMMEL_HAIR;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED;
 		InteractionFlags = CAN_BURN;
 	}
@@ -488,7 +482,7 @@ solid
 		Flexibility = 20;
 		AttachedGod = SILVA;
 		HardenedMaterial = TROLL_HIDE;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = CAN_BURN;
 	}
@@ -502,7 +496,7 @@ solid
 		NameStem = "angel hair";
 		Flexibility = 25;
 		AttachedGod = DULCIS;
-		IntelligenceRequirement = 40;
+		IntelligenceRequirement = 35;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|CAN_BE_TAILORED;
@@ -519,7 +513,7 @@ solid
 		Flexibility = 30;
 		AttachedGod = SILVA;
 		HardenedMaterial = DRAGON_HIDE;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 	}
@@ -533,7 +527,7 @@ solid
 		NameStem = "golden eagle feather";
 		Flexibility = 25;
 		AttachedGod = VALPURUS;
-		IntelligenceRequirement = 60;
+		IntelligenceRequirement = 50;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|CAN_BE_TAILORED;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -562,7 +556,7 @@ solid
 		NameStem = "dragon hide";
 		Flexibility = 5;
 		AttachedGod = SILVA;
-		IntelligenceRequirement = 40;
+		IntelligenceRequirement = 35;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|CAN_BE_TAILORED|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -579,7 +573,7 @@ solid
 		AttachedGod = SOPHOS;
 		Flexibility = 3;
 		HardenedMaterial = MITHRIL;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
@@ -595,7 +589,7 @@ solid
 		PriceModifier = 5000;
 		NameStem = "illithium";
 		AttachedGod = LEGIFER;
-		IntelligenceRequirement = 30;
+		IntelligenceRequirement = 25;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
@@ -613,7 +607,6 @@ solid
 		Flexibility = 2;
 		NaturalForm = stick;
 		HardenedMaterial = PINE_WOOD;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -627,7 +620,6 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		HardenedMaterial = FIR_WOOD;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -641,7 +633,6 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		HardenedMaterial = BIRCH_WOOD;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -655,7 +646,6 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		HardenedMaterial = OAK_WOOD;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -669,7 +659,7 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		HardenedMaterial = TEAK_WOOD;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
@@ -684,7 +674,7 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		HardenedMaterial = EBONY_WOOD;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -697,7 +687,7 @@ solid
 		NameStem = "ebony";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
-		IntelligenceRequirement = 15;
+		IntelligenceRequirement = 10;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
@@ -713,7 +703,7 @@ solid
 		NameStem = "octiron";
 		AttachedGod = SOPHOS;
 		Flexibility = 2;
-		IntelligenceRequirement = 45;
+		IntelligenceRequirement = 40;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_METAL|IS_GOLEM_MATERIAL;
@@ -734,7 +724,7 @@ solid
 		NaturalForm = stone;
 		PriceModifier = 8000;
 		HardenedMaterial = GREEN_CRYSTAL;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -754,7 +744,7 @@ solid
 		NaturalForm = stone;
 		PriceModifier = 8000;
 		HardenedMaterial = BLUE_CRYSTAL;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -773,7 +763,7 @@ solid
 		Emitation = rgb24(135, 155, 135);
 		NaturalForm = stone;
 		PriceModifier = 8000;
-		IntelligenceRequirement = 25;
+		IntelligenceRequirement = 20;
 		CommonFlags = Base|IS_VALUABLE;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 		InteractionFlags = Base&~CAN_DISSOLVE;
@@ -921,7 +911,6 @@ solid
 		AttachedGod = TERRA;
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
-		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
 
@@ -936,7 +925,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
 		PriceModifier = 1000;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		Alpha = 160;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
@@ -953,7 +942,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
 		PriceModifier = 1000;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		Alpha = 180;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 	}
@@ -969,7 +958,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
 		PriceModifier = 1000;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		Alpha = 180;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 	}
@@ -985,7 +974,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
 		PriceModifier = 1000;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		CategoryFlags = Base|IS_SPARKLING|IS_GOLEM_MATERIAL;
 	}
 
@@ -1000,7 +989,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = PURPLE_CRYSTAL;
 		PriceModifier = 500;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		Alpha = 140;
 		CategoryFlags = Base|IS_GOLEM_MATERIAL;
 	}
@@ -1220,7 +1209,6 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
-		IntelligenceRequirement = 5;
 		Effect = EFFECT_OMMEL_BONE;
 		ConsumeEndMessage = CEM_OMMEL_BONE;
 		NameFlags = Base|USE_AN;
@@ -1238,7 +1226,7 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		Effect = EFFECT_OMMEL_BONE;
 		ConsumeEndMessage = CEM_OMMEL_BONE;
 		NameFlags = Base|USE_AN;
@@ -1292,7 +1280,7 @@ gas
 		EffectStrength = 4;
 		Effect = EFFECT_SKUNK_SMELL;
 		BreatheMessage = "It smells really bad here.";
-		BreatheWisdomLimit = 3;
+		StepInWisdomLimit = 3;
 	}
 
 	Config GHOST;
@@ -1312,7 +1300,7 @@ gas
 		AttachedGod = SOPHOS;
 		Effect = EFFECT_MAGIC_MUSHROOM;
 		BreatheMessage = "The air is filled with tiny magical bubbles.";
-		BreatheWisdomLimit = 10;
+		StepInWisdomLimit = 10;
 	}
 
 	Config EVIL_WONDER_STAFF_VAPOUR;
@@ -1323,7 +1311,7 @@ gas
 		AttachedGod = INFUSCOR;
 		Effect = EFFECT_EVIL_WONDER_STAFF_VAPOUR;
 		BreatheMessage = "A sinister stench surrounds you.";
-		BreatheWisdomLimit = 5;
+		StepInWisdomLimit = 5;
 	}
 
 	Config GOOD_WONDER_STAFF_VAPOUR;
@@ -1390,6 +1378,7 @@ liquid
 		Acidicity = 10;
 		PriceModifier = 1000;
 		CommonFlags = Base|IS_VALUABLE;
+		StepInWisdomLimit = 20;
 	}
 
 	Config WATER;
@@ -1448,18 +1437,39 @@ liquid
 	Config BROWN_SLIME;
 	{
 		StrengthValue = 5;
-		Density = 400;
+		Density = 600;
 		NutritionValue = 10;
 		Color = rgb16(130, 90, 40);
 		NameStem = "brown slime";
 		Alpha = 200;
-		Flexibility = 30;
+		Flexibility = 25;
 		AttachedGod = SCABIES;
-		RustModifier = 200;
-		Acidicity = 100;
+		RustModifier = 50;
+		Acidicity = 25;
 		ConsumeWisdomLimit = 3;
 		BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
 		InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+		Stickiness = 100;
+		StepInWisdomLimit = 4;
+	}
+
+	Config YELLOW_SLIME;
+	{
+		StrengthValue = 5;
+		Density = 400;
+		NutritionValue = 5;
+		Color = rgb16(0, 230, 0);
+		NameStem = "green slime";
+		Alpha = 200;
+		Flexibility = 35;
+		AttachedGod = SCABIES;
+		RustModifier = 200;
+		Acidicity = 100;
+		ConsumeWisdomLimit = 4;
+		BodyFlags = Base&~USE_MATERIAL_ATTRIBUTES;
+		InteractionFlags = Base|AFFECT_INSIDE&~CAN_DISSOLVE;
+		Stickiness = 25;
+		StepInWisdomLimit = 5;
 	}
 
 	Config POISON_LIQUID;
@@ -1560,6 +1570,7 @@ liquid
 		ConsumeWisdomLimit = 0;
 		CategoryFlags = IS_BLOOD;
 		InteractionFlags = Base|AFFECT_INSIDE;
+		StepInWisdomLimit = 0;
 	}
 
 	Config SPIDER_BLOOD;
@@ -1586,6 +1597,7 @@ liquid
 		RustModifier = 200;
 		Acidicity = 10;
 		InteractionFlags = Base|AFFECT_INSIDE;
+		StepInWisdomLimit = 5;
 	}
 
 	Config ACIDOUS_BLOOD;
@@ -1599,9 +1611,11 @@ liquid
 		AttachedGod = CRUENTUS;
 		Acidicity = 500:
 		RustModifier = 500;
-		ConsumeWisdomLimit = 4;
+		ConsumeWisdomLimit = 8;
 		CategoryFlags = IS_BLOOD;
 		InteractionFlags = Base|AFFECT_INSIDE;
+		StepInWisdomLimit = 10;
+		NameFlags = Base|USE_AN;
 	}
 
 	Config SULPHURIC_ACID;
@@ -1615,9 +1629,10 @@ liquid
 		AttachedGod = SCABIES;
 		RustModifier = 400;
 		Acidicity = 400;
-		ConsumeWisdomLimit = 5;
+		ConsumeWisdomLimit = 6;
 		PriceModifier = 100;
 		InteractionFlags = Base|AFFECT_INSIDE;
+		StepInWisdomLimit = 8;
 	}
 
 	Config DOG_DROOL;
@@ -1690,6 +1705,7 @@ liquid
 		CommonFlags = Base|IS_VALUABLE&~CAN_BE_MIRRORED;
 		NameFlags = Base|USE_AN;
 		InteractionFlags = Base|EFFECT_IS_GOOD;
+		Stickiness = 100;
 	}
 
 	Config SWEAT;
@@ -2139,7 +2155,7 @@ ironalloy /* metals that rust */
 		NameStem = "iron";
 		RustModifier = 100;
 		HardenedMaterial = STEEL;
-		IntelligenceRequirement = 10;
+		IntelligenceRequirement = 5;
 		NameFlags = Base|USE_AN;
 	}
 
@@ -2154,7 +2170,7 @@ ironalloy /* metals that rust */
 		AttachedGod = LORICATUS;
 		RustModifier = 75;
 		HardenedMaterial = METEORIC_STEEL;
-		IntelligenceRequirement = 15;
+		IntelligenceRequirement = 10;
 		CommonFlags = Base|IS_VALUABLE;
 	}
 
@@ -2169,7 +2185,7 @@ ironalloy /* metals that rust */
 		AttachedGod = LORICATUS;
 		RustModifier = 50;
 		HardenedMaterial = ADAMANT;
-		IntelligenceRequirement = 20;
+		IntelligenceRequirement = 15;
 		CommonFlags = Base|IS_VALUABLE;
 	}
 
@@ -2184,7 +2200,7 @@ ironalloy /* metals that rust */
 		AdjectiveStem = "adamantine";
 		AttachedGod = LORICATUS;
 		RustModifier = 25;
-		IntelligenceRequirement = 45;
+		IntelligenceRequirement = 40;
 		CommonFlags = Base|IS_VALUABLE;
 		NameFlags = Base|USE_AN;
 		CategoryFlags = Base|IS_SPARKLING;

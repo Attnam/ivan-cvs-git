@@ -2069,13 +2069,13 @@ truth humanoid::CheckBalance(double KickDamage)
     || IsStuck()
     || !KickDamage
     || (GetUsableLegs() != 1
-	&& !(GetMoveType() & FLY)
+	&& !IsFlying()
 	&& KickDamage * 5 < RAND() % GetSize());
 }
 
 long humanoid::GetMoveAPRequirement(int Difficulty) const
 {
-  if(GetMoveType() & FLY)
+  if(IsFlying())
     return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
 
   switch(GetUsableLegs())
@@ -2191,7 +2191,7 @@ truth angel::AttachBodyPartsOfFriendsNear()
 
       if(Char && (!HurtOne || Char->IsPlayer()) && GetRelation(Char) == FRIEND && !Char->HasAllBodyParts())
       {
-	bodypart* BodyPart = Char->FindRandomOwnBodyPart();
+	bodypart* BodyPart = Char->FindRandomOwnBodyPart(false);
 
 	if(BodyPart)
 	{
@@ -2233,13 +2233,13 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
 		 BlitData.CustomData };
 
   /*bitmap* TileBuffer = igraph::GetTileBuffer();
-  bitmap* RealBitmap = BlitData.Bitmap;
-  BlitData.Bitmap = TileBuffer;
-  podv2 RealDest = BlitData.Dest;
-  BlitData.Src = RealDest;
-  BlitData.Dest.X = BlitData.Dest.Y = 0;
-  RealBitmap->NormalBlit(BlitData);//NormalBlit(TileBuffer, Pos, 0, 0, TILE_V2);
-  BlitData.Src.X = BlitData.Src.Y = 0;*/
+    bitmap* RealBitmap = BlitData.Bitmap;
+    BlitData.Bitmap = TileBuffer;
+    podv2 RealDest = BlitData.Dest;
+    BlitData.Src = RealDest;
+    BlitData.Dest.X = BlitData.Dest.Y = 0;
+    RealBitmap->NormalBlit(BlitData);//NormalBlit(TileBuffer, Pos, 0, 0, TILE_V2);
+    BlitData.Src.X = BlitData.Src.Y = 0;*/
   RealBitmap->NormalBlit(B);
   TileBuffer->FillPriority(0);
   B.Src.X = B.Src.Y = 0;
@@ -2269,11 +2269,11 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
 
   TileBuffer->FastBlit(RealBitmap, BlitData.Dest);
   /*BlitData.Bitmap = RealBitmap;
-  BlitData.Dest = RealDest;
-  ccol24 RealLuminance = BlitData.Luminance;
-  BlitData.Flags = 0;
-  TileBuffer->FastBlit(RealBitmap, RealDest);
-  BlitData.Luminance = RealLuminance;*/
+    BlitData.Dest = RealDest;
+    ccol24 RealLuminance = BlitData.Luminance;
+    BlitData.Flags = 0;
+    TileBuffer->FastBlit(RealBitmap, RealDest);
+    BlitData.Luminance = RealLuminance;*/
 }
 
 v2 kamikazedwarf::GetDrawDisplacement(int I) const
@@ -2670,30 +2670,29 @@ void smith::BeTalkedTo()
     return;
   }
 
-  for(int c = 0; c < BodyParts; ++c)
-  {
+  /*for(int c = 0; c < BodyParts; ++c)
+    {
     bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
     if(BodyPart)
     {
-      if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & IS_METAL))
-	continue;
+    if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & IS_METAL))
+    continue;
 	  
-      if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
-	continue;
+    if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
+    continue;
 
-      ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
+    ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
 	  
-      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
-      {
-	BodyPart->RestoreHP();
-	PLAYER->EditMoney(-25);
-      }	
+    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+    {
+    BodyPart->RestoreHP();
+    PLAYER->EditMoney(-25);
+    }	
     }
-  }
+    }*/
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith)
-  || PLAYER->EquipsSomething(&item::IsFixableBySmith))
+  if(PLAYER->PossessesItem(&item::IsFixableBySmith))
   {
     item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableBySmith);
 
@@ -2734,7 +2733,7 @@ void humanoid::CalculateDodgeValue()
 {
   DodgeValue = 0.05 * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
-  if(GetMoveType() & FLY)
+  if(IsFlying())
     DodgeValue *= 2;
   else
   {
@@ -2986,8 +2985,8 @@ truth humanoid::CheckIfEquipmentIsNotUsable(int I) const
 {
   return (I == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy("this item"))
 	     || (I == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy("this item"))
-	     || (I == RIGHT_WIELDED_INDEX && GetLeftWielded() && GetLeftWielded()->IsTwoHanded() && GetLeftArm()->CheckIfWeaponTooHeavy("your other wielded item"))
-	     || (I == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
+	     || (I == RIGHT_WIELDED_INDEX && GetLeftWielded() && GetLeftWielded()->IsTwoHanded() && GetLeftArm()->CheckIfWeaponTooHeavy(festring(GetPossessivePronoun() + " other wielded item").CStr()))
+	     || (I == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy(festring(GetPossessivePronoun() + " other wielded item").CStr()));
 }
 
 int mistress::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, truth Critical, truth ForceHit)
@@ -3108,6 +3107,9 @@ item* humanoid::GetPairEquipment(int I) const
 
 const festring& humanoid::GetStandVerb() const
 {
+  if(ForceCustomStandVerb())
+    return DataBase->StandVerb;
+
   static festring HasntFeet = CONST_S("crawling");
   static festring Hovering = CONST_S("hovering");
   static festring Swimming = CONST_S("swimming");
@@ -3118,7 +3120,7 @@ const festring& humanoid::GetStandVerb() const
   if(IsSwimming())
     return Swimming;
 
-  return HasAUsableLeg() ? character::GetStandVerb() : HasntFeet;
+  return HasAUsableLeg() ? DataBase->StandVerb : HasntFeet;
 }
 
 void darkmage::GetAICommand()
@@ -4065,7 +4067,7 @@ void necromancer::RaiseSkeleton()
 
 void humanoid::StayOn(liquid* Liquid)
 {
-  if(GetMoveType() & FLY)
+  if(IsFlying())
     return;
 
   truth Standing = false;
@@ -4546,9 +4548,9 @@ void orc::PostConstruct()
 
 truth mistress::AllowEquipment(const item* Item, int EquipmentIndex) const
 {
-  return (EquipmentIndex != RIGHT_WIELDED_INDEX
-	  && EquipmentIndex != LEFT_WIELDED_INDEX)
-			    || Item->IsWhip();
+  return ((EquipmentIndex != RIGHT_WIELDED_INDEX
+	   && EquipmentIndex != LEFT_WIELDED_INDEX)
+	  || Item->IsWhip());
 }
 
 int humanoid::GetAttributeAverage() const
@@ -4637,30 +4639,29 @@ void tailor::BeTalkedTo()
     return;
   }
 
-  for(int c = 0; c < BodyParts; ++c)
-  {
+  /*for(int c = 0; c < BodyParts; ++c)
+    {
     bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
     if(BodyPart)
     {
-      if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED))
-	continue;
+    if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED))
+    continue;
 	  
-      if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
-	continue;
+    if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
+    continue;
 
-      ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
+    ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
 	  
-      if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
-      {
-	BodyPart->RestoreHP();
-	PLAYER->EditMoney(-25);
-      }	
+    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
+    {
+    BodyPart->RestoreHP();
+    PLAYER->EditMoney(-25);
+    }	
     }
-  }
+    }*/
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor)
-  || PLAYER->EquipsSomething(&item::IsFixableByTailor))
+  if(PLAYER->PossessesItem(&item::IsFixableByTailor))
   {
     item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableByTailor);
 
@@ -4701,7 +4702,7 @@ void veterankamikazedwarf::PostConstruct()
   kamikazedwarf::PostConstruct();
   ivantime Time;
   game::GetTime(Time);
-  int Modifier = Time.Day - 5;
+  int Modifier = Time.Day - KAMIKAZE_INVISIBILITY_DAY_MIN;
 
   if(Time.Day >= KAMIKAZE_INVISIBILITY_DAY_MAX
      || (Modifier > 0
@@ -4882,9 +4883,9 @@ truth humanoid::AllowUnconsciousness() const
 	  && BodyPartIsVital(HEAD_INDEX));
 }
 
-truth humanoid::CanChokeOnWeb(web* Trap) const
+truth humanoid::CanChokeOnWeb(web* Web) const
 {
-  return CanChoke() && Trap->IsStuckToBodyPart(HEAD_INDEX);
+  return CanChoke() && Web->IsStuckToBodyPart(HEAD_INDEX);
 }
 
 truth humanoid::BrainsHurt() const
@@ -4973,4 +4974,27 @@ double playerkind::GetNaturalExperience(int Identifier) const
     NE /= TalentBonusOfAttribute[Identifier];
 
   return NE;
+}
+
+const char* humanoid::GetRunDescriptionLine(int I) const
+{
+  if(!GetRunDescriptionLineOne().IsEmpty())
+    return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
+
+  if(IsFlying())
+    return !I ? "Flying" : "very fast";
+
+  if(IsSwimming() && !GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
+    return !I ? "Floating" : "ahead fast";
+
+  if(IsSwimming())
+    return !I ? "Swimming" : "very fast";
+
+  if(!GetRightLeg() && !GetLeftLeg())
+    return !I ? "Rolling" : "very fast";
+
+  if(!GetRightLeg() || !GetLeftLeg())
+    return !I ? "Hopping" : "very fast";
+
+  return !I ? "Running" : "";
 }

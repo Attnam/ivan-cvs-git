@@ -1048,7 +1048,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 
       if(!IsPlayer())
 	for(int c = 0; c < Squares; ++c)
-	  if(MoveToSquare[c]->IsScaryForAIToStepOn(this))
+	  if(MoveToSquare[c]->IsScary(this))
 	    return false;
 
       if(Pets == 1)
@@ -1260,6 +1260,9 @@ void character::Die(const character* Killer, const festring& Msg, ulong DeathFla
     SaveLife();
     return;
   }
+
+  if(SpecialSaveLife())
+    return;
 
   Flags |= C_IN_NO_MSG_MODE;
   character* Ghost = 0;
@@ -1718,8 +1721,8 @@ truth character::MoveRandomly()
     {
       lsquare* Square = GetNearLSquare(GetPos() + ToTry);
 
-      if(!Square->IsDangerousForAIToStepOn(this)
-	 && !Square->IsScaryForAIToStepOn(this)
+      if(!Square->IsDangerous(this)
+	 && !Square->IsScary(this)
 	 && TryMove(ToTry, false, false))
 	return true;
     }
@@ -1974,10 +1977,14 @@ void character::Vomit(v2 Pos, int Amount, truth ShowMsg)
       ADD_MESSAGE("%s vomits.", CHAR_NAME(DEFINITE));
   }
 
-  if(IsPlayer())
+  if(VomittingIsUnhealthy())
   {
     EditExperience(ARM_STRENGTH, -75, 1 << 9);
     EditExperience(LEG_STRENGTH, -75, 1 << 9);
+  }
+
+  if(IsPlayer())
+  {
     EditNP(-2500 - RAND() % 2501);
     CheckStarvationDeath(CONST_S("vomited himself to death"));
   }
@@ -2088,7 +2095,7 @@ truth character::CheckBalance(double KickDamage)
   return !CanMove()
     || IsStuck()
     || !KickDamage
-    || (!(GetMoveType() & FLY)
+    || (!IsFlying()
 	&& KickDamage * 5 < RAND() % GetSize());
 }
 
@@ -2673,8 +2680,8 @@ truth character::MoveRandomlyInRoom()
     {
       lsquare* Square = GetNearLSquare(GetPos() + ToTry);
 
-      if(!Square->IsDangerousForAIToStepOn(this)
-	 && !Square->IsScaryForAIToStepOn(this)
+      if(!Square->IsDangerous(this)
+	 && !Square->IsScary(this)
 	 && (!Square->GetOLTerrain()
 	     || !Square->GetOLTerrain()->IsDoor())
 	 && TryMove(ToTry, false, false))
@@ -3008,7 +3015,7 @@ void character::TeleportRandomly(truth Intentional)
 
 void character::RestoreHP()
 {
-  DoForBodyParts(this, &bodypart::RestoreHP);
+  DoForBodyParts(this, &bodypart::FastRestoreHP);
   HP = MaxHP;
 }
 
@@ -3022,7 +3029,7 @@ void character::RestoreLivingHP()
 
     if(BodyPart && BodyPart->CanRegenerate())
     {
-      BodyPart->RestoreHP();
+      BodyPart->FastRestoreHP();
       HP += BodyPart->GetHP();
     }
   }
@@ -3578,9 +3585,11 @@ bodypart* character::MakeBodyPart(int I) const
 bodypart* character::CreateBodyPart(int I, int SpecialFlags)
 {
   bodypart* BodyPart = MakeBodyPart(I);
-  BodyPart->InitMaterials(CreateBodyPartMaterial(I, GetBodyPartVolume(I)), false);
+  material* Material = CreateBodyPartMaterial(I, GetBodyPartVolume(I));
+  BodyPart->InitMaterials(Material, false);
   BodyPart->SetSize(GetBodyPartSize(I, GetTotalSize()));
   BodyPart->SetBloodMaterial(GetBloodMaterial());
+  BodyPart->SetNormalMaterial(Material->GetConfig());
   SetBodyPart(I, BodyPart);
   BodyPart->InitSpecialAttributes();
 
@@ -3784,7 +3793,7 @@ void character::ReceiveSchoolFood(long SizeOfEffect)
   SizeOfEffect += RAND() % SizeOfEffect;
 
   if(SizeOfEffect >= 250)
-    Vomit(GetPos(), SizeOfEffect);
+    VomitAtRandomDirection(SizeOfEffect);
 
   if(!(RAND() % 3) && SizeOfEffect >= 500
      && EditAttribute(ENDURANCE, SizeOfEffect / 500))
@@ -4059,7 +4068,13 @@ void character::DrawPanel(truth AnimationDraw) const
   }
 
   if(game::PlayerIsRunning())
-    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Running");
+  {
+    FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, GetRunDescriptionLine(0));
+    const char* SecondLine = GetRunDescriptionLine(1);
+
+    if(strlen(SecondLine))
+      FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, SecondLine);
+  }
 
   /* test */
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "T: %ld", game::GetTimeSpent());
@@ -4069,7 +4084,7 @@ void character::CalculateDodgeValue()
 {
   DodgeValue = 0.05 * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
-  if(GetMoveType() & FLY)
+  if(IsFlying())
     DodgeValue *= 2;
 
   if(DodgeValue < 1)
@@ -4871,16 +4886,7 @@ void character::PrintEndPoisonedMessage() const
 void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
-  {
-    lsquare* Where = GetLSquareUnder()->GetRandomAdjacentSquare();
-
-    /* slightly more probable to vomit on self than other squares */
-
-    if(RAND_8 && (!Where->GetCharacter() || Where->GetCharacter()->IsPet()))
-      Vomit(Where->GetPos(), 500 + RAND() % 250);
-    else
-      Vomit(GetPos(), 500 + RAND() % 250);
-  }
+    VomitAtRandomDirection(500 + RAND_N(250));
 
   int Damage = 0;
 
@@ -4959,7 +4965,7 @@ void character::Draw(blitdata& BlitData) const
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
   }
 
-  if(GetMoveType() & FLY && SquareIndex == GetFlySymbolSquareIndex())
+  if(IsFlying() && SquareIndex == GetFlySymbolSquareIndex())
   {
     BlitData.Src.X = 128;
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
@@ -6028,23 +6034,26 @@ void character::AddConfuseHitMessage() const
     ADD_MESSAGE("This stuff is confusing.");
 }
 
-item* character::SelectFromPossessions(const festring& Topic, sorter SorterFunction)
+item* character::SelectFromPossessions(const festring& Topic, sorter Sorter)
 {
   itemvector ReturnVector;
-  SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, SorterFunction);
+  SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, Sorter);
   return !ReturnVector.empty() ? ReturnVector[0] : 0;
 }
 
-void character::SelectFromPossessions(itemvector& ReturnVector, const festring& Topic, int Flags, sorter SorterFunction)
+truth character::SelectFromPossessions(itemvector& ReturnVector, const festring& Topic, int Flags, sorter Sorter)
 {
-  if(!CanUseEquipment())
+  /*if(!CanUseEquipment() && !HasBodyPart(Sorter))
   {
-    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
-    return;
-  }
+    if(!GetStack()->SortedItems(this, Sorter))
+      return false;
+
+    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, Sorter);
+    return true;
+  }*/
 
   felist List(Topic);
-  truth InventoryPossible = GetStack()->SortedItems(this, SorterFunction);
+  truth InventoryPossible = GetStack()->SortedItems(this, Sorter);
 
   if(InventoryPossible)
     List.AddEntry(CONST_S("choose from inventory"), LIGHT_GRAY, 20, game::AddToItemDrawVector(itemvector()));
@@ -6052,12 +6061,28 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
   truth Any = false;
   itemvector Item;
   festring Entry;
+  int c;
 
-  for(int c = 0; c < GetEquipments(); ++c)
+  for(c = 0; c < BodyParts; ++c)
+  {
+    bodypart* BodyPart = GetBodyPart(c);
+
+    if(BodyPart && (Sorter == 0 || (BodyPart->*Sorter)(this)))
+    {
+      Item.push_back(BodyPart);
+      Entry.Empty();
+      BodyPart->AddName(Entry, UNARTICLED);
+      int ImageKey = game::AddToItemDrawVector(itemvector(1, BodyPart));
+      List.AddEntry(Entry, LIGHT_GRAY, 20, ImageKey, true);
+      Any = true;
+    }
+  }
+
+  for(c = 0; c < GetEquipments(); ++c)
   {
     item* Equipment = GetEquipment(c);
 
-    if(Equipment && (SorterFunction == 0 || (Equipment->*SorterFunction)(this)))
+    if(Equipment && (Sorter == 0 || (Equipment->*Sorter)(this)))
     {
       Item.push_back(Equipment);
       Entry = GetEquipmentName(c);
@@ -6083,7 +6108,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
     if(Chosen != ESCAPED)
     {
       if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
-	GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
+	GetStack()->DrawContents(ReturnVector, this, Topic, Flags, Sorter);
       else
       {
 	ReturnVector.push_back(Item[InventoryPossible ? Chosen - 1 : Chosen]);
@@ -6100,18 +6125,23 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
   }
   else
   {
+    if(!GetStack()->SortedItems(this, Sorter))
+      return false;
+
     game::ClearItemDrawVector();
-    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
+    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, Sorter);
   }
+
+  return true;
 }
 
-truth character::EquipsSomething(sorter SorterFunction)
+truth character::EquipsSomething(sorter Sorter)
 {
   for(int c = 0; c < GetEquipments(); ++c)
   {
     item* Equipment = GetEquipment(c);
 
-    if(Equipment && (SorterFunction == 0 || (Equipment->*SorterFunction)(this)))
+    if(Equipment && (Sorter == 0 || (Equipment->*Sorter)(this)))
       return true;
   }
 
@@ -6163,7 +6193,7 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
   }
 
   if(OldEquipment)
-    GetEquipment(Chosen)->MoveTo(MainStack);
+    OldEquipment->MoveTo(MainStack);
 
   sorter Sorter = EquipmentSorter(Chosen);
 
@@ -6204,6 +6234,12 @@ truth character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Cho
 
     if(Item)
     {
+      if(!IsPlayer() && !AllowEquipment(Item, Chosen))
+      {
+	ADD_MESSAGE("%s refuses to equip %s.", CHAR_DESCRIPTION(DEFINITE), Item->CHAR_NAME(DEFINITE));
+	return false;
+      }
+
       Item->RemoveFromSlot();
       SetEquipment(Chosen, Item);
 
@@ -6589,7 +6625,7 @@ void character::AddDefenceInfo(felist& List) const
     if(BodyPart)
     {
       Entry = CONST_S("   ");
-      Entry << BodyPart->GetBodyPartName();
+      BodyPart->AddName(Entry, UNARTICLED);
       Entry.Resize(60);
       Entry << BodyPart->GetMaxHP();
       Entry.Resize(70);
@@ -6736,10 +6772,10 @@ void character::FinalProcessForBone()
   }
 }
 
-truth character::HasRepairableBodyParts() const
+/*truth character::HasRepairableBodyParts() const
 {
   return CombineBodyPartPredicates<1>(this, &bodypart::IsRepairable);
-}
+}*/
 
 void character::SetSoulID(ulong What)
 {
@@ -7266,7 +7302,7 @@ truth character::CheckIfTooScaredToHit(const character* Enemy) const
 
 void character::PrintBeginLevitationMessage() const
 {
-  if(!(GetMoveType() & FLY))
+  if(!IsFlying())
     if(IsPlayer())
       ADD_MESSAGE("You rise into the air like a small hot-air balloon.");
     else if(CanBeSeenByPlayer())
@@ -7275,7 +7311,7 @@ void character::PrintBeginLevitationMessage() const
 
 void character::PrintEndLevitationMessage() const
 {
-  if(!(GetMoveType() & FLY))
+  if(!IsFlying())
     if(IsPlayer())
       ADD_MESSAGE("You descent gently onto the ground.");
     else if(CanBeSeenByPlayer())
@@ -8421,6 +8457,9 @@ int character::GetAttributeAverage() const
 
 const festring& character::GetStandVerb() const
 {
+  if(ForceCustomStandVerb())
+    return DataBase->StandVerb;
+
   static festring Hovering = "hovering";
   static festring Swimming = "swimming";
 
@@ -8446,7 +8485,7 @@ truth character::CheckApply() const
 
 void character::EndLevitation()
 {
-  if(!(GetMoveType() & FLY))
+  if(!IsFlying())
   {
     if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
       SignalStepFrom(0);
@@ -9059,7 +9098,7 @@ void character::EditNP(long What)
 
 truth character::IsSwimming() const
 {
-  return !(GetMoveType() & FLY)
+  return !IsFlying() && GetSquareUnder()
     && GetSquareUnder()->GetSquareWalkability() & SWIM;
 }
 
@@ -9104,4 +9143,50 @@ truth character::IsAnimated() const
 double character::GetNaturalExperience(int Identifier) const
 {
   return DataBase->NaturalExperience[Identifier];
+}
+
+truth character::HasBodyPart(sorter Sorter) const
+{
+  if(Sorter == 0)
+    return true;
+
+  return CombineBodyPartPredicates<1>(this, Sorter, this);
+}
+
+truth character::PossessesItem(sorter Sorter) const
+{
+  if(Sorter == 0)
+    return true;
+
+  return (GetStack()->SortedItems(this, Sorter)
+	  || CombineEquipmentPredicates<1>(this, Sorter, this)
+	  || CombineBodyPartPredicates<1>(this, Sorter, this));
+}
+
+/* 0 <= I <= 1 */
+
+const char* character::GetRunDescriptionLine(int I) const
+{
+  if(!GetRunDescriptionLineOne().IsEmpty())
+    return !I ? GetRunDescriptionLineOne().CStr() : GetRunDescriptionLineTwo().CStr();
+
+  if(IsFlying())
+    return !I ? "Flying" : "very fast";
+
+  if(IsSwimming())
+    return !I ? "Swimming" : "very fast";
+
+  return !I ? "Running" : "";
+}
+
+void character::VomitAtRandomDirection(int Amount)
+{
+  lsquare* Where = GetLSquareUnder()->GetRandomAdjacentSquare();
+
+  /* Slightly more probable to vomit on self than other squares */
+
+  if(RAND_8 && (!Where->GetCharacter() || Where->GetCharacter()->IsPet()))
+    Vomit(Where->GetPos(), Amount);
+  else
+    Vomit(GetPos(), Amount);
 }

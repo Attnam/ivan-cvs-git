@@ -49,8 +49,8 @@
 #include "fetime.h"
 #include "balance.h"
 
-#define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 116 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 103 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -361,7 +361,6 @@ truth game::Init(const festring& Name)
       Doggie->SetTeam(GetTeam(0));
       GetWorldMap()->GetPlayerGroup().push_back(Doggie);
       Doggie->SetAssignedName(ivanconfig::GetDefaultPetName());
-      //ADD_MESSAGE("Game generated successfully.");
       WizardMode = false;
       SeeWholeMapCheatMode = MAP_HIDDEN;
       GoThroughWallsCheat = false;
@@ -3574,4 +3573,9 @@ inputfile& operator>>(inputfile& SaveFile, massacreid& MI)
 {
   SaveFile >> MI.Type >> MI.Config >> MI.Name;
   return SaveFile;
+}
+
+truth game::PlayerIsRunning()
+{
+  return PlayerRunning && Player->CanMove();
 }

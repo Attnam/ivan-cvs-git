@@ -21,6 +21,8 @@ fluid::fluid() : entity(HAS_BE), Next(0), MotherItem(0), GearImage(0) { }
 
 fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(LSquareUnder), MotherItem(0), Image(false), GearImage(0), Flags(0)
 {
+  TrapData.TrapID = game::CreateNewTrapID(this);
+  TrapData.VictimID = 0;
   Image.ShadowPos = ZERO_V2;
   Liquid->SetMotherEntity(this);
   Emitation = Liquid->GetEmitation();
@@ -29,6 +31,8 @@ fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), L
 
 fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, truth IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
 {
+  TrapData.TrapID = 0;
+
   if(UseImage())
   {
     Image.Picture->InitRandMap();
@@ -46,6 +50,7 @@ fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, tru
 
 fluid::~fluid()
 {
+  game::RemoveTrapID(TrapData.TrapID);
   delete Liquid;
   delete [] GearImage;
 }
@@ -124,7 +129,7 @@ void fluid::Be()
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  SaveFile << Liquid;
+  SaveFile << TrapData << Liquid;
   SaveFile << LocationName << Flags;
   Image.Save(SaveFile);
 
@@ -143,6 +148,8 @@ void fluid::Save(outputfile& SaveFile) const
 void fluid::Load(inputfile& SaveFile)
 {
   LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
+  SaveFile >> TrapData;
+  game::AddTrapID(this, TrapData.TrapID);
   Liquid = static_cast<liquid*>(ReadType<material*>(SaveFile));
   Liquid->SetMotherEntity(this);
   Emitation = Liquid->GetEmitation();
@@ -627,7 +634,15 @@ void fluid::Destroy()
     MotherItem->RemoveFluid(this);
   }
   else
+  {
+    character* Char = game::SearchCharacter(GetVictimID());
+
+    if(Char)
+      Char->RemoveTrap(GetTrapID());
+
+    TrapData.VictimID = 0;
     LSquareUnder->RemoveFluid(this);
+  }
 
   SendToHell();
 }
@@ -636,4 +651,98 @@ truth fluid::UseImage() const
 {
   return !(Flags & FLUID_INSIDE)
     && (!MotherItem || MotherItem->ShowFluids());
+}
+
+void fluid::AddTrapName(festring& String, int) const
+{
+  Liquid->AddName(String, false, false);
+}
+
+truth fluid::TryToUnStick(character* Victim, v2)
+{
+  ulong TrapID = GetTrapID();
+  int Sum = Victim->GetAttribute(ARM_STRENGTH) + Victim->GetAttribute(LEG_STRENGTH) + Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(AGILITY);
+  int Modifier = Liquid->GetStickiness() * Liquid->GetVolume() / (Max(Sum, 1) * 500);
+
+  if(!RAND_N(Max(Modifier, 2)))
+  {
+    Victim->RemoveTrap(TrapID);
+    TrapData.VictimID = 0;
+
+    if(Victim->IsPlayer())
+      ADD_MESSAGE("You manage to unstick yourself from the %s.", Liquid->GetName(false, false).CStr());
+    else if(Victim->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s manages to unstick %sself from the %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+
+    Victim->EditAP(-250);
+    return true;
+  }
+
+  Modifier = Sum * 10000 / (Liquid->GetStickiness() * Liquid->GetVolume());
+
+  if(!RAND_N(Max(Modifier, 2)))
+  {
+    int VictimBodyPart = Victim->RandomizeTryToUnStickBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
+
+    if(VictimBodyPart != NONE_INDEX)
+    {
+      TrapData.BodyParts |= 1 << VictimBodyPart;
+      Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
+
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You fail to free yourself from the %s and your %s is stuck in it in the attempt.", Liquid->GetName(false, false).CStr(), Victim->GetBodyPartName(VictimBodyPart).CStr());
+      else if(Victim->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s tries to free %sself from the %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, Liquid->GetName(false, false).CStr());
+
+      Victim->EditAP(-1000);
+      return true;
+    }
+  }
+
+  if(Victim->IsPlayer())
+    ADD_MESSAGE("You are unable to unstick yourself from %s.", Liquid->GetName(false, false).CStr());
+
+  Victim->EditAP(-1000);
+  return false;
+}
+
+void fluid::StepOnEffect(character* Stepper)
+{
+  if(!Liquid->GetStickiness() || Stepper->IsImmuneToStickiness())
+    return;
+
+  int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
+
+  if(StepperBodyPart == NONE_INDEX)
+    return;
+
+  TrapData.VictimID = Stepper->GetID();
+  TrapData.BodyParts = 1 << StepperBodyPart;
+  Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
+
+  if(Stepper->IsPlayer())
+    ADD_MESSAGE("Your %s is stuck to %s.", Stepper->GetBodyPartName(StepperBodyPart).CStr(), Liquid->GetName(false, false).CStr());
+  else if(Stepper->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s gets stuck to %s.", Stepper->CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
+}
+
+void fluid::PreProcessForBone()
+{
+  game::RemoveTrapID(TrapData.TrapID);
+  TrapData.TrapID = 0;
+}
+
+void fluid::PostProcessForBone()
+{
+  TrapData.TrapID = game::CreateNewTrapID(this);
+}
+
+truth fluid::IsStuckTo(const character* Char) const
+{
+  return TrapData.VictimID == Char->GetID();
+}
+
+truth fluid::IsDangerous(const character* Char) const
+{
+  return Char->GetAttribute(WISDOM) >= Liquid->GetStepInWisdomLimit();
 }

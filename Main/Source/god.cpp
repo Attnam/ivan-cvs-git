@@ -352,7 +352,7 @@ truth god::TryToAttachBodyPart(character* Char)
 
   if(!Char->HasAllBodyParts())
   {
-    bodypart* BodyPart = Char->FindRandomOwnBodyPart();
+    bodypart* BodyPart = Char->FindRandomOwnBodyPart(true);
 
     if(BodyPart && LikesMaterial(BodyPart->GetMainMaterial()->GetDataBase(), Char))
     {
@@ -447,7 +447,6 @@ truth god::TryToHardenBodyPart(character* Char)
       {
 	BodyPart->ChangeMainMaterial(Material->SpawnMore());
 	ADD_MESSAGE("%s changes your %s to %s.", GetName(), BodyPart->GetBodyPartName().CStr(), Material->GetName(false, false).CStr());
-	BodyPart->RestoreHP();
 	Changed = true;
 	break;
       }
@@ -467,4 +466,25 @@ const char* god::GetPersonalPronoun() const
 const char* god::GetObjectPronoun() const
 {
   return GetSex() == MALE ? "Him" : "Her";
+}
+
+void god::SignalRandomAltarGeneration(const std::vector<v2>& RoomSquare)
+{
+  int Times = 2 + femath::LoopRoll(80, 8);
+
+  for(int c = 0; c < Times; ++c)
+  {
+    long Category = RAND() & ANY_CATEGORY;
+
+    if(!Category)
+      Category = ANY_CATEGORY;
+
+    item* Item = protosystem::BalancedCreateItem(0, MAX_PRICE, Category, 0, 0, GetType());
+
+    if(Item)
+    {
+      Item->CalculateEnchantment();
+      game::GetCurrentLevel()->GetLSquare(RoomSquare[RAND_N(RoomSquare.size())])->AddItem(Item);
+    }
+  }
 }

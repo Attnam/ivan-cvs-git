@@ -143,7 +143,7 @@ truth owterrain::Enter(truth DirectionUp) const
 {
   if(DirectionUp)
   {
-    if(!(PLAYER->GetMoveType() & FLY))
+    if(!PLAYER->IsFlying())
       ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
     else
       ADD_MESSAGE("You fly around for some time.");

@@ -75,7 +75,7 @@ class trap : public entity
   virtual void StepOnEffect(character*) = 0;
   virtual void Draw(blitdata&) const = 0;
   virtual void ReceiveDamage(character*, int, int, int) { }
-  virtual truth IsDangerousFor(const character*) const { return false; }
+  virtual truth IsDangerous(const character*) const { return false; }
   virtual void PreProcessForBone() { }
   virtual void PostProcessForBone() { }
  protected:

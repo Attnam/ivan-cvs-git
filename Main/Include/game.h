@@ -394,7 +394,7 @@ class game
   static int GetTotalMinutes() { return Tick * 60 / 2000; }
   static truth PolymorphControlKeyHandler(int, festring&);
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
-  static truth PlayerIsRunning() { return PlayerRunning; }
+  static truth PlayerIsRunning();
   static void SetPlayerIsRunning(truth What) { PlayerRunning = What; }
   static truth FillPetVector(const char*);
   static truth CommandQuestion();

@@ -597,7 +597,7 @@ void worldmap::Draw(truth) const
 			{ TILE_SIZE, TILE_SIZE },
 			{ 0 },
 			TRANSPARENT_COLOR,
-			ALLOW_ANIMATE };
+			ALLOW_ANIMATE|ALLOW_ALPHA };
 
   if(!game::GetSeeWholeMapCheatMode())
   {

@@ -477,6 +477,62 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
+  item* MainWielded = PLAYER->GetMainWielded();
+	
+  if(MainWielded)
+  {
+    if(MainWielded->IsMaterialChangeable() && MainWielded->GetMainMaterial()->GetAttachedGod() == GetType())
+    {
+      int Config = MainWielded->GetMainMaterial()->GetHardenedMaterial(MainWielded);
+
+      if(Config)
+      {
+	int IR = material::GetDataBase(Config)->IntelligenceRequirement - GetRelation() / 50;
+
+	if(IR <= 1 || !RAND_N(IR))
+	{
+	  festring Desc;
+	  item* SecondaryWielded;
+
+	  if(MainWielded->HandleInPairs() && (SecondaryWielded = PLAYER->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, PLAYER))
+	  {
+	    MainWielded->AddName(Desc, PLURAL);
+	    Desc << " glow and sparkle like they were";
+
+	    if(SecondaryWielded->GetSecondaryMaterial() && SecondaryWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
+	      SecondaryWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(Config));
+
+	    SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(Config));
+	  }
+	  else
+	  {
+	    MainWielded->AddName(Desc, UNARTICLED);
+	    Desc << " glows and sparkles like it was";
+	  }
+
+	  if(MainWielded->GetSecondaryMaterial() && MainWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
+	    MainWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(Config));
+
+	  MainWielded->ChangeMainMaterial(MAKE_MATERIAL(Config));
+	  ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.CStr());
+	  return;
+	}
+      }
+
+      if(!(RAND() % 10))
+      {
+	item* Scroll = scrollofrepair::Spawn();
+	ADD_MESSAGE("%s gives you %s.", GetName(), Scroll->CHAR_NAME(INDEFINITE));
+	PLAYER->GetGiftStack()->AddItem(Scroll);
+	return;
+      }
+      else
+	ADD_MESSAGE("\"Mortal, thou art always my valiant knight!\"");  
+    }
+    /*else
+      ADD_MESSAGE("%s emits strange light but remains unchanged.", MainWielded->CHAR_NAME(DEFINITE));*/
+  }
+
   for(int c = 0; c < PLAYER->GetEquipments(); ++c)
   {
     item* Equipment = PLAYER->GetEquipment(c);
@@ -489,64 +545,10 @@ void loricatus::PrayGoodEffect()
     }
   }
 
-  item* MainWielded = PLAYER->GetMainWielded();
-	
-  if(MainWielded)
-  {
-    if(MainWielded->IsMaterialChangeable())
-    {
-      int StrengthValue = material::GetDataBase(STEEL)->StrengthValue;
-
-      if(StrengthValue > MainWielded->GetMainMaterial()->GetStrengthValue())
-      {
-	festring Desc;
-	item* SecondaryWielded;
-
-	if(MainWielded->HandleInPairs() && (SecondaryWielded = PLAYER->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, PLAYER))
-	{
-	  MainWielded->AddName(Desc, PLURAL);
-	  Desc << " glow and sparkle like they were";
-
-	  if(SecondaryWielded->GetSecondaryMaterial() && SecondaryWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
-	    SecondaryWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(STEEL));
-
-	  SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-	}
-	else
-	{
-	  MainWielded->AddName(Desc, UNARTICLED);
-	  Desc << " glows and sparkles like it was";
-	}
-
-	if(MainWielded->GetSecondaryMaterial() && MainWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
-	  MainWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(STEEL));
-
-	MainWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-	ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.CStr());
-      }
-      else
-      {
-	if(!(RAND() % 10))
-	{
-	  item* Scroll = scrollofrepair::Spawn();
-	  ADD_MESSAGE("%s gives you %s.", GetName(), Scroll->CHAR_NAME(INDEFINITE));
-	  PLAYER->GetGiftStack()->AddItem(Scroll);
-	}
-	else
-	  ADD_MESSAGE("\"Mortal, thou art always my valiant knight!\"");  
-      }
-      return;
-    }
-    else
-      ADD_MESSAGE("%s emits strange light but remains unchanged.", MainWielded->CHAR_NAME(DEFINITE));
-  }
+  if(PLAYER->GetUsableArms())
+    ADD_MESSAGE("You feel a slight tingling in your hands.");
   else
-  {
-    if(PLAYER->GetUsableArms())
-      ADD_MESSAGE("You feel a slight tingling in your hands.");
-    else
-      ADD_MESSAGE("You feel a slight tingle.");
-  }
+    ADD_MESSAGE("You feel a slight tingle.");
 }
 
 void loricatus::PrayBadEffect()

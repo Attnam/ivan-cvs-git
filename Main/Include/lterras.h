@@ -180,6 +180,7 @@ GLTERRAIN(liquidterrain, glterrain)
   virtual truth IsDipDestination() const { return true; }
   virtual void SurviveEffect(character*);
  protected:
+  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual v2 GetBitmapPos(int) const;
 };

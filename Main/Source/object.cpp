@@ -135,6 +135,7 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
       SignalEmitationDecrease(OldMaterial->GetEmitation());
   
     SignalVolumeAndWeightChange();
+    SignalMaterialChange();
   }
 
   if(!(SpecialFlags & NO_PIC_UPDATE))

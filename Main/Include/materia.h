@@ -43,27 +43,6 @@ struct materialdatabase : public databasebase
   long PriceModifier;
   col24 Emitation;
   int NutritionValue;
-  /*truth IsAbstract;
-    truth IsGolemMaterial;
-    truth CanBeWished;
-    truth IsAlive;
-    truth IsFlammable;
-    truth IsExplosive;
-    truth UsesLongArticle;
-    truth IsSparkling;
-    truth IsMetal;
-    truth CanHaveParasite;
-    truth EffectIsGood;
-    truth IsWarm;
-    truth UseMaterialAttributes;
-    truth CanRegenerate;
-    truth IsBlood;
-    truth IsImmuneToAcid;
-    truth IsScary;
-    truth CanBeMirrored;
-    truth AffectInside;
-    truth IsValuable;
-    truth CanBeTailored;*/
   festring NameStem;
   festring AdjectiveStem;
   int Effect;
@@ -78,12 +57,13 @@ struct materialdatabase : public databasebase
   int ConsumeWisdomLimit;
   int AttachedGod;
   festring BreatheMessage;
-  int BreatheWisdomLimit;
+  int StepInWisdomLimit;
   int RustModifier;
   int Acidicity;
   contentscript<item> NaturalForm;
   int HardenedMaterial;
   int IntelligenceRequirement;
+  int Stickiness;
 };
 
 class materialprototype
@@ -169,6 +149,7 @@ class material
   DATA_BASE_VALUE(int, Acidicity);
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
   DATA_BASE_VALUE(int, IntelligenceRequirement);
+  DATA_BASE_VALUE(int, Stickiness);
   const database* GetDataBase() const { return DataBase; }
   material* SpawnMore() const { return GetProtoType()->Spawn(GetConfig(), Volume); }
   material* SpawnMore(long Volume) const { return GetProtoType()->Spawn(GetConfig(), Volume); }
@@ -193,7 +174,7 @@ class material
   truth BreatheEffect(character*);
   virtual truth SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(truth) { }
-  DATA_BASE_VALUE(int, BreatheWisdomLimit);
+  DATA_BASE_VALUE(int, StepInWisdomLimit);
   virtual void SetRustLevel(int) { }
   virtual int GetRustLevel() const { return NOT_RUSTED; }
   virtual int GetRustData() const { return NOT_RUSTED; }
@@ -222,6 +203,7 @@ class material
   virtual truth IsExplosive() const;
   virtual truth IsSparkling() const;
   material* Duplicate() const { return DataBase->ProtoType->Clone(this); }
+  truth IsStuckTo(const character*) const;
  protected:
   virtual void PostConstruct() { }
   void Initialize(int, long, truth);

@@ -410,6 +410,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   {
     int Owner = 1 + RAND() % GODS;
     GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(altar::Spawn(Owner));
+    game::GetGod(Owner)->SignalRandomAltarGeneration(Inside);
     RoomClass->SetDivineMaster(Owner);
   }
 
@@ -703,7 +704,8 @@ void level::Load(inputfile& SaveFile)
 
       NodeMap[x][y] = new node(x, y, Map[x][y]);
       WalkabilityMap[x][y] = Map[x][y]->GetTheoreticalWalkability();
-      Map[x][y]->CalculateBorderPartners();
+      Map[x][y]->CalculateGroundBorderPartners();
+      Map[x][y]->CalculateOverBorderPartners();
     }
 
   SquareStack = new lsquare*[XSizeTimesYSize];
@@ -1840,7 +1842,10 @@ void level::GenerateDungeon(int Index)
 
   for(x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
-      Map[x][y]->CalculateBorderPartners();
+    {
+      Map[x][y]->CalculateGroundBorderPartners();
+      Map[x][y]->CalculateOverBorderPartners();
+    }
 
   AttachQueue.clear();
   CreateItems(LevelScript->GetItems()->Randomize());

@@ -138,6 +138,7 @@
 #define OMMEL_SNOT (LIQUID_ID + 21)
 #define SWEAT (LIQUID_ID + 22)
 #define GLOWING_BLOOD (LIQUID_ID + 23)
+#define YELLOW_SLIME (LIQUID_ID + 24)
 
 #define FLESH_ID (5 << 12)
 
@@ -365,6 +366,7 @@
 #define SAND_TERRAIN 8
 
 #define POOL 1
+#define UNDERGROUND_LAKE 2
 
 #define BRICK_FINE 1
 #define BRICK_PROPAGANDA 2

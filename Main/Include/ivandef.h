@@ -885,6 +885,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define CHECK_USABILITY 2
 
 #define ITEM_TRAP 0x8000
+#define FLUID_TRAP 0x10000
 
 /* Death flags */
 
@@ -1083,5 +1084,7 @@ const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
 #define TALENT_FAST_N_ACCURATE 1
 #define TALENT_HEALTHY 2
 #define TALENT_CLEVER 3
+
+#define BORDER_PARTNER_ANIMATED (8 << 24)
 
 #endif

@@ -40,6 +40,7 @@ col16 chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 +
 void floatingeye::SetWayPoints(const fearray<packv2>& What) { ArrayToVector(What, WayPoints); }
 
 bodypart* eddy::MakeBodyPart(int) const { return eddytorso::Spawn(0, NO_MATERIALS); }
+int eddy::GetBodyPartWobbleData(int) const { return WOBBLE_VERTICALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
 bodypart* magicmushroom::MakeBodyPart(int) const { return magicmushroomtorso::Spawn(0, NO_MATERIALS); }
 
@@ -680,6 +681,7 @@ void ostrich::GetAICommand()
     RestoreStamina();
     ResetStates();
     TemporaryState = 0;
+    GainIntrinsic(LEVITATION);
 
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
@@ -751,8 +753,8 @@ void mommo::CreateCorpse(lsquare* Square)
   {
     lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
 
-    if(NeighbourSquare && NeighbourSquare->IsFlyable())
-      NeighbourSquare->SpillFluid(0, liquid::Spawn(BROWN_SLIME, 250 + RAND() % 250));
+    if(NeighbourSquare)// && NeighbourSquare->IsFlyable())
+      NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
   }
 
   SendToHell();  
@@ -1848,7 +1850,7 @@ void mommo::GetAICommand()
 
   if(!(RAND() % 10))
   {
-    Vomit(GetPos(), 350 + RAND() % 350);
+    VomitAtRandomDirection(350 + RAND() % 350);
     EditAP(-1000);
     return;
   }
@@ -2243,4 +2245,58 @@ void spider::GetAICommand()
     return;
 
   EditAP(-1000);
+}
+
+void largecat::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << Lives;
+}
+
+void largecat::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> Lives;
+}
+
+truth largecat::SpecialSaveLife()
+{
+  if(--Lives <= 0 || game::IsInWilderness())
+    return false;
+
+  if(IsPlayer())
+    ADD_MESSAGE("But wait! You seem to have miraculously avoided certain death!");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("But wait, %s seems to have miraculously avoided certain death!", GetPersonalPronoun().CStr());
+
+  v2 Pos = GetPos();
+  rect Border(Pos + v2(-20, -20), Pos + v2(20, 20));
+  Pos = GetLevel()->GetRandomSquare(this, 0, &Border);
+
+  if(Pos == ERROR_V2)
+    Pos = GetLevel()->GetRandomSquare(this);
+
+  Move(Pos, true);
+
+  if(!IsPlayer() && CanBeSeenByPlayer())
+    ADD_MESSAGE("%s appears!", CHAR_NAME(INDEFINITE));
+
+  if(IsPlayer())
+    game::AskForKeyPress(CONST_S("Life saved! [press any key to continue]"));
+
+  RestoreBodyParts();
+  ResetSpoiling();
+  RestoreHP();
+  RestoreStamina();
+  ResetStates();
+
+  if(GetNP() < SATIATED_LEVEL)
+    SetNP(SATIATED_LEVEL);
+
+  SendNewDrawRequest();
+
+  if(GetAction())
+    GetAction()->Terminate(false);
+
+  return true;
 }

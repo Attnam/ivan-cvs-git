@@ -155,7 +155,7 @@ ITEM(bananapeels, item)
   virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual truth IsBananaPeel() const { return true; }
-  virtual truth IsDangerousForAI(const character*) const;
+  virtual truth IsDangerous(const character*) const;
   virtual truth RaiseTheDead(character*);
 };
 
@@ -167,7 +167,7 @@ ITEM(brokenbottle, item)
   virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual item* Fix();
-  virtual truth IsDangerousForAI(const character*) const;
+  virtual truth IsDangerous(const character*) const;
 };
 
 ITEM(scroll, item)
@@ -193,7 +193,7 @@ ITEM(scrollofteleportation, scroll)
 ITEM(scrollofcharging, scroll)
 {
  public:
-  virtual truth Read(character*);
+  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -354,13 +354,13 @@ ITEM(mine, materialcontainer)
   virtual truth CanBeSeenBy(const character*) const;
   virtual truth Apply(character* User);
   virtual truth IsAppliable(const character*) const { return true; }
-  virtual truth IsDangerousForAI(const character* Stepper) const { return WillExplode(Stepper); }
+  virtual truth IsDangerous(const character* Stepper) const { return WillExplode(Stepper); }
   virtual truth WillExplode(const character*) const;
   virtual int GetTeam() const { return Team; }
   virtual void SetTeam(int What) { Team = What; }
   virtual truth CheckPickUpEffect(character*);
   virtual void Search(const character*, int);
-  virtual truth IsDangerous() const { return IsActive(); }
+  virtual truth NeedDangerSymbol() const { return IsActive(); }
   virtual void FinalProcessForBone();
   virtual void TeleportRandomly();
  protected:
@@ -471,12 +471,12 @@ ITEM(beartrap, item)
   virtual truth Apply(character*);
   virtual v2 GetBitmapPos(int) const;
   virtual truth IsAppliable(const character*) const { return true; }
-  virtual truth IsDangerousForAI(const character*) const { return Active; }
+  virtual truth IsDangerous(const character*) const { return Active; }
   virtual int GetTeam() const { return Team; }
   virtual void SetTeam(int What) { Team = What; }
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual void Search(const character*, int);
-  virtual truth IsDangerous() const { return IsActive(); }
+  virtual truth NeedDangerSymbol() const { return IsActive(); }
   virtual void Fly(character*, int, int);
   virtual void FinalProcessForBone();
   virtual void TeleportRandomly();
@@ -510,14 +510,14 @@ ITEM(stethoscope, item)
 ITEM(scrollofenchantweapon, scroll)
 {
  public:
-  virtual truth Read(character*);
+  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
 ITEM(scrollofenchantarmor, scroll)
 {
  public:
-  virtual truth Read(character*);
+  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -528,7 +528,7 @@ ITEM(skull, item)
 ITEM(scrollofrepair, scroll)
 {
  public:
-  virtual truth Read(character*);
+  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -599,7 +599,7 @@ ITEM(scrollofhardenmaterial, scroll)
 ITEM(scrollofgolemcreation, scroll)
 {
  public:
-  virtual truth Read(character*);
+  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 

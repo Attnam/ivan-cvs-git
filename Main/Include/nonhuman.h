@@ -158,6 +158,13 @@ CHARACTER(bat, nonhumanoid)
 
 CHARACTER(largecat, nonhumanoid)
 {
+ public:
+  largecat() : Lives(7) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual truth SpecialSaveLife();
+ protected:
+  int Lives;
 };
 
 CHARACTER(largerat, nonhumanoid)
@@ -243,6 +250,7 @@ CHARACTER(eddy, nonhumanoid)
  public:
   virtual truth Hit(character*, v2, int, truth = false);
  protected:
+  virtual int GetBodyPartWobbleData(int) const;
   virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
 };

@@ -1130,7 +1130,7 @@ Dungeon ELPURI_CAVE;
 		Description = "Oree's lair";
 		ShortDescription = "OreeLair";
 		LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
-		FillSquare = ACIDOUS_BLOOD liquidterrain, 0;
+		FillSquare = ACIDOUS_BLOOD liquidterrain(UNDERGROUND_LAKE), 0;
 		TunnelSquare = solidterrain(GROUND), 0;
 		Rooms = 5;
 		GenerateMonsters = false;
@@ -1144,7 +1144,7 @@ Dungeon ELPURI_CAVE;
 		{
 			Pos = 2:XSize-5,2:YSize-5;
 			Size = 5:7,5:7;
-			WallSquare = RUBY solidterrain(GROUND), RUBY wall(BRICK_FINE);
+			WallSquare = RUBY solidterrain(PARQUET), RUBY wall(BRICK_FINE);
 			FloorSquare = RUBY solidterrain(PARQUET), 0;
 			DoorSquare = RUBY solidterrain(PARQUET), RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
 			Shape = ROUND_CORNERS;

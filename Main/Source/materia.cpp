@@ -386,3 +386,8 @@ truth material::IsSparkling() const
 {
   return DataBase->CategoryFlags & IS_SPARKLING;
 }
+
+truth material::IsStuckTo(const character* Char) const
+{
+  return MotherEntity->IsStuckTo(Char);
+}
