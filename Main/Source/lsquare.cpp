@@ -19,7 +19,7 @@
 #include "proto.h"
 #include "save.h"
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0), Luminance(0)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true)
 {
   Stack = new stack(this);
   SideStack[DOWN] = new stack(this, 0, DOWN);
@@ -30,14 +30,15 @@ lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLT
 
 lsquare::~lsquare()
 {
-  delete GetGLTerrain();
-  delete GetOLTerrain();
+  delete GLTerrain;
+  delete OLTerrain;
   delete Stack;
 
   for(ushort c = 0; c < 4; ++c)
     delete SideStack[c];
 
   delete Fluid;
+  delete Memorized;
 }
 
 void lsquare::SignalEmitationIncrease(ushort EmitationUpdate)
@@ -457,7 +458,7 @@ bool lsquare::Close(character* Closer)
 
 void lsquare::Save(outputfile& SaveFile) const
 {
-  GetStack()->Save(SaveFile); // This must be before square::Save! (Note: This comment is years old. It's probably obsolete)
+  Stack->Save(SaveFile); // This must be before square::Save! (Note: This comment is years old. It's probably obsolete)
   square::Save(SaveFile);
   SaveFile << GLTerrain << OLTerrain;
 
@@ -465,12 +466,15 @@ void lsquare::Save(outputfile& SaveFile) const
     SideStack[c]->Save(SaveFile);
 
   SaveFile << Emitter << Fluid << Emitation << DivineMaster << Engraved << Room << Luminance;
+
+  if(LastSeen)
+    Memorized->Save(SaveFile);
 }
 
 void lsquare::Load(inputfile& SaveFile)
 {
-  GetStack()->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
-  GetStack()->SetMotherSquare(this);
+  Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
+  Stack->SetMotherSquare(this);
   square::Load(SaveFile);
   SaveFile >> GLTerrain >> OLTerrain;
 
@@ -481,6 +485,12 @@ void lsquare::Load(inputfile& SaveFile)
     }
 
   SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> Room >> Luminance;
+
+  if(LastSeen)
+    {
+      Memorized = new bitmap(16, 16);
+      Memorized->Load(SaveFile);
+    }
 }
 
 void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -651,7 +661,10 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	      else
 		OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 	    }
-	  }
+
+	  if(Cheat)
+	    MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << ")";
+	}
       else
 	MemorizedDescription = "darkness";
 
@@ -1150,6 +1163,19 @@ void lsquare::SetLastSeen(ulong What)
   if(LastSeen == What)
     return;
 
+  if(Luminance < LIGHT_BORDER)
+    {
+      short XDist = Pos.X - game::GetPlayer()->GetPos().X;
+
+      if(XDist < -1 || XDist > 1)
+	return;
+
+      short YDist = Pos.Y - game::GetPlayer()->GetPos().Y;
+
+      if(YDist < -1 || YDist > 1)
+	return;
+    }
+
   if(!LastSeen)
     Memorized = new bitmap(16, 16);
 
@@ -1176,4 +1202,22 @@ void lsquare::SetLastSeen(ulong What)
   UpdateMemorized();
   UpdateMemorizedDescription();
   LastSeen = What;
+}
+
+void lsquare::DrawMemorized()
+{
+  if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
+    {
+      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+
+      if(LastSeen)
+	Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+      else
+	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+
+      if(Character && Character->CanBeSeenByPlayer())
+	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen ? true : false, true);
+
+      NewDrawRequested = false;
+    }
 }

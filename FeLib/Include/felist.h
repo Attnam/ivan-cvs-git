@@ -48,18 +48,16 @@ class felist
   felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
-  //void AddEntryToPos(const std::string&, ushort, ushort, bitmap* = 0, bool = true);
   void AddEntry(const std::string&, ushort, const std::vector<bitmap*>&, bool = true);
-  //void AddEntryToPos(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
-  //void RemoveEntryFromPos(ushort);
   void AddDescription(const std::string&, ushort = 0xFFFF);
-  ushort Draw(vector2d, ushort, ushort = 20, ushort = MAKE_RGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false);
+  ushort Draw(vector2d, ushort, ushort = 20, ushort = MAKE_RGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
   std::string GetEntry(ushort Index) const { return Entry[Index].String; }
   ushort GetColor(ushort Index) const { return Entry[Index].Color; }
   void SetColor(ushort Index, ushort What) { Entry[Index].Color = What; }
   ushort Length() const { return Entry.size(); }
+  ushort LastEntryIndex() const { return Entry.size() - 1; }
   void Load(inputfile&);
   void Save(outputfile&) const;
   bool IsEmpty() const { return (Length() == 0); }
@@ -68,7 +66,7 @@ class felist
   void EditSelected(short What) { Selected += What; }
   bool DrawPage(bitmap*) const;
   void Pop() { Entry.pop_back(); }
- protected:
+ private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;
   std::vector<felistdescription> Description;
@@ -80,6 +78,7 @@ class felist
   ushort PageLength;
   ushort BackColor;
   bool Selectable;
+  bool InverseMode;
 };
 
 #endif

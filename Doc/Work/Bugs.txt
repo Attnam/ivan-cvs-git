@@ -22,7 +22,7 @@ Can one eat a can MADE of bananaflesh?
 Walls & moving light.
 The volume bug.
 Boot of speed in hand.
-Can a player controlled carnivorous planet move?
+//Can a player controlled carnivorous plant move?
 If an Attnamian severs a bodypart which hits the player, the city shouldn't become mad!
 Multiple message boxes.
 It is possible to protect items from explosions by putting them in hand digging, or eating them (very low priority).

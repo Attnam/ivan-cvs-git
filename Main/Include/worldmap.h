@@ -42,6 +42,8 @@ class worldmap : public area
   std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
   character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
   virtual void Draw() const;
+  void CalculateLuminances();
+  void CalculateNeighbourBitmapPoses();
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

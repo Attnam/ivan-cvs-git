@@ -230,7 +230,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new werewolfhuman);
+	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -479,8 +479,12 @@ void game::DrawEverythingNoBlit()
     GetCurrentArea()->UpdateLOS();
 
   if(OnScreen(CursorPos))
-    GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+    if(!IsInWilderness() || GetWorldMap()->GetSquare(CursorPos)->GetLastSeen() || GetSeeWholeMapCheat())
+      GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+    else
+      DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
 
+  globalwindowhandler::UpdateTick();
   GetCurrentArea()->Draw();
 
   if(OnScreen(GetPlayer()->GetPos()))
@@ -1116,7 +1120,6 @@ bool game::HandleQuitMessage()
 	  return false;
     }
 
-  configuration::Save();
   return true;
 }
 
@@ -1328,20 +1331,14 @@ void game::LookHandler(vector2d CursorPos)
 
   if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
     Character->DisplayInfo(Msg);
+
   if(!(RAND() % 10000))
     Msg << " You see here a frog eating a magnolia.";
-    
-
-  if(game::WizardModeActivated())
-    Msg << " (" << CursorPos.X << ", " << CursorPos.Y << ")";
 
   ADD_MESSAGE("%s", Msg.c_str());
 
   if(game::GetSeeWholeMapCheat())
-    {
-      game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
-      //game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
-    }
+    game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 }
 
 bool game::AnimationController()

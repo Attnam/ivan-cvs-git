@@ -47,7 +47,7 @@ Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
-*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
+//*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 *Script should have an initial blood level of square option.
 *Balancing offervalues.
 /*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
@@ -79,7 +79,7 @@ Monsters should pray and occasionaly be punished by the gods for praying too oft
 Special "enemy sighted" rections.
 Vampires should be able to polymorph into a bat.
 Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
-*Weapon skills should affect attack AP costs as in ADOM.
+//*Weapon skills should affect attack AP costs as in ADOM.
 Throw remake using linear extrapolation.
 Throw flipping.
 Throw speed to conf.
@@ -146,7 +146,7 @@ One should be able to use a scroll of change material on one's bodyparts. ("Your
 Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
 Gems should increase score.
 Non-fatal battles like robberies.
-Angels should carry holy books of their respective OwnerGods.
+//Angels should carry holy books of their respective OwnerGods.
 Angels as enemies.
 Amputation.
 Beard item.
@@ -159,7 +159,7 @@ Worldmap LOS disabling.
 //Symbolic inventory.
 //Symbolic god menu.
 //Lists, especially message history, should look better.
-*Hunters must be one-armed.
+//*Hunters must be one-armed.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
 Allergies.
 Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
@@ -255,7 +255,12 @@ An amulet of life saving worn by a skeleton or zombie should either kill it or t
 Healing liquid should severely damage undead.
 In my (Timo's) opinion, we should add some powerful undead monsters and maybe a boss soon after the latter is done, as dipping a weapon into healing liquid then becomes rather a useful tactic.
 Wand of resurrection should behave correctly when zapped at undead.
-Werewolves (wolf form) should be nonhumanoids.
-One should be also able to wish for terrains.
+Werewolves (wolf form) should maybe be nonhumanoids.
+One should be also able to wish for terrains, like an altar of Valpurus.
 One MColor in the leg pictures should be allocated for boots (most humanoids walk barefooted now).
 It should be possible to specify the material while wishing for items and while polymorphing into a golem.
+Wand of strinking should also open doors.
+Allow animate and allow alpha blend options to configuration.
+Draw during automated action as an option.
+We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
+Look stretch config option.

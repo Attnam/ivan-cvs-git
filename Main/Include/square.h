@@ -11,14 +11,11 @@
 #include "vector2d.h"
 
 class area;
-class material;
-class bitmap;
 class character;
 class gterrain;
 class oterrain;
 class outputfile;
 class inputfile;
-class squarescript;
 
 class square
 {
@@ -27,7 +24,6 @@ class square
   virtual ~square();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void DrawMemorized();
   void SetCharacter(character* What) { Character = What; }
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
@@ -43,10 +39,8 @@ class square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
-  bitmap* GetMemorized() const { return Memorized; }
   void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
   void KickAnyoneStandingHereAway();
-  void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
   bool IsWalkable(character*) const;
   std::string SurviveMessage(character*) const;
   std::string DeathMessage(character*) const;
@@ -58,16 +52,17 @@ class square
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(character*) const;
+  ushort GetLuminance() const { return Luminance; }
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;
   character* Character;
   vector2d Pos;
-  bool NewDrawRequested, MemorizedUpdateRequested;
-  bitmap* Memorized;
+  bool NewDrawRequested;
   ulong LastSeen;
   bool DescriptionChanged;
   ushort AnimatedEntities;
+  ushort Luminance;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, square* Square)

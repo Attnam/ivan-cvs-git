@@ -112,7 +112,6 @@ int Main(int argc, char **argv)
 	  break;
 	}
       case 4:
-	configuration::Save();
 
 #ifdef __DJGPP__
 

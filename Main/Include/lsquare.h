@@ -25,6 +25,7 @@ class outputfile;
 class inputfile;
 class room;
 class fluid;
+class squarescript;
 
 struct emitter
 {
@@ -114,9 +115,11 @@ class lsquare : public square
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   void SetLastSeen(ulong);
-  ushort GetLuminance() const { return Luminance; }
   void CalculateLuminance();
   void DrawStaticContents(bitmap*, vector2d, ushort, bool) const;
+  void DrawMemorized();
+  bitmap* GetMemorized() const { return Memorized; }
+  void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -130,7 +133,8 @@ class lsquare : public square
   uchar Room;
   ushort TemporaryEmitation;
   fluid* Fluid;
-  ushort Luminance;
+  bitmap* Memorized;
+  bool MemorizedUpdateRequested;
 };
 
 #endif

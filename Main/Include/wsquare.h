@@ -27,7 +27,6 @@ class wsquare : public square
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void Draw();
-  void UpdateMemorized();
   void SetGWTerrain(gwterrain*);
   void SetOWTerrain(owterrain*);
   gwterrain* GetGWTerrain() const { return GWTerrain; }
@@ -42,7 +41,7 @@ class wsquare : public square
   void ChangeOWTerrain(owterrain*);
   void SetWTerrain(gwterrain*, owterrain*);
   void SetLastSeen(ulong);
-  void DrawStaticContents(bitmap*, vector2d, ushort, bool) const;
+  void CalculateLuminance();
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

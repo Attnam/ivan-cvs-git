@@ -57,13 +57,13 @@ worldmap::~worldmap()
 void worldmap::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
+  SaveFile.Write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
+  SaveFile.Write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
+  SaveFile.Write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile.Write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-  SaveFile.Write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-  SaveFile.Write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
   SaveFile << Continent << PlayerGroup;
 }
 
@@ -71,15 +71,6 @@ void worldmap::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
   Map = (wsquare***)area::Map;
-
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      {
-	Map[x][y] = new wsquare(this, vector2d(x, y));
-	game::SetSquareInLoad(Map[x][y]);
-	Map[x][y]->Load(SaveFile);
-      }
-
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
   AltitudeBuffer = Alloc2D<short>(XSize, YSize);
   ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
@@ -89,6 +80,16 @@ void worldmap::Load(inputfile& SaveFile)
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
+
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new wsquare(this, vector2d(x, y));
+	game::SetSquareInLoad(Map[x][y]);
+	Map[x][y]->Load(SaveFile);
+      }
+
+  CalculateNeighbourBitmapPoses();
   SaveFile >> Continent >> PlayerGroup;
 }
 
@@ -143,6 +144,8 @@ void worldmap::Generate()
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       game::GetDungeon(0)->SetWorldMapPos(ElpuriCavePos);
       GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
+      CalculateLuminances();
+      CalculateNeighbourBitmapPoses();
       break;
     }
 }
@@ -379,12 +382,24 @@ void worldmap::Draw() const
   if(!game::GetSeeWholeMapCheat())
     for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
       for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-	  Map[x][y]->Draw();
-	else
-	  Map[x][y]->DrawMemorized();
+	{
+	  if(Map[x][y]->GetLastSeen())
+	    Map[x][y]->Draw();
+	}
   else
     for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
       for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	Map[x][y]->Draw();
+}
+
+void worldmap::CalculateLuminances()
+{
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
+    Map[0][c]->CalculateLuminance();
+}
+
+void worldmap::CalculateNeighbourBitmapPoses()
+{
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
+    Map[0][c]->GetGWTerrain()->CalculateNeighbourBitmapPoses();
 }

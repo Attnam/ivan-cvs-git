@@ -1,3 +1,22 @@
+July 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Angels now carry a holy book of their divine master
+	* Decreased the brigthness of palette entry 151 by 5 in all m-colored graphics files,
+	  for it conflicted with the transparent color and caused problems with some image editors
+	* Configuration is now saved even if the game is terminated abnormally
+	* Corrected the remaining problems of the message history
+	* Animations now work correctly during faint, reading, digging and similiar automated actions
+	* Continent number and terrain height are again shown while looking on the world map when
+	  SeeWholeMapCheat is active
+	* Disabled the FOW on the world map, for IMO it doesn't make sense there (far away forests,
+	  towns and continents are not "seen", after all, they are known to be there, and the
+	  area revealed by moving around there is actually learnt from the natives' speeches etc.)
+	* LOS range in the wilderness doesn't depend on perception anymore, for reasons explained above
+	* Optimized the world map draw code greatly
+	* Modified dungeon LOS so that when walking in darkness, only one square in each direction is
+	  considered seen (it can be touched) and its memorized picture is updated. It was rather odd
+	  that you could "see" darkness really far away before
+
 July 13 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added teleport control, teleport randomly and polymorph randomly states

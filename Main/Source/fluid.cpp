@@ -60,8 +60,8 @@ void fluid::Be()
 	  SendToHell();
 	}
 
-      GetSquareUnder()->SendNewDrawRequest();
-      GetSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
     }
 }
 

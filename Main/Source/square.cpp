@@ -13,37 +13,23 @@
 #include "save.h"
 #include "igraph.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
 {
 }
 
 square::~square()
 {
   delete Character;
-  delete Memorized;
 }
 
 void square::Save(outputfile& SaveFile) const
 {
-  SaveFile << Character << LastSeen << DescriptionChanged  << AnimatedEntities;
-
-  if(LastSeen)
-    GetMemorized()->Save(SaveFile);
-
-  SaveFile << MemorizedDescription;
+  SaveFile << Character << LastSeen << DescriptionChanged << AnimatedEntities << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
 {
-  SaveFile >> Character >> LastSeen >> DescriptionChanged >> AnimatedEntities;
-
-  if(LastSeen)
-    {
-      Memorized = new bitmap(16, 16);
-      GetMemorized()->Load(SaveFile);
-    }
-
-  SaveFile >> MemorizedDescription;
+  SaveFile >> Character >> LastSeen >> DescriptionChanged >> AnimatedEntities >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
@@ -54,24 +40,6 @@ void square::AddCharacter(character* Guy)
 
   if(Guy->IsAnimated())
     IncAnimatedEntities();
-}
-
-void square::DrawMemorized()
-{
-  if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
-    {
-      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-
-      if(LastSeen)
-	Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
-      else
-	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
-
-      if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen ? true : false, true);
-
-      NewDrawRequested = false;
-    }
 }
 
 void square::RemoveCharacter()

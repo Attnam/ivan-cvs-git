@@ -23,6 +23,11 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 
 #include <unistd.h>
 
+void globalwindowhandler::UpdateTick()
+{
+  Tick = uclock() * 10 / UCLOCKS_PER_SEC;
+}
+
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 {
   if(EmptyBuffer)
@@ -32,7 +37,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
     if(ControlLoop.size())
       {
 	static ulong LastTick = 0;
-	Tick = uclock() * 10 / UCLOCKS_PER_SEC;
+	UpdateTick();
 
 	if(LastTick != Tick)
 	  {
@@ -70,6 +75,11 @@ int globalwindowhandler::ReadKey()
 std::vector<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
+
+void globalwindowhandler::UpdateTick()
+{
+  Tick = clock() * 10 / CLOCKS_PER_SEC;
+}
 
 #ifdef WIN32
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -214,7 +224,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  if(Active && ControlLoop.size())
 	    {
 	      static ulong LastTick = 0;
-	      Tick = clock() * 10 / CLOCKS_PER_SEC;
+	      UpdateTick();
 
 	      if(LastTick != Tick)
 		{
@@ -341,7 +351,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	    if((SDL_GetAppState() & SDL_APPACTIVE)  && ControlLoop.size())
 	      {
 		static ulong LastTick = 0;
-		Tick = clock() * 10 / CLOCKS_PER_SEC;
+		UpdateTick();
 
 		if(LastTick != Tick)
 		  {

@@ -890,6 +890,7 @@ wandofteleportation /* wand-> */
 	Price = 500;
 	PostFix = "of teleportation";
 	MainMaterialConfig == GOLD;
+	Alias == "wand of teleport";
 }
 
 mine /*materialcontainer-> */
@@ -1043,6 +1044,7 @@ ring
 	MainMaterialConfig == DIAMOND;
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
+
 	Config RINGOFFIRERESISTANCE;
 	{
 		Possibility = 15;

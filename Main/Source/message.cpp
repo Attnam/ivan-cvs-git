@@ -12,7 +12,7 @@
 #include "error.h"
 #include "save.h"
 
-felist msgsystem::MessageHistory("Message history", WHITE, 200);
+felist msgsystem::MessageHistory("Message history", WHITE, 128);
 std::string msgsystem::LastMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
@@ -34,9 +34,15 @@ void msgsystem::AddMessage(const char* Format, ...)
   if(!Buffer.length())
     ABORT("Empty message request!");
 
+  /* Comment the first line and uncomment the second before the release! */
+
+  if(isalpha(Buffer[Buffer.length() - 1]))
+    Buffer += " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
+    //Buffer += ".";
+
   if(Buffer == LastMessage)
     {
-      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.Length() - 1) == 0xFFFF)
+      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.LastEntryIndex()) == 0xFFFF)
 	MessageHistory.Pop();
 
       ++Times;
@@ -44,7 +50,7 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      for(c = MessageHistory.Length() - 1; c >= 0 && MessageHistory.GetColor(c) == 0xFFFF; --c)
+      for(c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == 0xFFFF; --c)
 	MessageHistory.SetColor(c, LIGHTGRAY);
 
       Times = 1;
@@ -109,7 +115,7 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
-  MessageHistory.Draw(vector2d(26, 42), 652, 40, MAKE_RGB(0, 0, 16), false);
+  MessageHistory.Draw(vector2d(26, 42), 652, 32, MAKE_RGB(0, 0, 16), false, true, true, false, true);
 }
 
 void msgsystem::Format()

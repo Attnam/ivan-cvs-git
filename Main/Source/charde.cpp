@@ -1428,6 +1428,8 @@ void angel::Load(inputfile& SaveFile)
 
 void angel::CreateInitialEquipment()
 {
+  GetStack()->FastAddItem(new holybook(GetConfig()));
+
   switch(GetMasterGod()->BasicAlignment())
     {
     case GOOD:
@@ -3309,16 +3311,15 @@ bool humanoid::DetachBodyPart()
     default:
       return false;
     }
+
   bodypart* BodyPart = GetBodyPart(ToBeDetached);
+
   if(BodyPart)
     {
       SevereBodyPart(ToBeDetached);
       GetSquareUnder()->SendNewDrawRequest();
-
       GetStack()->AddItem(BodyPart);
-
       BodyPart->DropEquipment();
-
       ADD_MESSAGE("Bodypart detached!");  
       return true;
     }

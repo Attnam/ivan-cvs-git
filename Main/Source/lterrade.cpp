@@ -507,8 +507,8 @@ void fountain::DryOut()
       if(CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorizedDescription();
 
-      GetSquareUnder()->SendNewDrawRequest();
-      GetSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
 
       if(CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorized();
@@ -599,9 +599,9 @@ bool altar::Polymorph(character*)
 
   SetConfig(NewGod);
 
-  GetSquareUnder()->SendNewDrawRequest();
-  GetSquareUnder()->SendMemorizedUpdateRequest();
-  GetSquareUnder()->SetDescriptionChanged(true);
+  GetLSquareUnder()->SendNewDrawRequest();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SetDescriptionChanged(true);
 
   if(CanBeSeenByPlayer())
     {

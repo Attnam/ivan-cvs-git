@@ -131,7 +131,7 @@ class OWTERRAIN
   elpuricave,
   owterrain,
  public:
-  virtual std::string GetNameStem() const { return "hideous cave entry radiating pure navastating"; }
+  virtual std::string GetNameStem() const { return "hideous cave entry radiating pure evil"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 48); }
   virtual bool GoDown(character*) const;
 );

@@ -2376,6 +2376,7 @@ bool character::RestUntilHealed()
 bool character::OutlineCharacters()
 {
   configuration::SetOutlineCharacters(!configuration::GetOutlineCharacters());
+  configuration::Save();
   game::GetCurrentArea()->SendNewDrawRequest();
   return false;
 }
@@ -2383,6 +2384,7 @@ bool character::OutlineCharacters()
 bool character::OutlineItems()
 {
   configuration::SetOutlineItems(!configuration::GetOutlineItems());
+  configuration::Save();
   game::GetCurrentArea()->SendNewDrawRequest();
   return false;
 }
@@ -2451,13 +2453,21 @@ bool character::LowerGodRelations()
 
 ushort character::LOSRange() const
 {
-  return GetAttribute(PERCEPTION) * game::GetCurrentArea()->GetLOSModifier() / 48;
+  if(!game::IsInWilderness())
+    return GetAttribute(PERCEPTION) * game::GetCurrentLevel()->GetLOSModifier() / 48;
+  else
+    return 3;
 }
 
 ushort character::LOSRangeSquare() const
 {
-  ulong LOSModifier = game::GetCurrentArea()->GetLOSModifier();
-  return GetAttribute(PERCEPTION) * GetAttribute(PERCEPTION) * LOSModifier * LOSModifier / 2304;
+  if(!game::IsInWilderness())
+    {
+      ulong LOSModifier = game::GetCurrentLevel()->GetLOSModifier();
+      return GetAttribute(PERCEPTION) * GetAttribute(PERCEPTION) * LOSModifier * LOSModifier / 2304;
+    }
+  else
+    return 9;
 }
 
 ushort character::ESPRange() const

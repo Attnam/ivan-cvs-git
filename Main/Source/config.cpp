@@ -196,6 +196,8 @@ void configuration::ShowConfigScreen()
 
       break;
     }
+
+  Save();
 }
 
 void configuration::SetDefaultName(const std::string& What)
@@ -226,6 +228,7 @@ void configuration::SetContrast(short What)
 void configuration::SwitchModeHandler()
 {
   SetFullScreenMode(!GetFullScreenMode());
+  Save();
 }
 
 void configuration::ContrastHandler(long Value)

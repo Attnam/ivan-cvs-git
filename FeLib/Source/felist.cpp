@@ -24,7 +24,7 @@ felist::~felist()
   Empty();
 }
 
-ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, ushort DrawBackColor, bool DrawSelectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade)
+ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, ushort DrawBackColor, bool DrawSelectable, bool BlitAfterwards, bool DrawBackroundAfterwards, bool Fade, bool DrawInverseMode)
 {
   if(!Entry.size())
     return 0xFFFF;
@@ -34,6 +34,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
   PageLength = DrawPageLength;
   Selectable = DrawSelectable;
   BackColor = DrawBackColor;
+  InverseMode = DrawInverseMode;
 
   FelistCurrentlyDrawn = this;
 
@@ -54,8 +55,13 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
       DOUBLEBUFFER->Blit(&BackGround);
     }
 
+  if(Selectable)
+    PageBegin = Selected - Selected % PageLength;
+  else if(InverseMode)
+    PageBegin = LastEntryIndex() - LastEntryIndex() % PageLength;
+  else
+    PageBegin = 0;
 
-  PageBegin = Selected - Selected % PageLength;
   ushort Return, c, Selectables = 0;
 
   bool JustSelectMove = false;
@@ -162,7 +168,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  break;
 	}
 
-      if(Pressed == 0x1B || AtTheEnd)
+      if(Pressed == 0x1B || (AtTheEnd && !InverseMode) || (!PageBegin && InverseMode))
 	{
 	  Return = 0xFFFF;
 	  break;
@@ -170,7 +176,11 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
       else
 	{
 	  BackGround.Blit(Buffer);
-	  PageBegin += PageLength;
+
+	  if(InverseMode)
+	    PageBegin -= PageLength;
+	  else
+	    PageBegin += PageLength;
 
 	  if(Selectable)
 	    Selected = PageBegin;
@@ -196,7 +206,6 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 bool felist::DrawPage(bitmap* Buffer) const
 {
   ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
-  //ushort Min = Selected - Selected % PageLength;
   DrawDescription(Buffer, Pos, Width, BackColor);
 
   ushort c, i; // c == entry index, i == selectable index
@@ -241,21 +250,20 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  LastFillBottom += 10;
 	}
 
-      if(c != Entry.size() - 1 && Entry[c].Selectable && i - PageBegin == PageLength - 1)
+      if((i - PageBegin == PageLength - 1 && Entry[c].Selectable) || c == Entry.size() - 1)
 	{
-	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
-	  FONT->Printf(Buffer, Pos.X + 13, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
-	  LastFillBottom += 30;
-	}
+	  if((!InverseMode && c != Entry.size() - 1) || (InverseMode && PageBegin))
+	    {
+	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
+	      FONT->Printf(Buffer, Pos.X + 13, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
+	      LastFillBottom += 30;
+	    }
+	  else
+	    {
+	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
+	      LastFillBottom += 10;
+	    }
 
-      if(c == Entry.size() - 1)
-	{
-	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
-	  LastFillBottom += 10;
-	}
-
-      if(c == Entry.size() - 1 || (Entry[c].Selectable && i - PageBegin == PageLength - 1))
-	{
 	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
 	  return c == Entry.size() - 1;
 	}
@@ -297,7 +305,7 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
       ushort Color = Entry[c + Selected].Color;
 
       if(PageLength > 1)
-	Color = MAKE_RGB(((GET_RED(Color) << 1) + GET_RED(Color) * 3 * Index / (PageLength - 1)) / 5, ((GET_GREEN(Color) << 1) + GET_GREEN(Color) * 3 * Index / (PageLength - 1)) / 5, ((GET_BLUE(Color) << 1) + GET_BLUE(Color) * 3 * Index / (PageLength - 1)) / 5);
+	Color = MAKE_RGB((GET_RED(Color) + GET_RED(Color) * 3 * Index / (PageLength - 1)) >> 2, (GET_GREEN(Color) + GET_GREEN(Color) * 3 * Index / (PageLength - 1)) >> 2, (GET_BLUE(Color) + GET_BLUE(Color) * 3 * Index / (PageLength - 1)) >> 2);
 
       FONT->Printf(DOUBLEBUFFER, Pos.X + 13, LastBottom, Color, "%s", Entry[c + Selected].String.c_str());
     }
@@ -322,50 +330,22 @@ void felist::AddEntry(const std::string& Str, ushort Color, bitmap* Bitmap, bool
   AddEntry(Str, Color, BitmapVector, Selectable);
 }
 
-/*void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, bitmap* Bitmap, bool Selectable)
-{
-  std::vector<bitmap*> BitmapVector;
-
-  if(Bitmap)
-    BitmapVector.push_back(Bitmap);
-
-  AddEntryToPos(Str, Pos, Color, BitmapVector, Selectable);
-}*/
-
 void felist::AddEntry(const std::string& Str, ushort Color, const std::vector<bitmap*>& Bitmap, bool Selectable)
 {
-  //AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, Bitmap, Selectable);
-
   Entry.push_back(felistentry(Bitmap, Str, Color, Selectable));
 
   if(Maximum && Entry.size() > Maximum)
     Entry.erase(Entry.begin());
 }
 
-/*void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, const std::vector<bitmap*>& Bitmap, bool Selectable)
-{
-  Entry.insert(Entry.begin() + Pos, felistentry(Bitmap, Str, Color, Selectable));
-
-  if(Maximum && Entry.size() > Maximum)
-    if(InverseMode)
-      Entry.pop_back();
-    else
-      Entry.erase(Entry.begin());
-}*/
-
-/*void felist::RemoveEntryFromPos(ushort Pos)
-{
-  Entry.erase(Entry.begin() + Pos);
-}*/
-
 void felist::Save(outputfile& SaveFile) const
 {
-  SaveFile << Entry << Description << Pos << Maximum << Selected << Width << PageLength << BackColor << Selectable;
+  SaveFile << Entry << Description << Maximum << Selected;
 }
 
 void felist::Load(inputfile& SaveFile) 
 {
-  SaveFile >> Entry >> Description >> Pos >> Maximum >> Selected >> Width >> PageLength >> BackColor >> Selectable;
+  SaveFile >> Entry >> Description >> Maximum >> Selected;
 }
 
 void felist::AddDescription(const std::string& Str, ushort Color)

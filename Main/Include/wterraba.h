@@ -25,12 +25,13 @@ class wterrain
   virtual wsquare* GetWSquareUnder() const { return WSquareUnder; }
   virtual void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   virtual worldmap* GetWorldMapUnder() const;
-  virtual std::string Name(uchar) const;
+  virtual void AddName(std::string&, uchar) const;
+  virtual std::string GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
+  virtual std::string GetNameStem() const = 0; // should be const std::string&
  protected:
   virtual void VirtualConstructor(bool) { }
-  virtual std::string GetNameStem() const = 0; // should be const std::string&
   virtual bool LongerArticle() const { return false; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
   wsquare* WSquareUnder;
@@ -62,6 +63,8 @@ class gwterrain : public wterrain, public gterrain
   virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
+  void CalculateNeighbourBitmapPoses();
+  std::vector<std::pair<vector2d, uchar> > Neighbour;
 };
 
 class owterrainprototype

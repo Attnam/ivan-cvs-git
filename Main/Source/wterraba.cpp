@@ -1,4 +1,4 @@
-#include <queue>
+#include <algorithm>
 
 #include "wsquare.h"
 #include "bitmap.h"
@@ -14,32 +14,31 @@
 #include "proto.h"
 #include "whandler.h"
 
-struct prioritypair
-{
-  prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) { }
-  bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
-  uchar Priority;
-  vector2d BitmapPos;
-};
-
-std::string wterrain::Name(uchar Case) const
+void wterrain::AddName(std::string& String, uchar Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & ARTICLEBIT))
-      return GetNameStem();
+      String << GetNameStem();
     else
       if(!(Case & INDEFINEBIT))
-	return "the " + GetNameStem();
+	String << "the " << GetNameStem();
       else
-	return (LongerArticle() ? "an " : "a ") + GetNameStem();
+	String << (LongerArticle() ? "an " : "a ") << GetNameStem();
   else
     if(!(Case & ARTICLEBIT))
-      return GetNameStem() + " terrains";
+      String << GetNameStem() << " terrains";
     else
       if(!(Case & INDEFINEBIT))
-	return "the " + GetNameStem() + " terrains";
+	String << "the " << GetNameStem() << " terrains";
       else
-	return GetNameStem() + " terrains";
+	String << GetNameStem() << " terrains";
+}
+
+std::string wterrain::GetName(uchar Case) const
+{
+  std::string Name;
+  AddName(Name, Case);
+  return Name;
 }
 
 vector2d wterrain::GetPos() const
@@ -49,29 +48,15 @@ vector2d wterrain::GetPos() const
 
 void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
 {
-  ushort Frame = AllowAnimate ? globalwindowhandler::GetTick() % AnimationFrames : 0;
-  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(Frame), Pos, 16, 16, Luminance);
-  std::priority_queue<prioritypair> Neighbour;
+  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
-  {
-    gwterrain* DoNeighbour = GetWorldMapUnder()->GetWSquare(DoX, DoY)->GetGWTerrain();
-
-    if(DoNeighbour->Priority() > Priority())
-      Neighbour.push(prioritypair(DoNeighbour->Priority(), DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(DoIndex) << 4)));
-  });
-
-  while(Neighbour.size())
-    {
-      igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour.top().BitmapPos, Pos, 16, 16, Luminance);
-      Neighbour.pop();
-    }
+  for(ushort c = 0; c < Neighbour.size(); ++c)
+    igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
 }
 
 void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
 {
-  ushort Frame = AllowAnimate ? globalwindowhandler::GetTick() % AnimationFrames : 0;
-  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(Frame), Pos, 16, 16, Luminance);
+  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 }
 
 worldmap* wterrain::GetWorldMapUnder() const
@@ -130,3 +115,22 @@ owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const std::st
   Index = protocontainer<owterrain>::Add(this);
 }
 
+bool DrawOrderer(const std::pair<vector2d, uchar>& Pair1, const std::pair<vector2d, uchar>& Pair2)
+{
+  return Pair1.second < Pair2.second;
+}
+
+void gwterrain::CalculateNeighbourBitmapPoses()
+{
+  Neighbour.clear();
+
+  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
+  {
+    gwterrain* DoNeighbour = GetWorldMapUnder()->GetWSquare(DoX, DoY)->GetGWTerrain();
+
+    if(DoNeighbour->Priority() > Priority())
+      Neighbour.push_back(std::pair<vector2d, uchar>(DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(DoIndex) << 4), DoNeighbour->Priority()));
+  });
+
+  std::sort(Neighbour.begin(), Neighbour.end(), DrawOrderer);
+}

@@ -19,50 +19,33 @@ wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, 
 
 wsquare::~wsquare()
 {
-  delete GetGWTerrain();
-  delete GetOWTerrain();
+  delete GWTerrain;
+  delete OWTerrain;
 }
 
 void wsquare::Save(outputfile& SaveFile) const
 {
   square::Save(SaveFile);
-
   SaveFile << GWTerrain << OWTerrain;
 }
 
 void wsquare::Load(inputfile& SaveFile)
 {
   square::Load(SaveFile);
-
   SaveFile >> GWTerrain >> OWTerrain;
-}
-
-void wsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool RealDraw) const
-{
-  GWTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
-  OWTerrain->Draw(Bitmap, Pos, Luminance, true, RealDraw);
-}
-
-void wsquare::UpdateMemorized()
-{
-  if(MemorizedUpdateRequested)
-    {
-      ushort Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
-      DrawStaticContents(Memorized, vector2d(0, 0), Luminance, false);
-      igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
-      MemorizedUpdateRequested = false;
-    }
+  CalculateLuminance();
 }
 
 void wsquare::Draw()
 {
-  if(NewDrawRequested || GetAnimatedEntities())
+  if(NewDrawRequested || AnimatedEntities)
     {
-      vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
-      ushort Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))) * configuration::GetContrastLuminance() >> 8;
-      DrawStaticContents(DOUBLEBUFFER, BitPos, Luminance, true);
+      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+      ushort RealLuminance = Luminance * configuration::GetContrastLuminance() >> 8;
+      GWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, false, true);
+      OWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
 
-      if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+      if(Character)
 	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
 
       NewDrawRequested = false;
@@ -82,11 +65,7 @@ void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 
   delete GetGWTerrain();
   SetGWTerrain(NewGround);
-
-  if(NewGround->IsAnimated())
-    IncAnimatedEntities();
-
-  DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
+  DescriptionChanged = NewDrawRequested = true;
 }
 
 void wsquare::ChangeOWTerrain(owterrain* NewOver)
@@ -96,11 +75,7 @@ void wsquare::ChangeOWTerrain(owterrain* NewOver)
 
   delete GetOWTerrain();
   SetOWTerrain(NewOver);
-
-  if(NewOver->IsAnimated())
-    IncAnimatedEntities();
-
-  DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
+  DescriptionChanged = NewDrawRequested = true;
 }
 
 void wsquare::SetWTerrain(gwterrain* NewGround, owterrain* NewOver)
@@ -139,17 +114,22 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 {
   if(DescriptionChanged || Cheat)
     {
-      /*std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? " of continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
+      MemorizedDescription.resize(0);
 
-	if(GetOWTerrain()->Name(UNARTICLED) != "atmosphere")
-	SetMemorizedDescription(GetOWTerrain()->Name(INDEFINITE) + " on " + GetGWTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
-	else
-	SetMemorizedDescription(GetGWTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");*/
-
-      if(GetOWTerrain()->Name(UNARTICLED).length())
-	SetMemorizedDescription(GetOWTerrain()->Name(INDEFINITE) + " surrounded by " + GetGWTerrain()->Name(UNARTICLED));
+      if(OWTerrain->GetNameStem().length())
+	{
+	  OWTerrain->AddName(MemorizedDescription, INDEFINITE);
+	  MemorizedDescription << " surrounded by ";
+	  GWTerrain->AddName(MemorizedDescription, UNARTICLED);
+	}
       else
-	SetMemorizedDescription(GetGWTerrain()->Name(UNARTICLED));
+	GWTerrain->AddName(MemorizedDescription, UNARTICLED);
+
+      if(Cheat)
+	{
+	  std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? ", continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
+	  MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << Continent << ", height " << GetWorldMapUnder()->GetAltitude(Pos) << " m)";
+	}
 
       DescriptionChanged = false;
     }
@@ -167,16 +147,11 @@ oterrain* wsquare::GetOTerrain() const
 
 void wsquare::SetLastSeen(ulong What)
 {
-  if(LastSeen == What)
-    return;
-
-  if(!LastSeen)
-    Memorized = new bitmap(16, 16);
-
-  if(LastSeen < What - 1)
-    NewDrawRequested = true;
-
-  UpdateMemorized();
   UpdateMemorizedDescription();
   LastSeen = What;
+}
+
+void wsquare::CalculateLuminance()
+{
+  Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
 }
