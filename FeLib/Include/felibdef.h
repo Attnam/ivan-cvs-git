@@ -57,6 +57,8 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define KEY_END 0x14F
 #define KEY_PAGE_DOWN 0x151
 #define KEY_PAGE_UP 0x149
+#define KEY_SPACE ' '
+#define KEY_NUMPAD_5 2
 
 #define NONE 0
 #define MIRROR 1

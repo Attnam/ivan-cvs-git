@@ -229,9 +229,13 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	case SDLK_PAGEDOWN:
 	  KeyPressed = KEY_PAGE_DOWN + 0xE000;
 	  break;
+	case SDLK_KP5:
+	  KeyPressed = KEY_NUMPAD_5;
+	  break;
 	case SDLK_PRINT:
 	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
+
 	default:
 	  KeyPressed = Event->key.keysym.unicode;
 

@@ -672,6 +672,9 @@ void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Mult
 
 vector2d game::GetDirectionVectorForKey(int Key)
 {
+  if(Key == KEY_NUMPAD_5)
+    return vector2d(0,0);
+
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c))
       return game::GetMoveVector(c);

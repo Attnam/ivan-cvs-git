@@ -352,7 +352,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
       DOUBLE_BUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != KEY_ESC && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
+      while(!isdigit(LastKey) && LastKey != KEY_ESC && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
 	LastKey = GET_KEY(false);
 
       if(LastKey == KEY_ESC)
@@ -369,7 +369,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 	  continue;
 	}
 
-      if(LastKey == KEY_ENTER)
+      if(LastKey == KEY_ENTER || LastKey == KEY_SPACE)
 	break;
 
       if(LastKey == '<' || LastKey == KEY_LEFT)
