@@ -291,8 +291,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic) const // Draws a
   ItemNames.AddDescription(Buffer);
 
   stackiterator i;
-	
-  //for(ushort c = 0; c < GetItems(); ++c)
+
   for(i = Item.begin(); i != Item.end(); ++i)
     {
       Buffer = (**i)->Name(INDEFINITE);
@@ -312,7 +311,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic) const // Draws a
   if(Chosen & 0x8000)
     return 0;
 
-  ushort c;
+  ushort c = 0;
 
   for(i = Item.begin(); i != Item.end(); ++i, ++c)
     if(c == Chosen)
@@ -651,4 +650,14 @@ ushort stack::SearchItem(item* ToBeSearched) const
       return c;
 
   return 0xFFFF;*/
+}
+
+stackiterator stack::GetBottomSlot() const
+{
+  return Item.begin();
+}
+
+stackiterator stack::GetSlotAboveTop() const
+{
+  return Item.end();
 }

@@ -46,8 +46,8 @@ class stack
   void RemoveItem(stackiterator);
   void FastRemoveItem(stackiterator);
   item* GetItem(ushort) const;
-  stackiterator GetBottomSlot() const { return Item.begin(); }
-  stackiterator GetSlotAboveTop() const { return Item.end(); }
+  stackiterator GetBottomSlot() const;
+  stackiterator GetSlotAboveTop() const;
   item* GetBottomItem() const;// { return Item.begin(); }
   ushort GetItems() const { return Item.size(); }
   void SetSquareUnder(square*);
