@@ -1,6 +1,12 @@
 #include <ctime>
 #ifdef WIN32
 #include <io.h>
+#else
+#include <stddef.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <algorithm>
 #endif
 
 #include "graphics.h"
@@ -274,14 +280,14 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 	return atoi(Input.c_str());
 }
 
-std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
+std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::string DirectoryName) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
 {
 #ifdef WIN32
 	struct _finddata_t Found;
 	long hFile;
 	int Check = 0;
 	felist Buffer("Choose a file and be sorry:", TopicColor);
-	hFile = _findfirst("Save/*.sav", &Found);
+	hFile = _findfirst(DirectoryName + "*.sav", &Found);
 
 	if(hFile == -1L)
 	{
@@ -303,8 +309,41 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 	if(Check == 0xFFFD)
 		return "";
 
-		return Buffer.GetEntry(Check);
-#else
-		
+	return Buffer.GetEntry(Check);
+#else  
+	DIR* dp;
+	struct dirent* ep;
+	std::string Buffer;
+	felist List("Choose a file and be sorry:", TopicColor);
+	dp = opendir(DirectoryName.c_str());
+	if(dp)
+	  {
+	    while(ep = readdir(dp))
+	      {
+		Buffer = std::string(ep->d_name);
+		if(Buffer.find(".sav") != Buffer.npos)
+		  {
+		    List.AddEntry(Buffer, ListColor);
+		  }
+	      }
+	    if(List.IsEmpty())
+	    {
+	      TextScreen("You don't have any previous saves.", TopicColor);
+	      return "";
+	    }
+	    else
+	      {
+		int Check = List.Draw(false, true);
+
+		while(Check > 0xFFFD)
+		  Check = List.Draw(false);
+
+		if(Check == 0xFFFD)
+		  return "";
+
+		return List.GetEntry(Check);
+	      }
+
+	  }
 #endif
 }

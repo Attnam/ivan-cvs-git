@@ -155,7 +155,7 @@ void game::Init(std::string Name)
 	#ifdef WIN32
 	_mkdir("Save");
 	#else
-	mkdir((std::string(getenv("HOME")) + SAVE_DIR).c_str(), S_IRWXU | S_IRWXG);
+	mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
 	#endif
 
 	if(Name == "")
@@ -553,7 +553,6 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 
 bool game::Save(std::string SaveName)
 {
-  // if HOME is not defined this will probably fail... / - might also cause problem...
 	outputfile SaveFile(SaveName + ".sav");
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
@@ -625,10 +624,10 @@ std::string game::SaveName()
 	for(ushort c = 0; c < SaveName.length(); ++c)
 		if(SaveName[c] == ' ')
 			SaveName[c] = '_';
-
+	#ifdef WIN32
 	if(SaveName.length() > 13)
 		SaveName.resize(13);
-
+	#endif
 	return SaveName;
 }
 
@@ -988,12 +987,8 @@ void game::DoNeutralDeed(ushort Amount)
 
 void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
 {
-  #ifdef WIN32
-	outputfile SaveFile(SaveName + ".wm");
-  #else
-	outputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".wm");
-  #endif
-
+  outputfile SaveFile(SaveName + ".wm");
+  
 	//	outputfile SaveFile(SaveName + ".wm");
 
 	SaveFile << WorldMap;
@@ -1004,13 +999,7 @@ void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
 
 void game::LoadWorldMap(std::string SaveName)
 {
-  #ifdef WIN32
 	inputfile SaveFile(SaveName + ".wm");
-  #else
-	inputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".wm");
-  #endif
-
-
 	SaveFile >> WorldMap;
 }
 
@@ -1131,6 +1120,7 @@ bool game::HandleQuitMessage()
 		    switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
 #else
 		    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+		      GetCurrentArea()->SendNewDrawRequest();
 #endif
 			{
 			case IDYES:

@@ -16,7 +16,6 @@ int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 int Main()
 #endif
 {
-	/* You are not expected to understand this */
 
 #ifdef VC
 
@@ -46,7 +45,7 @@ int Main()
 			break;
 		case 1:
 		{
-			std::string LoadName = iosystem::WhatToLoadMenu(WHITE, BLUE);
+			std::string LoadName = iosystem::WhatToLoadMenu(WHITE, BLUE, SAVE_DIR);
 
 			if(LoadName != "")
 			{
