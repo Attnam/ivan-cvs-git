@@ -262,7 +262,6 @@ class character : public entity, public id
   truth CheckDeath(const festring&, const character* = 0, ulong = 0);
   truth DodgesFlyingItem(item*, double);
   virtual truth Hit(character*, v2, int, truth = false) = 0;
-  truth OpenPos(v2);
   truth ReadItem(item*);
   truth TestForPickup(item*) const;
   void ThrowItem(int, item*);
@@ -391,7 +390,6 @@ class character : public entity, public id
   int GetTemporaryStateCounter(long) const;
   void EditTemporaryStateCounter(long, int);
   static truth AllowDamageTypeBloodSpill(int);
-  truth ClosePos(v2);
   int GetResistance(int) const;
   virtual int GetGlobalResistance(int Type) const { return GetResistance(Type); }
   virtual const char* GetEquipmentName(int) const;

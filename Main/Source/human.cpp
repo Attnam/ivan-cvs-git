@@ -648,6 +648,66 @@ void priest::BeTalkedTo()
     return;
   }
 
+  for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
+    if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
+    {
+      truth HasOld = false;
+
+      for(std::list<ulong>::const_iterator i = PLAYER->GetOriginalBodyPartID(c).begin(); i != PLAYER->GetOriginalBodyPartID(c).end(); ++i)
+      {
+	bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItem(*i));
+
+	if(OldBodyPart)
+	{
+	  HasOld = true;
+	  long Price = GetConfig() == VALPURUS ? 50 : 10;
+
+	  if(PLAYER->GetMoney() >= Price)
+	  {
+	    if(!OldBodyPart->CanRegenerate())
+	      ADD_MESSAGE("\"Sorry, I cannot put back bodyparts made of %s, not even your severed %s.\"", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
+	    else
+	    {
+	      ADD_MESSAGE("\"I could put your old %s back in exchange for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+
+	      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
+	      {
+		OldBodyPart->SetHP(1);
+		PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+		SetMoney(GetMoney() + Price);
+		OldBodyPart->RemoveFromSlot();
+		PLAYER->AttachBodyPart(OldBodyPart);
+		return;
+	      }
+	    }
+	  }
+	  else
+	    ADD_MESSAGE("\"Your %s is severed. Help yourself and get %ldgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+	}
+      }
+
+      long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+      if(PLAYER->GetMoney() >= Price)
+      {
+	if(HasOld)
+	  ADD_MESSAGE("\"I could still summon up a new one for %ld gold.\"", Price);
+	else
+	  ADD_MESSAGE("\"Since you don't seem to have your original %s with you, I could summon up a new one for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+
+	if(game::TruthQuestion(CONST_S("Agreed? [y/N]")))
+	{
+	  PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+	  SetMoney(GetMoney() + Price);
+	  PLAYER->CreateBodyPart(c);
+	  PLAYER->GetBodyPart(c)->SetHP(1);
+	  return;
+	}
+      }
+      else if(!HasOld)
+	ADD_MESSAGE("\"You don't have your original %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %ldgp first.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
+    }
+
   if(PLAYER->TemporaryStateIsActivated(POISONED))
   {
     long Price = GetConfig() == VALPURUS ? 25 : 5;
@@ -710,66 +770,6 @@ void priest::BeTalkedTo()
     else
       ADD_MESSAGE("\"You seem to be lycanthropic. I might be able to do something for that but I need %ldgp for the ritual materials first.\"", Price);
   }
-
-  for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
-    if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
-    {
-      truth HasOld = false;
-
-      for(std::list<ulong>::const_iterator i = PLAYER->GetOriginalBodyPartID(c).begin(); i != PLAYER->GetOriginalBodyPartID(c).end(); ++i)
-      {
-	bodypart* OldBodyPart = static_cast<bodypart*>(PLAYER->SearchForItem(*i));
-
-	if(OldBodyPart)
-	{
-	  HasOld = true;
-	  long Price = GetConfig() == VALPURUS ? 50 : 10;
-
-	  if(PLAYER->GetMoney() >= Price)
-	  {
-	    if(!OldBodyPart->CanRegenerate())
-	      ADD_MESSAGE("\"Sorry, I cannot put back bodyparts made of %s, not even your severed %s.\"", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
-	    else
-	    {
-	      ADD_MESSAGE("\"I could put your old %s back in exchange for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
-
-	      if(game::TruthQuestion(CONST_S("Do you agree? [y/N]")))
-	      {
-		OldBodyPart->SetHP(1);
-		PLAYER->SetMoney(PLAYER->GetMoney() - Price);
-		SetMoney(GetMoney() + Price);
-		OldBodyPart->RemoveFromSlot();
-		PLAYER->AttachBodyPart(OldBodyPart);
-		return;
-	      }
-	    }
-	  }
-	  else
-	    ADD_MESSAGE("\"Your %s is severed. Help yourself and get %ldgp and I'll help you too.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
-	}
-      }
-
-      long Price = GetConfig() == VALPURUS ? 100 : 20;
-
-      if(PLAYER->GetMoney() >= Price)
-      {
-	if(HasOld)
-	  ADD_MESSAGE("\"I could still summon up a new one for %ld gold.\"", Price);
-	else
-	  ADD_MESSAGE("\"Since you don't seem to have your original %s with you, I could summon up a new one for %ld gold.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
-
-	if(game::TruthQuestion(CONST_S("Agreed? [y/N]")))
-	{
-	  PLAYER->SetMoney(PLAYER->GetMoney() - Price);
-	  SetMoney(GetMoney() + Price);
-	  PLAYER->CreateBodyPart(c);
-	  PLAYER->GetBodyPart(c)->SetHP(1);
-	  return;
-	}
-      }
-      else if(!HasOld)
-	ADD_MESSAGE("\"You don't have your original %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %ldgp first.\"", PLAYER->GetBodyPartName(c).CStr(), Price);
-    }
 
   humanoid::BeTalkedTo();
 }
@@ -1124,14 +1124,15 @@ void kamikazedwarf::GetAICommand()
   if(GetHomeRoom())
     StandIdleAI();
   else 
+  {
+    if(!RAND_N(10)) 
     {
-      if(!RAND_N(10)) 
-	{
-	  SingRandomSong();
-	  return;
-	}
-      character::GetAICommand();
+      SingRandomSong();
+      return;
     }
+
+    character::GetAICommand();
+  }
 }
 
 int humanoid::GetSize() const
@@ -4395,7 +4396,6 @@ void humanoid::DropBodyPart(int Index)
   if(Dropped)
   {
     GetStack()->AddItem(Dropped);
-
     Dropped->DropEquipment();
 
     if(IsPlayer())
@@ -4955,53 +4955,53 @@ const char* humanoid::GetNormalDeathMessage() const
 void kamikazedwarf::SingRandomSong()  
 {
   festring Song;
+  festring God = GetMasterGod()->GetName();
 
-  switch(RAND_N(9)) { 
-  case 0:
-    Song = festring("On the palm of ") + GetMasterGod()->GetName() 
-      + festring(" everybody fears everything");
+  switch(RAND_N(9))
+  {
+   case 0:
+    Song = festring("On the palm of ") + God + " everybody fears everything";
     break;
-  case 1:
+   case 1:
     {
       festring Title = GetMasterGod()->GetSex() == MALE ? "King" : "Queen";
-      Song = festring("Joy to the world, ") + GetMasterGod()->GetName() 
-	+ festring(" is come! Let all above Valpurus receive her ") + Title;
+      Song = festring("Joy to the world, ") + God
+	     + " is come! Let all above Valpurus receive her " + Title;
       break;
     }
-  case 2:
-    Song = festring("Hark the herald angels sing. Glory to ") + GetMasterGod()->GetName() 
-      + festring("!");
+   case 2:
+    Song = festring("Hark the herald angels sing. Glory to ") + God + "!";
     break;
-  case 3:
-    Song = festring("O ") + GetMasterGod()->GetName() 
-      + festring(", You are so big, So absolutely huge, Gosh, we're all really impressed down here, I can tell You.");
+   case 3:
+    Song = festring("O ") + God 
+	   + ", You are so big, So absolutely huge, Gosh, "
+	   "we're all really impressed down here, I can tell You.";
     break;
-  case 4:
-    Song = festring("Forgive us, O ") + GetMasterGod()->GetName() + festring(" for this, our dreadful toadying and barefaced flattery");
+   case 4:
+    Song = festring("Forgive us, O ") + God
+	   + " for this, our dreadful toadying and barefaced flattery";
     break;
-  case 5:
-    Song = festring("But you, ") + GetMasterGod()->GetName() + festring(", are so strong and, well, just so super fantastic. Amen.");
+   case 5:
+    Song = festring("But you, ") + God
+	   + ", are so strong and, well, just so super fantastic. Amen.";
     break;
-  case 6:
-    Song = festring("O ") + GetMasterGod()->GetName() + festring(", please don't burn us");
+   case 6:
+    Song = festring("O ") + God + ", please don't burn us";
     break;
-
-  case 7:
-    Song = festring("O ") + GetMasterGod()->GetName() + festring(", please don't grill or toast your flock");
+   case 7:
+    Song = festring("O ") + God + ", please don't grill or toast your flock";
     break;
-
-  case 8:
-    Song = festring("O ") + GetMasterGod()->GetName() 
-      + festring(", please don't simmer us in stock");
+   case 8:
+    Song = festring("O ") + God + ", please don't simmer us in stock";
     break;
   }
   
   EditAP(-1000);
 
-  if(CanBeSeenByPlayer()) {
-    ADD_MESSAGE("%s sings: \"%s\"", CHAR_DESCRIPTION(DEFINITE), Song.CStr());
-  } else {
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s sings: \"%s\"",
+		CHAR_DESCRIPTION(DEFINITE), Song.CStr());
+  else
     ADD_MESSAGE("You hear someone sing: \"%s\"", Song.CStr());
-  }
 }
 

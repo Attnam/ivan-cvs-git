@@ -6,12 +6,27 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
+March 4 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Mind worms had somehow disappeared from char.pcx; they've been added
+    again
+  * The order of priests' limb attachment and leprosy curing services
+    has been reversed
+  * Bananas can now jam
+  * The Holy Hand Grenade, chastity belt, pear of anguish, weight
+    (for use with spanish donkey) added to item.pcx by Kahvi
+  * Judas chair, rotating drum, witch's spider, rack, wheel, logs for
+    hammering prior to wheel use, spanish donkey, spanish boot, iron maiden
+    (open and close) added to olterra.pcx by Kahvi
+  * Big T added as a 'being Tortured' symbol to symbol.pcx by Kahvi
+
 March 4 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * forgot a small test in the script. Now deleted.
   * AUTHORS file now updated
   * small bug fixes included
-	
+
 March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Ighalli's god changed integrated. AUTHORS file may need tweaking in the future.
@@ -19,15 +34,15 @@ March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Now compiles :)
-	
+
 February 28 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * kamikaze dwarfs sing hymns
   * limbs cut off by leprosy go to the inventory not to the ground
   * Carnivorous plants can now (probably) eat.
-  * some wands are teleported to kamikaze dwarfs in the cathedral (if they are 
-	kamikaze weapons)
-	
+  * some wands are teleported to kamikaze dwarfs in the cathedral (if they
+    are kamikaze weapons)
+
 February 11 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Rather a large doc update

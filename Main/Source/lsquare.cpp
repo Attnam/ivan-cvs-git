@@ -2798,3 +2798,27 @@ truth lsquare::VomitingIsDangerous(const character* Char) const
 	  || (Character && Character->GetTeam() != Char->GetTeam()
 	      && Character->GetRelation(Char) != HOSTILE));
 }
+
+bool lsquare::TeleportAllSmokeAway()
+{
+  return false;
+}
+
+bool lsquare::TeleportAllFluidsAway()
+{
+  return false;
+}
+
+bool lsquare::TeleportAllTrapsAway()
+{
+  for(trap* T = Trap; T; T = Trap)
+  {
+    T->Untrap();
+    RemoveTrap(T);
+    v2 V, Pos = GetPos();
+    for(V = GetLevel()->GetRandomSquare(); V != Pos; V = GetLevel()->GetRandomSquare());
+    GetNearLSquare(V)->AddTrap(T);
+  }
+
+  return false;
+}

@@ -43,6 +43,7 @@ TRAP(web, trap)
   virtual truth CanBeSeenBy(const character*) const;
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
+  virtual void Untrap();
  protected:
   trapdata TrapData;
   bitmap* Picture;

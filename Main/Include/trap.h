@@ -77,6 +77,7 @@ class trap : public entity
   virtual truth IsDangerous(const character*) const { return false; }
   virtual void PreProcessForBone() { }
   virtual void PostProcessForBone() { }
+  virtual void Untrap() = 0;
  protected:
   lsquare* LSquareUnder;
 };

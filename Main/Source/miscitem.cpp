@@ -1880,27 +1880,41 @@ truth beartrap::IsPickable(character* Picker) const
 void banana::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << TimesUsed << Charges;
+  SaveFile << TimesUsed << Charges << Jammed;
 }
 
 void banana::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> TimesUsed >> Charges;
+  SaveFile >> TimesUsed >> Charges >> Jammed;
 }
 
 truth banana::Zap(character*, v2, int)
 {
   if(IsBroken())
   {
-    ADD_MESSAGE("This banana is disfunctional.");
+    ADD_MESSAGE("This banana seems to be somehow disfunctional.");
+    return false;
+  }
+
+  if(Jammed)
+  {
+    ADD_MESSAGE("Unfortunately, your banana is jammed!");
     return false;
   }
 
   if(Charges > TimesUsed)
   {
-    ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
-    ++TimesUsed;
+    if(TimesUsed && !RAND_N(10))
+    {
+      ADD_MESSAGE("Oh no! Your banana jams in the middle of the firefight!");
+      Jammed = true;
+    }
+    else
+    {
+      ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
+      ++TimesUsed;
+    }
   }
   else
     ADD_MESSAGE("Click!");

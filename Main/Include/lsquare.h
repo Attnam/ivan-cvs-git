@@ -257,6 +257,9 @@ class lsquare : public square
   truth HasDangerousFluids(const character*) const;
   void AddLocationDescription(festring&) const;
   truth VomitingIsDangerous(const character*) const;
+  bool TeleportAllSmokeAway();
+  bool TeleportAllFluidsAway();
+  bool TeleportAllTrapsAway();
  protected:
   void ChangeLuminance(col24&, col24);
   void RemoveLuminance(col24&);

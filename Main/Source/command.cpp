@@ -201,7 +201,7 @@ truth commandsystem::Open(character* Char)
     v2 DirVect = game::GetDirectionVectorForKey(Key);
 
     if(DirVect != ERROR_V2 && Char->GetArea()->IsValidPos(Char->GetPos() + DirVect))
-      return Char->OpenPos(Char->GetPos() + DirVect);
+      return Char->GetNearLSquare(Char->GetPos() + DirVect)->Open(Char);
   }
   else
     ADD_MESSAGE("This monster type cannot open anything.");
@@ -216,7 +216,7 @@ truth commandsystem::Close(character* Char)
     int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
 
     if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
-      return Char->ClosePos(Char->GetPos() + game::GetMoveVector(Dir));
+      return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->Close(Char);
   }
   else
     ADD_MESSAGE("This monster type cannot close anything.");

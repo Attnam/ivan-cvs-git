@@ -213,3 +213,22 @@
 //Kill reasons to the "killed by other reasons" list.
 //You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
 //There shouldn't be doors in UT4. It is a natural cave.
+(r) Chance-value correlation to change material scrolls.
+(r) Scroll of create holy/fallen angel. (from JM)
+(r) Scroll of light. (from JM)
+(r) Scroll of life, permanent hp plus. (from JM)
+(r) Book of fire/frost magic which would have random spells. (from JM)
+(r) Pocket pick-axe.
+//Stone types.
+//Pet donkeys should be able to carry backpacks instead of the player.
+//One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
+//Perception should affect chance of detecting traps. (from JM)
+//Jammed bananas.
+//Material-colored cursor.
+//Priests should be created using CreateDivineConfigurations.
+//There should be an "unusable" state for bodyparts about to be severed.
+//Loricatus shouldn't change whips to steel.
+//Changes in attributes should be highlighted by some other colored font. (in the sidebar)
+//Vesana and other big monsters should also vomit much more than smaller creatures.
+//The message which informs that an item has been broken should indicate who carries the item.
+//The order of priests' limb attachment and leprosy curing services should be reversed.

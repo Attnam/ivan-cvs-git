@@ -184,12 +184,7 @@ void web::ReceiveDamage(character*, int, int Type, int)
 
 void web::Destroy()
 {
-  character* Char = game::SearchCharacter(GetVictimID());
-
-  if(Char)
-    Char->RemoveTrap(GetTrapID());
-
-  TrapData.VictimID = 0;
+  Untrap();
   GetLSquareUnder()->RemoveTrap(this);
   SendToHell();
 }
@@ -211,4 +206,14 @@ void web::PostProcessForBone()
 {
   trap::PostProcessForBone();
   TrapData.TrapID = game::CreateNewTrapID(this);
+}
+
+void web::Untrap()
+{
+  character* Char = game::SearchCharacter(GetVictimID());
+
+  if(Char)
+    Char->RemoveTrap(GetTrapID());
+
+  TrapData.VictimID = 0;
 }

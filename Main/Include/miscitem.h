@@ -58,7 +58,7 @@ ITEM(materialcontainer, item)
 ITEM(banana, materialcontainer)
 {
  public:
-  banana() : TimesUsed(0), Charges(6) { }
+  banana() : TimesUsed(0), Charges(6), Jammed(false) { }
   virtual truth Zap(character*, v2, int);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -71,6 +71,7 @@ ITEM(banana, materialcontainer)
  protected:
   int TimesUsed;
   int Charges;
+  truth Jammed;
 };
 
 ITEM(holybanana, banana)

@@ -1247,7 +1247,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	      else
 	      {
 		if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
-		  return OpenPos(MoveToSquare[c]->GetPos());
+		  return MoveToSquare[c]->Open(this);
 		else
 		  return false;
 	      }
@@ -1897,16 +1897,6 @@ truth character::TestForPickup(item* ToBeTested) const
   return true;
 }
 
-truth character::OpenPos(v2 APos)
-{
-  return GetNearLSquare(APos)->Open(this);
-}
-
-truth character::ClosePos(v2 APos)
-{
-  return GetNearLSquare(APos)->Close(this);
-}
-
 void character::AddScoreEntry(const festring& Description, double Multiplier, truth AddEndLevel) const
 {
   if(!game::WizardModeIsReallyActive())
@@ -1916,11 +1906,7 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
     if(!HScore.CheckVersion())
     {
       if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1), CONST_S("The highscore version doesn't match.\rDo you want to erase previous records and start a new file?\rNote, if you answer no, the score of your current game will be lost!\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
-      {
-      	/*GetCurrentArea()->SendNewDrawRequest();
-	DrawEverything();*/
 	return;
-      }
 
       HScore.Clear();
     }
