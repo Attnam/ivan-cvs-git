@@ -876,6 +876,11 @@ bool commandsystem::Throw(character* Char)
 
 bool commandsystem::Apply(character* Char)
 {
+  if(!Char->CanApply())
+    {
+      ADD_MESSAGE("This monster type cannot apply.");
+      return false;
+    }
   if(!Char->GetStack()->SortedItems(Char, &item::AppliableSorter) && !Char->EquipsSomething(&item::AppliableSorter))
     {
       ADD_MESSAGE("You have nothing to apply!");

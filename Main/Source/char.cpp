@@ -2083,7 +2083,7 @@ void character::GoOn(go* Go)
 
   if(!MoveToSquare->IsWalkable(this)
   || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam())
-  ||  MoveToSquare->GetStack()->IsDangerous(this))
+  ||  MoveToSquare->IsDangerous(this))
     {
       Go->Terminate(false);
       return;

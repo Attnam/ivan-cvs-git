@@ -89,6 +89,7 @@ character
 	BodyPartsDisappearWhenSevered = false;
 	CanBeConfused = true;
 	CanAttack = true;
+	CanApply = false;
 }
 
 humanoid
@@ -112,6 +113,7 @@ humanoid
 	FleshMaterial = HUMAN_FLESH;
 	DeathMessage = "@Dd dies screaming."; /* overridden if has no head */
 	CanThrow = true;
+	CanApply = true;
 }
 
 nonhumanoid
@@ -720,6 +722,7 @@ ennerbeast
 	DefaultCharisma = 1;
 	DefaultMana = 0;
 	CanOpen = false;
+	CanApply = false;
 	TotalVolume = 50000;
 	TorsoBitmapPos = 96, 0;
 	TotalSize = 150;
@@ -790,6 +793,7 @@ frog
 		CWeaponSkillHits == 100;
 		CanOpen = false;
 		AttachedGod = SCABIES;
+		CanApply = false;
 	}
 
 	Config GREATER_DARK;
@@ -853,6 +857,7 @@ frog
 		CWeaponSkillHits == 200;
 		CanOpen = false;
 		AttachedGod = VALPURUS;
+		CanApply = false;
 	}
 }
 
@@ -1147,6 +1152,7 @@ mommo
 	HasHead = false;
 	AttachedGod = SCABIES;
 	ClassStates = GAS_IMMUNITY;
+	CanApply = false;
 
 	Config CONICAL;
 	{
@@ -1898,6 +1904,7 @@ bat
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
+	CanApply = false;
 	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;

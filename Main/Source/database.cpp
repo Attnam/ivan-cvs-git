@@ -226,6 +226,7 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(BodyPartsDisappearWhenSevered);
   ANALYZE_DATA(CanBeConfused);
   ANALYZE_DATA(CanAttack);
+  ANALYZE_DATA(CanApply);
 
   return Found;
 }

@@ -408,7 +408,8 @@ class CHARACTER
 (
   werewolfwolf,
   humanoid,
-  ;
+ public:
+  virtual std::string GetKillName() const;
 );
 
 class CHARACTER

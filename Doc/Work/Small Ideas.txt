@@ -460,4 +460,5 @@ Options for sorting massacre history
 Potion of receive random stat (better name needed)
 Options for sorting massacre history.
 There should be a special effect for zapping a banana.
+Magical compass that shows the way to Attnam or other major city.
 More replies for dogs.

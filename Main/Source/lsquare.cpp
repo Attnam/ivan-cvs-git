@@ -1658,3 +1658,8 @@ void lsquare::ReceiveEarthQuakeDamage()
   if(GetOLTerrain() && GetOLTerrain()->IsDoor())
     GetOLTerrain()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
 }
+
+bool lsquare::IsDangerous(character* ToWhom) const
+{
+  return GetStack()->IsDangerous(ToWhom) || !(Smoke.empty());
+}

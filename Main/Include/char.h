@@ -148,6 +148,7 @@ struct characterdatabase
   bool BodyPartsDisappearWhenSevered;
   bool CanBeConfused;
   bool CanAttack;
+  bool CanApply;
 };
 
 class characterprototype
@@ -686,7 +687,7 @@ class character : public entity, public id
   void ParasitizedHandler();
   bool CanFollow() const;
   bool LeftOversAreUnique() const;
-  std::string GetKillName() const;
+  virtual std::string GetKillName() const;
   std::string GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(ushort) const { return 0; }
@@ -719,6 +720,7 @@ class character : public entity, public id
   void DrawBodyPartVector(std::vector<bitmap*>&) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
+  DATA_BASE_BOOL(CanApply);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -1,1 +1,1 @@
-SUBDIRS = Include Source
+SUBDIRS = Include Source Resource

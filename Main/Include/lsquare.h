@@ -153,6 +153,7 @@ class lsquare : public square
   virtual void DisplaySmokeInfo(std::string&) const;
   bool IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
+  bool IsDangerous(character*) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
