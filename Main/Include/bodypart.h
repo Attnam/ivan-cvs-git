@@ -126,7 +126,7 @@ class ABSTRACT_ITEM
   bool IsBadlyHurt() const { return !!(Flags & BADLY_HURT); }
   bool IsStuck() const { return !!(Flags & STUCK); }
   bool IsUsable() const { return !(Flags & (BADLY_HURT|STUCK)); }
-  virtual void SignalPossibleUsabilityChange() { }
+  virtual void SignalPossibleUsabilityChange() { UpdateFlags(); }
  protected:
   virtual bool IsSparkling(int) const;
   virtual alpha GetMaxAlpha() const;

@@ -3386,6 +3386,13 @@ void game::TeleportHandler(vector2d CursorPos)
 double game::GetGameSituationDanger()
 {
   double SituationDanger = 0;
+  character* Player = GetPlayer();
+  bool PlayerStuck = Player->IsStuck();
+  vector2d PlayerPos = Player->GetPos();
+  character* TruePlayer = Player;
+
+  if(PlayerStuck)
+    (Player = Player->Duplicate(IGNORE_PROHIBITIONS))->ChangeTeam(0);
 
   for(int c1 = 0; c1 < GetTeams(); ++c1)
     if(GetTeam(c1)->GetRelation(GetTeam(PLAYER_TEAM)) == HOSTILE)
@@ -3395,9 +3402,17 @@ double game::GetGameSituationDanger()
 	  character* Enemy = *i1;
 
 	  if(Enemy->IsEnabled() && Enemy->CanAttack()
-	  && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(Player->GetPos())))
+	  && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(PlayerPos)))
 	    {
-	      double PlayerTeamDanger = 1 / Enemy->GetSituationDanger(Player);
+	      bool EnemyStuck = Enemy->IsStuck();
+	      vector2d EnemyPos = Enemy->GetPos();
+	      bool Sees = TruePlayer->CanBeSeenBy(Enemy);
+	      character* TrueEnemy = Enemy;
+
+	      if(EnemyStuck)
+		Enemy = Enemy->Duplicate(IGNORE_PROHIBITIONS);
+
+	      double PlayerTeamDanger = 1 / Enemy->GetSituationDanger(Player, EnemyPos, PlayerPos, Sees);
 
 	      for(int c2 = 0; c2 < GetTeams(); ++c2)
 		if(GetTeam(c2)->GetRelation(GetTeam(c1)) == HOSTILE)
@@ -3407,14 +3422,39 @@ double game::GetGameSituationDanger()
 		      character* Friend = *i2;
 
 		      if(Friend->IsEnabled() && !Friend->IsPlayer() && Friend->CanAttack()
-		      && (Friend->CanMove() || Friend->GetPos().IsAdjacent(Enemy->GetPos())))
-			PlayerTeamDanger += Friend->GetSituationDanger(Enemy);
+		      && (Friend->CanMove() || Friend->GetPos().IsAdjacent(EnemyPos)))
+			{
+			  vector2d FriendPos = Friend->GetPos();
+			  bool Sees = TrueEnemy->CanBeSeenBy(Friend);
+
+			  if(Friend->IsStuck())
+			    {
+			      Friend = Friend->Duplicate(IGNORE_PROHIBITIONS);
+			      PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees) * .2;
+			      delete Friend;
+			    }
+			  else
+			    PlayerTeamDanger += Friend->GetSituationDanger(Enemy, FriendPos, EnemyPos, Sees);
+			}
 		    }
+
+	      if(EnemyStuck)
+		{
+		  PlayerTeamDanger *= 5;
+		  delete Enemy;
+		}
 
 	      SituationDanger += 1 / PlayerTeamDanger;
 	    }
 	}
 
   Player->ModifySituationDanger(SituationDanger);
+
+  if(PlayerStuck)
+    {
+      SituationDanger *= 2;
+      delete Player;
+    }
+
   return SituationDanger;
 }

@@ -8725,7 +8725,7 @@ void character::TryToName()
     }
 }
 
-double character::GetSituationDanger(const character* Enemy) const
+double character::GetSituationDanger(const character* Enemy, vector2d ThisPos, vector2d EnemyPos, bool SeesEnemy) const
 {
   double Danger;
 
@@ -8741,9 +8741,9 @@ double character::GetSituationDanger(const character* Enemy) const
   else
     Danger = GetRelativeDanger(Enemy);
 
-  Danger *= 3. / ((Enemy->GetPos() - GetPos()).GetManhattanLength() + 2);
+  Danger *= 3. / ((EnemyPos - ThisPos).GetManhattanLength() + 2);
 
-  if(!Enemy->CanBeSeenBy(this))
+  if(!SeesEnemy)
     Danger *= .2;
 
   if(StateIsActivated(PANIC))
@@ -9140,13 +9140,13 @@ bool character::CanPanic() const
   return !Action || !Action->IsUnconsciousness();
 }
 
-int character::GetRandomBodyPart() const
+int character::GetRandomBodyPart(ulong Possible) const
 {
   int OKBodyPart[MAX_BODYPARTS];
   int OKBodyParts = 0;
 
   for(int c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c))
+    if(1 << c & Possible && GetBodyPart(c))
       OKBodyPart[OKBodyParts++] = c;
 
   return OKBodyParts ? OKBodyPart[RAND_N(OKBodyParts)] : NONE_INDEX;

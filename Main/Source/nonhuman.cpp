@@ -2250,7 +2250,7 @@ void spider::GetAICommand()
 	      }
 	  }
 
-  if(Hostiles && !RAND_N(Max(20 / Hostiles, 4)))
+  if(Hostiles && !RAND_N(Max(30 / Hostiles, 4)))
     {
       web* Web = new web;
       Web->SetStrength(10);
@@ -2267,7 +2267,7 @@ void spider::GetAICommand()
 
   if(NearestChar)
     {
-      if(!NearestChar->IsStuck())
+      if(NearestChar->IsStuck())
 	SetGoingTo(NearestChar->GetPos());
       else
 	SetGoingTo((Pos << 1) - NearestChar->GetPos());

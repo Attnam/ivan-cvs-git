@@ -73,7 +73,7 @@ bool web::TryToUnStick(character* Victim, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to choke yourself on the web.");
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE),Victim->CHAR_OBJECT_PRONOUN);
+	ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
       Victim->LoseConsciousness(250 + RAND_N(250));
       Victim->EditAP(-1000);
@@ -82,7 +82,7 @@ bool web::TryToUnStick(character* Victim, vector2d)
 
   if(!RAND_N(Modifier))
     {
-      int VictimBodyPart = Victim->RandomizeTryToUnStickBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
+      int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
 
       if(VictimBodyPart != NONE_INDEX)
 	{

@@ -955,7 +955,7 @@ class character : public entity, public id
   void SignalPossibleTransparencyChange();
   int GetCursorData() const;
   void TryToName();
-  double GetSituationDanger(const character*) const;
+  double GetSituationDanger(const character*, vector2d, vector2d, bool) const;
   virtual void ModifySituationDanger(double&) const;
   void LycanthropySituationDangerModifier(double&) const;
   void PoisonedSituationDangerModifier(double&) const;
@@ -983,7 +983,7 @@ class character : public entity, public id
   virtual bool AllowUnconsciousness() const;
   virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
-  int GetRandomBodyPart() const;
+  int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }
  protected:
   static bool DamageTypeDestroysBodyPart(int);
