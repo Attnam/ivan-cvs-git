@@ -1,0 +1,10 @@
+*high priority
+
+*Funktioiden verkottaminen.
+Assistanttioperaattorien integrointi?
+*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
+Tilojen luokittaminen.
+*Tuonpuoleisen prototyypitys.
+Tasovaihdosten funktionaalisuuden kohotus.
+Syöntisallimusten liputtaminen.
+Karakterin atribuuttien kollektivointi.
