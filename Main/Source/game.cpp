@@ -246,7 +246,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new smith);
+	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -269,9 +269,9 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	/*character* Doggie = new dog;
+	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Doggie);*/
+	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
 	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {

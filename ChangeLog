@@ -87,6 +87,7 @@ November 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Corrected a fatal bug in Mjolak's and flaming sword's hit effects
 	* Added character attributes option to SecretKnowledge
 	* Removed bone support; it was realistic but not fun and slowed down the game
+	* Stacking system GUI improved even more
 
 November 12 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

@@ -1304,7 +1304,6 @@ Dungeon UNDER_WATER_TUNNEL;
 	Level 0;
 	{
 		IgnoreDefaultSpecialSquares = true;
-		GenerateMonsters = false;
 
 		RoomDefault
 		{
@@ -1313,7 +1312,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			AllowBoobyTrappedDoors=false;
 		}
 
-		/*Square, Random;
+		Square, Random;
 		{
 			Character=spider;
 			Times=5;
@@ -1329,7 +1328,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Character=zombie;
 			Times=5;
-		}*/
+		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
@@ -1355,7 +1354,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			Square, Pos 2,1;
 			{
 				Items==lantern;
-				/*Character = golem(BLOOD);*/
 			}
 		}
 	}

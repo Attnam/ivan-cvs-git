@@ -195,7 +195,7 @@ human
 	RightSWeaponSkillHits = 75;
 	LeftSWeaponSkillHits = 75;*/
 
-	DefaultArmStrength = 20;
+	/*DefaultArmStrength = 20;
 	DefaultLegStrength = 20;
 	DefaultDexterity = 20;
 	DefaultAgility = 20;
@@ -217,7 +217,7 @@ human
 	CWeaponSkillHits = { 2, 100, 75; }
 	RightSWeaponSkillHits = 100;
 	LeftSWeaponSkillHits = 75;
-	Inventory == PHOENIX_FEATHER shield;
+	Inventory == PHOENIX_FEATHER shield;*/
 
 	/*DefaultArmStrength = 25;
 	DefaultLegStrength = 25;
