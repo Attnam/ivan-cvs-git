@@ -87,3 +87,23 @@ Pets that resurrect the player.
 Compressed savefiles.
 Inventory screen could be categorised.
 Crash save.
+The great line algorithm idea.
+"You didn't manage to get onto the high score list"
+Cats and dogs should attack each other even if team comrades.
+It should be possible to unequip party members.
+It should be possible to command party members to flee.
+Lanterns should dim over time. (from Antti)
+Oil lamps should use oil as their fuel.
+Oil could have other uses as well.
+Tuukka's alternative walls should be integrated.
+Fungi that grow around the player and paralyze him.
+Stat point based character generation? (from Antti & others)
+Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
+Guilds. (from Tapani Tiilikainen)
+Option to change the size of font. (from sturmkoenig2k)
+Practise dungeon? (from JM)
+Elemental damage. (from JM)
+Zombies should lose weight when they drop lumps of flesh.
+Consummo should appreciate sacrificed scrolls and books more than other gods.
+Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
+Wear inconsistency.

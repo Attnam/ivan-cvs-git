@@ -1,8 +1,15 @@
+Version 0.311
+-------------
+
+-a few fatal bugs fixed
+-lots of optimization
+
 Version 0.310
 -------------
 
 Added stuff after version 0.300:
 
+-Linux and DOS ports
 -fountain effects
 -starting pet
 -the first dungeon shop

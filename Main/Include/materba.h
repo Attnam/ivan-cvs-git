@@ -45,14 +45,14 @@
 
 class character;
 class item;
-class object;
+class entity;
 class outputfile;
 class inputfile;
 
 class material : public typeable
 {
  public:
-  material() : Volume(0), MotherObject(0) { }
+  material() : Volume(0), MotherEntity(0) { }
   virtual ~material() { }
   virtual std::string Name(uchar = 0, bool = true) const;
   virtual ushort GetHitValue() const = 0;
@@ -80,8 +80,8 @@ class material : public typeable
   virtual ushort GetColor() const = 0;
   virtual bool CanBeWished() const { return true; }
   virtual material* CreateWishedMaterial(ulong) const;
-  virtual object* GetMotherObject() const { return MotherObject; }
-  virtual void SetMotherObject(object* What) { MotherObject = What; }
+  virtual entity* GetMotherEntity() const { return MotherEntity; }
+  virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ulong RawPrice() const { return 0; }
   virtual bool GetIsBadFoodForAI() const { return false; }
   virtual bool CanBeDigged() const { return true; }
@@ -95,7 +95,7 @@ class material : public typeable
   virtual std::string Article() const { return "a"; }
   virtual void NormalFoodEffect(character*, float, float);
   ulong Volume;
-  object* MotherObject;
+  entity* MotherEntity;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__

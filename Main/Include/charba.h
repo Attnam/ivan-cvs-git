@@ -286,6 +286,8 @@ class character : public object
   virtual void EditAgilityExperience(long What) { AgilityExperience += What; }
   virtual void EditPerceptionExperience(long What) { PerceptionExperience += What; }
   virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
+  virtual void SetSize(ushort Value) { Size = Value; }
+  virtual ushort GetSize() const { return Size; }
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -348,6 +350,7 @@ class character : public object
   ulong Money;
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
+  ushort Size;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

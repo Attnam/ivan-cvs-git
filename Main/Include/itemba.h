@@ -94,11 +94,14 @@ class item : public object
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
   virtual bool IsChargable() const { return false; }
+  virtual void SetSize(ushort Value) { Size = Value; }
+  virtual ushort GetSize() const { return Size; }
  protected:
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }
   virtual float NPModifier() const { return 1.0f; }
   bool Cannibalised;
+  ushort Size;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__

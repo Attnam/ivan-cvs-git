@@ -138,7 +138,7 @@ void configuration::ShowConfigScreen()
       switch(List.Draw(false, !game::GetRunning() && !BoolChange))
 	{
 	case 0:
-	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::GetRunning()));
+	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::GetRunning(), true));
 	  BoolChange = false;
 	  continue;
 	case 1:

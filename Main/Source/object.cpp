@@ -2,53 +2,33 @@
 
 #include "object.h"
 #include "error.h"
-#include "materba.h"
 #include "game.h"
-#include "lsquare.h"
 #include "god.h"
 
-object::object(bool AddToPool, bool HasBe) : InPool(AddToPool), Picture(0), SquareUnder(0)
+object::object(bool AddToPool, bool HasBe) : entity(AddToPool, HasBe)
 {
   *(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
-
-  if(AddToPool)
-    {
-      objectinfo ObjectInfo = { this, true, HasBe };
-      SetPoolIterator(objectpool::Add(ObjectInfo));
-      ID = game::CreateNewObjectID();
-    }
 }
 
 object::~object()
 {
-  EraseMaterials();
-
-  if(InPool)
-    objectpool::Remove(GetPoolIterator());
+  igraph::RemoveUser(GraphicId);
 }
 
 void object::Save(outputfile& SaveFile) const
 {
   typeable::Save(SaveFile);
+  entity::Save(SaveFile);
 
-  SaveFile << Material << Size << GraphicId << ID;
+  SaveFile << GraphicId;
 }
 
 void object::Load(inputfile& SaveFile)
 {
   typeable::Load(SaveFile);
+  entity::Load(SaveFile);
 
-  SquareUnder = game::GetSquareInLoad();
-
-  game::PopObjectID(ID);
-
-  SaveFile >> Material >> Size >> GraphicId >> ID;
-
-  for(ushort c = 0; c < Material.size(); ++c)
-    if(Material[c])
-      Material[c]->SetMotherObject(this);
-
-  PreserveBit.resize(Material.size(), false);
+  SaveFile >> GraphicId;
 
   Picture = igraph::AddUser(GraphicId).Bitmap;
 }
@@ -66,7 +46,7 @@ void object::InitMaterials(ushort Materials, ...)
 
       if(Material[c])
 	{
-	  Material[c]->SetMotherObject(this);
+	  Material[c]->SetMotherEntity(this);
 
 	  if(!Material[c]->GetVolume())
 	    Material[c]->SetVolume(GetDefaultVolume(c));
@@ -93,7 +73,7 @@ void object::InitMaterials(material* FirstMaterial)
 
   if(Material[0])
     {
-      Material[0]->SetMotherObject(this);
+      Material[0]->SetMotherEntity(this);
 
       GraphicId.Color[0] = Material[0]->GetColor();
 
@@ -106,18 +86,6 @@ void object::InitMaterials(material* FirstMaterial)
   GraphicId.BitmapPos = GetBitmapPos();
   GraphicId.FileIndex = GetGraphicsContainerIndex();
   Picture = igraph::AddUser(GraphicId).Bitmap;
-}
-
-ushort object::GetEmitation() const
-{
-  ushort Emitation = 0;
-
-  for(ushort c = 0; c < Material.size(); ++c)
-    if(Material[c])
-      if(Material[c]->GetEmitation() > Emitation)
-	Emitation = Material[c]->GetEmitation();
-
-  return Emitation;
 }
 
 std::string object::NameNormal(uchar Case, std::string Article, std::string Adjective) const
@@ -239,32 +207,6 @@ std::string object::NameContainer(uchar Case) const
     }
 }
 
-std::string object::NameSized(uchar Case, std::string Article, ushort LillaBorder, ushort StoraBorder) const
-{
-  std::string Temp;
-
-  if(GetSize() >= StoraBorder) Temp = "big ";
-  if(GetSize() >= LillaBorder && Size < StoraBorder) Temp = "standard sized ";
-  if(GetSize() < LillaBorder) Temp = "small ";            // SWEDISH SUX0R BAD!
-
-  if(!(Case & PLURAL))
-    if(!(Case & DEFINEBIT))
-      return Temp + NameSingular();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Temp + NameSingular();
-      else
-	return Article + " " + Temp + NameSingular();
-  else
-    if(!(Case & DEFINEBIT))
-      return Temp + NamePlural();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Temp + NamePlural();
-      else
-	return Temp + NamePlural();
-}
-
 std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) const
 {
   if(!(Case & PLURAL))
@@ -283,17 +225,6 @@ std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) 
 	return std::string("the ") + NamePlural() + " of " + GetMaterial(0)->Name();
       else
 	return NamePlural() + " of " + GetMaterial(0)->Name();
-}
-
-void object::EraseMaterials()
-{
-  igraph::RemoveUser(GraphicId);
-
-  for(ushort c = 0; c < Material.size(); ++c)
-    if(!PreserveBit[c])
-      delete Material[c];
-
-  Material.resize(0);
 }
 
 void object::SetMaterial(uchar Index, material* NewMaterial)
@@ -316,7 +247,7 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 
   if((Material[Index] = NewMaterial))
     {
-      Material[Index]->SetMotherObject(this);
+      Material[Index]->SetMotherEntity(this);
 
       if(!Material[Index]->GetVolume())
 	Material[Index]->SetVolume(GetDefaultVolume(Index));
@@ -343,40 +274,7 @@ void object::UpdatePicture()
   Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
-void object::PreserveMaterial(ushort Index)
-{
-  PreserveBit[Index] = true;
-}
-
-levelsquare* object::GetLevelSquareUnder() const
-{
-  return (levelsquare*)SquareUnder;
-}
-
-void object::SetLevelSquareUnder(levelsquare* What)
-{
-  SquareUnder = What;
-}
-
-material* object::GetMaterial(ushort Index) const
-{
-  if(Index < Material.size())
-    return Material[Index];
-  else
-    return 0;
-}
-
 std::string object::OwnerGodDescription(uchar OwnerGod) const
 {
   return std::string(" of ") + game::GetGod(OwnerGod)->Name();
-}
-
-bool object::GetExists() const
-{
-  return GetPoolIterator()->Exists;
-}
-
-void object::SetExists(bool What)
-{
-  GetPoolIterator()->Exists = What;
 }

@@ -696,7 +696,7 @@ class ITEM
 (
   neercseulb,
   spikedmace,
-  InitMaterials(3, new mithril, new mithril, new darkfrogflesh),
+  InitMaterials(3, new diamond, new diamond, new darkfrogflesh),
   {
     SetSize(200);
   },
@@ -1153,15 +1153,15 @@ class ITEM
   {
     SetSize(30);
     UpdatePicture();
-    SetInhabitedByGenie(!(rand() % 4));
+    SetInhabitedByGenie(!(rand() % 3));
   },
  public:
   virtual ushort Possibility() const { return 25; }
   virtual ushort GetEmitation() const { return 256; }
   virtual std::string NameSingular() const { return "oil lamp"; }
   virtual float OfferModifier() const { return 1; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
-  virtual ulong Price() const { return 100; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 150; default: return 0; } }
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }

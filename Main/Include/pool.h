@@ -7,24 +7,24 @@
 
 #include <list>
 
-class object;
+class entity;
 
-struct objectinfo
+struct entityinfo
 {
-  object* Object;
+  entity* Entity;
   bool Exists;
   bool HasBe;
 };
 
-class objectpool
+class entitypool
 {
  public:
-  static std::list<objectinfo>::iterator Add(objectinfo ObjectInfo) { return Pool.insert(Pool.end(), ObjectInfo); }
-  static void Remove(std::list<objectinfo>::iterator Iterator) { Pool.erase(Iterator); }
+  static std::list<entityinfo>::iterator Add(entityinfo EntityInfo) { return Pool.insert(Pool.end(), EntityInfo); }
+  static void Remove(std::list<entityinfo>::iterator Iterator) { Pool.erase(Iterator); }
   static void Be();
   static void BurnTheDead();
  private:
-  static std::list<objectinfo> Pool;
+  static std::list<entityinfo> Pool;
 };
 
 #endif

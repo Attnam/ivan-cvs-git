@@ -587,7 +587,7 @@ void bitmap::FadeToScreen()
       Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(255 - c * 50), 0);
       AlphaBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(c * 50), 0);
       graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+      while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
     }
 
   DOUBLEBUFFER->Fill(0);

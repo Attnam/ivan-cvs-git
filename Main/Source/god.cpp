@@ -1031,9 +1031,9 @@ void scabies::PlayerVomitedOnAltar()
 void valpurus::AddPriestMessage() const
 {
   ADD_MESSAGE("\"%s the Great Frog is the highest of all gods.", GOD_NAME);
-  ADD_MESSAGE("In the ancient times the World and its deities were born from His eggs.");
-  ADD_MESSAGE("That's why this cathedral and the whole city of Attnam is dedicated to His worship.\"");
-  ADD_MESSAGE("\"In thine prayers thou must understand He is a busy god who knows His importance.");
+  ADD_MESSAGE("The Wise know that the world is really a square pancake which He carries on His back.");
+  ADD_MESSAGE("This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"");
+  ADD_MESSAGE("\"In thine prayers thou must understand that He is a busy god who knows His importance.");
   ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
 }
 

@@ -138,6 +138,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::GetCurrentLevel()->Luxify();
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
+      game::GetCurrentArea()->UpdateLOS();
       if(configuration::GetAutosaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
@@ -161,6 +162,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 	  game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
 	  game::SendLOSUpdateRequest();
 	  game::UpdateCamera();
+	  game::GetCurrentArea()->UpdateLOS();
 	  if(configuration::GetAutosaveInterval())
 	    game::Save(game::GetAutoSaveFileName().c_str());
 	  return true;
@@ -203,8 +205,9 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
 
       game::GetCurrentLevel()->Luxify();
       game::ShowLevelMessage();
-      game::UpdateCamera();
       game::SendLOSUpdateRequest();
+      game::UpdateCamera();
+      game::GetCurrentArea()->UpdateLOS();
       if(configuration::GetAutosaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
@@ -498,7 +501,7 @@ bool fountain::Consume(character* Drinker)
 
 		  while(true)
 		    {
-		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80, false);
 		      item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
 
 		      if(TempItem)

@@ -1036,7 +1036,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
       character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
       if(Char)
-	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))
+	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	  {
 	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	    return false;
@@ -1048,7 +1048,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
     if(Char)
-      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))
+      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	{
 	  ADD_MESSAGE("%s follows you.", Char->CNAME(DEFINITE));
 

@@ -13,8 +13,9 @@
 #include "team.h"
 #include "config.h"
 #include "femath.h"
+#include "fluid.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0), TemporaryEmitation(0)
+levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
   Stack = new stack(this);
 
@@ -32,7 +33,7 @@ levelsquare::~levelsquare()
   for(ushort c = 0; c < 4; ++c)
     delete SideStack[c];
 
-  delete FluidBuffer;
+  delete Fluid;
 }
 
 void levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
@@ -88,8 +89,8 @@ bool levelsquare::DrawTerrain() const
 {
   GetGroundLevelTerrain()->DrawToTileBuffer();
 
-  if(Fluided)
-    GetFluidBuffer()->AlphaBlit(igraph::GetTileBuffer(), 0, 0);
+  if(GetFluid())
+    GetFluid()->DrawToTileBuffer();
 	
   GetOverLevelTerrain()->DrawToTileBuffer();
 
@@ -512,11 +513,7 @@ void levelsquare::Save(outputfile& SaveFile) const
   for(ushort c = 0; c < Emitter.Length(); ++c)
     SaveFile << Emitter.Access(c).Pos << Emitter.Access(c).DilatedEmitation;
 
-  SaveFile << Fluided;
-
-  if(Fluided)
-    GetFluidBuffer()->Save(SaveFile);
-
+  SaveFile << Fluid;
   SaveFile << Emitation << DivineOwner;
   SaveFile << Engraved << Room;
 }
@@ -549,14 +546,7 @@ void levelsquare::Load(inputfile& SaveFile)
       Emitter.Add(E);
     }
 
-  SaveFile >> Fluided;
-
-  if(Fluided)
-    {
-      FluidBuffer = new bitmap(16, 16);
-      GetFluidBuffer()->Load(SaveFile);
-    }
-
+  SaveFile >> Fluid;
   SaveFile >> Emitation >> DivineOwner;
   SaveFile >> Engraved >> Room;
 }
@@ -569,42 +559,13 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
 	
-  if(!Fluided)
+  if(!GetFluid())
     {
-      FluidBuffer = new bitmap(16, 16);
-      FluidBuffer->Fill(0xF81F);
-      Fluided = true;
-      GetFluidBuffer()->CreateAlphaMap(0);
+      SetFluid(new fluid);
+      GetFluid()->SetSquareUnder(this);
     }
 
-  for(ushort c = 0; c < Amount; ++c)
-    {
-      vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
-      GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
-      GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y, 150 + RAND() % 106);
-
-      for(ushort d = 0; d < 8; ++d)
-	if(RAND() % Lumpiness)
-	  {
-	    char Change[3];
-
-	    for(uchar x = 0; x < 3; ++x)
-	      Change[x] = RAND() % Variation - RAND() % Variation;
-
-	    if(short(GET_RED(Color) + Change[0]) < 0) Change[0] = -GET_RED(Color);
-	    if(short(GET_GREEN(Color) + Change[1]) < 0) Change[1] = -GET_GREEN(Color);
-	    if(short(GET_BLUE(Color) + Change[2]) < 0) Change[2] = -GET_BLUE(Color);
-
-	    if(short(GET_RED(Color) + Change[0]) > 255) Change[0] = 255 - GET_RED(Color);
-	    if(short(GET_GREEN(Color) + Change[1]) > 255) Change[1] = 255 - GET_GREEN(Color);
-	    if(short(GET_BLUE(Color) + Change[2]) > 255) Change[2] = 255 - GET_BLUE(Color);
-
-	    GetFluidBuffer()->PutPixel(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y,
-				       MAKE_RGB(GET_RED(Color) + Change[0], GET_GREEN(Color) + Change[1], GET_BLUE(Color) + Change[2]));
-
-	    GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y, 50 + RAND() % 206);
-	  }
-    }
+  GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
 }
 
 ushort levelsquare::GetLuminance() const
@@ -792,22 +753,6 @@ bool levelsquare::CanBeDigged(character*, item*) const
     }
 
   return GetOverLevelTerrain()->CanBeDigged();
-}
-
-void levelsquare::HandleFluids()
-{
-  if(Fluided && !(RAND() % 10))
-    {
-      if(!GetFluidBuffer()->ChangeAlpha(-1))
-	{
-	  Fluided = false;
-	  delete FluidBuffer;
-	  FluidBuffer = 0;
-	}
-
-      NewDrawRequested = true;
-      MemorizedUpdateRequested = true;
-    }
 }
 
 void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)
@@ -1086,4 +1031,16 @@ void levelsquare::StrikeEverything(character* Zapper, std::string DeathMsg, ucha
     }
 
   GetOverLevelTerrain()->ReceiveStrike();	
+}
+
+void levelsquare::RemoveFluid()
+{
+  if(GetFluid())
+    {
+      fluid* Backup = GetFluid();
+      SetFluid(0);
+      SignalEmitationDecrease(Backup->GetEmitation());
+      SendNewDrawRequest();
+      SendMemorizedUpdateRequest();
+    }
 }

@@ -1292,9 +1292,9 @@ class CHARACTER
   InitMaterials(new angelflesh),
   {
     SetSize(180);
-    SetAgility(25);
-    SetStrength(25);
-    SetEndurance(25);
+    SetAgility(35);
+    SetStrength(35);
+    SetEndurance(35);
     SetPerception(45);
   },
  public:

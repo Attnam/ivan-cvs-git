@@ -49,7 +49,7 @@ square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 uchar game::CurrentDungeon;
-ulong game::NextObjectID = 0;
+ulong game::NextEntityID = 0;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 
@@ -139,6 +139,19 @@ void game::InitScript()
 
 void game::Init(std::string Name)
 {
+  if(Name == "")
+    if(configuration::GetDefaultName() == "")
+      {
+	SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true));
+
+	if(PlayerName == "")
+	  return;
+      }
+    else
+      SetPlayerName(configuration::GetDefaultName());
+  else
+    SetPlayerName(Name);
+
   static ushort Counter = 0;
 
   Ticks = 0;
@@ -167,14 +180,6 @@ void game::Init(std::string Name)
 #ifdef USE_SDL
   mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
 #endif
-
-  if(Name == "")
-    if(configuration::GetDefaultName() == "")
-      SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true));
-    else
-      SetPlayerName(configuration::GetDefaultName());
-  else
-    SetPlayerName(Name);
 
   if(Load())
     {
@@ -238,14 +243,18 @@ void game::Init(std::string Name)
 void game::DeInit()
 {
   delete GetPlayerBackup();
-  delete WorldMap;
+  SetPlayerBackup(0);
+  delete GetWorldMap();
+  SetWorldMap(0);
 
   ushort c;
 
   for(c = 0; c < Dungeon.size(); ++c)
     delete Dungeon[c];
 
-  objectpool::BurnTheDead();
+  Dungeon.clear();
+
+  entitypool::BurnTheDead();
 
   for(c = 0; c < Team.size(); ++c)
     delete GetTeam(c);
@@ -262,7 +271,7 @@ void game::Run()
 
       try
 	{
-	  objectpool::Be();
+	  entitypool::Be();
 
 	  Tick();
 	  ApplyDivineTick();
@@ -563,7 +572,7 @@ bool game::Save(std::string SaveName)
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << PlayerName;
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextObjectID;
+  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextEntityID;
   SaveFile << LOSTurns;
 
   ulong Time = time(0);
@@ -596,7 +605,7 @@ bool game::Load(std::string SaveName)
 
   SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextObjectID;
+  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextEntityID;
   SaveFile >> LOSTurns;
 
   ulong Time;
@@ -777,7 +786,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = game::GetPlayer()->MaxDanger() * (0.05f + float(GetCurrent()) / 100);
+  float Base = game::GetPlayer()->MaxDanger() * (0.075f + float(GetCurrent()) / 75);
 
   while(true)
     {
@@ -785,25 +794,25 @@ float game::Difficulty()
 
       if(Dice == 0)
 	{
-	  Base /= 5;
+	  Base /= 6;
 	  continue;
 	}
 
       if(Dice == 24)
 	{
-	  Base *= 5;
+	  Base *= 6;
 	  continue;
 	}
 
       if(Dice < 5)
 	{
-	  Base /= 2;
+	  Base /= 3;
 	  continue;
 	}
 
       if(Dice > 19)
 	{
-	  Base *= 2;
+	  Base *= 3;
 	  continue;
 	}
 
@@ -823,7 +832,10 @@ void game::TriggerQuestForGoldenEagleShirt()
 {
   GetDungeon(0)->PrepareLevel(6);
   GetDungeon(0)->GetLevel(6)->CreateStairs(false);
-  GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
+
+  if(GetDungeon(0)->GetLevel(6)->GetLevelMessage() == "")
+    GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
+
   GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
 
@@ -1042,12 +1054,12 @@ void game::LoadWorldMap(std::string SaveName)
   SaveFile >> WorldMap;
 }
 
-ulong game::CreateNewObjectID()
+ulong game::CreateNewEntityID()
 {
-  if(NextObjectID == 0xFFFFFFFF)
+  if(NextEntityID == 0xFFFFFFFF)
     ABORT("Suddenly the Universe ends!");
 
-  return NextObjectID++;
+  return NextEntityID++;
 }
 
 void game::Hostility(team* Attacker, team* Defender)
@@ -1117,11 +1129,11 @@ bool game::IsValidPos(vector2d Pos)
     return false;
 }
 
-std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters)
+std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   EMPTY_MESSAGES();
   DrawEverythingNoBlit();
-  return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false);
+  return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
 }
 
 long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)

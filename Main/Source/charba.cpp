@@ -260,9 +260,10 @@ void character::Be()
 	}
 
       if(GetAP() >= 0)
-	{
-	  StateAutoDeactivation();
+	StateAutoDeactivation();
 
+      if(GetAP() >= 0)
+	{
 	  if(GetIsPlayer())
 	    {
 	      static ushort Timer = 0;
@@ -292,14 +293,14 @@ void character::Be()
 	  EditAP(-1000);
 	}
 
-	CharacterSpeciality();
-	Regenerate();
+      CharacterSpeciality();
+      Regenerate();
 
-	if(GetIsPlayer())
-	  {
-	    if(!StateIsActivated(CONSUMING))
-	      Hunger();
-	  }
+      if(GetIsPlayer())
+	{
+	  if(!StateIsActivated(CONSUMING))
+	    Hunger();
+	}
     }
 }
 
@@ -830,6 +831,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
+	    game::GetCurrentArea()->UpdateLOS();
 	    if(configuration::GetAutosaveInterval())
 	      game::Save(game::GetAutoSaveFileName().c_str());
 	    return true;
@@ -1425,7 +1427,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
   SaveFile << HP << NP << AP;
   SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-  SaveFile << State << Money << HomeRoom << WayPoint;
+  SaveFile << State << Money << HomeRoom << WayPoint << Size;
 
   if(HomeRoom)
     if(!game::GetInWilderness() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
@@ -1503,7 +1505,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
   SaveFile >> HP >> NP >> AP;
   SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-  SaveFile >> State >> Money >> HomeRoom >> WayPoint;
+  SaveFile >> State >> Money >> HomeRoom >> WayPoint >> Size;
 
   if(HomeRoom)
     {
@@ -1785,7 +1787,7 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
-  game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion("What do you want to engrave here?", vector2d(7,7), WHITE, 0, 80));
+  game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion("What do you want to engrave here?", vector2d(7,7), WHITE, 0, 80, true));
   return false;
 }
 
@@ -2637,15 +2639,18 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 	ADD_MESSAGE("You stop resting.");
 
       if(StateIsActivated(DIGGING))
-	{
 	  ADD_MESSAGE("You stop digging.");
-	  EditAP(-250);
-	}
     }
 
   EndConsuming();
   EndRest();
-  EndDig();
+
+  if(StateIsActivated(DIGGING))
+    {
+      EndDig();
+      EditAP(-250);
+    }
+
   EndGoing();
 }
 
@@ -3191,6 +3196,11 @@ void character::GoHandler()
 {
   if(GetAP() >= 0)
     {
+      StateAutoDeactivation();
+
+      if(!StateIsActivated(GOING))
+	return;
+
       if(!game::IsValidPos(GetPos() + game::GetMoveVector(StateVariables.Going.Direction)))
 	{
 	  EndGoing();

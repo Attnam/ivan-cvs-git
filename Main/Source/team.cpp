@@ -1,7 +1,8 @@
 #include "team.h"
 #include "error.h"
-#include "charba.h"
+#include "charde.h"
 #include "message.h"
+#include "config.h"
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {
@@ -29,10 +30,25 @@ void team::Hostility(team* Enemy)
 
       if(this == game::GetPlayer()->GetTeam())
 	{
-	  /* This is a gum solution. The message should come from the script. */
-
 	  if(Enemy->GetID() == 2)
-	    ADD_MESSAGE("You hear an alarm ringing.");
+	    {
+	      /* This is a gum solution. The message should come from the script. */
+
+	      ADD_MESSAGE("You hear an alarm ringing.");
+
+	      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() < 2)
+		{
+		  game::TriggerQuestForGoldenEagleShirt();
+
+		  /*
+		   * If the game would crash before the next autosave,
+		   * DarkLevel could be altered twice.
+		   */
+
+		  if(configuration::GetAutosaveInterval())
+		    game::Save(game::GetAutoSaveFileName().c_str());
+		}
+	    }
 
 	  if(Enemy->GetAttackEvilness())
 	    game::DoEvilDeed(Enemy->GetAttackEvilness());

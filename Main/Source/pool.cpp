@@ -1,35 +1,35 @@
-#include "object.h"
+#include "entity.h"
 #include "game.h"
 
-std::list<objectinfo> objectpool::Pool;
+std::list<entityinfo> entitypool::Pool;
 
-void objectpool::Be()
+void entitypool::Be()
 {
-  for(std::list<objectinfo>::iterator i = Pool.begin(); i != Pool.end();)
+  for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
     if(i->Exists)
       {
 	if(i->HasBe)
-	    i->Object->Be();
+	    i->Entity->Be();
 
 	++i;
       }
     else
       {
-	std::list<objectinfo>::iterator Dirt = i++;
-	delete Dirt->Object;
+	std::list<entityinfo>::iterator Dirt = i++;
+	delete Dirt->Entity;
       }
 }
 
-void objectpool::BurnTheDead()
+void entitypool::BurnTheDead()
 {
-  for(std::list<objectinfo>::iterator i = Pool.begin(); i != Pool.end();)
+  for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
     if(i->Exists)
       {
 	++i;
       }
     else
       {
-	std::list<objectinfo>::iterator Dirt = i++;
-	delete Dirt->Object;
+	std::list<entityinfo>::iterator Dirt = i++;
+	delete Dirt->Entity;
       }
 }

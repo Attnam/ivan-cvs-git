@@ -315,22 +315,6 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
 );
 
-/* Remove this in the next rel */
-
-class GROUNDLEVELTERRAIN
-(
-  tilefloor,
-  groundlevelterrain,
-  InitMaterials(2, new stone, new marble),
-  {
-  },
- public:
-  virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
- protected:
-  virtual std::string NameSingular() const { return "tile floor"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 304); }
-);
-
 class OVERLEVELTERRAIN
 (
   bookcase,

@@ -382,7 +382,7 @@ bool scrollofwishing::Read(character* Reader)
 {
   EMPTY_MESSAGES();
   game::DrawEverythingNoBlit();
-  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80, false);
 
   item* TempItem = protosystem::CreateItem(Temp, Reader->GetIsPlayer());
 
@@ -465,7 +465,7 @@ bool scrollofchangematerial::Read(character* Reader)
 
   EMPTY_MESSAGES();
   game::DrawEverythingNoBlit();
-  std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+  std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(7,7), WHITE, 0, 80, false);
 
   material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());
 	
@@ -950,7 +950,7 @@ bool oillamp::Apply(character* Applier, stack*)
 		  game::DrawEverything();
 		  GETKEY();
 
-		  if(game::BoolQuestion("Do you want to wish? [Y/n]"))
+		  if(game::BoolQuestion("Do you want to wish? [Y/n]", 'y'))
 		    {
 		      ADD_MESSAGE("You may wish for an item. - press any key -");
 		      game::DrawEverything();
@@ -958,7 +958,7 @@ bool oillamp::Apply(character* Applier, stack*)
 
 		      while(true)
 			{
-			  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+			  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80, false);
 			  item* TempItem = protosystem::CreateItem(Temp, Applier->GetIsPlayer());
 
 			  if(TempItem)
@@ -984,7 +984,7 @@ bool oillamp::Apply(character* Applier, stack*)
 	    }
 
 	    item* Sword = new curvedtwohandedsword;
-	    ADD_MESSAGE("%s whishes for %s.", Genie->CNAME(DEFINITE), Sword->CNAME(INDEFINITE));
+	    ADD_MESSAGE("%s wishes for %s.", Genie->CNAME(DEFINITE), Sword->CNAME(INDEFINITE));
 	    ADD_MESSAGE("%s appears from nothing.", Sword->CNAME(INDEFINITE));
 	    ADD_MESSAGE("%s wields %s.", Genie->CNAME(DEFINITE), Sword->CNAME(DEFINITE));
 	    Genie->SetWielded(Sword);

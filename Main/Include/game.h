@@ -158,14 +158,14 @@ class game
   static void SaveWorldMap(std::string = SaveName(), bool = false);
   static void LoadWorldMap(std::string = SaveName());
   static void UpdateCamera();
-  static ulong CreateNewObjectID();
-  static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) --NextObjectID; }
+  static ulong CreateNewEntityID();
+  static void PopEntityID(ulong ID) { if(NextEntityID == ID + 1) --NextEntityID; }
   static team* GetTeam(ushort Index) { return Team[Index]; }
   static uchar GetTeams() { return Team.size(); }
   static void Hostility(team*, team*);
   static void CreateTeams();
   static bool IsValidPos(vector2d);
-  static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort);
+  static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort, bool);
   static long NumberQuestion(std::string, vector2d, ushort);
   static void LOSTurn();
   static ulong GetLOSTurns() { return LOSTurns; }
@@ -209,7 +209,7 @@ class game
   static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
   static gamescript GameScript;
-  static ulong NextObjectID;
+  static ulong NextEntityID;
   static std::vector<team*> Team;
   static ulong LOSTurns;
   static bool LOSUpdateRequested;

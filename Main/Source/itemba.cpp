@@ -250,12 +250,12 @@ void item::Save(outputfile& SaveFile) const
 {
   object::Save(SaveFile);
 
-  SaveFile << Cannibalised;
+  SaveFile << Cannibalised << Size;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
 
-  SaveFile >> Cannibalised;
+  SaveFile >> Cannibalised >> Size;
 }

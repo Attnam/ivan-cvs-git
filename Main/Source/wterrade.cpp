@@ -42,6 +42,7 @@ bool attnam::GoDown(character* Who) const
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
+  game::GetCurrentArea()->UpdateLOS();
 
   if(Who->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
     {
@@ -78,6 +79,7 @@ bool elpuricave::GoDown(character* Who) const
   game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
+  game::GetCurrentArea()->UpdateLOS();
 
   if(configuration::GetAutosaveInterval())
     game::Save(game::GetAutoSaveFileName().c_str());

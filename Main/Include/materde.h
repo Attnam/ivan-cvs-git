@@ -984,12 +984,12 @@ class MATERIAL
   sapphire,
   material,
  public:
-  virtual ushort GetHitValue() const { return 300; }
+  virtual ushort GetHitValue() const { return 250; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
-  virtual ushort GetColor() const { return MAKE_RGB(200, 60, 60); }
+  virtual ushort GetColor() const { return MAKE_RGB(96, 96, 200); }
   virtual ulong RawPrice() const { return ulong(GetVolume() * 2); }
  protected:
   virtual std::string NameStem() const { return "sapphire"; }
@@ -1000,12 +1000,12 @@ class MATERIAL
   ruby,
   material,
  public:
-  virtual ushort GetHitValue() const { return 300; }
+  virtual ushort GetHitValue() const { return 250; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
-  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 60, 60); }
   virtual ulong RawPrice() const { return ulong(GetVolume() * 2.5); }
  protected:
   virtual std::string NameStem() const { return "ruby"; }

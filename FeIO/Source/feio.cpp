@@ -178,7 +178,7 @@ int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ush
   return signed(iSelected);
 }
 
-std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade)
+std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
 {
   if(Fade)
     {
@@ -211,10 +211,15 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 
       graphics::BlitDBToScreen();
 		
-      while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 8 || LastKey == 13))
+      while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 0x08 || LastKey == 0x0D || LastKey == 0x1B))
 	LastKey = GETKEY();
+
+      if(LastKey == 0x1B && AllowExit)
+	{
+	  return "";
+	}
 		
-      if(LastKey == 8)
+      if(LastKey == 0x08)
 	{
 	  if(Input.length())
 	    Input.resize(Input.length() - 1);
@@ -222,7 +227,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 	  continue;
 	}
 
-      if(LastKey == 13)
+      if(LastKey == 0x0D)
 	if(Input.length() >= MinLetters)
 	  break;
 	else

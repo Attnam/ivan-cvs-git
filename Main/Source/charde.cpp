@@ -27,6 +27,7 @@ std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 #include "team.h"
 #include "lterraba.h"
 #include "error.h"
+#include "config.h"
 
 petrus::~petrus()
 {
@@ -1662,14 +1663,12 @@ void mistress::BeTalkedTo(character* Talker)
 void angel::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-
   SaveFile << Master;
 }
 
 void angel::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-
   SaveFile >> Master;
 }
 
@@ -1679,31 +1678,25 @@ void angel::SetMaster(uchar NewMaster)
     {
     case GOOD:
       SetAgility(99);
-      SetStrength(30);
-      SetEndurance(30);
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new valpurium))));
-      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new valpurium))));
+      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new diamond))));
+      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new diamond))));
       SetMaterial(1, new goodleather);
       SetHP(GetMaxHP());
       break;
     case NEUTRAL:
-      SetAgility(25);
-      SetStrength(25);
       SetEndurance(99);
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new twohandedsword(new mithril))));
-      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
+      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new poleaxe(new sapphire))));
+      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new sapphire))));
       SetMaterial(1, new neutralleather);
       SetHP(GetMaxHP());
       break;
     case EVIL:
       {
-	SetAgility(25);
 	SetStrength(99);
-	SetEndurance(25);
 	item* SpikedMace = new spikedmace(false);
-	SpikedMace->InitMaterials(3, new mithril, new iron, new darkfrogflesh);
+	SpikedMace->InitMaterials(3, new ruby, new iron, new darkfrogflesh);
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(SpikedMace)));
-	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new brokenplatemail(new mithril))));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new brokenplatemail(new ruby))));
 	SetMaterial(1, new evilleather);
 	SetHP(GetMaxHP());
 	break;

@@ -26,6 +26,7 @@ class item;
 class outputfile;
 class inputfile;
 class room;
+class fluid;
 
 /* Presentation of the levelsquare class */
 
@@ -72,7 +73,6 @@ class levelsquare : public square
   virtual void UpdateMemorized();
   virtual bool CanBeDigged(character*, item*) const;
   virtual bool Dig(character*, item*);
-  virtual void HandleFluids();
   virtual groundterrain* GetGroundTerrain() const;
   virtual overterrain* GetOverTerrain() const;
   virtual groundlevelterrain* GetGroundLevelTerrain() const { return GroundLevelTerrain; }
@@ -82,7 +82,7 @@ class levelsquare : public square
   virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
   virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
   virtual void ChangeOverLevelTerrain(overlevelterrain*);
-  virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
+  //virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
   virtual void ApplyScript(squarescript*, room*);
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
@@ -100,6 +100,9 @@ class levelsquare : public square
   virtual void DrawParticles(ushort, uchar);
   virtual void PolymorphEverything(character*);
   virtual void StrikeEverything(character*, std::string, uchar);
+  virtual fluid* GetFluid() const { return Fluid; }
+  virtual void SetFluid(fluid* What) { Fluid = What; }
+  virtual void RemoveFluid();
  protected:
   groundlevelterrain* GroundLevelTerrain;
   overlevelterrain* OverLevelTerrain;
@@ -118,10 +121,9 @@ class levelsquare : public square
   ushort Emitation;
   std::string Engraved;
   uchar DivineOwner;
-  bool Fluided;
-  bitmap* FluidBuffer;
   uchar Room;
   ushort TemporaryEmitation;
+  fluid* Fluid;
 };
 
 #endif
