@@ -27,6 +27,7 @@ void material::Save(outputfile& SaveFile) const
 
 void material::Load(inputfile& SaveFile)
 {
+	typeable::Load(SaveFile);
 	SaveFile >> Volume;
 }
 

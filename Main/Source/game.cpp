@@ -136,7 +136,9 @@ void game::Init(std::string Name)
 	PlayerBackup = 0;
 	srand(time(0));
 	game::CalculateGodNumber();
+
 	_mkdir("Save");
+
 	if(Name == "")
 	{
 		DOUBLEBUFFER->ClearToColor(0);

@@ -294,3 +294,12 @@ void object::UpdatePicture()
 	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
+
+void object::SetSquareUnder(square* Square)
+{
+	SquareUnder = Square;
+
+	for(ushort c = 0; c < Material.size(); ++c)
+		if(Material[c])
+			Material[c]->SetSquareUnder(Square);
+}

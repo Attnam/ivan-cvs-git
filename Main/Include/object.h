@@ -56,6 +56,7 @@ public:
 	virtual void SetID(ulong What) { ID = What; }
 	virtual void DrawToTileBuffer() const = 0;
 	virtual bitmap* GetPicture() const { return Picture; }
+	virtual void SetSquareUnder(square*);
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;

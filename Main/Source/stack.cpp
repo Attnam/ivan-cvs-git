@@ -42,6 +42,8 @@ ushort stack::AddItem(item* ToBeAdded)
 
 	SetItem(GetItems(), ToBeAdded);
 
+	ToBeAdded->SetSquareUnder(GetSquareUnder());
+
 	if(!game::GetInWilderness() && ToBeAdded->GetEmitation() > GetEmitation())
 	{
 		SetItems(GetItems() + 1);
@@ -73,6 +75,8 @@ ushort stack::FastAddItem(item* ToBeAdded)
 	Item = TempItem;
 
 	SetItem(GetItems(), ToBeAdded);
+
+	ToBeAdded->SetSquareUnder(GetSquareUnder());
 
 	SetItems(GetItems() + 1);
 
@@ -294,6 +298,9 @@ void stack::Move(levelsquare* To)
 	GetLevelSquareUnder()->SignalEmitationDecrease(GetEmitation());
 
 	SetSquareUnder(To);
+
+	for(ushort c = 0; c < GetItems(); ++c)
+		GetItem(c)->SetSquareUnder(To);
 
 	if(SquareUnder)
 		SquareUnder->SendNewDrawRequest();

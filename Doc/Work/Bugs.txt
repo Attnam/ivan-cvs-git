@@ -2,7 +2,7 @@ Sokeaksi tuleminen pepsistä bugittaa.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
 Fullscreen + F10.
-Ligths should be updated when terrain changes.
+Lights should be updated when terrain changes.
 Material volume is undefined in script created instances.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 Show messages may show the same page twice. (not sure if this exists anymore)
