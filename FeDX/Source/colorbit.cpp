@@ -1,5 +1,6 @@
 #include <fstream>
 #include <cstdio>
+#include <cstdarg>
 
 #include "colorbit.h"
 #include "error.h"

@@ -1,5 +1,6 @@
 #include <complex>
 #include <ctime>
+#include <iostream>
 
 #include "graphics.h"
 #include "bitmap.h"
@@ -8,8 +9,10 @@
 #include "colorbit.h"
 #include "strover.h"
 
+#include "error.h"
+
 #ifdef WIN32
-int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int nCmdShow)
+int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)
 #else
 int Main()
 #endif
@@ -22,8 +25,12 @@ int Main()
 
 #ifdef WIN32
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false, NULL);
-#else
+#endif
+#ifdef SDL
 	graphics::SetMode("Esko", 800, 600, 16);
+#endif
+#ifdef __DJGPP__
+	graphics::SetMode(0x114);
 #endif
 
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
@@ -92,7 +99,7 @@ int Main()
 		graphics::BlitDBToScreen();
 	}
 
-	ushort LastX, LastY;
+	ushort LastX = 0, LastY = 0;
 
 	for(float a = 30, b = -100, d = -10, e = 100, c = 0; c < 4; c += 0.02f)
 	{
@@ -141,14 +148,15 @@ int Main()
 			return 0;
 	}
 
-	//graphics::SwitchMode();
-
 	char Buffer[100];
 
 	sprintf(Buffer, "Time: %.2f seconds.", float(clock() - STim) / CLOCKS_PER_SEC);
 
 #ifdef WIN32
 	MessageBox(NULL, Buffer, "Message from FEP", MB_OK);
+#else
+	graphics::DeInit();
+	std::cout << Buffer << std::endl;
 #endif
 
 	return 0;

@@ -4,7 +4,9 @@
 #ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
 #include <windows.h>
-#else
+#endif
+
+#ifdef SDL
 #include <stdlib.h>
 #include "sys/stat.h"
 #define IDNO 1
@@ -154,11 +156,13 @@ void game::Init(std::string Name)
 	LOSTurns = 1;
 	WorldMap = 0;
 
-	#ifdef WIN32
+#ifdef WIN32
 	_mkdir("Save");
-	#else
+#endif
+
+#ifdef SDL
 	mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
-	#endif
+#endif
 
 	if(Name == "")
 		if(configuration::GetDefaultName() == "")
@@ -561,7 +565,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << InWilderness << NextObjectID;
 	SaveFile << LOSTurns;
 
-	time_t Time = time(0);
+	ulong Time = time(0);
 	femath::SetSeed(Time);
 	SaveFile << Time;
 
@@ -594,7 +598,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> InWilderness >> NextObjectID;
 	SaveFile >> LOSTurns;
 
-	time_t Time;
+	ulong Time;
 	SaveFile >> Time;
 	femath::SetSeed(Time);
 
@@ -628,6 +632,11 @@ std::string game::SaveName()
 			SaveName[c] = '_';
 
 	#ifdef WIN32
+	if(SaveName.length() > 13)
+		SaveName.resize(13);
+	#endif
+
+	#ifdef __DJGPP__
 	if(SaveName.length() > 13)
 		SaveName.resize(13);
 	#endif
@@ -1114,6 +1123,8 @@ void game::UpdateCamera()
 	GetCurrentArea()->SendNewDrawRequest();
 }
 
+#ifndef __DJGPP__
+
 bool game::HandleQuitMessage()
 {
 	if(GetRunning())
@@ -1156,6 +1167,8 @@ bool game::HandleQuitMessage()
 	configuration::Save();
 	return true;
 }
+
+#endif
 
 void game::Beep()
 {

@@ -30,9 +30,13 @@ void igraph::Init()
 	{
 		AlreadyInstalled = true;
 #ifdef WIN32
-		graphics::SetMode(hInst, hWnd, "IVAN 0.302a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
-#else
-		graphics::SetMode("IVAN 0.302a", 800, 600, 16);
+		graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
+#endif
+#ifdef SDL
+		graphics::SetMode("IVAN 0.310a", 800, 600, 16);
+#endif
+#ifdef __DJGPP__
+		graphics::SetMode(0x114);
 #endif
 		DOUBLEBUFFER->Fill(0);
 		graphics::BlitDBToScreen();

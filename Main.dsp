@@ -387,6 +387,13 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Target
 # End Project

@@ -124,12 +124,12 @@ vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar Ma
 			{
 				Vector = FreeSquareSeeker(Vector, StartPos, MaxDistance - 1);
 
-				if(Vector.X != 0xFFFF)
+				if(Vector.X != -1)
 					return Vector;
 			}
 		})
 
-	return vector2d(0xFFFF, 0xFFFF);
+	return vector2d(-1, -1);
 }
 
 vector2d area::GetNearestFreeSquare(vector2d StartPos)
@@ -154,14 +154,14 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 			{
 				Vector = FreeSquareSeeker(Vector, StartPos, c);
 
-				if(Vector.X != 0xFFFF)
+				if(Vector.X != -1)
 					return Vector;
 			}
 		})
 
 	ABORT("No room for character. Character unhappy.");
 
-	return vector2d(0xFFFF, 0xFFFF);
+	return vector2d(-1, -1);
 }
 
 void area::Draw() const

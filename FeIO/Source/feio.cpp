@@ -2,12 +2,18 @@
 
 #ifdef WIN32
 #include <io.h>
-#else
+#endif
+
+#ifdef SDL
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <algorithm>
+#endif
+
+#ifdef __DJGPP__
+#include <dir.h>
 #endif
 
 #include "graphics.h"
@@ -311,7 +317,9 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 		return "";
 
 	return Buffer.GetEntry(Check);
-#else  
+#endif
+
+#ifdef SDL
 	DIR* dp;
 	struct dirent* ep;
 	std::string Buffer;
@@ -347,4 +355,68 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 
 	  }
 #endif
+
+#ifdef __DJGPP__
+	struct ffblk Found;
+	int Check = 0;
+	felist Buffer("Choose a file and be sorry:", TopicColor);
+	Check = findfirst((DirectoryName + "*.sav").c_str(), &Found, FA_HIDDEN | FA_ARCH);
+
+	if(Check)
+	{
+		TextScreen("You don't have any previous saves.", TopicColor);
+		return "";
+	}
+
+	while(!Check)
+	{
+		Buffer.AddEntry(Found.ff_name, ListColor);
+		Check = findnext(&Found);
+	}
+
+	Check = Buffer.Draw(false, true);
+
+	while(Check > 0xFFFD)
+		Check = Buffer.Draw(false);
+
+	if(Check == 0xFFFD)
+		return "";
+
+	return Buffer.GetEntry(Check);
+#endif
+
+/*#ifdef __DJGPP__
+	struct ffblk Found;
+	int Check;
+	list Buffer("Chooseth a file and be sorry");
+	string Name;
+	Check = findfirst("Save.sav", &Found, FA_HIDDEN | FA_ARCH);
+	if(Check)
+	{
+		DOUBLEBUFFER->ClearToColor(0,0,800,600);
+		DOUBLEBUFFER->Printf(FONTW, 260, 200, "You don't have any previous saves.");
+		DOUBLEBUFFER->Blit(SCREEN, 0, 0, 0, 0, 800, 600);
+		getkey();
+		return;
+	}
+	while(!Check)
+	{
+		Buffer.AddString(Found.ff_name);
+		Check = findnext(&Found);
+	}
+
+	Check = 0xFFFF;
+	while(Check > 0xFFFD)
+	{
+		DOUBLEBUFFER->ClearToColor(0, 0, 800, 600);
+		Check = Buffer.Draw();
+	}
+	if(Check == 0xFFFD)
+		return;
+	Name = Buffer.GetString(Check);
+	Name.resize(Name.size() - 4);
+	game::Init(Name);
+	game::Run();
+	game::DeInit();
+#endif*/
 }

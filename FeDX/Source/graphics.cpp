@@ -1,8 +1,19 @@
 #ifdef WIN32
 #include <windowsx.h>
 #include "ddutil.h"
-#else
+#endif
+
+#ifdef SDL
 #include "SDL.h"
+#endif
+
+#ifdef __DJGPP__
+#include <cstdlib>
+#include <dpmi.h>
+#include <go32.h>
+#include <pc.h>
+#include <sys/farptr.h>
+#include <conio.h>
 #endif
 
 #include "graphics.h"
@@ -10,15 +21,24 @@
 #include "whandler.h"
 #include "error.h"
 #include "colorbit.h"
+#include "blit.h"
 
 #ifdef WIN32
 HWND			graphics::hWnd;
 bool			graphics::FullScreen;
 CDisplay*		graphics::DXDisplay;
 void			(*graphics::SwitchModeHandler)();
-#else
+#endif
+
+#ifdef SDL
 SDL_Surface* graphics::screen;
 #endif
+
+#ifdef __DJGPP__
+ulong			graphics::BufferSize;
+ushort			graphics::ScreenSelector = 0;
+#endif
+
 bitmap*			graphics::DoubleBuffer;
 ushort			graphics::XRes;
 ushort			graphics::YRes;
@@ -29,18 +49,27 @@ colorizablebitmap*	graphics::DefaultFont = 0;
 extern DWORD GetDXVersion();
 #endif
 
+#ifdef __DJGPP__
+graphics::vesainfo graphics::VesaInfo;
+graphics::modeinfo graphics::ModeInfo;
+#endif
+
 void graphics::Init()
 {
 	static bool AlreadyInstalled = false;
 
-#ifndef WIN32
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
-	  ABORT("Can't initialize SDL.");
-#endif
-
 	if(!AlreadyInstalled)
 	{
 		AlreadyInstalled = true;
+
+#ifdef SDL
+		if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
+			ABORT("Can't initialize SDL.");
+#endif
+
+#ifdef __DJGPP__
+		VesaInfo.Retrieve();
+#endif
 
 		atexit(graphics::DeInit);
 	}
@@ -49,9 +78,19 @@ void graphics::Init()
 void graphics::DeInit()
 {
 	delete DefaultFont;
+	DefaultFont = 0;
 
-#ifndef WIN32
+#ifdef SDL
 	SDL_Quit();
+#endif
+
+#ifdef __DJGPP__
+	if(ScreenSelector)
+	{
+		__dpmi_free_ldt_descriptor(ScreenSelector);
+		ScreenSelector = 0;
+		textmode(0x3);
+	}
 #endif
 }
 
@@ -100,7 +139,9 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 	globalwindowhandler::SetInitialized(true);
 }
 
-#else
+#endif
+
+#ifdef SDL
 
 void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
 {
@@ -138,8 +179,6 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
 
 #endif
 
-void BlitToDB(ulong, ulong, ulong, ushort, ushort);
-
 #ifdef WIN32
 
 void graphics::BlitDBToScreen()
@@ -173,7 +212,9 @@ void graphics::BlitDBToScreen()
 	}
 }
 
-#else
+#endif
+
+#ifdef SDL
 
 void graphics::BlitDBToScreen()
 {
@@ -429,3 +470,91 @@ void graphics::LoadDefaultFont(std::string FileName)
 {
 	DefaultFont = new colorizablebitmap(FileName);
 }
+
+#ifdef __DJGPP__
+
+void graphics::SetMode(ushort Mode)
+{
+	ModeInfo.Retrieve(Mode);
+
+	if(!ModeInfo.CheckSupport())
+		ABORT("Mode 0x%X not supported!", Mode);
+
+	__dpmi_regs Regs;
+
+	Regs.x.ax = 0x4F02;
+        Regs.x.bx = Mode | 0x4000;
+
+	__dpmi_int(0x10, &Regs);
+
+	XRes =		ModeInfo.Width;
+	YRes =		ModeInfo.Height;
+	/*BitsPerPixel =	ModeInfo.BitsPerPixel;
+	BytesPerLine =	ModeInfo.BytesPerLine;*/
+	BufferSize =	YRes * ModeInfo.BytesPerLine;
+
+	//delete Screen;
+	delete DoubleBuffer;
+
+	//Screen = new bitmap(XRes, YRes, BytesPerLine, ModeInfo.PhysicalLFBAddress);
+	DoubleBuffer = new bitmap(XRes, YRes);
+
+	__dpmi_meminfo MemoryInfo;
+
+	MemoryInfo.size = BufferSize;
+	MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
+
+	__dpmi_physical_address_mapping(&MemoryInfo);
+	__dpmi_lock_linear_region(&MemoryInfo);
+
+	ScreenSelector = __dpmi_allocate_ldt_descriptors(1);
+
+	__dpmi_set_segment_base_address(ScreenSelector, MemoryInfo.address);
+	__dpmi_set_segment_limit(ScreenSelector, BufferSize - 1);
+}
+
+void graphics::BlitDBToScreen()
+{
+	ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+	ulong TrueDestOffset = 0;
+	ulong TrueDestXMove = 0;
+	ushort Width = XRES;
+	ushort Height = YRES;
+
+	BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, Width, Height);
+}
+
+void graphics::vesainfo::Retrieve(void)
+{
+	Signature = 0x32454256;
+
+	dosmemput(this, sizeof(vesainfo), __tb);
+
+	__dpmi_regs Regs;
+
+	Regs.x.ax = 0x4F00;
+	Regs.x.di =  __tb       & 0x000F;
+	Regs.x.es = (__tb >> 4) & 0xFFFF;
+
+	__dpmi_int(0x10, &Regs);
+
+	dosmemget(__tb, sizeof(vesainfo), this);
+}
+
+void graphics::modeinfo::Retrieve(ushort Mode)
+{
+	__dpmi_regs Regs;
+
+	Regs.x.ax = 0x4F01;
+	Regs.x.cx = Mode;
+	Regs.x.di =  __tb       & 0x000F;
+	Regs.x.es = (__tb >> 4) & 0xFFFF;
+
+	dosmemput(this, sizeof(modeinfo), __tb);
+
+	__dpmi_int(0x10, &Regs);
+
+	dosmemget(__tb, sizeof(modeinfo), this);
+}
+
+#endif

@@ -71,7 +71,7 @@ public:
 	virtual void EatEffect(character*, float, float = 1.0);
 	virtual void HitEffect(character*)			{ }
 	virtual short NutritionValue() const			{ return 0; }
-	virtual void MinusAmount(float Amount)			{ SetVolume(GetVolume() > Amount ? GetVolume() - Amount : 0); }
+	virtual void MinusAmount(float Amount)			{ SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
 	virtual material* Clone(ulong Volume) const = 0;
 	virtual material* Clone() const = 0;
 	virtual bool IsType(ushort QType) const { return Type() == QType; }

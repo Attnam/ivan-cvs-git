@@ -1,4 +1,26 @@
 #include "whandler.h"
+
+#ifdef __DJGPP__
+
+int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
+{
+	if(EmptyBuffer)
+		while(kbhit());
+
+	return getkey();
+				
+}
+
+int globalwindowhandler::ReadKey()
+{
+	if(kbhit())
+		return getkey();
+	else
+		return 0;
+}
+
+#else
+
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
@@ -90,10 +112,10 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				return 0;
 			}
 
-			ushort Index = KeyBuffer.Search(wParam);
+			/*ushort Index = KeyBuffer.Search(wParam);
 
 			if(Index != 0xFFFF)
-				KeyBuffer.Remove(Index);
+				KeyBuffer.Remove(Index);*/
 
 			return 0;
 		}
@@ -231,7 +253,11 @@ void globalwindowhandler::CheckMessages()
 			DispatchMessage(&msg);
 		}
 }
-#else
+
+#endif
+
+#ifdef SDL
+
 void globalwindowhandler::Init(const char* Title)
 {
   SDL_WM_SetCaption(Title, 0);
@@ -366,5 +392,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
   
 
 }
+
+#endif
 
 #endif

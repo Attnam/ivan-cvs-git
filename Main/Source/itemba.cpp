@@ -141,7 +141,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 
 	if(Breaks)
-		ImpactDamage(Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+		ImpactDamage(ushort(Speed), game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 
 	if(Pos == StartingPos)
 		return false;

@@ -5,6 +5,10 @@
 #pragma warning(disable : 4786)
 #endif
 
+#ifdef __DJGPP__
+#define PACKED __attribute__ ((packed))
+#endif
+
 #define DOUBLEBUFFER	graphics::GetDoubleBuffer()
 #define XRES		graphics::GetXRes()
 #define YRES		graphics::GetYRes()
@@ -28,7 +32,9 @@
 
 #ifdef WIN32
 #include <windows.h>
-#else
+#endif
+
+#ifdef SDL
 #include "SDL.h"
 #endif
 
@@ -55,8 +61,12 @@ static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, 
 	static void SwitchMode();
 	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
 	static bool GetFullScreen() { return FullScreen; }
-#else
+#endif
+#ifdef SDL
 	static void SetMode(const char*, ushort, ushort, uchar);
+#endif
+#ifdef __DJGPP__
+	static void SetMode(ushort);
 #endif
 	static void BlitDBToScreen();
 	static ushort GetXRes() { return XRes; }
@@ -71,8 +81,65 @@ private:
 	static bool FullScreen;
 	static CDisplay* DXDisplay;
 	static void (*SwitchModeHandler)();
-#else
+#endif
+#ifdef SDL
 	static SDL_Surface* screen;
+#endif
+#ifdef __DJGPP__
+	//static bitmap* Screen;
+	static ulong BufferSize;
+	static ushort ScreenSelector;
+	static struct vesainfo
+	{
+	public:
+		void Retrieve(void);
+		bool   CheckSupport(void)	{return Version == 0x0200 ? true : false;};
+		ulong Signature		PACKED;
+		ushort Version		PACKED;
+		ulong OEMString		PACKED;
+		ulong Capabilities	PACKED;
+		ulong ModeList		PACKED;
+		ushort Memory		PACKED;
+		uchar  Shit[493]		PACKED;
+	} VesaInfo;
+	static struct modeinfo
+	{
+		void Retrieve(ushort);
+		bool   CheckSupport(void)	{return Attribs1 & 1 ? true : false;};
+		ushort Attribs1		PACKED;
+		uchar  AWindowAttribs	PACKED;
+		uchar  BWindowAttribs	PACKED;
+		ushort Granularity		PACKED;
+		ushort WindowSize		PACKED;
+		ushort WindowASegment	PACKED;
+		ushort WindowBSegment	PACKED;
+		ulong WindowMoveFunction	PACKED;
+		ushort BytesPerLine	PACKED;
+		ushort Width		PACKED;
+		ushort Height		PACKED;
+		uchar  CharWidth		PACKED;
+		uchar  CharHeight		PACKED;
+		uchar  Planes		PACKED;
+		uchar  BitsPerPixel	PACKED;
+		uchar  Banks		PACKED;
+		uchar  MemoryModel		PACKED;
+		uchar  BankSize		PACKED;
+		uchar  ImagePages		PACKED;
+		uchar  Reserved1		PACKED;
+		uchar  RedBits		PACKED;
+		uchar  RedShift		PACKED;
+		uchar  GreenBits		PACKED;
+		uchar  GreenShift		PACKED;
+		uchar  BlueBits		PACKED;
+		uchar  BlueShift		PACKED;
+		uchar  ResBits		PACKED;
+		uchar  ResShift		PACKED;
+		uchar  Attribs2		PACKED;
+		ulong PhysicalLFBAddress	PACKED;
+		ulong OffScreenMem	PACKED;
+		ushort OffScreenMemSize	PACKED;
+		uchar  Reserved2[206]	PACKED;
+	} ModeInfo;
 #endif
 	static bitmap* DoubleBuffer;
 	static ushort XRes;

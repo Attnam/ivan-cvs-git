@@ -25,7 +25,7 @@
 #include "config.h"
 #include "femath.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -2720,10 +2720,10 @@ bool character::CheckForEnemies(bool CheckDoors)
 		return MoveTowards(NearestChar->GetPos());
 	}
 	else
-		if(!GetTeam()->GetLeader() && WayPoint.X != 0xFFFF)
+		if(!GetTeam()->GetLeader() && WayPoint.X != -1)
 			if(!MoveTowards(WayPoint))
 			{
-				WayPoint.X = 0xFFFF;
+				WayPoint.X = -1;
 				return false;
 			}
 			else
@@ -2819,10 +2819,10 @@ bool character::FollowLeader()
 			return MoveTowards(WayPoint);
 	}
 	else
-		if(WayPoint.X != 0xFFFF)
+		if(WayPoint.X != -1)
 			if(!MoveTowards(WayPoint))
 			{
-				WayPoint.X = 0xFFFF;
+				WayPoint.X = -1;
 				return false;
 			}
 			else

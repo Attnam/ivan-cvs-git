@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "error.h"
 
+#ifdef __DJGPP__
+#include <conio.h>
+#endif
+
 #ifdef WIN32
 int Main(HINSTANCE, HINSTANCE, HWND*, LPSTR, int);
 
@@ -33,8 +37,13 @@ int main()
 	  ShowWindow(hWnd, SW_HIDE);
 
 	  MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
-#else
-	  cout << "Fatal Error: Unknown exception thrown.";
+#endif
+#ifdef SDL
+	std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
+#endif
+#ifdef __DJGPP__
+	textmode(0x3);
+	std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
 		exit(3);
 

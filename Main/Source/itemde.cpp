@@ -506,7 +506,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 		if(Wearer && Wearer->GetTorsoArmor() == this)
 			Wearer->SetTorsoArmor(0);
 
-		ImpactDamage(Strength, false, ItemsStack);
+		ImpactDamage(ushort(Strength), false, ItemsStack);
 
 		if(Shown)
 			ADD_MESSAGE("The plate mail is damaged by the loud sound.");

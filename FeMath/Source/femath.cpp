@@ -128,13 +128,13 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 											\
 			if(DD SecCond 0)						\
 			{								\
-				SecC##SecSign##SecSign;					\
+				SecC SecSign##= 1;					\
 				DD += I2;						\
 			}								\
 			else								\
 				DD += I1;						\
 											\
-			PriC##PriSign##PriSign;						\
+			PriC PriSign##= 1;						\
 		}									\
 	}
 

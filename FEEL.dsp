@@ -83,7 +83,7 @@ SOURCE=.\Feel\Source\error.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Feel\Source\winmain.cpp
+SOURCE=.\Feel\Source\femain.cpp
 # End Source File
 # End Group
 # Begin Group "Include"

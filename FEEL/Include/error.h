@@ -5,6 +5,10 @@
 #pragma warning(disable : 4786)
 #endif
 
+#ifdef __DJGPP__
+#define SIGNALS 8
+#endif
+
 #define ABORT globalerrorhandler::Abort
 
 #ifdef WIN32
@@ -32,6 +36,11 @@ private:
 #endif
 #ifdef WIN32
 	static HWND* hWnd;
+#endif
+#ifdef __DJGPP__
+	static void SignalHandler(int);
+	static void (*OldSignal[SIGNALS])(int);
+	static int  Signal[SIGNALS];
 #endif
 };
 

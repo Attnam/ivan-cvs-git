@@ -15,7 +15,13 @@
 
 #ifdef WIN32
 #define HIGHSCORE_FILENAME "HScore.dat"
-#else
+#endif
+
+#ifdef __DJGPP__
+#define HIGHSCORE_FILENAME "HScore.dat"
+#endif
+
+#ifdef SDL
 #define HIGHSCORE_FILENAME "/var/lib/games/ivan-highscores.scores"
 #endif
 

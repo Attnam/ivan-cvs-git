@@ -8,28 +8,7 @@
 #include "save.h"
 #include "allocate.h"
 #include "femath.h"
-
-void BlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitMirror(ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitFlip(ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitMirrorFlip(ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void BlitLuminated(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
-void MaskedBlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitMirror(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitFlip(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitMirrorFlip(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void MaskedBlitLuminated(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void AlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, uchar, ushort);
-void AlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
-void DrawLine(ulong, ulong, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
+#include "blit.h"
 
 bitmap::bitmap(std::string FileName) : AlphaMap(0)
 {
@@ -154,8 +133,6 @@ void bitmap::Save(std::string FileName) const
 		}
 #endif
 }
-
-void Fill(ulong, ulong, ushort, ushort, ushort);
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
@@ -430,7 +407,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 	{
 		float PosX = sin((2 * PI / NumberOfSides) * c + Rotation) * Radius;
 		float PosY = cos((2 * PI / NumberOfSides) * c + Rotation) * Radius;
-		Points.push_back(vector2d(PosX, PosY) + Center);
+		Points.push_back(vector2d(short(PosX), short(PosY)) + Center);
 	}
 
 	if(DrawDiameters)

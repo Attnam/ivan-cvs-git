@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdarg>
 
 #include "message.h"
 #include "felist.h"

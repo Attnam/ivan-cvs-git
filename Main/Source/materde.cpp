@@ -5,7 +5,7 @@
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveSchoolFoodEffect(Volume > Amount ? Amount : Volume);
+	Eater->ReceiveSchoolFoodEffect(long(Volume > Amount ? Amount : Volume));
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -17,7 +17,7 @@ void schoolfood::HitEffect(character* Enemy)
 
 void frogflesh::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->Darkness(Volume > Amount ? Amount : Volume);
+	Eater->Darkness(long(Volume > Amount ? Amount : Volume));
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -30,7 +30,7 @@ void frogflesh::HitEffect(character* Enemy)
 void omleurine::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	if(Amount >= Volume)
-		Eater->ReceiveOmleUrineEffect(Volume > Amount ? Amount : Volume);
+		Eater->ReceiveOmleUrineEffect(long(Volume > Amount ? Amount : Volume));
 
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
@@ -43,7 +43,7 @@ void omleurine::HitEffect(character* Enemy)
 
 void pepsi::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceivePepsiEffect(Volume > Amount ? Amount : Volume);
+	Eater->ReceivePepsiEffect(long(Volume > Amount ? Amount : Volume));
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -68,7 +68,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 
 void koboldflesh::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveKoboldFleshEffect(Volume > Amount ? Amount : Volume);
+	Eater->ReceiveKoboldFleshEffect(long(Volume > Amount ? Amount : Volume));
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }

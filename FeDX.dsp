@@ -46,10 +46,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-# Begin Special Build Tool
-SOURCE=$(InputPath)
-PreLink_Cmds=nasm -o FeDX/Asm/winblit.obj FeDX/Source/winblit.asm -f win32
-# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "FeDX - Win32 Debug"
 
@@ -72,10 +68,6 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
-# Begin Special Build Tool
-SOURCE=$(InputPath)
-PreLink_Cmds=nasm -o FeDX/Asm/winblit.obj FeDX/Source/winblit.asm -f win32
-# End Special Build Tool
 
 !ENDIF 
 
@@ -115,6 +107,10 @@ SOURCE=.\FeDX\Source\dxutil.cpp
 
 SOURCE=.\FeDX\Source\graphics.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\FeDX\Source\winblit.cpp
+# End Source File
 # End Group
 # Begin Group "Include"
 
@@ -122,6 +118,10 @@ SOURCE=.\FeDX\Source\graphics.cpp
 # Begin Source File
 
 SOURCE=.\FeDX\Include\bitmap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeDX\Include\blit.h
 # End Source File
 # Begin Source File
 
@@ -140,9 +140,5 @@ SOURCE=.\FeDX\Include\dxutil.h
 SOURCE=.\FeDX\Include\graphics.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\FeDX\Asm\winblit.obj
-# End Source File
 # End Target
 # End Project

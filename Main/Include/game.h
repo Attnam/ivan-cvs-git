@@ -17,13 +17,20 @@
 #ifdef WIN32
 #define GAME_DIR std::string("")
 #define SAVE_DIR std::string("Save/")
-#else
+#endif
 
+#ifdef __DJGPP__
+#define GAME_DIR std::string("")
+#define SAVE_DIR std::string("Save/")
+#endif
+
+#ifdef SDL
 #define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
 
 #define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))
     // The program can only create directories to the deepness of 1 no more...
 #endif
+
 #include <string>
 #include <vector>
 
@@ -164,7 +171,9 @@ public:
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static petrus* GetPetrus() { return Petrus; }
 	static void SetPetrus(petrus* What) { Petrus = What; }
+#ifndef __DJGPP__
 	static bool HandleQuitMessage();
+#endif
 	static void Beep();
 	static uchar GetDirectionForVector(vector2d);
 	static void SetInGetCommand(bool What) { InGetCommand = What; }

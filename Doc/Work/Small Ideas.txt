@@ -81,6 +81,6 @@ Ivan should break doors.
 Monsters that change colors.
 Drugs.
 Karateka.
-Jewels.
-Genies should be able to wish.
+*Jewels.
+*Genies should be able to wish.
 Change material tweaking.

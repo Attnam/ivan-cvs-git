@@ -1,5 +1,11 @@
 #include <cstdio>
 
+#ifdef __DJGPP__
+#include <conio.h>
+#include <go32.h>
+#include <sys/farptr.h>
+#endif
+
 #include "graphics.h"
 #include "game.h"
 #include "igraph.h"
@@ -20,6 +26,10 @@ int Main()
 #ifdef VC
 	__asm _emit(1 << 0x04)|(1 << 0x07);
 #endif
+#ifdef __DJGPP__
+	char ShiftByteState = _farpeekb(_dos_ds, 0x417);
+	_farpokeb(_dos_ds, 0x417, 0);
+#endif
 
 	game::InitLuxTable();
 	game::InitScript();
@@ -31,7 +41,7 @@ int Main()
 	igraph::Init();
 #endif
 
-	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+	//globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 
 	elpuri Elpuri(true, false, false, false);
 
@@ -68,6 +78,9 @@ int Main()
 		}
 		case 4:
 			configuration::Save();
+#ifdef __DJGPP__
+			_farpokeb(_dos_ds, 0x417, ShiftByteState);
+#endif
 			return 0;
 		}
 }

@@ -8,9 +8,24 @@
 #define GETKEY globalwindowhandler::GetKey
 #define READKEY globalwindowhandler::ReadKey
 
+#ifdef __DJGPP__
+
+#include <pc.h>
+
+class globalwindowhandler
+{
+public:
+	static int GetKey(bool = true, bool = false);
+	static int ReadKey();
+};
+
+#else
+
 #ifdef WIN32
 #include <windows.h>
-#else
+#endif
+
+#ifdef SDL
 #include "SDL.h"
 #endif
 
@@ -26,12 +41,12 @@ public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static void Init(HINSTANCE, HWND*, const char*, LPCTSTR);
 	static void CheckMessages();
-#else
+#endif
+#ifdef SDL
 	static void Init(const char*);
 	static void ProcessMessage(SDL_Event);
 #endif
 	static int GetKey(bool = true, bool = false);
-
 	static int ReadKey();
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
@@ -46,6 +61,8 @@ private:
 	static char KeyboardLayoutName[KL_NAMELENGTH];
 #endif
 };
+
+#endif
 
 #endif
 
