@@ -5,9 +5,6 @@ void materialcontainer::ChangeContainedMaterial(material* What, ushort SpecialFl
 void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
 void materialcontainer::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetContainedMaterial(NewMaterial, SpecialFlags); }
 void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
-ulong materialcontainer::GetPrice() const { return GetContainedMaterial() ? GetContainedMaterial()->GetRawPrice() + item::GetPrice() : item::GetPrice(); }
-
-ulong banana::GetPrice() const { return GetContainedMaterial()->GetRawPrice() + item::GetPrice(); }
 
 uchar holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
@@ -20,27 +17,17 @@ ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB24(255, 255, 140
 bool can::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
 
-ulong lump::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
-
 bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 bool potion::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 
-ulong loaf::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
-
 ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
-
-ulong kiwi::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
-
-ulong pineapple::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
 
 bool backpack::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 ulong backpack::GetTotalExplosivePower() const { return GetContainedMaterial() ? GetContainedMaterial()->GetTotalExplosivePower() : 0; }
 
 void holybook::AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
 
-ulong oillamp::GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
-
-ulong stone::GetPrice() const { return (GetMainMaterial()->GetRawPrice() << 1) + item::GetPrice(); }
+ulong stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1; }
 
 ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
 
@@ -817,13 +804,13 @@ void scrolloftaming::FinishReading(character* Reader)
 void mine::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> Active >> Team;
+  SaveFile >> Active >> Team >> DiscoveredByTeam;
 }
 
 void mine::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << Active << Team;
+  SaveFile << Active << Team << DiscoveredByTeam;
 }
 
 bool mine::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
@@ -1218,13 +1205,13 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 void beartrap::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> Active >> Team;
+  SaveFile >> Active >> Team >> DiscoveredByTeam;
 }
 
 void beartrap::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << Active << Team;
+  SaveFile << Active << Team << DiscoveredByTeam;
 }
 
 void beartrap::VirtualConstructor(bool)
@@ -1346,14 +1333,16 @@ bool itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
   return GetMainMaterial()->IsTransparent() && CanBeSeenBy(Viewer);
 }
 
-bool mine::CanBeSeenBy(const character* Viewer) const 
+bool mine::CanBeSeenBy(const character* Viewer) const
 { 
-  return (!IsActive() || (Viewer->GetTeam()->GetID() == Team)) && materialcontainer::CanBeSeenBy(Viewer); 
+  ushort ViewerTeam = Viewer->GetTeam()->GetID();
+  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer); 
 }
 
-bool beartrap::CanBeSeenBy(const character* Viewer) const 
-{ 
-  return (!IsActive() || (Viewer->GetTeam()->GetID() == Team)) && item::CanBeSeenBy(Viewer); 
+bool beartrap::CanBeSeenBy(const character* Viewer) const
+{
+  ushort ViewerTeam = Viewer->GetTeam()->GetID();
+  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && item::CanBeSeenBy(Viewer); 
 }
 
 bool mine::Apply(character* User)
@@ -1516,7 +1505,7 @@ bool key::CanBePiledWith(const item* Item, const character* Viewer) const
   return item::CanBePiledWith(Item, Viewer) && LockType == static_cast<const key*>(Item)->LockType;
 }
 
-ulong mine::GetPrice() const
+/*ulong mine::GetPrice() const
 {
   if(GetContainedMaterial())
     {
@@ -1527,11 +1516,11 @@ ulong mine::GetPrice() const
     }
   else
     return item::GetPrice();
-}
+}*/
 
-ulong itemcontainer::GetPrice() const
+ulong itemcontainer::GetTruePrice() const
 {
-  return GetContained()->GetPrice() + item::GetPrice();
+  return GetContained()->GetTruePrice() + item::GetTruePrice();
 }
 
 void potion::Break()
@@ -1913,7 +1902,7 @@ bool horn::Apply(character* Blower)
 
 		    Audience->DeActivateTemporaryState(PANIC);
 		  }
-		else if(Config == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 100)
+		else if(Config == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
 		  Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	      }
 	  }
@@ -2105,9 +2094,13 @@ uchar lantern::GetAlphaD(ushort Frame) const
 
 void itemcontainer::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
 {
-  if(Sorter == 0 || Sorter(this,Character))
-    {
-      AllItems.push_back(const_cast<itemcontainer*>(this));
-    }
+  if(Sorter == 0 || Sorter(this, Character))
+    AllItems.push_back(const_cast<itemcontainer*>(this));
+
   GetContained()->SortAllItems(AllItems, Character, Sorter);
+}
+
+uchar materialcontainer::GetAttachedGod() const
+{
+  return DataBase->AttachedGod ? DataBase->AttachedGod : ContainedMaterial->GetAttachedGod();
 }

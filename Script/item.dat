@@ -80,6 +80,7 @@ item
 	BeamStyle = PARTICLE_BEAM;
 	WearWisdomLimit = NO_LIMIT;
 	AttachedGod = NONE;
+	/* Obligatory: AttachedGod */
 }
 
 materialcontainer
@@ -105,7 +106,7 @@ lantern
 	CanBeBroken = true;
 	BitmapPos = 0, 256;
 	WallBitmapPos = 0, 192;
-	AttachedGod = LORICATUS;
+	AttachedGod = LEGIFER;
 
 	Config BROKEN;
 	{
@@ -165,7 +166,6 @@ meleeweapon
 	IsAbstract = true;
 	CanBeBroken = true;
 	CanBePiled = false;
-	AttachedGod = LORICATUS;
 	CanBeEnchanted = true;
 
 	Config LONG_SWORD;
@@ -185,6 +185,7 @@ meleeweapon
 		SecondaryMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
 		MaterialConfigChances = { 4, 50, 150, 50, 10; }
 		Roundness = 10;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|LONG_SWORD;
@@ -211,6 +212,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 15;
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|TWO_HANDED_SWORD;
@@ -237,6 +239,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 250, 10; }
 		Roundness = 15;
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|TWO_HANDED_SCIMITAR;
@@ -262,6 +265,7 @@ meleeweapon
 		MaterialConfigChances = { 6, 250, 50, 250, 150, 50, 10; }
 		Roundness = 10;
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|SPEAR;
@@ -288,6 +292,7 @@ meleeweapon
 		MaterialConfigChances = { 4, 100, 100, 50, 10; }
 		Roundness = 20;
 		IsTwoHanded = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config BROKEN|AXE;
@@ -313,6 +318,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 50, 10; }
 		Roundness = 20;
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|HALBERD;
@@ -365,6 +371,7 @@ meleeweapon
 		Roundness = 20;
 		IsTwoHanded = true;
 		CanBeUsedBySmith = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config BROKEN|HAMMER;
@@ -466,6 +473,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 15;
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|BASTARD_SWORD;
@@ -491,6 +499,7 @@ meleeweapon
 		MaterialConfigChances = { 4, 50, 75, 50, 10; }
 		Roundness = 30;
 		IsTwoHanded = true;
+		AttachedGod = LORICATUS;
 	}
 
 	Config BROKEN|BATTLE_AXE;
@@ -765,7 +774,7 @@ bodyarmor /* armor-> */
 		StrengthModifier = 150; 
 		DefaultSize = 80;
 		DefaultMainVolume = 5000; 
-		BitmapPos = 16, 128;
+		BitmapPos = 64, 208;
 		Possibility = 10;
 		NameSingular = "armor";
 		PostFix = "of great health";
@@ -783,7 +792,7 @@ bodyarmor /* armor-> */
 	{
 		Possibility = 1;
 		StrengthModifier = 75;
-		BitmapPos = 0, 352;
+		BitmapPos = 64, 224;
 		FormModifier = 20;
 		Price = 50;
 		AffectsEndurance = false;
@@ -1317,7 +1326,7 @@ backpack /* materialcontainer-> */
 	Alias == "explosives";
 	Roundness = 70;
 	IsTwoHanded = true;
-	AttachedGod = LORICATUS;
+	AttachedGod = CRUENTUS;
 }
 
 holybook
@@ -1482,6 +1491,7 @@ cloak /* armor-> */
 	Roundness = 60;
 	IsTwoHanded = true;
 	InElasticityPenaltyModifier = 50;
+	AttachedGod = CLEPTIA;
 
 	Config CLOAK_OF_INVISIBILITY;
 	{
@@ -1490,7 +1500,6 @@ cloak /* armor-> */
 		PostFix = "of invisibility";
 		Price = 2500;
 		CanBeWished = false;
-		AttachedGod = CLEPTIA;
 	}
 }
 
@@ -1724,6 +1733,16 @@ ring
 		MainMaterialConfig == GLASS;
 		Price = 250;
 		AttachedGod = LORICATUS;
+	}
+
+	Config RING_OF_SEARCHING;
+	{
+		Possibility = 20;
+		PostFix = "of searching";
+		MainMaterialConfig == WOOD;
+		Price = 500;
+		AttachedGod = LEGIFER;
+		GearStates = SEARCHING;
 	}
 }
 
@@ -2134,7 +2153,6 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
-		AttachedGod = INFUSCOR;
 	}
 
 	Config BROKEN|HELM_OF_BRILLIANCE;
@@ -2387,6 +2405,7 @@ gorovitshammer
 	DefaultEnchantment = 2;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
+	AttachedGod = LORICATUS;
 }
 
 gorovitssickle
@@ -2484,7 +2503,7 @@ thunderhammer /* meleeweapon-> */
 	CanBeUsedBySmith = true;
 	Price = 500;
 	BaseEmitation = rgb24(130, 130, 130);
-	AttachedGod = SILVA;
+	AttachedGod = TERRA;
 
 	Config BROKEN;
 	{

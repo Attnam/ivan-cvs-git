@@ -10,6 +10,7 @@
 #include <list>
 #include <string>
 #include <map>
+#include <set>
 
 #include "rect.h"
 #include "error.h"
@@ -344,6 +345,31 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
       type1 First;
       SaveFile >> First;
       SaveFile >> Map[First];
+    }
+
+  return SaveFile;
+}
+
+template <class type> inline outputfile& operator<<(outputfile& SaveFile, const std::set<type>& Set)
+{
+  SaveFile << ulong(Set.size());
+
+  for(typename std::set<type>::const_iterator i = Set.begin(); i != Set.end(); ++i)
+    SaveFile << *i;
+
+  return SaveFile;
+}
+
+template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::set<type>& Set)
+{
+  ulong Size;
+  SaveFile >> Size;
+
+  for(ushort c = 0; c < Size; ++c)
+    {
+      type Value;
+      SaveFile >> Value;
+      Set.insert(Value);
     }
 
   return SaveFile;

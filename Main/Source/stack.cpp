@@ -675,12 +675,12 @@ void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* 
   std::stable_sort(PileVector.begin(), PileVector.end(), CategorySorter);
 }
 
-ulong stack::GetPrice() const
+ulong stack::GetTruePrice() const
 {
   ulong Price = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    Price += i->GetPrice();
+    Price += i->GetTruePrice();
 
   return Price;
 }

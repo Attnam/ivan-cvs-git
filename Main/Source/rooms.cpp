@@ -22,7 +22,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
+  ulong Price = ForSale->GetTruePrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
@@ -92,7 +92,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+  ulong Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
@@ -218,7 +218,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
 
   if(Visitor->IsPlayer())
     {
-      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetPrice() || Item->IsEncryptedScroll())
+      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetTruePrice() || Item->IsEncryptedScroll())
 	return true;
 
       ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
@@ -379,7 +379,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
+  ulong Price = ForSale->GetTruePrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
     {
@@ -451,7 +451,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+  ulong Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
@@ -612,7 +612,7 @@ void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
 bool shop::AllowSpoil(const item* Item) const
 {
   character* Master = game::SearchCharacter(MasterID);
-  return !Master || !Master->IsEnabled() || !Item->GetPrice();
+  return !Master || !Master->IsEnabled() || !Item->GetTruePrice();
 }
 
 bool shop::AllowKick(const character* Char, const lsquare* LSquare) const // gum solution

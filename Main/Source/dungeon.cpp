@@ -63,7 +63,9 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
 {
   if(Generated[Index])
     {
-      LoadLevel(game::SaveName(), Index);
+      level* NewLevel = LoadLevel(game::SaveName(), Index);
+      game::SetCurrentArea(NewLevel);
+      game::SetCurrentLevel(NewLevel);
       return true;
     }
   else

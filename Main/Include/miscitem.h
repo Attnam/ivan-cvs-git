@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <set>
+
 #include "item.h"
 
 class ABSTRACT_ITEM
@@ -26,10 +28,10 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
-  virtual ulong GetPrice() const;
   virtual void Be();
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
+  virtual uchar GetAttachedGod() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials();
@@ -43,7 +45,6 @@ class ITEM
   banana,
   materialcontainer,
  public:
-  virtual ulong GetPrice() const;
   virtual bool Zap(character*, vector2d, uchar);
   virtual uchar GetCharges() const { return Charges; }
   virtual void SetCharges(uchar What) { Charges = What; }
@@ -67,7 +68,6 @@ class ITEM
  public:
   virtual void Be() { }
   virtual uchar GetSpecialFlags() const;
-  virtual ulong GetPrice() const { return item::GetPrice(); }
 );
 
 class ITEM
@@ -121,7 +121,6 @@ class ITEM
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual material* CreateDipMaterial();
-  virtual ulong GetPrice() const;
   virtual bool IsDipDestination(const character*) const { return true; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
@@ -236,8 +235,6 @@ class ITEM
 (
   loaf,
   item,
- public:
-  virtual ulong GetPrice() const;
  protected:
   virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
@@ -310,16 +307,14 @@ class ITEM
 (
   kiwi,
   item,
- public:
-  virtual ulong GetPrice() const;
+  ;
 );
 
 class ITEM
 (
   pineapple,
   item,
- public:
-  virtual ulong GetPrice() const;
+  ;
 );
 
 class ITEM
@@ -374,7 +369,6 @@ class ITEM
   item,
  public:
   oillamp(const oillamp&);
-  virtual ulong GetPrice() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
@@ -391,7 +385,7 @@ class ITEM
   stone,
   item,
  public:
-  virtual ulong GetPrice() const;
+  virtual ulong GetTruePrice() const;
  protected:
   virtual bool ShowMaterial() const;
 );
@@ -423,12 +417,13 @@ class ITEM
   virtual bool WillExplode(const character*) const;
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
-  virtual ulong GetPrice() const;
+  //virtual ulong GetPrice() const;
   virtual bool CheckPickUpEffect(character*);
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
+  std::set<ushort> DiscoveredByTeam;
 );
 
 class ITEM
@@ -508,7 +503,7 @@ class ITEM
   virtual bool Polymorph(stack*);
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
-  virtual ulong GetPrice() const;
+  virtual ulong GetTruePrice() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void DrawContents(const character*);
   virtual bool Apply(character* Applier) { return Open(Applier); }
@@ -554,6 +549,7 @@ class ITEM
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
+  std::set<ushort> DiscoveredByTeam;
 );
 
 class ITEM

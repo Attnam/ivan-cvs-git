@@ -211,3 +211,13 @@ void olterrain::CalculateHP()
       HP = SV * SV * GetHPModifier() / 5000;
     }
 }
+
+uchar glterrain::GetAttachedGod() const
+{
+  return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
+}
+
+uchar olterrain::GetAttachedGod() const
+{
+  return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
+}

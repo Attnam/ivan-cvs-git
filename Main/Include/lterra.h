@@ -39,6 +39,7 @@ struct terraindatabase
   ulong DefaultContainedVolume;
   bool CreateDivineConfigurations;
   bool ShowMaterial;
+  uchar AttachedGod;
 };
 
 class lterrain : public object
@@ -139,6 +140,7 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
+  virtual uchar GetAttachedGod() const;
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const;
@@ -247,6 +249,7 @@ class olterrain : public lterrain, public oterrain
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
   void CalculateHP();
   virtual bool IsTransparent() const { return true; }
+  virtual uchar GetAttachedGod() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase();

@@ -89,7 +89,7 @@ class stack
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;
   void Pile(std::vector<std::vector<item*> >&, const character*, bool (*)(const item*, const character*) = 0) const;
-  ulong GetPrice() const;
+  ulong GetTruePrice() const;
   ulong GetTotalExplosivePower() const;
   void ReceiveFluidSpill(material*);
   static ushort GetSelected() { return Selected; }

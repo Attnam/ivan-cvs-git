@@ -32,7 +32,6 @@ struct materialdatabase
   bool IsGolemMaterial;
   ulong Emitation;
   bool CanBeWished;
-  uchar Alignment;
   ushort NutritionValue;
   bool IsAlive;
   bool IsFlammable;
@@ -114,7 +113,6 @@ class material
   DATA_BASE_BOOL(IsGolemMaterial);
   DATA_BASE_VALUE(ulong, Emitation);
   DATA_BASE_BOOL(CanBeWished);
-  DATA_BASE_VALUE(uchar, Alignment);
   DATA_BASE_VALUE(ushort, NutritionValue);
   DATA_BASE_BOOL(IsAlive);
   DATA_BASE_BOOL(IsFlammable);

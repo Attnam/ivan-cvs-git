@@ -41,6 +41,7 @@ olterrain
 	StorageVolume = 0;
 	HPModifier = 100;
 	IsSafeToCreateDoor = false;
+	AttachedGod = NONE;
 }
 
 wall
@@ -170,6 +171,7 @@ decoration
 		BitmapPos = 32, 336;
 		ShowMaterial = true;
 		HPModifier = 25;
+		AttachedGod = SILVA;
 	}
 
 	Config CARPET;
@@ -321,6 +323,7 @@ portal /* link -> */
 	MainMaterialConfig == GOLD;
 	MaterialColorB = rgb16(200, 0, 0);
 	NameSingular = "magic portal";
+	AttachedGod = MORTIFER;
 	/* BitmapPos overridden */
 
 	/* Config specialities hard-coded */
@@ -349,6 +352,7 @@ throne /* olterrain-> */
 	MaterialColorB = rgb16(200, 200, 0);
 	NameSingular = "throne";
 	BitmapPos = 0, 416;
+	AttachedGod = VALPURUS;
 }
 
 olterraincontainer /* olterrain->decoration-> */
@@ -365,6 +369,7 @@ olterraincontainer /* olterrain->decoration-> */
 		SitMessage = "The bookcase is very unconfortable to sit on.";
 		StorageVolume = 100000;
 		HPModifier = 20;
+		AttachedGod = SOPHOS;
 	}
 }
 

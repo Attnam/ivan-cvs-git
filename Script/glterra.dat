@@ -32,6 +32,7 @@ glterrain
 	DefaultContainedVolume = 0;
 	ShowMaterial = true;
 	CreateDivineConfigurations = false;
+	AttachedGod = NONE;
 }
 
 solidterrain /* glterrain-> */

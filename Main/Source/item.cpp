@@ -525,7 +525,7 @@ void item::AddAttackInfo(felist& List) const
 void item::AddMiscellaneousInfo(felist& List) const
 {
   std::string Entry(40, ' ');
-  Entry << int(GetPrice());
+  Entry << int(GetTruePrice());
   Entry.resize(55, ' ');
   Entry << int(GetOfferValue(NEUTRAL));
   Entry.resize(70, ' ');
@@ -618,7 +618,7 @@ void item::Empty()
 short item::GetOfferValue(char) const
 {
   /* Temporary */
-  return short(sqrt(GetPrice()));
+  return short(sqrt(GetTruePrice()));
 }
 
 void item::SignalEnchantmentChange()
@@ -729,8 +729,28 @@ bool item::IsBroken() const
 
 void item::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
 {
-  if(Sorter == 0 || Sorter(this,Character))
-    {
-      AllItems.push_back(const_cast<item*>(this));
-    }
+  if(Sorter == 0 || Sorter(this, Character))
+    AllItems.push_back(const_cast<item*>(this));
 }
+
+uchar item::GetAttachedGod() const
+{
+  return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
+}
+
+ulong item::GetMaterialPrice() const
+{
+  ulong Price = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      Price += GetMaterial(c)->GetRawPrice();
+
+  return Price;
+}
+
+ulong item::GetTruePrice() const
+{
+  return Max(GetPrice(), GetMaterialPrice());
+}
+

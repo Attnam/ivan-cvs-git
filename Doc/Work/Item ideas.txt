@@ -33,6 +33,7 @@ helm of ESP
 sandals of Hermes - flying
 //girdle of carrying - +x% carrying strength
 amulet of improbability - causes odd improbabilities
+spiked gauntlets
 
 Other equipment:
 

@@ -45,7 +45,7 @@
 #define BLOATED 4
 #define OVER_FED 5
 
-#define STATES 16
+#define STATES 17
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -63,6 +63,7 @@
 #define PANIC 8192
 #define CONFUSED 16384
 #define PARASITIZED 32768
+#define SEARCHING 65536
 
 #define TORSO 1
 #define HEAD 2
@@ -386,6 +387,7 @@
 #define DULCIS 4
 #define SEGES 5
 #define SOPHOS 6
+#define TERRA 7
 #define SILVA 7
 #define LORICATUS 8
 #define MELLIS 9

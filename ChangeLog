@@ -7,6 +7,13 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Special monsters and items now determine their AttachedGod correctly
+	* Terrains now also have AttachedGods (mostly depends on material)
+	* Horn of fear is now much more powerful
+	* Many unfinished things which I do not remember
+
 February 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* When player is killed by something when he is fainting the death message now says "killed by a X while helpless".
@@ -28,7 +35,7 @@ February 25 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 February 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added ghosts
-	
+
 February 20 2003 Timo Kiviluoto <sonor@phpoint.fi> and
 				 Heikki Sairanen<heikki.sairanen@phpoint.net>
 

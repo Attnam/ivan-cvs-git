@@ -67,7 +67,7 @@ class ABSTRACT_ITEM
   virtual bool IsVeryCloseToSpoiling() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   bool IsAlive() const;
-  virtual ulong GetPrice() const;
+  virtual ulong GetTruePrice() const;
   void SpillBlood(ushort);
   void SpillBlood(ushort, vector2d);
   void SetBloodColor(ushort What) { BloodColor = What; }
@@ -435,7 +435,7 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual long GetScore() const;
   virtual bool IsDestroyable() const;
-  virtual ulong GetPrice() const;
+  virtual ulong GetTruePrice() const;
   virtual ushort GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;

@@ -176,7 +176,7 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 			    if(MinPrice == 0 && MaxPrice == MAX_PRICE) // optimization, GetPrice() may be rather slow
 			      return Item;
 
-			    ulong Price = Item->GetPrice();
+			    ulong Price = Item->GetTruePrice();
 
 			    if(Item->HandleInPairs())
 			      Price <<= 1;

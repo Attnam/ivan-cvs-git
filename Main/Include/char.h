@@ -235,15 +235,15 @@ class character : public entity, public id
   void BeKicked(character*, item*, float, float, short, bool, bool);
   void FallTo(character*, vector2d);
   bool CheckCannibalism(const material*) const;
-  void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
-  void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
-  void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
-  void DeActivateEquipmentState(ushort What) { EquipmentState &= ~What; }
-  bool TemporaryStateIsActivated(ushort What) const { return (TemporaryState & What) != 0; }	
-  bool EquipmentStateIsActivated(ushort What) const { return (EquipmentState & What) != 0; }
-  bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
+  void ActivateTemporaryState(ulong What) { TemporaryState |= What; }
+  void DeActivateTemporaryState(ulong What) { TemporaryState &= ~What; }
+  void ActivateEquipmentState(ulong What) { EquipmentState |= What; }
+  void DeActivateEquipmentState(ulong What) { EquipmentState &= ~What; }
+  bool TemporaryStateIsActivated(ulong What) const { return (TemporaryState & What) != 0; }	
+  bool EquipmentStateIsActivated(ulong What) const { return (EquipmentState & What) != 0; }
+  bool StateIsActivated(ulong What) const { return TemporaryState & What || EquipmentState & What; }
   virtual bool Faint(ushort, bool = false);
-  void SetTemporaryStateCounter(ushort, ushort);
+  void SetTemporaryStateCounter(ulong, ushort);
   void DeActivateVoluntaryAction(const std::string&);
   void ActionAutoTermination();
   team* GetTeam() const { return Team; }
@@ -319,8 +319,8 @@ class character : public entity, public id
   virtual uchar CloseMultiplier() const { return 2; }
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const { return true; }
-  ushort GetTemporaryStateCounter(ushort) const;
-  void EditTemporaryStateCounter(ushort, short);
+  ushort GetTemporaryStateCounter(ulong) const;
+  void EditTemporaryStateCounter(ulong, short);
   static bool AllowDamageTypeBloodSpill(uchar);
   bool ClosePos(vector2d);
   ushort GetResistance(uchar) const;
@@ -482,8 +482,8 @@ class character : public entity, public id
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   ushort GetConfig() const { return Config; }
-  void BeginTemporaryState(ushort, ushort);
-  void GainIntrinsic(ushort);
+  void BeginTemporaryState(ulong, ushort);
+  void GainIntrinsic(ulong);
   void HandleStates();
   void PrintBeginPolymorphControlMessage() const;
   void PrintEndPolymorphControlMessage() const;
@@ -495,8 +495,11 @@ class character : public entity, public id
   void PrintEndHasteMessage() const;
   void PrintBeginSlowMessage() const;
   void PrintEndSlowMessage() const;
+  void PrintBeginSearchingMessage() const;
+  void PrintEndSearchingMessage() const;
   void EndPolymorph();
   void LycanthropyHandler();
+  void SearchingHandler();
   void SaveLife();
   void BeginInvisibility();
   void BeginInfraVision();
@@ -747,7 +750,7 @@ class character : public entity, public id
   stack* Stack;
   long NP, AP;
   bool Player;
-  ushort TemporaryState;
+  ulong TemporaryState;
   ushort TemporaryStateCounter[STATES];
   team* Team;
   vector2d WayPoint;
@@ -766,7 +769,7 @@ class character : public entity, public id
   entity* MotherEntity;
   character* PolymorphBackup;
   cweaponskill** CWeaponSkill;
-  ushort EquipmentState;
+  ulong EquipmentState;
   square* SquareUnder;
   ulong Volume;
   ulong Weight;

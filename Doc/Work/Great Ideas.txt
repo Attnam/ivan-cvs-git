@@ -70,3 +70,4 @@ Game saga.
 Pregnancy state for female players.
 Storks. (alternative for the last one)
 One day, the dolphins in the cathedral should vanish, leaving behind only a glass bowl.
+Inquisition.

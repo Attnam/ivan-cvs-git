@@ -40,7 +40,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 16
+#define STATES 17
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -58,6 +58,7 @@
 #define PANIC 8192
 #define CONFUSED 16384
 #define PARASITIZED 32768
+#define SEARCHING 65536
 
 #define HEAD 1
 #define TORSO 2
@@ -426,6 +427,7 @@
 #define RING_OF_POISON_RESISTANCE 7
 #define RING_OF_INVISIBILITY 8
 #define RING_OF_ELECTRICITY_RESISTANCE 9
+#define RING_OF_SEARCHING 10
 
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
@@ -560,6 +562,7 @@
 #define DULCIS 4
 #define SEGES 5
 #define SOPHOS 6
+#define TERRA 7
 #define SILVA 7
 #define LORICATUS 8
 #define MELLIS 9

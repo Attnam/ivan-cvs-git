@@ -3,7 +3,7 @@
 uchar bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 void bodypart::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
 void bodypart::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
-ulong bodypart::GetPrice() const { return GetMainMaterial()->GetRawPrice() / 100 + item::GetPrice(); }
+ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice() / 100; }
 uchar bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 
@@ -650,13 +650,13 @@ bool corpse::IsDestroyable() const
   return true;
 }
 
-ulong corpse::GetPrice() const
+ulong corpse::GetTruePrice() const
 {
   ulong Price = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
-      Price += GetDeceased()->GetBodyPart(c)->GetPrice();
+      Price += GetDeceased()->GetBodyPart(c)->GetTruePrice();
 
   return Price;
 }

@@ -85,6 +85,7 @@ character
 	UsesNutrition = true;
 	AttackWisdomLimit = NO_LIMIT;
 	CanWalkThroughWalls = false;
+	/* Obligatory: AttachedGod */
 	BodyPartsDisappearWhenSevered = false;
 }
 
@@ -765,7 +766,7 @@ frog
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 100;
 		CanOpen = false;
-		AttachedGod = MORTIFER;
+		AttachedGod = SCABIES;
 	}
 
 	Config GREATER_DARK;
@@ -788,7 +789,7 @@ frog
 		CanBeGenerated = true;
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 200;
-		AttachedGod = MORTIFER;
+		AttachedGod = SCABIES;
 	}
 
 	Config LIGHT;
@@ -1189,6 +1190,7 @@ golem
 		DangerModifier = 500;
 		Adjective = "valpurium";
 		CanBeWished = false;
+		AttachedGod = VALPURUS;
 	}
 
 	Config SPIDER_SILK;
@@ -1204,6 +1206,7 @@ golem
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		Adjective = "spider silk";
+		AttachedGod = SOPHOS;
 	}
 
 	Config BLOOD;
@@ -1211,6 +1214,7 @@ golem
 		CanBeGenerated = false;
 		Adjective = "blood";
 		CanBeWished = false;
+		AttachedGod = CRUENTUS;
 	}
 }
 
@@ -2404,7 +2408,7 @@ unicorn
 		SkinColor = rgb16(200, 200, 200);
 		Adjective = "white";
 		FleshMaterial = WHITE_UNICORN_FLESH;
-		AttachedGod = SEGES;
+		AttachedGod = DULCIS;
 	}
 
 	Config NEUTRAL;
@@ -2412,7 +2416,7 @@ unicorn
 		SkinColor = rgb16(144, 144, 144);
 		Adjective = "gray";
 		FleshMaterial = GRAY_UNICORN_FLESH;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config EVIL;
@@ -2597,7 +2601,7 @@ snake
 	FleshMaterial = SNAKE_FLESH;
 	DangerModifier = 33;
 	CanOpen = false;
-	AttachedGod = SILVA;
+	AttachedGod = MELLIS;
 }
 
 orc
@@ -3034,12 +3038,12 @@ elder
 	IsUnique = true;
 	DefaultName = "Kaethos";
 	IsCharmable = false;
-	AttachedGod = SILVA;
+	AttachedGod = SOPHOS;
 	HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
 	FriendlyReplies =
 	{
 		10,
-		"\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. But good luck anyway.\"",
+		"\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. Good luck.\"",
 		"\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
 		"\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
 		"\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",

@@ -17,7 +17,6 @@ material
 	IsGolemMaterial = false;
 	Emitation = 0;
 	CanBeWished = true;
-	Alignment = NEUTRAL;
 	NutritionValue = 0;
 	IsAlive = false;
 	ConsumeWisdomLimit = NO_LIMIT;
@@ -38,7 +37,7 @@ material
 	EffectStrength = 100;
 	CanHaveParasite = false;
 	/* DigProductMaterial defaults to Config */
-	AttachedGod = NONE;
+	/* Obligatory: AttachedGod */
 
 	Config IRON;
 	{
@@ -64,7 +63,6 @@ material
 		CanBeWished = false;
 		Emitation = rgb24(150, 150, 150);
 		PriceModifier = 50000;
-		Alignment = GOOD;
 		NameStem = "valpurium";
 		IsSparkling = true;
 		IsMetal = true;
@@ -80,7 +78,7 @@ material
 		IsGolemMaterial = true; 
 		Color = rgb16(80, 80, 80);
 		NameStem = "stone";
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config GRAVEL;
@@ -91,7 +89,7 @@ material
 		Color = rgb16(144, 144, 144);
 		NameStem = "gravel";
 		CanBeWished = false;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config MORAINE;
@@ -103,7 +101,7 @@ material
 		NameStem = "moraine";
 		CanBeWished = false;
 		DigProductMaterial = STONE;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config WOOD;
@@ -128,6 +126,7 @@ material
 		Color = rgb16(180, 180, 255);
 		NameStem = "glass";
 		Alpha = 150;
+		AttachedGod = LEGIFER;
 	}
 
 	Config PARCHMENT;
@@ -180,6 +179,7 @@ material
 		IsGolemMaterial = true;
 		Color = rgb16(210, 210, 210);
 		NameStem = "marble";
+		AttachedGod = DULCIS;
 	}
 
 	Config GOLD;
@@ -274,6 +274,7 @@ material
 		Color = rgb16(128, 0, 0);
 		NameStem = "sulfur";
 		Flexibility = 3;
+		AttachedGod = LORICATUS;
 	}
 
 	Config UNICORN_HORN;
@@ -487,7 +488,7 @@ material
 		Flexibility = 25;
 		Article = "an";
 		CanBeWished = false;
-		AttachedGod = VALPURUS;
+		AttachedGod = DULCIS;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -524,7 +525,7 @@ material
 		Article = "an";
 		NameStem = "ice";
 		Alpha = 150;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 }
 
@@ -543,7 +544,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		PriceModifier = 600;
 		NameStem = "banana flesh";
 		Flexibility = 5;
-		AttachedGod = SEGES;
+		AttachedGod = SILVA;
 	}
 
 	Config SCHOOL_FOOD;
@@ -551,7 +552,6 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 3;
 		ConsumeType = CT_MEAT;
 		Density = 1500;
-		Alignment = EVIL;
 		NutritionValue = 50;
 		Color = rgb16(111, 74, 37);
 		ConsumeWisdomLimit = 7;
@@ -672,7 +672,7 @@ gas
 		Article = "an";
 		Alpha = 150;
 		Flexibility = 75;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config MAGICAL_AIR;
@@ -716,7 +716,6 @@ liquid
 	{
 		StrengthValue = 200;
 		Density = 1500;
-		Alignment = EVIL;
 		NutritionValue = 50;
 		Color = rgb16(48, 48, 48);
 		ConsumeWisdomLimit = 2;
@@ -734,7 +733,7 @@ liquid
 		Color = rgb16(144, 144, 240);
 		NameStem = "water";
 		Alpha = 150;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 
 	Config HEALING_LIQUID;
@@ -757,7 +756,6 @@ liquid
 		NutritionValue = 10;
 		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
-		Alignment = EVIL;
 		NameStem = "blood";
 		Alpha = 175;
 		Flexibility = 40;
@@ -781,7 +779,6 @@ liquid
 	Config POISON_LIQUID;
 	{
 		StrengthValue = 1;
-		Alignment = EVIL;
 		NutritionValue = 10;
 		Color = rgb16(0, 128, 0);
 		ConsumeWisdomLimit = 5;
@@ -795,7 +792,6 @@ liquid
 	Config VALDEMAR;
 	{
 		StrengthValue = 1;
-		Alignment = EVIL;
 		NutritionValue = 8;
 		Color = rgb16(50, 0, 0);
 		ConsumeWisdomLimit = 10;
@@ -811,7 +807,6 @@ liquid
 	Config ANTIDOTE_LIQUID;
 	{
 		StrengthValue = 1;
-		Alignment = GOOD;
 		NutritionValue = 10;
 		Color = rgb16(128, 0, 128);
 		NameStem = "antidote liquid";
@@ -846,7 +841,6 @@ liquid
 		NutritionValue = 50;
 		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
-		Alignment = EVIL;
 		NameStem = "troll blood";
 		Alpha = 175;
 		Flexibility = 40;
@@ -855,7 +849,7 @@ liquid
 		HitMessage = HM_HEALING_LIQUID;
 		EffectStrength = 50;
 		PriceModifier = 500;
-		AttachedGod = SEGES;
+		AttachedGod = CRUENTUS;
 	}
 }
 
@@ -870,7 +864,7 @@ flesh
 	NameStem = "flesh";
 	Flexibility = 5;
 	SpoilModifier = 10000;
-	PriceModifier = 600;
+	PriceModifier = 1200;
 	CanHaveParasite = true;
 
 	Config GOBLINOID_FLESH;
@@ -878,7 +872,7 @@ flesh
 		Color = rgb16(0, 128, 0);
 		NameStem = "green flesh";
 		NutritionValue = 150;
-		PriceModifier = 400;
+		PriceModifier = 800;
 		AttachedGod = MORTIFER;
 	}
 
@@ -887,7 +881,7 @@ flesh
 		NutritionValue = 250;
 		NameStem = "pork";
 		SpoilModifier = 20000;
-		PriceModifier = 800;
+		PriceModifier = 1600;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
 	}
@@ -897,14 +891,13 @@ flesh
 		NutritionValue = 250;
 		NameStem = "beef";
 		SpoilModifier = 20000;
-		PriceModifier = 800;
+		PriceModifier = 1600;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
 	}
 
 	Config FROG_FLESH;
 	{
-		Alignment = EVIL;
 		ConsumeWisdomLimit = 7;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
@@ -915,7 +908,6 @@ flesh
 
 	Config ELPURI_FLESH;
 	{
-		Alignment = EVIL;
 		ConsumeWisdomLimit = 7;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
@@ -930,7 +922,6 @@ flesh
 
 	Config HUMAN_FLESH;
 	{
-		Alignment = EVIL;
 		NameStem = "human flesh";
 		AttachedGod = MORTIFER;
 	}
@@ -955,7 +946,6 @@ flesh
 
 	Config DOG_FLESH;
 	{
-		Alignment = EVIL;
 		NameStem = "dog flesh";
 		AttachedGod = MORTIFER;
 	}
@@ -973,7 +963,6 @@ flesh
 	Config SPIDER_FLESH;
 	{
 		NameStem = "spider flesh";
-		NutritionValue = 100;
 		AttachedGod = MORTIFER;
 	}
 
@@ -1069,28 +1058,24 @@ flesh
 	Config BLACK_UNICORN_FLESH;
 	{
 		Color = rgb16(48, 48, 48);
-		/* Slightly strange. This means that the good gods like to receive this sacrifice */
-		Alignment = GOOD;
 		NameStem = "black unicorn flesh";
-		PriceModifier = 1000;
-		AttachedGod = SEGES;
+		PriceModifier = 2000;
+		AttachedGod = DULCIS;
 	}
 
 	Config GRAY_UNICORN_FLESH;
 	{
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
-		PriceModifier = 1000;
+		PriceModifier = 2000;
 		AttachedGod = LORICATUS;
 	}
 
 	Config WHITE_UNICORN_FLESH;
 	{
 		Color = rgb16(160, 160, 160);
-		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
-		Alignment = EVIL;
 		NameStem = "white unicorn flesh";
-		PriceModifier = 1000;
+		PriceModifier = 2000;
 		AttachedGod = MORTIFER;
 	}
 
@@ -1143,6 +1128,7 @@ flesh
 		Effect = EFFECT_ESP;
 		AttachedGod = LEGIFER;
 	}
+
 	Config MUSHROOM_FLESH;
 	{
 		NameStem = "mushroom";
@@ -1169,7 +1155,7 @@ powder
 		Density = 250;
 		Color = rgb16(30, 30, 30);
 		IsExplosive = true;
-		PriceModifier = 600;
+		PriceModifier = 1000;
 		NameStem = "gunpowder";
 		ExplosivePower = 10000;
 		Flexibility = 35;
@@ -1185,6 +1171,6 @@ powder
 		NameStem = "snow";
 		AdjectiveStem = "snowy";
 		Flexibility = 40;
-		AttachedGod = SILVA;
+		AttachedGod = TERRA;
 	}
 }

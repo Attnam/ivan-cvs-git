@@ -51,6 +51,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	      {
 		typedatabase TempDataBase(DataBase);
 		TempDataBase.InitDefaults(c);
+		TempDataBase.AttachedGod = c;
 		Proto->Config.insert(std::pair<ushort, typedatabase>(c, TempDataBase));
 	      }
 	}
@@ -339,6 +340,7 @@ template<> bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(DefaultContainedVolume);
   ANALYZE_DATA(CreateDivineConfigurations);
   ANALYZE_DATA(ShowMaterial);
+  ANALYZE_DATA(AttachedGod);
 
   return Found;
 }
@@ -370,6 +372,7 @@ template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(DefaultContainedVolume);
   ANALYZE_DATA(CreateDivineConfigurations);
   ANALYZE_DATA(ShowMaterial);
+  ANALYZE_DATA(AttachedGod);
 
   ANALYZE_DATA(DigMessage);
   ANALYZE_DATA(CanBeDestroyed);
@@ -396,7 +399,6 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(IsGolemMaterial);
   ANALYZE_DATA(Emitation);
   ANALYZE_DATA(CanBeWished);
-  ANALYZE_DATA(Alignment);
   ANALYZE_DATA(NutritionValue);
   ANALYZE_DATA(IsAlive);
   ANALYZE_DATA(IsFlammable);

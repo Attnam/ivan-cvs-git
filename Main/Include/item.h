@@ -62,7 +62,7 @@ struct itemdatabase
   bool CanBeGeneratedInContainer;
   uchar ForcedVisualEffects;
   uchar Roundness;
-  ushort GearStates;
+  ulong GearStates;
   bool IsTwoHanded;
   bool CreateDivineConfigurations;
   bool CanBeCloned;
@@ -267,7 +267,7 @@ class item : public object
   DATA_BASE_BOOL(CanBeGeneratedInContainer);
   virtual DATA_BASE_VALUE(uchar, ForcedVisualEffects);
   DATA_BASE_VALUE(uchar, Roundness);
-  DATA_BASE_VALUE(ushort, GearStates);
+  DATA_BASE_VALUE(ulong, GearStates);
   DATA_BASE_BOOL(IsTwoHanded);
   DATA_BASE_BOOL(CanBeBroken);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
@@ -301,7 +301,6 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamEffect);
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
-  DATA_BASE_VALUE(uchar, AttachedGod);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -384,7 +383,10 @@ class item : public object
   virtual bool HasBetterVersion() const { return false; }
   virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
   virtual bool AllowAlphaEverywhere() const { return false; }
+  virtual uchar GetAttachedGod() const;
+  virtual ulong GetTruePrice() const;
  protected:
+  virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
