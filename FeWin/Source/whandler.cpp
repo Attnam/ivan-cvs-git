@@ -255,20 +255,12 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 		{
 			int Key =  KeyBuffer.Remove(0);
 			int BackUp = Key;
-			if(Key > 0xE000) Key -= 0xE000;
-			/*
-			if(Key == VK_LEFT || Key == VK_NUMPAD4) return 0x14B;
-			if(Key == VK_HOME || Key == VK_NUMPAD7) return 0x147;
-			if(Key == VK_UP || Key == VK_NUMPAD8) return 0x148;
-			if(Key == VK_PRIOR || Key == VK_NUMPAD9) return 0x149;	// page up! Believe it, or not!
-			if(Key == VK_RIGHT || Key == VK_NUMPAD6) return 0x14D;
-			if(Key == VK_NEXT || Key == VK_NUMPAD3) return 0x151;	// page down! Believe it, or not!
-			if(Key == VK_DOWN || Key == VK_NUMPAD2) return 0x150;
-			if(Key == VK_END || Key == VK_NUMPAD1) return 0x14F;
-			if(Key == VK_NUMPAD5) return '.';*/
-
-
-			return Key;			
+			if(Key > 0xE000) 
+			  return Key - 0xE000;
+			if(Key != 0 && Key < 0x81)
+			  return Key;
+			else if(AcceptCommandKeys)
+			  return 0;
 		}
 		else
 		  CheckMessages();
