@@ -9,6 +9,14 @@ is also provided AS IS and is probably completely unreadable.
 
 January 1 2004 Timo Kiviluoto <firstname.lastname@hut.fi>
 
+	* Corrected a fatal bug in the cloning code
+	* Fixed a problem that caused the fluid system to run occasionally very slowly
+	* Decreased the banana peel trap damage a little
+	* Pressing ESC when choosing a teleport control target no longer crashes
+	* Prevented crystals from spawning over stairs in UT4
+
+January 1 2004 Timo Kiviluoto <firstname.lastname@hut.fi>
+
 	* Corrected an extremely fatal bug in the square destruction code (it may
 	  have caused random crashes when changing levels)
 	* Fixed a harmless light update absence bug in the cloning code

@@ -580,6 +580,7 @@ class ITEM
   playerkindhead,
   head,
  public:
+  playerkindhead(const playerkindhead& Head) : head(Head) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -594,6 +595,7 @@ class ITEM
   playerkindtorso,
   humanoidtorso,
  public:
+  playerkindtorso(const playerkindtorso& Torso) : humanoidtorso(Torso) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -611,6 +613,7 @@ class ITEM
   playerkindrightarm,
   rightarm,
  public:
+  playerkindrightarm(const playerkindrightarm& Arm) : rightarm(Arm) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -626,6 +629,7 @@ class ITEM
   playerkindleftarm,
   leftarm,
  public:
+  playerkindleftarm(const playerkindleftarm& Arm) : leftarm(Arm) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -641,6 +645,7 @@ class ITEM
   playerkindgroin,
   groin,
  public:
+  playerkindgroin(const playerkindgroin& Groin) : groin(Groin) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -655,6 +660,7 @@ class ITEM
   playerkindrightleg,
   rightleg,
  public:
+  playerkindrightleg(const playerkindrightleg& Leg) : rightleg(Leg) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();
@@ -670,6 +676,7 @@ class ITEM
   playerkindleftleg,
   leftleg,
  public:
+  playerkindleftleg(const playerkindleftleg& Leg) : leftleg(Leg) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool UpdateArmorPictures();

@@ -2770,6 +2770,10 @@ void character::TeleportRandomly()
       if(IsPlayer())
 	{
 	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
+
+	  if(PlayersInput == vector2d(-1, -1)) // esc pressed
+	    PlayersInput = GetPos();
+
 	  lsquare* Square = GetNearLSquare(PlayersInput);
 
 	  if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())

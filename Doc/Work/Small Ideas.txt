@@ -450,3 +450,5 @@ Graphical effect for Mjolak's energy attack.
 Bananas should return when thrown (they are boomerang-shaped).
 How much a monster can eat should depend on its volume (pet rats eat exactly as much as mammoths before they become bloated and stop).
 When seasons are integrated, bears should hibernate through winter.
+Loricatus should change weak golems to steel.
+Statistics about the real time spent on a game.

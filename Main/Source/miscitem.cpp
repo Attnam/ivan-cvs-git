@@ -670,7 +670,7 @@ void bananapeels::StepOnEffect(character* Stepper)
 
       /* Do damage against any random bodypart except legs */
 
-      Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
+      Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, ALL&~LEGS);
       Stepper->CheckDeath(CONST_S("slipped on a banana peel"), 0);
       Stepper->EditAP(-500);
     }

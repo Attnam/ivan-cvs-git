@@ -123,6 +123,9 @@ material* material::EatEffect(character* Eater, ulong Amount)
 
 bool material::HitEffect(character* Enemy)
 {
+  if(!Volume)
+    return false;
+
   switch(GetHitMessage())
     {
     case HM_SCHOOL_FOOD: Enemy->AddSchoolFoodHitMessage(); break;

@@ -2265,6 +2265,7 @@ beartrap
 	{
 		Possibility = 10;
 		BitmapPos = 48, 48;
+		Price = 0;
 	}
 }
 

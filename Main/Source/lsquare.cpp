@@ -535,6 +535,9 @@ void lsquare::Save(outputfile& SaveFile) const
 
 void lsquare::Load(inputfile& SaveFile)
 {
+  if(Pos == vector2d(46, 32))
+    int esko = 2;
+
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
   Stack->SetMotherSquare(this);
   square::Load(SaveFile);
@@ -1527,9 +1530,6 @@ void lsquare::GetHitByExplosion(const explosion* Explosion)
 {
   if(Explosion->ID == LastExplosionID)
     return;
-
-  if(vector2d(33, 13) == Pos)
-    int esko = 2;
 
   LastExplosionID = Explosion->ID;
   ushort DistanceSquare = (Pos - Explosion->Pos).GetLengthSquare();

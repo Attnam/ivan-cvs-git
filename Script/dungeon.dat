@@ -1931,12 +1931,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			AltarPossible = false;
 		}
 
-		Square, Random IN_ROOM;
-		{
-		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = 100; }
-		    EntryIndex = 200;
-		}
-
 		Square, Random;
 		{
 			OTerrain = decoration(SHARD);
@@ -1979,6 +1973,12 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random IN_ROOM;
 		{
 			Character = golem(GREEN_CRYSTAL);
+		}
+
+		Square, Random IN_ROOM; /* this *must* be last currently */
+		{
+		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = 100; }
+		    EntryIndex = 200;
 		}
 	}
 }

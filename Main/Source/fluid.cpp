@@ -302,7 +302,7 @@ void fluid::CheckGearPicture(vector2d ShadowPos, ushort SpecialFlags, bool BodyA
 	GearImage = new imagedata[1];
 
       ImagePtr = GearImage;
-      ulong Pixels = Image.AlphaSum >> 10;
+      Pixels = Image.AlphaSum >> 10;
     }
 
   ImagePtr->ShadowPos = ShadowPos;
@@ -429,37 +429,33 @@ void fluid::imagedata::Load(inputfile& SaveFile)
 void fluid::imagedata::AddLiquidToPicture(const colorizablebitmap* Shadow, ulong Pixels, ulong AlphaSuggestion, ushort Color, pixelpredicate PixelPredicate)
 {
   DripTimer = 0;
+  bool** ValidityMap = igraph::GetBodyBitmapValidityMap(SpecialFlags);
+  vector2d PixelAllowed[256];
+  ushort PixelsAllowed = 0;
+
+  if(Shadow)
+    {
+      for(ushort x = 1; x < 14; ++x)
+	for(ushort y = 1; y < 14; ++y)
+	  if(ValidityMap[x][y] && !(Shadow->*PixelPredicate)(ShadowPos + vector2d(x, y)))
+	    PixelAllowed[PixelsAllowed++] = vector2d(x, y);
+
+      if(!PixelsAllowed)
+	return;
+    }
+
   ulong Lumps = Pixels - (Pixels << 3) / 9; // ceil[Pixels/9]
   ulong RoomForPixels = (Lumps << 3) + Lumps;
   ushort Red = GetRed16(Color);
   ushort Green = GetGreen16(Color);
   ushort Blue = GetBlue16(Color);
-  bool** ValidityMap = igraph::GetBodyBitmapValidityMap(SpecialFlags);
+
+  if(AlphaSuggestion < 25)
+    AlphaSuggestion = 25;
 
   for(ulong c = 0; c < Lumps; ++c)
     {
-      /* Note! Don't ever give an item a fully transparent picture to make it
-	 invisible or something, or this will crash. */
-
-      vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
-      ulong Counter = 0;
-
-      if(Shadow)
-	while((Shadow->*PixelPredicate)(ShadowPos + Cords) || !ValidityMap[Cords.X][Cords.Y])
-	  {
-	    Cords.X = 1 + RAND() % 14;
-	    Cords.Y = 1 + RAND() % 14;
-
-	    if(++Counter == 256)
-	      {
-		AlphaAverage = Picture->CalculateAlphaAverage();
-		return;
-	      }
-	  }
-
-      if(AlphaSuggestion < 25) /// check!
-	int eskoo = 2;
-
+      vector2d Cords = Shadow ? PixelAllowed[RAND() % PixelsAllowed] : vector2d(1 + RAND() % 14, 1 + RAND() % 14);
       Picture->PutPixel(Cords, Color);
       long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
       AlphaSum += Alpha - Picture->GetAlpha(Cords);
