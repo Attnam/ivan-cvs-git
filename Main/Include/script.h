@@ -114,7 +114,7 @@ template <class type> ulong* contentscript<type>::GetMaterialVolume(ushort Index
 class squarescript : public script
 {
 public:
-	squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0) {}
+	squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) {}
 	void ReadFrom(inputfile&);
 	posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
 	contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
@@ -124,6 +124,7 @@ public:
 	bool* GetIsUpStairs(bool AOE = true) const { SCRIPT_RETURN(IsUpStairs) }
 	bool* GetIsDownStairs(bool AOE = true) const { SCRIPT_RETURN(IsDownStairs) }
 	bool* GetIsWorldMapEntry(bool AOE = true) const { SCRIPT_RETURN(IsWorldMapEntry) }
+	uchar* GetTimes(bool AOE = true) const { SCRIPT_RETURN(Times) }
 protected:
 	posscript* PosScript;
 	contentscript<character>* Character;
@@ -133,6 +134,7 @@ protected:
 	bool* IsUpStairs;
 	bool* IsDownStairs;
 	bool* IsWorldMapEntry;
+	uchar* Times;
 };
 
 template <class type> class contentmap : public script

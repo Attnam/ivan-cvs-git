@@ -167,20 +167,20 @@ public:
 	virtual void ReceiveSchoolFoodEffect(long);
 	virtual void ReceiveSound(char*, short, float);
 	virtual void Regenerate(ushort = 1);
-	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
+	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; if(Agility > 99) Agility = 99; }
 	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
 	virtual void SetAP(long What) { AP = What; }
 	virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
-	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
+	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetNP(long);
-	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
+	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; if(Perception > 99) Perception = 99; }
 	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
 	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
 	virtual void SetSquareUnder(square* Square);
-	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
+	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; if(Strength > 99) Strength = 99; }
 	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
 	virtual void SetWielded(item* Something) { Wielded = Something; }
 	virtual void SpillBlood(uchar);

@@ -230,6 +230,16 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 				continue;
 			}
 
+			if(Word == "Times")
+			{
+				if(!Times)
+					Times = new uchar;
+
+				*Times = SaveFile.ReadNumber(ValueMap);
+
+				continue;
+			}
+
 			ABORT("Odd script term %s encountered in square script!", Word.c_str());
 		}
 	}

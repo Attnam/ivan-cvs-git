@@ -292,23 +292,28 @@ void level::Generate(levelscript* GenLevelScript)
 	{
 		squarescript* Square = LevelScript->GetSquare()[c];
 
-		vector2d Pos;
+		uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
 
-		if(Square->GetPosScript()->GetRandom())
+		for(uchar c = 0; c < Times; ++c)
 		{
-			if(Square->GetPosScript()->GetIsInRoom(false))
-				for(Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable()))
-				{
-					if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
-						break;
-				}
-			else
-				Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
-		}
-		else
-			Pos = *Square->GetPosScript()->GetVector();
+			vector2d Pos;
 
-		Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
+			if(Square->GetPosScript()->GetRandom())
+			{
+				if(Square->GetPosScript()->GetIsInRoom(false))
+					for(Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable()))
+					{
+						if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
+							break;
+					}
+				else
+					Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+			}
+			else
+				Pos = *Square->GetPosScript()->GetVector();
+
+			Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
+		}
 	}
 }
 
@@ -571,14 +576,19 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 		squarescript* Square = RoomScript->GetSquare()[c];
 
-		vector2d Pos;
+		uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
 
-		if(Square->GetPosScript()->GetRandom())
-			ABORT("Illegal command: Random square positioning not supported in roomscript!");
-		else
-			Pos = *Square->GetPosScript()->GetVector();
+		for(uchar c = 0; c < Times; ++c)
+		{
+			vector2d Pos;
 
-		Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square, RoomClass);
+			if(Square->GetPosScript()->GetRandom())
+				ABORT("Illegal command: Random square positioning not supported in roomscript!");
+			else
+				Pos = *Square->GetPosScript()->GetVector();
+
+			Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square, RoomClass);
+		}
 	}
 
 	if(RoomScript->GetCharacterMap(false))
@@ -634,7 +644,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		contentscript<overlevelterrain>* OverTerrainScript;
 
-		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
+		for(ushort x = 0; x < RoomScript->GetOverTerrainMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetOverTerrainMap()->GetSize()->Y; ++y)
 				if(OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y))
 					Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(OverTerrainScript->Instantiate());

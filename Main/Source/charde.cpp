@@ -453,10 +453,10 @@ bool humanoid::Hit(character* Enemy)
 			GetWielded()->ReceiveHitEffect(Enemy, this);
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
-		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit())
+		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
 			GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
 		if(GetWielded())
-			if(GetCurrentSingleWeaponSkill()->AddHit())
+			if(GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
 				GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
@@ -470,12 +470,12 @@ bool humanoid::Hit(character* Enemy)
 void humanoid::CharacterSpeciality()
 {
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		if(GetCategoryWeaponSkill(c)->Turn())
+		if(GetCategoryWeaponSkill(c)->Turn() && GetIsPlayer())
 			GetCategoryWeaponSkill(c)->AddLevelDownMessage();
 
 	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
 	{
-		if((*i)->Turn())
+		if((*i)->Turn() && GetIsPlayer())
 			for(ushort c = 0; c < GetStack()->GetItems(); ++c)
 				if((*i)->GetID() == GetStack()->GetItem(c)->GetID())
 				{
@@ -713,6 +713,8 @@ void farmer::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
+		/* This message may be little incorrect if wielded item has changed... */
+
 		ADD_MESSAGE("\"Did you think I use this axe only to chop wood?\"");
 		return;
 	}
@@ -724,7 +726,7 @@ void farmer::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because summer lasts two weeks.\"");
+		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"");
 		break;
 	case 1:
 		ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CNAME(DEFINITE));
@@ -922,7 +924,7 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description)
 
 void humanoid::KickHit()
 {
-	if(GetCategoryWeaponSkill(UNARMED)->AddHit())
+	if(GetCategoryWeaponSkill(UNARMED)->AddHit() && GetIsPlayer())
 		GetCategoryWeaponSkill(UNARMED)->AddLevelUpMessage();
 }
 
@@ -1008,10 +1010,10 @@ void hunter::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"A man is not a man unless he has lost his right arm in a battle against a polar bear.\"");
+		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
 		break;
 	case 1:
-		ADD_MESSAGE("\"Ah! So much to hunt here! Bears, ogres, slaves, farmers...\"");
+		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
 		break;
 	case 2:
 		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
@@ -1042,7 +1044,7 @@ void slave::BeTalkedTo(character* Talker)
 	{
 		if(Talker->GetMoney() >= 50)
 		{
-			ADD_MESSAGE("\"Do you want to buy me? 50 squirrels. I work very hard.\"");
+			ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", CNAME(DEFINITE));
 
 			if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 			{
@@ -1055,7 +1057,7 @@ void slave::BeTalkedTo(character* Talker)
 		else
 		{
 			ADD_MESSAGE("\"Don't touch me! Master does not want people to touch sale items.");
-			ADD_MESSAGE("\"I'm worth 50 squirrels, ye know!\"");
+			ADD_MESSAGE("\"I'm worth 50 squirrels, you know!\"");
 		}
 
 		return;

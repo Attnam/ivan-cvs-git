@@ -516,7 +516,7 @@ void erado::PrayGoodEffect()
 
 void erado::PrayBadEffect()
 {
-	ADD_MESSAGE("A dark, booming voice shakes the walls:");
+	ADD_MESSAGE("A dark, booming voice shakes the area:");
 	ADD_MESSAGE("\"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\"");
 	ADD_MESSAGE("A bolt of black energy hits you.");
 
@@ -537,14 +537,17 @@ void mellis::PrayGoodEffect()
 	{
 		ADD_MESSAGE("%s tries to trade some of your items into better ones.", GOD_NAME);
 		bool Cont = true;
+
 		while(Cont)
 		{
 			Cont = false;
+
 			for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
 			{
 				if(game::GetPlayer()->GetStack()->GetItem(c))
 				{
 					NewVersion = game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion();
+
 					if(NewVersion)
 					{
 						item* ToBeDeleted = game::GetPlayer()->GetStack()->GetItem(c);

@@ -15,3 +15,4 @@ Different types of item enchantments.
 Random gods.
 Ego monsters.
 Monster, item and god memories.
+The Saveloader.

@@ -9,6 +9,7 @@ D-money is temporarily lost in polymorph (Timo)
 D-altar of level 10 bugs (Timo)
  -you can identify monsters in the dark by chatting with them (Timo)
  -lamps on walls break incorrectly (Timo)
+ -highlightion is incorrect when the score entry is discarded (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features
@@ -21,20 +22,22 @@ D-making rest stop when the player is hungry (Timo)
 D-making weapon experience and money affect score and NP not affect it (Timo)
 D-making kicking increase the unarmed weapon skill (Hex)
 D-reimplementating higher victory types (Timo)
-D-adding pray effects for Silva (Hex or Timo)
+D-adding pray effects for Silva (Timo)
 D-making Venius burn only hostile creatures (Hex)
 D-making Mellis fill also intact empty bottles and empty cans (Hex)
  -making Loricatus fix broken plate mails (Hex)
 D-adding relation effect limits to cannibalism and navastating (Timo)
  -adding Banana and Pick-axe logo to menu (Hex)
  -adding "Name too short!" message (Hex)
- -adding grass, pines and spruces to Attnam once the pics are available (Timo)
+D-adding grass, pines and spruces to Attnam once the pics are available (Timo)
 D-removing the polymorph feature that multiplies items (Timo)
 D-adding autosave interval option (Hex)
  -making plate mails much less fragile when they are kicked (Hex)
 D-adding infravision to some monsters (Timo)
  -prohibiting saveload possibility caused by the nature of the corner X (Timo)
  -"there is something leading downwards here" message (Hex)
+ -adding death in the dark messages (Timo)
+ -adding information of death level to hscore (Timo)
 
 -fixing buggy graphics that are buggy due to code
 D-can (Timo)
@@ -49,11 +52,17 @@ D-corpse (Timo)
 
 -fixing buggy graphics that are buggy due to overuse of material colors
 D-many items and some terrains (Tuukka)
- -open can (Tuukka)
+D-open can (Tuukka)
+
+-fixing buggy graphics due to other reasons
+ -frog (Tuukka)
 
 -creating new graphics (to make Attnam a little less ugly)
- -grass (Tuukka)
- -pine and spruce (Tuukka)
+D-grass (Tuukka)
+D-pine and spruce (Tuukka)
+ -librarian (Tuukka)
+ -bookcase (Tuukka)
+ -concubine (Tuukka)
  -others that may be needed (Tuukka)
 
 -a lot of testing (everyone that can be forced to do it)

@@ -92,13 +92,13 @@ Dungeon 0;
 		}
 	}
 
-	Level 4+rand()%2;
+	Level 4+rand%2;
 	{
-		Rooms=5+rand%16;  /* Due to a bug in recalculation code this must be repeated! */
+		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=true; }
 		{
 			Character=ennerbeast;
 		}
@@ -120,7 +120,7 @@ Dungeon 0;
 			GenerateLamps=false;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=true; }
 		{
 			Character=elpuri;
 		}
@@ -129,7 +129,7 @@ Dungeon 0;
 	Level 2+rand%2;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
-		Rooms=5+rand%16;  /* Due to a bug in recalculation code this must be repeated! */
+		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		Room 1;
 		{
@@ -158,7 +158,7 @@ Dungeon 0;
 
 	Level 5+rand%4;
 	{
-		Rooms=5+rand%16;  /* Due to a bug in recalculation code this must be repeated! */
+		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		Room 1;
 		{
@@ -188,7 +188,6 @@ Dungeon 0;
 	Level 8;
 	{
 		GenerateDownStairs=false;
-		/*Speciality=AboveOreeLair;*/
 
 		Room 0;
 		{
@@ -212,8 +211,6 @@ Dungeon 0;
 
 	Level 9;
 	{
-		/*Speciality=OreeLair;*/
-
 		Description=OreeLair;
 		LevelMessage="You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
 		FillSquare=pepsi ground,pepsi earth;
@@ -279,7 +276,7 @@ Dungeon 1;
 	Level 0;
 	{
 		Description=Attnam;
-		FillSquare=ground,empty;
+		FillSquare=grassterrain,empty;
 		Size=48,48;
 		GenerateMonsters=false;
 		Rooms=25 + rand % 6;
@@ -297,7 +294,7 @@ Dungeon 1;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=false;
-			WallSquare=ground,wall;
+			WallSquare=grassterrain,wall;
 			FloorSquare=parquet,empty;
 			DoorSquare=parquet,door;
 			GenerateDoor=true;
@@ -310,102 +307,32 @@ Dungeon 1;
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=hunter;
+			OverTerrain=pine;
+			Times=50;
+		}
+
+		Square, Random { Walkable=true; InRoom=false; }
+		{
+			OverTerrain=spruce;
+			Times=200;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=hunter;
+			Times=10;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=polarbear;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=polarbear;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=polarbear;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=polarbear;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=polarbear;
+			Times=5;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=farmer;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=farmer;
-		}
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=farmer;
-		}
-
-		Square, Random { Walkable=true; InRoom=false;  }
-		{
-			Character=farmer;
+			Times=5;
 		}
 
 		Square, Random { Walkable=true; InRoom=false;  }
@@ -477,33 +404,37 @@ Dungeon 1;
 			
 			OverTerrainMap
 			{
-				Pos = 4,4;
-				Size = 17,17;
+				Pos = 3,3;
+				Size = 19,19;
 				
 				Types
 				{
 					v = valpurium wall;
 					t = throne;
+					b = birch;
+					c = carpet;
 				}
 			}
 			{
-				......vvvvv......
-				....vvv...vvv....
-				...vv.......vv...
-				..vv.........vv..
-				.vv...........vv.
-				.v.............v.
-				vv.............vv
-				v......t.t......v
-				v...............v
-				v...............v
-				vv.............vv
-				.v.............v.
-				.vv...........vv.
-				..vv.........vv..
-				...vv.......vv...
-				....vvv...vvv....
-				......v...v......
+				bb...............bb
+				bb.....vvvvv.....bb
+				.....vvv...vvv.....
+				....vv.......vv....
+				...vv.........vv...
+				..vv...........vv..
+				..v.............v..
+				.vv.............vv.
+				.v......t.t......v.
+				.v.......c.......v.
+				.v.......c.......v.
+				.vv......c......vv.
+				..v......c......v..
+				..vv.....c.....vv..
+				...vv....c....vv...
+				....vv...c...vv....
+				.....vvv.c.vvv.....
+				bb.....v...v.....bb
+				bb...............bb
 			}
 			
 			CharacterMap
@@ -515,7 +446,7 @@ Dungeon 1;
 				{
 					s = cityguard;
 					p = perttu;
-					f = farmer;
+					l = lightfrog;
 				}
 			}
 			{
@@ -567,7 +498,7 @@ Dungeon 1;
 				........k........
 				........p........
 				........b........
-				.................
+				........k........
 				.................
 			}
 
@@ -579,7 +510,7 @@ Dungeon 1;
 			Pos=25,38;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=ground,wall;
+			WallSquare=grassterrain,wall;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -632,7 +563,7 @@ Dungeon 1;
 		{
 			Pos=41,41;
 			Size=5,5;
-			WallSquare=ground,gold wall;
+			WallSquare=grassterrain,gold wall;
 			GenerateDoor=false;
 			DivineOwner=2;
 			Type=temple;
@@ -658,7 +589,7 @@ Dungeon 1;
 		{
 			Pos=2,41;
 			Size=5,5;
-			WallSquare=ground,marble wall;
+			WallSquare=grassterrain,marble wall;
 			GenerateDoor=false;
 			DivineOwner=4;
 			Type=temple;
@@ -684,7 +615,7 @@ Dungeon 1;
 		{
 			Pos=41,2;
 			Size=5,5;
-			WallSquare=ground,bananaflesh wall;
+			WallSquare=grassterrain,bananaflesh wall;
 			GenerateDoor=false;
 			DivineOwner=6;
 			Type=temple;
@@ -710,7 +641,7 @@ Dungeon 1;
 		{
 			Pos=2,2;
 			Size=5,5;
-			WallSquare=ground,parchment wall;
+			WallSquare=grassterrain,parchment wall;
 			GenerateDoor=false;
 			DivineOwner=7;
 			Type=temple;
@@ -735,21 +666,21 @@ Dungeon 1;
 		Room 6;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=ground, wood wall;
+			WallSquare=grassterrain, wood wall;
 			DoorSquare=floor, door;
 		}
 
 		Room 7;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=ground, wood wall;
+			WallSquare=grassterrain, wood wall;
 			DoorSquare=floor, door;
 		}
 
 		Room 8;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=ground, wood wall;
+			WallSquare=grassterrain, wood wall;
 			DoorSquare=floor, door;
 		}
 	}

@@ -529,7 +529,7 @@ public:
 	virtual uchar GetConsumeType() const			{ return ODD; }
 	virtual ushort GetDensity() const				{ return 100; }
 	virtual ushort OfferValue() const				{ return 2; }
-	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(32, 96, 32); }
 protected:
 	virtual std::string NameStem() const	{ return "grass"; }
 );
@@ -586,7 +586,7 @@ class MATERIAL
 	lightfrogflesh,
 	frogflesh,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
+	virtual ushort GetColor() const { return MAKE_RGB(255, 255, 255); }
 protected:
 	virtual std::string NameStem() const	{ return "light frog flesh"; }
 );
@@ -596,7 +596,7 @@ class MATERIAL
 	dolphinflesh,
 	flesh,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 protected:
 	virtual std::string NameStem() const	{ return "dolphin flesh"; }
 );
@@ -606,9 +606,34 @@ class MATERIAL
 	polarbearflesh,
 	flesh,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
+	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
 protected:
 	virtual std::string NameStem() const	{ return "polar bear flesh"; }
+);
+
+class MATERIAL
+(
+	leaf,
+	material,
+public:
+	virtual ushort GetHitValue() const 				{ return 10; }
+	virtual uchar GetConsumeType() const				{ return ODD; }
+	virtual ushort GetDensity() const				{ return 500; }
+	virtual ushort OfferValue() const				{ return 10; }
+	virtual bool IsSolid() const { return true; }
+	virtual ushort GetColor() const { return MAKE_RGB(0, 160, 0); }
+protected:
+	virtual std::string NameStem() const	{ return "leaf"; }
+);
+
+class MATERIAL
+(
+	expensivefabric,
+	cloth,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(128, 0, 0); }
+protected:
+	virtual std::string NameStem() const	{ return "expensive fabric"; }
 );
 	
 #endif

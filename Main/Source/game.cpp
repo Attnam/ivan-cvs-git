@@ -798,7 +798,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-	float Base = game::GetPlayer()->Danger() / 25 * (GetCurrent() + 1);
+	float Base = game::GetPlayer()->Danger() / 25 * (GetCurrent() + 2);
 
 	while(true)
 	{

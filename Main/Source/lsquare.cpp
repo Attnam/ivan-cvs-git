@@ -876,8 +876,6 @@ overterrain* levelsquare::GetOverTerrain() const
 
 void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
-	Clean();
-
 	if(SquareScript->GetCharacter(false))
 	{
 		character* Char = SquareScript->GetCharacter()->Instantiate();
@@ -899,6 +897,8 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 	if(SquareScript->GetOverTerrain(false))
 	{
+		Clean();
+
 		overlevelterrain* Terrain = SquareScript->GetOverTerrain()->Instantiate();
 
 		ChangeOverLevelTerrain(Terrain);

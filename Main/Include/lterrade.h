@@ -58,7 +58,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", grass::StaticType()))
 protected:
 	virtual std::string NameSingular() const				{ return "grassy ground"; }
-	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 336); }
 );
 
 class OVERLEVELTERRAIN
@@ -215,6 +215,63 @@ public:
 protected:
 	virtual std::string NameSingular() const				{ return "throne"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 416); }
+);
+
+class OVERLEVELTERRAIN
+(
+	pine,
+	overlevelterrain,
+	InitMaterials(2, new leaf, new wood),
+	{
+	},
+public:
+	virtual std::string DigMessage() const { return "You chop the tree down."; }
+protected:
+	virtual std::string NameSingular() const				{ return "pine"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(16, 320); }
+);
+
+class OVERLEVELTERRAIN
+(
+	spruce,
+	overlevelterrain,
+	InitMaterials(2, new leaf, new wood),
+	{
+	},
+public:
+	virtual std::string DigMessage() const { return "You chop the tree down."; }
+protected:
+	virtual std::string NameSingular() const				{ return "spruce"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(16, 352); }
+);
+
+class OVERLEVELTERRAIN
+(
+	birch,
+	overlevelterrain,
+	InitMaterials(2, new leaf, new wood),
+	{
+	},
+public:
+	virtual std::string DigMessage() const { return "You chop the tree down."; }
+protected:
+	virtual std::string NameSingular() const				{ return "birch"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(32, 336); }
+);
+
+class OVERLEVELTERRAIN
+(
+	carpet,
+	overlevelterrain,
+	InitMaterials(new expensivefabric),
+	{
+	},
+public:
+	virtual bool CanBeDigged() const { return false; }
+	virtual std::string DigMessage() const { return "You can't force yourself to ruin this wonderful carpet."; }
+protected:
+	virtual std::string NameSingular() const				{ return "carpet"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 272); }
 );
 
 #endif
