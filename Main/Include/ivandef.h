@@ -32,9 +32,9 @@ struct databasebase { int Config; };
 #define OVER_FED_LEVEL 175000
 #define BLOATED_LEVEL 150000
 #define SATIATED_LEVEL 100000
-#define NOT_HUNGER_LEVEL 25000
+#define NOT_HUNGER_LEVEL 30000
+#define HUNGER_LEVEL 20000
 #define VERY_HUNGER_LEVEL 10000
-#define HUNGER_LEVEL 5000
 
 #define OVER_LOADED 0
 #define STRESSED 1

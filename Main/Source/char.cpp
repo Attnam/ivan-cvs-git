@@ -631,7 +631,7 @@ void character::Be()
       if(IsPlayer())
 	{
 	  if(GetHungerState() == STARVING && !(RAND() % 50))
-	    Faint(500 + RAND() % 500, true);
+	    Faint(250 + RAND() % 250, true);
 
 	  if(!Action || Action->AllowFoodConsumption())
 	    Hunger();
@@ -3244,7 +3244,7 @@ void character::Regenerate()
 
       EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, Min(5000 * BodyPart->GetMaxHP() / (BodyPart->GetHP() * BodyPart->GetHP()), 300), 1 << 8);
+      EditExperience(ENDURANCE, Min(5000 * BodyPart->GetMaxHP() / (BodyPart->GetHP() * BodyPart->GetHP()), 300), 1 << 9);
     }
 }
 
