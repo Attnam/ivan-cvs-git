@@ -406,7 +406,7 @@ public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual ushort GetDensity() const				{ return 1800; }
 	virtual ushort OfferValue() const				{ return 5; }
-	virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(112, 112, 64); }
 protected:
 	virtual std::string NameStem() const	{ return "Enner Beast flesh"; }
 	virtual std::string Article() const { return "an"; }
@@ -467,7 +467,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 6; }
 	virtual short NutritionValue() const			{ return 400; }
-	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 200); }
+	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
 protected:
 	virtual std::string NameStem() const	{ return "jackal flesh"; }
 );

@@ -17,7 +17,7 @@ New goals for version 0.30 alpha:
 -making weapon experience and money affect score and NP not affect it (Timo)
 -making kicking increase the unarmed weapon skill (Hex)
 -reimplementating higher victory types (Timo)
--adding pray effects for Silva (Hex)
+-adding pray effects for Silva (Hex or Timo)
 -making Venius burn only hostile creatures (Hex)
 -making Mellis fill also intact empty bottles and empty cans (Hex)
 -adding relation effect limits to cannibalism and navastating (Timo)
@@ -26,10 +26,18 @@ New goals for version 0.30 alpha:
 
 -fixing buggy graphics that are buggy due to code
  -can (Timo)
+ -fallen valpurist (Timo)
+ -Oree (Timo)
+ -froggoblin (Timo)
+ -moraine (Hex)
+ -seats (Hex)
+ -arrow (Timo)
+ -stairs (Timo)
+ -corpse (Timo)
  -others that may be found (Timo)
 
 -fixing buggy graphics that are buggy due to overuse of material colors
- -many weapons etc. (Tuukka)
+ -many ietms and some terrains (Tuukka)
 
 -creating new graphics (to make Attnam a little less ugly)
  -grass (Tuukka)

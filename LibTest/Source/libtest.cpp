@@ -17,7 +17,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	DOUBLEBUFFER->ClearToColor(0xF81F);
 
-	{
+	/*{
 		bitmap Pera("Graphics/Char.pcx"), Temp(16, 16);
 
 		for(ushort x = 1; x < 21; ++x)
@@ -48,7 +48,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 				Pera.Blit(&Temp, x * 16, y * 16, 0, 0, 16, 16);
 				Temp.Save(std::string("Pic/T") + x + "-" + y + ".bmp");
 			}
-	}
+	}*/
 
 	colorizablebitmap Pertti("Graphics/Char.pcx");
 
