@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a small abusable bug in the monster AI
+	* "Collected conversations of Ivan Gorovits and the Leader of Citizens" added
+	  to Doc/Data
+
 March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Severed bodyparts of humans look again correct

@@ -4,6 +4,6 @@ A* route code.
 //Floating eye.
 Verbalized danger to stethoscope info.
 //Explosions should be stopped by walls.
-Different effects for breaking different wands.
+//Different effects for breaking different wands.
 //Removing asm.
 //Removing MS-code.

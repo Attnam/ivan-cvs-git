@@ -108,3 +108,7 @@ Hattifattener
 Grid feature
 
 	Zaps people.
+
+Mad cow
+
+	Eating makes the player mad, too.

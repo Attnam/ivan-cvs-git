@@ -3102,7 +3102,7 @@ void darkmage::GetAICommand()
 	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	    if((*i)->IsEnabled())
 	      {
-		ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+		ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - GetPos().X), abs((*i)->GetPos().Y - GetPos().Y));
 
 		if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
 		  {

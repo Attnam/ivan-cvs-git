@@ -58,6 +58,7 @@ Torturing devices.
 Vacuum cleaner.
 Rolling pin.
 Frying pan.
+Clothes peg.
 
 //Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
 //Small, medium and large chests (one is probably already done...)

@@ -1787,7 +1787,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	  {
-	    ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+	    ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - GetPos().X), abs((*i)->GetPos().Y - GetPos().Y));
 
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
