@@ -748,8 +748,8 @@ void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
 	  ivantime Time;
 	  game::GetTime(Time);
 
-	  if(Time.Day > 10)
-	    Char->EditAllAttributes(Time.Day - 10);
+	  if(Time.Day > 7)
+	    Char->EditAllAttributes((Time.Day - 6) >> 1);
 	}
       else
 	delete Char;

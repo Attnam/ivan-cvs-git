@@ -7,7 +7,9 @@ Version 0.440
 - added some cosmetical weather effects
 - New Attnam has now many new NPCs, for instance a sumo wrestler who
   can be challenged
-- polymorph control is now more interesting
+- polymorph control is now more interesting; you need to see a monster
+  once before you can polymorph into it, and more powerful ones require
+  more intelligence
 - added wands of acid rain, mirroring and necromancy
 - added scrolls of detect material, harden material and golem creation
 - added several new monsters, eg. named archangels for each god
@@ -18,6 +20,7 @@ Version 0.440
 - the player can now panic if he gets hit too much
 - the player can now become exhausted if he fights for too long and/or
   uses the new r'u'n command too much
+- added leprosy, a disease which causes your limbs to drop off randomly
 
 Version 0.430
 -------------

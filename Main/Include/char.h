@@ -176,6 +176,7 @@ struct characterdatabase : public databasebase
   int FleshMaterial;
   festring DeathMessage;
   int HPRequirementForGeneration;
+  int DayRequirementForGeneration;
   int AttackWisdomLimit;
   int AttachedGod;
   packedvector2d WieldedPosition;

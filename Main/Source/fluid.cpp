@@ -87,7 +87,7 @@ void fluid::Be()
   if(!(Rand & 7))
     if(MotherItem)
       {
-	if(MotherItem->Exists())
+	if(MotherItem->Exists() && MotherItem->AllowFluidBe())
 	  Liquid->TouchEffect(MotherItem, LocationName);
       }
     else
@@ -101,7 +101,7 @@ void fluid::Be()
 	  LSquareUnder->GetCharacter()->StayOn(Liquid);
       }
 
-  if(MotherItem ? !(Rand & 15) && MotherItem->AllowFluidBe() : !(Rand & 63))
+  if(MotherItem ? !(Rand & 15) && MotherItem->Exists() && MotherItem->AllowFluidBe() : !(Rand & 63))
     {
       long OldVolume = Liquid->GetVolume();
       long NewVolume = ((OldVolume << 6) - OldVolume) >> 6;

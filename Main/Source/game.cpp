@@ -285,8 +285,18 @@ bool game::Init(const festring& Name)
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
+
+	for(int c = 0; c < ATTRIBUTES; ++c)
+	  {
+	    if(c != ENDURANCE)
+	      Player->EditAttribute(c, (RAND() & 1) - (RAND() & 1));
+
+	    Player->EditExperience(c, 500, 1 << 11);
+	  }
+
+	Player->SetMoney(Player->GetMoney() + RAND() % 11);
 	// ///
-	//Player->GainIntrinsic(LEPROSY);
+	Player->GainIntrinsic(LEPROSY);
 	// ///
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
@@ -903,8 +913,8 @@ double game::GetMinDifficulty()
   ivantime Time;
   GetTime(Time);
 
-  if(Time.Day > 5)
-    Base += 0.001 * (Time.Day - 5);
+  if(Time.Day > 3)
+    Base += 0.001 * (Time.Day - 3);
 
   for(;;)
     {
@@ -3253,12 +3263,12 @@ color16 game::GetAttributeColor(int I)
 {
   int Delta = GetTick() - LastAttributeChangeTick[I];
 
-  if(OldAttribute[I] == NewAttribute[I] || Delta >= 255)
+  if(OldAttribute[I] == NewAttribute[I] || Delta >= 510)
     return WHITE;
   else if(OldAttribute[I] < NewAttribute[I])
-    return MakeRGB16(255, 255, Delta);
+    return MakeRGB16(255, 255, Delta >> 1);
   else
-    return MakeRGB16(255, Delta, Delta);
+    return MakeRGB16(255, Delta >> 1, Delta >> 1);
 }
 
 void game::UpdateAttributeMemory()

@@ -480,6 +480,11 @@ bool oillamp::Apply(character* Applier)
       vector2d TryToCreate;
       bool FoundPlace = false;
 
+      if(RAND_N(5))
+	Genie->SetTeam(Applier->GetTeam());
+      else
+	Genie->SetTeam(game::GetTeam(MONSTER_TEAM));
+
       /* First try to create a genie nearby (10 tries - if all of them fail then stop trying) */
 
       for(int c = 0; c < 10 && !FoundPlace; ++c)
@@ -499,16 +504,12 @@ bool oillamp::Apply(character* Applier)
 	{
 	  Genie->GetLSquareUnder()->AddSmoke(new gas(SMOKE, 1000));
 
-	  if(!(RAND() % 5))
-	    {
-	      Genie->SetTeam(game::GetTeam(MONSTER_TEAM));
-	      ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
-	    }
+	  if(!Applier->IsPet())
+	    ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
 	  else
 	    {
 	      if(Applier->IsPlayer())
 		{
-		  Genie->SetTeam(Applier->GetTeam());
 		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
 
 		  if(game::BoolQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))

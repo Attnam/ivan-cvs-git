@@ -337,6 +337,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(DeathMessage);
   ADD_MEMBER(IgnoreDanger);
   ADD_MEMBER(HPRequirementForGeneration);
+  ADD_MEMBER(DayRequirementForGeneration);
   ADD_MEMBER(IsExtraCoward);
   ADD_MEMBER(SpillsBlood);
   ADD_MEMBER(HasEyes);

@@ -60,10 +60,10 @@ class ITEM
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   virtual item* Fix();
   virtual void CalculateEnchantment();
+  virtual bool AllowFluids() const { return true; }
  protected:
   virtual long GetMaterialPrice() const;
   virtual bool CalculateHasBe() const;
-  virtual bool AllowFluids() const { return true; }
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(int) const;
   virtual void AddPostFix(festring&) const;

@@ -74,6 +74,7 @@ class inputfile
   const festring& GetFileName() const { return FileName; }
   void Close() { fclose(Buffer); }
  private:
+  int HandlePunct(festring&, int, int);
   FILE* Buffer;
   festring FileName;
   const valuemap* ValueMap;

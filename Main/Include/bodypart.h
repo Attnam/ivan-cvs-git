@@ -122,8 +122,9 @@ class ABSTRACT_ITEM
   virtual void DestroyBodyPart(stack*);
   virtual void SetLifeExpectancy(int, int);
   virtual void SpecialEatEffect(character*, int);
- protected:
+  virtual character* GetBodyPartMaster() const { return Master; }
   virtual bool AllowFluids() const { return true; }
+ protected:
   virtual bool IsSparkling(int) const;
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }

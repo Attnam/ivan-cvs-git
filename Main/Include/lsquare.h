@@ -250,7 +250,7 @@ class lsquare : public square
   void DestroyMemorized();
   void SwapMemorized(lsquare*);
   bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
-  lsquare* GetRandomAdjacentFlyableLSquare() const;
+  lsquare* GetRandomAdjacentSquare() const;
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);

@@ -166,7 +166,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	SecondaryMaterialConfig = { 6, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP, OMMEL_CERUMEN, OMMEL_SNOT; }
-	MaterialConfigChances = { 6, 750, 10, 25, 10, 25, 25; }
+	MaterialConfigChances = { 6, 750, 5, 25, 5, 10, 10; }
 	Roundness = 60;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
@@ -1008,7 +1008,7 @@ potion /* materialcontainer-> */
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
 	SecondaryMaterialConfig = { 11, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
-	MaterialConfigChances = { 11, 100, 75, 10, 50, 1, 10, 5, 25, 10, 10, 25; }
+	MaterialConfigChances = { 11, 100, 75, 5, 50, 1, 10, 5, 25, 5, 5, 25; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
@@ -1241,7 +1241,7 @@ wand
 		Price = 500;
 		IsPolymorphSpawnable = false;
 		PostFix = "of polymorph";
-		MainMaterialConfig == UNICORN_HORN;
+		MainMaterialConfig == OCTIRON;
 		BeamRange = 5;
 		MinCharges = 2;
 		MaxCharges = 5;
@@ -1329,7 +1329,7 @@ wand
 		Possibility = 20;
 		Price = 750;
 		PostFix = "of resurrection";
-		MainMaterialConfig == OMMEL_TOOTH;
+		MainMaterialConfig == PHOENIX_FEATHER;
 		BeamRange = 5;
 		MinCharges = 1;
 		MaxCharges = 3;

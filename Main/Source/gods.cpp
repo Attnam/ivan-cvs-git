@@ -932,9 +932,11 @@ void scabies::PrayGoodEffect()
 	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	    {
 	      character* Char = *i;
-	      if(!Char->IsImmuneToLeprosy())
+
+	      if((*i)->IsEnabled() && !Char->IsImmuneToLeprosy())
 		Char->GainIntrinsic(LEPROSY);
 	    }
+
       ADD_MESSAGE("You feel a a horrible disease spreading.");
       return;
     }

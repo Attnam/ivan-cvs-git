@@ -51,28 +51,117 @@ festring inputfile::ReadWord(bool AbortOnEOF)
   return ToReturn;
 }
 
+#define MODE_WORD 1
+#define MODE_NUMBER 2
+
+#define PUNCT_RETURN 0
+#define PUNCT_CONTINUE 1
+
+int inputfile::HandlePunct(festring& String, int Char, int Mode)
+{
+  if(Char == '/')
+    {
+      if(!feof(Buffer))
+	{
+	  Char = fgetc(Buffer);
+
+	  if(Char == '*')
+	    {
+	      long StartPos = TellPos();
+	      int OldChar = 0, CommentLevel = 1;
+
+	      for(;;)
+		{
+		  if(feof(Buffer))
+		    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
+
+		  Char = fgetc(Buffer);
+
+		  if(OldChar != '*' || Char != '/')
+		    {
+		      if(OldChar != '/' || Char != '*')
+			OldChar = Char;
+		      else
+			{
+			  ++CommentLevel;
+			  OldChar = 0;
+			}
+		    }
+		  else
+		    {
+		      if(!--CommentLevel)
+			break;
+		      else
+			OldChar = 0;
+		    }
+		}
+
+	      return PUNCT_CONTINUE;
+	    }
+	  else
+	    {
+	      ungetc(Char, Buffer);
+	      clearerr(Buffer);
+	    }
+	}
+
+      if(Mode)
+	ungetc('/', Buffer);
+      else
+	String << '/';
+
+      return PUNCT_RETURN;
+    }
+
+  if(Mode)
+    {
+      ungetc(Char, Buffer);
+      return PUNCT_RETURN;
+    }
+
+  if(Char == '"')
+    {
+      long StartPos = TellPos();
+      int OldChar = 0;
+
+      for(;;)
+	{
+	  if(feof(Buffer))
+	    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
+
+	  Char = fgetc(Buffer);
+
+	  if(Char != '"')
+	    {
+	      String << char(Char);
+	      OldChar = Char;
+	    }
+	  else if(OldChar == '\\')
+	    {
+	      String[String.GetSize() - 1] = '"';
+	      OldChar = 0;
+	    }
+	  else
+	    return PUNCT_RETURN;
+	}
+    }
+
+  String << char(Char);
+  return PUNCT_RETURN;
+}
+
 void inputfile::ReadWord(festring& String, bool AbortOnEOF)
 {
   int Mode = 0;
   String.Empty();
 
-  for(;;)
+  for(int Char = fgetc(Buffer); !feof(Buffer); Char = fgetc(Buffer))
     {
-      if(feof(Buffer))
-	{
-	  if(AbortOnEOF)
-	    ABORT("Unexpected end of file %s!", FileName.CStr());
-
-	  return;
-	}
-
-      int Char = fgetc(Buffer);
-
       if(isalpha(Char) || Char == '_')
 	{
 	  if(!Mode)
-	    Mode = 1;
-	  else if(Mode == 2)
+	    Mode = MODE_WORD;
+	  else if(Mode == MODE_NUMBER)
 	    {
 	      ungetc(Char, Buffer);
 	      return;
@@ -85,8 +174,8 @@ void inputfile::ReadWord(festring& String, bool AbortOnEOF)
       if(isdigit(Char))
 	{
 	  if(!Mode)
-	    Mode = 2;
-	  else if(Mode == 1)
+	    Mode = MODE_NUMBER;
+	  else if(Mode == MODE_WORD)
 	    {
 	      ungetc(Char, Buffer);
 	      return;
@@ -99,112 +188,21 @@ void inputfile::ReadWord(festring& String, bool AbortOnEOF)
       if((Char == ' ' || Char == '\n') && Mode)
 	return;
 
-      if(ispunct(Char))
-	{
-	  if(Char == '/')
-	    {
-	      if(!feof(Buffer))
-		{
-		  Char = fgetc(Buffer);
-
-		  if(Char == '*')
-		    {
-		      long StartPos = TellPos();
-		      int OldChar = 0, CommentLevel = 1;
-
-		      for(;;)
-			{
-			  if(feof(Buffer))
-			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
-
-			  Char = fgetc(Buffer);
-
-			  if(OldChar != '*' || Char != '/')
-			    {
-			      if(OldChar != '/' || Char != '*')
-				OldChar = Char;
-			      else
-				{
-				  ++CommentLevel;
-				  OldChar = 0;
-				}
-			    }
-			  else
-			    {
-			      if(!--CommentLevel)
-				break;
-			      else
-				OldChar = 0;
-			    }
-			}
-
-		      continue;
-		    }
-		  else
-		    ungetc(Char, Buffer);
-		}
-
-	      if(Mode)
-		ungetc('/', Buffer);
-	      else
-		String << '/';
-
-	      return;
-	    }
-
-	  if(Mode)
-	    {
-	      ungetc(Char, Buffer);
-	      return;
-	    }
-
-	  if(Char == '"')
-	    {
-	      long StartPos = TellPos();
-	      int OldChar = 0;
-
-	      for(;;)
-		{
-		  if(feof(Buffer))
-		    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.CStr(), TellLineOfPos(StartPos));
-
-		  Char = fgetc(Buffer);
-
-		  if(Char != '"')
-		    {
-		      String << char(Char);
-		      OldChar = Char;
-		    }
-		  else if(OldChar == '\\')
-		    {
-		      String[String.GetSize() - 1] = '"';
-		      OldChar = 0;
-		    }
-		  else
-		    return;
-		}
-	    }
-
-	  String << char(Char);
-	  return;
-	}
+      if(ispunct(Char) && HandlePunct(String, Char, Mode) == PUNCT_RETURN)
+	return;
     }
+
+  if(AbortOnEOF)
+    ABORT("Unexpected end of file %s!", FileName.CStr());
+
+  if(Mode)
+    clearerr(Buffer);
 }
 
 char inputfile::ReadLetter(bool AbortOnEOF)
 {
-  for(;;)
+  for(int Char = fgetc(Buffer); !feof(Buffer); Char = fgetc(Buffer))
     {
-      if(feof(Buffer))
-	{
-	  if(AbortOnEOF)
-	    ABORT("Unexpected end of file %s!", FileName.CStr());
-
-	  return 0;
-	}
-
-      int Char = fgetc(Buffer);
-
       if(isalpha(Char) || isdigit(Char))
 	return Char;
 
@@ -259,6 +257,11 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 	  return Char;
 	}
     }
+
+  if(AbortOnEOF)
+    ABORT("Unexpected end of file %s!", FileName.CStr());
+
+  return 0;
 }
 
 /* Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+Variable%4" etc. */

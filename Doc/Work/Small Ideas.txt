@@ -499,4 +499,5 @@ Things less dense than a liquid should float in a square full of that liquid.
 Simple protection for changing highscore files. Needed if list of best scores is done.
 If a creature has lost all its limbs, leprosy should drop its head.
 Good NPCs should try not to use ommel bone/tooth weapons.
-Death message for team member killing each other while confused should be "X killed by confused Y">>>>>>> 1.330
+Death message for team member killing each other while confused should be "X killed by confused Y".
+Lair of the Loser Kamikaze Dwarf somewhere below Dark Level (he destroys half of the level with him, if he somehow manages to light his megaexplosives).

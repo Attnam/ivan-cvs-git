@@ -205,7 +205,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Leprosy",
-    RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
     &character::PrintBeginLeprosyMessage,
     &character::PrintEndLeprosyMessage,
     &character::BeginLeprosy,
@@ -3354,7 +3354,8 @@ void character::Regenerate()
 
       EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, Min(4000 * BodyPart->GetMaxHP() / (BodyPart->GetHP() * BodyPart->GetHP()), 240), 1 << 9);
+      int HP = BodyPart->GetHP();
+      EditExperience(ENDURANCE, Min(1000 * BodyPart->GetMaxHP() / (HP * HP), 300), 1000);
     }
 }
 
@@ -3678,12 +3679,18 @@ void character::ReceiveHeal(long Amount)
 
   Amount -= c * 10;
 
-  if(Amount >= 250)
+  if(RAND() % 10 < Amount)
+    HealHitPoint();
+
+  if(Amount >= 250 || RAND() % 250 < Amount)
     {
       bodypart* NewBodyPart = GenerateRandomBodyPart();
+
       if(!NewBodyPart)
 	return;
+
       NewBodyPart->SetHP(1);
+
       if(IsPlayer())
 	ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
       else if(CanBeSeenByPlayer())
@@ -3706,7 +3713,8 @@ void character::ReceiveSchoolFood(long SizeOfEffect)
   if(SizeOfEffect >= 250)
     Vomit(GetPos(), SizeOfEffect);
 
-  if(!(RAND() % 3) && SizeOfEffect >= 500 && EditAttribute(ENDURANCE, SizeOfEffect / 500))
+  if(!(RAND() % 3) && SizeOfEffect >= 500
+  && EditAttribute(ENDURANCE, SizeOfEffect / 500))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
@@ -3736,8 +3744,8 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmmelUrine(long Amount)
 {
-  EditExperience(ARM_STRENGTH, Amount, 1 << 13);
-  EditExperience(LEG_STRENGTH, Amount, 1 << 13);
+  EditExperience(ARM_STRENGTH, 500, Amount << 4);
+  EditExperience(LEG_STRENGTH, 500, Amount << 4);
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
@@ -3745,8 +3753,8 @@ void character::ReceiveOmmelUrine(long Amount)
 
 void character::ReceiveOmmelCerumen(long Amount)
 {
-  EditExperience(INTELLIGENCE, Amount, 1 << 14);
-  EditExperience(WISDOM, Amount, 1 << 14);
+  EditExperience(INTELLIGENCE, 500, Amount << 5);
+  EditExperience(WISDOM, 500, Amount << 5);
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
@@ -3754,8 +3762,8 @@ void character::ReceiveOmmelCerumen(long Amount)
 
 void character::ReceiveOmmelSweat(long Amount)
 {
-  EditExperience(AGILITY, Amount, 1 << 13);
-  EditExperience(DEXTERITY, Amount, 1 << 13);
+  EditExperience(AGILITY, 500, Amount << 4);
+  EditExperience(DEXTERITY, 500, Amount << 4);
   RestoreStamina();
 
   if(IsPlayer())
@@ -3764,8 +3772,8 @@ void character::ReceiveOmmelSweat(long Amount)
 
 void character::ReceiveOmmelTears(long Amount)
 {
-  EditExperience(PERCEPTION, Amount, 1 << 13);
-  EditExperience(CHARISMA, Amount, 1 << 13);
+  EditExperience(PERCEPTION, 500, Amount << 4);
+  EditExperience(CHARISMA, 500, Amount << 4);
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
@@ -3773,7 +3781,7 @@ void character::ReceiveOmmelTears(long Amount)
 
 void character::ReceiveOmmelSnot(long Amount)
 {
-  EditExperience(ENDURANCE, Amount, 1 << 14);
+  EditExperience(ENDURANCE, 500, Amount << 5);
   RestoreLivingHP();
 
   if(IsPlayer())
@@ -4784,11 +4792,12 @@ void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
     {
-      lsquare* Where = GetLSquareUnder()->GetRandomAdjacentFlyableLSquare();
-      if(Where && RAND_8) // slightly more probable to vomit on self than other squares
-	{
-	  Vomit(Where->GetPos(), 500 + RAND() % 250);       
-	}
+      lsquare* Where = GetLSquareUnder()->GetRandomAdjacentSquare();
+
+      /* slightly more probable to vomit on self than other squares */
+
+      if(RAND_8 && (!Where->GetCharacter() || Where->GetCharacter()->IsPet()))
+	Vomit(Where->GetPos(), 500 + RAND() % 250);
       else
 	Vomit(GetPos(), 500 + RAND() % 250);
     }
@@ -5755,22 +5764,22 @@ void character::ReceiveAntidote(long Amount)
 	}
     }
 
-  if(Amount >= 100 && StateIsActivated(PARASITIZED))
+  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(PARASITIZED))
     {
       if(IsPlayer())
 	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
       DeActivateTemporaryState(PARASITIZED);
-      Amount -= 100;
+      Amount -= Min(100L, Amount);
     }
   
-  if(Amount >= 100 && StateIsActivated(LEPROSY))
+  if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You are not falling to pieces anymore.");
 
       DeActivateTemporaryState(LEPROSY);
-      Amount -= 100;
+      Amount -= Min(100L, Amount);
     }
 }
 
@@ -6880,6 +6889,7 @@ bool character::AttackAdjacentEnemyAI()
       Hit(Char[ChosenIndex], Pos[ChosenIndex], Dir[ChosenIndex]);
       return true;
     }
+
   return false;
 }
 
@@ -7149,7 +7159,10 @@ liquid* character::CreateBlood(long Volume) const
 
 void character::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
 {
+  long ReserveVolume = Liquid->GetVolume() >> 1;
+  Liquid->EditVolume(-ReserveVolume);
   GetStack()->SpillFluid(Spiller, Liquid, long(Liquid->GetVolume() * sqrt(double(GetStack()->GetVolume()) / GetVolume())));
+  Liquid->EditVolume(ReserveVolume);
   int c;
   long Modifier[MAX_BODYPARTS], ModifierSum = 0;
 
@@ -7420,7 +7433,17 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
 
   Exp += (NaturalExp * (100 + Value) - 100 * OldExp) * Speed * EXP_DIVISOR;
   LimitRef(Exp, MIN_EXP, MAX_EXP);
-  return int(Exp * EXP_DIVISOR) - int(OldExp * EXP_DIVISOR);
+  int NewA = int(Exp * EXP_DIVISOR);
+  int OldA = int(OldExp * EXP_DIVISOR);
+  int Delta = NewA - OldA;
+
+  if(Delta > 0)
+    Exp = Max(Exp, (NewA + 0.05) * EXP_MULTIPLIER);
+  else if(Delta < 0)
+    Exp = Min(Exp, (NewA + 0.95) * EXP_MULTIPLIER);
+
+  LimitRef(Exp, MIN_EXP, MAX_EXP);
+  return Delta;
 }
 
 int character::GetAttribute(int Identifier) const
@@ -7472,8 +7495,8 @@ void character::TryToInfectWithLeprosy(const character* Infector)
 {
   if(!IsImmuneToLeprosy()
   && ((GetRelation(Infector) == HOSTILE
-    && !RAND_N(50 * GetAttribute(ENDURANCE))) 
-   || !RAND_N(500 * GetAttribute(ENDURANCE))))
+    && !RAND_N(25 * GetAttribute(ENDURANCE))) 
+   || !RAND_N(250 * GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
 
@@ -7680,6 +7703,9 @@ void character::EditStamina(int Amount, bool CanCauseFaint)
 
 void character::RegenerateStamina()
 {
+  if(GetTirednessState() != UNTIRED)
+    EditExperience(ENDURANCE, 50, 1);
+
   int Bonus = 1;
 
   if(Action)
@@ -8410,6 +8436,7 @@ character* character::GetNewFormForPolymorphWithControl()
 {
   festring Topic, Temp;
   character* NewForm = 0;
+
   while(!NewForm)
     {
       festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '?' for a list]"),
@@ -8444,7 +8471,6 @@ character* character::GetNewFormForPolymorphWithControl()
 	    NewForm->RemoveAllItems();
 	}
     }
-
 
   return NewForm;
 }

@@ -38,7 +38,7 @@ festring material::GetName(bool Articled, bool Adjective) const
 
 int material::TakeDipVolumeAway()
 {
-  long Amount = 100;
+  long Amount = 500;
 
   if(Amount < Volume)
     EditVolume(-Amount);

@@ -1060,7 +1060,7 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, long VolumeModifier)
   FillItemVector(ItemVector);
 
   for(int c = ItemVector.size() - 1; c >= 0; --c)
-    if(ItemVector[c]->Exists())
+    if(ItemVector[c]->Exists() && ItemVector[c]->AllowFluids())
       {
 	long ItemVolume = ItemVector[c]->GetVolume();
 	double Root = sqrt(ItemVolume);

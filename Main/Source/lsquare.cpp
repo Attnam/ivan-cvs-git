@@ -2443,18 +2443,22 @@ bool lsquare::Necromancy(const beamdata& Beam)
 
 
 // Returns 0 if fails
-lsquare* lsquare::GetRandomAdjacentFlyableLSquare() const
+
+lsquare* lsquare::GetRandomAdjacentSquare() const
 {
-  std::vector<lsquare*> OK;
-  lsquare* LSquare;
+  lsquare* OK[8];
+  int Index = 0;
+
   for(int c = 0; c < 8; ++c)
     {
-      LSquare = GetNeighbourLSquare(c);
-      if(LSquare->IsFlyable())
-	OK.push_back(LSquare);
+      lsquare* Square = NeighbourLSquare[c];
+
+      if(Square)
+	OK[Index++] = Square;
     }
-  if(OK.empty())
-    return 0;
+
+  if(Index)
+    return OK[RAND_N(Index)];
   else
-    return OK[RAND_N(OK.size())];
+    return 0;
 }

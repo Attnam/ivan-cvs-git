@@ -584,6 +584,11 @@ void genetrixvesana::GetAICommand()
 {
   ++TurnsExisted;
 
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+
   if(!(RAND() % 60))
     {
       int NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
@@ -1001,7 +1006,8 @@ void mushroom::GetAICommand()
   
   lsquare* CradleSquare = GetNeighbourLSquare(RAND() % 8);
 
-  if(CradleSquare && !CradleSquare->GetCharacter() && (CradleSquare->GetWalkability() & WALK))
+  if(CradleSquare && !CradleSquare->GetCharacter()
+  && (CradleSquare->GetWalkability() & WALK))
     {
       int SpoiledItems = 0;
       int MushroomsNear = 0;

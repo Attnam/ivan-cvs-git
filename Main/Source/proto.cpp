@@ -70,7 +70,11 @@ character* protosystem::BalancedCreateMonster()
 			continue;
 		    }
 
-		  if(PLAYER->GetMaxHP() < DataBase->HPRequirementForGeneration)
+		  ivantime Time;
+		  game::GetTime(Time);
+
+		  if(PLAYER->GetMaxHP() < DataBase->HPRequirementForGeneration
+		  && Time.Day < DataBase->DayRequirementForGeneration)
 		    continue;
 
 		  Possible.push_back(ConfigID);

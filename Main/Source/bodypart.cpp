@@ -779,11 +779,11 @@ bool corpse::RaiseTheDead(character* Summoner)
       vector2d Pos = GetPos();
       RemoveFromSlot();
       GetDeceased()->SetMotherEntity(0);
-      GetDeceased()->PutToOrNear(Pos);
 
       if(Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
 	GetDeceased()->ChangeTeam(Summoner->GetTeam());
 
+      GetDeceased()->PutToOrNear(Pos);
       GetDeceased()->SignalStepFrom(0);
       Deceased = 0;
       SendToHell();
@@ -929,12 +929,18 @@ bool arm::EditAttribute(int Identifier, int Value)
     {
       if(!UseMaterialAttributes()
       && Master->RawEditAttribute(StrengthExperience, Value))
-	Master->CalculateBattleInfo();
+	{
+	  Master->CalculateBattleInfo();
+	  return true;
+	}
     }
   else if(Identifier == DEXTERITY)
     if(!UseMaterialAttributes()
     && Master->RawEditAttribute(DexterityExperience, Value))
-      Master->CalculateBattleInfo();
+      {
+	Master->CalculateBattleInfo();
+	return true;
+      }
 
   return false;
 }
@@ -1025,12 +1031,16 @@ bool leg::EditAttribute(int Identifier, int Value)
 	{
 	  Master->CalculateBurdenState();
 	  Master->CalculateBattleInfo();
+	  return true;
 	}
     }
   else if(Identifier == AGILITY)
     if(!UseMaterialAttributes()
     && Master->RawEditAttribute(AgilityExperience, Value))
-      Master->CalculateBattleInfo();
+      {
+	Master->CalculateBattleInfo();
+	return true;
+      }
 
   return false;
 }

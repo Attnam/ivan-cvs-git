@@ -1748,18 +1748,6 @@ void playerkind::VirtualConstructor(bool Load)
       SoulID = 0;
       IsBonePlayer = false;
       IsClone = false;
-      EditAttribute(ARM_STRENGTH, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(DEXTERITY, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(LEG_STRENGTH, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(AGILITY, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(PERCEPTION, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(INTELLIGENCE, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(WISDOM, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(CHARISMA, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(MANA, (RAND() & 1) - (RAND() & 1));
-
-      if(GetMoney())
-	SetMoney(GetMoney() + RAND() % 11);
     }
 }
 
@@ -3150,7 +3138,7 @@ void darkmage::GetAICommand()
 	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
 
 	  TeleportRandomly();
-	  EditAP(-4000 / GetConfig());
+	  EditAP(-GetSpellAPCost());
 	  return;
 	}
     }
@@ -3172,7 +3160,7 @@ void darkmage::GetAICommand()
   if(NearestEnemy)
     {
       lsquare* Square = NearestEnemy->GetLSquareUnder();
-      EditAP(-4000 / GetConfig());
+      EditAP(-GetSpellAPCost());
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
@@ -3281,7 +3269,7 @@ void darkmage::GetAICommand()
   if(RandomFriend)
     {
       lsquare* Square = RandomFriend->GetLSquareUnder();
-      EditAP(-4000 / GetConfig());
+      EditAP(-GetSpellAPCost());
       Square->DrawParticles(RED);
 
       switch(GetConfig())
@@ -3889,7 +3877,7 @@ void necromancer::GetAICommand()
   if(NearestEnemy && !(RAND() % (GetConfig() == APPRENTICE_NECROMANCER ? 3 : 2)))
     {
       lsquare* Square = NearestEnemy->GetLSquareUnder();
-      EditAP(-4000 / GetConfig());
+      EditAP(-GetSpellAPCost());
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
@@ -3950,7 +3938,7 @@ void necromancer::GetAICommand()
 	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
 
 	  TeleportRandomly();
-	  EditAP(-4000 / GetConfig());
+	  EditAP(-GetSpellAPCost());
 	  return;
 	}
       else if(NearestEnemy->IsSmall() && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
@@ -3969,8 +3957,12 @@ void necromancer::GetAICommand()
 bool necromancer::TryToRaiseZombie()
 {
   for(int c = 0; c < game::GetTeams(); ++c)
-    for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-      if(!(*i)->IsEnabled() && (*i)->GetMotherEntity() && (*i)->GetMotherEntity()->Exists() && (GetConfig() == MASTER_NECROMANCER || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
+    for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
+	i != game::GetTeam(c)->GetMember().end(); ++i)
+      if(!(*i)->IsEnabled() && (*i)->GetMotherEntity()
+      && (*i)->GetMotherEntity()->Exists()
+      && (GetConfig() == MASTER_NECROMANCER
+       || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
 	{
 	  character* Zombie = (*i)->GetMotherEntity()->TryNecromancy(this);
 
@@ -3981,7 +3973,7 @@ bool necromancer::TryToRaiseZombie()
 	      else if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s casts a spell, but you notice no effect.", CHAR_NAME(DEFINITE));
 
-	      EditAP(-4000 / GetConfig());
+	      EditAP(-GetSpellAPCost());
 	      return true;
 	    }
 	}
@@ -4000,6 +3992,7 @@ void necromancer::RaiseSkeleton()
   if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
     {
       Skeleton = new skeleton(WAR_LORD);
+      Skeleton->SetTeam(GetTeam());
       Skeleton->PutNear(GetPos());
       Skeleton->SignalGeneration();
 
@@ -4012,7 +4005,8 @@ void necromancer::RaiseSkeleton()
     }
   else
     {
-      Skeleton = new skeleton(GetConfig() == APPRENTICE_NECROMANCER ? 0 : WARRIOR, NO_EQUIPMENT);
+      Skeleton = new skeleton(GetConfig() == APPRENTICE_NECROMANCER ? 0 : WARRIOR);
+      Skeleton->SetTeam(GetTeam());
       Skeleton->PutNear(GetPos());
 
       if(Skeleton->CanBeSeenByPlayer())
@@ -4022,8 +4016,7 @@ void necromancer::RaiseSkeleton()
     }
 
   Skeleton->SetGenerationDanger(GetGenerationDanger());
-  Skeleton->SetTeam(GetTeam());
-  EditAP(-4000 / GetConfig());
+  EditAP(-GetSpellAPCost());
 }
 
 void humanoid::StayOn(liquid* Liquid)
@@ -4333,7 +4326,7 @@ void darkknight::SpecialBodyPartSeverReaction()
 
 void humanoid::LeprosyHandler()
 {
-  if(!RAND_N(2500 * GetAttribute(ENDURANCE)))
+  if(!RAND_N(1000 * GetAttribute(ENDURANCE)))
     DropRandomNonVitalBodypart();
 
   if(!game::IsInWilderness())
@@ -4360,7 +4353,7 @@ void humanoid::DropRandomNonVitalBodypart()
 
 void humanoid::DropBodyPart(int Index)
 {
-  if(GetBodyPart(Index)->IsAlive())
+  if(!GetBodyPart(Index)->IsAlive())
     return;
 
   festring NameOfDropped = GetBodyPart(Index)->GetBodyPartName();
@@ -4377,23 +4370,23 @@ void humanoid::DropBodyPart(int Index)
 
       if(IsPlayer())
 	{
-	  ADD_MESSAGE("Your %s drops to the ground.", NameOfDropped.CStr());
+	  ADD_MESSAGE("You feel very ill. Your %s drops to the ground.", NameOfDropped.CStr());
 	  game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
 	  DeActivateVoluntaryAction();
 	}
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s's %s drops to the ground.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
+	ADD_MESSAGE("Suddenly %s's %s drops to the ground.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
     }
   else
     {
       if(IsPlayer())
 	{
-	  ADD_MESSAGE("Your %s disappears.", NameOfDropped.CStr());
+	  ADD_MESSAGE("You feel very ill. Your %s disappears.", NameOfDropped.CStr());
 	  game::AskForKeyPress(CONST_S("Bodypart destroyed! [press any key to continue]"));
 	  DeActivateVoluntaryAction();
 	}
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());      
+	ADD_MESSAGE("Suddenly %s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());      
     }
 }
 
@@ -4558,4 +4551,28 @@ bool humanoid::CheckApply() const
       return false;
     }
   return true;
+}
+
+int darkmage::GetSpellAPCost() const
+{
+  switch(GetConfig())
+    {
+    case APPRENTICE: return 4000;
+    case BATTLE_MAGE: return 2000;
+    case ELDER: return 1000;
+    case ARCH_MAGE: return 500;
+    }
+
+  return 4000;
+}
+
+int necromancer::GetSpellAPCost() const
+{
+  switch(GetConfig())
+    {
+    case APPRENTICE_NECROMANCER: return 2000;
+    case MASTER_NECROMANCER: return 1000;
+    }
+
+  return 4000;
 }

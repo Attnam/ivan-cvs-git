@@ -44,7 +44,7 @@ command* commandsystem::Command[] =
   new command(&Apply, "apply", 'a', 'a', false),
   new command(&Talk, "chat", 'C', 'C', false),
   new command(&Close, "close", 'c', 'c', false),
-  new command(&Dip, "dip", '!', '!', true),
+  new command(&Dip, "dip", '!', '!', false),
   new command(&Drink, "drink", 'D', 'D', true),
   new command(&Drop, "drop", 'd', 'd', true),
   new command(&Eat, "eat", 'e', 'e', true),

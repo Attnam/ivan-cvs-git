@@ -621,6 +621,8 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand();
+ protected:
+  int GetSpellAPCost() const;
 );
 
 class CHARACTER
@@ -631,6 +633,8 @@ class CHARACTER
   virtual void GetAICommand();
   virtual bool TryToRaiseZombie();
   virtual void RaiseSkeleton();
+ protected:
+  int GetSpellAPCost() const;
 );
 
 class CHARACTER

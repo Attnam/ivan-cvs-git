@@ -1170,7 +1170,7 @@ liquid
 	Density = 1000;
 	Flexibility = 50;
 	IsWarm = false;
-	RustModifier = 0;
+	RustModifier = 100;
 
 	Config OMMEL_URINE;
 	{
@@ -1216,7 +1216,6 @@ liquid
 		NameStem = "water";
 		Alpha = 150;
 		AttachedGod = TERRA;
-		RustModifier = 100;
 	}
 
 	Config HEALING_LIQUID;
@@ -1245,6 +1244,7 @@ liquid
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
 		IsBlood = true;
+		RustModifier = 5;
 	}
 
 	Config BROWN_SLIME;
@@ -1276,7 +1276,6 @@ liquid
 		Alpha = 150;
 		PriceModifier = 500;
 		AttachedGod = SCABIES;
-		RustModifier = 50;
 	}
 
 	Config VALDEMAR;
@@ -1362,6 +1361,7 @@ liquid
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
 		IsBlood = true;
+		RustModifier = 200;
 		Acidicity = 100;
 		AffectInside = true;
 		ConsumeWisdomLimit = 0;
@@ -1432,7 +1432,6 @@ liquid
 		NameStem = "dog drool";
 		Alpha = 175;
 		AttachedGod = SILVA;
-		RustModifier = 100;
 	}
 
 	Config PEA_SOUP;

@@ -491,8 +491,9 @@ class item : public object
   virtual bool IsValuable() const;
   virtual bool Necromancy(character*) { return false; }
   virtual void CalculateEnchantment() { }
- protected:
+  virtual character* GetBodyPartMaster() const { return 0; }
   virtual bool AllowFluids() const { return false; }
+ protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

@@ -88,6 +88,7 @@ character
 	DeathMessage = "@Dd is slain.";
 	IgnoreDanger = false;
 	HPRequirementForGeneration = 0;
+	DayRequirementForGeneration = 0;
 	IsExtraCoward = false;
 	SpillsBlood = true;
 	HasEyes = true;
@@ -178,6 +179,7 @@ playerkind
 	/*Inventory = { 3, holybanana { Times = 5; }, can { SecondaryMaterial = PEA_SOUP; Times = 5; }, wand(WAND_OF_INVISIBILITY); }*/
 	/*KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 100;*/
+	/*Inventory == potion { Times = 50; }*/
 }
 
 petrus
@@ -1305,7 +1307,8 @@ mommo
 		TotalSize = 100;
 		Adjective = "conical";
 		HPRequirementForGeneration = 80;
-		Frequency = 500;
+		DayRequirementForGeneration = 3;
+		Frequency = 1000;
 	}
 
 	Config FLAT;
@@ -1321,7 +1324,8 @@ mommo
 		TotalSize = 75;
 		Adjective = "flat";
 		HPRequirementForGeneration = 60;
-		Frequency = 1000;
+		DayRequirementForGeneration = 2;
+		Frequency = 1500;
 		CanHear = false;
 	}
 }
@@ -2604,6 +2608,7 @@ kamikazedwarf
 	DeathMessage = "@Dd dies smiling.";
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 60;
+	DayRequirementForGeneration = 3;
 	Frequency = 300;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	AttachedGod = NONE;
@@ -3400,6 +3405,7 @@ chameleon
 	FleshMaterial = CHAMELEON_FLESH;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 40;
+	DayRequirementForGeneration = 2;
 	Frequency = 1000;
 	IsExtraCoward = true;
 	AttachedGod = SCABIES;
@@ -3428,6 +3434,7 @@ floatingeye
 	FleshMaterial = FLOATING_EYE_FLESH;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 40;
+	DayRequirementForGeneration = 2;
 	Frequency = 1500;
 	TorsoBitmapPos = 32, 0;
 	SkinColor = rgb16(180,180,180);
@@ -3472,6 +3479,7 @@ eddy
 	CanBeGenerated = true;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 50;
+	DayRequirementForGeneration = 2;
 	Frequency = 1000;
 	PanicLevel = 0;
 	StandVerb = "twirling";
@@ -3592,6 +3600,7 @@ darkmage
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
 		HPRequirementForGeneration = 150;
+		DayRequirementForGeneration = 6;
 		Frequency = 1500;
 		PanicLevel = 75;
 		Inventory == lantern;
@@ -3622,6 +3631,7 @@ darkmage
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 250;
+		DayRequirementForGeneration = 10;
 		Frequency = 1000;
 		PanicLevel = 25;
 		CWeaponSkillHits == 100;
@@ -3654,6 +3664,7 @@ darkmage
 		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
 		RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 5; }
 		HPRequirementForGeneration = 350;
+		DayRequirementForGeneration = 14;
 		Frequency = 500;
 		PanicLevel = 10;
 		CWeaponSkillHits == 200;
@@ -3698,6 +3709,7 @@ darkmage
 		RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
 		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
 		HPRequirementForGeneration = 450;
+		DayRequirementForGeneration = 18;
 		PanicLevel = 0;
 		CanBeConfused = false;
 		CWeaponSkillHits == 500;
@@ -4006,7 +4018,7 @@ bunny
 	TorsoBitmapPos = 160, 0;
 	HostileReplies == "@Dd squeals furiously.";
 	FriendlyReplies == "@Dd squeals happily.";
-	SkinColor = rgb16(110, 90, 80);
+	SkinColor = rgb16(90, 70, 60);
 	NameSingular = "bunny";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 650;
@@ -4122,6 +4134,7 @@ hattifattener
 	AttachedGod = TERRA;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 60;
+	DayRequirementForGeneration = 3;
 	ElectricityResistance = 100;
 	Frequency = 1000;
 	PanicLevel = 0;
@@ -4172,6 +4185,7 @@ necromancer
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 0; }
 		HPRequirementForGeneration = 75;
+		DayRequirementForGeneration = 3;
 		Frequency = 1500;
 		PanicLevel = 5;
 		Inventory == skull;
@@ -4201,6 +4215,7 @@ necromancer
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 150;
+		DayRequirementForGeneration = 6;
 		Frequency = 1000;
 		PanicLevel = 0;
 		CWeaponSkillHits == 100;
@@ -4245,6 +4260,7 @@ sumowrestler
 	IsUnique = true;
 	CanBeWished = true;
 	IsPolymorphable = false;
+	PanicLevel = 10;
 	BaseUnarmedStrength = 100;
 	FriendlyReplies =
 	{
@@ -4408,6 +4424,7 @@ veterankamikazedwarf
 	Adjective = "veteran";
 	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
 	HPRequirementForGeneration = 200;
+	DayRequirementForGeneration = 8;
 	Frequency = 200;
 	IsAbstract = true;
 	CreateDivineConfigurations = true;

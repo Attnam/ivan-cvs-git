@@ -273,6 +273,11 @@ void liquid::TouchEffect(item* Item, const festring& LocationName)
 
   if(GetAcidicity())
     Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
+
+  character* Char = Item->GetBodyPartMaster();
+
+  if(Char)
+    Effect(Char, Volume >> 6);
 }
 
 void liquid::TouchEffect(lterrain* Terrain)
@@ -289,8 +294,11 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
   if(GetRustModifier())
     Char->GetBodyPart(BodyPartIndex)->TryToRust(GetRustModifier() * GetVolume());
 
-  if(GetAcidicity())
+  if(Char->IsEnabled() && GetAcidicity())
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, CONST_S(""), Volume * GetAcidicity() >> 1);
+
+  if(Char->IsEnabled())
+    Effect(Char, Volume >> 9);
 }
 
 /* Doesn't do the actual rusting, just returns whether it should happen */
