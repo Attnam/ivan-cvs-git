@@ -434,22 +434,25 @@ bool fountain::Drink(character* Drinker)
 		    && !GetNearLSquare(TryToCreate)->GetCharacter())//Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
 		      {
 			Created = true;
-			Monster->PutTo(TryToCreate);
 
 			if(RAND() % 5)
-			  {
-			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-
-			    if(Monster->CanBeSeenByPlayer())
-			      ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
-			  }
+			  Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 			else
-			  {
-			    Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
+			  Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
 
-			    if(Monster->CanBeSeenByPlayer())
-			      ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
-			  }
+			Monster->PutTo(TryToCreate);
+
+			if(Monster->CanBeSeenByPlayer())
+			  if(Monster->IsPet())
+			    {
+			      if(Monster->CanBeSeenByPlayer())
+				ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+			    }
+			  else
+			    {
+			      if(Monster->CanBeSeenByPlayer())
+				ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
+			    }
 
 			break;
 		      }
