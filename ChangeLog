@@ -1,3 +1,8 @@
+August 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* corrected funny (ok it's not very funny) spelling mistake. The text said before: "...ThOu HaSt SlAuGtHeReD pEtRuS..."
+	* Added panic. At the moment all monsters panic when their HPs reach 1 which will have to be tweaked.
+	
 August 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added parameter IgnoreVisibility to all stack::DrawContents and their calls

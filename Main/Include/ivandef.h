@@ -56,7 +56,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 13
+#define STATES 14
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -71,6 +71,7 @@
 #define TELEPORT 1024 /* Teleports every now and then */
 #define POLYMORPH 2048 /* Polymorph randomly every now and then */
 #define TELEPORT_CONTROL 4096
+#define PANIC 8192
 
 #define TORSO 1
 #define HEAD 2

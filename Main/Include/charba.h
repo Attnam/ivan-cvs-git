@@ -676,6 +676,9 @@ class character : public entity, public id
   room* GetRoomUnder() const { return GetLSquareUnder()->GetRoomClass(); }
   virtual bool TryToEquip(item*);
   virtual bool TryToConsume(item*);
+  virtual void PrintBeginPanicMessage() const;
+  virtual void PrintEndPanicMessage() const;
+  virtual bool WillPanic() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
