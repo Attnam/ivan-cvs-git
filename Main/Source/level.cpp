@@ -1572,8 +1572,8 @@ void level::GenerateDungeon(ushort Index)
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   ulong Counter = 0;
-
-  for(ushort x = 0; x < XSize; ++x)
+  ushort x;
+  for(x = 0; x < XSize; ++x)
     {
       game::BusyAnimation();
 

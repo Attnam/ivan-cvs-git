@@ -35,4 +35,6 @@ Healing liquid penetrates chests.
 Mistresses like shields more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
 Headless zombies can eat.
-
+While in read-mode player can find mines.
+Squares near should be redrawn when digged. (bad edge tiles)
+Creating doors doesn't update the lookmode description.

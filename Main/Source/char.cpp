@@ -893,6 +893,8 @@ bool character::TryMove(vector2d MoveVector, bool DisplaceAllowed)
 
 	  if(Pets == 1)
 	    return DisplaceAllowed && (CanMoveOn(MoveToSquare[0]) || (IsPlayer() && game::GoThroughWallsCheatIsActive())) && Displace(Pet[0]);
+	  else if(Pets)
+	    return false;
 
 	  if(CanMoveOn(MoveToSquare[0]) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
 	    {
