@@ -6,10 +6,17 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+May 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Getting killed by an own thunder hammer or Turox now gives a unique message
+	* A voluntary action is now terminated if a mage attacks from long range
+	* Corrected a bug that caused bone to spoil way too fast
+
 May 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Documented 1 idea and 1 bug
-	
+
 May 6 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Biting monsters now capture the severed bodyparts of the enemy

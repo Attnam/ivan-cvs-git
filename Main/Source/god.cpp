@@ -217,8 +217,9 @@ bool god::ReceiveOffer(item* Sacrifice)
 	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
       PrintRelation();
+      ushort RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
-      if(OfferValue > 0 && Relation > 500 && !(RAND() % 100))
+      if(OfferValue > 0 && Relation > 500 && !(RAND() % RandModifier))
 	{
 	  character* Angel = CreateAngel();
 
