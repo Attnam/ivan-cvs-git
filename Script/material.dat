@@ -949,7 +949,7 @@ organic /* substances that spoil but are not flesh */
 		NutritionValue = 500;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
-		SpoilModifier = 65000;
+		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
 	}
 
@@ -1020,6 +1020,38 @@ organic /* substances that spoil but are not flesh */
 		Density = 500;
 		ConsumeType = CT_PROCESSED;
 		IsValuable = true;
+	}
+
+	Config OMMEL_BONE;
+	{
+		StrengthValue = 250;
+		Flexibility = 2;
+		Density = 1250;
+		ConsumeType = CT_BONE;
+		Color = rgb16(210, 210, 210);
+		NutritionValue = 1000;
+		NameStem = "ommel bone";
+		ConsumeEndMessage = CEM_BONE;
+		SpoilModifier = 48000;
+		AttachedGod = MORTIFER;
+		HardenedMaterial = OMMEL_TOOTH;
+		IntelligenceRequirement = 15;
+	}
+
+	Config OMMEL_TOOTH;
+	{
+		StrengthValue = 375;
+		Flexibility = 2;
+		Density = 750;
+		ConsumeType = CT_BONE;
+		Color = rgb16(200, 200, 255);
+		NutritionValue = 1000;
+		NameStem = "ommel tooth";
+		ConsumeEndMessage = CEM_BONE;
+		SpoilModifier = 48000;
+		AttachedGod = MORTIFER;
+		IntelligenceRequirement = 30;
+		IsSparkling = true;
 	}
 }
 

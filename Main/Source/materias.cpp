@@ -18,10 +18,13 @@ bool ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustL
 
 void organic::Be()
 {
-  if(++SpoilCheckCounter >= 50)
+  if(SpoilCheckCounter++ >= 50)
     {
       if(MotherEntity->AllowSpoil())
 	{
+	  if(DataBase->NameStem == "ommel tooth")
+	    int esko = 2;
+
 	  if((SpoilCounter += 50) < GetSpoilModifier())
 	    {
 	      if(SpoilCounter << 1 >= GetSpoilModifier())

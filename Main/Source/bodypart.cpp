@@ -861,104 +861,6 @@ void leftleg::VirtualConstructor(bool Load)
   BootSlot.Init(this, LEFT_BOOT_INDEX);
 }
 
-/*bool arm::ApplyExperience()
-{
-  if(UseMaterialAttributes())
-    return false;
-
-  bool Edited = false;
-
-  if(Master->CheckForAttributeIncrease(Strength, StrengthExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-  else if(Master->CheckForAttributeDecrease(Strength, StrengthExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-
-  if(Master->CheckForAttributeIncrease(Dexterity, DexterityExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks quite dextrous.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-  else if(Master->CheckForAttributeDecrease(Dexterity, DexterityExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks clumsy.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-
-  return Edited;
-}
-
-bool leg::ApplyExperience()
-{
-  if(UseMaterialAttributes())
-    return false;
-
-  bool Edited = false;
-
-  if(Master->CheckForAttributeIncrease(Strength, StrengthExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", Master->CHAR_NAME(DEFINITE));
-
-      Master->CalculateBurdenState();
-      Edited = true;
-    }
-  else if(Master->CheckForAttributeDecrease(Strength, StrengthExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", Master->CHAR_NAME(DEFINITE));
-
-      Master->CalculateBurdenState();
-      Edited = true;
-    }
-
-  if(Master->CheckForAttributeIncrease(Agility, AgilityExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks very agile.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-  else if(Master->CheckForAttributeDecrease(Agility, AgilityExperience))
-    {
-      if(Master->IsPlayer())
-	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().CStr());
-      else if(Master->IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks sluggish.", Master->CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-
-  return Edited;
-}*/
-
 void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
   long StrExp = 50, DexExp = 50;
@@ -2193,16 +2095,6 @@ void arm::AddAttackInfo(felist& List) const
 
       Entry.Resize(50);
       Entry << GetMinDamage() << '-' << GetMaxDamage();
-      /*int DamageBonus = GetWielded() ? int(GetWielded()->GetDamageBonus()) : 0;
-
-      if(DamageBonus)
-	{
-	  if(DamageBonus > 0)
-	    Entry << '+';
-
-	  Entry << DamageBonus;
-	}*/
-
       Entry.Resize(60);
       Entry << int(GetToHitValue());
       Entry.Resize(70);

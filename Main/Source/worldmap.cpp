@@ -658,6 +658,7 @@ inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
 
 void worldmap::UpdateLOS()
 {
+  game::RemoveLOSUpdateRequest();
   int Radius = PLAYER->GetLOSRange();
   long RadiusSquare = Radius * Radius;
   vector2d Pos = PLAYER->GetPos();
@@ -668,6 +669,4 @@ void worldmap::UpdateLOS()
     for(int y = Rect.Y1; y <= Rect.Y2; ++y)
       if(long(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	Map[x][y]->SignalSeen();
-
-  game::RemoveLOSUpdateRequest();
 }

@@ -262,7 +262,7 @@ class ITEM
 
 class ITEM
 (
-  cheapcopyofleftnutofpetrus,
+  copyofleftnutofpetrus,
   nut,
   ;
 );

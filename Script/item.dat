@@ -207,9 +207,9 @@ meleeweapon
 		FormModifier = 90;
 		StrengthModifier = 100;
 		NameSingular = "long sword";
-		MainMaterialConfig = { 9, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 9, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 9, 200, 150, 100, 50, 1000, 750, 100, 25, 25; }
+		MainMaterialConfig = { 11, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 11, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 11, 200, 150, 100, 50, 1000, 750, 100, 25, 25, 10, 5; }
 		Roundness = 10;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
@@ -236,9 +236,9 @@ meleeweapon
 		BitmapPos = 0, 0;
 		FormModifier = 135;
 		NameSingular = "two-handed sword";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 6, 2000, 100, 25, 25, 10, 5; }
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -264,9 +264,9 @@ meleeweapon
 		BitmapPos = 0, 16;
 		FormModifier = 160;
 		NameSingular = "two-handed scimitar";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 6, 2000, 100, 25, 25, 10, 5; }
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -292,9 +292,9 @@ meleeweapon
 		DefaultMainVolume = 100;
 		DefaultSecondaryVolume = 2500;
 		NameSingular = "spear";
-		MainMaterialConfig = { 11, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 13, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == PINE_WOOD;
-		MaterialConfigChances = { 11, 250, 200, 150, 100, 250, 650, 500, 350, 200, 50, 50; }
+		MaterialConfigChances = { 13, 250, 200, 150, 100, 250, 650, 500, 350, 200, 50, 50, 25, 10; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -322,9 +322,9 @@ meleeweapon
 		FormModifier = 60;
 		NameSingular = "axe";
 		Article = "an";
-		MainMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == PINE_WOOD;
-		MaterialConfigChances = { 6, 1250, 1000, 500, 100, 25, 25; }
+		MaterialConfigChances = { 8, 1250, 1000, 500, 100, 25, 25, 10, 5; }
 		Roundness = 20;
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
@@ -351,9 +351,9 @@ meleeweapon
 		BitmapPos = 0, 80;
 		FormModifier = 115;
 		NameSingular = "halberd";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == BIRCH_WOOD;
-		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
+		MaterialConfigChances = { 6, 2000, 100, 25, 25, 10, 5; }
 		Roundness = 20;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -380,9 +380,9 @@ meleeweapon
 		Possibility = 300;
 		WeaponCategory = BLUNT_WEAPONS;
 		NameSingular = "mace";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == FIR_WOOD;
-		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
+		MaterialConfigChances = { 6, 2000, 100, 25, 25, 10, 5; }
 		Roundness = 30; /* we count the handle, too */
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -409,9 +409,9 @@ meleeweapon
 		BitmapPos = 80, 16;
 		FormModifier = 55;
 		NameSingular = "war hammer";
-		MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
+		MainMaterialConfig = { 9, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OCTIRON, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == FIR_WOOD;
-		MaterialConfigChances = { 7, 1000, 750, 500, 100, 25, 25, 25; }
+		MaterialConfigChances = { 9, 1000, 750, 500, 100, 25, 25, 10, 25, 5; }
 		Roundness = 20;
 		IsTwoHanded = true;
 		CanBeUsedBySmith = true;
@@ -439,9 +439,9 @@ meleeweapon
 		FormModifier = 60;
 		StrengthModifier = 40;
 		NameSingular = "sickle";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == FIR_WOOD;
-		MaterialConfigChances = { 4, 500, 100, 25, 25; }
+		MaterialConfigChances = { 6, 500, 100, 25, 25, 10, 5; }
 		Roundness = 20;
 		AttachedGod = SEGES;
 		WieldedBitmapPos = 176, 32;
@@ -468,9 +468,9 @@ meleeweapon
 		FormModifier = 75;
 		StrengthModifier = 60;
 		NameSingular = "dagger";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 4, 1000, 100, 25, 25; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 6, 1000, 100, 25, 25, 10, 5; }
 		Roundness = 20;
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 288;
@@ -497,9 +497,9 @@ meleeweapon
 		FormModifier = 80;
 		StrengthModifier = 90;
 		NameSingular = "short sword";
-		MainMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 6, 1250, 1000, 750, 100, 25, 25; }
+		MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 8, 1250, 1000, 750, 100, 25, 25, 10, 5; }
 		Roundness = 15;
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 32;
@@ -526,9 +526,9 @@ meleeweapon
 		BitmapPos = 64, 160;
 		FormModifier = 115;
 		NameSingular = "bastard sword";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 6, 2000, 100, 25, 25, 10, 5; }
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -554,9 +554,9 @@ meleeweapon
 		BitmapPos = 64, 80;
 		FormModifier = 85;
 		NameSingular = "battle-axe";
-		MainMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == OAK_WOOD;
-		MaterialConfigChances = { 6, 1500, 1000, 750, 100, 25, 25; }
+		MaterialConfigChances = { 8, 1500, 1000, 750, 100, 25, 25, 10, 5; }
 		Roundness = 30;
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
@@ -583,9 +583,9 @@ meleeweapon
 		FormModifier = 80;
 		StrengthModifier = 40;
 		NameSingular = "scythe";
-		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+		MainMaterialConfig = { 6, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == FIR_WOOD;
-		MaterialConfigChances = { 4, 500, 100, 25, 25; }
+		MaterialConfigChances = { 6, 500, 100, 25, 25, 10, 5; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = MORTIFER;
@@ -613,9 +613,9 @@ meleeweapon
 		DefaultMainVolume = 3000;
 		DefaultSecondaryVolume = 200;
 		NameSingular = "quarterstaff";
-		MainMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
-		SecondaryMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
-		MaterialConfigChances = { 9, 100, 350, 300, 250, 200, 150, 100, 75, 25; }
+		MainMaterialConfig = { 10, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_TOOTH; }
+		SecondaryMaterialConfig = { 10, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON, OMMEL_TOOTH; }
+		MaterialConfigChances = { 10, 100, 350, 300, 250, 200, 150, 100, 75, 25, 5; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = SILVA;
@@ -643,9 +643,9 @@ meleeweapon
 		BitmapPos = 48, 160;
 		FormModifier = 50;
 		NameSingular = "hammer";
-		MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON; }
+		MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OCTIRON, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == FIR_WOOD;
-		MaterialConfigChances = { 6, 750, 500, 100, 25, 25, 25; }
+		MaterialConfigChances = { 8, 750, 500, 100, 25, 25, 10, 10, 5; }
 		Roundness = 20;
 		CanBeUsedBySmith = true;
 		AttachedGod = LORICATUS;
@@ -657,8 +657,8 @@ meleeweapon
 		Possibility = 5;
 		BitmapPos = 48, 192;
 		WieldedBitmapPos = 176, 224;
-		MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, ADAMANT; }
-		MaterialConfigChances = { 5, 100, 25, 25, 25, 5; }
+		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+		MaterialConfigChances = { 4, 100, 25, 25, 5; }
 	}
 }
 
@@ -796,9 +796,9 @@ pickaxe /* meleeweapon-> */
 	Roundness = 20;
 	WeaponCategory = AXES;
 	StrengthModifier = 75;
-	MainMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
+	MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 	SecondaryMaterialConfig == FIR_WOOD;
-	MaterialConfigChances = { 6, 2000, 1500, 750, 100, 25, 25; }
+	MaterialConfigChances = { 8, 2000, 1500, 750, 100, 25, 25, 10, 5; }
 	IsTwoHanded = true;
 	Price = 50; /* bonus for being able to dig */
 	AttachedGod = LORICATUS;
@@ -844,8 +844,8 @@ bodyarmor /* armor-> */
 		DefaultMainVolume = 2000; 
 		BitmapPos = 16, 96;
 		NameSingular = "chain mail";
-		MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL; }
-		MaterialConfigChances = { 6, 450, 300, 150, 25, 20, 25; }
+		MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 8, 450, 300, 150, 25, 20, 25, 10, 5; }
 		InElasticityPenaltyModifier = 10;
 		TorsoArmorBitmapPos = 32, 432;
 		ArmArmorBitmapPos = 64, 432;
@@ -871,8 +871,8 @@ bodyarmor /* armor-> */
 		Possibility = 250;
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
-		MainMaterialConfig = { 9, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
-		MaterialConfigChances = { 9, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25; }
+		MainMaterialConfig = { 11, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 11, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25, 10, 5; }
 		InElasticityPenaltyModifier = 20;
 	}
 
@@ -895,8 +895,8 @@ bodyarmor /* armor-> */
 		Possibility = 5;
 		NameSingular = "armor";
 		PostFix = "of great health";
-		MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR; }
-		MaterialConfigChances = { 5, 150, 75, 25, 50, 10; }
+		MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 7, 150, 75, 25, 50, 10, 25, 10; }
 		InElasticityPenaltyModifier = 40;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
@@ -1139,21 +1139,34 @@ scrollofwishing /* scroll-> */
 	ReadDifficulty = 2500;
 }
 
-cheapcopyofleftnutofpetrus /* nut-> */
+copyofleftnutofpetrus /* nut-> */
 {
 	DefaultSize = 10;
-	Possibility = 10;
-	Price = 50;
 	Category = MISC;
 	DefaultMainVolume = 500;
 	NameSingular = "copy of the left nut of Petrus";
 	NamePlural = "copies of the left nut of Petrus";
-	Adjective = "cheap";
-	MainMaterialConfig == GLASS; /* should be plastic */
-	Alias == "left nut of Petrus";
 	FormModifier = 15;
 	AttachedGod = MELLIS;
 	IsValuable = false;
+	IsAbstract = true;
+
+	Config CHEAP;
+	{
+		Possibility = 10;
+		Price = 50;
+		MainMaterialConfig == GLASS; /* should be plastic */
+		Adjective = "cheap";
+		Alias == "left nut";
+	}
+
+	Config EXPENSIVE;
+	{
+		Possibility = 5;
+		Price = 500;
+		MainMaterialConfig == DIAMOND;
+		Adjective = "expensive";
+	}
 }
 
 wand
@@ -1265,7 +1278,7 @@ wand
 		Possibility = 20;
 		Price = 750;
 		PostFix = "of resurrection";
-		MainMaterialConfig == HUMAN_FLESH;
+		MainMaterialConfig == OMMEL_TOOTH;
 		BeamRange = 5;
 		MinCharges = 1;
 		MaxCharges = 3;
@@ -1682,8 +1695,8 @@ shield /* armor-> */
 	BitmapPos = 32, 336;
 	FormModifier = 15;
 	NameSingular = "shield";
-	MainMaterialConfig = { 12, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
-	MaterialConfigChances = { 12, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25; }
+	MainMaterialConfig = { 14, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+	MaterialConfigChances = { 14, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25, 10000, 5; }
 	Roundness = 95;
 	WeaponCategory = SHIELDS;
 	CanBeBroken = true;
@@ -2518,8 +2531,8 @@ helmet
 	BitmapPos = 16, 384;
 	FormModifier = 10;
 	NameSingular = "helmet";
-	MainMaterialConfig = { 21, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL; }
-	MaterialConfigChances = { 21, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25, 25; }
+	MainMaterialConfig = { 23, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+	MaterialConfigChances = { 23, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25, 25, 10, 5; }
 	Roundness = 60;
 	CanBeBroken = true;
 	WieldedBitmapPos = 160, 128;
@@ -2544,8 +2557,8 @@ helmet
 		BitmapPos = 48, 32;
 		Possibility = 35;
 		Adjective = "full";
-		MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL; }
-		MaterialConfigChances = { 7, 750, 500, 250, 100, 25, 25, 25; }
+		MainMaterialConfig = { 9, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+		MaterialConfigChances = { 9, 750, 500, 250, 100, 25, 25, 25, 10, 5; }
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
 	}

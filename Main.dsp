@@ -451,10 +451,6 @@ SOURCE=.\Main\Include\confdef.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\config.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Include\cont.h
 # End Source File
 # Begin Source File

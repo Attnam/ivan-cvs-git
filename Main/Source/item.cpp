@@ -549,7 +549,8 @@ item* item::Duplicate(ulong Flags)
   if(!(Flags & IGNORE_PROHIBITIONS)
   && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
    || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
-    || !MainMaterial->CanBeMirrored()
+    || (MainMaterial
+     && !MainMaterial->CanBeMirrored())
     || (GetSecondaryMaterial()
      && !GetSecondaryMaterial()->CanBeMirrored())))))
     return 0;

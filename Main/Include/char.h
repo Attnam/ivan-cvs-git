@@ -1023,6 +1023,7 @@ class character : public entity, public id
   int BlocksSinceLastTurn;
   double GenerationDanger;
   ulong CommandFlags;
+  bool HasBeenWarned;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

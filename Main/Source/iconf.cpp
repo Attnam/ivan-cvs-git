@@ -36,6 +36,9 @@ scrollbaroption ivanconfig::Contrast(	  "Contrast",
 					  &ContrastChangeInterface,
 					  &ContrastChanger,
 					  &ContrastHandler);
+booloption ivanconfig::WarnAboutDanger(	  "WarnAboutVeryDangerousMonsters",
+					  "Warn about very dangerous monsters",
+					  true);
 booloption ivanconfig::AutoDropLeftOvers( "AutoDropLeftOvers",
 					  "drop food leftovers automatically",
 					  true);
@@ -190,6 +193,7 @@ void ivanconfig::Initialize()
   configsystem::AddOption(&DefaultPetName);
   configsystem::AddOption(&AutoSaveInterval);
   configsystem::AddOption(&Contrast);
+  configsystem::AddOption(&WarnAboutDanger);
   configsystem::AddOption(&AutoDropLeftOvers);
   configsystem::AddOption(&LookZoom);
   configsystem::AddOption(&UseAlternativeKeys);

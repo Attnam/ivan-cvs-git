@@ -23,6 +23,7 @@ class ivanconfig
   static const festring& GetDefaultPetName() { return DefaultPetName.Value; }
   static long GetAutoSaveInterval() { return AutoSaveInterval.Value; }
   static long GetContrast() { return Contrast.Value; }
+  static bool GetWarnAboutDanger() { return WarnAboutDanger.Value; }
   static bool GetAutoDropLeftOvers() { return AutoDropLeftOvers.Value; }
   static bool GetLookZoom() { return LookZoom.Value; }
   static bool GetUseAlternativeKeys() { return UseAlternativeKeys.Value; }
@@ -58,6 +59,7 @@ class ivanconfig
   static stringoption DefaultPetName;
   static numberoption AutoSaveInterval;
   static scrollbaroption Contrast;
+  static booloption WarnAboutDanger;
   static booloption AutoDropLeftOvers;
   static booloption LookZoom;
   static booloption UseAlternativeKeys;

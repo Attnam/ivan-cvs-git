@@ -276,7 +276,7 @@ festring character::GetZombieDescription() const { return " of " + GetName(INDEF
 bool character::BodyPartCanBeSevered(int I) const { return !!I; }
 bool character::HasBeenSeen() const { return !!(DataBase->Flags & HAS_BEEN_SEEN); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), HasBeenWarned(false)
 {
   Stack = new stack(0, this, HIDDEN);
 
@@ -322,7 +322,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   ID = game::CreateNewCharacterID(this);
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER), HasBeenWarned(false)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -1227,7 +1227,8 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
   else if(ForceMsg)
     ADD_MESSAGE("You sense the death of something.");
 
-  if(StateIsActivated(LIFE_SAVED))
+  if(StateIsActivated(LIFE_SAVED)
+  && CanMoveOn(!game::IsInWilderness() ? GetSquareUnder() : PLAYER->GetSquareUnder()))
     {
       SaveLife();
       return;
@@ -3614,6 +3615,9 @@ void character::Initialize(int NewConfig, int SpecialFlags)
       CreateBodyParts(SpecialFlags | NO_PIC_UPDATE);
       InitSpecialAttributes();
       CommandFlags = GetDefaultCommandFlags();
+
+      if(GetAttribute(INTELLIGENCE) < 8) // gum
+	CommandFlags &= ~DONT_CONSUME_ANYTHING_VALUABLE;
 
       if(!GetDefaultName().IsEmpty())
 	SetAssignedName(GetDefaultName());
@@ -7494,11 +7498,26 @@ void character::SignalGeneration()
 void character::CheckIfSeen()
 {
   if(IsPlayer() || CanBeSeenByPlayer())
-    const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
+    SignalSeen();
 }
 
 void character::SignalSeen()
 {
+  /*if(ivanconfig::GetWarnAboutDanger() && !HasBeenWarned && GetRelation(PLAYER) == HOSTILE)
+    {
+      double Danger = GetRelativeDanger(PLAYER);
+
+      if(Danger > 5.)
+	{
+	  if(Danger > 50.)
+	    game::AskForKeyPress(CONST_S("You sense enormous danger! [press any key to continue]"));
+	  else
+	    game::AskForKeyPress(CONST_S("You sense danger! [press any key to continue]"));
+
+	  HasBeenWarned = true;
+	}
+    }*/
+
   const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
 }
 

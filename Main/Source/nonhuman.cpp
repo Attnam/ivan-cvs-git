@@ -581,7 +581,7 @@ void genetrixvesana::GetAICommand()
 {
   ++TurnsExisted;
 
-  if(!(RAND() % 40))
+  if(!(RAND() % 60))
     {
       int NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 
@@ -627,7 +627,7 @@ void genetrixvesana::GetAICommand()
 		  }
 	}
 
-      EditAP(-1000);
+      EditAP(-2000);
       return;
     }
 

@@ -77,6 +77,8 @@
 #define HOLY_BANANA_FLESH (ORGANIC_ID + 10)
 #define CARROT_FLESH (ORGANIC_ID + 11)
 #define OMMEL_CERUMEN (ORGANIC_ID + 12)
+#define OMMEL_BONE (ORGANIC_ID + 13)
+#define OMMEL_TOOTH (ORGANIC_ID + 14)
 
 #define GAS_ID (3 << 12)
 
@@ -193,6 +195,9 @@
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
 #define ARMOR_OF_GREAT_HEALTH 3
+
+#define CHEAP 1
+#define EXPENSIVE 2
 
 #define WAND_OF_POLYMORPH 1
 #define WAND_OF_STRIKING 2

@@ -2424,6 +2424,7 @@ struct loscontroller : public tickcontroller, public stackcontroller
 
 void level::UpdateLOS()
 {
+  game::RemoveLOSUpdateRequest();
   stackcontroller::Map = Map;
   stackcontroller::Stack = SquareStack;
   stackcontroller::StackIndex = 0;
@@ -2442,8 +2443,6 @@ void level::UpdateLOS()
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	  (*i)->SendNewDrawRequest();
-
-  game::RemoveLOSUpdateRequest();
 }
 
 void level::EnableGlobalRain()
