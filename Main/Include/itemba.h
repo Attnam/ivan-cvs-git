@@ -56,7 +56,7 @@ public:
 	virtual long Score() const { return 0; }
 	virtual bool Destroyable() const { return true; }
 	virtual bool Fly(uchar, ushort, stack*, bool = true);
-	virtual bool HitCharacter(character*, float);
+	virtual bool HitCharacter(character*, float, character*);
 	virtual bool DogWillCatchAndConsume() const { return false; }
 	virtual uchar GetDipMaterialNumber() const { return GetMaterials() - 1; }
 	virtual item* PrepareForConsuming(character*, stack*); // Stack where the item IS

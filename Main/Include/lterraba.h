@@ -49,6 +49,7 @@ public:
 	virtual bool CanBeOpenedByAI() { return false; }
 	virtual bool ReceiveStrike() { return false; }
 	virtual bool GetIsLocked() const { return false; }
+	virtual bool Polymorph(character*) { return false; }
 protected:
 	uchar VisualFlags;
 };

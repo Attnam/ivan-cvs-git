@@ -1023,6 +1023,7 @@ void levelsquare::PolymorphEverything(character* Zapper)
 	}
 
 	GetStack()->Polymorph();
+	GetOverLevelTerrain()->Polymorph(Zapper);
 }
 
 void levelsquare::DrawParticles(ushort Color, uchar)

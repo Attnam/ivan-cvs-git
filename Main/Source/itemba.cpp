@@ -13,6 +13,7 @@
 #include "message.h"
 #include "wskill.h"
 #include "team.h"
+#include "femath.h"
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
 {
@@ -83,6 +84,12 @@ short item::CalculateOfferValue(char GodAlignment) const
 	return short(OfferValue * (OfferModifier() / 250));
 }
 
+
+/******************************************
+*This fly system seems to have been made, *
+*just to handle only player			  *
+*kicking and throwing things...		  *
+******************************************/
 bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 {
 	vector2d StartingPos = Start->GetPos();
@@ -119,7 +126,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 				if(Hostile)
 					game::GetPlayer()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter());
 
-				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
+				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed, game::GetPlayer()))
 				{
 					Breaks = true;
 					break;
@@ -141,12 +148,12 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 		return true;
 }
 
-bool item::HitCharacter(character* Dude, float Speed)
+bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
 {
 	if(Dude->Catches(this, Speed))
 		return true;
 
-	if(Dude->DodgesFlyingItem(this, Speed)) // Insert better formula for dodge
+	if(Dude->DodgesFlyingItem(this, Speed)) 
 	{
 		if(Dude->GetIsPlayer())
 			ADD_MESSAGE("%s misses you.", CNAME(DEFINITE));
@@ -156,6 +163,8 @@ bool item::HitCharacter(character* Dude, float Speed)
 
 		return false;
 	}
+	if(RAND() % 2) 
+		ReceiveHitEffect(Dude, Hitter);
 
 	Dude->HasBeenHitByItem(this, Speed);
 

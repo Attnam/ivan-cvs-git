@@ -25,20 +25,28 @@ void can::PositionedDrawToTileBuffer(uchar) const
 
 item* can::TryToOpen(character* Opener, stack* Stack)
 {
-	item* x = new lump(GetMaterial(1));
-	Stack->AddItem(x);
-	SetMaterial(1,0);
-	UpdatePicture();
-
-	if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+	if(Opener->GetStrength() > RAND() % 5 + 1)
 	{
-		ushort Index = Opener->GetStack()->SearchItem(this);
+		item* x = new lump(GetMaterial(1));
+		Stack->AddItem(x);
+		SetMaterial(1,0);
+		UpdatePicture();
 
-		if(Index != 0xFFFF)
-			Opener->GetStack()->MoveItem(Index, Opener->GetLevelSquareUnder()->GetStack());
+		if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+		{
+			ushort Index = Opener->GetStack()->SearchItem(this);
+
+			if(Index != 0xFFFF)
+				Opener->GetStack()->MoveItem(Index, Opener->GetLevelSquareUnder()->GetStack());
+		}
+
+		return x;
 	}
-
-	return x;
+	else
+	{
+		ADD_MESSAGE("The can is shut tight and you are too weak.");
+		return 0;
+	}
 }
 
 bool banana::Consume(character* Eater, float Amount)

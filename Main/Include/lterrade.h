@@ -205,6 +205,7 @@ public:
 	virtual void StepOn(character*);
 	virtual void Kick(ushort, bool, uchar);
 	virtual void ReceiveVomit(character*);
+	virtual bool Polymorph(character*);
 protected:
 	virtual std::string NameSingular() const		{ return "altar"; }
 	virtual vector2d GetBitmapPos() const				{ return vector2d(0, 368); }

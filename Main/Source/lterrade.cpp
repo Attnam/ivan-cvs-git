@@ -23,12 +23,33 @@ bool door::Open(character* Opener)
 	{
 		if(IsLocked)
 		{
-			if(Opener == game::GetPlayer())
+			if(Opener->GetIsPlayer())
 				ADD_MESSAGE("The door is locked.");
+			
+			
 			return true;
 		}
-		else if(Opener == game::GetPlayer())
-			ADD_MESSAGE("You open the door.");
+		else if(RAND() % 5 + 1 < Opener->GetStrength())
+		{
+			if(Opener->GetIsPlayer())
+				ADD_MESSAGE("You open the door.");
+			else if(GetLevelSquareUnder()->CanBeSeen())
+			{
+				if(Opener->GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s opens the door.", Opener->CNAME(DEFINITE));
+				else
+					ADD_MESSAGE("Something opens the door.");
+			}
+		}
+		else
+		{
+			if(Opener->GetIsPlayer())
+				ADD_MESSAGE("The door resists.");
+			else if(GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
+			return true;
+		}
+
 	}
 	else
 	{
@@ -564,4 +585,23 @@ bool brokendoor::ReceiveStrike()
 		ADD_MESSAGE("The wand strikes the door, but the door won't budge.");
 
 	return true;
+}
+
+bool altar::Polymorph(character* Zapper)
+{
+	uchar OldGod;
+
+	if(GetSquareUnder()->CanBeSeen())
+	{
+		ADD_MESSAGE("%s glows briefly.", CNAME(DEFINITE));
+	}
+	
+	OldGod = OwnerGod;
+
+	while(OwnerGod == OldGod)
+	{
+		OwnerGod = RAND() % game::GetGodNumber() + 1;
+	}
+	return true;	
+	
 }
