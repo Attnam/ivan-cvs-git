@@ -3140,3 +3140,16 @@ void character::ChangeTeam(team* What)
 
 	SetTeamIterator(GetTeam()->Add(this));
 }
+
+void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
+{
+/*	if(RAND() % 5)
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You lose control of your legs and you fall down.");
+
+		Faint();
+	}
+	else*/
+		ADD_MESSAGE("This stuff tastes really funny.");
+}

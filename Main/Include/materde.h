@@ -711,6 +711,7 @@ public:
 	virtual ushort OfferValue() const				{ return 14; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(100, 100, 90); }
 	virtual short NutritionValue() const			{ return 100; }
+	virtual void EatEffect(character*, float, float);
 protected:
 	virtual std::string NameStem() const	{ return "kobold flesh"; }
 );

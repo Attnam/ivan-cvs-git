@@ -264,7 +264,7 @@ public:
 	virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
 	virtual void SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 	virtual bool CanBeDisplaced() const { return true; }
-
+	virtual void ReceiveKoboldFleshEffect(long);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
