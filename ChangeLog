@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* (u)longlong type is no longer used
+
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Slow is now a hostile action
 	* The encrypted scroll is now removed when the player talks to Petrus
 	* GC levels 8 and 9 are now more difficult

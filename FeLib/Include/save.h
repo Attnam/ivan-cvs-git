@@ -210,30 +210,6 @@ inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
   return SaveFile;
 }
 
-inline outputfile& operator<<(outputfile& SaveFile, longlong Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, longlong& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, ulonglong Value)
-{
-  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, ulonglong& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
 inline outputfile& operator<<(outputfile& SaveFile, float Value)
 {
   SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));

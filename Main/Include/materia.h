@@ -147,7 +147,7 @@ class material
   virtual bool IsLiquid() const { return false; }
   virtual std::string GetConsumeVerb() const;
   ulong GetWeight() const { return Weight; }
-  void CalculateWeight() { Weight = ulonglong(Volume) * GetDensity() / 1000; }
+  void CalculateWeight() { Weight = Volume * GetDensity() / 1000; }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   bool IsSameAs(const material* What) const { return What->Config == Config; }
