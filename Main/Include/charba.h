@@ -275,7 +275,7 @@ protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
 	virtual bool CheckForDoors();
-	virtual bool CheckForEnemies();
+	virtual bool CheckForEnemies(bool);
 	virtual bool FollowLeader();
 	virtual void StandIdleAI();
 	virtual void CreateCorpse();

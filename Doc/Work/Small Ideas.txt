@@ -77,3 +77,4 @@ Attnam's shopkeeper should give the player a quest to kill his competitor in the
 Silva + shop need tweaking.
 Punishment of cathedral terrain destruction.
 *Integration of the mammoth.
+Fountains should dry out, not disappear.

@@ -3,8 +3,6 @@
 #include "error.h"
 #include "bitmap.h"
 
-
-
 dynarray<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;

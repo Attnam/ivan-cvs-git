@@ -612,7 +612,7 @@ void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace
 {
 	SeekLeader();
 
-	if(CheckForEnemies())
+	if(CheckForEnemies(true))
 		return;
 
 	if(CheckForDoors())
@@ -2462,7 +2462,7 @@ void character::StandIdleAI()
 {
 	SeekLeader();
 
-	if(CheckForEnemies())
+	if(CheckForEnemies(true))
 		return;
 
 	if(CheckForDoors())
@@ -2666,7 +2666,7 @@ void character::StruckByWandOfStriking(character* Zapper)
 	CheckDeath("killed by a wand of striking");
 }
 
-bool character::CheckForEnemies()
+bool character::CheckForEnemies(bool CheckDoors)
 {
 	bool HostileCharsNear = false;
 
@@ -2709,6 +2709,9 @@ bool character::CheckForEnemies()
 		else
 			if(HostileCharsNear)
 			{
+				if(CheckDoors && CheckForDoors())
+					return true;
+
 				MoveRandomly(); // one has heard that an enemy is near but doesn't know where
 				return true;
 			}

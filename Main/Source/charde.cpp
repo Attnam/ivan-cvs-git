@@ -351,7 +351,7 @@ void ennerbeast::GetAICommand()
 
 	SeekLeader();
 
-	if(CheckForEnemies())
+	if(CheckForEnemies(false))
 		return;
 
 	if(FollowLeader())
@@ -378,7 +378,7 @@ void petrus::GetAICommand()
 		}
 	})
 
-	if(CheckForEnemies())
+	if(CheckForEnemies(true))
 		return;
 
 	if(CheckForDoors())
@@ -1172,7 +1172,7 @@ void slave::GetAICommand()
 {
 	SeekLeader();
 
-	if(CheckForEnemies())
+	if(CheckForEnemies(true))
 		return;
 
 	if(CheckForDoors())
