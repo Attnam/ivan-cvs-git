@@ -31,8 +31,7 @@ Tämä pätee myös bodyparteille. HP:n on kuitenkin silloin oltava < HP/3.
 Aseeseen kohdistuu vahinko, joka on yhtä suuri kuin jos sen lyöjä löisi sitä vihollisen ruumiinosalla tai armorilla.
 Artifakti voi särkyä vain jos toinen artifakti osuu siihen.
 Tietyt iskut, kuten huuto, penetroi armorin. Se voi rikkoa samalla armorin.
-Bodypartin HP lasketaan kaavalla Volume * Endurance / 10000 tai elottomilla Volume * MaterialSV / 10000.
-Näytettävä HP on bodyparttien HP:iden summa.
+//Bodypartin HP lasketaan kaavalla Volume * Endurance / 1000 tai elottomilla Volume * MaterialSV / 1000.
 Kun HP <= 0, bodypart irtoaa.
 Tässä on poikkeuksena pää, joka ei voi irrota ensimmäisellä iskulla, ts. kun se on max hp:ssa, jos se on > 1. Silloin hp asetaan yhteen.
 Jos pää saa damagea, olento menee tajuttomaksi.

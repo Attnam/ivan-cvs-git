@@ -160,10 +160,46 @@ Lists, especially message history, should look better.
 *Hunters must be one-armed.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
 Allergies.
-Special birth gifts like "big head".
+Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
 Copper, bronze, wooden weapons.
 Nuts could be bodyparts. Or perhaps not.
 Tame symbol.
 Potion effect from fountain.
 Bananas should have black dots when spoiled.
 Zoom to look.
+"Need brain but you too stupid!"
+High level priests should be able to summon angels.
+Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
+Healing potions. (from JM)
+Pet priest. (from JM)
+Weakening enner beast. (from JM)
+Shine effect for jewel and valpurium items with outline. (from JM)
+Sword of Fire/Frost/Ligthning. (from JM)
+Frozen state to monsters. (from JM)
+Dialogs. (from JM)
+A way to steal from the weapon vault of the Cathedral. (key to secret door?) (from JM)
+A scroll that would make a ego-sword flaming. (from JM)
+Hunters should ask the player to aid them in a quest battle against a goblin king. (from JM)
+Pits with sticks. (from JM)
+Acid pits. (from JM)
+Perception should affect chance of detecting traps. (from JM)
+Slow and haste. (from JM)
+Flying monsters should be more difficult to hit. (from JM)
+Flying monsters should occasionally be displaced.
+Status bar with colored statuses (poisoned, flying etc). (from JM)
+Scroll of create holy/fallen angel. (from JM)
+Scroll of light. (from JM)
+Scroll of life, permanent hp plus. (from JM)
+Book of fire/frost magic which would have random spells. (from JM)
+Additional head to flails. (from JM)
+Fireproof container for scrolls and wands. (from JM)
+Desperado attacks like in FFs. (from JM)
+Secret doors that can be opened by whistling. (from JM)
+Heads on walls that can be talked to. (from JM)
+Scribe scroll skill. (from JM)
+Deathblow that penetrates armor. (from JM)
+Keys to doors. (from JM)
+Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
+Money to humanoid monsters. (from JM)
+Stores specialized on potions or scrolls. (from JM)
+Pick-axes available in the lowest levels. (from JM)

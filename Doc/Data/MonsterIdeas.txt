@@ -29,5 +29,20 @@ Floating eye (or Beholder)
 
 	 When you hit this monster you will fall asleep (a la Nethack)
 
+Titan
+Giant
 
+Scorpion
 
+	Poisons.
+
+Lich
+	Preferably like in BG2.
+
+Cyclops
+Vampire
+Minotaur
+
+Kerberus
+
+	Bites with three heads.
