@@ -14,7 +14,6 @@ Forge.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-//Lada.
 Jungle bays.
 Robe.
 Mouse.
@@ -31,7 +30,6 @@ Oterrain border tiles.
 Skis.
 Female character.
 Tailor.
-//Web.
 M-colored explosions.
 Iron maiden.
 Victory screen background, etc.

@@ -2872,6 +2872,23 @@ punishers immediately.
 Ivan put one in humanoid.pcx along with children.
 And he ought not forget happy mask.
 
+Ivan on November 30 2004
+------------------------
+
+Intoruction of farmer child:
+leg: 18,2
+torso: 20,2
+hand: 19,2
+head 20,1
+
+Torturator mister:
+head: 23,1
+col 2 yellow
+col 3 black
+col 4 black
+wear black metal plate mail
+and red cape
+
 Leader on December 8 2004
 -------------------------
 
@@ -3232,6 +3249,43 @@ stubborn.
 Ivan agree?
 In any case, IVAN AI code not very good and Ivan probably have to wait for
 formations for some time.
+
+Leader on 19 January 2005
+-------------------------
+
+Leader summon Ivan to front line in central Turkmenistan where he lead proud
+and determined soviet forces pushing west towards Ashgabat.
+In scorching desert heat Ivan hurry towards Leader command nexus.
+Above him traitor Tupolevs swarm like fireflies, lighting night of Karakum
+with a myriad of deadly missiles, turning battlefield into nightmarish rain
+of falling stars.
+Surrounded by deafening artillery fire Ivan arrive to destination.
+Ivan find Leader and his generals bathing in an oasis hidden amidst a
+graveyard of smoking tanks, drinking vodka and being creative by telling war
+stories of their past heroic victories.
+One officer currently barbequing a KIA Akhal-Teke horse in flame of burning
+petroleum pipeline.
+Leader grab towel and asks Ivan to have a bite with him.
+Mouth full of roasted horse meat he explain urgent intelligence mission
+waiting Ivan deep in enemy territory.
+Leader trust Ivan only one who can succeed in job.
+All other Leader subjects likely to defect to rebel side if allowed to go
+that far from watchful Leader eyes.
+Ivan ought to take 32x32 Lada and drive to Kiev ASAP.
+There he seek agent Fidel of Cuban intelligence service in Boryspil airport.
+Of course, Fidel do all he can to hide identity and not arouse suspicion of
+Goldstein's spies.
+Fidel choose role of American patriot, wear big cowboy hat, wave big flag of
+stars and stripes and loudly sing US national anthem.
+When Ivan locate him, he ask, "I have always wondered, what was the maiden
+name of the wife of the fourteenth president of your mighty nation?"
+If he answer, "I have no idea", Ivan know he Fidel.
+Every real American patriot would know answer.
+Then Fidel ask Ivan light his cigar.
+Ivan swap it with roll of tobacco Leader give him, and light it instead.
+After Fidel and Ivan part, Ivan put cigar to item.pcx and send it to Leader.
+No one suspect Leader just received important microfilm from comrade Castro!
+Leader wait for rapid success.
 
 ----------------------------------------------------------------------------
 

@@ -18,3 +18,5 @@
 //Lanterns are too heavy.
 //Repeadatly reading and cancelling reading a scroll gives lots of wisdom
 //Selling silver golem limbs is too good business.
+//Horn of bravery is useless.
+//Wand of cloning is too frequent.

@@ -153,3 +153,61 @@
 //Using a wand of door creation in shops is allowed.
 //Do psi waves damage armor?
 //Pickaxes can't dig squares on the edges but explosions can destroy them. 
+//It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
+//Strength bonus is shown in the battle info screen even for Bill's wills.
+//The player often becomes burdened, stressed or overloaded when he eats big corpses.
+//The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
+//The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
+//Chests in inventory cannot be unlocked.
+//Mistresses like shields and jewels more than their whips.
+//Headless zombies can eat.
+//Broken thunder hammer emits light.
+//Squares near should be redrawn when digged. (bad edge tiles)
+//Creating doors doesn't update the lookmode description.
+//Teleported, activated mines can be seen by player.
+//Angels shouldn't eat
+//Squares near should be redrawn when digged. (bad edge tiles)
+//Creating doors doesn't update the lookmode description.
+//Dying + being resurrected doesn't eliminate poison.
+//Teleport control can be used to detect walls.
+//RED ommel urine ALERT!
+//Displacing plants is again allowed.
+//(hs) "You look down. You see an active mine." in the dark.
+//(hs+) NetBSD and trailing slash.
+//Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
+//(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
+// (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
+// (hs) Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
+//(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
+//(hs) Headless zombies can vomit.
+// (hs) Mushrooms can be kicked around.
+//Carnivorous plants can move by displacing pets.
+//EditAttribute() probably doesn't update all caches correctly.
+//Polymorph default bugs if the string is very long.
+//Leprosy can cause player to become overloaded in world map and there is no way to drop items.
+//Lyre of charm works on monsters that don't hear. (like headless zombie)
+//(hs-) If player tries to apply when he has no arms, the message says that there are no items to apply.
+//Leprosy can cause player to become overloaded in world map and there is no way to drop items.
+// (hs) Can you see the cause of death if you don't get to highscore list?
+//You can sell mirrored items.
+//Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
+// (hs) Smith not repairing equiped items.
+//Graphics bug in vesana corpse.
+//(hs) Shopkeepers/librarians can buy items even if unconsciouss.
+//If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
+//One has no way to use stairs covered by sticky slime.
+//Typo in GPL notice
+//(hs) Tailor doesn't fix straight from equipment
+//Spider corpses are not poisonous.
+//Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
+//Invisible golems block light.
+//You can create a human flesh golem from your head, without even dying.
+//Then you can pray to a god and and get a new head made of eg. marble :-0
+//You get stuck to slime even when flying.
+//You can probably give commands to unconscious monsters.
+//"The magic mushroom grunts happily."
+//Mammoth's corpse's weight is negative.
+//Damaged gear shouldn't rise dexterity but lower it. (think about it. At least this is the most probable outcome)
+//Are the angels supposed to leave the items in a bonefile? (stupid me. They just disappear)
+//"You sense danger message" seen after genie comes up and wish is made.
+//Messages after teleport.

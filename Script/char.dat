@@ -4581,6 +4581,7 @@ genetrixvesana
   StandVerb = "rooted";
   IsRooted = true;
   AllowUnconsciousness = false;
+  Sex = FEMALE;
 }
 
 hedgehog

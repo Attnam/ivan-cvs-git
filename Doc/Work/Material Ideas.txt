@@ -1,18 +1,12 @@
 sapient pearwood			used to create items that magically follow their owner
 ommel flesh				beneficial effect (spoils)
-//ommel bone				-||- (spoils)
-//ommel tooth				-||- (spoils)
 ommel skin				-||-
 ommel nail				-||-
 ommel spit				-||-
-//ommel tears				-||-
 ommel blood				-||-
-//ommel sweat				-||-
 ommel bile				-||-
 ommel vomit				-||-
 ommel sperm				-||-
-//ommel cerumen				-||-
-//ommel snot				-||-
 emerald (green)				SV 200-350
 opal (light blue)			SV 200-350
 uranium					slowly causes mutations, D 18700

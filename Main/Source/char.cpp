@@ -7493,7 +7493,7 @@ void character::PrintEndLevitationMessage() const
 {
   if(!IsFlying())
     if(IsPlayer())
-      ADD_MESSAGE("You descent gently onto the ground.");
+      ADD_MESSAGE("You descend gently onto the ground.");
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s drops onto the ground.", CHAR_NAME(DEFINITE));
 }

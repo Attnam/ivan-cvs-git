@@ -1035,7 +1035,7 @@ organic /* substances that spoil but are not flesh */
     Density = 1500;
     NutritionValue = 500;
     Color = rgb16(111, 74, 37);
-    ConsumeWisdomLimit = 7;
+    ConsumeWisdomLimit = 0;
     NameStem = "school food";
     Effect = EFFECT_SCHOOL_FOOD;
     ConsumeEndMessage = CEM_SCHOOL_FOOD;
@@ -1613,7 +1613,7 @@ liquid
     AttachedGod = CRUENTUS;
     Acidicity = 500:
     RustModifier = 500;
-    ConsumeWisdomLimit = 8;
+    ConsumeWisdomLimit = 4;
     CategoryFlags = IS_BLOOD;
     InteractionFlags = Base|AFFECT_INSIDE;
     StepInWisdomLimit = 10;
@@ -1631,7 +1631,7 @@ liquid
     AttachedGod = SCABIES;
     RustModifier = 400;
     Acidicity = 400;
-    ConsumeWisdomLimit = 6;
+    ConsumeWisdomLimit = 4;
     PriceModifier = 100;
     InteractionFlags = Base|AFFECT_INSIDE;
     StepInWisdomLimit = 8;

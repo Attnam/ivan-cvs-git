@@ -4,3 +4,9 @@
 //illithium (white)			between mithril and sapphire/ruby
 //adamant (adj: adamantine) (white)	between diamond and valpurium
 //octiron (black)			very magical
+//ommel bone				-||- (spoils)
+//ommel tooth				-||- (spoils)
+//ommel tears				-||-
+//ommel sweat				-||-
+//ommel cerumen				-||-
+//ommel snot				-||-

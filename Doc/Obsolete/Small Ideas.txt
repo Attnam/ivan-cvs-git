@@ -147,3 +147,69 @@
 //Mellis should sometimes give vodka bottles.
 //You should be able to can corpses.
 //*HEALING SHOULD STOP IF A MAGE ATTACKS!!!
+//Atavus should do something special on Christmas.
+//Ivan should break doors.
+//Monsters that block light.
+//It should be possible to unequip party members.
+//It should be possible to command party members to flee.
+//Sophos should appreciate sacrificed scrolls and books more than other gods.
+//There should be more ways to gain pets for non-lawfuls.
+//Fireproof container for scrolls and wands. (from JM)
+//Spiders should make webs.
+//Scroll of gold detection that would identify every unit made of gold on the level.
+//Zombies should spoil.
+//Talking to oneself should abuse intelligence.
+//If you are illiterate you shouldn't be able to read engraved messages.
+//It should be possible to specify the material when polymorphing into a golem.
+(r) "Bang your head at" command.
+//Mistresses should not exchange their whips for any other weapons.
+//Gold golems should be immune to acid.
+//Mommos should do acid damage.
+//Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
+//Corrosion for materials.
+(r) Acid blobs. (needs corrosion, //might also be done by changing mommos)
+(r) Healing liquid should cure poison.
+//Fluids could spill also over character pictures.
+//Spruces should block light.
+//Carrot that would increase perception a little.
+//Scroll of harden material.
+//Wand of resurrection shouldn't work on golem corpses.
+//Msg from hit should depend more on weapon and there should be more variation. ("the monster STABS you with its wooden spear").
+//Breaking different wands should cause different effects.
+(r) It should be possible to give the smith a better hammer so he could fix mithril items, too.
+//Mushrooms in forest. Cause odd effects when eaten.
+//Movement mode: run.
+(r) Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
+//Make golem scroll.
+//Weapons should become covered with blood when monsters are killed with them.
+//If a player vomits in a shop after eating an item bought there, the shopkeeper should say something like "No returns".
+//Wielded wands should sometimes break in fights.
+//Windows on walls.
+//You should be able to wish for anything. (Very problematic, I know)
+(r) Iron and other "good" materials should become more probable for items. (WHY?)
+//Fire immunity for imps.
+//One should occasionally pray to a wrong god when confused.
+//Harp of charm which tames monsters. (from JM)
+//Stamina. (from JM)
+//Arm m-color 3 should be allocated for gauntlets.
+//Message for bottles breaking inside chests.
+//Bear traps made of stronger materials should do more damage.
+//Being confused should decrease chance to hit.
+//New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
+//New fountain effect: random level teleport.
+//Library improvement - When walking towards the book cases should show the inventory (like with doors)
+//Go should stop if the player teleports.
+//Better mines.
+//Polymorphing from nonhumanoid back to humanoid should autoequip items.
+//If Vesana is slowed, plants should be created at half speed.
+//Leprosy state.
+//Scroll of detect material.
+//Gods should give items attached to them.
+//Bear trap price should depend on material.
+//Maybe one should be able to polymorph into a creature only if he has seen one of its kind at least once.
+//When team member doesn't see leader but sees a teammate he/she/it should try to go near the teammate.
+//(hs) Levitating mushrooms should be able to move.
+//(hs+) Autovomiting should choose various squares.
+//Kill reasons to the "killed by other reasons" list.
+//You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
+//There shouldn't be doors in UT4. It is a natural cave.

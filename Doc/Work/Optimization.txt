@@ -2,6 +2,4 @@ level::RandomSquare()
 spoiling & applyexperience
 reduce the number of CalculateNeighbourBitmapPoses calls
 DrawMemorized may be called too often
-//Cache ability to block light
-//AlterLuminance
 ChangeAlpha
