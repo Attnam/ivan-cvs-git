@@ -18,4 +18,14 @@ Wishing improvements
 It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 //Remove the 3 letter limit for names.
 //Amulet of Life saving generates high score entry.
-Explosions should be stopped by walls.
+//Explosions should be stopped by walls.
+Remove the WMode options.
+//School food thingy.
+//Mondedr.
+//Chameleon + invisibility.
+Ommel urine + damaged metal hand.
+//Golem trouble.
+Quitting in Win.
+"Angel of Atavus is crawling here."
+Horn of bravery and horn of fear.
+Poison + golems.

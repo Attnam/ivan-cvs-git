@@ -218,6 +218,8 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(HasEyes);
   ANALYZE_DATA(HasHead);
   ANALYZE_DATA(CanThrow);
+  ANALYZE_DATA(UsesNutrition);
+  ANALYZE_DATA(AttackWisdomLimit);
 
   return Found;
 }
@@ -301,6 +303,7 @@ template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::stri
   ANALYZE_DATA(BeamColor);
   ANALYZE_DATA(BeamEffect);
   ANALYZE_DATA(BeamStyle);
+  ANALYZE_DATA(WearWisdomLimit);
 
   return Found;
 }
@@ -392,7 +395,6 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(Alignment);
   ANALYZE_DATA(NutritionValue);
   ANALYZE_DATA(IsAlive);
-  ANALYZE_DATA(IsBadFoodForAI);
   ANALYZE_DATA(IsFlammable);
   ANALYZE_DATA(IsExplosive);
   ANALYZE_DATA(NameStem);
@@ -411,6 +413,7 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(IsMetal);
   ANALYZE_DATA(CanHaveParasite);
   ANALYZE_DATA(DigProductMaterial);
+  ANALYZE_DATA(ConsumeWisdomLimit);
 
   return Found;
 }

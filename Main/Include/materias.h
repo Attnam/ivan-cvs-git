@@ -20,7 +20,6 @@ class MATERIAL
   virtual uchar GetSpoilLevel() const { return SpoilLevel; }
   virtual void ResetSpoiling();
   virtual void EatEffect(character*, ulong, ulong);
-  virtual bool CanBeEatenByAI() const;
   virtual void AddConsumeEndMessage(character*) const;
   virtual void SetSpoilCounter(ushort);
  protected:

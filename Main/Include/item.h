@@ -18,6 +18,7 @@ template <class type> class database;
 struct itemdatabase
 {
   void InitDefaults(ushort);
+  bool AllowRandomInstantiation() const { return true; }
   ushort Possibility;
   vector2d InHandsPic;
   long Score;
@@ -93,6 +94,7 @@ struct itemdatabase
   ulong BeamColor;
   uchar BeamEffect;
   uchar BeamStyle;
+  ushort WearWisdomLimit;
 };
 
 class itemprototype
@@ -295,6 +297,7 @@ class item : public object
   virtual DATA_BASE_VALUE(ulong, BeamColor);
   virtual DATA_BASE_VALUE(uchar, BeamEffect);
   virtual DATA_BASE_VALUE(uchar, BeamStyle);
+  DATA_BASE_VALUE(ushort, WearWisdomLimit);
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }

@@ -78,6 +78,7 @@ item
 	/* Obligatory if wand: BeamColor */
 	/* Obligatory if wand: BeamEffect */
 	BeamStyle = PARTICLE_BEAM;
+	WearWisdomLimit = NO_LIMIT;
 }
 
 materialcontainer
@@ -132,7 +133,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
-	MaterialConfigChances = { 2, 50, 10; }
+	MaterialConfigChances = { 2, 75, 5; }
 	Roundness = 60;
 }
 
@@ -148,7 +149,7 @@ lump
 	FormModifier = 10;
 	NameSingular = "lump";
 	MainMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
-	MaterialConfigChances = { 2, 50, 10; }
+	MaterialConfigChances = { 2, 75, 5; }
 	OKVisualEffects = MIRROR|FLIP;
 	Roundness = 75;
 }
@@ -883,6 +884,7 @@ scrollofcharging /* scroll-> */
 	Price = 400;
 	PostFix = "of charging";
 	CanBeCloned = false;
+	IsPolymorphSpawnable = false;
 }
 
 nut
@@ -1005,6 +1007,7 @@ wand
 		MaxCharges = 5;
 		BeamColor = RANDOM_COLOR;
 		BeamEffect = BEAM_POLYMORPH;
+		CanBeCloned = false;
 	}
 
 	Config WAND_OF_STRIKING;
@@ -1602,6 +1605,7 @@ ring
 		MainMaterialConfig == MITHRIL;
 		Alias == "ring of teleport";
 		Price = 250;
+		WearWisdomLimit = 15;
 	}
 
 	Config RING_OF_TELEPORT_CONTROL;
@@ -1620,6 +1624,7 @@ ring
 		MainMaterialConfig == UNICORN_HORN;
 		GearStates = POLYMORPH;
 		Price = 250;
+		WearWisdomLimit = 15;
 	}
 
 	Config RING_OF_POISON_RESISTANCE;

@@ -599,4 +599,6 @@
 
 #define RANDOM_COLOR 65536
 
+#define NO_LIMIT 65535
+
 ; /* this line must be here */

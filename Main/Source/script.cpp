@@ -168,16 +168,21 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 
 template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort SpecialFlags) const
 {
-  type* Instance;
+  type* Instance = 0;
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
   const typename type::databasemap& ProtoConfig = Proto->GetConfig();
 
   if(!Config && ProtoConfig.begin()->second.IsAbstract)
     {
-      ushort ChosenConfig = 1 + RAND() % (ProtoConfig.size() - 1);
-      typename type::databasemap::const_iterator i;
-      for(i = ProtoConfig.begin(); ChosenConfig; ++i, --ChosenConfig);
-      Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+      while(!Instance)
+	{
+	  ushort ChosenConfig = 1 + RAND() % (ProtoConfig.size() - 1);
+	  typename type::databasemap::const_iterator i;
+	  for(i = ProtoConfig.begin(); ChosenConfig; ++i, --ChosenConfig);
+
+	  if(i->second.AllowRandomInstantiation())
+	    Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+	}
     }
   else
     Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);

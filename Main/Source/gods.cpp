@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /* Compiled through godset.cpp */
 
 std::string valpurus::GetName() const { return "Valpurus"; }
@@ -229,11 +231,14 @@ void seges::PrayGoodEffect()
 
 void seges::PrayBadEffect()
 {
-  ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
-  PLAYER->EditNP(-10000);
-
-  if(PLAYER->GetNP() < 1)
-    PLAYER->CheckStarvationDeath("starved by " + GetName());
+  if(PLAYER->UsesNutrition())
+    {
+      ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
+      PLAYER->EditNP(-10000);
+      PLAYER->CheckStarvationDeath("starved by " + GetName());
+    }
+  else
+    ADD_MESSAGE("Seges tries to alter the contents of your stomach, but fails.");
 }
 
 void atavus::PrayGoodEffect()
@@ -626,8 +631,8 @@ void mortifer::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   bool Success = false;
-
   std::vector<item*> OKItems;
+
   for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
     {
       if(!i->HasBetterVersion())
@@ -636,7 +641,9 @@ void mellis::PrayGoodEffect()
       OKItems.push_back(*i);
       Success = true;
     }
+
   item* NewVersion;
+
   for(ushort c = 0; !OKItems.empty() && c < 5; ++c)
     {
       item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
@@ -647,9 +654,10 @@ void mellis::PrayGoodEffect()
       ToBeDeleted->SendToHell();
       OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
     }
+
   if((Success && !(RAND() % 5) || (!Success && !(RAND() % 3))))
     {
-      uchar* Possible = new uchar[GODS]; 
+      uchar Possible[GODS];
       ushort PossibleSize = 0;
 
       for(uchar c = 1; c <= GODS; ++c)
@@ -664,6 +672,7 @@ void mellis::PrayGoodEffect()
 	  return;
 	}
     }
+
   if(!Success)
     ADD_MESSAGE("Nothing happens.");
 }

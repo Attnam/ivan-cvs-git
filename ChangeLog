@@ -7,11 +7,38 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected an abusable bug in the item polymorph code
+	* Polypiling may no longer create scrolls of charging
+	* Wands of polymorph may no longer be cloned
+	* Being satiated no longer abuses agility, since even the minimum effect was way
+	  too strong; however, bloated and overfed effects remain unchanged
+	* Bone now spoils slower
+	* Disabled Mondedr
+	* The library is now better protected
+	* Experiment ZQ-29 and blood golems no longer appears in the golem room
+	* Added ConsumeWisdomLimit material database value which prevents monsters with
+	  enough wisdom to avoid eating the specified material (this replaces the
+	  IsBadFoodForAI value)
+	* Monsters with >= 10 wisdom will not attack a floating eye anymore
+	* Monsters with >= 15 wisdom will not wear rings of teleport/polymorph
+	* Elpuri can no longer faint
+	* Corrected a memory leak in Mellis's pray effect
+	* Skeletons, Bill's wills, golems, imps and floating eyes no longer eat nor get
+	  hungry
+	* Eating and drinking items in the player's inventory is again allowed in the
+	  cathedral and shops
+	* Dark frog flesh's effect decreased somewhat
+	* Poison no longer affects non-living bodyparts
+	* Completely non-living monsters can no longer be paratisitized
+	* Ommel urine + damaged non-living bodyparts works now correctly
+
 February 02 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Space is also accepted as enter-key in scroll bar questions
 	* . = keypads 5 in direction questions
-	
+
 February 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Mellis now exchanges maximum of 5 items
@@ -19,7 +46,7 @@ February 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 January 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Chests can be offered now
-		
+
 January 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected an odd bug caused by RNG inlining

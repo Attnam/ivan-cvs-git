@@ -367,12 +367,11 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
   bool Something = false;
-  std::string Buffer;
 
   if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
       List.AddEntry("", LIGHT_GRAY);
-      Buffer = "right accustomization";
+      std::string Buffer = "right accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentRightSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -395,7 +394,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       if(!Something)
 	List.AddEntry("", LIGHT_GRAY);
 
-      Buffer = "left accustomization";
+      std::string Buffer = "left accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -1749,6 +1748,9 @@ bool humanoid::EditAttribute(ushort Identifier, short Value)
 
 void humanoid::EditExperience(ushort Identifier, long Value)
 {
+  if(Identifier == AGILITY && Value < 0)
+    int esko = 2;
+
   if(Identifier < BASE_ATTRIBUTES)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
@@ -2232,13 +2234,11 @@ void humanoid::AddAttackInfo(felist& List) const
 	GetLeftArm()->AddAttackInfo(List);
     }
 
-  std::string Entry;
-
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
 
-      Entry = "   kick attack";
+      std::string Entry = "   kick attack";
       Entry.resize(50, ' ');
       Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
       Entry.resize(60, ' ');
@@ -2250,7 +2250,7 @@ void humanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingHead())
     {
-      Entry = "   bite attack";
+      std::string Entry = "   bite attack";
       Entry.resize(50, ' ');
       Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
       Entry.resize(60, ' ');

@@ -28,6 +28,7 @@ inline long APBonus(long Attribute) { return Attribute >= 10 ? 90 + Attribute : 
 struct characterdatabase
 {
   void InitDefaults(ushort) { IsAbstract = false; }
+  bool AllowRandomInstantiation() const { return CanBeGenerated && !IsUnique; }
   ushort DefaultArmStrength;
   ushort DefaultLegStrength;
   ushort DefaultDexterity;
@@ -140,6 +141,8 @@ struct characterdatabase
   bool HasEyes;
   bool HasHead;
   bool CanThrow;
+  bool UsesNutrition;
+  ushort AttackWisdomLimit;
 };
 
 class characterprototype
@@ -236,7 +239,7 @@ class character : public entity, public id
   bool TemporaryStateIsActivated(ushort What) const { return (TemporaryState & What) != 0; }	
   bool EquipmentStateIsActivated(ushort What) const { return (EquipmentState & What) != 0; }
   bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual void Faint(ushort, bool = false);
+  virtual bool Faint(ushort, bool = false);
   void SetTemporaryStateCounter(ushort, ushort);
   void DeActivateVoluntaryAction(const std::string&);
   void ActionAutoTermination();
@@ -435,6 +438,8 @@ class character : public entity, public id
   DATA_BASE_BOOL(HasEyes);
   virtual DATA_BASE_BOOL(HasHead);
   DATA_BASE_BOOL(CanThrow);
+  DATA_BASE_BOOL(UsesNutrition);
+  DATA_BASE_VALUE(ushort, AttackWisdomLimit);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -682,6 +687,8 @@ class character : public entity, public id
   virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
   void GetHitByExplosion(const explosion&, ushort);
+  bool AllowPoisoned() const { return IsAlive(); }
+  bool AllowParasitized() const { return IsAlive(); }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

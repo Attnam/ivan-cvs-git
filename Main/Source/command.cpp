@@ -179,6 +179,12 @@ bool commandsystem::Drop(character* Char)
 
 bool commandsystem::Eat(character* Char)
 {
+  if(!Char->UsesNutrition())
+    {
+      ADD_MESSAGE("In this form you can't and don't need to eat.");
+      return true;
+    }
+
   if(!game::IsInWilderness() && Char->GetLSquareUnder()->GetOLTerrain()->HasEatEffect())
     {
       if(Char->GetLSquareUnder()->GetOLTerrain()->Eat(Char))
@@ -203,6 +209,12 @@ bool commandsystem::Eat(character* Char)
 
 bool commandsystem::Drink(character* Char)
 {
+  if(!Char->UsesNutrition())
+    {
+      ADD_MESSAGE("In this form you can't and don't need to drink.");
+      return true;
+    }
+
   if(!game::IsInWilderness() && Char->GetLSquareUnder()->GetOLTerrain()->HasDrinkEffect())
     {
       if(Char->GetLSquareUnder()->GetOLTerrain()->Drink(Char))
@@ -771,10 +783,18 @@ bool commandsystem::Apply(character* Char)
 
 bool commandsystem::ForceVomit(character* Char)
 {
-  ADD_MESSAGE("You push your fingers down to your throat and vomit.");
-  Char->Vomit(2 + RAND() % 3);
-  Char->EditAP(-1000);
-  return true;
+  if(Char->IsAlive())
+    {
+      ADD_MESSAGE("You push your fingers down to your throat and vomit.");
+      Char->Vomit(2 + RAND() % 3);
+      Char->EditAP(-1000);
+      return true;
+    }
+  else
+    {
+      ADD_MESSAGE("You can't vomit.");
+      return false;
+    }
 }
 
 bool commandsystem::Zap(character* Char)
@@ -1150,7 +1170,6 @@ bool commandsystem::ShowWeaponSkills(character* Char)
   List.AddDescription("");
   List.AddDescription("Category name                 Level     Points    Needed    Battle bonus");
   bool Something = false;
-  std::string Buffer;
 
   for(ushort c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
     {
@@ -1158,7 +1177,7 @@ bool commandsystem::ShowWeaponSkills(character* Char)
 
       if(Skill->GetHits())
 	{
-	  Buffer = Skill->GetName();
+	  std::string Buffer = Skill->GetName();
 	  Buffer.resize(30, ' ');
 	  Buffer << Skill->GetLevel();
 	  Buffer.resize(40, ' ');

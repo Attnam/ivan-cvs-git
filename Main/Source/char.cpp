@@ -13,6 +13,7 @@ void (character::*PrintEndStateMessage[STATES])() const = { 0, &character::Print
 void (character::*BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0 };
 void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0 };
 void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler };
+bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, 0, &character::AllowParasitized };
 std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized" };
 bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false };
 bool StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, true, false };
@@ -176,7 +177,7 @@ void character::Hunger()
       EditExperience(LEG_STRENGTH, -1);
     }
 
-  if(GetHungerState() >= SATIATED)
+  if(GetHungerState() >= BLOATED)
     EditExperience(AGILITY, -1);
 
   CheckStarvationDeath("starved to death");
@@ -458,7 +459,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 void character::GetAICommand()
 {
   SeekLeader();
-
 
   if(FollowLeader())
     return;
@@ -1359,7 +1359,7 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
 
 bool character::CheckStarvationDeath(const std::string& Msg)
 {
-  if(GetNP() < 1)
+  if(GetNP() < 1 && UsesNutrition())
     {
       Die(Msg);
       return true;
@@ -1443,6 +1443,9 @@ void character::GetPlayerCommand()
 
 void character::Vomit(ushort Amount)
 {
+  if(!IsAlive())
+    return;
+    
   if(IsPlayer())
     ADD_MESSAGE("You vomit.");
   else if(CanBeSeenByPlayer())
@@ -1625,12 +1628,12 @@ void character::StandIdleAI()
   EditAP(-1000);
 }
 
-void character::Faint(ushort Counter, bool HungerFaint)
+bool character::Faint(ushort Counter, bool HungerFaint)
 {
   if(GetAction())
     {
       if(HungerFaint && !GetAction()->AllowFaint())
-	return;
+	return false;
       else
 	GetAction()->Terminate(false);
     }
@@ -1643,6 +1646,7 @@ void character::Faint(ushort Counter, bool HungerFaint)
   faint* Faint = new faint(this);
   Faint->SetCounter(Counter);
   SetAction(Faint);
+  return true;
 }
 
 void character::DeActivateVoluntaryAction(const std::string& Reason)
@@ -1706,7 +1710,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true))
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
@@ -1796,7 +1800,7 @@ bool character::CheckForUsefulItemsOnGround()
 	if(TryToEquip(ItemVector[c]))
 	  return true;
 
-	if(GetHungerState() < SATIATED && TryToConsume(ItemVector[c]))
+	if(UsesNutrition() && GetHungerState() < SATIATED && TryToConsume(ItemVector[c]))
 	  return true;
       }
 
@@ -2271,8 +2275,6 @@ void character::RestoreLivingHP()
 	  HP += BodyPart->GetHP();
 	}
     }
-
-  HP = MaxHP;
 }
 
 bool character::AllowDamageTypeBloodSpill(uchar Type) const
@@ -2477,7 +2479,9 @@ void character::AddName(std::string& String, uchar Case) const
 
 uchar character::GetHungerState() const
 {
-  if(GetNP() > OVER_FED_LEVEL)
+  if(!UsesNutrition())
+    return NOT_HUNGRY;
+  else if(GetNP() > OVER_FED_LEVEL)
     return OVER_FED;
   else if(GetNP() > BLOATED_LEVEL)
     return BLOATED;
@@ -2984,15 +2988,15 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
   if(GetHungerState() == OVER_FED)
     {
-      DeActivateVoluntaryAction("You are forced to vomit to prevent choking on this stuff.");
+      DeActivateVoluntaryAction("You are about to choke on this stuff.");
       Vomit(2 + RAND() % 3);
     }
 }
 
 void character::ReceiveOmmelUrine(long Amount)
 {
-  EditExperience(ARM_STRENGTH, Amount << 3);
-  EditExperience(LEG_STRENGTH, Amount << 3);
+  EditExperience(ARM_STRENGTH, Amount << 2);
+  EditExperience(LEG_STRENGTH, Amount << 2);
   RestoreLivingHP();
 
   if(IsPlayer())
@@ -3029,10 +3033,9 @@ void character::AddPepsiConsumeEndMessage() const
 
 void character::ReceiveDarkness(long SizeOfEffect)
 {
-  EditAttribute(INTELLIGENCE, -1);
-  EditAttribute(WISDOM, -1);
-  EditAttribute(CHARISMA, -1);
-  EditAttribute(MANA, -1);
+  EditExperience(INTELLIGENCE, -(SizeOfEffect << 6));
+  EditExperience(WISDOM, -(SizeOfEffect << 6));
+  EditExperience(CHARISMA, -(SizeOfEffect << 6));
 
   if(IsPlayer())
     game::DoEvilDeed(short(SizeOfEffect / 50));
@@ -3445,15 +3448,18 @@ void character::BeginTemporaryState(ushort State, ushort Counter)
       break;
 
   if(Index == STATES)
-    ABORT("BeginTemporaryState works only when State == 2 ^ n");
+    ABORT("BeginTemporaryState works only when State == 2 ^ n!");
 
   if(TemporaryStateIsActivated(State))
     {
       if(GetTemporaryStateCounter(State) != PERMANENT)
 	EditTemporaryStateCounter(State, Counter);
     }
-  else
+  else if(StateIsAllowed[Index] == 0 || (this->*StateIsAllowed[Index])())
     {
+      ActivateTemporaryState(State);
+      SetTemporaryStateCounter(State, Counter);
+
       if(!EquipmentStateIsActivated(State))
 	{
 	  (this->*PrintBeginStateMessage[Index])();
@@ -3461,9 +3467,6 @@ void character::BeginTemporaryState(ushort State, ushort Counter)
 	  if(BeginStateHandler[Index])
 	    (this->*BeginStateHandler[Index])();
 	}
-
-      ActivateTemporaryState(State);
-      SetTemporaryStateCounter(State, Counter);
     }
 }
 
@@ -4484,12 +4487,10 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
 
 void character::AddDefenceInfo(felist& List) const
 {
-  std::string Entry;
-
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
-	Entry = "   ";
+	std::string Entry = "   ";
 	Entry << GetBodyPart(c)->GetBodyPartName();
 	Entry.resize(60, ' ');
 	Entry << GetBodyPart(c)->GetMaxHP();
@@ -4513,7 +4514,7 @@ character* character::Duplicate() const
 
 bool character::TryToEquip(item* Item)
 {
-  if(!CanUseEquipment())
+  if(!CanUseEquipment() || GetAttribute(WISDOM) >= Item->GetWearWisdomLimit())
     return false;
 
   for(ushort e = 0; e < GetEquipmentSlots(); ++e)
@@ -5319,9 +5320,8 @@ bool character::ConsumeItem(item* Item)
   if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
     return false;
 
-  if(GetRoom() && !GetRoom()->ConsumeItem(this,Item, 1))
+  if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this,Item, 1))
     return false;
-
      
   if(IsPlayer())
     ADD_MESSAGE("You begin %s %s.", Item->GetConsumeVerb().c_str(), Item->CHAR_NAME(DEFINITE));
@@ -5404,4 +5404,3 @@ void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
   ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
   CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
 }
-

@@ -1067,6 +1067,16 @@ Dungeon ATTNAM;
 			}
 		}
 
+		Square, Pos 29, 7;
+		{
+			Character = guard(VETERAN);
+		}
+
+		Square, Pos 31, 7;
+		{
+			Character = guard(VETERAN);
+		}
+
 		Room 3;
 		{
 			Pos=22,53;

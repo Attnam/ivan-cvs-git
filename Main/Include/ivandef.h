@@ -429,4 +429,6 @@
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
 
+#define NO_LIMIT 0xFFFF
+
 #endif

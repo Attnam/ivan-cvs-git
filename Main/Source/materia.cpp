@@ -188,3 +188,7 @@ ulong material::GetTotalNutritionValue(const item* What) const
   return ulonglong(GetNutritionValue()) * What->GetNPModifier() * GetVolume() * 15 / 1000000;
 }
 
+bool material::CanBeEatenByAI(const character* Eater) const
+{
+  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() && !GetSpoilLevel();
+}

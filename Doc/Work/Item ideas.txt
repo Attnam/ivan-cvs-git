@@ -5,6 +5,7 @@ Misc:
 wand of petrification - has a chance of changing the material of every item and monster it hits to stone
 is - these things are expensive but their amount is every now and then cut to half (mockery of Adom's si :)
 ring of conflict
+vodka bottle of plenty
 
 Weapons:
 

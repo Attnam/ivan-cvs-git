@@ -15,6 +15,7 @@ template <class type> class database;
 struct terraindatabase
 {
   void InitDefaults(ushort) { IsAbstract = false; }
+  bool AllowRandomInstantiation() const { return true; }
   vector2d BitmapPos;
   std::string Article;
   std::string Adjective;

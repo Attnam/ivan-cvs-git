@@ -491,11 +491,9 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
 void nonhumanoid::AddAttackInfo(felist& List) const
 {
-  std::string Entry;
-
   if(IsUsingArms())
     {
-      Entry = "   unarmed attack";
+      std::string Entry = "   unarmed attack";
       Entry.resize(50, ' ');
       Entry << GetUnarmedMinDamage() << '-' << GetUnarmedMaxDamage();
       Entry.resize(60, ' ');
@@ -507,7 +505,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingLegs())
     {
-      Entry = "   kick attack";
+      std::string Entry = "   kick attack";
       Entry.resize(50, ' ');
       Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
       Entry.resize(60, ' ');
@@ -519,7 +517,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingHead())
     {
-      Entry = "   bite attack";
+      std::string Entry = "   bite attack";
       Entry.resize(50, ' ');
       Entry << GetBiteMinDamage() << '-' << GetBiteMaxDamage();
       Entry.resize(60, ' ');
@@ -1099,13 +1097,10 @@ bool floatingeye::Hit(character* Enemy, bool)
 
 ushort floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
-  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
-    {
-      Enemy->Faint(250 + RAND() % 250);
-      return HAS_FAILED;
-    }
-
-  return nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(250 + RAND() % 250)) /* Changes for fainting 2 out of 3 */
+    return HAS_FAILED;
+  else
+    return nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
 }
 
 void elpuri::CreateCorpse(lsquare* Square)
@@ -1148,3 +1143,15 @@ bool chameleon::SpecialEnemySightedReaction(character*)
   return false;
 }
 
+ushort chameleon::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+{
+  ushort Return = TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+
+  if(Return != HAS_DIED)
+    {
+      character* NewForm = PolymorphRandomly(10, 100, 500 + RAND() % 500);
+      NewForm->GainIntrinsic(POLYMORPH);
+    }
+
+  return Return;
+}

@@ -82,6 +82,8 @@ character
 	HasEyes = true;
 	HasHead = true;
 	CanThrow = false;
+	UsesNutrition = true;
+	AttackWisdomLimit = NO_LIMIT;
 }
 
 humanoid
@@ -908,6 +910,7 @@ billswill
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
 	HasHead = false;
+	UsesNutrition = false;
 }
 
 skeleton
@@ -944,6 +947,7 @@ skeleton
 	FleshMaterial = BONE;
 	DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
 	SpillsBlood = false;
+	UsesNutrition = false;
 
 	Config WARRIOR;
 	{
@@ -1178,6 +1182,7 @@ golem
 	FriendlyReplies == "\"Yes, master?\"";
 	/* FleshMaterial overridden */
 	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";
+	UsesNutrition = false;
 
 	Config VALPURIUM;
 	{
@@ -1733,7 +1738,7 @@ librarian
 	DefaultLegStrength = 10;
 	DefaultDexterity = 5;
 	DefaultAgility = 5;
-	DefaultEndurance = 5;
+	DefaultEndurance = 10;
 	DefaultPerception = 12;
 	DefaultIntelligence = 30;
 	DefaultWisdom = 15;
@@ -1758,6 +1763,7 @@ librarian
 	IsNameable = false;
 	DefaultName = "Haathbar";
 	IsCharmable = false;
+	IsExtraCoward = true;
 }
 
 zombie
@@ -1768,8 +1774,8 @@ zombie
 	DefaultAgility = 4;
 	DefaultEndurance = 10;
 	DefaultPerception = 12;
-	DefaultIntelligence = 4;
-	DefaultWisdom = 4;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 3;
 	DefaultCharisma = 3;
 	DefaultMana = 0;
 	SkinColor = rgb16(0, 120, 120);
@@ -1816,6 +1822,7 @@ imp
 	PanicLevel = 75;
 	BaseUnarmedStrength = 300;
 	FleshMaterial = SULFUR;
+	UsesNutrition = false;
 }
 
 bat
@@ -2564,7 +2571,7 @@ orc
 	DefaultEndurance = 15;
 	DefaultPerception = 18;
 	DefaultIntelligence = 7;
-	DefaultWisdom = 5;
+	DefaultWisdom = 6;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
 	SkinColor = rgb16(48, 48, 48);
@@ -3101,4 +3108,6 @@ floatingeye
 	CanRead = true;
 	CanFly = true;
 	HasHead = false;
+	UsesNutrition = false;
+	AttackWisdomLimit = 10;
 }

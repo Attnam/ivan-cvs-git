@@ -1,7 +1,6 @@
 /* Compiled through materset.cpp */
 
 void organicsubstance::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
-bool organicsubstance::CanBeEatenByAI() const { return !IsBadFoodForAI() && !SpoilLevel; }
 
 std::string liquid::GetConsumeVerb() const { return "drinking"; }
 
@@ -90,7 +89,7 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount, ulong NPModifie
     {
       Eater->BeginTemporaryState(CONFUSED, ushort(Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500));
 
-      if(CanHaveParasite() && !(RAND() % (5000 / GetSpoilLevel())))
+      if(CanHaveParasite() && !(RAND() % (2500 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 
@@ -133,4 +132,3 @@ void organicsubstance::SetSpoilCounter(ushort What)
   else
     MotherEntity->SignalSpoil(this);
 }
-

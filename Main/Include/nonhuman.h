@@ -100,6 +100,7 @@ class CHARACTER
   virtual bool Hit(character*, bool = false);
   virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool SpecialEnemySightedReaction(character*);
+  virtual bool Faint(ushort, bool = false) { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
@@ -289,6 +290,7 @@ class CHARACTER
   chameleon,
   nonhumanoid,
  public:
+  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetSkinColor() const;

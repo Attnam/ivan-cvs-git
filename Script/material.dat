@@ -20,7 +20,7 @@ material
 	Alignment = NEUTRAL;
 	NutritionValue = 0;
 	IsAlive = false;
-	IsBadFoodForAI = false;
+	ConsumeWisdomLimit = NO_LIMIT;
 	IsFlammable = false;
 	IsExplosive = false;
 	/* Obligatory: NameStem */
@@ -518,7 +518,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Alignment = EVIL;
 		NutritionValue = 50;
 		Color = rgb16(111, 74, 37);
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 7;
 		NameStem = "school food";
 		Effect = EFFECT_SCHOOL_FOOD;
 		ConsumeEndMessage = CEM_SCHOOL_FOOD;
@@ -597,7 +597,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NutritionValue = 50;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
-		SpoilModifier = 50000;
+		SpoilModifier = 100000;
 	}
 
 	Config BREAD;
@@ -672,7 +672,7 @@ liquid
 		Alignment = EVIL;
 		NutritionValue = 50;
 		Color = rgb16(48, 48, 48);
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 2;
 		NameStem = "pepsi";
 		Effect = EFFECT_PEPSI;
 		ConsumeEndMessage = CEM_PEPSI;
@@ -732,7 +732,7 @@ liquid
 		Alignment = EVIL;
 		NutritionValue = 10;
 		Color = rgb16(0, 128, 0);
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 5;
 		NameStem = "poison";
 		Effect = EFFECT_POISON;
 		Alpha = 150;
@@ -745,7 +745,7 @@ liquid
 		Alignment = EVIL;
 		NutritionValue = 8;
 		Color = rgb16(50, 0, 0);
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 10;
 		NameStem = "Valdemar";
 		Effect = EFFECT_CONFUSE;
 		Alpha = 200;
@@ -774,7 +774,7 @@ liquid
 		StrengthValue = 1;
 		NutritionValue = 8;
 		Color = rgb16(144, 144, 144);
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 10;
 		NameStem = "vodka";
 		Effect = EFFECT_CONFUSE;
 		Alpha = 150;
@@ -845,7 +845,7 @@ flesh
 	Config FROG_FLESH;
 	{
 		Alignment = EVIL;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 7;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
@@ -855,7 +855,7 @@ flesh
 	Config ELPURI_FLESH;
 	{
 		Alignment = EVIL;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 7;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
@@ -897,7 +897,7 @@ flesh
 	{
 		StrengthValue = 10;
 		Density = 1800;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 0;
 		NameStem = "enner beast flesh";
 		Article = "an";
 	}
@@ -919,6 +919,7 @@ flesh
 		Effect = EFFECT_POLYMORPH;
 		EffectStrength = 6;
 		Emitation = rgb24(140, 100, 100);
+		ConsumeWisdomLimit = 8;
 	}
 
 	Config BAT_FLESH;
@@ -931,12 +932,13 @@ flesh
 		NameStem = "werewolf flesh";
 		Effect = EFFECT_LYCANTHROPY;
 		EffectStrength = 10;
+		ConsumeWisdomLimit = 10;
 	}
 
 	Config KOBOLD_FLESH;
 	{
 		NutritionValue = 100;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 7;
 		NameStem = "kobold flesh";
 		Effect = EFFECT_KOBOLD_FLESH;
 		ConsumeEndMessage = CEM_KOBOLD_FLESH;
@@ -975,7 +977,7 @@ flesh
 		NameStem = "daemon flesh";
 		Effect = EFFECT_POISON;
 		EffectStrength = 10;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 8;
 	}
 
 	Config MAMMOTH_FLESH;
@@ -1023,7 +1025,7 @@ flesh
 		NameStem = "snake flesh";
 		Effect = EFFECT_POISON;
 		EffectStrength = 15;
-		IsBadFoodForAI = true;
+		ConsumeWisdomLimit = 3;
 	}
 
 	Config ORC_FLESH;
@@ -1041,6 +1043,7 @@ flesh
 		NameStem = "chameleon flesh";
 		Effect = EFFECT_POLYMORPH;
 		PriceModifier = 1000;
+		ConsumeWisdomLimit = 7;
 	}
 
 	Config FLOATING_EYE_FLESH;

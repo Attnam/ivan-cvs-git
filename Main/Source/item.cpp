@@ -158,7 +158,7 @@ bool item::Polymorph(stack* CurrentStack)
     return false;
   else
     {
-      CurrentStack->AddItem(protosystem::BalancedCreateItem());
+      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, true));
       RemoveFromSlot();
       SendToHell();
       return true;
@@ -184,7 +184,7 @@ bool item::Consume(character* Eater, long Amount)
 
 bool item::CanBeEatenByAI(const character* Eater) const
 {
-  return !Eater->CheckCannibalism(GetConsumeMaterial()) && GetConsumeMaterial()->CanBeEatenByAI();
+  return !Eater->CheckCannibalism(GetConsumeMaterial()) && GetConsumeMaterial()->CanBeEatenByAI(Eater);
 }
 
 void item::Save(outputfile& SaveFile) const

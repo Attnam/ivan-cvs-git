@@ -35,7 +35,6 @@ struct materialdatabase
   uchar Alignment;
   ushort NutritionValue;
   bool IsAlive;
-  bool IsBadFoodForAI;
   bool IsFlammable;
   bool IsExplosive;
   std::string NameStem;
@@ -54,6 +53,7 @@ struct materialdatabase
   bool IsMetal;
   bool CanHaveParasite;
   ushort DigProductMaterial;
+  ushort ConsumeWisdomLimit;
 };
 
 class materialprototype
@@ -116,7 +116,6 @@ class material
   DATA_BASE_VALUE(uchar, Alignment);
   DATA_BASE_VALUE(ushort, NutritionValue);
   DATA_BASE_BOOL(IsAlive);
-  DATA_BASE_BOOL(IsBadFoodForAI);
   DATA_BASE_BOOL(IsFlammable);
   virtual DATA_BASE_BOOL(IsExplosive);
   DATA_BASE_VALUE(const std::string&, NameStem);
@@ -134,6 +133,7 @@ class material
   DATA_BASE_BOOL(CanHaveParasite);
   DATA_BASE_VALUE(ushort, EffectStrength);
   DATA_BASE_VALUE(ushort, DigProductMaterial);
+  DATA_BASE_VALUE(ushort, ConsumeWisdomLimit);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
@@ -157,7 +157,7 @@ class material
   virtual void SetWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
-  virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI(); }
+  bool CanBeEatenByAI(const character*) const;
   virtual void SetSpoilCounter(ushort) { }
  protected:
   virtual void VirtualConstructor(bool) { }

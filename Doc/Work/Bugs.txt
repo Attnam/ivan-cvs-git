@@ -136,3 +136,4 @@ The bad pray effect of Sophos can sometimes leave the player in a state where he
 (s) Putting mines in Attnam is considered OK by guards.
 Amulet of Life saving generates high score entry.
 Offering chests in prohibited. (They are too important according to the game)
+Skeletons can be poisoned.

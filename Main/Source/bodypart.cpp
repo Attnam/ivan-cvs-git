@@ -216,6 +216,9 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if(Master)
     {
+      if(!IsAlive() && Type == POISON)
+	return false;
+
       ushort BHP = HP;
 
       if(HP <= Damage && CannotBeSevered(Type))
