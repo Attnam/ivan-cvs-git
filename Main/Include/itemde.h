@@ -146,7 +146,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,16))
 	virtual std::string NameSingular() const RET("long sword")
 	virtual float OfferModifier() const RET(0.5)
-	virtual vector2d GetBitmapPos() const RETV(0,0)
+	virtual vector2d GetBitmapPos() const RETV(16,336)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2400; case 1: return 100; default: return 0; } }
 protected:
@@ -864,7 +864,7 @@ public:
 	virtual ushort Possibility() const RET(10)
 	virtual std::string NameSingular() const RET("broken plate mail")
 	virtual float OfferModifier() const RET(0.1f)
-	virtual vector2d GetBitmapPos() const RETV(16,128)
+	virtual vector2d GetBitmapPos() const RETV(0,352)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
 protected:

@@ -195,7 +195,7 @@ public:
 	virtual std::string DigMessage() { return "The throne resists."; }
 protected:
 	virtual std::string NameSingular() const				{ return "throne"; }
-	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 304); }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 416); }
 );
 
 #endif
