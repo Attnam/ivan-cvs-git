@@ -906,7 +906,17 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
   GLTerrain->StepOn(Stepper);
 
   if(OLTerrain)
-    OLTerrain->StepOn(Stepper);
+    {
+      OLTerrain->StepOn(Stepper);
+      if(Stepper->DestroysWalls() && OLTerrain->CanBeDestroyed())
+	{
+	  ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
+	  Stepper->EditAP(-10);
+	  OLTerrain->Break();
+	}
+    }
+
+
 
   if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);

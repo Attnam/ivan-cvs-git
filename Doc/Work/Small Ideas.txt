@@ -414,3 +414,4 @@ Go should stop if the player teleports.
 Ability to absorb specific elemental damage.
 Corpse which makes you sober.
 Ivan should buy vodka from player.
+There could be possibility to revive pet by praying (from shvagier (?))

@@ -291,6 +291,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BiteCapturesBodyPart);
   ADD_MEMBER(IsPlant);
   ADD_MEMBER(MoveType);
+  ADD_MEMBER(DestroysWalls);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

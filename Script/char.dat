@@ -103,6 +103,7 @@ character
 	BiteCapturesBodyPart = true;
 	IsPlant = false;
 	MoveType = WALK;
+	DestroysWalls = false;
 }
 
 humanoid
@@ -3652,7 +3653,8 @@ elpuri
 	CanBeConfused = false;
 	AttackStyle = USE_HEAD;
 	KnownCWeaponSkills == BITE;
-	MoveType = WALK|SWIM;
+	MoveType = WALK|SWIM|WALK_THROUGH_WALLS; 
+	DestroysWalls = true;
 }
 
 genetrixvesana

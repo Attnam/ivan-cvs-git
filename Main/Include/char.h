@@ -164,6 +164,7 @@ struct characterdatabase
   bool BiteCapturesBodyPart;
   bool IsPlant;
   uchar MoveType;
+  bool DestroysWalls;
 };
 
 class characterprototype
@@ -789,6 +790,7 @@ class character : public entity, public id
   lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
   void SignalStepFrom(lsquare**);
   virtual ulong GetSumOfAttributes() const;
+  DATA_BASE_BOOL(DestroysWalls);
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;
