@@ -105,18 +105,19 @@ void highscore::Save(const festring& File) const
 	    << Entry << Time << RandomID << LastAdd << CheckSum;
 }
 
-void highscore::Load(const festring& File)
+/* This function needs much more error handling */
+truth highscore::Load(const festring& File)
 {
   {
     inputfile HighScore(File, 0, false);
 
     if(!HighScore.IsOpen())
-      return;
+      return false;
 
     HighScore.Get();
 
     if(HighScore.Eof())
-      return;
+      return true; 
   }
 
   inputfile HighScore(File, 0, false);
