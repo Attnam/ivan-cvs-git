@@ -911,25 +911,17 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 		GetLevelUnder()->SetWorldMapEntry(Pos);
 }
 
-bool levelsquare::CanBeSeen() const
+bool levelsquare::CanBeSeen(bool IgnoreDarkness) const
 {
-	if(GetLuminance() >= LIGHT_BORDER && GetLastSeen() == game::GetLOSTurns())
+	if((IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns())
 		return true;
 	else
 		return false;
 }
 
-bool levelsquare::CanBeSeenIgnoreDarkness() const
+bool levelsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
-	if(GetLastSeen() == game::GetLOSTurns())
-		return true;
-	else
-		return false;
-}
-
-bool levelsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance) const
-{
-	if(GetLuminance() < LIGHT_BORDER)
+	if(!IgnoreDarkness && GetLuminance() < LIGHT_BORDER)
 		return false;
 	else
 		return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);

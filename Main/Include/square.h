@@ -42,9 +42,8 @@ public:
 	virtual std::string GetMemorizedDescription() { return MemorizedDescription; }
 	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
 	virtual void UpdateMemorizedDescription(bool = false) = 0;
-	virtual bool CanBeSeen() const;
-	virtual bool CanBeSeenIgnoreDarkness() const { return CanBeSeen(); }
-	virtual bool CanBeSeenFrom(vector2d, ulong) const;
+	virtual bool CanBeSeen(bool = false) const;
+	virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
 	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }

@@ -51,12 +51,7 @@ public:
 	static level* GetCurrentLevel();
 	static bool LOSHandler(vector2d, vector2d);
 	static bool DoLine(long, long, long, long, ulong, bool (*Proc)(vector2d, vector2d));
-	static class panel
-	{
-	public:
-		void Draw() const;
-	private:
-	} Panel;
+	static void DrawPanel();
 	static ushort*** GetLuxTable()		{ return LuxTable; }
 	static ushort* GetLuxTableSize()		{ return LuxTableSize; }
 	static void Quit();
@@ -160,6 +155,8 @@ public:
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static perttu* GetPerttu() { return Perttu; }
 	static void SetPerttu(perttu* What) { Perttu = What; }
+	static ushort GetAutosaveInterval() { return AutosaveInterval; }
+	static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
@@ -195,6 +192,7 @@ private:
 	static ulong LOSTurns;
 	static bool LOSUpdateRequested;
 	static perttu* Perttu;
+	static ushort AutosaveInterval;
 };
 
 #endif

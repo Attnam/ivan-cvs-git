@@ -3,7 +3,7 @@
 #include "square.h"
 #include "message.h"
 #include "itemba.h"
-#include "lterrade.h"
+#include "lterraba.h"
 #include "god.h"
 #include "lsquare.h"
 #include "stack.h"
@@ -152,12 +152,6 @@ void temple::HandleInstantiatedCharacter(character* Character)
 {
 	Master = Character;
 	Character->SetHomeRoom(Index);
-}
-
-void temple::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
-{
-	if(Terrain->GetType() == altar::StaticType())
-		((altar*)Terrain)->SetOwnerGod(DivineOwner);
 }
 
 void temple::Enter(character* Pilgrim)

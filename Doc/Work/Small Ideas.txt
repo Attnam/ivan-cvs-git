@@ -7,7 +7,6 @@ Listan voisi (jos haluaa) sorttia p‰iv‰m‰‰r‰n mukaan.
 Verest‰ voisi myˆs tehd‰ valuvaa.
 Jumalille pit‰‰ olla muuten muitakin efektej‰ kuin vain nuo kaksi.
 Jumalten roolin miettiminen.
-Valoja irti sein‰st‰.
 Attribuuttibonusten osittainen expoittaminen.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
 Humanoidin armorkuvat.
@@ -40,7 +39,6 @@ Highscores should be crypted somehow.
 Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
-Golems shouldn't be able to eat anything else.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.

@@ -362,19 +362,27 @@ bool dog::Catches(item* Thingy, float)
 {
 	if(Thingy->DogWillCatchAndConsume())
 	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
+		if(ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack()))
+			if(GetIsPlayer())
+				ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
+			else
+			{
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+
+				SetTeam(game::GetPlayer()->GetTeam());
+			}
 		else
-		{
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
-			SetTeam(game::GetPlayer()->GetTeam());
-		}
-		ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack());
+			if(GetIsPlayer())
+				ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
+			else
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+
 		return true;
 	}
-
-	return false;
+	else
+		return false;
 }
 
 bool dog::ConsumeItemType(uchar Type) const     // We need a better system for this... Writing this to every F***ing character that needs one
@@ -437,10 +445,10 @@ bool humanoid::Hit(character* Enemy)
 			GetWielded()->ReceiveHitEffect(Enemy, this);
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
-		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer()))
+		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit())
 			GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
 		if(GetWielded())
-			if(GetCurrentSingleWeaponSkill()->AddHit(GetIsPlayer()))
+			if(GetCurrentSingleWeaponSkill()->AddHit())
 				GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
@@ -882,4 +890,10 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description)
 	Description += "GS";
 	Description.resize(83, ' ');
 	Description += "SS";
+}
+
+void humanoid::KickHit()
+{
+	if(GetCategoryWeaponSkill(UNARMED)->AddHit())
+		GetCategoryWeaponSkill(UNARMED)->AddLevelUpMessage();
 }

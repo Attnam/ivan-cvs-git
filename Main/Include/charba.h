@@ -243,8 +243,11 @@ public:
 	virtual void AddSpecialItemInfoDescription(std::string&) {}
 	virtual long StatScore() const;
 	virtual bool CheckStarvationDeath(std::string);
-	virtual void ShowNewPosInfo();
+	virtual void ShowNewPosInfo() const;
 	virtual void Hostility(character*);
+	virtual void KickHit() {}
+	virtual bool HasInfraVision() const { return false; }
+	virtual bool SetAutosaveInterval();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

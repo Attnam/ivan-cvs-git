@@ -125,7 +125,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 		Enemy->AddHitMessage(this,true);
 
-		if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen())
+		if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen(true))
 			ADD_MESSAGE("(damage: %d)", Damage);
 
 		SetHP(GetHP() - Damage);
@@ -163,7 +163,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 		{
 			Enemy->AddHitMessage(this);
 
-			if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen())
+			if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen(true))
 				ADD_MESSAGE("(damage: %d)", Damage);
 
 			SetHP(GetHP() - Damage);
@@ -177,9 +177,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 	else
 	{
 		Enemy->AddDodgeMessage(this);
-
 		SetAgilityExperience(GetAgilityExperience() + 100);
-
 		return HAS_DODGED;
 	}
 }
@@ -225,7 +223,7 @@ void character::Be()
 			{
 				static ushort Timer = 0;
 
-				if(CanMove() && !game::GetInWilderness() && Timer++ == 20)
+				if(game::GetAutosaveInterval() && CanMove() && !game::GetInWilderness() && ++Timer >= game::GetAutosaveInterval())
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -475,38 +473,35 @@ bool character::ConsumeItemType(uchar Type) const
 	{
 	case LIQUID:
 		return true;
-	break;
-		
+		break;	
 	case ODD:
 		return false;
-	break;
+		break;
 	case FRUIT:
 		return true;
-	break;
+		break;
 	case MEAT:
 		return true;
-	break;
+		break;
 	case SPOILED:
 		return true;
-	break;
+		break;
 	case HARD:
 		return false;
-	break;
+		break;
 	case SCHOOLFOOD:
 		return true;
-	break;
+		break;
 	case CONTAINER:
 		return false;
-	break;
+		break;
 	case BONE:
 		return false;
-	break;
-
+		break;
 	default:
 		ADD_MESSAGE("ERRRRORRRRRR in Consumeitemtype."); //All hail SpykoS! He is the author of this file, and his might is over that of PMGR!!!
+		return false;
 	}
-		
-	return false;
 }
 
 void character::Move(vector2d MoveTo, bool TeleportMove)
@@ -1559,6 +1554,9 @@ bool character::ShowKeyLayout()
 	List.AddDescription("");
 	List.AddDescription("Key       Description");
 
+	List.AddEntry("F2        take screenshot", RED);
+	List.AddEntry("F4        toggle fullscreen mode", RED);
+
 	for(uchar c = 1; game::GetCommand(c); ++c)
 		if(game::GetWizardMode() || !game::GetCommand(c)->GetWizardModeFunction())
 		{
@@ -1618,7 +1616,7 @@ bool character::Look()
 		{
 			std::string Msg;
 
-			if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenIgnoreDarkness() || game::GetSeeWholeMapCheat())
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen(true) || game::GetSeeWholeMapCheat())
 				Msg = "You see here ";
 			else
 				Msg = "You remember here ";
@@ -2070,10 +2068,10 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 			ADD_MESSAGE("%s hits you.", Thingy->CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("%s hits %s.", Thingy->CNAME(DEFINITE), CNAME(DEFINITE));
-
-		if(game::GetWizardMode())
-			ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 	}
+
+	if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen(true))
+		ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 
 	SpillBlood(1 + rand() % 1);
 	CheckDeath(std::string("died by thrown ") + Thingy->CNAME(INDEFINITE) );
@@ -2283,34 +2281,50 @@ ulong character::GetBloodColor() const
 	return MAKE_RGB(75,0,0);
 }
 
-void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction, character*)
+void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction, character* Kicker)
 {
-	if(rand() % 10 +  rand() % 3 * KickStrength / 2 > GetAgility())
+	if(rand() % 10 + rand() % 3 * KickStrength / 2 > GetAgility())
 	{
 		if(KickStrength > 8 + rand() % 4 - rand() % 4)
 		{
-			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
 			if(ShowOnScreen)
 			{
 				if(GetIsPlayer())
 					ADD_MESSAGE("The kick throws you off balance.");
 				else
-					ADD_MESSAGE("The kick throws %s off balance.", Name(DEFINITE).c_str());
+					ADD_MESSAGE("The kick throws %s off balance.", CNAME(DEFINITE));
 			}
-			SetHP(GetHP() - rand() % (KickStrength / 5));
-			
+
+			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
+
+			ushort Damage = rand() % (KickStrength / 5);
+
+			if(ShowOnScreen && game::GetWizardMode())
+				ADD_MESSAGE("(damage: %d)", Damage);
+
+			SetHP(GetHP() - Damage);			
 			CheckDeath("kicked to death");		
 		}
 		else
+		{
 			if(ShowOnScreen)
 			{
 				if(GetIsPlayer())
 					ADD_MESSAGE("The kick hits you, but you remain standing.");
 				else
-					ADD_MESSAGE("The kick hits %s.", Name(DEFINITE).c_str());
-				SetHP(GetHP() - rand() % (KickStrength / 7));
-				CheckDeath("kicked to death");
+					ADD_MESSAGE("The kick hits %s.", CNAME(DEFINITE));
 			}
+
+			ushort Damage = rand() % (KickStrength / 7);
+
+			if(ShowOnScreen && game::GetWizardMode())
+				ADD_MESSAGE("(damage: %d)", Damage);
+
+			SetHP(GetHP() - Damage);
+			CheckDeath("kicked to death");
+		}
+
+		Kicker->KickHit();
 	}
 	else
 		if(ShowOnScreen)
@@ -2318,7 +2332,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 			if(GetIsPlayer())
 				ADD_MESSAGE("The kick misses you.");
 			else
-				ADD_MESSAGE("The kick misses %s.", Name(DEFINITE).c_str());
+				ADD_MESSAGE("The kick misses %s.", CNAME(DEFINITE));
 		}
 	
 }
@@ -2479,10 +2493,18 @@ void character::EndPolymorph()
 		while(GetStack()->GetItems())
 			GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
 
+		if(game::GetPlayerBackup()->CanWield())
+			game::GetPlayerBackup()->SetWielded(GetWielded());
+
+		if(game::GetPlayerBackup()->CanWear())
+			game::GetPlayerBackup()->SetTorsoArmor(GetTorsoArmor());
+
 		game::GetPlayerBackup()->SetMoney(GetMoney());
 
 		game::SetPlayer(game::GetPlayerBackup());
 		game::SetPlayerBackup(0);
+
+		game::GetPlayer()->SetTeam(GetTeam());
 
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
@@ -2533,7 +2555,7 @@ void character::StateAutoDeactivation()
 	{
 		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))))
+		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
 			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 			{
 				DeActivateVoluntaryStates(Character->Name(DEFINITE) + " seems to be hostile");
@@ -2564,7 +2586,7 @@ bool character::CheckForEnemies()
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
+		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
 		{
 			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
 
@@ -2658,7 +2680,7 @@ bool character::FollowLeader()
 	if(!GetTeam()->GetLeader())
 		return false;
 
-	if(GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
+	if(GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
 	{
 		vector2d Distance = GetPos() - WayPoint;
 
@@ -2682,7 +2704,7 @@ bool character::FollowLeader()
 
 void character::SeekLeader()
 {
-	if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
+	if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
 		WayPoint = GetTeam()->GetLeader()->GetPos();
 }
 
@@ -2898,7 +2920,7 @@ void character::SetNP(long What)
 	}
 }
 
-void character::ShowNewPosInfo()
+void character::ShowNewPosInfo() const
 {
 	if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + 48)
 		game::UpdateCameraX();
@@ -2937,4 +2959,24 @@ void character::Hostility(character* Enemy)
 
 		Enemy->SetTeam(game::GetTeam(1));
 	}
+}
+
+bool character::SetAutosaveInterval()
+{
+	long Interval = game::NumberQuestion("How many turns do you want the autosave interval be?", vector2d(7,7), WHITE);
+
+	if(Interval < 0)
+	{
+		ADD_MESSAGE("A negative number is not allowed.");
+		return false;
+	}
+
+	if(Interval > 65535)
+	{
+		ADD_MESSAGE("The maximum interval is 65535 turns.");
+		return false;
+	}
+
+	game::SetAutosaveInterval(Interval);
+	return false;
 }

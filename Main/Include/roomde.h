@@ -35,7 +35,6 @@ class ROOM
 	},
 public:
 	virtual void HandleInstantiatedCharacter(character*);
-	virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
 	virtual void Enter(character*);
 );
 

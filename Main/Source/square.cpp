@@ -62,7 +62,7 @@ void square::RemoveCharacter()
 	NewDrawRequested = true;
 }
 
-bool square::CanBeSeen() const
+bool square::CanBeSeen(bool) const
 {
 	if(GetLastSeen() == game::GetLOSTurns())
 		return true;
@@ -70,7 +70,7 @@ bool square::CanBeSeen() const
 		return false;
 }
 
-bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance) const
+bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
 {
 	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
 }

@@ -195,31 +195,27 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 	ExpandPossibleRoute(From, Target, XMode);
 
 	if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)
-		//ABORT("Route code error during level generate! Contact Timo!");
-
-	{
-	for(ushort x = 0; x < XSize; ++x)
-		for(ushort y = 0; y < YSize; ++y)
-			if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
-			{
-				FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
-
-				FlagMap[From.X][From.Y] |= STILL_ON_POSSIBLE_ROUTE;
-
-				ExpandStillPossibleRoute(From, Target, XMode);
-
-				if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
+		for(ushort x = 0; x < XSize; ++x)
+			for(ushort y = 0; y < YSize; ++y)
+				if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
 				{
-					FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
+					FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 
-					Map[x][y]->ChangeOverLevelTerrain(new empty);
+					FlagMap[From.X][From.Y] |= STILL_ON_POSSIBLE_ROUTE;
+
+					ExpandStillPossibleRoute(From, Target, XMode);
+
+					if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
+					{
+						FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
+
+						Map[x][y]->ChangeOverLevelTerrain(new empty);
+					}
+
+					for(ushort X = 0; X < XSize; ++X)
+						for(ushort Y = 0; Y < YSize; ++Y)
+							FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
 				}
-
-				for(ushort X = 0; X < XSize; ++X)
-					for(ushort Y = 0; Y < YSize; ++Y)
-						FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
-			}
-	}
 
 	for(ushort x = 1; x < XSize - 1; ++x)
 		for(ushort y = 1; y < YSize - 1; ++y)

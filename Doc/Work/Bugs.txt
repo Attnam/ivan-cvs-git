@@ -1,6 +1,1 @@
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
-Various graphics have become buggy after the Material Color Change.
-Effect of DoEvilDeed may surpass relation limits.
-Burning the priest of Venius with Holy Fire yields a free mithril chain mail.
-Valpurium plate mail can be damaged with kick. (feature?)
-"Farmer stops fighting" message is incorrect.

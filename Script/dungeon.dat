@@ -418,7 +418,7 @@ Dungeon 1;
 			Pos=11,11;
 			Size=25,25;
 			AltarPossible=false;
-			WallSquare=grassterrain,wall;
+			WallSquare=grassterrain,mithril wall;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;

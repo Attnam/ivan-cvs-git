@@ -604,7 +604,7 @@ class ITEM
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual std::string NameSingular() const RET("bone")
-	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()))
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", bone::StaticType()))
 	virtual float OfferModifier() const RET(0.1f)
 	virtual bool DogWillCatchAndConsume() const RET(true);
 	virtual vector2d GetBitmapPos() const RETV(16,240)

@@ -1,6 +1,6 @@
 #include "roomba.h"
 #include "save.h"
-#include "lterraba.h"
+#include "lterrade.h"
 #include "error.h"
 
 room::room(bool SetStats) : Master(0)
@@ -27,4 +27,7 @@ void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
 {
 	if(Terrain->IsDoor())
 		Door.push_back(Terrain->GetPos());
+
+	if(Terrain->GetType() == altar::StaticType())
+		((altar*)Terrain)->SetOwnerGod(DivineOwner);
 }

@@ -82,10 +82,9 @@ public:
 	virtual void ChangeOverLevelTerrain(overlevelterrain*);
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
 	virtual void ApplyScript(squarescript*, room*);
-	virtual bool CanBeSeen() const;
-	virtual bool CanBeSeenFrom(vector2d, ulong) const;
+	virtual bool CanBeSeen(bool = false) const;
+	virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
 	virtual void MoveCharacter(levelsquare*);
-	virtual bool CanBeSeenIgnoreDarkness() const;
 	virtual ushort GetRawLuminance() const;
 	virtual void StepOn(character*, square*);
 	virtual uchar GetRoom() const { return Room; }

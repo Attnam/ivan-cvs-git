@@ -53,19 +53,19 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::Close, "close", 'c', false),
 				new command(&character::Consume, "eat/drink", 'e', true),
-				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'F', true),
+				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'G', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::WhatToEngrave, "engrave", 'E', false),
-				new command(&character::GainAllItems, "give all items cheat", 'A', true, true),
-				new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", 'G', true, true),
+				new command(&character::GainAllItems, "give all items cheat", '8', true, true),
+				new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseSoftGamma, "increase software gamma", 'f', true),
+				new command(&character::IncreaseSoftGamma, "increase software gamma", 'g', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
-				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", 'L', true, true),
-				new command(&character::LowerStats, "lower stats cheat", 'T', true, true),
+				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
+				new command(&character::LowerStats, "lower stats cheat", '2', true, true),
 				new command(&character::Offer, "offer", 'O', false),
 				new command(&character::Open, "open", 'o', false),
 				new command(&character::OutlineCharacters, "outline characters", 'K', true),
@@ -73,12 +73,13 @@ command* game::Command[] = {	0,
 				new command(&character::PickUp, "pick up", ',', false),
 				new command(&character::Pray, "pray", 'p', false),
 				new command(&character::Quit, "quit", 'q', true),
-				new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", 'P', true, true),
-				new command(&character::RaiseStats, "raise stats cheat", 'R', true, true),
+				new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
+				new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
 				new command(&character::Read, "read", 'r', false),
 				new command(&character::RestUntilHealed, "rest/heal", 'h', true),
 				new command(&character::Save, "save game", 's', true),
-				new command(&character::SeeWholeMap, "see whole map cheat", 'Y', true, true),
+				new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
+				new command(&character::SetAutosaveInterval, "set autosave frequency", 'f', true),
 				new command(&character::ShowInventory, "show inventory", 'i', true),
 				new command(&character::ShowKeyLayout, "show key layout", '?', true),
 				new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
@@ -86,7 +87,7 @@ command* game::Command[] = {	0,
 				new command(&character::DrawMessageHistory, "show message history", 'M', true),
 				new command(&character::Talk, "chat with someone", 'C', false),
 				new command(&character::Throw, "throw", 't', false),
-				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", 'U', true, true),
+				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
 				new command(&character::ForceVomit, "vomit", 'v', false),
 				new command(&character::NOP, "wait", '.', true),
 				new command(&character::WearArmor, "wear", 'W', true),
@@ -98,14 +99,12 @@ command* game::Command[] = {	0,
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
 const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
 
-game::panel game::Panel;
-
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable;
 ushort* game::LuxTableSize;
 bool game::Running;
 character* game::Player;
-vector2d game::Camera(0, 0);
+vector2d game::Camera(0,0);
 bool game::WizardMode;
 bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
@@ -115,6 +114,7 @@ uchar game::GodNumber;
 ulong game::Turns;
 float game::SoftGamma = 1;
 bool game::OutlineItems = false, game::OutlineCharacters = false;
+ushort game::AutosaveInterval = 0;
 
 void game::InitScript()
 {
@@ -136,7 +136,6 @@ void game::Init(std::string Name)
 	WizardMode = false;
 	SeeWholeMapCheat = false;
 	GoThroughWallsCheat = false;
-	InWilderness = false;
 	PlayerBackup = 0;
 	srand(time(0));
 	game::CalculateGodNumber();
@@ -385,13 +384,13 @@ bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*
 	return true;
 }
 
-void game::panel::Draw() const
+void game::DrawPanel()
 {
 	DOUBLEBUFFER->ClearToColor(0, 512, 800, 88, 0);
 
-	character* Player = game::GetPlayer();
+	character* Player = GetPlayer();
 
-	FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
+	FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s %s", GetPlayerName().c_str(), Player->CNAME(DEFINITE));
 
 	FONT->Printf(DOUBLEBUFFER, 16, 534, WHITE, "Strength: %d", Player->GetStrength());
 	FONT->Printf(DOUBLEBUFFER, 16, 544, WHITE, "Endurance: %d", Player->GetEndurance());
@@ -415,14 +414,17 @@ void game::panel::Draw() const
 	FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
 
 	if(GetWizardMode())
+	{
 		FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "NP: %d", Player->GetNP());
+		FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "Danger: %d", Player->Danger());
+	}
 
 	if(GetInWilderness())
 		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "Worldmap");
 	else
-		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "%s", game::GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
+		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
 
-	FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Turns: %d", game::GetTurns());
+	FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Turns: %d", GetTurns());
 
 	if(Player->GetNP() < CRITICALHUNGERLEVEL)
 		FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
@@ -570,9 +572,11 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 		game::GetCurrentArea()->UpdateLOS();
 
 	game::GetCurrentArea()->Draw();
+
 	if(OnScreen(GetPlayer()->GetPos()))
 		igraph::DrawCursor((GetPlayer()->GetPos() - GetCamera() + vector2d(0,2)) << 4);
-	game::Panel.Draw();
+
+	DrawPanel();
 
 	if(EmptyMsg)
 	{
@@ -588,7 +592,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;
-	SaveFile << OutlineItems << OutlineCharacters << LOSTurns;
+	SaveFile << OutlineItems << OutlineCharacters << LOSTurns << AutosaveInterval;
 
 	time_t Time = time(0);
 	srand(Time);
@@ -621,7 +625,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
 	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;
-	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns;
+	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns >> AutosaveInterval;
 
 	time_t Time;
 	SaveFile >> Time;

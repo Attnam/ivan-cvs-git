@@ -172,19 +172,28 @@ void venius::PrayBadEffect()
 
 void dulcis::PrayGoodEffect()
 {
-	ADD_MESSAGE("A beatiful melody echoes through the dungeon.");
+	ADD_MESSAGE("A beautiful melody echoes around you.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-
-	if(Char)
 	{
-		if(Char->Charmable())
-		{
-			Char->SetTeam(game::GetPlayer()->GetTeam());
-			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
-		}
-		else
-			ADD_MESSAGE("%s seems not affected.", game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
+		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
+		if(Char)
+			if(Char->Charmable())
+				if(Char->Danger() * 2 < game::GetPlayer()->Danger())
+				{
+					if(Char->GetTeam() == game::GetPlayer()->GetTeam())
+						ADD_MESSAGE("%s seems to be very happy.", Char->CNAME(DEFINITE));
+					else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
+						ADD_MESSAGE("%s stops fighting.", Char->CNAME(DEFINITE));
+					else
+						ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CNAME(DEFINITE));
+
+					Char->SetTeam(game::GetPlayer()->GetTeam());
+				}
+				else
+					ADD_MESSAGE("%s resists its charming call.", Char->CNAME(DEFINITE));
+			else
+				ADD_MESSAGE("%s seems not affected.", Char->CNAME(DEFINITE));
 	})
 }
 

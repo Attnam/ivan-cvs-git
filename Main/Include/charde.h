@@ -44,6 +44,7 @@ public:
 	virtual long StatScore() const;
 	virtual void AddSpecialItemInfo(std::string&, item*);
 	virtual void AddSpecialItemInfoDescription(std::string&);
+	virtual void KickHit();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(1000)
@@ -128,6 +129,7 @@ public:
 	virtual void AddHitMessage(character*, const bool = false) const;
 	virtual uchar GetStoryState() const { return StoryState; }
 	virtual void SetStoryState(uchar What) { StoryState = What; }
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();
@@ -269,6 +271,7 @@ public:
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
@@ -295,7 +298,6 @@ public:
 	virtual ushort Possibility() const RET(5)
 	virtual uchar GetSex() const RET(MALE)
 	virtual bool CanWield() const RET(true)
-	virtual bool Charmable() const RET(false)
 	virtual bool CanKick() const RET(true)
 	virtual ushort CalculateArmorModifier() const RET(61)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
@@ -322,7 +324,6 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual bool Hit(character*);
-	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
@@ -363,6 +364,7 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
 	virtual ulong GetBloodColor() const RET(BLACK)
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(80,0)
 	virtual std::string NameSingular() const RET("dark frog")
@@ -410,9 +412,10 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(50)
 	virtual void SpillBlood(uchar) {}
-	virtual bool Charmable() const RET(false)
+	virtual void SpillBlood(uchar, vector2d) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
 	virtual void BeTalkedTo(character*);
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(48,0)
 	virtual std::string NameSingular() const RET("pure mass of Bill's will")
@@ -443,6 +446,7 @@ public:
 	virtual bool CanWield() const RET(true)
 	virtual bool CanKick() const RET(true)
 	virtual void SpillBlood(uchar) {}
+	virtual void SpillBlood(uchar, vector2d) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
@@ -467,6 +471,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(100)
+	virtual bool CanWield() const RET(true)
 	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 25000; else return 0; }
 	virtual void BeTalkedTo(character*);
@@ -552,8 +557,11 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameWithMaterial(Case))
 	virtual void DrawToTileBuffer() const;
 	virtual void SpillBlood(uchar) {}
+	virtual void SpillBlood(uchar, vector2d) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 	virtual void BeTalkedTo(character*);
+	virtual bool CheckForUsefulItemsOnGround() { return false; }
+	virtual bool CanKick() const RET(true)
 protected:
 	virtual std::string NameSingular() const RET("golem")
 	virtual vector2d GetBitmapPos() const RETV(256,0)
@@ -629,6 +637,7 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100; else return 0; }
 	virtual ulong GetBloodColor() const RET(BLACK)
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(272,0)
 	virtual std::string NameSingular() const RET("spider")
