@@ -257,11 +257,8 @@ bool commandsystem::Drop(character* Char)
 
 bool commandsystem::Eat(character* Char)
 {
-  if(!Char->UsesNutrition())
-    {
-      ADD_MESSAGE("In this form you can't and don't need to eat.");
-      return true;
-    }
+  if(!Char->CheckConsume("eat"))
+    return false;
 
   lsquare* Square = Char->GetLSquareUnder();
 
@@ -292,11 +289,8 @@ bool commandsystem::Eat(character* Char)
 
 bool commandsystem::Drink(character* Char)
 {
-  if(!Char->UsesNutrition())
-    {
-      ADD_MESSAGE("In this form you can't and don't need to drink.");
-      return true;
-    }
+  if(!Char->CheckConsume("drink"))
+    return false;
 
   lsquare* Square = Char->GetLSquareUnder();
 

@@ -137,6 +137,7 @@ class ABSTRACT_CHARACTER
   virtual void FinalProcessForBone();
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
   virtual ulong GetSumOfAttributes() const;
+  virtual bool CheckConsume(const festring&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;

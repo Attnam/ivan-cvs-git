@@ -3926,3 +3926,16 @@ ulong humanoid::GetSumOfAttributes() const
 {
   return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY) + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
 }
+
+bool humanoid::CheckConsume(const festring& Verb) const
+{
+  if(IsPlayer())
+    {
+      if(!HasHead())
+	{
+	  ADD_MESSAGE("You need a head to %s.", Verb.CStr());
+	  return false;
+	}
+    }
+  return character::CheckConsume(Verb);
+}

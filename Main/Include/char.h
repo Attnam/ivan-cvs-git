@@ -801,6 +801,7 @@ class character : public entity, public id
   virtual void SignalNaturalGeneration() { }
   virtual bool IsBunny() const { return false; }
   void SetConfig(ushort, ushort = 0);
+  virtual bool CheckConsume(const festring&) const;
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

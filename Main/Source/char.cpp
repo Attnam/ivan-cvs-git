@@ -6861,3 +6861,16 @@ void character::SetConfig(ushort NewConfig, ushort SpecialFlags)
   if(!(SpecialFlags & NO_PIC_UPDATE))
     UpdatePictures();
 }
+
+bool character::CheckConsume(const festring& Verb) const
+{
+  if(IsPlayer())
+    {
+      if(!UsesNutrition())
+	{
+	  ADD_MESSAGE("In this form you can't and don't need to %s.", Verb.CStr());
+	  return false;
+	}
+    }
+  return true;
+}
