@@ -2240,3 +2240,65 @@ ulong character::GetBloodColor() const
 	return MAKE_RGB(75,0,0);
 }
 
+void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction)
+{
+	if(rand() % 10 +  rand() % 3 * KickStrength / 2 > GetAgility())
+	{
+		if(KickStrength > 8 + rand() % 4 - rand() % 4)
+		{
+			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
+			if(ShowOnScreen)
+			{
+				if(GetIsPlayer())
+					ADD_MESSAGE("The kick throws you off balance.");
+				else
+					ADD_MESSAGE("The kick throws %s off balance.", Name(DEFINITE).c_str());
+			}
+			SetHP(GetHP() - rand() % (KickStrength / 5));
+			CheckDeath("kicked to death");		
+		}
+		else
+			if(ShowOnScreen)
+			{
+				if(GetIsPlayer())
+					ADD_MESSAGE("The kick hits you, but you remain standing.");
+				else
+					ADD_MESSAGE("The kick hits %s.", Name(DEFINITE).c_str());
+				SetHP(GetHP() - rand() % (KickStrength / 7));
+				CheckDeath("kicked to death");
+			}
+	}
+	else
+		if(ShowOnScreen)
+		{
+			if(GetIsPlayer())
+				ADD_MESSAGE("The kick misses you.");
+			else
+				ADD_MESSAGE("The kick misses %s.", Name(DEFINITE).c_str());
+		}
+	
+}
+
+void character::FallTo(vector2d Where, bool OnScreen)
+{
+	SetAP(GetAP() - 500);
+	if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(Where)->GetCharacter())
+	{
+		Move(Where, true);
+	}
+
+
+
+	if(!game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
+	{
+		if(OnScreen)
+		{
+			if(GetIsPlayer()) 
+				ADD_MESSAGE("You hit your head on the wall.");
+			else
+				ADD_MESSAGE("%s hits %s head on the wall.", Name(DEFINITE).c_str(), game::PossessivePronoun(GetSex()));
+		}
+		SetHP(GetHP() - rand() % 2);
+		CheckDeath("killed by hitting a wall");
+	}	
+}

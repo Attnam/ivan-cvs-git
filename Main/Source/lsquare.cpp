@@ -519,6 +519,8 @@ void levelsquare::UpdateMemorizedDescription()
 void levelsquare::Kick(ushort Strength, uchar KickWay)
 {
 	GetStack()->Kick(Strength, RetrieveFlag(), KickWay);
+	if(GetCharacter())
+		GetCharacter()->BeKicked(Strength, RetrieveFlag(), KickWay);
 }
 
 bool levelsquare::CanBeSeenFrom(vector2d FromPos) const

@@ -125,7 +125,7 @@ void game::Init(std::string Name)
 	InWilderness = false;
 	PlayerBackup = 0;
 	PolymorphCounter = 0xFFFF;
-	srand(5);
+	srand(time(0));
 	game::CalculateGodNumber();
 
 	LevelMsg[3] = "You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
@@ -534,7 +534,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
 
-	time_t Time = 5;//time(0);
+	time_t Time = time(0);
 	srand(Time);
 	SaveFile << Time;
 

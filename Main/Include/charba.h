@@ -197,6 +197,8 @@ public:
 	virtual bool SetTorsoArmor(item* What) const RET(false)
 	virtual void ChangeBackToPlayer();
 	virtual bool CanKick() const RET(false)
+	virtual void BeKicked(ushort, bool, uchar);
+	virtual void FallTo(vector2d, bool);
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
