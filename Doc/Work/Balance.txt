@@ -4,10 +4,6 @@
 (r) rejected
 (s) suspended
 
-//Shields may be a little too weak.
-//Lanterns are too heavy.
 Turox's price is too high.
 Dagger is "somewhat difficult to use" if one has 9 strength.
 Horn of bravery is useless.
-Repeadatly reading and cancelling reading a scroll gives lots of wisdom
-Selling silver golem limbs is too good business.

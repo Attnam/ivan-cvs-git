@@ -78,13 +78,13 @@ Different holy water effects for each god.
 
 Different angels for each god.
 
-Bonefile system.
+//Bonefile system.
 
 Support for colored messages.
 
 //Armor pictures for player.
 
-Weapon pictures for player.
+//Weapon pictures for player.
 
 Blindness state.
 

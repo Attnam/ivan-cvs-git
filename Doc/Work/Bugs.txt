@@ -12,46 +12,24 @@
 (s) One cannot eat a can MADE of bananaflesh.
 (s) It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 Entering a dungeon and loading an autosave saves some time.
-//Skeletons are probably seen by infravision.
 (s) Messages after teleport.
 (s) Bear trap in shop.
 (s) "Valpurus shall not carry more continents!"
 (s) Strength bonus is shown in the battle info screen even for Bill's wills.
 (s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 (s) Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
-//It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 /Putting mines in Attnam is considered OK by guards.
-//Skeletons can be poisoned.
-//Does using a two-handed weapon yield exp to only one arm?
-//I think one can get a score of hundreds of thousands by cloning vast amounts of wands of resurrection and repeatedly killing and resurrecting Elpuri and collecting the dropped heads, each worth 2000p.
-//'G'oing on the the ostrich landing site and interrupting a banana grower may sometimes make New Attnam hostile.
 The player often becomes burdened, stressed or overloaded when he eats big corpses.
-//Highscores don't always fit to the screen.
-//It is possible to chat with fainted creatures.
 (s) Wielded items can't be eaten.
-//AI monsters don't mind about smokes.
-//Panicking monsters can eat.
-//Pet ghosts don't gain any strength exp.
 (s) Throwing a potion of water at a wall in a shop makes the guards hostile.
-//Ghosts can be poisoned.
 (s) If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.
-//"You hit something! Something manages to block the attack with its steel sword +1!"
-//It is not possible to zap a wielded item.
 (s) The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
 (s) The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
 (s) The head of Ivan is left in bone levels.
-//"You faint. You hit the floating eye! It is not hurt."
 Kamikaze dwarves die smiling even if headless.
-//"You feel a slight tingling in your hands." when armless.
-//Mirage dogs.
 Odd pentagram missing bug.
 A puppy can polymorph into a puppy.
-//Magical air and bone are shown by infravision.
-//Sophos doesn't accept parchment golem corpses.
-//Using a wand of door creation in shops is allowed.
-//Do psi waves damage armor?
 (s) Do new bodyparts of player clones work properly? (no)
-//Pickaxes can't dig squares on the edges but explosions can destroy them. 
 Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
 Headless zombies can eat.

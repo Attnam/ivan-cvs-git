@@ -26,7 +26,6 @@ It should be possible to determine line height as a felist draw function argumen
 *Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
-//Wood types. (wood is a _bit_ generic)
 Stone types.
 Script should be crypted or precompiled.
 Golems should be able to eat things made of their material to increase size and stats.
@@ -158,7 +157,6 @@ Msghistory max length to conf.
 Opening a can should be more difficult with less hands.
 Fly function for character.
 Item category "rubbish" which would contain bananapeals and roubles.
-//Cumulative comments to script.
 Material-colored cursor.
 Wand levels.
 Talking to oneself should abuse intelligence.
@@ -268,7 +266,6 @@ Ask for auto wear for picked up items.
 The spirit appearing in fountains should have a picture.
 Town portal scroll.
 Small shadows for items. (one pixel right and down from the items graphic)
-//*Using sickle or scythe against plants should yield a bonus.
 "Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
 Unlike their colleagues, Nefas's angels should have a groin.
@@ -326,9 +323,7 @@ If the player has a floating eye in his team and has ESP, the eye's field of vis
 Options for sorting massacre history
 Potion of receive random stat (better name needed).
 Options for sorting massacre history.
-//There should be a special effect for zapping a holy banana.
 Magical compass that shows the way to Attnam or other major city.
-//More replies for dogs.
 Shops should replenish their inventory frequently. (from JM)
 Exploding potions (other than vodka). (from JM)
 Wand of create monster. (from JM)
@@ -357,12 +352,8 @@ Floods. (from JM)
 Wand's explosive effect strength should depend on its charges.
 Alpha halos to some other items, too.
 Arm m-color 3 should be allocated for gauntlets.
-//Engraved messages should be shown in the lookmode.
 Shirt of the Golden Eagle shouldn't emit light unless it's worn.
 Using the lookmode while polymorphed into a floating eye should have a special effect.
-//The starting puppy dies in every game. It should be named Kenny.
-//If player uses heal command (h) when his/her HPs are at max, the game should wait for a player specified number of turns.
-//The starting puppy dies in every game. It should be named Kenny.
 Raining frogs.
 Zombies transporting vodka.
 Hangover state.
@@ -372,12 +363,10 @@ Poisoned food.
 A wand which could penetrate walls.
 Lockpick item.
 Mjolak should do more energy damage if the player has good relation with Cruentus.
-//Mellis should sometimes give vodka bottles.
 Very high damage should sometimes leave permanent scars, which would decrease charisma.
 Number of turns in high score list.
 Ghost should be able to change level anywhere.
 Nymph hair should burn.
-//You should be able to can corpses.
 If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
 Mistresses should sometimes kick male players in the groin.
 Banana peels should become bananas if zapped with a wand of resurrection.
@@ -402,7 +391,6 @@ Houses floating in water.
 Fountain of youth.
 Sometimes when taking (really bad) damage the player might receive permanent wounds (or in other words loose a couple of points from the MaxHP of the bodypart taking damage.)
 If one monster can see an invisible player, then it should reveal his location his comrades, too.
-//*HEALING SHOULD STOP IF A MAGE ATTACKS!!!
 Cave paintings.
 List of dead friends.
 New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
@@ -413,3 +401,4 @@ Loricatus shouldn't change whips to steel.
 Ikiros should forge weapons from raw materials provided by the player.
 Kiss command.
 Cloak of fire resistance should protect items in the inventory from fire.
+Eyeglasses.

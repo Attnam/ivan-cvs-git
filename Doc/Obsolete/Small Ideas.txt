@@ -136,3 +136,14 @@
 //Bottles should break more easily when kicked.
 //Pets should gain wisdom from trial and error.
 //Gas masks.
+//Wood types. (wood is a _bit_ generic)
+//Cumulative comments to script.
+//*Using sickle or scythe against plants should yield a bonus.
+//There should be a special effect for zapping a holy banana.
+//More replies for dogs.
+//Engraved messages should be shown in the lookmode.
+//The starting puppy dies in every game. It should be named Kenny.
+//If player uses heal command (h) when his/her HPs are at max, the game should wait for a player specified number of turns.
+//Mellis should sometimes give vodka bottles.
+//You should be able to can corpses.
+//*HEALING SHOULD STOP IF A MAGE ATTACKS!!!

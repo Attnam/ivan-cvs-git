@@ -3,7 +3,6 @@ lp - low priority
 // - done
 (r) - rejected
 
-//Inhandspics of broken weapons. (lp)
 Hit symbol.
 Scimitar + broken picture.
 Katana + broken picture.
@@ -15,13 +14,11 @@ Forge.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-//Visible invisible stalker.
 Lada.
 Jungle bays.
 Robe.
 Mouse.
 Torturing devices.
-//Vacuum cleaner.
 Rolling pin.
 Frying pan.
 Clothes peg.
@@ -31,6 +28,4 @@ Fungi.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.
-Steel halberd on a gravel floor.
-Steel scimitar on a gravel ground.
-Stalker.
+Visible invisible stalker is too invisible.

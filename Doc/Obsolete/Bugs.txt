@@ -131,3 +131,25 @@
 //TOO MANY KAMIKAZE DWARFS.
 //"XXXX, killed by a werewolf polymorphed into a werewolf"
 //Go-command shouldn't walk to squares with smoke.
+//Skeletons are probably seen by infravision.
+//It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+//Skeletons can be poisoned.
+//Does using a two-handed weapon yield exp to only one arm?
+//I think one can get a score of hundreds of thousands by cloning vast amounts of wands of resurrection and repeatedly killing and resurrecting Elpuri and collecting the dropped heads, each worth 2000p.
+//'G'oing on the the ostrich landing site and interrupting a banana grower may sometimes make New Attnam hostile.
+//Highscores don't always fit to the screen.
+//It is possible to chat with fainted creatures.
+//AI monsters don't mind about smokes.
+//Panicking monsters can eat.
+//Pet ghosts don't gain any strength exp.
+//Ghosts can be poisoned.
+//"You hit something! Something manages to block the attack with its steel sword +1!"
+//It is not possible to zap a wielded item.
+//"You faint. You hit the floating eye! It is not hurt."
+//"You feel a slight tingling in your hands." when armless.
+//Mirage dogs.
+//Magical air and bone are shown by infravision.
+//Sophos doesn't accept parchment golem corpses.
+//Using a wand of door creation in shops is allowed.
+//Do psi waves damage armor?
+//Pickaxes can't dig squares on the edges but explosions can destroy them. 

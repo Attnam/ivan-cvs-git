@@ -37,9 +37,14 @@ lp - low priority
 //Iron dagger on a gravel floor.
 //Floating eye.
 //Bunny, large bunny and mega-large bunny.
+//Inhandspics of broken weapons. (lp)
+//Visible invisible stalker.
+//Vacuum cleaner.
 
 //Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
 //Small, medium and large chests (one is probably already done...)
 //The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
 //Keys are hardly visible on wooden parquet
 //Broken axe is nearly invisible on gravel floor
+//Steel halberd on a gravel floor.
+//Steel scimitar on a gravel ground.

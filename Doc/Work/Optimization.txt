@@ -12,5 +12,5 @@ Cache ability to block light
 AlterLuminance
 ChangeAlpha
 //Limits in bitmap.cpp
-AI equipment selection calls UpdatePictures() too often.
-igraph::RemoveUser()
+//AI equipment selection calls UpdatePictures() too often.
+//igraph::RemoveUser()

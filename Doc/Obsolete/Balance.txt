@@ -14,3 +14,7 @@
 //Guy with beginning stats and no equipment in gloomy cave level 2 -> Ur-Khan the orc marshal appears. (I was in WMode, but still...)
 //There's a LOT of school food in the game.
 //People shouldn't get permanently confused from fountains!
+//Shields may be a little too weak.
+//Lanterns are too heavy.
+//Repeadatly reading and cancelling reading a scroll gives lots of wisdom
+//Selling silver golem limbs is too good business.
