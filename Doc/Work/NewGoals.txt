@@ -37,7 +37,7 @@ D-making plate mails much less fragile when they are kicked (Hex)
 D-adding infravision to some monsters (Timo)
 D-prohibiting the saveload possibility caused by the nature of the corner X (Timo)
 D-adding "there is something leading downwards here" message (Hex)
- -adding death in the dark messages (Timo)
+D-adding death in the dark messages (Timo)
 D-adding information of death level to hscore (Timo)
 
 -fixing buggy graphics that are buggy due to code

@@ -13,8 +13,6 @@
 #include "charba.h"
 #include "team.h"
 
-#include <vector>
-
 bool door::Open(character* Opener)
 {
 	if(!GetIsWalkable())

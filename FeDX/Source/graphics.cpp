@@ -57,14 +57,28 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 			ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewXRes, NewYRes, NewColorDepth);
 	}
 	else
+	{
 		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
 			ABORT("This system does not support %dx%dx%d in window mode!", NewXRes, NewYRes, NewColorDepth);
+	}
 
 	DoubleBuffer = new bitmap(DXDisplay->GetBackBuffer(), NewXRes, NewYRes);
 
 	XRes = NewXRes;
 	YRes = NewYRes;
 	ColorDepth = NewColorDepth;
+
+	if(!FullScreen)
+	{
+		DDPIXELFORMAT DDPixelFormat;
+		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
+		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
+
+		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
+
+		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
+			SwitchMode();
+	}
 }
 
 void graphics::BlitDBToScreen()
@@ -141,12 +155,13 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 
 	// DDraw stuff begins here
 	if( FAILED( hr = DirectDrawCreateEx( NULL, (VOID**)&m_pDD, IID_IDirectDraw7, NULL ) ) )
-	return E_FAIL;
+		return E_FAIL;
 
 	// Set cooperative level
 	hr = m_pDD->SetCooperativeLevel( hWnd, DDSCL_NORMAL );
+
 	if( FAILED(hr) )
-	return E_FAIL;
+		return E_FAIL;
 
 	RECT  rcWork;
 	RECT  rc;
@@ -258,6 +273,31 @@ void graphics::SwitchMode()
 			ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
 
 		ShowCursor(true);
+	}
+
+	if(!FullScreen)
+	{
+		DDPIXELFORMAT DDPixelFormat;
+		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
+		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
+
+		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
+
+		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
+		{
+			MessageBox(NULL, "This alpha release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
+
+			FullScreen = !FullScreen;
+
+			delete DXDisplay;
+
+			DXDisplay = new CDisplay();
+
+			if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
+				ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+
+			ShowCursor(false);
+		}
 	}
 
 	DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer(), XRes, YRes);

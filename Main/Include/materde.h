@@ -226,7 +226,7 @@ class MATERIAL
 	frogflesh,
 	flesh,
 public:
-	virtual ushort OfferValue() const				{ return 50; }
+	virtual ushort OfferValue() const				{ return 500; }
 	virtual uchar Alignment() const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);

@@ -1848,4 +1848,3 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
-

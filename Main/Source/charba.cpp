@@ -139,7 +139,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 				SpillBlood(2 + rand() % 2, Where);
 		});
 
-		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
+		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE), Enemy->GetIsPlayer()))
 			return HAS_DIED;
 
 		return HAS_HIT;
@@ -167,7 +167,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 			SetHP(GetHP() - Damage);
 
-			if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
+			if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE), Enemy->GetIsPlayer()))
 				return HAS_DIED;
 
 			return HAS_HIT;
@@ -859,7 +859,7 @@ void character::CreateCorpse()
 	SetMaterial(0, 0);
 }
 
-void character::Die()
+void character::Die(bool ForceMsg)
 {
 	// Not for programmers: This function MUST NOT delete any objects!
 
@@ -887,6 +887,9 @@ void character::Die()
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
+		else
+			if(ForceMsg)
+				ADD_MESSAGE("You sense the death of something.");
 
 	SetExists(false);
 
@@ -1994,14 +1997,14 @@ void character::AddScoreEntry(std::string Description, float Multiplier, bool Ad
 	HScore.Save();
 }
 
-bool character::CheckDeath(std::string Msg)
+bool character::CheckDeath(std::string Msg, bool ForceMsg)
 {
-	if(GetHP() < 1 || GetNP() < 1)
+	if(GetHP() < 1)
 	{
 		if(GetIsPlayer() && !game::GetWizardMode())
 			AddScoreEntry(Msg);
 
-		Die();
+		Die(ForceMsg);
 
 		return true;
 	}
@@ -2318,7 +2321,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 				ADD_MESSAGE("(damage: %d)", Damage);
 
 			SetHP(GetHP() - Damage);			
-			CheckDeath("kicked to death");		
+			CheckDeath("kicked to death", Kicker->GetIsPlayer());		
 		}
 		else
 		{
@@ -2334,7 +2337,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 				ADD_MESSAGE("(damage: %d)", Damage);
 
 			SetHP(GetHP() - Damage);
-			CheckDeath("kicked to death");
+			CheckDeath("kicked to death", Kicker->GetIsPlayer());
 		}
 
 		Kicker->KickHit();

@@ -63,7 +63,7 @@ public:
 	virtual bool Charmable() const { return true; }
 	virtual bool Catches(item*, float) { return false; }
 	virtual bool CheckBulimia() const;
-	virtual bool CheckDeath(std::string);
+	virtual bool CheckDeath(std::string, bool = false);
 	virtual bool CheckIfConsumable(ushort) const;
 	virtual bool ConsumeItem(item*, stack*);
 	virtual bool ConsumeItemType(uchar) const;
@@ -152,7 +152,7 @@ public:
 	virtual void ApplyExperience();
 	virtual void BeTalkedTo(character*);
 	virtual void Darkness(long);
-	virtual void Die();
+	virtual void Die(bool = false);
 	virtual void DrawToTileBuffer() const;
 	virtual void HasBeenHitByItem(item*, float);
 	virtual void HealFully(character*) {}
