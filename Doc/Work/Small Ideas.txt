@@ -220,3 +220,4 @@ Item list to lookmode.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
 Skeleton bone flight.
+Mutant monster.

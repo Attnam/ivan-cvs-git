@@ -432,7 +432,7 @@ item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
 void stack::DeletePointers()
 {
   while(GetItems())
-    FastRemoveItem(0);
+    FastRemoveItem(GetBottomSlot());
 }
 
 /*void stack::StackMerge(stack* ToBeMerged)

@@ -1299,8 +1299,8 @@ class ABSTRACT_ITEM
   virtual void SetBitmapPos(vector2d What) { BitmapPos = What; }
   virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
   virtual void SetColor(ushort Index, ushort What) { Color[Index] = What; }
-  virtual character* GetMaster() const { return Master; }
-  virtual void SetMaster(character* What) { Master = What; }
+  virtual character* GetMaster() const;
+  //virtual void SetMaster(character*);
   virtual humanoid* GetHumanoidMaster() const;
   virtual bool AutoInitializable() const { return false; }
   virtual ushort GetStrengthValue() const;
@@ -1314,8 +1314,9 @@ class ABSTRACT_ITEM
   virtual void SetOwnerDescription(std::string What) { OwnerDescription = What; }
   virtual bool GetUnique() const { return Unique; }
   virtual void SetUnique(bool What) { Unique = What; }
-  virtual bool GetAttached() const { return Attached; }
-  virtual void SetAttached(bool What) { Attached = What; }
+  //virtual bool IsAttached() const;
+  /*virtual void SetAttached(bool What) { Attached = What; }*/
+  virtual characterslot* GetCharacterSlot() const;
  protected:
   virtual std::string PostFix() const { return GetOwnerDescription(); }
   virtual bool ShowPostFix() const { return !GetMaster(); }
@@ -1329,10 +1330,10 @@ class ABSTRACT_ITEM
   std::string OwnerDescription;
   vector2d BitmapPos;
   ushort Color[4];
-  character* Master;
+  //character* Master;
   short HP;
   bool Unique;
-  bool Attached;
+  //bool Attached;
 );
 
 class ITEM
@@ -1532,7 +1533,7 @@ class ITEM
   InitMaterials(new elpuriflesh),
   {
     SetSize(60);
-    SetMaster(0);
+    //SetMaster(0);
     SetUnique(true);
     SetOwnerDescription("of Elpuri, the Master Dark Frog");
   },
@@ -1562,7 +1563,7 @@ class ITEM
   InitMaterials(new ennerbeastflesh),
   {
     SetSize(50);
-    SetMaster(0);
+    //SetMaster(0);
     SetUnique(false);
     SetOwnerDescription("of an enner beast");
   },

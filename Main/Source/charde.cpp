@@ -2177,8 +2177,9 @@ void humanoid::CreateHead()
   SetHead(new head(false));
   UpdateHeadPicture(false);
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
-  GetHead()->SetMaster(this);
-  GetHead()->SetAttached(true);
+  /*GetHead()->SetMaster(this);
+  GetHead()->SetAttached(true);*/
+  GetHead()->PlaceToSlot(GetHeadSlot());
   GetHead()->SetSize(HeadSize());
 }
 
@@ -2202,8 +2203,9 @@ void humanoid::CreateTorso()
   SetTorso(new humanoidtorso(false));
   UpdateTorsoPicture(false);
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
-  GetTorso()->SetMaster(this);
-  GetTorso()->SetAttached(true);
+  /*GetTorso()->SetMaster(this);
+  GetTorso()->SetAttached(true);*/
+  GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize());
 }
 
@@ -2227,8 +2229,9 @@ void humanoid::CreateRightArm()
   SetRightArm(new rightarm(false));
   UpdateRightArmPicture(false);
   GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
-  GetRightArm()->SetMaster(this);
-  GetRightArm()->SetAttached(true);
+  /*GetRightArm()->SetMaster(this);
+  GetRightArm()->SetAttached(true);*/
+  GetRightArm()->PlaceToSlot(GetRightArmSlot());
   GetRightArm()->SetSize(RightArmSize());
 }
 
@@ -2251,7 +2254,8 @@ void humanoid::CreateLeftArm()
   SetLeftArm(new leftarm(false));
   UpdateLeftArmPicture(false);
   GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
-  GetLeftArm()->SetMaster(this);
+  //GetLeftArm()->SetMaster(this);
+  GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
   GetLeftArm()->SetSize(LeftArmSize());
 }
 
@@ -2274,8 +2278,9 @@ void humanoid::CreateGroin()
   SetGroin(new groin(false));
   UpdateGroinPicture(false);
   GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
-  GetGroin()->SetMaster(this);
-  GetGroin()->SetAttached(true);
+  /*GetGroin()->SetMaster(this);
+  GetGroin()->SetAttached(true);*/
+  GetGroin()->PlaceToSlot(GetGroinSlot());
   GetGroin()->SetSize(GroinSize());
 }
 
@@ -2298,8 +2303,9 @@ void humanoid::CreateRightLeg()
   SetRightLeg(new rightleg(false));
   UpdateRightLegPicture(false);
   GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
-  GetRightLeg()->SetMaster(this);
-  GetRightLeg()->SetAttached(true);
+  /*GetRightLeg()->SetMaster(this);
+  GetRightLeg()->SetAttached(true);*/
+  GetRightLeg()->PlaceToSlot(GetRightLegSlot());
   GetRightLeg()->SetSize(RightLegSize());
 }
 
@@ -2322,8 +2328,9 @@ void humanoid::CreateLeftLeg()
   SetLeftLeg(new leftleg(false));
   UpdateLeftLegPicture(false);
   GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
-  GetLeftLeg()->SetMaster(this);
-  GetLeftLeg()->SetAttached(true);
+  /*GetLeftLeg()->SetMaster(this);
+  GetLeftLeg()->SetAttached(true);*/
+  GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
   GetLeftLeg()->SetSize(LeftLegSize());
 }
 

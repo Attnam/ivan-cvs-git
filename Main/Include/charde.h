@@ -105,6 +105,13 @@ class ABSTRACT_CHARACTER
   virtual float GetMainToHitValue() const;
   virtual float GetSecondaryToHitValue() const;
 
+  virtual characterslot* GetHeadSlot() const { return GetBodyPartSlot(1); }
+  virtual characterslot* GetRightArmSlot() const { return GetBodyPartSlot(2); }
+  virtual characterslot* GetLeftArmSlot() const { return GetBodyPartSlot(3); }
+  virtual characterslot* GetGroinSlot() const { return GetBodyPartSlot(4); }
+  virtual characterslot* GetRightLegSlot() const { return GetBodyPartSlot(5); }
+  virtual characterslot* GetLeftLegSlot() const { return GetBodyPartSlot(6); }
+
  protected:
 
   virtual uchar GetHeadType() const { return 0; } // = 0;

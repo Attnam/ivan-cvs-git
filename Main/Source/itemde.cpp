@@ -1237,14 +1237,14 @@ bool scrolloftaming::Read(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << BitmapPos << Color[0] << Color[1] << Color[2] << Color[3] << HP << OwnerDescription << Unique << Attached;
+  SaveFile << BitmapPos << Color[0] << Color[1] << Color[2] << Color[3] << HP << OwnerDescription << Unique;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3] >> HP >> OwnerDescription >> Unique >> Attached;
-  SetMaster(0);
+  SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3] >> HP >> OwnerDescription >> Unique;
+  //SetMaster(0);
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1777,4 +1777,23 @@ void amulet::GenerateAmuletMaterials()
     case 1: InitMaterials(new diamond); break;
     case 2: InitMaterials(new copper); break;
     }  
+}
+
+character* bodypart::GetMaster() const
+{
+  if(Slot->IsCharacterSlot())
+    return GetCharacterSlot()->GetMaster();
+  else
+    return 0;
+}
+
+/*void bodypart::SetMaster(character* What)
+{
+  if(Slot->IsCharacterSlot())
+    GetCharacterSlot()->SetMaster(What);
+}*/
+
+characterslot* bodypart::GetCharacterSlot() const
+{
+  return (characterslot*)GetSlot();
 }

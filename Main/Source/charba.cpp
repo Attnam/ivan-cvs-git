@@ -1003,12 +1003,11 @@ void character::CreateCorpse()
   for(ushort c = 0; c < BodyParts(); ++c)
     if(GetBodyPart(c))
       {
-	GetBodyPart(c)->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
-	GetBodyPart(c)->SetUnique(ForceDefiniteArticle() || AssignedName != "");
-	GetBodyPart(c)->SetMaster(0);
-	GetBodyPart(c)->SetAttached(false);
-	GetLSquareUnder()->GetStack()->AddItem(GetBodyPart(c));
-	SetBodyPart(c, 0);
+	bodypart* BodyPart = GetBodyPart(c);
+	BodyPart->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
+	BodyPart->SetUnique(ForceDefiniteArticle() || AssignedName != "");
+	BodyPart->RemoveFromSlot();
+	GetLSquareUnder()->GetStack()->AddItem(BodyPart);
       }
 
   /*corpse* Corpse = new corpse(GetMaterial(0));
@@ -1085,7 +1084,7 @@ void character::Die(bool ForceMsg)
       SetSquareUnder(0); // prevents light optimization
 
       while(GetStack()->GetItems())
-	GetStack()->MoveItem(0, Square->GetStack());
+	GetStack()->MoveItem(GetStack()->GetBottomSlot(), Square->GetStack());
 
       SetSquareUnder(Square);
     }
@@ -1551,7 +1550,7 @@ void character::Save(outputfile& SaveFile) const
   uchar c;
 
   for(c = 0; c < BodyParts(); ++c)
-    SaveFile << (item*)BodyPart[c];
+    SaveFile << BodyPartSlot[c];
 
   if(HomeRoom)
     if(!game::GetInWilderness() && GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
@@ -1638,11 +1637,12 @@ void character::Load(inputfile& SaveFile)
 
   for(c = 0; c < BodyParts(); ++c)
     {
+      SaveFile >> BodyPartSlot[c];
       /* CHeck ThIs! */
-      item* I;
-      SaveFile >> I;
-      BodyPart[c] = (bodypart*)I;
-      BodyPart[c]->SetMaster(this);
+      /*item* I;
+      SaveFile >> I;*/
+      //BodyPart[c] = (bodypart*)I;
+      //BodyPart[c]->SetMaster(this);
     }
 
   if(HomeRoom)
@@ -2534,7 +2534,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
     }
 
   while(GetStack()->GetItems())
-    GetStack()->MoveItem(0, NewForm->GetStack());
+    GetStack()->MoveItem(GetStack()->GetBottomSlot(), NewForm->GetStack());
 
   NewForm->SetMoney(GetMoney());
 
@@ -2758,7 +2758,7 @@ void character::EndPolymorph()
       SetSquareUnder(0);
 
       while(GetStack()->GetItems())
-	GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
+	GetStack()->MoveItem(GetStack()->GetBottomSlot(), game::GetPlayerBackup()->GetStack());
 
       SetSquareUnder(game::GetPlayerBackup()->GetSquareUnder()); // might be used afterwards
 
@@ -3693,8 +3693,9 @@ void character::CreateTorso()
   SetTorso(new normaltorso(false));
   GetTorso()->SetBitmapPos(GetBitmapPos());
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
-  GetTorso()->SetMaster(this);
-  GetTorso()->SetAttached(true);
+  /*GetTorso()->SetMaster(this);
+  GetTorso()->SetAttached(true);*/
+  GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize());
 }
 
@@ -3822,10 +3823,9 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
 
       BodyPart->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
       BodyPart->SetUnique(ForceDefiniteArticle() || AssignedName != "");
-      SetBodyPart(BodyPartIndex, 0); // light update!!!
+      //SetBodyPart(BodyPartIndex, 0); // light update!!!
+      BodyPart->RemoveFromSlot();
       GetSquareUnder()->SendNewDrawRequest();
-      BodyPart->SetMaster(0);
-      BodyPart->SetAttached(false);
 
       if(!game::GetInWilderness())
 	{
@@ -4111,4 +4111,27 @@ bool character::EqupmentScreen()
 {
   ADD_MESSAGE("You can't use equipment!");
   return false;
+}
+
+bodypart* character::GetBodyPart(ushort Index) const
+{
+  return (bodypart*)GetBodyPartSlot(Index)->GetItem();
+}
+
+void character::SetBodyPart(ushort Index, bodypart* What)
+{
+  GetBodyPartSlot(Index)->SetItem(What);
+}
+
+void character::AllocateBodyPartArray()
+{
+  BodyPartSlot = new characterslot[BodyParts()];
+
+  for(ushort c = 0; c < BodyParts(); ++c)
+    GetBodyPartSlot(c)->SetMaster(this);
+}
+
+characterslot* character::GetBodyPartSlot(ushort Index) const
+{
+  return &BodyPartSlot[Index];
 }

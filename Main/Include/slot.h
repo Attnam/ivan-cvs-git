@@ -23,8 +23,8 @@ typedef std::list<stackslot*>::iterator stackiterator;
 class slot
 {
  public:
-  virtual void Empty() const = 0;
-  virtual void FastEmpty() const = 0;
+  virtual void Empty() = 0;
+  virtual void FastEmpty() = 0;
   void Save(outputfile&) const;
   void Load(inputfile&);
   item* GetItem() const { return Item; }
@@ -40,8 +40,8 @@ class slot
 class stackslot : public slot
 {
  public:
-  virtual void Empty() const;
-  virtual void FastEmpty() const;
+  virtual void Empty();
+  virtual void FastEmpty();
   stack* GetMotherStack() const { return MotherStack; }
   void SetMotherStack(stack* What) { MotherStack = What; }
   std::list<stackslot*>::iterator GetStackIterator() const { return StackIterator; }
@@ -68,8 +68,8 @@ inline inputfile& operator>>(inputfile& SaveFile, stackslot*& StackSlot)
 class characterslot : public slot
 {
  public:
-  virtual void Empty() const;
-  virtual void FastEmpty() const;
+  virtual void Empty();
+  virtual void FastEmpty();
   character* GetMaster() const { return Master; }
   void SetMaster(character* What) { Master = What; }
   virtual void MoveItemTo(stack*);
@@ -77,5 +77,17 @@ class characterslot : public slot
  protected:
   character* Master;
 };
+
+inline outputfile& operator<<(outputfile& SaveFile, characterslot StackSlot)
+{
+  StackSlot.Save(SaveFile);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, characterslot& StackSlot)
+{
+  StackSlot.Load(SaveFile);
+  return SaveFile;
+}
 
 #endif

@@ -13,22 +13,26 @@ void slot::Load(inputfile& SaveFile)
   SaveFile >> Item;
 }
 
-void stackslot::Empty() const
+void stackslot::Empty()
 {
   GetMotherStack()->RemoveItem(StackIterator);
 }
 
-void stackslot::FastEmpty() const
+void stackslot::FastEmpty()
 {
   GetMotherStack()->FastRemoveItem(StackIterator);
 }
 
-void characterslot::Empty() const
+void characterslot::Empty()
 {
+  /* add light update */
+
+  SetItem(0);
 }
 
-void characterslot::FastEmpty() const
+void characterslot::FastEmpty()
 {
+  SetItem(0);
 }
 
 void stackslot::MoveItemTo(stack* Stack)

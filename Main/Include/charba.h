@@ -87,9 +87,10 @@ class wsquare;
 class outputfile;
 class inputfile;
 class team;
-class bodypart;
 class torso;
 class humanoidtorso;
+class bodypart;
+class characterslot;
 
 /* Presentation of the character class */
 
@@ -328,8 +329,8 @@ class character : public type, public entity, public identity
   virtual torso* GetTorso() const;
   virtual humanoidtorso* GetHumanoidTorso() const;
   virtual void SetTorso(torso* What);
-  virtual bodypart* GetBodyPart(ushort Index) const { return BodyPart[Index]; }
-  virtual void SetBodyPart(ushort Index, bodypart* What) { BodyPart[Index] = What; }
+  virtual bodypart* GetBodyPart(ushort) const;
+  virtual void SetBodyPart(ushort, bodypart*);
 
   virtual void SetMaterial(uchar, material*);
 
@@ -390,6 +391,11 @@ class character : public type, public entity, public identity
   virtual bool CanWieldInSecondaryHand() const { return false; }
 
   virtual uchar GetHungerState() const;
+
+  virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
+
+  virtual characterslot* GetBodyPartSlot(ushort) const;
+
  protected:
 
   virtual ushort TotalSize() const = 0;
@@ -408,7 +414,7 @@ class character : public type, public entity, public identity
 
   virtual vector2d GetBitmapPos() const = 0;
 
-  virtual void AllocateBodyPartArray() { BodyPart = new bodypart*[BodyParts()]; }
+  virtual void AllocateBodyPartArray();// { BodyPart = new bodypart*[BodyParts()]; }
 
   virtual ushort TorsoSize() const;
 
@@ -475,7 +481,7 @@ class character : public type, public entity, public identity
   ulong Money;
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
-  bodypart** BodyPart;
+  characterslot* BodyPartSlot;
   std::string AssignedName;
 };
 
