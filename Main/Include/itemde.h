@@ -38,7 +38,7 @@ class ITEM
 		SetSize(30);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(5)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, bananapeal::StaticType()))
 	virtual std::string NameSingular() const RET("holy banana of Liukas Vipro")
 	virtual std::string NamePlural() const RET("holy bananas of Liukas Vipro")
@@ -740,7 +740,7 @@ public:
 	virtual bool Zap(character*, vector2d, uchar);
 );
 
-class ITEM
+/*class ITEM
 (
 	arrow,
 	item,
@@ -757,7 +757,7 @@ public:
 	virtual bool UseThrowStrengthModifier() const RET(true)
 protected:
 	virtual ushort GetFormModifier() const RET(50)
-);
+);*/
 
 class ITEM
 (
@@ -872,7 +872,7 @@ protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
 
-class ITEM
+/*class ITEM
 (
 	bow,
 	item,
@@ -889,6 +889,6 @@ public:
 	virtual float GetThrowStrengthModifier() const RET(4)
 protected:
 	virtual ushort GetFormModifier() const RET(40)
-);
+);*/
 
 #endif

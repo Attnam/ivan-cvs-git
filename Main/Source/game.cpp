@@ -191,6 +191,7 @@ void game::Init(std::string Name)
 
 		for(ushort c = 1; GetGod(c); ++c)
 		{
+			GetGod(c)->SetKnown(false);
 			GetGod(c)->SetRelation(0);
 			GetGod(c)->SetTimer(0);
 		}
@@ -435,9 +436,15 @@ void game::panel::Draw() const
 void game::UpdateCameraX()
 {
 	if(Player->GetPos().X < 25)
-		Camera.X = 0;
+		if(!Player->GetPos().X)
+			return;
+		else
+			Camera.X = 0;
 	else
-		Camera.X = Player->GetPos().X - 25;
+		if(Camera.X == Player->GetPos().X - 25)
+			return;
+		else
+			Camera.X = Player->GetPos().X - 25;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }
@@ -445,9 +452,15 @@ void game::UpdateCameraX()
 void game::UpdateCameraY()
 {
 	if(Player->GetPos().Y < 18)
-		Camera.Y = 0;
+		if(!Player->GetPos().Y)
+			return;
+		else
+			Camera.Y = 0;
 	else
-		Camera.Y = Player->GetPos().Y - 18;
+		if(Camera.Y == Player->GetPos().Y - 18)
+			return;
+		else
+			Camera.Y = Player->GetPos().Y - 18;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }
@@ -678,19 +691,31 @@ bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
 void game::UpdateCameraXWithPos(ushort Coord)
 {
         if(Coord < 25)
-		Camera.X = 0;
+		if(!Camera.X)
+			return;
+		else
+			Camera.X = 0;
 	else
-                Camera.X = Coord - 25;
+                if(Camera.X == Coord - 25)
+			return;
+		else
+			Camera.X = Coord - 25;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-        if(Coord < 25)
-                Camera.Y = 0;
+        if(Coord < 18)
+                if(!Camera.Y)
+			return;
+		else
+			Camera.Y = 0;
 	else
-                Camera.Y = Coord - 25;
+                if(Camera.Y == Coord - 18)
+			return;
+		else
+			Camera.Y = Coord - 18;
 
 	GetCurrentArea()->SendNewDrawRequest();
 }

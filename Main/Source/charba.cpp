@@ -1963,16 +1963,13 @@ bool character::Throw()
 
 	if(Index < GetStack()->GetItems())
 	{
-		if(GetStack()->GetItem(Index) == GetWielded())
-		{
-			SetWielded(0);
-			return false;
-		}
-
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?", 8, false);
 
 		if(Answer == 0xFF)
 			return false;
+
+		if(GetStack()->GetItem(Index) == GetWielded())
+			SetWielded(0);
 
 		ThrowItem(Answer, GetStack()->GetItem(Index));
 	}

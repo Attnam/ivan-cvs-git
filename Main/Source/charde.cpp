@@ -464,19 +464,20 @@ bool humanoid::Throw()
 
 	if(Index < GetStack()->GetItems())
 	{
-		if(GetStack()->GetItem(Index) == GetWielded())
-		{
-			SetWielded(0);
-			return false;
-		}
 		if(GetStack()->GetItem(Index) == GetTorsoArmor())
 		{
 			ADD_MESSAGE("You can't throw something that you wear.");
 			return false;
 		}
+
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw it?", 8, false);
+
 		if(Answer == 0xFF)
 			return false;
+
+		if(GetStack()->GetItem(Index) == GetWielded())
+			SetWielded(0);
+
 		ThrowItem(Answer, GetStack()->GetItem(Index));
 	}
 	else

@@ -12,7 +12,7 @@ Valoja irti seinästä.
 Attribuuttibonusten osittainen expoittaminen.
 Pitää tehdä ruokamyrkytyksestä joku tila characterille.
 Humanoidin armorkuvat.
-Ehkä muitakin näppäimiä?
+Ehkä muitakin erikoisnäppäimiä kuin F2 ja F4 toimimaan getkeyn aikana?
 Menujen koristelu (ehkä fadeja).
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia eräillä henkilöillä)
 Kloonaus.
@@ -29,10 +29,10 @@ CNAME should be clarified.
 Hit rate of thrown items should be lowered.
 You must be able to open door by throwing items.
 Lamps should be white.
-Name too short message.
+!!!Name too short message.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
-Teleport disabling.
+!!!Teleport disabling.
 Teleport should bounce back from valpurium.
 It should be possible to determine line height as a felist draw function argument.
 Vomiting in a shop should have a special effect.
@@ -44,18 +44,17 @@ Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 Golems shouldn't be able to eat anything else.
-Mellis should fill also intact empty bottles and empty cans.
+!!!Mellis should fill also intact empty bottles and empty cans.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
 Dogs ought to be possible to name.
-Lookmode should show player's name as char description, not "a human".
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor
  but the strongest player-obtainable weapon/armor ever generated?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
-Cannibalism and navastating should have relation effect limits.
+!!!Cannibalism and navastating should have relation effect limits.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
