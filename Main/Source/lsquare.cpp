@@ -1271,7 +1271,7 @@ bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
 
   if(Character)
     {
-      if(Character->GetTeam() != Zapper->GetTeam())
+      if(Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
       Character->PolymorphRandomly(1, 9999, 5000 + RAND() % 5000);
@@ -1284,7 +1284,6 @@ bool lsquare::Strike(character* Zapper, const std::string& DeathMsg, uchar Direc
 {
   ushort Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
-  //  GetFirstSideStackUnderAttack(Direction)->ReceiveDamage(Zapper, Damage, ENERGY);
   stack* SideStack = GetFirstSideStackUnderAttack(Direction);
 
   if(SideStack)
@@ -1330,7 +1329,7 @@ bool lsquare::Teleport(character* Teleporter, const std::string&, uchar)
 { 
   if(GetCharacter())
     {
-      if(Character->GetTeam() != Teleporter->GetTeam())
+      if(Teleporter && Character->GetTeam() != Teleporter->GetTeam())
 	Teleporter->Hostility(GetCharacter());
 
       GetCharacter()->TeleportRandomly();

@@ -15,14 +15,21 @@
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
   Gas->SetMotherEntity(this);
-  Picture.resize(4);
+  Picture.resize(16);
   ushort Color = Gas->GetColor();
+  bitmap Temp(16, 16, TRANSPARENT_COLOR);
+  ushort Last = 4;
 
-  for(ushort c = 0; c < 4; ++c)
+  for(ushort c = 0; c < 16; ++c)
     {
       Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
       Picture[c]->CreateAlphaMap(Alpha);
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture[c], c << 4, 32, 0, 0, 16,16, &Color);
+      ushort Frame;
+
+      for(Frame = RAND() & 3; Frame == Last; Frame = RAND() & 3);
+
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, Frame << 4, 32, 0, 0, 16, 16, &Color);
+      Temp.Blit(Picture[c], uchar(RAND() & 7));
     }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);
@@ -54,7 +61,7 @@ void smoke::Be()
 	  return;
 	}
 
-      for(ushort c = 0; c < 4; ++c)
+      for(ushort c = 0; c < 16; ++c)
 	Picture[c]->FillAlpha(Alpha);
 
       Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
@@ -114,7 +121,7 @@ void smoke::Merge(gas* OtherGas)
   LSquareUnder->SignalSmokeAlphaChange(OtherGas->GetAlpha() - Alpha);
   Alpha = OtherGas->GetAlpha();
 
-  for(ushort c = 0; c < 4; ++c)
+  for(ushort c = 0; c < 16; ++c)
     Picture[c]->FillAlpha(Alpha);
 
   delete OtherGas;

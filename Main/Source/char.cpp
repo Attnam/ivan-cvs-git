@@ -210,7 +210,12 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       Enemy->AddMissMessage(this);
       EditExperience(AGILITY, 50);
       EditExperience(PERCEPTION, 25);
-      DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+
+      if(Enemy->CanBeSeenByPlayer())
+	DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+      else
+	DeActivateVoluntaryAction("The attack interupts you.");
+
       return HAS_DODGED;
     }
 
@@ -267,7 +272,11 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
 
       if(!TrueDamage || (Weapon && !Weapon->Exists()))
 	{
-	  DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	  if(Enemy->CanBeSeenByPlayer())
+	    DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	  else
+	    DeActivateVoluntaryAction("The attack interupts you.");
+
 	  return HAS_BLOCKED;
 	}
     }
@@ -283,7 +292,11 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
 
   if(!Succeeded)
     {
-      DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+      if(Enemy->CanBeSeenByPlayer())
+	DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+      else
+	DeActivateVoluntaryAction("The attack interupts you.");
+
       return DID_NO_DAMAGE;
     }
 
@@ -292,7 +305,11 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
-  DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+  if(Enemy->CanBeSeenByPlayer())
+    DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+  else
+    DeActivateVoluntaryAction("The attack interupts you.");
+
   return HAS_HIT;
 }
 
@@ -1410,7 +1427,10 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
   if(CheckDeath(DeathMsg, Thrower))
     return;
 
-  DeActivateVoluntaryAction("The attack of " + Thrower->GetName(DEFINITE) + " interupts you.");
+  if(Thrower->CanBeSeenByPlayer())
+    DeActivateVoluntaryAction("The attack of " + Thrower->GetName(DEFINITE) + " interupts you.");
+  else
+    DeActivateVoluntaryAction("The attack interupts you.");
 }
 
 bool character::DodgesFlyingItem(item*, float ToHitValue)

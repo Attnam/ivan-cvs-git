@@ -415,6 +415,7 @@ bool commandsystem::Talk(character* Char)
   else if(Characters == 1)
     {
       ToTalk->BeTalkedTo();
+      Char->EditExperience(CHARISMA, 10);
       Char->EditAP(-1000);
       return true;
     }
@@ -428,6 +429,7 @@ bool commandsystem::Talk(character* Char)
       if(Dir == YOURSELF)
 	{
 	  ADD_MESSAGE("You talk to yourself for some time.");
+	  Char->EditExperience(WISDOM, -10);
 	  Char->EditAP(-1000);
 	  return true;
 	}
@@ -437,6 +439,7 @@ bool commandsystem::Talk(character* Char)
       if(Dude)
 	{
 	  Dude->BeTalkedTo();
+	  Char->EditExperience(CHARISMA, 10);
 	  Char->EditAP(-1000);
 	  return true;
 	}

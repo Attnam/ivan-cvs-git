@@ -489,4 +489,3 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
   return Buffer.GetEntry(Check);
 #endif
 }
-

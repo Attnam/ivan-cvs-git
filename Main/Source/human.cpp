@@ -3371,21 +3371,32 @@ ushort human::GetBodyPartColorC(ushort Index) const
 void human::SignalEquipmentAdd(ushort EquipmentIndex)
 {
   humanoid::SignalEquipmentAdd(EquipmentIndex);
-  UpdatePictures();
-  GetSquareUnder()->SendNewDrawRequest();
+
+  if(!Initializing)
+    {
+      UpdatePictures();
+      GetSquareUnder()->SendNewDrawRequest();
+    }
 }
 
 void human::SignalEquipmentRemoval(ushort EquipmentIndex)
 {
   humanoid::SignalEquipmentRemoval(EquipmentIndex);
-  UpdatePictures();
-  GetSquareUnder()->SendNewDrawRequest();
+
+  if(!Initializing)
+    {
+      UpdatePictures();
+      GetSquareUnder()->SendNewDrawRequest();
+    }
 }
 
 void human::SignalBodyPartVolumeAndWeightChange()
 {
-  UpdatePictures();
-  GetSquareUnder()->SendNewDrawRequest();
+  if(!Initializing)
+    {
+      UpdatePictures();
+      GetSquareUnder()->SendNewDrawRequest();
+    }
 }
 
 bool communist::BoundToUse(const item* Item, ushort Index) const

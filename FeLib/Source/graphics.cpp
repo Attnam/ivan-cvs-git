@@ -227,4 +227,3 @@ void graphics::modeinfo::Retrieve(ushort Mode)
 }
 
 #endif
-

@@ -9,10 +9,10 @@ void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort Spec
 uchar holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
 vector2d lantern::GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
-ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB24(255, 255, 240); }
-ushort lantern::GetMaterialColorB(ushort) const { return MakeRGB24(255, 255, 140); }
-ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB24(255, 255, 140); }
-ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB16(255, 255, 240); }
+ushort lantern::GetMaterialColorB(ushort) const { return MakeRGB16(255, 255, 100); }
+ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB16(255, 255, 100); }
+ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB16(255, 255, 100); }
 
 bool can::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
@@ -819,7 +819,7 @@ void mine::StepOnEffect(character* Stepper)
     return;
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+    ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
   else if(GetSquareUnder()->CanBeSeenByPlayer())
@@ -1324,6 +1324,9 @@ bool beartrap::CanBeSeenBy(const character* Viewer) const
 
 bool mine::Apply(character* User)
 {
+  if(User->IsPlayer() && !game::BoolQuestion("Are you sure you want to plant " + GetName(DEFINITE) + "? [y/N]")) 
+    return false;
+
   if(User->IsPlayer())
     ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
 
@@ -1481,19 +1484,6 @@ bool key::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return item::CanBePiledWith(Item, Viewer) && LockType == static_cast<const key*>(Item)->LockType;
 }
-
-/*ulong mine::GetPrice() const
-{
-  if(GetContainedMaterial())
-    {
-      if(GetContainedMaterial()->IsExplosive())
-	return (GetContainedMaterial()->GetRawPrice() << 1) + item::GetPrice();
-      else
-	return GetContainedMaterial()->GetRawPrice() + item::GetPrice();
-    }
-  else
-    return item::GetPrice();
-}*/
 
 ulong itemcontainer::GetTruePrice() const
 {

@@ -1034,8 +1034,8 @@ void mommo::CreateCorpse(lsquare* Square)
 
 void carnivorousplant::CreateCorpse(lsquare* Square)
 {
-  ushort Amount = !Config ? (RAND() & 1 ? 0 : (RAND() % 3 ? 1 : 2))
-			  : (RAND() & 1 ? 1 : (RAND() & 1 ? 2 : (RAND() & 1 ? 3 : 4)));
+  ushort Amount = !Config ? (RAND() % 7 ? 0 : 1)
+			  : (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3)));
 
   for(ushort c = 0; c < Amount; ++c)
     Square->AddItem(new kiwi);
@@ -1430,7 +1430,7 @@ void skunk::GetAICommand()
 {
   if(!IsRetreating())
     {
-      if(!RAND_N(3))
+      if(!RAND_N(4))
 	{
 	  character* Char = GetRandomNeighbour(HOSTILE);
 
@@ -1445,7 +1445,7 @@ void skunk::GetAICommand()
 	    }
 	}
     }
-  else if(RAND_N(3))
+  else if(RAND_N(2))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));

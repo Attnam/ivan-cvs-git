@@ -576,7 +576,7 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, uchar Alpha, ushort MaskColor) cons
   ulong Size = XSizeTimesYSize;
   const ushort* SrcPtr = Image[0];
   ushort* DestPtr = Bitmap->Image[0];
-  uchar NegAlpha = 0xFF - Alpha;
+  ushort NegAlpha = 256 - Alpha;
 
   for(ulong c = 0; c < Size; ++c, ++SrcPtr, ++DestPtr)
     if(*SrcPtr != MaskColor)
@@ -619,9 +619,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -639,9 +639,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -659,9 +659,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -680,9 +680,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -701,9 +701,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -721,9 +721,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -743,9 +743,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -764,9 +764,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
-		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
 	  }
 
 	break;
@@ -1270,9 +1270,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
-	  *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
-					     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
-					     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+					     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+					     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
     }
 }
 

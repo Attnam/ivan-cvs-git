@@ -284,7 +284,7 @@ meleeweapon
 		DefaultSecondaryVolume = 400;
 		StrengthModifier = 80;
 		BitmapPos = 16, 256;
-		FormModifier = 45;
+		FormModifier = 55;
 		NameSingular = "axe";
 		Article = "an";
 		MainMaterialConfig = { 5, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
@@ -364,7 +364,7 @@ meleeweapon
 		StrengthModifier = 110;
 		BitmapPos = 48, 160;
 		FormModifier = 55;
-		NameSingular = "hammer";
+		NameSingular = "war hammer";
 		MainMaterialConfig = { 8, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 8, 1000, 750, 500, 100, 25, 25, 25, 1; }

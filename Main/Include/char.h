@@ -850,4 +850,3 @@ name : public base\
 }; ABSTRACT_CHARACTER_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
-

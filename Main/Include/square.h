@@ -33,7 +33,6 @@ class square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
-  //bool IsWalkable(const character* = 0) const;
   std::string SurviveMessage(character*) const;
   std::string MonsterSurviveMessage(character*) const;
   std::string DeathMessage(character*) const;

@@ -415,7 +415,6 @@ class ITEM
   virtual bool WillExplode(const character*) const;
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
-  //virtual ulong GetPrice() const;
   virtual bool CheckPickUpEffect(character*);
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
@@ -625,4 +624,3 @@ class ITEM
 );
 
 #endif
-

@@ -788,7 +788,7 @@ gas
 		NameStem = "skunk smell";
 		Alpha = 200;
 		AttachedGod = SCABIES;
-		EffectStrength = 5;
+		EffectStrength = 4;
 		Effect = EFFECT_SKUNK_SMELL;
 		BreatheMessage = "It smells really bad here.";
 	}

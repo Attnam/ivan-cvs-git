@@ -168,8 +168,6 @@ int globalwindowhandler::ReadKey()
 
   if(SDL_GetAppState() & SDL_APPACTIVE)
     {
-      //ProcessMessage(&Event);
-
       while(SDL_PollEvent(&Event))
 	ProcessMessage(&Event);
     }

@@ -144,7 +144,7 @@ Dipping to corpses doesn't work.
 (this may not be a bug, but it is a problem) Go and heal commands might be too fast on a very fast machine (> 1 GHz or something like that)
 Does using a two-handed weapon yield exp to only one arm?
 Guards in the library.
-(example) Even though the golem is not seen the message "The attack of the glass golem interrupts you." is displayed
+//(example) Even though the golem is not seen the message "The attack of the glass golem interrupts you." is displayed
 (might be a feature... But probably isn't even thought Timo may say so) Merka the shopkeeper walking around in the dungeon. 
 //Dark wizards are too hard.
 //TOO MANY KAMIKAZE DWARFS.

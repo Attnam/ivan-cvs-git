@@ -455,3 +455,4 @@ Characters wearing bright colored cloaks should be more visible in the dark.
 Fire immunity for imps.
 One should occasionally pray to a wrong god when confused.
 When showing inventory at the endgame, equipment should also be displayed.
+If the player has a floating eye in his team and has ESP, the eye's field of vision should be added to player's LOS.

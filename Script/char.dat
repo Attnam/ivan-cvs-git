@@ -3242,7 +3242,7 @@ floatingeye
 {
 	DefaultArmStrength = 1; 
 	DefaultAgility = 3;
-	DefaultEndurance = 8;
+	DefaultEndurance = 6;
 	DefaultPerception = 50;
 	DefaultIntelligence = 2;
 	DefaultWisdom = 2;
@@ -3343,6 +3343,7 @@ mushroom
 	BaseUnarmedStrength = 200;
 	CanBeDisplaced = false;
 	CanWalk = false;
+	PanicLevel = 0;
 }
 
 magicmushroom
@@ -3638,6 +3639,6 @@ skunk
 	PanicLevel = 85;
 	TorsoMainColor = rgb16(220, 220, 220); 
 	PoisonResistance = 10;
-	DangerModifier = 50;
+	DangerModifier = 33;
 	ClassStates = GAS_IMMUNITY;
 }

@@ -7,12 +7,23 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 24 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Talking now trains charisma a little
+	* Corrected a small bug in the lantern animation
+	* Mushrooms no longer panic
+	* Skunks are now a bit easier
+	* Corrected a typo in the mine discovery message ("thumb" -> "thump")
+	* Smokes are now a little less repetitive
+	* A problem in the attack interrupt message fixed
+	* Corrected a fatal bug in the wand of teleport's and polymorph's break code
+
 March 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected some bugs concerning the new kill lists
 	* The massacre lists now show the total amounts of killed monsters in each
 	  category
-	* The player's representation in the game screen is now influenced by his armor
+	* The player's representation on the game screen is now influenced by his armor
 	* Some graphics needed to make the latter possible added to humanoid.pcx by me
 	* Gas mask added to item.pcx by Kahvi
 	* Steam tank added to char.pcx by Kahvi

@@ -594,7 +594,6 @@ void door::Break()
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
-      //SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)
@@ -735,12 +734,6 @@ bool fountain::AddAdjective(std::string& String, bool Articled) const
   else
     return false;
 }
-
-/*void liquidterrain::VirtualConstructor(bool Load) // gum solution
-{
-  glterrain::VirtualConstructor(Load);
-  SetAnimationFrames(16);
-}*/
 
 fountain::~fountain()
 {

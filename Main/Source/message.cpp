@@ -38,8 +38,8 @@ void msgsystem::AddMessage(const char* Format, ...)
   /* Comment the first line and uncomment the second before the release! */
 
   if(isalpha(Buffer[Buffer.length() - 1]))
-    Buffer << " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
-    //Buffer << ".";
+    //Buffer << " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
+    Buffer << ".";
 
   if(BigMessageMode)
     {
