@@ -32,15 +32,15 @@ public:
 	static void DeInit(void);
 	static bitmap* GetLevelTerrainGraphic(void)	{return Graphic[GLTERRAIN];}
 	static bitmap* GetWorldMapTerrainGraphic(void)	{return Graphic[GWTERRAIN];}
-	static bitmap* GetItemGraphic(void)	{return Graphic[GITEM];}
+	static bitmap* GetItemGraphic(void)		{return Graphic[GITEM];}
 	static bitmap* GetCharacterGraphic(void)	{return Graphic[GCHARACTER];}
-	static bitmap* GetFOWGraphic(void)	{return Graphic[GFOWGRAPHIC];}
-	static bitmap* GetHumanGraphic(void)	{return Graphic[GHUMAN];}
-	static bitmap* GetFontRGraphic(void)	{return Graphic[GFONTR];}
-	static bitmap* GetFontBGraphic(void)	{return Graphic[GFONTB];}
-	static bitmap* GetFontWGraphic(void)	{return Graphic[GFONTW];}
-	static bitmap* GetSymbolGraphic(void)	{return Graphic[GSYMBOL];}
-	static bitmap* GetTileBuffer(void)	{ return TileBuffer; }
+	static bitmap* GetFOWGraphic(void)		{return Graphic[GFOWGRAPHIC];}
+	static bitmap* GetHumanGraphic(void)		{return Graphic[GHUMAN];}
+	static bitmap* GetFontRGraphic(void)		{return Graphic[GFONTR];}
+	static bitmap* GetFontBGraphic(void)		{return Graphic[GFONTB];}
+	static bitmap* GetFontWGraphic(void)		{return Graphic[GFONTW];}
+	static bitmap* GetSymbolGraphic(void)		{return Graphic[GSYMBOL];}
+	static bitmap* GetTileBuffer(void)		{ return TileBuffer; }
 	static void BlitTileBuffer(vector, ushort = 256);
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
