@@ -5756,7 +5756,7 @@ void character::PrintEndConfuseMessage() const
 
 vector2d character::ApplyStateModification(vector2d TryDirection) const
 {
-  if(!StateIsActivated(CONFUSED) || RAND() & 1 || game::IsInWilderness())
+  if(!StateIsActivated(CONFUSED) || RAND() & 7 || game::IsInWilderness())
     return TryDirection;
   else
     {
