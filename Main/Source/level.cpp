@@ -975,6 +975,20 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 					Terrorist->GetTeam()->Hostility(Char->GetTeam());
 					Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
 					Char->ReceiveFireDamage(Terrorist, Damage);
+
+					Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+
+					DO_FOR_SQUARES_AROUND(Char->GetPos().X, Char->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+					{
+						if(!(RAND() % 3))
+						{
+							vector2d Where(DoX, DoY);
+
+							if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable())
+								Char->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
+						}
+					});
+
 					Char->CheckGearExistence();
 					Char->CheckDeath("killed by an explosion");
 				}
@@ -992,6 +1006,20 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 		Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
 		game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage, true);
 		game::GetPlayer()->ReceiveFireDamage(Terrorist, PlayerDamage);
+
+		game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+
+		DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+		{
+			if(!(RAND() % 3))
+			{
+				vector2d Where(DoX, DoY);
+
+				if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable())
+					game::GetPlayer()->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
+			}
+		});
+
 		game::GetPlayer()->CheckGearExistence();
 		game::GetPlayer()->CheckDeath("killed by an explosion");
 	}

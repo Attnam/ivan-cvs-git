@@ -711,7 +711,7 @@ bool holybook::Read(character* Reader)
 	return false;
 }
 
-ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 100000; default: return 0; } }
+ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
 
 bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
@@ -754,7 +754,6 @@ bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect
 
 		MotherStack->RemoveItem(MotherStack->SearchItem(this));
 		SetExists(false);
-	//	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
 		return true;
 	}
 	else
@@ -769,7 +768,9 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 		{
 			if(!game::GetCurrentLevel()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
 				break;
+
 			levelsquare* Temp = game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction));
+
 			if(!(Temp->GetOverLevelTerrain()->GetIsWalkable()))
 			{
 				BeamEffect(Zapper, Direction, Temp);

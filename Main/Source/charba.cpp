@@ -1867,14 +1867,20 @@ bool character::Pray()
 
 void character::SpillBlood(uchar HowMuch, vector2d GetPos)
 {
+	if(!HowMuch)
+		return;
+
 	if(!game::GetInWilderness()) 
-		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 10, 40);
+		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
 void character::SpillBlood(uchar HowMuch)
 {
+	if(!HowMuch)
+		return;
+
 	if(!game::GetInWilderness()) 
-		GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),10,40);
+		GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
 void character::ReceiveSchoolFoodEffect(long SizeOfEffect)

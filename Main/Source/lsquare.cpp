@@ -572,6 +572,9 @@ void levelsquare::Load(inputfile& SaveFile)
 
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
 {
+	if(!Amount)
+		return;
+
 	NewDrawRequested = true;
 	MemorizedUpdateRequested = true;
 	
@@ -974,7 +977,7 @@ void levelsquare::SwapCharacter(levelsquare* With)
 
 void levelsquare::ReceiveVomit(character* Who)
 {
-	SpillFluid(1, MAKE_RGB(10,230,10),5,50);
+	SpillFluid(1, MAKE_RGB(10,230,10),5,60);
 	GetOverLevelTerrain()->ReceiveVomit(Who);
 }
 

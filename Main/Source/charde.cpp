@@ -1445,9 +1445,12 @@ void zombie::BeTalkedTo(character* Talker)
 
 void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 {
+	if(!HowMuch)
+		return;
+
 	if(!game::GetInWilderness()) 
 	{
-		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 10, 40);
+		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 
 		if(!(RAND() % 10)) 
 			game::GetCurrentLevel()->GetLevelSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
