@@ -1,3 +1,14 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
+ *
+ */
+
 #ifndef __FESTRING_H__
 #define __FESTRING_H__
 

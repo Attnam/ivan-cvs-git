@@ -1,3 +1,14 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
+ *
+ */
+
 #ifndef __RECT_H__
 #define __RECT_H__
 
