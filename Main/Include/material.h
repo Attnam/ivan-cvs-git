@@ -338,8 +338,7 @@ public:
 	bone(ulong Volume) : material(Volume)		{}
 	bone(std::ifstream* SaveFile) : material(SaveFile)		{}
 	virtual ~bone(void)					{}
-	virtual const char* Name(void) 					{return "bone";}
-	virtual const char* NameInDefinite(void)			{return "a bone";}
+	virtual std::string Name(uchar Case)				{return !(Case & INDEFINEBIT) ? "bone" : "a bone";}
 	virtual ushort GetHitValue(void) 				{return 25;}
 	virtual ushort GetDensity(void)				{return 2000;}
 	virtual ushort Type(void)					{return IBONE;}

@@ -9,13 +9,13 @@
 #define	DEFINITE		2	//0000010
 #define	INDEFINEBIT		4	//0000100
 #define	INDEFINITE		6	//0000110
-
+/*
 #define NAME public: virtual std::string Name(uchar Case)
 #define NAME_SINGULAR protected: virtual std::string NameSingular(void) const
 #define NAME_PLURAL protected: virtual std::string NamePlural(void) const
 #define DRAW_TO_TILE_BUFFER public: virtual void DrawToTileBuffer(void)
 #define C_BITMAP_POS protected: virtual vector CBitmapPos(void)
-
+*/
 #include <string>
 #include <fstream>
 

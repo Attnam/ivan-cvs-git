@@ -69,22 +69,22 @@ public:
 	virtual void Die(void);
 	virtual bool OpenItem(void);
 	virtual void ReceiveSound(char*, short, float);
-	virtual item*  CWielded(void)					{return Wielded;}
+	virtual item* CWielded(void)					{return Wielded;}
 	virtual stack* CStack(void)					{return Stack;}
-	virtual ushort    CEmitation(void);
+	virtual ushort CEmitation(void);
 	virtual vector CPos(void);
-	virtual bool      CHasActed(void)					{return HasActed;}
-	virtual ushort    CStrength(void)					{return Strength;}
-	virtual ushort    CAgility(void)					{return Agility;}
-	virtual ushort    CEndurance(void)					{return Endurance;}
-	virtual ushort    CPerception(void)				{return Perception;}
-	virtual ushort    CSize(void)					{return Size;}	 
-	virtual short    CHP(void)					{return HP;}
-	virtual long    CNP(void)					{return NP;}
-	virtual void   SSquareUnder(square* Square);
-	virtual void   SHasActed(bool HA)				{HasActed = HA;}
-	virtual bool   WearArmor(void);
-	virtual item*  CTorsoArmor(void)				{return 0;}
+	virtual bool CHasActed(void)					{return HasActed;}
+	virtual ushort CStrength(void)					{return Strength;}
+	virtual ushort CAgility(void)					{return Agility;}
+	virtual ushort CEndurance(void)					{return Endurance;}
+	virtual ushort CPerception(void)				{return Perception;}
+	virtual ushort CSize(void)					{return Size;}	 
+	virtual short CHP(void)					{return HP;}
+	virtual long CNP(void)					{return NP;}
+	virtual void SSquareUnder(square* Square);
+	virtual void SHasActed(bool HA)				{HasActed = HA;}
+	virtual bool WearArmor(void);
+	virtual item* CTorsoArmor(void)				{return 0;}
 	virtual bool ConsumeItemType(uchar);
 	virtual void ReceiveFireDamage(long);
 	virtual void ReceiveSchoolFoodEffect(long);
@@ -237,7 +237,7 @@ protected:
 	long APsToBeEaten;
 	bool Dead;
 };
-
+/*
 #undef RET
 #define RET(Val) { return Val; }
 #undef RETV
@@ -287,7 +287,7 @@ protected:
 #define POSSIBILITY public: virtual ushort Possibility(void) const
 #undef APPLY
 #define APPLY public: virtual bool Apply(void)
-
+*/
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
 	#define CHARACTER(name, base, initmaterials, setstats, loader, destructor, data)\
@@ -361,30 +361,31 @@ ABSTRACT_CHARACTER(
 		SaveFile->read((char*)&TorsoType, sizeof(TorsoType));
 	},
 	{},
-	DRAW_TO_TILE_BUFFER;
-	WEAR_ARMOR;
-	C_TORSO_ARMOR RET(Armor.Torso)
-	GET_SEX RET(MALE)
-	CALCULATE_ARMOR_MODIFIER;
-	DROP;
-	WIELD;
-	SAVE;
-	THROW;
-	C_ARM_TYPE RET(ArmType)
-	C_HEAD_TYPE RET(HeadType)
-	GET_MELEE_STRENGTH RET(2000)
-	CAN_WIELD RET(true)
-	CAN_WEAR RET(true)
-	WEAR_ITEM { Armor.Torso = What; return true; }
+public:
+	virtual void DrawToTileBuffer(void);
+	virtual bool WearArmor(void);
+	virtual item* CTorsoArmor(void) RET(Armor.Torso)
+	virtual uchar GetSex(void) RET(MALE)
+	virtual ushort CalculateArmorModifier(void);
+	virtual bool Drop(void);
+	virtual bool Wield(void);
+	virtual void Save(std::ofstream*);
+	virtual bool Throw(void);
+	virtual uchar CArmType(void) RET(ArmType)
+	virtual uchar CHeadType(void) RET(HeadType)
+	virtual bool CanWield(void) RET(true)
+	virtual bool CanWear(void) RET(true)
+	virtual bool WearItem(item* What) { Armor.Torso = What; return true; }
 	class armor {public: armor(void); item* Torso; item* Legs; item* Hands; item* Head; item* Feet;} Armor;
 	uchar ArmType; uchar HeadType; uchar LegType; uchar TorsoType;
-	C_BITMAP_POS RETV(0,0)
-	APPLY;
-public:
-	V void SArmType(uchar Value) { ArmType = Value; }
-	V void SHeadType(uchar Value) { HeadType = Value; }
-	V void SLegType(uchar Value) { LegType = Value; }
-	V void STorsoType(uchar Value) { TorsoType = Value; }
+	virtual vector CBitmapPos(void) RETV(0,0)
+	virtual bool Apply(void);
+	virtual void SArmType(uchar Value) { ArmType = Value; }
+	virtual void SHeadType(uchar Value) { HeadType = Value; }
+	virtual void SLegType(uchar Value) { LegType = Value; }
+	virtual void STorsoType(uchar Value) { TorsoType = Value; }
+protected:
+	virtual float GetMeleeStrength(void) RET(2000)
 );
 
 inline humanoid::armor::armor(void) : Torso(0), Legs(0), Hands(0), Head(0), Feet(0) {}
@@ -406,10 +407,11 @@ CHARACTER(
 	},
 	{},
 	{},
-	NAME_SINGULAR RET("human")
-	NAME_PLURAL RET("humans")
-	DANGER RET(0)
-	POSSIBILITY RET(0)
+public:
+	virtual std::string NameSingular(void) const RET("human")
+	virtual std::string NamePlural(void) const RET("humans")
+	virtual ulong Danger(void) RET(0)
+	virtual ushort Possibility(void) const RET(0)
 );
                       
 CHARACTER(
@@ -433,24 +435,26 @@ CHARACTER(
 		SaveFile->read((char*)&HealTimer, sizeof(HealTimer));
 	},
 	{},
-	NAME_SINGULAR RET("Perttu, the Überpriest of the Great Frog")
-	NAME_PLURAL RET("Perttus, the Überpriests of the Great Frog")
-	NAME RET(NameProperNoun(Case))
-	BE_TALKED_TO;
-	C_EMITATION RET(333)
-	DIE;
-	GET_MELEE_STRENGTH RET(10000)
-	NEUTRAL_AI_COMMAND;
-	HEAL_FULLY;
-	S_HEALTIMER { HealTimer = What; }
-	C_HEALTIMER RET(HealTimer)
-	RECEIVE_FIRE_DAMAGE {}
+public:
+	virtual std::string NameSingular(void) const RET("Perttu, the Überpriest of the Great Frog")
+	virtual std::string NamePlural(void) const RET("Perttus, the Überpriests of the Great Frog")
+	virtual std::string Name(uchar Case) RET(NameProperNoun(Case))
+	virtual void BeTalkedTo(character*);
+	virtual ushort CEmitation(void) RET(333)
+	virtual void Die(void);
+	virtual void HealFully(character*);
+	virtual void SHealTimer(ushort What) { HealTimer = What; }
+	virtual ushort CHealTimer(void) RET(HealTimer)
+	virtual void ReceiveFireDamage(long) {}
 	protected: ushort HealTimer;
-	SAVE;
-	DANGER RET(150000)
-	CHARMABLE RET(false)
-	POSSIBILITY RET(0)
-	CREATE_INITIAL_EQUIPMENT;
+	virtual void Save(std::ofstream*);
+	virtual ulong Danger(void) RET(150000)
+	virtual bool Charmable(void) RET(false)
+	virtual ushort Possibility(void) const RET(0)
+protected:
+	virtual void CreateInitialEquipment(void);
+	virtual float GetMeleeStrength(void) RET(10000)
+	virtual void NeutralAICommand(void);
 );
 
 CHARACTER(
@@ -466,20 +470,22 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameProperNoun(Case))
-	GET_SEX RET(MALE)
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonPepsiVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonPepsiVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonPepsiVerb(Critical))
-	GET_MELEE_STRENGTH RET(40000)
-	CALCULATE_ARMOR_MODIFIER RET(10)
-	NAME_SINGULAR RET("Oree the Pepsi Daemon King")
-	NAME_PLURAL RET("Orees the Pepsi Daemon Kings")
-	DANGER RET(30000)
-	CHARMABLE RET(false)
-	C_BITMAP_POS RETV(208,0)
-	CREATE_INITIAL_EQUIPMENT;
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameProperNoun(Case))
+	virtual uchar GetSex(void) RET(MALE)
+	virtual ushort CalculateArmorModifier(void) RET(10)
+	virtual std::string NameSingular(void) const RET("Oree the Pepsi Daemon King")
+	virtual std::string NamePlural(void) const RET("Orees the Pepsi Daemon Kings")
+	virtual ulong Danger(void) RET(30000)
+	virtual bool Charmable(void) RET(false)
+	virtual vector CBitmapPos(void) RETV(208,0)
+protected:
+	virtual void CreateInitialEquipment(void);
+	virtual float GetMeleeStrength(void) RET(40000)
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonPepsiVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonPepsiVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonPepsiVerb(Critical))
 );
 
 CHARACTER(
@@ -495,17 +501,19 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(5)
-	GET_SEX RET(MALE)
-	GET_MELEE_STRENGTH RET(10000)
-	NAME_SINGULAR RET("Bill's SWAT commando")
-	NAME_PLURAL RET("Bill's SWAT commandos")
-	CAN_WIELD RET(true)
-	CAN_WEAR RET(false)
-	DANGER RET(750)
-	CHARMABLE RET(false)
-	C_BITMAP_POS RETV(128,0)
-	CREATE_INITIAL_EQUIPMENT;
+public:
+	virtual ushort Possibility(void) const RET(5)
+	virtual uchar GetSex(void) RET(MALE)
+	virtual std::string NameSingular(void) const RET("Bill's SWAT commando")
+	virtual std::string NamePlural(void) const RET("Bill's SWAT commandos")
+	virtual bool CanWield(void) RET(true)
+	virtual bool CanWear(void) RET(false)
+	virtual ulong Danger(void) RET(750)
+	virtual bool Charmable(void) RET(false)
+	virtual vector CBitmapPos(void) RETV(128,0)
+protected:
+	virtual void CreateInitialEquipment(void);
+	virtual float GetMeleeStrength(void) RET(10000)
 );
 
 CHARACTER(
@@ -521,15 +529,17 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	HIT;
-	HOSTILE_AI_COMMAND;
-	GET_MELEE_STRENGTH RET(200000)
-	NAME_SINGULAR RET("Enner Beast")
-	NAME_PLURAL RET("Enner Beasts")
-	DANGER RET(2500);
-	CHARMABLE RET(false)
-	C_BITMAP_POS RETV(96,0)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual bool Hit(character*);
+	virtual std::string NameSingular(void) const RET("Enner Beast")
+	virtual std::string NamePlural(void) const RET("Enner Beasts")
+	virtual ulong Danger(void) RET(2500);
+	virtual bool Charmable(void) RET(false)
+	virtual vector CBitmapPos(void) RETV(96,0)
+protected:
+	virtual float GetMeleeStrength(void) RET(200000)
+	virtual void HostileAICommand(void);
 );
 
 ABSTRACT_CHARACTER(
@@ -537,10 +547,11 @@ ABSTRACT_CHARACTER(
 	character,
 	{},
 	{},
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonBiteVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	GET_MELEE_STRENGTH RET(20000)
+protected:
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonBiteVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonBiteVerb(Critical))
+	virtual float GetMeleeStrength(void) RET(20000)
 );
 
 CHARACTER(
@@ -556,11 +567,12 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(100)
-	NAME_SINGULAR RET("dark frog")
-	NAME_PLURAL RET("dark frogs")
-	DANGER RET(25)
-	C_BITMAP_POS RETV(80,0)
+public:
+	virtual ushort Possibility(void) const RET(100)
+	virtual std::string NameSingular(void) const RET("dark frog")
+	virtual std::string NamePlural(void) const RET("dark frogs")
+	virtual ulong Danger(void) RET(25)
+	virtual vector CBitmapPos(void) RETV(80,0)
 );
 
 CHARACTER(
@@ -576,14 +588,15 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameProperNoun(Case))
-	NAME_SINGULAR RET("Elpuri the Dark Frog")
-	NAME_PLURAL RET("Elpuris the Dark Frogs")
-	DIE;
-	DANGER RET(5000)
-	CHARMABLE RET(false)
-	C_BITMAP_POS RETV(64,0)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameProperNoun(Case))
+	virtual std::string NameSingular(void) const RET("Elpuri the Dark Frog")
+	virtual std::string NamePlural(void) const RET("Elpuris the Dark Frogs")
+	virtual void Die(void);
+	virtual ulong Danger(void) RET(5000)
+	virtual bool Charmable(void) RET(false)
+	virtual vector CBitmapPos(void) RETV(64,0)
 );
 
 CHARACTER(
@@ -599,18 +612,20 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(50)
-	DIE;
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonPSIVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonPSIVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonPSIVerb(Critical))
-	GET_MELEE_STRENGTH RET(30000)
-	NAME_SINGULAR RET("pure mass of Bill's will")
-	NAME_PLURAL RET("pure masses of Bill's will")
-	SPILL_BLOOD {}
-	DANGER RET(75)
-	CHARMABLE RET(false)
-	C_BITMAP_POS RETV(48,0)
+public:
+	virtual ushort Possibility(void) const RET(50)
+	virtual void Die(void);
+	virtual std::string NameSingular(void) const RET("pure mass of Bill's will")
+	virtual std::string NamePlural(void) const RET("pure masses of Bill's will")
+	virtual void SpillBlood(uchar) {}
+	virtual ulong Danger(void) RET(75)
+	virtual bool Charmable(void) RET(false)
+	virtual vector CBitmapPos(void) RETV(48,0)
+protected:
+	virtual float GetMeleeStrength(void) RET(30000)
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonPSIVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonPSIVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonPSIVerb(Critical))
 );
 
 CHARACTER(
@@ -626,16 +641,18 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(50)
-	GET_MELEE_STRENGTH RET(5000)
-	NAME_SINGULAR RET("fallen valpurist")
-	NAME_PLURAL RET("fallen valpurists")
-	CAN_WIELD RET(true)
-	CAN_WEAR RET(false)
-	DIE;
-	DANGER RET(25)
-	C_BITMAP_POS RETV(112,0)
-	CREATE_INITIAL_EQUIPMENT;
+public:
+	virtual ushort Possibility(void) const RET(50)
+	virtual std::string NameSingular(void) const RET("fallen valpurist")
+	virtual std::string NamePlural(void) const RET("fallen valpurists")
+	virtual bool CanWield(void) RET(true)
+	virtual bool CanWear(void) RET(false)
+	virtual void Die(void);
+	virtual ulong Danger(void) RET(25)
+	virtual vector CBitmapPos(void) RETV(112,0)
+protected:
+	virtual void CreateInitialEquipment(void);
+	virtual float GetMeleeStrength(void) RET(5000)
 );
 
 CHARACTER(
@@ -651,15 +668,16 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(100)
-	GET_MELEE_STRENGTH RET(5000)
-	NAME_SINGULAR RET("frog-goblin hybrid")
-	NAME_PLURAL RET("frog-goblin hybrids")
-	CAN_WIELD RET(true)
-	CAN_WEAR RET(false)
-	DANGER RET(25)
-	C_BITMAP_POS RETV(144,0)
-	CREATE_INITIAL_EQUIPMENT;
+public:
+	virtual ushort Possibility(void) const RET(100)
+	virtual std::string NameSingular(void) const RET("frog-goblin hybrid")
+	virtual std::string NamePlural(void) const RET("frog-goblin hybrids")
+	virtual bool CanWield(void) RET(true)
+	virtual ulong Danger(void) RET(25)
+	virtual vector CBitmapPos(void) RETV(144,0)
+protected:
+	virtual void CreateInitialEquipment(void);
+	virtual float GetMeleeStrength(void) RET(5000)
 );
 
 ABSTRACT_CHARACTER(
@@ -667,10 +685,11 @@ ABSTRACT_CHARACTER(
 	character,
 	{},
 	{},
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBrownSlimeVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonBrownSlimeVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonBrownSlimeVerb(Critical))
-	GET_MELEE_STRENGTH RET(25000)
+protected:
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonBrownSlimeVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonBrownSlimeVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonBrownSlimeVerb(Critical))
+	virtual float GetMeleeStrength(void) RET(25000)
 );
 
 CHARACTER(
@@ -686,11 +705,12 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	NAME_SINGULAR RET("conical mommo slime")
-	NAME_PLURAL RET("conical mommo slimes")
-	DANGER RET(250)
-	C_BITMAP_POS RETV(176,0)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual std::string NameSingular(void) const RET("conical mommo slime")
+	virtual std::string NamePlural(void) const RET("conical mommo slimes")
+	virtual ulong Danger(void) RET(250)
+	virtual vector CBitmapPos(void) RETV(176,0)
 );
 
 CHARACTER(
@@ -706,11 +726,12 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(75)
-	NAME_SINGULAR RET("flat mommo slime")
-	NAME_PLURAL RET("flat mommo slimes")
-	DANGER RET(75)
-	C_BITMAP_POS RETV(192,0)
+public:
+	virtual ushort Possibility(void) const RET(75)
+	virtual std::string NameSingular(void) const RET("flat mommo slime")
+	virtual std::string NamePlural(void) const RET("flat mommo slimes")
+	virtual ulong Danger(void) RET(75)
+	virtual vector CBitmapPos(void) RETV(192,0)
 );
 
 CHARACTER(
@@ -726,17 +747,19 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(20)
-	CALCULATE_ARMOR_MODIFIER;
-	DIE;
-	MOVE_RANDOMLY;
-	GET_MELEE_STRENGTH;
-	NAME_SINGULAR;
-	NAME_PLURAL RET("golems")
-	DANGER;
-	C_BITMAP_POS RETV(256,0)
-	DRAW_TO_TILE_BUFFER;
-	SPILL_BLOOD {}
+public:
+	virtual ushort Possibility(void) const RET(20)
+	virtual ushort CalculateArmorModifier(void);
+	virtual void Die(void);
+	virtual void MoveRandomly(void);
+	virtual std::string NameSingular(void) const;
+	virtual std::string NamePlural(void) const RET("golems")
+	virtual ulong Danger(void);
+	virtual vector CBitmapPos(void) RETV(256,0)
+	virtual void DrawToTileBuffer(void);
+	virtual void SpillBlood(uchar) {}
+protected:
+	virtual float GetMeleeStrength(void);
 );
 
 CHARACTER(
@@ -752,15 +775,17 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(40)
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonBiteVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	GET_MELEE_STRENGTH RET(7500)
-	NAME_SINGULAR RET("wolf")
-	NAME_PLURAL RET("wolves")
-	DANGER RET(20)
-	C_BITMAP_POS RETV(224,0)
+public:
+	virtual ushort Possibility(void) const RET(40)
+	virtual std::string NameSingular(void) const RET("wolf")
+	virtual std::string NamePlural(void) const RET("wolves")
+	virtual ulong Danger(void) RET(20)
+	virtual vector CBitmapPos(void) RETV(224,0)
+protected:
+	virtual float GetMeleeStrength(void) RET(7500)
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonBiteVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonBiteVerb(Critical))
 );
 
 CHARACTER(
@@ -776,17 +801,19 @@ CHARACTER(
 	},
 	{},
 	{},
-	POSSIBILITY RET(20)
-	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	FIRST_PERSON_HIT_VERB RET(FirstPersonBiteVerb(Critical))
-	AI_COMBAT_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
-	GET_MELEE_STRENGTH RET(5000)
-	NAME_SINGULAR RET("dog")
-	NAME_PLURAL RET("dogs")
-	DANGER RET(10)
-	CATCHES;
-	CONSUME_ITEM_TYPE;
-	C_BITMAP_POS RETV(240,0)
+public:
+	virtual ushort Possibility(void) const RET(20)
+	virtual std::string NameSingular(void) const RET("dog")
+	virtual std::string NamePlural(void) const RET("dogs")
+	virtual ulong Danger(void) RET(10)
+	virtual bool Catches(item*, float, bool);
+	virtual bool ConsumeItemType(uchar);
+	virtual vector CBitmapPos(void) RETV(240,0)
+protected:
+	virtual float GetMeleeStrength(void) RET(5000)
+	virtual std::string ThirdPersonMeleeHitVerb(const bool Critical) RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, const bool Critical) RET(FirstPersonBiteVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, const bool Critical) RET(ThirdPersonBiteVerb(Critical))
 );
 
 #endif

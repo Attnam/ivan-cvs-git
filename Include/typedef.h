@@ -1,7 +1,8 @@
 #ifndef __KEYWORD_H__
 #define __KEYWORD_H__
 
-#define		V		virtual
+#define RET(Val) { return Val; }
+#define RETV(XVal,YVal) { return vector(XVal, YVal); }
 
 typedef		unsigned	char		uchar;
 typedef		unsigned	short		ushort;

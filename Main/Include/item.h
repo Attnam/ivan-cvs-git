@@ -71,12 +71,12 @@ protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort CFormModifier(void) {return 0;}
 };
-
+/*
 #undef RET
 #define RET(Val) { return Val; }
 #undef RETV
 #define RETV(XVal,YVal) { return vector(XVal, YVal); }
-
+*/
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
 	#define ITEM(name, base, initmaterials, setstats, loader, destructor, data)\
@@ -136,7 +136,7 @@ public:\
 	virtual ~name() destructor\
 	data\
 };
-
+/*
 #define GET_CONSUME_TYPE public: virtual uchar GetConsumeType(void)
 #define CONSUME public: virtual bool Consume(character*, float = 100)
 #define C_FORM_MODIFIER protected: virtual ushort CFormModifier(void)
@@ -169,16 +169,16 @@ public:\
 #define POSSIBILITY public: virtual ushort Possibility(void) const
 #undef APPLY
 #define APPLY public: virtual bool Apply(character*)
-
+*/
 ABSTRACT_ITEM(
 	meleeweapon,
 	item,
 	{},
 	{},
-	RECEIVE_HIT_EFFECT;
-	DIP_INTO;
-	CAN_BE_DIPPED_INTO RET(Material[2] ? false : true)
-	CAN_BE_DIPPED RET(true)
+	virtual void ReceiveHitEffect(character*, character*);
+	virtual void DipInto(item*);
+	virtual bool CanBeDippedInto(item*) RET(Material[2] ? false : true)
+	virtual bool CanBeDipped(void) RET(true)
 );
 
 ITEM(
@@ -190,16 +190,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(50)
-	NAME RET(NameSized(Case,"a", 15, 40))
-	GET_CONSUME_TYPE RET(Material[1]->CConsumeType())
-	GET_IN_HANDS_PIC RET(vector(160, 112))
-	CONSUME;
-	NAME_SINGULAR RET("banana")
-	NAME_PLURAL RET("bananas")
-	C_FORM_MODIFIER RET(25)
-	OFFER_MODIFIER RET(1)
-	C_BITMAP_POS RETV(0,112)
+	virtual ushort Possibility(void) const RET(50)
+	virtual std::string Name(uchar Case) RET(NameSized(Case,"a", 15, 40))
+	virtual uchar GetConsumeType(void) RET(Material[1]->CConsumeType())
+	virtual vector GetInHandsPic(void) RET(vector(160, 112))
+	virtual bool Consume(character*, float = 100);
+	virtual std::string NameSingular(void) const RET("banana")
+	virtual std::string NamePlural(void) const RET("bananas")
+	virtual float OfferModifier(void)  RET(1)
+	virtual vector CBitmapPos(void) RETV(0,112)
+protected:
+	virtual ushort CFormModifier(void) RET(25)
 );
 
 ITEM(
@@ -211,14 +212,16 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(1)
-	NAME RET(NameArtifact(Case, IBANANAPEAL))
-	NAME_SINGULAR RET("holy banana of Liukas Vipro")
-	NAME_PLURAL RET("holy bananas of Liukas Vipro")
-	C_FORM_MODIFIER RET(35)
-	OFFER_MODIFIER RET(40)
-	SCORE RET(250)
-	C_BITMAP_POS RETV(0,112)
+public:
+	virtual ushort Possibility(void) const RET(1)
+	virtual std::string Name(uchar Case) RET(NameArtifact(Case, IBANANAPEAL))
+	virtual std::string NameSingular(void) const RET("holy banana of Liukas Vipro")
+	virtual std::string NamePlural(void) const RET("holy bananas of Liukas Vipro")
+	virtual float OfferModifier(void)  RET(40)
+	virtual long Score(void) RET(250)
+	virtual vector CBitmapPos(void) RETV(0,112)
+protected:
+	virtual ushort CFormModifier(void) RET(35)
 );
 
 ITEM(
@@ -230,15 +233,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(10)
-	POSITIONED_DRAW_TO_TILE_BUFFER;
-	C_EMITATION RET(300)
-	NAME_SINGULAR RET("lamp")
-	NAME_PLURAL RET("lamps")
-	C_FORM_MODIFIER RET(30)
-	GET_IN_HANDS_PIC RET(vector(160, 128))
-	OFFER_MODIFIER RET(1)
-	C_BITMAP_POS RETV(0,192)
+public:
+	virtual ushort Possibility(void) const RET(10)
+	virtual void PositionedDrawToTileBuffer(uchar);
+	virtual ushort CEmitation(void) RET(300)
+	virtual std::string NameSingular(void) const RET("lamp")
+	virtual std::string NamePlural(void) const RET("lamps")
+	virtual vector GetInHandsPic(void) RET(vector(160, 128))
+	virtual float OfferModifier(void)  RET(1)
+	virtual vector CBitmapPos(void) RETV(0,192)
+protected:
+	virtual ushort CFormModifier(void) RET(30)
 );
 
 ITEM(
@@ -250,18 +255,20 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(100)
-	POSITIONED_DRAW_TO_TILE_BUFFER;
-	NAME RET(NameContainer(Case))
-	TRY_TO_OPEN;
-	GET_CONSUME_TYPE RET(Material[1] ? Material[1]->CConsumeType() : ODD)
-	NAME_SINGULAR RET("can")
-	NAME_PLURAL RET("cans")
-	C_FORM_MODIFIER RET(20)
-	GET_IN_HANDS_PIC RET(vector(160, 144))
-	OFFER_MODIFIER RET(0.5)
-	PREPARE_FOR_CONSUMING;
-	C_BITMAP_POS RETV(144,288)
+public:
+	virtual ushort Possibility(void) const RET(100)
+	virtual void PositionedDrawToTileBuffer(uchar);
+	virtual std::string Name(uchar Case) RET(NameContainer(Case))
+	virtual ushort TryToOpen(stack*);
+	virtual uchar GetConsumeType(void) RET(Material[1] ? Material[1]->CConsumeType() : ODD)
+	virtual std::string NameSingular(void) const RET("can")
+	virtual std::string NamePlural(void) const RET("cans")
+	virtual vector GetInHandsPic(void) RET(vector(160, 144))
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual ushort PrepareForConsuming(character*, stack*);
+	virtual vector CBitmapPos(void) RETV(144,288)
+protected:
+	virtual ushort CFormModifier(void) RET(20)
 );
 
 ITEM(
@@ -273,20 +280,22 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameThingsThatAreLikeLumps(Case, "a")) 
-	GET_CONSUME_TYPE RET(Material[0]->CConsumeType())
-	CONSUME;
-	RECEIVE_HIT_EFFECT;
-	CAN_BE_DIPPED_INTO RET(true)
-	BE_DIPPED_INTO;
-	NAME_SINGULAR RET("lump")
-	NAME_PLURAL RET("lumps")
-	C_FORM_MODIFIER RET(10)
-	GET_IN_HANDS_PIC RET(vector(160, 112))
-	OFFER_MODIFIER RET(0.5)
-	C_BITMAP_POS RETV(144,48)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameThingsThatAreLikeLumps(Case, "a")) 
+	virtual uchar GetConsumeType(void) RET(Material[0]->CConsumeType())
+	virtual bool Consume(character*, float = 100);
+	virtual void ReceiveHitEffect(character*, character*);
+	virtual bool CanBeDippedInto(item*) RET(true)
+	virtual material* BeDippedInto(void);
+	virtual std::string NameSingular(void) const RET("lump")
+	virtual std::string NamePlural(void) const RET("lumps")
+	virtual vector GetInHandsPic(void) RET(vector(160, 112))
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual vector CBitmapPos(void) RETV(144,48)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(10)
 );
 
 ITEM(
@@ -298,13 +307,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	GET_IN_HANDS_PIC RET(vector(160,32))
-	NAME_SINGULAR RET("sword")
-	NAME_PLURAL RET("swords")
-	C_FORM_MODIFIER RET(100)
-	OFFER_MODIFIER RET(0.5)
-	C_BITMAP_POS RETV(0,0)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual vector GetInHandsPic(void) RET(vector(160,32))
+	virtual std::string NameSingular(void) const RET("sword")
+	virtual std::string NamePlural(void) const RET("swords")
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual vector CBitmapPos(void) RETV(0,0)
+protected:
+	virtual ushort CFormModifier(void) RET(100)
 );
 
 ITEM(
@@ -316,12 +327,14 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(3)
-	NAME_SINGULAR RET("two-handed sword")
-	NAME_PLURAL RET("two-handed swords")
-	C_FORM_MODIFIER RET(125)
-	OFFER_MODIFIER RET(0.25)
-	C_BITMAP_POS RETV(0,0)
+public:
+	virtual ushort Possibility(void) const RET(3)
+	virtual std::string NameSingular(void) const RET("two-handed sword")
+	virtual std::string NamePlural(void) const RET("two-handed swords")
+	virtual vector CBitmapPos(void) RETV(0,0)
+	virtual float OfferModifier(void)  RET(0.25)
+protected:
+	virtual ushort CFormModifier(void) RET(125)
 );
 
 ITEM(
@@ -333,12 +346,14 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(1)
-	NAME_SINGULAR RET("curved two-handed sword")
-	NAME_PLURAL RET("curved two-handed swords")
-	C_FORM_MODIFIER RET(150)
-	OFFER_MODIFIER RET(0.25)
-	C_BITMAP_POS RETV(0,16)
+public:
+	virtual ushort Possibility(void) const RET(1)
+	virtual std::string NameSingular(void) const RET("curved two-handed sword")
+	virtual std::string NamePlural(void) const RET("curved two-handed swords")
+	virtual float OfferModifier(void)  RET(0.25)
+	virtual vector CBitmapPos(void) RETV(0,16)
+protected:
+	virtual ushort CFormModifier(void) RET(150)
 );
 
 ITEM(
@@ -350,15 +365,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameArtifact(Case, IVALPURIUM))
-	NAME_SINGULAR RET("holy broadsword named Valpuri's Justifier")
-	NAME_PLURAL RET("holy broadswords named Valpuri's Justifier")
-	C_FORM_MODIFIER RET(400)
-	OFFER_MODIFIER RET(0.5)
-	SCORE RET(1000)
-	C_BITMAP_POS RETV(0,64)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameArtifact(Case, IVALPURIUM))
+	virtual std::string NameSingular(void) const RET("holy broadsword named Valpuri's Justifier")
+	virtual std::string NamePlural(void) const RET("holy broadswords named Valpuri's Justifier")
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual long Score(void) RET(1000)
+	virtual vector CBitmapPos(void) RETV(0,64)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(400)
 );
 
 ITEM(
@@ -370,13 +387,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	GET_IN_HANDS_PIC RET(vector(160,16))
-	NAME_SINGULAR RET("axe")
-	NAME_PLURAL RET("axes")
-	C_FORM_MODIFIER RET(150)
-	OFFER_MODIFIER RET(0.25)
-	C_BITMAP_POS RETV(144,256)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual vector GetInHandsPic(void) RET(vector(160,16))
+	virtual std::string NameSingular(void) const RET("axe")
+	virtual std::string NamePlural(void) const RET("axes")
+	virtual float OfferModifier(void)  RET(0.25)
+	virtual vector CBitmapPos(void) RETV(144,256)
+protected:
+	virtual ushort CFormModifier(void) RET(150)
 );
 
 ITEM(
@@ -388,14 +407,16 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(10)
-	NAME_SINGULAR RET("pick-axe")
-	NAME_PLURAL RET("pick-axes")
-	C_FORM_MODIFIER RET(150)
-	GET_IN_HANDS_PIC RET(vector(160, 64))
-	OFFER_MODIFIER RET(0.25)
-	C_BITMAP_POS RETV(0,96)
-	APPLY;
+public:
+	virtual ushort Possibility(void) const RET(10)
+	virtual std::string NameSingular(void) const RET("pick-axe")
+	virtual std::string NamePlural(void) const RET("pick-axes")
+	virtual vector GetInHandsPic(void) RET(vector(160, 64))
+	virtual float OfferModifier(void)  RET(0.25)
+	virtual vector CBitmapPos(void) RETV(0,96)
+	virtual bool Apply(character*);
+protected:
+	virtual ushort CFormModifier(void) RET(150)
 );
 
 ITEM(
@@ -407,14 +428,16 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	GET_IN_HANDS_PIC RET(vector(160,96))
-	CAN_BE_DIPPED_INTO RET(Material[2] ? false : true)
-	NAME_SINGULAR RET("spear")
-	NAME_PLURAL RET("spears")
-	C_FORM_MODIFIER RET(200)
-	OFFER_MODIFIER RET(1)
-	C_BITMAP_POS RETV(144,144)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual vector GetInHandsPic(void) RET(vector(160,96))
+	virtual bool CanBeDippedInto(item*) RET(Material[2] ? false : true)
+	virtual std::string NameSingular(void) const RET("spear")
+	virtual std::string NamePlural(void) const RET("spears")
+	virtual float OfferModifier(void)  RET(1)
+	virtual vector CBitmapPos(void) RETV(144,144)
+protected:
+	virtual ushort CFormModifier(void) RET(200)
 );
 
 ABSTRACT_ITEM(
@@ -422,7 +445,10 @@ ABSTRACT_ITEM(
 	item,
 	{},
 	{},
-	CAN_BE_WORN RET(true)
+public:
+	virtual bool CanBeWorn(void) RET(true)
+protected:
+	virtual ushort CFormModifier(void) RET(15)
 );
 
 ITEM(
@@ -434,13 +460,13 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(3)
-	GET_ARMOR_VALUE { float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
-	C_FORM_MODIFIER RET(15)
-	NAME_SINGULAR RET("plate mail")
-	NAME_PLURAL RET("plate mails")
-	OFFER_MODIFIER RET(0.5)
-	C_BITMAP_POS RETV(144,128)
+public:
+	virtual ushort Possibility(void) const RET(3)
+	virtual ushort GetArmorValue(void) { float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
+	virtual std::string NameSingular(void) const RET("plate mail")
+	virtual std::string NamePlural(void) const RET("plate mails")
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual vector CBitmapPos(void) RETV(144,128)
 );
 
 ITEM(
@@ -452,13 +478,13 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(10)
-	GET_ARMOR_VALUE { float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
-	C_FORM_MODIFIER RET(15)
-	NAME_SINGULAR RET("chain mail")
-	NAME_PLURAL RET("chain mails")
-	OFFER_MODIFIER RET(0.5)
-	C_BITMAP_POS RETV(144,96)
+public:
+	virtual ushort Possibility(void) const RET(10)
+	virtual ushort GetArmorValue(void) { float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
+	virtual std::string NameSingular(void) const RET("chain mail")
+	virtual std::string NamePlural(void) const RET("chain mails")
+	virtual float OfferModifier(void)  RET(0.5)
+	virtual vector CBitmapPos(void) RETV(144,96)
 );
 
 ABSTRACT_ITEM(
@@ -466,7 +492,8 @@ ABSTRACT_ITEM(
 	torsoarmor,
 	{},
 	{},
-	private: void Temporary(void) {} //...
+private:
+	void Temporary(void) {} //...
 );
 
 ITEM(
@@ -478,16 +505,16 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	GET_ARMOR_VALUE RET(10)
-	C_FORM_MODIFIER RET(15)
-	NAME_SINGULAR RET("Maakotka shirt")
-	NAME_PLURAL RET("Maakotka shirts")
-	CALCULATE_OFFER_VALUE RET(750)
-	SCORE RET(1000)
-	IS_MAAKOTKA_SHIRT RET(true);
-	C_BITMAP_POS RETV(144,112)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual ushort GetArmorValue(void) RET(10)
+	virtual std::string NameSingular(void) const RET("Maakotka shirt")
+	virtual std::string NamePlural(void) const RET("Maakotka shirts")
+	virtual short CalculateOfferValue(char) RET(750)
+	virtual long Score(void) RET(1000)
+	virtual bool IsMaakotkaShirt(void) RET(true);
+	virtual vector CBitmapPos(void) RETV(144,112)
+	virtual bool CanBeWished(void) RET(false)
 );
 
 ITEM(
@@ -499,15 +526,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	GET_CONSUME_TYPE RET(Material[0]->CConsumeType())
-	CONSUME;
-	NAME_SINGULAR RET("corpse")
-	NAME_PLURAL RET("corpses")
-	C_FORM_MODIFIER RET(20)
-	OFFER_MODIFIER RET(0.01f)
-	C_BITMAP_POS RETV(144,192)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual uchar GetConsumeType(void) RET(Material[0]->CConsumeType())
+	virtual bool Consume(character*, float = 100);
+	virtual std::string NameSingular(void) const RET("corpse")
+	virtual std::string NamePlural(void) const RET("corpses")
+	virtual float OfferModifier(void)  RET(0.01f)
+	virtual vector CBitmapPos(void) RETV(144,192)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(20)
 );
 
 ITEM(
@@ -519,17 +548,19 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	GET_CONSUME_TYPE RET(Material[1] ? Material[1]->CConsumeType() : ODD)
-	CONSUME;
-	NAME RET(NameContainer(Case))
-	NAME_SINGULAR RET("bottle")
-	NAME_PLURAL RET("bottles")
-	C_FORM_MODIFIER RET(40)
-	IMPACT_DAMAGE;
-	POSITIONED_DRAW_TO_TILE_BUFFER;
-	OFFER_MODIFIER RET(0.1f)
-	C_BITMAP_POS RETV(0,144)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual uchar GetConsumeType(void) RET(Material[1] ? Material[1]->CConsumeType() : ODD)
+	virtual bool Consume(character*, float = 100);
+	virtual std::string Name(uchar Case) RET(NameContainer(Case))
+	virtual std::string NameSingular(void) const RET("bottle")
+	virtual std::string NamePlural(void) const RET("bottles")
+	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual void PositionedDrawToTileBuffer(uchar);
+	virtual float OfferModifier(void)  RET(0.1f)
+	virtual vector CBitmapPos(void) RETV(0,144)
+protected:
+	virtual ushort CFormModifier(void) RET(40)
 );
 
 ITEM(
@@ -541,15 +572,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	NAME RET(NameHandleDefaultMaterial(Case, "a", IBANANAPEAL))
-	NAME_SINGULAR RET("banana peal")
-	NAME_PLURAL RET("banana peals")
-	C_FORM_MODIFIER RET(20)
-	BETTER_VERSION { return new banana; }
-	OFFER_MODIFIER RET(0)
-	SCORE RET(-1)
-	C_BITMAP_POS RETV(0,128)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual std::string Name(uchar Case) RET(NameHandleDefaultMaterial(Case, "a", IBANANAPEAL))
+	virtual std::string NameSingular(void) const RET("banana peal")
+	virtual std::string NamePlural(void) const RET("banana peals")
+	virtual item* BetterVersion(void) { return new banana; }
+	virtual float OfferModifier(void)  RET(0)
+	virtual long Score(void) RET(-1)
+	virtual vector CBitmapPos(void) RETV(0,128)
+protected:
+	virtual ushort CFormModifier(void) RET(20)
 );
 
 ITEM(
@@ -561,13 +594,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	NAME_SINGULAR RET("broken bottle")
-	NAME_PLURAL RET("broken bottles")
-	C_FORM_MODIFIER RET(60)
-	BETTER_VERSION { item* P = new potion(false); P->InitMaterials(2, new glass(50), new omleurine(1500)); return P; }
-	OFFER_MODIFIER RET(0)
-	C_BITMAP_POS RETV(144,160)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual std::string NameSingular(void) const RET("broken bottle")
+	virtual std::string NamePlural(void) const RET("broken bottles")
+	virtual item* BetterVersion(void) { item* P = new potion(false); P->InitMaterials(2, new glass(50), new omleurine(1500)); return P; }
+	virtual float OfferModifier(void)  RET(0)
+	virtual vector CBitmapPos(void) RETV(144,160)
+protected:
+	virtual ushort CFormModifier(void) RET(60)
 );
 
 ABSTRACT_ITEM(
@@ -575,8 +610,10 @@ ABSTRACT_ITEM(
 	item,
 	{},
 	{},
-	CAN_BE_READ;
-	C_FORM_MODIFIER RET(30)
+public:
+	virtual bool CanBeRead(character*);
+protected:
+	virtual ushort CFormModifier(void) RET(30)
 );
 
 ITEM(
@@ -588,12 +625,13 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	READ;
-	NAME_SINGULAR RET("scroll of create monster")
-	NAME_PLURAL RET("scrolls of create monster")
-	OFFER_MODIFIER RET(5)
-	C_BITMAP_POS RETV(144,176)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual std::string NameSingular(void) const RET("scroll of create monster")
+	virtual std::string NamePlural(void) const RET("scrolls of create monster")
+	virtual float OfferModifier(void)  RET(5)
+	virtual vector CBitmapPos(void) RETV(144,176)
+	virtual bool Read(character*);
 );
 
 ITEM(
@@ -605,12 +643,13 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(25)
-	READ;
-	NAME_SINGULAR RET("scroll of teleportation")
-	NAME_PLURAL RET("scrolls of teleportation")
-	OFFER_MODIFIER RET(5)
-	C_BITMAP_POS RETV(144,176)
+public:
+	virtual ushort Possibility(void) const RET(25)
+	virtual std::string NameSingular(void) const RET("scroll of teleportation")
+	virtual std::string NamePlural(void) const RET("scrolls of teleportation")
+	virtual float OfferModifier(void)  RET(5)
+	virtual vector CBitmapPos(void) RETV(144,176)
+	virtual bool Read(character*);
 );
 
 ITEM(
@@ -622,13 +661,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME_SINGULAR RET("head")
-	NAME_PLURAL RET("heads")
-	C_FORM_MODIFIER RET(10)
-	OFFER_MODIFIER RET(0.1f)
-	C_BITMAP_POS RETV(0,0)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string NameSingular(void) const RET("head")
+	virtual std::string NamePlural(void) const RET("heads")
+	virtual float OfferModifier(void)  RET(0.1f)
+	virtual vector CBitmapPos(void) RETV(0,0)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(10)
 );
 
 ITEM(
@@ -640,14 +681,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameArtifact(Case, IELPURIFLESH))
-	IS_HEAD_OF_ELPURI RET(true)
-	NAME_SINGULAR RET("head of Elpuri")
-	NAME_PLURAL RET("heads of Elpuri")
-	SCORE RET(500);
-	C_BITMAP_POS RETV(144,0)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameArtifact(Case, IELPURIFLESH))
+	virtual bool IsHeadOfElpuri(void) RET(true)
+	virtual std::string NameSingular(void) const RET("head of Elpuri")
+	virtual std::string NamePlural(void) const RET("heads of Elpuri")
+	virtual long Score(void) RET(500);
+	virtual vector CBitmapPos(void) RETV(144,0)
+	virtual bool CanBeWished(void) RET(false)
 );
 
 ITEM(
@@ -659,13 +701,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	C_FORM_MODIFIER RET(10)
-	NAME_SINGULAR RET("nut")
-	NAME_PLURAL RET("nuts")
-	OFFER_MODIFIER RET(10)
-	C_BITMAP_POS RETV(0,0)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string NameSingular(void) const RET("nut")
+	virtual std::string NamePlural(void) const RET("nuts")
+	virtual float OfferModifier(void)  RET(10)
+	virtual vector CBitmapPos(void) RETV(0,0)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(10)
 );
 
 ITEM(
@@ -677,14 +721,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	IS_PERTTUS_NUT RET(true)
-	NAME RET(NameArtifact(Case, IHUMANFLESH))
-	NAME_SINGULAR RET("left nut of Perttu")
-	NAME_PLURAL RET("left nuts of Perttu")		//???
-	SCORE RET(2500)
-	C_BITMAP_POS RETV(144,208)
-	CREATE_WISHED_ITEM;
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual bool IsPerttusNut(void) RET(true)
+	virtual std::string Name(uchar Case) RET(NameArtifact(Case, IHUMANFLESH))
+	virtual std::string NameSingular(void) const RET("left nut of Perttu")
+	virtual std::string NamePlural(void) const RET("left nuts of Perttu")		//???
+	virtual long Score(void) RET(2500)
+	virtual vector CBitmapPos(void) RETV(144,208)
+	virtual item* CreateWishedItem(void);
 );
 
 ITEM(
@@ -696,16 +741,18 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(50)
-	NAME_SINGULAR RET("bone")
-	NAME_PLURAL RET("bones")
-	C_FORM_MODIFIER RET(50)
-	NAME RET(NameSized(Case,"a", 15, 40))
-	OFFER_MODIFIER RET(0.1f)
-	CONSUME;
-	DOG_WILL_CATCH_AND_CONSUME RET(true);
-	GET_CONSUME_TYPE RET(Material[0]->CConsumeType());
-	C_BITMAP_POS RETV(144,240)
+public:
+	virtual ushort Possibility(void) const RET(50)
+	virtual std::string NameSingular(void) const RET("bone")
+	virtual std::string NamePlural(void) const RET("bones")
+	virtual std::string Name(uchar Case) RET(NameSized(Case,"a", 15, 40))
+	virtual float OfferModifier(void)  RET(0.1f)
+	virtual bool Consume(character*, float = 100);
+	virtual bool DogWillCatchAndConsume(void) RET(true);
+	virtual uchar GetConsumeType(void) RET(Material[0]->CConsumeType());
+	virtual vector CBitmapPos(void) RETV(144,240)
+protected:
+	virtual ushort CFormModifier(void) RET(50)
 );
 
 ITEM(
@@ -717,12 +764,14 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(15)
-	C_FORM_MODIFIER RET(100)
-	NAME_SINGULAR RET("poleaxe")
-	NAME_PLURAL RET("poleaxes")
-	OFFER_MODIFIER RET(0.25f)
-	C_BITMAP_POS RETV(0,80)
+public:
+	virtual ushort Possibility(void) const RET(15)
+	virtual std::string NameSingular(void) const RET("poleaxe")
+	virtual std::string NamePlural(void) const RET("poleaxes")
+	virtual float OfferModifier(void)  RET(0.25f)
+	virtual vector CBitmapPos(void) RETV(0,80)
+protected:
+	virtual ushort CFormModifier(void) RET(100)
 );
 
 ITEM(
@@ -734,13 +783,15 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(5)
-	C_FORM_MODIFIER RET(75)
-	NAME_SINGULAR RET("spiked mace")
-	NAME_PLURAL RET("spiked maces")
-	GET_IN_HANDS_PIC RET(vector(160, 0))
-	OFFER_MODIFIER RET(0.125)
-	C_BITMAP_POS RETV(0,32)
+public:
+	virtual ushort Possibility(void) const RET(5)
+	virtual std::string NameSingular(void) const RET("spiked mace")
+	virtual std::string NamePlural(void) const RET("spiked maces")
+	virtual vector GetInHandsPic(void) RET(vector(160, 0))
+	virtual float OfferModifier(void)  RET(0.125)
+	virtual vector CBitmapPos(void) RETV(0,32)
+protected:
+	virtual ushort CFormModifier(void) RET(75)
 );
 
 ITEM(
@@ -752,16 +803,18 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME RET(NameArtifact(Case, IMITHRIL))
-	C_FORM_MODIFIER RET(100)
-	NAME_SINGULAR RET("ancient mace named H'taed Foneer Cse-ulb")
-	NAME_PLURAL RET("ancient maces named H'taed Foneer Cse-ulb")
-	GET_IN_HANDS_PIC RET(vector(160, 0))
-	OFFER_MODIFIER RET(0.25)
-	SCORE RET(1000)
-	C_BITMAP_POS RETV(0,32)
-	CAN_BE_WISHED RET(false) 
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) RET(NameArtifact(Case, IMITHRIL))
+	virtual std::string NameSingular(void) const RET("ancient mace named H'taed Foneer Cse-ulb")
+	virtual std::string NamePlural(void) const RET("ancient maces named H'taed Foneer Cse-ulb")
+	virtual vector GetInHandsPic(void) RET(vector(160, 0))
+	virtual float OfferModifier(void)  RET(0.25)
+	virtual long Score(void) RET(1000)
+	virtual vector CBitmapPos(void) RETV(0,32)
+	virtual bool CanBeWished(void) RET(false)
+protected:
+	virtual ushort CFormModifier(void) RET(100)
 );
 
 ITEM(
@@ -773,15 +826,17 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(200)
-	NAME RET(NameThingsThatAreLikeLumps(Case, "a")) 
-	NAME_SINGULAR RET("loaf")
-	NAME_PLURAL RET("loaves")
-	GET_CONSUME_TYPE RET(Material[0]->CConsumeType())
-	CONSUME;
-	C_FORM_MODIFIER RET(15)
-	OFFER_MODIFIER RET(0.125)
-	C_BITMAP_POS RETV(0,272)
+public:
+	virtual ushort Possibility(void) const RET(200)
+	virtual std::string Name(uchar Case) RET(NameThingsThatAreLikeLumps(Case, "a")) 
+	virtual std::string NameSingular(void) const RET("loaf")
+	virtual std::string NamePlural(void) const RET("loaves")
+	virtual uchar GetConsumeType(void) RET(Material[0]->CConsumeType())
+	virtual bool Consume(character*, float = 100);
+	virtual float OfferModifier(void)  RET(0.125)
+	virtual vector CBitmapPos(void) RETV(0,272)
+protected:
+	virtual ushort CFormModifier(void) RET(15)
 );
 
 ITEM(
@@ -793,13 +848,14 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(1)
-	READ;
-	NAME_SINGULAR RET("scroll of wishing")
-	NAME_PLURAL RET("scrolls of wishing")
-	OFFER_MODIFIER RET(50)
-	C_BITMAP_POS RETV(144,176)
-	CAN_BE_WISHED RET(false)
+public:
+	virtual ushort Possibility(void) const RET(1)
+	virtual std::string NameSingular(void) const RET("scroll of wishing")
+	virtual std::string NamePlural(void) const RET("scrolls of wishing")
+	virtual float OfferModifier(void)  RET(50)
+	virtual vector CBitmapPos(void) RETV(144,176)
+	virtual bool CanBeWished(void) RET(false)
+	virtual bool Read(character*);
 );
 
 ITEM(
@@ -811,11 +867,12 @@ ITEM(
 	},
 	{},
 	{},
-	POSSIBILITY RET(0)
-	NAME_SINGULAR RET("cheap copy of left nut of Perttu")
-	NAME_PLURAL RET("cheap copies of left nut of Perttu")		//???
-	SCORE RET(1)
-	C_BITMAP_POS RETV(144,208)
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string NameSingular(void) const RET("cheap copy of left nut of Perttu")
+	virtual std::string NamePlural(void) const RET("cheap copies of left nut of Perttu")		//???
+	virtual long Score(void) RET(1)
+	virtual vector CBitmapPos(void) RETV(144,208)
 );
 
 #endif
