@@ -1,6 +1,6 @@
 This file is written in Timo-dialect (a highly modified version
 of the Finnish language), since these tasks are not meant to be
-done by anyone else than the writer.
+done (or understood) by anyone else than the writer.
 
 *high priority
 

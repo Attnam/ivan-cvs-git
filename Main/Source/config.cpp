@@ -8,11 +8,13 @@
 #include "game.h"
 #include "message.h"
 #include "area.h"
+
 #ifdef WIN32
 #define CONFIG_FILENAME "ivan.cfg"
 #else
 #define CONFIG_FILENAME (std::string(getenv("HOME")) + std::string("/.ivan.conf")).c_str()
 #endif
+
 std::string configuration::DefaultName;
 ushort configuration::AutosaveInterval = 500;
 uchar configuration::Contrast = 100;
@@ -122,11 +124,14 @@ void configuration::ShowConfigScreen()
 		List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), BLUE);
 		List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", BLUE);
 		List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", BLUE);
-		List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), BLUE);
+
+#ifdef WIN32
+		List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
+#endif
 
 		switch(List.Draw(false, !game::GetRunning() && !BoolChange))
 		{
@@ -144,29 +149,29 @@ void configuration::ShowConfigScreen()
 			BoolChange = false;
 			continue;
 		case 3:
-#ifdef WIN32
-		        graphics::SwitchMode();
-#endif
-			BoolChange = true;
-			continue;
-		case 4:
 			SetBeepOnCritical(!GetBeepOnCritical());
 			BoolChange = true;
 			continue;
-		case 5:
+		case 4:
 			SetAutodropLeftOvers(!GetAutodropLeftOvers());
 			BoolChange = true;
 			continue;
-		case 6:
+		case 5:
 			SetOutlineCharacters(!GetOutlineCharacters());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
 			continue;
-		case 7:
+		case 6:
 			SetOutlineItems(!GetOutlineItems());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
 			continue;
+#ifdef WIN32
+		case 7:
+		        graphics::SwitchMode();
+			BoolChange = true;
+			continue;
+#endif
 		}
 
 		break;

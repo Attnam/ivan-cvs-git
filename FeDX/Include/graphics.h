@@ -25,11 +25,13 @@
 
 #define WHITE	MAKE_RGB(255, 255, 255)
 #define BLACK	MAKE_RGB(0, 0, 0)
+
 #ifdef WIN32
 #include <windows.h>
 #else
 #include "SDL.h"
 #endif
+
 #include <list>
 #include <string>
 
@@ -37,6 +39,7 @@
 
 class bitmap;
 class colorizablebitmap;
+
 #ifdef WIN32
 class CDisplay;
 #endif
@@ -53,18 +56,15 @@ static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, 
 	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
 	static bool GetFullScreen() { return FullScreen; }
 #else
- static void SetMode(const char*, ushort, ushort, uchar);
+	static void SetMode(const char*, ushort, ushort, uchar);
 #endif
 	static void BlitDBToScreen();
 	static ushort GetXRes() { return XRes; }
 	static ushort GetYRes() { return YRes; }
 	static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
 	static void UpdateBounds();
-
 	static void LoadDefaultFont(std::string);
 	static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
-
-
 private:
 #ifdef WIN32
 	static HWND hWnd;
@@ -79,7 +79,6 @@ private:
 	static ushort YRes;
 	static uchar ColorDepth;
 	static colorizablebitmap* DefaultFont;
-
 };
 
 #endif

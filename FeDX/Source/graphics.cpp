@@ -13,7 +13,6 @@
 
 #ifdef WIN32
 HWND			graphics::hWnd;
-
 bool			graphics::FullScreen;
 CDisplay*		graphics::DXDisplay;
 void			(*graphics::SwitchModeHandler)();
@@ -26,7 +25,6 @@ ushort			graphics::YRes;
 uchar			graphics::ColorDepth;
 colorizablebitmap*	graphics::DefaultFont = 0;
 
-
 #ifdef WIN32
 extern DWORD GetDXVersion();
 #endif
@@ -34,10 +32,12 @@ extern DWORD GetDXVersion();
 void graphics::Init()
 {
 	static bool AlreadyInstalled = false;
+
 #ifndef WIN32
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
 	  ABORT("Can't initialize SDL.");
 #endif
+
 	if(!AlreadyInstalled)
 	{
 		AlreadyInstalled = true;
@@ -49,11 +49,14 @@ void graphics::Init()
 void graphics::DeInit()
 {
 	delete DefaultFont;
+
 #ifndef WIN32
 	SDL_Quit();
 #endif
 }
+
 #ifdef WIN32
+
 void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
 	FullScreen = FScreen;
@@ -96,6 +99,7 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
 	globalwindowhandler::SetInitialized(true);
 }
+
 #else
 
 void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
@@ -131,10 +135,13 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
 
 	globalwindowhandler::SetInitialized(true);
 }
+
 #endif
+
 void BlitToDB(ulong, ulong, ulong, ushort, ushort);
 
 #ifdef WIN32
+
 void graphics::BlitDBToScreen()
 {
 	if(DXDisplay->GetDirectDraw()->RestoreAllSurfaces() == DD_OK)
@@ -165,7 +172,9 @@ void graphics::BlitDBToScreen()
 		}
 	}
 }
+
 #else
+
 void graphics::BlitDBToScreen()
 {
     if ( SDL_MUSTLOCK(screen) ) {
@@ -189,9 +198,11 @@ void graphics::BlitDBToScreen()
     }
     SDL_UpdateRect(screen, 0,0,XRES,YRES);
 }
+
 #endif
 
 #ifdef WIN32
+
 HRESULT CDisplay::CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth,
                                            DWORD dwHeight, DWORD dwBPP )
 {
@@ -340,6 +351,7 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 
 	return S_OK;
 }
+
 #endif
 
 void graphics::UpdateBounds()
@@ -349,7 +361,9 @@ void graphics::UpdateBounds()
 		DXDisplay->UpdateBounds();
 #endif
 }
+
 #ifdef WIN32
+
 void graphics::SwitchMode()
 {
 	globalwindowhandler::SetInitialized(false);
@@ -408,6 +422,7 @@ void graphics::SwitchMode()
 
 	globalwindowhandler::SetInitialized(true);
 }
+
 #endif
 
 void graphics::LoadDefaultFont(std::string FileName)

@@ -5,6 +5,7 @@
 #include "error.h"
 #include "colorbit.h"
 #include "config.h"
+
 #ifdef WIN32
 #include "resource.h"
 #endif
@@ -16,6 +17,7 @@ bitmap* igraph::OutlineBuffer;
 char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx" };
 char* igraph::GraphicFileName[] = { "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx"};
 tilemap igraph::TileMap;
+
 #ifdef WIN32
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 #else

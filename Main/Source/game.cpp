@@ -1,5 +1,6 @@
 #include <cmath>
 #include <ctime>
+
 #ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
 #include <windows.h>
@@ -152,6 +153,7 @@ void game::Init(std::string Name)
 	game::CalculateGodNumber();
 	LOSTurns = 1;
 	WorldMap = 0;
+
 	#ifdef WIN32
 	_mkdir("Save");
 	#else
@@ -624,10 +626,12 @@ std::string game::SaveName()
 	for(ushort c = 0; c < SaveName.length(); ++c)
 		if(SaveName[c] == ' ')
 			SaveName[c] = '_';
+
 	#ifdef WIN32
 	if(SaveName.length() > 13)
 		SaveName.resize(13);
 	#endif
+
 	return SaveName;
 }
 

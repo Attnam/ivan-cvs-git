@@ -41,7 +41,6 @@ private:
 	static dynarray<int> KeyBuffer;
 	static bool Initialized;
 	static bool (*QuitMessageHandler)();
-
 #ifdef WIN32
 	static bool Active;
 	static char KeyboardLayoutName[KL_NAMELENGTH];

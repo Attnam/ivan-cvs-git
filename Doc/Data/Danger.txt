@@ -2,16 +2,18 @@ Iter Vehemens ad Necem combat danger levels.
 
 Random monsters are usually 1-3 levels less dangerous than the player.
 Bosses are usually as dangerous as the whole player team when they are met.
-Player starts from the level marked with *.
+Player starts from level 1.
 
 Level	Danger points	Description		Monsters
-0	0		harmless		kobolds, donkeys, zombies
-1*	100		mostly harmless		bats, rats, gibberlings, skeletons, dogs, leaf/cloth golems
-3	500					goblins, cats, mommos, frogs, wolves, bone/wood/gold/glass golems
+0	0		harmless		spiders, kobolds, donkeys, zombies
+1	100		mostly harmless		bats, rats, gibberlings, skeletons, dogs, leaf/cloth golems
+3	500					goblins, cats, mommos, frogs, wolves, bone/wood/gold/glass golems, werewolves (h-form)
 4	2500					imps, Bill's wills, marble/sulfur/stone golems
-5	10000					dark knights, werevolves (w-form), k-dwarves, iron golems
+5	10000					dark knights*, werewolves (w-form), k-dwarves, iron golems
 6	50000					Ivan, mistresses, mithril/valpurium golems, angels
 7	250000					Elpuri
 8	1000000					Oree
 9	5000000					Perttu
 10	25000000	demigod			-
+
+* Level 6 dark knigths are also occasionally spawned.
