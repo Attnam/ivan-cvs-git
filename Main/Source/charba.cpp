@@ -228,7 +228,7 @@ void character::Be()
 			{
 				static ushort Timer = 0;
 
-				if(configuration::GetAutosaveInterval() && CanMove() && !game::GetInWilderness() && ++Timer >= configuration::GetAutosaveInterval())
+				if(configuration::GetAutosaveInterval() && CanMove() && ++Timer >= configuration::GetAutosaveInterval())
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -2891,7 +2891,7 @@ bool character::Displace(character* Who)
 		return true;
 	}
 
-	if(CurrentDanger() > Who->CurrentDanger() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
+	if(CurrentDanger() > Who->CurrentDanger() && Who->CanBeDisplaced() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
 	{
 		if(GetIsPlayer())
 			if(GetSquareUnder()->CanBeSeen() || Who->GetSquareUnder()->CanBeSeen())

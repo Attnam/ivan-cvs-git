@@ -92,7 +92,7 @@ Dungeon 0;
 		}
 	}
 
-	Level 4+rand%2;
+	Level 4;
 	{
 		Rooms=10+rand%21;  /* Due to a bug in the recalculation code this must be repeated! */
 

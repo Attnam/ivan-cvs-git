@@ -137,6 +137,7 @@ public:
 	virtual uchar GetStoryState() const { return StoryState; }
 	virtual void SetStoryState(uchar What) { StoryState = What; }
 	virtual bool HasInfraVision() const { return true; }
+	virtual bool CanBeDisplaced() const { return false; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();
@@ -283,6 +284,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual bool HasInfraVision() const { return true; }
+	virtual bool CanBeDisplaced() const { return false; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
@@ -403,6 +405,7 @@ public:
 	virtual void BeTalkedTo(character*);
 	virtual ushort CalculateArmorModifier() const RET(10)
 	virtual bool Hit(character*);
+	virtual bool CanBeDisplaced() const { return false; }
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual vector2d GetBitmapPos() const RETV(64,0)
@@ -813,6 +816,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 150000; else return 0; }
 	virtual void GetAICommand() {}
 	virtual std::string StandVerb() const { return "swimming"; }
+	virtual bool CanBeDisplaced() const { return false; }
 protected:
 	virtual std::string NameSingular() const RET("female dolphin in season")
 	virtual float GetMeleeStrength() const RET(1000)

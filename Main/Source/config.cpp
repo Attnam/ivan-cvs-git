@@ -13,7 +13,7 @@ uchar configuration::Contrast = 100;
 bool configuration::BeepOnCritical = false;
 std::string configuration::DefaultName;
 bool configuration::AutodropLeftOvers = true;
-ushort configuration::AutosaveInterval = 100;
+ushort configuration::AutosaveInterval = 500;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
 
