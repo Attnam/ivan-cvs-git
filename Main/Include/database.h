@@ -6,7 +6,7 @@
 #endif
 
 #include <string>
-
+#include <typeinfo>
 class inputfile;
 
 template <class type> class database
@@ -30,8 +30,8 @@ template <class type> void database<type>::InstallDataBase(type* Instance)
     Instance->DataBase = Instance->GetProtoType()->GetDataBase();
   else
     {
-      const type::databasemap& Configs = Instance->GetProtoType()->GetConfig();
-      type::databasemap::const_iterator i = Configs.find(Instance->Config);
+      const typename type::databasemap& Configs = Instance->GetProtoType()->GetConfig();
+      typename type::databasemap::const_iterator i = Configs.find(Instance->Config);
 
       if(i != Configs.end())
 	Instance->DataBase = &i->second;

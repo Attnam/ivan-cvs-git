@@ -209,10 +209,10 @@ template <class type> type* contentscripttemplate<type>::Instantiate() const
 
   if(!Config && protocontainer<type>::GetProto(ContentType)->IsAbstract())
     {
-      const type::databasemap& Config = protocontainer<type>::GetProto(ContentType)->GetConfig();
+      const typename type::databasemap& Config = protocontainer<type>::GetProto(ContentType)->GetConfig();
       ChosenConfig = RAND() % Config.size();
 
-      for(type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+      for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!ChosenConfig--)
 	  {
 	    ChosenConfig = i->first;

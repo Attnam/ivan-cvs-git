@@ -157,8 +157,8 @@ template <class type> uchar CountCorrectNameParts(const typename type::database&
 
 template <class type> std::pair<const typename type::prototype*, ushort> SearchForProto(const std::string& What, bool Output)
 {
-  typedef type::prototype prototype;
-  typedef type::databasemap databasemap;
+  typedef typename type::prototype prototype;
+  typedef typename type::databasemap databasemap;
 
   std::string Identifier;
   Identifier << " " << What << " ";
@@ -183,7 +183,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	else
 	  Illegal = true;
 
-      for(databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+      for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	{
 	  Correct = CountCorrectNameParts<type>(i->second, Identifier);
 
