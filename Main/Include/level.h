@@ -52,6 +52,7 @@ public:
 	virtual vector GetDownStairs(void) { return DownStairs; }
 	virtual void SetUpStairs(vector What) { UpStairs = What; }
 	virtual void SetDownStairs(vector What) { DownStairs = What; }
+	virtual void ParticleTrail(vector, vector);
 protected:
 	levelsquare*** Map;
 	bitmap* FluidBuffer;

@@ -31,7 +31,7 @@ class typeable;
 class prototypesystem
 {
 public:
-	static character*		BalancedCreateMonster(void);
+	static character*		BalancedCreateMonster(float = 1);
 	static item*			BalancedCreateItem(void);
 	static character*		CreateMonster(ushort);
 	static item*			CreateItem(ushort);

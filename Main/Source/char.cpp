@@ -2726,7 +2726,30 @@ bool character::ForceVomit(void)
 
 bool character::Zap(void)
 {
-	ADD_MESSAGE("Under construction.");
-	return true;
+	ushort Index;
+	if((Index = GetStack()->DrawContents("What do you want to zap with?")) == 0xFFFF)
+	{
+		ADD_MESSAGE("You have nothing to zap with.");
+		return false;
+	}
+
+	if(Index < GetStack()->GetItems())
+	{
+		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap?", 8, false);
+		if(Answer == 0xFF)
+			return false;
+		return GetStack()->GetItem(Index)->Zap(GetPos(), Answer);
+	}
+	else
+		return false;
+
+	return true;	
 }
 
+bool character::Polymorph(void)
+{
+	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster());
+
+	delete this;
+	return true;
+}

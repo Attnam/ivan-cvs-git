@@ -65,6 +65,7 @@ public:
 	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
+	virtual bool Zap(vector, uchar);
 protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort GetFormModifier(void) const { return 0; }
@@ -826,6 +827,7 @@ public:
 	virtual std::string NamePlural(void) const RET("wands of polymorph")
 	virtual float OfferModifier(void) const RET(30)
 	virtual vector GetBitmapPos(void) const RETV(144,176)
+	virtual bool Zap(vector, uchar);
 );
 	
 

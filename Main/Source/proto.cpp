@@ -19,7 +19,7 @@ ushort prototypesystem::Add(typeable* Proto)
 	return ProtoData.size() - 2;
 }
 
-character* prototypesystem::BalancedCreateMonster(void)
+character* prototypesystem::BalancedCreateMonster(float Multiplier)
 {
 	ushort Types = character::GetProtoIndexEnd() - character::GetProtoIndexBegin();
 
@@ -32,7 +32,7 @@ character* prototypesystem::BalancedCreateMonster(void)
 
 		character* Monster = GetProtoType<character>(Chosen)->Clone(); //GGG
 
-		if(c == 99 || (Monster->Danger() < game::Difficulty() * 1.5f && Monster->Danger() > game::Difficulty() * 0.5f))
+		if(c == 99 || (Monster->Danger() < game::Difficulty() * Multiplier * 1.5f && Monster->Danger() > game::Difficulty() * 0.5f))
 			return Monster;
 		else
 			delete Monster;

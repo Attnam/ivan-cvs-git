@@ -310,7 +310,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen()))
 					break;
 			}
-			while(clock() - StartTime < 0.2 * CLOCKS_PER_SEC)
+			while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC)
 			{
 
 			}
@@ -466,5 +466,44 @@ bool wand::Apply(character* StupidPerson)
 	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
 	
 	return true;
+}
+
+
+bool wandofpolymorph::Zap(vector Pos, uchar Direction)
+{
+	vector CurrentPos = Pos;
+	for(ushort Length = 0;Length < 5;Length++)
+	{
+		if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
+		{
+			break;
+		}
+		else
+		{
+			
+			CurrentPos += game::GetMoveVector(Direction);			
+			
+			clock_t StartTime = clock();
+			
+			
+
+			if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
+			{
+				game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->Polymorph();
+			}
+			
+			
+			
+
+		}
+	}
+	return true;
+}
+
+
+bool item::Zap(vector, uchar)
+{
+	 ADD_MESSAGE("You can't zap this."); 
+	 return false; 
 }
 

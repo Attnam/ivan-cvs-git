@@ -10,10 +10,10 @@
 #define NEUTRAL 1
 #define FRIEND 2
 
-#define NUMBER_OF_HUMAN_ARMS	12
-#define NUMBER_OF_HUMAN_HEADS	16
-#define NUMBER_OF_HUMAN_LEGS	12
-#define NUMBER_OF_HUMAN_TORSOS	12
+#define NUMBER_OF_HUMAN_ARMS	7
+#define NUMBER_OF_HUMAN_HEADS	12
+#define NUMBER_OF_HUMAN_LEGS	6
+#define NUMBER_OF_HUMAN_TORSOS	9
 
 #define HUNGERLEVEL 		200 
 #define CRITICALHUNGERLEVEL 	60
@@ -199,6 +199,7 @@ public:
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 	virtual bool Zap(void);
+	virtual bool Polymorph(void);
 protected:
 	virtual void CreateCorpse(void);
 	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
@@ -384,10 +385,10 @@ class CHARACTER
 		SetStrength(80);
 		SetEndurance(80);
 		SetPerception(80);
-		SetArmType(3);
-		SetHeadType(15);
+		SetArmType(4);
+		SetHeadType(11);
 		SetLegType(2);
-		SetTorsoType(3);
+		SetTorsoType(6);
 		SetRelations(1);
 		SetHealTimer(100);
 	},

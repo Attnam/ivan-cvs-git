@@ -719,3 +719,9 @@ vector level::RandomSquare(bool Walkablility) const
 	return Pos;
 }
 
+void level::ParticleTrail(vector StartPos, vector EndPos)
+{
+	if(StartPos.X != EndPos.X && StartPos.Y != EndPos.Y)
+		ABORT("666th rule of thermodynamics - Particles don't move the way you want them to move.");
+	// NEEDS SOME WORK!
+}
