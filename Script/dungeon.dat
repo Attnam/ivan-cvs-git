@@ -1296,7 +1296,7 @@ Dungeon NEW_ATTNAM;
 			OTerrain = WOOD door;
 		}
 
-		Square, Pos 49, 49;
+		Square, Pos 0, 33;
 		{
 			EntryIndex = STAIRS_UP;
 		}
