@@ -16,11 +16,18 @@
 
 #include <pc.h>
 
+#include "typedef.h"
+
 class globalwindowhandler
 {
  public:
   static int GetKey(bool = true, bool = false);
   static int ReadKey();
+  static ulong GetTick() { return Tick; }
+  static void SetControlLoop(void (*What)()) { ControlLoop = What; }
+ protected:
+  static void (*ControlLoop)();
+  static ulong Tick;
 };
 
 #else

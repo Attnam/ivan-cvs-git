@@ -2,13 +2,25 @@
 
 #ifdef __DJGPP__
 
+#include <unistd.h>
+
+ulong globalwindowhandler::Tick = 0;
+void (*globalwindowhandler::ControlLoop)() = 0;
+
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 {
   if(EmptyBuffer)
     while(kbhit()) getkey();
 
-  return getkey();
-				
+  while(!kbhit())
+    if(ControlLoop)
+      {
+	ControlLoop();
+	++Tick;
+	usleep(50000);
+      }
+
+  return getkey();			
 }
 
 int globalwindowhandler::ReadKey()

@@ -114,9 +114,9 @@ class materialscript : public script
  public:
   materialscript();
   void ReadFrom(inputfile&);
-  virtual void SetType(ushort What) { Type = What; }
-  virtual ushort GetType() const { return Type; }
-  virtual material* Instantiate() const;
+  void SetType(ushort What) { Type = What; }
+  ushort GetType() const { return Type; }
+  material* Instantiate() const;
  protected:
   DATAMEMBER(ulong, Volume);
   ushort Type;

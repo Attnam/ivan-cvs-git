@@ -1042,7 +1042,7 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofteleportation::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
+bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
 { 
   Where->TeleportEverything(Who);
   return false;

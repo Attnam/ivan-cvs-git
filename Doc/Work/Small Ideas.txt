@@ -230,3 +230,4 @@ Moving diagonally should use sqrt(2) times more AP.
 Msghistory length to conf.
 Opening a can should be more difficult with less hands.
 Fly function for character!
+Mirrors.
