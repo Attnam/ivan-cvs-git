@@ -20,5 +20,6 @@ Staff + broken and in hands picture.
 //Elpuri's head is of wrong color.
 //Broken chain mail.
 Club + broken and in hands picture.
+Jackals on gravel floor.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

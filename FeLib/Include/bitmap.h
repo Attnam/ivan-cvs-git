@@ -33,6 +33,8 @@ class bitmap
   void Save(const std::string&) const;
   void PutPixel(ushort, ushort, ushort);
   void PutPixel(vector2d Pos, ushort Color) { PutPixel(Pos.X, Pos.Y, Color); }
+  void SafePutPixel(ushort X, ushort Y, ushort Color) { if(X < XSize && Y < YSize) PutPixel(X, Y, Color); }
+  void SafePutPixel(vector2d Pos, ushort Color) { if(Pos.X < XSize && Pos.Y < YSize) PutPixel(Pos.X, Pos.Y, Color); }
   ushort GetPixel(ushort, ushort) const;
   ushort GetPixel(vector2d Pos) const { return GetPixel(Pos.X, Pos.Y); }
 
@@ -151,7 +153,7 @@ class bitmap
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(void (*)(bitmap*) = 0);
   void DrawFlames(ushort, ushort = PINK);
-  bool IsValid(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
+  bool IsValidPos(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
   void CreateSparkle(vector2d, ushort);
  protected:
   ushort XSize, YSize;

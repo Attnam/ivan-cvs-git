@@ -6,7 +6,6 @@ item
 {
 	Possibility = 0;
 	InHandsPic = 160, 144;
-	OfferModifier = 0;
 	Score = 0;
 	IsDestroyable = true;
 	CanBeWished = true;
@@ -66,7 +65,7 @@ materialcontainer
 lantern
 {
         DefaultSize = 30;
-	Possibility = 50;
+	Possibility = 100;
 	InHandsPic = 160, 160;
         Category = TOOL;
 	DefaultMainVolume = 1000;
@@ -74,7 +73,6 @@ lantern
 	FormModifier = 30;
 	Price = 50;
 	BaseEmitation = 300;
-	OfferModifier = 10000;
 	NameSingular = "lantern";
         MainMaterialConfig == GLASS;
 	Alias == "light";
@@ -86,12 +84,11 @@ lantern
 	Config BROKEN;
 	{
 		DefaultSize = 15;
-		Possibility = 25;
+		Possibility = 10;
 		InHandsPic = 160, 128;
 		FormModifier = 80;
 		Price = 0;
 		BaseEmitation = 0;
-		OfferModifier = 0;
 		BitmapPos = 0, 304;
 		WallBitmapPos = 0, 208;
 	}
@@ -100,7 +97,7 @@ lantern
 can /* materialcontainer-> */
 {
 	DefaultSize = 10;
-	Possibility = 200;
+	Possibility = 250;
 	InHandsPic = 160, 144;
 	Category = FOOD;
 	DefaultMainVolume = 50;
@@ -108,7 +105,6 @@ can /* materialcontainer-> */
 	StrengthModifier = 50;
 	/* BitmapPos depends on being full or not */
 	FormModifier = 30;
-	OfferModifier = 5000;
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
@@ -120,14 +116,13 @@ can /* materialcontainer-> */
 lump
 {
 	DefaultSize = 10;
-	Possibility = 200;
+	Possibility = 250;
 	InHandsPic = 160, 112;
 	Category = FOOD;
 	DefaultMainVolume = 500;
 	StrengthModifier = 75;
 	BitmapPos = 16, 48;
 	FormModifier = 15;
-	OfferModifier = 5000;
 	NameSingular = "lump";
 	MainMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
@@ -146,7 +141,7 @@ meleeweapon
 	Config LONGSWORD;
 	{
 		DefaultSize = 150;
-		Possibility = 25;
+		Possibility = 250;
 		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 2400;
@@ -154,7 +149,6 @@ meleeweapon
 		BitmapPos = 16, 336;
 		FormModifier = 150;
 		StrengthModifier = 150;
-		OfferModifier = 5000;
 		NameSingular = "sword";
 		Adjective = "long";
 		MainMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
@@ -165,13 +159,14 @@ meleeweapon
 
 	Config BROKEN|LONGSWORD;
 	{
+		Possibility = 25;
 		BitmapPos = 32, 208;
 	}
 
 	Config TWOHANDEDSWORD;
 	{
 		DefaultSize = 175;
-		Possibility = 3;
+		Possibility = 50;
 		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 5500;
@@ -180,7 +175,6 @@ meleeweapon
 		BitmapPos = 0, 0;
 		StrengthModifier = 150;
 		FormModifier = 175;
-		OfferModifier = 2500;
 		Adjective = "two-handed";
 		NameSingular = "sword";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -192,6 +186,7 @@ meleeweapon
 
 	Config BROKEN|TWOHANDEDSWORD;
 	{
+		Possibility = 5;
 		BitmapPos = 32, 80;
 	}
 
@@ -207,7 +202,6 @@ meleeweapon
 		BitmapPos = 0, 16;
 		StrengthModifier = 150;
 		FormModifier = 200;
-		OfferModifier = 2500;
 		Adjective = "curved two-handed";
 		NameSingular = "sword";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -219,13 +213,14 @@ meleeweapon
 
 	Config BROKEN|CURVEDTWOHANDEDSWORD;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 96;
 	}
 
 	Config SPEAR;
 	{
 		DefaultSize = 200;
-		Possibility = 100;
+		Possibility = 1000;
 		InHandsPic = 160, 96;
 		WeaponCategory = SPEARS;
 		StrengthModifier = 75;
@@ -233,24 +228,24 @@ meleeweapon
 		FormModifier = 200;
 		DefaultMainVolume = 200;
 		DefaultSecondaryVolume = 1600;
-		OfferModifier = 10000;
 		NameSingular = "spear";
 		MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
-		MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
+		MaterialConfigChances = { 6, 250, 50, 250, 150, 50, 10; }
 		Roundness = 10;
 		IsTwoHanded = true;
 	}
 
 	Config BROKEN|SPEAR;
 	{
+		Possibility = 100;
 		BitmapPos = 32, 224;
 	}
 
 	Config AXE;
 	{
 		DefaultSize = 125;
-		Possibility = 100;
+		Possibility = 1000;
 		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
 		DefaultMainVolume = 1400;
@@ -258,7 +253,6 @@ meleeweapon
 		StrengthModifier = 150;
 		BitmapPos = 16, 256;
 		FormModifier = 150;
-		OfferModifier = 2500;
 		NameSingular = "axe";
 		Article = "an";
 		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
@@ -270,13 +264,14 @@ meleeweapon
 
 	Config BROKEN|AXE;
 	{
+		Possibility = 100;
 		BitmapPos = 32, 176;
 	}
 
 	Config POLEAXE;
 	{
 		DefaultSize = 225;
-		Possibility = 50;
+		Possibility = 250;
 		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
 		DefaultMainVolume = 2500;
@@ -294,6 +289,7 @@ meleeweapon
 
 	Config BROKEN|POLEAXE;
 	{
+		Possibility = 25;
 		BitmapPos = 32, 144;
 	}
 
@@ -304,11 +300,10 @@ meleeweapon
 		DefaultSize = 150; 
 		DefaultMainVolume = 5000; 
 		BitmapPos = 0, 32;
-		Possibility = 20;
+		Possibility = 100;
 		InHandsPic = 160, 192;
 		DefaultSecondaryVolume = 2000;
 		WeaponCategory = MACES;
-		OfferModifier = 1250;
 		NameSingular = "mace";
 		Adjective = "spiked";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -320,6 +315,7 @@ meleeweapon
 
 	Config BROKEN|SPIKEDMACE;
 	{
+		Possibility = 10;
 		BitmapPos = 32, 112;
 	}
 }
@@ -336,7 +332,6 @@ banana /* materialcontainer-> */
 	BitmapPos = 0, 112;
 	FormModifier = 50;
 	DefaultSize = 20;
-	OfferModifier = 10000;
 	NameSingular = "banana";
 	MainMaterialConfig == BANANAPEAL;
 	SecondaryMaterialConfig == BANANAFLESH;
@@ -363,7 +358,6 @@ holybanana /* materialcontainer->banana-> */
 	DefaultSize = 30;
 	Score = 250;
 	Price = 1000;
-	OfferModifier = 400000;
 	Adjective = "holy";
 	PostFix = "of Liukas Vipro";
 	ArticleMode = DEFINITEARTICLE;
@@ -376,7 +370,7 @@ holybanana /* materialcontainer->banana-> */
 	}
 }
 
-valpurusjustifier /* meleeweapon-> */
+justifier /* meleeweapon-> */
 {
 	DefaultSize = 200;
 	Possibility = 0;
@@ -391,7 +385,6 @@ valpurusjustifier /* meleeweapon-> */
 	CanBeWished = false;
 	IsMaterialChangeable = false;
 	StrengthModifier = 400;
-	OfferModifier = 5000;
 	NameSingular = "broadsword";
 	Adjective = "holy";
 	PostFix = "named Valpurus's Justifier";
@@ -425,7 +418,6 @@ neercseulb /* meleeweapon-> */
 	DefaultMainVolume = 12000;
 	DefaultSecondaryVolume = 6000;
 	DefaultContainedVolume = 2500;
-	OfferModifier = 2500;
 	Adjective = "ancient";
 	NameSingular = "mace";
 	AdjectiveArticle = "an";
@@ -450,7 +442,7 @@ neercseulb /* meleeweapon-> */
 pickaxe /* meleeweapon-> */
 {
 	DefaultSize = 150;
-	Possibility = 50;
+	Possibility = 100;
 	InHandsPic = 160, 64;
 	DefaultMainVolume = 1500;
 	DefaultSecondaryVolume = 2000;
@@ -461,7 +453,6 @@ pickaxe /* meleeweapon-> */
 	Roundness = 20;
 	WeaponCategory = AXES;
 	StrengthModifier = 150;
-	OfferModifier = 2500;
 	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
@@ -470,6 +461,7 @@ pickaxe /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 10;
 		BitmapPos = 32, 160;
 		Price = 0;
 	}
@@ -493,12 +485,11 @@ bodyarmor /* armor-> */
 
 	Config CHAINMAIL;
 	{
-		Possibility = 25;
+		Possibility = 50;
 		StrengthModifier = 100; 
 		DefaultSize = 75; 
 		DefaultMainVolume = 2000; 
 		BitmapPos = 16, 96;
-		OfferModifier = 5000;
 		NameSingular = "chain mail";
 		MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
@@ -507,6 +498,7 @@ bodyarmor /* armor-> */
 
 	Config BROKEN|CHAINMAIL;
 	{
+		Possibility = 5;
 		BitmapPos = 48, 208;
 		FormModifier = 30;
 		StrengthModifier = 50;
@@ -518,8 +510,7 @@ bodyarmor /* armor-> */
 		DefaultSize = 75; 
 		DefaultMainVolume = 4000; 
 		BitmapPos = 16, 128;
-		Possibility = 50;
-		OfferModifier = 5000;
+		Possibility = 250;
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
 		MainMaterialConfig = { 3, LEATHER, BRONZE, IRON; }
@@ -529,11 +520,10 @@ bodyarmor /* armor-> */
 
 	Config BROKEN|PLATEMAIL;
 	{
-		Possibility = 10;
+		Possibility = 25;
 		StrengthModifier = 75;
 		BitmapPos = 0, 352;
 		FormModifier = 30;
-		OfferModifier = 1000;
 	}
 }
 
@@ -560,7 +550,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
-	Possibility = 100;
+	Possibility = 250;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = POTION;
@@ -569,7 +559,6 @@ potion /* materialcontainer-> */
 	StrengthModifier = 50;
 	BitmapPos = 0, 160;
 	FormModifier = 40;
-	OfferModifier = 1000;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
 	ContainedMaterialConfig = { 5, 0, WATER, HEALINGLIQUID, OMLEURINE, POISONLIQUID; }
@@ -582,14 +571,13 @@ potion /* materialcontainer-> */
 bananapeals
 {
 	DefaultSize = 20;
-	Possibility = 50;
+	Possibility = 100;
 	InHandsPic = 160, 112;
 	Category = MISC;
 	DefaultMainVolume = 40;
 	StrengthModifier = 50;
 	BitmapPos = 0, 128;
 	FormModifier = 70;
-	OfferModifier = 0;
 	NameSingular = "banana peal";
 	MainMaterialConfig == BANANAPEAL;
 	Roundness = 10;
@@ -598,14 +586,13 @@ bananapeals
 brokenbottle /* cannot contain anything, so NOT bottle-> */
 {
 	DefaultSize = 10;
-	Possibility = 50;
+	Possibility = 100;
 	InHandsPic = 160, 128;
 	Category = MISC;
 	DefaultMainVolume = 60;
 	StrengthModifier = 50;
 	BitmapPos = 16, 160;
 	FormModifier = 100;
-	OfferModifier = 0;
 	NameSingular = "bottle";
 	Adjective = "broken";
 	MainMaterialConfig == GLASS;
@@ -629,14 +616,14 @@ scroll
 
 scrollofcreatemonster /* scroll-> */
 {
-	Possibility = 50;
+	Possibility = 75;
 	Price = 20;
 	PostFix = "of create monster";
 }
 
 scrollofteleportation /* scroll-> */
 {
-	Possibility = 50;
+	Possibility = 100;
 	Price = 50;
 	PostFix = "of teleportation";
 	Alias == "scroll of teleport";
@@ -645,7 +632,7 @@ scrollofteleportation /* scroll-> */
 
 scrollofcharging /* scroll-> */
 {
-	Possibility = 5;
+	Possibility = 25;
 	Price = 400;
 	PostFix = "of charging";
 }
@@ -660,7 +647,6 @@ nut
 	StrengthModifier = 50;
 	BitmapPos = 16, 208;
 	FormModifier = 20;
-	OfferModifier = 100000;
 	MainMaterialConfig == HUMANFLESH;
 	NameSingular = "nut";
 	Roundness = 90;
@@ -687,14 +673,13 @@ leftnutofpetrus /* nut-> */
 bone
 {
 	DefaultSize = 50;
-	Possibility = 100;
+	Possibility = 250;
 	WeaponCategory = CLUBS;
 	DefaultMainVolume = 1500;
 	StrengthModifier = 100;
 	BitmapPos = 16, 240;
 	FormModifier = 70;
 	Category = MISC;
-	OfferModifier = 1000;
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
 	Roundness = 20;
@@ -704,7 +689,7 @@ bone
 loaf
 {
 	DefaultSize = 40;
-	Possibility = 100;
+	Possibility = 250;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = FOOD;
@@ -712,7 +697,6 @@ loaf
 	StrengthModifier = 100;
 	BitmapPos = 0, 272;
 	FormModifier = 30;
-	OfferModifier = 1250;
 	NameSingular = "loaf";
 	NamePlural = "loaves";
 	MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
@@ -723,7 +707,7 @@ loaf
 
 scrollofwishing /* scroll-> */
 {
-	Possibility = 1;
+	Possibility = 2;
 	CanBeWished = false;
 	Price = 2000;
 	IsPolymorphSpawnable = false;
@@ -734,7 +718,7 @@ scrollofwishing /* scroll-> */
 cheapcopyofleftnutofpetrus /* nut-> */
 {
 	DefaultSize = 10;
-	Possibility = 5;
+	Possibility = 10;
 	Score = 1;
 	Price = 500;
 	Category = MISC;
@@ -762,11 +746,11 @@ wand
 
 wandofpolymorph /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 25;
 	Price = 500;
 	IsPolymorphSpawnable = false;
 	PostFix = "of polymorph";
-	MainMaterialConfig == GLASS;
+	MainMaterialConfig == UNICORNHORN;
 	BeamRange = 5;
 	MinCharges = 2;
 	MaxCharges = 5;
@@ -774,7 +758,7 @@ wandofpolymorph /* wand-> */
 
 scrollofchangematerial /* scroll-> */
 {
-	Possibility = 3;
+	Possibility = 5;
 	Price = 500;
 	PostFix = "of change material";
 }
@@ -787,7 +771,7 @@ avatarofvalpurus
 	IsDestroyable = false;
 	InHandsPic = 160, 112;
 	IsMaterialChangeable = false;
-	Price = 2000000000;
+	Price = 1000000;
 	Category = MISC;
 	DefaultMainVolume = 250;
 	StrengthModifier = 400;
@@ -804,10 +788,10 @@ avatarofvalpurus
 
 wandofstriking /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 50;
 	Price = 500;
 	PostFix = "of striking";
-	MainMaterialConfig == MARBLE;
+	MainMaterialConfig == IRON;
 	BeamRange = 15;
 	MinCharges = 2;
 	MaxCharges = 5;
@@ -816,13 +800,12 @@ wandofstriking /* wand-> */
 kiwi
 {
 	DefaultSize = 10;
-	Possibility = 25;
+	Possibility = 50;
 	Category = FOOD;
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
 	BitmapPos = 0, 384;
 	FormModifier = 20;
-	OfferModifier = 4000;
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWIFLESH;
 	Roundness = 80;
@@ -831,13 +814,12 @@ kiwi
 pineapple
 {
 	DefaultSize = 20;
-	Possibility = 25;
+	Possibility = 50;
 	Category = FOOD;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 100;
 	BitmapPos = 0, 368;
 	FormModifier = 20;
-	OfferModifier = 4000;
 	NameSingular = "pineapple";
 	MainMaterialConfig == PINEAPPLEFLESH;
 	Roundness = 90;
@@ -854,7 +836,6 @@ palmbranch
 	StrengthModifier = 50;
 	BitmapPos = 0, 240;
 	FormModifier = 50;
-	OfferModifier = 3000;
 	NameSingular = "palm branch";
 	MainMaterialConfig == PALMLEAF;
 	Roundness = 80;
@@ -864,14 +845,13 @@ palmbranch
 whip /* meleeweapon-> */
 {
 	DefaultSize = 200;
-	Possibility = 25;
+	Possibility = 50;
 	InHandsPic = 160, 224;
 	WeaponCategory = WHIPS;
 	DefaultMainVolume = 1000;
 	DefaultSecondaryVolume = 200;
 	StrengthModifier = 50;
 	BitmapPos = 32, 0;
-	OfferModifier = 5000;
 	NameSingular = "whip";
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
@@ -880,6 +860,7 @@ whip /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 5;
 		BitmapPos = 32, 256;
 	}
 }
@@ -887,7 +868,7 @@ whip /* meleeweapon-> */
 backpack /* materialcontainer-> */
 {
 	DefaultSize = 80;
-	Possibility = 10;
+	Possibility = 25;
 	InHandsPic = 160, 144;
 	Category = TOOL;
 	DefaultMainVolume = 1000;
@@ -895,7 +876,6 @@ backpack /* materialcontainer-> */
 	StrengthModifier = 200;
 	BitmapPos = 32, 16;
 	FormModifier = 20;
-	OfferModifier = 5000;
 	NameSingular = "backpack";
 	MainMaterialConfig == LEATHER;
 	ContainedMaterialConfig == GUNPOWDER;
@@ -908,13 +888,12 @@ holybook
 {
 	DefaultSize = 25;
 	InHandsPic = 160, 128;
-	Possibility = 25;
+	Possibility = 25; /* this is for each config */
 	Category = BOOK;
 	DefaultMainVolume = 2000;
 	StrengthModifier = 100;
 	BitmapPos = 32, 32;
 	FormModifier = 30;
-	OfferModifier = 4000;
 	Adjective = "holy";
 	NameSingular = "book";
 	ArticleMode = DEFINITEARTICLE;
@@ -936,7 +915,6 @@ fiftymillionroubles
 	StrengthModifier = 25;
 	BitmapPos = 0, 336;
 	FormModifier = 20;
-	OfferModifier = 100;
 	NameSingular = "pile";
 	PostFix = "of 50 million roubles";
 	MainMaterialConfig == PARCHMENT;
@@ -955,26 +933,25 @@ oillamp
 	BitmapPos = 32, 48;
 	FormModifier = 30;
 	BaseEmitation = 256;
-	OfferModifier = 10000;
 	NameSingular = "lamp";
 	Adjective = "oil";
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
 	CanBePiled = false; /* otherwise you could summon a genie only from the first piled item */
+	Price = 100;
 }
 
 stone
 {
 	DefaultSize = 30;
-	Possibility = 5;
+	Possibility = 25;
 	InHandsPic = 160, 112;
 	Category = VALUABLE;
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
 	BitmapPos = 0, 48;
 	FormModifier = 45;
-	OfferModifier = 7000;
 	NameSingular = "stone";
 	MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
 	MaterialConfigChances = { 5, 30, 20, 15, 10, 5; }
@@ -984,10 +961,10 @@ stone
 
 wandoffireballs /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 50;
 	Price = 500;
 	PostFix = "of fireballs";
-	MainMaterialConfig == MARBLE;
+	MainMaterialConfig == BRONZE;
 	BeamRange = 200;
 	MinCharges = 1;
 	MaxCharges = 4;
@@ -995,17 +972,17 @@ wandoffireballs /* wand-> */
 
 scrolloftaming /* scroll-> */
 {
-	Possibility = 5;
+	Possibility = 25;
 	Price = 500;
 	PostFix = "of taming";
 }
 
 wandofteleportation /* wand-> */
 {
-	Possibility = 30;
+	Possibility = 75;
 	Price = 500;
 	PostFix = "of teleportation";
-	MainMaterialConfig == GOLD;
+	MainMaterialConfig == SILVER;
 	Alias == "wand of teleport";
 	BeamRange = 5;
 	MinCharges = 2;
@@ -1015,7 +992,7 @@ wandofteleportation /* wand-> */
 mine /*materialcontainer-> */
 {
 	DefaultSize = 50;
-	Possibility = 20;
+	Possibility = 50;
 	Category = TOOL;
 	DefaultMainVolume = 100;
 	DefaultContainedVolume = 5000;
@@ -1031,10 +1008,10 @@ mine /*materialcontainer-> */
 
 wandofhaste /* wand-> */
 {
-	Possibility = 30;
+	Possibility = 50;
 	Price = 500;
 	PostFix = "of haste";
-	MainMaterialConfig == IRON;
+	MainMaterialConfig == TIN;
 	BeamRange = 5;
 	MinCharges = 2;
 	MaxCharges = 6;
@@ -1042,10 +1019,10 @@ wandofhaste /* wand-> */
 
 wandofslow /* wand-> */
 {
-	Possibility = 30;
+	Possibility = 50;
 	Price = 500;
 	PostFix = "of slow";
-	MainMaterialConfig == IRON;
+	MainMaterialConfig == STONE;
 	BeamRange = 5;
 	MinCharges = 2;
 	MaxCharges = 6;
@@ -1054,39 +1031,37 @@ wandofslow /* wand-> */
 key
 {
 	DefaultSize = 10;
-	Possibility = 50;
+	Possibility = 100;
 	Price = 10;
 	Category = TOOL;
 	DefaultMainVolume = 15;
 	StrengthModifier = 50;
 	BitmapPos = 16, 416;
 	FormModifier = 40;
-	OfferModifier = 5000;
 	NameSingular = "key";
 	MainMaterialConfig == IRON;
 	Roundness = 10;
 }
 
-shield
+shield /* armor-> */
 {
 	DefaultSize = 80;
-	Possibility = 30;
+	Possibility = 250;
 	Category = SHIELD;
 	DefaultMainVolume = 1500;
 	StrengthModifier= 200;
 	BitmapPos = 32, 336;
 	FormModifier = 30;
-	OfferModifier = 4000;
 	NameSingular = "shield";
 	MainMaterialConfig = { 5, WOOD, COPPER, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 5, 250, 150, 150, 50, 10; }
+	MaterialConfigChances = { 5, 200, 150, 150, 50, 10; }
 	Roundness = 80;
 	WeaponCategory = SHIELDS;
-	CanBePiled = false;
 	CanBeBroken = true;
 
 	Config BROKEN;
 	{
+		Possibility = 25;
 		DefaultSize = 40;
 		FormModifier = 40;
 		BitmapPos = 48, 224;
@@ -1096,13 +1071,12 @@ shield
 cloak /* armor-> */
 {
 	DefaultSize = 200;
-	Possibility = 40;
+	Possibility = 250;
 	Category = CLOAK;
 	DefaultMainVolume = 4000;
 	StrengthModifier = 100;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
-	OfferModifier = 4000;
 	NameSingular = "cloak";
 	MainMaterialConfig = { 3, LEATHER, FABRIC, CLOTH; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
@@ -1114,47 +1088,48 @@ cloak /* armor-> */
 		Possibility = 1;
 		GearStates = INVISIBLE;
 		PostFix = "of invisibility";
+		Price = 2500;
 	}
 }
 
 boot /* armor-> */
 {
 	DefaultSize = 30;
-	Possibility = 40;
+	Possibility = 250;
 	Category = BOOT;
 	DefaultMainVolume = 600;
 	StrengthModifier = 100;
 	BitmapPos = 0, 400;
 	FormModifier = 20;
-	OfferModifier = 4000;
 	NameSingular = "boot";
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 4, 250, 100, 50, 10; }
+	MaterialConfigChances = { 4, 200, 100, 50, 20; }
 	Roundness = 50;
 	CanBePiled = true;
 
 	Config BOOTOFSPEED;
 	{
+		Possibility = 5;
 		PostFix = "of speed";
 		MainMaterialConfig == DIAMOND;
 		MaterialConfigChances == 100;
 		GearStates = HASTE;
+		Price = 1000;
 	}
 }
 
 gauntlet /* armor-> */
 {
 	DefaultSize = 30;
-	Possibility = 40;
+	Possibility = 250;
 	Category = GAUNTLET;
 	DefaultMainVolume = 400;
 	StrengthModifier = 75;
 	BitmapPos = 32, 368;
 	FormModifier = 20;
-	OfferModifier = 4000;
 	NameSingular = "gauntlet";
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 4, 250, 100, 50, 10; }
+	MaterialConfigChances = { 4, 200, 100, 50, 20; }
 	Roundness = 60;
 	CanBePiled = true;
 }
@@ -1162,7 +1137,7 @@ gauntlet /* armor-> */
 belt /* armor-> */
 {
 	DefaultSize = 150;
-	Possibility = 40;
+	Possibility = 250;
 	WeaponCategory = WHIPS;
 	Category = BELT;
 	DefaultMainVolume = 250;
@@ -1178,7 +1153,6 @@ belt /* armor-> */
 ring
 {
 	DefaultSize = 2;
-	Possibility = 20;
 	Category = RING;
 	DefaultMainVolume = 3;
 	StrengthModifier = 100;
@@ -1191,77 +1165,81 @@ ring
 
 	Config RINGOFFIRERESISTANCE;
 	{
-		Possibility = 15;
+		Possibility = 50;
 		FireResistance = 10;
 		PostFix = "of fire resistance";
-		MainMaterialConfig == GOLD;
+		MainMaterialConfig == DIAMOND;
+		Price = 250;
 	}
 
 	Config RINGOFPOLYMORPHCONTROL;
 	{
-		PostFix = "of polymorph control";
 		Possibility = 10;
-		MainMaterialConfig == RUBY;
+		PostFix = "of polymorph control";
+		MainMaterialConfig == SAPPHIRE;
 		GearStates == POLYMORPH_CONTROL;
+		Price = 500;
 	}
 
 	Config RINGOFINFRAVISION;
 	{
+		Possibility = 20;
 		PostFix = "of infravision";
-		Possibility = 10;
 		MainMaterialConfig == SILVER;
 		GearStates = INFRAVISION;
+		Price = 500;
 	}
 	
 	Config RINGOFTELEPORTATION;
 	{
+		Possibility = 30;
 		PostFix = "of teleportation";
 		GearStates = TELEPORT;
 		MainMaterialConfig == IRON;
 		Alias == "ring of teleport";
+		Price = 250;
 	}
 
 	Config RINGOFTELEPORTCONTROL;
 	{
+		Possibility = 10;
 		PostFix = "of teleport control";
+		MainMaterialConfig == RUBY;
 		GearStates = TELEPORT_CONTROL;
+		Price = 500;
 	}
 
 	Config RINGOFPOLYMORPH;
 	{
+		Possibility = 30;
 		PostFix = "of polymorph";
+		MainMaterialConfig == UNICORNHORN;
 		GearStates = POLYMORPH;
-	}
-
-	Config RINGOFENERGYRESISTANCE;
-	{
-		Possibility = 15;
-		EnergyResistance = 10;
-		PostFix = "of energy resistance";
-		MainMaterialConfig == GOLD;
-	}
-
-	Config RINGOFACIDRESISTANCE;
-	{
-		Possibility = 15;
-		AcidResistance = 10;
-		PostFix = "of acid resistance";
-		MainMaterialConfig == GOLD;
+		Price = 250;
 	}
 
 	Config RINGOFPOISONRESISTANCE;
 	{
-		Possibility = 15;
+		Possibility = 40;
 		PoisonResistance = 10;
 		PostFix = "of poison resistance";
-		MainMaterialConfig == GOLD;
+		MainMaterialConfig == IRON;
+		Price = 250;
+	}
+
+	Config RINGOFINVISIBILITY;
+	{
+		Possibility = 1;
+		PostFix = "of invisibility";
+		MainMaterialConfig == GLASS;
+		GearStates = INVISIBLE;
+		Price = 2500;
 	}
 }
 
 amulet
 {
 	DefaultSize = 20;
-	Possibility = 10;
 	Category = AMULET;
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
@@ -1275,34 +1253,39 @@ amulet
 
 	Config AMULETOFLIFESAVING;
 	{
+		Possibility = 5;
 		PostFix = "of life saving";
 		MainMaterialConfig == GOLD;
 		GearStates = LIFE_SAVED;
 		CanBeCloned = false;
+		Price = 5000;
 	}
 
 	Config AMULETOFESP;
 	{
+		Possibility = 10;
 		PostFix = "of ESP";
 		MainMaterialConfig == SAPPHIRE;
 		GearStates = ESP;
+		Price = 1000;
 	}
 }
 
 bodypart
 {
+	Possibility = 0;
 	Category = FOOD;
 	IsAutoInitializable = false;
 	NPModifier = 100;
 	IsAbstract = true;
 	IsTwoHanded = true;
 	Adjective = "severed"; /* only used if severed */
+	CanBeWished = false; /* temporary */
 }
 
 head /* bodypart-> */
 {
 	InHandsPic = 160, 144;
-	OfferModifier = 1000;
 	StrengthModifier = 150;
 	FormModifier = 20;
 	NameSingular = "head";
@@ -1372,6 +1355,7 @@ leftleg /* bodypart->leg-> */
 
 headofelpuri /* cannot wear helmet etc, so NOT head-> */
 {
+	Possibility = 0;
 	CanBeWished = false;
 	DefaultSize = 60;
 	Score = 1000;
@@ -1396,23 +1380,22 @@ corpse
 {
 	Possibility = 0;
 	Category = FOOD;
-	CanBeWished = false;
 	InHandsPic = 160, 144;
 	IsAutoInitializable = false;
 	IsPolymorphSpawnable = false;
 	StrengthModifier = 100;
 	FormModifier = 15;
 	NPModifier = 100;
-	OfferModifier = 100;
 	NameSingular = "corpse";
 	OKVisualEffects = ROTATE|MIRROR|FLIP;
 	Roundness = 50;
 	IsTwoHanded = true;
+	CanBeWished = false; /* temporary */
 }
 
 wandoflocking /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 50;
 	Price = 100;
 	PostFix = "of locking";
 	MainMaterialConfig == COPPER;
@@ -1423,7 +1406,7 @@ wandoflocking /* wand-> */
 
 wandofresurrection /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 25;
 	Price = 500;
 	PostFix = "of resurrection";
 	MainMaterialConfig == BONE;
@@ -1434,6 +1417,7 @@ wandofresurrection /* wand-> */
 
 whistle
 {
+	Possibility = 50;
 	Category = TOOL;
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
@@ -1448,10 +1432,12 @@ whistle
 
 magicalwhistle /* whistle-> */
 {
-	MainMaterialConfig == GOLD;
+	Possibility = 5;
+	MainMaterialConfig == RUBY;
 	NameSingular = "whistle";
 	Adjective = "magical";
 	Price = 2000;
+	Alias == "magic whistle";
 }
 
 chest
@@ -1475,7 +1461,7 @@ chest
 
 wandofdoorcreation /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 50;
 	Price = 200;
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
@@ -1494,11 +1480,12 @@ beartrap
 	DefaultMainVolume = 500;
 	FormModifier = 100;
 	Roundness = 30;
+	Price = 10;
 }
 
 wandofinvisibility /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 50;
 	Price = 250;
 	PostFix = "of invisibility";
 	MainMaterialConfig == GLASS;
@@ -1510,13 +1497,12 @@ wandofinvisibility /* wand-> */
 helmet
 {
 	DefaultSize = 30;
-	Possibility = 40;
+	Possibility = 250;
 	Category = HELMET;
 	DefaultMainVolume = 600;
 	StrengthModifier = 100;
 	BitmapPos = 16, 384;
 	FormModifier = 30;
-	OfferModifier = 4000;
 	NameSingular = "helmet";
 	MainMaterialConfig = 	{ 10, 	LEATHER,BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
 	MaterialConfigChances = { 10, 	30,	30,	10,	10,	2,	4,	20,	5,	3,	30; }
@@ -1526,7 +1512,7 @@ helmet
 stethoscope
 {
 	DefaultSize = 40;
-	Possibility = 30;
+	Possibility = 25;
 	Category = TOOL;
 	DefaultMainVolume = 200;
 	StrengthModifier = 50;	
@@ -1549,7 +1535,6 @@ flamingsword /* meleeweapon-> */
 	BitmapPos = 16, 336;
 	FormModifier = 150;
 	StrengthModifier = 150;
-	OfferModifier = 10000;
 	NameSingular = "sword";
 	Adjective = "flaming";
 	MainMaterialConfig =  { 3, BRONZE, IRON, MITHRIL; }
@@ -1561,6 +1546,7 @@ flamingsword /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 3;
 		BitmapPos = 32, 208;
 	}
 }
@@ -1590,6 +1576,7 @@ mjolak /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 144;
 		Price = 0;
 	}
@@ -1598,7 +1585,7 @@ mjolak /* meleeweapon-> */
 vermis /* meleeweapon-> */
 {
 	DefaultSize = 250;
-	Possibility = 100;
+	Possibility = 5;
 	InHandsPic = 160, 96;
 	WeaponCategory = SPEARS;
 	StrengthModifier = 100;
@@ -1606,7 +1593,6 @@ vermis /* meleeweapon-> */
 	FormModifier = 1000;
 	DefaultMainVolume = 100;
 	DefaultSecondaryVolume = 1000;
-	OfferModifier = 10000;
 	NameSingular = "spear";
 	PostFix = "named Vermis";
 	MainMaterialConfig == DIAMOND;
@@ -1620,6 +1606,7 @@ vermis /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 224;
 		Price = 0;
 	}
@@ -1631,7 +1618,7 @@ turox /* meleeweapon-> */
 	FormModifier = 150;
 	DefaultSize = 175;
 	BitmapPos = 0, 32;
-	Possibility = 20;
+	Possibility = 5;
 	InHandsPic = 160, 192;
 	DefaultMainVolume = 7000;
 	DefaultSecondaryVolume = 3000;
@@ -1649,6 +1636,7 @@ turox /* meleeweapon-> */
 
 	Config BROKEN;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 112;
 		Price = 0;
 	}
@@ -1657,7 +1645,7 @@ turox /* meleeweapon-> */
 whipofcleptia /* meleeweapon->whip-> */
 {
 	DefaultSize = 250;
-	Possibility = 25;
+	Possibility = 10;
 	DefaultMainVolume = 1250;
 	DefaultSecondaryVolume = 250;
 	StrengthModifier = 100;
@@ -1674,6 +1662,7 @@ whipofcleptia /* meleeweapon->whip-> */
 
 	Config BROKEN;
 	{
+		Possibility = 0;
 		BitmapPos = 32, 256;
 		Price = 0;
 	}
@@ -1681,13 +1670,27 @@ whipofcleptia /* meleeweapon->whip-> */
 
 wandofcloning /* wand-> */
 {
-	Possibility = 20;
+	Possibility = 25;
 	Price = 1000;
 	IsPolymorphSpawnable = false;
 	PostFix = "of cloning";
-	MainMaterialConfig == BRONZE;
+	MainMaterialConfig == MARBLE;
 	BeamRange = 5;
 	MinCharges = 1;
 	MaxCharges = 2;
 	CanBeCloned = false;
+}
+
+scrollofenchantweapon /* scroll-> */
+{
+	Possibility = 10;
+	Price = 250;
+	PostFix = "of enchant weapon";
+}
+
+scrollofenchantarmor /* scroll-> */
+{
+	Possibility = 25;
+	Price = 250;
+	PostFix = "of enchant armor";
 }

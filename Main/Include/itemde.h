@@ -25,14 +25,14 @@ class ABSTRACT_ITEM
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
+  virtual void SetContainedMaterial(material* What, ushort SpecialFlags = 0) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
+  virtual void ChangeContainedMaterial(material* What, ushort SpecialFlags = 0) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
   void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual material* GetConsumeMaterial() const { return ContainedMaterial; }
-  virtual void SetConsumeMaterial(material* NewMaterial) { SetContainedMaterial(NewMaterial); }
-  virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeContainedMaterial(NewMaterial); }
+  virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetContainedMaterial(NewMaterial, SpecialFlags); }
+  virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
   virtual uchar GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
@@ -40,6 +40,7 @@ class ABSTRACT_ITEM
   virtual ulong GetPrice() const { return GetContainedMaterial() ? GetContainedMaterial()->GetRawPrice() + item::GetPrice() : item::GetPrice(); }
   virtual void Be();
  protected:
+  virtual bool IsSparkling(ushort) const;
   virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
@@ -57,7 +58,8 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
-  virtual uchar GetSpecialFlags(ushort) const;
+  virtual uchar GetAlphaA(ushort) const { return 255; }
+  virtual uchar GetSpecialFlags() const;
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
   uchar SquarePosition;
@@ -104,11 +106,11 @@ class ITEM
   virtual ulong GetPrice() const;
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
-  virtual void SetSecondaryMaterial(material* What) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume()); }
-  virtual void ChangeSecondaryMaterial(material* What) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume()); }
+  virtual void SetSecondaryMaterial(material* What, ushort SpecialFlags = 0) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+  virtual void ChangeSecondaryMaterial(material* What, ushort SpecialFlags = 0) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
+  virtual void SetContainedMaterial(material* What, ushort SpecialFlags = 0) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
+  virtual void ChangeContainedMaterial(material* What, ushort SpecialFlags = 0) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
   void InitMaterials(material* M1, material* M2, material* M3, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), ContainedMaterial, M3, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -119,7 +121,15 @@ class ITEM
   virtual bool HasSecondaryMaterial() const { return true; }
   virtual bool HasContainedMaterial() const { return true; }
   virtual void Be();
+  virtual bool IsWeapon(const character*) const { return true; }
+  virtual void EditEnchantment(char);
+  virtual float GetWeaponStrength() const;
+  virtual ushort GetStrengthValue() const;
+  virtual float GetToHitValueBonus() const { return (20 + Enchantment) / 20.0f; }
+  virtual float GetAPBonus() const { return 20.0f / (20 + Enchantment); }
  protected:
+  virtual void VirtualConstructor(bool) { Enchantment = 0; }
+  virtual bool IsSparkling(ushort) const;
   virtual void AddPostFix(std::string&) const;
   virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();
@@ -127,6 +137,7 @@ class ITEM
   virtual uchar GetAlphaB(ushort) const;
   material* SecondaryMaterial;
   material* ContainedMaterial;
+  char Enchantment;
 );
 
 class ITEM
@@ -144,15 +155,13 @@ class ITEM
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
   virtual void GenerateLeftOvers(character*);
-  virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
   virtual void SignalSpoil(material*);
   virtual material* GetConsumeMaterial() const { return SecondaryMaterial; }
-  virtual void SetConsumeMaterial(material* NewMaterial) { SetSecondaryMaterial(NewMaterial); }
-  virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeSecondaryMaterial(NewMaterial); }
+  virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetSecondaryMaterial(NewMaterial, SpecialFlags); }
+  virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual ushort GetMaterialColorA(ushort) const;
   uchar Charges;
 );
 
@@ -165,16 +174,22 @@ class ITEM
 
 class ITEM
 (
-  valpurusjustifier,
+  justifier,
   meleeweapon,
-  ;
+ protected:
+  virtual void Be() { }
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual ushort GetOutlineColor(ushort) const;
 );
 
 class ITEM
 (
   neercseulb,
   meleeweapon,
-  ;
+ protected:
+  virtual void Be() { }
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual ushort GetOutlineColor(ushort) const;
 );
 
 class ITEM
@@ -194,6 +209,17 @@ class ABSTRACT_ITEM
  public:
   virtual ulong GetPrice() const;
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual bool IsWeapon(const character*) const { return true; }
+  virtual bool IsArmor(const character*) const { return true; }
+  virtual void EditEnchantment(char);
+  virtual ushort GetStrengthValue() const;
+  virtual bool CanBePiledWith(const item*, const character*) const;
+ protected:
+  virtual void AddPostFix(std::string&) const;
+  virtual void VirtualConstructor(bool) { Enchantment = 0; }
+  char Enchantment;
 );
 
 class ITEM
@@ -212,10 +238,13 @@ class ITEM
   goldeneagleshirt,
   bodyarmor,
  public:
+  virtual void Be() { }
   virtual ushort GetStrengthValue() const { return 100; }
-  virtual short GetOfferValue(char) const { return 750; }
   virtual bool IsGoldenEagleShirt() const { return true; };
   virtual bool IsConsumable(const character*) const { return false; }
+ protected:
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual ushort GetOutlineColor(ushort) const;
 );
 
 class ITEM
@@ -302,6 +331,7 @@ class ITEM
   leftnutofpetrus,
   nut,
  public:
+  virtual void Be() { }
   virtual bool IsPetrussNut() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
 );
@@ -396,6 +426,7 @@ class ITEM
   avatarofvalpurus,
   item,
  public:
+  virtual void Be() { }
   virtual bool IsTheAvatar() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
 );
@@ -505,8 +536,6 @@ class ITEM
   item,
  public:
   virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() * 2 + item::GetPrice(); }
- protected:
-  virtual void VirtualConstructor(bool);
 );
 
 class ITEM
@@ -606,11 +635,12 @@ class ITEM
 class ITEM
 (
   shield,
-  item,
+  armor,
  public:
   virtual ulong GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
+  virtual float GetToHitValueBonus() const { return (10 + Enchantment) / 10.0f; }
 );
 
 class ITEM
@@ -618,7 +648,7 @@ class ITEM
   cloak,
   armor,
  public:
-    virtual ulong GetPrice() const { return (armor::GetPrice() << 3) + item::GetPrice(); }
+    virtual ulong GetPrice() const { return armor::GetPrice() * 20 + item::GetPrice(); }
   virtual bool IsCloak(const character*) const { return true; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(111, 64, 37); }
@@ -629,7 +659,7 @@ class ITEM
   boot,
   armor,
  public:
-    virtual ulong GetPrice() const { return armor::GetPrice() + item::GetPrice(); }
+    virtual ulong GetPrice() const { return armor::GetPrice() / 5 + item::GetPrice(); }
   virtual bool IsBoot(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
@@ -639,7 +669,7 @@ class ITEM
   gauntlet, 
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + item::GetPrice(); }
   virtual bool IsGauntlet(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
@@ -649,7 +679,7 @@ class ITEM
   belt, 
   armor,
  public:
-  virtual ulong GetPrice() const { return (armor::GetPrice() << 1) + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() * 5 + item::GetPrice(); }
   virtual bool IsBelt(const character*) const { return true; }
   virtual ushort GetFormModifier() const; 
 );
@@ -682,7 +712,7 @@ class ABSTRACT_ITEM
   friend class corpse;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
   character* GetMaster() const { return Master; }
   humanoid* GetHumanoidMaster() const;
   void SetMaster(character* What) { Master = What; }
@@ -691,22 +721,17 @@ class ABSTRACT_ITEM
   void SetHP(short);
   short GetHP() const { return HP; }
   void EditHP(short);
+  void IncHP() { ++HP; }
   virtual ushort GetTotalResistance(uchar) const = 0;
   virtual bool ReceiveDamage(character*, ushort, uchar);
   const std::string& GetOwnerDescription() const { return OwnerDescription; }
   void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
   bool GetUnique() const { return Unique; }
   void SetUnique(bool What) { Unique = What; }
-  void Regenerate();
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
-  virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
-  std::vector<vector2d>& GetBitmapPosVector() { return BitmapPos; }
-  std::vector<ushort>& GetColorBVector() { return ColorB; }
-  std::vector<ushort>& GetColorCVector() { return ColorC; }
-  std::vector<ushort>& GetColorDVector() { return ColorD; }
-  std::vector<uchar>& GetSpecialFlagsVector() { return SpecialFlags; }
+  virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMainMaterial(NewMaterial, SpecialFlags); }
+  virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
   virtual bool ApplyExperience() { return false; }
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
@@ -736,7 +761,7 @@ class ABSTRACT_ITEM
   virtual bool IsVeryCloseToSpoiling() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   bool IsAlive() const { return MainMaterial->IsAlive(); }
-  virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() + item::GetPrice(); }
+  virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() / 100 + item::GetPrice(); }
   void SpillBlood(ushort);
   void SpillBlood(ushort, vector2d);
   void SetBloodColor(ushort What) { BloodColor = What; }
@@ -744,7 +769,13 @@ class ABSTRACT_ITEM
   virtual void Be();
   bool IsInBadCondition() const { return HP * 3 < MaxHP || (HP == 1 && MaxHP != 1); }
   bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP || (HP == 1 && MaxHP != 1); }
+  void SetBitmapPos(vector2d What) { BitmapPos = What; }
+  void SetSpecialFlags(uchar What) { SpecialFlags = What; }
+  void SetMaterialColorB(ushort What) { ColorB = What; }
+  void SetMaterialColorC(ushort What) { ColorC = What; }
+  void SetMaterialColorD(ushort What) { ColorD = What; }
  protected:
+  virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
@@ -752,21 +783,20 @@ class ABSTRACT_ITEM
   virtual bool ShowMaterial() const { return false; }
   virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
   virtual ushort GetMaterialColorA(ushort) const;
-  virtual ushort GetMaterialColorB(ushort Frame) const { return ColorB[Frame]; }
-  virtual ushort GetMaterialColorC(ushort Frame) const { return ColorC[Frame]; }
-  virtual ushort GetMaterialColorD(ushort Frame) const { return ColorD[Frame]; }
-  virtual vector2d GetBitmapPos(ushort Frame) const { return BitmapPos[Frame]; }
-  virtual uchar GetSpecialFlags(ushort Frame) const { return SpecialFlags[Frame]; }
+  virtual ushort GetMaterialColorB(ushort) const { return ColorB; }
+  virtual ushort GetMaterialColorC(ushort) const { return ColorC; }
+  virtual ushort GetMaterialColorD(ushort) const { return ColorD; }
+  virtual vector2d GetBitmapPos(ushort) const { return BitmapPos; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags; }
   std::string OwnerDescription;
-  std::vector<vector2d> BitmapPos;
-  std::vector<ushort> ColorB;
-  std::vector<ushort> ColorC;
-  std::vector<ushort> ColorD;
-  std::vector<uchar> SpecialFlags;
+  vector2d BitmapPos;
+  ushort ColorB;
+  ushort ColorC;
+  ushort ColorD;
+  uchar SpecialFlags;
   short HP;
   short MaxHP;
   bool Unique;
-  ulong RegenerationCounter;
   ulong CarriedWeight;
   ulong BodyPartVolume;
   ushort BloodColor;
@@ -826,7 +856,7 @@ class ITEM
   normaltorso,
   torso,
  public:
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRCHARACTER; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
   virtual ushort GetTotalResistance(uchar) const;
 );
 
@@ -839,7 +869,7 @@ class ITEM
   virtual ~humanoidtorso();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
   virtual ushort GetTotalResistance(uchar) const;
   void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
   item* GetBodyArmor() const { return *BodyArmorSlot; }
@@ -914,8 +944,9 @@ class ABSTRACT_ITEM
   float GetBlockChance(float) const;
   ushort GetBlockCapability() const;
   void WieldedSkillHit();
-  float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier(Master) / 10000; }
+  float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
   void AddDefenceInfo(felist&) const;
+  void SignalAttackInfoChange();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -942,7 +973,7 @@ class ITEM
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STRIGHTARM; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|STRIGHTARM; }
 );
 
 class ITEM
@@ -956,7 +987,7 @@ class ITEM
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STLEFTARM; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|STLEFTARM; }
 );
 
 class ITEM
@@ -967,7 +998,7 @@ class ITEM
   virtual ushort GetTotalResistance(uchar) const;
   virtual uchar GetBodyPartIndex() const { return GROININDEX; }
  protected:
-  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STGROIN; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|STGROIN; }
 );
 
 class ABSTRACT_ITEM
@@ -1029,7 +1060,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STRIGHTLEG; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|STRIGHTLEG; }
 );
 
 class ITEM
@@ -1041,7 +1072,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STLEFTLEG; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|STLEFTLEG; }
 );
 
 class ITEM
@@ -1051,6 +1082,7 @@ class ITEM
  public:
   virtual bool IsHeadOfElpuri() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
+  virtual void Be() { }
 );
 
 class ITEM
@@ -1067,7 +1099,7 @@ class ITEM
   virtual bool IsBadFoodForAI(character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
-  virtual bool IsDipDestination(const character*) const { return true; }
+  //virtual bool IsDipDestination(const character*) const { return true; }
   virtual character* GetDeceased() const { return Deceased; }
   virtual void SetDeceased(character*);
   virtual void Save(outputfile&) const;
@@ -1088,6 +1120,7 @@ class ITEM
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
+  virtual bool IsSparkling(ushort) const { return false; }
   virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColorA(ushort) const;
@@ -1223,7 +1256,7 @@ class ITEM
   helmet,
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + item::GetPrice(); }
   virtual bool IsHelmet(const character*) const { return true; }
 );
 
@@ -1243,8 +1276,7 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
-  virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
-  virtual void VirtualConstructor(bool);
+  virtual uchar GetSpecialFlags() const { return STFLAME; }
 );
 
 class ITEM
@@ -1292,5 +1324,22 @@ class ITEM
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
-#endif
+class ITEM
+(
+  scrollofenchantweapon,
+  scroll,
+ public:
+  virtual bool Read(character*);
+  virtual void FinishReading(character*);
+);
 
+class ITEM
+(
+  scrollofenchantarmor,
+  scroll,
+ public:
+  virtual bool Read(character*);
+  virtual void FinishReading(character*);
+);
+
+#endif

@@ -138,7 +138,7 @@ class ABSTRACT_CHARACTER
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
   virtual bool HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
   virtual std::string GetBodyPartName(ushort, bool = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
   void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
@@ -148,10 +148,10 @@ class ABSTRACT_CHARACTER
   virtual bool IsAlive() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
-  virtual ushort GetBodyPartColorB(ushort, ushort);
-  virtual ushort GetBodyPartColorC(ushort, ushort);
-  virtual ushort GetBodyPartColorD(ushort, ushort);
+  virtual vector2d GetBodyPartBitmapPos(ushort);
+  virtual ushort GetBodyPartColorB(ushort);
+  virtual ushort GetBodyPartColorC(ushort);
+  virtual ushort GetBodyPartColorD(ushort);
   virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
@@ -275,12 +275,12 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
-  virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
-  virtual vector2d GetRightArmBitmapPos(ushort) const { return vector2d(64, (RAND() & 1) * 16); }
-  virtual vector2d GetLeftArmBitmapPos(ushort Frame) const { return GetRightArmBitmapPos(Frame); }
-  virtual vector2d GetGroinBitmapPos(ushort) const { return vector2d(0, (RAND() & 1) * 16); }
-  virtual vector2d GetRightLegBitmapPos(ushort Frame) const { return GetGroinBitmapPos(Frame); }
-  virtual vector2d GetLeftLegBitmapPos(ushort Frame) const { return GetGroinBitmapPos(Frame); }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
+  virtual vector2d GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) * 16); }
+  virtual vector2d GetLeftArmBitmapPos() const { return GetRightArmBitmapPos(); }
+  virtual vector2d GetGroinBitmapPos() const { return vector2d(0, (RAND() & 1) * 16); }
+  virtual vector2d GetRightLegBitmapPos() const { return GetGroinBitmapPos(); }
+  virtual vector2d GetLeftLegBitmapPos() const { return GetGroinBitmapPos(); }
 );
 
 class CHARACTER
@@ -317,7 +317,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
@@ -466,6 +466,7 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Catches(item*, float);
+  virtual void BeTalkedTo(character*);
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOGFLESH, Volume); }
 );
@@ -505,7 +506,7 @@ class CHARACTER
  public:
   virtual bool MoveRandomly();
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
@@ -519,7 +520,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
 );
 
 class CHARACTER
@@ -539,8 +540,8 @@ class CHARACTER
   virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHINFLESH, Volume); }
-  virtual uchar GetSpecialBodyPartFlags(ushort, ushort) const { return (RAND() % 8)&~FLIP; }
-  virtual void SpecialTurnHandler() { UpdateBodyPartPictures(); }
+  virtual uchar GetSpecialBodyPartFlags(ushort) const { return (RAND() % 8)&~FLIP; }
+  virtual void SpecialTurnHandler() { UpdatePictures(); }
 );
 
 class CHARACTER
@@ -578,8 +579,8 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
-  virtual ushort GetHairColor(ushort) const;
-  virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(112, (RAND() % 6) * 16); }
+  virtual ushort GetHairColor() const;
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) * 16); }
 );
 
 class CHARACTER
@@ -609,7 +610,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
  protected:
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is slain (again)."; }
 );
@@ -636,7 +637,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
 );
 
 class CHARACTER
@@ -701,14 +702,14 @@ class CHARACTER
   virtual bool AttachBodyPartsOfFriendsNear(); 
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() const { return HealTimer; }
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
  protected:
-  virtual ushort GetTorsoMainColor(ushort) const;
-  virtual ushort GetArmMainColor(ushort) const;
+  virtual ushort GetTorsoMainColor() const;
+  virtual ushort GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
   virtual void CreateCorpse() { SendToHell(); }
   virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
@@ -736,8 +737,11 @@ class CHARACTER
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
  protected:
+  virtual ushort GetTorsoMainColor() const;
+  virtual ushort GetArmMainColor() const;
+  virtual ushort GetLegMainColor() const;
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies smiling."; }
 );
 
@@ -759,9 +763,9 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool SpecialEnemySightedReaction(character*);
-  virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment(ushort);
  protected:
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   uchar Alignment;
 );
@@ -772,7 +776,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
  protected:
@@ -799,7 +803,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
-  virtual ushort GetTorsoSpecialColor(ushort) const { return RAND() % WHITE; } // the flower
+  virtual ushort GetTorsoSpecialColor() const { return RAND() % WHITE; } // the flower
   virtual void GetAICommand();
 );
 

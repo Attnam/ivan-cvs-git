@@ -88,7 +88,7 @@ Genie's strength.
 Items inside chests carried by player at death should be shown. (hex)
 Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
-Glitter effect.
+//Glitter effect.
 //Fire effect.
 Lightning effect.
 Flies over spoiling items effect.
@@ -103,20 +103,22 @@ Hit effects of thrown items.
 Applying wielded item should be possible.
 Vodka.
 //Splitting lines in highscores.
-Calamus and whip of Calamus should work together.
+//Calamus and whip of Calamus should work together.
 Treasure room to the right arm of the Cathedral.
 Artifact vault.
 Village and tunnel.
 Kick system should be checked. (timo)
-Kamikaze dwarves should be separated by colours.
+//Kamikaze dwarves should be separated by colours.
 Manual.
-Item possibilities. (timo)
+//Item possibilities. (timo)
 Skull. (hex)
-Wand of cloning. (hex)
+//Wand of cloning. (hex)
 Water should make gunpowder useless.
 Temporary invisibility should be cancelled if the character hits something.
-Applying a whistle should set the waypoint of all monsters in the level to point to the square under player.
+Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player.
 Prevent digging with broken pick-axe.
 Stethoscopre should show relative danger.
 Remove the school food effects of scabies (or make them a lot more seldom).
-
+Raven.
+Kicking chests.
+Prohibit spoiling in shops and on the cathedral floor.

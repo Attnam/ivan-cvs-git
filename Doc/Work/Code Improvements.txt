@@ -45,3 +45,4 @@ Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
 *Nimivälimuisti.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
 Charba.cpp:n resplittaus (controllit erilleen?).
+Lukufunktioden generalisoiminen.

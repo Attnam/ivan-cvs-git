@@ -42,11 +42,11 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-void oree::CreateInitialEquipment()
+void oree::CreateInitialEquipment(ushort SpecialFlags)
 {
-  humanoid::CreateInitialEquipment();
-  can* Can = new can(0, false);
-  Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330));
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  can* Can = new can(0, NOMATERIALS);
+  Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330), !(SpecialFlags & NOPICUPDATE));
   GetStack()->AddItem(Can);
 }
 
@@ -59,7 +59,7 @@ bool ennerbeast::Hit(character*)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
 	character* Char = GetNearSquare(x, y)->GetCharacter();
-	ushort ScreamStrength = 1000000 / GetHypotSquare(GetPos().X - x, GetPos().Y - y);
+	ushort ScreamStrength = 50 / (hypot(GetPos().X - x, GetPos().Y - y) + 1);
 
 	if(Char && Char != this)
 	  {
@@ -69,14 +69,14 @@ bool ennerbeast::Hit(character*)
 	      else
 		ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
 
-	    Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, 8, true);
+	    Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
 	    Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
 	  }
 
 	GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
 
-	for(ushort x = 0; x < 4; ++x)
-	  GetNearLSquare(x, y)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
+	for(ushort c = 0; c < 4; ++c)
+	  GetNearLSquare(x, y)->GetSideStack(c)->ReceiveDamage(this, ScreamStrength, SOUND);
       }
 
   EditNP(-100);
@@ -449,13 +449,7 @@ void petrus::BeTalkedTo(character* Talker)
 
 	  /* And now we actually make his face change color ;-) */
 
-	  if(GetHead()->GetMainMaterial()->IsFlesh())
-	    {
-	      std::vector<ushort>& SkinColor = ((flesh*)GetHead()->GetMainMaterial())->GetSkinColorVector();
-	      SkinColor.clear();
-	      SkinColor.push_back(MakeRGB(255, 75, 50));
-	    }
-
+	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB(255, 75, 50));
 	  GetHead()->UpdatePictures();
 	  GetSquareUnder()->SendNewDrawRequest();
 	  Talker->GetTeam()->Hostility(GetTeam());
@@ -819,10 +813,10 @@ void communist::BeTalkedTo(character* Talker)
     }
 }
 
-void communist::CreateInitialEquipment()
+void communist::CreateInitialEquipment(ushort SpecialFlags)
 {
-  humanoid::CreateInitialEquipment();
-  GetStack()->AddItem(new fiftymillionroubles);
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  GetStack()->AddItem(new fiftymillionroubles(0, SpecialFlags));
 }
 
 void hunter::BeTalkedTo(character* Talker)
@@ -961,13 +955,16 @@ bool elpuri::Hit(character* Enemy)
 	  character* ByStander = Square->GetCharacter();
 
 	  if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
-	    nonhumanoid::Hit(ByStander);
+	    {
+	      nonhumanoid::Hit(ByStander);
+	      ByStander->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
+	    }
 
-	  Square->GetStack()->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+	  Square->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
 
 	  for(ushort c = 0; c < 4; ++c)
 	    if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	      Square->GetSideStack(c)->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+	      Square->GetSideStack(c)->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
 	}
     }
 
@@ -1216,15 +1213,15 @@ void zombie::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }
 
-void mistress::CreateInitialEquipment()
+void mistress::CreateInitialEquipment(ushort SpecialFlags)
 {
-  humanoid::CreateInitialEquipment();
+  humanoid::CreateInitialEquipment(SpecialFlags);
 
   if(!(RAND() % 10))
-    GetStack()->AddItem(new banana);
+    GetStack()->AddItem(new banana(0, SpecialFlags));
 
   if(!(RAND() % 100))
-    GetStack()->AddItem(new holybanana);
+    GetStack()->AddItem(new holybanana(0, SpecialFlags));
 }
 
 void mistress::BeTalkedTo(character* Talker)
@@ -1247,31 +1244,31 @@ void angel::Load(inputfile& SaveFile)
   SaveFile >> HealTimer;
 }
 
-void angel::CreateInitialEquipment()
+void angel::CreateInitialEquipment(ushort SpecialFlags)
 {
-  humanoid::CreateInitialEquipment();
-  GetStack()->AddItem(new holybook(GetConfig()));
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  GetStack()->AddItem(new holybook(GetConfig(), SpecialFlags));
 
   switch(GetMasterGod()->BasicAlignment())
     {
     case GOOD:
-      SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(DIAMOND)));
-      SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(DIAMOND)));
+      SetMainWielded(new meleeweapon(LONGSWORD, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
+      SetBodyArmor(new bodyarmor(CHAINMAIL, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
       GetCWeaponSkill(LARGE_SWORDS)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
-      SetMainWielded(new meleeweapon(POLEAXE, MAKE_MATERIAL(SAPPHIRE)));
-      SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(SAPPHIRE)));
+      SetMainWielded(new meleeweapon(POLEAXE, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
+      SetBodyArmor(new bodyarmor(CHAINMAIL, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
       GetCWeaponSkill(AXES)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case EVIL:
       {
-	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, false);
-	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH));
+	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, NOMATERIALS);
+	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH), !(SpecialFlags & NOPICUPDATE));
 	SetMainWielded(SpikedMace);
-	SetBodyArmor(new bodyarmor(BROKEN|PLATEMAIL, MAKE_MATERIAL(RUBY)));
+	SetBodyArmor(new bodyarmor(BROKEN|PLATEMAIL, SpecialFlags, MAKE_MATERIAL(RUBY)));
 	GetCWeaponSkill(MACES)->AddHit(2000);
 	GetCurrentRightSWeaponSkill()->AddHit(2000);
 	break;
@@ -1314,10 +1311,10 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
     }
 }
 
-void kamikazedwarf::CreateInitialEquipment()
+void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
 {
-  SetRightWielded(new holybook(GetConfig()));
-  GetStack()->AddItem(new backpack);
+  SetRightWielded(new holybook(GetConfig(), SpecialFlags));
+  GetStack()->AddItem(new backpack(0, SpecialFlags));
   GetCWeaponSkill(UNCATEGORIZED)->AddHit(100);
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
@@ -1433,13 +1430,13 @@ bool unicorn::SpecialEnemySightedReaction(character*)
   return false;
 }
 
-void unicorn::CreateInitialEquipment()
+void unicorn::CreateInitialEquipment(ushort SpecialFlags)
 {
   if(RAND() & 1)
-    GetStack()->AddItem(new stone);
+    GetStack()->AddItem(new stone(0, SpecialFlags));
 
   if(RAND() & 1)
-    GetStack()->AddItem(new stone);
+    GetStack()->AddItem(new stone(0, SpecialFlags));
 }
 
 ushort humanoid::GetSize() const
@@ -1500,13 +1497,13 @@ bodypart* humanoid::MakeBodyPart(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return new humanoidtorso(0, false);
-    case HEADINDEX: return new head(0, false);
-    case RIGHTARMINDEX: return new rightarm(0, false);
-    case LEFTARMINDEX: return new leftarm(0, false);
-    case GROININDEX: return new groin(0, false);
-    case RIGHTLEGINDEX: return new rightleg(0, false);
-    case LEFTLEGINDEX: return new leftleg(0, false);
+    case TORSOINDEX: return new humanoidtorso(0, NOMATERIALS);
+    case HEADINDEX: return new head(0, NOMATERIALS);
+    case RIGHTARMINDEX: return new rightarm(0, NOMATERIALS);
+    case LEFTARMINDEX: return new leftarm(0, NOMATERIALS);
+    case GROININDEX: return new groin(0, NOMATERIALS);
+    case RIGHTLEGINDEX: return new rightleg(0, NOMATERIALS);
+    case LEFTLEGINDEX: return new leftleg(0, NOMATERIALS);
     default:
       ABORT("Weird bodypart to make for a humanoid. It must be your fault!");
       return 0;
@@ -1746,7 +1743,7 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
     Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleared automatically
 
   if(GetLeftArm())
-    Dig->SetRightBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
+    Dig->SetLeftBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
 
   DigItem->RemoveFromSlot();
   SetMainWielded(DigItem); // bug, this may change arm?
@@ -2063,46 +2060,46 @@ bool humanoid::HandleNoBodyPart(ushort Index)
     }
 }
 
-vector2d humanoid::GetBodyPartBitmapPos(ushort Index, ushort Frame)
+vector2d humanoid::GetBodyPartBitmapPos(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoBitmapPos(Frame);
-    case HEADINDEX: return GetHeadBitmapPos(Frame);
-    case RIGHTARMINDEX: return GetRightArmBitmapPos(Frame);
-    case LEFTARMINDEX: return GetLeftArmBitmapPos(Frame);
-    case GROININDEX: return GetGroinBitmapPos(Frame);
-    case RIGHTLEGINDEX: return GetRightLegBitmapPos(Frame);
-    case LEFTLEGINDEX: return GetLeftLegBitmapPos(Frame);
+    case TORSOINDEX: return GetTorsoBitmapPos();
+    case HEADINDEX: return GetHeadBitmapPos();
+    case RIGHTARMINDEX: return GetRightArmBitmapPos();
+    case LEFTARMINDEX: return GetLeftArmBitmapPos();
+    case GROININDEX: return GetGroinBitmapPos();
+    case RIGHTLEGINDEX: return GetRightLegBitmapPos();
+    case LEFTLEGINDEX: return GetLeftLegBitmapPos();
     default:
       ABORT("Weird bodypart BitmapPos request for a humanoid!");
       return vector2d();
     }
 }
 
-ushort humanoid::GetBodyPartColorB(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorB(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoMainColor(Frame);
-    case HEADINDEX: return GetCapColor(Frame);
+    case TORSOINDEX: return GetTorsoMainColor();
+    case HEADINDEX: return GetCapColor();
     case RIGHTARMINDEX:
-    case LEFTARMINDEX: return GetArmMainColor(Frame);
+    case LEFTARMINDEX: return GetArmMainColor();
     case GROININDEX:
     case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return GetLegMainColor(Frame);
+    case LEFTLEGINDEX: return GetLegMainColor();
     default:
       ABORT("Weird bodypart color B request for a humanoid!");
       return 0;
     }
 }
 
-ushort humanoid::GetBodyPartColorC(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorC(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetBeltColor(Frame);
-    case HEADINDEX: return GetHairColor(Frame);
+    case TORSOINDEX: return GetBeltColor();
+    case HEADINDEX: return GetHairColor();
     case RIGHTARMINDEX:
     case LEFTARMINDEX:
     case GROININDEX:
@@ -2114,17 +2111,17 @@ ushort humanoid::GetBodyPartColorC(ushort Index, ushort Frame)
     }
 }
 
-ushort humanoid::GetBodyPartColorD(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorD(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoSpecialColor(Frame);
-    case HEADINDEX: return GetEyeColor(Frame);
+    case TORSOINDEX: return GetTorsoSpecialColor();
+    case HEADINDEX: return GetEyeColor();
     case RIGHTARMINDEX:
-    case LEFTARMINDEX: return GetArmSpecialColor(Frame);
+    case LEFTARMINDEX: return GetArmSpecialColor();
     case GROININDEX:
     case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return GetLegSpecialColor(Frame);
+    case LEFTLEGINDEX: return GetLegSpecialColor();
     default:
       ABORT("Weird bodypart color D request for a humanoid!");
       return 0;
@@ -2198,10 +2195,10 @@ void communist::VirtualConstructor(bool Load)
     SetAssignedName("Ivan");
 }
 
-void unicorn::CreateBodyParts()
+void unicorn::CreateBodyParts(ushort SpecialFlags)
 {
   SetAlignment(RAND() % 3);
-  character::CreateBodyParts();
+  character::CreateBodyParts(SpecialFlags);
 }
 
 void human::Save(outputfile& SaveFile) const
@@ -2911,11 +2908,11 @@ bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
   return true;
 }
 
-void hunter::CreateBodyParts()
+void hunter::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
     if(c != LEFTARMINDEX)
-      CreateBodyPart(c);
+      CreateBodyPart(c, SpecialFlags);
     else
       SetLeftArm(0);
 }
@@ -3183,35 +3180,50 @@ bool snake::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmou
     return false;
 }
 
-ushort angel::GetTorsoMainColor(ushort) const
+ushort angel::GetTorsoMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort angel::GetArmMainColor(ushort) const
+ushort angel::GetArmMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-void angel::CreateBodyParts()
+ushort kamikazedwarf::GetTorsoMainColor() const
+{
+  return GetMasterGod()->GetColor();
+}
+
+ushort kamikazedwarf::GetArmMainColor() const
+{
+  return GetMasterGod()->GetColor();
+}
+
+ushort kamikazedwarf::GetLegMainColor() const
+{
+  return GetMasterGod()->GetColor();
+}
+
+void angel::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
     if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
       SetBodyPart(c, 0);
     else
-      CreateBodyPart(c);
+      CreateBodyPart(c, SpecialFlags);
 }
 
-void genie::CreateBodyParts()
+void genie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
     if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
       SetBodyPart(c, 0);
     else
-      CreateBodyPart(c);
+      CreateBodyPart(c, SpecialFlags);
 }
 
-ushort housewife::GetHairColor(ushort) const
+ushort housewife::GetHairColor() const
 {
   static ushort HouseWifeHairColor[] = { MakeRGB(48, 40, 8), MakeRGB(60, 48, 24),  MakeRGB(200, 0, 0) };
   return HouseWifeHairColor[RAND() % 3];
@@ -3420,22 +3432,29 @@ material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
 
 item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 {
-  bone* Bone = new bone(0, false);
+  bone* Bone = new bone(0, NOMATERIALS);
   item* BodyPart = GetBodyPart(BodyPartIndex);
   Bone->InitMaterials(BodyPart->GetContainedMaterial());
-  BodyPart->SetContainedMaterial(0);
+  BodyPart->SetContainedMaterial(0, NOPICUPDATE);
   BodyPart->SendToHell();
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
   CalculateBattleInfo();
+
+  if(StuckToBodyPart == BodyPartIndex)
+    {
+      StuckToBodyPart = NONEINDEX;
+      StuckTo = 0;
+    }
+
   return Bone;  
 }
 
-void zombie::CreateBodyParts()
+void zombie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
     if(BodyPartVital(c) || RAND() % 3)
-      CreateBodyPart(c);
+      CreateBodyPart(c, SpecialFlags);
 }
 
 void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
@@ -3448,13 +3467,13 @@ void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
 
 #define INSTANTIATE(name)\
 {\
-  item* name = DataBase->name.Instantiate();\
+  item* name = DataBase->name.Instantiate(SpecialFlags);\
   \
   if(name)\
     Set##name(name);\
 }\
 
-void humanoid::CreateInitialEquipment()
+void humanoid::CreateInitialEquipment(ushort SpecialFlags)
 {
   INSTANTIATE(Helmet);
   INSTANTIATE(Amulet);
@@ -3635,4 +3654,12 @@ float kamikazedwarf::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
     return 1000;
   else
     return humanoid::GetTimeToKill(Enemy, UseMaxHP) * HPAfterExplosion / HP;
+}
+
+void dog::BeTalkedTo(character* Char)
+{
+  if(RAND() % 100)
+    character::BeTalkedTo(Char);
+  else
+    ADD_MESSAGE("\"Can't you understand I can't speak?\"");
 }

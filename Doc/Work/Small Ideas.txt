@@ -302,3 +302,6 @@ Bleeding bodypart state.
 It should be possible for a critical hit to sever a lump flesh.
 If a mine in the inventory is active, it should be displayed somehow.
 Non-living bodyparts should be immune to poison.
+Gold golems should be immune to acid.
+Mommos should do acid damage.
+"Character attributes" option to secret knowledge.

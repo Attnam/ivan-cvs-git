@@ -1,3 +1,62 @@
+August 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Equipment is now dropped correctly after Sophos teleport a bodypart away
+	* Corrected a bug that caused dogs catching bones to crash
+	* Added "magic whistle" alias for magical whistle
+	* Magical whistle now prints a message when blown
+	* Removed rings of energy and acid resistance, as they were completely useless
+	* Doubled all block values (is this too much?)
+	* Scroll of change material reading can now be cancelled
+	* Bodypart healing is now faster
+	* Rest command cannot be used anymore if only non-alive bodyparts are hurt
+	* Rest command is now terminated if only non-alive bodyparts are hurt
+	* Female slaves again wield palm branches
+	* Sparkle effect time doesn't anymore need to equal 0 mod 16, and their
+	  position and timing varies depending on class instance
+	* SparklePos now prefers the middle parts of the picture, since clipping
+	  the sparkle isn't really aesthetic
+	* Far away stacks can now be 'l'ooked at if SeeWholeMapCheat is active,
+	  and full information about their items is shown
+	* Corrected a fatal bug that caused the breaking of wielded potions to crash
+	* Added weapon and armor enchantments (the +x thing)
+	* Added scrolls of enchant weapon and enchant armor
+	* '?' screen is now easier to read in WMode
+	* Corrected a bug that caused incorrect SS levels to be printed in the inventory
+	* Horn and flail pictures added to Item.pcx by Kahvi
+
+August 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Sparkling now works with all items made of sparkling material
+	* Sparkle effect is now less frequent
+	* All prices are now more or less correct
+	* Valpurus now gives a valpurium two-handed sword, not a curved one
+	  (old effect was a bit too powerful...)
+	* Loricatus now changes things to steel, not mithril (same as above)
+	* UpdatePictures() is now not called when creating temporary monsters
+	  and equipment for danger calculations
+	* Iterative UpdatePictures() calls are now less common
+	* Reduced enner beast's damage by 99.99%
+	* Kicking works a bit better now
+	* Wand of locking works again
+	* Quest artifacts no longer spoil
+	* Adjusted bear trap damage a little
+	* Offer values now depend on price
+	* Cleptia now hastes/slows the player instead of increasing/decreasing
+	  his agility
+	* Name length is again limited
+	* Removed bodypart animation structures, as they weren't used and were
+	  already outdated
+	* The game crashes no more when an item spoils when it's currently being
+	  eating
+	* Wolves are now easier
+	* The dungeon shop now appears before the wolf level
+	* The dungeon shop has now more useful items for sale
+	* Vomiting in the world map no longer crashes
+	* Digging doesn't destroy your weapon anymore if both hands are full
+	* Decreased difficulty in general
+	* Probably much that I have forgotten (night coder in a hurry has a poor
+	  memory)
+
 August 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Kamikaze dwarves now die in the initial explosion

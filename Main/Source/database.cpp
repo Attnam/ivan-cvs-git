@@ -226,7 +226,6 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
 
   ANALYZEDATA(Possibility);
   ANALYZEDATA(InHandsPic);
-  ANALYZEDATA(OfferModifier);
   ANALYZEDATA(Score);
   ANALYZEDATA(IsDestroyable);
   ANALYZEDATA(CanBeWished);
@@ -362,7 +361,6 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(StrengthValue);
   ANALYZEDATA(ConsumeType);
   ANALYZEDATA(Density);
-  ANALYZEDATA(OfferModifier);
   ANALYZEDATA(Color);
   ANALYZEDATA(PriceModifier);
   ANALYZEDATA(IsSolid);

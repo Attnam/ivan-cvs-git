@@ -124,6 +124,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
+      game::GetCurrentLevel()->FiatLux();
       game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
       game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
@@ -194,10 +195,11 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       if(game::GetCurrent() == 8)
 	Who->GetLSquareUnder()->ChangeLTerrain(new solidterrain(PARQUET), new empty);
 
-      GetLevelUnder()->RemoveCharacter(Who->GetPos());
+      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
+      game::GetCurrentLevel()->FiatLux();
       game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
       game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 
@@ -232,14 +234,14 @@ void door::BeKicked(character*, ushort KickDamage)
 {
   if(!IsWalkable()) 
     {
-      if(!IsLocked() && KickDamage > RAND() % 5)
+      if(!IsLocked() && KickDamage > RAND() % 3)
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The door opens.");
 
 	  MakeWalkable();
 	}
-      else if(KickDamage > RAND() % 10)
+      else if(KickDamage > RAND() % 6)
 	{
 	  if(IsLocked() && RAND() & 1)	// _can't really think of a good formula for this... 
 	    {				//Strength isn't everything
@@ -479,19 +481,14 @@ bool fountain::Drink(character* Drinker)
 	      if(RAND() % 10)
 		{
 		  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
-		  if(!Drinker->ActivateRandomState(200 + RAND() % 300))
-		    {
-		      DryOut();
-		    }
+		  Drinker->ActivateRandomState(2000 + RAND() % 3000);
 		}
 	      else
 		{
 		  ADD_MESSAGE("This water tastes very odd.");
+
 		  if(!Drinker->GainRandomInstric())
-		    {
-		      ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
-		      DryOut();
-		    }
+		    ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
 		}
 	      break;
 	    default:
@@ -521,7 +518,6 @@ void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CHARNAME(DEFINITE));
   ChangeContainedMaterial(0);
-  UpdatePictures();
 
   if(GetLSquareUnder())
     {
@@ -535,7 +531,7 @@ void brokendoor::BeKicked(character*, ushort KickDamage)
   if(!IsWalkable())
     if(IsLocked())
       {
-	if(KickDamage > RAND() % 5)
+	if(KickDamage > RAND() % 3)
 	  {
 	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The door opens from the force of your kick.");
@@ -543,7 +539,7 @@ void brokendoor::BeKicked(character*, ushort KickDamage)
 	    SetIsLocked(false);
 	    MakeWalkable();
 	  }
-	else if(KickDamage > RAND() % 5)
+	else if(KickDamage > RAND() % 3)
 	  {
 	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The lock breaks from the force of your kick.");
@@ -555,7 +551,7 @@ void brokendoor::BeKicked(character*, ushort KickDamage)
 	    ADD_MESSAGE("The door won't budge!");
       }
     else
-      if(KickDamage > RAND() % 5)
+      if(KickDamage > RAND() % 3)
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The broken door opens.");
@@ -736,13 +732,14 @@ void door::Break()
   else
     {
       bool Open = Opened;
-      brokendoor* Temp = new brokendoor(0, false);
+      brokendoor* Temp = new brokendoor(0, NOMATERIALS);
       Temp->InitMaterials(GetMainMaterial());
-      SetMainMaterial(0);
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
+      SetMainMaterial(0, NOPICUPDATE);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
+
       if(Open)
 	Temp->MakeWalkable();
       else 
@@ -902,5 +899,10 @@ void liquidterrain::VirtualConstructor(bool Load) // gum solution
 fountain::~fountain()
 {
   delete ContainedMaterial;
+}
+
+bool fountain::IsSparkling(ushort ColorIndex) const
+{
+  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
 }
 

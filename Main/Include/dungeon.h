@@ -20,7 +20,7 @@ class dungeon
   dungeon() { }
   dungeon(uchar);
   ~dungeon();
-  void PrepareLevel(ushort = game::GetCurrent());
+  void PrepareLevel(ushort = game::GetCurrent(), bool = true);
   void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent(), bool = true);
   void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent());
   level* GetLevel(ushort Index) const { return Level[Index]; }

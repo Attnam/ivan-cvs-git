@@ -250,6 +250,7 @@ class game
   static bool Generating;
   static dangermap DangerMap;
   static configid NextDangerId;
+  static bool BusyAnimationDisabled;
 };
 
 #endif

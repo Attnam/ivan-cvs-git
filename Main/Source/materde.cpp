@@ -19,7 +19,7 @@ MATERIAL_PROTOTYPE(material, 0);
 
 void organicsubstance::Be()
 {
-  if(MotherEntity->AllowSpoil() && (SpoilCounter += 10) > GetSpoilModifier())
+  if(MotherEntity->AllowSpoil() && ++SpoilCounter > GetSpoilModifier())
     MotherEntity->SignalSpoil(this);
 }
 

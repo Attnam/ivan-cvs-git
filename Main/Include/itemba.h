@@ -29,7 +29,6 @@ struct itemdatabase
   void InitDefaults(ushort);
   ushort Possibility;
   vector2d InHandsPic;
-  ulong OfferModifier;
   long Score;
   bool IsDestroyable;
   bool CanBeWished;
@@ -89,8 +88,8 @@ class itemprototype
 {
  public:
   friend class database<item>;
-  itemprototype(itemprototype*, item* (*)(ushort, bool, bool), const std::string&);
-  item* Clone(ushort Config = 0, bool CallGenerateMaterials = true) const { return Cloner(Config, CallGenerateMaterials, false); }
+  itemprototype(itemprototype*, item* (*)(ushort, ushort), const std::string&);
+  item* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   item* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
@@ -103,7 +102,7 @@ class itemprototype
   ushort Index;
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
-  item* (*Cloner)(ushort, bool, bool);
+  item* (*Cloner)(ushort, ushort);
   std::string ClassId;
 };
 
@@ -177,6 +176,8 @@ class item : public object
   static bool GauntletSorter(item* Item, const character* Char) { return Item->IsGauntlet(Char); }
   static bool BeltSorter(item* Item, const character* Char) { return Item->IsBelt(Char); }
   static bool BootSorter(item* Item, const character* Char) { return Item->IsBoot(Char); }
+  static bool WeaponSorter(item* Item, const character* Char) { return Item->IsWeapon(Char); }
+  static bool ArmorSorter(item* Item, const character* Char) { return Item->IsArmor(Char); }
   virtual bool IsConsumable(const character*) const;
   virtual bool IsEatable(const character*) const;
   virtual bool IsDrinkable(const character*) const;
@@ -196,6 +197,8 @@ class item : public object
   virtual bool IsBelt(const character*) const { return false; }
   virtual bool IsBoot(const character*) const { return false; }
   virtual bool IsShield(const character*) const { return false; }
+  virtual bool IsWeapon(const character*) const { return false; }
+  virtual bool IsArmor(const character*) const { return false; }
   virtual bool IsOnGround() const { return GetSlot()->IsOnGround(); }
   virtual ushort GetResistance(uchar) const;
   virtual void GenerateLeftOvers(character*);
@@ -213,7 +216,6 @@ class item : public object
   virtual bool IsWhip() const { return false; }
   virtual DATABASEVALUE(ushort, Possibility);
   virtual DATABASEVALUE(vector2d, InHandsPic);
-  virtual DATABASEVALUE(ulong, OfferModifier);
   virtual DATABASEVALUE(long, Score);
   virtual DATABASEBOOL(IsDestroyable);
   virtual DATABASEBOOL(CanBeWished);
@@ -261,14 +263,12 @@ class item : public object
   virtual DATABASEVALUEWITHPARAMETER(vector2d, WallBitmapPos, ushort);
   virtual DATABASEVALUE(const std::string&, FlexibleNameSingular);
   virtual DATABASEBOOL(CanBePiled);
-  static item* Clone(ushort, bool, bool) { return 0; }
+  static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
-  virtual uchar GetVisualEffects() const { return VisualEffects; }
-  virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
-  virtual ulong GetBlockModifier(const character*) const;
+  virtual ulong GetBlockModifier() const;
   virtual bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
@@ -297,7 +297,7 @@ class item : public object
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(GetWeaponStrength() * 3 / 20000); }
   ushort GetBaseMaxDamage() const { return ushort(GetWeaponStrength() * 5 / 20000 + 1); }
-  ushort GetBaseBlockValue(const character* Char) const { return ushort(12.5f * GetBlockModifier(Char) / (2500 + float(GetWeight() - 500))); }
+  ushort GetBaseBlockValue() const { return ushort(12.5f * GetBlockModifier() / (2500 + float(GetWeight() - 500))); }
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
@@ -314,13 +314,17 @@ class item : public object
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break();
   void Empty();
+  virtual void EditEnchantment(char) { }
+  void SignalAttackInfoChange();
+  virtual float GetToHitValueBonus() const { return 1.0f; }
+  virtual float GetAPBonus() const { return 1.0f; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
-  void Initialize(ushort, bool, bool);
+  void Initialize(ushort, ushort);
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
   virtual bool ShowMaterial() const;
   slot* Slot;
   bool Cannibalised;
@@ -343,12 +347,11 @@ class item : public object
 name : public base\
 {\
  public:\
-  name(ushort Config = 0, bool CallGenerateMaterials = true, bool Load = false) : base(donothing()) { Initialize(Config, CallGenerateMaterials, Load); }\
-  name(ushort Config, material* FirstMaterial) : base(donothing()) { Initialize(Config, true, false); SetMainMaterial(FirstMaterial); }\
-  name(material* FirstMaterial) : base(donothing()) { Initialize(0, true, false); SetMainMaterial(FirstMaterial); }\
+  name(ushort Config = 0, ushort SpecialFlags = 0) : base(donothing()) { Initialize(Config, SpecialFlags); }\
+  name(ushort Config, ushort SpecialFlags, material* FirstMaterial) : base(donothing()) { Initialize(Config, SpecialFlags); SetMainMaterial(FirstMaterial, SpecialFlags & NOPICUPDATE); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
-  static item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
+  static item* Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
  protected:\
   virtual item* RawDuplicate() const { return new name(*this); }\
   static itemprototype name##_ProtoType;\
@@ -362,7 +365,7 @@ name : public base\
  public:\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
-  static item* Clone(ushort, bool, bool) { return 0; }\
+  static item* Clone(ushort, ushort) { return 0; }\
  protected:\
   static prototype name##_ProtoType;\
   data\

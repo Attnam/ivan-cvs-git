@@ -776,7 +776,21 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
     }
 
   if(SquareScript->GetItem(false))
-    GetStack()->AddItem(SquareScript->GetItem()->Instantiate());
+    {
+      stack* Stack;
+      item* Item = SquareScript->GetItem()->Instantiate();
+      uchar* SideStackIndex = SquareScript->GetItem()->GetSideStackIndex(false);
+
+      if(!SideStackIndex)
+	Stack = GetStack();
+      else
+	{
+	  Item->SignalSquarePositionChange(*SideStackIndex);
+	  Stack = GetSideStack(*SideStackIndex);
+	}
+
+      Stack->AddItem(Item);
+    }
 
   if(SquareScript->GetGTerrain(false))
     ChangeGLTerrain(SquareScript->GetGTerrain()->Instantiate());
@@ -1092,7 +1106,7 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
 
 bool lsquare::LockEverything(character*)
 {
-  if(GetOLTerrain()->IsLocked())
+  if(!GetOLTerrain()->IsLocked())
     {
       GetOLTerrain()->Lock();
       return true;

@@ -11,7 +11,8 @@
 #include "whandler.h"
 #include "festring.h"
 #include "colorbit.h"
-object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects), AnimationFrames(Object.AnimationFrames)
+
+object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects)
 {
   CopyMaterial(Object.MainMaterial, MainMaterial);
 }
@@ -45,9 +46,10 @@ void object::Load(inputfile& SaveFile)
 {
   SaveFile >> GraphicId >> Config >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
-  Picture.resize(GraphicId.size());
+  AnimationFrames = GraphicId.size();
+  Picture.resize(AnimationFrames);
 
-  for(ushort c = 0; c < GraphicId.size(); ++c)
+  for(ushort c = 0; c < AnimationFrames; ++c)
     Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
 }
 
@@ -98,12 +100,12 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
     }
 }
 
-void object::ChangeMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+void object::ChangeMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume, ushort SpecialFlags)
 {
-  delete SetMaterial(Material, NewMaterial, DefaultVolume);
+  delete SetMaterial(Material, NewMaterial, DefaultVolume, SpecialFlags);
 }
 
-material* object::SetMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+material* object::SetMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume, ushort SpecialFlags)
 {
   material* OldMaterial = Material;
   Material = NewMaterial;
@@ -133,12 +135,51 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
     SignalEmitationDecrease(OldMaterial->GetEmitation());
 
   SignalVolumeAndWeightChange();
-  UpdatePictures();
+
+  if(!(SpecialFlags & NOPICUPDATE))
+    UpdatePictures();
+
   return OldMaterial;
 }
 
 void object::UpdatePictures()
 {
+  AnimationFrames = GetClassAnimationFrames();
+  vector2d SparklePos;
+  uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
+  uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
+  uchar SparkleTime;
+  bool Sparkling = false;
+
+  if(!(SpecialFlags & STFLAME))
+    {
+      bool MColorSparkling[4] = { false, false, false, false };
+
+      for(ushort c = 0; c < 4; ++c)
+	if(IsSparkling(c))
+	  Sparkling = MColorSparkling[c] = true;
+
+      if(Sparkling)
+	{
+	  static ushort SeedModifier = 0;
+	  long NewSeed = RAND(); 
+	  vector2d BPos = GetBitmapPos(0);
+	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
+
+	  if(++SeedModifier == 0x10)
+	    SeedModifier = 0;
+
+	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(BPos, vector2d(16, 16), MColorSparkling);
+	  SparkleTime = ((RAND() & 3) << 5) + (RAND() & 0xF);
+	  femath::SetSeed(NewSeed);
+
+	  if(AnimationFrames < 128)
+	    AnimationFrames = 128;
+	}
+    }
+  else if(AnimationFrames < 16)
+    AnimationFrames = 16;
+
   ushort c;
 
   for(c = 0; c < GraphicId.size(); ++c)
@@ -146,12 +187,7 @@ void object::UpdatePictures()
 
   GraphicId.resize(AnimationFrames);
   Picture.resize(AnimationFrames);
-  bool Sparkling[4];
 
-  for(c = 0; c < 4; ++c)
-    Sparkling[c] = IsSparkling(c);
-
-  vector2d SparklePos = igraph::GetRawGraphic(GetGraphicsContainerIndex(0))->RandomizeSparklePos(GetBitmapPos(0), vector2d(16,16), Sparkling); 
   for(c = 0; c < GraphicId.size(); ++c)
     {
       GraphicId[c].Color[0] = GetMaterialColorA(c);
@@ -187,10 +223,12 @@ void object::UpdatePictures()
 	GraphicId[c].Alpha[3] = MaxAlpha;
 
       GraphicId[c].BitmapPos = GetBitmapPos(c);
-      GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
-      GraphicId[c].SpecialFlags = (GetVisualEffects() & 0x7)|GetSpecialFlags(c);
+      GraphicId[c].FileIndex = GraphicsContainerIndex;
+      GraphicId[c].SpecialFlags = SpecialFlags;
       GraphicId[c].Frame = c;
-      GraphicId[c].SparklePos = SparklePos;
+      GraphicId[c].SparklePos = Sparkling && c >= SparkleTime && c < SparkleTime + 16 ? SparklePos : BITMAP_ERROR_VECTOR;
+      GraphicId[c].SparkleTime = SparkleTime;
+      GraphicId[c].OutlineColor = GetOutlineColor(c);
       Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
     }
 }
@@ -222,22 +260,22 @@ void object::AddLumpyPostFix(std::string& String) const
     GetMainMaterial()->AddName(String << " of ");
 }
 
-void object::SetSecondaryMaterial(material*)
+void object::SetSecondaryMaterial(material*, ushort)
 {
   ABORT("Illegal object::SetSecondaryMaterial call!");
 }
 
-void object::ChangeSecondaryMaterial(material*)
+void object::ChangeSecondaryMaterial(material*, ushort)
 {
   ABORT("Illegal object::ChangeSecondaryMaterial call!");
 }
 
-void object::SetContainedMaterial(material*)
+void object::SetContainedMaterial(material*, ushort)
 {
   ABORT("Illegal object::SetContainedMaterial call!");
 }
 
-void object::ChangeContainedMaterial(material*)
+void object::ChangeContainedMaterial(material*, ushort)
 {
   ABORT("Illegal object::ChangeContainedMaterial call!");
 }
@@ -361,5 +399,23 @@ bool object::CalculateHasBe() const
 
 bool object::IsSparkling(ushort ColorIndex) const
 {
-  return (GetMaterial(ColorIndex) && GetMaterial(ColorIndex)->IsSparkling());
+  return !ColorIndex && MainMaterial->IsSparkling();
 }
+
+/*void object::CalculateAnimationFrames()
+{
+  InitAnimationFrames();
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->GetAnimationFrames() > AnimationFrames && AllowSparkling())
+      AnimationFrames = GetMaterial(c)->GetAnimationFrames();
+}
+
+void object::InitAnimationFrames()
+{
+  AnimationFrames = GetClassAnimationFrames();
+
+  if(AnimationFrames < 16 && GetSpecialFlags() & FLAME)
+    AnimationFrames = 16;
+}*/
+

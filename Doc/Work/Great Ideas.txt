@@ -16,7 +16,7 @@ Smithing.
 Ghost-Überpriests.
 Thougth Control.
 Microwave oven.
-Different types of item enchantments.
+Different types of item enchantments. (like what?)
 (r) Random gods.
 Ego monsters. (also named ones)
 Monster, item and god memories.
@@ -44,5 +44,7 @@ Intergame pets.
 Player god.
 Different holy water effects for each god.
 Camera.
-Monolith somewhere.
+Monolith.
 Elevetor.
+Plaque epidemic.
+Swedish educator.

@@ -14,10 +14,10 @@ class GWTERRAIN
   ocean,
   gwterrain,
  public:
-  virtual void VirtualConstructor(bool) { SetAnimationFrames(16); }
+  virtual void VirtualConstructor(bool) { SetAnimationFrames(32); }
   virtual std::string GetNameStem() const { return "ocean"; }
   virtual bool LongerArticle() const { return true; }
-  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(32 + Frame * 16, 160); }
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(32 + ((Frame << 3)&~8), 160); }
   virtual uchar Priority() const { return 10; }
   virtual bool IsWalkable(const character*) const;
   virtual std::string SurviveMessage() const { return "you manage to reach the shore"; }

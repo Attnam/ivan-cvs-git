@@ -64,7 +64,7 @@ void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 100000));
+  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 50000));
   Volume -= Amount;
 }
 
@@ -99,7 +99,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     }
 }
 
-long material::GetOfferValue(char GodAlignment) const
+/*long material::GetOfferValue(char GodAlignment) const
 {
   long Value = 0;
 
@@ -123,7 +123,7 @@ long material::GetOfferValue(char GodAlignment) const
     Value += GetVolume() * GetOfferModifier();
 
   return Value;
-}
+}*/
 
 material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
 {

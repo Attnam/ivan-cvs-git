@@ -31,19 +31,19 @@ class object : public entity, public id
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void InitMaterials(material*, bool = true);
-  void UpdatePictures();
+  virtual void UpdatePictures();
   material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
-  void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
-  virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
-  virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
-  virtual void SetSecondaryMaterial(material*);
-  virtual void ChangeSecondaryMaterial(material*);
-  virtual void SetContainedMaterial(material*);
-  virtual void ChangeContainedMaterial(material*);
+  void SetMainMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+  void ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+  virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMainMaterial(NewMaterial, SpecialFlags); }
+  virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
+  virtual void SetSecondaryMaterial(material*, ushort = 0);
+  virtual void ChangeSecondaryMaterial(material*, ushort = 0);
+  virtual void SetContainedMaterial(material*, ushort = 0);
+  virtual void ChangeContainedMaterial(material*, ushort = 0);
   virtual uchar GetMaterials() const { return 1; }
   material* GetMaterial(ushort Index) const { return const_cast<object*>(this)->GetMaterialReference(Index); }
   const std::vector<bitmap*>& GetPicture() const { return Picture; }
@@ -51,8 +51,8 @@ class object : public entity, public id
   virtual ushort GetBaseEmitation() const { return 0; }
   virtual void SetParameters(uchar) { }
   virtual uchar GetOKVisualEffects() const { return 0; }
-  virtual uchar GetVisualEffects() const { return VisualEffects; }
-  virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
+  uchar GetVisualEffects() const { return VisualEffects; }
+  void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual uchar GetForcedVisualEffects() const { return 0; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
   bool IsAnimated() const { return AnimationFrames > 1; }
@@ -67,8 +67,8 @@ class object : public entity, public id
   virtual void CalculateAll() = 0;
   virtual bool HasSecondaryMaterial() const { return false; }
   virtual bool HasContainedMaterial() const { return false; }
-  virtual bool IsSparkling(ushort) const;
  protected:
+  virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
   virtual material*& GetMaterialReference(ushort) { return MainMaterial; }
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -77,11 +77,11 @@ class object : public entity, public id
   virtual ulong GetDefaultSecondaryVolume() const { return 0; }
   virtual ulong GetDefaultContainedVolume() const { return 0; }
   void InitMaterial(material*&, material*, ulong);
-  material* SetMaterial(material*&, material*, ulong);
-  void ChangeMaterial(material*&, material*, ulong);
+  material* SetMaterial(material*&, material*, ulong, ushort);
+  void ChangeMaterial(material*&, material*, ulong, ushort);
   bool CalculateHasBe() const;
-  virtual uchar GetSpecialFlags(ushort) const { return STNORMAL; }
-  virtual uchar GetGraphicsContainerIndex(ushort) const = 0;
+  virtual uchar GetSpecialFlags() const { return STNORMAL; }
+  virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }
   virtual ushort GetMaterialColorC(ushort) const { return 0; }
@@ -92,11 +92,13 @@ class object : public entity, public id
   virtual uchar GetAlphaB(ushort) const { return 255; }
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
+  virtual ushort GetOutlineColor(ushort) const { return TRANSPARENTCOL; }
   virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
   virtual void InstallDataBase() = 0;
+  virtual ushort GetClassAnimationFrames() const { return 1; }
   void AddContainerPostFix(std::string&) const;
   void AddLumpyPostFix(std::string&) const;
   bool AddEmptyAdjective(std::string&, bool) const;

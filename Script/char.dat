@@ -149,7 +149,6 @@ petrus
 	LegBitmapPos = 0, 0;
 	TotalVolume = 80000;
 	TotalSize = 225;
-	BaseEmitation = 333;
 	CanRead = true;
 	NameSingular = "high priest";
 	PostFix = "of the Great Frog";
@@ -158,7 +157,7 @@ petrus
 	Alias == "Petrus";
 	Amulet = amulet(AMULETOFLIFESAVING);
 	BodyArmor = DIAMOND bodyarmor(PLATEMAIL);
-	RightWielded = valpurusjustifier;
+	RightWielded = justifier;
 	RightRing = ring(RINGOFFIRERESISTANCE);
 	LeftRing = ring(RINGOFPOISONRESISTANCE);
 	RightBoot = GOLD boot(BOOTOFSPEED);
@@ -391,6 +390,7 @@ darkknight
 		BodyArmor = IRON bodyarmor(CHAINMAIL);
 		RightWielded = IRON IRON meleeweapon(LONGSWORD);
 		LeftWielded = IRON shield;
+		AdjectiveArticle = "an";
 		Adjective = "elite";
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
@@ -758,9 +758,9 @@ golem
 
 wolf
 {
-	DefaultArmStrength = 10;
+	DefaultArmStrength = 7;
 	DefaultAgility = 25;
-	DefaultEndurance = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 24;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
@@ -784,7 +784,7 @@ dog
 {
 	DefaultArmStrength = 5;
 	DefaultAgility = 20;
-	DefaultEndurance = 10;
+	DefaultEndurance = 7;
 	DefaultPerception = 21;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
@@ -1169,6 +1169,7 @@ femaleslave
 	TotalSize = 170;
 	Adjective = "female";
 	NameSingular = "slave";
+	RightWielded = palmbranch;
 }
 
 librarian
@@ -1626,8 +1627,8 @@ kamikazedwarf
 	ArmBitmapPos = 80, 0;
 	LegBitmapPos = 0, 208;
 	HairColor = rgb(144, 72, 0);
-	ClothColor = rgb(72, 56, 16);
-	BeltColor = rgb(64, 64, 64);
+	BeltColor = rgb(72, 56, 16);
+	/*BeltColor = rgb(64, 64, 64);*/
 	TotalVolume = 60000;
 	TotalSize = 130;
 	CanRead = true;

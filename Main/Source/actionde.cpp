@@ -86,10 +86,16 @@ void consume::Handle()
 	if(game::BoolQuestion("Continue " + GetDescription() + "? [y/N]"))
 	  SetInDNDMode(true);
 	else
-	  Terminate(false);
+	  {
+	    Terminate(false);
+	    return;
+	  }
       }
     else
-      Terminate(false);
+      {
+	Terminate(false);
+	return;
+      }
 
   SetHasEaten(true);
 
@@ -104,9 +110,9 @@ void consume::Terminate(bool Finished)
   if(Finished)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You finish %s %s.", Description.c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str(), Consuming->CHARNAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -116,9 +122,9 @@ void consume::Terminate(bool Finished)
   else if(*Consuming)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You stop %s %s.", Description.c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str(), Consuming->CHARNAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -131,9 +137,9 @@ void consume::Terminate(bool Finished)
   else
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s.", Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("You stop %s.", Description.c_str());
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str());
     }
 
   action::Terminate(Finished);
@@ -167,7 +173,7 @@ void rest::Load(inputfile& SaveFile)
 
 void rest::Handle()
 {
-  if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP())
+  if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP() || !GetActor()->CanHeal())
     Terminate(true);
   else
     {

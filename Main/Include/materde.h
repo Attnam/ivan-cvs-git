@@ -47,11 +47,11 @@ class MATERIAL
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual std::vector<ushort>& GetSkinColorVector() { return SkinColor; }
-  virtual ushort GetSkinColor(ushort Frame) const { return SkinColor[Frame]; }
+  virtual ushort GetSkinColor() const { return SkinColor; }
+  virtual void SetSkinColor(ushort What) { SkinColor = What; }
   virtual bool IsFlesh() const { return true; }
  protected:
-  std::vector<ushort> SkinColor;
+  ushort SkinColor;
 );
 
 #endif

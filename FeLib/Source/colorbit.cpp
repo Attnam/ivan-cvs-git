@@ -411,9 +411,11 @@ void colorizablebitmap::CreateFontCache(ushort Color)
 }
 
 /* returns BITMAP_ERROR_VECTOR if fails find Pos else returns pos */
+
 vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, bool* Sparkling) const
 {
   bool SparklingReally = false;
+
   for(ushort c = 0; c < 4; ++c)
     if(Sparkling[c])
       SparklingReally = true;
@@ -421,18 +423,30 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
   if(!SparklingReally)
     return BITMAP_ERROR_VECTOR;
 
-  std::vector<vector2d> Possible;
-  Possible.reserve(Size.X * Size.Y);
+  std::vector<vector2d> PreferredPossible;
+  PreferredPossible.reserve((Size.X - 8) * (Size.Y - 8));
+  std::vector<vector2d> BadPossible;
+  BadPossible.reserve(8 * (Size.X + Size.Y) - 64);
 
-  for(ushort x = Pos.X; x < Pos.X + Size.X; ++x)
-    for(ushort y = Pos.Y; y < Pos.Y + Size.Y; ++y)
+  ushort XMax = Pos.X + Size.X;
+  ushort YMax = Pos.Y + Size.Y;
+
+  for(ushort x = Pos.X; x < XMax; ++x)
+    for(ushort y = Pos.Y; y < YMax; ++y)
       {
-	uchar Entry = GetPaletteEntry(x,y);
-	if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
-	  Possible.push_back(vector2d(x,y));
-      }
-  if(Possible.empty())
-    return BITMAP_ERROR_VECTOR;
+	uchar Entry = GetPaletteEntry(x, y);
 
-  return Possible[RAND() % Possible.size()] - Pos;
+	if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
+	  if(x >= Pos.X + 4 && x < XMax - 4 && y >= Pos.Y + 4 && y < YMax - 4)
+	    PreferredPossible.push_back(vector2d(x, y));
+	  else
+	    BadPossible.push_back(vector2d(x, y));
+      }
+
+  if(!PreferredPossible.empty())
+    return PreferredPossible[RAND() % PreferredPossible.size()] - Pos;
+  else if(!BadPossible.empty())
+    return BadPossible[RAND() % BadPossible.size()] - Pos;
+  else
+    return BITMAP_ERROR_VECTOR;
 }

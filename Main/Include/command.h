@@ -17,7 +17,7 @@ class command
   std::string GetDescription() const { return Description; }
   char GetKey() const { return Key; }
   bool IsUsableInWilderness() const { return UsableInWilderness; }
-  bool GetWizardModeFunction() const { return WizardModeFunction; }
+  bool IsWizardModeFunction() const { return WizardModeFunction; }
  private:
   bool (character::*LinkedFunction)();
   std::string Description;

@@ -649,7 +649,21 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  for(y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
 	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
-	      Map[XPos + x][YPos + y]->GetStack()->AddItem(ItemScript->Instantiate());
+	      {
+		stack* Stack;
+		item* Item = ItemScript->Instantiate();
+		uchar* SideStackIndex = ItemScript->GetSideStackIndex(false);
+
+		if(!SideStackIndex)
+		  Stack = Map[XPos + x][YPos + y]->GetStack();
+		else
+		  {
+		    Item->SignalSquarePositionChange(*SideStackIndex);
+		    Stack = Map[XPos + x][YPos + y]->GetSideStack(*SideStackIndex);
+		  }
+
+		Stack->AddItem(Item);
+	      }
 	}
     }
 

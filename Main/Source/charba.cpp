@@ -46,7 +46,7 @@ std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed",
 bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, true, false, false, false };
 bool character::StateCanBeRandomlyActivated[] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false };
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -84,7 +84,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false)
+character::character(donothing) : entity(true), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONEINDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -869,7 +869,7 @@ bool character::Quit()
 
 void character::CreateCorpse()
 {
-  corpse* Corpse = new corpse(0, false);
+  corpse* Corpse = new corpse(0, NOMATERIALS);
   Corpse->SetDeceased(this);
   GetStackUnder()->AddItem(Corpse);
   SetHasBe(false);
@@ -1299,6 +1299,10 @@ bool character::HasHeadOfElpuri() const
     if(i->IsHeadOfElpuri())
       return true;
 
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->IsHeadOfElpuri())
+      return true;
+
   return false;
 }
 
@@ -1308,6 +1312,10 @@ bool character::HasPetrussNut() const
     if(i->IsPetrussNut())
       return true;
 
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->IsPetrussNut())
+      return true;
+
   return false;
 }
 
@@ -1315,6 +1323,10 @@ bool character::HasGoldenEagleShirt() const
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsGoldenEagleShirt())
+      return true;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->IsGoldenEagleShirt())
       return true;
 
   return false;
@@ -1455,7 +1467,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config;
+  SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config << RegenerationCounter;
   SaveFile << HasBe() << Polymorphed;
 
   for(c = 0; c < BodyParts; ++c)
@@ -1507,7 +1519,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config >> RegenerationCounter;
   SetHasBe(ReadType<bool>(SaveFile));
   SaveFile >> Polymorphed;
 
@@ -1641,13 +1653,29 @@ bool character::ShowKeyLayout()
   List.AddDescription("Key       Description");
 
   for(ushort c = 1; game::GetCommand(c); ++c)
-    if(game::WizardModeActivated() || !game::GetCommand(c)->GetWizardModeFunction())
+    if(!game::GetCommand(c)->IsWizardModeFunction())
       {
 	std::string Buffer;
 	Buffer += game::GetCommand(c)->GetKey();
 	Buffer.resize(10, ' ');
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
+
+  if(game::WizardModeActivated())
+    {
+      List.AddEntry("", WHITE);
+      List.AddEntry("Wizard mode functions:", WHITE);
+      List.AddEntry("", WHITE);
+
+      for(ushort c = 1; game::GetCommand(c); ++c)
+	if(game::GetCommand(c)->IsWizardModeFunction())
+	  {
+	    std::string Buffer;
+	    Buffer += game::GetCommand(c)->GetKey();
+	    Buffer.resize(10, ' ');
+	    List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
+	  }
+    }
 
   List.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
   return false;
@@ -2006,7 +2034,7 @@ void character::GetPlayerCommand()
 	    if(game::IsInWilderness() && !game::GetCommand(c)->IsUsableInWilderness())
 	      ADD_MESSAGE("This function cannot be used while in wilderness.");
 	    else
-	      if(!game::WizardModeActivated() && game::GetCommand(c)->GetWizardModeFunction())
+	      if(!game::WizardModeActivated() && game::GetCommand(c)->IsWizardModeFunction())
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 	      else
 		HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
@@ -2031,7 +2059,8 @@ void character::Vomit(ushort Amount)
   EditExperience(LEGSTRENGTH, -50);
   EditNP(-200 - RAND() % 201);
 
-  GetLSquareUnder()->ReceiveVomit(this, Amount);
+  if(!game::IsInWilderness())
+    GetLSquareUnder()->ReceiveVomit(this, Amount);
 }
 
 bool character::Apply()
@@ -2433,6 +2462,18 @@ void character::SeekLeader()
 
 bool character::RestUntilHealed()
 {
+  if(GetHP() == GetMaxHP())
+    {
+      ADD_MESSAGE("You HP is already at its maximum.");
+      return false;
+    }
+
+  if(!CanHeal())
+    {
+      ADD_MESSAGE("You cannot heal.");
+      return false;
+    }
+
   long HPToRest = game::NumberQuestion("How many hit points you desire?", vector2d(16, 6), WHITE);
 
   if(HPToRest <= GetHP())
@@ -2883,61 +2924,61 @@ ushort character::GetSize() const
     return 0;
 }
 
-void character::SetMainMaterial(material* NewMaterial)
+void character::SetMainMaterial(material* NewMaterial, ushort SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->SetMainMaterial(NewMaterial);
+  GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
 
   for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-      GetBodyPart(c)->SetMainMaterial(NewMaterial);
+      GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
     }
 }
 
-void character::ChangeMainMaterial(material* NewMaterial)
+void character::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
-  GetBodyPart(0)->ChangeMainMaterial(NewMaterial);
+  GetBodyPart(0)->ChangeMainMaterial(NewMaterial, SpecialFlags);
 
   for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
-      GetBodyPart(c)->ChangeMainMaterial(NewMaterial);
+      GetBodyPart(c)->ChangeMainMaterial(NewMaterial, SpecialFlags);
     }
 }
 
-void character::SetSecondaryMaterial(material*)
+void character::SetSecondaryMaterial(material*, ushort)
 {
   ABORT("Illegal character::SetSecondaryMaterial call!");
 }
 
-void character::ChangeSecondaryMaterial(material*)
+void character::ChangeSecondaryMaterial(material*, ushort)
 {
   ABORT("Illegal character::ChangeSecondaryMaterial call!");
 }
 
-void character::SetContainedMaterial(material* NewMaterial)
+void character::SetContainedMaterial(material* NewMaterial, ushort SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetContainedMaterial()->GetVolume());
-  GetBodyPart(0)->SetContainedMaterial(NewMaterial);
+  GetBodyPart(0)->SetContainedMaterial(NewMaterial, SpecialFlags);
 
   for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
-      GetBodyPart(c)->SetContainedMaterial(NewMaterial);
+      GetBodyPart(c)->SetContainedMaterial(NewMaterial, SpecialFlags);
     }
 }
 
-void character::ChangeContainedMaterial(material* NewMaterial)
+void character::ChangeContainedMaterial(material* NewMaterial, ushort SpecialFlags)
 {
   NewMaterial->SetVolume(GetBodyPart(0)->GetContainedMaterial()->GetVolume());
-  GetBodyPart(0)->SetContainedMaterial(NewMaterial);
+  GetBodyPart(0)->SetContainedMaterial(NewMaterial, SpecialFlags);
 
   for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
-      GetBodyPart(c)->ChangeContainedMaterial(NewMaterial);
+      GetBodyPart(c)->ChangeContainedMaterial(NewMaterial, SpecialFlags);
     }
 }
 
@@ -3481,9 +3522,55 @@ bool character::ScrollMessagesUp()
 
 void character::Regenerate()
 {
+  if(HP == MaxHP)
+    return;
+
+  ulong RegenerationBonus = 0;
+  bool NoHealableBodyParts = true;
+
   for(ushort c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->Regenerate();
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsAlive())
+	{
+	  RegenerationBonus += BodyPart->GetMaxHP();
+
+	  if(NoHealableBodyParts && BodyPart->GetHP() < BodyPart->GetMaxHP())
+	    NoHealableBodyParts = false;
+	}
+    }
+
+  if(!RegenerationBonus || NoHealableBodyParts)
+    return;
+
+  RegenerationBonus *= GetAttribute(ENDURANCE);
+
+  if(Action && Action->GetRestRegenerationBonus())
+    RegenerationBonus *= GetSquareUnder()->GetRestModifier();
+
+  RegenerationCounter += RegenerationBonus;
+
+  while(RegenerationCounter > 100000)
+    {
+      uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
+
+      for(ushort c = 0; c < BodyParts; ++c)
+	{
+	  bodypart* BodyPart = GetBodyPart(c);
+
+	  if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+	    NeedHealIndex[NeedHeal++] = c;
+	}
+
+      if(!NeedHeal)
+	break;
+
+      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncHP();
+      ++HP;
+      EditExperience(ENDURANCE, 100);
+      RegenerationCounter -= 100000;
+    }
 }
 
 void character::PrintInfo() const
@@ -3609,10 +3696,10 @@ uchar character::GetBodyPartBonePercentile(ushort Index)
     }
 }
 
-void character::CreateBodyParts()
+void character::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    CreateBodyPart(c);
+    CreateBodyPart(c, SpecialFlags);
 }
 
 void character::RestoreBodyParts()
@@ -3622,7 +3709,7 @@ void character::RestoreBodyParts()
       CreateBodyPart(c);
 }
 
-void character::UpdateBodyPartPictures()
+void character::UpdatePictures()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
     UpdateBodyPartPicture(c);
@@ -3631,7 +3718,7 @@ void character::UpdateBodyPartPictures()
 bodypart* character::MakeBodyPart(ushort Index)
 {
   if(Index == TORSOINDEX)
-    return new normaltorso(0, false);
+    return new normaltorso(0, NOMATERIALS);
   else
     {
       ABORT("Weird bodypart to make for a character!");
@@ -3639,14 +3726,16 @@ bodypart* character::MakeBodyPart(ushort Index)
     }
 }
 
-bodypart* character::CreateBodyPart(ushort Index)
+bodypart* character::CreateBodyPart(ushort Index, ushort SpecialFlags)
 {
   bodypart* BodyPart = MakeBodyPart(Index);
   BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
   BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
   SetBodyPart(Index, BodyPart);
   BodyPart->InitSpecialAttributes();
-  UpdateBodyPartPicture(Index);
+
+  if(!(SpecialFlags & NOPICUPDATE))
+    UpdateBodyPartPicture(Index);
 
   if(!Initializing)
     {
@@ -3659,10 +3748,10 @@ bodypart* character::CreateBodyPart(ushort Index)
   return BodyPart;
 }
 
-vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
+vector2d character::GetBodyPartBitmapPos(ushort Index)
 {
   if(Index == TORSOINDEX)
-    return GetTorsoBitmapPos(Frame);
+    return GetTorsoBitmapPos();
   else
     {
       ABORT("Weird bodypart BitmapPos request for a character!");
@@ -3670,10 +3759,10 @@ vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
     }
 }
 
-ushort character::GetBodyPartColorA(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorA(ushort Index)
 {
   if(Index < GetBodyParts())
-    return GetSkinColor(Frame);
+    return GetSkinColor();
   else
     {
       ABORT("Weird bodypart color A request for a character!");
@@ -3681,10 +3770,10 @@ ushort character::GetBodyPartColorA(ushort Index, ushort Frame)
     }
 }
 
-ushort character::GetBodyPartColorB(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorB(ushort Index)
 {
   if(Index == TORSOINDEX)
-    return GetTorsoMainColor(Frame);
+    return GetTorsoMainColor();
   else
     {
       ABORT("Weird bodypart color B request for a character!");
@@ -3692,7 +3781,7 @@ ushort character::GetBodyPartColorB(ushort Index, ushort Frame)
     }
 }
 
-ushort character::GetBodyPartColorC(ushort Index, ushort)
+ushort character::GetBodyPartColorC(ushort Index)
 {
   if(Index == TORSOINDEX)
     return 0; // reserved for future use
@@ -3703,10 +3792,10 @@ ushort character::GetBodyPartColorC(ushort Index, ushort)
     }
 }
 
-ushort character::GetBodyPartColorD(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorD(ushort Index)
 {
   if(Index == TORSOINDEX)
-    return GetTorsoSpecialColor(Frame);
+    return GetTorsoSpecialColor();
   else
     {
       ABORT("Weird bodypart color D request for a character!");
@@ -3714,46 +3803,19 @@ ushort character::GetBodyPartColorD(ushort Index, ushort Frame)
     }
 }
 
-/* This should perhaps have a parameter that controls which color vectors are updated... */
-
 void character::UpdateBodyPartPicture(ushort Index)
 {
-  if(GetBodyPart(Index))
+  bodypart* BodyPart = GetBodyPart(Index);
+
+  if(BodyPart)
     {
-      std::vector<vector2d>& BitmapPos = GetBodyPart(Index)->GetBitmapPosVector();
-      std::vector<ushort>& ColorB = GetBodyPart(Index)->GetColorBVector();
-      std::vector<ushort>& ColorC = GetBodyPart(Index)->GetColorCVector();
-      std::vector<ushort>& ColorD = GetBodyPart(Index)->GetColorDVector();
-      std::vector<uchar>& SpecialFlags = GetBodyPart(Index)->GetSpecialFlagsVector();
-
-      BitmapPos.clear();
-      ColorB.clear();
-      ColorC.clear();
-      ColorD.clear();
-      SpecialFlags.clear();
-
-      for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
-	{
-	  BitmapPos.push_back(GetBodyPartBitmapPos(Index, c));
-	  ColorB.push_back(GetBodyPartColorB(Index, c));
-	  ColorC.push_back(GetBodyPartColorC(Index, c));
-	  ColorD.push_back(GetBodyPartColorD(Index, c));
-	  SpecialFlags.push_back(GetSpecialBodyPartFlags(Index, c));
-	}
-
-      material* Material = GetBodyPart(Index)->GetMainMaterial();
-
-      if(Material->IsFlesh())
-	{
-          std::vector<ushort>& SkinColor = static_cast<flesh*>(Material)->GetSkinColorVector();
-	  SkinColor.clear();
-
-	  for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
-	    SkinColor.push_back(GetBodyPartColorA(Index, c));
-	}
-
-      GetBodyPart(Index)->SetAnimationFrames(GetBodyPartAnimationFrames(Index));
-      GetBodyPart(Index)->UpdatePictures();
+      BodyPart->SetBitmapPos(GetBodyPartBitmapPos(Index));
+      BodyPart->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(Index));
+      BodyPart->SetMaterialColorB(GetBodyPartColorB(Index));
+      BodyPart->SetMaterialColorC(GetBodyPartColorC(Index));
+      BodyPart->SetMaterialColorD(GetBodyPartColorD(Index));
+      BodyPart->SetSpecialFlags(GetSpecialBodyPartFlags(Index));
+      BodyPart->UpdatePictures();
     }
 }
 
@@ -3790,13 +3852,13 @@ void character::LoadDataBaseStats()
 
 character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  character* Char = Cloner(0, false, true);
+  character* Char = Cloner(0, LOAD);
   Char->Load(SaveFile);
   Char->CalculateAll();
   return Char;
 }
 
-void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
+void character::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
   Initializing = InNoMsgMode = true;
   CalculateBodyParts();
@@ -3813,7 +3875,7 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     CWeaponSkill[c] = new cweaponskill(c);
 
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
       Config = NewConfig;
       InstallDataBase();
@@ -3825,7 +3887,7 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
 	  if(TemporaryState & (1 << c))
 	    TemporaryStateCounter[c] = 0;
 
-      CreateBodyParts();
+      CreateBodyParts(SpecialFlags & NOPICUPDATE);
 
       for(c = 0; c < BASEATTRIBUTES; ++c)
 	BaseExperience[c] = 0;
@@ -3833,12 +3895,12 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
       InitSpecialAttributes();
     }
 
-  VirtualConstructor(Load);
+  VirtualConstructor(SpecialFlags & LOAD);
 
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
-      if(CreateEquipment)
-	CreateInitialEquipment();
+      if(!(SpecialFlags & NOEQUIPMENT))
+	CreateInitialEquipment((SpecialFlags & NOEQUIPMENTPICUPDATE) >> 1);
 
       CalculateAll();
       RestoreHP();
@@ -3847,7 +3909,7 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
   Initializing = InNoMsgMode = false;
 }
 
-characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
+characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<character>::Add(this);
 }
@@ -3883,15 +3945,13 @@ void character::ReceiveHeal(long Amount)
 
   if(Amount)
     for(c = 0; c < GetBodyParts(); ++c)
-      {
-	if(GetBodyPart(c))
-	  {
-	    if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
-	      GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
-	    else
-	      GetBodyPart(c)->EditHP(Amount / GetBodyParts());
-	  }
-      }
+      if(GetBodyPart(c))
+	{
+	  if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
+	    GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+	  else
+	    GetBodyPart(c)->EditHP(Amount / GetBodyParts());
+	}
 }
 
 void character::AddHealingLiquidConsumeEndMessage() const
@@ -3980,7 +4040,7 @@ void character::AddPepsiConsumeEndMessage() const
 
 void character::ReceiveDarkness(long SizeOfEffect)
 {
-  long Penalty = 1 + SizeOfEffect * (100 + RAND() % 26 - RAND() % 26) / 100000;
+  //long Penalty = 1 + SizeOfEffect * (100 + RAND() % 26 - RAND() % 26) / 100000;
 
   /*if(GetStrength() - Penalty > 1)
     SetStrength(GetStrength() - Penalty);
@@ -4007,13 +4067,13 @@ void character::ReceiveDarkness(long SizeOfEffect)
   else
     SetHP(1);*/
 
-  if(IsPlayer())
-    {
-      game::DoEvilDeed(short(SizeOfEffect / 50));
+  EditAttribute(INTELLIGENCE, -1);
+  EditAttribute(WISDOM, -1);
+  EditAttribute(CHARISMA, -1);
+  EditAttribute(MANA, -1);
 
-      if(game::WizardModeActivated())
-	ADD_MESSAGE("Change in relation: %d.", short(SizeOfEffect / 100));
-    }
+  if(IsPlayer())
+    game::DoEvilDeed(short(SizeOfEffect / 50));
 }
 
 void character::AddFrogFleshConsumeEndMessage() const
@@ -4265,7 +4325,7 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
     {
       item* Blocker = Arm->GetWielded();
 
-      if(RAND() % ushort(100 + WeaponToHitValue / (Arm->GetToHitValue() * Blocker->GetBlockModifier(this)) * (100 + Success) * 10000) < 100)
+      if(RAND() % ushort(100 + WeaponToHitValue / (Arm->GetToHitValue() * Blocker->GetBlockModifier()) * (100 + Success) * 10000) < 100)
 	{
 	  ushort NewDamage = BlockStrength < Damage ? Damage - BlockStrength : 0;
 
@@ -4761,20 +4821,20 @@ void character::PolymorphRandomly(ushort Time)
 	while(!NewForm)
 	  {
 	    std::string Temp = game::StringQuestion("What do you want to become?", vector2d(16, 6), WHITE, 0, 80, false);
-	    NewForm = protosystem::CreateMonster(Temp, false);
+	    NewForm = protosystem::CreateMonster(Temp, NOEQUIPMENT);
 	  }
       else
 	{
 	  switch(GetSex())
 	    {
-	    case UNDEFINED: NewForm = new mammoth(0, false); break;
-	    case MALE: NewForm = new communist(0, false); break;
-	    case FEMALE: NewForm = new mistress(QUEEN, false); break;
+	    case UNDEFINED: NewForm = new mammoth(0, NOEQUIPMENT); break;
+	    case MALE: NewForm = new communist(0, NOEQUIPMENT); break;
+	    case FEMALE: NewForm = new mistress(QUEEN, NOEQUIPMENT); break;
 	    }
 	}
     }
   else
-    NewForm = protosystem::CreateMonster(false);
+    NewForm = protosystem::CreateMonster(NOEQUIPMENT);
 
   Polymorph(NewForm, Time);
 }
@@ -5110,7 +5170,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      
 	      ulong Amount = (RAND() % TorsosVolume) + 1;
 
-	      lump* Lump = new lump(0, false); 
+	      lump* Lump = new lump(0, NOMATERIALS); 
 	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
 	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
 	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
@@ -5124,7 +5184,9 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
       else
 	{
 	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
-	  SeveredBodyPart->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+	  GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack()->AddItem(SeveredBodyPart);
+	  SeveredBodyPart->DropEquipment();
+
 	  if(IsPlayer())
 	    ADD_MESSAGE("Your %s teleports away.", SeveredBodyPart->CHARNAME(UNARTICLED));
 	  else
@@ -5306,6 +5368,7 @@ void character::EditExperience(ushort Identifier, long Value)
 bool character::ActivateRandomState(ushort Time)
 {
   ushort ToBeActivated = GetRandomNotActivatedState();
+
   if(ToBeActivated == 0)
     return false;
 
@@ -5316,8 +5379,10 @@ bool character::ActivateRandomState(ushort Time)
 bool character::GainRandomInstric()
 {
   ushort ToBeActivated = GetRandomNotActivatedState();
+
   if(ToBeActivated == 0)
     return false;
+
   GainIntrinsic(ToBeActivated);
   return true;
 }
@@ -5333,21 +5398,10 @@ ushort character::GetRandomNotActivatedState()
 {
   ushort OKStates[STATES];
   ushort NumberOfOKStates = 0;
-  ushort CurrentState;
 
   for(ushort c = 0; c < STATES; ++c)
-    {
-      if(c == 0)
-	CurrentState = 1;
-      else
-	CurrentState = 2 << (c - 1);
-
-      if(!StateIsActivated(CurrentState) && StateCanBeRandomlyActivated[c])
-	{
-	  OKStates[NumberOfOKStates] = CurrentState;
-	  ++NumberOfOKStates;
-	}
-    }
+    if(StateCanBeRandomlyActivated[c])
+      OKStates[NumberOfOKStates++] = 1 << c;
 
   if(NumberOfOKStates == 0)
     return 0;
@@ -5682,4 +5736,17 @@ void character::SignalSpoil()
 square* character::GetSquareUnder() const
 {
   return !MotherEntity ? SquareUnder : MotherEntity->GetSquareUnder();
+}
+
+bool character::CanHeal() const
+{
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+	return true;
+    }
+
+  return false;
 }

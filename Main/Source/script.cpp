@@ -218,7 +218,7 @@ template <class type> const std::string& contentscripttemplate<type>::GetClassId
   return protocontainer<type>::GetMainClassId();
 }
 
-template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount) const
+template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
   Instance.resize(Amount, 0);
@@ -234,7 +234,7 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
 	  for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!ChosenConfig--)
 	      {
-		Instance[c] = Proto->Clone(i->first);
+		Instance[c] = Proto->Clone(i->first, SpecialFlags|NOPICUPDATE);
 		break;
 	      }
 	}
@@ -242,7 +242,7 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
   else
     {
       for(ulong c = 0; c < Amount; ++c)
-	Instance[c] = Proto->Clone(Config);
+	Instance[c] = Proto->Clone(Config, SpecialFlags|NOPICUPDATE);
     }
 
   if(GetParameters(false))
@@ -251,15 +251,19 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
 
   if(GetMainMaterial(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate());
+      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
 
   if(GetSecondaryMaterial(false) && Instance[0]->HasSecondaryMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate());
+      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
 
   if(GetContainedMaterial(false) && Instance[0]->HasContainedMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate());
+      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
+
+  if(!(SpecialFlags & NOPICUPDATE))
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->UpdatePictures();
 }
 
 template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
@@ -272,22 +276,22 @@ contentscript<character>::contentscript<character>()
   INITMEMBER(Team);
 }
 
-void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount) const
+void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
-  contentscripttemplate<character>::BasicInstantiate(Instance, Amount);
+  contentscripttemplate<character>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
 }
 
-character* contentscript<character>::Instantiate() const
+character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 {
   if(!ContentType)
     return 0;
 
   std::vector<character*> Instance;
-  Instantiate(Instance, 1);
+  Instantiate(Instance, 1, SpecialFlags);
   return Instance[0];
 }
 
@@ -295,11 +299,12 @@ contentscript<item>::contentscript<item>()
 {
   INITMEMBER(Team);
   INITMEMBER(Active);
+  INITMEMBER(SideStackIndex);
 }
 
-void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount) const
+void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
-  contentscripttemplate<item>::BasicInstantiate(Instance, Amount);
+  contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
@@ -310,28 +315,28 @@ void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount
       Instance[c]->SetIsActive(*GetActive());
 }
 
-item* contentscript<item>::Instantiate() const
+item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 {
   if(!ContentType)
     return 0;
 
   std::vector<item*> Instance;
-  Instantiate(Instance, 1);
+  Instantiate(Instance, 1, SpecialFlags);
   return Instance[0];
 }
 
-void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ulong Amount) const
+void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
-  contentscripttemplate<glterrain>::BasicInstantiate(Instance, Amount);
+  contentscripttemplate<glterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
 }
 
-glterrain* contentscript<glterrain>::Instantiate() const
+glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
 {
   if(!ContentType)
     return 0;
 
   std::vector<glterrain*> Instance;
-  Instantiate(Instance, 1);
+  Instantiate(Instance, 1, SpecialFlags);
   return Instance[0];
 }
 
@@ -340,9 +345,9 @@ contentscript<olterrain>::contentscript<olterrain>()
   INITMEMBER(VisualEffects);
 }
 
-void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount) const
+void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
-  contentscripttemplate<olterrain>::BasicInstantiate(Instance, Amount);
+  contentscripttemplate<olterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
 
   if(GetVisualEffects(false))
     for(ulong c = 0; c < Amount; ++c)
@@ -352,13 +357,13 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
       }
 }
 
-olterrain* contentscript<olterrain>::Instantiate() const
+olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
   if(!ContentType)
     return 0;
 
   std::vector<olterrain*> Instance;
-  Instantiate(Instance, 1);
+  Instantiate(Instance, 1, SpecialFlags);
   return Instance[0];
 }
 

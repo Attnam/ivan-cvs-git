@@ -82,7 +82,7 @@ class lterrain : public object
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
  protected:
-  void Initialize(ushort, bool, bool);
+  void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;
 };
@@ -95,8 +95,8 @@ class glterrainprototype
 {
  public:
   friend class database<glterrain>;
-  glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, bool, bool), const std::string&);
-  glterrain* Clone(ushort Config = 0, bool CallGenerateMaterials = true) const { return Cloner(Config, CallGenerateMaterials, false); }
+  glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, ushort), const std::string&);
+  glterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   glterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
@@ -109,7 +109,7 @@ class glterrainprototype
   ushort Index;
   glterrainprototype* Base;
   std::map<ushort, glterraindatabase> Config;
-  glterrain* (*Cloner)(ushort, bool, bool);
+  glterrain* (*Cloner)(ushort, ushort);
   std::string ClassId;
 };
 
@@ -148,10 +148,10 @@ class glterrain : public lterrain, public gterrain
   virtual DATABASEVALUE(ulong, DefaultSecondaryVolume);
   virtual DATABASEVALUE(ulong, DefaultContainedVolume);
   virtual DATABASEBOOL(ShowMaterial);
-  static glterrain* Clone(ushort, bool, bool) { return 0; }
+  static glterrain* Clone(ushort, ushort) { return 0; }
  protected:
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRGLTERRAIN; }
   const database* DataBase;
   static prototype glterrain_ProtoType;
 };
@@ -169,8 +169,8 @@ class olterrainprototype
 {
  public:
   friend class database<olterrain>;
-  olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, bool, bool), const std::string&);
-  olterrain* Clone(ushort Config = 0, bool CallGenerateMaterials = true) const { return Cloner(Config, CallGenerateMaterials, false); }
+  olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, ushort), const std::string&);
+  olterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   olterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
@@ -183,7 +183,7 @@ class olterrainprototype
   ushort Index;
   olterrainprototype* Base;
   std::map<ushort, olterraindatabase> Config;
-  olterrain* (*Cloner)(ushort, bool, bool);
+  olterrain* (*Cloner)(ushort, ushort);
   std::string ClassId;
 };
 
@@ -243,10 +243,10 @@ class olterrain : public lterrain, public oterrain
   virtual DATABASEBOOL(IsSafeToDestroy);
   virtual DATABASEVALUE(uchar, RestModifier);
   virtual DATABASEVALUE(const std::string&, RestMessage);
-  static olterrain* Clone(ushort, bool, bool) { return 0; }
+  static olterrain* Clone(ushort, ushort) { return 0; }
  protected:
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GROLTERRAIN; }
   const database* DataBase;
   short HP;
   static prototype olterrain_ProtoType;
@@ -263,10 +263,10 @@ class olterrain : public lterrain, public oterrain
 name : public base\
 {\
  public:\
-  name(ushort Config = 0, bool CallGenerateMaterials = true, bool Load = false) : base(donothing()) { Initialize(Config, CallGenerateMaterials, Load); }\
+  name(ushort Config = 0, ushort SpecialFlags = 0) : base(donothing()) { Initialize(Config, SpecialFlags); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
-  static protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
+  static protobase* Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
  protected:\
   static prototype name##_ProtoType;\
   data\

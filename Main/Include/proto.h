@@ -50,10 +50,10 @@ template <class type> inline ushort protocontainer<type>::SearchCodeName(const s
 class protosystem
 {
  public:
-  static character* BalancedCreateMonster(float = 1.0f, bool = true);
+  static character* BalancedCreateMonster();
   static item* BalancedCreateItem(bool = false);
-  static character* CreateMonster(bool = true);
-  static character* CreateMonster(const std::string&, bool, bool = true);
+  static character* CreateMonster(ushort = 0);
+  static character* CreateMonster(const std::string&, ushort = 0, bool = true);
   static item* CreateItem(const std::string&, bool = true);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
   static void GenerateCodeNameMaps();

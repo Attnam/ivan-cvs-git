@@ -47,17 +47,6 @@ bool item::IsDrinkable(const character* Eater) const
   return IsConsumable(Eater) && GetConsumeMaterial()->IsLiquid();
 }
 
-short item::GetOfferValue(char GodAlignment) const
-{
-  long OfferValue = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      OfferValue += GetMaterial(c)->GetOfferValue(GodAlignment);
-
-  return short(OfferValue * (GetOfferModifier() / 250));
-}
-
 bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
   if(Direction == RANDOMDIR)
@@ -107,7 +96,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 	}
     }
 
-  MoveTo(GetNearLSquare(Pos)->GetStack());
+  //MoveTo(GetNearLSquare(Pos)->GetStack());
 
   if(Breaks)
     ReceiveDamage(Thrower, short(Speed), PHYSICALDAMAGE);
@@ -175,6 +164,9 @@ bool item::Polymorph(stack* CurrentStack)
 
 bool item::Consume(character* Eater, long Amount)
 {
+  if(!GetConsumeMaterial()) // if it's spoiled or something
+    return true;
+
   GetConsumeMaterial()->EatEffect(Eater, Amount, GetNPModifier());
 
   if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
@@ -310,7 +302,7 @@ bool item::Open(character* Char)
 
 item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  item* Item = Cloner(0, false, true);
+  item* Item = Cloner(0, LOAD);
   Item->Load(SaveFile);
   Item->CalculateAll();
   return Item;
@@ -321,32 +313,34 @@ void item::LoadDataBaseStats()
   SetSize(GetDefaultSize());
 }
 
-void item::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
+void item::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
       RandomizeVisualEffects();
 
-      if(CallGenerateMaterials)
+      if(!(SpecialFlags & NOMATERIALS))
 	GenerateMaterials();
     }
 
-  VirtualConstructor(Load);
+  VirtualConstructor(SpecialFlags & LOAD);
 
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
-      if(CallGenerateMaterials)
+      if(!(SpecialFlags & NOMATERIALS))
 	{
-	  UpdatePictures();
 	  CalculateAll();
+
+	  if(!(SpecialFlags & NOPICUPDATE))
+	    UpdatePictures();
 	}
     }
 }
 
-itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
+itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<item>::Add(this);
 }
@@ -364,12 +358,12 @@ std::string item::GetConsumeVerb() const
   return GetConsumeMaterial()->GetConsumeVerb();
 }
 
-ulong item::GetBlockModifier(const character* User) const
+ulong item::GetBlockModifier() const
 {
-  if(!IsShield(User))
-    return GetSize() * GetRoundness();
-  else
+  if(!IsShield(0))
     return GetSize() * GetRoundness() << 1;
+  else
+    return GetSize() * GetRoundness() << 2;
 }
 
 bool item::CanBeSeenByPlayer() const
@@ -379,10 +373,7 @@ bool item::CanBeSeenByPlayer() const
 
 bool item::CanBeSeenBy(const character* Who) const
 {
-  if(Slot)
-    return Slot->CanBeSeenBy(Who);
-  else
-    return false;
+  return (Who->IsPlayer() && game::GetSeeWholeMapCheat()) || (Slot && Slot->CanBeSeenBy(Who));
 }
 
 std::string item::GetDescription(uchar Case) const
@@ -535,6 +526,9 @@ void itemdatabase::InitDefaults(ushort Config)
 
 void item::AddMiscellaneousInfo(felist& List) const
 {
+  if(dynamic_cast<const goldeneagleshirt*>(this) != 0)
+    int esko = 2;
+
   std::string Entry(40, ' ');
   Entry << int(GetPrice());
   Entry.resize(55, ' ');
@@ -618,4 +612,16 @@ void item::Empty()
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
     }
+}
+
+short item::GetOfferValue(char) const
+{
+  /* Temporary */
+  return short(sqrt(GetPrice()));
+}
+
+void item::SignalAttackInfoChange()
+{
+  if(Slot)
+    Slot->SignalAttackInfoChange();
 }

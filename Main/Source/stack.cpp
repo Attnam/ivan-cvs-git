@@ -193,7 +193,7 @@ bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(item*, c
 
 void stack::BeKicked(character* Kicker, ushort KickDamage)
 {
-  if(KickDamage >= 25000)
+  if(KickDamage)
     {
       ReceiveDamage(Kicker, KickDamage, PHYSICALDAMAGE);
 
@@ -203,9 +203,8 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 	if(GetItems())
 	  GetTop()->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
     }
-  else
-    if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
-      ADD_MESSAGE("Your weak kick has no effect.");
+  else if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
+    ADD_MESSAGE("Your weak kick has no effect.");
 }
 
 long stack::Score() const
@@ -425,7 +424,7 @@ bool stack::TryKey(item* Key, character* Applier)
 
 bool stack::Open(character* Opener)
 {
-  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", false, true, &item::OpenableSorter);
+  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", true, true, &item::OpenableSorter);
 
   if(ToBeOpened == 0)
     return false;

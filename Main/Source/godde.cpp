@@ -39,7 +39,9 @@ void sophos::PrayBadEffect()
 void valpurus::PrayGoodEffect()
 {
   ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
-  game::GetPlayer()->GetGiftStack()->AddItem(new meleeweapon(CURVEDTWOHANDEDSWORD, MAKE_MATERIAL(VALPURIUM)));
+  meleeweapon* Weapon = new meleeweapon(TWOHANDEDSWORD);
+  Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0);
+  game::GetPlayer()->GetGiftStack()->AddItem(Weapon);
 }
 
 void valpurus::PrayBadEffect()
@@ -147,7 +149,7 @@ void atavus::PrayGoodEffect()
 {
   if(game::GetPlayer()->HasAllBodyParts())
     {
-      item* Reward = new bodyarmor(PLATEMAIL, false);
+      item* Reward = new bodyarmor(PLATEMAIL, NOMATERIALS);
       Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
       ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
       game::GetPlayer()->GetGiftStack()->AddItem(Reward);
@@ -358,13 +360,13 @@ void silva::PrayBadEffect()
   switch(RAND() % 300 / 100)
     {
     case 0:
-      game::GetPlayer()->Polymorph(new spider(true, true), 1000 + RAND() % 1000);
+      game::GetPlayer()->Polymorph(new spider, 1000 + RAND() % 1000);
       break;
     case 1:
-      game::GetPlayer()->Polymorph(new donkey(true, true), 1000 + RAND() % 1000);
+      game::GetPlayer()->Polymorph(new donkey, 1000 + RAND() % 1000);
       break;
     case 2:
-      game::GetPlayer()->Polymorph(new jackal(true, true), 1000 + RAND() % 1000);
+      game::GetPlayer()->Polymorph(new jackal, 1000 + RAND() % 1000);
       break;
     }
 }
@@ -430,7 +432,7 @@ void loricatus::PrayGoodEffect()
       {
 	std::string OldName;
 	game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
+	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
       }
@@ -460,18 +462,13 @@ void loricatus::PrayBadEffect()
 void cleptia::PrayGoodEffect()
 {
   ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
-  game::GetPlayer()->EditAttribute(AGILITY, 1);
+  game::GetPlayer()->BeginTemporaryState(HASTE, 250);
 }
 
 void cleptia::PrayBadEffect()
 {
-  if(game::GetPlayer()->GetAttribute(AGILITY) > 5)
-    {
-      ADD_MESSAGE("%s slows you down.", GOD_NAME);
-      game::GetPlayer()->EditAttribute(AGILITY, -1);
-    }
-  else
-    ADD_MESSAGE("Suprisingly you feel nothing.");
+  ADD_MESSAGE("%s slows you down.", GOD_NAME);
+  game::GetPlayer()->BeginTemporaryState(SLOW, 250);
 }
 
 void mortifer::PrayGoodEffect()
@@ -674,7 +671,7 @@ void infuscor::PrayBadEffect()
 void nefas::PrayGoodEffect()
 {
   ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
-  potion* Reward = new potion(0, false);
+  potion* Reward = new potion(0, NOMATERIALS);
   Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMLEURINE));
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
   ADD_MESSAGE("%s drops on the ground.", Reward->CHARNAME(DEFINITE));
@@ -683,8 +680,7 @@ void nefas::PrayGoodEffect()
 void nefas::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
-  game::GetPlayer()->ReceiveDamage(0, RAND() % 7, PHYSICALDAMAGE, HEAD);
-  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
+  game::GetPlayer()->ReceiveDamage(0, 2 + RAND() % 7, PHYSICALDAMAGE, HEAD);
   game::GetPlayer()->GetStackUnder()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath("killed while enjoying the company of " + Name());
 }
@@ -718,7 +714,7 @@ void scabies::PrayGoodEffect()
 
   for(ushort c = 0; c < 5; ++c)
     {
-      can* Reward = new can(0, false);
+      can* Reward = new can(0, NOMATERIALS);
       Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD));
       game::GetPlayer()->GetGiftStack()->AddItem(Reward);
     }
@@ -727,16 +723,10 @@ void scabies::PrayGoodEffect()
 void scabies::PrayBadEffect()
 {
   ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
-
-  for(ushort c = 0; c < 5; ++c)
-    {
-      material* SchoolFood = MAKE_MATERIAL(SCHOOLFOOD, 600);
-      SchoolFood->EatEffect(game::GetPlayer(), 600);
-      delete SchoolFood;
-    }
-
+  material* SchoolFood = MAKE_MATERIAL(SCHOOLFOOD, 1000);
+  SchoolFood->EatEffect(game::GetPlayer(), 1000);
+  delete SchoolFood;
   ADD_MESSAGE("You feel your muscles softening terribly...");
-
   game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
   game::GetPlayer()->EditAttribute(DEXTERITY, -1);
 }
@@ -761,7 +751,7 @@ void cruentus::PrayGoodEffect()
     }
 
   ADD_MESSAGE("Cruentus recommends you to its master, Mortifer.");
-  game::GetGod(16)->AdjustRelation(100);
+  game::GetGod(15)->AdjustRelation(100);
 
 }
 

@@ -73,3 +73,12 @@ Head of Elpuri, Shirt of the Golden Eagle and the Left Nut of Petrus aren't reco
 Consummo message.
 //Picking up a bear trap.
 //Turox etc. + poison  doesn't work.
+Bear trap + displace.
+Attnam + Elpuri.
+Headless zombies + Chat.
+Mesages after teleport.
+Panic + vital bodypart.
+Poison + poison resistance message.
+(7x) the werewolf resists.
+Bear trap in shop.
+Bloated monster eat AI.

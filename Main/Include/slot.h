@@ -38,6 +38,7 @@ class slot
   virtual void SignalEmitationDecrease(ushort) = 0;
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const = 0;
+  virtual void SignalAttackInfoChange() { }
  protected:
   item* Item;
 };
@@ -99,6 +100,7 @@ class gearslot : public slot
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
   virtual bool CanBeSeenBy(const character*) const;
+  virtual void SignalAttackInfoChange();
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;

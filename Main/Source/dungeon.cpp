@@ -68,7 +68,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
   return LevelScript;
 }
 
-void dungeon::PrepareLevel(ushort Index)
+void dungeon::PrepareLevel(ushort Index, bool Visual)
 {
   if(Generated[Index])
     LoadLevel(game::SaveName(), Index);
@@ -76,7 +76,10 @@ void dungeon::PrepareLevel(ushort Index)
     {
       Level[Index] = new level;
       Level[Index]->SetLevelScript(GetLevelScript(Index));
-      game::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+
+      if(Visual)
+	game::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+
       game::SetIsGenerating(true);
       Level[Index]->Generate();
       Generated[Index] = true;
@@ -86,7 +89,6 @@ void dungeon::PrepareLevel(ushort Index)
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 
       game::SetIsGenerating(false);
-      Level[Index]->FiatLux();
     }
 }
 

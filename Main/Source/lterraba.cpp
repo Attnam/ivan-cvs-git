@@ -21,6 +21,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
+      game::GetCurrentLevel()->FiatLux();
       vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
       game::GetCurrentArea()->AddCharacter(Pos, Who);
       game::SendLOSUpdateRequest();
@@ -75,6 +76,7 @@ bool olterrain::GoDown(character* Who) const // Try to go down
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
+      game::GetCurrentLevel()->FiatLux();
       vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
       game::GetCurrentArea()->AddCharacter(Pos, Who);
       game::SendLOSUpdateRequest();
@@ -149,7 +151,7 @@ void olterrain::Break()
 
 glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  glterrain* Terrain = Cloner(0, false, true);
+  glterrain* Terrain = Cloner(0, LOAD);
   Terrain->Load(SaveFile);
   Terrain->CalculateAll();
   return Terrain;
@@ -157,42 +159,44 @@ glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 
 olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  olterrain* Terrain = Cloner(0, false, true);
+  olterrain* Terrain = Cloner(0, LOAD);
   Terrain->Load(SaveFile);
   Terrain->CalculateAll();
   return Terrain;
 }
 
-void lterrain::Initialize(ushort NewConfig, bool CallGenerateMaterials, bool Load)
+void lterrain::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
       Config = NewConfig;
       InstallDataBase();
       RandomizeVisualEffects();
 
-      if(CallGenerateMaterials)
+      if(!(SpecialFlags & NOMATERIALS))
 	GenerateMaterials();
     }
 
-  VirtualConstructor(Load);
+  VirtualConstructor(SpecialFlags & LOAD);
 
-  if(!Load)
+  if(!(SpecialFlags & LOAD))
     {
-      if(CallGenerateMaterials)
+      if(!(SpecialFlags & NOMATERIALS))
 	{
-	  UpdatePictures();
 	  CalculateAll();
+
+	  if(!(SpecialFlags & NOPICUPDATE))
+	    UpdatePictures();
 	}
     }
 }
 
-glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
+glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<glterrain>::Add(this);
 }
 
-olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
+olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<olterrain>::Add(this);
 }
@@ -247,3 +251,4 @@ void lterrain::SignalEmitationDecrease(ushort EmitationUpdate)
 	LSquareUnder->SignalEmitationDecrease(EmitationUpdate);
     }
 }
+

@@ -34,9 +34,8 @@ ITEM_PROTOTYPE(item, 0);
 
 void banana::GenerateLeftOvers(character* Eater)
 {
-  item* Peals = new bananapeals(0, false);
+  item* Peals = new bananapeals(0, NOMATERIALS);
   Peals->InitMaterials(GetMainMaterial());
-  SetMainMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
     Eater->GetStackUnder()->AddItem(Peals);
@@ -44,6 +43,7 @@ void banana::GenerateLeftOvers(character* Eater)
     Eater->GetStack()->AddItem(Peals);
 
   RemoveFromSlot();
+  SetMainMaterial(0, NOPICUPDATE);
   SendToHell();
 }
 
@@ -285,16 +285,8 @@ void scrollofwishing::FinishReading(character* Reader)
 
 bool scrollofchangematerial::Read(character* Reader)
 {
-  if(Reader->GetStack()->GetItems() <= 1) // that 1 is the scroll itself
-    {
-      ADD_MESSAGE("You have nothing to change.");
-      return false;
-    }
-  else
-    {
-      Reader->StartReading(this, 1000);
-      return true;
-    }
+  Reader->StartReading(this, 1000);
+  return true;
 }
 
 void scrollofchangematerial::FinishReading(character* Reader)
@@ -302,31 +294,44 @@ void scrollofchangematerial::FinishReading(character* Reader)
   if(!Reader->GetStack()->GetItems())
     ADD_MESSAGE("You notice you have lost anything you wished to alter.");
   else
-    while(true)
-      {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
+    {
+      while(true)
+	{
+	  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
 
-	if(Item)
-	  {
-	    if(!Item->IsMaterialChangeable())
-	      {
-		ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHARNAME(DEFINITE));
-		break;
-	      }
+	  if(Item)
+	    {
+	      if(!Item->IsMaterialChangeable())
+		{
+		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHARNAME(DEFINITE));
+		  break;
+		}
 
-	    std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-	    material* TempMaterial = protosystem::CreateMaterial(Temp, Item->GetMainMaterial()->GetVolume());
+	      std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+	      material* TempMaterial = protosystem::CreateMaterial(Temp, Item->GetMainMaterial()->GetVolume());
 
-	    if(TempMaterial)
-	      {
-		Item->ChangeMainMaterial(TempMaterial);
-		break;
-	      }
-	  }
-      }
+	      if(TempMaterial)
+		{
+		  if(!Item->GetMainMaterial()->IsSameAs(TempMaterial))
+		    {
+		      ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item->CHARNAME(UNARTICLED));
+		      Item->ChangeMainMaterial(TempMaterial);
+		    }
+		  else
+		    ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item->CHARNAME(UNARTICLED));
 
-  RemoveFromSlot();
-  SendToHell();
+		  break;
+		}
+	      else
+		game::DrawEverythingNoBlit();
+	    }
+	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	    return;
+	}
+
+      RemoveFromSlot();
+      SendToHell();
+    }
 }
 
 item* brokenbottle::BetterVersion() const
@@ -338,9 +343,8 @@ item* brokenbottle::BetterVersion() const
   else
     Stuff = MAKE_MATERIAL(OMLEURINE);
 
-  potion* P = new potion(0, false); 
+  potion* P = new potion(0, NOMATERIALS); 
   P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
-
   return P;
 }
 
@@ -443,7 +447,7 @@ item* potion::BetterVersion() const
       else
 	Stuff = MAKE_MATERIAL(OMLEURINE);
 
-      potion* P = new potion(0, false); 
+      potion* P = new potion(0, NOMATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
 
       return P;
@@ -463,7 +467,7 @@ item* can::BetterVersion() const
       else
 	Stuff = MAKE_MATERIAL(BANANAFLESH);
 
-      can* P = new can(0, false); 
+      can* P = new can(0, NOMATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(IRON), Stuff); 
 
       return P;
@@ -739,9 +743,7 @@ bool oillamp::Apply(character* Applier)
 		}
 	    }
 
-	    item* Sword = new meleeweapon(CURVEDTWOHANDEDSWORD);
-	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHARNAME(DEFINITE), Sword->CHARNAME(INDEFINITE), Sword->CHARNAME(INDEFINITE), Genie->CHARNAME(DEFINITE));
-	    Genie->SetMainWielded(Sword);
+	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHARNAME(DEFINITE), Genie->GetMainWielded()->CHARNAME(INDEFINITE), Genie->GetMainWielded()->CHARNAME(INDEFINITE), Genie->CHARNAME(DEFINITE));
 	}
       else
 	{
@@ -925,13 +927,13 @@ void scrolloftaming::FinishReading(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << RegenerationCounter << BloodColor;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << BloodColor;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> RegenerationCounter >> BloodColor;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> BloodColor;
 }
 
 bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
@@ -1324,7 +1326,7 @@ float arm::GetWieldedToHitValue() const
   if(Weight < 500)
     Weight = 500;
 
-  float Bonus = float(GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus()) * GetCurrentSWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() / (1000000 + (Weight - 500) * 400);
+  float Bonus = float(GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus()) * GetCurrentSWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() * GetWielded()->GetToHitValueBonus() / (1000000 + (Weight - 500) * 400);
   float ThisToHit = ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION));
 
   if(PairArm)
@@ -1351,7 +1353,7 @@ float arm::GetWieldedToHitValue() const
 long arm::GetWieldedAPCost() const
 {
   arm* PairArm = GetPairArm();
-  float SkillPenalty = 0.01f * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSWeaponSkill()->GetAPBonus() / GetMaster()->GetMoveEase();
+  float SkillPenalty = 0.01f * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSWeaponSkill()->GetAPBonus() * GetWielded()->GetAPBonus() / GetMaster()->GetMoveEase();
 
   if(PairArm)
     {
@@ -1566,38 +1568,6 @@ void corpse::SetDeceased(character* What)
   UpdatePictures();
 }
 
-void bodypart::Regenerate()
-{
-  if(HP == MaxHP)
-    return;
-
-  if(IsAlive())
-    {
-      ulong RegenerationBonus = ulong(MaxHP) * Master->GetAttribute(ENDURANCE);
-
-      if(Master->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
-	RegenerationBonus *= Master->GetSquareUnder()->GetRestModifier();
-
-      RegenerationCounter += RegenerationBonus;
-      bool Increased = false;
-
-      while(RegenerationCounter > 100000)
-	{
-	  if(HP < MaxHP)
-	    {
-	      ++HP;
-	      Master->EditExperience(ENDURANCE, 100);
-	      Increased = true;
-	    }
-
-	  RegenerationCounter -= 100000;
-	}
-
-      if(Increased)
-	Master->CalculateHP();
-    }
-}
-
 void head::DropEquipment()
 {
   if(GetHelmet())
@@ -1735,6 +1705,7 @@ void materialcontainer::Load(inputfile& SaveFile)
 void meleeweapon::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
+  SaveFile << Enchantment;
   SaveFile << SecondaryMaterial;
   SaveFile << ContainedMaterial;
 }
@@ -1742,6 +1713,7 @@ void meleeweapon::Save(outputfile& SaveFile) const
 void meleeweapon::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
+  SaveFile >> Enchantment;
   LoadMaterial(SaveFile, SecondaryMaterial);
   LoadMaterial(SaveFile, ContainedMaterial);
 }
@@ -1802,22 +1774,12 @@ uchar meleeweapon::GetAlphaB(ushort) const
     return 0;
 }
 
-ushort bodypart::GetMaterialColorA(ushort Frame) const
+ushort bodypart::GetMaterialColorA(ushort) const
 {
   if(GetMainMaterial())
-    return GetMainMaterial()->GetSkinColor(Frame);
+    return GetMainMaterial()->GetSkinColor();
   else
     return 0;
-}
-
-ushort banana::GetMaterialColorA(ushort Frame) const
-{
-  ushort Color = object::GetMaterialColorA(Frame);
-
-  if(!Frame)
-    return Color;
-  else
-    return MakeRGB(GetRed(Color) * Frame / 20, GetGreen(Color) * Frame / 20, GetBlue(Color) * Frame / 20);
 }
 
 bool wandofresurrection::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
@@ -1843,7 +1805,6 @@ bool corpse::RaiseTheDead(character* Summoner)
 void banana::VirtualConstructor(bool Load)
 {
   meleeweapon::VirtualConstructor(Load);
-  SetAnimationFrames(20);
 
   if(!Load)
     SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
@@ -1884,7 +1845,6 @@ void bodypart::VirtualConstructor(bool Load)
 {
   materialcontainer::VirtualConstructor(Load);
   SetUnique(false);
-  RegenerationCounter = 0;
   SetMaster(0);
 }
 
@@ -1959,13 +1919,20 @@ void whistle::BlowEffect(character* Whistler)
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce an interesting sound.");
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows to his whistle and produces an odd sound.", Whistler->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHARNAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a whistle playing.");
 }
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
+  if(Whistler->IsPlayer())
+    ADD_MESSAGE("You produce a peculiar sound.");
+  else if(Whistler->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHARNAME(DEFINITE));
+  else 
+    ADD_MESSAGE("You hear a strange tune playing.");
+
   const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
 
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
@@ -2437,7 +2404,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHARNAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICALDAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->ReceiveBodyPartDamage(0, 2 + RAND() % 2, PHYSICALDAMAGE, BodyPart, YOURSELF, false, false, false);
       Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE));
       return false;
     }
@@ -2496,7 +2463,7 @@ void beartrap::StepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       SetIsActive(false);
-      Stepper->ReceiveBodyPartDamage(0, 4 + RAND() % 5, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
       Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE));
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
@@ -2576,7 +2543,7 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
 
 	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
 	  {
-	    door* Door = new door(0, false);
+	    door* Door = new door(0, NOMATERIALS);
 	    Door->InitMaterials(MAKE_MATERIAL(IRON));
 	    Door->Lock();
 	    Square->ChangeOLTerrainAndUpdateLights(Door);
@@ -2682,7 +2649,7 @@ bool wandofinvisibility::BeamEffect(character*, const std::string&, uchar, lsqua
   return false;
 }
 
-uchar lantern::GetSpecialFlags(ushort) const
+uchar lantern::GetSpecialFlags() const
 {
   switch(SquarePosition)
     {
@@ -2700,7 +2667,7 @@ uchar lantern::GetSpecialFlags(ushort) const
 void bodypart::AddPostFix(std::string& String) const
 {
   if(OwnerDescription.length())
-    String << " " << OwnerDescription;
+    String << ' ' << OwnerDescription;
 }
 
 bool stethoscope::Apply(character* Doctor) 
@@ -2933,12 +2900,6 @@ bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPart
     return BaseSuccess;
 }
 
-void flamingsword::VirtualConstructor(bool Load)
-{
-  meleeweapon::VirtualConstructor(Load);
-  SetAnimationFrames(16);
-}
-
 bool arm::TwoHandWieldIsActive() const
 {
   if(GetWielded()->IsTwoHanded())
@@ -3093,17 +3054,13 @@ bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 
 void bodypart::RandomizePosition()
 {
-  for(ushort c = 0; c < SpecialFlags.size(); ++c)
-    SpecialFlags[c] |= 1 + RAND() % 7;
-
+  SpecialFlags |= 1 + RAND() % 7;
   UpdatePictures();
 }
 
 void bodypart::ResetPosition()
 {
-  for(ushort c = 0; c < SpecialFlags.size(); ++c)
-    SpecialFlags[c] &= ~0x7;
-
+  SpecialFlags &= ~0x7;
   UpdatePictures();
 }
 
@@ -3160,7 +3117,7 @@ bool beartrap::Apply(character* User)
 
 float arm::GetBlockChance(float EnemyToHitValue) const
 {
-  return GetWielded() ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * GetWielded()->GetBlockModifier(Master)) * 10000), 1.0f) : 0;
+  return GetWielded() ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * GetWielded()->GetBlockModifier()) * 10000), 1.0f) : 0;
 }
 
 ushort arm::GetBlockCapability() const
@@ -3197,7 +3154,7 @@ vector2d beartrap::GetBitmapPos(ushort) const
 
 bool mine::WillExplode(const character* Stepper) const
 {
-  return IsActive() && GetContainedMaterial() && GetContainedMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 500);
+  return IsActive() && GetContainedMaterial() && GetContainedMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 5000);
 }
 
 materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
@@ -3205,7 +3162,7 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
   CopyMaterial(MC.ContainedMaterial, ContainedMaterial);
 }
 
-meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW)
+meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW), Enchantment(MW.Enchantment)
 {
   CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
   CopyMaterial(MW.ContainedMaterial, ContainedMaterial);
@@ -3312,7 +3269,7 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushor
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, BDAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", BBV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3321,7 +3278,7 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushor
 	Entry << ", CS " << CWeaponSkillLevel;
 
       if(SWeaponSkillLevel)
-	Entry << ", SS " << CWeaponSkillLevel;
+	Entry << ", SS " << SWeaponSkillLevel;
 
       Entry << "]";
     }
@@ -3359,7 +3316,7 @@ void shield::AddInventoryEntry(const character* Viewer, felist& List, ushort, bo
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue(Viewer) << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, BBV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3368,7 +3325,7 @@ void shield::AddInventoryEntry(const character* Viewer, felist& List, ushort, bo
 	Entry << ", CS " << CWeaponSkillLevel;
 
       if(SWeaponSkillLevel)
-	Entry << ", SS " << CWeaponSkillLevel;
+	Entry << ", SS " << SWeaponSkillLevel;
 
       Entry << "]";
     }
@@ -3415,9 +3372,9 @@ void materialcontainer::SignalSpoil(material* Material)
 	}
       else
 	{
-	  lump* Lump = new lump(0, false);
+	  lump* Lump = new lump(0, NOMATERIALS);
 	  Lump->InitMaterials(GetContainedMaterial());
-	  SetContainedMaterial(0);
+	  SetContainedMaterial(0, NOPICUPDATE);
 	  GetSlot()->DonateTo(Lump);
 	}
 
@@ -3442,10 +3399,10 @@ void banana::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The inside of %s spoils completely.", CHARNAME(DEFINITE));
 
-      item* Peals = new bananapeals(0, false);
+      item* Peals = new bananapeals(0, NOMATERIALS);
       Peals->InitMaterials(GetMainMaterial());
-      SetMainMaterial(0);
       GetSlot()->DonateTo(Peals);
+      SetMainMaterial(0, NOPICUPDATE);
       SendToHell();
     }
   else
@@ -3477,6 +3434,11 @@ void meleeweapon::AddPostFix(std::string& String) const
       String << " covered with ";
       GetContainedMaterial()->AddName(String, false, false);
     }
+
+  if(Enchantment > 0)
+    String << " +" << short(Enchantment);
+  else if(Enchantment < 0)
+    String << ' ' << short(Enchantment);
 }
 
 void bodypart::SignalSpoil(material* Material)
@@ -3556,13 +3518,18 @@ bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) cons
 
   const meleeweapon* Weapon = static_cast<const meleeweapon*>(Item);
 
-  if(!SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial))
+  if(Enchantment != Weapon->Enchantment || !SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial))
     return false;
 
   if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
     return true;
 
   return ContainedMaterial != 0 && Weapon->ContainedMaterial != 0 && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial);
+}
+
+bool armor::CanBePiledWith(const item* Item, const character* Viewer) const
+{
+  return item::CanBePiledWith(Item, Viewer) && Enchantment == static_cast<const armor*>(Item)->Enchantment;
 }
 
 bool key::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -3633,10 +3600,10 @@ void potion::Break()
   if(GetContainedMaterial()) 
     GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
 
-  item* Remains = new brokenbottle(0, false);
+  item* Remains = new brokenbottle(0, NOMATERIALS);
   Remains->InitMaterials(GetMainMaterial());
-  SetMainMaterial(0);
   GetSlot()->DonateTo(Remains);
+  SetMainMaterial(0, NOPICUPDATE);
   SendToHell();
 }
 
@@ -3707,9 +3674,10 @@ void bodypart::InitSpecialAttributes()
   BloodColor = Master->GetBloodColor();
 }
 
-ulong shield::GetPrice() const
+ulong shield::GetPrice() const /* temporary... */
 {
-  return item::GetPrice();
+  float StrengthValue = GetStrengthValue();
+  return (GetBaseBlockValue() * StrengthValue * StrengthValue * StrengthValue / 750) + item::GetPrice();
 }
 
 ulong whipofcleptia::GetPrice() const
@@ -3718,10 +3686,149 @@ ulong whipofcleptia::GetPrice() const
   return GetMainMaterial()->GetFlexibility() > 5 || Config & BROKEN ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
 
-void stone::VirtualConstructor(bool Load)
+bool materialcontainer::IsSparkling(ushort ColorIndex) const
 {
-  item::VirtualConstructor(Load);
-  SetAnimationFrames(16);
+  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
 }
 
+bool meleeweapon::IsSparkling(ushort ColorIndex) const
+{
+  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && SecondaryMaterial->IsSparkling()) || (ColorIndex == 2 && ContainedMaterial && ContainedMaterial->IsSparkling());
+}
 
+ushort justifier::GetOutlineColor(ushort Frame) const
+{
+  Frame %= 32;
+  return MakeRGB(0, 135 + (Frame * (31 - Frame) >> 1), 0);
+}
+
+ushort neercseulb::GetOutlineColor(ushort Frame) const
+{
+  Frame %= 32;
+  return MakeRGB(135 + (Frame * (31 - Frame) >> 1), 0, 0);
+}
+
+ushort goldeneagleshirt::GetOutlineColor(ushort Frame) const
+{
+  Frame %= 32;
+  return MakeRGB(0, 135 + (Frame * (31 - Frame) >> 1), 0);
+}
+
+void armor::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << Enchantment;
+}
+
+void armor::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> Enchantment;
+}
+
+void armor::AddPostFix(std::string& String) const
+{
+  item::AddPostFix(String);
+
+  if(Enchantment > 0)
+    String << " +" << short(Enchantment);
+  else if(Enchantment < 0)
+    String << ' ' << short(Enchantment);
+}
+
+bool scrollofenchantweapon::Read(character* Reader)
+{
+  Reader->StartReading(this, 1000);
+  return true;
+}
+
+void scrollofenchantweapon::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, item::WeaponSorter))
+    ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
+  else
+    {
+      while(true)
+	{
+	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose a weapon to enchant:", true, true, item::WeaponSorter);
+
+	  if(Item)
+	    {
+	      ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item->CHARNAME(UNARTICLED));
+	      Item->EditEnchantment(1);
+	      break;
+	    }
+	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	    return;
+	}
+
+      RemoveFromSlot();
+      SendToHell();
+    }
+}
+
+bool scrollofenchantarmor::Read(character* Reader)
+{
+  Reader->StartReading(this, 1000);
+  return true;
+}
+
+void scrollofenchantarmor::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, item::ArmorSorter))
+    ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
+  else
+    {
+      while(true)
+	{
+	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose an armor to enchant:", true, true, item::ArmorSorter);
+
+	  if(Item)
+	    {
+	      ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item->CHARNAME(UNARTICLED));
+	      Item->EditEnchantment(1);
+	      break;
+	    }
+	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	    return;
+	}
+
+      RemoveFromSlot();
+      SendToHell();
+    }
+}
+
+void meleeweapon::EditEnchantment(char Amount)
+{
+  Enchantment += Amount;
+  SignalAttackInfoChange();
+}
+
+void armor::EditEnchantment(char Amount)
+{
+  Enchantment += Amount;
+  SignalAttackInfoChange();
+}
+
+float meleeweapon::GetWeaponStrength() const
+{
+  return sqrt(float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight()) * (20 + Enchantment) / 20;
+}
+
+ushort meleeweapon::GetStrengthValue() const
+{
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 20000;
+}
+
+ushort armor::GetStrengthValue() const
+{
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (10 + Enchantment) / 10000;
+}
+
+void arm::SignalAttackInfoChange()
+{
+  item::SignalAttackInfoChange();
+
+  if(GetMaster() && !GetMaster()->IsInitializing())
+    CalculateAttackInfo();
+}

@@ -30,19 +30,21 @@ struct graphic_id
   uchar FileIndex;
   uchar SpecialFlags;
   ushort Frame;
+  ushort OutlineColor;
   vector2d SparklePos;
+  uchar SparkleTime;
 };
 
 inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 {
-  if(GI1.FileIndex != GI2.FileIndex)
-    return GI1.FileIndex < GI2.FileIndex;
-
   if(GI1.BitmapPos.X != GI2.BitmapPos.X)
     return GI1.BitmapPos.X < GI2.BitmapPos.X;
 
   if(GI1.BitmapPos.Y != GI2.BitmapPos.Y)
     return GI1.BitmapPos.Y < GI2.BitmapPos.Y;
+
+  if(GI1.FileIndex != GI2.FileIndex)
+    return GI1.FileIndex < GI2.FileIndex;
 
   if(GI1.Color[0] != GI2.Color[0])
     return GI1.Color[0] < GI2.Color[0];
@@ -59,6 +61,12 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.SpecialFlags != GI2.SpecialFlags)
     return GI1.SpecialFlags < GI2.SpecialFlags;
 
+  if(GI1.Frame != GI2.Frame)
+    return GI1.Frame < GI2.Frame;
+
+  if(GI1.OutlineColor != GI2.OutlineColor)
+    return GI1.OutlineColor < GI2.OutlineColor;
+
   if(GI1.BaseAlpha != GI2.BaseAlpha)
     return GI1.BaseAlpha < GI2.BaseAlpha;
 
@@ -74,14 +82,14 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.Alpha[3] != GI2.Alpha[3])
     return GI1.Alpha[3] < GI2.Alpha[3];
 
-  if(GI1.Frame != GI2.Frame)
-    return GI1.Frame < GI2.Frame;
-
   if(GI1.SparklePos.X != GI2.SparklePos.X)
     return GI1.SparklePos.X < GI2.SparklePos.X;
   
   if(GI1.SparklePos.Y != GI2.SparklePos.Y)
     return GI1.SparklePos.Y < GI2.SparklePos.Y;
+
+  if(GI1.SparkleTime != GI2.SparkleTime)
+    return GI1.SparkleTime < GI2.SparkleTime;
 
   return false;
 }
@@ -132,5 +140,3 @@ outputfile& operator<<(outputfile&, const graphic_id&);
 inputfile& operator>>(inputfile&, graphic_id&);
 
 #endif
-
-

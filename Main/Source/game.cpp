@@ -72,6 +72,7 @@ long game::CurrentEmitterPosX;
 long game::CurrentEmitterPosY;
 vector2d game::CurrentEmitterPos;
 bool game::Generating = false;
+bool game::BusyAnimationDisabled = false;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -84,25 +85,23 @@ std::vector<god*> game::God;
 command* game::Command[] =
 {
   0,
+
+  /* Sort according to description */
+
   new command(&character::Apply, "apply", 'a', false),
   new command(&character::Talk, "chat", 'C', false),
   new command(&character::Close, "close", 'c', false),
-  new command(&character::DetachBodyPart, "detach a limb cheat", '0', true, true),
   new command(&character::Dip, "dip", '!', true),
   new command(&character::Drink, "drink", 'D', true),
   new command(&character::Drop, "drop", 'd', false),
   new command(&character::Eat, "eat", 'e', true),
   new command(&character::WhatToEngrave, "engrave", 'G', false),
   new command(&character::EquipmentScreen, "equipment menu", 'E', true),
-  new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
-  new command(&character::GainAllItems, "give all items cheat", '8', true, true),
   new command(&character::Go, "go", 'g', false),
   new command(&character::GoDown, "go down", '>', true),
   new command(&character::GoUp, "go up", '<', true),
   new command(&character::Kick, "kick", 'k', false),
   new command(&character::Look, "look", 'l', true),
-  new command(&character::LowerStats, "lower stats cheat", '2', true, true),
-  new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
   new command(&character::AssignName, "name", 'n', false),
   new command(&character::Offer, "offer", 'O', false),
   new command(&character::Open, "open", 'o', false),
@@ -111,16 +110,11 @@ command* game::Command[] =
   new command(&character::PickUp, "pick up", ',', false),
   new command(&character::Pray, "pray", 'p', false),
   new command(&character::Quit, "quit", 'q', true),
-  new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
-  new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
   new command(&character::Read, "read", 'r', false),
-  new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&character::RestUntilHealed, "rest/heal", 'h', true),
   new command(&character::Save, "save game", 's', true),
-  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
   new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
-  new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
   new command(&character::ShowConfigScreen, "show config screen", '\\', true),
   new command(&character::ShowInventory, "show inventory", 'i', true),
   new command(&character::ShowKeyLayout, "show key layout", '?', true),
@@ -128,11 +122,24 @@ command* game::Command[] =
   new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
   new command(&character::Sit, "sit", 'S', false),
   new command(&character::Throw, "throw", 't', false),
-  new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
   new command(&character::ForceVomit, "vomit", 'v', false),
   new command(&character::NOP, "wait", '.', true),
   new command(&character::WizardMode, "wizard mode activation", 'X', true),
   new command(&character::Zap, "zap", 'z', false),
+
+  /* Sort according to key */
+
+  new command(&character::RaiseStats, "raise stats", '1', true, true),
+  new command(&character::LowerStats, "lower stats", '2', true, true),
+  new command(&character::SeeWholeMap, "see whole map", '3', true, true),
+  new command(&character::WalkThroughWalls, "toggle walk through walls mode", '4', true, true),
+  new command(&character::RaiseGodRelations, "raise your relations to the gods", '5', true, true),
+  new command(&character::LowerGodRelations, "lower your relations to the gods", '6', true, true),
+  new command(&character::GainDivineKnowledge, "gain knowledge of all gods", '7', true, true),
+  new command(&character::GainAllItems, "gain all items", '8', true, true),
+  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
+  new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
+  new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
   0
 };
 
@@ -175,7 +182,7 @@ bool game::Init(const std::string& Name)
   if(!Name.length())
     if(!configuration::GetDefaultName().length())
       {
-	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 200, true, true);
+	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
 
 	if(!PlayerName.length())
 	  return false;
@@ -712,7 +719,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = 0.075f + float(GetCurrent()) / 75;
+  float Base = 0.050f + float(GetCurrent()) / 50;
 
   while(true)
     {
@@ -756,7 +763,9 @@ void game::ShowLevelMessage()
 
 void game::TriggerQuestForGoldenEagleShirt()
 {
-  GetDungeon(0)->PrepareLevel(6);
+  BusyAnimationDisabled = true;
+  GetDungeon(0)->PrepareLevel(6, false);
+  BusyAnimationDisabled = false;
   GetDungeon(0)->GetLevel(6)->CreateStairs(false);
 
   if(!GetDungeon(0)->GetLevel(6)->GetLevelMessage().length())
@@ -1194,7 +1203,7 @@ void game::BusyAnimation(bitmap* Buffer)
       ElpuriLoaded = true;
     }
 
-  if(clock() - LastTime > CLOCKS_PER_SEC >> 5)
+  if(!BusyAnimationDisabled && clock() - LastTime > CLOCKS_PER_SEC >> 5)
     {
       vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
@@ -1422,12 +1431,12 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
     {
     case 'i':
       if(!IsInWilderness())
-	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat())
+	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::GetSeeWholeMapCheat())
 	  {
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", false, false);
+	      Stack->DrawContents(game::GetPlayer(), "Items here", false, GetSeeWholeMapCheat());
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1436,11 +1445,11 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     case 'c':
-      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat())
+      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::GetSeeWholeMapCheat())
 	{
 	  character* Char = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-	  if(Char && (Char->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || game::GetSeeWholeMapCheat()))
 	    Char->PrintInfo();
 	  else
 	    ADD_MESSAGE("You see no one here.");
@@ -1566,7 +1575,7 @@ void game::InitDangerMap()
 		First = false;
 	      }
 
-	    character* Char = Proto->Clone(i->first);
+	    character* Char = Proto->Clone(i->first, NOPICUPDATE|NOEQUIPMENTPICUPDATE);
 	    DangerMap[configid(c, i->first)] = Char->GetRelativeDanger(Player, true);
 	    delete Char;
 	  }
@@ -1585,7 +1594,7 @@ void game::CalculateNextDanger()
 
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
-      character* Char = Proto->Clone(NextDangerId.Config);
+      character* Char = Proto->Clone(NextDangerId.Config, NOPICUPDATE|NOEQUIPMENTPICUPDATE);
       DangerIterator->second = (DangerIterator->second * 9 + Char->GetRelativeDanger(Player, true)) / 10;
       delete Char;
 
@@ -1616,3 +1625,4 @@ void game::CalculateNextDanger()
   else
     ABORT("It is dangerous to go ice fishing in the summer.");
 }
+

@@ -145,14 +145,15 @@ class OLTERRAIN
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return ContainedMaterial != 0; }
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
+  virtual void SetContainedMaterial(material* What, ushort SpecialFlags = 0) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
+  virtual void ChangeContainedMaterial(material* What, ushort SpecialFlags = 0) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
   void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
   virtual bool HasContainedMaterial() const { return true; }
  protected:
+  virtual bool IsSparkling(ushort) const;
   virtual material*& GetMaterialReference(ushort);
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
@@ -171,6 +172,7 @@ class OLTERRAIN
   virtual void BeKicked(character*, ushort);
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual void HasBeenHitBy(item*, float, uchar);
+  virtual void Break() { olterrain::Break(); }
  protected:
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, IsWalkable() ? 48 : 160); }
 );
@@ -188,8 +190,9 @@ class GLTERRAIN
   virtual std::string ScoreEntry() const { return "drowned"; }
   virtual bool IsFatalToStay() const { return true; }
  protected:
+  virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + Frame * 16, 0); } // gum solution, should come from script
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
 );
 
 #endif

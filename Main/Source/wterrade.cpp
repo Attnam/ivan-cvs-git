@@ -33,6 +33,7 @@ bool attnam::GoDown(character* Who) const
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(1)->PrepareLevel(0);
+  game::GetCurrentLevel()->FiatLux();
   game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
@@ -75,6 +76,7 @@ bool elpuricave::GoDown(character* Who) const
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(0)->PrepareLevel(0);
+  game::GetCurrentLevel()->FiatLux();
   game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 

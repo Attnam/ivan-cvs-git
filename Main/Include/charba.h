@@ -156,8 +156,8 @@ class characterprototype
 {
  public:
   friend class database<character>;
-  characterprototype(characterprototype*, character* (*)(ushort, bool, bool), const std::string&);
-  character* Clone(ushort Config = 0, bool CreateEquipment = true) const { return Cloner(Config, CreateEquipment, false); }
+  characterprototype(characterprototype*, character* (*)(ushort, ushort), const std::string&);
+  character* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   character* CloneAndLoad(inputfile&) const;
   ushort GetIndex() const { return Index; }
   const characterprototype* GetBase() const { return Base; }
@@ -170,7 +170,7 @@ class characterprototype
   ushort Index;
   characterprototype* Base;
   std::map<ushort, characterdatabase> Config;
-  character* (*Cloner)(ushort, bool, bool);
+  character* (*Cloner)(ushort, ushort);
   std::string ClassId;
 };
 
@@ -317,7 +317,7 @@ class character : public entity, public id
   virtual void ReceiveKoboldFlesh(long);
   virtual bool ChangeRandomStat(short);
   virtual uchar RandomizeReply(uchar, bool*);
-  virtual void CreateInitialEquipment() { }
+  virtual void CreateInitialEquipment(ushort) { }
   virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual void TestWalkability();
@@ -330,12 +330,12 @@ class character : public entity, public id
   void SetTorso(torso* What) { SetBodyPart(TORSOINDEX, What); }
   bodypart* GetBodyPart(ushort Index) const { return static_cast<bodypart*>(*BodyPartSlot[Index]); }
   void SetBodyPart(ushort, bodypart*);
-  virtual void SetMainMaterial(material*);
-  virtual void ChangeMainMaterial(material*);
-  virtual void SetSecondaryMaterial(material*);
-  virtual void ChangeSecondaryMaterial(material*);
-  virtual void SetContainedMaterial(material*);
-  virtual void ChangeContainedMaterial(material*);
+  virtual void SetMainMaterial(material*, ushort = 0);
+  virtual void ChangeMainMaterial(material*, ushort = 0);
+  virtual void SetSecondaryMaterial(material*, ushort = 0);
+  virtual void ChangeSecondaryMaterial(material*, ushort = 0);
+  virtual void SetContainedMaterial(material*, ushort = 0);
+  virtual void ChangeContainedMaterial(material*, ushort = 0);
   virtual void Teleport(vector2d);
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
@@ -401,7 +401,7 @@ class character : public entity, public id
   virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
-  virtual bodypart* CreateBodyPart(ushort);
+  virtual bodypart* CreateBodyPart(ushort, ushort = 0);
   virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < GetEquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
@@ -442,27 +442,27 @@ class character : public entity, public id
   virtual DATABASEVALUE(ushort, ConsumeFlags);
   virtual DATABASEVALUE(ulong, TotalVolume);
   virtual DATABASEVALUE(const std::string&, TalkVerb);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, TorsoBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, ArmBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, LegBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, RightArmBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, LeftArmBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, RightLegBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, LeftLegBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, GroinBitmapPos, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, ClothColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, SkinColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, CapColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, HairColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, EyeColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, TorsoMainColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, BeltColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, TorsoSpecialColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, ArmMainColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, ArmSpecialColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, LegMainColor, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, LegSpecialColor, ushort);
+  virtual DATABASEVALUE(vector2d, HeadBitmapPos);
+  virtual DATABASEVALUE(vector2d, TorsoBitmapPos);
+  virtual DATABASEVALUE(vector2d, ArmBitmapPos);
+  virtual DATABASEVALUE(vector2d, LegBitmapPos);
+  virtual DATABASEVALUE(vector2d, RightArmBitmapPos);
+  virtual DATABASEVALUE(vector2d, LeftArmBitmapPos);
+  virtual DATABASEVALUE(vector2d, RightLegBitmapPos);
+  virtual DATABASEVALUE(vector2d, LeftLegBitmapPos);
+  virtual DATABASEVALUE(vector2d, GroinBitmapPos);
+  virtual DATABASEVALUE(ushort, ClothColor);
+  virtual DATABASEVALUE(ushort, SkinColor);
+  virtual DATABASEVALUE(ushort, CapColor);
+  virtual DATABASEVALUE(ushort, HairColor);
+  virtual DATABASEVALUE(ushort, EyeColor);
+  virtual DATABASEVALUE(ushort, TorsoMainColor);
+  virtual DATABASEVALUE(ushort, BeltColor);
+  virtual DATABASEVALUE(ushort, TorsoSpecialColor);
+  virtual DATABASEVALUE(ushort, ArmMainColor);
+  virtual DATABASEVALUE(ushort, ArmSpecialColor);
+  virtual DATABASEVALUE(ushort, LegMainColor);
+  virtual DATABASEVALUE(ushort, LegSpecialColor);
   virtual DATABASEVALUE(uchar, HeadBonePercentile);
   virtual DATABASEVALUE(uchar, TorsoBonePercentile);
   virtual DATABASEVALUE(uchar, ArmBonePercentile);
@@ -501,7 +501,7 @@ class character : public entity, public id
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
-  static character* Clone(ushort, bool, bool) { return 0; }
+  static character* Clone(ushort, ushort) { return 0; }
   virtual bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*) = 0;
@@ -686,27 +686,27 @@ class character : public entity, public id
   void SetPolymorphed(bool What) { Polymorphed = What; }
   bool IsInBadCondition() const { return HP * 3 < MaxHP; }
   bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP; }
+  virtual void UpdatePictures();
+  virtual bool CanHeal() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
-  void Initialize(ushort, bool, bool);
+  void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
   virtual void LoadDataBaseStats();
   void InstallDataBase();
-  virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
-  virtual ushort GetBodyPartColorA(ushort, ushort);
-  virtual ushort GetBodyPartColorB(ushort, ushort);
-  virtual ushort GetBodyPartColorC(ushort, ushort);
-  virtual ushort GetBodyPartColorD(ushort, ushort);
-  virtual ushort GetBodyPartAnimationFrames(ushort) const { return 1; }
+  virtual vector2d GetBodyPartBitmapPos(ushort);
+  virtual ushort GetBodyPartColorA(ushort);
+  virtual ushort GetBodyPartColorB(ushort);
+  virtual ushort GetBodyPartColorC(ushort);
+  virtual ushort GetBodyPartColorD(ushort);
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual void UpdateBodyPartPicture(ushort);
-  virtual void UpdateBodyPartPictures();
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
-  virtual void CreateBodyParts();
+  virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
   virtual bool AddMaterialDescription(std::string&, bool) const;
@@ -738,7 +738,7 @@ class character : public entity, public id
   virtual std::string KickNoun() const { return "kick"; }
   virtual std::string BiteNoun() const { return "attack"; }
   virtual bool AttackIsBlockable(uchar) const { return true; }
-  virtual uchar GetSpecialBodyPartFlags(ushort, ushort) const { return STNORMAL; }
+  virtual uchar GetSpecialBodyPartFlags(ushort) const { return STNORMAL; }
   virtual DATABASEVALUE(uchar, PanicLevel);
   stack* Stack;
   long NP, AP;
@@ -787,6 +787,7 @@ class character : public entity, public id
   uchar BodyParts;
   bool Polymorphed;
   bool InNoMsgMode;
+  ulong RegenerationCounter;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
@@ -800,10 +801,10 @@ class character : public entity, public id
 name : public base\
 {\
  public:\
-  name(ushort Config = 0, bool CreateEquipment = true, bool Load = false) : base(donothing()) { Initialize(Config, CreateEquipment, Load); }\
+  name(ushort Config = 0, ushort SpecialFlags = 0) : base(donothing()) { Initialize(Config, SpecialFlags); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
-  static character* Clone(ushort Config, bool CreateEquipment, bool Load) { return new name(Config, CreateEquipment, Load); }\
+  static character* Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
  protected:\
   virtual character* RawDuplicate() const { return new name(*this); }\
   static prototype name##_ProtoType;\
@@ -817,7 +818,7 @@ name : public base\
  public:\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
-  static character* Clone(ushort, bool, bool) { return 0; }\
+  static character* Clone(ushort, ushort) { return 0; }\
  protected:\
   static prototype name##_ProtoType;\
   data\

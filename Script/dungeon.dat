@@ -54,7 +54,7 @@ Dungeon 0;
 
 		Size=XSize, YSize;
 		Rooms=10+rand%21;
-		Items=10+rand%21;
+		Items=25+rand%26;
 		GenerateMonsters=true;
 		ReCalculate=true;
 		GenerateUpStairs=true;
@@ -142,7 +142,7 @@ Dungeon 0;
 		}
 	}
 
-	Level 2+rand%2;
+	Level 3;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
 		Rooms=10+rand%21;
@@ -173,7 +173,7 @@ Dungeon 0;
 		}
 	}
 
-	Level 2+rand%2;
+	Level 2;
 	{
 		Rooms=10+rand%21;
 
@@ -212,6 +212,18 @@ Dungeon 0;
 				Character=shopkeeper { Team=6; }
 			}
 
+			Square, Pos 2,1;
+			{
+				Item = IRON gauntlet;
+				Times = 2;
+			}
+
+			Square, Pos 3,2;
+			{
+				Item = IRON boot;
+				Times = 2;
+			}
+
 			ItemMap
 			{
 				Pos=1,1;
@@ -220,20 +232,18 @@ Dungeon 0;
 				Types
 				{
 					c = scrollofchangematerial;
-					L = IRON IRON meleeweapon(LONGSWORD);
-					C = MITHRIL bodyarmor(CHAINMAIL);
+					L = STEEL STEEL meleeweapon(LONGSWORD);
+					C = IRON bodyarmor(CHAINMAIL);
 					s = wandofstriking;
 					a = lantern;
-                                        l = BREAD loaf;
+                                        l = IRON helmet;
 					t = scrollofteleportation;
-					g = IRON can { ContainedMaterial = GOBLINOIDFLESH; }
-					p = IRON meleeweapon(POLEAXE);
-					B = BEEF loaf;
+					p = STEEL STEEL meleeweapon(AXE);
 				}
 			}
 			{
-			    .B.
-			    pag
+			    ...
+			    pa.
 			    t.c
 			    LlC
 			    .s.
@@ -384,7 +394,7 @@ Dungeon 0;
 				Types
 				{
 					O=oree;
-					B=darkknight;
+					B=darkknight(ELITE);
 					G=BLOOD golem;
 				}
 			}
@@ -488,7 +498,7 @@ Dungeon 1;
 			Pos=10,10;
 			Size=41,42;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),MITHRIL wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASSTERRAIN),STONE wall(BRICK_FINE);
 			FloorSquare=solidterrain(GRASSTERRAIN),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -565,12 +575,12 @@ Dungeon 1;
 				Size=39,40;
 				Types
 				{
-					# = VALPURIUM wall(BRICK_FINE);
+					# = MARBLE wall(BRICK_FINE);
 					T = throne;
 					c = decoration(CARPET);
 					A = VALPURIUM altar(valpurus);
-					D = VALPURIUM door;
-					L = VALPURIUM door { Parameters = LOCKED; }
+					D = MARBLE door;
+					L = MARBLE door { Parameters = LOCKED; }
 					b = decoration(LINDEN);
 					1 = decoration(POOLCORNER) { VisualEffects = NONE; }
 					2 = decoration(POOLCORNER) { VisualEffects = MIRROR; }
@@ -653,10 +663,14 @@ Dungeon 1;
 					d = DIAMOND stone;
 					C = chest;
 					W = wandofpolymorph;
+					1 = lantern { SideStackIndex = UP; }
+					2 = lantern { SideStackIndex = DOWN; }
+					3 = lantern { SideStackIndex = RIGHT; }
+					4 = lantern { SideStackIndex = LEFT; }
 				}
 			}
 			{
-				............#########............
+				............##2###2##............
 				............#.......#............
 				####......###.......###......####
 				#..#......#...........#......#..#
@@ -665,25 +679,25 @@ Dungeon 1;
 				#..###..#......p.p......#..###..#
 				#...e#..#......b.b......#..#....#
 				#...e#..#......k.k......#..#....#
-				###.e#..###.r..p.p..r.###..#..###
-				..#.e###..#....b.b....#..###..#..
+				##1.e#..##1.r..p.p..r.1##..#..1##
+				..#.e4##..#....b.b....#..##3..#..
 				..#....#..#....k.k....#..#....#..
-				..###..####....p.p....####..###..
-				....#.....#.h..b.b..h.#.....#....
+				..###..4###....p.p....###3..###..
+				....#.....3.h..b.b..h.4.....#....
 				....#.....#....k.k....#.....#....
-				....####..#....p.p....#..####....
+				....###3..#....p.p....#..4###....
 				.......#..#....b.b....#..#.......
-				......###.#.i..k.k..i.#.###......
+				......###.3.i..k.k..i.4.###......
 				..#####.#.#....p.p....#.#.#####..
 				.##.......#....b.b....#.......##.
-				.#......#.#....k.k....#.#......#.
-				.#......#.#.g..p.p..g.#.#......#.
-				.##.....#.#....b.b....#.#.....##.
+				.#......3.#....k.k....#.4......#.
+				.#......#.3.g..p.p..g.4.#......#.
+				.##.....4.#....b.b....#.3.....##.
 				..##....#.#...........#.#....##..
-				...##...#.######.######.#...##...
+				...##...#.##2###.###2##.#...##...
+				....#...4...............3...#....
 				....#...#...............#...#....
-				....#...#...............#...#....
-				...#######...###.###...#######...
+				...###2###...##2.2##...###2###...
 				####.........#.....#....ooool####
 				#........#####.....#####.....ttc#
 				#........#.............#ssss...c#
@@ -797,11 +811,11 @@ Dungeon 1;
 					a = lantern;
 					P = potion { ContainedMaterial = OMLEURINE; }
 					C = bodyarmor(CHAINMAIL);
-					w = whip;
+					x = meleeweapon(AXE);
 				}
 			}
 			{
-			    .spw.
+			    .spx.
 			    bLlCP
 			    tiAat
 			}
@@ -811,7 +825,7 @@ Dungeon 1;
 		{
 			Pos=54,55;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),GOLD wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASSTERRAIN),STEEL wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=legifer;
 			Type=temple;
@@ -819,12 +833,12 @@ Dungeon 1;
 			Square, Pos 2, 0;
 			{
 				GTerrain = solidterrain(PARQUET);
-				OTerrain = GOLD door;
+				OTerrain = STEEL door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = GOLD altar(legifer);
+				OTerrain = STEEL altar(legifer);
 			}
 
 			Square, Pos 2, 3;
@@ -863,7 +877,7 @@ Dungeon 1;
 		{
 			Pos=54,2;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),BANANAFLESH wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASSTERRAIN),WOOD wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=seges;
 			Type=temple;
@@ -871,12 +885,12 @@ Dungeon 1;
 			Square, Pos 0, 2;
 			{
 				GTerrain = solidterrain(PARQUET);
-				OTerrain = BANANAFLESH door;
+				OTerrain = WOOD door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = BANANAFLESH altar(seges);
+				OTerrain = WOOD altar(seges);
 			}
 
 			Square, Pos 3, 2;

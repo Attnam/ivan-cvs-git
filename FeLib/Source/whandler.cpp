@@ -23,7 +23,7 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 
 ulong globalwindowhandler::UpdateTick()
 {
-  Tick = clock() * 10 / CLOCKS_PER_SEC;
+  Tick = clock() * 25 / CLOCKS_PER_SEC;
   return Tick;
 
 }
@@ -235,7 +235,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    graphics::BlitDBToScreen();
 		}
 
-	      Sleep(50);
+	      Sleep(10);
 	    }
 	  else
 	    WaitMessage();
@@ -361,7 +361,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    if(Draw)
 		      graphics::BlitDBToScreen();
 
-		    SDL_Delay(50);
+		    SDL_Delay(30);
 		  }
 	      }
 	    else

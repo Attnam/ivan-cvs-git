@@ -181,7 +181,7 @@ template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
   virtual const std::string& GetClassId() const;
-  void BasicInstantiate(std::vector<type*>&, ulong) const;
+  void BasicInstantiate(std::vector<type*>&, ulong, ushort) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
 
@@ -191,8 +191,8 @@ class contentscript<character> : public contentscripttemplate<character>
 {
  public:
   contentscript<character>();
-  void Instantiate(std::vector<character*>&, ulong) const;
-  character* Instantiate() const;
+  void Instantiate(std::vector<character*>&, ulong, ushort = 0) const;
+  character* Instantiate(ushort = 0) const;
  protected:
   DATAMEMBER(ushort, Team);
 };
@@ -201,26 +201,27 @@ class contentscript<item> : public contentscripttemplate<item>
 {
  public:
   contentscript<item>();
-  void Instantiate(std::vector<item*>&, ulong) const;
-  item* Instantiate() const;
+  void Instantiate(std::vector<item*>&, ulong, ushort = 0) const;
+  item* Instantiate(ushort = 0) const;
  protected:
   DATAMEMBER(ushort, Team);
   DATAMEMBER(bool, Active);
+  DATAMEMBER(uchar, SideStackIndex);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
  public:
-  void Instantiate(std::vector<glterrain*>&, ulong) const;
-  glterrain* Instantiate() const;
+  void Instantiate(std::vector<glterrain*>&, ulong, ushort = 0) const;
+  glterrain* Instantiate(ushort = 0) const;
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
   contentscript<olterrain>();
-  void Instantiate(std::vector<olterrain*>&, ulong) const;
-  olterrain* Instantiate() const;
+  void Instantiate(std::vector<olterrain*>&, ulong, ushort = 0) const;
+  olterrain* Instantiate(ushort = 0) const;
  protected:
   DATAMEMBER(uchar, VisualEffects);
 };

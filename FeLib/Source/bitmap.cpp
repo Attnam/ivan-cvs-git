@@ -1072,8 +1072,7 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
   ushort* FlameLowestPoint = new ushort[XSize];
   ushort x,y, Top, MaxDist, RelPos;
   long NewSeed = RAND(); 
-  ++Frame; /* 0 doesn't seem to be a good seed */
-  femath::SetSeed(Frame); /* Because we want flame animation loops to be same in every session */
+  femath::SetSeed(Frame % 16 + 1); /* We want flame animation loops to be same in every session */
 
   for(x = 0; x < XSize; ++x)
     {
@@ -1114,27 +1113,19 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 
 void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 {
-  if(Frame == 0)
+  if(!Frame)
     return;
 
-  ushort Size = -(Frame - 1)*(Frame - 16) / 10;
+  ushort Size = (Frame - 1) * (16 - Frame) / 10;
+  SafePutPixel(SparklePos.X, SparklePos.Y, WHITE);
 
-  for(ushort c = 0; c < Size; ++c)
+  for(ushort c = 1; c < Size; ++c)
     {
-      uchar Lightness = 192 + c * 64 / Size;
+      uchar Lightness = 191 + (Size - c) * 64 / Size;
       ushort RGB = MakeRGB(Lightness, Lightness, Lightness);
-
-      vector2d Pos(SparklePos.X + c, SparklePos.Y);
-      if(IsValid(Pos))
-	PutPixel(Pos.X, Pos.Y, RGB);
-      Pos = vector2d(SparklePos.X - c, SparklePos.Y);
-      if(IsValid(Pos))
-	PutPixel(Pos.X, Pos.Y, RGB);
-      Pos = vector2d(SparklePos.X, SparklePos.Y + c);
-      if(IsValid(Pos))
-	PutPixel(Pos.X, Pos.Y, RGB);
-      Pos = vector2d(SparklePos.X, SparklePos.Y - c);
-      if(IsValid(Pos))
-	PutPixel(Pos.X, Pos.Y, RGB);
+      SafePutPixel(SparklePos.X + c, SparklePos.Y, RGB);
+      SafePutPixel(SparklePos.X - c, SparklePos.Y, RGB);
+      SafePutPixel(SparklePos.X, SparklePos.Y + c, RGB);
+      SafePutPixel(SparklePos.X, SparklePos.Y - c, RGB);
     }
 }

@@ -79,27 +79,32 @@ char* festring::IntegerToChar(long Integer)
   else if(Integer > 2147483647)
     return strcpy(BufferPtr, "Inf");
 
+  bool ForceZeros = false;
+
   if(Integer >= 2000000000)
     {
       *BufferPtr++ = '2';
       Integer -= 2000000000;
+      ForceZeros = true;
     }
   else if(Integer >= 1000000000)
     {
       *BufferPtr++ = '1';
       Integer -= 1000000000;
+      ForceZeros = true;
     }
 
-  if(Integer >= 1000000)
+  if(ForceZeros || Integer >= 1000000)
     {
       ushort Temp = Integer / 1000000;
       *BufferPtr++ = IntegerMap[Temp][0];
       *BufferPtr++ = IntegerMap[Temp][1];
       *BufferPtr++ = IntegerMap[Temp][2];
       Integer -= Temp * 1000000;
+      ForceZeros = true;
     }
 
-  if(Integer >= 1000)
+  if(ForceZeros || Integer >= 1000)
     {
       ushort Temp = Integer / 1000;
       *BufferPtr++ = IntegerMap[Temp][0];

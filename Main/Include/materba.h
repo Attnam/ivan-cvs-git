@@ -27,7 +27,6 @@ struct materialdatabase
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
-  ushort OfferModifier;
   ushort Color;
   ulong PriceModifier;
   bool IsSolid;
@@ -94,18 +93,17 @@ class material
   bool Effect(character*, long);
   void EatEffect(character*, ulong, float = 1.0);
   bool HitEffect(character*);
-  virtual ushort GetSkinColor(ushort) const { return GetColor(); }
+  virtual ushort GetSkinColor() const { return GetColor(); }
+  virtual void SetSkinColor(ushort) { }
   ulong GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
   bool CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
   virtual bool HasBe() const { return false; }
   virtual void Be() { }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void AddConsumeEndMessage(character*) const;
-  long GetOfferValue(char GodAlignment) const;
   DATABASEVALUE(ushort, StrengthValue);
   DATABASEVALUE(ushort, ConsumeType);
   DATABASEVALUE(ushort, Density);
-  DATABASEVALUE(ushort, OfferModifier);
   DATABASEVALUE(ushort, Color);
   DATABASEVALUE(ulong, PriceModifier);
   DATABASEBOOL(IsSolid);
@@ -127,6 +125,7 @@ class material
   DATABASEVALUE(uchar, Alpha);
   DATABASEVALUE(uchar, Flexibility);
   DATABASEVALUE(ushort, SpoilModifier);
+  DATABASEBOOL(IsSparkling);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
@@ -149,7 +148,6 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
-  DATABASEBOOL(IsSparkling);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

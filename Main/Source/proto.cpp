@@ -19,11 +19,11 @@ template <class type> void protocontainer<type>::GenerateCodeNameMap()
     CodeNameMap[GetProto(c)->GetClassId()] = c;
 }
 
-character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems)
+character* protosystem::BalancedCreateMonster()
 {
   for(ushort c = 0;; ++c)
     {
-      float Difficulty = game::Difficulty() * Multiplier;
+      float Difficulty = game::Difficulty();
 
       for(ushort i = 0; i < 10; ++i)
 	{
@@ -39,9 +39,9 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 		  {
 		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    if(c >= 99 || (DangerModifier < Difficulty * 3 && DangerModifier > Difficulty / 3))
+		    if(c >= 99 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 5))
 		      {
-			character* Monster = Proto->Clone(i->first, CreateItems);
+			character* Monster = Proto->Clone(i->first);
 			Monster->SetTeam(game::GetTeam(1));
 			return Monster;
 		      }
@@ -90,7 +90,7 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
     }
 }
 
-character* protosystem::CreateMonster(bool CreateItems)
+character* protosystem::CreateMonster(ushort SpecialFlags)
 {
   while(true)
     {
@@ -105,7 +105,7 @@ character* protosystem::CreateMonster(bool CreateItems)
 	  {
 	    if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
 	      {
-		character* Monster = Proto->Clone(i->first, CreateItems);
+		character* Monster = Proto->Clone(i->first, SpecialFlags);
 		Monster->SetTeam(game::GetTeam(1));
 		return Monster;
 	      }
@@ -179,12 +179,12 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
   return Id;
 }
 
-character* protosystem::CreateMonster(const std::string& What, bool CreateEquipment, bool Output)
+character* protosystem::CreateMonster(const std::string& What, ushort SpecialFlags, bool Output)
 {
   std::pair<const character::prototype*, ushort> Id = SearchForProto<character>(What, Output);
 
   if(Id.first)
-    return Id.first->Clone(Id.second, CreateEquipment);
+    return Id.first->Clone(Id.second, SpecialFlags);
   else
     return 0;
 }
