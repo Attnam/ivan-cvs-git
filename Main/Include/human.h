@@ -76,7 +76,7 @@ class ABSTRACT_CHARACTER
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(ushort) const;
-  virtual bool CompleteRiseFromTheDead();
+  virtual bool TryToRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
   virtual void Kick(lsquare*, uchar, bool = false);
   virtual float GetTimeToKill(const character*, bool) const;
@@ -172,7 +172,7 @@ class CHARACTER
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*);
-  virtual bool CompleteRiseFromTheDead();
+  virtual bool TryToRiseFromTheDead();
   virtual void FinalProcessForBone();
   virtual void BeTalkedTo();
   virtual bool IsHuman() const { return true; }

@@ -9,6 +9,12 @@ is also provided AS IS and is probably completely unreadable.
 
 August 4 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
+	* Resurrecting monsters will no trigger StepOn effects under them
+	* Corrected a typo in Vladimir's description
+	* Vladimir can no longer be polymorphed
+
+August 4 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
 	* The alternative key settings now work in felists, for instance inventory
 	* Imps are now immune to fire
 	* Gibberlings now gibber instead of grunting

@@ -766,18 +766,24 @@ bool corpse::RaiseTheDead(character* Summoner)
   if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
-  GetDeceased()->PutToOrNear(GetPos());
-  RemoveFromSlot();
-  GetDeceased()->Enable();
-  GetDeceased()->SetMotherEntity(0);
-  bool Success = GetDeceased()->CompleteRiseFromTheDead();
+  if(GetDeceased()->TryToRiseFromTheDead())
+    {
+      vector2d Pos = GetPos();
+      RemoveFromSlot();
+      GetDeceased()->Enable();
+      GetDeceased()->SetMotherEntity(0);
+      GetDeceased()->PutToOrNear(Pos);
 
-  if(Success && Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
-    GetDeceased()->ChangeTeam(Summoner->GetTeam());
+      if(Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
+	GetDeceased()->ChangeTeam(Summoner->GetTeam());
 
-  Deceased = 0;
-  SendToHell();
-  return Success;
+      GetDeceased()->SignalStepFrom(0);
+      Deceased = 0;
+      SendToHell();
+      return true;
+    }
+  else
+    return false;;
 }
 
 void bodypart::VirtualConstructor(bool Load)

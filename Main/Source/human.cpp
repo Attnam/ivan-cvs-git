@@ -1506,7 +1506,7 @@ ushort humanoid::GlobalResistance(ushort Type) const
   return Resistance;
 }
 
-bool humanoid::CompleteRiseFromTheDead()
+bool humanoid::TryToRiseFromTheDead()
 {
   ushort c;
 
@@ -1549,6 +1549,7 @@ bool humanoid::CompleteRiseFromTheDead()
 	}
     }
 
+  ResetStates();
   return true;
 }
 
@@ -1560,13 +1561,11 @@ bool humanoid::HandleNoBodyPart(ushort Index)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The headless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die();
       return false;
     case GROIN_INDEX:
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die();
       return false;
     case TORSO_INDEX:
       ABORT("The corpse does not have a torso.");
@@ -3741,14 +3740,13 @@ bool human::SuckSoul(character* Soul)
   return false;
 }
 
-bool human::CompleteRiseFromTheDead()
+bool human::TryToRiseFromTheDead()
 {
-  if(humanoid::CompleteRiseFromTheDead())
+  if(humanoid::TryToRiseFromTheDead())
     {
       if(IsEnabled() && SoulID)
 	{
 	  ADD_MESSAGE("The soulless body of %s wobbles for a moment.", CHAR_NAME(DEFINITE));
-	  Die();
 	  return false;
 	}
 

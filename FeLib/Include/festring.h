@@ -17,7 +17,9 @@ class festring
 {
  public:
   typedef ulong sizetype;
-  festring() : Data(0), Size(0) { }
+  /* I can prove that the code works even if OwnsData is left uninitialized.
+     However, Valgrind reports this as a possible error which is annoying */
+  festring() : Data(0), Size(0), OwnsData(false) { }
   festring(sizetype, char);
   festring(const char* CStr) : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
   festring(const char* CStr, sizetype N) : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }

@@ -50,9 +50,9 @@ character
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
 	/* At least one of the following three is obligatory: */
-	/* BaseUnarmedStrength */
-	/* BaseBiteStrength, if not defined then equals BaseUnarmedStrength / 2 */
-	/* BaseKickStrength, if not defined then equals BaseUnarmedStrength * 2 */
+	BaseUnarmedStrength = 0;
+	BaseBiteStrength = 0; /* Defaults to BaseUnarmedStrength / 2 */
+	BaseKickStrength = 0; /* Defaults to BaseUnarmedStrength * 2 */
 	AttackStyle = USE_ARMS;
 	CanUseEquipment = false;
 	CanKick = false;
@@ -3938,7 +3938,7 @@ vladimir
 	FriendlyReplies == "@Dd roars cheerfully.";
 	SkinColor = rgb16(110, 90, 80);
 	NameSingular = "bunny";
-	Adjective = "gigantic carnivorous mutant bunny";
+	Adjective = "gigantic carnivorous mutant";
 	AttackStyle = USE_HEAD|USE_ARMS;
 	BaseUnarmedStrength = 1000;
 	BaseBiteStrength = 500;
@@ -3954,6 +3954,7 @@ vladimir
 	TotalVolume = 800000;
 	IsUnique = true;
 	CanApply = true;
+	IsPolymorphable = false;
 }
 
 hattifattener

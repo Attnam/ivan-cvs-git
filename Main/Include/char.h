@@ -360,7 +360,7 @@ class character : public entity, public id
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
-  virtual bool CompleteRiseFromTheDead();
+  virtual bool TryToRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
   bool CanUseEquipment(ushort) const;

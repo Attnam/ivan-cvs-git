@@ -1172,7 +1172,7 @@ Dungeon ATTNAM;
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
-		Square, Random;
+		/*Square, Random;
 		{
 			Character = genetrixvesana { Team = ATTNAM_TEAM; }
 			Times = 10;
@@ -1390,7 +1390,7 @@ Dungeon ATTNAM;
 		{
 			Items == beartrap { Team = ATTNAM_TEAM; IsActive = true; }
 			Times = 100;
-		}
+		}*/
 	}
 }
 

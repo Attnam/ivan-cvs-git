@@ -325,7 +325,7 @@ void game::Run()
 	      Counter = 0;
 	    }
 
-	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new holybanana);
+	  /*CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new holybanana);
 	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, WAND));
 	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_POLYMORPH));
 	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_CLONING));
@@ -334,7 +334,7 @@ void game::Run()
 	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 	  Char = protosystem::CreateMonster(1, 10000);
 	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  Char->ChangeTeam(GetTeam(ATTNAM_TEAM));
+	  Char->ChangeTeam(GetTeam(ATTNAM_TEAM));*/
 	}
 
       try

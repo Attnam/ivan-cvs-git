@@ -1208,9 +1208,9 @@ ushort unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart,
   return Return;
 }
 
-bool elpuri::CompleteRiseFromTheDead()
+bool elpuri::TryToRiseFromTheDead()
 {
-  character::CompleteRiseFromTheDead();
+  character::TryToRiseFromTheDead();
 
   for(ushort c = 0; c < GetSquaresUnder(); ++c)
     for(stackiterator i = GetLSquareUnder(c)->GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -1227,8 +1227,6 @@ bool elpuri::CompleteRiseFromTheDead()
       ADD_MESSAGE("%s dies.", CHAR_NAME(DEFINITE));
     }
 
-  largecreature::CreateCorpse(GetLSquareUnder());
-  Remove();
   return false;
 }
 

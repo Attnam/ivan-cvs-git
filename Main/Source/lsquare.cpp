@@ -1165,7 +1165,7 @@ void lsquare::SendMemorizedUpdateRequest()
       MemorizedUpdateRequested = true;
       DescriptionChanged = true;
 
-      if(CanBeSeenByPlayer())
+      if(!game::IsGenerating() && CanBeSeenByPlayer())
 	{
 	  UpdateMemorized();
 	  UpdateMemorizedDescription();

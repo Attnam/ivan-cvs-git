@@ -3194,7 +3194,7 @@ void character::PrintInfo() const
     }
 }
 
-bool character::CompleteRiseFromTheDead()
+bool character::TryToRiseFromTheDead()
 {
   for(ushort c = 0; c < BodyParts; ++c)
     {
@@ -3208,6 +3208,7 @@ bool character::CompleteRiseFromTheDead()
 	    BodyPart->SetHP(1);
 	}
     }
+
   ResetStates();
   return true;
 }

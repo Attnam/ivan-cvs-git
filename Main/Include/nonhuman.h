@@ -420,7 +420,7 @@ class CHARACTER
   virtual bool SpecialEnemySightedReaction(character*);
   virtual bool Faint(ushort, bool = false) { return false; }
   virtual bool MustBeRemovedFromBone() const;
-  virtual bool CompleteRiseFromTheDead();
+  virtual bool TryToRiseFromTheDead();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
