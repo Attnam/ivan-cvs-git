@@ -131,16 +131,18 @@ void lsquare::Draw()
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheatMode()))
 	    {
+	      ushort Index = Character->GetSquareIndex(Pos);
+
 	      if(Character->GetMoveType() & FLY)
 		{
 		  for(ushort c = 0; c < Smoke.size(); ++c)
 		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
-		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
 		}
 	      else
 		{
-		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
 
 		  for(ushort c = 0; c < Smoke.size(); ++c)
 		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
@@ -161,7 +163,7 @@ void lsquare::Draw()
 	  DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
 	  if(Character && Character->CanBeSeenByPlayer())
-	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 	}
 
       NewDrawRequested = false;
@@ -566,7 +568,6 @@ void lsquare::AddCharacter(character* Guy)
     ABORT("Overgrowth of square population detected!");
 
   Character = Guy;
-  Guy->SetSquareUnder(this);
   SignalEmitationIncrease(Guy->GetEmitation());
   NewDrawRequested = true;
   IncAnimatedEntities();
@@ -586,7 +587,7 @@ void lsquare::RemoveCharacter()
     {
       DecAnimatedEntities();
       character* Backup = Character;
-      SetCharacter(0);
+      Character = 0;
       SignalEmitationDecrease(Backup->GetEmitation());
       NewDrawRequested = true;
     }
@@ -685,30 +686,29 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-bool lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical, bool ForceHit)
+bool lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, uchar Direction, bool Critical, bool ForceHit)
 {
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->KickSquare(Kicker, this);
 
-  uchar Direction = game::GetDirectionForVector(GetPos() - Kicker->GetPos());
-  GetStack()->BeKicked(Kicker, ushort(KickDamage));
+  GetStack()->BeKicked(Kicker, ushort(KickDamage), Direction);
 
   stack* SideStack = GetFirstSideStackUnderAttack(Direction);
 
   if(SideStack)
-    SideStack->BeKicked(Kicker, ushort(KickDamage));
+    SideStack->BeKicked(Kicker, ushort(KickDamage), Direction);
 
   SideStack = GetSecondSideStackUnderAttack(Direction);
 
   if(SideStack)
-    SideStack->BeKicked(Kicker, ushort(KickDamage));
+    SideStack->BeKicked(Kicker, ushort(KickDamage), Direction);
 
   if(GetOLTerrain())
-    GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage * (100 + Success) / 100));
+    GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage * (100 + Success) / 100), Direction);
 
   if(GetCharacter())
     {
-      GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical, ForceHit);
+      GetCharacter()->BeKicked(Kicker, Boot, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
       return true;
     }
   else
@@ -804,7 +804,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   const bool* AttachRequired = SquareScript->AttachRequired();
 
   if(AttachRequired && *AttachRequired)
-    GetLevel()->AttachPos(Pos.X, Pos.Y);
+    GetLevel()->AddToAttachQueue(Pos);
 
   const uchar* EntryIndex = SquareScript->GetEntryIndex();
 
@@ -820,7 +820,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
 
-      AddCharacter(Char);
+      Char->PutTo(Pos);
       Char->CreateHomeData();
 
       if(Room)
@@ -880,28 +880,6 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
       || femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
-void lsquare::MoveCharacter(lsquare* To)
-{
-  if(Character)
-    {
-      if(To->Character)
-	ABORT("Overgrowth of square population detected!");
-
-      character* Movee = Character;
-      ulong Emit = Movee->GetEmitation();
-      SetCharacter(0);
-      To->Character = Movee;
-      Movee->SetSquareUnder(To);
-      To->SignalEmitationIncrease(Emit);
-      SignalEmitationDecrease(Emit);
-      NewDrawRequested = true;
-      To->NewDrawRequested = true;
-      DecAnimatedEntities();
-      To->IncAnimatedEntities();
-      To->StepOn(Movee, this);
-    }
-}
-
 void lsquare::StepOn(character* Stepper, lsquare* ComingFrom)
 {
   if(RoomIndex && ComingFrom->GetRoomIndex() != RoomIndex)
@@ -914,38 +892,6 @@ void lsquare::StepOn(character* Stepper, lsquare* ComingFrom)
 
   if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);
-}
-
-void lsquare::SwapCharacter(lsquare* With)
-{
-  if(Character)
-    if(!With->Character)
-      MoveCharacter(With);
-    else
-      {
-	character* MoveeOne = Character, * MoveeTwo = With->Character;;
-	ulong EmitOne = MoveeOne->GetEmitation();
-	ulong EmitTwo = MoveeTwo->GetEmitation();
-	SetCharacter(MoveeTwo);
-	With->SetCharacter(MoveeOne);
-	MoveeTwo->SetSquareUnder(this);
-	MoveeOne->SetSquareUnder(With);
-	SignalEmitationIncrease(EmitTwo);
-	With->SignalEmitationIncrease(EmitOne);
-	SignalEmitationDecrease(EmitOne);
-	With->SignalEmitationDecrease(EmitTwo);
-	NewDrawRequested = true;
-	With->NewDrawRequested = true;
-	DecAnimatedEntities();
-	With->IncAnimatedEntities();
-	IncAnimatedEntities();
-	With->DecAnimatedEntities();
-	With->StepOn(MoveeOne, this);
-	StepOn(MoveeTwo, With);
-      }
-  else
-    if(With->Character)
-      With->MoveCharacter(this);
 }
 
 void lsquare::ReceiveVomit(character* Who, ushort Amount)
@@ -1144,7 +1090,7 @@ void lsquare::DrawMemorized()
     DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
   if(Character && Character->CanBeSeenByPlayer())
-    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 }
 
 void lsquare::DrawMemorizedCharacter()
@@ -1158,7 +1104,7 @@ void lsquare::DrawMemorizedCharacter()
       else
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
-      Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+      Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
       NewDrawRequested = false;
     }
 }
@@ -1199,13 +1145,9 @@ void lsquare::KickAnyoneStandingHereAway()
 {
   if(Character)
     {
-      vector2d Pos = GetLevel()->GetNearestFreeSquare(Character, GetPos());
-
-      if(Pos == ERROR_VECTOR)
-	Pos = GetLevel()->GetRandomSquare(Character);
-
-      GetLevel()->AddCharacter(Pos, Character);
-      RemoveCharacter();
+      character* Backup = Character;
+      Backup->Remove();
+      Backup->PutNear(Pos);
     }
 }
 
@@ -1366,7 +1308,7 @@ bool lsquare::FireBall(character* Who, const festring& DeathMsg, uchar)
 { 
   if(!IsFlyable() || GetCharacter())
     {
-      GetLevel()->Explosion(Who, DeathMsg, GetPos(), 70 + RAND() % 21 - RAND() % 21);
+      GetLevel()->Explosion(Who, DeathMsg, Pos, 70 + RAND() % 21 - RAND() % 21);
       return true;
     }
 
@@ -1736,7 +1678,7 @@ void lsquare::PreProcessForBone()
   if(Character && !Character->PreProcessForBone())
     {
       Character->SendToHell();
-      RemoveCharacter();
+      Character->Remove();
     }
 
   GetStack()->PreProcessForBone();
@@ -1747,7 +1689,7 @@ void lsquare::PostProcessForBone(float& DangerSum, ushort& Enemies)
   if(Character && !Character->PostProcessForBone(DangerSum, Enemies))
     {
       Character->SendToHell();
-      RemoveCharacter();
+      Character->Remove();
     }
 
   GetStack()->PostProcessForBone();

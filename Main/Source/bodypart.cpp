@@ -12,6 +12,8 @@ ushort bodypart::GetMaterialColorA(ushort) const { return GetMainMaterial()->Get
 bool bodypart::IsWarm() const { return MainMaterial->IsWarm(); }
 bool bodypart::UseMaterialAttributes() const { return MainMaterial->UseMaterialAttributes(); }
 bool bodypart::CanRegenerate() const { return MainMaterial->CanRegenerate(); }
+square* bodypart::GetSquareUnder(ushort Index) const { return Master ? Slot[0]->GetSquareUnder(Index) : Slot[Index]->GetSquareUnder(); }
+lsquare* bodypart::GetLSquareUnder(ushort Index) const { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(Index) : Slot[Index]->GetSquareUnder()); }
 
 uchar head::GetBodyPartIndex() const { return HEAD_INDEX; }
 ushort head::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
@@ -45,11 +47,14 @@ uchar leftleg::GetBodyPartIndex() const { return LEFT_LEG_INDEX; }
 ushort leftleg::GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
 
 vector2d eddytorso::GetBitmapPos(ushort Frame) const { return torso::GetBitmapPos(Frame) + vector2d((Frame&0x6) << 3, 0); }
+
 vector2d mommotorso::GetBitmapPos(ushort Frame) const { return Frame >> 4 ? torso::GetBitmapPos(Frame) : torso::GetBitmapPos(Frame) + vector2d((Frame&0xE) << 3, 0); }
 
 head* corpse::Behead() { return Deceased->Behead(); }
 bool corpse::CanBeCloned() const { return GetDeceased()->CanBeCloned(); }
 uchar corpse::GetAttachedGod() const { return GetDeceased()->GetTorso()->GetAttachedGod(); }
+
+vector2d ennerhead::GetBitmapPos(ushort Frame) const { return Frame & 16 ? head::GetBitmapPos(Frame) : head::GetBitmapPos(Frame) + vector2d(16, 0); }
 
 void bodypart::Save(outputfile& SaveFile) const
 {
@@ -776,7 +781,7 @@ bool corpse::RaiseTheDead(character* Summoner)
   if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
-  GetLSquareUnder()->AddCharacter(GetDeceased());
+  GetDeceased()->PutToOrNear(GetPos());
   RemoveFromSlot();
   GetDeceased()->Enable();
   GetDeceased()->SetMotherEntity(0);
@@ -958,11 +963,11 @@ bool leg::ApplyExperience()
   return Edited;
 }
 
-void arm::Hit(character* Enemy, bool ForceHit)
+void arm::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
 {
   item* Wielded = GetWielded();
 
-  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % Master->GetCriticalModifier()), ForceHit))
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -1707,7 +1712,8 @@ void bodypart::SpillBlood(ushort HowMuch, vector2d Pos)
 void bodypart::SpillBlood(ushort HowMuch)
 {
   if(HowMuch && (!Master || (Master->IsEnabled() && Master->SpillsBlood())) && IsAlive() && !game::IsInWilderness())
-    GetLSquareUnder()->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+    for(ushort c = 0; c < GetSquaresUnder(); ++c)
+      GetLSquareUnder(c)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
 void bodypart::InitSpecialAttributes()
@@ -2289,7 +2295,7 @@ void arm::UpdateWieldedPicture()
       if(Wielded && Master)
 	{
 	  ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
-	  WieldedAnimationFrames = Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
+	  Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
 	}
       else if(WieldedAnimationFrames)
 	{
@@ -2315,7 +2321,7 @@ void arm::UpdatePictures()
   UpdateWieldedPicture();
 }
 
-void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
 {
   if(AllowAlpha)
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
@@ -2370,11 +2376,11 @@ bool bodypart::IsRepairable() const
 
 bool corpse::SuckSoul(character* Soul, character* Summoner)
 {
-  lsquare* Square = GetLSquareUnder();
+  vector2d Pos = Soul->GetPos();
 
   if(Deceased->SuckSoul(Soul))
     {
-      Square->RemoveCharacter();
+      Soul->Remove();
       character* Deceased = GetDeceased();
 
       if(RaiseTheDead(Summoner))
@@ -2385,7 +2391,7 @@ bool corpse::SuckSoul(character* Soul, character* Summoner)
       else
 	{
 	  Deceased->SetSoulID(Soul->GetID());
-	  Square->AddCharacter(Soul);
+	  Soul->PutTo(Pos);
 	  return false;
 	}
     }
@@ -2399,4 +2405,76 @@ float arm::GetTypeDamage(const character* Enemy) const
     return Damage;
   else
     return Damage * 1.5f;
+}
+
+void largetorso::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
+{
+  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+}
+
+void largetorso::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+{
+  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate, AllowAlpha);
+}
+
+void largecorpse::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
+{
+  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+}
+
+void largecorpse::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+{
+  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate, AllowAlpha);
+}
+
+void largetorso::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*))
+{
+  if(!Slot[0])
+    {
+      Slot[0] = StackSlot;
+      vector2d Pos = GetPos();
+      level* Level = GetLevel();
+
+      for(ushort c = 1; c < 4; ++c)
+	(Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this);
+    }
+  else
+    for(ushort c = 1; c < 4; ++c)
+      if(!Slot[c])
+	{
+	  Slot[c] = StackSlot;
+	  return;
+	}
+}
+
+ushort largetorso::GetSquareIndex(vector2d Pos) const
+{
+  vector2d RelativePos = Pos - GetPos();
+  return RelativePos.X + (RelativePos.Y << 1);
+}
+
+void largecorpse::SignalStackAdd(stackslot* StackSlot, void (stack::*AddHandler)(item*))
+{
+  if(!Slot[0])
+    {
+      Slot[0] = StackSlot;
+      vector2d Pos = GetPos();
+      level* Level = GetLevel();
+
+      for(ushort c = 1; c < 4; ++c)
+	(Level->GetLSquare(Pos + game::GetLargeMoveVector(12 + c))->GetStack()->*AddHandler)(this);
+    }
+  else
+    for(ushort c = 1; c < 4; ++c)
+      if(!Slot[c])
+	{
+	  Slot[c] = StackSlot;
+	  return;
+	}
+}
+
+ushort largecorpse::GetSquareIndex(vector2d Pos) const
+{
+  vector2d RelativePos = Pos - GetPos();
+  return RelativePos.X + (RelativePos.Y << 1);
 }

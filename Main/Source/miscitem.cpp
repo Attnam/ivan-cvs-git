@@ -74,9 +74,9 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(GetArea()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
+      if(GetArea()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
 	{
-	  GetNearLSquare(TryToCreate)->AddCharacter(Monster);
+	  Monster->PutTo(TryToCreate);
 
 	  if(Reader->IsPlayer())
 	    {
@@ -126,7 +126,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 500);
 }
 
-bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
+bool lump::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool BlockedByArmour)
 {
   if(!BlockedByArmour && RAND() & 1)
     {
@@ -556,9 +556,9 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(GetArea()->IsValidPos(TryToCreate) && Genie->CanMoveOn(GetNearLSquare(TryToCreate)) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
+	  if(GetArea()->IsValidPos(TryToCreate) && Genie->CanMoveOn(GetNearLSquare(TryToCreate)) && Genie->IsFreeForMe(GetNearLSquare(TryToCreate)))
 	    {
-	      GetNearSquare(TryToCreate)->AddCharacter(Genie);
+	      Genie->PutTo(TryToCreate);
 	      FoundPlace = true;
 	      SetInhabitedByGenie(false);
 	      break;
@@ -604,7 +604,7 @@ bool oillamp::Apply(character* Applier)
 			    }
 			}
 
-		      GetLevel()->RemoveCharacter(TryToCreate);
+		      Genie->Remove();
 		      delete Genie;
 		      Applier->EditAP(-1000);
 		      return true;
@@ -2218,6 +2218,7 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 	    {
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
+
 	      SetIsActive(false);
 	      GetLSquareUnder()->SendMemorizedUpdateRequest();
 	      GetLSquareUnder()->SendNewDrawRequest();	  
@@ -2289,9 +2290,9 @@ void can::DipInto(material* Material, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-bool holybanana::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool holybanana::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = banana::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = banana::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(Enemy->IsEnabled() && RAND() & 1)
     {
@@ -2452,9 +2453,9 @@ bool charmlyre::Apply(character* Charmer)
       else 
 	ADD_MESSAGE("You hear a mesmerizing tune playing.");
 
-      for(ushort d = 0; d < 8; ++d)
+      for(ushort d = 0; d < Charmer->GetNeighbourSquares(); ++d)
 	{
-	  square* Square = PLAYER->GetNeighbourSquare(d);
+	  square* Square = Charmer->GetNeighbourSquare(d);
 
 	  if(Square)
 	    {
@@ -2462,16 +2463,16 @@ bool charmlyre::Apply(character* Charmer)
 
 	      if(Char)
 		if(Char->IsCharmable())
-		  if(PLAYER->GetRelativeDanger(Char) > 4.0f)
+		  if(Charmer->GetRelativeDanger(Char) > 4.0f)
 		    {
-		      if(Char->GetTeam() == PLAYER->GetTeam())
+		      if(Char->GetTeam() == Charmer->GetTeam())
 			ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
-		      else if(Char->GetRelation(PLAYER) == HOSTILE)
+		      else if(Char->GetRelation(Charmer) == HOSTILE)
 			ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
 		      else
 			ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
 
-		      Char->ChangeTeam(PLAYER->GetTeam());
+		      Char->ChangeTeam(Charmer->GetTeam());
 		    }
 		  else
 		    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));

@@ -375,6 +375,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsQuestItem);
   ADD_MEMBER(IsGoodWithPlants);
   ADD_MEMBER(CreateLockConfigurations);
+  ADD_MEMBER(CanBePickedUp);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -524,6 +525,8 @@ template<> void databasecreator<character>::CheckDefaults(const festring& Word, 
     DataBase.LeftBoot = DataBase.RightBoot;
   else if(Word == "DefaultName")
     DataBase.Alias.push_back(DataBase.DefaultName);
+  else if(Word == "IsUnique")
+    DataBase.CanBeWished = !DataBase.IsUnique;
 }
 
 template<> void databasecreator<item>::CheckDefaults(const festring& Word, item::database& DataBase)

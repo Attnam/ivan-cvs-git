@@ -28,7 +28,7 @@ class slot
   virtual void AddFriendItem(item*) const = 0;
   virtual bool IsOnGround() const { return false; }
   virtual void PutInItem(item*);
-  virtual square* GetSquareUnder() const = 0;
+  virtual square* GetSquareUnder(ushort = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() = 0;
   virtual void SignalEmitationIncrease(ulong) = 0;
   virtual void SignalEmitationDecrease(ulong) = 0;
@@ -50,7 +50,7 @@ class stackslot : public slot
   virtual void Empty();
   virtual void AddFriendItem(item*) const;
   virtual bool IsOnGround() const;
-  virtual square* GetSquareUnder() const;
+  virtual square* GetSquareUnder(ushort = 0) const;
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
@@ -59,6 +59,8 @@ class stackslot : public slot
   stack* GetMotherStack() const { return MotherStack; }
   void SetMotherStack(stack* What) { MotherStack = What; }
   virtual bool IsVisible() const;
+  virtual void PutInItem(item*);
+  virtual void Load(inputfile&);
  protected:
   stack* MotherStack;
   stackslot* Last;
@@ -72,7 +74,7 @@ class characterslot : public slot
   character* GetMaster() const { return Master; }
   void SetMaster(character* What) { Master = What; }
   virtual void AddFriendItem(item*) const;
-  virtual square* GetSquareUnder() const;
+  virtual square* GetSquareUnder(ushort = 0) const;
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
@@ -95,7 +97,7 @@ class gearslot : public slot
   uchar GetEquipmentIndex() const { return EquipmentIndex; }
   void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
   virtual void PutInItem(item*);
-  virtual square* GetSquareUnder() const;
+  virtual square* GetSquareUnder(ushort = 0) const;
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
@@ -117,7 +119,7 @@ class actionslot : public slot
   virtual bool IsActionSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   void Init(action*);
-  virtual square* GetSquareUnder() const;
+  virtual square* GetSquareUnder(ushort = 0) const;
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);

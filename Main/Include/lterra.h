@@ -38,7 +38,7 @@ class lterrain : public object
   bool CanBeSeenBy(character*) const;
   virtual const festring& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-  virtual square* GetSquareUnderEntity() const;
+  virtual square* GetSquareUnderEntity(ushort = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   level* GetLevel() const;
@@ -50,6 +50,8 @@ class lterrain : public object
   virtual bool HasKeyHole() const { return CanBeOpened(); }
   virtual bool IsOnGround() const { return true; }
   room* GetRoom() const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -228,7 +230,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Enter(bool) const;
-  virtual void BeKicked(character*, ushort);
+  virtual void BeKicked(character*, ushort, uchar);
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
   virtual bool HasDrinkEffect() const { return false; } 

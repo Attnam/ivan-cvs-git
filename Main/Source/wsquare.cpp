@@ -34,7 +34,7 @@ void wsquare::Draw()
 	OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 
       NewDrawRequested = false;
     }

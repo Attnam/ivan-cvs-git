@@ -93,7 +93,8 @@ const int game::MoveCommandKeyWithoutNumberPad[] = { '7','8','9','u','o','j','k'
 
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
-const vector2d game::BasicMoveVector[] = { vector2d(-1,0), vector2d(1,0), vector2d(0,-1), vector2d(0,1) };
+const vector2d game::BasicMoveVector[] = { vector2d(-1, 0), vector2d(1, 0), vector2d(0, -1), vector2d(0, 1) };
+const vector2d game::LargeMoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(2, -1), vector2d(-1, 0), vector2d(2, 0), vector2d(-1, 1), vector2d(2, 1), vector2d(-1, 2), vector2d(0, 2), vector2d(1, 2), vector2d(2, 2), vector2d(0, 0), vector2d(1, 0), vector2d(0, 1), vector2d(1, 1) };
 
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable = 0;
@@ -1572,12 +1573,12 @@ bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
       if(!GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
 	return false;
 
-      GetCurrentLevel()->RemoveCharacter(Player->GetPos());
+      Player->Remove();
       GetCurrentDungeon()->SaveLevel(SaveName(), CurrentLevelIndex);
     }
   else
     {
-      GetWorldMap()->RemoveCharacter(Player->GetPos());
+      Player->Remove();
       GetWorldMap()->GetPlayerGroup().swap(Group);
       SaveWorldMap();
     }
@@ -1596,7 +1597,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       bool New = !PrepareRandomBone(Area) && !GetCurrentDungeon()->PrepareLevel(Area);
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
-      GetCurrentLevel()->AddCharacter(Pos, Player);
+      Player->PutToOrNear(Pos);
       GetCurrentLevel()->FiatLux();
 
       for(ushort c = 0; c < Group.size(); ++c)
@@ -1606,7 +1607,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	  if(NPCPos == ERROR_VECTOR)
 	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
 
-	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
+	  Group[c]->PutTo(NPCPos);
 	}
 
       const bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
@@ -1629,7 +1630,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       CurrentArea = WorldMap;
       CurrentWSquareMap = WorldMap->GetMap();
       GetWorldMap()->GetPlayerGroup().swap(Group);
-      GetCurrentArea()->AddCharacter(GetWorldMap()->GetEntryPos(Player, EntryIndex), Player);
+      Player->PutTo(GetWorldMap()->GetEntryPos(Player, EntryIndex));
       SendLOSUpdateRequest();
       UpdateCamera();
       GetCurrentArea()->UpdateLOS();

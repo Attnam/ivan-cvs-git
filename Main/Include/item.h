@@ -103,6 +103,7 @@ struct itemdatabase
   bool IsQuestItem;
   bool IsGoodWithPlants;
   bool CreateLockConfigurations;
+  bool CanBePickedUp;
 };
 
 class itemprototype
@@ -135,6 +136,7 @@ class item : public object
   typedef std::map<ushort, itemdatabase> databasemap;
   item(donothing);
   item(const item&);
+  virtual ~item();
   virtual float GetWeaponStrength() const;
   virtual bool Open(character*);
   virtual bool Consume(character*, long);
@@ -144,7 +146,7 @@ class item : public object
   virtual bool CanBeRead(character*) const { return false; }
   virtual bool Read(character*) { return false; }
   virtual void FinishReading(character*) { }
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool) { return false; }
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool) { return false; }
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
@@ -171,11 +173,12 @@ class item : public object
   void SetID(ulong What) { ID = What; }
   void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
-  slot* GetSlot() const { return Slot; }
-  void SetSlot(slot* What) { Slot = What; }
+  slot* GetSlot(ushort Index = 0) const { return Slot[Index]; }
+  void SetMainSlot(slot* What) { Slot[0] = What; }
   void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   void RemoveFromSlot();
   void MoveTo(stack*);
+  bool IsMainSlot(const slot* What) const { return Slot[0] == What; }
   static const char* GetItemCategoryName(ulong);
   static bool EatableSorter(const item* Item, const character* Char) { return Item->IsEatable(Char); }
   static bool DrinkableSorter(const item* Item, const character* Char) { return Item->IsDrinkable(Char); }
@@ -308,6 +311,7 @@ class item : public object
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
   DATA_BASE_BOOL(IsQuestItem);
   DATA_BASE_BOOL(IsGoodWithPlants);
+  DATA_BASE_BOOL(CanBePickedUp);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -318,16 +322,16 @@ class item : public object
   bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
   festring GetDescription(uchar) const;
-  virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
-  square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
-  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
-  level* GetLevel() const { return static_cast<level*>(Slot->GetSquareUnder()->GetArea()); }
-  area* GetArea() const { return Slot->GetSquareUnder()->GetArea(); }
-  vector2d GetPos() const { return Slot->GetSquareUnder()->GetPos(); }
-  square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetArea()->GetSquare(Pos); }
-  square* GetNearSquare(ushort x, ushort y) const { return Slot->GetSquareUnder()->GetArea()->GetSquare(x, y); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetArea()->GetSquare(Pos)); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetArea()->GetSquare(x, y)); }
+  virtual square* GetSquareUnderEntity(ushort = 0) const;
+  virtual square* GetSquareUnder(ushort = 0) const;
+  virtual lsquare* GetLSquareUnder(ushort = 0) const;
+  level* GetLevel() const { return static_cast<level*>(Slot[0]->GetSquareUnder()->GetArea()); }
+  area* GetArea() const { return Slot[0]->GetSquareUnder()->GetArea(); }
+  vector2d GetPos(ushort Index = 0) const { return Slot[Index]->GetSquareUnder()->GetPos(); }
+  square* GetNearSquare(vector2d Pos) const { return Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos); }
+  square* GetNearSquare(ushort x, ushort y) const { return Slot[0]->GetSquareUnder()->GetArea()->GetSquare(x, y); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(Slot[0]->GetSquareUnder()->GetArea()->GetSquare(x, y)); }
   virtual void SignalVolumeAndWeightChange();
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
@@ -385,7 +389,7 @@ class item : public object
   virtual bool IsInCorrectSlot(ushort) const;
   bool IsInCorrectSlot() const;
   ushort GetEquipmentIndex() const;
-  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+  room* GetRoom(ushort Index = 0) const { return GetLSquareUnder(Index)->GetRoom(); }
   virtual bool HasBetterVersion() const { return false; }
   virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
   virtual bool AllowAlphaEverywhere() const { return false; }
@@ -409,6 +413,15 @@ class item : public object
   void SetConfig(ushort);
   god* GetMasterGod() const;
   const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
+  virtual ushort GetSquaresUnder() const { return 1; }
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual ushort GetSquareIndex(vector2d) const { return 0; }
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
+  vector2d GetLargeBitmapPos(vector2d, ushort) const;
+  void LargeDraw(bitmap*, vector2d, ulong, ushort, bool) const;
+  void LargeDraw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
+  virtual ushort GetStackAnimationFrames() const { return AnimationFrames; }
  protected:
   virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;
@@ -419,7 +432,7 @@ class item : public object
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
   virtual bool ShowMaterial() const;
-  slot* Slot;
+  slot** Slot;
   ushort Size;
   ulong ID;
   const database* DataBase;

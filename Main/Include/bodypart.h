@@ -88,7 +88,7 @@ class ABSTRACT_ITEM
   virtual bool IsDipDestination(const character*) const;
   virtual material* CreateDipMaterial();
   virtual bool EditAllAttributes(short) { return false; }
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
   void SetIsSparklingB(bool What) { IsSparklingB = What; }
   void SetIsSparklingC(bool What) { IsSparklingC = What; }
   void SetIsSparklingD(bool What) { IsSparklingD = What; }
@@ -97,6 +97,8 @@ class ABSTRACT_ITEM
   bool IsWarm() const;
   bool UseMaterialAttributes() const;
   bool CanRegenerate() const;
+  virtual square* GetSquareUnder(ushort = 0) const;
+  virtual lsquare* GetLSquareUnder(ushort = 0) const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual uchar GetMaxAlpha() const;
@@ -237,7 +239,7 @@ class ABSTRACT_ITEM
   virtual void DropEquipment();
   float GetUnarmedToHitValue() const;
   float GetUnarmedDamage() const;
-  virtual void Hit(character*, bool = false);
+  void Hit(character*, vector2d, uchar, bool = false);
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long, bool = true);
@@ -507,6 +509,48 @@ class ITEM
   normaltorso,
  public:
   virtual ushort GetClassAnimationFrames() const { return 64; }
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
+);
+
+class ITEM
+(
+  largetorso,
+  normaltorso,
+ public:
+  virtual ushort GetSquaresUnder() const { return 4; }
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual ushort GetSquareIndex(vector2d) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
+  virtual ushort GetStackAnimationFrames() const { return AnimationFrames >> 2; }
+ protected:
+  virtual vector2d GetBitmapPos(ushort Index) const { return GetLargeBitmapPos(BitmapPos, Index); }
+  virtual void ModifyAnimationFrames(ushort& AF) const { AF <<= 2; }
+);
+
+class ITEM
+(
+  largecorpse,
+  corpse,
+ public:
+  virtual ushort GetSquaresUnder() const { return 4; }
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
+  virtual ushort GetSquareIndex(vector2d) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
+  virtual ushort GetStackAnimationFrames() const { return AnimationFrames >> 2; }
+ protected:
+  virtual vector2d GetBitmapPos(ushort Index) const { return GetLargeBitmapPos(item::GetBitmapPos(Index), Index); }
+  virtual void ModifyAnimationFrames(ushort& AF) const { AF <<= 2; }
+);
+
+class ITEM
+(
+  ennerhead,
+  head,
+ public:
+  virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );

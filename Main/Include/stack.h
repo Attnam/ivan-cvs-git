@@ -54,7 +54,7 @@ class stack
   square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
-  void BeKicked(character*, ushort);
+  void BeKicked(character*, ushort, uchar);
   long GetScore() const;
   void Polymorph(character*);
   void CheckForStepOnEffect(character*);
@@ -105,8 +105,8 @@ class stack
   void PostProcessForBone();
   void FinalProcessForBone();
   void SetIsFreezed(bool What) { Freezed = What; }
- private:
   void AddElement(item*);
+ private:
   void RemoveElement(stackslot*);
   static ushort Selected;
   stackslot* Bottom;

@@ -74,7 +74,7 @@ void smoke::Be()
     Gas->BreatheEffect(Char);
 }
 
-square* smoke::GetSquareUnderEntity() const
+square* smoke::GetSquareUnderEntity(ushort) const
 { 
   return LSquareUnder;
 }

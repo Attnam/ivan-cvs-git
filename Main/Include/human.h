@@ -17,7 +17,7 @@ class ABSTRACT_CHARACTER
   humanoid(const humanoid&);
   virtual ~humanoid();
   virtual bool CanWield() const;
-  virtual bool Hit(character*, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
   virtual ushort GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
   rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
@@ -78,13 +78,13 @@ class ABSTRACT_CHARACTER
   virtual ushort GlobalResistance(ushort) const;
   virtual bool CompleteRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
-  virtual void Kick(lsquare*, bool = false);
+  virtual void Kick(lsquare*, uchar, bool = false);
   virtual float GetTimeToKill(const character*, bool) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
-  virtual void Bite(character*, bool = false);
+  virtual void Bite(character*, vector2d, uchar, bool = false);
   virtual ushort GetCarryingStrength() const;
   virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
@@ -102,7 +102,7 @@ class ABSTRACT_CHARACTER
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
@@ -165,7 +165,7 @@ class CHARACTER
   virtual void SignalBodyPartVolumeAndWeightChange();
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*);
   virtual bool CompleteRiseFromTheDead();
@@ -274,9 +274,10 @@ class CHARACTER
   ennerbeast,
   humanoid,
  public:
-  virtual bool Hit(character*, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
   virtual bool MustBeRemovedFromBone() const;
  protected:
+  virtual bodypart* MakeBodyPart(ushort) const;
   virtual void GetAICommand();
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
@@ -409,7 +410,7 @@ class CHARACTER
   mistress,
   humanoid,
  public:
-  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
 );
 
@@ -470,11 +471,11 @@ class CHARACTER
   kamikazedwarf,
   humanoid,
  public:
-  virtual bool Hit(character*, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;
@@ -518,7 +519,7 @@ class CHARACTER
   festring GetProfessionDescription() const;
   virtual bool IsBananaGrower() const { return true; }
  protected:
-  virtual bool HandleCharacterBlockingTheWay(character*);
+  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   uchar Profession;

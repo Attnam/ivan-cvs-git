@@ -38,9 +38,9 @@ class ABSTRACT_CHARACTER
   long GetUnarmedAPCost() const { return UnarmedAPCost; }
   long GetKickAPCost() const { return KickAPCost; }
   long GetBiteAPCost() const { return BiteAPCost; }
-  virtual void Kick(lsquare*, bool = false);
-  virtual bool Hit(character*, bool = false);
-  virtual void UnarmedHit(character*, bool = false);
+  virtual void Kick(lsquare*, uchar, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
+  virtual void UnarmedHit(character*, vector2d, uchar, bool = false);
   virtual void InitSpecialAttributes();
   virtual float GetTimeToKill(const character*, bool) const;
   virtual void ApplyExperience(bool = false);
@@ -48,7 +48,7 @@ class ABSTRACT_CHARACTER
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
-  virtual void Bite(character*, bool = false);
+  virtual void Bite(character*, vector2d, uchar, bool = false);
   virtual ushort GetCarryingStrength() const;
   virtual void CalculateBattleInfo();
   void CalculateUnarmedAttackInfo();
@@ -83,26 +83,6 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
-);
-
-class CHARACTER
-(
-  elpuri,
-  frog,
- public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual bool Hit(character*, bool = false);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
-  virtual bool SpecialEnemySightedReaction(character*);
-  virtual bool Faint(ushort, bool = false) { return false; }
-  virtual bool MustBeRemovedFromBone() const;
-  virtual bool CompleteRiseFromTheDead();
- protected:
-  virtual void VirtualConstructor(bool);
-  virtual void GetAICommand();
-  virtual void CreateCorpse(lsquare*);
-  bool Active;
 );
 
 class CHARACTER
@@ -154,7 +134,7 @@ class CHARACTER
   spider,
   nonhumanoid,
  public:
-  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
+  virtual bool SpecialBiteEffect(character*, vector2d, uchar, uchar, bool);
 );
 
 class CHARACTER
@@ -220,7 +200,7 @@ class CHARACTER
   unicorn,
   nonhumanoid,
  public:
-  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
 );
 
@@ -237,7 +217,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual ushort GetTorsoSpecialColor() const;
-  virtual void GetAICommand();
+  virtual void GetAICommand() { AttackAdjacentEnemyAI(); }
   virtual void CreateCorpse(lsquare*);
 );
 
@@ -253,18 +233,7 @@ class CHARACTER
   snake,
   nonhumanoid,
  protected:
-  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
-);
-
-class CHARACTER
-(
-  genetrixvesana,
-  carnivorousplant,
- protected:
-  virtual ushort GetTorsoSpecialColor() const;
-  virtual void GetAICommand();
-  virtual void CreateCorpse(lsquare*);
-  virtual bool MustBeRemovedFromBone() const;
+  virtual bool SpecialBiteEffect(character*, vector2d, uchar, uchar, bool);
 );
 
 class CHARACTER
@@ -275,7 +244,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
-  virtual bool HandleCharacterBlockingTheWay(character*);
+  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   bool HasBeenOnLandingSite;
@@ -286,7 +255,7 @@ class CHARACTER
   chameleon,
   nonhumanoid,
  public:
-  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetSkinColor() const;
@@ -298,8 +267,8 @@ class CHARACTER
   floatingeye,
   nonhumanoid,
  public:
-  virtual bool Hit(character*, bool);
-  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual bool Hit(character*, vector2d, uchar, bool);
+  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
   virtual void SetWayPoints(const std::vector<vector2d>&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -315,7 +284,7 @@ class CHARACTER
   eddy,
   nonhumanoid,
  public:
-  virtual bool Hit(character*, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual void GetAICommand();
@@ -379,7 +348,7 @@ class CHARACTER
   twoheadedmoose,
   nonhumanoid,
  public:
-  virtual bool Hit(character*, bool = false);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
 );
 
 class CHARACTER
@@ -409,6 +378,60 @@ class CHARACTER
   invisiblestalker,
   nonhumanoid,
   ;
+);
+
+class ABSTRACT_CHARACTER
+(
+  largecreature,
+  nonhumanoid,
+ public:
+  virtual void CalculateSquaresUnder() { SquaresUnder = 4; }
+  virtual ushort GetSquareIndex(vector2d) const;
+  virtual ushort GetNeighbourSquares() const { return 12; }
+  virtual ushort GetExtendedNeighbourSquares() const { return 16; }
+  virtual square* GetNeighbourSquare(ushort) const;
+  virtual lsquare* GetNeighbourLSquare(ushort) const;
+  virtual wsquare* GetNeighbourWSquare(ushort) const;
+  virtual ushort CalculateNewSquaresUnder(lsquare**, vector2d) const;
+  virtual bool IsFreeForMe(square*) const;
+  virtual bool CanMoveOn(const lsquare*) const;
+  virtual bool CanMoveOn(const square*) const;
+  virtual void PutTo(vector2d);
+  virtual void Remove();
+ protected:
+  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual void CreateCorpse(lsquare*);
+  virtual void LoadSquaresUnder();
+);
+
+class CHARACTER
+(
+  elpuri,
+  largecreature,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual bool Hit(character*, vector2d, uchar, bool = false);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
+  virtual bool SpecialEnemySightedReaction(character*);
+  virtual bool Faint(ushort, bool = false) { return false; }
+  virtual bool MustBeRemovedFromBone() const;
+  virtual bool CompleteRiseFromTheDead();
+ protected:
+  virtual void VirtualConstructor(bool);
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+  bool Active;
+);
+
+class CHARACTER
+(
+  genetrixvesana,
+  largecreature,
+ protected:
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+  virtual bool MustBeRemovedFromBone() const;
 );
 
 #endif

@@ -10,7 +10,15 @@ void slot::Load(inputfile& SaveFile)
   SaveFile >> Item;
 
   if(Item)
-    Item->SetSlot(this);
+    Item->SetMainSlot(this);
+}
+
+void stackslot::Load(inputfile& SaveFile)
+{
+  SaveFile >> Item;
+
+  if(Item)
+    Item->SignalStackAdd(this, &stack::AddElement);
 }
 
 void stackslot::Empty()
@@ -125,7 +133,19 @@ void slot::PutInItem(item* What)
 
   if(Item)
     {
-      Item->SetSlot(this);
+      Item->SetMainSlot(this);
+      SignalVolumeAndWeightChange();
+      SignalEmitationIncrease(Item->GetEmitation());
+    }
+}
+
+void stackslot::PutInItem(item* What)
+{
+  Item = What;
+
+  if(Item)
+    {
+      Item->SignalStackAdd(this, &stack::AddItem);
       SignalVolumeAndWeightChange();
       SignalEmitationIncrease(Item->GetEmitation());
     }
@@ -137,7 +157,7 @@ void characterslot::PutInItem(item* What)
 
   if(Item)
     {
-      Item->SetSlot(this);
+      Item->SetMainSlot(this);
       static_cast<bodypart*>(Item)->SetMaster(GetMaster());
 
       if(!GetMaster()->IsInitializing())
@@ -157,29 +177,29 @@ void gearslot::PutInItem(item* What)
 
   if(Item)
     {
-      Item->SetSlot(this);
+      Item->SetMainSlot(this);
       GetBodyPart()->SignalEquipmentAdd(this);
       SignalVolumeAndWeightChange();
       SignalEmitationIncrease(Item->GetEmitation());
     }
 }
 
-square* stackslot::GetSquareUnder() const
+square* stackslot::GetSquareUnder(ushort) const
 {
   return GetMotherStack()->GetSquareUnder();
 }
 
-square* characterslot::GetSquareUnder() const
+square* characterslot::GetSquareUnder(ushort Index) const
 {
-  return GetMaster()->GetSquareUnder();
+  return GetMaster()->GetSquareUnder(Index);
 }
 
-square* gearslot::GetSquareUnder() const
+square* gearslot::GetSquareUnder(ushort) const
 {
   return GetBodyPart()->GetSquareUnder();
 }
 
-square* actionslot::GetSquareUnder() const
+square* actionslot::GetSquareUnder(ushort) const
 {
   return GetAction()->GetActor()->GetSquareUnder();
 }

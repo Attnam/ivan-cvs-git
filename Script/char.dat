@@ -731,7 +731,6 @@ ennerbeast
 	CanOpen = false;
 	CanApply = false;
 	TotalVolume = 50000;
-	TorsoBitmapPos = 96, 0;
 	TotalSize = 150;
 	Adjective = "enner";
 	NameSingular = "beast";
@@ -744,7 +743,7 @@ ennerbeast
 	LegBitmapPos = 16, 48;
 	TorsoBitmapPos = 32, 48;
 	ArmBitmapPos = 64, 48;
-	HeadBitmapPos = 112, 320;
+	HeadBitmapPos = 96, 320;
 	HairColor = rgb16(64, 20, 0);
 	ClothColor = rgb16(0, 0, 100);
 	BootColor = rgb16(90, 50, 10);
@@ -863,43 +862,6 @@ frog
 		CWeaponSkillHits == 200;
 		AttachedGod = VALPURUS;
 	}
-}
-
-elpuri
-{
-	DefaultArmStrength = 80;
-	DefaultAgility = 25;
-	DefaultEndurance = 20;
-	DefaultPerception = 40;
-	DefaultIntelligence = 40;
-	DefaultWisdom = 30;
-	DefaultCharisma = 2;
-	DefaultMana = 30;
-	IsCharmable = false;
-	CanBeDisplaced = false;
-	IsNameable = false;
-	IsUnique = true;
-	TotalVolume = 1000000;
-	TorsoBitmapPos = 64, 0;
-	TotalSize = 250;
-	NameSingular = "Master Dark Frog";
-	IsPolymorphable = false;
-	CanBeGenerated = false;
-	Alias == "Elpuri";
-	CWeaponSkillHits == 1000;
-	PanicLevel = 0;
-	CanBeCloned = false;
-	DefaultName = "Elpuri";
-	HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
-	BloodColor = rgb16(0, 0, 0);
-	SkinColor = rgb16(60, 60, 60);
-	ClassStates = INFRA_VISION;
-	BaseBiteStrength = 1250;
-	FleshMaterial = ELPURI_FLESH;
-	DeathMessage = "@Dd groans horribly and drops @pp head.";
-	AttachedGod = SCABIES;
-	CanTalk = true;
-	CanBeConfused = false;
 }
 
 billswill
@@ -3035,40 +2997,6 @@ smith
 	AttachedGod = LORICATUS;
 }
 
-genetrixvesana
-{
-	DefaultArmStrength = 16;
-	DefaultAgility = 8;
-	DefaultEndurance = 32;
-	DefaultPerception = 24;
-	DefaultIntelligence = 12;
-	DefaultWisdom = 8;
-	DefaultCharisma = 20;
-	DefaultMana = 0;
-	TotalVolume = 25000;
-	TorsoBitmapPos = 80, 16;
-	TotalSize = 250;
-	Adjective = "mother carnivorous";
-	DefaultName = "genetrix vesana";
-	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 600;
-	SkinColor = rgb16(111, 64, 37);
-	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
-	KnownCWeaponSkills == BITE;
-	CWeaponSkillHits == 100;
-	PanicLevel = 0;
-	CanBeGenerated = false;
-	IsCharmable = false;
-	CanBeDisplaced = false;
-	IsNameable = false;
-	IsUnique = true;
-	DeathMessage = "@Dd is brutally destroyed.";
-	BaseEmitation = rgb24(140, 100, 100);
-	FleshMaterial = MUTANT_PLANT_FIBER;
-	AttachedGod = SCABIES;
-	IsPlant = true;
-}
-
 ostrich
 {
 	DefaultArmStrength = 15;
@@ -3402,7 +3330,7 @@ darkmage
 		BeltColor = rgb16(80, 80, 80);
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
-		HPRequirementForGeneration = 100;
+		HPRequirementForGeneration = 150;
 		Frequency = 1500;
 		PanicLevel = 75;
 		Inventory == lantern;
@@ -3431,7 +3359,7 @@ darkmage
 		CapColor = rgb16(180, 40, 40);
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
-		HPRequirementForGeneration = 200;
+		HPRequirementForGeneration = 250;
 		Frequency = 1000;
 		PanicLevel = 25;
 		CWeaponSkillHits == 100;
@@ -3462,7 +3390,7 @@ darkmage
 		CapColor = rgb16(80, 80, 160);
 		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
 		RightWielded = ARCANITE ARCANITE meleeweapon(QUARTER_STAFF) { Enchantment = 5; }
-		HPRequirementForGeneration = 300;
+		HPRequirementForGeneration = 350;
 		Frequency = 500;
 		PanicLevel = 10;
 		CWeaponSkillHits == 200;
@@ -3505,7 +3433,7 @@ darkmage
 		RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
 		RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
 		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
-		HPRequirementForGeneration = 400;
+		HPRequirementForGeneration = 450;
 		PanicLevel = 0;
 		CanBeConfused = false;
 		CWeaponSkillHits == 500;
@@ -3678,4 +3606,94 @@ invisiblestalker
 	CWeaponSkillHits == 200;
 	ClassStates = INVISIBLE;
 	BodyPartsDisappearWhenSevered = true;
+}
+
+largecreature
+{
+	IsAbstract = true;
+	CanBeWished = false;
+	CanBeGenerated = false;
+}
+
+elpuri
+{
+	DefaultArmStrength = 80;
+	DefaultAgility = 25;
+	DefaultEndurance = 20;
+	DefaultPerception = 40;
+	DefaultIntelligence = 40;
+	DefaultWisdom = 30;
+	DefaultCharisma = 2;
+	DefaultMana = 30;
+	IsCharmable = false;
+	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	TotalVolume = 1000000;
+	TorsoBitmapPos = 160, 64;
+	TotalSize = 250;
+	NameSingular = "Master Dark Frog";
+	IsPolymorphable = false;
+	CanBeGenerated = false;
+	Alias == "Elpuri";
+	CWeaponSkillHits == 1000;
+	PanicLevel = 0;
+	CanBeCloned = false;
+	DefaultName = "Elpuri";
+	HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
+	BloodColor = rgb16(0, 0, 0);
+	SkinColor = rgb16(60, 60, 60);
+	ClassStates = INFRA_VISION;
+	BaseBiteStrength = 1250;
+	FleshMaterial = ELPURI_FLESH;
+	DeathMessage = "@Dd groans horribly and drops @pp head.";
+	AttachedGod = SCABIES;
+	CanTalk = true;
+	CanBeConfused = false;
+	AttackStyle = USE_HEAD;
+	KnownCWeaponSkills == BITE;
+	MoveType = WALK|SWIM;
+}
+
+genetrixvesana
+{
+	DefaultArmStrength = 16;
+	DefaultAgility = 8;
+	DefaultEndurance = 20;
+	DefaultPerception = 24;
+	DefaultIntelligence = 12;
+	DefaultWisdom = 8;
+	DefaultCharisma = 20;
+	DefaultMana = 0;
+	TotalVolume = 100000;
+	TorsoBitmapPos = 128, 64;
+	TotalSize = 250;
+	Adjective = "mother carnivorous";
+	NameSingular = "plant";
+	DefaultName = "genetrix vesana";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 600;
+	SkinColor = rgb16(111, 64, 37);
+	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
+	TorsoSpecialColor = rgb16(160, 0, 0);
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 100;
+	PanicLevel = 0;
+	IsCharmable = false;
+	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	DeathMessage = "@Dd is brutally destroyed.";
+	BaseEmitation = rgb24(140, 100, 100);
+	FleshMaterial = MUTANT_PLANT_FIBER;
+	AttachedGod = SCABIES;
+	IsPlant = true;
+	CanOpen = false;
+	HostileReplies == "@Dd is silent.";
+	FriendlyReplies == "@Dd is silent.";
+	ClassStates = INFRA_VISION;
+	HasFeet = false;
+	SpillsBlood = false;
+	StandVerb = "rooted";
+	MoveType = NO_MOVE;
 }

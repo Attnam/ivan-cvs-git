@@ -80,11 +80,15 @@ void worldmap::Load(inputfile& SaveFile)
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
+  ushort x, y;
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      Map[x][y] = new wsquare(this, vector2d(x, y));
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new wsquare(this, vector2d(x, y));
 	game::SetSquareInLoad(Map[x][y]);
 	Map[x][y]->Load(SaveFile);
       }
@@ -263,7 +267,7 @@ void worldmap::Generate()
       SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
       GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);
       SetEntryPos(UNDER_WATER_TUNNEL_EXIT, TunnelExit);
-      GetWSquare(NewAttnamPos)->AddCharacter(PLAYER);
+      PLAYER->PutTo(NewAttnamPos);
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();
       break;

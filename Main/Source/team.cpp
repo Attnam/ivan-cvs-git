@@ -58,7 +58,7 @@ void team::Hostility(team* Enemy)
 		      if(Where == ERROR_VECTOR)
 			Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
 
-		      game::GetCurrentLevel()->AddCharacter(Where, Angel);
+		      Angel->PutTo(Where);
 		      Angel->SetTeam(Enemy);
 
 		      if(Angel->CanBeSeenByPlayer())

@@ -97,7 +97,7 @@ void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimat
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
-void door::BeKicked(character* Kicker, ushort KickDamage)
+void door::BeKicked(character* Kicker, ushort KickDamage, uchar)
 {
   if(!Opened) 
     {
@@ -245,7 +245,7 @@ bool throne::SitOn(character* Sitter)
   return true;
 }
 
-void altar::BeKicked(character* Kicker, ushort)
+void altar::BeKicked(character* Kicker, ushort, uchar)
 {
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
@@ -414,10 +414,10 @@ bool fountain::Drink(character* Drinker)
 		  {
 		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-		    if(GetLevel()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && !GetNearLSquare(TryToCreate)->GetCharacter())
+		    if(GetLevel()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
 		      {
 			Created = true;
-			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
+			Monster->PutTo(TryToCreate);
 
 			if(RAND() % 5)
 			  {
@@ -493,7 +493,7 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
+void brokendoor::BeKicked(character* Kicker, ushort KickDamage, uchar)
 {
   if(!Opened) 
     {

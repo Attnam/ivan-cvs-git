@@ -66,7 +66,7 @@ class ITEM
   holybanana,
   banana,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual bool Zap(character*, vector2d, uchar);
   virtual void Be() { }
   virtual ushort GetSpecialFlags() const;
@@ -125,7 +125,7 @@ class ITEM
   lump,
   item,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual material* CreateDipMaterial();
   virtual bool IsDipDestination(const character*) const { return MainMaterial != 0; }
  protected:

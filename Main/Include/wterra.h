@@ -15,7 +15,6 @@ class wterrain
   virtual ~wterrain() { }
   virtual void Load(inputfile&);
   vector2d GetPos() const { return WSquareUnder->GetPos(); }
-  wsquare* GetWSquareUnder() const { return WSquareUnder; }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   worldmap* GetWorldMap() const { return WSquareUnder->GetWorldMap(); }
   void AddName(festring&, uchar) const;

@@ -5,7 +5,7 @@ olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cl
 const glterraindatabase& glterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 const olterraindatabase& olterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
-square* lterrain::GetSquareUnderEntity() const { return LSquareUnder; }
+square* lterrain::GetSquareUnderEntity(ushort) const { return LSquareUnder; }
 level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
 lsquare* lterrain::GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
 lsquare* lterrain::GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
@@ -197,7 +197,7 @@ void olterrain::ReceiveDamage(character* Villain, ushort Damage, ushort)
     }
 }
 
-void olterrain::BeKicked(character* Kicker, ushort Damage)
+void olterrain::BeKicked(character* Kicker, ushort Damage, uchar)
 {
   if(CanBeDestroyed() && Damage > GetMainMaterial()->GetStrengthValue() >> 1)
     {
@@ -278,24 +278,38 @@ void olterrainprototype::CreateSpecialConfigurations()
       const item::databasemap& KeyConfig = key_ProtoType.GetConfig();
 
       for(olterrain::databasemap::const_iterator i1 = Config.begin(); !(i1->first & LOCK_BITS); ++i1)
-	{
-	  ushort NewConfig = i1->first | BROKEN_LOCK;
-	  olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
-	  TempDataBase.InitDefaults(NewConfig);
-	  TempDataBase.PostFix << "with a broken lock";
+	if(!i1->second.IsAbstract)
+	  {
+	    ushort NewConfig = i1->first | BROKEN_LOCK;
+	    olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
+	    TempDataBase.InitDefaults(NewConfig);
+	    TempDataBase.PostFix << "with a broken lock";
 
-	  for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
-	    {
-	      ushort NewConfig = i1->first | i2->first;
-	      olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
-	      TempDataBase.InitDefaults(NewConfig);
-	      TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
-	    }
-	}
+	    for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
+	      {
+		ushort NewConfig = i1->first | i2->first;
+		olterraindatabase& TempDataBase = Config.insert(std::pair<ushort, olterraindatabase>(NewConfig, i1->second)).first->second;
+		TempDataBase.InitDefaults(NewConfig);
+		TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
+	      }
+	  }
     }
 }
 
 bool olterrain::IsTransparent() const
 {
   return IsAlwaysTransparent() || MainMaterial->IsTransparent();
+}
+
+void lterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void lterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+{
+  if(AllowAlpha)
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

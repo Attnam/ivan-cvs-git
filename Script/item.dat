@@ -83,6 +83,7 @@ item
 	IsQuestItem = false;
 	IsGoodWithPlants = true;
 	CreateLockConfigurations = false; /* Can't be overridden by Configs */
+	CanBePickedUp = true;
 }
 
 materialcontainer
@@ -690,6 +691,7 @@ holybanana /* materialcontainer->banana-> */
 	CanBeBroken = false;
 	ContainedMaterialConfig == HOLY_BANANA_FLESH;
 	BaseEmitation = rgb24(160, 140, 110);
+	CanBeCloned = false;
 }
 
 justifier /* meleeweapon-> */
@@ -1731,32 +1733,6 @@ boot /* armor-> */
 		Price = 50;
 		FormModifier = 50;
 	}
-
-	Config BOOT_OF_PORTER;
-	{
-		Possibility = 25;
-		PostFix = "of the Porter";
-		AffectsCarryingCapacity = true;
-		Price = 75;
-		DefaultEnchantment = 1;
-		PriceIsProportionalToEnchantment = true;
-		AttachedGod = MELLIS;
-		MainMaterialConfig == TROLL_HIDE;
-		MaterialConfigChances == 100;
-	}
-
-	Config BOOT_OF_MASTER_PORTER;
-	{
-		Possibility = 10;
-		PostFix = "of the Master Porter";
-		AffectsCarryingCapacity = true;
-		Price = 150;
-		DefaultEnchantment = 8;
-		PriceIsProportionalToEnchantment = true;
-		AttachedGod = MELLIS;
-		MainMaterialConfig == TROLL_HIDE;
-		MaterialConfigChances == 100;
-	}
 }
 
 gauntlet /* armor-> */
@@ -2118,6 +2094,7 @@ corpse
 	IsMaterialChangeable = false;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 144;
+	/* BitmapPos overridden */
 }
 
 eddytorso /* normaltorso-> */
@@ -2889,4 +2866,21 @@ charmlyre
 	CanBePiled = false;
 	AttachedGod = DULCIS;
 	WieldedBitmapPos = 176, 352;
+}
+
+largetorso /* normaltorso-> */
+{
+	AttachedGod = NONE;
+	CanBePickedUp = false;
+}
+
+largecorpse /* corpse -> */
+{
+	BitmapPos = 48, 0;
+	CanBePickedUp = false;
+	OKVisualEffects = NONE;
+}
+
+ennerhead /* head-> */
+{
 }

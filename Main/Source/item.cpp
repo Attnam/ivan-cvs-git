@@ -9,22 +9,35 @@ bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_I
 
 item::item(donothing) : Slot(0), ItemFlags(0), CloneMotherID(0) { }
 void item::InstallDataBase(ushort Config) { databasecreator<item>::InstallDataBase(this, Config); }
-bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
+bool item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 ushort item::GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
 ushort item::GetBaseMaxDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 1.25f) + 1; }
 ushort item::GetBaseToHitValue() const { return 100 * GetBonus() / (1000 + GetWeight()); }
 ushort item::GetBaseBlockValue() const { return ushort(GetBlockModifier() * GetBonus() / (100000 + 100 * GetWeight())); }
 bool item::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_INDEX || Index == LEFT_WIELDED_INDEX; }
-bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(Slot)->GetEquipmentIndex()); }
-ushort item::GetEquipmentIndex() const { return static_cast<gearslot*>(Slot)->GetEquipmentIndex(); }
+bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(*Slot)->GetEquipmentIndex()); }
+ushort item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 uchar item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 bool item::IsBroken() const { return (GetConfig() & BROKEN) != 0; }
 const char* item::GetBreakVerb() const { return "breaks"; }
+square* item::GetSquareUnderEntity(ushort Index) const { return GetSquareUnder(Index); }
+square* item::GetSquareUnder(ushort Index) const { return Slot[Index] ? Slot[Index]->GetSquareUnder() : 0; }
+lsquare* item::GetLSquareUnder(ushort Index) const { return static_cast<lsquare*>(Slot[Index]->GetSquareUnder()); }
+void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*)) { Slot[0] = StackSlot; }
 
 item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), ItemFlags(0), CloneMotherID(Item.CloneMotherID)
 {
   CloneMotherID.push_back(Item.ID);
+  Slot = new slot*[GetSquaresUnder()];
+
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    Slot[c] = 0;
+}
+
+item::~item()
+{
+  delete [] Slot;
 }
 
 bool item::IsConsumable(const character* Eater) const
@@ -238,22 +251,18 @@ ushort item::GetStrengthValue() const
 
 void item::RemoveFromSlot()
 {
-  if(Slot)
-    {
-      Slot->Empty();
-      Slot = 0;
-    }
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    if(Slot[c])
+      {
+	Slot[c]->Empty();
+	Slot[c] = 0;
+      }
 }
 
 void item::MoveTo(stack* Stack)
 {
-  if(Slot)
-    {
-      RemoveFromSlot();
-      Stack->AddItem(this);
-    }
-  else
-    Stack->AddItem(this);
+  RemoveFromSlot();
+  Stack->AddItem(this);
 }
 
 const char* item::GetItemCategoryName(ulong Category) // convert to array
@@ -335,6 +344,11 @@ void item::LoadDataBaseStats()
 
 void item::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
+  Slot = new slot*[GetSquaresUnder()];
+
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    Slot[c] = 0;
+
   if(!(SpecialFlags & LOAD))
     {
       ID = game::CreateNewItemID();
@@ -388,7 +402,11 @@ bool item::CanBeSeenByPlayer() const
 
 bool item::CanBeSeenBy(const character* Who) const
 {
-  return (Who->IsPlayer() && game::GetSeeWholeMapCheatMode()) || (Slot && Slot->CanBeSeenBy(Who));
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    if(Slot[c] && Slot[c]->CanBeSeenBy(Who))
+      return true;
+
+  return Who->IsPlayer() && game::GetSeeWholeMapCheatMode();
 }
 
 festring item::GetDescription(uchar Case) const
@@ -403,8 +421,9 @@ void item::SignalVolumeAndWeightChange()
 {
   CalculateVolumeAndWeight();
 
-  if(Slot)
-    Slot->SignalVolumeAndWeightChange();
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    if(Slot[c])
+      Slot[c]->SignalVolumeAndWeightChange();
 }
 
 void item::CalculateVolumeAndWeight()
@@ -425,8 +444,9 @@ void item::SignalEmitationIncrease(ulong EmitationUpdate)
     {
       game::CombineLights(Emitation, EmitationUpdate);
 
-      if(Slot)
-	Slot->SignalEmitationIncrease(EmitationUpdate);
+      for(ushort c = 0; c < GetSquaresUnder(); ++c)
+	if(Slot[c])
+	  Slot[c]->SignalEmitationIncrease(EmitationUpdate);
     }
 }
 
@@ -437,8 +457,10 @@ void item::SignalEmitationDecrease(ulong EmitationUpdate)
       ulong Backup = Emitation;
       CalculateEmitation();
 
-      if(Backup != Emitation && Slot)
-	Slot->SignalEmitationDecrease(EmitationUpdate);
+      if(Backup != Emitation)
+	for(ushort c = 0; c < GetSquaresUnder(); ++c)
+	  if(Slot[c])
+	    Slot[c]->SignalEmitationDecrease(EmitationUpdate);
     }
 }
 
@@ -452,8 +474,8 @@ void item::CalculateAll()
 
 void item::WeaponSkillHit()
 {
-  if(Slot && Slot->IsGearSlot())
-    static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
+  if(Slot[0] && Slot[0]->IsGearSlot())
+    static_cast<arm*>(static_cast<gearslot*>(*Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
 /* Returns 0 if item cannot be cloned */
@@ -614,10 +636,11 @@ void item::Empty()
   ChangeContainedMaterial(0);
 
   if(!game::IsInWilderness())
-    {
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
-      GetLSquareUnder()->SendNewDrawRequest();
-    }
+    for(ushort c = 0; c < GetSquaresUnder(); ++c)
+      {
+	GetLSquareUnder()->SendMemorizedUpdateRequest();
+	GetLSquareUnder()->SendNewDrawRequest();
+      }
 }
 
 short item::GetOfferValue(uchar Receiver) const
@@ -636,8 +659,9 @@ short item::GetOfferValue(uchar Receiver) const
 
 void item::SignalEnchantmentChange()
 {
-  if(Slot)
-    Slot->SignalEnchantmentChange();
+  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+    if(Slot[c])
+      Slot[c]->SignalEnchantmentChange();
 }
 
 ulong item::GetEnchantedPrice(char Enchantment) const
@@ -664,8 +688,15 @@ item* item::Fix()
 
 void item::DonateSlotTo(item* Item)
 {
-  Slot->DonateTo(Item);
-  Slot = 0;
+  Slot[0]->DonateTo(Item);
+  Slot[0] = 0;
+
+  for(ushort c = 1; c < GetSquaresUnder(); ++c)
+    if(Slot[c])
+      {
+	Slot[c]->Empty();
+	Slot[c] = 0;
+      }
 }
 
 uchar item::GetSpoilLevel() const
@@ -675,11 +706,11 @@ uchar item::GetSpoilLevel() const
 
 void item::SignalSpoilLevelChange(material*)
 {
-  bool NeedToInformSlot = !IsAnimated() && GetSpoilLevel() && GetSquareUnder() && Slot->IsVisible();
-  UpdatePictures();
+  if(!IsAnimated() && GetSpoilLevel() && Slot[0] && Slot[0]->IsVisible())
+    for(ushort c = 0; c < GetSquaresUnder(); ++c)
+      GetSquareUnder(c)->IncAnimatedEntities();
 
-  if(NeedToInformSlot)
-    Slot->GetSquareUnder()->IncAnimatedEntities();
+  UpdatePictures();
 }
 
 bool item::AllowSpoil() const
@@ -740,7 +771,7 @@ const char* item::GetStrengthValueDescription() const
 void item::SpecialGenerationHandler()
 {
   if(HandleInPairs())
-    GetSlot()->AddFriendItem(Duplicate());
+    Slot[0]->AddFriendItem(Duplicate());
 }
 
 void item::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
@@ -870,21 +901,57 @@ void itemprototype::CreateSpecialConfigurations()
       const item::databasemap& KeyConfig = key_ProtoType.GetConfig();
 
       for(item::databasemap::const_iterator i1 = Config.begin(); !(i1->first & LOCK_BITS); ++i1)
-	{
-	  ushort NewConfig = i1->first | BROKEN_LOCK;
-	  itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
-	  TempDataBase.InitDefaults(NewConfig);
-	  TempDataBase.PostFix << "with a broken lock";
-	  TempDataBase.Possibility = 0;
+	if(!i1->second.IsAbstract)
+	  {
+	    ushort NewConfig = i1->first | BROKEN_LOCK;
+	    itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
+	    TempDataBase.InitDefaults(NewConfig);
+	    TempDataBase.PostFix << "with a broken lock";
+	    TempDataBase.Possibility = 0;
 
-	  for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
-	    {
-	      ushort NewConfig = i1->first | i2->first;
-	      itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
-	      TempDataBase.InitDefaults(NewConfig);
-	      TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
-	      TempDataBase.Possibility = 0;
-	    }
-	}
+	    for(item::databasemap::const_iterator i2 = ++KeyConfig.begin(); i2 != KeyConfig.end(); ++i2)
+	      {
+		ushort NewConfig = i1->first | i2->first;
+		itemdatabase& TempDataBase = Config.insert(std::pair<ushort, itemdatabase>(NewConfig, i1->second)).first->second;
+		TempDataBase.InitDefaults(NewConfig);
+		TempDataBase.PostFix << "with " << i2->second.AdjectiveArticle << ' ' << i2->second.Adjective << " lock";
+		TempDataBase.Possibility = 0;
+	      }
+	  }
     }
+}
+
+void item::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate) const
+{
+  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void item::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
+{
+  if(AllowAlpha)
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+vector2d item::GetLargeBitmapPos(vector2d BasePos, ushort Index) const
+{
+  ushort SquareIndex = Index / (AnimationFrames >> 2);
+  return vector2d(SquareIndex & 1 ? BasePos.X + 16 : BasePos.X, SquareIndex & 2 ? BasePos.Y + 16 : BasePos.Y);
+}
+
+void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
+{
+  ushort TrueAnimationFrames = AnimationFrames >> 2;
+  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+{
+  ushort TrueAnimationFrames = AnimationFrames >> 2;
+
+  if(AllowAlpha)
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

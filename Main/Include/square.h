@@ -19,7 +19,6 @@ class square
   virtual ~square();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SetCharacter(character* What) { Character = What; }
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   virtual character* GetCharacter() const { return Character; }
@@ -49,6 +48,7 @@ class square
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
   virtual uchar GetSquareWalkability() const = 0;
+  void SetCharacter(character* What) { Character = What; }
  protected:
   festring MemorizedDescription;
   area* AreaUnder;

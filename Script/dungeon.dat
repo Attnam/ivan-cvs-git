@@ -1333,7 +1333,13 @@ Dungeon NEW_ATTNAM;
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain = boulder(1);
-			Times = 25;
+			Times = 10;
+		}
+
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain = boulder(2);
+			Times = 10;
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -1620,22 +1626,30 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room
 		{
-			Size = 5,5;
+			Size = 6,6;
 			Pos = 3*XSize/4:XSize/4-5,2:YSize-5;
 			FloorSquare = solidterrain(GRASS_TERRAIN), 0;
 			GenerateFountains = false;
 			AltarPossible = false;
 			GenerateLanterns = false;
+			GenerateDoor = false;
 
-			Square, Pos 2,2;
+			Square, Pos 3,3;
 			{
 				OTerrain = stairs(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
-				EntryIndex = STAIRS_UP;				
+				EntryIndex = STAIRS_UP;			
+			}
+
+			Square, Pos 0,1;
+			{
+				GTerrain = BALSA_WOOD solidterrain(PARQUET);
+				OTerrain = BALSA_WOOD door;
+				AttachRequired = true;
 			}
 
 			CharacterMap
 			{
-				Size = 3,3;
+				Size = 4,4;
 				Pos = 1,1;
 				Types
 				{
@@ -1644,9 +1658,10 @@ Dungeon UNDER_WATER_TUNNEL;
 				}
 			}
 			{
-				.c.
-				cgc
-				.c.
+				.cc.
+				cg.c
+				c..c
+				.cc.
 			}
 		}
 

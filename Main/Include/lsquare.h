@@ -68,7 +68,7 @@ class lsquare : public square
   bool Engrave(const festring& What) { Engraved = What; return true; }
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
-  bool BeKicked(character*, item*, float, float, short, bool, bool);
+  bool BeKicked(character*, item*, float, float, short, uchar, bool, bool);
   uchar GetDivineMaster() const;
   void Draw();
   void UpdateMemorized();
@@ -88,12 +88,10 @@ class lsquare : public square
   void ApplyScript(const squarescript*, room*);
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
-  void MoveCharacter(lsquare*);
   ulong GetRawLuminance() const;
   void StepOn(character*, lsquare*);
   uchar GetRoomIndex() const { return RoomIndex; }
   void SetRoomIndex(uchar What) { RoomIndex = What; }
-  void SwapCharacter(lsquare*);
   void ReceiveVomit(character*, ushort);
   room* GetRoom() const { return RoomIndex ? GetLevel()->GetRoom(RoomIndex) : 0; }
   void SetTemporaryEmitation(ulong);

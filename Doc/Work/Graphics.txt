@@ -25,6 +25,10 @@ Clothes peg.
 Showel.
 Sausage.
 Fungi.
+Nomad.
+Cactus.
+Oterrain border tiles.
+Skis.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

@@ -20,7 +20,7 @@ class fluid : public entity
   void Draw(bitmap*, vector2d, ulong, bool) const;
   const bitmap* GetPicture() const { return Picture; }
   material* GetMaterial() const { return Material; }
-  virtual square* GetSquareUnderEntity() const { return SquareUnder; }
+  virtual square* GetSquareUnderEntity(ushort = 0) const { return SquareUnder; }
   square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }

@@ -12,11 +12,12 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
     return;
 
   ushort VisibleItems = 0;
+  vector2d StackPos = GetPos();
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode())
       {
-	i->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+	i->Draw(Bitmap, Pos, Luminance, i->GetSquareIndex(StackPos), AllowAnimate);
 	++VisibleItems;
       }
 
@@ -26,7 +27,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode())
-	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, AllowAnimate);
+	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, i->GetSquareIndex(StackPos), AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
@@ -101,13 +102,15 @@ void stack::Clean(bool LastClean)
 
   while(Slot)
     {
-      if(SquarePosition != HIDDEN && Slot->GetItem()->IsAnimated() && SquareUnder)
+      item* Item = Slot->GetItem();
+
+      if(SquarePosition != HIDDEN && Item->IsAnimated() && SquareUnder)
 	SquareUnder->DecAnimatedEntities();
 
-      if(LastClean)
-	delete Slot->GetItem();
+      if(LastClean && Item->GetSquaresUnder() == 1)
+	delete Item;
       else
-	Slot->GetItem()->SendToHell();
+	Item->SendToHell();
 
       stackslot* Rubbish = Slot;
       Slot = Slot->Next;
@@ -133,19 +136,28 @@ item* stack::MoveItem(stackslot* Slot, stack* MoveTo)
 
 void stack::Save(outputfile& SaveFile) const
 {
-  SaveFile << SquarePosition << Items;
+  SaveFile << SquarePosition;
+  ushort SavedItems = 0;
 
-  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    SaveFile << i.GetSlot();
+  for(stackiterator i1 = GetBottom(); i1.HasItem(); ++i1)
+    if(i1->IsMainSlot(&i1.GetSlot()))
+      ++SavedItems;
+
+  SaveFile << SavedItems;
+
+  for(stackiterator i2 = GetBottom(); i2.HasItem(); ++i2)
+    if(i2->IsMainSlot(&i2.GetSlot()))
+      SaveFile << i2.GetSlot();
 }
 
 void stack::Load(inputfile& SaveFile)
 {
-  SaveFile >> SquarePosition >> Items;
+  ushort SavedItems;
+  SaveFile >> SquarePosition >> SavedItems;
 
-  for(ushort c = 0; c < Items; ++c)
+  for(ushort c = 0; c < SavedItems; ++c)
     {
-      if(!c)
+      if(!c && !Items)
 	Bottom = Top = new stackslot(this, 0);
       else
 	Top = Top->Next = new stackslot(this, Top);
@@ -155,6 +167,8 @@ void stack::Load(inputfile& SaveFile)
       Weight += (*Top)->GetWeight();
       game::CombineLights(Emitation, (*Top)->GetEmitation());
     }
+
+  Items += SavedItems;
 }
 
 vector2d stack::GetPos() const
@@ -180,7 +194,7 @@ bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(const it
   return false;
 }
 
-void stack::BeKicked(character* Kicker, ushort KickDamage)
+void stack::BeKicked(character* Kicker, ushort KickDamage, uchar Direction)
 {
   if(KickDamage)
     {
@@ -190,10 +204,10 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 	{
 	  item* Item1 = *GetTop();
 	  item* Item2 = RAND() & 1 && GetItems() > 1 ? *--GetTop() : 0;
-	  Item1->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage * 3);
+	  Item1->Fly(Kicker, Direction, KickDamage * 3);
 
 	  if(Item2)
-	    Item2->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage * 3);
+	    Item2->Fly(Kicker, Direction, KickDamage * 3);
 	}
     }
   else if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
@@ -354,7 +368,7 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
   if(Flags & REMEMBER_SELECTED)
     Contents.SetSelected(GetSelected());
 
-  game::DrawEverythingNoBlit(); //prevents mirage puppies
+  game::DrawEverythingNoBlit(); //doesn't prevent mirage puppies
   ushort Chosen = Contents.Draw();
 
   if(Chosen & FELIST_ERROR_BIT)
@@ -416,7 +430,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
 
       Entry.Empty();
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), Item->GetAnimationFrames(), true, Item->AllowAlphaEverywhere());
+      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), Item->GetStackAnimationFrames(), true, Item->AllowAlphaEverywhere());
     }
 }
 
@@ -587,7 +601,7 @@ bool stack::CanBeSeenBy(const character* Viewer) const
   if(MotherEntity)
     return MotherEntity->ContentsCanBeSeenBy(Viewer);
   else
-    return GetSquareTrulyUnder() == Viewer->GetSquareUnder() || GetSquareTrulyUnder()->CanBeSeenBy(Viewer);
+    return Viewer->IsOver(GetSquareTrulyUnder()->GetPos()) || GetSquareTrulyUnder()->CanBeSeenBy(Viewer);
 }
 
 bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
@@ -643,11 +657,8 @@ void stack::MoveItemsTo(stack* Stack)
 void stack::MoveItemsTo(slot* Slot)
 {
   while(GetItems())
-    {
-      Slot->AddFriendItem(*GetBottom());
-    }
+    Slot->AddFriendItem(*GetBottom());
 }
-
 
 ushort stack::GetItems(const character* Char, bool ForceIgnoreVisibility) const
 {

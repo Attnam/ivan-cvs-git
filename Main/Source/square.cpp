@@ -4,23 +4,29 @@ square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(
 
 square::~square()
 {
-  delete Character;
+  if(Character)
+    Character->SendToHell();
 }
 
 void square::Save(outputfile& SaveFile) const
 {
-  SaveFile << Character << LastSeen << AnimatedEntities << MemorizedDescription;
+  if(!Character || Character->IsMainPos(Pos))
+    SaveFile << Character;
+
+  SaveFile << LastSeen << AnimatedEntities << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
 {
-  SaveFile >> Character >> LastSeen >> AnimatedEntities >> MemorizedDescription;
+  if(!Character)
+    SaveFile >> Character;
+
+  SaveFile >> LastSeen >> AnimatedEntities >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
 {
   Character = Guy;
-  Guy->SetSquareUnder(this);
   NewDrawRequested = true;
   IncAnimatedEntities();
 }
@@ -30,7 +36,7 @@ void square::RemoveCharacter()
   if(Character)
     DecAnimatedEntities();
 
-  SetCharacter(0);
+  Character = 0;
   NewDrawRequested = true;
 }
 

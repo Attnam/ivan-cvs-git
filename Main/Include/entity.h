@@ -28,7 +28,7 @@ class entity
   bool IsEnabled() const { return (EntityFlags & HAS_BE) != 0; }
   void Enable();
   void Disable();
-  virtual square* GetSquareUnderEntity() const = 0;
+  virtual square* GetSquareUnderEntity(ushort = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() { }
   ulong GetEmitation() const { return Emitation; }
   virtual void SignalEmitationIncrease(ulong) { }

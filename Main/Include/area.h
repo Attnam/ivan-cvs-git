@@ -22,8 +22,6 @@ class area
   area(ushort, ushort);
   virtual ~area();
   virtual void Draw(bool) const = 0;
-  void AddCharacter(vector2d, character*);
-  void RemoveCharacter(vector2d);
   void Save(outputfile&) const;
   void Load(inputfile&);
   ushort GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
@@ -34,7 +32,6 @@ class area
   void UpdateLOS();
   void SendNewDrawRequest();
   void Initialize(ushort, ushort);
-  virtual void MoveCharacter(vector2d, vector2d);
   square* GetNeighbourSquare(vector2d, ushort) const;
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
   bool IsValidPos(short X, short Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }

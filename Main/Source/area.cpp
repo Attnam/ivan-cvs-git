@@ -53,52 +53,45 @@ void area::Load(inputfile& SaveFile)
   SaveFile.Read(reinterpret_cast<char*>(FlagMap[0]), sizeof(ushort) * XSizeTimesYSize);
 }
 
-void area::RemoveCharacter(vector2d Pos)
-{
-  Map[Pos.X][Pos.Y]->RemoveCharacter();
-}
-
-void area::AddCharacter(vector2d Pos, character* Guy)
-{
-  Map[Pos.X][Pos.Y]->AddCharacter(Guy);
-}
-
 void area::UpdateLOS()
 {
   game::LOSTurn();
   ushort Radius = PLAYER->GetLOSRange();
   ulong RadiusSquare = Radius * Radius;
-  vector2d Pos = PLAYER->GetPos();
-
-  ushort MaxDist = Pos.X;
-
-  if(Pos.Y > MaxDist)
-    MaxDist = Pos.Y;
-
-  if(XSize - Pos.X - 1 > MaxDist)
-    MaxDist = XSize - Pos.X - 1;
-
-  if(YSize - Pos.Y - 1 > MaxDist)
-    MaxDist = YSize - Pos.Y - 1;
-
-  if(Radius > MaxDist)
-    Radius = MaxDist;
-
   bool (*LOSHandler)(long, long) = game::IsInWilderness() ? game::WorldMapLOSHandler : game::LevelLOSHandler;
 
-  rect Rect;
-  femath::CalculateEnvironmentRectangle(Rect, Border, Pos, Radius);
+  for(ushort c = 0; c < PLAYER->GetSquaresUnder(); ++c)
+    {
+      vector2d Pos = PLAYER->GetPos(c);
+      ushort MaxDist = Pos.X;
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
-	femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
+      if(Pos.Y > MaxDist)
+	MaxDist = Pos.Y;
+
+      if(XSize - Pos.X - 1 > MaxDist)
+	MaxDist = XSize - Pos.X - 1;
+
+      if(YSize - Pos.Y - 1 > MaxDist)
+	MaxDist = YSize - Pos.Y - 1;
+
+      if(Radius > MaxDist)
+	Radius = MaxDist;
+
+      rect Rect;
+      femath::CalculateEnvironmentRectangle(Rect, Border, Pos, Radius);
+
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	  if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+	    femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
+
+    }
 
   if(PLAYER->StateIsActivated(INFRA_VISION) && !game::IsInWilderness())
     for(ushort c = 0; c < game::GetTeams(); ++c)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
-	  (*i)->GetSquareUnder()->SendNewDrawRequest();
+	  (*i)->SendNewDrawRequest();
 
   game::RemoveLOSUpdateRequest();
 }
@@ -111,13 +104,6 @@ void area::SendNewDrawRequest()
 
   DOUBLE_BUFFER->ClearToColor(0);
   DOUBLE_BUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenXSize() << 4), 33 + (game::GetScreenYSize() << 4), DARK_GRAY, true);
-}
-
-void area::MoveCharacter(vector2d From, vector2d To)
-{
-  character* Backup = GetSquare(From)->GetCharacter();
-  GetSquare(From)->RemoveCharacter();
-  GetSquare(To)->AddCharacter(Backup);
 }
 
 square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const

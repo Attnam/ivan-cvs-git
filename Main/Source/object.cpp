@@ -183,10 +183,10 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  AnimationFrames = UpdatePictures(Picture, GraphicIterator, vector2d(0, 0), AnimationFrames, (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  UpdatePictures(Picture, GraphicIterator, vector2d(0, 0), AnimationFrames, (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-ushort object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterator, vector2d Position, ushort OldAnimationFrames, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
+void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterator, vector2d Position, ushort& OldAnimationFrames, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
 {
   ushort AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
@@ -289,6 +289,7 @@ ushort object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIter
 	AnimationFrames = 128;
     }
 
+  ModifyAnimationFrames(AnimationFrames);
   ushort c;
 
   for(c = 0; c < OldAnimationFrames; ++c)
@@ -306,6 +307,7 @@ ushort object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIter
       GraphicIterator = new tilemap::iterator[AnimationFrames];
     }
 
+  OldAnimationFrames = AnimationFrames;
   graphicid GI;
 
   for(c = 0; c < AnimationFrames; ++c)
@@ -364,8 +366,6 @@ ushort object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIter
       GI.Position = Position;
       Picture[c] = (GraphicIterator[c] = igraph::AddUser(GI))->second.Bitmap;
     }
-
-  return AnimationFrames;
 }
 
 ushort object::GetMaterialColorA(ushort) const
@@ -438,24 +438,6 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
       Material->SetMotherEntity(this);
       game::CombineLights(Emitation, Material->GetEmitation());
     }
-}
-
-void object::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
-{
-  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-}
-
-void object::SolidDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
-{
-  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-}
-
-void object::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
-{
-  if(AllowAlpha)
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-  else
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 ushort object::RandomizeMaterialConfiguration()

@@ -9,6 +9,7 @@
 
 level::level() : Room(1, static_cast<room*>(0)) { }
 void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
+void level::AddToAttachQueue(vector2d Pos) { AttachQueue.push_back(Pos); }
 
 node*** node::NodeMap;
 uchar node::RequiredWalkability;
@@ -446,7 +447,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
-		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
+		Char->PutTo(CharPos + vector2d(x, y));
 		Char->CreateHomeData();
 		const bool* IsMaster = CharacterScript->IsMaster();
 
@@ -597,6 +598,7 @@ void level::Save(outputfile& SaveFile) const
 
 void level::Load(inputfile& SaveFile)
 {
+  game::SetIsGenerating(true);
   area::Load(SaveFile);
   Map = reinterpret_cast<lsquare***>(area::Map);
   SaveFile >> Room;
@@ -604,8 +606,11 @@ void level::Load(inputfile& SaveFile)
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
+      Map[x][y] = new lsquare(this, vector2d(x, y));
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new lsquare(this, vector2d(x, y));
 	game::SetSquareInLoad(Map[x][y]);
 	Map[x][y]->Load(SaveFile);
       }
@@ -617,9 +622,11 @@ void level::Load(inputfile& SaveFile)
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
       {
-	NodeMap[x][y] = new node(x,y, Map[x][y]);
+	NodeMap[x][y] = new node(x, y, Map[x][y]);
 	WalkabilityMap[x][y] = Map[x][y]->GetWalkability();
       }
+
+  game::SetIsGenerating(false);
 }
 
 void level::FiatLux()
@@ -651,7 +658,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 	}
 
       if(!(Pos.X == 0 && Pos.Y == 0))
-	Map[Pos.X][Pos.Y]->AddCharacter(Char);
+	Char->PutTo(Pos);
     }
 }
 
@@ -680,16 +687,18 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
 	  Pos.X = 1 + RAND() % (XSize - 2);
 	  Pos.Y = 1 + RAND() % (YSize - 2);
 	}
+
       LSquare = Map[Pos.X][Pos.Y];
-      if(((Char ? !Char->CanMoveOn(LSquare) : !(LSquare->GetWalkability() & WALK)) != (Flags & NOT_WALKABLE))
-	 || (!LSquare->GetCharacter() != !(Flags & HAS_CHARACTER))
-	 || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
+
+      if(((Char ? Char->CanMoveOn(LSquare) : (LSquare->GetWalkability() & WALK)) != !(Flags & NOT_WALKABLE))
+      || ((Char ? Char->IsFreeForMe(LSquare) : !LSquare->GetCharacter()) != !(Flags & HAS_CHARACTER))
+      || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
 	continue;
 
       uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
       if((RoomFlags == IN_ROOM && !LSquare->GetRoomIndex())
-	 || (RoomFlags == NOT_IN_ROOM && LSquare->GetRoomIndex()))
+      || (RoomFlags == NOT_IN_ROOM && LSquare->GetRoomIndex()))
 	continue;
 
       return Pos;
@@ -705,11 +714,6 @@ void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
 bool level::IsOnGround() const
 {
   return *LevelScript->IsOnGround();
-}
-
-void level::MoveCharacter(vector2d From, vector2d To)
-{
-  GetLSquare(From)->MoveCharacter(GetLSquare(To));
 }
 
 ushort level::GetLOSModifier() const
@@ -919,7 +923,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i) && Leader->GetSquareUnder()->CanBeSeenBy(*i, true) && (*i)->CanFollow())
+	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
 	    {
 	      ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	      return false;
@@ -937,7 +941,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader && (TakeAll || (Leader->CanBeSeenBy(*i) && Leader->GetSquareUnder()->CanBeSeenBy(*i, true) && (*i)->CanFollow())))
+	if((*i)->IsEnabled() && *i != Leader && (TakeAll || (Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())))
 	  {
 	    if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
 	      (*i)->GetAction()->Terminate(false);
@@ -946,7 +950,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 	      {
 		ADD_MESSAGE("%s follows you.", (*i)->CHAR_NAME(DEFINITE));
 		CharacterArray.push_back(*i);
-		Leader->GetLevel()->RemoveCharacter((*i)->GetPos());
+		(*i)->Remove();
 	      }
 	  }
 
@@ -1400,7 +1404,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && !GetLSquare(Pos)->GetCharacter() && Pos != Prohibited)
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && Pos != Prohibited)
 	return Pos;
     }
 
@@ -1428,7 +1432,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 
 vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
 {
-  if(Char->CanMoveOn(GetLSquare(StartPos)) && !GetLSquare(StartPos)->GetCharacter())
+  if(Char->CanMoveOn(GetLSquare(StartPos)) && Char->IsFreeForMe(GetLSquare(StartPos)))
     return StartPos;
 
   ushort c;
@@ -1437,7 +1441,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) c
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && !GetLSquare(Pos)->GetCharacter())
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)))
 	return Pos;
     }
 
@@ -1468,7 +1472,7 @@ vector2d level::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, 
     {
       lsquare* Square = Origo->GetNeighbourLSquare(d);
 
-      if(Square && Char->CanMoveOn(Square) && (AllowCharacter || !Square->GetCharacter()))
+      if(Square && Char->CanMoveOn(Square) && (AllowCharacter || Char->IsFreeForMe(Square)))
 	PossibleDir[Index++] = d;
     }
 
@@ -1639,6 +1643,10 @@ void level::GenerateDungeon(ushort Index)
       ApplyLSquareScript(&*i);
     }
 
+  for(c = 0; c < AttachQueue.size(); ++c)
+    AttachPos(AttachQueue[c].X, AttachQueue[c].Y);
+
+  AttachQueue.clear();
   CreateItems(LevelScript->GetItems()->Randomize());
 }
 
@@ -1709,18 +1717,17 @@ void level::GenerateJungle()
     }
 }
 
-
 void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNodes, ushort MaxNodes, vector2d StartPos)
 {
   vector2d Pos = StartPos, Direction;
   ushort Length;
   game::BusyAnimation();
   FlagMap[Pos.X][Pos.Y] = PREFERRED;
-  for(ushort c = 0; c < MaxNodes; ++c)
+  for(ushort c1 = 0; c1 < MaxNodes; ++c1)
     {
       Direction = game::GetBasicMoveVector(RAND() % 4);
       Length = MinLength + RAND_N(MaxLength - MinLength + 1);
-      for(ushort d = 0; d < Length; ++d)
+      for(ushort c2 = 0; c2 < Length; ++c2)
 	{
 	  if(IsValidPos(Direction + Pos))
 	    {
@@ -1729,7 +1736,7 @@ void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNo
 	    }
 	  else
 	    {
-	      if(c >= MinNodes)
+	      if(c1 >= MinNodes)
 		return;
 	      break;
 	    }
@@ -1746,6 +1753,7 @@ uchar node::CalculateNextNodes()
       if(NodePos.X >= 0 && NodePos.Y >= 0 && NodePos.X < XSize && NodePos.Y < YSize)
 	{
 	  node* Node = NodeMap[NodePos.X][NodePos.Y];
+
 	  if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanMoveOn(Square))))
 	    {
 	      Link[c] = Node;

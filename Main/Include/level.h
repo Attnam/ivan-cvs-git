@@ -81,7 +81,6 @@ class level : public area
   void SetLevelScript(const levelscript* What) { LevelScript = What; }
   bool IsOnGround() const;
   const levelscript* GetLevelScript() const { return LevelScript; }
-  virtual void MoveCharacter(vector2d, vector2d);
   ushort GetLOSModifier() const;
   ushort CalculateMinimumEmitationRadius(ulong) const;
   room* GetRoom(ushort) const;
@@ -126,6 +125,7 @@ class level : public area
   void CreateTunnelNetwork(ushort, ushort, ushort, ushort, vector2d);
   void SetWalkability(vector2d Pos, uchar What) { WalkabilityMap[Pos.X][Pos.Y] = What; }
   node* FindRoute(vector2d, vector2d, uchar, const character* = 0);
+  void AddToAttachQueue(vector2d);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
@@ -143,6 +143,7 @@ class level : public area
   std::vector<bool> PlayerHurt;
   node*** NodeMap;
   uchar** WalkabilityMap;
+  std::vector<vector2d> AttachQueue;
 };
 
 outputfile& operator<<(outputfile&, const level*);

@@ -204,7 +204,7 @@ class character : public entity, public id
   virtual bool Catches(item*) { return false; }
   bool CheckDeath(const festring&, const character*, bool = false);
   bool DodgesFlyingItem(item*, float);
-  virtual bool Hit(character*, bool = false) = 0;
+  virtual bool Hit(character*, vector2d, uchar, bool = false) = 0;
   bool OpenPos(vector2d);
   bool ReadItem(item*);
   bool TestForPickup(item*) const;
@@ -223,7 +223,7 @@ class character : public entity, public id
   stack* GetStack() const { return Stack; }
   uchar GetBurdenState() const { return BurdenState; }
   bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
-  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, vector2d, float, float, short, uchar, uchar, bool, bool);
   ushort GetLOSRange() const;
   ushort GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
   ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
@@ -250,7 +250,7 @@ class character : public entity, public id
   void Vomit(ushort);
   virtual void Be();
   bool Polymorph(character*, ushort);
-  void BeKicked(character*, item*, float, float, short, bool, bool);
+  void BeKicked(character*, item*, vector2d, float, float, short, uchar, bool, bool);
   void FallTo(character*, vector2d);
   bool CheckCannibalism(const material*) const;
   void ActivateTemporaryState(ulong What) { TemporaryState |= What; }
@@ -481,12 +481,13 @@ class character : public entity, public id
   DATA_BASE_BOOL(IgnoreDanger);
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
+  DATA_BASE_VALUE(uchar, MoveType);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
   bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
-  virtual void Kick(lsquare*, bool = false) = 0;
+  virtual void Kick(lsquare*, uchar, bool = false) = 0;
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
@@ -563,8 +564,8 @@ class character : public entity, public id
   void PrintEndPoisonedMessage() const;
   bool IsWarm() const;
   void CalculateEquipmentState();
-  void Draw(bitmap*, vector2d, ulong, bool) const;
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
+  void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
   god* GetMasterGod() const;
   void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
@@ -583,22 +584,20 @@ class character : public entity, public id
   dungeon* GetDungeon() const { return static_cast<level*>(GetSquareUnder()->GetArea())->GetDungeon(); }
   level* GetLevel() const { return static_cast<level*>(GetSquareUnder()->GetArea()); }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
-  square* GetNeighbourSquare(ushort Index) const { return GetSquareUnder()->GetNeighbourSquare(Index); }
-  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<lsquare*>(GetSquareUnder())->GetNeighbourLSquare(Index); }
-  wsquare* GetNeighbourWSquare(ushort) const;
-  stack* GetStackUnder() const { return static_cast<lsquare*>(GetSquareUnder())->GetStack(); }
+  virtual square* GetNeighbourSquare(ushort) const;
+  virtual lsquare* GetNeighbourLSquare(ushort) const;
+  virtual wsquare* GetNeighbourWSquare(ushort) const;
+  stack* GetStackUnder(ushort Index = 0) const { return static_cast<lsquare*>(GetSquareUnder(Index))->GetStack(); }
   square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
   square* GetNearSquare(ushort x, ushort y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
   lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
   wsquare* GetNearWSquare(vector2d) const;
   wsquare* GetNearWSquare(ushort, ushort) const;
-  vector2d GetPos() const { return GetSquareUnder()->GetPos(); }
-  square* GetSquareUnder() const { return !MotherEntity ? SquareUnder : MotherEntity->GetSquareUnderEntity(); }
-  virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
-  void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
-  wsquare* GetWSquareUnder() const;
+  vector2d GetPos(ushort Index = 0) const { return GetSquareUnder(Index)->GetPos(); }
+  square* GetSquareUnder(ushort Index = 0) const { return !MotherEntity ? SquareUnder[Index] : MotherEntity->GetSquareUnderEntity(Index); }
+  virtual square* GetSquareUnderEntity(ushort Index = 0) const { return GetSquareUnder(Index); }
+  lsquare* GetLSquareUnder(ushort Index = 0) const { return static_cast<lsquare*>(GetSquareUnder(Index)); }
   ushort GetRandomNonVitalBodyPart();
   void TeleportSomePartsAway(ushort);
   virtual void SignalVolumeAndWeightChange();
@@ -640,13 +639,13 @@ class character : public entity, public id
   bool ContentsCanBeSeenBy(const character*) const;
   festring GetBeVerb() const;
   virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
-  virtual bool SpecialUnarmedEffect(character*, uchar, uchar, bool) { return false; }
-  virtual bool SpecialKickEffect(character*, uchar, uchar, bool) { return false; }
-  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool) { return false; }
-  bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
+  virtual bool SpecialUnarmedEffect(character*, vector2d, uchar, uchar, bool) { return false; }
+  virtual bool SpecialKickEffect(character*, vector2d, uchar, uchar, bool) { return false; }
+  virtual bool SpecialBiteEffect(character*, vector2d, uchar, uchar, bool) { return false; }
+  bool HitEffect(character*, item*, vector2d, uchar, uchar, uchar, bool);
   void WeaponSkillHit(item*, uchar);
   character* Duplicate() const;
-  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+  room* GetRoom(ushort Index = 0) const { return GetLSquareUnder(Index)->GetRoom(); }
   bool TryToEquip(item*);
   bool TryToConsume(item*);
   void UpdateESPLOS() const;
@@ -697,7 +696,7 @@ class character : public entity, public id
   bool EquipsSomething(bool (*)(const item*, const character*) = 0);
   bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return true; }
-  virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
+  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar) { return false; }
   virtual festring& ProcessMessage(festring&) const;
   virtual bool IsHumanoid() const { return false; }
   long GetStuffScore() const;
@@ -764,12 +763,32 @@ class character : public entity, public id
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
   virtual uchar GetArms() const { return 0; }
   bool IsPet() const;
+  virtual void PutTo(vector2d);
+  void PutNear(vector2d);
+  void PutToOrNear(vector2d);
+  virtual void Remove();
+  bool IsSmall() const { return SquaresUnder == 1; }
+  bool IsOver(vector2d) const;
+  bool SquareUnderCanBeSeenByPlayer(bool) const;
+  bool SquareUnderCanBeSeenBy(const character*, bool) const;
+  ushort GetDistanceSquareFrom(const character*) const;
   virtual bool CanMoveOn(const lsquare*) const;
   virtual bool CanMoveOn(const square*) const;
-  virtual bool CanMoveOn(const olterrain*) const;
-  virtual bool CanMoveOn(const oterrain*) const;
-  DATA_BASE_VALUE(uchar, MoveType);  
+  bool CanMoveOn(const olterrain*) const;
+  bool CanMoveOn(const oterrain*) const;
+  bool IsMainPos(vector2d What) const { return GetPos() == What; }
+  virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
+  ushort GetSquaresUnder() const { return SquaresUnder; }
+  virtual ushort GetSquareIndex(vector2d) const { return 0; }
+  virtual ushort GetNeighbourSquares() const { return 8; }
+  virtual ushort GetExtendedNeighbourSquares() const { return 9; }
+  virtual ushort CalculateNewSquaresUnder(lsquare**, vector2d) const;
+  virtual bool IsFreeForMe(square*) const;
+  void SendNewDrawRequest() const;
+  square* GetNaturalNeighbourSquare(ushort Index) const { return character::GetNeighbourSquare(Index); }
+  lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
  protected:
+  virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
@@ -821,6 +840,7 @@ class character : public entity, public id
   virtual bool AttackIsBlockable(uchar) const { return true; }
   virtual bool AttackMayDamageArmor() const { return true; }
   virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
+  void AttackAdjacentEnemyAI();
   stack* Stack;
   long NP, AP;
   bool Player;
@@ -843,7 +863,7 @@ class character : public entity, public id
   character* PolymorphBackup;
   cweaponskill** CWeaponSkill;
   ulong EquipmentState;
-  square* SquareUnder;
+  square** SquareUnder;
   ulong Volume;
   ulong Weight;
   ulong CarriedWeight;
@@ -863,6 +883,7 @@ class character : public entity, public id
   homedata* HomeData;
   ulong ID;
   bool PictureUpdatesForbidden;
+  ushort SquaresUnder;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

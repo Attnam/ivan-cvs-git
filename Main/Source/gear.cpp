@@ -62,7 +62,7 @@ ushort helmet::GetMaterialColorC(ushort) const { return MakeRGB16(180, 200, 180)
 
 ushort wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
-bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
+bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool BlockedByArmour)
 {
   if(!BlockedByArmour && GetContainedMaterial())
     {
@@ -184,9 +184,9 @@ uchar meleeweapon::GetAlphaB(ushort) const
   return SecondaryMaterial->GetAlpha();
 }
 
-bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool flamingsword::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(Enemy->IsEnabled() && RAND() & 1)
     {
@@ -199,9 +199,9 @@ bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPart
     return BaseSuccess;
 }
 
-bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool mjolak::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
     {
@@ -217,9 +217,9 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
     return BaseSuccess;
 }
 
-bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool vermis::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
@@ -233,9 +233,9 @@ bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
     return BaseSuccess;
 }
 
-bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool turox::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
@@ -249,16 +249,16 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
       else
         DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
 
-      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 70 + RAND() % 20 - RAND() % 20);
+      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, HitPos, 70 + RAND() % 20 - RAND() % 20);
       return true;
     }
   else
     return BaseSuccess;
 }
 
-bool whipofthievery::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool whipofthievery::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
@@ -441,9 +441,9 @@ uchar meleeweapon::GetSpoilLevel() const
   return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
 }
 
-bool neercseulb::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool neercseulb::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
@@ -459,9 +459,9 @@ bool neercseulb::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIn
     return BaseSuccess;
 }
 
-bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
@@ -475,7 +475,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
       else
         DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
 
-      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 4);
+      GetLevel()->LightningBeam(Hitter, DeathMSG, Hitter->GetPos(), WHITE, BEAM_LIGHTNING, Direction, 4);
       return true;
     }
   else
@@ -602,9 +602,9 @@ void meleeweapon::GenerateMaterials()
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
 }
 
-bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && ScabiesHelps(Enemy, Hitter))
     {
@@ -696,29 +696,46 @@ ushort wondersmellstaff::GetOutlineColor(ushort Frame) const
   return TRANSPARENT_COLOR;
 }
 
-bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(RAND() & 3)
 	{
-	  lsquare* Square = Enemy->GetLSquareUnder();
+	  bool Seen = false;
+	  ushort Amount = 250 / Enemy->GetSquaresUnder();
 
-	  if(Square->CanBeSeenByPlayer())
+	  for(ushort c = 0; c < Enemy->GetSquaresUnder(); ++c)
+	    {
+	      lsquare* Square = Enemy->GetLSquareUnder(c);
+
+	      if(Square->IsFlyable())
+		{
+		  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, Amount));
+
+		  if(!Seen && Square->CanBeSeenByPlayer())
+		    Seen = true;
+		}
+	    }
+
+	  if(Seen)
 	    ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
-
-	  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, 250));
 	}
       else
 	{
+	  /* Can a multitiled creature ever be the hitter? */
+
 	  lsquare* Square = Hitter->GetLSquareUnder();
 
-	  if(Square->CanBeSeenByPlayer())
-	    ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+	  if(Square->IsFlyable())
+	    {
+	      if(Square->CanBeSeenByPlayer())
+		ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
 
-	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 100));
+	      Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 100));
+	    }
 	}
 
       return true;

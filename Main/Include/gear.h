@@ -14,7 +14,7 @@ class ITEM
  public:
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual void DipInto(material*, character*);
   virtual ulong GetPrice() const;
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
@@ -76,7 +76,7 @@ class ITEM
   neercseulb,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
@@ -110,7 +110,7 @@ class ITEM
   flamingsword,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual ushort GetSpecialFlags() const;
 );
 
@@ -119,7 +119,7 @@ class ITEM
   mjolak,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
 );
 
 class ITEM
@@ -127,7 +127,7 @@ class ITEM
   vermis,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
 );
 
 class ITEM
@@ -135,7 +135,7 @@ class ITEM
   turox,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
 );
 
 class ITEM
@@ -144,7 +144,7 @@ class ITEM
   whip,
  public:
   virtual ulong GetPrice() const;
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
  protected:
   virtual bool CleptiaHelps(const character*, const character*) const;
 );
@@ -184,7 +184,7 @@ class ITEM
   thunderhammer,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual ushort GetSpecialFlags() const;
   virtual bool ReceiveDamage(character*, ushort, ushort);
 );
@@ -349,7 +349,7 @@ class ITEM
   chameleonwhip, 
   whip, 
  public: 
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool); 
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool); 
  protected: 
   virtual bool ScabiesHelps(const character*, const character*) const; 
 );
@@ -359,7 +359,7 @@ class ITEM
   wondersmellstaff,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual ushort GetClassAnimationFrames() const;

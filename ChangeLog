@@ -6,6 +6,22 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added support for multi-tile characters and items
+	* 32x32 genetrix vesana and Elpuri added to char.pcx by Kahvi
+	* Genetrix vesana, Elpuri and their corpses are now 2x2 squares large
+	* Earth with border tiles added to olterra.pcx by Kahvi
+	* Sumo wrestler added to humanoid.pcx by Kahvi
+	* Removed boots of the (Master) Porter
+	* Corrected a bug in the lock configuration creation code
+	* The enner beast is now quite funnily animated
+	* The holy banana can no longer be cloned
+	* Mages are now a little less insane opponents
+	* Corrected a highly abusable problem in the polymorph control code
+	* Added numerous bugs
+
 July 9 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Chests in inventory can be unlocked/locked.
@@ -15,7 +31,7 @@ July 9 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	2 : lock chest
 	3 : goto 1
 	(gives dex)
-	
+
 July 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a fatal bug in the level loading code

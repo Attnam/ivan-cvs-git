@@ -47,16 +47,13 @@ class object : public entity, public id
   bool IsAnimated() const { return AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
-  void SolidDraw(bitmap*, vector2d, ulong, bool) const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
   virtual void CalculateAll() = 0;
   virtual uchar GetSpoilLevel() const { return 0; }
   void CreateWieldedBitmap(graphicid&) const;
   virtual vector2d GetWieldedBitmapPos(ushort) const { return vector2d(); }
-  ushort UpdatePictures(bitmap**&, tilemap::iterator*&, vector2d, ushort, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
+  void UpdatePictures(bitmap**&, tilemap::iterator*&, vector2d, ushort&, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
   virtual ushort GetSpecialFlags() const;
   static void InitSparkleValidityArrays();
  protected:
@@ -96,6 +93,7 @@ class object : public entity, public id
   virtual vector2d GetBitmapPos(ushort) const = 0;
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }
+  virtual void ModifyAnimationFrames(ushort&) const { }
   material* MainMaterial;
   bitmap** Picture;
   tilemap::iterator* GraphicIterator;

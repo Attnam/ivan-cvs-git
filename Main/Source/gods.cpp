@@ -145,7 +145,7 @@ void dulcis::PrayGoodEffect()
 {
   ADD_MESSAGE("A beautiful melody echoes around you.");
 
-  for(ushort d = 0; d < 8; ++d)
+  for(ushort d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
     {
       square* Square = PLAYER->GetNeighbourSquare(d);
 
@@ -450,7 +450,7 @@ void silva::PrayGoodEffect()
 	    }
 
 	  Wolf->SetTeam(PLAYER->GetTeam());
-	  game::GetCurrentLevel()->AddCharacter(Pos, Wolf);
+	  Wolf->PutTo(Pos);
 	}
 
       if(!Created)
@@ -839,7 +839,7 @@ void nefas::PrayGoodEffect()
       else
 	{
 	  Mistress->SetTeam(PLAYER->GetTeam());
-	  game::GetCurrentLevel()->AddCharacter(Where, Mistress);
+	  Mistress->PutTo(Where);
 	  ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
 	}
     }
@@ -902,7 +902,7 @@ void scabies::PrayGoodEffect()
 
   bool Success = false;
 
-  for(ushort d = 0; d < 8; ++d)
+  for(ushort d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
     {
       lsquare* Square = PLAYER->GetNeighbourLSquare(d);
 

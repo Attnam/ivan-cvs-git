@@ -24,7 +24,7 @@ class smoke : public entity
   virtual ~smoke();
   virtual void Be();
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
-  virtual square* GetSquareUnderEntity() const;
+  virtual square* GetSquareUnderEntity(ushort = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   void Save(outputfile&) const;

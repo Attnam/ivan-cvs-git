@@ -39,7 +39,7 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-bool ennerbeast::Hit(character*, bool)
+bool ennerbeast::Hit(character*, vector2d, uchar, bool)
 {
   if(RAND() & 1)
     ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHAR_DESCRIPTION(DEFINITE));
@@ -155,7 +155,7 @@ void ennerbeast::GetAICommand()
   SeekLeader();
 
   if(StateIsActivated(PANIC) || !(RAND() % 3))
-    Hit(0);
+    Hit(0, vector2d(0, 0), YOURSELF);
 
   if(CheckForEnemies(false, false))
     return;
@@ -183,7 +183,7 @@ void petrus::GetAICommand()
     }
 
   if(!LastHealed || game::GetTicks() - LastHealed > 16384)
-    for(ushort d = 0; d < 8; ++d)
+    for(ushort d = 0; d < GetNeighbourSquares(); ++d)
       {
 	square* Square = GetNeighbourSquare(d);
 
@@ -300,7 +300,7 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-bool humanoid::Hit(character* Enemy, bool ForceHit)
+bool humanoid::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
@@ -355,13 +355,13 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 	  if(FirstArm && FirstArm->GetDamage())
 	    {
 	      FirstAPCost = FirstArm->GetAPCost();
-	      FirstArm->Hit(Enemy, ForceHit);
+	      FirstArm->Hit(Enemy, HitPos, Direction, ForceHit);
 	    }
 
 	  if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
 	    {
 	      SecondAPCost = SecondArm->GetAPCost();
-	      SecondArm->Hit(Enemy, ForceHit);
+	      SecondArm->Hit(Enemy, HitPos, Direction, ForceHit);
 	    } 
 
 	  EditNP(-50);
@@ -374,7 +374,7 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 	{
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
-	  Kick(Enemy->GetLSquareUnder(), ForceHit);
+	  Kick(GetNearLSquare(HitPos), Direction, ForceHit);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -383,7 +383,7 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 	{
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
-          Bite(Enemy, ForceHit);
+          Bite(Enemy, HitPos, Direction, ForceHit);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -480,7 +480,7 @@ void petrus::BeTalkedTo()
 
 	  GetHead()->GetMainMaterial()->SetSkinColor(MakeRGB16(255, 75, 50));
 	  GetHead()->UpdatePictures();
-	  GetSquareUnder()->SendNewDrawRequest();
+	  SendNewDrawRequest();
 	  game::AskForKeyPress(CONST_S("You are attacked! [press any key to continue]"));
 	  PLAYER->GetTeam()->Hostility(GetTeam());
 	  game::SetStoryState(2);
@@ -964,26 +964,22 @@ void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
 
-bool kamikazedwarf::Hit(character* Enemy, bool ForceHit)
+bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
 {
-  if(IsPlayer())
-    return humanoid::Hit(Enemy, ForceHit);
-  else
-    {
-      for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-	if(i->IsExplosive())
-	  {
-	    if(RAND() & 1)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
-	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+  if(!IsPlayer())
+    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+      if(i->IsExplosive())
+	{
+	  if(RAND() & 1)
+	    ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+	  else
+	    ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
 
-	    if(i->Apply(this))
-	      return true;
-	  }
+	  if(i->Apply(this))
+	    return true;
+	}
 
-      return humanoid::Hit(Enemy, ForceHit);
-    }
+  return humanoid::Hit(Enemy, HitPos, Direction, ForceHit);
 }
 
 void kamikazedwarf::GetAICommand()
@@ -1420,11 +1416,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	if(Equipment)
 	  {
 	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
-
-	    if(Equipment->AllowAlphaEverywhere())
-	      Equipment->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
-	    else
-	      Equipment->SolidDraw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
+	    Equipment->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), 0, true, Equipment->AllowAlphaEverywhere());
 	  }
       }
 
@@ -1711,23 +1703,23 @@ void shopkeeper::VirtualConstructor(bool Load)
     SetMoney(GetMoney() + RAND() % 2001);
 }
 
-void humanoid::Bite(character* Enemy, bool ForceHit)
+void humanoid::Bite(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
 {
   /* This function ought not to be called without a head */
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 30);
-  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
+  Enemy->TakeHit(this, 0, HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-void humanoid::Kick(lsquare* Square, bool ForceHit)
+void humanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
 {
   leg* KickLeg = GetRandomLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
 
-  if(Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit))
+  if(Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
       KickLeg->EditExperience(LEG_STRENGTH, 40);
       KickLeg->EditExperience(AGILITY, 20);
@@ -2069,7 +2061,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
   character* HurtOne = 0;
   bodypart* SeveredOne = 0;
 
-  for(ushort d = 0; d < 8; ++d)
+  for(ushort d = 0; d < GetNeighbourSquares(); ++d)
     {
       square* Square = GetNeighbourSquare(d);
 
@@ -2114,7 +2106,7 @@ void angel::VirtualConstructor(bool Load)
   LastHealed = 0;
 }
 
-void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
 {
   bitmap* TileBuffer = igraph::GetTileBuffer();
   Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
@@ -2123,26 +2115,26 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool
   /* Order is important: don't use a loop. */
 
   if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
       GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
@@ -2152,33 +2144,33 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool
   TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
-void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
 {
   bitmap* TileBuffer = igraph::GetTileBuffer();
   Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
   TileBuffer->FillPriority(0);
 
   if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 1), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
       GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
@@ -2759,9 +2751,9 @@ bool genie::CanCreateBodyPart(ushort C) const
   return C == TORSO_INDEX || C == HEAD_INDEX || C == RIGHT_ARM_INDEX || C == LEFT_ARM_INDEX;
 }
 
-bool bananagrower::HandleCharacterBlockingTheWay(character* Char)
+bool bananagrower::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, uchar Dir)
 {
-  return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char));
+  return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char, Pos, Dir));
 }
 
 festring& bananagrower::ProcessMessage(festring& Msg) const
@@ -2804,7 +2796,7 @@ void encourager::GetAICommand()
 	    {
 	      character* Char = Square->GetCharacter();
 
-	      if(Char && Char->IsBananaGrower() && Hit(Char, true))
+	      if(Char && Char->IsBananaGrower() && Hit(Char, Square->GetPos(), NotDiagonal[d], true))
 		{
 		  LastHit = game::GetTicks();
 		  WayPoint = vector2d(-1, -1);
@@ -2863,9 +2855,9 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-ushort mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+ushort mistress::TakeHit(character* Enemy, item* Weapon, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
 {
-  ushort Return = humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+  ushort Return = humanoid::TakeHit(Enemy, Weapon, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
   if(Return == HAS_HIT && Critical)
     {
@@ -3052,7 +3044,7 @@ void darkmage::GetAICommand()
   if(NearestEnemy && ((GetConfig() != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3 && MoveTowards((Pos << 1) - NearestEnemy->GetPos()))
     return;
 
-  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy))
+  if(NearestEnemy && NearestEnemy->IsSmall() && NearestEnemy->GetPos().IsAdjacent(Pos) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
     return;
 
   if(Friend.size() && !(RAND() & 3))
@@ -3066,7 +3058,7 @@ void darkmage::GetAICommand()
   if(NearestEnemy)
     {
       lsquare* Square = NearestEnemy->GetLSquareUnder();
-      EditAP(-2000);
+      EditAP(-3000);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
@@ -3136,7 +3128,7 @@ void darkmage::GetAICommand()
 		else
 		  {
 		    Golem->SetTeam(GetTeam());
-		    GetLevel()->GetLSquare(Where)->AddCharacter(Golem);
+		    Golem->PutTo(Where);
 
 		    if(Golem->CanBeSeenByPlayer())
 		      ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(DEFINITE));
@@ -3163,7 +3155,7 @@ void darkmage::GetAICommand()
   if(RandomFriend)
     {
       lsquare* Square = RandomFriend->GetLSquareUnder();
-      EditAP(-2000);
+      EditAP(-3000);
       Square->DrawParticles(RED);
 
       switch(GetConfig())
@@ -3215,7 +3207,7 @@ void zombie::GetAICommand()
 	      Head->RemoveFromSlot();
 	      AttachBodyPart(Head);
 	      Head->SetHP(1);
-	      EditAP(-1000);
+	      DexterityAction(10);
 	      return;
 	    }
 	}
@@ -3377,7 +3369,7 @@ void human::SignalEquipmentAdd(ushort EquipmentIndex)
   if(!Initializing)
     {
       UpdatePictures();
-      GetSquareUnder()->SendNewDrawRequest();
+      SendNewDrawRequest();
     }
 }
 
@@ -3388,7 +3380,7 @@ void human::SignalEquipmentRemoval(ushort EquipmentIndex)
   if(!Initializing)
     {
       UpdatePictures();
-      GetSquareUnder()->SendNewDrawRequest();
+      SendNewDrawRequest();
     }
 }
 
@@ -3397,7 +3389,7 @@ void human::SignalBodyPartVolumeAndWeightChange()
   if(!Initializing)
     {
       UpdatePictures();
-      GetSquareUnder()->SendNewDrawRequest();
+      SendNewDrawRequest();
     }
 }
 
@@ -3406,7 +3398,7 @@ bool communist::BoundToUse(const item* Item, ushort Index) const
   return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(Index);
 }
 
-void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
 {
   bitmap* TileBuffer = igraph::GetTileBuffer();
   Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
@@ -3415,26 +3407,26 @@ void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool Al
   /* Order is important: don't use a loop. */
 
   if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
       GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
@@ -3573,7 +3565,7 @@ void humanoid::DetachBodyPart()
   if(GetBodyPart(ToBeDetached))
     {
       item* ToDrop = SevereBodyPart(ToBeDetached);
-      GetSquareUnder()->SendNewDrawRequest();
+      SendNewDrawRequest();
 
       if(ToDrop)
 	{
@@ -3894,4 +3886,12 @@ bool guard::MoveTowardsHomePos()
     }
   else
     return humanoid::MoveTowardsHomePos();
+}
+
+bodypart* ennerbeast::MakeBodyPart(ushort Index) const
+{
+  if(Index == HEAD_INDEX)
+    return new ennerhead(0, NO_MATERIALS);
+  else
+    return humanoid::MakeBodyPart(Index);
 }

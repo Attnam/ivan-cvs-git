@@ -98,6 +98,7 @@ class game
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static const vector2d GetRelativeMoveVector(ushort Index) { return RelativeMoveVector[Index]; }
   static const vector2d GetBasicMoveVector(ushort Index) { return BasicMoveVector[Index]; }
+  static const vector2d GetLargeMoveVector(ushort Index) { return LargeMoveVector[Index]; }
   static area* GetCurrentArea() { return CurrentArea; }
   static level* GetCurrentLevel() { return CurrentLevel; }
   static bool WorldMapLOSHandler(long, long);
@@ -290,6 +291,7 @@ class game
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
   static const vector2d BasicMoveVector[];
+  static const vector2d LargeMoveVector[];
   static ushort*** LuxTable;
   static ushort* LuxTableSize;
   static bool Running;

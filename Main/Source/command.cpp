@@ -85,7 +85,7 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', true, true),
   new command(&GainAllItems, "gain all items", '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '£', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', true, true),
   new command(&ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&SummonMonster, "summon monster", '&', false, true),
@@ -345,27 +345,33 @@ bool commandsystem::PickUp(character* Char)
   Char->GetStackUnder()->Pile(PileVector, Char);
 
   if(PileVector.size() == 1)
-    {
-      ushort Amount = PileVector[0].size();
+    if(PileVector[0][0]->CanBePickedUp())
+      {
+	ushort Amount = PileVector[0].size();
 
-      if(Amount > 1)
-	Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	if(Amount > 1)
+	  Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
-      if(!Amount)
+	if(!Amount)
+	  return false;
+
+	if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(Char))
+	  {
+	    for(ushort c = 0; c < Amount; ++c)
+	      PileVector[0][c]->MoveTo(Char->GetStack());
+
+	    ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
+	    Char->DexterityAction(2);
+	    return true;
+	  }
+	else
+	  return false;
+      }
+    else
+      {
+	ADD_MESSAGE("%s too large to big up!", PileVector[0].size() == 1 ? "It is" : "They are");
 	return false;
-
-      if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(Char))
-	{
-	  for(ushort c = 0; c < Amount; ++c)
-	    PileVector[0][c]->MoveTo(Char->GetStack());
-
-	  ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
-	  Char->DexterityAction(2);
-	  return true;
-	}
-      else
-	return false;
-    }
+      }
 
   bool Success = false;
   stack::SetSelected(0);
@@ -379,14 +385,19 @@ bool commandsystem::PickUp(character* Char)
       if(ToPickup.empty())
 	break;
 
-      if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(Char))
+      if(ToPickup[0]->CanBePickedUp())
 	{
-	  for(ushort c = 0; c < ToPickup.size(); ++c)
-	    ToPickup[c]->MoveTo(Char->GetStack());
+	  if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(Char))
+	    {
+	      for(ushort c = 0; c < ToPickup.size(); ++c)
+		ToPickup[c]->MoveTo(Char->GetStack());
 
-	  ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
-	  Success = true;
+	      ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
+	      Success = true;
+	    }
 	}
+      else
+	ADD_MESSAGE("%s too large to big up!", ToPickup.size() == 1 ? "It is" : "They are");
     }
 
   if(Success)
@@ -421,7 +432,7 @@ bool commandsystem::Talk(character* Char)
 
   for(ushort d = 0; d < 8; ++d)
     {
-      lsquare* Square = Char->GetNeighbourLSquare(d);
+      lsquare* Square = Char->GetNaturalNeighbourLSquare(d);
 
       if(Square)
 	{
@@ -461,17 +472,16 @@ bool commandsystem::Talk(character* Char)
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
 	return false;
 
-      if(Dir == YOURSELF)
+      character* Dude = Char->GetNearSquare(Char->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
+
+      if(Dude == Char)
 	{
 	  ADD_MESSAGE("You talk to yourself for some time.");
 	  Char->EditExperience(WISDOM, -10);
 	  Char->EditAP(-1000);
 	  return true;
 	}
-
-      character* Dude = Char->GetNearSquare(Char->GetPos() + game::GetMoveVector(Dir))->GetCharacter();
-
-      if(Dude)
+      else if(Dude)
 	{
 	  Char->EditAP(-1000);
 
@@ -549,7 +559,7 @@ bool commandsystem::Dip(character* Char)
 
   for(ushort d = 0; d < 9; ++d)
     {
-      lsquare* Square = Char->GetNeighbourLSquare(d);
+      lsquare* Square = Char->GetNaturalNeighbourLSquare(d);
 
       if(Square && Square->IsDipDestination())
 	DipDestinationNear = true;
@@ -728,6 +738,8 @@ bool commandsystem::Pray(character* Char)
 
 bool commandsystem::Kick(character* Char)
 {
+  /** No multi-tile support */
+
   if(!Char->CheckKick())
     return false;
 
@@ -754,7 +766,7 @@ bool commandsystem::Kick(character* Char)
     else
       Char->Hostility(Square->GetCharacter());
 
-  Char->Kick(Square);
+  Char->Kick(Square, Dir);
   return true;
 }
 
@@ -994,7 +1006,7 @@ bool commandsystem::Go(character* Char)
   Go->SetDirection(Dir);
   uchar OKDirectionsCounter = 0;
 
-  for(ushort d = 0; d < 8; ++d)
+  for(ushort d = 0; d < Char->GetNeighbourSquares(); ++d)
     {
       lsquare* Square = Char->GetNeighbourLSquare(d);
 
@@ -1410,7 +1422,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetStackAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddAttackInfo(List);
 	    }
 
@@ -1422,7 +1434,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetStackAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddMiscellaneousInfo(List);
 	    }
 
@@ -1484,12 +1496,7 @@ bool commandsystem::SummonMonster(character* Char)
     Summoned = protosystem::CreateMonster(game::StringQuestion(CONST_S("Summon which monster?"), vector2d(16, 6), WHITE, 0, 80, false));
 
   Summoned->SetTeam(game::GetTeam(MONSTER_TEAM));
-  vector2d Where = Char->GetLevel()->GetNearestFreeSquare(Summoned, Char->GetPos());
-
-  if(Where == ERROR_VECTOR)
-    Where = Char->GetLevel()->GetRandomSquare(Summoned);
-
-  Char->GetNearLSquare(Where)->AddCharacter(Summoned);
+  Summoned->PutNear(Char->GetPos());
   return false;
 }
 

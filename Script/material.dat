@@ -997,7 +997,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Color = rgb16(220, 120, 0);
 		Density = 1200;
 		NutritionValue = 1000;
-		CanBeWished = true;
+		CanBeWished = false;
 		PriceModifier = 1000;
 		Flexibility = 5;
 	}
