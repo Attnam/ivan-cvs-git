@@ -629,6 +629,9 @@ class character : public entity, public id
   short GetMaxHP() const { return MaxHP; }
   void CalculateBodyPartMaxHPs();
   bool IsInitializing() const { return Initializing; }
+  bool ActivateRandomState(ushort);
+  ushort GetRandomNotActivatedState();
+  bool GainRandomInstric();
   virtual void CalculateAttackInfo() = 0;
   void CalculateBurdenState();
  protected:
@@ -714,6 +717,7 @@ class character : public entity, public id
   static void (character::*StateHandler[])();
   static std::string StateDescription[];
   static bool StateIsSecret[];
+  static bool StateCanBeRandomlyActivated[];
   square* SquareUnder;
   static prototype character_ProtoType;
   ulong Volume;

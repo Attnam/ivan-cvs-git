@@ -44,6 +44,7 @@ void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 
 void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0 };
 std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleport", "Polymorphing", "Telep. ctrl" };
 bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, false, true };
+bool character::StateCanBeRandomlyActivated[] = { false,true,true,true,false,true,true,true,true,false,true,true, true };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
@@ -1807,8 +1808,13 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
       if(AddEndLevel)
 	Desc += " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
 
-      HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
-      HScore.Save();
+      if(!HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc))
+	{
+	  HScore.ForgetLastAdd();
+	  game::TextScreen("You didn't manage to get onto the high score list.");
+	}
+      else
+	HScore.Save();
     }
 }
 
@@ -2604,6 +2610,9 @@ void character::ShowNewPosInfo() const
 
 void character::Hostility(character* Enemy)
 {
+  if(Enemy == this)
+    return;
+
   if(GetTeam() != Enemy->GetTeam())
     GetTeam()->Hostility(Enemy->GetTeam());
   else if(Enemy->IsEnabled())
@@ -4265,10 +4274,14 @@ void character::CalculateEquipmentState()
 void character::BeginTemporaryState(ushort State, ushort Counter)
 {
   ushort Index;
-
+  if(State == POLYMORPHED)
+    ABORT("No Polymorphing with BeginTemporaryState!");
   for(Index = 0; Index < STATES; ++Index)
     if(1 << Index == State)
       break;
+
+  if(Index == STATES)
+    ABORT("BeginTemporaryState works only when %s != 2 ^ n", State);
 
   if(TemporaryStateIsActivated(State))
     {
@@ -4921,7 +4934,7 @@ void character::PrintEndTeleportMessage() const
 
 void character::TeleportHandler()
 {
-  if(!(RAND() % 1500 + 100)) // What the elpuri is this? HEX! It's always false!
+  if(!(RAND() % 1500)) // What the elpuri is this? HEX! It's always false!
     TeleportRandomly();
 }
 
@@ -4938,7 +4951,7 @@ void character::PrintEndPolymorphMessage() const
 
 void character::PolymorphHandler()
 {
-  if(!(RAND() % 400 + 400))
+  if(!(RAND() % 400))
     PolymorphRandomly(200 + RAND() % 800);
 }
 
@@ -5171,5 +5184,57 @@ bool character::EditAttribute(ushort Identifier, short Value)
     }
   else
     return false;
+}
+
+bool character::ActivateRandomState(ushort Time)
+{
+  ushort ToBeActivated = GetRandomNotActivatedState();
+  if(ToBeActivated == 0)
+    return false;
+
+  BeginTemporaryState(ToBeActivated, Time);
+  return true;
+}
+
+bool character::GainRandomInstric()
+{
+  ushort ToBeActivated = GetRandomNotActivatedState();
+  if(ToBeActivated == 0)
+    return false;
+  GainIntrinsic(ToBeActivated);
+  return true;
+}
+
+/*
+ * Returns a state that is 
+ * 1) Not active
+ * 2) ActivatableRandomly
+ * if no such state is found return 0
+ */
+
+ushort character::GetRandomNotActivatedState()
+{
+  ushort OKStates[STATES];
+  ushort NumberOfOKStates = 0;
+  ushort CurrentState;
+
+  for(ushort c = 0; c < STATES; ++c)
+    {
+      if(c == 0)
+	CurrentState = 1;
+      else
+	CurrentState = 2 << (c - 1);
+
+      if(!StateIsActivated(CurrentState) && StateCanBeRandomlyActivated[c])
+	{
+	  OKStates[NumberOfOKStates] = CurrentState;
+	  ++NumberOfOKStates;
+	}
+    }
+
+  if(NumberOfOKStates == 0)
+    return 0;
+  
+  return OKStates[RAND() % NumberOfOKStates];
 }
 

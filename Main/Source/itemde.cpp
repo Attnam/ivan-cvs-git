@@ -2814,8 +2814,8 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 
       return true;
     }
-
-  ADD_MESSAGE("You are unable to escape from %s.", CHARNAME(DEFINITE));
+  if(Victim->IsPlayer())
+    ADD_MESSAGE("You are unable to escape from %s.", CHARNAME(DEFINITE));
   return false;
 }
 

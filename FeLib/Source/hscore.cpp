@@ -55,7 +55,6 @@ void highscore::Draw() const
       Desc += Entry[c];
       List.AddEntry(Desc, c == LastAdd ? RED : LIGHTGRAY);
     }
-
   List.Draw(vector2d(10, 10), 780, 50, BLACK, false, false, false, true);
 }
 

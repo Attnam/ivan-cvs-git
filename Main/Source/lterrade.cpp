@@ -427,7 +427,7 @@ bool fountain::Drink(character* Drinker)
 
 	  Drinker->EditAP(-1000);
 
-	  switch(RAND() % 5)
+	  switch(RAND() % 6)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");
@@ -469,6 +469,25 @@ bool fountain::Drink(character* Drinker)
 
 	      break;
 
+	    case 4:
+	      if(RAND() % 10)
+		{
+		  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
+		  if(!Drinker->ActivateRandomState(200 + RAND() % 300))
+		    {
+		      DryOut();
+		    }
+		}
+	      else
+		{
+		  ADD_MESSAGE("This water tastes very odd.");
+		  if(!Drinker->GainRandomInstric())
+		    {
+		      ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
+		      DryOut();
+		    }
+		}
+	      break;
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
 	      Drinker->EditNP(250);

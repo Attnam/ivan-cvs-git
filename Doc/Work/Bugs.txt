@@ -36,7 +36,17 @@ Entering a dungeon and loading an autosave saves some time.
 Skeletons are probably seen by infravision.
 //ESP + Wmode look bugs.
 Wishing for ring of teleport bugs.
-Teleportation in Attnam bugs.
+//Teleportation in Attnam bugs.
 Corpse + loricatus.
 Chests and lanterns.
+
+
+-----
+#0  0x080dd652 in square::KickAnyoneStandingHereAway() (this=0x0)
+    at square.cpp:78
+#1  0x080c593c in stairsdown::GoDown(character*) const (this=0x9809f50, 
+    Who=0x986a8b0) at lterrade.cpp:195
+-----
+
+Visual bugs with close in Linux with the X-button.
 Unicorns can eat silver stones.

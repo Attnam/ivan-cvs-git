@@ -1,3 +1,8 @@
+July 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* new Fountain effect: randomly activates a mode temporarily or permanently depending on luck.
+	* teleporting yourself in Attnam no longer makes all the citizens angry.
+
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* AnimationController now redraws only the equipment; stats and msg panel is left

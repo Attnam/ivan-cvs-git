@@ -46,3 +46,11 @@ Minotaur
 Kerberus
 
 	Bites with three heads.
+
+Light Bugs (work in progress-name)
+      
+     These creatures normally are drawn towards light sources.
+
+Dark Bugs (work in progress-name)
+     
+     These creatures normally are drawn towards darkness.
