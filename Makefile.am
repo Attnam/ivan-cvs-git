@@ -1,6 +1,6 @@
 SUBDIRS = FeLib Main Script Graphics
 
-EXTRA_DIST = IVAN.dsw FeLib.dsb Main.dsp Graphics/Font.pcx Graphics/FOW.pcx Graphics/Char.pcx Graphics/Human.pcx Graphics/Cursor.pcx Graphics/Item.pcx Graphics/LTerrain.pcx Graphics/Symbol.pcx Graphics/WTerrain.pcx Script/dungeon.dat ivandj.mak ivanmgw.mak LICENSING
+EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING
 
 install-data-local:
 	-./mkinstalldirs $(localstatedir) $(bindir)

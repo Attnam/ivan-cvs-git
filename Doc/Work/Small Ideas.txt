@@ -411,4 +411,7 @@ When many same kind of items on ground the message should say "5 Xs here" not ".
 Movement modes. (walk, run, stealth)
 "No load" mode. (if weight of stack < 1 kg)
 Lanterns inside glass chests should still emit light.
+Axes should also be used for going through doors (a la Shining)
+Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
 The smith should fix damaged metal limbs for a fee.
+

@@ -2503,7 +2503,7 @@ buffalo
 snake
 {
 	DefaultArmStrength = 7;
-	DefaultAgility = 8;
+	DefaultAgility = 5;
 	DefaultEndurance = 10;
 	DefaultPerception = 9;
 	DefaultIntelligence = 5;

@@ -1,3 +1,11 @@
+December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Sophos' bad pray effect changed (now works!)
+	* Dipping in frozen fountains no longer works
+	* Snakes are a bit slower
+	* Fixed last problems (I feel like an optimist) in makefile generation.
+	* NEWS updated
+	
 December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Whips' durability descriptions are no longer shown in the inventory screen

@@ -1068,3 +1068,8 @@ void olterraincontainer::Break()
   GetContained()->MoveItemsTo(GetLSquareUnder()->GetStack());
   olterrain::Break();
 }
+
+bool fountain::IsDipDestination() const
+{
+ return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
+}

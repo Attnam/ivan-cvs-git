@@ -166,7 +166,7 @@ class OLTERRAIN
   virtual bool HasDrinkEffect() const { return true; } 
   virtual void DryOut();
   virtual bool DipInto(item*, character*);
-  virtual bool IsDipDestination() const { return ContainedMaterial != 0; }
+  virtual bool IsDipDestination() const;
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What, ushort SpecialFlags = 0) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
   virtual void ChangeContainedMaterial(material* What, ushort SpecialFlags = 0) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }

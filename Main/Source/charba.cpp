@@ -5286,7 +5286,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	{
 	  for(; c < NumberToTeleport; ++c)
 	    {
-	      GetTorso()->SetHP(GetTorso()->GetHP() - RAND() % 5 - 1);
+	      GetTorso()->SetHP(GetTorso()->GetHP() * 4 / 5);
 	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
 
 	      if(TorsosVolume == 0)
