@@ -68,7 +68,6 @@ protected:
 	ushort Size;
 	bool InPool, Exists;
 	bitmap* Picture;
-	ushort* Color; //Must be removed
 	graphic_id GraphicId;
 };
 
