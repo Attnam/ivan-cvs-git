@@ -943,36 +943,42 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 
 	GetLevelSquare(Pos)->SetTemporaryEmitation(0);
 
-	uchar Radius = 8 - Size;
+	ushort Radius = 8 - Size;
+	ushort RadiusSquare = Radius * Radius;
 	ushort PlayerDamage;
 	bool PlayerHurt = false;
 
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
 	{
-		levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
-		character* Char = Square->GetCharacter();
-		ushort Damage = Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y)));
+		ushort DistanceSquare = GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer);
 
-		if(Char)
-			if(Char->GetIsPlayer())
-			{
-				PlayerDamage = Damage;
-				PlayerHurt = true;
-			}
-			else
-			{
-				Terrorist->GetTeam()->Hostility(Char->GetTeam());
-				Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
-				Char->ReceiveFireDamage(Terrorist, Damage);
-				Char->CheckGearExistence();
-				Char->CheckDeath("killed by an explosion");
-			}
+		if(DistanceSquare <= RadiusSquare)
+		{
+			levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
+			character* Char = Square->GetCharacter();
+			ushort Damage = Strength / (DistanceSquare + 1);
 
-		Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
-		Square->GetStack()->ReceiveFireDamage(Terrorist, Damage);
+			if(Char)
+				if(Char->GetIsPlayer())
+				{
+					PlayerDamage = Damage;
+					PlayerHurt = true;
+				}
+				else
+				{
+					Terrorist->GetTeam()->Hostility(Char->GetTeam());
+					Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+					Char->ReceiveFireDamage(Terrorist, Damage);
+					Char->CheckGearExistence();
+					Char->CheckDeath("killed by an explosion");
+				}
 
-		if(Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
-			Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
+			Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+			Square->GetStack()->ReceiveFireDamage(Terrorist, Damage);
+
+			if(Damage >= 20 && Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
+				Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
+		}
 	})
 
 	if(PlayerHurt)

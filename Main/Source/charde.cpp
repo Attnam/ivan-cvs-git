@@ -1698,14 +1698,14 @@ bool kamikazedwarf::Hit(character* Enemy)
 
 void kamikazedwarf::Save(outputfile& SaveFile) const
 {
-	humanoid::Save(SaveFile);
+	complexhumanoid::Save(SaveFile);
 
 	SaveFile << Master;
 }
 
 void kamikazedwarf::Load(inputfile& SaveFile)
 {
-	humanoid::Load(SaveFile);
+	complexhumanoid::Load(SaveFile);
 
 	SaveFile >> Master;
 }

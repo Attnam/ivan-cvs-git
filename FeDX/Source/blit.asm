@@ -1,5 +1,6 @@
 BITS 32
 
+GLOBAL _BlitNoFlags__FUlUlUlUlUsUs
 GLOBAL _BlitMirror__FUlUlUlUlUsUs
 GLOBAL _BlitFlip__FUlUlUlUlUsUs
 GLOBAL _BlitMirrorFlip__FUlUlUlUlUsUs
@@ -8,36 +9,78 @@ GLOBAL _BlitMirrorRotate90__FUlUlUlUlUlUsUs
 GLOBAL _BlitFlipRotate90__FUlUlUlUlUlUsUs
 GLOBAL _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
 GLOBAL _BlitLuminated__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitMirror__FUlUlUlUlUsUs
-GLOBAL _MaskedBlitFlip__FUlUlUlUlUsUs
-GLOBAL _MaskedBlitMirrorFlip__FUlUlUlUlUsUs
-GLOBAL _MaskedBlitRotate90__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitLuminated__FUlUlUlUlUlUsUs
-GLOBAL _AlphaBlit__FUlUlUlUlUsUsUc
-GLOBAL _AlphaBlit__FUlUlUlUlUlUsUs
+GLOBAL _MaskedBlitNoFlags__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirror__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitFlip__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
+GLOBAL _AlphaBlit__FUlUlUlUlUsUsUcUs
+GLOBAL _AlphaBlit__FUlUlUlUlUsUsUs
 GLOBAL _DrawLine__FUlUlUsUsUsUsUsUsUs
 
 SECTION .text
 
 ;-------------------------------------
 
+_BlitNoFlags__FUlUlUlUlUsUs
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+8]
+	mov [Height], ax
+	mov ax, [ebp+12]
+	mov [Width], ax
+	mov eax, [ebp+16]
+	mov [TrueDestXMove], eax
+	mov eax, [ebp+20]
+	mov [TrueSourceXMove], eax
+	mov eax, [ebp+24]
+	mov [TrueDestOffset], eax
+	mov eax, [ebp+28]
+	mov [TrueSourceOffset], eax
+	pop ebp
+
+	pushad
+	push es
+	mov ax, ds
+	mov esi, [TrueSourceOffset]
+	mov edi, [TrueDestOffset]
+	mov es, ax
+	xor ecx, ecx
+	mov dx, [Width]
+	mov bx, [Height]
+	shr dx, 0x01
+	cld
+MaskedLoop39:
+	mov cx, dx
+	rep movsd
+	add esi, [TrueSourceXMove]
+	add edi, [TrueDestXMove]
+	dec bx
+	jnz MaskedLoop39
+	pop es
+	popad
+	ret
+
+;-------------------------------------
+
 _BlitMirror__FUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -73,17 +116,17 @@ BlitMirror2:
 _BlitFlip__FUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -114,17 +157,17 @@ BlitFlip3:
 _BlitMirrorFlip__FUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -160,19 +203,19 @@ BlitMirrorFlip7:
 _BlitRotate90__FUlUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -207,19 +250,19 @@ BlitRotate905:
 _BlitMirrorRotate90__FUlUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -254,19 +297,19 @@ BlitMirrorRotate909:
 _BlitFlipRotate90__FUlUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -301,19 +344,19 @@ BlitFlipRotate9011:
 _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+16]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -348,19 +391,19 @@ BlitMirrorFlipRotate9013:
 _BlitLuminated__FUlUlUlUlUlUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Luminance], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+16]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -440,20 +483,79 @@ BlitLuminatedNext6:
 
 ;-------------------------------------
 
-_MaskedBlitMirror__FUlUlUlUlUsUs
+_MaskedBlitNoFlags__FUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
+	mov [TrueSourceOffset], eax
+	pop ebp
+
+	pushad
+	push es
+	mov ax, ds
+	mov esi, [TrueSourceOffset]
+	mov edi, [TrueDestOffset]
+	mov es, ax
+	xor ecx, ecx
+	mov ebx, [TrueSourceXMove]
+	mov edx, [TrueDestXMove]
+	cld
+MaskedLoop37:
+	mov cx, [Width]
+MaskedLoop557:
+	lodsw
+	cmp ax, [MaskColor]
+	je MaskSkip27
+	stosw
+	dec cx
+	jnz MaskedLoop557
+	add esi, ebx
+	add edi, edx
+	dec word [Height]
+	jnz MaskedLoop37
+	jmp MaskedNextLine27
+MaskSkip27:
+	add edi, 0x02
+	dec cx
+	jnz MaskedLoop557
+	add esi, ebx
+	add edi, edx
+	dec word [Height]
+	jnz MaskedLoop37
+MaskedNextLine27:
+	pop es
+	popad
+
+;-------------------------------------
+
+_MaskedBlitMirror__FUlUlUlUlUsUsUs
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
+	mov [Height], ax
+	mov ax, [ebp+16]
+	mov [Width], ax
+	mov eax, [ebp+20]
+	mov [TrueDestXMove], eax
+	mov eax, [ebp+24]
+	mov [TrueSourceXMove], eax
+	mov eax, [ebp+28]
+	mov [TrueDestOffset], eax
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -471,7 +573,7 @@ MaskedBlitMirror1:
 	mov cx, [Width]
 MaskedBlitMirror2:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip1
 	std
 	stosw
@@ -498,20 +600,22 @@ MaskedNextLine1:
 
 ;-------------------------------------
 
-_MaskedBlitFlip__FUlUlUlUlUsUs
+_MaskedBlitFlip__FUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -529,7 +633,7 @@ MaskedBlitFlip3:
 	mov cx, [Width]
 MaskedBlitFlip55:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip2
 	stosw
 	dec cx
@@ -554,20 +658,22 @@ MaskedNextLine2:
 
 ;-------------------------------------
 
-_MaskedBlitMirrorFlip__FUlUlUlUlUsUs
+_MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -585,7 +691,7 @@ MaskedBlitMirrorFlip6:
 	mov cx, [Width]
 MaskedBlitMirrorFlip7:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip3
 	std
 	stosw
@@ -612,22 +718,24 @@ MaskedNextLine3:
 
 ;-------------------------------------
 
-_MaskedBlitRotate90__FUlUlUlUlUlUsUs
+_MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -645,7 +753,7 @@ MaskedBlitRotate904:
 	mov cx, dx
 MaskedBlitRotate905:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip4
 	mov [edi], ax
 MaskSkip4:
@@ -662,22 +770,24 @@ MaskSkip4:
 
 ;-------------------------------------
 
-_MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUs
+_MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -695,7 +805,7 @@ MaskedBlitMirrorRotate908:
 	mov cx, dx
 MaskedBlitMirrorRotate909:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip5
 	mov [edi], ax
 MaskSkip5:
@@ -712,22 +822,24 @@ MaskSkip5:
 
 ;-------------------------------------
 
-_MaskedBlitFlipRotate90__FUlUlUlUlUlUsUs
+_MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -745,7 +857,7 @@ MaskedBlitFlipRotate9010:
 	mov cx, dx
 MaskedBlitFlipRotate9011:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip6
 	mov [edi], ax
 MaskSkip6:
@@ -762,22 +874,24 @@ MaskSkip6:
 
 ;-------------------------------------
 
-_MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
+_MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestYMove], eax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -795,7 +909,7 @@ MaskedBlitMirrorFlipRotate9012:
 	mov cx, dx
 MaskedBlitMirrorFlipRotate9013:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je MaskSkip7
 	mov [edi], ax
 MaskSkip7:
@@ -812,22 +926,24 @@ MaskSkip7:
 
 ;-------------------------------------
 
-_MaskedBlitLuminated__FUlUlUlUlUlUsUs
+_MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Luminance], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Height], ax
-	mov ax, word [ebp+16]
+	mov ax, [ebp+20]
 	mov [Width], ax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -846,7 +962,7 @@ MaskedBlitLuminated1:
 	mov cx, [Width]
 MaskedBlitLuminated2:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je near MaskSkipL1
 	mov bx, ax
 	and bx, 0x1F
@@ -919,22 +1035,24 @@ MaskedNextLineL1:
 
 ;-------------------------------------
 
-_AlphaBlit__FUlUlUlUlUsUsUc
+_AlphaBlit__FUlUlUlUlUsUsUcUs
 	push ebp
 	mov ebp, esp
-	mov al, byte [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov al, byte [ebp+12]
 	mov [Alpha], al
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Height], ax
-	mov ax, word [ebp+16]
+	mov ax, [ebp+20]
 	mov [Width], ax
-	mov eax, dword [ebp+20]
+	mov eax, [ebp+24]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+28]
 	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+32]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+36]
 	mov [TrueSourceOffset], eax
 	pop ebp
 
@@ -950,7 +1068,7 @@ AlphaBlit11:
 	mov cx, [Width]
 AlphaBlit12:
 	lodsw
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je near MaskSkipA1
 	mov bx, [edi]
 	mov [DColor], bx
@@ -1028,22 +1146,22 @@ MaskedNextLineA1:
 
 ;-------------------------------------
 
-_AlphaBlit__FUlUlUlUlUlUsUs
+_AlphaBlit__FUlUlUlUlUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
+	mov [MaskColor], ax
+	mov ax, [ebp+12]
 	mov [Height], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+16]
 	mov [Width], ax
-	mov eax, dword [ebp+16]
+	mov eax, [ebp+20]
 	mov [TrueDestXMove], eax
-	mov eax, dword [ebp+20]
-	mov [TrueSourceXMove], eax
-	mov eax, dword [ebp+24]
+	mov eax, [ebp+24]
 	mov [TrueDestOffset], eax
-	mov eax, dword [ebp+28]
+	mov eax, [ebp+28]
 	mov [TrueSourceOffset], eax
-	mov eax, dword [ebp+32]
+	mov eax, [ebp+32]
 	mov [AlphaMapOffset], eax
 	pop ebp
 
@@ -1063,7 +1181,7 @@ AlphaBlit22:
 	mov dl, [ebx]
 	inc ebx
 	push ebx
-	cmp ax, 0xF81F
+	cmp ax, [MaskColor]
 	je near MaskSkipA2
 	mov bx, [edi]
 	mov [DColor], bx
@@ -1127,7 +1245,6 @@ MaskSkipA2:
 	dec cx
 	jnz near AlphaBlit22
 MaskedNextLineA2:
-	add esi, [TrueSourceXMove]
 	add edi, [TrueDestXMove]
 	dec word [Height]
 	jnz near AlphaBlit21
@@ -1141,23 +1258,23 @@ MaskedNextLineA2:
 _DrawLine__FUlUlUsUsUsUsUsUsUs
 	push ebp
 	mov ebp, esp
-	mov ax, word [ebp+8]
+	mov ax, [ebp+8]
 	mov [Color], ax
-	mov ax, word [ebp+12]
+	mov ax, [ebp+12]
 	mov [ThisXSize], ax
-	mov ax, word [ebp+16]
+	mov ax, [ebp+16]
 	mov [ThisYSize], ax
-	mov ax, word [ebp+20]
+	mov ax, [ebp+20]
 	mov [ToY], ax
-	mov ax, word [ebp+24]
+	mov ax, [ebp+24]
 	mov [ToX], ax
-	mov ax, word [ebp+28]
+	mov ax, [ebp+28]
 	mov [FromY], ax
-	mov ax, word [ebp+32]
+	mov ax, [ebp+32]
 	mov [FromX], ax
-	mov eax, dword [ebp+36]
+	mov eax, [ebp+36]
 	mov [Pitch], eax
-	mov eax, dword [ebp+40]
+	mov eax, [ebp+40]
 	mov [Surface], eax
 	pop ebp
 
@@ -1372,3 +1489,4 @@ DistaX:			dw 0x00
 DistaY:			dw 0x00
 BTemp:			dw 0x00
 Color:			dw 0x00
+MaskColor:		dw 0x00

@@ -9,6 +9,50 @@
 #include "allocate.h"
 #include "femath.h"
 
+/*GLOBAL _BlitNoFlags__FUlUlUlUlUsUs
+GLOBAL _BlitMirror__FUlUlUlUlUsUs
+GLOBAL _BlitFlip__FUlUlUlUlUsUs
+GLOBAL _BlitMirrorFlip__FUlUlUlUlUsUs
+GLOBAL _BlitRotate90__FUlUlUlUlUlUsUs
+GLOBAL _BlitMirrorRotate90__FUlUlUlUlUlUsUs
+GLOBAL _BlitFlipRotate90__FUlUlUlUlUlUsUs
+GLOBAL _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
+GLOBAL _BlitLuminated__FUlUlUlUlUlUsUs
+GLOBAL _MaskedBlitNoFlags__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirror__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitFlip__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
+GLOBAL _MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
+GLOBAL _AlphaBlit__FUlUlUlUlUsUsUcUs
+GLOBAL _AlphaBlit__FUlUlUlUlUsUsUs
+GLOBAL _DrawLine__FUlUlUsUsUsUsUsUsUs*/
+
+void BlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitMirror(ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitFlip(ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitMirrorFlip(ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
+void BlitLuminated(ulong, ulong, ulong, ulong, ulong, ushort, ushort);
+void MaskedBlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitMirror(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitFlip(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitMirrorFlip(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitMirrorRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitMirrorFlipRotate90(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void MaskedBlitLuminated(ulong, ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void AlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, uchar, ushort);
+void AlphaBlit(ulong, ulong, ulong, ulong, ushort, ushort, ushort);
+void DrawLine(ulong, ulong, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
+
 bitmap::bitmap(std::string FileName) : AlphaMap(0)
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
