@@ -2467,3 +2467,28 @@ ushort largecorpse::GetSquareIndex(vector2d Pos) const
   vector2d RelativePos = Pos - GetPos();
   return RelativePos.X + (RelativePos.Y << 1);
 }
+
+
+
+character* corpse::TryNecromancy(character* Summoner) 
+{
+  if(Summoner && Summoner->IsPlayer())
+    game::DoEvilDeed(50);
+
+  character* NewZombie = GetDeceased()->TryToRiseFromTheDeadAsZombie();
+
+  if(NewZombie)
+    {
+      vector2d Pos = GetPos();
+      NewZombie->PutToOrNear(Pos); 
+      
+      if(Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
+	NewZombie->ChangeTeam(Summoner->GetTeam());
+
+      NewZombie->SignalStepFrom(0);
+      RemoveFromSlot();
+      SendToHell();      
+      return NewZombie;
+    }
+  return 0;
+}

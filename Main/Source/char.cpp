@@ -6871,3 +6871,8 @@ bool character::CheckConsume(const festring& Verb) const
 
   return true;
 }
+
+void character::PutTo(lsquare* To)
+{
+  PutTo(To->GetPos());
+}

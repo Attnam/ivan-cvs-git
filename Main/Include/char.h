@@ -766,6 +766,7 @@ class character : public entity, public id
   virtual uchar GetArms() const { return 0; }
   bool IsPet() const;
   virtual void PutTo(vector2d);
+  void PutTo(lsquare*);
   void PutNear(vector2d);
   void PutToOrNear(vector2d);
   virtual void Remove();
@@ -809,6 +810,7 @@ class character : public entity, public id
   virtual ushort GetTameSymbolSquareIndex() const { return 0; }
   virtual ushort GetFlySymbolSquareIndex() const { return 0; }
   virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
+  virtual character* TryToRiseFromTheDeadAsZombie() { return 0; }
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

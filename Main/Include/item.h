@@ -421,6 +421,7 @@ class item : public object
   virtual ushort GetStackAnimationFrames() const { return AnimationFrames; }
   virtual bool BunnyWillCatchAndConsume() const { return false; }
   void DonateIDTo(item*);
+  virtual character* TryNecromancy(character*) { return 0; }
  protected:
   virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;

@@ -3999,3 +3999,174 @@ void femaleslave::BeTalkedTo()
   else
     ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
 }
+
+void necromancer::GetAICommand()
+{
+  character* NearestEnemy = 0;
+  ulong NearestEnemyDistance = 0xFFFFFFFF;
+  character* RandomFriend = 0;
+  vector2d Pos = GetPos();
+
+  /* Look for zombie candidates */
+  if(SpellsLeft && RaiseDeadAsZombies())
+    {
+      --SpellsLeft;
+      return;
+    }
+
+  /* if no zombies can be created just rise some skeletons or just walk */
+
+  switch(RAND() % 10)
+    {
+    case 0:
+      if(SpellsLeft)
+	{
+	  character* BoneMan = RaiseSkeleton();
+	  if(BoneMan)
+	    {
+	      --SpellsLeft;	  
+	      if(BoneMan->CanBeSeenByPlayer())
+		{
+		  ADD_MESSAGE("The ground shakes and %s emerges from it.", BoneMan->CHAR_NAME(DEFINITE));
+		}
+	      return;
+	    }
+	}
+
+    case 1:
+      if(GetConfig() == MASTER_NECROMANCER)
+	{
+	  character* NearestEnemy = 0;
+	  ulong NearestEnemyDistance = 0xFFFFFFFF;
+	  for(ushort c = 0; c < game::GetTeams(); ++c)
+	    {
+	      if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+		{
+		  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+		    if((*i)->IsEnabled())
+		      {
+			ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+
+			if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+			  {
+			    NearestEnemy = *i;
+			    NearestEnemyDistance = ThisDistance;
+			  }
+		      }
+		}
+	    }
+	  if(NearestEnemyDistance > 7)
+	    {
+	      SetGoingTo(NearestEnemy->GetPos());
+	      MoveTowardsTarget();
+	    }
+	  else
+	    {
+
+	      lsquare* Square = NearestEnemy->GetLSquareUnder();
+	      Square->DrawParticles(RED); 
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s invokes a spell.", CHAR_NAME(DEFINITE));
+
+	      Square->Strike(this, CONST_S("killed by the spells of ") + GetName(INDEFINITE), YOURSELF);
+	    }
+	}
+    case 2:
+      if(CheckForDoors())
+	return;
+      
+      if(MoveRandomly())
+	return;
+    }
+  
+}
+
+
+
+bool necromancer::RaiseDeadAsZombies()
+{
+  for(ushort d = 0; d < GetNeighbourSquares(); ++d)
+    {
+      lsquare* Square = GetNeighbourLSquare(d);
+
+      if(Square)
+	{
+	  for(stackiterator si = Square->GetStack()->GetBottom(); si.HasItem(); ++si)
+	    {
+	      character* Risen;
+	      if((Risen = si->TryNecromancy(this)) && Risen->CanBeSeenByPlayer())
+		{
+		  Risen->SetTeam(GetTeam());
+		  ADD_MESSAGE("%s calls %s back to life.", CHAR_NAME(DEFINITE), Risen->CHAR_NAME(DEFINITE));
+		  EditAP(-500);
+		  return true;
+		}
+	    }
+
+	}
+    }
+  return false;
+}
+
+
+character* necromancer::RaiseSkeleton()
+{
+  for(ushort c = 0; c < 100; ++c)
+    {
+      lsquare* Square = GetNeighbourLSquare(RAND() % DIRECTION_COMMAND_KEYS);
+
+      if(Square && !Square->GetCharacter())
+	{
+	  character* Monster;
+	  switch(RAND() % 10)
+	    {
+	    case 0:
+	      Monster = new skeleton(WARRIOR);
+	      break;
+	    default:
+	      Monster = new skeleton;
+	    }
+	  Monster->SetTeam(GetTeam());
+	  if(Monster->CanMoveOn(Square) && Monster->IsFreeForMe(Square))
+	    {
+	      Monster->PutTo(Square);
+	      EditAP(-4000 / GetConfig());
+	      return Monster;
+	    }
+	  else
+	    delete Monster; 
+	}
+    }
+}
+
+character* humanoid::TryToRiseFromTheDeadAsZombie()
+{
+  return new zombie;
+
+  // zombie shouldn't have bodyparts this has... Correct please! 
+}
+
+
+void necromancer::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << SpellsLeft;
+}
+
+void necromancer::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> SpellsLeft;
+}
+
+void necromancer::VirtualConstructor(bool Load)
+{
+  humanoid::VirtualConstructor(Load);
+  if(!Load)
+    {
+      if(GetConfig() == MASTER_NECROMANCER)
+	SpellsLeft = RAND_N(31) + 20;
+      else
+	SpellsLeft = RAND_N(16) + 10;
+    }
+}

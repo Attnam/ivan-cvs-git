@@ -431,3 +431,8 @@ Potion of ommel spit which would increase random attribute.
 Drinking and surviving a potion of poison should give some permanent poison resistance.
 '.' in battle should act as a defend command, which would double the chance of blocking.
 Fortune cookies.
+Changes in attributes should be highlighted by some other colored font. (in the sidebar)
+Detonator and starting explosive. When applied the detonator explodes the small other explosive. Could be useful to start big explosions.    
+Vesana and other big monsters should also vomit much more than smaller creatures.
+Doing evil/good deads should have greater effect on the god on whose altar room the deed is done.
+Faster scrolling for look mode. (maybe when shift is pressed)

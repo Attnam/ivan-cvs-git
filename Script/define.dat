@@ -562,6 +562,9 @@
 #define ADULT_MALE 4
 #define ADULT_FEMALE 5
 
+#define APPRENTICE_NECROMANCER 1
+#define MASTER_NECROMANCER 2  
+
 #define PARQUET 1
 #define FLOOR 2
 #define GROUND 3

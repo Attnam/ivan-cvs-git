@@ -140,6 +140,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanConsume(material*) const;
   virtual bool PreProcessForBone();
   virtual void FinalProcessForBone();
+  virtual character* TryToRiseFromTheDeadAsZombie();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -578,6 +579,21 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand();
+);
+
+class CHARACTER
+(
+  necromancer,
+  humanoid,
+ public:
+  virtual void GetAICommand();
+  virtual bool RaiseDeadAsZombies();
+  virtual character* RaiseSkeleton();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual void VirtualConstructor(bool);
+  ushort SpellsLeft;
 );
 
 #endif

@@ -477,6 +477,7 @@ class ITEM
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone();
   virtual bool SuckSoul(character*, character* = 0);
+  virtual character* TryNecromancy(character*);
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials() { }

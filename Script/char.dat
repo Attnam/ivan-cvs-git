@@ -3991,3 +3991,81 @@ hattifattener
 	SpillsBlood = false;
 	Alias == "Hattivatti";
 }
+
+
+necromancer
+{
+	HeadBitmapPos = 112, 304;
+	TorsoBitmapPos = 48, 224;
+	ArmBitmapPos = 80, 64;
+	LegBitmapPos = 16, 160;
+	ClothColor = rgb16(50, 50, 50);
+	CanRead = true;
+	CanBeGenerated = true;
+	ClassStates = INFRA_VISION|ESP;
+	HostileReplies == "@Dd yells: \"Death! Death!\"";
+	FriendlyReplies == "\"I see dead people.\"";
+	IgnoreDanger = true;
+	AttachedGod = INFUSCOR;
+	IsAbstract = true;
+	KnownCWeaponSkills == BLUNT_WEAPONS;
+
+	Config APPRENTICE;
+	{
+		DefaultArmStrength = 15;
+		DefaultLegStrength = 15;
+		DefaultDexterity = 15;
+		DefaultAgility = 8;
+		DefaultEndurance = 15;
+		DefaultPerception = 21;
+		DefaultIntelligence = 15;
+		DefaultWisdom = 10;
+		DefaultCharisma = 10;
+		DefaultMana = 20;
+		AdjectiveArticle = "an";
+		Adjective = "apprentice";
+		NameSingular = "necromancer";
+		TotalVolume = 60000;
+		TotalSize = 180;
+		ClothColor = rgb16(80, 80, 80);
+		BeltColor = rgb16(80, 80, 80);
+		Cloak = LEATHER cloak { Enchantment = 2; }
+		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 0; }
+		HPRequirementForGeneration = 90;
+		Frequency = 1500;
+		PanicLevel = 5;
+		Inventory == GREEN_CRYSTAL skull;
+		CWeaponSkillHits == 50;
+		RightSWeaponSkillHits = 20;
+		LeftSWeaponSkillHits = 20;
+	}
+
+	Config MASTER;
+	{
+		DefaultArmStrength = 13;
+		DefaultLegStrength = 13;
+		DefaultDexterity = 20;
+		DefaultAgility = 6;
+		DefaultEndurance = 15;
+		DefaultPerception = 18;
+		DefaultIntelligence = 30;
+		DefaultWisdom = 15;
+		DefaultCharisma = 15;
+		DefaultMana = 30;
+		Adjective = "master";
+		NameSingular = "necromancer";
+		TotalVolume = 70000;
+		TotalSize = 170;
+		HairColor = rgb16(180, 40, 40);
+		CapColor = rgb16(180, 40, 40);
+		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
+		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+		HPRequirementForGeneration = 150;
+		Frequency = 1000;
+		PanicLevel = 0;
+		CWeaponSkillHits == 100;
+		RightSWeaponSkillHits = 50;
+		LeftSWeaponSkillHits = 50;
+		Inventory = {2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
+	}
+}
