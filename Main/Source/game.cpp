@@ -9,7 +9,6 @@
  *
  */
 
-
 #include <algorithm>
 #include <cstdarg>
 
@@ -2183,7 +2182,7 @@ int game::GetLevels()
   return GetCurrentDungeon()->GetLevels();
 }
 
-void game::SignalDeath(const character* Ghost, const character* Murderer)
+void game::SignalDeath(const character* Ghost, const character* Murderer, const festring& DeathMsg)
 {
   massacremap* MassacreMap;
 
@@ -2212,11 +2211,26 @@ void game::SignalDeath(const character* Ghost, const character* Murderer)
   massacremap::iterator i = MassacreMap->find(CI);
 
   if(i == MassacreMap->end())
-    MassacreMap->insert(std::pair<configid, killdata>(CI, killdata(1, Ghost->GetGenerationDanger())));
+    {
+      i = MassacreMap->insert(std::pair<configid, killdata>(CI, killdata(1, Ghost->GetGenerationDanger()))).first;
+      i->second.Reason.push_back(killreason(DeathMsg, 1));
+    }
   else
     {
       ++i->second.Amount;
       i->second.DangerSum += Ghost->GetGenerationDanger();
+      std::vector<killreason>& Reason = i->second.Reason;
+      int c;
+
+      for(c = 0; c < Reason.size(); ++c)
+	if(Reason[c].String == DeathMsg)
+	  {
+	    ++Reason[c].Amount;
+	    break;
+	  }
+
+      if(c == Reason.size())
+	Reason.push_back(killreason(DeathMsg, 1));
     }
 }
 
@@ -2229,9 +2243,13 @@ void game::DisplayMassacreLists()
 
 struct massacresetentry
 {
-  bool operator<(const massacresetentry& MSE) const { return festring::IgnoreCaseCompare(Key, MSE.Key); }
+  bool operator<(const massacresetentry& MSE) const
+  {
+    return festring::IgnoreCaseCompare(Key, MSE.Key);
+  }
   festring Key;
   festring String;
+  std::vector<festring> Details;
   int ImageKey;
 };
 
@@ -2266,6 +2284,30 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 	  First = false;
 	}
 
+      const std::vector<killreason>& Reason = i1->second.Reason;
+      std::vector<festring>& Details = Entry.Details;
+
+      if(Reason.size() == 1)
+	{
+	  festring Begin;
+
+	  if(Reason[0].Amount == 1)
+	    Begin = "";
+	  else if(Reason[0].Amount == 2)
+	    Begin = "both ";
+	  else
+	    Begin = "all ";
+
+	  Details.push_back(Begin + Reason[0].String);
+	}
+      else
+	{
+	  for(int c = 0; c < Reason.size(); ++c)
+	    Details.push_back(CONST_S("") + Reason[c].Amount + ' ' + Reason[c].String);
+
+	  std::sort(Details.begin(), Details.end(), ignorecaseorderer());
+	}
+
       MassacreSet.insert(Entry);
     }
 
@@ -2280,6 +2322,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   felist List(MainTopic);
   SetStandardListAttributes(List);
   List.SetPageLength(15);
+  List.AddFlags(SELECTABLE);
   List.SetEntryDrawer(CharacterEntryDrawer);
   List.AddDescription(CONST_S(""));
   festring SideTopic;
@@ -2305,11 +2348,37 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
     }
 
   List.AddDescription(SideTopic);
+  std::set<massacresetentry>::const_iterator i2;
 
-  for(std::set<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
+  for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
     List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->ImageKey);
 
-  List.Draw();
+  for(;;)
+    {
+      //DrawEverythingNoBlit();
+      int Chosen = List.Draw();
+
+      if(Chosen & FELIST_ERROR_BIT)
+	break;
+
+      felist SubList(CONST_S("Massacre details"));
+      SetStandardListAttributes(SubList);
+      SubList.SetPageLength(20);
+      int Counter = 0;
+
+      for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2, ++Counter)
+	if(Counter == Chosen)
+	  {
+	    for(int c = 0; c < i2->Details.size(); ++c)
+	      SubList.AddEntry(i2->Details[c], LIGHT_GRAY);
+
+	    break;
+	  }
+
+      SubList.Draw();
+      //List.SetSelected(Chosen);
+    }
+
   ClearCharacterDrawVector();
 
   for(uint c = 0; c < GraveYard.size(); ++c)
@@ -2922,13 +2991,25 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
 
 outputfile& operator<<(outputfile& SaveFile, const killdata& Value)
 {
-  SaveFile << Value.Amount << Value.DangerSum;
+  SaveFile << Value.Amount << Value.DangerSum << Value.Reason;
   return SaveFile;
 }
 
 inputfile& operator>>(inputfile& SaveFile, killdata& Value)
 {
-  SaveFile >> Value.Amount >> Value.DangerSum;
+  SaveFile >> Value.Amount >> Value.DangerSum >> Value.Reason;
+  return SaveFile;
+}
+
+outputfile& operator<<(outputfile& SaveFile, const killreason& Value)
+{
+  SaveFile << Value.Amount << Value.String;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, killreason& Value)
+{
+  SaveFile >> Value.Amount >> Value.String;
   return SaveFile;
 }
 
@@ -3172,8 +3253,7 @@ color16 game::GetAttributeColor(int I)
 {
   int Delta = GetTick() - LastAttributeChangeTick[I];
 
-  if(OldAttribute[I] == NewAttribute[I]
-  || Delta >= 255)
+  if(OldAttribute[I] == NewAttribute[I] || Delta >= 255)
     return WHITE;
   else if(OldAttribute[I] < NewAttribute[I])
     return MakeRGB16(255, 255, Delta);

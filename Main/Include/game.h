@@ -105,11 +105,23 @@ struct ivantime
   int Min;
 };
 
+struct killreason
+{
+  killreason() { }
+  killreason(const festring& String, int Amount) : String(String), Amount(Amount) { }
+  festring String;
+  int Amount;
+};
+
+outputfile& operator<<(outputfile&, const killreason&);
+inputfile& operator>>(inputfile&, killreason&);
+
 struct killdata
 {
   killdata(int Amount = 0, double DangerSum = 0) : Amount(Amount), DangerSum(DangerSum) { }
   int Amount;
   double DangerSum;
+  std::vector<killreason> Reason;
 };
 
 outputfile& operator<<(outputfile&, const killdata&);
@@ -284,7 +296,7 @@ class game
   static festring& GetDefaultSummonMonster() { return DefaultSummonMonster; }
   static festring& GetDefaultChangeMaterial() { return DefaultChangeMaterial; }
   static festring& GetDefaultDetectMaterial() { return DefaultDetectMaterial; }
-  static void SignalDeath(const character*, const character*);
+  static void SignalDeath(const character*, const character*, const festring&);
   static void DisplayMassacreLists();
   static void DisplayMassacreList(const massacremap&, const char*, long);
   static bool MassacreListsEmpty();

@@ -293,7 +293,18 @@ inline festring& festring::operator<<(const festring& Str)
 
 struct charcomparer
 {
-  bool operator()(const char* const& S1, const char* const& S2) const { return strcmp(S1, S2) < 0; }
+  bool operator()(const char* const& S1, const char* const& S2) const
+  {
+    return strcmp(S1, S2) < 0;
+  }
+};
+
+struct ignorecaseorderer
+{
+  bool operator()(const festring& S1, const festring& S2) const
+  {
+    return festring::IgnoreCaseCompare(S1, S2);
+  }
 };
 
 #define CONST_S(str) festring(str, sizeof(str) - 1)

@@ -796,7 +796,10 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
   else
     {
       if(IsPlayer())
-	ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
+	{
+	  const char* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
+	  ADD_MESSAGE("You try very hard to %s forward. But your load is too heavy.", CrawlVerb);
+	}
 
       EditAP(-1000);
     }
@@ -1274,7 +1277,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
       if(!StateIsActivated(POLYMORPHED))
 	{
 	  if(!IsPlayer())
-	    game::SignalDeath(this, Killer);
+	    game::SignalDeath(this, Killer, Msg);
 
 	  if(AllowCorpse)
 	    CreateCorpse(LSquareUnder[0]);
@@ -1284,7 +1287,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
       else
 	{
 	  if(!IsPlayer())
-	    game::SignalDeath(GetPolymorphBackup(), Killer);
+	    game::SignalDeath(GetPolymorphBackup(), Killer, Msg);
 
 	  GetPolymorphBackup()->CreateCorpse(LSquareUnder[0]);
 	  GetPolymorphBackup()->SetPolymorphed(false);
@@ -2418,7 +2421,8 @@ bool character::Displace(character* Who, bool Forced)
     {
       if(IsPlayer())
 	{
-	  ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
+	  const char* CrawlVerb = StateIsActivated(LEVITATION) ? "float" : "crawl";
+	  ADD_MESSAGE("You try very hard to %s forward. But your load is too heavy.", CrawlVerb);
 	  EditAP(-1000);
 	  return true;
 	}
@@ -8406,6 +8410,7 @@ bool character::CheckApply() const
       ADD_MESSAGE("This monster type cannot apply.");
       return false;
     }
+
   return true;
 }
 
