@@ -71,9 +71,11 @@ class MATERIAL
   virtual bool SkinColorIsSparkling() const { return SkinColorSparkling; }
   virtual void SetSkinColorIsSparkling(bool What) { SkinColorSparkling = What; }
   virtual bool IsFlesh() const { return true; }
+  bool IsInfectedByLeprosy() const { return InfectedByLeprosy; }
  protected:
   color16 SkinColor;
   bool SkinColorSparkling;
+  bool InfectedByLeprosy;
 );
 
 class MATERIAL

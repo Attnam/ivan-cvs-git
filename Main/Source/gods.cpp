@@ -225,6 +225,12 @@ void seges::PrayGoodEffect()
       if(PLAYER->GetNP() < SATIATED_LEVEL)
 	PLAYER->SetNP(SATIATED_LEVEL);
     }
+
+  if(PLAYER->StateIsActivated(LEPROSY))
+    {
+      ADD_MESSAGE("%s cures your leprosy.", GetName());
+      PLAYER->DeActivateTemporaryState(LEPROSY);
+    }
 }
 
 void seges::PrayBadEffect()

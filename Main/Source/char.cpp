@@ -2966,7 +2966,12 @@ item* character::SevereBodyPart(int BodyPartIndex)
   if(BodyPartsDisappearWhenSevered() || StateIsActivated(POLYMORPHED) || game::AllBodyPartsVanish())
     {
       BodyPart->RemoveFromSlot();
-      GetStackUnder()->AddItem(BodyPart);
+
+      if(game::IsInWilderness())
+	GetStack()->AddItem(BodyPart);
+      else
+	GetStackUnder()->AddItem(BodyPart);
+
       BodyPart->DropEquipment();
       BodyPart->RemoveFromSlot();
       CalculateAttributeBonuses();
@@ -4556,6 +4561,9 @@ int character::GetDistanceSquareFrom(const character* Who) const
 
 void character::AttachBodyPart(bodypart* BodyPart)
 {
+  if(BodyPart->GetMainMaterial()->IsInfectedByLeprosy())
+    GainIntrinsic(LEPROSY);
+
   SetBodyPart(BodyPart->GetBodyPartIndex(), BodyPart);
 
   if(!AllowSpoil())
@@ -5585,6 +5593,15 @@ void character::ReceiveAntidote(long Amount)
 	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
       DeActivateTemporaryState(PARASITIZED);
+      Amount -= 100;
+    }
+  
+  if(Amount >= 100 && StateIsActivated(LEPROSY))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You are not falling to pieces anymore.");
+
+      DeActivateTemporaryState(LEPROSY);
       Amount -= 100;
     }
 }
@@ -7302,11 +7319,6 @@ void character::EditDealExperience(long Price)
   EditExperience(CHARISMA, sqrt(Price) / 10, 1 << 9);
 }
 
-bool character::IsNotImmuneToLeprosy() const
-{
-  return TorsoIsAlive() && !IsImmuneToLeprosy();
-}
-
 void character::PrintBeginLeprosyMessage() const
 {
   if(IsPlayer())
@@ -7319,35 +7331,10 @@ void character::PrintEndLeprosyMessage() const
     ADD_MESSAGE("You feel that you're OK."); // CHANGE OR DIE
 }
 
-/* Eka kunnon tauti. Vain humanoideille ja vain pysyvänä. Oliot, joilla on
-spitaali, tiputtaa joskus raajojaan (mahd vaikka 1/(5000*endurance)
-tikissä), ja erityisesti jos niillä lyödään tai potkitaan
-(1/(50*endurance)). Se myös alentaa strengthejä, agilityä, dexterityä,
-endurancea ja karismaa pikkuhiljaa (-2 ekspaa joka tikki). Bakteeri myös
-skannaa alati viereisiä olioita ja leviää mahdollisuudella 1/(1000*terveen
-end.) per tikki tai 1/(100*terveen end.) jos toinen on hostile (taistelu
-menossa, saastunut veri roiskuu yms). Huomaa, että irronneen raajan pitää
-olla lihaa, eli rautajalka ei putoa. Lisäksi tauti ei tartu jollei torso ole
-elävä (kuten vaikka golemeilla ja skeletoneilla). Parhaimpien
-nimellisten NPC:eiden pitää olla myös immuuneja, mutta on ihan ok jos joku
-farmeri hajoaa tämän vuoksi kappaleiksi. Papit ja tietyt jumalat (ainakin
-Seges) voi ihmeparantaa taudin. Scabies laukaisee tämän joka kymmenennellä
-rukouksella jokaiselle ei-immuunille viholliselle levelissä. Zombeilla voisi
-ehkä myös olla spitaali suurella todennäköisyydellä? Laita myös
-materias.h:ssa lihaan booli, onko se saastunut. Kun state (de)aktivoidaan,
-tämä päivitetään joka bodypartille. Jos lihaa syödään, tartunta tulee jos
-RAND() % (100000 / Amount) == 0. Jos spitaalinen raaja laitetaan paikalleen
-jo parantuneeseen ruumiiseen, tauti puhkeaa taas. */
-
-void character::LeprosyHandler()
-{
-
-}
-
 void character::TryToInfectWithLeprosy(const character* Infector)
 {
-  if((GetRelation(Infector) == HOSTILE && !RAND_N(100*GetAttribute(ENDURANCE))) 
-  || !RAND_N(1000*GetAttribute(ENDURANCE)))
+  if(!IsImmuneToLeprosy() && ((GetRelation(Infector) == HOSTILE && !RAND_N(100*GetAttribute(ENDURANCE))) 
+			     || !RAND_N(1000*GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
 
@@ -7611,4 +7598,19 @@ int character::GetTirednessState() const
     return EXHAUSTED;
   else
     return FAINTING;
+}
+
+bool character::IsImmuneToLeprosy() const
+{
+  return DataBase->IsImmuneToLeprosy || !TorsoIsAlive();
+}
+
+void character::LeprosyHandler()
+{
+  EditExperience(ARM_STRENGTH, -25, 1 << 1);
+  EditExperience(LEG_STRENGTH, -25, 1 << 1);
+  EditExperience(DEXTERITY, -25, 1 << 1);
+  EditExperience(AGILITY, -25, 1 << 1);  
+  EditExperience(ENDURANCE, -25, 1 << 1);
+  EditExperience(CHARISMA, -25, 1 << 1);
 }

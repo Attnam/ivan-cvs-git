@@ -145,6 +145,7 @@ class ABSTRACT_CHARACTER
   virtual character* CreateZombie() const;
   virtual void LeprosyHandler();
   virtual void DropRandomNonVitalBodypart();
+  virtual void DropBodyPart(int);
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;

@@ -367,12 +367,16 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	    {
 	      FirstAPCost = FirstArm->GetAPCost();
 	      FirstArm->Hit(Enemy, HitPos, Direction, ForceHit);
+	      if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
+		DropBodyPart(FirstArm->GetBodyPartIndex());
 	    }
 
 	  if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
 	    {
 	      SecondAPCost = SecondArm->GetAPCost();
 	      SecondArm->Hit(Enemy, HitPos, Direction, ForceHit);
+	      if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
+		DropBodyPart(SecondArm->GetBodyPartIndex());
 	    } 
 
 	  EditNP(-50);
@@ -387,6 +391,8 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
 	  Kick(GetNearLSquare(HitPos), Direction, ForceHit);
+	  if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
+	    DropBodyPart(RAND_2 ? GetRightLeg()->GetBodyPartIndex() : GetLeftLeg()->GetBodyPartIndex());
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -4211,15 +4217,9 @@ void darkknight::SpecialBodyPartSeverReaction()
 
 void humanoid::LeprosyHandler()
 {
-  EditExperience(ARM_STRENGTH, -25, 1 << 1);
-  EditExperience(LEG_STRENGTH, -25, 1 << 1);
-  EditExperience(DEXTERITY, -25, 1 << 1);
-  EditExperience(AGILITY, -25, 1 << 1);  
-  EditExperience(ENDURANCE, -25, 1 << 1);
-  EditExperience(CHARISMA, -25, 1 << 1);
-
   if(!RAND_N(5000*GetAttribute(ENDURANCE)))
     DropRandomNonVitalBodypart();
+
   if(!game::IsInWilderness())
     {
       for(int d = 0; d < GetNeighbourSquares(); ++d)
@@ -4230,30 +4230,50 @@ void humanoid::LeprosyHandler()
 	    Square->GetCharacter()->TryToInfectWithLeprosy(this);
 	}
     }  
+  character::LeprosyHandler();
 }
 
 void humanoid::DropRandomNonVitalBodypart()
 {
-  bodypart* BodyPart[MAX_BODYPARTS];
-  int Index = 0;
-  for(int c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && !BodyPartIsVital(c))
-      BodyPart[Index++] = GetBodyPart(c);  
-
-  bodypart* ToDrop = BodyPart[RAND_N(Index)];
-  SendNewDrawRequest();
-
-  if(ToDrop)
+  int BodyPartIndexToDrop = GetRandomNonVitalBodyPart();
+  
+  if(BodyPartIndexToDrop)
     {
-      stack* DropStack = game::IsInWilderness() ? GetStack() : GetStackUnder();
-      DropStack->AddItem(ToDrop);
-      ToDrop->DropEquipment();
+      DropBodyPart(BodyPartIndexToDrop);
+    }
+}
+
+void humanoid::DropBodyPart(int Index)
+{
+  festring NameOfDropped = GetBodyPart(Index)->GetBodyPartName();
+
+  item* Dropped = SevereBodyPart(Index);
+  
+  if(Dropped)
+    {
+      if(game::IsInWilderness())
+	GetStack()->AddItem(Dropped);
+      else
+	GetStackUnder()->AddItem(Dropped);
+      Dropped->DropEquipment();
       if(IsPlayer())
 	{
-	  ADD_MESSAGE("Your %s drops to the ground.", ToDrop->GetBodyPartName().CStr());
+	  ADD_MESSAGE("Your %s drops to the ground.", NameOfDropped.CStr());
 	  game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
+	  DeActivateVoluntaryAction(CONST_S(""));
 	}
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s's %s drops to the ground.", CHAR_NAME(DEFINITE), ToDrop->GetBodyPartName().CStr());
+	ADD_MESSAGE("%s's %s drops to the ground.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
+    }
+  else
+    {
+      if(IsPlayer())
+	{
+	  ADD_MESSAGE("Your %s disappears.", NameOfDropped.CStr());
+	  game::AskForKeyPress(CONST_S("Bodypart destroyed! [press any key to continue]"));
+	  DeActivateVoluntaryAction(CONST_S(""));
+	}
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());      
     }
 }

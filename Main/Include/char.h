@@ -479,7 +479,6 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanMove);
   DATA_BASE_VALUE(int, BloodMaterial);
   DATA_BASE_VALUE(int, VomitMaterial);
-  DATA_BASE_BOOL(IsImmuneToLeprosy);
   DATA_BASE_BOOL(AutomaticallySeen);
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
@@ -829,7 +828,6 @@ class character : public entity, public id
   void PrintEndLevitatingMessage() const;
   void EditDealExperience(long);
   int RawEditExperience(double&, double, double, double) const;
-  bool IsNotImmuneToLeprosy() const;
   virtual void LeprosyHandler();
   virtual void TryToInfectWithLeprosy(const character*);
   void PrintBeginLeprosyMessage() const;
@@ -853,6 +851,7 @@ class character : public entity, public id
   int GetMaxStamina() const { return MaxStamina; }
   void SetGenerationDanger(double What) { GenerationDanger = What; }
   double GetGenerationDanger() const { return GenerationDanger; }
+  bool IsImmuneToLeprosy() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -60,13 +60,13 @@ void organic::VirtualConstructor(bool Load)
 void flesh::Save(outputfile& SaveFile) const
 {
   organic::Save(SaveFile);
-  SaveFile << SkinColor << SkinColorSparkling;
+  SaveFile << SkinColor << SkinColorSparkling << InfectedByLeprosy;
 }
 
 void flesh::Load(inputfile& SaveFile)
 {
   organic::Load(SaveFile);
-  SaveFile >> SkinColor >> SkinColorSparkling;
+  SaveFile >> SkinColor >> SkinColorSparkling >> InfectedByLeprosy;
 }
 
 void powder::Be()
@@ -92,6 +92,12 @@ material* organic::EatEffect(character* Eater, long Amount)
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / (1000 * (GetSpoilLevel() + 1)));
+
+
+  if(IsInfectedByLeprosy() && Amount && !RAND_N(100000 / Amount))
+    {
+      Eater->GainIntrinsic(LEPROSY);
+    }
 
   if(GetSpoilLevel() > 0)
     {
