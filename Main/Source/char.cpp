@@ -1810,7 +1810,6 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
       game::AskForKeyPress("Do you want to ERASE previous records or shall we not record this game? [press any key to continue]");
       truth OK = game::TruthQuestion("ERASE previous records and record this game [y/n]", REQUIRES_ANSWER);
 
-
       if(!OK)
 	return;
 	
@@ -7536,6 +7535,12 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
 {
   double OldExp = Exp;
 
+  if(Speed < 0)
+  {
+    Speed = -Speed;
+    Value = -Value;
+  }
+
   if(!OldExp || !Value
      || (Value > 0 && OldExp >= NaturalExp * (100 + Value) / 100)
      || (Value < 0 && OldExp <= NaturalExp * (100 + Value) / 100))
@@ -8897,12 +8902,12 @@ void character::AddRandomScienceName(festring& String) const
   if(L && Prefix[L - 1] == Science[0])
     Science.Erase(0, 1);
 
-  if(!NoAttrib && !NoSecondAdjective == !RAND_N(3))
+  if(!NoAttrib && !NoSecondAdjective == !RAND_GOOD(3))
   {
     int S1 = NoSecondAdjective ? 0 : GetScienceTalkAdjectiveAttribute().Size;
     int S2 = GetScienceTalkSubstantiveAttribute().Size;
     festring OtherAttribute;
-    int Chosen = RAND_N(S1 + S2);
+    int Chosen = RAND_GOOD(S1 + S2);
     
     if(Chosen < S1)
       OtherAttribute = GetScienceTalkAdjectiveAttribute()[Chosen];
@@ -8928,14 +8933,15 @@ void character::AddRandomScienceName(festring& String) const
 truth character::TryToTalkAboutScience()
 {
   if(GetRelation(PLAYER) == HOSTILE
-     || GetScienceTalkPossibility() <= RAND_N(100)
+     || GetScienceTalkPossibility() <= RAND_GOOD(100)
      || PLAYER->GetAttribute(INTELLIGENCE) < GetScienceTalkIntelligenceRequirement()
-     || PLAYER->GetAttribute(WISDOM) < GetScienceTalkWisdomRequirement())
+     || PLAYER->GetAttribute(WISDOM) < GetScienceTalkWisdomRequirement()
+     || PLAYER->GetAttribute(CHARISMA) < GetScienceTalkCharismaRequirement())
     return false;
 
   festring Science;
 
-  if(RAND_N(3))
+  if(RAND_GOOD(3))
     AddRandomScienceName(Science);
   else
   {
@@ -8945,7 +8951,7 @@ truth character::TryToTalkAboutScience()
 
     if(S1.Find(S2) == festring::NPos && S2.Find(S1) == festring::NPos)
     {
-      switch(RAND_N(3))
+      switch(RAND_GOOD(3))
       {
        case 0: Science = "the relation of "; break;
        case 1: Science = "the differences of "; break;
@@ -8994,6 +9000,7 @@ truth character::TryToTalkAboutScience()
 
   PLAYER->EditExperience(INTELLIGENCE, 1000, 50. * GetScienceTalkIntelligenceModifier() / ++ScienceTalks);
   PLAYER->EditExperience(WISDOM, 1000, 50. * GetScienceTalkWisdomModifier() / ++ScienceTalks);
+  PLAYER->EditExperience(CHARISMA, 1000, 50. * GetScienceTalkCharismaModifier() / ++ScienceTalks);
   return true;
 }
 

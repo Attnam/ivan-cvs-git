@@ -369,8 +369,10 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ScienceTalkPossibility);
   ADD_MEMBER(ScienceTalkIntelligenceModifier);
   ADD_MEMBER(ScienceTalkWisdomModifier);
+  ADD_MEMBER(ScienceTalkCharismaModifier);
   ADD_MEMBER(ScienceTalkIntelligenceRequirement);
   ADD_MEMBER(ScienceTalkWisdomRequirement);
+  ADD_MEMBER(ScienceTalkCharismaRequirement);
   ADD_MEMBER(IsExtraFragile);
   ADD_MEMBER(AllowUnconsciousness);
   ADD_MEMBER(CanChoke);

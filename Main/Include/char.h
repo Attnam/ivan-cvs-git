@@ -208,8 +208,10 @@ struct characterdatabase : public databasebase
   int ScienceTalkPossibility;
   int ScienceTalkIntelligenceModifier;
   int ScienceTalkWisdomModifier;
+  int ScienceTalkCharismaModifier;
   int ScienceTalkIntelligenceRequirement;
   int ScienceTalkWisdomRequirement;
+  int ScienceTalkCharismaRequirement;
   int DisplacePriority;
   festring RunDescriptionLineOne;
   festring RunDescriptionLineTwo;
@@ -542,8 +544,10 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, ScienceTalkPossibility);
   DATA_BASE_VALUE(int, ScienceTalkIntelligenceModifier);
   DATA_BASE_VALUE(int, ScienceTalkWisdomModifier);
+  DATA_BASE_VALUE(int, ScienceTalkCharismaModifier);
   DATA_BASE_VALUE(int, ScienceTalkIntelligenceRequirement);
   DATA_BASE_VALUE(int, ScienceTalkWisdomRequirement);
+  DATA_BASE_VALUE(int, ScienceTalkCharismaRequirement);
   DATA_BASE_TRUTH(IsExtraFragile);
   DATA_BASE_TRUTH(IsImmuneToStickiness);
   DATA_BASE_VALUE(festring, ForceVomitMessage);

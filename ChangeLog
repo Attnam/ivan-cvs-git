@@ -6,19 +6,23 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
+November 17 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Science talks can now require and train charisma
+  * Richel Decos has his own unique science talk particles
+
 November 15 2004 Heikki Sairanen <first.last@tut.fi>
 
-	* small typo corrected
-	
+  * small typo corrected
+
 November 12 2004 Heikki Sairanen <first.last@tut.fi>
 
-	* the incompatability of old highscore files is handled like it should
-	
+  * the incompatability of old highscore files is handled like it should
 
 November 11 2004 Heikki Sairanen <first.last@tut.fi>
 
-	* old highscore files incompatable
-	
+  * old highscore files incompatable
 
 November 11 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 

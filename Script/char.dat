@@ -128,7 +128,7 @@ character
   IsEnormous = false;
   ScienceTalkAdjectiveAttribute =
   {
-    143,
+    142,
     "", "applied", "recent", "dark", "linear",
     "molecular", "theoretical", "classical", "the future of", "queer",
     "multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
@@ -153,7 +153,7 @@ character
     "mental", "orthodox", "the history of", "soft", "hard",
     "illegitimate", "comical", "collective", "optical", "intellectual",
 
-    "creative uses of", "global", "the origin of", "royal", "clinical",
+    "the creative uses of", "global", "the origin of", "royal", "clinical",
     "evolutionary", "alien", "the implementation of", "psychic", "plasma",
     "commercial", "wicked", "hypnotic", "polymorphic", "controlled",
     "doctrine:", "frictionless", "the conservation of", "ideal", "moral",
@@ -161,15 +161,16 @@ character
 
     "sentient", "silksteel", "dead", "temporal", "transcendent",
     "unified", "the threshold of", "finite", "postmodern", "selective",
-    "arctic", "the proofs of", "mortal", "teleological", "hybrid",
-    "the principle of", "the art of", "sick";
+    "arctic", "the proofs of", "mortal", "teleological", "sick",
+    "the principle of", "the art of";
   }
   ScienceTalkSubstantiveAttribute =
   {
-    14,
+    16,
     "New Age", "military", "space", "neutronium", "punishment",
     "last century", "mass", "horseback", "tachyon", "singularity",
-    "antimatter", "superstring", "nerd", "crystal";
+    "antimatter", "superstring", "nerd", "crystal", "free market",
+    "hybrid";
   }
   ScienceTalkPrefix =
   {
@@ -189,7 +190,7 @@ character
   }
   ScienceTalkName =
   {
-    262,
+    265,
     "sanitation", "relativity", "physics", "mathematics", "philosophy",
     "numerology", "slavery", "mechanics", "magicks", "architecture",
     "archaeology", "logic", "fiction", "questions", "theology",
@@ -256,13 +257,15 @@ character
     "!the greatness of IVAN",
     "!free software ideology",
     "lobotomy", "circle squaring", "angle trisection", "cosmetics", "love",
-    "autopsies", "Zen";
+    "autopsies", "Zen", "polyandry", "polygyny", "bubbles";
   }
   ScienceTalkPossibility = 0;
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomModifier */
+  ScienceTalkCharismaModifier = 0;
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceRequirement */
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomRequirement */
+  ScienceTalkCharismaRequirement = 0;
   IsExtraFragile = false;
   AllowUnconsciousness = true;
   CanChoke = true;
@@ -2591,7 +2594,7 @@ mistress
 
     "the theory of", "educational", "recreational", "phallic", "gothic",
     "motorized",  "tropical", "the purpose of", "happy", "political",
-    "the history of", "creative uses of", "chaotic", "erotic", "arctic",
+    "the history of", "the creative uses of", "chaotic", "erotic", "arctic",
     "experimental", "lewd", "clinical", "electrical", "nymphomaniacal",
     "intellectual", "the origin of", "hot", "frictionless", "lesbian",
 
@@ -2612,7 +2615,7 @@ mistress
   }
   ScienceTalkName =
   {
-    50,
+    52,
     "impalement", "bondage", "slavery", "torture", "disembowelment",
     "whipmaking", "orgies", "herecy", "brazen bulls", "necrophilia",
     "masochism", "dentistry", "swedish", "feminism", "licking",
@@ -2623,7 +2626,9 @@ mistress
     "piercings", "adultery", "frottage", "thumbscrews", "egoism",
     "beer", "castration", "watersports", "scaphism", "seduction",
     "iron maidens", "fisting", "drugs", "lingerie", "tablillas",
-    "poker", "reproduction", "sake", "idolatry", "horror";
+    "poker", "reproduction", "sake", "idolatry", "horror",
+
+    "sensory deprivation tanks", "hallucinations";
   }
   ScienceTalkPossibility = 95;
   ScienceTalkIntelligenceModifier = 2;
@@ -3704,6 +3709,67 @@ imperialist
     "\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"";
   }
   AutomaticallySeen = true;
+  ScienceTalkAdjectiveAttribute =
+  {
+    82,
+    "applied",  "recent", "theoretical", "classical", "the future of",
+    "fundamental", "probability", "higher", "elementary", "practical",
+    "artificial", "the wonders of", "modern", "empirical", "statistical",
+    "the axioms of", "the theory of", "urban", "forbidden", "nautical", 
+    "popular", "the current state of", "liberal", "ceremonial", "heroic",
+
+    "mythical", "scientific", "advanced", "revolutionary", "motorized",
+    "neolithic", "jurassic", "synthetic", "polymorphic", "strategic",
+    "tropical", "diplomatic", "political", "experimental", "glorious",
+    "the evolution of", "global", "natural", "genetic", "intellectual",
+    "hard", "compressed", "educational", "recreational", "teleological",
+
+    "the creative uses of", "selective", "the origin of", "royal", "alien", 
+    "evolutionary", "the art of", "psychic", "unified", "postmodern",
+    "hypnotic", "doctrine:", "frictionless", "the secrets of", "mental",
+    "transcendent", "the purpose of", "the history of", "good", "arctic",
+    "the implementation of", "paraller", "orthodox", "soft", "chaotic",
+
+    "happy", "the blessings of", "ancient", "flexible", "laissez-faire",
+    "legendary", "the magnificence of";
+  }
+  ScienceTalkSubstantiveAttribute =
+  {
+    6,
+    "New Age", "space", "last century", "mass", "free market",
+    "hybrid";
+  }
+  ScienceTalkPrefix =
+  {
+    18,
+    "", "", "", "", "",
+    "macro", "ethno", "hyper", "trans", "geo",
+    "mega", "cosmo", "meta", "super", "ego",
+    "pseudo", "eroto", "neo";
+  }
+
+  ScienceTalkName =
+  {
+    36,
+    "commercials", "lockouts", "banking", "profits", "egoism",
+    "bazaars", "corporations", "sackings", "advertising", "capitalism",
+    "monopolies", "!M.U.L.E.", "tax cuts", "bargaining", "brands",
+    "wholesaling", "cartels", "economics", "commerse", "lobbying",
+
+    "the industrial revolution", "game theory", "!the Wealth of Nations",
+    "economic growth", "right-wing politics", "customer manipulation",
+    "public relations", "guerilla marketing", "industrial espionage",
+    "the anti-communist movement", "investor relations", "price warfare",
+    "the crusade against labour unions", "ESP marketing", "insurance firms",
+    "cigarettes";
+  }
+  ScienceTalkPossibility = 80;
+  ScienceTalkIntelligenceModifier = 25;
+  ScienceTalkWisdomModifier = 0;
+  ScienceTalkCharismaModifier = 50;
+  ScienceTalkIntelligenceRequirement = 10;
+  ScienceTalkWisdomRequirement = 0;
+  ScienceTalkCharismaRequirement = 15;
 }
 
 smith
