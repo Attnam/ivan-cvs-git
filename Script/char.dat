@@ -2035,8 +2035,8 @@ kobold
 	DefaultWisdom = 4;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	SkinColor = rgb16(40, 110, 110);
-	EyeColor = rgb16(200, 0, 0);
+	SkinColor = rgb16(60, 120, 120); /*rgb16(40, 110, 110);*/ /* rgb16(80, 144, 144); */
+	EyeColor = rgb16(180, 180, 0);
 	HairColor = rgb16(35, 35, 35);
 	ClothColor = rgb16(48, 48, 48);
 	LegMainColor = rgb16(111, 74, 37);
@@ -2065,7 +2065,7 @@ kobold
 		RightSWeaponSkillHits = 5;
 		PostFix = "chieftain";
 		PanicLevel = 50;
-		ClothColor = rgb16(00, 96, 0);
+		ClothColor = rgb16(100, 100, 48);
 		LegMainColor = rgb16(111, 74, 37);
 	}
 
@@ -2077,7 +2077,7 @@ kobold
 		RightSWeaponSkillHits = 10;
 		PostFix = "lord";
 		PanicLevel = 33;
-		ClothColor = rgb16(140, 0, 0);
+		ClothColor = rgb16(160, 0, 0);
 		LegMainColor = rgb16(111, 74, 37);
 	}
 
@@ -2102,7 +2102,7 @@ kobold
 		TotalVolume = 70000;
 		PanicLevel = 10;
 		TotalSize = 120;
-		ClothColor = rgb16(120, 0, 120);
+		ClothColor = rgb16(144, 0, 144);
 		LegMainColor = rgb16(111, 74, 37);
 		Inventory == wandofpolymorph;
 	}

@@ -1,6 +1,14 @@
 NOTICE!!!
 This file contains SPOILERS, which might ruin your IVAN experience totally.
-This file is also provided AS IS and is probably completely unreadable.	
+This file is also provided AS IS and is probably completely unreadable.
+
+December 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal bug in the door breaking code
+	* Legs swapped
+	* Fixed the Evil Boulder Bug of the Insane Environmentalist once and for all
+	* You can no longer 'l'ook at walls to see if they contain jewels
+	* Kobolds are little less ugly now
 
 December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
@@ -30,7 +38,7 @@ December 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Overall difficulty lowered by 33%
-	* Fixed one type
+	* Fixed one typo
 
 December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

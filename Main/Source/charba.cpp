@@ -2805,7 +2805,7 @@ void character::ShowNewPosInfo() const
 
 void character::Hostility(character* Enemy)
 {
-  if(Enemy == this)
+  if(Enemy == this || !Enemy)
     return;
 
   if(GetTeam()->GetID() != Enemy->GetTeam()->GetID())

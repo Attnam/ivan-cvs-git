@@ -21,9 +21,9 @@ Quarterstaff + broken picture.
 Scimitar + broken picture.
 Katana + broken picture.
 Broadsword + broken picture.
-Battle axe + broken picture.
+//Battle axe + broken picture.
 Club + broken picture.
-Scythe + broken picture.
+//Scythe + broken picture.
 Bastard sword + broken picture.
 Colossal morning star + broken picture.
 Great axe + broken picture.

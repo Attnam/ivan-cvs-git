@@ -141,19 +141,6 @@ tile igraph::AddUser(graphicid GI)
 
       if((GI.SpecialFlags & 0x38) == ST_RIGHT_LEG)
 	{
-	  /* Right leg from the character's, NOT the player's point of view */
-
-	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
-	}
-
-      if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
-	{
 	  /* Left leg from the character's, NOT the player's point of view */
 
 	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
@@ -162,6 +149,19 @@ tile igraph::AddUser(graphicid GI)
 	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(6, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
+	}
+
+      if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
+	{
+	  /* Right leg from the character's, NOT the player's point of view */
+
+	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
 

@@ -344,7 +344,7 @@ void silva::PrayGoodEffect()
 
 	    if(!MonsterHere || MonsterHere->GetRelation(game::GetPlayer()) == HOSTILE)
 	      {
-		Square->ChangeOLTerrainAndUpdateLights(new boulder(1 + RAND() & 1));
+		Square->ChangeOLTerrainAndUpdateLights(new boulder(1 + (RAND() & 1)));
 
 		if(MonsterHere)
 		  MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);

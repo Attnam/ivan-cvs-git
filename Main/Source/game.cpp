@@ -265,7 +265,6 @@ bool game::Init(const std::string& Name)
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
-	Ticks = 0;
 	msgsystem::Format();
 	WizardMode = false;
 	SeeWholeMapCheat = false;
@@ -1396,15 +1395,17 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
 
 void game::LookKeyHandler(vector2d CursorPos, int Key)
 {
+  square* Square = GetCurrentArea()->GetSquare(CursorPos);
+
   switch(Key)
     {
     case 'i':
       if(!IsInWilderness())
-	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
+	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
 	  {
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
-	    if(Stack->GetVisibleItems(game::GetPlayer()))
+	    if(Square->GetOTerrain()->IsWalkable() && Stack->GetVisibleItems(game::GetPlayer()))
 	      Stack->DrawContents(game::GetPlayer(), "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
@@ -1414,9 +1415,9 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     case 'c':
-      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
+      if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
 	{
-	  character* Char = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+	  character* Char = Square->GetCharacter();
 
 	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || game::SeeWholeMapCheatIsActive()))
 	    Char->PrintInfo();

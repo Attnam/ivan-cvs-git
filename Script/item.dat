@@ -241,7 +241,7 @@ meleeweapon
 	Config SPEAR;
 	{
 		DefaultSize = 190;
-		Possibility = 1000;
+		Possibility = 800;
 		InHandsPic = 160, 96;
 		WeaponCategory = SPEARS;
 		StrengthModifier = 70;
@@ -259,14 +259,14 @@ meleeweapon
 
 	Config BROKEN|SPEAR;
 	{
-		Possibility = 100;
+		Possibility = 80;
 		BitmapPos = 32, 224;
 	}
 
 	Config AXE;
 	{
 		DefaultSize = 60;
-		Possibility = 750;
+		Possibility = 600;
 		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
 		DefaultMainVolume = 200;
@@ -285,7 +285,7 @@ meleeweapon
 
 	Config BROKEN|AXE;
 	{
-		Possibility = 75;
+		Possibility = 60;
 		BitmapPos = 32, 176;
 	}
 
@@ -322,7 +322,7 @@ meleeweapon
 		DefaultMainVolume = 300;
 		DefaultSecondaryVolume = 500;
 		BitmapPos = 0, 32;
-		Possibility = 500;
+		Possibility = 400;
 		InHandsPic = 160, 192;
 		WeaponCategory = MACES;
 		NameSingular = "mace";
@@ -335,14 +335,14 @@ meleeweapon
 
 	Config BROKEN|MACE;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		BitmapPos = 32, 112;
 	}
 
 	Config HAMMER;
 	{
 		DefaultSize = 60;
-		Possibility = 500;
+		Possibility = 400;
 		InHandsPic = 176, 16;
 		WeaponCategory = HAMMERS;
 		DefaultMainVolume = 250;
@@ -361,7 +361,7 @@ meleeweapon
 
 	Config BROKEN|HAMMER;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		BitmapPos = 48, 192;
 	}
 

@@ -42,7 +42,7 @@ roomprototype::roomprototype(room* (*Cloner)(bool), const std::string& ClassId) 
 
 void room::DestroyTerrain(character* Who, olterrain*)
 {
-  if(Master)
+  if(Who && Master)
     Who->Hostility(Master);
 
   if(DivineMaster)
