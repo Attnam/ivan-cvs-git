@@ -9,3 +9,4 @@ Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Include/lterrade.h: door::HasBeenHitBy, brokendoor::HasBeenHitBy added
 	* Main/Source/lterrade.cpp: door::HasBeenHitBy, brokendoor::HasBeenHitBy. That open or damage the door when an item hits it.
 	* Main/Include/itemde.h: Wand of strikings color changed from yellow to white. Added Wand of fireballs
+	* Main/Source/charba.cpp character::WizardMode changed so that the player now receives 5 scrolls of wishing also after activating the wizard mode.
