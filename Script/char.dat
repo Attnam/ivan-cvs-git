@@ -3276,3 +3276,39 @@ darkwizard
 	IsExtraCoward = true;
 	AttachedGod = INFUSCOR;
 }
+
+ghost
+{
+	DefaultArmStrength = 5;
+	DefaultAgility = 20;
+	DefaultEndurance = 8;
+	DefaultPerception = 30;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 15;
+	StandVerb = "hovering";
+	Frequency = 100;
+	DangerModifier = 250;
+	CanFly = true;
+	TotalVolume = 500000;
+	TorsoBitmapPos = 112, 16;
+	TotalSize = 100;
+	NameSingular = "ghost";
+	BaseUnarmedStrength = 1500;
+	CanBeGenerated = true;
+	ClassStates = INFRA_VISION|ESP;
+	KnownCWeaponSkills == UNARMED;
+	CWeaponSkillHits == 100;
+	BaseEmitation = rgb24(110, 110, 110);
+	HostileReplies == "\"Boo!\"";
+	FriendlyReplies == "\"A very good Boo to you, my friend.\"";
+	PanicLevel = 0;
+	HasFeet = false;
+	FleshMaterial = MAGICAL_AIR;
+	DeathMessage = "@Dd vanishes from existence.";
+	SpillsBlood = false;
+	UsesNutrition = false;
+	CanWalkThroughWalls = true;
+	AttachedGod = MORTIFER;
+}

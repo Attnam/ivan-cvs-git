@@ -1253,3 +1253,17 @@ mushroom* mutatedmushroom::GetChildMushroom() const
 {
   return new mutatedmushroom;
 }
+
+void ghost::GetAICommand()
+{
+  SeekLeader();
+
+  if(FollowLeader())
+    return;
+
+  if(CheckForEnemies(true, true))
+    return;
+  MoveRandomly();
+}
+
+

@@ -1233,7 +1233,7 @@ kiwi
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWI_FLESH;
 	Roundness = 80;
-	AttachedGod = SEGES;
+	AttachedGod = SILVA;
 }
 
 pineapple
@@ -1249,7 +1249,7 @@ pineapple
 	MainMaterialConfig == PINEAPPLE_FLESH;
 	Roundness = 90;
 	IsTwoHanded = true;
-	AttachedGod = SEGES;
+	AttachedGod = SILVA;
 }
 
 palmbranch

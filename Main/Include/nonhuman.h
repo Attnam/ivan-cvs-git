@@ -348,4 +348,12 @@ class CHARACTER
   virtual mushroom* GetChildMushroom() const;
 );
 
+class CHARACTER
+(
+  ghost,
+  nonhumanoid,
+ protected:
+  virtual void GetAICommand();
+);
+
 #endif

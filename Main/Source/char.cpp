@@ -1713,7 +1713,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !CanWalkThroughWalls()) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
