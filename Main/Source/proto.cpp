@@ -27,6 +27,12 @@ character* protosystem::BalancedCreateMonster()
 
   for(ushort c = 0;; ++c)
     {
+      if(c >= 100)
+	{
+	  game::Save();
+	  ABORT("This is a temporary abort in BalancedCreateMonster() installed by Timo. Do not panic. Your game has been saved. Contact me immediately!");
+	}
+
       float Difficulty = game::Difficulty();
 
       for(ushort i = 0; i < 25; ++i)
@@ -136,17 +142,17 @@ template <class type> ushort CountCorrectNameLetters(const typename type::databa
 {
   ushort Counter = 0;
 
-  if(Identifier.find(" " + DataBase.NameSingular + " ") != std::string::npos)
+  if(festring::IgnoreCaseFind(Identifier, " " + DataBase.NameSingular + " ") != std::string::npos)
     Counter += DataBase.NameSingular.length();
 
-  if(DataBase.Adjective.length() && Identifier.find(" " + DataBase.Adjective + " ") != std::string::npos)
+  if(DataBase.Adjective.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.Adjective + " ") != std::string::npos)
     Counter += DataBase.Adjective.length();
 
-  if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != std::string::npos)
+  if(DataBase.PostFix.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.PostFix + " ") != std::string::npos)
     Counter += DataBase.PostFix.length();
 
   for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-    if(Identifier.find(" " + DataBase.Alias[c] + " ") != std::string::npos)
+    if(festring::IgnoreCaseFind(Identifier, " " + DataBase.Alias[c] + " ") != std::string::npos)
       Counter += DataBase.Alias[c].length();
 
   return Counter;

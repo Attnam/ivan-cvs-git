@@ -234,9 +234,9 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 	Input += char(LastKey);
     }
 
-  long LastAlpha = -1;
+  strsize LastAlpha = strsize(-1);
 
-  for(long c = 0; c < Input.size(); ++c)
+  for(strsize c = 0; c < Input.size(); ++c)
     if(Input[c] != ' ')
       LastAlpha = c;
 

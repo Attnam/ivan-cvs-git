@@ -61,7 +61,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /Ze /W3 /GR /GX /Zi /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /Zp8 /W3 /GR /GX /Zi /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo

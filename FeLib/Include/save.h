@@ -12,6 +12,7 @@
 #include <map>
 
 #include "vector2d.h"
+#include "femath.h"
 
 typedef std::map<std::string, long> valuemap;
 
@@ -40,6 +41,7 @@ class inputfile
   long ReadNumber(const valuemap&, uchar = 0xFF);
   long ReadNumber();
   vector2d ReadVector2d(const valuemap&);
+  rect ReadRect(const valuemap&);
   bool ReadBool();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
@@ -90,6 +92,7 @@ inline void ReadData(ushort& Type, inputfile& SaveFile, const valuemap& ValueMap
 inline void ReadData(long& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
 inline void ReadData(ulong& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
 inline void ReadData(vector2d& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadVector2d(ValueMap); }
+inline void ReadData(rect& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadRect(ValueMap); }
 void ReadData(std::string&, inputfile&, const valuemap&);
 void ReadData(std::vector<long>&, inputfile&, const valuemap&);
 void ReadData(std::vector<std::string>&, inputfile&, const valuemap&);
@@ -277,4 +280,3 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
 }
 
 #endif
-

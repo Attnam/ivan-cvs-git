@@ -10,11 +10,7 @@
 #include "save.h"
 #include "bitmap.h"
 
-#ifdef WIN32
-#define CONFIG_FILENAME "ivan.cfg"
-#endif
-
-#ifdef __DJGPP__
+#if defined(WIN32) || defined(__DJGPP__)
 #define CONFIG_FILENAME "ivan.cfg"
 #endif
 

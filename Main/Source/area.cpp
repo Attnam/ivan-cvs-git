@@ -99,8 +99,8 @@ void area::UpdateLOS()
 
 void area::SendNewDrawRequest()
 {
-  for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-    for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+  for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+    for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
       Map[x][y]->SendNewDrawRequest();
 
   DOUBLEBUFFER->Fill(0);

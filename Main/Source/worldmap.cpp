@@ -143,6 +143,11 @@ void worldmap::Generate()
       SetEntryPos(ATTNAM, AttnamPos);
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       SetEntryPos(ELPURICAVE, ElpuriCavePos);
+      /*GetWSquare(AttnamPos)->ChangeOWTerrain(new underwatertunnel);
+      SetEntryPos(UNDERWATERTUNNEL, AttnamPos);
+      GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new underwatertunnelexit);
+      SetEntryPos(UNDERWATERTUNNELEXIT, ElpuriCavePos);*/
+
       GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();
@@ -429,15 +434,15 @@ void worldmap::Draw() const
 {
   if(!game::GetSeeWholeMapCheat())
     {
-      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	  if(Map[x][y]->GetLastSeen())
 	    Map[x][y]->Draw();
     }
   else
     {
-      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	  Map[x][y]->Draw();
     }
 }

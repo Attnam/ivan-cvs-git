@@ -18,10 +18,7 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-
-#ifdef __DJGPP__
-#define PACKED __attribute__ ((packed))
-#endif
+#include "felibdef.h"
 
 #define DOUBLEBUFFER graphics::GetDoubleBuffer()
 #define RES graphics::GetRes()
@@ -75,52 +72,52 @@ class graphics
   static struct vesainfo
   {
     void Retrieve();
-    bool   CheckSupport() { return Version == 0x0200; }
-    ulong Signature		PACKED;
-    ushort Version		PACKED;
-    ulong OEMString		PACKED;
-    ulong Capabilities	PACKED;
-    ulong ModeList		PACKED;
-    ushort Memory		PACKED;
-    uchar  Shit[493]		PACKED;
+    bool CheckSupport() { return Version == 0x0200; }
+    ulong Signature PACKED;
+    ushort Version PACKED;
+    ulong OEMString PACKED;
+    ulong Capabilities PACKED;
+    ulong ModeList PACKED;
+    ushort Memory PACKED;
+    uchar Shit[493] PACKED;
   } VesaInfo;
   static struct modeinfo
   {
     void Retrieve(ushort);
-    bool   CheckSupport() { return Attribs1 & 1 != 0; }
-    ushort Attribs1		PACKED;
-    uchar  AWindowAttribs	PACKED;
-    uchar  BWindowAttribs	PACKED;
-    ushort Granularity		PACKED;
-    ushort WindowSize		PACKED;
-    ushort WindowASegment	PACKED;
-    ushort WindowBSegment	PACKED;
-    ulong WindowMoveFunction	PACKED;
-    ushort BytesPerLine	PACKED;
-    ushort Width		PACKED;
-    ushort Height		PACKED;
-    uchar  CharWidth		PACKED;
-    uchar  CharHeight		PACKED;
-    uchar  Planes		PACKED;
-    uchar  BitsPerPixel	PACKED;
-    uchar  Banks		PACKED;
-    uchar  MemoryModel		PACKED;
-    uchar  BankSize		PACKED;
-    uchar  ImagePages		PACKED;
-    uchar  Reserved1		PACKED;
-    uchar  RedBits		PACKED;
-    uchar  RedShift		PACKED;
-    uchar  GreenBits		PACKED;
-    uchar  GreenShift		PACKED;
-    uchar  BlueBits		PACKED;
-    uchar  BlueShift		PACKED;
-    uchar  ResBits		PACKED;
-    uchar  ResShift		PACKED;
-    uchar  Attribs2		PACKED;
-    ulong PhysicalLFBAddress	PACKED;
-    ulong OffScreenMem	PACKED;
-    ushort OffScreenMemSize	PACKED;
-    uchar  Reserved2[206]	PACKED;
+    bool CheckSupport() { return Attribs1 & 1 != 0; }
+    ushort Attribs1 PACKED;
+    uchar AWindowAttribs PACKED;
+    uchar BWindowAttribs PACKED;
+    ushort Granularity PACKED;
+    ushort WindowSize PACKED;
+    ushort WindowASegment PACKED;
+    ushort WindowBSegment PACKED;
+    ulong WindowMoveFunction PACKED;
+    ushort BytesPerLine PACKED;
+    ushort Width PACKED;
+    ushort Height PACKED;
+    uchar CharWidth PACKED;
+    uchar CharHeight PACKED;
+    uchar Planes PACKED;
+    uchar BitsPerPixel PACKED;
+    uchar Banks PACKED;
+    uchar MemoryModel PACKED;
+    uchar BankSize PACKED;
+    uchar ImagePages PACKED;
+    uchar Reserved1 PACKED;
+    uchar RedBits PACKED;
+    uchar RedShift PACKED;
+    uchar GreenBits PACKED;
+    uchar GreenShift PACKED;
+    uchar BlueBits PACKED;
+    uchar BlueShift PACKED;
+    uchar ResBits PACKED;
+    uchar ResShift PACKED;
+    uchar Attribs2 PACKED;
+    ulong PhysicalLFBAddress PACKED;
+    ulong OffScreenMem PACKED;
+    ushort OffScreenMemSize PACKED;
+    uchar Reserved2[206] PACKED;
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;

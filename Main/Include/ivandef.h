@@ -22,13 +22,13 @@
 #define DATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
 #define DATABASEBOOL(data) bool data() const { return DataBase->data; }
 
-#if defined WIN32 || defined __DJGPP__
+#if defined(WIN32) || defined(__DJGPP__)
 #define GAME_DIR std::string("")
 #define SAVE_DIR std::string("Save/")
 #define HOME_DIR std::string("")
 #endif
 
-// The program can only create directories to the deepness of one, no more...
+/* The program can only create directories to the deepness of one, no more... */
 
 #ifdef USE_SDL
 #define GAME_DIR (std::string(DATADIR) + "/ivan/")
@@ -528,6 +528,9 @@
 
 #define ELPURICAVE 1
 #define ATTNAM 2
+#define NEWATTNAM 3
+#define UNDERWATERTUNNEL 4
+#define UNDERWATERTUNNELEXIT 5
 
 #define DARKLEVEL 6
 #define OREELAIR 9

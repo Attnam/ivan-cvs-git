@@ -196,20 +196,3 @@ void igraph::RemoveUser(graphic_id GI)
 	TileMap.erase(Iterator);
       }
 }
-
-outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
-{
-  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialFlags << GI.BaseAlpha << GI.Frame << GI.OutlineColor << GI.SparklePos << GI.SparkleTime;
-  SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
-  SaveFile << GI.Alpha[0] << GI.Alpha[1] << GI.Alpha[2] << GI.Alpha[3];
-  return SaveFile;
-}
-
-inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
-{
-  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialFlags >> GI.BaseAlpha >> GI.Frame >> GI.OutlineColor >> GI.SparklePos >> GI.SparkleTime;
-  SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
-  SaveFile >> GI.Alpha[0] >> GI.Alpha[1] >> GI.Alpha[2] >> GI.Alpha[3];
-  return SaveFile;
-}
-

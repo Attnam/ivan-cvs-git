@@ -1,3 +1,19 @@
+September 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Capitalization functions of festring are now more flexible
+	* Added festring::IgnoreCaseFind() which acts like std::string::find() except
+	  that it ignores case
+	* Wish parser is no longer case sensitive
+	* Added SoCM alias for scroll of change material
+	* Position script now allows one to select a random squares inside arbitrary
+	  rectangles
+	* Added owterrain classes and script entries for New Attnam and the underwater
+	  tunnel
+	* Added femath::CompareBits() which allows easy ordering of POD objects
+	  (but alignment of structure members must be disabled first!)
+	* The < operators of graphic_id and configid are now more elegant
+	* Saving and loading graphic_id and configid objects is now more elegant
+
 September 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Banana peal is now banana peel (why wasn't this typo noticed before?)

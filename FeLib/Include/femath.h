@@ -17,6 +17,20 @@ template <class type> inline const type& Max(const type& X, const type& Y) { ret
 template <class type> inline const type& Min(const type& X, const type& Y) { return X < Y ? X : Y; }
 template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
 
+/* This allows ordering of POD objects whose structure members are not aligned */
+
+template <class type> inline bool CompareBits(const type& V1, const type& V2)
+{
+  const char* Ptr1 = reinterpret_cast<const char*>(&V1);
+  const char* Ptr2 = reinterpret_cast<const char*>(&V2);
+
+  for(ushort c = 0; c < sizeof(type); ++c, ++Ptr1, ++Ptr2)
+    if(*Ptr1 != *Ptr2)
+      return *Ptr1 < *Ptr2;
+
+  return false;
+}
+
 struct rect
 {
   rect() { }

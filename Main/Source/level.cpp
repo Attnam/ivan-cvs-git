@@ -303,7 +303,7 @@ void level::Generate()
 
   if(!*LevelScript->GetIgnoreDefaultSpecialSquares())
     {
-      /* gum solution */
+      /* Gum solution */
 
       levelscript* LevelBase = static_cast<levelscript*>(LevelScript->GetBase());
 
@@ -335,7 +335,7 @@ void level::ApplyLSquareScript(squarescript* Script)
       vector2d Pos;
 
       if(Script->GetPosition()->GetRandom())
-	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags());
+	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders(false));
       else
 	Pos = *Script->GetPosition()->GetVector();
 
@@ -359,21 +359,6 @@ void level::AttachPos(vector2d What)
   FlagMap[What.X][What.Y] &= ~PREFERRED;
 }
 
-/*void level::CreateRandomTunnel()
-{
-  vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-    Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  vector2d T(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  while(FlagMap[T.X][T.Y] & FORBIDDEN)
-    T = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  GenerateTunnel(Pos, T, RAND() & 1);
-}*/
-
 void level::CreateItems(ushort Amount)
 {
   for(ushort x = 0; x < Amount; ++x)
@@ -384,31 +369,6 @@ void level::CreateItems(ushort Amount)
       Item->SpecialGenerationHandler();
     }
 }
-
-/*void level::CreateStairs(bool Up)
-{
-  vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN))
-    Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  Map[Pos.X][Pos.Y]->ChangeOLTerrain(Up ? (olterrain*)(new stairsup) : (olterrain*)(new stairsdown));
-
-  if(Up)
-    UpStairs = Pos;
-  else
-    DownStairs = Pos;
-
-  vector2d Target = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  while(!(FlagMap[Target.X][Target.Y] & PREFERRED))
-    Target = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  GenerateTunnel(Pos, Target, RAND() & 1);
-
-  FlagMap[Pos.X][Pos.Y] |= FORBIDDEN;
-  FlagMap[Pos.X][Pos.Y] &= ~PREFERRED;
-}*/
 
 bool level::MakeRoom(roomscript* RoomScript)
 {
@@ -799,7 +759,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     }
 }
 
-vector2d level::GetRandomSquare(const character* Char, uchar Flags) const
+vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
   for(ushort c = 0;; ++c)
     {
@@ -809,7 +769,18 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags) const
       if(c == 10000)
 	ABORT("GetRandomSquare request failed!");
 
-      vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
+      vector2d Pos;
+
+      if(Borders)
+	{
+	  Pos.X = Borders->X1 + RAND() % (Borders->X2 - Borders->X1);
+	  Pos.Y = Borders->Y1 + RAND() % (Borders->Y2 - Borders->Y1);
+	}
+      else
+	{
+	  Pos.X = 1 + RAND() % (XSize - 2);
+	  Pos.Y = 1 + RAND() % (YSize - 2);
+	}
 
       if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOTWALKABLE))
       || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HASCHARACTER))
@@ -1062,8 +1033,8 @@ void level::Draw() const
 {
   if(!game::GetSeeWholeMapCheat())
     {
-      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	  if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
 	    Map[x][y]->Draw();
 	  else
@@ -1071,8 +1042,8 @@ void level::Draw() const
     }
   else
     {
-      for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	  Map[x][y]->Draw();
     }
 }
@@ -1090,9 +1061,5 @@ lsquare* level::GetNeighbourLSquare(vector2d Pos, ushort Index) const
 vector2d level::GetEntryPos(const character* Char, uchar Index) const
 {
   std::map<uchar, vector2d>::const_iterator i = EntryMap.find(Index);
-
-  if(i == EntryMap.end())
-    int esko = 2;
-
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }

@@ -330,11 +330,19 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 vector2d inputfile::ReadVector2d(const valuemap& ValueMap)
 {
   vector2d Vector;
-
   Vector.X = ReadNumber(ValueMap);
   Vector.Y = ReadNumber(ValueMap);
-
   return Vector;
+}
+
+rect inputfile::ReadRect(const valuemap& ValueMap)
+{
+  rect Rect;
+  Rect.X1 = ReadNumber(ValueMap);
+  Rect.Y1 = ReadNumber(ValueMap);
+  Rect.X2 = ReadNumber(ValueMap);
+  Rect.Y2 = ReadNumber(ValueMap);
+  return Rect;
 }
 
 bool inputfile::ReadBool()

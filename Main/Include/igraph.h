@@ -12,92 +12,57 @@
 #include <map>
 #include <string>
 
+#include "felibdef.h"
 #include "typedef.h"
 #include "vector2d.h"
 #include "ivandef.h"
+#include "save.h"
 
 class bitmap;
 class colorizablebitmap;
-class inputfile;
-class outputfile;
+
+/* CompareBits doesn't like alignment of structure members */
+
+#ifdef VC
+#pragma pack(1)
+#endif
 
 struct graphic_id
 {
-  vector2d BitmapPos;
-  ushort Color[4];
-  uchar BaseAlpha;
-  uchar Alpha[4];
-  uchar FileIndex;
-  uchar SpecialFlags;
-  ushort Frame;
-  ushort OutlineColor;
-  vector2d SparklePos;
-  uchar SparkleTime;
+  graphic_id() { }
+  bool operator<(const graphic_id& GI) const { return CompareBits(*this, GI); }
+  vector2d BitmapPos PACKED;
+  ushort Color[4] PACKED;
+  ushort Frame PACKED;
+  uchar FileIndex PACKED;
+  uchar BaseAlpha PACKED;
+  uchar Alpha[4] PACKED;
+  uchar SpecialFlags PACKED;
+  vector2d SparklePos PACKED;
+  uchar SparkleTime PACKED;
+  ushort OutlineColor PACKED;
 };
 
-inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
+#ifdef VC
+#pragma pack()
+#endif
+
+inline outputfile& operator<<(outputfile& SaveFile, const graphic_id& Value)
 {
-  if(GI1.BitmapPos.X != GI2.BitmapPos.X)
-    return GI1.BitmapPos.X < GI2.BitmapPos.X;
+  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
 
-  if(GI1.BitmapPos.Y != GI2.BitmapPos.Y)
-    return GI1.BitmapPos.Y < GI2.BitmapPos.Y;
-
-  if(GI1.FileIndex != GI2.FileIndex)
-    return GI1.FileIndex < GI2.FileIndex;
-
-  if(GI1.Color[0] != GI2.Color[0])
-    return GI1.Color[0] < GI2.Color[0];
-
-  if(GI1.Color[1] != GI2.Color[1])
-    return GI1.Color[1] < GI2.Color[1];
-
-  if(GI1.Color[2] != GI2.Color[2])
-    return GI1.Color[2] < GI2.Color[2];
-
-  if(GI1.Color[3] != GI2.Color[3])
-    return GI1.Color[3] < GI2.Color[3];
-
-  if(GI1.SpecialFlags != GI2.SpecialFlags)
-    return GI1.SpecialFlags < GI2.SpecialFlags;
-
-  if(GI1.Frame != GI2.Frame)
-    return GI1.Frame < GI2.Frame;
-
-  if(GI1.OutlineColor != GI2.OutlineColor)
-    return GI1.OutlineColor < GI2.OutlineColor;
-
-  if(GI1.BaseAlpha != GI2.BaseAlpha)
-    return GI1.BaseAlpha < GI2.BaseAlpha;
-
-  if(GI1.Alpha[0] != GI2.Alpha[0])
-    return GI1.Alpha[0] < GI2.Alpha[0];
-
-  if(GI1.Alpha[1] != GI2.Alpha[1])
-    return GI1.Alpha[1] < GI2.Alpha[1];
-
-  if(GI1.Alpha[2] != GI2.Alpha[2])
-    return GI1.Alpha[2] < GI2.Alpha[2];
-
-  if(GI1.Alpha[3] != GI2.Alpha[3])
-    return GI1.Alpha[3] < GI2.Alpha[3];
-
-  if(GI1.SparklePos.X != GI2.SparklePos.X)
-    return GI1.SparklePos.X < GI2.SparklePos.X;
-  
-  if(GI1.SparklePos.Y != GI2.SparklePos.Y)
-    return GI1.SparklePos.Y < GI2.SparklePos.Y;
-
-  if(GI1.SparkleTime != GI2.SparkleTime)
-    return GI1.SparkleTime < GI2.SparkleTime;
-
-  return false;
+inline inputfile& operator>>(inputfile& SaveFile, graphic_id& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
 }
 
 struct tile
 {
   tile() { }
-  tile(bitmap* Bitmap, ulong Users = 1) : Bitmap(Bitmap), Users(Users) { }
+  tile(bitmap* Bitmap) : Bitmap(Bitmap), Users(1) { }
   bitmap* Bitmap;
   ulong Users;
 };
@@ -135,8 +100,5 @@ class igraph
   static tilemap TileMap;
   static bitmap* OutlineBuffer;
 };
-
-outputfile& operator<<(outputfile&, const graphic_id&);
-inputfile& operator>>(inputfile&, graphic_id&);
 
 #endif

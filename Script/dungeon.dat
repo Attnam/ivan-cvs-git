@@ -1,4 +1,4 @@
-Dungeons=2;
+Dungeons=4;
 Teams=8;
 
 /*
@@ -669,8 +669,8 @@ Dungeon ATTNAM;
 				b.b..b##8.6#.######D######.#...##b..b.b
 				.......#8.6#...............#...#.......
 				b...b.b#473#...............#...#b.b...b
-				.b....#######...###D###...#######....b.
-				b..##@#.s.s.D...#.b.b.#...L.....#@##..b
+				.b....##@####...###D###...####@##....b.
+				b..####.s.s.D...#.b.b.#...L.....####..b
 				..b#.d......#####.....#####........#b..
 				b..#....s.s.#b..b.....b..b#........#..b
 				.b.##...#####.bb..b.b..bb.#####...##.b.
@@ -1049,3 +1049,107 @@ Dungeon ATTNAM;
 	}
 }
 
+Dungeon NEWATTNAM;
+{
+	Levels=1;
+}
+
+Dungeon UNDERWATERTUNNEL;
+{
+	Levels=3;
+
+	LevelDefault
+	{
+		FillSquare=solidterrain(GROUND),wall(EARTH);
+
+		Variable XSize = 80;
+		Variable YSize = 20;
+
+		Size=XSize, YSize;
+		Rooms=5+rand%6;
+		Items=15+rand%16;
+		GenerateMonsters=true;
+		ReCalculate=true;
+		OnGround=false;
+		TeamDefault=1;
+		AmbientLight=0;
+		LOSModifier=16;
+		IgnoreDefaultSpecialSquares = false;
+
+		Square, Random;
+		{
+			Item = beartrap { Team = MONSTER_TEAM; Active = true; }
+			Times = rand%2;
+		}
+
+		RoomDefault
+		{
+			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
+			Size=4+rand%8,4+rand%8;
+			AltarPossible=false;
+			WallSquare=solidterrain(GROUND),wall(BRICK_OLD);
+			FloorSquare=solidterrain(PARQUET),empty;
+			DoorSquare=solidterrain(PARQUET),door;
+			GenerateDoor=true;
+			ReCalculate=true;
+                        DivineMaster=0;
+                        GenerateTunnel=true;
+			GenerateLanterns=true;
+			Type=normalroom;
+			GenerateFountains=true;
+			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
+		}
+	}
+
+	Level 0;
+	{
+		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP);
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
+		}
+
+		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSDOWN);
+			EntryIndex = STAIRSDOWN;
+			AttachRequired = true;
+		}
+	}
+
+	Level 1;
+	{
+		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP);
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
+		}
+
+		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP) { AttachedArea = 2; }
+			EntryIndex = STAIRSUP + 1;
+			AttachRequired = true;
+		}
+	}
+
+	Level 2;
+	{
+		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSDOWN) { AttachedArea = 1; AttachedEntry = STAIRSUP + 1; }
+			EntryIndex = STAIRSDOWN;
+			AttachRequired = true;
+		}
+
+		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP) { AttachedArea = WORLDMAP; AttachedEntry = UNDERWATERTUNNELEXIT; }
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
+		}
+	}
+}

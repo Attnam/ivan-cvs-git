@@ -62,7 +62,13 @@ inline ushort MakeShadeColor(ushort Color) { return MakeRGB(GetRed(Color) / 3, G
 
 #define NOFLAME 0xFFFF
 
-#define BITMAP_ERROR_VECTOR vector2d(-666,-666)
+#define BITMAP_ERROR_VECTOR vector2d(-666, -666)
+
+#ifdef GCC
+#define PACKED __attribute__ ((packed))
+#else
+#define PACKED
+#endif
 
 #endif
 

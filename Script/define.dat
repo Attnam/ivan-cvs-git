@@ -469,6 +469,9 @@
 
 #define ELPURICAVE 1
 #define ATTNAM 2
+#define NEWATTNAM 3
+#define UNDERWATERTUNNEL 4
+#define UNDERWATERTUNNELEXIT 5
 
 #define DARKLEVEL 6
 #define OREELAIR 9

@@ -54,6 +54,7 @@ datamemberbase* posscript::GetData(const std::string& Identifier)
 {
   ANALYZEMEMBER(Vector);
   ANALYZEMEMBER(Flags);
+  ANALYZEMEMBER(Borders);
   return 0;
 }
 
@@ -71,6 +72,13 @@ void posscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "Random")
     {
       Random = true;
+      Flags.Load(SaveFile, ValueMap);
+    }
+
+  if(Word == "BoundedRandom")
+    {
+      Random = true;
+      Borders.Load(SaveFile, ValueMap);
       Flags.Load(SaveFile, ValueMap);
     }
 }

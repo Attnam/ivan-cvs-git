@@ -31,7 +31,7 @@ class level : public area
   level() : Room(1, (room*)0) { }
   virtual ~level();
   void Generate();
-  vector2d GetRandomSquare(const character* = 0, uchar = 0) const;
+  vector2d GetRandomSquare(const character* = 0, uchar = 0, const rect* = 0) const;
   void GenerateMonsters();
   lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }

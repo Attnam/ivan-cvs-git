@@ -133,7 +133,7 @@ char* festring::IntegerToChar(long Integer)
  * but words are left uncut if possible.
  */
 
-void festring::SplitString(std::string& Source, std::string& Result, std::string::size_type Length)
+void festring::SplitString(std::string& Source, std::string& Result, strsize Length)
 {
   if(Source.length() <= Length)
     {
@@ -142,7 +142,7 @@ void festring::SplitString(std::string& Source, std::string& Result, std::string
       return;
     }
 
-  std::string::size_type Pos = Source.find_last_of(' ', Length);
+  strsize Pos = Source.find_last_of(' ', Length);
 
   if(Pos != std::string::npos)
     {
@@ -163,7 +163,7 @@ void festring::SplitString(std::string& Source, std::string& Result, std::string
  * except the first.
  */
 
-void festring::SplitString(const std::string& Source, std::vector<std::string>& StringVector, std::string::size_type Length, std::string::size_type Marginal)
+void festring::SplitString(const std::string& Source, std::vector<std::string>& StringVector, strsize Length, strsize Marginal)
 {
   if(!Length)
     ABORT("Illegal Length 0 passed to festring::SplitString()!");
@@ -183,12 +183,32 @@ void festring::SplitString(const std::string& Source, std::vector<std::string>& 
     }
 }
 
-/* Capitalizes the first letter of String and returns the result. */
+/*
+ * Returns the position of the first occurance of What in Where
+ * starting at Begin or after it, ignoring the case of letters.
+ * If the search fails, std::string::npos is returned instead.
+ */
 
-std::string& festring::Capitalize(std::string& String)
+strsize festring::IgnoreCaseFind(const std::string& Where, const std::string& What, strsize Begin)
 {
-  if(String[0] > 0x60 && String[0] < 0x7B)
-    String[0] &= ~0x20;
+  if(What.empty())
+   return Begin;
 
-  return String;
+  for(; Where.size() >= What.size() + Begin; ++Begin)
+    if(CapitalizeCopy(Where[Begin]) == CapitalizeCopy(What[0]))
+      {
+	bool Equal = true;
+
+	for(strsize c = 1; c < What.size(); ++c)
+	  if(CapitalizeCopy(Where[Begin + c]) != CapitalizeCopy(What[c]))
+	    {
+	      Equal = false;
+	      break;
+	    }
+
+	if(Equal)
+	  return Begin;
+      }
+
+  return std::string::npos;
 }

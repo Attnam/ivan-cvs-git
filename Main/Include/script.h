@@ -107,6 +107,7 @@ class script
 {
  public:
   script() : Base(0) { }
+  virtual ~script() { }
   const valuemap& GetValueMap() const { return ValueMap; }
   void SetValueMap(const valuemap& What) { ValueMap = What; }
   bool LoadData(inputfile&, const std::string&);
@@ -130,6 +131,7 @@ class posscript : public script
   bool Random;
   DATAMEMBER(vector2d, Vector);
   DATAMEMBER(uchar, Flags);
+  DATAMEMBER(rect, Borders);
 };
 
 class materialscript : public script
@@ -148,7 +150,6 @@ class basecontentscript : public script
 {
  public:
   basecontentscript() : ContentType(0), Config(0) { }
-  virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&, bool = false);
   ushort GetContentType() const { return ContentType; }
   virtual datamemberbase* GetData(const std::string&);
@@ -235,7 +236,7 @@ template <class type> class contentmap : public script
 {
  public:
   contentmap() : ContentScriptMap(0) { }
-  ~contentmap() { DeleteContents(); }
+  virtual ~contentmap() { DeleteContents(); }
   virtual void ReadFrom(inputfile&, bool = false);
   void DeleteContents();
   const contentscript<type>* GetContentScript(ushort X, ushort Y) const { return ContentScriptMap[X][Y]; }
@@ -249,7 +250,7 @@ template <class type> class contentmap : public script
 class roomscript : public script
 {
  public:
-  ~roomscript();
+  virtual ~roomscript();
   void ReadFrom(inputfile&, bool = false);
   const std::vector<squarescript*>& GetSquare() const { return Square; }
   virtual datamemberbase* GetData(const std::string&);
@@ -280,7 +281,7 @@ class roomscript : public script
 class levelscript : public script
 {
  public:
-  ~levelscript();
+  virtual ~levelscript();
   void ReadFrom(inputfile&, bool = false);
   const std::vector<squarescript*>& GetSquare() const { return Square; }
   const std::map<uchar, roomscript*>& GetRoom() const { return Room; }
@@ -308,7 +309,7 @@ class levelscript : public script
 class dungeonscript : public script
 {
  public:
-  ~dungeonscript();
+  virtual ~dungeonscript();
   virtual void ReadFrom(inputfile&, bool = false);
   const std::map<uchar, levelscript*>& GetLevel() const { return Level; }
   virtual datamemberbase* GetData(const std::string&);
@@ -332,7 +333,7 @@ class teamscript : public script
 class gamescript : public script
 {
  public:
-  ~gamescript();
+  virtual ~gamescript();
   virtual void ReadFrom(inputfile&, bool = false);
   const std::vector<std::pair<uchar, teamscript*> >& GetTeam() const { return Team; }
   const std::map<uchar, dungeonscript*>& GetDungeon() const { return Dungeon; }

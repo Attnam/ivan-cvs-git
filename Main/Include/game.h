@@ -7,6 +7,7 @@
 
 #include <vector>
 
+#include "felibdef.h"
 #include "typedef.h"
 #include "vector2d.h"
 #include "graphics.h"
@@ -25,41 +26,37 @@ class command;
 class worldmap;
 class square;
 class dungeon;
-class outputfile;
-class inputfile;
 class team;
 class bitmap;
 class petrus;
 class gamescript;
 
+#ifdef VC
+#pragma pack(1)
+#endif
+
 struct configid
 {
   configid() { }
   configid(ushort Type, ushort Config) : Type(Type), Config(Config) { }
-  ushort Type;
-  ushort Config;
+  bool operator<(const configid& CI) const { return CompareBits(*this, CI); }
+  ushort Type PACKED;
+  ushort Config PACKED;
 };
 
-inline bool operator < (const configid& CI1, const configid& CI2)
+#ifdef VC
+#pragma pack()
+#endif
+
+inline outputfile& operator<<(outputfile& SaveFile, const configid& Value)
 {
-  if(CI1.Type != CI2.Type)
-    return CI1.Type < CI2.Type;
-
-  if(CI1.Config != CI2.Config)
-    return CI1.Config < CI2.Config;
-
-  return false;
-}
-
-inline outputfile& operator<<(outputfile& SaveFile, const configid& ConfigId)
-{
-  SaveFile << ConfigId.Type << ConfigId.Config;
+  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, configid& ConfigId)
+inline inputfile& operator>>(inputfile& SaveFile, configid& Value)
 {
-  SaveFile >> ConfigId.Type >> ConfigId.Config;
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 

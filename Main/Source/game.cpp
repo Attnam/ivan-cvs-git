@@ -595,12 +595,7 @@ std::string game::SaveName(const std::string& Base)
     if(SaveName[c] == ' ')
       SaveName[c] = '_';
 
-#ifdef WIN32
-  if(SaveName.length() > 13)
-    SaveName.resize(13);
-#endif
-
-#ifdef __DJGPP__
+#if defined(WIN32) || defined(__DJGPP__)
   if(SaveName.length() > 13)
     SaveName.resize(13);
 #endif

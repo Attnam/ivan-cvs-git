@@ -760,6 +760,7 @@ scrollofchangematerial /* scroll-> */
 	Possibility = 5;
 	Price = 500;
 	PostFix = "of change material";
+	Alias == "SoCM";
 }
 
 avatarofvalpurus

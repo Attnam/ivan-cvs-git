@@ -1137,18 +1137,6 @@ bool lsquare::TryKey(item* Key, character* Applier)
     }
 }
 
-outputfile& operator<<(outputfile& SaveFile, const emitter& EmitterElement)
-{
-  SaveFile << EmitterElement.Pos << EmitterElement.DilatedEmitation;
-  return SaveFile;
-}
-
-inputfile& operator>>(inputfile& SaveFile, emitter& EmitterElement)
-{
-  SaveFile >> EmitterElement.Pos >> EmitterElement.DilatedEmitation;
-  return SaveFile;
-}
-
 void lsquare::SetLastSeen(ulong What)
 {
   if(LastSeen == What)
@@ -1269,4 +1257,16 @@ void lsquare::KickAnyoneStandingHereAway()
       GetLevelUnder()->AddCharacter(Pos, Character);
       RemoveCharacter();
     }
+}
+
+outputfile& operator<<(outputfile& SaveFile, const emitter& Emitter)
+{
+  SaveFile << Emitter.Pos << Emitter.DilatedEmitation;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, emitter& Emitter)
+{
+  SaveFile >> Emitter.Pos >> Emitter.DilatedEmitation;
+  return SaveFile;
 }
