@@ -226,6 +226,7 @@ public:
 	virtual vector2d GetSquareBeingDigged() const { return vector2d(StateVariables.Digging.SquareBeingDiggedX, StateVariables.Digging.SquareBeingDiggedY); }
 	virtual bool OutlineCharacters();
 	virtual bool OutlineItems();
+	virtual float GetThrowStrengthModifier() const;
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

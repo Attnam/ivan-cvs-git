@@ -74,6 +74,8 @@ public:
 	virtual void CheckPickUpEffect(character*) {}
 	virtual uchar GetWeaponCategory() const;
 	virtual void StruckByWandOfStriking(stack*);
+	virtual float GetThrowStrengthModifier() const { return 1; }
+	virtual bool UseThrowStrengthModifier() const { return false; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

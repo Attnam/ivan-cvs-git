@@ -777,6 +777,7 @@ public:
 	virtual float OfferModifier() const RET(0.5f)
 	virtual vector2d GetBitmapPos() const RETV(16,80)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
+	virtual bool UseThrowStrengthModifier() const RET(true)
 protected:
 	virtual ushort GetFormModifier() const RET(70)
 );
@@ -895,6 +896,26 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(10)
+);
+
+class ITEM
+(
+	bow,
+	item,
+	InitMaterials(1,new wood),
+	{
+		SetSize(50);
+	},
+public:
+	virtual ushort Possibility() const RET(10)
+	virtual std::string NameSingular() const RET("bow")
+	virtual std::string NamePlural() const RET("bows")
+	virtual float OfferModifier() const RET(0.3f)
+	virtual vector2d GetBitmapPos() const RETV(16,320)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2080; default: return 0; } }
+	virtual float GetThrowStrengthModifier() const RET(4)
+protected:
+	virtual ushort GetFormModifier() const RET(13)
 );
 
 #endif

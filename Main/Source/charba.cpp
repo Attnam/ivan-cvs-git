@@ -1888,8 +1888,10 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 {
 	if(Direction > 7)
 		ABORT("Throw in TOO odd direction...");
-
-	return ToBeThrown->Fly(Direction, GetStrength(), GetStack(), GetIsPlayer());
+	if(GetWielded() && ToBeThrown->UseThrowStrengthModifier())
+		return ToBeThrown->Fly(Direction, ushort(GetStrength() * GetThrowStrengthModifier()), GetStack(), GetIsPlayer());
+	else
+		return ToBeThrown->Fly(Direction, GetStrength(), GetStack(), GetIsPlayer());
 }
 
 void character::HasBeenHitByItem(item* Thingy, float Speed)
@@ -2558,4 +2560,12 @@ bool character::OutlineItems()
 	game::ToggleOutlineItems();
 	game::GetCurrentArea()->SendNewDrawRequest();
 	return false;
+}
+
+float character::GetThrowStrengthModifier() const
+{
+	if(GetWielded())
+		return GetWielded()->GetThrowStrengthModifier();
+	else
+		return 1;
 }
