@@ -2231,7 +2231,7 @@ void character::ActionAutoTermination()
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled() && ((IsPlayer() && (*i)->GetSquareUnder()->CanBeSeen()) || (!IsPlayer() && (*i)->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
 	  {
 	    ADD_MESSAGE("%s seems to be hostile.", (*i)->CHARNAME(DEFINITE));
@@ -2249,7 +2249,7 @@ bool character::CheckForEnemies(bool CheckDoors)
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
 	  {
 	    ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
@@ -3047,7 +3047,7 @@ void character::ChangeContainedMaterial(material* NewMaterial)
     }
 }
 
-void character::Teleport()
+void character::TeleportRandomly()
 {
   Move(game::GetCurrentLevel()->RandomSquare(this, true), true);
 }
@@ -3929,6 +3929,18 @@ characterprototype::characterprototype(characterprototype* Base) : Base(Base)
   Index = protocontainer<character>::Add(this);
 }
 
+bool character::TeleportNear(character* Caller)
+{
+  vector2d Where = game::GetCurrentArea()->GetNearestFreeSquare(Caller, Caller->GetPos());
+  Teleport(Where);
+  return true;
+}
+
+void character::Teleport(vector2d Pos)
+{
+  Move(Pos, true);
+}
+
 void character::InstallDataBase()
 {
   if(!Config)
@@ -4141,4 +4153,5 @@ void character::AddBoneConsumeEndMessage() const
   else if(GetSquareUnder()->CanBeSeen())
     ADD_MESSAGE("%s barks happily.", CHARNAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
 }
+
 

@@ -337,7 +337,7 @@ void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
       ItemVector[c]->ReceiveDamage(Damager, Damage, Type);
 }
 
-void stack::Teleport()
+void stack::TeleportRandomly()
 {
   itemvector ItemVector;
 
@@ -345,7 +345,7 @@ void stack::Teleport()
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists())
-      ItemVector[c]->Teleport();
+      ItemVector[c]->TeleportRandomly();
 }
 
 lsquare* stack::GetLSquareTrulyUnder() const

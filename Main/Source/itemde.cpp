@@ -29,7 +29,7 @@ ITEM_PROTOTYPE(item, 0, 0, false);
 #include "actionba.h"
 #include "felist.h"
 #include "save.h"
-
+#include "team.h"
 item* can::TryToOpen(character* Opener)
 {
   if(Opener->GetStrength() > RAND() % 30)
@@ -165,7 +165,7 @@ bool scrollofteleport::Read(character* Reader)
     if(Reader->GetSquareUnder()->CanBeSeen())
       ADD_MESSAGE("The %s reads %s and disappears!", Reader->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
-  Reader->Teleport();
+  Reader->TeleportRandomly();
   return true;
 }
 
@@ -2557,5 +2557,37 @@ void wandofresurrection::VirtualConstructor(bool Load)
   
   if(!Load)
     SetCharges(1 + RAND() % 2);
+}
+
+std::string platemail::NameSingular() const
+{
+  if(GetMaterial(0) && GetMaterial(0)->IsFlexible()) 
+    return "armor";
+  else
+    return "plate mail"; 
+}
+
+bool whistle::Apply(character* Whistler) 
+{
+  BlowEffect(Whistler);
+  return true;
+} 
+
+void whistle::BlowEffect(character* Whistler)
+{
+  if(Whistler->IsPlayer())
+    ADD_MESSAGE("You produce an interesting sound.");
+  else if(Whistler->GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s blows to his whistle and produces an odd sound.", Whistler->CHARNAME(DEFINITE));
+  else 
+    ADD_MESSAGE("You hear a whistle.");
+}
+
+void magicalwhistle::BlowEffect(character* Whistler)
+{
+  const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
+
+  for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
+    if(Whistler != (*i)) (*i)->TeleportNear(Whistler);
 }
 

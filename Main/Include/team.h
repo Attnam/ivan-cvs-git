@@ -30,7 +30,7 @@ class team
   character* GetLeader() const { return Leader; }
   std::list<character*>::iterator Add(character* Char) { return Member.insert(Member.end(), Char); }
   void Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
-  std::list<character*>& GetMember() { return Member; }
+  const std::list<character*>& GetMember() const { return Member; }
   ushort GetAttackEvilness() const { return AttackEvilness; }
   void SetAttackEvilness(ushort What) { AttackEvilness = What; }
  private:

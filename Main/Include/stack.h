@@ -7,6 +7,7 @@
 
 #include <list>
 #include <vector>
+#include <string>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -68,7 +69,7 @@ class stack
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const;
   void ReceiveDamage(character*, short, uchar);
-  void Teleport();
+  void TeleportRandomly();
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, character*, const std::string&, bool, bool (*)(item*, character*)) const;
   item* SearchChosen(ushort&, ushort, character*, bool (*)(item*, character*)) const;

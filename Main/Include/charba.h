@@ -322,7 +322,7 @@ class character : public entity, public id
   virtual void ChangeSecondaryMaterial(material*);
   virtual void SetContainedMaterial(material*);
   virtual void ChangeContainedMaterial(material*);
-  virtual void Teleport();
+  virtual void Teleport(vector2d);
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
@@ -478,6 +478,8 @@ class character : public entity, public id
 
   virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual void TeleportRandomly();
+  virtual bool TeleportNear(character*);
  protected:
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }

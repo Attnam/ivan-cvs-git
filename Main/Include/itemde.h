@@ -251,7 +251,7 @@ class ITEM
  public:
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string NameSingular() const { return "plate mail"; }
+  virtual std::string NameSingular() const;
   virtual void GenerateMaterials();
 );
 
@@ -1285,6 +1285,29 @@ class ITEM
   virtual std::string NamePlural() const { return "amulets of life saving"; }
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GOLD)); }
 );
-   
+
+class ITEM
+(
+ whistle,
+ item,
+ public:
+  virtual bool Apply(character*);
+  virtual bool IsAppliable(character*) const { return true; }
+  virtual void BlowEffect(character*);
+ protected:
+  virtual std::string NameSingular() const { return "whistle"; }
+  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(TIN)); }
+);
+
+class ITEM
+(
+ magicalwhistle,
+ whistle,
+ public:
+  virtual void BlowEffect(character*);
+ protected:
+  virtual std::string NameSingular() const { return "super whistle"; }
+  virtual std::string Adjective() const { return "magical"; }
+);
 #endif
 

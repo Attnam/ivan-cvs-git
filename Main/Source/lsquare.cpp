@@ -1146,13 +1146,13 @@ void lsquare::TeleportEverything(character* Teleporter)
   if(GetCharacter())
     {
       Teleporter->Hostility(GetCharacter());
-      GetCharacter()->Teleport();
+      GetCharacter()->TeleportRandomly();
     }
 
   if(Room)
     GetLevelUnder()->GetRoom(Room)->TeleportSquare(Teleporter, this);
 
-  GetStack()->Teleport();
+  GetStack()->TeleportRandomly();
 
   Teleporter->EditPerceptionExperience(50);
   Teleporter->EditNP(-50);

@@ -5,7 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <deque>
 #include <string>
 #include <vector>
 

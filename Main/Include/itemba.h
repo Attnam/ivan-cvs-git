@@ -126,7 +126,7 @@ class item : public object
   virtual ushort GetSize() const { return Size; }
   virtual ulong GetID() const { return ID; }
   virtual void SetID(ulong What) { ID = What; }
-  virtual void Teleport();
+  virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }

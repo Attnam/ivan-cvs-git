@@ -201,11 +201,11 @@ void item::Load(inputfile& SaveFile)
   SaveFile >> Cannibalised >> Size >> ID;
 }
 
-void item::Teleport()
+void item::TeleportRandomly()
 {
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
 
-  MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
+  MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(0, true, false))->GetStack());
 }
 
 void item::DrawToTileBuffer(vector2d Pos, bool Animate) const

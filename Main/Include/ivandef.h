@@ -266,6 +266,7 @@
 #define RUBY 0x1000 + 26
 #define BRONZE 0x1000 + 27
 #define COPPER 0x1000 + 28
+#define TIN 0x1000 + 29
 
 #define BANANAFLESH 0x2000 + 1
 #define SCHOOLFOOD 0x2000 + 2
