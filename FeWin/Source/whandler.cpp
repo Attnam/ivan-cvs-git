@@ -123,17 +123,19 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			unsigned short ToBeReturned;	
 			unsigned char KeyboardBuffer[256];
 
-			if(Key == VK_LEFT) return 0x14B;
-			if(Key == VK_HOME) return 0x147;
-			if(Key == VK_UP) return 0x148;
-			if(Key == VK_PRIOR) return 0x149;	// page up! Belive it, or not!
-			if(Key == VK_RIGHT) return 0x14D;
-			if(Key == VK_NEXT) return 0x151;	// page down! Believe it, or not!
-			if(Key == VK_DOWN) return 0x150;
-			if(Key == VK_END) return 0x14F;
+			if(Key == VK_LEFT || Key == VK_NUMPAD4) return 0x14B;
+			if(Key == VK_HOME || Key == VK_NUMPAD7) return 0x147;
+			if(Key == VK_UP || Key == VK_NUMPAD8) return 0x148;
+			if(Key == VK_PRIOR || Key == VK_NUMPAD9) return 0x149;	// page up! Believe it, or not!
+			if(Key == VK_RIGHT || Key == VK_NUMPAD6) return 0x14D;
+			if(Key == VK_NEXT || Key == VK_NUMPAD3) return 0x151;	// page down! Believe it, or not!
+			if(Key == VK_DOWN || Key == VK_NUMPAD2) return 0x150;
+			if(Key == VK_END || Key == VK_NUMPAD1) return 0x14F;
+			if(Key == VK_NUMPAD5) return '.';
 
 			if(!GetKeyboardState(KeyboardBuffer))
 				return 'x';
+
 			ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
 
 			if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)

@@ -87,7 +87,15 @@ SOURCE=.\FeMath\Source\rand.cpp
 # PROP Default_Filter "h,hh,hpp"
 # Begin Source File
 
+SOURCE=.\FeMath\Include\femath.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeMath\Include\rand.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeMath\Include\vector2d.h
 # End Source File
 # End Group
 # End Target

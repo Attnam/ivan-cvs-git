@@ -10,6 +10,3 @@ typedef		unsigned	short		ushort;
 typedef		unsigned	long		ulong;
 
 #endif
-
-
-

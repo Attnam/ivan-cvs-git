@@ -53,5 +53,4 @@ inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 	return SaveFile;
 }
 
-
 #endif

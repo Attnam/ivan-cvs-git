@@ -34,4 +34,3 @@ inline std::string operator+ (const char* CString, std::string CppString)
 }
 
 #endif
-
