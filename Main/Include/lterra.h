@@ -101,6 +101,7 @@ class lterrain : public object
   virtual void GenerateMaterials();
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   virtual const fearray<long>& GetMainMaterialConfig() const = 0;
+  virtual void SurviveEffect(character*) { }
  protected:
   void Initialize(int, int);
   virtual void VirtualConstructor(bool) { }

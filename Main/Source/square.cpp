@@ -121,3 +121,11 @@ bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), IgnoreDarkness);
 }
+
+void square::SurviveEffect(character* Who)
+{
+  if(GetOTerrain())
+    GetOTerrain()->SurviveEffect(Who);
+
+  GetGTerrain()->SurviveEffect(Who);
+}

@@ -829,9 +829,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
 
 void character::GetAICommand()
 {
-  if(DataBase->NameSingular == "mistress")
-    int esko = 2;
-
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -2812,8 +2809,8 @@ void character::TestWalkability()
 		  ADD_MESSAGE("%s.", SquareUnder->SurviveMessage(this));
 		else if(CanBeSeenByPlayer())
 		  ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), SquareUnder->MonsterSurviveMessage(this));
-
 		Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
+		SquareUnder->SurviveEffect(this);
 		Alive = true;
 		break;
 	      }
@@ -7312,7 +7309,7 @@ void character::PrintBeginLevitationMessage() const
 {
   if(!(GetMoveType() & FLY))
     if(IsPlayer())
-      ADD_MESSAGE("Your rise into the air like a small hot-air balloon.");
+      ADD_MESSAGE("You rise into the air like a small hot-air balloon.");
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s begins to float.", CHAR_NAME(DEFINITE));
 }
@@ -8446,7 +8443,15 @@ int character::GetAttributeAverage() const
 const festring& character::GetStandVerb() const
 {
   static festring Hovering = "hovering";
-  return StateIsActivated(LEVITATION) ? Hovering : DataBase->StandVerb;
+  static festring Swimming = "swimming";
+
+  if(StateIsActivated(LEVITATION))
+    return Hovering;
+
+  if(GetSquareUnder()->GetSquareWalkability() & SWIM)
+    return Swimming;
+
+  return DataBase->StandVerb;
 }
 
 bool character::CheckApply() const
@@ -8652,8 +8657,8 @@ int character::GetCursorData() const
       else if(++Bad == 2)
 	return DARK_CURSOR|FLASH;
     }
-
-  return Bad ? NORMAL_CURSOR|FLASH : NORMAL_CURSOR;
+  int Color = game::PlayerIsRunning() ? BLUE_CURSOR : NORMAL_CURSOR;
+  return Bad ? Color|FLASH : Color;
 }
 
 void character::TryToName()

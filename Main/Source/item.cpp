@@ -166,8 +166,7 @@ void item::Fly(character* Thrower, int Direction, int Force)
 
   if(Breaks)
     ReceiveDamage(Thrower, int(sqrt(GetWeight() * RangeLeft) / 10), THROW|PHYSICAL_DAMAGE, Direction);
-
-  if(GetLSquareUnder()->GetRoom())
+  else if(GetLSquareUnder()->GetRoom())
     GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
 }
 

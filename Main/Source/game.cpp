@@ -149,6 +149,7 @@ int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
+olterrain* game::MonsterPortal;
 
 void game::AddCharacterID(character* Char, ulong ID) {
 if(CharacterIDMap.find(ID) != CharacterIDMap.end())

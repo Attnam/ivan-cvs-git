@@ -172,6 +172,7 @@ class ITEM
   virtual void StepOnEffect(character*);
   virtual bool IsBananaPeel() const { return true; }
   virtual bool IsDangerousForAI(const character*) const;
+  virtual bool RaiseTheDead(character*);
 );
 
 class ITEM

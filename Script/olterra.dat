@@ -590,3 +590,12 @@ earth
 	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
 	IsWall = true;
 }
+
+monsterportal
+{
+	DigMessage = "The portal is magically protected from your feeble attack.";
+	MainMaterialConfig == SILVER;
+	MaterialColorB = rgb16(0, 0, 90);
+	NameSingular = "magical portal";
+	AttachedGod = MORTIFER;
+}

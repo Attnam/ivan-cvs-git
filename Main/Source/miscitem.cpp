@@ -88,6 +88,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 	  else if(Monster->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHAR_NAME(INDEFINITE));
 
+	  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 	  RemoveFromSlot();
 	  SendToHell();
 	  return;
@@ -2893,4 +2894,12 @@ int itemcontainer::GetTeleportPriority() const
 void itemcontainer::SetParameters(int Param)
 {
   SetIsLocked(Param & LOCKED);
+}
+
+bool bananapeels::RaiseTheDead(character*)
+{
+  GetSlot()->AddFriendItem(new banana);
+  RemoveFromSlot();
+  SendToHell();
+  return true;  
 }

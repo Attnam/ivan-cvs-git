@@ -780,10 +780,11 @@ struct databasebase { int Config; };
 
 #define NO_PARAMETERS 0xFF
 
-#define CURSOR_TYPES 2
+#define CURSOR_TYPES 3
 
 #define NORMAL_CURSOR 0
 #define DARK_CURSOR 1
+#define BLUE_CURSOR 2
 #define FLASH 0x4000
 #define TARGET 0x8000
 

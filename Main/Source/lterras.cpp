@@ -17,6 +17,7 @@ vector2d door::GetBitmapPos(int Frame) const { return Opened ? GetOpenBitmapPos(
 int door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 
 vector2d portal::GetBitmapPos(int Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
+vector2d monsterportal::GetBitmapPos(int Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
 void fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
 void fountain::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
@@ -1226,4 +1227,16 @@ void door::BeDestroyed()
 bool fountain::IsFountainWithWater() const
 {
   return !!GetSecondaryMaterial();
+}
+
+void liquidterrain::SurviveEffect(character* Survivor)
+{
+  Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->Clone(1000 + RAND_N(500))), false, false);  
+}
+
+
+void monsterportal::VirtualConstructor(bool Load)
+{
+  olterrain::VirtualConstructor(Load);
+  game::SetMonsterPortal(this);
 }

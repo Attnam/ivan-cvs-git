@@ -49,6 +49,7 @@ class bitmap;
 class festring;
 class rain;
 class liquid;
+class olterrain;
 struct explosion;
 
 typedef std::map<festring, long> valuemap;
@@ -379,6 +380,8 @@ class game
   static void PetHandler(vector2d);
   static bool SelectPet(int);
   static double GetGameSituationDanger();
+  static olterrain* GetMonsterPortal() { return MonsterPortal; }
+  static void SetMonsterPortal(olterrain* What) { MonsterPortal = What; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
@@ -472,6 +475,7 @@ class game
   static int LastAttributeChangeTick[ATTRIBUTES];
   static int NecroCounter;
   static int CursorData;
+  static olterrain* MonsterPortal;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

@@ -64,6 +64,7 @@ class square
   void AddFlags(ulong What) { Flags |= What; }
   void RemoveFlags(ulong What) { Flags &= ~What; }
   virtual bool HasBeenSeen() const { return !!LastSeen; }
+  virtual void SurviveEffect(character*);
  protected:
   festring MemorizedDescription;
   area* AreaUnder;

@@ -2687,7 +2687,7 @@ void smith::BeTalkedTo()
 
   if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith))
     {
-      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::IsFixableBySmith);
+      item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableBySmith);
 
       if(!Item)
 	return;
@@ -3114,9 +3114,13 @@ const festring& humanoid::GetStandVerb() const
 {
   static festring HasntFeet = CONST_S("crawling");
   static festring Hovering = CONST_S("hovering");
+  static festring Swimming = CONST_S("swimming");
 
   if(StateIsActivated(LEVITATION))
     return Hovering;
+
+  if(GetSquareUnder()->GetSquareWalkability() & SWIM)
+    return Swimming;
 
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
@@ -4659,7 +4663,7 @@ void tailor::BeTalkedTo()
 
   if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor))
     {
-      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::IsFixableByTailor);
+      item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableByTailor);
 
       if(!Item)
 	return;
@@ -4728,4 +4732,54 @@ void humanoid::ModifySituationDanger(double& Danger) const
     case 0: Danger *= 10;
     case 1: Danger *= 2;
     }
+}
+
+void oree::GetAICommand()
+{
+  if(!RAND_N(50))
+    {
+      CallForMonsters();
+    }
+
+  humanoid::GetAICommand();
+}
+
+void oree::CallForMonsters()
+{
+  character* ToBeCalled;
+  switch(RAND_N(5))
+    {
+    case 0:
+      ToBeCalled = new darkknight(ELITE);
+      break;
+    case 1:
+      ToBeCalled = new frog(RAND_2 ? GREATER_DARK : GIANT_DARK);
+      break;
+    case 2: 
+      ToBeCalled = new frog(DARK);
+      break;
+    case 3:
+      ToBeCalled = new darkmage(RAND_2 ? APPRENTICE : BATTLE_MAGE);
+      break;
+    case 4:
+      ToBeCalled = new darkmage(RAND_2 ? APPRENTICE : ELDER);      
+      break;
+    case 5:
+      ToBeCalled = new necromancer(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+      break;
+    }
+  vector2d TryToCreate;
+  for(int c = 0; c < 100; ++c)
+    {
+      TryToCreate = game::GetMonsterPortal()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+      if(GetArea()->IsValidPos(TryToCreate) && ToBeCalled->CanMoveOn(GetNearLSquare(TryToCreate)) && ToBeCalled->IsFreeForMe(GetNearLSquare(TryToCreate)))
+	{
+	  ToBeCalled->SetTeam(game::GetTeam(MONSTER_TEAM));
+	  ToBeCalled->PutTo(TryToCreate);
+	  return;
+	}
+    }
+  delete ToBeCalled;
+  return;
 }

@@ -205,6 +205,7 @@ class GLTERRAIN
   virtual bool IsFatalToStay() const { return true; }
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }
+  virtual void SurviveEffect(character*);
  protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(int) const;
@@ -243,6 +244,16 @@ class OLTERRAIN
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(int) const;
   int PictureIndex;
+);
+
+class OLTERRAIN
+(
+  monsterportal,
+  decoration,
+ protected:
+  void VirtualConstructor(bool);
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual vector2d GetBitmapPos(int) const;
 );
 
 #endif

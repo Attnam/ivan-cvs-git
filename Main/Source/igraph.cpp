@@ -34,7 +34,8 @@ bitmap* igraph::Menu;
 bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
 rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(16, 16), new rawbitmap(16, 16) };
 bitmap* igraph::Cursor[CURSOR_TYPES];
-color16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(255, 0, 0), MakeRGB16(40, 40, 40) };
+color16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(255, 0, 0), MakeRGB16(40, 40, 40),
+					      MakeRGB16(0, 0, 255) };
 bitmap* igraph::BackGround;
 int igraph::CurrentColorType = -1;
 

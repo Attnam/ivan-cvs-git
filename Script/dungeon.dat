@@ -1143,6 +1143,11 @@ Dungeon ELPURI_CAVE;
 				OTerrain = portal(OREE_LAIR_EXIT) { AttachedArea = 0; AttachedEntry = RANDOM; }
 			}
 
+			Square, Pos 7,4;
+			{
+				OTerrain = monsterportal;
+			}
+
 			CharacterMap
 			{
 				Pos = 1,1;

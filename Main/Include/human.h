@@ -277,12 +277,14 @@ class CHARACTER
   humanoid,
  public:
   virtual void Bite(character*, vector2d, int, bool = false);
+  virtual void GetAICommand();
  protected:
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
   virtual const char* ThirdPersonCriticalBiteVerb() const;
   virtual const char* BiteNoun() const;
+  void CallForMonsters();
 );
 
 class CHARACTER
