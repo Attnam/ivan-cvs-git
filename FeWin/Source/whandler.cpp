@@ -94,7 +94,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 
 	if(EmptyBuffer)
 	{
-		/*while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+		while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
 			if(msg.message == WM_QUIT)
 				exit(0);
 			else
@@ -103,7 +103,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 
 				if(msg.message != WM_SYSKEYUP)
 					DispatchMessage(&msg);
-			}*/
+			}
 
 		while(KeyBuffer.Length())
 			KeyBuffer.Remove(0);
