@@ -325,7 +325,7 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   const materialscript* MainMaterial = GetMainMaterial();
   const materialscript* SecondaryMaterial = GetSecondaryMaterial();
   const materialscript* ContainedMaterial = GetContainedMaterial();
-  const const typename type::database* DataBase = &ProtoConfig.begin()->second;
+  const typename type::database* DataBase = &ProtoConfig.begin()->second;
   bool UseOverriddenMaterials = false;
 
   if(!Config && DataBase->IsAbstract)

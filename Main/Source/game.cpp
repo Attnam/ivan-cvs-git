@@ -2449,7 +2449,8 @@ bool game::TryToEnterSumoArena()
     }
 
   GetCurrentDungeon()->SaveLevel(SaveName(), 0);
-  EnterArea(charactervector(), 1, STAIRS_UP);
+  charactervector test;
+  EnterArea(test, 1, STAIRS_UP);
   MirrorSumo->PutTo(SUMO_ARENA_POS + vector2d(6, 7));
   MirrorSumo->ChangeTeam(GetTeam(SUMO_TEAM));
   GetCurrentLevel()->GetLSquare(SUMO_ARENA_POS)->GetRoom()->SetMasterID(MirrorSumo->GetID());
@@ -2481,7 +2482,8 @@ bool game::TryToExitSumoArena()
       PLAYER->Remove();
       GetCurrentLevel()->CollectEverything(IVector, CVector);
       GetCurrentDungeon()->SaveLevel(SaveName(), 1);
-      EnterArea(std::vector<character*>(), 0, STAIRS_DOWN);
+      std::vector<character*> test;
+      EnterArea(test, 0, STAIRS_DOWN);
       PLAYER->GetStackUnder()->AddItems(IVector);
 
       if(!IVector.empty())
@@ -2530,7 +2532,8 @@ bool game::EndSumoWrestling(uchar Result)
   charactervector CVector;
   GetCurrentLevel()->CollectEverything(IVector, CVector);
   GetCurrentDungeon()->SaveLevel(SaveName(), 1);
-  EnterArea(std::vector<character*>(), 0, STAIRS_DOWN);
+  charactervector test;
+  EnterArea(test, 0, STAIRS_DOWN);
   SumoWrestling = false;
   PLAYER->GetStackUnder()->AddItems(IVector);
   vector2d PlayerPos = PLAYER->GetPos();

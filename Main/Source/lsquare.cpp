@@ -122,7 +122,7 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
     }
 
   if(HasFluids)
-    for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
+    for(fluidlist::const_iterator f = Fluid.begin(); f != Fluid.end(); ++f)
       (*f)->Draw(Bitmap, Pos, Luminance, RealDraw);
 
   if(OLTerrain && IsFlyable())

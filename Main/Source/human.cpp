@@ -3877,7 +3877,7 @@ void necromancer::GetAICommand()
 bool necromancer::TryToRaiseZombie()
 {
   for(ushort c = 0; c < game::GetTeams(); ++c)
-    for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+    for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
       if(!(*i)->IsEnabled() && (*i)->GetMotherEntity() && (*i)->GetMotherEntity()->Exists() && (GetConfig() == MASTER_NECROMANCER || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
 	{
 	  character* Zombie = (*i)->GetMotherEntity()->TryNecromancy(this);
@@ -4121,8 +4121,8 @@ void imperialist::BeTalkedTo()
 character* humanoid::CreateZombie() const
 {
   zombie* Zombie = new zombie;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  ushort c;
+  for(c = 0; c < GetBodyParts(); ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
