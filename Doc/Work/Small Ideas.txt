@@ -110,7 +110,7 @@ Elemental damage. (from JM)
 *Zombies should lose weight when they drop lumps of flesh.
 Consummo should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
-Fix wear-time AV inconsistency.
+Fix wear-time AV inconsistency. (very difficult)
 *Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
 Elpuri's lair could be even more frightening.
@@ -121,7 +121,7 @@ Valpurus's altar rooms should be frog-shaped.
 When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into a donkey.")
 Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
 Intelligent polymorphed monsters should have unique replies?
-*Fluid disappears too fast.
+//*Fluid disappears too fast.
 *Mommos should not leave corpses but just slime.
 ***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
 *Dipping an empty bottle in a fountain should fill it with water.
@@ -145,7 +145,7 @@ One should be able to buy better bodyparts somewhere in the game.
 One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
 Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
 Gems should increase score.
-Non-fatal battles.
+Non-fatal battles like robberies.
 Angels should carry holy books of their respective OwnerGods.
 Angels as enemies.
 Amputation.
@@ -162,7 +162,7 @@ Lists, especially message history, should look better.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
 Allergies.
 Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
-Copper, bronze, wooden weapons.
+*Copper, bronze, wooden weapons.
 Nuts could be bodyparts. Or perhaps not.
 Tame symbol.
 Potion effect from fountain.
@@ -173,7 +173,7 @@ High level priests should be able to summon angels.
 Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
 Healing potions. (from JM)
 Pet priest. (from JM)
-Weakening enner beast. (from JM)
+Weakening the enner beast. (from JM)
 Shine effect for jewel and valpurium items with outline. (from JM)
 Sword of Fire/Frost/Ligthning. (from JM)
 Frozen state to monsters. (from JM)
@@ -192,14 +192,14 @@ Scroll of create holy/fallen angel. (from JM)
 Scroll of light. (from JM)
 Scroll of life, permanent hp plus. (from JM)
 Book of fire/frost magic which would have random spells. (from JM)
-Additional head to flails. (from JM)
+Additional heads for flails. (from JM)
 Fireproof container for scrolls and wands. (from JM)
 Desperado attacks like in FFs. (from JM)
 Secret doors that can be opened by whistling. (from JM)
 Heads on walls that can be talked to. (from JM)
 Scribe scroll skill. (from JM)
 Deathblow that penetrates armor. (from JM)
-Keys to doors. (from JM)
+*Keys to doors. (from JM)
 Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
@@ -210,3 +210,4 @@ Wand of locking.
 Scroll of gold detection that would identify every unit made of gold.
 Bananas should act as boomerangs when thrown.
 *Satiated and bloated states.
+Zombies should spoil.
