@@ -2022,10 +2022,10 @@ int itemcontainer::GetOfferValue(int Receiver) const
   return item::GetOfferValue(Receiver) + Sum;
 }
 
-bool itemcontainer::IsDestroyable() const
+bool itemcontainer::IsDestroyable(const character* Char) const
 {
   for(int c = 0; c < GetContained()->GetItems(); ++c)
-    if(!GetContained()->GetItem(c)->IsDestroyable())
+    if(!GetContained()->GetItem(c)->IsDestroyable(Char))
       return false;
 
   return true;
@@ -2799,4 +2799,64 @@ ulong wand::GetSpecialParameters() const
     }
 
   return 0;
+}
+
+bool scrollofgolemcreation::Read(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsDestroyable) && !Reader->EquipsSomething(&item::IsDestroyable))
+    {
+      ADD_MESSAGE("You have nothing you can use for golem creation.");
+      return false;
+    }
+  else
+    {
+      Reader->StartReading(this, GetReadDifficulty());
+      return true;
+    }
+}
+
+void scrollofgolemcreation::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsDestroyable) && !Reader->EquipsSomething(&item::IsDestroyable))
+    ADD_MESSAGE("You have lost whatever you wished to change into a golem.");
+  else
+    for(;;)
+      {
+	itemvector Item;
+	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to use for golem creation?"), NO_MULTI_SELECT, &item::IsDestroyable);
+
+	if(!Item.empty())
+	  {
+	    int MaterialConfig = Item[0]->GetMainMaterial()->GetConfig();
+	    golem* Golem = new golem(MaterialConfig);
+	    vector2d Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
+	    Item[0]->RemoveFromSlot();
+	    Item[0]->SendToHell();
+
+	    if(Where == ERROR_VECTOR)
+	      {
+		ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-colored magical vortex, but nothing happens.", Item[0]->CHAR_NAME(DEFINITE));
+		delete Golem;
+	      }
+	    else
+	      {
+		ADD_MESSAGE("You cast the spell and %s is sucked into a rainbow-colored magical vortex.", Item[0]->CHAR_NAME(DEFINITE));
+		Golem->SetTeam(Reader->GetTeam());
+		Golem->PutTo(Where);
+
+		if(Golem->CanBeSeenByPlayer())
+		  ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(DEFINITE));
+
+		Golem->GetLSquareUnder()->DrawParticles(RED);
+	      }
+
+	    break;
+	  }
+	else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
+	  return;
+      }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
 }

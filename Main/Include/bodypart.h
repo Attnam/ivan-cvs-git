@@ -477,7 +477,7 @@ class ITEM
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsDestroyable() const;
+  virtual bool IsDestroyable(const character*) const;
   virtual long GetTruePrice() const;
   virtual int GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);

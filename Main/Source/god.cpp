@@ -221,7 +221,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 
   if(OfferValue)
     {
-      if(!Sacrifice->IsDestroyable())
+      if(!Sacrifice->IsDestroyable(PLAYER))
 	{
 	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
 	  return false;

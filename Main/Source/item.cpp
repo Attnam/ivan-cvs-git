@@ -597,7 +597,7 @@ bool item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 	}
     }
 
-  if(Type & ACID && IsBroken() && IsDestroyable())
+  if(Type & ACID && IsBroken() && IsDestroyable(Damager))
     {
       int StrengthValue = GetStrengthValue();
 

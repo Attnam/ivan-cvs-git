@@ -3160,7 +3160,7 @@ scrollofhardenmaterial /* scroll-> */
 
 scrollofgolemcreation /* scroll-> */
 {
-	Possibility = 125;
+	Possibility = 75;
 	Price = 250;
 	PostFix = "of golem creation";
 	AttachedGod = SOPHOS;

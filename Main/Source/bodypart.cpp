@@ -663,13 +663,13 @@ leg::~leg()
   delete GetBoot();
 }
 
-bool corpse::IsDestroyable() const
+bool corpse::IsDestroyable(const character* Char) const
 {
   for(int c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     {
       bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
 
-      if(BodyPart && !BodyPart->IsDestroyable())
+      if(BodyPart && !BodyPart->IsDestroyable(Char))
 	return false;
     }
 

@@ -500,7 +500,7 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
   virtual bool AllowContentEmitation() const { return false; }
-  virtual bool IsDestroyable() const;
+  virtual bool IsDestroyable(const character*) const;
   virtual int GetOfferValue(int) const;
   virtual void SortAllItems(itemvector&, const character*, sorter) const;
   virtual void PreProcessForBone();
@@ -669,6 +669,15 @@ class ITEM
   scrollofhardenmaterial,
   scroll,
  public:
+  virtual void FinishReading(character*);
+);
+
+class ITEM
+(
+  scrollofgolemcreation,
+  scroll,
+ public:
+  virtual bool Read(character*);
   virtual void FinishReading(character*);
 );
 

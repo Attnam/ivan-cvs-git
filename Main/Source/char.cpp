@@ -1487,7 +1487,7 @@ bool character::ReadItem(item* ToBeRead)
 	{
 	  if(StateIsActivated(CONFUSED) && !(RAND() & 7))
 	    {
-	      if(!ToBeRead->IsDestroyable())
+	      if(!ToBeRead->IsDestroyable(this))
 		ADD_MESSAGE("You read some words of %s and understand exactly nothing.", ToBeRead->CHAR_NAME(DEFINITE));
 	      else
 		{

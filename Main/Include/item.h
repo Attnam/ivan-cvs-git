@@ -241,7 +241,7 @@ class item : public object
   virtual bool CanOpenLockType(int) const { return false; }
   virtual bool IsWhip() const { return false; }
   DATA_BASE_VALUE(int, Config);
-  virtual DATA_BASE_BOOL(IsDestroyable);
+  virtual DATA_BASE_BOOL_WITH_PARAMETER(IsDestroyable, const character*);
   DATA_BASE_BOOL(IsMaterialChangeable);
   DATA_BASE_VALUE(int, WeaponCategory);
   DATA_BASE_BOOL(IsAutoInitializable);

@@ -20,6 +20,7 @@ struct databasebase { int Config; };
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
 #define DATA_BASE_BOOL(data) bool data() const { return DataBase->data; }
+#define DATA_BASE_BOOL_WITH_PARAMETER(data, param) bool data(param) const { return DataBase->data; }
 
 #define HAS_HIT 0
 #define HAS_BLOCKED 1

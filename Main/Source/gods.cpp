@@ -299,7 +299,7 @@ void atavus::PrayBadEffect()
       int ToBeDeleted = RAND() % PLAYER->GetStack()->GetItems();
       item* Disappearing = PLAYER->GetStack()->GetItem(ToBeDeleted);
 
-      if(Disappearing->IsDestroyable())
+      if(Disappearing->IsDestroyable(0))
 	{
 	  ADD_MESSAGE("Your %s disappears.", Disappearing->CHAR_NAME(UNARTICLED));
 	  Disappearing->RemoveFromSlot();
@@ -1074,11 +1074,11 @@ void cruentus::PrayBadEffect()
 
   if(ToBe)
     {
-      if(!ToBe->IsDestroyable())
+      if(!ToBe->IsDestroyable(0))
 	{
 	  ToBe = PLAYER->GetSecondaryWielded();
 
-	  if(!ToBe || !ToBe->IsDestroyable())
+	  if(!ToBe || !ToBe->IsDestroyable(0))
 	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GetName(), PLAYER->GetMainWielded()->CHAR_NAME(UNARTICLED));
 	}
     }
@@ -1086,11 +1086,11 @@ void cruentus::PrayBadEffect()
     {
       ToBe = PLAYER->GetSecondaryWielded();
 
-      if(ToBe && !ToBe->IsDestroyable())
+      if(ToBe && !ToBe->IsDestroyable(0))
 	ADD_MESSAGE("%s tries to destroy your %s, but fails.", GetName(), ToBe->CHAR_NAME(UNARTICLED));
     }
 
-  if(ToBe && ToBe->IsDestroyable())
+  if(ToBe && ToBe->IsDestroyable(0))
     {
       ADD_MESSAGE("%s destroys your weapon.", GetName());
       ToBe->RemoveFromSlot();
