@@ -4,7 +4,7 @@
 #include "feio.h"
 #include "festring.h"
 
-#define HIGH_SCORE_VERSION 110 // Increment this if changes make highscores incompatible
+#define HIGH_SCORE_VERSION 111 // Increment this if changes make highscores incompatible
 
 highscore::highscore(const festring& File) : LastAdd(0xFF)
 {

@@ -1969,7 +1969,7 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 	    }
 	}
 
-      if(!NoRoom)
+      if(NoRoom)
 	{
 	  if(HasHead())
 	    {
