@@ -18,12 +18,12 @@ Hex's buggy messages.
 Backround problem with config screen.
 Wishing for corpse or any bodypart crashes.
 Can one eat a can MADE of bananaflesh?
-Dos-kehote.
+//Dos-prompt bug.
 Walls & moving light.
 The volume bug.
 Boot of speed in hand.
 Can a player controlled carnivorous planet move?
-If an Attnamian severs a bodypart which hits the player, the city should become mad!
+If an Attnamian severs a bodypart which hits the player, the city shouldn't become mad!
 Multiple message boxes.
 It is possible to protect items from explosions by putting them in hand digging, or eating them (very low priority).
 Chests.
