@@ -173,6 +173,7 @@ Dungeon ELPURI_CAVE;
 			IsInside = true;
 			GenerateWindows = false;
 			UseFillSquareWalls = false;
+			Flags = 0;
 		}
 	}
 
@@ -193,10 +194,22 @@ Dungeon ELPURI_CAVE;
 	{
 		Size = 80, 60;
 
+		RoomDefault
+		{
+			Pos = 2:XSize-5,2:YSize-5;
+			Size = 10:20,10:20;
+		}
+
 		Room
 		{
 			AltarPossible = false;
 			Size = 30,30;
+			Flags = NO_MONSTER_GENERATION;
+
+			Square, Random;
+			{
+				OTerrain = STEEL sign { Text = "Experimental dwarven mine field. Thank you for participating in testing!"; }
+			}
 
 			Square, Random;
 			{
@@ -212,33 +225,21 @@ Dungeon ELPURI_CAVE;
 
 			Square, Random;
 			{
-				Items == beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
-				Times = 100;
-			}
-
-			Square, Random;
-			{
 				Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
-				Times = 100;
+				Times = 40;
 			}
 
 			Square, Random;
 			{
-				Character = spider(LARGE);
+				Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
 				Times = 20;
 			}
 
 			Square, Random;
 			{
 				Items == backpack { Chance = 25; }
-				Times = 10;
+				Times = 4;
 			}
-		}
-
-		RoomDefault
-		{
-			Pos = 2:XSize-5,2:YSize-5;
-			Size = 10:20,10:20;
 		}
 	}
 
@@ -485,7 +486,6 @@ Dungeon ELPURI_CAVE;
 	{
 		Room /* vault */
 		{
-		
 			GenerateLanterns = false;
 			GenerateFountains = false;
 			GenerateDoor = false;
@@ -493,6 +493,7 @@ Dungeon ELPURI_CAVE;
 			AltarPossible = false;
 			Size = 7,7;
 			UseFillSquareWalls = true;
+			Flags = NO_MONSTER_GENERATION;
 
 			OTerrainMap
 			{
@@ -660,6 +661,7 @@ Dungeon ELPURI_CAVE;
 			AltarPossible = false;
 			Size = 7,7;
 			UseFillSquareWalls = true;
+			Flags = NO_MONSTER_GENERATION;
 
 			OTerrainMap
 			{
@@ -1084,6 +1086,7 @@ Dungeon ELPURI_CAVE;
 			AltarPossible = false;
 			Size = 7,7;
 			UseFillSquareWalls = true;
+			Flags = NO_MONSTER_GENERATION;
 
 			OTerrainMap
 			{
@@ -1274,6 +1277,7 @@ Dungeon ATTNAM;
 			IsInside = true;
 			GenerateWindows = true;
 			UseFillSquareWalls = false;
+			Flags = 0;
 		}
 
 		Square, Pos 0, 0;
@@ -1305,7 +1309,6 @@ Dungeon ATTNAM;
 		Square, Random NOT_IN_ROOM;
 		{
 			Character = bear(POLAR_BEAR);
-			Times = 5;
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -2050,6 +2053,7 @@ Dungeon NEW_ATTNAM;
 			IsInside = true;
 			GenerateWindows = true;
 			UseFillSquareWalls = false;
+			Flags = 0;
 		}
 
 		Room
@@ -2511,6 +2515,7 @@ Dungeon NEW_ATTNAM;
 			GenerateWindows = false;
 			IsInside = true;
 			UseFillSquareWalls = false;
+			Flags = 0;
 
 			Square, Pos 6, 6;
 			{
@@ -2625,6 +2630,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			IsInside = true;
 			GenerateWindows = false;
 			UseFillSquareWalls = false;
+			Flags = 0;
 		}
 	}
 
@@ -2873,11 +2879,11 @@ Dungeon UNDER_WATER_TUNNEL;
 					EntryIndex = STAIRS_UP;
 			}
 
-			Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+			/*Square, Random IN_ROOM|HAS_NO_OTERRAIN;
 			{
 					OTerrain = stairs(STAIRS_DOWN);
 					EntryIndex = STAIRS_DOWN;
-			}
+			}*/
 		}
 
 		Square, Random HAS_NO_OTERRAIN;

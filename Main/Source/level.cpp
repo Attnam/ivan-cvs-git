@@ -395,6 +395,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Spawn();
   RoomClass->SetPos(Pos);
   RoomClass->SetSize(Size);
+  RoomClass->SetFlags(*RoomScript->GetFlags());
   AddRoom(RoomClass);
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
   game::BusyAnimation();
@@ -739,9 +740,15 @@ void level::GenerateNewMonsters(int HowMany, truth ConsiderPlayer)
     {
       Pos = GetRandomSquare(Char);
 
-      if(!ConsiderPlayer
-	 || abs(int(Pos.X) - PLAYER->GetPos().X) > 6
-	 || abs(int(Pos.Y) - PLAYER->GetPos().Y) > 6)
+      if(Pos == ERROR_V2)
+	break;
+
+      lsquare* Square = GetLSquare(Pos);
+
+      if((!Square->GetRoomIndex()
+	  || !Square->GetRoom()->DontGenerateMonsters())
+	 && (!ConsiderPlayer
+	     || (Pos - PLAYER->GetPos()).GetManhattanLength() > 6))
 	break;
     }
 
@@ -1001,7 +1008,7 @@ int level::TriggerExplosions(int MinIndex)
     int EmitChange = Min(50 + ExplosionQueue[c]->Strength, 255);
     GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
 
-    if(!GetSquare(ExplosionQueue[c]->Pos)->CanBeSeenByPlayer())
+    if(!GetSquare(ExplosionQueue[c]->Pos)->CanBeSeenByPlayer(true))
       ++NotSeen;
   }
 

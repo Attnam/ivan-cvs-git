@@ -82,12 +82,12 @@ truth wand::Apply(character* Terrorist)
     return false;
 
   if(Terrorist->IsPlayer())
-    ADD_MESSAGE("You bend %s with all your strength.", CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You bend %s with all your strength.", CHAR_NAME(DEFINITE));
   else if(Terrorist->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(INDEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
+    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
 
-  if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s %s.", CHAR_DESCRIPTION(DEFINITE), GetBreakMsg().CStr());
+  if(Terrorist->IsPlayer() || Terrorist->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetBreakMsg().CStr());
 
   BreakEffect(Terrorist, CONST_S("killed by ") + GetName(INDEFINITE) + " broken @bk");
   Terrorist->DexterityAction(5);
@@ -300,7 +300,7 @@ truth backpack::Apply(character* Terrorist)
       ADD_MESSAGE("You light your %s. It explodes!", CHAR_NAME(UNARTICLED));
     else if(Terrorist->CanBeSeenByPlayer())
       ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
-    else if(GetSquareUnder()->CanBeSeenByPlayer())
+    else if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("Something explodes!");
 
     RemoveFromSlot();
@@ -378,7 +378,7 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
@@ -664,7 +664,7 @@ truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
@@ -693,7 +693,7 @@ void mine::StepOnEffect(character* Stepper)
   }
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
-  else if(GetSquareUnder()->CanBeSeenByPlayer())
+  else if(GetSquareUnder()->CanBeSeenByPlayer(true))
     ADD_MESSAGE("Something explodes!");
 
   SetIsActive(false);
@@ -1517,21 +1517,6 @@ int materialcontainer::GetSparkleFlags() const
     | (SecondaryMaterial && SecondaryMaterial->IsSparkling() ? SPARKLING_B : 0);
 }
 
-/*truth scrollofenchantweapon::Read(character* Reader)
-{
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsWeapon)
-     && !Reader->EquipsSomething(&item::IsWeapon))
-  {
-    ADD_MESSAGE("You have nothing to enchant.");
-    return false;
-  }
-  else
-  {
-    Reader->StartReading(this, GetReadDifficulty());
-    return true;
-  }
-}*/
-
 void scrollofenchantweapon::FinishReading(character* Reader)
 {
   for(;;)
@@ -1560,7 +1545,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 	  continue;
       }
 
-      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
       {
 	if(Item.size() == 1)
 	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
@@ -1588,21 +1573,6 @@ void scrollofenchantweapon::FinishReading(character* Reader)
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
-
-/*truth scrollofenchantarmor::Read(character* Reader)
-{
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsArmor)
-     && !Reader->EquipsSomething(&item::IsArmor))
-  {
-    ADD_MESSAGE("You have nothing to enchant.");
-    return false;
-  }
-  else
-  {
-    Reader->StartReading(this, GetReadDifficulty());
-    return true;
-  }
-}*/
 
 void scrollofenchantarmor::FinishReading(character* Reader)
 {
@@ -1632,7 +1602,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 	  continue;
       }
 
-      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+      if(Item[0]->GetEnchantment() >= 5 && RAND_GOOD(Item[0]->GetEnchantment() - 3))
       {
 	if(Item.size() == 1)
 	  ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
@@ -1739,9 +1709,13 @@ truth mine::CheckPickUpEffect(character*)
   if(WillExplode(0))
   {
     lsquare* Square = GetLSquareUnder();
+
+    if(Square->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
+
     RemoveFromSlot();
     SendToHell();
-    Square->GetLevel()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+    Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
     return false;
   }
 
@@ -1987,7 +1961,7 @@ void banana::SignalSpoil(material* Material)
   if(Material == GetSecondaryMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The inside of %s spoils completely.", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The inside of %s spoils completely.", GetExtendedDescription().CStr());
 
     delete RemoveSecondaryMaterial();
   }
@@ -2164,7 +2138,7 @@ truth potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
@@ -2288,7 +2262,7 @@ truth holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();

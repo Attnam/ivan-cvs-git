@@ -1506,6 +1506,9 @@ truth lsquare::FireBall(const beamdata& Beam)
 { 
   if(!IsFlyable() || GetCharacter())
   {
+    if(CanBeSeenByPlayer(true))
+      ADD_MESSAGE("A magical explosion is triggered!");
+
     GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
     return true;
   }
@@ -1835,14 +1838,6 @@ void lsquare::ReceiveEarthQuakeDamage()
   if(GetOLTerrain() && GetOLTerrain()->IsDoor())
     GetOLTerrain()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
 }
-
-/*truth lsquare::IsDangerous(character* ToWhom) const
-{
-  return ((!Who->IsFlying()
-	   && (Stack->IsDangerous(Who)
-	    || HasDangerousFluids(Who)))
-	  || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who));
-}*/
 
 truth lsquare::CanBeFeltByPlayer() const
 {

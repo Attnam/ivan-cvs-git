@@ -1957,7 +1957,7 @@ communist /* Ivan */
 		"castroism", "maoism", "trotskyism", "anticapitalism", "agriculture",
 		"communism", "atheism", "hoxhaism", "class struggles", "socialist art",
 		"communitarianism", "bolshevism", "sickle smithing", "ballistics", "weaponry",
-		"distillation of vodka";
+		"vodka distillation";
 	}
 	ScienceTalkPossibility = 25;
 	ScienceTalkIntelligenceModifier = 10;
@@ -2003,32 +2003,34 @@ hunter
 	HostileReplies == "\"Your head will look fine above my fireplace!\"";
 	FriendlyReplies =
 	{
-		4,
+		5,
 		"\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"",
 		"\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"",
 		"\"I am the Great White Hunter. Get out of My way!\"",
-		"\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"";
+		"\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"",
+		"\"It is good Petrus had his predecessor assassinated. Can you believe it, the dude tried to take from us our natural right to carry a spear in the street!\"";
 	}
 	AttachedGod = LORICATUS;
 	ScienceTalkAdjectiveAttribute =
 	{
-		15,
+		16,
 		"!hunting", "!laying traps for", "!tracking", "!stuffing", "!techniques of slaying",
 		"!the locations of the vital organs of", "!the joy of defeating", "!capturing", "!ambushing", "!sharpshooting",
-		"!preemptively striking against", "!ridding the world of all", "!skinning", "!lynching", "!eliminating the threat of";
+		"!preemptively striking against", "!ridding the world of all", "!skinning", "!lynching", "!eliminating the threat of",
+		"!chasing";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
-		16,
+		17,
 		"black", "dangerous", "baby", "young", "wild",
 		"fierce", "endangered", "mad", "rare", "giant",
 		"evil", "malicious", "injured", "weak", "tasty",
-		"sick";
+		"sick", "fat";
 	}
 	ScienceTalkPrefix == "";
 	ScienceTalkName =
 	{
-		73,
+		74,
 		"slaves", "farmers", "communists", "prisoners", "witches",
 		"goblins", "orcs", "kobolds", "gibberlings", "stray cats",
 		"neighbour's pets", "reindeer", "deer", "elk", "moose",
@@ -2045,9 +2047,9 @@ hunter
 		"bats", "scientists", "dragons", "goats", "falcons",
 		"ravens", "trolls", "werewolves", "zombies", "Siberian tigers",
 		"gnus", "llamas", "nerds", "people you don't like", "squirrels",
-		"flying squirrels", "lynxes", "chickens";
+		"flying squirrels", "lynxes", "chickens", "democrats";
 	}
-	ScienceTalkPossibility = 95;
+	ScienceTalkPossibility = 85;
 	ScienceTalkIntelligenceModifier = 2;
 	ScienceTalkWisdomModifier = 1;
 	ScienceTalkIntelligenceRequirement = 6;
@@ -2609,7 +2611,7 @@ mistress
 	}
 	ScienceTalkName =
 	{
-		49,
+		50,
 		"impalement", "bondage", "slavery", "torture", "disembowelment",
 		"whipmaking", "orgies", "herecy", "brazen bulls", "necrophilia",
 		"masochism", "dentistry", "swedish", "feminism", "licking",
@@ -2620,7 +2622,7 @@ mistress
 		"piercings", "adultery", "frottage", "thumbscrews", "egoism",
 		"beer", "castration", "watersports", "scaphism", "seduction",
 		"iron maidens", "fisting", "drugs", "lingerie", "tablillas",
-		"poker", "reproduction", "sake", "idolatry";
+		"poker", "reproduction", "sake", "idolatry", "horror";
 	}
 	ScienceTalkPossibility = 95;
 	ScienceTalkIntelligenceModifier = 2;
@@ -3081,7 +3083,6 @@ kamikazedwarf
 		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
 		"\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
 	}
-	/*Inventory == wand(WAND_OF_ACID_RAIN);*/
 }
 
 mammoth

@@ -242,7 +242,6 @@ std::list<character*>::iterator character::GetTeamIterator() { return TeamIterat
 void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 void character::CreateInitialEquipment(int SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
 void character::EditAP(long What) { AP = Limit<long>(AP + What, -12000, 1200); }
-//truth character::CanUseEquipment(int I) const { return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I); }
 int character::GetRandomStepperBodyPart() const { return TORSO_INDEX; }
 void character::GainIntrinsic(long What) { BeginTemporaryState(What, PERMANENT); }
 truth character::IsUsingArms() const { return GetAttackStyle() & USE_ARMS; }
@@ -1464,7 +1463,7 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
 
   int FittingTypes = 0;
   int DamageFlags = Weapon->GetDamageFlags();
-  int DamageType;
+  int DamageType = 0;
 
   for(int c = 0; c < DAMAGE_TYPES; ++c)
     if(1 << c & DamageFlags)
@@ -6078,15 +6077,6 @@ item* character::SelectFromPossessions(const festring& Topic, sorter Sorter)
 
 truth character::SelectFromPossessions(itemvector& ReturnVector, const festring& Topic, int Flags, sorter Sorter)
 {
-  /*if(!CanUseEquipment() && !HasBodyPart(Sorter))
-  {
-    if(!GetStack()->SortedItems(this, Sorter))
-      return false;
-
-    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, Sorter);
-    return true;
-  }*/
-
   felist List(Topic);
   truth InventoryPossible = GetStack()->SortedItems(this, Sorter);
 
@@ -8929,7 +8919,7 @@ truth character::TryToTalkAboutScience()
     ADD_MESSAGE("%s explains a few of %s opinions regarding %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
     break;
    case 2:
-    ADD_MESSAGE("%s reveals a number of %s insightful views about %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
+    ADD_MESSAGE("%s reveals a number of %s insightful views of %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
     break;
    case 3:
     ADD_MESSAGE("You exhange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
@@ -8950,7 +8940,7 @@ truth character::TryToTalkAboutScience()
     ADD_MESSAGE("%s delivers a long monologue concerning eg. %s.", CHAR_DESCRIPTION(DEFINITE), Science.CStr());
     break;
    case 9:
-    ADD_MESSAGE("You dive into a brief but thought-provoking debate pertaining to %s with %s", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    ADD_MESSAGE("You dive into a brief but thought-provoking debate over %s with %s", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
     break;
   }
 
@@ -9329,3 +9319,8 @@ const character* character::FindCarrier() const
 {
   return this; //check
 }
+
+/*
+§12345678990+´
+½!"#¤%&/()=?`*/
+

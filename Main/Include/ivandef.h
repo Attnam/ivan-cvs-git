@@ -1093,4 +1093,8 @@ const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 #define BORDER_PARTNER_ANIMATED (16 << 24)
 
+/* room flags */
+
+#define NO_MONSTER_GENERATION 1
+
 #endif

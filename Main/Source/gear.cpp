@@ -260,6 +260,9 @@ truth turox::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyP
     if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
       ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
+    if(GetSquareUnder()->CanBeSeenByPlayer(true))
+      ADD_MESSAGE("A magical explosion is triggered!");
+
     Enemy->GetLevel()->Explosion(Hitter, CONST_S("burned @bkp Turox's explosion"), HitPos, 10 + RAND() % 100);
     return true;
   }
@@ -353,16 +356,16 @@ void meleeweapon::SignalSpoil(material* Material)
   {
     if(CanBeSeenByPlayer())
       if(SecondaryMaterial->GetVolume())
-	ADD_MESSAGE("The edge of %s spoils.", CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("The edge of %s spoils.", GetExtendedDescription().CStr());
       else
-	ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s spoils.", GetExtendedDescription().CStr());
 
     RemoveMainMaterial();
   }
   else
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("The handle of %s spoils", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("The handle of %s spoils", GetExtendedDescription().CStr());
 
     delete RemoveSecondaryMaterial();
   }

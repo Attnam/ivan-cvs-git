@@ -85,6 +85,8 @@ class room
   virtual truth IsOKToDestroyWalls(const character*) const;
   virtual void AddItemEffect(item*) { };
   void FinalProcessForBone();
+  void SetFlags(ulong What) { Flags = What; }
+  truth DontGenerateMonsters() const { return Flags & NO_MONSTER_GENERATION; }
  protected:
   mutable character* Master;
   mutable ulong LastMasterSearchTick;
@@ -93,6 +95,7 @@ class room
   ulong MasterID;
   int Index;
   int DivineMaster;
+  ulong Flags;
 };
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__

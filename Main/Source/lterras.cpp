@@ -679,7 +679,7 @@ void door::ActivateBoobyTrap()
   {
    case 1:
     // Explosion
-    if(CanBeSeenByPlayer())
+    if(LSquareUnder->CanBeSeenByPlayer(true))
       ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
 
     BoobyTrap = 0;

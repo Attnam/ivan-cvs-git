@@ -48,7 +48,12 @@ void area::Save(outputfile& SaveFile) const
 void area::Load(inputfile& SaveFile)
 {
   game::SetAreaInLoad(this);
-  SaveFile >> XSize >> YSize >> EntryMap;
+  SaveFile >> XSize >> YSize;
+  
+  if(SaveFile.Eof())
+    ABORT("Area file %s corrupted!", SaveFile.GetFileName().CStr());
+
+  SaveFile >> EntryMap;
   XSizeTimesYSize = XSize * YSize;
   Border = rect(0, 0, XSize - 1, YSize - 1);
   Alloc2D(Map, XSize, YSize);

@@ -26,7 +26,7 @@ void organic::Be()
   {
     if(MotherEntity->AllowSpoil())
     {
-      if((SpoilCounter += 50) < GetSpoilModifier())
+      if((SpoilCounter += 25) < GetSpoilModifier())
       {
 	if(SpoilCounter << 1 >= GetSpoilModifier())
 	{

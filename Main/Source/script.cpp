@@ -804,6 +804,7 @@ void roomscript::InitDataMap()
   INIT_ENTRY(IsInside);
   INIT_ENTRY(GenerateWindows);
   INIT_ENTRY(UseFillSquareWalls);
+  INIT_ENTRY(Flags);
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile)

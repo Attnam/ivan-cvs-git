@@ -15,7 +15,6 @@
 team::team() : Leader(0) { }
 team::team(ulong ID) : Leader(0), ID(ID), KillEvilness(0) { }
 std::list<character*>::iterator team::Add(character* Char) { return Member.insert(Member.end(), Char); }
-void team::Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
 
 void team::SetRelation(team* AnotherTeam, int Relation)
 {
@@ -159,4 +158,12 @@ void team::MoveMembersTo(charactervector& CVector)
 	(*i)->Remove();
       }
     }
+}
+
+void team::Remove(std::list<character*>::iterator Iterator)
+{
+  if(*Iterator == Leader)
+    Leader = 0;
+
+  Member.erase(Iterator);
 }

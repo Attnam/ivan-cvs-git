@@ -2222,7 +2222,7 @@ void spider::GetAICommand()
   if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
   {
     web* Web = web::Spawn();
-    Web->SetStrength(GetConfig() == LARGE ? 10 : 50);
+    Web->SetStrength(GetConfig() == LARGE ? 10 : 25);
 
     if(GetLSquareUnder()->AddTrap(Web))
     {

@@ -56,7 +56,6 @@ class inputfile
   long ReadNumber(int = 0xFF, truth = false);
   v2 ReadVector2d();
   rect ReadRect();
-  //truth Readtruth();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
   truth IsOpen() { return truth(Buffer); }

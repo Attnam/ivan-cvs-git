@@ -1554,28 +1554,29 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
   v2 Where(RES.X - SILHOUETTE_SIZE.X - 39, 53);
   const int Equipments = GetEquipments();
 
-  for(c = 0; c < Equipments; ++c)
-    if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
-    {
-      v2 Pos = Where + GetEquipmentPanelPos(c);
-
-      if(!AnimationDraw)
-	DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
-
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment && (!AnimationDraw || Equipment->IsAnimated()))
+  if(CanUseEquipment())
+    for(c = 0; c < Equipments; ++c)
+      if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
       {
-	igraph::BlitBackGround(Pos, TILE_V2);
-	B1.Dest = Pos;
+	v2 Pos = Where + GetEquipmentPanelPos(c);
 
-	if(Equipment->AllowAlphaEverywhere())
-	  B1.CustomData |= ALLOW_ALPHA;
+	if(!AnimationDraw)
+	  DOUBLE_BUFFER->DrawRectangle(Pos + v2(-1, -1), Pos + TILE_V2, DARK_GRAY);
 
-	Equipment->Draw(B1);
-	B1.CustomData &= ~ALLOW_ALPHA;
+	item* Equipment = GetEquipment(c);
+
+	if(Equipment && (!AnimationDraw || Equipment->IsAnimated()))
+	{
+	  igraph::BlitBackGround(Pos, TILE_V2);
+	  B1.Dest = Pos;
+
+	  if(Equipment->AllowAlphaEverywhere())
+	    B1.CustomData |= ALLOW_ALPHA;
+
+	  Equipment->Draw(B1);
+	  B1.CustomData &= ~ALLOW_ALPHA;
+	}
       }
-    }
 
   if(!AnimationDraw)
   {

@@ -393,6 +393,7 @@ class roomscript : public scriptwithbase
   SCRIPT_TRUTH_WITH_BASE(IsInside);
   SCRIPT_TRUTH_WITH_BASE(GenerateWindows);
   SCRIPT_TRUTH_WITH_BASE(UseFillSquareWalls);
+  SCRIPT_MEMBER_WITH_BASE(ulong, Flags);
 };
 
 class levelscript : public scriptwithbase

@@ -703,7 +703,7 @@ void item::SignalSpoil(material*)
     return;
 
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s spoils completely.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s spoils completely.", GetExtendedDescription().CStr());
 
   truth Equipped = PLAYER->Equips(this);
   Disappear();
@@ -770,7 +770,7 @@ void item::Be()
     if(LifeExpectancy == 1)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s disappears.", GetExtendedDescription().CStr());
 
       truth Equipped = PLAYER->Equips(this);
       Disappear();

@@ -524,3 +524,5 @@ Boulders should cast small shadows in sunlight.
 Explosions should break pineapples and kiwis, leaving only some juice to the ground.
 A frog should be able to use its long, sticky tongue as a ranged weapon and catch small creatures up to three squares away so it may digest them afterwards. Elpuri should also be able to catch man-sized creatures who would find themselves in its acidous stomach, like they would have been engulfed by a purple worm in Nethack.
 Every 10000th new game or so IVAN should make a Nethack level 1 represented by ASCII characters and show it instead of the real one, print the standard Amulet of Yendor story, ask for key press, then print "Oh gosh. Wrong game, sorry!" and continue the original game.
+Mommos should follow the player more agressively; they are useless now as pets.
+"Sulphuric acid is raining here." to look mode when appropriate.

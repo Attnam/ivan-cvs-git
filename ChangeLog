@@ -7,6 +7,24 @@
 
 -----------------------------------------------------------------------------
 
+October 13 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* Decreased the amount of Attnam's polar bears to one, because their
+		shadows had a noticable negative effect to performance
+	* BugFix: charming a tourist and leaving New Attnam crashed
+	* Halved the speed materials spoil
+	* Spoil and mirror item vanish messages are now more informative
+	* BugFix: equipment slots were shown in the panel when polymorphed into
+		a golem
+	* BugFix: removed the stairs to not-yet-done UT5
+	* Webs of giant spiders are a little weaker
+	* The big trap room of GC changed into a dwarven mine field
+	* Monsters are no longer generated in the mine field or vault rooms
+	* Corrected a bug in the lantern code which could prevent items on the
+		ground from being animated if the square once had a wall & attached
+		lantern
+	* Fixed many problems with messages
+
 October 8 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* BugFix: items on the ground were sometimes not animated
