@@ -101,6 +101,9 @@ void lsquare::SignalEmitationDecrease(color24 EmitationUpdate)
 
 void lsquare::CalculateEmitation()
 {
+  if(Pos == vector2d(12,33))
+    int esko = 2;
+
   Emitation = Stack->GetEmitation();
   int c;
 
@@ -231,7 +234,8 @@ void lsquare::Draw()
 	      S->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
 
 	  for(const rain* R = Rain; R; R = R->Next)
-	    R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
+	    if(R->IsEnabled())
+	      R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
 	}
       else if(CanBeFeltByPlayer())
 	{
@@ -240,7 +244,8 @@ void lsquare::Draw()
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, ivanconfig::ApplyContrastTo(RealLuminance), true);
 
 	  for(const rain* R = Rain; R; R = R->Next)
-	    R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
+	    if(R->IsEnabled())
+	      R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
 	}
       else
 	{
