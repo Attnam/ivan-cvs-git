@@ -560,6 +560,45 @@ bool level::MakeRoom(roomscript* RoomScript)
 					Map[XPos + x][YPos + y]->FastAddCharacter(CharacterScript->Instantiate());
 	}
 
+	if(RoomScript->GetItemMap(false))
+	{
+		XPos = BXPos + RoomScript->GetItemMap()->GetPos()->X;
+		YPos = BYPos + RoomScript->GetItemMap()->GetPos()->Y;
+
+		contentscript<item>* ItemScript;
+
+		for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
+			for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
+				if(ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y))
+					Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
+	}
+
+	if(RoomScript->GetGroundTerrainMap(false))
+	{
+		XPos = BXPos + RoomScript->GetGroundTerrainMap()->GetPos()->X;
+		YPos = BYPos + RoomScript->GetGroundTerrainMap()->GetPos()->Y;
+
+		contentscript<groundlevelterrain>* GroundTerrainScript;
+
+		for(ushort x = 0; x < RoomScript->GetGroundTerrainMap()->GetSize()->X; ++x)
+			for(ushort y = 0; y < RoomScript->GetGroundTerrainMap()->GetSize()->Y; ++y)
+				if(GroundTerrainScript = RoomScript->GetGroundTerrainMap()->GetContentScript(x, y))
+					Map[XPos + x][YPos + y]->ChangeGroundLevelTerrain(GroundTerrainScript->Instantiate());
+	}
+
+	if(RoomScript->GetOverTerrainMap(false))
+	{
+		XPos = BXPos + RoomScript->GetOverTerrainMap()->GetPos()->X;
+		YPos = BYPos + RoomScript->GetOverTerrainMap()->GetPos()->Y;
+
+		contentscript<overlevelterrain>* OverTerrainScript;
+
+		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
+			for(ushort y = 0; y < RoomScript->GetOverTerrainMap()->GetSize()->Y; ++y)
+				if(OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y))
+					Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(OverTerrainScript->Instantiate());
+	}
+
 	return true;
 }
 
