@@ -46,7 +46,7 @@ void configuration::Save()
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
   SaveFile << "CharacterOutlineColor = " << GetRed16(CharacterOutlineColor) << ", " << GetGreen16(CharacterOutlineColor) << ", " << GetBlue16(CharacterOutlineColor) << ";\n";
   SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
-  SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
+  //  SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
   SaveFile << "LookZoom = " << LookZoom <<";\n";
 }
@@ -101,8 +101,8 @@ void configuration::Load()
 	  SetItemOutlineColor(MakeRGB16(Red, Green, Blue));
 	}
 
-      if(Word == "BeepOnCritical")
-	SetBeepOnCritical(SaveFile.ReadBool());
+      /*      if(Word == "BeepOnCritical")
+	      SetBeepOnCritical(SaveFile.ReadBool());*/
 
       if(Word == "FullScreenMode")
 	SetFullScreenMode(SaveFile.ReadBool());
@@ -154,7 +154,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
 
-      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHT_GRAY);
+      /*      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHT_GRAY);*/
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
 
@@ -193,17 +193,17 @@ void configuration::ShowConfigScreen()
 	  BoolChange = true;
 	  continue;
 	case 6:
-	  SetBeepOnCritical(!GetBeepOnCritical());
-	  BoolChange = true;
-	  continue;
-	case 7:
 	  SetFullScreenMode(!GetFullScreenMode());
 	  graphics::SwitchMode();
 	  BoolChange = true;
 	  continue;
-	case 8:
+	case 7:
 	  SetLookZoom(!GetLookZoom());
 	  BoolChange = true;
+	  continue;
+	case 8:
+	  /*	  SetBeepOnCritical(!GetBeepOnCritical());
+		  BoolChange = true;*/
 	  continue;
 	}
 

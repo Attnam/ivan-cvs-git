@@ -2035,7 +2035,7 @@ kobold
 	DefaultWisdom = 4;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	SkinColor = rgb16(80, 144, 144);
+	SkinColor = rgb16(40, 110, 110);
 	EyeColor = rgb16(200, 0, 0);
 	HairColor = rgb16(35, 35, 35);
 	ClothColor = rgb16(48, 48, 48);

@@ -414,4 +414,4 @@ Lanterns inside glass chests should still emit light.
 Axes should also be used for going through doors (a la Shining)
 Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
 The smith should fix damaged metal limbs for a fee.
-
+Finding Attnam in the map can be difficult if the distance is long.  

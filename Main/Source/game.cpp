@@ -1108,8 +1108,8 @@ bool game::HandleQuitMessage()
 
 void game::Beep()
 {
-  if(configuration::GetBeepOnCritical())
-    std::cout << "\a";
+  /*   if(configuration::GetBeepOnCritical())
+       std::cout << "\007";*/
 }
 
 uchar game::GetDirectionForVector(vector2d Vector)
