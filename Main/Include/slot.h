@@ -12,7 +12,6 @@ class character;
 class outputfile;
 class inputfile;
 class bodypart;
-class action;
 class square;
 
 class slot
@@ -108,25 +107,6 @@ class gearslot : public slot
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;
-};
-
-class actionslot : public slot
-{
- public:
-  virtual void Empty();
-  action* GetAction() const { return Action; }
-  void SetAction(action* What) { Action = What; }
-  virtual bool IsActionSlot() const { return true; }
-  virtual void AddFriendItem(item*) const;
-  void Init(action*);
-  virtual square* GetSquareUnder(ushort = 0) const;
-  virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
-  virtual bool CanBeSeenBy(const character*) const;
-  virtual bool IsVisible() const { return false; }
- protected:
-  action* Action;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, const slot& Slot)

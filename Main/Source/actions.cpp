@@ -45,20 +45,20 @@ void faint::Terminate(bool Finished)
 void consume::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << WasOnGround;
-  SaveFile << Consuming;
+  SaveFile << WasOnGround << ConsumingID << Description;
 }
 
 void consume::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> WasOnGround;
-  LoadActionSlot(SaveFile, Consuming);
+  SaveFile >> WasOnGround >> ConsumingID >> Description;
 }
 
 void consume::Handle()
 {
-  if(!*Consuming)
+  item* Consuming = game::SearchItem(ConsumingID);
+
+  if(!Consuming || !Consuming->Exists() || !Actor->IsOver(Consuming))
     {
       Terminate(false);
       return;
@@ -101,6 +101,8 @@ void consume::Handle()
 
 void consume::Terminate(bool Finished)
 {
+  item* Consuming = game::SearchItem(ConsumingID);
+
   if(Finished)
     {
       if(GetActor()->IsPlayer())
@@ -113,7 +115,7 @@ void consume::Terminate(bool Finished)
 
       Consuming->GenerateLeftOvers(GetActor());
     }
-  else if(*Consuming)
+  else if(Consuming && Consuming->Exists())
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s %s.", Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
@@ -122,11 +124,6 @@ void consume::Terminate(bool Finished)
 
       if(Eaten)
 	Consuming->AddConsumeEndMessage(GetActor());
-
-      if(WasOnGround)
-	Consuming->MoveTo(GetActor()->GetStackUnder());
-      else
-	Consuming->MoveTo(GetActor()->GetStack());
     }
   else
     {
@@ -137,15 +134,6 @@ void consume::Terminate(bool Finished)
     }
 
   action::Terminate(Finished);
-}
-
-void consume::SetConsuming(item* Food)
-{
-  if(!Food)
-    ABORT("Consuming nothing!");
-
-  Food->RemoveFromSlot();
-  Food->PlaceToSlot(&Consuming);
 }
 
 void rest::Save(outputfile& SaveFile) const
@@ -195,17 +183,13 @@ void rest::Terminate(bool Finished)
 void dig::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << SquareDug << MoveDigger;
-  SaveFile << RightBackup;
-  SaveFile << LeftBackup;
+  SaveFile << SquareDug << MoveDigger << RightBackupID << LeftBackupID;
 }
 
 void dig::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> SquareDug >> MoveDigger;
-  LoadActionSlot(SaveFile, RightBackup);
-  LoadActionSlot(SaveFile, LeftBackup);
+  SaveFile >> SquareDug >> MoveDigger >> RightBackupID >> LeftBackupID;
 }
 
 void dig::Handle()
@@ -249,18 +233,20 @@ void dig::Handle()
       if(MoveDigger && Actor->GetMainWielded())
 	Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
-      if(*RightBackup)
+      item* RightBackup = game::SearchItem(RightBackupID);
+
+      if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
 	{
-	  item* RB = *RightBackup;
-	  RB->RemoveFromSlot();
-	  Actor->SetRightWielded(RB);
+	  RightBackup->RemoveFromSlot();
+	  Actor->SetRightWielded(RightBackup);
 	}
 
-      if(*LeftBackup)
+      item* LeftBackup = game::SearchItem(LeftBackupID);
+
+      if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
 	{
-	  item* LB = *LeftBackup;
-	  LB->RemoveFromSlot();
-	  Actor->SetLeftWielded(LB);
+	  LeftBackup->RemoveFromSlot();
+	  Actor->SetLeftWielded(LeftBackup);
 	}
 
       Terminate(true);
@@ -279,31 +265,7 @@ void dig::Terminate(bool Finished)
 	ADD_MESSAGE("%s stops digging.", GetActor()->CHAR_NAME(DEFINITE));
     }
 
-  if(*RightBackup)
-    RightBackup->MoveTo(GetActor()->GetStack());
-
-  if(*LeftBackup)
-    LeftBackup->MoveTo(GetActor()->GetStack());
-
   action::Terminate(Finished);
-}
-
-void dig::SetRightBackup(item* Item)
-{
-  if(Item)
-    {
-      Item->RemoveFromSlot();
-      Item->PlaceToSlot(&RightBackup);
-    }
-}
-
-void dig::SetLeftBackup(item* Item)
-{
-  if(Item)
-    {
-      Item->RemoveFromSlot();
-      Item->PlaceToSlot(&LeftBackup);
-    }
 }
 
 void go::Save(outputfile& SaveFile) const
@@ -324,60 +286,11 @@ void go::Handle()
   GetActor()->GoOn(this);
 }
 
-void consume::DropUsedItems()
-{
-  if(*Consuming)
-    if(!game::IsInWilderness())
-      Consuming->MoveTo(GetActor()->GetStackUnder());
-    else
-      Consuming->MoveTo(GetActor()->GetStack());
-}
-
-void consume::DeleteUsedItems()
-{
-  if(*Consuming)
-    Consuming->SendToHell();
-}
-
-void dig::DropUsedItems()
-{
-  if(*RightBackup)
-    if(!game::IsInWilderness())
-      RightBackup->MoveTo(GetActor()->GetStackUnder());
-    else
-      RightBackup->MoveTo(GetActor()->GetStack());
-
-  if(*LeftBackup)
-    if(!game::IsInWilderness())
-      LeftBackup->MoveTo(GetActor()->GetStackUnder());
-    else
-      LeftBackup->MoveTo(GetActor()->GetStack());
-}
-
-void dig::DeleteUsedItems()
-{
-  if(*RightBackup)
-    RightBackup->SendToHell();
-
-  if(*LeftBackup)
-    LeftBackup->SendToHell();
-}
-
-void consume::VirtualConstructor(bool)
-{
-  Consuming.Init(this);
-  SetHasEaten(false);
-}
-
-void dig::VirtualConstructor(bool)
-{
-  RightBackup.Init(this);
-  LeftBackup.Init(this);
-}
-
 void study::Handle()
 {
-  if(!*Literature)
+  item* Literature = game::SearchItem(LiteratureID);
+
+  if(!Literature || !Literature->Exists() || !Actor->IsOver(Literature))
     {
       Terminate(false);
       return;
@@ -407,6 +320,8 @@ void study::Handle()
 
 void study::Terminate(bool Finished)
 {
+  item* Literature = game::SearchItem(LiteratureID);
+
   if(Finished)
     {
       if(GetActor()->IsPlayer())
@@ -417,21 +332,15 @@ void study::Terminate(bool Finished)
       character* Actor = GetActor();
       Literature->FinishReading(Actor);
 
-
       if(!Actor->IsEnabled())
 	return;
-
-      if(*Literature)
-	Literature->MoveTo(GetActor()->GetStack());
     }
-  else if(*Literature)
+  else if(Literature && Literature->Exists())
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop reading %s.", Literature->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
-
-      Literature->MoveTo(GetActor()->GetStack());
     }
   else
     {
@@ -448,115 +357,13 @@ void study::Terminate(bool Finished)
 void study::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Counter;
-  SaveFile << Literature;
+  SaveFile << Counter << LiteratureID;
 }
 
 void study::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Counter;
-  LoadActionSlot(SaveFile, Literature);
-}
-
-void study::DropUsedItems()
-{
-  if(*Literature)
-    if(!game::IsInWilderness())
-      Literature->MoveTo(GetActor()->GetStackUnder());
-    else
-      Literature->MoveTo(GetActor()->GetStack());
-}
-
-void study::DeleteUsedItems()
-{
-  if(*Literature)
-    Literature->SendToHell();
-}
-
-void study::SetLiterature(item* What)
-{
-  if(!What)
-    ABORT("Reading nothing!");
-
-  What->RemoveFromSlot();
-  What->PlaceToSlot(&Literature);
-}
-
-void study::VirtualConstructor(bool)
-{
-  Literature.Init(this);
-}
-
-/* These function are really lame */
-
-ulong consume::GetVolume() const
-{
-  return *Consuming ? Consuming->GetVolume() : 0;
-}
-
-ulong consume::GetWeight() const
-{
-  return *Consuming ? Consuming->GetWeight() : 0;
-}
-
-ulong dig::GetVolume() const
-{
-  ulong Volume = 0;
-
-  if(*RightBackup)
-    Volume += RightBackup->GetVolume();
-
-  if(*LeftBackup)
-    Volume += LeftBackup->GetVolume();
-
-  return Volume;
-}
-
-ulong dig::GetWeight() const
-{
-  ulong Weight = 0;
-
-  if(*RightBackup)
-    Weight += RightBackup->GetWeight();
-
-  if(*LeftBackup)
-    Weight += LeftBackup->GetWeight();
-
-  return Weight;
-}
-
-ulong study::GetVolume() const
-{
-  return *Literature ? Literature->GetVolume() : 0;
-}
-
-ulong study::GetWeight() const
-{
-  return *Literature ? Literature->GetWeight() : 0;
-}
-
-ulong consume::GetEmitation() const
-{
-  return *Consuming ? Consuming->GetEmitation() : 0;
-}
-
-ulong dig::GetEmitation() const
-{
-  ulong Emitation = 0;
-
-  if(*RightBackup)
-    game::CombineLights(Emitation, RightBackup->GetEmitation());
-
-  if(*LeftBackup)
-    game::CombineLights(Emitation, LeftBackup->GetEmitation());
-
-  return Emitation;
-}
-
-ulong study::GetEmitation() const
-{
-  return *Literature ? Literature->GetEmitation() : 0;
+  SaveFile >> Counter >> LiteratureID;
 }
 
 bool go::TryDisplace()

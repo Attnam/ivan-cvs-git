@@ -11,7 +11,6 @@ class character;
 class action;
 class outputfile;
 class inputfile;
-class actionslot;
 
 class actionprototype
 {
@@ -44,17 +43,11 @@ class action
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsRest() const { return false; }
-  virtual void DropUsedItems() { }
-  virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const char* GetDescription() const = 0;
-  void LoadActionSlot(inputfile&, actionslot&);
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
-  virtual ulong GetVolume() const { return 0; }
-  virtual ulong GetWeight() const { return 0; }
-  virtual ulong GetEmitation() const { return 0; }
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
   virtual bool CanBeTalkedTo() const { return true; }

@@ -525,4 +525,8 @@
 #define SUCCESS 1
 #define BLOCKED 2
 
+#define STACK_SLOT 1
+#define CHARACTER_SLOT 2
+#define GEAR_SLOT 3
+
 #endif

@@ -57,19 +57,6 @@ void gearslot::Init(bodypart* BodyPart, uchar Index)
   SetEquipmentIndex(Index);
 }
 
-void actionslot::Empty()
-{
-  ulong Emitation = Item->GetEmitation();
-  Item = 0;
-  SignalVolumeAndWeightChange();
-  SignalEmitationDecrease(Emitation);
-}
-
-void actionslot::Init(action* Action)
-{
-  SetAction(Action);
-}
-
 void stackslot::AddFriendItem(item* Item) const
 {
   Item->RemoveFromSlot();
@@ -96,12 +83,6 @@ void gearslot::AddFriendItem(item* Item) const
     GetBodyPart()->GetMaster()->GetStack()->AddItem(Item);
 }
 
-void actionslot::AddFriendItem(item* Item) const
-{
-  Item->RemoveFromSlot();
-  GetAction()->GetActor()->GetStack()->AddItem(Item);
-}
-
 bool stackslot::IsOnGround() const
 {
   return GetMotherStack()->IsOnGround();
@@ -120,11 +101,6 @@ void characterslot::SignalVolumeAndWeightChange()
 void gearslot::SignalVolumeAndWeightChange()
 {
   GetBodyPart()->SignalVolumeAndWeightChange();
-}
-
-void actionslot::SignalVolumeAndWeightChange()
-{
-  GetAction()->GetActor()->SignalVolumeAndWeightChange();
 }
 
 void slot::PutInItem(item* What)
@@ -199,11 +175,6 @@ square* gearslot::GetSquareUnder(ushort) const
   return GetBodyPart()->GetSquareUnder();
 }
 
-square* actionslot::GetSquareUnder(ushort) const
-{
-  return GetAction()->GetActor()->GetSquareUnder();
-}
-
 void stackslot::SignalEmitationIncrease(ulong Emitation)
 {
   GetMotherStack()->SignalEmitationIncrease(Emitation);
@@ -219,11 +190,6 @@ void gearslot::SignalEmitationIncrease(ulong Emitation)
   GetBodyPart()->SignalEmitationIncrease(Emitation);
 }
 
-void actionslot::SignalEmitationIncrease(ulong Emitation)
-{
-  GetAction()->GetActor()->SignalEmitationIncrease(Emitation);
-}
-
 void stackslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetMotherStack()->SignalEmitationDecrease(Emitation);
@@ -237,11 +203,6 @@ void characterslot::SignalEmitationDecrease(ulong Emitation)
 void gearslot::SignalEmitationDecrease(ulong Emitation)
 {
   GetBodyPart()->SignalEmitationDecrease(Emitation);
-}
-
-void actionslot::SignalEmitationDecrease(ulong Emitation)
-{
-  GetAction()->GetActor()->SignalEmitationDecrease(Emitation);
 }
 
 void characterslot::Load(inputfile& SaveFile)
@@ -277,11 +238,6 @@ bool characterslot::CanBeSeenBy(const character* Viewer) const
 bool gearslot::CanBeSeenBy(const character* Viewer) const
 {
   return GetBodyPart()->CanBeSeenBy(Viewer);
-}
-
-bool actionslot::CanBeSeenBy(const character* Viewer) const
-{
-  return GetAction()->GetActor()->CanBeSeenBy(Viewer);
 }
 
 void gearslot::SignalEnchantmentChange()

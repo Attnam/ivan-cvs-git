@@ -1300,10 +1300,16 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
   dig* Dig = new dig(this);
 
   if(GetRightArm() && GetRightArm()->GetWielded() != DigItem)
-    Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleared automatically
+    {
+      Dig->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+      GetRightArm()->GetWielded()->MoveTo(GetStack());
+    }
 
   if(GetLeftArm() && GetLeftArm()->GetWielded() != DigItem)
-    Dig->SetLeftBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
+    {
+      Dig->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+      GetLeftArm()->GetWielded()->MoveTo(GetStack());
+    }
 
   if(GetMainWielded() != DigItem)
     {
@@ -3929,13 +3935,13 @@ ulong humanoid::GetSumOfAttributes() const
 
 bool humanoid::CheckConsume(const festring& Verb) const
 {
-  if(IsPlayer())
+  if(!HasHead())
     {
-      if(!HasHead())
-	{
-	  ADD_MESSAGE("You need a head to %s.", Verb.CStr());
-	  return false;
-	}
+      if(IsPlayer())
+	ADD_MESSAGE("You need a head to %s.", Verb.CStr());
+
+      return false;
     }
+
   return character::CheckConsume(Verb);
 }

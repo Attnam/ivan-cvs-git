@@ -20,10 +20,10 @@
 int Main(int argc, char **argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
-  {
-    std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
-    return 0;
-  }
+    {
+      std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
+      return 0;
+    }
 
 #ifdef __DJGPP__
 

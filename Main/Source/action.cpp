@@ -27,9 +27,3 @@ action* actionprototype::CloneAndLoad(inputfile& SaveFile) const
   Action->Load(SaveFile);
   return Action;
 }
-
-void action::LoadActionSlot(inputfile& SaveFile, actionslot& ActionSlot)
-{
-  SaveFile >> ActionSlot;
-  ActionSlot.SetAction(this);
-}

@@ -26,8 +26,9 @@ square* item::GetSquareUnder(ushort Index) const { return Slot[Index] ? Slot[Ind
 lsquare* item::GetLSquareUnder(ushort Index) const { return static_cast<lsquare*>(Slot[Index]->GetSquareUnder()); }
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*)) { Slot[0] = StackSlot; }
 
-item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), ItemFlags(0), CloneMotherID(Item.CloneMotherID)
+item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), ItemFlags(0), CloneMotherID(Item.CloneMotherID)
 {
+  ID = game::CreateNewItemID(this);
   CloneMotherID.push_back(Item.ID);
   Slot = new slot*[GetSquaresUnder()];
 
@@ -38,6 +39,7 @@ item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), ID(game::
 item::~item()
 {
   delete [] Slot;
+  game::RemoveItemID(ID);
 }
 
 bool item::IsConsumable(const character* Eater) const
@@ -233,6 +235,7 @@ void item::Load(inputfile& SaveFile)
   object::Load(SaveFile);
   InstallDataBase(ReadType<ushort>(SaveFile));
   SaveFile >> Size >> ID >> ItemFlags >> CloneMotherID;
+  game::AddItemID(this, ID);
 }
 
 void item::TeleportRandomly()
@@ -351,7 +354,7 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
 
   if(!(SpecialFlags & LOAD))
     {
-      ID = game::CreateNewItemID();
+      ID = game::CreateNewItemID(this);
       InstallDataBase(NewConfig);
       LoadDataBaseStats();
       RandomizeVisualEffects();
@@ -487,7 +490,7 @@ item* item::Duplicate()
 
   item* Clone = RawDuplicate();
   CloneMotherID.push_back(ID);
-  ID = game::CreateNewItemID();
+  ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }
@@ -619,6 +622,7 @@ void item::Break(character* Breaker)
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
   Broken->SetID(ID);
+  ID = 0;
   DonateSlotTo(Broken);
   SendToHell();
 
@@ -679,6 +683,7 @@ item* item::Fix()
       Fixed->SetConfig(GetConfig() ^ BROKEN);
       Fixed->SetSize(Fixed->GetSize() << 1);
       Fixed->SetID(ID);
+      ID = 0;
       DonateSlotTo(Fixed);
       SendToHell();
     }
@@ -850,16 +855,23 @@ void item::PreProcessForBone()
       RemoveFromSlot();
       SendToHell();
     }
+  else
+    {
+      game::RemoveItemID(ID);
+      ID = -ID;
+      game::AddItemID(this, ID);
+    }
 }
 
 void item::PostProcessForBone()
 {
-  boneidmap::iterator BI = game::GetBoneItemIDMap().find(ID);
+  boneidmap::iterator BI = game::GetBoneItemIDMap().find(-ID);
+  game::RemoveItemID(ID);
 
   if(BI == game::GetBoneItemIDMap().end())
     {
-      ulong NewID = game::CreateNewItemID();
-      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(ID, NewID));
+      ulong NewID = game::CreateNewItemID(this);
+      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
       ID = NewID;
     }
   else
@@ -871,7 +883,7 @@ void item::PostProcessForBone()
 
       if(BI == game::GetBoneItemIDMap().end())
 	{
-	  ulong NewCloneMotherID = game::CreateNewItemID();
+	  ulong NewCloneMotherID = game::CreateNewItemID(0);
 	  game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(CloneMotherID[c], NewCloneMotherID));
 	  CloneMotherID[c] = NewCloneMotherID;
 	}

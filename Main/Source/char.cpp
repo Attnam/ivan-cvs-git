@@ -303,10 +303,7 @@ character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false
 character::~character()
 {
   if(Action)
-    {
-      Action->DeleteUsedItems();
-      delete Action;
-    }
+    delete Action;
 
   if(Team)
     Team->Remove(GetTeamIterator());
@@ -1159,13 +1156,6 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
 	  if(BodyPart)
 	    BodyPart->DropEquipment();
 	}
-
-      if(GetAction())
-	{
-	  GetAction()->DropUsedItems();
-	  delete GetAction();
-	  SetAction(0);
-	}
     }
   else
     {
@@ -1181,7 +1171,6 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
 
       if(GetAction())
 	{
-	  GetAction()->DeleteUsedItems();
 	  delete GetAction();
 	  SetAction(0);
 	}
@@ -4381,7 +4370,7 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
 void character::StartReading(item* Item, ulong Time)
 {
   study* Read = new study(this);
-  Read->SetLiterature(Item); // slot cleared automatically
+  Read->SetLiteratureID(Item->GetID());
 
   if(game::WizardModeIsActive())
     Time = 1;
@@ -4858,13 +4847,6 @@ void character::CalculateVolumeAndWeight()
 {
   Volume = Stack->GetVolume();
   Weight = Stack->GetWeight();
-
-  if(Action)
-    {
-      Volume += Action->GetVolume();
-      Weight += Action->GetWeight();
-    }
-
   BodyVolume = 0;
   CarriedWeight = Weight;
 
@@ -4941,9 +4923,6 @@ void character::CalculateEmitation()
     }
 
   game::CombineLights(Emitation, Stack->GetEmitation());
-
-  if(Action)
-    game::CombineLights(Emitation, Action->GetEmitation());
 }
 
 void character::CalculateAll()
@@ -5249,7 +5228,7 @@ character* character::Duplicate() const
 
 bool character::TryToEquip(item* Item)
 {
-  if(!CanUseEquipment() || GetAttribute(WISDOM) >= Item->GetWearWisdomLimit())
+  if(!CanUseEquipment() || GetAttribute(WISDOM) >= Item->GetWearWisdomLimit() || Item->GetSquaresUnder() != 1)
     return false;
 
   for(ushort e = 0; e < GetEquipmentSlots(); ++e)
@@ -6031,7 +6010,7 @@ bool character::ConsumeItem(item* Item)
   consume* Consume = new consume(this);
   Consume->SetDescription(Item->GetConsumeVerb());
   Consume->SetWasOnGround(Item->IsOnGround());
-  Consume->SetConsuming(Item);
+  Consume->SetConsumingID(Item->GetID());
   SetAction(Consume);
   DexterityAction(5);
   return true;
@@ -6862,15 +6841,25 @@ void character::SetConfig(ushort NewConfig, ushort SpecialFlags)
     UpdatePictures();
 }
 
+bool character::IsOver(const item* Item) const
+{
+  for(ushort c1 = 0; c1 < Item->GetSquaresUnder(); ++c1)
+    for(ushort c2 = 0; c2 < SquaresUnder; ++c2)
+      if(Item->GetPos(c1) == GetPos(c2))
+	return true;
+
+  return false;
+}
+
 bool character::CheckConsume(const festring& Verb) const
 {
-  if(IsPlayer())
+  if(!UsesNutrition())
     {
-      if(!UsesNutrition())
-	{
-	  ADD_MESSAGE("In this form you can't and don't need to %s.", Verb.CStr());
-	  return false;
-	}
+      if(IsPlayer())
+	ADD_MESSAGE("In this form you can't and don't need to %s.", Verb.CStr());
+
+      return false;
     }
+
   return true;
 }

@@ -107,6 +107,7 @@ valuemap game::GlobalValueMap;
 dangermap game::DangerMap;
 configid game::NextDangerID;
 characteridmap game::CharacterIDMap;
+itemidmap game::ItemIDMap;
 const explosion* game::CurrentExplosion;
 bool game::PlayerHurtByExplosion;
 area* game::CurrentArea;
@@ -123,6 +124,8 @@ uchar game::MoveType;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
+void game::AddItemID(item* Item, ulong ID) { ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
+void game::RemoveItemID(ulong ID) { if(ID) ItemIDMap.erase(ItemIDMap.find(ID)); }
 const dangermap& game::GetDangerMap() { return DangerMap; }
 
 void game::InitScript()
@@ -132,8 +135,6 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
 }
-
-#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -1837,10 +1838,26 @@ ulong game::CreateNewCharacterID(character* NewChar)
   return ID;
 }
 
+ulong game::CreateNewItemID(item* NewItem)
+{
+  ulong ID = NextItemID++;
+
+  if(NewItem)
+    ItemIDMap.insert(std::pair<ulong, item*>(ID, NewItem));
+
+  return ID;
+}
+
 character* game::SearchCharacter(ulong ID)
 {
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
+}
+
+item* game::SearchItem(ulong ID)
+{
+  itemidmap::iterator Iterator = ItemIDMap.find(ID);
+  return Iterator != ItemIDMap.end() ? Iterator->second : 0;
 }
 
 outputfile& operator<<(outputfile& SaveFile, const configid& Value)
@@ -2248,16 +2265,13 @@ long game::GetScore()
   double Counter = 0;
   character* Char;
   massacremap::const_iterator i1, i2;
-
   massacremap SumMap;
 
   for(i1 = PlayerMassacreMap.begin(); i1 != PlayerMassacreMap.end(); ++i1)
     SumMap.insert(std::pair<configid, ushort>(i1->first, i1->second));
 
   for(i1 = PetMassacreMap.begin(); i1 != PetMassacreMap.end(); ++i1)
-    {
-      SumMap[i1->first] += i1->second;
-    }
+    SumMap[i1->first] += i1->second;
 
   for(i1 = SumMap.begin(); i1 != SumMap.end(); ++i1)
     {
@@ -2266,7 +2280,6 @@ long game::GetScore()
       delete Char;
       Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
     }
-
 
   return long(0.01 * Counter);
 }

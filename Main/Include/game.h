@@ -85,6 +85,7 @@ inputfile& operator>>(inputfile&, dangerid&);
 
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
+typedef std::map<ulong, item*> itemidmap;
 typedef std::map<configid, ushort> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
 
@@ -164,7 +165,7 @@ class game
   static worldmap* LoadWorldMap(const festring& = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
-  static ulong CreateNewItemID() { return NextItemID++; }
+  static ulong CreateNewItemID(item*);
   static team* GetTeam(ushort Index) { return Team[Index]; }
   static uchar GetTeams() { return Teams; }
   static void Hostility(team*, team*);
@@ -230,8 +231,11 @@ class game
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(vector2d, ushort);
   static character* SearchCharacter(ulong);
+  static item* SearchItem(ulong);
   static void AddCharacterID(character*, ulong);
   static void RemoveCharacterID(ulong);
+  static void AddItemID(item*, ulong);
+  static void RemoveItemID(ulong);
   static uchar GetStoryState() { return StoryState; }
   static void SetStoryState(uchar What) { StoryState = What; }
   static void SetIsInGetCommand(bool What) { InGetCommand = What; }
@@ -332,6 +336,7 @@ class game
   static float AveragePlayerDexterity;
   static float AveragePlayerAgility;
   static characteridmap CharacterIDMap;
+  static itemidmap ItemIDMap;
   static uchar Teams;
   static uchar Dungeons;
   static uchar StoryState;

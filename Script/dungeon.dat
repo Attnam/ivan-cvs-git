@@ -1512,7 +1512,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times = 2;
 		}
 
-
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = stairs(STAIRS_DOWN);

@@ -6,7 +6,6 @@
 #endif
 
 #include "action.h"
-#include "slot.h"
 #include "vector2d.h"
 
 class ACTION
@@ -37,22 +36,16 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetConsuming(item*);
+  void SetConsumingID(ulong What) { ConsumingID = What; }
   void SetWasOnGround(bool What) { WasOnGround = What; }
   void SetHasEaten(bool What) { Eaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
-  virtual void DropUsedItems();
-  virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
   virtual void SetDescription(const festring&);
-  virtual ulong GetVolume() const;
-  virtual ulong GetWeight() const;
-  virtual ulong GetEmitation() const;
  protected:
-  virtual void VirtualConstructor(bool);
   festring Description;
-  actionslot Consuming;
+  ulong ConsumingID;
   bool WasOnGround;
   bool Eaten;
 );
@@ -85,21 +78,15 @@ class ACTION
   virtual void Handle();
   void SetSquareDug(vector2d What) { SquareDug = What; }
   virtual void Terminate(bool);
-  void SetRightBackup(item*);
-  void SetLeftBackup(item*);
+  void SetRightBackupID(ulong What) { RightBackupID = What; }
+  void SetLeftBackupID(ulong What) { LeftBackupID = What; }
   virtual bool TryDisplace() { return false; }
-  virtual void DropUsedItems();
-  virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
-  virtual ulong GetVolume() const;
-  virtual ulong GetWeight() const;
-  virtual ulong GetEmitation() const;
   virtual bool ShowEnvironment() const { return false; }
   void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
-  virtual void VirtualConstructor(bool);
-  actionslot RightBackup;
-  actionslot LeftBackup;
+  ulong RightBackupID;
+  ulong LeftBackupID;
   vector2d SquareDug;
   bool MoveDigger;
 );
@@ -133,17 +120,11 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetLiterature(item*);
-  virtual void DropUsedItems();
-  virtual void DeleteUsedItems();
+  void SetLiteratureID(ulong What) { LiteratureID = What; }
   virtual const char* GetDescription() const;
   void SetCounter(ushort What) { Counter = What; }
-  virtual ulong GetVolume() const;
-  virtual ulong GetWeight() const;
-  virtual ulong GetEmitation() const;
  protected:
-  virtual void VirtualConstructor(bool);
-  actionslot Literature;
+  ulong LiteratureID;
   ushort Counter;
 );
 

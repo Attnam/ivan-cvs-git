@@ -19,6 +19,7 @@ class go;
 class team;
 class wsquare;
 class cweaponskill;
+class action;
 struct homedata;
 
 typedef std::vector<std::pair<float, ushort> > blockvector;
@@ -769,6 +770,7 @@ class character : public entity, public id
   virtual void Remove();
   bool IsSmall() const { return SquaresUnder == 1; }
   bool IsOver(vector2d) const;
+  bool IsOver(const item*) const;
   bool SquareUnderCanBeSeenByPlayer(bool) const;
   bool SquareUnderCanBeSeenBy(const character*, bool) const;
   ushort GetDistanceSquareFrom(const character*) const;
@@ -801,6 +803,7 @@ class character : public entity, public id
   virtual void SignalNaturalGeneration() { }
   virtual bool IsBunny() const { return false; }
   void SetConfig(ushort, ushort = 0);
+  characterslot* GetBodyPartSlot(ushort c) { return &BodyPartSlot[c]; }
   virtual bool CheckConsume(const festring&) const;
  protected:
   virtual void LoadSquaresUnder();

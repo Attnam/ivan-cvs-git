@@ -1554,6 +1554,7 @@ void potion::Break(character* Breaker)
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
   Remains->SetID(ID);
+  ID = 0;
   DonateSlotTo(Remains);
   SendToHell();
 
@@ -1897,6 +1898,7 @@ item* brokenbottle::Fix()
   potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
   Potion->SetID(ID);
+  ID = 0;
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
   SendToHell();
