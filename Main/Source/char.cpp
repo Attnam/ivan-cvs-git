@@ -185,7 +185,7 @@ statedata StateData[STATES] =
     &character::ConfusedSituationDangerModifier
   }, {
     "Parasitized",
-    RANDOMIZABLE&~DUR_TEMPORARY,
+    SECRET|RANDOMIZABLE&~DUR_TEMPORARY,
     &character::PrintBeginParasitizedMessage,
     &character::PrintEndParasitizedMessage,
     0,
@@ -832,6 +832,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
 
 void character::GetAICommand()
 {
+  if(DataBase->NameSingular == "housewife")
+    int esko = 2;
+
   SeekLeader(GetLeader());
 
   if(FollowLeader(GetLeader()))
@@ -1118,8 +1121,8 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
 			  {
 			    if(!IsPlayer() || game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
 			      {
-				OpenPos(MoveToSquare[c]->GetPos());
-				return true;
+				return OpenPos(MoveToSquare[c]->GetPos());
+				//return true;
 			      }
 			    else
 			      return false;
@@ -3859,6 +3862,24 @@ void character::ReceiveOmmelSnot(long Amount)
     game::DoEvilDeed(Amount / 25);
 }
 
+void character::ReceiveOmmelBone(long Amount)
+{
+  EditExperience(ARM_STRENGTH, 500, Amount << 6);
+  EditExperience(LEG_STRENGTH, 500, Amount << 6);
+  EditExperience(DEXTERITY, 500, Amount << 6);
+  EditExperience(AGILITY, 500, Amount << 6);
+  EditExperience(ENDURANCE, 500, Amount << 6);
+  EditExperience(PERCEPTION, 500, Amount << 6);
+  EditExperience(INTELLIGENCE, 500, Amount << 6);
+  EditExperience(WISDOM, 500, Amount << 6);
+  EditExperience(CHARISMA, 500, Amount << 6);
+  RestoreLivingHP();
+  RestoreStamina();
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
+}
+
 void character::AddOmmelConsumeEndMessage() const
 {
   if(IsPlayer())
@@ -4250,7 +4271,8 @@ void character::BeginTemporaryState(long State, int Counter)
 
       if(!EquipmentStateIsActivated(State))
 	{
-	  (this->*StateData[Index].PrintBeginMessage)();
+	  if(!InNoMsgMode)
+	    (this->*StateData[Index].PrintBeginMessage)();
 
 	  if(StateData[Index].BeginHandler)
 	    (this->*StateData[Index].BeginHandler)();
@@ -7384,7 +7406,7 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
     return 0;
 
   if(!IsPlayer())
-    Speed *= 2;
+    Speed *= 1.5;
 
   Exp += (NaturalExp * (100 + Value) - 100 * OldExp) * Speed * EXP_DIVISOR;
   LimitRef(Exp, MIN_EXP, MAX_EXP);
@@ -7789,6 +7811,13 @@ void character::ReceiveBlackUnicorn(long Amount)
     if(StateData[c].Flags & DUR_TEMPORARY)
       {
 	BeginTemporaryState(1 << c, Amount / 100);
+
+	if(!IsEnabled())
+	  return;
+      }
+    else if(StateData[c].Flags & DUR_PERMANENT)
+      {
+	GainIntrinsic(1 << c);
 
 	if(!IsEnabled())
 	  return;
@@ -8999,3 +9028,50 @@ bool character::IsSwimming() const
   return !(GetMoveType() & FLY)
       && GetSquareUnder()->GetSquareWalkability() & SWIM;
 }
+
+void character::AddBlackUnicornConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel dirty and loathsome.");
+}
+
+void character::AddGrayUnicornConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel neutralized.");
+}
+
+void character::AddWhiteUnicornConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel purified.");
+}
+
+void character::AddOmmelBoneConsumeEndMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel the power of all your canine ancestors combining in your body.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("For a moment %s looks extremely ferocious. You shudder.", CHAR_NAME(DEFINITE));
+}
+
+/*const char* character::GetUnnaturalDangerDescription() const
+{
+  character* Char = GetProtoType()->Clone(GetConfig(), NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+
+"mostly harmless
+"harmless
+  
+  if(Danger >= 2.5)
+    Description = "rather strong"
+  if(Danger >= 10)
+    Description = "very strong"
+  if(Danger >= 50)
+    Description = "mighty"
+  if(Danger >= 250)
+    Description = "mighty"
+  if(Danger >= 1000)
+    Description = "relatively omnipotent"
+
+  delete Char;
+}*/

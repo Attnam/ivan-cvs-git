@@ -331,6 +331,26 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
+	RandomLevel 0:11;
+	{
+		/* I'm Evil, Bwahaha */
+
+		Square, Random;
+		{
+			Items == VALPURIUM VALPURIUM flamingsword { Enchantment = 10; LifeExpectancy = 1000:10000; Chance = 1; }
+		}
+	}
+
+	RandomLevel 0:11;
+	{
+		/* I'm Evil, Bwahaha */
+
+		Square, Random;
+		{
+			Items == itemcontainer(LARGE_CHEST) { LifeExpectancy = 100:10000; Chance = 1; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }
+		}
+	}
+
 	RandomLevel 1:4;
 	{
 		CanGenerateBone = false;
@@ -358,7 +378,7 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 4,4;
 			{
-				Items = { 2, MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } } }
+				Items = { 2, MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = LOCKED; ItemsInside == Random { MinPrice = 1250; Times = 2; } } }
 			}
 		}
 	}
@@ -505,14 +525,11 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 3,3;
 			{
-				Items == ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK)
+				Items == METEORIC_STEEL itemcontainer(CHEST|OCTAGONAL_LOCK)
 				{
 					Parameters = LOCKED;
-					ItemsInside = { 5,	Random { MinPrice = 1000; },
-															Random { MinPrice = 1000; },
-															stone { Chance = 75; },
-															stone { Chance = 75; },
-															stone { Chance = 75; } } 
+					ItemsInside = { 2,	Random { MinPrice = 1250; Times = 2; },
+															stone { Chance = 75; Times = 3; } }
 				}
 			}
 		}
@@ -678,8 +695,7 @@ Dungeon ELPURI_CAVE;
 				Items == ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK)
 				{
 					Parameters = LOCKED;
-					ItemsInside = { 2,	Random { MinPrice = 2000; },
-															Random { MinPrice = 2000; } } 
+					ItemsInside == Random { MinPrice = 2000; Times = 2; }
 				}
 			}
 		}
@@ -1099,8 +1115,7 @@ Dungeon ELPURI_CAVE;
 				Items == ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK)
 				{
 					Parameters = LOCKED;
-					ItemsInside = { 2,	Random { MinPrice = 3000; },
-															Random { MinPrice = 3000; } } 
+					ItemsInside == Random { MinPrice = 3000; Times = 2; }
 				}
 			}
 		}
@@ -1479,7 +1494,7 @@ Dungeon ATTNAM;
 					2 == lantern { SquarePosition = DOWN; }
 					3 == lantern { SquarePosition = RIGHT; }
 					4 == lantern { SquarePosition = LEFT; }
-					C == GOLD itemcontainer(CHEST) { ItemsInside = { 5, GOLD helmet, stone, stone, stone, GOLD banana; } }
+					C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, GOLD helmet, stone { Times = 10; }, GOLD banana; } }
 					F == ring(RING_OF_FIRE_RESISTANCE); 
 					I == ring(RING_OF_INVISIBILITY);
 					E == amulet(AMULET_OF_ESP);

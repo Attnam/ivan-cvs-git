@@ -95,4 +95,4 @@ Funny colors with dexterity etc when going to change equipment and then pressing
 MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
 Graphics bug in vesana.
 Graphics bug in vesana corpse.
-
+Light sources in glass chests don't work correctly.

@@ -117,10 +117,17 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class ABSTRACT_CHARACTER
+(
+  canine,
+  nonhumanoid,
+  ;
+);
+
 class CHARACTER
 (
   wolf,
-  nonhumanoid,
+  canine,
  protected:
   virtual color16 GetSkinColor() const;
 );
@@ -128,7 +135,7 @@ class CHARACTER
 class CHARACTER
 (
   dog,
-  nonhumanoid,
+  canine,
  public:
   virtual bool Catches(item*);
   virtual void BeTalkedTo();

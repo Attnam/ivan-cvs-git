@@ -906,6 +906,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
 
   if(GLTerrainScript)
     {
+      GetLevel()->AddFlag(Pos, FORBIDDEN);
       ChangeGLTerrain(GLTerrainScript->Instantiate());
 
       if(GLTerrainScript->IsInside())
@@ -918,7 +919,10 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   const contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain();
 
   if(OLTerrainScript)
-    ChangeOLTerrain(OLTerrainScript->Instantiate());
+    {
+      GetLevel()->AddFlag(Pos, FORBIDDEN);
+      ChangeOLTerrain(OLTerrainScript->Instantiate());
+    }
 }
 
 bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const

@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -108,7 +108,7 @@ void felist::SetColor(uint I, color16 What)
 
 void felist::AddDescription(const festring& Str, color16 Color)
 {
-  Description.push_back(new felistdescription(Str, Color)); 
+  Description.push_back(new felistdescription(Str, Color));
 }
 
 void felist::Pop()
@@ -493,7 +493,7 @@ void felist::Save(outputfile& SaveFile) const
   SaveFile << Entry << Maximum << Selected;
 }
 
-void felist::Load(inputfile& SaveFile) 
+void felist::Load(inputfile& SaveFile)
 {
   SaveFile >> Entry >> Maximum >> Selected;
 }

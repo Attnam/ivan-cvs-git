@@ -43,6 +43,8 @@ class MATERIAL
   virtual void AddConsumeEndMessage(character*) const;
   virtual void SetSpoilCounter(int);
   virtual bool CanSpoil() const { return true; }
+  virtual int GetSpoilPercentage() const;
+  virtual bool Spoils() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;

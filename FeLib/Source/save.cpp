@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -300,6 +300,13 @@ long inputfile::ReadNumber(int CallLevel, bool PreserveTerminator)
 		ungetc(')', Buffer);
 
 	      return Value;
+	    }
+
+	  if(First == '~')
+	    {
+	      Value = ~ReadNumber(4);
+	      NumberCorrect = true;
+	      continue;
 	    }
 
 	  /* Convert this into an inline function! */

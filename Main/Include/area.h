@@ -36,6 +36,7 @@ class area
   void Save(outputfile&) const;
   void Load(inputfile&);
   int GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
+  void AddFlag(vector2d Pos, int What) { FlagMap[Pos.X][Pos.Y] |= What; }
   square* GetSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   square* GetSquare(int x, int y) const { return Map[x][y]; }
   int GetXSize() const { return XSize; }

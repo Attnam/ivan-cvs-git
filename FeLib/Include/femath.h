@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -32,6 +32,7 @@
 #define RAND_64 (femath::Rand() & 63)
 #define RAND_128 (femath::Rand() & 127)
 #define RAND_256 (femath::Rand() & 255)
+#define RAND_GOOD femath::RandGood
 
 class outputfile;
 class inputfile;
@@ -43,6 +44,7 @@ public:
   static long Rand();
   static void SetSeed(ulong);
   static long RandN(long N) { return Rand() % N; }
+  static long RandGood(long N) { return long(double(N) * Rand() / 0x80000000); }
   static int WeightedRand(long*, long);
   static int WeightedRand(const std::vector<long>&, long);
   static double CalculateAngle(vector2d);

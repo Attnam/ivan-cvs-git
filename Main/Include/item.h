@@ -519,6 +519,10 @@ class item : public object
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
   bool HasID(ulong What) const { return ID == What; }
+  virtual bool WillSpoil() const;
+  int GetMaxSpoilPercentage() const;
+  bool HasPrice() const;
+  virtual void Disappear();
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

@@ -95,8 +95,6 @@ void item::Fly(character* Thrower, int Direction, int Force)
       return;
     }
 
-
-
   if(Direction == RANDOM_DIR)
     Direction = RAND() & 7;
 
@@ -692,8 +690,7 @@ void item::SignalSpoil(material*)
     ADD_MESSAGE("%s spoils completely.", CHAR_NAME(DEFINITE));
 
   bool Equipped = PLAYER->Equips(this);
-  RemoveFromSlot();
-  SendToHell();
+  Disappear();
 
   if(Equipped)
     game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
@@ -720,7 +717,8 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
       && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
-      && !Fluid && !Item->Fluid;
+      && !Fluid && !Item->Fluid
+      && !LifeExpectancy == !Item->LifeExpectancy;
 }
 
 void item::Break(character* Breaker, int)
@@ -759,8 +757,7 @@ void item::Be()
 	  ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
 
 	bool Equipped = PLAYER->Equips(this);
-	RemoveFromSlot();
-	SendToHell();
+	Disappear();
 
 	if(Equipped)
 	  game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
@@ -923,7 +920,15 @@ long item::GetMaterialPrice() const
 
 long item::GetTruePrice() const
 {
-  return Max(GetPrice(), GetMaterialPrice());
+  if(LifeExpectancy)
+    return 0;
+
+  long Price = Max(GetPrice(), GetMaterialPrice());
+
+  if(WillSpoil())
+    Price = Price * (100 - GetMaxSpoilPercentage()) / 500;
+
+  return Price;
 }
 
 bool item::IsSparkling() const
@@ -1408,7 +1413,7 @@ bool item::CanBeHardened(const character*) const
 
 void item::SetLifeExpectancy(int Base, int RandPlus)
 {
-  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  LifeExpectancy = RandPlus > 1 ? Base + RAND_N(RandPlus) : Base;
   Enable();
 }
 
@@ -1474,4 +1479,43 @@ void item::AddTrapName(festring& String, int Amount) const
       String << Amount << ' ';
       AddName(String, PLURAL);
     }
+}
+
+bool item::WillSpoil() const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    {
+      const material* Material = GetMaterial(c);
+
+      if(Material && Material->Spoils())
+	return true;
+    }
+
+  return false;
+}
+
+int item::GetMaxSpoilPercentage() const
+{
+  int MaxPercentage = 0;
+
+  for(int c = 0; c < GetMaterials(); ++c)
+    {
+      const material* Material = GetMaterial(c);
+
+      if(Material)
+	MaxPercentage = Max(MaxPercentage, Material->GetSpoilPercentage());
+    }
+
+  return MaxPercentage;
+}
+
+bool item::HasPrice() const
+{
+  return GetPrice() || GetMaterialPrice();
+}
+
+void item::Disappear()
+{
+  RemoveFromSlot();
+  SendToHell();
 }

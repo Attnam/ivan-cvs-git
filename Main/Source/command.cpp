@@ -27,6 +27,7 @@
 #include "materia.h"
 #include "database.h"
 //#include "fetime.h"
+#include "team.h"
 
 #ifdef WIZARD
 #include "proto.h"
@@ -98,13 +99,12 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
   new command(&GainAllItems, "gain all items", '$', '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, false),
   new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
   new command(&SummonMonster, "summon monster", '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', false, true),
   new command(&Possess, "possess creature", '{', '{', false, true),
   new command(&Polymorph, "polymorph", '[', '[', true, true),
-
 
 #endif
 
@@ -375,7 +375,9 @@ bool commandsystem::PickUp(character* Char)
 	if(!Amount)
 	  return false;
 
-	if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(Char))
+	if((!PileVector[0][0]->GetRoom()
+	 || PileVector[0][0]->GetRoom()->PickupItem(Char, PileVector[0][0], Amount))
+	&& PileVector[0][0]->CheckPickUpEffect(Char))
 	  {
 	    for(int c = 0; c < Amount; ++c)
 	      PileVector[0][c]->MoveTo(Char->GetStack());
@@ -407,7 +409,9 @@ bool commandsystem::PickUp(character* Char)
 
       if(ToPickup[0]->CanBePickedUp())
 	{
-	  if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(Char))
+	  if((!ToPickup[0]->GetRoom()
+	   || ToPickup[0]->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size()))
+	  && ToPickup[0]->CheckPickUpEffect(Char))
 	    {
 	      for(uint c = 0; c < ToPickup.size(); ++c)
 		ToPickup[c]->MoveTo(Char->GetStack());
@@ -1300,7 +1304,16 @@ bool commandsystem::SecretKnowledge(character* Char)
   if(Chosen < 4)
     {
       charactervector& Character = game::GetCharacterDrawVector();
-      Character.push_back(Char);
+      int TeamSize = 0;
+
+      for(std::list<character*>::const_iterator i = Char->GetTeam()->GetMember().begin();
+	  i != Char->GetTeam()->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	  {
+	    Character.push_back(*i);
+	    ++TeamSize;
+	  }
+
       protosystem::CreateEveryCharacter(Character);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
 
@@ -1372,7 +1385,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 
       List.Draw();
 
-      for(c = 1; c < Character.size(); ++c)
+      for(c = TeamSize; c < Character.size(); ++c)
 	delete Character[c];
 
       game::ClearCharacterDrawVector();

@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -2007,8 +2007,7 @@ void level::GenerateTundra()
 
   game::BusyAnimation();
   int c;
-
-  int AmountOfBoulders = RAND_N(20) + 8; 
+  int AmountOfBoulders = RAND_N(20) + 8;
 
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(SNOW_BOULDER));
@@ -2080,7 +2079,7 @@ void level::GenerateGlacier()
 		{
 		  int SquaresAround = 0;
 		  int IceAround = 0;
-	      
+
 		  for(int d = 0; d < 8; ++d)
 		    {
 		      vector2d Pos = vector2d(x,y) + game::GetMoveVector(d);

@@ -227,6 +227,8 @@ class material
   virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
   int GetHardenedMaterial(const item*) const;
   int GetHardenModifier(const item*) const;
+  virtual int GetSpoilPercentage() const { return 0; }
+  virtual bool Spoils() const { return false; }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(int, long, bool);

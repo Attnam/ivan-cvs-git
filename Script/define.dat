@@ -206,6 +206,7 @@
 #define EFFECT_OMMEL_SWEAT 26
 #define EFFECT_OMMEL_TEARS 27
 #define EFFECT_OMMEL_SNOT 28
+#define EFFECT_OMMEL_BONE 29
 
 /* CEM = Consume End Message */
 
@@ -224,6 +225,7 @@
 #define CEM_BLACK_UNICORN_FLESH 12
 #define CEM_GRAY_UNICORN_FLESH 13
 #define CEM_WHITE_UNICORN_FLESH 14
+#define CEM_OMMEL_BONE 15
 
 /* HM = Hit Message */
 

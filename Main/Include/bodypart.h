@@ -71,7 +71,6 @@ class ABSTRACT_ITEM
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   bool IsAlive() const;
-  virtual long GetTruePrice() const;
   void SpillBlood(int);
   void SpillBlood(int, vector2d);
   virtual void Be();

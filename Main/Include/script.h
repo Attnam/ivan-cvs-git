@@ -266,6 +266,7 @@ class contentscript<item> : public contentscripttemplate<item>
   static datamap DataMap;
   SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(interval, Times);
+  SCRIPT_MEMBER(interval, LifeExpectancy);
   FAST_SCRIPT_MEMBER(ulong, Category);
   FAST_SCRIPT_MEMBER(long, MinPrice);
   FAST_SCRIPT_MEMBER(long, MaxPrice);

@@ -134,6 +134,10 @@ SOURCE=.\FeLib\Source\festring.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Source\fetime.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Source\graphics.cpp
 # End Source File
 # Begin Source File

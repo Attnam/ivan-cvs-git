@@ -35,7 +35,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(ForSale->IsLanternOnWall())
     {
-      ADD_MESSAGE("I'd appreciate it if you left my light sources alone, thank you.");
+      ADD_MESSAGE("\"I'd appreciate it if you left my light sources alone, thank you!\"");
       return false;
     }
 
@@ -406,7 +406,7 @@ bool library::PickupItem(character* Customer, item* ForSale, int Amount)
 
   if(ForSale->IsLanternOnWall())
     {
-      ADD_MESSAGE("I'd appreciate it if you left my light sources alone, thank you.");
+      ADD_MESSAGE("\"I'd appreciate it if you left my light sources alone, thank you!\"");
       return false;
     }
 
@@ -643,7 +643,7 @@ void bananadroparea::TeleportSquare(character* Infidel, lsquare* Square)
 bool shop::AllowSpoil(const item* Item) const
 {
   character* Master = GetMaster();
-  return !Master || !Master->IsEnabled() || !Item->GetTruePrice();
+  return !Master || !Master->IsEnabled() || !Item->HasPrice();
 }
 
 bool shop::AllowKick(const character* Char, const lsquare* LSquare) const // gum solution

@@ -46,7 +46,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "save.h"
 #include "whandler.h"
 #include "bitmap.h"
-
 #include "fluid.h"
 #include "rawbit.h"
 

@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -50,7 +50,7 @@ scrollbaroption::scrollbaroption( const char* Name, const char* Description, lon
 				  void (*BarHandler)(long)) :
 				  numberoption(Name, Description, Value, ValueDisplayer, ChangeInterface, ValueChanger),
 				  BarHandler(BarHandler) { }
-				  
+
 
 booloption::booloption(		  const char* Name, const char* Description, bool Value,
 				  void (*ValueDisplayer)(const booloption*, festring&),

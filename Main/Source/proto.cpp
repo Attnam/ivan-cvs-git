@@ -87,13 +87,13 @@ character* protosystem::BalancedCreateMonster()
 
       for(int i = 0; i < 25; ++i)
 	{
-	  configid Chosen = Possible[RAND() % Possible.size()];
+	  configid Chosen = Possible[RAND_GOOD(Possible.size())];
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
 	  character* Monster = Proto->Clone(Chosen.Config);
 
 	  if(c >= 100
 	  || ((Monster->GetFrequency() == 10000
-	    || Monster->GetFrequency() > RAND() % 10000)
+	    || Monster->GetFrequency() > RAND_GOOD(10000))
 	   && (Monster->IsUnique()
 	    || (Monster->GetTimeToKill(PLAYER, true) > 5000
 	     && PLAYER->GetTimeToKill(Monster, true) < 75000))))
@@ -149,7 +149,7 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
     {
       for(int c1 = 0; c1 < BALANCED_CREATE_ITEM_ITERATIONS; ++c1)
 	{
-	  long Rand = RAND_N(TotalPossibility);
+	  long Rand = RAND_GOOD(TotalPossibility);
 	  int Category;
 
 	  if(RequiredCategory == ANY_CATEGORY)
@@ -227,8 +227,8 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
       if(c0 == 25 && RequiredGod)
 	return 0;
 
-      MinPrice = MinPrice * 3 >> 2;
-      MaxPrice = MaxPrice * 5 >> 2;
+      MinPrice = MinPrice * 7 >> 3;
+      MaxPrice = MaxPrice * 9 >> 3;
     }
 }
 
@@ -254,7 +254,7 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 	      && DataBase->CanBeWished
 	      && !DataBase->IsUnique
 	      && (DataBase->Frequency == 10000
-	       || DataBase->Frequency > RAND() % 10000))
+	       || DataBase->Frequency > RAND_GOOD(10000)))
 		{
 		  configid ConfigID(Type, DataBase->Config);
 
@@ -280,7 +280,7 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 	  continue;
 	}
 
-      configid Chosen = Possible[RAND() % Possible.size()];
+      configid Chosen = Possible[RAND_GOOD(Possible.size())];
       Monster = protocontainer<character>::GetProto(Chosen.Type)->Clone(Chosen.Config, SpecialFlags);
       Monster->SignalGeneration();
       Monster->SetTeam(game::GetTeam(MONSTER_TEAM));

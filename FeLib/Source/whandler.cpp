@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -119,7 +119,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
   if(EmptyBuffer)
     {
       while(SDL_PollEvent(&Event))
-	ProcessMessage(&Event);	     
+	ProcessMessage(&Event);
 
       KeyBuffer.clear();
     }
@@ -130,7 +130,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	int Key = KeyBuffer[0];
 	KeyBuffer.erase(KeyBuffer.begin());
 
-	if(Key > 0xE000) 
+	if(Key > 0xE000)
 	  return Key - 0xE000;
 
 	if(Key && Key < 0x81)

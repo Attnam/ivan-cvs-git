@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -43,7 +43,7 @@ bool basequadricontroller::SectorCompletelyClear;
 /* See the GNU Library General Public License for more details.    */
 /* You should have received a copy of the GNU Library General      */
 /* Public License along with this library; if not, write to the    */
-/* Free Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA   */ 
+/* Free Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA   */
 /* 02111-1307  USA                                                 */
 
 /* Copyright (C) 1997 Makoto Matsumoto and Takuji Nishimura.       */
@@ -58,7 +58,7 @@ bool basequadricontroller::SectorCompletelyClear;
 #define UPPER_MASK 0x80000000 /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffff /* least significant r bits */
 
-/* Tempering parameters */   
+/* Tempering parameters */
 #define TEMPERING_MASK_B 0x9d2c5680
 #define TEMPERING_MASK_C 0xefc60000
 #define TEMPERING_SHIFT_U(y) (y >> 11)
@@ -113,7 +113,7 @@ long femath::Rand()
 
     mti = 0;
   }
-  
+
   y = mt[mti++];
   y ^= TEMPERING_SHIFT_U(y);
   y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;

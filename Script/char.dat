@@ -1215,10 +1215,11 @@ frog
 	HostileReplies == "@Dd croaks angrily.";
 	FriendlyReplies =
 	{
-		3,
+		4,
 		"@Dd frolics in religious ecstasy.",
 		"@Dd croaks with pious joy.",
-		"@Dd jumps up and down in enlightened trance.";
+		"@Dd jumps up and down in enlightened trance.",
+		"@Dd goes \"Ribbit! Ribbit!\" full of transcendent delight.";
 	}
 	NameSingular = "frog";
 	IsAbstract = true;
@@ -1799,6 +1800,20 @@ golem
 	}
 }
 
+canine
+{
+	IsAbstract = true;
+	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
+	AttackStyle = USE_HEAD;
+	KnownCWeaponSkills == BITE;
+	ScienceTalkPossibility = 1;
+	ScienceTalkIntelligenceModifier = 1;
+	ScienceTalkWisdomModifier = 2;
+	ScienceTalkIntelligenceRequirement = 3;
+	ScienceTalkWisdomRequirement = 3;
+	ScienceTalkName == "bones";
+}
+
 wolf
 {
 	DefaultArmStrength = 10;
@@ -1817,10 +1832,8 @@ wolf
 	/* SkinColor overridden */
 	NameSingular = "wolf";
 	NamePlural = "wolves";
-	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 600;
 	CanBeGenerated = true;
-	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
 	ClassStates = INFRA_VISION;
 	FleshMaterial = WOLF_FLESH;
@@ -1842,25 +1855,16 @@ dog
 	HostileReplies == "@Dd barks in fury.";
 	/* FriendlyReplies overridden */
 	TotalSize = 70;
-	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	SkinColor = rgb16(111, 74, 37);
 	NameSingular = "puppy";
 	NamePlural = "puppies";
-	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 350;
 	CanBeGenerated = true;
-	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	FleshMaterial = DOG_FLESH;
 	AttachedGod = SILVA;
 	Alias == "dog";
 	DeathMessage = "@Dd is killed.";
-	ScienceTalkPossibility = 1;
-	ScienceTalkIntelligenceModifier = 1;
-	ScienceTalkWisdomModifier = 2;
-	ScienceTalkIntelligenceRequirement = 3;
-	ScienceTalkWisdomRequirement = 3;
-	ScienceTalkName == "bones";
 }
 
 spider
@@ -1935,8 +1939,8 @@ ass
 	DefaultMana = 0;
 	TotalVolume = 40000;
 	TorsoBitmapPos = 288, 0;
-	HostileReplies == "@Dd neighs angrily.";
-	FriendlyReplies == "@Dd neighs cheerfully.";
+	HostileReplies == "@Dd brays angrily.";
+	FriendlyReplies == "@Dd brays cheerfully.";
 	TotalSize = 150;
 	SkinColor = rgb16(80, 80, 80);
 	Adjective = "mutant";

@@ -316,6 +316,7 @@ struct databasebase { int Config; };
 #define EFFECT_OMMEL_SWEAT 26
 #define EFFECT_OMMEL_TEARS 27
 #define EFFECT_OMMEL_SNOT 28
+#define EFFECT_OMMEL_BONE 29
 
 /* CEM = Consume End Message */
 
@@ -334,6 +335,7 @@ struct databasebase { int Config; };
 #define CEM_BLACK_UNICORN_FLESH 12
 #define CEM_GRAY_UNICORN_FLESH 13
 #define CEM_WHITE_UNICORN_FLESH 14
+#define CEM_OMMEL_BONE 15
 
 /* HM = Hit Message */
 
@@ -667,7 +669,7 @@ struct databasebase { int Config; };
 /* Slows down protosystem::BalancedCreateItem() but makes it produce more
    accurate results */
 
-#define BALANCED_CREATE_ITEM_ITERATIONS 50
+#define BALANCED_CREATE_ITEM_ITERATIONS 100
 
 #define CONFIG_TABLE_SIZE 256
 

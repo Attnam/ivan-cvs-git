@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -147,7 +147,7 @@ template <class type> inline void fearray<type>::Add(const type& Type)
     }
 }
 
-template <class type1, class type2> 
+template <class type1, class type2>
 inline void ArrayToVector(const fearray<type1>& Array, std::vector<type2>& Vect)
 {
   Vect.resize(Array.Size, type2());

@@ -312,6 +312,7 @@ solid
 		NameStem = "unicorn horn";
 		AttachedGod = SEGES;
 		IsValuable = true;
+		IntelligenceRequirement = 25;
 	}
 
 	Config DIAMOND;
@@ -1081,7 +1082,7 @@ organic /* substances that spoil but are not flesh */
 		ConsumeType = CT_FRUIT;
 		NutritionValue = 1000;
 		Color = rgb16(224, 224, 0);
-		PriceModifier = 600;
+		PriceModifier = 3000;
 		NameStem = "banana flesh";
 		Flexibility = 5;
 		AttachedGod = SILVA;
@@ -1102,9 +1103,9 @@ organic /* substances that spoil but are not flesh */
 		Flexibility = 5;
 		CanBeWished = false;
 		AttachedGod = SCABIES;
-		PriceModifier = 600;
+		PriceModifier = 1000;
 		CanBeMirrored = false;
-		SpoilModifier = 100000;
+		SpoilModifier = 65000;
 	}
 
 	Config BANANA_PEEL;
@@ -1128,7 +1129,7 @@ organic /* substances that spoil but are not flesh */
 		Density = 1200;
 		NutritionValue = 1000;
 		Color = rgb16(160, 112, 32);
-		PriceModifier = 600;
+		PriceModifier = 3000;
 		NameStem = "kiwi flesh";
 		Flexibility = 5;
 		AttachedGod = SILVA;
@@ -1141,7 +1142,7 @@ organic /* substances that spoil but are not flesh */
 		Density = 1200;
 		NutritionValue = 1000;
 		Color = rgb16(192, 112, 96);
-		PriceModifier = 600;
+		PriceModifier = 3000;
 		NameStem = "pineapple flesh";
 		Flexibility = 5;
 		AttachedGod = SILVA;
@@ -1192,6 +1193,7 @@ organic /* substances that spoil but are not flesh */
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
 		IsGolemMaterial = true;
+		HardenedMaterial = OMMEL_BONE;
 	}
 
 	Config BREAD;
@@ -1201,7 +1203,7 @@ organic /* substances that spoil but are not flesh */
 		Density = 250;
 		NutritionValue = 1000;
 		Color = rgb16(180, 96, 64);
-		PriceModifier = 600;
+		PriceModifier = 3000;
 		NameStem = "bread";
 		Flexibility = 5;
 		SpoilModifier = 20000;
@@ -1215,7 +1217,7 @@ organic /* substances that spoil but are not flesh */
 		ConsumeType = CT_FRUIT;
 		NutritionValue = 20000;
 		Color = rgb16(224, 224, 0);
-		PriceModifier = 600;
+		PriceModifier = 3000;
 		NameStem = "holy banana flesh";
 		Flexibility = 10;
 		AttachedGod = SILVA;
@@ -1239,7 +1241,7 @@ organic /* substances that spoil but are not flesh */
 		Density = 1200;
 		NutritionValue = 1000;
 		CanBeWished = false;
-		PriceModifier = 1000;
+		PriceModifier = 5000;
 		Flexibility = 5;
 		IsValuable = true;
 	}
@@ -1249,7 +1251,7 @@ organic /* substances that spoil but are not flesh */
 		StrengthValue = 1;
 		Color = rgb16(180, 150, 50);
 		NutritionValue = 500;
-		PriceModifier = 2500;
+		PriceModifier = 10000;
 		NameStem = "ommel cerumen";
 		Article = "an";
 		Effect = EFFECT_OMMEL_CERUMEN;
@@ -1266,8 +1268,8 @@ organic /* substances that spoil but are not flesh */
 	Config OMMEL_BONE;
 	{
 		StrengthValue = 250;
-		Flexibility = 2;
-		Density = 1500;
+		Flexibility = 4;
+		Density = 750;
 		ConsumeType = CT_BONE;
 		Color = rgb16(210, 210, 210);
 		NutritionValue = 1000;
@@ -1276,16 +1278,16 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
-		HardenedMaterial = OMMEL_TOOTH;
-		IntelligenceRequirement = 15;
+		IntelligenceRequirement = 5;
 		IsGolemMaterial = true;
+		Effect = EFFECT_OMMEL_BONE;
+		ConsumeEndMessage = CEM_OMMEL_BONE;
 	}
 
 	Config OMMEL_TOOTH;
 	{
 		StrengthValue = 375;
-		Flexibility = 2;
-		Density = 750;
+		Density = 5000;
 		ConsumeType = CT_BONE;
 		Color = rgb16(200, 200, 255);
 		NutritionValue = 1000;
@@ -1294,9 +1296,11 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
-		IntelligenceRequirement = 30;
+		IntelligenceRequirement = 10;
 		IsSparkling = true;
 		IsGolemMaterial = true;
+		Effect = EFFECT_OMMEL_BONE;
+		ConsumeEndMessage = CEM_OMMEL_BONE;
 	}
 }
 
@@ -1447,6 +1451,7 @@ liquid
 		RustModifier = 200;
 		Acidicity = 10;
 		IsValuable = true;
+		PriceModifier = 1000;
 	}
 
 	Config WATER;
@@ -1464,7 +1469,7 @@ liquid
 		StrengthValue = 1;
 		NutritionValue = 250;
 		Color = rgb16(180, 0, 0);
-		PriceModifier = 1000;
+		PriceModifier = 1500;
 		NameStem = "healing liquid";
 		Effect = EFFECT_HEAL;
 		ConsumeEndMessage = CEM_HEALING_LIQUID;
@@ -1487,7 +1492,7 @@ liquid
 		IsBlood = true;
 		RustModifier = 1;
 	}
-	
+
 	Config GLOWING_BLOOD;
 	{
 		StrengthValue = 1;
@@ -1529,7 +1534,7 @@ liquid
 		NameStem = "poison";
 		Effect = EFFECT_POISON;
 		Alpha = 150;
-		PriceModifier = 500;
+		PriceModifier = 250;
 		AttachedGod = SCABIES;
 	}
 
@@ -1598,7 +1603,7 @@ liquid
 		ConsumeEndMessage = CEM_HEALING_LIQUID;
 		HitMessage = HM_HEALING_LIQUID;
 		EffectStrength = 50;
-		PriceModifier = 500;
+		PriceModifier = 750;
 		AttachedGod = CRUENTUS;
 		EffectIsGood = true;
 		IsWarm = true;
@@ -1677,6 +1682,7 @@ liquid
 		Acidicity = 400;
 		AffectInside = true;
 		ConsumeWisdomLimit = 5;
+		PriceModifier = 100;
 	}
 
 	Config DOG_DROOL;
@@ -1699,6 +1705,7 @@ liquid
 		Effect = EFFECT_PEA_SOUP;
 		ConsumeEndMessage = CEM_PEA_SOUP;
 		AttachedGod = SEGES;
+		PriceModifier = 100;
 	}
 
 	Config OMMEL_SWEAT;
@@ -1740,7 +1747,7 @@ liquid
 		StrengthValue = 1;
 		Color = rgb16(145, 145, 16);
 		NutritionValue = 750;
-		PriceModifier = 2500;
+		PriceModifier = 7500;
 		NameStem = "ommel snot";
 		Article = "an";
 		Effect = EFFECT_OMMEL_SNOT;
@@ -1777,7 +1784,7 @@ flesh
 	NameStem = "flesh";
 	Flexibility = 5;
 	SpoilModifier = 10000;
-	PriceModifier = 12;
+	PriceModifier = 60;
 	CanHaveParasite = true;
 	IsWarm = true;
 	UseMaterialAttributes = false;
@@ -1787,7 +1794,7 @@ flesh
 		Color = rgb16(0, 128, 0);
 		NameStem = "green flesh";
 		NutritionValue = 15;
-		PriceModifier = 8;
+		PriceModifier = 40;
 		AttachedGod = MORTIFER;
 	}
 
@@ -1796,7 +1803,7 @@ flesh
 		NutritionValue = 2500;
 		NameStem = "pork";
 		SpoilModifier = 20000;
-		PriceModifier = 1600;
+		PriceModifier = 8000;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
 		IsGolemMaterial = true;
@@ -1807,7 +1814,7 @@ flesh
 		NutritionValue = 2500;
 		NameStem = "beef";
 		SpoilModifier = 20000;
-		PriceModifier = 1600;
+		PriceModifier = 8000;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
 		IsGolemMaterial = true;
@@ -1981,7 +1988,7 @@ flesh
 	{
 		Color = rgb16(48, 48, 48);
 		NameStem = "black unicorn flesh";
-		PriceModifier = 20;
+		PriceModifier = 100;
 		AttachedGod = DULCIS;
 		IsWarm = false;
 		Effect = EFFECT_BLACK_UNICORN_FLESH;
@@ -1994,7 +2001,7 @@ flesh
 	{
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
-		PriceModifier = 20;
+		PriceModifier = 100;
 		AttachedGod = LORICATUS;
 		Effect = EFFECT_GRAY_UNICORN_FLESH;
 		ConsumeEndMessage = CEM_GRAY_UNICORN_FLESH;
@@ -2005,7 +2012,7 @@ flesh
 	{
 		Color = rgb16(160, 160, 160);
 		NameStem = "white unicorn flesh";
-		PriceModifier = 20;
+		PriceModifier = 100;
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_WHITE_UNICORN_FLESH;
 		ConsumeEndMessage = CEM_WHITE_UNICORN_FLESH;
@@ -2051,7 +2058,7 @@ flesh
 	{
 		NameStem = "chameleon flesh";
 		Effect = EFFECT_POLYMORPH;
-		PriceModifier = 10;
+		PriceModifier = 50;
 		ConsumeWisdomLimit = 7;
 		AttachedGod = SCABIES;
 	}
@@ -2064,6 +2071,7 @@ flesh
 		AttachedGod = LEGIFER;
 		EffectIsGood = true;
 		IsValuable = true;
+		PriceModifier = 120;
 	}
 
 	Config MUSHROOM_FLESH;
@@ -2075,6 +2083,7 @@ flesh
 		AttachedGod = NEFAS;
 		EffectStrength = 20;
 		IsWarm = false;
+		PriceModifier = 100;
 	}
 
 	Config MOOSE_FLESH;
@@ -2126,6 +2135,7 @@ flesh
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_TELEPORT_CONTROL;
 		IsValuable = true;
+		PriceModifier = 120;
 	}
 
 	Config MAGIC_MUSHROOM_FLESH;
@@ -2137,6 +2147,7 @@ flesh
 		AttachedGod = NEFAS;
 		EffectStrength = 20;
 		IsWarm = false;
+		PriceModifier = 150;
 	}
 }
 

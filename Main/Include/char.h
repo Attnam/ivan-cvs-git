@@ -401,6 +401,10 @@ class character : public entity, public id
   void AddKoboldFleshConsumeEndMessage() const;
   void AddKoboldFleshHitMessage() const;
   void AddBoneConsumeEndMessage() const;
+  void AddBlackUnicornConsumeEndMessage() const;
+  void AddGrayUnicornConsumeEndMessage() const;
+  void AddWhiteUnicornConsumeEndMessage() const;
+  void AddOmmelBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(int, bool = false, stack* = 0);
   virtual bool TryToRiseFromTheDead();
@@ -922,6 +926,7 @@ class character : public entity, public id
   void ReceiveOmmelSweat(long);
   void ReceiveOmmelTears(long);
   void ReceiveOmmelSnot(long);
+  void ReceiveOmmelBone(long);
   bool IsSameAs(const character*) const;
   ulong GetCommandFlags() const;
   void SetCommandFlags(ulong What) { CommandFlags = What; }

@@ -12,7 +12,6 @@
 /* Compiled through itemset.cpp */
 
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
-long bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
 int bodypart::GetArticleMode() const { return IsUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
@@ -3093,7 +3092,7 @@ void corpse::Be()
 
 void bodypart::SetLifeExpectancy(int Base, int RandPlus)
 {
-  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  LifeExpectancy = RandPlus > 1 ? Base + RAND_N(RandPlus) : Base;
 
   if(!Master)
     Enable();

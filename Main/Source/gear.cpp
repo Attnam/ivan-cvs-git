@@ -158,7 +158,8 @@ long meleeweapon::GetPrice() const
   WeaponStrengthModifier *= WeaponStrengthModifier;
   WeaponStrengthModifier *= GetMainMaterial()->GetWeight();
   WeaponStrengthModifier *= Max((10 + Enchantment) * 0.1, 0.1);
-  return long(WeaponStrengthModifier / (20000000.0 * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
+  return long(WeaponStrengthModifier / (20000000.0 * sqrt(GetWeight())))
+       + GetEnchantedPrice(Enchantment);
 }
 
 int whip::GetFormModifier() const

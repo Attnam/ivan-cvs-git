@@ -41,7 +41,7 @@ long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0;
 bool backpack::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
 long backpack::GetTotalExplosivePower() const { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
-long stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1; }
+long stone::GetTruePrice() const { return item::GetTruePrice() << 1; }
 
 color16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
@@ -299,7 +299,6 @@ void lantern::SignalSquarePositionChange(int SquarePosition)
   item::SignalSquarePositionChange(SquarePosition);
   UpdatePictures();
 }
-
 
 item* potion::BetterVersion() const
 {
@@ -1403,6 +1402,7 @@ materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
 itemcontainer::itemcontainer(const itemcontainer& Container) : item(Container), Locked(Container.Locked)
 {
   Contained = new stack(0, this, HIDDEN);
+  CalculateAll();
 }
 
 oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
@@ -2839,7 +2839,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 
 void itemcontainer::SetLifeExpectancy(int Base, int RandPlus)
 {
-  LifeExpectancy = RandPlus ? Base + RAND_N(RandPlus) : Base;
+  LifeExpectancy = RandPlus > 1 ? Base + RAND_N(RandPlus) : Base;
   Enable();
   Contained->SetLifeExpectancy(Base, RandPlus);
 }
@@ -2986,4 +2986,10 @@ void beartrap::DonateSlotTo(item* Item)
 
   TrapData.VictimID = 0;
   item::DonateSlotTo(Item);
+}
+
+void itemcontainer::Disappear()
+{
+  Contained->MoveItemsTo(GetSlot());
+  item::Disappear();
 }

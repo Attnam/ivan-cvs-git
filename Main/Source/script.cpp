@@ -512,6 +512,7 @@ void contentscript<item>::InitDataMap()
   INIT_ENTRY(Times);
   INIT_ENTRY(MinPrice);
   INIT_ENTRY(MaxPrice);
+  INIT_ENTRY(LifeExpectancy);
   INIT_ENTRY(Team);
   INIT_ENTRY(Category);
   INIT_ENTRY(SquarePosition);
@@ -548,6 +549,9 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
     Instance = protosystem::BalancedCreateItem(GetMinPrice(), GetMaxPrice(), GetCategory(), SpecialFlags, GetConfigFlags());
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
+
+  if(GetLifeExpectancy())
+    Instance->SetLifeExpectancy(GetLifeExpectancy()->Min, (GetLifeExpectancy()->Max - GetLifeExpectancy()->Min) + 1);
 
   if(GetTeam() != DEFAULT_TEAM)
     Instance->SetTeam(GetTeam());

@@ -125,6 +125,7 @@ class ITEM
   virtual bool IsDipDestination(const character*) const;
   virtual liquid* CreateDipLiquid();
   virtual bool AllowSpoil() const { return false; } // temporary
+  virtual bool WillSpoil() const { return false; } // temporary
   virtual bool HasBetterVersion() const { return !SecondaryMaterial; }
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
@@ -525,6 +526,7 @@ class ITEM
   virtual void CalculateEnchantment();
   virtual int GetTeleportPriority() const;
   virtual void SetParameters(int);
+  virtual void Disappear();
  protected:
   virtual color16 GetMaterialColorB(int) const;
   virtual void VirtualConstructor(bool);

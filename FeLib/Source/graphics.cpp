@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -105,7 +105,7 @@ void graphics::SetMode(const char* Title, const char* IconName, int NewResX, int
 
   Screen = SDL_SetVideoMode(NewResX, NewResY, 16, Flags);
 
-  if(!Screen) 
+  if(!Screen)
     ABORT("Couldn't set video mode.");
 
   SDL_WM_SetCaption(Title, 0);
@@ -155,7 +155,7 @@ void graphics::SwitchMode()
 
   Screen = SDL_SetVideoMode(ResX, ResY, ColorDepth, Flags);
 
-  if(!Screen) 
+  if(!Screen)
     ABORT("Couldn't toggle fullscreen mode.");
 
   BlitDBToScreen();
@@ -177,7 +177,7 @@ void graphics::SetMode(const char*, const char*, int NewResX, int NewResY, bool)
   for(Mode = 0; Mode < 0x10000; ++Mode)
     {
       ModeInfo.Retrieve(Mode);
-      
+
       if(ModeInfo.Attribs1 & 0x01
       && ModeInfo.Attribs1 & 0xFF
       && ModeInfo.Width == NewResX

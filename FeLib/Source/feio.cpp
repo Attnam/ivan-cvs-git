@@ -1,10 +1,10 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem
  *  Copyright (C) Timo Kiviluoto
  *  Released under GNU General Public License
  *
- *  See LICENSING which should included with 
+ *  See LICENSING which should included with
  *  this file for more details
  *
  */
@@ -96,7 +96,7 @@ int CountChars(char cSF, const festring& sSH)
    to the lower-left corner and SmallText2 is printed to the lower-right. They both can have
    line-ending characters ('\r') and must also always end with one. */
 
-/* Warning: This function is utter garbage that just happens to work. If you need to use 
+/* Warning: This function is utter garbage that just happens to work. If you need to use
    this function use the comments. Don't try to understand it. It is impossible. */
 
 int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, color16 Color, const festring& SmallText1, const festring& SmallText2)
@@ -192,9 +192,9 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 	  graphics::BlitDBToScreen();
 	  k = GET_KEY(false);
 	}
-		
+
       switch(k)
-	{	
+	{
 	case KEY_UP:
 	  if(iSelected > 0)
 	    --iSelected;
@@ -223,10 +223,10 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 }
 
 /* Asks the user a question requiring a string answer. The answer is saved to Input. Input can also already
-   have a default something retyped for the user. Topic is the question or other topic for the question. 
+   have a default something retyped for the user. Topic is the question or other topic for the question.
    Pos the cordinates of where the question is printed on the screen. Color is the color of all the fonts
-   in this function. Enter is only accepted when the answers length is between MinLetters and MaxLetters. 
-   If Fade is true the question is asked on a black background and the transition to that is a fade. 
+   in this function. Enter is only accepted when the answers length is between MinLetters and MaxLetters.
+   If Fade is true the question is asked on a black background and the transition to that is a fade.
    If AllowExit is true the user can abort with the esc-key.
 
    The function returns ABORTED (when user aborts with esc) or NORMAL_EXIT. */
@@ -264,7 +264,7 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 
       if(TooShort)
 	DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 30, 81, 9, 0);
-		
+
       /* if LastKey is less than 20 it is a control character not available in the font */
 
       while(!(IsAcceptableForStringQuestion(LastKey)))
@@ -283,7 +283,7 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 
       if(LastKey == KEY_ESC && AllowExit)
 	return ABORTED;
-		
+
       if(LastKey == KEY_BACK_SPACE)
 	{
 	  if(!Input.IsEmpty())
@@ -361,7 +361,7 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
 
       if(LastKey == KEY_ENTER)
 	break;
-      
+
       if(ReturnZeroOnEsc && LastKey == KEY_ESC)
 	return 0;
 
@@ -372,12 +372,12 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
   return atoi(Input.CStr());
 }
 
-/* Asks a question defined by Topic and the answer is numeric. The value is 
-   represented by a scroll bar. The topic is drawn to position Pos. Step is 
+/* Asks a question defined by Topic and the answer is numeric. The value is
+   represented by a scroll bar. The topic is drawn to position Pos. Step is
    the step size. Min and Max are the minimum and maximum values. If the player
-   aborts with the esc key AbortValue is returned. Color1 is the left portion 
+   aborts with the esc key AbortValue is returned. Color1 is the left portion
    controls the color of left portion of the scroll bar and Color2 the right portion.
-   LeftKey and RightKey are the keys for changing the scrollbar. Although '<' and '>' 
+   LeftKey and RightKey are the keys for changing the scrollbar. Although '<' and '>'
    also work always. If Fade is true the screen is faded to black before drawing th scrollbar.
    If Handler is set it is called always when the value of the scroll bar changes. */
 
@@ -432,7 +432,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
 	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s", Topic.CStr(), Input.CStr());
 	  FONT->Printf(DOUBLE_BUFFER, Pos.X + ((Topic.GetSize() + Input.GetSize()) << 3) + 8, Pos.Y + 1, TopicColor, "_");
 	}
-      
+
       DOUBLE_BUFFER->DrawHorizontalLine(Pos.X + 1, Pos.X + 201, Pos.Y + 15, Color2, false);
       DOUBLE_BUFFER->DrawVerticalLine(Pos.X + 201, Pos.Y + 12, Pos.Y + 18, Color2, false);
       DOUBLE_BUFFER->DrawHorizontalLine(Pos.X + 1, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
@@ -526,7 +526,7 @@ festring iosystem::ContinueMenu(color16 TopicColor, color16 ListColor, const fes
 
   /* an error has occured in felist */
 
-  if(Check & FELIST_ERROR_BIT) 
+  if(Check & FELIST_ERROR_BIT)
     return "";
 
   return List.GetEntry(Check);
@@ -608,7 +608,7 @@ festring iosystem::ContinueMenu(color16 TopicColor, color16 ListColor, const fes
 
 bool iosystem::IsAcceptableForStringQuestion(char Key)
 {
-  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*' 
+  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*'
   || Key == '/' || Key == '\\' || Key == ':')
     return false;
 

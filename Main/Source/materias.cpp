@@ -295,3 +295,7 @@ bool ironalloy::TryToRust(long Modifier, long Volume)
   return false;
 }
 
+int organic::GetSpoilPercentage() const
+{
+  return 100 * SpoilCounter / GetSpoilModifier();
+}
