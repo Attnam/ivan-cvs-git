@@ -50,7 +50,7 @@ Laitteistovaatimukset
 
 Teoreettinen vähimmäisvaatimus on PC ja sen sisällä i386-prosessori tai
 uudempi. Todellisuudessa täysin jökkimättömään kokemukseen tarvitset ainakin
-300 MHz:n härvelin ja jonkun hitusen järkevämmän tyypinkin siille. Tämä on
+300 MHz:n härvelin ja jonkun hitusen järkevämmän tyypinkin sille. Tämä on
 kenties liikaa Rogue likelle, mutta tässä vaiheessa emme ole katsoneet
 optimointia pääprioriteetiksi.
 
