@@ -1617,7 +1617,7 @@ void level::GenerateDungeon(ushort Index)
 
 void level::GenerateJungle()
 {
-  ushort **DataMap;
+  /*ushort **DataMap;
   DataMap = new (ushort*)[XSize];
   for(ushort x = 0; x < XSize; ++x)
     DataMap[x] = new ushort[YSize];
@@ -1642,5 +1642,5 @@ void level::GenerateJungle()
     }
   for(ushort x = 0; x < XSize; ++x)
     delete DataMap[x];
-  delete DataMap;
+  delete DataMap;*/
 }

@@ -704,9 +704,9 @@ material
 
 	Config BLUE_CRYSTAL;
 	{
-		StrengthValue = 90;
+		StrengthValue = 130;
 		ConsumeType = CT_MINERAL; /* correct someday */
-		Density = 250;
+		Density = 450;
 		IsGolemMaterial = true;
 		Color = rgb16(150, 150, 170);
 		Article = "a";
@@ -721,9 +721,9 @@ material
 
 	Config PURPLE_CRYSTAL;
 	{
-		StrengthValue = 90;
+		StrengthValue = 130;
 		ConsumeType = CT_MINERAL; /* correct someday */
-		Density = 250;
+		Density = 450;
 		IsGolemMaterial = true;
 		Color = rgb16(175, 150, 175);
 		Article = "a";
@@ -738,9 +738,9 @@ material
 
 	Config GREEN_CRYSTAL;
 	{
-		StrengthValue = 90;
+		StrengthValue = 130;
 		ConsumeType = CT_MINERAL; /* correct someday */
-		Density = 250;
+		Density = 450;
 		IsGolemMaterial = true;
 		Color = rgb16(150, 175, 150);
 		Article = "a";
@@ -752,8 +752,6 @@ material
 		Emitation = rgb24(135, 155, 135);
 		IsSparkling = true;
 	}
-	
-
 
 	Config DARK_GRASS;
 	{
@@ -770,8 +768,6 @@ material
 		IsAlive = true;
 		CanRegenerate = true;
 	}
-
-
 }
 
 organicsubstance /* substances that spoil but are not flesh */

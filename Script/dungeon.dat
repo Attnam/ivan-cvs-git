@@ -1552,6 +1552,57 @@ Dungeon UNDER_WATER_TUNNEL;
 			EntryIndex = STAIRS_UP + 1;
 			AttachRequired = true;
 		}
+		Room
+		{
+			Pos = 2:XSize-5,2:YSize-5;
+			Size = 11,11;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = true;
+			GenerateFountains = false;
+			Type = ROOM_LIBRARY;
+			OTerrainMap {
+				Size = 11,11;
+				Pos = 0,0;
+				Types {
+					% = decoration(CARPET);
+					# = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; Chance = 40; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; Chance = 40; } } }
+				}
+			}
+			{
+				...........
+				.....%.....
+				..#..%..#..				
+				..#..%..#..
+				..#..%..#..
+				....%.%....
+				..#..%..#..
+				..#..%..#..
+				..#..%..#..
+				.....%.....
+				...........
+			}
+
+			Square, Pos 5,5;
+			{
+				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
+				EntryIndex = 100;
+				Items == itemcontainer(CHEST) 
+				{
+					ItemsInside = {4,
+						Random { MinPrice = 300; Chance = 25; },
+						Random { MinPrice = 100; Chance = 50; },
+						stone { Chance = 75; },
+						mine { Team = MONSTER_TEAM; IsActive = true; Chance = 60; }
+					} 
+				}
+
+			}
+
+			Square, Pos 4, 4;
+			{
+				OTerrain = sign { Text = "WARNING! Perilous Caverns below!"; }
+			}
+		}
 	}
 
 	Level VESANA_LEVEL;
@@ -1598,50 +1649,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			}
 		}
 
-		Room
-		{
-			Pos = 2:XSize-5,2:YSize-5;
-			Size = 11,11;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = true;
-			OTerrainMap {
-				Size = 11,11;
-				Pos = 0,0;
-				Types {
-					% = decoration(CARPET);
-					^ = fountain;
-					# = olterraincontainer(BOOK_CASE);
-				}
-			}
-			{
-				...........
-				.....%.....
-				..#..%..#..				
-				..#..%..#..
-				..#..%..#..
-				....%.%....
-				..#..%..#..
-				..#..%..#..
-				..#..%..#..
-				.....%.....
-				...........
-			}
-			Square, Pos 5,5;
-			{
-				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
-				EntryIndex = 100;
-				Items == itemcontainer(CHEST) 
-				{
-					ItemsInside = {4,
-						Random { MinPrice = 300; },
-						Random { MinPrice = 100; Chance = 50; },
-						stone { Chance = 75; },
-						mine { Team = MONSTER_TEAM; IsActive = true; Chance = 35; }
-					} 
-				}
-
-			}
-		}
 	}
 
 	Level 3;
@@ -1659,7 +1666,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			Shape = ROUND_CORNERS;
 			WallSquare = solidterrain(DARK_GRASS_TERRAIN), STONE wall(EARTH);
 			FloorSquare = STONE solidterrain(DARK_GRASS_TERRAIN), 0;
-
+			AltarPossible = false;
 		}
 		Square, Random IN_ROOM;
 		{
@@ -1670,21 +1677,93 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			OTerrain = decoration(SHARD);
-			Times = 15:30;
+			Times = 12:30;
 		}
 
-		/*Square, Random;
+		Room
 		{
-			OTerrain = decoration(CRYSTAL_GREEN);
-			Times = 5:10;
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+			Square, Random;
+			{
+				OTerrain = boulder;
+				Times = 3:10;
+			}
+			Square, Random;
+			{
+				Items == stone { Chance = 35; }
+				Times = 0:5;
+			}
+		}
+
+		Room
+		{
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+			Square, Random;
+			{
+				OTerrain = boulder;
+				Times = 3:10;
+			}
+			Square, Random;
+			{
+				Items == stone { Chance = 35; }
+				Times = 0:5;
+			}
+		}
+
+		Room
+		{
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+			Square, Random;
+			{
+				OTerrain = boulder;
+				Times = 3:10;
+			}
+			Square, Random;
+			{
+				Items == stone { Chance = 35; }
+				Times = 0:5;
+			}
+		}
+
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain = boulder;
+			Times = 10:30;
 		}
 
 		Square, Random;
 		{
-			OTerrain = decoration(CRYSTAL_PURPLE);
-			Times = 5:10;
-		}*/
-		
+			Items == stone;
+			Times = 0:15;
+		}
+		Square, Random;
+		{
+			OTerrain = STONE altar(TERRA);
+		}
+
+		Square, Random IN_ROOM;
+		{
+			Character = golem(BLUE_CRYSTAL);
+		}
+
+		Square, Random IN_ROOM;
+		{
+			Character = golem(PURPLE_CRYSTAL);
+		}
+
+		Square, Random IN_ROOM;
+		{
+			Character = golem(GREEN_CRYSTAL);
+		}
 
 		Room
 		{
@@ -1735,7 +1814,6 @@ Dungeon MONDEDR;
 		LOSModifier = 48;
 	}
 }
-
 
 Dungeon FOO;
 {
