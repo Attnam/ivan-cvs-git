@@ -62,6 +62,8 @@ bool ennerbeast::Hit(character*)
 
 		if(Char && Char != this)
 			Char->ReceiveSound(Message, rand() % 26 - rand() % 26, GetMeleeStrength() * GetStrength() / GetHypotSquare<float>(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
+
+
 	});
 
 	SetStrengthExperience(GetStrengthExperience() + 100);

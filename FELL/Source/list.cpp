@@ -53,7 +53,7 @@ ushort list::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) con
 				return 0xFFFE;
 			}
 
-			if(Pressed == 0x1B)
+			if(Pressed == 0x1B || (Pressed == 0x20 && c == String.Length() - 1))
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
