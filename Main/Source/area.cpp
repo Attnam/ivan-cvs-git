@@ -107,7 +107,7 @@ void area::MoveCharacter(vector2d From, vector2d To)
 
 vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar MaxDistance)
 {
-	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
 	{
 		vector2d Vector = vector2d(DoX, DoY);
 
@@ -116,7 +116,7 @@ vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar Ma
 	})
 
 	if(MaxDistance)
-		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
 		{
 			vector2d Vector = vector2d(DoX, DoY);
 
@@ -137,7 +137,7 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 	if(GetSquare(StartPos)->GetOverTerrain()->GetIsWalkable() && !GetSquare(StartPos)->GetCharacter())
 		return StartPos;
 
-	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
 	{
 		vector2d Vector = vector2d(DoX, DoY);
 
@@ -146,7 +146,7 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 	})
 
 	for(ushort c = 0; c < 20; ++c)
-		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
 		{
 			vector2d Vector = vector2d(DoX, DoY);
 

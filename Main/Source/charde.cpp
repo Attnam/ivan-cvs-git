@@ -124,26 +124,6 @@ bool ennerbeast::Hit(character*)
 	return true;
 }
 
-bool humanoid::Drop()
-{
-	ushort Index = GetStack()->DrawContents(this, "What do you want to drop?");
-
-	if(Index < GetStack()->GetItems() && GetStack()->GetItem(Index))
-		if(GetStack()->GetItem(Index) == GetWielded())
-			ADD_MESSAGE("You can't drop something you wield!");
-		else if(GetStack()->GetItem(Index) == Armor.Torso)
-			ADD_MESSAGE("You can't drop something you wear!");
-		else
-			if(!GetLevelSquareUnder()->GetRoom() || (GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->DropItem(this, GetStack()->GetItem(Index))))
-			{
-				GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack());
-
-				return true;
-			}
-
-	return false;
-}
-
 void golem::DrawToTileBuffer() const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -185,32 +165,6 @@ void humanoid::DrawToTileBuffer() const
 		igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
 }
 
-bool humanoid::Wield()
-{
-	ushort Index;
-	if((Index = GetStack()->DrawContents(this, "What do you want to wield? or press '-' for hands")) == 0xFFFF)
-	{
-		ADD_MESSAGE("You have nothing to wield.");
-		return false;
-	}
-
-	if(Index == 0xFFFE)
-		SetWielded(0);
-	else
-		if(Index < GetStack()->GetItems())
-	{
-	if(GetStack()->GetItem(Index) != Armor.Torso)
-		SetWielded(GetStack()->GetItem(Index));
-	else ADD_MESSAGE("You can't wield something that you wear!");
-	}
-
-		else
-			return false;
-
-	return true;
-	
-}
-
 void fallenvalpurist::CreateCorpse()
 {
 	ushort Amount = 2 + rand() % 4;
@@ -240,10 +194,13 @@ void ennerbeast::CreateCorpse()
 
 bool humanoid::WearArmor()
 {
-	ushort Index;
-
-	if((Index = GetStack()->DrawContents(this, "What do you want to wear? or press '-' for nothing")) == 0xFFFF)
+	if(!GetStack()->GetItems())
+	{
+		ADD_MESSAGE("You have nothing to wear!");
 		return false;
+	}
+
+	ushort Index = GetStack()->DrawContents(this, "What do you want to wear? or press '-' for nothing");
 
 	if(Index == 0xFFFE)
 	{
@@ -252,9 +209,7 @@ bool humanoid::WearArmor()
 	}
 	else
 		if(Index < GetStack()->GetItems())		// Other Armor types should be coded...
-		{
 			if(GetStack()->GetItem(Index)->CanBeWorn())
-			{
 				if(GetStack()->GetItem(Index) != GetWielded())
 				{
 					Armor.Torso = GetStack()->GetItem(Index);
@@ -262,10 +217,8 @@ bool humanoid::WearArmor()
 				}
 				else
 					ADD_MESSAGE("You can't wear something that you wield!");
-			}
 			else
 				ADD_MESSAGE("You can't wear THAT!");
-		}
 
 	return false;
 }
@@ -405,40 +358,6 @@ void perttu::Load(inputfile& SaveFile)
 	game::SetPerttu(this);
 }
 
-bool humanoid::Throw()
-{
-	ushort Index;
-
-	if((Index = GetStack()->DrawContents(this, "What do you want to throw?")) == 0xFFFF)
-	{
-		ADD_MESSAGE("You have nothing to throw.");
-		return false;
-	}
-
-	if(Index < GetStack()->GetItems())
-	{
-		if(GetStack()->GetItem(Index) == GetTorsoArmor())
-		{
-			ADD_MESSAGE("You can't throw something that you wear.");
-			return false;
-		}
-
-		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw it?", 8, false);
-
-		if(Answer == 0xFF)
-			return false;
-
-		if(GetStack()->GetItem(Index) == GetWielded())
-			SetWielded(0);
-
-		ThrowItem(Answer, GetStack()->GetItem(Index));
-	}
-	else
-		return false;
-
-	return true;
-}
-
 bool dog::Catches(item* Thingy, float)
 {
 	if(Thingy->DogWillCatchAndConsume())
@@ -464,69 +383,35 @@ bool dog::ConsumeItemType(uchar Type) const     // We need a better system for t
 	{
 	case LIQUID:
 		return true;
-	break;
-		
+		break;	
 	case ODD:
 		return false;
-	break;
+		break;
 	case FRUIT:
 		return true;
-	break;
+		break;
 	case MEAT:
 		return true;
-	break;
+		break;
 	case SPOILED:
 		return true;
-	break;
+		break;
 	case HARD:
 		return false;
-	break;
+		break;
 	case SCHOOLFOOD:
 		return true;
-	break;
+		break;
 	case CONTAINER:
 		return false;
-	break;
+		break;
 	case BONE: // Bone is an odd item, cause it actually can be opened, but not always...
 		return true;
-	break;
-
-
+		break;
 	default:
 		ADD_MESSAGE("ERRRRORRRRRR in dog::Consumeitemtype.");
-	}
-		
-	return false;
-}
-
-bool humanoid::Apply()
-{
-	ushort Index;
-
-	if((Index = GetStack()->DrawContents(this, "What do you want to apply?")) == 0xFFFF)
-	{
-		ADD_MESSAGE("You have nothing to apply.");
 		return false;
 	}
-
-	if(Index < GetStack()->GetItems())
-	{
-		if(GetStack()->GetItem(Index) == GetTorsoArmor())
-		{
-			ADD_MESSAGE("You can't apply something that you wear.");
-			return false;
-		}
-		
-		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
-			return false;
-
-		if(GetWielded() && !GetWielded()->GetExists()) 
-			SetWielded(0);
-	}
-	else
-		return false;
-
-	return true;
 }
 
 float humanoid::GetAttackStrength() const
@@ -540,10 +425,7 @@ bool humanoid::Hit(character* Enemy)
 		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
 			return false;
 
-	GetTeam()->Hostility(Enemy->GetTeam());
-
-	if(GetTeam() == Enemy->GetTeam())
-		Enemy->SetTeam(game::GetTeam(1));
+	Hostility(Enemy);
 
 	short Success = rand() % 26 - rand() % 26;
 

@@ -42,7 +42,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
 		float Danger = Monster->Danger(), Difficulty = game::Difficulty();
 
-		if(c == 49 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
+		if(c == 24 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
 		{
 			Monster->SetTeam(game::GetTeam(1));
 			return Monster;
@@ -94,12 +94,13 @@ item* protosystem::CreateItem(std::string What, bool Output)
 				return protocontainer<item>::GetProto(c)->CreateWishedItem();
 			else if(Output)
 			{
-				ADD_MESSAGE("This item cannot be wished.");
+				ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
 				return 0;
 			}
 
-	if(Output) 
+	if(Output)
 		ADD_MESSAGE("There is no such item.");
+
 	return 0;
 }
 
@@ -111,11 +112,13 @@ material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Outpu
 				return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
 			else if(Output)
 			{
-				ADD_MESSAGE("This material cannot be wished.");
+				ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
 				return 0;
 			}
 		
-	if(Output) ADD_MESSAGE("There is no such item.");
+	if(Output)
+		ADD_MESSAGE("There is no such item.");
+
 	return 0;
 }
 

@@ -22,13 +22,27 @@ class GROUNDLEVELTERRAIN
 (
 	floor,
 	groundlevelterrain,
-	InitMaterials(new gravel),
+	InitMaterials(new stone),
 	{
 	},
 public:
 	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
 protected:
 	virtual std::string NameSingular() const				{ return "floor"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
+);
+
+class GROUNDLEVELTERRAIN
+(
+	ground,
+	groundlevelterrain,
+	InitMaterials(new gravel),
+	{
+	},
+public:
+	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
+protected:
+	virtual std::string NameSingular() const				{ return "ground"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
 
@@ -115,6 +129,7 @@ public:
 	virtual void Load(inputfile&);
 	virtual bool GetIsWalkable() const { return IsOpen; }
 	virtual bool IsDoor() const { return true; }
+	virtual std::string Name(uchar) const;
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }
@@ -134,7 +149,7 @@ public:
 	virtual bool GoUp(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
-	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(180, 180, 0); }
+	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway upwards"; }
 	virtual std::string NamePlural() const					{ return "stairways upwards"; }
@@ -152,7 +167,7 @@ public:
 	virtual bool GoDown(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
-	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(180, 180, 0); }
+	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway downwards"; }
 	virtual std::string NamePlural() const					{ return "stairways downwards"; }

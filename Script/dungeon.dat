@@ -25,7 +25,7 @@ Dungeon 0;
 
 	LevelDefault
 	{
-		FillSquare=floor,earth;
+		FillSquare=ground,earth;
 
 		Size=36,36;
 		Rooms=5+rand%16;
@@ -44,7 +44,7 @@ Dungeon 0;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=true;
-			WallSquare=floor,wall;
+			WallSquare=ground,wall;
 			FloorSquare=parquet,empty;
 			DoorSquare=parquet,door;
 			GenerateDoor=true;
@@ -108,14 +108,14 @@ Dungeon 0;
 	{
 		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare=stone floor, iron wall;
+		FillSquare=floor, iron wall;
 		Items=0;
 		GenerateDownStairs=false;
 
 		RoomDefault
 		{
 			AltarPossible=false;
-			WallSquare=stone floor, iron wall;
+			WallSquare=floor, iron wall;
 			DoorSquare=parquet,iron door;
 			GenerateLamps=false;
 		}
@@ -194,7 +194,7 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=floor,pepsi wall;
+			WallSquare=ground,pepsi wall;
 			FloorSquare=parquet,empty;
 			DoorSquare=parquet,pepsi door;
 
@@ -216,7 +216,7 @@ Dungeon 0;
 
 		Description=OreeLair;
 		LevelMessage="You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
-		FillSquare=pepsi floor,pepsi earth;
+		FillSquare=pepsi ground,pepsi earth;
 		Rooms=1;
 		GenerateMonsters=false;
 		GenerateUpStairs=false;
@@ -228,7 +228,7 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=pepsi floor,pepsi wall;
+			WallSquare=pepsi ground,pepsi wall;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -279,7 +279,7 @@ Dungeon 1;
 	Level 0;
 	{
 		Description=Attnam;
-		FillSquare=floor,empty;
+		FillSquare=ground,empty;
 		Size=48,48;
 		GenerateMonsters=false;
 		Rooms=25 + rand % 6;
@@ -297,7 +297,7 @@ Dungeon 1;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=false;
-			WallSquare=floor,wall;
+			WallSquare=ground,wall;
 			FloorSquare=parquet,empty;
 			DoorSquare=parquet,door;
 			GenerateDoor=true;
@@ -542,6 +542,8 @@ Dungeon 1;
 				{
 					a = avatarofvalpuri;
 					b = banana;
+					k = kiwi;
+					p = pineapple;
 				}
 			}
 			{
@@ -554,11 +556,11 @@ Dungeon 1;
 				.................
 				.........a.......
 				........b........
+				........k........
+				........p........
 				........b........
-				........b........
-				........b........
-				........b........
-				........b........
+				........k........
+				........p........
 				........b........
 				.................
 				.................
@@ -606,12 +608,13 @@ Dungeon 1;
 					l = bananaflesh lump;
 					L = pork loaf;
 					P = glass omleurine potion;
+					C = chainmail;
 				}
 			}
 			{
 			    tsp.b
 			    PlLcl
-			    tbbbL		
+			    tbCbL		
 			}
 		}
 
@@ -721,23 +724,23 @@ Dungeon 1;
 
 		Room 6;
 		{
-			FloorSquare=stone floor,empty;
-			WallSquare=stone floor, wood wall;
-			DoorSquare=stone floor, door;
+			FloorSquare=floor,empty;
+			WallSquare=ground, wood wall;
+			DoorSquare=floor, door;
 		}
 
 		Room 7;
 		{
-			FloorSquare=stone floor,empty;
-			WallSquare=stone floor, wood wall;
-			DoorSquare=stone floor, door;
+			FloorSquare=floor,empty;
+			WallSquare=ground, wood wall;
+			DoorSquare=floor, door;
 		}
 
 		Room 8;
 		{
-			FloorSquare=stone floor,empty;
-			WallSquare=stone floor, wood wall;
-			DoorSquare=stone floor, door;
+			FloorSquare=floor,empty;
+			WallSquare=ground, wood wall;
+			DoorSquare=floor, door;
 		}
 	}
 }

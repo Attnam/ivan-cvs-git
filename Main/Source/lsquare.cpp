@@ -98,7 +98,7 @@ bool levelsquare::DrawStacks() const
 {
 	bool Items = false;
 
-	if(GetStack()->PositionedDrawToTileBuffer())
+	if(GetOverTerrain()->GetIsWalkable() && GetStack()->PositionedDrawToTileBuffer())
 		Items = true;
 
 	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
@@ -137,6 +137,8 @@ void levelsquare::UpdateMemorized()
 {
 	if(MemorizedUpdateRequested)
 	{
+		if(GetOverLevelTerrain()->GetType() == door::StaticType())
+			int esko = 2;
 		ushort Luminance = GetLuminance();
 
 		if(Luminance >= LIGHT_BORDER)
@@ -146,7 +148,7 @@ void levelsquare::UpdateMemorized()
 
 			igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
 
-			if(GetStack()->GetItems() > 1)
+			if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
 				igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
 
 			igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
@@ -188,7 +190,9 @@ void levelsquare::Draw()
 					else
 					{
 						igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+
+						if(GetOverTerrain()->GetIsWalkable())
+							igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 
 						if(GetCharacter())
 						{
@@ -201,7 +205,7 @@ void levelsquare::Draw()
 				{
 					igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
-					if(GetStack()->GetItems() > 1)
+					if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())	
 						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 
 					if(GetCharacter())
@@ -229,7 +233,7 @@ void levelsquare::Draw()
 
 					igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), ITEM_OUTLINE_COLOR);
 
-					if(GetStack()->GetItems() > 1)
+					if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
 						igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
 
 					igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
@@ -674,60 +678,65 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 	if(DescriptionChanged || Cheat)
 	{
 		if(GetLuminance() >= LIGHT_BORDER || Cheat)
-		{
-			bool Anything = false;
-
-			if(GetOverLevelTerrain()->Name(UNARTICLED) != "air atmosphere")
+			if(GetOverTerrain()->GetIsWalkable())
 			{
-				SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
-				Anything = true;
-			}
+				bool Anything = false;
 
-			if(GetStack()->GetItems())
-			{
-				if(Anything)
-					if(GetStack()->GetItems() == 1)
-						SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+				if(GetOverLevelTerrain()->Name(UNARTICLED) != "air atmosphere")
+				{
+					SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
+					Anything = true;
+				}
+
+				if(GetStack()->GetItems())
+				{
+					if(Anything)
+						if(GetStack()->GetItems() == 1)
+							SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+						else
+							SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
 					else
-						SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
+						if(GetStack()->GetItems() == 1)
+							SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+						else
+							SetMemorizedDescription("many items");
+
+					Anything = true;
+
+					SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
+				}
 				else
-					if(GetStack()->GetItems() == 1)
-						SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+					if(Anything)
+						SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
 					else
-						SetMemorizedDescription("many items");
+						SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 
-				Anything = true;
+				for(uchar c = 0; c < 4; ++c)
+				{
+					if(GetSideStack(c)->GetItems() == 1)
+					{
+						if(!Anything)
+							SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 
-				SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
+						SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
+					}
+					else
+					if(GetSideStack(c)->GetItems() > 1)
+					{
+						if(!Anything)
+							SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
+
+						SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
+					}
+				}
+
+				if(!Anything)
+					SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 			}
 			else
-				if(Anything)
-					SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
-				else
-					SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-			for(uchar c = 0; c < 4; ++c)
 			{
-				if(GetSideStack(c)->GetItems() == 1)
-				{
-					if(!Anything)
-						SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-					SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
-				}
-				else
-				if(GetSideStack(c)->GetItems() > 1)
-				{
-					if(!Anything)
-						SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-
-					SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
-				}
+				SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
 			}
-
-			if(!Anything)
-				SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
-		}
 		else
 			SetMemorizedDescription("darkness");
 
@@ -741,7 +750,7 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 		if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
 			return false;
 		else
-			Kicker->GetTeam()->Hostility(GetCharacter()->GetTeam());
+			Kicker->Hostility(GetCharacter());
 
 	if(Room)
 		GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
@@ -942,6 +951,7 @@ void levelsquare::MoveCharacter(levelsquare* To)
 		SignalEmitationDecrease(Emit);
 		NewDrawRequested = true;
 		To->NewDrawRequested = true;
+		To->StepOn(Movee, this);
 	}
 }
 
@@ -974,6 +984,8 @@ void levelsquare::SwapCharacter(levelsquare* With)
 			With->SignalEmitationDecrease(EmitTwo);
 			NewDrawRequested = true;
 			With->NewDrawRequested = true;
+			With->StepOn(MoveeOne, this);
+			StepOn(MoveeTwo, With);
 		}
 	else
 		if(With->Character)

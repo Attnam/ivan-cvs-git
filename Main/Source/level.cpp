@@ -194,8 +194,8 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 
 	ExpandPossibleRoute(From, Target, XMode);
 
-	if(!(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE))
-		ABORT("Route code error during level generate! Contact Timo!");
+	if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)
+		//ABORT("Route code error during level generate! Contact Timo!");
 
 	{
 	for(ushort x = 0; x < XSize; ++x)
@@ -803,12 +803,12 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 
 vector2d level::RandomSquare(bool Walkablility, bool HasCharacter) const
 {
-	vector2d Pos(rand() % XSize, rand() % YSize);
+	vector2d Pos(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
-	while(Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter()))
+	for(ushort c = 0; (Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
 	{
-		Pos.X = rand() % XSize;
-		Pos.Y = rand() % YSize;
+		Pos.X = 1 + rand() % (XSize - 2);
+		Pos.Y = 1 + rand() % (YSize - 2);
 	}
 
 	return Pos;

@@ -7,7 +7,10 @@
 #include "message.h"
 #include "proto.h"
 #include "save.h"
+#include "script.h"
+#include "lterrade.h"
 #include "team.h"
+
 void god::Pray()
 {
 	if(!Timer)
@@ -114,17 +117,7 @@ void consummo::PrayGoodEffect()
 	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
 	ADD_MESSAGE("You teleport away!");
 
-	vector2d Pos;
-
-	for(;;)
-	{
-		Pos = game::GetCurrentLevel()->RandomSquare(true);
-
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter() == 0)
-			break;
-	}
-
-	game::GetPlayer()->Move(Pos, true);
+	game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(true), true);
 }
 
 void consummo::PrayBadEffect()
@@ -159,10 +152,14 @@ void venius::PrayGoodEffect()
 	ADD_MESSAGE("A huge divine fire sweeps the surrounding area.");
 
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
 	{
-		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(20);
-		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
+		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
+		if(Char && game::GetPlayer()->GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
+		{
+			Char->ReceiveFireDamage(20);
+			Char->CheckDeath(std::string("burned to death by the wrath of ") + Name());
+		}
 	})
 }
 
@@ -178,6 +175,7 @@ void dulcis::PrayGoodEffect()
 	ADD_MESSAGE("A beatiful melody echoes through the dungeon.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+
 	if(Char)
 	{
 		if(Char->Charmable())
@@ -280,6 +278,7 @@ void atavus::PrayBadEffect()
 	{
 		ushort ToBeDeleted = rand() % game::GetPlayer()->GetStack()->GetItems();
 		item* Disappearing = game::GetPlayer()->GetStack()->GetItem(ToBeDeleted);
+
 		if(Disappearing->Destroyable())
 		{
 			ADD_MESSAGE("Your %s disappears.", Disappearing->CNAME(UNARTICLED));
@@ -308,12 +307,131 @@ void atavus::PrayBadEffect()
 
 void silva::PrayGoodEffect()
 {
-	ADD_MESSAGE("This will soon be implemented.");
+	if(!*game::GetCurrentLevel()->GetLevelScript()->GetOnGround())
+	{
+		ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
+
+		uchar c, Tunnels = 2 + rand() % 3;
+
+		for(c = 0; c < Tunnels; ++c)
+			game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(false));
+
+		uchar ToEmpty = 10 + rand() % 11;
+
+		for(c = 0; c < ToEmpty; ++c)
+			for(ushort i = 0; i < 50; ++i)
+			{
+				vector2d Pos = game::GetCurrentLevel()->RandomSquare(false);
+				bool Correct = false;
+
+				DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+				{
+					if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+					{
+						Correct = true;
+						break;
+					}
+				});
+
+				if(Correct)
+				{
+					game::GetCurrentLevel()->GetLevelSquare(Pos)->ChangeOverLevelTerrain(new empty);
+
+					for(uchar p = 0; p < 4; ++p)
+						game::GetCurrentLevel()->GetLevelSquare(Pos)->GetSideStack(p)->Clean();
+
+					break;
+				}
+			}
+
+		uchar ToGround = 20 + rand() % 21;
+
+		for(c = 0; c < ToGround; ++c)
+			for(ushort i = 0; i < 50; ++i)
+			{
+				vector2d Pos = game::GetCurrentLevel()->RandomSquare(true, rand() % 2 ? true : false);
+
+				character* Char = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter();
+
+				if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetType() != empty::StaticType() || (Char && Char->GetIsPlayer()))
+					continue;
+
+				uchar Walkables = 0;
+
+				DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+				{
+					if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+						++Walkables;
+				});
+
+				if(Walkables > 6)
+				{
+					game::GetCurrentLevel()->GetLevelSquare(Pos)->ChangeOverLevelTerrain(new earth);
+
+					if(Char)
+					{
+						if(Char->GetSquareUnder()->CanBeSeen())
+							ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CNAME(DEFINITE));
+
+						Char->SetHP(Char->GetHP() - 50 - rand() % 51);
+						Char->CheckDeath("killed by an earthquake");
+					}
+
+					game::GetCurrentLevel()->GetLevelSquare(Pos)->KickAnyoneStandingHereAway();
+
+					ushort p;
+
+					for(p = 0; p < 4; ++p)
+						game::GetCurrentLevel()->GetLevelSquare(Pos)->GetSideStack(p)->Clean();
+
+					for(p = 0; p < game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems();)
+						if(!game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()))
+							++p;
+
+					break;
+				}
+			}
+	}
+	else
+	{
+		uchar Created = 0;
+
+		DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+		{
+			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+			{
+				wolf* Wolf = new wolf;
+				Wolf->SetTeam(game::GetPlayer()->GetTeam());
+				game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->AddCharacter(Wolf);
+				++Created;
+			}
+		});
+
+		if(!Created)
+			ADD_MESSAGE("You hear a sad howling of a wolf inprisoned in the earth.");
+
+		if(Created == 1)
+			ADD_MESSAGE("Suddenly a tame wolf materializes beside you.");
+
+		if(Created > 1)
+			ADD_MESSAGE("Suddenly some tame wolves materialize around you.");
+	}
 }
 
 void silva::PrayBadEffect()
 {
-	ADD_MESSAGE("This will soon be implemented.");
+	switch(rand() % 300 / 100)
+	{
+	case 0:
+		game::GetPlayer()->Polymorph(new spider(true, true, false));
+		break;
+	case 1:
+		game::GetPlayer()->Polymorph(new donkey(true, true, false));
+		break;
+	case 2:
+		game::GetPlayer()->Polymorph(new jackal(true, true, false));
+		break;
+	}
 }
 
 void loricatus::PrayGoodEffect()
@@ -321,13 +439,16 @@ void loricatus::PrayGoodEffect()
 	std::string OldName;
 
 	if(game::GetPlayer()->GetWielded())
-	{
-		OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
-		game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
-	}
+		if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
+		{
+			OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
+			game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
+			ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
+		}
+		else
+			ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	else
-		ADD_MESSAGE("You feel a loss.");
+		ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
 
 void loricatus::PrayBadEffect()
@@ -335,13 +456,16 @@ void loricatus::PrayBadEffect()
 	std::string OldName;
 
 	if(game::GetPlayer()->GetWielded())
-	{
-		OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
-		game::GetPlayer()->GetWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
-	}
+		if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
+		{
+			OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
+			game::GetPlayer()->GetWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
+			ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
+		}
+		else
+			ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	else
-		ADD_MESSAGE("You feel a loss.");
+		ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
 
 void calamus::PrayGoodEffect()
@@ -399,6 +523,7 @@ void mellis::PrayGoodEffect()
 	bool Success = false;
 	ushort JustCreated;
 	item* NewVersion;
+
 	if(game::GetPlayer()->GetStack()->GetItems())
 	{
 		ADD_MESSAGE("%s tries to trade some of your items into better ones.", GOD_NAME);

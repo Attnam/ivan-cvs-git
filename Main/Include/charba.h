@@ -188,8 +188,8 @@ public:
 	virtual void Vomit(ushort);
 	virtual void Be();
 	virtual bool Zap();
-	virtual bool Polymorph();
-	virtual bool SetTorsoArmor(item* What) const RET(false)
+	virtual bool Polymorph(character*);
+	virtual bool SetTorsoArmor(item* What) RET(false)
 	virtual bool CanKick() const RET(false)
 	virtual void BeKicked(ushort, bool, uchar, character*);
 	virtual void FallTo(vector2d, bool);
@@ -243,6 +243,8 @@ public:
 	virtual void AddSpecialItemInfoDescription(std::string&) {}
 	virtual long StatScore() const;
 	virtual bool CheckStarvationDeath(std::string);
+	virtual void ShowNewPosInfo();
+	virtual void Hostility(character*);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

@@ -86,7 +86,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	else
 		if(game::BoolQuestion("Are you sure you want to steal this item? [y/N]"))
 		{
-			Customer->GetTeam()->Hostility(Master->GetTeam());
+			Customer->Hostility(Master);
 			return true;
 		}
 		else
@@ -183,7 +183,7 @@ void shop::KickSquare(character* Infidel, levelsquare* Square)
 	if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	{
 		ADD_MESSAGE("\"You infidel!\"");
-		Infidel->GetTeam()->Hostility(Master->GetTeam());
+		Infidel->Hostility(Master);
 	}
 }
 
@@ -203,7 +203,7 @@ bool shop::ConsumeItem(character* Customer, item*)
 	else
 		if(game::BoolQuestion("It's illegal to eat property of others. Are you sure you sure? [y/N]"))
 		{
-			Customer->GetTeam()->Hostility(Master->GetTeam());
+			Customer->Hostility(Master);
 			return true;
 		}
 		else

@@ -19,15 +19,11 @@ public:
 	virtual bool SetTorsoArmor(item* What) { Armor.Torso = What; return true;}
 	virtual uchar GetSex() const RET(MALE)
 	virtual ushort CalculateArmorModifier() const;
-	virtual bool Drop();
-	virtual bool Wield();
 	virtual void Save(outputfile&) const;
-	virtual bool Throw();
 	virtual uchar GetArmType() const RET(ArmType)
 	virtual uchar GetHeadType() const RET(HeadType)
 	virtual bool CanWield() const RET(true)
 	virtual bool CanWear() const RET(true)
-	virtual bool Apply();
 	virtual void SetArmType(uchar Value) { ArmType = Value; }
 	virtual void SetHeadType(uchar Value) { HeadType = Value; }
 	virtual void SetLegType(uchar Value) { LegType = Value; }

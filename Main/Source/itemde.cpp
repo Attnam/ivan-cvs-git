@@ -28,22 +28,15 @@ item* can::TryToOpen(stack* Stack)
 	return x;
 }
 
-bool corpse::Consume(character* Eater, float Amount)
+bool banana::Consume(character* Eater, float Amount)
 {
-	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
-	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
 	{
 		game::DoEvilDeed(10);
 		ADD_MESSAGE("You feel that this was an evil deed.");
 	}
-
-	return GetMaterial(0)->GetVolume() ? false : true;
-}
-
-bool banana::Consume(character* Eater, float Amount)
-{
-	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
 	{
@@ -59,6 +52,12 @@ bool banana::Consume(character* Eater, float Amount)
 bool potion::Consume(character* Eater, float Amount)
 {
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
+
+	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
+	{
+		game::DoEvilDeed(10);
+		ADD_MESSAGE("You feel that this was an evil deed.");
+	}
 
 	if(!GetMaterial(1)->GetVolume())
 		ChangeMaterial(1,0);
@@ -121,19 +120,13 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 bool scrollofteleport::Read(character* Reader)
 {
-	for(vector2d Pos;;)
-	{
-		Pos = game::GetCurrentLevel()->RandomSquare(true);
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter() == 0)
-			break;
-	}
 	if(Reader->GetIsPlayer())
 		ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
 	else
 		if(Reader->GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
-	Reader->Move(Pos, true);
+	Reader->Move(game::GetCurrentLevel()->RandomSquare(true), true);
 	return true;
 }
 
@@ -179,7 +172,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	if(GetMaterial(1)) 
 		GetLevelSquareUnder()->SpillFluid(5, GetMaterial(1)->GetColor());
 	Remains->InitMaterials(GetMaterial(0));
-	SetMaterial(0, 0);
+	SetMaterial(0,0);
 	ushort Index = ItemStack->AddItem(Remains);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
@@ -190,18 +183,6 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-}
-
-bool loaf::Consume(character* Eater, float Amount)
-{
-	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-	return GetMaterial(0)->GetVolume() ? false : true;
-}
-
-bool abone::Consume(character* Consumer, float Amount)
-{
-	GetMaterial(0)->EatEffect(Consumer, Amount, NPModifier());
-	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
 item* can::PrepareForConsuming(character* Consumer, stack* Stack)
@@ -323,8 +304,8 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
-					Zapper->GetTeam()->Hostility(Character->GetTeam());
-					Character->Polymorph();
+					Zapper->Hostility(Character);
+					Character->Polymorph(protosystem::BalancedCreateMonster(5, false));
 				}
 
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
@@ -334,7 +315,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	else
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph();
+			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph(protosystem::BalancedCreateMonster(5, false));
 		
 		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems())
 			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
@@ -499,7 +480,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
-					Zapper->GetTeam()->Hostility(Character->GetTeam());
+					Zapper->Hostility(Character);
 					Character->StruckByWandOfStriking();
 				}
 
@@ -576,12 +557,6 @@ material* corpse::BeDippedInto()
 	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
 }
 
-bool fruit::Consume(character* Eater, float Amount)
-{
-	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-	return GetMaterial(0)->GetVolume() ? false : true;
-}
-
 void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 {
 	if(!Index)
@@ -648,10 +623,10 @@ item* potion::BetterVersion(void) const
 		else
 			Stuff = new omleurine;
 
-		 item* P = new potion(false); 
-		 P->InitMaterials(2, new glass, Stuff); 
+		item* P = new potion(false); 
+		P->InitMaterials(2, new glass, Stuff);
 
-		 return P;
+		return P;
 	}
 	else
 		return 0;
@@ -668,13 +643,11 @@ item* can::BetterVersion(void) const
 		else
 			Stuff = new bananaflesh;
 
-		 item* P = new potion(false); 
-		 P->InitMaterials(2, new glass, Stuff); 
+		item* P = new can(false); 
+		P->InitMaterials(2, new iron, Stuff); 
 
-		 return P;
+		return P;
 	}
 	else
 		return 0;
 }
-
-

@@ -101,7 +101,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 
 		std::vector<character*> MonsterList;
 
-		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 		{
 			character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
 
@@ -133,7 +133,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		{
 			std::vector<character*> TempPlayerGroup;
 
-			DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+			DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 			{
 				character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
 
@@ -186,7 +186,7 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 		std::vector<character*> MonsterList;
 
-		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 		{
 			character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
 
@@ -246,14 +246,15 @@ void door::MakeWalkable()
 {
 	IsOpen = true;
 
+	UpdatePicture();
+
 	GetLevelSquareUnder()->SendNewDrawRequest();
 	GetLevelSquareUnder()->SendMemorizedUpdateRequest();
+	GetLevelSquareUnder()->SetDescriptionChanged(true);
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
 		game::GetCurrentLevel()->UpdateLOS();
-
-	UpdatePicture();
 }
 
 void door::MakeNotWalkable()
@@ -262,14 +263,15 @@ void door::MakeNotWalkable()
 
 	IsOpen = false;
 
+	UpdatePicture();
+
 	GetLevelSquareUnder()->SendNewDrawRequest();
 	GetLevelSquareUnder()->SendMemorizedUpdateRequest();
+	GetLevelSquareUnder()->SetDescriptionChanged(true);
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
 		game::GetCurrentLevel()->UpdateLOS();
-
-	UpdatePicture();
 }
 
 void altar::StepOn(character* Stepper)
@@ -345,4 +347,24 @@ void altar::ReceiveVomit(character* Who)
 {
 	if(Who->GetIsPlayer())
 		game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
+}
+
+std::string door::Name(uchar Case) const
+{
+	if(!(Case & PLURAL))
+		if(!(Case & DEFINEBIT))
+			return std::string(IsOpen ? "open " : "closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string(IsOpen ? "the open " : "the closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+			else
+				return std::string(IsOpen ? "open " : "closed ") + GetMaterial(0)->Name()  + " " + NameSingular();
+	else
+		if(!(Case & DEFINEBIT))
+			return GetMaterial(0)->Name()  + " " + NamePlural();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + GetMaterial(0)->Name()  + " " + NamePlural();
+			else
+				return GetMaterial(0)->Name()  + " " + NamePlural();
 }

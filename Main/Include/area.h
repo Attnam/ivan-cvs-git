@@ -174,34 +174,6 @@
 	}								\
 }
 
-#define DO_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoOne, DoTwo)				\
-{																\
-	long	Left    = (CenterX) - (Radius),											\
-		Top     = (CenterY) - (Radius),											\
-		Rigth   = (CenterX) + (Radius),											\
-		Bottom  = (CenterY) + (Radius);											\
-																\
-	if(Left   < (ClipLeft))		Left   = (ClipLeft);									\
-	if(Top    < (ClipTop))		Top    = (ClipTop);									\
-	if(Rigth  > (ClipRigth))	Rigth  = (ClipRigth);									\
-	if(Bottom > (ClipBottom))	Bottom = (ClipBottom);									\
-																\
-	if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop))				\
-	{															\
-		ushort XPointer, YPointer;											\
-																\
-		for(XPointer = Left; XPointer <= Rigth; ++XPointer)								\
-		{														\
-			DoOne;													\
-		}														\
-																\
-		for(YPointer = Top; YPointer <= Bottom; ++YPointer)								\
-		{														\
-			DoTwo;													\
-		}														\
-	}															\
-}
-
 #define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat)				\
 {																\
 	long	Left    = (CenterX) - (Radius),											\
@@ -214,7 +186,7 @@
 	if(Rigth  > (ClipRigth))	Rigth  = (ClipRigth);									\
 	if(Bottom > (ClipBottom))	Bottom = (ClipBottom);									\
 																\
-	if(Left < (ClipRigth) && Top < (ClipBottom) && Rigth > (ClipLeft) && Bottom > (ClipTop))				\
+	if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop))				\
 	{															\
 		ushort XPointer, YPointer;											\
 																\

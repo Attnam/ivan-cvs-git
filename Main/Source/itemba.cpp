@@ -114,7 +114,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
 			{
 				if(Hostile)
-					game::GetPlayer()->GetTeam()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->GetTeam());
+					game::GetPlayer()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter());
 
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
 				{
@@ -217,10 +217,20 @@ void item::StruckByWandOfStriking(stack* What)
 bool item::Consume(character* Eater, float Amount)
 {
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+
+	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+	{
+		game::DoEvilDeed(10);
+		ADD_MESSAGE("You feel that this was an evil deed.");
+	}
+
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
-bool item::IsBadFoodForAI() const
+bool item::IsBadFoodForAI(character* Eater) const
 {
-	return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
+	if(Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+		return true;
+	else
+		return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
 }
