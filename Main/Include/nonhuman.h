@@ -444,6 +444,7 @@ class CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual void FinalProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();

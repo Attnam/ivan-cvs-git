@@ -205,7 +205,8 @@ class material
   virtual bool IsPowder() const { return false; }
   static item* CreateNaturalForm(int, long);
   item* CreateNaturalForm(long) const;
-  bool IsInfectedByLeprosy() const { return false; }
+  virtual bool IsInfectedByLeprosy() const { return false; }
+  virtual void SetIsInfectedByLeprosy(bool) { }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(int, long, bool);

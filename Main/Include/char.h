@@ -864,6 +864,8 @@ class character : public entity, public id
   virtual void SignalDisappearance();
   virtual bool HornOfFearWorks() const;
   virtual bool CanHear() const;
+  void BeginLeprosy();
+  void EndLeprosy();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -248,12 +248,15 @@ void seges::PrayGoodEffect()
 
       if(PLAYER->GetNP() < SATIATED_LEVEL)
 	PLAYER->SetNP(SATIATED_LEVEL);
+
+      return;
     }
 
   if(PLAYER->StateIsActivated(LEPROSY))
     {
       ADD_MESSAGE("%s cures your leprosy.", GetName());
       PLAYER->DeActivateTemporaryState(LEPROSY);
+      return;
     }
 }
 
@@ -1037,7 +1040,10 @@ void cruentus::PrayGoodEffect()
 	  {
 	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
-	    if(Audience && !Audience->TemporaryStateIsActivated(PANIC) && PLAYER->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
+	    if(Audience
+	    && !Audience->TemporaryStateIsActivated(PANIC)
+	    && PLAYER->GetRelation(Audience) == HOSTILE
+	    && Audience->GetPanicLevel() > RAND() % 33)
 	      Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	  }
 

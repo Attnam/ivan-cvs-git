@@ -1343,7 +1343,7 @@ golem
 	CanRead = true;
 	BodyPartsDisappearWhenSevered = true;
 	DangerModifier = 75;
-	IsImmuneToLeprosy = true;
+	/*IsImmuneToLeprosy = true;*/
 
 	Config VALPURIUM;
 	{

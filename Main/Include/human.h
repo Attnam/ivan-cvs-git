@@ -412,6 +412,7 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual festring GetZombieDescription() const;
  protected:
+  virtual void VirtualConstructor(bool);
   virtual void AddPostFix(festring&) const;
   virtual void GetAICommand();
   virtual bool AllowExperience() const { return false; }
@@ -519,7 +520,8 @@ class CHARACTER
 (
   orc,
   humanoid,
-  ;
+ protected:
+  virtual void VirtualConstructor(bool);
 );
 
 class CHARACTER

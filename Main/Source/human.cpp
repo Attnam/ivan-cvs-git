@@ -367,7 +367,8 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	    {
 	      FirstAPCost = FirstArm->GetAPCost();
 	      FirstArm->Hit(Enemy, HitPos, Direction, ForceHit);
-	      if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
+
+	      if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
 		DropBodyPart(FirstArm->GetBodyPartIndex());
 	    }
 
@@ -375,7 +376,8 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	    {
 	      SecondAPCost = SecondArm->GetAPCost();
 	      SecondArm->Hit(Enemy, HitPos, Direction, ForceHit);
-	      if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
+
+	      if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
 		DropBodyPart(SecondArm->GetBodyPartIndex());
 	    } 
 
@@ -391,8 +393,10 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
 	  Kick(GetNearLSquare(HitPos), Direction, ForceHit);
-	  if(StateIsActivated(LEPROSY) && !RAND_N(50*GetAttribute(ENDURANCE)))
-	    DropBodyPart(RAND_2 ? GetRightLeg()->GetBodyPartIndex() : GetLeftLeg()->GetBodyPartIndex());
+
+	  if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
+	    DropBodyPart(RAND_2 ? RIGHT_LEG_INDEX : LEFT_LEG_INDEX);
+
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -623,6 +627,27 @@ void priest::BeTalkedTo()
 	}
       else
 	ADD_MESSAGE("\"You seem to be rather ill. Get %d gold pieces and I'll fix that.\"", Price);
+    }
+
+  if(PLAYER->TemporaryStateIsActivated(LEPROSY))
+    {
+      long Price = GetConfig() == VALPURUS ? 100 : 20;
+
+      if(PLAYER->GetMoney() >= Price)
+	{
+	  ADD_MESSAGE("\"You seem to have contracted the vile disease of leprosy. I could give you a small dose of medicince for %d gold pieces.\"", Price);
+
+	  if(game::BoolQuestion(CONST_S("Do you agree? [y/N]")))
+	    {
+	      ADD_MESSAGE("You feel better.");
+	      PLAYER->DeActivateTemporaryState(LEPROSY);
+	      PLAYER->SetMoney(PLAYER->GetMoney() - Price);
+	      SetMoney(GetMoney() + Price);
+	      return;
+	    }
+	}
+      else
+	ADD_MESSAGE("\"You seem to be falling apart. Get %d gold pieces and I'll fix that.\"", Price);
     }
 
   for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
@@ -4259,7 +4284,7 @@ void darkknight::SpecialBodyPartSeverReaction()
 
 void humanoid::LeprosyHandler()
 {
-  if(!RAND_N(5000*GetAttribute(ENDURANCE)))
+  if(!RAND_N(5000 * GetAttribute(ENDURANCE)))
     DropRandomNonVitalBodypart();
 
   if(!game::IsInWilderness())
@@ -4271,7 +4296,8 @@ void humanoid::LeprosyHandler()
 	  if(Square && Square->GetCharacter())
 	    Square->GetCharacter()->TryToInfectWithLeprosy(this);
 	}
-    }  
+    }
+
   character::LeprosyHandler();
 }
 
@@ -4279,14 +4305,15 @@ void humanoid::DropRandomNonVitalBodypart()
 {
   int BodyPartIndexToDrop = GetRandomNonVitalBodyPart();
   
-  if(BodyPartIndexToDrop)
-    {
-      DropBodyPart(BodyPartIndexToDrop);
-    }
+  if(BodyPartIndexToDrop != NONE_INDEX)
+    DropBodyPart(BodyPartIndexToDrop);
 }
 
 void humanoid::DropBodyPart(int Index)
 {
+  if(GetBodyPart(Index)->IsAlive())
+    return;
+
   festring NameOfDropped = GetBodyPart(Index)->GetBodyPartName();
   item* Dropped = SevereBodyPart(Index);
   
@@ -4409,3 +4436,19 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
     }
 }
 
+
+void zombie::VirtualConstructor(bool Load)
+{
+  if(!Load && !RAND_N(3))
+    GainIntrinsic(LEPROSY);
+
+  humanoid::VirtualConstructor(Load);
+}
+
+void orc::VirtualConstructor(bool Load)
+{
+  if(!Load && !RAND_N(25))
+    GainIntrinsic(LEPROSY);
+
+  humanoid::VirtualConstructor(Load);
+}

@@ -2097,3 +2097,9 @@ void blinkdog::Load(inputfile& SaveFile)
   dog::Load(SaveFile);
   SaveFile >> SummonModifier;
 }
+
+void genetrixvesana::FinalProcessForBone()
+{
+  largecreature::FinalProcessForBone();
+  TurnsExisted = 0;
+}

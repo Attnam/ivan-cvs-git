@@ -197,10 +197,9 @@ statedata StateData[STATES] =
     RANDOMIZABLE&~DUR_TEMPORARY,
     &character::PrintBeginLeprosyMessage,
     &character::PrintEndLeprosyMessage,
-    0,
-    0,
+    &character::BeginLeprosy,
+    &character::EndLeprosy,
     &character::LeprosyHandler,
-    //    &character::IsNotImmuneToLeprosy
     0
   }
 };
@@ -2904,7 +2903,8 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 	}
     }
 
-  if(BodyPart->ReceiveDamage(Damager, Damage, Type, Direction) && BodyPartCanBeSevered(BodyPartIndex))
+  if(BodyPart->ReceiveDamage(Damager, Damage, Type, Direction)
+  && BodyPartCanBeSevered(BodyPartIndex))
     {
       if(DamageTypeDestroysBodyPart(Type))
 	{
@@ -2959,7 +2959,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 	    game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
 	}
 
-      if(CanPanicFromSeveredBodyPart() && RAND() % 100 < GetPanicLevel() && !StateIsActivated(PANIC) && !IsDead())
+      if(CanPanicFromSeveredBodyPart()
+      && RAND() % 100 < GetPanicLevel()
+      && !StateIsActivated(PANIC) && !IsDead())
 	BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
 
       SpecialBodyPartSeverReaction();
@@ -2976,6 +2978,9 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 item* character::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+
+  if(StateIsActivated(LEPROSY))
+    BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
 
   if(StuckToBodyPart == BodyPartIndex)
     {
@@ -4538,9 +4543,6 @@ int character::GetDistanceSquareFrom(const character* Who) const
 
 void character::AttachBodyPart(bodypart* BodyPart)
 {
-  if(BodyPart->GetMainMaterial()->IsInfectedByLeprosy())
-    GainIntrinsic(LEPROSY);
-
   SetBodyPart(BodyPart->GetBodyPartIndex(), BodyPart);
 
   if(!AllowSpoil())
@@ -5402,7 +5404,7 @@ void character::PrintEndPanicMessage() const
 
 void character::CheckPanic(int Ticks)
 {
-  if(GetPanicLevel() && !StateIsActivated(PANIC)
+  if(GetPanicLevel() > 1 && !StateIsActivated(PANIC)
   && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1))
     BeginTemporaryState(PANIC, ((Ticks * 3) >> 2) + RAND() % ((Ticks >> 1) + 1)); // 25% randomness to ticks...
 }
@@ -6068,6 +6070,11 @@ void character::SetBodyPart(int I, bodypart* What)
     {
       What->Disable();
       AddOriginalBodyPartID(I, What->GetID());
+
+      if(What->GetMainMaterial()->IsInfectedByLeprosy())
+	GainIntrinsic(LEPROSY);
+      else if(StateIsActivated(LEPROSY))
+	What->GetMainMaterial()->SetIsInfectedByLeprosy(true);
     }
 }
 
@@ -7264,8 +7271,10 @@ void character::PrintEndLeprosyMessage() const
 
 void character::TryToInfectWithLeprosy(const character* Infector)
 {
-  if(!IsImmuneToLeprosy() && ((GetRelation(Infector) == HOSTILE && !RAND_N(100*GetAttribute(ENDURANCE))) 
-			     || !RAND_N(1000*GetAttribute(ENDURANCE))))
+  if(!IsImmuneToLeprosy()
+  && ((GetRelation(Infector) == HOSTILE
+    && !RAND_N(100 * GetAttribute(ENDURANCE))) 
+   || !RAND_N(1000 * GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
 
@@ -7451,6 +7460,10 @@ void character::EditStamina(int Amount, bool CanCauseFaint)
 	  game::SetPlayerIsRunning(false);
 	}
     }
+
+  if(IsPlayer() && StateIsActivated(PANIC)
+  && GetTirednessState() != FAINTING)
+    game::SetPlayerIsRunning(true);
 }
 
 void character::RegenerateStamina()
@@ -7791,4 +7804,26 @@ void character::SignalDisappearance()
 bool character::HornOfFearWorks() const
 {
   return CanHear() && GetPanicLevel() > RAND() % 33;
+}
+
+void character::BeginLeprosy()
+{
+  for(int c = 0; c < GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
+    }
+}
+
+void character::EndLeprosy()
+{
+  for(int c = 0; c < GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(false);
+    }
 }
