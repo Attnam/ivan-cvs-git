@@ -590,11 +590,11 @@ void door::Break()
     {
       bool Open = Opened;
       brokendoor* Temp = new brokendoor(0, NO_MATERIALS);
-      Temp->InitMaterials(GetMainMaterial());
+      Temp->InitMaterials(GetMainMaterial()->Clone());
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
-      SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+      //SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)

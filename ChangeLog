@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 March 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* A terrible bug in the door breaking code fixed
+
+March 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Searching now works correctly
 	* Restrictions of permanent states activated by fountain updated
 
