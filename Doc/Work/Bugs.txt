@@ -1,7 +1,6 @@
 * = suspended
 
 *Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
-Quitting via the corner X doesn't update hscores.
 *Item's GetSquareUnder() doesn't work.
 Cannibalism abuse.
 *Alt+Enter twice.
@@ -9,5 +8,4 @@ Keys don't work on Win2k fullscreen mode.
 *Alt+Enter in config screen.
 *Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
-The shop kick bug.
 The black screen bug.

@@ -1126,7 +1126,7 @@ class ITEM
     SetInhabitedByGenie(!(RAND() % 4));
   },
  public:
-  virtual ushort Possibility() const { return 2; }
+  virtual ushort Possibility() const { return 10; }
   virtual ushort GetEmitation() const { return 256; }
   virtual std::string NameSingular() const { return "oil lamp"; }
   virtual float OfferModifier() const { return 1; }
@@ -1138,6 +1138,7 @@ class ITEM
   virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
   virtual bool Apply(character*, stack*);
   virtual vector2d GetBitmapPos() const { return vector2d(32,48); }
+  virtual bool CanBeWished() const { return false; }
  protected:
   virtual ushort GetFormModifier() const { return 30; }
   bool InhabitedByGenie;

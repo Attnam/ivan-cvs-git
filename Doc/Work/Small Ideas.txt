@@ -71,13 +71,9 @@ Monsters that change colors.
 Drugs.
 Karateka.
 *Jewels.
-*Genies should be able to wish.
 Change material tweaking.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
-*Integration of genies.
-*Effect for Venius's firestorm.
-*Killed by an explosion.
 WMap terrain height should be shown in WMode.
 Special "enemy sighted" rections.
 Attnam could be resized again?

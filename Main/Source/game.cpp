@@ -44,6 +44,7 @@
 #include "colorbit.h"
 #include "config.h"
 #include "femath.h"
+#include "hscore.h"
 
 class quitrequest {};
 
@@ -1154,6 +1155,15 @@ bool game::HandleQuitMessage()
 	      return false;
 	    default:
 	      RemoveSaves();
+	      Running = false;
+
+	      if(!GetWizardMode())
+		{
+		  GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
+		  highscore HScore;
+		  HScore.Draw();
+		}
+
 	      break;
 	    }
 	}
