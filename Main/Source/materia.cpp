@@ -224,4 +224,3 @@ bool material::BreatheEffect(character* Enemy)
 {
   return Effect(Enemy, Max<ulong>(GetVolume() / 10, 50));
 }
-

@@ -12,7 +12,7 @@
  *
  * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
 
-#define IVAN_VERSION "0.411"
+#define IVAN_VERSION "0.420"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -475,5 +475,7 @@
 
 #define BROKEN 256
 #define DEVOUT 512
+
+#define CANNIBALIZED 1
 
 #endif

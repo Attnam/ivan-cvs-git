@@ -469,7 +469,7 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
 	}
     }
 
-  ushort DoneDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICAL_DAMAGE, BodyPart, Dir, false, Critical);
+  ushort DoneDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICAL_DAMAGE, BodyPart, Dir, false, Critical, true, Type == BITE_ATTACK && Enemy->BiteCapturesBodyPart());
   bool Succeeded = (GetBodyPart(BodyPart) && HitEffect(Enemy, Weapon, Type, BodyPart, Dir, !DoneDamage)) || DoneDamage;
 
   if(Succeeded)
@@ -2645,7 +2645,7 @@ bool character::AllowDamageTypeBloodSpill(ushort Type)
 
 /* Returns truly done damage */
 
-ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
+ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg, bool CaptureBodyPart)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->DamageArmor(Damager, Damage, Type);
@@ -2694,7 +2694,9 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushor
 
       if(Severed)
 	{
-	  if(!game::IsInWilderness())
+	  if(CaptureBodyPart)
+	    Damager->GetLSquareUnder()->AddItem(Severed);
+	  else if(!game::IsInWilderness())
 	    {
 	      GetStackUnder()->AddItem(Severed);
 	      
@@ -6093,7 +6095,7 @@ bool character::PreProcessForBone()
 
   if(MustBeRemovedFromBone())
     return false;
-  else if(IsUnique())
+  else if(IsUnique() && !CanBeGenerated())
     game::SetQuestMonsterFound(true);
 
   RestoreLivingHP();

@@ -5,8 +5,7 @@ const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy",
 
 itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
-item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(Item.ID), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight) { }
-item::item(donothing) : Slot(0), Cannibalised(false) { }
+item::item(donothing) : Slot(0), ItemFlags(0), CloneMotherID(0) { }
 void item::InstallDataBase(ushort Config) { databasecreator<item>::InstallDataBase(this, Config); }
 bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
@@ -19,6 +18,12 @@ bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot
 ushort item::GetEquipmentIndex() const { return static_cast<gearslot*>(Slot)->GetEquipmentIndex(); }
 uchar item::GetGraphicsContainerIndex() const { return GR_ITEM; }
 bool item::IsBroken() const { return (GetConfig() & BROKEN) != 0; }
+const char* item::GetBreakVerb() const { return "breaks"; }
+
+item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), ItemFlags(0), CloneMotherID(Item.CloneMotherID)
+{
+  CloneMotherID.push_back(Item.ID);
+}
 
 bool item::IsConsumable(const character* Eater) const
 {
@@ -185,11 +190,11 @@ bool item::Consume(character* Eater, long Amount)
 
   GetConsumeMaterial()->EatEffect(Eater, Amount);
 
-  if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
+  if(!(ItemFlags & CANNIBALIZED) && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
-      Cannibalised = true;
+      ItemFlags |= CANNIBALIZED;
     }
 
   return GetConsumeMaterial()->GetVolume() ? false : true;
@@ -205,14 +210,14 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << GetType();
   object::Save(SaveFile);
   SaveFile << GetConfig();
-  SaveFile << Cannibalised << Size << ID;
+  SaveFile << Size << ID << ItemFlags << CloneMotherID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase(ReadType<ushort>(SaveFile));
-  SaveFile >> Cannibalised >> Size >> ID;
+  SaveFile >> Size >> ID >> ItemFlags >> CloneMotherID;
 }
 
 void item::TeleportRandomly()
@@ -451,12 +456,14 @@ void item::WeaponSkillHit()
 
 /* Returns 0 if item cannot be cloned */
 
-item* item::Duplicate() const
+item* item::Duplicate()
 {
   if(!CanBeCloned())
     return 0;
 
   item* Clone = RawDuplicate();
+  CloneMotherID.push_back(ID);
+  ID = game::CreateNewItemID();
   Clone->UpdatePictures();
   return Clone;
 }
@@ -573,7 +580,7 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
 void item::Break(character* Breaker)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s breaks.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetBreakVerb());
 
   if(Breaker && IsOnGround())
     {
@@ -823,6 +830,20 @@ void item::PostProcessForBone()
     }
   else
     ID = BI->second;
+
+  for(ushort c = 0; c < CloneMotherID.size(); ++c)
+    {
+      BI = game::GetBoneItemIDMap().find(CloneMotherID[c]);
+
+      if(BI == game::GetBoneItemIDMap().end())
+	{
+	  ulong NewCloneMotherID = game::CreateNewItemID();
+	  game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(CloneMotherID[c], NewCloneMotherID));
+	  CloneMotherID[c] = NewCloneMotherID;
+	}
+      else
+	CloneMotherID[c] = BI->second;
+    }
 }
 
 void item::SetConfig(ushort NewConfig)

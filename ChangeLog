@@ -7,12 +7,30 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 6 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Biting monsters now capture the severed bodyparts of the enemy
+	* Eddies are no longer charmable as this could be abused
+	* Corrected a small bug in the square memorized descriptions
+	* Cloned weapon accustomizations are now separated, so that using two
+	  cloned items doesn't increase one common sweaponskill but two
+	  (this was unbelievably difficult, so there might be obscure bugs)
+	* Cloaks now *really* can break
+	* Corrected a small bug concerning the handling of special monsters during
+	  bonefile creation
+	* Version updated to 0.420
+	* Removed lots of debug tests
+	* Corrected a fatal bug in the door booby trap code that occurred often
+	  after earthquakes
+	* The enner beast is now a little less insane
+	* Doubled the time bone needs to spoil
+
 May 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Hands no longer tingle when praying to Loricatus handless
 	* Monsters don't walk to smoke for fun
 	* Sickle and scythe are better with plants than other items
-	
+
 May 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added version information to bone files
@@ -22,6 +40,8 @@ May 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Added hammer item (worse than war hammer)
 	* Ikiros now uses a normal hammer instead of war hammer
 	* Cloaks can now break
+	* Broken cloaks' and flexible armors' adjectives changed from "broken" to
+	  "torn"
 	* Broken items now have unique material configurations, which are usually
 	  much better than intact items'; this might make repairing techniques more
 	  important

@@ -74,7 +74,8 @@ class sweaponskill : public weaponskill
   void AddLevelDownMessage(const char*) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsSkillOf(const item*) const;
+  bool IsSkillOf(const item*) const;
+  bool IsSkillOfCloneMother(const item*, ulong) const;
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
  private:

@@ -21,7 +21,7 @@ Jungle bays.
 Robe.
 Mouse.
 Torturing devices.
-Vacuum cleaner.
+//Vacuum cleaner.
 Rolling pin.
 Frying pan.
 Clothes peg.

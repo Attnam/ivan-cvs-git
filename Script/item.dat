@@ -1282,7 +1282,7 @@ wand
 		Price = 500;
 		PostFix = "of lightning";
 		MainMaterialConfig == GOLD;
-		BeamRange = 20;
+		BeamRange = 15;
 		MinCharges = 2;
 		MaxCharges = 5;
 		BeamColor = WHITE;
@@ -1600,6 +1600,7 @@ cloak /* armor-> */
 	InElasticityPenaltyModifier = 50;
 	AttachedGod = CLEPTIA;
 	WieldedBitmapPos = 160, 144;
+	CanBeBroken = true;
 
 	Config BROKEN;
 	{

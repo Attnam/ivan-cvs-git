@@ -286,7 +286,7 @@ class ABSTRACT_ITEM
   virtual bool IsRightArm() const = 0;
   virtual void UpdatePictures();
   virtual ushort GetAnimationFrames() const;
-  virtual float GetEnemyTypeBonus(const character*) const;
+  virtual float GetTypeDamage(const character*) const;
  protected:
   virtual sweaponskill*& GetCurrentSWeaponSkill() const = 0;
   virtual void VirtualConstructor(bool);

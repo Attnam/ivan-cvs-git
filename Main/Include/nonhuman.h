@@ -93,7 +93,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Hit(character*, bool = false);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
   virtual bool SpecialEnemySightedReaction(character*);
   virtual bool Faint(ushort, bool = false) { return false; }
   virtual bool MustBeRemovedFromBone() const;
@@ -356,7 +356,7 @@ class CHARACTER
   void SetOwnerSoul(const festring& What) { OwnerSoul = What; }
   virtual bool IsNameable() const { return OwnerSoul.IsEmpty(); }
   virtual bool RaiseTheDead(character*);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
   virtual bool SpecialEnemySightedReaction(character*);
   void SetIsActive(bool What) { Active = What; }
   virtual bool IsPolymorphable() const { return MaxHP < 100; }

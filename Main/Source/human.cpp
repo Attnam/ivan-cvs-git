@@ -52,7 +52,7 @@ bool ennerbeast::Hit(character*, bool)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(100 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(75 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {
@@ -2438,9 +2438,18 @@ const festring& humanoid::GetDeathMessage() const
 
 uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
 {
-  for(std::list<sweaponskill*>::const_iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+  std::list<sweaponskill*>::const_iterator i;
+
+  for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
     if((*i)->IsSkillOf(Item))
       return (*i)->GetLevel();
+
+  const std::vector<ulong>& CMID = Item->GetCloneMotherID();
+
+  for(long c = CMID.size() - 1; c >= 0; --c)
+    for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+      if((*i)->IsSkillOfCloneMother(Item, CMID[c]))
+	return (*i)->GetLevel();
 
   return 0;
 }
@@ -3773,18 +3782,29 @@ void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, const it
 	  if(Skill)
 	    EnsureCurrentSWeaponSkillIsCorrect(Skill, 0);
 
-	  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+	  std::list<sweaponskill*>::iterator i;
+
+	  for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
 	    if((*i)->IsSkillOf(Wielded))
 	      {
 		Skill = *i;
-		break;
+		return;
 	      }
 
-	  if(!Skill)
-	    {
-	      Skill = new sweaponskill(Wielded);
-	      SWeaponSkill.push_back(Skill);
-	    }
+	  const std::vector<ulong>& CMID = Wielded->GetCloneMotherID();
+
+	  for(long c = CMID.size() - 1; c >= 0; --c)
+	    for(i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+	      if((*i)->IsSkillOfCloneMother(Wielded, CMID[c]))
+		{
+		  Skill = new sweaponskill(**i);
+		  Skill->SetID(Wielded->GetID());
+		  SWeaponSkill.push_back(Skill);
+		  return;
+		}
+
+	  Skill = new sweaponskill(Wielded);
+	  SWeaponSkill.push_back(Skill);
 	}
     }
   else if(Skill)

@@ -91,7 +91,6 @@ character
 	CanAttack = true;
 	CanApply = false;
 	WieldedPosition = 0, 0;
-	/*ClothColorIsSparkling = false;*/
 	SkinColorIsSparkling = false;	
 	CapColorIsSparkling = false;
 	HairColorIsSparkling = false;
@@ -104,6 +103,7 @@ character
 	ArmSpecialColorIsSparkling = false;
 	LegMainColorIsSparkling = false;
 	LegSpecialColorIsSparkling = false;
+	BiteCapturesBodyPart = true;
 	IsPlant = false;
 }
 
@@ -595,6 +595,7 @@ oree
 	AttachedGod = MORTIFER;
 	CanBeConfused = false;
 	WieldedPosition = 0, -1;
+	BiteCapturesBodyPart = false;
 }
 
 darkknight
@@ -698,7 +699,7 @@ darkknight
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Golgor Dhan";
-		DangerModifier = 2000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -760,6 +761,7 @@ ennerbeast
 		"\"Can you help me with this download problem?\"";
 	}
 	AttachedGod = SCABIES;
+	BiteCapturesBodyPart = false;
 }
 
 frog
@@ -938,6 +940,7 @@ billswill
 	BodyPartsDisappearWhenSevered = true;
 	CanTalk = true;
 	AttackStyle = USE_HEAD;
+	BiteCapturesBodyPart = false;
 }
 
 skeleton
@@ -1011,7 +1014,7 @@ skeleton
 		NameSingular = "skeleton warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
-		DangerModifier = 2000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1118,7 +1121,7 @@ goblin
 		NameSingular = "goblin king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-		DangerModifier = 2500;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1157,6 +1160,7 @@ mommo
 	HasHead = false;
 	AttachedGod = SCABIES;
 	ClassStates = GAS_IMMUNITY;
+	BiteCapturesBodyPart = false;
 
 	Config CONICAL;
 	{
@@ -1240,7 +1244,7 @@ golem
 	Config SPIDER_SILK;
 	{
 		DefaultName = "experiment ZQ-29";
-		DangerModifier = 2000;
+		DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL); }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
@@ -1347,6 +1351,7 @@ spider
 	FleshMaterial = SPIDER_FLESH;
 	AttachedGod = SCABIES;
 	BodyPartsDisappearWhenSevered = true;
+	BiteCapturesBodyPart = false;
 }
 
 jackal
@@ -1934,6 +1939,7 @@ bat
 	PanicLevel = 75;
 	FleshMaterial = BAT_FLESH;
 	AttachedGod = INFUSCOR;
+	BiteCapturesBodyPart = false;
 }
 
 mistress
@@ -2216,7 +2222,7 @@ kobold
 		NameSingular = "kobold patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 3000;
+		DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
@@ -2824,7 +2830,7 @@ orc
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
-		DangerModifier = 2000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -3286,6 +3292,7 @@ eddy
 	ClassStates = GAS_IMMUNITY;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 0;
+	IsCharmable = false;
 }
 
 mushroom
@@ -3533,6 +3540,7 @@ ghost
 	BodyPartsDisappearWhenSevered = true;
 	BaseBiteStrength = 1000;
 	AttackStyle = USE_HEAD;
+	BiteCapturesBodyPart = false;
 }
 
 twoheadedmoose
@@ -3597,6 +3605,7 @@ magpie
 	FleshMaterial = MAGPIE_FLESH;
 	AttachedGod = CLEPTIA;
 	ClassStates = INFRA_VISION; /* So that invisible player doesn't screw the AI */
+	BiteCapturesBodyPart = false;
 }
 
 skunk

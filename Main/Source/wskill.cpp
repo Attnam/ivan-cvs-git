@@ -23,6 +23,7 @@ ushort sweaponskill::GetLevelMap(ushort Index) const { return SWeaponSkillLevelM
 ulong sweaponskill::GetUnuseTickMap(ushort Index) const { return SWeaponSkillUnuseTickMap[Index]; }
 ushort sweaponskill::GetUnusePenaltyMap(ushort Index) const { return SWeaponSkillUnusePenaltyMap[Index]; }
 bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
+bool sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {

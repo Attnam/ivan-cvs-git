@@ -623,7 +623,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		      if(PileVector.size() == 1)
 			PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
 		      else
-			MemorizedDescription = CONST_S("many items");
+			MemorizedDescription << "many items";
 
 		      MemorizedDescription << " on ";
 		      Anything = true;
@@ -1488,7 +1488,7 @@ bool lsquare::DoorCreation(character* Creator, const festring&, uchar)
 	GetRoom()->HostileAction(Creator);
 
       door* Door = new door(0, NO_MATERIALS);
-      Door->InitMaterials(MAKE_MATERIAL(IRON));
+      Door->InitMaterials(MAKE_MATERIAL(STEEL));
 
       if(RAND() % 10)
 	Door->Lock();
@@ -1771,9 +1771,8 @@ void lsquare::DisplayEngravedInfo(festring& Buffer) const
 bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
 {
   for(ushort c = 0; c < Smoke.size(); ++c)
-    {
-      if(Smoke[c]->IsDangerousForAIToBreathe(Who))
-	return true;
-    }
+    if(Smoke[c]->IsDangerousForAIToBreathe(Who))
+      return true;
+
   return false;
 }

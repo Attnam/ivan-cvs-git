@@ -36,11 +36,12 @@ bool door::Open(character* Opener)
 	}
       else if(RAND() % 20 < Opener->GetAttribute(ARM_STRENGTH))
 	{
+	  bool WasSeenByPlayer = CanBeSeenByPlayer(); // MakeWalkable() might destroy the door
 	  MakeWalkable();
 
 	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("You open the door.");
-	  else if(CanBeSeenByPlayer())
+	  else if(WasSeenByPlayer)
 	    {
 	      if(Opener->CanBeSeenByPlayer())
 		ADD_MESSAGE("%s opens the door.", Opener->CHAR_NAME(DEFINITE));

@@ -250,7 +250,6 @@ bool game::Init(const festring& Name)
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
 	DefaultPolymorphTo.Empty();
 	Player->GetStack()->AddItem(new encryptedscroll);
-	Player->GetStack()->AddItem(new stethoscope);
 	BaseScore = Player->GetScore();
 
 	character* Doggie = new dog;
@@ -305,8 +304,6 @@ void game::DeInit()
   delete [] Team;
   delete GameScript;
   msgsystem::Format();
-
-
   DangerMap.clear();
 }
 
@@ -2120,7 +2117,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(/**!WizardModeIsActive() && */!IsInWilderness() && GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && GetCurrentLevel()->PreProcessForBone())
     {
       ushort BoneIndex;
       festring BoneName;
@@ -2145,9 +2142,7 @@ void game::CreateBone()
 
 bool game::PrepareRandomBone(ushort LevelIndex)
 {
-  /* Don't load a bone over a level already generated, or over a shop, vault, etc. */
-
-  if(GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
+  if(WizardModeIsActive() || GetCurrentDungeon()->IsGenerated(LevelIndex) || !*GetCurrentDungeon()->GetLevelScript(LevelIndex)->CanGenerateBone())
     return false;
 
   ushort BoneIndex;
@@ -2158,7 +2153,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen())/// || RAND() & 1)
+      if(BoneFile.IsOpen() && RAND() & 1)
 	{
 	  if(ReadType<ushort>(BoneFile) != BONE_FILE_VERSION)
 	    {

@@ -285,6 +285,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ArmSpecialColorIsSparkling);
   ADD_MEMBER(LegMainColorIsSparkling);
   ADD_MEMBER(LegSpecialColorIsSparkling);
+  ADD_MEMBER(BiteCapturesBodyPart);
   ADD_MEMBER(IsPlant);
 }
 

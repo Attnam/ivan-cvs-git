@@ -815,7 +815,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NutritionValue = 500;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
-		SpoilModifier = 100000;
+		SpoilModifier = 200000;
 		AttachedGod = MORTIFER;
 	}
 

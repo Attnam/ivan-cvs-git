@@ -228,6 +228,7 @@ class ITEM
   virtual bool IsBodyArmor(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
  protected:
+  virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
   virtual const festring& GetNameSingular() const;
 );
@@ -268,6 +269,7 @@ class ITEM
   virtual bool IsCloak(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
  protected:
+  virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
   virtual ushort GetMaterialColorB(ushort) const;
 );

@@ -164,6 +164,7 @@ struct characterdatabase
   bool ArmSpecialColorIsSparkling;
   bool LegMainColorIsSparkling;
   bool LegSpecialColorIsSparkling;
+  bool BiteCapturesBodyPart;
   bool IsPlant;
 };
 
@@ -308,7 +309,7 @@ class character : public entity, public id
   void RestoreHP();
   void RestoreLivingHP();
   virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
   virtual bool BodyPartIsVital(ushort) const { return true; }
   void RestoreBodyParts();
   const festring& GetAssignedName() const { return AssignedName; }
@@ -484,6 +485,8 @@ class character : public entity, public id
   DATA_BASE_BOOL(LegMainColorIsSparkling);
   DATA_BASE_BOOL(LegSpecialColorIsSparkling);
   DATA_BASE_BOOL(IgnoreDanger);
+  DATA_BASE_BOOL(BiteCapturesBodyPart);
+  DATA_BASE_BOOL(IsPlant);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -766,7 +769,6 @@ class character : public entity, public id
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
   virtual uchar GetArms() const { return 0; }
-  DATA_BASE_BOOL(IsPlant);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

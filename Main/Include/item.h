@@ -306,6 +306,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BreakEffectRange);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
   DATA_BASE_BOOL(IsQuestItem);
+  DATA_BASE_BOOL(IsGoodWithPlants);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -339,7 +340,7 @@ class item : public object
   void WeaponSkillHit();
   virtual void SetTeam(ushort) { }
   void SpecialGenerationHandler();
-  item* Duplicate() const;
+  item* Duplicate();
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const;
   ushort GetBaseMaxDamage() const;
@@ -405,8 +406,9 @@ class item : public object
   virtual bool SuckSoul(character*, character* = 0) { return false; }
   void SetConfig(ushort);
   god* GetMasterGod() const;
-  DATA_BASE_BOOL(IsGoodWithPlants);
+  const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
  protected:
+  virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
@@ -416,12 +418,13 @@ class item : public object
   virtual uchar GetGraphicsContainerIndex() const;
   virtual bool ShowMaterial() const;
   slot* Slot;
-  bool Cannibalised;
   ushort Size;
   ulong ID;
   const database* DataBase;
   ulong Volume;
   ulong Weight;
+  uchar ItemFlags;
+  std::vector<ulong> CloneMotherID;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

@@ -74,7 +74,6 @@ void smoke::Be()
     Gas->BreatheEffect(Char);
 }
 
-
 square* smoke::GetSquareUnderEntity() const
 { 
   return LSquareUnder;
@@ -130,11 +129,5 @@ void smoke::Merge(gas* OtherGas)
 
 bool smoke::IsDangerousForAIToBreathe(const character* Who)
 {
-  if(Who->StateIsActivated(GAS_IMMUNITY))
-     return false;
-  
-  if(Gas->GetBreatheWisdomLimit() != NO_LIMIT && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit())
-    return true;
-  
-  return false;
+  return !Who->StateIsActivated(GAS_IMMUNITY) && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
 }

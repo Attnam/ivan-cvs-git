@@ -26,6 +26,7 @@ short armor::GetCarryingBonus() const { return Enchantment << 1; }
 ulong bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 bool bodyarmor::IsInCorrectSlot(ushort Index) const { return Index == BODY_ARMOR_INDEX; }
 const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
+const char* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
 ushort goldeneagleshirt::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 255); }
 
@@ -34,6 +35,7 @@ ushort shield::GetBonus() const { return 100 + 10 * Enchantment; }
 ulong cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
 bool cloak::IsInCorrectSlot(ushort Index) const { return Index == CLOAK_INDEX; }
 ushort cloak::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
+const char* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
 ulong boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 bool boot::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_BOOT_INDEX || Index == LEFT_BOOT_INDEX; }
