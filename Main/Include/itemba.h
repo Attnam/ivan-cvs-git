@@ -31,10 +31,9 @@ public:
 	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
 	virtual ushort GetEmitation() const;
 	virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
-	virtual uchar GetConsumeType() const { return ODD; }
 	virtual item* TryToOpen(stack*) { return 0; }
 	virtual ulong GetWeight() const;
-	virtual bool Consume(character*, float) { return false; }
+	virtual bool Consume(character*, float);
 	virtual ushort GetArmorValue() const { return 100; }
 	virtual bool IsHeadOfElpuri() const { return false; }
 	virtual bool IsPerttusNut() const { return false; }
@@ -81,6 +80,7 @@ public:
 	virtual bool IsTheAvatar() const RET(false)
 	virtual void SignalSquarePositionChange(bool) {}
 	virtual ulong ConsumeLimit() const { return 0; }
+	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -559,7 +559,7 @@ public:
 	virtual ushort OfferValue() const				{ return 12; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 180; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(225, 225, 225); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(25, 25, 25); }
 protected:
 	virtual std::string NameStem() const	{ return "pineapple flesh"; }
 );
@@ -579,4 +579,6 @@ protected:
 	virtual std::string NameStem() const	{ return "leather"; }
 );
 
+
+	
 #endif

@@ -213,3 +213,9 @@ void item::StruckByWandOfStriking(stack* What)
 { 
 	ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What); 
 }
+
+bool item::Consume(character* Eater, float Amount)
+{
+	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+	return GetMaterial(0)->GetVolume() ? false : true;
+}

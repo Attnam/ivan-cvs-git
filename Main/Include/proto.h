@@ -64,10 +64,10 @@ public:
 	static item*			BalancedCreateItem();
 	static character*		CreateMonster(ushort);
 	static item*			CreateItem(ushort);
-	static item*			CreateItem(std::string);
+	static item*			CreateItem(std::string, bool = true);
 	static material*		CreateRandomSolidMaterial(ulong = 0);
 	static material*		CreateMaterial(ushort, ulong);
-	static material*		CreateMaterial(std::string, ulong);
+	static material*		CreateMaterial(std::string, ulong, bool = true);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)

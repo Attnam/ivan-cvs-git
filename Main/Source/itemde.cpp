@@ -56,12 +56,6 @@ bool banana::Consume(character* Eater, float Amount)
 	return GetMaterial(1)->GetVolume() ? false : true;
 }
 
-bool lump::Consume(character* Eater, float Amount)
-{
-	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-	return GetMaterial(0)->GetVolume() ? false : true;
-}
-
 bool potion::Consume(character* Eater, float Amount)
 {
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
@@ -370,7 +364,7 @@ bool scrollofwishing::Read(character* Reader)
 	game::DrawEverythingNoBlit();
 	std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 256);
 
-	item* TempItem = protosystem::CreateItem(Temp);
+	item* TempItem = protosystem::CreateItem(Temp, Reader->GetIsPlayer());
 
 	if(TempItem)
 	{
@@ -378,8 +372,7 @@ bool scrollofwishing::Read(character* Reader)
 		ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
 		return true;
 	}
-	else
-		ADD_MESSAGE("There is no such item.");
+
 
 	return false;
 }
@@ -462,7 +455,6 @@ bool scrollofchangematerial::Read(character* Reader)
 		Reader->GetStack()->GetItem(Index)->ChangeMainMaterial(TempMaterial);
 	else
 	{
-		ADD_MESSAGE("There is no such material.");
 		return false;
 	}
 

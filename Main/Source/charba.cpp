@@ -134,17 +134,13 @@ uchar character::TakeHit(character* Enemy, short Success)
 		SetHP(GetHP() - Damage);
 
 		if(rand() % 4) 
-			SpillBlood(rand() % 5);
-
-		/* This may crash on borders! */
-
-		vector2d Where = GetPos() + game::GetMoveVector(rand() % 8);
-
-		if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
+			SpillBlood(1 + rand() % 5);
+		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
 		{
-			SpillBlood(5 + rand() % 5, Where);
-		}
-
+			vector2d Where(DoX, DoY);
+			if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable()) 
+				SpillBlood(1 + rand() % 5, vector2d(DoX, DoY));
+		});
 		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
 			return HAS_DIED;
 

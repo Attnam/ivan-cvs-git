@@ -2,7 +2,7 @@ New goals for version 0.30 alpha:
 
 -fixing all known bugs except the Great Surface Destruction Bug
 D-single weapon's name not updated (Timo)
- -eating weapons made of an eatable material (Hex)
+D-eating weapons made of an eatable material (Hex)
 D-wrath of Seges (Timo)
 D-score bug with polymorph (Timo)
 D-money is temporarily lost in polymorph (Timo)
@@ -11,9 +11,9 @@ D-money is temporarily lost in polymorph (Timo)
 
 -adding new essential features
 D-adding question to leaving city (Hex)
- -fixing the message of wishing forbidden items (Hex)
+D-fixing the message of wishing forbidden items (Hex)
 D-making fluid spill from breaking potions (Hex)
-B-adding more blood in criticals (Hex)
+D-adding more blood in criticals (Hex)
  -making monsters think what they eat (Hex)
 D-making rest stop when the player is hungry (Timo)
 D-making weapon experience and money affect score and NP not affect it (Timo)

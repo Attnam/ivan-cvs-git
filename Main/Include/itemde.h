@@ -120,7 +120,6 @@ public:
 	virtual ushort Possibility() const RET(200)
 	virtual std::string Name(uchar Case) const RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
-	virtual bool Consume(character*, float);
 	virtual void ReceiveHitEffect(character*, character*);
 	virtual bool CanBeDippedInto(item*) const RET(true)
 	virtual material* BeDippedInto();

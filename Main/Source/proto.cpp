@@ -25,6 +25,7 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 #include "lterrade.h"
 #include "wterrade.h"
 #include "roomde.h"
+#include "message.h"
 
 #include "error.h"
 
@@ -85,21 +86,36 @@ item* protosystem::CreateItem(ushort Index)
 	return protocontainer<item>::GetProto(Index)->Clone();
 }
 
-item* protosystem::CreateItem(std::string What)
+item* protosystem::CreateItem(std::string What, bool Output)
 {
 	for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-		if(protocontainer<item>::GetProto(c)->CanBeWished() && protocontainer<item>::GetProto(c)->GetNameSingular() == What)
-			return protocontainer<item>::GetProto(c)->CreateWishedItem();
+		if(protocontainer<item>::GetProto(c)->GetNameSingular() == What)
+			if(protocontainer<item>::GetProto(c)->CanBeWished())
+				return protocontainer<item>::GetProto(c)->CreateWishedItem();
+			else if(Output)
+			{
+				ADD_MESSAGE("This item cannot be wished.");
+				return 0;
+			}
 
+	if(Output) 
+		ADD_MESSAGE("There is no such item.");
 	return 0;
 }
 
-material* protosystem::CreateMaterial(std::string What, ulong Volume)
+material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Output)
 {
 	for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
-		if(protocontainer<material>::GetProto(c)->CanBeWished() && protocontainer<material>::GetProto(c)->Name() == What)
-			return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
-
+		if(protocontainer<material>::GetProto(c)->Name() == What)
+			if(protocontainer<material>::GetProto(c)->CanBeWished())
+				return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
+			else if(Output)
+			{
+				ADD_MESSAGE("This material cannot be wished.");
+				return 0;
+			}
+		
+	if(Output) ADD_MESSAGE("There is no such item.");
 	return 0;
 }
 
