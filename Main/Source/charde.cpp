@@ -280,16 +280,13 @@ void petrus::HealFully(character* ToBeHealed)
 void petrus::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-
   SaveFile << HealTimer << StoryState;
 }
 
 void petrus::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-
   SaveFile >> HealTimer >> StoryState;
-
   game::SetPetrus(this);
 }
 
@@ -2558,7 +2555,7 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 {
   ushort Color[4], x;
 
-  for(x = 0; x < 4; x++)
+  for(x = 0; x < 4; ++x)
     Color[x] = BLACK;
 
   if(GetLeftLeg())
@@ -2578,7 +2575,7 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
-  for(x = 0; x < 4; x++)
+  for(x = 0; x < 4; ++x)
     Color[x] = BLACK;
 
   if(GetTorso())
@@ -2786,7 +2783,7 @@ void human::VirtualConstructor()
   SetEndurance(GetEndurance() + RAND() % 6);
   SetPerception(GetPerception() + RAND() % 6);
   SetMoney(GetMoney() + RAND() % 101);
-  SetSize(GetSize() + RAND() % 51);
+  SetTotalSize(character::GetTotalSize() + RAND() % 51);
 }
 
 void petrus::VirtualConstructor()
@@ -2832,4 +2829,16 @@ void unicorn::VirtualConstructor()
 {
   character::VirtualConstructor();
   SetAlignment(RAND() % 3);
+}
+
+void human::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << TotalSize;
+}
+
+void human::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> TotalSize;
 }

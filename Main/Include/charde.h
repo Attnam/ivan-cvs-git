@@ -27,9 +27,9 @@ class ABSTRACT_CHARACTER
   character,
  public:
   virtual ~humanoid();
+  virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   //virtual uchar GetSex() const { return MALE; }
-  virtual void Save(outputfile&) const;
   virtual bool CanWield() const { return true; }
   //virtual bool CanWear() const { return true; }
   virtual bool Hit(character*);
@@ -254,7 +254,7 @@ class ABSTRACT_CHARACTER
   virtual uchar BodyParts() const { return 7; }
 
   //virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(0,0); } // remove this
-  ////virtual float GetMeleeStrength() const { return 1000; }
+  //virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies screaming."; }
   gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
 );
@@ -270,15 +270,21 @@ class CHARACTER
     SetPerception(10 + RAND() % 6);
     SetMoney(200 + RAND() % 101);
   },*/
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual ushort GetTotalSize() const { return TotalSize; }
+  virtual void SetTotalSize(ushort What) { TotalSize = What; }
  protected:
   virtual void VirtualConstructor();
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
+  /*virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
-  virtual ulong TotalVolume() const { return 60000; }
+  virtual ulong TotalVolume() const { return 60000; }*/
   virtual std::string NameSingular() const { return "human"; }
-  virtual ushort TotalSize() const { return 180; }
+  ushort TotalSize;
+  //virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -299,35 +305,35 @@ class CHARACTER
   virtual ~petrus();
   virtual void Load(inputfile&);
   virtual void BeTalkedTo(character*);
-  virtual ushort GetEmitation() const { return 333; }
+  //virtual ushort GetEmitation() const { return 333; }
   virtual void HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() { return HealTimer; }
   virtual void Save(outputfile&) const;
-  virtual bool Charmable() const { return false; }
+  //virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
-  virtual bool HasInfraVision() const { return true; }
-  virtual bool CanBeDisplaced() const { return false; }
+  //virtual bool HasInfraVision() const { return true; }
+  //virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
-  virtual bool CanBeAssignedAName() const { return false; }
-  virtual bool IsUnique() const { return true; }
+  //virtual bool CanBeAssignedAName() const { return false; }
+  //virtual bool IsUnique() const { return true; }
  protected:
   virtual void VirtualConstructor();
-  virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
+  /*virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 144); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 80); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0,0); }
-  virtual ulong TotalVolume() const { return 80000; }
+  virtual ulong TotalVolume() const { return 80000; }*/
   virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
   virtual void CreateCorpse();
   virtual std::string GetDeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual void GetAICommand();
-  virtual ushort TotalSize() const { return 225; }
+  //virtual ushort TotalSize() const { return 225; }
   ushort HealTimer;
   uchar StoryState;
 );
@@ -495,7 +501,7 @@ class CHARACTER
     SetPerception(30);
   },*/
  public:
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
  protected:
@@ -524,7 +530,7 @@ class CHARACTER
   },*/
  public:
   virtual bool CanOpen() const { return false; }
-  static bool CanBeGenerated() { return false; }
+  //static bool CanBeGenerated() { return false; }
   virtual bool Hit(character*);
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual void BeTalkedTo(character*);
@@ -591,7 +597,7 @@ class CHARACTER
   },*/
  public:
   virtual void VirtualConstructor();
-  static bool CanBeGenerated() { return false; }
+  //static bool CanBeGenerated() { return false; }
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
@@ -627,7 +633,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool HasInfraVision() const { return true; }
   virtual std::string StandVerb() const { return "floating"; }
-  static ushort Frequency() { return 100; }
+  //static ushort Frequency() { return 100; }
   virtual bool CanFly() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 500000; }
@@ -655,7 +661,7 @@ class CHARACTER
     SetPerception(15);
   },*/
  public:
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
@@ -688,7 +694,7 @@ class CHARACTER
     SetPerception(18);
   },*/
  public:
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
   virtual uchar GetSex() const { return UNDEFINED; }
@@ -987,7 +993,7 @@ class CHARACTER
     SetPerception(24);
   },*/
  public:
-  static bool CanBeGenerated() { return false; }
+  //static bool CanBeGenerated() { return false; }
  protected:
   virtual ulong TotalVolume() const { return 500000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new polarbearflesh(Volume); }
@@ -1010,7 +1016,7 @@ class CHARACTER
     SetPerception(30);
   },*/
  public:
-  static bool CanBeGenerated() { return false; }
+  //static bool CanBeGenerated() { return false; }
   virtual std::string StandVerb() const { return "swimming"; }
   virtual bool CanBeDisplaced() const { return false; }
   virtual bool CanOpen() const { return false; }
@@ -1038,7 +1044,7 @@ class CHARACTER
     SetPerception(18);
   },*/
  public:
-  static bool CanBeGenerated() { return false; }
+  //static bool CanBeGenerated() { return false; }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
   virtual bool CanSwim() const { return true; }
  protected:
@@ -1278,7 +1284,7 @@ class CHARACTER
     SetPerception(12);
   },*/
  public:
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
   virtual void SpillBlood(uchar, vector2d);
   //virtual float GetMeleeStrength() const { return 1500; }
@@ -1363,7 +1369,7 @@ class CHARACTER
   },*/
  public:
   virtual void BeTalkedTo(character*);
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual uchar GetSex() const { return FEMALE; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual void CreateInitialEquipment();
@@ -1394,7 +1400,7 @@ class CHARACTER
       ChangeIntoWolf();/
   },*/
  public:
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool HasInfraVision() const { return GetIsWolf(); }
@@ -1438,7 +1444,7 @@ class CHARACTER
   },*/
  public:
   virtual uchar GetSex() const { return UNDEFINED; }
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   virtual void CreateInitialEquipment();
  protected:
   //virtual ushort SkinColor() const { return MAKE_RGB(30, 100, 110); }
@@ -1587,7 +1593,7 @@ class CHARACTER
  public:
   virtual void VirtualConstructor();
   virtual void BeTalkedTo(character*);
-  static bool CanBeGenerated() { return true; }
+  //static bool CanBeGenerated() { return true; }
   //virtual float GetMeleeStrength() const { return 2000; }
   virtual ulong CurrentDanger() const { return character::CurrentDanger() * 50; }
   virtual ulong MaxDanger() const { return character::MaxDanger() * 50; }
@@ -1598,7 +1604,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment();
-  static ushort Frequency() { return 1000; }
+  //static ushort Frequency() { return 1000; }
   virtual void SetDivineMaster(uchar);
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 160); }

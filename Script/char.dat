@@ -36,6 +36,7 @@ petrus
 	TotalVolume = 80000;
 	MeleeStrength = 20000;
 	TotalSize = 225;
+	BaseEmitation = 333;
 }
 
 farmer

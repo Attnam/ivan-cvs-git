@@ -53,9 +53,9 @@ class MATERIAL
   virtual uchar Alignment() const { return GOOD; }
   virtual ushort GetEmitation() const { return 320; }
   virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
-  static bool CanBeWished() { return false; }
+  //static bool CanBeWished() { return false; }
   virtual ulong RawPrice() const { return GetVolume() << 2; }
-  static bool IsSolid() { return true; }*/
+  //static bool IsSolid() { return true; }*/
  protected:
   virtual std::string NameStem() const { return "valpurium"; }
 );
@@ -68,8 +68,8 @@ class MATERIAL
   /*  virtual ushort GetStrengthValue() const { return 60; }
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3000; }
-  virtual ushort OfferValue() const { return 5; }*/
-  static bool IsSolid() { return true; }
+  virtual ushort OfferValue() const { return 5; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }*/
  protected:
   virtual std::string NameStem() const { return "stone"; }
@@ -166,7 +166,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 5; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(140, 100, 60); }*/
  protected:
   virtual std::string AdjectiveStem() const { return "wooden"; }
@@ -236,7 +236,7 @@ class MATERIAL
   /*  virtual ushort GetStrengthValue() const { return 30; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 5; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(144, 144, 144); }
   virtual short NutritionValue() const { return 20; }
   virtual ushort GetConsumeType() const { return BONE; }*/
@@ -294,7 +294,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 5; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(128, 128, 255); }*/
  protected:
   virtual std::string NameStem() const { return "glass"; }
@@ -310,7 +310,7 @@ class MATERIAL
   virtual ushort GetDensity() const { return 1000; }
   virtual short NutritionValue() const { return 30; }
   virtual ushort GetColor() const { return MAKE_RGB(128, 128, 0); }
-  static bool CanBeWished() { return false; }
+  //static bool CanBeWished() { return false; }
   virtual bool IsAlive() const { return true; }
   virtual ushort OfferValue() const { return 100; }*/
   virtual void EatEffect(character*, float, float);
@@ -346,7 +346,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 600; }
   virtual ushort OfferValue() const { return 5; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
   virtual bool IsFlammable() const { return true; }*/
  protected:
@@ -362,7 +362,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 100; }
   virtual ushort OfferValue() const { return 5; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(64, 64, 160); }
   virtual bool IsFlammable() const { return true; }*/
  protected:
@@ -377,7 +377,7 @@ class MATERIAL
   /*  virtual ushort OfferValue() const { return 30; }
   virtual uchar Alignment() const { return EVIL; }
   virtual ushort GetSkinColor(ushort Frame) const { return SkinColor[Frame]; } // spoiled: MAKE_RGB(0, 120, 120)
-  virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+  virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }*/
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual std::vector<ushort>& GetSkinColorVector() { return SkinColor; }
@@ -492,7 +492,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 5000; }
   virtual ushort OfferValue() const { return 25; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(184, 184, 184); }*/
   virtual ulong RawPrice() const { return GetVolume() >> 1; }
  protected:
@@ -543,7 +543,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 7; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }*/
  protected:
   virtual std::string NameStem() const { return "marble"; }
@@ -558,9 +558,9 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 20000; }
   virtual ushort OfferValue() const { return 50; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
-  static bool CanBeWished() { return false; }*/
+  //static bool CanBeWished() { return false; }*/
   virtual ulong RawPrice() const { return GetVolume() << 1; }
  protected:
   virtual std::string AdjectiveStem() const { return "golden"; }
@@ -628,7 +628,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
   virtual bool IsFlexible() const { return true; }
   virtual bool IsFlammable() const { return true; }*/
@@ -676,7 +676,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(0, 160, 0); }
   virtual bool IsFlammable() const { return true; }
   virtual bool IsAlive() const { return true; }*/
@@ -707,7 +707,7 @@ class MATERIAL
   virtual ushort OfferValue() const { return 1; }
   virtual short NutritionValue() const { return 10; }
   virtual ushort GetColor() const { return MAKE_RGB(64, 64, 192); }
-  static bool CanBeWished() { return false; }*/
+  //static bool CanBeWished() { return false; }*/
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
  protected:
   virtual std::string NameStem() const { return "water"; }
@@ -730,7 +730,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 10; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(128, 0, 0); }*/
  protected:
   virtual std::string NameStem() const { return "sulfur"; }
@@ -838,7 +838,7 @@ class MATERIAL
   virtual ushort GetDensity() const { return 250; }
   virtual ushort OfferValue() const { return 5; }
   virtual ushort GetColor() const { return MAKE_RGB(30, 30, 30); }
-  static bool CanBeWished() { return false; }
+  //static bool CanBeWished() { return false; }
   virtual bool IsExplosive() const { return true; } */
   virtual ushort ExplosivePower() const { return GetVolume() / 250; }
   virtual ulong RawPrice() const { return GetVolume() >> 4; }
@@ -869,7 +869,7 @@ class MATERIAL
   virtual ushort GetColor() const { return MAKE_RGB(160, 0, 0); }
   virtual uchar Alignment() const { return EVIL; }
   virtual bool IsAlive() const { return true; }
-  static bool CanBeWished() { return false; } */
+  //static bool CanBeWished() { return false; } */
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
  protected:
   virtual std::string NameStem() const { return "blood"; }
@@ -963,7 +963,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }*/
   virtual ulong RawPrice() const { return ulong(GetVolume() * 3); }
  protected:
@@ -979,9 +979,9 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 10500; }
   virtual ushort OfferValue() const { return 30; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
-  static bool CanBeWished() { return false; }*/
+  //static bool CanBeWished() { return false; }*/
   virtual ulong RawPrice() const { return ulong(GetVolume() * 1.5); }
  protected:
   virtual std::string NameStem() const { return "silver"; }
@@ -996,7 +996,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(96, 96, 200); }*/
   virtual ulong RawPrice() const { return ulong(GetVolume() * 2); }
  protected:
@@ -1012,7 +1012,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(200, 60, 60); }*/
   virtual ulong RawPrice() const { return ulong(GetVolume() * 2.5); }
  protected:
@@ -1047,7 +1047,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 8300; } 
   virtual ushort OfferValue() const { return 10; }
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(150, 100, 50); } */
   virtual ulong RawPrice() const { return GetVolume() >> 9; }
  protected:
@@ -1063,7 +1063,7 @@ class MATERIAL
   virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 9000; } // rounded from 8920
   virtual ushort OfferValue() const { return 10; } 
-  static bool IsSolid() { return true; }
+  //static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(96, 64, 32); }*/
   virtual ulong RawPrice() const { return GetVolume() >> 9; }
  protected:

@@ -110,8 +110,8 @@ class character_prototype
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
   virtual character_database& GetDataBase() const = 0;
-  ushort GetFrequency() const { return GetDataBase().Frequency; }
-  bool CanBeGenerated() const { return GetDataBase().CanBeGenerated; }
+  DATABASEVALUE(ushort, Frequency);
+  DATABASEBOOL(CanBeGenerated);
  protected:
   ushort Index;
 };
@@ -122,6 +122,7 @@ class character : public entity, public id
 {
  public:
   typedef character_prototype prototype;
+  typedef character_database database;
   friend class corpse;
   character();
   //character(bool, bool, bool = true);
@@ -417,7 +418,8 @@ class character : public entity, public id
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
-  virtual const character_database& GetDataBase() const = 0;
+  virtual const prototype& GetProtoType() const = 0;
+  virtual const database& GetDataBase() const = 0;
 
   virtual void LoadDataBaseStats();
 
@@ -486,9 +488,8 @@ class character : public entity, public id
   DATABASEBOOL(IsNameable);
   DATABASEVALUE(ushort, BaseEmitation);
 
-  virtual const character::prototype* const GetProtoType() const = 0;
-
  protected:
+  virtual void Initialize(bool, bool);
   virtual void VirtualConstructor() { }
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor0(ushort, ushort);
@@ -518,7 +519,7 @@ class character : public entity, public id
   //virtual ulong TotalVolume() const = 0;
   virtual uchar BodyParts() const { return 1; }
   //virtual vector2d GetBitmapPos(ushort) const = 0;
-  virtual void AllocateBodyPartArray();
+  //virtual void AllocateBodyPartArray();
   //virtual ushort TorsoSize() const;
   virtual std::string MaterialDescription(bool) const;
   virtual bool ShowClassDescription() const { return true; }
@@ -573,7 +574,7 @@ class character : public entity, public id
 
 #define CHARACTER_PROTOTYPE(name, base)\
   \
-  character_database name##_DataBase;\
+  static character::database name##_DataBase;\
   \
   static class name##_prototype : public character::prototype\
   {\
@@ -581,30 +582,13 @@ class character : public entity, public id
     name##_prototype() { Index = protocontainer<character>::Add(this); }\
     virtual character* Clone(bool MakeBodyParts = true, bool CreateEquipment = true) const { return new name(MakeBodyParts, CreateEquipment); }\
     virtual std::string ClassName() const { return #name; }\
-    virtual character_database& GetDataBase() const { return name##_DataBase; }\
+    virtual character::database& GetDataBase() const { return name##_DataBase; }\
   } name##_ProtoType;\
   \
-  name::name(bool MakeBodyParts, bool CreateEquipment)\
-  {\
-    LoadDataBaseStats();\
-    VirtualConstructor();\
-    AllocateBodyPartArray();\
-    \
-    if(MakeBodyParts)\
-      {\
-	CreateBodyParts();\
-	\
-	if(CreateEquipment)\
-	  CreateInitialEquipment();\
-	\
-	RestoreHP();\
-      }\
-  }\
-  \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const character::prototype* const name::GetProtoType() const { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
-  const character_database& name::GetDataBase() const { return name##_DataBase; }
+  const character::prototype& name::GetProtoType() const { return name##_ProtoType; }\
+  const character::database& name::GetDataBase() const { return name##_DataBase; }
 
 #else
 
@@ -617,10 +601,10 @@ class character : public entity, public id
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true);\
+  name(bool MakeBodyParts = true, bool CreateEquipment = true) { Initialize(MakeBodyParts, CreateEquipment); }\
   static ushort StaticType();\
-  virtual const character_database& GetDataBase() const;\
-  virtual const character::prototype* const GetProtoType() const;\
+  virtual const prototype& GetProtoType() const;\
+  virtual const database& GetDataBase() const;\
  protected:\
   virtual ushort Type() const;\
   data\

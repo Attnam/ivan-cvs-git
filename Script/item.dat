@@ -42,8 +42,7 @@ Preset values for the obligatory members
     DefaultMainVolume = 0; 
     BitmapPos = 0,0;
 
-
-----
+*/
 
 /*
 meleeweapon
@@ -55,8 +54,6 @@ meleeweapon
     	DefaultMainVolume = 0; 
     	BitmapPos  = 0,0; 
 }
-*/
-
 */
 
 banana
@@ -98,6 +95,7 @@ lantern
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
 /*	BitmapPos is depended on being on the wall or not */
+	BitmapPos = 0, 0;
 	FormModifier = 30;
 	Price = 50;
 	BaseEmitation = 300;
@@ -113,6 +111,7 @@ can
 	DefaultContainedVolume = 500;
 	StrengthModifier = 50;
 	/* BitmapPos depends on being full or not */
+	BitmapPos = 0, 0;
 	FormModifier = 30;
 }
 
@@ -139,6 +138,7 @@ longsword
 	DefaultSecondaryVolume = 100;
 	BitmapPos = 16, 336;
 	FormModifier = 150;
+	StrengthModifier = 150;
 }
 
 twohandedsword
@@ -194,7 +194,7 @@ axe
 	InHandsPic = 160, 176;
 	WeaponCategory = AXES;
 	DefaultMainVolume = 1400;
-	SecondaryVolume = 1600;
+	DefaultSecondaryVolume = 1600;
 	StrengthModifier = 150;
 	BitmapPos = 16, 256;
 	FormModifier = 150;
@@ -208,7 +208,7 @@ pickaxe
 	InHandsPic = 160, 64;
 	WeaponCategory = AXES;
 	DefaultMainVolume = 1500;
-	SecondaryVolume = 2000;
+	DefaultSecondaryVolume = 2000;
 	StrengthModifier = 150;
 	BitmapPos = 0, 96;
 	FormModifier = 100;
@@ -233,7 +233,7 @@ spear
 	InHandsPic = 160, 144;
 	Category = BODYARMOR;
 	FormModifier = 20;
-/* The following are not set in the old itemde.h, so they are rather stupid here */
+/ The following are not set in the old itemde.h, so they are rather stupid here /
 	StrengthModifier = 0; 
 	DefaultSize = 0 ; 
 	DefaultMainVolume = 0; 
@@ -269,7 +269,7 @@ chainmail
 	InHandsPic = 160, 144;
 	Category = BODYARMOR;
 	FormModifier = 20;
-/* The following are not set in the old itemde.h, so they are rather stupid here */
+/ The following are not set in the old itemde.h, so they are rather stupid here /
 	StrengthModifier = 0; 
 	DefaultSize = 0 ; 
 	DefaultMainVolume = 0; 
@@ -288,7 +288,7 @@ goldeneagleshirt
 	Possibility = 0;
 	Score = 2500;
 	CanBeWished = false;
-	Destroyable = false;
+	IsDestroyable = false;
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
 	BaseEmitation = 333;
@@ -296,7 +296,7 @@ goldeneagleshirt
 
 potion
 {
-	SetSize = 30;
+	DefaultSize = 30;
 	Possibility = 100;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160,128;
@@ -405,7 +405,7 @@ leftnutofpetrus
 	BitmapPos = 16, 208;
 	FormModifier = 20;
 	Score = 5000;
-	Destroyable = false;
+	IsDestroyable = false;
 	Category = MISC;
 	BaseEmitation = 333;
 }
@@ -419,6 +419,7 @@ abone
 	StrengthModifier = 100;
 	BitmapPos = 16, 240;
 	FormModifier = 70;
+	Category = MISC;
 }
 
 
@@ -430,7 +431,7 @@ poleaxe
 	InHandsPic = 160, 176;
 	WeaponCategory = AXES;
 	DefaultMainVolume = 2500;
-	SecondaryVolume = 2000;
+	DefaultSecondaryVolume = 2000;
 	StrengthModifier = 150;
 	BitmapPos = 0, 80;
 	FormModifier = 150;
@@ -494,7 +495,7 @@ scrollofwishing
 	Possibility = 1;
 	CanBeWished = false;
 	Price = 2000;
-	PolymorphSpawnable = false;
+	IsPolymorphSpawnable = false;
 }
 
 cheapcopyofleftnutofpetrus
@@ -505,6 +506,10 @@ cheapcopyofleftnutofpetrus
 	Price = 500;
 	Category = MISC;
 	StrengthModifier = 50;
+	FormModifier = 70;
+	DefaultMainVolume = 500;
+	FormModifier = 20;
+	BitmapPos = 16, 208;
 }
 
 /*
@@ -522,16 +527,16 @@ wandofpolymorph
 {
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	DefaultSize = 30;
 	Possibility = 20;
 	Price = 500;
-	PolymorphSpawnable = false;
+	IsPolymorphSpawnable = false;
 }
 
-lantern
+brokenlantern
 {
 	DefaultSize = 15;
 	Possibility = 25;
@@ -540,6 +545,7 @@ lantern
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
 /*	BitmapPos is depended on being on the wall or not */
+	BitmapPos = 0, 0;
 	FormModifier = 80;
 	Price = 50;
 	BaseEmitation = 0;
@@ -563,7 +569,7 @@ avatarofvalpurus
 	DefaultSize = 10;
 	Possibility = 0;
 	CanBeWished = false;
-	Destroyable = false;
+	IsDestroyable = false;
 	InHandsPic = 160, 112;
 	IsMaterialChangeable = false;
 	Price = 2000000000;
@@ -578,7 +584,7 @@ wandofstriking
 {
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	DefaultSize = 30;
@@ -601,7 +607,7 @@ brokenplatemail
 kiwi
 {
 	DefaultSize = 10;
-	Possibiliity = 25;
+	Possibility = 25;
 	Category = FOOD;
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
@@ -643,13 +649,14 @@ whip
 	DefaultSecondaryVolume = 200;
 	StrengthModifier = 50;
 	BitmapPos = 32, 0;
-	FormModifier = 0; // not needed
+	FormModifier = 0; /* not needed */
+	Category = WEAPON;
 }
 
 backpack
 {
 	DefaultSize = 80;
-	Possibilty = 10;
+	Possibility = 10;
 	InHandsPic = 160, 144;
 	Category = TOOL;
 	DefaultMainVolume = 1000;
@@ -706,14 +713,14 @@ astone
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
 	BitmapPos = 0, 48;
-	Modifier = 45;
+	FormModifier = 45;
 }
 
 wandoffireballs
 {
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	DefaultSize = 30;
@@ -730,7 +737,7 @@ scrolloftaming
 	BitmapPos = 16, 176;
 	FormModifier = 40;
 	DefaultSize = 30;
-	Possibily = 5;
+	Possibility = 5;
 	DefaultSize = 30;
 	Price = 350;
 }
@@ -740,12 +747,11 @@ wandofteleportation
 	Category = WAND;
 	DefaultMainVolume = 200;
 	DefaultSize = 30;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	Price = 500;
 }
-
 
 mine
 {
@@ -764,7 +770,7 @@ wandofhaste
 	DefaultSize = 30;
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	Possibility = 30;
@@ -775,7 +781,7 @@ wandofslow
 	DefaultSize = 30;
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	Possibility = 30;
@@ -832,7 +838,7 @@ gauntlet
 	Possibility = 40;
 	Category = GAUNTLET;
 	DefaultMainVolume = 400;
-	StrenthModifier = 75;
+	StrengthModifier = 75;
 	BitmapPos = 32, 368;
 	FormModifier = 20;
 }
@@ -846,6 +852,7 @@ belt
 	DefaultMainVolume = 250;
 	StrengthModifier = 50;
 	BitmapPos = 32, 384;
+	FormModifier = 0; /* Not used */
 }
 
 ring
@@ -875,10 +882,13 @@ corpse
 	Possibility = 0;
 	Category = FOOD;
 	CanBeWished = false;
-	IsAutoInitilizable = false;
+	IsAutoInitializable = false;
 	IsPolymorphSpawnable = false;
 	StrengthModifier = 100;
 	FormModifier = 15;
+	DefaultSize = 0; /* Not used */
+	DefaultMainVolume = 0; /* Not used */
+	BitmapPos = 0, 0; /* Not used */
 }
 
 wandoflocking
@@ -888,7 +898,7 @@ wandoflocking
 	Price = 70;
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 }
@@ -900,7 +910,7 @@ wandofresurrection
 	Price = 400;
 	Category = WAND;
 	DefaultMainVolume = 200;
-	StrengthModfier = 50;
+	StrengthModifier = 50;
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 }
@@ -914,5 +924,5 @@ ringoffireresistance
 	StrengthModifier = 100;
 	BitmapPos = 16, 400;
 	FormModifier = 20;
-	FireReistance = 10;
+	FireResistance = 10;
 }

@@ -30,7 +30,8 @@ Ring of strength.
 Ring of see invisible. (hex)
 Ring of teleportation. (hex)
 Potion of invisibility. (hex)
-Magic whistle. (hex, kuva kahvi)
+//Magic whistlen kuva. (kahvi)
+Magic whistle. (hex)
 Inhandspicit kuntoon. (timo)
 Ruumiinosien hoitotavat:
 * Temppelit rahaa vastaan - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
@@ -44,7 +45,7 @@ Ruumiinosien hoitotavat:
 * Enkelit (kerran 2500 vuorossa) - raaja paikoilleen (1 hp). (hex)
 * Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
 Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
-Avaimelle kuva. (kahvi)
+//Avaimelle kuva. (kahvi)
 Helmet. (hex)
 BaseEmitationit toimintaan. (timo)
 Pertun nutin wishaaminen. (timo)

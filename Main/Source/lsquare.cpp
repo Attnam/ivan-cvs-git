@@ -1065,7 +1065,7 @@ void lsquare::DrawParticles(ushort Color, uchar)
 
   game::DrawEverythingNoBlit();
 
-  for(ushort c = 0; c < 10; c++)
+  for(ushort c = 0; c < 10; ++c)
     DOUBLEBUFFER->PutPixel(BitPos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   graphics::BlitDBToScreen();

@@ -41,7 +41,7 @@ void globalerrorhandler::Install()
       OldNewHandler = set_new_handler(NewHandler);
 
 #ifdef __DJGPP__
-      for(ushort c = 0; c < SIGNALS; c++)
+      for(ushort c = 0; c < SIGNALS; ++c)
 	OldSignal[c] = signal(Signal[c], SignalHandler);
 #endif
 
@@ -52,7 +52,7 @@ void globalerrorhandler::Install()
 void globalerrorhandler::DeInstall()
 {
 #ifdef __DJGPP__
-  for(ushort c = 0; c < SIGNALS; c++)
+  for(ushort c = 0; c < SIGNALS; ++c)
     signal(Signal[c], OldSignal[c]);
 #endif
 

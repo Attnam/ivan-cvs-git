@@ -2794,7 +2794,7 @@ bool character::ChangeRandomStat(short HowMuch)
 {
   // Strength, Endurance, Agility, Perception
 
-  for(ushort c = 0; c < 15; c++)
+  for(ushort c = 0; c < 15; ++c)
     switch(RAND() % 4)
       {
       case 0:
@@ -3578,14 +3578,6 @@ void character::SetBodyPart(ushort Index, bodypart* What)
   GetBodyPartSlot(Index)->SetItem(What);
 }
 
-void character::AllocateBodyPartArray()
-{
-  BodyPartSlot = new characterslot[BodyParts()];
-
-  for(ushort c = 0; c < BodyParts(); ++c)
-    GetBodyPartSlot(c)->SetMaster(this);
-}
-
 characterslot* character::GetBodyPartSlot(ushort Index) const
 {
   return &BodyPartSlot[Index];
@@ -4066,7 +4058,7 @@ ushort character::GetBodyPartColor1(ushort Index, ushort Frame)
     }
 }
 
-ushort character::GetBodyPartColor2(ushort Index, ushort Frame)
+ushort character::GetBodyPartColor2(ushort Index, ushort)
 {
   if(Index == TORSOINDEX)
     return 0; // reserved for future use
@@ -4144,7 +4136,7 @@ void character::LoadDataBaseStats()
 
 character* character::Clone(bool MakeBodyParts, bool CreateEquipment) const
 {
-  return GetProtoType()->Clone(MakeBodyParts, CreateEquipment);
+  return GetProtoType().Clone(MakeBodyParts, CreateEquipment);
 }
 
 character* character_prototype::CloneAndLoad(inputfile& SaveFile) const
@@ -4152,4 +4144,25 @@ character* character_prototype::CloneAndLoad(inputfile& SaveFile) const
   character* Char = Clone(false, false);
   Char->Load(SaveFile);
   return Char;
+}
+
+void character::Initialize(bool MakeBodyParts, bool CreateEquipment)
+{
+  LoadDataBaseStats();
+  VirtualConstructor();
+
+  BodyPartSlot = new characterslot[BodyParts()];
+
+  for(ushort c = 0; c < BodyParts(); ++c)
+    GetBodyPartSlot(c)->SetMaster(this);
+
+  if(MakeBodyParts)
+    {
+      CreateBodyParts();
+
+      if(CreateEquipment)
+	CreateInitialEquipment();
+
+      RestoreHP();
+    }
 }

@@ -213,10 +213,10 @@ item* can::PrepareForConsuming(character* Consumer)
     return 0;
 }
 
-item* leftnutofpetrus::CreateWishedItem()
+/*item* leftnutofpetrus::CreateWishedItem()
 {
   return new cheapcopyofleftnutofpetrus;
-}
+}*/
 
 bool pickaxe::Apply(character* User)
 {
@@ -786,7 +786,7 @@ bool oillamp::Apply(character* Applier)
 
       /* First try to create a genie nearby (10 tries - if all of them fail then stop trying) */
 
-      for(ushort c = 0; c < 10 && !FoundPlace; c++)
+      for(ushort c = 0; c < 10 && !FoundPlace; ++c)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
@@ -985,7 +985,7 @@ bool scrolloftaming::Read(character* Reader)
   // First find all characters in the squares around Reader
   std::vector<character*> CharactersNearBy;
 
-  for(ushort c = 0; c < 8; c++)
+  for(ushort c = 0; c < 8; ++c)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
       if(game::IsValidPos(Test))

@@ -99,7 +99,7 @@ class material
   //virtual bool IsAlive() const { return false; }
   virtual bool HasBe() const { return false; }
   virtual bool Be() { return true; }
-  static bool SpecialWishedMaterial() { return false; }
+  //static bool SpecialWishedMaterial() { return false; }
   virtual ushort GetType() const { return Type(); }
   virtual void AddConsumeEndMessage(character*) const { }
   virtual long CalculateOfferValue(char GodAlignment) const;
