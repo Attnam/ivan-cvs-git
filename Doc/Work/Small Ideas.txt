@@ -419,4 +419,4 @@ There could be possibility to revive pet by praying (from shvagier (?))
 Better mines.
 wand/scroll of fire barrier (from shvagier (?))
 Petrification state.
-
+There should be a special effect for selling empty potions.

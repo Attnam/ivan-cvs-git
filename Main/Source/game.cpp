@@ -2270,25 +2270,21 @@ int game::GetMoveCommandKey(ushort Index)
 long game::GetScore()
 {
   double Counter = 0;
-  character* Char;
-  massacremap::const_iterator i1, i2;
-  massacremap SumMap;
+  massacremap::const_iterator i;
+  massacremap SumMap = PlayerMassacreMap;
 
-  for(i1 = PlayerMassacreMap.begin(); i1 != PlayerMassacreMap.end(); ++i1)
-    SumMap.insert(std::pair<configid, ushort>(i1->first, i1->second));
+  for(i = PetMassacreMap.begin(); i != PetMassacreMap.end(); ++i)
+    SumMap[i->first] += i->second;
 
-  for(i1 = PetMassacreMap.begin(); i1 != PetMassacreMap.end(); ++i1)
-    SumMap[i1->first] += i1->second;
-
-  for(i1 = SumMap.begin(); i1 != SumMap.end(); ++i1)
+  for(i = SumMap.begin(); i != SumMap.end(); ++i)
     {
-      Char = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
+      character* Char = protocontainer<character>::GetProto(i->first.Type)->Clone(i->first.Config);
       ushort SumOfAttributes = Char->GetSumOfAttributes();
       delete Char;
-      Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
+      Counter += sqrt(i->second) * SumOfAttributes * SumOfAttributes;
     }
 
-  return long(0.01 * Counter);
+  return long(0.01f * Counter);
 }
 
 /* Only works if New Attnam is loaded */

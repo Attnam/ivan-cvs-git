@@ -74,7 +74,6 @@ class igraph
   static void DrawCursor(vector2d);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
-  static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
   static colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
   static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
   static colorizablebitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
@@ -86,7 +85,6 @@ class igraph
   static const char* RawGraphicFileName[];
   static const char* GraphicFileName[];
   static tilemap TileMap;
-  static bitmap* OutlineBuffer;
   static uchar RollBuffer[256];
   static bitmap* FlagBuffer;
 };

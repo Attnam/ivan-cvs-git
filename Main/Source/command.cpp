@@ -46,8 +46,6 @@ command* commandsystem::Command[] =
   new command(&AssignName, "name", 'n', false),
   new command(&Offer, "offer", 'f', false),
   new command(&Open, "open", 'O', false),
-  //  new command(&OutlineCharacters, "outline characters", 'u', true),
-  //  new command(&OutlineItems, "outline items", 'U', true),
   new command(&PickUp, "pick up", ',', false),
   new command(&Pray, "pray", 'p', false),
   new command(&Quit, "quit", 'Q', true),
@@ -959,22 +957,6 @@ bool commandsystem::Rest(character* Char)
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
   return true;
-}
-
-bool commandsystem::OutlineCharacters(character* Char)
-{
-  configuration::SetOutlineCharacters(!configuration::GetOutlineCharacters());
-  configuration::Save();
-  Char->GetArea()->SendNewDrawRequest();
-  return false;
-}
-
-bool commandsystem::OutlineItems(character* Char)
-{
-  configuration::SetOutlineItems(!configuration::GetOutlineItems());
-  configuration::Save();
-  Char->GetArea()->SendNewDrawRequest();
-  return false;
 }
 
 bool commandsystem::Sit(character* Char)

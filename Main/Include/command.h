@@ -60,8 +60,6 @@ private:
   static bool WhatToEngrave(character*);
   static bool Zap(character*);
   static bool Rest(character*);
-  static bool OutlineCharacters(character*);
-  static bool OutlineItems(character*);
   static bool Sit(character*);
   static bool Go(character*);
   static bool ShowConfigScreen(character*);

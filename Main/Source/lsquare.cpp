@@ -103,14 +103,14 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
 
   if(IsTransparent())
     {
-      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw, RealDraw);
+      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
 
       for(ushort c = 0; c < 4; ++c)
 	{
 	  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
 	  if(Stack)
-	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw, RealDraw);
+	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
 	}
     }
 }
@@ -1756,7 +1756,7 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
 
 bool BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
 {
-  return BP1.Terrain->GetBorderTilePriority() < BP1.Terrain->GetBorderTilePriority();
+  return BP1.Terrain->GetBorderTilePriority() < BP2.Terrain->GetBorderTilePriority();
 }
 
 void lsquare::CalculateBorderPartners()

@@ -1941,7 +1941,6 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
 
-  ///SetSquareUnder(0);
   InNoMsgMode = NewForm->InNoMsgMode = false;
   NewForm->CalculateAll();
 
@@ -2311,7 +2310,6 @@ bool character::Displace(character* Who, bool Forced)
 	return false;
     }
 
-  //CHECK!
   if(IsSmall() && Who->IsSmall() && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0f)) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
     {
       if(IsPlayer())
@@ -4253,7 +4251,6 @@ void character::EndPolymorph()
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(Char);
 
-  ///SetSquareUnder(0);
   InNoMsgMode = Char->InNoMsgMode = false;
   Char->CalculateAll();
   Char->SetAssignedName(GetAssignedName());
@@ -4671,14 +4668,6 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
     Luminance = configuration::GetContrastLuminance();
 
   DrawBodyParts(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
-
-  if(configuration::GetOutlineCharacters())
-    {
-      igraph::GetTileBuffer()->ClearToColor(TRANSPARENT_COLOR);
-      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, SquareIndex, AllowAnimate);
-      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
-      igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
-    }
   
   if(GetTeam() == PLAYER->GetTeam() && !IsPlayer() && SquareIndex == GetTameSymbolSquareIndex())
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
@@ -6663,7 +6652,7 @@ void character::SignalStepFrom(lsquare** OldSquareUnder)
 
 ulong character::GetSumOfAttributes() const
 {
-  return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + (GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY)) * 2;
+  return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY);
 }
 
 void character::IntelligenceAction(ushort Difficulty)

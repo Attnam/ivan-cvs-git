@@ -17,10 +17,6 @@ festring configuration::DefaultPetName = CONST_S("Kenny");
 ushort configuration::AutoSaveInterval = 100;
 ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
-bool configuration::OutlineCharacters = false;
-bool configuration::OutlineItems = false;
-ushort configuration::CharacterOutlineColor = MakeRGB16(48, 48, 48);
-ushort configuration::ItemOutlineColor = MakeRGB16(48, 48, 100);
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
 ulong configuration::ContrastLuminance = NORMAL_LUMINANCE;
@@ -39,10 +35,6 @@ void configuration::Save()
   SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
   SaveFile << "Contrast = " << Contrast << ";\n";
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
-  SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
-  SaveFile << "OutlineItems = " << OutlineItems << ";\n";
-  SaveFile << "CharacterOutlineColor = " << GetRed16(CharacterOutlineColor) << ", " << GetGreen16(CharacterOutlineColor) << ", " << GetBlue16(CharacterOutlineColor) << ";\n";
-  SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
   SaveFile << "LookZoom = " << LookZoom <<";\n";
   SaveFile << "UseNumberPad = " << UseNumberPad << ";\n;";
@@ -79,30 +71,6 @@ void configuration::Load()
 
       if(Word == "AutoDropLeftOvers")
 	SetAutoDropLeftOvers(SaveFile.ReadBool());
-
-      if(Word == "OutlineCharacters")
-	SetOutlineCharacters(SaveFile.ReadBool());
-
-      if(Word == "OutlineItems")
-	SetOutlineItems(SaveFile.ReadBool());
-
-      if(Word == "CharacterOutlineColor")
-	{
-	  uchar Red = SaveFile.ReadNumber();
-	  uchar Green = SaveFile.ReadNumber();
-	  uchar Blue = SaveFile.ReadNumber();
-
-	  SetCharacterOutlineColor(MakeRGB16(Red, Green, Blue));
-	}
-
-      if(Word == "ItemOutlineColor")
-	{
-	  uchar Red = SaveFile.ReadNumber();
-	  uchar Green = SaveFile.ReadNumber();
-	  uchar Blue = SaveFile.ReadNumber();
-
-	  SetItemOutlineColor(MakeRGB16(Red, Green, Blue));
-	}
 
       if(Word == "FullScreenMode")
 	SetFullScreenMode(SaveFile.ReadBool());
@@ -155,8 +123,6 @@ void configuration::ShowConfigScreen()
 
       List.AddEntry(CONST_S("Contrast:                               ") + Contrast + "/100", LIGHT_GRAY);
       List.AddEntry(CONST_S("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(CONST_S("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(CONST_S("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(CONST_S("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(CONST_S("Use number pad:                         ") + (UseNumberPad ? "yes" : "no"), LIGHT_GRAY);
 
@@ -193,25 +159,15 @@ void configuration::ShowConfigScreen()
 	  BoolChange = true;
 	  break;
 	case 5:
-	  SetOutlineCharacters(!GetOutlineCharacters());
-	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
-	  BoolChange = true;
-	  break;
-	case 6:
-	  SetOutlineItems(!GetOutlineItems());
-	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
-	  BoolChange = true;
-	  break;
-	case 7:
 	  SetLookZoom(!GetLookZoom());
 	  BoolChange = true;
 	  break;
-	case 8:
+	case 6:
 	  SetUseNumberPad(!GetUseNumberPad());
 	  BoolChange = true;
 	  break;
 #ifndef __DJGPP__
-	case 9:
+	case 7:
 	  graphics::SwitchMode();
 	  BoolChange = true;
 	  break;

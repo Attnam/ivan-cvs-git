@@ -301,6 +301,7 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color,
 }
 
 /* Notice that '<' and '>' are active always. */
+
 long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, ushort LeftKey, ushort RightKey, bool Fade, void (*Handler)(long))
 {
   long BarValue = StartValue;

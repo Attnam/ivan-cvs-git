@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
+	* Removed the obsolete character and item outline codes
+	* Corrected some gcc warnings
+
+August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
 	* Corrected a fatal bug in the bonefile code
 	* The holy banana's big explosion damage reduced to half
 	* Added some magic resistance to powerful named monsters

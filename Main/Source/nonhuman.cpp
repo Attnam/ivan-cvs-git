@@ -1670,7 +1670,6 @@ bool bunny::CheckForMatePartner()
     {
       character* BestPartner = 0;
       float BestPartnerDanger = 0;
-      vector2d Pos = GetPos();
 
       for(ushort c = 0; c < game::GetTeams(); ++c)
 	if(GetTeam()->GetRelation(game::GetTeam(c)) != HOSTILE)

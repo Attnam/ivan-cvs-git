@@ -21,14 +21,6 @@ class configuration
   static void SetContrast(short);
   static bool GetAutoDropLeftOvers() { return AutoDropLeftOvers; }
   static void SetAutoDropLeftOvers(bool What) { AutoDropLeftOvers = What; }
-  static bool GetOutlineCharacters() { return OutlineCharacters; }
-  static void SetOutlineCharacters(bool What) { OutlineCharacters = What; }
-  static bool GetOutlineItems() { return OutlineItems; }
-  static void SetOutlineItems(bool What) { OutlineItems = What; }
-  static ushort GetCharacterOutlineColor() { return CharacterOutlineColor; }
-  static void SetCharacterOutlineColor(ushort What) { CharacterOutlineColor = What; }
-  static ushort GetItemOutlineColor() { return ItemOutlineColor; }
-  static void SetItemOutlineColor(ushort What) { ItemOutlineColor = What; }
   static bool GetBeepOnCritical() { return BeepOnCritical; }
   static void SetBeepOnCritical(bool What) { BeepOnCritical = What; }
   static bool GetFullScreenMode() { return FullScreenMode; }
@@ -53,10 +45,6 @@ class configuration
   static ushort AutoSaveInterval;
   static ushort Contrast;
   static bool AutoDropLeftOvers;
-  static bool OutlineCharacters;
-  static bool OutlineItems;
-  static ushort CharacterOutlineColor;
-  static ushort ItemOutlineColor;
   static bool BeepOnCritical;
   static bool FullScreenMode;
   static ulong ContrastLuminance;

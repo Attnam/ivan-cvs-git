@@ -61,7 +61,7 @@ Dungeon ELPURI_CAVE;
 
 	LevelDefault
 	{
-		FillSquare = solidterrain(GROUND),earth;
+		FillSquare = solidterrain(GROUND), STONE earth;
 		Size = 64, 36;
 		Rooms = 10:30;
 		Items = 25:50;
@@ -309,7 +309,7 @@ Dungeon ELPURI_CAVE;
 		
 			GenerateLanterns = false;
 			GenerateFountains = false;
-			WallSquare = solidterrain(GROUND),earth;
+			WallSquare = solidterrain(GROUND), STONE earth;
 			GenerateDoor = false;
 			GenerateTunnel = false;
 			AltarPossible = false;
@@ -1424,7 +1424,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	LevelDefault
 	{
-		FillSquare = solidterrain(GROUND),earth;
+		FillSquare = solidterrain(GROUND), earth;
 		Size = 80, 20;
 		Rooms = 5:10;
 		Items = 15:30;

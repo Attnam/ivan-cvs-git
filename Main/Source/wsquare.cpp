@@ -149,7 +149,6 @@ void wsquare::CalculateLuminance()
   Luminance = MakeRGB24(Element, Element, Element);
 }
 
-
 uchar wsquare::GetWalkability() const 
 { 
   return OWTerrain ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability() : GWTerrain->GetWalkability(); 

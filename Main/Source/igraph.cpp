@@ -11,7 +11,6 @@
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
-bitmap* igraph::OutlineBuffer;
 bitmap* igraph::FlagBuffer;
 const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
 const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
@@ -51,7 +50,6 @@ void igraph::Init()
 
       TileBuffer = new bitmap(16, 16);
       TileBuffer->CreatePriorityMap(0);
-      OutlineBuffer = new bitmap(16, 16);
       FlagBuffer = new bitmap(16, 16);
       FlagBuffer->CreateAlphaMap(0);
     }
@@ -68,7 +66,6 @@ void igraph::DeInit()
     delete Graphic[c];
 
   delete TileBuffer;
-  delete OutlineBuffer;
   delete FlagBuffer;
 }
 

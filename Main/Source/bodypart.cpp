@@ -2306,7 +2306,7 @@ void arm::UpdatePictures()
   UpdateWieldedPicture();
 }
 
-void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
 {
   if(AllowAlpha)
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);

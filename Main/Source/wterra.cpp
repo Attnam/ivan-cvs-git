@@ -5,6 +5,7 @@ owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* C
 
 uchar gwterrain::GetWalkability() const { return ANY_MOVE; }
 uchar owterrain::GetWalkability() const { return ANY_MOVE; }
+uchar owterrain::GetAttachedEntry() const { return STAIRS_UP; }
 
 void wterrain::AddName(festring& String, uchar Case) const
 {
@@ -126,9 +127,3 @@ bool owterrain::Enter(bool DirectionUp) const
 
   return game::TryTravel(GetAttachedDungeon(), GetAttachedArea(), GetAttachedEntry());
 }
-
-uchar owterrain::GetAttachedEntry() const
-{
-  return STAIRS_UP;
-}
-
