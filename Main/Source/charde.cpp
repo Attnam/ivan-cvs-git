@@ -3849,7 +3849,7 @@ void encourager::Load(inputfile& SaveFile)
   SaveFile >> LastHit;
 }
 
-void encourager::VirtualConstructor(bool)
+void encourager::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
   LastHit = 0;

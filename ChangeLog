@@ -1,4 +1,8 @@
 November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Totally weird and odd bug in charde.cpp.
+
+November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Bugs corrected:
 	- Headless player zombie + Chat.
 	- Seges and others may give genies and angels a groin and legs.
