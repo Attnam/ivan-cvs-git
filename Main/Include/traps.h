@@ -40,6 +40,8 @@ class TRAP
   void SetStrength(int What) { Strength = What; }
   virtual void Draw(bitmap*, vector2d, color24) const;
   virtual bool IsStuckToBodyPart(int) const;
+  virtual void ReceiveDamage(character*, int, int, int);
+  virtual void Destroy();
  protected:
   virtual void VirtualConstructor(bool);
   trapdata TrapData;

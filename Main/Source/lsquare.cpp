@@ -1382,6 +1382,7 @@ bool lsquare::Strike(const beamdata& Beam)
 {
   int Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Beam.Owner, Damage, ENERGY, Beam.Direction);
+  ReceiveTrapDamage(Beam.Owner, Damage, ENERGY, Beam.Direction);
 
   character* Char = GetCharacter();
 
@@ -1492,6 +1493,7 @@ bool lsquare::Lightning(const beamdata& Beam)
 {
   int Damage = 20 + RAND() % 6 - RAND() % 6;
   GetStack()->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, Beam.Direction);
+  ReceiveTrapDamage(Beam.Owner, Damage, ELECTRICITY, Beam.Direction);
 
   character* Char = GetCharacter();
 
@@ -1594,6 +1596,9 @@ void lsquare::GetHitByExplosion(const explosion* Explosion)
 
   GetStack()->ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE);
   GetStack()->ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
+
+  ReceiveTrapDamage(Explosion->Terrorist, Damage >> 1, FIRE);
+  ReceiveTrapDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
 
   if(GetOLTerrain())
     GetOLTerrain()->ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE);
@@ -1759,7 +1764,7 @@ void lsquare::DisplaySmokeInfo(festring& Msg) const
 void lsquare::ReceiveEarthQuakeDamage()
 {
   GetStack()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
-
+  ReceiveTrapDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
   /* Gum solution */
 
   if(GetOLTerrain() && GetOLTerrain()->IsDoor())
@@ -2590,4 +2595,21 @@ void lsquare::DisplayTrapInfo(festring& Msg) const
 {
   for(const trap* T = Trap; T; T = T->Next)
     T->AddDescription(Msg);
+}
+
+void lsquare::FillTrapVector(std::vector<trap*>& TrapVector) const
+{
+  for(trap* T = Trap; T; T = T->Next)
+    TrapVector.push_back(T);
+}
+
+void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Direction)
+{
+  std::vector<trap*> TrapVector;
+  FillTrapVector(TrapVector);
+
+  for(int c = 0; c < TrapVector.size(); ++c)
+    {
+      TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
+    }
 }

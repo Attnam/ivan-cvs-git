@@ -73,6 +73,7 @@ class trap : public entity
   virtual const prototype* GetProtoType() const;
   virtual void StepOnEffect(character*) = 0;
   virtual void Draw(bitmap*, vector2d, color24) const = 0;
+  virtual void ReceiveDamage(character*, int, int, int) { }
  protected:
   virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;

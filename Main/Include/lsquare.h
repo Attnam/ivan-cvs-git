@@ -263,6 +263,8 @@ class lsquare : public square
   bool AddTrap(trap*);
   void RemoveTrap(trap*);
   void DisplayTrapInfo(festring&) const;
+  void FillTrapVector(std::vector<trap*>&) const;
+  void ReceiveTrapDamage(character*, int, int, int = YOURSELF);
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);

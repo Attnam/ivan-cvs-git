@@ -158,3 +158,22 @@ bool web::IsStuckToBodyPart(int I) const
 {
   return !!(1 << I & TrapData.BodyParts);
 }
+
+void web::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
+{
+  if(Type & (ACID|FIRE|ELECTRICITY|ENERGY))
+    Destroy();
+}
+
+
+void web::Destroy()
+{
+  character* Char = game::SearchCharacter(GetVictimID());
+
+  if(Char)
+    Char->RemoveTrap(GetTrapID());
+
+  TrapData.VictimID = 0;
+  GetLSquareUnder()->RemoveTrap(this);
+  SendToHell();
+}
