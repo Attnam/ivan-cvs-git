@@ -34,7 +34,7 @@ character* protosystem::BalancedCreateMonster()
 		    {
 		      float Danger = DangerID.EquippedDanger;
 
-		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 2.5f))
+		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 3.0f))
 			continue;
 
 		      float DangerModifier = DataBase.DangerModifier == 100 ? Danger : Danger * 100 / DataBase.DangerModifier;

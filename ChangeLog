@@ -7,6 +7,19 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Decreased old walls' HPs by 40%, so that the steel vault is easier to open
+	  with explosives
+	* Corrected a bug that caused the player to die on the first turn if he had
+	  starved in the world map at the end of the previous game
+	* Weaponskills now don't care whether the weapon is poisoned or not
+	* "X looks very agile." etc. messages are now only shown for pets (they were
+	  annoying for instance in Attnam)
+	* Ivan is now a lot tougher
+	* Forbade the Grisly Game-Reaping Abuse of Arbitrary Brain Weight
+	* The final battle against Petrus is now much more difficult
+
 May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Cloaks break less often now

@@ -407,3 +407,5 @@ Cave paintings.
 List of dead friends.
 New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
 New fountain effect: random level teleport.
+Carnivorous plants should be carnivorous, not anorectic.
+There should be an option to display weapon skills at the end of the game.

@@ -103,6 +103,9 @@ void skeleton::CreateCorpse(lsquare* Square)
 
 void petrus::CreateCorpse(lsquare* Square)
 {
+  if(game::GetStoryState() == 2)
+    game::GetTeam(ATTNAM_TEAM)->SetRelation(game::GetTeam(PLAYER_TEAM), FRIEND);
+
   Square->AddItem(new leftnutofpetrus);
   SendToHell();
 }
@@ -168,6 +171,17 @@ void ennerbeast::GetAICommand()
 
 void petrus::GetAICommand()
 {
+  if(HP << 1 < MaxHP && (GetPos() - vector2d(28, 20)).GetLengthSquare() > 25)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+      GetLevel()->GetLSquare(28, 20)->KickAnyoneStandingHereAway();
+      Move(vector2d(28, 20), true);
+      EditAP(-1000);
+      return;
+    }
+
   if(!LastHealed || game::GetTicks() - LastHealed > 16384)
     for(ushort d = 0; d < 8; ++d)
       {
@@ -469,6 +483,7 @@ void petrus::BeTalkedTo()
 	  GetSquareUnder()->SendNewDrawRequest();
 	  game::AskForKeyPress(CONST_S("You are attacked! [press any key to continue]"));
 	  PLAYER->GetTeam()->Hostility(GetTeam());
+	  game::SetStoryState(2);
 	  return;
 	}
     }
@@ -2699,7 +2714,7 @@ void bananagrower::GetAICommand()
       if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
-      Teleport(Where);
+      Move(Where, true);
       Profession = RAND() & 7;
       RestoreBodyParts();
       RestoreHP();
@@ -2895,9 +2910,6 @@ void guard::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> WayPoints >> NextWayPoint;
-
-  if(GetConfig() == MASTER)
-    game::SetHaedlac(this);
 }
 
 void guard::VirtualConstructor(bool Load)
@@ -2909,7 +2921,6 @@ void guard::VirtualConstructor(bool Load)
 
   if(!Load && GetConfig() == MASTER)
     {
-      game::SetHaedlac(this);
       key* Key = new key;
       Key->SetLockType(HEXAGONAL);
       GetStack()->AddItem(Key);
@@ -2918,6 +2929,17 @@ void guard::VirtualConstructor(bool Load)
 
 void guard::GetAICommand()
 {
+  if(GetConfig() == MASTER && HP << 1 < MaxHP && (GetPos() - vector2d(30, 17)).GetLengthSquare() > 9)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+      GetLevel()->GetLSquare(30, 16)->KickAnyoneStandingHereAway();
+      Move(vector2d(30, 16), true);
+      EditAP(-1000);
+      return;
+    }
+
   if(WayPoints.size() && WayPoint.X == -1)
     {
       if(GetPos() == WayPoints[NextWayPoint])
@@ -2981,12 +3003,6 @@ item* humanoid::GetPairEquipment(ushort Index) const
     case LEFT_BOOT_INDEX: return GetRightBoot();
     default: return 0;
     }
-}
-
-guard::~guard()
-{
-  if(GetConfig() == MASTER)
-    game::SetHaedlac(0);
 }
 
 item* zombie::SevereBodyPart(ushort BodyPartIndex)
@@ -3841,4 +3857,50 @@ humanoid::~humanoid()
 {
   for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
     delete *i;
+}
+
+void guard::TeleportRandomly()
+{
+  if(GetConfig() != MASTER)
+    humanoid::TeleportRandomly();
+}
+
+bool petrus::MoveTowardsHomePos()
+{
+  if(GetPos() != vector2d(28, 20))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+      GetLevel()->GetLSquare(28, 20)->KickAnyoneStandingHereAway();
+      Move(vector2d(28, 20), true);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s appears.", CHAR_NAME(DEFINITE));
+
+      EditAP(-1000);
+      return true;
+    }
+  else
+    return false;
+}
+
+bool guard::MoveTowardsHomePos()
+{
+  if(GetConfig() == MASTER && GetPos() != vector2d(30, 16))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+      GetLevel()->GetLSquare(30, 16)->KickAnyoneStandingHereAway();
+      Move(vector2d(30, 16), true);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s appears.", CHAR_NAME(DEFINITE));
+
+      EditAP(-1000);
+      return true;
+    }
+  else
+    return humanoid::MoveTowardsHomePos();
 }

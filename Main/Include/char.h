@@ -306,7 +306,6 @@ class character : public entity, public id
   void ChangeSecondaryMaterial(material*, ushort = 0);
   void SetContainedMaterial(material*, ushort = 0);
   void ChangeContainedMaterial(material*, ushort = 0);
-  void Teleport(vector2d);
   void RestoreHP();
   void RestoreLivingHP();
   virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
@@ -490,7 +489,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  void TeleportRandomly();
+  virtual void TeleportRandomly();
   bool TeleportNear(character*);
   bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
@@ -711,7 +710,7 @@ class character : public entity, public id
   long GetStuffScore() const;
   bool IsOnGround() const;
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
-  bool MoveTowardsHomePos();
+  virtual bool MoveTowardsHomePos();
   virtual void SetWayPoints(const std::vector<vector2d>&) { }
   bool TryToChangeEquipment(ushort);
   void PrintBeginParasitizedMessage() const;
@@ -771,6 +770,7 @@ class character : public entity, public id
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
   virtual uchar GetArms() const { return 0; }
+  bool IsPet() const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

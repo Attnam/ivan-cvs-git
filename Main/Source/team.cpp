@@ -43,6 +43,37 @@ void team::Hostility(team* Enemy)
 	      /* This is a gum solution. The message should come from the script. */
 
 	      ADD_MESSAGE("You hear an alarm ringing.");
+
+	      if(game::GetStoryState() != 2)
+		{
+		  vector2d AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : vector2d(28, 20);
+		  ushort Seen = 0;
+		  angel* Angel;
+
+		  for(ushort c = 0; c < 3; ++c)
+		    {
+		      Angel = new angel(VALPURUS);
+		      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
+
+		      if(Where == ERROR_VECTOR)
+			Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
+
+		      game::GetCurrentLevel()->AddCharacter(Where, Angel);
+		      Angel->SetTeam(Enemy);
+
+		      if(Angel->CanBeSeenByPlayer())
+			++Seen;
+		    }
+
+		  if(Seen == 1)
+		    ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
+		  else if(Seen == 2)
+		    ADD_MESSAGE("Two %s materialize.", Angel->CHAR_NAME(PLURAL));
+		  else if(Seen == 3)
+		    ADD_MESSAGE("Three %s materialize.", Angel->CHAR_NAME(PLURAL));
+
+		  ADD_MESSAGE("\"We will defend the Holy Order!\"");
+		}
 	    }
 
 	  ADD_MESSAGE("You have a feeling this wasn't a good idea...");

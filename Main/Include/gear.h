@@ -44,6 +44,7 @@ class ITEM
   virtual ushort GetBonus() const;
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
+  virtual ulong GetBaseWeight() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;

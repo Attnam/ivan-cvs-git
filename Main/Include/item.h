@@ -331,6 +331,7 @@ class item : public object
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
   ulong GetWeight() const { return Weight; }
+  virtual ulong GetBaseWeight() const { return Weight; }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   void CalculateAll();

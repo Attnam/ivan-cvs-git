@@ -18,12 +18,12 @@ ulong cweaponskill::GetUnuseTickMap(ushort Index) const { return CWeaponSkillUnu
 ushort cweaponskill::GetUnusePenaltyMap(ushort Index) const { return CWeaponSkillUnusePenaltyMap[Index]; }
 const char* cweaponskill::GetName() const { return CWeaponSkillName[Index]; }
 
-sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
+sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->GetBaseWeight()), Config(Item->GetConfig()) { }
 ushort sweaponskill::GetLevelMap(ushort Index) const { return SWeaponSkillLevelMap[Index]; }
 ulong sweaponskill::GetUnuseTickMap(ushort Index) const { return SWeaponSkillUnuseTickMap[Index]; }
 ushort sweaponskill::GetUnusePenaltyMap(ushort Index) const { return SWeaponSkillUnusePenaltyMap[Index]; }
-bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
-bool sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
+bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetBaseWeight() && Config == Item->GetConfig(); }
+bool sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetBaseWeight() && Config == Item->GetConfig(); }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {

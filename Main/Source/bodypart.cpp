@@ -871,7 +871,7 @@ bool arm::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -880,7 +880,7 @@ bool arm::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -890,7 +890,7 @@ bool arm::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks quite dextrous.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -899,7 +899,7 @@ bool arm::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks clumsy.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -919,7 +919,7 @@ bool leg::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", Master->CHAR_NAME(DEFINITE));
 
       Master->CalculateBurdenState();
@@ -929,7 +929,7 @@ bool leg::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", Master->CHAR_NAME(DEFINITE));
 
       Master->CalculateBurdenState();
@@ -940,7 +940,7 @@ bool leg::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks very agile.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -949,7 +949,7 @@ bool leg::ApplyExperience()
     {
       if(Master->IsPlayer())
 	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().CStr());
-      else if(CanBeSeenByPlayer())
+      else if(Master->IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks sluggish.", Master->CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -2040,7 +2040,7 @@ bool leg::DamageArmor(character* Damager, ushort Damage, ushort Type)
 
 bool bodypart::CanBeEatenByAI(const character* Who) const
 {
-  return item::CanBeEatenByAI(Who) && !(Who->GetTeam()->GetID() == PLAYER->GetTeam()->GetID() && PLAYER->HasHadBodyPart(this));
+  return item::CanBeEatenByAI(Who) && !(Who->IsPet() && PLAYER->HasHadBodyPart(this));
 }
 
 ushort bodypart::GetConditionColor() const

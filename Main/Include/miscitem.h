@@ -32,6 +32,7 @@ class ABSTRACT_ITEM
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
   virtual uchar GetAttachedGod() const;
+  virtual ulong GetBaseWeight() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials();

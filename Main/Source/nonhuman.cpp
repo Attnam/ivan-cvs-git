@@ -362,7 +362,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your feel stronger!");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks stronger.", CHAR_NAME(DEFINITE));
 
       CalculateBurdenState();
@@ -372,7 +372,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your feel weaker.");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks weaker.", CHAR_NAME(DEFINITE));
 
       CalculateBurdenState();
@@ -383,7 +383,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your feel very agile!");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks very agile.", CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -392,7 +392,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your feel slower.");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("Suddenly %s looks sluggish.", CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -647,7 +647,7 @@ void ostrich::GetAICommand()
       if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
-      Teleport(Where);
+      Move(Where, true);
       RestoreHP();
       ResetStates();
       TemporaryState = 0;

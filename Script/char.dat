@@ -166,16 +166,16 @@ human
 
 petrus
 {
-	DefaultArmStrength = 42;
-	DefaultLegStrength = 42;
-	DefaultDexterity = 42;
-	DefaultAgility = 42;
-	DefaultEndurance = 42;
-	DefaultPerception = 42;
-	DefaultIntelligence = 42;
-	DefaultWisdom = 42;
-	DefaultCharisma = 42;
-	DefaultMana = 42;
+	DefaultArmStrength = 40;
+	DefaultLegStrength = 40;
+	DefaultDexterity = 40;
+	DefaultAgility = 40;
+	DefaultEndurance = 40;
+	DefaultPerception = 40;
+	DefaultIntelligence = 40;
+	DefaultWisdom = 40;
+	DefaultCharisma = 40;
+	DefaultMana = 40;
 	IsCharmable = false;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -195,7 +195,7 @@ petrus
 	IsPolymorphable = false;
 	Alias == "Petrus";
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = DIAMOND bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+	BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 4; }
 	Cloak = ANGEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 4; }
 	Belt = ILLITHIUM belt { Enchantment = 4; }
 	RightWielded = justifier;
@@ -870,7 +870,7 @@ frog
 elpuri
 {
 	DefaultArmStrength = 80;
-	DefaultAgility = 20;
+	DefaultAgility = 25;
 	DefaultEndurance = 20;
 	DefaultPerception = 40;
 	DefaultIntelligence = 40;
@@ -1422,9 +1422,9 @@ communist /* Ivan */
 {
 	DefaultArmStrength = 40;
 	DefaultLegStrength = 40;
-	DefaultDexterity = 15;
-	DefaultAgility = 15;
-	DefaultEndurance = 25;
+	DefaultDexterity = 20;
+	DefaultAgility = 20;
+	DefaultEndurance = 30;
 	DefaultPerception = 18;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 6;
@@ -1446,18 +1446,20 @@ communist /* Ivan */
 	Alias == "Ivan";
 	ClassStates = INFRA_VISION;
 	Helmet = helmet(GOROVITS_FAMILY_GAS_MASK);
-	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	Belt = NYMPH_HAIR belt { Enchantment = 1; }
+	Cloak = OMMEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 2; }
+	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+	Belt = TROLL_HIDE belt { Enchantment = 2; }
 	RightWielded = gorovitshammer;
 	LeftWielded = gorovitssickle;
+	RightRing = ring(RING_OF_FIRE_RESISTANCE);
+	LeftRing = ring(RING_OF_POISON_RESISTANCE);
 	KnownCWeaponSkills = { 5, UNARMED, SMALL_SWORDS, BLUNT_WEAPONS, AXES, POLE_ARMS; }
-	CWeaponSkillHits = { 5, 200, 500, 500, 200, 200; }
-	RightSWeaponSkillHits = 200;
-	LeftSWeaponSkillHits = 200;
-	RightGauntlet = HARDENED_LEATHER gauntlet { Enchantment = 1; }
-	RightBoot = HARDENED_LEATHER boot { Enchantment = 1; }
-	PanicLevel = 10;
+	CWeaponSkillHits = { 5, 100, 200, 200, 100, 100; }
+	RightSWeaponSkillHits = 100;
+	LeftSWeaponSkillHits = 100;
+	RightGauntlet = PHOENIX_FEATHER gauntlet { Enchantment = 2; }
+	RightBoot = STEEL boot(BOOT_OF_AGILITY) { Enchantment = 2; }
+	PanicLevel = 33;
 	Inventory = { 4, lantern, fiftymillionroubles, potion { ContainedMaterial = VODKA; }, potion { ContainedMaterial = VODKA; } }
 	IsUnique = true;
 	DefaultName = "Ivan";

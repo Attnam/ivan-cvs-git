@@ -1824,11 +1824,11 @@ ring
 
 	Config RING_OF_POLYMORPH_CONTROL;
 	{
-		Possibility = 10;
+		Possibility = 5;
 		PostFix = "of polymorph control";
 		MainMaterialConfig == SAPPHIRE;
 		GearStates == POLYMORPH_CONTROL;
-		Price = 500;
+		Price = 750;
 		AttachedGod = SCABIES;
 		Alias == "ring of polycontrol";
 	}
@@ -2614,7 +2614,7 @@ gorovitshammer
 	CanBeUsedBySmith = true;
 	CanBeBroken = false;
 	CanBeWished = false;
-	DefaultEnchantment = 2;
+	DefaultEnchantment = 3;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = LORICATUS;
@@ -2639,7 +2639,7 @@ gorovitssickle
 	Roundness = 50;
 	CanBeBroken = false;
 	CanBeWished = false;
-	DefaultEnchantment = 2;
+	DefaultEnchantment = 3;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = SEGES;

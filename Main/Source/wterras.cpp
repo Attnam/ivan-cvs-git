@@ -52,7 +52,7 @@ const char* mondedr::GetNameStem() const { return "very unattractive place"; }
 vector2d mondedr::GetBitmapPos(ushort) const { return vector2d(0, 64); }
 uchar mondedr::GetAttachedDungeon() const { return MONDEDR; }
 
-bool attnam::Enter(bool DirectionUp) const
+/*bool attnam::Enter(bool DirectionUp) const
 {
   if(!owterrain::Enter(DirectionUp))
     return false;
@@ -78,7 +78,7 @@ bool attnam::Enter(bool DirectionUp) const
     game::Save(game::GetAutoSaveFileName().CStr());
 
   return true;
-}
+}*/
 
 bool ocean::IsWalkable(const character* ByWho) const
 {

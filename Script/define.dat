@@ -584,7 +584,6 @@
 #define PLAYER_TEAM 0
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
-#define FINAL_BATTLE_TEAM 3
 #define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8

@@ -5,6 +5,7 @@ void materialcontainer::ChangeContainedMaterial(material* What, ushort SpecialFl
 void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
 void materialcontainer::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetContainedMaterial(NewMaterial, SpecialFlags); }
 void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
+ulong materialcontainer::GetBaseWeight() const { return !ContainedMaterial ? Weight : Weight - ContainedMaterial->GetWeight(); }
 
 ushort holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
@@ -102,6 +103,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
   ADD_MESSAGE("You feel a lost soul fly by you.");
   RemoveFromSlot();
   SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 500);
 }
 
 bool scrollofteleportation::Read(character* Reader)
@@ -120,6 +122,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->TeleportRandomly();
   RemoveFromSlot();
   SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 500);
 }
 
 bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
@@ -205,6 +208,7 @@ void scrollofwishing::FinishReading(character* Reader)
 
 	  RemoveFromSlot();
 	  SendToHell();
+	  Reader->EditExperience(INTELLIGENCE, 5000);
 	  return;
 	}
     }
@@ -295,6 +299,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
+      Reader->EditExperience(INTELLIGENCE, 2500);
     }
 }
 
@@ -442,12 +447,14 @@ void holybook::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
     {
+      PLAYER->EditExperience(INTELLIGENCE, 100);
+      PLAYER->EditExperience(WISDOM, 250);
+
       if(GetMasterGod()->IsKnown())
 	{
 	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GetName());
 	  GetMasterGod()->AdjustRelation(75);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), 15, true);
-	  PLAYER->EditExperience(WISDOM, 250);
 
 	  if(!(RAND() % 3))
 	    {
@@ -688,6 +695,7 @@ void scrollofcharging::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 1000);
 }
 
 void bananapeels::StepOnEffect(character* Stepper)
@@ -763,6 +771,7 @@ void scrolloftaming::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 1000);
 }
 
 void mine::Load(inputfile& SaveFile)
@@ -1643,6 +1652,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
+      Reader->EditExperience(INTELLIGENCE, 1000);
     }
 }
 
@@ -1713,6 +1723,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
+      Reader->EditExperience(INTELLIGENCE, 1000);
     }
 }
 
@@ -1883,8 +1894,10 @@ void scrollofrepair::FinishReading(character* Reader)
 	    return;
 	}
     }
+
   RemoveFromSlot();
-  SendToHell();  
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 1000);
 }
 
 item* brokenbottle::Fix()

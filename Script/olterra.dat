@@ -76,6 +76,7 @@ wall
 		Adjective = "old";
 		NameSingular = "wall";
 		BitmapPos = 16, 256;
+		HPModifier = 75;
 	}
 
 	Config BRICK_PRIMITIVE;
@@ -86,6 +87,7 @@ wall
 		Adjective = "primitive";
 		NameSingular = "wall";
 		BitmapPos = 48, 272;
+		HPModifier = 75;
 	}
 
 	Config EARTH;

@@ -229,8 +229,6 @@ class game
   static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(vector2d, ushort);
-  static character* GetHaedlac() { return Haedlac; }
-  static void SetHaedlac(character* What) { Haedlac = What; }
   static character* SearchCharacter(ulong);
   static void AddCharacterID(character*, ulong);
   static void RemoveCharacterID(ulong);
@@ -329,7 +327,6 @@ class game
   static float AveragePlayerLegStrength;
   static float AveragePlayerDexterity;
   static float AveragePlayerAgility;
-  static character* Haedlac;
   static characteridmap CharacterIDMap;
   static uchar Teams;
   static uchar Dungeons;

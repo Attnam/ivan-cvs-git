@@ -51,7 +51,7 @@ statedata StateData[STATES] =
     0
   }, {
     "PolyControl",
-    RANDOMIZABLE&~SRC_EVIL,
+    RANDOMIZABLE&~(SRC_EVIL|SRC_GOOD),
     &character::PrintBeginPolymorphControlMessage,
     &character::PrintEndPolymorphControlMessage,
     0,
@@ -249,6 +249,7 @@ bool character::BodyPartColorCIsSparkling(ushort, bool) const { return 0; } // r
 bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpecialColorIsSparkling(); }
 ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
+bool character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false)
 {
@@ -660,8 +661,8 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
       if(!TeleportMove)
 	{
 	  EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
-	  EditNP(-10 * GetSquareUnder()->GetEntryDifficulty());
-	  EditExperience(AGILITY, 10 * GetSquareUnder()->GetEntryDifficulty());
+	  EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
+	  EditExperience(AGILITY, 8 * GetSquareUnder()->GetEntryDifficulty());
 	}
     }
   else
@@ -999,6 +1000,8 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
 	  SendToHell();
 	}
     }
+  else
+    SendToHell();
 
   if(IsPlayer())
     {
@@ -1177,7 +1180,7 @@ void character::ApplyExperience(bool Edited)
       {
 	if(IsPlayer())
 	  ADD_MESSAGE("You feel tougher than anything!");
-	else if(CanBeSeenByPlayer())
+	else if(IsPet() && CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks tougher.", CHAR_NAME(DEFINITE));
 
 	CalculateBodyPartMaxHPs();
@@ -1187,7 +1190,7 @@ void character::ApplyExperience(bool Edited)
       {
 	if(IsPlayer())
 	  ADD_MESSAGE("You feel less healthy.");
-	else if(CanBeSeenByPlayer())
+	else if(IsPet() && CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks less healthy.", CHAR_NAME(DEFINITE));
 
 	CalculateBodyPartMaxHPs();
@@ -1256,7 +1259,7 @@ void character::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel very confident of your social skills.");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	{
 	  if(GetAttribute(CHARISMA) <= 15)
 	    ADD_MESSAGE("%s looks less ugly.", CHAR_NAME(DEFINITE));
@@ -1270,7 +1273,7 @@ void character::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel somehow disliked.");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	{
 	  if(GetAttribute(CHARISMA) < 15)
 	    ADD_MESSAGE("%s looks more ugly.", CHAR_NAME(DEFINITE));
@@ -1285,7 +1288,7 @@ void character::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel magical forces coursing through your body!");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("You notice an odd glow around %s.", CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -1294,7 +1297,7 @@ void character::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You feel your magical abilities withering slowly.");
-      else if(CanBeSeenByPlayer())
+      else if(IsPet() && CanBeSeenByPlayer())
 	ADD_MESSAGE("You notice strange vibrations in the air around %s. But they disappear rapidly.", CHAR_NAME(DEFINITE));
 
       Edited = true;
@@ -1745,7 +1748,7 @@ void character::Vomit(ushort Amount)
 
   EditExperience(ARM_STRENGTH, -50);
   EditExperience(LEG_STRENGTH, -50);
-  EditNP(-2000 - RAND() % 2001);
+  EditNP(-2500 - RAND() % 2501);
 
   if(StateIsActivated(PARASITIZED) && !(RAND() % 5))
     {
@@ -2191,8 +2194,8 @@ bool character::Displace(character* Who, bool Forced)
 	Who->ShowNewPosInfo();
 
       EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
-      EditNP(-10 * GetSquareUnder()->GetEntryDifficulty());
-      EditExperience(AGILITY, 10 * GetSquareUnder()->GetEntryDifficulty());
+      EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
+      EditExperience(AGILITY, 8 * GetSquareUnder()->GetEntryDifficulty());
       return true;
     }
   else
@@ -2967,9 +2970,9 @@ void character::Regenerate()
       if(!HealHitPoint())
 	break;
 
-      EditNP(-Max(10000 / MaxHP, 1));
+      EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, Max(4000 / MaxHP, 1));
+      EditExperience(ENDURANCE, Max(5000 / MaxHP, 1));
     }
 }
 
@@ -3267,13 +3270,8 @@ bool character::TeleportNear(character* Caller)
   if(Where == ERROR_VECTOR)
     return false;
 
-  Teleport(Where);
+  Move(Where, true);
   return true;
-}
-
-void character::Teleport(vector2d Pos)
-{
-  Move(Pos, true);
 }
 
 void character::ReceiveHeal(long Amount)
@@ -5776,7 +5774,7 @@ void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
 {
   uchar DamageDirection = GetPos() == Explosion->Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion->Pos);
 
-  if(GetTeam()->GetID() != PLAYER->GetTeam()->GetID() && Explosion->Terrorist && Explosion->Terrorist->GetTeam()->GetID() == PLAYER->GetTeam()->GetID())
+  if(!IsPet() && Explosion->Terrorist && Explosion->Terrorist->IsPet())
     Explosion->Terrorist->Hostility(this);
 
   GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
@@ -6094,7 +6092,7 @@ void character::AddHolyBananaConsumeEndMessage() const
 
 bool character::PreProcessForBone()
 {
-  if(GetTeam()->GetID() == PLAYER_TEAM && IsEnabled())
+  if(IsPet() && IsEnabled())
     {
       Die();
       return true;

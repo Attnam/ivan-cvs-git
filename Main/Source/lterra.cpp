@@ -223,7 +223,7 @@ void olterrain::CalculateHP()
   if(GetMainMaterial())
     {
       ulong SV = GetMainMaterial()->GetStrengthValue();
-      HP = SV * SV * GetHPModifier() / 5000;
+      HP = SV * SV * GetHPModifier() / 6000;
     }
 }
 

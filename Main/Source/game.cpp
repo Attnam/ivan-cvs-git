@@ -83,7 +83,6 @@ bool game::TooGreatDangerFoundBool;
 bool game::Loading = false;
 bool game::InGetCommand = false;
 character* game::Petrus = 0;
-character* game::Haedlac = 0;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
@@ -135,7 +134,7 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
-#include "confdef.h"
+//#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -233,7 +232,6 @@ bool game::Init(const festring& Name)
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
 	Petrus = 0;
-	Haedlac = 0;
 	InitDungeons();
 	CurrentArea = WorldMap = new worldmap(128, 128);
 	CurrentWSquareMap = WorldMap->GetMap();
@@ -1982,7 +1980,7 @@ void game::SignalDeath(const character* Ghost, const character* Murderer)
       ++PlayerMassacreAmount;
       MassacreMap = &PlayerMassacreMap;
     }
-  else if(Murderer->GetTeam()->GetID() == PLAYER_TEAM)
+  else if(Murderer->IsPet())
     {
       ++PetMassacreAmount;
       MassacreMap = &PetMassacreMap;

@@ -11,7 +11,7 @@ Teams = 9;
  * 0 == PLAYER_TEAM == Player and pets
  * 1 == MONSTER_TEAM == Monsters, default relation to other teams == hostile
  * 2 == ATTNAM_TEAM == Residents of Attnam
- * 3 == FINAL_BATTLE_TEAM == Petrus's team during the Final Battle
+ * 3 == obsolete
  * 7 == NEW_ATTNAM_TEAM == natives and ostriches of New Attnam
  * 8 == COLONIST_TEAM == colonists of New Attnam
  */

@@ -8,6 +8,7 @@ void meleeweapon::InitMaterials(material* M1, material* M2, material* M3, bool C
 ushort meleeweapon::GetEffectBonus() const { return 100 + 5 * Enchantment; }
 ushort meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
 ushort meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
+ulong meleeweapon::GetBaseWeight() const { return !ContainedMaterial ? Weight : Weight - ContainedMaterial->GetWeight(); }
 
 ushort justifier::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 0); }
 
@@ -701,14 +702,14 @@ bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar Body
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
-      if(RAND() & 1)
+      if(RAND() & 3)
 	{
 	  lsquare* Square = Enemy->GetLSquareUnder();
 
 	  if(Square->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
 
-	  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, 500));
+	  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, 250));
 	}
       else
 	{
@@ -717,7 +718,7 @@ bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar Body
 	  if(Square->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
 
-	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 250));
+	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 100));
 	}
 
       return true;

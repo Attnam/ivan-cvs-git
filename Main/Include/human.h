@@ -196,6 +196,8 @@ class CHARACTER
   virtual void BeTalkedTo();
   bool HealFully(character*);
   virtual void FinalProcessForBone();
+  virtual void TeleportRandomly() { }
+  virtual bool MoveTowardsHomePos();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse(lsquare*);
@@ -218,11 +220,12 @@ class CHARACTER
   guard,
   humanoid,
  public:
-  virtual ~guard();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void GetAICommand();
   virtual void SetWayPoints(const std::vector<vector2d>&);
+  virtual void TeleportRandomly();
+  virtual bool MoveTowardsHomePos();
  protected:
   virtual void VirtualConstructor(bool);
   std::vector<vector2d> WayPoints;

@@ -103,7 +103,6 @@ class OWTERRAIN
   virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
-  virtual bool Enter(bool) const;
 );
 
 class OWTERRAIN
