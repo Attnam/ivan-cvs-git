@@ -910,7 +910,8 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
       OLTerrain->StepOn(Stepper);
       if(Stepper->DestroysWalls() && OLTerrain->CanBeDestroyed())
 	{
-	  ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
+	  if(CanBeSeenByPlayer()) 
+	    ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
 	  Stepper->EditAP(-10);
 	  OLTerrain->Break();
 	}

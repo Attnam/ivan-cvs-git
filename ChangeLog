@@ -6,6 +6,11 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added CanBeSeen checks to Elpuri's code. 
+	* Added weird reference to Ivan's talk
+	
 July 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Elpuri goes through walls and destroys them

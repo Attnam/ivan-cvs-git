@@ -1427,7 +1427,7 @@ communist /* Ivan */
 	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
 	FriendlyReplies =
 	{
-		9,
+		10,
 		"\"Da, @nu like killing.\"",
 		"\"@Nu ruski specialist.\"",
 		"\"@Nu work. Else @nu get stapled.\"",
@@ -1436,7 +1436,8 @@ communist /* Ivan */
 		"\"@Nu like throw Ladas. You want compete?\"",
 		"\"Why is AK not invented?\"",
 		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
-		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"";
+		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"",
+		"\"The vodka is strong, but the meat is rotten.\"";
 	}
 	AttachedGod = LORICATUS;
 }
