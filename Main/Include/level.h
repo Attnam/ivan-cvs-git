@@ -228,6 +228,7 @@ class level : public area
   olterrain* GetRandomFountainWithWater(olterrain*) const;
   int GetEnchantmentMinusChance() { return EnchantmentMinusChance; }
   int GetEnchantmentPlusChance() { return EnchantmentPlusChance; }
+  void Amnesia(int);
  protected:
   bool GenerateLanterns(int, int, int) const;
   bool GenerateWindows(int, int) const;

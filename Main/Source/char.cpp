@@ -9117,10 +9117,10 @@ bool character::AllowUnconsciousness() const
   return DataBase->AllowUnconsciousness && TorsoIsAlive();
 }
 
-bool character::IsTooHurtToRegainConsciousness() const
+/*bool character::IsTooHurtToRegainConsciousness() const
 {
   return AllowUnconsciousness() && GetTorso()->IsBadlyHurt();
-}
+}*/
 
 bool character::CanPanic() const
 {

@@ -34,13 +34,10 @@ void unconsciousness::Load(inputfile& SaveFile)
 
 void unconsciousness::Handle()
 {
-  if(Counter == 1 && !Actor->IsTooHurtToRegainConsciousness())
+  if(!--Counter)
     Terminate(true);
   else
     {
-      if(Counter != 1)
-	--Counter;
-
       Actor->EditExperience(ARM_STRENGTH, -50, 1 << 2);
       Actor->EditExperience(LEG_STRENGTH, -50, 1 << 2);
     }

@@ -457,9 +457,7 @@ bool fountain::Drink(character* Drinker)
 			      }
 			  }
 			else
-			  {
-			    ADD_MESSAGE("You feel something moving near you.");
-			  }
+			  ADD_MESSAGE("You feel something moving near you.");
 
 			break;
 		      }

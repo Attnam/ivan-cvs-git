@@ -3194,8 +3194,40 @@ void head::SignalPossibleUsabilityChange()
   ulong OldFlags = Flags;
   UpdateFlags();
 
-  if(HP > 0 && Flags & BADLY_HURT && !Master->IsInitializing())
-    Master->LoseConsciousness(1);
+  if(!Master->IsInitializing() && HP > 0
+  && Flags & BADLY_HURT && !(OldFlags & BADLY_HURT))
+    switch(RAND_N(7))
+      {
+      case 0:
+      case 1: 
+      case 2: Master->LoseConsciousness(50 + RAND_N(50)); break;
+      case 3:
+      case 4:
+      case 5: Master->BeginTemporaryState(CONFUSED, 500 + RAND_N(500)); break;
+      case 6: 
+	if(Master->IsPlayer() && !RAND_N(3))
+	  {
+	    if(RAND_N(5))
+	      {
+		ADD_MESSAGE("Your memory becomes blurred.");
+		GetLevel()->Amnesia(25 + RAND_N(50));
+		Master->EditExperience(INTELLIGENCE, -80, 1 << 13);
+		game::SendLOSUpdateRequest();
+	      }
+	    else
+	      {
+		ADD_MESSAGE("A terrible concussion garbles your consciousness.");
+		Master->BeginTemporaryState(CONFUSED, 5000 + RAND_N(5000));
+		Master->EditExperience(INTELLIGENCE, -100, 1 << 14);
+		GetLevel()->BlurMemory();
+		game::SendLOSUpdateRequest();
+	      }
+	  }
+	else
+	  Master->EditExperience(INTELLIGENCE, -60, 1 << 12);
+
+	break;
+      }
 }
 
 void arm::SignalPossibleUsabilityChange()

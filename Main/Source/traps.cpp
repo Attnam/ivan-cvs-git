@@ -22,11 +22,11 @@ void web::VirtualConstructor(bool Load)
     {
       TrapData.TrapID = game::CreateNewTrapID(this);
       TrapData.VictimID = 0;
-      Picture = new bitmap(16,16, TRANSPARENT_COLOR);
+      Picture = new bitmap(16, 16, TRANSPARENT_COLOR);
       bitmap Temp(16, 16, TRANSPARENT_COLOR);
       Temp.ActivateFastFlag();
       packedcolor16 Color = MakeRGB16(250, 250, 250);
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, RAND_2 ? 64 : 80, 32, 0,0,16,16, &Color);
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, RAND_2 ? 64 : 80, 32, 0, 0, 16, 16, &Color);
       Temp.NormalBlit(Picture, Flags);
     }
 }
@@ -164,7 +164,6 @@ void web::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
   if(Type & (ACID|FIRE|ELECTRICITY|ENERGY))
     Destroy();
 }
-
 
 void web::Destroy()
 {

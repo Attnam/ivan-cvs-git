@@ -2800,7 +2800,27 @@ olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
 	if(OLTerrain && OLTerrain != Except && OLTerrain->IsFountainWithWater())
 	  Found.push_back(OLTerrain);
       }
+
   if(Found.empty())
     return 0;
+
   return Found[RAND_N(Found.size())];
+}
+
+void level::Amnesia(int Percentile)
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      {
+	lsquare* Square = Map[x][y];
+
+	if(Square->HasNoBorderPartners() && RAND_N(100) < Percentile)
+	  {
+	    Square->Flags |= STRONG_NEW_DRAW_REQUEST
+			   | MEMORIZED_UPDATE_REQUEST
+			   | DESCRIPTION_CHANGE;
+
+	    Square->DestroyMemorized();
+	  }
+      }
 }

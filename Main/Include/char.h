@@ -981,7 +981,7 @@ class character : public entity, public id
   bool BodyPartIsStuck(int) const;
   void PrintAttribute(const char*, int, int, int) const;
   virtual bool AllowUnconsciousness() const;
-  virtual bool IsTooHurtToRegainConsciousness() const;
+  //virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }

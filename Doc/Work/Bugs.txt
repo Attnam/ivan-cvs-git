@@ -93,3 +93,4 @@ Vladimir can now be teleported (example: magical whistle) to places where he des
 Funny colors with dexterity etc when going to change equipment and then pressing esc
 // (hs) Smith not repairing equiped items.
 Etta the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
+Graphics bug in vesana.

@@ -1260,6 +1260,9 @@ void lsquare::SendMemorizedUpdateRequest()
 
       if(!game::IsGenerating() && (CanBeSeenByPlayer() || CanBeFeltByPlayer()))
 	{
+	  if(!Memorized)
+	    CreateMemorized();
+
 	  UpdateMemorized();
 	  UpdateMemorizedDescription();
 	}

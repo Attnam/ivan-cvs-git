@@ -4856,10 +4856,10 @@ bool humanoid::AllowUnconsciousness() const
       && TorsoIsAlive() && BodyPartIsVital(HEAD_INDEX);
 }
 
-bool humanoid::IsTooHurtToRegainConsciousness() const
+/*bool humanoid::IsTooHurtToRegainConsciousness() const
 {
   return AllowUnconsciousness() && GetHead()->IsBadlyHurt();
-}
+}*/
 
 bool humanoid::CanChokeOnWeb(web* Trap) const
 {
