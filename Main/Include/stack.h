@@ -36,8 +36,8 @@ class stack
   ushort FastAddItem(item*);
   item* RemoveItem(ushort);
   void FastRemoveItem(ushort);
-  item* GetItem(ushort I) const	{ return Item[I]; }
-  ushort GetItems() const	{ return Items; }
+  item* GetItem(ushort I) const { return Item[I]; }
+  ushort GetItems() const { return Items; }
   void SetSquareUnder(square*);
   ushort DrawContents(character*, std::string) const;
   void DrawPartOfContents(ushort, ushort, bool, const char*) const;

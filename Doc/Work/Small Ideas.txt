@@ -87,6 +87,6 @@ Monsters should pray and occasionaly be punished by the gods for praying too oft
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
 *Integration of genies.
 Effect for Venius's firestorm.
-Hunter's last reply should be tweaked.
 There should be an option to set the value of pi in the config menu.
 *Killed by an explosion.
+WMap terrain height should be shown in WMode.

@@ -261,7 +261,7 @@ bool humanoid::WearArmor()
       return true;
     }
   else
-    if(Index < GetStack()->GetItems())		// Other Armor types should be coded...
+    if(Index < GetStack()->GetItems()) // Other Armor types should be coded...
       if(GetStack()->GetItem(Index)->CanBeWorn())
 	if(GetStack()->GetItem(Index) != GetWielded())
 	  {
@@ -446,7 +446,7 @@ bool dog::Catches(item* Thingy, float)
     return false;
 }
 
-bool dog::ConsumeItemType(uchar Type) const     // We need a better system for this... Writing this to every F***ing character that needs one
+bool dog::ConsumeItemType(uchar Type) const // We need a better system for this... Writing this to every F***ing character that needs one
 {					  // is Stoo-bit
   switch(Type)
     {
@@ -1871,3 +1871,4 @@ void genie::CreateInitialEquipment()
   /*SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
   SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));*/
 }
+

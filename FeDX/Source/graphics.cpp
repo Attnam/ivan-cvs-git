@@ -343,7 +343,7 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
   SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
   GetWindowRect( hWnd, &rc );
   if( rc.left < rcWork.left ) rc.left = rcWork.left;
-  if( rc.top  < rcWork.top )  rc.top  = rcWork.top;
+  if( rc.top  < rcWork.top ) rc.top  = rcWork.top;
   SetWindowPos( hWnd, NULL, rc.left, rc.top, 0, 0,
 		SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE );
 

@@ -68,14 +68,14 @@ class game
   static void Init(std::string = "");
   static void DeInit();
   static void Run();
-  static int GetMoveCommandKey(uchar Index)	{ return MoveCommandKey[Index]; }
-  static const vector2d GetMoveVector(uchar Index)	{ return MoveVector[Index]; }
+  static int GetMoveCommandKey(uchar Index) { return MoveCommandKey[Index]; }
+  static const vector2d GetMoveVector(uchar Index) { return MoveVector[Index]; }
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
   static bool LOSHandler(vector2d, vector2d);
   static void DrawPanel();
-  static ushort*** GetLuxTable()		{ return LuxTable; }
-  static ushort* GetLuxTableSize()		{ return LuxTableSize; }
+  static ushort*** GetLuxTable() { return LuxTable; }
+  static ushort* GetLuxTableSize() { return LuxTableSize; }
   static void Quit();
   static character* GetPlayer() { return Player; }
   static void SetPlayer(character*);

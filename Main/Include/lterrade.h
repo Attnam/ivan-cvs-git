@@ -17,9 +17,9 @@ class GROUNDLEVELTERRAIN
  public:
   virtual uchar OKVisualEffects() const { return 0; }
  protected:
-  virtual std::string NameSingular() const        { return "parquet"; }
-  virtual std::string NamePlural() const          { return "parquette"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 240); }
+  virtual std::string NameSingular() const { return "parquet"; }
+  virtual std::string NamePlural() const { return "parquette"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
 );
 
 class GROUNDLEVELTERRAIN
@@ -32,8 +32,8 @@ class GROUNDLEVELTERRAIN
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
-  virtual std::string NameSingular() const        { return "floor"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 352); }
+  virtual std::string NameSingular() const { return "floor"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
 );
 
 class GROUNDLEVELTERRAIN
@@ -46,8 +46,8 @@ class GROUNDLEVELTERRAIN
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
-  virtual std::string NameSingular() const        { return "ground"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 352); }
+  virtual std::string NameSingular() const { return "ground"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
 );
 
 class GROUNDLEVELTERRAIN
@@ -61,8 +61,8 @@ class GROUNDLEVELTERRAIN
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
   virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", grass::StaticType()); }
  protected:
-  virtual std::string NameSingular() const        { return "grassy ground"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(16, 336); }
+  virtual std::string NameSingular() const { return "grassy ground"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 336); }
 );
 
 class OVERLEVELTERRAIN
@@ -78,8 +78,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
-  virtual std::string NameSingular() const        { return "earth"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(0, 336); }
+  virtual std::string NameSingular() const { return "earth"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 336); }
 );
 
 class OVERLEVELTERRAIN
@@ -95,8 +95,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "The wall is pretty hard, but you still manage to go through it."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
-  virtual std::string NameSingular() const        { return "wall"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 240); }
+  virtual std::string NameSingular() const { return "wall"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
 );
 
 class OVERLEVELTERRAIN
@@ -109,8 +109,8 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
  protected:
-  virtual std::string NameSingular() const        { return "atmosphere"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 480); }
+  virtual std::string NameSingular() const { return "atmosphere"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 480); }
 );
 
 class OVERLEVELTERRAIN
@@ -142,8 +142,8 @@ class OVERLEVELTERRAIN
   virtual void Lock() { SetIsLocked(true); }
   virtual bool CanBeDigged() const { return true; }
  protected:
-  virtual std::string NameSingular() const        { return "door"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, GetIsWalkable() ? 48 : 176); }
+  virtual std::string NameSingular() const { return "door"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
   virtual void MakeWalkable();
   virtual void MakeNotWalkable();
   bool IsOpen;
@@ -164,9 +164,9 @@ class OVERLEVELTERRAIN
   virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
   virtual void StepOn(character*);
  protected:
-  virtual std::string NameSingular() const        { return "stairway upwards"; }
-  virtual std::string NamePlural() const          { return "stairways upwards"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 192); }
+  virtual std::string NameSingular() const { return "stairway upwards"; }
+  virtual std::string NamePlural() const { return "stairways upwards"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 192); }
 );
 
 class OVERLEVELTERRAIN
@@ -183,9 +183,9 @@ class OVERLEVELTERRAIN
   virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
   virtual void StepOn(character*);
  protected:
-  virtual std::string NameSingular() const        { return "stairway downwards"; }
-  virtual std::string NamePlural() const          { return "stairways downwards"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 208); }
+  virtual std::string NameSingular() const { return "stairway downwards"; }
+  virtual std::string NamePlural() const { return "stairways downwards"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 208); }
 );
 
 class OVERLEVELTERRAIN
@@ -212,8 +212,8 @@ class OVERLEVELTERRAIN
   virtual bool Polymorph(character*);
   virtual void SitOn(character*);
  protected:
-  virtual std::string NameSingular() const    { return "altar"; }
-  virtual vector2d GetBitmapPos() const        { return vector2d(0, 368); }
+  virtual std::string NameSingular() const { return "altar"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 368); }
   uchar OwnerGod;
 );
 
@@ -228,8 +228,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "The throne resists."; }
   virtual void SitOn(character*);
  protected:
-  virtual std::string NameSingular() const        { return "throne"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(0, 416); }
+  virtual std::string NameSingular() const { return "throne"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 416); }
 );
 
 class OVERLEVELTERRAIN
@@ -245,8 +245,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "You chop the tree down."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
-  virtual std::string NameSingular() const        { return "pine"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(16, 320); }
+  virtual std::string NameSingular() const { return "pine"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 320); }
 );
 
 class OVERLEVELTERRAIN
@@ -262,8 +262,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "You chop the tree down."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
-  virtual std::string NameSingular() const        { return "spruce"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(16, 352); }
+  virtual std::string NameSingular() const { return "spruce"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 352); }
 );
 
 class OVERLEVELTERRAIN
@@ -279,8 +279,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "You chop the tree down."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
-  virtual std::string NameSingular() const        { return "lovely linden"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(32, 336); }
+  virtual std::string NameSingular() const { return "lovely linden"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32, 336); }
 );
 
 class OVERLEVELTERRAIN
@@ -293,8 +293,8 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "You can't force yourself to ruin this wonderful carpet."; }
  protected:
-  virtual std::string NameSingular() const        { return "carpet"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(0, 272); }
+  virtual std::string NameSingular() const { return "carpet"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 272); }
 );
 
 class OVERLEVELTERRAIN
@@ -309,8 +309,8 @@ class OVERLEVELTERRAIN
   virtual void SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
-  virtual std::string NameSingular() const        { return "couch"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(0, 400); }
+  virtual std::string NameSingular() const { return "couch"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
 );
 
 class OVERLEVELTERRAIN
@@ -325,8 +325,8 @@ class OVERLEVELTERRAIN
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual void SitOn(character*);
  protected:
-  virtual std::string NameSingular() const        { return "pool"; }
-  virtual vector2d GetBitmapPos() const          { return vector2d(16, 304); }
+  virtual std::string NameSingular() const { return "pool"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 304); }
 );
 
 class GROUNDLEVELTERRAIN
@@ -339,8 +339,8 @@ class GROUNDLEVELTERRAIN
  public:
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
-  virtual std::string NameSingular() const        { return "tile floor"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(0, 304); }
+  virtual std::string NameSingular() const { return "tile floor"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 304); }
 );
 
 class OVERLEVELTERRAIN
@@ -356,8 +356,8 @@ class OVERLEVELTERRAIN
   virtual void SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
-  virtual std::string NameSingular() const        { return "bookcase"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(16, 272); }
+  virtual std::string NameSingular() const { return "bookcase"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 272); }
 );
 
 class OVERLEVELTERRAIN
@@ -376,8 +376,8 @@ class OVERLEVELTERRAIN
   virtual bool HasConsumeEffect() const { return true; } 
   virtual void DryOut();
  protected:
-  virtual std::string NameSingular() const        { return "fountain"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(16, 288); }
+  virtual std::string NameSingular() const { return "fountain"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 288); }
 );
 
 class OVERLEVELTERRAIN
@@ -393,8 +393,8 @@ class OVERLEVELTERRAIN
   virtual void SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
-  virtual std::string NameSingular() const        { return "luxurious double bed"; }
-  virtual vector2d GetBitmapPos() const            { return vector2d(48, 304); }
+  virtual std::string NameSingular() const { return "luxurious double bed"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(48, 304); }
 );
 
 class OVERLEVELTERRAIN
@@ -412,8 +412,8 @@ class OVERLEVELTERRAIN
   virtual bool ReceiveStrike();
   virtual bool CanBeDigged() const { return true; }
  protected:
-  virtual std::string NameSingular() const  { return "broken door"; }
-  virtual vector2d GetBitmapPos() const    { return vector2d(0, GetIsWalkable() ? 48 : 160); }
+  virtual std::string NameSingular() const { return "broken door"; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
 
 #endif

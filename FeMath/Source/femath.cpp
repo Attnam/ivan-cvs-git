@@ -40,10 +40,10 @@
 /* Tempering parameters */   
 #define TEMPERING_MASK_B 0x9d2c5680
 #define TEMPERING_MASK_C 0xefc60000
-#define TEMPERING_SHIFT_U(y)  (y >> 11)
-#define TEMPERING_SHIFT_S(y)  (y << 7)
-#define TEMPERING_SHIFT_T(y)  (y << 15)
-#define TEMPERING_SHIFT_L(y)  (y >> 18)
+#define TEMPERING_SHIFT_U(y) (y >> 11)
+#define TEMPERING_SHIFT_S(y) (y << 7)
+#define TEMPERING_SHIFT_T(y) (y << 15)
+#define TEMPERING_SHIFT_L(y) (y >> 18)
 
 ulong femath::mt[N1]; /* the array for the state vector  */
 long femath::mti = N1+1; /* mti==N+1 means mt[N] is not initialized */
@@ -68,7 +68,7 @@ long femath::Rand()
   if (mti >= N1) { /* generate N words at one time */
     int kk;
 
-    if (mti == N1+1)   /* if sgenrand() has not been called, */
+    if (mti == N1+1) /* if sgenrand() has not been called, */
       SetSeed(4357); /* a default initial seed is used   */
 
     for (kk=0;kk<N1-M;kk++) {
@@ -105,9 +105,9 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 {
   long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
-#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)			\
+#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond) 	\
 	{										\
-		if(!D##PriC)								\
+		if(!D##PriC) 						\
 		{									\
 			Proc(vector2d(X1, Y1), vector2d(X1, Y1));			\
 			return true;							\
@@ -120,13 +120,13 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 		X = X1;									\
 		Y = Y1;									\
 											\
-		while(PriC PriCond PriC##2)						\
+		while(PriC PriCond PriC##2) 				\
 		{									\
 			if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance ||	\
-			   !Proc(vector2d(X, Y), vector2d(X1, Y1)))			\
+			   !Proc(vector2d(X, Y), vector2d(X1, Y1))) 	\
 				return false;						\
 											\
-			if(DD SecCond 0)						\
+			if(DD SecCond 0) 				\
 			{								\
 				SecC SecSign##= 1;					\
 				DD += I2;						\
@@ -163,3 +163,4 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 
 					      return true;
 }
+

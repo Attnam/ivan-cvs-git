@@ -5,24 +5,24 @@ void Fill(ulong TrueDestOffset, ulong TrueDestXMove, ushort Width, ushort Height
   __asm
     {
       pushad
-	push es
-	mov ax, ds
-	mov edi, TrueDestOffset
-	mov es, ax
-	xor ecx, ecx
-	mov dx, Width
-	mov bx, Height
-	mov ax, Color
-	cld
-	MaskedLoop38:
+      push es
+      mov ax, ds
+      mov edi, TrueDestOffset
+      mov es, ax
+      xor ecx, ecx
+      mov dx, Width
+      mov bx, Height
+      mov ax, Color
+      cld
+    MaskedLoop38:
       mov cx, dx
-	rep stosw
-	add edi, TrueDestXMove
-	dec bx
-	jnz MaskedLoop38
-	pop es
-	popad
-	}
+      rep stosw
+      add edi, TrueDestXMove
+      dec bx
+      jnz MaskedLoop38
+      pop es
+      popad
+    }
 }
 
 void BlitToDB(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueDestXMove, ushort Width, ushort Height)

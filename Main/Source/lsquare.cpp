@@ -23,7 +23,7 @@ levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, P
 {
   Stack = new stack(this);
 
-  for(ushort c = 0; c < 4; ++c)	//Is there a better way to do this? Only Stroustrup knows...
+  for(ushort c = 0; c < 4; ++c) //Is there a better way to do this? Only Stroustrup knows...
     SideStack[c] = new stack(this, c);
 }
 
@@ -212,7 +212,7 @@ void levelsquare::Draw()
 		{
 		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
-		  if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())	
+		  if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable()) 
 		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
@@ -1090,3 +1090,4 @@ void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
 
   GetOverLevelTerrain()->ReceiveStrike();	
 }
+

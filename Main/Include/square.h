@@ -35,9 +35,9 @@ class square
   virtual void SetCharacter(character* What ) { Character = What; }
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
-  virtual character* GetCharacter() const		{ return Character; }
-  virtual ulong GetLastSeen() const				{ return LastSeen; }
-  virtual vector2d GetPos() const			{ return Pos; }
+  virtual character* GetCharacter() const { return Character; }
+  virtual ulong GetLastSeen() const 		{ return LastSeen; }
+  virtual vector2d GetPos() const 	{ return Pos; }
   virtual void SetLastSeen(ulong);
   virtual ushort GetPopulation() const { if(Character) return 1; else return 0; }
   virtual area* GetAreaUnder() const { return AreaUnder; }

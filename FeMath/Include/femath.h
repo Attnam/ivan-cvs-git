@@ -13,13 +13,13 @@
 
 #define N1 624
 
-#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)		\
+#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then) \
 {									\
-	while(true)							\
+	while(true) 					\
 	{								\
 		ushort DoX, DoY, DoIndex = 0;				\
 									\
-		if(X && Y)						\
+		if(X && Y) 				\
 		{							\
 			DoX = X - 1; DoY = Y - 1;			\
 									\
@@ -28,7 +28,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(Y)							\
+		if(Y) 					\
 		{							\
 			DoX = X; DoY = Y - 1;				\
 									\
@@ -37,7 +37,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1 && Y)				\
+		if(X < BorderX - 1 && Y) 		\
 		{							\
 			DoX = X + 1; DoY = Y - 1;			\
 									\
@@ -46,7 +46,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X)							\
+		if(X) 					\
 		{							\
 			DoX = X - 1; DoY = Y;				\
 									\
@@ -55,7 +55,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1)					\
+		if(X < BorderX - 1) 			\
 		{							\
 			DoX = X + 1; DoY = Y;				\
 									\
@@ -64,7 +64,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X && Y < BorderY - 1)				\
+		if(X && Y < BorderY - 1) 		\
 		{							\
 			DoX = X - 1; DoY = Y + 1;			\
 									\
@@ -73,7 +73,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(Y < BorderY - 1)					\
+		if(Y < BorderY - 1) 			\
 		{							\
 			DoX = X; DoY = Y + 1;				\
 									\
@@ -82,7 +82,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1 && Y < BorderY - 1)			\
+		if(X < BorderX - 1 && Y < BorderY - 1) 	\
 		{							\
 			DoX = X + 1; DoY = Y + 1;			\
 									\
@@ -95,11 +95,11 @@
 
 #define DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(X, Y, BorderX, BorderY, FirstCommand, SecondCommand, CommonCommand)\
 {									\
-	while(true)							\
+	while(true) 					\
 	{								\
 		ushort DoX, DoY, DoIndex = 0;				\
 									\
-		if(X && Y)						\
+		if(X && Y) 				\
 		{							\
 			DoX = X - 1; DoY = Y - 1;			\
 									\
@@ -109,7 +109,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(Y)							\
+		if(Y) 					\
 		{							\
 			DoX = X; DoY = Y - 1;				\
 									\
@@ -119,7 +119,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1 && Y)				\
+		if(X < BorderX - 1 && Y) 		\
 		{							\
 			DoX = X + 1; DoY = Y - 1;			\
 									\
@@ -129,7 +129,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X)							\
+		if(X) 					\
 		{							\
 			DoX = X - 1; DoY = Y;				\
 									\
@@ -139,7 +139,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1)					\
+		if(X < BorderX - 1) 			\
 		{							\
 			DoX = X + 1; DoY = Y;				\
 									\
@@ -149,7 +149,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X && Y < BorderY - 1)				\
+		if(X && Y < BorderY - 1) 		\
 		{							\
 			DoX = X - 1; DoY = Y + 1;			\
 									\
@@ -159,7 +159,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(Y < BorderY - 1)					\
+		if(Y < BorderY - 1) 			\
 		{							\
 			DoX = X; DoY = Y + 1;				\
 									\
@@ -169,7 +169,7 @@
 									\
 		++DoIndex;						\
 									\
-		if(X < BorderX - 1 && Y < BorderY - 1)			\
+		if(X < BorderX - 1 && Y < BorderY - 1) 	\
 		{							\
 			DoX = X + 1; DoY = Y + 1;			\
 									\
@@ -181,24 +181,24 @@
 	}								\
 }
 
-#define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat)				\
+#define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat) 		\
 {																\
 	long	Left    = (CenterX) - (Radius),											\
 		Top     = (CenterY) - (Radius),											\
 		Rigth   = (CenterX) + (Radius),											\
 		Bottom  = (CenterY) + (Radius);											\
 																\
-	if(Left   < (ClipLeft))		Left   = (ClipLeft);									\
-	if(Top    < (ClipTop))		Top    = (ClipTop);									\
-	if(Rigth  > (ClipRigth))	Rigth  = (ClipRigth);									\
-	if(Bottom > (ClipBottom))	Bottom = (ClipBottom);									\
+	if(Left   < (ClipLeft)) Left   = (ClipLeft);									\
+	if(Top    < (ClipTop)) Top    = (ClipTop);									\
+	if(Rigth  > (ClipRigth)) Rigth  = (ClipRigth);									\
+	if(Bottom > (ClipBottom)) Bottom = (ClipBottom);									\
 																\
-	if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop))				\
+	if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop)) 		\
 	{															\
 		ushort XPointer, YPointer;											\
 																\
-		for(XPointer = Left; XPointer <= Rigth; ++XPointer)								\
-			for(YPointer = Top; YPointer <= Bottom; ++YPointer)							\
+		for(XPointer = Left; XPointer <= Rigth; ++XPointer) 						\
+			for(YPointer = Top; YPointer <= Bottom; ++YPointer) 					\
 			{													\
 				DoWhat;												\
 			}													\

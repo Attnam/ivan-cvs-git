@@ -56,15 +56,15 @@ class CDisplay
   virtual ~CDisplay();
 
   // Access functions
-  HWND                 GetHWnd()           { return m_hWnd; }
-  LPDIRECTDRAW7        GetDirectDraw()     { return m_pDD; }
-  LPDIRECTDRAWSURFACE7 GetFrontBuffer()    { return m_pddsFrontBuffer; }
-  LPDIRECTDRAWSURFACE7 GetBackBuffer()     { return m_pddsBackBuffer; }
+  HWND                 GetHWnd() { return m_hWnd; }
+  LPDIRECTDRAW7        GetDirectDraw() { return m_pDD; }
+  LPDIRECTDRAWSURFACE7 GetFrontBuffer() { return m_pddsFrontBuffer; }
+  LPDIRECTDRAWSURFACE7 GetBackBuffer() { return m_pddsBackBuffer; }
   LPDIRECTDRAWSURFACE7 GetBackBufferLEft() { return m_pddsBackBufferLeft; }
 
   // Status functions
-  BOOL    IsWindowed()                     { return m_bWindowed; }
-  BOOL    IsStereo()                       { return m_bStereo; }
+  BOOL    IsWindowed()      { return m_bWindowed; }
+  BOOL    IsStereo()        { return m_bStereo; }
 
   // Creation/destruction methods
   HRESULT CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeight,
@@ -113,7 +113,7 @@ class CSurface
 
  public:
   LPDIRECTDRAWSURFACE7 GetDDrawSurface() { return m_pdds; }
-  BOOL                 IsColorKeyed()    { return m_bColorKeyed; }
+  BOOL                 IsColorKeyed() { return m_bColorKeyed; }
 
   HRESULT DrawBitmap( HBITMAP hBMP, DWORD dwBMPOriginX = 0, DWORD dwBMPOriginY = 0, 
 		      DWORD dwBMPWidth = 0, DWORD dwBMPHeight = 0 );
@@ -139,3 +139,4 @@ extern CDisplay* g_pDisplay;
 
 
 #endif // DDUTIL_H
+

@@ -1671,10 +1671,10 @@ bool character::Look()
 	    DOUBLEBUFFER->Fill((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 	    CursorPos += game::GetMoveVector(c);
 
-	    if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
-	    if(short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentArea()->GetXSize()-1;
-	    if(short(CursorPos.Y) > game::GetCurrentArea()->GetYSize()-1)	CursorPos.Y = 0;
-	    if(short(CursorPos.Y) < 0)					CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
+	    if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1) CursorPos.X = 0;
+	    if(short(CursorPos.X) < 0) 			CursorPos.X = game::GetCurrentArea()->GetXSize()-1;
+	    if(short(CursorPos.Y) > game::GetCurrentArea()->GetYSize()-1) CursorPos.Y = 0;
+	    if(short(CursorPos.Y) < 0) 			CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
 	  }
 
       if(GetIsPlayer())
@@ -3362,3 +3362,4 @@ void character::DisplayInfo()
   if(game::GetWizardMode())
     ADD_MESSAGE("(danger: %d)", CurrentDanger());
 }
+

@@ -249,7 +249,7 @@ void stack::Optimize(ushort OptimizeBoundary)
     }
 }
 
-ushort stack::DrawContents(character* Viewer, std::string Topic) const 	// Draws a list of the items in this stack on the screen
+ushort stack::DrawContents(character* Viewer, std::string Topic) const // Draws a list of the items in this stack on the screen
 {									// Displays Topic on the screen also...
   if(!GetItems()) return 0xFFFF;
   felist ItemNames(Topic, WHITE, 0, true);
@@ -505,3 +505,4 @@ void stack::ReceiveFireDamage(character* Burner, long SizeOfEffect)
     if(!GetItem(c)->ReceiveFireDamage(Burner, this, SizeOfEffect))
       ++c;
 }
+

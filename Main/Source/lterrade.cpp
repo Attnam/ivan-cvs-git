@@ -104,7 +104,7 @@ void altar::Save(outputfile& SaveFile) const
   SaveFile << OwnerGod;
 }
 
-bool stairsup::GoUp(character* Who) const  // Try to go up
+bool stairsup::GoUp(character* Who) const // Try to go up
 {
   if(game::GetCurrent())
     {
@@ -162,7 +162,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
     }
 }
 
-bool stairsdown::GoDown(character* Who) const  // Try to go down
+bool stairsdown::GoDown(character* Who) const // Try to go down
 {
   if(game::GetCurrent() != game::GetLevels() - 1)
     {
@@ -379,20 +379,20 @@ std::string door::Name(uchar Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & DEFINEBIT))
-      return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
+      return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
+	return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
       else
-	return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name()  + " " + NameSingular();
+	return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
   else
     if(!(Case & DEFINEBIT))
-      return GetMaterial(0)->Name()  + " " + NamePlural();
+      return GetMaterial(0)->Name() + " " + NamePlural();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + GetMaterial(0)->Name()  + " " + NamePlural();
+	return std::string("the ") + GetMaterial(0)->Name() + " " + NamePlural();
       else
-	return GetMaterial(0)->Name()  + " " + NamePlural();
+	return GetMaterial(0)->Name() + " " + NamePlural();
 }
 
 void couch::SitOn(character*)
@@ -624,3 +624,4 @@ void altar::SitOn(character*)
 	game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true);
       }
 }
+

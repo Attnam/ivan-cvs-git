@@ -21,11 +21,11 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
 #define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
 
-#define CALL_EXPAND(x, y)					\
+#define CALL_EXPAND(x, y) 			\
 	{								\
 		ExpandPossibleRoute(vector2d(x, y), Target, XMode);	\
 									\
-		if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)	\
+		if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE) \
 			return;						\
 	}
 
@@ -109,11 +109,11 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
 {
 #define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
 
-#define CALL_EXPAND(x, y)						\
+#define CALL_EXPAND(x, y) 				\
 	{									\
 		ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);		\
 										\
-		if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE)	\
+		if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE) \
 			return;							\
 	}
 

@@ -280,9 +280,9 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 				return Value;\
 			}
 
-      CHECK_OP(&, 1)	CHECK_OP(|, 1)	CHECK_OP(^, 1)
-	CHECK_OP(*, 2)	CHECK_OP(/, 2)	CHECK_OP(%, 2)
-	CHECK_OP(+, 3)	CHECK_OP(-, 3)
+      CHECK_OP(&, 1) CHECK_OP(|, 1) CHECK_OP(^, 1)
+	CHECK_OP(*, 2) CHECK_OP(/, 2) CHECK_OP(%, 2)
+	CHECK_OP(+, 3) CHECK_OP(-, 3)
 
 	if(Word == "(")
 	  {
@@ -376,3 +376,4 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 
   return SaveFile;
 }
+

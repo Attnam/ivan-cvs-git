@@ -19,7 +19,7 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 #endif
 
 #ifdef __DJGPP__
-void (*globalerrorhandler::OldSignal[SIGNALS])(int)	= {0, 0, 0, 0, 0, 0, 0, 0};
+void (*globalerrorhandler::OldSignal[SIGNALS])(int) = {0, 0, 0, 0, 0, 0, 0, 0};
 int    globalerrorhandler::Signal[SIGNALS]		= {SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT};
 #endif
 

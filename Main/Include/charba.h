@@ -123,17 +123,17 @@ class character : public object
   virtual void AddScoreEntry(std::string, float = 1, bool = true) const;
   virtual long Score() const;
   virtual float GetAttackStrength() const;
-  virtual item* GetTorsoArmor() const				{ return 0; }
-  virtual item* GetWielded() const				{ return Wielded; }
+  virtual item* GetTorsoArmor() const 		{ return 0; }
+  virtual item* GetWielded() const 		{ return Wielded; }
   virtual worldmapsquare* GetWorldMapSquareUnder() const;
   virtual long GetAgilityExperience() const { return AgilityExperience; }
   virtual long GetAP() const { return AP; }
   virtual long GetEnduranceExperience() const { return EnduranceExperience; }
-  virtual long GetNP() const					{ return NP; }
+  virtual long GetNP() const 			{ return NP; }
   virtual long GetPerceptionExperience() const { return PerceptionExperience; }
   virtual long GetStrengthExperience() const { return StrengthExperience; }
-  virtual short GetHP() const					{ return HP; }
-  virtual stack* GetStack() const				{ return Stack; }
+  virtual short GetHP() const 			{ return HP; }
+  virtual stack* GetStack() const 		{ return Stack; }
   virtual uchar GetBurdenState(ulong = 0) const;
   virtual uchar GetSex() const { return UNDEFINED; }
   virtual uchar TakeHit(character*, short);
@@ -142,12 +142,12 @@ class character : public object
   virtual ulong GetBloodColor() const;
   virtual ushort CalculateArmorModifier() const;
   virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
-  virtual ushort GetAgility() const					{ return Agility; }
+  virtual ushort GetAgility() const 			{ return Agility; }
   virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
   virtual ushort GetEmitation() const;
-  virtual ushort GetEndurance() const					{ return Endurance; }
-  virtual ushort GetPerception() const				{ return Perception; }
-  virtual ushort GetStrength() const					{ return Strength; }
+  virtual ushort GetEndurance() const 			{ return Endurance; }
+  virtual ushort GetPerception() const 		{ return Perception; }
+  virtual ushort GetStrength() const 			{ return Strength; }
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual bool CanBeGenerated() const { return true; }
@@ -287,21 +287,21 @@ class character : public object
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
-  virtual float GetMeleeStrength() const				{ return 0; }
-  virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string FirstPersonHitVerb(character*, bool Critical) const	{ return NormalFirstPersonHitVerb(Critical); }
-  virtual std::string AICombatHitVerb(character*, bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
-  virtual std::string NormalFirstPersonHitVerb(bool Critical) const	{ return Critical ? "critically hit" : "hit"; }
-  virtual std::string NormalThirdPersonHitVerb(bool Critical) const	{ return Critical ? "critically hits" : "hits"; }
-  virtual std::string FirstPersonBiteVerb(bool Critical) const		{ return Critical ? "critically bite" : "bite"; }
-  virtual std::string ThirdPersonBiteVerb(bool Critical) const		{ return Critical ? "critically bites" : "bites"; }
-  virtual std::string FirstPersonPSIVerb(bool Critical) const		{ return Critical ? "emit powerful psi waves at" : "emit psi waves at"; }
-  virtual std::string ThirdPersonPSIVerb(bool Critical) const		{ return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
-  virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomit very acidous brown slime at" : "vomit brown slime at"; }
-  virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
-  virtual std::string FirstPersonBloodVerb(bool Critical) const		{ return Critical ? "vomit very acidous blood at" : "vomit acidous blood at"; }
-  virtual std::string ThirdPersonBloodVerb(bool Critical) const		{ return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
+  virtual float GetMeleeStrength() const 		{ return 0; }
+  virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
+  virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
+  virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return NormalFirstPersonHitVerb(Critical); }
+  virtual std::string AICombatHitVerb(character*, bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
+  virtual std::string NormalFirstPersonHitVerb(bool Critical) const { return Critical ? "critically hit" : "hit"; }
+  virtual std::string NormalThirdPersonHitVerb(bool Critical) const { return Critical ? "critically hits" : "hits"; }
+  virtual std::string FirstPersonBiteVerb(bool Critical) const { return Critical ? "critically bite" : "bite"; }
+  virtual std::string ThirdPersonBiteVerb(bool Critical) const { return Critical ? "critically bites" : "bites"; }
+  virtual std::string FirstPersonPSIVerb(bool Critical) const { return Critical ? "emit powerful psi waves at" : "emit psi waves at"; }
+  virtual std::string ThirdPersonPSIVerb(bool Critical) const { return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
+  virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const { return Critical ? "vomit very acidous brown slime at" : "vomit brown slime at"; }
+  virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const { return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
+  virtual std::string FirstPersonBloodVerb(bool Critical) const { return Critical ? "vomit very acidous blood at" : "vomit acidous blood at"; }
+  virtual std::string ThirdPersonBloodVerb(bool Critical) const { return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
   virtual std::string TalkVerb() const { return "grunts"; }
   stack* Stack;
   item* Wielded;

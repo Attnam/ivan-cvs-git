@@ -51,7 +51,7 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.BitmapPos.Y != GI2.BitmapPos.Y)
     return GI1.BitmapPos.Y < GI2.BitmapPos.Y;
 
-  if(!GI1.Color || !GI2.Color)	// This shouldn't be possible, but if it is, it's better to behave oddly
+  if(!GI1.Color || !GI2.Color) // This shouldn't be possible, but if it is, it's better to behave oddly
     return false;		// than to crash horribly and undebuggablely
 
   if(GI1.Color[0] != GI2.Color[0])
@@ -88,7 +88,7 @@ class igraph
   static void Init();
 #endif
   static void DeInit();
-  static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
+  static bitmap* GetWorldMapTerrainGraphic() { return Graphic[GWTERRAIN]; }
   static bitmap* GetFOWGraphic() { return Graphic[GFOW]; }
   static bitmap* GetCursorGraphic() { return Graphic[GCURSOR]; }
   static bitmap* GetHumanGraphic() { return Graphic[GHUMAN]; }

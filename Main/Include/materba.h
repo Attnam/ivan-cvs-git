@@ -56,9 +56,9 @@ class material : public typeable
   virtual ~material() {}
   virtual std::string Name(uchar Case = 0) const;
   virtual ushort GetHitValue() const = 0;
-  virtual uchar GetConsumeType() const			{ return ODD; }
-  virtual ulong GetVolume() const			{ return Volume; }
-  virtual ulong GetWeight() const			{ return ulong(float(Volume) * GetDensity() / 1000); }
+  virtual uchar GetConsumeType() const 	{ return ODD; }
+  virtual ulong GetVolume() const 	{ return Volume; }
+  virtual ulong GetWeight() const 	{ return ulong(float(Volume) * GetDensity() / 1000); }
   virtual ushort GetDensity() const = 0;
   virtual ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
@@ -67,11 +67,11 @@ class material : public typeable
   virtual void SetVolume(ulong What) { Volume = What; }
   virtual ushort GetEmitation() const { return 0; }
   virtual ushort OfferValue() const = 0;
-  virtual uchar Alignment() const				{ return NEUTRAL; }
+  virtual uchar Alignment() const 		{ return NEUTRAL; }
   virtual void EatEffect(character*, float, float = 1.0);
-  virtual void HitEffect(character*)			{ }
-  virtual short NutritionValue() const			{ return 0; }
-  virtual void MinusAmount(float Amount)			{ SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
+  virtual void HitEffect(character*) 	{ }
+  virtual short NutritionValue() const 	{ return 0; }
+  virtual void MinusAmount(float Amount) 	{ SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
   virtual material* Clone(ulong Volume) const = 0;
   virtual material* Clone() const = 0;
   virtual bool IsType(ushort QType) const { return Type() == QType; }

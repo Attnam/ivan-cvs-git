@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------------
 // Miscellaneous helper functions
 //-----------------------------------------------------------------------------
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETE(p) { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
 
 
@@ -92,12 +92,13 @@ HRESULT _DbgOut( TCHAR*, DWORD, HRESULT, TCHAR* );
 #endif
 
 #if defined(DEBUG) | defined(_DEBUG)
-    #define DEBUG_MSG(str)    _DbgOut( __FILE__, (DWORD)__LINE__, 0, str )
+    #define DEBUG_MSG(str) _DbgOut( __FILE__, (DWORD)__LINE__, 0, str )
 #else
-    #define DEBUG_MSG(str)    (0L)
+    #define DEBUG_MSG(str) (0L)
 #endif
 
 
 
 
 #endif // DXUTIL_H
+

@@ -16,9 +16,9 @@
 
 #define MAKE_RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
 
-#define GET_RED(Color)		((Color >> 8) & 0xF8)
-#define GET_GREEN(Color)	((Color >> 3) & 0xFC)
-#define GET_BLUE(Color)		((Color << 3) & 0xF8)
+#define GET_RED(Color) ((Color >> 8) & 0xF8)
+#define GET_GREEN(Color) ((Color >> 3) & 0xFC)
+#define GET_BLUE(Color) ((Color << 3) & 0xF8)
 
 #define RED	MAKE_RGB(255, 0, 0)
 #define GREEN	MAKE_RGB(0, 255, 0)
@@ -92,7 +92,7 @@ class graphics
   {
     public:
 void Retrieve(void);
-    bool   CheckSupport(void)	{return Version == 0x0200 ? true : false;};
+    bool   CheckSupport(void) {return Version == 0x0200 ? true : false;};
     ulong Signature		PACKED;
     ushort Version		PACKED;
     ulong OEMString		PACKED;
@@ -104,7 +104,7 @@ void Retrieve(void);
   static struct modeinfo
   {
     void Retrieve(ushort);
-    bool   CheckSupport(void)	{return Attribs1 & 1 ? true : false;};
+    bool   CheckSupport(void) {return Attribs1 & 1 ? true : false;};
     ushort Attribs1		PACKED;
     uchar  AWindowAttribs	PACKED;
     uchar  BWindowAttribs	PACKED;
