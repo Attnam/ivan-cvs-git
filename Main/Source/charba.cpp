@@ -294,31 +294,38 @@ bool character::GoDown()
 
 bool character::Open()
 {
-	if(GetStack()->GetItems())
-		ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key, space or i]");
-	else
-		ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key or space]");
-
-	DRAW_MESSAGES();
-
-	EMPTY_MESSAGES();
-
-	graphics::BlitDBToScreen();
-
-	while(true)
+	if(CanOpenDoors())
 	{
-		int Key = GETKEY();
+		if(GetStack()->GetItems())
+			ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key, space or i]");
+		else
+			ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key or space]");
 
-		if(Key == 'i') 
-			return OpenItem();
+		DRAW_MESSAGES();
 
-		if(Key == 0x1B || Key == ' ')
-			return false;
+		EMPTY_MESSAGES();
 
-		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-			if(Key == game::GetMoveCommandKey(c))
-				return OpenPos(GetPos() + game::GetMoveVector(c));
+		graphics::BlitDBToScreen();
+
+		while(true)
+		{
+			int Key = GETKEY();
+
+			if(Key == 'i') 
+				return OpenItem();
+
+			if(Key == 0x1B || Key == ' ')
+				return false;
+
+			for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+				if(Key == game::GetMoveCommandKey(c))
+					return OpenPos(GetPos() + game::GetMoveVector(c));
+		}
 	}
+	else
+		ADD_MESSAGE("This monster type cannot open doors.");
+
+	return false;
 }
 
 bool character::Close()
