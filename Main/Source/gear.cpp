@@ -461,7 +461,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() & 3))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -611,7 +611,7 @@ bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 
       if(Hitter->IsPlayer())
 	{
-	  game::DoEvilDeed(25);
+	  game::DoEvilDeed(20);
 	  game::GetGod(10)->AdjustRelation(10);
 	}
 
@@ -698,7 +698,7 @@ bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar Body
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(RAND() & 1)
 	{
@@ -716,7 +716,7 @@ bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar Body
 	  if(Square->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
 
-	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 500));
+	  Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 250));
 	}
 
       return true;

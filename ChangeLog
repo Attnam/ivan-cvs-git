@@ -6,10 +6,30 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the reload datafiles command which made it useless
+	* The locks of the cathedral have been changed, and the master guard holds the
+	  only key
+	* The secret equipment room of Attnam now contains more powerful items, if
+	  someone wants to steal them
+	* Removed a test in wskill.cpp which I had totally forgotten and which looked
+	  like a symptom of a really horrible bug
+	* Gravel is now somewhat brighter so steel weapons items are easier to see
+	* Adjusted various rings' materials so that they are more visible on gravel and
+	  marble floors
+	* Items on lower levels are now somewhat more valuable (the difference is not
+	  great since I don't want to ruin game balance now)
+	* Corrected a bug in the sizes of broken items generated on the ground that
+	  most likely had existed since v0.40
+	* Magical mushrooms teleport a little less often now
+	* Thunder hammer is bit less überpowerful now
+
 May 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added possibility loafs by 25 % to improve the food situation.
-	
+
 May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Bonefiles aren't now *always* generated when it's possible

@@ -78,6 +78,8 @@ Dungeon ELPURI_CAVE;
 		MonsterGenerationIntervalBase = 100;
 		MonsterGenerationIntervalDelta = -10;
 		CanGenerateBone = true;
+		ItemMinPriceBase = 20;
+		ItemMinPriceDelta = 10;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
@@ -468,6 +470,7 @@ Dungeon ELPURI_CAVE;
 		IgnoreDefaultSpecialSquares = true;
 		DifficultyBase = 75;
 		MonsterAmountBase = 14;
+		ItemMinPriceBase = 45;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
@@ -482,6 +485,7 @@ Dungeon ELPURI_CAVE;
 		IgnoreDefaultSpecialSquares = true;
 		DifficultyBase = 90;
 		MonsterAmountBase = 18;
+		ItemMinPriceBase = 70;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
@@ -758,8 +762,8 @@ Dungeon ATTNAM;
 					T = throne;
 					| = decoration(CARPET);
 					A = VALPURIUM altar(VALPURUS);
-					D = MARBLE door;
-					L = MARBLE door { Parameters = LOCKED; }
+					D = MARBLE door { LockType = HEXAGONAL; }
+					L = MARBLE door { Parameters = LOCKED; LockType = HEXAGONAL; }
 					b = decoration(SNOW_FIR);
 					1 = decoration(POOL_CORNER) { VisualEffects = NONE; }
 					2 = decoration(POOL_CORNER) { VisualEffects = MIRROR; }
@@ -829,12 +833,6 @@ Dungeon ATTNAM;
 					b == banana;
 					k == kiwi;
 					p == pineapple;
-					o == IRON meleeweapon(HALBERD);
-					l == MITHRIL MITHRIL meleeweapon(LONG_SWORD);
-					t == IRON IRON meleeweapon(TWO_HANDED_SWORD);
-					m == IRON meleeweapon(MACE);
-					s == IRON meleeweapon(SPEAR);
-					c == bodyarmor(CHAIN_MAIL);
 					e == backpack;
 					g == GOLD stone;
 					i == SILVER stone;
@@ -856,6 +854,9 @@ Dungeon ATTNAM;
 					P == GOLD bodyarmor(PLATE_MAIL);
 					O == GOLD cloak;
 					W == wand(WAND_OF_POLYMORPH);
+					w == Random { MinPrice = 350; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 1; }
+					c == Random { MinPrice = 700; Category = WEAPON|SHIELD; ConfigFlags = NO_BROKEN; Enchantment = 3; }
+					m == Random { MinPrice = 350; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; ConfigFlags = NO_BROKEN; Enchantment = 1; }
 				}
 			}
 			{
@@ -887,9 +888,9 @@ Dungeon ATTNAM;
 				....#...4...............3...#....
 				....#...#...............#...#....
 				...###2###...##2.2##...###2###...
-				####.........#.....#....ooool####
-				#........#####.....#####.....ttc#
-				#........#.............#ssss...c#
+				####.........#.....#....wwwwc####
+				#........#####.....#####.....mmm#
+				#........#.............#wwww...m#
 				##...#####.............#####mm.##
 				.##..#.....................#mm##.
 				..####.....................####..
@@ -1422,6 +1423,8 @@ Dungeon UNDER_WATER_TUNNEL;
 		MonsterGenerationIntervalBase = 200;
 		MonsterGenerationIntervalDelta = -50;
 		CanGenerateBone = true;
+		ItemMinPriceBase = 0;
+		ItemMinPriceDelta = 5;
 
 		Square, Random;
 		{

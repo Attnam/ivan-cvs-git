@@ -344,7 +344,7 @@ bool fountain::Drink(character* Drinker)
 	      break;
 
 	    case 2:
-	      if(!(RAND() % 12))
+	      if(!(RAND() % 15))
 		{
 		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
 
@@ -608,7 +608,7 @@ void door::Break()
       Temp->InitMaterials(GetMainMaterial()->Clone());
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
-      Temp->SetLockType(GetLockType());
+      Temp->SetLockType(LockType);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)
@@ -703,7 +703,7 @@ bool door::TryKey(item* Thingy, character* Applier)
   if(Opened)
     return false;
 
-  if(Thingy->CanOpenLockType(GetLockType()))
+  if(Thingy->CanOpenLockType(LockType))
     {
       if(Applier->IsPlayer())
 	{

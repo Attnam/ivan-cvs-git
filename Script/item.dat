@@ -202,7 +202,7 @@ meleeweapon
 	Config TWO_HANDED_SWORD;
 	{
 		DefaultSize = 150;
-		Possibility = 50;
+		Possibility = 75;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 350;
 		DefaultSecondaryVolume = 150;
@@ -222,7 +222,7 @@ meleeweapon
 
 	Config BROKEN|TWO_HANDED_SWORD;
 	{
-		Possibility = 5;
+		Possibility = 8;
 		BitmapPos = 32, 80;
 		WieldedBitmapPos = 176, 80;
 		MaterialConfigChances = { 4, 0, 250, 25, 25; }
@@ -270,7 +270,7 @@ meleeweapon
 		NameSingular = "spear";
 		MainMaterialConfig = { 11, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig == PINE_WOOD;
-		MaterialConfigChances = { 11, 600, 450, 300, 150, 250, 1500, 1000, 500, 250, 25, 25; }
+		MaterialConfigChances = { 11, 250, 200, 150, 100, 250, 650, 500, 350, 200, 50, 50; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
@@ -282,8 +282,8 @@ meleeweapon
 		Possibility = 60;
 		BitmapPos = 32, 224;
 		WieldedBitmapPos = 176, 96;
-		MainMaterialConfig = { 8, EBONY_WOOD, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
-		MaterialConfigChances = { 8, 100, 200, 25, 25, 5, 5, 5, 5; }
+		MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
+		MaterialConfigChances = { 7, 150, 25, 25, 5, 5, 5, 5; }
 	}
 
 	Config AXE;
@@ -319,7 +319,7 @@ meleeweapon
 	Config HALBERD;
 	{
 		DefaultSize = 170;
-		Possibility = 150;
+		Possibility = 100;
 		WeaponCategory = POLE_ARMS;
 		DefaultMainVolume = 375;
 		DefaultSecondaryVolume = 1500;
@@ -338,7 +338,7 @@ meleeweapon
 
 	Config BROKEN|HALBERD;
 	{
-		Possibility = 15;
+		Possibility = 10;
 		BitmapPos = 32, 144;
 		WieldedBitmapPos = 176, 256;
 		MainMaterialConfig = { 3, STEEL, METEORIC_STEEL, MITHRIL; }
@@ -592,7 +592,7 @@ meleeweapon
 		NameSingular = "quarterstaff";
 		MainMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
 		SecondaryMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
-		MaterialConfigChances = { 9, 1500, 1250, 1000, 750, 500, 250, 100, 50, 25; }
+		MaterialConfigChances = { 9, 400, 350, 300, 250, 200, 150, 100, 75, 25; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = SILVA;
@@ -606,7 +606,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 304;
 		MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
 		SecondaryMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
-		MaterialConfigChances = { 3, 500, 100, 25; }
+		MaterialConfigChances = { 3, 500, 200, 25; }
 	}
 
 	Config HAMMER;
@@ -839,7 +839,7 @@ bodyarmor /* armor-> */
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
 		MainMaterialConfig = { 9, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
-		MaterialConfigChances = { 9, 5000, 2500, 250, 1000, 100, 250, 250, 100, 25; }
+		MaterialConfigChances = { 9, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25; }
 		InElasticityPenaltyModifier = 20;
 	}
 
@@ -985,7 +985,7 @@ scroll
 scrollofcreatemonster /* scroll-> */
 {
 	Possibility = 75;
-	Price = 20;
+	Price = 25;
 	PostFix = "of create monster";
 	AttachedGod = CRUENTUS;
 }
@@ -1129,7 +1129,7 @@ wand
 
 	Config WAND_OF_POLYMORPH;
 	{
-		Possibility = 25;
+		Possibility = 20;
 		Price = 500;
 		IsPolymorphSpawnable = false;
 		PostFix = "of polymorph";
@@ -1145,7 +1145,7 @@ wand
 
 	Config WAND_OF_STRIKING;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 500;
 		PostFix = "of striking";
 		MainMaterialConfig == IRON;
@@ -1159,7 +1159,7 @@ wand
 
 	Config WAND_OF_FIRE_BALLS;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 500;
 		PostFix = "of fireballs";
 		MainMaterialConfig == BRONZE;
@@ -1174,7 +1174,7 @@ wand
 
 	Config WAND_OF_TELEPORTATION;
 	{
-		Possibility = 75;
+		Possibility = 60;
 		Price = 500;
 		PostFix = "of teleportation";
 		MainMaterialConfig == SILVER;
@@ -1190,7 +1190,7 @@ wand
 
 	Config WAND_OF_HASTE;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 500;
 		PostFix = "of haste";
 		MainMaterialConfig == TIN;
@@ -1204,7 +1204,7 @@ wand
 
 	Config WAND_OF_SLOW;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 500;
 		PostFix = "of slow";
 		MainMaterialConfig == STONE;
@@ -1218,7 +1218,7 @@ wand
 
 	Config WAND_OF_RESURRECTION;
 	{
-		Possibility = 25;
+		Possibility = 20;
 		Price = 750;
 		PostFix = "of resurrection";
 		MainMaterialConfig == BONE;
@@ -1232,7 +1232,7 @@ wand
 
 	Config WAND_OF_DOOR_CREATION;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 250;
 		PostFix = "of door creation";
 		MainMaterialConfig == OAK_WOOD;
@@ -1247,7 +1247,7 @@ wand
 
 	Config WAND_OF_INVISIBILITY;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		Price = 250;
 		PostFix = "of invisibility";
 		MainMaterialConfig == GLASS;
@@ -1261,7 +1261,7 @@ wand
 
 	Config WAND_OF_CLONING;
 	{
-		Possibility = 25;
+		Possibility = 20;
 		Price = 1000;
 		IsPolymorphSpawnable = false;
 		PostFix = "of cloning";
@@ -1278,7 +1278,7 @@ wand
 
 	Config WAND_OF_LIGHTNING;
 	{
-		Possibility = 75;
+		Possibility = 60;
 		Price = 250;
 		PostFix = "of lightning";
 		MainMaterialConfig == GOLD;
@@ -1541,7 +1541,7 @@ key
 {
 	DefaultSize = 10;
 	Possibility = 100;
-	Price = 10;
+	Price = 50;
 	Category = TOOL;
 	DefaultMainVolume = 15;
 	StrengthModifier = 50;
@@ -1632,7 +1632,7 @@ cloak /* armor-> */
 
 	Config CLOAK_OF_FIRE_RESISTANCE;
 	{
-		Possibility = 30;
+		Possibility = 20;
 		PostFix = "of fire resistance";
 		Price = 250;
 		FireResistance = 25;
@@ -1640,7 +1640,7 @@ cloak /* armor-> */
 
 	Config BROKEN|CLOAK_OF_FIRE_RESISTANCE;
 	{
-		Possibility = 3;
+		Possibility = 2;
 		BitmapPos = 64, 304;
 		InElasticityPenaltyModifier = 25;
 		FireResistance = 10;
@@ -1651,7 +1651,7 @@ cloak /* armor-> */
 
 	Config CLOAK_OF_ELECTRICITY_RESISTANCE;
 	{
-		Possibility = 20;
+		Possibility = 15;
 		PostFix = "of electricity resistance";
 		Price = 250;
 		ElectricityResistance = 25;
@@ -1817,7 +1817,7 @@ ring
 		Possibility = 40;
 		FireResistance = 15;
 		PostFix = "of fire resistance";
-		MainMaterialConfig == ARCANITE;
+		MainMaterialConfig == DRAGON_HIDE;
 		Price = 250;
 		AttachedGod = LORICATUS;
 	}
@@ -1869,7 +1869,7 @@ ring
 	{
 		Possibility = 30;
 		PostFix = "of polymorph";
-		MainMaterialConfig == UNICORN_HORN;
+		MainMaterialConfig == ARCANITE;
 		GearStates = POLYMORPH;
 		Price = 250;
 		WearWisdomLimit = 15;
@@ -1901,7 +1901,7 @@ ring
 		Possibility = 30;
 		ElectricityResistance = 15;
 		PostFix = "of electricity resistance";
-		MainMaterialConfig == GLASS;
+		MainMaterialConfig == EBONY_WOOD;
 		Price = 250;
 		AttachedGod = LORICATUS;
 	}
@@ -2106,7 +2106,7 @@ whistle
 	NameSingular = "whistle";
 	MainMaterialConfig == TIN;
 	Roundness = 10;
-	Price = 20;
+	Price = 25;
 	AttachedGod = DULCIS;
 	WieldedBitmapPos = 160, 368;
 }
@@ -2210,7 +2210,7 @@ beartrap
 	DefaultMainVolume = 500;
 	FormModifier = 30;
 	Roundness = 30;
-	Price = 10;
+	Price = 25;
 	CanBePiled = false;
 	CanBeBroken = true;
 	AttachedGod = CRUENTUS;
@@ -2290,7 +2290,7 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 2;
-		Price = 20;
+		Price = 25;
 		AffectsPerception = false;
 	}
 
@@ -2316,7 +2316,7 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 2;
-		Price = 20;
+		Price = 25;
 		AffectsWisdom = false;
 	}
 
@@ -2341,7 +2341,7 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 2;
-		Price = 20;
+		Price = 25;
 		AffectsIntelligence = false;
 	}
 
@@ -2352,7 +2352,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 10;
+		Possibility = 5;
 		PostFix = "of attractivity";
 		AffectsCharisma = true;
 		MainMaterialConfig == GOLD;
@@ -2367,7 +2367,7 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 5;
-		Price = 20;
+		Price = 25;
 		AffectsCharisma = false;
 	}
 
@@ -2728,8 +2728,8 @@ thunderhammer /* meleeweapon-> */
 		BitmapPos = 48, 192;
 		Price = 100;
 		WieldedBitmapPos = 176, 224;
-		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
-		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, ADAMANT; }
+		MaterialConfigChances = { 5, 250, 25, 25, 25, 5; }
 	}
 }
 

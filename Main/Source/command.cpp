@@ -1095,7 +1095,6 @@ bool commandsystem::ShowWeaponSkills(character* Char)
   bool Something = false;
   festring Buffer;
 
-
   for(ushort c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
     {
       cweaponskill* Skill = Char->GetCWeaponSkill(c);

@@ -3363,6 +3363,7 @@ magicmushroom
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 20;
 	Frequency = 5000;
+	DangerModifier = 75;
 }
 
 darkmage

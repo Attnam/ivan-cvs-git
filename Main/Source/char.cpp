@@ -2967,7 +2967,7 @@ void character::Regenerate()
       if(!HealHitPoint())
 	break;
 
-      EditNP(-Max(15000 / MaxHP, 1));
+      EditNP(-Max(10000 / MaxHP, 1));
       RegenerationCounter -= 1250000;
       EditExperience(ENDURANCE, Max(4000 / MaxHP, 1));
     }

@@ -87,7 +87,7 @@ character* game::Haedlac = 0;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
-const char* const game::LockDescription[] = { "round", "square", "triangular", "broken" };
+const char* const game::LockDescription[] = { "round", "square", "triangular", "broken", "hexagonal" };
 god** game::God;
 
 const int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
@@ -744,20 +744,23 @@ long game::GodScore()
 float game::GetMinDifficulty()
 {
   float Base = float(CurrentLevel->GetDifficulty()) / 5000;
+  long MultiplierExponent = 0;
 
   while(true)
     {
       uchar Dice = RAND() % 25;
 
-      if(Dice < 5)
+      if(Dice < 5 && MultiplierExponent > -3)
 	{
 	  Base /= 3;
+	  --MultiplierExponent;
 	  continue;
 	}
 
-      if(Dice >= 20)
+      if(Dice >= 20 && MultiplierExponent < 3)
 	{
 	  Base *= 3;
+	  ++MultiplierExponent;
 	  continue;
 	}
 
@@ -2155,7 +2158,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen() && RAND() & 1)
+      if(BoneFile.IsOpen() && !(RAND() & 7))
 	{
 	  if(ReadType<ushort>(BoneFile) != BONE_FILE_VERSION)
 	    {

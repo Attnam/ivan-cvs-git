@@ -353,12 +353,17 @@ void level::AttachPos(ushort WhatX, ushort WhatY)
 
 void level::CreateItems(ushort Amount)
 {
-  for(ushort x = 0; x < Amount; ++x)
+  if(Amount)
     {
-      vector2d Pos = GetRandomSquare();
-      item* Item = protosystem::BalancedCreateItem();
-      Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
-      Item->SpecialGenerationHandler();
+      ulong MinPrice = *LevelScript->GetItemMinPriceBase() + *LevelScript->GetItemMinPriceDelta() * Index;
+
+      for(ushort x = 0; x < Amount; ++x)
+	{
+	  vector2d Pos = GetRandomSquare();
+	  item* Item = protosystem::BalancedCreateItem(MinPrice, MAX_PRICE, 0, 0, IGNORE_BROKEN_PRICE);
+	  Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
+	  Item->SpecialGenerationHandler();
+	}
     }
 }
 

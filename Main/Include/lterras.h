@@ -52,7 +52,6 @@ class OLTERRAIN
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
   virtual void SetLockType(uchar What) { LockType = What; }
-  virtual uchar GetLockType() { return LockType; }
   virtual bool TryKey(item*, character*);
   virtual void SetParameters(uchar);
   virtual void Lock() { SetIsLocked(true); }

@@ -200,6 +200,7 @@
 #define SQUARE 1
 #define TRIANGULAR 2
 #define DAMAGED 3 // lock is too damaged to be used again
+#define HEXAGONAL 4
 
 #define GOOD 1
 #define NEUTRAL 2
@@ -477,5 +478,8 @@
 #define DEVOUT 512
 
 #define CANNIBALIZED 1
+
+#define NO_BROKEN 1
+#define IGNORE_BROKEN_PRICE 2
 
 #endif

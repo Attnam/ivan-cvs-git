@@ -146,6 +146,8 @@
 #define ROUND 0
 #define SQUARE 1
 #define TRIANGULAR 2
+#define DAMAGED 3
+#define HEXAGONAL 4
 
 #define GOOD 1
 #define NEUTRAL 2
@@ -658,5 +660,8 @@
 #define RANDOM_COLOR 65536
 
 #define NO_LIMIT 65535
+
+#define NO_BROKEN 1
+#define IGNORE_BROKEN_PRICE 2
 
 ; /* this line must be here */

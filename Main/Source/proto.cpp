@@ -34,7 +34,7 @@ character* protosystem::BalancedCreateMonster()
 		    {
 		      float Danger = DangerID.EquippedDanger;
 
-		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 3.0f))
+		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 2.5f))
 			continue;
 
 		      float DangerModifier = DataBase.DangerModifier == 100 ? Danger : Danger * 100 / DataBase.DangerModifier;
@@ -76,7 +76,7 @@ character* protosystem::BalancedCreateMonster()
   return 0;
 }
 
-item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, ushort SpecialFlags, bool Polymorph)
+item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, ushort SpecialFlags, ushort ConfigFlags, bool Polymorph)
 {
   ulong SumOfPossibilities = 0;
 
@@ -85,7 +85,7 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
       const item::databasemap& Config = protocontainer<item>::GetProto(c)->GetConfig();
 
       for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract && (!Category || Category & i->second.Category))
+	if(!i->second.IsAbstract && (!Category || Category & i->second.Category) && (!(ConfigFlags & NO_BROKEN) || !(i->first & BROKEN)))
 	  SumOfPossibilities += i->second.Possibility;
     }
 
@@ -101,7 +101,7 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 	      const item::databasemap& Config = Proto->GetConfig();
 
 	      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-		if(!i->second.IsAbstract && (!Category || Category & i->second.Category))
+		if(!i->second.IsAbstract && (!Category || Category & i->second.Category) && (!(ConfigFlags & NO_BROKEN) || !(i->first & BROKEN)))
 		  {
 		    Counter += i->second.Possibility;
 
@@ -111,7 +111,7 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 			  {
 			    item* Item = Proto->Clone(i->first, SpecialFlags);
 
-			    if(MinPrice == 0 && MaxPrice == MAX_PRICE) // optimization, GetPrice() may be rather slow
+			    if((MinPrice == 0 && MaxPrice == MAX_PRICE) || (i->first & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE)) // optimization, GetTruePrice() may be rather slow
 			      return Item;
 
 			    ulong Price = Item->GetTruePrice();

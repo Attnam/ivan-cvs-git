@@ -284,6 +284,7 @@ class olterrain : public lterrain, public oterrain
   virtual uchar GetAttachedGod() const;
   void SetConfig(ushort);
   god* GetMasterGod() const;
+  virtual void SetLockType(uchar) { }
  protected:
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase(ushort);

@@ -435,8 +435,8 @@ class ITEM
   item,
  public:
   virtual bool Apply(character*);
-  virtual void SetLockType(uchar What) { LockType = What; }
-  virtual uchar GetLockType() const { return LockType; }
+  void SetLockType(uchar What) { LockType = What; }
+  uchar GetLockType() const { return LockType; }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

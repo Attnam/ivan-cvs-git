@@ -10,7 +10,7 @@ ushort CWeaponSkillUnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000
 const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES] = { "unarmed combat", "kicking", "biting", "uncategorized", "small swords", "large swords", "blunt weapons", "axes", "polearms", "whips", "shields" };
 
 ushort SWeaponSkillLevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
-ulong SWeaponSkillUnuseTickMap[] = { 100, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
+ulong SWeaponSkillUnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
 ushort SWeaponSkillUnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
 
 ushort cweaponskill::GetLevelMap(ushort Index) const { return CWeaponSkillLevelMap[Index]; }

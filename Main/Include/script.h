@@ -233,6 +233,7 @@ class contentscript<item> : public contentscripttemplate<item>
   SCRIPT_MEMBER(ulong, Category);
   SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(uchar, Chance);
+  SCRIPT_MEMBER(ushort, ConfigFlags);
 };
 
 bool IsValidScript(const std::list<contentscript<item> >*);
@@ -264,6 +265,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   SCRIPT_MEMBER(uchar, AttachedEntry);
   SCRIPT_MEMBER(festring, Text);
   SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(uchar, LockType);
 };
 
 class squarescript : public script
@@ -383,6 +385,8 @@ class levelscript : public scriptwithbase
   SCRIPT_BOOL_WITH_BASE(AutoReveal);
   SCRIPT_MEMBER_WITH_BASE(festring, ShortDescription);
   SCRIPT_BOOL_WITH_BASE(CanGenerateBone);
+  SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceBase);
+  SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceDelta);
 };
 
 class dungeonscript : public script

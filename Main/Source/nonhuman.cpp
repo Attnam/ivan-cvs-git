@@ -996,7 +996,7 @@ void mushroom::VirtualConstructor(bool Load)
 
 void magicmushroom::GetAICommand()
 {
-  if(!(RAND() % 500))
+  if(!(RAND() % 750))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));

@@ -2904,6 +2904,16 @@ void guard::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
   NextWayPoint = 0;
+
+  /* Gum solutions */
+
+  if(!Load && GetConfig() == MASTER)
+    {
+      game::SetHaedlac(this);
+      key* Key = new key;
+      Key->SetLockType(HEXAGONAL);
+      GetStack()->AddItem(Key);
+    }
 }
 
 void guard::GetAICommand()

@@ -25,12 +25,15 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 
       if(Iterator != Proto->Config.end())
 	DataBase = &Iterator->second;
-      else if(Proto->Base)
-	DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database(Proto->Base->Config.begin()->second))).first->second;
       else
-	DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database())).first->second;
+	{
+	  if(Proto->Base)
+	    DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database(Proto->Base->Config.begin()->second))).first->second;
+	  else
+	    DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database())).first->second;
 
-      DataBase->InitDefaults(0);
+	  DataBase->InitDefaults(0);
+	}
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
@@ -46,9 +49,10 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 	      if(Iterator != Proto->Config.end())
 		TempDataBase = &Iterator->second;
 	      else
-		TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, Proto->ChooseBaseForConfig(ConfigNumber))).first->second;
-
-	      TempDataBase->InitDefaults(ConfigNumber);
+		{
+		  TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, Proto->ChooseBaseForConfig(ConfigNumber))).first->second;
+		  TempDataBase->InitDefaults(ConfigNumber);
+		}
 
 	      if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
@@ -75,9 +79,11 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 		if(Iterator != Proto->Config.end())
 		  TempDataBase = &Iterator->second;
 		else
-		  TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(c, *DataBase)).first->second;
+		  {
+		    TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(c, *DataBase)).first->second;
+		    TempDataBase->InitDefaults(DEVOUT|c);
+		  }
 
-		TempDataBase->InitDefaults(DEVOUT|c);
 		TempDataBase->AttachedGod = c;
 	      }
 	}

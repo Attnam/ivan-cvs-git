@@ -426,6 +426,7 @@ void contentscript<item>::InitDataMap()
   INIT_MEMBER(Category);
   INIT_MEMBER(ItemsInside);
   INIT_MEMBER(Chance);
+  INIT_MEMBER(ConfigFlags);
 }
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
@@ -442,7 +443,8 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
       const ulong* MinPrice = GetMinPrice();
       const ulong* MaxPrice = GetMaxPrice();
       const ulong* Category = GetCategory();
-      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY, SpecialFlags);
+      const ushort* ConfigFlags = GetConfigFlags();
+      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY, SpecialFlags, ConfigFlags ? *ConfigFlags : 0);
     }
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
@@ -486,6 +488,7 @@ void contentscript<olterrain>::InitDataMap()
   INIT_MEMBER(AttachedEntry);
   INIT_MEMBER(Text);
   INIT_MEMBER(ItemsInside);
+  INIT_MEMBER(LockType);
 }
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
@@ -521,6 +524,11 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
+
+  const uchar* LockType = GetLockType();
+
+  if(LockType)
+    Instance->SetLockType(*LockType);
 
   return Instance;
 }
@@ -744,6 +752,8 @@ void levelscript::InitDataMap()
   INIT_MEMBER(AutoReveal);
   INIT_MEMBER(ShortDescription);
   INIT_MEMBER(CanGenerateBone);
+  INIT_MEMBER(ItemMinPriceBase);
+  INIT_MEMBER(ItemMinPriceDelta);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)

@@ -176,7 +176,7 @@ bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
 	    Room->HostileAction(Polymorpher);
 	}
 
-      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, 0, true));
+      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, 0, 0, true));
       RemoveFromSlot();
       SendToHell();
       return true;
@@ -528,6 +528,7 @@ void itemdatabase::InitDefaults(ushort NewConfig)
       else
 	Adjective = CONST_S("broken");
 
+      DefaultSize >>= 1;
       FormModifier >>= 2;
       StrengthModifier >>= 1;
     }
