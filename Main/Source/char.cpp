@@ -7552,7 +7552,7 @@ int character::GetAttribute(int Identifier, bool AllowBonus) const
   int A = int(BaseExperience[Identifier] * EXP_DIVISOR);
 
   if(AllowBonus && Identifier == INTELLIGENCE && BrainsHurt())
-    return Max(A / 3 + AttributeBonus[INTELLIGENCE], 1);
+    return Max((A + AttributeBonus[INTELLIGENCE]) / 3, 1);
 
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
@@ -7587,21 +7587,21 @@ void character::EditDealExperience(long Price)
 void character::PrintBeginLeprosyMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel bad. Very bad.");
+    ADD_MESSAGE("You feel you're falling in pieces.");
 }
 
 void character::PrintEndLeprosyMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel that you're OK."); // CHANGE OR DIE
+    ADD_MESSAGE("You feel your limbs are stuck in place tightly."); // CHANGE OR DIE
 }
 
 void character::TryToInfectWithLeprosy(const character* Infector)
 {
   if(!IsImmuneToLeprosy()
   && ((GetRelation(Infector) == HOSTILE
-    && !RAND_N(25 * GetAttribute(ENDURANCE))) 
-   || !RAND_N(250 * GetAttribute(ENDURANCE))))
+    && !RAND_N(50 * GetAttribute(ENDURANCE))) 
+   || !RAND_N(500 * GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
 

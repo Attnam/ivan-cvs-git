@@ -1468,7 +1468,7 @@ void bitmap::CreateFlies(ulong Seed, int Frame, int FlyAmount)
       vector2d Where;
       Where.X = int(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = int(StartPos.Y + sin(2*(Constant + Temp)) * 3);
-      PowerPutPixel(Where.X, Where.Y, 0, 255, FLY_PRIORITY);
+      PowerPutPixel(Where.X, Where.Y, MakeRGB16(40, 40, 60), 255, FLY_PRIORITY);
     }
 
   femath::LoadSeed();

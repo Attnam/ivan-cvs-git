@@ -34,7 +34,7 @@ void web::VirtualConstructor(bool Load)
 bool web::TryToUnStick(character* Victim, vector2d)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = 10 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
+  int Modifier = 7 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(Modifier <= 1 || !RAND_N(Modifier))
     {
@@ -68,7 +68,7 @@ bool web::TryToUnStick(character* Victim, vector2d)
 
   Modifier = Max(GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75, 2);
 
-  if(Victim->CanChokeOnWeb(this) && !RAND_N(Modifier << 2))
+  if(Victim->CanChokeOnWeb(this) && !RAND_N(Modifier << 3))
     {
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to choke yourself on the web.");
