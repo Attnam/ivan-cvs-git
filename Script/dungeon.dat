@@ -344,9 +344,10 @@ Dungeon 1;
 			Times=5;
 		}
 
-		Square, Pos 30,59;
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=kamikazedwarf;
+			Times=100;
 		}
 
 		Square, Pos 30,61;

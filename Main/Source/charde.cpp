@@ -200,10 +200,10 @@ void complexhumanoid::DrawToTileBuffer() const
 	if(GetWielded())
 		InHandsPic = GetWielded()->GetInHandsPic();
 
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), LegPos.X,LegPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), LegPos.X,LegPos.Y + 1, 0, 0, 16, 15);
 	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), TorsoPos.X, TorsoPos.Y, 0, 0, 16, 16);
 	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16);
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16);
+	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 1, 16, 15);
 	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ShieldPos.X, ShieldPos.Y, 0, 0, 16, 16);
 
 	if(GetWielded() && (InHandsPic.X != 0 || InHandsPic.Y != 0))

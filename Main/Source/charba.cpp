@@ -2168,6 +2168,8 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 		SetHP(GetHP() - (SizeOfEffect + RAND() % (SizeOfEffect / 2)));
 	else
 		SetHP(GetHP() - SizeOfEffect);
+
+	GetStack()->ReceiveFireDamage(SizeOfEffect);
 }
 
 void character::GetPlayerCommand()

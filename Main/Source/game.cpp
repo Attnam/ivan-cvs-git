@@ -219,7 +219,7 @@ void game::Init(std::string Name)
 
 		BaseScore = Player->Score();
 
-		dolphin* Doggie = new dolphin;
+		dog* Doggie = new dog;
 		Doggie->SetTeam(GetTeam(0));
 		GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 

@@ -476,3 +476,7 @@ void stack::ImpactDamage(ushort Strength, bool ShowOnScreen)
 		if(!GetItem(c)->ImpactDamage(Strength, ShowOnScreen, this))
 			++c;
 }
+
+void stack::ReceiveFireDamage(long SizeOfEffect)
+{
+}

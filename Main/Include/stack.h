@@ -67,6 +67,7 @@ public:
 	square* GetSquareTrulyUnder() const;
 	levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }
 	void ImpactDamage(ushort, bool);
+	void ReceiveFireDamage(long);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;
