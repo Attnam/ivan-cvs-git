@@ -169,3 +169,4 @@ Prices of golden items.
 Bear traps should break eventually.
 //More color states to silhouette.
 Digging walls should yield stones.
+Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.

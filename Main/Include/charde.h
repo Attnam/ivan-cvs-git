@@ -412,6 +412,7 @@ class CHARACTER
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
   virtual std::string BiteNoun() const { return "slime"; }
+  virtual void CreateCorpse();
 );
 
 class CHARACTER

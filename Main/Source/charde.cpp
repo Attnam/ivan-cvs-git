@@ -3923,3 +3923,15 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
   return (Index == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy())
       || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy());
 }
+
+void mommo::CreateCorpse()
+{
+  for(ushort d = 0; d < 9; ++d)
+    {
+      lsquare* Square = GetNeighbourLSquare(d);
+
+      if(Square && Square->GetOLTerrain()->IsWalkable())
+	Square->SpillFluid(RAND() % 20, MakeRGB16(0,128 + RAND() % 128, 0), 5, 60);
+    }
+  SendToHell();  
+}

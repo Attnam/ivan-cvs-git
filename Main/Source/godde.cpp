@@ -376,6 +376,14 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
+  for(ushort c = 0; c < game::GetPlayer()->GetEquipmentSlots(); ++c)
+    if(game::GetPlayer()->GetEquipment(c) && game::GetPlayer()->GetEquipment(c)->IsBroken())
+      {
+	ADD_MESSAGE("%s fixes your %s.", GOD_NAME, game::GetPlayer()->GetEquipment(c)->CHAR_NAME(UNARTICLED));
+	game::GetPlayer()->GetEquipment(c)->Fix();
+	return;
+      }
+
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
