@@ -551,7 +551,9 @@ class ITEM
   virtual bool CanBeSeenBy(const character*) const;
   virtual bool Apply(character* User);
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool DangerousToStepOn(const character* What) const { return CanBeSeenBy(What); } 
+  virtual bool DangerousToStepOn(const character* Stepper) const { return WillExplode(Stepper); } 
+  virtual bool WillExplode(const character*) const;
+  virtual void SetTeam(ushort What) { Team = What; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;
@@ -1171,7 +1173,8 @@ class ITEM
   virtual bool Apply(character*);
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool DangerousToStepOn(const character* What) const { return CanBeSeenBy(What); } 
+  virtual bool DangerousToStepOn(const character* What) const { return true; } 
+  virtual void SetTeam(ushort What) { Team = What; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;

@@ -629,3 +629,11 @@ bool stack::CanBeSeenBy(const character* Viewer) const
   else
     return MotherSquare->CanBeSeenBy(Viewer);
 }
+
+bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
+{
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    if((**i)->CanBeSeenBy(Stepper) && (**i)->DangerousToStepOn(Stepper))
+      return true;
+  return false;
+}

@@ -204,7 +204,7 @@ class contentscript<item> : public contentscripttemplate<item>
   void Instantiate(std::vector<item*>&, ulong) const;
   item* Instantiate() const;
  protected:
-  DATAMEMBER(bool, IsVisible);
+  DATAMEMBER(ushort, Team);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>

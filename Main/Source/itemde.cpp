@@ -1258,7 +1258,7 @@ bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
 
 bool mine::StepOnEffect(character* Stepper)
 {
-  if(GetContainedMaterial()->GetTotalExplosivePower() == 0)
+  if(!WillExplode(Stepper))
     return false;
 
   if(Stepper->IsPlayer())
@@ -2711,7 +2711,6 @@ void beartrap::VirtualConstructor(bool Load)
 
 bool beartrap::StepOnEffect(character* Stepper)
 {
-  SetIsVisible(true);
   if(IsActive())
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
@@ -3423,4 +3422,9 @@ vector2d beartrap::GetBitmapPos(ushort) const
     return vector2d(32,304);
   else
     return vector2d(32,320);
+}
+
+bool mine::WillExplode(const character* Stepper) const
+{
+  return GetContainedMaterial()->GetTotalExplosivePower() != 0 && Stepper->GetWeight() > 500;
 }

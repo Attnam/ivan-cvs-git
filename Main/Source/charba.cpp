@@ -1647,7 +1647,7 @@ bool character::MoveRandomly()
     {
       vector2d ToTry = GetPos() + game::GetMoveVector(RAND() % 8);
 
-      if(GetLevelUnder()->IsValidPos(ToTry) && TryMove(ToTry, false))
+      if(GetLevelUnder()->IsValidPos(ToTry) && !GetLevelUnder()->GetLSquare(ToTry)->IsDangerousForAIToStepOn(this) && TryMove(ToTry, false))
 	return true;
     }
 

@@ -1,3 +1,8 @@
+August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mines and beartraps work well with the new system.
+
+
 August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added char* festring::IntegerToChar(long) which is a much faster

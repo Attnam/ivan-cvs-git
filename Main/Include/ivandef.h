@@ -497,6 +497,6 @@
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
 /* Hard-coded Teams */
-#define MONSTER_TEAM 0
-#define PLAYER_TEAM 1
+#define MONSTER_TEAM 1
+#define PLAYER_TEAM 0
 #endif

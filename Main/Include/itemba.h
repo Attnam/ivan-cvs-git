@@ -260,8 +260,6 @@ class item : public object
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
   virtual std::string GetDescription(uchar) const;
-  virtual bool IsVisible() const { return true; }
-  virtual void SetIsVisible(bool) { }
   virtual square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
   level* GetLevelUnder() const { return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder()); }
@@ -279,6 +277,7 @@ class item : public object
   virtual void DropEquipment() { }
   virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
+  virtual void SetTeam(ushort What) { }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

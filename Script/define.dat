@@ -445,4 +445,7 @@
 
 #define BOOKCASE 1
 
+#define MONSTER_TEAM 1
+#define PLAYER_TEAM 0
+
 ; /* this line must be here */

@@ -122,6 +122,7 @@ class lsquare : public square
   void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
   lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
+  bool IsDangerousForAIToStepOn(const character*) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

@@ -72,13 +72,13 @@ Dungeon 0;
 
                 Square, Random { Walkable=true; }
 		{
-			Item = mine { IsVisible = false; }
+			Item = mine { Team = MONSTER_TEAM; }
 			Times = 1+rand%10;
 		}
 
 		Square, Random { Walkable=true; }
 		{
-			Item = beartrap { IsVisible = false; }
+			Item = beartrap { Team = MONSTER_TEAM; }
 			Times = 1+rand%5;
 		}
 

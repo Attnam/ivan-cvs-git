@@ -283,16 +283,16 @@ character* contentscript<character>::Instantiate() const
 
 contentscript<item>::contentscript<item>()
 {
-  INITMEMBER(IsVisible);
+  INITMEMBER(Team);
 }
 
 void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount) const
 {
   contentscripttemplate<item>::BasicInstantiate(Instance, Amount);
 
-  if(GetIsVisible(false))
+  if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetIsVisible(*GetIsVisible());
+      Instance[c]->SetTeam(*GetTeam());
 }
 
 item* contentscript<item>::Instantiate() const

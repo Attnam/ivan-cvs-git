@@ -1233,3 +1233,7 @@ void lsquare::DrawMemorized()
     }
 }
 
+bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
+{
+  return GetStack()->IsDangerousForAIToStepOn(Who); 
+} 

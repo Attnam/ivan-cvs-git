@@ -88,6 +88,7 @@ class stack
   void SignalEmitationDecrease(ushort);
   void CalculateEmitation();
   bool CanBeSeenBy(const character*) const;
+  bool IsDangerousForAIToStepOn(const character*) const;
  private:
   stacklist* Item;
   square* MotherSquare;
