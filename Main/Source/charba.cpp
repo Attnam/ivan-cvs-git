@@ -567,11 +567,11 @@ bool character::CheckBulimia() const
 
 void character::ReceiveBulimiaDamage()
 {
-//<<<<<<< charba.cpp
+// charba.cpp
   /*if((GetNP() / 10 - (GetSize() << 5)) / 50 > 0)
-=======
+
   if(GetHungerState() == BLOATED)
->>>>>>> 1.202
+ 1.202
     {
       ADD_MESSAGE("Urgh... Your stomach hurts.");
 
