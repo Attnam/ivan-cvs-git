@@ -1054,3 +1054,30 @@ void astone::GenerateStoneMaterials()
     case 4: InitMaterials(new diamond); break;
     }
 }
+
+void banana::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << Charges;
+}
+
+void banana::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> Charges;
+}
+
+bool banana::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(Charges)
+    {
+      ADD_MESSAGE("BANG! You zap the banana!");
+      --Charges;
+    }
+  else
+    {
+      ADD_MESSAGE("Click!");
+    }
+
+  return true;
+}

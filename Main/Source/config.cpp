@@ -48,7 +48,7 @@ void configuration::Save()
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
   SaveFile << "CharacterOutlineColor = " << GET_RED(CharacterOutlineColor) << ", " << GET_GREEN(CharacterOutlineColor) << ", " << GET_BLUE(CharacterOutlineColor) << ";\n";
-  SaveFile << "ItemOutlineColor = " << GET_RED(ItemOutlineColor) << ", " << GET_GREEN(ItemOutlineColor) << ", " << GET_BLUE(ItemOutlineColor) << ";";
+  SaveFile << "ItemOutlineColor = " << GET_RED(ItemOutlineColor) << ", " << GET_GREEN(ItemOutlineColor) << ", " << GET_BLUE(ItemOutlineColor) << ";\n";
   SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
 }

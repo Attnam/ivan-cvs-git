@@ -24,6 +24,7 @@
 #include "felist.h"
 #include "colorbit.h"
 #include "femath.h"
+#include "strover.h"
 
 #define PENT_WIDTH 70
 
@@ -231,9 +232,8 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 	  }
 
       if(Input.length() < MaxLetters)
-	Input += LastKey;
+	Input += char(LastKey);
     }
-
 
   return Input;
 }
@@ -282,7 +282,7 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 	break;
 
       if(Input.length() < 12)
-	Input += LastKey;
+	Input += char(LastKey);
     }
 
   return atoi(Input.c_str());

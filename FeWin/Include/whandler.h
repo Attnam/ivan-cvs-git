@@ -46,7 +46,7 @@ class globalwindowhandler
   static void Init(const char*);
   static void ProcessMessage(SDL_Event);
 #endif
-  static int GetKey(bool = true, bool = false);
+  static int GetKey(bool = true);
   static int ReadKey();
   static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
   static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }

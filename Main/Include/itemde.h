@@ -17,6 +17,7 @@ class ITEM
   InitMaterials(2, new bananapeal, new bananaflesh),
   {
     SetSize(20);
+    SetCharges(6);
   },
  public:
   virtual ushort Possibility() const { return 200; }
@@ -32,8 +33,15 @@ class ITEM
   virtual ulong Price() const { return GetMaterial(1)->RawPrice(); }
   virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
   virtual uchar GetConsumeMaterial() const { return 1; }
+  virtual bool CanBeZapped() const { return true; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual uchar GetCharges() const { return Charges; }
+  virtual void SetCharges(uchar What) { Charges = What; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual ushort GetFormModifier() const { return 50; }
+  uchar Charges;
 );
 
 class ITEM

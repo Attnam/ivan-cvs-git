@@ -96,12 +96,40 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
     case WM_KEYDOWN:
       {
+	int Key = 0;
+
+	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = 0x14B;
+	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = 0x147;
+	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = 0x148;
+	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = 0x149;	// page up! Believe it, or not!
+	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = 0x14D;
+	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = 0x151;	// page down! Believe it, or not!
+	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = 0x150;
+	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = 0x14F;
+	if(wParam == VK_NUMPAD5) Key = '.';
+
+	if(Key)
+	  {
+	    ushort Index = KeyBuffer.Search(Key);
+
+	    if(Index == 0xFFFF)
+	      KeyBuffer.Add(Key);
+	  }
+
+	return 0;
+
+	/*ushort Index = KeyBuffer.Search(wParam);
+
+	if(Index == 0xFFFF)
+	  KeyBuffer.Add(wParam);*/
+      }
+
+    case WM_CHAR:
+      {
 	ushort Index = KeyBuffer.Search(wParam);
 
 	if(Index == 0xFFFF)
 	  KeyBuffer.Add(wParam);
-
-	return 0;
       }
 
     case WM_KEYUP:
@@ -112,10 +140,10 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	    return 0;
 	  }
 
-	ushort Index = KeyBuffer.Search(wParam);
+	/*ushort Index = KeyBuffer.Search(wParam);
 
 	if(Index != 0xFFFF)
-	  KeyBuffer.Remove(Index);
+	  KeyBuffer.Remove(Index);*/
 
 	return 0;
       }
@@ -132,7 +160,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
   return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
+int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
   MSG msg;
 
@@ -147,7 +175,9 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
   while(true)
     if(Active && KeyBuffer.Length())
       {
-	int Key =  KeyBuffer.Remove(0);
+	return KeyBuffer.Remove(0);
+
+	/*int Key =  KeyBuffer.Remove(0);
 
 	HKL MappedVirtualKey = LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE );
 
@@ -174,7 +204,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 	  return ToBeReturned;
 	else
 	  if(AcceptCommandKeys)
-	    return 0;
+	    return 0;*/
       }
     else
       if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
@@ -235,7 +265,7 @@ int globalwindowhandler::ReadKey()
     }
 
   if(KeyBuffer.Length())
-    return GetKey(false, true);
+    return GetKey(false);
   else
     return 0;
 }
@@ -264,7 +294,7 @@ void globalwindowhandler::Init(const char* Title)
   SDL_EnableUNICODE(1);
 }
 
-int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
+int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
   if(EmptyBuffer)
     {
@@ -285,18 +315,13 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 	  return Key - 0xE000;
 	if(Key != 0 && Key < 0x81)
 	  return Key;
-	else if(AcceptCommandKeys)
-	  return 0;
       }
     else
       {
 	SDL_Event event;
 	SDL_WaitEvent(&event);
-	ProcessMessage(event);		    
-
-
-      }
-				
+	ProcessMessage(event);
+      }				
 }
 
 int globalwindowhandler::ReadKey()
@@ -322,15 +347,13 @@ int globalwindowhandler::ReadKey()
 void globalwindowhandler::ProcessMessage(SDL_Event event)
 {
   ushort Index, KeyPressed;
-
-      
+ 
   switch( event.type )
     {
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
-     
-     
+
     case SDL_KEYDOWN:
       switch(event.key.keysym.sym)
 	{
