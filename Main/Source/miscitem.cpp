@@ -2944,6 +2944,12 @@ void holyhandgrenade::Be() {
 
 void holyhandgrenade::Explode()
 {
+  if(game::IsInWilderness()) {
+    ADD_MESSAGE("You manage to dispose of %s.", CHAR_NAME(DEFINITE));
+    RemoveFromSlot();
+    SendToHell();
+    return;
+  }
   character* Damager = game::SearchCharacter(PinPullerID);
   festring DeathMsg = CONST_S("killed by an explosion of ");
   AddName(DeathMsg, INDEFINITE);
