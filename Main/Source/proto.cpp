@@ -44,7 +44,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
 	  float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
 
-	  if(c >= 99 || (Danger < Difficulty * Multiplier * 3.0f && Danger > Difficulty * Multiplier / 3))
+	  if(c >= 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier / 3))
 	    {
 	      Monster->SetTeam(game::GetTeam(1));
 	      return Monster;

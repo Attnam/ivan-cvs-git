@@ -1361,6 +1361,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment();
+  virtual ushort Frequency() const { return 2500; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }
   virtual std::string NameSingular() const { return "kamikaze dwarf"; }
@@ -1380,7 +1381,7 @@ class CHARACTER
     SetPerception(18);
   },
  public:
-  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 5000000; else return 0; }
+  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(528,0); }
   virtual std::string NameSingular() const { return "mammoth"; }

@@ -1027,7 +1027,7 @@ void character::Regenerate(ushort Turns)
       if(GetHP() < GetMaxHP())
 	{
 	  SetHP(GetHP() + 1);
-	  SetEnduranceExperience(GetEnduranceExperience() + 100);
+	  SetEnduranceExperience(GetEnduranceExperience() + 200);
 	}
 
       SetRegenerationCounter(GetRegenerationCounter() - 200);

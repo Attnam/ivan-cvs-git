@@ -751,7 +751,7 @@ Dungeon 1;
 				Character = slave;
 			}
 
-			Square, Pos 1, 3;
+			Square, Pos 5, 1;
 			{
 				Character = shopkeeper;
 			}
@@ -777,9 +777,9 @@ Dungeon 1;
 				}
 			}
 			{
-			    .spwt
+			    .spw.
 			    bLlCP
-			    .iAat
+			    tiAat
 			}
 		}
 

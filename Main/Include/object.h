@@ -72,10 +72,10 @@ class object : public typeable
  protected:
   virtual std::string NameSingular() const = 0;
   virtual std::string NamePlural() const { return NameSingular() + "s"; }
-  virtual std::string NameNormal(uchar, std::string) const;
+  virtual std::string NameNormal(uchar, std::string, std::string = "") const;
   virtual std::string NameProperNoun(uchar) const;
   virtual std::string NameArtifact(uchar, uchar) const;
-  virtual std::string NameWithMaterial(uchar) const;
+  virtual std::string NameWithMaterial(uchar, uchar = 0) const;
   virtual std::string NameHandleDefaultMaterial(uchar, std::string, uchar) const;
   virtual std::string NameContainer(uchar) const;
   virtual std::string NameSized(uchar, std::string, ushort, ushort) const;

@@ -8,3 +8,5 @@ Keys don't work on Win2k fullscreen mode.
 *Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
 The black screen bug.
+Go bug.
+WMode bug.

@@ -32,7 +32,7 @@ Secret Knowledge Command.
 Smithy to Attnam.
 *Monster names.
 ?Some random encounters in the wilderness.
-/*Various fountain effects & fountains to dungeons.
+//*Various fountain effects & fountains to dungeons.
 Bodyparts.
 
 Smaller Jobs (see SourceForge for details):

@@ -172,7 +172,7 @@ void valpurus::PrayBadEffect()
 void venius::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\"");
-  ADD_MESSAGE("A huge firestorm engulf everything around you.");
+  ADD_MESSAGE("A huge firestorm engulfs everything around you.");
 
   game::GetCurrentLevel()->Explosion(game::GetPlayer(), "killed accidentally by " + Name(), game::GetPlayer()->GetPos(), 40, false);
 }

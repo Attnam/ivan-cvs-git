@@ -1155,8 +1155,8 @@ class ITEM
   },
  public:
   virtual ushort Possibility() const { return 5; }
-  virtual std::string Name(uchar Case) const { return NameThingsThatAreLikeLumps(Case, "a"); }
-  virtual std::string NameSingular() const { return "rock"; }
+  virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
+  virtual std::string NameSingular() const { return "stone"; }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 112); }
   virtual float OfferModifier() const { return 0.7f; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,48); }

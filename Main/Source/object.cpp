@@ -122,24 +122,24 @@ ushort object::GetEmitation() const
   return Emitation;
 }
 
-std::string object::NameNormal(uchar Case, std::string Article) const
+std::string object::NameNormal(uchar Case, std::string Article, std::string Adjective) const
 {
   if(!(Case & PLURAL))
     if(!(Case & DEFINEBIT))
-      return NameSingular();
+      return Adjective + NameSingular();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + NameSingular();
+	return std::string("the ") + Adjective + NameSingular();
       else
-	return Article + " " + NameSingular();
+	return Article + " " + Adjective + NameSingular();
   else
     if(!(Case & DEFINEBIT))
-      return NamePlural();
+      return Adjective + NamePlural();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + NamePlural();
+	return std::string("the ") + Adjective + NamePlural();
       else
-	return NamePlural();
+	return Adjective + NamePlural();
 }
 
 std::string object::NameProperNoun(uchar Case) const
@@ -171,24 +171,24 @@ std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const
     }
 }
 
-std::string object::NameWithMaterial(uchar Case) const
+std::string object::NameWithMaterial(uchar Case, uchar Index) const
 {
   if(!(Case & PLURAL))
     if(!(Case & DEFINEBIT))
-      return Material[0]->Name() + " " + NameSingular();
+      return Material[Index]->Name() + " " + NameSingular();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Material[0]->Name() + " " + NameSingular();
+	return std::string("the ") + Material[Index]->Name() + " " + NameSingular();
       else
-	return Material[0]->Name(INDEFINITE) + " " + NameSingular();
+	return Material[Index]->Name(INDEFINITE) + " " + NameSingular();
   else
     if(!(Case & DEFINEBIT))
-      return Material[0]->Name() + " " + NamePlural();
+      return Material[Index]->Name() + " " + NamePlural();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Material[0]->Name() + " " + NamePlural();
+	return std::string("the ") + Material[Index]->Name() + " " + NamePlural();
       else
-	return Material[0]->Name() + " " + NamePlural();
+	return Material[Index]->Name() + " " + NamePlural();
 }
 
 std::string object::NameHandleDefaultMaterial(uchar Case, std::string Article, uchar DefaultMaterial) const

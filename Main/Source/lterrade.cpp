@@ -533,6 +533,20 @@ void fountain::DryOut()
   delete GetMaterial(1);
   SetMaterial(1, 0);
   UpdatePicture();
+
+  if(GetSquareUnder())
+    {
+      GetSquareUnder()->SetDescriptionChanged(true);
+
+      if(GetSquareUnder()->CanBeSeen())
+	GetSquareUnder()->UpdateMemorizedDescription();
+
+      GetSquareUnder()->SendNewDrawRequest();
+      GetSquareUnder()->SendMemorizedUpdateRequest();
+
+      if(GetSquareUnder()->CanBeSeen())
+	GetSquareUnder()->UpdateMemorized();
+    }
 }
 
 void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
@@ -668,4 +682,12 @@ bool altar::SitOn(character*)
 bool pool::GetIsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
+}
+
+std::string fountain::Name(uchar Case) const
+{
+  if(GetMaterial(1))
+    return NameWithMaterial(Case, 1);
+  else
+    return NameNormal(Case, "a", "dried out ");
 }
