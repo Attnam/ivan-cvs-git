@@ -3403,7 +3403,7 @@ skunk
 	HostileReplies == "@Dd grawls.";
 	FriendlyReplies == "@Dd discusses philosophy with you.";
 	TotalSize = 80;
-	SkinColor = rgb16(10, 10, 10);
+	SkinColor = rgb16(20, 20, 20);
 	NameSingular = "skunk";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 300;
