@@ -3,6 +3,7 @@
 #include "error.h"
 #include "femath.h"
 #include "save.h"
+#include "proto.h"
 
 std::string material::Name(bool Articled, bool Adjective) const
 {
@@ -24,7 +25,7 @@ ushort material::TakeDipVolumeAway()
 
 void material::Save(outputfile& SaveFile) const
 {
-  SaveFile << Type();
+  SaveFile << GetType();
   SaveFile << Volume;
 }
 
@@ -72,4 +73,23 @@ long material::CalculateOfferValue(char GodAlignment) const
     Value += GetVolume() * GetOfferValue();
 
   return Value;
+}
+
+material* material_prototype::Clone(ulong Volume) const
+{
+  material* Material = Clone();
+  Material->SetVolume(Volume);
+  return Material;
+}
+
+material* material_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  material* Material = Clone();
+  Material->Load(SaveFile);
+  return Material;
+}
+
+material_prototype::material_prototype()
+{
+  Index = protocontainer<material>::Add(this);
 }

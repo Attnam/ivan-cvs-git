@@ -9,6 +9,7 @@
 #include "config.h"
 #include "whandler.h"
 #include "save.h"
+#include "proto.h"
 
 bool olterrain::GoUp(character* Who) const // Try to go up
 {
@@ -167,3 +168,35 @@ void olterrain::Break()
   GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(new empty);
 }
 
+glterrain* glterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  glterrain* Terrain = Clone(false);
+  Terrain->Load(SaveFile);
+  return Terrain;
+}
+
+olterrain* olterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  olterrain* Terrain = Clone(false);
+  Terrain->Load(SaveFile);
+  return Terrain;
+}
+
+void lterrain::Initialize(bool CallGenerateMaterials)
+{
+  VirtualConstructor();
+  HandleVisualEffects();
+
+  if(CallGenerateMaterials)
+    GenerateMaterials();
+}
+
+glterrain_prototype::glterrain_prototype()
+{
+  Index = protocontainer<glterrain>::Add(this);
+}
+
+olterrain_prototype::olterrain_prototype()
+{
+  Index = protocontainer<olterrain>::Add(this);
+}

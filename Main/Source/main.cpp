@@ -14,10 +14,10 @@
 #include "config.h"
 #include "game.h"
 #include "igraph.h"
-//#include "graphics.h"
 #include "main.h"
 #include "femath.h"
 #include "felibdef.h"
+#include "proto.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -32,7 +32,7 @@ int Main(int argc, char **argv)
 {
   if(argc > 1 && std::string(argv[1]) == "--version")
   {
-    std::cout << "IVAN version " << VERSION << std::endl;
+    std::cout << "Iter Vehemens ad Necem version " << VERSION << std::endl;
     return 0;
   }
 
@@ -55,6 +55,7 @@ int Main(int argc, char **argv)
 
 #endif
 
+  protosystem::GenerateCodeNameMaps();
   femath::SetSeed(time(0));
   game::InitLuxTable();
   game::InitScript();

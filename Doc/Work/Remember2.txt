@@ -2,7 +2,7 @@ Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
 Nostoteko‰ly.
 Kick ja bite toimimaan, jos k‰det irti. (timo)
 Pertun kasvot. (timo)
-Zoom lookiin. (hex)
+//Zoom lookiin. (hex)
 V‰rien tarkistusl‰pik‰yminen.
 Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
 Menua vasemmalle. (hex)
@@ -23,7 +23,7 @@ Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
 Leather armorin nimi kuntoon. (hex)
 Taistelun tasapainotus. (timo)
 Animaatiot: Artifaktit, lamput...
-Amulet of life saving. (hex)
+/Amulet of life saving. (hex)
 Amulet of ESP.
 Ring of polymorph. (hex)
 Ring of strength.

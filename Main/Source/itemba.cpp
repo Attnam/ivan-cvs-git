@@ -18,12 +18,8 @@
 #include "materba.h"
 #include "save.h"
 
-item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
+item::item() : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
 {
-  ID = game::CreateNewItemID();
-
-  if(CreateMaterials || SetStats)
-    ABORT("Boo!");
 }
 
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
@@ -369,4 +365,30 @@ item* item::TryToOpen(character* Char)
     ADD_MESSAGE("You can't open %s.", CHARNAME(DEFINITE));
 
   return 0;
+}
+
+item* item_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  item* Item = Clone(false);
+  Item->Load(SaveFile);
+  return Item;
+}
+
+void item::LoadDataBaseStats()
+{
+  SetSize(GetDefaultSize());
+}
+
+void item::Initialize(bool CallGenerateMaterials)
+{
+  LoadDataBaseStats();
+  VirtualConstructor();
+
+  if(CallGenerateMaterials)
+    GenerateMaterials();
+}
+
+item_prototype::item_prototype()
+{
+  Index = protocontainer<item>::Add(this);
 }

@@ -50,6 +50,7 @@ class object : public entity, public id
   virtual bool IsAnimated() const { return false; }
   virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ushort GetBaseEmitation() const { return 0; }
+  virtual ushort GetType() const = 0;
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -71,7 +72,6 @@ class object : public entity, public id
   virtual std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
   virtual ushort GetAnimationFrames() const { return 1; }
-  virtual ushort Type() const = 0;
   material* MainMaterial;
   std::vector<graphic_id> GraphicId;
   std::vector<bitmap*> Picture;

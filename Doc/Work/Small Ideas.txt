@@ -236,3 +236,4 @@ Cumulative comments to script.
 Material colored cursor.
 Alphablit to bottles.
 Wand levels.
+Talking to oneself should abuse intelligence.

@@ -298,8 +298,7 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
   DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, ++Type[OldTypeBuffer[DoX][DoY]], ++Type[TypeBuffer[DoX][DoY]], ;)
 
-    ++Type[TypeBuffer[x][y]];
-
+  ++Type[TypeBuffer[x][y]];
   uchar MostCommon = 0;
 
   for(ushort c = 1; c < Types; ++c)

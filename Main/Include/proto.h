@@ -15,9 +15,10 @@ template <class type> class protocontainer
   typedef typename type::prototype prototype;
   static ushort Add(prototype*);
   static const prototype* const GetProto(ushort Index) { return ProtoData[Index]; }
-  static ushort GetProtoAmount() { return ProtoData.size() - 2; }
+  static ushort GetProtoAmount() { return ProtoData.size(); }
   static ushort SearchCodeName(const std::string&);
   static const valuemap& GetCodeNameMap() { return CodeNameMap; }
+  static void GenerateCodeNameMap();
  private:
   static std::vector<prototype*> ProtoData;
   static valuemap CodeNameMap;
@@ -37,8 +38,8 @@ class protosystem
   static character* CreateMonster(bool = true);
   static item* CreateItem(const std::string&, bool = true);
   static material* CreateRandomSolidMaterial(ulong);
-  static material* CreateMaterial(ushort, ulong);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
+  static void GenerateCodeNameMaps();
 };
 
 template <class type> inline outputfile& operator<<(outputfile&, type*);

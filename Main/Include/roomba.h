@@ -20,8 +20,9 @@ class room;
 class room_prototype
 {
  public:
+  room_prototype();
   virtual room* Clone() const = 0;
-  virtual room* CloneAndLoad(inputfile&) const = 0;
+  room* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
@@ -32,12 +33,11 @@ class room
 {
  public:
   typedef room_prototype prototype;
-  room(bool);
+  room() : Master(0) { }
   virtual ~room() { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Enter(character*) { }
-  virtual room* Clone() const = 0;
   virtual vector2d GetPos() const { return Pos; }
   virtual void SetPos(vector2d What) { Pos = What; }
   virtual vector2d GetSize() const { return Size; }
@@ -60,9 +60,10 @@ class room
   virtual bool Dip(character*) const { return true; }
   virtual bool HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
+  virtual const prototype& GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
  protected:
-  virtual void SetDefaultStats() = 0;
-  virtual ushort Type() const = 0;
+  virtual void VirtualConstructor() { }
   std::vector<vector2d> Door;
   vector2d Pos, Size;
   character* Master;
@@ -71,42 +72,34 @@ class room
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
 
-#define ROOM_PROTOTYPE(name, base, setstats)\
+#define ROOM_PROTOTYPE(name, base)\
   \
   static class name##_prototype : public room::prototype\
   {\
    public:\
-    name##_prototype() { Index = protocontainer<room>::Add(this); }\
     virtual room* Clone() const { return new name; }\
-    virtual room* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  void name::SetDefaultStats() { setstats }\
-  const room::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
-  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
+  const room::prototype& name::GetProtoType() const { return name##_ProtoType; }
 
 #else
 
-#define ROOM_PROTOTYPE(name, base, setstats)
+#define ROOM_PROTOTYPE(name, base)
 
 #endif
 
-#define ROOM(name, base, setstats, data)\
+#define ROOM(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
-  virtual room* Clone() const { return new name; }\
+  name() { VirtualConstructor(); }\
   static ushort StaticType();\
-  static const room::prototype* const GetProtoType();\
- protected:\
-  virtual ushort Type() const;\
-  virtual void SetDefaultStats();\
+  virtual const room::prototype& GetProtoType() const;\
   data\
-}; ROOM_PROTOTYPE(name, base, setstats)
+}; ROOM_PROTOTYPE(name, base)
 
 #endif
 

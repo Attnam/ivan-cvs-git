@@ -18,13 +18,13 @@ template <class type> ushort protocontainer<type>::Add(prototype* Proto)
 
   if(!Initialized)
     {
-      ProtoData.resize(2, 0);
+      ProtoData.resize(1, 0);
       Initialized = true;
     }
 
-  ProtoData.insert(ProtoData.end() - 1, Proto);
-  CodeNameMap[Proto->ClassName()] = ProtoData.size() - 2;
-  return ProtoData.size() - 2;
+  ProtoData.push_back(Proto);//insert(ProtoData.end() - 1, Proto);
+  //CodeNameMap[Proto->ClassName()] = ProtoData.size() - 2;
+  return ProtoData.size() - 1;
 }
 
 template ushort protocontainer<action>::Add(action::prototype*);
@@ -58,6 +58,12 @@ template ushort protocontainer<glterrain>::SearchCodeName(const std::string&);
 template ushort protocontainer<material>::SearchCodeName(const std::string&);
 template ushort protocontainer<owterrain>::SearchCodeName(const std::string&);
 template ushort protocontainer<gwterrain>::SearchCodeName(const std::string&);
+
+template <class type> void protocontainer<type>::GenerateCodeNameMap()
+{
+  for(ushort c = 1; c < GetProtoAmount(); ++c)
+    CodeNameMap[GetProto(c)->ClassName()] = c;
+}
 
 template <class type> outputfile& operator<<(outputfile& SaveFile, type* Class)
 {
@@ -112,7 +118,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
       for(ushort i = 0; i < 10; ++i)
 	{
-	  ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	  const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
 
 	  if(Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
@@ -140,12 +146,12 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
 
       ushort c;
 
-      for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+      for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
 	SumOfPossibilities += protocontainer<item>::GetProto(c)->GetPossibility();
 			
       RandomOne = 1 + RAND() % (SumOfPossibilities);
 		
-      for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+      for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
 	{
 	  Counter += protocontainer<item>::GetProto(c)->GetPossibility();
 
@@ -162,14 +168,12 @@ character* protosystem::CreateMonster(bool CreateItems)
 {
   while(true)
     {
-      ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+      ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 
       if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
 	{
 	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, CreateItems);
-
 	  Monster->SetTeam(game::GetTeam(1));
-
 	  return Monster;
 	}
     }
@@ -177,11 +181,11 @@ character* protosystem::CreateMonster(bool CreateItems)
 
 item* protosystem::CreateItem(const std::string& What, bool Output)
 {
-  for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     {
       /* "Temporary" gum solution! */
 
-      item* Temp = protocontainer<item>::GetProto(c)->Clone(false, false);
+      item* Temp = protocontainer<item>::GetProto(c)->Clone(false);
 
       if(Temp->NameSingular() == What)
 	if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
@@ -202,14 +206,14 @@ item* protosystem::CreateItem(const std::string& What, bool Output)
 
 material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)
 {
-  for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
     {
       /* "Temporary" gum solution! */
 
       material* Temp = protocontainer<material>::GetProto(c)->Clone();
 
       if(Temp->Name(UNARTICLED) == What)
-	if(protocontainer<material>::GetProto(c)->GetCanBeWished())
+	if(protocontainer<material>::GetProto(c)->CanBeWished())
 	  return protocontainer<material>::GetProto(c)->Clone(Volume);
 	else if(Output)
 	  {
@@ -226,12 +230,21 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
 
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
-  for(ushort c = 1 + RAND() % protocontainer<material>::GetProtoAmount();; c = 1 + RAND() % protocontainer<material>::GetProtoAmount())
-    if(protocontainer<material>::GetProto(c)->GetIsSolid())
+  for(ushort c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1);; c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1))
+    if(protocontainer<material>::GetProto(c)->IsSolid())
       return protocontainer<material>::GetProto(c)->Clone(Volume);
 }
 
-material* protosystem::CreateMaterial(ushort Index, ulong Volume)
+void protosystem::GenerateCodeNameMaps()
 {
-  return protocontainer<material>::GetProto(Index)->Clone(Volume);
+  protocontainer<action>::GenerateCodeNameMap();
+  protocontainer<character>::GenerateCodeNameMap();
+  protocontainer<god>::GenerateCodeNameMap();
+  protocontainer<item>::GenerateCodeNameMap();
+  protocontainer<room>::GenerateCodeNameMap();
+  protocontainer<olterrain>::GenerateCodeNameMap();
+  protocontainer<glterrain>::GenerateCodeNameMap();
+  protocontainer<material>::GenerateCodeNameMap();
+  protocontainer<owterrain>::GenerateCodeNameMap();
+  protocontainer<gwterrain>::GenerateCodeNameMap();
 }

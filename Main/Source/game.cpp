@@ -284,7 +284,7 @@ void game::Init(const std::string& Name)
 	Angel->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Angel);*/
 
-	/*for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
+	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  Player->GetStack()->AddItem(new oillamp(protocontainer<material>::GetProto(c)->Clone()));*/
 
 	ADD_MESSAGE("Game generated successfully.");
@@ -1337,7 +1337,7 @@ void game::CreateGods()
 {
   God.resize(1, 0);
 
-  for(ushort c = 1; c <= protocontainer<god>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
     God.push_back(protocontainer<god>::GetProto(c)->Clone());
 }
 
@@ -1405,6 +1405,9 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
   while(true)
     {
+      if(!game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen())
+	DOUBLEBUFFER->Fill(game::CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
+
       if(Key == ' ')
 	{
 	  Return = CursorPos;
@@ -1421,7 +1424,6 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
       if(DirectionVector != vector2d(0, 0))
 	{
-	  DOUBLEBUFFER->Fill(game::CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
 	  CursorPos += DirectionVector;
 
 	  if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize() - 1) CursorPos.X = 0;

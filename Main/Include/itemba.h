@@ -57,20 +57,16 @@ struct item_database
 class item_prototype
 {
  public:
-  virtual item* Clone(bool = true, bool = true) const = 0;
-  virtual item* CloneAndLoad(inputfile&) const = 0;
+  item_prototype();
+  virtual item* Clone(bool = true) const = 0;
+  item* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
   virtual item_database& GetDataBase() const = 0;
-  virtual bool IsAutoInitializable() const { return GetDataBase().IsAutoInitializable; }
-  virtual bool CanBeWished() const { return GetDataBase().CanBeWished; }
-  virtual bool IsPolymorphSpawnable() const { return GetDataBase().IsPolymorphSpawnable; }
-  virtual ushort GetPossibility() const { return GetDataBase().Possibility; }
-  /*virtual bool PolymorphSpawnable() const = 0;
-  virtual ushort Possibility() const = 0;
-  virtual bool CanBeWished() const = 0;
-  virtual item* CreateWishedItem() const = 0;
-  virtual bool AutoInitializable() const = 0;*/
+  DATABASEBOOL(IsAutoInitializable);
+  DATABASEBOOL(CanBeWished);
+  DATABASEBOOL(IsPolymorphSpawnable);
+  DATABASEVALUE(ushort, Possibility);
  protected:
   ushort Index;
 };
@@ -81,12 +77,12 @@ class item : public object
 {
  public:
   typedef item_prototype prototype;
-  item(bool, bool);
+  typedef item_database database;
+  item();
   virtual float GetWeaponStrength() const;
   virtual void DrawToTileBuffer(bool) const;
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  //virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
   virtual item* TryToOpen(character*);
   virtual bool Consume(character*, float);
   virtual bool IsHeadOfElpuri() const { return false; }
@@ -97,58 +93,38 @@ class item : public object
   virtual void ReceiveHitEffect(character*, character*) { }
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
-  //virtual bool CanBeWorn() const { return false; }
   virtual item* BetterVersion() const { return 0; }
   virtual short CalculateOfferValue(char) const;
-  //virtual float OfferModifier() const { return 0; }
-  //virtual long Score() const { return 0; }
-  //virtual bool Destroyable() const { return true; }
   virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual item* PrepareForConsuming(character*);
-  virtual item* Clone(bool = true, bool = true) const = 0;
-  //static bool CanBeWished() { return true; }
-  //static item* CreateWishedItem() { return 0; } // never called
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar);
-  //virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
-  //virtual bool IsMaterialChangeable() const { return true; }
   virtual void CheckPickUpEffect(character*) { }
-  //virtual uchar GetWeaponCategory() const;
-  //virtual float GetThrowGetStrengthModifier() const { return 1; }
-  //virtual bool UseThrowGetStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
-  //virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const { return "eating"; }
-  //static bool PolymorphSpawnable() { return true; }
   virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
-  //virtual bool IsChargable() const { return false; }
   virtual void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
   virtual ulong GetID() const { return ID; }
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport();
   virtual ushort GetStrengthValue() const;
-  //static bool AutoInitializable() { return true; }
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }
   virtual void PlaceToSlot(slot*);
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
-  //virtual uchar GetLockType() const { return 0; }
   virtual void DonateSlotTo(item*);
-  //virtual ushort GetOneHandedStrengthPenalty(character*) { return 0; }
-  //virtual ushort GetOneHandedToHitPenalty(character*) { return 0; }
-  //virtual uchar GetCategory() const = 0;
   static uchar ItemCategories() { return 18; }
   static std::string ItemCategoryName(uchar);
   static bool ConsumableSorter(item* Item, character* Char) { return Item->IsConsumable(Char); }
@@ -188,22 +164,15 @@ class item : public object
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
-  /*virtual ushort SoundResistance() const { return 0; }
-  virtual ushort EnergyResistance() const { return 0; }
-  virtual ushort AcidResistance() const { return 0; }
-  virtual ushort FireResistance() const { return 0; }
-  virtual ushort PoisonResistance() const { return 0; }
-  virtual ushort BulimiaResistance() const { return 0; }*/
-  //static bool SpecialWishedItem() { return false; }
-  virtual ushort GetType() const { return Type(); }
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
   virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
-  //virtual bool IsStackable() const { return false; }
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
-  virtual const item_database& GetDataBase() const = 0;
+  virtual const prototype& GetProtoType() const = 0;
+  virtual const database& GetDataBase() const = 0;
 
   DATABASEVALUE(ushort, Possibility);
   DATABASEVALUE(vector2d, InHandsPic);
@@ -236,42 +205,12 @@ class item : public object
   DATABASEVALUE(ulong, Price);
   DATABASEVALUE(ushort, BaseEmitation);
 
-  /*virtual ushort GetPossibility() const { return GetDataBase().Possibility; }
-  virtual vector2d GetInHandsPic() const { return GetDataBase().InHandsPic; }
-  virtual ulong GetOfferModifier() const { return GetDataBase().OfferModifier; }
-  virtual long GetScore() const { return GetDataBase().Score; }
-  virtual bool IsDestroyable() const { return GetDataBase().IsDestroyable; }
-  virtual bool CanBeWished() const { return GetDataBase().CanBeWished; }
-  virtual bool IsMaterialChangeable() const { return GetDataBase().IsMaterialChangeable; }
-  virtual uchar GetWeaponCategory() const { return GetDataBase().WeaponCategory; }
-  virtual bool IsPolymorphSpawnable() const { return GetDataBase().IsPolymorphSpawnable; }
-  virtual bool IsAutoInitializable() const { return GetDataBase().IsAutoInitializable; }
-  virtual ushort GetOneHandedStrengthPenalty(character*) const { return GetDataBase().OneHandedStrengthPenalty; }
-  virtual ushort GetOneHandedToHitPenalty(character*) const { return GetDataBase().OneHandedToHitPenalty; }
-  virtual uchar GetCategory() const { return GetDataBase().Category; }
-  virtual ushort GetSoundResistance() const { return GetDataBase().SoundResistance; }
-  virtual ushort GetEnergyResistance() const { return GetDataBase().EnergyResistance; }
-  virtual ushort GetAcidResistance() const { return GetDataBase().AcidResistance; }
-  virtual ushort GetFireResistance() const { return GetDataBase().FireResistance; }
-  virtual ushort GetPoisonResistance() const { return GetDataBase().PoisonResistance; }
-  virtual ushort GetBulimiaResistance() const { return GetDataBase().BulimiaResistance; }
-  virtual bool IsStackable() const { return GetDataBase().IsStackable; }
-  virtual ushort GetStrengthModifier() const { return GetDataBase().StrengthModifier; }
-  virtual ushort GetFormModifier() const { return GetDataBase().FormModifier; }
-  virtual ulong GetNPModifier() const { return GetDataBase().NPModifier; }
-  virtual ushort GetDefaultSize() const { return GetDataBase().DefaultSize; }
-  virtual ulong GetDefaultMainVolume() const { return GetDataBase().DefaultMainVolume; }
-  virtual ulong GetDefaultSecondaryVolume() const { return GetDataBase().DefaultSecondaryVolume; }
-  virtual ulong GetDefaultContainedVolume() const { return GetDataBase().DefaultContainedVolume; }
-  virtual vector2d GetBitmapPos(ushort) const { return GetDataBase().BitmapPos; }
-  virtual ulong GetPrice() const { return GetDataBase().Price; }*/
-
  protected:
-  //virtual ushort GetStrengthModifier() const = 0;
+  virtual void LoadDataBaseStats();
+  virtual void VirtualConstructor() { }
+  virtual void Initialize(bool);
+  virtual void GenerateMaterials() = 0;
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
-  virtual void SetDefaultStats() = 0;
-  //virtual ushort GetFormModifier() const { return 0; }
-  //virtual float NPModifier() const { return 1.0f; }
   virtual bool ShowMaterial() const { return true; }
   slot* Slot;
   bool Cannibalised;
@@ -282,68 +221,48 @@ class item : public object
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
 
-#define ITEM_PROTOTYPE(name, base, initmaterials, setstats)\
+#define ITEM_PROTOTYPE(name, base)\
   \
-  item_database name##_DataBase;\
+  item::database name##_DataBase;\
   \
   static class name##_prototype : public item::prototype\
   {\
    public:\
-    name##_prototype() { Index = protocontainer<item>::Add(this); }\
-    virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-    virtual item* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+    virtual item* Clone(bool CallGenerateMaterials = true) const { return new name(CallGenerateMaterials); }\
     virtual std::string ClassName() const { return #name; }\
-    /*virtual bool PolymorphSpawnable() const { return name::PolymorphSpawnable(); }\
-    virtual ushort Possibility() const { return name::Possibility(); }\
-    virtual bool CanBeWished() const { return name::CanBeWished(); }\
-    virtual item* CreateWishedItem() const;\
-    virtual bool AutoInitializable() const { return name::AutoInitializable(); }*/\
-    virtual item_database& GetDataBase() const { return name##_DataBase; }\
+    virtual item::database& GetDataBase() const { return name##_DataBase; }\
   } name##_ProtoType;\
   \
-  name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); if(CreateMaterials) initmaterials ; }\
-  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMainMaterial(FirstMaterial); }\
-  void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const item::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
-  ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
-  /*item* name##_prototype::CreateWishedItem() const { if(!name::SpecialWishedItem()) return Clone(); else return name::CreateWishedItem(); }*/\
-  const item_database& name::GetDataBase() const { return name##_DataBase; }
+  const item::prototype& name::GetProtoType() const { return name##_ProtoType; }\
+  const item::database& name::GetDataBase() const { return name##_DataBase; }
 
 #else
 
-#define ITEM_PROTOTYPE(name, base, initmaterials, setstats)
+#define ITEM_PROTOTYPE(name, base)
 
 #endif
 
-#define ITEM(name, base, initmaterials, setstats, data)\
+#define ITEM(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true);\
-  name(material*, bool = true);\
-  virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+  name(bool CallGenerateMaterials = true) { Initialize(CallGenerateMaterials); }\
+  name(material* FirstMaterial) { Initialize(true); SetMainMaterial(FirstMaterial); }\
   static ushort StaticType();\
-  static const item::prototype* const GetProtoType();\
-  virtual const item_database& GetDataBase() const;\
- protected:\
-  virtual void SetDefaultStats();\
-  virtual ushort Type() const;\
+  virtual const prototype& GetProtoType() const;\
+  virtual const database& GetDataBase() const;\
   data\
-}; ITEM_PROTOTYPE(name, base, initmaterials, setstats)
+}; ITEM_PROTOTYPE(name, base)
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool CreateMaterials, bool SetStats) : base(CreateMaterials, SetStats) { }\
   data\
 };
 
 #endif
-
-
-
 

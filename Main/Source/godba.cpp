@@ -153,7 +153,7 @@ character* god::CreateAngel()
 
       if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  Angel->SetDivineMaster(Type());
+	  Angel->SetDivineMaster(GetType());
 
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));
@@ -240,7 +240,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 void god::Save(outputfile& SaveFile) const
 {
-  SaveFile << Type();
+  SaveFile << GetType();
   SaveFile << Relation << Timer << Known;
 }
 
@@ -249,3 +249,14 @@ void god::Load(inputfile& SaveFile)
   SaveFile >> Relation >> Timer >> Known;
 }
 
+god* god_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  god* God = Clone();
+  God->Load(SaveFile);
+  return God;
+}
+
+god_prototype::god_prototype()
+{
+  Index = protocontainer<god>::Add(this);
+}

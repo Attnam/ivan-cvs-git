@@ -13,12 +13,13 @@ class GLTERRAIN
 (
   parquet,
   glterrain,
-  InitMaterials(new wood),
-  {
-  },
+  //InitMaterials(new wood),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return 0; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new wood); }
   virtual std::string NameSingular() const { return "parquet"; }
   virtual std::string NamePlural() const { return "parquette"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 240); }
@@ -28,12 +29,13 @@ class GLTERRAIN
 (
   floor,
   glterrain,
-  InitMaterials(new gravel),
-  {
-  },
+  //InitMaterials(new gravel),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new gravel); }
   virtual std::string NameSingular() const { return "floor"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 352); }
 );
@@ -42,12 +44,13 @@ class GLTERRAIN
 (
   ground,
   glterrain,
-  InitMaterials(new gravel),
-  {
-  },
+  //InitMaterials(new gravel),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new gravel); }
   virtual std::string NameSingular() const { return "ground"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 352); }
 );
@@ -56,12 +59,13 @@ class GLTERRAIN
 (
   grassterrain,
   glterrain,
-  InitMaterials(new grass),
-  {
-  },
+  //InitMaterials(new grass),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new grass); }
   virtual std::string NameSingular() const { return "ground"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 336); }
 );
@@ -70,15 +74,16 @@ class OLTERRAIN
 (
   earth,
   olterrain,
-  InitMaterials(new moraine),
-  {
-  },
+  //InitMaterials(new moraine),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new moraine); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(56, 56, 56); }
   virtual std::string Article() const { return "an"; }
   virtual std::string NameSingular() const { return "earth"; }
@@ -89,15 +94,16 @@ class OLTERRAIN
 (
   wall,
   olterrain,
-  InitMaterials(new stone),
-  {
-  },
+  //InitMaterials(new stone),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return 0; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The wall is pretty hard, but you still manage to go through it."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
   virtual std::string NameSingular() const { return "wall"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 240); }
 );
@@ -106,13 +112,14 @@ class OLTERRAIN
 (
   empty,
   olterrain,
-  InitMaterials(new air),
-  {
-  },
+  //InitMaterials(new air),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
   virtual bool IsSafeToDestroy() const { return true; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new air); }
   virtual std::string NameSingular() const { return ""; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 480); }
 );
@@ -121,14 +128,14 @@ class OLTERRAIN
 (
   door,
   olterrain,
-  InitMaterials(new stone),
-  {
+  //InitMaterials(new stone),
+  /*{
     SetIsOpen(false);
     SetIsLocked(false);
     SetBoobyTrap(0);
     SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
     SetHP(500);
-  },
+  },*/
  public:
   virtual bool Open(character*);
   virtual bool Close(character*);
@@ -153,6 +160,8 @@ class OLTERRAIN
   virtual uchar GetLockType() { return LockType; }
   virtual bool ReceiveApply(item*, character*);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
+  virtual void VirtualConstructor();
   virtual std::string Adjective(bool) const;
   virtual bool ShowAdjective() const { return true; }
   virtual void Break();
@@ -172,15 +181,16 @@ class OLTERRAIN
 (
   stairsup,
   olterrain,
-  InitMaterials(new stone),
-  {
-  },
+  //InitMaterials(new stone),
+  /*{
+  },*/
  public:
   virtual bool GoUp(character*) const;
   virtual uchar OKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(160, 64, 0); }
   virtual std::string NameSingular() const { return "stairway upwards"; }
   virtual std::string NamePlural() const { return "stairways upwards"; }
@@ -191,15 +201,16 @@ class OLTERRAIN
 (
   stairsdown,
   olterrain,
-  InitMaterials(new stone),
-  {
-  },
+  //InitMaterials(new stone),
+  /*{
+  },*/
  public:
   virtual bool GoDown(character*) const;
   virtual uchar OKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(160, 64, 0); }
   virtual std::string NameSingular() const { return "stairway downwards"; }
   virtual std::string NamePlural() const { return "stairways downwards"; }
@@ -210,10 +221,10 @@ class OLTERRAIN
 (
   altar,
   olterrain,
-  InitMaterials(new stone),
-  {
+  //InitMaterials(new stone),
+  /*{
     SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
-  },
+  },*/
  public:
   virtual bool CanBeOffered() const { return true; }
   virtual void DrawToTileBuffer(bool) const;
@@ -229,6 +240,8 @@ class OLTERRAIN
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
+  virtual void VirtualConstructor();
   virtual std::string Article() const { return "an"; }
   virtual std::string NameSingular() const { return "altar"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 368); }
@@ -241,13 +254,14 @@ class OLTERRAIN
 (
   throne,
   olterrain,
-  InitMaterials(new gold),
-  {
-  },
+  //InitMaterials(new gold),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The throne resists."; }
   virtual bool SitOn(character*);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new gold); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string NameSingular() const { return "throne"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 416); }
@@ -257,14 +271,15 @@ class OLTERRAIN
 (
   pine,
   olterrain,
-  InitMaterials(new wood),
-  {
-  },
+  //InitMaterials(new wood),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new wood); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "pine"; }
@@ -275,14 +290,15 @@ class OLTERRAIN
 (
   spruce,
   olterrain,
-  InitMaterials(new wood),
-  {
-  },
+  //InitMaterials(new wood),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new wood); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "spruce"; }
@@ -293,14 +309,15 @@ class OLTERRAIN
 (
   linden,
   olterrain,
-  InitMaterials(new wood),
-  {
-  },
+  //InitMaterials(new wood),
+  /*{
+  },*/
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new wood); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "lovely linden"; }
@@ -311,12 +328,13 @@ class OLTERRAIN
 (
   carpet,
   olterrain,
-  InitMaterials(new fabric),
-  {
-  },
+  //InitMaterials(new fabric),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "You can't force yourself to ruin this wonderful carpet."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new fabric); }
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
   virtual std::string NameSingular() const { return "carpet"; }
@@ -327,9 +345,9 @@ class OLTERRAIN
 (
   couch,
   olterrain,
-  InitMaterials(new fabric),
-  {
-  },
+  //InitMaterials(new fabric),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The destroy the couch."; }
   virtual bool SitOn(character*);
@@ -337,6 +355,7 @@ class OLTERRAIN
   virtual uchar RestModifier() const { return 2; }
   virtual void ShowRestMessage(character*) const;
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new fabric); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
@@ -348,14 +367,15 @@ class OLTERRAIN
 (
   bookcase,
   olterrain,
-  InitMaterials(new wood),
-  {
-  },
+  //InitMaterials(new wood),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "You smash the bookcase into pieces."; }
   virtual bool SitOn(character*);
   virtual bool CanBeDug() const { return true; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new wood); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "bookcase"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 272); }
@@ -365,9 +385,9 @@ class OLTERRAIN
 (
   fountain,
   olterrain,
-  InitMaterials(new marble, new water),
-  {
-  },
+  //InitMaterials(new marble, new water),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
   virtual bool SitOn(character*);
@@ -385,6 +405,7 @@ class OLTERRAIN
   virtual uchar GetMaterials() const { return 2; }
   virtual material* GetMaterial(ushort) const;
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new marble, new water); }
   virtual ushort GetMaterialColor1(ushort) const;
   virtual ulong GetDefaultContainedVolume() const { return 10000; }
   virtual std::string PostFix() const { return ContainerPostFix(); }
@@ -400,9 +421,9 @@ class OLTERRAIN
 (
   doublebed,
   olterrain,
-  InitMaterials(new fabric),
-  {
-  },
+  //InitMaterials(new fabric),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "You smash the bed into pieces."; }
   virtual bool SitOn(character*);
@@ -410,6 +431,7 @@ class OLTERRAIN
   virtual uchar RestModifier() const { return 5; }
   virtual void ShowRestMessage(character*) const;
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new fabric); }
   virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
@@ -422,11 +444,11 @@ class OLTERRAIN
 (
   brokendoor,
   door,
-  InitMaterials(new stone),
-  {
+  //InitMaterials(new stone),
+  /*{
     SetIsOpen(false);
     SetHP(500);
-  },
+  },*/
  public:
   virtual std::string DigMessage() const { return "You destroy the broken door."; }
   virtual void Kick(ushort, bool, uchar);
@@ -434,6 +456,7 @@ class OLTERRAIN
   virtual bool CanBeDug() const { return true; }
   virtual void HasBeenHitBy(item*, float, uchar, bool);
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new stone); }
   virtual std::string NameSingular() const { return "broken door"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
@@ -442,9 +465,9 @@ class GLTERRAIN
 (
   pool,
   glterrain,
-  InitMaterials(new water),
-  {
-  },
+  //InitMaterials(new water),
+  /*{
+  },*/
  public:
   virtual bool GetIsWalkable(character*) const;
   virtual bool SitOn(character*);
@@ -453,6 +476,7 @@ class GLTERRAIN
   virtual std::string MonsterDeathVerb() const { return "drowns"; }
   virtual std::string ScoreEntry() const { return "drowned"; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new water); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "pool"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 224); }
@@ -462,12 +486,13 @@ class OLTERRAIN
 (
   poolborder,
   olterrain,
-  InitMaterials(new marble),
-  {
-  },
+  //InitMaterials(new marble),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new marble); }
   virtual std::string NameSingular() const { return ""; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(32, 320); }
 );
@@ -476,12 +501,13 @@ class OLTERRAIN
 (
   poolcorner,
   olterrain,
-  InitMaterials(new marble),
-  {
-  },
+  //InitMaterials(new marble),
+  /*{
+  },*/
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
  protected:
+  virtual void GenerateMaterials() { InitMaterials(new marble); }
   virtual std::string NameSingular() const { return ""; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(48, 320); }
 );

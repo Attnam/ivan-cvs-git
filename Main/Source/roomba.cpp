@@ -5,15 +5,9 @@
 #include "itemde.h"
 #include "save.h"
 
-room::room(bool SetStats) : Master(0)
-{
-  if(SetStats)
-    ABORT("Baa!");
-}
-
 void room::Save(outputfile& SaveFile) const
 {
-  SaveFile << Type();
+  SaveFile << GetType();
   SaveFile << Pos << Size << Door << Index << DivineMaster;
 }
 
@@ -39,4 +33,14 @@ void room::HandleInstantiatedCharacter(character* Character)
     Character->SetDivineMaster(DivineMaster);
 }
 
+room* room_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  room* Room = Clone();
+  Room->Load(SaveFile);
+  return Room;
+}
 
+room_prototype::room_prototype()
+{
+  Index = protocontainer<room>::Add(this);
+}

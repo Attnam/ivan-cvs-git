@@ -13,8 +13,8 @@ class ACTION
 (
   faint,
   action,
-  {
-  },
+  /*{
+  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -32,10 +32,10 @@ class ACTION
 (
   consume,
   action,
-  {
+  /*{
     Consuming.Init(this);
     SetHasEaten(false);
-  },
+  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -53,6 +53,7 @@ class ACTION
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
  protected:
+  virtual void VirtualConstructor();
   actionslot Consuming;
   bool WasOnGround;
   bool HasEaten;
@@ -62,8 +63,8 @@ class ACTION
 (
   rest,
   action,
-  {
-  },
+  /*{
+  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -80,10 +81,10 @@ class ACTION
 (
   dig,
   action,
-  {
+  /*{
     RightBackup.Init(this);
     LeftBackup.Init(this);
-  },
+  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -100,6 +101,7 @@ class ACTION
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
  protected:
+  virtual void VirtualConstructor();
   actionslot RightBackup;
   actionslot LeftBackup;
   vector2d SquareDug;
@@ -109,8 +111,8 @@ class ACTION
 (
   go,
   action,
-  {
-  },
+  /*{
+  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

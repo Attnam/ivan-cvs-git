@@ -764,6 +764,8 @@ void door::Break()
       brokendoor* Temp = new brokendoor(false);
       Temp->InitMaterials(GetMainMaterial());
       Temp->SetIsLocked(GetIsLocked());
+      Temp->SetBoobyTrap(0);
+      Temp->SetLockType(GetLockType());
       GetLSquareUnder()->ChangeOLTerrain(Temp);
     }
 }
@@ -775,15 +777,14 @@ void door::ActivateBoobyTrap()
     case 1:
       // Explosion
       if(GetLSquareUnder()->CanBeSeen())
-	{
-	  ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
-	  GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
-	}
+	ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
+
+      BoobyTrap = 0;
+      GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
       break;
     case 0:
       break;
     }
-  BoobyTrap = 0;
 }
 
 void door::CreateBoobyTrap()
@@ -868,4 +869,20 @@ ushort fountain::GetMaterialColor1(ushort) const
     return GetContainedMaterial()->GetColor();
   else
     return 0;
+}
+
+void door::VirtualConstructor()
+{
+  olterrain::VirtualConstructor();
+  SetIsOpen(false);
+  SetIsLocked(false);
+  SetBoobyTrap(0);
+  SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+  SetHP(500);
+}
+
+void altar::VirtualConstructor()
+{
+  olterrain::VirtualConstructor();
+  SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
 }

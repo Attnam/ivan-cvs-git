@@ -2408,3 +2408,146 @@ bool leftleg::FitsBodyPartIndex(uchar c, character*) const
   return c == LEFTLEGINDEX;
 }
 
+void banana::VirtualConstructor()
+{
+  materialcontainer::VirtualConstructor();
+  SetCharges(6);
+}
+
+void lantern::VirtualConstructor()
+{
+  item::VirtualConstructor();
+  SetOnWall(false);
+}
+
+void wand::VirtualConstructor()
+{
+  item::VirtualConstructor();
+  SetTimesUsed(0);
+}
+
+void wandofpolymorph::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void wandofstriking::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void holybook::VirtualConstructor()
+{
+  item::VirtualConstructor();
+
+  /* Don't use SetDivineMaster, since it calls UpdatePicture()! */
+
+  DivineMaster = 1 + RAND() % (game::GetGods() - 1);
+}
+
+void oillamp::VirtualConstructor()
+{
+  item::VirtualConstructor();
+  SetInhabitedByGenie(!(rand() % 2));
+}
+
+void wandoffireballs::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(1 + RAND() % 3);
+}
+
+void wandofteleportation::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void mine::VirtualConstructor()
+{
+  item::VirtualConstructor();
+  SetCharged(RAND() % 5 ? true : false);
+}
+
+void wandofhaste::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void wandofslow::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void key::VirtualConstructor()
+{
+  item::VirtualConstructor();
+  SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+}
+
+void bodypart::VirtualConstructor()
+{
+  materialcontainer::VirtualConstructor();
+  SetUnique(false);
+  SetRegenerationCounter(0);
+}
+
+void head::VirtualConstructor()
+{
+  bodypart::VirtualConstructor();
+  HelmetSlot.Init(this);
+  AmuletSlot.Init(this);
+}
+
+void humanoidtorso::VirtualConstructor()
+{
+  torso::VirtualConstructor();
+  BodyArmorSlot.Init(this);
+  CloakSlot.Init(this);
+  BeltSlot.Init(this);
+}
+
+void arm::VirtualConstructor()
+{
+  bodypart::VirtualConstructor();
+  WieldedSlot.Init(this);
+  GauntletSlot.Init(this);
+  RingSlot.Init(this);
+  SetCurrentSingleWeaponSkill(0);
+  SetHasBe(true);
+}
+
+void leg::VirtualConstructor()
+{
+  bodypart::VirtualConstructor();
+  BootSlot.Init(this);
+}
+
+void headofelpuri::VirtualConstructor()
+{
+  head::VirtualConstructor();
+  SetUnique(true);
+  SetOwnerDescription("of Elpuri, the Master Dark Frog");
+}
+
+void headofennerbeast::VirtualConstructor()
+{
+  head::VirtualConstructor();
+  SetOwnerDescription("of an enner beast");
+}
+
+void wandoflocking::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(2 + RAND() % 5);
+}
+
+void wandofresurrection::VirtualConstructor()
+{
+  wand::VirtualConstructor();
+  SetCharges(1 + RAND() % 2);
+}

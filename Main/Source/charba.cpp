@@ -1285,7 +1285,7 @@ bool character::Dip()
 
 void character::Save(outputfile& SaveFile) const
 {
-  SaveFile << Type();
+  SaveFile << GetType();
   entity::Save(SaveFile);
 
   Stack->Save(SaveFile);
@@ -1416,7 +1416,7 @@ bool character::LowerStats()
 
 bool character::GainAllItems()
 {
-  for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     if(protocontainer<item>::GetProto(c)->IsAutoInitializable())
       Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
 
@@ -3039,8 +3039,7 @@ void character::SetMainMaterial(material* NewMaterial)
 
   for(ushort c = 1; c < BodyParts(); ++c)
     {
-      NewMaterial = NewMaterial->Clone();
-      NewMaterial->SetVolume(GetBodyPart(c)->GetMainMaterial()->GetVolume());
+      NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->SetMainMaterial(NewMaterial);
     }
 }
@@ -3052,8 +3051,7 @@ void character::ChangeMainMaterial(material* NewMaterial)
 
   for(ushort c = 1; c < BodyParts(); ++c)
     {
-      NewMaterial = NewMaterial->Clone();
-      NewMaterial->SetVolume(GetBodyPart(c)->GetMainMaterial()->GetVolume());
+      NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->ChangeMainMaterial(NewMaterial);
     }
 }
@@ -3075,8 +3073,7 @@ void character::SetContainedMaterial(material* NewMaterial)
 
   for(ushort c = 1; c < BodyParts(); ++c)
     {
-      NewMaterial = NewMaterial->Clone();
-      NewMaterial->SetVolume(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
+      NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
       GetBodyPart(c)->SetContainedMaterial(NewMaterial);
     }
 }
@@ -3088,8 +3085,7 @@ void character::ChangeContainedMaterial(material* NewMaterial)
 
   for(ushort c = 1; c < BodyParts(); ++c)
     {
-      NewMaterial = NewMaterial->Clone();
-      NewMaterial->SetVolume(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
+      NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
       GetBodyPart(c)->ChangeContainedMaterial(NewMaterial);
     }
 }
@@ -3106,7 +3102,7 @@ bool character::SecretKnowledge()
   std::string Buffer = "Name                                                 Weight       SV     Str";
   List.AddDescription(Buffer);
 
-  for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     if(protocontainer<item>::GetProto(c)->IsAutoInitializable())
       {
 	item* Item = protocontainer<item>::GetProto(c)->Clone();
@@ -4165,4 +4161,9 @@ void character::Initialize(bool MakeBodyParts, bool CreateEquipment)
 
       RestoreHP();
     }
+}
+
+character_prototype::character_prototype()
+{
+  Index = protocontainer<character>::Add(this);
 }

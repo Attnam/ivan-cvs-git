@@ -15,8 +15,9 @@ class inputfile;
 class action_prototype
 {
  public:
+  action_prototype();
   virtual action* Clone() const = 0;
-  virtual action* CloneAndLoad(inputfile&) const = 0;
+  action* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
@@ -27,7 +28,6 @@ class action
 {
  public:
   typedef action_prototype prototype;
-  action(character* Actor) : Actor(Actor) { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
   virtual character* GetActor() const { return Actor; }
@@ -42,50 +42,43 @@ class action
   virtual ulong GetWeight() const { return 0; }
   virtual void DropUsedItems() { }
   virtual void DeleteUsedItems() { }
+  virtual const prototype& GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
  protected:
-  virtual ushort Type() const = 0;
+  virtual void VirtualConstructor() { }
   character* Actor;
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
 
-#define ACTION_PROTOTYPE(name, base, setstats)\
+#define ACTION_PROTOTYPE(name, base)\
   \
   static class name##_prototype : public action::prototype\
   {\
    public:\
-    name##_prototype() { Index = protocontainer<action>::Add(this); }\
     virtual action* Clone() const { return new name; }\
-    virtual action* CloneAndLoad(inputfile& SaveFile) const { action* Act = new name; Act->Load(SaveFile); return Act; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
-  void name::Init() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const action::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
-  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
+  const action::prototype& name::GetProtoType() const { return name##_ProtoType; }
 
 #else
 
-#define ACTION_PROTOTYPE(name, base, setstats)
+#define ACTION_PROTOTYPE(name, base)
 
 #endif
 
-#define ACTION(name, base, setstats, data)\
+#define ACTION(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name() : base(0) { Init(); }\
-  name(character* Actor) : base(Actor) { Init(); }\
-  virtual action* Clone() const { return new name; }\
+  name(character* Actor = 0) { SetActor(Actor); VirtualConstructor(); }\
   static ushort StaticType();\
-  static const action::prototype* const GetProtoType();\
- protected:\
-  virtual void Init();\
-  virtual ushort Type() const;\
+  virtual const action::prototype& GetProtoType() const;\
   data\
-}; ACTION_PROTOTYPE(name, base, setstats)
+}; ACTION_PROTOTYPE(name, base)
 
 #endif
 

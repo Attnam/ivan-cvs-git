@@ -337,3 +337,15 @@ void dig::DeleteUsedItems()
   if(GetLeftBackup())
     GetLeftBackup()->SetExists(false);
 }
+
+void consume::VirtualConstructor()
+{
+  Consuming.Init(this);
+  SetHasEaten(false);
+}
+
+void dig::VirtualConstructor()
+{
+  RightBackup.Init(this);
+  LeftBackup.Init(this);
+}

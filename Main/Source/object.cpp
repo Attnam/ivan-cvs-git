@@ -16,7 +16,7 @@ object::~object()
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << Type();
+  SaveFile << GetType();
   entity::Save(SaveFile);
   SaveFile << GraphicId << MainMaterial;
 }

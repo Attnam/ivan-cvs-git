@@ -26,18 +26,20 @@ class wterrain
   virtual void Load(inputfile&);
   virtual bool IsAnimated() const { return false; }
  protected:
+  virtual void VirtualConstructor() { }
   virtual std::string NameStem() const = 0;
   virtual std::string Article() const { return "a"; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
-  virtual ushort Type() const = 0;
+  virtual ushort GetType() const = 0;
   wsquare* WSquareUnder;
 };
 
 class gwterrain_prototype
 {
  public:
-  virtual gwterrain* Clone(bool = true) const = 0;
-  virtual gwterrain* CloneAndLoad(inputfile&) const = 0;
+  gwterrain_prototype();
+  virtual gwterrain* Clone() const = 0;
+  gwterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
@@ -48,18 +50,19 @@ class gwterrain : public wterrain, public gterrain
 {
  public:
   typedef gwterrain_prototype prototype;
-  gwterrain(bool = true) { }
   virtual void DrawToTileBuffer(bool) const;
-  virtual gwterrain* Clone(bool = true) const = 0;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
+  virtual const prototype& GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
 };
 
 class owterrain_prototype
 {
  public:
-  virtual owterrain* Clone(bool = true) const = 0;
-  virtual owterrain* CloneAndLoad(inputfile&) const = 0;
+  owterrain_prototype();
+  virtual owterrain* Clone() const = 0;
+  owterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
@@ -70,70 +73,59 @@ class owterrain : public wterrain, public oterrain
 {
  public:
   typedef owterrain_prototype prototype;
-  owterrain(bool = true) { }
   virtual void DrawToTileBuffer(bool) const;
-  virtual owterrain* Clone(bool = true) const = 0;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
+  virtual const prototype& GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define WTERRAIN_PROTOTYPE(name, base, protobase, setstats)\
+#define WTERRAIN_PROTOTYPE(name, base, protobase)\
   \
   static class name##_prototype : public protobase::prototype\
   {\
    public:\
-    name##_prototype() { Index = protocontainer<protobase>::Add(this); }\
-    virtual protobase* Clone(bool SetStats = true) const { return new name(SetStats); }\
-    virtual protobase* CloneAndLoad(inputfile& SaveFile) const { protobase* P = new name(false); P->Load(SaveFile); return P; }\
+    virtual protobase* Clone() const { return new name; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
-  void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const protobase::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
-  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
+  const protobase::prototype& name::GetProtoType() const { return name##_ProtoType; }
 
 #else
 
-#define WTERRAIN_PROTOTYPE(name, base, protobase, setstats)
+#define WTERRAIN_PROTOTYPE(name, base, protobase)
 
 #endif
 
-#define WTERRAIN(name, base, protobase, setstats, data)\
+#define WTERRAIN(name, base, protobase, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
+  name() { VirtualConstructor(); }\
   static ushort StaticType();\
-  static const protobase::prototype* const GetProtoType();\
- protected:\
-  virtual void SetDefaultStats();\
-  virtual ushort Type() const;\
+  virtual const protobase::prototype& GetProtoType() const;\
   data\
-}; WTERRAIN_PROTOTYPE(name, base, protobase, setstats)
+}; WTERRAIN_PROTOTYPE(name, base, protobase)
 
-#define GWTERRAIN(name, base, setstats, data)\
+#define GWTERRAIN(name, base, data)\
 \
 WTERRAIN(\
   name,\
   base,\
   gwterrain,\
-  setstats,\
-  virtual gwterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
   data\
 );
 
-#define OWTERRAIN(name, base, setstats, data)\
+#define OWTERRAIN(name, base, data)\
 \
 WTERRAIN(\
   name,\
   base,\
   owterrain,\
-  setstats,\
-  virtual owterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
   data\
 );
 

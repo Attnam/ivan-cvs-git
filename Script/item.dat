@@ -40,7 +40,7 @@ Preset values for the obligatory members
     FormModifier = 0; 
     DefaultSize = 0 ; 
     DefaultMainVolume = 0; 
-    BitmapPos = 0,0;
+    BitmapPos = 0, 0;
 
 */
 
@@ -52,7 +52,7 @@ meleeweapon
     	FormModifier = 0; 
     	DefaultSize =  0; 
     	DefaultMainVolume = 0; 
-    	BitmapPos  = 0,0; 
+    	BitmapPos  = 0, 0; 
 }
 */
 
@@ -237,7 +237,7 @@ spear
 	StrengthModifier = 0; 
 	DefaultSize = 0 ; 
 	DefaultMainVolume = 0; 
-	BitmapPos = 0,0;
+	BitmapPos = 0, 0;
 } */
 
 platemail
@@ -248,7 +248,7 @@ platemail
 	StrengthModifier = 200; 
 	DefaultSize = 75; 
 	DefaultMainVolume = 4000; 
-	BitmapPos = 16,128;
+	BitmapPos = 16, 128;
 	Possibility = 50;
 }
 
@@ -261,7 +261,7 @@ chainmail
 	StrengthModifier = 100; 
 	DefaultSize = 75; 
 	DefaultMainVolume = 2000; 
-	BitmapPos = 16,96;
+	BitmapPos = 16, 96;
 }
 
 /*shirt
@@ -273,7 +273,7 @@ chainmail
 	StrengthModifier = 0; 
 	DefaultSize = 0 ; 
 	DefaultMainVolume = 0; 
-	BitmapPos = 0,0;
+	BitmapPos = 0, 0;
 } */
 
 goldeneagleshirt
@@ -284,7 +284,7 @@ goldeneagleshirt
 	StrengthModifier = 50; 
 	DefaultSize = 0 ; 
 	DefaultMainVolume = 0; 
-	BitmapPos = 16,112;
+	BitmapPos = 16, 112;
 	Possibility = 0;
 	Score = 2500;
 	CanBeWished = false;
@@ -299,7 +299,7 @@ potion
 	DefaultSize = 30;
 	Possibility = 100;
 	WeaponCategory = CLUBS;
-	InHandsPic = 160,128;
+	InHandsPic = 160, 128;
 	Category = POTION;
 	DefaultMainVolume = 60;
 	DefaultContainedVolume = 1500;
@@ -444,7 +444,7 @@ spikedmace
     	FormModifier = 125; 
     	DefaultSize =  150; 
     	DefaultMainVolume = 5000; 
-    	BitmapPos  = 0,32; 
+    	BitmapPos  = 0, 32; 
 	Possibility = 20;
 	InHandsPic = 160, 192;
 	DefaultSecondaryVolume = 2000;
@@ -458,7 +458,7 @@ neercseulb
     	FormModifier = 150; 
     	DefaultSize =  200; 
     	DefaultMainVolume = 5000; 
-    	BitmapPos  = 0,32; 
+    	BitmapPos  = 0, 32; 
 	Possibility = 0;
 	InHandsPic = 160, 192;
 	DefaultSecondaryVolume = 2000;

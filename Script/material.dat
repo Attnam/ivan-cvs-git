@@ -30,6 +30,7 @@ iron
 	Color = rgb(56, 56, 56);
 	PriceModifier = 40;
 	IsSolid = true;
+	PriceModifier = 40;
 }
 
 valpurium
@@ -43,6 +44,8 @@ valpurium
 	IsSolid = true;
 	CanBeWished = false;
 	Emitation = 320;
+	PriceModifier = 160000;
+	Alignment = GOOD;
 }	
 
 stone
@@ -62,8 +65,9 @@ bananaflesh
 	ConsumeType = FRUIT;
 	OfferValue = 10;
 	NutritionValue = 200;
-	Color = rgb(200,200,0);
+	Color = rgb(200, 200, 0);
 	IsAlive = true;
+	PriceModifier = 600;
 }
 
 gravel
@@ -72,7 +76,7 @@ gravel
 	ConsumeType = MINERAL;
 	Density = 2500;
 	OfferValue = 1;
-	Color = rgb(72,72,72);
+	Color = rgb(72, 72, 72);
 }
 
 moraine
@@ -81,7 +85,7 @@ moraine
 	ConsumeType = MINERAL;
 	Density = 2500;
 	OfferValue = 2;
-	Color = rgb(111,74,37);
+	Color = rgb(111, 74, 37);
 }
 
 
@@ -93,7 +97,7 @@ schoolfood
 	OfferValue = 20;
 	Alignment = EVIL;
 	NutritionValue = 100;
-	Color = rgb(111,74,37);
+	Color = rgb(111, 74, 37);
 	IsBadFoodForAI = true;
 	IsAlive = true;
 }
@@ -103,7 +107,7 @@ air
 	StrengthValue = 0;
 	Density = 1;
 	OfferValue = 0;
-	Color = rgb(112,112,200);
+	Color = rgb(112, 112, 200);
 	ConsumeType = GAS;
 }
 
@@ -114,7 +118,7 @@ wood
 	Density = 500;
 	OfferValue = 5;
 	IsSolid = true;
-	Color = rgb(140,100,60);
+	Color = rgb(140, 100, 60);
 }
 
 flesh
@@ -124,7 +128,7 @@ flesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 }
 
@@ -133,10 +137,11 @@ goblinoidflesh
 	StrengthValue = 10;
 	ConsumeType = MEAT;
 	Density = 1200;
-	OfferValue = 30;
+	OfferValue = 10;
 	NutritionValue = 200;
-	Color = rgb(0,128,0);
+	Color = rgb(0, 128, 0);
 	IsAlive = true;
+	PriceModifier = 600;
 }
 
 pork
@@ -146,8 +151,9 @@ pork
 	Density = 1200;
 	OfferValue = 20;
 	NutritionValue = 400;
-	Color = rgb(128,128,128);
+	Color = rgb(128, 128, 128);
 	IsAlive = true;
+	PriceModifier = 1250;
 }
 
 beef
@@ -157,8 +163,9 @@ beef
 	Density = 1200;
 	OfferValue = 20;
 	NutritionValue = 400;
-	Color = rgb(128,128,128);
+	Color = rgb(128, 128, 128);
 	IsAlive = true;
+	PriceModifier = 1250;
 }
 
 bone
@@ -168,7 +175,7 @@ bone
 	OfferValue = 5;
 	ConsumeType = BONE;
 	IsSolid = true;
-	Color = rgb(144,144,144);
+	Color = rgb(144, 144, 144);
 	NutritionValue = 20;
 }
 
@@ -179,7 +186,7 @@ frogflesh
 	Density = 1200;
 	OfferValue = 500;
 	NutritionValue = 1000;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 	Alignment = EVIL;
 	IsBadFoodForAI = true;
@@ -192,7 +199,7 @@ darkfrogflesh
 	Density = 1200;
 	OfferValue = 500;
 	NutritionValue = 1000;
-	Color = rgb(48,48,48);
+	Color = rgb(48, 48, 48);
 	IsAlive = true;
 	Alignment = EVIL;
 	IsBadFoodForAI = true;
@@ -205,7 +212,7 @@ elpuriflesh
 	Density = 2400;
 	OfferValue = 1;
 	NutritionValue = 1000;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 	Alignment = EVIL;
 	IsBadFoodForAI = true;
@@ -218,7 +225,7 @@ glass
 	Density = 2500;
 	OfferValue = 5;
 	IsSolid = true;
-	Color = rgb(128,128,255);
+	Color = rgb(128, 128, 255);
 }
 
 omleurine
@@ -227,7 +234,7 @@ omleurine
 	ConsumeType = LIQUID;
 	Density = 1000;
 	OfferValue = 100;
-	Color = rgb(128,128,0);
+	Color = rgb(128, 128, 0);
 	CanBeWished = false;
 	IsAlive = true;
 }
@@ -238,7 +245,7 @@ bananapeal
 	ConsumeType = MISC_ORGANIC;
 	Density = 500;
 	OfferValue = 1;
-	Color = rgb(176,176,0);
+	Color = rgb(176, 176, 0);
 	IsAlive = true;
 }
 
@@ -249,7 +256,7 @@ parchment
 	Density = 600;
 	OfferValue = 5;
 	IsSolid = true;
-	Color = rgb(176,176,176);
+	Color = rgb(176, 176, 176);
 	IsFlammable = true;
 }
 
@@ -260,7 +267,7 @@ cloth
 	Density = 100;
 	OfferValue = 5;
 	IsSolid = true;
-	Color = rgb(64,64,160);
+	Color = rgb(64, 64, 160);
 	IsFlammable = true;
 }
 
@@ -271,7 +278,7 @@ humanflesh
 	Density = 1200;
 	OfferValue = 30;
 	NutritionValue = 200;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 	Alignment = EVIL;
 	/* 
@@ -289,7 +296,7 @@ humanflesh
 	Density = 1200;
 	OfferValue = 30;
 	NutritionValue = 200;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 	Alignment = EVIL;*/
 	/* 
@@ -305,7 +312,7 @@ slime
 	Density = 400;
 	OfferValue = 1;
 	NutritionValue = 100;
-	Color = rgb(0,128,0);
+	Color = rgb(0, 128, 0);
 	IsAlive = true;
 }
 
@@ -316,7 +323,7 @@ brownslime
 	Density = 400;
 	OfferValue = 1;
 	NutritionValue = 100;
-	Color = rgb(111,74,37);
+	Color = rgb(111, 74, 37);
 	IsAlive = true;
 }
 
@@ -327,7 +334,7 @@ wolfflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 }
 
@@ -338,7 +345,7 @@ dogflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(111,74,37);
+	Color = rgb(111, 74, 37);
 	IsAlive = true;
 	Alignment = EVIL;
 }
@@ -350,7 +357,7 @@ ennerbeastflesh
 	Density = 1800;
 	OfferValue = 5;
 	NutritionValue = 200;
-	Color = rgb(112,112,64);
+	Color = rgb(112, 112, 64);
 	IsAlive = true;
 	Alignment = EVIL; /* Atleast this is questionable... */
 	IsBadFoodForAI = true;
@@ -368,7 +375,7 @@ pepsi
 	OfferValue = 50;
 	Alignment = EVIL;
 	NutritionValue = 400;
-	Color = rgb(48,48,48);
+	Color = rgb(48, 48, 48);
 	IsBadFoodForAI = true;
 }
 
@@ -379,7 +386,7 @@ mithril
 	Density = 5000;
 	OfferValue = 25;
 	IsSolid = true;
-	Color = rgb(184,184,184);
+	Color = rgb(184, 184, 184);
 }
 
 spiderflesh
@@ -389,7 +396,7 @@ spiderflesh
 	Density = 1200;
 	OfferValue = 4;
 	NutritionValue = 200;
-	Color = rgb(160,160,160);
+	Color = rgb(160, 160, 160);
 	IsAlive = true;
 }
 
@@ -400,7 +407,7 @@ jackalflesh
 	Density = 1200;
 	OfferValue = 6;
 	NutritionValue = 200;
-	Color = rgb(224,224,224);
+	Color = rgb(224, 224, 224);
 	IsAlive = true;
 }
 	
@@ -411,7 +418,7 @@ donkeyflesh
 	Density = 1200;
 	OfferValue = 6;
 	NutritionValue = 200;
-	Color = rgb(80,80,80);
+	Color = rgb(80, 80, 80);
 	IsAlive = true;
 }
 	
@@ -422,7 +429,7 @@ marble
 	Density = 3000;
 	OfferValue = 7;
 	IsSolid = true;
-	Color = rgb(160,160,160);
+	Color = rgb(160, 160, 160);
 }
 
 gold
@@ -432,7 +439,7 @@ gold
 	Density = 20000;
 	OfferValue = 50;
 	IsSolid = true;
-	Color = rgb(200,200,0);
+	Color = rgb(200, 200, 0);
 	CanBeWished = false;
 }
 
@@ -442,7 +449,7 @@ grass
 	ConsumeType = MISC_ORGANIC;
 	Density = 100;
 	OfferValue = 2;
-	Color = rgb(32,96,32);
+	Color = rgb(32, 96, 32);
 	IsFlammable = true;
 }
 
@@ -463,7 +470,7 @@ pineappleflesh
 	ConsumeType = FRUIT;
 	Density = 1200;
 	OfferValue = 12;
-	Color = rgb(192,112,96);
+	Color = rgb(192, 112, 96);
 	IsAlive = true;
 }
 
@@ -474,7 +481,7 @@ leather
 	Density = 500;
 	OfferValue = 10;
 	IsSolid = true;
-	Color = rgb(111,64,37);
+	Color = rgb(111, 64, 37);
 	IsFlexible = true;
 	IsFlammable = true;
 }
@@ -487,7 +494,7 @@ lightfrogflesh
 	Density = 1200;
 	OfferValue = 500;
 	NutritionValue = 1000;
-	Color = rgb(32,88,32);
+	Color = rgb(32, 88, 32);
 	IsAlive = true;
 	Alignment = EVIL;
 	IsBadFoodForAI = true;
@@ -500,7 +507,7 @@ dolphinflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(64,64,64);
+	Color = rgb(64, 64, 64);
 	IsAlive = true;
 }
 
@@ -511,7 +518,7 @@ flesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(128,128,128);
+	Color = rgb(128, 128, 128);
 	IsAlive = true;
 }
 
@@ -522,7 +529,7 @@ leaf
 	Density = 500;
 	OfferValue = 10;
 	IsSolid = true;
-	Color = rgb(0,160,0);
+	Color = rgb(0, 160, 0);
 	IsFlammable = true;
 	IsAlive = true;
 }
@@ -534,7 +541,7 @@ fabric
 	Density = 100;
 	OfferValue = 5;
 	IsSolid = true;
-	Color = rgb(176,0,0);
+	Color = rgb(176, 0, 0);
 	IsFlammable = true;
 }
 
@@ -545,7 +552,7 @@ water
 	Density = 1000;
 	OfferValue = 1;
 	NutritionValue = 10;
-	Color = rgb(64,64,192);
+	Color = rgb(64, 64, 192);
 	CanBeWished = false;
 }
 
@@ -556,7 +563,7 @@ palmleaf
 	Density = 500;
 	OfferValue = 10;
 	IsSolid = true;
-	Color = rgb(0,160,0);
+	Color = rgb(0, 160, 0);
 	IsFlammable = true;
 	IsAlive = true;
 }
@@ -568,7 +575,7 @@ sulfur
 	Density = 2000;
 	OfferValue = 10;
 	IsSolid = true;
-	Color = rgb(128,0,0);
+	Color = rgb(128, 0, 0);
 }
 
 batflesh
@@ -578,7 +585,7 @@ batflesh
 	Density = 1200;
 	OfferValue = 7;
 	NutritionValue = 200;
-	Color = rgb(48,48,48);
+	Color = rgb(48, 48, 48);
 	IsAlive = true;
 }
 
@@ -589,7 +596,7 @@ werewolfflesh
 	Density = 1200;
 	OfferValue = 13;
 	NutritionValue = 200;
-	Color = rgb(90,64,64);
+	Color = rgb(90, 64, 64);
 	IsAlive = true;
 }
 
@@ -600,7 +607,7 @@ koboldflesh
 	Density = 1200;
 	OfferValue = 14;
 	NutritionValue = 100;
-	Color = rgb(30,100,110);
+	Color = rgb(30, 100, 110);
 	IsAlive = true;
 	IsBadFoodForAI = true;
 }
@@ -612,7 +619,7 @@ gibberlingflesh
 	Density = 1200;
 	OfferValue = 12;
 	NutritionValue = 200;
-	Color = rgb(100,100,200);
+	Color = rgb(100, 100, 200);
 	IsAlive = true;
 }
 
@@ -623,7 +630,7 @@ catflesh
 	Density = 1200;
 	OfferValue = 12;
 	NutritionValue = 200;
-	Color = rgb(50,50,50);
+	Color = rgb(50, 50, 50);
 	IsAlive = true;
 }
 
@@ -634,7 +641,7 @@ ratflesh
 	Density = 1200;
 	OfferValue = 8;
 	NutritionValue = 200;
-	Color = rgb(180,100,40);
+	Color = rgb(180, 100, 40);
 	IsAlive = true;
 }
 
@@ -645,7 +652,7 @@ angelflesh
 	Density = 1200;
 	OfferValue = 8;
 	NutritionValue = 200;
-	Color = rgb(200,200,200);
+	Color = rgb(200, 200, 200);
 	IsAlive = true;
 }
 
@@ -656,7 +663,7 @@ dwarfflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(180,120,90);
+	Color = rgb(180, 120, 90);
 	IsAlive = true;
 }
 
@@ -666,7 +673,7 @@ gunpowder
 	ConsumeType = MINERAL;
 	Density = 250;
 	OfferValue = 5;
-	Color = rgb(30,30,30);
+	Color = rgb(30, 30, 30);
 	CanBeWished = false;
 	IsExplosive = true;
 	/* Explosive power is not done yet. (it depents on Volume and the script doesn't support it */
@@ -679,7 +686,7 @@ daemonflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(180,0,0);
+	Color = rgb(180, 0, 0);
 	IsAlive = true;
 }
 
@@ -690,7 +697,7 @@ blood
 	Density = 1000;
 	OfferValue = 50;
 	NutritionValue = 10;
-	Color = rgb(160,0,0);
+	Color = rgb(160, 0, 0);
 	CanBeWished = false;
 	Alignment = EVIL;
 	IsAlive = true;
@@ -703,7 +710,7 @@ mammothflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(100,130,160);
+	Color = rgb(100, 130, 160);
 	IsAlive = true;
 }
 
@@ -714,7 +721,7 @@ bread
 	Density = 200;
 	OfferValue = 7;
 	NutritionValue = 200;
-	Color = rgb(200,110,60);
+	Color = rgb(200, 110, 60);
 }
 
 unicornhorn
@@ -723,7 +730,7 @@ unicornhorn
 	ConsumeType = MISC_ORGANIC;
 	Density = 2000;
 	OfferValue = 10;
-	Color = rgb(180,180,180);
+	Color = rgb(180, 180, 180);
 	IsAlive = true;
 }
 
@@ -733,7 +740,7 @@ blackunicornflesh
 	ConsumeType = MEAT;
 	Density = 1200;
 	OfferValue = 35;
-	Color = rgb(48,48,48);
+	Color = rgb(48, 48, 48);
 	IsAlive = true;
 	Alignment = GOOD; 
 	/* Slightly strange. This means the the good gods like to receive this sacrifice */
@@ -745,7 +752,7 @@ grayunicornflesh
 	ConsumeType = MEAT;
 	Density = 1200;
 	OfferValue = 35;
-	Color = rgb(112,112,112);
+	Color = rgb(112, 112, 112);
 	IsAlive = true;
 }
 
@@ -755,7 +762,7 @@ whiteunicornflesh
 	ConsumeType = MEAT;
 	Density = 1200;
 	OfferValue = 35;
-	Color = rgb(160,160,160);
+	Color = rgb(160, 160, 160);
 	IsAlive = true;
 	Alignment = EVIL; 
 	/* Slightly strange. This means the the evil gods like to receive this sacrifice */
@@ -768,7 +775,7 @@ diamond
 	Density = 3500;
 	OfferValue = 50;
 	IsSolid = true;
-	Color = rgb(180,180,180);
+	Color = rgb(180, 180, 180);
 }
 
 silver
@@ -778,7 +785,7 @@ silver
 	Density = 10500;
 	OfferValue = 30;
 	IsSolid = true;
-	Color = rgb(160,160,160);
+	Color = rgb(160, 160, 160);
 	CanBeWished = false;
 }
 
@@ -789,7 +796,7 @@ sapphire
 	Density = 3500;
 	OfferValue = 50;
 	IsSolid = true;
-	Color = rgb(96,96,200);
+	Color = rgb(96, 96, 200);
 }
 
 ruby
@@ -809,7 +816,7 @@ healingliquid
 	Density = 1100;
 	OfferValue = 70;
 	NutritionValue = 30;
-	Color = rgb(128,0,0);
+	Color = rgb(128, 0, 0);
 }
 
 bronze
@@ -819,7 +826,7 @@ bronze
 	Density = 8300;
 	OfferValue = 10;
 	IsSolid = true;
-	Color = rgb(150,100,50);
+	Color = rgb(150, 100, 50);
 }
 
 copper
@@ -839,7 +846,7 @@ lionflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(192,160,112);
+	Color = rgb(192, 160, 112);
 	IsAlive = true;
 }
 
@@ -850,7 +857,7 @@ buffaloflesh
 	Density = 1200;
 	OfferValue = 15;
 	NutritionValue = 200;
-	Color = rgb(60,55,50);
+	Color = rgb(60, 55, 50);
 	IsAlive = true;
 }
 

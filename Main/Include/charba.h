@@ -105,6 +105,7 @@ struct character_database
 class character_prototype
 {
  public:
+  character_prototype();
   virtual character* Clone(bool = true, bool = true) const = 0;
   character* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -125,14 +126,11 @@ class character : public entity, public id
   typedef character_database database;
   friend class corpse;
   character();
-  //character(bool, bool, bool = true);
   virtual ~character();
   virtual character* Clone(bool = true, bool = true) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  //virtual bool CanRead() const { return true; }
   virtual bool CanWield() const { return false; }
-  //virtual bool Charmable() const { return true; }
   virtual bool Catches(item*, float) { return false; }
   virtual bool CheckBulimia() const;
   virtual bool CheckDeath(const std::string&, bool = false);
@@ -196,11 +194,9 @@ class character : public entity, public id
   virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState(ulong = 0) const;
-  //virtual uchar GetSex() const { return UNDEFINED; }
   virtual uchar TakeHit(character*, item*, float, float, short, bool);
   virtual ulong CurrentDanger() const;
   virtual ulong MaxDanger() const;
-  //virtual ulong GetBloodColor() const;
   virtual ushort GetAgility() const { return Agility; }
   virtual ushort GetEmitation() const;
   virtual ushort GetEndurance() const { return Endurance; }
@@ -208,7 +204,6 @@ class character : public entity, public id
   virtual ushort GetStrength() const { return Strength; }
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
-  //static bool CanBeGenerated() { return true; }
   virtual vector2d GetPos() const;
   virtual void AddMissMessage(character*) const;
   virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
@@ -284,28 +279,19 @@ class character : public entity, public id
   virtual void ShowNewPosInfo() const;
   virtual void Hostility(character*);
   virtual void KickHit() { }
-  //virtual bool HasInfraVision() const { return false; }
-  //virtual uchar CriticalModifier() const { return 20; }
-  //virtual std::string StandVerb() const { return "standing"; }
   virtual stack* GetGiftStack() const;
   virtual bool MoveRandomlyInRoom();
-  //virtual bool CanOpen() const { return true; }
   virtual bool Go();
   virtual bool ShowConfigScreen();
   virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
   virtual void SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
-  //virtual bool CanBeDisplaced() const { return true; }
   virtual void ReceiveKoboldFleshEffect(long);
   virtual bool ChangeRandomStat(short);
   virtual uchar RandomizeReply(uchar, bool*);
-  //static ushort Frequency() { return 10000; }
   virtual ushort DangerLevel() const;
   virtual void CreateInitialEquipment() { }
   virtual void DisplayInfo();
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
-  /*virtual bool CanWalk() const { return true; }
-  virtual bool CanSwim() const { return false; }
-  virtual bool CanFly() const { return false; }*/
   virtual void TestWalkability();
   virtual void EditAP(long What) { AP += What; }
   virtual void EditNP(long What) { NP += What; }
@@ -336,7 +322,6 @@ class character : public entity, public id
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(const std::string& What) { AssignedName = What; }
-  //virtual bool CanBeAssignedAName() const { return true; }
   virtual std::string Description(uchar) const;
   virtual std::string PersonalPronoun() const;
   virtual std::string PossessivePronoun() const;
@@ -383,13 +368,6 @@ class character : public entity, public id
   virtual void TalkTo(character*);
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;
-  /*virtual ushort PhysicalDamageResistance() const { return 0; }
-  virtual ushort SoundResistance() const { return 0; }
-  virtual ushort EnergyResistance() const { return 0; }
-  virtual ushort AcidResistance() const { return 0; }
-  virtual ushort FireResistance() const { return 0; }
-  virtual ushort PoisonResistance() const { return 0; }
-  virtual ushort BulimiaResistance() const { return 0; }*/
   virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
   virtual void SetDivineMaster(uchar);
   virtual bool CheckWearEquipment() const;
@@ -413,15 +391,12 @@ class character : public entity, public id
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
-  //virtual bool IsUnique() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype& GetProtoType() const = 0;
   virtual const database& GetDataBase() const = 0;
-
-  virtual void LoadDataBaseStats();
 
   DATABASEVALUE(ushort, DefaultAgility);
   DATABASEVALUE(ushort, DefaultStrength);
@@ -488,9 +463,12 @@ class character : public entity, public id
   DATABASEBOOL(IsNameable);
   DATABASEVALUE(ushort, BaseEmitation);
 
+  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+
  protected:
   virtual void Initialize(bool, bool);
   virtual void VirtualConstructor() { }
+  virtual void LoadDataBaseStats();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor0(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -501,26 +479,14 @@ class character : public entity, public id
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
-  //virtual void CreateBodyPart(ushort);
   virtual void UpdateBodyPartPicture(ushort);
   virtual void UpdateBodyPartPictures();
   virtual bodypart* MakeBodyPart(ushort);
-  //virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
-  //virtual ushort TotalSize() const = 0;
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts();
-  //virtual void CreateTorso();
   virtual material* CreateBodyPartFlesh(ushort, ulong) const = 0;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
-  //virtual material* CreateTorsoFlesh(ulong) const = 0;
-  //virtual material* CreateTorsoBone(ulong) const;
-  //virtual uchar TorsoBonePercentile() const { return 20; }
-  //virtual ulong GetTorsoVolume() const { return GetTotalVolume(); }
-  //virtual ulong TotalVolume() const = 0;
   virtual uchar BodyParts() const { return 1; }
-  //virtual vector2d GetBitmapPos(ushort) const = 0;
-  //virtual void AllocateBodyPartArray();
-  //virtual ushort TorsoSize() const;
   virtual std::string MaterialDescription(bool) const;
   virtual bool ShowClassDescription() const { return true; }
   virtual void SeekLeader();
@@ -531,11 +497,9 @@ class character : public entity, public id
   virtual void StandIdleAI();
   virtual void CreateCorpse();
   virtual std::string GetDeathMessage() { return Name(DEFINITE) + " is slain."; }
-  //virtual void SetDefaultStats() = 0;
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
-  //virtual float GetMeleeStrength() const { return 0; }
   virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return NormalFirstPersonHitVerb(Critical); }
@@ -550,8 +514,6 @@ class character : public entity, public id
   virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const { return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
   virtual std::string FirstPersonBloodVerb(bool Critical) const { return Critical ? "vomit very acidous blood at" : "vomit acidous blood at"; }
   virtual std::string ThirdPersonBloodVerb(bool Critical) const { return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
-  //virtual std::string TalkVerb() const { return "grunts"; }
-  virtual ushort Type() const = 0;
   stack* Stack;
   ushort Strength, Endurance, Agility, Perception;
   long NP, AP;
@@ -579,14 +541,12 @@ class character : public entity, public id
   static class name##_prototype : public character::prototype\
   {\
    public:\
-    name##_prototype() { Index = protocontainer<character>::Add(this); }\
     virtual character* Clone(bool MakeBodyParts = true, bool CreateEquipment = true) const { return new name(MakeBodyParts, CreateEquipment); }\
     virtual std::string ClassName() const { return #name; }\
     virtual character::database& GetDataBase() const { return name##_DataBase; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   const character::prototype& name::GetProtoType() const { return name##_ProtoType; }\
   const character::database& name::GetDataBase() const { return name##_DataBase; }
 
@@ -605,8 +565,6 @@ name : public base\
   static ushort StaticType();\
   virtual const prototype& GetProtoType() const;\
   virtual const database& GetDataBase() const;\
- protected:\
-  virtual ushort Type() const;\
   data\
 }; CHARACTER_PROTOTYPE(name, base)
 
