@@ -2,15 +2,69 @@
 
 character* protosystem::BalancedCreateMonster()
 {
-  std::vector<std::pair<ushort, ushort> > Illegal;
-
   for(ushort c = 0;; ++c)
     {
       float Difficulty = game::Difficulty();
+      std::vector<configid> Possible;
+
+      for(ushort Type = 1; Type < protocontainer<character>::GetProtoAmount(); ++Type)
+	{
+	  const character::prototype* Proto = protocontainer<character>::GetProto(Type);
+	  const character::databasemap& Config = Proto->GetConfig();
+
+	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	    if(!i->second.IsAbstract && i->second.CanBeGenerated)
+	      {
+		configid ConfigID(Type, i->first);
+		const dangerid& DangerId = game::GetDangerMap().find(ConfigID)->second;
+
+		if(i->second.IsUnique && DangerId.HasBeenGenerated)
+		  continue;
+
+		if(c >= 100)
+		  {
+		    Possible.push_back(ConfigID);
+		    continue;
+		  }
+
+		if(!i->second.IgnoreDanger)
+		  {
+		    float DangerModifier = i->second.DangerModifier == 100 ? DangerId.Danger : DangerId.Danger * 100 / i->second.DangerModifier;
+
+		    if(DangerModifier > Difficulty * 5 || DangerModifier < Difficulty / 5)
+		      continue;
+		  }
+
+		if(PLAYER->GetMaxHP() < i->second.HPRequirementForGeneration)
+		  continue;
+
+		if(!i->second.IsUnique && RAND() % 3)
+		  continue;
+
+		Possible.push_back(ConfigID);
+	      }
+	}
+
+      if(Possible.empty())
+	continue;
 
       for(ushort i = 0; i < 25; ++i)
 	{
-	  ushort ChosenType;
+	  configid Chosen = Possible[RAND() % Possible.size()];
+	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
+	  character* Monster = Proto->Clone(Chosen.Config);
+
+	   if(c >= 100 || (Monster->GetTimeToKill(PLAYER, true) > 7500 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
+	    {
+	      game::SignalGeneration(Chosen);
+	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+	      return Monster;
+	    }
+	  else
+	    delete Monster;
+	}
+
+	  /*ushort ChosenType;
 	  ushort ChosenConfig;
 	  std::pair<ushort, ushort> Chosen;
 	  const character::prototype* Proto;
@@ -76,7 +130,7 @@ character* protosystem::BalancedCreateMonster()
 
 		break;
 	      }
-	}
+	}*/
     }
 
   /* This line is never reached, but it prevents warnings given by some (stupid) compilers. */
@@ -161,11 +215,13 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!Chosen--)
 	      {
+		configid ConfigID(Chosen, i->first);
+
 		if(!i->second.IsAbstract
 		&& i->second.CanBeGenerated
 		&& i->second.CanBeWished
 		&& (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000)
-		&& (!i->second.IsUnique || !game::GetDangerMap().find(configid(Chosen, i->first))->second.HasBeenGenerated))
+		&& (!i->second.IsUnique || !game::GetDangerMap().find(ConfigID)->second.HasBeenGenerated))
 		  {
 		    character* Monster = Proto->Clone(i->first, SpecialFlags);
 
@@ -180,7 +236,7 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 			  }
 		      }
 
-		    game::SignalGeneration(Chosen, i->first);
+		    game::SignalGeneration(ConfigID);
 		    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 		    return Monster;
 		  }

@@ -14,7 +14,6 @@ class character;
 class terrain
 {
  public:
-  virtual bool IsWalkable() const { return true; }
   virtual void StepOn(character*) { }
   virtual std::string SurviveMessage() const;
   virtual std::string MonsterSurviveMessage() const;
@@ -27,13 +26,14 @@ class terrain
 class gterrain : public terrain
 {
  public:
-  virtual bool IsWalkable(const character*) const;
+  virtual bool IsWalkable(const character* = 0) const;
   virtual uchar GetEntryDifficulty() const = 0;
 };
 
 class oterrain : public terrain
 {
  public:
+  virtual bool IsWalkable(const character* = 0) const { return true; }
   virtual bool Enter(bool) const = 0;
   virtual uchar GetRestModifier() const { return 1; }
   virtual void ShowRestMessage(character*) const { }

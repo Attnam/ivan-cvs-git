@@ -3,7 +3,7 @@
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
 void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 void door::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
-vector2d door::GetBitmapPos(ushort) const { return vector2d(0, IsWalkable() ? 48 : 176); }
+vector2d door::GetBitmapPos(ushort) const { return vector2d(0, Opened ? 48 : 176); }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
@@ -15,7 +15,7 @@ void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitM
 vector2d fountain::GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
 
 void brokendoor::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
-vector2d brokendoor::GetBitmapPos(ushort) const { return vector2d(0, IsWalkable() ? 48 : 160); }
+vector2d brokendoor::GetBitmapPos(ushort) const { return vector2d(0, Opened ? 48 : 160); }
 
 std::string liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
 std::string liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
@@ -26,7 +26,7 @@ vector2d liquidterrain::GetBitmapPos(ushort Frame) const { return vector2d(48 + 
 
 bool door::Open(character* Opener)
 {
-  if(!IsWalkable())
+  if(!Opened)
     {
       if(IsLocked())
 	{
@@ -72,7 +72,7 @@ bool door::Open(character* Opener)
 bool door::Close(character* Closer)
 {
   if(Closer->IsPlayer())
-    if(IsWalkable())
+    if(Opened)
       {
 	if(RAND() % 20 < Closer->GetAttribute(ARM_STRENGTH))
 	  {
@@ -100,7 +100,7 @@ void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimat
 
 void door::BeKicked(character* Kicker, ushort KickDamage)
 {
-  if(!IsWalkable()) 
+  if(!Opened) 
     {
       room* Room = GetLSquareUnder()->GetRoom();
 
@@ -486,7 +486,7 @@ void fountain::DryOut()
 
 void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 {
-  if(!IsWalkable()) 
+  if(!Opened) 
     {
       room* Room = GetLSquareUnder()->GetRoom();
 
@@ -959,7 +959,7 @@ void wall::Break()
 
 void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
 {
-  if(!IsWalkable() && !IsLocked() && Damage > (RAND() & 3))
+  if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The door opens.");
@@ -1002,7 +1002,7 @@ void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
 
 void brokendoor::ReceiveDamage(character* Villain, ushort Damage, uchar)
 {
-  if(!IsWalkable() && !IsLocked() && Damage > (RAND() & 3))
+  if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The broken door opens.");
@@ -1056,3 +1056,22 @@ bool fountain::IsDipDestination() const
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
 
+bool wall::IsWalkable(const character* Char) const
+{
+  return Char && Char->CanWalkThroughWalls();
+}
+
+bool wall::IsTransparent() const
+{
+  return MainMaterial->IsTransparent();
+}
+
+bool door::IsWalkable(const character* Char) const
+{
+  return Opened || (Char && Char->CanWalkThroughWalls());
+}
+
+bool door::IsTransparent() const
+{
+  return Opened || MainMaterial->IsTransparent();
+}

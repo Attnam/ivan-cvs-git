@@ -13,7 +13,8 @@ class OLTERRAIN
   olterrain,
  public:
   virtual void Break();
-  virtual bool IsWalkable() const { return false; }
+  virtual bool IsWalkable(const character* = 0) const;
+  virtual bool IsTransparent() const;
 );
 
 class OLTERRAIN
@@ -46,12 +47,12 @@ class OLTERRAIN
  public:
   virtual bool Open(character*);
   virtual bool Close(character*);
-  virtual bool CanBeOpened() const { return !IsWalkable(); }
+  virtual bool CanBeOpened() const { return !Opened; }
   virtual void BeKicked(character*, ushort);
   virtual void SetIsOpened(bool What) { Opened = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsWalkable() const { return Opened; }
+  virtual bool IsWalkable(const character* = 0) const;
   virtual bool IsDoor() const { return true; }
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual bool IsLocked() const { return Locked; }
@@ -65,6 +66,7 @@ class OLTERRAIN
   virtual void SetParameters(uchar);
   virtual void Lock() { SetIsLocked(true); }
   virtual void HasBeenHitByItem(character*, item*, ushort);
+  virtual bool IsTransparent() const;
  protected:
   virtual void AddPostFix(std::string&) const;
   virtual void VirtualConstructor(bool);
@@ -202,7 +204,7 @@ class GLTERRAIN
   liquidterrain,
   glterrain,
  public:
-  virtual bool IsWalkable(const character*) const;
+  virtual bool IsWalkable(const character* = 0) const;
   virtual std::string SurviveMessage() const;
   virtual std::string MonsterSurviveMessage() const;
   virtual std::string DeathMessage() const;

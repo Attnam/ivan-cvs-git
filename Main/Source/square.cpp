@@ -60,12 +60,12 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
 
 bool square::IsWalkable(const character* Char) const
 {
-  return GetOTerrain()->IsWalkable() && GetGTerrain()->IsWalkable(Char);
+  return GetOTerrain()->IsWalkable(Char) && GetGTerrain()->IsWalkable(Char);
 }
 
-std::string square::SurviveMessage(character*) const
+std::string square::SurviveMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable())
+  if(!GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->SurviveMessage();
   else
     return GetGTerrain()->SurviveMessage();
@@ -73,31 +73,31 @@ std::string square::SurviveMessage(character*) const
 
 std::string square::MonsterSurviveMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable())
+  if(!GetOTerrain()->IsWalkable(Char))
     return Char->GetName(DEFINITE) + " " + GetOTerrain()->MonsterSurviveMessage();
   else
     return Char->GetName(DEFINITE) + " " + GetGTerrain()->MonsterSurviveMessage();
 }
 
-std::string square::DeathMessage(character*) const
+std::string square::DeathMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable())
+  if(!GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->DeathMessage();
   else
     return GetGTerrain()->DeathMessage();
 }
 
-std::string square::MonsterDeathVerb(character*) const
+std::string square::MonsterDeathVerb(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable())
+  if(!GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->MonsterDeathVerb();
   else
     return GetGTerrain()->MonsterDeathVerb();
 }
 
-std::string square::ScoreEntry(character*) const
+std::string square::ScoreEntry(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable())
+  if(!GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->ScoreEntry();
   else
     return GetGTerrain()->ScoreEntry();

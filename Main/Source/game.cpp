@@ -344,7 +344,7 @@ bool game::LevelLOSHandler(long X, long Y)
 {
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->SetLastSeen(LOSTurns);
-  return Square->GetOLTerrain()->IsWalkable();
+  return Square->GetOLTerrain()->IsTransparent();
 }
 
 void game::UpdateCameraX()
@@ -601,14 +601,14 @@ bool game::EmitationHandler(long X, long Y)
 
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->AlterLuminance(CurrentEmitterPos, Emit);
-  return Square->GetOLTerrain()->IsWalkable();
+  return Square->GetOLTerrain()->IsTransparent();
 }
 
 bool game::NoxifyHandler(long X, long Y)
 {
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->NoxifyEmitter(CurrentEmitterPos);
-  return Square->GetOLTerrain()->IsWalkable();
+  return Square->GetOLTerrain()->IsTransparent();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -689,7 +689,7 @@ vector2d game::GetDirectionVectorForKey(int Key)
 
 bool game::EyeHandler(long X, long Y)
 {
-  return CurrentLSquareMap[X][Y]->GetOLTerrain()->IsWalkable();
+  return CurrentLSquareMap[X][Y]->GetOLTerrain()->IsTransparent();
 }
 
 long game::GodScore()
@@ -1333,9 +1333,10 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
       if(!IsInWilderness())
 	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || SeeWholeMapCheatIsActive())
 	  {
-	    stack* Stack = GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
+	    lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
+	    stack* Stack = LSquare->GetStack();
 
-	    if(Square->GetOTerrain()->IsWalkable() && Stack->GetVisibleItems(PLAYER))
+	    if(LSquare->GetOLTerrain()->IsTransparent() && Stack->GetVisibleItems(PLAYER))
 	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
@@ -1638,9 +1639,9 @@ void game::SetStandardListAttributes(felist& List)
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
 }
 
-void game::SignalGeneration(ushort Type, ushort Config)
+void game::SignalGeneration(configid ConfigID)
 {
-  dangermap::iterator Iterator = DangerMap.find(configid(Type, Config));
+  dangermap::iterator Iterator = DangerMap.find(ConfigID);
 
   if(Iterator != DangerMap.end())
     Iterator->second.HasBeenGenerated = true;

@@ -84,6 +84,7 @@ character
 	CanThrow = false;
 	UsesNutrition = true;
 	AttackWisdomLimit = NO_LIMIT;
+	CanWalkThroughWalls = false;
 }
 
 humanoid

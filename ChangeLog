@@ -6,6 +6,13 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added support for transparent non-walkable tiles
+	* Added support for monsters walking through walls
+	* Monster generation works now a little better (maybe)
+
 February 20 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added cans filled with mushroom flesh. 
@@ -13,7 +20,7 @@ February 20 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 February 17 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Dark wizards added 
-	
+
 February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Gcc 3.2.1 now compiles the game correctly and without warnings

@@ -220,6 +220,8 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(CanThrow);
   ANALYZE_DATA(UsesNutrition);
   ANALYZE_DATA(AttackWisdomLimit);
+  ANALYZE_DATA(CanWalkThroughWalls);
+  ANALYZE_DATA(AttachedGod);
 
   return Found;
 }
@@ -304,6 +306,7 @@ template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::stri
   ANALYZE_DATA(BeamEffect);
   ANALYZE_DATA(BeamStyle);
   ANALYZE_DATA(WearWisdomLimit);
+  ANALYZE_DATA(AttachedGod);
 
   return Found;
 }
@@ -414,6 +417,7 @@ template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::
   ANALYZE_DATA(CanHaveParasite);
   ANALYZE_DATA(DigProductMaterial);
   ANALYZE_DATA(ConsumeWisdomLimit);
+  ANALYZE_DATA(AttachedGod);
 
   return Found;
 }

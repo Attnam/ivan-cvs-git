@@ -224,7 +224,7 @@ class game
   static void CombineLights(ulong&, ulong);
   static bool IsDark(ulong);
   static void SetStandardListAttributes(felist&);
-  static void SignalGeneration(ushort, ushort);
+  static void SignalGeneration(configid);
   static float GetAveragePlayerArmStrength() { return AveragePlayerArmStrength; }
   static float GetAveragePlayerLegStrength() { return AveragePlayerLegStrength; }
   static float GetAveragePlayerDexterity() { return AveragePlayerDexterity; }

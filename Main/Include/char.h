@@ -143,6 +143,8 @@ struct characterdatabase
   bool CanThrow;
   bool UsesNutrition;
   ushort AttackWisdomLimit;
+  bool CanWalkThroughWalls;
+  uchar AttachedGod;
 };
 
 class characterprototype
@@ -439,6 +441,9 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanThrow);
   DATA_BASE_BOOL(UsesNutrition);
   DATA_BASE_VALUE(ushort, AttackWisdomLimit);
+  DATA_BASE_BOOL(CanWalkThroughWalls);
+  DATA_BASE_BOOL(IsUnique);
+  DATA_BASE_VALUE(uchar, AttachedGod);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);

@@ -97,6 +97,7 @@ struct itemdatabase
   uchar BeamEffect;
   uchar BeamStyle;
   ushort WearWisdomLimit;
+  uchar AttachedGod;
 };
 
 class itemprototype
@@ -300,6 +301,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamEffect);
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
+  DATA_BASE_VALUE(uchar, AttachedGod);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }

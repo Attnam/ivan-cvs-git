@@ -246,6 +246,7 @@ class olterrain : public lterrain, public oterrain
   ushort GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
   void CalculateHP();
+  virtual bool IsTransparent() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase();

@@ -54,6 +54,7 @@ struct materialdatabase
   bool CanHaveParasite;
   ushort DigProductMaterial;
   ushort ConsumeWisdomLimit;
+  uchar AttachedGod;
 };
 
 class materialprototype
@@ -134,6 +135,7 @@ class material
   DATA_BASE_VALUE(ushort, EffectStrength);
   DATA_BASE_VALUE(ushort, DigProductMaterial);
   DATA_BASE_VALUE(ushort, ConsumeWisdomLimit);
+  DATA_BASE_VALUE(uchar, AttachedGod);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }

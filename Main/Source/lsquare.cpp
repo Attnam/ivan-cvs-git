@@ -92,7 +92,7 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
 	
   OLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
 
-  if(OLTerrain->IsWalkable())
+  if(OLTerrain->IsTransparent())
     {
       Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw, RealDraw);
 
@@ -219,7 +219,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
       {
 	if(!Luminance || game::CompareLights(i->DilatedEmitation, Luminance) < 0)
 	  i->DilatedEmitation = 0;
-	else if(!OLTerrain->IsWalkable())
+	else if(!OLTerrain->IsTransparent())
 	  {
 	    i->DilatedEmitation = 0;
 	    NewDrawRequested = true;
@@ -256,7 +256,7 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
 {
   uchar BitMask = 0;
 
-  #define IW(X, Y) GetNearLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
+  #define IW(X, Y) GetNearLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsTransparent()
 
   if(Dir.X < Pos.X)
     {
@@ -325,7 +325,7 @@ void lsquare::AlterLuminance(vector2d Dir, ulong NewLuminance)
 	  {
 	    if(NewLuminance != Luminance)
 	      {
-		if(!OLTerrain->IsWalkable())
+		if(!OLTerrain->IsTransparent())
 		  {
 		    i->DilatedEmitation = NewLuminance;
 		    NewDrawRequested = true;
@@ -361,7 +361,7 @@ void lsquare::AlterLuminance(vector2d Dir, ulong NewLuminance)
 	  {
 	    if(!Luminance || game::CompareLights(i->DilatedEmitation, Luminance) < 0)
 	      Emitter.erase(i);
-	    else if(!OLTerrain->IsWalkable())
+	    else if(!OLTerrain->IsTransparent())
 	      {
 		Emitter.erase(i);
 		NewDrawRequested = true;
@@ -400,7 +400,7 @@ void lsquare::AlterLuminance(vector2d Dir, ulong NewLuminance)
     {
       if(game::CompareLights(NewLuminance, Luminance) > 0)
 	{
-	  if(!OLTerrain->IsWalkable())
+	  if(!OLTerrain->IsTransparent())
 	    {
 	      Emitter.push_back(emitter(Dir, NewLuminance));
 	      NewDrawRequested = true;
@@ -504,7 +504,7 @@ void lsquare::CalculateLuminance()
 {
   Luminance = *GetLevel()->GetLevelScript()->GetAmbientLight();
 
-  if(OLTerrain->IsWalkable())
+  if(OLTerrain->IsTransparent())
     {
       for(ushort c = 0; c < Emitter.size(); ++c)
 	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
@@ -569,7 +569,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	{
 	  MemorizedDescription.resize(0);
 
-	  if(GetOTerrain()->IsWalkable())
+	  if(OLTerrain->IsTransparent())
 	    {
 	      bool Anything = false;
 
@@ -915,9 +915,9 @@ void lsquare::SetTemporaryEmitation(ulong What)
 
 void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 {
-  bool WasWalkable = GetOLTerrain()->IsWalkable();
+  bool WasTransParent = GetOLTerrain()->IsTransparent();
 
-  if(WasWalkable && !NewTerrain->IsWalkable())
+  if(WasTransParent && !NewTerrain->IsTransparent())
     ForceEmitterNoxify();
 
   ulong OldEmit = GetOLTerrain()->GetEmitation();
@@ -933,7 +933,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
       GetSideStack(c)->MoveItemsTo(GetStack());
     }
 
-  if(WasWalkable != GetOLTerrain()->IsWalkable())
+  if(WasTransParent != GetOLTerrain()->IsTransparent())
     {
       ForceEmitterEmitation();
       CalculateLuminance();
@@ -1023,7 +1023,7 @@ void lsquare::SetLastSeen(ulong What)
   if(LastSeen < What - 1)
     NewDrawRequested = true;
 
-  if(!OLTerrain->IsWalkable())
+  if(!OLTerrain->IsTransparent())
     {
       ulong OldLuminance = Luminance;
       CalculateLuminance();

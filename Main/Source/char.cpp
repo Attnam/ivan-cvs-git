@@ -1582,10 +1582,12 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 {
   EditAP(-500);
 
-  if(GetNearLSquare(Where)->GetOLTerrain()->IsWalkable() && !GetNearSquare(Where)->GetCharacter())
-    Move(Where, true);
-
-  if(!GetNearLSquare(Where)->GetOLTerrain()->IsWalkable())
+  if(GetNearLSquare(Where)->GetOLTerrain()->IsWalkable(this))
+    {
+      if(!GetNearSquare(Where)->GetCharacter())
+	Move(Where, true);
+    }
+  else
     {
       if(HasHead())
 	{

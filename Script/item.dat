@@ -79,6 +79,7 @@ item
 	/* Obligatory if wand: BeamEffect */
 	BeamStyle = PARTICLE_BEAM;
 	WearWisdomLimit = NO_LIMIT;
+	AttachedGod = NONE;
 }
 
 materialcontainer
@@ -104,6 +105,7 @@ lantern
 	CanBeBroken = true;
 	BitmapPos = 0, 256;
 	WallBitmapPos = 0, 192;
+	AttachedGod = LORICATUS;
 
 	Config BROKEN;
 	{
@@ -135,6 +137,7 @@ can /* materialcontainer-> */
 	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
 	MaterialConfigChances = { 2, 75, 5, 10; }
 	Roundness = 60;
+	AttachedGod = NONE;
 }
 
 lump
@@ -152,6 +155,7 @@ lump
 	MaterialConfigChances = { 2, 75, 5; }
 	OKVisualEffects = MIRROR|FLIP;
 	Roundness = 75;
+	AttachedGod = NONE;
 }
 
 meleeweapon
@@ -161,6 +165,7 @@ meleeweapon
 	IsAbstract = true;
 	CanBeBroken = true;
 	CanBePiled = false;
+	AttachedGod = LORICATUS;
 	CanBeEnchanted = true;
 
 	Config LONG_SWORD;
@@ -333,6 +338,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 30; /* we count the handle, too */
 		IsTwoHanded = true;
+		AttachedGod = CRUENTUS;
 	}
 
 	Config BROKEN|MACE;
@@ -383,6 +389,7 @@ meleeweapon
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 20;
+		AttachedGod = SEGES;
 	}
 
 	Config BROKEN|SICKLE;
@@ -407,6 +414,7 @@ meleeweapon
 		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 20;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config BROKEN|DAGGER;
@@ -432,6 +440,7 @@ meleeweapon
 		SecondaryMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 		MaterialConfigChances = { 4, 100, 100, 50, 10; }
 		Roundness = 15;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config BROKEN|SHORT_SWORD;
@@ -507,6 +516,7 @@ meleeweapon
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 10;
 		IsTwoHanded = true;
+		AttachedGod = MORTIFER;
 	}
 
 	Config BROKEN|SCYTHE;
@@ -562,6 +572,7 @@ banana /* materialcontainer-> */
 	MaxCharges = 6;
 	MinCharges = 6;
 	CanBePiled = true;
+	AttachedGod = NEFAS;
 
 	Config BROKEN;
 	{
@@ -623,6 +634,7 @@ justifier /* meleeweapon-> */
 	DefaultEnchantment = 16;
 	CanBeEnchanted = false;
 	GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
+	AttachedGod = VALPURUS;
 }
 
 neercseulb /* meleeweapon-> */
@@ -653,6 +665,7 @@ neercseulb /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeBroken = false;
 	DefaultEnchantment = 6;
+	AttachedGod = MORTIFER;
 }
 
 pickaxe /* meleeweapon-> */
@@ -675,6 +688,7 @@ pickaxe /* meleeweapon-> */
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
 	IsTwoHanded = true;
 	Price = 50; /* bonus for being able to dig */
+	AttachedGod = LORICATUS;
 
 	Config BROKEN;
 	{
@@ -700,6 +714,7 @@ bodyarmor /* armor-> */
 	Roundness = 70;
 	IsTwoHanded = true;
 	CanBeBroken = true;
+	AttachedGod = LORICATUS;
 
 	Config CHAIN_MAIL;
 	{
@@ -761,6 +776,7 @@ bodyarmor /* armor-> */
 		DefaultEnchantment = 1;
 		Price = 250;
 		PriceIsProportionalToEnchantment = true;
+		AttachedGod = SEGES;
 	}
 
 	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
@@ -795,6 +811,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	DefaultEnchantment = 10;
 	InElasticityPenaltyModifier = 30;
 	CanBeEnchanted = false;
+	AttachedGod = VALPURUS;
 } 
 
 potion /* materialcontainer-> */
@@ -816,6 +833,7 @@ potion /* materialcontainer-> */
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
+	AttachedGod = NONE;
 }
 
 bananapeels
@@ -832,6 +850,7 @@ bananapeels
 	MainMaterialConfig == BANANA_PEEL;
 	Roundness = 10;
 	WeaponCategory = WHIPS;
+	AttachedGod = NEFAS;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -848,6 +867,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	Adjective = "broken";
 	MainMaterialConfig == GLASS;
 	Roundness = 70;
+	AttachedGod = NEFAS;
 }
 
 scroll
@@ -870,6 +890,7 @@ scrollofcreatemonster /* scroll-> */
 	Possibility = 75;
 	Price = 20;
 	PostFix = "of create monster";
+	AttachedGod = CRUENTUS;
 }
 
 scrollofteleportation /* scroll-> */
@@ -878,6 +899,7 @@ scrollofteleportation /* scroll-> */
 	Price = 50;
 	PostFix = "of teleportation";
 	Alias == "scroll of teleport";
+	AttachedGod = SOPHOS;
 }
 
 scrollofcharging /* scroll-> */
@@ -887,6 +909,7 @@ scrollofcharging /* scroll-> */
 	PostFix = "of charging";
 	CanBeCloned = false;
 	IsPolymorphSpawnable = false;
+	AttachedGod = SOPHOS;
 }
 
 nut
@@ -902,6 +925,7 @@ nut
 	MainMaterialConfig == HUMAN_FLESH;
 	NameSingular = "nut";
 	Roundness = 90;
+	AttachedGod = NEFAS;
 }
 
 leftnutofpetrus /* nut-> */
@@ -921,6 +945,7 @@ leftnutofpetrus /* nut-> */
 	CanBeWished = false;
 	CanBeCloned = false;
 	FormModifier = 15;
+	AttachedGod = VALPURUS;
 }
 
 bone
@@ -937,6 +962,7 @@ bone
 	MainMaterialConfig == BONE;
 	Roundness = 20;
 	IsTwoHanded = true;
+	AttachedGod = MORTIFER;
 }
 
 loaf
@@ -956,6 +982,7 @@ loaf
 	MaterialConfigChances = { 3, 50, 50, 200; }
 	Alias == "food";
 	Roundness = 20;
+	AttachedGod = NONE;
 }
 
 scrollofwishing /* scroll-> */
@@ -966,6 +993,7 @@ scrollofwishing /* scroll-> */
 	IsPolymorphSpawnable = false;
 	PostFix = "of wishing";
 	CanBeCloned = false;
+	AttachedGod = ATAVUS;
 }
 
 cheapcopyofleftnutofpetrus /* nut-> */
@@ -982,6 +1010,7 @@ cheapcopyofleftnutofpetrus /* nut-> */
 	MainMaterialConfig == GLASS; /* should be plastic */
 	Alias == "left nut of Petrus";
 	FormModifier = 15;
+	AttachedGod = MELLIS;
 }
 
 wand
@@ -1010,6 +1039,7 @@ wand
 		BeamColor = RANDOM_COLOR;
 		BeamEffect = BEAM_POLYMORPH;
 		CanBeCloned = false;
+		AttachedGod = SCABIES;
 	}
 
 	Config WAND_OF_STRIKING;
@@ -1023,6 +1053,7 @@ wand
 		MaxCharges = 5;
 		BeamColor = WHITE;
 		BeamEffect = BEAM_STRIKE;
+		AttachedGod = INFUSCOR;
 	}
 
 	Config WAND_OF_FIRE_BALLS;
@@ -1036,6 +1067,7 @@ wand
 		MaxCharges = 4;
 		BeamColor = YELLOW;
 		BeamEffect = BEAM_FIRE_BALL;
+		AttachedGod = INFUSCOR;
 	}
 
 	Config WAND_OF_TELEPORTATION;
@@ -1050,6 +1082,7 @@ wand
 		MaxCharges = 6;
 		BeamColor = GREEN;
 		BeamEffect = BEAM_TELEPORT;
+		AttachedGod = SOPHOS;
 	}
 
 	Config WAND_OF_HASTE;
@@ -1063,6 +1096,7 @@ wand
 		MaxCharges = 6;
 		BeamColor = RED;
 		BeamEffect = BEAM_HASTE;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config WAND_OF_SLOW;
@@ -1076,6 +1110,7 @@ wand
 		MaxCharges = 6;
 		BeamColor = BLUE;
 		BeamEffect = BEAM_SLOW;
+		AttachedGod = INFUSCOR;
 	}
 
 	Config WAND_OF_RESURRECTION;
@@ -1089,6 +1124,7 @@ wand
 		MaxCharges = 3;
 		BeamColor = BLACK;
 		BeamEffect = BEAM_RESURRECT;
+		AttachedGod = SEGES;
 	}
 
 	Config WAND_OF_DOOR_CREATION;
@@ -1103,6 +1139,7 @@ wand
 		BeamColor = LIGHT_GRAY;
 		BeamEffect = BEAM_DOOR_CREATION;
 		BeamStyle = SHIELD_BEAM;
+		AttachedGod = LORICATUS;
 	}
 
 	Config WAND_OF_INVISIBILITY;
@@ -1116,6 +1153,7 @@ wand
 		MaxCharges = 6;
 		BeamColor = TRANSPARENT_COLOR; /* invisible */
 		BeamEffect = BEAM_INVISIBILITY;
+		AttachedGod = CLEPTIA;
 	}
 
 	Config WAND_OF_CLONING;
@@ -1131,6 +1169,7 @@ wand
 		CanBeCloned = false;
 		BeamColor = PINK;
 		BeamEffect = BEAM_CLONE;
+		AttachedGod = INFUSCOR;
 	}
 
 	Config WAND_OF_LIGHTNING;
@@ -1145,6 +1184,7 @@ wand
 		BeamColor = WHITE;
 		BeamEffect = BEAM_LIGHTNING;
 		BeamStyle = LIGHTNING_BEAM;
+		AttachedGod = INFUSCOR;
 	}
 }
 
@@ -1154,6 +1194,7 @@ scrollofchangematerial /* scroll-> */
 	Price = 1000;
 	PostFix = "of change material";
 	Alias == "SoCM";
+	AttachedGod = LORICATUS;
 }
 
 avatarofvalpurus
@@ -1177,6 +1218,7 @@ avatarofvalpurus
 	IsPolymorphable = false;
 	Roundness = 80;
 	CanBeCloned = false;
+	AttachedGod = VALPURUS;
 }
 
 kiwi
@@ -1191,6 +1233,7 @@ kiwi
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWI_FLESH;
 	Roundness = 80;
+	AttachedGod = SEGES;
 }
 
 pineapple
@@ -1206,6 +1249,7 @@ pineapple
 	MainMaterialConfig == PINEAPPLE_FLESH;
 	Roundness = 90;
 	IsTwoHanded = true;
+	AttachedGod = SEGES;
 }
 
 palmbranch
@@ -1222,6 +1266,7 @@ palmbranch
 	MainMaterialConfig == PALM_LEAF;
 	Roundness = 80;
 	IsTwoHanded = true;
+	AttachedGod = SILVA;
 }
 
 whip /* meleeweapon-> */
@@ -1241,6 +1286,7 @@ whip /* meleeweapon-> */
 	Roundness = 2;
 	FormModifier = 7; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;
+	AttachedGod = NEFAS;
 
 	Config RUNED_WHIP;
 	{
@@ -1271,6 +1317,7 @@ backpack /* materialcontainer-> */
 	Alias == "explosives";
 	Roundness = 70;
 	IsTwoHanded = true;
+	AttachedGod = LORICATUS;
 }
 
 holybook
@@ -1292,6 +1339,7 @@ holybook
 	IsTwoHanded = true;
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
+	AttachedGod = NONE;
 }
 
 fiftymillionroubles
@@ -1309,6 +1357,7 @@ fiftymillionroubles
 	MainMaterialConfig == PARCHMENT;
 	Alias = { 2, "money", "riches"; }
 	Roundness = 60;
+	AttachedGod = MELLIS;
 }
 
 oillamp
@@ -1330,6 +1379,7 @@ oillamp
 	Price = 100;
 	Alias == "lamp";
 	WeaponCategory = BLUNT_WEAPONS;
+	AttachedGod = LORICATUS;
 }
 
 stone
@@ -1347,6 +1397,7 @@ stone
 	MaterialConfigChances = { 5, 30, 20, 15, 10, 5; }
 	Alias == "jewel";
 	Roundness = 90;
+	AttachedGod = NONE;
 }
 
 scrolloftaming /* scroll-> */
@@ -1354,6 +1405,7 @@ scrolloftaming /* scroll-> */
 	Possibility = 25;
 	Price = 500;
 	PostFix = "of taming";
+	AttachedGod = DULCIS;
 }
 
 mine /*materialcontainer-> */
@@ -1371,6 +1423,7 @@ mine /*materialcontainer-> */
 	ContainedMaterialConfig == GUN_POWDER;
 	Roundness = 100;
 	IsTwoHanded = true;
+	AttachedGod = CRUENTUS;
 }
 
 key
@@ -1386,6 +1439,7 @@ key
 	NameSingular = "key";
 	MainMaterialConfig == IRON;
 	Roundness = 10;
+	AttachedGod = LORICATUS;
 }
 
 shield /* armor-> */

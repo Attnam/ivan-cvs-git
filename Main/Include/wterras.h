@@ -17,7 +17,7 @@ class GWTERRAIN
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar Priority() const { return 10; }
-  virtual bool IsWalkable(const character*) const;
+  virtual bool IsWalkable(const character* = 0) const;
   virtual std::string SurviveMessage() const;
   virtual std::string MonsterSurviveMessage() const;
   virtual std::string DeathMessage() const;

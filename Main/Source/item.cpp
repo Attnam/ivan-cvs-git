@@ -75,7 +75,7 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
 
       lsquare* JustHit = GetNearLSquare(Pos + DirVector);
 
-      if(!(JustHit->GetOLTerrain()->IsWalkable()))
+      if(!JustHit->GetOLTerrain()->IsWalkable())
 	{
 	  Breaks = true;
 	  JustHit->GetOLTerrain()->HasBeenHitByItem(Thrower, this, ushort(BaseDamage * sqrt(RangeLeft)));
