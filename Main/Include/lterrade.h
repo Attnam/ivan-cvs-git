@@ -328,4 +328,47 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 304); }
 );
 
+class GROUNDLEVELTERRAIN
+(
+	bookcase,
+	groundlevelterrain,
+	InitMaterials(new wood),
+	{
+	},
+public:
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+protected:
+	virtual std::string NameSingular() const				{ return "bookcase"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 272); }
+);
+
+class GROUNDLEVELTERRAIN
+(
+	fountain,
+	groundlevelterrain,
+	InitMaterials(2, new marble, new stone),
+	{
+	},
+public:
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+protected:
+	virtual std::string NameSingular() const				{ return "fountain"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 288); }
+);
+
+class GROUNDLEVELTERRAIN
+(
+	doublebed,
+	groundlevelterrain,
+	InitMaterials(2, new gold, new expensivefabric),
+	{
+	},
+public:
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+protected:
+	virtual std::string NameSingular() const				{ return "double bed"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }
+);
+
+
 #endif
