@@ -522,7 +522,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
-      if(CanBeSeenByPlayer() && game::WizardModeActivated())
+      if(CanBeSeenByPlayer() && game::WizardModeIsActive())
 	{
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
 	}
@@ -565,7 +565,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // I hear Newton screaming in his grave.
-      if(CanBeSeenByPlayer() && game::WizardModeActivated())
+      if(CanBeSeenByPlayer() && game::WizardModeIsActive())
 	{
 	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
 	}
@@ -602,7 +602,7 @@ void door::Break()
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
-      SetMainMaterial(0, NO_PIC_UPDATE);
+      SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)
@@ -788,14 +788,9 @@ bool link::Enter(bool DirectionUp) const
   if(DirectionUp != IsUpLink())
     return olterrain::Enter(DirectionUp);
 
-  /* These must be backupped, since LeaveLevel destroys the link */
-
-  uchar AttachedArea = GetAttachedArea();
-  uchar AttachedEntry = GetAttachedEntry();
-
   /* "Temporary" gum solutions */
 
-  if(!DirectionUp && AttachedArea == OREE_LAIR)
+  if(Config == OREE_LAIR_ENTRY)
     {
       ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
 
@@ -803,13 +798,24 @@ bool link::Enter(bool DirectionUp) const
 	return false;
     }
 
-  if(DirectionUp && game::GetCurrent() == OREE_LAIR)
-    {
-      ADD_MESSAGE("Somehow you get the feeling you cannot return.");
+  if(Config == OREE_LAIR_EXIT)
+    if(game::GetPlayer()->HasGoldenEagleShirt())
+      {
+	ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
-      if(!game::BoolQuestion("Continue anyway? [y/N]"))
-	return false;
-    }
+	if(!game::BoolQuestion("Continue anyway? [y/N]"))
+	  return false;
+      }
+    else
+      {
+	ADD_MESSAGE("An unknown magical force pushes you back.");
+	return true;
+      }
+
+  /* These must be backupped, since LeaveLevel destroys the link */
+
+  uchar AttachedArea = GetAttachedArea();
+  uchar AttachedEntry = GetAttachedEntry();
 
   std::vector<character*> Group;
 
@@ -878,3 +884,6 @@ void sign::StepOn(character* Stepper)
   if(Stepper->IsPlayer())
     ADD_MESSAGE("There's a sign here saying: \"%s\"", Text.c_str());
 }
+
+
+

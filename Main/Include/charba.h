@@ -715,6 +715,7 @@ class character : public entity, public id
   virtual void DamageAllItems(character*, ushort, uchar);
   virtual bool Equips(const item*) const;
   virtual void AddAttributeInfo(std::string&) const;
+  virtual bool LevelTeleport();
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateGolemMaterialConfigurations(); }

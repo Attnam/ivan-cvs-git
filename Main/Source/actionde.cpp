@@ -386,7 +386,7 @@ void read::Handle()
       return;
     }
 
-  if(GetActor()->GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheat())
+  if(GetActor()->GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
     {
       ADD_MESSAGE("It is too dark to read now.");
       Terminate(false);
@@ -567,3 +567,5 @@ ulong read::GetEmitation() const
 {
   return *Literature ? Literature->GetEmitation() : 0;
 }
+
+

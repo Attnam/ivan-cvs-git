@@ -1,3 +1,24 @@
+November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Exp rates quadrupled
+	* Fixed a bug in the battle info screen: it didn't work correctly if a
+	  two-handed weapon was too heavy to be used
+	* Animated set of magic portal pictures added to OLTerrain.pcx by me
+	* Added magic portal olterrain
+	* Oree's lair can now only be entered through a magic portal in level 9 and
+	  exited via another portal which teleports the player straight to level
+	  one but can only be used if he has the Shirt
+	* Changed the layout of Oree's lair a little
+	* The game no longer crashes if the player tries to go down in tunnel end
+	  level while WMode is active
+	* Added level teleport WMode command ('|')
+	* Reading in WMode now takes only about one tick
+	* S&R done:
+	  * WizardModeActivated() -> WizardModeIsActive()
+	  * GetSeeWholeMapCheat() -> SeeWholeMapCheatIsActive()
+	  * GetGoThroughWallsCheat() -> GoThroughWallsCheatIsActive()
+	* Increased bone's strength value a little
+
 November 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Practically every battle algorithm has been rewritten

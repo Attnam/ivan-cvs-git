@@ -519,7 +519,7 @@ void worldmap::RemoveEmptyContinents()
 
 void worldmap::Draw() const
 {
-  if(!game::GetSeeWholeMapCheat())
+  if(!game::SeeWholeMapCheatIsActive())
     {
       for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
 	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
@@ -555,3 +555,5 @@ wsquare* worldmap::GetNeighbourWSquare(vector2d Pos, ushort Index) const
   else
     return 0;
 }
+
+

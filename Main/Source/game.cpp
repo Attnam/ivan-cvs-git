@@ -144,6 +144,7 @@ command* game::Command[] =
   new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
   new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&character::SummonMonster, "summon monster", '&', false, true),
+  new command(&character::LevelTeleport, "level teleport", '|', false, true),
   0
 };
 
@@ -322,7 +323,15 @@ void game::Run()
   while(true)
     {
       if(!InWilderness)
-	GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
+	{
+	  static ushort Counter = 0;
+
+	  if(++Counter == 10)
+	    {
+	      GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
+	      Counter = 0;
+	    }
+	}
 
       try
 	{
@@ -473,7 +482,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
     GetCurrentArea()->UpdateLOS();
 
   if(OnScreen(CursorPos))
-    if(!IsInWilderness() || GetWorldMap()->GetSquare(CursorPos)->GetLastSeen() || GetSeeWholeMapCheat())
+    if(!IsInWilderness() || GetWorldMap()->GetSquare(CursorPos)->GetLastSeen() || SeeWholeMapCheatIsActive())
       GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
@@ -832,7 +841,7 @@ level* game::GetLevel(ushort Index)
   return GetCurrentDungeon()->GetLevel(Index);
 }
 
-uchar game::GetLevels()
+ushort game::GetLevels()
 {
   return GetCurrentDungeon()->GetLevels();
 }
@@ -1244,7 +1253,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
     {
       square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
-      if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheat())
+      if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !SeeWholeMapCheatIsActive())
 	DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
@@ -1303,7 +1312,7 @@ void game::LookHandler(vector2d CursorPos)
 {
   std::string OldMemory;
 
-  if(game::GetSeeWholeMapCheat())
+  if(game::SeeWholeMapCheatIsActive())
     {
       OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
 
@@ -1315,9 +1324,9 @@ void game::LookHandler(vector2d CursorPos)
 
   std::string Msg;
 
-  if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::GetSeeWholeMapCheat())
+  if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::SeeWholeMapCheatIsActive())
     {
-      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || game::GetSeeWholeMapCheat())
+      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || game::SeeWholeMapCheatIsActive())
 	Msg = "You see here ";
       else
 	Msg = "You remember here ";
@@ -1329,7 +1338,7 @@ void game::LookHandler(vector2d CursorPos)
 
   character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000))
@@ -1337,7 +1346,7 @@ void game::LookHandler(vector2d CursorPos)
 
   ADD_MESSAGE("%s", Msg.c_str());
 
-  if(game::GetSeeWholeMapCheat())
+  if(game::SeeWholeMapCheatIsActive())
     game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 }
 
@@ -1420,12 +1429,12 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
     {
     case 'i':
       if(!IsInWilderness())
-	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::GetSeeWholeMapCheat())
+	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
 	  {
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", NO_SELECT|(GetSeeWholeMapCheat() ? 0 : NO_SPECIAL_INFO));
+	      Stack->DrawContents(game::GetPlayer(), "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }
@@ -1434,11 +1443,11 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     case 'c':
-      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::GetSeeWholeMapCheat())
+      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
 	{
 	  character* Char = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || game::GetSeeWholeMapCheat()))
+	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || game::SeeWholeMapCheatIsActive()))
 	    Char->PrintInfo();
 	  else
 	    ADD_MESSAGE("You see no one here.");
@@ -1484,10 +1493,10 @@ void game::End(bool Permanently, bool AndGoToMenu)
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
 
-  if(Permanently || !WizardModeActivated())
+  if(Permanently || !WizardModeIsActive())
     RemoveSaves(Permanently);
 
-  if(Permanently && !WizardModeActivated())
+  if(Permanently && !WizardModeIsActive())
     {
       highscore HScore;
 
@@ -1728,3 +1737,7 @@ void game::SignalGeneration(ushort Type, ushort Config)
   if(Iterator != DangerMap.end())
     Iterator->second.HasBeenGenerated = true;
 }
+
+
+
+

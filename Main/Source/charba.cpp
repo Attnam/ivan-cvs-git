@@ -150,7 +150,6 @@ void character::Hunger()
 
 uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical)
 {
-  DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
   uchar Dir = Type == BITE_ATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = GetDodgeValue();
 
@@ -169,6 +168,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
       Enemy->AddMissMessage(this);
       EditExperience(AGILITY, 50);
       EditExperience(PERCEPTION, 25);
+      DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
       return HAS_DODGED;
     }
 
@@ -224,7 +224,10 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
       TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue, TrueDamage, Success, Type);
 
       if(!TrueDamage || (Weapon && !Weapon->Exists()))
-	return HAS_BLOCKED;
+	{
+	  DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+	  return HAS_BLOCKED;
+	}
     }
 
   ushort DoneDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICAL_DAMAGE, BodyPart, Dir, false, Critical);
@@ -237,11 +240,15 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
     Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
   if(!Succeeded)
-    return DID_NO_DAMAGE;
+    {
+      DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
+      return DID_NO_DAMAGE;
+    }
 
   if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
     return HAS_DIED;
 
+  DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
   return HAS_HIT;
 }
 
@@ -697,7 +704,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		  if(GetTeam() != Character->GetTeam())
 		    return Hit(Character);
 		  else
-		    if(DisplaceAllowed && (MoveToSquare->IsWalkable(this) || game::GetGoThroughWallsCheat()))
+		    if(DisplaceAllowed && (MoveToSquare->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
 		      {
 			if(!Displace(Character))
 			  EditAP(-1000);
@@ -720,7 +727,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    }
 	  else
 	    {
-	      if(MoveToSquare->IsWalkable(this) || (game::GetGoThroughWallsCheat() && IsPlayer()))
+	      if(MoveToSquare->IsWalkable(this) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
 		{
 		  Move(MoveTo);
 		  return true;
@@ -786,7 +793,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
     }
   else
     {
-      if(GetAreaUnder()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GetGoThroughWallsCheat()))
+      if(GetAreaUnder()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
 	{
 	  Move(MoveTo);
 	  return true;
@@ -871,7 +878,7 @@ bool character::Quit()
   if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [y/N]"))
     {
       AddScoreEntry("cowardly quit the game", 0.75f);
-      game::End(!game::WizardModeActivated() || game::BoolQuestion("Remove saves? [y/N]"));
+      game::End(!game::WizardModeIsActive() || game::BoolQuestion("Remove saves? [y/N]"));
       return true;
     }
   else
@@ -897,7 +904,7 @@ void character::Die(bool ForceMsg)
     {
       ADD_MESSAGE("You die.");
 
-      if(game::WizardModeActivated())
+      if(game::WizardModeIsActive())
 	{
 	  game::DrawEverything();
 
@@ -1361,7 +1368,7 @@ bool character::Save()
 
 bool character::Read()
 {
-  if(!CanRead() && !game::GetSeeWholeMapCheat())
+  if(!CanRead() && !game::SeeWholeMapCheatIsActive())
     {
       ADD_MESSAGE("You can't read.");
       return false;
@@ -1381,12 +1388,16 @@ bool character::ReadItem(item* ToBeRead)
 {
   if(ToBeRead->CanBeRead(this))
     {
-      if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheat())
+      if(!GetLSquareUnder()->IsDark() || game::SeeWholeMapCheatIsActive())
 	{
 	  if(ToBeRead->Read(this))
 	    {
-	      /* This AP is used to take the stuff out of backpack */
-	      DexterityAction(5);
+	      if(!game::WizardModeIsActive())
+		{
+		  /* This AP is used to take the stuff out of backpack */
+		  DexterityAction(5);
+		}
+
 	      return true;
 	    }
 	  else
@@ -1575,7 +1586,7 @@ void character::Load(inputfile& SaveFile)
 
 bool character::WizardMode()
 {
-  if(!game::WizardModeActivated())
+  if(!game::WizardModeIsActive())
     {
       if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [y/N]"))
 	{
@@ -1676,7 +1687,7 @@ bool character::ShowKeyLayout()
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHT_GRAY);
       }
 
-  if(game::WizardModeActivated())
+  if(game::WizardModeIsActive())
     {
       List.AddEntry("", WHITE);
       List.AddEntry("Wizard mode functions:", WHITE);
@@ -1900,7 +1911,7 @@ long character::GetScore() const
 
 void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
 {
-  if(!game::WizardModeActivated())
+  if(!game::WizardModeIsActive())
     {
       highscore HScore;
       std::string Desc = game::GetPlayer()->GetAssignedName() + ", " + Description;
@@ -2043,7 +2054,7 @@ void character::GetPlayerCommand()
 	    if(game::IsInWilderness() && !game::GetCommand(c)->IsUsableInWilderness())
 	      ADD_MESSAGE("This function cannot be used while in wilderness.");
 	    else
-	      if(!game::WizardModeActivated() && game::GetCommand(c)->IsWizardModeFunction())
+	      if(!game::WizardModeIsActive() && game::GetCommand(c)->IsWizardModeFunction())
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 	      else
 		HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
@@ -2672,7 +2683,7 @@ void character::ShowNewPosInfo() const
 
   if(!game::IsInWilderness())
     {
-      if(GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheat())
+      if(GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
 	ADD_MESSAGE("It's dark in here!");
 
       ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
@@ -2995,7 +3006,7 @@ void character::TeleportRandomly()
 	{
 	  vector2d PlayersInput = game::PositionQuestion("Where do you wish to teleport? [direction keys]", GetPos(), 0,0,false);
 
-	  if(GetNearLSquare(PlayersInput)->IsWalkable(this) || game::GetGoThroughWallsCheat())
+	  if(GetNearLSquare(PlayersInput)->IsWalkable(this) || game::GoThroughWallsCheatIsActive())
 	    {
 	      if(GetNearLSquare(PlayersInput)->GetCharacter())
 		{
@@ -3329,7 +3340,7 @@ std::string character::GetPersonalPronoun() const
 {
   if(IsPlayer())
     return "you";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "it";
   else if(GetSex() == MALE)
     return "he";
@@ -3341,7 +3352,7 @@ std::string character::GetPossessivePronoun() const
 {
   if(IsPlayer())
     return "your";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "its";
   else if(GetSex() == MALE)
     return "his";
@@ -3353,7 +3364,7 @@ std::string character::GetObjectPronoun() const
 {
   if(IsPlayer())
     return "you";
-  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "it";
   else if(GetSex() == MALE)
     return "him";
@@ -3611,7 +3622,7 @@ void character::PrintInfo() const
   felist Info("Information about " + GetName(DEFINITE));
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if((EquipmentEasilyRecognized(c) || game::WizardModeActivated()) && GetEquipment(c))
+    if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
       Info.AddEntry(EquipmentName(c) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture());
 
   if(Info.IsEmpty())
@@ -4016,8 +4027,8 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmmelUrine(long Amount)
 {
-  EditExperience(ARM_STRENGTH, Amount << 5);
-  EditExperience(LEG_STRENGTH, Amount << 5);
+  EditExperience(ARM_STRENGTH, Amount << 3);
+  EditExperience(LEG_STRENGTH, Amount << 3);
   RestoreHP();
 }
 
@@ -4032,7 +4043,7 @@ void character::AddOmmelUrineConsumeEndMessage() const
 void character::ReceivePepsi(long SizeOfEffect)
 {
   ReceiveDamage(0, SizeOfEffect / 100, POISON, TORSO);
-  EditExperience(PERCEPTION, SizeOfEffect << 5);
+  EditExperience(PERCEPTION, SizeOfEffect << 3);
 
   if(CheckDeath("was poisoned by pepsi"))
     return;
@@ -4126,12 +4137,12 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
     {
       if(!DoubleAttribute)
 	{
-	  if(Experience > long(Attribute) << 10)
+	  if(Experience > long(Attribute) << 8)
 	    {
 	      if(Attribute < 100)
 		{
 		  Attribute += 1;
-		  Experience -= Attribute << 10;
+		  Experience -= Attribute << 8;
 		  Effect = true;
 		  continue;
 		}
@@ -4139,12 +4150,12 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
 	}
       else
 	{
-	  if(Experience > long(Attribute) << 9)
+	  if(Experience > long(Attribute) << 7)
 	    {
 	      if(Attribute < 200)
 		{
 		  Attribute += 1;
-		  Experience -= Attribute << 9;
+		  Experience -= Attribute << 7;
 		  Effect = true;
 		  continue;
 		}
@@ -4170,12 +4181,12 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
     {
       if(!DoubleAttribute)
 	{
-	  if(Experience < (long(Attribute) - 100) << 10)
+	  if(Experience < (long(Attribute) - 100) << 8)
 	    {
 	      if(Attribute > 1)
 		{
 		  Attribute -= 1;
-		  Experience += Max(long(100 - Attribute) << 10, 0L);
+		  Experience += Max(long(100 - Attribute) << 8, 0L);
 		  Effect = true;
 		  continue;
 		}
@@ -4183,12 +4194,12 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	}
       else
 	{
-	  if(Experience < (long(Attribute) - 200) << 9)
+	  if(Experience < (long(Attribute) - 200) << 7)
 	    {
 	      if(Attribute > 2)
 		{
 		  Attribute -= 1;
-		  Experience += Max(long(200 - Attribute) << 9, 0L);
+		  Experience += Max(long(200 - Attribute) << 7, 0L);
 		  Effect = true;
 		  continue;
 		}
@@ -4867,8 +4878,8 @@ void character::StartReading(item* Item, ulong Time)
   read* Read = new read(this);
   Read->SetLiterature(Item); // slot cleared automatically
 
-  if(game::WizardModeActivated() && Time > 100)
-    Time = 100;
+  if(game::WizardModeIsActive())
+    Time = 1;
 
   Read->SetCounter(Time);
   SetAction(Read);
@@ -6109,4 +6120,30 @@ void character::AddAttributeInfo(std::string& Entry) const
   Entry << GetAttribute(CHARISMA);
   Entry.resize(72, ' ');
   Entry << GetAttribute(MANA);
+}
+
+bool character::LevelTeleport()
+{
+  std::vector<character*> Group;
+  long Level = game::NumberQuestion("To which level?", vector2d(16, 6), WHITE);
+
+  if(Level <= 0 || Level > game::GetLevels())
+    {
+      ADD_MESSAGE("There is no level %d in this dungeon, %s!", Level, game::Insult());
+      return false;
+    }
+
+  if(Level == game::GetCurrent() + 1)
+    {
+      ADD_MESSAGE("You are already here, %s!", game::Insult());
+      return false;
+    }
+
+  if(game::LeaveLevel(Group, true))
+    {
+      game::EnterArea(Group, Level - 1, RANDOM);
+      return true;
+    }
+  else
+    return false;
 }

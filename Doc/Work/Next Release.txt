@@ -69,7 +69,7 @@ Dipping to corpses, containers etc.
 //People shouldn't "die screaming" if their heads are not present.
 //Shields. (timo)
 //Lower all unarmed to hit values. (timo)
-/Skeleton bodyparts.
+//Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
 Effects and exps for wisdom and charisma.
@@ -95,7 +95,7 @@ Things thrown at doors.
 (s) Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
 (s) Re-enable Golden Eagle Quest danger requirement.
-Prevent escape from Oree.
+//Prevent escape from Oree.
 ?Configurations should be visually separated with colors.
 //Blocking and visibility should be considered when calculating relative danger.
 //Spiders must not trigger mines.
@@ -118,7 +118,7 @@ Applying wielded item should be possible.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.
 Stethoscope should show relative danger.
-Remove the school food effects of scabies (or make them a lot more seldom).
+//Remove the school food effects of scabies (or make them a lot more seldom).
 ?Raven.
 Kicking chests.
 //Prohibit spoiling in shops and on the cathedral floor.
@@ -126,7 +126,7 @@ Kicking chests.
 //Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
 //?Charges for magic whistle.
-/Smithy to Attnam.
+//Smithy to Attnam.
 //Cut down the size of Elpuri's cave.
 //Mana should be hidden.
 Solving the Elpuri Cave distance problem.
@@ -142,7 +142,7 @@ Boot m-color.
 //?Look stretch config option.
 (r) ?If a mine in the inventory is active, it should be displayed somehow.
 //Potion full of antidote.
-?Teleport to level 10.
+//?Teleport to level 10.
 Selecting from gear when using SoCM/SoEW/SoEA.
 //Weapon volumes should be more realistic.
 //?Flaming effect for holy banana.
@@ -159,3 +159,7 @@ New background story.
 ?Village duelist.
 ?olterraincontainer
 Smith prices.
+?Kamikaze dwarf generation.
+Renaming "single weapon skills".
+?Scroll of repair.
+Prices of golden items.

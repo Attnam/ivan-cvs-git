@@ -237,6 +237,20 @@ link /* olterrain-> */
 	}
 }
 
+portal /* link -> */
+{
+	DigMessage = "The portal is magically protected from your feeble attack.";
+	MainMaterialConfig == GOLD;
+	MaterialColorB = rgb16(200, 0, 0);
+	NameSingular = "magic portal";
+	/* BitmapPos overridden */
+
+	/* Config specialities hard-coded */
+
+	Config OREE_LAIR_ENTRY; { }
+	Config OREE_LAIR_EXIT; { }
+}
+
 altar /* olterrain-> */
 {
 	DigMessage = "An invisible wall stops your feeble attempt.";

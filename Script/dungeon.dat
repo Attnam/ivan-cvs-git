@@ -384,7 +384,7 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 3,3;
 			{
-				OTerrain = IRON link(STAIRS_DOWN);
+				OTerrain = portal(OREE_LAIR_ENTRY) { AttachedArea = OREE_LAIR; AttachedEntry = STAIRS_UP; }
 			}
 
 			Square, Pos 3,5;
@@ -402,7 +402,7 @@ Dungeon ELPURI_CAVE;
 	Level OREE_LAIR;
 	{
 		Description=OreeLair;
-		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
+		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\"";
 		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Rooms=1;
 		GenerateMonsters=false;
@@ -412,7 +412,7 @@ Dungeon ELPURI_CAVE;
 
 		Room 0;
 		{
-			Size=7,7;
+			Size=9,9;
 			AltarPossible=false;
 			WallSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 			FloorSquare=solidterrain(PARQUET),empty;
@@ -421,39 +421,42 @@ Dungeon ELPURI_CAVE;
 			DivineMaster=mortifer;
 			GenerateFountains=false;
 
-			Square, Pos 3,1;
+			Square, Pos 4,1;
 			{
-				OTerrain = IRON altar(mortifer);
+				OTerrain = STEEL altar(mortifer);
 			}
 
-			Square, Pos 3,3;
+			Square, Pos 4,4;
 			{
 				EntryIndex = STAIRS_UP;
 			}
 
-			Square, Pos 3,5;
+			Square, Pos 4,7;
 			{
-				OTerrain = IRON link(STAIRS_UP);
+				OTerrain = portal(OREE_LAIR_EXIT) { AttachedArea = 0; AttachedEntry = RANDOM; }
 			}
 
 			CharacterMap
 			{
 				Pos=1,1;
-				Size=5,5;
+				Size=7,7;
 
 				Types
 				{
 					O=oree;
 					B=darkknight(ELITE);
 					G=golem(BLOOD);
+					A=angel(MORTIFER);
 				}
 			}
 			{
-				..O..
-				.BBB.
-				GB.BG
-				.BBB.
-				..G..
+				..O.A..
+				.......
+				..BBB..
+				G.B.B.G
+				..BBB..
+				.......
+				..G.G..
 			}
 		}
 	}

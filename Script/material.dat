@@ -556,7 +556,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config BONE;
 	{
-		StrengthValue = 35;
+		StrengthValue = 40;
 		Density = 2000;
 		ConsumeType = CT_BONE;
 		Color = rgb16(180, 180, 180);

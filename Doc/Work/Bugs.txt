@@ -105,3 +105,4 @@ You can change a sword to water with a scroll of change material. (maybe the who
 Teleportation state works in the wilderness.
 Golden plate mails are worth less than iron ones.
 The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
+Skulls are insanely heavy (8 kg).

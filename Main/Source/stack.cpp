@@ -34,7 +34,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
   ushort VisibleItems = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
+    if(i->CanBeSeenBy(Viewer) || game::SeeWholeMapCheatIsActive())
       {
 	i->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 	++VisibleItems;
@@ -45,7 +45,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
       igraph::GetTileBuffer()->Fill(TRANSPARENT_COLOR);
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-	if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
+	if(i->CanBeSeenBy(Viewer) || game::SeeWholeMapCheatIsActive())
 	  i->Draw(igraph::GetTileBuffer(), vector2d(0, 0), MakeRGB24(128, 128, 128), false, AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
@@ -706,4 +706,5 @@ void stack::ReceiveFluidSpill(material* Liquid)
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->ReceiveFluidSpill(Liquid);
 }
+
 

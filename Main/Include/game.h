@@ -115,12 +115,12 @@ class game
   static bool IsRunning() { return Running; }
   static void SetIsRunning(bool What) { Running = What; }
   static void ActivateWizardMode() { WizardMode = true; }
-  static bool WizardModeActivated() { return WizardMode; }
+  static bool WizardModeIsActive() { return WizardMode; }
   static void SeeWholeMap();
-  static bool GetSeeWholeMapCheat() { return SeeWholeMapCheat; }
+  static bool SeeWholeMapCheatIsActive() { return SeeWholeMapCheat; }
   static bool EmitationHandler(long, long);
   static bool NoxifyHandler(long, long);
-  static bool GetGoThroughWallsCheat() { return GoThroughWallsCheat; }
+  static bool GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
   static void GoThroughWalls() { GoThroughWallsCheat = !GoThroughWallsCheat; }
   static void UpdateCameraXWithPos(ushort);
   static void UpdateCameraYWithPos(ushort);
@@ -157,7 +157,7 @@ class game
   static void SetSquareInLoad(square* What) { SquareInLoad = What; }
   static area* GetAreaInLoad() { return AreaInLoad; }
   static square* GetSquareInLoad() { return SquareInLoad; }
-  static uchar GetLevels();
+  static ushort GetLevels();
   static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
   static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
@@ -282,3 +282,8 @@ class game
 };
 
 #endif
+
+
+
+
+

@@ -131,12 +131,12 @@ void lsquare::Draw()
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
-      if(!IsDark() || game::GetSeeWholeMapCheat())
+      if(!IsDark() || game::SeeWholeMapCheatIsActive())
 	{
-	  ulong RealLuminance = game::GetSeeWholeMapCheat() ? configuration::GetContrastLuminance() : configuration::ApplyContrastTo(Luminance);
+	  ulong RealLuminance = game::SeeWholeMapCheatIsActive() ? configuration::GetContrastLuminance() : configuration::ApplyContrastTo(Luminance);
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
-	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+	  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
 	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true, true);
 	}
       else
@@ -1292,3 +1292,5 @@ bool lsquare::IsDark() const
 {
   return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
 }
+
+

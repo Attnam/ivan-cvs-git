@@ -104,6 +104,15 @@ class OLTERRAIN
 
 class OLTERRAIN
 (
+  portal,
+  link,
+ protected:
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame % 32) << 3)&~8), 0); } // gum solution, should come from script
+);
+
+class OLTERRAIN
+(
   altar,
   olterrain,
  public:

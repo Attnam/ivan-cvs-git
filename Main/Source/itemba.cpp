@@ -371,7 +371,7 @@ bool item::CanBeSeenByPlayer() const
 
 bool item::CanBeSeenBy(const character* Who) const
 {
-  return (Who->IsPlayer() && game::GetSeeWholeMapCheat()) || (Slot && Slot->CanBeSeenBy(Who));
+  return (Who->IsPlayer() && game::SeeWholeMapCheatIsActive()) || (Slot && Slot->CanBeSeenBy(Who));
 }
 
 std::string item::GetDescription(uchar Case) const
@@ -689,4 +689,5 @@ void item::ResetSpoiling()
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
 }
+
 

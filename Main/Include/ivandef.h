@@ -556,6 +556,8 @@
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
+#define OREE_LAIR_ENTRY 3
+#define OREE_LAIR_EXIT 4
 
 #define BOOK_CASE 1
 
@@ -579,6 +581,7 @@
 #define NO_EQUIPMENT_PIC_UPDATE (NO_PIC_UPDATE << 1)
 #define NO_MATERIALS 8
 #define NO_EQUIPMENT 16
+#define NO_SIGNALS 32
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2
@@ -586,6 +589,7 @@
 #define NOT_IN_ROOM 8
 #define ATTACHABLE (16|NOT_IN_ROOM) /* overrides IN_ROOM */
 
+#define RANDOM 0
 #define ELPURI_CAVE 1
 #define ATTNAM 2
 #define NEW_ATTNAM 3

@@ -128,13 +128,18 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 	}
 
       NewMaterial->SetMotherEntity(this);
-      SignalEmitationIncrease(NewMaterial->GetEmitation());
+
+      if(!(SpecialFlags & NO_SIGNALS))
+	SignalEmitationIncrease(NewMaterial->GetEmitation());
     }
 
-  if(OldMaterial)
-    SignalEmitationDecrease(OldMaterial->GetEmitation());
-
-  SignalVolumeAndWeightChange();
+  if(!(SpecialFlags & NO_SIGNALS))
+    {
+      if(OldMaterial)
+	SignalEmitationDecrease(OldMaterial->GetEmitation());
+  
+      SignalVolumeAndWeightChange();
+    }
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
     UpdatePictures();

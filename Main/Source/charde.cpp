@@ -2824,10 +2824,10 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 
   item* BodyPart = GetBodyPart(BodyPartIndex);
   Bone->InitMaterials(BodyPart->GetMainMaterial());
-  BodyPart->SetMainMaterial(0, NO_PIC_UPDATE);
-  BodyPart->SendToHell();
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
+  BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+  BodyPart->SendToHell();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
 

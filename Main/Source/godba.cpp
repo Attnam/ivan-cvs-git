@@ -77,7 +77,7 @@ std::string god::CompleteDescription() const
   Desc += Name();
   Desc.resize(20, ' ');
 
-  if(game::WizardModeActivated())
+  if(game::WizardModeIsActive())
     {
       Desc += Timer;
       Desc += " - ";
@@ -259,3 +259,6 @@ godprototype::godprototype(god* (*Cloner)(bool), const std::string& ClassId) : C
 {
   Index = protocontainer<god>::Add(this);
 }
+
+
+

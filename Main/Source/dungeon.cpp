@@ -129,7 +129,7 @@ void dungeon::Load(inputfile& SaveFile)
     SaveFile >> Generated[c];
 }
 
-uchar dungeon::GetLevels() const
+ushort dungeon::GetLevels() const
 {
   return *DungeonScript->GetLevels();
 }

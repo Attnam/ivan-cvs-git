@@ -177,15 +177,15 @@ bool olterrain::Enter(bool DirectionUp) const
 
   std::vector<character*> Group;
 
-  if(game::WizardModeActivated())
-    if(!DirectionUp && game::GetCurrent() < 8 && game::LeaveLevel(Group, true))
+  if(game::WizardModeIsActive())
+    if(!DirectionUp && game::GetCurrent() < game::GetLevels() - 1 && game::LeaveLevel(Group, true))
       {
-	game::EnterArea(Group, game::GetCurrent() + 1, 0);
+	game::EnterArea(Group, game::GetCurrent() + 1, RANDOM);
 	return true;
       }
     else if(DirectionUp && game::GetCurrent() >= 1 && game::LeaveLevel(Group, true))
       {
-	game::EnterArea(Group, game::GetCurrent() - 1, 0);
+	game::EnterArea(Group, game::GetCurrent() - 1, RANDOM);
 	return true;
       }
 
@@ -196,3 +196,6 @@ bool olterrain::Enter(bool DirectionUp) const
 
   return false;
 }
+
+
+

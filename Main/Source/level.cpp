@@ -624,9 +624,7 @@ void level::GenerateMonsters()
       ushort Population = 0;
 
       for(ushort c = 0; c < game::GetTeams(); ++c)
-	{
-	  Population += game::GetTeam(c)->GetMember().size();
-	}
+	Population += game::GetTeam(c)->GetMember().size();
 
       if(Population < GetIdealPopulation())
 	if(!(RAND() % (2 << (11 - game::GetCurrent()))))
@@ -971,7 +969,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
 void level::Draw() const
 {
-  if(!game::GetSeeWholeMapCheat())
+  if(!game::SeeWholeMapCheatIsActive())
     {
       for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
 	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
@@ -1097,3 +1095,5 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	  }
       }
 }
+
+

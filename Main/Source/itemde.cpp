@@ -46,7 +46,7 @@ void banana::GenerateLeftOvers(character* Eater)
     Eater->GetStack()->AddItem(Peel);
 
   RemoveFromSlot();
-  SetMainMaterial(0, NO_PIC_UPDATE);
+  SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
   SendToHell();
 }
 
@@ -65,7 +65,7 @@ void potion::GenerateLeftOvers(character* Eater)
 
 bool scroll::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead() || game::GetSeeWholeMapCheat();
+  return Reader->CanRead() || game::SeeWholeMapCheatIsActive();
 }
 
 bool scrollofcreatemonster::Read(character* Reader)
@@ -527,7 +527,7 @@ bool backpack::Apply(character* Terrorist)
 
 bool holybook::CanBeRead(character* Reader) const
 {
-  return Reader->CanRead() || game::GetSeeWholeMapCheat();
+  return Reader->CanRead() || game::SeeWholeMapCheatIsActive();
 }
 
 bool holybook::Read(character* Reader)
@@ -3499,8 +3499,8 @@ void materialcontainer::SignalSpoil(material* Material)
 	{
 	  lump* Lump = new lump(0, NO_MATERIALS);
 	  Lump->InitMaterials(GetContainedMaterial());
-	  SetContainedMaterial(0, NO_PIC_UPDATE);
 	  DonateSlotTo(Lump);
+	  SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
 	}
 
       SendToHell();
@@ -3527,7 +3527,7 @@ void banana::SignalSpoil(material* Material)
       item* Peel = new bananapeels(0, NO_MATERIALS);
       Peel->InitMaterials(GetMainMaterial());
       DonateSlotTo(Peel);
-      SetMainMaterial(0, NO_PIC_UPDATE);
+      SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
       SendToHell();
     }
   else
@@ -4247,11 +4247,11 @@ void arm::ShowWieldedAttackInfo() const
     {
       Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 2;
+      Requirement >>= 1;
 
       if(HitStrength <= Requirement)
 	{
-	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + (Requirement + 1) + " strength.", RED);
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + ((Requirement >> 1) + 1) + " strength.", RED);
 	  Info.AddEntry("", LIGHT_GRAY);
 	  Info.Draw();
 	  return;
@@ -4385,11 +4385,11 @@ void arm::ShowDefenceInfo() const
     {
       Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 2;
+      Requirement >>= 1;
 
       if(HitStrength <= Requirement)
 	{
-	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + (Requirement + 1) + " strength.", RED);
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + ((Requirement >> 1) + 1) + " strength.", RED);
 	  Info.AddEntry("", LIGHT_GRAY);
 	  Info.Draw();
 	  return;
@@ -4874,3 +4874,5 @@ ushort gorovitssickle::GetOutlineColor(ushort Frame) const
   Frame &= 31;
   return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
+
+
