@@ -6,6 +6,12 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+February 8 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Floors are now a bit brighter
+	* Added comprehensive graphics file format documentation to Doc/Data
+
 February 8 2003 Heikki Sairanen <sonor@phpoint.fi>
 
 	* Added eddies in space-time continuum

@@ -21,7 +21,7 @@ Maybe some keys other than Alt+Enter and Print Screen should also work during ge
 Double-sized draw of the tiles as a switch.
 //Cloning.
 Size of player should increase from eating.
-How can you change the window to the rigth size? (stickiness)
+(r) How can you change the window to the rigth size? (stickiness)
 //*Banana peals should be slippery.
 //Weapons should break.
 Pickup all.
@@ -52,7 +52,7 @@ Some variety to monster death messages, e.g. some messages influenced by the cau
 //*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 *Script should have an initial blood level of square option.
 //*Balancing offervalues.
-/*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
+*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
 //Donkey should be named "an ass".
 Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
@@ -70,7 +70,7 @@ Fire should do extra damage to parchment golems.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
 //Punishment of cathedral terrain destruction.
-/*Ivan should break doors.
+*Ivan should break doors.
 //Monsters that change colors.
 Drugs.
 Karateka.
@@ -139,9 +139,9 @@ Inns. (from JM)
 //Double wielding. (from JM)
 Thief monsters. (from JM)
 //Invisible monsters. (from JM)
-/*There should be more ways to gain pets for non-lawfuls.
+*There should be more ways to gain pets for non-lawfuls.
 If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack full of gunpowder anymore.
-*Explosions should be stopped by walls.
+//*Explosions should be stopped by walls.
 //**Message splitting.
 One should be able to buy better bodyparts somewhere in the game.
 One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
@@ -250,7 +250,7 @@ Poison should spread from bodypart to bodypart. (from JM)
 Titles and bonuses. (from JM)
 Informative pictures to message panel. (from JM)
 If one the player mounts an ass and has a carrot in the inventory, it should be held automatically in front of the "vehicle" to increase speed.
-The player shouldn't be able to fly over oceans if all members of his team aren't able to do it. (currently a bat and a pet dog can cross any sea without trouble)
+//The player shouldn't be able to fly over oceans if all members of his team aren't able to do it. (currently a bat and a pet dog can cross any sea without trouble)
 An amulet of life saving worn by a skeleton or zombie should either kill it or transform it into a living human.
 Healing liquid should severely damage undead.
 In my (Timo's) opinion, we should add some powerful undead monsters and maybe a boss soon after the latter is done, as dipping a weapon into healing liquid then becomes rather a useful tactic.
@@ -293,7 +293,7 @@ A special message should be printed when zapping a WoR at a bone or a skull.
 //If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
 Hallucination state.
 Random items to certain monsters' inventories.
-NP shouldn't be consumed if polymorphed into a golem.
+//NP shouldn't be consumed if polymorphed into a golem.
 *Petrus's bodyparts should disappear when severed.
 "There is no door to close, silly."
 Bodypart state system.
@@ -301,22 +301,22 @@ Poisoned bodypart state.
 Bleeding bodypart state.
 It should be possible for a critical hit to sever a lump flesh.
 (r) If a mine in the inventory is active, it should be displayed somehow.
-*Non-living bodyparts should be immune to poison.
+//*Non-living bodyparts should be immune to poison.
 Gold golems should be immune to acid.
 Mommos should do acid damage.
-"Character attributes" option to secret knowledge.
+//"Character attributes" option to secret knowledge.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
 Potion of death/döden. (from Atte Aholainen)
 Physical damage should be divided to slashing, blunt, piercing etc. damage. (from Atte Aholainen)
 Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
 Metal detector.
 More info about players' old games in highscore list (maybe a sub menu).
-*If the handle of a weapon is of the same material as the edge, change material should change it, too.
+//*If the handle of a weapon is of the same material as the edge, change material should change it, too.
 Stressed state should slowly decrease player's size.
 Being satiated or bloated should decrease move ease.
 If HP == MaxHP, healing liquid should increase MaxHP a bit.
 Metal should look different from other materials: the lighter parts should be even lighter and darker parts slightly darker to increase the contrast.
-Corrosion for materials. 
+Corrosion for materials.
 Acid blobs. (needs corrosion, might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
@@ -340,11 +340,11 @@ Monsters that have died of poisoning should be poisoned when eaten.
 //*Bear traps should break eventually.
 Carrot that would increase perception a little.
 //*RDAM and similiar unclear attributes should be moved to an own screen.
-When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
+(r) When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
 Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time).
-Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
+//Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
 Picking up VERY heavy items should be prohibited.
 If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
 New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
@@ -358,7 +358,7 @@ Money unit and its plural and symbol should be possible to define from config.
 *Scroll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
-Lookmode should show whether a creature is panicked.
+//Lookmode should show whether a creature is panicked.
 //"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2".
 Coconuts falling from palms.
 Changing keyboard layout (some people don't seem to like numpad).
@@ -374,7 +374,7 @@ Dragon scale material.
 Breaking different wands should cause different effects.
 Scroll of level teleport.
 Once implemented, the game saga should show how many times the player has polymorphed.
-Buffalos shouldn't be able to throw items.
+//Buffalos shouldn't be able to throw items.
 Getting knowledge of all gods should be rewarded somehow.
 If a fireball beam doesn't hit anything, it should still explode at the end of its range.
 *It should be possible to give the smith a better hammer so he could fix mithril items, too.
@@ -393,7 +393,7 @@ Using sickle or scythe against plants should yield a bonus.
 "Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
 //Food in can's should spoil _much_ slower.
-Skeletons' stomachs shouldn't be able to contain liquids.
+//Skeletons' stomachs shouldn't be able to contain liquids.
 Unlike their colleagues, Nefas's angels should have a groin.
 *Priests, Petrus and angels should be able to resurrect dead pets.
 //Wand of door creation should create doors to walls.
@@ -407,8 +407,8 @@ When many same kind of items on ground the message should say "5 Xs here" not ".
 Lanterns inside glass chests should still emit light.
 Axes should also be used for going through doors. (a la Shining)
 Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
-The smith should fix damaged metal limbs for a fee.
-Finding Attnam in the map can be difficult if the distance is long.  
+//The smith should fix damaged metal limbs for a fee.
+Finding Attnam in the map can be difficult if the distance is long.
 Make golem scroll.
 Weapons should become covered with blood when monsters are killed with them.
 Thunderbird feather material.

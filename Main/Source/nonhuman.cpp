@@ -1156,24 +1156,24 @@ ushort chameleon::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   return Return;
 }
 
-bool eddy::Hit(character* Enemy, bool ForceHit)
+bool eddy::Hit(character* Enemy, bool)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
 
-  if(rand() % 2)
+  if(RAND() % 2)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You engulf %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
-      else if(Enemy->IsPlayer())
-	ADD_MESSAGE("%s engulfs you.", CHAR_NAME(DEFINITE));
-      else if(Enemy->CanBeSeenByPlayer())
+      else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engulfs %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
-      Enemy->GetLSquareUnder()->Teleport(this,"",game::GetDirectionForVector(Enemy->GetPos() - GetPos())); // Teleports also the on the square randomly
+
+      Enemy->GetLSquareUnder()->Teleport(this, "", game::GetDirectionForVector(Enemy->GetPos() - GetPos())); // Teleports also the on the square randomly
+													     // Um, what?
     }
-  else
-    if(IsPlayer())
-      ADD_MESSAGE("You miss %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+  else if(IsPlayer())
+    ADD_MESSAGE("You miss %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+
   SetAP(-1000);
   return true;  
 }
