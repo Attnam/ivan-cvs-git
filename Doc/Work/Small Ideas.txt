@@ -50,4 +50,4 @@ Weapons should break
 Space should = to esc in the inventory.
 Pickup all
 Last game should be highlighted in the high scores.
-
+Some way of writing a word on a different colour with ADD_MESSAGE()
