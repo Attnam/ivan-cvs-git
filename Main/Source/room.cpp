@@ -91,3 +91,8 @@ character* room::GetMaster() const
       return Master = game::SearchCharacter(MasterID);
     }
 }
+
+bool room::IsOKToDestroyWalls(const character* Infidel) const
+{
+  return !MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE;
+}

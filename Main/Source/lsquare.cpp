@@ -1221,6 +1221,14 @@ bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 
 bool lsquare::IsScaryForAIToStepOn(const character* Who) const
 {
+  /* This gum is all sticky (this is for Vladimir) */
+
+  if(Who->DestroysWalls() && GetRoom())
+    {
+      if(OLTerrain && OLTerrain->CanBeDestroyed() && !GetRoom()->IsOKToDestroyWalls(Who))
+	return true;
+    }
+
   return IsScaryForAIToBreathe(Who);
 }
 
@@ -1753,7 +1761,7 @@ void lsquare::ReceiveEarthQuakeDamage()
 
 bool lsquare::IsDangerous(character* ToWhom) const
 {
-  return GetStack()->IsDangerous(ToWhom) || Smoke;
+  return (GetStack()->IsDangerous(ToWhom) || Smoke);
 }
 
 bool lsquare::CanBeFeltByPlayer() const

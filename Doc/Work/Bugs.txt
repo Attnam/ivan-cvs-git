@@ -85,7 +85,8 @@ You can sell mirrored items.
 (s) Border tile bug.
 Mirror + WorldMap.
 You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
-Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
+//Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
 "The kobold glows and transforms into an invisible talker."
 Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
 "There is many items on the wall"
+Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
