@@ -42,10 +42,13 @@ class ACTION
   virtual void Terminate(bool);
   virtual item* GetConsuming() const;
   virtual void SetConsuming(item*);
+  virtual bool GetWasOnGround() const { return WasOnGround; }
+  virtual void SetWasOnGround(bool What) { WasOnGround = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
  protected:
   actionslot Consuming;
+  bool WasOnGround;
 );
 
 class ACTION

@@ -29,12 +29,10 @@ class ABSTRACT_CHARACTER
   virtual void VirtualConstructor();
   virtual void Load(inputfile&);
   virtual uchar GetSex() const { return MALE; }
-  //virtual ushort CalculateArmorModifier() const;
   virtual void Save(outputfile&) const;
   virtual bool CanWield() const { return true; }
   virtual bool CanWear() const { return true; }
   virtual bool CanKick() const { return true; }
-  //virtual float GetAttackStrength() const;
   virtual bool Hit(character*);
   virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
   virtual void CharacterSpeciality(ushort = 1);
@@ -68,7 +66,7 @@ class ABSTRACT_CHARACTER
 
   virtual void DrawToTileBuffer() const;
 
-  virtual bool ReceiveEffect(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveDamage(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
 
   virtual bool BodyPartVital(uchar);
   virtual void RestoreBodyParts();
@@ -80,7 +78,6 @@ class ABSTRACT_CHARACTER
 
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  //virtual void SetBodyArmor(item*);
 
   virtual bool CanWieldInMainHand() const;
   virtual bool CanWieldInSecondaryHand() const;

@@ -38,6 +38,7 @@ class slot
   virtual bool IsCharacterSlot() const { return false; }
   virtual bool IsGearSlot() const { return false; }
   virtual void AddFriendItem(item*) const = 0;
+  virtual bool IsOnGround() const { return false; }
  protected:
   item* Item;
 };
@@ -54,6 +55,7 @@ class stackslot : public slot
   virtual void MoveItemTo(stack*);
   virtual bool IsStackSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
+  virtual bool IsOnGround() const;
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;

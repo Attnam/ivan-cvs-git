@@ -61,64 +61,44 @@ void faint::Terminate(bool Finished)
 void consume::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Consuming;
+  SaveFile << Consuming << WasOnGround;
 }
 
 void consume::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Consuming;
+  SaveFile >> Consuming >> WasOnGround;
 }
 
 void consume::Handle()
 {
-  /*if(ulong(++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
+  if(Consuming->Consume(GetActor(), 500))
     {
-      if(GetIsPlayer())
-	ADD_MESSAGE("You finish %s %s.", GetConsumingCurrently()->GetConsumeVerb().c_str(), GetConsumingCurrently()->CHARNAME(DEFINITE));
-      else
-	if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s finishes eating %s.", CHARNAME(DEFINITE), GetConsumingCurrently()->CHARNAME(DEFINITE));
-
-      EndConsuming();
-
-      return;
-    }*/
+      Consuming->SetExists(false);
+      Terminate(true);
+    }
 }
 
 void consume::Terminate(bool Finished)
 {
-  /*if(StateIsActivated(CONSUMING))
-    {
-      if(GetConsumingCurrently()->Consume(this, StateCounter[CONSUMING] * 500))
-	{
-	  GetConsumingCurrently()->RemoveFromSlot();
-	  /item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
-
-	  if(!ToBeDeleted)
-	    ToBeDeleted = GetLSquareUnder()->GetStack()->RemoveItem(GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));/
-
-	  GetConsumingCurrently()->SetExists(false);
-	}
-
-      ReceiveBulimiaDamage();
-      DeActivateState(CONSUMING);
-      SetConsumingCurrently(0);
-    }*/
-
   if(Finished)
     {
       if(GetActor()->GetIsPlayer())
-	ADD_MESSAGE("You finish %s.", Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("You finish %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s finishes %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
     }
   else
     {
+      if(GetWasOnGround())
+	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      else
+	Consuming->MoveTo(GetActor()->GetStack());
+
       if(GetActor()->GetIsPlayer())
-	ADD_MESSAGE("You stop %s.", Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("You stop %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
+	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
     }
 
   action::Terminate(Finished);

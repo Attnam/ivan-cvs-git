@@ -26,7 +26,7 @@
 
 void (character::*character::StateHandler[STATES])() = { &character::PolymorphHandler, &character::HasteHandler, &character::SlowHandler };
 
-character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : entity(AddToPool, true), Stack(new stack), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
+character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : entity(AddToPool, true), Stack(new stack(0, HIDDEN)), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
 {
   if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
     ABORT("BOOO!");
@@ -50,7 +50,7 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 
   ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 50000);
 
-  ReceiveEffect(Damage, SOUND, ALL, 8, true);
+  ReceiveDamage(Damage, SOUND, ALL, 8, true);
   //SetHP(HP - Damage);
 
   /* Behold! The Ultimate in gum solutions! */
@@ -153,7 +153,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
       Enemy->AddHitMessage(this, Weapon, BodyPart, true);
 
-      ReceiveBodyPartPhysicalDamage(Damage, BodyPart, Dir, false, true);
+      ReceiveBodyPartDamage(Damage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
 
       if(game::GetWizardMode() && GetLSquareUnder()->CanBeSeen(true))
 	ADD_MESSAGE("(damage: %d)", Damage);
@@ -187,7 +187,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
       Enemy->AddHitMessage(this, Weapon, BodyPart);
 
-      if(!ReceiveBodyPartPhysicalDamage(Damage, BodyPart, Dir))
+      if(!ReceiveBodyPartDamage(Damage, PHYSICALDAMAGE, BodyPart, Dir))
 	return HAS_BLOCKED;
 
       if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE), Enemy->GetIsPlayer()))
@@ -496,6 +496,7 @@ bool character::ConsumeItem(item* Item)
     return false;
 
   consume* Consume = new consume(this);
+  Consume->SetWasOnGround(Item->IsOnGround());
   Consume->SetConsuming(Item);
   SetAction(Consume);
   return true;
@@ -1805,7 +1806,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 
 void character::ReceiveNutrition(long SizeOfEffect)
 {
-  EditNP(SizeOfEffect * 20);
+  EditNP(SizeOfEffect);
 }
 
 void character::ReceiveOmleUrineEffect(long)
@@ -2239,6 +2240,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
       NewForm->ActivateState(POLYMORPHED);
       NewForm->SetStateCounter(POLYMORPHED, Counter);
       game::SendLOSUpdateRequest();
+      game::GetCurrentArea()->UpdateLOS();
     }
   else
     {
@@ -2441,6 +2443,7 @@ void character::EndPolymorph()
       game::GetPlayer()->TestWalkability();
 
       game::SendLOSUpdateRequest();
+      game::GetCurrentArea()->UpdateLOS();
     }
 }
 
@@ -3349,12 +3352,84 @@ void character::RestoreHP()
       GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
 }
 
-bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex, uchar Direction, bool PenetrateArmor, bool Critical)
+/*bool character::ReceiveBodyPartEffect(short Amount, uchar Type, uchar BodyPart, uchar Direction, bool PenetrateArmor, bool Critical)
+{
+  switch(Type)
+    {
+    case PHYSICALDAMAGE:
+      return ReceiveBodyPartPhysicalDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case SOUND:
+      return ReceiveBodyPartSoundDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case ACID:
+      return ReceiveBodyPartAcidDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case ENERGY:
+      return ReceiveBodyPartEnergyDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case FIRE:
+      return ReceiveBodyPartFireDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case POISON:
+      return ReceiveBodyPartPoisonDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    case BULIMIA:
+      return ReceiveBodyPartBulimiaDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
+    default:
+      ABORT("Unknown effect destroyed dungeon!");
+      return false;
+    }
+}*/
+
+void character::BlockDamageType(uchar Type)
+{
+  switch(Type)
+    {
+    case PHYSICALDAMAGE:
+      EditStrengthExperience(50);
+      EditEnduranceExperience(50);
+    }
+}
+
+bool character::AllowDamageTypeBloodSpill(uchar Type) const
+{
+  switch(Type)
+    {
+    case PHYSICALDAMAGE:
+    case SOUND:
+    case ENERGY:
+      return true;
+    case ACID:
+    case FIRE:
+    case POISON:
+    case BULIMIA:
+      return false;
+    default:
+      ABORT("Unknown blood effect destroyed dungeon!");
+      return false;
+    }
+}
+
+bool character::DamageTypeCanSeverBodyPart(uchar Type) const
+{
+  switch(Type)
+    {
+    case PHYSICALDAMAGE:
+      return true;
+    case SOUND:
+    case ENERGY:
+    case ACID:
+    case FIRE:
+    case POISON:
+    case BULIMIA:
+      return false;
+    default:
+      ABORT("Unknown reaping effect destroyed dungeon!");
+      return false;
+    }
+}
+
+bool character::ReceiveBodyPartDamage(short Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
-  if(!PenetrateArmor)
-    Damage -= BodyPart->GetArmoredStrengthValue();
+  if(!PenetrateResistance)
+    Damage -= BodyPart->GetResistance(Type);
 
   if(Damage < 1)
     if(Critical)
@@ -3366,12 +3441,11 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
 	else if(GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s is not hurt.", PersonalPronoun().c_str());
 
-	EditStrengthExperience(50);
-	EditEnduranceExperience(50);
+	BlockDamageType(Type);
 	return false;
       }
 
-  if(Critical)
+  if(Critical && AllowDamageTypeBloodSpill(Type))
     {
       SpillBlood(3 + RAND() % 3);
 
@@ -3384,7 +3458,7 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
       });
     }
 
-  if(BodyPart->ReceivePhysicalDamage(Damage) && BodyPartCanBeSevered(BodyPartIndex))
+  if(BodyPart->ReceiveDamage(Type, Damage) && DamageTypeCanSeverBodyPart(Type) && BodyPartCanBeSevered(BodyPartIndex))
     {
       if(GetIsPlayer())
 	ADD_MESSAGE("Your %s is severed off!", BodyPart->CHARNAME(UNARTICLED));
@@ -3410,9 +3484,9 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
   return true;
 }
 
-bool character::ReceiveEffect(short Amount, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
+bool character::ReceiveDamage(short Amount, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
-  return ReceiveBodyPartEffect(Amount, Type, 0, Direction, PenetrateArmor, Critical);
+  return ReceiveBodyPartDamage(Amount, Type, 0, Direction, PenetrateArmor, Critical);
 }
 
 bool character::BodyPartVital(uchar Index)
@@ -3450,30 +3524,6 @@ bool character::AssignName()
 	ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHARNAME(DEFINITE), Character->CHARNAME(DEFINITE));
     }
   return false;
-}
-
-bool character::ReceiveBodyPartEffect(short Amount, uchar Type, uchar BodyPart, uchar Direction, bool PenetrateArmor, bool Critical)
-{
-  switch(Type)
-    {
-    case PHYSICALDAMAGE:
-      return ReceiveBodyPartPhysicalDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    /*case SOUND:
-      return ReceiveBodyPartSoundDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    case ACID:
-      return ReceiveBodyPartAcidDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    case ENERGY:
-      return ReceiveBodyPartEnergyDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    case FIRE:
-      return ReceiveBodyPartFireDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    case POISON:
-      return ReceiveBodyPartPoisonDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);
-    case BULIMIA:
-      return ReceiveBodyPartBulimiaDamage(Amount, BodyPart, Direction, PenetrateArmor, Critical);*/
-    default:
-      ABORT("Unknown effect destroyed dungeon!");
-      return false;
-    }
 }
 
 std::string character::Description(uchar Case) const
@@ -3716,7 +3766,7 @@ void character::EditStateCounter(uchar State, short What)
       StateCounter[c] += What;
 }
 
-ushort character::GetStateCounter(uchar State)
+ushort character::GetStateCounter(uchar State) const
 {
   for(ushort c = 0; c < STATES; ++c)
     if((1 << c) & State)

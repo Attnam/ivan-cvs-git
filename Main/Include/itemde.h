@@ -1592,8 +1592,8 @@ class ABSTRACT_ITEM
   virtual void SetHP(short What) { HP = What; }
   virtual short GetHP() const { return HP; }
   virtual void EditHP(short What) { HP += What; }
-  virtual ushort GetArmoredStrengthValue() const = 0;
-  virtual bool ReceivePhysicalDamage(short);
+  virtual ushort GetResistance(uchar) const = 0;
+  virtual bool ReceiveDamage(uchar, short);
   virtual std::string GetOwnerDescription() const { return OwnerDescription; }
   virtual void SetOwnerDescription(std::string What) { OwnerDescription = What; }
   virtual bool GetUnique() const { return Unique; }
@@ -1635,7 +1635,7 @@ class ITEM
   virtual bool CanBeWished() const { return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
   virtual vector2d GetInHandsPic() const { return vector2d(160,144); }
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
   virtual void SetHelmet(item* What) { HelmetSlot.SetItem(What); }
   virtual item* GetHelmet() const { return *HelmetSlot; }
   virtual void SetAmulet(item* What) { AmuletSlot.SetItem(What); }
@@ -1672,7 +1672,7 @@ class ITEM
   virtual ushort GetMaterialColor2() const { return item::GetMaterialColor2(); }
   virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }*/
   virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
 );
 
 class ITEM
@@ -1690,7 +1690,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
   virtual void SetBodyArmor(item* What) { BodyArmorSlot.SetItem(What); }
   virtual item* GetBodyArmor() const { return *BodyArmorSlot; }
   virtual void SetCloak(item* What) { CloakSlot.SetItem(What); }
@@ -1710,7 +1710,7 @@ class ABSTRACT_ITEM
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
   virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
   virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
@@ -1784,7 +1784,7 @@ class ITEM
     SetUnique(false);
   },
  public:
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
  protected:
   virtual ushort GetStrengthModifier() const { return 100; }
   virtual uchar GetSpecialType() const { return STGROIN; }
@@ -1798,7 +1798,7 @@ class ABSTRACT_ITEM
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetArmoredStrengthValue() const;
+  virtual ushort GetResistance(uchar) const;
   virtual void SetBoot(item* What) { BootSlot.SetItem(What); }
   virtual item* GetBoot() const { return *BootSlot; }
  protected:

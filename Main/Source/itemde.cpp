@@ -38,7 +38,7 @@ item* can::TryToOpen(character* Opener)
       item* Item = new lump(GetContainedMaterial());
       DonateSlotTo(Item);
 
-      if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+      if(!game::GetInWilderness() && configuration::GetAutoDropLeftOvers())
 	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
       else
 	  Item->GetSlot()->AddFriendItem(this);
@@ -74,7 +74,7 @@ bool banana::Consume(character* Eater, float Amount)
       Peals->InitMaterials(GetMaterial(0));
       PreserveMaterial(0);
 
-      if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+      if(!game::GetInWilderness() && configuration::GetAutoDropLeftOvers())
 	Eater->GetLSquareUnder()->GetStack()->AddItem(Peals);
       else
 	Eater->GetStack()->AddItem(Peals);
@@ -99,7 +99,7 @@ bool potion::Consume(character* Eater, float Amount)
   if(!GetConsumeMaterial()->GetVolume())
     ChangeMaterial(GetConsumeMaterialIndex(), 0);
 
-  if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+  if(!game::GetInWilderness() && configuration::GetAutoDropLeftOvers())
       MoveTo(Eater->GetLSquareUnder()->GetStack());
 
   if(GetSquareUnder())
@@ -538,7 +538,7 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
 {
   if(!(RAND() % 10))
     {
-      if(Stepper->ReceiveEffect(1 + RAND() % 2, PHYSICALDAMAGE, LEGS))
+      if(Stepper->ReceiveDamage(1 + RAND() % 2, PHYSICALDAMAGE, LEGS))
 	{
 	  if(Stepper->GetIsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
@@ -1122,7 +1122,7 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
 	  ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
       Stepper->EditAP(1000);
       /* Do damage against any random bodypart except legs */
-      Stepper->ReceiveEffect(1 + RAND() % 2, PHYSICALDAMAGE, ALL&~LEGS);
+      Stepper->ReceiveDamage(1 + RAND() % 2, PHYSICALDAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("stepped on a banana peal.");
       Stepper->EditAP(-500);
     }
@@ -1255,84 +1255,84 @@ short bodypart::GetMaxHP() const
     return 0;
 }
 
-ushort head::GetArmoredStrengthValue() const
+ushort head::GetResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort SV = GetStrengthValue();
+      ushort Resistance = GetResistance(Type);
 
       if(GetMaster()->GetHumanoidTorso()->GetBodyArmor())
-	SV += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetStrengthValue();
+	Resistance += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetResistance(Type);
 
-      return SV;
+      return Resistance;
     }
   else
-    return GetStrengthValue();
+    return GetResistance(Type);
 }
 
-ushort normaltorso::GetArmoredStrengthValue() const
+ushort normaltorso::GetResistance(uchar Type) const
 {
-  return GetStrengthValue();
+  return GetResistance(Type);
 }
 
-ushort humanoidtorso::GetArmoredStrengthValue() const
+ushort humanoidtorso::GetResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort SV = GetStrengthValue();
+      ushort Resistance = GetResistance(Type);
 
       if(GetBodyArmor())
-	SV += GetBodyArmor()->GetStrengthValue();
+	Resistance += GetBodyArmor()->GetResistance(Type);
 
-      return SV;
+      return Resistance;
     }
   else
-    return GetStrengthValue();
+    return GetResistance(Type);
 }
 
-ushort arm::GetArmoredStrengthValue() const
+ushort arm::GetResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort SV = GetStrengthValue();
+      ushort Resistance = GetResistance(Type);
 
       if(GetMaster()->GetHumanoidTorso()->GetBodyArmor())
-	SV += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetStrengthValue();
+	Resistance += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetResistance(Type);
 
-      return SV;
+      return Resistance;
     }
   else
-    return GetStrengthValue();
+    return GetResistance(Type);
 }
 
-ushort groin::GetArmoredStrengthValue() const
+ushort groin::GetResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort SV = GetStrengthValue();
+      ushort Resistance = GetResistance(Type);
 
       if(GetMaster()->GetHumanoidTorso()->GetBodyArmor())
-	SV += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetStrengthValue();
+	Resistance += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetResistance(Type);
 
-      return SV;
+      return Resistance;
     }
   else
-    return GetStrengthValue();
+    return GetResistance(Type);
 }
 
-ushort leg::GetArmoredStrengthValue() const
+ushort leg::GetResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort SV = GetStrengthValue();
+      ushort Resistance = GetResistance(Type);
 
       if(GetMaster()->GetHumanoidTorso()->GetBodyArmor())
-	SV += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetStrengthValue();
+	Resistance += GetMaster()->GetHumanoidTorso()->GetBodyArmor()->GetResistance(Type);
 
-      return SV;
+      return Resistance;
     }
   else
-    return GetStrengthValue();
+    return GetResistance(Type);
 }
 
 void head::Save(outputfile& SaveFile) const
@@ -1403,7 +1403,7 @@ void leg::Load(inputfile& SaveFile)
   BootSlot.SetBodyPart(this);
 }
 
-bool bodypart::ReceivePhysicalDamage(short Damage)
+bool bodypart::ReceiveDamage(uchar, short Damage)
 {
   if(GetMaster())
     {

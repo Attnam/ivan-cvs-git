@@ -241,7 +241,7 @@ bool item::Consume(character* Eater, float Amount)
       Cannibalised = true;
     }
 
-  return GetMainMaterial()->GetVolume() ? false : true;
+  return GetConsumeMaterial()->GetVolume() ? false : true;
 }
 
 bool item::IsBadFoodForAI(character* Eater) const
@@ -342,7 +342,6 @@ void item::MoveTo(stack* Stack)
 
 void item::DonateSlotTo(item* Item)
 {
-  //Item->SetSlot(GetSlot());
   GetSlot()->SetItem(Item);
   SetSlot(0);
 }
@@ -370,5 +369,27 @@ std::string item::ItemCategoryName(uchar Category)
     case VALUABLE: return "Valuables";
     case MISC: return "Miscellaneous items";
     default: return "Illegal items";
+    }
+}
+
+bool item::IsOnGround() const
+{
+  return GetSlot()->IsOnGround();
+}
+
+ushort item::GetResistance(uchar Type) const
+{
+  switch(Type)
+    {
+    case PHYSICALDAMAGE: return GetStrengthValue();
+    case SOUND: return 0;
+    case ENERGY: return 0;
+    case ACID: return 0;
+    case FIRE: return 0;
+    case POISON: return 0;
+    case BULIMIA: return 0;
+    default:
+      ABORT("Resistance lack detected!");
+      return 0;
     }
 }

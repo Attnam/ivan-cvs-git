@@ -1,3 +1,8 @@
+April 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Damage system revised
+	* The Great Ultimate Line of Sight Bug of Doomsday corrected
+
 2002-04-26  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* charde.cpp/h: Added lion, buffalo and carnivorousplant

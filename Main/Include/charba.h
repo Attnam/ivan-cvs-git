@@ -105,7 +105,6 @@ class character : public type, public entity, public id
   virtual bool Catches(item*, float) { return false; }
   virtual bool CheckBulimia() const;
   virtual bool CheckDeath(std::string, bool = false);
-  //virtual bool CheckIfConsumable(item*) const;
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*);
   virtual bool OpenItem();
@@ -173,7 +172,6 @@ class character : public type, public entity, public id
   virtual ulong GetBloodColor() const;
   virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
   virtual ushort GetAgility() const { return Agility; }
-  //virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
   virtual ushort GetEmitation() const;
   virtual ushort GetEndurance() const { return Endurance; }
   virtual ushort GetPerception() const { return Perception; }
@@ -182,7 +180,6 @@ class character : public type, public entity, public id
   virtual ushort LOSRangeSquare() const;
   virtual bool CanBeGenerated() const { return true; }
   virtual vector2d GetPos() const;
-  //virtual std::string GetFailToHurtMessage(character*) const;
   virtual void AddMissMessage(character*) const;
   virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
   virtual void ApplyExperience();
@@ -206,7 +203,6 @@ class character : public type, public entity, public id
   virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; if(Agility > 99) Agility = 99; }
   virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
   virtual void SetAP(long What) { AP = What; }
-  //virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
   virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
   virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
   virtual void SetIsPlayer(bool What) { IsPlayer = What; }
@@ -233,14 +229,9 @@ class character : public type, public entity, public id
   virtual void DeActivateState(uchar What) { State &= ~What; }
   virtual bool StateIsActivated(uchar What) const { return State & What ? true : false; }
   virtual void Faint();
-  //virtual void FaintHandler();
-  //virtual void ConsumeHandler();
   virtual void PolymorphHandler();
   virtual void SetStateCounter(uchar, ushort);
-  //virtual bool CanMove();
   virtual void DeActivateVoluntaryStates(std::string = "");
-  //virtual void EndFainted();
-  //virtual void EndConsuming();
   virtual void EndPolymorph();
   virtual void StruckByWandOfStriking(character*, std::string);
   virtual void ActionAutoTermination();
@@ -248,14 +239,6 @@ class character : public type, public entity, public id
   virtual void SetTeam(team*);
   virtual void ChangeTeam(team*);
   virtual bool RestUntilHealed();
-  //virtual void RestHandler();
-  //virtual void EndRest();
-  //virtual void DigHandler();
-  //virtual void EndDig();
-  //virtual void SetOldWieldedItem(item* What) { StateVariables.Digging.OldWieldedItem = What; }
-  //virtual void SetSquareBeingDug(vector2d What) { StateVariables.Digging.SquareBeingDugX = What.X; StateVariables.Digging.SquareBeingDugY = What.Y; }
-  //virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
-  //virtual vector2d GetSquareBeingDug() const { return vector2d(StateVariables.Digging.SquareBeingDugX, StateVariables.Digging.SquareBeingDugY); }
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
   virtual float GetThrowGetStrengthModifier() const;
@@ -285,8 +268,6 @@ class character : public type, public entity, public id
   virtual stack* GetGiftStack() const;
   virtual bool MoveRandomlyInRoom();
   virtual bool CanOpenDoors() const { return true; }
-  //virtual void GoHandler();
-  //virtual void EndGoing();
   virtual bool Go();
   virtual bool ShowConfigScreen();
   virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
@@ -322,15 +303,14 @@ class character : public type, public entity, public id
   virtual void Teleport();
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
-  virtual bool ReceiveEffect(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
-  virtual bool ReceiveBodyPartPhysicalDamage(short, uchar, uchar = 8, bool = false, bool = false);
+  virtual bool ReceiveDamage(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveBodyPartDamage(short, uchar, uchar, uchar = 8, bool = false, bool = false);
   virtual bool BodyPartVital(uchar);
   virtual void RestoreBodyParts();
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(std::string What) { AssignedName = What; }
   virtual bool CanBeAssignedAName() const { return true; }
-  virtual bool ReceiveBodyPartEffect(short, uchar, uchar, uchar = 8, bool = false, bool = false);
   virtual std::string Description(uchar) const;
   virtual std::string PersonalPronoun() const;
   virtual std::string PossessivePronoun() const;
@@ -365,14 +345,16 @@ class character : public type, public entity, public id
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }
   virtual void GoOn(go*);
-  //  virtual uchar GetLegs() const;
   virtual bool CheckKick();
   virtual short GetLengthOfOpen(vector2d) const { return -500; }
   virtual bool CheckThrow() const { return true; }  
   virtual bool CheckApply() const { return true; }
   virtual bool CheckOffer() const { return true; }
-  virtual ushort GetStateCounter(uchar);
+  virtual ushort GetStateCounter(uchar) const;
   virtual void EditStateCounter(uchar, short);
+  virtual void BlockDamageType(uchar);
+  virtual bool AllowDamageTypeBloodSpill(uchar) const;
+  virtual bool DamageTypeCanSeverBodyPart(uchar) const;
  protected:
   virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;

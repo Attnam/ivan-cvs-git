@@ -162,6 +162,8 @@ class item : public object
   virtual bool IsGauntlet(character*) const { return false; }
   virtual bool IsBelt(character*) const { return false; }
   virtual bool IsBoot(character*) const { return false; }
+  virtual bool IsOnGround() const;
+  virtual ushort GetResistance(uchar) const;
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }

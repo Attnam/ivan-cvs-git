@@ -9,8 +9,8 @@
 #define LEFT 1
 #define UP 2
 #define RIGHT 3
-
 #define CENTER 4
+#define HIDDEN 5
 
 #include <string>
 #include <list>
@@ -82,6 +82,7 @@ class stack
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, character*, std::string, bool, bool (item::*)(character*) const) const;
   item* SearchChosen(ushort&, ushort, character*, bool (item::*)(character*) const) const;
+  bool IsOnGround() const { return SquarePosition == HIDDEN; }
  private:
   stacklist* Item;
   square* SquareUnder;

@@ -2200,7 +2200,7 @@ void dwarf::DrawToTileBuffer() const
     GetHead()->DrawToTileBuffer(vector2d(0, 1));
 }
 
-bool humanoid::ReceiveEffect(short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
+bool humanoid::ReceiveDamage(short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
 {
   std::vector<uchar> ChooseFrom;
 
@@ -2233,13 +2233,13 @@ bool humanoid::ReceiveEffect(short Amount, uchar Type, uchar TargetFlags, uchar 
       bool Affected = false;
 
       for(ushort c = 0; c < ChooseFrom.size(); ++c)
-	if(ReceiveBodyPartEffect(Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
+	if(ReceiveBodyPartDamage(Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
 	  Affected = true;
 
       return Affected;
     }
   else
-    return ReceiveBodyPartEffect(Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
+    return ReceiveBodyPartDamage(Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
 }
 
 item* humanoid::GetMainWielded() const

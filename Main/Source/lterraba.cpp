@@ -164,6 +164,6 @@ bool glterrain::SitOn(character*)
 
 void olterrain::Break()
 {
-  GetLSquareUnder()->ChangeOLTerrain(new empty);
+  GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(new empty);
 }
 

@@ -52,7 +52,7 @@ void valpurus::PrayGoodEffect()
 void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
-  game::GetPlayer()->ReceiveEffect(10, PHYSICALDAMAGE, HEAD, RAND() % 8);
+  game::GetPlayer()->ReceiveDamage(10, PHYSICALDAMAGE, HEAD, RAND() % 8);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
   game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
 }
@@ -102,7 +102,7 @@ void dulcis::PrayGoodEffect()
 void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
-  game::GetPlayer()->ReceiveEffect(1 + RAND() % 9, SOUND, HEAD);
+  game::GetPlayer()->ReceiveDamage(1 + RAND() % 9, SOUND, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
   game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
 }
@@ -247,7 +247,7 @@ void silva::PrayGoodEffect()
 
 	    if(Correct)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrain(new empty);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new empty);
 
 		for(ushort p = 0; p < 4; ++p)
 		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
@@ -278,14 +278,14 @@ void silva::PrayGoodEffect()
 
 	    if(Walkables > 6)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrain(new earth);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new earth);
 
 		if(Char)
 		  {
 		    if(Char->GetSquareUnder()->CanBeSeen())
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHARNAME(DEFINITE));
 
-		    Char->ReceiveEffect(20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
+		    Char->ReceiveDamage(20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
 		    //Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
 		    Char->CheckDeath("killed by an earthquake");
 		  }
@@ -475,7 +475,7 @@ void erado::PrayBadEffect()
   ADD_MESSAGE("A bolt of black energy hits you.");
 
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
-  game::GetPlayer()->ReceiveEffect(1 + RAND() % 20, ENERGY, ALL);
+  game::GetPlayer()->ReceiveDamage(1 + RAND() % 20, ENERGY, ALL);
 
   game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
   game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
@@ -693,7 +693,7 @@ void macellarius::PrayGoodEffect()
 void macellarius::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
-  game::GetPlayer()->ReceiveEffect(RAND() % 7, PHYSICALDAMAGE, HEAD);
+  game::GetPlayer()->ReceiveDamage(RAND() % 7, PHYSICALDAMAGE, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
   game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
@@ -780,7 +780,7 @@ void cruentus::PrayBadEffect()
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
       //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
-      game::GetPlayer()->ReceiveEffect(1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
+      game::GetPlayer()->ReceiveDamage(1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
       game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
     }
 }

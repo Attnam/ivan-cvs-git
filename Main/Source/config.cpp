@@ -23,7 +23,7 @@
 std::string configuration::DefaultName;
 ushort configuration::AutoSaveInterval = 500;
 uchar configuration::Contrast = 100;
-bool configuration::AutodropLeftOvers = true;
+bool configuration::AutoDropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
 ushort configuration::CharacterOutlineColor = BLUE;
@@ -41,7 +41,7 @@ void configuration::Save()
   SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
   SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
   SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
-  SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
+  SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
   SaveFile << "CharacterOutlineColor = " << GET_RED(CharacterOutlineColor) << ", " << GET_GREEN(CharacterOutlineColor) << ", " << GET_BLUE(CharacterOutlineColor) << ";\n";
@@ -71,8 +71,8 @@ void configuration::Load()
       if(Word == "Contrast")
 	SetContrast(SaveFile.ReadNumber());
 
-      if(Word == "AutodropLeftOvers")
-	SetAutodropLeftOvers(SaveFile.ReadBool());
+      if(Word == "AutoDropLeftOvers")
+	SetAutoDropLeftOvers(SaveFile.ReadBool());
 
       if(Word == "OutlineCharacters")
 	SetOutlineCharacters(SaveFile.ReadBool());
@@ -142,7 +142,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
       List.AddEntry(std::string("AutoSave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
-      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHTGRAY);
 
@@ -169,7 +169,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  continue;
 	case 3:
-	  SetAutodropLeftOvers(!GetAutodropLeftOvers());
+	  SetAutoDropLeftOvers(!GetAutoDropLeftOvers());
 	  BoolChange = true;
 	  continue;
 	case 4:

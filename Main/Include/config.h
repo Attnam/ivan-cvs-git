@@ -19,8 +19,8 @@ class configuration
   static void EditContrast(char);
   static uchar GetContrast() { return Contrast; }
   static void SetContrast(long);
-  static bool GetAutodropLeftOvers() { return AutodropLeftOvers; }
-  static void SetAutodropLeftOvers(bool What) { AutodropLeftOvers = What; }
+  static bool GetAutoDropLeftOvers() { return AutoDropLeftOvers; }
+  static void SetAutoDropLeftOvers(bool What) { AutoDropLeftOvers = What; }
   static bool GetOutlineCharacters() { return OutlineCharacters; }
   static void SetOutlineCharacters(bool What) { OutlineCharacters = What; }
   static bool GetOutlineItems() { return OutlineItems; }
@@ -41,7 +41,7 @@ class configuration
   static std::string DefaultName;
   static ushort AutoSaveInterval;
   static uchar Contrast;
-  static bool AutodropLeftOvers;
+  static bool AutoDropLeftOvers;
   static bool OutlineCharacters;
   static bool OutlineItems;
   static ushort CharacterOutlineColor;

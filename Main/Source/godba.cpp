@@ -135,7 +135,7 @@ void god::PlayerVomitedOnAltar()
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
   ADD_MESSAGE("The vomit lands on your face.");
   AdjustRelation(-200);
-  game::GetPlayer()->ReceiveEffect(1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
+  game::GetPlayer()->ReceiveDamage(1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 

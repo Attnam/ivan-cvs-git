@@ -129,3 +129,8 @@ void actionslot::AddFriendItem(item* Item) const
 {
   GetAction()->GetActor()->GetStack()->AddItem(Item);
 }
+
+bool stackslot::IsOnGround() const
+{
+  return GetMotherStack()->IsOnGround();
+}

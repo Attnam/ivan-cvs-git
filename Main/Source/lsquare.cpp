@@ -480,6 +480,8 @@ void lsquare::AlterLuminance(vector2d Dir, ushort AiL)
 
   NewDrawRequested = true;
 
+  /* This is extremely important but I don't remember why! */
+
   if(GetLastSeen() == game::GetLOSTurns())
     game::SendLOSUpdateRequest();
 }
@@ -828,9 +830,7 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
   if(SquareScript->GetOTerrain(false))
     {
       Clean();
-
       olterrain* Terrain = SquareScript->GetOTerrain()->Instantiate();
-
       ChangeOLTerrain(Terrain);
 
       if(Room)
@@ -952,6 +952,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   SignalEmitationDecrease(Emit);
   ForceEmitterEmitation();
   game::SendLOSUpdateRequest();
+  game::GetCurrentArea()->UpdateLOS();
 
   for(ushort c = 0; c < 4; ++c)
     for(stackiterator i = GetSideStack(c)->GetBottomSlot(); i != GetSideStack(c)->GetSlotAboveTop(); ++i)
@@ -1100,13 +1101,6 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
 	  if(!GetLevelUnder()->GetRoom(GetRoom())->Dip(Dipper))
 	    return false;
 	}
-      /*else
-	{
-	  if(!game::BoolQuestion("Do you want to dip? [y/N]"))
-	    {
-	      return false;
-	    }
-	}*/
     }
   
   if(GetGLTerrain()->DipInto(Thingy, Dipper) || GetOLTerrain()->DipInto(Thingy, Dipper))
@@ -1140,4 +1134,3 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 	}*/
     }
 }
-
