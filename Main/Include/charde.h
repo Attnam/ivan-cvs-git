@@ -12,8 +12,12 @@ public:
 	uchar GetLevel();
 	ulong GetHits();
 	ulong GetLastHit();
-	void AddHit() { Hits++; }
+	void AddHit() { if(Hits != 0xFFFF) Hits++; }
+	void AddHit(ulong AddHits) { if(Hits <= 0xFFFF - AddHits) Hits += AddHits; else Hits = 0xFFFF; }
+	void SubHit() { if(Hits) Hits--; }
+	void SubHit(ulong SubHits) { if(Hits >= SubHits) Hits -= SubHits; else Hits = 0; }
 private:
+	static ushort* LevelMap;
 	uchar Level;
 	ulong Hits;
 	ulong LastHit;

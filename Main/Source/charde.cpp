@@ -12,6 +12,8 @@
 #include "god.h"
 #include "feio.h"
 
+ushort* weaponskill::LevelMap = 0;
+
 void perttu::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurijustifier)));

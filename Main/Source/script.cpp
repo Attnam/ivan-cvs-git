@@ -84,13 +84,13 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 	}
 
 	if(Word != ";" && Word != ",")
-		ABORT("Script error: Odd terminator %s encountered in content script!", Word.c_str());
+		ABORT("Script error: Odd terminator %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
 }
 
 template <class type> type* contentscript<type>::Instantiate() const
 {
 	if(!ContentType)
-		ABORT("Illegal content script instantiation!");
+		ABORT("Illegal content script instantiation of %s!", typeid(type).name());
 
 	type* Instance;
 
@@ -218,7 +218,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 {
 	if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in content map script!");
+		ABORT("Bracket missing in content map script of %s!", typeid(type).name());
 
 	std::map<char, contentscript<type>*> SymbolMap;
 
@@ -249,7 +249,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 		if(Word == "Types")
 		{
 			if(SaveFile.ReadWord() != "{")
-				ABORT("Bracket missing in room script!");
+				ABORT("Missing bracket in content map script of %s!", typeid(type).name());
 
 			for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 			{
@@ -269,7 +269,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 		Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
 
 	if(SaveFile.ReadWord() != "{")
-		ABORT("Missing bracket in content map script!");
+		ABORT("Missing bracket in content map script of %s!", typeid(type).name());
 
 	for(ushort y = 0; y < GetSize()->Y; ++y)
 		for(ushort x = 0; x < GetSize()->X; ++x)
@@ -281,11 +281,11 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 			if(Iterator != SymbolMap.end())
 				ContentScriptMap[x][y] = Iterator->second;
 			else
-				ABORT("Illegal content %c in content map!", Char);
+				ABORT("Illegal content %c in content map of %s!", Char, typeid(type).name());
 		}
 
 	if(SaveFile.ReadWord() != "}")
-		ABORT("Missing bracket in content map script!");
+		ABORT("Missing bracket in content map script of %s!", typeid(type).name());
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
