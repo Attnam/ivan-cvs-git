@@ -213,7 +213,6 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 					if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
 					{
 						FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
-
 						Map[x][y]->ChangeOverLevelTerrain(new empty);
 					}
 
@@ -866,7 +865,12 @@ room* level::GetRoom(uchar Index) const
 
 void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 {
-	GetLevelSquare(Pos)->SetTemporaryEmitation(350);
+	ushort EmitChange = 300 + Strength * 2;
+
+	if(EmitChange > 511)
+		EmitChange = 511;
+
+	GetLevelSquare(Pos)->SetTemporaryEmitation(EmitChange);
 
 	ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
@@ -883,7 +887,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 		}
 
 	vector2d BPos = ((Pos - game::GetCamera() + vector2d(0,2)) << 4) - vector2d(16 * (6 - Size), 16 * (6 - Size));
-	vector2d SizeVect(16 + 32 * (6 - Size), 16 + 32 * (6 - Size));
+	vector2d SizeVect(16 + 32 * (6 - Size), 16 + 32 * (6 - Size)), OldSizeVect = SizeVect;
 	vector2d PicPos = StrengthPicPos[Size];
 
 	while(true)
@@ -919,7 +923,18 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 
 		DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
 		game::DrawEverythingNoBlit(false);
-		igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos.X, PicPos.Y, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+
+		uchar Flags = RAND() % 8;
+
+		if(!Flags || SizeVect != OldSizeVect)
+			igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos.X, PicPos.Y, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+		else
+		{
+			bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
+			igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos.X, PicPos.Y, 0, 0, SizeVect.X, SizeVect.Y, Flags);
+			ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+		}
+
 		graphics::BlitDBToScreen();
 		game::GetCurrentArea()->SendNewDrawRequest();
 		clock_t StartTime = clock();
@@ -939,7 +954,6 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 		character* Char = Square->GetCharacter();
 
 		if(Char)
-		{
 			if(Char->GetIsPlayer())
 			{
 				PlayerDamage = Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y)));
@@ -948,18 +962,25 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 			else
 			{
 				Terrorist->GetTeam()->Hostility(Char->GetTeam());
+				Char->GetStack()->ImpactDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))), Square->CanBeSeen());
 				Char->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
-				Char->CheckDeath(std::string("killed by an explosion"));
+				Char->CheckGearExistence();
+				Char->CheckDeath("killed by an explosion");
 			}
-		}
 
+		Square->GetStack()->ImpactDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))), Square->CanBeSeen());
 		Square->GetStack()->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
+
+		if(Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
+			Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
 	})
 
 	if(PlayerHurt)
 	{
 		Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
+		game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage, true);
 		game::GetPlayer()->ReceiveFireDamage(Terrorist, PlayerDamage);
-		game::GetPlayer()->CheckDeath(std::string("killed by an explosion"));
+		game::GetPlayer()->CheckGearExistence();
+		game::GetPlayer()->CheckDeath("killed by an explosion");
 	}
 }

@@ -765,6 +765,9 @@ ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: r
 
 bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
 {
+	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+		ADD_MESSAGE("%s catches fire and explodes!", CNAME(DEFINITE));
+
 	MotherStack->RemoveItem(MotherStack->SearchItem(this));
 	SetExists(false);
 	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
@@ -773,6 +776,9 @@ bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfE
 
 bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long SizeOfEffect)
 {
+	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+		ADD_MESSAGE("%s explodes in the heat!", CNAME(DEFINITE));
+
 	MotherStack->RemoveItem(MotherStack->SearchItem(this));
 	SetExists(false);
 	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());

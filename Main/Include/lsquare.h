@@ -94,6 +94,7 @@ public:
 	virtual room* GetRoomClass() const;
 	virtual void SetTemporaryEmitation(ushort);
 	virtual ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
+	virtual void ChangeOverLevelTerrainAndUpdateLights(overlevelterrain*);
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

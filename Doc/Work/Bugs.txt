@@ -3,3 +3,4 @@ Ivan's engrave msg is still too long.
 Quitting via the corner X doesn't update hscores.
 Item's GetSquareUnder() doesn't work.
 The shopmaster bug.
+The save bug.

@@ -781,17 +781,7 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {
 	ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
-
-	ushort Emit = GetOverLevelTerrain()->GetEmitation();
-	ChangeOverLevelTerrain(new empty);
-	SignalEmitationDecrease(Emit);
-	ForceEmitterEmitation();
-	GetLevelUnder()->UpdateLOS();
-
-	for(uchar c = 0; c < 4; ++c)
-		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
-			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
-
+	ChangeOverLevelTerrainAndUpdateLights(new empty);
 	return true;
 }
 
@@ -1003,4 +993,17 @@ void levelsquare::SetTemporaryEmitation(ushort What)
 		SignalEmitationIncrease(What);
 	else if(What < Emitation)
 		SignalEmitationDecrease(Old);
+}
+
+void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTerrain)
+{
+	ushort Emit = GetOverLevelTerrain()->GetEmitation();
+	ChangeOverLevelTerrain(NewTerrain);
+	SignalEmitationDecrease(Emit);
+	ForceEmitterEmitation();
+	GetLevelUnder()->UpdateLOS();
+
+	for(uchar c = 0; c < 4; ++c)
+		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
+			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
 }

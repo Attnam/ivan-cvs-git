@@ -420,7 +420,6 @@ void fountain::Consume(character* Drinker)
 	}
 }
 
-
 void fountain::DryOut()
 {
 	ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));

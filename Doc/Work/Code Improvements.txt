@@ -18,3 +18,6 @@ Dynarrayn eliminaatio.
 Osoitinluokat?
 Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
+Aliasten klarifikaatio.
+Merkkijonoviittausten regularisoiminen.
+Merkkitaulukoiden hävittäminen.

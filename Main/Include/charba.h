@@ -268,6 +268,7 @@ public:
 	virtual bool CanBeDisplaced() const { return true; }
 	virtual void ReceiveKoboldFleshEffect(long);
 	virtual bool ChangeRandomStat(short);
+	virtual void CheckGearExistence();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

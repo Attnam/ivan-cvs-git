@@ -35,12 +35,12 @@ public:
 	virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
 	virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
 	virtual float GetToHitValue() const;
-	virtual void ReceiveSound(char*, short, float);
 	virtual long StatScore() const;
 	virtual void AddSpecialItemInfo(std::string&, item*);
 	virtual void AddSpecialItemInfoDescription(std::string&);
 	virtual void KickHit();
 	virtual bool CanBeGenerated() const { return false; }
+	virtual void CheckGearExistence();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(1000)

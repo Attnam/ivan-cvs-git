@@ -624,14 +624,6 @@ void humanoid::SetWielded(item* Something)
 		GetSquareUnder()->SendNewDrawRequest();
 }
 
-void humanoid::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
-{
-	character::ReceiveSound(Pointer, Success, ScreamStrength);
-
-	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
-		SetTorsoArmor(0);
-}
-
 float humanoid::GetToHitValue() const
 {
 	if(GetWielded())
@@ -1191,6 +1183,7 @@ bool elpuri::Hit(character* Enemy)
 			case HAS_BLOCKED:
 			case HAS_DIED:
 				ByStander->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
+				ByStander->CheckGearExistence();
 				SetStrengthExperience(GetStrengthExperience() + 50);
 			case HAS_DODGED:
 				SetAgilityExperience(GetAgilityExperience() + 25);
@@ -1699,4 +1692,12 @@ void kamikazedwarf::Load(inputfile& SaveFile)
 	humanoid::Load(SaveFile);
 
 	SaveFile >> Master;
+}
+
+void humanoid::CheckGearExistence()
+{
+	character::CheckGearExistence();
+
+	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
+		SetTorsoArmor(0);
 }

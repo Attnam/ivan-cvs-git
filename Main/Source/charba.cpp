@@ -56,11 +56,8 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 
 	SetHP(HP - Damage);
 	GetStack()->ReceiveSound(ScreamStrength);
-
 	CheckDeath("killed by an Enner Beast's scream");
-
-	if(GetWielded() && !GetWielded()->GetExists())
-		SetWielded(0);
+	CheckGearExistence();
 }
 
 void character::Hunger(ushort Turns) 
@@ -3231,4 +3228,10 @@ bool character::ChangeRandomStat(short HowMuch)
 		}
 	
 	return false; // No stat could be lowered (tried randomly 15 times)
+}
+
+void character::CheckGearExistence()
+{
+	if(GetWielded() && !GetWielded()->GetExists())
+		SetWielded(0);
 }
