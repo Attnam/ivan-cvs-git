@@ -667,14 +667,17 @@ protected:
 
 class MATERIAL
 (
-	impflesh,
-	flesh,
+	sulfur,
+	material,
 public:
-	virtual ushort OfferValue() const				{ return 20; }
+	virtual ushort GetHitValue() const				{ return 50; }
+	virtual uchar GetConsumeType() const				{ return HARD; }
+	virtual ushort GetDensity() const				{ return 2000; }
+	virtual ushort OfferValue() const				{ return 10; }
+	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(128, 0, 0); }
-	virtual short NutritionValue() const			{ return 250; }
 protected:
-	virtual std::string NameStem() const	{ return "imp flesh"; }
+	virtual std::string NameStem() const	{ return "sulfur"; }
 );
 
 class MATERIAL

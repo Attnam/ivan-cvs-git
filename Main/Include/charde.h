@@ -1003,9 +1003,9 @@ class CHARACTER
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 	virtual void BeTalkedTo(character*);
-	virtual void CreateInitialEquipment();
 	virtual uchar GetSex() const RET(FEMALE)
 protected:
+	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("female slave")
 	virtual float GetMeleeStrength() const RET(500)
 	virtual void GetAICommand() { StandIdleAI(); }
@@ -1059,7 +1059,7 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual void BeTalkedTo(character*);
 	virtual void SpillBlood(uchar, vector2d);
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 50000; else return 0; }
 	virtual float GetMeleeStrength() const RET(1500)
 protected:
 	virtual std::string NameSingular() const RET("zombie")
@@ -1070,20 +1070,20 @@ class CHARACTER
 (
 	imp,
 	character,
-	InitMaterials(new impflesh),
+	InitMaterials(new sulfur),
 	{
-		SetSize(50);
+		SetSize(100);
 		SetAgility(15);
 		SetStrength(10);
 		SetEndurance(10);
 		SetPerception(15);
 	},
 public:
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(368,0)
 	virtual std::string NameSingular() const RET("imp")
-	virtual float GetMeleeStrength() const RET(15000)
+	virtual float GetMeleeStrength() const RET(20000)
 );
 
 class CHARACTER
@@ -1099,14 +1099,14 @@ class CHARACTER
 		SetPerception(24);
 	},
 public:
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 1000; else return 0; }
 	virtual std::string StandVerb() const { return "flying"; }
 	virtual bool CanOpenDoors(void) const { return false; }
 	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(464,0)
 	virtual std::string NameSingular() const RET("bat")
-	virtual float GetMeleeStrength() const RET(5000)
+	virtual float GetMeleeStrength() const RET(20000)
 );
 
 class CHARACTER
@@ -1125,7 +1125,7 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual uchar GetSex() const RET(FEMALE)
-	virtual float GetMeleeStrength() const RET(1200)
+	virtual float GetMeleeStrength() const RET(5000)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(352,0)
 	virtual void CreateInitialEquipment();
@@ -1138,7 +1138,7 @@ class CHARACTER
 	complexhumanoid,
 	InitMaterials(new werewolfflesh),
 	{
-		SetChangeCounter(0);
+		SetChangeCounter(RAND() % 1000);
 
 		if(RAND() % 2) 
 			ChangeIntoHuman();
@@ -1181,11 +1181,12 @@ class CHARACTER
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 90000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
+	virtual void CreateInitialEquipment();
 	virtual vector2d GetBitmapPos() const RETV(480,0)
 	virtual std::string NameSingular() const RET("kobold")
-	virtual float GetMeleeStrength() const RET(15000)
+	virtual float GetMeleeStrength() const RET(2000)
 );
 
 class CHARACTER	// it should be noted that I no idea what 
@@ -1201,11 +1202,11 @@ class CHARACTER	// it should be noted that I no idea what
 		SetPerception(15);
 	},
 public:
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 70000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(448,0)
 	virtual std::string NameSingular() const RET("gibberling")
-	virtual float GetMeleeStrength() const RET(5000)
+	virtual float GetMeleeStrength() const RET(10000)
 );
 
 class CHARACTER	
@@ -1221,11 +1222,11 @@ class CHARACTER
 		SetPerception(21);
 	},
 public:
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 15000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(496,0)
 	virtual std::string NameSingular() const RET("large cat")
-	virtual float GetMeleeStrength() const RET(15000)
+	virtual float GetMeleeStrength() const RET(20000)
 );
 
 class CHARACTER	
@@ -1241,11 +1242,11 @@ class CHARACTER
 		SetPerception(12);
 	},
 public:
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(512,0)
 	virtual std::string NameSingular() const RET("large rat")
-	virtual float GetMeleeStrength() const RET(4000)
+	virtual float GetMeleeStrength() const RET(20000)
 );
 
 class CHARACTER	

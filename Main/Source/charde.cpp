@@ -1458,11 +1458,11 @@ void mistress::CreateInitialEquipment()
 
 void werewolf::ChangeIntoHuman()
 {
-	SetSize(180);
+	SetSize(170);
 	SetAgility(15);
-	SetStrength(12);
-	SetEndurance(14);
-	SetPerception(12);
+	SetStrength(15);
+	SetEndurance(15);
+	SetPerception(15);
 	SetLegType(1);
 	SetTorsoType(1);
 	SetArmType(1);		// Needs GFX
@@ -1473,15 +1473,16 @@ void werewolf::ChangeIntoHuman()
 	SetEnduranceExperience(0);
 	SetAgilityExperience(0);
 	SetPerceptionExperience(0);
+	SetHP(GetMaxHP());
 }
 
 void werewolf::ChangeIntoWolf()
 {
 	SetSize(200);
 	SetAgility(25);
-	SetStrength(22);
-	SetEndurance(24);
-	SetPerception(20);
+	SetStrength(25);
+	SetEndurance(25);
+	SetPerception(24);
 	SetLegType(2);		// Needs GFX
 	SetTorsoType(2);
 	SetArmType(2);
@@ -1493,6 +1494,7 @@ void werewolf::ChangeIntoWolf()
 	SetEnduranceExperience(0);
 	SetAgilityExperience(0);
 	SetPerceptionExperience(0);
+	SetHP(GetMaxHP());
 }
 
 void werewolf::Be()
@@ -1500,6 +1502,7 @@ void werewolf::Be()
 	if(ChangeCounter++ > 1000)
 	{
 		SetChangeCounter(0);
+
 		if(GetIsWolf())
 		{	
 			ChangeIntoHuman();
@@ -1542,9 +1545,9 @@ ulong werewolf::MaxDanger()
 float werewolf::GetMeleeStrength() const
 {
 	if(GetIsWolf())
-		return 9000;
+		return 20000;
 	else
-		return 1000;
+		return 2000;
 }
 
 void werewolf::Save(outputfile& SaveFile) const
@@ -1559,4 +1562,9 @@ void werewolf::Load(inputfile& SaveFile)
 	complexhumanoid::Load(SaveFile);
 
 	SaveFile >> IsWolf >> ChangeCounter;
+}
+
+void kobold::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
 }
