@@ -2244,7 +2244,7 @@ void spider::GetAICommand()
 	      }
 	  }
 
-  if(Hostiles && !RAND_N(Max(30 / Hostiles, 4)))
+  if(Hostiles && !RAND_N(Max(60 / Hostiles, 8)))
     {
       web* Web = new web;
       Web->SetStrength(10);

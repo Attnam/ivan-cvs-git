@@ -253,17 +253,17 @@ void seges::PrayGoodEffect()
       return;
     }
 
-  if(PLAYER->GetNP() < SATIATED_LEVEL)
-    {
-      ADD_MESSAGE("Your stomach feels full again.");
-      PLAYER->SetNP(BLOATED_LEVEL);
-      return;
-    }
-
   if(PLAYER->StateIsActivated(LEPROSY))
     {
       ADD_MESSAGE("%s cures your leprosy.", GetName());
       PLAYER->DeActivateTemporaryState(LEPROSY);
+      return;
+    }
+
+  if(PLAYER->GetNP() < SATIATED_LEVEL)
+    {
+      ADD_MESSAGE("Your stomach feels full again.");
+      PLAYER->SetNP(BLOATED_LEVEL);
       return;
     }
 

@@ -2517,7 +2517,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		TeamDefault = MONSTER_TEAM;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
-		DifficultyBase = 10;
+		DifficultyBase = 5;
 		DifficultyDelta = 15;
 		MonsterAmountDelta = 0;
 		MonsterGenerationIntervalBase = 200;

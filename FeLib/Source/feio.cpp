@@ -324,7 +324,7 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
    is drawn to cordinates given by Pos. All fonts are Color colored. If Fade is true
    the question is asked on a black background and the transition to that is a fade. */
 
-long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color, bool Fade)
+long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color, bool Fade, bool ReturnZeroOnEsc)
 {
   bitmap BackUp(RES_X, 9, 0);
 
@@ -349,7 +349,7 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && (LastKey != '-' || !Input.IsEmpty()))
+      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != KEY_ESC && (LastKey != '-' || !Input.IsEmpty()))
 	LastKey = GET_KEY(false);
 
       if(LastKey == KEY_BACK_SPACE)
@@ -362,6 +362,9 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
 
       if(LastKey == KEY_ENTER)
 	break;
+      
+      if(ReturnZeroOnEsc && LastKey == KEY_ESC)
+	return 0;
 
       if(Input.GetSize() < 12)
 	Input << char(LastKey);

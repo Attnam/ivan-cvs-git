@@ -218,7 +218,7 @@ class game
   static void Hostility(team*, team*);
   static void CreateTeams();
   static festring StringQuestion(const festring&, color16, festring::sizetype, festring::sizetype, bool, stringkeyhandler = 0);
-  static long NumberQuestion(const festring&, int);
+  static long NumberQuestion(const festring&, int, bool = false);
   static ulong IncreaseLOSTick();
   static ulong GetLOSTick() { return LOSTick; }
   static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }

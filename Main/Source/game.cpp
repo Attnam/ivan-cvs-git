@@ -1166,11 +1166,11 @@ festring game::StringQuestion(const festring& Topic, color16 Color, festring::si
   return Return;
 }
 
-long game::NumberQuestion(const festring& Topic, color16 Color)
+long game::NumberQuestion(const festring& Topic, color16 Color, bool ReturnZeroOnEsc)
 {
   DrawEverythingNoBlit();
   igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
-  long Return = iosystem::NumberQuestion(Topic, vector2d(16, 6), Color, false);
+  long Return = iosystem::NumberQuestion(Topic, vector2d(16, 6), Color, false, ReturnZeroOnEsc);
   igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Return;
 }

@@ -36,3 +36,4 @@ aluminium				SV 90, D 2650
 lead
 holy spirit
 elerium-115 (from xcom)			huge amount of energy
+wrapping paper				god = Atavus

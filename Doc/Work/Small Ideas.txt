@@ -510,4 +510,7 @@ Magic hassel which causes invisibility. (from Henri Kiviluoto)
 Stickiness value for materials.
 Detecting spider silk should identify webs in the level.
 Eddies should teleport smoke, fluids and webs around.
+Spilling blood on Seges' altar should anger Seges.
+Altars should have special features like healing on Seges' altar.
 Golems' wisdom shouldn't rise.
+

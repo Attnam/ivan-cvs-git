@@ -980,7 +980,7 @@ bool commandsystem::Rest(character* Char)
 
   if(Error)
     {
-      long MinutesToRest = game::NumberQuestion(CONST_S("How many minutes to wait?"), WHITE);
+      long MinutesToRest = game::NumberQuestion(CONST_S("How many minutes to wait?"), WHITE, true);
 
       if(MinutesToRest > 0)
 	{
@@ -1003,7 +1003,9 @@ bool commandsystem::Rest(character* Char)
 
   if(HPToRest <= Char->GetHP())
     {
-      ADD_MESSAGE("Your HP is already %d.", Char->GetHP());
+      if(HPToRest != 0)
+	ADD_MESSAGE("Your HP is already %d.", Char->GetHP());
+
       return false;
     }
 

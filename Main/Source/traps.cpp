@@ -180,5 +180,5 @@ void web::Destroy()
 
 bool web::CanBeSeenBy(const character* Who) const
 {
-  return GetLSquareUnder()->CanBeSeenBy(Who);
+  return GetLSquareUnder()->CanBeSeenBy(Who) && Who->GetAttribute(WISDOM) > 4;
 }

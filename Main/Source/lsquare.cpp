@@ -1773,7 +1773,7 @@ void lsquare::ReceiveEarthQuakeDamage()
 
 bool lsquare::IsDangerous(character* ToWhom) const
 {
-  return (GetStack()->IsDangerous(ToWhom) || Smoke);
+  return (GetStack()->IsDangerous(ToWhom) || Smoke || HasDangerousTraps(ToWhom));
 }
 
 bool lsquare::CanBeFeltByPlayer() const
