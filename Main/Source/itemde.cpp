@@ -386,7 +386,7 @@ vector2d can::GetBitmapPos() const
 
 bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
-	if(rand() % 5 && Strength > 5 + rand() % 10)
+	if(!(rand() % 25) && Strength > 10 + rand() % 10)
 	{
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
 		if(Shown)
