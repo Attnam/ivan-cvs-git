@@ -946,15 +946,12 @@ void wall::Break()
 
   if(DigProduct)
     {
-      material* StoneMaterial = MAKE_MATERIAL(DigProduct);
-      ushort HowManyParts = 1 + RAND() % 4;
+      ushort HowManyParts = 1 + (RAND() & 3);
 
       for(ushort c = 0; c < HowManyParts; ++c)
 	{
-	  material* StonesMaterial = StoneMaterial->Clone();
-	  StonesMaterial->SetVolume(1000);
 	  item* Stone = new stone(0, NO_MATERIALS);
-	  Stone->InitMaterials(StonesMaterial);
+	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
 	  GetLSquareUnder()->GetStack()->AddItem(Stone);
 	}
     }
@@ -1043,4 +1040,15 @@ void brokendoor::ReceiveDamage(character* Villain, ushort Damage, uchar)
       else if(LockBreaks && CanBeSeenByPlayer())
 	ADD_MESSAGE("The broken door's lock is shattered.");
     }
+}
+
+olterraincontainer::~olterraincontainer()
+{
+  delete Contained;
+}
+
+void olterraincontainer::Break()
+{
+  GetContained()->MoveItemsTo(GetLSquareUnder()->GetStack());
+  olterrain::Break();
 }

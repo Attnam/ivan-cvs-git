@@ -1189,6 +1189,8 @@ void lsquare::SetLastSeen(ulong What)
   UpdateMemorizedDescription();
 }
 
+#include "charde.h"
+
 void lsquare::DrawMemorized()
 {
   if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
@@ -1199,6 +1201,9 @@ void lsquare::DrawMemorized()
 	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
       else
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+
+      if(dynamic_cast<dog*>(Character) != 0)
+	int esko = 2;
 
       if(Character && Character->CanBeSeenByPlayer())
 	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);

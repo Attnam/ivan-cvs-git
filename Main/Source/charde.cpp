@@ -2289,23 +2289,6 @@ long humanoid::GetMoveAPRequirement(uchar Difficulty) const
     }
 }
 
-bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
-{
-  switch(Index)
-    {
-    case RIGHT_GAUNTLET_INDEX:
-      return GetLeftGauntlet() && GetLeftGauntlet()->IsSimiliarTo(GetRightGauntlet());
-    case LEFT_GAUNTLET_INDEX:
-      return GetRightGauntlet() && GetRightGauntlet()->IsSimiliarTo(GetLeftGauntlet());
-    case RIGHT_BOOT_INDEX:
-      return GetLeftBoot() && GetLeftBoot()->IsSimiliarTo(GetRightBoot());
-    case LEFT_BOOT_INDEX:
-      return GetRightBoot() && GetRightBoot()->IsSimiliarTo(GetLeftBoot());
-    }
-
-  return true;
-}
-
 void hunter::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 

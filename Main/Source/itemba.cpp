@@ -22,7 +22,7 @@
 #include "festring.h"
 
 const std::string item::ToHitValueDescription[] = { "unbelievably inaccurate", "inaccurate", "decently accurate", "accurate","highly accurate","extremely accurate","unbelievably accurate" };
-const std::string item::StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "unbreakable" };
+const std::string item::StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
 {

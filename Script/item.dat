@@ -516,11 +516,6 @@ justifier /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeBroken = false;
 	DefaultEnchantment = 16;
-
-	Config BROKEN; /* for future */
-	{
-		BitmapPos = 32, 128;
-	}
 }
 
 neercseulb /* meleeweapon-> */
@@ -551,11 +546,6 @@ neercseulb /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeBroken = false;
 	DefaultEnchantment = 6;
-
-	Config BROKEN; /* for future */
-	{
-		BitmapPos = 32, 112;
-	}
 }
 
 pickaxe /* meleeweapon-> */
@@ -672,7 +662,6 @@ bodyarmor /* armor-> */
 		BitmapPos = 0, 352;
 		FormModifier = 20;
 		Price = 50;
-		AffectsEndurance = false;
 	}
 }
 
@@ -1014,12 +1003,6 @@ whip /* meleeweapon-> */
 	FormModifier = 7; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;
 
-	Config BROKEN; /* for future */
-	{
-		Possibility = 0;
-		BitmapPos = 32, 256;
-	}
-
 	Config RUNED_WHIP;
 	{
 		DefaultSize = 230;
@@ -1029,12 +1012,6 @@ whip /* meleeweapon-> */
 		StrengthModifier = 20;
 		Adjective = "runed";
 		FormModifier = 15;
-	}
-
-	Config BROKEN|RUNED_WHIP;
-	{
-		Possibility = 0;
-		BitmapPos = 32, 256;
 	}
 }
 
@@ -2067,13 +2044,6 @@ whipofthievery /* meleeweapon->whip-> */
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
 	Price = 750;
-
-	Config BROKEN; /* for future */
-	{
-		Possibility = 0;
-		BitmapPos = 32, 256;
-		Price = 0;
-	}
 }
 
 wandofcloning /* wand-> */

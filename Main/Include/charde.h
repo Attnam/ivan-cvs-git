@@ -107,7 +107,6 @@ class ABSTRACT_CHARACTER
   virtual bool AddSpecialSkillInfo(felist&) const;
   virtual bool CheckBalance(float);
   virtual long GetMoveAPRequirement(uchar) const;
-  virtual bool EquipmentHasNoPairProblems(ushort) const;
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
   virtual bool EquipmentEasilyRecognized(ushort) const;

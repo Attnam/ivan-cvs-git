@@ -377,6 +377,8 @@ class item : public object
   virtual bool IsEncryptedScroll() const { return false; }
   virtual const std::string& GetStrengthValueDescription() const;
   virtual const std::string& GetBaseToHitValueDescription() const;
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_INDEX || Index == LEFT_WIELDED_INDEX; }
+  bool IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(Slot)->GetEquipmentIndex()); }
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();

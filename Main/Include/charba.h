@@ -506,6 +506,7 @@ class character : public entity, public id
   virtual DATA_BASE_BOOL(HasFeet);
   virtual DATA_BASE_VALUE(const std::string&, DeathMessage);
   DATA_BASE_BOOL(IsExtraCoward);
+  DATA_BASE_BOOL(SpillsBlood);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -542,7 +543,6 @@ class character : public entity, public id
   virtual bool CheckBalance(float);
   long GetStateAPGain(long) const;
   virtual long GetMoveAPRequirement(uchar Difficulty) const { return 10000000 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase()); }
-  virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   ushort GetConfig() const { return Config; }
@@ -745,7 +745,9 @@ class character : public entity, public id
   virtual void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
   virtual bool CanFollow() const;
-  DATA_BASE_BOOL(SpillsBlood);
+  bool LeftOversAreUnique() const { return GetArticleMode() != NORMAL_ARTICLE || AssignedName.length(); }
+  std::string GetKillName() const;
+  std::string GetPanelName() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

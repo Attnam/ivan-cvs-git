@@ -8,6 +8,7 @@
 #include "femath.h"
 #include "game.h"
 #include "save.h"
+#include "team.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -93,6 +94,12 @@ void area::UpdateLOS()
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       if(ulong(HypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
 	femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
+
+  if(game::GetPlayer()->StateIsActivated(INFRA_VISION) && !game::IsInWilderness())
+    for(ushort c = 0; c < game::GetTeams(); ++c)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	  (*i)->GetSquareUnder()->SendNewDrawRequest();
 
   game::RemoveLOSUpdateRequest();
 }

@@ -240,6 +240,7 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return (armor::GetPrice() << 2) + GetEnchantedPrice(Enchantment); }
   virtual bool IsBodyArmor(const character*) const { return true; }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == BODY_ARMOR_INDEX; }
  protected:
   virtual const std::string& GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 );
@@ -667,6 +668,7 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return armor::GetPrice() * 20 + GetEnchantedPrice(Enchantment); }
   virtual bool IsCloak(const character*) const { return true; }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == CLOAK_INDEX; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 );
@@ -679,6 +681,7 @@ class ITEM
   virtual ulong GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
   virtual bool IsBoot(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_BOOT_INDEX || Index == LEFT_BOOT_INDEX; }
 );
 
 class ITEM
@@ -689,6 +692,7 @@ class ITEM
   virtual ulong GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
   virtual bool IsGauntlet(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_GAUNTLET_INDEX || Index == LEFT_GAUNTLET_INDEX; }
 );
 
 class ITEM
@@ -699,6 +703,7 @@ class ITEM
   virtual ulong GetPrice() const { return armor::GetPrice() * 5 + GetEnchantedPrice(Enchantment); }
   virtual bool IsBelt(const character*) const { return true; }
   virtual ushort GetFormModifier() const; 
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == BELT_INDEX; }
 );
 
 class ITEM
@@ -707,6 +712,7 @@ class ITEM
   item,
  public:
   virtual bool IsRing(const character*) const { return true; }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_RING_INDEX || Index == LEFT_RING_INDEX; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(200, 200, 200); }
 );
@@ -717,6 +723,7 @@ class ITEM
   item,
  public:
   virtual bool IsAmulet(const character*) const { return true; }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == AMULET_INDEX; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 );
@@ -743,8 +750,8 @@ class ABSTRACT_ITEM
   virtual bool ReceiveDamage(character*, ushort, uchar);
   const std::string& GetOwnerDescription() const { return OwnerDescription; }
   void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
-  bool GetUnique() const { return Unique; }
-  void SetUnique(bool What) { Unique = What; }
+  bool IsUnique() const { return Unique; }
+  void SetIsUnique(bool What) { Unique = What; }
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMainMaterial(NewMaterial, SpecialFlags); }
@@ -1149,8 +1156,8 @@ class ITEM
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
   //virtual bool IsDipDestination(const character*) const { return true; }
-  virtual character* GetDeceased() const { return Deceased; }
-  virtual void SetDeceased(character*);
+  character* GetDeceased() const { return Deceased; }
+  void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void AddConsumeEndMessage(character*) const;
@@ -1180,6 +1187,7 @@ class ITEM
   virtual void AddPostFix(std::string&) const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual ushort GetSize() const;
+  virtual uchar GetArticleMode() const;
   character* Deceased;
 );
 
@@ -1316,6 +1324,7 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
   virtual bool IsHelmet(const character*) const { return true; }
+  virtual bool IsInCorrectSlot(ushort Index) const { return Index == HELMET_INDEX; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(140, 70, 70); }
 );

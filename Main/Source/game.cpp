@@ -395,8 +395,9 @@ bool game::WorldMapLOSHandler(long X, long Y)
 
 bool game::LevelLOSHandler(long X, long Y)
 {
-  GetCurrentLevel()->GetLSquare(X, Y)->SetLastSeen(LOSTurns);
-  return GetCurrentLevel()->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
+  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  Square->SetLastSeen(LOSTurns);
+  return Square->GetOLTerrain()->IsWalkable();
 }
 
 void game::UpdateCameraX()
@@ -443,7 +444,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult()
 {
-  switch(RAND() % 15)
+  switch(RAND() % 16)
     {
     case 0  : return "moron";
     case 1  : return "silly";
@@ -476,8 +477,8 @@ bool game::BoolQuestion(const std::string& String, int DefaultAnswer, int OtherK
   else if(DefaultAnswer != REQUIRES_ANSWER)
     ABORT("Illegal BoolQuestion DefaultAnswer send!");
   
-  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
-  return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
+  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 6, 'y', 'Y', KEY_ENTER, 'n', 'N', OtherKeyForTrue);
+  return FromKeyQuestion == KEY_ENTER || FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
 }
 
 void game::DrawEverything()
@@ -627,14 +628,16 @@ bool game::EmitationHandler(long X, long Y)
       Emit = MakeRGB24(Red, Green, Blue);
     }
 
-  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->AlterLuminance(CurrentEmitterPos, Emit);
-  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
+  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  Square->AlterLuminance(CurrentEmitterPos, Emit);
+  return Square->GetOLTerrain()->IsWalkable();
 }
 
 bool game::NoxifyHandler(long X, long Y)
 {
-  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->NoxifyEmitter(CurrentEmitterPos);
-  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
+  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  Square->NoxifyEmitter(CurrentEmitterPos);
+  return Square->GetOLTerrain()->IsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -1480,7 +1483,7 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
 	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHAR_NAME(DEFINITE), Character->CHAR_NAME(DEFINITE));
 	  else
 	    {
-	      std::string Topic = "What name will you give to " + Character->GetName(UNARTICLED) + "?";
+	      std::string Topic = "What name will you give to " + Character->GetName(DEFINITE) + "?";
 	      std::string Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
 
 	      if(Name.length())

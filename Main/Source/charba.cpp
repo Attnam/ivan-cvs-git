@@ -245,7 +245,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
       return DID_NO_DAMAGE;
     }
 
-  if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy, Enemy->IsPlayer()))
+  if(CheckDeath("killed by " + Enemy->GetKillName(), Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
   DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
@@ -394,6 +394,7 @@ bool character::GoUp()
       ADD_MESSAGE("You unable to go up with %s stuck to you.", StuckTo->CHAR_NAME(INDEFINITE));
       return false;
     }
+
   if(GetSquareUnder()->GetOTerrain()->Enter(true))
     {
       EditExperience(LEG_STRENGTH, 50);
@@ -412,6 +413,7 @@ bool character::GoDown()
       ADD_MESSAGE("You unable to go down with %s stuck to you.", StuckTo->CHAR_NAME(INDEFINITE));
       return false;
     }
+
   if(GetSquareUnder()->GetOTerrain()->Enter(false))
     {
       EditExperience(AGILITY, 25);
@@ -1836,6 +1838,7 @@ bool character::Pray()
       {
 	bitmap Icon(igraph::GetSymbolGraphic(), GetLSquareUnder()->GetDivineMaster() << 4, 0, 16, 16);
 	Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineMaster())->CompleteDescription(), LIGHT_GRAY, 20, &Icon);
+	KnownIndex.push_back(GetLSquareUnder()->GetDivineMaster());
       }
     else
       {
@@ -1846,11 +1849,13 @@ bool character::Pray()
   game::SetStandardListAttributes(Panthenon);
   Panthenon.AddFlags(SELECTABLE);
   ushort Select = Panthenon.Draw();
+
   if(Select == LIST_WAS_EMPTY)
     {
       ADD_MESSAGE("You do not know any gods.");
       return false;
     }
+
   if(Select & FELIST_ERROR_BIT)
     return false;
   else
@@ -2789,9 +2794,9 @@ void character::Hostility(character* Enemy)
   if(Enemy == this)
     return;
 
-  if(GetTeam() != Enemy->GetTeam())
+  if(GetTeam()->GetID() != Enemy->GetTeam()->GetID())
     GetTeam()->Hostility(Enemy->GetTeam());
-  else if(Enemy->IsEnabled())
+  else if(Enemy->IsEnabled() && IsPlayer())
     {
       if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s becomes enraged.", Enemy->CHAR_NAME(DEFINITE));
@@ -3313,7 +3318,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	return 0;
       }
 
-  if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness() && SpillsBlood())
+  if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness())
     {
       BodyPart->SpillBlood(3 + RAND() % 3);
 
@@ -3364,7 +3369,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
-  BodyPart->SetUnique(GetArticleMode() != NORMAL_ARTICLE || AssignedName.length());
+  BodyPart->SetIsUnique(LeftOversAreUnique());
   BodyPart->RemoveFromSlot();
   BodyPart->RandomizePosition();
   CalculateAttributeBonuses();
@@ -4172,7 +4177,7 @@ void character::AddBoneConsumeEndMessage() const
     ADD_MESSAGE("%s barks happily.", CHAR_NAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
 }
 
-/* returns true if character manages to unstuck himself (from all traps...). vector2d is the direction which the character has tried to escape to */
+/* Returns true if character manages to unstuck himself (from all traps). vector2d is the direction which the character has tried to escape to. */
 
 bool character::TryToUnstuck(vector2d Direction)
 {
@@ -4315,7 +4320,7 @@ void character::DrawPanel(bool AnimationDraw) const
 
   DOUBLE_BUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
   DOUBLE_BUFFER->Fill(16, 45 + game::GetScreenSize().Y * 16, game::GetScreenSize().X << 4, 9, 0);
-  FONT->Printf(DOUBLE_BUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", CHAR_NAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", GetPanelName().c_str());
 
   ushort PanelPosX = RES.X - 96;
   ushort PanelPosY = DrawStats(false);
@@ -4506,7 +4511,7 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 {
   item* Equipment = GetEquipment(EquipmentIndex);
 
-  if(EquipmentHasNoPairProblems(EquipmentIndex))
+  if(Equipment->IsInCorrectSlot(EquipmentIndex))
     {
       ushort AddedStates = Equipment->GetGearStates();
 
@@ -4529,7 +4534,7 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 	    }
     }
 
-  if(!Initializing)
+  if(!Initializing && Equipment->IsInCorrectSlot(EquipmentIndex))
     ApplyEquipmentAttributeBonuses(Equipment);
 }
 
@@ -4545,7 +4550,7 @@ void character::CalculateEquipmentState()
   EquipmentState = 0;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && EquipmentHasNoPairProblems(c))
+    if(GetEquipment(c) && GetEquipment(c)->IsInCorrectSlot(c))
       EquipmentState |= GetEquipment(c)->GetGearStates();
 
   for(c = 0; c < STATES; ++c)
@@ -4821,6 +4826,7 @@ void character::EndPolymorph()
   SetSquareUnder(0);
   InNoMsgMode = Char->InNoMsgMode = false;
   Char->CalculateAll();
+  Char->SetAssignedName(GetAssignedName());
 
   if(IsPlayer())
     {
@@ -4854,7 +4860,7 @@ void character::SaveLife()
       item* LifeSaver = 0;
 
       for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	if(GetEquipment(c) && EquipmentHasNoPairProblems(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
+	if(GetEquipment(c) && GetEquipment(c)->IsInCorrectSlot(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
 	  LifeSaver = GetEquipment(c);
 
       if(!LifeSaver)
@@ -4940,17 +4946,19 @@ void character::DexterityAction(ushort Difficulty)
   EditExperience(DEXTERITY, 5 * Difficulty);
 }
 
-/* if Theretically true then Range is not a factor */
+/* If Theoretically == true, range is not a factor. */
+
 bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
-  bool Visible = !StateIsActivated(INVISIBLE) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm());
+  bool InfraSeen = game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm();
+  bool Visible = !StateIsActivated(INVISIBLE) || InfraSeen;
 
   if((game::IsInWilderness() && Visible) || (!IgnoreESP && game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm());
+    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->LOSRangeSquare() && femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -5245,9 +5253,10 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
   for(ushort c = 0; c < NumberToTeleport; ++c)
     {
       uchar RandomBodyPart = GetRandomNonVitalBodyPart();
+
       if(RandomBodyPart == NONE_INDEX)
 	{
-	  for(;c < NumberToTeleport; ++c)
+	  for(; c < NumberToTeleport; ++c)
 	    {
 	      GetTorso()->SetHP(GetTorso()->GetHP() - RAND() % 5 - 1);
 	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
@@ -5266,7 +5275,6 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      else if(CanBeSeenByPlayer())
 		ADD_MESSAGE("Parts of %s teleport away.", CHAR_NAME(DEFINITE));
 	    }
-	  return;
 	}
       else
 	{
@@ -5275,9 +5283,9 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	  SeveredBodyPart->DropEquipment();
 
 	  if(IsPlayer())
-	    ADD_MESSAGE("Your %s teleports away.", SeveredBodyPart->CHAR_NAME(UNARTICLED));
-	  else
-	    ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), SeveredBodyPart->CHAR_NAME(UNARTICLED));
+	    ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).c_str());
+	  else if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
 	}	
     }
 }
@@ -5868,7 +5876,7 @@ void character::CalculateAttributeBonuses()
     {
       item* Equipment = GetEquipment(c);
 
-      if(!Equipment)
+      if(!Equipment || !Equipment->IsInCorrectSlot(c))
 	continue;
 
       if(Equipment->AffectsEndurance())
@@ -6440,4 +6448,20 @@ void character::ParasitizedHandler()
 bool character::CanFollow() const
 {
   return CanWalk() && !StateIsActivated(PANIC);
+}
+
+std::string character::GetKillName() const
+{
+  if(!GetPolymorphBackup())
+    return GetName(INDEFINITE);
+  else
+    return GetPolymorphBackup()->GetName(INDEFINITE) + " polymorphed into " + GetName(INDEFINITE);
+}
+
+std::string character::GetPanelName() const
+{
+  std::string Name;
+  Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
+  id::AddName(Name, UNARTICLED);
+  return Name;
 }

@@ -32,7 +32,7 @@ void sophos::PrayGoodEffect()
 void sophos::PrayBadEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
-  game::GetPlayer()->TeleportSomePartsAway(RAND() % 2 + 1);
+  game::GetPlayer()->TeleportSomePartsAway(1 + (RAND() & 1));
   game::GetPlayer()->CheckDeath("shattered to pieces by the wrath of " + Name(), 0);
 }
 
@@ -325,20 +325,25 @@ void silva::PrayGoodEffect()
 		break;
 	      }
 	  }
+
       // Generate a few boulders in the level
-      ushort BoulderNumber = RAND() % 20;
+
+      ushort BoulderNumber = 10 + RAND() % 10;
+
       for(c = 0; c < BoulderNumber; ++c)
 	{
 	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare();
-	    character* MonsterHere = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
-	    if(!MonsterHere || !MonsterHere->IsPlayer())
+	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+	    character* MonsterHere = Square->GetCharacter();
+
+	    if(!MonsterHere || MonsterHere->GetRelation(game::GetPlayer()) == HOSTILE)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new boulder);
+		Square->ChangeOLTerrainAndUpdateLights(new boulder(1 + RAND() & 1));
+
 		if(MonsterHere)
-		  {
-		    MonsterHere->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-		  }
-		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE);
+		  MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+
+		Square->GetStack()->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE);
 	      }
 	}
 

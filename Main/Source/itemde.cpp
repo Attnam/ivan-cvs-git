@@ -254,7 +254,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer())
     DeathMsg = "exploded himself by breaking a wand";
   else
-    DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
+    DeathMsg = "kamikazed by " + Terrorist->GetKillName();
 
   Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 50);
   Terrorist->DexterityAction(5);
@@ -364,23 +364,14 @@ item* brokenbottle::BetterVersion() const
 
 void brokenbottle::StepOnEffect(character* Stepper)
 {
-  if(!(RAND() % 10))
+  if(Stepper->HasFeet() && !(RAND() % 5))
     {
-      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, LEGS, YOURSELF, false, false, false, false))
-	{
-	  if(Stepper->IsPlayer())
-	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
-	  else if(Stepper->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CHAR_NAME(DEFINITE));
-	}
-      else
-	{
-	  if(Stepper->IsPlayer())
-	    ADD_MESSAGE("Some glass splinters are shattered under your feet.");
-	  else if(Stepper->CanBeSeenByPlayer())
-	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHAR_NAME(DEFINITE));
-	}
+      if(Stepper->IsPlayer())
+	ADD_MESSAGE("Auch. You step on sharp glass splinters.");
+      else if(Stepper->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s steps on sharp glass splinters.", Stepper->CHAR_NAME(DEFINITE));
 
+      Stepper->ReceiveDamage(0, 1 + RAND() % 3, PHYSICAL_DAMAGE, LEGS);
       Stepper->CheckDeath("stepped on a broken bottle", 0);
     }
 }
@@ -513,7 +504,7 @@ bool backpack::Apply(character* Terrorist)
       if(Terrorist->IsPlayer())
 	DeathMsg = "exploded himself with " + GetName(INDEFINITE);
       else
-	DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
+	DeathMsg = "kamikazed by " + Terrorist->GetKillName();
 
       Terrorist->DexterityAction(5);
       Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
@@ -565,11 +556,11 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if((Type == FIRE || Type == ENERGY) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
-      std::string DeathMsg = "explosion of ";
+      std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetKillName();
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -588,11 +579,11 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if((Type == FIRE || Type == ENERGY) && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
-      std::string DeathMsg = "explosion of ";
+      std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetKillName();
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -865,7 +856,7 @@ void bananapeels::StepOnEffect(character* Stepper)
 
       Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("slipped on a banana peel.", 0);
-      Stepper->EditAP(-1000);
+      Stepper->EditAP(-500);
     }
 }
 
@@ -1178,10 +1169,7 @@ bool mine::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	{
-	  DeathMsg << " caused by ";
-	  Damager->AddName(DeathMsg, INDEFINITE);
-	}
+	DeathMsg << " caused by " << Damager->GetKillName();
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -1207,6 +1195,13 @@ void mine::StepOnEffect(character* Stepper)
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
   else if(GetSquareUnder()->CanBeSeenByPlayer())
     ADD_MESSAGE("Something explodes!");
+
+  SetIsActive(false);
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SendNewDrawRequest();
+
+  if(Stepper->IsPlayer())
+    game::AskForKeyPress("Trap activated! [press any key to continue]");
 
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
@@ -1854,8 +1849,8 @@ void key::VirtualConstructor(bool Load)
 void bodypart::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  SetUnique(false);
-  SetMaster(0);
+  Unique = false;
+  Master = 0;
 }
 
 void head::VirtualConstructor(bool Load)
@@ -2459,10 +2454,14 @@ void beartrap::StepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
       SetIsActive(false);
-      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
-      Stepper->CheckDeath("died by stepping to " + GetName(INDEFINITE), 0);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
+
+      if(Stepper->IsPlayer())
+	game::AskForKeyPress("Trap activated! [press any key to continue]");
+
+      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->CheckDeath("died by stepping to " + GetName(INDEFINITE), 0);
     }
 }
 
@@ -3071,7 +3070,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      std::string DeathMSG = "killed by " + Enemy->GetName(DEFINITE); 
+      std::string DeathMSG = "killed by " + Enemy->GetKillName(); 
       Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
       return true;
     }
@@ -3666,7 +3665,7 @@ void bodypart::Be()
 
 void bodypart::SpillBlood(ushort HowMuch, vector2d GetPos)
 {
-  if(!HowMuch || !IsAlive())
+  if(!HowMuch || (Master && !Master->SpillsBlood()) || !IsAlive())
     return;
 
   if(!game::IsInWilderness()) 
@@ -3675,7 +3674,7 @@ void bodypart::SpillBlood(ushort HowMuch, vector2d GetPos)
 
 void bodypart::SpillBlood(ushort HowMuch)
 {
-  if(!HowMuch || !IsAlive())
+  if(!HowMuch || (Master && !Master->SpillsBlood()) || !IsAlive())
     return;
 
   if(!game::IsInWilderness()) 
@@ -3941,11 +3940,14 @@ void arm::SignalEquipmentAdd(gearslot* Slot)
 {
   if(GetMaster())
     {
-      ApplyEquipmentAttributeBonuses(Slot->GetItem());
       ushort EquipmentIndex = Slot->GetEquipmentIndex();
+      item* Equipment = Slot->GetItem();
+
+      if(Equipment->IsInCorrectSlot(EquipmentIndex))
+	ApplyEquipmentAttributeBonuses(Equipment);
 
       if(EquipmentIndex == RIGHT_GAUNTLET_INDEX || EquipmentIndex == LEFT_GAUNTLET_INDEX)
-	ApplyDexterityPenalty(Slot->GetItem());
+	ApplyDexterityPenalty(Equipment);
 
       GetMaster()->SignalEquipmentAdd(EquipmentIndex);
     }
@@ -3955,11 +3957,14 @@ void leg::SignalEquipmentAdd(gearslot* Slot)
 {
   if(GetMaster())
     {
-      ApplyEquipmentAttributeBonuses(Slot->GetItem());
       ushort EquipmentIndex = Slot->GetEquipmentIndex();
+      item* Equipment = Slot->GetItem();
+
+      if(Equipment->IsInCorrectSlot(EquipmentIndex))
+	ApplyEquipmentAttributeBonuses(Equipment);
 
       if(EquipmentIndex == RIGHT_BOOT_INDEX || EquipmentIndex == LEFT_BOOT_INDEX)
-	ApplyAgilityPenalty(Slot->GetItem());
+	ApplyAgilityPenalty(Equipment);
 
       GetMaster()->SignalEquipmentAdd(EquipmentIndex);
     }
@@ -3996,7 +4001,7 @@ void arm::CalculateAttributeBonuses()
     {
       item* Equipment = GetEquipment(c);
 
-      if(Equipment)
+      if(Equipment && Equipment->IsInCorrectSlot())
 	ApplyEquipmentAttributeBonuses(Equipment);
     }
 
@@ -4017,7 +4022,7 @@ void leg::CalculateAttributeBonuses()
     {
       item* Equipment = GetEquipment(c);
 
-      if(Equipment)
+      if(Equipment && Equipment->IsInCorrectSlot())
 	ApplyEquipmentAttributeBonuses(Equipment);
     }
 
@@ -4997,11 +5002,11 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if(Type == FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
-      std::string DeathMsg = "explosion of ";
+      std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetKillName();
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -5016,3 +5021,7 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
     return item::ReceiveDamage(Damager, Damage, Type);
 }
 
+uchar corpse::GetArticleMode() const
+{
+  return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
+}

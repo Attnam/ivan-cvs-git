@@ -3,6 +3,7 @@
 / partly done or needs testing/balancing
 (r) rejected
 (s) suspended
+(d) double entry
 
 //Image flipping (more).
 Lowscore.
@@ -124,10 +125,10 @@ Something mysterious should happen when one lays a pick-axe on a holy banana of 
 Intelligent polymorphed monsters should have unique replies?
 //*Fluid disappears too fast.
 *Mommos should not leave corpses but just slime.
-/***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
+//***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
 /*Dipping an empty bottle in a fountain should fill it with water.
 //*The librarian should sell scrolls of charging.
-/*Wand's explosive power should depend on its charges.
+*Wand's explosive power should depend on its charges.
 Hirelings. (from JM)
 Books of <skill>. (from JM)
 Fighting tactics. (from JM)
@@ -399,7 +400,8 @@ Priests, Petrus and angels should be able to resurrect dead pets.
 Wand of door creation should create doors to walls.
 Mushrooms in forest. Cause odd effects when eaten.
 (r... damn. I thought I was onto something) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
-When many same kind of items on ground the message should say "5 Xs here" not "...several items here"
-There should be many types of attack damage with physical object (eg blunt, sting, chop)
-Movement modes (walk, run, stealth)
-"No load" mode (if weight of stack < 1 kg)
+Items inside shelves should take damage from explosions.
+When many same kind of items on ground the message should say "5 Xs here" not "...several items here".
+(d) There should be many types of attack damage with physical object. (eg blunt, sting, chop)
+Movement modes. (walk, run, stealth)
+"No load" mode. (if weight of stack < 1 kg)

@@ -902,6 +902,7 @@ skeleton
 	FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"";
 	FleshMaterial = BONE;
 	DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
+	SpillsBlood = false;
 
 	Config WARRIOR;
 	{
@@ -2790,6 +2791,7 @@ imperialist
 	AttackStyle = USE_ARMS|USE_LEGS;
 	CriticalModifier = 4;
 	IsCharmable = false;
+	StandVerb = "smiling in a twisted way";
 	FriendlyReplies =
 	{
 		7,
@@ -2864,7 +2866,6 @@ genetrixvesana
 	BaseBiteStrength = 700;
 	SkinColor = rgb16(111, 64, 37);
 	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
-	CanWalk = false;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 	PanicLevel = 0;

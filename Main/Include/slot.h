@@ -95,8 +95,8 @@ class gearslot : public slot
   void SetBodyPart(bodypart* What) { BodyPart = What; }
   virtual void AddFriendItem(item*) const;
   void Init(bodypart*, uchar);
-  virtual uchar GetEquipmentIndex() const { return EquipmentIndex; }
-  virtual void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
+  uchar GetEquipmentIndex() const { return EquipmentIndex; }
+  void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
   virtual void PutInItem(item*);
   virtual square* GetSquareUnder() const;
   virtual void SignalVolumeAndWeightChange();

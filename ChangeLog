@@ -1,3 +1,19 @@
+December 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed the Mega-Monstrous Equipment of Cursed Hands Bug Named IVAN's Doom -5
+	* Destroyed the Infamous Infralight Eating Bug Fiend Covered With Blood -3
+	* Corrected a memory leak in the wall breaking/stone creation code
+	* Petrus no longer starts slaughtering everyone in Attnam when a kamikaze dwarf
+	  explodes near him
+	* _Lots_ of smaller bugs fixed
+	* BoolQuestion now interprets enter as "yes", not as the default answer
+	* Corpses of unique monsters now use a definite article
+	* AskKeyPress is now called upon bear trap and mine activation
+	* Alignment is once again shown in the player name over the message panel
+	* High score entries now show if the player was killed by a polymorphed monster
+	* Reading now trains intelligence
+	* Legless people no longer step on splinters
+
 December 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Not walking (eg carnivorous plants) can't follow player to world map
@@ -7,7 +23,7 @@ December 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Confused people no longer tries to move against walls; there is no message and
+	* Confused people no longer try to move against walls; there is no message and
 	  no time penalty, so this was a very unclear reason not to accept a key press
 	* Increased nutrition given by Seges
 	* Increased nutrition given by life saving
@@ -16,7 +32,7 @@ December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Scabies can now polymorph the player
 	* Mithril can no longer be wished; equipment made of it made the game boring,
 	  since no updating was virtually impossible
-	* Decreased phoenix feather's SV to the choice between steel and it more interesting
+	* Decreased phoenix feather's SV to make the choice between steel and it more interesting
 	* Corrected the possibilities of broken helmets
 	* Decreased the overall difficulty values in the game by 25%
 	* Doubled all monster generation intervals in the game

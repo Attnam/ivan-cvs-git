@@ -902,7 +902,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	      else
 		{
 		  if(Terrorist)
-		    Terrorist->GetTeam()->Hostility(Char->GetTeam());
+		    Terrorist->Hostility(Char);
 
 		  Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 		  vector2d SpillDirection = vector2d(x, y) + game::GetMoveVector(DamageDirection);

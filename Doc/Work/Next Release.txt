@@ -72,13 +72,13 @@ Dipping to corpses, containers etc.
 //Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
-Effects and exps for wisdom and charisma.
-?Shirt.
+Effect and exp for charisma.
+(s) ?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
-?The flight of wielded item and amulet.
-?Cats & rat corpses.
-Things thrown at doors.
+(s) ?The flight of wielded item and amulet.
+(s) ?Cats & rat corpses.
+//Things thrown at doors.
 %s"
 //CollectCreatures
 //Drinking should be separated.
@@ -99,7 +99,7 @@ Things thrown at doors.
 ?Configurations should be visually separated with colors.
 //Blocking and visibility should be considered when calculating relative danger.
 //Spiders must not trigger mines.
-Hit effects of thrown items.
+//Hit effects of thrown items.
 (s) Applying wielded item should be possible.
 //?Vodka.
 //Splitting lines in highscores.
@@ -107,7 +107,7 @@ Hit effects of thrown items.
 //Treasure room to the right arm of the Cathedral.
 //?Artifact vault.
 //Village and tunnel.
-Kick system should be checked. (timo)
+//Kick system should be checked. (timo)
 //Kamikaze dwarves should be separated by colours.
 (s) ?Manual.
 //Item possibilities. (timo)
@@ -119,12 +119,12 @@ Kick system should be checked. (timo)
 //Prevent digging with a broken pick-axe.
 Stethoscope should show relative danger.
 //Remove the school food effects of scabies (or make them a lot more seldom).
-?Raven.
+(s) ?Raven.
 Kicking chests.
 //Prohibit spoiling in shops and on the cathedral floor.
 /?Mellis should give information about unknown gods.
 //Whips shouldn't really break when hitting armor.
-Balancing Loricatus.
+//Balancing Loricatus.
 //?Charges for magic whistle.
 //Smithy to Attnam.
 //Cut down the size of Elpuri's cave.
@@ -136,7 +136,7 @@ Balancing Loricatus.
 //RDAM and similiar unclear attributes should be moved to an own screen.
 //?Snake flesh should be poisonous.
 //?Some special effect for daemon flesh.
-Checking throw balance.
+//Checking throw balance.
 //Pick-axe available in the lowest levels.
 //Boot m-color.
 //?Look stretch config option.
@@ -153,22 +153,22 @@ Checking throw balance.
 //New background story.
 //?Armor breaking.
 //Tunnel boss.
-?Something special to tunnel level 2.
+(s) ?Something special to tunnel level 2.
 //?Penalty for eating spoiled food.
 //Pets shouldn't eat the player's bodyparts.
-?Village duelist.
+(s) ?Village duelist.
 //?olterraincontainer
 Smith prices.
 //?Kamikaze dwarf generation.
 Renaming "single weapon skills".
 //?Scroll of repair.
-Prices of golden items.
-?If a monster is polymorphed and kills the player, this should be shown in the high score entry.
+?Prices of golden items.
+//If a monster is polymorphed and kills the player, this should be shown in the high score entry.
 //High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
 //Invisibility + selling.
 Bear traps should break eventually.
 //More color states to silhouette.
-Digging walls should yield stones.
+//Digging walls should yield stones.
 Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.
 ?Zombie flesh should already be spoiled when a zombie dies
-Wait for keypress when player gets stuck in a bear trap.
+//Wait for keypress when player gets stuck in a bear trap.

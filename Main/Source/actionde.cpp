@@ -408,6 +408,8 @@ void read::Handle()
   if(game::CompareLightToInt(GetActor()->GetLSquareUnder()->GetLuminance(), 115) < 0)
     GetActor()->EditExperience(PERCEPTION, -1);
 
+  GetActor()->EditExperience(INTELLIGENCE, 5);
+
   if(!Counter)
     {
       Terminate(true);
