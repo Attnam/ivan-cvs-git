@@ -24,8 +24,10 @@ class inputfile
 public:
 	inputfile(std::string FileName) : Buffer(FileName.c_str(), std::ios::in | std::ios::binary) {}
 	std::ifstream& GetBuffer() { return Buffer; }
-	std::string ReadWord();
+	std::string ReadWord(bool = true);
 	long ReadNumber(std::map<std::string, long>, uchar = 0xFF);
+	vector2d ReadVector2d(std::map<std::string, long>);
+	bool ReadBool();
 private:
 	std::ifstream Buffer;
 };

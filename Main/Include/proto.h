@@ -1,7 +1,11 @@
 #ifndef __PROTO_H__
 #define __PROTO_H__
 
+#pragma warning(disable : 4786)
+
 #include <vector>
+#include <map>
+#include <string>
 
 #include "typedef.h"
 
@@ -21,14 +25,27 @@ public:
 	static ushort Add(type*);
 	static const type* const GetProto(ushort Index) { return ProtoData[Index]; }
 	static ushort GetProtoAmount() { return ProtoData.size() - 2; }
+	static ushort SearchCodeName(std::string);
 private:
 	static std::vector<type*> ProtoData;
+	static std::map<std::string, ushort> CodeNameMap;
 };
 
 template <class type> ushort protocontainer<type>::Add(type* Proto)
 {
 	ProtoData.insert(ProtoData.end() - 1, Proto);
+	CodeNameMap[Proto->ClassName()] = ProtoData.size() - 2;
 	return ProtoData.size() - 2;
+}
+
+template <class type> ushort protocontainer<type>::SearchCodeName(std::string Name)
+{
+	std::map<std::string, ushort>::iterator I = CodeNameMap.find(Name);
+
+	if(I != CodeNameMap.end())
+		return (*I)->GetType();
+	else
+		return 0;
 }
 
 class protosystem

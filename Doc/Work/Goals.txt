@@ -9,6 +9,22 @@ Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
 Pimeydelle vaikutuksia.
 Kickille vielä muutakin käyttöä.
 Avatut cannit.
-Rennen pää.
 Asetaidot.
 Tiimit.
+Script.
+Attnam.
+Player must not be the Only Son anymore.
+Garbage monsters.
+New material color system.
+Ääriviivat itemeille ja monsuille.
+Space should = esc in the inventory.
+Pickup all.
+Help should be organised.
+Lamppujen pitäisi mennä rikki potkittaessa ja heitoissa.
+Do you really want to pray to somebody.
+Pick-axejen sääteleminen (kesto, expat, valot).
+Mellis abuse.
+Alpha blend.
+Rest until fully healed.
+Messagebuffer should be reordered.
+Messagebuffer should be saved.

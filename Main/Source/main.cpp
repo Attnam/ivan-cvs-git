@@ -4,6 +4,9 @@
 #include "hscore.h"
 #include "feio.h"
 
+#include "script.h"
+#include "save.h"
+
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
 	__asm _emit(1 << 0x04)|(1 << 0x07);
@@ -11,6 +14,12 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 	igraph::Init(hInstance, hWnd);
 
 	game::InitLuxTable();
+
+	/*inputfile Input("Script/dungeon.dat");
+
+	gamescript GS;
+
+	GS.ReadFrom(Input, std::map<std::string, long>());*/
 
 	iosystem::TextScreen(FONTW, "Iter Vehemens ad Necem v. 0.240 alpha\n\nAntivalpuri is rising and dark times are ahead;\nDark frogs pillage towns and tomatoes are growing.\nBut fortunately, there is hope, you!");
 

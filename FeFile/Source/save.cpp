@@ -5,7 +5,7 @@
 #include "strover.h"
 #include "error.h"
 
-std::string inputfile::ReadWord()
+std::string inputfile::ReadWord(bool AbortOnEOF)
 {
 	uchar Mode = 0;
 
@@ -14,7 +14,15 @@ std::string inputfile::ReadWord()
 	for(;;)
 	{
 		if(GetBuffer().eof())
+		{
+			if(AbortOnEOF)
+				ABORT("Unexpected end of script file!");
+
+			for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
+				Buffer.resize(Buffer.length() - 1);
+
 			return Buffer;
+		}
 
 		int Char = GetBuffer().peek();
 
@@ -44,7 +52,12 @@ std::string inputfile::ReadWord()
 				Mode = 2;
 			else
 				if(Mode == 1)
+				{
+					for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
+						Buffer.resize(Buffer.length() - 1);
+
 					return Buffer;
+				}
 
 			Buffer += char(Char);
 		}
@@ -65,37 +78,89 @@ std::string inputfile::ReadWord()
 							if(GetBuffer().eof())
 								ABORT("Script error: Unterminated comment!");
 
-							if(Char == '*')
+							if(Char == '*' && GetBuffer().peek() == '/')
 							{
-								if(GetBuffer().peek() == '/')
-								{
-									GetBuffer().get();
+								GetBuffer().get();
 
-									if(Mode == 2)
-										return Buffer;
-									else
-										break;
-								}
+								if(Mode == 2)
+									return Buffer;
+								else
+									break;
 							}		
 						}
 
 						continue;
 					}
 
-				if(Mode == 1 || Mode == 2)
+				if(Mode == 1)
+				{
+					for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
+						Buffer.resize(Buffer.length() - 1);
+
+					return Buffer;
+				}
+
+				if(Mode == 2)
 					return Buffer;
 
 				Buffer += char(Char);
+				return Buffer;
 			}
-			else
+
+			if(Mode == 2)
+				return Buffer;
+
+			if(Char == '"')
 			{
-				if(Mode == 1 || Mode == 2)
-					return Buffer;
+				Mode = 1;
 
-				Buffer += char(Char);
 				GetBuffer().get();
+
+				if(GetBuffer().eof())
+					ABORT("Script error: Unterminated comment");
+
+				for(;;)
+				{
+					Char = GetBuffer().get();
+
+					if(GetBuffer().eof())
+						ABORT("Script error: Unterminated comment");
+
+					if(GetBuffer().peek() == '"')
+						if(Char == '\\')
+						{
+							Buffer += '"';
+							GetBuffer().get();
+
+							if(GetBuffer().peek() == '"')
+							{
+								GetBuffer().get();
+								break;
+							}
+						}
+						else
+						{
+							Buffer += char(Char);
+							GetBuffer().get();
+							break;
+						}
+					else
+						Buffer += char(Char);
+				}
+
+				continue;
 			}
 
+			if(Mode == 1)
+			{
+				for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
+					Buffer.resize(Buffer.length() - 1);
+
+				return Buffer;
+			}
+
+			Buffer += char(Char);
+			GetBuffer().get();
 			return Buffer;
 		}
 
@@ -117,7 +182,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 			continue;
 		}
 
-		if(Word == ";")
+		if(Word == ";" || Word == ",")
 		{
 			if(CallLevel != 0xFF)
 				GetBuffer().seekg(-1, std::ios::cur);
@@ -166,8 +231,42 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 			continue;
 		}
 
+		if(Word == "=" && CallLevel == 0xFF)
+			continue;
+
 		ABORT("Odd script value \"%s\" encountered!", Word.c_str());
 	}
+}
+
+vector2d inputfile::ReadVector2d(std::map<std::string, long> ValueMap)
+{
+	vector2d Vector;
+
+	Vector.X = ReadNumber(ValueMap);
+	Vector.Y = ReadNumber(ValueMap);
+
+	return Vector;
+}
+
+bool inputfile::ReadBool()
+{
+	std::string Word = ReadWord();
+
+	if(Word == "=")
+		Word = ReadWord();
+
+	if(ReadWord() != ";")
+		ABORT("Bool value terminated incorrectly!");
+
+	if(Word == "true" || Word == "1")
+		return true;
+
+	if(Word == "false" || Word == "0")
+		return false;
+
+	ABORT("Odd bool value \"%s\" encountered!", Word.c_str());
+
+	return rand() % 2 ? true : false;
 }
 
 outputfile& operator<<(outputfile& SaveFile, std::string String)

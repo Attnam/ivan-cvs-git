@@ -14,7 +14,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	bitmap Font("Graphics/FontR.pcx");
 	bitmap Pertti("Graphics/Char.pcx");
 
-	inputfile IFile("Script/dungeon.dat");
+	inputfile IFile("Script/test.dat");
 
 	std::string Buffer;
 
@@ -22,10 +22,13 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	std::map<std::string, long> Map;
 
+	Map["pepe"] = 4;
+
 	long Value = IFile.ReadNumber(Map);
 
 	Buffer += IFile.ReadWord();
 	Buffer += IFile.ReadWord();
+	bool B = IFile.ReadBool();
 	Buffer += IFile.ReadWord();
 
 	DOUBLEBUFFER->ClearToColor(0xFFFF);

@@ -9,6 +9,13 @@ std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData(2
 std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData(2, 0);
 std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData(2, 0);
 std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData(2, 0);
+std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<groundlevelterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<overlevelterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<groundworldmapterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<overworldmapterrain>::CodeNameMap;
 
 #include "materde.h"
 #include "itemde.h"

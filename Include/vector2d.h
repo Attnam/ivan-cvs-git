@@ -12,9 +12,17 @@ public:
 	vector2d&	operator += (const vector2d& H)		{ X += H.X; Y += H.Y; return *this; }
 	vector2d	operator -  (const vector2d& H) const	{ return vector2d(X - H.X, Y - H.Y); }
 	vector2d&	operator -= (const vector2d& H)		{ X -= H.X; Y -= H.Y; return *this; }
+        vector2d	operator *  (const ushort& H) const	{ return vector2d(ushort(X * H), ushort(Y * H)); }
+        vector2d&	operator *= (const ushort& H)		{ X *= H; Y *= H; return *this; }
+        vector2d	operator /  (const ushort& H) const	{ return vector2d(ushort(X / H), ushort(Y / H)); }
+        vector2d&	operator /= (const ushort& H)		{ X /= H; Y /= H; return *this; }
+        vector2d	operator *  (const float& H) const	{ return vector2d(ushort(X * H), ushort(Y * H)); }
+        vector2d&	operator *= (const float& H)		{ X = ushort(X * H); Y = ushort(Y * H); return *this; }
+        vector2d	operator /  (const float& H) const	{ return vector2d(ushort(X / H), ushort(Y / H)); }
+        vector2d&	operator /= (const float& H)		{ X = ushort(X / H); Y = ushort(Y / H); return *this; }
 	vector2d&	operator =  (const vector2d& H)		{ X = H.X; Y = H.Y; return *this; }
-	bool	operator == (const vector2d& H) const	{ if(X == H.X && Y == H.Y) return true; else return false; }
-	bool	operator != (const vector2d& H) const	{ if(X == H.X && Y == H.Y) return false; else return true; }
+	bool		operator == (const vector2d& H) const	{ if(X == H.X && Y == H.Y) return true; else return false; }
+	bool		operator != (const vector2d& H) const	{ if(X == H.X && Y == H.Y) return false; else return true; }
 	vector2d	operator << (const uchar Shift) const	{ return vector2d(X << Shift, Y << Shift); }
 	vector2d	operator >> (const uchar Shift) const	{ return vector2d(X >> Shift, Y >> Shift); }
         ushort X, Y;

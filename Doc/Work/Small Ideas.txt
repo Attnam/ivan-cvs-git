@@ -15,7 +15,6 @@ Hiscoreihin päivämäärä.
 Listan voisi (jos haluaa) sorttia päivämäärän mukaan.
 Veri pitäisi tehdä katoavaksi.
 Siitä voisi ehkä myös tehdä valuvaa.
-Axeista pitäisi poistaa jokunen pixeli.
 Kannibalismi.
 Dark frogeista plussaa kaaottisille jumalille.
 Syönnin keskeytys kun monsu tulee näköpiiriin.
@@ -32,23 +31,21 @@ Skripti/editori.
 Asekokemus.
 Pitää tehdä ruokamyrkytyksestä joku tila characterille.
 Humanoidin armorkuvat.
-Ei alttareita ekalle levelille.
 Screenshot toimimaan getkeyn aikanakin, kuten F4.
 Ehkä muitakin näppäimiä?
 Lamppujen pitäisi mennä rikki potkittaessa ja heitoissa.
 Menujen koristelu (pentagrammeja ja ehkä fadeja)
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia eräillä henkilöillä)
-Syvyysefekti semiportaattomalla tummennuksella toteutettuna.
 Kloonaus.
-Rennen pää.
-Garbage can.
 Size of player increases from eating.
 How can you change the window to the rigth size?
-Banana peals are slippery
-Walking on broken bottles should cause HP loss
-Weapons should break
-Space should = to esc in the inventory.
-Pickup all
+Banana peals are slippery.
+Walking on broken bottles should cause HP loss.
+Weapons should break.
+Space should = esc in the inventory.
+Pickup all.
 Last game should be highlighted in the high scores.
 Some way of writing a word on a different colour with ADD_MESSAGE()
 Blindness of pets.
+Messagebuffer should be reordered.
+Messagebuffer should be saved.
