@@ -16,7 +16,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <cmath>
+#include <cstdlib>
 
 #include "felibdef.h"
 

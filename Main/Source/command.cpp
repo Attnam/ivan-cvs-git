@@ -507,8 +507,8 @@ bool commandsystem::NOP(character* Char)
   /*igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
   graphics::BlitDBToScreen();
   GET_KEY();*/
-  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
-  return false;
+  //  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
+  //  return false;
 
   /*{
     //humanoid* H = static_cast<humanoid*>(Char);
@@ -1097,7 +1097,7 @@ bool commandsystem::ShowWeaponSkills(character* Char)
     {
       cweaponskill* Skill = Char->GetCWeaponSkill(c);
 
-      if(Skill->GetHits() / 100)
+      if(Skill->GetHits() / 100 || (Char->IsUsingWeaponOfCategory(c)))
 	{
 	  Buffer = Skill->GetName(c);
 	  Buffer.Resize(30);
@@ -1119,8 +1119,7 @@ bool commandsystem::ShowWeaponSkills(character* Char)
 
 	  Buffer << '%';
 
-	  if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->GetWeaponCategory() == c)
-	  || (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->GetWeaponCategory() == c))
+	  if(Char->IsUsingWeaponOfCategory(c))
 	    List.AddEntry(Buffer, WHITE);
 	  else
 	    List.AddEntry(Buffer, LIGHT_GRAY);

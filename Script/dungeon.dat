@@ -2525,6 +2525,12 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times = 0:3;
 		}
 
+		Square, Random;
+		{
+			Items == Random { Category = FOOD; }
+			Times = 1:5;
+		}
+
 		RoomDefault
 		{
 			Pos = 2:XSize-5,2:YSize-5;

@@ -1456,5 +1456,5 @@ long item::GetFixPrice() const
   Clone = Clone->Fix();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
-  return Max<long>(5 * sqrt(FixPrice), 10);
+  return Max(long(5 * sqrt(FixPrice)), 10L);
 }

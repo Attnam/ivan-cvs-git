@@ -7930,7 +7930,7 @@ void character::DecreaseStateCounter(long State, int Counter)
 
 bool character::IsImmuneToLeprosy() const
 {
-  return DataBase->IsImmuneToLeprosy || !TorsoIsAlive();
+  return DataBase->IsImmuneToLeprosy || UseMaterialAttributes();
 }
 
 void character::LeprosyHandler()
@@ -8744,4 +8744,10 @@ void character::ParasitizedSituationDangerModifier(double& Danger) const
 void character::LeprosySituationDangerModifier(double& Danger) const
 {
   Danger *= 1.5;
+}
+
+bool character::IsUsingWeaponOfCategory(int Category) const
+{
+  return ((GetMainWielded() && GetMainWielded()->GetWeaponCategory() == Category)
+	  || (GetSecondaryWielded() && GetSecondaryWielded()->GetWeaponCategory() == Category));
 }
