@@ -2416,7 +2416,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 
 			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
 
-			ushort Damage = RAND() % (KickStrength / 10);
+			ushort Damage = RAND() % (KickStrength / 10 + 1);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);
@@ -2432,7 +2432,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 				else
 					ADD_MESSAGE("The kick hits %s.", CNAME(DEFINITE));
 
-			ushort Damage = RAND() % (KickStrength / 15);
+			ushort Damage = RAND() % (KickStrength / 15 + 1);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);

@@ -57,16 +57,19 @@ Full backpacks should decrease AV, but it would increase the chance of item brea
 Explosion animation.
 Cube-like screenshot system.
 Drinking from the fountains of the Cathedral should be prohibited.
-Loaf of bread.
+*Loaf of bread.
 Talking to a slave while wielding a whip should cause a special effect.
 Atavus should do something special on Christmas.
 A graphical equipment screen.
 Gurus.
 Meditation command.
 Opening a banana should remove its peals.
-Uses for a holybook after it's been read.
-Specialities to daemon flesh.
-Fixing level 10.
+*Specialities to daemon flesh.
+*Fixing level 10.
 Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
-High score version number.
+*High score version number.
+Kamikaze dwarves to Attnam's temples.
+Random item option to script.
+As Heikki suggested, when one jumps in the WMap and is strong enough, one should reach the orbit.
+Holybook color change.

@@ -1067,13 +1067,13 @@ void game::CreateTeams()
 		Team.push_back(NewTeam);
 	}
 
-	for(c = 0; c < GameScript.GetTeam().size(); ++c)
-		for(ushort i = 0; i < GameScript.GetTeam()[c].second->GetRelation().size(); ++i)
-			GetTeam(GameScript.GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GameScript.GetTeam()[c].first), GameScript.GetTeam()[c].second->GetRelation()[i].second);
-
 	for(c = 0; c < Team.size(); ++c)
 		if(c != 1)
 			GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
+
+	for(c = 0; c < GameScript.GetTeam().size(); ++c)
+		for(ushort i = 0; i < GameScript.GetTeam()[c].second->GetRelation().size(); ++i)
+			GetTeam(GameScript.GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GameScript.GetTeam()[c].first), GameScript.GetTeam()[c].second->GetRelation()[i].second);
 }
 
 bool game::IsValidPos(vector2d Pos)
@@ -1184,11 +1184,13 @@ uchar game::GetDirectionForVector(vector2d Vector)
 std::string game::GetVerbalPlayerAlignment()
 {
 	long Sum = 0;
+
 	for(uchar c = 1; c < game::GetGodNumber(); c++)
 	{
 		if(GetGod(c)->GetRelation() > 0)
 			Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
 	}
+
 	if(Sum > 2000)
 		return std::string("extremely lawful");
 	if(Sum > 1000)

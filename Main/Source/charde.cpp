@@ -644,7 +644,8 @@ float humanoid::GetToHitValue() const
 
 void shopkeeper::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe(new mithril))));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
 }
 
 void farmer::CreateInitialEquipment()
@@ -845,18 +846,29 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		else
+			ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
 		ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
-		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+		{
+			ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+			ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
+		}
+		else
+			ADD_MESSAGE("\"I once had a shop in Attnam, but the competition was too hard, so I moved.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"Don't try anything. The High Priest is a LAN friend of mine.\"");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("\"Don't try anything. The High Priest is a LAN friend of mine.\"");
+		else
+			ADD_MESSAGE("\"The monsters don't attack me, because of our mutually profitable contract.\"");
 		break;
 	}
 }

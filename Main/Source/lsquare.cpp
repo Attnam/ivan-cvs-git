@@ -1044,9 +1044,51 @@ void levelsquare::DrawParticles(ushort Color, uchar)
 		while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void levelsquare::StrikeEverything(character* Zapper, uchar)
+/*const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
+
+#define DOWN 0
+#define LEFT 1
+#define UP 2
+#define RIGHT 3*/
+
+void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
 {
 	GetStack()->StruckByWandOfStriking(Zapper);
+
+	switch(Direction)
+	{
+	case 0:
+		GetSideStack(UP)->StruckByWandOfStriking(Zapper);
+		GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+		break;
+	case 1:
+		GetSideStack(UP)->StruckByWandOfStriking(Zapper);
+		break;
+	case 2:
+		GetSideStack(UP)->StruckByWandOfStriking(Zapper);
+		GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+		break;
+	case 3:
+		GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+		break;
+	case 4:
+		GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+		break;
+	case 5:
+		GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
+		GetSideStack(LEFT)->StruckByWandOfStriking(Zapper);
+		break;
+	case 6:
+		GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
+		break;
+	case 7:
+		GetSideStack(DOWN)->StruckByWandOfStriking(Zapper);
+		GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper);
+		break;
+	}
+
+	//for(uchar c = 0; c < 4; ++c)
+	//	GetSideStack(c)->StruckByWandOfStriking(Zapper);
 
 	if(GetCharacter())
 	{

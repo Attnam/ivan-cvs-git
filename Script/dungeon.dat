@@ -18,7 +18,7 @@ Team 3; /* Petrus's team during the Final Battle */
 	Relation 2, NEUTRAL;
 }
 
-Team 4; /* Pestifer's Enner Beasts */
+Team 4; /* Enner Beasts */
 {
 	Relation 0, HOSTILE;
 	Relation 2, HOSTILE;
@@ -121,24 +121,23 @@ Dungeon 0;
 
 	Level 4;
 	{
-		Rooms=10+rand%21;  
-
 		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
+		Rooms=10+rand%21;
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			Character=ennerbeast { Team = 4; }
+			Character=ennerbeast { Team=4; }
 		}
 	}
 
 	Level 5;
 	{
-		Rooms=10+rand%21;  
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
+		Rooms=10+rand%21;
 
 		Square, Random { Walkable=true; InRoom=true; }
 		{
-			Character=ivan { Team = 7; }
+			Character=ivan { Team=7; }
 		}
 	}
 
@@ -167,7 +166,8 @@ Dungeon 0;
 	Level 2+rand%2;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
-		Rooms=10+rand%21;  
+		Rooms=10+rand%21;
+
 		Room 1;
 		{
 			Size=7,7;
@@ -194,9 +194,77 @@ Dungeon 0;
 		}
 	}
 
+	Level 2+rand%2;
+	{
+		Rooms=10+rand%21;
+
+		Room 2;
+		{
+			Size=5,7;
+			AltarPossible=false;
+			DivineOwner=10;
+			Type=shop;
+			AllowLockedDoors=false;
+			GenerateFountains=false;
+
+			Square, Pos 1,1;
+			{
+				Character=guard { Team=6; }
+			}
+
+			Square, Pos 3,1;
+			{
+				Character=guard { Team=6; }
+			}
+
+			Square, Pos 1,5;
+			{
+				Character=guard { Team=6; }
+			}
+
+			Square, Pos 3,5;
+			{
+				Character=guard { Team=6; }
+			}
+
+			Square, Pos 2,3;
+			{
+				Character=shopkeeper { Team=6; }
+			}
+
+			ItemMap
+			{
+				Pos=1,1;
+				Size=3,5;
+
+				Types
+				{
+					c = scrollofchangematerial;
+					L = iron longsword;
+					C = mithril chainmail;
+					s = wandofstriking;
+					a = lamp;
+					l = pork loaf;
+					t = scrollofteleport;
+					g = iron goblinoidflesh can;
+					p = iron poleaxe;
+					B = beef loaf;
+				}
+			}
+			{
+			    .B.
+			    pag
+			    t.c
+			    LlC
+			    .s.
+			}
+		}
+	}
+
 	Level 5+rand%4;
 	{
-		Rooms=10+rand%21;  
+		Rooms=10+rand%21;
+
 		Room 1;
 		{
 			Size=7,7;
@@ -326,7 +394,7 @@ Dungeon 1;
 		TeamDefault=2;
 		AmbientLight=225;
 		LOSModifier=48;
-		
+
 		RoomDefault
 		{
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
@@ -379,12 +447,6 @@ Dungeon 1;
 		{
 			Character=housewife;
 			Times=5;
-		}
-
-		Square, Random { Walkable=true; }
-		{
-			Character=kamikazedwarf;
-			Times=250;
 		}
 
 		Square, Pos 30,61;
@@ -683,8 +745,7 @@ Dungeon 1;
 					t = scrollofteleport;
 					s = stone spear;
 					p = pickaxe;
-					l = lamp;
-					c = scrollofchangematerial;
+					A = pineapple;
 					b = banana;
 					l = wolfflesh lump;
 					i = iron polarbearflesh can;
@@ -692,12 +753,12 @@ Dungeon 1;
 					a = lamp;
 					P = glass omleurine potion;
 					C = chainmail;
-					w = wandofstriking;
+					w = whip;
 				}
 			}
 			{
 			    .spwt
-			    bLlcP
+			    bLlAP
 			    .iaCt
 			}
 		}

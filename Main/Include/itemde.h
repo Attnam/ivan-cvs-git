@@ -974,6 +974,7 @@ public:
 	virtual float OfferModifier() const RET(0.4f)
 	virtual vector2d GetBitmapPos() const RETV(0,384)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
@@ -993,6 +994,7 @@ public:
 	virtual float OfferModifier() const RET(0.4f)
 	virtual vector2d GetBitmapPos() const RETV(0,368)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );

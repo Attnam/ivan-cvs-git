@@ -233,7 +233,7 @@ class CHARACTER
 		SetAgility(10);
 		SetStrength(25);
 		SetEndurance(30);
-		SetPerception(25);
+		SetPerception(30);
 		SetLegType(2);
 		SetTorsoType(7);
 		SetArmType(6);
@@ -246,6 +246,7 @@ public:
 	virtual void CreateInitialEquipment();
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
 	virtual void BeTalkedTo(character*);
+	virtual bool Polymorph() RET(false)
 protected:
 	virtual std::string NameSingular() const RET("shopkeeper")
 	virtual float GetMeleeStrength() const RET(2000)

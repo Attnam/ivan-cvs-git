@@ -37,22 +37,22 @@ Monster names.
 Smaller Jobs (see SourceForge for details):
 
 Bones in chaos gods' altars
-Altar's owner change when polymorphed
+//Altar's owner change when polymorphed
 Heavy item throwing
 A tool for combining high score files
 Throwers want justice
 *Message modes
-?Wishing artifacts in WMode
+//?Wishing artifacts in WMode
 ?Sitting worshippers
 Confuse
 //Exploding wands should be illegal
-Strength requirement for opening things
+//Strength requirement for opening things
 Money should weight something
 Chemical warfare from afar
 ?Golems shouldn't talk
 Attacking Attnamians should be chaotic
-*Alignment to panel
-/Possibility to break armor on criticals
+/*Alignment to panel
+//Possibility to break armor on criticals
 //*Some realism to lampfighting
 Prohibition of WoS vandalism
 Forbidding shop polypiles

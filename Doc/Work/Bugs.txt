@@ -2,10 +2,13 @@ Messagesystem may show an empty [Y/N] boolquestion, if many messages are display
 Quitting via the corner X doesn't update hscores.
 Item's GetSquareUnder() doesn't work.
 The shopmaster bug.
-The locked shop bug.
 Cannibalism abuse.
 Alt+Enter twice.
 The dark death bug.
 Keys don't work on Win2k fullscreen mode.
 Does the hightline bug exist anymore?
 Alt+Enter in config screen.
+Valpurium doors become broken stone doors.
+Picking sale items after polymorphing and killing the shopkeeper crashes.
+Shopkeeper + darkness.
+Shopkeeper + levelchange?

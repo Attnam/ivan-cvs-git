@@ -177,6 +177,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "green flesh"; }
 );
@@ -572,6 +573,7 @@ public:
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 150; }
 	virtual ushort GetColor() const				{ return MAKE_RGB(192, 112, 96); }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "pineapple flesh"; }
 );
