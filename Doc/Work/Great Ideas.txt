@@ -29,5 +29,6 @@ Castle generator.
 Sight direction.
 Spreading fire.
 Burial.
-Homes.
 Wars.
+Homes.
+Family. And lost siblings that can be found by digging in the World Map.

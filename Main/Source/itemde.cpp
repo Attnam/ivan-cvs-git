@@ -290,7 +290,7 @@ bool pickaxe::Apply(character* User, stack*)
   return false;
 }
 
-ushort platemail::GetArmorValue() const
+/*ushort platemail::GetArmorValue() const
 {
   float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3;
 
@@ -327,7 +327,7 @@ ushort brokenplatemail::GetArmorValue() const
     Base = 100;
 
   return ushort(Base);
-}
+}*/
 
 bool wand::Apply(character* Terrorist, stack* MotherStack)
 {
@@ -528,7 +528,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 {
-  if(Strength > 2500.0f / GetArmorValue() + RAND() % 11 - RAND() % 11)
+  /*if(Strength > 2500.0f / StrengthValue() + RAND() % 11 - RAND() % 11)
     {
       if (IsShown)
 	ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
@@ -541,7 +541,7 @@ bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
       SetExists(false);
       return true;
     }
-  else
+  else*/
     return false;
 }
 
@@ -587,7 +587,7 @@ ulong meleeweapon::Price() const
 
 ulong torsoarmor::Price() const
 {
-  float ArmorModifier = 100.0f / GetArmorValue();
+  float ArmorModifier = StrengthValue() / 10;
 
   return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
 }
@@ -1197,6 +1197,7 @@ void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3];
+  SetMaster(0);
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1218,4 +1219,12 @@ bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar
 { 
   Where->TeleportEverything(Who);
   return false;
+}
+
+ushort bodypart::StrengthValue() const
+{
+  if(GetMaster() && GetMaterial(SurfaceMaterial())->IsAlive())
+    return ulong(StrengthModifier()) * GetMaster()->GetEndurance() / 1000;
+  else
+    return ulong(StrengthModifier()) * GetMaterial(SurfaceMaterial())->StrengthValue() / 1000;
 }

@@ -121,7 +121,7 @@ void guard::CreateInitialEquipment()
 
 ushort humanoid::CalculateArmorModifier() const
 {
-  return Armor.Torso ? Armor.Torso->GetArmorValue() : 100;
+  return Armor.Torso ? Armor.Torso->StrengthValue() : 0;
 }
 
 bool ennerbeast::Hit(character*)
@@ -247,15 +247,17 @@ void humanoid::Load(inputfile& SaveFile)
 
 float golem::GetMeleeStrength() const
 {
-  return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
+  //return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
+  return 0;
 }
 
 ushort golem::CalculateArmorModifier() const
 {
-  if(((GetTorso()->GetMaterial(0)->GetArmorValue() * 3) >> 2) > 90)
+  /*if(((GetTorso()->GetMaterial(0)->StrengthValue() * 3) >> 2) > 90)
     return 10;
   else
-    return 100 - ((GetTorso()->GetMaterial(0)->GetArmorValue() * 3) >> 2);
+    return 100 - ((GetTorso()->GetMaterial(0)->StrengthValue() * 3) >> 2);*/
+  return 0;
 }
 
 bool golem::MoveRandomly()

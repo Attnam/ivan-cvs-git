@@ -55,7 +55,7 @@ class material : public type
   material() : Volume(0), MotherEntity(0) { }
   virtual ~material() { }
   virtual std::string Name(uchar = 0, bool = true) const;
-  virtual ushort GetHitValue() const = 0;
+  virtual ushort StrengthValue() const = 0;
   virtual uchar GetConsumeType() const   { return ODD; }
   virtual ulong GetVolume() const   { return Volume; }
   virtual ulong GetWeight() const   { return ulong(float(Volume) * GetDensity() / 1000); }
@@ -63,7 +63,6 @@ class material : public type
   virtual ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetArmorValue() const { return GetHitValue(); }
   virtual void SetVolume(ulong What) { Volume = What; }
   virtual ushort GetEmitation() const { return 0; }
   virtual ushort OfferValue() const = 0;
@@ -89,6 +88,7 @@ class material : public type
   virtual bool IsExplosive() const { return false; }
   virtual ushort ExplosivePower() const { return 0; }
   virtual bool IsFlammable() const { return false; }
+  virtual bool IsAlive() const { return false; }
  protected:
   virtual std::string AdjectiveStem() const { return NameStem(); }
   virtual std::string NameStem() const = 0;

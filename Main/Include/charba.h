@@ -297,6 +297,8 @@ class character : public type, public entity
   virtual void SetMaterial(uchar, material*);
 
   virtual void Teleport();
+
+  virtual bool SecretKnowledge();
  protected:
 
   virtual void CreateBodyParts();

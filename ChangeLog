@@ -1,3 +1,58 @@
+March 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* GetHitValue() of material and GetArmorValue() of material and item replaced by StrengthValue()
+	  * Modified files:
+	    * stack.cpp
+	    * itemba.cpp
+	      * ushort item::StrengthValue() const added
+	    * itemde.cpp
+	      * ushort bodypart::StrengthValue() const added
+	    * charba.cpp
+	    * charde.cpp
+	    * materba.h
+	      * ushort material::GetHitValue() const removed
+	      * ushort material::GetArmorValue() const removed
+	      * ushort material::StrengthValue() const added
+	    * materde.h
+	      * Numerous ushort xxx::GetHitValue() consts removed
+	      * Numerous ushort xxx::GetArmorValue() consts removed
+	      * Numerous ushort xxx::StrengthValue() consts added
+	    * itemba.h
+	      * uchar item::SurfaceMaterial() const added
+	    * itemde.h
+	      * Some ushort xxx::GetArmorValue() consts removed
+	* Master data member added to bodypart
+	  * Modified files:
+		* itemde.cpp
+	    * itemde.h
+	      * character* bodypart::GetMaster() const 
+	      * void bodypart::SetMaster(character* What)
+	* StrengthModifier attributes added to items
+	  * Modified files:
+		* itemba.cpp
+	    * itemba.h
+	      * ushort item::StrengthModifier() const added
+		* itemde.cpp
+	    * itemde.h
+	      * Numerous ushort xxx::StrengthModifier() const added
+	* IsAlive() attributes added to materials
+	  * Modified files:
+	    * itemde.cpp
+	    * materba.h
+	      * bool material::IsAlive() consts added
+	    * materde.h
+	      * Numerous bool xxx::IsAlive() consts added
+	* Secret knowledge command partially added
+	  * Modified files:
+	    * game.cpp
+	    * charba.h
+	    * charba.cpp
+	      * bool character::SecretKnowledge() added
+	    * itemba.h
+	      * bool item::AutoInitializable() const added
+	    * itemde.h
+	      * bool bodypart::AutoInitializable() const added
+
 March 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	 * Graphics/Makefile.am: Human.pcx changed to Humanoid.pcx

@@ -20,10 +20,10 @@ Single weapon skillit on k‰siss‰.
 Asetaidot parantaa to hit valueta, dodge valueta ja damagea.
 Bonukset riippuu kategoriasta.
 
-Materiaalit on joko el‰vi‰ tai elottomia.
-Itemin SV = StrengthModifier * MaterialSV / 1000.
-Bodypartin SV on itemin SV, jos se on eloton.
-Jos se on el‰v‰, k‰ytet‰‰n kaavaa StrengthModifier * Endurance / 1000.
+//Materiaalit on joko el‰vi‰ tai elottomia.
+//Itemin SV = StrengthModifier * MaterialSV / 1000.
+//Bodypartin SV on itemin SV, jos se on eloton.
+//Jos se on el‰v‰, k‰ytet‰‰n kaavaa StrengthModifier * Endurance / 1000.
 P‰‰ll‰ olevan itemin SV sek‰ bodypartin SV v‰hennet‰‰n vahingosta.
 Critical hit tekee kuitenkin v‰hint‰‰n 1 dam.
 Mahdollisuus rikkoutua iskusta on (Dam / SV - 1) * 10%.
@@ -31,8 +31,8 @@ T‰m‰ p‰tee myˆs bodyparteille. HP:n on kuitenkin silloin oltava < HP/3.
 Aseeseen kohdistuu vahinko, joka on yht‰ suuri kuin jos sen lyˆj‰ lˆisi sit‰ vihollisen ruumiinosalla tai armorilla.
 Artifakti voi s‰rky‰ vain jos toinen artifakti osuu siihen.
 Tietyt iskut, kuten huuto, penetroi armorin. Se voi rikkoa samalla armorin.
-Bodypartin HP lasketaan kaavalla Volume * Endurance / 1000 tai elottomilla Volume * MaterialSV / 1000.
-N‰ytett‰v‰ HP on bodyparttien HP:iden summa / 10.
+Bodypartin HP lasketaan kaavalla Volume * Endurance / 10000 tai elottomilla Volume * MaterialSV / 10000.
+N‰ytett‰v‰ HP on bodyparttien HP:iden summa.
 Kun HP <= 0, bodypart irtoaa.
 T‰ss‰ on poikkeuksena p‰‰, joka ei voi irrota ensimm‰isell‰ iskulla, ts. kun se on max hp:ssa, jos se on > 1. Silloin hp asetaan yhteen.
 Jos p‰‰ saa damagea, olento menee tajuttomaksi.
@@ -41,6 +41,15 @@ Vain elolliset bodypartit healaa.
 P‰‰kallo lasketaan armoriksi.
 Normaalitilassa mahdollisuus osua bodypartiin jakautuu volumejen suhteessa.
 To hit value lis‰‰ ja dodgevalue v‰hent‰‰ mahdollisuutta osua kriittiseen ruumiinosaan (suora verrannollisuus).
+
+Ways to cure lost limbs:
+
+Temples.
+Gods.
+Potion.
+Smithy.
+Angels.
+Petrus?
 
 StrengthModifiereita:
 

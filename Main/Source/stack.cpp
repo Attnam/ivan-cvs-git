@@ -263,7 +263,7 @@ ushort stack::DrawContents(character* Viewer, std::string Topic) const // Draws 
       Buffer.resize(50,' ');
       Buffer += int(GetItem(c)->GetWeight());
       Buffer.resize(63, ' ');
-      Buffer += int(GetItem(c)->GetArmorValue());
+      Buffer += int(GetItem(c)->StrengthValue());
       Buffer.resize(70, ' ');
       Buffer += int(GetItem(c)->GetWeaponStrength() / 100);
       Viewer->AddSpecialItemInfo(Buffer, GetItem(c));

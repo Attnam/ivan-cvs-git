@@ -1641,7 +1641,8 @@ bool character::LowerStats()
 bool character::GainAllItems()
 {
   for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-    Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
+    if(protocontainer<item>::GetProto(c)->AutoInitializable())
+      Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
 
   return false;
 }
@@ -2788,7 +2789,7 @@ bool character::CheckForUsefulItemsOnGround()
 {
   for(ushort c = 0; c < GetLSquareUnder()->GetStack()->GetItems(); ++c)
     {
-      if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
+      /*if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
 	  {
 	    item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
@@ -2802,7 +2803,7 @@ bool character::CheckForUsefulItemsOnGround()
 	      ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
 
 	    return true;
-	  }
+	  }*/
 
       if(CanWield() && long(GetLSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
@@ -3562,4 +3563,30 @@ void character::SetMaterial(uchar Index, material* NewMaterial)
 void character::Teleport()
 {
   Move(game::GetCurrentLevel()->RandomSquare(this, true), true);
+}
+
+bool character::SecretKnowledge()
+{
+  felist List("Knowledge of the ancients:", WHITE, 0, true);
+
+  std::string Buffer = "Name                                                 Weight       SV     Str";
+  List.AddDescription(Buffer);
+
+  for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+    if(protocontainer<item>::GetProto(c)->AutoInitializable())
+      {
+	item* Item = protocontainer<item>::GetProto(c)->Clone();
+	Buffer = Item->Name(INDEFINITE);
+	Buffer.resize(50,' ');
+	Buffer += int(Item->GetWeight());
+	Buffer.resize(63, ' ');
+	Buffer += int(Item->StrengthValue());
+	Buffer.resize(70, ' ');
+	Buffer += int(Item->GetWeaponStrength() / 100);
+	List.AddEntry(Buffer, RED);
+	delete Item;
+      }
+
+  List.Draw(false);
+  return false;
 }

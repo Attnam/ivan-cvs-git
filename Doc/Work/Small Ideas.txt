@@ -159,3 +159,7 @@ Symbolic god menu.
 Lists, especially message history, should look better.
 *Hunters must be one-armed.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
+Allergies.
+Special birth gifts like "big head".
+Copper, bronze, wooden weapons.
+Nuts could be bodyparts. Or perhaps not.

@@ -179,7 +179,7 @@ item* item::PrepareForConsuming(character*, stack*)
 
 float item::GetWeaponStrength() const
 {
-  return sqrt(float(GetFormModifier()) * Material[0]->GetHitValue() * GetWeight());
+  return sqrt(float(GetFormModifier()) * Material[0]->StrengthValue() * GetWeight());
 }
 
 void item::DrawToTileBuffer() const
@@ -302,4 +302,9 @@ void item::DrawToTileBuffer(vector2d Pos) const
     }
 
   Picture->MaskedBlit(igraph::GetTileBuffer(), FromX, FromY, ToX, ToY, Width, Height);
+}
+
+ushort item::StrengthValue() const
+{
+  return ulong(StrengthModifier()) * GetMaterial(SurfaceMaterial())->StrengthValue() / 1000;
 }

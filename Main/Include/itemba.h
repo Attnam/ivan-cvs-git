@@ -37,7 +37,7 @@ class item : public object
   virtual item* TryToOpen(character*, stack*) { return 0; }
   virtual ulong GetWeight() const;
   virtual bool Consume(character*, float);
-  virtual ushort GetArmorValue() const { return 100; }
+  //virtual ushort GetArmorValue() const { return 100; }
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }
   virtual bool IsGoldenEagleShirt() const { return false; }
@@ -99,7 +99,11 @@ class item : public object
   virtual ulong GetID() const { return ID; }
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport(stack*);
+  virtual ushort StrengthValue() const;
+  virtual uchar SurfaceMaterial() const { return 0; }
+  virtual bool AutoInitializable() const { return true; }
  protected:
+  virtual ushort StrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }

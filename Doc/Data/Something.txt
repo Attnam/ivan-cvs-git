@@ -31,4 +31,28 @@
 
 				lterrain gterrain oterrain wterrain
 
-material fluid item character glterrain olterrain gwterrain owterrain room level dungeon god
+material fluid item character glterrain olterrain gwterrain owterrain room level god
+
+
+entity
+Contains a void Be()-function. If the entity is loaded into memory and enabled, this function
+is called by entitypool::Be() every tick. Character actions, food spoiling and all such
+action handlers are handled through Be(). Some of entity's important information, namely
+bool Exists and bool Hasbe are (for optimization reasons) stored in a class called entityinfo,
+which is inserted into entitypool when the entity is allocated. If Exists == false, the
+entity is deleted during next entitypool::Be(). If Hasbe == false, the entity is disabled
+and its Be() in not called. For instance lterrains are all disabled, since calling thousands
+of useless virtual Be()s every tick would considerably waste resources.
+
+type
+Contains an ushort Type member, which is determined at compile time by the macro system. Each
+instantatiable child class with individual properties, such as long sword, farmer, goblin
+etc. are derived from type. When such classes are loaded, protocontainers uses Type member to
+determine which class truly needs to be allocated.
+
+unit
+Contains materials, which are stored in vector<material*> Material.
+
+object
+Contains an individual, material colorized bitmap* Picture.
+
