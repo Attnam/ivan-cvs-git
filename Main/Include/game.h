@@ -6,25 +6,20 @@
 #endif
 
 #ifndef VERSION
-#define VERSION			"0.40d"
+#define VERSION "0.40d"
 #endif
 
-#define SAVEFILE_VERSION	110	// Increment this if changes make savefiles incompatible
+#define SAVEFILE_VERSION 110	// Increment this if changes make savefiles incompatible
 
 #define DIRECTION_COMMAND_KEYS 8
 #define EXTENDED_DIRECTION_COMMAND_KEYS 9
 #define YOURSELF 8
 
-#define UNDEFINED		0
-#define MALE			1
-#define FEMALE			2
-#define TRANSSEXUAL		3
+#define LIGHT_BORDER 160
 
-#define LIGHT_BORDER		160
-
-#define LOADED			0
-#define NEWGAME			1
-#define BACK			2
+#define LOADED 0
+#define NEWGAME 1
+#define BACK 2
 
 #ifdef WIN32
 #define GAME_DIR std::string("")
@@ -39,8 +34,8 @@
 // The program can only create directories to the deepness of one, no more...
 
 #ifdef USE_SDL
-#define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
-#define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))
+#define GAME_DIR (std::string(DATADIR) + "/ivan/")
+#define SAVE_DIR (std::string(getenv("HOME")) + "/IvanSave/")
 #endif
 
 #include <vector>
@@ -48,7 +43,6 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "graphics.h"
-#include "command.h"
 
 class area;
 class material;
@@ -193,6 +187,7 @@ class game
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
+  static void AnimationController();
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

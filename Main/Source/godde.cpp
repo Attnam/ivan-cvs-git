@@ -21,6 +21,7 @@ valuemap protocontainer<god>::CodeNameMap;
 #include "script.h"
 #include "lterrade.h"
 #include "slot.h"
+#include "strover.h"
 
 void consummo::PrayGoodEffect()
 {
@@ -33,7 +34,7 @@ void consummo::PrayBadEffect()
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! Some parts of you teleport away!");
   //game::GetPlayer()->ReceivePhysicalDamage(5, HEAD, false, RAND() % 8);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
-  game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
+  game::GetPlayer()->CheckDeath("shattered to pieces by the wrath of " + Name());
 }
 
 void valpurus::PrayGoodEffect()
@@ -47,7 +48,7 @@ void valpurus::PrayBadEffect()
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
   game::GetPlayer()->ReceiveDamage(0, 10, PHYSICALDAMAGE, HEAD, RAND() % 8);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
-  game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
+  game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name());
 }
 
 void venius::PrayGoodEffect()
@@ -61,7 +62,7 @@ void venius::PrayBadEffect()
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
   //game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
-  game::GetPlayer()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
+  game::GetPlayer()->CheckDeath("burned to death by the wrath of " + Name());
 }
 
 void dulcis::PrayGoodEffect()
@@ -97,7 +98,7 @@ void dulcis::PrayBadEffect()
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
-  game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
+  game::GetPlayer()->CheckDeath("became insane by listening " + Name() + " too much");
 }
 
 void seges::PrayGoodEffect()
@@ -114,7 +115,7 @@ void seges::PrayBadEffect()
   game::GetPlayer()->EditNP(-1000);
 
   if(game::GetPlayer()->GetNP() < 1)
-    game::GetPlayer()->CheckStarvationDeath(std::string("starved by ") + Name());
+    game::GetPlayer()->CheckStarvationDeath("starved by " + Name());
 }
 
 void atavus::PrayGoodEffect()
@@ -348,7 +349,6 @@ void loricatus::PrayGoodEffect()
       Old->SetExists(false);
       item* Plate = new platemail(false);
       Plate->InitMaterials(Old->GetMainMaterial());
-      Old->PreserveMaterial(0);
       game::GetPlayer()->GetStack()->AddItem(Plate);
     }
 	
@@ -356,7 +356,7 @@ void loricatus::PrayGoodEffect()
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
 	std::string OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetMainWielded()->GetMaterial(0)->GetVolume()));
+	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(new mithril);
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
       }
@@ -374,7 +374,7 @@ void loricatus::PrayBadEffect()
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
 	OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetMainWielded()->GetMaterial(0)->GetVolume()));
+	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(new bananaflesh);
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
       }
     else
@@ -416,13 +416,12 @@ void erado::PrayBadEffect()
   game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
   game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
   game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
-  game::GetPlayer()->CheckDeath(std::string("obliterated by the unholy power of ") + Name());
+  game::GetPlayer()->CheckDeath("obliterated by the unholy power of " + Name());
 }
 
 void mellis::PrayGoodEffect()
 {
   bool Success = false;
-  //ushort JustCreated;
   item* NewVersion;
 
   if(game::GetPlayer()->GetStack()->GetItems())
@@ -434,8 +433,6 @@ void mellis::PrayGoodEffect()
 	{
 	  Cont = false;
 
-	  //for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
-	    //if(game::GetPlayer()->GetStack()->GetItem(c))
 	  for(stackiterator i = game::GetPlayer()->GetStack()->GetBottomSlot(); i != game::GetPlayer()->GetStack()->GetSlotAboveTop(); ++i)
 	    {
 	      NewVersion = (**i)->BetterVersion();
@@ -447,8 +444,6 @@ void mellis::PrayGoodEffect()
 		  game::GetPlayer()->GetStack()->AddItem(NewVersion);
 		  Success = true;
 		  ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHARNAME(DEFINITE), NewVersion->CHARNAME(INDEFINITE));
-		  //if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
-		  //if(ToBeDeleted == game::GetPlayer()->GetBodyArmor()) game::GetPlayer()->SetBodyArmor(0);
 		  ToBeDeleted->SetExists(false);
 		  Cont = true;
 		  break;
@@ -605,8 +600,8 @@ void infuscor::PrayBadEffect()
 void macellarius::PrayGoodEffect()
 {
   ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
-  item* Reward = new potion(false);
-  Reward->InitMaterials(2, new glass, new omleurine);
+  potion* Reward = new potion(false);
+  Reward->InitMaterials(new glass, new omleurine);
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
   ADD_MESSAGE("%s drops on the ground.", Reward->CHARNAME(DEFINITE));
 }
@@ -617,7 +612,7 @@ void macellarius::PrayBadEffect()
   game::GetPlayer()->ReceiveDamage(0, RAND() % 7, PHYSICALDAMAGE, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
   game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
-  game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
+  game::GetPlayer()->CheckDeath("killed while enjoying the company of " + Name());
 }
 
 void scabies::PrayGoodEffect()
@@ -626,8 +621,8 @@ void scabies::PrayGoodEffect()
 
   for(ushort c = 0; c < 5; ++c)
     {
-      item* Reward = new can(false);
-      Reward->InitMaterials(2, new iron, new schoolfood);
+      can* Reward = new can(false);
+      Reward->InitMaterials(new iron, new schoolfood);
       game::GetPlayer()->GetGiftStack()->AddItem(Reward);
     }
 }
@@ -693,8 +688,6 @@ void cruentus::PrayBadEffect()
       ADD_MESSAGE("%s destroys your weapon.", GOD_NAME);
 
       ToBe->RemoveFromSlot();
-      //game::GetPlayer()->GetStack()->RemoveItem(game::GetPlayer()->GetStack()->SearchItem(ToBe));
-      //game::GetPlayer()->SetWielded(0);
       ToBe->SetExists(false);
     }
   else
@@ -702,7 +695,7 @@ void cruentus::PrayBadEffect()
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
       //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
       game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
-      game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
+      game::GetPlayer()->CheckDeath("destroyed by " + Name());
     }
 }
 
@@ -750,22 +743,22 @@ void cruentus::Pray()
 
 std::string venius::GetPriestMessage() const
 {
-  return std::string("\"") + GOD_NAME + " is the Great Protector of all Law and Order. Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"";
+  return "\"" + Name() + " is the Great Protector of all Law and Order. Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"";
 }
 
 std::string dulcis::GetPriestMessage() const
 {
-  return std::string("\"") + GOD_NAME + " is the Creator of everything that we call Art and Beauty. When thou pray for Her help, She may calm thine worst enemies with Her love. But beware! There areth some villains that may resist even Her call!\"";
+  return "\"" + Name() + " is the Creator of everything that we call Art and Beauty. When thou pray for Her help, She may calm thine worst enemies with Her love. But beware! There areth some villains that may resist even Her call!\"";
 }
 
 std::string seges::GetPriestMessage() const
 {
-  return std::string("\"") + GOD_NAME + " brings Life, Health and Nutrition to all who follow Her. When thou call upon Her with an empty stomach, a miracle may indeed fill it.";
+  return "\"" + Name() + " brings Life, Health and Nutrition to all who follow Her. When thou call upon Her with an empty stomach, a miracle may indeed fill it.";
 }
 
 std::string consummo::GetPriestMessage() const
 {
-  return std::string("\"The Wise bow before ") + GOD_NAME + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou may find thyself in an even worse situation!\"";
+  return "\"The Wise bow before " + Name() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou may find thyself in an even worse situation!\"";
 }
 
 void scabies::PlayerVomitedOnAltar()
@@ -776,7 +769,7 @@ void scabies::PlayerVomitedOnAltar()
 
 std::string valpurus::GetPriestMessage() const
 {
-  return std::string("\"") + GOD_NAME + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
+  return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
 }
 
 

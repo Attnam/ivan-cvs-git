@@ -35,11 +35,17 @@ class colorizablebitmap
   bitmap* Colorize(vector2d, vector2d, ushort*) const;
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
+  vector2d GetSize() const { return vector2d(XSize, YSize); }
 
   void AlterGradient(ushort, ushort, ushort, ushort, uchar, char, bool);
   void AlterGradient(vector2d Pos, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
   void AlterGradient(ushort X, ushort Y, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
   void AlterGradient(vector2d Pos, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+
+  void SwapColors(ushort, ushort, ushort, ushort, uchar, uchar);
+  void SwapColors(vector2d Pos, ushort Width, ushort Height, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
+  void SwapColors(ushort X, ushort Y, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
+  void SwapColors(vector2d Pos, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
 
  protected:
   ushort XSize, YSize;

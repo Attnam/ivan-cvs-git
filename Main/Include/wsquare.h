@@ -7,7 +7,6 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-
 #include "square.h"
 
 class area;
@@ -25,8 +24,8 @@ class wsquare : public square
   virtual ~wsquare();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool DrawTerrain() const;
-  virtual bool DrawCharacters() const;
+  virtual bool DrawTerrain(bool) const;
+  virtual bool DrawCharacters(bool) const;
   virtual void Draw();
   virtual void UpdateMemorized();
   virtual void SetGWTerrain(gwterrain*);
@@ -41,6 +40,7 @@ class wsquare : public square
   virtual oterrain* GetOTerrain() const;
   virtual void ChangeGWTerrain(gwterrain*);
   virtual void ChangeOWTerrain(owterrain*);
+  virtual void SetWTerrain(gwterrain*, owterrain*);
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

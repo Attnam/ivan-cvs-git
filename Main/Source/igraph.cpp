@@ -173,3 +173,16 @@ void igraph::RemoveUser(graphic_id GI)
       }
 }
 
+outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
+{
+  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialType;
+  SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
+{
+  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialType;
+  SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
+  return SaveFile;
+}

@@ -13,6 +13,7 @@ valuemap protocontainer<material>::CodeNameMap;
 #include "charba.h"
 #include "message.h"
 #include "lsquare.h"
+#include "save.h"
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {

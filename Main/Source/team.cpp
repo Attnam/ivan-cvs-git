@@ -3,6 +3,8 @@
 #include "charde.h"
 #include "message.h"
 #include "config.h"
+#include "game.h"
+#include "save.h"
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {

@@ -9,6 +9,7 @@
 #include "area.h"
 #include "femath.h"
 #include "slot.h"
+#include "game.h"
 
 stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition)
 {
@@ -21,13 +22,13 @@ stack::~stack()
   delete Item;
 }
 
-bool stack::DrawToTileBuffer() const
+bool stack::DrawToTileBuffer(bool Animate) const
 {
   if(!GetItems())
     return false;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    (**i)->PositionedDrawToTileBuffer(SquarePosition);
+    (**i)->PositionedDrawToTileBuffer(SquarePosition, Animate);
 
   return true;
 }
@@ -42,7 +43,7 @@ void stack::AddItem(item* ToBeAdded)
 
   ToBeAdded->SetSquareUnder(GetSquareUnder());
 
-  if(GetSquareUnder())
+  if(GetSquareUnder() && SquarePosition != HIDDEN)
     {
       GetSquareUnder()->SetDescriptionChanged(true);
 
@@ -55,11 +56,17 @@ void stack::AddItem(item* ToBeAdded)
       if(!game::GetInWilderness())
 	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
 
-      GetSquareTrulyUnder()->SendNewDrawRequest();
-      GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+      if(SquarePosition != HIDDEN)
+	{
+	  GetSquareTrulyUnder()->SendNewDrawRequest();
+	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
-      if(GetSquareTrulyUnder()->CanBeSeen())
-	GetSquareTrulyUnder()->UpdateMemorized();
+	  if(GetSquareTrulyUnder()->CanBeSeen())
+	    GetSquareTrulyUnder()->UpdateMemorized();
+
+	  if(ToBeAdded->IsAnimated())
+	    GetSquareTrulyUnder()->IncAnimatedEntities();
+	}
     }
 }
 
@@ -70,15 +77,19 @@ void stack::FastAddItem(item* ToBeAdded)
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
   ToBeAdded->SetSquareUnder(GetSquareUnder());
+
+  if(SquarePosition != HIDDEN && ToBeAdded->IsAnimated() && GetSquareTrulyUnder())
+    GetSquareTrulyUnder()->IncAnimatedEntities();
 }
 
 void stack::RemoveItem(stackiterator Iterator)
 {
   ushort IEmit = GetEmitation();
+  bool WasAnimated = (**Iterator)->IsAnimated();
   delete *Iterator;
   Item->erase(Iterator);
 
-  if(GetSquareUnder())
+  if(GetSquareUnder() && SquarePosition != HIDDEN)
     {
       GetSquareUnder()->SetDescriptionChanged(true);
 
@@ -91,16 +102,25 @@ void stack::RemoveItem(stackiterator Iterator)
       if(!game::GetInWilderness())
 	GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
 
-      GetSquareTrulyUnder()->SendNewDrawRequest();
-      GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+      if(SquarePosition != HIDDEN)
+	{
+	  GetSquareTrulyUnder()->SendNewDrawRequest();
+	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
-      if(GetSquareTrulyUnder()->CanBeSeen())
-	GetSquareTrulyUnder()->UpdateMemorized();
+	  if(GetSquareTrulyUnder()->CanBeSeen())
+	    GetSquareTrulyUnder()->UpdateMemorized();
+
+	  if(WasAnimated)
+	    GetSquareTrulyUnder()->DecAnimatedEntities();
+	}
     }
 }
 
 void stack::FastRemoveItem(stackiterator Iterator)
 {
+  if(SquarePosition != HIDDEN && (**Iterator)->IsAnimated() && GetSquareTrulyUnder())
+    GetSquareTrulyUnder()->DecAnimatedEntities();
+
   delete *Iterator;
   Item->erase(Iterator);
 }
@@ -109,6 +129,9 @@ void stack::Clean()
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
+      if(SquarePosition != HIDDEN && (**i)->IsAnimated() && GetSquareTrulyUnder())
+	GetSquareTrulyUnder()->DecAnimatedEntities();
+
       (**i)->SetExists(false);
       delete *i;
     }
@@ -118,15 +141,6 @@ void stack::Clean()
 
 item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
 {
-  if(GetSquareTrulyUnder())
-    {
-      GetSquareTrulyUnder()->SendNewDrawRequest();
-      GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
-    }
-
-  if(GetSquareUnder())
-    GetSquareUnder()->SetDescriptionChanged(true);
-
   item* Item = ***Iterator;
 
   if(MoveTo->GetLSquareTrulyUnder() == GetLSquareTrulyUnder())
@@ -134,34 +148,31 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
       MoveTo->FastAddItem(***Iterator);
       FastRemoveItem(Iterator);
 
-      if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
+      if(SquarePosition != HIDDEN)
+	{
+	  if(GetSquareTrulyUnder())
+	    {
+	      GetSquareTrulyUnder()->SendNewDrawRequest();
+	      GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+	    }
 
-      if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
-	GetSquareTrulyUnder()->UpdateMemorized();
+	  if(GetSquareUnder())
+	    GetSquareUnder()->SetDescriptionChanged(true);
+	}
+
+      if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
+	{
+	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+	    GetSquareUnder()->UpdateMemorizedDescription();
+
+	  if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+	    GetSquareTrulyUnder()->UpdateMemorized();
+	}
     }
   else
     {
-      if(MoveTo->GetSquareTrulyUnder())
-	{
-	  MoveTo->GetSquareTrulyUnder()->SendNewDrawRequest();
-	  MoveTo->GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
-	}
-
-      if(MoveTo->GetSquareUnder())
-	MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
-
       MoveTo->AddItem(***Iterator);
       RemoveItem(Iterator);
-
-      if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
-
-      if(MoveTo->GetSquareUnder() && MoveTo->GetSquareUnder()->CanBeSeen())
-	MoveTo->GetSquareUnder()->UpdateMemorizedDescription();
-
-      if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
-	GetSquareTrulyUnder()->UpdateMemorized();
     }
 
   return Item;
@@ -477,17 +488,17 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 	      }
 
 	    Buffer.resize(45,' ');
-	    Buffer += int((**i)->GetWeight());
+	    Buffer += (**i)->GetWeight();
 	    Buffer.resize(52, ' ');
-	    Buffer += int((**i)->GetStrengthValue());
+	    Buffer += (**i)->GetStrengthValue();
 	    Buffer.resize(57, ' ');
-	    Buffer += int((**i)->GetWeaponStrength() / 100);
+	    Buffer += ulong((**i)->GetWeaponStrength() / 100);
 	    Viewer->AddSpecialItemInfo(Buffer, ***i);
 
 	    if(!SelectItem)
-	      Buffer = std::string("   ") + Buffer;
+	      Buffer = "   " + Buffer;
 
-	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture());
+	    ItemNames.AddEntry(Buffer, LIGHTGRAY, 0);//(**i)->GetMainPicture());
 	  }
     }
 }

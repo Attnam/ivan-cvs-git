@@ -22,7 +22,7 @@ Osoitinluokat?
 //Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
-(r) Merkkijonoviittausten regularisoiminen.
+//Merkkijonoviittausten regularisoiminen.
 Merkkitaulukoiden hävittäminen.
 *Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.

@@ -17,6 +17,8 @@ valuemap protocontainer<room>::CodeNameMap;
 #include "lsquare.h"
 #include "stack.h"
 #include "team.h"
+#include "game.h"
+#include "save.h"
 
 void shop::HandleInstantiatedCharacter(character* Character)
 {

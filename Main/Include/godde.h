@@ -73,20 +73,6 @@ class GOD
   virtual void PrayBadEffect();
 );
 
-/*class GOD
-(
-  inasnum,
-  god,
- public:
-  virtual std::string Name() const { return "Inasnum"; }
-  virtual std::string Description() const { return "god of prophecies and dreams"; }
-  virtual uchar Alignment() const { return AL; }
-  virtual uchar BasicAlignment() const { return GOOD; }
- protected:
-  virtual void PrayGoodEffect();
-  virtual void PrayBadEffect();
-);*/
-
 class GOD
 (
   seges,
@@ -178,20 +164,6 @@ class GOD
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
 );
-
-/*class GOD
-(
-  pestifer,
-  god,
- public:
-  virtual std::string Name() const { return "Pestifer"; }
-  virtual std::string Description() const { return "god of pain, misery and annoying noise"; }
-  virtual uchar Alignment() const { return AC; }
-  virtual uchar BasicAlignment() const { return EVIL; }
- protected:
-  virtual void PrayGoodEffect();
-  virtual void PrayBadEffect();
-);*/
 
 class GOD
 (

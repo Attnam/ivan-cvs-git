@@ -28,6 +28,8 @@ int globalwindowhandler::ReadKey()
 dynarray<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
+void (*globalwindowhandler::ControlLoop)() = 0;
+ulong globalwindowhandler::Tick = 0;
 
 #ifdef WIN32
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -175,8 +177,14 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  }
       else
 	{
-	  WaitMessage();
-	  //Sleep(40);
+	  if(ControlLoop)
+	    {
+	      ControlLoop();
+	      ++Tick;
+	      Sleep(50);
+	    }
+	  else
+	    WaitMessage();
 	}
 }
 

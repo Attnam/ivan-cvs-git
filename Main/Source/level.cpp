@@ -18,15 +18,15 @@
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
-#define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
+  #define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
 
-#define CALL_EXPAND(x, y) 			\
-	{								\
-		ExpandPossibleRoute(vector2d(x, y), Target, XMode);	\
-									\
-		if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE) \
-			return;						\
-	}
+  #define CALL_EXPAND(x, y)\
+    {\
+      ExpandPossibleRoute(vector2d(x, y), Target, XMode);\
+      \
+      if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)\
+	return;\
+    }
 
   FlagMap[Origo.X][Origo.Y] |= ON_POSSIBLE_ROUTE;
 
@@ -106,15 +106,15 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 
 void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
-#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
+  #define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
 
-#define CALL_EXPAND(x, y) 				\
-	{									\
-		ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);		\
-										\
-		if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE) \
-			return;							\
-	}
+  #define CALL_EXPAND(x, y) \
+    {\
+      ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);\
+      \
+      if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE) \
+	return;\
+    }
 
   FlagMap[Origo.X][Origo.Y] |= STILL_ON_POSSIBLE_ROUTE;
 
@@ -242,7 +242,7 @@ void level::Generate(levelscript* GenLevelScript)
       for(ulong y = 0; y < YSize; ++y)
 	{
 	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  Map[x][y]->ChangeLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
+	  Map[x][y]->SetLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
 	}
     }
 
@@ -953,7 +953,6 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
       if(BPos.Y + SizeVect.Y > RES.Y)
 	SizeVect.Y = RES.Y - BPos.Y;
 
-      //DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
       game::DrawEverythingNoBlit();
 
       uchar Flags = RAND() % 8;
@@ -1014,14 +1013,11 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 		  }
 	      });
 
-	      //Char->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
 	      Char->ReceiveDamage(Terrorist, Damage, FIRE, ALL);
-	      //Char->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 	      Char->CheckDeath(DeathMsg);
 	    }
 
 	Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
-	//Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
 	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
 	  Square->ChangeOLTerrainAndUpdateLights(new empty);
@@ -1046,9 +1042,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
       });
 
       game::GetPlayer()->GetStack()->ReceiveDamage(Terrorist, PlayerDamage, FIRE);
-      //game::GetPlayer()->ReceiveFireDamage(Terrorist, DeathMsg, PlayerDamage);
       game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage, FIRE, ALL);
-      //game::GetPlayer()->CheckGearExistence();
       game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }
@@ -1081,10 +1075,6 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 	  if(!Char->GetAction())
 	    {
 	      ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
-
-	      //if(Char->StateIsActivated(CONSUMING)) 
-		//Char->EndConsuming();
-
 	      CharacterArray.push_back(Char);
 	      game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
 	    }

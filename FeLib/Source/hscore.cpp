@@ -46,9 +46,9 @@ void highscore::Draw() const
   for(ushort c = 0; c < Score.size(); ++c)
     {
       std::string Desc;
-      Desc += int(c + 1);
+      Desc += c + 1;
       Desc.resize(5, ' ');
-      Desc += int(Score[c]);
+      Desc += Score[c];
       Desc.resize(13, ' ');
       Desc += Entry[c];
       List.AddEntry(Desc, c == LastAdd ? RED : LIGHTGRAY);

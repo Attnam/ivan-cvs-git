@@ -27,11 +27,6 @@ valuemap protocontainer<item>::CodeNameMap;
 #include "actionba.h"
 #include "felist.h"
 
-void can::PositionedDrawToTileBuffer(uchar) const
-{
-  Picture->MaskedBlit(igraph::GetTileBuffer());
-}
-
 item* can::TryToOpen(character* Opener)
 {
   if(Opener->GetStrength() > RAND() % 30)
@@ -44,9 +39,7 @@ item* can::TryToOpen(character* Opener)
       else
 	  Item->GetSlot()->AddFriendItem(this);
 
-      SetMaterial(GetContainedMaterialIndex(), 0);
-      UpdatePicture();
-
+      SetContainedMaterial(0);
       return Item;
     }
   else
@@ -61,8 +54,7 @@ item* can::TryToOpen(character* Opener)
 void banana::GenerateLeftOvers(character* Eater)
 {
   item* Peals = new bananapeals(false);
-  Peals->InitMaterials(GetMaterial(0));
-  PreserveMaterial(0);
+  Peals->InitMaterials(GetMainMaterial());
 
   if(!game::GetInWilderness() && (!Eater->GetIsPlayer() || configuration::GetAutoDropLeftOvers()))
     Eater->GetLSquareUnder()->GetStack()->AddItem(Peals);
@@ -97,7 +89,7 @@ void potion::GenerateLeftOvers(character* Eater)
 	GetSquareUnder()->UpdateMemorized();
     }*/
 
-  ChangeMaterial(GetConsumeMaterialIndex(), 0);
+  ChangeConsumeMaterial(0);
 
   if(!game::GetInWilderness() && (!Eater->GetIsPlayer() || configuration::GetAutoDropLeftOvers()))
     MoveTo(Eater->GetLSquareUnder()->GetStack());
@@ -105,22 +97,24 @@ void potion::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetStack());
 }
 
-void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition) const
+void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
 {
+  bitmap* Bitmap = Animate ? Picture[globalwindowhandler::GetTick() % AnimationFrames()] : Picture[0];
+
   switch(LSquarePosition)
     {
     case CENTER:
     case DOWN:
-      Picture->MaskedBlit(igraph::GetTileBuffer());
+      Bitmap->MaskedBlit(igraph::GetTileBuffer());
       break;
     case LEFT:
-      Picture->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90));
+      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90));
       break;
     case UP:
-      Picture->MaskedBlit(igraph::GetTileBuffer(), uchar(FLIP));
+      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(FLIP));
       break;
     case RIGHT:
-      Picture->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90 | MIRROR));
+      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90 | MIRROR));
       break;
     }
 }
@@ -185,21 +179,21 @@ void lump::ReceiveHitEffect(character* Enemy, character*)
 
 void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 {
-  if(GetMaterial(2))
+  if(GetContainedMaterial())
     {
       if(Enemy->GetIsPlayer())
-	ADD_MESSAGE("The %s reacts with you!", GetMaterial(2)->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("The %s reacts with you!", GetContainedMaterial()->CHARNAME(UNARTICLED));
       else
 	if(Enemy->GetSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("The %s reacts with %s.", GetMaterial(2)->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("The %s reacts with %s.", GetContainedMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
 
-      GetMaterial(2)->HitEffect(Enemy);
+      GetContainedMaterial()->HitEffect(Enemy);
     }
 }
 
 void meleeweapon::DipInto(material* Material, character* Dipper)
 {
-  ChangeMaterial(2, Material);
+  ChangeContainedMaterial(Material);
 
   if(Dipper->GetIsPlayer())
     ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
@@ -210,28 +204,9 @@ material* lump::CreateDipMaterial()
   return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
 }
 
-/*bool potion::ImpactDamage(ushort)
-{
-  item* Remains = new brokenbottle(false);
-  if(GetContainedMaterial()) 
-    GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
-  Remains->InitMaterials(GetMaterial(0));
-  SetMaterial(0,0);
-  DonateSlotTo(Remains);
-  if(GetSquareUnder()->CanBeSeen())
-    ADD_MESSAGE("The potion shatters to pieces.");
-  SetExists(false);
-  return true;
-}*/
-
-void potion::PositionedDrawToTileBuffer(uchar) const
-{
-  Picture->MaskedBlit(igraph::GetTileBuffer());
-}
-
 item* can::PrepareForConsuming(character* Consumer)
 {
-  if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CHARNAME(DEFINITE) + " before eating it? [Y/n]", 'y'))
+  if(!Consumer->GetIsPlayer() || game::BoolQuestion("Do you want to open " + Name(DEFINITE) + " before eating it? [Y/n]", 'y'))
     return TryToOpen(Consumer);
   else
     return 0;
@@ -271,45 +246,6 @@ bool pickaxe::Apply(character* User)
   return false;
 }
 
-/*ushort platemail::GetArmorValue() const
-{
-  float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3;
-
-  if(Base < 1)
-    Base = 1;
-
-  if(Base > 100)
-    Base = 100;
-
-  return ushort(Base);
-}
-
-ushort chainmail::GetArmorValue() const
-{
-  float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2;
-
-  if(Base < 1)
-    Base = 1;
-
-  if(Base > 100)
-    Base = 100;
-
-  return ushort(Base);
-}
-
-ushort brokenplatemail::GetArmorValue() const
-{
-  float Base = 95 - sqrt(Material[0]->GetHitValue());
-
-  if(Base < 1)
-    Base = 1;
-
-  if(Base > 100)
-    Base = 100;
-
-  return ushort(Base);
-}*/
-
 bool wand::Apply(character* Terrorist)
 {
   if(Terrorist->GetIsPlayer())
@@ -326,7 +262,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->GetIsPlayer())
     DeathMsg = "exploded himself by breaking a wand";
   else
-    DeathMsg = std::string("kamikazed by ") + Terrorist->Name(INDEFINITE);
+    DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
 
   Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
   return true;
@@ -377,19 +313,6 @@ bool scrollofwishing::Read(character* Reader)
   return false;
 }
 
-/*bool lantern::ImpactDamage(ushort)
-{
-  brokenlantern* Lantern = new brokenlantern(false);
-  Lantern->InitMaterials(GetMaterial(0));
-  PreserveMaterial(0);
-  Lantern->SignalSquarePositionChange(OnWall);
-  DonateSlotTo(Lantern);
-  if(GetSquareUnder()->CanBeSeen())
-    ADD_MESSAGE("The lantern shatters to pieces.");
-  SetExists(false);
-  return true;
-}*/
-
 bool lantern::ReceiveDamage(character*, short Damage, uchar)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
@@ -398,8 +321,7 @@ bool lantern::ReceiveDamage(character*, short Damage, uchar)
 	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
 
       brokenlantern* Lantern = new brokenlantern(false);
-      Lantern->InitMaterials(GetMaterial(0));
-      PreserveMaterial(0);
+      Lantern->InitMaterials(GetMainMaterial());
       Lantern->SignalSquarePositionChange(OnWall);
       DonateSlotTo(Lantern);
       SetExists(false);
@@ -420,8 +342,7 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
 	GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
 
       item* Remains = new brokenbottle(false);
-      Remains->InitMaterials(GetMaterial(0));
-      PreserveMaterial(0);
+      Remains->InitMaterials(GetMainMaterial());
       DonateSlotTo(Remains);
       SetExists(false);
       return true;
@@ -429,19 +350,6 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
 
   return false;
 }
-
-/*bool potion::ReceiveSound(float Strength)
-{
-  if(!(RAND() % 75) && Strength > 10 + RAND() % 10)
-    {
-      ImpactDamage(ushort(Strength));
-      if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("The potion is destroyed by the sound.");
-      return true;
-    }
-
-  return false;	
-}*/
 
 bool scrollofchangematerial::Read(character* Reader)
 {
@@ -492,8 +400,8 @@ item* brokenbottle::BetterVersion() const
   else
     Stuff = new omleurine;
 
-  item* P = new potion(false); 
-  P->InitMaterials(2, new glass, Stuff); 
+  potion* P = new potion(false); 
+  P->InitMaterials(new glass, Stuff); 
 
   return P;
 }
@@ -521,8 +429,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
 	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
 
       item* Plate = new brokenplatemail(false);
-      Plate->InitMaterials(GetMaterial(0));
-      PreserveMaterial(0);
+      Plate->InitMaterials(GetMainMaterial());
       DonateSlotTo(Plate);
       SetExists(false);
       return true;
@@ -530,40 +437,6 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
 
   return false;
 }
-
-/*bool platemail::ReceiveSound(float Strength)
-{
-  if(Strength > 20000 + RAND() % 40000)
-    {
-      ImpactDamage(ushort(Strength));
-
-      if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("The plate mail is damaged by the loud sound.");
-
-      return true;
-    }
-
-  return false;	
-}*/
-
-/*bool platemail::ImpactDamage(ushort Strength)
-{
-  if(Strength > 2500.0f / GetStrengthValue() + RAND() % 11 - RAND() % 11)
-    {
-      if(IsShown)
-	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
-
-      ItemStack->RemoveItem(ItemStack->SearchItem(this));
-      item* Plate = new brokenplatemail(false);
-      Plate->InitMaterials(GetMaterial(0));
-      ItemStack->AddItem(Plate);
-      SetMaterial(0,0);
-      SetExists(false);
-      return true;
-    }
-  else
-    return false;
-}*/
 
 bool brokenbottle::GetStepOnEffect(character* Stepper)
 {
@@ -593,11 +466,6 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
   return false;
 }
 
-/*material* corpse::CreateDipMaterial()
-{
-  return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
-}*/
-
 material* potion::CreateDipMaterial()
 {
   return GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
@@ -605,7 +473,9 @@ material* potion::CreateDipMaterial()
 
 void potion::DipInto(material* Material, character* Dipper)
 {
-  ChangeMaterial(1, Material);
+  /* Add alchemy */
+
+  ChangeContainedMaterial(Material);
 
   if(Dipper->GetIsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
@@ -629,7 +499,7 @@ void lantern::SignalSquarePositionChange(bool NewPosOnWall)
     return;
 
   OnWall = NewPosOnWall;
-  UpdatePicture();
+  UpdatePictures();
 }
 
 void lantern::Save(outputfile& SaveFile) const
@@ -644,13 +514,6 @@ void lantern::Load(inputfile& SaveFile)
   SaveFile >> OnWall;
 }
 
-/*void corpse::SetBloodColor(ushort Color)
-{
-  igraph::RemoveUser(GraphicId);
-  GraphicId.Color[1] = Color;
-  Picture = igraph::AddUser(GraphicId).Bitmap;
-}*/
-
 item* potion::BetterVersion() const
 {
   if(!GetContainedMaterial())
@@ -662,8 +525,8 @@ item* potion::BetterVersion() const
       else
 	Stuff = new omleurine;
 
-      item* P = new potion(false); 
-      P->InitMaterials(2, new glass, Stuff);
+      potion* P = new potion(false); 
+      P->InitMaterials(new glass, Stuff);
 
       return P;
     }
@@ -682,8 +545,8 @@ item* can::BetterVersion() const
       else
 	Stuff = new bananaflesh;
 
-      item* P = new can(false); 
-      P->InitMaterials(2, new iron, Stuff); 
+      can* P = new can(false); 
+      P->InitMaterials(new iron, Stuff); 
 
       return P;
     }
@@ -715,9 +578,9 @@ bool backpack::Apply(character* Terrorist)
       std::string DeathMsg;
 
       if(Terrorist->GetIsPlayer())
-	DeathMsg = std::string("exploded himself with ") + Name(INDEFINITE);
+	DeathMsg = "exploded himself with " + Name(INDEFINITE);
       else
-	DeathMsg = std::string("kamikazed by ") + Terrorist->Name(INDEFINITE);
+	DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
 
       Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
       return true;
@@ -820,38 +683,6 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
   return false;
 }
 
-/*bool wand::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
-{
-  if(!(RAND() % 10))
-    {
-      if(MotherStack->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s catches fire and explodes!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 40);
-      return true;
-    }
-  else
-    return false;
-}
-
-bool backpack::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
-{
-  if(!(RAND() % 3))
-    {
-      if(MotherStack->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s explodes in the heat!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
-      return true;
-    }
-  else
-    return false;
-}*/
-
 std::string wand::PostFix() const
 {
   if(!TimesUsed)
@@ -876,21 +707,6 @@ bool scroll::ReceiveDamage(character*, short, uchar Type)
 
   return false;
 }
-
-/*bool scroll::ReceiveFireDamage(character*, std::string, stack* MotherStack, long)
-{
-  if(!(RAND() % 10) && GetMainMaterial()->IsFlammable())
-    {
-      if(MotherStack->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      return true;
-    }
-  else
-    return false;
-}*/
 
 void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction, uchar Range)
 {
@@ -956,53 +772,6 @@ bool holybook::ReceiveDamage(character*, short, uchar Type)
   return false;
 }
 
-/*bool holybook::ReceiveFireDamage(character*, std::string, stack* MotherStack, long)
-{
-  if(!(RAND() % 2) && GetMainMaterial()->IsFlammable())
-    {
-      if(MotherStack->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      return true;
-    }
-  else
-    return false;
-}*/
-
-/*bool wand::StruckByWandOfStriking(character* Striker, std::string DeathMsg) 
-{ 
-  if(!(RAND() % 10))
-    {
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, GetLSquareUnder()->GetPos(), 40);
-      return true;
-    }
-  else
-    return false;
-}
-
-bool backpack::StruckByWandOfStriking(character* Striker, std::string DeathMsg) 
-{ 
-  if(RAND() % 3)
-    {
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
-      return true;
-    }
-  else
-    return false;
-}*/
-
 bool oillamp::Apply(character* Applier)
 {
   if(Applier->GetIsPlayer())
@@ -1048,8 +817,6 @@ bool oillamp::Apply(character* Applier)
 		  if(game::BoolQuestion("Do you want to wish? [Y/n]", 'y'))
 		    {
 		      ADD_MESSAGE("You may wish for an item.");
-		      //game::DrawEverything();
-		      //GETKEY();
 
 		      while(true)
 			{
@@ -1109,7 +876,7 @@ void holybook::SetDivineMaster(uchar NewDivineMaster)
   DivineMaster = NewDivineMaster;
 }
 
-ushort holybook::GetMaterialColor0() const
+ushort holybook::GetMaterialColor0(ushort) const
 {
   return game::GetGod(DivineMaster)->GetColor();
 }
@@ -1139,7 +906,6 @@ bool scrollofcharging::Read(character* Reader)
       return false;
     }
 
-  //EMPTY_MESSAGES();
   game::DrawEverythingNoBlit();
   Item->ChargeFully(Reader);
   ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHARNAME(DEFINITE));
@@ -1251,13 +1017,13 @@ bool scrolloftaming::Read(character* Reader)
 
 void bodypart::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
+  materialcontainer::Save(SaveFile);
   SaveFile << BitmapPos << Color[0] << Color[1] << Color[2] << Color[3] << HP << OwnerDescription << Unique << RegenerationCounter;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
+  materialcontainer::Load(SaveFile);
   SaveFile >> BitmapPos >> Color[0] >> Color[1] >> Color[2] >> Color[3] >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
 }
 
@@ -1297,17 +1063,9 @@ short bodypart::GetMaxHP() const
       short HP = 0;
 
       if(GetMainMaterial()->IsAlive())
-	for(ushort c = 0; c < GetMaterials(); ++c)
-	  {
-	    if(GetMaterial(c))
-	      HP += ulong(GetMaterial(c)->GetVolume()) * GetMaster()->GetEndurance() / 10000;
-	  }
+	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMaster()->GetEndurance() / 10000;
       else
-	for(ushort c = 0; c < GetMaterials(); ++c)
-	  {
-	    if(GetMaterial(c))
-	      HP += ulong(GetMaterial(c)->GetVolume()) * GetMaterial(c)->GetStrengthValue() / 10000;
-	  }
+	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMainMaterial()->GetStrengthValue() / 10000;
 
       if(HP < 1)
 	HP = 1;
@@ -1322,7 +1080,7 @@ ushort head::GetTotalResistance(uchar Type) const
 {
   if(GetMaster())
     {
-      ushort Resistance = GetResistance(Type);
+      ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
       if(GetHelmet())
 	Resistance += GetHelmet()->GetResistance(Type);
@@ -1514,47 +1272,15 @@ bool bodypart::ReceiveDamage(character*, short Damage, uchar)
 
 void mine::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
+  materialcontainer::Load(SaveFile);
   SaveFile >> Charged;
 }
 
 void mine::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
+  materialcontainer::Save(SaveFile);
   SaveFile << Charged;
 }
-
-/*bool mine::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
-{
-  if(!(RAND() % 2))
-    {
-      if(MotherStack->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s activates and explodes!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 30);
-      return true;
-    }
-  else
-    return false;
-}
-
-bool mine::StruckByWandOfStriking(character* Striker, std::string DeathMsg) 
-{ 
-  if(!(RAND() % 2))
-    {
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
-
-      RemoveFromSlot();
-      SetExists(false);
-      GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, GetLSquareUnder()->GetPos(), 30);
-      return true;
-    }
-  else
-    return false;
-}*/
 
 bool mine::ReceiveDamage(character* Damager, short, uchar Type)
 {
@@ -1776,7 +1502,7 @@ humanoid* bodypart::GetHumanoidMaster() const
 
 ushort belt::GetFormModifier() const
 {
-  if(GetMaterial(0)->IsFlexible())
+  if(GetMainMaterial()->IsFlexible())
     return 800;
   else
     return 60;
@@ -1818,8 +1544,8 @@ void can::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(2, new iron, new bananaflesh); break;
-    case 1: InitMaterials(2, new iron, new schoolfood); break;
+    case 0: InitMaterials(new iron, new bananaflesh); break;
+    case 1: InitMaterials(new iron, new schoolfood); break;
     }
 }
 
@@ -1840,10 +1566,10 @@ void potion::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(2, new glass, 0); break;
-    case 1: InitMaterials(2, new glass, new water); break;
-    case 2: InitMaterials(2, new glass, new healingliquid); break;
-    case 3: InitMaterials(2, new diamond, new omleurine); break;
+    case 0: InitMaterials(new glass, 0); break;
+    case 1: InitMaterials(new glass, new water); break;
+    case 2: InitMaterials(new glass, new healingliquid); break;
+    case 3: InitMaterials(new diamond, new omleurine); break;
     }
 }
 
@@ -1865,10 +1591,10 @@ void longsword::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(3, new wood, new wood, 0); break;
-    case 1: InitMaterials(3, new bronze, new bronze, 0); break;
-    case 2: InitMaterials(3, new iron, new iron, 0); break;
-    case 3: InitMaterials(3, new mithril, new mithril, 0); break;
+    case 0: InitMaterials(new wood, new wood, 0); break;
+    case 1: InitMaterials(new bronze, new bronze, 0); break;
+    case 2: InitMaterials(new iron, new iron, 0); break;
+    case 3: InitMaterials(new mithril, new mithril, 0); break;
     }
 }
 
@@ -1878,8 +1604,8 @@ void twohandedsword::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(3, new iron, new iron, 0); break;
-    case 1: InitMaterials(3, new mithril, new mithril, 0); break;
+    case 0: InitMaterials(new iron, new iron, 0); break;
+    case 1: InitMaterials(new mithril, new mithril, 0); break;
     }
 }
 
@@ -1889,8 +1615,8 @@ void curvedtwohandedsword::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(3, new iron, new iron, 0); break;
-    case 1: InitMaterials(3, new mithril, new mithril, 0); break;
+    case 0: InitMaterials(new iron, new iron, 0); break;
+    case 1: InitMaterials(new mithril, new mithril, 0); break;
     }
 }
 
@@ -1900,10 +1626,10 @@ void axe::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(3, new copper, new wood, 0); break;
-    case 1: InitMaterials(3, new bronze, new wood, 0); break;
-    case 2: InitMaterials(3, new iron, new wood, 0); break;
-    case 3: InitMaterials(3, new mithril, new wood, 0); break;
+    case 0: InitMaterials(new copper, new wood, 0); break;
+    case 1: InitMaterials(new bronze, new wood, 0); break;
+    case 2: InitMaterials(new iron, new wood, 0); break;
+    case 3: InitMaterials(new mithril, new wood, 0); break;
     }
 }
 
@@ -1913,10 +1639,10 @@ void pickaxe::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(3, new copper, new wood, 0); break;
-    case 1: InitMaterials(3, new bronze, new wood, 0); break;
-    case 2: InitMaterials(3, new iron, new wood, 0); break;
-    case 3: InitMaterials(3, new mithril, new wood, 0); break;
+    case 0: InitMaterials(new copper, new wood, 0); break;
+    case 1: InitMaterials(new bronze, new wood, 0); break;
+    case 2: InitMaterials(new iron, new wood, 0); break;
+    case 3: InitMaterials(new mithril, new wood, 0); break;
     }
 }
 
@@ -1926,12 +1652,12 @@ void spear::GenerateMaterials()
 
   switch(femath::WeightedRand(6, Possibility))
     {
-    case 0: InitMaterials(3, new wood, new wood, 0); break;
-    case 1: InitMaterials(3, new bone, new wood, 0); break;
-    case 2: InitMaterials(3, new copper, new wood, 0); break;
-    case 3: InitMaterials(3, new bronze, new wood, 0); break;
-    case 4: InitMaterials(3, new iron, new wood, 0); break;
-    case 5: InitMaterials(3, new mithril, new wood, 0); break;
+    case 0: InitMaterials(new wood, new wood, 0); break;
+    case 1: InitMaterials(new bone, new wood, 0); break;
+    case 2: InitMaterials(new copper, new wood, 0); break;
+    case 3: InitMaterials(new bronze, new wood, 0); break;
+    case 4: InitMaterials(new iron, new wood, 0); break;
+    case 5: InitMaterials(new mithril, new wood, 0); break;
     }
 }
 
@@ -1965,8 +1691,8 @@ void poleaxe::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(3, new iron, new wood, 0); break;
-    case 1: InitMaterials(3, new mithril, new wood, 0); break;
+    case 0: InitMaterials(new iron, new wood, 0); break;
+    case 1: InitMaterials(new mithril, new wood, 0); break;
     }
 }
 
@@ -1976,8 +1702,8 @@ void spikedmace::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(3, new iron, new wood, 0); break;
-    case 1: InitMaterials(3, new mithril, new wood, 0); break;
+    case 0: InitMaterials(new iron, new wood, 0); break;
+    case 1: InitMaterials(new mithril, new wood, 0); break;
     }
 }
 
@@ -2101,26 +1827,17 @@ void corpse::Load(inputfile& SaveFile)
 
 std::string corpse::PostFix() const
 {
-  return std::string("of ") + GetDeceased()->Name(INDEFINITE);
+  return "of " + GetDeceased()->Name(INDEFINITE);
 }
 
 bool corpse::Consume(character* Eater, float Amount)
 {
-  /*for(ushort c = GetDeceased()->BodyParts() - 1; c != 0; --c)
-    if(GetDeceased()->GetBodyPart(c))
-      if(GetDeceased()->GetBodyPart(c)->Consume(Eater, Amount))
-	{
-	  GetDeceased()->GetBodyPart(c)->AddConsumeEndMessage(Eater);
-	  GetDeceased()->GetBodyPart(c)->GenerateLeftOvers(Eater);
-	  return false;
-	}*/
-
-  return GetDeceased()->GetBodyPart(0)->Consume(Eater, Amount);
+  return GetDeceased()->GetTorso()->Consume(Eater, Amount);
 }
 
 void corpse::GenerateLeftOvers(character* Eater)
 {
-  GetDeceased()->GetBodyPart(0)->GenerateLeftOvers(Eater);
+  GetDeceased()->GetTorso()->GenerateLeftOvers(Eater);
   RemoveFromSlot();
   SetExists(false);
 }
@@ -2185,22 +1902,37 @@ corpse::~corpse()
   GetDeceased()->SetExists(false);
 }
 
-void corpse::SetMaterial(uchar Index, material* NewMaterial)
+void corpse::SetMainMaterial(material* NewMaterial)
 {
-  GetDeceased()->SetMaterial(Index, NewMaterial);
+  GetDeceased()->SetMainMaterial(NewMaterial);
 }
 
-ushort corpse::GetMaterialColor0() const
+void corpse::ChangeMainMaterial(material* NewMaterial)
 {
-  return GetDeceased()->GetTorso()->GetMaterialColor0();
+  GetDeceased()->ChangeMainMaterial(NewMaterial);
 }
 
-ushort corpse::GetMaterialColor1() const
+void corpse::SetContainedMaterial(material* NewMaterial)
+{
+  GetDeceased()->SetContainedMaterial(NewMaterial);
+}
+
+void corpse::ChangeContainedMaterial(material* NewMaterial)
+{
+  GetDeceased()->ChangeContainedMaterial(NewMaterial);
+}
+
+ushort corpse::GetMaterialColor0(ushort Frame) const
+{
+  return GetDeceased()->GetTorso()->GetMaterialColor0(Frame);
+}
+
+ushort corpse::GetMaterialColor1(ushort) const
 {
   return GetDeceased()->GetBloodColor();
 }
 
-vector2d corpse::GetBitmapPos() const
+vector2d corpse::GetBitmapPos(ushort) const
 {
   if(GetDeceased()->GetSize() < 50)
     return vector2d(32, 64);
@@ -2218,7 +1950,7 @@ ushort corpse::GetSize() const
 void corpse::SetDeceased(character* What)
 {
   Deceased = What;
-  UpdatePicture();
+  UpdatePictures();
 }
 
 void bodypart::Regenerate(ushort Turns)
@@ -2378,7 +2110,7 @@ void leg::DropEquipment()
 
 void corpse::AddConsumeEndMessage(character* Eater) const
 {
-  GetDeceased()->GetBodyPart(0)->AddConsumeEndMessage(Eater);
+  GetDeceased()->GetTorso()->AddConsumeEndMessage(Eater);
 }
 
 void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
@@ -2392,7 +2124,7 @@ void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
       Buffer += CurrentSingleWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
 
-      Buffer += int(CurrentSingleWeaponSkill->GetHits());
+      Buffer += CurrentSingleWeaponSkill->GetHits();
       Buffer.resize(50, ' ');
 
       if(CurrentSingleWeaponSkill->GetLevel() != 10)
@@ -2498,4 +2230,93 @@ item* corpse::PrepareForConsuming(character*)
     }
 
   return this;
+}
+
+void materialcontainer::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> ContainedMaterial;
+}
+
+void materialcontainer::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << ContainedMaterial;
+}
+
+void meleeweapon::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> SecondaryMaterial >> ContainedMaterial;
+}
+
+void meleeweapon::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << SecondaryMaterial << ContainedMaterial;
+}
+
+material* materialcontainer::GetMaterial(uchar Index) const
+{
+  switch(Index)
+    {
+    case 0: return MainMaterial;
+    case 1: return ContainedMaterial;
+    default: return 0;
+    }
+}
+
+material* meleeweapon::GetMaterial(uchar Index) const
+{
+  switch(Index)
+    {
+    case 0: return MainMaterial;
+    case 1: return SecondaryMaterial;
+    case 2: return ContainedMaterial;
+    default: return 0;
+    }
+}
+
+material* corpse::GetMaterial(uchar Index) const
+{
+  switch(Index)
+    {
+    case 0: return GetDeceased()->GetTorso()->GetMainMaterial();
+    case 1: return GetDeceased()->GetTorso()->GetContainedMaterial();
+    default: return 0;
+    }
+}
+
+ushort materialcontainer::GetMaterialColor1(ushort) const
+{
+  if(GetContainedMaterial())
+    return GetContainedMaterial()->GetColor();
+  else
+    return 0;
+}
+
+ushort meleeweapon::GetMaterialColor1(ushort) const
+{
+  if(GetSecondaryMaterial())
+    return GetSecondaryMaterial()->GetColor();
+  else
+    return 0;
+}
+
+ushort bodypart::GetMaterialColor0(ushort) const
+{
+  if(GetMainMaterial())
+    return GetMainMaterial()->GetSkinColor();
+  else
+    return 0;
+}
+
+ushort banana::GetMaterialColor0(ushort Frame) const
+{
+  ushort Color = object::GetMaterialColor0(Frame);
+
+  if(!Frame)
+    return Color;
+  else
+    return MAKE_RGB(GET_RED(Color) * Frame / 20, GET_GREEN(Color) * Frame / 20, GET_BLUE(Color) * Frame / 20);
 }

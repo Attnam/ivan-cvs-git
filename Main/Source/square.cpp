@@ -8,8 +8,10 @@
 #include "femath.h"
 #include "bitmap.h"
 #include "graphics.h"
+#include "proto.h"
+#include "game.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
 {
 }
 
@@ -21,7 +23,7 @@ square::~square()
 
 void square::Save(outputfile& SaveFile) const
 {
-  SaveFile << Character << LastSeen << DescriptionChanged;
+  SaveFile << Character << LastSeen << DescriptionChanged  << AnimatedEntities;
 
   if(LastSeen)
     GetMemorized()->Save(SaveFile);
@@ -33,7 +35,7 @@ void square::Load(inputfile& SaveFile)
 {
   game::SetSquareInLoad(this);
 
-  SaveFile >> Character >> LastSeen >> DescriptionChanged;
+  SaveFile >> Character >> LastSeen >> DescriptionChanged >> AnimatedEntities;
 
   if(LastSeen)
     {
@@ -49,6 +51,9 @@ void square::AddCharacter(character* Guy)
   Character = Guy;
   Guy->SetSquareUnder(this);
   NewDrawRequested = true;
+
+  if(Guy->IsAnimated())
+    IncAnimatedEntities();
 }
 
 void square::DrawMemorized()
@@ -62,6 +67,9 @@ void square::DrawMemorized()
 
 void square::RemoveCharacter()
 {
+  if(Character && Character->IsAnimated())
+    DecAnimatedEntities();
+
   SetCharacter(0);
   NewDrawRequested = true;
 }
@@ -74,9 +82,21 @@ bool square::CanBeSeen(bool) const
     return false;
 }
 
-bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
+bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
-  return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
+  ulong Distance = (GetPos() - FromPos).Length();
+
+  if(Distance > MaxDistance)
+    return false;
+  else
+    {
+      character* Char = GetCharacter();
+
+      if(Char && Char->GetIsPlayer() && Distance < Char->LOSRangeSquare())
+	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
+      else
+	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
+    }
 }
 
 void square::SetLastSeen(ulong What)
@@ -148,4 +168,3 @@ uchar square::RestModifier() const
 {
   return GetOTerrain()->RestModifier();
 }
-

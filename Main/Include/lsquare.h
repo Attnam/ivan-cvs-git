@@ -8,7 +8,6 @@
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
-
 #include "square.h"
 
 class game;
@@ -64,9 +63,9 @@ class lsquare : public square
   virtual bool Kick(character*, ushort, uchar);
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
-  virtual bool DrawTerrain() const;
-  virtual bool DrawStacks() const;
-  virtual bool DrawCharacters() const;
+  virtual bool DrawTerrain(bool) const;
+  virtual bool DrawStacks(bool) const;
+  virtual bool DrawCharacters(bool) const;
   virtual void Draw();
   virtual void UpdateMemorized();
   virtual bool CanBeDug() const;
@@ -80,6 +79,9 @@ class lsquare : public square
   virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
   virtual void ChangeGLTerrain(glterrain*);
   virtual void ChangeOLTerrain(olterrain*);
+  virtual void SetLTerrain(glterrain*, olterrain*);
+  virtual void SetGLTerrain(glterrain*);
+  virtual void SetOLTerrain(olterrain*);
   virtual void ApplyScript(squarescript*, room*);
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;

@@ -7,7 +7,6 @@
 
 #include "vector2d.h"
 #include "terra.h"
-#include "proto.h"
 
 class wsquare;
 class worldmap;
@@ -25,10 +24,11 @@ class wterrain
   virtual std::string Name(uchar) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool IsAnimated() const { return false; }
  protected:
   virtual std::string NameStem() const = 0;
   virtual std::string Article() const { return "a"; }
-  virtual vector2d GetBitmapPos() const = 0;
+  virtual vector2d GetBitmapPos(ushort) const = 0;
   virtual ushort Type() const = 0;
   wsquare* WSquareUnder;
 };
@@ -49,7 +49,7 @@ class gwterrain : public wterrain, public gterrain
  public:
   typedef gwterrain_prototype prototype;
   gwterrain(bool = true) { }
-  virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(bool) const;
   virtual gwterrain* Clone(bool = true) const = 0;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
@@ -71,7 +71,7 @@ class owterrain : public wterrain, public oterrain
  public:
   typedef owterrain_prototype prototype;
   owterrain(bool = true) { }
-  virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(bool) const;
   virtual owterrain* Clone(bool = true) const = 0;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;

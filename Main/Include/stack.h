@@ -40,7 +40,7 @@ class stack
   stack(square* = 0, uchar = CENTER);
   ~stack();
   void Load(inputfile&);
-  bool DrawToTileBuffer() const;
+  bool DrawToTileBuffer(bool) const;
   void AddItem(item*);
   void FastAddItem(item*);
   void RemoveItem(stackiterator);

@@ -10,7 +10,6 @@
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
-
 #include "area.h"
 #include "roomba.h"
 

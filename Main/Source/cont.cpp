@@ -4,6 +4,7 @@
 #include "error.h"
 #include "femath.h"
 #include "wterraba.h"
+#include "save.h"
 
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
@@ -62,3 +63,26 @@ vector2d continent::GetRandomMember(ushort Type)
   return TypeContainer[RAND() % TypeContainer.size()];
 }
 
+outputfile& operator<<(outputfile& SaveFile, continent* Continent)
+{
+  if(Continent)
+    {
+      SaveFile.Put(1);
+      Continent->Save(SaveFile);
+    }
+  else
+    SaveFile.Put(0);
+
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
+{
+  if(SaveFile.Get())
+    {
+      Continent = new continent;
+      Continent->Load(SaveFile);
+    }
+
+  return SaveFile;
+}

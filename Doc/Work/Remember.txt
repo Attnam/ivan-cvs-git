@@ -3,16 +3,16 @@
 (s) Multi-tiled creatures.
 (s) New team system.
 /*Corpse.
-(s) Corpse size levels.
+//Corpse size levels.
 (s) Lines & words.
-*Healing.
+//*Healing.
 *Danger values & difficulty.
 //Name system.
 //(s) Vector based humanoid read.
 (s) Throw flipping.
-*Silhouette.
+/*Silhouette.
 //*Graphical item menu.
-*Effect types.
+/*Effect types.
 Priest.
 /*Pick-axe.
 //*New state system.

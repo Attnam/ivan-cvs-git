@@ -12,6 +12,9 @@
 #include "wskill.h"
 #include "femath.h"
 #include "slot.h"
+#include "game.h"
+#include "proto.h"
+#include "whandler.h"
 
 item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
 {
@@ -21,9 +24,12 @@ item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
     ABORT("Boo!");
 }
 
-void item::PositionedDrawToTileBuffer(uchar) const
+void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer());
+  if(Animate)
+    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
+  else
+    Picture[0]->MaskedBlit(igraph::GetTileBuffer());
 }
 
 bool item::IsConsumable(character* Eater) const
@@ -34,46 +40,13 @@ bool item::IsConsumable(character* Eater) const
     return Eater->CanEat(GetConsumeMaterial());
 }
 
-ushort item::GetEmitation() const
+short item::CalculateOfferValue(char GodAlignment) const
 {
-  ushort Emitation = 0;
+  long OfferValue = 0;
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      if(GetMaterial(c)->GetEmitation() > Emitation)
-	Emitation = GetMaterial(c)->GetEmitation();
-
-  return Emitation;
-}
-
-short item::CalculateOfferValue(char GodAlignment) const
-{
-  float OfferValue = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    {
-      if(GetMaterial(c))
-	{
-	  if(GetMaterial(c)->Alignment() == EVIL)
-	    {
-	      if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-		OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-	      else
-		if(GodAlignment == GOOD)
-		  OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
-	    }
-	  else if(GetMaterial(c)->Alignment() == GOOD)
-	    {
-	      if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-		OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-	      else
-		if(GodAlignment == EVIL)
-		  OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
-	    }
-	  else
-	    OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
-	}
-    }
+      OfferValue += GetMaterial(c)->CalculateOfferValue(GodAlignment);
 
   return short(OfferValue * (OfferModifier() / 250));
 }
@@ -114,7 +87,6 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 
 	  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 	  game::DrawEverything();
-	  //Start = game::GetCurrentLevel()->GetLSquare(Pos)->GetStack();
 
 	  if(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter())
 	    {
@@ -173,12 +145,12 @@ item* item::PrepareForConsuming(character*)
 
 float item::GetWeaponStrength() const
 {
-  return sqrt(float(GetFormModifier()) * Material[0]->GetStrengthValue() * GetWeight());
+  return sqrt(float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight());
 }
 
-void item::DrawToTileBuffer() const
+void item::DrawToTileBuffer(bool Animate) const
 {
-  PositionedDrawToTileBuffer(CENTER);
+  PositionedDrawToTileBuffer(CENTER, Animate);
 }
 
 bool item::Apply(character* Applier)
@@ -201,20 +173,10 @@ bool item::Polymorph(stack* CurrentStack)
   return true;
 }
 
-void item::ChangeMainMaterial(material* NewMaterial)
-{
-  ChangeMaterial(0, NewMaterial);
-}
-
 uchar item::GetWeaponCategory() const
 {
   return UNCATEGORIZED;
 }
-
-/*bool item::StruckByWandOfStriking(character*, std::string) 
-{ 
-  return ImpactDamage(10);
-}*/
 
 bool item::Consume(character* Eater, float Amount)
 {
@@ -254,10 +216,11 @@ void item::Load(inputfile& SaveFile)
 void item::Teleport()
 {
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
+
   MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
 }
 
-void item::DrawToTileBuffer(vector2d Pos) const
+void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
 {
   vector2d From, To, BlitSize;
 
@@ -287,23 +250,15 @@ void item::DrawToTileBuffer(vector2d Pos) const
       BlitSize.Y = 16 - Pos.Y;
     }
 
-  Picture->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
+  if(Animate)
+    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
+  else
+    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
 }
 
 ushort item::GetStrengthValue() const
 {
   return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
-}
-
-ulong item::GetVolume() const
-{
-  ulong Volume = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      Volume += GetMaterial(c)->GetVolume();
-
-  return Volume;
 }
 
 void item::PlaceToSlot(slot* Slot)
@@ -385,7 +340,7 @@ ushort item::GetResistance(uchar Type) const
 
 void item::Be()
 {
-  ABORT("ESKO!");
+  ABORT("Illegal item::Be()!");
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && !GetMaterial(c)->Be() && RemoveMaterial(c))

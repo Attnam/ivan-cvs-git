@@ -5,6 +5,7 @@
 #include "charba.h"
 #include "lsquare.h"
 #include "actionba.h"
+#include "proto.h"
 
 void slot::Save(outputfile& SaveFile) const
 {

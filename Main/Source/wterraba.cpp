@@ -6,6 +6,9 @@
 #include "message.h"
 #include "charba.h"
 #include "femath.h"
+#include "wterraba.h"
+#include "game.h"
+#include "strover.h"
 
 struct prioritypair
 {
@@ -22,7 +25,7 @@ std::string wterrain::Name(uchar Case) const
       return NameStem();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + NameStem();
+	return "the " + NameStem();
       else
 	return Article() + " " + NameStem();
   else
@@ -30,7 +33,7 @@ std::string wterrain::Name(uchar Case) const
       return NameStem() + " terrains";
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + NameStem() + " terrains";
+	return "the " + NameStem() + " terrains";
       else
 	return NameStem() + " terrains";
 }
@@ -40,9 +43,9 @@ vector2d wterrain::GetPos() const
   return GetWSquareUnder()->GetPos();
 }
 
-void gwterrain::DrawToTileBuffer() const
+void gwterrain::DrawToTileBuffer(bool) const
 {
-  igraph::GetWTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos(), 0, 0, 16, 16);
+  igraph::GetWTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos(0), 0, 0, 16, 16);
 
   std::priority_queue<prioritypair> Neighbour;
 
@@ -51,7 +54,7 @@ void gwterrain::DrawToTileBuffer() const
     gwterrain* DoNeighbour = GetWorldMapUnder()->GetWSquare(DoX, DoY)->GetGWTerrain();
 
     if(DoNeighbour->Priority() > Priority())
-      Neighbour.push(prioritypair(DoNeighbour->Priority(), DoNeighbour->GetBitmapPos() - (game::GetMoveVector(DoIndex) << 4)));
+      Neighbour.push(prioritypair(DoNeighbour->Priority(), DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(DoIndex) << 4)));
   });
 
   while(Neighbour.size())
@@ -61,9 +64,9 @@ void gwterrain::DrawToTileBuffer() const
     }
 }
 
-void owterrain::DrawToTileBuffer() const
+void owterrain::DrawToTileBuffer(bool) const
 {
-  igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos(), 0, 0, 16, 16);
+  igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos(0), 0, 0, 16, 16);
 }
 
 worldmap* wterrain::GetWorldMapUnder() const

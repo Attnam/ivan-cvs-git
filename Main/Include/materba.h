@@ -23,13 +23,6 @@
 #define GAS 256
 
 #include "typedef.h"
-#include "proto.h"
-
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
-
-#include "igraph.h"
-
-#endif
 
 /* Presentation of material class */
 
@@ -53,6 +46,15 @@ class material_prototype
   virtual bool IsSolid() const = 0;
  protected:
   ushort Index;
+};
+
+struct materialdatabase
+{
+  ushort StrengthValue;
+  ushort Density;
+  ushort OfferValue;
+  ushort Color;
+  ushort PriceModifier;
 };
 
 class material
@@ -82,6 +84,7 @@ class material
   virtual material* Clone() const = 0;
   virtual bool IsType(ushort QType) const { return Type() == QType; }
   static bool IsSolid() { return false; }
+  virtual ushort GetSkinColor() const { return GetColor(); }
   virtual ushort GetColor() const = 0;
   static bool CanBeWished() { return true; }
   static material* CreateWishedMaterial(ulong) { return 0; } // never called
@@ -100,6 +103,7 @@ class material
   static bool SpecialWishedMaterial() { return false; }
   virtual ushort GetType() const { return Type(); }
   virtual void AddConsumeEndMessage(character*) const { }
+  virtual long CalculateOfferValue(char GodAlignment) const;
  protected:
   virtual std::string NameStem() const = 0;
   virtual std::string AdjectiveStem() const { return NameStem(); }
@@ -113,6 +117,8 @@ class material
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
 
 #define MATERIAL_PROTOTYPE(name, base)\
+  \
+  /*materialdatabase name##_MaterialDataBase;*/\
   \
   static class name##_prototype : public material::prototype\
   {\

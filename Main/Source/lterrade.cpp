@@ -27,6 +27,7 @@ valuemap protocontainer<olterrain>::CodeNameMap;
 #include "itemba.h"
 #include "config.h"
 #include "itemde.h"
+
 bool door::Open(character* Opener)
 {
   if(!GetIsWalkable())
@@ -92,9 +93,13 @@ bool door::Close(character* Closer)
   return true;
 }
 
-void altar::DrawToTileBuffer() const
+void altar::DrawToTileBuffer(bool Animate) const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer());
+  if(Animate)
+    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+  else
+    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+
   igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 }
 
@@ -268,7 +273,7 @@ void door::Load(inputfile& SaveFile)
 void door::MakeWalkable()
 {
   IsOpen = true;
-  UpdatePicture();
+  UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
@@ -287,7 +292,7 @@ void door::MakeNotWalkable()
 {
   GetLSquareUnder()->ForceEmitterNoxify();
   IsOpen = false;
-  UpdatePicture();
+  UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
@@ -475,8 +480,6 @@ bool fountain::Consume(character* Drinker)
 	      if(!(RAND() % 10))
 		{
 		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
-		  //game::DrawEverything();
-		  //GETKEY();
 
 		  while(true)
 		    {
@@ -522,9 +525,8 @@ bool fountain::Consume(character* Drinker)
 void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CHARNAME(DEFINITE));
-  delete GetContainedMaterial();
-  SetMaterial(GetContainedMaterialIndex(), 0);
-  UpdatePicture();
+  ChangeContainedMaterial(0);
+  UpdatePictures();
 
   if(GetSquareUnder())
     {
@@ -582,9 +584,6 @@ bool door::ReceiveDamage(character*, short, uchar)
 {
   if(RAND() % 2)
     {
-      //if(GetLSquareUnder()->CanBeSeen())
-	//ADD_MESSAGE("The wand strikes the door and the door breaks.");
-
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
 
@@ -592,9 +591,6 @@ bool door::ReceiveDamage(character*, short, uchar)
     }
   else
     {
-      //if(GetLSquareUnder()->CanBeSeen())
-	//ADD_MESSAGE("The wand strikes the door and the door opens.");
-
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 		
@@ -677,11 +673,6 @@ bool pool::GetIsWalkable(character* ByWho) const
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
 
-/*std::string fountain::Adjective(bool Articled) const
-{
-  return Articled ? "a dried out" : "dried out";
-}*/
-
 void couch::ShowRestMessage(character*) const
 {
   ADD_MESSAGE("You rest well on the soft sofa.");
@@ -698,7 +689,6 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
-      // And Einstein.
       if(Visible && game::GetWizardMode())
 	{
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
@@ -771,8 +761,7 @@ void door::Break()
   else
     {
       brokendoor* Temp = new brokendoor(false);
-      Temp->InitMaterials(GetMaterial(0));
-      PreserveMaterial(0);
+      Temp->InitMaterials(GetMainMaterial());
       Temp->SetIsLocked(GetIsLocked());
       GetLSquareUnder()->ChangeOLTerrain(Temp);
     }
@@ -803,7 +792,8 @@ void door::CreateBoobyTrap()
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(Thingy->GetType() == key::StaticType()) // What the? EEEEEEEVVVVVVVVIIIIIIILLLLLLL HEX!!! Reply: Hey. It's worse than IsKey() function in item. 
+  if(Thingy->GetType() == key::StaticType())  // What the? EEEEEEEVVVVVVVVIIIIIIILLLLLLL HEX!!! Reply: Hey. It's worse than IsKey() function in item.
+					      // Reply: If you admit it's worse, why don't you fix it?
     { 
       if(IsOpen)
 	return false;
@@ -849,3 +839,32 @@ bool fountain::DipInto(item* ToBeDipped, character* Who)
     return false;
 }
 
+void fountain::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  SaveFile >> ContainedMaterial;
+}
+
+void fountain::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  SaveFile << ContainedMaterial;
+}
+
+material* fountain::GetMaterial(uchar Index) const
+{
+  switch(Index)
+    {
+    case 0: return MainMaterial;
+    case 1: return ContainedMaterial;
+    default: return 0;
+    }
+}
+
+ushort fountain::GetMaterialColor1(ushort) const
+{
+  if(GetContainedMaterial())
+    return GetContainedMaterial()->GetColor();
+  else
+    return 0;
+}

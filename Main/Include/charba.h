@@ -54,9 +54,13 @@
 #define POISON 6
 #define BULIMIA 7
 
+#define UNDEFINED 0
+#define MALE 1
+#define FEMALE 2
+#define TRANSSEXUAL 3
+
 #include <list>
 
-#include "game.h"
 #include "typedef.h"
 #include "vector2d.h"
 #include "igraph.h"
@@ -195,7 +199,7 @@ class character : public entity, public id
   virtual void BeTalkedTo(character*);
   virtual void Darkness(long);
   virtual void Die(bool = false);
-  virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(bool) const;
   virtual void HasBeenHitByItem(character*, item*, float);
   virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
@@ -302,7 +306,12 @@ class character : public entity, public id
   virtual void SetTorso(torso* What);
   virtual bodypart* GetBodyPart(ushort) const;
   virtual void SetBodyPart(ushort, bodypart*);
-  virtual void SetMaterial(uchar, material*);
+  virtual void SetMainMaterial(material*);
+  virtual void ChangeMainMaterial(material*);
+  virtual void SetSecondaryMaterial(material*);
+  virtual void ChangeSecondaryMaterial(material*);
+  virtual void SetContainedMaterial(material*);
+  virtual void ChangeContainedMaterial(material*);
   virtual void Teleport();
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
@@ -392,6 +401,7 @@ class character : public entity, public id
   virtual void AddInfo(felist&) const;
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(uchar);
+  virtual bool IsAnimated() const { return false; }
  protected:
   virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;
@@ -404,7 +414,7 @@ class character : public entity, public id
   virtual ulong TorsoVolume() const { return TotalVolume(); }
   virtual ulong TotalVolume() const = 0;
   virtual uchar BodyParts() const { return 1; }
-  virtual vector2d GetBitmapPos() const = 0;
+  virtual vector2d GetBitmapPos(ushort) const = 0;
   virtual void AllocateBodyPartArray();
   virtual ushort TorsoSize() const;
   virtual std::string MaterialDescription(bool) const;
@@ -499,7 +509,7 @@ class character : public entity, public id
     \
     AllocateBodyPartArray();\
     CreateBodyParts();\
-    SetMaterial(0, FirstMaterial);\
+    SetMainMaterial(FirstMaterial);\
     \
     if(CreateEquipment)\
       CreateInitialEquipment();\

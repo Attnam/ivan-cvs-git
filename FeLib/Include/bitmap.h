@@ -124,6 +124,7 @@ class bitmap
 
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
+  vector2d GetSize() const { return vector2d(XSize, YSize); }
   void DrawPolygon(vector2d, ushort, ushort, ushort, bool = true, bool = false, double = 0);
   void CreateAlphaMap(uchar);
   bool ChangeAlpha(char);

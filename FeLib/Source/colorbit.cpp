@@ -268,3 +268,20 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
 	  }
     }
 }
+
+void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Height, uchar Color1, uchar Color2)
+{
+  if(Color1 > 3 || Color2 > 3)
+    ABORT("Illgal color swap!");
+
+  for(ushort x = X; x < X + Width; ++x)
+    for(ushort y = Y; y < Y + Height; ++y)
+      {
+	uchar& Pixel = PaletteBuffer[y * XSize + x];
+
+	if(Pixel >= 192 + Color1 * 16 && Pixel <= 207 + Color1 * 16)
+	  Pixel += (Color2 - Color1) * 16;
+	else if(Pixel >= 192 + Color2 * 16 && Pixel <= 207 + Color2 * 16)
+	  Pixel += (Color1 - Color2) * 16;
+      }
+}

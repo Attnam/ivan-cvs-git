@@ -3,6 +3,7 @@
 #include "strover.h"
 #include "script.h"
 #include "feio.h"
+#include "save.h"
 
 dungeon::dungeon(uchar Index) : Index(Index)
 {
@@ -140,3 +141,26 @@ std::string dungeon::GetLevelDescription(uchar Index)
     return std::string("level ") + (Index + 1);
 }
 
+outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)
+{
+  if(Dungeon)
+    {
+      SaveFile.Put(1);
+      Dungeon->Save(SaveFile);
+    }
+  else
+    SaveFile.Put(0);
+
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
+{
+  if(SaveFile.Get())
+    {
+      Dungeon = new dungeon;
+      Dungeon->Load(SaveFile);
+    }
+
+  return SaveFile;
+}

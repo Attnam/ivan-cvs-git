@@ -66,6 +66,8 @@ int Main(int argc, char **argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 #endif
 
+  globalwindowhandler::SetControlLoop(game::AnimationController);
+
   while(true)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
       {

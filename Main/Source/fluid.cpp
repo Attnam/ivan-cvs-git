@@ -7,7 +7,7 @@
 #include "materba.h"
 #include "igraph.h"
 
-fluid::fluid()
+fluid::fluid() : Picture(0), Material(0)
 {
   SetHasBe(true);
   Picture = new bitmap(16, 16);
@@ -67,18 +67,46 @@ void fluid::Be()
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  unit::Save(SaveFile);
+  entity::Save(SaveFile);
   SaveFile << Picture;
 }
 
 void fluid::Load(inputfile& SaveFile)
 {
-  unit::Load(SaveFile);
+  entity::Load(SaveFile);
   SaveFile >> Picture;
 }
 
-void fluid::DrawToTileBuffer() const
+void fluid::DrawToTileBuffer(bool Animate) const
 {
   Picture->AlphaBlit(igraph::GetTileBuffer());
 }
 
+outputfile& operator<<(outputfile& SaveFile, fluid* Fluid)
+{
+  if(Fluid)
+    {
+      SaveFile.Put(1);
+      Fluid->Save(SaveFile);
+    }
+  else
+    SaveFile.Put(0);
+
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
+{
+  if(SaveFile.Get())
+    {
+      Fluid = new fluid;
+      Fluid->Load(SaveFile);
+    }
+
+  return SaveFile;
+}
+
+ushort fluid::GetEmitation() const
+{
+  return GetMaterial()->GetEmitation();
+}

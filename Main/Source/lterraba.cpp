@@ -7,6 +7,7 @@
 #include "worldmap.h"
 #include "femath.h"
 #include "config.h"
+#include "whandler.h"
 
 bool olterrain::GoUp(character* Who) const // Try to go up
 {
@@ -114,14 +115,12 @@ void olterrain::Load(inputfile& SaveFile)
   SaveFile >> HP;
 }
 
-void glterrain::DrawToTileBuffer() const
+void lterrain::DrawToTileBuffer(bool Animate) const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
-}
-
-void olterrain::DrawToTileBuffer() const
-{
-  Picture->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+  if(Animate)
+    Picture[globalwindowhandler::GetTick() % AnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+  else
+    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
 }
 
 bool lterrain::Open(character* Opener)

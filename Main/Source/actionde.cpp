@@ -17,6 +17,8 @@ valuemap protocontainer<action>::CodeNameMap;;
 #include "itemba.h"
 #include "level.h"
 #include "error.h"
+#include "game.h"
+#include "lterraba.h"
 
 void faint::Save(outputfile& SaveFile) const
 {

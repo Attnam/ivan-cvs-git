@@ -9,7 +9,6 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-#include "save.h"
 
 class worldmap;
 class outputfile;
@@ -47,29 +46,8 @@ inline void continent::Add(vector2d Pos)
   ContinentBuffer[Pos.X][Pos.Y] = Index;
 }
 
-inline outputfile& operator<<(outputfile& SaveFile, continent* Continent)
-{
-  if(Continent)
-    {
-      SaveFile.Put(1);
-      Continent->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
-{
-  if(SaveFile.Get())
-    {
-      Continent = new continent;
-      Continent->Load(SaveFile);
-    }
-
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, continent*);
+inputfile& operator>>(inputfile&, continent*&);
 
 #endif
 

@@ -8,6 +8,8 @@
 #include "error.h"
 #include "dungeon.h"
 #include "femath.h"
+#include "proto.h"
+#include "save.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -17,7 +19,7 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
     for(ulong y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new wsquare(this, vector2d(x, y));
-	Map[x][y]->ChangeWTerrain(new ocean, new atmosphere);
+	Map[x][y]->SetWTerrain(new ocean, new atmosphere);
       }
 
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
@@ -387,4 +389,26 @@ void worldmap::RemoveEmptyContinents()
 	  }
 }
 
+outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+{
+  if(WorldMap)
+    {
+      SaveFile.Put(1);
+      WorldMap->Save(SaveFile);
+    }
+  else
+    SaveFile.Put(0);
 
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
+{
+  if(SaveFile.Get())
+    {
+      WorldMap = new worldmap;
+      WorldMap->Load(SaveFile);
+    }
+
+  return SaveFile;
+}

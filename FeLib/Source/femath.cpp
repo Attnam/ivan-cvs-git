@@ -103,7 +103,7 @@ long femath::Rand()
 #pragma warning(disable : 4018)
 #endif
 
-bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*Proc)(vector2d, vector2d))
+bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(vector2d, vector2d))
 {
   long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
@@ -124,7 +124,7 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
       \
       while(PriC PriCond PriC##2)\
 	{\
-	  if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || !Proc(vector2d(X, Y), vector2d(X1, Y1)))\
+	  if(!Proc(vector2d(X, Y), vector2d(X1, Y1)))\
 	    return false;\
 	  \
 	  if(DD SecCond 0)\

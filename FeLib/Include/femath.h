@@ -217,7 +217,7 @@ class femath
 public: 
   static long Rand();
   static void SetSeed(ulong);
-  static bool DoLine(long, long, long, long, ulong, bool (*Proc)(vector2d, vector2d));
+  static bool DoLine(long, long, long, long, bool (*Proc)(vector2d, vector2d));
   static ushort WeightedRand(ushort, ushort*);
   static float CalculateAngle(vector2d);
 protected:

@@ -35,6 +35,7 @@ class character;
 class item;
 class god;
 class room;
+class material;
 
 class datamemberbase
 {
@@ -53,6 +54,7 @@ template <class type> class datamembertemplate : public datamemberbase
  public:
   datamembertemplate() : Base(0), Member(0) { }
   type* GetMember(bool) const;
+  void SetMember(type* What) { Member = What; }
   virtual void SetBase(datamemberbase*);
  protected:
   datamembertemplate<type>* Base;
@@ -107,18 +109,31 @@ class posscript : public script
   DATAMEMBER(bool, InRoom);
 };
 
+class materialscript : public script
+{
+ public:
+  materialscript();
+  void ReadFrom(inputfile&);
+  virtual void SetType(ushort What) { Type = What; }
+  virtual ushort GetType() const { return Type; }
+  virtual material* Instantiate() const;
+ protected:
+  DATAMEMBER(ulong, Volume);
+  ushort Type;
+};
+
 template <class type> class basecontentscript : public script
 {
  public:
+  basecontentscript();
   virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&);
-  virtual void ReadParameters(inputfile&, const std::string&);
-  virtual ushort* GetMaterialType(ushort, bool = true) const;
-  virtual ulong* GetMaterialVolume(ushort, bool = true) const;
   virtual ushort GetContentType() const { return ContentType; }
   virtual type* Instantiate() const;
  protected:
-  std::vector<std::pair<ushort*, ulong*> > MaterialData;
+  DATAMEMBER(materialscript, MainMaterial);
+  DATAMEMBER(materialscript, SecondaryMaterial);
+  DATAMEMBER(materialscript, ContainedMaterial);
   ushort ContentType;
 };
 
@@ -128,7 +143,6 @@ class contentscript<character> : public basecontentscript<character>
 {
  public:
   contentscript<character>();
-  virtual void ReadParameters(inputfile&, const std::string&);
   virtual character* Instantiate() const;
  protected:
   DATAMEMBER(ushort, Team);
@@ -138,7 +152,6 @@ class contentscript<olterrain> : public basecontentscript<olterrain>
 {
  public:
   contentscript<olterrain>();
-  virtual void ReadParameters(inputfile&, const std::string&);
   virtual olterrain* Instantiate() const;
  protected:
   DATAMEMBER(bool, Locked);

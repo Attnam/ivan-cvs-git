@@ -6,6 +6,7 @@
 #include "graphics.h"
 #include "error.h"
 #include "femath.h"
+#include "game.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -38,21 +39,16 @@ area::~area()
 void area::Save(outputfile& SaveFile) const
 {
   SaveFile << XSize << YSize;
-
   SaveFile.Write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::Load(inputfile& SaveFile)
 {
   game::SetAreaInLoad(this);
-
   SaveFile >> XSize >> YSize;
-
   XSizeTimesYSize = XSize * YSize;
-
   Alloc2D(Map, XSize, YSize);
   Alloc2D(FlagMap, XSize, YSize);
-
   SaveFile.Read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
@@ -76,7 +72,7 @@ void area::UpdateLOS()
   DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
+      femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, game::LOSHandler);
   });
 
   game::RemoveLOSUpdateRequest();

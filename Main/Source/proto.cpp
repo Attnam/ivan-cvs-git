@@ -8,6 +8,8 @@
 #include "godba.h"
 #include "roomba.h"
 #include "wterraba.h"
+#include "game.h"
+#include "lterraba.h"
 
 template <class type> ushort protocontainer<type>::Add(prototype* Proto)
 {

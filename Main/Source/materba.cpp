@@ -2,6 +2,7 @@
 #include "charba.h"
 #include "error.h"
 #include "femath.h"
+#include "save.h"
 
 std::string material::Name(bool Articled, bool Adjective) const
 {
@@ -47,3 +48,28 @@ bool material::CanBeDug(material* ShovelMaterial) const
   return ShovelMaterial->GetStrengthValue() > GetStrengthValue();
 }
 
+long material::CalculateOfferValue(char GodAlignment) const
+{
+  long Value = 0;
+
+  if(Alignment() == EVIL)
+    {
+      if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
+	Value += GetVolume() * OfferValue();
+      else
+	if(GodAlignment == GOOD)
+	  Value -= GetVolume() * OfferValue();
+    }
+  else if(Alignment() == GOOD)
+    {
+      if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
+	Value += GetVolume() * OfferValue();
+      else
+	if(GodAlignment == EVIL)
+	  Value -= GetVolume() * OfferValue();
+    }
+  else
+    Value += GetVolume() * OfferValue();
+
+  return Value;
+}

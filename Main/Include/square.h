@@ -30,8 +30,8 @@ class square
   virtual void DrawMemorized();
   virtual void Draw() = 0;
   virtual void UpdateMemorized() = 0;
-  virtual bool DrawTerrain() const = 0;
-  virtual bool DrawCharacters() const = 0;
+  virtual bool DrawTerrain(bool) const = 0;
+  virtual bool DrawCharacters(bool) const = 0;
   virtual void SetCharacter(character* What) { Character = What; }
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
@@ -61,6 +61,9 @@ class square
   virtual std::string ScoreEntry(character*) const;
   virtual ushort GetEntryAPRequirement() const;
   virtual uchar RestModifier() const;
+  virtual ushort GetAnimatedEntities() const { return AnimatedEntities; }
+  virtual void IncAnimatedEntities() { ++AnimatedEntities; }
+  virtual void DecAnimatedEntities() { --AnimatedEntities; }
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;
@@ -70,6 +73,7 @@ class square
   bitmap* Memorized;
   ulong LastSeen;
   bool DescriptionChanged;
+  ushort AnimatedEntities;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, square* Square)

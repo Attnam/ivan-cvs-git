@@ -38,6 +38,7 @@
 #include "femath.h"
 #include "hscore.h"
 #include "error.h"
+#include "command.h"
 
 class quitrequest { };
 
@@ -133,7 +134,7 @@ ulong game::Ticks;
 void game::InitScript()
 {
   femath::SetSeed(time(0));
-  inputfile ScriptFile((GAME_DIR + std::string("Script/dungeon.dat")).c_str());
+  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
   GameScript.ReadFrom(ScriptFile);
 }
 
@@ -246,7 +247,6 @@ void game::Init(const std::string& Name)
 	Angel->SetMaster(1);
 	Angel->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Angel);*/
-
 
 	for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
 	  Player->GetStack()->AddItem(new oillamp(protocontainer<material>::GetProto(c)->Clone()));
@@ -1278,23 +1278,23 @@ std::string game::GetVerbalPlayerAlignment()
     }
 
   if(Sum > 15000)
-    return std::string("extremely lawful");
+    return "extremely lawful";
   if(Sum > 10000)
-    return std::string("very lawful");
+    return "very lawful";
   if(Sum > 5000)
-    return std::string("lawful");
+    return "lawful";
   if(Sum > 1000)
-    return std::string("mildly lawful");
+    return "mildly lawful";
   if(Sum > -1000)
-    return std::string("neutral");
+    return "neutral";
   if(Sum > -5000)
-    return std::string("mildly chaotic");
+    return "mildly chaotic";
   if(Sum > -10000)
-    return std::string("chaotic");
+    return "chaotic";
   if(Sum > -15000)
-    return std::string("very chaotic");
+    return "very chaotic";
 
-  return std::string("extremely chaotic");
+  return "extremely chaotic";
 }
 
 void game::CreateGods()
@@ -1338,10 +1338,10 @@ void game::BusyAnimation(bitmap* Buffer)
       ushort x;
 
       for(x = 0; x < 10; ++x)
-	Buffer->DrawPolygon(Pos, 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), false, true, Rotation + double(x) / 50);
+	Buffer->DrawPolygon(Pos, 100, 5, MAKE_RGB(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
 
       for(x = 0; x < 4; ++x)
-	Buffer->DrawPolygon(Pos, 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
+	Buffer->DrawPolygon(Pos, 100 + x, 50, MAKE_RGB(255 - 12 * x,0,0));
 
       if(Buffer == DOUBLEBUFFER)
 	graphics::BlitDBToScreen();
@@ -1455,3 +1455,8 @@ void game::LookHandler(vector2d CursorPos)
     ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 }
 
+void game::AnimationController()
+{
+  if(GetRunning && GetInGetCommand())
+    game::DrawEverything();
+}

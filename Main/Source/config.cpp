@@ -17,7 +17,7 @@
 #endif
 
 #ifdef USE_SDL
-#define CONFIG_FILENAME (std::string(getenv("HOME")) + std::string("/.ivan.conf")).c_str()
+#define CONFIG_FILENAME (std::string(getenv("HOME")) + "/.ivan.conf").c_str()
 #endif
 
 std::string configuration::DefaultName;

@@ -44,7 +44,6 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
-# SUBTRACT CPP /Z<none>
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -107,7 +106,6 @@ PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
-# SUBTRACT BASE CPP /Z<none>
 # ADD CPP /nologo /W3 /GR /GX /Zi /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
@@ -294,10 +292,6 @@ SOURCE=.\Main\Source\terra.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\unit.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Source\worldmap.cpp
 # End Source File
 # Begin Source File
@@ -470,10 +464,6 @@ SOURCE=.\Main\Include\terra.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\unit.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Include\worldmap.h
 # End Source File
 # Begin Source File
@@ -500,6 +490,15 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # End Target
 # End Project

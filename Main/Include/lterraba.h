@@ -11,12 +11,6 @@
 #include "typedef.h"
 #include "vector2d.h"
 
-#include "proto.h"
-#include "materde.h"
-#include "game.h"
-#include "igraph.h"
-
-class bitmap;
 class character;
 class material;
 class game;
@@ -27,6 +21,7 @@ class outputfile;
 class inputfile;
 class glterrain;
 class olterrain;
+class item;
 
 /* Presentation of the lterrain class & subclasses */
 
@@ -45,10 +40,8 @@ class lterrain : public object
   virtual uchar GetVisualFlags() const { return VisualFlags; }
   virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   virtual void HandleVisualEffects();
-  virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
-  //virtual bool ReceiveStrike() { return false; }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool GetIsLocked() const { return false; }
   virtual bool Polymorph(character*) { return false; }
@@ -56,8 +49,10 @@ class lterrain : public object
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
+  virtual void DrawToTileBuffer(bool) const;
  protected:
-  virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
+  virtual ulong DefaultMainVolume() const { return 10000000; }
+  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRLTERRAIN; }
   virtual bool ShowMaterial() const { return true; }
   uchar VisualFlags;
 };
@@ -78,7 +73,6 @@ class glterrain : public lterrain, public gterrain
  public:
   typedef glterrain_prototype prototype;
   glterrain(bool = true, bool = true) { }
-  virtual void DrawToTileBuffer() const;
   virtual glterrain* Clone(bool = true, bool = true) const = 0;
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
@@ -102,7 +96,6 @@ class olterrain : public lterrain, public oterrain
   olterrain(bool = true, bool = true) : HP(1000) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void DrawToTileBuffer() const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
   virtual uchar GetDivineMaster() const { return 0; }
@@ -139,7 +132,7 @@ class olterrain : public lterrain, public oterrain
   } name##_ProtoType;\
   \
   name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); if(CreateMaterials) initmaterials ; HandleVisualEffects(); }\
-  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMaterial(0, FirstMaterial); HandleVisualEffects(); }\
+  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMainMaterial(FirstMaterial); HandleVisualEffects(); }\
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   const protobase::prototype* const name::GetPrototype() { return &name##_ProtoType; }\

@@ -4,165 +4,133 @@
 #include "error.h"
 #include "game.h"
 #include "godba.h"
+#include "save.h"
 
 object::~object()
 {
-  igraph::RemoveUser(GraphicId);
+  for(ushort c = 0; c < AnimationFrames(); ++c)
+    igraph::RemoveUser(GraphicId[c]);
 }
 
 void object::Save(outputfile& SaveFile) const
 {
   SaveFile << Type();
-  unit::Save(SaveFile);
+  entity::Save(SaveFile);
   SaveFile << GraphicId;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  unit::Load(SaveFile);
+  entity::Load(SaveFile);
   SaveFile >> GraphicId;
-  Picture = igraph::AddUser(GraphicId).Bitmap;
-}
 
-void object::InitMaterials(ushort Materials, ...)
-{
-  va_list AP;
-  va_start(AP, Materials);
+  Picture.resize(GraphicId.size());
 
-  for(ushort c = 0; c < Materials; ++c)
-    {
-      Material.push_back(va_arg(AP, material*));
-      PreserveBit.push_back(false);
-
-      if(Material[c])
-	{
-	  if(Material[c]->HasBe())
-	    SetHasBe(true);
-
-	  Material[c]->SetMotherEntity(this);
-
-	  if(!Material[c]->GetVolume())
-	    Material[c]->SetVolume(GetDefaultVolume(c));
-	}
-    }
-
-  va_end(AP);
-  UpdatePicture(false);
+  for(ushort c = 0; c < AnimationFrames(); ++c)
+    Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
 }
 
 void object::InitMaterials(material* FirstMaterial)
 {
-  Material.push_back(FirstMaterial);
-  PreserveBit.push_back(false);
-
-  if(Material[0])
-    {
-      if(Material[0]->HasBe())
-	SetHasBe(true);
-
-      Material[0]->SetMotherEntity(this);
-
-      if(!Material[0]->GetVolume())
-	Material[0]->SetVolume(GetDefaultVolume(0));
-    }
-
-  UpdatePicture(false);
+  InitMaterial(MainMaterial, FirstMaterial, DefaultMainVolume());
+  UpdatePictures(false);
 }
 
-void object::SetMaterial(uchar Index, material* NewMaterial)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume)
 {
-  if(Index >= Material.size())
-    {
-      Material.resize(Index + 1, 0);
-      PreserveBit.resize(Index + 1, false);
-    }
+  InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
+  InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
+  UpdatePictures(false);
+}
 
-  if((!Material[Index] || !Material[Index]->HasBe()) && NewMaterial && NewMaterial->HasBe())
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, material*& ThirdMaterial, material* ThirdNewMaterial, ulong ThirdDefaultVolume)
+{
+  InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
+  InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
+  InitMaterial(ThirdMaterial, ThirdNewMaterial, ThirdDefaultVolume);
+  UpdatePictures(false);
+}
+
+void object::InitMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+{
+  Material = NewMaterial;
+
+  if(Material)
+    {
+      if(Material->HasBe())
+	SetHasBe(true);
+
+      Material->SetMotherEntity(this);
+
+      if(!Material->GetVolume())
+	Material->SetVolume(DefaultVolume);
+    }
+}
+
+void object::ChangeMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+{
+  delete SetMaterial(Material, NewMaterial, DefaultVolume);
+}
+
+material* object::SetMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+{
+  material* OldMaterial = Material;
+  Material = NewMaterial;
+
+  if((!OldMaterial || !OldMaterial->HasBe()) && NewMaterial && NewMaterial->HasBe())
     SetHasBe(true);
 
-  if(Material[Index] && Material[Index]->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
-    {
-      bool HasBe = false;
-
-      for(ushort c = 0; c < Material.size(); ++c)
-	if(c != Index && Material[c] && Material[c]->HasBe())
-	  {
-	    HasBe = true;
-	    break;
-	  }
-
-      SetHasBe(HasBe);
-    }
+  if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
+    SetHasBe(CalculateHasBe());
 
   if(NewMaterial)
     {
       NewMaterial->SetMotherEntity(this);
 
       if(!NewMaterial->GetVolume())
-	NewMaterial->SetVolume(GetDefaultVolume(Index));
+	if(OldMaterial)
+	  NewMaterial->SetVolume(OldMaterial->GetVolume());
+	else
+	  if(DefaultVolume)
+	    NewMaterial->SetVolume(DefaultVolume);
+	  else
+	    ABORT("Singularity spawn detected!");
     }
 
-  Material[Index] = NewMaterial;
-  UpdatePicture();
+  UpdatePictures();
+  return OldMaterial;
 }
 
-void object::ChangeMaterial(uchar Index, material* NewMaterial)
-{
-  if(Index >= Material.size())
-    SetMaterial(Index, NewMaterial);
-  else
-    {
-      material* OldMaterial = Material[Index];
-      SetMaterial(Index, NewMaterial);
-      delete OldMaterial;
-    }
-}
-
-void object::UpdatePicture(bool RemoveOld)
+void object::UpdatePictures(bool RemoveOld)
 {
   if(RemoveOld)
-    igraph::RemoveUser(GraphicId);
+    for(ushort c = 0; c < AnimationFrames(); ++c)
+      igraph::RemoveUser(GraphicId[c]);
+  else
+    {
+      GraphicId.resize(AnimationFrames());
+      Picture.resize(AnimationFrames());
+    }
 
-  GraphicId.Color[0] = GetMaterialColor0();
-  GraphicId.Color[1] = GetMaterialColor1();
-  GraphicId.Color[2] = GetMaterialColor2();
-  GraphicId.Color[3] = GetMaterialColor3();
-  GraphicId.BitmapPos = GetBitmapPos();
-  GraphicId.FileIndex = GetGraphicsContainerIndex();
-  GraphicId.SpecialType = GetSpecialType();
-  Picture = igraph::AddUser(GraphicId).Bitmap;
+  for(ushort c = 0; c < AnimationFrames(); ++c)
+    {
+      GraphicId[c].Color[0] = GetMaterialColor0(c);
+      GraphicId[c].Color[1] = GetMaterialColor1(c);
+      GraphicId[c].Color[2] = GetMaterialColor2(c);
+      GraphicId[c].Color[3] = GetMaterialColor3(c);
+      GraphicId[c].BitmapPos = GetBitmapPos(c);
+      GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
+      GraphicId[c].SpecialType = GetSpecialType(c);
+      Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
+    }
 }
 
-ushort object::GetMaterialColor0() const
+ushort object::GetMaterialColor0(ushort) const
 {
-  if(GetMaterial(0))
-    return GetMaterial(0)->GetColor();
+  if(GetMainMaterial())
+    return GetMainMaterial()->GetColor();
   else
     return 0;
-}
-
-ushort object::GetMaterialColor1() const
-{
-  if(GetMaterial(1))
-    return GetMaterial(1)->GetColor();
-  else
-    return GetMaterialColor0();
-}
-
-ushort object::GetMaterialColor2() const
-{
-  if(GetMaterial(2))
-    return GetMaterial(2)->GetColor();
-  else
-    return GetMaterialColor0();
-}
-
-ushort object::GetMaterialColor3() const
-{
-  if(GetMaterial(3))
-    return GetMaterial(3)->GetColor();
-  else
-    return GetMaterialColor0();
 }
 
 std::string object::MaterialDescription(bool Articled) const
@@ -182,11 +150,62 @@ std::string object::LumpyPostFix() const
 
 ulong object::GetWeight() const
 {
-  ulong TotalWeight = 0;
+  ulong Weight = 0;
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      TotalWeight += GetMaterial(c)->GetWeight();
+      Weight += GetMaterial(c)->GetWeight();
 
-  return TotalWeight;
+  return Weight;
+}
+
+ulong object::GetVolume() const
+{
+  ulong Volume = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      Volume += GetMaterial(c)->GetVolume();
+
+  return Volume;
+}
+
+ushort object::GetEmitation() const
+{
+  ushort Emitation = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)
+      Emitation = GetMaterial(c)->GetEmitation();
+
+  return Emitation;
+}
+
+bool object::CalculateHasBe() const
+{
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->HasBe())
+      return true;
+
+  return false;
+}
+
+void object::SetSecondaryMaterial(material*)
+{
+  ABORT("Illegal object::SetSecondaryMaterial call!");
+}
+
+void object::ChangeSecondaryMaterial(material*)
+{
+  ABORT("Illegal object::ChangeSecondaryMaterial call!");
+}
+
+void object::SetContainedMaterial(material*)
+{
+  ABORT("Illegal object::SetContainedMaterial call!");
+}
+
+void object::ChangeContainedMaterial(material*)
+{
+  ABORT("Illegal object::ChangeContainedMaterial call!");
 }

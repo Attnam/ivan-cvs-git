@@ -27,7 +27,7 @@ class entity
   virtual void SetPoolIterator(std::list<entityinfo>::iterator What) { PoolIterator = What; }
   virtual bool GetExists() const;
   virtual void SetExists(bool);
-  virtual void DrawToTileBuffer() const = 0;
+  virtual void DrawToTileBuffer(bool) const = 0;
   virtual square* GetSquareUnder() const { return SquareUnder; }
   virtual void SetSquareUnder(square* What) { SquareUnder = What; }
   virtual lsquare* GetLSquareUnder() const;

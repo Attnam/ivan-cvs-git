@@ -26,12 +26,8 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-
 #include "object.h"
-#include "materba.h"
 #include "igraph.h"
-#include "proto.h"
-#include "lterrade.h"
 
 class bitmap;
 class character;
@@ -68,10 +64,9 @@ class item : public object
   typedef item_prototype prototype;
   item(bool, bool);
   virtual float GetWeaponStrength() const;
-  virtual void DrawToTileBuffer() const;
-  virtual void DrawToTileBuffer(vector2d Pos) const;
-  virtual void PositionedDrawToTileBuffer(uchar) const;
-  virtual ushort GetEmitation() const;
+  virtual void DrawToTileBuffer(bool) const;
+  virtual void DrawToTileBuffer(vector2d Pos, bool) const;
+  virtual void PositionedDrawToTileBuffer(uchar, bool) const;
   virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
   virtual item* TryToOpen(character*) { return 0; }
   virtual bool Consume(character*, float);
@@ -101,7 +96,6 @@ class item : public object
   virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
   virtual bool IsMaterialChangeable() const { return true; }
-  virtual void ChangeMainMaterial(material*);
   virtual void CheckPickUpEffect(character*) { }
   virtual uchar GetWeaponCategory() const;
   virtual float GetThrowGetStrengthModifier() const { return 1; }
@@ -110,7 +104,6 @@ class item : public object
   virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
-  //virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const { return "eating"; }
   static bool PolymorphSpawnable() { return true; }
@@ -127,7 +120,6 @@ class item : public object
   virtual void Teleport();
   virtual ushort GetStrengthValue() const;
   static bool AutoInitializable() { return true; }
-  virtual ulong GetVolume() const;
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }
   virtual void PlaceToSlot(slot*);
@@ -192,7 +184,7 @@ class item : public object
   virtual bool IsEqual(item*) const { return false; }
  protected:
   virtual ushort GetStrengthModifier() const = 0;
-  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
+  virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }
   virtual float NPModifier() const { return 1.0f; }
@@ -201,6 +193,7 @@ class item : public object
   bool Cannibalised;
   ushort Size;
   ulong ID;
+  graphic_id InHandsGraphicId;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
@@ -222,7 +215,7 @@ class item : public object
   } name##_ProtoType;\
   \
   name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); if(CreateMaterials) initmaterials ; }\
-  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMaterial(0, FirstMaterial); }\
+  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMainMaterial(FirstMaterial); }\
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   const item::prototype* const name::GetPrototype() { return &name##_ProtoType; }\

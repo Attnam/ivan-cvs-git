@@ -9,6 +9,8 @@
 #include "roomba.h"
 #include "godba.h"
 #include "error.h"
+#include "game.h"
+#include "proto.h"
 
 template <class type> type* datamembertemplate<type>::GetMember(bool AbortOnError) const
 {
@@ -149,6 +151,57 @@ void posscript::ReadFrom(inputfile& SaveFile)
     }
 }
 
+materialscript::materialscript() : Type(0)
+{
+  INITMEMBER(Volume);
+}
+
+void materialscript::ReadFrom(inputfile& SaveFile)
+{
+  std::string Word;
+  SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    Word = SaveFile.ReadWord();
+
+  Type = protocontainer<material>::SearchCodeName(Word);
+
+  if(!Type)
+    ABORT("Odd script term %s encountered in material script!", Word.c_str());
+
+  if(SaveFile.ReadWord() != "{")
+    return;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
+    {
+      ushort c;
+
+      for(c = 0; c < Data.size(); ++c)
+	if(Data[c]->Load(Word, SaveFile, ValueMap))
+	  break;
+
+      if(c == Data.size())
+	ABORT("Odd script term %s encountered in material script!", Word.c_str());
+    }
+}
+
+material* materialscript::Instantiate() const
+{
+  material* Instance = protocontainer<material>::GetProto(Type)->Clone();
+
+  if(GetVolume(false))
+    Instance->SetVolume(*GetVolume());
+
+  return Instance;
+}
+
+template <class type> basecontentscript<type>::basecontentscript<type>()
+{
+  INITMEMBER(MainMaterial);
+  INITMEMBER(SecondaryMaterial);
+  INITMEMBER(ContainedMaterial);
+}
+
 template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile)
 {
   std::string Word = SaveFile.ReadWord();
@@ -156,103 +209,30 @@ template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile
   if(Word == "=")
     Word = SaveFile.ReadWord();
 
-  ushort Index;
+  ushort Index = protocontainer<material>::SearchCodeName(Word);
 
-  for(ushort c = 0;; ++c)
-    if(Index = protocontainer<material>::SearchCodeName(Word))
-      {
-	if(c < MaterialData.size())
-	  {
-	    *MaterialData[c].first = Index;
-	    Word = SaveFile.ReadWord();
-
-	    if(Word == "(")
-	      {
-		*MaterialData[c].second = SaveFile.ReadNumber(ValueMap);
-		Word = SaveFile.ReadWord();
-	      }
-	  }
-	else
-	  {
-	    ushort* NewIndex = new ushort;
-	    ulong* NewVolume = 0;
-	    *NewIndex = Index;
-	    Word = SaveFile.ReadWord();
-
-	    if(Word == "(")
-	      {
-		NewVolume = new ulong;
-		*NewVolume = SaveFile.ReadNumber(ValueMap);
-		Word = SaveFile.ReadWord();
-	      }
-
-	    MaterialData.push_back(std::pair<ushort*, ulong*>(NewIndex, NewVolume));
-	  }
-      }
-    else
-      break;
-
-  if((Index = protocontainer<type>::SearchCodeName(Word)) || Word == "0")
+  if(Index)
     {
-      ContentType = Index;
+      if(!GetMainMaterial(false))
+	MainMaterial.SetMember(new materialscript);
+
+      GetMainMaterial()->SetType(Index);
       Word = SaveFile.ReadWord();
     }
 
-  ReadParameters(SaveFile, Word);
-}
+  ContentType = protocontainer<type>::SearchCodeName(Word);
 
-template <class type> type* basecontentscript<type>::Instantiate() const
-{
-  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone();
-
-  for(ushort c = 0; c < MaterialData.size(); ++c)
-    Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialData[c].first)->Clone(MaterialData[c].second ? *MaterialData[c].second : 0));
-
-  return Instance;
-}
-
-template <class type> void basecontentscript<type>::ReadParameters(inputfile&, const std::string& LastWord)
-{
-  if(LastWord != ";" && LastWord != ",")
-    ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
-}
-
-template <class type> ushort* basecontentscript<type>::GetMaterialType(ushort Index, bool AOE) const
-{
-  if(Index < MaterialData.size() && MaterialData[Index].first)
-    return MaterialData[Index].first;
+  if(ContentType || Word == "0")
+    Word = SaveFile.ReadWord();
   else
-    {
-      if(AOE)
-	ABORT("Undefined script member MaterialData[%d] sought!", Index);
+    ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), typeid(type).name());
 
-      return 0;
-    }
-}
+  ValueMap["NONE"] = NONE;
+  ValueMap["MIRROR"] = MIRROR;
+  ValueMap["FLIP"] = FLIP;
+  ValueMap["ROTATE"] = ROTATE_90;
 
-template <class type> ulong* basecontentscript<type>::GetMaterialVolume(ushort Index, bool AOE) const
-{
-  if(Index < MaterialData.size() && MaterialData[Index].second)
-    return MaterialData[Index].second;
-  else
-    {
-      if(AOE)
-	ABORT("Undefined script member MaterialData[%d] sought!", Index);
-
-      return 0;
-    }
-}
-
-contentscript<character>::contentscript<character>()
-{
-  INITMEMBER(Team);
-}
-
-void contentscript<character>::ReadParameters(inputfile& SaveFile, const std::string& LastWord)
-{
-  std::string Word;
-
-  if(LastWord == "{")
+  if(Word == "{")
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	ushort c;
@@ -262,10 +242,32 @@ void contentscript<character>::ReadParameters(inputfile& SaveFile, const std::st
 	    break;
 
 	if(c == Data.size())
-	  ABORT("Odd script term %s encountered in character script!", Word.c_str());
+	  ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), typeid(type).name());
       }
   else
-    basecontentscript<character>::ReadParameters(SaveFile, LastWord);
+    if(Word != ";" && Word != ",")
+      ABORT("Script error: Odd terminator %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
+}
+
+template <class type> type* basecontentscript<type>::Instantiate() const
+{
+  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone();
+
+  if(GetMainMaterial(false))
+    Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate());
+
+  if(GetSecondaryMaterial(false))
+    Instance->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate());
+
+  if(GetContainedMaterial(false))
+    Instance->ChangeContainedMaterial(GetContainedMaterial()->Instantiate());
+
+  return Instance;
+}
+
+contentscript<character>::contentscript<character>()
+{
+  INITMEMBER(Team);
 }
 
 character* contentscript<character>::Instantiate() const
@@ -282,31 +284,6 @@ contentscript<olterrain>::contentscript<olterrain>()
 {
   INITMEMBER(Locked);
   INITMEMBER(VisualFlags);
-}
-
-void contentscript<olterrain>::ReadParameters(inputfile& SaveFile, const std::string& LastWord)
-{
-  ValueMap["NONE"] = 0;
-  ValueMap["MIRROR"] = 1;
-  ValueMap["FLIP"] = 2;
-  ValueMap["ROTATE"] = 4;
-
-  std::string Word;
-
-  if(LastWord == "{")
-    for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-      {
-	ushort c;
-
-	for(c = 0; c < Data.size(); ++c)
-	  if(Data[c]->Load(Word, SaveFile, ValueMap))
-	    break;
-
-	if(c == Data.size())
-	  ABORT("Odd script term %s encountered in olterrain script!", Word.c_str());
-      }
-  else
-    basecontentscript<olterrain>::ReadParameters(SaveFile, LastWord);
 }
 
 olterrain* contentscript<olterrain>::Instantiate() const

@@ -54,12 +54,16 @@ class globalwindowhandler
   static int ReadKey();
   static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
   static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
+  static void SetControlLoop(void (*What)()) { ControlLoop = What; }
   static void SetInitialized(bool What) { Initialized = What; }
   static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
+  static ulong GetTick() { return Tick; }
  private:
   static dynarray<int> KeyBuffer;
   static bool Initialized;
   static bool (*QuitMessageHandler)();
+  static void (*ControlLoop)();
+  static ulong Tick;
 #ifdef WIN32
   static bool Active;
   static char KeyboardLayoutName[KL_NAMELENGTH];

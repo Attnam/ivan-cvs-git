@@ -7,6 +7,9 @@
 #include "bitmap.h"
 #include "graphics.h"
 #include "config.h"
+#include "wterraba.h"
+#include "proto.h"
+#include "game.h"
 
 wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0)
 {
@@ -32,19 +35,19 @@ void wsquare::Load(inputfile& SaveFile)
   SaveFile >> GWTerrain >> OWTerrain;
 }
 
-bool wsquare::DrawTerrain() const
+bool wsquare::DrawTerrain(bool Animate) const
 {
-  GetGWTerrain()->DrawToTileBuffer();
-  GetOWTerrain()->DrawToTileBuffer();
+  GetGWTerrain()->DrawToTileBuffer(Animate);
+  GetOWTerrain()->DrawToTileBuffer(Animate);
 
   return true;
 }
 
-bool wsquare::DrawCharacters() const
+bool wsquare::DrawCharacters(bool Animate) const
 {
   if(GetCharacter())
     {
-      GetCharacter()->DrawToTileBuffer();
+      GetCharacter()->DrawToTileBuffer(Animate);
       return true;
     }
   else
@@ -57,7 +60,7 @@ void wsquare::UpdateMemorized()
     {
       ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
 
-      DrawTerrain();
+      DrawTerrain(false);
 
       igraph::GetTileBuffer()->Blit(GetMemorized(), Luminance);
       igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
@@ -68,20 +71,20 @@ void wsquare::UpdateMemorized()
 
 void wsquare::Draw()
 {
-  if(NewDrawRequested)
+  if(NewDrawRequested || GetAnimatedEntities())
     {
       vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
 
       ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
       ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
-      DrawTerrain();
+      DrawTerrain(true);
 
       igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), Luminance);
 
       if(!configuration::GetOutlineCharacters())
 	{
-	  DrawCharacters();
+	  DrawCharacters(true);
 	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	}
       else
@@ -91,7 +94,7 @@ void wsquare::Draw()
 	  if(GetCharacter())
 	    {
 	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-	      DrawCharacters();
+	      DrawCharacters(true);
 	      igraph::GetTileBuffer()->Outline(configuration::GetCharacterOutlineColor());
 	      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	    }
@@ -109,16 +112,36 @@ void wsquare::ChangeWTerrain(gwterrain* NewGround, owterrain* NewOver)
 
 void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 {
+  if(GetGWTerrain()->IsAnimated())
+    DecAnimatedEntities();
+
   delete GetGWTerrain();
   SetGWTerrain(NewGround);
+
+  if(NewGround->IsAnimated())
+    IncAnimatedEntities();
+
   DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
 }
 
 void wsquare::ChangeOWTerrain(owterrain* NewOver)
 {
+  if(GetOWTerrain()->IsAnimated())
+    DecAnimatedEntities();
+
   delete GetOWTerrain();
   SetOWTerrain(NewOver);
+
+  if(NewOver->IsAnimated())
+    IncAnimatedEntities();
+
   DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
+}
+
+void wsquare::SetWTerrain(gwterrain* NewGround, owterrain* NewOver)
+{
+  SetGWTerrain(NewGround);
+  SetOWTerrain(NewOver);
 }
 
 void wsquare::SetGWTerrain(gwterrain* What)
@@ -126,7 +149,12 @@ void wsquare::SetGWTerrain(gwterrain* What)
   GWTerrain = What;
 
   if(What)
-    What->SetWSquareUnder(this);
+    {
+      What->SetWSquareUnder(this);
+
+      if(What->IsAnimated())
+	IncAnimatedEntities();
+    }
 }
 
 void wsquare::SetOWTerrain(owterrain* What)
@@ -134,7 +162,12 @@ void wsquare::SetOWTerrain(owterrain* What)
   OWTerrain = What;
 
   if(What)
-    What->SetWSquareUnder(this);
+    {
+      What->SetWSquareUnder(this);
+
+      if(What->IsAnimated())
+	IncAnimatedEntities();
+    }
 }
 
 void wsquare::UpdateMemorizedDescription(bool)

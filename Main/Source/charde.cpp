@@ -85,8 +85,8 @@ void priest::CreateInitialEquipment()
 void oree::CreateInitialEquipment()
 {
   SetBodyArmor(new goldeneagleshirt);
-  item* Can = new can(false);
-  Can->InitMaterials(2, new iron(10), new pepsi(330));
+  can* Can = new can(false);
+  Can->InitMaterials(new iron(10), new pepsi(330));
   GetStack()->FastAddItem(Can);
 }
 
@@ -96,8 +96,8 @@ void darkknight::CreateInitialEquipment()
     SetMainWielded(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword));
   else
     {
-      item* DoomsDay = new longsword;
-      DoomsDay->InitMaterials(3, new mithril, new iron, new darkfrogflesh);
+      longsword* DoomsDay = new longsword;
+      DoomsDay->InitMaterials(new mithril, new iron, new darkfrogflesh);
       SetMainWielded(DoomsDay);
     }
 
@@ -179,6 +179,12 @@ void petrus::CreateCorpse()
   SetExists(false);
 }
 
+void elpuri::CreateCorpse()
+{
+  character::CreateCorpse();
+  GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
+}
+
 void humanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
@@ -200,15 +206,6 @@ float golem::GetMeleeStrength() const
   //return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
   return 0;
 }
-
-/*ushort golem::CalculateArmorModifier() const
-{
-  if(((GetTorso()->GetMaterial(0)->GetStrengthValue() * 3) >> 2) > 90)
-    return 10;
-  else
-    return 100 - ((GetTorso()->GetMaterial(0)->GetStrengthValue() * 3) >> 2);
-  return 0;
-}*/
 
 bool golem::MoveRandomly()
 {
@@ -436,6 +433,8 @@ bool humanoid::Hit(character* Enemy)
   if(GetSecondaryAttackStrength())
     SecondaryHit(Enemy);
 
+  // add kicking and biting!!!
+
   EditNP(-50);
 
   return true;
@@ -527,7 +526,7 @@ bool humanoid::ShowWeaponSkills()
 	Buffer += GetCategoryWeaponSkill(c)->GetLevel();
 	Buffer.resize(40, ' ');
 
-	Buffer += int(GetCategoryWeaponSkill(c)->GetHits());
+	Buffer += GetCategoryWeaponSkill(c)->GetHits();
 	Buffer.resize(50, ' ');
 
 	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
@@ -595,9 +594,9 @@ void petrus::BeTalkedTo(character* Talker)
 
 	  /* And now we actually make his face change color ;-) */
 
-	  GetHead()->SetColor(0, MAKE_RGB(255, 75, 50));
-	  GetHead()->UpdatePicture();
-	  GetSquareUnder()->SendNewDrawRequest();
+	  //GetHead()->SetColor(0, MAKE_RGB(255, 75, 50));
+	  //GetHead()->UpdatePictures();
+	  //GetSquareUnder()->SendNewDrawRequest();
 	  Talker->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
@@ -1564,8 +1563,8 @@ void angel::SetDivineMaster(uchar NewMaster)
     case EVIL:
       {
 	SetStrength(99);
-	item* SpikedMace = new spikedmace(false);
-	SpikedMace->InitMaterials(3, new ruby, new iron, new darkfrogflesh);
+	spikedmace* SpikedMace = new spikedmace(false);
+	SpikedMace->InitMaterials(new ruby, new iron, new darkfrogflesh);
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(new ruby));
 	RestoreHP();
@@ -1898,38 +1897,38 @@ void humanoid::RestoreBodyParts()
     CreateLeftLeg();
 }
 
-void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture)
+void humanoid::UpdateBodyPartPictures(bool CallUpdatePictures)
 {
-  UpdateHeadPicture(CallUpdatePicture);
-  UpdateTorsoPicture(CallUpdatePicture);
-  UpdateRightArmPicture(CallUpdatePicture);
-  UpdateLeftArmPicture(CallUpdatePicture);
-  UpdateGroinPicture(CallUpdatePicture);
-  UpdateRightLegPicture(CallUpdatePicture);
-  UpdateLeftLegPicture(CallUpdatePicture);
+  UpdateHeadPicture(CallUpdatePictures);
+  UpdateTorsoPicture(CallUpdatePictures);
+  UpdateRightArmPicture(CallUpdatePictures);
+  UpdateLeftArmPicture(CallUpdatePictures);
+  UpdateGroinPicture(CallUpdatePictures);
+  UpdateRightLegPicture(CallUpdatePictures);
+  UpdateLeftLegPicture(CallUpdatePictures);
 }
 
 void humanoid::CreateHead()
 {
   SetHead(new head(false));
   UpdateHeadPicture(false);
-  GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+  GetHead()->InitMaterials(CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
   GetHead()->PlaceToSlot(GetHeadSlot());
   GetHead()->SetSize(HeadSize(TotalSize()));
 }
 
-void humanoid::UpdateHeadPicture(bool CallUpdatePicture)
+void humanoid::UpdateHeadPicture(bool CallUpdatePictures)
 {
   if(GetHead())
     {
       GetHead()->SetBitmapPos(GetHeadBitmapPos());
-      GetHead()->SetColor(0, SkinColor());
+      //GetHead()->SetColor(0, SkinColor());
       GetHead()->SetColor(1, CapColor());
       GetHead()->SetColor(2, HairColor());
       GetHead()->SetColor(3, EyeColor());
 
-      if(CallUpdatePicture)
-	GetHead()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetHead()->UpdatePictures();
     }
 }
 
@@ -1937,23 +1936,23 @@ void humanoid::CreateTorso()
 {
   SetTorso(new humanoidtorso(false));
   UpdateTorsoPicture(false);
-  GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+  GetTorso()->InitMaterials(CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
   GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize(TotalSize()));
 }
 
-void humanoid::UpdateTorsoPicture(bool CallUpdatePicture)
+void humanoid::UpdateTorsoPicture(bool CallUpdatePictures)
 {
   if(GetTorso())
     {
       GetTorso()->SetBitmapPos(GetTorsoBitmapPos());
-      GetTorso()->SetColor(0, SkinColor());
+      //GetTorso()->SetColor(0, SkinColor());
       GetTorso()->SetColor(1, TorsoMainColor());
       GetTorso()->SetColor(2, BeltColor());
       GetTorso()->SetColor(3, TorsoSpecialColor());
 
-      if(CallUpdatePicture)
-	GetTorso()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetTorso()->UpdatePictures();
     }
 }
 
@@ -1961,22 +1960,22 @@ void humanoid::CreateRightArm()
 {
   SetRightArm(new rightarm(false));
   UpdateRightArmPicture(false);
-  GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+  GetRightArm()->InitMaterials(CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
   GetRightArm()->PlaceToSlot(GetRightArmSlot());
   GetRightArm()->SetSize(RightArmSize(TotalSize()));
 }
 
-void humanoid::UpdateRightArmPicture(bool CallUpdatePicture)
+void humanoid::UpdateRightArmPicture(bool CallUpdatePictures)
 {
   if(GetRightArm())
     {
       GetRightArm()->SetBitmapPos(GetRightArmBitmapPos());
-      GetRightArm()->SetColor(0, SkinColor());
+      //GetRightArm()->SetColor(0, SkinColor());
       GetRightArm()->SetColor(1, ArmMainColor());
       GetRightArm()->SetColor(3, ArmSpecialColor());
 
-      if(CallUpdatePicture)
-	GetRightArm()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetRightArm()->UpdatePictures();
     }
 }
 
@@ -1984,22 +1983,22 @@ void humanoid::CreateLeftArm()
 {
   SetLeftArm(new leftarm(false));
   UpdateLeftArmPicture(false);
-  GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+  GetLeftArm()->InitMaterials(CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
   GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
   GetLeftArm()->SetSize(LeftArmSize(TotalSize()));
 }
 
-void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture)
+void humanoid::UpdateLeftArmPicture(bool CallUpdatePictures)
 {
   if(GetLeftArm())
     {
       GetLeftArm()->SetBitmapPos(GetLeftArmBitmapPos());
-      GetLeftArm()->SetColor(0, SkinColor());
+      //GetLeftArm()->SetColor(0, SkinColor());
       GetLeftArm()->SetColor(1, ArmMainColor());
       GetLeftArm()->SetColor(3, ArmSpecialColor());
 
-      if(CallUpdatePicture)
-	GetLeftArm()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetLeftArm()->UpdatePictures();
     }
 }
 
@@ -2007,22 +2006,22 @@ void humanoid::CreateGroin()
 {
   SetGroin(new groin(false));
   UpdateGroinPicture(false);
-  GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
+  GetGroin()->InitMaterials(CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
   GetGroin()->PlaceToSlot(GetGroinSlot());
   GetGroin()->SetSize(GroinSize(TotalSize()));
 }
 
-void humanoid::UpdateGroinPicture(bool CallUpdatePicture)
+void humanoid::UpdateGroinPicture(bool CallUpdatePictures)
 {
   if(GetGroin())
     {
       GetGroin()->SetBitmapPos(GetGroinBitmapPos());
-      GetGroin()->SetColor(0, SkinColor());
+      //GetGroin()->SetColor(0, SkinColor());
       GetGroin()->SetColor(1, LegMainColor());
       GetGroin()->SetColor(3, LegSpecialColor());
 
-      if(CallUpdatePicture)
-	GetGroin()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetGroin()->UpdatePictures();
     }
 }
 
@@ -2030,22 +2029,22 @@ void humanoid::CreateRightLeg()
 {
   SetRightLeg(new rightleg(false));
   UpdateRightLegPicture(false);
-  GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+  GetRightLeg()->InitMaterials(CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
   GetRightLeg()->PlaceToSlot(GetRightLegSlot());
   GetRightLeg()->SetSize(RightLegSize(TotalSize()));
 }
 
-void humanoid::UpdateRightLegPicture(bool CallUpdatePicture)
+void humanoid::UpdateRightLegPicture(bool CallUpdatePictures)
 {
   if(GetRightLeg())
     {
       GetRightLeg()->SetBitmapPos(GetRightLegBitmapPos());
-      GetRightLeg()->SetColor(0, SkinColor());
+      //GetRightLeg()->SetColor(0, SkinColor());
       GetRightLeg()->SetColor(1, LegMainColor());
       GetRightLeg()->SetColor(3, LegSpecialColor());
 
-      if(CallUpdatePicture)
-	GetRightLeg()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetRightLeg()->UpdatePictures();
     }
 }
 
@@ -2053,22 +2052,22 @@ void humanoid::CreateLeftLeg()
 {
   SetLeftLeg(new leftleg(false));
   UpdateLeftLegPicture(false);
-  GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+  GetLeftLeg()->InitMaterials(CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
   GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
   GetLeftLeg()->SetSize(LeftLegSize(TotalSize()));
 }
 
-void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture)
+void humanoid::UpdateLeftLegPicture(bool CallUpdatePictures)
 {
   if(GetLeftLeg())
     {
       GetLeftLeg()->SetBitmapPos(GetLeftLegBitmapPos());
-      GetLeftLeg()->SetColor(0, SkinColor());
+      //GetLeftLeg()->SetColor(0, SkinColor());
       GetLeftLeg()->SetColor(1, LegMainColor());
       GetLeftLeg()->SetColor(3, LegSpecialColor());
 
-      if(CallUpdatePicture)
-	GetLeftLeg()->UpdatePicture();
+      if(CallUpdatePictures)
+	GetLeftLeg()->UpdatePictures();
     }
 }
 
@@ -2104,54 +2103,54 @@ bool humanoid::BodyPartCanBeSevered(uchar Index) const
     return true;
 }
 
-void humanoid::DrawToTileBuffer() const
+void humanoid::DrawToTileBuffer(bool Animate) const
 {
   /* Order is important, so don't use a loop */
 
   if(GetGroin())
-    GetGroin()->DrawToTileBuffer();
+    GetGroin()->DrawToTileBuffer(Animate);
 
   if(GetRightLeg())
-    GetRightLeg()->DrawToTileBuffer();
+    GetRightLeg()->DrawToTileBuffer(Animate);
 
   if(GetLeftLeg())
-    GetLeftLeg()->DrawToTileBuffer();
+    GetLeftLeg()->DrawToTileBuffer(Animate);
 
   if(GetTorso())
-    GetTorso()->DrawToTileBuffer();
+    GetTorso()->DrawToTileBuffer(Animate);
 
   if(GetRightArm())
-    GetRightArm()->DrawToTileBuffer();
+    GetRightArm()->DrawToTileBuffer(Animate);
 
   if(GetLeftArm())
-    GetLeftArm()->DrawToTileBuffer();
+    GetLeftArm()->DrawToTileBuffer(Animate);
 
   if(GetHead())
-    GetHead()->DrawToTileBuffer();
+    GetHead()->DrawToTileBuffer(Animate);
 }
 
-void dwarf::DrawToTileBuffer() const
+void dwarf::DrawToTileBuffer(bool Animate) const
 {
   if(GetGroin())
-    GetGroin()->DrawToTileBuffer(vector2d(0, -1));
+    GetGroin()->DrawToTileBuffer(vector2d(0, -1), Animate);
 
   if(GetRightLeg())
-    GetRightLeg()->DrawToTileBuffer(vector2d(0, -1));
+    GetRightLeg()->DrawToTileBuffer(vector2d(0, -1), Animate);
 
   if(GetLeftLeg())
-    GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1));
+    GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1), Animate);
 
   if(GetTorso())
-    GetTorso()->DrawToTileBuffer();
+    GetTorso()->DrawToTileBuffer(Animate);
   
   if(GetRightArm())
-    GetRightArm()->DrawToTileBuffer();
+    GetRightArm()->DrawToTileBuffer(Animate);
 
   if(GetLeftArm())
-    GetLeftArm()->DrawToTileBuffer();
+    GetLeftArm()->DrawToTileBuffer(Animate);
 
   if(GetHead())
-    GetHead()->DrawToTileBuffer(vector2d(0, 1));
+    GetHead()->DrawToTileBuffer(vector2d(0, 1), Animate);
 }
 
 bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
@@ -2528,7 +2527,7 @@ void carnivorousplant::CreateTorso()
 {
   character::CreateTorso();
   GetTorso()->SetColor(1, MAKE_RGB(40 + RAND() % 100, 40 + RAND() % 100, 40 + RAND() % 100));
-  GetTorso()->UpdatePicture();
+  GetTorso()->UpdatePictures();
 }
 
 bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
@@ -2613,7 +2612,7 @@ void kamikazedwarf::SetDivineMaster(uchar Master)
 void humanoid::AddInfo(felist& Info) const
 {
   if(GetMainWielded())
-    Info.AddEntry(std::string("Main wielded: ") + GetMainWielded()->Name(INDEFINITE), LIGHTGRAY);
+    Info.AddEntry("Main wielded: " + GetMainWielded()->Name(INDEFINITE), LIGHTGRAY);
   else
     Info.AddEntry("Main wielded: nothing", LIGHTGRAY);
 
@@ -2622,17 +2621,10 @@ void humanoid::AddInfo(felist& Info) const
   else
     Info.AddEntry("Secondary wielded: nothing", LIGHTGRAY);
 
-  Info.AddEntry(std::string("Main attack strength: ") + int(GetMainAttackStrength()), LIGHTGRAY);
-  Info.AddEntry(std::string("Secondary attack strength: ") + int(GetSecondaryAttackStrength()), LIGHTGRAY);
-  Info.AddEntry(std::string("Main to hit value: ") + int(GetMainToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Secondary to hit value: ") + int(GetSecondaryToHitValue()), LIGHTGRAY);  
-}
-
-void elpuri::CreateHead()
-{
-  /*SetHead(new headofelpuri);
-  GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(HeadSize(TotalSize()));*/
+  Info.AddEntry(std::string("Main attack strength: ") + ulong(GetMainAttackStrength()), LIGHTGRAY);
+  Info.AddEntry(std::string("Secondary attack strength: ") + ulong(GetSecondaryAttackStrength()), LIGHTGRAY);
+  Info.AddEntry(std::string("Main to hit value: ") + ulong(GetMainToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Secondary to hit value: ") + ulong(GetSecondaryToHitValue()), LIGHTGRAY);
 }
 
 void ennerbeast::CreateHead()

@@ -373,9 +373,20 @@ class MATERIAL
  public:
   virtual ushort OfferValue() const { return 30; }
   virtual uchar Alignment() const { return EVIL; }
-  virtual ushort GetColor() const { return MAKE_RGB(180, 120, 90); }
+  virtual ushort GetSkinColor() const { return MAKE_RGB(180, 120, 90); } // spoiled: MAKE_RGB(0, 120, 120)
+  //virtual ushort GetColor() const { return MAKE_RGB(180, 120, 90); }
  protected:
   virtual std::string NameStem() const { return "human flesh"; }
+);
+
+class MATERIAL
+(
+  negroidflesh,
+  flesh,
+ public:
+  virtual ushort GetSkinColor() const { return MAKE_RGB(160, 100, 64); } // MAKE_RGB(160, 100, 64), MAKE_RGB(128, 80, 48)
+ protected:
+  virtual std::string NameStem() const { return "negroid flesh"; }
 );
 
 class MATERIAL
@@ -736,7 +747,7 @@ class MATERIAL
   flesh,
  public:
   virtual ushort OfferValue() const { return 13; }
-  virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); }
+  virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); } // MAKE_RGB(88, 96, 88)
  protected:
   virtual std::string NameStem() const { return "werewolf flesh"; }
 );
@@ -747,7 +758,7 @@ class MATERIAL
   flesh,
  public:
   virtual ushort OfferValue() const { return 14; }
-  virtual ushort GetColor() const { return MAKE_RGB(40, 120, 120); }
+  virtual ushort GetColor() const { return MAKE_RGB(30, 100, 110); }//MAKE_RGB(40, 120, 120); }
   virtual short NutritionValue() const { return 100; }
   virtual void EatEffect(character*, float, float);
   virtual bool GetIsBadFoodForAI() const { return true; }

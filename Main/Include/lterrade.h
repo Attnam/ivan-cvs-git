@@ -5,9 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "lterraba.h"
-
 #define NUMBER_OF_LOCK_TYPES 3
+
+#include "lterraba.h"
+#include "materde.h"
+#include "game.h"
 
 class GLTERRAIN
 (
@@ -21,7 +23,7 @@ class GLTERRAIN
  protected:
   virtual std::string NameSingular() const { return "parquet"; }
   virtual std::string NamePlural() const { return "parquette"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 240); }
 );
 
 class GLTERRAIN
@@ -35,7 +37,7 @@ class GLTERRAIN
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
   virtual std::string NameSingular() const { return "floor"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 352); }
 );
 
 class GLTERRAIN
@@ -49,7 +51,7 @@ class GLTERRAIN
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
   virtual std::string NameSingular() const { return "ground"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 352); }
 );
 
 class GLTERRAIN
@@ -63,14 +65,14 @@ class GLTERRAIN
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
  protected:
   virtual std::string NameSingular() const { return "ground"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 336); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 336); }
 );
 
 class OLTERRAIN
 (
   earth,
   olterrain,
-  InitMaterials(2, new moraine, new stone),
+  InitMaterials(new moraine),
   {
   },
  public:
@@ -79,9 +81,10 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(56, 56, 56); }
   virtual std::string Article() const { return "an"; }
   virtual std::string NameSingular() const { return "earth"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 336); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 336); }
 );
 
 class OLTERRAIN
@@ -98,7 +101,7 @@ class OLTERRAIN
   virtual bool GetIsWalkable() const { return false; }
  protected:
   virtual std::string NameSingular() const { return "wall"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 240); }
 );
 
 class OLTERRAIN
@@ -113,7 +116,7 @@ class OLTERRAIN
   virtual bool IsSafeToDestroy() const { return true; }
  protected:
   virtual std::string NameSingular() const { return ""; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 480); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 480); }
 );
 
 class OLTERRAIN
@@ -125,7 +128,6 @@ class OLTERRAIN
     SetIsOpen(false);
     SetIsLocked(false);
     SetBoobyTrap(0);
-    UpdatePicture();
     SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
     SetHP(500);
   },
@@ -143,7 +145,6 @@ class OLTERRAIN
   virtual void SetIsLocked(bool What) { IsLocked = What; }
   virtual bool GetIsLocked() const { return IsLocked; }
   virtual bool CanBeOpenedByAI() { return !GetIsLocked() && CanBeOpened(); }
-  //virtual bool ReceiveStrike();
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual void Lock() { SetIsLocked(true); }
   virtual bool CanBeDug() const { return true; }
@@ -158,7 +159,7 @@ class OLTERRAIN
   virtual bool ShowAdjective() const { return true; }
   virtual void Break();
   virtual std::string NameSingular() const { return "door"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
   virtual void MakeWalkable();
   virtual void MakeNotWalkable();
   virtual uchar GetBoobyTrap() { return BoobyTrap; }
@@ -182,10 +183,10 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
-  virtual ushort GetMaterialColor1() const { return MAKE_RGB(160, 64, 0); }
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(160, 64, 0); }
   virtual std::string NameSingular() const { return "stairway upwards"; }
   virtual std::string NamePlural() const { return "stairways upwards"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 192); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 192); }
 );
 
 class OLTERRAIN
@@ -201,10 +202,10 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
-  virtual ushort GetMaterialColor1() const { return MAKE_RGB(160, 64, 0); }
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(160, 64, 0); }
   virtual std::string NameSingular() const { return "stairway downwards"; }
   virtual std::string NamePlural() const { return "stairways downwards"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 208); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 208); }
 );
 
 class OLTERRAIN
@@ -217,7 +218,7 @@ class OLTERRAIN
   },
  public:
   virtual bool CanBeOffered() const { return true; }
-  virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(bool) const;
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void Save(outputfile&) const;
@@ -232,7 +233,7 @@ class OLTERRAIN
  protected:
   virtual std::string Article() const { return "an"; }
   virtual std::string NameSingular() const { return "altar"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 368); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 368); }
   virtual std::string PostFix() const { return DivineMasterDescription(DivineMaster); }
   virtual bool ShowPostFix() const { return true; }
   uchar DivineMaster;
@@ -242,22 +243,23 @@ class OLTERRAIN
 (
   throne,
   olterrain,
-  InitMaterials(2, new gold, new gold),
+  InitMaterials(new gold),
   {
   },
  public:
   virtual std::string DigMessage() const { return "The throne resists."; }
   virtual bool SitOn(character*);
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string NameSingular() const { return "throne"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 416); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 416); }
 );
 
 class OLTERRAIN
 (
   pine,
   olterrain,
-  InitMaterials(2, new leaf, new wood),
+  InitMaterials(new wood),
   {
   },
  public:
@@ -265,16 +267,17 @@ class OLTERRAIN
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "pine"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 320); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 320); }
 );
 
 class OLTERRAIN
 (
   spruce,
   olterrain,
-  InitMaterials(2, new leaf, new wood),
+  InitMaterials(new wood),
   {
   },
  public:
@@ -282,16 +285,17 @@ class OLTERRAIN
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "spruce"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 352); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 352); }
 );
 
 class OLTERRAIN
 (
   linden,
   olterrain,
-  InitMaterials(2, new leaf, new wood),
+  InitMaterials(new wood),
   {
   },
  public:
@@ -299,9 +303,10 @@ class OLTERRAIN
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(0, 160, 0); }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "lovely linden"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(32, 336); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(32, 336); }
 );
 
 class OLTERRAIN
@@ -317,14 +322,14 @@ class OLTERRAIN
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
   virtual std::string NameSingular() const { return "carpet"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 272); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 272); }
 );
 
 class OLTERRAIN
 (
   couch,
   olterrain,
-  InitMaterials(2, new fabric, new gold),
+  InitMaterials(new fabric),
   {
   },
  public:
@@ -334,10 +339,11 @@ class OLTERRAIN
   virtual uchar RestModifier() const { return 2; }
   virtual void ShowRestMessage(character*) const;
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
   virtual std::string NameSingular() const { return "couch"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 400); }
 );
 
 class OLTERRAIN
@@ -354,14 +360,14 @@ class OLTERRAIN
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "bookcase"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 272); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 272); }
 );
 
 class OLTERRAIN
 (
   fountain,
   olterrain,
-  InitMaterials(2, new marble, new water),
+  InitMaterials(new marble, new water),
   {
   },
  public:
@@ -372,20 +378,31 @@ class OLTERRAIN
   virtual void DryOut();
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }
+  virtual material* GetContainedMaterial() const { return ContainedMaterial; }
+  virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, DefaultContainedVolume()); }
+  virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, DefaultContainedVolume()); }
+  virtual void InitMaterials(material* M1, material* M2) { ObjectInitMaterials(MainMaterial, M1, DefaultMainVolume(), ContainedMaterial, M2, DefaultContainedVolume()); }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual uchar GetMaterials() const { return 2; }
+  virtual material* GetMaterial(uchar) const;
  protected:
+  virtual ushort GetMaterialColor1(ushort) const;
+  virtual ulong DefaultContainedVolume() const { return 10000; }
   virtual std::string PostFix() const { return ContainerPostFix(); }
   virtual bool ShowPostFix() const { return GetContainedMaterial() ? true : false; }
   virtual std::string Adjective() const { return "dried out"; }
   virtual bool ShowAdjective() const { return !GetContainedMaterial(); }
   virtual std::string NameSingular() const { return "fountain"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
+  material* ContainedMaterial;
 );
 
 class OLTERRAIN
 (
   doublebed,
   olterrain,
-  InitMaterials(2, new gold, new fabric),
+  InitMaterials(new fabric),
   {
   },
  public:
@@ -395,11 +412,12 @@ class OLTERRAIN
   virtual uchar RestModifier() const { return 5; }
   virtual void ShowRestMessage(character*) const;
  protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(200, 200, 0); }
   virtual std::string Adjective() const { return "expensive"; }
   virtual bool ShowAdjective() const { return true; }
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "luxurious double bed"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(48, 304); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(48, 304); }
 );
 
 class OLTERRAIN
@@ -409,19 +427,17 @@ class OLTERRAIN
   InitMaterials(new stone),
   {
     SetIsOpen(false);
-    UpdatePicture();
     SetHP(500);
   },
  public:
   virtual std::string DigMessage() const { return "You destroy the broken door."; }
   virtual void Kick(ushort, bool, uchar);
-  //virtual bool ReceiveStrike();
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual bool CanBeDug() const { return true; }
   virtual void HasBeenHitBy(item*, float, uchar, bool);
  protected:
   virtual std::string NameSingular() const { return "broken door"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
 
 class GLTERRAIN
@@ -441,7 +457,7 @@ class GLTERRAIN
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "pool"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 224); }
 );
 
 class OLTERRAIN
@@ -455,7 +471,7 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
  protected:
   virtual std::string NameSingular() const { return ""; }
-  virtual vector2d GetBitmapPos() const { return vector2d(32, 320); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(32, 320); }
 );
 
 class OLTERRAIN
@@ -469,7 +485,7 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
  protected:
   virtual std::string NameSingular() const { return ""; }
-  virtual vector2d GetBitmapPos() const { return vector2d(48, 320); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(48, 320); }
 );
 
 #endif

@@ -6,8 +6,6 @@
 #endif
 
 #include "typedef.h"
-#include "save.h"
-
 #include "game.h"
 
 /* Presentation of the dungeon class */
@@ -46,29 +44,8 @@ class dungeon
   vector2d WorldMapPos;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)
-{
-  if(Dungeon)
-    {
-      SaveFile.Put(1);
-      Dungeon->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
-{
-  if(SaveFile.Get())
-    {
-      Dungeon = new dungeon;
-      Dungeon->Load(SaveFile);
-    }
-
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, dungeon*);
+inputfile& operator>>(inputfile&, dungeon*&);
 
 #endif
 

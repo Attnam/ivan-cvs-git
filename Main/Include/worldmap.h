@@ -7,16 +7,17 @@
 
 #include <deque>
 #include <string>
+#include <vector>
 
 #include "typedef.h"
 #include "area.h"
-#include "wterraba.h"
 #include "cont.h"
 
 class wsquare;
 class outputfile;
 class inputfile;
 class character;
+class continent;
 
 class worldmap : public area
 {
@@ -50,29 +51,8 @@ class worldmap : public area
   std::vector<character*> PlayerGroup;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
-{
-  if(WorldMap)
-    {
-      SaveFile.Put(1);
-      WorldMap->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
-{
-  if(SaveFile.Get())
-    {
-      WorldMap = new worldmap;
-      WorldMap->Load(SaveFile);
-    }
-
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, worldmap*);
+inputfile& operator>>(inputfile&, worldmap*&);
 
 #endif
 

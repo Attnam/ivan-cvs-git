@@ -15,6 +15,8 @@
 #include "femath.h"
 #include "fluid.h"
 #include "error.h"
+#include "game.h"
+#include "proto.h"
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
@@ -86,54 +88,54 @@ ushort lsquare::CalculateEmitation() const
   return Emitation;
 }
 
-bool lsquare::DrawTerrain() const
+bool lsquare::DrawTerrain(bool Animate) const
 {
-  GetGLTerrain()->DrawToTileBuffer();
+  GetGLTerrain()->DrawToTileBuffer(Animate);
 
   if(GetFluid())
-    GetFluid()->DrawToTileBuffer();
+    GetFluid()->DrawToTileBuffer(Animate);
 	
-  GetOLTerrain()->DrawToTileBuffer();
+  GetOLTerrain()->DrawToTileBuffer(Animate);
 
   return true;
 }
 
-bool lsquare::DrawStacks() const
+bool lsquare::DrawStacks(bool Animate) const
 {
   bool Items = false;
 
   if(GetOTerrain()->GetIsWalkable())
     {
-      if(GetStack()->DrawToTileBuffer())
+      if(GetStack()->DrawToTileBuffer(Animate))
 	Items = true;
 
 #define NS(D, S) game::GetCurrentLevel()->GetLSquare(Pos + D)->GetSideStack(S)
 
       if(GetPos().X)
-	if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer())
+	if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer(Animate))
 	  Items = true;
 
       if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
-	if(NS(vector2d(1, 0), 3)->DrawToTileBuffer())
+	if(NS(vector2d(1, 0), 3)->DrawToTileBuffer(Animate))
 	  Items = true;
 
       if(GetPos().Y)
-	if(NS(vector2d(0, -1), 2)->DrawToTileBuffer())
+	if(NS(vector2d(0, -1), 2)->DrawToTileBuffer(Animate))
 	  Items = true;
 
       if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
-	if(NS(vector2d(0, 1), 0)->DrawToTileBuffer())
+	if(NS(vector2d(0, 1), 0)->DrawToTileBuffer(Animate))
 	  Items = true;
     }
 
   return Items;
 }
 
-bool lsquare::DrawCharacters() const
+bool lsquare::DrawCharacters(bool Animate) const
 {
   if(GetCharacter())
     {
-      GetCharacter()->DrawToTileBuffer();
+      GetCharacter()->DrawToTileBuffer(Animate);
       return true;
     }
   else
@@ -148,8 +150,8 @@ void lsquare::UpdateMemorized()
 
       if(Luminance >= LIGHT_BORDER)
 	{
-	  DrawTerrain();
-	  DrawStacks();
+	  DrawTerrain(false);
+	  DrawStacks(false);
 
 	  igraph::GetTileBuffer()->Blit(GetMemorized());
 
@@ -170,7 +172,7 @@ void lsquare::UpdateMemorized()
 
 void lsquare::Draw()
 {
-  if(NewDrawRequested)
+  if(NewDrawRequested || GetAnimatedEntities())
     {
       vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
       ushort Luminance = GetLuminance();
@@ -182,13 +184,13 @@ void lsquare::Draw()
 
 	  if(!configuration::GetOutlineItems())
 	    {
-	      DrawTerrain();
-	      DrawStacks();
+	      DrawTerrain(true);
+	      DrawStacks(true);
 
 	      if(!configuration::GetOutlineCharacters())
 		if(GetStack()->GetItems() <= 1)
 		  {
-		    DrawCharacters();
+		    DrawCharacters(true);
 		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		    DrawCharacterSymbols(BitPos, ContrastLuminance);
 		  }
@@ -202,7 +204,7 @@ void lsquare::Draw()
 		    if(GetCharacter())
 		      {
 			igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-			DrawCharacters();
+			DrawCharacters(true);
 			igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 			DrawCharacterSymbols(BitPos, ContrastLuminance);
 		      }
@@ -217,7 +219,7 @@ void lsquare::Draw()
 		  if(GetCharacter())
 		    {
 		      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-		      DrawCharacters();
+		      DrawCharacters(true);
 		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
@@ -227,12 +229,12 @@ void lsquare::Draw()
 	    }
 	  else
 	    {
-	      DrawTerrain();
+	      DrawTerrain(true);
 
 	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 
-	      if(DrawStacks())
+	      if(DrawStacks(true))
 		{
 		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		  igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
@@ -248,14 +250,14 @@ void lsquare::Draw()
 
 	      if(!configuration::GetOutlineCharacters())
 		{
-		  if(DrawCharacters())
+		  if(DrawCharacters(true))
 		    {
 		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      DrawCharacterSymbols(BitPos, ContrastLuminance);
 		    }
 		}
 	      else
-		if(DrawCharacters())
+		if(DrawCharacters(true))
 		  {
 		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		    igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
@@ -288,7 +290,7 @@ void lsquare::Emitate()
   DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, game::EmitationHandler);
   });
 }
 
@@ -310,7 +312,7 @@ void lsquare::ReEmitate()
   DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, game::EmitationHandler);
   });
 }
 
@@ -326,7 +328,7 @@ void lsquare::Noxify()
   DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
   {
     if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
+      femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, game::NoxifyHandler);
   });
 }
 
@@ -614,21 +616,27 @@ ushort lsquare::GetRawLuminance() const
 void lsquare::AddCharacter(character* Guy)
 {
   if(Character)
-    ABORT("Overgrowing of square population detected!");
+    ABORT("Overgrowth of square population detected!");
 
   Character = Guy;
   Guy->SetSquareUnder(this);
   SignalEmitationIncrease(Guy->GetEmitation());
   NewDrawRequested = true;
+
+  if(Guy->IsAnimated())
+    IncAnimatedEntities();
 }
 
 void lsquare::FastAddCharacter(character* Guy)
 {
   if(Character)
-    ABORT("Overgrowing of square population detected!");
+    ABORT("Overgrowth of square population detected!");
 
   SetCharacter(Guy);
   Guy->SetSquareUnder(this);
+
+  if(Guy->IsAnimated())
+    IncAnimatedEntities();
 }
 
 void lsquare::Clean()
@@ -643,6 +651,9 @@ void lsquare::RemoveCharacter()
 {
   if(Character)
     {
+      if(Character->IsAnimated())
+	DecAnimatedEntities();
+
       character* Backup = Character;
       SetCharacter(0);
       SignalEmitationDecrease(Backup->GetEmitation());
@@ -776,28 +787,58 @@ void lsquare::ChangeLTerrain(glterrain* NewGround, olterrain* NewOver)
 
 void lsquare::ChangeGLTerrain(glterrain* NewGround)
 {
+  if(GetGLTerrain()->IsAnimated())
+    DecAnimatedEntities();
+
   delete GetGLTerrain();
   GLTerrain = NewGround;
-
-  if(NewGround)
-    NewGround->SetSquareUnder(this);
-
+  NewGround->SetSquareUnder(this);
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
+
+  if(NewGround->IsAnimated())
+    IncAnimatedEntities();
 }
 
 void lsquare::ChangeOLTerrain(olterrain* NewOver)
 {
+  if(GetOLTerrain()->IsAnimated())
+    DecAnimatedEntities();
+
   delete GetOLTerrain();
   OLTerrain = NewOver;
-
-  if(NewOver)
-    NewOver->SetSquareUnder(this);
-
+  NewOver->SetSquareUnder(this);
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
+
+  if(NewOver->IsAnimated())
+    IncAnimatedEntities();
+}
+
+void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
+{
+  SetGLTerrain(NewGround);
+  SetOLTerrain(NewOver);
+}
+
+void lsquare::SetGLTerrain(glterrain* NewGround)
+{
+  GLTerrain = NewGround;
+  NewGround->SetSquareUnder(this);
+
+  if(NewGround->IsAnimated())
+    IncAnimatedEntities();
+}
+
+void lsquare::SetOLTerrain(olterrain* NewOver)
+{
+  OLTerrain = NewOver;
+  NewOver->SetSquareUnder(this);
+
+  if(NewOver->IsAnimated())
+    IncAnimatedEntities();
 }
 
 gterrain* lsquare::GetGTerrain() const
@@ -861,10 +902,19 @@ bool lsquare::CanBeSeen(bool IgnoreDarkness) const
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
-  if(!IgnoreDarkness && GetLuminance() < LIGHT_BORDER)
+  ulong Distance = (GetPos() - FromPos).Length();
+
+  if(Distance > MaxDistance || (!IgnoreDarkness && GetLuminance() < LIGHT_BORDER))
     return false;
   else
-    return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
+    {
+      character* Char = GetCharacter();
+
+      if(Char && Char->GetIsPlayer() && Distance < Char->LOSRangeSquare())
+	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
+      else
+	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
+    }
 }
 
 void lsquare::MoveCharacter(lsquare* To)
@@ -872,7 +922,7 @@ void lsquare::MoveCharacter(lsquare* To)
   if(Character)
     {
       if(To->Character)
-	ABORT("Overgrowing of square population detected!");
+	ABORT("Overgrowth of square population detected!");
 
       character* Movee = Character;
       ushort Emit = Movee->GetEmitation();
@@ -883,7 +933,15 @@ void lsquare::MoveCharacter(lsquare* To)
       SignalEmitationDecrease(Emit);
       NewDrawRequested = true;
       To->NewDrawRequested = true;
-      if(!Movee->CanFly()) To->StepOn(Movee, this);
+
+      if(Movee->IsAnimated())
+	{
+	  DecAnimatedEntities();
+	  To->IncAnimatedEntities();
+	}
+
+      if(!Movee->CanFly())
+	To->StepOn(Movee, this);
     }
 }
 
@@ -916,8 +974,24 @@ void lsquare::SwapCharacter(lsquare* With)
 	With->SignalEmitationDecrease(EmitTwo);
 	NewDrawRequested = true;
 	With->NewDrawRequested = true;
-	With->StepOn(MoveeOne, this);
-	StepOn(MoveeTwo, With);
+
+      if(MoveeOne->IsAnimated())
+	{
+	  DecAnimatedEntities();
+	  With->IncAnimatedEntities();
+	}
+
+      if(MoveeTwo->IsAnimated())
+	{
+	  IncAnimatedEntities();
+	  With->DecAnimatedEntities();
+	}
+
+	if(!MoveeOne->CanFly())
+	  With->StepOn(MoveeOne, this);
+
+	if(!MoveeTwo->CanFly())
+	  StepOn(MoveeTwo, With);
       }
   else
     if(With->Character)
@@ -1127,16 +1201,6 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
     {
       if(GetCharacter()->GetTeam() == game::GetPlayer()->GetTeam())
 	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos, 16, 16, ContrastLuminance);
-
-      /*switch(game::GetPlayer()->GetTeam()->GetRelation(GetCharacter()->GetTeam()))
-	{
-	case FRIEND:
-	  igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
-	  break;
-	default:
-	  
-	  break;
-	}*/
     }
 }
 

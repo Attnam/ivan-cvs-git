@@ -29,6 +29,7 @@ struct vector2d
   vector2d& operator <<= (uchar Shift)	      { X <<= Shift; Y <<= Shift; return *this; }
   vector2d  operator >>  (uchar Shift) const  { return vector2d(X >> Shift, Y >> Shift); }
   vector2d& operator >>= (uchar Shift)	      { X >>= Shift; Y >>= Shift; return *this; }
+  ulong Length() const			      { return long(X) * long(X) + long(Y) * long(Y); }
   short X, Y;
 };
 

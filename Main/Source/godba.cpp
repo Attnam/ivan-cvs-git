@@ -7,6 +7,8 @@
 #include "lsquare.h"
 #include "itemba.h"
 #include "strover.h"
+#include "game.h"
+#include "save.h"
 
 void god::Pray()
 {
@@ -77,9 +79,9 @@ std::string god::CompleteDescription() const
 
   if(game::GetWizardMode())
     {
-      Desc += int(Timer);
+      Desc += Timer;
       Desc += " - ";
-      Desc += int(Relation);
+      Desc += Relation;
     }
 
   Desc.resize(32, ' ');

@@ -41,7 +41,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 	MessageHistory.RemoveEntryFromPos(0);
 
       ++Times;
-      End = int(game::GetTicks() / 10);
+      End = game::GetTicks() / 10;
     }
   else
     {
@@ -49,7 +49,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 	MessageHistory.SetColor(c, LIGHTGRAY);
 
       Times = 1;
-      Begin = End = int(game::GetTicks() / 10);
+      Begin = End = game::GetTicks() / 10;
       LastMessage = Buffer;
     }
 
@@ -64,10 +64,10 @@ void msgsystem::AddMessage(const char* Format, ...)
 
       if(First)
 	{
-	  Temp += int(Begin);
+	  Temp += Begin;
 
 	  if(Begin != End)
-	    Temp += std::string("-") + int(End);
+	    Temp += std::string("-") + End;
 
 	  if(Times != 1)
 	    Temp += std::string(" (") + Times + "x)";

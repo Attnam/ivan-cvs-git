@@ -1,10 +1,14 @@
 #ifndef __FLUID_H__
 #define __FLUID_H__
 
-#include "unit.h"
-#include "save.h"
+#include "entity.h"
 
-class fluid : public unit
+class outputfile;
+class inputfile;
+class material;
+class bitmap;
+
+class fluid : public entity
 {
  public:
   fluid();
@@ -13,31 +17,16 @@ class fluid : public unit
   virtual void Be();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(bool) const;
+  virtual ushort GetEmitation() const;
+  virtual bitmap* GetPicture() const { return Picture; }
+  virtual material* GetMaterial() const { return Material; }
+ protected:
+  bitmap* Picture;
+  material* Material;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, fluid* Fluid)
-{
-  if(Fluid)
-    {
-      SaveFile.Put(1);
-      Fluid->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
-{
-  if(SaveFile.Get())
-    {
-      Fluid = new fluid;
-      Fluid->Load(SaveFile);
-    }
-
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, fluid*);
+inputfile& operator>>(inputfile&, fluid*&);
 
 #endif

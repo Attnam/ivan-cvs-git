@@ -12,7 +12,7 @@ std::string id::NameSingular(bool Articled) const
 
 std::string id::DivineMasterDescription(uchar DivineMaster) const
 {
-  return std::string("of ") + game::GetGod(DivineMaster)->Name();
+  return "of " + game::GetGod(DivineMaster)->Name();
 }
 
 std::string id::Name(uchar Case) const
@@ -22,7 +22,7 @@ std::string id::Name(uchar Case) const
 
   if((Case & ARTICLEBIT) && (ForceDefiniteArticle() || !(Case & INDEFINEBIT)) && ShowArticle())
     {
-      Name += std::string("the ");
+      Name += "the ";
       Articled = false;
     }
 
@@ -55,7 +55,7 @@ std::string id::Name(uchar Case) const
       std::string PoF = PostFix();
 
       if(PoF != "")
-	Name += std::string(" ") + PoF;
+	Name += " " + PoF;
     }
 
   return Name;

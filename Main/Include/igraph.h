@@ -37,10 +37,11 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-#include "save.h"
 
 class bitmap;
 class colorizablebitmap;
+class inputfile;
+class outputfile;
 
 struct graphic_id
 {
@@ -64,8 +65,8 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.SpecialType != GI2.SpecialType)
     return GI1.SpecialType < GI2.SpecialType;
 
-  if(!GI1.Color || !GI2.Color)	// This shouldn't be possible, but if it is, it's better to behave oddly
-    return false;		// than to crash horribly and undebuggablely
+  if(!GI1.Color || !GI2.Color)	// This shouldn't be possible
+    return false;
 
   if(GI1.Color[0] != GI2.Color[0])
     return GI1.Color[0] < GI2.Color[0];
@@ -123,19 +124,8 @@ class igraph
   static bitmap* OutlineBuffer;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
-{
-  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialType;
-  SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
-{
-  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialType;
-  SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, const graphic_id&);
+inputfile& operator>>(inputfile&, graphic_id&);
 
 #endif
 
