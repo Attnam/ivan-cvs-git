@@ -1534,7 +1534,7 @@ bool level::PreProcessForBone()
 
   uchar DungeonIndex = GetDungeon()->GetIndex();
 
-  return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 2)
+  return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 5)
       &&  (game::GetQuestMonstersFound()
       || ((DungeonIndex != UNDER_WATER_TUNNEL || Index != VESANA_LEVEL)
       &&  (DungeonIndex != ELPURI_CAVE || (Index != ENNER_BEAST_LEVEL && Index != DARK_LEVEL))));

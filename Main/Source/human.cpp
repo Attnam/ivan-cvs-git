@@ -669,6 +669,16 @@ void communist::BeTalkedTo()
   if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5f)
     {
       ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
+
+      for(std::list<character*>::const_iterator i = GetTeam()->GetMember().begin(); i != GetTeam()->GetMember().end();)
+	if(*i != this)
+	  {
+	    character* Char = *i++;
+	    Char->ChangeTeam(PLAYER->GetTeam());
+	  }
+	else
+	  ++i;
+
       ChangeTeam(PLAYER->GetTeam());
     }
   else if(GetTeam() != PLAYER->GetTeam() && !(RAND() % 5))

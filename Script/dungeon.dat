@@ -367,6 +367,10 @@ Dungeon ELPURI_CAVE;
 			Character = communist { Team = IVAN_TEAM; }
 		}
 		
+		Square, Random;
+		{
+			Character = vladimir { Team = IVAN_TEAM; }
+		}
 	}
 
 	Level DARK_LEVEL;

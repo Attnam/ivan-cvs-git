@@ -4694,10 +4694,10 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
     }
   
-  if(GetTeam() == PLAYER->GetTeam() && !IsPlayer())
+  if(GetTeam() == PLAYER->GetTeam() && !IsPlayer() && SquareIndex == 0)
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 
-  if(GetMoveType() & FLY)
+  if(GetMoveType() & FLY && SquareIndex == 1) // fix
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 

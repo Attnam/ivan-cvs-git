@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
+  * Added Vladimir the gigantic carnivorous mutant bunny, which is a loyal companion
+	of Ivan and occupies 2x2 squares at once
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
 	* Corrected a bug which caused female cowards of Attnam to scream impolite
 	  personal pronouns if their pursuer wasn't seen by the player
 	* Hattifattener added to char.pcx by Kahvi

@@ -3886,9 +3886,37 @@ bunny
 	}
 }
 
-/*vladimir
+vladimir
 {
-}*/
+	DefaultArmStrength = 60;
+	DefaultAgility = 30;
+	DefaultEndurance = 25;
+	DefaultPerception = 30;
+	DefaultIntelligence = 8;
+	DefaultWisdom = 7;
+	DefaultCharisma = 15;
+	DefaultMana = 0;
+	TorsoBitmapPos = 288, 32;
+	HostileReplies == "@Dd roars terribly.";
+	FriendlyReplies == "@Dd roars cheerfully.";
+	SkinColor = rgb16(110, 90, 80);
+	NameSingular = "bunny";
+	Adjective = "gigantic carnivorous mutant bunny";
+	AttackStyle = USE_HEAD|USE_ARMS;
+	BaseUnarmedStrength = 1000;
+	BaseBiteStrength = 500;
+	KnownCWeaponSkills = { 2, UNARMED, BITE; }
+	CWeaponSkillHits == 200;
+	FleshMaterial = MUTANT_BUNNY_FLESH;
+	AttachedGod = SCABIES;
+	TotalSize = 400;
+	MoveType = WALK|FLY|WALK_THROUGH_WALLS; 
+	DestroysWalls = true;
+	DefaultName = "Vladimir";
+	Alias == "Vladimir";
+	TotalVolume = 800000;
+	IsUnique = true;
+}
 
 hattifattener
 {
