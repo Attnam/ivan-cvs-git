@@ -1010,7 +1010,7 @@ void itemcontainer::VirtualConstructor(bool Load)
 	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
 	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
 	      {
-		SetConfig(i->first);
+		SetConfig(i->first, NO_PIC_UPDATE);
 		break;
 	      }
 	}

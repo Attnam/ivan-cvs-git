@@ -1566,48 +1566,11 @@ Dungeon UNDER_WATER_TUNNEL;
 			AllowLockedDoors = true;
 			AllowBoobyTrappedDoors = true;
 			GenerateFountains = false;
-			Type = ROOM_LIBRARY;
-			OTerrainMap {
-				Size = 11,11;
-				Pos = 0,0;
-				Types {
-					% = decoration(CARPET);
-					# = olterraincontainer(BOOK_CASE) { ItemsInside = { 2, Random { MaxPrice = 500; Category = SCROLL|BOOK; Chance = 40; }, Random { MaxPrice = 500; Category = SCROLL|BOOK; Chance = 40; } } }
-				}
-			}
-			{
-				...........
-				.....%.....
-				.....%.....				
-				.....%.....
-				.....%.....
-				....%.%....
-				.....%.....
-				.....%.....
-				.....%.....
-				.....%.....
-				...........
-			}
 
 			Square, Pos 5,5;
 			{
 				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
 				EntryIndex = 100;
-				Items == itemcontainer(CHEST) 
-				{
-					ItemsInside = {4,
-						Random { MinPrice = 300; Chance = 25; },
-						Random { MinPrice = 100; Chance = 50; },
-						stone { Chance = 75; },
-						mine { Team = MONSTER_TEAM; IsActive = true; Chance = 60; }
-					} 
-				}
-
-			}
-
-			Square, Pos 4, 4;
-			{
-				OTerrain = sign { Text = "WARNING! Perilous Caverns below!"; }
 			}
 		}
 	}
@@ -1675,6 +1638,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
 		AmbientLight = rgb24(50, 50, 50);
 		FillSquare = solidterrain(DARK_GRASS_TERRAIN), STONE wall(EARTH);
+
 		RoomDefault
 		{
 			Size = 8:17,8:17;
@@ -1684,6 +1648,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			FloorSquare = STONE solidterrain(DARK_GRASS_TERRAIN), 0;
 			AltarPossible = false;
 		}
+
 		Square, Random IN_ROOM;
 		{
 		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = 100; }
@@ -1694,75 +1659,6 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			OTerrain = decoration(SHARD);
 			Times = 12:30;
-		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-			Square, Random;
-			{
-				OTerrain = boulder(1);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				OTerrain = boulder(2);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				Items == stone { Chance = 35; }
-				Times = 0:5;
-			}
-		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-			Square, Random;
-			{
-				OTerrain = boulder(1);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				OTerrain = boulder(2);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				Items == stone { Chance = 35; }
-				Times = 0:5;
-			}
-		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-			Square, Random;
-			{
-				OTerrain = boulder(2);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				OTerrain = boulder(1);
-				Times = 1:5;
-			}
-			Square, Random;
-			{
-				Items == stone { Chance = 35; }
-				Times = 0:5;
-			}
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -1779,9 +1675,10 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			Items == stone;
-			Times = 0:15;
+			Times = 0:10;
 		}
-		Square, Random;
+
+		Square, Random IN_ROOM;
 		{
 			OTerrain = STONE altar(TERRA);
 		}
@@ -1800,41 +1697,5 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Character = golem(GREEN_CRYSTAL);
 		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-		}
-
-		Room
-		{
-			Size = 8:15,8:15;
-			AllowLockedDoors = true;
-			AllowBoobyTrappedDoors = false;
-			Shape = ROUND_CORNERS;
-		}
-
-		Square, Random NOT_IN_ROOM;
-		{
-			OTerrain = boulder(1);
-			Times = 5:15;
-		}
-		Square, Random NOT_IN_ROOM;
-		{
-			OTerrain = boulder(2);
-			Times = 5:15;
-		}
-
 	}
 }

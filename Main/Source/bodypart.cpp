@@ -293,7 +293,7 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
 bool bodypart::CannotBeSevered(ushort Type)
 {
-  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (!Master->GetTorso()->IsInBadCondition() && Master->GetTorso()->MaxHP > 3))) || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX);
+  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (Master->GetTorso()->HP * 3 >= Master->GetTorso()->MaxHP << 1 && Master->GetTorso()->MaxHP > 1))) || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX);
 }
 
 float arm::GetUnarmedDamage() const

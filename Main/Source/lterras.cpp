@@ -91,9 +91,9 @@ bool door::Close(character* Closer)
   return true;
 }
 
-void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
 {
-  olterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate);
+  olterrain::Draw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
@@ -698,7 +698,7 @@ void door::VirtualConstructor(bool Load)
 	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
 	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
 	      {
-		SetConfig(i->first);
+		SetConfig(i->first, NO_PIC_UPDATE);
 		break;
 	      }
 	}

@@ -44,6 +44,8 @@ olterrain
 	CreateLockConfigurations = false; /* Can't be overridden by Configs */
 	Walkability = ANY_MOVE;
 	IsAlwaysTransparent = true;
+	UseBorderTiles = false;
+	BorderTilePriority = 0;
 }
 
 wall
@@ -53,6 +55,7 @@ wall
 	IsSafeToCreateDoor = true;
 	Walkability = WALK_THROUGH_WALLS;
 	IsAlwaysTransparent = false;
+	BorderTilePriority = 100;
 
 	Config BRICK_FINE;
 	{
@@ -103,8 +106,10 @@ wall
 		MaterialColorB = rgb16(56, 56, 56);
 		Article = "an";
 		NameSingular = "earth";
-		BitmapPos = 0, 336;
+		BitmapPos = 96, 416;
 		HPModifier = 50;
+		BorderTilePriority = 10;
+		UseBorderTiles = true;
 	}
 
 	Config STONE_WALL;
@@ -529,5 +534,3 @@ sign
 	MaterialColorB = rgb16(48, 48, 48);
 	HPModifier = 10;
 }
-
-

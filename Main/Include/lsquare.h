@@ -162,6 +162,8 @@ class lsquare : public square
   bool IsDangerousForAIToBreathe(const character*) const;
   uchar GetWalkability() const { return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); }
   virtual uchar GetSquareWalkability() const { return GetWalkability(); }
+  void CalculateBorderPartners();
+  void RequestForBorderPartnerUpdates();
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -180,6 +182,7 @@ class lsquare : public square
   std::vector<smoke*> Smoke;
   ushort SmokeAlphaSum;
   bool Freezed;
+  std::pair<olterrain*, ushort> BorderPartner[8];
 };
 
 inline bool lsquare::IsDark() const

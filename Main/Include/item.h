@@ -410,7 +410,7 @@ class item : public object
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone() { }
   virtual bool SuckSoul(character*, character* = 0) { return false; }
-  void SetConfig(ushort);
+  void SetConfig(ushort, ushort = 0);
   god* GetMasterGod() const;
   const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
   virtual ushort GetSquaresUnder() const { return 1; }

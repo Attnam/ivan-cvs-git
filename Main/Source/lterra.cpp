@@ -250,11 +250,13 @@ void olterraindatabase::InitDefaults(ushort NewConfig)
     PostFix << "of " << festring(protocontainer<god>::GetProto(NewConfig&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
-void olterrain::SetConfig(ushort NewConfig)
+void olterrain::SetConfig(ushort NewConfig, ushort SpecialFlags)
 {
   InstallDataBase(NewConfig);
   CalculateAll();
-  UpdatePictures();
+
+  if(!(SpecialFlags & NO_PIC_UPDATE))
+    UpdatePictures();
 }
 
 god* olterrain::GetMasterGod() const
@@ -312,4 +314,70 @@ void lterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAni
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void olterrain::ModifyAnimationFrames(ushort& AF) const
+{
+  if(UseBorderTiles())
+    AF += AF << 3;
+}
+
+vector2d olterrain::GetBitmapPos(ushort Index) const
+{
+  if(UseBorderTiles())
+    {
+      vector2d MV = game::GetMoveVector((Index + (Index << 3)) / AnimationFrames);
+
+      if(VisualEffects & MIRROR)
+	MV.X = -MV.X;
+
+      if(VisualEffects & FLIP)
+	MV.Y = -MV.Y;
+
+      if(VisualEffects & ROTATE)
+	{
+	  const short T = MV.Y;
+	  MV.Y = -MV.X;
+	  MV.X = T;
+	}
+
+      return DataBase->BitmapPos + (MV << 4);
+    }
+  else
+    return DataBase->BitmapPos;
+}
+
+void olterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
+{
+  if(UseBorderTiles())
+    {
+      ushort TrueAnimationFrames = AnimationFrames / 9;
+      ushort PictureIndex = SquareIndex * TrueAnimationFrames;
+
+      if(AllowAnimate && TrueAnimationFrames != 1)
+	PictureIndex += globalwindowhandler::GetTick() % TrueAnimationFrames;
+
+      Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    }
+  else
+    lterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate);
+}
+
+void olterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+{
+  if(UseBorderTiles())
+    {
+      ushort TrueAnimationFrames = AnimationFrames / 9;
+      ushort PictureIndex = SquareIndex * TrueAnimationFrames;
+
+      if(AllowAnimate && TrueAnimationFrames != 1)
+	PictureIndex += globalwindowhandler::GetTick() % TrueAnimationFrames;
+
+      if(AllowAlpha)
+	Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      else
+	Picture[PictureIndex]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    }
+  else
+    lterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }

@@ -50,7 +50,7 @@ class lterrain : public object
   virtual bool HasKeyHole() const { return CanBeOpened(); }
   virtual bool IsOnGround() const { return true; }
   room* GetRoom() const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool) const;
   void Draw(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
   void Initialize(ushort, ushort);
@@ -147,8 +147,8 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
-  virtual uchar GetAttachedGod() const;
   DATA_BASE_VALUE(uchar, Walkability);
+  virtual uchar GetAttachedGod() const;
  protected:
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
@@ -196,6 +196,8 @@ struct olterraindatabase
   bool CreateLockConfigurations;
   uchar Walkability; 
   bool IsAlwaysTransparent;
+  bool UseBorderTiles;
+  ushort BorderTilePriority;
 };
 
 class olterrainprototype
@@ -249,7 +251,6 @@ class olterrain : public lterrain, public oterrain
   const database* GetDataBase() const { return DataBase; }
   void ShowRestMessage(character*) const;
   DATA_BASE_VALUE(ushort, Config);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
   DATA_BASE_VALUE(const festring&, AdjectiveArticle);
@@ -279,6 +280,10 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE(uchar, HPModifier);
   DATA_BASE_BOOL(IsSafeToCreateDoor);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, ushort);
+  DATA_BASE_BOOL(UseBorderTiles);
+  DATA_BASE_VALUE(ushort, BorderTilePriority);
+  virtual DATA_BASE_VALUE(uchar, Walkability);
+  DATA_BASE_BOOL(IsAlwaysTransparent);
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const festring&) { }
@@ -288,12 +293,14 @@ class olterrain : public lterrain, public oterrain
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
   void CalculateHP();
   virtual uchar GetAttachedGod() const;
-  void SetConfig(ushort);
+  void SetConfig(ushort, ushort = 0);
   god* GetMasterGod() const;
-  virtual DATA_BASE_VALUE(uchar, Walkability);
-  DATA_BASE_BOOL(IsAlwaysTransparent);
   virtual bool IsTransparent() const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
  protected:
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual void ModifyAnimationFrames(ushort&) const;
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;

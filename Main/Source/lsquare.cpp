@@ -96,7 +96,10 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
     Fluid->Draw(Bitmap, Pos, Luminance, RealDraw);
 
   if(OLTerrain)	
-    OLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
+    OLTerrain->Draw(Bitmap, Pos, Luminance, 8, RealDraw);
+
+  for(ushort c = 0; c < 8 && BorderPartner[c].first; ++c)
+    BorderPartner[c].first->Draw(Bitmap, Pos, Luminance, BorderPartner[c].second, RealDraw);
 
   if(IsTransparent())
     {
@@ -760,6 +763,7 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
   GetLevel()->SetWalkability(Pos, GetWalkability());
+  RequestForBorderPartnerUpdates();
 
   if(NewOver)
     {
@@ -775,6 +779,7 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
   SetGLTerrain(NewGround);
   SetOLTerrain(NewOver);
   GetLevel()->SetWalkability(Pos, GetWalkability());
+  RequestForBorderPartnerUpdates();
 }
 
 void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
@@ -1734,4 +1739,49 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
   return false;
 }
 
+bool BorderPartnerOrderer(const std::pair<olterrain*, ushort>& BP1, const std::pair<olterrain*, ushort>& BP2)
+{
+  return BP1.first->GetBorderTilePriority() < BP1.first->GetBorderTilePriority();
+}
 
+void lsquare::CalculateBorderPartners()
+{
+  ushort Index = 0;
+  vector2d Pos = GetPos();
+  level* Level = GetLevel();
+  ushort Priority = OLTerrain ? OLTerrain->GetBorderTilePriority() : 0;
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      lsquare* Square = Level->GetNeighbourLSquare(Pos, d);
+
+      if(Square)
+	{
+	  olterrain* Terrain = Square->GetOLTerrain();
+
+	  if(Terrain && Terrain->UseBorderTiles() && Terrain->GetBorderTilePriority() > Priority)
+	    {
+	      BorderPartner[Index].first = Terrain;
+	      BorderPartner[Index].second = 7 - d;
+	      ++Index;
+	    }
+	}
+    }
+
+  std::sort(BorderPartner, BorderPartner + Index, BorderPartnerOrderer);
+
+  if(Index < 8)
+    BorderPartner[Index].first = 0;
+}
+
+void lsquare::RequestForBorderPartnerUpdates()
+{
+  if(!game::IsGenerating())
+    for(ushort d = 0; d < 9; ++d)
+      {
+	lsquare* Square = GetNeighbourLSquare(d);
+
+	if(Square)
+	  Square->CalculateBorderPartners();
+      }
+}

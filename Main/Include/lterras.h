@@ -108,7 +108,7 @@ class OLTERRAIN
   virtual void ReceiveVomit(character*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
 );
 
 class OLTERRAIN

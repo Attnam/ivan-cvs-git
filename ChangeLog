@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+July 11 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added border tiles to earth
+	* Wand of door creation no longer crashes
+	* Corey's level no longer crashes, I think
+
 July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* StepOn effects work again

@@ -624,6 +624,7 @@ void level::Load(inputfile& SaveFile)
       {
 	NodeMap[x][y] = new node(x, y, Map[x][y]);
 	WalkabilityMap[x][y] = Map[x][y]->GetWalkability();
+	Map[x][y]->CalculateBorderPartners();
       }
 
   game::SetIsGenerating(false);
@@ -1645,6 +1646,10 @@ void level::GenerateDungeon(ushort Index)
 
   for(c = 0; c < AttachQueue.size(); ++c)
     AttachPos(AttachQueue[c].X, AttachQueue[c].Y);
+
+  for(x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      Map[x][y]->CalculateBorderPartners();
 
   AttachQueue.clear();
   CreateItems(LevelScript->GetItems()->Randomize());

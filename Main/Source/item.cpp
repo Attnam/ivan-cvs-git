@@ -880,11 +880,13 @@ void item::PostProcessForBone()
     }
 }
 
-void item::SetConfig(ushort NewConfig)
+void item::SetConfig(ushort NewConfig, ushort SpecialFlags)
 {
   InstallDataBase(NewConfig);
   CalculateAll();
-  UpdatePictures();
+
+  if(!(SpecialFlags & NO_PIC_UPDATE))
+    UpdatePictures();
 }
 
 god* item::GetMasterGod() const
@@ -943,7 +945,7 @@ vector2d item::GetLargeBitmapPos(vector2d BasePos, ushort Index) const
 void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
 {
   ushort TrueAnimationFrames = AnimationFrames >> 2;
-  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture[!AllowAnimate ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
@@ -951,7 +953,7 @@ void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
   ushort TrueAnimationFrames = AnimationFrames >> 2;
 
   if(AllowAlpha)
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    Picture[!AllowAnimate ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    Picture[!AllowAnimate ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

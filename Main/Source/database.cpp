@@ -446,6 +446,8 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(Walkability);
   ADD_MEMBER(IsAlwaysTransparent);
+  ADD_MEMBER(UseBorderTiles);
+  ADD_MEMBER(BorderTilePriority);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()
