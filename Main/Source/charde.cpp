@@ -3432,7 +3432,12 @@ material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
 
 item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 {
-  bone* Bone = new bone(0, NOMATERIALS);
+  item* Bone;
+  if(BodyPartIndex == HEADINDEX)
+    Bone = new skull(0, NOMATERIALS);
+  else
+    Bone = new bone(0, NOMATERIALS);
+
   item* BodyPart = GetBodyPart(BodyPartIndex);
   Bone->InitMaterials(BodyPart->GetContainedMaterial());
   BodyPart->SetContainedMaterial(0, NOPICUPDATE);
@@ -3446,7 +3451,6 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
       StuckToBodyPart = NONEINDEX;
       StuckTo = 0;
     }
-
   return Bone;  
 }
 

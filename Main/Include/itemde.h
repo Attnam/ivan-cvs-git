@@ -344,7 +344,6 @@ class ITEM
   item,
  public:
   virtual bool DogWillCatchAndConsume() const { return GetConsumeMaterial()->GetConfig() == BONE; }
-
 );
 
 class ITEM
@@ -1346,4 +1345,10 @@ class ITEM
   virtual void FinishReading(character*);
 );
 
+class ITEM
+(
+ skull,
+ item,
+ public:
+);
 #endif

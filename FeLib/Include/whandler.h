@@ -74,8 +74,8 @@ class globalwindowhandler
   static bool (*QuitMessageHandler)();
   static controlvector ControlLoop;
   static ulong Tick;
-  static bool Active;
 #ifdef WIN32
+  static bool Active;
   static char KeyboardLayoutName[KL_NAMELENGTH];
 #endif
 };

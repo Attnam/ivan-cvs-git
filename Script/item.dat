@@ -683,7 +683,6 @@ bone
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
 	Roundness = 20;
-	IsTwoHanded = true;
 }
 
 loaf
@@ -720,7 +719,7 @@ cheapcopyofleftnutofpetrus /* nut-> */
 	DefaultSize = 10;
 	Possibility = 10;
 	Score = 1;
-	Price = 500;
+	Price = 50;
 	Category = MISC;
 	DefaultMainVolume = 500;
 	NameSingular = "copy of the left nut of Petrus";
@@ -1693,3 +1692,23 @@ scrollofenchantarmor /* scroll-> */
 	Price = 250;
 	PostFix = "of enchant armor";
 }
+
+skull
+{
+	InHandsPic = 160, 144;
+	StrengthModifier = 100;
+	FormModifier = 20;
+	Roundness = 65;
+	DefaultSize = 17;
+	Possibility = 30;
+	WeaponCategory = MISC;
+	DefaultMainVolume = 500;
+	BitmapPos = 48, 112;
+	FormModifier = 70;
+	Category = MISC;
+	NameSingular = "skull";
+	MainMaterialConfig == BONE;
+	Roundness = 20;
+	IsTwoHanded = true;
+}
+

@@ -93,7 +93,7 @@ Compressed savefiles.
 //Inventory screen could be categorised.
 Crash save.
 (r, doesn't work) The Great Line Algorithm Idea. (GLAI)
-*"You didn't manage to get onto the high score list"
+//"You didn't manage to get onto the high score list"
 Cats and dogs should attack each other even if team comrades.
 *It should be possible to unequip party members.
 It should be possible to command party members to flee.
@@ -306,6 +306,9 @@ Gold golems should be immune to acid.
 Mommos should do acid damage.
 "Character attributes" option to secret knowledge.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
+Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
+Metal detector.
+More info about players' old games in highscore list (probably a sub menu).
 Potion of death.
 Physical damage should be divided.
 If the handle of a weapon is of the same material as the edge, change material should change it, too.

@@ -23,7 +23,11 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 
 ulong globalwindowhandler::UpdateTick()
 {
+#ifdef USE_SDL
+  Tick = SDL_GetTicks() / 40;
+#else
   Tick = clock() * 25 / CLOCKS_PER_SEC;
+#endif
   return Tick;
 }
 
@@ -306,9 +310,6 @@ void globalwindowhandler::CheckMessages()
 #endif
 
 #ifdef USE_SDL
-
-bool globalwindowhandler::Active = true;
-
 void globalwindowhandler::Init(const char* Title)
 {
   SDL_WM_SetCaption(Title, 0);
@@ -328,7 +329,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     }
 
   while(true)
-    if(KeyBuffer.size())
+    if(!KeyBuffer.empty())
       {
 	int Key = KeyBuffer[0];
 	KeyBuffer.erase(KeyBuffer.begin());
@@ -361,9 +362,8 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 
 		    if(Draw)
 		      graphics::BlitDBToScreen();
-
-		    SDL_Delay(30);
 		  }
+		SDL_Delay(10);
 	      }
 	    else
 	      {
@@ -406,10 +406,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
-      return;
-    case SDL_ACTIVEEVENT:
-      if(event->active.state & SDL_APPACTIVE)
-	Active = event->active.gain;
       return;
     case SDL_KEYDOWN:
       switch(event->key.keysym.sym)
