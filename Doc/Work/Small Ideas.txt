@@ -506,6 +506,7 @@ A tin foil hat should make you immune to ESP.
 HP-based monster generation should use HP averages over long periods of time instead of current max HP.
 Butcher in Attnam - converts pets to cans of flesh.
 Tailor and smith should be able to make items from raw materials.
+Two rings of searching should have more effect than one.
 Canning food from lumps and corpses.
 Wearing equipment of a god's material should make Him/Her slightly more favourable.
 Playing musical instruments should increase relation to Dulcis somewhat.
