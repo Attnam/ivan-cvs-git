@@ -470,7 +470,6 @@ bool stack::TryKey(item* Key, character* Applier)
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if((IgnoreVisibility || i->CanBeSeenBy(Applier)) && i->TryKey(Key, Applier))
       return true;
-
   return false;
 }
 

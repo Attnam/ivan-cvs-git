@@ -1131,19 +1131,18 @@ bool lsquare::RaiseTheDead(character* Summoner)
     return false;
 }
 
+// return true if key fits someplace
 bool lsquare::TryKey(item* Key, character* Applier)
 {
-  if(GetOLTerrain()->TryKey(Key,Applier) || GetStack()->TryKey(Key, Applier))
-    {
-      return true;
-    }
-  else
-    {
-      if(Applier->IsPlayer()) 
-	ADD_MESSAGE("There's no keyhole here!");
+  if(GetOLTerrain()->TryKey(Key, Applier))
+    return true;
 
+  if(!GetOLTerrain()->HasKeyHole() && !GetStack()->TryKey(Key,Applier))
+    {
+      ADD_MESSAGE("There's no place here to put the key in!");
       return false;
     }
+  return true;
 }
 
 void lsquare::SetLastSeen(ulong What)

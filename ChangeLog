@@ -1,3 +1,14 @@
+November 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bugs squashed:
+	-When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
+	-Carnivorous plants can be kicked around.
+	-"The kamikaze dwarf manages to free heself from the bear trap."
+	-slight problem with key msgs corrected
+	* Features added:
+	- Loricatus now changes the material of items that have a StrengthValue that is larger than the strengthvalue of steel
+	- if the item that the player is carrying is steel, then there is a 10 % that he will be rewarded a scroll of repair 
+
 November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Stats of summoned bodyparts are now more intelligent

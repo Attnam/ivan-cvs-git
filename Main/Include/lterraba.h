@@ -83,6 +83,7 @@ class lterrain : public object
   virtual void CalculateAll() { CalculateEmitation(); }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
+  virtual bool HasKeyHole() const { return CanBeOpened(); }
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }

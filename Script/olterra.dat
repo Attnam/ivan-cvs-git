@@ -363,12 +363,12 @@ boulder /* olterrain-> */
 	SitMessage = "The boulder is rather hard to sit on.";
 	CanBeDug = true;
 	IsAbstract = true;
+	BitmapPos = 64, 304;
 
 	Config 1;
 	{
 		BitmapPos = 64, 288;
 	}
-
 	Config 2;
 	{
 		BitmapPos = 64, 304;

@@ -739,7 +739,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 			{
 			  if(Terrain->IsLocked())
 			    {
-			      ADD_MESSAGE("%s is locked.", Terrain->CHAR_NAME(DEFINITE));
+			      ADD_MESSAGE("The %s is locked.", Terrain->GetNameSingular().c_str()); /* not sure if this is better than "the door is locked", but I guess it _might_ be slighltly better */
 			      return false;
 			    }
 			  else
@@ -2271,9 +2271,11 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 /* return true if still in balance */
 bool character::CheckBalance(float KickDamage)
 {
+  if(!CanWalk()) // if the monster isn't standing it hardly can't loose its balance
+    return true;
   if(KickDamage == 0)
     return true;
-  return KickDamage * 25 < RAND() % GetSize();
+  return (KickDamage * 25 < RAND() % GetSize()); 
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)

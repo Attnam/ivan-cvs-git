@@ -389,9 +389,24 @@ void loricatus::PrayGoodEffect()
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
 	std::string OldName;
-	game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHAR_NAME(INDEFINITE));
+	ushort StrengthValue = protocontainer<material>::GetProto(1)->GetConfig().find(STEEL)->second.StrengthValue;
+	if(StrengthValue > game::GetPlayer()->GetMainWielded()->GetMainMaterial()->GetStrengthValue())
+	  {
+	    game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
+	    game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
+	    ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHAR_NAME(INDEFINITE));
+	  }
+	else
+	  {
+	    if(!(RAND() % 10))
+	      {
+		item* Scroll = new scrollofrepair;
+		ADD_MESSAGE("%s gives you %s.", GOD_NAME, Scroll->CHAR_NAME(INDEFINITE));
+		game::GetPlayer()->GetGiftStack()->AddItem(Scroll);
+	      }
+	    else
+	      ADD_MESSAGE("\"Mortal thou art always my valiant knight.\"");  
+	  }
 	return;
       }
     else
