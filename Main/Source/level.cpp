@@ -350,7 +350,7 @@ void level::CreateItems(ushort Amount)
 	{
 		vector Pos = RandomSquare(true);
 
-		Map[Pos.X][Pos.Y]->Stack->FastAddItem(prototypesystem::BalancedCreateItem());
+		Map[Pos.X][Pos.Y]->Stack->FastAddItem(protosystem::BalancedCreateItem());
 	}
 }
 
@@ -362,7 +362,7 @@ void level::CreateMonsters(ushort Amount)
 		vector Pos = RandomSquare(true);
 
 		if(!Map[Pos.X][Pos.Y]->Character)
-			Map[Pos.X][Pos.Y]->FastAddCharacter(prototypesystem::BalancedCreateMonster());
+			Map[Pos.X][Pos.Y]->FastAddCharacter(protosystem::BalancedCreateMonster());
 	}
 }
 
@@ -696,7 +696,7 @@ void level::GenerateNewMonsters(ushort HowMany)
 				break;
 		}
 
-		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(prototypesystem::BalancedCreateMonster());
+		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(protosystem::BalancedCreateMonster());
 	}
 }
 

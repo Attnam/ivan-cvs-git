@@ -138,7 +138,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 	{
-		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(prototypesystem::BalancedCreateMonster());
+		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster());
 
 		if(Reader == game::GetPlayer())
 			ADD_MESSAGE("As you read the scroll a monster appears.");
@@ -378,7 +378,7 @@ float item::GetWeaponStrength(void) const
 bool scrollofwishing::Read(character* Reader)
 {
 	std::string Temp = game::StringQuestion("What do you want to wish for?", 256);
-	item* TempItem = prototypesystem::CreateItem(Temp);
+	item* TempItem = protosystem::CreateItem(Temp);
 
 	if(TempItem)
 	{
@@ -422,7 +422,7 @@ bool pickaxe::Apply(character* User)
 
 item* item::CreateWishedItem(void) const
 {
-	return GetProtoType<item>(Type())->Clone(); //GGG
+	return protocontainer<item>::GetProto(Type())->Clone(); //GGG
 }
 
 bool item::Apply(character*)
@@ -535,7 +535,7 @@ bool item::Zap(vector, uchar)
 
 bool item::Polymorph(stack* CurrentStack)
 {
-	CurrentStack->AddItem(prototypesystem::BalancedCreateItem());
+	CurrentStack->AddItem(protosystem::BalancedCreateItem());
 	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
 	delete this;
 	return true;
@@ -550,3 +550,4 @@ void wand::Load(std::ifstream& SaveFile)
 {
 	Charge = SaveFile.get();
 }
+

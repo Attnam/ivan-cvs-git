@@ -23,18 +23,23 @@ public:
 	virtual void UpdateMemorizedAndDraw(void);
 	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void SetOverWorldMapTerrain(overworldmapterrain*);
-	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const;
-	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const;
+	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const { return GroundWorldMapTerrain; }
+	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const { return OverWorldMapTerrain; }
 	virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
 	//virtual short GetAltitude(void) { return Altitude; };
 	//virtual void SetAltitude(short What) { Altitude = What; }
-	virtual worldmap* GetMotherWorldMap(void) const { return (worldmap*)MotherArea; }
-	virtual void SetMotherWorldMap(worldmap* What) { MotherArea = (area*)What; }
+	virtual worldmap* GetWorldMapUnder(void) const { return (worldmap*)AreaUnder; }
+	virtual void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
 	virtual void UpdateMemorizedDescription(void);
+	virtual groundterrain* GetGroundTerrain(void) const;// { return GroundWorldMapTerrain; }
+	virtual overterrain* GetOverTerrain(void) const;// { return OverWorldMapTerrain; }
 protected:
-	//worldmap* MotherWorldMap;
+	groundworldmapterrain* GroundWorldMapTerrain;
+	overworldmapterrain* OverWorldMapTerrain;
+	//worldmap* WorldMapUnder;
 	//short Altitude;
 	bool TerrainChanged;
 };
 
 #endif
+

@@ -53,6 +53,12 @@ protected:
 	long Timer;
 };
 
+inline std::ofstream& operator<<(std::ofstream& SaveFile, god* God)
+{
+	God->Save(SaveFile);
+	return SaveFile;
+}
+
 class valpuri : public god
 {
 public:

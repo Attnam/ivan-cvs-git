@@ -261,6 +261,7 @@ public:
 	virtual ushort GetFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
 	virtual square* operator [] (vector Pos) const { return Map[Pos.X][Pos.Y]; }
 	virtual square* GetSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
+	virtual square* GetSquare(ushort x, ushort y) const { return Map[x][y]; }
 	virtual ushort GetXSize(void) const { return XSize; }
 	virtual ushort GetYSize(void) const { return YSize; }
 	virtual bitmap* GetMemorized(void) const { return Memorized; }
@@ -273,5 +274,11 @@ protected:
 	ushort XSize, YSize;
 	ulong XSizeTimesYSize;
 };
+
+inline std::ofstream& operator<<(std::ofstream& SaveFile, area* Area)
+{
+	Area->Save(SaveFile);
+	return SaveFile;
+}
 
 #endif

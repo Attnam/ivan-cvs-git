@@ -9,7 +9,7 @@
 #include "message.h"
 #include "strover.h"
 
-levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), Emitation(0), DivineOwner(0), Fluided(false)
+levelsquare::levelsquare(level* LevelUnder, vector Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false)
 {
 	Stack = new stack(this);
 
@@ -28,11 +28,11 @@ levelsquare::~levelsquare(void)
 		delete SideStack[c];
 }
 
-void levelsquare::HandleCharacters(void)
+/*void levelsquare::HandleCharacters(void)
 {
 	if(GetCharacter() && GetCharacter() != game::GetPlayer())
 		GetCharacter()->Act();
-}
+}*/
 
 void levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
 {
@@ -293,6 +293,8 @@ void levelsquare::Save(std::ofstream& SaveFile) const
 {
 	square::Save(SaveFile);
 
+	SaveFile << GroundLevelTerrain << OverLevelTerrain;
+
 	GetStack()->Save(SaveFile);
 
 	{
@@ -313,7 +315,7 @@ void levelsquare::Save(std::ofstream& SaveFile) const
 	SaveFile.write((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
-		GetMotherLevel()->GetFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetLevelUnder()->GetFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.write((char*)&Emitation, sizeof(Emitation));
 	SaveFile.write((char*)&DivineOwner, sizeof(DivineOwner));
@@ -323,6 +325,8 @@ void levelsquare::Save(std::ofstream& SaveFile) const
 void levelsquare::Load(std::ifstream& SaveFile)
 {
 	square::Load(SaveFile);
+
+	SaveFile >> GroundLevelTerrain >> OverLevelTerrain;
 
 	Stack->Load(SaveFile);
 
@@ -348,7 +352,7 @@ void levelsquare::Load(std::ifstream& SaveFile)
 	SaveFile.read((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
-		GetMotherLevel()->GetFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetLevelUnder()->GetFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.read((char*)&Emitation, sizeof(Emitation));
 	SaveFile.read((char*)&DivineOwner, sizeof(DivineOwner));
@@ -362,7 +366,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	{
 		Fluided = true;
 		TimeFromSpill = 0;
-		GetMotherLevel()->GetFluidBuffer()->ClearToColor(Pos.X << 4, Pos.Y << 4, 16, 16, 0xF81F);
+		GetLevelUnder()->GetFluidBuffer()->ClearToColor(Pos.X << 4, Pos.Y << 4, 16, 16, 0xF81F);
 	}
 
 	for(ushort c = 0; c < Amount; c++)
@@ -569,7 +573,7 @@ void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelter
 
 void levelsquare::SetGroundLevelTerrain(groundlevelterrain* What)
 {
-	GroundTerrain = What;
+	GroundLevelTerrain = What;
 
 	if(What)
 		What->SetSquareUnder(this);
@@ -577,18 +581,29 @@ void levelsquare::SetGroundLevelTerrain(groundlevelterrain* What)
 
 void levelsquare::SetOverLevelTerrain(overlevelterrain* What)
 {
-	OverTerrain = What;
+	OverLevelTerrain = What;
 
 	if(What)
 		What->SetSquareUnder(this);
 }
 
-groundlevelterrain* levelsquare::GetGroundLevelTerrain(void) const
+/*groundterrain* levelsquare::GetGroundTerrain(void) const
 {
-	return (groundlevelterrain*)GroundTerrain;
+	return GroundLevelTerrain;
 }
 
-overlevelterrain* levelsquare::GetOverLevelTerrain(void) const
+overterrain* levelsquare::GetOverTerrain(void) const
 {
-	return (overlevelterrain*)OverTerrain;
+	return (overlevelterrain*)OverLevelTerrain;
+}*/
+
+groundterrain* levelsquare::GetGroundTerrain(void) const
+{
+	return GroundLevelTerrain;
 }
+
+overterrain* levelsquare::GetOverTerrain(void) const
+{
+	return OverLevelTerrain;
+}
+

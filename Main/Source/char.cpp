@@ -19,6 +19,7 @@
 #include "message.h"
 #include "dungeon.h"
 #include "pool.h"
+
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
 	SetConsumingCurrently(0xFFFF);
@@ -235,9 +236,9 @@ bool ennerbeast::Hit(character*)
 	return true;
 }
 
-void character::Act(void)
+void character::Be(void)
 {
-	if(!GetHasActed())
+	if(game::GetPlayerBackup() != this)
 	{
 		if(game::GetPlayer() == this) 
 		{
@@ -258,16 +259,17 @@ void character::Act(void)
 			switch(GetBurdenState())
 			{
 			case UNBURDENED:
-				SetAP(GetAP() + 100 + (GetAgility() - 10) / 2);
+				SetAP(GetAP() + 100 + (GetAgility() >> 1));
 			break;
 			case BURDENED:
-				SetAP(GetAP() + 50 + (GetAgility() - 10) / 4);
+				SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
 			break;
 			case STRESSED:
 			case OVERLOADED:
-				SetAP(GetAP() + 33 + (GetAgility() - 10) / 6);
+				SetAP(GetAP() + 50 + (GetAgility() >> 2));
 			break;
 			}
+
 			if(GetConsumingCurrently() != 0xFFFF) ContinueEating();
 
 			if(GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !GetFainted() && GetIsPlayer())
@@ -310,7 +312,7 @@ void character::Act(void)
 		}
 	}
 
-	SetHasActed(true);
+	//SetHasActed(true);
 }
 
 
@@ -1458,7 +1460,7 @@ void character::Save(std::ofstream& SaveFile) const
 	SaveFile.write((char*)&EnduranceExperience, sizeof(EnduranceExperience));
 	SaveFile.write((char*)&AgilityExperience, sizeof(AgilityExperience));
 	SaveFile.write((char*)&PerceptionExperience, sizeof(PerceptionExperience));
-	SaveFile.write((char*)&HasActed, sizeof(HasActed));
+	//SaveFile.write((char*)&HasActed, sizeof(HasActed));
 	SaveFile.write((char*)&Relations, sizeof(Relations));
 	SaveFile.write((char*)&Fainted, sizeof(Fainted));
 	SaveFile.write((char*)&EatingCurrently, sizeof(EatingCurrently));
@@ -1491,7 +1493,7 @@ void character::Load(std::ifstream& SaveFile)
 	SaveFile.read((char*)&EnduranceExperience, sizeof(EnduranceExperience));
 	SaveFile.read((char*)&AgilityExperience, sizeof(AgilityExperience));
 	SaveFile.read((char*)&PerceptionExperience, sizeof(PerceptionExperience));
-	SaveFile.read((char*)&HasActed, sizeof(HasActed));
+	//SaveFile.read((char*)&HasActed, sizeof(HasActed));
 	SaveFile.read((char*)&Relations, sizeof(Relations));
 	SaveFile.read((char*)&Fainted, sizeof(Fainted));
 	SaveFile.read((char*)&EatingCurrently, sizeof(EatingCurrently));
@@ -1582,8 +1584,8 @@ bool character::LowerStats(void)
 bool character::GainAllItems(void)
 {
 	if(game::GetWizardMode())
-		for(ushort c = item::GetProtoIndexBegin(); c < item::GetProtoIndexEnd(); c++)
-			Stack->AddItem(GetProtoType<item>(c)->Clone()); //GGG
+		for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); c++)
+			Stack->AddItem(protocontainer<item>::GetProto(c)->Clone()); //GGG
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
@@ -1892,7 +1894,7 @@ void character::NeutralAICommand(void)
 		if(!SeenCharacters.Access(c)->GetRelations() && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
 		{
 			Charge(SeenCharacters.Access(c));
-			SetHasActed(true);
+			//SetHasActed(true);
 			return;
 		}
 	}
@@ -1908,7 +1910,7 @@ void character::NeutralAICommand(void)
 				ADD_MESSAGE("Something opens the door.");
 		}
 
-	SetHasActed(true);
+	//SetHasActed(true);
 	return;
 	})
 
@@ -1918,7 +1920,7 @@ void character::NeutralAICommand(void)
 		if(TestForPickup(GetLevelSquareUnder()->GetStack()->GetItem(ItemToTry)))
 		{
 			GetLevelSquareUnder()->GetStack()->MoveItem(ItemToTry, GetStack());
-			SetHasActed(true);
+			//SetHasActed(true);
 		}
 		for(ushort c = 0; c < GetStack()->GetItems(); c++)
 		{
@@ -1991,7 +1993,7 @@ void character::HostileAICommand(void)
 	if((NumberFor = SeenCharacters.Search(game::GetPlayer())) != 0xFFFF && GetLevelSquareUnder()->RetrieveFlag())
 	{
 		Charge(SeenCharacters.Access(NumberFor));
-		SetHasActed(true);
+		//SetHasActed(true);
 		return;
 	}
 	else
@@ -2001,7 +2003,7 @@ void character::HostileAICommand(void)
 			if(SeenCharacters.Access(c)->GetRelations() > 0 && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
 			{
 				Charge(SeenCharacters.Access(c));
-				SetHasActed(true);
+				//SetHasActed(true);
 				return;
 			}
 		}
@@ -2018,7 +2020,7 @@ void character::HostileAICommand(void)
 				ADD_MESSAGE("Something opens the door.");
 		}
 
-	SetHasActed(true);
+	//SetHasActed(true);
 	return;
 	})
 
@@ -2077,7 +2079,7 @@ void character::HostileAICommand(void)
 		if(TestForPickup(GetLevelSquareUnder()->GetStack()->GetItem(ItemToTry)))
 		{
 			GetLevelSquareUnder()->GetStack()->MoveItem(ItemToTry, GetStack());
-			SetHasActed(true);
+			//SetHasActed(true);
 			return;
 		}
 	}
@@ -2091,7 +2093,7 @@ void ennerbeast::HostileAICommand(void)
 	{
 		Charge(game::GetPlayer());
 
-		SetHasActed(true);
+		//SetHasActed(true);
 
 		return;
 	}
@@ -2485,7 +2487,9 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 
 void character::GetPlayerCommand(void)
 {
-	while(!GetHasActed())
+	bool HasActed = false;
+
+	while(!HasActed)
 	{
 		game::DrawEverything();
 
@@ -2671,7 +2675,7 @@ bool character::Zap(void)
 
 bool character::Polymorph(void)
 {
-	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster(2));
+	GetSquareUnder()->AddCharacter(protosystem::BalancedCreateMonster(2));
 
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
@@ -2710,3 +2714,4 @@ void character::ChangeBackToPlayer(void)
 	game::SetPlayer(GetSquareUnder()->GetCharacter());
 	game::SetPlayerBackup(0);	
 }
+

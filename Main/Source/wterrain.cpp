@@ -1,3 +1,6 @@
+#include <queue>
+
+#include "area.h"
 #include "wterrain.h"
 #include "wsquare.h"
 #include "igraph.h"
@@ -5,6 +8,8 @@
 #include "object.h"
 #include "material.h"
 #include "proto.h"
+#include "worldmap.h"
+#include "game.h"
 
 std::string worldmapterrain::Name(uchar Case) const
 {
@@ -31,9 +36,38 @@ vector worldmapterrain::GetPos(void) const
 	return GetWorldMapSquareUnder()->GetPos();
 }
 
+void groundworldmapterrain::DrawNeighbour(vector Pos, uchar NeighbourIndex) const
+{
+	
+}
+
+struct prioritypair
+{
+	prioritypair(uchar Priority, vector BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
+	bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
+	uchar Priority;
+	vector BitmapPos;
+};
+
 void groundworldmapterrain::DrawToTileBuffer(void) const
 {
 	igraph::GetWorldMapTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
+
+	std::priority_queue<prioritypair> Neighbour;
+
+	DO_FOR_SQUARES_AROUND(GetWorldMapSquareUnder()->GetPos().X, GetWorldMapSquareUnder()->GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
+	{
+		groundworldmapterrain* DoNeighbour = GetWorldMapUnder()->GetWorldMapSquare(DoX, DoY)->GetGroundWorldMapTerrain();
+
+		if(DoNeighbour->Priority() > Priority())
+			Neighbour.push(prioritypair(DoNeighbour->Priority(), DoNeighbour->GetBitmapPos() - (game::GetMoveVector(DoIndex) << 4)));
+	})
+
+	while(Neighbour.size())
+	{
+		igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos.X, Neighbour.top().BitmapPos.Y, 0, 0, 16, 16);
+		Neighbour.pop();
+	}
 }
 
 void overworldmapterrain::DrawToTileBuffer(void) const
@@ -55,5 +89,10 @@ void overworldmapterrain::Load(std::ifstream& SaveFile)
 
 worldmapsquare* worldmapterrain::GetWorldMapSquareUnder(void) const
 {
-	return dynamic_cast<worldmapsquare*>(SquareUnder);
+	return (worldmapsquare*)SquareUnder;
+}
+
+worldmap* worldmapterrain::GetWorldMapUnder(void) const
+{
+	return (worldmap*)AreaUnder;
 }

@@ -9,10 +9,14 @@ public:
         vector(void) {}
         vector(ushort X, ushort Y) : X(X), Y(Y) {}
 	vector	operator +  (const vector& H) const	{ return vector(X + H.X, Y + H.Y); }
-	vector&	operator += (const vector& H)		{X += H.X; Y += H.Y; return *this; }
-	vector&	operator =  (const vector& H)		{X = H.X; Y = H.Y; return *this; }
-	bool	operator == (const vector& H) const	{if(X == H.X && Y == H.Y) return true; else return false; }
-	bool	operator != (const vector& H) const	{if(X == H.X && Y == H.Y) return false; else return true; }
+	vector&	operator += (const vector& H)		{ X += H.X; Y += H.Y; return *this; }
+	vector	operator -  (const vector& H) const	{ return vector(X - H.X, Y - H.Y); }
+	vector&	operator -= (const vector& H)		{ X -= H.X; Y -= H.Y; return *this; }
+	vector&	operator =  (const vector& H)		{ X = H.X; Y = H.Y; return *this; }
+	bool	operator == (const vector& H) const	{ if(X == H.X && Y == H.Y) return true; else return false; }
+	bool	operator != (const vector& H) const	{ if(X == H.X && Y == H.Y) return false; else return true; }
+	vector	operator << (const uchar Shift) const	{ return vector(X << Shift, Y << Shift); }
+	vector	operator >> (const uchar Shift) const	{ return vector(X >> Shift, Y >> Shift); }
         ushort X, Y;
 };
 

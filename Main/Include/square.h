@@ -33,26 +33,33 @@ public:
 	virtual vector GetPos(void) const			{ return Pos; }
 	virtual void SetKnown(bool What) { Known = What; }
 	virtual ushort GetPopulation(void) const { if(Character) return 1; else return 0; }
-	virtual area* GetMotherArea(void) const { return MotherArea; }
+	virtual area* GetAreaUnder(void) const { return AreaUnder; }
 	virtual void EmptyFlag(void)			{ Flag = false; }
 	virtual void SetFlag(void)			{ Flag = true; }
 	virtual bool RetrieveFlag(void) const		{ return Flag; }
-	virtual groundterrain* GetGroundTerrain(void) { return GroundTerrain; }
-	virtual void SetGroundTerrain(groundterrain* What) { GroundTerrain = What; }
-	virtual overterrain* GetOverTerrain(void) { return OverTerrain; }
-	virtual void SetOverTerrain(overterrain* What) { OverTerrain = What; }
+	virtual groundterrain* GetGroundTerrain(void) const = 0;// { return GroundTerrain; }
+	//virtual void SetGroundTerrain(groundterrain* What) = 0;// { GroundTerrain = What; }
+	virtual overterrain* GetOverTerrain(void) const = 0;// { return OverTerrain; }
+	//virtual void SetOverTerrain(overterrain* What) = 0;//{ OverTerrain = What; }
 	virtual std::string GetMemorizedDescription(void) { return MemorizedDescription; }
 	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
 	virtual void UpdateMemorizedDescription(void) = 0;
 	virtual bool CanBeSeen(void) const;
 protected:
 	std::string MemorizedDescription;
-	groundterrain* GroundTerrain;
-	overterrain* OverTerrain;
-	area* MotherArea;
+	//groundterrain* GroundTerrain;
+	//overterrain* OverTerrain;
+	area* AreaUnder;
 	character* Rider, * Character, * Flyer;
 	vector Pos;
 	bool Known, Flag;
 };
 
+inline std::ofstream& operator<<(std::ofstream& SaveFile, square* Square)
+{
+	Square->Save(SaveFile);
+	return SaveFile;
+}
+
 #endif
+

@@ -7,7 +7,7 @@
 #include "material.h"
 #include "strover.h"
 
-square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), OverTerrain(0), GroundTerrain(0), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
+square::square(area* AreaUnder, vector Pos) : AreaUnder(AreaUnder), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
 {
 }
 
@@ -20,14 +20,14 @@ square::~square(void)
 
 void square::Save(std::ofstream& SaveFile) const
 {
-	SaveFile << GroundTerrain << OverTerrain;
+	//SaveFile << GroundTerrain << OverTerrain;
 
 	SaveFile << Character;
 
 	SaveFile.write((char*)&Known, sizeof(Known));
 
 	if(Known)
-		GetMotherArea()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetAreaUnder()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.write((char*)&Flag, sizeof(Flag));
 
@@ -38,14 +38,14 @@ void square::Load(std::ifstream& SaveFile)
 {
 	game::SetSquareInLoad(this);
 
-	SaveFile >> GroundTerrain >> OverTerrain;
+	//SaveFile >> GroundTerrain >> OverTerrain;
 
 	SaveFile >> Character;
 
 	SaveFile.read((char*)&Known, sizeof(Known));
 
 	if(Known)
-		GetMotherArea()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetAreaUnder()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.read((char*)&Flag, sizeof(Flag));
 
@@ -66,7 +66,7 @@ void square::DrawMemorized(void) const
 {
 	if(GetKnown())
 	{
-		MotherArea->GetMemorized()->Blit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
+		AreaUnder->GetMemorized()->Blit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
 		igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 	}
 }
@@ -91,3 +91,4 @@ bool square::CanBeSeen(void) const
 	else
 		return false;
 }
+

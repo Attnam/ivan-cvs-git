@@ -73,7 +73,7 @@ public:
 	virtual bool HasMaakotkaShirt(void) const;
 	virtual bool HasPerttusNut(void) const;
 	virtual bool GetFainted(void) const { return Fainted; }
-	virtual bool GetHasActed(void) const { return HasActed; }
+	//virtual bool GetHasActed(void) const { return HasActed; }
 	virtual bool GetIsPlayer(void) const { return IsPlayer; }
 	virtual bool Apply(void);
 	virtual bool Close(void);
@@ -147,7 +147,7 @@ public:
 	virtual ushort LOSRangeLevelSquare(void) const { return GetPerception() * GetPerception() / 9; }
 	virtual ushort Possibility(void) const = 0;
 	virtual vector GetPos(void) const;
-	virtual void Act(void);
+	//virtual void Act(void);
 	virtual void AddBlockMessage(character*) const;
 	virtual void AddDodgeMessage(character*) const;
 	virtual void AddHitMessage(character*, const bool = false) const;
@@ -178,7 +178,7 @@ public:
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
 	virtual void SetFainted(bool To) { Fainted = To; }
-	virtual void SetHasActed(bool HA)				{HasActed = HA; }
+	//virtual void SetHasActed(bool HA)				{HasActed = HA; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
@@ -194,10 +194,10 @@ public:
 	virtual void SpillBlood(uchar);
 	virtual void StopEating(void);
 	virtual void Vomit(ushort);
-	virtual void Be(void) { if(game::GetPlayerBackup() != this) { HasActed = false; Act(); } }
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	virtual void Be(void);// { if(game::GetPlayerBackup() != this) { HasActed = false; Act(); } }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
 	virtual bool Zap(void);
 	virtual bool Polymorph(void);
 	virtual bool SetTorsoArmor(item* What) const RET(false)
@@ -235,14 +235,14 @@ protected:
 	short HP;
 	long NP, AP;
 	long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
-	bool HasActed;
+	//bool HasActed;
 	uchar Relations;
 	bool Fainted;
 	ushort EatingCurrently;
 	long APsToBeEaten;
 	bool Dead;
 	bool IsPlayer;
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -266,7 +266,7 @@ protected:
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false, false, false, false))) {}\
+		name##_protoinstaller(void) : Index(protocontainer<character>::Add(new name(false, false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -308,7 +308,7 @@ public:\
 	data\
 };
 
-BEGIN_PROTOTYPING(character)
+//BEGIN_PROTOTYPING(character)
 
 class ABSTRACT_CHARACTER
 (
@@ -709,7 +709,7 @@ class CHARACTER
 (
 	golem,
 	character,
-	InitMaterials(prototypesystem::CreateRandomSolidMaterial(100000)),
+	InitMaterials(protosystem::CreateRandomSolidMaterial(100000)),
 	{
 		SetSize(250);
 		SetAgility(5);
@@ -785,6 +785,6 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 );
 
-FINISH_PROTOTYPING(character)
+//FINISH_PROTOTYPING(character)
 
 #endif

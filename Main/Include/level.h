@@ -29,6 +29,7 @@ public:
 	virtual void FastAddCharacter(vector, character*);
 	virtual void HandleCharacters(void);
 	virtual levelsquare* GetLevelSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
+	virtual levelsquare* GetLevelSquare(ushort x, ushort y) const { return Map[x][y]; }
 	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector Pos);
 	virtual void GenerateTunnel(vector, vector, bool);

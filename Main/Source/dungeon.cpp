@@ -106,7 +106,9 @@ void dungeon::SaveLevel(std::string SaveName, ushort Index, bool DeleteAfterward
 	if(!SaveFile.is_open())
 		ABORT("Level lost!");
 
-	Level[Index]->Save(SaveFile);
+	//Level[Index]->Save(SaveFile);
+
+	SaveFile << Level[Index];
 
 	if(DeleteAfterwards)
 	{

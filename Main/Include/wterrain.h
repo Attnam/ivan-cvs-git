@@ -15,6 +15,7 @@ public:
 	friend class worldmap;
 	virtual vector GetPos(void) const;
 	virtual worldmapsquare* GetWorldMapSquareUnder(void) const;
+	virtual worldmap* GetWorldMapUnder(void) const;
 	virtual std::string Name(uchar = 0) const;
 protected:
 	virtual std::string NameStem(void) const = 0;
@@ -30,11 +31,13 @@ public:
 	virtual void DrawToTileBuffer(void) const;
 	virtual groundworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	virtual uchar Priority(void) const = 0;
+	virtual void DrawNeighbour(vector, uchar) const;
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
-protected:
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
+//protected:
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 class overworldmapterrain : public worldmapterrain, public overterrain
@@ -46,11 +49,11 @@ public:
 	virtual void DrawToTileBuffer(void) const;
 	virtual overworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
-protected:
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
+//protected:
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -71,7 +74,7 @@ protected:
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false))) {}\
+		name##_protoinstaller(void) : Index(protocontainer<protobase>::Add(new name(false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -122,7 +125,7 @@ WORLDMAPTERRAIN(\
 	data\
 );
 
-BEGIN_PROTOTYPING(groundworldmapterrain)
+//BEGIN_PROTOTYPING(groundworldmapterrain)
 
 class GROUNDWORLDMAPTERRAIN
 (
@@ -133,6 +136,7 @@ class GROUNDWORLDMAPTERRAIN
 	virtual std::string NameStem(void) const { return "ocean"; }
 	virtual std::string Article(void) const { return "an"; }
 	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
+	virtual uchar Priority(void) const { return 10; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -143,6 +147,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "glacier"; }
 	virtual vector GetBitmapPos(void) const { return vector(16, 16); }
+	virtual uchar Priority(void) const { return 90; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -153,6 +158,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "desert"; }
 	virtual vector GetBitmapPos(void) const { return vector(64, 16); }
+	virtual uchar Priority(void) const { return 20; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -163,6 +169,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "tundra"; }
 	virtual vector GetBitmapPos(void) const { return vector(112, 16); }
+	virtual uchar Priority(void) const { return 80; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -173,6 +180,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "jungle"; }
 	virtual vector GetBitmapPos(void) const { return vector(208, 16); }
+	virtual uchar Priority(void) const { return 50; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -183,6 +191,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "swamp"; }
 	virtual vector GetBitmapPos(void) const { return vector(256, 16); }
+	virtual uchar Priority(void) const { return 40; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -193,6 +202,7 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "leafy forest"; }
 	virtual vector GetBitmapPos(void) const { return vector(304, 16); }
+	virtual uchar Priority(void) const { return 60; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -204,6 +214,7 @@ class GROUNDWORLDMAPTERRAIN
 	virtual std::string NameStem(void) const { return "evergreen forest"; }
 	virtual std::string Article(void) const { return "an"; }
 	virtual vector GetBitmapPos(void) const { return vector(352, 16); }
+	virtual uchar Priority(void) const { return 70; }
 );
 
 class GROUNDWORLDMAPTERRAIN
@@ -214,11 +225,12 @@ class GROUNDWORLDMAPTERRAIN
 	},
 	virtual std::string NameStem(void) const { return "steppe"; }
 	virtual vector GetBitmapPos(void) const { return vector(160, 16); }
+	virtual uchar Priority(void) const { return 30; }
 );
 
-FINISH_PROTOTYPING(groundworldmapterrain)
+//FINISH_PROTOTYPING(groundworldmapterrain)
 
-BEGIN_PROTOTYPING(overworldmapterrain)
+//BEGIN_PROTOTYPING(overworldmapterrain)
 
 class OVERWORLDMAPTERRAIN
 (
@@ -251,6 +263,6 @@ class OVERWORLDMAPTERRAIN
 	virtual vector GetBitmapPos(void) const { return vector(16, 48); }
 );
 
-FINISH_PROTOTYPING(overworldmapterrain)
+//FINISH_PROTOTYPING(overworldmapterrain)
 
 #endif

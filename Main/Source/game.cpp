@@ -80,8 +80,11 @@ command* game::Command[] = {	0,
 				new command(&character::Zap, "zap", 'z', false),
 				0};
 
-int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 0x147, 0x149, 0x151, 0x14F};
-const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(1, 0), vector(0, -1), vector(0, 1), vector(-1, 0), vector(-1, -1), vector(1, -1), vector(1, 1), vector(-1, 1)};
+//int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 0x147, 0x149, 0x151, 0x14F};
+//const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(1, 0), vector(0, -1), vector(0, 1), vector(-1, 0), vector(-1, -1), vector(1, -1), vector(1, 1), vector(-1, 1)};
+
+int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
+const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(-1, -1), vector(0, -1), vector(1, -1), vector(-1, 0), vector(1, 0), vector(-1, 1), vector(0, 1), vector(1, 1)};
 
 std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
 game::panel game::Panel;
@@ -152,7 +155,7 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		WorldMap = new worldmap(256, 256);
+		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
 
 		InWilderness = true;
@@ -186,9 +189,7 @@ void game::Init(std::string Name)
 
 void game::DeInit(void)
 {
-	if(GetPlayerBackup())
-		delete GetPlayerBackup();
-
+	delete GetPlayerBackup();
 	delete WorldMap;
 	delete Dungeon;
 
@@ -199,7 +200,7 @@ void game::Run(void)
 {
 	while(GetRunning())
 	{
-		game::GetPlayer()->Act();
+		//game::GetPlayer()->Act();
 
 		if(!InWilderness)
 			Dungeon->GetLevel(Current)->HandleCharacters();	// Temporary
@@ -632,16 +633,20 @@ bool game::Save(std::string SaveName)
 	srand(Time);
 	SaveFile.write((char*)&Time, sizeof(Time));
 
-	Dungeon->Save(SaveFile);
+	//Dungeon->Save(SaveFile);
+
+	SaveFile << Dungeon;
 
 	if(InWilderness)
-		WorldMap->Save(SaveFile);
+		SaveFile << WorldMap;
+		//WorldMap->Save(SaveFile);
 	else
 		Dungeon->SaveLevel(SaveName, Current, false);
 
 	{
 	for(ushort c = 1; GetGod(c); c++)
-		GetGod(c)->Save(SaveFile);
+		SaveFile << GetGod(c);
+		//GetGod(c)->Save(SaveFile);
 	}
 
 	vector Pos = game::GetPlayer()->GetPos();

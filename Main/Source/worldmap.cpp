@@ -9,6 +9,7 @@
 #include "material.h"
 #include "proto.h"
 #include "error.h"
+#include "save.h"
 
 uchar** continent::ContinentBuffer;
 
@@ -47,6 +48,11 @@ void worldmap::Save(std::ofstream& SaveFile) const
 	SaveFile.write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
 	SaveFile.write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
 	SaveFile.write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
+
+	SaveFile << Continent;
+
+	//for(uchar i = 0; i < Continent.size(); i++)
+	//	 
 }
 
 void worldmap::Load(std::ifstream& SaveFile)
@@ -71,6 +77,8 @@ void worldmap::Load(std::ifstream& SaveFile)
 	SaveFile.read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
 	continent::ContinentBuffer = ContinentBuffer;
+
+	SaveFile >> Continent;
 }
 
 void worldmap::Draw(void) const
@@ -153,14 +161,14 @@ void worldmap::SmoothAltitude(void)
 	delete [] OldAltitudeBuffer;
 }
 
-#define CLIMATE_RANDOMNESS		0.2		//0 = mathematic, 1 = random
+//#define CLIMATE_RANDOMNESS		0.2		//0 = mathematic, 1 = random
 #define MAX_TEMPERATURE			27		//increase for more tropical world
-#define LATITUDE_EFFECT			0.3		//increase for more effect
+#define LATITUDE_EFFECT			40		//increase for more effect
 #define ALTITUDE_EFFECT			0.06
 
 #define COLD				10
-#define NORMAL				13
-#define WARM				15
+#define NORMAL				12
+#define WARM				17
 #define HOT				19
 
 void worldmap::GenerateClimate(void)
@@ -169,48 +177,57 @@ void worldmap::GenerateClimate(void)
 	{
 		float DistanceFromEquator = fabs(float(y) / YSize - 0.5f);
 
+		bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
+
 		for(ushort x = 0; x < XSize; x++)
 		{
 			if(AltitudeBuffer[x][y] <= 0)
 			{
-				Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
-				TypeBuffer[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType() - groundworldmapterrain::GetProtoIndexBegin();
+				TypeBuffer[x][y] = ocean::StaticType();
+				//Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
+				//TypeBuffer[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType();// - groundworldmapterrain::GetProtoIndexBegin();
 				continue;
 			}
 
-			bool Rainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
+			bool Rainy = LatitudeRainy;
 
-			if(rand() % 10 < 10 * CLIMATE_RANDOMNESS)
-				Rainy = rand() % 2 ? true : false;
+			//if(rand() % 10 < 10 * CLIMATE_RANDOMNESS)
+			//	Rainy = rand() % 2 ? true : false;
 
 			if(!Rainy)
 				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(AltitudeBuffer[DoX][DoY] <= 0) { Rainy = true; break; })
 
-			char Temperature = char(MAX_TEMPERATURE - DistanceFromEquator * YSize * LATITUDE_EFFECT - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
+			char Temperature = char(MAX_TEMPERATURE - DistanceFromEquator * LATITUDE_EFFECT - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
 
 			if(Temperature <= COLD)
 				if(Rainy)
-					TypeBuffer[x][y] = snow::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = snow::StaticType();
 				else
-					TypeBuffer[x][y] = glacier::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = glacier::StaticType();
 
 			if(Temperature > COLD && Temperature <= NORMAL)
 				if(Rainy)
-					TypeBuffer[x][y] = evergreenforest::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = evergreenforest::StaticType();
 				else
-					TypeBuffer[x][y] = snow::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = snow::StaticType();
 
-			if(Temperature > NORMAL && Temperature <= HOT)
+			if(Temperature > NORMAL && Temperature <= WARM)
 				if(Rainy)
-					TypeBuffer[x][y] = leafyforest::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = leafyforest::StaticType();
 				else
-					TypeBuffer[x][y] = steppe::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = steppe::StaticType();
+
+			if(Temperature > WARM && Temperature <= HOT)
+				if(Rainy)
+					TypeBuffer[x][y] = leafyforest::StaticType();
+				else
+					TypeBuffer[x][y] = desert::StaticType();
 
 			if(Temperature > HOT)
 				if(Rainy)
-					TypeBuffer[x][y] = jungle::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = jungle::StaticType();
 				else
-					TypeBuffer[x][y] = desert::StaticType() - groundworldmapterrain::GetProtoIndexBegin();
+					TypeBuffer[x][y] = desert::StaticType();
 		}
 	}
 }
@@ -221,20 +238,20 @@ void worldmap::SmoothClimate(void)
 
 	for(ushort c = 0; c < 3; c++)
 		for(ushort y = 0; y < YSize; y++)
-			for(ushort x = 0; x < XSize; x++)
-				if(OldTypeBuffer[x][y] = TypeBuffer[x][y])
-					TypeBuffer[x][y] = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y);
+			for(ushort x = 0, NewType; x < XSize; x++)
+				if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
+					TypeBuffer[x][y] = NewType;
 
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-			Map[x][y]->ChangeWorldMapTerrain(GetProtoType<groundworldmapterrain>(TypeBuffer[x][y] + groundworldmapterrain::GetProtoIndexBegin())->Clone(), new atmosphere);
+			Map[x][y]->ChangeWorldMapTerrain(protocontainer<groundworldmapterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
 
 	delete [] OldTypeBuffer;
 }
 
 ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort x, ushort y)
 {
-	static ushort Types = groundworldmapterrain::GetProtoAmount();											
+	static ushort Types = protocontainer<groundworldmapterrain>::GetProtoAmount() + 1;//groundworldmapterrain::GetProtoAmount();											
 	static uchar* Type = new uchar[Types];
 
 	for(ushort n = 0; n < Types; n++)
@@ -244,10 +261,10 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
 	Type[TypeBuffer[x][y]]++;
 
-	uchar MostCommon = Type[0];
+	uchar MostCommon = 0;
 
 	for(ushort c = 1; c < Types; c++)
-		if(Type[c] > Type[MostCommon])
+		if(Type[c] > Type[MostCommon] && c != ocean::StaticType())
 			MostCommon = c;
 
 	return MostCommon;
@@ -313,3 +330,4 @@ void worldmap::RemoveEmptyContinents(void)
 				else
 					Continent.pop_back();
 }
+

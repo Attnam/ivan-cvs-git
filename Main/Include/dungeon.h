@@ -31,4 +31,10 @@ private:
 	uchar Levels;
 };
 
+inline std::ofstream& operator<<(std::ofstream& SaveFile, dungeon* Dungeon)
+{
+	Dungeon->Save(SaveFile);
+	return SaveFile;
+}
+
 #endif

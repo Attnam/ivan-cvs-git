@@ -77,15 +77,15 @@ public:
 	virtual bool IsType(ushort QType) const { return Type() == QType; }
 	virtual bool IsSolid(void) const { return false; }
 	virtual void Be(void) {}
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
 protected:
 	virtual std::string NameStem(void) const = 0;
 	virtual std::string Article(void) const { return "a"; }
 	virtual void NormalFoodEffect(character*, float, float);
 	ulong Volume;
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -109,7 +109,7 @@ protected:
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller(void) : Index(prototypesystem::Add(new name)) {}\
+		name##_protoinstaller(void) : Index(protocontainer<material>::Add(new name)) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -138,7 +138,7 @@ protected:
 
 #endif
 
-BEGIN_PROTOTYPING(material)
+//BEGIN_PROTOTYPING(material)
 
 class MATERIAL
 (
@@ -570,6 +570,6 @@ protected:
 	virtual std::string NameStem(void) const	{ return "mithril"; }
 );
 
-FINISH_PROTOTYPING(material)
+//FINISH_PROTOTYPING(material)
 
 #endif

@@ -32,7 +32,7 @@ public:
 	virtual ~levelsquare(void);
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
-	virtual void HandleCharacters(void);
+	//virtual void HandleCharacters(void);
 	virtual void RemoveCharacter(void);
 	virtual stack* GetStack(void) const		{ return Stack; }
 	virtual void AlterLuminance(vector, ushort);
@@ -69,12 +69,16 @@ public:
 	virtual void HandleFluids(void);
 	virtual void SetGroundLevelTerrain(groundlevelterrain*);
 	virtual void SetOverLevelTerrain(overlevelterrain*);
-	virtual groundlevelterrain* GetGroundLevelTerrain(void) const;
-	virtual overlevelterrain* GetOverLevelTerrain(void) const;
+	virtual groundterrain* GetGroundTerrain(void) const;// { return GroundLevelTerrain; }
+	virtual overterrain* GetOverTerrain(void) const;// { return OverLevelTerrain; }
+	virtual groundlevelterrain* GetGroundLevelTerrain(void) const { return GroundLevelTerrain; }
+	virtual overlevelterrain* GetOverLevelTerrain(void) const { return OverLevelTerrain; }
 	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
-	virtual level* GetMotherLevel(void) const { return (level*)MotherArea; }
-	virtual void SetMotherLevel(level* What) { MotherArea = (area*)What; }
+	virtual level* GetLevelUnder(void) const { return (level*)AreaUnder; }
+	virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
 protected:
+	groundlevelterrain* GroundLevelTerrain;
+	overlevelterrain* OverLevelTerrain;
 	ushort CalculateEmitation(void) const;
 	struct emitter
 	{
@@ -95,3 +99,4 @@ protected:
 };
 
 #endif
+

@@ -53,11 +53,11 @@ public:
 	virtual void Save(std::ofstream& SaveFile) const { levelterrain::Save(SaveFile); }
 	virtual void Load(std::ifstream& SaveFile) { levelterrain::Load(SaveFile); };
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 protected:
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	static ushort ProtoIndexBegin, ProtoIndexEnd;*/
 };
 
 class overlevelterrain : public levelterrain, public overterrain
@@ -73,35 +73,23 @@ public:
 	virtual std::string DigMessage(void) { return "The ground is too hard to dig."; }
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
 protected:
 	virtual void MakeWalkable(void);
 	virtual void MakeNotWalkable(void);
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define LEVELTERRAIN(name, base, protobase, initmaterials, setstats, data)\
-	\
-	name : public base\
-	{\
-	public:\
-		name(bool = true, bool = true, bool = true);\
-		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
-		static ushort StaticType(void);\
-	protected:\
-		virtual void SetDefaultStats(void);\
-		virtual ushort Type(void) const;\
-		data\
-	};\
+	#define PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
 	\
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false, false, false))) {}\
+		name##_protoinstaller(void) : Index(protocontainer<protobase>::Add(new name(false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -114,21 +102,23 @@ protected:
 
 #else
 
-	#define LEVELTERRAIN(name, base, protobase, initmaterials, setstats, data)\
-	\
-	name : public base\
-	{\
-	public:\
-		name(bool = true, bool = true, bool = true);\
-		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
-		static ushort StaticType(void);\
-	protected:\
-		virtual void SetDefaultStats(void);\
-		virtual ushort Type(void) const;\
-		data\
-	};
+	#define PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
 
 #endif
+
+#define LEVELTERRAIN(name, base, protobase, initmaterials, setstats, data)\
+\
+name : public base\
+{\
+public:\
+	name(bool = true, bool = true, bool = true);\
+	name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	static ushort StaticType(void);\
+protected:\
+	virtual void SetDefaultStats(void);\
+	virtual ushort Type(void) const;\
+	data\
+}; PROTOINSTALLER(name, base, protobase, initmaterials, setstats);
 
 #define GROUNDLEVELTERRAIN(name, base, initmaterials, setstats, data)\
 \
@@ -156,7 +146,7 @@ LEVELTERRAIN(\
 	data\
 );
 
-BEGIN_PROTOTYPING(groundlevelterrain)
+//BEGIN_PROTOTYPING(groundlevelterrain)
 
 class GROUNDLEVELTERRAIN
 (
@@ -188,9 +178,9 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 352); }
 );
 
-FINISH_PROTOTYPING(groundlevelterrain)
+//FINISH_PROTOTYPING(groundlevelterrain)
 
-BEGIN_PROTOTYPING(overlevelterrain)
+//BEGIN_PROTOTYPING(overlevelterrain)
 
 class OVERLEVELTERRAIN
 (
@@ -325,7 +315,7 @@ protected:
 	uchar OwnerGod;
 );
 
-FINISH_PROTOTYPING(overlevelterrain)
+//FINISH_PROTOTYPING(overlevelterrain)
 
 #endif
 

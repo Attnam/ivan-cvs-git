@@ -62,16 +62,16 @@ public:
 	virtual bool CanBeWished(void) const { return true; }
 	virtual item* CreateWishedItem(void) const;
 	virtual bool Apply(character*);
-	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
-	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/
 	virtual bool Zap(vector, uchar);
 	virtual bool CanBeZapped(void) const { return false; }
 	virtual bool Polymorph(stack*);
 protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort GetFormModifier(void) const { return 0; }
-	static ushort ProtoIndexBegin, ProtoIndexEnd;
+	//static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -95,7 +95,7 @@ protected:
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false, false, false))) {}\
+		name##_protoinstaller(void) : Index(protocontainer<item>::Add(new name(false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -135,7 +135,7 @@ public:\
 	data\
 };
 
-BEGIN_PROTOTYPING(item)
+//BEGIN_PROTOTYPING(item)
 
 class ABSTRACT_ITEM
 (
@@ -880,6 +880,6 @@ public:
 	virtual bool CanBeWished(void) const RET(true)
 );
 
-FINISH_PROTOTYPING(item)
+//FINISH_PROTOTYPING(item)
 
 #endif

@@ -22,6 +22,7 @@ public:
 	virtual void Draw(void) const;
 	virtual void Save(std::ofstream&) const;
 	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	virtual worldmapsquare* GetWorldMapSquare(ushort x, ushort y) const {return Map[x][y];}
 	virtual void GenerateClimate(void);
 	virtual void Load(std::ifstream&);
 	virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
