@@ -208,7 +208,7 @@ void game::Init(std::string Name)
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new petrus);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
 	Petrus = 0;

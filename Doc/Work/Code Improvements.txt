@@ -27,3 +27,4 @@ Merkkitaulukoiden hävittäminen.
 MS-koodin poisajo grafiikkakirjastosta.
 Kirjastoniputus.
 Esittelyjen uudelleenjärjesteleminen? (tosi tylsää)
+*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.

@@ -1,5 +1,9 @@
 March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* charde.h: Bodypart color tweaks
+
+March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* bitmap.cpp: Added bool DrawSides parameter for bitmap::DrawPolygon
 
 March 14 2002 Timo Kiviluoto <sonor@phpoint.fi>

@@ -252,10 +252,14 @@ class CHARACTER
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(48, 48, 48); }
   virtual uchar GetHeadType() const { return 9; }
   virtual uchar GetTorsoType() const { return 5; }
-  virtual uchar GetArmType() const { return 2; }
-  virtual uchar GetLegType() const { return 1; }
+  virtual uchar GetArmType() const { return 1; }
+  virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "Petrus, the High Priest of the Great Frog"; }
   virtual void CreateCorpse();
@@ -287,6 +291,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual ushort HairColor() const { return RAND() % 2 ? MAKE_RGB(80, 0, 80) : MAKE_RGB(160, 160, 160); }
   virtual uchar GetHeadType() const { return 4 + RAND() % 2; }
   virtual uchar GetTorsoType() const { return 2; }
   virtual uchar GetArmType() const { return RAND() % 2; }
@@ -316,6 +321,12 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual ushort CapColor() const { return MAKE_RGB(0, 128, 128); }
+  virtual ushort HeadSpecialColor() const { return MAKE_RGB(0, 128, 128); }
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(0, 128, 128); }
+  //virtual ushort BeltColor() const { return MAKE_RGB(0, 128, 128); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(0, 128, 128); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(0, 128, 128); }
   virtual uchar GetHeadType() const { return 7; }
   virtual uchar GetTorsoType() const { return 8; }
   virtual uchar GetArmType() const { return 5; }
@@ -380,6 +391,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool CanSwim() const { return true; }
  protected:
+  virtual ushort CapColor() const { return MAKE_RGB(180, 0, 80); }
   virtual uchar GetHeadType() const { return 8; }
   virtual uchar GetTorsoType() const { return 2; }
   virtual uchar GetArmType() const { return 1; }
@@ -854,7 +866,7 @@ class CHARACTER
   virtual uchar GetHeadType() const { return 11; }
   virtual uchar GetTorsoType() const { return 9; }
   virtual uchar GetArmType() const { return 7; }
-  virtual uchar GetLegType() const { return 1; }
+  virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 120000; }
   virtual std::string DeathMessage() { return "Ivan falls groaning bravely: \"Party revenges Ivan!\""; }
   virtual std::string NameSingular() const { return "Ivan"; }
@@ -881,6 +893,8 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(128, 80, 48); }
+  virtual ushort BeltColor() const { return MAKE_RGB(144, 96, 60); }
   virtual uchar GetHeadType() const { return 12; }
   virtual uchar GetTorsoType() const { return 12; }
   virtual uchar GetArmType() const { return 8; }
@@ -986,7 +1000,7 @@ class CHARACTER
   virtual uchar GetHeadType() const { return 0; }
   virtual uchar GetTorsoType() const { return 0; }
   virtual uchar GetArmType() const { return 0; }
-  virtual uchar GetLegType() const { return 6; }
+  virtual uchar GetLegType() const { return 1; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "slave"; }
 );
@@ -1013,6 +1027,10 @@ class CHARACTER
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(150, 0, 0); }
+  virtual ushort BeltColor() const { return MAKE_RGB(180, 180, 0); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(150, 0, 0); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(150, 0, 0); }
   virtual uchar GetHeadType() const { return 16; }
   virtual uchar GetTorsoType() const { return 10; }
   virtual uchar GetArmType() const { return 10; }
@@ -1031,6 +1049,7 @@ class CHARACTER
     //SetHeadType(16);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
 );
@@ -1044,6 +1063,7 @@ class CHARACTER
     //SetHeadType(17);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual uchar GetHeadType() const { return 17; }
   virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
 );
@@ -1057,6 +1077,7 @@ class CHARACTER
     //SetHeadType(18);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(60, 48, 24); }
   virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
 );
@@ -1070,6 +1091,7 @@ class CHARACTER
     //SetHeadType(19);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(96, 0, 60); }
   virtual uchar GetHeadType() const { return 19; }
   virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
 );
@@ -1083,6 +1105,7 @@ class CHARACTER
     //SetHeadType(20);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(80, 64, 32); }
   virtual uchar GetHeadType() const { return 20; }
   virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
 );
@@ -1096,6 +1119,7 @@ class CHARACTER
     //SetHeadType(21);
   },
  protected:
+  virtual ushort GetHairColor() const { return MAKE_RGB(144, 0, 0); }
   virtual uchar GetHeadType() const { return 21; }
   virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
 );
@@ -1179,10 +1203,11 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
+  virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual uchar GetHeadType() const { return 14; }
   virtual uchar GetTorsoType() const { return 5; }
-  virtual uchar GetArmType() const { return 2; }
-  virtual uchar GetLegType() const { return 1; }
+  virtual uchar GetArmType() const { return 1; }
+  virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "librarian"; }
   virtual float GetMeleeStrength() const { return 500; }
