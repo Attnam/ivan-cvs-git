@@ -149,6 +149,7 @@ struct characterdatabase
   bool CanBeConfused;
   bool CanAttack;
   bool CanApply;
+  vector2d WieldedPosition;
 };
 
 class characterprototype
@@ -453,6 +454,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanBeConfused);
   DATA_BASE_BOOL(CanAttack);
   DATA_BASE_BOOL(CanApply);
+  DATA_BASE_VALUE(vector2d, WieldedPosition);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -766,7 +768,7 @@ class character : public entity, public id
   virtual const char* KickNoun() const;
   virtual const char* BiteNoun() const;
   virtual bool AttackIsBlockable(uchar) const { return true; }
-  virtual uchar GetSpecialBodyPartFlags(ushort, bool = false) const;
+  virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
   stack* Stack;
   long NP, AP;
   bool Player;

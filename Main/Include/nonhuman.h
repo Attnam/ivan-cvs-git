@@ -183,7 +183,7 @@ class CHARACTER
   dolphin,
   nonhumanoid,
  protected:
-  virtual uchar GetSpecialBodyPartFlags(ushort, bool = false) const;
+  virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }
 );
 

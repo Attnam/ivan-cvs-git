@@ -368,3 +368,9 @@ Raining frogs.
 Zombies transporting vodka.
 Hangover state.
 Gods shouldn't like spoiled corpses.
+Teleport trap.
+Poisoned food.
+A wand which could penetrate walls.
+Lockpick item.
+Mjolak should do more energy damage if the player has good relation with Cruentus.
+Mellis should sometimes give vodka bottles.

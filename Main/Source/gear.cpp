@@ -9,9 +9,9 @@ ushort meleeweapon::GetEffectBonus() const { return 100 + 5 * Enchantment; }
 ushort meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
 ushort meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
 
-uchar flamingsword::GetSpecialFlags() const { return ST_FLAME; }
+ushort flamingsword::GetSpecialFlags() const { return ST_FLAME; }
 
-uchar thunderhammer::GetSpecialFlags() const { return !IsBroken() ? ST_LIGHTNING : 0; }
+ushort thunderhammer::GetSpecialFlags() const { return !IsBroken() ? ST_LIGHTNING : 0; }
 
 short armor::GetCarryingBonus() const { return Enchantment << 1; }
 

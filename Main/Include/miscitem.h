@@ -67,7 +67,7 @@ class ITEM
   banana,
  public:
   virtual void Be() { }
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -91,7 +91,7 @@ class ITEM
   virtual uchar GetAlphaB(ushort) const;
   virtual uchar GetAlphaC(ushort) const;
   virtual uchar GetAlphaD(ushort) const;
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort) const;
   uchar SquarePosition;
@@ -549,6 +549,8 @@ class ITEM
   virtual bool ReceiveDamage(character*, ushort, ushort);
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
+  virtual bool IsStuck() const;
+  virtual void Fly(character*, uchar, ushort);
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);

@@ -3,7 +3,7 @@ lp - low priority
 // - done
 (r) - rejected
 
-Inhandspics of broken weapons. (lp)
+//Inhandspics of broken weapons. (lp)
 Hit symbol.
 Scimitar + broken picture.
 Katana + broken picture.
@@ -25,6 +25,8 @@ Vacuum cleaner.
 Rolling pin.
 Frying pan.
 Clothes peg.
+Showel.
+Sausage.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

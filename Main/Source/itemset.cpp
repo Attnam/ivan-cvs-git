@@ -35,6 +35,8 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "team.h"
 #include "smoke.h"
 #include "save.h"
+#include "whandler.h"
+#include "bitmap.h"
 
 #include "item.cpp"
 #include "bodypart.cpp"

@@ -102,13 +102,13 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterialColorC(ushort) const { return ColorC; }
   virtual ushort GetMaterialColorD(ushort) const { return ColorD; }
   virtual vector2d GetBitmapPos(ushort) const { return BitmapPos; }
-  virtual uchar GetSpecialFlags() const { return SpecialFlags; }
+  virtual ushort GetSpecialFlags() const { return SpecialFlags; }
   festring OwnerDescription;
   vector2d BitmapPos;
   ushort ColorB;
   ushort ColorC;
   ushort ColorD;
-  uchar SpecialFlags;
+  ushort SpecialFlags;
   short HP;
   short MaxHP;
   bool Unique;
@@ -265,6 +265,7 @@ class ABSTRACT_ITEM
   virtual void CalculateAttributeBonuses();
   short GetWieldedHitStrength() const;
   virtual void SignalEquipmentAdd(gearslot*);
+  virtual void SignalEquipmentRemoval(gearslot*);
   void ApplyDexterityPenalty(item*);
   virtual bool DamageArmor(character*, ushort, ushort);
   bool CheckIfWeaponTooHeavy(const char*) const;
@@ -272,6 +273,10 @@ class ABSTRACT_ITEM
   virtual void LowerStats();
   void AddAttackInfo(felist&) const;
   void AddDefenceInfo(felist&) const;
+  void UpdateWieldedPicture();
+  void DrawWielded(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual bool IsRightArm() const = 0;
+  virtual void UpdatePictures();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -287,6 +292,8 @@ class ABSTRACT_ITEM
   long APCost;
   short StrengthBonus;
   short DexterityBonus;
+  graphicid WieldedGraphicId;
+  bitmap* WieldedPicture;
 );
 
 class ITEM
@@ -298,9 +305,10 @@ class ITEM
   virtual uchar GetBodyPartIndex() const;
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
+  virtual bool IsRightArm() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -312,9 +320,10 @@ class ITEM
   virtual uchar GetBodyPartIndex() const;
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
+  virtual bool IsRightArm() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -326,7 +335,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const;
   virtual bool DamageArmor(character*, ushort, ushort);
  protected:
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ABSTRACT_ITEM
@@ -396,7 +405,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -408,7 +417,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM

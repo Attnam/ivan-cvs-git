@@ -38,6 +38,7 @@ struct graphicid
   ushort OutlineColor NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
+  vector2d Position NO_ALIGNMENT;
 };
 
 #ifdef VC

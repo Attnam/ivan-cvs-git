@@ -179,9 +179,9 @@ bool commandsystem::Open(character* Char)
       bool OpenableItems = Char->GetStack()->SortedItems(Char, &item::OpenableSorter);
 
       if(OpenableItems)
-	Key = game::AskForKeyPress(CONST_S("What do you wish to open?  [press a direction key, space or i]"));
+	Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key, space or i]"));
       else
-	Key = game::AskForKeyPress(CONST_S("What do you wish to open?  [press a direction key or space]"));
+	Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key or space]"));
 
       if(Key == 'i' && OpenableItems)
 	{

@@ -13,7 +13,7 @@ void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMa
 void object::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
 void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
-uchar object::GetSpecialFlags() const { return ST_NORMAL; }
+ushort object::GetSpecialFlags() const { return ST_NORMAL; }
 ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
 const std::vector<bitmap*>& object::GetPicture() const { return Picture; }
 
@@ -157,7 +157,7 @@ void object::UpdatePictures()
   AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
   uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
-  uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
+  ushort SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
   ushort Seed = 0;
   uchar FlyAmount = GetSpoilLevel(); 
@@ -285,6 +285,7 @@ void object::UpdatePictures()
       GI.OutlineColor = GetOutlineColor(c);
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
+      GI.Position = vector2d(0, 0);
       Picture[c] = igraph::AddUser(GI);
     }
 }

@@ -6,7 +6,7 @@ void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { Ob
 void materialcontainer::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetContainedMaterial(NewMaterial, SpecialFlags); }
 void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
 
-uchar holybanana::GetSpecialFlags() const { return ST_FLAME; }
+ushort holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
 vector2d lantern::GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
 ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB16(255, 255, 240); }
@@ -622,6 +622,9 @@ bool oillamp::Apply(character* Applier)
 		}
 	    }
 
+	  meleeweapon* Weapon = new meleeweapon(TWO_HANDED_SCIMITAR, NO_MATERIALS);
+	  Weapon->InitMaterials(MAKE_MATERIAL(ARCANITE), MAKE_MATERIAL(ARCANITE), 0);
+	  Genie->SetRightWielded(Weapon);
 	  ADD_MESSAGE("%s wishes for a two-handed scimitar. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
 	}
       else
@@ -1258,7 +1261,7 @@ void can::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetStack());
 }
 
-uchar lantern::GetSpecialFlags() const
+ushort lantern::GetSpecialFlags() const
 {
   switch(SquarePosition)
     {
@@ -2147,7 +2150,7 @@ void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
 
 bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if(!IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
+  if(!IsStuck() && !IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
@@ -2206,3 +2209,16 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
   return item::ReceiveDamage(Damager, Damage, Type);
 }
+
+bool beartrap::IsStuck() const
+{
+  character* Char = GetLSquareUnder()->GetCharacter();
+  return Char && Char->GetStuckTo() && Char->GetStuckTo()->GetID() == GetID();
+}
+
+void beartrap::Fly(character* Thrower, uchar Direction, ushort Force)
+{
+  if(!IsStuck())
+    item::Fly(Thrower, Direction, Force);
+}
+

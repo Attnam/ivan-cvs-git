@@ -105,7 +105,7 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -175,7 +175,7 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
   virtual bool ReceiveDamage(character*, ushort, ushort);
 );
 
@@ -288,6 +288,7 @@ class ITEM
   virtual bool IsBelt(const character*) const { return true; }
   virtual ushort GetFormModifier() const; 
   virtual bool IsInCorrectSlot(ushort) const;
+  virtual ushort GetMaterialColorB(ushort Frame) const { return GetMaterialColorA(Frame); }
 );
 
 class ITEM

@@ -23,7 +23,7 @@ const char* mommo::ThirdPersonBiteVerb() const { return "vomits acidous slime at
 const char* mommo::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
 const char* mommo::BiteNoun() const { return "slime"; }
 
-uchar dolphin::GetSpecialBodyPartFlags(ushort, bool) const { return RAND() & (MIRROR|ROTATE); }
+ushort dolphin::GetSpecialBodyPartFlags(ushort, bool) const { return RAND() & (MIRROR|ROTATE); }
 
 ushort chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
@@ -547,11 +547,11 @@ void genetrixvesana::GetAICommand()
 			if(NewPlant->CanBeSeenByPlayer())
 			  {
 			    if((*i)->IsPlayer())
-			      ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
+			      ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(INDEFINITE));
 			    else if((*i)->CanBeSeenByPlayer())
-			      ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), (*i)->CHAR_NAME(DEFINITE));
+			      ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(INDEFINITE), (*i)->CHAR_NAME(DEFINITE));
 			    else
-			      ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(DEFINITE));
+			      ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(INDEFINITE));
 			  }
 		      }
 		  }
@@ -1058,29 +1058,32 @@ bool magpie::IsRetreating() const
 
 void magpie::GetAICommand()
 {
-  character* Char = GetRandomNeighbour();
-
-  if(Char)
+  if(!IsRetreating())
     {
-      std::vector<item*> Sparkling;
+      character* Char = GetRandomNeighbour();
 
-      for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
+      if(Char)
 	{
-	  if((*i)->IsSparkling() && !MakesBurdened((*i)->GetWeight()))
-	    Sparkling.push_back(*i);
-	}
+	  std::vector<item*> Sparkling;
 
-      if(!Sparkling.empty())
-	{
-	  item* ToSteal = Sparkling[RAND() % Sparkling.size()];
-	  ToSteal->RemoveFromSlot();
-	  GetStack()->AddItem(ToSteal);
+	  for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
+	    {
+	      if((*i)->IsSparkling() && !MakesBurdened((*i)->GetWeight()))
+		Sparkling.push_back(*i);
+	    }
 
-	  if(Char->IsPlayer())
-	    ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+	  if(!Sparkling.empty())
+	    {
+	      item* ToSteal = Sparkling[RAND() % Sparkling.size()];
+	      ToSteal->RemoveFromSlot();
+	      GetStack()->AddItem(ToSteal);
 
-	  EditAP(-500);
-	  return;
+	      if(Char->IsPlayer())
+		ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+
+	      EditAP(-500);
+	      return;
+	    }
 	}
     }
 

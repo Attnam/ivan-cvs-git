@@ -59,6 +59,7 @@ class object : public entity, public id
   void SetConfig(ushort);
   virtual void CalculateAll() = 0;
   virtual uchar GetSpoilLevel() const { return 0; }
+  void CreateWieldedBitmap(graphicid&) const;
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
@@ -71,7 +72,7 @@ class object : public entity, public id
   material* SetMaterial(material*&, material*, ulong, ushort);
   void ChangeMaterial(material*&, material*, ulong, ushort);
   bool CalculateHasBe() const;
-  virtual uchar GetSpecialFlags() const;
+  virtual ushort GetSpecialFlags() const;
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }

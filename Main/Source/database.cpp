@@ -250,12 +250,12 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeConfused);
   ADD_MEMBER(CanAttack);
   ADD_MEMBER(CanApply);
+  ADD_MEMBER(WieldedPosition);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
 {
   ADD_MEMBER(Possibility);
-  ADD_MEMBER(InHandsPic);
   ADD_MEMBER(Score);
   ADD_MEMBER(IsDestroyable);
   ADD_MEMBER(CanBeWished);
@@ -331,6 +331,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(WearWisdomLimit);
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(BreakEffectRange);
+  ADD_MEMBER(WieldedBitmapPos);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()

@@ -5,3 +5,4 @@
 (s) suspended
 
 Shields may be a little too weak.
+Lanterns are too heavy.

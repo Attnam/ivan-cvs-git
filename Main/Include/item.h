@@ -23,7 +23,6 @@ struct itemdatabase
   void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return true; }
   ushort Possibility;
-  vector2d InHandsPic;
   long Score;
   bool IsDestroyable;
   bool CanBeWished;
@@ -99,6 +98,7 @@ struct itemdatabase
   ushort WearWisdomLimit;
   uchar AttachedGod;
   uchar BreakEffectRange;
+  vector2d WieldedBitmapPos;
 };
 
 class itemprototype
@@ -145,7 +145,7 @@ class item : public object
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual short GetOfferValue(uchar) const;
-  void Fly(character*, uchar, ushort);
+  virtual void Fly(character*, uchar, ushort);
   uchar HitCharacter(character*, character*, ushort, float, uchar);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual bool Apply(character*);
@@ -233,7 +233,6 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-  DATA_BASE_VALUE(vector2d, InHandsPic);
   virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
   DATA_BASE_BOOL(IsMaterialChangeable);
@@ -303,6 +302,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
   DATA_BASE_VALUE(uchar, BreakEffectRange);
+  DATA_BASE_VALUE(vector2d, WieldedBitmapPos);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -393,6 +393,7 @@ class item : public object
   virtual bool IsGorovitsFamilyRelic() const { return false; }
   virtual bool HasLock() const { return false; }
   virtual bool EffectIsGood() const { return false; }
+  void CreateWieldedGraphicId(graphicid&, vector2d, uchar, bool) const;
 #ifdef WIZARD
   virtual void AddAttackInfo(felist&) const;
   void AddMiscellaneousInfo(felist&) const;

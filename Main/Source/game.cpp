@@ -31,7 +31,7 @@
 #include "bitmap.h"
 #include "save.h"
 
-#define SAVE_FILE_VERSION 112 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 113 // Increment this if changes make savefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -463,9 +463,6 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
   globalwindowhandler::UpdateTick();
   GetCurrentArea()->Draw(AnimationDraw);
 
-  if(OnScreen(GetPlayer()->GetPos()))
-    igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
-
   GetPlayer()->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -480,6 +477,9 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
 
       igraph::DrawCursor(ScreenCordinates);
     }
+
+  if(OnScreen(GetPlayer()->GetPos()))
+    igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
 }
 
 bool game::Save(const festring& SaveName)
@@ -1167,7 +1167,7 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
       square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
       if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheatMode())
-	DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
+	DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, BLACK);
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 

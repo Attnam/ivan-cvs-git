@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 16 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected many bugs in the bear trap code
+	* Slaves no longer carry encrypted scrolls
+	* Wielded items are again shown on the game screen
+
 April 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Arms are again shown correctly on the game screen
@@ -39,7 +45,7 @@ April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	
 April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Setting the default name is now possible from conf
+	* Setting the pet default name is now possible from conf
 	* This default is initialized to Kenny
 	* Puppies now have more replies
 

@@ -1828,13 +1828,7 @@ bool humanoid::CanWield() const
 
 bool humanoid::CheckBalance(float KickDamage)
 {
-  if(KickDamage == 0)
-    return true;
-
-  if(GetLegs() == 1)
-    return false;
-  else
-    return KickDamage * 50 < RAND() % GetSize();
+  return !CanWalk() || !KickDamage || IsStuck() || (GetLegs() != 1 && KickDamage * 10 < RAND() % GetSize());
 }
 
 long humanoid::GetMoveAPRequirement(uchar Difficulty) const
@@ -2042,15 +2036,21 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool
 
   if(GetTorso())
     GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-  
+
+  if(GetHead())
+    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
   if(GetRightArm())
     GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    {
+      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    }
 
-  if(GetHead())
-    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+  if(GetRightArm())
+    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
 void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
@@ -2066,15 +2066,21 @@ void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance,
 
   if(GetTorso())
     GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-  
+
+  if(GetHead())
+    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
+
   if(GetRightArm())
     GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
-    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    {
+      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    }
 
-  if(GetHead())
-    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
+  if(GetRightArm())
+    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
 ushort angel::GetTorsoMainColor() const
@@ -2730,7 +2736,7 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+/*void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
   humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 
@@ -2741,7 +2747,7 @@ void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, b
       Temp->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
       delete Temp;
     }
-}
+}*/
 
 ushort mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
@@ -3223,11 +3229,34 @@ bool communist::BoundToUse(const item* Item, ushort Index) const
 
 void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
-  /* The order is unique. */
+  /* Order is important: Don't use a loop. */
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+  if(GetTorso())
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetGroin())
+    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetRightLeg())
+    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetLeftLeg())
+    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetHead())
+    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetRightArm())
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+
+  if(GetLeftArm())
+    {
+      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    }
+
+  if(GetRightArm())
+    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
 }
 
 festring werewolfwolf::GetKillName() const

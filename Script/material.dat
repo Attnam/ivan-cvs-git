@@ -59,7 +59,7 @@ material
 		StrengthValue = 400;
 		ConsumeType = CT_METAL;
 		Density = 3000;
-		Color = rgb16(232, 232, 0);
+		Color = rgb16(220, 220, 0);
 		IsGolemMaterial = true;
 		CanBeWished = false;
 		Emitation = rgb24(150, 150, 150);
@@ -205,7 +205,7 @@ material
 		StrengthValue = 2;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 100;
-		Color = rgb16(32, 96, 32);
+		Color = rgb16(32, 110, 32);
 		IsFlammable = true;
 		NameStem = "grass";
 		AdjectiveStem = "grassy";

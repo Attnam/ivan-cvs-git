@@ -10,7 +10,6 @@
 item
 {
 	Possibility = 0;
-	InHandsPic = 160, 144;
 	Score = 0;
 	IsDestroyable = true;
 	CanBeWished = true;
@@ -80,6 +79,7 @@ item
 	WearWisdomLimit = NO_LIMIT;
 	AttachedGod = NONE;
 	/* Obligatory: AttachedGod */
+	WieldedBitmapPos = 176, 0;
 }
 
 materialcontainer
@@ -91,7 +91,6 @@ lantern
 {
 	DefaultSize = 30;
 	Possibility = 100;
-	InHandsPic = 160, 160;
 	Category = TOOL;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
@@ -106,17 +105,18 @@ lantern
 	BitmapPos = 0, 256;
 	WallBitmapPos = 0, 192;
 	AttachedGod = LEGIFER;
+	WieldedBitmapPos = 160, 160;
 
 	Config BROKEN;
 	{
 		DefaultSize = 15;
 		Possibility = 10;
-		InHandsPic = 160, 128;
 		FormModifier = 25;
 		Price = 0;
 		BaseEmitation = 0;
 		BitmapPos = 0, 304;
 		WallBitmapPos = 0, 208;
+		WieldedBitmapPos = 176, 160;
 	}
 }
 
@@ -124,7 +124,6 @@ can /* materialcontainer-> */
 {
 	DefaultSize = 10;
 	Possibility = 450;
-	InHandsPic = 160, 144;
 	Category = FOOD;
 	DefaultMainVolume = 50;
 	DefaultContainedVolume = 500;
@@ -138,13 +137,13 @@ can /* materialcontainer-> */
 	MaterialConfigChances = { 3, 750, 50, 25; }
 	Roundness = 60;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 176, 144;
 }
 
 lump
 {
 	DefaultSize = 10;
 	Possibility = 400;
-	InHandsPic = 160, 112;
 	Category = FOOD;
 	DefaultMainVolume = 500;
 	StrengthModifier = 75;
@@ -156,6 +155,7 @@ lump
 	OKVisualEffects = MIRROR|FLIP;
 	Roundness = 75;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 160, 112;
 }
 
 meleeweapon
@@ -171,7 +171,6 @@ meleeweapon
 	{
 		DefaultSize = 120;
 		Possibility = 100;
-		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 130;
 		DefaultSecondaryVolume = 45;
@@ -185,19 +184,20 @@ meleeweapon
 		MaterialConfigChances = { 7, 500, 1500, 750, 100, 25, 25, 2; }
 		Roundness = 10;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 16;
 	}
 
 	Config BROKEN|LONG_SWORD;
 	{
 		Possibility = 10;
 		BitmapPos = 32, 208;
+		WieldedBitmapPos = 176, 80;
 	}
 
 	Config TWO_HANDED_SWORD;
 	{
 		DefaultSize = 150;
 		Possibility = 50;
-		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 350;
 		DefaultSecondaryVolume = 150;
@@ -212,19 +212,20 @@ meleeweapon
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 16;
 	}
 
 	Config BROKEN|TWO_HANDED_SWORD;
 	{
 		Possibility = 25;
 		BitmapPos = 32, 80;
+		WieldedBitmapPos = 176, 80;
 	}
 
 	Config TWO_HANDED_SCIMITAR;
 	{
 		DefaultSize = 140;
 		Possibility = 25;
-		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 400;
 		DefaultSecondaryVolume = 150;
@@ -239,19 +240,20 @@ meleeweapon
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 176, 112;
 	}
 
 	Config BROKEN|TWO_HANDED_SCIMITAR;
 	{
 		Possibility = 5;
 		BitmapPos = 32, 96;
+		WieldedBitmapPos = 176, 80;
 	}
 
 	Config SPEAR;
 	{
 		DefaultSize = 190;
 		Possibility = 800;
-		InHandsPic = 160, 96;
 		WeaponCategory = POLE_ARMS;
 		StrengthModifier = 70;
 		BitmapPos = 16, 144;
@@ -265,19 +267,20 @@ meleeweapon
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 96;
 	}
 
 	Config BROKEN|SPEAR;
 	{
 		Possibility = 80;
 		BitmapPos = 32, 224;
+		WieldedBitmapPos = 176, 96;
 	}
 
 	Config AXE;
 	{
 		DefaultSize = 60;
 		Possibility = 600;
-		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
 		DefaultMainVolume = 200;
 		DefaultSecondaryVolume = 400;
@@ -292,19 +295,20 @@ meleeweapon
 		Roundness = 20;
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
+		WieldedBitmapPos = 160, 176;
 	}
 
 	Config BROKEN|AXE;
 	{
 		Possibility = 60;
 		BitmapPos = 32, 176;
+		WieldedBitmapPos = 176, 176;
 	}
 
 	Config HALBERD;
 	{
 		DefaultSize = 170;
 		Possibility = 200;
-		InHandsPic = 160, 176;
 		WeaponCategory = POLE_ARMS;
 		DefaultMainVolume = 375;
 		DefaultSecondaryVolume = 1800;
@@ -318,12 +322,14 @@ meleeweapon
 		Roundness = 20;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 256;
 	}
 
 	Config BROKEN|HALBERD;
 	{
 		Possibility = 20;
 		BitmapPos = 32, 144;
+		WieldedBitmapPos = 176, 256;
 	}
 
 	Config MACE;
@@ -335,7 +341,6 @@ meleeweapon
 		DefaultSecondaryVolume = 500;
 		BitmapPos = 0, 32;
 		Possibility = 400;
-		InHandsPic = 160, 192;
 		WeaponCategory = BLUNT_WEAPONS;
 		NameSingular = "mace";
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
@@ -344,19 +349,21 @@ meleeweapon
 		Roundness = 30; /* we count the handle, too */
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 192;
+
 	}
 
 	Config BROKEN|MACE;
 	{
 		Possibility = 40;
 		BitmapPos = 32, 112;
+		WieldedBitmapPos = 176, 192;
 	}
 
 	Config HAMMER;
 	{
 		DefaultSize = 60;
 		Possibility = 400;
-		InHandsPic = 176, 16;
 		WeaponCategory = BLUNT_WEAPONS;
 		DefaultMainVolume = 250;
 		DefaultSecondaryVolume = 500;
@@ -371,19 +378,20 @@ meleeweapon
 		IsTwoHanded = true;
 		CanBeUsedBySmith = true;
 		AttachedGod = LORICATUS;
+		WieldedBitmapPos = 176, 16;
 	}
 
 	Config BROKEN|HAMMER;
 	{
 		Possibility = 40;
 		BitmapPos = 48, 192;
+		WieldedBitmapPos = 176, 224;
 	}
 
 	Config SICKLE;
 	{
 		DefaultSize = 40;
 		Possibility = 50;
-		InHandsPic = 0, 0; /* fix */
 		WeaponCategory = SMALL_SWORDS;
 		DefaultMainVolume = 100;
 		DefaultSecondaryVolume = 50;
@@ -396,19 +404,20 @@ meleeweapon
 		MaterialConfigChances = { 3, 1000, 100, 25; }
 		Roundness = 20;
 		AttachedGod = SEGES;
+		WieldedBitmapPos = 176, 32;
 	}
 
 	Config BROKEN|SICKLE;
 	{
 		Possibility = 5;
 		BitmapPos = 48, 176;
+		WieldedBitmapPos = 176, 240;
 	}
 
 	Config DAGGER;
 	{
 		DefaultSize = 40;
 		Possibility = 300;
-		InHandsPic = 160, 32;
 		WeaponCategory = SMALL_SWORDS;
 		DefaultMainVolume = 25;
 		DefaultSecondaryVolume = 25;
@@ -421,19 +430,20 @@ meleeweapon
 		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
 		Roundness = 20;
 		AttachedGod = CLEPTIA;
+		WieldedBitmapPos = 160, 288;
 	}
 
 	Config BROKEN|DAGGER;
 	{
 		Possibility = 30;
 		BitmapPos = 48, 288;
+		WieldedBitmapPos = 176, 288;
 	}
 
 	Config SHORT_SWORD;
 	{
 		DefaultSize = 70;
 		Possibility = 200;
-		InHandsPic = 160, 16;
 		WeaponCategory = SMALL_SWORDS;
 		DefaultMainVolume = 70;
 		DefaultSecondaryVolume = 30;
@@ -447,19 +457,20 @@ meleeweapon
 		MaterialConfigChances = { 6, 1250, 1000, 750, 100, 25, 25; }
 		Roundness = 15;
 		AttachedGod = CLEPTIA;
+		WieldedBitmapPos = 160, 32;
 	}
 
 	Config BROKEN|SHORT_SWORD;
 	{
 		Possibility = 20;
 		BitmapPos = 48, 272;
+		WieldedBitmapPos = 176, 208;
 	}
 
 	Config BASTARD_SWORD;
 	{
 		DefaultSize = 130;
 		Possibility = 75;
-		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 225;
 		DefaultSecondaryVolume = 100;
@@ -473,19 +484,20 @@ meleeweapon
 		Roundness = 15;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
+		WieldedBitmapPos = 160, 16;
 	}
 
 	Config BROKEN|BASTARD_SWORD;
 	{
 		Possibility = 8;
 		BitmapPos = 64, 192;
+		WieldedBitmapPos = 176, 80;
 	}
 
 	Config BATTLE_AXE;
 	{
 		DefaultSize = 110;
 		Possibility = 200;
-		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
 		DefaultMainVolume = 250;
 		DefaultSecondaryVolume = 400;
@@ -499,19 +511,20 @@ meleeweapon
 		Roundness = 30;
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
+		WieldedBitmapPos = 160, 272;
 	}
 
 	Config BROKEN|BATTLE_AXE;
 	{
 		Possibility = 20;
 		BitmapPos = 64, 96;
+		WieldedBitmapPos = 176, 272;
 	}
 
 	Config SCYTHE;
 	{
 		DefaultSize = 200;
 		Possibility = 50;
-		InHandsPic = 0, 0; /* fix */
 		WeaponCategory = POLE_ARMS;
 		DefaultMainVolume = 150;
 		DefaultSecondaryVolume = 1800;
@@ -525,19 +538,20 @@ meleeweapon
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = MORTIFER;
+		WieldedBitmapPos = 176, 48;
 	}
 
 	Config BROKEN|SCYTHE;
 	{
 		Possibility = 5;
 		BitmapPos = 64, 128;
+		WieldedBitmapPos = 160, 48;
 	}
 
 	Config QUARTER_STAFF;
 	{
 		DefaultSize = 220;
 		Possibility = 200;
-		InHandsPic = 160, 96;
 		WeaponCategory = BLUNT_WEAPONS;
 		StrengthModifier = 80;
 		BitmapPos = 64, 240;
@@ -550,19 +564,20 @@ meleeweapon
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = SILVA;
+		WieldedBitmapPos = 160, 304;
 	}
 
 	Config BROKEN|QUARTER_STAFF;
 	{
 		Possibility = 30;
 		BitmapPos = 64, 256;
+		WieldedBitmapPos = 176, 304;
 	}
 }
 
 banana /* materialcontainer-> */
 {
 	Possibility = 150;
-	InHandsPic = 160, 112;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 40;
 	DefaultContainedVolume = 150;
@@ -581,11 +596,13 @@ banana /* materialcontainer-> */
 	MinCharges = 6;
 	CanBePiled = true;
 	AttachedGod = NEFAS;
+	WieldedBitmapPos = 160, 320;
 
 	Config BROKEN;
 	{
 		Possibility = 10;
 		BitmapPos = 32, 272;
+		WieldedBitmapPos = 176, 320;
 	}
 }
 
@@ -604,6 +621,7 @@ holybanana /* materialcontainer->banana-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	Roundness = 20;
+	WieldedBitmapPos = 160, 320;
 
 	Config BROKEN;
 	{
@@ -611,6 +629,7 @@ holybanana /* materialcontainer->banana-> */
 		BitmapPos = 32, 272;
 		Price = 500;
 		Score = 250;
+		WieldedBitmapPos = 176, 320;
 	}
 }
 
@@ -618,7 +637,6 @@ justifier /* meleeweapon-> */
 {
 	DefaultSize = 125;
 	Possibility = 0;
-	InHandsPic = 160, 16;
 	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 200;
 	DefaultSecondaryVolume = 100;
@@ -643,6 +661,7 @@ justifier /* meleeweapon-> */
 	CanBeEnchanted = false;
 	GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
 	AttachedGod = VALPURUS;
+	WieldedBitmapPos = 160, 16;
 }
 
 neercseulb /* meleeweapon-> */
@@ -654,7 +673,6 @@ neercseulb /* meleeweapon-> */
 	Score = 1000;
 	CanBeWished = false;
 	BitmapPos = 0, 32;
-	InHandsPic = 160, 192;
 	WeaponCategory = BLUNT_WEAPONS;
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 800;
@@ -674,6 +692,7 @@ neercseulb /* meleeweapon-> */
 	CanBeBroken = false;
 	DefaultEnchantment = 6;
 	AttachedGod = MORTIFER;
+	WieldedBitmapPos = 160, 192;
 }
 
 pickaxe /* meleeweapon-> */
@@ -681,7 +700,6 @@ pickaxe /* meleeweapon-> */
 	Category = TOOL;
 	DefaultSize = 75;
 	Possibility = 100;
-	InHandsPic = 160, 64;
 	DefaultMainVolume = 225;
 	DefaultSecondaryVolume = 400;
 	BitmapPos = 0, 96;
@@ -697,12 +715,14 @@ pickaxe /* meleeweapon-> */
 	IsTwoHanded = true;
 	Price = 50; /* bonus for being able to dig */
 	AttachedGod = LORICATUS;
+	WieldedBitmapPos = 160, 64;
 
 	Config BROKEN;
 	{
 		Possibility = 10;
 		BitmapPos = 32, 160;
 		Price = 0;
+		WieldedBitmapPos = 176, 64;
 	}
 }
 
@@ -715,7 +735,6 @@ armor
 
 bodyarmor /* armor-> */
 {
-	InHandsPic = 160, 144;
 	Category = BODY_ARMOR;
 	FormModifier = 15;
 	IsAbstract = true;
@@ -723,6 +742,7 @@ bodyarmor /* armor-> */
 	IsTwoHanded = true;
 	CanBeBroken = true;
 	AttachedGod = LORICATUS;
+	WieldedBitmapPos = 160, 144;
 
 	Config CHAIN_MAIL;
 	{
@@ -827,7 +847,6 @@ potion /* materialcontainer-> */
 	DefaultSize = 30;
 	Possibility = 750;
 	WeaponCategory = BLUNT_WEAPONS;
-	InHandsPic = 160, 128;
 	Category = POTION;
 	DefaultMainVolume = 60;
 	DefaultContainedVolume = 1500;
@@ -842,13 +861,14 @@ potion /* materialcontainer-> */
 	Roundness = 70;
 	CanBeBroken = true;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 176, 144;
+
 }
 
 bananapeels
 {
 	DefaultSize = 20;
 	Possibility = 100;
-	InHandsPic = 160, 112;
 	Category = MISC;
 	DefaultMainVolume = 40;
 	StrengthModifier = 50;
@@ -859,13 +879,13 @@ bananapeels
 	Roundness = 10;
 	WeaponCategory = WHIPS;
 	AttachedGod = NEFAS;
+	WieldedBitmapPos = 160, 112;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
 {
 	DefaultSize = 10;
 	Possibility = 100;
-	InHandsPic = 160, 128;
 	Category = MISC;
 	DefaultMainVolume = 60;
 	StrengthModifier = 50;
@@ -876,11 +896,11 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	MainMaterialConfig == GLASS;
 	Roundness = 70;
 	AttachedGod = NEFAS;
+	WieldedBitmapPos = 160, 128;
 }
 
 scroll
 {
-	InHandsPic = 160, 128;
 	Category = SCROLL;
 	DefaultMainVolume = 250;
 	StrengthModifier = 25;
@@ -891,6 +911,7 @@ scroll
 	MainMaterialConfig == PARCHMENT;
 	IsAbstract = true;
 	Roundness = 15;
+	WieldedBitmapPos = 176, 144;
 }
 
 scrollofcreatemonster /* scroll-> */
@@ -924,7 +945,6 @@ nut
 {
 	DefaultSize = 3; 
 	Possibility = 5;
-	InHandsPic = 160, 128;
 	Category = FOOD;
 	DefaultMainVolume = 25;
 	StrengthModifier = 50;
@@ -933,7 +953,8 @@ nut
 	MainMaterialConfig == HUMAN_FLESH;
 	NameSingular = "nut";
 	Roundness = 90;
-	AttachedGod = NEFAS;
+	AttachedGod = NEFAS;	
+	WieldedBitmapPos = 160, 368;
 }
 
 leftnutofpetrus /* nut-> */
@@ -970,7 +991,8 @@ bone
 	MainMaterialConfig == BONE;
 	Roundness = 20;
 	IsTwoHanded = true;
-	AttachedGod = MORTIFER;
+	AttachedGod = MORTIFER;	
+	WieldedBitmapPos = 160, 336;
 }
 
 loaf
@@ -978,7 +1000,6 @@ loaf
 	DefaultSize = 40;
 	Possibility = 400;
 	WeaponCategory = BLUNT_WEAPONS;
-	InHandsPic = 160, 128;
 	Category = FOOD;
 	DefaultMainVolume = 500;
 	StrengthModifier = 100;
@@ -991,6 +1012,7 @@ loaf
 	Alias == "food";
 	Roundness = 20;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 160, 352;
 }
 
 scrollofwishing /* scroll-> */
@@ -1034,6 +1056,7 @@ wand
 	Roundness = 5;
 	CanBePiled = false;
 	BreakEffectRange = 1;
+	WieldedBitmapPos = 160, 352;
 
 	Config WAND_OF_POLYMORPH;
 	{
@@ -1215,7 +1238,6 @@ avatarofvalpurus
 	Possibility = 0;
 	CanBeWished = false;
 	IsDestroyable = false;
-	InHandsPic = 160, 112;
 	IsMaterialChangeable = false;
 	Price = 1000000;
 	Category = MISC;
@@ -1231,6 +1253,7 @@ avatarofvalpurus
 	Roundness = 80;
 	CanBeCloned = false;
 	AttachedGod = VALPURUS;
+	WieldedBitmapPos = 160, 128;
 }
 
 kiwi
@@ -1246,6 +1269,7 @@ kiwi
 	MainMaterialConfig == KIWI_FLESH;
 	Roundness = 80;
 	AttachedGod = SILVA;
+	WieldedBitmapPos = 160, 368;
 }
 
 pineapple
@@ -1262,13 +1286,13 @@ pineapple
 	Roundness = 90;
 	IsTwoHanded = true;
 	AttachedGod = SILVA;
+	WieldedBitmapPos = 176, 144;
 }
 
 palmbranch
 {
 	DefaultSize = 80;
 	Possibility = 10;
-	InHandsPic = 160, 208;
 	Category = MISC;
 	DefaultMainVolume = 4000;
 	StrengthModifier = 50;
@@ -1279,13 +1303,13 @@ palmbranch
 	Roundness = 80;
 	IsTwoHanded = true;
 	AttachedGod = SILVA;
+	WieldedBitmapPos = 160, 208;
 }
 
 whip /* meleeweapon-> */
 {
 	DefaultSize = 210;
 	Possibility = 50;
-	InHandsPic = 160, 224;
 	WeaponCategory = WHIPS;
 	DefaultMainVolume = 500;
 	DefaultSecondaryVolume = 40;
@@ -1299,6 +1323,7 @@ whip /* meleeweapon-> */
 	FormModifier = 10; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;
 	AttachedGod = NEFAS;
+	WieldedBitmapPos = 160, 224;
 
 	Config RUNED_WHIP;
 	{
@@ -1316,7 +1341,6 @@ backpack /* materialcontainer-> */
 {
 	DefaultSize = 80;
 	Possibility = 25;
-	InHandsPic = 160, 144;
 	Category = TOOL;
 	DefaultMainVolume = 1000;
 	DefaultContainedVolume = 10000;
@@ -1330,12 +1354,12 @@ backpack /* materialcontainer-> */
 	Roundness = 70;
 	IsTwoHanded = true;
 	AttachedGod = CRUENTUS;
+	WieldedBitmapPos = 160, 144;
 }
 
 holybook
 {
 	DefaultSize = 25;
-	InHandsPic = 160, 128;
 	Possibility = 15; /* this is for each config */
 	Category = BOOK;
 	DefaultMainVolume = 2000;
@@ -1352,6 +1376,7 @@ holybook
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 176, 144;
 }
 
 fiftymillionroubles
@@ -1370,6 +1395,7 @@ fiftymillionroubles
 	Alias = { 2, "money", "riches"; }
 	Roundness = 60;
 	AttachedGod = MELLIS;
+	WieldedBitmapPos = 160, 128;
 }
 
 oillamp
@@ -1392,13 +1418,13 @@ oillamp
 	Alias == "lamp";
 	WeaponCategory = BLUNT_WEAPONS;
 	AttachedGod = ATAVUS;
+	WieldedBitmapPos = 160, 128;
 }
 
 stone
 {
 	DefaultSize = 30;
 	Possibility = 25;
-	InHandsPic = 160, 112;
 	Category = VALUABLE;
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
@@ -1410,6 +1436,7 @@ stone
 	Alias == "jewel";
 	Roundness = 90;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 160, 368;
 }
 
 scrolloftaming /* scroll-> */
@@ -1436,6 +1463,7 @@ mine /*materialcontainer-> */
 	Roundness = 100;
 	IsTwoHanded = true;
 	AttachedGod = CRUENTUS;
+	WieldedBitmapPos = 160, 128;
 }
 
 key
@@ -1452,6 +1480,7 @@ key
 	MainMaterialConfig == IRON;
 	Roundness = 10;
 	AttachedGod = LORICATUS;
+	WieldedBitmapPos = 160, 368;
 }
 
 shield /* armor-> */
@@ -1469,6 +1498,7 @@ shield /* armor-> */
 	Roundness = 80;
 	WeaponCategory = SHIELDS;
 	CanBeBroken = true;
+	WieldedBitmapPos = 128, 32;
 
 	Config BROKEN;
 	{
@@ -1495,6 +1525,7 @@ cloak /* armor-> */
 	IsTwoHanded = true;
 	InElasticityPenaltyModifier = 50;
 	AttachedGod = CLEPTIA;
+	WieldedBitmapPos = 160, 144;
 
 	Config CLOAK_OF_INVISIBILITY;
 	{
@@ -1521,6 +1552,7 @@ boot /* armor-> */
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 10;
 	HandleInPairs = true;
+	WieldedBitmapPos = 160, 128;
 
 	Config BOOT_OF_STRENGTH;
 	{
@@ -1574,6 +1606,7 @@ gauntlet /* armor-> */
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 20;
 	HandleInPairs = true;
+	WieldedBitmapPos = 160, 128;
 
 	Config GAUNTLET_OF_STRENGTH;
 	{
@@ -1616,6 +1649,7 @@ belt /* armor-> */
 	MaterialConfigChances = { 5, 1500, 500, 200, 100, 5; }
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
+	WieldedBitmapPos = 160, 224;
 
 	Config BELT_OF_CARRYING;
 	{
@@ -1641,6 +1675,7 @@ ring
 	MainMaterialConfig == DIAMOND;
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
+	WieldedBitmapPos = 160, 368;
 
 	Config RING_OF_FIRE_RESISTANCE;
 	{
@@ -1760,6 +1795,7 @@ amulet
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
+	WieldedBitmapPos = 160, 112;
 
 	Config AMULET_OF_LIFE_SAVING;
 	{
@@ -1797,11 +1833,11 @@ bodypart
 
 head /* bodypart-> */
 {
-	InHandsPic = 160, 144;
 	StrengthModifier = 200;
 	FormModifier = 10;
 	NameSingular = "head";
 	Roundness = 70;
+	WieldedBitmapPos = 160, 128;
 }
 
 torso /* bodypart-> */
@@ -1811,6 +1847,7 @@ torso /* bodypart-> */
 	NameSingular = "torso";
 	IsAbstract = true;
 	Roundness = 60;
+	WieldedBitmapPos = 160, 144;
 }
 
 normaltorso /* bodypart->torso-> */
@@ -1828,6 +1865,7 @@ arm /* bodypart-> */
 	IsAbstract = true;
 	Roundness = 15;
 	WeaponCategory = BLUNT_WEAPONS;
+	WieldedBitmapPos = 160, 352;
 }
 
 rightarm /* bodypart->arm-> */
@@ -1846,6 +1884,7 @@ groin /* bodypart-> */
 	FormModifier = 10;
 	NameSingular = "groin";
 	Roundness = 40;
+	WieldedBitmapPos = 160, 128;
 }
 
 leg /* bodypart-> */
@@ -1855,6 +1894,7 @@ leg /* bodypart-> */
 	IsAbstract = true;
 	Roundness = 20;
 	WeaponCategory = BLUNT_WEAPONS;
+	WieldedBitmapPos = 160, 352;
 }
 
 rightleg /* bodypart->leg-> */
@@ -1875,7 +1915,6 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	Score = 2000;
 	IsDestroyable = false;
 	Category = MISC;
-	InHandsPic = 160, 144;
 	StrengthModifier = 150;
 	FormModifier = 15;
 	BitmapPos = 16, 0;
@@ -1888,13 +1927,13 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	IsTwoHanded = true;
 	CanBeCloned = false;
 	AttachedGod = SCABIES;
+	WieldedBitmapPos = 160, 144;
 }
 
 corpse
 {
 	Possibility = 0;
 	Category = FOOD;
-	InHandsPic = 160, 144;
 	IsAutoInitializable = false;
 	IsPolymorphSpawnable = false;
 	StrengthModifier = 100;
@@ -1906,6 +1945,7 @@ corpse
 	CanBeWished = false; /* temporary */
 	IsMaterialChangeable = false;
 	AttachedGod = NONE;
+	WieldedBitmapPos = 160, 144;
 }
 
 eddytorso /* normaltorso-> */
@@ -1932,6 +1972,7 @@ whistle
 	Roundness = 10;
 	Price = 20;
 	AttachedGod = DULCIS;
+	WieldedBitmapPos = 160, 368;
 }
 
 magicalwhistle /* whistle-> */
@@ -1959,6 +2000,7 @@ itemcontainer
 	IsPolymorphSpawnable = false;
 	IsDestroyable = false;
 	AttachedGod = ATAVUS;
+	WieldedBitmapPos = 160, 144;
 
 	Config SMALL_CHEST;
 	{
@@ -2036,6 +2078,7 @@ beartrap
 	CanBePiled = false;
 	CanBeBroken = true;
 	AttachedGod = CRUENTUS;
+	WieldedBitmapPos = 160, 128;
 
 	Config BROKEN;
 	{
@@ -2058,6 +2101,7 @@ helmet
 	MaterialConfigChances = { 14, 500, 750, 300, 400, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25; }
 	Roundness = 60;
 	CanBeBroken = true;
+	WieldedBitmapPos = 160, 128;
 
 	Config BROKEN;
 	{
@@ -2222,13 +2266,13 @@ stethoscope
 	Price = 250;
 	MainMaterialConfig == UNICORN_HORN;
 	AttachedGod = SEGES;
+	WieldedBitmapPos = 160, 128;
 }
 
 flamingsword /* meleeweapon-> */
 {
 	DefaultSize = 120;
 	Possibility = 20;
-	InHandsPic = 160, 16;
 	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 130;
 	DefaultSecondaryVolume = 45;
@@ -2244,29 +2288,20 @@ flamingsword /* meleeweapon-> */
 	BaseEmitation = rgb24(150, 120, 90);
 	Price = 250;
 	AttachedGod = LORICATUS;
+	WieldedBitmapPos = 160, 16;
 
 	Config BROKEN;
 	{
 		Possibility = 3;
 		BitmapPos = 32, 208;
+		WieldedBitmapPos = 176, 80;
 	}
 }
-
-		/*DefaultSize = 170;
-		Possibility = 200;
-		InHandsPic = 160, 176;
-		WeaponCategory = POLE_ARMS;
-		DefaultMainVolume = 375;
-		DefaultSecondaryVolume = 1800;
-		StrengthModifier = 150;
-		BitmapPos = 0, 80;
-		FormModifier = 115;*/
 
 mjolak /* meleeweapon-> */
 {
 	DefaultSize = 180;
 	Possibility = 3;
-	InHandsPic = 160, 176;
 	WeaponCategory = POLE_ARMS;
 	DefaultMainVolume = 400;
 	DefaultSecondaryVolume = 2000;
@@ -2286,12 +2321,14 @@ mjolak /* meleeweapon-> */
 	Price = 750;
 	Score = 750;
 	AttachedGod = CRUENTUS;
+	WieldedBitmapPos = 160, 256;
 
 	Config BROKEN;
 	{
 		Possibility = 0;
 		BitmapPos = 32, 144;
 		Price = 150;
+		WieldedBitmapPos = 176, 256;
 	}
 }
 
@@ -2299,7 +2336,6 @@ vermis /* meleeweapon-> */
 {
 	DefaultSize = 220;
 	Possibility = 5;
-	InHandsPic = 160, 96;
 	WeaponCategory = POLE_ARMS;
 	StrengthModifier = 100;
 	BitmapPos = 16, 144;
@@ -2319,23 +2355,16 @@ vermis /* meleeweapon-> */
 	Price = 500;
 	Score = 750;
 	AttachedGod = SOPHOS;
+	WieldedBitmapPos = 160, 96;
 
 	Config BROKEN;
 	{
 		Possibility = 0;
 		BitmapPos = 32, 224;
 		Price = 100;
+		WieldedBitmapPos = 176, 96;
 	}
 }
-
-		/*StrengthModifier = 125; 
-		FormModifier = 65; 
-		DefaultSize = 70; 
-		DefaultMainVolume = 300;
-		DefaultSecondaryVolume = 500;
-		BitmapPos = 0, 32;
-		Possibility = 400;
-		InHandsPic = 160, 192;*/
 
 turox /* meleeweapon-> */
 {
@@ -2344,7 +2373,6 @@ turox /* meleeweapon-> */
 	DefaultSize = 90;
 	BitmapPos = 0, 32;
 	Possibility = 5;
-	InHandsPic = 160, 192;
 	DefaultMainVolume = 800;
 	DefaultSecondaryVolume = 600;
 	WeaponCategory = BLUNT_WEAPONS;
@@ -2360,12 +2388,14 @@ turox /* meleeweapon-> */
 	Price = 250;
 	Score = 750;
 	AttachedGod = CRUENTUS;
+	WieldedBitmapPos = 160, 192;
 
 	Config BROKEN;
 	{
 		Possibility = 0;
 		BitmapPos = 32, 112;
-		Price = 50;
+		Price = 50;		
+		WieldedBitmapPos = 176, 192;
 	}
 }
 
@@ -2406,7 +2436,6 @@ scrollofenchantarmor /* scroll-> */
 
 skull
 {
-	InHandsPic = 160, 144;
 	StrengthModifier = 100;
 	FormModifier = 15;
 	Roundness = 65;
@@ -2419,13 +2448,13 @@ skull
 	MainMaterialConfig == BONE;
 	IsTwoHanded = true;
 	AttachedGod = MORTIFER;
+	WieldedBitmapPos = 160, 128;
 }
 
 gorovitshammer
 {
 	DefaultSize = 90;
 	Possibility = 0;
-	InHandsPic = 176, 16;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 300;
 	DefaultSecondaryVolume = 600;
@@ -2445,13 +2474,13 @@ gorovitshammer
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = LORICATUS;
+	WieldedBitmapPos = 176, 16;
 }
 
 gorovitssickle
 {
 	DefaultSize = 60;
 	Possibility = 0;
-	InHandsPic = 160, 64; /* fix */
 	WeaponCategory = SMALL_SWORDS;
 	DefaultMainVolume = 125;
 	DefaultSecondaryVolume = 50;
@@ -2469,6 +2498,7 @@ gorovitssickle
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = SEGES;
+	WieldedBitmapPos = 176, 32;
 }
 
 scrollofrepair /* scroll-> */
@@ -2494,7 +2524,6 @@ encryptedscroll /* scroll-> */
 
 horn
 {
-	InHandsPic = 160, 128;
 	StrengthModifier = 70;
 	FormModifier = 30;
 	Roundness = 40;
@@ -2509,6 +2538,7 @@ horn
 	Price = 500;
 	CanBePiled = false;
 	AttachedGod = DULCIS;
+	WieldedBitmapPos = 160, 352;
 
 	Config BRAVERY;
 	{
@@ -2527,7 +2557,6 @@ thunderhammer /* meleeweapon-> */
 {
 	DefaultSize = 50;
 	Possibility = 10;
-	InHandsPic = 176, 16;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 200;
 	DefaultSecondaryVolume = 400;
@@ -2543,12 +2572,14 @@ thunderhammer /* meleeweapon-> */
 	Price = 500;
 	BaseEmitation = rgb24(130, 130, 130);
 	AttachedGod = TERRA;
+	WieldedBitmapPos = 176, 16;
 
 	Config BROKEN;
 	{
 		Possibility = 1;
 		BitmapPos = 48, 192;
 		Price = 100;
+		WieldedBitmapPos = 176, 224;
 	}
 }
 
@@ -2556,7 +2587,6 @@ saalthul
 {
 	DefaultSize = 70;
 	Possibility = 3;
-	InHandsPic = 160, 16;
 	WeaponCategory = SMALL_SWORDS;
 	DefaultMainVolume = 60;
 	DefaultSecondaryVolume = 20;
@@ -2576,6 +2606,7 @@ saalthul
 	CanBeCloned = false;
 	Alias == "Saal'thul";
 	AttachedGod = CLEPTIA;
+	WieldedBitmapPos = 160, 32;
 
 	Config BROKEN;
 	{
@@ -2583,6 +2614,7 @@ saalthul
 		BitmapPos = 48, 272;
 		Price = 100;
 		GearStates = 0;
+		WieldedBitmapPos = 176, 208;
 	}
 }
 
@@ -2600,6 +2632,7 @@ chameleonwhip
 	FormModifier = 30; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
 	AttachedGod = SCABIES;
+	WieldedBitmapPos = 160, 224;
 }
 
 carrot
@@ -2619,4 +2652,5 @@ carrot
 	Roundness = 10;
 	CanBePiled = true;
 	AttachedGod = SEGES;
+	WieldedBitmapPos = 160, 352;
 }

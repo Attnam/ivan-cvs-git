@@ -235,7 +235,7 @@ const char* character::ThirdPersonCriticalBiteVerb() const { return "critically 
 const char* character::UnarmedHitNoun() const { return "attack"; }
 const char* character::KickNoun() const { return "kick"; }
 const char* character::BiteNoun() const { return "attack"; }
-uchar character::GetSpecialBodyPartFlags(ushort, bool) const { return ST_NORMAL; }
+ushort character::GetSpecialBodyPartFlags(ushort, bool) const { return ST_NORMAL; }
 const char* character::GetEquipmentName(ushort) const { return ""; }
 const std::list<ulong>& character::GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
 wsquare* character::GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(Index); }
@@ -1804,7 +1804,7 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 
 bool character::CheckBalance(float KickDamage)
 {
-  return !CanWalk() || !KickDamage || KickDamage * 25 < RAND() % GetSize();
+  return !CanWalk() || !KickDamage || IsStuck() || KickDamage * 5 < RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -3156,7 +3156,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
 	  if(TemporaryState & (1 << c))
 	    TemporaryStateCounter[c] = PERMANENT;
 
-      CreateBodyParts(SpecialFlags & NO_PIC_UPDATE);
+      CreateBodyParts(SpecialFlags | NO_PIC_UPDATE);
 
       for(c = 0; c < BASE_ATTRIBUTES; ++c)
 	BaseExperience[c] = 0;
@@ -3173,6 +3173,9 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
     {
       if(!(SpecialFlags & NO_EQUIPMENT))
 	CreateInitialEquipment((SpecialFlags & NO_EQUIPMENT_PIC_UPDATE) >> 1);
+
+      if(!(SpecialFlags & NO_PIC_UPDATE))
+	UpdatePictures();
 
       CalculateAll();
       RestoreHP();

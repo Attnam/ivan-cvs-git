@@ -80,7 +80,13 @@ bitmap* igraph::AddUser(const graphicid& GI)
     }
   else
     {
+      if(GI.Position != vector2d(0, 0))
+	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, vector2d(16, 16), GI.Position);
+
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
+
+      if(GI.Position != vector2d(0, 0))
+	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, vector2d(16, 16), -GI.Position);
 
       if((GI.SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);

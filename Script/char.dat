@@ -90,6 +90,7 @@ character
 	CanBeConfused = true;
 	CanAttack = true;
 	CanApply = false;
+	WieldedPosition = 0, 0;
 }
 
 humanoid
@@ -279,7 +280,7 @@ guard
 		Adjective = "rookie";
 		CWeaponSkillHits = { 2, 20, 20; }
 		PanicLevel = 50;
-		ClothColor = rgb16(150, 100, 50);
+		ClothColor = rgb16(130, 80, 30);
 		FriendlyReplies =
 		{
 			4,
@@ -347,7 +348,7 @@ guard
 		RightSWeaponSkillHits = 200;
 		LeftSWeaponSkillHits = 200;
 		PanicLevel = 15;
-		ClothColor = rgb16(144, 144, 144);
+		ClothColor = rgb16(100, 100, 100);
 		FriendlyReplies =
 		{
 			5,
@@ -375,7 +376,7 @@ guard
 		LeftSWeaponSkillHits = 50;
 		PanicLevel = 10;
 		TotalVolume = 80000;
-		ClothColor = rgb16(255, 255, 255);
+		ClothColor = rgb16(220, 220, 220);
 		FriendlyReplies =
 		{
 			5,
@@ -529,7 +530,7 @@ priest
 	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
 	Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
 	Belt = NYMPH_HAIR belt { Enchantment = 2; }
-	RightWielded = MITHRIL meleeweapon(MACE) { Enchantment = 3; }
+	RightWielded = ARCANITE meleeweapon(MACE) { Enchantment = 3; }
 	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
 	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
 	KnownCWeaponSkills == BLUNT_WEAPONS;
@@ -592,6 +593,7 @@ oree
 	DeathMessage = "@Dd vomits blood for one last time and then dies.";
 	AttachedGod = MORTIFER;
 	CanBeConfused = false;
+	WieldedPosition = 0, -1;
 }
 
 darkknight
@@ -629,7 +631,7 @@ darkknight
 		AttributeBonus = -20;
 		Helmet = BRONZE helmet(FULL_HELMET);
 		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
-		RightWielded = BRONZE meleeweapon(LONG_SWORD);
+		RightWielded = BRONZE BRONZE meleeweapon(LONG_SWORD);
 		LeftWielded = BRONZE shield;
 		Adjective = "rookie";
 		CWeaponSkillHits = { 2, 200, 200; }
@@ -684,7 +686,7 @@ darkknight
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
 		Belt = SAPPHIRE belt { Enchantment = 3; }
-		RightWielded = DIAMOND DIAMOND meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
+		RightWielded = SAPPHIRE RUBY meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
 		RightGauntlet = RUBY gauntlet { Enchantment = 3; }
 		RightBoot = RUBY boot { Enchantment = 3; }
 		Adjective = "grand master";
@@ -973,6 +975,7 @@ skeleton
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
+	WieldedPosition = 0, -1;
 
 	Config WARRIOR;
 	{
@@ -1050,6 +1053,7 @@ goblin
 	FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
 	FleshMaterial = GOBLINOID_FLESH;
 	AttachedGod = CRUENTUS;
+	WieldedPosition = 0, -2;
 
 	Config BERSERKER;
 	{
@@ -1597,6 +1601,7 @@ slave
 		"\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
 	}
 	AttachedGod = MELLIS;
+	Inventory == 0;
 }
 
 petrusswife
@@ -1627,6 +1632,7 @@ petrusswife
 	PanicLevel = 95;
 	BaseUnarmedStrength = 200;
 	IsExtraCoward = true;
+	WieldedPosition = 0, -1;
 	HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
 	FriendlyReplies =
 	{
@@ -1716,6 +1722,7 @@ housewife
 	IsExtraCoward = true;
 	HostileReplies == "\"Face my rolling pin! Graah!\"";
 	AttachedGod = SEGES;
+	WieldedPosition = 0, -1;
 	FriendlyReplies =
 	{
 		5,
@@ -1855,6 +1862,7 @@ zombie
 	DeathMessage = "@Dd is slain (again).";
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
+	WieldedPosition = -1, -2;
 }
 
 imp
@@ -1959,6 +1967,7 @@ mistress
 	Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
 	HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
 	AttachedGod = NEFAS;
+	WieldedPosition = 0, -1;
 	FriendlyReplies =
 	{
 		3,
@@ -2156,6 +2165,7 @@ kobold
 	FleshMaterial = KOBOLD_FLESH;
 	DeathMessage = "@Dd dies yelling like a tortured hyena.";
 	AttachedGod = CRUENTUS;
+	WieldedPosition = 0, -1;
 
 	Config CHIEFTAIN;
 	{
@@ -2345,6 +2355,7 @@ angel
 	AttachedGod = NONE;
 	BodyPartsDisappearWhenSevered = true;
 	CanBeConfused = false;
+	WieldedPosition = 0, -2;
 }
 
 kamikazedwarf
@@ -2383,6 +2394,7 @@ kamikazedwarf
 	Frequency = 100;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	AttachedGod = NONE;
+	WieldedPosition = -1, -2;
 	FriendlyReplies =
 	{
 		4,
@@ -2450,6 +2462,7 @@ unicorn
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	Inventory = { 2, stone { Chance = 50; }, stone { Chance = 50; } }
+	Frequency = 5000;
 
 	Config GOOD;
 	{
@@ -2499,7 +2512,7 @@ genie
 	TorsoBitmapPos = 32, 272;
 	ArmBitmapPos = 64, 272;
 	/* LegBitmapPos is not used */
-	RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SCIMITAR);
+	/*RightWielded = ARCANITE ARCANITE meleeweapon(TWO_HANDED_SCIMITAR);*/
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
@@ -2514,6 +2527,7 @@ genie
 	AttachedGod = ATAVUS;
 	BodyPartsDisappearWhenSevered = true;
 	ClassStates = GAS_IMMUNITY;
+	WieldedPosition = -1, -3;
 }
 
 lion
@@ -2694,6 +2708,7 @@ orc
 	FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
 	FleshMaterial = ORC_FLESH;
 	AttachedGod = CRUENTUS;
+	WieldedPosition = -1, -1;
 
 	Config SLAUGHTERER;
 	{
@@ -2788,7 +2803,7 @@ orc
 		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 2; }
 		BodyArmor = DRAGON_HIDE bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
-		RightWielded = DIAMOND meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
+		RightWielded = RUBY meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
 		LeftWielded = 0;
 		Belt = RUBY belt { Enchantment = 2; }
 		RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
@@ -2915,8 +2930,8 @@ imperialist
 	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
 	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
 	Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 1; }
-	RightWielded = HARDENED_LEATHER DIAMOND whip(RUNED_WHIP) { Enchantment = 3; }
-	LeftWielded = HARDENED_LEATHER DIAMOND whip(RUNED_WHIP) { Enchantment = 3; }
+	RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
+	LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
 	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
 	RightBoot = MITHRIL boot(BOOT_OF_KICKING) { Enchantment = 3; }
 	KnownCWeaponSkills = { 2, WHIPS, KICK; }
@@ -3130,7 +3145,7 @@ encourager
 	TotalSize = 170;
 	NameSingular = "banana grower encourager";
 	Belt = LEATHER belt;
-	RightWielded = LEATHER whip;
+	RightWielded = HARDENED_LEATHER whip;
 	RightBoot = HARDENED_LEATHER boot;
 	KnownCWeaponSkills = { 2, KICK, WHIPS; }
 	CWeaponSkillHits = { 2, 100, 100; }
