@@ -1034,7 +1034,7 @@ void god::PlayerVomitedOnAltar()
 
 void scabies::PlayerVomitedOnAltar()
 {
-	ADD_MESSAGE("%s feels that you are indeed her follower.");
+	ADD_MESSAGE("%s feels that you are indeed her follower.", GOD_NAME); 
 	AdjustRelation(1);
 }
 
