@@ -730,7 +730,7 @@ bool commandsystem::Pray(character* Char)
 	{
 	  if(game::BoolQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
 	    {
-	      if(Char->StateIsActivated(CONFUSED) && !(RAND() % 3))
+	      if(Char->StateIsActivated(CONFUSED) && !(RAND() & 7))
 		{
 		  int Index;
 		  for(Index = 1 + RAND() % GODS;
@@ -999,11 +999,11 @@ bool commandsystem::Sit(character* Char)
 
 bool commandsystem::Go(character* Char)
 {
-  if(Char->StateIsActivated(CONFUSED))
+  /*if(Char->StateIsActivated(CONFUSED))
     {
       ADD_MESSAGE("In this mental state you would forget your destination immediately.");
       return false;
-    }
+    }*/
 
   int Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key]"), false);
 

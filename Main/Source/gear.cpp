@@ -61,7 +61,7 @@ color16 amulet::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
 bool helmet::IsGorovitsFamilyRelic() const { return GetConfig() == GOROVITS_FAMILY_GAS_MASK; }
 long helmet::GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
 bool helmet::IsInCorrectSlot(int I) const { return I == HELMET_INDEX; }
-color16 helmet::GetMaterialColorB(int) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
+color16 helmet::GetMaterialColorB(int) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? (GetConfig() & ~BROKEN) ? MakeRGB16(140, 70, 70) : MakeRGB16(111, 64, 37) : MakeRGB16(0, 40, 0); }
 color16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
 
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }

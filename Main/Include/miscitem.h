@@ -384,6 +384,7 @@ class ITEM
   virtual long GetTruePrice() const;
  protected:
   virtual bool ShowMaterial() const;
+  virtual bool WeightIsIrrelevant() const { return true; }
 );
 
 class ITEM
@@ -660,6 +661,7 @@ class ITEM
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
+  virtual bool WeightIsIrrelevant() const { return true; }
 );
 
 class ITEM

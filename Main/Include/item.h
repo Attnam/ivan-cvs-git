@@ -484,6 +484,7 @@ class item : public object
   virtual int GetGraphicsContainerIndex() const;
   virtual bool ShowMaterial() const;
   virtual bool AllowSparkling() const { return !Fluid; }
+  virtual bool WeightIsIrrelevant() const { return false; }
   slot** Slot;
   int Size;
   ulong ID;

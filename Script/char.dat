@@ -1637,7 +1637,7 @@ hunter
 bear
 {
 	DefaultArmStrength = 50;
-	DefaultAgility = 10;
+	DefaultAgility = 15;
 	DefaultEndurance = 20;
 	DefaultPerception = 15;
 	DefaultIntelligence = 5;
@@ -3499,7 +3499,7 @@ magicmushroom
 	HasFeet = false;
 	UsesNutrition = false;
 	SpillsBlood = false;
-	FleshMaterial = MUSHROOM_FLESH;
+	FleshMaterial = MAGIC_MUSHROOM_FLESH;
 	SkinColor = rgb16(200, 170, 170);
 	CanBeGenerated = true;
 	AttachedGod = SCABIES;

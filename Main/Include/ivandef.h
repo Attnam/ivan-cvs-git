@@ -281,7 +281,7 @@ struct databasebase { int Config; };
 #define EFFECT_POLYMORPH 11
 #define EFFECT_ESP 12
 #define EFFECT_SKUNK_SMELL 13
-#define EFFECT_MAGIC_VAPOUR 14
+#define EFFECT_MAGIC_MUSHROOM 14
 #define EFFECT_TRAIN_PERCEPTION 15
 #define EFFECT_HOLY_BANANA 16
 #define EFFECT_EVIL_WONDER_STAFF_VAPOUR 17
@@ -291,6 +291,7 @@ struct databasebase { int Config; };
 #define EFFECT_GRAY_UNICORN_FLESH 21
 #define EFFECT_WHITE_UNICORN_FLESH 22
 #define EFFECT_TELEPORT_CONTROL 23
+#define EFFECT_MUSHROOM 24
 
 /* CEM = Consume End Message */
 
@@ -505,12 +506,13 @@ struct databasebase { int Config; };
 #define DUR_PERMANENT 4
 #define DUR_FLAGS (2|4)
 #define SRC_FOUNTAIN 8
-#define SRC_MAGIC_VAPOUR 16
-#define SRC_CONFUSE_READ 32
-#define SRC_EVIL 64
-#define SRC_GOOD 128
-#define SRC_FLAGS (8|16|32|64|128)
-#define RANDOMIZABLE (2|4|8|16|32|64|128)
+#define SRC_MUSHROOM 16
+#define SRC_MAGIC_MUSHROOM 32
+#define SRC_CONFUSE_READ 64
+#define SRC_EVIL 128
+#define SRC_GOOD 256
+#define SRC_FLAGS (8|16|32|64|128|256)
+#define RANDOMIZABLE (2|4|8|16|32|64|128|256)
 
 #define MAP_HIDDEN 0
 #define SHOW_MAP_IN_TRUE_LIGHT 1

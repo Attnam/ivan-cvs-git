@@ -1403,10 +1403,6 @@ void game::LookHandler(vector2d CursorPos)
       if(!IsInWilderness() && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
 	{
 	  lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
-
-	  if(LSquare->FluidIsVisible())
-	    LSquare->DisplayFluidInfo(Msg);
-
 	  LSquare->DisplaySmokeInfo(Msg);
 
 	  if(LSquare->HasEngravings() && LSquare->IsTransparent())

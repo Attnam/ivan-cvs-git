@@ -661,6 +661,9 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	  else
 	    OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 
+	  if(FluidIsVisible())
+	    DisplayFluidInfo(MemorizedDescription);
+
 	  if(Cheat)
 	    MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << ")";
 	}
@@ -668,6 +671,9 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	{
 	  MemorizedDescription.Empty();
 	  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+
+	  if(FluidIsVisible())
+	    DisplayFluidInfo(MemorizedDescription);
 	}
       else
 	MemorizedDescription = CONST_S("darkness");
@@ -1209,7 +1215,7 @@ void lsquare::SendMemorizedUpdateRequest()
     {
       Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
 
-      if(!game::IsGenerating() && CanBeSeenByPlayer())
+      if(!game::IsGenerating() && (CanBeSeenByPlayer() || CanBeFeltByPlayer()))
 	{
 	  UpdateMemorized();
 	  UpdateMemorizedDescription();
@@ -1938,15 +1944,15 @@ void lsquare::DisplayFluidInfo(festring& Msg) const
 {
   if(Fluid)
     {
-      Msg << " There is ";
+      Msg << ". There is ";
       fluid::AddFluidInfo(Fluid, Msg);
 
       /* Does this cause problems? */
 
       if(IsFlyable())
-	Msg << " on the ground.";
+	Msg << " on the ground";
       else
-	Msg << " on the wall.";
+	Msg << " on the wall";
     }
 }
 

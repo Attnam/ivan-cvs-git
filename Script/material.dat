@@ -1034,7 +1034,7 @@ gas
 		NameStem = "raw vapourized magic";
 		Alpha = 200;
 		AttachedGod = SOPHOS;
-		Effect = EFFECT_MAGIC_VAPOUR;
+		Effect = EFFECT_MAGIC_MUSHROOM;
 		BreatheMessage = "The air is filled with tiny magical bubbles.";
 		BreatheWisdomLimit = 10;
 	}
@@ -1634,8 +1634,8 @@ flesh
 	{
 		NameStem = "mushroom";
 		Density = 600;
-		Effect = EFFECT_CONFUSE;
-		ConsumeWisdomLimit = 5;
+		Effect = EFFECT_MUSHROOM;
+		ConsumeWisdomLimit = 10;
 		AttachedGod = NEFAS;
 		EffectStrength = 20;
 		IsWarm = false;
@@ -1689,6 +1689,17 @@ flesh
 		NameStem = "blink dog flesh";
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_TELEPORT_CONTROL;
+	}
+
+	Config MAGIC_MUSHROOM_FLESH;
+	{
+		NameStem = "magical mushroom";
+		Density = 600;
+		Effect = EFFECT_MAGIC_MUSHROOM;
+		ConsumeWisdomLimit = 10;
+		AttachedGod = NEFAS;
+		EffectStrength = 20;
+		IsWarm = false;
 	}
 }
 

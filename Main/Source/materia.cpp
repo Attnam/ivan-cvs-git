@@ -77,10 +77,10 @@ bool material::Effect(character* Eater, long Amount)
     case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); break;
     case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); break;
     case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); break;
-    case EFFECT_MAGIC_VAPOUR:
+    case EFFECT_MAGIC_MUSHROOM:
       {
 	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-        Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+        Eater->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	break;
       }
     case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount, 1 << 14); break;
@@ -102,6 +102,12 @@ bool material::Effect(character* Eater, long Amount)
     case EFFECT_GRAY_UNICORN_FLESH: Eater->ReceiveGrayUnicorn(Amount); break;
     case EFFECT_WHITE_UNICORN_FLESH: Eater->ReceiveWhiteUnicorn(Amount); break;
     case EFFECT_TELEPORT_CONTROL: Eater->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
+    case EFFECT_MUSHROOM:
+      {
+	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+        Eater->ActivateRandomState(SRC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+	break;
+      }
     default: return false;
     }
 

@@ -1746,7 +1746,7 @@ bool bunny::CheckForMatePartner()
 	}
     }
 
-  if(GetConfig() == ADULT_FEMALE && GetNP() > SATIATED_LEVEL)
+  if(GetConfig() == ADULT_FEMALE && GetNP() > NOT_HUNGER_LEVEL + 10000)
     {
       for(int d = 0; d < GetNeighbourSquares(); ++d)
 	{
@@ -1809,6 +1809,8 @@ bool bunny::CheckForMatePartner()
 		  EditNP(-10000);
 		  Father->EditAP(-3000);
 		  EditAP(-5000);
+		  EditStamina(-GetMaxStamina() >> 1, true);
+		  Father->EditStamina(-(Father->GetMaxStamina() << 2) / 5, true);
 		  return true;
 		}
 	    }

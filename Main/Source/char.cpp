@@ -33,7 +33,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Hasted",
-    RANDOMIZABLE&~SRC_EVIL,
+    RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
     &character::PrintBeginHasteMessage,
     &character::PrintEndHasteMessage,
     0,
@@ -51,7 +51,7 @@ statedata StateData[STATES] =
     0
   }, {
     "PolyControl",
-    RANDOMIZABLE&~(SRC_EVIL|SRC_GOOD),
+    RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL|SRC_GOOD),
     &character::PrintBeginPolymorphControlMessage,
     &character::PrintEndPolymorphControlMessage,
     0,
@@ -78,7 +78,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Invisible",
-    RANDOMIZABLE&~SRC_EVIL,
+    RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
     &character::PrintBeginInvisibilityMessage,
     &character::PrintEndInvisibilityMessage,
     &character::BeginInvisibility,  &character::EndInvisibility,
@@ -86,7 +86,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Infravision",
-    RANDOMIZABLE&~SRC_EVIL,
+    RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
     &character::PrintBeginInfraVisionMessage,
     &character::PrintEndInfraVisionMessage,
     &character::BeginInfraVision,
@@ -113,7 +113,7 @@ statedata StateData[STATES] =
     &character::CanBePoisoned
   }, {
     "Teleporting",
-    SECRET|RANDOMIZABLE&~SRC_GOOD,
+    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
     &character::PrintBeginTeleportMessage,
     &character::PrintEndTeleportMessage,
     0,
@@ -122,7 +122,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Polymorphing",
-    SECRET|RANDOMIZABLE&~SRC_GOOD,
+    SECRET|RANDOMIZABLE&~(SRC_MUSHROOM|SRC_GOOD),
     &character::PrintBeginPolymorphMessage,
     &character::PrintEndPolymorphMessage,
     0,
@@ -131,7 +131,7 @@ statedata StateData[STATES] =
     0
   }, {
     "TeleControl",
-    RANDOMIZABLE&~SRC_EVIL,
+    RANDOMIZABLE&~(SRC_MUSHROOM|SRC_EVIL),
     &character::PrintBeginTeleportControlMessage,
     &character::PrintEndTeleportControlMessage,
     0,
@@ -149,7 +149,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Confused",
-    RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD),
+    SECRET|RANDOMIZABLE&~(DUR_PERMANENT|SRC_GOOD),
     &character::PrintBeginConfuseMessage,
     &character::PrintEndConfuseMessage,
     0,
@@ -1485,7 +1485,7 @@ bool character::ReadItem(item* ToBeRead)
     {
       if(!GetLSquareUnder()->IsDark() || game::GetSeeWholeMapCheatMode())
 	{
-	  if(StateIsActivated(CONFUSED))
+	  if(StateIsActivated(CONFUSED) && !(RAND() & 7))
 	    {
 	      if(!ToBeRead->IsDestroyable())
 		ADD_MESSAGE("You read some words of %s and understand exactly nothing.", ToBeRead->CHAR_NAME(DEFINITE));
@@ -2525,7 +2525,7 @@ bool character::MoveRandomlyInRoom()
 
 void character::GoOn(go* Go, bool FirstStep)
 {
-  vector2d MoveVector = game::GetMoveVector(Go->GetDirection());
+  vector2d MoveVector = ApplyStateModification(game::GetMoveVector(Go->GetDirection()));
   lsquare* MoveToSquare[MAX_SQUARES_UNDER];
   int Squares = CalculateNewSquaresUnder(MoveToSquare, GetPos() + MoveVector);
 
@@ -5745,7 +5745,7 @@ bool character::Equips(const item* Item) const
 void character::PrintBeginConfuseMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Whoh! The ground refuses to settle.");
+    ADD_MESSAGE("You feel quite happy.");
 }
 
 void character::PrintEndConfuseMessage() const
@@ -5756,7 +5756,7 @@ void character::PrintEndConfuseMessage() const
 
 vector2d character::ApplyStateModification(vector2d TryDirection) const
 {
-  if(!StateIsActivated(CONFUSED) || RAND() & 7 || game::IsInWilderness())
+  if(!StateIsActivated(CONFUSED) || RAND() & 15 || game::IsInWilderness())
     return TryDirection;
   else
     {

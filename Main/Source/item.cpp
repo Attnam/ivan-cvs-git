@@ -675,7 +675,7 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return GetType() == Item->GetType()
       && GetConfig() == Item->GetConfig()
-      && Weight == Item->Weight
+      && (WeightIsIrrelevant() || Weight == Item->Weight)
       && MainMaterial->IsSameAs(Item->MainMaterial)
       && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
       && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
