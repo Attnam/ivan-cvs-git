@@ -80,7 +80,7 @@ class ABSTRACT_CHARACTER
 
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  virtual void SetBodyArmor(item*);
+  //virtual void SetBodyArmor(item*);
 
   virtual bool CanWieldInMainHand() const;
   virtual bool CanWieldInSecondaryHand() const;
@@ -123,8 +123,6 @@ class ABSTRACT_CHARACTER
   virtual item* GetLeftBoot() const;
   virtual bool VirtualEquipmentScreen();
   virtual void SwitchToDig(item*, vector2d);
-  virtual void SetRightWielded(item*);
-  virtual void SetLeftWielded(item*);
   virtual uchar GetLegs() const;
   virtual uchar GetArms() const;
   virtual bool CheckKick();
@@ -132,6 +130,24 @@ class ABSTRACT_CHARACTER
   virtual short GetLengthOfOpen(vector2d) const;
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
+
+  virtual void SetHelmet(item*);
+  virtual void SetAmulet(item*);
+  virtual void SetCloak(item*);
+  virtual void SetBodyArmor(item*);
+  virtual void SetBelt(item*);
+  virtual void SetRightWielded(item*);
+  virtual void SetLeftWielded(item*);
+  virtual void SetRightRing(item*);
+  virtual void SetLeftRing(item*);
+  virtual void SetRightGauntlet(item*);
+  virtual void SetLeftGauntlet(item*);
+  virtual void SetRightBoot(item*);
+  virtual void SetLeftBoot(item*);
+
+  virtual bool (item::*EquipmentSorter(uchar) const)(character*) const;
+  virtual void SetEquipment(uchar, item*);
+
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }

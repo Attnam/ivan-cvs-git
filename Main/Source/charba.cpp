@@ -30,19 +30,6 @@ character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bo
 {
   if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
     ABORT("BOOO!");
-
-  /*StateHandler[0] = &character::PolymorphHandler;
-  StateHandler[1] = &character::HasteHandler;
-  StateHandler[2] = &character::SlowHandler;*/
-
-  /*StateHandler[FAINTED] = &character::FaintHandler;
-  StateHandler[CONSUMING] = &character::ConsumeHandler;
-  StateHandler[POLYMORPHED] = &character::PolymorphHandler;
-  StateHandler[RESTING] = &character::RestHandler;
-  StateHandler[DIGGING] = &character::DigHandler;
-  StateHandler[GOING] = &character::GoHandler;
-  StateHandler[HASTE] = &character::HasteHandler;
-  StateHandler[SLOW] = &character::SlowHandler;*/
 }
 
 character::~character()
@@ -301,7 +288,6 @@ void character::Be()
 
 	  if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && (!GetAction() || GetAction()->AllowFaint()))
 	    {
-	      //DeActivateVoluntaryStates();
 	      if(GetAction())
 		GetAction()->Terminate(false);
 
@@ -477,30 +463,6 @@ bool character::Consume()
 	return true;
     }
 
-  /*if(!game::GetInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
-    {
-      item* Item = GetLSquareUnder()->GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
-
-      if(Item)
-	{
-	  if(GetLSquareUnder()->GetRoom() && !GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, Item))
-	    return false;
-
-	  if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
-	    return false;
-
-	  if(ConsumeItem(Item, GetLSquareUnder()->GetStack()))
-	    {
-	      ReceiveBulimiaDamage();
-	      return true;
-	    }
-	  else
-	    return false;
-	}
-      else
-	return false;
-    }*/
-
   if((!game::GetInWilderness || !GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter)) && !GetStack()->SortedItems(this, item::ConsumableSorter))
     {
       ADD_MESSAGE("You have nothing to consume!");
@@ -514,10 +476,6 @@ bool character::Consume()
   else
       Item = GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
 
-  //if(GetStack()->SortedItems(this, item::ConsumableSorter))
-    //{
-      //item* Item = GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
-
   if(Item)
     {
       if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
@@ -525,22 +483,7 @@ bool character::Consume()
 
       ConsumeItem(Item);
       return true;
-
-      /*if(ConsumeItem(Item))
-	{
-	  ReceiveBulimiaDamage();
-	  return true;
-	}
-      else
-	return false;*/
     }
-	/*}
-      else
-	return false;
-    }
-
-  if(GetIsPlayer() && (game::GetInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter)) && !GetStack()->SortedItems(this, item::ConsumableSorter))
-    ADD_MESSAGE("You have nothing to consume!");*/
 
   return false;
 }
@@ -552,9 +495,6 @@ bool character::ConsumeItem(item* Item)
   if(!Item)
     return false;
 
-  //SetConsumingCurrently(Item);
-  //ActivateState(CONSUMING);
-  //StateCounter[CONSUMING] = 0;
   consume* Consume = new consume(this);
   Consume->SetConsuming(Item);
   SetAction(Consume);
@@ -1435,20 +1375,6 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << Action;
 
-  /*if(StateIsActivated(CONSUMING))
-    SaveFile << GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
-  else
-    SaveFile << ushort(0);
-
-  if(StateIsActivated(DIGGING))
-    {
-      SaveFile << uchar(1);
-      //SaveFile << GetStack()->SearchItem(GetOldWieldedItem());
-      SaveFile << StateVariables.Digging.SquareBeingDugX << StateVariables.Digging.SquareBeingDugY;
-    }
-  else
-    SaveFile << uchar(0);*/
-
   for(c = 0; c < STATES; ++c)
     SaveFile << StateCounter[c];
 
@@ -1459,26 +1385,6 @@ void character::Save(outputfile& SaveFile) const
     }
   else
     SaveFile << uchar(0);
-
-  /*if(StateIsActivated(CONSUMING))
-    {
-      ushort Index = GetStack()->SearchItem(GetConsumingCurrently());
-
-      if(Index != 0xFFFF)
-	SaveFile << uchar(1) << Index;
-      else
-	{
-	  if(!game::GetInWilderness())
-	    Index = GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
-
-	  if(Index == 0xFFFF)
-	    ABORT("Consuming unknown item!");
-
-	  SaveFile << uchar(2) << Index;
-	}
-    }
-  else
-    SaveFile << uchar(0);*/
 
   if(GetTeam() && GetTeam()->GetLeader() == this)
     SaveFile << uchar(1);
@@ -1521,23 +1427,6 @@ void character::Load(inputfile& SaveFile)
 
   SaveFile >> Action;
 
-  /*ushort Index;
-
-  SaveFile >> Index;
-
-  if(Index)
-    SetConsumingCurrently(GetLSquareUnder()->GetStack()->GetItem(Index));
-
-  uchar Digging;
-  SaveFile >> Digging;
-
-  if(Digging)
-    {
-      /SaveFile >> Index;
-      SetOldWieldedItem(GetStack()->GetItem(Index));/
-      SaveFile >> StateVariables.Digging.SquareBeingDugX >> StateVariables.Digging.SquareBeingDugY;
-    }*/
-
   for(c = 0; c < STATES; ++c)
     SaveFile >> StateCounter[c];
 
@@ -1551,21 +1440,6 @@ void character::Load(inputfile& SaveFile)
       SaveFile >> TeamID;
       SetTeam(game::GetTeam(TeamID));
     }
-
-  /*uchar Stacky;
-
-  SaveFile >> Stacky;
-
-  if(Stacky)
-    {
-      SaveFile >> Index;
-
-      if(Stacky == 1)
-	SetConsumingCurrently(GetStack()->GetItem(Index));
-
-      if(Stacky == 2)
-	SetConsumingCurrently(GetLSquareUnder()->GetStack()->GetItem(Index));
-    }*/
 
   uchar Leader;
 
@@ -2516,46 +2390,10 @@ void character::Faint()
     if(GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s faints.", CHARNAME(DEFINITE));
 
-  //ActivateState(FAINTED);
-  //StateCounter[FAINTED] = 100 + RAND() % 101;
   faint* Faint = new faint(this);
   Faint->SetCounter(100 + RAND() % 101);
   SetAction(Faint);
 }
-
-/*void character::FaintHandler()
-{
-  if(!(StateCounter[FAINTED]--))
-    {
-      if(GetIsPlayer())
-	ADD_MESSAGE("You wake up.");
-      else
-	if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s wakes up.", CHARNAME(DEFINITE));
-
-      EndFainted();
-    }
-  else
-    {
-      EditStrengthExperience(-3);
-    }
-}*/
-
-/*void character::ConsumeHandler()
-{
-  if(ulong(++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
-    {
-      if(GetIsPlayer())
-	ADD_MESSAGE("You finish %s %s.", GetConsumingCurrently()->GetConsumeVerb().c_str(), GetConsumingCurrently()->CHARNAME(DEFINITE));
-      else
-	if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s finishes eating %s.", CHARNAME(DEFINITE), GetConsumingCurrently()->CHARNAME(DEFINITE));
-
-      EndConsuming();
-
-      return;
-    }
-}*/
 
 void character::PolymorphHandler()
 {
@@ -2567,33 +2405,6 @@ void character::PolymorphHandler()
 
   EditStateCounter(POLYMORPHED, -1);
 }
-
-/*void character::EndFainted()
-{
-  if(StateIsActivated(FAINTED))
-    DeActivateState(FAINTED);
-}*/
-
-/*void character::EndConsuming()
-{
-  if(StateIsActivated(CONSUMING))
-    {
-      if(GetConsumingCurrently()->Consume(this, StateCounter[CONSUMING] * 500))
-	{
-	  GetConsumingCurrently()->RemoveFromSlot();
-	  /item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
-
-	  if(!ToBeDeleted)
-	    ToBeDeleted = GetLSquareUnder()->GetStack()->RemoveItem(GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));/
-
-	  GetConsumingCurrently()->SetExists(false);
-	}
-
-      ReceiveBulimiaDamage();
-      DeActivateState(CONSUMING);
-      SetConsumingCurrently(0);
-    }
-}*/
 
 void character::EndPolymorph()
 {
@@ -2633,14 +2444,6 @@ void character::EndPolymorph()
     }
 }
 
-/*bool character::CanMove()
-{
-  if(StateIsActivated(FAINTED) || StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING))
-    return false;
-  else
-    return true;
-}*/
-
 void character::DeActivateVoluntaryStates(std::string Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
@@ -2650,32 +2453,6 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 
       GetAction()->Terminate(false);
     }
-
-  /*if(GetIsPlayer())
-    {
-      if((StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING)) && Reason != "")
-	ADD_MESSAGE("%s.", Reason.c_str());
-
-      if(StateIsActivated(CONSUMING))
-	ADD_MESSAGE("You stop eating.");
-
-      if(StateIsActivated(RESTING))
-	ADD_MESSAGE("You stop resting.");
-
-      if(StateIsActivated(DIGGING))
-	ADD_MESSAGE("You stop digging.");
-    }
-
-  EndConsuming();
-  EndRest();
-
-  if(StateIsActivated(DIGGING))
-    {
-      EndDig();
-      EditAP(-250);
-    }
-
-  EndGoing();*/
 }
 
 void character::ActionAutoTermination()
@@ -2895,56 +2672,11 @@ bool character::RestUntilHealed()
 
   GetSquareUnder()->GetOTerrain()->ShowRestMessage(this);
   DRAW_MESSAGES();
-  //StateCounter[RESTING] = HPToRest;
-  //ActivateState(RESTING);
   rest* Rest = new rest(this);
   Rest->SetGoalHP(HPToRest);
   SetAction(Rest);
   return true;
 }
-
-
-/*void character::RestHandler()
-{
-  if(GetHP() >= StateCounter[RESTING] || GetHP() == GetMaxHP())
-    EndRest();
-  else
-    {
-      EditAgilityExperience(-1 * GetSquareUnder()->RestModifier());
-    }
-}*/
-
-/*void character::EndRest()
-{
-  DeActivateState(RESTING);
-}*/
-
-/*void character::DigHandler()
-{
-  if(StateCounter[DIGGING] > 0)
-    {
-      StateCounter[DIGGING]--;
-      EditStrengthExperience(5);
-      EditAgilityExperience(-5);
-      EditNP(-5);
-    }
-  else
-    EndDig();
-}
-
-void character::EndDig()
-{
-  if(StateIsActivated(DIGGING))
-    {
-      if(StateCounter[DIGGING] == 0)
-	{
-	  //game::GetCurrentLevel()->GetLSquare(GetSquareBeingDug())->Dig(this, GetWielded());
-	  //SetWielded(GetOldWieldedItem());
-	}
-
-      DeActivateState(DIGGING);
-    }
-}*/
 
 bool character::OutlineCharacters()
 {
@@ -3185,24 +2917,14 @@ bool character::MoveRandomlyInRoom()
   return OK;
 }
 
-/*void character::EndGoing()
-{
-  DeActivateState(GOING);
-  game::GetCurrentArea()->SendNewDrawRequest();
-}*/
-
 bool character::Go()
 {
   vector2d Temp;
 
   if((Temp = game::AskForDirectionVector("What direction do you want to go?")) != vector2d(0,0))
     {
-      //ActivateState(GOING);
-      //StateVariables.Going.Direction = game::GetDirectionForVector(Temp);
       go* Go = new go(this);
-
       Go->SetDirection(game::GetDirectionForVector(Temp));
-
       uchar OKDirectionsCounter = 0;
 
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
@@ -3212,12 +2934,8 @@ bool character::Go()
       });
 
       Go->SetWalkingInOpen(OKDirectionsCounter > 2 ? true : false);
-
-      //square* OldSquare = GetSquareUnder();
-
       SetAction(Go);
       Go->Handle();
-
       return GetAction() ? true : false;
     }
 
@@ -3229,9 +2947,6 @@ void character::GoOn(go* Go)
   if(GetAP() >= 0)
     {
       ActionAutoTermination();
-
-      //if(!StateIsActivated(GOING))
-	//return;
 
       if(!GetAction())
 	return;

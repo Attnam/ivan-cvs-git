@@ -346,6 +346,7 @@ class ABSTRACT_ITEM
   virtual vector2d GetInHandsPic() const { return vector2d(160,144); }
   virtual ulong Price() const;
   virtual uchar GetCategory() const { return BODYARMOR; }
+  virtual bool IsBodyArmor(character*) const { return true; }
  protected:
   virtual ushort GetFormModifier() const { return 20; }
 );
@@ -1454,6 +1455,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the cloak can be calculated somehow
   virtual void GenerateCloakMaterials();
   virtual uchar GetCategory() const { return CLOAK; }
+  virtual bool IsCloak(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 30; }
   virtual vector2d GetBitmapPos() const { return vector2d(32,352); }
@@ -1475,6 +1477,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
   virtual void GenerateBootMaterials();
   virtual uchar GetCategory() const { return BOOT; }
+  virtual bool IsBoot(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
@@ -1496,6 +1499,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
   virtual void GenerateGauntletMaterials();
   virtual uchar GetCategory() const { return GAUNTLET; }
+  virtual bool IsGauntlet(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 55; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 368); }
@@ -1517,6 +1521,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual uchar GetWeaponCategory() const { return WHIPS; }
   virtual uchar GetCategory() const { return BELT; }
+  virtual bool IsBelt(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 384); }
@@ -1538,6 +1543,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual void GenerateRingMaterials();
   virtual uchar GetCategory() const { return RING; }
+  virtual bool IsRing(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 80; }
   virtual vector2d GetBitmapPos() const { return vector2d(16, 400); }
@@ -1559,6 +1565,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual void GenerateAmuletMaterials();
   virtual uchar GetCategory() const { return AMULET; }
+  virtual bool IsAmulet(character*) const { return true; }
  protected:
   virtual ushort GetStrengthModifier() const { return 30; }
   virtual vector2d GetBitmapPos() const { return vector2d(32, 400); }

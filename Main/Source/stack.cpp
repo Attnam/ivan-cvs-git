@@ -213,6 +213,9 @@ vector2d stack::GetPos() const
 
 bool stack::SortedItems(character* Viewer, bool (item::*SorterFunction)(character*) const) const
 {
+  if(SorterFunction == 0)
+    return GetItems() ? true : false;
+
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     if(((***i)->*SorterFunction)(Viewer))
       return true;

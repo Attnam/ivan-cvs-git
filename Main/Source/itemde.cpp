@@ -259,28 +259,6 @@ item* leftnutofpetrus::CreateWishedItem() const
   return new cheapcopyofleftnutofpetrus;
 }
 
-/*
-  
-  Few Examples:
-  
-  (moraine - iron)
-  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.2) = 150
-  TimeToBeUsed = 4 * (50 - 25) / (1 - 0.2) = 125
-  TimeToBeUsed = 4 * (50 - 49) / (1 - 0.2) = 5
-  
-  (wood - iron) (0.3)
-  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.3) = 171
-  TimeToBeUsed = 142
-  TimeToBeUsed = 5.7
-
-  (morain - wood)
-  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.2 / 0.3) = 180
-  
-  (moraine - valpurium)
-  TimeToBeUsed = 4 * (50 - 20) / (1 - 20 / 400) = 126
-*/
-
-
 bool pickaxe::Apply(character* User)
 {
   vector2d Temp = game::AskForDirectionVector("What direction do you want to dig?");
@@ -294,13 +272,6 @@ bool pickaxe::Apply(character* User)
 	  if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
 	    {
 	      User->SwitchToDig(this, User->GetPos() + Temp);
-	      //((dig* Dig = new dig(User);
-	      //((Dig->SetRightBackup();
-	      //User->SetSquareBeingDug();
-	      //User->SetOldWieldedItem(User->GetWielded());
-	      //User->SetMainWielded(this);
-	      //User->ActivateState(DIGGING);
-	      //User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? 4 * (50 - User->GetStrength()) / (1 - Square->GetOLTerrain()->GetMaterial(0)->GetStrengthValue() / GetMaterial(0)->GetStrengthValue()) : 3);
 	      return true;
 	    }
 	  else
@@ -609,19 +580,6 @@ void potion::DipInto(material* Material, character* Dipper)
     ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
-/*void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
-{
-  if(!Index)
-    {
-      for(ushort c = 1; c < 4 && c < Material.size(); ++c)
-	if(!Material[c])
-	  GraphicId.Color[c] = GraphicId.Color[0];
-    }
-  else
-    if(EmptyMaterial)
-      GraphicId.Color[Index] = GraphicId.Color[0];
-}*/
-
 ulong meleeweapon::Price() const
 {
   return ulong(GetWeaponStrength() * GetWeaponStrength() * GetWeaponStrength() / (float(GetWeight()) * 1000000));
@@ -814,16 +772,6 @@ bool backpack::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack*
   else
     return false;
 }
-
-/*std::string wand::Name(uchar Case) const 
-{ 
-  if(!TimesUsed)
-    return NameWithMaterial(Case);
-  else if(TimesUsed == 1)
-    return NameWithMaterial(Case) + " (used 1 time)"; 
-  else
-    return NameWithMaterial(Case) + " (used " + TimesUsed + " times)";
-}*/
 
 std::string wand::PostFix() const
 {
@@ -1624,15 +1572,6 @@ bool key::Apply(character* User)
     }
   return true;
 }
-
-/*bool potion::HasBeenDippedInFountain(character* Dipper, fountain* Fountain)
-{
-  if(Dipper->GetIsPlayer())
-      ADD_MESSAGE("You dip %s in %s. It is filled with %s.", CHARNAME(DEFINITE), Fountain->CHARNAME(DEFINITE));
-
-  ChangeMaterial(1, new water);
-  return true;
-}*/
 
 void arm::SignalGearUpdate()
 {

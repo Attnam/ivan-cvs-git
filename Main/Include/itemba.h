@@ -138,6 +138,14 @@ class item : public object
   bool AppliableSorter(character* Char) const { return IsAppliable(Char); }
   bool ZappableSorter(character* Char) const { return IsZappable(Char); }
   bool ChargeableSorter(character* Char) const { return IsChargeable(Char); }
+  bool HelmetSorter(character* Char) const { return IsHelmet(Char); }
+  bool AmuletSorter(character* Char) const { return IsAmulet(Char); }
+  bool CloakSorter(character* Char) const { return IsCloak(Char); }
+  bool BodyArmorSorter(character* Char) const { return IsBodyArmor(Char); }
+  bool RingSorter(character* Char) const { return IsRing(Char); }
+  bool GauntletSorter(character* Char) const { return IsGauntlet(Char); }
+  bool BeltSorter(character* Char) const { return IsBelt(Char); }
+  bool BootSorter(character* Char) const { return IsBoot(Char); }
   virtual bool IsConsumable(character*) const;
   virtual bool IsOpenable(character*) const { return false; }
   virtual bool IsReadable(character*) const { return false; }
@@ -146,6 +154,14 @@ class item : public object
   virtual bool IsAppliable(character*) const { return false; }
   virtual bool IsZappable(character*) const { return false; }
   virtual bool IsChargeable(character*) const { return false; }
+  virtual bool IsHelmet(character*) const { return false; }
+  virtual bool IsAmulet(character*) const { return false; }
+  virtual bool IsCloak(character*) const { return false; }
+  virtual bool IsBodyArmor(character*) const { return false; }
+  virtual bool IsRing(character*) const { return false; }
+  virtual bool IsGauntlet(character*) const { return false; }
+  virtual bool IsBelt(character*) const { return false; }
+  virtual bool IsBoot(character*) const { return false; }
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }

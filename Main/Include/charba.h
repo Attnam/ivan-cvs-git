@@ -35,15 +35,6 @@
 
 #define STATES      3
 
-/*#define FAINTED      0
-#define CONSUMING    1
-#define POLYMORPHED    2
-#define RESTING      3
-#define DIGGING      4
-#define GOING      5
-#define HASTE 6
-#define SLOW 7*/
-
 #define POLYMORPHED 1
 #define HASTE 2
 #define SLOW 4
@@ -437,24 +428,6 @@ class character : public type, public entity, public id
   static void (character::*StateHandler[STATES])();
   team* Team;
   vector2d WayPoint;
-  /*union statevariables
-  {
-    struct consuming
-    {
-      item* ConsumingCurrently;
-    } Consuming;
-    struct digging
-    {
-      ushort SquareBeingDugX;
-      ushort SquareBeingDugY;
-      //item* OldWieldedItem;
-    } Digging;
-    struct going
-    {
-      uchar Direction;
-      bool WalkingInOpen;
-    } Going;
-  } StateVariables;*/
   ulong Money;
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;

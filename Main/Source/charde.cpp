@@ -2257,11 +2257,6 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-/*item* humanoid::GetBodyArmor() const
-{
-  return GetHumanoidTorso()->GetBodyArmor();
-}*/
-
 arm* humanoid::GetMainArm() const
 {
   if(GetRightArm())
@@ -2291,11 +2286,6 @@ void humanoid::SetSecondaryWielded(item* Item)
     ABORT("Left hand in wrong place!");
 }
 
-void humanoid::SetBodyArmor(item* Item)
-{
-  GetHumanoidTorso()->SetBodyArmor(Item);
-}
-
 bool humanoid::CanWieldInMainHand() const
 {
   return GetMainArm() ? true : false;
@@ -2310,20 +2300,45 @@ std::string humanoid::EquipmentName(uchar Index) const
 {
   switch(Index)
     {
-    case 0: return "Helmet";
-    case 1: return "Amulet";
-    case 2: return "Cloak";
-    case 3: return "Body armor";
-    case 4: return "Belt";
-    case 5: return "Right hand wielded";
-    case 6: return "Left hand wielded";
-    case 7: return "Right ring";
-    case 8: return "Left ring";
-    case 9: return "Right gauntlet";
-    case 10: return "Left gauntlet";
-    case 11: return "Right boot";
-    case 12: return "Left boot";
-    default: return "Forbidden piece of cloth";
+    case 0: return "helmet";
+    case 1: return "amulet";
+    case 2: return "cloak";
+    case 3: return "body armor";
+    case 4: return "belt";
+    case 5: return "right hand wielded";
+    case 6: return "left hand wielded";
+    case 7: return "right ring";
+    case 8: return "left ring";
+    case 9: return "right gauntlet";
+    case 10: return "left gauntlet";
+    case 11: return "right boot";
+    case 12: return "left boot";
+    default: return "forbidden piece of cloth";
+    }
+}
+
+/*
+ * You are not expected to understand this.
+ */
+
+bool (item::*humanoid::EquipmentSorter(uchar Index) const)(character*) const
+{
+  switch(Index)
+    {
+    case 0: return &item::HelmetSorter;
+    case 1: return &item::AmuletSorter;
+    case 2: return &item::CloakSorter;
+    case 3: return &item::BodyArmorSorter;
+    case 4: return &item::BeltSorter;
+    case 5:
+    case 6: return 0;
+    case 7:
+    case 8: return &item::RingSorter;
+    case 9:
+    case 10: return &item::GauntletSorter;
+    case 11:
+    case 12: return &item::BootSorter;
+    default: return 0;
     }
 }
 
@@ -2390,14 +2405,48 @@ item* humanoid::GetLeftGauntlet() const { return GetLeftArm() ? GetLeftArm()->Ge
 item* humanoid::GetRightBoot() const { return GetRightLeg() ? GetRightLeg()->GetBoot() : 0; }
 item* humanoid::GetLeftBoot() const { return GetLeftLeg() ? GetLeftLeg()->GetBoot() : 0; }
 
+void humanoid::SetEquipment(uchar Index, item* What)
+{
+  switch(Index)
+    {
+    case 0: SetHelmet(What); break;
+    case 1: SetAmulet(What); break;
+    case 2: SetCloak(What); break;
+    case 3: SetBodyArmor(What); break;
+    case 4: SetBelt(What); break;
+    case 5: SetRightWielded(What); break;
+    case 6: SetLeftWielded(What); break;
+    case 7: SetRightRing(What); break;
+    case 8: SetLeftRing(What); break;
+    case 9: SetRightGauntlet(What); break;
+    case 10: SetLeftGauntlet(What); break;
+    case 11: SetRightBoot(What); break;
+    case 12: SetLeftBoot(What); break;
+    }
+}
+
+void humanoid::SetHelmet(item* What) { if(GetHead()) GetHead()->SetHelmet(What); }
+void humanoid::SetAmulet(item* What) { if(GetHead()) GetHead()->SetAmulet(What); }
+void humanoid::SetCloak(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetCloak(What); }
+void humanoid::SetBodyArmor(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetBodyArmor(What); }
+void humanoid::SetBelt(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetBelt(What); }
+void humanoid::SetRightWielded(item* What) { if(GetRightArm()) GetRightArm()->SetWielded(What); }
+void humanoid::SetLeftWielded(item* What) { if(GetLeftArm()) GetLeftArm()->SetWielded(What); }
+void humanoid::SetRightRing(item* What) { if(GetRightArm()) GetRightArm()->SetRing(What); }
+void humanoid::SetLeftRing(item* What) { if(GetLeftArm()) GetLeftArm()->SetRing(What); }
+void humanoid::SetRightGauntlet(item* What) { if(GetRightArm()) GetRightArm()->SetGauntlet(What); }
+void humanoid::SetLeftGauntlet(item* What) { if(GetLeftArm()) GetLeftArm()->SetGauntlet(What); }
+void humanoid::SetRightBoot(item* What) { if(GetRightLeg()) GetRightLeg()->SetBoot(What); }
+void humanoid::SetLeftBoot(item* What) { if(GetLeftLeg()) GetLeftLeg()->SetBoot(What); }
+
 bool humanoid::VirtualEquipmentScreen()
 {
+  ushort Chosen = 0;
   bool EquipmentChanged = false;
-  bool Fade = true;
 
   while(true)
     {
-      DOUBLEBUFFER->Fill(0);
+      game::DrawEverythingNoBlit();
 
       felist List("Equipment menu", WHITE);
 
@@ -2416,43 +2465,43 @@ bool humanoid::VirtualEquipmentScreen()
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
 
-      ushort Chosen = List.Draw(vector2d(10, 42), 780, 20, true, false, false, Fade);
+      List.SetSelected(Chosen);
+      Chosen = List.Draw(vector2d(10, 42), 780, 20, true, false);
 
       if(Chosen >= EquipmentSlots())
 	break;
 
       if(!GetBodyPartOfEquipment(Chosen))
 	{
-	  Fade = false;
+	  ADD_MESSAGE("Bodypart missing!");
+	  continue;
+	}
+
+      item* OldEquipment = GetEquipment(Chosen);
+
+      if(OldEquipment)
+	GetEquipment(Chosen)->MoveTo(GetStack());
+
+      if(!GetStack()->SortedItems(this, EquipmentSorter(Chosen)))
+	{
+	  ADD_MESSAGE("You haven't got any item that could be used for this purpose.");
 	  continue;
 	}
       else
-	Fade = true;
-
-      switch(Chosen)
 	{
-	case 0:
-	  //List.Draw(false, Fade);
-	  break;
-	case 1:
+	  item* Item = GetStack()->DrawContents(this, std::string("Choose ") + EquipmentName(Chosen) + ":", EquipmentSorter(Chosen));
 
-	  break;
-	case 2:
+	  if(Item != OldEquipment)
+	    EquipmentChanged = true;
 
-	  break;
-	case 3:
-
-	  break;
-	case 4:
-
-	  break;
-	case 5:
-
-	  break;
+	  if(Item)
+	    {
+	      Item->RemoveFromSlot();
+	      SetEquipment(Chosen, Item);
+	    }
 	}
     }
 
-  game::GetCurrentArea()->SendNewDrawRequest();
   return EquipmentChanged;
 }
 
@@ -2470,18 +2519,6 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
   GetMainArm()->SetWielded(DigItem);
   Dig->SetSquareDug(Square);
   SetAction(Dig);
-}
-
-void humanoid::SetRightWielded(item* Item)
-{
-  if(GetRightArm())
-    GetRightArm()->SetWielded(Item);
-}
-
-void humanoid::SetLeftWielded(item* Item)
-{
-  if(GetLeftArm())
-    GetLeftArm()->SetWielded(Item);
 }
 
 bool humanoid::CheckKick()

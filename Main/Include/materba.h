@@ -22,23 +22,6 @@
 #define MISC_ORGANIC 128
 #define GAS 256
 
-/*#define ODD     0
-#define FRUIT     1
-#define MEAT     2
-#define SPOILED   3
-#define HARD     4
-#define SCHOOLFOOD   5
-#define CONTAINER  6
-#define LIQUID    7
-#define BONE    8
-
-#define EFOOD      1
-#define ESCHOOLFOOD    2
-#define EOMLEURINE    3
-#define EDARKNESS    4
-#define EFIRE      5
-#define EPEPSI      6*/
-
 #include <string>
 
 #include "typedef.h"
