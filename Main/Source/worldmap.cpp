@@ -73,6 +73,8 @@ void worldmap::Load(inputfile& SaveFile)
 	SaveFile.GetBuffer().read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
 	SaveFile.GetBuffer().read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
 
+	continent::TypeBuffer = TypeBuffer;
+	continent::AltitudeBuffer = AltitudeBuffer;
 	continent::ContinentBuffer = ContinentBuffer;
 
 	SaveFile >> Continent;

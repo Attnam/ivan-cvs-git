@@ -972,6 +972,8 @@ bool character::Talk()
 
 bool character::NOP()
 {
+	continent* C = game::GetWorldMap()->GetContinent(1);
+
 	SetAgilityExperience(GetAgilityExperience() - 5);
 
 	return true;

@@ -156,7 +156,7 @@ void game::Init(std::string Name)
 
 		InitDungeons();
 
-		WorldMap = new worldmap(128, 128);
+		WorldMap = new worldmap(500,500);
 		WorldMap->Generate();
 
 		InWilderness = true;

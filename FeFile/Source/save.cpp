@@ -18,9 +18,6 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 			if(AbortOnEOF)
 				ABORT("Unexpected end of script file!");
 
-			for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
-				Buffer.resize(Buffer.length() - 1);
-
 			return Buffer;
 		}
 
@@ -37,14 +34,8 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 			Buffer += char(Char);
 		}
 
-		if(Char == ' ')
-		{
-			if(Mode == 1)
-				Buffer += char(Char);
-
-			if(Mode == 2)
-				return Buffer;
-		}
+		if(Char == ' ' && Mode)
+			return Buffer;
 
 		if(isdigit(Char))
 		{
@@ -52,12 +43,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 				Mode = 2;
 			else
 				if(Mode == 1)
-				{
-					for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
-						Buffer.resize(Buffer.length() - 1);
-
 					return Buffer;
-				}
 
 			Buffer += char(Char);
 		}
@@ -92,28 +78,18 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 						continue;
 					}
 
-				if(Mode == 1)
-				{
-					for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
-						Buffer.resize(Buffer.length() - 1);
-
-					return Buffer;
-				}
-
-				if(Mode == 2)
+				if(Mode)
 					return Buffer;
 
 				Buffer += char(Char);
 				return Buffer;
 			}
 
-			if(Mode == 2)
+			if(Mode)
 				return Buffer;
 
 			if(Char == '"')
 			{
-				Mode = 1;
-
 				GetBuffer().get();
 
 				if(GetBuffer().eof())
@@ -147,14 +123,6 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 					else
 						Buffer += char(Char);
 				}
-
-				continue;
-			}
-
-			if(Mode == 1)
-			{
-				for(short c = Buffer.length() - 1; Buffer[c] == ' '; c--)
-					Buffer.resize(Buffer.length() - 1);
 
 				return Buffer;
 			}

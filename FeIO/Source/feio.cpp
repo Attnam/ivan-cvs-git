@@ -47,9 +47,11 @@ void iosystem::TextScreen(bitmap* Font, std::string Text, bool GKey)
 unsigned int iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 {
 	unsigned int iReturnCounter = 0;
+
 	for(unsigned int i = 0; i < sSH.length(); ++i)
 		if(sSH[i] == cSF)
 			++iReturnCounter;
+
 	return iReturnCounter;
 }
 
@@ -118,7 +120,7 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
 
-		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == 8 || LastKey == 13))
+		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 8 || LastKey == 13))
 			LastKey = GETKEY();
 
 		if(LastKey == 8)

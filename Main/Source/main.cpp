@@ -15,11 +15,11 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	game::InitLuxTable();
 
-	/*inputfile Input("Script/dungeon.dat");
+	inputfile Input("Script/dungeon.dat");
 
 	gamescript GS;
 
-	GS.ReadFrom(Input, std::map<std::string, long>());*/
+	GS.ReadFrom(Input, std::map<std::string, long>());
 
 	char Buffer[256];
 

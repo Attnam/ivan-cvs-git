@@ -24,12 +24,15 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	Map["pepe"] = 4;
 
+	Buffer += IFile.ReadWord();
+	Buffer += " " + IFile.ReadWord();
+	Buffer += " " + IFile.ReadWord();
+	bool B = IFile.ReadBool();
+
 	long Value = IFile.ReadNumber(Map);
 
-	Buffer += IFile.ReadWord();
-	Buffer += IFile.ReadWord();
-	bool B = IFile.ReadBool();
-	Buffer += IFile.ReadWord();
+	Buffer += " " + IFile.ReadWord();
+	Buffer += " " + IFile.ReadWord(false);
 
 	DOUBLEBUFFER->ClearToColor(0xFFFF);
 	DOUBLEBUFFER->ClearToColor(50, 350, 700, 200, 0xF81F);

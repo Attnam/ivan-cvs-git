@@ -57,7 +57,7 @@ inline outputfile& operator<<(outputfile& SaveFile, continent* Continent)
 	return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, continent* Continent)
+inline inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 {
 	if(SaveFile.GetBuffer().get())
 	{

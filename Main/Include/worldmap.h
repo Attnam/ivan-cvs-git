@@ -33,6 +33,7 @@ public:
 	virtual void SmoothClimate();
 	virtual void RandomizeAltitude();
 	virtual continent* GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+	virtual continent* GetContinent(ushort Index) const { return Continent[Index]; }
 	virtual void RemoveEmptyContinents();
 	virtual short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 protected:

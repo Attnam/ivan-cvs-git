@@ -43,7 +43,7 @@ template <class type> ushort protocontainer<type>::SearchCodeName(std::string Na
 	std::map<std::string, ushort>::iterator I = CodeNameMap.find(Name);
 
 	if(I != CodeNameMap.end())
-		return (*I)->GetType();
+		return I->second;
 	else
 		return 0;
 }
