@@ -195,3 +195,16 @@ void item::ChangeMainMaterial(material* NewMaterial)
 {
 	ChangeMaterial(0, NewMaterial);
 }
+
+
+void item::CheckPickUpEffect(character* Picker)
+{
+/*	character* ShopKeeper;
+	if(!(Shop = Picker->GetSquareUnder()->GetIsShopkeeper()))
+	{
+		std::string Buffer = ;
+
+		
+		
+		game::BoolQuestion("This, char DefaultAnswer, int OtherKeyForTrue)*/
+}

@@ -857,11 +857,14 @@ void game::InitDungeons()
 void game::DoGoodDeed(short Amount)
 {
 	if(!Amount) return;
-
+	
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
 		float Change = Amount - float(2 * Amount / 10) * GetGod(c)->Alignment();
-		GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) );
+		if(GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c) 
+			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) * 2 );
+		else
+			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change));
 	}
 }
 
@@ -872,7 +875,10 @@ void game::DoEvilDeed(short Amount)
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
 		float Change = - Amount + float(2 * Amount / 10) * GetGod(c)->Alignment();
-		GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) );
+		if(GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c) 
+			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) * 2 );
+		else
+			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change));
 	}
 }
 

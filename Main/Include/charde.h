@@ -376,7 +376,7 @@ public:
 	virtual ushort Possibility() const RET(50)
 	virtual void SpillBlood(uchar) {}
 	virtual ulong Danger() const RET(75)
-	virtual bool Charmable() const RET(false)
+	virtual bool Charmable() const RET(false)	
 protected:
 	virtual vector2d GetBitmapPos() const RETV(48,0)
 	virtual std::string NameSingular() const RET("pure mass of Bill's will")
