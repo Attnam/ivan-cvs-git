@@ -1,6 +1,6 @@
 New goals for version 0.30 alpha:
 
--fixing all bugs except the Great Surface Destruction Bug
+-fixing all known bugs except the Great Surface Destruction Bug
  -single weapon's name not updated (Timo)
  -eating weapons made of an eatable material (Hex)
  -odd hit message (Timo)
@@ -8,28 +8,30 @@ New goals for version 0.30 alpha:
  -score bug with polymorph (Timo)
  -others that may be found (Hex or Timo)
 
--adding more blood in criticals (Hex)
--making fluid spill from breaking potions (Hex)
--adding question to leaving city (Hex)
--fixing the message of wishing forbidden items (Hex)
--making monsters think what they eat (Hex)
--making rest stop when the player is hungry (Timo)
--making weapon experience and money affect score and NP not affect it (Timo)
--making kicking increase the unarmed weapon skill (Hex)
--reimplementating higher victory types (Timo)
--adding pray effects for Silva (Hex or Timo)
--making Venius burn only hostile creatures (Hex)
--making Mellis fill also intact empty bottles and empty cans (Hex)
--adding relation effect limits to cannibalism and navastating (Timo)
--adding Banana and Pick-axe logo to menu (Hex)
--adding "Name too short!" message (Hex)
+-adding new essential features
+ -adding question to leaving city (Hex)
+ -fixing the message of wishing forbidden items (Hex)
+ -making fluid spill from breaking potions (Hex)
+ -adding more blood in criticals (Hex)
+ -making monsters think what they eat (Hex)
+ -making rest stop when the player is hungry (Timo)
+ -making weapon experience and money affect score and NP not affect it (Timo)
+ -making kicking increase the unarmed weapon skill (Hex)
+ -reimplementating higher victory types (Timo)
+ -adding pray effects for Silva (Hex or Timo)
+ -making Venius burn only hostile creatures (Hex)
+ -making Mellis fill also intact empty bottles and empty cans (Hex)
+ -adding relation effect limits to cannibalism and navastating (Timo)
+ -adding Banana and Pick-axe logo to menu (Hex)
+ -adding "Name too short!" message (Hex)
+ -adding grass, pines and spruces to Attnam once the pics are available (Timo)
 
 -fixing buggy graphics that are buggy due to code
  -can (Timo)
  -fallen valpurist (Timo)
  -Oree (Timo)
  -froggoblin (Timo)
- -moraine (Hex)
+ -earth (Hex)
  -seats (Hex)
  -arrow (Timo)
  -stairs (Timo)
@@ -37,10 +39,20 @@ New goals for version 0.30 alpha:
  -others that may be found (Timo)
 
 -fixing buggy graphics that are buggy due to overuse of material colors
- -many ietms and some terrains (Tuukka)
+ -many items and some terrains (Tuukka)
 
 -creating new graphics (to make Attnam a little less ugly)
  -grass (Tuukka)
  -pine and spruce (Tuukka)
  -new Avatar (Tuukka)
  -others that may be needed (Tuukka)
+
+-a lot of testing (everyone that can be forced to do it)
+
+-other, non-executable related jobs
+ -creating the homepage (Ikki)
+ -finding a good screenshot for the homepage (Hex or Timo)
+ -collecting a list of best features IVAN 0.30a has to offer
+  (lighting system, weapon skills, script etc.) for the homepage (Hex or Timo)
+ -writing a new readme file (Hex and Timo)
+ -marketing IVAN to public (Hex)
