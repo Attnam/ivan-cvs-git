@@ -13,7 +13,7 @@ class windowhandler
   static void Init(void);
   static void DeInit(void);
   static void Click(vector2d);
-  static vector<window*> GetWindowList(void) { return WindowList; }
+  static vector<window*>& GetWindowList(void) { return WindowList; }
   static void BringOnTop(window*);
   static cursor* GetCursor(void) { return Cursor; }
  protected:

@@ -224,8 +224,8 @@ void whattoedit::Draw(void)
 void window::Close(window* Caller)
 {
 
- windowhandler::GetWindowList().clear();
-// find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller));
+ //windowhandler::GetWindowList().clear();
+ find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller);
  delete Caller;
 }
 

@@ -21,7 +21,7 @@ public:
 	virtual ~square(void);
 	virtual void Save(std::ofstream&) const;
 	virtual void Load(std::ifstream&);
-	virtual void DrawCheat(void) const;
+	//virtual void DrawCheat(void) const;
 	virtual void DrawMemorized(void) const;
 	virtual void UpdateMemorizedAndDraw(void) = 0;
 	virtual void DrawToTileBuffer(void) const = 0;
@@ -45,6 +45,7 @@ public:
 	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
 	virtual void UpdateMemorizedDescription(void) = 0;
 	virtual bool CanBeSeen(void) const;
+	virtual void DrawCheat(void) const = 0;
 protected:
 	std::string MemorizedDescription;
 	//groundterrain* GroundTerrain;

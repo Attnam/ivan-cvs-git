@@ -76,6 +76,7 @@ public:
 	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
 	virtual level* GetLevelUnder(void) const { return (level*)AreaUnder; }
 	virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
+	virtual void DrawCheat(void) const;
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

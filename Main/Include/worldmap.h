@@ -33,6 +33,7 @@ public:
 	virtual void RandomizeAltitude(void);
 	virtual uchar GetContinentUnder(vector Pos) const { return ContinentBuffer[Pos.X][Pos.Y]; }
 	virtual void RemoveEmptyContinents(void);
+	virtual short GetAltitude(vector Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 protected:
 	worldmapsquare*** Map;
 	//std::vector<char*> ContinentName;

@@ -48,7 +48,7 @@ template <class type> inline std::ifstream& operator>>(std::ifstream& SaveFile, 
 
 	SaveFile.read((char*)&Size, sizeof(Size));
 
-	Vector.resize(Size);
+	Vector.resize(Size, type());
 
 	for(ulong c = 0; c < Vector.size(); c++)
 		SaveFile >> Vector[c];

@@ -50,7 +50,9 @@ void worldmapsquare::UpdateMemorizedAndDraw(void)
 	if(GetCharacter())
 		GetCharacter()->DrawToTileBuffer();
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+	ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 2);
+
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
 }
 
 void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, overworldmapterrain* NewOver)
@@ -99,9 +101,9 @@ void worldmapsquare::UpdateMemorizedDescription(void)
 	if(TerrainChanged)
 	{
 		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
-			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos));
+			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos) + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
 		else
-			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos));
+			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + " of continent number " + GetWorldMapUnder()->GetContinentUnder(Pos) + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
 
 		TerrainChanged = false;
 	}
@@ -117,3 +119,14 @@ overterrain* worldmapsquare::GetOverTerrain(void) const
 	return OverWorldMapTerrain;
 }
 
+void worldmapsquare::DrawCheat(void) const
+{
+	DrawToTileBuffer();
+
+	if(GetCharacter())
+		GetCharacter()->DrawToTileBuffer();
+
+	ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 2);
+
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+}

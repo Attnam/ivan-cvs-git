@@ -607,3 +607,12 @@ overterrain* levelsquare::GetOverTerrain(void) const
 	return OverLevelTerrain;
 }
 
+void levelsquare::DrawCheat(void) const
+{
+	DrawToTileBuffer();
+
+	if(GetCharacter())
+		GetCharacter()->DrawToTileBuffer();
+
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+}

@@ -4,12 +4,12 @@
 
 void continent::Save(std::ofstream& SaveFile) const
 {
-	//SaveFile << Name << Member << Index;
+	SaveFile << Name << Member << Index;
 }
 
 void continent::Load(std::ifstream& SaveFile)
 {
-	//SaveFile >> Name >> Member >> Index;
+	SaveFile >> Name >> Member >> Index;
 }
 
 void continent::AttachTo(continent& Continent)

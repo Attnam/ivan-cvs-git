@@ -52,16 +52,6 @@ void square::Load(std::ifstream& SaveFile)
 	SaveFile >> MemorizedDescription;
 }
 
-void square::DrawCheat(void) const
-{
-	DrawToTileBuffer();
-
-	if(GetCharacter())
-		GetCharacter()->DrawToTileBuffer();
-
-	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
-}
-
 void square::DrawMemorized(void) const
 {
 	if(GetKnown())

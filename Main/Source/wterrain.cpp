@@ -36,10 +36,10 @@ vector worldmapterrain::GetPos(void) const
 	return GetWorldMapSquareUnder()->GetPos();
 }
 
-void groundworldmapterrain::DrawNeighbour(vector Pos, uchar NeighbourIndex) const
+/*void groundworldmapterrain::DrawNeighbour(vector Pos, uchar NeighbourIndex) const
 {
 	
-}
+}*/
 
 struct prioritypair
 {
@@ -69,6 +69,29 @@ void groundworldmapterrain::DrawToTileBuffer(void) const
 		Neighbour.pop();
 	}
 }
+
+/*void groundworldmapterrain::DrawToTileBuffer(void) const
+{
+	igraph::GetWorldMapTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
+
+	//std::priority_queue<prioritypair> Neighbour;
+
+	DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(GetWorldMapSquareUnder()->GetPos().X, GetWorldMapSquareUnder()->GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
+	{
+		vector NeighbourBitmap = GetWorldMapUnder()->GetWorldMapSquare(DoX, DoY)->GetGroundWorldMapTerrain()->GetBitmapPos() - (game::GetMoveVector(DoIndex) << 4);
+
+		igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), NeighbourBitmap.X, NeighbourBitmap.Y, 0, 0, 16, 16);
+
+		//if(DoNeighbour->Priority() > Priority())
+		//	Neighbour.push(prioritypair(DoNeighbour->Priority(), ));
+	}, ;, ;)
+
+	/while(Neighbour.size())
+	{
+		igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos.X, Neighbour.top().BitmapPos.Y, 0, 0, 16, 16);
+		Neighbour.pop();
+	}/
+}*/
 
 void overworldmapterrain::DrawToTileBuffer(void) const
 {

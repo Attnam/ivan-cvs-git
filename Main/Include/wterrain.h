@@ -32,7 +32,7 @@ public:
 	virtual groundworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
 	virtual uchar Priority(void) const = 0;
-	virtual void DrawNeighbour(vector, uchar) const;
+	//virtual void DrawNeighbour(vector, uchar) const;
 	/*static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
 	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
 	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }*/

@@ -33,6 +33,7 @@ public:
 	virtual void UpdateMemorizedDescription(void);
 	virtual groundterrain* GetGroundTerrain(void) const;// { return GroundWorldMapTerrain; }
 	virtual overterrain* GetOverTerrain(void) const;// { return OverWorldMapTerrain; }
+	virtual void DrawCheat(void) const;
 protected:
 	groundworldmapterrain* GroundWorldMapTerrain;
 	overworldmapterrain* OverWorldMapTerrain;
