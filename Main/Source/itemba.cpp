@@ -25,9 +25,9 @@ item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer(), GetVisualFlags());
   else
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), GetVisualFlags());
 }
 
 bool item::IsConsumable(character* Eater) const
@@ -393,6 +393,8 @@ void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
 
   if(!Load && CallGenerateMaterials)
     GenerateMaterials();
+  if(!Load)
+      HandleVisualEffects();
 }
 
 itemprototype::itemprototype(itemprototype* Base) : Base(Base)
@@ -443,4 +445,15 @@ void item::InitChosenMaterial(material*& Material, const std::vector<long>& Mate
     InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
   else
     ABORT("MaterialConfig array of illegal size detected!");
+}
+
+void item::HandleVisualEffects()
+{
+  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
+
+  for(ushort c = 0; c < 8; ++c)
+    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
+      Flags |= 1 << c;
+
+  SetVisualFlags(Flags);
 }

@@ -47,6 +47,7 @@ item
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
+	OKVisualEffects = NONE;
 }
 
 materialcontainer
@@ -139,6 +140,7 @@ lump
 	NameSingular = "lump";
 	MainMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
+	OKVisualEffects = ROTATE|MIRROR|FLIP;
 }
 
 meleeweapon
@@ -1054,6 +1056,7 @@ corpse
 	NPModifier = 100;
 	OfferModifier = 100;
 	NameSingular = "corpse";
+	OKVisualEffects = ROTATE|MIRROR|FLIP;
 }
 
 wandoflocking /* wand-> */

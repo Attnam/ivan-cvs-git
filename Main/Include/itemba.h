@@ -67,6 +67,7 @@ struct itemdatabase
   std::vector<long> MaterialConfigChances;
   bool IsAbstract;
   bool IsPolymorphable;
+  uchar OKVisualEffects;
 };
 
 class itemprototype
@@ -245,13 +246,16 @@ class item : public object
   DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
   DATABASEBOOL(IsPolymorphable);
+  DATABASEVALUE(uchar, OKVisualEffects);
 
   virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   //virtual bool ReceiveApply(character*) { return false; }
   virtual bool TryKey(item*, character*) { return false; }
-
+  virtual uchar GetVisualFlags() const { return VisualFlags; }
+  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
+  virtual void HandleVisualEffects();
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
@@ -269,6 +273,7 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
+  uchar VisualFlags;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__

@@ -202,6 +202,7 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(MaterialConfigChances);
   ANALYZEDATA(IsAbstract);
   ANALYZEDATA(IsPolymorphable);
+  ANALYZEDATA(OKVisualEffects);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

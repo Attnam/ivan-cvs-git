@@ -153,7 +153,7 @@ vector2d lterrain::GetPos() const
 
 void lterrain::HandleVisualEffects()
 {
-  uchar Flags = 0, AcceptedFlags = OKVisualEffects();
+  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
 
   for(ushort c = 0; c < 8; ++c)
     if((AcceptedFlags & (1 << c)) && (RAND() % 2))

@@ -15,7 +15,7 @@ class GLTERRAIN
   parquet,
   glterrain,
  public:
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(WOOD)); }
   virtual std::string GetNameSingular() const { return "parquet"; }
@@ -28,7 +28,7 @@ class GLTERRAIN
   floor,
   glterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GRAVEL)); }
   virtual std::string GetNameSingular() const { return "floor"; }
@@ -40,7 +40,7 @@ class GLTERRAIN
   ground,
   glterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GRAVEL)); }
   virtual std::string GetNameSingular() const { return "ground"; }
@@ -52,7 +52,7 @@ class GLTERRAIN
   grassterrain,
   glterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(GRASS)); }
   virtual std::string GetNameSingular() const { return "ground"; }
@@ -64,7 +64,7 @@ class OLTERRAIN
   earth,
   olterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR | FLIP | ROTATE; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
   virtual bool IsWalkable() const { return false; }
@@ -81,7 +81,7 @@ class OLTERRAIN
   wall,
   olterrain,
  public:
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The wall is pretty hard, but you still manage to go through it."; }
   virtual bool IsWalkable() const { return false; }
@@ -156,7 +156,7 @@ class OLTERRAIN
   olterrain,
  public:
   virtual bool GoUp(character*) const;
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
@@ -173,7 +173,7 @@ class OLTERRAIN
   olterrain,
  public:
   virtual bool GoDown(character*) const;
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
   virtual void StepOn(character*);
  protected:
@@ -195,7 +195,7 @@ class OLTERRAIN
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "An invisible wall stops your feeble attempt."; }
   virtual void StepOn(character*);
   virtual void Kick(ushort, bool, uchar);
@@ -231,7 +231,7 @@ class OLTERRAIN
   pine,
   olterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
@@ -247,7 +247,7 @@ class OLTERRAIN
   spruce,
   olterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:
@@ -263,7 +263,7 @@ class OLTERRAIN
   linden,
   olterrain,
  public:
-  virtual uchar OKVisualEffects() const { return MIRROR; }
+  virtual uchar GetOKVisualEffects() const { return MIRROR; }
   virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
  protected:

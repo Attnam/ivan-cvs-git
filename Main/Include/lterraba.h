@@ -35,7 +35,7 @@ class lterrain : public object
   virtual bool CanBeOpened() const { return false; }
   virtual bool CanBeOffered() const { return false; }
   virtual bool CanBeDug() const { return false; }
-  virtual uchar OKVisualEffects() const { return 0; }
+  virtual uchar GetOKVisualEffects() const { return 0; }
   virtual uchar GetVisualFlags() const { return VisualFlags; }
   virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   virtual void HandleVisualEffects();
