@@ -1,3 +1,9 @@
+October 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Support for round corners for rooms added
+	* Some rewriting of some really awful code in level.cpp, but not enough...
+	* Started New Attnam (1 % done now or something like that)
+
 September 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Gunpower can now get wet

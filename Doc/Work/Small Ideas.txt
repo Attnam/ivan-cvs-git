@@ -336,3 +336,4 @@ Time bomb.
 Prohibit vomiting over Avatar.
 Monster that only sees in red, green or blue light.
 Monsters that have died of poisoning should be poisoned when eaten.
+Fly system should be remade (with the ability of having two or more items in the air at the same time)

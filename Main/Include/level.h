@@ -64,9 +64,10 @@ class level : public area
   virtual void Draw() const;
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
   vector2d GetEntryPos(const character*, uchar) const;
+  void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, roomscript*, room*, vector2d, vector2d);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
-  void CreateWallSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
+  void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
   lsquare*** Map;
   levelscript* LevelScript;
   std::string LevelMessage;

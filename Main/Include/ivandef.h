@@ -542,4 +542,7 @@
 #define DARKLEVEL 6
 #define OREELAIR 9
 
+#define RECTANGLE 1
+#define ROUNDCORNERS 2
+
 #endif

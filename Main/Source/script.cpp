@@ -503,6 +503,7 @@ datamemberbase* roomscript::GetData(const std::string& Identifier)
   ANALYZEMEMBER(GenerateFountains);
   ANALYZEMEMBER(AllowLockedDoors);
   ANALYZEMEMBER(AllowBoobyTrappedDoors);
+  ANALYZEMEMBER(Shape);
   return 0;
 }
 

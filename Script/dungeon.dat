@@ -112,6 +112,7 @@ Dungeon ELPURICAVE;
 			GenerateFountains=true;
 			AllowLockedDoors=true;
 			AllowBoobyTrappedDoors=true;
+			Shape = RECTANGLE;
 		}
 	}
 
@@ -148,6 +149,7 @@ Dungeon ELPURICAVE;
 			Size=5,5;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
+			Shape = ROUNDCORNERS;
 
 			Square, Pos 2,2;
 			{
@@ -482,6 +484,7 @@ Dungeon ATTNAM;
 			GenerateFountains=false;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
+			Shape = RECTANGLE;
 		}
 
 		Square, Random NOTINROOM;
@@ -1051,7 +1054,70 @@ Dungeon ATTNAM;
 
 Dungeon NEWATTNAM;
 {
-	Levels=1;
+	Levels = 1;
+	Level 0;
+	{
+		Description="New Attnam";
+		FillSquare=solidterrain(GRASSTERRAIN),empty;
+
+		Variable XSize = 50;
+		Variable YSize = 50;
+
+		Size=XSize, YSize;
+		GenerateMonsters=false;
+		Rooms= 5 + rand % 3;
+		Items=0;
+		ReCalculate=false;
+		OnGround=true;
+		TeamDefault=2;
+		AmbientLight=rgb24(150, 150, 150);
+		LOSModifier=48;
+		IgnoreDefaultSpecialSquares = false;
+
+		RoomDefault
+		{
+			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
+			Size=4+rand%8,4+rand%8;
+			AltarPossible=false;
+			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			FloorSquare=solidterrain(PARQUET),empty;
+			DoorSquare=solidterrain(PARQUET),door;
+			GenerateDoor=true;
+			ReCalculate=true;
+			DivineMaster=0;
+			GenerateTunnel=false;
+			GenerateLanterns=true;
+			Type=normalroom;
+			GenerateFountains=false;
+			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
+			Shape = ROUNDCORNERS;
+		}
+
+		Square, Random NOTINROOM;
+		{
+			Character=hunter;
+			Times=10;
+		}
+
+
+		Square, Random NOTINROOM;
+		{
+			Character=farmer;
+			Times=5;
+		}
+
+		Square, Random NOTINROOM;
+		{
+			Character=housewife;
+			Times=5;
+		}
+
+		Square, Pos 30,61;
+		{
+			EntryIndex = STAIRSUP;
+		}
+	}
 }
 
 Dungeon UNDERWATERTUNNEL;
@@ -1099,6 +1165,7 @@ Dungeon UNDERWATERTUNNEL;
 			GenerateFountains=true;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
+			Shape = 1 + rand%2;
 		}
 	}
 
@@ -1153,3 +1220,5 @@ Dungeon UNDERWATERTUNNEL;
 		}
 	}
 }
+
+

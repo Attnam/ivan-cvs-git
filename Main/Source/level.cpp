@@ -374,8 +374,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 {
   game::BusyAnimation();
   ushort XPos = RoomScript->GetPos()->X, YPos = RoomScript->GetPos()->Y, Width = RoomScript->GetSize()->X, Height = RoomScript->GetSize()->Y;
-  ushort BXPos = XPos, BYPos = YPos;
-  ushort x, y;
+  ushort x, y, c;
 
   if(XPos + Width > XSize - 2)
     return false;
@@ -394,77 +393,36 @@ bool level::MakeRoom(roomscript* RoomScript)
   AddRoom(RoomClass);
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
   game::BusyAnimation();
-  std::vector<glterrain*> GTerrain;
-  std::vector<olterrain*> OTerrain;
-  RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(GTerrain, ((Width + Height) << 1) - 4);
-  RoomScript->GetWallSquare()->GetOTerrain()->Instantiate(OTerrain, ((Width + Height) << 1) - 4);
-  ulong Counter = 0;
+
+
   uchar Room = RoomClass->GetIndex();
-  uchar DivineMaster = RoomScript->GetDivineMaster(false) ? *RoomScript->GetDivineMaster() : 0;
-  bool AllowLanterns = *RoomScript->GetGenerateLanterns();
+  std::vector<vector2d> OKForDoor, Inside, Border;
 
-  for(x = XPos; x < XPos + Width; ++x, Counter += 2)
-    {
-      CreateWallSquare(GTerrain[Counter], OTerrain[Counter], x, YPos, Room, DivineMaster);
-      CreateWallSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, YPos + Height - 1, Room, DivineMaster);
-
-      if(AllowLanterns && x != XPos && x != XPos + Width - 1)
-	{
-	  GenerateLanterns(x, YPos, DOWN);
-	  GenerateLanterns(x, YPos + Height - 1, UP);
-	}
-    }
-
+  GenerateRectangularRoom(OKForDoor, Inside, Border, RoomScript, RoomClass, vector2d(XPos, YPos), vector2d(Width, Height));
   game::BusyAnimation();
-
-  for(y = YPos + 1; y < YPos + Height - 1; ++y, Counter += 2)
-    {
-      CreateWallSquare(GTerrain[Counter], OTerrain[Counter], XPos, y, Room, DivineMaster);
-      CreateWallSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], XPos + Width - 1, y, Room, DivineMaster);
-
-      if(AllowLanterns)
-	{
-	  GenerateLanterns(XPos, y, RIGHT);
-	  GenerateLanterns(XPos + Width - 1, y, LEFT);
-	}
-    }
-
-  game::BusyAnimation();
-
-  RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(GTerrain, (Width - 2) * (Height - 2));
-  RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate(OTerrain, (Width - 2) * (Height - 2));
-  Counter = 0;
-
-  for(x = XPos + 1; x < XPos + Width - 1; ++x)
-    for(y = YPos + 1; y < YPos + Height - 1; ++y, ++Counter)
-      {
-	Map[x][y]->ChangeLTerrain(GTerrain[Counter], OTerrain[Counter]);
-	FlagMap[x][y] |= FORBIDDEN;
-
-	if(DivineMaster)
-	  Map[x][y]->SetDivineMaster(DivineMaster);
-
-	Map[x][y]->SetRoom(Room);
-      }
 
   if(*RoomScript->GetGenerateFountains() && !(RAND() % 10))
-    Map[XPos + 1 + RAND() % (Width - 2)][YPos + 1 + RAND() % (Height - 2)]->ChangeOLTerrain(new fountain);
+    GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new fountain);
 
   if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
     {
       uchar Owner = 1 + RAND() % (game::GetGods() - 1);
-      Map[XPos + 1 + RAND() % (Width - 2)][YPos + 1 + RAND() % (Height - 2)]->ChangeOLTerrain(new altar(Owner));
-
-      for(ushort x = XPos; x < XPos + Width; ++x)
-	for(y = YPos; y < YPos + Height; ++y)
-	  Map[x][y]->SetDivineMaster(Owner);
+      GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
+      ushort c;
+      for(c = 0; c < Inside.size(); ++c)
+	GetLSquare(Inside[c])->SetDivineMaster(Owner);
+      for(c = 0; c < Border.size(); ++c)
+	GetLSquare(Border[c])->SetDivineMaster(Owner);
     }
 
-  if(*RoomScript->GetGenerateTunnel() && Door.size())
+  if(*RoomScript->GetGenerateTunnel() && !Door.empty())
     {
       game::BusyAnimation();
-      vector2d LPos = Door[RAND() % Door.size()];
-      ushort LXPos = LPos.X, LYPos = LPos.Y;
+      vector2d OutsideDoorPos = Door[RAND() % Door.size()]; // An other room
+      if(OKForDoor.empty())
+	ABORT("The Doors - You are strange.");
+      vector2d InsideDoorPos = OKForDoor[RAND() % OKForDoor.size()]; // this door
+
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
@@ -475,29 +433,15 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  Door->Lock();
 	}
 
-      Map[LXPos][LYPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
-      Map[LXPos][LYPos]->Clean();
-      FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
-      FlagMap[LXPos][LYPos] |= PREFERRED;
-      ushort BXPos = XPos, BYPos = YPos;
+      Map[OutsideDoorPos.X][OutsideDoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
+      Map[OutsideDoorPos.X][OutsideDoorPos.Y]->Clean();
+      FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] &= ~FORBIDDEN;
+      FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] |= PREFERRED;
 
-      if(RAND() & 1)
-	{
-	  XPos += RAND() % (Width - 2) + 1;
 
-	  if(RAND() & 1)
-	    YPos += Height - 1;
-	}
-      else
-	{
-	  YPos += RAND() % (Height - 2) + 1;
 
-	  if(RAND() & 1)
-	    XPos += Width - 1;
-	}
-
-      FlagMap[XPos][YPos] &= ~FORBIDDEN;
-      FlagMap[XPos][YPos] |= PREFERRED;
+      FlagMap[InsideDoorPos.X][InsideDoorPos.Y] &= ~FORBIDDEN;
+      FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= PREFERRED;
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
@@ -508,41 +452,29 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  Door->Lock();
 	}
 
-      Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
-      Map[XPos][YPos]->Clean();
-      GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() & 1);
-      FlagMap[LXPos][LYPos] |= FORBIDDEN;
-      FlagMap[LXPos][LYPos] &= ~PREFERRED;
-      FlagMap[XPos][YPos] |= FORBIDDEN;
-      FlagMap[XPos][YPos] &= ~PREFERRED;
-      XPos = BXPos; YPos = BYPos;
+      Map[InsideDoorPos.X][InsideDoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
+      Map[InsideDoorPos.X][InsideDoorPos.Y]->Clean();
+      GenerateTunnel(vector2d(InsideDoorPos.X, InsideDoorPos.Y), vector2d(OutsideDoorPos.X, OutsideDoorPos.Y), RAND() & 1);
+      FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] |= FORBIDDEN;
+      FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] &= ~PREFERRED;
+      FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= FORBIDDEN;
+      FlagMap[InsideDoorPos.X][InsideDoorPos.Y] &= ~PREFERRED;
     }
 
   if(*RoomScript->GetGenerateDoor())
     {
       game::BusyAnimation();
 
-      if(RAND() & 1)
-	{
-	  XPos += RAND() % (Width - 2) + 1;
-
-	  if(RAND() & 1)
-	    YPos += Height - 1;
-	}
-      else
-	{
-	  YPos += RAND() % (Height - 2) + 1;
-
-	  if(RAND() & 1)
-	    XPos += Width - 1;
-	}
-
-      Door.push_back(vector2d(XPos, YPos));
+      vector2d DoorPos;
+      if(OKForDoor.empty())
+	ABORT("The Doors - This thing has been broken.");
+      DoorPos = OKForDoor[RAND() % OKForDoor.size()];
+      Door.push_back(DoorPos);
 
       if(!*RoomScript->GetGenerateTunnel())
 	{
-	  Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
-	  Map[XPos][YPos]->Clean();
+	  Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
+	  Map[DoorPos.X][DoorPos.Y]->Clean();
 	}
     }
 
@@ -561,14 +493,13 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  else
 	    Pos = *Script->GetPosition()->GetVector();
 
-	  Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Script, RoomClass);
+	  Map[XPos + Pos.X][YPos + Pos.Y]->ApplyScript(Script, RoomClass);
 	}
     }
 
   if(RoomScript->GetCharacterMap(false))
     {
-      XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
+      vector2d CharPos(XPos + RoomScript->GetCharacterMap()->GetPos()->X, YPos + RoomScript->GetCharacterMap()->GetPos()->Y);
       const contentscript<character>* CharacterScript;
 
       for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
@@ -583,7 +514,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
-		Map[XPos + x][YPos + y]->AddCharacter(Char);
+		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
 		RoomClass->HandleInstantiatedCharacter(Char);
 	      }
 	}
@@ -591,8 +522,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetItemMap(false))
     {
-      XPos = BXPos + RoomScript->GetItemMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetItemMap()->GetPos()->Y;
+      vector2d ItemPos(XPos + RoomScript->GetItemMap()->GetPos()->X, YPos + RoomScript->GetItemMap()->GetPos()->Y);
       const contentscript<item>* ItemScript;
 
       for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
@@ -607,13 +537,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 		uchar* SideStackIndex = ItemScript->GetSideStackIndex(false);
 
 		if(!SideStackIndex)
-		  Stack = Map[XPos + x][YPos + y]->GetStack();
+		  Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
 		else
 		  {
 		    Item->SignalSquarePositionChange(*SideStackIndex);
-		    Stack = Map[XPos + x][YPos + y]->GetSideStack(*SideStackIndex);
+		    Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
 		  }
-
 		Stack->AddItem(Item);
 	      }
 	}
@@ -621,8 +550,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetGTerrainMap(false))
     {
-      XPos = BXPos + RoomScript->GetGTerrainMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetGTerrainMap()->GetPos()->Y;
+      vector2d GTerrainPos(XPos + RoomScript->GetGTerrainMap()->GetPos()->X, YPos + RoomScript->GetGTerrainMap()->GetPos()->Y);
       const contentscript<glterrain>* GTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
@@ -631,14 +559,13 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  for(y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
 	    if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
-	      Map[XPos + x][YPos + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
+	      Map[GTerrainPos.X + x][GTerrainPos.Y + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
 	}
     }
 
   if(RoomScript->GetOTerrainMap(false))
     {
-      XPos = BXPos + RoomScript->GetOTerrainMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetOTerrainMap()->GetPos()->Y;
+      vector2d OTerrainPos(XPos + RoomScript->GetOTerrainMap()->GetPos()->X, YPos + RoomScript->GetOTerrainMap()->GetPos()->Y);
       const contentscript<olterrain>* OTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
@@ -649,7 +576,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	    if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
 	      {
 		olterrain* Terrain = OTerrainScript->Instantiate();
-		Map[XPos + x][YPos + y]->ChangeOLTerrain(Terrain);
+		Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
 		RoomClass->HandleInstantiatedOLTerrain(Terrain);
 	      }
 	}
@@ -668,7 +595,7 @@ void level::GenerateLanterns(ushort X, ushort Y, uchar SquarePos) const
     }
 }
 
-void level::CreateWallSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room, uchar DivineMaster) const
+void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room, uchar DivineMaster) const
 {
   Map[X][Y]->ChangeLTerrain(GLTerrain, OLTerrain);
   FlagMap[X][Y] |= FORBIDDEN;
@@ -1060,3 +987,92 @@ vector2d level::GetEntryPos(const character* Char, uchar Index) const
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
 
+void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vector<vector2d>& Inside, std::vector<vector2d>& Border, roomscript* RoomScript, room* RoomClass, vector2d Pos, vector2d Size)
+{
+  std::vector<glterrain*> GTerrain;
+  std::vector<olterrain*> OTerrain;
+  RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(GTerrain, ((Size.X + Size.Y) << 1) - 4);
+  RoomScript->GetWallSquare()->GetOTerrain()->Instantiate(OTerrain, ((Size.X + Size.Y) << 1) - 4);
+  uchar Room = RoomClass->GetIndex();
+  ulong Counter = 0;
+  uchar DivineMaster = RoomScript->GetDivineMaster(false) ? *RoomScript->GetDivineMaster() : 0;
+  bool AllowLanterns = *RoomScript->GetGenerateLanterns();
+  ushort x,y;
+  uchar Shape = *RoomScript->GetShape();
+  if(Shape == ROUNDCORNERS && ((Size.X < 4 || Size.Y < 4) || (Size.X == 4 && Size.Y == 4))) /* No wierd shapes this way. */
+    Shape = RECTANGLE;
+
+  for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)
+    {
+      if(Shape == ROUNDCORNERS)
+	{
+	  if(x == Pos.X)
+	    {
+	      CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x + 1, Pos.Y + 1, Room, DivineMaster);
+	      CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x + 1, Pos.Y + Size.Y - 2, Room, DivineMaster);
+	      Border.push_back(vector2d(x + 1, Pos.Y + 1));
+	      Border.push_back(vector2d(x + 1, Pos.Y + Size.Y - 2));
+	      continue;
+	    }
+	  else if(x == Pos.X + Size.X - 1)
+	    {
+	      CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x - 1, Pos.Y + 1, Room, DivineMaster);
+	      CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x - 1, Pos.Y + Size.Y - 2, Room, DivineMaster);
+	      Border.push_back(vector2d(x - 1, Pos.Y + 1));
+	      Border.push_back(vector2d(x - 1, Pos.Y + Size.Y - 2));
+	      continue;
+	    }
+	}
+      CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x, Pos.Y, Room, DivineMaster);
+      CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, Pos.Y + Size.Y - 1, Room, DivineMaster);
+
+
+      if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
+	 || (Shape == ROUNDCORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
+	{
+	  OKForDoor.push_back(vector2d(x,Pos.Y));
+	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));
+	  if(AllowLanterns)
+	    {
+	      GenerateLanterns(x, Pos.Y, DOWN);
+	      GenerateLanterns(x, Pos.Y + Size.Y - 1, UP);
+	    }
+	}
+      Border.push_back(vector2d(x, Pos.Y));
+      Border.push_back(vector2d(x, Pos.Y + Size.Y - 1));
+    }
+
+  game::BusyAnimation();
+
+  for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, Counter += 2)
+    {
+      CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], Pos.X, y, Room, DivineMaster);
+      CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], Pos.X + Size.X - 1, y, Room, DivineMaster);
+      if(Shape == ROUNDCORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
+	{
+	  OKForDoor.push_back(vector2d(Pos.X, y));
+	  OKForDoor.push_back(vector2d(Pos.X + Size.X - 1, y));
+	}
+      Border.push_back(vector2d(Pos.X, y));
+      Border.push_back(vector2d(Pos.X + Size.X - 1, y));
+      if(AllowLanterns)
+	{
+	  GenerateLanterns(Pos.X, y, RIGHT);
+	  GenerateLanterns(Pos.X + Size.X - 1, y, LEFT);
+	}
+    }
+
+  RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(GTerrain, (Size.X - 2) * (Size.Y - 2));
+  RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate(OTerrain, (Size.X - 2) * (Size.Y - 2));
+  Counter = 0;
+  for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x)
+    for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, ++Counter)
+      {
+	/* if not in the corner */
+	if(!(Shape == ROUNDCORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
+	  {
+	    CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x, y, Room, DivineMaster);
+	    Inside.push_back(vector2d(x,y));
+	  }
+      }
+}

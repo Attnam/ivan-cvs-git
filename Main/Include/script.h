@@ -276,6 +276,7 @@ class roomscript : public script
   DATAMEMBER(bool, GenerateFountains);
   DATAMEMBER(bool, AllowLockedDoors);
   DATAMEMBER(bool, AllowBoobyTrappedDoors);
+  DATAMEMBER(uchar, Shape);
 };
 
 class levelscript : public script
