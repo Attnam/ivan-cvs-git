@@ -3561,7 +3561,7 @@ void genetrixvesana::GetAICommand()
 
 		if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
 		  {
-		    character* NewPlant = new carnivorousplant(RAND() % 3 ? 0 : GREATER);
+		    character* NewPlant = new carnivorousplant(RAND() & 3 ? 0 : GREATER);
 		    NewPlant->SetTeam(GetTeam());
 		    LSquare->AddCharacter(NewPlant);
 		    --NumberOfPlants;
@@ -3961,8 +3961,9 @@ void mommo::CreateCorpse()
       lsquare* Square = GetNeighbourLSquare(d);
 
       if(Square && Square->GetOLTerrain()->IsWalkable())
-	Square->SpillFluid(RAND() % 20, MakeRGB16(0,128 + RAND() % 128, 0), 5, 60);
+	Square->SpillFluid(RAND() % 20, GetBloodColor(), 5, 60);
     }
+
   SendToHell();  
 }
 
@@ -4083,7 +4084,8 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
 
 void carnivorousplant::CreateCorpse()
 {
-  ushort Amount = !Config ? RAND() % 3 : 1 + (RAND() & 3);
+  ushort Amount = !Config ? (RAND() & 1 ? 0 : (RAND() % 3 ? 1 : 2))
+			  : (RAND() & 1 ? 1 : (RAND() & 1 ? 2 : (RAND() & 1 ? 3 : 4)));
 
   for(ushort c = 0; c < Amount; ++c)
     GetStackUnder()->AddItem(new kiwi);
@@ -4143,4 +4145,11 @@ guard::~guard()
 {
   if(Config == MASTER)
     game::SetHaedlac(0);
+}
+
+item* zombie::SevereBodyPart(ushort BodyPartIndex)
+{
+  item* BodyPart = humanoid::SevereBodyPart(BodyPartIndex);
+  BodyPart->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
+  return BodyPart;
 }

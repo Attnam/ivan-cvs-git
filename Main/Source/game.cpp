@@ -146,10 +146,10 @@ command* game::Command[] =
   new command(&character::LowerGodRelations, "lower your relations to the gods", '6', true, true),
   new command(&character::GainDivineKnowledge, "gain knowledge of all gods", '7', true, true),
   new command(&character::GainAllItems, "gain all items", '8', true, true),
-  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
+  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, false),
   new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
   new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
-  new command(&character::ShowBattleInfo, "show battle info", '%', true, true),
+  new command(&character::ShowBattleInfo, "show battle info", '%', true, false),
   new command(&character::SummonMonster, "summon monster", '&', false, true),
   new command(&character::LevelTeleport, "level teleport", '|', false, true),
   0
@@ -275,6 +275,7 @@ bool game::Init(const std::string& Name)
 	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
+	Player->SetNP(SATIATED_LEVEL);
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
 	Petrus = 0;
@@ -1703,7 +1704,7 @@ void game::SetStandardListAttributes(felist& List)
 {
   List.SetPos(vector2d(26, 42));
   List.SetWidth(652);
-  List.SetBackColor(MakeRGB16(0, 0, 32));
+  List.SetBackColor(MakeRGB16(16, 16, 40));
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
 }
 

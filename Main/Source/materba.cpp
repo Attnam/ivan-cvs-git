@@ -42,7 +42,7 @@ void material::Load(inputfile& SaveFile)
   CalculateWeight();
 }
 
-bool material::Effect(character* Eater, long Amount)
+bool material::Effect(character* Eater, ulong Amount)
 {
   /* Receivexxx should return bool! */
 
@@ -67,12 +67,14 @@ bool material::Effect(character* Eater, long Amount)
     default: return false;
     }
 }
+
 /* NPModifier / 100 = percent */
-void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
+
+void material::EatEffect(character* Eater, ulong Amount, ulong NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 100000));
+  Eater->ReceiveNutrition(ulonglong(GetNutritionValue()) * Amount * NPModifier * 15 / 1000000);
   SetVolume(Volume - Amount);
 }
 
@@ -196,5 +198,5 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
 
 ulong material::GetTotalNutritionValue(const item* What) const
 { 
-  return ulong(float(GetNutritionValue()) * GetVolume() * What->GetNPModifier() / 100000);
+  return ulonglong(GetNutritionValue()) * What->GetNPModifier() * GetVolume() * 15 / 1000000;
 }

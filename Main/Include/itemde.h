@@ -801,6 +801,7 @@ class ABSTRACT_ITEM
   virtual void SignalSpoilLevelChange(material*);
   virtual bool CanBeEatenByAI(const character*) const;
   virtual bool DamageArmor(character*, ushort, uchar) { return false; }
+  bool CannotBeSevered(uchar);
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;

@@ -86,8 +86,8 @@ Dungeon ELPURI_CAVE;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
-		DifficultyBase = 40;
-		DifficultyDelta = 10;
+		DifficultyBase = 60;
+		DifficultyDelta = 15;
 		MonsterAmountBase = 10;
 		MonsterAmountDelta = 4;
 		MonsterGenerationIntervalBase = 100;
@@ -146,21 +146,21 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level rand%3;
+	Level 1+rand%3;
 	{
 		LevelMessage = "You hear many wolves howling. You shiver.";
 		Rooms = 10+rand%21;
 
 		Room 1;
 		{
-			Size = 7,7;
+			Size = 7,6;
 			AltarPossible = false;
 			Shape = ROUND_CORNERS;
 
 			CharacterMap
 			{
 				Pos = 1,1;
-				Size = 5,5;
+				Size = 5,4;
 
 				Types
 				{
@@ -170,7 +170,6 @@ Dungeon ELPURI_CAVE;
 			}
 			{
 				.www.
-				wwwww
 				wwWww
 				wwwww
 				.www.
@@ -1405,8 +1404,8 @@ Dungeon UNDER_WATER_TUNNEL;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
-		DifficultyBase = 10;
-		DifficultyDelta = 10;
+		DifficultyBase = 15;
+		DifficultyDelta = 15;
 		MonsterAmountDelta = 0;
 		MonsterGenerationIntervalBase = 200;
 		MonsterGenerationIntervalDelta = -50;
@@ -1507,6 +1506,16 @@ Dungeon UNDER_WATER_TUNNEL;
 		Size = 160, 20;
 		MonsterAmountBase = 15;
 		Items = 20+rand%21;
+
+		Square, Random;
+		{
+			Items == Random { MinPrice = 50; MaxPrice = 500; Category = BODY_ARMOR; }
+		}
+
+		Square, Random;
+		{
+			Items == Random { MinPrice = 50; MaxPrice = 500; Category = HELMET|CLOAK|BELT|BOOT|GAUNTLET; }
+		}
 
 		RoomDefault
 		{

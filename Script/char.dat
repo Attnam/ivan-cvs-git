@@ -134,6 +134,28 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
+
+	/*DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 15;
+	DefaultAgility = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 10;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = BRONZE helmet;
+	BodyArmor = IRON bodyarmor(CHAIN_MAIL);
+	Cloak = TROLL_HIDE cloak;
+	Belt = TROLL_HIDE belt;
+	RightWielded = IRON meleeweapon(MACE);
+	RightGauntlet = TROLL_HIDE gauntlet;
+	RightBoot = BRONZE boot;
+	KnownCWeaponSkills == MACES;
+	CWeaponSkillHits == 50;
+	RightSWeaponSkillHits = 50;
+	LeftSWeaponSkillHits = 50;*/
 }
 
 petrus
@@ -658,7 +680,7 @@ darkknight
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Golgor Dhan";
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeWished = false;
@@ -730,7 +752,6 @@ frog
 	CanSwim = true;
 	KnownCWeaponSkills == BITE;
 	FleshMaterial = FROG_FLESH;
-	DangerModifier = 50;
 	PanicLevel = 50;
 
 	Config DARK;
@@ -954,7 +975,7 @@ skeleton
 		PostFix = "warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1056,7 +1077,7 @@ goblin
 		PostFix = "king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-		DangerModifier = 1500;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1167,7 +1188,7 @@ golem
 	{
 		DefaultName = "experiment ZQ-29";
 		Frequency = 500;
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wandofinvisibility, wandofteleportation, wandofcloning, scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
 		ClassStates = HASTE|INFRA_VISION|INVISIBLE;
@@ -2035,7 +2056,7 @@ kobold
 	DefaultWisdom = 4;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	SkinColor = rgb16(60, 120, 120); /*rgb16(40, 110, 110);*/ /* rgb16(80, 144, 144); */
+	SkinColor = rgb16(60, 120, 120);
 	EyeColor = rgb16(180, 180, 0);
 	HairColor = rgb16(35, 35, 35);
 	ClothColor = rgb16(48, 48, 48);
@@ -2096,7 +2117,7 @@ kobold
 		PostFix = "patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 2500;
+		DangerModifier = 3500;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
@@ -2457,13 +2478,14 @@ carnivorousplant
 	FleshMaterial = PLANT_FIBER;
 	DeathMessage = "@Dd is destroyed.";
 	SpillsBlood = false;
+	StandVerb = "is rooted";
 
 	Config GREATER;
 	{
 		AttributeBonus = 150;
 		TorsoBitmapPos = 96, 16;
 		Adjective = "greater carnivorous";
-		BaseBiteStrength = 500;
+		BaseBiteStrength = 400;
 		CWeaponSkillHits == 50;
 		TotalVolume = 20000;
 		TotalSize = 175;
@@ -2676,7 +2698,7 @@ orc
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeWished = false;
@@ -2817,7 +2839,7 @@ imperialist
 	FriendlyReplies =
 	{
 		7,
-		"\"And they said levitating ostriches had no future! BUWAHAAHAHAHAAHHA!\" (foam drips from the imperialist's mouth as @pp laughs almost insanely)",
+		"\"And they said levitating ostriches had no future! Hah!",
 		"\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"",
 		"\"Poor people shouldn't complain - after all it's their own fault.\"",
 		"\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if this room has something to do with it?\"",

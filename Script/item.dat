@@ -1269,7 +1269,7 @@ boot /* armor-> */
 	{
 		Possibility = 25;
 		PostFix = "of strength";
-		MainMaterialConfig == IRON;
+		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
 		AffectsLegStrength = true;
 		Price = 50;
@@ -1311,17 +1311,17 @@ gauntlet /* armor-> */
 	FormModifier = 20;
 	NameSingular = "gauntlet";
 	MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 7, 200, 100, 20, 10, 75, 25, 5; }
+	MaterialConfigChances = { 7, 200, 100, 20, 10, 50, 25, 5; }
 	Roundness = 60;
 	CanBePiled = true;
-	InElasticityPenaltyModifier = 30;
+	InElasticityPenaltyModifier = 20;
 	HandleInPairs = true;
 
 	Config GAUNTLET_OF_STRENGTH;
 	{
 		Possibility = 25;
 		PostFix = "of strength";
-		MainMaterialConfig == IRON;
+		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
 		AffectsArmStrength = true;
 		Price = 75;

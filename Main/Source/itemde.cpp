@@ -1165,8 +1165,7 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar Type)
     {
       ushort BHP = HP;
 
-      if((HP <= Damage && HP == MaxHP && HP != 1 && Master->BodyPartIsVital(GetBodyPartIndex()))
-      || ((Type == POISON || Type == SOUND) && GetBodyPartIndex() != TORSO_INDEX))
+      if(HP <= Damage && CannotBeSevered(Type))
 	Damage = GetHP() - 1;
 
       if(!Damage)
@@ -1198,6 +1197,11 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar Type)
     }
 
   return false;
+}
+
+bool bodypart::CannotBeSevered(uchar Type)
+{
+  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (!Master->GetTorso()->IsInBadCondition() && Master->GetTorso()->MaxHP > 3))) || ((Type == POISON || Type == SOUND) && GetBodyPartIndex() != TORSO_INDEX);
 }
 
 void mine::Load(inputfile& SaveFile)

@@ -331,7 +331,7 @@ bool fountain::Drink(character* Drinker)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");
-	      Drinker->EditNP(50);
+	      Drinker->EditNP(100);
 
 	      if(!(RAND() % 5))
 		Drinker->PolymorphRandomly(0, 10000, 2500 + RAND() % 2500);
@@ -342,7 +342,7 @@ bool fountain::Drink(character* Drinker)
 	
 	    case 1:
 	      ADD_MESSAGE("The water tasted very good.");
-	      Drinker->EditNP(1000);
+	      Drinker->EditNP(2500);
 	      Drinker->ChangeRandomStat(1);
 	      break;
 
@@ -450,7 +450,7 @@ bool fountain::Drink(character* Drinker)
 
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
-	      Drinker->EditNP(250);
+	      Drinker->EditNP(500);
 	      break;
 
 	    }
@@ -739,7 +739,7 @@ bool fountain::AddAdjective(std::string& String, bool Articled) const
 {
   if(!GetContainedMaterial())
     {
-      String += Articled ? "a dried out" : "dried out";
+      String += Articled ? "a dried out " : "dried out ";
       return true;
     }
   else

@@ -90,11 +90,11 @@ void powder::Load(inputfile& SaveFile)
   SaveFile >> Wetness;
 }
 
-void organicsubstance::EatEffect(character* Eater, ulong Amount, float NPModifier)
+void organicsubstance::EatEffect(character* Eater, ulong Amount, ulong NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / (100000 * (GetSpoilLevel() + 1))));
+  Eater->ReceiveNutrition(ulonglong(GetNutritionValue()) * Amount * NPModifier * 15 / (1000000 * (GetSpoilLevel() + 1)));
 
   if(GetSpoilLevel() > 0)
     {

@@ -84,7 +84,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(70000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -268,8 +268,12 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
   std::priority_queue<svpriorityelement> SVQueue;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      SVQueue.push(svpriorityelement(c, GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP()));
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && !BodyPart->CannotBeSevered(PHYSICAL_DAMAGE))
+	SVQueue.push(svpriorityelement(c, BodyPart->GetStrengthValue() + BodyPart->GetHP()));
+    }
 
   while(SVQueue.size())
     {
@@ -5568,14 +5572,20 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
     DodgeValue *= 2;
 
   float MinHits = 1000;
+  bool First = true;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(BodyPartIsVital(c) && GetBodyPart(c))
       {
 	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, DodgeValue, AttackIsBlockable, UseMaxHP);
 
-	if(Hits < MinHits)
-	  MinHits = Hits;
+	if(First)
+	  {
+	    MinHits = Hits;
+	    First = false;
+	  }
+	else
+	  MinHits = 1 / (1 / MinHits + 1 / Hits);
       }
 
   return MinHits;

@@ -39,6 +39,7 @@ Cyclops
 Vampire
 	
 	Should be damaged by too much light.
+
 Minotaur
 
 Kerberus

@@ -1,6 +1,25 @@
-NOTICE!!!
-This file contains SPOILERS, which might ruin your IVAN experience totally.
-This file is also provided AS IS and is probably completely unreadable.
+-------------------------------------------------------------------------------------
+
+									NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally. The file
+is also provided AS IS and is probably completely unreadable.
+
+-------------------------------------------------------------------------------------
+
+December 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Doubled nutrition level limits
+	* Increased NP values by 50%
+	* Adjusted the probability distribution of kiwi amounts
+	* Further decreased the amount of wolves in the special level
+	* Decreased gauntlets' InElasticityPenaltyModifier from 30% to 20%
+	* Severed zombie bodyparts are now initially spoiled like the corpse
+	* Plants no longer stand but are rooted
+	* Tweaked the danger algorithm so that monsters value helmets more
+	* Added two random pieces of armor to UT level 2
+	* Greater carnivorous plants are now a bit easier
+	* Torso must now be in bad condition before head or groin can be destroyed
 
 December 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

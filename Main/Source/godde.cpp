@@ -163,7 +163,7 @@ void seges::PrayGoodEffect()
 void seges::PrayBadEffect()
 {
   ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
-  game::GetPlayer()->EditNP(-1000);
+  game::GetPlayer()->EditNP(-10000);
 
   if(game::GetPlayer()->GetNP() < 1)
     game::GetPlayer()->CheckStarvationDeath("starved by " + Name());
@@ -890,7 +890,7 @@ void scabies::PrayBadEffect()
     {
       ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
       material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 1000);
-      SchoolFood->EatEffect(game::GetPlayer(), 1000);
+      SchoolFood->EatEffect(game::GetPlayer(), 1000, 10000);
       delete SchoolFood;
       ADD_MESSAGE("You feel your muscles softening terribly...");
       game::GetPlayer()->EditAttribute(ARM_STRENGTH, -1);
