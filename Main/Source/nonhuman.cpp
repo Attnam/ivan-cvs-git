@@ -53,7 +53,7 @@ bool elpuri::Hit(character* Enemy, bool ForceHit)
 	}
     }
 
-  SetAP(-1000);
+  EditAP(-1000);
   return true;
 }
 
@@ -1174,6 +1174,6 @@ bool eddy::Hit(character* Enemy, bool)
   else if(IsPlayer())
     ADD_MESSAGE("You miss %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-  SetAP(-1000);
+  EditAP(-1000);
   return true;  
 }
