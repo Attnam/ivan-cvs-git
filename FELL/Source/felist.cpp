@@ -137,7 +137,8 @@ void felist::Load(inputfile& SaveFile)
   SaveFile >> Entry >> Description >> Maximum >> InverseMode >> DrawLetters;
 }
 
-void felist::DrawDescription(std::string Str, ushort Color)
+void felist::AddDescription(std::string Str, ushort Color)
 { 
   Description.push_back(felistentry(Str, Color)); 
 }
+
