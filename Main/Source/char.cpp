@@ -3236,7 +3236,7 @@ void character::Regenerate()
 
       EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, BodyPart->GetMaxHP() << 3 / BodyPart->GetHP(), 1 << 7);
+      EditExperience(ENDURANCE, (BodyPart->GetMaxHP() << 5) / BodyPart->GetHP(), 1 << 12);
     }
 }
 

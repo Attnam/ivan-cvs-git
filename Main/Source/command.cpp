@@ -493,6 +493,13 @@ bool commandsystem::Talk(character* Char)
 
 bool commandsystem::NOP(character* Char)
 {
+  {
+    //humanoid* H = static_cast<humanoid*>(Char);
+
+    for(int c = 0; c < Char->GetBodyParts(); ++c)
+      Char->GetBodyPart(c)->EditHP(-Char->GetBodyPart(c)->GetHP() / 2);
+  }
+
   game::GetScore();
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);
