@@ -396,4 +396,4 @@ Thunder hammer's power should be proportional to relation with Loricatus.
 The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
 *Blindfold.
-
+"walk through walls" State 

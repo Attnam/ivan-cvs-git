@@ -3637,7 +3637,7 @@ invisiblestalker
 	CanBeGenerated = true;
 	KnownCWeaponSkills == ARMS;
 	CWeaponSkillHits == 150;
-	FleshMaterial = STALKER_FLESH;
+	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd hisses.";
 	AttachedGod = CLEPTIA;
 	CanKick = true;

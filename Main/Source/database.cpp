@@ -448,6 +448,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(BreatheMessage);
   ADD_MEMBER(EffectIsGood);
+  ADD_MEMBER(IsWarm);
 }
 
 template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

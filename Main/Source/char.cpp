@@ -4283,7 +4283,7 @@ void character::PoisonedHandler()
 bool character::IsWarm() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->IsAlive())
+    if(GetBodyPart(c) && GetBodyPart(c)->IsWarm())
       return true;
 
   return false;

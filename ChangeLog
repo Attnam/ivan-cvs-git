@@ -8,6 +8,14 @@ is also provided AS IS and is probably completely unreadable.
 ------------------------------------------------------------------------------------
 April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Skeletons and other monster made from cold materials do not show in infravision
+
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Bug in bodypart::SpillBlood(ushort) squashed
+	
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Added invisible stalker
 	* Bone files work in Linux
 	

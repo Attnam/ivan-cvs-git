@@ -1642,7 +1642,7 @@ void bodypart::SpillBlood(ushort HowMuch)
   if(!HowMuch || (Master && !Master->SpillsBlood()) || !IsAlive())
     return;
 
-  if(!game::IsInWilderness()) 
+  if(!game::IsInWilderness() && GetLSquareUnder()) 
     GetLSquareUnder()->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
@@ -2325,4 +2325,9 @@ bool corpse::SuckSoul(character* Soul, character* Summoner)
     }
   else
     return false;
+}
+
+bool bodypart::IsWarm() const
+{
+  return GetMainMaterial()->IsWarm();
 }

@@ -39,6 +39,7 @@ material
 	/* DigProductMaterial defaults to Config */
 	/* Obligatory: AttachedGod */
 	EffectIsGood = false;
+	IsWarm = false;
 
 	Config IRON;
 	{
@@ -608,6 +609,7 @@ organicsubstance /* substances that spoil but are not flesh */
 {
 	IsAlive = true;
 	SpoilModifier = 10000;
+	IsWarm = false;
 
 	Config BANANA_FLESH;
 	{
@@ -703,6 +705,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		SpoilModifier = 10000;
 		Emitation = rgb24(140, 100, 100);
 		AttachedGod = SCABIES;
+		IsWarm = true;
 	}
 
 	Config BONE;
@@ -746,6 +749,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Effect = EFFECT_HOLY_BANANA;
 		ConsumeEndMessage = CEM_HOLY_BANANA;
 		CanBeWished = false;
+		IsWarm = true;
 	}
 
 	Config CARROT_FLESH;
@@ -772,6 +776,7 @@ gas
 	Density = 1;
 	Flexibility = 75;
 	ConsumeType = CT_GAS;
+	IsWarm = false;
 
 	Config AIR;
 	{
@@ -839,6 +844,7 @@ liquid
 	CanBeWished = false;
 	Density = 1000;
 	Flexibility = 50;
+	IsWarm = false;
 
 	Config OMMEL_URINE;
 	{
@@ -855,6 +861,7 @@ liquid
 		Alpha = 150;
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
+		IsWarm = true;
 	}
 
 	Config PEPSI;
@@ -1016,6 +1023,7 @@ flesh
 	SpoilModifier = 10000;
 	PriceModifier = 12;
 	CanHaveParasite = true;
+	IsWarm = true;
 
 	Config GOBLINOID_FLESH;
 	{
@@ -1068,6 +1076,7 @@ flesh
 		Article = "an";
 		Color = rgb16(60, 60, 60);
 		AttachedGod = VALPURUS;
+		IsWarm = false;
 	}
 
 	Config HUMAN_FLESH;
@@ -1211,6 +1220,7 @@ flesh
 		NameStem = "black unicorn flesh";
 		PriceModifier = 20;
 		AttachedGod = DULCIS;
+		IsWarm = false;
 	}
 
 	Config GRAY_UNICORN_FLESH;
@@ -1288,6 +1298,7 @@ flesh
 		ConsumeWisdomLimit = 5;
 		AttachedGod = NEFAS;
 		EffectStrength = 20;
+		IsWarm = false;
 	}
 
 	Config MOOSE_FLESH;
@@ -1310,16 +1321,12 @@ flesh
 		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
 	}
-	Config STALKER_FLESH;
-	{
-		NameStem = "magpie flesh";
-		AttachedGod = MORTIFER;
-	}
 }
 
 powder
 {
 	CanBeWished = false;
+	IsWarm = false;
 
 	Config GUN_POWDER;
 	{

@@ -94,6 +94,7 @@ class ABSTRACT_ITEM
   void SetIsSparklingD(bool What) { IsSparklingD = What; }
   virtual ushort GetSpecialFlags() const;
   virtual bool IsRepairable() const;
+  virtual bool IsWarm() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual uchar GetMaxAlpha() const;

@@ -57,6 +57,7 @@ struct materialdatabase
   uchar AttachedGod;
   festring BreatheMessage;
   bool EffectIsGood;
+  bool IsWarm;
 };
 
 class materialprototype
@@ -169,6 +170,7 @@ class material
   bool BreatheEffect(character*);
   virtual bool SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(bool) { }
+  DATA_BASE_BOOL(IsWarm);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);
