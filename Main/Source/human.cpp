@@ -1487,13 +1487,13 @@ bool humanoid::HandleNoBodyPart(ushort Index)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The headless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die();
+      Die("",false);
       return false;
     case GROIN_INDEX:
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
-      Die();
+      Die("",false);
       return false;
     case TORSO_INDEX:
       ABORT("The corpse does not have a torso.");

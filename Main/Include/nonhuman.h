@@ -288,10 +288,11 @@ class CHARACTER
 (
   chameleon,
   nonhumanoid,
+ public:
+  virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetSkinColor() const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }
-  virtual void GetAICommand();
 );
 
 class CHARACTER  

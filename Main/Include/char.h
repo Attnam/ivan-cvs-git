@@ -210,7 +210,7 @@ class character : public entity, public id
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   virtual void ReceiveDarkness(long);
-  void Die(bool = false);
+  void Die(const std::string&, bool = false);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);

@@ -58,3 +58,5 @@ Robe.
 //The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
 //Keys are hardly visible on wooden parquet
 //Broken axe is nearly invisible on gravel floor
+Bronze hammer on gravel floor is not very clear.
+Goblin berserker on grassy ground is really NOT visible.

@@ -6,7 +6,18 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+January 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Fountains should never give permanent lycanthropy-state.
+	* Nefas shouldn't confuse plants. (maybe they should hit randomly characters around them)
+	* Healing should be terminated if player enters faint state.
+	* Remove the 3 letter limit for names.
+	* Amulet of Life saving generates high score entry.
+	
+January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Lycanthropy cannot be randomly activated anymore. 
+	
 January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Corrected some bugs in the Win SDL port

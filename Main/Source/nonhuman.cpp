@@ -142,7 +142,7 @@ void carnivorousplant::GetAICommand()
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && GetRelation(Char) == HOSTILE && Hit(Char))
+	  if(Char && (GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED)) && Hit(Char))
 	    return;
 	}
     }
@@ -1039,17 +1039,6 @@ void mommo::CreateCorpse(lsquare* Square)
   SendToHell();  
 }
 
-void chameleon::GetAICommand()
-{
-  if(HP != MaxHP || !(RAND() % 10))
-    {
-      character* NewForm = PolymorphRandomly(10, 250, 1000 + RAND() % 1000);
-      NewForm->GainIntrinsic(POLYMORPH);
-    }
-  else
-    character::GetAICommand();
-}
-
 void carnivorousplant::CreateCorpse(lsquare* Square)
 {
   ushort Amount = !Config ? (RAND() & 1 ? 0 : (RAND() % 3 ? 1 : 2))
@@ -1139,4 +1128,15 @@ bool spider::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmo
     }
   else
     return false;
+}
+
+bool chameleon::SpecialEnemySightedReaction(character*)
+{
+  if(HP != MaxHP || !(RAND() % 3))
+    {
+      character* NewForm = PolymorphRandomly(10, 100, 500 + RAND() % 500);
+      NewForm->GainIntrinsic(POLYMORPH);
+      return true;
+    }
+  return false;
 }

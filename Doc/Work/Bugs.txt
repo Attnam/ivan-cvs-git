@@ -20,9 +20,9 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Do slimes slip down on banana peals? Or bats?
 //Hex's buggy messages.
 //Pressing esc in stringquestion crashes game!!!
-(?) Background problem with config screen.
+//Background problem with config screen.
 (s) Wishing for corpse or any bodypart in WMode crashes.
-(s) Can one eat a can MADE of bananaflesh?
+(s) One cannot eat a can MADE of bananaflesh.
 //Dos-prompt bug.
 //Walls & moving light.
 //The volume bug.
@@ -133,5 +133,5 @@ It seems that due to certain bitshift rounding errors, resting causes more exp m
 //You can fill a potion with ice.
 The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
 //Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
-Putting mines in Attnam is considered OK by guards.
+(s) Putting mines in Attnam is considered OK by guards.
 Amulet of Life saving generates high score entry.

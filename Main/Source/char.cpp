@@ -15,7 +15,7 @@ void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0,
 void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler };
 std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized" };
 bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false };
-bool StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false };
+bool StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, true, false };
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
@@ -147,6 +147,7 @@ character::~character()
 
 void character::Hunger() 
 {
+  uchar OldState = GetHungerState();
   switch(GetBurdenState())
     {
     case UNBURDENED:
@@ -163,6 +164,10 @@ void character::Hunger()
       EditExperience(LEG_STRENGTH, 2);
       EditExperience(AGILITY, -2);
       break;
+    }
+  if(OldState == HUNGRY && GetHungerState() == STARVING)
+    {
+      DeActivateVoluntaryAction("You are getting extremely hungry.");
     }
 
   if(GetHungerState() == HUNGRY || GetHungerState() == STARVING)
@@ -691,7 +696,8 @@ void character::CreateCorpse(lsquare* Square)
   Disable();
 }
 
-void character::Die(bool ForceMsg)
+/* returns true if the character really dies */
+void character::Die(const std::string& Msg,bool ForceMsg)
 {
   // Note for programmers: This function MUST NOT delete any objects in any case! 
 
@@ -823,9 +829,11 @@ void character::Die(bool ForceMsg)
 
   if(IsPlayer())
     {
+      AddScoreEntry(Msg);
       game::TextScreen("Unfortunately you died during your journey. The high priest is not happy.");
       game::End();
     }
+  return;
 }
 
 void character::AddMissMessage(const character* Enemy) const
@@ -1340,13 +1348,10 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
 
   if(IsDead())
     {
-      if(IsPlayer())
-	AddScoreEntry(Msg);
-
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
-      Die(ForceMsg);
+      Die(Msg,ForceMsg);
       return true;
     }
   else
@@ -1357,10 +1362,7 @@ bool character::CheckStarvationDeath(const std::string& Msg)
 {
   if(GetNP() < 1)
     {
-      if(IsPlayer())
-	AddScoreEntry(Msg);
-
-      Die();
+      Die(Msg,false);
       return true;
     }
   else
@@ -2150,7 +2152,7 @@ void character::TestWalkability()
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterDeathVerb(this).c_str());
 
-	      Die();
+	      Die("",false);
 	    }
 	}
     }

@@ -132,7 +132,7 @@ bool game::Init(const std::string& Name)
   if(!Name.length())
     if(!configuration::GetDefaultName().length())
       {
-	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
+	PlayerName = iosystem::StringQuestion("What is your name? (1-20 letters)", vector2d(30, 46), WHITE, 1, 20, true, true);
 
 	if(!PlayerName.length())
 	  return false;
