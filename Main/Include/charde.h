@@ -1380,25 +1380,34 @@ protected:
 	virtual std::string TalkVerb() const { return "roars"; }
 );
 
-/*class CHARACTER
+class CHARACTER
 (
  unicorn,
  character,
- InitMaterials(2, new unicornflesh, new unicornhorn)
+ RandomizeFleshMaterial(),
 {
-  SetSize();
+  SetSize(200);
   SetAgility(50);
-  SetStrength(2);
+  SetStrength(4);
   SetEndurance(5);
   SetPerception(30);
 },
  public:
- virtual GetDefaultVolume(ushort Index) const { if(!Index) return 1; else return 0; }
- virtual vector2d GetBitmapPos() const RETV(540, 0)
- virtual std::string NameSingular() const RET("unicorn")
+ virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 300000; else return 0; }
+ virtual vector2d GetBitmapPos() const RETV(544, 0)
+ virtual std::string NameSingular() const;
  virtual float GetMeleeStrength() const RET(1200)
  virtual std::string TalkVerb() const { return "neigh"; }
- );*/
+ virtual void SetAlignment(uchar What) { Alignment = What; }
+ virtual uchar GetAlignment() const { return Alignment; }
+ virtual void Load(inputfile&);
+ virtual void Save(outputfile&) const;
+ virtual void RandomizeFleshMaterial();
+ protected:
+ uchar Alignment;
+ );
+
+
 
 #endif
 

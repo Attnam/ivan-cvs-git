@@ -1773,3 +1773,46 @@ void human::CreateInitialEquipment()
 
 void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
 void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }
+
+
+void unicorn::RandomizeFleshMaterial()
+{
+  SetAlignment(RAND() % 3);
+  switch(GetAlignment())
+    {
+    case GOOD:
+      InitMaterials(2, new whiteunicornflesh, new unicornhorn);
+      return;
+    case NEUTRAL:
+      InitMaterials(2, new grayunicornflesh, new unicornhorn);
+      return;
+    default:
+      InitMaterials(2, new blackunicornflesh, new unicornhorn);
+      return;
+    }
+}
+
+void unicorn::Save(outputfile& SaveFile) const
+{
+  character::Save(SaveFile);
+  SaveFile << Alignment;
+}
+
+void unicorn::Load(inputfile& SaveFile)
+{
+  character::Load(SaveFile);
+  SaveFile >> Alignment;
+}
+
+std::string unicorn::NameSingular() const
+{
+  switch(Alignment)
+    {
+    case EVIL:
+      return "black unicorn";
+    case NEUTRAL:
+      return "gray unicorn";
+    case GOOD:
+      return "white unicorn";
+    }
+}

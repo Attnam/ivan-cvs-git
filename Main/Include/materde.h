@@ -893,8 +893,68 @@ protected:
 	virtual std::string NameStem() const	{ return "bread"; }
 
 );
- 
+
+class MATERIAL
+(
+ unicornflesh,
+ flesh,
+
+public:
+	virtual ushort OfferValue() const { return 35; }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
+protected:
+	virtual std::string NameStem() const	{ return "unicorn flesh"; }  
+ );
+
+class MATERIAL
+(
+	unicornhorn,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 110; }
+	virtual uchar GetConsumeType() const				{ return HARD; }
+	virtual ushort GetDensity() const				{ return 5000; }
+	virtual ushort OfferValue() const				{ return 10; }
+	virtual bool IsSolid() const { return true; }
+	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
+	virtual ulong RawPrice() const { return GetVolume() >> 8; }
+	virtual bool CanBeDigged() const { return false; }
+protected:
+	virtual std::string NameStem() const	{ return "unicorn horn"; }
+);
+class MATERIAL
+(
+ blackunicornflesh,
+ flesh,
+ virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
+ virtual uchar Alignment() const { return EVIL; }
+protected:
+ virtual std::string NameStem() const	{ return "black unicorn flesh"; } 
+);
+
+class MATERIAL
+(
+ grayunicornflesh,
+ flesh,
+ virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+ virtual uchar Alignment() const { return NEUTRAL; }
+protected:
+ virtual std::string NameStem() const	{ return "gray unicorn flesh"; } 
+);
+
+class MATERIAL
+(
+ whiteunicornflesh,
+ flesh,
+ virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+ virtual uchar Alignment() const { return GOOD; }
+protected:
+ virtual std::string NameStem() const	{ return "white unicorn flesh"; } 
+);
+
 #endif
+
 
 
 
