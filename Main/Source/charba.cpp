@@ -2545,9 +2545,10 @@ void character::EndDig(void)
 	if(StateIsActivated(DIGGING))
 	{
 		if(StateCounter[DIGGING] == 0)
+		{
 			game::GetCurrentLevel()->GetLevelSquare(GetSquareBeingDigged())->Dig(this, GetWielded());
-
-		SetWielded(GetOldWieldedItem());
+			SetWielded(GetOldWieldedItem());
+		}
 		DeActivateState(DIGGING);
 	}
 }
