@@ -7,13 +7,13 @@ class outputfile;
 class inputfile;
 class character;
 
-class groundterrain : virtual public typeable//, virtual public drawable
+class groundterrain : virtual public typeable
 {
 public:
 	virtual void DrawToTileBuffer() const = 0;
 };
 
-class overterrain : virtual public typeable//, virtual public drawable
+class overterrain : virtual public typeable
 {
 public:
 	virtual void Save(outputfile&) const;

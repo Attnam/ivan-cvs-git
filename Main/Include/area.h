@@ -202,17 +202,6 @@
 	}															\
 }
 
-/*#define DO_BIG_RECTANGLE(ClipLeft, ClipTop, ClipRigth, ClipBottom, DoOne, DoTwo)						\
-{																\
-	ushort XPointer, YPointer;												\
-																\
-	for(XPointer = (ClipLeft); XPointer <= (ClipRigth); XPointer++)								\
-		DoOne;														\
-																\
-	for(YPointer = (ClipTop); YPointer <= (ClipBottom); YPointer++)								\
-		DoTwo;														\
-}*/
-
 #define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat)				\
 {																\
 	long	Left    = (CenterX) - (Radius),											\

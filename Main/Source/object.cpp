@@ -250,37 +250,12 @@ std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) 
 				return NamePlural() + " of " + GetMaterial(0)->Name();
 }
 
-/*std::string object::NameWithAdjectiveAndMaterial(uchar Case, std::string Article) const
-{
-	if(!(Case & PLURAL))
-		if(!(Case & DEFINEBIT))
-			return NameSingular() + " of " + GetMaterial(0)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NameSingular() + " of " + GetMaterial(0)->Name();
-			else
-				return Article + " " + NameSingular() + " of " + GetMaterial(0)->Name();
-	else
-		if(!(Case & DEFINEBIT))
-			return NamePlural() + " of " + GetMaterial(0)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NamePlural() + " of " + GetMaterial(0)->Name();
-			else
-				return NamePlural() + " of " + GetMaterial(0)->Name();
-}*/
-
 void object::EraseMaterials()
 {
 	igraph::RemoveUser(GraphicId);
 
 	for(ushort c = 0; c < Material.size(); ++c)
-	{
 		delete Material[c];
-
-		//if(c < 4)
-		//	Color[c] = 0;
-	}
 
 	Material.resize(0);
 }

@@ -10,7 +10,7 @@ class outputfile;
 class inputfile;
 class dungeon;
 
-class worldmapterrain : virtual public typeable//, virtual public drawable
+class worldmapterrain : virtual public typeable
 {
 public:
 	friend class worldmap;

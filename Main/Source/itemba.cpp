@@ -20,7 +20,6 @@ item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPo
 
 void item::PositionedDrawToTileBuffer(uchar) const
 {
-	//igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
@@ -169,7 +168,7 @@ void item::DrawToTileBuffer() const
 
 item* item::CreateWishedItem() const
 {
-	return protocontainer<item>::GetProto(Type())->Clone(); //GGG
+	return protocontainer<item>::GetProto(Type())->Clone();
 }
 
 bool item::Apply(character*)

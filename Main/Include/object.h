@@ -25,7 +25,7 @@ class outputfile;
 class inputfile;
 class bitmap;
 
-class object : virtual public typeable//, virtual public drawable
+class object : virtual public typeable
 {
 public:
 	object(bool);
@@ -63,15 +63,13 @@ protected:
 	virtual std::string NameSized(uchar, std::string, ushort, ushort) const;
 	virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
 	virtual vector2d GetBitmapPos() const = 0;
-	//virtual ushort* CColor() const;
 	std::vector<material*> Material;
 	std::list<object*>::iterator PoolIterator;
 	ushort Size;
 	bool InPool, Exists;
 	bitmap* Picture;
-	ushort* Color;
+	ushort* Color; //Must be removed
 	graphic_id GraphicId;
 };
 
 #endif
-

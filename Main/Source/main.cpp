@@ -3,6 +3,7 @@
 #include "igraph.h"
 #include "hscore.h"
 #include "feio.h"
+#include "whandler.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {

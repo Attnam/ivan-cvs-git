@@ -15,8 +15,7 @@
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
-	//igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16); //GGG
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 ushort can::TryToOpen(stack* Stack)
@@ -102,8 +101,7 @@ bool potion::Consume(character* Eater, float Amount)
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
-	//igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), (GetBitmapPos().Y + (LevelSquarePosition << 4)), 0, 0, 16, 16);
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16); //GGG
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool scroll::CanBeRead(character* Reader) const
@@ -195,11 +193,6 @@ void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
-	/*igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (Material[0]->GetItemColor() << 4), GetBitmapPos().Y+16, 0, 0, 16, 16);
-
-	if(Material[1])
-		igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (Material[1]->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);*/
-
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 

@@ -88,7 +88,6 @@ public:
 	static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
 	static bitmap* GetItemGraphic()		{ return Graphic[GITEM]; }
 	static bitmap* GetCharacterGraphic()	{ return Graphic[GCHARACTER]; }
-	//static bitmap* GetCharacterGraphic(ushort);// { return Graphic[GCHARACTER]; }
 	static bitmap* GetFOWGraphic()		{ return Graphic[GFOW]; }
 	static bitmap* GetCursorGraphic()		{ return Graphic[GCURSOR]; }
 	static bitmap* GetHumanGraphic()		{ return Graphic[GHUMAN]; }
@@ -99,12 +98,9 @@ public:
 	static bitmap* GetTileBuffer()		{ return TileBuffer; }
 	static void BlitTileBuffer(vector2d, ushort = 256);
 	static void DrawCursor(vector2d);
-	//static void CreateGraphics(ushort) {}
 	static tile GetTile(graphic_id);
 	static tile AddUser(graphic_id);
 	static void RemoveUser(graphic_id);
-	//static tilemap& GetTileMap() { return TileMap; }
-	//static std::map<ushort, materialgraphics>& GetMaterialGraphics() const { return MaterialGraphics; }
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;

@@ -11,9 +11,6 @@ bitmap::bitmap(std::string FileName, bool Is16Bit) : BackupBuffer(0), Is16Bit(Is
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
-	//if(!File.is_open())
-	//	ABORT("Bitmap %s not found!", FileName);
-
 	File.seekg(-768, std::ios::end);
 
 	Palette = new uchar[768];
@@ -193,8 +190,6 @@ void bitmap::Save(std::string FileName) const
 	ZeroMemory( &ddsd,sizeof(ddsd) );
 	ddsd.dwSize = sizeof(ddsd);
 	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	//ushort XSize = ddsd.dwWidth, YSize = ddsd.dwHeight;//, XMove = ddsd.lPitch;
 
 	BMPHeader[0x12] =  XSize       & 0xFF;
 	BMPHeader[0x13] = (XSize >> 8) & 0xFF;
@@ -1419,7 +1414,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 			DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
 }
 
-/*bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
+bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
 {
 	bitmap* Bitmap = new bitmap(XSize, YSize);
 
@@ -1454,7 +1449,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 
 	return Bitmap;
-}*/
+}
 
 bitmap* bitmap::ColorizeTo16Bit(vector2d Pos, vector2d Size, ushort* Color)
 {
@@ -1494,5 +1489,3 @@ bitmap* bitmap::ColorizeTo16Bit(vector2d Pos, vector2d Size, ushort* Color)
 
 	return Bitmap;
 }
-
-

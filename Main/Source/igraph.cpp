@@ -27,8 +27,6 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 		for(c = 3; c < GRAPHIC_TYPES; ++c)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
-		//CharacterGraphics = new bitmap("Graphics/NovaChar.pcx");
-
 		TileBuffer = new bitmap(16, 16);
 
 		atexit(igraph::DeInit);
@@ -58,30 +56,6 @@ void igraph::DrawCursor(vector2d Pos)
 	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
 
-/*void igraph::CreateGraphics(ushort Color)
-{
-	std::map<ushort, materialgraphics>::iterator Iterator = MaterialGraphics.find(Color);
-
-	if(Iterator == MaterialGraphics.end())
-	{
-		materialgraphics NewMaterialGraphics;
-
-		NewMaterialGraphics.CharacterGraphics = CharacterGraphics->ColorizeTo16Bit(Color);
-
-		MaterialGraphics[Color] = NewMaterialGraphics;
-	}
-}
-
-bitmap* GetCharacterGraphic(ushort Color)
-{
-	std::map<ushort, materialgraphics>::iterator Iterator = MaterialGraphics.find(Color);
-
-	if(Iterator != MaterialGraphics.end())
-		ABORT("Character Graphics of color 0x%X not found!", Color);
-
-	return Iterator->second.CharacterGraphics;
-}*/
-
 tile igraph::GetTile(graphic_id GI)
 {
 	tilemap::iterator Iterator = TileMap.find(GI);
@@ -97,12 +71,7 @@ tile igraph::AddUser(graphic_id GI)
 	tilemap::iterator Iterator = TileMap.find(GI);
 
 	if(Iterator != TileMap.end())
-	{
-		ulong p = Iterator->second.Users;
 		++(Iterator->second.Users);
-
-		p = Iterator->second.Users;
-	}
 	else
 	{
 		bitmap* Bitmap = Graphic[GI.FileIndex]->ColorizeTo16Bit(GI.BitmapPos, vector2d(16, 16), GI.Color);
@@ -127,24 +96,10 @@ void igraph::RemoveUser(graphic_id GI)
 	tilemap::iterator Iterator = TileMap.find(GI);
 
 	if(Iterator != TileMap.end())
-	{
-		ulong p = Iterator->second.Users;
-		--(Iterator->second.Users);
-
-		p = Iterator->second.Users;
-
-		if(!Iterator->second.Users)
+		if(!(--Iterator->second.Users))
 		{
 			delete Iterator->second.Bitmap;
 			delete [] Iterator->first.Color;
 			TileMap.erase(Iterator);
-
-			tilemap::iterator Iterator2 = TileMap.find(GI);
-
-			if(Iterator2 != TileMap.end())
-				int esko =2;
-			else
-				int esko =2;
 		}
-	}
 }

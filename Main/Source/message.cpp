@@ -149,4 +149,3 @@ void globalmessagingsystem::Format()
 {
 	MessageHistory.Empty();
 }
-

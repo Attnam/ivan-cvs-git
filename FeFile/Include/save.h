@@ -13,7 +13,7 @@
 class outputfile
 {
 public:
-	outputfile(std::string, bool = false);// : Buffer(FileName.c_str(), std::ios::out | std::ios::binary) {}
+	outputfile(std::string, bool = false);
 	std::ofstream& GetBuffer() { return Buffer; }
 private:
 	std::ofstream Buffer;
@@ -22,7 +22,7 @@ private:
 class inputfile
 {
 public:
-	inputfile(std::string, bool = true);// : Buffer(FileName.c_str(), std::ios::in | std::ios::binary) {}
+	inputfile(std::string, bool = true);
 	std::ifstream& GetBuffer() { return Buffer; }
 	std::string ReadWord(bool = true);
 	char ReadLetter(bool = true);

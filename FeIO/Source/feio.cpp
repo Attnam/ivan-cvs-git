@@ -238,4 +238,3 @@ std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for
 
 	return Buffer.GetString(Check);
 }
-

@@ -880,4 +880,3 @@ void game::DoNeutralDeed(short Amount)
 	if(!Amount) return;
 	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
 }
-

@@ -664,4 +664,3 @@ void god::PrintRelation() const
 
 	ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
 }
-

@@ -535,7 +535,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::DrawToTileBuffer() const
 {
-	//igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetFleshColor()) << 4, 0, 0, 16, 16);
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
@@ -701,7 +700,7 @@ bool character::TryMove(vector2d MoveTo)
 			return false;
 	else
 		if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
-			if(true || (game::GetGoThroughWallsCheat() && GetIsPlayer())) //GGG
+			if(true || (game::GetGoThroughWallsCheat() && GetIsPlayer())) //The player must not be the only son!
 			{
 				Move(MoveTo);
 				return true;
@@ -1268,7 +1267,7 @@ bool character::GainAllItems()
 {
 	if(game::GetWizardMode())
 		for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-			Stack->AddItem(protocontainer<item>::GetProto(c)->Clone()); //GGG
+			Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
@@ -2265,4 +2264,3 @@ bool character::CheckCannibalism(ushort What)
 { 
 	return (GetMaterial(0)->GetType() == What); 
 }
-

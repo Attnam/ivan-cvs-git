@@ -47,6 +47,7 @@ public:
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
 	void DrawPolygon(vector2d, ushort, ushort, ushort, bool = false, double = 0);
+	bitmap* ColorizeTo16Bit(ushort*);
 	bitmap* ColorizeTo16Bit(vector2d, vector2d, ushort*);
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);
