@@ -1,5 +1,69 @@
 /* Numeric character data loaded during game startup */
 
+/* Default values: */
+
+character
+{
+	/* Obligatory: DefaultAgility */
+	/* Obligatory: DefaultStrength */
+	/* Obligatory: DefaultEndurance */
+	/* Obligatory: DefaultPerception */
+	DefaultMoney = 0;
+	/* Obligatory: TotalSize */
+	CanRead = false;
+	IsCharmable = true;
+	Sex = UNDEFINED;
+	BloodColor = rgb(75, 0, 0);
+	CanBeGenerated = false;
+	HasInfraVision = false;
+	CriticalModifier = 20;
+	StandVerb = "standing";
+	CanOpen = true;
+	CanBeDisplaced = true;
+	Frequency = 10000;
+	CanWalk = true;
+	CanSwim = false;
+	CanFly = false;
+	PhysicalDamageResistance = 0;
+	SoundResistance = 0;
+	EnergyResistance = 0;
+	AcidResistance = 0;
+	FireResistance = 0;
+	PoisonResistance = 0;
+	BulimiaResistance = 0;
+	IsUnique = false;
+	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED;
+	/* Obligatory: TotalVolume */
+	/* Obligatory: MeleeStrength */
+	TalkVerb = "grunts";
+	IsNameable = true;
+	BaseEmitation = 0;
+	/* Obligatory: TorsoBitmapPos */
+	TorsoBonePercentile = 30;
+}
+
+humanoid
+{
+	HeadBitmapPos = 96, 0;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 0;
+	ClothColor = rgb(111, 74, 37);
+	SkinColor = rgb(180, 120, 90);
+	HairColor = rgb(160, 80, 0);
+	EyeColor = rgb(112, 72, 42);
+	BeltColor = rgb(48, 48, 48);
+	TorsoSpecialColor = 0;
+	ArmSpecialColor = 0;
+	LegSpecialColor = 0;
+	HeadBonePercentile = 20;
+	TorsoBonePercentile = 10;
+	ArmBonePercentile = 30;
+	GroinBonePercentile = 40;
+	LegBonePercentile = 30;
+	MeleeStrength = 1000;
+}
+
 human
 {
 	DefaultAgility = 15;
@@ -13,7 +77,6 @@ human
 	LegBitmapPos = 0, 0;
 	TotalVolume = 60000;
 	TotalSize = 150;
-	MeleeStrength = 1000;
 	CanRead = true;
 }
 

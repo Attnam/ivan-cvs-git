@@ -15,46 +15,15 @@
 #include "save.h"
 #include "materba.h"
 
+gamescript* scriptsystem::GameScript = 0;
+database<character>* scriptsystem::CharacterDataBase = 0;
+database<item>* scriptsystem::ItemDataBase = 0;
+database<material>* scriptsystem::MaterialDataBase = 0;
+
 template <class type> datamembertemplate<type>::~datamembertemplate<type>()
 {
   delete Member;
 }
-
-template <class type> type* datamembertemplate<type>::GetMember(bool AbortOnError) const
-{
-  if(Member)
-    return Member;
-  else
-    if(Base)
-      return Base->GetMember(AbortOnError);
-    else
-    {
-      if(AbortOnError)
-	ABORT("Undefined script member %s sought!", Identifier.c_str());
-
-      return 0;
-    }
-}
-
-/* Forced instantiations are here to decrease compilation time, at least in the future */
-
-template bool* datamembertemplate<bool>::GetMember(bool) const;
-template uchar* datamembertemplate<uchar>::GetMember(bool) const;
-template ushort* datamembertemplate<ushort>::GetMember(bool) const;
-template vector2d* datamembertemplate<vector2d>::GetMember(bool) const;
-template std::string* datamembertemplate<std::string>::GetMember(bool) const;
-template posscript* datamembertemplate<posscript>::GetMember(bool) const;
-template squarescript* datamembertemplate<squarescript>::GetMember(bool) const;
-template levelscript* datamembertemplate<levelscript>::GetMember(bool) const;
-template dungeonscript* datamembertemplate<dungeonscript>::GetMember(bool) const;
-template contentscript<character>* datamembertemplate<contentscript<character> >::GetMember(bool) const;
-template contentscript<item>* datamembertemplate<contentscript<item> >::GetMember(bool) const;
-template contentscript<glterrain>* datamembertemplate<contentscript<glterrain> >::GetMember(bool) const;
-template contentscript<olterrain>* datamembertemplate<contentscript<olterrain> >::GetMember(bool) const;
-template contentmap<character>* datamembertemplate<contentmap<character> >::GetMember(bool) const;
-template contentmap<item>* datamembertemplate<contentmap<item> >::GetMember(bool) const;
-template contentmap<glterrain>* datamembertemplate<contentmap<glterrain> >::GetMember(bool) const;
-template contentmap<olterrain>* datamembertemplate<contentmap<olterrain> >::GetMember(bool) const;
 
 template <class type> void datamembertemplate<type>::SetBase(datamemberbase* What)
 {
@@ -918,14 +887,10 @@ data<material>::data<material>()
   INITMEMBER(IsExplosive);
 }
 
-template class database<character>;
-template class database<item>;
-template class database<material>;
-
 template <class type> database<type>::~database<type>()
 {
-  for(std::map<std::string, data<type>*>::iterator i = Data.begin(); i != Data.end(); ++i)
-    delete i->second;
+  for(ushort c = 0; c < Data.size(); ++c)
+    delete Data[c];
 }
 
 template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
@@ -946,281 +911,200 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       DataElement->SetType(Index);
       DataElement->SetValueMap(ValueMap);
       DataElement->ReadFrom(SaveFile);
-      Data[Word] = DataElement;
+      Data.push_back(DataElement);
     }
 }
 
 #define SETDATA(data)\
 {\
   if(DataElement->Get##data(false))\
-    DataBase.data = *DataElement->Get##data();\
-  else\
-    ABORT("Obligatory data member " #data " missing in the database of %s!", Iterator->first.c_str());\
+    DataBase->data = *DataElement->Get##data();\
+  else if(Base)\
+    DataBase->data = Base->data;\
 }
 
 #define SETDATAWITHDEFAULT(data, defaultvalue)\
 {\
   if(DataElement->Get##data(false))\
-    DataBase.data = *DataElement->Get##data();\
+    DataBase->data = *DataElement->Get##data();\
   else\
-    DataBase.data = defaultvalue;\
+    DataBase->data = defaultvalue;\
 }
 
 void database<character>::Apply()
 {
-  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+  for(ushort c = 0; c < Data.size(); ++c)
     {
-      std::map<std::string, data<character>*>::iterator Iterator = Data.find(protocontainer<character>::GetProto(c)->ClassName());
-
-      if(Iterator != Data.end())
-	{
-	  data<character>* DataElement = Iterator->second;
-	  character::database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
-	  SETDATA(DefaultAgility);
-	  SETDATA(DefaultStrength);
-	  SETDATA(DefaultEndurance);
-	  SETDATA(DefaultPerception);
-	  SETDATAWITHDEFAULT(DefaultMoney, 0);
-	  SETDATA(TotalSize);
-	  SETDATAWITHDEFAULT(CanRead, false);
-	  SETDATAWITHDEFAULT(IsCharmable, true);
-	  SETDATAWITHDEFAULT(Sex, MALE);
-	  SETDATAWITHDEFAULT(BloodColor, MAKE_RGB(75, 0, 0));
-	  SETDATAWITHDEFAULT(CanBeGenerated, true);
-	  SETDATAWITHDEFAULT(HasInfraVision, false);
-	  SETDATAWITHDEFAULT(CriticalModifier, 20);
-	  SETDATAWITHDEFAULT(StandVerb, "standing");
-	  SETDATAWITHDEFAULT(CanOpen, true);
-	  SETDATAWITHDEFAULT(CanBeDisplaced, true);
-	  SETDATAWITHDEFAULT(Frequency, 10000);
-	  SETDATAWITHDEFAULT(CanWalk, true);
-	  SETDATAWITHDEFAULT(CanSwim, false);
-	  SETDATAWITHDEFAULT(CanFly, false);
-	  SETDATAWITHDEFAULT(PhysicalDamageResistance, 0);
-	  SETDATAWITHDEFAULT(SoundResistance, 0);
-	  SETDATAWITHDEFAULT(EnergyResistance, 0);
-	  SETDATAWITHDEFAULT(AcidResistance, 0);
-	  SETDATAWITHDEFAULT(FireResistance, 0);
-	  SETDATAWITHDEFAULT(PoisonResistance, 0);
-	  SETDATAWITHDEFAULT(BulimiaResistance, 0);
-	  SETDATAWITHDEFAULT(IsUnique, false);
-	  SETDATAWITHDEFAULT(EatFlags, FRUIT|MEAT|LIQUID|PROCESSED);
-	  SETDATA(TotalVolume);
-	  SETDATA(MeleeStrength);
-	  SETDATAWITHDEFAULT(TalkVerb, "grunts");
-	  SETDATAWITHDEFAULT(HeadBitmapPos, vector2d(96, 0));
-	  SETDATAWITHDEFAULT(TorsoBitmapPos, vector2d(32, 0));
-	  SETDATAWITHDEFAULT(ArmBitmapPos, vector2d(64, 0));
-	  SETDATAWITHDEFAULT(LegBitmapPos, vector2d(0, 0));
-	  SETDATAWITHDEFAULT(RightArmBitmapPos, DataBase.ArmBitmapPos);
-	  SETDATAWITHDEFAULT(LeftArmBitmapPos, DataBase.ArmBitmapPos);
-	  SETDATAWITHDEFAULT(RightLegBitmapPos, DataBase.LegBitmapPos);
-	  SETDATAWITHDEFAULT(LeftLegBitmapPos, DataBase.LegBitmapPos);
-	  SETDATAWITHDEFAULT(GroinBitmapPos, DataBase.LegBitmapPos);
-	  SETDATAWITHDEFAULT(ClothColor, MAKE_RGB(111, 74, 37));
-	  SETDATAWITHDEFAULT(SkinColor, MAKE_RGB(180, 120, 90));
-	  SETDATAWITHDEFAULT(CapColor, DataBase.ClothColor);
-	  SETDATAWITHDEFAULT(HairColor, MAKE_RGB(160, 80, 0));
-	  SETDATAWITHDEFAULT(EyeColor, MAKE_RGB(112, 72, 42));
-	  SETDATAWITHDEFAULT(TorsoMainColor, DataBase.ClothColor);
-	  SETDATAWITHDEFAULT(BeltColor, MAKE_RGB(48, 48, 48));
-	  SETDATAWITHDEFAULT(TorsoSpecialColor, 0);
-	  SETDATAWITHDEFAULT(ArmMainColor, DataBase.ClothColor);
-	  SETDATAWITHDEFAULT(ArmSpecialColor, 0);
-	  SETDATAWITHDEFAULT(LegMainColor, DataBase.ClothColor);
-	  SETDATAWITHDEFAULT(LegSpecialColor, 0);
-	  SETDATAWITHDEFAULT(HeadBonePercentile, 20);
-	  SETDATAWITHDEFAULT(TorsoBonePercentile, 10);
-	  SETDATAWITHDEFAULT(ArmBonePercentile, 30);
-	  SETDATAWITHDEFAULT(RightArmBonePercentile, DataBase.ArmBonePercentile);
-	  SETDATAWITHDEFAULT(LeftArmBonePercentile, DataBase.ArmBonePercentile);
-	  SETDATAWITHDEFAULT(GroinBonePercentile, 40);
-	  SETDATAWITHDEFAULT(LegBonePercentile, 30);
-	  SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase.LegBonePercentile);
-	  SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase.LegBonePercentile);
-	  SETDATAWITHDEFAULT(IsNameable, true);
-	  SETDATAWITHDEFAULT(BaseEmitation, 0);
-	}
-      else
-	{
-	  character::database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
-
-	  DataBase.DefaultMoney = 0;
-	  DataBase.CanRead = false;
-	  DataBase.IsCharmable = true;
-	  DataBase.Sex = MALE;
-	  DataBase.BloodColor = MAKE_RGB(75, 0, 0);
-	  DataBase.CanBeGenerated = true;
-	  DataBase.HasInfraVision = false;
-	  DataBase.CriticalModifier = 20;
-	  DataBase.StandVerb = "standing";
-	  DataBase.CanOpen = true;
-	  DataBase.CanBeDisplaced = true;
-	  DataBase.Frequency = 10000;
-	  DataBase.CanWalk = true;
-	  DataBase.CanSwim = false;
-	  DataBase.CanFly = false;
-	  DataBase.PhysicalDamageResistance = 0;
-	  DataBase.SoundResistance = 0;
-	  DataBase.EnergyResistance = 0;
-	  DataBase.AcidResistance = 0;
-	  DataBase.FireResistance = 0;
-	  DataBase.PoisonResistance = 0;
-	  DataBase.BulimiaResistance = 0;
-	  DataBase.IsUnique = false;
-	  DataBase.EatFlags = FRUIT|MEAT|LIQUID|PROCESSED;
-	  DataBase.TalkVerb = "grunts";
-	  DataBase.HeadBitmapPos = vector2d(96, 0);
-	  DataBase.TorsoBitmapPos = vector2d(32, 0);
-	  DataBase.ArmBitmapPos = vector2d(64, 0);
-	  DataBase.LegBitmapPos = vector2d(0, 0);
-	  DataBase.RightArmBitmapPos = DataBase.ArmBitmapPos;
-	  DataBase.LeftArmBitmapPos = DataBase.ArmBitmapPos;
-	  DataBase.RightLegBitmapPos = DataBase.LegBitmapPos;
-	  DataBase.LeftLegBitmapPos = DataBase.LegBitmapPos;
-	  DataBase.GroinBitmapPos = DataBase.LegBitmapPos;
-	  DataBase.ClothColor = MAKE_RGB(111, 74, 37);
-	  DataBase.SkinColor = MAKE_RGB(180, 120, 90);
-	  DataBase.CapColor = DataBase.ClothColor;
-	  DataBase.HairColor = MAKE_RGB(160, 80, 0);
-	  DataBase.EyeColor = MAKE_RGB(112, 72, 42);
-	  DataBase.TorsoMainColor = DataBase.ClothColor;
-	  DataBase.BeltColor = MAKE_RGB(48, 48, 48);
-	  DataBase.TorsoSpecialColor = 0;
-	  DataBase.ArmMainColor = DataBase.ClothColor;
-	  DataBase.ArmSpecialColor = 0;
-	  DataBase.LegMainColor = DataBase.ClothColor;
-	  DataBase.LegSpecialColor = 0;
-	  DataBase.HeadBonePercentile = 20;
-	  DataBase.TorsoBonePercentile = 10;
-	  DataBase.ArmBonePercentile = 30;
-	  DataBase.RightArmBonePercentile = DataBase.ArmBonePercentile;
-	  DataBase.LeftArmBonePercentile = DataBase.ArmBonePercentile;
-	  DataBase.GroinBonePercentile = 40;
-	  DataBase.LegBonePercentile = 30;
-	  DataBase.RightLegBonePercentile = DataBase.LegBonePercentile;
-	  DataBase.LeftLegBonePercentile = DataBase.LegBonePercentile;
-	  DataBase.IsNameable = true;
-	  DataBase.BaseEmitation = 0;
-	}
+      data<character>* DataElement = Data[c];
+      const character::prototype* const Proto = protocontainer<character>::GetProto(DataElement->GetType());
+      character::database* DataBase = Proto->GetDataBase();
+      character::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
+      SETDATA(DefaultAgility);
+      SETDATA(DefaultStrength);
+      SETDATA(DefaultEndurance);
+      SETDATA(DefaultPerception);
+      SETDATA(DefaultMoney);
+      SETDATA(TotalSize);
+      SETDATA(CanRead);
+      SETDATA(IsCharmable);
+      SETDATA(Sex);
+      SETDATA(BloodColor);
+      SETDATA(CanBeGenerated);
+      SETDATA(HasInfraVision);
+      SETDATA(CriticalModifier);
+      SETDATA(StandVerb);
+      SETDATA(CanOpen);
+      SETDATA(CanBeDisplaced);
+      SETDATA(Frequency);
+      SETDATA(CanWalk);
+      SETDATA(CanSwim);
+      SETDATA(CanFly);
+      SETDATA(PhysicalDamageResistance);
+      SETDATA(SoundResistance);
+      SETDATA(EnergyResistance);
+      SETDATA(AcidResistance);
+      SETDATA(FireResistance);
+      SETDATA(PoisonResistance);
+      SETDATA(BulimiaResistance);
+      SETDATA(IsUnique);
+      SETDATA(EatFlags);
+      SETDATA(TotalVolume);
+      SETDATA(MeleeStrength);
+      SETDATA(TalkVerb);
+      SETDATA(HeadBitmapPos);
+      SETDATA(TorsoBitmapPos);
+      SETDATA(ArmBitmapPos);
+      SETDATA(LegBitmapPos);
+      SETDATAWITHDEFAULT(RightArmBitmapPos, DataBase->ArmBitmapPos);
+      SETDATAWITHDEFAULT(LeftArmBitmapPos, DataBase->ArmBitmapPos);
+      SETDATAWITHDEFAULT(RightLegBitmapPos, DataBase->LegBitmapPos);
+      SETDATAWITHDEFAULT(LeftLegBitmapPos, DataBase->LegBitmapPos);
+      SETDATAWITHDEFAULT(GroinBitmapPos, DataBase->LegBitmapPos);
+      SETDATA(ClothColor);
+      SETDATA(SkinColor);
+      SETDATAWITHDEFAULT(CapColor, DataBase->ClothColor);
+      SETDATA(HairColor);
+      SETDATA(EyeColor);
+      SETDATAWITHDEFAULT(TorsoMainColor, DataBase->ClothColor);
+      SETDATA(BeltColor);
+      SETDATA(TorsoSpecialColor);
+      SETDATAWITHDEFAULT(ArmMainColor, DataBase->ClothColor);
+      SETDATA(ArmSpecialColor);
+      SETDATAWITHDEFAULT(LegMainColor, DataBase->ClothColor);
+      SETDATA(LegSpecialColor);
+      SETDATA(HeadBonePercentile);
+      SETDATA(TorsoBonePercentile);
+      SETDATA(ArmBonePercentile);
+      SETDATAWITHDEFAULT(RightArmBonePercentile, DataBase->ArmBonePercentile);
+      SETDATAWITHDEFAULT(LeftArmBonePercentile, DataBase->ArmBonePercentile);
+      SETDATA(GroinBonePercentile);
+      SETDATA(LegBonePercentile);
+      SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase->LegBonePercentile);
+      SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase->LegBonePercentile);
+      SETDATA(IsNameable);
+      SETDATA(BaseEmitation);
     }
 }
 
 void database<item>::Apply()
 {
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 0; c < Data.size(); ++c)
     {
-      std::map<std::string, data<item>*>::iterator Iterator = Data.find(protocontainer<item>::GetProto(c)->ClassName());
-
-      if(Iterator != Data.end())
-	{
-	  data<item>* DataElement = Iterator->second;
-	  item::database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
-	  SETDATAWITHDEFAULT(Possibility, 0);
-	  SETDATAWITHDEFAULT(InHandsPic, vector2d(160, 144));
-	  SETDATAWITHDEFAULT(OfferModifier, 0);
-	  SETDATAWITHDEFAULT(Score, 0);
-	  SETDATAWITHDEFAULT(IsDestroyable, true);
-	  SETDATAWITHDEFAULT(CanBeWished, true);
-	  SETDATAWITHDEFAULT(IsMaterialChangeable, true);
-	  SETDATAWITHDEFAULT(WeaponCategory, UNCATEGORIZED);
-	  SETDATAWITHDEFAULT(IsPolymorphSpawnable, true);
-	  SETDATAWITHDEFAULT(IsAutoInitializable, true);
-	  SETDATAWITHDEFAULT(OneHandedStrengthPenalty, 0);
-	  SETDATAWITHDEFAULT(OneHandedToHitPenalty, 0);
-	  SETDATA(Category);
-	  SETDATAWITHDEFAULT(SoundResistance, 0);
-	  SETDATAWITHDEFAULT(EnergyResistance, 0);
-	  SETDATAWITHDEFAULT(AcidResistance, 0);
-	  SETDATAWITHDEFAULT(FireResistance, 0);
-	  SETDATAWITHDEFAULT(PoisonResistance, 0);
-	  SETDATAWITHDEFAULT(BulimiaResistance, 0);
-	  SETDATAWITHDEFAULT(IsStackable, true);
-	  SETDATA(StrengthModifier);
-	  SETDATA(FormModifier);
-	  SETDATAWITHDEFAULT(NPModifier, 10000);
-	  SETDATA(DefaultSize);
-	  SETDATA(DefaultMainVolume);
-	  SETDATAWITHDEFAULT(DefaultSecondaryVolume, 0);
-	  SETDATAWITHDEFAULT(DefaultContainedVolume, 0);
-	  SETDATA(BitmapPos);
-	  SETDATAWITHDEFAULT(Price, 0);
-	  SETDATAWITHDEFAULT(BaseEmitation, 0);
-	}
-      else
-	{
-	  item::database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
-	  DataBase.Possibility = 0;
-          DataBase.InHandsPic = vector2d(160, 144);
-	  DataBase.OfferModifier = 0;
-	  DataBase.Score = 0;
-	  DataBase.IsDestroyable = true;
-	  DataBase.CanBeWished = true;
-	  DataBase.IsMaterialChangeable = true;
-	  DataBase.WeaponCategory = UNCATEGORIZED;
-	  DataBase.IsPolymorphSpawnable = true;
-	  DataBase.IsAutoInitializable = true;
-	  DataBase.OneHandedStrengthPenalty = 0;
-	  DataBase.OneHandedToHitPenalty = 0;
-	  DataBase.SoundResistance = 0;
-	  DataBase.EnergyResistance = 0;
-	  DataBase.AcidResistance = 0;
-	  DataBase.FireResistance = 0;
-	  DataBase.PoisonResistance = 0;
-	  DataBase.BulimiaResistance = 0;
-	  DataBase.IsStackable = true;
-	  DataBase.NPModifier = 10000;
-	  DataBase.DefaultSecondaryVolume = 0;
-	  DataBase.DefaultContainedVolume = 0;
-	  DataBase.Price = 0;
-	  DataBase.BaseEmitation = 0;
-	}
+      data<item>* DataElement = Data[c];
+      const item::prototype* const Proto = protocontainer<item>::GetProto(DataElement->GetType());
+      item::database* DataBase = Proto->GetDataBase();
+      item::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
+      SETDATA(Possibility);
+      SETDATA(InHandsPic);
+      SETDATA(OfferModifier);
+      SETDATA(Score);
+      SETDATA(IsDestroyable);
+      SETDATA(CanBeWished);
+      SETDATA(IsMaterialChangeable);
+      SETDATA(WeaponCategory);
+      SETDATA(IsPolymorphSpawnable);
+      SETDATA(IsAutoInitializable);
+      SETDATA(OneHandedStrengthPenalty);
+      SETDATA(OneHandedToHitPenalty);
+      SETDATA(Category);
+      SETDATA(SoundResistance);
+      SETDATA(EnergyResistance);
+      SETDATA(AcidResistance);
+      SETDATA(FireResistance);
+      SETDATA(PoisonResistance);
+      SETDATA(BulimiaResistance);
+      SETDATA(IsStackable);
+      SETDATA(StrengthModifier);
+      SETDATA(FormModifier);
+      SETDATA(NPModifier);
+      SETDATA(DefaultSize);
+      SETDATA(DefaultMainVolume);
+      SETDATA(DefaultSecondaryVolume);
+      SETDATA(DefaultContainedVolume);
+      SETDATA(BitmapPos);
+      SETDATA(Price);
+      SETDATA(BaseEmitation);
     }
 }
 
 void database<material>::Apply()
 {
-  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+  for(ushort c = 0; c < Data.size(); ++c)
     {
-      std::map<std::string, data<material>*>::iterator Iterator = Data.find(protocontainer<material>::GetProto(c)->ClassName());
-
-      if(Iterator != Data.end())
-	{
-	  data<material>* DataElement = Iterator->second;
-	  material::database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
-	  SETDATA(StrengthValue);
-	  SETDATA(ConsumeType);
-	  SETDATA(Density);
-	  SETDATA(OfferValue);
-	  SETDATA(Color);
-	  SETDATAWITHDEFAULT(PriceModifier, 0);
-	  SETDATAWITHDEFAULT(IsSolid, false);
-	  SETDATAWITHDEFAULT(Emitation, 0);
-	  SETDATAWITHDEFAULT(CanBeWished, true);
-	  SETDATAWITHDEFAULT(Alignment, NEUTRAL);
-	  SETDATAWITHDEFAULT(NutritionValue, 0);
-	  SETDATAWITHDEFAULT(IsAlive, false);
-	  SETDATAWITHDEFAULT(IsBadFoodForAI, false);
-	  SETDATAWITHDEFAULT(ExplosivePower, 0);
-	  SETDATAWITHDEFAULT(IsFlammable, false);
-	  SETDATAWITHDEFAULT(IsFlexible, false);
-	  SETDATAWITHDEFAULT(IsExplosive, false);
-	}
-      else
-	{
-	  material::database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
-	  DataBase.PriceModifier = 0;
-	  DataBase.IsSolid = false;
-	  DataBase.Emitation = 0;
-	  DataBase.CanBeWished = true;
-	  DataBase.Alignment = NEUTRAL;
-	  DataBase.NutritionValue = 0;
-	  DataBase.IsAlive = false;
-	  DataBase.IsBadFoodForAI = false;
-	  DataBase.ExplosivePower = 0;
-	  DataBase.IsFlammable = false;
-	  DataBase.IsFlexible = false;
-	  DataBase.IsExplosive = false;
-	}
+      data<material>* DataElement = Data[c];
+      const material::prototype* const Proto = protocontainer<material>::GetProto(DataElement->GetType());
+      material::database* DataBase = Proto->GetDataBase();
+      material::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
+      SETDATA(StrengthValue);
+      SETDATA(ConsumeType);
+      SETDATA(Density);
+      SETDATA(OfferValue);
+      SETDATA(Color);
+      SETDATA(PriceModifier);
+      SETDATA(IsSolid);
+      SETDATA(Emitation);
+      SETDATA(CanBeWished);
+      SETDATA(Alignment);
+      SETDATA(NutritionValue);
+      SETDATA(IsAlive);
+      SETDATA(IsBadFoodForAI);
+      SETDATA(ExplosivePower);
+      SETDATA(IsFlammable);
+      SETDATA(IsFlexible);
+      SETDATA(IsExplosive);
     }
+}
+
+void scriptsystem::Initialize()
+{
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
+    delete GameScript;
+    GameScript = new gamescript;
+    GameScript->ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/char.dat");
+    delete CharacterDataBase;
+    CharacterDataBase = new database<character>;
+    CharacterDataBase->ReadFrom(ScriptFile);
+    CharacterDataBase->Apply();
+  }
+
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/item.dat");
+    delete ItemDataBase;
+    ItemDataBase = new database<item>;
+    ItemDataBase->ReadFrom(ScriptFile);
+    ItemDataBase->Apply();
+  }
+
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
+    delete MaterialDataBase;
+    MaterialDataBase = new database<material>;
+    MaterialDataBase->ReadFrom(ScriptFile);
+    MaterialDataBase->Apply();
+  }
 }

@@ -362,7 +362,7 @@ item* item::TryToOpen(character* Char)
   return 0;
 }
 
-item* item_prototype::CloneAndLoad(inputfile& SaveFile) const
+item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   item* Item = Clone(false);
   Item->Load(SaveFile);
@@ -383,7 +383,7 @@ void item::Initialize(bool CallGenerateMaterials)
     GenerateMaterials();
 }
 
-item_prototype::item_prototype()
+itemprototype::itemprototype()
 {
   Index = protocontainer<item>::Add(this);
 }

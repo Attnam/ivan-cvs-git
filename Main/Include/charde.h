@@ -29,9 +29,7 @@ class ABSTRACT_CHARACTER
   virtual ~humanoid();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  //virtual uchar GetSex() const { return MALE; }
   virtual bool CanWield() const { return true; }
-  //virtual bool CanWear() const { return true; }
   virtual bool Hit(character*);
   virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
   virtual void CharacterSpeciality(ushort = 1);
@@ -40,9 +38,7 @@ class ABSTRACT_CHARACTER
   virtual void AddSpecialItemInfo(std::string&, item*);
   virtual void AddSpecialItemInfoDescription(std::string&);
   virtual void KickHit();
-  //static bool CanBeGenerated() { return false; }
   virtual ushort GetSize() const;
-
   virtual head* GetHead() const;
   virtual void SetHead(head* What);
   virtual rightarm* GetRightArm() const;
@@ -55,53 +51,30 @@ class ABSTRACT_CHARACTER
   virtual void SetRightLeg(rightleg* What);
   virtual leftleg* GetLeftLeg() const;
   virtual void SetLeftLeg(leftleg* What);
-
   virtual humanoidtorso* GetHumanoidTorso() const;
   virtual void SetHumanoidTorso(humanoidtorso* What);
-
   virtual arm* GetMainArm() const;
   virtual arm* GetSecondaryArm() const;
-
   virtual void DrawToTileBuffer(bool) const;
-
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
-
   virtual bool BodyPartVital(ushort);
-
   virtual bool BodyPartCanBeSevered(ushort) const;
-
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
-
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-
-  //virtual bool CanWieldInMainHand() const;
-  //virtual bool CanWieldInSecondaryHand() const;
-
   virtual arm* GetMainWeaponArm() const;
   virtual arm* GetSecondaryWeaponArm() const;
   virtual void MainHit(character*);
   virtual void SecondaryHit(character*);
-
   virtual float GetMainAttackStrength() const;
   virtual float GetSecondaryAttackStrength() const;
-
   virtual float GetMainToHitValue() const;
   virtual float GetSecondaryToHitValue() const;
-
-  /*virtual characterslot* GetHeadSlot() const { return GetBodyPartSlot(1); }
-  virtual characterslot* GetRightArmSlot() const { return GetBodyPartSlot(2); }
-  virtual characterslot* GetLeftArmSlot() const { return GetBodyPartSlot(3); }
-  virtual characterslot* GetGroinSlot() const { return GetBodyPartSlot(4); }
-  virtual characterslot* GetRightLegSlot() const { return GetBodyPartSlot(5); }
-  virtual characterslot* GetLeftLegSlot() const { return GetBodyPartSlot(6); }*/
-
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
   virtual ushort EquipmentSlots() const { return 13; }
-
   virtual item* GetHelmet() const;
   virtual item* GetAmulet() const;
   virtual item* GetCloak() const;
@@ -124,7 +97,6 @@ class ABSTRACT_CHARACTER
   virtual short GetLengthOfClose(vector2d) const;
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
-
   virtual void SetHelmet(item*);
   virtual void SetAmulet(item*);
   virtual void SetCloak(item*);
@@ -138,123 +110,26 @@ class ABSTRACT_CHARACTER
   virtual void SetLeftGauntlet(item*);
   virtual void SetRightBoot(item*);
   virtual void SetLeftBoot(item*);
-
   virtual bool (*EquipmentSorter(ushort) const)(item*, character*);
   virtual void SetEquipment(ushort, item*);
   virtual bool DrawSilhouette(bitmap*, vector2d);
   virtual ushort GlobalResistance(uchar) const;
   virtual void AddInfo(felist&) const;
   virtual void CompleteRiseFromTheDead();
-  //virtual void CreateBodyPart(ushort);
   virtual bool HandleNoBodyPart(ushort);
-
   virtual bool CheckWearEquipment() const { return true; }
-
  protected:
   virtual void VirtualConstructor();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
   virtual ushort GetBodyPartColor2(ushort, ushort);
   virtual ushort GetBodyPartColor3(ushort, ushort);
-
-  /*virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
-  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
-  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
-  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
-  virtual vector2d GetRightArmBitmapPos() const { return GetArmBitmapPos(); }
-  virtual vector2d GetLeftArmBitmapPos() const { return GetArmBitmapPos(); }
-  virtual vector2d GetRightLegBitmapPos() const { return GetLegBitmapPos(); }
-  virtual vector2d GetLeftLegBitmapPos() const { return GetLegBitmapPos(); }
-  virtual vector2d GetGroinBitmapPos() const { return GetLegBitmapPos(); }
-
-  virtual ushort SkinColor() const { return MAKE_RGB(180, 120, 90); }
-
-  virtual ushort CapColor() const { return ClothColor(); }
-  virtual ushort HairColor() const { return MAKE_RGB(160, 80, 0); }
-  virtual ushort EyeColor() const { return MAKE_RGB(112, 72, 42); }
-
-  virtual ushort TorsoMainColor() const { return ClothColor(); }
-  virtual ushort BeltColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 0, 0); }
-
-  virtual ushort ArmMainColor() const { return ClothColor(); }
-  virtual ushort ArmSpecialColor() const { return MAKE_RGB(0, 0, 0); }
-
-  virtual ushort LegMainColor() const { return ClothColor(); }
-  virtual ushort LegSpecialColor() const { return MAKE_RGB(0, 0, 0); }
-
-  virtual ushort ClothColor() const { return MAKE_RGB(111, 74, 37); }*/
-
-  /*virtual void CreateHead();
-  virtual void CreateTorso();
-  virtual void CreateRightArm();
-  virtual void CreateLeftArm();
-  virtual void CreateGroin();
-  virtual void CreateRightLeg();
-  virtual void CreateLeftLeg();*/
-  //virtual void UpdateBodyPartPictures(bool = true);
-  /*virtual void UpdateHeadPicture(bool = true);
-  virtual void UpdateTorsoPicture(bool = true);
-  virtual void UpdateRightArmPicture(bool = true);
-  virtual void UpdateLeftArmPicture(bool = true);
-  virtual void UpdateGroinPicture(bool = true);
-  virtual void UpdateRightLegPicture(bool = true);
-  virtual void UpdateLeftLegPicture(bool = true);*/
-  /*virtual material* CreateHeadFlesh(ulong Volume) const { return CreateTorsoFlesh(Volume); }
-  virtual material* CreateHeadBone(ulong Volume) const { return CreateTorsoBone(Volume); }
-  virtual material* CreateRightArmFlesh(ulong Volume) const { return CreateArmFlesh(Volume); }
-  virtual material* CreateRightArmBone(ulong Volume) const { return CreateArmBone(Volume); }
-  virtual material* CreateLeftArmFlesh(ulong Volume) const { return CreateArmFlesh(Volume); }
-  virtual material* CreateLeftArmBone(ulong Volume) const { return CreateArmBone(Volume); }
-  virtual material* CreateArmFlesh(ulong Volume) const { return CreateTorsoFlesh(Volume); }
-  virtual material* CreateArmBone(ulong Volume) const { return CreateTorsoBone(Volume); }
-  virtual material* CreateGroinFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
-  virtual material* CreateGroinBone(ulong Volume) const { return CreateLegBone(Volume); }
-  virtual material* CreateRightLegFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
-  virtual material* CreateRightLegBone(ulong Volume) const { return CreateLegBone(Volume); }
-  virtual material* CreateLeftLegFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
-  virtual material* CreateLeftLegBone(ulong Volume) const { return CreateLegBone(Volume); }
-  virtual material* CreateLegFlesh(ulong Volume) const { return CreateTorsoFlesh(Volume); }
-  virtual material* CreateLegBone(ulong Volume) const { return CreateTorsoBone(Volume); }*/
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new humanflesh(Volume); }
-  /*virtual uchar HeadBonePercentile() const { return 20; }
-  virtual uchar TorsoBonePercentile() const { return 10; }
-  virtual uchar RightArmBonePercentile() const { return ArmBonePercentile(); }
-  virtual uchar LeftArmBonePercentile() const { return ArmBonePercentile(); }
-  virtual uchar ArmBonePercentile() const { return 30; }
-  virtual uchar GroinBonePercentile() const { return 40; }
-  virtual uchar RightLegBonePercentile() const { return LegBonePercentile(); }
-  virtual uchar LeftLegBonePercentile() const { return LegBonePercentile(); }
-  virtual uchar LegBonePercentile() const { return 30; }*/
-  /*virtual ulong GetHeadVolume() const;
-  virtual ulong GetTorsoVolume() const;
-  virtual ulong GetRightArmVolume() const { return GetArmVolume(); }
-  virtual ulong GetLeftArmVolume() const { return GetArmVolume(); }
-  virtual ulong GetArmVolume() const;
-  virtual ulong GetGroinVolume() const;
-  virtual ulong GetRightLegVolume() const { return GetLegVolume(); }
-  virtual ulong GetLeftLegVolume() const { return GetLegVolume(); }
-  virtual ulong GetLegVolume() const;*/
-
-  /*virtual ushort GetHeadSize(ushort) const;
-  virtual ushort GetTorsoSize(ushort) const;
-  virtual ushort GetRightArmSize(ushort TotalSize) const { return GetArmSize(TotalSize); }
-  virtual ushort GetLeftArmSize(ushort TotalSize) const { return GetArmSize(TotalSize); }
-  virtual ushort GetArmSize(ushort) const;
-  virtual ushort GetGroinSize(ushort) const;
-  virtual ushort GetRightLegSize(ushort TotalSize) const { return GetLegSize(TotalSize); }
-  virtual ushort GetLeftLegSize(ushort TotalSize) const { return GetLegSize(TotalSize); }
-  virtual ushort GetLegSize(ushort) const;*/
-
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
-
   virtual uchar BodyParts() const { return 7; }
-
-  //virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(0,0); } // remove this
-  //virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string GetDeathMessage() { return Name(DEFINITE) + " dies screaming."; }
   gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
 );
@@ -263,13 +138,6 @@ class CHARACTER
 (
   human,
   humanoid,
-  /*{
-    SetAgility(15 + RAND() % 11);
-    SetStrength(10 + RAND() % 6);
-    SetEndurance(10 + RAND() % 6);
-    SetPerception(10 + RAND() % 6);
-    SetMoney(200 + RAND() % 101);
-  },*/
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -277,14 +145,8 @@ class CHARACTER
   virtual void SetTotalSize(ushort What) { TotalSize = What; }
  protected:
   virtual void VirtualConstructor();
-  /*virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
-  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
-  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
-  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
-  virtual ulong TotalVolume() const { return 60000; }*/
   virtual std::string NameSingular() const { return "human"; }
   ushort TotalSize;
-  //virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER

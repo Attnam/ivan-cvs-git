@@ -2,7 +2,6 @@
 #include "lterrade.h"
 #include "error.h"
 #include "charde.h"
-#include "itemde.h"
 #include "save.h"
 
 void room::Save(outputfile& SaveFile) const
@@ -33,14 +32,14 @@ void room::HandleInstantiatedCharacter(character* Character)
     Character->SetDivineMaster(DivineMaster);
 }
 
-room* room_prototype::CloneAndLoad(inputfile& SaveFile) const
+room* roomprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   room* Room = Clone();
   Room->Load(SaveFile);
   return Room;
 }
 
-room_prototype::room_prototype()
+roomprototype::roomprototype()
 {
   Index = protocontainer<room>::Add(this);
 }

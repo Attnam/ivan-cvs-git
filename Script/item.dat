@@ -1,62 +1,46 @@
 /* Numeric item data loaded during game startup */
 
-/* Members (values marked with (*) are obligatory, others are preceded with their default value):
+/* Default values: */
 
-    ushort Possibility; (0)
-    vector2d InHandsPic; (160, 144)
-    ulong OfferModifier; (0)
-    long Score; (0)
-    bool IsDestroyable; (true)
-    bool CanBeWished; (true)
-    bool IsMaterialChangeable; (true)
-    uchar WeaponCategory; (UNCATEGORIZED)
-    bool IsPolymorphSpawnable; (true)
-    bool IsAutoInitializable; (true)
-    ushort OneHandedStrengthPenalty; (0)
-    ushort OneHandedToHitPenalty; (0)
-    uchar Category; (*)
-    ushort SoundResistance; (0)
-    ushort EnergyResistance; (0)
-    ushort AcidResistance; (0)
-    ushort FireResistance; (0)
-    ushort PoisonResistance; (0)
-    ushort BulimiaResistance; (0)
-    bool IsStackable; (true)
-    ushort StrengthModifier; (*)
-    ushort FormModifier; (*)
-    ulong NPModifier; (10000)
-    ushort DefaultSize; (*)
-    ulong DefaultMainVolume; (*)
-    ulong DefaultSecondaryVolume; (0)
-    ulong DefaultContainedVolume; (0)
-    vector2d BitmapPos; (*)
-    ulong Price; (0)
-
------------------------------------------------
-
-Preset values for the obligatory members
-    uchar Category = 0; 
-    StrengthModifier = 0; 
-    FormModifier = 0; 
-    DefaultSize = 0 ; 
-    DefaultMainVolume = 0; 
-    BitmapPos = 0, 0;
-
-*/
-
-/*
-meleeweapon
+item
 {
-	Category = WEAPON;
-    	StrengthModifier = 0; 
-    	FormModifier = 0; 
-    	DefaultSize =  0; 
-    	DefaultMainVolume = 0; 
-    	BitmapPos  = 0, 0; 
+	  Possibility = 0;
+	  InHandsPic = 160, 144;
+	  OfferModifier = 0;
+	  Score = 0;
+	  IsDestroyable = true;
+	  CanBeWished = true;
+	  IsMaterialChangeable = true;
+	  WeaponCategory = UNCATEGORIZED;
+	  IsPolymorphSpawnable = true;
+	  IsAutoInitializable = true;
+	  OneHandedStrengthPenalty = 0;
+	  OneHandedToHitPenalty = 0;
+	  Category = MISC;
+	  SoundResistance = 0;
+	  EnergyResistance = 0;
+	  AcidResistance = 0;
+	  FireResistance = 0;
+	  PoisonResistance = 0;
+	  BulimiaResistance = 0;
+	  IsStackable = true;
+	  StrengthModifier;
+	  /* Obligatory: FormModifier */
+	  NPModifier = 10000;
+	  /* Obligatory: DefaultSize */
+	  DefaultMainVolume;
+	  DefaultSecondaryVolume = 0;
+	  DefaultContainedVolume = 0;
+	  /* Obligatory: BitmapPos */
+	  Price = 0;
+	  BaseEmitation = 0;
 }
-*/
 
-banana
+materialcontainer
+{
+}
+
+banana /* materialcontainer-> */
 {
 	Possibility = 100;
 	InHandsPic = 160, 112;
@@ -68,22 +52,20 @@ banana
 	BitmapPos = 0, 112;
 	FormModifier = 50;
 	DefaultSize = 20;
+	OfferModifier = 10000;
 }
 
-holybanana
+holybanana /* materialcontainer->banana-> */
 {
 	Possibility = 5;
-	InHandsPic = 160, 112;
-	WeaponCategory = CLUBS;
 	DefaultMainVolume = 400;
 	DefaultContainedVolume = 1500;
 	StrengthModifier = 250;
-	Category = FOOD;
-	BitmapPos = 0, 112;
 	FormModifier = 200;
-	DefaultSize = 20;
+	DefaultSize = 30;
 	Score = 250;
 	Price = 1000;
+	OfferModifier = 400000;
 }
 
 lantern
@@ -94,14 +76,14 @@ lantern
 	Category = TOOL;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
-/*	BitmapPos is depended on being on the wall or not */
-	BitmapPos = 0, 0;
+	/*	BitmapPos depends on being on the wall or not */
 	FormModifier = 30;
 	Price = 50;
 	BaseEmitation = 300;
+	OfferModifier = 10000;
 }
 
-can
+can /* materialcontainer-> */
 {
 	DefaultSize = 10;
 	Possibility = 200;
@@ -111,8 +93,8 @@ can
 	DefaultContainedVolume = 500;
 	StrengthModifier = 50;
 	/* BitmapPos depends on being full or not */
-	BitmapPos = 0, 0;
 	FormModifier = 30;
+	OfferModifier = 5000;
 }
 
 lump
@@ -125,11 +107,16 @@ lump
 	StrengthModifier = 75;
 	BitmapPos = 16, 48;
 	FormModifier = 15;
+	OfferModifier = 5000;
 }
 
-longsword
+meleeweapon
 {
 	Category = WEAPON;
+}
+
+longsword /* meleeweapon-> */
+{
 	DefaultSize = 150;
 	Possibility = 25;
 	InHandsPic = 160, 16;
@@ -139,43 +126,32 @@ longsword
 	BitmapPos = 16, 336;
 	FormModifier = 150;
 	StrengthModifier = 150;
+	OfferModifier = 5000;
 }
 
-twohandedsword
+twohandedsword /* meleeweapon->longsword-> */
 {
-	InHandsPic = 160, 16;
-	Category = WEAPON;
 	DefaultSize = 175;
 	Possibility = 3;
-	WeaponCategory = LARGE_SWORDS;
-	DefaultMainVolume = 1500;
-	DefaultSecondaryVolume = 250;
-	StrengthModifier = 250;
-	BitmapPos = 0, 0;
-	FormModifier = 175;	
-}
-
-curvedtwohandedsword
-{
-	InHandsPic = 160, 16;
-	Category = WEAPON;
-	DefaultSize = 175;
-	Possibility = 0;
-	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 5500;
 	DefaultSecondaryVolume = 250;
 	StrengthModifier = 250;
-	BitmapPos = 0, 16;
-	FormModifier = 200;	
+	BitmapPos = 0, 0;
+	FormModifier = 175;
+	OfferModifier = 2500;
 }
 
-valpurusjustifier
+curvedtwohandedsword /* meleeweapon->longsword->twohandedsword */
 {
-	Category = WEAPON;
+	Possibility = 0;
+	BitmapPos = 0, 16;
+	FormModifier = 200;
+}
+
+valpurusjustifier /* meleeweapon->longsword-> */
+{
 	DefaultSize = 200;
 	Possibility = 0;
-	InHandsPic = 160, 16;
-	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 6700;
 	DefaultSecondaryVolume = 300;
 	BitmapPos = 0, 64;
@@ -184,11 +160,11 @@ valpurusjustifier
 	CanBeWished = false;
 	IsMaterialChangeable = false;
 	StrengthModifier = 400;
+	OfferModifier = 5000;
 }
 
-axe
+axe /* meleeweapon-> */
 {
-	Category = WEAPON;
 	DefaultSize = 125;
 	Possibility = 100;
 	InHandsPic = 160, 176;
@@ -198,25 +174,22 @@ axe
 	StrengthModifier = 150;
 	BitmapPos = 16, 256;
 	FormModifier = 150;
+	OfferModifier = 2500;
 }
 
-pickaxe
+pickaxe /* meleeweapon->axe-> */
 {
-	Category = WEAPON;
 	DefaultSize = 150;
 	Possibility = 50;
 	InHandsPic = 160, 64;
-	WeaponCategory = AXES;
 	DefaultMainVolume = 1500;
 	DefaultSecondaryVolume = 2000;
-	StrengthModifier = 150;
 	BitmapPos = 0, 96;
 	FormModifier = 100;
 }
 
-spear
+spear /* meleeweapon-> */
 {
-	Category = WEAPON;
 	DefaultSize = 200;
 	Possibility = 100;
 	InHandsPic = 160, 96;
@@ -226,64 +199,43 @@ spear
 	FormModifier = 200;
 	DefaultMainVolume = 200;
 	DefaultSecondaryVolume = 1600;
+	OfferModifier = 10000;
 }
 
-/*bodyarmor
+bodyarmor
 {
 	InHandsPic = 160, 144;
 	Category = BODYARMOR;
 	FormModifier = 20;
-/ The following are not set in the old itemde.h, so they are rather stupid here /
-	StrengthModifier = 0; 
-	DefaultSize = 0 ; 
-	DefaultMainVolume = 0; 
-	BitmapPos = 0, 0;
-} */
+}
 
-platemail
+platemail /* bodyarmor-> */
 {
-	InHandsPic = 160, 144;
-	Category = BODYARMOR;
-	FormModifier = 20;
 	StrengthModifier = 200; 
 	DefaultSize = 75; 
 	DefaultMainVolume = 4000; 
 	BitmapPos = 16, 128;
 	Possibility = 50;
+	OfferModifier = 5000;
 }
 
-chainmail
+chainmail /* bodyarmor-> */
 {
-	InHandsPic = 160, 144;
-	Category = BODYARMOR;
-	FormModifier = 20;
 	Possibility = 25;
 	StrengthModifier = 100; 
 	DefaultSize = 75; 
 	DefaultMainVolume = 2000; 
 	BitmapPos = 16, 96;
+	OfferModifier = 5000;
 }
 
-/*shirt
+shirt /* bodyarmor-> */
 {
-	InHandsPic = 160, 144;
-	Category = BODYARMOR;
-	FormModifier = 20;
-/ The following are not set in the old itemde.h, so they are rather stupid here /
-	StrengthModifier = 0; 
-	DefaultSize = 0 ; 
-	DefaultMainVolume = 0; 
-	BitmapPos = 0, 0;
-} */
+}
 
-goldeneagleshirt
+goldeneagleshirt /* bodyarmor->shirt-> */
 {
-	InHandsPic = 160, 144;
-	Category = BODYARMOR;
-	FormModifier = 20;
-	StrengthModifier = 50; 
-	DefaultSize = 0 ; 
-	DefaultMainVolume = 0; 
+	DefaultSize = 60;
 	BitmapPos = 16, 112;
 	Possibility = 0;
 	Score = 2500;
@@ -292,9 +244,10 @@ goldeneagleshirt
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
 	BaseEmitation = 333;
+	/* StrengthModifier not used, SV == constant 100 */
 } 
 
-potion
+potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
 	Possibility = 100;
@@ -306,6 +259,7 @@ potion
 	StrengthModifier = 50;
 	BitmapPos = 0, 160;
 	FormModifier = 40;
+	OfferModifier = 1000;
 }
 
 bananapeals
@@ -318,11 +272,12 @@ bananapeals
 	StrengthModifier = 50;
 	BitmapPos = 0, 128;
 	FormModifier = 70;
+	OfferModifier = 0;
 }
 
 brokenbottle
 {
-	DefaultSize(10);
+	DefaultSize = 10;
 	Possibility = 50;
 	InHandsPic = 160, 128;
 	Category = MISC;
@@ -330,9 +285,9 @@ brokenbottle
 	StrengthModifier = 50;
 	BitmapPos = 16, 160;
 	FormModifier = 100;
+	OfferModifier = 0;
 }
 
-/*
 scroll
 {
 	InHandsPic = 160, 128;
@@ -343,48 +298,29 @@ scroll
 	FormModifier = 40;
 	DefaultSize = 30;
 }
-*/
 
-scrollofcreatemonster
+scrollofcreatemonster /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
 	Possibility = 50;
-	DefaultSize = 30;
+	Price = 20;
 }
 
-scrollofteleport
+scrollofteleport /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
-	DefaultSize = 30;
 	Possibility = 50;
+	Price = 50;
 }
 
 
-scrollofcharging
+scrollofcharging /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
-	DefaultSize = 30;
 	Possibility = 5;
+	Price = 400;
 }
 
 nut
 {
-	DefaultSize = 2; 
+	DefaultSize = 3; 
 	Possibility = 5;
 	InHandsPic = 160, 128;
 	Category = FOOD;
@@ -392,21 +328,18 @@ nut
 	StrengthModifier = 50;
 	BitmapPos = 16, 208;
 	FormModifier = 20;
+	OfferModifier = 100000;
 }
 
-leftnutofpetrus
+leftnutofpetrus /* nut-> */
 {
 	DefaultSize = 10;
 	Possibility = 0;
-	InHandsPic = 160, 128;
-	Category = FOOD;
+	Category = MISC;
 	DefaultMainVolume = 500;
 	StrengthModifier = 2500;
-	BitmapPos = 16, 208;
-	FormModifier = 20;
 	Score = 5000;
 	IsDestroyable = false;
-	Category = MISC;
 	BaseEmitation = 333;
 }
 
@@ -420,16 +353,14 @@ abone
 	BitmapPos = 16, 240;
 	FormModifier = 70;
 	Category = MISC;
+	OfferModifier = 1000;
 }
 
 
-poleaxe
+poleaxe /* meleeweapon->axe-> */
 {
-	Category = WEAPON;
 	DefaultSize = 225;
 	Possibility = 50;
-	InHandsPic = 160, 176;
-	WeaponCategory = AXES;
 	DefaultMainVolume = 2500;
 	DefaultSecondaryVolume = 2000;
 	StrengthModifier = 150;
@@ -437,37 +368,33 @@ poleaxe
 	FormModifier = 150;
 }
 
-spikedmace
+spikedmace /* meleeweapon-> */
 {
-	Category = WEAPON;
-    	StrengthModifier = 400; 
-    	FormModifier = 125; 
-    	DefaultSize =  150; 
-    	DefaultMainVolume = 5000; 
-    	BitmapPos  = 0, 32; 
+	StrengthModifier = 400; 
+	FormModifier = 125; 
+	DefaultSize = 150; 
+	DefaultMainVolume = 5000; 
+	BitmapPos = 0, 32; 
 	Possibility = 20;
 	InHandsPic = 160, 192;
 	DefaultSecondaryVolume = 2000;
 	WeaponCategory = MACES;
+	OfferModifier = 1250;
 }
 
-neercseulb
+neercseulb /* meleeweapon->spikedmace-> */
 {
-	Category = WEAPON;
-    	StrengthModifier = 600; 
-    	FormModifier = 150; 
-    	DefaultSize =  200; 
-    	DefaultMainVolume = 5000; 
-    	BitmapPos  = 0, 32; 
+	StrengthModifier = 600;
+	FormModifier = 150;
+	DefaultSize = 200;
 	Possibility = 0;
-	InHandsPic = 160, 192;
-	DefaultSecondaryVolume = 2000;
-	WeaponCategory = MACES;
 	Score = 1000;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
+	DefaultMainVolume = 12000;
 	DefaultSecondaryVolume = 6000;
 	DefaultContainedVolume = 2500;
+	OfferModifier = 2500;
 }
 
 loaf
@@ -481,49 +408,28 @@ loaf
 	StrengthModifier = 100;
 	BitmapPos = 0, 272;
 	FormModifier = 30;
+	OfferModifier = 1250;
 }	
 
-scrollofwishing
+scrollofwishing /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
-	DefaultSize = 30;
 	Possibility = 1;
 	CanBeWished = false;
 	Price = 2000;
 	IsPolymorphSpawnable = false;
 }
 
-cheapcopyofleftnutofpetrus
+cheapcopyofleftnutofpetrus /* nut-> */
 {
 	DefaultSize = 10;
 	Possibility = 5;
-	Score = 1;	
+	Score = 1;
 	Price = 500;
 	Category = MISC;
-	StrengthModifier = 50;
-	FormModifier = 70;
 	DefaultMainVolume = 500;
-	FormModifier = 20;
-	BitmapPos = 16, 208;
 }
 
-/*
 wand
-{
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModfier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
-}
-*/
-
-wandofpolymorph
 {
 	Category = WAND;
 	DefaultMainVolume = 200;
@@ -531,35 +437,28 @@ wandofpolymorph
 	BitmapPos = 0, 288;
 	FormModifier = 80;
 	DefaultSize = 30;
+}
+
+wandofpolymorph /* wand-> */
+{
 	Possibility = 20;
 	Price = 500;
 	IsPolymorphSpawnable = false;
 }
 
-brokenlantern
+brokenlantern /* lantern-> */
 {
 	DefaultSize = 15;
 	Possibility = 25;
 	InHandsPic = 160, 128;
-	Category = TOOL;
-	DefaultMainVolume = 1000;
-	StrengthModifier = 50;
-/*	BitmapPos is depended on being on the wall or not */
-	BitmapPos = 0, 0;
 	FormModifier = 80;
-	Price = 50;
+	Price = 0;
 	BaseEmitation = 0;
+	OfferModifier = 0;
 }
 
-scrollofchangematerial
+scrollofchangematerial /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
-	DefaultSize = 30;
 	Possibility = 3;
 	Price = 500;
 }
@@ -580,28 +479,21 @@ avatarofvalpurus
 	FormModifier = 20;
 }
 
-wandofstriking
+wandofstriking /* wand-> */
 {
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
-	DefaultSize = 30;
 	Possibility = 20;
 	Price = 500;
 }
 
-brokenplatemail
+brokenplatemail /* bodyarmor-> */
 {
-	Category = BODYARMOR;
 	DefaultSize = 70;
 	Possibility = 10;
-	InHandsPic = 160, 144;
 	DefaultMainVolume = 4000;
 	StrengthModifier = 75;
 	BitmapPos = 0, 352;
 	FormModifier = 30;
+	OfferModifier = 1000;
 }
 
 kiwi
@@ -613,6 +505,7 @@ kiwi
 	StrengthModifier = 50;
 	BitmapPos = 0, 384;
 	FormModifier = 20;
+	OfferModifier = 4000;
 }
 
 
@@ -625,6 +518,7 @@ pineapple
 	StrengthModifier = 100;
 	BitmapPos = 0, 368;
 	FormModifier = 20;
+	OfferModifier = 4000;
 }
 
 palmbranch
@@ -637,9 +531,10 @@ palmbranch
 	StrengthModifier = 50;
 	BitmapPos = 0, 240;
 	FormModifier = 50;
+	OfferModifier = 3000;
 }
 
-whip
+whip /* meleeweapon-> */
 {
 	DefaultSize = 200;
 	Possibility = 25;
@@ -649,11 +544,11 @@ whip
 	DefaultSecondaryVolume = 200;
 	StrengthModifier = 50;
 	BitmapPos = 32, 0;
-	FormModifier = 0; /* not needed */
-	Category = WEAPON;
+	OfferModifier = 5000;
+	/* FormModifier not used */
 }
 
-backpack
+backpack /* materialcontainer-> */
 {
 	DefaultSize = 80;
 	Possibility = 10;
@@ -664,6 +559,7 @@ backpack
 	StrengthModifier = 200;
 	BitmapPos = 32, 16;
 	FormModifier = 20;
+	OfferModifier = 5000;
 }
 
 holybook
@@ -676,6 +572,7 @@ holybook
 	StrengthModifier = 100;
 	BitmapPos = 32, 32;
 	FormModifier = 30;
+	OfferModifier = 4000;
 }
 
 fiftymillionroubles
@@ -683,12 +580,13 @@ fiftymillionroubles
 	DefaultSize = 20;
 	Possibility = 0;
 	Price = 2;
-	Category = VALUABLE;
+	Category = VALUABLE; /* ??? */
 	DefaultMainVolume = 1000;
 	StrengthModifier = 25;
 	BitmapPos = 0, 336;
 	FormModifier = 20;
 	CanBeWished = false;
+	OfferModifier = 100;
 }
 
 oillamp
@@ -702,6 +600,7 @@ oillamp
 	BitmapPos = 32, 48;
 	FormModifier = 30;
 	BaseEmitation = 256;
+	OfferModifier = 10000;
 }
 
 astone
@@ -714,46 +613,28 @@ astone
 	StrengthModifier = 100;
 	BitmapPos = 0, 48;
 	FormModifier = 45;
+	OfferModifier = 7000;
 }
 
-wandoffireballs
+wandoffireballs /* wand-> */
 {
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
-	DefaultSize = 30;
 	Possibility = 20;
 	Price = 500;
 }
 
-scrolloftaming
+scrolloftaming /* scroll-> */
 {
-	InHandsPic = 160, 128;
-	Category = SCROLL;
-	DefaultMainVolume = 250;
-	StrengthModifier = 25;
-	BitmapPos = 16, 176;
-	FormModifier = 40;
-	DefaultSize = 30;
 	Possibility = 5;
-	DefaultSize = 30;
 	Price = 350;
 }
 
-wandofteleportation
+wandofteleportation /* wand-> */
 {
-	Category = WAND;
-	DefaultMainVolume = 200;
-	DefaultSize = 30;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
+	Possibility = 30;
 	Price = 500;
 }
 
-mine
+mine /*materialcontainer-> */
 {
 	DefaultSize = 5;
 	Possibility = 20;
@@ -765,26 +646,16 @@ mine
 	FormModifier = 30;
 }
 
-wandofhaste
+wandofhaste /* wand-> */
 {
-	DefaultSize = 30;
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
 	Possibility = 30;
+	Price = 500;
 }
 
-wandofslow
+wandofslow /* wand-> */
 {
-	DefaultSize = 30;
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
 	Possibility = 30;
+	Price = 500;
 }
 
 key
@@ -795,8 +666,9 @@ key
 	Category = TOOL;
 	DefaultMainVolume = 15;
 	StrengthModifier = 50;
-	BitmapPos = 16, 48;
+	BitmapPos = 16, 416;
 	FormModifier = 40;
+	OfferModifier = 5000;
 }
 
 shield
@@ -808,6 +680,7 @@ shield
 	StrengthModifier= 200;
 	BitmapPos = 32, 336;
 	FormModifier = 30;
+	OfferModifier = 4000;
 }
 
 cloak
@@ -819,6 +692,7 @@ cloak
 	StrengthModifier = 100;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
+	OfferModifier = 4000;
 }
 
 boot
@@ -830,6 +704,7 @@ boot
 	StrengthModifier = 100;
 	BitmapPos = 0, 400;
 	FormModifier = 20;
+	OfferModifier = 4000;
 }
 
 gauntlet
@@ -841,6 +716,7 @@ gauntlet
 	StrengthModifier = 75;
 	BitmapPos = 32, 368;
 	FormModifier = 20;
+	OfferModifier = 4000;
 }
 
 belt
@@ -852,7 +728,7 @@ belt
 	DefaultMainVolume = 250;
 	StrengthModifier = 50;
 	BitmapPos = 32, 384;
-	FormModifier = 0; /* Not used */
+	/* FormModifier not used */
 }
 
 ring
@@ -877,60 +753,125 @@ amulet
 	FormModifier = 50;
 }
 
+bodypart
+{
+	Category = FOOD;
+	IsAutoInitializable = false;
+	NPModifier = 100;
+	CanBeWished = false;
+}
+
+head /* bodypart-> */
+{
+	InHandsPic = 160, 144;
+	OfferModifier = 1000;
+	StrengthModifier = 150;
+	FormModifier = 20;
+}
+
+torso /* bodypart-> */
+{
+	StrengthModifier = 250;
+	FormModifier = 20;
+}
+
+normaltorso /* bodypart->torso-> */
+{
+}
+
+humanoidtorso /* bodypart->torso-> */
+{
+}
+
+arm /* bodypart-> */
+{
+	StrengthModifier = 50;
+	FormModifier = 20;
+}
+
+rightarm /* bodypart->arm-> */
+{
+}
+
+leftarm /* bodypart->arm-> */
+{
+}
+
+groin /* bodypart-> */
+{
+	StrengthModifier = 100;
+	FormModifier = 20;
+}
+
+leg /* bodypart-> */
+{
+	StrengthModifier = 75;
+	FormModifier = 20;
+}
+
+rightleg /* bodypart->leg-> */
+{
+}
+
+leftleg /* bodypart->leg-> */
+{
+}
+
+headofelpuri
+{
+	CanBeWished = false;
+	DefaultSize = 60;
+	Score = 1000;
+	IsDestroyable = false;
+	Category = MISC;
+	InHandsPic = 160, 144;
+	StrengthModifier = 150;
+	FormModifier = 20;
+	BitmapPos = 16, 0;
+	DefaultMainVolume = 25000;
+}
+
 corpse
 {
 	Possibility = 0;
 	Category = FOOD;
 	CanBeWished = false;
+	InHandsPic = 160, 144;
 	IsAutoInitializable = false;
 	IsPolymorphSpawnable = false;
 	StrengthModifier = 100;
 	FormModifier = 15;
-	DefaultSize = 0; /* Not used */
-	DefaultMainVolume = 0; /* Not used */
-	BitmapPos = 0, 0; /* Not used */
+	NPModifier = 100;
+	OfferModifier = 100;
 }
 
-wandoflocking
+wandoflocking /* wand-> */
 {
-	DefaultSize = 30;
 	Possibility = 20;
-	Price = 70;
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
+	Price = 100;
 }
 
-wandofresurrection
+wandofresurrection /* wand-> */
 {
-	DefaultSize = 30;
 	Possibility = 20;
-	Price = 400;
-	Category = WAND;
-	DefaultMainVolume = 200;
-	StrengthModifier = 50;
-	BitmapPos = 0, 288;
-	FormModifier = 80;
+	Price = 500;
 }
 
-ringoffireresistance
+ring
 {
-	DefaultSize = 3;
-	Possibility = 15;
+	DefaultSize = 2;
+	Possibility = 20;
 	Category = RING;
 	DefaultMainVolume = 3;
 	StrengthModifier = 100;
 	BitmapPos = 16, 400;
 	FormModifier = 20;
-	FireResistance = 10;
 }
 
-amuletoflifesaving
+amulet
 {
 	DefaultSize = 20;
-	Possibility = 3;
+	Possibility = 10;
 	Category = AMULET;
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
@@ -938,3 +879,12 @@ amuletoflifesaving
 	FormModifier = 50;
 }
 
+ringoffireresistance /* ring-> */
+{
+	Possibility = 15;
+	FireResistance = 10;
+}
+
+amuletoflifesaving /* amulet-> */
+{
+}

@@ -249,14 +249,14 @@ void god::Load(inputfile& SaveFile)
   SaveFile >> Relation >> Timer >> Known;
 }
 
-god* god_prototype::CloneAndLoad(inputfile& SaveFile) const
+god* godprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   god* God = Clone();
   God->Load(SaveFile);
   return God;
 }
 
-god_prototype::god_prototype()
+godprototype::godprototype()
 {
   Index = protocontainer<god>::Add(this);
 }

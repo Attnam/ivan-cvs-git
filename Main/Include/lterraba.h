@@ -59,10 +59,10 @@ class lterrain : public object
   uchar VisualFlags;
 };
 
-class glterrain_prototype
+class glterrainprototype
 {
  public:
-  glterrain_prototype();
+  glterrainprototype();
   virtual glterrain* Clone(bool = true) const = 0;
   glterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -74,17 +74,17 @@ class glterrain_prototype
 class glterrain : public lterrain, public gterrain
 {
  public:
-  typedef glterrain_prototype prototype;
+  typedef glterrainprototype prototype;
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
-class olterrain_prototype
+class olterrainprototype
 {
  public:
-  olterrain_prototype();
+  olterrainprototype();
   virtual olterrain* Clone(bool = true) const = 0;
   olterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -96,7 +96,7 @@ class olterrain_prototype
 class olterrain : public lterrain, public oterrain
 {
  public:
-  typedef olterrain_prototype prototype;
+  typedef olterrainprototype prototype;
   olterrain() : HP(1000) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -117,15 +117,15 @@ class olterrain : public lterrain, public oterrain
   virtual void SetHP(short What) { HP = What; }
   virtual void EditHP(short What) { HP += What; }
   virtual bool IsSafeToDestroy() const { return false; }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   short HP;
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define LTERRAIN_PROTOTYPE(name, base, protobase)\
+#define LTERRAIN_PROTOTYPE(name, protobase)\
   \
   static class name##_prototype : public protobase::prototype\
   {\
@@ -135,11 +135,11 @@ class olterrain : public lterrain, public oterrain
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const protobase::prototype& name::GetProtoType() const { return name##_ProtoType; }
+  protobase::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define LTERRAIN_PROTOTYPE(name, base, protobase)
+#define LTERRAIN_PROTOTYPE(name, protobase)
 
 #endif
 
@@ -150,9 +150,9 @@ name : public base\
  public:\
   name(bool CallGenerateMaterials = true) { Initialize(CallGenerateMaterials); }\
   static ushort StaticType();\
-  virtual const protobase::prototype& GetProtoType() const;\
+  virtual prototype* GetProtoType() const;\
   data\
-}; LTERRAIN_PROTOTYPE(name, base, protobase)
+}; LTERRAIN_PROTOTYPE(name, protobase);
 
 #define GLTERRAIN(name, base,  data)\
 \

@@ -9,6 +9,7 @@
 
 #include "typedef.h"
 #include "vector2d.h"
+#include "error.h"
 
 #define DATAMEMBER(type, name)\
  public:\
@@ -61,6 +62,22 @@ template <class type> class datamembertemplate : public datamemberbase
   datamembertemplate<type>* Base;
   type* Member;
 };
+
+template <class type> inline type* datamembertemplate<type>::GetMember(bool AbortOnError) const
+{
+  if(Member)
+    return Member;
+  else
+    if(Base)
+      return Base->GetMember(AbortOnError);
+    else
+    {
+      if(AbortOnError)
+	ABORT("Undefined script member %s sought!", Identifier.c_str());
+
+      return 0;
+    }
+}
 
 template <class type> class datamember : public datamembertemplate<type>
 {
@@ -468,9 +485,21 @@ template <class type> class database
   ~database();
   void ReadFrom(inputfile&);
   void Apply();
-  const std::map<std::string, data<type>*>& GetData() { return Data; }
  protected:
-  std::map<std::string, data<type>*> Data;
+  std::vector<data<type>*> Data;
+};
+
+class scriptsystem
+{
+ public:
+  static void Initialize();
+  static gamescript* GetGameScript() { return GameScript; }
+ protected:
+  static gamescript* GameScript;
+  static database<character>* CharacterDataBase;
+  static database<item>* ItemDataBase;
+  static database<material>* MaterialDataBase;
+  
 };
 
 #endif

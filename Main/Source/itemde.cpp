@@ -6,6 +6,8 @@
 std::vector<item::prototype*> protocontainer<item>::ProtoData;
 valuemap protocontainer<item>::CodeNameMap;
 
+ITEM_PROTOTYPE(item, 0, 0, false);
+
 #include "femath.h"
 #include "itemde.h"
 
@@ -2176,7 +2178,7 @@ long corpse::Score() const
   return Score;
 }
 
-bool corpse::Destroyable() const
+bool corpse::IsDestroyable() const
 {
   for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->IsDestroyable())
@@ -2520,19 +2522,6 @@ void leg::VirtualConstructor()
 {
   bodypart::VirtualConstructor();
   BootSlot.Init(this);
-}
-
-void headofelpuri::VirtualConstructor()
-{
-  head::VirtualConstructor();
-  SetUnique(true);
-  SetOwnerDescription("of Elpuri, the Master Dark Frog");
-}
-
-void headofennerbeast::VirtualConstructor()
-{
-  head::VirtualConstructor();
-  SetOwnerDescription("of an enner beast");
 }
 
 void wandoflocking::VirtualConstructor()

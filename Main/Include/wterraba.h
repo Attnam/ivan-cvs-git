@@ -34,10 +34,10 @@ class wterrain
   wsquare* WSquareUnder;
 };
 
-class gwterrain_prototype
+class gwterrainprototype
 {
  public:
-  gwterrain_prototype();
+  gwterrainprototype();
   virtual gwterrain* Clone() const = 0;
   gwterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -49,18 +49,18 @@ class gwterrain_prototype
 class gwterrain : public wterrain, public gterrain
 {
  public:
-  typedef gwterrain_prototype prototype;
+  typedef gwterrainprototype prototype;
   virtual void DrawToTileBuffer(bool) const;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
-class owterrain_prototype
+class owterrainprototype
 {
  public:
-  owterrain_prototype();
+  owterrainprototype();
   virtual owterrain* Clone() const = 0;
   owterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -72,17 +72,17 @@ class owterrain_prototype
 class owterrain : public wterrain, public oterrain
 {
  public:
-  typedef owterrain_prototype prototype;
+  typedef owterrainprototype prototype;
   virtual void DrawToTileBuffer(bool) const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define WTERRAIN_PROTOTYPE(name, base, protobase)\
+#define WTERRAIN_PROTOTYPE(name, protobase)\
   \
   static class name##_prototype : public protobase::prototype\
   {\
@@ -92,11 +92,11 @@ class owterrain : public wterrain, public oterrain
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const protobase::prototype& name::GetProtoType() const { return name##_ProtoType; }
+  protobase::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define WTERRAIN_PROTOTYPE(name, base, protobase)
+#define WTERRAIN_PROTOTYPE(name, protobase)
 
 #endif
 
@@ -107,9 +107,9 @@ name : public base\
  public:\
   name() { VirtualConstructor(); }\
   static ushort StaticType();\
-  virtual const protobase::prototype& GetProtoType() const;\
+  virtual prototype* GetProtoType() const;\
   data\
-}; WTERRAIN_PROTOTYPE(name, base, protobase)
+}; WTERRAIN_PROTOTYPE(name, protobase);
 
 #define GWTERRAIN(name, base, data)\
 \

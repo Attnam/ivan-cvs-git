@@ -24,12 +24,12 @@ dungeon::~dungeon()
 
 void dungeon::Initialize()
 {
-  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
+  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = scriptsystem::GetGameScript()->GetDungeon().find(Index);
 
-  if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
+  if(DungeonIterator != scriptsystem::GetGameScript()->GetDungeon().end())
     DungeonScript = DungeonIterator->second;
   else
-    DungeonScript = game::GetGameScript()->GetDungeonDefault();
+    DungeonScript = scriptsystem::GetGameScript()->GetDungeonDefault();
 
   Level = new level*[GetLevels()];
   Generated = new bool[GetLevels()];

@@ -99,26 +99,26 @@ void wterrain::Load(inputfile&)
   WSquareUnder = (wsquare*)game::GetSquareInLoad();
 }
 
-gwterrain* gwterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+gwterrain* gwterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   gwterrain* Terrain = Clone();
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
-owterrain* owterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+owterrain* owterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   owterrain* Terrain = Clone();
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
-gwterrain_prototype::gwterrain_prototype()
+gwterrainprototype::gwterrainprototype()
 {
   Index = protocontainer<gwterrain>::Add(this);
 }
 
-owterrain_prototype::owterrain_prototype()
+owterrainprototype::owterrainprototype()
 {
   Index = protocontainer<owterrain>::Add(this);
 }

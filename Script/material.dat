@@ -1,25 +1,31 @@
 /* Numeric material data loaded during game startup */
 
-/* Members (values marked with (*) are obligatory, others are preceded with their default value):
+/* Default values: */
 
-    ushort StrengthValue; (*)
-    ushort ConsumeType; (*)
-    ushort Density; (*)
-    ushort OfferValue; (*)
-    ushort Color; (*)
-    ushort PriceModifier; (0)
-    bool IsSolid; (false)
-    ushort Emitation; (0)
-    bool CanBeWished; (true)
-    uchar Alignment; (NEUTRAL)
-    ushort NutritionValue; (0)
-    bool IsAlive; (false)
-    bool IsBadFoodForAI; (false)
-    ushort ExplosivePower; (0)
-    bool IsFlammable; (false)
-    bool IsFlexible; (false)
-    bool IsExplosive; (false)
-*/
+material
+{
+	  /* Obligatory: StrengthValue */
+	  /* Obligatory: ConsumeType */
+	  /* Obligatory: Density */
+	  /* Obligatory: OfferValue */
+	  /* Obligatory: Color */
+	  PriceModifier = 0;
+	  IsSolid = false;
+	  Emitation = 0;
+	  CanBeWished = true;
+	  Alignment = NEUTRAL;
+	  NutritionValue = 0;
+	  IsAlive = false;
+	  IsBadFoodForAI = false;
+	  ExplosivePower = 0;
+	  IsFlammable = false;
+	  IsFlexible = false;
+	  IsExplosive = false;
+}
+
+organicsubstance
+{
+}
 
 iron
 {
@@ -132,39 +138,26 @@ flesh
 	IsAlive = true;
 }
 
-goblinoidflesh
+goblinoidflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 10;
-	NutritionValue = 200;
 	Color = rgb(0, 128, 0);
-	IsAlive = true;
 	PriceModifier = 600;
 }
 
-pork
+pork /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 20;
 	NutritionValue = 400;
 	Color = rgb(128, 128, 128);
-	IsAlive = true;
 	PriceModifier = 1250;
 }
 
-beef
+beef /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 20;
 	NutritionValue = 400;
 	Color = rgb(128, 128, 128);
-	IsAlive = true;
 	PriceModifier = 1250;
 }
 
@@ -179,43 +172,24 @@ bone
 	NutritionValue = 20;
 }
 
-frogflesh
+frogflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 500;
 	NutritionValue = 1000;
-	Color = rgb(64, 64, 64);
-	IsAlive = true;
 	Alignment = EVIL;
 	IsBadFoodForAI = true;
 }
 
-darkfrogflesh
+darkfrogflesh /* flesh->frogflesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 500;
-	NutritionValue = 1000;
 	Color = rgb(48, 48, 48);
-	IsAlive = true;
-	Alignment = EVIL;
-	IsBadFoodForAI = true;
 }
 
-elpuriflesh
+elpuriflesh /* flesh->frogflesh->darkfrogflesh-> */
 {
 	StrengthValue = 30;
-	ConsumeType = MEAT;
 	Density = 2400;
 	OfferValue = 1;
-	NutritionValue = 1000;
-	Color = rgb(64, 64, 64);
-	IsAlive = true;
-	Alignment = EVIL;
-	IsBadFoodForAI = true;
 }
 
 glass
@@ -237,6 +211,8 @@ omleurine
 	Color = rgb(128, 128, 0);
 	CanBeWished = false;
 	IsAlive = true;
+	NutritionValue = 30;
+	PriceModifier = 2500;
 }
 
 bananapeal
@@ -271,39 +247,12 @@ cloth
 	IsFlammable = true;
 }
 
-humanflesh
+humanflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 30;
-	NutritionValue = 200;
 	Color = rgb(64, 64, 64);
-	IsAlive = true;
 	Alignment = EVIL;
-	/* 
-	Possibly missing from this script:
-	SkinColor = rgb(180, 120, 90);
-	*/
 }
-
-/* Have to hope that his is politically correct. */
-
-/*negroidflesh
-{
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 30;
-	NutritionValue = 200;
-	Color = rgb(64, 64, 64);
-	IsAlive = true;
-	Alignment = EVIL;*/
-	/* 
-	Possibly missing from this script:
-	SkinColor = rgb(160, 100, 64);
-	*/
-/*}*/
 
 slime
 {
@@ -318,53 +267,29 @@ slime
 
 brownslime
 {
-	StrengthValue = 2;
-	ConsumeType = LIQUID;
-	Density = 400;
-	OfferValue = 1;
-	NutritionValue = 100;
 	Color = rgb(111, 74, 37);
-	IsAlive = true;
 }
 
-wolfflesh
+wolfflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(64, 64, 64);
-	IsAlive = true;
+	PriceModifier = 600;
 }
 
-dogflesh
+dogflesh /* flesh->wolfflesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(111, 74, 37);
-	IsAlive = true;
 	Alignment = EVIL;
 }
 
-ennerbeastflesh
+ennerbeastflesh /* humanflesh-> */
 {
 	StrengthValue = 30;
-	ConsumeType = MEAT;
 	Density = 1800;
 	OfferValue = 5;
-	NutritionValue = 200;
 	Color = rgb(112, 112, 64);
-	IsAlive = true;
-	Alignment = EVIL; /* Atleast this is questionable... */
 	IsBadFoodForAI = true;
-	/* 
-	Possibly missing from this script:
-	SkinColor = rgb(180, 120, 90);
-	*/
 }
 
 pepsi
@@ -387,39 +312,25 @@ mithril
 	OfferValue = 25;
 	IsSolid = true;
 	Color = rgb(184, 184, 184);
+	PriceModifier = 5000;
 }
 
-spiderflesh
+spiderflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 4;
-	NutritionValue = 200;
 	Color = rgb(160, 160, 160);
-	IsAlive = true;
 }
 
-jackalflesh
+jackalflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 6;
-	NutritionValue = 200;
 	Color = rgb(224, 224, 224);
-	IsAlive = true;
 }
 	
-donkeyflesh
+donkeyflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 6;
-	NutritionValue = 200;
 	Color = rgb(80, 80, 80);
-	IsAlive = true;
 }
 	
 marble
@@ -441,6 +352,7 @@ gold
 	IsSolid = true;
 	Color = rgb(200, 200, 0);
 	CanBeWished = false;
+	PriceModifier = 20000;
 }
 
 grass
@@ -462,6 +374,7 @@ kiwiflesh
 	NutritionValue = 150;
 	Color = rgb(160, 112, 32);
 	IsAlive = true;
+	PriceModifier = 600;
 }
 
 pineappleflesh
@@ -470,8 +383,10 @@ pineappleflesh
 	ConsumeType = FRUIT;
 	Density = 1200;
 	OfferValue = 12;
+	NutritionValue = 150;
 	Color = rgb(192, 112, 96);
 	IsAlive = true;
+	PriceModifier = 600;
 }
 
 leather
@@ -486,40 +401,20 @@ leather
 	IsFlammable = true;
 }
 
-
-lightfrogflesh
+lightfrogflesh /* flesh->frogflesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 500;
-	NutritionValue = 1000;
 	Color = rgb(32, 88, 32);
-	IsAlive = true;
-	Alignment = EVIL;
-	IsBadFoodForAI = true;
 }
 
-dolphinflesh
+dolphinflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(64, 64, 64);
-	IsAlive = true;
 }
 
-flesh
+polarbearflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(128, 128, 128);
-	IsAlive = true;
+	PriceModifier = 600;
 }
 
 leaf
@@ -534,15 +429,9 @@ leaf
 	IsAlive = true;
 }
 
-fabric
+fabric /* cloth-> */
 {
-	StrengthValue = 5;
-	ConsumeType = MISC_ORGANIC;
-	Density = 100;
-	OfferValue = 5;
-	IsSolid = true;
 	Color = rgb(176, 0, 0);
-	IsFlammable = true;
 }
 
 water
@@ -556,16 +445,8 @@ water
 	CanBeWished = false;
 }
 
-palmleaf
+palmleaf /* leaf-> */
 {
-	StrengthValue = 5;
-	ConsumeType = MISC_ORGANIC;
-	Density = 500;
-	OfferValue = 10;
-	IsSolid = true;
-	Color = rgb(0, 160, 0);
-	IsFlammable = true;
-	IsAlive = true;
 }
 
 sulfur
@@ -578,93 +459,53 @@ sulfur
 	Color = rgb(128, 0, 0);
 }
 
-batflesh
+batflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 7;
-	NutritionValue = 200;
 	Color = rgb(48, 48, 48);
-	IsAlive = true;
 }
 
-werewolfflesh
+werewolfflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 13;
-	NutritionValue = 200;
 	Color = rgb(90, 64, 64);
-	IsAlive = true;
 }
 
-koboldflesh
+koboldflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 14;
 	NutritionValue = 100;
 	Color = rgb(30, 100, 110);
-	IsAlive = true;
 	IsBadFoodForAI = true;
 }
 
-gibberlingflesh
+gibberlingflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 12;
-	NutritionValue = 200;
 	Color = rgb(100, 100, 200);
-	IsAlive = true;
 }
 
-catflesh
+catflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 12;
-	NutritionValue = 200;
 	Color = rgb(50, 50, 50);
-	IsAlive = true;
 }
 
-ratflesh
+ratflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 8;
-	NutritionValue = 200;
 	Color = rgb(180, 100, 40);
-	IsAlive = true;
 }
 
-angelflesh
+angelflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 8;
-	NutritionValue = 200;
 	Color = rgb(200, 200, 200);
-	IsAlive = true;
 }
 
-dwarfflesh
+dwarfflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(180, 120, 90);
-	IsAlive = true;
 }
 
 gunpowder
@@ -676,18 +517,13 @@ gunpowder
 	Color = rgb(30, 30, 30);
 	CanBeWished = false;
 	IsExplosive = true;
-	/* Explosive power is not done yet. (it depents on Volume and the script doesn't support it */
+	/* Explosive power is not done yet. (it depends on Volume and the script doesn't support it */
+	PriceModifier = 600;
 }
 
-daemonflesh
+daemonflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(180, 0, 0);
-	IsAlive = true;
 }
 
 blood
@@ -703,15 +539,9 @@ blood
 	IsAlive = true;
 }
 
-mammothflesh
+mammothflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(100, 130, 160);
-	IsAlive = true;
 }
 
 bread
@@ -722,6 +552,7 @@ bread
 	OfferValue = 7;
 	NutritionValue = 200;
 	Color = rgb(200, 110, 60);
+	PriceModifier = 600;
 }
 
 unicornhorn
@@ -734,38 +565,26 @@ unicornhorn
 	IsAlive = true;
 }
 
-blackunicornflesh
+blackunicornflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(48, 48, 48);
-	IsAlive = true;
-	Alignment = GOOD; 
 	/* Slightly strange. This means the the good gods like to receive this sacrifice */
+	Alignment = GOOD;
 }
 
-grayunicornflesh
+grayunicornflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(112, 112, 112);
-	IsAlive = true;
 }
 
-whiteunicornflesh
+whiteunicornflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(160, 160, 160);
-	IsAlive = true;
-	Alignment = EVIL; 
 	/* Slightly strange. This means the the evil gods like to receive this sacrifice */
+	Alignment = EVIL;
 }
 
 diamond
@@ -776,6 +595,7 @@ diamond
 	OfferValue = 50;
 	IsSolid = true;
 	Color = rgb(180, 180, 180);
+	PriceModifier = 30000;
 }
 
 silver
@@ -787,6 +607,7 @@ silver
 	IsSolid = true;
 	Color = rgb(160, 160, 160);
 	CanBeWished = false;
+	PriceModifier = 15000;
 }
 
 sapphire
@@ -797,6 +618,7 @@ sapphire
 	OfferValue = 50;
 	IsSolid = true;
 	Color = rgb(96, 96, 200);
+	PriceModifier = 20000;
 }
 
 ruby
@@ -807,6 +629,7 @@ ruby
 	OfferValue = 50;
 	IsSolid = true;
 	Color = rgb(200, 60, 60);
+	PriceModifier = 24000;
 }
 
 healingliquid
@@ -817,6 +640,7 @@ healingliquid
 	OfferValue = 70;
 	NutritionValue = 30;
 	Color = rgb(128, 0, 0);
+	PriceModifier = 2500;
 }
 
 bronze
@@ -827,6 +651,7 @@ bronze
 	OfferValue = 10;
 	IsSolid = true;
 	Color = rgb(150, 100, 50);
+	PriceModifier = 30;
 }
 
 copper
@@ -837,27 +662,18 @@ copper
 	OfferValue = 10;
 	IsSolid = true;
 	Color = rgb(96, 64, 32);
+	PriceModifier = 20;
 }
 
-lionflesh
+lionflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(192, 160, 112);
-	IsAlive = true;
+	PriceModifier = 600;
 }
 
-buffaloflesh
+buffaloflesh /* flesh-> */
 {
-	StrengthValue = 10;
-	ConsumeType = MEAT;
-	Density = 1200;
-	OfferValue = 15;
-	NutritionValue = 200;
 	Color = rgb(60, 55, 50);
-	IsAlive = true;
+	PriceModifier = 600;
 }
 

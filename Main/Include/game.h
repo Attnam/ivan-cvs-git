@@ -26,12 +26,9 @@ class square;
 class dungeon;
 class outputfile;
 class inputfile;
-class gamescript;
 class team;
 class bitmap;
 class petrus;
-
-template <class type> class database;
 
 /* Presentation of the game class */
 
@@ -117,11 +114,9 @@ class game
   static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
-  static gamescript* GetGameScript() { return GameScript; }
   static void DoGoodDeed(ushort);
   static void DoNeutralDeed(ushort);
   static void DoEvilDeed(ushort);
-  static void InitScript();
   static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
   static void LoadWorldMap(const std::string& = SaveName(""));
   static void UpdateCamera();
@@ -184,10 +179,6 @@ class game
   static square* SquareInLoad;
   static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
-  static gamescript* GameScript;
-  static database<character>* CharacterDataBase;
-  static database<item>* ItemDataBase;
-  static database<material>* MaterialDataBase;
   static ulong NextItemID;
   static std::vector<team*> Team;
   static ulong LOSTurns;

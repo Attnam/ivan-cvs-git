@@ -26,7 +26,7 @@ valuemap protocontainer<olterrain>::CodeNameMap;
 #include "stack.h"
 #include "itemba.h"
 #include "config.h"
-#include "itemde.h"
+#include "itemba.h"
 #include "save.h"
 
 bool door::Open(character* Opener)
@@ -794,12 +794,12 @@ void door::CreateBoobyTrap()
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(Thingy->GetType() == key::StaticType()) // This is still EEEEEEEEEEVIIIIIIIIIIIIIIIIIL.
+  if(Thingy->CanOpenDoors())
     {
       if(IsOpen)
 	return false;
 
-      if(((key*)Thingy)->GetLockType() == GetLockType())
+      if(Thingy->GetLockType() == GetLockType())
 	{
 	  if(Applier->GetIsPlayer())
 	    {

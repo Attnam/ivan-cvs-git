@@ -18,6 +18,7 @@
 #include "femath.h"
 #include "felibdef.h"
 #include "proto.h"
+#include "script.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -58,7 +59,7 @@ int Main(int argc, char **argv)
   protosystem::GenerateCodeNameMaps();
   femath::SetSeed(time(0));
   game::InitLuxTable();
-  game::InitScript();
+  scriptsystem::Initialize();
   configuration::Load();
 
 #ifdef WIN32

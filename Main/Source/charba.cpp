@@ -4054,10 +4054,10 @@ void character::LoadDataBaseStats()
 
 character* character::Clone(bool MakeBodyParts, bool CreateEquipment) const
 {
-  return GetProtoType().Clone(MakeBodyParts, CreateEquipment);
+  return GetProtoType()->Clone(MakeBodyParts, CreateEquipment);
 }
 
-character* character_prototype::CloneAndLoad(inputfile& SaveFile) const
+character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   character* Char = Clone(false, false);
   Char->Load(SaveFile);
@@ -4097,7 +4097,7 @@ void character::Initialize(bool MakeBodyParts, bool CreateEquipment)
     }
 }
 
-character_prototype::character_prototype()
+characterprototype::characterprototype()
 {
   Index = protocontainer<character>::Add(this);
 }

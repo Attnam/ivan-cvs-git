@@ -47,5 +47,10 @@ Ruumiinosien hoitotavat:
 Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
 //Avaimelle kuva. (kahvi)
 Helmet. (hex)
-BaseEmitationit toimintaan. (timo)
+//BaseEmitationit toimintaan. (timo)
 Pertun nutin wishaaminen. (timo)
+Orc.
+Prices. (timo)
+OfferModifiers. (timo)
+NPModifiers. (timo)
+1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.

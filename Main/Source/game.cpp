@@ -63,11 +63,6 @@ std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 
-gamescript* game::GameScript = 0;
-database<character>* game::CharacterDataBase = 0;
-database<item>* game::ItemDataBase = 0;
-database<material>* game::MaterialDataBase = 0;
-
 bool game::IsLoading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
@@ -141,42 +136,8 @@ bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 ulong game::Ticks;
 
-void game::InitScript()
-{
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
-    delete GameScript;
-    GameScript = new gamescript;
-    GameScript->ReadFrom(ScriptFile);
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/char.dat");
-    delete CharacterDataBase;
-    CharacterDataBase = new database<character>;
-    CharacterDataBase->ReadFrom(ScriptFile);
-    CharacterDataBase->Apply();
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/item.dat");
-    delete ItemDataBase;
-    ItemDataBase = new database<item>;
-    ItemDataBase->ReadFrom(ScriptFile);
-    ItemDataBase->Apply();
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
-    delete MaterialDataBase;
-    MaterialDataBase = new database<material>;
-    MaterialDataBase->ReadFrom(ScriptFile);
-    MaterialDataBase->Apply();
-  }
-}
-
-#include "stack.h"
-#include "itemde.h"
+/*#include "stack.h"
+#include "itemde.h"*/
 
 void game::Init(const std::string& Name)
 {
@@ -1004,7 +965,7 @@ void game::SeeWholeMap()
 
 void game::InitDungeons()
 {
-  Dungeon.resize(*GameScript->GetDungeons());
+  Dungeon.resize(*scriptsystem::GetGameScript()->GetDungeons());
 
   for(ushort c = 0; c < Dungeon.size(); ++c)
     {
@@ -1155,7 +1116,7 @@ void game::CreateTeams()
 {
   ushort c;
 
-  for(c = 0; c < *GameScript->GetTeams(); ++c)
+  for(c = 0; c < *scriptsystem::GetGameScript()->GetTeams(); ++c)
     {
       team* NewTeam = new team(c);
 
@@ -1169,13 +1130,13 @@ void game::CreateTeams()
     if(c != 1)
       GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
 
-  for(c = 0; c < GameScript->GetTeam().size(); ++c)
+  for(c = 0; c < scriptsystem::GetGameScript()->GetTeam().size(); ++c)
   {
-    for(ushort i = 0; i < GameScript->GetTeam()[c].second->GetRelation().size(); ++i)
-      GetTeam(GameScript->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GameScript->GetTeam()[c].first), GameScript->GetTeam()[c].second->GetRelation()[i].second);
+    for(ushort i = 0; i < scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
+      GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].first), scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
 
-    if(GameScript->GetTeam()[c].second->GetAttackEvilness(false))
-      GetTeam(GameScript->GetTeam()[c].first)->SetAttackEvilness(*GameScript->GetTeam()[c].second->GetAttackEvilness());
+    if(scriptsystem::GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false))
+      GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*scriptsystem::GetGameScript()->GetTeam()[c].second->GetAttackEvilness());
   }
 }
 

@@ -6,6 +6,8 @@
 std::vector<character::prototype*> protocontainer<character>::ProtoData;
 valuemap protocontainer<character>::CodeNameMap;
 
+CHARACTER_PROTOTYPE(character, 0, 0, false);
+
 #include "femath.h"
 #include "itemde.h"
 #include "charde.h"

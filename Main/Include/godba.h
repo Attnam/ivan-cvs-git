@@ -16,10 +16,10 @@ class outputfile;
 class inputfile;
 class god;
 
-class god_prototype
+class godprototype
 {
  public:
-  god_prototype();
+  godprototype();
   virtual god* Clone() const = 0;
   god* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -31,7 +31,7 @@ class god_prototype
 class god
 {
  public:
-  typedef god_prototype prototype;
+  typedef godprototype prototype;
   god() : Relation(0), Timer(0), Known(false) { }
   virtual void Pray();
   virtual std::string Name() const = 0;
@@ -58,8 +58,8 @@ class god
   virtual void PlayerVomitedOnAltar();
   virtual character* CreateAngel();
   virtual ushort GetColor() const = 0;
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
@@ -70,7 +70,7 @@ class god
 
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
 
-#define GOD_PROTOTYPE(name, base)\
+#define GOD_PROTOTYPE(name)\
   \
   static class name##_prototype : public god::prototype\
   {\
@@ -80,11 +80,11 @@ class god
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const god::prototype& name::GetProtoType() const { return name##_ProtoType; }
+  god::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define GOD_PROTOTYPE(name, base)
+#define GOD_PROTOTYPE(name)
 
 #endif
 
@@ -94,9 +94,9 @@ name : public base\
 {\
  public:\
   static ushort StaticType();\
-  virtual const god::prototype& GetProtoType() const;\
+  virtual god::prototype* GetProtoType() const;\
   data\
-}; GOD_PROTOTYPE(name, base)
+}; GOD_PROTOTYPE(name);
 
 #endif
 

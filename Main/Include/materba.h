@@ -17,7 +17,7 @@ class outputfile;
 class inputfile;
 class material;
 
-struct material_database
+struct materialdatabase
 {
   ushort StrengthValue;
   ushort ConsumeType;
@@ -38,10 +38,10 @@ struct material_database
   bool IsExplosive;
 };
 
-class material_prototype
+class materialprototype
 {
  public:
-  material_prototype();
+  materialprototype();
   material* Clone(ulong) const;
   virtual material* Clone() const = 0;
   material* CloneAndLoad(inputfile&) const;
@@ -49,7 +49,9 @@ class material_prototype
   ushort GetIndex() const { return Index; }
   DATABASEBOOL(IsSolid);
   DATABASEBOOL(CanBeWished);
-  virtual material_database& GetDataBase() const = 0;
+  virtual materialdatabase* GetDataBase() const = 0;
+  virtual materialprototype* GetBase() const = 0;
+  virtual bool IsConcrete() const = 0;
  protected:
   ushort Index;
 };
@@ -57,8 +59,8 @@ class material_prototype
 class material
 {
  public:
-  typedef material_prototype prototype;
-  typedef material_database database;
+  typedef materialprototype prototype;
+  typedef materialdatabase database;
   material() : Volume(0), MotherEntity(0) { }
   virtual ~material() { }
   virtual std::string Name(bool = false, bool = true) const;
@@ -79,7 +81,7 @@ class material
   virtual bool CanBeDug(material*) const;
   virtual bool HasBe() const { return false; }
   virtual bool Be() { return true; }
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const { }
   virtual long CalculateOfferValue(char GodAlignment) const;
 
@@ -101,10 +103,11 @@ class material
   DATABASEBOOL(IsFlexible);
   DATABASEBOOL(IsExplosive);
 
-  virtual const prototype& GetProtoType() const = 0;
-  virtual const database& GetDataBase() const = 0;
-  virtual material* Clone(ulong Volume) const { return GetProtoType().Clone(Volume); }
-  virtual material* Clone() const { return GetProtoType().Clone(); }
+  static ushort StaticType();
+  virtual prototype* GetProtoType() const;
+  virtual database* GetDataBase() const;
+  virtual material* Clone(ulong Volume) const { return GetProtoType()->Clone(Volume); }
+  virtual material* Clone() const { return GetProtoType()->Clone(); }
 
  protected:
   virtual std::string NameStem() const = 0;
@@ -117,25 +120,27 @@ class material
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
 
-#define MATERIAL_PROTOTYPE(name, base)\
+#define MATERIAL_PROTOTYPE(name, cloner, baseproto, concrete)\
   \
   material::database name##_DataBase;\
   \
   static class name##_prototype : public material::prototype\
   {\
    public:\
-    virtual material* Clone() const { return new name; }\
+    virtual material* Clone() const { return cloner; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual material::database& GetDataBase() const { return name##_DataBase; }\
+    virtual material::database* GetDataBase() const { return &name##_DataBase; }\
+    virtual material::prototype* GetBase() const { return baseproto; }\
+    virtual bool IsConcrete() const { return concrete; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const material::prototype& name::GetProtoType() const { return name##_ProtoType; }\
-  const material::database& name::GetDataBase() const { return name##_DataBase; }
+  material::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
+  material::database* name::GetDataBase() const { return &name##_DataBase; }
 
 #else
 
-#define MATERIAL_PROTOTYPE(name, base)
+#define MATERIAL_PROTOTYPE(name, cloner, baseproto, concrete)
 
 #endif
 
@@ -147,18 +152,21 @@ name : public base\
   name(ulong InitVolume) { Volume = InitVolume; }\
   name() { }\
   static ushort StaticType();\
-  virtual const prototype& GetProtoType() const;\
-  virtual const database& GetDataBase() const;\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-}; MATERIAL_PROTOTYPE(name, base)
+}; MATERIAL_PROTOTYPE(name, new name, &base##_ProtoType, true);
 
 #define ABSTRACT_MATERIAL(name, base, data)\
 \
 name : public base\
 {\
  public:\
+  static ushort StaticType();\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-};
+}; MATERIAL_PROTOTYPE(name, 0, &base##_ProtoType, false);
 
 #endif
 

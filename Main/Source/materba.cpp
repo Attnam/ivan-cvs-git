@@ -75,21 +75,21 @@ long material::CalculateOfferValue(char GodAlignment) const
   return Value;
 }
 
-material* material_prototype::Clone(ulong Volume) const
+material* materialprototype::Clone(ulong Volume) const
 {
   material* Material = Clone();
   Material->SetVolume(Volume);
   return Material;
 }
 
-material* material_prototype::CloneAndLoad(inputfile& SaveFile) const
+material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   material* Material = Clone();
   Material->Load(SaveFile);
   return Material;
 }
 
-material_prototype::material_prototype()
+materialprototype::materialprototype()
 {
   Index = protocontainer<material>::Add(this);
 }

@@ -1,3 +1,12 @@
+May 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Compilation optimizations that certainly didn't optimize anything
+
+May 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Major macro system change: database derivation now works
+	* Item and material datafilezation checked throughoutly
+
 May 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Compilation optimizations

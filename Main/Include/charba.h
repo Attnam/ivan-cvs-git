@@ -34,7 +34,7 @@ class characterslot;
 class action;
 class go;
 
-struct character_database
+struct characterdatabase
 {
   ushort DefaultAgility;
   ushort DefaultStrength;
@@ -102,17 +102,19 @@ struct character_database
   ushort BaseEmitation;
 };
 
-class character_prototype
+class characterprototype
 {
  public:
-  character_prototype();
+  characterprototype();
   virtual character* Clone(bool = true, bool = true) const = 0;
   character* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  virtual character_database& GetDataBase() const = 0;
+  virtual characterdatabase* GetDataBase() const = 0;
+  virtual characterprototype* GetBase() const = 0;
   DATABASEVALUE(ushort, Frequency);
   DATABASEBOOL(CanBeGenerated);
+  virtual bool IsConcrete() const = 0;
  protected:
   ushort Index;
 };
@@ -122,8 +124,8 @@ class character_prototype
 class character : public entity, public id
 {
  public:
-  typedef character_prototype prototype;
-  typedef character_database database;
+  typedef characterprototype prototype;
+  typedef characterdatabase database;
   friend class corpse;
   character();
   virtual ~character();
@@ -395,8 +397,9 @@ class character : public entity, public id
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual const database& GetDataBase() const = 0;
+  static ushort StaticType();
+  virtual prototype* GetProtoType() const;
+  virtual database* GetDataBase() const;
 
   DATABASEVALUE(ushort, DefaultAgility);
   DATABASEVALUE(ushort, DefaultStrength);
@@ -464,7 +467,7 @@ class character : public entity, public id
   DATABASEVALUE(ushort, BaseEmitation);
 
   virtual item* GetLifeSaver() const;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void Initialize(bool, bool);
   virtual void VirtualConstructor() { }
@@ -534,25 +537,27 @@ class character : public entity, public id
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
-#define CHARACTER_PROTOTYPE(name, base)\
+#define CHARACTER_PROTOTYPE(name, cloner, baseproto, concrete)\
   \
   static character::database name##_DataBase;\
   \
   static class name##_prototype : public character::prototype\
   {\
    public:\
-    virtual character* Clone(bool MakeBodyParts = true, bool CreateEquipment = true) const { return new name(MakeBodyParts, CreateEquipment); }\
+    virtual character* Clone(bool MakeBodyParts, bool CreateEquipment) const { return cloner; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual character::database& GetDataBase() const { return name##_DataBase; }\
+    virtual character::database* GetDataBase() const { return &name##_DataBase; }\
+    virtual character::prototype* GetBase() const { return baseproto; }\
+    virtual bool IsConcrete() const { return concrete; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const character::prototype& name::GetProtoType() const { return name##_ProtoType; }\
-  const character::database& name::GetDataBase() const { return name##_DataBase; }
+  character::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
+  character::database* name::GetDataBase() const { return &name##_DataBase; }
 
 #else
 
-#define CHARACTER_PROTOTYPE(name, base)
+#define CHARACTER_PROTOTYPE(name, cloner, baseproto, concrete)
 
 #endif
 
@@ -563,18 +568,20 @@ name : public base\
  public:\
   name(bool MakeBodyParts = true, bool CreateEquipment = true) { Initialize(MakeBodyParts, CreateEquipment); }\
   static ushort StaticType();\
-  virtual const prototype& GetProtoType() const;\
-  virtual const database& GetDataBase() const;\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-}; CHARACTER_PROTOTYPE(name, base)
+}; CHARACTER_PROTOTYPE(name, new name(MakeBodyParts, CreateEquipment), &base##_ProtoType, true);
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
 name : public base\
 {\
  public:\
+  static ushort StaticType();\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-};
+}; CHARACTER_PROTOTYPE(name, 0, &base##_ProtoType, false);
 
 #endif
-

@@ -20,7 +20,7 @@ class inputfile;
 class slot;
 class item;
 
-struct item_database
+struct itemdatabase
 {
   ushort Possibility;
   vector2d InHandsPic;
@@ -54,19 +54,21 @@ struct item_database
   ushort BaseEmitation;
 };
 
-class item_prototype
+class itemprototype
 {
  public:
-  item_prototype();
+  itemprototype();
   virtual item* Clone(bool = true) const = 0;
   item* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  virtual item_database& GetDataBase() const = 0;
+  virtual itemdatabase* GetDataBase() const = 0;
+  virtual itemprototype* GetBase() const = 0;
   DATABASEBOOL(IsAutoInitializable);
   DATABASEBOOL(CanBeWished);
   DATABASEBOOL(IsPolymorphSpawnable);
   DATABASEVALUE(ushort, Possibility);
+  virtual bool IsConcrete() const = 0;
  protected:
   ushort Index;
 };
@@ -76,8 +78,8 @@ class item_prototype
 class item : public object
 {
  public:
-  typedef item_prototype prototype;
-  typedef item_database database;
+  typedef itemprototype prototype;
+  typedef itemdatabase database;
   item();
   virtual float GetWeaponStrength() const;
   virtual void DrawToTileBuffer(bool) const;
@@ -164,15 +166,18 @@ class item : public object
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual const database& GetDataBase() const = 0;
+  static ushort StaticType();
+  virtual prototype* GetProtoType() const = 0;
+  virtual database* GetDataBase() const = 0;
+  virtual bool CanOpenDoors() const { return false; }
+  virtual uchar GetLockType() const { return 0xFF; }
 
   DATABASEVALUE(ushort, Possibility);
   DATABASEVALUE(vector2d, InHandsPic);
@@ -221,25 +226,27 @@ class item : public object
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
 
-#define ITEM_PROTOTYPE(name, base)\
+#define ITEM_PROTOTYPE(name, cloner, baseproto, concrete)\
   \
   item::database name##_DataBase;\
   \
   static class name##_prototype : public item::prototype\
   {\
    public:\
-    virtual item* Clone(bool CallGenerateMaterials = true) const { return new name(CallGenerateMaterials); }\
+    virtual item* Clone(bool CallGenerateMaterials = true) const { return cloner; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual item::database& GetDataBase() const { return name##_DataBase; }\
+    virtual item::database* GetDataBase() const { return &name##_DataBase; }\
+    virtual item::prototype* GetBase() const { return baseproto; }\
+    virtual bool IsConcrete() const { return concrete; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const item::prototype& name::GetProtoType() const { return name##_ProtoType; }\
-  const item::database& name::GetDataBase() const { return name##_DataBase; }
+  item::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
+  item::database* name::GetDataBase() const { return &name##_DataBase; }
 
 #else
 
-#define ITEM_PROTOTYPE(name, base)
+#define ITEM_PROTOTYPE(name, cloner, baseproto, concrete)
 
 #endif
 
@@ -251,18 +258,21 @@ name : public base\
   name(bool CallGenerateMaterials = true) { Initialize(CallGenerateMaterials); }\
   name(material* FirstMaterial) { Initialize(true); SetMainMaterial(FirstMaterial); }\
   static ushort StaticType();\
-  virtual const prototype& GetProtoType() const;\
-  virtual const database& GetDataBase() const;\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-}; ITEM_PROTOTYPE(name, base)
+}; ITEM_PROTOTYPE(name, new name(CallGenerateMaterials), &base##_ProtoType, true);
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
 name : public base\
 {\
  public:\
+  static ushort StaticType();\
+  virtual prototype* GetProtoType() const;\
+  virtual database* GetDataBase() const;\
   data\
-};
+}; ITEM_PROTOTYPE(name, 0, &base##_ProtoType, false);
 
 #endif
 

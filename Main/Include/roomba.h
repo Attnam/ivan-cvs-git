@@ -17,10 +17,10 @@ class item;
 class lsquare;
 class room;
 
-class room_prototype
+class roomprototype
 {
  public:
-  room_prototype();
+  roomprototype();
   virtual room* Clone() const = 0;
   room* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
@@ -32,7 +32,7 @@ class room_prototype
 class room
 {
  public:
-  typedef room_prototype prototype;
+  typedef roomprototype prototype;
   room() : Master(0) { }
   virtual ~room() { }
   virtual void Save(outputfile&) const;
@@ -60,8 +60,8 @@ class room
   virtual bool Dip(character*) const { return true; }
   virtual bool HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
-  virtual const prototype& GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType().GetIndex(); }
+  virtual prototype* GetProtoType() const = 0;
+  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void VirtualConstructor() { }
   std::vector<vector2d> Door;
@@ -72,7 +72,7 @@ class room
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
 
-#define ROOM_PROTOTYPE(name, base)\
+#define ROOM_PROTOTYPE(name)\
   \
   static class name##_prototype : public room::prototype\
   {\
@@ -82,11 +82,11 @@ class room
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const room::prototype& name::GetProtoType() const { return name##_ProtoType; }
+  room::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define ROOM_PROTOTYPE(name, base)
+#define ROOM_PROTOTYPE(name)
 
 #endif
 
@@ -97,9 +97,9 @@ name : public base\
  public:\
   name() { VirtualConstructor(); }\
   static ushort StaticType();\
-  virtual const room::prototype& GetProtoType() const;\
+  virtual prototype* GetProtoType() const;\
   data\
-}; ROOM_PROTOTYPE(name, base)
+}; ROOM_PROTOTYPE(name);
 
 #endif
 

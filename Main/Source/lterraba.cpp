@@ -168,14 +168,14 @@ void olterrain::Break()
   GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(new empty);
 }
 
-glterrain* glterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   glterrain* Terrain = Clone(false);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
-olterrain* olterrain_prototype::CloneAndLoad(inputfile& SaveFile) const
+olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   olterrain* Terrain = Clone(false);
   Terrain->Load(SaveFile);
@@ -191,12 +191,12 @@ void lterrain::Initialize(bool CallGenerateMaterials)
     GenerateMaterials();
 }
 
-glterrain_prototype::glterrain_prototype()
+glterrainprototype::glterrainprototype()
 {
   Index = protocontainer<glterrain>::Add(this);
 }
 
-olterrain_prototype::olterrain_prototype()
+olterrainprototype::olterrainprototype()
 {
   Index = protocontainer<olterrain>::Add(this);
 }

@@ -14,14 +14,14 @@ void action::Save(outputfile& SaveFile) const
   SaveFile << GetType();
 }
 
-action* action_prototype::CloneAndLoad(inputfile& SaveFile) const
+action* actionprototype::CloneAndLoad(inputfile& SaveFile) const
 {
   action* Action = Clone();
   Action->Load(SaveFile);
   return Action;
 }
 
-action_prototype::action_prototype()
+actionprototype::actionprototype()
 {
   Index = protocontainer<action>::Add(this);
 }

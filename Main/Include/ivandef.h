@@ -18,9 +18,9 @@
 #define VERSION "0.40d"
 #endif
 
-#define DATABASEVALUE(type, data) virtual type Get##data() const { return GetDataBase().data; }
-#define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return GetDataBase().data; }
-#define DATABASEBOOL(data) virtual bool data() const { return GetDataBase().data; }
+#define DATABASEVALUE(type, data) virtual type Get##data() const { return GetDataBase()->data; }
+#define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return GetDataBase()->data; }
+#define DATABASEBOOL(data) virtual bool data() const { return GetDataBase()->data; }
 
 #define HAS_HIT 0
 #define HAS_BLOCKED 1

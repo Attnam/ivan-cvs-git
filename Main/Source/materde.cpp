@@ -6,6 +6,8 @@
 std::vector<material::prototype*> protocontainer<material>::ProtoData;
 valuemap protocontainer<material>::CodeNameMap;
 
+MATERIAL_PROTOTYPE(material, 0, 0, false);
+
 #include "materde.h"
 
 #undef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
