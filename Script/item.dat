@@ -567,7 +567,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
-	Possibility = 400;
+	Possibility = 425;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = POTION;
@@ -578,8 +578,8 @@ potion /* materialcontainer-> */
 	FormModifier = 40;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 5, WATER, HEALING_LIQUID, OMLE_URINE, POISON_LIQUID, VALDEMAR; }
-	MaterialConfigChances = { 5, 100, 75, 50, 75, 1; }
+	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
+	MaterialConfigChances = { 6, 100, 75, 50, 75, 1, 50; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;

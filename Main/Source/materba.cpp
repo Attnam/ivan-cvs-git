@@ -50,12 +50,13 @@ bool material::Effect(character* Eater, long Amount)
     {
     case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
     case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); return true;
-    case EFFECT_OMLE_URINE: Eater->ReceiveOmleUrine(Amount); return true;
+    case EFFECT_OMEL_URINE: Eater->ReceiveOmelUrine(Amount); return true;
     case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); return true;
     case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
     case EFFECT_HEAL: Eater->ReceiveHeal(Amount); return true;
     case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); return true;
     case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
+    case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
     default: return false;
     }
 }
@@ -74,10 +75,11 @@ bool material::HitEffect(character* Enemy)
     {
     case HM_SCHOOL_FOOD: Enemy->AddSchoolFoodHitMessage(); break;
     case HM_FROG_FLESH: Enemy->AddFrogFleshConsumeEndMessage(); break;
-    case HM_OMLE_URINE: Enemy->AddOmleUrineConsumeEndMessage(); break;
+    case HM_OMEL_URINE: Enemy->AddOmelUrineConsumeEndMessage(); break;
     case HM_PEPSI: Enemy->AddPepsiConsumeEndMessage(); break;
     case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
+    case HM_ANTIDOTE: Enemy->AddAntidoteConsumeEndMessage(); break;
     }
 
   ulong Amount = Min(100UL, GetVolume());
@@ -92,10 +94,11 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_SCHOOL_FOOD: Eater->AddSchoolFoodConsumeEndMessage(); break;
     case CEM_BONE: Eater->AddBoneConsumeEndMessage(); break;
     case CEM_FROG_FLESH: Eater->AddFrogFleshConsumeEndMessage(); break;
-    case CEM_OMLE_URINE: Eater->AddOmleUrineConsumeEndMessage(); break;
+    case CEM_OMEL_URINE: Eater->AddOmelUrineConsumeEndMessage(); break;
     case CEM_PEPSI: Eater->AddPepsiConsumeEndMessage(); break;
     case CEM_KOBOLD_FLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
     case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;
+    case CEM_ANTIDOTE: Eater->AddAntidoteConsumeEndMessage(); break;
     }
 }
 

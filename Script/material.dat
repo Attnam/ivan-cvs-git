@@ -479,18 +479,18 @@ liquid
 	Density = 1000;
 	Flexibility = 25;
 
-	Config OMLE_URINE;
+	Config OMEL_URINE;
 	{
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
 		CanBeWished = false;
 		NutritionValue = 50;
 		PriceModifier = 2500;
-		NameStem = "Omle urine";
+		NameStem = "Omel urine";
 		Article = "an";
-		Effect = EFFECT_OMLE_URINE;
-		ConsumeEndMessage = CEM_OMLE_URINE;
-		HitMessage = HM_OMLE_URINE;
+		Effect = EFFECT_OMEL_URINE;
+		ConsumeEndMessage = CEM_OMEL_URINE;
+		HitMessage = HM_OMEL_URINE;
 		Alpha = 150;
 	}
 
@@ -576,6 +576,16 @@ liquid
 		NameStem = "Valdemar";
 		Effect = EFFECT_POISON;
 		Alpha = 200;
+	}
+	Config ANTIDOTE_LIQUID;
+	{
+		StrengthValue = 1;
+		Alignment = GOOD;
+		NutritionValue = 10;
+		Color = rgb16(128, 0, 128);
+		NameStem = "antidote liquid";
+		Effect = EFFECT_ANTIDOTE;
+		Alpha = 170;
 	}
 }
 

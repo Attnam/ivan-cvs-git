@@ -218,29 +218,32 @@
 #define EFFECT_NOTHING 0
 #define EFFECT_POISON 1
 #define EFFECT_DARKNESS 2
-#define EFFECT_OMLE_URINE 3
+#define EFFECT_OMEL_URINE 3
 #define EFFECT_PEPSI 4
 #define EFFECT_KOBOLD_FLESH 5
 #define EFFECT_HEAL 6
 #define EFFECT_LYCANTHROPY 7
 #define EFFECT_SCHOOL_FOOD 8
+#define EFFECT_ANTIDOTE 9
 
 #define CEM_NOTHING 0
 #define CEM_SCHOOL_FOOD 1
 #define CEM_BONE 2
 #define CEM_FROG_FLESH 3
-#define CEM_OMLE_URINE 4
+#define CEM_OMEL_URINE 4
 #define CEM_PEPSI 5
 #define CEM_KOBOLD_FLESH 6
 #define CEM_HEALING_LIQUID 7
+#define CEM_ANTIDOTE 8
 
 #define HM_NOTHING 0
 #define HM_SCHOOL_FOOD 1
 #define HM_FROG_FLESH 2
-#define HM_OMLE_URINE 3
+#define HM_OMEL_URINE 3
 #define HM_PEPSI 4
 #define HM_KOBOLD_FLESH 5
 #define HM_HEALING_LIQUID 6
+#define HM_ANTIDOTE 7
 
 #define MATERIAL_ID 4096
 
@@ -289,7 +292,7 @@
 
 #define LIQUID_ID (4096 * 4)
 
-#define OMLE_URINE (LIQUID_ID + 1)
+#define OMEL_URINE (LIQUID_ID + 1)
 #define PEPSI (LIQUID_ID + 2)
 #define WATER (LIQUID_ID + 3)
 #define HEALING_LIQUID (LIQUID_ID + 4)
@@ -297,6 +300,7 @@
 #define BROWN_SLIME (LIQUID_ID + 6)
 #define POISON_LIQUID (LIQUID_ID + 7)
 #define VALDEMAR (LIQUID_ID + 8)
+#define ANTIDOTE_LIQUID (LIQUID_ID + 9);
 
 #define FLESH_ID (4096 * 5)
 

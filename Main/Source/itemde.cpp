@@ -346,7 +346,7 @@ item* brokenbottle::BetterVersion() const
   if(RAND() % 5)
     Stuff = MAKE_MATERIAL(BANANA_FLESH);
   else
-    Stuff = MAKE_MATERIAL(OMLE_URINE);
+    Stuff = MAKE_MATERIAL(OMEL_URINE);
 
   potion* P = new potion(0, NO_MATERIALS); 
   P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
@@ -450,7 +450,7 @@ item* potion::BetterVersion() const
       if(RAND() % 5)
 	Stuff = MAKE_MATERIAL(BANANA_FLESH);
       else
-	Stuff = MAKE_MATERIAL(OMLE_URINE);
+	Stuff = MAKE_MATERIAL(OMEL_URINE);
 
       potion* P = new potion(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);

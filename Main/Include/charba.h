@@ -261,7 +261,7 @@ class character : public entity, public id
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveNutrition(long);
-  virtual void ReceiveOmleUrine(long);
+  virtual void ReceiveOmelUrine(long);
   virtual void ReceivePepsi(long);
   virtual void ReceiveSchoolFood(long);
   void Regenerate();
@@ -389,7 +389,7 @@ class character : public entity, public id
   virtual void AddHealingLiquidConsumeEndMessage() const;
   virtual void AddSchoolFoodConsumeEndMessage() const;
   virtual void AddSchoolFoodHitMessage() const;
-  virtual void AddOmleUrineConsumeEndMessage() const;
+  virtual void AddOmelUrineConsumeEndMessage() const;
   virtual void AddPepsiConsumeEndMessage() const;
   virtual void AddFrogFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshConsumeEndMessage() const;
@@ -694,6 +694,8 @@ class character : public entity, public id
   virtual uchar GetRelation(const character*) const;
   virtual void CalculateAttributeBonuses();
   virtual void ApplyEquipmentAttributeBonuses(item*);
+  virtual void ReceiveAntidote(long);
+  virtual void AddAntidoteConsumeEndMessage() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

@@ -4050,14 +4050,14 @@ void character::ReceiveNutrition(long SizeOfEffect)
   EditNP(SizeOfEffect);
 }
 
-void character::ReceiveOmleUrine(long Amount)
+void character::ReceiveOmelUrine(long Amount)
 {
   EditExperience(ARM_STRENGTH, Amount << 5);
   EditExperience(LEG_STRENGTH, Amount << 5);
   RestoreHP();
 }
 
-void character::AddOmleUrineConsumeEndMessage() const
+void character::AddOmelUrineConsumeEndMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
@@ -5031,7 +5031,7 @@ void character::PoisonedHandler()
     if(!(RAND() % 50))
       ++Damage;
 
-  ReceiveDamage(this, Damage, POISON, ALL, 8, true, false, false);
+  ReceiveDamage(this, Damage, POISON, ALL, 8, true, false, false, false);
   CheckDeath("died of acute poisoning");
 }
 
@@ -5900,4 +5900,31 @@ void character::ApplyEquipmentAttributeBonuses(item* Equipment)
 
   if(Equipment->AffectsMana())
     AttributeBonus[MANA] += Equipment->GetEnchantment();
+}
+
+void character::ReceiveAntidote(long Amount)
+{
+  if(StateIsActivated(POISONED))
+    {
+      long Left = GetTemporaryStateCounter(POISONED);
+      if(Left > Amount)
+	{
+	  EditTemporaryStateCounter(POISONED, -Amount);
+	}
+      else
+	{
+	  if(IsPlayer())
+	    ADD_MESSAGE("Aaaah... You feel MUCH better.");
+	  DeActivateTemporaryState(POISONED);
+	}
+    }
+}
+
+void character::AddAntidoteConsumeEndMessage() const
+{
+  if(StateIsActivated(POISONED)) /* true only if the poison didn't cure the poison completely */
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your body processes the poison in your vains with rapid speed.");
+    }
 }

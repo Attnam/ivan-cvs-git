@@ -868,6 +868,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment(ushort);
+  virtual void GetAICommand();
 );
 
 #endif

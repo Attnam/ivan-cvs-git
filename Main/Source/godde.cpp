@@ -616,7 +616,7 @@ void nefas::PrayGoodEffect()
 {
   ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
   potion* Reward = new potion(0, NO_MATERIALS);
-  Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMLE_URINE));
+  Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMEL_URINE));
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
   ADD_MESSAGE("%s drops on the ground.", Reward->CHAR_NAME(DEFINITE));
 }

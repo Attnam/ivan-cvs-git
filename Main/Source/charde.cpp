@@ -3769,3 +3769,8 @@ void imperialist::BeTalkedTo(character* Talker)
       break;
     }  
 }
+
+void imperialist::GetAICommand()
+{
+  StandIdleAI();
+}
