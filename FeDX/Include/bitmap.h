@@ -53,6 +53,7 @@ public:
 	void CreateAlphaMap(uchar);
 	void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[X][Y] = Alpha; }
 	uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[X][Y]; }
+	void Outline(ushort);
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);
 	void AttachSurface(IDirectDrawSurface7*, ushort, ushort);

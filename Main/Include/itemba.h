@@ -1,6 +1,8 @@
 #ifndef __ITEMBA_H__
 #define __ITEMBA_H__
 
+#define ITEM_OUTLINE_COLOR	GREEN
+
 #include "typedef.h"
 #include "vector2d.h"
 

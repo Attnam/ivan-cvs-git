@@ -125,7 +125,7 @@ bool humanoid::Drop()
 
 void golem::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void humanoid::DrawToTileBuffer() const
@@ -155,13 +155,13 @@ void humanoid::DrawToTileBuffer() const
 
 	if(GetWielded() != 0) InHandsPic = GetWielded()->GetInHandsPic();
 
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16); // Legs
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), 32, 0, 0, 0, 16, 16); // Torso
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16); // Arms
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16); // Head
+	igraph::GetHumanGraphic()->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16); // Legs
+	igraph::GetHumanGraphic()->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 32, 0, 0, 0, 16, 16); // Torso
+	igraph::GetHumanGraphic()->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16); // Arms
+	igraph::GetHumanGraphic()->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16); // Head
 
-	if(GetWielded() != 0)
-		if(InHandsPic.X != 0 || InHandsPic.Y != 0) igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
+	if(GetWielded() != 0 && (InHandsPic.X != 0 || InHandsPic.Y != 0))
+		igraph::GetHumanGraphic()->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
 }
 
 bool humanoid::Wield()

@@ -72,64 +72,65 @@ void globalmessagingsystem::Draw()
 	Buffer[98] = 0;
 
 	if(MessageBuffer)
-	while(Length)
-	{
-		for(ushort y = 0; y < 2; ++y)
+		while(Length)
 		{
-			if(Length <= 98)
+			for(ushort y = 0; y < 2; ++y)
 			{
-				for(ulong c = 0; c < Length; ++c)
-					Buffer[c] = MessageBuffer[c + Pointer];
-
-				Buffer[Length] = 0;
-
-				FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
-
-				Length = 0;
-
-				break;
-			}
-			else
-			{
-				ulong i = 97;
-
-				for(; i; i--)
-					if(MessageBuffer[Pointer + i] == ' ')
-					{
-						for(ulong c = 0; c < i; ++c)
-							Buffer[c] = MessageBuffer[c + Pointer];
-
-						Buffer[i] = 0;
-
-						Pointer += i + 1;
-
-						Length -= i + 1;
-
-						break;
-					}
-
-				if(!i)
+				if(Length <= 98)
 				{
-					for(ulong c = 0; c < 98; ++c)
+					for(ulong c = 0; c < Length; ++c)
 						Buffer[c] = MessageBuffer[c + Pointer];
 
-					Pointer += 98;
+					Buffer[Length] = 0;
 
-					Length -= 98;
+					FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
+
+					Length = 0;
+
+					break;
 				}
+				else
+				{
+					ulong i = 97;
 
-				FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
+					for(; i; i--)
+						if(MessageBuffer[Pointer + i] == ' ')
+						{
+							for(ulong c = 0; c < i; ++c)
+								Buffer[c] = MessageBuffer[c + Pointer];
+
+							Buffer[i] = 0;
+
+							Pointer += i + 1;
+
+							Length -= i + 1;
+
+							break;
+						}
+
+					if(!i)
+					{
+						for(ulong c = 0; c < 98; ++c)
+							Buffer[c] = MessageBuffer[c + Pointer];
+
+						Pointer += 98;
+
+						Length -= 98;
+					}
+
+					FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
+				}
+			}
+
+			if(Length)
+			{
+				graphics::BlitDBToScreen();
+
+				GETKEY();
+
+				DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
 			}
 		}
-		if(Length)
-		{
-			graphics::BlitDBToScreen();
-
-			GETKEY();
-
-			DOUBLEBUFFER->ClearToColor(0, 0, 800, 32, 0);
-		}
-	}
 }
 
 void globalmessagingsystem::Empty()

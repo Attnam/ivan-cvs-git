@@ -528,7 +528,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool character::Wield()
@@ -1777,17 +1777,6 @@ bool character::Kick()
 	return false;
 }
 
-bool character::ScreenShot()
-{
-	bitmap TempDB(XRES, YRES);
-
-	DOUBLEBUFFER->Blit(&TempDB, 0, 0, 0, 0, XRES, YRES);
-
-	TempDB.Save("Scrshot.bmp");
-
-	return false;
-}
-
 bool character::Offer()
 {
 	if(GetLevelSquareUnder()->GetOverLevelTerrain()->CanBeOffered())
@@ -2552,6 +2541,21 @@ void character::EndDig(void)
 			game::GetCurrentLevel()->GetLevelSquare(GetSquareBeingDigged())->Dig(this, GetWielded());
 			SetWielded(GetOldWieldedItem());
 		}
+
 		DeActivateState(DIGGING);
 	}
+}
+
+bool character::OutlineCharacters()
+{
+	game::ToggleOutlineCharacters();
+	game::GetCurrentArea()->SendNewDrawRequest();
+	return false;
+}
+
+bool character::OutlineItems()
+{
+	game::ToggleOutlineItems();
+	game::GetCurrentArea()->SendNewDrawRequest();
+	return false;
 }

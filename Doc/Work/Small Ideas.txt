@@ -62,3 +62,8 @@ Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
+Dogs ought to be possible to name.
+Lookmode should show player's name as char description, not "a human".
+A program which would translate a pcx file into a script content map.
+Player's difficulty level should not be influenced by the current weapon/armor
+ but the strongest player-obtainable weapon/armor ever generated.

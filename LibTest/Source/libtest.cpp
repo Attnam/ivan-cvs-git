@@ -38,7 +38,13 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	Color[3] = BLACK;
 	bitmap* Bill = Pertti.Colorize(vector2d(160, 0), vector2d(16, 16), Color);
 
+	Enner->Outline(0xFFFF);
+
 	FONT->Printf(DOUBLEBUFFER, 212, 450, RED, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
+
+	CharRed->Outline(GREEN);
+	CharGreen->Outline(BLUE);
+	CharBlue->Outline(RED);
 
 	CharRed->MaskedBlit(DOUBLEBUFFER, 0, 0, 352, 308, 32, 32);
 	CharGreen->MaskedBlit(DOUBLEBUFFER, 0, 0, 384, 308, 32, 32);
@@ -82,7 +88,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 		graphics::BlitDBToScreen();
 	}
 
-	/*bitmap Backup(800, 600);
+	bitmap Backup(800, 600);
 
 	DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, 800, 600);
 
@@ -116,7 +122,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 		if(globalwindowhandler::ReadKey())
 			return 0;
-	}*/
+	}
 
 	GETKEY();
 

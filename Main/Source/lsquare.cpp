@@ -118,13 +118,36 @@ void levelsquare::UpdateMemorizedAndDraw()
 
 		DrawToTileBuffer();
 
+		if(game::GetOutlineItems())
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+
+		if(GetStack()->GetItems() > 1)
+			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
+
 		ushort RealLuminance = GetLuminance();
 
 		igraph::GetTileBuffer()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16, RealLuminance);
 		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
+		if(game::GetOutlineItems())
+		{
+			igraph::GetOutlineBuffer()->Outline(ITEM_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
+
+		if(GetStack()->GetItems() > 1)
+			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
+
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
+
+		if(game::GetOutlineCharacters())
+		{
+			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
 
 		if(game::GetSeeWholeMapCheat())
 			RealLuminance = 256;
@@ -419,7 +442,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 
 ushort levelsquare::GetLuminance() const
 {
-	ushort Luminance = 0;
+	ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
 	if(GetOverLevelTerrain()->GetIsWalkable())
 	{
@@ -655,8 +678,25 @@ void levelsquare::DrawCheat()
 	{
 		DrawToTileBuffer();
 
+		if(game::GetOutlineItems())
+		{
+			igraph::GetOutlineBuffer()->Outline(ITEM_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
+
+		if(GetStack()->GetItems() > 1)
+			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
+
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
+
+		if(game::GetOutlineCharacters())
+		{
+			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
 
 		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 

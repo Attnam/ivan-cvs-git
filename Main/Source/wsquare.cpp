@@ -62,6 +62,13 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
 
+		if(game::GetOutlineCharacters())
+		{
+			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
+
 		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 
 		NewDrawRequested = false;
@@ -147,6 +154,13 @@ void worldmapsquare::DrawCheat()
 
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
+
+		if(game::GetOutlineCharacters())
+		{
+			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+		}
 
 		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 

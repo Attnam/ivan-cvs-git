@@ -25,9 +25,6 @@ void stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 	for(ushort c = 0; c < GetItems(); ++c)
 		if(GetItem(c))
 			GetItem(c)->PositionedDrawToTileBuffer(LevelSquarePosition);
-
-	if(GetItems() > 1)
-		igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
 }
 
 ushort stack::AddItem(item* ToBeAdded)

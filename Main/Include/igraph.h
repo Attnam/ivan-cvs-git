@@ -92,6 +92,7 @@ public:
 	static tile GetTile(graphic_id);
 	static tile AddUser(graphic_id);
 	static void RemoveUser(graphic_id);
+	static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
 private:
 	static colorizablebitmap* RawGraphic[RAW_TYPES];
 	static bitmap* Graphic[GRAPHIC_TYPES];
@@ -99,6 +100,7 @@ private:
 	static char* RawGraphicFileName[];
 	static char* GraphicFileName[];
 	static tilemap TileMap;
+	static bitmap* OutlineBuffer;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, graphic_id GI)

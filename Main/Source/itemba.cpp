@@ -22,7 +22,7 @@ item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPo
 
 void item::PositionedDrawToTileBuffer(uchar) const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 ulong item::GetWeight() const

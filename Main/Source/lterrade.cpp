@@ -180,7 +180,7 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	{
 		if(game::GetCurrent() == 8)
 		{
-			if(!game::BoolQuestion("Something with ultimate sinister power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
+			if(!game::BoolQuestion("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
 				return false;
 
 			Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);

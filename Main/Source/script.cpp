@@ -701,6 +701,16 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
+		if(Word == "AmbientLight")
+		{
+			if(!AmbientLight)
+				AmbientLight = new ushort;
+
+			*AmbientLight  = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
+
 		ABORT("Odd script term %s encountered in level script!", Word.c_str());
 	}
 }

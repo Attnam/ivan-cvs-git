@@ -1,6 +1,7 @@
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
+#include "bitmap.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::KeyPressed = false;
@@ -56,13 +57,20 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_KEYDOWN:
 		{
-			if(wParam == VK_F4)
-				graphics::SwitchMode();
-			else
+			if(wParam == VK_F2)
 			{
-				KeyPressed = true;
-				KeyBuffer.Add(wParam);
+				DOUBLEBUFFER->Save("Scrshot.bmp");
+				return 0;
 			}
+
+			if(wParam == VK_F4)
+			{
+				graphics::SwitchMode();
+				return 0;
+			}
+
+			KeyPressed = true;
+			KeyBuffer.Add(wParam);
 
 			return 0;
 		}

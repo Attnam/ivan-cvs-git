@@ -62,8 +62,10 @@ command* game::Command[] = {	0,
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
 				new command(&character::LowerStats, "lower stats", 'T', true),
-				new command(&character::Offer, "offer", 'O', false),
+				new command(&character::Offer, "sacrifice", 'S', false),
 				new command(&character::Open, "open", 'o', false),
+				new command(&character::OutlineCharacters, "outline characters", 'O', true),
+				new command(&character::OutlineItems, "outline items", 'I', true),
 				new command(&character::PickUp, "pick up", ',', false),
 				new command(&character::Pray, "pray", 'p', false),
 				new command(&character::Quit, "quit", 'q', true),
@@ -76,7 +78,6 @@ command* game::Command[] = {	0,
 				new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
 				new command(&character::DrawMessageHistory, "show message history", 'M', true),
 				new command(&character::Talk, "talk", 'C', false),
-				new command(&character::ScreenShot, "take screenshot", 'S', true),
 				new command(&character::Throw, "throw", 't', false),
 				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", 'U', true),
 				new command(&character::ForceVomit, "vomit", 'v', false),
@@ -106,6 +107,7 @@ std::string game::PlayerName;
 uchar game::GodNumber;
 ulong game::Turns;
 float game::SoftGamma = 1;
+bool game::OutlineItems = false, game::OutlineCharacters = false;
 
 void game::InitScript()
 {
@@ -184,12 +186,10 @@ void game::Init(std::string Name)
 		GetCurrentArea()->UpdateLOS();
 		GetCurrentArea()->SendNewDrawRequest();
 
-		{
 		for(ushort c = 1; GetGod(c); ++c)
 		{
-			GetGod(c)->SetRelation(1000);
+			GetGod(c)->SetRelation(0);
 			GetGod(c)->SetTimer(0);
-		}
 		}
 
 		Turns = 0;
@@ -549,6 +549,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;
+	SaveFile << OutlineItems << OutlineCharacters;
 
 	time_t Time = time(0);
 	srand(Time);

@@ -8,6 +8,7 @@
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
+bitmap* igraph::OutlineBuffer;
 char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx" };
 char* igraph::GraphicFileName[] = { "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx" };
 tilemap igraph::TileMap;
@@ -32,6 +33,8 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
 		TileBuffer = new bitmap(16, 16);
+		OutlineBuffer = new bitmap(16, 16);
+		OutlineBuffer->ClearToColor(0xF81F);
 
 		atexit(igraph::DeInit);
 	}

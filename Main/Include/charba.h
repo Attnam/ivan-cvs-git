@@ -27,6 +27,8 @@
 #define RESTING		3
 #define DIGGING		4
 
+#define CHARACTER_OUTLINE_COLOR	BLUE
+
 #include "game.h"
 #include "object.h"
 #include "typedef.h"
@@ -102,7 +104,6 @@ public:
 	virtual bool RaiseStats();
 	virtual bool Read();
 	virtual bool Save();
-	virtual bool ScreenShot();
 	virtual bool SeeWholeMap();
 	virtual bool ShowInventory();
 	virtual bool ShowKeyLayout();
@@ -219,12 +220,12 @@ public:
 	virtual void EndRest();
 	virtual void DigHandler();
 	virtual void EndDig();
-	//virtual levelsquare* GetSquareBeingDigged() { return StateVariables.Digging.SquareBeingDigged; }
-	//virtual void SetSquareToBeDigged(levelsquare* What) { StateVariables.Digging.SquareBeingDigged = What; }
 	virtual void SetOldWieldedItem(item* What) { StateVariables.Digging.OldWieldedItem = What; }
 	virtual void SetSquareBeingDigged(vector2d What) { StateVariables.Digging.SquareBeingDiggedX = What.X; StateVariables.Digging.SquareBeingDiggedY = What.Y; }
 	virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
 	virtual vector2d GetSquareBeingDigged() const { return vector2d(StateVariables.Digging.SquareBeingDiggedX, StateVariables.Digging.SquareBeingDiggedY); }
+	virtual bool OutlineCharacters();
+	virtual bool OutlineItems();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

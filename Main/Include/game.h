@@ -147,7 +147,12 @@ public:
 	static bool IsValidPos(vector2d);
 	static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort);
 	static long NumberQuestion(std::string, vector2d, ushort);
+	static void ToggleOutlineItems() { OutlineItems = !OutlineItems; }
+	static void ToggleOutlineCharacters() { OutlineCharacters = !OutlineCharacters; }
+	static bool GetOutlineItems() { return OutlineItems; }
+	static bool GetOutlineCharacters() { return OutlineCharacters; }
 private:
+	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
 	static god* God[];
 	static ushort Current;

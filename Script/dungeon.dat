@@ -23,6 +23,7 @@ Dungeon 0;
 		GenerateDownStairs=true;
 		OnGround=false;
 		TeamDefault=1;
+		AmbientLight=0;
 
 		RoomDefault
 		{
@@ -238,6 +239,7 @@ Dungeon 1;
 		GenerateDownStairs=false;
 		OnGround=true;
 		TeamDefault=2;
+		AmbientLight=256;
 		
 		RoomDefault
 		{

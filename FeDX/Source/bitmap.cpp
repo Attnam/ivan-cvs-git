@@ -129,7 +129,7 @@ void bitmap::Save(outputfile& SaveFile) const
 	for(ushort y = 0; y < YSize; ++y, Buffer += ddsd.lPitch)
 		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::Load(inputfile& SaveFile)
@@ -144,7 +144,7 @@ void bitmap::Load(inputfile& SaveFile)
 	for(ushort y = 0; y < YSize; ++y, Buffer += ddsd.lPitch)
 		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::Save(std::string FileName) const
@@ -193,7 +193,7 @@ void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
 	ddsd.dwSize = sizeof(ddsd);
 	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 	((ushort*)ddsd.lpSurface)[Y * (ddsd.lPitch >> 1) + X] = Color;
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 ushort bitmap::GetPixel(ushort X, ushort Y) const
@@ -203,7 +203,7 @@ ushort bitmap::GetPixel(ushort X, ushort Y) const
 	ddsd.dwSize = sizeof(ddsd);
 	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 	ushort Color = ((ushort*)ddsd.lpSurface)[Y * (ddsd.lPitch >> 1) + X];
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 	return Color;
 }
 
@@ -217,7 +217,7 @@ void bitmap::Lock()
 
 void bitmap::Release()
 {
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 	delete TempDDSD;
 }
 
@@ -1647,4 +1647,62 @@ void bitmap::CreateAlphaMap(uchar InitialValue)
 		ABORT("Alpha leak detected!");
 
 	Alloc2D<uchar>(AlphaMap, XSize, YSize, InitialValue);
+}
+
+void bitmap::Outline(ushort Color)
+{
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+	ulong Buffer;
+
+	ushort LastColor, NextColor;
+
+	for(ushort x = 0; x < XSize; ++x)
+	{
+		Buffer = ulong(ddsd.lpSurface) + (x << 1);
+
+		LastColor = *(ushort*)Buffer;
+
+		for(ushort y = 0; y < YSize - 1; ++y)
+		{
+			NextColor = *(ushort*)(Buffer + ddsd.lPitch);
+
+			if(LastColor == 0xF81F && NextColor != 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			Buffer += ddsd.lPitch;
+
+			if(LastColor != 0xF81F && NextColor == 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			LastColor = NextColor;
+		}
+	}
+
+	for(ushort y = 0; y < XSize; ++y)
+	{
+		Buffer = ulong(ddsd.lpSurface) + y * ddsd.lPitch;
+
+		LastColor = *(ushort*)Buffer;
+
+		for(ushort x = 0; x < XSize - 1; ++x)
+		{
+			NextColor = *(ushort*)(Buffer + 2);
+
+			if(LastColor == 0xF81F && NextColor != 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			Buffer += 2;
+
+			if(LastColor != 0xF81F && NextColor == 0xF81F)
+				*(ushort*)Buffer = Color;
+
+			LastColor = NextColor;
+		}
+	}
+
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }

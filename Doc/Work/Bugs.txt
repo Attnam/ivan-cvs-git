@@ -2,7 +2,6 @@ Liian pitkät messaget bugittaa msghistoryssa.
 Lights should be updated when terrain changes.
 Material volume is undefined in script created instances.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
-Show messages may show the same page twice. (not sure if this exists anymore)
 Various graphics have become buggy after the Material Color Change.
 Dark frog effect is far too high.
 "The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
@@ -15,3 +14,4 @@ Dipping to dark frog flesh doesn't work.
 One can kill Attnamian farmers with Holy Fire without becoming outlawed.
 Attacking team members doesn't work correctly.
 Characters not in LOS aren't shown in WMode lookmode.
+Show messages may show the same page twice. (does exist, appears when 2+ pages are displayed with a boolquestion on the last page)

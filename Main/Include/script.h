@@ -205,6 +205,7 @@ public:
 	bool* GetGenerateDownStairs(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDownStairs) }
 	bool* GetOnGround(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OnGround) }
 	uchar* GetTeamDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(TeamDefault) }
+	ushort* GetAmbientLight(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AmbientLight) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -218,6 +219,7 @@ protected:
 	bool* GenerateMonsters, * ReCalculate;
 	bool* GenerateUpStairs, * GenerateDownStairs, * OnGround;
 	uchar* TeamDefault;
+	ushort* AmbientLight;
 	levelscript* Base;
 };
 

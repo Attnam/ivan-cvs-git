@@ -67,7 +67,6 @@ class chooserwindow : public window
 class toolwindow : public window
 {
  public:
- // void Draw(void);
   toolwindow(rectangle);
   virtual void SetActive(unsigned char);
   virtual unsigned char GetActive(void) const { return Active; }

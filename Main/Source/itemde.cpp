@@ -16,7 +16,7 @@
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 item* can::TryToOpen(stack* Stack)
@@ -76,7 +76,7 @@ bool potion::Consume(character* Eater, float Amount)
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool scroll::CanBeRead(character* Reader) const
@@ -177,7 +177,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool loaf::Consume(character* Eater, float Amount)
@@ -214,7 +214,6 @@ bool pickaxe::Apply(character* User, stack*)
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->CanBeDigged(User, this))
 		{
-			//User->SetAP(ushort(User->GetAP() + float(User->GetStrength() * 2 - 200)));
 			User->SetSquareBeingDigged(User->GetPos() + Temp);
 			User->SetOldWieldedItem(User->GetWielded());
 			User->SetWielded(this);
@@ -303,7 +302,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
-					Zapper->GetTeam()->Hostility(Zapper->GetTeam());
+					Zapper->GetTeam()->Hostility(Character->GetTeam());
 					Character->Polymorph();
 				}
 
@@ -491,7 +490,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
-					Zapper->GetTeam()->Hostility(Zapper->GetTeam());
+					Zapper->GetTeam()->Hostility(Character->GetTeam());
 					Character->StruckByWandOfStriking();
 				}
 
