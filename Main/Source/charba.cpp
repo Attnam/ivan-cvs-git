@@ -34,14 +34,6 @@ character::character() : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), Strength
   SetHasBe(true);
 }
 
-/*character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts) : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
-{
-  SetHasBe(true);
-
-  if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
-    ABORT("BOOO!");
-}*/
-
 character::~character()
 {
   if(GetAction())
@@ -211,8 +203,6 @@ void character::Be()
     }
   else
     {
-      ApplyExperience();
-
       switch(GetBurdenState())
 	{
 	case UNBURDENED:
@@ -253,6 +243,8 @@ void character::Be()
 
   if(GetAP() >= 0)
     {
+      ApplyExperience();
+
       if(GetIsPlayer())
 	{
 	  static ushort Timer = 0;
@@ -2026,21 +2018,10 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 	}
     }
 
-  /*if(NewForm->CanWieldInMainHand())
-    NewForm->SetMainWielded(GetMainWielded());
-
-  if(NewForm->CanWieldInSecondaryHand())
-    NewForm->SetSecondaryWielded(GetSecondaryWielded());
-
-  if(NewForm->CanWear())
-    NewForm->SetBodyArmor(GetBodyArmor());*/
-
   NewForm->ChangeTeam(GetTeam());
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
-
-  //ChangeTeam(0);
 
   return true;
 }
@@ -2049,11 +2030,6 @@ wsquare* character::GetWSquareUnder() const
 {
   return (wsquare*)SquareUnder;
 }
-
-/*ulong character::GetBloodColor() const
-{
-  return MAKE_RGB(75,0,0);
-}*/
 
 void character::BeKicked(character* Kicker, ushort KickStrength, uchar Direction)
 {
@@ -2215,15 +2191,6 @@ void character::EndPolymorph()
 		Item->MoveTo(Player->GetStack());
 	    }
 	}
-
-      /*if(Player->CanWieldInMainHand())
-	Player->SetMainWielded(GetMainWielded());
-
-      if(Player->CanWieldInSecondaryHand())
-	Player->SetSecondaryWielded(GetSecondaryWielded());
-
-      if(Player->CanWear())
-	Player->SetBodyArmor(GetBodyArmor());*/
 
       Player->SetMoney(GetMoney());
       game::SetPlayer(Player);
@@ -2999,27 +2966,10 @@ void character::TestWalkability()
     }
 }
 
-/*void character::CreateBodyParts()
-{
-  CreateTorso();
-}
-
-void character::RestoreBodyParts()
-{
-  if(!GetTorso())
-    CreateTorso();
-}*/
-
 material* character::CreateBodyPartBone(ushort, ulong Volume) const
 {
   return new bone(Volume);
 }
-
-/*void character::SetSize(ushort Size)
-{
-  if(GetTorso())
-    GetTorso()->SetSize(Size);
-}*/
 
 ushort character::GetSize() const
 {
@@ -3028,20 +2978,6 @@ ushort character::GetSize() const
   else
     return 0;
 }
-
-/*ushort character::TorsoSize() const
-{
-  return GetTotalSize();
-}*/
-
-/*void character::CreateTorso()
-{
-  SetTorso(new normaltorso(false));
-  GetTorso()->SetBitmapPos(GetBitmapPos(0)); // fix this!
-  GetTorso()->InitMaterials(CreateTorsoFlesh(GetTorsoVolume() * (100 - GetTorsoBonePercentile()) / 100), CreateTorsoBone(GetTorsoVolume() * GetTorsoBonePercentile() / 100));
-  GetTorso()->PlaceToSlot(GetTorsoSlot());
-  GetTorso()->SetSize(TorsoSize());
-}*/
 
 torso* character::GetTorso() const { return (torso*)GetBodyPart(0); }
 humanoidtorso* character::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(0); }
@@ -3935,18 +3871,6 @@ bool character::RaiseTheDead(character*)
   return true;
 }
 
-/*void character::CreateBodyPart(ushort Index)
-{
-  switch(Index)
-    {
-    case TORSOINDEX:
-      CreateTorso();
-      break;
-    default:
-      ABORT("Wierd bodypart case to create for a character.");
-    }
-}*/
-
 void character::SetSize(ushort Size)
 {
   for(uchar c = 0; c < BodyParts(); ++c)
@@ -3989,8 +3913,6 @@ uchar character::GetBodyPartBonePercentile(ushort Index)
 
 void character::CreateBodyParts()
 {
-  /* Create all body parts */
-
   for(uchar c = 0; c < BodyParts(); ++c) 
     CreateBodyPart(c);
 }
@@ -4006,14 +3928,6 @@ void character::UpdateBodyPartPictures()
 {
   for(ushort c = 0; c < BodyParts(); ++c)
     UpdateBodyPartPicture(c);
-
-  /*UpdateHeadPicture(CallUpdatePictures);
-  UpdateTorsoPicture(CallUpdatePictures);
-  UpdateRightArmPicture(CallUpdatePictures);
-  UpdateLeftArmPicture(CallUpdatePictures);
-  UpdateGroinPicture(CallUpdatePictures);
-  UpdateRightLegPicture(CallUpdatePictures);
-  UpdateLeftLegPicture(CallUpdatePictures);*/
 }
 
 bodypart* character::MakeBodyPart(ushort Index)
@@ -4125,13 +4039,6 @@ void character::UpdateBodyPartPicture(ushort Index)
 	}
 
       GetBodyPart(Index)->SetAnimationFrames(GetBodyPartAnimationFrames(Index));
-
-      /*GetBodyPart(Index)->SetBitmapPos(GetHeadBitmapPos());
-      //GetHead()->SetColor(0, SkinColor());
-      GetBodyPart(Index)->SetColor(1, GetCapColor());
-      GetBodyPart(Index)->SetColor(2, GetHairColor());
-      GetBodyPart(Index)->SetColor(3, GetEyeColor());*/
-
       GetBodyPart(Index)->UpdatePictures();
     }
 }

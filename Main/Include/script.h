@@ -123,38 +123,61 @@ class materialscript : public script
   ushort Type;
 };
 
-template <class type> class basecontentscript : public script
+class basecontentscript : public script
 {
  public:
   basecontentscript();
   virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&);
   virtual ushort GetContentType() const { return ContentType; }
-  virtual type* Instantiate() const;
  protected:
+  virtual std::string ClassName() const = 0;
+  virtual ushort SearchCodeName(const std::string&) const = 0;
   DATAMEMBER(materialscript, MainMaterial);
   DATAMEMBER(materialscript, SecondaryMaterial);
   DATAMEMBER(materialscript, ContainedMaterial);
   ushort ContentType;
 };
 
-template <class type> class contentscript : public basecontentscript<type> { };
+template <class type> class contentscripttemplate : public basecontentscript
+{
+ public:
+  virtual type* Instantiate() const;
+ protected:
+  virtual ushort SearchCodeName(const std::string&) const;
+};
 
-class contentscript<character> : public basecontentscript<character>
+template <class type> class contentscript : public contentscripttemplate<type> { };
+
+class contentscript<character> : public contentscripttemplate<character>
 {
  public:
   contentscript<character>();
   virtual character* Instantiate() const;
  protected:
+  virtual std::string ClassName() const { return "character"; }
   DATAMEMBER(ushort, Team);
 };
 
-class contentscript<olterrain> : public basecontentscript<olterrain>
+class contentscript<item> : public contentscripttemplate<item>
+{
+ protected:
+  virtual std::string ClassName() const { return "item"; }
+};
+
+class contentscript<glterrain> : public contentscripttemplate<glterrain>
+{
+ protected:
+  virtual std::string ClassName() const { return "glterrain"; }
+};
+
+class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
   contentscript<olterrain>();
   virtual olterrain* Instantiate() const;
  protected:
+  virtual std::string ClassName() const { return "olterrain"; }
   DATAMEMBER(bool, Locked);
   DATAMEMBER(uchar, VisualFlags);
 };
@@ -290,23 +313,26 @@ class gamescript : public script
   DATAMEMBER(uchar, Teams);
 };
 
-template <class type> class basedata : public script
+class basedata : public script
 {
  public:
+  virtual ~basedata() { }
   void ReadFrom(inputfile&);
   ushort GetType() const { return Type; }
   void SetType(ushort What) { Type = What; }
  protected:
+  virtual std::string ClassName() const = 0;
   ushort Type;
 };
 
-template <class type> class data : public basedata<type> { };
+template <class type> class data : public basedata { };
 
-class data<character> : public basedata<character>
+class data<character> : public basedata
 {
  public:
   data<character>();
  protected:
+  virtual std::string ClassName() const { return "character"; }
   DATAMEMBER(ushort, DefaultAgility);
   DATAMEMBER(ushort, DefaultStrength);
   DATAMEMBER(ushort, DefaultEndurance);
@@ -337,7 +363,6 @@ class data<character> : public basedata<character>
   DATAMEMBER(bool, IsUnique);
   DATAMEMBER(ushort, EatFlags);
   DATAMEMBER(ulong, TotalVolume);
-  //DATAMEMBER(vector2d, BitmapPos);
   DATAMEMBER(ulong, MeleeStrength);
   DATAMEMBER(std::string, TalkVerb);
   DATAMEMBER(vector2d, HeadBitmapPos);
@@ -374,11 +399,12 @@ class data<character> : public basedata<character>
   DATAMEMBER(ushort, BaseEmitation);
 };
 
-class data<item> : public basedata<item>
+class data<item> : public basedata
 {
  public:
   data<item>();
  protected:
+  virtual std::string ClassName() const { return "item"; }
   DATAMEMBER(ushort, Possibility);
   DATAMEMBER(vector2d, InHandsPic);
   DATAMEMBER(ulong, OfferModifier);
@@ -411,11 +437,12 @@ class data<item> : public basedata<item>
   DATAMEMBER(ushort, BaseEmitation);
 };
 
-class data<material> : public basedata<material>
+class data<material> : public basedata
 {
  public:
   data<material>();
  protected:
+  virtual std::string ClassName() const { return "material"; }
   DATAMEMBER(ushort, StrengthValue);
   DATAMEMBER(ushort, ConsumeType);
   DATAMEMBER(ushort, Density);

@@ -213,11 +213,6 @@ item* can::PrepareForConsuming(character* Consumer)
     return 0;
 }
 
-/*item* leftnutofpetrus::CreateWishedItem()
-{
-  return new cheapcopyofleftnutofpetrus;
-}*/
-
 bool pickaxe::Apply(character* User)
 {
   uchar Dir = game::DirectionQuestion("What direction do you want to dig?", 0xFF, false);

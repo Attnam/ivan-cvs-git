@@ -158,6 +158,7 @@ class game
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
   static void AnimationController();
+  static void AddDefinesToValueMap(valuemap&);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

@@ -203,14 +203,14 @@ material* materialscript::Instantiate() const
   return Instance;
 }
 
-template <class type> basecontentscript<type>::basecontentscript<type>()
+basecontentscript::basecontentscript()
 {
   INITMEMBER(MainMaterial);
   INITMEMBER(SecondaryMaterial);
   INITMEMBER(ContainedMaterial);
 }
 
-template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile)
+void basecontentscript::ReadFrom(inputfile& SaveFile)
 {
   std::string Word = SaveFile.ReadWord();
 
@@ -228,12 +228,12 @@ template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile
       Word = SaveFile.ReadWord();
     }
 
-  ContentType = protocontainer<type>::SearchCodeName(Word);
+  ContentType = SearchCodeName(Word);
 
   if(ContentType || Word == "0")
     Word = SaveFile.ReadWord();
   else
-    ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), typeid(type).name());
+    ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), ClassName().c_str());
 
   ValueMap["NONE"] = NONE;
   ValueMap["MIRROR"] = MIRROR;
@@ -250,14 +250,14 @@ template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile
 	    break;
 
 	if(c == Data.size())
-	  ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), typeid(type).name());
+	  ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), ClassName().c_str());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Script error: Odd terminator %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
+      ABORT("Script error: Odd terminator %s encountered in content script of %s!", Word.c_str(), ClassName().c_str());
 }
 
-template <class type> type* basecontentscript<type>::Instantiate() const
+template <class type> type* contentscripttemplate<type>::Instantiate() const
 {
   type* Instance = protocontainer<type>::GetProto(ContentType)->Clone();
 
@@ -273,6 +273,11 @@ template <class type> type* basecontentscript<type>::Instantiate() const
   return Instance;
 }
 
+template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
+{
+  return protocontainer<type>::SearchCodeName(Word);
+}
+
 contentscript<character>::contentscript<character>()
 {
   INITMEMBER(Team);
@@ -280,7 +285,7 @@ contentscript<character>::contentscript<character>()
 
 character* contentscript<character>::Instantiate() const
 {
-  character* Instance = basecontentscript<character>::Instantiate();
+  character* Instance = contentscripttemplate<character>::Instantiate();
 
   if(GetTeam(false))
     Instance->SetTeam(game::GetTeam(*GetTeam()));
@@ -296,7 +301,7 @@ contentscript<olterrain>::contentscript<olterrain>()
 
 olterrain* contentscript<olterrain>::Instantiate() const
 {
-  olterrain* Instance = basecontentscript<olterrain>::Instantiate();
+  olterrain* Instance = contentscripttemplate<olterrain>::Instantiate();
 
   if(GetLocked(false) && *GetLocked())
     Instance->Lock();
@@ -770,10 +775,10 @@ void gamescript::ReadFrom(inputfile& SaveFile)
     }
 }
 
-template <class type> void basedata<type>::ReadFrom(inputfile& SaveFile)
+void basedata::ReadFrom(inputfile& SaveFile)
 {
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in the data script of %s!", typeid(type).name());
+    ABORT("Bracket missing in the data script of %s!", ClassName().c_str());
 
   std::string Word;
 
@@ -786,7 +791,7 @@ template <class type> void basedata<type>::ReadFrom(inputfile& SaveFile)
 	  break;
 
       if(c == Data.size())
-	ABORT("Odd script term %s encountered in the data script of %s!", Word.c_str(), typeid(type).name());
+	ABORT("Odd script term %s encountered in the data script of %s!", Word.c_str(), ClassName().c_str());
     }
 }
 
@@ -822,7 +827,6 @@ data<character>::data<character>()
   INITMEMBER(IsUnique);
   INITMEMBER(EatFlags);
   INITMEMBER(TotalVolume);
-  //INITMEMBER(BitmapPos);
   INITMEMBER(MeleeStrength);
   INITMEMBER(TalkVerb);
   INITMEMBER(HeadBitmapPos);
@@ -929,58 +933,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
   std::string Word;
   valuemap ValueMap;
 
-  ValueMap["ODD"] = ODD;
-  ValueMap["FRUIT"] = FRUIT;
-  ValueMap["MEAT"] = MEAT;
-  ValueMap["METAL"] = METAL;
-  ValueMap["MINERAL"] = MINERAL;
-  ValueMap["LIQUID"] = LIQUID;
-  ValueMap["BONE"] = BONE;
-  ValueMap["PROCESSED"] = PROCESSED;
-  ValueMap["MISC_ORGANIC"] = MISC_ORGANIC;
-  ValueMap["GAS"] = GAS;
-
-  ValueMap["GOOD"] = GOOD;
-  ValueMap["NEUTRAL"] = NEUTRAL;
-  ValueMap["EVIL"] = EVIL;
-
-  ValueMap["UNCATEGORIZED"] = UNCATEGORIZED;
-  ValueMap["UNARMED"] = UNARMED;
-  ValueMap["DAGGERS"] = DAGGERS;
-  ValueMap["SMALL_SWORDS"] = SMALL_SWORDS;
-  ValueMap["LARGE_SWORDS"] = LARGE_SWORDS;
-  ValueMap["CLUBS"] = CLUBS;
-  ValueMap["HAMMERS"] = HAMMERS;
-  ValueMap["MACES"] = MACES;
-  ValueMap["FLAILS"] = FLAILS;
-  ValueMap["AXES"] = AXES;
-  ValueMap["HALBERDS"] = HALBERDS;
-  ValueMap["SPEARS"] = SPEARS;
-  ValueMap["WHIPS"] = WHIPS;
-
-  ValueMap["HELMET"] = HELMET;
-  ValueMap["AMULET"] = AMULET;
-  ValueMap["CLOAK"] = CLOAK;
-  ValueMap["BODYARMOR"] = BODYARMOR;
-  ValueMap["WEAPON"] = WEAPON;
-  ValueMap["SHIELD"] = SHIELD;
-  ValueMap["RING"] = RING;
-  ValueMap["GAUNTLET"] = GAUNTLET;
-  ValueMap["BELT"] = BELT;
-  ValueMap["BOOT"] = BOOT;
-  ValueMap["FOOD"] = FOOD;
-  ValueMap["POTION"] = POTION;
-  ValueMap["SCROLL"] = SCROLL;
-  ValueMap["BOOK"] = BOOK;
-  ValueMap["WAND"] = WAND;
-  ValueMap["TOOL"] = TOOL;
-  ValueMap["VALUABLE"] = VALUABLE;
-  ValueMap["MISC"] = MISC;
-
-  ValueMap["UNDEFINED"] = UNDEFINED;
-  ValueMap["MALE"] = MALE;
-  ValueMap["FEMALE"] = FEMALE;
-  ValueMap["TRANSSEXUAL"] = TRANSSEXUAL;
+  game::AddDefinesToValueMap(ValueMap);
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
@@ -1022,7 +975,7 @@ void database<character>::Apply()
       if(Iterator != Data.end())
 	{
 	  data<character>* DataElement = Iterator->second;
-	  character_database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
+	  character::database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
 	  SETDATA(DefaultAgility);
 	  SETDATA(DefaultStrength);
 	  SETDATA(DefaultEndurance);
@@ -1090,9 +1043,7 @@ void database<character>::Apply()
 	}
       else
 	{
-	  /* Remove these! */
-
-	  character_database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
+	  character::database& DataBase = protocontainer<character>::GetProto(c)->GetDataBase();
 
 	  DataBase.DefaultMoney = 0;
 	  DataBase.CanRead = false;
@@ -1164,7 +1115,7 @@ void database<item>::Apply()
       if(Iterator != Data.end())
 	{
 	  data<item>* DataElement = Iterator->second;
-	  item_database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
+	  item::database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
 	  SETDATAWITHDEFAULT(Possibility, 0);
 	  SETDATAWITHDEFAULT(InHandsPic, vector2d(160, 144));
 	  SETDATAWITHDEFAULT(OfferModifier, 0);
@@ -1198,9 +1149,7 @@ void database<item>::Apply()
 	}
       else
 	{
-	  /* Remove these! */
-
-	  item_database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
+	  item::database& DataBase = protocontainer<item>::GetProto(c)->GetDataBase();
 	  DataBase.Possibility = 0;
           DataBase.InHandsPic = vector2d(160, 144);
 	  DataBase.OfferModifier = 0;
@@ -1238,7 +1187,7 @@ void database<material>::Apply()
       if(Iterator != Data.end())
 	{
 	  data<material>* DataElement = Iterator->second;
-	  material_database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  material::database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
 	  SETDATA(StrengthValue);
 	  SETDATA(ConsumeType);
 	  SETDATA(Density);
@@ -1259,9 +1208,7 @@ void database<material>::Apply()
 	}
       else
 	{
-	  /* Remove these! */
-
-	  material_database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  material::database& DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
 	  DataBase.PriceModifier = 0;
 	  DataBase.IsSolid = false;
 	  DataBase.Emitation = 0;

@@ -1803,31 +1803,6 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
     }
 }
 
-/*ushort humanoid::GetHeadSize(ushort) const
-{
-  return 20;
-}
-
-ushort humanoid::GetTorsoSize(ushort TotalSize) const
-{
-  return (TotalSize - GetHeadSize(TotalSize)) * 2 / 5;
-}
-
-ushort humanoid::GetArmSize(ushort TotalSize) const
-{
-  return (TotalSize - GetHeadSize(TotalSize)) * 3 / 5;
-}
-
-ushort humanoid::GetGroinSize(ushort TotalSize) const
-{
-  return (TotalSize - GetHeadSize(TotalSize)) / 3;
-}
-
-ushort humanoid::GetLegSize(ushort TotalSize) const
-{
-  return (TotalSize - GetHeadSize(TotalSize)) * 3 / 5;
-}*/
-
 ulong humanoid::GetBodyPartVolume(ushort Index)
 {
   switch(Index)
@@ -1844,31 +1819,6 @@ ulong humanoid::GetBodyPartVolume(ushort Index)
       return 0;
     }
 }
-
-/*ulong humanoid::GetHeadVolume() const
-{
-  return 4000;
-}
-
-ulong humanoid::GetTorsoVolume() const
-{
-  return GetTotalVolume() - GetHeadVolume() - GetArmVolume() * 2 - GetGroinVolume() - GetLegVolume() * 2;
-}
-
-ulong humanoid::GetArmVolume() const
-{
-  return (GetTotalVolume() - GetHeadVolume()) / 10;
-}
-
-ulong humanoid::GetGroinVolume() const
-{
-  return (GetTotalVolume() - GetHeadVolume()) / 10;
-}
-
-ulong humanoid::GetLegVolume() const
-{
-  return (GetTotalVolume() - GetHeadVolume()) * 2 / 15;
-}*/
 
 bodypart* humanoid::MakeBodyPart(ushort Index)
 {
@@ -1887,40 +1837,6 @@ bodypart* humanoid::MakeBodyPart(ushort Index)
     }
 }
 
-/*material* humanoid::CreateBodyPartFlesh(ushort Index, ulong Volume)
-{
-  switch(Index)
-    {
-    case TORSOINDEX: return new humanoidtorso(false);
-    case HEADINDEX: return new head(false);
-    case RIGHTARMINDEX: return new rightarm(false);
-    case LEFTARMINDEX: return new leftarm(false);
-    case GROININDEX: return new groin(false);
-    case RIGHTLEGINDEX: return new rightleg(false);
-    case LEFTLEGINDEX: return new leftleg(false);
-    default:
-      ABORT("Wierd bodypart flesh to create for a humanoid. It must be your fault!");
-      return 0;
-    }
-}
-
-material* humanoid::CreateBodyPartBone(ushort Index, ulong Volume)
-{
-  switch(Index)
-    {
-    case TORSOINDEX: return new humanoidtorso(false);
-    case HEADINDEX: return new head(false);
-    case RIGHTARMINDEX: return new rightarm(false);
-    case LEFTARMINDEX: return new leftarm(false);
-    case GROININDEX: return new groin(false);
-    case RIGHTLEGINDEX: return new rightleg(false);
-    case LEFTLEGINDEX: return new leftleg(false);
-    default:
-      ABORT("Wierd bodypart bone to create for a humanoid. It must be your fault!");
-      return 0;
-    }
-}*/
-
 uchar humanoid::GetBodyPartBonePercentile(ushort Index)
 {
   switch(Index)
@@ -1937,169 +1853,6 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
       return 0;
     }
 }
-
-/*void humanoid::CreateHead()
-{
-  SetHead(new head(false));
-  UpdateHeadPicture(false);
-  GetHead()->InitMaterials(CreateHeadFlesh(GetHeadVolume() * (100 - GetHeadBonePercentile()) / 100), CreateHeadBone(GetTorsoVolume() * GetHeadBonePercentile() / 100));
-  GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(GetHeadSize(GetTotalSize()));
-}
-
-void humanoid::UpdateHeadPicture(bool CallUpdatePictures)
-{
-  if(GetHead())
-    {
-      GetHead()->SetBitmapPos(GetHeadBitmapPos());
-      //GetHead()->SetColor(0, SkinColor());
-      GetHead()->SetColor(1, GetCapColor());
-      GetHead()->SetColor(2, GetHairColor());
-      GetHead()->SetColor(3, GetEyeColor());
-
-      if(CallUpdatePictures)
-	GetHead()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateTorso()
-{
-  SetTorso(new humanoidtorso(false));
-  UpdateTorsoPicture(false);
-  GetTorso()->InitMaterials(CreateTorsoFlesh(GetTorsoVolume() * (100 - GetTorsoBonePercentile()) / 100), CreateTorsoBone(GetTorsoVolume() * GetTorsoBonePercentile() / 100));
-  GetTorso()->PlaceToSlot(GetTorsoSlot());
-  GetTorso()->SetSize(GetTorsoSize(GetTotalSize()));
-}
-
-void humanoid::UpdateTorsoPicture(bool CallUpdatePictures)
-{
-  if(GetTorso())
-    {
-      GetTorso()->SetBitmapPos(GetTorsoBitmapPos());
-      //GetTorso()->SetColor(0, SkinColor());
-      GetTorso()->SetColor(1, GetTorsoMainColor());
-      GetTorso()->SetColor(2, GetBeltColor());
-      GetTorso()->SetColor(3, GetTorsoSpecialColor());
-
-      if(CallUpdatePictures)
-	GetTorso()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateRightArm()
-{
-  SetRightArm(new rightarm(false));
-  UpdateRightArmPicture(false);
-  GetRightArm()->InitMaterials(CreateRightArmFlesh(GetRightArmVolume() * (100 - GetRightArmBonePercentile()) / 100), CreateRightArmBone(GetRightArmVolume() * GetRightArmBonePercentile() / 100));
-  GetRightArm()->PlaceToSlot(GetRightArmSlot());
-  GetRightArm()->SetSize(GetRightArmSize(GetTotalSize()));
-}
-
-void humanoid::UpdateRightArmPicture(bool CallUpdatePictures)
-{
-  if(GetRightArm())
-    {
-      GetRightArm()->SetBitmapPos(GetRightArmBitmapPos());
-      //GetRightArm()->SetColor(0, GetSkinColor());
-      GetRightArm()->SetColor(1, GetArmMainColor());
-      GetRightArm()->SetColor(3, GetArmSpecialColor());
-
-      if(CallUpdatePictures)
-	GetRightArm()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateLeftArm()
-{
-  SetLeftArm(new leftarm(false));
-  UpdateLeftArmPicture(false);
-  GetLeftArm()->InitMaterials(CreateLeftArmFlesh(GetLeftArmVolume() * (100 - GetLeftArmBonePercentile()) / 100), CreateLeftArmBone(GetLeftArmVolume() * GetLeftArmBonePercentile() / 100));
-  GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
-  GetLeftArm()->SetSize(GetLeftArmSize(GetTotalSize()));
-}
-
-void humanoid::UpdateLeftArmPicture(bool CallUpdatePictures)
-{
-  if(GetLeftArm())
-    {
-      GetLeftArm()->SetBitmapPos(GetLeftArmBitmapPos());
-      //GetLeftArm()->SetColor(0, SkinColor());
-      GetLeftArm()->SetColor(1, GetArmMainColor());
-      GetLeftArm()->SetColor(3, GetArmSpecialColor());
-
-      if(CallUpdatePictures)
-	GetLeftArm()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateGroin()
-{
-  SetGroin(new groin(false));
-  UpdateGroinPicture(false);
-  GetGroin()->InitMaterials(CreateGroinFlesh(GetGroinVolume() * (100 - GetGroinBonePercentile()) / 100), CreateGroinBone(GetGroinVolume() * GetGroinBonePercentile() / 100));
-  GetGroin()->PlaceToSlot(GetGroinSlot());
-  GetGroin()->SetSize(GetGroinSize(GetTotalSize()));
-}
-
-void humanoid::UpdateGroinPicture(bool CallUpdatePictures)
-{
-  if(GetGroin())
-    {
-      GetGroin()->SetBitmapPos(GetGroinBitmapPos());
-      //GetGroin()->SetColor(0, SkinColor());
-      GetGroin()->SetColor(1, GetLegMainColor());
-      GetGroin()->SetColor(3, GetLegSpecialColor());
-
-      if(CallUpdatePictures)
-	GetGroin()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateRightLeg()
-{
-  SetRightLeg(new rightleg(false));
-  UpdateRightLegPicture(false);
-  GetRightLeg()->InitMaterials(CreateRightLegFlesh(GetRightLegVolume() * (100 - GetRightLegBonePercentile()) / 100), CreateRightLegBone(GetRightLegVolume() * GetRightLegBonePercentile() / 100));
-  GetRightLeg()->PlaceToSlot(GetRightLegSlot());
-  GetRightLeg()->SetSize(GetRightLegSize(GetTotalSize()));
-}
-
-void humanoid::UpdateRightLegPicture(bool CallUpdatePictures)
-{
-  if(GetRightLeg())
-    {
-      GetRightLeg()->SetBitmapPos(GetRightLegBitmapPos());
-      //GetRightLeg()->SetColor(0, SkinColor());
-      GetRightLeg()->SetColor(1, GetLegMainColor());
-      GetRightLeg()->SetColor(3, GetLegSpecialColor());
-
-      if(CallUpdatePictures)
-	GetRightLeg()->UpdatePictures();
-    }
-}
-
-void humanoid::CreateLeftLeg()
-{
-  SetLeftLeg(new leftleg(false));
-  UpdateLeftLegPicture(false);
-  GetLeftLeg()->InitMaterials(CreateLeftLegFlesh(GetLeftLegVolume() * (100 - GetLeftLegBonePercentile()) / 100), CreateLeftLegBone(GetLeftLegVolume() * GetLeftLegBonePercentile() / 100));
-  GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
-  GetLeftLeg()->SetSize(GetLeftLegSize(GetTotalSize()));
-}
-
-void humanoid::UpdateLeftLegPicture(bool CallUpdatePictures)
-{
-  if(GetLeftLeg())
-    {
-      GetLeftLeg()->SetBitmapPos(GetLeftLegBitmapPos());
-      //GetLeftLeg()->SetColor(0, SkinColor());
-      GetLeftLeg()->SetColor(1, GetLegMainColor());
-      GetLeftLeg()->SetColor(3, GetLegSpecialColor());
-
-      if(CallUpdatePictures)
-	GetLeftLeg()->UpdatePictures();
-    }
-}*/
 
 head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
 void humanoid::SetHead(head* What) { SetBodyPart(1, What); }
@@ -2647,13 +2400,6 @@ void humanoid::AddInfo(felist& Info) const
   Info.AddEntry(std::string("Main to hit value: ") + ulong(GetMainToHitValue()), LIGHTGRAY);
   Info.AddEntry(std::string("Secondary to hit value: ") + ulong(GetSecondaryToHitValue()), LIGHTGRAY);
 }
-
-/*void ennerbeast::CreateHead()
-{
-  SetHead(new headofennerbeast);
-  GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(HeadSize(TotalSize()));
-}*/
 
 void humanoid::CompleteRiseFromTheDead()
 {

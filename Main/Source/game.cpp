@@ -1501,3 +1501,59 @@ void game::AnimationController()
   if(GetRunning() && GetInGetCommand())
     game::DrawEverything();
 }
+
+void game::AddDefinesToValueMap(valuemap& ValueMap)
+{
+  ValueMap["ODD"] = ODD;
+  ValueMap["FRUIT"] = FRUIT;
+  ValueMap["MEAT"] = MEAT;
+  ValueMap["METAL"] = METAL;
+  ValueMap["MINERAL"] = MINERAL;
+  ValueMap["LIQUID"] = LIQUID;
+  ValueMap["BONE"] = BONE;
+  ValueMap["PROCESSED"] = PROCESSED;
+  ValueMap["MISC_ORGANIC"] = MISC_ORGANIC;
+  ValueMap["GAS"] = GAS;
+
+  ValueMap["GOOD"] = GOOD;
+  ValueMap["NEUTRAL"] = NEUTRAL;
+  ValueMap["EVIL"] = EVIL;
+
+  ValueMap["UNCATEGORIZED"] = UNCATEGORIZED;
+  ValueMap["UNARMED"] = UNARMED;
+  ValueMap["DAGGERS"] = DAGGERS;
+  ValueMap["SMALL_SWORDS"] = SMALL_SWORDS;
+  ValueMap["LARGE_SWORDS"] = LARGE_SWORDS;
+  ValueMap["CLUBS"] = CLUBS;
+  ValueMap["HAMMERS"] = HAMMERS;
+  ValueMap["MACES"] = MACES;
+  ValueMap["FLAILS"] = FLAILS;
+  ValueMap["AXES"] = AXES;
+  ValueMap["HALBERDS"] = HALBERDS;
+  ValueMap["SPEARS"] = SPEARS;
+  ValueMap["WHIPS"] = WHIPS;
+
+  ValueMap["HELMET"] = HELMET;
+  ValueMap["AMULET"] = AMULET;
+  ValueMap["CLOAK"] = CLOAK;
+  ValueMap["BODYARMOR"] = BODYARMOR;
+  ValueMap["WEAPON"] = WEAPON;
+  ValueMap["SHIELD"] = SHIELD;
+  ValueMap["RING"] = RING;
+  ValueMap["GAUNTLET"] = GAUNTLET;
+  ValueMap["BELT"] = BELT;
+  ValueMap["BOOT"] = BOOT;
+  ValueMap["FOOD"] = FOOD;
+  ValueMap["POTION"] = POTION;
+  ValueMap["SCROLL"] = SCROLL;
+  ValueMap["BOOK"] = BOOK;
+  ValueMap["WAND"] = WAND;
+  ValueMap["TOOL"] = TOOL;
+  ValueMap["VALUABLE"] = VALUABLE;
+  ValueMap["MISC"] = MISC;
+
+  ValueMap["UNDEFINED"] = UNDEFINED;
+  ValueMap["MALE"] = MALE;
+  ValueMap["FEMALE"] = FEMALE;
+  ValueMap["TRANSSEXUAL"] = TRANSSEXUAL;
+}
