@@ -160,6 +160,10 @@ SOURCE=.\Main\Source\stack.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\terrain.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\worldmap.cpp
 # End Source File
 # Begin Source File
@@ -237,6 +241,10 @@ SOURCE=.\Main\Include\square.h
 # Begin Source File
 
 SOURCE=.\Main\Include\stack.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\terrain.h
 # End Source File
 # Begin Source File
 
