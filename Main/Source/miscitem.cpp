@@ -1090,6 +1090,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
+      Victim->EditAP(-500);
       return true;
     }
 
@@ -1104,6 +1105,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is freed.", Victim->CHAR_NAME(DEFINITE));
 
+      Victim->EditAP(-500);
       return true;
     }
 
@@ -1116,12 +1118,14 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
 
       Victim->ReceiveBodyPartDamage(0, GetBaseDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
       Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
+      Victim->EditAP(-1000);
       return false;
     }
 
   if(Victim->IsPlayer())
     ADD_MESSAGE("You are unable to escape from %s.", CHAR_NAME(DEFINITE));
 
+  Victim->EditAP(-1000);
   return false;
 }
 
