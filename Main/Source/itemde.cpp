@@ -1149,7 +1149,7 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
+bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar, lsquare* Where) 
 { 
   if(!Where->GetOTerrain()->GetIsWalkable() || Where->GetCharacter())
     {
@@ -1228,7 +1228,7 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
+bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar, lsquare* Where) 
 { 
   Where->TeleportEverything(Who);
   return false;

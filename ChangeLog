@@ -1,5 +1,13 @@
 March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* itemde.cpp: Two unused parameter warnings corrected
+	* lterrade.cpp: Two unused parameter warnings corrected
+	* entity.cpp: Two unused parameter warnings corrected
+	* ivandj.mak: Added reference to new files
+	* ivanmgw.mak: Added reference to new files
+
+March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Unit class added
 	  * This class holds materials. It is derived from entity and is base for object and fluid.
 	  * Modified files:
@@ -277,6 +285,3 @@ Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Source/lterrade.cpp: door::HasBeenHitBy, brokendoor::HasBeenHitBy. That open or damage the door when an item hits it.
 	* Main/Include/itemde.h: Wand of strikings color changed from yellow to white. Added Wand of fireballs
 	* Main/Source/charba.cpp character::WizardMode changed so that the player now receives 5 scrolls of wishing also after activating the wizard mode.
-
-
-

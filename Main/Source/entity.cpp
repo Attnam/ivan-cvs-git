@@ -17,11 +17,11 @@ entity::~entity()
     entitypool::Remove(GetPoolIterator());
 }
 
-void entity::Save(outputfile& SaveFile) const
+void entity::Save(outputfile&) const
 {
 }
 
-void entity::Load(inputfile& SaveFile)
+void entity::Load(inputfile&)
 {
   SquareUnder = game::GetSquareInLoad();
 }

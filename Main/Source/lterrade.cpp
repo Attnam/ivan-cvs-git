@@ -720,7 +720,7 @@ void doublebed::ShowRestMessage(character*) const
   ADD_MESSAGE("You lay yourself on the confortable bed.");
 }
 
-void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 {
   if(!GetIsWalkable())
     {
@@ -766,7 +766,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool V
     }
 }
 
-void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 {
   if(!GetIsWalkable())
     {
