@@ -1,3 +1,8 @@
+June 15 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added beartrap (which probably will need some more tweaking)
+
+
 June 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Pool and LOS codes optimized greatly and character AI (which takes most of the processor time now) somewhat.

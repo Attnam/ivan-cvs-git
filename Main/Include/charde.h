@@ -124,6 +124,7 @@ class ABSTRACT_CHARACTER
   virtual ushort DrawStats() const;
   virtual void Bite(character*);
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH); }
+  virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
  protected:
   virtual void VirtualConstructor(bool);

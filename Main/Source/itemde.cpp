@@ -2877,6 +2877,97 @@ void chest::SetSquareUnder(square* Square)
   GetContained()->SetSquareUnder(Square);
 }
 
+/* Victim is of course the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
+bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
+{
+  if(!(RAND() % 5))
+    {
+
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
+      else if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s hurts %s %s more with %s", Victim->CHARNAME(DEFINITE), Victim->PossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+      Victim->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
+      std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
+      Victim->CheckDeath(DeathMessage);
+      return false;
+    }
+  if(!(RAND() % 3))
+    {
+      Victim->SetStuckTo(0);
+      Victim->SetStuckToBodyPart(NONEINDEX);
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You manage to free yourself from %s", CHARNAME(DEFINITE));
+      else if(Victim->GetLSquareUnder()->CanBeSeen())
+	{
+	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->PersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
+	  ADD_MESSAGE("%s", msg.c_str());
+	}
+      return true;
+    }
+  ADD_MESSAGE("You are unable to escape from %s", CHARNAME(DEFINITE));
+  return false;
+}
+
+void beartrap::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> IsActivated;
+}
+
+void beartrap::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << IsActivated;
+}
+
+void beartrap::VirtualConstructor(bool Load)
+{
+  item::VirtualConstructor(Load);
+  IsActivated = RAND() % 2;
+}
+
+bool beartrap::GetStepOnEffect(character* Stepper)
+{
+  if(IsActivated)
+    {
+      ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
+
+      if(StepperBodyPart == NONEINDEX)
+	return false;
+
+      Stepper->SetStuckTo(this);
+      Stepper->SetStuckToBodyPart(StepperBodyPart);
+      if(Stepper->IsPlayer())
+	ADD_MESSAGE("You step in %s and it traps your %s. ", CHARNAME(INDEFINITE), Stepper->GetBodyPart(Stepper->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+      else if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s is trapped in %s", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+
+      Stepper->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
+      Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE) + ".");
+      IsActivated = false;
+    }
+  else
+    {
+      if(Stepper->IsPlayer())
+	ADD_MESSAGE("You step on %s but luckily it isn't active.", CHARNAME(INDEFINITE));
+      /* My English seems to be a bit rusty. It might be good to choose some other word than "active" */
+    }
+  return false;
+}
+
+bool beartrap::CheckPickUpEffect(character* Picker)
+{
+  if(Picker->GetStuckTo() == this)
+    {
+      if(Picker->IsPlayer())
+	ADD_MESSAGE("%s is tightly stuck to %s", CHARNAME(DEFINITE), Picker->GetBodyPart(Picker->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+      return false;
+    }
+  IsActivated = false; /* Just in case something wierd is going on */
+  return true;
+}
+
 /*bool wandofdoorcreation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
 { 
   return Where->LockEverything(Who); 
@@ -2968,4 +3059,9 @@ void wandofdoorcreation::VirtualConstructor(bool Load)
   
   if(!Load)
     SetCharges(2 + RAND() % 5);
+}
+
+bool beartrap::IsPickable(character* Picker) const
+{
+  return Picker->GetStuckTo() != this;
 }

@@ -1188,3 +1188,13 @@ wandofdoorcreation /* wand-> */
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
 }
+
+beartrap
+{
+	MainMaterialConfig == IRON;
+	NameSingular = "bear trap";
+	Possibility = 100;
+	CanBeGeneratedInContainer = false; /* Activated code might cause problems other wise */
+	IsPickableByAI = false;
+	BitmapPos = 32,304;
+}

@@ -437,6 +437,13 @@ bool character::CheckBulimia() const
 
 void character::Move(vector2d MoveTo, bool TeleportMove)
 {
+  /* Test whether the player is stuck to something */
+  if(!TeleportMove && IsStuck())
+    {
+      if(!TryToUnstuck(MoveTo - GetPos()))
+	return;
+    }
+
   if(GetBurdenState() != OVERLOADED || TeleportMove)
     {
       game::GetCurrentArea()->MoveCharacter(GetPos(), MoveTo);
@@ -453,7 +460,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
     }
   else
     if(IsPlayer())
-      ADD_MESSAGE("You try to use your claws to crawl forward. But your load is too heavy.");
+      ADD_MESSAGE("You crawl forward, but your load is too heavy.");
 }
 
 void character::DrawToTileBuffer(bool Animate) const
@@ -462,8 +469,7 @@ void character::DrawToTileBuffer(bool Animate) const
     GetTorso()->DrawToTileBuffer(Animate);
 }
 
-void character::GetAICommand()	// Freedom is slavery. Love is hate. War is peace.
-				// Shouldn't it be "Ignorance is strength", not "Love is hate"?
+void character::GetAICommand()
 {
   SeekLeader();
 
@@ -703,10 +709,15 @@ bool character::PickUp()
 	    if(Item)
 		if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item)))
 		  {
-		    ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
-		    Item->MoveTo(GetStack());
-		    Item->CheckPickUpEffect(this);
-		    ToBeReturned = true;
+		    if(Item->CheckPickUpEffect(this))
+		      {
+			ADD_MESSAGE("%s picked up.", Item->CHARNAME(INDEFINITE));
+			Item->MoveTo(GetStack());
+			Item->CheckPickUpEffect(this);
+			ToBeReturned = true;
+		      }
+		    else
+		      return false;
 		  }
 
 	    if(!Item || !GetLSquareUnder()->GetStack()->GetItems())
@@ -1356,6 +1367,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << bool(false);
 
   SaveFile << AssignedName;
+  SaveFile << StuckTo << StuckToBodyPart;
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1407,6 +1419,7 @@ void character::Load(inputfile& SaveFile)
 
   SaveFile >> AssignedName;
 
+  SaveFile >> StuckTo >> StuckToBodyPart;
   InstallDataBase();
 }
 
@@ -2379,7 +2392,7 @@ bool character::CheckForUsefulItemsOnGround()
 	    return true;
 	  }*/
 
-      if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this))
+      if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this) && (**i)->IsPickable(this))
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
 	  {
 	    if(GetLSquareUnder()->CanBeSeen())
@@ -3122,7 +3135,7 @@ bool character::DamageTypeCanSeverBodyPart(uchar Type) const
       return false;
     }
 }
-
+/* Returns true if the damage really does some damage */
 bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
@@ -3191,7 +3204,7 @@ bodypart* character::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->RemoveFromSlot();
   return BodyPart;
 }
-
+/* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage */
 bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
   bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical);
@@ -4148,6 +4161,26 @@ void character::AddBoneConsumeEndMessage() const
     ADD_MESSAGE("%s barks happily.", CHARNAME(DEFINITE)); // this suspects that nobody except dogs can eat bones
 }
 
+/* returns true if character manages to unstuck himself (from all traps...). vector2d is the direction which the character has tried to escape to */
+bool character::TryToUnstuck(vector2d Direction)
+{
+  return StuckTo->TryToUnstuck(this, StuckToBodyPart, Direction);
+}
+
+
+
+bool character::IsStuck() const
+{
+  if(GetStuckToBodyPart() == NONEINDEX)
+    return false;
+  
+
+  if(GetBodyPart(GetStuckToBodyPart()))
+    return true;
+  else
+    return false;
+}
+
 bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, bool DoubleAttribute)
 {
   /* Check if attribute is disabled for creature */
@@ -4311,8 +4344,12 @@ float character::CalculateDodgeValue() const
 void character::VirtualConstructor(bool Load)
 {
   if(!Load)
-    for(ushort c = 0; c < BASEATTRIBUTES; ++c)
-      BaseExperience[c] = 0;
+    {
+      for(ushort c = 0; c < BASEATTRIBUTES; ++c)
+	BaseExperience[c] = 0;
+      SetStuckTo(0);
+      SetStuckToBodyPart(NONEINDEX);
+    }
 }
 
 bool character::DamageTypeAffectsInventory(uchar Type) const

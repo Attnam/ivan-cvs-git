@@ -1158,6 +1158,22 @@ class ITEM
 
 class ITEM
 (
+  beartrap,
+  item,
+ public:
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual bool GetStepOnEffect(character*);
+  virtual bool TryToUnstuck(character*, ushort, vector2d);
+  virtual bool CheckPickUpEffect(character*);
+  virtual bool IsPickable(character*) const;
+ protected:
+  virtual void VirtualConstructor(bool);
+  bool IsActivated;
+); 
+
+class ITEM
+(
   wandofdoorcreation,
   wand,
  public:

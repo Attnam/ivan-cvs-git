@@ -496,6 +496,7 @@ class character : public entity, public id
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
   static character* Clone(ushort, bool, bool) { return 0; }
+  virtual bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*) = 0;
   virtual void SpecialBiteEffect(character*) { }
@@ -512,6 +513,12 @@ class character : public entity, public id
   virtual ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
   virtual void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
   virtual bool DamageTypeAffectsInventory(uchar) const;
+  virtual void SetStuckTo(item* What) {  StuckTo = What; }
+  virtual item* GetStuckTo() const { return StuckTo; }
+  virtual void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
+  virtual ushort GetStuckToBodyPart() const { return StuckToBodyPart; }
+  virtual bool TryToUnstuck(vector2d);
+  virtual ushort GetRandomStepperBodyPart() const { return TORSOINDEX; }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual void EditVolume(long);
@@ -587,6 +594,8 @@ class character : public entity, public id
   action* Action;
   ushort Config;
   const database* DataBase;
+  ushort StuckToBodyPart;
+  item* StuckTo; // Bad naming. Sorry.
   ushort BaseAttribute[BASEATTRIBUTES];
   long BaseExperience[BASEATTRIBUTES];
   static std::string StateDescription[STATES];

@@ -3177,6 +3177,26 @@ ushort nonhumanoid::DrawStats() const
   return PanelPosY;
 }
 
+ushort humanoid::GetRandomStepperBodyPart() const
+{
+  std::vector<ushort> Possible;
+  if(GetBodyPart(RIGHTLEGINDEX))
+    Possible.push_back(RIGHTLEGINDEX);
+  if(GetBodyPart(LEFTLEGINDEX))
+    Possible.push_back(LEFTLEGINDEX);
+  if(Possible.size())
+    return Possible[RAND() % Possible.size()];
+  else
+    switch(RAND() % 3)
+      {
+      case 0:
+	return GROININDEX;
+      case 1:
+	return TORSOINDEX;
+      default:
+	return HEADINDEX;
+      }
+}
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
 {
   if(GetRightWielded())
@@ -3187,3 +3207,4 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
 
   return Damage;
 }
+

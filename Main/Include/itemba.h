@@ -136,7 +136,7 @@ class item : public object
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool Polymorph(stack*);
-  virtual void CheckPickUpEffect(character*) { }
+  virtual bool CheckPickUpEffect(character*) { return true; }
   virtual bool GetStepOnEffect(character*) { return false; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
@@ -263,11 +263,17 @@ class item : public object
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
+  virtual uchar GetVisualFlags() const { return VisualFlags; }
+  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
+  //  virtual void HandleVisualEffects();
+  virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual uchar GetVisualEffects() const { return VisualEffects; }
   virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
+  virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
   virtual void EditVolume(long);
   virtual void EditWeight(long);
   virtual ulong GetBlockModifier(const character*) const;
+  virtual bool IsPickable(character*) const { return true; }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
@@ -284,7 +290,7 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
-  uchar VisualEffects;
+  uchar VisualFlags;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
