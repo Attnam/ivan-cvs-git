@@ -134,3 +134,4 @@ It seems that due to certain bitshift rounding errors, resting causes more exp m
 The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
 //Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
 Putting mines in Attnam is considered OK by guards.
+Amulet of Life saving generates high score entry.

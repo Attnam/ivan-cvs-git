@@ -416,5 +416,8 @@ If a player vomits in a shop after eating an item bought there, the shopkeeper s
 Zapping food with wand of slow/haste should slow/fasten the spoiling time.
 Enchantments should increase thunder hammer's lightning possibility or lightning damage.
 One should be able to fix non-living bodyparts with a scroll of repair.
+Vodka should increase or decrease wisdom. (probably determined randomly) 
+Monsters that can eat already spoiled food without damage. (eg zombie)
+Lightning and metal items should interact somehow.=======
 Skis.
 Footprints.

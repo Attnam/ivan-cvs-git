@@ -43,6 +43,7 @@
 #define DID_NO_DAMAGE 4
 #define HAS_FAILED 5
 
+#define OVER_FED_LEVEL 175000
 #define BLOATED_LEVEL 150000
 #define SATIATED_LEVEL 100000
 #define NOT_HUNGER_LEVEL 25000
@@ -58,6 +59,7 @@
 #define NOT_HUNGRY 2
 #define SATIATED 3
 #define BLOATED 4
+#define OVER_FED 5
 
 #define STATES 16
 

@@ -107,7 +107,7 @@ void consume::Handle()
 
   /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
 
-  if(Consuming->Consume(Actor, 500) && Actor->IsEnabled())
+  if(Consuming->Consume(Actor, 500) && Actor->GetAction() && Actor->IsEnabled())
     Terminate(true);
 }
 

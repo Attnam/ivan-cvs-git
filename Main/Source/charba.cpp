@@ -3519,7 +3519,9 @@ void character::AddName(std::string& String, uchar Case) const
 
 uchar character::GetHungerState() const
 {
-  if(GetNP() > BLOATED_LEVEL)
+  if(GetNP() > OVER_FED_LEVEL)
+    return OVER_FED;
+  else if(GetNP() > BLOATED_LEVEL)
     return BLOATED;
   else if(GetNP() > SATIATED_LEVEL)
     return SATIATED;
@@ -4096,13 +4098,13 @@ void character::AddSchoolFoodHitMessage() const
 
 void character::ReceiveNutrition(long SizeOfEffect)
 {
-  if(GetHungerState() == BLOATED)
-    {
-      ReceiveDamage(0, SizeOfEffect / 1000 ? SizeOfEffect / 1000 : 1, BULIMIA, TORSO);
-      CheckDeath("choked on his food", 0);
-    }
-
   EditNP(SizeOfEffect);
+
+  if(GetHungerState() == OVER_FED)
+    {
+      DeActivateVoluntaryAction("You are forced to vomit to prevent choking on this stuff.");
+      Vomit(2 + RAND() % 3);
+    }
 }
 
 void character::ReceiveOmmelUrine(long Amount)
