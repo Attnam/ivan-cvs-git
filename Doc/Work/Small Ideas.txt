@@ -50,3 +50,4 @@ Some variety to monster death messages, e.g. some messages influenced by the cau
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 World map terrain descriptions shouldn't have an article.
 Talk idea.
+Lookmode should show wielded item.

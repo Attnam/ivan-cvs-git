@@ -126,7 +126,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 		Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, 800, 600);
 		graphics::BlitDBToScreen();
 
-		if(globalwindowhandler::ReadKey())
+		if(READKEY())
 			return 0;
 	}
 

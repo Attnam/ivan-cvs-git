@@ -93,7 +93,7 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 		graphics::BlitDBToScreen();
 		int k;
 		
-		switch(k = globalwindowhandler::ReadKey())
+		switch(k = READKEY())
 		{
 			
 			case 0x148:

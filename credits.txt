@@ -5,6 +5,11 @@ Programming (in order of actual code completed):
 	Perttu Luukko
 	Niko Kosonen
 
+Special thanks for the rand() function we use:
+
+	Takuji Nishimura
+	Makoto Matsumoto
+
 Graphics (in order of actual graphics completed):
 	Tuukka Virtaperko
 

@@ -4,6 +4,7 @@
 #pragma warning(disable : 4786)
 
 #define GETKEY globalwindowhandler::GetKey
+#define READKEY globalwindowhandler::ReadKey
 
 #include <windows.h>
 

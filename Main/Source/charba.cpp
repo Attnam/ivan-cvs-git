@@ -1686,6 +1686,7 @@ bool character::Look()
 			character* Character;
 
 			if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
+			{
 				if(Character->GetIsPlayer())
 					ADD_MESSAGE("You are %s here.", Character->StandVerb().c_str());
 				else
@@ -1706,6 +1707,10 @@ bool character::Look()
 							ADD_MESSAGE("%s is friendly.", game::PersonalPronoun(Character->GetSex()));
 					}
 				}
+
+				if(game::GetWizardMode())
+					ADD_MESSAGE("(danger: %d)", Character->MaxDanger());
+			}
 		}
 		else
 			ADD_MESSAGE("You have no idea what might lie here.");

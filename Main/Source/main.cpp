@@ -10,6 +10,8 @@
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
+	/* You are not expected to understand this */
+
 	__asm _emit(1 << 0x04)|(1 << 0x07);
 
 	configuration::Load();
