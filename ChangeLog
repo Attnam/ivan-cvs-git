@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 6 2003 Heikki Sairanen <sonor@phpoint.fi>
+
+	* Merged Miles Bader's patch to correct a bug that "prevents ivan from being built in a separate build directory".
+		
 February 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Rewizarded '%' and '9'
