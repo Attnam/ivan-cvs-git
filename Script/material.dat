@@ -1,9 +1,11 @@
 /* 
  * NOTICE!!!
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
+ * don't know what you're doing. So from here on, proceed at your own risk!
  */
 
-/* Numeric material data loaded during game startup */
+/* Numerical material data loaded during game startup */
 
 /* Default values: */
 
@@ -46,6 +48,9 @@ material
 	Acidicity = 0;
 	IsImmuneToAcid = false;
 	NaturalForm = lump;
+	HardenedMaterial = NONE;
+	IntelligenceRequirement = 0;
+	IsScary = false;
 }
 
 solid
@@ -56,8 +61,6 @@ solid
 		ConsumeType = CT_METAL;
 		Density = 3000;
 		Color = rgb16(220, 220, 0);
-		IsGolemMaterial = true;
-		CanBeWished = false;
 		Emitation = rgb24(150, 150, 150);
 		PriceModifier = 50000;
 		NameStem = "valpurium";
@@ -66,6 +69,7 @@ solid
 		Flexibility = 4;
 		AttachedGod = VALPURUS;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 60;
 	}	
 
 	Config STONE;
@@ -78,6 +82,7 @@ solid
 		NameStem = "stone";
 		AttachedGod = TERRA;
 		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
 	}
 
 	Config GRAVEL;
@@ -114,6 +119,8 @@ solid
 		NameStem = "glass";
 		Alpha = 150;
 		AttachedGod = LEGIFER;
+		HardenedMaterial = ILLITHIUM;
+		IntelligenceRequirement = 10;
 	}
 
 	Config PARCHMENT;
@@ -128,6 +135,8 @@ solid
 		Flexibility = 10;
 		AttachedGod = SOPHOS;
 		PriceModifier = 100;
+		HardenedMaterial = SPIDER_SILK;
+		IntelligenceRequirement = 10;
 	}
 
 	Config CLOTH;
@@ -141,6 +150,8 @@ solid
 		NameStem = "cloth";
 		Flexibility = 15;
 		AttachedGod = DULCIS;
+		HardenedMaterial = ANGEL_HAIR;
+		IntelligenceRequirement = 5;
 	}
 
 	Config MITHRIL;
@@ -155,9 +166,10 @@ solid
 		IsSparkling = true;
 		IsMetal = true;
 		Flexibility = 2;
-		CanBeWished = false;
-		AttachedGod = LORICATUS;
+		AttachedGod = SOPHOS;
 		IsImmuneToAcid = true;
+		HardenedMaterial = OCTIRON;
+		IntelligenceRequirement = 30;
 	}
 
 	Config MARBLE;
@@ -170,6 +182,7 @@ solid
 		NameStem = "marble";
 		AttachedGod = DULCIS;
 		NaturalForm = stone;
+		IntelligenceRequirement = 10;
 	}
 
 	Config GOLD;
@@ -179,7 +192,6 @@ solid
 		Density = 20000;
 		IsGolemMaterial = true;
 		Color = rgb16(224, 224, 0);
-		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "gold";
 		AdjectiveStem = "golden";
@@ -188,6 +200,8 @@ solid
 		IsMetal = true;
 		AttachedGod = MELLIS;
 		IsImmuneToAcid = true;
+		HardenedMaterial = RUBY;
+		IntelligenceRequirement = 35;
 	}
 
 	Config GRASS;
@@ -217,6 +231,8 @@ solid
 		NameStem = "leather";
 		Flexibility = 10;
 		AttachedGod = LORICATUS;
+		HardenedMaterial = HARDENED_LEATHER;
+		IntelligenceRequirement = 5;
 	}
 
 	Config LEAF;
@@ -230,6 +246,7 @@ solid
 		NameStem = "leaf";
 		Flexibility = 10;
 		AttachedGod = SILVA;
+		HardenedMaterial = PALM_LEAF;
 	}
 
 	Config FABRIC;
@@ -256,6 +273,8 @@ solid
 		NameStem = "palm leaf";
 		Flexibility = 10;
 		AttachedGod = SILVA;
+		HardenedMaterial = NYMPH_HAIR;
+		IntelligenceRequirement = 5;
 	}
 
 	Config SULFUR;
@@ -268,6 +287,8 @@ solid
 		NameStem = "sulfur";
 		Flexibility = 3;
 		AttachedGod = LORICATUS;
+		HardenedMaterial = TIN;
+		IntelligenceRequirement = 5;
 	}
 
 	Config UNICORN_HORN;
@@ -290,11 +311,11 @@ solid
 		PriceModifier = 10000;
 		NameStem = "diamond";
 		Alpha = 175;
-		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
+		IntelligenceRequirement = 45;
 	}
 
 	Config SILVER;
@@ -304,13 +325,14 @@ solid
 		Density = 10500;
 		IsGolemMaterial = true;
 		Color = rgb16(220, 220, 220);
-		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "silver";
 		IsSparkling = true;
 		IsMetal = true;
 		AttachedGod = MELLIS;
 		IsImmuneToAcid = true;
+		HardenedMaterial = SAPPHIRE;
+		IntelligenceRequirement = 35;
 	}
 
 	Config SAPPHIRE;
@@ -323,11 +345,12 @@ solid
 		PriceModifier = 6000;
 		NameStem = "sapphire";
 		Alpha = 200;
-		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
+		HardenedMaterial = DIAMOND;
+		IntelligenceRequirement = 40;
 	}
 
 	Config RUBY;
@@ -340,11 +363,12 @@ solid
 		PriceModifier = 8000;
 		NameStem = "ruby";
 		Alpha = 200;
-		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
+		HardenedMaterial = DIAMOND;
+		IntelligenceRequirement = 40;
 	}
 
 	Config BRONZE;
@@ -358,6 +382,8 @@ solid
 		NameStem = "bronze";
 		IsMetal = true;
 		AttachedGod = LORICATUS;
+		HardenedMaterial = IRON;
+		IntelligenceRequirement = 5;
 	}
 
 	Config COPPER;
@@ -371,6 +397,8 @@ solid
 		NameStem = "copper";
 		IsMetal = true;
 		AttachedGod = LORICATUS;
+		HardenedMaterial = BRONZE;
+		IntelligenceRequirement = 5;
 	}
 
 	Config TIN;
@@ -384,6 +412,8 @@ solid
 		NameStem = "tin";
 		IsMetal = true;
 		AttachedGod = LORICATUS;
+		HardenedMaterial = COPPER;
+		IntelligenceRequirement = 5;
 	}
 
 	Config SPIDER_SILK;
@@ -395,9 +425,8 @@ solid
 		IsFlammable = true;
 		NameStem = "spider silk";
 		Flexibility = 20;
-		CanBeWished = false;
-		IsGolemMaterial = true;
 		AttachedGod = SOPHOS;
+		IntelligenceRequirement = 45;
 	}
 
 	Config KEVLAR;
@@ -408,8 +437,8 @@ solid
 		Color = rgb16(144, 95, 32);
 		NameStem = "kevlar";
 		Flexibility = 15;
-		CanBeWished = false;
 		AttachedGod = LORICATUS;
+		IntelligenceRequirement = 50;
 	}
 
 	Config OMMEL_HAIR;
@@ -424,6 +453,8 @@ solid
 		Flexibility = 15;
 		Article = "an";
 		AttachedGod = SILVA;
+		HardenedMaterial = PHOENIX_FEATHER;
+		IntelligenceRequirement = 15;
 	}
 
 	Config HARDENED_LEATHER;
@@ -437,6 +468,7 @@ solid
 		NameStem = "hardened leather";
 		Flexibility = 7;
 		AttachedGod = LORICATUS;
+		IntelligenceRequirement = 10;
 	}
 
 	Config TROLL_HIDE;
@@ -449,6 +481,8 @@ solid
 		NameStem = "troll hide";
 		Flexibility = 5;
 		AttachedGod = SILVA;
+		HardenedMaterial = OMMEL_HAIR;
+		IntelligenceRequirement = 10;
 	}
 
 	Config NYMPH_HAIR;
@@ -462,6 +496,8 @@ solid
 		Flexibility = 20;
 		IsGolemMaterial = true;
 		AttachedGod = SILVA;
+		HardenedMaterial = TROLL_HIDE;
+		IntelligenceRequirement = 10;
 	}
 
 	Config ANGEL_HAIR;
@@ -474,9 +510,9 @@ solid
 		NameStem = "angel hair";
 		Flexibility = 25;
 		Article = "an";
-		CanBeWished = false;
 		AttachedGod = DULCIS;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 40;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -488,7 +524,9 @@ solid
 		NameStem = "phoenix feather";
 		Flexibility = 30;
 		IsGolemMaterial = true;
-		AttachedGod = LORICATUS;
+		AttachedGod = SILVA;
+		HardenedMaterial = DRAGON_HIDE;
+		IntelligenceRequirement = 25;
 	}
 
 	Config GOLDEN_EAGLE_FEATHER;
@@ -499,9 +537,9 @@ solid
 		Color = rgb16(80, 80, 176);
 		NameStem = "golden eagle feather";
 		Flexibility = 25;
-		CanBeWished = false;
 		AttachedGod = VALPURUS;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 60;
 	}
 
 	Config ICE;
@@ -526,10 +564,10 @@ solid
 		Color = rgb16(160, 60, 32);
 		NameStem = "dragon hide";
 		Flexibility = 5;
-		CanBeWished = false;
 		IsGolemMaterial = true;
-		AttachedGod = CRUENTUS;
+		AttachedGod = SILVA;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 40;
 	}
 
 	Config ARCANITE;
@@ -545,8 +583,9 @@ solid
 		IsMetal = true;
 		AttachedGod = SOPHOS;
 		Flexibility = 3;
-		CanBeWished = false;
 		IsImmuneToAcid = true;
+		HardenedMaterial = MITHRIL;
+		IntelligenceRequirement = 25;
 	}
 
 	Config ILLITHIUM;
@@ -561,8 +600,8 @@ solid
 		NameStem = "illithium";
 		IsMetal = true;
 		AttachedGod = LEGIFER;
-		CanBeWished = false;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 30;
 	}
 
 	Config BALSA_WOOD;
@@ -576,6 +615,7 @@ solid
 		AttachedGod = SILVA;
 		Flexibility = 2;
 		NaturalForm = stick;
+		IntelligenceRequirement = 5;
 	}
 
 	Config PINE_WOOD;
@@ -588,6 +628,7 @@ solid
 		NameStem = "pine";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 5;
 	}
 
 	Config FIR_WOOD;
@@ -600,6 +641,7 @@ solid
 		NameStem = "fir";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 5;
 	}
 
 	Config BIRCH_WOOD;
@@ -612,6 +654,7 @@ solid
 		NameStem = "birch";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 5;
 	}
 
 	Config OAK_WOOD;
@@ -625,6 +668,7 @@ solid
 		NameStem = "oak";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 10;
 	}
 
 	Config TEAK_WOOD;
@@ -637,6 +681,7 @@ solid
 		NameStem = "teak";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 10;
 	}
 
 	Config EBONY_WOOD;
@@ -650,6 +695,7 @@ solid
 		NameStem = "ebony";
 		AttachedGod = SILVA;
 		NaturalForm = stick;
+		IntelligenceRequirement = 15;
 	}
 
 	Config OCTIRON;
@@ -664,14 +710,14 @@ solid
 		NameStem = "octiron";
 		IsMetal = true;
 		AttachedGod = SOPHOS;
-		CanBeWished = false;
 		Flexibility = 2;
 		IsImmuneToAcid = true;
+		IntelligenceRequirement = 45;
 	}
 
 	Config BLUE_CRYSTAL;
 	{
-		StrengthValue = 130;
+		StrengthValue = 140;
 		ConsumeType = CT_MINERAL; /* correct someday */
 		Density = 2000;
 		IsGolemMaterial = true;
@@ -687,6 +733,8 @@ solid
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
 		PriceModifier = 8000;
+		HardenedMaterial = GREEN_CRYSTAL;
+		IntelligenceRequirement = 25;
 	}
 
 	Config PURPLE_CRYSTAL;
@@ -707,11 +755,13 @@ solid
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
 		PriceModifier = 8000;
+		HardenedMaterial = BLUE_CRYSTAL;
+		IntelligenceRequirement = 25;
 	}
 
 	Config GREEN_CRYSTAL;
 	{
-		StrengthValue = 130;
+		StrengthValue = 150;
 		ConsumeType = CT_MINERAL; /* correct someday */
 		Density = 2000;
 		IsGolemMaterial = true;
@@ -727,6 +777,7 @@ solid
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
 		PriceModifier = 8000;
+		IntelligenceRequirement = 25;
 	}
 
 	Config DARK_GRASS;
@@ -1005,6 +1056,16 @@ gas
 		Effect = EFFECT_GOOD_WONDER_STAFF_VAPOUR;
 		BreatheMessage = "It smells oddly intelligent here.";
 	}
+
+	Config FART;
+	{
+		Color = rgb16(120, 70, 40);
+		NameStem = "brown gas";
+		Alpha = 150;
+		AttachedGod = SILVA;
+		BreatheMessage = "Ugh. It smells horrible here.";
+		IsScary = true;
+	}
 }
 
 liquid
@@ -1020,7 +1081,6 @@ liquid
 	{
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
-		CanBeWished = false;
 		NutritionValue = 500;
 		PriceModifier = 2500;
 		NameStem = "ommel urine";
@@ -1173,7 +1233,6 @@ liquid
 		StrengthValue = 1;
 		NutritionValue = 500;
 		Color = rgb16(160, 0, 0);
-		CanBeWished = false;
 		NameStem = "troll blood";
 		Alpha = 175;
 		Flexibility = 40;
@@ -1262,6 +1321,17 @@ liquid
 		Alpha = 175;
 		AttachedGod = SILVA;
 		RustModifier = 100;
+	}
+
+	Config PEA_SOUP;
+	{
+		StrengthValue = 5;
+		NutritionValue = 250;
+		Color = rgb16(0, 200, 0);
+		NameStem = "pea soup";
+		Effect = EFFECT_PEA_SOUP;
+		ConsumeEndMessage = CEM_PEA_SOUP;
+		AttachedGod = SEGES;
 	}
 }
 
@@ -1666,6 +1736,8 @@ ironalloy /* metals that rust */
 		NameStem = "iron";
 		Article = "an";
 		RustModifier = 100;
+		HardenedMaterial = STEEL;
+		IntelligenceRequirement = 10;
 	}
 
 	Config STEEL;
@@ -1680,6 +1752,8 @@ ironalloy /* metals that rust */
 		IsMetal = true;
 		AttachedGod = LORICATUS;
 		RustModifier = 75;
+		HardenedMaterial = METEORIC_STEEL;
+		IntelligenceRequirement = 15;
 	}
 
 	Config METEORIC_STEEL;
@@ -1694,6 +1768,8 @@ ironalloy /* metals that rust */
 		IsMetal = true;
 		AttachedGod = LORICATUS;
 		RustModifier = 50;
+		HardenedMaterial = ADAMANT;
+		IntelligenceRequirement = 20;
 	}
 
 	Config ADAMANT;
@@ -1710,7 +1786,7 @@ ironalloy /* metals that rust */
 		IsMetal = true;
 		AttachedGod = LORICATUS;
 		IsSparkling = true;
-		CanBeWished = false;
 		RustModifier = 25;
+		IntelligenceRequirement = 45;
 	}
 }

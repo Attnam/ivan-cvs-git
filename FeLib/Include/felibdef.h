@@ -21,12 +21,39 @@ const ulong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 
 #define FPI 3.1415926535897932384626433832795
 
-template <class type> inline type Max(type X, type Y) { return X >= Y ? X : Y; }
-template <class type> inline type Max(type X, type Y, type Z) { return Max(Max(X, Y), Z); }
-template <class type> inline type Min(type X, type Y) { return X <= Y ? X : Y; }
-template <class type> inline type Min(type X, type Y, type Z) { return Min(Min(X, Y), Z); }
-template <class type> inline type Limit(type Value, type Minimum, type Maximum) { return Min(Max(Value, Minimum), Maximum); }
-template <class type> inline type HypotSquare(type X, type Y) { return X * X + Y * Y; }
+template <class type>
+inline type Max(type X, type Y) { return X >= Y ? X : Y; }
+
+template <class type> inline type Max(type X, type Y, type Z)
+{
+  return X >= Y ? (X >= Z ? X : Z) : (Y >= Z ? Y : Z);
+}
+
+template <class type>
+inline type Min(type X, type Y) { return X <= Y ? X : Y; }
+
+template <class type> inline type Min(type X, type Y, type Z)
+{
+  return X <= Y ? (X <= Z ? X : Z) : (Y <= Z ? Y : Z);
+}
+
+template <class type>
+inline type HypotSquare(type X, type Y) { return X * X + Y * Y; }
+
+template <class type>
+inline type Limit(type Value, type Minimum, type Maximum)
+{
+  return Value >= Minimum ? Value <= Maximum ? Value : Maximum : Minimum;
+}
+
+template <class type>
+inline void LimitRef(type& Value, type Minimum, type Maximum)
+{
+  if(Value <= Minimum)
+    Value = Minimum;
+  else if(Value >= Maximum)
+    Value = Maximum;
+}
 
 template <class type> inline void Swap(type& X, type& Y)
 {
@@ -38,19 +65,44 @@ template <class type> inline void Swap(type& X, type& Y)
 inline color16 GetRed16(color16 Color) { return Color >> 8 & 0xF8; }
 inline color16 GetGreen16(color16 Color) { return Color >> 3 & 0xFC; }
 inline color16 GetBlue16(color16 Color) { return Color << 3 & 0xF8; }
-inline color16 MakeRGB16(int Red, int Green, int Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
 
-inline color16 EditRGB16(color16 Color, int Red, int Green, int Blue) { return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF), Limit(GetGreen16(Color) + Green, 0, 0xFF), Limit(GetBlue16(Color) + Blue, 0, 0xFF)); }
+inline color16 MakeRGB16(int Red, int Green, int Blue)
+{
+  return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F);
+}
 
-inline color16 MakeShadeColor(color16 Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
+/*inline color16 EditRGB16(color16 Color, int Red, int Green, int Blue)
+{
+  return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF),
+		   Limit(GetGreen16(Color) + Green, 0, 0xFF),
+		   Limit(GetBlue16(Color) + Blue, 0, 0xFF));
+}*/
+
+inline color16 MakeShadeColor(color16 Color)
+{
+  return MakeRGB16(GetRed16(Color) / 3,
+		   GetGreen16(Color) / 3,
+		   GetBlue16(Color) / 3);
+}
 
 inline color24 GetRed24(color24 Color) { return Color >> 16 & 0xFF; }
 inline color24 GetGreen24(color24 Color) { return Color >> 8 & 0xFF; }
 inline color24 GetBlue24(color24 Color) { return Color & 0xFF; }
-inline color24 MakeRGB24(int Red, int Green, int Blue) { return (Red << 16 & 0xFF0000) | (Green << 8 & 0xFF00) | (Blue & 0xFF); }
 
-inline int GetMaxColor24(color24 Color) { return Max(GetRed24(Color), GetGreen24(Color), GetBlue24(Color)); }
-inline int GetMinColor24(color24 Color) { return Min(GetRed24(Color), GetGreen24(Color), GetBlue24(Color)); }
+inline color24 MakeRGB24(int Red, int Green, int Blue)
+{
+  return (Red << 16 & 0xFF0000) | (Green << 8 & 0xFF00) | (Blue & 0xFF);
+}
+
+inline int GetMaxColor24(color24 Color)
+{
+  return Max(GetRed24(Color), GetGreen24(Color), GetBlue24(Color));
+}
+
+inline int GetMinColor24(color24 Color)
+{
+  return Min(GetRed24(Color), GetGreen24(Color), GetBlue24(Color));
+}
 
 #define NONE 0
 #define MIRROR 1
@@ -138,5 +190,9 @@ inline int GetMinColor24(color24 Color) { return Min(GetRed24(Color), GetGreen24
 
 #define SKIP_FIRST 1
 #define ALLOW_END_FAILURE 2
+
+#define MAX_RAND 0x7FFFFFFF
+
+#define TRANSPARENT_PALETTE_INDEX 191
 
 #endif

@@ -699,7 +699,7 @@ void valpurus::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, 100, true);
-      PLAYER->EditExperience(WISDOM, 1000);
+      PLAYER->EditExperience(WISDOM, 300, 1 << 11);
 
       if(Relation > 500 && !(RAND() % 5))
 	{
@@ -719,7 +719,7 @@ void valpurus::Pray()
       AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, 20, false);
-      PLAYER->EditExperience(WISDOM, -250);
+      PLAYER->EditExperience(WISDOM, -50, 1 << 10);
 
       if(Relation < -500 && !(RAND() % 25))
 	{
@@ -743,7 +743,7 @@ void mortifer::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, 100, true);
-      PLAYER->EditExperience(WISDOM, 1000);
+      PLAYER->EditExperience(WISDOM, 300, 1 << 11);
 
       if(Relation > 500 && !(RAND() % 5))
 	{
@@ -763,7 +763,7 @@ void mortifer::Pray()
       AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, 20, false);
-      PLAYER->EditExperience(WISDOM, -250);
+      PLAYER->EditExperience(WISDOM, -50, 1 << 10);
 
       if(Relation < -500 && !(RAND() % 5))
 	{
@@ -912,7 +912,7 @@ void scabies::PrayGoodEffect()
     }
 
   if(!Success)
-    PLAYER->PolymorphRandomly(250, 1000, 1000 + RAND() % 1000);
+    PLAYER->PolymorphRandomly(2500, 10000, 1000 + RAND() % 1000);
 }
 
 void scabies::PrayBadEffect()

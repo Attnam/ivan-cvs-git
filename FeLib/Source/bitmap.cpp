@@ -6,6 +6,7 @@
 #include "save.h"
 #include "allocate.h"
 #include "femath.h"
+#include "colorbit.h"
 
 /* Blitting must be as fast as possible, even if no optimizations are used;
  * therefore we can't use inline functions inside loops, since they may be left
@@ -55,11 +56,13 @@ else\
   int DestRed = (DestCol & 0xF800);\
   Red = (((Red - DestRed) * Alpha >> 8) + DestRed) & 0xF800;\
 }
+
 #define NEW_APPLY_ALPHA_GREEN()\
 {\
   int DestGreen = (DestCol & 0x7E0);\
   Green = (((Green - DestGreen) * Alpha >> 8) + DestGreen) & 0x7E0;\
 }
+
 #define NEW_APPLY_ALPHA_BLUE()\
 {\
   int DestBlue = (DestCol & 0x1F);\
@@ -334,7 +337,7 @@ void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int
 	  memcpy(DestImage[0], SrcImage[0], XSizeTimesYSize * sizeof(packedcolor16));
 	else
 	  {
-	    int Bytes = Width * sizeof(packedcolor16);
+	    const int Bytes = Width * sizeof(packedcolor16);
 
 	    for(int y = 0; y < Height; ++y)
 	      memcpy(&DestImage[DestY + y][DestX], &SrcImage[SourceY + y][SourceX], Bytes);
@@ -364,8 +367,12 @@ void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int
     case FLIP:
       {
 	DestY += Height - 1;
+	const int Bytes = Width * sizeof(packedcolor16);
 
 	for(int y = 0; y < Height; ++y)
+	  memcpy(&DestImage[DestY - y][DestX], &SrcImage[SourceY + y][SourceX], Bytes);
+
+	/*for(int y = 0; y < Height; ++y)
 	  {
 	    const ulong* SrcPtr = reinterpret_cast<const ulong*>(&SrcImage[SourceY + y][SourceX]);
 	    const ulong* EndPtr = SrcPtr + (Width >> 1);
@@ -376,7 +383,7 @@ void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int
 
 	    if(Width & 1)
 	      *reinterpret_cast<packedcolor16*>(DestPtr) = *reinterpret_cast<const packedcolor16*>(SrcPtr);
-	  }
+	  }*/
 
 	break;
       }
@@ -1353,52 +1360,55 @@ void bitmap::AlphaBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int 
     }
 }
 
-void bitmap::CreateFlames(int Frame, color16 MaskColor)
+/* Only works for 16x16 pictures :( */
+
+void bitmap::CreateFlames(rawbitmap* RawBitmap, vector2d RawPos, ulong SeedNFlags, int Frame)
 {
-  int* FlameLowestPoint = new int[XSize];
-  int* FlameTop = new int[XSize];
-  int* FlamePhase = new int[XSize];
-  int x, y;
   femath::SaveSeed();
-  femath::SetSeed(0x666);
+  femath::SetSeed(SeedNFlags);
+  int FlameTop[16], FlameBottom[16], FlamePhase[16];
+  int x, y;
 
-  for(x = 0; x < XSize; ++x)
+  for(x = 0; x < 16; ++x)
     {
-      if(GetPixel(x, 0) == MaskColor && GetPixel(x, 1) == MaskColor)
-	{
-	  FlameLowestPoint[x] = NO_FLAME;
+      FlameBottom[x] = NO_FLAME;
 
-	  for(int y = 1; y < YSize - 1; ++y)
-	    if(GetPixel(x, y) == MaskColor && GetPixel(x, y + 1) != MaskColor)
+      for(y = 0; y < 16; ++y)
+	if(GetPixel(x, y) != TRANSPARENT_COLOR)
+	  {
+	    if(1 << RawBitmap->GetMaterialColorIndex(RawPos.X + x, RawPos.Y + y) & SeedNFlags)
 	      {
-		FlameLowestPoint[x] = y;
-
-		if(FlameLowestPoint[x] >= 4)
-		  FlameTop[x] = (FlameLowestPoint[x] >> 1) - (RAND() % (FlameLowestPoint[x] >> 1)) - 1;
-		else
-		  FlameTop[x] = 0;
-
 		FlamePhase[x] = RAND_16;
-		break;
+
+		if(y > 1)
+		  {
+		    FlameBottom[x] = y - 1;
+
+		    if(y >= 5)
+		      FlameTop[x] = (y - (RAND_32 * y >> 5)) >> 1;
+		    else
+		      FlameTop[x] = 0;
+		  }
+		else
+		  {
+		    FlameBottom[x] = 1;
+		    FlameTop[x] = 0;
+		  }
 	      }
-	}
-      else
-	{
-	  FlameLowestPoint[x] = 1;
-	  FlameTop[x] = 0;
-	  FlamePhase[x] = RAND_16;
-	}
+
+	    break;
+	  }
     }
 
-  for(x = 0; x < XSize; ++x)
+  for(x = 0; x < 16; ++x)
     {
-      if(FlameLowestPoint[x] != NO_FLAME)
+      if(FlameBottom[x] != NO_FLAME)
 	{
 	  int Phase = (Frame + FlamePhase[x]) & 15;
-	  int Length = FlameLowestPoint[x] - FlameTop[x];
-	  int Top = FlameLowestPoint[x] - Length + Phase * (15 - Phase) * Length / 56;
+	  int Length = FlameBottom[x] - FlameTop[x];
+	  int Top = FlameBottom[x] - Length + Phase * (15 - Phase) * Length / 56;
 
-	  for(y = Top; y <= FlameLowestPoint[x]; ++y)
+	  for(y = Top; y <= FlameBottom[x]; ++y)
 	    {
 	      int Pos = y - Top;
 	      PowerPutPixel(x, y, MakeRGB16(255, 255 - (Pos << 7) / Length, 0), 127 + (Pos << 6) / Length, AVERAGE_PRIORITY);
@@ -1407,9 +1417,6 @@ void bitmap::CreateFlames(int Frame, color16 MaskColor)
     }
 
   femath::LoadSeed();
-  delete [] FlameLowestPoint;
-  delete [] FlameTop;
-  delete [] FlamePhase;
 }
 
 void bitmap::CreateSparkle(vector2d SparklePos, int Frame)
@@ -1540,8 +1547,8 @@ bool bitmap::CreateLightning(vector2d StartPos, vector2d Direction, int MaxLengt
       if(Direction.Y < 0 || (!Direction.Y && RAND() & 1))
 	Move.Y = -Move.Y;
 
-      Move.X = Limit(Move.X, -StartPos.X, XSize - StartPos.X - 1);
-      Move.Y = Limit(Move.Y, -StartPos.Y, XSize - StartPos.Y - 1);
+      LimitRef(Move.X, -StartPos.X, XSize - StartPos.X - 1);
+      LimitRef(Move.Y, -StartPos.Y, XSize - StartPos.Y - 1);
 
       if(Counter < 10 && ((!Move.Y && !LastMove.Y) || (Move.Y && LastMove.Y && (Move.X << 10) / Move.Y == (LastMove.X << 10) / LastMove.Y)))
 	{

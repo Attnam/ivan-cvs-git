@@ -26,11 +26,11 @@ character* protosystem::BalancedCreateMonster()
 
 	      if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
 		{
-		  configid ConfigID(Type, ConfigData[c]->Config);
-		  const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-
-		  if(DataBase->IsUnique && DangerID.HasBeenGenerated)
+		  if(DataBase->IsUnique
+		  && DataBase->Flags & HAS_BEEN_GENERATED)
 		    continue;
+
+		  configid ConfigID(Type, ConfigData[c]->Config);
 
 		  if(c >= 100)
 		    {
@@ -38,16 +38,24 @@ character* protosystem::BalancedCreateMonster()
 		      continue;
 		    }
 
+		  const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+
 		  if(!DataBase->IgnoreDanger)
 		    {
 		      double Danger = DangerID.EquippedDanger;
 
-		      if(Danger > 99.0 || Danger < 0.01 || (DataBase->IsUnique && Danger < 3.0))
+		      if(Danger > 99.0
+		      || Danger < 0.0011
+		      || (DataBase->IsUnique && Danger < 3.0))
 			continue;
 
-		      double DangerModifier = DataBase->DangerModifier == 100 ? Danger : Danger * 100 / DataBase->DangerModifier;
+		      double DangerModifier
+		      = DataBase->DangerModifier == 100
+		      ? Danger
+		      : Danger * 100 / DataBase->DangerModifier;
 
-		      if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
+		      if(DangerModifier < MinDifficulty
+		      || DangerModifier > MaxDifficulty)
 			continue;
 		    }
 
@@ -68,9 +76,14 @@ character* protosystem::BalancedCreateMonster()
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
 	  character* Monster = Proto->Clone(Chosen.Config);
 
-	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && (Monster->IsUnique() || (Monster->GetTimeToKill(PLAYER, true) > 5000 && PLAYER->GetTimeToKill(Monster, true) < 75000))))
+	  if(c >= 100
+	  || ((Monster->GetFrequency() == 10000
+	    || Monster->GetFrequency() > RAND() % 10000)
+	   && (Monster->IsUnique()
+	    || (Monster->GetTimeToKill(PLAYER, true) > 5000
+	     && PLAYER->GetTimeToKill(Monster, true) < 75000))))
 	    {
-	      game::SignalGeneration(Chosen);
+	      Monster->SignalGeneration();
 	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 	      return Monster;
 	    }
@@ -218,15 +231,20 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
 	    {
 	      const character::database* DataBase = ConfigData[c];
 
-	      if(!DataBase->IsAbstract && DataBase->CanBeGenerated && DataBase->CanBeWished && !DataBase->IsUnique && (DataBase->Frequency == 10000 || DataBase->Frequency > RAND() % 10000))
+	      if(!DataBase->IsAbstract
+	      && DataBase->CanBeGenerated
+	      && DataBase->CanBeWished
+	      && !DataBase->IsUnique
+	      && (DataBase->Frequency == 10000
+	       || DataBase->Frequency > RAND() % 10000))
 		{
 		  configid ConfigID(Type, DataBase->Config);
 
-		  if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
+		  if((MinDanger > 0 || MaxDanger < 1000000) && c < 25)
 		    {
 		      const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 		      double RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
-		      int Danger = int(DataBase->DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / DataBase->DangerModifier);
+		      int Danger = int(DataBase->DangerModifier == 100 ? RawDanger * 1000 : RawDanger * 100000 / DataBase->DangerModifier);
 
 		      if(Danger < MinDanger || Danger > MaxDanger)
 			continue;
@@ -240,13 +258,13 @@ character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialF
       if(Possible.empty())
 	{
 	  MinDanger = MinDanger > 0 ? Max(MinDanger * 3 >> 2, 1) : 0;
-	  MaxDanger = MaxDanger < 10000 ? Min(MaxDanger * 5 >> 2, 9999) : 10000;
+	  MaxDanger = MaxDanger < 1000000 ? Min(MaxDanger * 5 >> 2, 999999) : 1000000;
 	  continue;
 	}
 
       configid Chosen = Possible[RAND() % Possible.size()];
       Monster = protocontainer<character>::GetProto(Chosen.Type)->Clone(Chosen.Config, SpecialFlags);
-      game::SignalGeneration(Chosen);
+      Monster->SignalGeneration();
       Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
     }
 
@@ -348,7 +366,18 @@ character* protosystem::CreateMonster(const festring& What, int SpecialFlags, bo
   std::pair<const character::prototype*, int> ID = SearchForProto<character>(What, Output);
 
   if(ID.first)
-    return ID.first->Clone(ID.second, SpecialFlags);
+    {
+      character* Char = ID.first->Clone(ID.second, SpecialFlags);
+
+      if(false)//!Char->HasBeenSeen())// && !game::WizardModeIsActive())
+	{
+	  ADD_MESSAGE("You have no idea what this creature is like.");
+	  delete Char;
+	  return 0;
+	}
+      else
+	return Char;
+    }
   else
     return 0;
 }
@@ -420,9 +449,9 @@ void protosystem::CreateEveryItem(itemvector& Item)
 
 void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 {
-  for(int c = 1; c < protocontainer<material>::Size; ++c)
+  for(int c1 = 1; c1 < protocontainer<material>::Size; ++c1)
     {
-      const material::prototype* Proto = protocontainer<material>::GetProto(c);
+      const material::prototype* Proto = protocontainer<material>::GetProto(c1);
       const material::database*const* ConfigData = Proto->GetConfigData();
       int ConfigSize = Proto->GetConfigSize();
 
@@ -442,7 +471,9 @@ void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
       int ConfigSize = Proto->GetConfigSize();
 
       for(int c2 = 0; c2 < ConfigSize; ++c2)
-	if(!ConfigData[c2]->IsAbstract && !ConfigData[c2]->IsUnique && ConfigData[c2]->CanBeGenerated)
+	if(!ConfigData[c2]->IsAbstract
+	&& !ConfigData[c2]->IsUnique
+	&& ConfigData[c2]->CanBeGenerated)
 	  EnemyVector.push_back(Proto->Clone(ConfigData[c2]->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
     }
 }
@@ -512,5 +543,65 @@ void protosystem::Initialize()
       database* DataBase = ItemConfigData[c];
       TotalItemPossibility += DataBase->Possibility;
       DataBase->PartialPossibilitySum = TotalItemPossibility;
+    }
+}
+
+void protosystem::InitCharacterDataBaseFlags()
+{
+  for(int c1 = 1; c1 < protocontainer<character>::GetSize(); ++c1)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c1);
+      character::database** ConfigData = Proto->ConfigData;
+      int ConfigSize = Proto->GetConfigSize();
+
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	if(!ConfigData[c2]->AutomaticallySeen)
+	  ConfigData[c2]->Flags = 0;
+	else
+	  ConfigData[c2]->Flags = HAS_BEEN_SEEN;
+    }
+}
+
+void protosystem::SaveCharacterDataBaseFlags(outputfile& SaveFile)
+{
+  for(int c1 = 1; c1 < protocontainer<character>::GetSize(); ++c1)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c1);
+      const character::database*const* ConfigData = Proto->ConfigData;
+      int ConfigSize = Proto->GetConfigSize();
+
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	SaveFile << ConfigData[c2]->Flags;
+    }
+}
+
+void protosystem::LoadCharacterDataBaseFlags(inputfile& SaveFile)
+{
+  for(int c1 = 1; c1 < protocontainer<character>::GetSize(); ++c1)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c1);
+      character::database** ConfigData = Proto->ConfigData;
+      int ConfigSize = Proto->GetConfigSize();
+
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	SaveFile >> ConfigData[c2]->Flags;
+    }
+}
+
+void protosystem::CreateEverySeenCharacter(charactervector& Character)
+{
+  for(int c1 = 1; c1 < protocontainer<character>::GetSize(); ++c1)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c1);
+      const character::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
+
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->Flags & HAS_BEEN_SEEN)
+	  {
+	    character* Char = Proto->Clone(ConfigData[c2]->Config);
+	    Char->SetAssignedName("");
+	    Character.push_back(Char);
+	  }
     }
 }

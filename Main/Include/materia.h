@@ -5,24 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
-//#include <map>
-
-//#include "ivandef.h"
-
 #include "script.h"
 #include "ivandef.h"
 
 #define MAKE_MATERIAL material::MakeMaterial
 
-/*class character;
-class item;
-class entity;
-class outputfile;
-class inputfile;
-class material;
-class festring;
-class materialprototype;
-template <class type> class databasecreator;*/
 class entity;
 class materialprototype;
 template <class type> class databasecreator;
@@ -31,6 +18,7 @@ struct materialdatabase : public databasebase
 {
   typedef materialprototype prototype;
   void InitDefaults(const prototype*, int);
+  void PostProcess() { }
   const prototype* ProtoType;
   bool IsAbstract;
   int StrengthValue;
@@ -74,6 +62,9 @@ struct materialdatabase : public databasebase
   int Acidicity;
   bool IsImmuneToAcid;
   contentscript<item> NaturalForm;
+  int HardenedMaterial;
+  int IntelligenceRequirement;
+  bool IsScary;
 };
 
 class materialprototype
@@ -164,6 +155,8 @@ class material
   DATA_BASE_VALUE(int, Acidicity);
   DATA_BASE_BOOL(IsImmuneToAcid);
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
+  DATA_BASE_VALUE(int, HardenedMaterial);
+  DATA_BASE_VALUE(int, IntelligenceRequirement);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(GetConfig(), Volume); }
@@ -191,6 +184,7 @@ class material
   virtual void SetSkinColorIsSparkling(bool) { }
   DATA_BASE_BOOL(IsWarm);
   DATA_BASE_VALUE(int, BreatheWisdomLimit);
+  DATA_BASE_BOOL(IsScary);
   virtual void SetRustLevel(int) { }
   virtual int GetRustLevel() const { return NOT_RUSTED; }
   virtual int GetRustData() const { return NOT_RUSTED; }

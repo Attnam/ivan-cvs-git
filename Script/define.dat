@@ -1,3 +1,12 @@
+/* 
+ * NOTICE!!!
+ * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
+ * don't know what you're doing. So from here on, proceed at your own risk!
+ */
+
+/* Numerical defines for other script files */
+
 #define NONE 0
 #define MIRROR 1
 #define FLIP 2
@@ -16,32 +25,6 @@
 #define BLACK 0
 
 #define TRANSPARENT_COLOR 63519
-
-#define HAS_HIT 0
-#define HAS_BLOCKED 1
-#define HAS_DODGED 2
-#define HAS_DIED 3
-#define DID_NO_DAMAGE 4
-#define HAS_FAILED 5
-
-/* ----------------------------- SATIATION LEVELS */
-#define BLOATED_LEVEL 100000
-#define SATIATED_LEVEL 50000
-#define NOT_HUNGER_LEVEL 10000
-#define HUNGER_LEVEL 2500
-
-/* ----------------------------- WEIGHT LEVELS */
-#define OVER_LOADED 0
-#define STRESSED 1
-#define BURDENED 2
-#define UNBURDENED 3
-
-/* ----------------------------- SATIATION STATUS */
-#define STARVING 0
-#define HUNGRY 1
-#define NOT_HUNGRY 2
-#define SATIATED 3
-#define BLOATED 4
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -202,6 +185,7 @@
 #define EFFECT_HOLY_BANANA 16
 #define EFFECT_EVIL_WONDER_STAFF_VAPOUR 17
 #define EFFECT_GOOD_WONDER_STAFF_VAPOUR 18
+#define EFFECT_PEA_SOUP 19
 
 /* CEM = Consume End Message */
 
@@ -216,6 +200,7 @@
 #define CEM_ANTIDOTE 8
 #define CEM_ESP 9
 #define CEM_HOLY_BANANA 10
+#define CEM_PEA_SOUP 11
 
 /* HM = Hit Message */
 
@@ -306,6 +291,7 @@
 #define MAGIC_VAPOUR (GAS_ID + 6)
 #define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
+#define FART (GAS_ID + 9)
 
 #define LIQUID_ID (4096 * 4)
 
@@ -326,6 +312,7 @@
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
 #define SULPHURIC_ACID (LIQUID_ID + 16)
 #define DOG_DROOL (LIQUID_ID + 17)
+#define PEA_SOUP (LIQUID_ID + 18)
 
 #define FLESH_ID (4096 * 5)
 
@@ -771,5 +758,7 @@
 
 #define IS_LEADER 1
 #define IS_MASTER 2
+
+#define DEPENDS_ON_DANGER 65535
 
 ; /* this line must be here */

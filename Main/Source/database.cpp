@@ -92,6 +92,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 		if(!AnalyzeData(SaveFile, Word, *ConfigDataBase))
 		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
 
+	      ConfigDataBase->PostProcess();
 	      continue;
 	    }
 
@@ -99,6 +100,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
 	}
 
+      DataBase->PostProcess();
       Configs = Proto->CreateSpecialConfigurations(TempConfig, Configs);
       Proto->ConfigData = new database*[Configs];
       Proto->ConfigSize = Configs;
@@ -344,6 +346,9 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BloodMaterial);
   ADD_MEMBER(VomitMaterial);
   ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(IsImmuneToLeprosy);
+  ADD_MEMBER(PolymorphIntelligenceRequirement);
+  ADD_MEMBER(AutomaticallySeen);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -537,6 +542,9 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(Acidicity);
   ADD_MEMBER(IsImmuneToAcid);
   ADD_MEMBER(NaturalForm);
+  ADD_MEMBER(HardenedMaterial);
+  ADD_MEMBER(IntelligenceRequirement);
+  ADD_MEMBER(IsScary);
 }
 
 template <class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

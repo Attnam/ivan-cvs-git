@@ -83,7 +83,7 @@ bool material::Effect(character* Eater, long Amount)
         Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	break;
       }
-    case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount); break;
+    case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount, 1 << 14); break;
     case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); break;
     case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
       {
@@ -97,6 +97,7 @@ bool material::Effect(character* Eater, long Amount)
         Eater->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	break;
       }
+    case EFFECT_PEA_SOUP: Eater->ReceivePeaSoup(Amount); break;
     default: return false;
     }
 
@@ -161,6 +162,7 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_ANTIDOTE: Eater->AddAntidoteConsumeEndMessage(); break;
     case CEM_ESP: Eater->AddESPConsumeMessage(); break;
     case CEM_HOLY_BANANA: Eater->AddHolyBananaConsumeEndMessage(); break;
+    case CEM_PEA_SOUP: Eater->AddPeaSoupConsumeEndMessage(); break;
     }
 }
 
@@ -170,26 +172,6 @@ material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
   Material->Load(SaveFile);
   return Material;
 }
-
-/*material* material::MakeMaterial(int Config)
-{
-  if(!Config)
-    return 0;
-
-  switch(Config >> 12)
-    {
-    case SOLID_ID >> 12: return new solid(Config, 0);
-    case ORGANIC_ID >> 12: return new organic(Config, 0);
-    case GAS_ID >> 12: return new gas(Config, 0);
-    case LIQUID_ID >> 12: return new liquid(Config, 0);
-    case FLESH_ID >> 12: return new flesh(Config, 0);
-    case POWDER_ID >> 12: return new powder(Config, 0);
-    case IRON_ALLOY_ID >> 12: return new ironalloy(Config, 0);
-    }
-
-  ABORT("Odd material configuration number %d requested!", Config);
-  return 0;
-}*/
 
 material* material::MakeMaterial(int Config, long Volume)
 {
@@ -273,7 +255,7 @@ const materialdatabase* material::GetDataBase(int Config)
 void material::FinishConsuming(character* Consumer)
 {
   if(!Consumer->IsPlayer() && GetConsumeWisdomLimit() != NO_LIMIT)
-    Consumer->EditExperience(WISDOM, 500);
+    Consumer->EditExperience(WISDOM, 100, 1 << 13); /** C **/
 
   AddConsumeEndMessage(Consumer);
 }

@@ -170,19 +170,11 @@ SOURCE=.\FeLib\Include\colorbit.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\config.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\FeLib\Include\error.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\FeLib\Include\fearray.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Include\febot.h
 # End Source File
 # Begin Source File
 

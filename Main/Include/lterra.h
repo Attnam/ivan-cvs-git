@@ -24,6 +24,7 @@ template <class type> class databasecreator;
 
 struct lterraindatabase : public databasebase
 {
+  void PostProcess() { }
   vector2d BitmapPos;
   festring Article;
   festring Adjective;

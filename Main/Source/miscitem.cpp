@@ -5,7 +5,7 @@ void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags
 void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultContainedVolume(), CUP); }
 void materialcontainer::InitMaterials(const materialscript* M, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
-int holybanana::GetSpecialFlags() const { return ST_FLAME; }
+int holybanana::GetSpecialFlags() const { return ST_FLAME_1; }
 
 color16 lantern::GetMaterialColorA(int) const { return MakeRGB16(255, 255, 240); }
 color16 lantern::GetMaterialColorB(int) const { return MakeRGB16(255, 255, 100); }
@@ -88,7 +88,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
   ADD_MESSAGE("You feel a lost soul fly by you.");
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 500);
+  Reader->EditExperience(INTELLIGENCE, 100, 1 << 12);
 }
 
 void scrollofteleportation::FinishReading(character* Reader)
@@ -101,7 +101,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->TeleportRandomly();
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 500);
+  Reader->EditExperience(INTELLIGENCE, 100, 1 << 12);
 }
 
 bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
@@ -147,91 +147,110 @@ void scrollofwishing::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 5000);
+  Reader->EditExperience(INTELLIGENCE, 400, 1 << 12);
 }
 
 void scrollofchangematerial::FinishReading(character* Reader)
 {
   if(!Reader->GetStack()->GetItems() && !Reader->EquipsSomething())
-    ADD_MESSAGE("You notice you have lost anything you wished to alter.");
-  else
     {
-      for(;;)
+      ADD_MESSAGE("You notice you have lost anything you wished to alter.");
+      return;
+    }
+
+  for(;;)
+    {
+      itemvector Item;
+      Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
+
+      if(Item.empty())
+	if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
+	  return;
+	else
+	  continue;
+
+      if(!Item[0]->IsMaterialChangeable())
 	{
-	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
-
-	  if(!Item.empty())
-	    {
-	      if(!Item[0]->IsMaterialChangeable())
-		{
-		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
-		  break;
-		}
-
-	      if(Item[0]->HandleInPairs() && Item.size() == 1)
-		{
-		  ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
-
-		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
-		    continue;
-		}
-
-	      festring Temp = game::DefaultQuestion(CONST_S("What material do you want to wish for?"),
-						    game::GetDefaultChangeMaterial());
-	      material* TempMaterial = protosystem::CreateMaterial(Temp);
-
-	      if(TempMaterial)
-		{
-		  material* MainMaterial = Item[0]->GetMainMaterial();
-		  material* SecondaryMaterial = Item[0]->GetSecondaryMaterial();
-
-		  if(Item.size() == 1)
-		    {
-		      if(!MainMaterial->IsSameAs(TempMaterial))
-			{
-			  ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item[0]->CHAR_NAME(UNARTICLED));
-
-			  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-			    Item[0]->ChangeSecondaryMaterial(TempMaterial->Clone());
-
-			  Item[0]->ChangeMainMaterial(TempMaterial);
-			}
-		      else
-			ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item[0]->CHAR_NAME(UNARTICLED));
-		    }
-		  else
-		    {
-		      if(!MainMaterial->IsSameAs(TempMaterial))
-			{
-			  ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look greatly altered.", Item[0]->CHAR_NAME(PLURAL));
-
-			  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-			    for(uint c = 0; c < Item.size(); ++c)
-			      Item[c]->ChangeSecondaryMaterial(TempMaterial->Clone());
-
-			  Item[0]->ChangeMainMaterial(TempMaterial);
-
-			  for(uint c = 1; c < Item.size(); ++c)
-			    Item[c]->ChangeMainMaterial(TempMaterial->Clone());
-			}
-		      else
-			ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look unchanged.", Item[0]->CHAR_NAME(PLURAL));
-		    }
-
-		  break;
-		}
-	      else
-		game::DrawEverythingNoBlit();
-	    }
-	  else if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
-	    return;
+	  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+	  break;
 	}
 
-      RemoveFromSlot();
-      SendToHell();
-      Reader->EditExperience(INTELLIGENCE, 2500);
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+	{
+	  ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
+
+	  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
+	    continue;
+	}
+
+      festring Temp = game::DefaultQuestion(CONST_S("What material do you want to wish for?"),
+					    game::GetDefaultChangeMaterial());
+      material* TempMaterial = protosystem::CreateMaterial(Temp);
+
+      if(!TempMaterial)
+	{
+	  game::DrawEverythingNoBlit();
+	  continue;
+	}
+
+      msgsystem::EnterBigMessageMode();
+
+      if(Item.size() == 1)
+	ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames.", Item[0]->CHAR_NAME(UNARTICLED));
+      else
+	ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames.", Item[0]->CHAR_NAME(PLURAL));
+
+      if(TempMaterial->GetIntelligenceRequirement() + 10 > Reader->GetAttribute(INTELLIGENCE))
+	{
+	  ADD_MESSAGE("But your mind is not yet strong enough to summon enough %s for the change.", TempMaterial->GetName(false, false).CStr());
+	  delete TempMaterial;
+	  msgsystem::LeaveBigMessageMode();
+	  break;
+	}
+
+      material* MainMaterial = Item[0]->GetMainMaterial();
+      material* SecondaryMaterial = Item[0]->GetSecondaryMaterial();
+
+      if(Item.size() == 1)
+	{
+	  if(!MainMaterial->IsSameAs(TempMaterial))
+	    {
+	      ADD_MESSAGE("As you lift it again it looks greatly altered.");
+
+	      if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+		Item[0]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
+	      Item[0]->ChangeMainMaterial(TempMaterial);
+	    }
+	  else
+	    ADD_MESSAGE("As you lift it again it looks unchanged.");
+	}
+      else
+	{
+	  if(!MainMaterial->IsSameAs(TempMaterial))
+	    {
+	      ADD_MESSAGE("As you lift them again they look greatly altered.");
+
+	      if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+		for(uint c = 0; c < Item.size(); ++c)
+		  Item[c]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
+	      Item[0]->ChangeMainMaterial(TempMaterial);
+
+	      for(uint c = 1; c < Item.size(); ++c)
+		Item[c]->ChangeMainMaterial(TempMaterial->Clone());
+	    }
+	  else
+	    ADD_MESSAGE("As you lift them again they look unchanged.");
+	}
+
+      msgsystem::LeaveBigMessageMode();
+      break;
     }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 350, 1 << 12);
 }
 
 item* brokenbottle::BetterVersion() const
@@ -348,8 +367,8 @@ void holybook::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
     {
-      PLAYER->EditExperience(INTELLIGENCE, 100);
-      PLAYER->EditExperience(WISDOM, 250);
+      PLAYER->EditExperience(INTELLIGENCE, 50, 1 << 12);
+      PLAYER->EditExperience(WISDOM, 100, 1 << 12);
 
       if(GetMasterGod()->IsKnown())
 	{
@@ -580,7 +599,7 @@ void scrollofcharging::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 1000);
+  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
 }
 
 void bananapeels::StepOnEffect(character* Stepper)
@@ -650,7 +669,7 @@ void scrolloftaming::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 1000);
+  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
 }
 
 void mine::Load(inputfile& SaveFile)
@@ -1031,19 +1050,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % 3))
-    {
-      if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).CStr());
-      else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
-
-      Victim->ReceiveBodyPartDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
-      return false;
-    }
-
-  if(!(RAND() % 5))
+  if(!(RAND() % (GetBaseDamage() << 1)))
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONE_INDEX);
@@ -1056,7 +1063,7 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % 10))
+  if(!(RAND() % (GetBaseDamage() << 2)))
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONE_INDEX);
@@ -1068,6 +1075,18 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
 	ADD_MESSAGE("%s is freed.", Victim->CHAR_NAME(DEFINITE));
 
       return true;
+    }
+
+  if(!(RAND() % 3))
+    {
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).CStr());
+      else if(Victim->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
+
+      Victim->ReceiveBodyPartDamage(0, GetBaseDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
+      return false;
     }
 
   if(Victim->IsPlayer())
@@ -1116,7 +1135,7 @@ void beartrap::StepOnEffect(character* Stepper)
       if(Stepper->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->ReceiveBodyPartDamage(0, GetBaseDamage() << 1, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
       Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0);
     }
 }
@@ -1322,7 +1341,7 @@ bool wand::Zap(character* Zapper, vector2d, int Direction)
       return true;
     }
 
-  Zapper->EditExperience(PERCEPTION, 250);
+  Zapper->EditExperience(PERCEPTION, 100, 1 << 10);
   festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
   (GetLevel()->*level::GetBeam(GetBeamStyle()))(Zapper, DeathMSG, Zapper->GetPos(), GetBeamColor(), GetBeamEffect(), Direction, GetBeamRange());
   ++TimesUsed;
@@ -1514,7 +1533,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
-      Reader->EditExperience(INTELLIGENCE, 1000);
+      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
     }
 }
 
@@ -1585,7 +1604,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
-      Reader->EditExperience(INTELLIGENCE, 1000);
+      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
     }
 }
 
@@ -1751,7 +1770,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 1000);
+  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
 }
 
 item* brokenbottle::Fix()
@@ -2147,7 +2166,7 @@ bool holybanana::Zap(character* Zapper, vector2d, int Direction)
   if(Charges > TimesUsed)
     {
       ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
-      Zapper->EditExperience(PERCEPTION, 250);
+      Zapper->EditExperience(PERCEPTION, 10, 1 << 10);
       festring DeathMSG = CONST_S("killed by ") + GetName(INDEFINITE);
       (GetLevel()->*level::GetBeam(PARTICLE_BEAM))(Zapper, DeathMSG, Zapper->GetPos(), YELLOW, BEAM_FIRE_BALL, Direction, 50);
       ++TimesUsed;
@@ -2164,7 +2183,18 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, int
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+      int DamageBonus = int(GetDamageBonus());
+
+      if(DamageBonus)
+	{
+	  if(DamageBonus > 0)
+	    Entry << '+';
+
+	  Entry << DamageBonus;
+	}
+
+      Entry << ", " << GetBaseToHitValueDescription();
 
       if(!IsBroken())
 	Entry << ", " << GetStrengthValueDescription();
@@ -2509,21 +2539,129 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
       ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
       Level->BlurMemory();
       Reader->BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
-      Reader->EditExperience(INTELLIGENCE, -5000);
+      Reader->EditExperience(INTELLIGENCE, -100, 1 << 12);
     }
   else if(!Squares)
     {
       ADD_MESSAGE("You feel a sudden urge to imagine the dark void of a starless night sky.");
-      Reader->EditExperience(INTELLIGENCE, 250);
+      Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
     }
   else
     {
       ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
       game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), Reader->GetPos(), 0, 0, false);
-      Reader->EditExperience(INTELLIGENCE, 1000);
+      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
     }
 
   delete TempMaterial;
   Level->CalculateLuminances();
   game::SendLOSUpdateRequest();
+}
+
+int beartrap::GetBaseDamage() const
+{
+  int Modifier = GetMainMaterial()->GetStrengthValue() / 50;
+  Modifier *= Modifier;
+  Modifier >>= 1;
+  return Modifier ? Modifier + RAND() % Modifier : 1;
+}
+
+void scrollofhardenmaterial::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->GetItems() && !Reader->EquipsSomething())
+    {
+      ADD_MESSAGE("You notice you have lost anything you wished to alter.");
+      return;
+    }
+
+  for(;;)
+    {
+      itemvector Item;
+      Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to harden?"), NO_MULTI_SELECT|SELECT_PAIR, &item::CanBeHardened);
+
+      if(Item.empty())
+	if(game::BoolQuestion(CONST_S("Really cancel read? [y/N]")))
+	  return;
+	else
+	  continue;
+
+      if(!Item[0]->IsMaterialChangeable())
+	{
+	  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+	  break;
+	}
+
+      if(Item[0]->HandleInPairs() && Item.size() == 1)
+	{
+	  ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
+
+	  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
+	    continue;
+	}
+
+      msgsystem::EnterBigMessageMode();
+
+      if(Item.size() == 1)
+	ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames.", Item[0]->CHAR_NAME(UNARTICLED));
+      else
+	ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames.", Item[0]->CHAR_NAME(PLURAL));
+
+      int Config = Item[0]->GetMainMaterial()->GetHardenedMaterial();
+
+      if(!Config)
+	{
+	  /* Should not be possible */
+
+	  if(Item.size() == 1)
+	    ADD_MESSAGE("But it is already as hard as it can get.");
+	  else
+	    ADD_MESSAGE("But they are already as hard as they can get.");
+
+	  msgsystem::LeaveBigMessageMode();
+	  break;
+	}
+
+      material* TempMaterial = MAKE_MATERIAL(Config);
+
+      if(TempMaterial->GetIntelligenceRequirement() > Reader->GetAttribute(INTELLIGENCE))
+	{
+	  delete TempMaterial;
+	  ADD_MESSAGE("But your mind is not yet strong enough to harden %s.", Item.size() == 1 ? "it" : "them");
+	  msgsystem::LeaveBigMessageMode();
+	  break;
+	}
+
+      material* MainMaterial = Item[0]->GetMainMaterial();
+      material* SecondaryMaterial = Item[0]->GetSecondaryMaterial();
+
+      if(Item.size() == 1)
+	{
+	  ADD_MESSAGE("As you lift it again it looks much harder.");
+
+	  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+	    Item[0]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
+	  Item[0]->ChangeMainMaterial(TempMaterial);
+	}
+      else
+	{
+	  ADD_MESSAGE("As you lift them again they look much harder.");
+
+	  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+	    for(uint c = 0; c < Item.size(); ++c)
+	      Item[c]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
+	  Item[0]->ChangeMainMaterial(TempMaterial);
+
+	  for(uint c = 1; c < Item.size(); ++c)
+	    Item[c]->ChangeMainMaterial(TempMaterial->Clone());
+	}
+
+      msgsystem::LeaveBigMessageMode();
+      break;
+    }
+
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
 }

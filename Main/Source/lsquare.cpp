@@ -575,6 +575,7 @@ void lsquare::AddCharacter(character* Guy)
   SignalEmitationIncrease(Guy->GetEmitation());
   Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
+  Guy->CheckIfSeen();
 }
 
 void lsquare::Clean()
@@ -943,7 +944,12 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 void lsquare::ReceiveVomit(character* Who, liquid* Liquid)
 {
   if(!GetOLTerrain() || !GetOLTerrain()->ReceiveVomit(Who, Liquid))
-    SpillFluid(Who, Liquid);
+    {
+      SpillFluid(Who, Liquid);
+
+      if(RoomIndex)
+	GetRoom()->ReceiveVomit(Who);
+    }
 }
 
 void lsquare::SetTemporaryEmitation(color24 What)
@@ -1107,6 +1113,9 @@ void lsquare::SignalSeen(ulong Tick)
 
   UpdateMemorized();
   UpdateMemorizedDescription();
+
+  if(Character)
+    Character->CheckIfSeen();
 }
 
 void lsquare::DrawMemorized()
@@ -1142,7 +1151,14 @@ void lsquare::DrawMemorizedCharacter()
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
-  return (!(Who->GetMoveType() & FLY) && Stack->IsDangerousForAIToStepOn(Who)) || IsDangerousForAIToBreathe(Who);
+  return (!(Who->GetMoveType() & FLY)
+       && Stack->IsDangerousForAIToStepOn(Who))
+      || IsDangerousForAIToBreathe(Who);
+}
+
+bool lsquare::IsScaryForAIToStepOn(const character* Who) const
+{
+  return IsScaryForAIToBreathe(Who);
 }
 
 stack* lsquare::GetStackOfAdjacentSquare(int I) const
@@ -1280,7 +1296,7 @@ bool lsquare::Polymorph(character* Zapper, const festring&, int)
       if(Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
-      Character->PolymorphRandomly(1, 9999, 5000 + RAND() % 5000);
+      Character->PolymorphRandomly(1, 999999, 500 + RAND() % 500);
     }
 
   return false;
@@ -1739,6 +1755,15 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
     if(S->IsDangerousForAIToBreathe(Who))
+      return true;
+
+  return false;
+}
+
+bool lsquare::IsScaryForAIToBreathe(const character* Who) const
+{
+  for(const smoke* S = Smoke; S; S = S->Next)
+    if(S->IsScaryForAIToBreathe(Who))
       return true;
 
   return false;

@@ -35,7 +35,7 @@ class ABSTRACT_ITEM
   bool IsUnique() const { return Unique; }
   void SetIsUnique(bool What) { Unique = What; }
   virtual void DropEquipment() { }
-  virtual bool ApplyExperience() { return false; }
+  //virtual bool ApplyExperience() { return false; }
   virtual void InitSpecialAttributes() { }
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*);
@@ -261,14 +261,14 @@ class ABSTRACT_ITEM
   void Hit(character*, vector2d, int, bool = false);
   int GetAttribute(int) const;
   bool EditAttribute(int, int);
-  void EditExperience(int, long, bool = true);
-  virtual bool ApplyExperience();
-  void SetStrength(int What) { Strength = What; }
-  void SetDexterity(int What) { Dexterity = What; }
+  void EditExperience(int, double, double);
+  //virtual bool ApplyExperience();
+  void SetStrength(int What) { StrengthExperience = What * EXP_MULTIPLIER; }
+  void SetDexterity(int What) { DexterityExperience = What * EXP_MULTIPLIER; }
   virtual void InitSpecialAttributes();
   virtual void Mutate();
-  int GetDexterity() const { return Dexterity; }
-  int GetStrength() const { return Strength; }
+  /*int GetDexterity() const { return Dexterity; }
+  int GetStrength() const { return Strength; }*/
   virtual arm* GetPairArm() const = 0;
   long GetWieldedAPCost() const;
   long GetUnarmedAPCost() const;
@@ -289,7 +289,7 @@ class ABSTRACT_ITEM
   bool TwoHandWieldIsActive() const;
   double GetBlockChance(double) const;
   int GetBlockCapability() const;
-  void WieldedSkillHit();
+  void WieldedSkillHit(int);
   double GetBlockValue() const;
   void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
@@ -309,6 +309,8 @@ class ABSTRACT_ITEM
   virtual double GetTypeDamage(const character*) const;
   virtual item* GetArmorToReceiveFluid(bool) const;
   virtual void CopyAttributes(const bodypart*);
+  double GetStrengthExperience() const { return StrengthExperience; }
+  double GetDexterityExperience() const { return DexterityExperience; }
  protected:
   virtual sweaponskill*& GetCurrentSWeaponSkill() const = 0;
   virtual void VirtualConstructor(bool);
@@ -316,10 +318,10 @@ class ABSTRACT_ITEM
   gearslot WieldedSlot;
   gearslot GauntletSlot;
   gearslot RingSlot;
-  int Strength;
-  int Dexterity;
-  long StrengthExperience;
-  long DexterityExperience;
+  /*int Strength;
+  int Dexterity;*/
+  double StrengthExperience;
+  double DexterityExperience;
   int BaseUnarmedStrength;
   double Damage;
   double ToHitValue;
@@ -391,12 +393,12 @@ class ABSTRACT_ITEM
   int GetKickMaxDamage() const;
   int GetAttribute(int) const;
   bool EditAttribute(int, int);
-  void EditExperience(int, long, bool = true);
-  virtual bool ApplyExperience();
-  void SetStrength(int What) { Strength = What; }
+  void EditExperience(int, double, double);
+  //virtual bool ApplyExperience();
+  /*void SetStrength(int What) { Strength = What; }
   void SetAgility(int What) { Agility = What; }
   int GetAgility() const { return Agility; }
-  int GetStrength() const { return Strength; }
+  int GetStrength() const { return Strength; }*/
   virtual void InitSpecialAttributes();
   virtual void Mutate();
   long GetKickAPCost() const { return KickAPCost; }
@@ -417,14 +419,16 @@ class ABSTRACT_ITEM
   void AddAttackInfo(felist&) const;
   virtual item* GetArmorToReceiveFluid(bool) const;
   virtual void CopyAttributes(const bodypart*);
+  double GetStrengthExperience() const { return StrengthExperience; }
+  double GetAgilityExperience() const { return AgilityExperience; }
  protected:
   virtual void VirtualConstructor(bool);
   void UpdateLegArmorPictures(graphicdata&, graphicdata&, int) const;
   gearslot BootSlot;
-  int Strength;
-  int Agility;
-  long StrengthExperience;
-  long AgilityExperience;
+  /*int Strength;
+  int Agility;*/
+  double StrengthExperience;
+  double AgilityExperience;
   int BaseKickStrength;
   double KickDamage;
   double KickToHitValue;
@@ -675,6 +679,7 @@ class ITEM
  protected:
   virtual int GetClassAnimationFrames() const { return 64; }
   virtual vector2d GetBitmapPos(int) const;
+  virtual int GetSpecialFlags() const { return normaltorso::GetSpecialFlags()|ST_FLAME_2; }
 );
 
 class ITEM

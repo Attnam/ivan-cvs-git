@@ -32,6 +32,7 @@ struct databasebase { int Config; };
 #define BLOATED_LEVEL 150000
 #define SATIATED_LEVEL 100000
 #define NOT_HUNGER_LEVEL 25000
+#define VERY_HUNGER_LEVEL 10000
 #define HUNGER_LEVEL 5000
 
 #define OVER_LOADED 0
@@ -40,13 +41,14 @@ struct databasebase { int Config; };
 #define UNBURDENED 3
 
 #define STARVING 0
-#define HUNGRY 1
-#define NOT_HUNGRY 2
-#define SATIATED 3
-#define BLOATED 4
-#define OVER_FED 5
+#define VERY_HUNGRY 1
+#define HUNGRY 2
+#define NOT_HUNGRY 3
+#define SATIATED 4
+#define BLOATED 5
+#define OVER_FED 6
 
-#define STATES 19
+#define STATES 20
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -67,6 +69,7 @@ struct databasebase { int Config; };
 #define SEARCHING 65536
 #define GAS_IMMUNITY 131072
 #define LEVITATION 262144
+#define LEPROSY 524288
 
 #define TORSO 1
 #define HEAD 2
@@ -160,6 +163,8 @@ struct databasebase { int Config; };
 #define GR_CURSOR 2
 #define GR_SYMBOL 3
 
+/* SpecialFlags for graphics system. No one knows what "ST_" means... */
+
 #define ST_NORMAL 0
 #define ST_RIGHT_ARM 8
 #define ST_LEFT_ARM 16
@@ -169,13 +174,18 @@ struct databasebase { int Config; };
 #define ST_OTHER_BODYPART 48
 #define ST_WIELDED 56
 #define ST_CLOAK 64
-#define ST_FLAME 128
-#define ST_LIGHTNING 256
-#define ST_DISALLOW_R_COLORS 512
-#define ST_WOBBLE 1024
-#define ST_WOBBLE_HORIZONTALLY_BIT 2048
+#define ST_LIGHTNING 128
+#define ST_DISALLOW_R_COLORS 256
+#define ST_WOBBLE 512
+#define ST_WOBBLE_HORIZONTALLY_BIT 1024
 #define ST_WOBBLE_VERTICALLY ST_WOBBLE
 #define ST_WOBBLE_HORIZONTALLY (ST_WOBBLE|ST_WOBBLE_HORIZONTALLY_BIT)
+#define ST_FLAME_1 2048
+#define ST_FLAME_2 4096
+#define ST_FLAME_3 8192
+#define ST_FLAME_4 16384
+#define ST_FLAMES (ST_FLAME_1|ST_FLAME_2|ST_FLAME_3|ST_FLAME_4)
+#define ST_FLAME_SHIFT 11
 
 #define SILHOUETTE_X_SIZE 48
 #define SILHOUETTE_Y_SIZE 64
@@ -276,6 +286,7 @@ struct databasebase { int Config; };
 #define EFFECT_HOLY_BANANA 16
 #define EFFECT_EVIL_WONDER_STAFF_VAPOUR 17
 #define EFFECT_GOOD_WONDER_STAFF_VAPOUR 18
+#define EFFECT_PEA_SOUP 19
 
 /* CEM = Consume End Message */
 
@@ -290,6 +301,7 @@ struct databasebase { int Config; };
 #define CEM_ANTIDOTE 8
 #define CEM_ESP 9
 #define CEM_HOLY_BANANA 10
+#define CEM_PEA_SOUP 11
 
 /* HM = Hit Message */
 
@@ -336,6 +348,8 @@ struct databasebase { int Config; };
 #define DIR_ERROR 0xFF
 
 #define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0
+
+#define MAX_EQUIPMENT_SLOTS 13
 
 #define HELMET_INDEX 0
 #define AMULET_INDEX 1
@@ -671,5 +685,15 @@ struct databasebase { int Config; };
 #define CONDITION_COLORS 5
 
 #define NATURAL_MATERIAL_FORM 0x7FFF
+
+#define EXP_DIVISOR 2e-8
+#define EXP_MULTIPLIER 5e+7
+#define MIN_EXP 5e+7
+#define MAX_EXP 5e+10
+
+#define HAS_BEEN_GENERATED 1
+#define HAS_BEEN_SEEN 2
+
+#define DEPENDS_ON_DANGER 0xFFFF
 
 #endif

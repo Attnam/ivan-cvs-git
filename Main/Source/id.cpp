@@ -2,7 +2,6 @@
 #include "game.h"
 #include "god.h"
 #include "festring.h"
-#include "ivandef.h"
 
 void id::AddNameSingular(festring& String, bool Articled) const
 {

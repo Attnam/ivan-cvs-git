@@ -24,6 +24,7 @@
 #include "bitmap.h"
 #include "colorbit.h"
 #include "miscitem.h"
+#include "confdef.h"
 
 #include "team.cpp"
 #include "char.cpp"

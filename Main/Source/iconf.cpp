@@ -1,7 +1,6 @@
 #include "iconf.h"
 #include "game.h"
 #include "feio.h"
-#include "ivandef.h"
 #include "area.h"
 #include "graphics.h"
 #include "bitmap.h"

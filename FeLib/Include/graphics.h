@@ -17,7 +17,7 @@
 #define FONT graphics::GetDefaultFont()
 
 class bitmap;
-class colorizablebitmap;
+class rawbitmap;
 class festring;
 
 class graphics
@@ -38,7 +38,7 @@ class graphics
   static int GetResY() { return ResY; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(const festring&);
-  static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
+  static rawbitmap* GetDefaultFont() { return DefaultFont; }
   static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
  private:
   static void (*SwitchModeHandler)();
@@ -101,7 +101,7 @@ class graphics
   static int ResX;
   static int ResY;
   static int ColorDepth;
-  static colorizablebitmap* DefaultFont;
+  static rawbitmap* DefaultFont;
 };
 
 #endif

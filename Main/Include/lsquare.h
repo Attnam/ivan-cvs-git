@@ -155,6 +155,7 @@ class lsquare : public square
   lsquare* GetNeighbourLSquare(int) const;
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
   bool IsDangerousForAIToStepOn(const character*) const;
+  bool IsScaryForAIToStepOn(const character*) const;
   stack* GetStackOfAdjacentSquare(int) const;
   void KickAnyoneStandingHereAway();
   bool IsDark() const;
@@ -199,6 +200,7 @@ class lsquare : public square
   void FinalProcessForBone();
   bool IsFreezed() const { return !!(Flags & FREEZED); }
   bool IsDangerousForAIToBreathe(const character*) const;
+  bool IsScaryForAIToBreathe(const character*) const;
   int GetWalkability() const;
   int GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual int GetSquareWalkability() const { return GetWalkability(); }

@@ -253,6 +253,7 @@ void materialscript::Save(outputfile& SaveFile) const
 void materialscript::Load(inputfile& SaveFile)
 {
   script::Load(SaveFile);
+  Config = 0;
   SaveFile >> (ushort&)Config;
 }
 

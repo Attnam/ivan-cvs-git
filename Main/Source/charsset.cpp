@@ -33,6 +33,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "bitmap.h"
 #include "lterras.h"
 #include "save.h"
+#include "database.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

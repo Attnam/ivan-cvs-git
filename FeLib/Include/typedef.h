@@ -18,5 +18,6 @@ typedef int alpha;
 typedef uchar packedalpha;
 typedef int priority;
 typedef uchar packedpriority;
+typedef uchar paletteindex;
 
 #endif

@@ -18,11 +18,11 @@ class weaponskill
   weaponskill() : Level(0), Hits(0), HitCounter(0) { }
   int GetLevel() const { return Level; }
   int GetHits() const { return Hits; }
-  uint GetHitCounter() const { return HitCounter; }
+  //uint GetHitCounter() const { return HitCounter; }
   bool Tick();
-  bool AddHit();
+  //bool AddHit();
   bool AddHit(int);
-  bool SubHit();
+  //bool SubHit();
   bool SubHit(int);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -42,7 +42,7 @@ class cweaponskill : public weaponskill
   virtual ulong GetUnuseTickMap(int) const;
   virtual int GetUnusePenaltyMap(int) const;
   const char* GetName(int) const;
-  int GetBonus() const { return 100 + 10 * Level; }
+  int GetBonus() const { return 1000 + 50 * Level; }
   void AddLevelUpMessage(int) const;
   void AddLevelDownMessage(int) const;
 };
@@ -67,7 +67,7 @@ class sweaponskill : public weaponskill
   virtual int GetLevelMap(int) const;
   virtual ulong GetUnuseTickMap(int) const;
   virtual int GetUnusePenaltyMap(int) const;
-  int GetBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
+  int GetBonus() const { return Level ? 1150 + 25 * (Level - 1) : 1000; }
   void AddLevelUpMessage(const char*) const;
   void AddLevelDownMessage(const char*) const;
   virtual void Save(outputfile&) const;

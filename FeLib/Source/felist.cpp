@@ -444,7 +444,7 @@ void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
     }
 }
 
-void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, color16 Color, uint PageLength)
+void felist::CreateQuickDrawFontCaches(rawbitmap* Font, color16 Color, uint PageLength)
 {
   if(PageLength < 2)
     return;

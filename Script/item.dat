@@ -1,9 +1,11 @@
 /* 
  * NOTICE!!!
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
+ * don't know what you're doing. So from here on, proceed at your own risk!
  */
 
-/* Numeric item data loaded during game startup */
+/* Numerical item data loaded during game startup */
 
 /* Default values: */
 
@@ -149,8 +151,8 @@ can /* materialcontainer-> */
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
-	SecondaryMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
-	MaterialConfigChances = { 3, 750, 50, 25; }
+	SecondaryMaterialConfig = { 4, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH, PEA_SOUP; }
+	MaterialConfigChances = { 4, 750, 50, 25, 10; }
 	Roundness = 60;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
@@ -1106,7 +1108,7 @@ scrollofwishing /* scroll-> */
 {
 	Possibility = 3;
 	CanBeWished = false;
-	Price = 2000;
+	Price = 3000;
 	IsPolymorphSpawnable = false;
 	PostFix = "of wishing";
 	CanBeCloned = false;
@@ -1328,12 +1330,12 @@ wand
 
 scrollofchangematerial /* scroll-> */
 {
-	Possibility = 25;
-	Price = 1000;
+	Possibility = 5;
+	Price = 2000;
 	PostFix = "of change material";
 	Alias == "SoCM";
 	AttachedGod = LORICATUS;
-	ReadDifficulty = 1000;
+	ReadDifficulty = 2000;
 }
 
 avatarofvalpurus
@@ -2402,12 +2404,16 @@ beartrap
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 128;
 	IsPolymorphable = false;
+	MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+	MaterialConfigChances = { 5, 500, 100, 50, 25, 1; }
 
 	Config BROKEN;
 	{
 		Possibility = 10;
 		BitmapPos = 48, 48;
 		Price = 0;
+		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+		MaterialConfigChances = { 4, 100, 50, 25, 1; }
 	}
 }
 
@@ -3116,4 +3122,14 @@ stick
 	Roundness = 10;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 352;
+}
+
+scrollofhardenmaterial /* scroll-> */
+{
+	Possibility = 50;
+	Price = 500;
+	PostFix = "of harden material";
+	Alias == "SoHM";
+	AttachedGod = LORICATUS;
+	ReadDifficulty = 500;
 }

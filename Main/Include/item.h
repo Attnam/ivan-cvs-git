@@ -19,7 +19,7 @@ template <class type> class databasecreator;
 
 typedef std::vector<item*> itemvector;
 typedef std::vector<fluid*> fluidvector;
-typedef bool (colorizablebitmap::*pixelpredicate)(vector2d) const;
+typedef bool (rawbitmap::*pixelpredicate)(vector2d) const;
 typedef bool (material::*materialpredicate)() const;
 typedef bool (item::*sorter)(const character*) const;
 
@@ -30,6 +30,7 @@ struct itemdatabase : public databasebase
   typedef itemprototype prototype;
   void InitDefaults(const prototype*, int);
   bool AllowRandomInstantiation() const;
+  void PostProcess() { }
   const prototype* ProtoType;
   /* Maintained by configcontainer */
   long PartialPossibilitySum;
@@ -226,6 +227,7 @@ class item : public object
   virtual bool IsEnchantable(const character*) const { return CanBeEnchanted(); }
   virtual bool IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
   virtual bool IsDecosAdShirt(const character*) const { return false; }
+  bool CanBeHardened(const character*) const;
   virtual bool HasLock(const character*) const { return false; }
   virtual bool IsOnGround() const;
   int GetResistance(int) const;
@@ -352,7 +354,7 @@ class item : public object
   virtual void DropEquipment() { }
   virtual bool IsDangerousForAI(const character*) const { return false; } 
   virtual bool IsDangerous() const { return false; } 
-  void WeaponSkillHit();
+  void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
   void SpecialGenerationHandler();
   item* Duplicate();
@@ -372,7 +374,9 @@ class item : public object
   virtual void SetEnchantment(int) { }
   virtual void EditEnchantment(int) { }
   virtual void SignalEnchantmentChange();
-  virtual int GetBonus() const { return 100; }
+  //virtual int GetBonus() const { return 100; }
+  virtual double GetTHVBonus() const { return 0.; }
+  virtual double GetDamageBonus() const { return 0.; }
   virtual void DrawContents(const character*) { }
   virtual bool IsBroken() const;
   virtual int GetEnchantment() const { return 0; }
@@ -436,7 +440,7 @@ class item : public object
   void RemoveFluid(fluid*);
   void AddFluid(liquid*, int = 0);
   virtual bool IsAnimated() const;
-  const colorizablebitmap* GetRawPicture() const;
+  const rawbitmap* GetRawPicture() const;
   void DrawFluidGearPictures(bitmap*, vector2d, color24, int, bool) const;
   void DrawFluidBodyArmorPictures(bitmap*, vector2d, color24, int, bool) const;
   void CheckFluidGearPictures(vector2d, int, bool);

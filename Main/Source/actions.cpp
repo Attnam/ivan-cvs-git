@@ -27,8 +27,8 @@ void faint::Handle()
     Terminate(true);
   else
     {
-      GetActor()->EditExperience(ARM_STRENGTH, -2);
-      GetActor()->EditExperience(LEG_STRENGTH, -2);
+      GetActor()->EditExperience(ARM_STRENGTH, -50, 1 << 2);
+      GetActor()->EditExperience(LEG_STRENGTH, -50, 1 << 2);
     }
 }
 
@@ -152,8 +152,8 @@ void rest::Handle()
     Terminate(true);
   else
     {
-      GetActor()->EditExperience(DEXTERITY, -1);
-      GetActor()->EditExperience(AGILITY, -1);
+      GetActor()->EditExperience(DEXTERITY, -25, 1 << 1);
+      GetActor()->EditExperience(AGILITY, -25, 1 << 1);
     }
 }
 
@@ -211,9 +211,9 @@ void dig::Handle()
 
   int Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
   Terrain->EditHP(-Max(Damage, 1));
-  Actor->EditExperience(ARM_STRENGTH, 10);
+  Actor->EditExperience(ARM_STRENGTH, 150, 1 << 5);
   Actor->EditAP(-100000 / APBonus(Actor->GetAttribute(DEXTERITY)));
-  Actor->EditNP(-30);
+  Actor->EditNP(-500);
 
   if(Terrain->GetHP() <= 0)
     {
@@ -301,7 +301,7 @@ void study::Handle()
     }
 
   if(game::CompareLightToInt(GetActor()->GetLSquareUnder()->GetLuminance(), 115) < 0)
-    GetActor()->EditExperience(PERCEPTION, -1);
+    GetActor()->EditExperience(PERCEPTION, -50, 1 << 1);
 
   if(!Counter)
     {

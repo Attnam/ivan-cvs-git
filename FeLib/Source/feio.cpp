@@ -220,7 +220,7 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 
    The function returns ABORTED (when user aborts with esc) or NORMAL_EXIT. */
 
-int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool Fade, bool AllowExit)
+int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool Fade, bool AllowExit, stringkeyhandler StringKeyHandler)
 {
   if(Fade)
     {
@@ -274,6 +274,9 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 	    TooShort = true;
 	    continue;
 	  }
+
+      if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
+	continue;
 
       if(LastKey >= 0x20 && Input.GetSize() < MaxLetters && (LastKey != ' ' || !Input.IsEmpty()))
 	Input << char(LastKey);

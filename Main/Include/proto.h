@@ -72,6 +72,10 @@ class protosystem
   static void CreateEveryMaterial(std::vector<material*>&);
 #endif
   static void Initialize();
+  static void InitCharacterDataBaseFlags();
+  static void SaveCharacterDataBaseFlags(outputfile&);
+  static void LoadCharacterDataBaseFlags(inputfile&);
+  static void CreateEverySeenCharacter(charactervector&);
  private:
   static itemdatabase** ItemConfigData;
   static int ItemConfigDataSize;

@@ -79,6 +79,7 @@
 #define MAGIC_VAPOUR (GAS_ID + 6)
 #define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
+#define FART (GAS_ID + 9)
 
 #define LIQUID_ID (4 << 12)
 
@@ -99,6 +100,7 @@
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
 #define SULPHURIC_ACID (LIQUID_ID + 16)
 #define DOG_DROOL (LIQUID_ID + 17)
+#define PEA_SOUP (LIQUID_ID + 18)
 
 #define FLESH_ID (5 << 12)
 

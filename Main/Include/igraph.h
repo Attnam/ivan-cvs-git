@@ -11,7 +11,7 @@
 #include "femath.h"
 
 class bitmap;
-class colorizablebitmap;
+class rawbitmap;
 class outputfile;
 class inputfile;
 class festring;
@@ -25,29 +25,34 @@ class festring;
 struct graphicid
 {
   graphicid() { }
-  bool operator<(const graphicid& GI) const { return memcmp(this, &GI, sizeof(graphicid)) < 0; }
+  bool operator<(const graphicid&) const;
   ushort BitmapPosX NO_ALIGNMENT;
   ushort BitmapPosY NO_ALIGNMENT;
   packedcolor16 Color[4] NO_ALIGNMENT;
   uchar Frame NO_ALIGNMENT;
   uchar FileIndex NO_ALIGNMENT;
   ushort SpecialFlags NO_ALIGNMENT;
-  packedalpha BaseAlpha NO_ALIGNMENT;
   packedalpha Alpha[4] NO_ALIGNMENT;
+  packedalpha BaseAlpha NO_ALIGNMENT;
   uchar SparkleFrame NO_ALIGNMENT;
   uchar SparklePosX NO_ALIGNMENT;
   uchar SparklePosY NO_ALIGNMENT;
   packedcolor16 OutlineColor NO_ALIGNMENT;
   packedalpha OutlineAlpha NO_ALIGNMENT;
-  ushort Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
   vector2d Position NO_ALIGNMENT;
   uchar RustData[4] NO_ALIGNMENT;
+  ushort Seed NO_ALIGNMENT;
 };
 
 #ifdef VC
 #pragma pack()
 #endif
+
+inline bool graphicid::operator<(const graphicid& GI) const
+{
+  return memcmp(this, &GI, sizeof(graphicid)) < 0;
+}
 
 outputfile& operator<<(outputfile&, const graphicid&);
 inputfile& operator>>(inputfile&, graphicid&);
@@ -90,10 +95,10 @@ class igraph
   static void DrawCursor(vector2d);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
-  static const colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
-  static const colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
-  static const colorizablebitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
-  static const colorizablebitmap* GetRawGraphic(int I) { return RawGraphic[I]; }
+  static const rawbitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
+  static const rawbitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
+  static const rawbitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
+  static const rawbitmap* GetRawGraphic(int I) { return RawGraphic[I]; }
   static const int* GetBodyBitmapValidityMap(int);
   static bitmap* GetFlagBuffer() { return FlagBuffer; }
   static const bitmap* GetMenuGraphic() { return Menu; }
@@ -101,11 +106,11 @@ class igraph
   static void UnLoadMenu();
   static bitmap* GetSilhouetteCache(int I1, int I2) { return SilhouetteCache[I1][I2]; }
  private:
-  static void EditBodyPartTile(bitmap*, int);
-  static vector2d RotateTile(bitmap*, vector2d, int);
+  static void EditBodyPartTile(rawbitmap*, rawbitmap*, vector2d, int);
+  static vector2d RotateTile(rawbitmap*, rawbitmap*, vector2d, vector2d, int);
   static void CreateBodyBitmapValidityMaps();
   static void CreateSilhouetteCaches();
-  static colorizablebitmap* RawGraphic[RAW_TYPES];
+  static rawbitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];
   static bitmap* TileBuffer;
   static const char* RawGraphicFileName[];
@@ -116,6 +121,7 @@ class igraph
   static int** BodyBitmapValidityMap;
   static bitmap* Menu;
   static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
+  static rawbitmap* ColorizeBuffer[2];
 };
 
 #endif

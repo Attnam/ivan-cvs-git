@@ -346,3 +346,18 @@ Game abuser
 	exp.
 
 Panda
+
+Mind worm
+
+	'As the writhing, teeming mass of Mind Worms swarmed over the outer
+	perimeter, we saw the defenders recoil in horror. "Stay calm! Use
+	your flame guns!" shouted the commander, but to no avail. It is well
+	known that the Mind Worm Boil uses psychic terror to paralyze its
+	prey, and then carefully implants ravenous larvae in the brains of
+	its still-conscious victims. Even with the best weapons, only the
+	most disciplined troops can resist this horrific attack.
+
+		-- Lady Deirdre Skye,
+		"Our Secret War"'
+
+	(from Sid Meier's Alpha Centauri)

@@ -345,7 +345,7 @@ bool fountain::Drink(character* Drinker)
 	      Drinker->EditNP(100);
 
 	      if(!(RAND() % 5))
-		Drinker->PolymorphRandomly(0, 10000, 2500 + RAND() % 2500);
+		Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
 	      else
 		Drinker->ChangeRandomAttribute(-1);
 
@@ -567,7 +567,7 @@ bool altar::SitOn(character* Sitter)
 	{
 	  GetMasterGod()->AdjustRelation(2);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), 1, true);
-	  PLAYER->EditExperience(WISDOM, 10);
+	  PLAYER->EditExperience(WISDOM, 50, 1 << 6);
 	}
     }
   else
@@ -583,7 +583,7 @@ bool altar::SitOn(character* Sitter)
 
 	GetMasterGod()->AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(GetMasterGod(), 10, true);
-	PLAYER->EditExperience(WISDOM, 250);
+	PLAYER->EditExperience(WISDOM, 300, 1 << 11);
       }
 
   Sitter->EditAP(-1000);

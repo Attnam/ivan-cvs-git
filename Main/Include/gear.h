@@ -32,12 +32,12 @@ class ITEM
   virtual int GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(int);
   virtual void EditEnchantment(int);
-  virtual double GetWeaponStrength() const;
+  //virtual double GetWeaponStrength() const;
   virtual int GetStrengthValue() const;
-  virtual int GetEffectBonus() const;
-  virtual int GetAPBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
-  virtual int GetBonus() const;
+  //virtual int GetBonus() const;
+  virtual double GetTHVBonus() const;
+  virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
   virtual void TryToRust(long);
@@ -264,7 +264,8 @@ class ITEM
   virtual long GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
-  virtual int GetBonus() const;
+  //virtual int GetBonus() const;
+  virtual double GetTHVBonus() const;
 );
 
 class ITEM

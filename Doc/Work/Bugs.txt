@@ -72,3 +72,5 @@ It seems to be possible to occasionally find traps by saveloading next to them.
 Mushrooms can be kicked around.
 If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.
 Carnivorous plants can move by displacing pets.
+EditAttribute() probably doesn't update all caches correctly.
+Polymorph default bugs if the string is very long.

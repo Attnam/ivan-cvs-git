@@ -11,7 +11,7 @@
 
 class outputfile;
 class inputfile;
-class colorizablebitmap;
+class rawbitmap;
 class bitmap;
 class festring;
 struct felistentry;
@@ -42,7 +42,7 @@ class felist
   void EditSelected(int What) { Selected += What; }
   bool DrawPage(bitmap*) const;
   void Pop();
-  static void CreateQuickDrawFontCaches(colorizablebitmap*, color16, uint);
+  static void CreateQuickDrawFontCaches(rawbitmap*, color16, uint);
   void PrintToFile(const festring&);
   void SetPos(vector2d What) { Pos = What; }
   void SetWidth(uint What) { Width = What; }

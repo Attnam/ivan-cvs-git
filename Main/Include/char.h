@@ -32,12 +32,15 @@ inline int APBonus(int Attribute)
   return Attribute >= 10 ? 90 + Attribute : 50 + Attribute * 5;
 }
 
-struct characterdatabase : databasebase
+struct characterdatabase : public databasebase
 {
   typedef characterprototype prototype;
   void InitDefaults(const prototype*, int);
   bool AllowRandomInstantiation() const { return CanBeGenerated && !IsUnique; }
+  void PostProcess();
   const prototype* ProtoType;
+  double NaturalExperience[ATTRIBUTES];
+  ulong Flags;
   bool IsAbstract;
   bool CanRead;
   bool IsCharmable;
@@ -71,16 +74,18 @@ struct characterdatabase : databasebase
   bool DestroysWalls;
   bool CanMove;
   bool HasSecondaryMaterial;
-  int DefaultArmStrength;
-  int DefaultLegStrength;
-  int DefaultDexterity;
-  int DefaultAgility;
+  bool IsImmuneToLeprosy;
+  bool AutomaticallySeen;
   int DefaultEndurance;
   int DefaultPerception;
   int DefaultIntelligence;
   int DefaultWisdom;
   int DefaultCharisma;
   int DefaultMana;
+  int DefaultArmStrength;
+  int DefaultLegStrength;
+  int DefaultDexterity;
+  int DefaultAgility;
   long DefaultMoney;
   int TotalSize;
   int Sex;
@@ -164,12 +169,14 @@ struct characterdatabase : databasebase
   int MoveType;
   int BloodMaterial;
   int VomitMaterial;
+  int PolymorphIntelligenceRequirement;
 };
 
 class characterprototype
 {
  public:
   friend class databasecreator<character>;
+  friend class protosystem;
   characterprototype(characterprototype*, character* (*)(int, int), const char*);
   character* Clone(int Config = 0, int SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   character* CloneAndLoad(inputfile&) const;
@@ -211,7 +218,7 @@ class character : public entity, public id
   bool ReadItem(item*);
   bool TestForPickup(item*) const;
   void ThrowItem(int, item*);
-  bool TryMove(vector2d, bool = true);
+  bool TryMove(vector2d, bool, bool);
   bool HasHeadOfElpuri() const;
   bool HasGoldenEagleShirt() const;
   bool HasPetrussNut() const;
@@ -232,13 +239,13 @@ class character : public entity, public id
   void AddMissMessage(const character*) const;
   void AddPrimitiveHitMessage(const character*, const festring&, const festring&, int) const;
   void AddWeaponHitMessage(const character*, const item*, int, bool = false) const;
-  virtual void ApplyExperience(bool = false);
+  //virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
   void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true);
   void HasBeenHitByItem(character*, item*, int, double, int);
   void Hunger();
-  void Move(vector2d, bool = false);
+  void Move(vector2d, bool, bool = false);
   virtual bool MoveRandomly();
   void ReceiveNutrition(long);
   void ReceiveOmmelUrine(long);
@@ -364,17 +371,18 @@ class character : public entity, public id
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(int) { }
+  double GetNaturalExperience(int Identifier) const { return DataBase->NaturalExperience[Identifier]; }
   DATA_BASE_VALUE(int, Config);
-  DATA_BASE_VALUE(int, DefaultArmStrength);
-  DATA_BASE_VALUE(int, DefaultLegStrength);
-  DATA_BASE_VALUE(int, DefaultDexterity);
-  DATA_BASE_VALUE(int, DefaultAgility);
   DATA_BASE_VALUE(int, DefaultEndurance);
   DATA_BASE_VALUE(int, DefaultPerception);
   DATA_BASE_VALUE(int, DefaultIntelligence);
   DATA_BASE_VALUE(int, DefaultWisdom);
   DATA_BASE_VALUE(int, DefaultCharisma);
   DATA_BASE_VALUE(int, DefaultMana);
+  DATA_BASE_VALUE(int, DefaultArmStrength);
+  DATA_BASE_VALUE(int, DefaultLegStrength);
+  DATA_BASE_VALUE(int, DefaultDexterity);
+  DATA_BASE_VALUE(int, DefaultAgility);
   DATA_BASE_VALUE(long, DefaultMoney);
   DATA_BASE_VALUE(int, TotalSize);
   DATA_BASE_BOOL(CanRead);
@@ -435,7 +443,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(long, ClassStates);
   DATA_BASE_VALUE(const fearray<festring>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
-  DATA_BASE_VALUE(int, AttributeBonus);
+  //DATA_BASE_VALUE(int, AttributeBonus);
   DATA_BASE_VALUE(const fearray<long>&, KnownCWeaponSkills);
   DATA_BASE_VALUE(const fearray<long>&, CWeaponSkillHits);
   DATA_BASE_VALUE(int, RightSWeaponSkillHits);
@@ -470,6 +478,8 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanMove);
   DATA_BASE_VALUE(int, BloodMaterial);
   DATA_BASE_VALUE(int, VomitMaterial);
+  DATA_BASE_BOOL(IsImmuneToLeprosy);
+  DATA_BASE_BOOL(AutomaticallySeen);
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -478,10 +488,10 @@ class character : public entity, public id
   virtual void Kick(lsquare*, int, bool = false) = 0;
   virtual int GetAttribute(int) const;
   virtual bool EditAttribute(int, int);
-  virtual void EditExperience(int, long);
-  bool CheckForAttributeIncrease(int&, long&, bool = false);
-  bool CheckForAttributeDecrease(int&, long&, bool = false);
-  bool RawEditAttribute(int&, int&, bool = false) const;
+  virtual void EditExperience(int, double, double);
+  /*bool CheckForAttributeIncrease(int&, long&, bool = false);
+  bool CheckForAttributeDecrease(int&, long&, bool = false);*/
+  bool RawEditAttribute(double&, int) const;
   void DrawPanel(bool) const;
   virtual int DrawStats(bool) const = 0;
   virtual int GetCarryingStrength() const = 0;
@@ -632,7 +642,7 @@ class character : public entity, public id
   virtual bool SpecialKickEffect(character*, vector2d, int, int, bool) { return false; }
   virtual bool SpecialBiteEffect(character*, vector2d, int, int, bool) { return false; }
   bool HitEffect(character*, item*, vector2d, int, int, int, bool);
-  void WeaponSkillHit(item*, int);
+  void WeaponSkillHit(item*, int, int);
   character* Duplicate() const;
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   bool TryToEquip(item*);
@@ -701,7 +711,7 @@ class character : public entity, public id
   festring GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(int) const { return 0; }
-  bool HealHitPoint();
+  bodypart* HealHitPoint();
   void CreateHomeData();
   room* GetHomeRoom() const;
   bool HomeDataIsValid() const;
@@ -777,7 +787,7 @@ class character : public entity, public id
   lsquare* GetNaturalNeighbourLSquare(int I) const { return character::GetNeighbourLSquare(I); }
   void SignalStepFrom(lsquare**);
   virtual void SpecialBodyDefenceEffect(character*, bodypart*, int) { }
-  virtual long GetSumOfAttributes() const;
+  virtual int GetSumOfAttributes() const;
   bool IsGoingSomeWhere() const { return GoingTo != ERROR_VECTOR; }
   virtual bool CreateRoute();
   void TerminateGoingTo();
@@ -816,6 +826,25 @@ class character : public entity, public id
   bool CheckIfTooScaredToHit(const character*) const;
   void PrintBeginLevitatingMessage() const;
   void PrintEndLevitatingMessage() const;
+  void EditDealExperience(long);
+  int RawEditExperience(double&, double, double, double) const;
+  bool IsNotImmuneToLeprosy() const;
+  virtual void LeprosyHandler();
+  virtual void TryToInfectWithLeprosy(const character*);
+  void PrintBeginLeprosyMessage() const;
+  void PrintEndLeprosyMessage() const;
+  void SignalGeneration();
+  void CheckIfSeen();
+  bool HasBeenSeen() const;
+  int GetPolymorphIntelligenceRequirement(const character*) const;
+  void RemoveAllItems();
+  int CalculateWeaponSkillHits(const character*) const;
+  void DonateEquipmentTo(character*);
+  void ReceivePeaSoup(long);
+  void AddPeaSoupConsumeEndMessage() const;
+  void CalculateMaxStamina();
+  void EditStamina(int, bool);
+  void RegenerateStamina();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -850,7 +879,7 @@ class character : public entity, public id
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
   virtual void GetAICommand();
-  bool MoveTowardsTarget();
+  bool MoveTowardsTarget(bool);
   virtual const char* FirstPersonUnarmedHitVerb() const;
   virtual const char* FirstPersonCriticalUnarmedHitVerb() const;
   virtual const char* ThirdPersonUnarmedHitVerb() const;
@@ -869,8 +898,14 @@ class character : public entity, public id
   virtual bool AttackIsBlockable(int) const { return true; }
   virtual bool AttackMayDamageArmor() const { return true; }
   virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int ModifyBodyPartHitPreference(int, int Modifier) const { return Modifier; }
+  virtual int ModifyBodyPartToHitChance(int, int Chance) const { return Chance; }
+  virtual bool CanPanicFromSeveredBodyPart() const { return true; }
+  virtual void SpecialBodyPartSeverReaction() { }
   void AttackAdjacentEnemyAI();
-  int RandomizeBabyAttribute(int);
+  double RandomizeBabyExperience(double);
+  static bool IsLimbIndex(int);
+  virtual bool AllowExperience() const { return true; }
   stack* Stack;
   long NP, AP;
   bool Player;
@@ -886,8 +921,8 @@ class character : public entity, public id
   const database* DataBase;
   int StuckToBodyPart;
   item* StuckTo; // Bad naming. Sorry.
-  int BaseAttribute[BASE_ATTRIBUTES];
-  long BaseExperience[BASE_ATTRIBUTES];
+  //int BaseAttribute[BASE_ATTRIBUTES];
+  double BaseExperience[BASE_ATTRIBUTES];
   std::list<ulong>* OriginalBodyPartID;
   entity* MotherEntity;
   character* PolymorphBackup;
@@ -917,6 +952,8 @@ class character : public entity, public id
   std::vector<vector2d> Route;
   std::set<vector2d> Illegal;
   ulong LastAcidMsgMin;
+  int Stamina;
+  int MaxStamina;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

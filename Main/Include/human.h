@@ -82,7 +82,7 @@ class ABSTRACT_CHARACTER
   virtual double GetTimeToKill(const character*, bool) const;
   virtual int GetAttribute(int) const;
   virtual bool EditAttribute(int, int);
-  virtual void EditExperience(int, long);
+  virtual void EditExperience(int, double, double);
   virtual int DrawStats(bool) const;
   virtual void Bite(character*, vector2d, int, bool = false);
   virtual int GetCarryingStrength() const;
@@ -135,7 +135,7 @@ class ABSTRACT_CHARACTER
   virtual void DetachBodyPart();
   virtual int GetRandomApplyBodyPart() const;
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
-  virtual long GetSumOfAttributes() const;
+  virtual int GetSumOfAttributes() const;
   virtual bool CheckConsume(const festring&) const;
   virtual bool CanConsume(material*) const;
   virtual bool PreProcessForBone();
@@ -143,6 +143,8 @@ class ABSTRACT_CHARACTER
   virtual void StayOn(liquid*);
   virtual head* GetVirtualHead() const { return GetHead(); }
   virtual character* CreateZombie() const;
+  virtual void LeprosyHandler();
+  virtual void DropRandomNonVitalBodypart();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
@@ -268,7 +270,11 @@ class CHARACTER
 (
   darkknight,
   humanoid,
-  ;
+ protected:
+  virtual int ModifyBodyPartHitPreference(int, int) const;
+  virtual int ModifyBodyPartToHitChance(int, int) const;
+  virtual bool CanPanicFromSeveredBodyPart() const { return false; }
+  virtual void SpecialBodyPartSeverReaction();
 );
 
 class CHARACTER
@@ -405,6 +411,7 @@ class CHARACTER
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void GetAICommand();
+  virtual bool AllowExperience() const { return false; }
   festring Description;
 );
 

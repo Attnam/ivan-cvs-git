@@ -36,6 +36,7 @@ void square::AddCharacter(character* Guy)
   Character = Guy;
   Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
+  Guy->CheckIfSeen();
 }
 
 void square::RemoveCharacter()

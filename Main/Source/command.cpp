@@ -61,6 +61,7 @@ command* commandsystem::Command[] =
   new command(&Search, "search", 's', false),
   new command(&Sit, "sit", '_', false),
   new command(&Throw, "throw", 't', false),
+  new command(&ToggleRunning, "toggle running", 'u', true),
   new command(&ForceVomit, "vomit", 'V', false),
   new command(&NOP, "wait", '.', true),
   new command(&WieldInRightArm, "wield in right arm", 'w', true),
@@ -125,7 +126,7 @@ bool commandsystem::GoUp(character* Char)
 
   if(Terrain->Enter(true))
     {
-      Char->EditExperience(LEG_STRENGTH, 20);
+      Char->EditExperience(LEG_STRENGTH, 100, 1 << 6);
       Char->EditNP(-20);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -160,7 +161,7 @@ bool commandsystem::GoDown(character* Char)
 
   if(Terrain->Enter(false))
     {
-      Char->EditExperience(AGILITY, 10);
+      Char->EditExperience(AGILITY, 100, 1 << 6);
       Char->EditNP(-10);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -450,7 +451,7 @@ bool commandsystem::Talk(character* Char)
 	}
 
       ToTalk->BeTalkedTo();
-      Char->EditExperience(CHARISMA, 5);
+      Char->EditExperience(CHARISMA, 50, 1 << 7);
       return true;
     }
   else
@@ -465,7 +466,7 @@ bool commandsystem::Talk(character* Char)
       if(Dude == Char)
 	{
 	  ADD_MESSAGE("You talk to yourself for some time.");
-	  Char->EditExperience(WISDOM, -10);
+	  Char->EditExperience(WISDOM, -50, 1 << 7);
 	  Char->EditAP(-1000);
 	  return true;
 	}
@@ -480,7 +481,7 @@ bool commandsystem::Talk(character* Char)
 	    }
 
 	  Dude->BeTalkedTo();
-	  Char->EditExperience(CHARISMA, 5);
+	  Char->EditExperience(CHARISMA, 50, 1 << 7);
 	  return true;
 	}
       else
@@ -492,8 +493,8 @@ bool commandsystem::Talk(character* Char)
 
 bool commandsystem::NOP(character* Char)
 {
-  Char->EditExperience(DEXTERITY, -10);
-  Char->EditExperience(AGILITY, -10);
+  Char->EditExperience(DEXTERITY, -25, 1 << 3);
+  Char->EditExperience(AGILITY, -25, 1 << 3);
   Char->EditAP(-Char->GetStateAPGain(1000));
   return true;
 }
@@ -720,7 +721,24 @@ bool commandsystem::Pray(character* Char)
       else
 	{
 	  if(game::BoolQuestion(CONST_S("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
-	    game::GetGod(Known[Select])->Pray();
+	    {
+	      if(Char->StateIsActivated(CONFUSED) && !(RAND() % 3))
+		{
+		  int Index;
+		  for(Index = 1 + RAND() % GODS;
+		      Index == Known[Select];
+		      Index = 1 + RAND() % GODS);
+
+		  if(game::GetGod(Index)->IsKnown())
+		    ADD_MESSAGE("You feel something went wrong in the rituals. You have accidentally prayed to %s!", game::GetGod(Index)->GetName());
+		  else
+		    ADD_MESSAGE("Your rituals were seriously incorrect. You have accidentally prayed to an unknown god, but have no idea how!");
+
+		  game::GetGod(Index)->Pray();
+		}
+	      else
+		game::GetGod(Known[Select])->Pray();
+	    }
 	  else
 	    return false;
 	}
@@ -787,7 +805,7 @@ bool commandsystem::Offer(character* Char)
 	    {
 	      Item->RemoveFromSlot();
 	      Item->SendToHell();
-	      Char->DexterityAction(5);
+	      Char->DexterityAction(5); /** C **/
 	      return true;
 	    }
 	  else
@@ -829,9 +847,9 @@ bool commandsystem::Throw(character* Char)
 	return false;
 
       Char->ThrowItem(Answer, Item);
-      Char->EditExperience(ARM_STRENGTH, 10);
-      Char->EditExperience(DEXTERITY, 10);
-      Char->EditExperience(PERCEPTION, 10);
+      Char->EditExperience(ARM_STRENGTH, 50, 1 << 8);
+      Char->EditExperience(DEXTERITY, 50, 1 << 8);
+      Char->EditExperience(PERCEPTION, 50, 1 << 8);
       Char->EditNP(-50);
       Char->DexterityAction(5);
       return true;
@@ -1096,22 +1114,27 @@ bool commandsystem::ShowWeaponSkills(character* Char)
     {
       cweaponskill* Skill = Char->GetCWeaponSkill(c);
 
-      if(Skill->GetHits())
+      if(Skill->GetHits() / 100)
 	{
 	  Buffer = Skill->GetName(c);
 	  Buffer.Resize(30);
 	  Buffer << Skill->GetLevel();
 	  Buffer.Resize(40);
-	  Buffer << Skill->GetHits();
+	  Buffer << Skill->GetHits() / 100;
 	  Buffer.Resize(50);
 
-	  if(Skill->GetLevel() != 10)
-	    Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits());
+	  if(Skill->GetLevel() != 20)
+	    Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits()) / 100;
 	  else
 	    Buffer << '-';
 
 	  Buffer.Resize(60);
-	  Buffer << '+' << int(Skill->GetBonus() - 100) << '%';
+	  Buffer << '+' << (Skill->GetBonus() - 1000) / 10;
+
+	  if(Skill->GetBonus() % 10)
+	    Buffer << '.' << Skill->GetBonus() % 10;
+
+	  Buffer << '%';
 
 	  if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->GetWeaponCategory() == c)
 	  || (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->GetWeaponCategory() == c))
@@ -1355,19 +1378,12 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Entry.Resize(47);
-	      Entry << int(Character[c]->GetRelativeDanger(Char, true) * 100);
+	      Entry << int(Character[c]->GetRelativeDanger(Char, true) * 1000);
 	      Entry.Resize(57);
-
-	      if(Character[c]->CanBeGenerated())
-		{
-		  const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
-		  Entry << int(DI.NakedDanger * 100);
-		  Entry.Resize(67);
-		  Entry << int(DI.EquippedDanger * 100);
-		}
-	      else
-		Entry << "-         -";
-
+	      const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
+	      Entry << int(DI.NakedDanger * 1000);
+	      Entry.Resize(67);
+	      Entry << int(DI.EquippedDanger * 1000);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, c);
 	    }
 
@@ -1523,3 +1539,9 @@ bool commandsystem::Possess(character* Char)
 }
 
 #endif
+
+bool commandsystem::ToggleRunning(character*)
+{
+  game::SetPlayerIsRunning(!game::PlayerIsRunning());
+  return false;
+}

@@ -542,6 +542,7 @@ class ITEM
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
+  int GetBaseDamage() const;
   bool Active;
   int Team;
   std::set<int> DiscoveredByTeam;
@@ -657,6 +658,14 @@ class ITEM
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
+);
+
+class ITEM
+(
+  scrollofhardenmaterial,
+  scroll,
+ public:
+  virtual void FinishReading(character*);
 );
 
 #endif

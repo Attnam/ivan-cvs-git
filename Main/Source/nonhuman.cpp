@@ -144,73 +144,74 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 void nonhumanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
-  SaveFile << (int)Strength << (int)Agility << StrengthExperience << AgilityExperience;
+  SaveFile << StrengthExperience << AgilityExperience;
 }
 
 void nonhumanoid::Load(inputfile& SaveFile)
 {
   character::Load(SaveFile);
-  SaveFile >> (int&)Strength >> (int&)Agility >> StrengthExperience >> AgilityExperience;
+  SaveFile >> StrengthExperience >> AgilityExperience;
 }
 
 void nonhumanoid::CalculateUnarmedDamage()
 {
-  UnarmedDamage = sqrt(5e-10 * GetAttribute(ARM_STRENGTH)) * GetBaseUnarmedStrength() * GetCWeaponSkill(UNARMED)->GetBonus();
+  UnarmedDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH)) * GetBaseUnarmedStrength() * GetCWeaponSkill(UNARMED)->GetBonus();
 }
 
 void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  UnarmedToHitValue = GetAttribute(DEXTERITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetBonus() * GetMoveEase() / 50000;
+  UnarmedToHitValue = GetAttribute(DEXTERITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetBonus() * GetMoveEase() / 500000;
 }
 
 void nonhumanoid::CalculateUnarmedAPCost()
 {
-  UnarmedAPCost = Max<long>(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(UNARMED)->GetBonus()), 100);
+  UnarmedAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(UNARMED)->GetBonus())), 100L);
 }
 
 void nonhumanoid::CalculateKickDamage()
 {
-  KickDamage = sqrt(5e-10 * GetAttribute(LEG_STRENGTH)) * GetBaseKickStrength() * GetCWeaponSkill(KICK)->GetBonus();
+  KickDamage = sqrt(5e-12 * GetAttribute(LEG_STRENGTH)) * GetBaseKickStrength() * GetCWeaponSkill(KICK)->GetBonus();
 }
 
 void nonhumanoid::CalculateKickToHitValue()
 {
-  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetBonus() * GetMoveEase() / 100000;
+  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetBonus() * GetMoveEase() / 1000000;
 }
 
 void nonhumanoid::CalculateKickAPCost()
 {
-  KickAPCost = Max<long>(2000000000 / (APBonus(GetAttribute(AGILITY)) * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus()), 100);
+  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY)) * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus())), 1000L);
 }
 
 void nonhumanoid::CalculateBiteDamage()
 {
-  BiteDamage = sqrt(5e-10 * GetAttribute(ARM_STRENGTH)) * GetBaseBiteStrength() * GetCWeaponSkill(BITE)->GetBonus();
+  BiteDamage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH)) * GetBaseBiteStrength() * GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void nonhumanoid::CalculateBiteToHitValue()
 {
-  BiteToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetBonus() * GetMoveEase() / 100000;
+  BiteToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetBonus() * GetMoveEase() / 1000000;
 }
 
 void nonhumanoid::CalculateBiteAPCost()
 {
-  BiteAPCost = Max<long>(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus()), 100);
+  BiteAPCost = Max(long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus())), 100L);
 }
 
 void nonhumanoid::InitSpecialAttributes()
 {
-  Strength = (GetDefaultArmStrength() * (100 + GetAttributeBonus()) / 100) << 1;
-  Agility = (GetDefaultAgility() * (100 + GetAttributeBonus()) / 100) << 1;
-  StrengthExperience = AgilityExperience = 0;
+  StrengthExperience = GetNaturalExperience(ARM_STRENGTH);
+  AgilityExperience = GetNaturalExperience(AGILITY);
+  LimitRef(StrengthExperience, MIN_EXP, MAX_EXP);
+  LimitRef(AgilityExperience, MIN_EXP, MAX_EXP);
 }
 
 void nonhumanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-  EditExperience(ARM_STRENGTH, 20);
-  EditExperience(AGILITY, 40);
+  EditExperience(ARM_STRENGTH, 50, 1 << 8);
+  EditExperience(AGILITY, 100, 1 << 8);
   Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -221,8 +222,8 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
 
   if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
-      EditExperience(LEG_STRENGTH, 40);
-      EditExperience(AGILITY, 20);
+      EditExperience(LEG_STRENGTH, 100, 1 << 8);
+      EditExperience(AGILITY, 50, 1 << 8);
     }
 }
 
@@ -309,9 +310,9 @@ void nonhumanoid::UnarmedHit(character* Enemy, vector2d HitPos, int Direction, b
     case HAS_BLOCKED:
     case HAS_DIED:
     case DID_NO_DAMAGE:
-      EditExperience(ARM_STRENGTH, 40);
+      EditExperience(ARM_STRENGTH, 100, 1 << 8);
     case HAS_DODGED:
-      EditExperience(DEXTERITY, 20);
+      EditExperience(DEXTERITY, 50, 1 << 8);
     }
 }
 
@@ -349,7 +350,7 @@ double nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   return AttackStyles / Effectivity;
 }
 
-void nonhumanoid::ApplyExperience(bool Edited)
+/*void nonhumanoid::ApplyExperience(bool Edited)
 {
   if(GetTorso()->UseMaterialAttributes())
     {
@@ -398,7 +399,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
     }
 
   character::ApplyExperience(Edited);
-}
+}*/
 
 int nonhumanoid::GetAttribute(int Identifier) const
 {
@@ -407,14 +408,14 @@ int nonhumanoid::GetAttribute(int Identifier) const
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(!GetTorso()->UseMaterialAttributes())
-	return Strength >> 1;
+	return int(StrengthExperience * EXP_DIVISOR);
       else
 	return GetTorso()->GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
       if(!GetTorso()->UseMaterialAttributes())
-	return Agility >> 1;
+	return int(AgilityExperience * EXP_DIVISOR);
       else
 	return (GetTorso()->GetMainMaterial()->GetFlexibility() << 2);
     }
@@ -430,9 +431,9 @@ bool nonhumanoid::EditAttribute(int Identifier, int Value)
   if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
-    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(Strength, Value, true);
+    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(Agility, Value, true);
+    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(AgilityExperience, Value);
   else
     {
       ABORT("Illegal nonhumanoid attribute %d edit request!", Identifier);
@@ -440,28 +441,54 @@ bool nonhumanoid::EditAttribute(int Identifier, int Value)
     }
 }
 
-void nonhumanoid::EditExperience(int Identifier, long Value)
+void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
 {
+  if(!AllowExperience())
+    return;
+
   if(Identifier < BASE_ATTRIBUTES)
-    character::EditExperience(Identifier, Value);
+    character::EditExperience(Identifier, Value, Speed);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(!GetTorso()->UseMaterialAttributes())
 	{
-	  if(!IsPlayer())
-	    Value <<= 1;
+	  int Change = RawEditExperience(StrengthExperience,
+					 GetNaturalExperience(ARM_STRENGTH),
+					 Value, Speed / 2);
 
-	  StrengthExperience += Value;
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "stronger" : "weaker";
+
+	      if(IsPlayer())
+		ADD_MESSAGE("Your feel %s!", Adj);
+	      else if(IsPet() && CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
+
+	      CalculateBurdenState();
+	      CalculateBattleInfo();
+	    }
 	}
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
       if(!GetTorso()->UseMaterialAttributes())
 	{
-	  if(!IsPlayer())
-	    Value <<= 1;
+	  int Change = RawEditExperience(AgilityExperience,
+					 GetNaturalExperience(AGILITY),
+					 Value, Speed / 2);
 
-	  AgilityExperience += Value;
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "very agile" : "sluggish";
+
+	      if(IsPlayer())
+		ADD_MESSAGE("Your feel %s!", Adj);
+	      else if(IsPet() && CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", CHAR_NAME(DEFINITE), Adj);
+
+	      CalculateBattleInfo();
+	    }
 	}
     }
   else
@@ -643,7 +670,7 @@ void ostrich::GetAICommand()
     {
       SetGoingTo(vector2d(45, 45));
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
   else if(GetPos().Y == 54)
@@ -679,7 +706,7 @@ void ostrich::GetAICommand()
     {
       SetGoingTo(vector2d(45, 54));
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
 
@@ -742,7 +769,6 @@ int elpuri::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int 
 void elpuri::VirtualConstructor(bool Load)
 {
   nonhumanoid::VirtualConstructor(Load);
-  Strength = Agility = 0;
   Active = false;
 }
 
@@ -844,7 +870,7 @@ int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart
   if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(150 + RAND() % 150)) /* Changes for fainting 2 out of 3 */
     {
       if(!Enemy->IsPlayer())
-	Enemy->EditExperience(WISDOM, 100);
+	Enemy->EditExperience(WISDOM, 50, 1 << 13);
 
       return HAS_FAILED;
     }
@@ -884,7 +910,7 @@ bool chameleon::SpecialEnemySightedReaction(character*)
 {
   if(HP != MaxHP || !(RAND() % 3))
     {
-      character* NewForm = PolymorphRandomly(10, 100, 500 + RAND() % 500);
+      character* NewForm = PolymorphRandomly(100, 1000, 500 + RAND() % 500);
       NewForm->GainIntrinsic(POLYMORPH);
       return true;
     }
@@ -898,7 +924,7 @@ int chameleon::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
   if(Return != HAS_DIED)
     {
-      character* NewForm = PolymorphRandomly(10, 100, 500 + RAND() % 500);
+      character* NewForm = PolymorphRandomly(100, 1000, 500 + RAND() % 500);
       NewForm->GainIntrinsic(POLYMORPH);
     }
 
@@ -970,8 +996,9 @@ void mushroom::GetAICommand()
 	  Child->SetSpecies(Species);
 	  Child->SetTeam(GetTeam());
 	  Child->PutTo(CradleSquare->GetPos());
+
 	  for(int c = 0; c < BASE_ATTRIBUTES; ++c)
-	    Child->BaseAttribute[c] = RandomizeBabyAttribute(BaseAttribute[c] * 4);
+	    Child->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] * 4);
 
 	  if(Child->CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
@@ -1228,19 +1255,13 @@ bool elpuri::TryToRiseFromTheDead()
 
 bool nonhumanoid::EditAllAttributes(int Amount)
 {
-  Strength += Amount << 1;
-  Agility += Amount << 1;
-
-  if(!IsPlayer())
-    {
-      if(Strength > 200)
-	Strength = 200;
-
-      if(Agility > 200)
-	Agility = 200;
-    }
-
-  return character::EditAllAttributes(Amount) || Strength < 200 || Agility < 200;
+  LimitRef(StrengthExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  LimitRef(AgilityExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  return character::EditAllAttributes(Amount)
+      || (Amount < 0
+       && (StrengthExperience != MIN_EXP || AgilityExperience != MIN_EXP))
+      || (Amount > 0
+       && (StrengthExperience != MAX_EXP || AgilityExperience != MAX_EXP));
 }
 
 #ifdef WIZARD
@@ -1619,11 +1640,11 @@ void bunny::GetAICommand()
 	ADD_MESSAGE("%s looks more mature.", CHAR_NAME(DEFINITE));
 
       GetTorso()->SetSize(GetTorso()->GetSize() << 1);
-      Strength <<= 1;
-      Agility <<= 1;
+      LimitRef(StrengthExperience *= 2, MIN_EXP, MAX_EXP);
+      LimitRef(AgilityExperience *= 2, MIN_EXP, MAX_EXP);
 
       for(int c = 0; c < BASE_ATTRIBUTES; ++c)
-	BaseAttribute[c] <<= 1;
+	BaseExperience[c] = Limit(BaseExperience[c] * 2, MIN_EXP, MAX_EXP);
 
       GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() << 1);
       SetConfig(GetConfig() + 2);
@@ -1687,7 +1708,7 @@ bool bunny::CheckForMatePartner()
       if(BestPartner && !GetPos().IsAdjacent(BestPartner->GetPos()))
 	{
 	  SetGoingTo(BestPartner->GetPos());
-	  MoveTowardsTarget();
+	  MoveTowardsTarget(true);
 	  return true;
 	}
     }
@@ -1722,25 +1743,25 @@ bool bunny::CheckForMatePartner()
 		    }
 
 		  bunny* Baby = new bunny(BABY_MALE + (RAND() & 1));
-		  Baby->Strength = RandomizeBabyAttribute(Strength + static_cast<bunny*>(Father)->Strength);
-		  Baby->Agility = RandomizeBabyAttribute(Agility + static_cast<bunny*>(Father)->Agility);
+		  Baby->StrengthExperience = RandomizeBabyExperience(StrengthExperience + static_cast<bunny*>(Father)->StrengthExperience);
+		  Baby->AgilityExperience = RandomizeBabyExperience(AgilityExperience + static_cast<bunny*>(Father)->AgilityExperience);
 
 		  if(Baby->GetConfig() == BABY_MALE)
 		    {
-		      Baby->Strength <<= 2;
-		      Baby->Agility <<= 2;
+		      Baby->StrengthExperience *= 4;
+		      Baby->AgilityExperience *= 4;
 		    }
 		  else
 		    {
-		      Baby->Strength <<= 1;
-		      Baby->Agility *= 6;
+		      Baby->StrengthExperience *= 2;
+		      Baby->AgilityExperience *= 6;
 		    }
 
-		  Baby->Strength /= 3;
-		  Baby->Agility /= 5;
+		  Baby->StrengthExperience /= 3;
+		  Baby->AgilityExperience /= 5;
 
 		  for(int c = 0; c < BASE_ATTRIBUTES; ++c)
-		    Baby->BaseAttribute[c] = RandomizeBabyAttribute(BaseAttribute[c] + static_cast<bunny*>(Father)->BaseAttribute[c]);
+		    Baby->BaseExperience[c] = RandomizeBabyExperience(BaseExperience[c] + static_cast<bunny*>(Father)->BaseExperience[c]);
 
 		  Baby->CalculateAll();
 		  Baby->RestoreHP();
@@ -1843,7 +1864,7 @@ void mommo::GetAICommand()
 
 void dog::GetAICommand()
 {
-  if(!game::IsInWilderness() && !(RAND() & 3))
+  if(!game::IsInWilderness() && !(RAND() & 7))
     GetLSquareUnder()->SpillFluid(this, new liquid(DOG_DROOL, 25 + RAND() % 50), false, false);
 
   character::GetAICommand();
@@ -1956,4 +1977,62 @@ void blinkdog::SummonFriend()
     ADD_MESSAGE("%s appears!", Buddy->CHAR_NAME(INDEFINITE));
 
   EditAP(-1000);
+}
+
+const char* DolphinTalkAttribute[] =
+{
+  "quantum",
+  "applied",
+  "cosmic",
+  "dark",
+  "linear",
+  "molecular",
+  "theoretical",
+  "classical",
+  "the future of"
+};
+
+const char* DolphinTalkScience[] =
+{
+  "necromancy",
+  "relativity",
+  "physics",
+  "artificial intelligence",
+  "mathematics",
+  "philosophy",
+  "biology",
+  "politics",
+  "mechanics",
+  "magicks",
+  "existential questions",
+  "architecture",
+  "archaeology",
+  "logic",
+  "fiction",
+  "economics",
+  "theology"
+};
+
+void dolphin::BeTalkedTo()
+{
+  if(GetRelation(PLAYER) != HOSTILE
+  && PLAYER->GetAttribute(INTELLIGENCE) >= 30)
+    {
+      const char* Attribute = DolphinTalkAttribute[RAND() % (sizeof(DolphinTalkAttribute) / sizeof(const char*))];
+      const char* Science = DolphinTalkScience[RAND() % (sizeof(DolphinTalkScience) / sizeof(const char*))];
+      const char* Prefix;
+
+      if(RAND() % 3)
+	Prefix = "";
+      else if(RAND() % 3)
+	Prefix = "meta";
+      else if(RAND() % 3)
+	Prefix = "neo";
+      else
+	Prefix = "neuro";
+
+      ADD_MESSAGE("You have a rather pleasant about %s %s%s with %s.", Attribute, Prefix, Science, CHAR_NAME(DEFINITE));
+    }
+  else
+    character::BeTalkedTo();
 }

@@ -86,7 +86,8 @@ bool ennerbeast::Hit(character* Enemy, vector2d, int, bool)
       }
 
   EditNP(-100);
-  EditAP(-100000 / GetCWeaponSkill(BITE)->GetBonus());
+  EditAP(-1000000 / GetCWeaponSkill(BITE)->GetBonus());
+  EditStamina(-100, false);
   return true;
 }
 
@@ -260,7 +261,7 @@ bool petrus::HealFully(character* ToBeHealed)
   if(DidSomething)
     {
       LastHealed = game::GetTick();
-      DexterityAction(5);
+      DexterityAction(10);
       return true;
     }
   else
@@ -359,7 +360,9 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	      FirstArm = GetLeftArm();
 	      SecondArm = GetRightArm();
 	    }
-	  
+
+	  int Strength = GetAttribute(ARM_STRENGTH);
+
 	  if(FirstArm && FirstArm->GetDamage())
 	    {
 	      FirstAPCost = FirstArm->GetAPCost();
@@ -374,6 +377,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 
 	  EditNP(-50);
 	  EditAP(-Max(FirstAPCost, SecondAPCost));
+	  EditStamina(-1000 / Strength, false);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -407,28 +411,34 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
   bool Something = false;
 
-  if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
+  if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits() / 100)
     {
       List.AddEntry(CONST_S(""), LIGHT_GRAY);
       festring Buffer = CONST_S("right accustomization");
       Buffer.Resize(30);
       Buffer << CurrentRightSWeaponSkill->GetLevel();
       Buffer.Resize(40);
-      Buffer << CurrentRightSWeaponSkill->GetHits();
+      Buffer << CurrentRightSWeaponSkill->GetHits() / 100;
       Buffer.Resize(50);
 
-      if(CurrentRightSWeaponSkill->GetLevel() != 10)
-	Buffer << (CurrentRightSWeaponSkill->GetLevelMap(CurrentRightSWeaponSkill->GetLevel() + 1) - CurrentRightSWeaponSkill->GetHits());
+      if(CurrentRightSWeaponSkill->GetLevel() != 20)
+	Buffer << (CurrentRightSWeaponSkill->GetLevelMap(CurrentRightSWeaponSkill->GetLevel() + 1) - CurrentRightSWeaponSkill->GetHits()) / 100;
       else
 	Buffer << '-';
 
       Buffer.Resize(60);
-      Buffer << '+' << int(CurrentRightSWeaponSkill->GetBonus() - 100) << '%';
+      int Bonus = CurrentRightSWeaponSkill->GetBonus();
+      Buffer << '+' << (Bonus - 1000) / 10;
+
+      if(Bonus % 10)
+	Buffer << '.' << Bonus % 10;
+
+      Buffer << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
     }
 
-  if(CurrentLeftSWeaponSkill && CurrentLeftSWeaponSkill->GetHits())
+  if(CurrentLeftSWeaponSkill && CurrentLeftSWeaponSkill->GetHits() / 100)
     {
       if(!Something)
 	List.AddEntry(CONST_S(""), LIGHT_GRAY);
@@ -437,16 +447,22 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       Buffer.Resize(30);
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
       Buffer.Resize(40);
-      Buffer << CurrentLeftSWeaponSkill->GetHits();
+      Buffer << CurrentLeftSWeaponSkill->GetHits() / 100;
       Buffer.Resize(50);
 
-      if(CurrentLeftSWeaponSkill->GetLevel() != 10)
-	Buffer << (CurrentLeftSWeaponSkill->GetLevelMap(CurrentLeftSWeaponSkill->GetLevel() + 1) - CurrentLeftSWeaponSkill->GetHits());
+      if(CurrentLeftSWeaponSkill->GetLevel() != 20)
+	Buffer << (CurrentLeftSWeaponSkill->GetLevelMap(CurrentLeftSWeaponSkill->GetLevel() + 1) - CurrentLeftSWeaponSkill->GetHits()) / 100;
       else
 	Buffer << '-';
 
       Buffer.Resize(60);
-      Buffer << '+' << int(CurrentLeftSWeaponSkill->GetBonus() - 100) << '%';
+      int Bonus = CurrentLeftSWeaponSkill->GetBonus();
+      Buffer << '+' << (Bonus - 1000) / 10;
+
+      if(Bonus % 10)
+	Buffer << '.' << Bonus % 10;
+
+      Buffer << '%';
       List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
     }
@@ -894,7 +910,7 @@ void zombie::BeTalkedTo()
 	ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
     }
   else
-    ADD_MESSAGE("\"Need brain, but not your brain.\"");
+    ADD_MESSAGE("\"Need brain but you too stoopid!\"");
 }
 
 void angel::Save(outputfile& SaveFile) const
@@ -931,10 +947,10 @@ void angel::CreateInitialEquipment(int SpecialFlags)
       Equipment->InitMaterials(MAKE_MATERIAL(MITHRIL), !(SpecialFlags & NO_PIC_UPDATE));
       Equipment->SetEnchantment(2);
       SetLeftWielded(Equipment);
-      GetCWeaponSkill(LARGE_SWORDS)->AddHit(200);
-      GetCWeaponSkill(SHIELDS)->AddHit(500);
-      GetCurrentRightSWeaponSkill()->AddHit(200);
-      GetCurrentLeftSWeaponSkill()->AddHit(200);
+      GetCWeaponSkill(LARGE_SWORDS)->AddHit(20000);
+      GetCWeaponSkill(SHIELDS)->AddHit(50000);
+      GetCurrentRightSWeaponSkill()->AddHit(20000);
+      GetCurrentLeftSWeaponSkill()->AddHit(20000);
       GetRightArm()->SetDexterity(40);
       GetLeftArm()->SetDexterity(40);
       break;
@@ -951,9 +967,9 @@ void angel::CreateInitialEquipment(int SpecialFlags)
       Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetLeftWielded(Weapon);
-      GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500);
-      GetCurrentRightSWeaponSkill()->AddHit(200);
-      GetCurrentLeftSWeaponSkill()->AddHit(200);
+      GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(50000);
+      GetCurrentRightSWeaponSkill()->AddHit(20000);
+      GetCurrentLeftSWeaponSkill()->AddHit(20000);
       SetEndurance(40);
       break;
     case EVIL:
@@ -969,8 +985,8 @@ void angel::CreateInitialEquipment(int SpecialFlags)
       Equipment->InitMaterials(MAKE_MATERIAL(ANGEL_HAIR), !(SpecialFlags & NO_PIC_UPDATE));
       Equipment->SetEnchantment(1);
       SetLeftGauntlet(Equipment);
-      GetCWeaponSkill(POLE_ARMS)->AddHit(1000);
-      GetCurrentRightSWeaponSkill()->AddHit(1000);
+      GetCWeaponSkill(POLE_ARMS)->AddHit(100000);
+      GetCurrentRightSWeaponSkill()->AddHit(100000);
       GetRightArm()->SetStrength(40);
       GetLeftArm()->SetStrength(40);
     }
@@ -980,8 +996,8 @@ void kamikazedwarf::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   SetRightWielded(new holybook(GetConfig(), SpecialFlags));
-  GetCWeaponSkill(UNCATEGORIZED)->AddHit(100);
-  GetCurrentRightSWeaponSkill()->AddHit(100);
+  GetCWeaponSkill(UNCATEGORIZED)->AddHit(10000);
+  GetCurrentRightSWeaponSkill()->AddHit(10000);
 }
 
 bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
@@ -1730,7 +1746,7 @@ void humanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool Force
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
-  EditExperience(AGILITY, 30);
+  EditExperience(AGILITY, 100, 1 << 9);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -1739,11 +1755,12 @@ void humanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
   leg* KickLeg = GetRandomLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
+  EditStamina(-1000 / GetAttribute(LEG_STRENGTH), false);
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
-      KickLeg->EditExperience(LEG_STRENGTH, 40);
-      KickLeg->EditExperience(AGILITY, 20);
+      KickLeg->EditExperience(LEG_STRENGTH, 50, 1 << 9);
+      KickLeg->EditExperience(AGILITY, 50, 1 << 9);
     }
 }
 
@@ -1882,31 +1899,28 @@ bool humanoid::EditAttribute(int Identifier, int Value)
     }
 }
 
-void humanoid::EditExperience(int Identifier, long Value)
+void humanoid::EditExperience(int Identifier, double Value, double Speed)
 {
+  if(!AllowExperience())
+    return;
+
   if(Identifier < BASE_ATTRIBUTES)
-    character::EditExperience(Identifier, Value);
+    character::EditExperience(Identifier, Value, Speed);
   else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
     {
-      if(!IsPlayer())
-	Value <<= 1;
-
       if(GetRightArm())
-	GetRightArm()->EditExperience(Identifier, Value, false);
+	GetRightArm()->EditExperience(Identifier, Value, Speed);
 
       if(GetLeftArm())
-	GetLeftArm()->EditExperience(Identifier, Value, false);
+	GetLeftArm()->EditExperience(Identifier, Value, Speed);
     }
   else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
     {
-      if(!IsPlayer())
-	Value <<= 1;
-
       if(GetRightLeg())
-	GetRightLeg()->EditExperience(Identifier, Value, false);
+	GetRightLeg()->EditExperience(Identifier, Value, Speed);
 
       if(GetLeftLeg())
-	GetLeftLeg()->EditExperience(Identifier, Value, false);
+	GetLeftLeg()->EditExperience(Identifier, Value, Speed);
     }
   else
     ABORT("Illegal humanoid attribute %d experience edit request!", Identifier);
@@ -1974,7 +1988,12 @@ bool humanoid::CanWield() const
 
 bool humanoid::CheckBalance(double KickDamage)
 {
-  return !CanMove() || IsStuck() || !KickDamage || (GetLegs() != 1 && !(GetMoveType() & FLY) && KickDamage * 5 < RAND() % GetSize());
+  return !CanMove()
+      || IsStuck()
+      || !KickDamage
+      || (GetLegs() != 1
+       && !(GetMoveType() & FLY)
+       && KickDamage * 5 < RAND() % GetSize());
 }
 
 long humanoid::GetMoveAPRequirement(int Difficulty) const
@@ -2123,7 +2142,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
       SeveredOne->RemoveFromSlot();
       HurtOne->AttachBodyPart(SeveredOne);
       LastHealed = game::GetTick();
-      DexterityAction(5);
+      DexterityAction(10);
       return true;
     }
   else
@@ -2344,10 +2363,10 @@ void humanoid::CreateInitialEquipment(int SpecialFlags)
   INSTANTIATE(LeftBoot);
 
   if(CurrentRightSWeaponSkill)
-    CurrentRightSWeaponSkill->AddHit(GetRightSWeaponSkillHits());
+    CurrentRightSWeaponSkill->AddHit(GetRightSWeaponSkillHits() * 100);
 
   if(CurrentLeftSWeaponSkill)
-    CurrentLeftSWeaponSkill->AddHit(GetLeftSWeaponSkillHits());
+    CurrentLeftSWeaponSkill->AddHit(GetLeftSWeaponSkillHits() * 100);
 }
 
 festring humanoid::GetBodyPartName(int I, bool Articled) const
@@ -2717,7 +2736,7 @@ void bananagrower::GetAICommand()
     {
       SetGoingTo(BananaTarget);
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
   else if(GetPos().X == 54)
@@ -2754,7 +2773,7 @@ void bananagrower::GetAICommand()
     {
       SetGoingTo(vector2d(54, 45));
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
 
@@ -3058,7 +3077,7 @@ void darkmage::GetAICommand()
     {
       SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
 
@@ -3728,9 +3747,9 @@ bodypart* ennerbeast::MakeBodyPart(int I) const
     return humanoid::MakeBodyPart(I);
 }
 
-long humanoid::GetSumOfAttributes() const
+int humanoid::GetSumOfAttributes() const
 {
-  return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY) + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
+  return character::GetSumOfAttributes() + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
 }
 
 bool humanoid::CheckConsume(const festring& Verb) const
@@ -3833,7 +3852,7 @@ void necromancer::GetAICommand()
     {
       SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
 
-      if(MoveTowardsTarget())
+      if(MoveTowardsTarget(true))
 	return;
     }
 
@@ -3888,14 +3907,15 @@ void necromancer::RaiseSkeleton()
 {
   /* Gum solution */
 
-  configid WarLordConfigID(skeleton_ProtoType.GetIndex(), WAR_LORD);
+  const database* WarLordDataBase;
+  databasecreator<character>::FindDataBase(DataBase, &skeleton_ProtoType, WAR_LORD);
   skeleton* Skeleton;
 
-  if(GetConfig() == MASTER_NECROMANCER && !game::GetDangerMap().find(WarLordConfigID)->second.HasBeenGenerated && !(RAND() % 250))
+  if(GetConfig() == MASTER_NECROMANCER && !(WarLordDataBase->Flags & HAS_BEEN_GENERATED) && !(RAND() % 250))
     {
       Skeleton = new skeleton(WAR_LORD);
       Skeleton->PutNear(GetPos());
-      game::SignalGeneration(WarLordConfigID);
+      Skeleton->SignalGeneration();
 
       if(Skeleton->CanBeSeenByPlayer())
 	ADD_MESSAGE("The whole area trembles terribly as %s emerges from the ground.", Skeleton->CHAR_NAME(DEFINITE));
@@ -4141,9 +4161,9 @@ character* humanoid::CreateZombie() const
 	}
     }
 
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
-    Zombie->BaseAttribute[c] = BaseAttribute[c];
-
+  memcpy(Zombie->BaseExperience,
+	 BaseExperience,
+	 BASE_ATTRIBUTES * sizeof(*BaseExperience));
   Zombie->CalculateAll();
   Zombie->RestoreHP();
   Zombie->SetDescription(GetZombieDescription());
@@ -4166,4 +4186,69 @@ void zombie::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> Description;
+}
+
+int darkknight::ModifyBodyPartHitPreference(int I, int Modifier) const
+{
+  return IsLimbIndex(I) ? Modifier << 1 : Modifier;
+}
+
+int darkknight::ModifyBodyPartToHitChance(int I, int Chance) const
+{
+  return IsLimbIndex(I) ? Chance << 1 : Chance;
+}
+
+void darkknight::SpecialBodyPartSeverReaction()
+{
+  if(!IsPlayer() && !(RAND() % 5))
+    ADD_MESSAGE("\"Bah! Just a scratch.\"");
+}
+
+void humanoid::LeprosyHandler()
+{
+  EditExperience(ARM_STRENGTH, -25, 1 << 1);
+  EditExperience(LEG_STRENGTH, -25, 1 << 1);
+  EditExperience(DEXTERITY, -25, 1 << 1);
+  EditExperience(AGILITY, -25, 1 << 1);  
+  EditExperience(ENDURANCE, -25, 1 << 1);
+  EditExperience(CHARISMA, -25, 1 << 1);
+
+  if(!RAND_N(5000*GetAttribute(ENDURANCE)))
+    DropRandomNonVitalBodypart();
+  if(!game::IsInWilderness())
+    {
+      for(int d = 0; d < GetNeighbourSquares(); ++d)
+	{
+	  lsquare* Square = GetNeighbourLSquare(d);
+
+	  if(Square && Square->GetCharacter())
+	    Square->GetCharacter()->TryToInfectWithLeprosy(this);
+	}
+    }  
+}
+
+void humanoid::DropRandomNonVitalBodypart()
+{
+  bodypart* BodyPart[MAX_BODYPARTS];
+  int Index = 0;
+  for(int c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c) && !BodyPartIsVital(c))
+      BodyPart[Index++] = GetBodyPart(c);  
+
+  bodypart* ToDrop = BodyPart[RAND_N(Index)];
+  SendNewDrawRequest();
+
+  if(ToDrop)
+    {
+      stack* DropStack = game::IsInWilderness() ? GetStack() : GetStackUnder();
+      DropStack->AddItem(ToDrop);
+      ToDrop->DropEquipment();
+      if(IsPlayer())
+	{
+	  ADD_MESSAGE("Your %s drops to the ground.", ToDrop->GetBodyPartName().CStr());
+	  game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
+	}
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s's %s drops to the ground.", CHAR_NAME(DEFINITE), ToDrop->GetBodyPartName().CStr());
+    }
 }

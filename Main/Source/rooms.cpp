@@ -51,7 +51,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, int Amount)
 	    ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	    Customer->EditMoney(-Price);
 	    GetMaster()->EditMoney(Price);
-	    Customer->EditExperience(CHARISMA, Price);
+	    Customer->EditDealExperience(Price);
 	  }
 
 	return true;
@@ -84,7 +84,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, int Amount)
 	    {
 	      Customer->EditMoney(-Price);
 	      GetMaster()->EditMoney(+Price);
-	      Customer->EditExperience(CHARISMA, Price);
+	      Customer->EditDealExperience(Price);
 	      return true;
 	    }
 	  else
@@ -129,7 +129,7 @@ bool shop::DropItem(character* Customer, item* ForSale, int Amount)
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	Customer->EditMoney(Price);
 	GetMaster()->EditMoney(-Price);
-	Customer->EditExperience(CHARISMA, Price);
+	Customer->EditDealExperience(Price);
 	return true;
       }
     else
@@ -163,7 +163,7 @@ bool shop::DropItem(character* Customer, item* ForSale, int Amount)
 	    {
 	      Customer->SetMoney(Customer->GetMoney() + Price);
 	      GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
-	      Customer->EditExperience(CHARISMA, Price);
+	      Customer->EditDealExperience(Price);
 	      return true;
 	    }
 	  else
@@ -408,7 +408,7 @@ bool library::PickupItem(character* Customer, item* ForSale, int Amount)
 	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	  Customer->EditMoney(-Price);
 	  GetMaster()->EditMoney(Price);
-	  Customer->EditExperience(CHARISMA, Price);
+	  Customer->EditDealExperience(Price);
 	  return true;
 	}
       else
@@ -440,7 +440,7 @@ bool library::PickupItem(character* Customer, item* ForSale, int Amount)
 	    {
 	      Customer->EditMoney(-Price);
 	      GetMaster()->EditMoney(Price);
-	      Customer->EditExperience(CHARISMA, Price);
+	      Customer->EditDealExperience(Price);
 	      return true;
 	    }
 	  else
@@ -479,7 +479,7 @@ bool library::DropItem(character* Customer, item* ForSale, int Amount)
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
-	Customer->EditExperience(CHARISMA, Price);
+	Customer->EditDealExperience(Price);
 	return true;
       }
     else
@@ -513,7 +513,7 @@ bool library::DropItem(character* Customer, item* ForSale, int Amount)
 	    {
 	      Customer->EditMoney(Price);
 	      GetMaster()->EditMoney(-Price);
-	      Customer->EditExperience(CHARISMA, Price);
+	      Customer->EditDealExperience(Price);
 	      return true;
 	    }
 	  else
@@ -711,4 +711,13 @@ bool sumoarena::CheckDestroyTerrain(character* Infidel)
     }
   else
     return false; 
+}
+
+void shop::ReceiveVomit(character* Who)
+{
+  if(MasterIsActive()
+  && Who->IsPlayer()
+  && Who->GetRelation(GetMaster()) != HOSTILE
+  && Who->CanBeSeenBy(GetMaster()))
+    ADD_MESSAGE("\"Unfortunately I accept no returns.\"");
 }

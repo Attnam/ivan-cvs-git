@@ -43,10 +43,10 @@ class ABSTRACT_CHARACTER
   virtual void UnarmedHit(character*, vector2d, int, bool = false);
   virtual void InitSpecialAttributes();
   virtual double GetTimeToKill(const character*, bool) const;
-  virtual void ApplyExperience(bool = false);
+  //virtual void ApplyExperience(bool = false);
   virtual int GetAttribute(int) const;
   virtual bool EditAttribute(int, int);
-  virtual void EditExperience(int, long);
+  virtual void EditExperience(int, double, double);
   virtual int DrawStats(bool) const;
   virtual void Bite(character*, vector2d, int, bool = false);
   virtual int GetCarryingStrength() const;
@@ -55,17 +55,17 @@ class ABSTRACT_CHARACTER
   void CalculateKickAttackInfo();
   void CalculateBiteAttackInfo();
   virtual bool UseMaterialAttributes() const;
-  void SetStrength(int What) { Strength = What; }
-  void SetAgility(int What) { Agility = What; }
+  /*void SetStrength(int What) { Strength = What; }
+  void SetAgility(int What) { Agility = What; }*/
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual bool EditAllAttributes(int);
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const;
  protected:
-  int Strength;
-  int Agility;
-  long StrengthExperience;
-  long AgilityExperience;
+  /*int Strength;
+  int Agility;*/
+  double StrengthExperience;
+  double AgilityExperience;
   double UnarmedDamage;
   double KickDamage;
   double BiteDamage;
@@ -164,6 +164,8 @@ class CHARACTER
 (
   dolphin,
   nonhumanoid,
+ public:
+  virtual void BeTalkedTo();
  protected:
   virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }

@@ -9,7 +9,7 @@
 #include "object.h"
 #include "allocate.h"
 
-colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
+rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
@@ -20,6 +20,7 @@ uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
 bitmap* igraph::Menu;
 bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
+rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(16, 16), new rawbitmap(16, 16) };
 
 void igraph::Init()
 {
@@ -44,7 +45,7 @@ void igraph::Init()
       int c;
 
       for(c = 0; c < RAW_TYPES; ++c)
-	RawGraphic[c] = new colorizablebitmap(game::GetGameDir() + RawGraphicFileName[c]);
+	RawGraphic[c] = new rawbitmap(game::GetGameDir() + RawGraphicFileName[c]);
 
       for(c = 0; c < GRAPHIC_TYPES; ++c)
 	{
@@ -52,6 +53,8 @@ void igraph::Init()
 	  Graphic[c]->ActivateFastFlag();
 	}
 
+      ColorizeBuffer[0]->CopyPaletteFrom(RawGraphic[0]);
+      ColorizeBuffer[1]->CopyPaletteFrom(RawGraphic[0]);
       TileBuffer = new bitmap(16, 16);
       TileBuffer->ActivateFastFlag();
       TileBuffer->CreatePriorityMap(0);
@@ -98,20 +101,38 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
   else
     {
-      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(vector2d(GI.BitmapPosX, GI.BitmapPosY), SizeVect, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
-      Bitmap->ActivateFastFlag();
       const int SpecialFlags = GI.SpecialFlags;
       const int BodyPartFlags = SpecialFlags & 0x38;
-      const int Frame = GI.Frame;
-
-      if(BodyPartFlags)
-	EditBodyPartTile(Bitmap, BodyPartFlags);
-
-      vector2d SparklePos = vector2d(GI.SparklePosX, GI.SparklePosY);
       const int RotateFlags = SpecialFlags & 0x7;
+      const int Frame = GI.Frame;
+      vector2d SparklePos = vector2d(GI.SparklePosX, GI.SparklePosY);
+      rawbitmap* RawBitmap = RawGraphic[GI.FileIndex];
+      vector2d RawPos = vector2d(GI.BitmapPosX, GI.BitmapPosY);
 
-      if(RotateFlags)
-	SparklePos = RotateTile(Bitmap, SparklePos, RotateFlags);
+      if(BodyPartFlags && BodyPartFlags < ST_OTHER_BODYPART)
+	{
+	  ColorizeBuffer[0]->Clear();
+	  EditBodyPartTile(RawBitmap, ColorizeBuffer[0], RawPos, BodyPartFlags);
+	  RawBitmap = ColorizeBuffer[0];
+	  RawPos.X = RawPos.Y = 0;
+
+	  if(RotateFlags)
+	    {
+	      ColorizeBuffer[1]->Clear();
+	      RotateTile(RawBitmap, ColorizeBuffer[1], RawPos, SparklePos, RotateFlags);
+	      RawBitmap = ColorizeBuffer[1];
+	    }
+	}
+      else if(RotateFlags)
+	{
+	  ColorizeBuffer[0]->Clear();
+	  RotateTile(RawBitmap, ColorizeBuffer[0], RawPos, SparklePos, RotateFlags);
+	  RawBitmap = ColorizeBuffer[0];
+	  RawPos.X = RawPos.Y = 0;
+	}
+
+      bitmap* Bitmap = RawBitmap->Colorize(RawPos, SizeVect, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
+      Bitmap->ActivateFastFlag();
 
       if(BodyPartFlags)
 	Bitmap->CreatePriorityMap(SpecialFlags & ST_CLOAK ? CLOAK_PRIORITY : AVERAGE_PRIORITY);
@@ -128,8 +149,11 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       if(SpecialFlags & ST_WOBBLE && !(Frame & 0x60))
 	Bitmap->Wobble(Frame, !!(SpecialFlags & ST_WOBBLE_HORIZONTALLY_BIT));
 
-      if(SpecialFlags & ST_FLAME)
-	Bitmap->CreateFlames(Frame);
+      if(SpecialFlags & ST_FLAMES)
+	{
+	  ulong SeedNFlags = SpecialFlags >> ST_FLAME_SHIFT & 3 | GI.Seed << 4;
+	  Bitmap->CreateFlames(RawBitmap, RawPos - GI.Position, SeedNFlags, Frame);
+	}
 
       if(SpecialFlags & ST_LIGHTNING && !((Frame + 1) & 7))
 	Bitmap->CreateLightning(GI.Seed + Frame, WHITE);
@@ -138,63 +162,47 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
 }
 
-void igraph::EditBodyPartTile(bitmap* Bitmap, int BodyPartFlags)
+void igraph::EditBodyPartTile(rawbitmap* Source, rawbitmap* Dest, vector2d Pos, int BodyPartFlags)
 {
   if(BodyPartFlags == ST_RIGHT_ARM)
-    Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
+    Source->NormalBlit(Dest, Pos.X, Pos.Y, 0, 0, 8, 16);
   else if(BodyPartFlags == ST_LEFT_ARM)
-    Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
+    Source->NormalBlit(Dest, Pos.X + 8, Pos.Y, 8, 0, 8, 16);
   else if(BodyPartFlags == ST_GROIN)
     {
-      int Pixel[9], y, i;
+      Source->NormalBlit(Dest, Pos.X, Pos.Y + 8, 0, 8, 16, 2);
+      int y, i;
 
       for(y = 10, i = 0; y < 13; ++y)
 	for(int x = y - 5; x < 20 - y; ++x)
-	  Pixel[i++] = Bitmap->GetPixel(x, y);
-
-      Bitmap->Fill(0, 10, 16, 6, TRANSPARENT_COLOR);
-
-      for(y = 10, i = 0; y < 13; ++y)
-	for(int x = y - 5; x < 20 - y; ++x)
-	  Bitmap->PutPixel(x, y, Pixel[i++]);
+	  Dest->PutPixel(x, y, Source->GetPixel(Pos.X + x, Pos.Y + y));
     }
   else if(BodyPartFlags == ST_RIGHT_LEG)
     {
       /* Right leg from the character's, NOT the player's point of view */
 
-      Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
-      Bitmap->Fill(0, 0, 8, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(5, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(6, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(6, 11, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
+      Source->NormalBlit(Dest, Pos.X, Pos.Y + 10, 0, 10, 8, 6);
+      Dest->PutPixel(5, 10, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(6, 10, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(7, 10, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(6, 11, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(7, 11, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(7, 12, TRANSPARENT_PALETTE_INDEX);
     }
   else if(BodyPartFlags == ST_LEFT_LEG)
     {
       /* Left leg from the character's, NOT the player's point of view */
 
-      Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
-      Bitmap->Fill(8, 0, 8, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
-      Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
+      Source->NormalBlit(Dest, Pos.X + 8, Pos.Y + 10, 8, 10, 8, 6);
+      Dest->PutPixel(8, 10, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(9, 10, TRANSPARENT_PALETTE_INDEX);
+      Dest->PutPixel(8, 11, TRANSPARENT_PALETTE_INDEX);
     }
 }
 
-vector2d igraph::RotateTile(bitmap* Bitmap, vector2d SparklePos, int RotateFlags)
+vector2d igraph::RotateTile(rawbitmap* Source, rawbitmap* Dest, vector2d Pos, vector2d SparklePos, int RotateFlags)
 {
-  if(Bitmap->GetAlphaMap())
-    {
-      Bitmap->BlitAndCopyAlpha(FlagBuffer, RotateFlags);
-      FlagBuffer->FastBlitAndCopyAlpha(Bitmap);
-    }
-  else
-    {
-      Bitmap->NormalBlit(FlagBuffer, RotateFlags);
-      FlagBuffer->FastBlit(Bitmap);
-    }
+  Source->NormalBlit(Dest, Pos.X, Pos.Y, 0, 0, 16, 16, RotateFlags);
 
   if(SparklePos.X != SPARKLE_POS_X_ERROR)
     {

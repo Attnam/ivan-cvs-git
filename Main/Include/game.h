@@ -11,6 +11,7 @@
 #include "vector2d.h"
 #include "femath.h"
 #include "festring.h"
+#include "ivandef.h"
 
 #ifndef LIGHT_BORDER
 #define LIGHT_BORDER 80
@@ -40,6 +41,7 @@ class liquid;
 struct explosion;
 
 typedef std::map<festring, long> valuemap;
+typedef bool (*stringkeyhandler)(int, festring&);
 
 struct homedata
 {
@@ -75,10 +77,9 @@ inputfile& operator>>(inputfile&, configid&);
 struct dangerid
 {
   dangerid() { }
-  dangerid(double NakedDanger, double EquippedDanger) : NakedDanger(NakedDanger), EquippedDanger(EquippedDanger), HasBeenGenerated(false) { }
+  dangerid(double NakedDanger, double EquippedDanger) : NakedDanger(NakedDanger), EquippedDanger(EquippedDanger) { }
   double NakedDanger;
   double EquippedDanger;
-  bool HasBeenGenerated;
 };
 
 outputfile& operator<<(outputfile&, const dangerid&);
@@ -176,7 +177,7 @@ class game
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static festring StringQuestion(const festring&, vector2d, color16, festring::sizetype, festring::sizetype, bool);
+  static festring StringQuestion(const festring&, vector2d, color16, festring::sizetype, festring::sizetype, bool, stringkeyhandler = 0);
   static long NumberQuestion(const festring&, vector2d, int);
   static ulong IncreaseLOSTick();
   static ulong GetLOSTick() { return LOSTick; }
@@ -227,11 +228,11 @@ class game
   static color24 CombineConstLights(color24, color24);
   static bool IsDark(color24);
   static void SetStandardListAttributes(felist&);
-  static void SignalGeneration(configid);
-  static double GetAveragePlayerArmStrength() { return AveragePlayerArmStrength; }
-  static double GetAveragePlayerLegStrength() { return AveragePlayerLegStrength; }
-  static double GetAveragePlayerDexterity() { return AveragePlayerDexterity; }
-  static double GetAveragePlayerAgility() { return AveragePlayerAgility; }
+  //static void SignalGeneration(configid);
+  static double GetAveragePlayerArmStrengthExperience() { return AveragePlayerArmStrengthExperience; }
+  static double GetAveragePlayerLegStrengthExperience() { return AveragePlayerLegStrengthExperience; }
+  static double GetAveragePlayerDexterityExperience() { return AveragePlayerDexterityExperience; }
+  static double GetAveragePlayerAgilityExperience() { return AveragePlayerAgilityExperience; }
   static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(vector2d, int);
@@ -320,11 +321,15 @@ class game
   static ulong IncreaseSquarePartEmitationTicks();
   static const int GetLargeMoveDirection(int I) { return LargeMoveDirection[I]; }
   static void Wish(character*, const char*, const char*);
-  static festring DefaultQuestion(festring, festring&);
+  static festring DefaultQuestion(festring, festring&, stringkeyhandler = 0);
   static void GetTime(ivantime&);
   static long GetTurn() { return Turn; }
   static void IncreaseTurn() { ++Turn; }
   static int GetTotalMinutes() { return Tick * 60 / 2000; }
+  static bool PolymorphControlKeyHandler(int, festring&);
+  static ulong* GetEquipmentMemory() { return EquipmentMemory; }
+  static bool PlayerIsRunning() { return PlayerRunning; }
+  static void SetPlayerIsRunning(bool What) { PlayerRunning = What; }
  private:
   static const char* const Alignment[];
   static god** God;
@@ -362,10 +367,10 @@ class game
   static dangermap DangerMap;
   static int NextDangerIDType;
   static int NextDangerIDConfigIndex;
-  static double AveragePlayerArmStrength;
-  static double AveragePlayerLegStrength;
-  static double AveragePlayerDexterity;
-  static double AveragePlayerAgility;
+  static double AveragePlayerArmStrengthExperience;
+  static double AveragePlayerLegStrengthExperience;
+  static double AveragePlayerDexterityExperience;
+  static double AveragePlayerAgilityExperience;
   static characteridmap CharacterIDMap;
   static itemidmap ItemIDMap;
   static int Teams;
@@ -407,6 +412,8 @@ class game
   static ulong SquarePartEmitationTick;
   static const int LargeMoveDirection[];
   static long Turn;
+  static ulong EquipmentMemory[MAX_EQUIPMENT_SLOTS];
+  static bool PlayerRunning;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

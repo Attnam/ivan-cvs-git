@@ -1,9 +1,11 @@
 /* 
  * NOTICE!!!
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
+ * don't know what you're doing. So from here on, proceed at your own risk!
  */
 
-/* Numeric character data loaded during game startup */
+/* Numerical character data loaded during game startup */
 
 /* Default values: */
 
@@ -95,6 +97,9 @@ character
 	BloodMaterial = BLOOD;
 	VomitMaterial = VOMIT;
 	HasSecondaryMaterial = false;
+	IsImmuneToLeprosy = true;
+	PolymorphIntelligenceRequirement = DEPENDS_ON_DANGER;
+	AutomaticallySeen = false;
 }
 
 humanoid
@@ -119,6 +124,7 @@ humanoid
 	DeathMessage = "@Dd dies screaming."; /* overridden if has no head */
 	CanThrow = true;
 	CanApply = true;
+	IsImmuneToLeprosy = false;
 }
 
 nonhumanoid
@@ -149,6 +155,7 @@ playerkind
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	/* Replies overridden */
+	Inventory == scrollofteleportation { Times = 30; }
 }
 
 petrus
@@ -201,6 +208,7 @@ petrus
 	BodyPartsDisappearWhenSevered = true;
 	CanBeConfused = false;
 	EnergyResistance = 50;
+	IsImmuneToLeprosy = true;
 }
 
 farmer
@@ -283,6 +291,7 @@ guard
 			"\"This place's as hot as the elemental plane of fire! I want back home.\"",
 			"\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
 		}
+		AutomaticallySeen = true;
 	}
 
 	Config VETERAN;
@@ -481,6 +490,7 @@ shopkeeper
 			"\"No, I don't sell spoiled food. Decos's alchemists have pumped so much magic potions into the soil that nothing here will go bad before you buy it.\"",
 			"\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
 		}
+		AutomaticallySeen = true;
 	}
 
 	Config ATTNAM;
@@ -609,6 +619,7 @@ priest
 			"\"You cannot contact any god unless you know the right rituals. Alas, I'm unable to teach you any, since after the invasion the Attnamese forbade us to officially worship any god save Valpurus. I can therefore only help you as a healer.\"",
 			"\"With my holy powers, I'm capable of reattaching severed limbs and removing various diseases and poisons. For a price, of course. Should I not bring enough income to the colony, the occupiers would make me a banana grower, too.\"";
 		}
+		AutomaticallySeen = true;
 	}
 }
 
@@ -853,6 +864,7 @@ frog
 	FleshMaterial = FROG_FLESH;
 	PanicLevel = 50;
 	MoveType = WALK|SWIM;
+	CanRead = true;
 
 	Config DARK;
 	{
@@ -860,7 +872,7 @@ frog
 		DefaultAgility = 40;
 		DefaultEndurance = 10;
 		DefaultPerception = 24;
-		DefaultIntelligence = 30;
+		DefaultIntelligence = 25;
 		DefaultWisdom = 20;
 		DefaultCharisma = 5;
 		DefaultMana = 20;
@@ -882,7 +894,7 @@ frog
 		DefaultAgility = 35;
 		DefaultEndurance = 15;
 		DefaultPerception = 30;
-		DefaultIntelligence = 35;
+		DefaultIntelligence = 30;
 		DefaultWisdom = 25;
 		DefaultCharisma = 4;
 		DefaultMana = 25;
@@ -905,7 +917,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 20;
 		DefaultPerception = 36;
-		DefaultIntelligence = 40;
+		DefaultIntelligence = 35;
 		DefaultWisdom = 30;
 		DefaultCharisma = 3;
 		DefaultMana = 30;
@@ -928,7 +940,7 @@ frog
 		DefaultAgility = 40;
 		DefaultEndurance = 10;
 		DefaultPerception = 24;
-		DefaultIntelligence = 20;
+		DefaultIntelligence = 15;
 		DefaultWisdom = 30;
 		DefaultCharisma = 15;
 		DefaultMana = 20;
@@ -947,7 +959,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 15;
 		DefaultPerception = 36;
-		DefaultIntelligence = 25;
+		DefaultIntelligence = 20;
 		DefaultWisdom = 35;
 		DefaultCharisma = 20;
 		DefaultMana = 25;
@@ -967,7 +979,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 20;
 		DefaultPerception = 36;
-		DefaultIntelligence = 30;
+		DefaultIntelligence = 25;
 		DefaultWisdom = 40;
 		DefaultCharisma = 25;
 		DefaultMana = 30;
@@ -1335,7 +1347,6 @@ golem
 		Frequency = 1000;
 		DangerModifier = 500;
 		Adjective = "valpurium";
-		CanBeWished = false;
 		AttachedGod = VALPURUS;
 	}
 
@@ -1359,7 +1370,6 @@ golem
 	{
 		CanBeGenerated = false;
 		Adjective = "acidous blood";
-		CanBeWished = false;
 		AttachedGod = CRUENTUS;
 	}
 }
@@ -1451,6 +1461,7 @@ spider
 	AttachedGod = SCABIES;
 	BodyPartsDisappearWhenSevered = true;
 	BiteCapturesBodyPart = false;
+	AutomaticallySeen = true;
 }
 
 jackal
@@ -1508,6 +1519,7 @@ ass
 	BaseEmitation = rgb24(140, 100, 100);
 	Alias == "donkey";
 	AttachedGod = SCABIES;
+	AutomaticallySeen = true;
 }
 
 communist /* Ivan */
@@ -1642,7 +1654,7 @@ bear
 	FleshMaterial = BEAR_FLESH;
 	DeathMessage = "@Dd groans terribly and falls dead to the ground.";
 	AttachedGod = SILVA;
-	IsAbstract = true;	
+	IsAbstract = true;
 
 	Config BLACK_BEAR;
 	{
@@ -1709,7 +1721,6 @@ dolphin
 	PostFix = "in season";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 200;
-	CanRead = true;
 	HasFeet = false;
 	FleshMaterial = DOLPHIN_FLESH;
 	AttachedGod = SOPHOS;
@@ -1944,6 +1955,7 @@ femaleslave
 			"\"Don't tell me you need a palm leaf expert, too.\"",
 			"\"Now it's my sister's turn to be jealous!\"";
 		}
+		AutomaticallySeen = true;
 	}
 }
 
@@ -1980,6 +1992,7 @@ librarian
 	IsCharmable = false;
 	IsExtraCoward = true;
 	AttachedGod = SOPHOS;
+	PolymorphIntelligenceRequirement = 20;
 }
 
 zombie
@@ -2494,7 +2507,6 @@ angel
 	CanRead = true;
 	NameSingular = "angel";
 	Article = "an";
-	CanBeWished = false;
 	ClassStates = ESP|GAS_IMMUNITY;
 	SkinColor = rgb16(200, 200, 200);
 	HairColor = rgb16(180, 180, 0);
@@ -2593,7 +2605,6 @@ mammoth
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	PanicLevel = 10;
-	CanBeWished = false;
 	FleshMaterial = MAMMOTH_FLESH;
 	AttachedGod = SILVA;
 	Frequency = 2500;
@@ -2716,6 +2727,7 @@ lion
 	FleshMaterial = LION_FLESH;
 	DeathMessage = "@Dd growls and is slain.";
 	AttachedGod = SILVA;
+	AutomaticallySeen = true;
 }
 
 carnivorousplant
@@ -2839,6 +2851,7 @@ snake
 	DangerModifier = 75;
 	CanOpen = false;
 	AttachedGod = MELLIS;
+	AutomaticallySeen = true;
 }
 
 orc
@@ -3090,6 +3103,7 @@ bananagrower
 		"\"I knew you would come to save us!\"",
 		"\"Kill Petrus for us, too!\"";
 	}
+	AutomaticallySeen = true;
 }
 
 imperialist
@@ -3100,7 +3114,7 @@ imperialist
 	DefaultAgility = 20;
 	DefaultEndurance = 15;
 	DefaultPerception = 24;
-	DefaultIntelligence = 40;
+	DefaultIntelligence = 35;
 	DefaultWisdom = 10;
 	DefaultCharisma = 25;
 	DefaultMana = 10;
@@ -3150,6 +3164,7 @@ imperialist
 		"\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"",
 		"\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"";
 	}
+	AutomaticallySeen = true;
 }
 
 smith
@@ -3226,6 +3241,7 @@ ostrich
 	IsCharmable = false; /* AI will go insane if it leaves New Attnam */
 	AttachedGod = SILVA;
 	ClassStates = LEVITATION;
+	AutomaticallySeen = true;
 }
 
 elder
@@ -3271,6 +3287,7 @@ elder
 		"\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
 		"\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"";
 	}
+	AutomaticallySeen = true;
 }
 
 encourager
@@ -3313,6 +3330,7 @@ encourager
 		"@Dd screams at your face: \"Me talented shouter. That made everyone in Attnam jealous. Me was sent here and told to never come back.\"",
 		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouragering workers.\"";
 	}
+	AutomaticallySeen = true;
 }
 
 chameleon
@@ -3535,6 +3553,7 @@ darkmage
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		LeftSWeaponSkillHits = 20;
+		PolymorphIntelligenceRequirement = 5;
 	}
 
 	Config BATTLE_MAGE;
@@ -3564,6 +3583,7 @@ darkmage
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
 		Inventory == Random { MaxPrice = 500; Category = WAND|SCROLL; }
+		PolymorphIntelligenceRequirement = 20;
 	}
 
 	Config ELDER;
@@ -3595,6 +3615,7 @@ darkmage
 		RightSWeaponSkillHits = 100;
 		LeftSWeaponSkillHits = 100;
 		Inventory == Random { MinPrice = 500; Category = WAND|SCROLL; }
+		PolymorphIntelligenceRequirement = 35;
 	}
 
 	Config ARCH_MAGE;
@@ -3640,6 +3661,7 @@ darkmage
 		FireResistance = 40;
 		ElectricityResistance = 40;
 		EnergyResistance = 40;
+		PolymorphIntelligenceRequirement = 50;
 	}
 }
 
@@ -3925,6 +3947,7 @@ hedgehog
 	CWeaponSkillHits == 20;
 	FleshMaterial = HEDGEHOG_FLESH;
 	AttachedGod = SILVA;
+	AutomaticallySeen = true;
 }
 
 bunny
@@ -4111,6 +4134,7 @@ necromancer
 		LeftSWeaponSkillHits = 20;
 		CapColor = rgb16(150, 150, 100);
 		GauntletColor = rgb16(150, 150, 100);
+		PolymorphIntelligenceRequirement = 5;
 	}
 
 	Config MASTER_NECROMANCER;
@@ -4140,6 +4164,7 @@ necromancer
 		Inventory = {2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
 		CapColor = rgb16(100, 100, 200);
 		GauntletColor = rgb16(100, 100, 200);
+		PolymorphIntelligenceRequirement = 20;
 	}
 }
 
@@ -4188,6 +4213,7 @@ sumowrestler
 		"\"If you attack Attnam, too, please don't liberate my wife. She'll force me to commence a merciless diet for sure!\"",
 		"\"I think I'm going to move abroad and start teaching sumo wrestling to foreigners. I'm sure it'll be the number one fashion sport of big-boned people in no time!\"";
 	}
+	AutomaticallySeen = true;
 }
 
 tourist
@@ -4198,6 +4224,7 @@ tourist
 	AttachedGod = MELLIS;
 	SkinColor = rgb16(200, 110, 70);
 	IsExtraCoward = true;
+	AutomaticallySeen = true;
 
 	Config HUSBAND;
 	{

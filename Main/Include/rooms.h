@@ -30,6 +30,7 @@ class ROOM
   virtual bool AllowKick(const character*,const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual bool AllowFoodSearch() const { return false; }
+  virtual void ReceiveVomit(character*);
 );
 
 class ROOM

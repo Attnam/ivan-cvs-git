@@ -7,7 +7,7 @@
 
 class bitmap;
 
-typedef bool (colorizablebitmap::*pixelpredicate)(vector2d) const;
+typedef bool (rawbitmap::*pixelpredicate)(vector2d) const;
 
 class fluid : public entity
 {
@@ -47,7 +47,7 @@ class fluid : public entity
     imagedata(bool = true);
     ~imagedata();
     void Animate(bitmap*, vector2d, color24, int) const;
-    void AddLiquidToPicture(const colorizablebitmap*, long, long, color16, pixelpredicate);
+    void AddLiquidToPicture(const rawbitmap*, long, long, color16, pixelpredicate);
     void Save(outputfile&) const;
     void Load(inputfile&);
     bool Fade();

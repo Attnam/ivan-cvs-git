@@ -132,3 +132,8 @@ bool smoke::IsDangerousForAIToBreathe(const character* Who) const
   return !Who->StateIsActivated(GAS_IMMUNITY)
       && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
 }
+
+bool smoke::IsScaryForAIToBreathe(const character* Who) const
+{
+  return !Who->StateIsActivated(GAS_IMMUNITY) && Gas->IsScary();
+}

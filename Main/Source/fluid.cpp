@@ -456,7 +456,7 @@ void fluid::imagedata::Load(inputfile& SaveFile)
    to determine whether pixels of the Shadow are allowed to be covered
    by the fluid. It is not used if Shadow == 0. */
 
-void fluid::imagedata::AddLiquidToPicture(const colorizablebitmap* Shadow, long Pixels, long AlphaSuggestion, color16 Color, pixelpredicate PixelPredicate)
+void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, long AlphaSuggestion, color16 Color, pixelpredicate PixelPredicate)
 {
   if(ShadowPos == ERROR_VECTOR)
     return;

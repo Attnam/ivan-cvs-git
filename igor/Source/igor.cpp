@@ -52,7 +52,7 @@ int Main(int, char**)
   graphics::LoadDefaultFont(Directory + "Font.pcx");
   DOUBLE_BUFFER->ClearToColor(0);
 
-  colorizablebitmap* CBitmap;
+  rawbitmap* CBitmap;
   felist List(CONST_S("Choose file to edit:"));
   List.AddEntry(CONST_S("Char.pcx"), LIGHT_GRAY);
   List.AddEntry(CONST_S("Humanoid.pcx"), LIGHT_GRAY);
@@ -77,7 +77,7 @@ int Main(int, char**)
     case 4: FileName = CONST_S("OLTerra.pcx"); break;
     }
 
-  CBitmap = new colorizablebitmap(Directory + FileName);
+  CBitmap = new rawbitmap(Directory + FileName);
   bitmap CursorBitmap(Directory + "Cursor.pcx");
   CursorBitmap.ActivateFastFlag();
   vector2d Cursor(0, 0);

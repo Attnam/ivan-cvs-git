@@ -8,6 +8,7 @@
 #include "vector2d.h"
 
 class bitmap;
+class rawbitmap;
 class outputfile;
 class inputfile;
 class festring;
@@ -163,7 +164,7 @@ class bitmap
   alpha GetAlpha(vector2d Pos) const { return AlphaMap[Pos.Y][Pos.X]; }
   void Outline(color16, alpha, priority);
   void FadeToScreen(bitmapeditor = 0);
-  void CreateFlames(int, color16 = TRANSPARENT_COLOR);
+  void CreateFlames(rawbitmap*, vector2d, ulong, int);
   bool IsValidPos(vector2d What) const { return What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize; }
   bool IsValidPos(int X, int Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   void CreateSparkle(vector2d, int);

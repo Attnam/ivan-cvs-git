@@ -207,7 +207,7 @@ void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
   SaveFile << (int)BaseUnarmedStrength;
-  SaveFile << (int)Strength << StrengthExperience << (int)Dexterity << DexterityExperience;
+  SaveFile << StrengthExperience << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
   SaveFile << WieldedGraphicData;
 }
@@ -216,7 +216,7 @@ void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> (int&)BaseUnarmedStrength;
-  SaveFile >> (int&)Strength >> StrengthExperience >> (int&)Dexterity >> DexterityExperience;
+  SaveFile >> StrengthExperience >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
   SaveFile >> WieldedGraphicData;
 }
@@ -224,14 +224,14 @@ void arm::Load(inputfile& SaveFile)
 void leg::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BaseKickStrength << (int)Strength << StrengthExperience << (int)Agility << AgilityExperience;
+  SaveFile << BaseKickStrength << StrengthExperience << AgilityExperience;
   SaveFile << BootSlot;
 }
 
 void leg::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BaseKickStrength >> (int&)Strength >> StrengthExperience >> (int&)Agility >> AgilityExperience;
+  SaveFile >> BaseKickStrength >> StrengthExperience >> AgilityExperience;
   SaveFile >> BootSlot;
 }
 
@@ -286,21 +286,27 @@ bool bodypart::CannotBeSevered(int Type)
 double arm::GetUnarmedDamage() const
 {
   double WeaponStrength = GetBaseUnarmedStrength() * GetBaseUnarmedStrength();
+  item* Gauntlet = GetGauntlet();
 
-  if(GetGauntlet())
-    WeaponStrength += GetGauntlet()->GetWeaponStrength();
+  if(Gauntlet)
+    WeaponStrength += Gauntlet->GetWeaponStrength();
 
-  return sqrt(5e-10 * GetAttribute(ARM_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+  double Damage = sqrt(5e-12 * GetAttribute(ARM_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+
+  if(Gauntlet)
+    Damage += Gauntlet->GetDamageBonus();
+
+  return Damage;
 }
 
 double arm::GetUnarmedToHitValue() const
 {
-  return GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus() * Master->GetMoveEase() / 50000;
+  return GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus() * Master->GetMoveEase() / 500000;
 }
 
 long arm::GetUnarmedAPCost() const
 {
-  return 1000000000 / (APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(UNARMED)->GetBonus());
+  return long(10000000000. / (APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(UNARMED)->GetBonus()));
 }
 
 void arm::CalculateDamage()
@@ -367,7 +373,7 @@ double arm::GetWieldedDamage() const
     }
 
   if(HitStrength > Requirement)
-    return sqrt(5e-14 * HitStrength * Wielded->GetWeaponStrength()) * GetCurrentSWeaponSkill()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
+    return Wielded->GetDamageBonus() + sqrt(5e-18 * HitStrength * Wielded->GetWeaponStrength()) * GetCurrentSWeaponSkill()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
   else
     return 0;
 }
@@ -380,7 +386,7 @@ double arm::GetWieldedToHitValue() const
     return 0;
 
   const item* Wielded = GetWielded();
-  double Base = 2e-7 * Min(HitStrength, 10) * Wielded->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() / (1000 + Wielded->GetWeight());
+  double Base = 2e-11 * Min(HitStrength, 10) * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() * (10000. / (1000 + Wielded->GetWeight()) + Wielded->GetTHVBonus());
   double ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION));
   const arm* PairArm = GetPairArm();
 
@@ -412,7 +418,7 @@ long arm::GetWieldedAPCost() const
   if(HitStrength <= 0)
     return 0;
 
-  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Wielded->GetBonus() * Min(HitStrength, 10)));
+  return long(1 / (1e-14 * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Min(HitStrength, 10)));
 }
 
 void head::CalculateDamage()
@@ -420,7 +426,7 @@ void head::CalculateDamage()
   if(!Master)
     return;
 
-  BiteDamage = 7.07e-5 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  BiteDamage = 7.07e-6 * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void head::CalculateToHitValue()
@@ -428,7 +434,7 @@ void head::CalculateToHitValue()
   if(!Master)
     return;
 
-  BiteToHitValue = Master->GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 100000;
+  BiteToHitValue = Master->GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 1000000;
 }
 
 void head::CalculateAPCost()
@@ -436,7 +442,7 @@ void head::CalculateAPCost()
   if(!Master)
     return;
 
-  BiteAPCost = Max<long>(1000000000 / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus()), 100);
+  BiteAPCost = Max(long(10000000000. / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus())), 100L);
 }
 
 void leg::CalculateDamage()
@@ -445,11 +451,15 @@ void leg::CalculateDamage()
     return;
 
   double WeaponStrength = GetBaseKickStrength() * GetBaseKickStrength();
+  item* Boot = GetBoot();
 
-  if(GetBoot())
-    WeaponStrength += GetBoot()->GetWeaponStrength();
+  if(Boot)
+    WeaponStrength += Boot->GetWeaponStrength();
 
-  KickDamage = sqrt(5e-10 * GetAttribute(LEG_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus();
+  KickDamage = sqrt(5e-12 * GetAttribute(LEG_STRENGTH) * WeaponStrength) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus();
+
+  if(Boot)
+    KickDamage += Boot->GetDamageBonus();
 }
 
 void leg::CalculateToHitValue()
@@ -457,7 +467,7 @@ void leg::CalculateToHitValue()
   if(!Master)
     return;
 
-  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 100000;
+  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 1000000;
 }
 
 void leg::CalculateAPCost()
@@ -465,7 +475,7 @@ void leg::CalculateAPCost()
   if(!Master)
     return;
 
-  KickAPCost = Max<long>(2000000000 / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus()), 100);
+  KickAPCost = Max(long(20000000000. / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus())), 100L);
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -738,7 +748,7 @@ void head::VirtualConstructor(bool Load)
   bodypart::VirtualConstructor(Load);
   HelmetSlot.Init(this, HELMET_INDEX);
   AmuletSlot.Init(this, AMULET_INDEX);
-  BaseBiteStrength = 0;
+  //BaseBiteStrength = 0;
 }
 
 void humanoidtorso::VirtualConstructor(bool Load)
@@ -752,13 +762,10 @@ void humanoidtorso::VirtualConstructor(bool Load)
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  BaseUnarmedStrength = Strength = Dexterity = 0;
+  //BaseUnarmedStrength = 0;
 
   if(!Load)
-    {
-      StrengthBonus = DexterityBonus = 0;
-      StrengthExperience = DexterityExperience = 0;
-    }
+    StrengthBonus = DexterityBonus = 0;
 }
 
 void rightarm::VirtualConstructor(bool Load)
@@ -780,10 +787,9 @@ void leftarm::VirtualConstructor(bool Load)
 void leg::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  Strength = Agility = 0;
 
   if(!Load)
-    StrengthBonus = AgilityBonus = StrengthExperience = AgilityExperience = 0;
+    StrengthBonus = AgilityBonus = 0;
 }
 
 void rightleg::VirtualConstructor(bool Load)
@@ -798,7 +804,7 @@ void leftleg::VirtualConstructor(bool Load)
   BootSlot.Init(this, LEFT_BOOT_INDEX);
 }
 
-bool arm::ApplyExperience()
+/*bool arm::ApplyExperience()
 {
   if(UseMaterialAttributes())
     return false;
@@ -894,11 +900,21 @@ bool leg::ApplyExperience()
     }
 
   return Edited;
-}
+}*/
 
 void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
+  long StrExp = 50, DexExp = 50;
+  bool THW = false;
   item* Wielded = GetWielded();
+
+  if(Wielded)
+    {
+      long Weight = Wielded->GetWeight();
+      StrExp = Limit(Weight / 200L, 50L, 200L);
+      DexExp = Weight ? Limit(500L / Weight, 50L, 200L) : 200;
+      THW = TwoHandWieldIsActive();
+    }
 
   switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), this, HitPos, GetTypeDamage(Enemy), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, Direction, !(RAND() % Master->GetCriticalModifier()), ForceHit))
     {
@@ -906,16 +922,16 @@ void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
     case HAS_BLOCKED:
     case HAS_DIED:
     case DID_NO_DAMAGE:
-      EditExperience(ARM_STRENGTH, 20);
+      EditExperience(ARM_STRENGTH, StrExp, 1 << 9);
 
-      if(GetWielded() && TwoHandWieldIsActive()) // wielded might have changed
-	GetPairArm()->EditExperience(ARM_STRENGTH, 20);
+      if(THW)
+	GetPairArm()->EditExperience(ARM_STRENGTH, StrExp, 1 << 9);
 
     case HAS_DODGED:
-      EditExperience(DEXTERITY, 10);
+      EditExperience(DEXTERITY, DexExp, 1 << 9);
 
-      if(GetWielded() && TwoHandWieldIsActive())
-	GetPairArm()->EditExperience(DEXTERITY, 10);
+      if(THW)
+	GetPairArm()->EditExperience(DEXTERITY, DexExp, 1 << 9);
     }
 }
 
@@ -924,14 +940,14 @@ int arm::GetAttribute(int Identifier) const
   if(Identifier == ARM_STRENGTH)
     {
       if(!UseMaterialAttributes())
-	return Max(Strength + StrengthBonus, 1);
+	return Max(int(StrengthExperience * EXP_DIVISOR) + StrengthBonus, 1);
       else
 	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == DEXTERITY)
     {
       if(!UseMaterialAttributes())
-	return Max(Dexterity + DexterityBonus, 1);
+	return Max(int(DexterityExperience * EXP_DIVISOR) + DexterityBonus, 1);
       else
 	return Max((GetMainMaterial()->GetFlexibility() << 2) + DexterityBonus, 1);
     }
@@ -945,9 +961,9 @@ int arm::GetAttribute(int Identifier) const
 bool arm::EditAttribute(int Identifier, int Value)
 {
   if(Identifier == ARM_STRENGTH)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(Strength, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == DEXTERITY)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(Dexterity, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(DexterityExperience, Value);
   else
     {
       ABORT("Illegal arm attribute %d edit request!", Identifier);
@@ -955,20 +971,49 @@ bool arm::EditAttribute(int Identifier, int Value)
     }
 }
 
-void arm::EditExperience(int Identifier, long Value, bool DirectCall)
+void arm::EditExperience(int Identifier, double Value, double Speed)
 {
-  if(DirectCall)
-    Value <<= 1;
-
   if(Identifier == ARM_STRENGTH)
     {
       if(!UseMaterialAttributes())
-	StrengthExperience += Value;
+	{
+	  int Change = Master->RawEditExperience(StrengthExperience,
+						 Master->GetNaturalExperience(ARM_STRENGTH),
+						 Value, Speed);
+
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "stronger" : "weaker";
+
+	      if(Master->IsPlayer())
+		ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
+	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
+
+	      Master->CalculateBattleInfo();
+	    }
+	}
     }
   else if(Identifier == DEXTERITY)
     {
       if(!UseMaterialAttributes())
-	DexterityExperience += Value;
+	{
+	  int Change = Master->RawEditExperience(DexterityExperience,
+						 Master->GetNaturalExperience(DEXTERITY),
+						 Value, Speed);
+
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "quite dextrous" : "clumsy";
+
+	      if(Master->IsPlayer())
+		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
+
+	      Master->CalculateBattleInfo();
+	    }
+	}
     }
   else
     ABORT("Illegal arm attribute %d experience edit request!", Identifier);
@@ -979,14 +1024,14 @@ int leg::GetAttribute(int Identifier) const
   if(Identifier == LEG_STRENGTH)
     {
       if(!UseMaterialAttributes())
-	return Max(Strength + StrengthBonus, 1);
+	return Max(int(StrengthExperience * EXP_DIVISOR) + StrengthBonus, 1);
       else
 	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == AGILITY)
     {
       if(!UseMaterialAttributes())
-	return Max(Agility + AgilityBonus, 1);
+	return Max(int(AgilityExperience * EXP_DIVISOR) + AgilityBonus, 1);
       else
 	return Max((GetMainMaterial()->GetFlexibility() << 2) + AgilityBonus, 1);
     }
@@ -1000,9 +1045,9 @@ int leg::GetAttribute(int Identifier) const
 bool leg::EditAttribute(int Identifier, int Value)
 {
   if(Identifier == LEG_STRENGTH)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(Strength, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == AGILITY)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(Agility, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(AgilityExperience, Value);
   else
     {
       ABORT("Illegal leg attribute %d edit request!", Identifier);
@@ -1010,20 +1055,50 @@ bool leg::EditAttribute(int Identifier, int Value)
     }
 }
 
-void leg::EditExperience(int Identifier, long Value, bool DirectCall)
+void leg::EditExperience(int Identifier, double Value, double Speed)
 {
-  if(DirectCall)
-    Value <<= 1;
-
   if(Identifier == LEG_STRENGTH)
     {
       if(!UseMaterialAttributes())
-	StrengthExperience += Value;
+	{
+	  int Change = Master->RawEditExperience(StrengthExperience,
+						 Master->GetNaturalExperience(LEG_STRENGTH),
+						 Value, Speed);
+
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "stronger" : "weaker";
+
+	      if(Master->IsPlayer())
+		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
+
+	      Master->CalculateBurdenState();
+	      Master->CalculateBattleInfo();
+	    }
+	}
     }
   else if(Identifier == AGILITY)
     {
       if(!UseMaterialAttributes())
-	AgilityExperience += Value;
+	{
+	  int Change = Master->RawEditExperience(AgilityExperience,
+						 Master->GetNaturalExperience(AGILITY),
+						 Value, Speed);
+
+	  if(Change)
+	    {
+	      const char* Adj = Change > 0 ? "very agile" : "slower";
+
+	      if(Master->IsPlayer())
+		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
+		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
+
+	      Master->CalculateBattleInfo();
+	    }
+	}
     }
   else
     ABORT("Illegal leg attribute %d experience edit request!", Identifier);
@@ -1038,15 +1113,17 @@ void arm::InitSpecialAttributes()
 {
   if(!Master->IsHuman() || Master->IsInitializing())
     {
-      Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
-      Dexterity = Master->GetDefaultDexterity() * (100 + Master->GetAttributeBonus()) / 100;
+      StrengthExperience = Master->GetNaturalExperience(ARM_STRENGTH);
+      DexterityExperience = Master->GetNaturalExperience(DEXTERITY);
     }
   else
     {
-      Strength = int(game::GetAveragePlayerArmStrength());
-      Dexterity = int(game::GetAveragePlayerDexterity());
+      StrengthExperience = game::GetAveragePlayerArmStrengthExperience();
+      DexterityExperience = game::GetAveragePlayerDexterityExperience();
     }
 
+  LimitRef(StrengthExperience, MIN_EXP, MAX_EXP);
+  LimitRef(DexterityExperience, MIN_EXP, MAX_EXP);
   BaseUnarmedStrength = Master->GetBaseUnarmedStrength();
 }
 
@@ -1054,15 +1131,17 @@ void leg::InitSpecialAttributes()
 {
   if(!Master->IsHuman() || Master->IsInitializing())
     {
-      Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
-      Agility = Master->GetDefaultAgility() * (100 + Master->GetAttributeBonus()) / 100;
+      StrengthExperience = Master->GetNaturalExperience(LEG_STRENGTH);
+      AgilityExperience = Master->GetNaturalExperience(AGILITY);
     }
   else
     {
-      Strength = int(game::GetAveragePlayerLegStrength());
-      Agility = int(game::GetAveragePlayerAgility());
+      StrengthExperience = game::GetAveragePlayerLegStrengthExperience();
+      AgilityExperience = game::GetAveragePlayerAgilityExperience();
     }
 
+  LimitRef(StrengthExperience, MIN_EXP, MAX_EXP);
+  LimitRef(AgilityExperience, MIN_EXP, MAX_EXP);
   BaseKickStrength = Master->GetBaseKickStrength();
 }
 
@@ -1080,21 +1159,25 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 
 void bodypart::Mutate()
 {
-  GetMainMaterial()->SetVolume(long(GetVolume() * (1.5 - double(RAND() % 1000) / 1000)));
-}
-
-void leg::Mutate()
-{
-  bodypart::Mutate();
-  SetAgility(int(GetAgility() * (1.5 - double(RAND() % 1000) / 1000)));
-  SetStrength(int(GetStrength() * (1.5 - double(RAND() % 1000) / 1000)));
+  GetMainMaterial()->SetVolume(long(GetVolume() * (1.5 - (RAND() & 1023) / 1023.)));
 }
 
 void arm::Mutate()
 {
   bodypart::Mutate();
-  SetStrength(long(GetStrength() * (1.5 - double(RAND() % 1000) / 1000)));
-  SetDexterity(long(GetDexterity() * (1.5 - double(RAND() % 1000) / 1000)));
+  StrengthExperience = StrengthExperience * (1.5 - (RAND() & 1023) / 1023.);
+  DexterityExperience = DexterityExperience * (1.5 - (RAND() & 1023) / 1023.);
+  LimitRef(StrengthExperience, MIN_EXP, MAX_EXP);
+  LimitRef(DexterityExperience, MIN_EXP, MAX_EXP);
+}
+
+void leg::Mutate()
+{
+  bodypart::Mutate();
+  StrengthExperience = StrengthExperience * (1.5 - (RAND() & 1023) / 1023.);
+  AgilityExperience = AgilityExperience * (1.5 - (RAND() & 1023) / 1023.);
+  LimitRef(StrengthExperience, MIN_EXP, MAX_EXP);
+  LimitRef(AgilityExperience, MIN_EXP, MAX_EXP);
 }
 
 arm* rightarm::GetPairArm() const
@@ -1438,14 +1521,14 @@ int arm::GetBlockCapability() const
   if(HitStrength <= 0)
     return 0;
 
-  return Min(HitStrength, 10) * Wielded->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() / 100000;
+  return Min(HitStrength, 10) * Wielded->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() / 10000000;
 }
 
-void arm::WieldedSkillHit()
+void arm::WieldedSkillHit(int Hits)
 {
   item* Wielded = GetWielded();
 
-  if(Master->GetCWeaponSkill(Wielded->GetWeaponCategory())->AddHit())
+  if(Master->GetCWeaponSkill(Wielded->GetWeaponCategory())->AddHit(Hits))
     {
       CalculateAttackInfo();
 
@@ -1456,7 +1539,7 @@ void arm::WieldedSkillHit()
 	}
     }
 
-  if(GetCurrentSWeaponSkill()->AddHit())
+  if(GetCurrentSWeaponSkill()->AddHit(Hits))
     {
       CalculateAttackInfo();
 
@@ -1478,7 +1561,7 @@ humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : torso(Torso)
   BeltSlot.Init(this, BELT_INDEX);
 }
 
-arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
+arm::arm(const arm& Arm) : bodypart(Arm), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
 {
 }
 
@@ -1496,7 +1579,7 @@ leftarm::leftarm(const leftarm& Arm) : arm(Arm)
   RingSlot.Init(this, LEFT_RING_INDEX);
 }
 
-leg::leg(const leg& Leg) : bodypart(Leg), Strength(Leg.Strength), Agility(Leg.Agility), StrengthExperience(Leg.StrengthExperience), AgilityExperience(Leg.AgilityExperience), BaseKickStrength(Leg.BaseKickStrength)
+leg::leg(const leg& Leg) : bodypart(Leg), StrengthExperience(Leg.StrengthExperience), AgilityExperience(Leg.AgilityExperience), BaseKickStrength(Leg.BaseKickStrength)
 {
 }
 
@@ -1667,7 +1750,10 @@ void arm::SignalEquipmentRemoval(gearslot* Slot)
     if(EquipmentIndex == RIGHT_WIELDED_INDEX || EquipmentIndex == LEFT_WIELDED_INDEX)
       {
 	UpdateWieldedPicture();
-	GetSquareUnder()->SendNewDrawRequest();
+	square* Square = GetSquareUnder();
+
+	if(Square)
+	  Square->SendNewDrawRequest();
       }
 
   if(Master)
@@ -1803,13 +1889,13 @@ int arm::GetWieldedHitStrength() const
 void arm::ApplyDexterityPenalty(item* Item)
 {
   if(Item)
-    DexterityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? Dexterity : GetMainMaterial()->GetFlexibility());
+    DexterityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? GetAttribute(DEXTERITY) : GetMainMaterial()->GetFlexibility());
 }
 
 void leg::ApplyAgilityPenalty(item* Item)
 {
   if(Item)
-    AgilityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? Agility : GetMainMaterial()->GetFlexibility());
+    AgilityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? GetAttribute(AGILITY) : GetMainMaterial()->GetFlexibility());
 }
 
 int corpse::GetSpoilLevel() const
@@ -1989,36 +2075,22 @@ head* head::Behead()
 
 bool arm::EditAllAttributes(int Amount)
 {
-  Strength += Amount;
-  Dexterity += Amount;
-
-  if(!Master->IsPlayer())
-    {
-      if(Strength > 100)
-	Strength = 100;
-
-      if(Dexterity > 100)
-	Dexterity = 100;
-    }
-
-  return Strength < 100 || Dexterity < 100;
+  LimitRef(StrengthExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  LimitRef(DexterityExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  return (Amount < 0
+       && (StrengthExperience != MIN_EXP || DexterityExperience != MIN_EXP))
+      || (Amount > 0
+       && (StrengthExperience != MAX_EXP || DexterityExperience != MAX_EXP));
 }
 
 bool leg::EditAllAttributes(int Amount)
 {
-  Strength += Amount;
-  Agility += Amount;
-
-  if(!Master->IsPlayer())
-    {
-      if(Strength > 100)
-	Strength = 100;
-
-      if(Agility > 100)
-	Agility = 100;
-    }
-
-  return Strength < 100 || Agility < 100;
+  LimitRef(StrengthExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  LimitRef(AgilityExperience += Amount * EXP_MULTIPLIER, MIN_EXP, MAX_EXP);
+  return (Amount < 0
+       && (StrengthExperience != MIN_EXP || AgilityExperience != MIN_EXP))
+      || (Amount > 0
+       && (StrengthExperience != MAX_EXP || AgilityExperience != MAX_EXP));
 }
 
 #ifdef WIZARD
@@ -2041,6 +2113,16 @@ void arm::AddAttackInfo(felist& List) const
 
       Entry.Resize(50);
       Entry << GetMinDamage() << '-' << GetMaxDamage();
+      /*int DamageBonus = GetWielded() ? int(GetWielded()->GetDamageBonus()) : 0;
+
+      if(DamageBonus)
+	{
+	  if(DamageBonus > 0)
+	    Entry << '+';
+
+	  Entry << DamageBonus;
+	}*/
+
       Entry.Resize(60);
       Entry << int(GetToHitValue());
       Entry.Resize(70);
@@ -2838,15 +2920,15 @@ material* bodypart::RemoveMaterial(material* Material)
 void arm::CopyAttributes(const bodypart* BodyPart)
 {
   const arm* Arm = static_cast<const arm*>(BodyPart);
-  Strength = Arm->Strength;
-  Dexterity = Arm->Dexterity;
+  StrengthExperience = Arm->StrengthExperience;
+  DexterityExperience = Arm->DexterityExperience;
 }
 
 void leg::CopyAttributes(const bodypart* BodyPart)
 {
   const leg* Leg = static_cast<const leg*>(BodyPart);
-  Strength = Leg->Strength;
-  Agility = Leg->Agility;
+  StrengthExperience = Leg->StrengthExperience;
+  AgilityExperience = Leg->AgilityExperience;
 }
 
 bool corpse::DetectMaterial(const material* Material) const
@@ -2895,7 +2977,7 @@ vector2d dogtorso::GetBitmapPos(int Frame) const
   return vector2d(BasePos.X + ((Frame & 4) << 2), BasePos.Y);
 }
 
-void dogtorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+void dogtorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int, bool AllowAnimate, bool AllowAlpha) const
 {
   const int AF = GraphicData.AnimationFrames >> 1;
   int Index = !AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF;

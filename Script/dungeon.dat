@@ -1,7 +1,11 @@
 /* 
  * NOTICE!!!
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
+ * don't know what you're doing. So from here on, proceed at your own risk!
  */
+
+/* Team and dungeon data for the game */
 
 Dungeons = 4;
 Teams = 11;
@@ -270,7 +274,7 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 4,4;
 			{
-				Items = { 2, beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, itemcontainer(CHEST) { ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } } }
+				Items = { 2, METEORIC_STEEL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, itemcontainer(CHEST) { ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } } }
 			}
 		}
 	}
@@ -366,7 +370,7 @@ Dungeon ELPURI_CAVE;
 
 			Square, Random;
 			{
-				Items == beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
+				Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
 				Times = 2;
 			}
 
@@ -526,6 +530,12 @@ Dungeon ELPURI_CAVE;
 			Times = 2:6;
 		}
 
+		Square, Random;
+		{
+			Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
+			Times = 2:6;
+		}
+
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = stairs(STAIRS_DOWN);
@@ -544,6 +554,12 @@ Dungeon ELPURI_CAVE;
 		Square, Random;
 		{
 			Items == mine(BIG_MINE) { Team = MONSTER_TEAM; IsActive = true; }
+			Times = 2:6;
+		}
+
+		Square, Random;
+		{
+			Items == MITHRIL beartrap { Team = MONSTER_TEAM; IsActive = true; }
 			Times = 2:6;
 		}
 

@@ -41,7 +41,7 @@ Hetairia	Legifer
 List of all gods
 ----------------
 
-Valpurus 	the king of gods				order
+Valpurus 	god of divine order				order
 Sophos		god of wisdom and stability			order, life
 Dulcis		goddess of love and art				life
 Seges		goddess of health and agriculture		life, man

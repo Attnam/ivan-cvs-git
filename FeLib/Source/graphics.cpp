@@ -31,7 +31,7 @@ bitmap* graphics::DoubleBuffer;
 int graphics::ResX;
 int graphics::ResY;
 int graphics::ColorDepth;
-colorizablebitmap* graphics::DefaultFont = 0;
+rawbitmap* graphics::DefaultFont = 0;
 
 void graphics::Init()
 {
@@ -154,7 +154,7 @@ void graphics::SwitchMode()
 
 void graphics::LoadDefaultFont(const festring& FileName)
 {
-  DefaultFont = new colorizablebitmap(FileName);
+  DefaultFont = new rawbitmap(FileName);
 }
 
 #ifdef __DJGPP__

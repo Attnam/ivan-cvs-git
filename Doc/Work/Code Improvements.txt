@@ -66,3 +66,4 @@ Artikkelien bitittäminen.
 //Inttien synninpäästö.
 Tehokkuustietojen välitys ruutuilmiöihin.
 Enumeraatiot barrikadeille.
+Keinosielujen uudelleenvaistoittaminen.

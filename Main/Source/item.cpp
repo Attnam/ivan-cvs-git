@@ -10,10 +10,10 @@ bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_I
 item::item(donothing) : Slot(0), CloneMotherID(0), Fluid(0) { }
 bool item::IsOnGround() const { return Slot[0]->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
-int item::GetBaseMinDamage() const { return int(sqrt(GetWeaponStrength() / 20000.0) * 0.75); }
-int item::GetBaseMaxDamage() const { return int(sqrt(GetWeaponStrength() / 20000.0) * 1.25) + 1; }
-int item::GetBaseToHitValue() const { return 100 * GetBonus() / (1000 + GetWeight()); }
-int item::GetBaseBlockValue() const { return int(GetBlockModifier() * GetBonus() / (100000 + 100 * GetWeight())); }
+int item::GetBaseMinDamage() const { return int(sqrt(GetWeaponStrength() / 20000.) * 0.75); }
+int item::GetBaseMaxDamage() const { return int(sqrt(GetWeaponStrength() / 20000.) * 1.25) + 1; }
+int item::GetBaseToHitValue() const { return int(10000. / (1000 + GetWeight()) + GetTHVBonus()); }
+int item::GetBaseBlockValue() const { return int((10000. / (1000 + GetWeight()) + GetTHVBonus()) * GetBlockModifier() / 10000.); }
 bool item::IsInCorrectSlot(int I) const { return I == RIGHT_WIELDED_INDEX || I == LEFT_WIELDED_INDEX; }
 bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(*Slot)->GetEquipmentIndex()); }
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
@@ -29,7 +29,7 @@ bool item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED;
 bool item::IsConsumable(const character* Eater) const { return !!GetConsumeMaterial(Eater); }
 bool item::IsEatable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsSolid); }
 bool item::IsDrinkable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsLiquid); }
-pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &colorizablebitmap::IsTransparent; }
+pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
@@ -88,16 +88,18 @@ void item::Fly(character* Thrower, int Direction, int Force)
   bool Breaks = false;
   double BaseDamage, BaseToHitValue;
 
+  /*** check ***/
+
   if(Thrower)
     {
-      int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 100;
-      BaseDamage = sqrt(5e-10 * GetWeaponStrength() * Force / Range) * Bonus;
-      BaseToHitValue = GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+      int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 1000;
+      BaseDamage = sqrt(5e-12 * GetWeaponStrength() * Force / Range) * Bonus;
+      BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
     }
   else
     {
       BaseDamage = sqrt(5e-6 * GetWeaponStrength() * Force / Range);
-      BaseToHitValue = 10 * GetBonus() / (500 + GetWeight()) / Range;
+      BaseToHitValue = 10 * 100 / (500 + GetWeight()) / Range;
     }
 
   int RangeLeft;
@@ -517,10 +519,10 @@ void item::CalculateAll()
 
 /* Temporary and buggy. */
 
-void item::WeaponSkillHit()
+void item::WeaponSkillHit(int Hits)
 {
   if(Slot[0] && Slot[0]->IsGearSlot())
-    static_cast<arm*>(static_cast<gearslot*>(*Slot)->GetBodyPart())->WieldedSkillHit();
+    static_cast<arm*>(static_cast<gearslot*>(*Slot)->GetBodyPart())->WieldedSkillHit(Hits);
 }
 
 /* Returns 0 if item cannot be cloned */
@@ -871,6 +873,16 @@ void item::AddAttackInfo(felist& List) const
   Entry << int(GetStrengthRequirement());
   Entry.Resize(70);
   Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
+  int DamageBonus = int(GetDamageBonus());
+
+  if(DamageBonus)
+    {
+      if(DamageBonus > 0)
+	Entry << '+';
+
+      Entry << DamageBonus;
+    }
+
   List.AddEntry(Entry, LIGHT_GRAY);
 }
 
@@ -1030,7 +1042,7 @@ void item::SignalRustLevelChange()
   SendNewDrawAndMemorizedUpdateRequest();
 }
 
-const colorizablebitmap* item::GetRawPicture() const
+const rawbitmap* item::GetRawPicture() const
 {
   return igraph::GetRawGraphic(GetGraphicsContainerIndex());
 }
@@ -1315,4 +1327,9 @@ bool item::Read(character* Reader)
 {
   Reader->StartReading(this, GetReadDifficulty());
   return true;
+}
+
+bool item::CanBeHardened(const character*) const
+{
+  return MainMaterial->GetHardenedMaterial() != NONE;
 }

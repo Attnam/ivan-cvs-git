@@ -3,9 +3,9 @@
 void meleeweapon::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
-int meleeweapon::GetEffectBonus() const { return 100 + 5 * Enchantment; }
-int meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
-int meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
+//int meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
+double meleeweapon::GetTHVBonus() const { return Enchantment * .5; }
+double meleeweapon::GetDamageBonus() const { return Enchantment; }
 color16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
 bool meleeweapon::IsDippable(const character*) const { return !Fluid; }
 bool meleeweapon::AllowRegularColors() const { return !!SecondaryMaterial->GetVolume(); }
@@ -16,7 +16,7 @@ color16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
 color16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
-int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME; }
+int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
 
 color16 gorovitshammer::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
@@ -33,7 +33,8 @@ const char* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexi
 
 color16 goldeneagleshirt::GetOutlineColor(int) const { return MakeRGB16(0, 255, 255); }
 
-int shield::GetBonus() const { return 100 + 10 * Enchantment; }
+//int shield::GetBonus() const { return 100 + 10 * Enchantment; }
+double shield::GetTHVBonus() const { return Enchantment * .5; }
 
 long cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
 bool cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
@@ -143,9 +144,10 @@ bool pickaxe::Apply(character* User)
 
 long meleeweapon::GetPrice() const
 {
-  double WeaponStrengthModifier = GetFormModifier() * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 20;
+  double WeaponStrengthModifier = GetFormModifier() * GetMainMaterial()->GetStrengthValue();
   WeaponStrengthModifier *= WeaponStrengthModifier;
   WeaponStrengthModifier *= GetMainMaterial()->GetWeight();
+  WeaponStrengthModifier *= Max((10 + Enchantment) * 0.1, 0.1);
   return long(WeaponStrengthModifier / (20000000.0 * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
 }
 
@@ -321,7 +323,18 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, in
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+      int DamageBonus = int(GetDamageBonus());
+
+      if(DamageBonus)
+	{
+	  if(DamageBonus > 0)
+	    Entry << '+';
+
+	  Entry << DamageBonus;
+	}
+
+      Entry << ", " << GetBaseToHitValueDescription();
 
       if(!IsBroken() && !IsWhip())
 	Entry << ", " << GetStrengthValueDescription();
@@ -408,14 +421,14 @@ void meleeweapon::EditEnchantment(int Amount)
   SignalEnchantmentChange();
 }
 
-double meleeweapon::GetWeaponStrength() const
+/*double meleeweapon::GetWeaponStrength() const
 {
   return item::GetWeaponStrength() * (20 + Enchantment) / 20;
-}
+}*/
 
 int meleeweapon::GetStrengthValue() const
 {
-  return long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 40000;
+  return Max<int>(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
 }
 
 void meleeweapon::VirtualConstructor(bool Load)
@@ -579,7 +592,7 @@ void armor::EditEnchantment(int Amount)
 
 int armor::GetStrengthValue() const
 {
-  return long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (10 + Enchantment) / 20000;
+  return Max(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
 }
 
 void armor::VirtualConstructor(bool Load)
@@ -621,8 +634,8 @@ bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, vector2d HitP
 	  game::GetGod(10)->AdjustRelation(10);
 	}
 
-      int CurrentDanger = int(Enemy->GetRelativeDanger(PLAYER) * 100);
-      Enemy->PolymorphRandomly(CurrentDanger / 4, Min(CurrentDanger, 9999), 100 + RAND() % 400);
+      int CurrentDanger = int(Enemy->GetRelativeDanger(PLAYER) * 1000);
+      Enemy->PolymorphRandomly(CurrentDanger / 4, Min(CurrentDanger, 999999), 100 + RAND() % 400);
       return true;
     }
   else
@@ -852,9 +865,9 @@ material* meleeweapon::RemoveSecondaryMaterial()
 pixelpredicate meleeweapon::GetFluidPixelAllowedPredicate() const
 {
   if(SecondaryMaterial->GetVolume())
-    return &colorizablebitmap::IsTransparent;
+    return &rawbitmap::IsTransparent;
   else
-    return &colorizablebitmap::IsMaterialColor1;
+    return &rawbitmap::IsMaterialColor1;
 }
 
 void meleeweapon::CalculateEmitation()

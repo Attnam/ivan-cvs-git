@@ -57,10 +57,10 @@ ulong game::LOSTick;
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
 bool game::Generating = false;
-double game::AveragePlayerArmStrength;
-double game::AveragePlayerLegStrength;
-double game::AveragePlayerDexterity;
-double game::AveragePlayerAgility;
+double game::AveragePlayerArmStrengthExperience;
+double game::AveragePlayerLegStrengthExperience;
+double game::AveragePlayerDexterityExperience;
+double game::AveragePlayerAgilityExperience;
 int game::Teams;
 int game::Dungeons;
 int game::StoryState;
@@ -82,6 +82,7 @@ long game::GlobalRainTimeModifier;
 bool game::PlayerSumoChampion;
 ulong game::SquarePartEmitationTick = 0;
 long game::Turn;
+bool game::PlayerRunning;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -129,6 +130,7 @@ bool game::GoThroughWallsCheat;
 int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
+ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 
 void game::AddCharacterID(character* Char, ulong ID) {
 if(CharacterIDMap.find(ID) != CharacterIDMap.end())
@@ -141,9 +143,6 @@ if(CharacterIDMap.find(ID) == CharacterIDMap.end())
 CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID) {
-if(ID == 1)
-  int esko = 2;
-
 if(ItemIDMap.find(ID) != ItemIDMap.end())
   int esko = 2;
 ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
@@ -265,10 +264,13 @@ bool game::Init(const festring& Name)
 	InitScript();
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new playerkind);
+	SetPlayer(new orc(SLAUGHTERER));
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
+	// ///
+	Player->GainIntrinsic(LEPROSY);
+	// ///
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
 	Petrus = 0;
@@ -302,8 +304,11 @@ bool game::Init(const festring& Name)
 	SeeWholeMapCheatMode = MAP_HIDDEN;
 	GoThroughWallsCheat = false;
 	SumoWrestling = false;
-	GlobalRainTimeModifier = RAND() & 1023;
+	GlobalRainTimeModifier = RAND() & 8191;
 	PlayerSumoChampion = false;
+	protosystem::InitCharacterDataBaseFlags();
+	memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
+	PlayerRunning = false;
 
 	if(game::IsXMas())
 	  {
@@ -580,10 +585,14 @@ bool game::Save(const festring& SaveName)
   long Seed = RAND();
   femath::SetSeed(Seed);
   SaveFile << Seed;
-  SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
-  SaveFile << Teams << Dungeons << StoryState;
+  SaveFile << AveragePlayerArmStrengthExperience;
+  SaveFile << AveragePlayerLegStrengthExperience;
+  SaveFile << AveragePlayerDexterityExperience;
+  SaveFile << AveragePlayerAgilityExperience;
+  SaveFile << Teams << Dungeons << StoryState << PlayerRunning;
   SaveFile << PlayerMassacreMap << PetMassacreMap << MiscMassacreMap;
   SaveFile << PlayerMassacreAmount << PetMassacreAmount << MiscMassacreAmount;
+  SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
   int c;
 
   for(c = 1; c < Dungeons; ++c)
@@ -605,6 +614,7 @@ bool game::Save(const festring& SaveName)
   SaveFile << DangerMap << NextDangerIDType << NextDangerIDConfigIndex;
   SaveFile << DefaultPolymorphTo << DefaultSummonMonster;
   SaveFile << DefaultWish << DefaultChangeMaterial << DefaultDetectMaterial;
+  protosystem::SaveCharacterDataBaseFlags(SaveFile);
   return true;
 }
 
@@ -631,10 +641,14 @@ int game::Load(const festring& SaveName)
   SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<long>(SaveFile));
-  SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
-  SaveFile >> Teams >> Dungeons >> StoryState;
+  SaveFile >> AveragePlayerArmStrengthExperience;
+  SaveFile >> AveragePlayerLegStrengthExperience;
+  SaveFile >> AveragePlayerDexterityExperience;
+  SaveFile >> AveragePlayerAgilityExperience;
+  SaveFile >> Teams >> Dungeons >> StoryState >> PlayerRunning;
   SaveFile >> PlayerMassacreMap >> PetMassacreMap >> MiscMassacreMap;
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
+  LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
   int c;
 
   Dungeon = new dungeon*[Dungeons];
@@ -672,6 +686,7 @@ int game::Load(const festring& SaveName)
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
   SaveFile >> DefaultWish >> DefaultChangeMaterial >> DefaultDetectMaterial;
+  protosystem::LoadCharacterDataBaseFlags(SaveFile);
   return LOADED;
 }
 
@@ -999,12 +1014,12 @@ void game::CreateTeams()
 
 /* vector2d Pos should be removed from xxxQuestion()s? */
 
-festring game::StringQuestion(const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool AllowExit)
+festring game::StringQuestion(const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0); // pos may be incorrect!
   festring Return;
-  iosystem::StringQuestion(Return, Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
+  iosystem::StringQuestion(Return, Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
@@ -1543,7 +1558,7 @@ void game::InitDangerMap()
       int ConfigSize = Proto->GetConfigSize();
 
       for(int c2 = 0; c2 < ConfigSize; ++c2)
-	if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->CanBeGenerated)
+	if(!ConfigData[c2]->IsAbstract)
 	  {
 	    int Config = ConfigData[c2]->Config;
 
@@ -1582,27 +1597,21 @@ void game::CalculateNextDanger()
       character* Char = Proto->Clone(DataBase->Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       double CurrentDanger = Char->GetRelativeDanger(Player, true);
       double NakedDanger = DangerIterator->second.NakedDanger;
+      delete Char;
 
       if(NakedDanger > CurrentDanger)
 	DangerIterator->second.NakedDanger = (NakedDanger * 9 + CurrentDanger) / 10;
 
-      delete Char;
       Char = Proto->Clone(DataBase->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       CurrentDanger = Char->GetRelativeDanger(Player, true);
       double EquippedDanger = DangerIterator->second.EquippedDanger;
+      delete Char;
 
       if(EquippedDanger > CurrentDanger)
 	DangerIterator->second.EquippedDanger = (EquippedDanger * 9 + CurrentDanger) / 10;
 
-      delete Char;
-      int ConfigSize = Proto->GetConfigSize();
-
-      for(int c = NextDangerIDConfigIndex + 1; c < ConfigSize; ++c)
-	if(ConfigData[c]->CanBeGenerated)
-	  {
-	    NextDangerIDConfigIndex = c;
-	    return;
-	  }
+      if(++NextDangerIDConfigIndex < Proto->GetConfigSize())
+	return;
 
       for(;;)
 	{
@@ -1611,10 +1620,10 @@ void game::CalculateNextDanger()
 
 	  Proto = protocontainer<character>::GetProto(NextDangerIDType);
 	  ConfigData = Proto->GetConfigData();
-	  ConfigSize = Proto->GetConfigSize();
+	  int ConfigSize = Proto->GetConfigSize();
 
 	  for(int c = 0; c < ConfigSize; ++c)
-	    if(!ConfigData[c]->IsAbstract && ConfigData[c]->CanBeGenerated)
+	    if(!ConfigData[c]->IsAbstract)
 	      {
 		NextDangerIDConfigIndex = c;
 		return;
@@ -1760,17 +1769,21 @@ void game::SetStandardListAttributes(felist& List)
   List.SetDownKey(game::GetMoveCommandKey(KEY_DOWN_INDEX));
 }
 
-void game::SignalGeneration(configid ConfigID)
+/*void game::SignalGeneration(configid ConfigID)
 {
   dangermap::iterator Iterator = DangerMap.find(ConfigID);
 
   if(Iterator != DangerMap.end())
-    Iterator->second.HasBeenGenerated = true;
-}
+    Iterator->second.Flags |= HAS_BEEN_GENERATED;
+}*/
 
 void game::InitPlayerAttributeAverage()
 {
-  AveragePlayerArmStrength = AveragePlayerLegStrength = AveragePlayerDexterity = AveragePlayerAgility = 0;
+  AveragePlayerArmStrengthExperience
+  = AveragePlayerLegStrengthExperience
+  = AveragePlayerDexterityExperience
+  = AveragePlayerAgilityExperience
+  = 0;
 
   if(!GetPlayer()->IsHumanoid())
     return;
@@ -1782,8 +1795,8 @@ void game::InitPlayerAttributeAverage()
 
   if(RightArm && !RightArm->UseMaterialAttributes())
     {
-      AveragePlayerArmStrength += RightArm->GetStrength();
-      AveragePlayerDexterity += RightArm->GetDexterity();
+      AveragePlayerArmStrengthExperience += RightArm->GetStrengthExperience();
+      AveragePlayerDexterityExperience += RightArm->GetDexterityExperience();
       ++Arms;
     }
 
@@ -1791,8 +1804,8 @@ void game::InitPlayerAttributeAverage()
 
   if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
-      AveragePlayerArmStrength += LeftArm->GetStrength();
-      AveragePlayerDexterity += LeftArm->GetDexterity();
+      AveragePlayerArmStrengthExperience += LeftArm->GetStrengthExperience();
+      AveragePlayerDexterityExperience += LeftArm->GetDexterityExperience();
       ++Arms;
     }
 
@@ -1800,8 +1813,8 @@ void game::InitPlayerAttributeAverage()
 
   if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
-      AveragePlayerLegStrength += RightLeg->GetStrength();
-      AveragePlayerAgility += RightLeg->GetAgility();
+      AveragePlayerLegStrengthExperience += RightLeg->GetStrengthExperience();
+      AveragePlayerAgilityExperience += RightLeg->GetAgilityExperience();
       ++Legs;
     }
 
@@ -1809,21 +1822,21 @@ void game::InitPlayerAttributeAverage()
 
   if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
-      AveragePlayerLegStrength += LeftLeg->GetStrength();
-      AveragePlayerAgility += LeftLeg->GetAgility();
+      AveragePlayerLegStrengthExperience += LeftLeg->GetStrengthExperience();
+      AveragePlayerAgilityExperience += LeftLeg->GetAgilityExperience();
       ++Legs;
     }
 
   if(Arms)
     {
-      AveragePlayerArmStrength = AveragePlayerArmStrength / Arms;
-      AveragePlayerDexterity = AveragePlayerDexterity / Arms;
+      AveragePlayerArmStrengthExperience /= Arms;
+      AveragePlayerDexterityExperience /= Arms;
     }
 
   if(Legs)
     {
-      AveragePlayerLegStrength = AveragePlayerLegStrength / Legs;
-      AveragePlayerAgility = AveragePlayerAgility / Legs;
+      AveragePlayerLegStrengthExperience /= Legs;
+      AveragePlayerAgilityExperience /= Legs;
     }
 }
 
@@ -1833,18 +1846,18 @@ void game::UpdatePlayerAttributeAverage()
     return;
 
   humanoid* Player = static_cast<humanoid*>(GetPlayer());
-  double PlayerArmStrength = 0;
-  double PlayerLegStrength = 0;
-  double PlayerDexterity = 0;
-  double PlayerAgility = 0;
+  double PlayerArmStrengthExperience = 0;
+  double PlayerLegStrengthExperience = 0;
+  double PlayerDexterityExperience = 0;
+  double PlayerAgilityExperience = 0;
   int Arms = 0;
   int Legs = 0;
   rightarm* RightArm = Player->GetRightArm();
 
   if(RightArm && !RightArm->UseMaterialAttributes())
     {
-      PlayerArmStrength += RightArm->GetStrength();
-      PlayerDexterity += RightArm->GetDexterity();
+      PlayerArmStrengthExperience += RightArm->GetStrengthExperience();
+      PlayerDexterityExperience += RightArm->GetDexterityExperience();
       ++Arms;
     }
 
@@ -1852,8 +1865,8 @@ void game::UpdatePlayerAttributeAverage()
 
   if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
-      PlayerArmStrength += LeftArm->GetStrength();
-      PlayerDexterity += LeftArm->GetDexterity();
+      PlayerArmStrengthExperience += LeftArm->GetStrengthExperience();
+      PlayerDexterityExperience += LeftArm->GetDexterityExperience();
       ++Arms;
     }
 
@@ -1861,8 +1874,8 @@ void game::UpdatePlayerAttributeAverage()
 
   if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
-      PlayerLegStrength += RightLeg->GetStrength();
-      PlayerAgility += RightLeg->GetAgility();
+      PlayerLegStrengthExperience += RightLeg->GetStrengthExperience();
+      PlayerAgilityExperience += RightLeg->GetAgilityExperience();
       ++Legs;
     }
 
@@ -1870,21 +1883,21 @@ void game::UpdatePlayerAttributeAverage()
 
   if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
-      PlayerLegStrength += LeftLeg->GetStrength();
-      PlayerAgility += LeftLeg->GetAgility();
+      PlayerLegStrengthExperience += LeftLeg->GetStrengthExperience();
+      PlayerAgilityExperience += LeftLeg->GetAgilityExperience();
       ++Legs;
     }
 
   if(Arms)
     {
-      AveragePlayerArmStrength = (49 * AveragePlayerArmStrength + PlayerArmStrength / Arms) / 50;
-      AveragePlayerDexterity = (49 * AveragePlayerDexterity + PlayerDexterity / Arms) / 50;
+      AveragePlayerArmStrengthExperience = (49 * AveragePlayerArmStrengthExperience + PlayerArmStrengthExperience / Arms) / 50;
+      AveragePlayerDexterityExperience = (49 * AveragePlayerDexterityExperience + PlayerDexterityExperience / Arms) / 50;
     }
 
   if(Legs)
     {
-      AveragePlayerLegStrength = (49 * AveragePlayerLegStrength + PlayerLegStrength / Legs) / 50;
-      AveragePlayerAgility = (49 * AveragePlayerAgility + PlayerAgility / Legs) / 50;
+      AveragePlayerLegStrengthExperience = (49 * AveragePlayerLegStrengthExperience + PlayerLegStrengthExperience / Legs) / 50;
+      AveragePlayerAgilityExperience = (49 * AveragePlayerAgilityExperience + PlayerAgilityExperience / Legs) / 50;
     }
 }
 
@@ -1978,13 +1991,13 @@ inputfile& operator>>(inputfile& SaveFile, configid& Value)
 
 outputfile& operator<<(outputfile& SaveFile, const dangerid& Value)
 {
-  SaveFile << Value.NakedDanger << Value.EquippedDanger << Value.HasBeenGenerated;
+  SaveFile << Value.NakedDanger << Value.EquippedDanger;
   return SaveFile;
 }
 
 inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 {
-  SaveFile >> Value.NakedDanger >> Value.EquippedDanger >> Value.HasBeenGenerated;
+  SaveFile >> Value.NakedDanger >> Value.EquippedDanger;
   return SaveFile;
 }
 
@@ -2592,8 +2605,8 @@ bool game::EndSumoWrestling(int Result)
 	Msg << "also ";
 
       Msg << "teach you a few nasty martial art tricks the years have taught me.\"";
-      PLAYER->GetCWeaponSkill(UNARMED)->AddHit(1000);
-      PLAYER->GetCWeaponSkill(KICK)->AddHit(1000);
+      PLAYER->GetCWeaponSkill(UNARMED)->AddHit(100000);
+      PLAYER->GetCWeaponSkill(KICK)->AddHit(100000);
       character* Imperialist = GetCurrentLevel()->GetLSquare(5, 5)->GetRoom()->GetMaster();
 
       if(Imperialist && Imperialist->GetRelation(PLAYER) != HOSTILE)
@@ -2702,12 +2715,12 @@ void game::Wish(character* Wisher, const char* MsgSingle, const char* MsgPair)
     }
 }
 
-festring game::DefaultQuestion(festring Topic, festring& Default)
+festring game::DefaultQuestion(festring Topic, festring& Default, stringkeyhandler KeyHandler)
 {
   if(!Default.IsEmpty())
     Topic << " [" << Default << ']';
 
-  festring Answer = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false);
+  festring Answer = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false, KeyHandler);
 
   if(Answer.IsEmpty())
     Answer = Default;
@@ -2721,4 +2734,39 @@ void game::GetTime(ivantime& Time)
   Time.Day = Time.Hour / 24 + 1;
   Time.Hour %= 24;
   Time.Min = Tick % 2000 * 60 / 2000;
+}
+
+bool NameOrderer(character* C1, character* C2)
+{
+  return festring::IgnoreCaseCompare(C1->GetName(UNARTICLED), C2->GetName(UNARTICLED));
+}
+
+bool game::PolymorphControlKeyHandler(int Key, festring& String)
+{
+  if(Key == '*')
+    {
+      felist List(CONST_S("List of known creatures"));
+      SetStandardListAttributes(List);
+      List.SetPageLength(15);
+      List.AddFlags(SELECTABLE);
+      protosystem::CreateEverySeenCharacter(CharacterDrawVector);
+      std::sort(CharacterDrawVector.begin(), CharacterDrawVector.end(), NameOrderer);
+      List.SetEntryDrawer(game::CharacterEntryDrawer);
+
+      for(uint c = 0; c < CharacterDrawVector.size(); ++c)
+	List.AddEntry(CharacterDrawVector[c]->GetName(UNARTICLED), LIGHT_GRAY, 0, c);
+
+      int Chosen = List.Draw();
+
+      for(c = 0; c < CharacterDrawVector.size(); ++c)
+	delete CharacterDrawVector[c];
+
+      if(!(Chosen & FELIST_ERROR_BIT))
+	String = List.GetEntry(Chosen);
+
+      CharacterDrawVector.clear();
+      return true;
+    }
+
+  return false;
 }

@@ -437,4 +437,20 @@ template <class type> inline inputfile& LoadLinkedList(inputfile& SaveFile, type
   return SaveFile;
 }
 
+template <class type> inline outputfile& SaveArray(outputfile& SaveFile, const type* Array, int Count)
+{
+  for(int c = 0; c < Count; ++c)
+    SaveFile << Array[c];
+
+  return SaveFile;
+}
+
+template <class type> inline inputfile& LoadArray(inputfile& SaveFile, type* Array, int Count)
+{
+  for(int c = 0; c < Count; ++c)
+    SaveFile >> Array[c];
+
+  return SaveFile;
+}
+
 #endif

@@ -141,12 +141,11 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
   int SparkleTime = 0;
   int Seed = 0;
   int FlyAmount = GetSpoilLevel(); 
-  bool Sparkling = false;
-  bool FrameNeeded = false;
+  bool Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   vector2d BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
 
-  if(!(SpecialFlags & (ST_FLAME|ST_LIGHTNING)))
+  if(!(SpecialFlags & (ST_FLAMES|ST_LIGHTNING)))
     {
       if(AllowSparkling())
 	{
@@ -217,20 +216,16 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
 
       if(FlyAmount)
 	{
-	  static int SeedModifier = 1;
-	  Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
-
-	  if(++SeedModifier > 0x10)
-	    SeedModifier = 1;
+	  SeedNeeded = true;
+	  FrameNeeded = true;
 
 	  if(AnimationFrames <= 32)
 	    AnimationFrames = 32;
-
-	  FrameNeeded = true;
 	}
     }
-  else if(SpecialFlags & ST_FLAME)
+  else if(SpecialFlags & ST_FLAMES)
     {
+      SeedNeeded = true;
       FrameNeeded = true;
 
       if(AnimationFrames <= 16)
@@ -238,14 +233,19 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
     }
   else if(SpecialFlags & ST_LIGHTNING)
     {
+      SeedNeeded = true;
+
+      if(AnimationFrames <= 128)
+	AnimationFrames = 128;
+    }
+
+  if(SeedNeeded)
+    {
       static int SeedModifier = 1;
       Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 0x42;
 
       if(++SeedModifier > 0x10)
 	SeedModifier = 1;
-
-      if(AnimationFrames <= 128)
-	AnimationFrames = 128;
     }
 
   if(SpecialFlags & ST_WOBBLE && AnimationFrames <= 128)

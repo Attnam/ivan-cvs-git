@@ -15,7 +15,7 @@ void god::Pray()
 	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, 10, true);
-	PLAYER->EditExperience(WISDOM, 250);
+	PLAYER->EditExperience(WISDOM, 20, 1 << 10);
 
 	if(Relation > 500 && !(RAND() % 100))
 	  {
@@ -35,7 +35,7 @@ void god::Pray()
 	AdjustTimer(10000);
 	AdjustRelation(-50);
 	game::ApplyDivineAlignmentBonuses(this, 10, false);
-	PLAYER->EditExperience(WISDOM, -250);
+	PLAYER->EditExperience(WISDOM, -50, 1 << 10);
       }
   else
     if(Relation > RAND_N(500) && Timer < RAND_N(500000))
@@ -45,7 +45,7 @@ void god::Pray()
 	AdjustTimer(25000);
 	AdjustRelation(-75);
 	game::ApplyDivineAlignmentBonuses(this, 15, false);
-	PLAYER->EditExperience(WISDOM, -250);
+	PLAYER->EditExperience(WISDOM, -50, 1 << 10);
       }
     else
       {
@@ -54,7 +54,7 @@ void god::Pray()
 	AdjustTimer(50000);
 	AdjustRelation(-100);
 	game::ApplyDivineAlignmentBonuses(this, 20, false);
-	PLAYER->EditExperience(WISDOM, -500);
+	PLAYER->EditExperience(WISDOM, -100, 1 << 11);
 
 	if(Relation < -500 && !(RAND() % 50))
 	  {
@@ -225,9 +225,9 @@ bool god::ReceiveOffer(item* Sacrifice)
 	game::ApplyDivineAlignmentBonuses(this, -OfferValue / 5, false);
 
       if(OfferValue > 0)
-	PLAYER->EditExperience(WISDOM, 50);
+	PLAYER->EditExperience(WISDOM, 100, 1 << 7);
       else
-	PLAYER->EditExperience(WISDOM, -50);
+	PLAYER->EditExperience(WISDOM, -100, 1 << 7);
 
       if(OfferValue > 0)
 	{

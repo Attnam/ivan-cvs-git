@@ -90,6 +90,7 @@ private:
   static bool LevelTeleport(character*);
   static bool Possess(character*);
 #endif
+  static bool ToggleRunning(character*);
   static command* Command[];
 };
 
