@@ -84,7 +84,7 @@ lantern
         Category = TOOL;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
-	FormModifier = 30;
+	FormModifier = 20;
 	Price = 50;
 	BaseEmitation = rgb24(130, 130, 120);
 	NameSingular = "lantern";
@@ -100,7 +100,7 @@ lantern
 		DefaultSize = 15;
 		Possibility = 10;
 		InHandsPic = 160, 128;
-		FormModifier = 80;
+		FormModifier = 25;
 		Price = 0;
 		BaseEmitation = 0;
 		BitmapPos = 0, 304;
@@ -118,7 +118,7 @@ can /* materialcontainer-> */
 	DefaultContainedVolume = 500;
 	StrengthModifier = 50;
 	/* BitmapPos depends on being full or not */
-	FormModifier = 30;
+	FormModifier = 15;
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
@@ -136,7 +136,7 @@ lump
 	DefaultMainVolume = 500;
 	StrengthModifier = 75;
 	BitmapPos = 16, 48;
-	FormModifier = 15;
+	FormModifier = 10;
 	NameSingular = "lump";
 	MainMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
@@ -154,14 +154,14 @@ meleeweapon
 
 	Config LONG_SWORD;
 	{
-		DefaultSize = 150;
-		Possibility = 250;
+		DefaultSize = 120;
+		Possibility = 100;
 		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
-		DefaultMainVolume = 2400;
-		DefaultSecondaryVolume = 100;
+		DefaultMainVolume = 130;
+		DefaultSecondaryVolume = 45;
 		BitmapPos = 16, 336;
-		FormModifier = 150;
+		FormModifier = 100;
 		StrengthModifier = 150;
 		NameSingular = "sword";
 		Adjective = "long";
@@ -173,22 +173,22 @@ meleeweapon
 
 	Config BROKEN|LONG_SWORD;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		BitmapPos = 32, 208;
 	}
 
 	Config TWO_HANDED_SWORD;
 	{
-		DefaultSize = 175;
+		DefaultSize = 150;
 		Possibility = 50;
 		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
-		DefaultMainVolume = 5500;
-		DefaultSecondaryVolume = 250;
+		DefaultMainVolume = 350;
+		DefaultSecondaryVolume = 150;
 		StrengthModifier = 250;
 		BitmapPos = 0, 0;
-		StrengthModifier = 150;
-		FormModifier = 175;
+		StrengthModifier = 150; /* Which one is correct? */
+		FormModifier = 135;
 		Adjective = "two-handed";
 		NameSingular = "sword";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -204,20 +204,20 @@ meleeweapon
 		BitmapPos = 32, 80;
 	}
 
-	Config CURVED_TWO_HANDED_SWORD;
+	Config TWO_HANDED_SCIMITAR;
 	{
-		DefaultSize = 175;
+		DefaultSize = 140;
 		Possibility = 0;
 		InHandsPic = 160, 16;
 		WeaponCategory = LARGE_SWORDS;
-		DefaultMainVolume = 5500;
-		DefaultSecondaryVolume = 250;
+		DefaultMainVolume = 400;
+		DefaultSecondaryVolume = 150;
 		StrengthModifier = 250;
 		BitmapPos = 0, 16;
-		StrengthModifier = 150;
-		FormModifier = 200;
-		Adjective = "curved two-handed";
-		NameSingular = "sword";
+		StrengthModifier = 150; /* Which one is correct? */
+		FormModifier = 140;
+		Adjective = "two-handed";
+		NameSingular = "scimitar";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
 		MaterialConfigChances = { 2, 250, 10; }
@@ -225,23 +225,23 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|CURVED_TWO_HANDED_SWORD;
+	Config BROKEN|TWO_HANDED_SCIMITAR;
 	{
-		Possibility = 0;
+		Possibility = 1;
 		BitmapPos = 32, 96;
 	}
 
 	Config SPEAR;
 	{
-		DefaultSize = 200;
+		DefaultSize = 190;
 		Possibility = 1000;
 		InHandsPic = 160, 96;
 		WeaponCategory = SPEARS;
 		StrengthModifier = 75;
 		BitmapPos = 16, 144;
-		FormModifier = 200;
-		DefaultMainVolume = 200;
-		DefaultSecondaryVolume = 1600;
+		FormModifier = 85;
+		DefaultMainVolume = 100;
+		DefaultSecondaryVolume = 2000;
 		NameSingular = "spear";
 		MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
@@ -258,15 +258,15 @@ meleeweapon
 
 	Config AXE;
 	{
-		DefaultSize = 125;
-		Possibility = 1000;
+		DefaultSize = 60;
+		Possibility = 750;
 		InHandsPic = 160, 176;
 		WeaponCategory = AXES;
-		DefaultMainVolume = 1400;
-		DefaultSecondaryVolume = 1600;
+		DefaultMainVolume = 200;
+		DefaultSecondaryVolume = 400;
 		StrengthModifier = 150;
 		BitmapPos = 16, 256;
-		FormModifier = 150;
+		FormModifier = 45;
 		NameSingular = "axe";
 		Article = "an";
 		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
@@ -278,22 +278,22 @@ meleeweapon
 
 	Config BROKEN|AXE;
 	{
-		Possibility = 100;
+		Possibility = 75;
 		BitmapPos = 32, 176;
 	}
 
-	Config POLE_AXE;
+	Config HALBERD;
 	{
-		DefaultSize = 225;
-		Possibility = 250;
+		DefaultSize = 170;
+		Possibility = 200;
 		InHandsPic = 160, 176;
-		WeaponCategory = AXES;
-		DefaultMainVolume = 2500;
-		DefaultSecondaryVolume = 2000;
+		WeaponCategory = POLE_ARMS;
+		DefaultMainVolume = 375;
+		DefaultSecondaryVolume = 1800;
 		StrengthModifier = 150;
 		BitmapPos = 0, 80;
-		FormModifier = 150;
-		NameSingular = "poleaxe";
+		FormModifier = 115;
+		NameSingular = "halberd";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 50, 10; }
@@ -301,25 +301,24 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|POLE_AXE;
+	Config BROKEN|HALBERD;
 	{
-		Possibility = 25;
+		Possibility = 20;
 		BitmapPos = 32, 144;
 	}
 
-	Config SPIKED_MACE;
+	Config MACE;
 	{
 		StrengthModifier = 400; 
-		FormModifier = 125; 
-		DefaultSize = 150; 
-		DefaultMainVolume = 5000; 
+		FormModifier = 65; 
+		DefaultSize = 70; 
+		DefaultMainVolume = 300;
+		DefaultSecondaryVolume = 500;
 		BitmapPos = 0, 32;
-		Possibility = 100;
+		Possibility = 500;
 		InHandsPic = 160, 192;
-		DefaultSecondaryVolume = 2000;
 		WeaponCategory = MACES;
 		NameSingular = "mace";
-		Adjective = "spiked";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 100, 10; }
@@ -327,10 +326,108 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|SPIKED_MACE;
+	Config BROKEN|MACE;
 	{
-		Possibility = 10;
+		Possibility = 50;
 		BitmapPos = 32, 112;
+	}
+
+	Config HAMMER;
+	{
+		DefaultSize = 60;
+		Possibility = 500;
+		InHandsPic = 176, 16;
+		WeaponCategory = HAMMERS;
+		DefaultMainVolume = 250;
+		DefaultSecondaryVolume = 500;
+		StrengthModifier = 150;
+		BitmapPos = 48, 160;
+		FormModifier = 55;
+		NameSingular = "hammer";
+		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 4, 100, 100, 50, 10; }
+		Roundness = 20;
+		IsTwoHanded = true;
+	}
+
+	Config BROKEN|HAMMER;
+	{
+		Possibility = 50;
+		BitmapPos = 48, 192;
+	}
+
+	Config SICKLE;
+	{
+		DefaultSize = 40;
+		Possibility = 50;
+		InHandsPic = 160, 64; /* fix */
+		WeaponCategory = AXES;
+		DefaultMainVolume = 100;
+		DefaultSecondaryVolume = 50;
+		BitmapPos = 48, 144;
+		FormModifier = 45;
+		StrengthModifier = 150;
+		NameSingular = "sickle";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 50;
+	}
+
+	Config BROKEN|SICKLE;
+	{
+		Possibility = 5;
+		BitmapPos = 48, 176;
+	}
+
+	Config DAGGER;
+	{
+		DefaultSize = 40;
+		Possibility = 300;
+		InHandsPic = 160, 32;
+		WeaponCategory = DAGGERS;
+		DefaultMainVolume = 25;
+		DefaultSecondaryVolume = 25;
+		BitmapPos = 48, 256;
+		FormModifier = 70;
+		StrengthModifier = 150;
+		NameSingular = "dagger";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 20;
+	}
+
+	Config BROKEN|DAGGER;
+	{
+		Possibility = 30;
+		BitmapPos = 48, 288;
+	}
+
+	Config SHORT_SWORD;
+	{
+		DefaultSize = 70;
+		Possibility = 200;
+		InHandsPic = 160, 16;
+		WeaponCategory = SMALL_SWORDS;
+		DefaultMainVolume = 90;
+		DefaultSecondaryVolume = 35;
+		BitmapPos = 48, 240;
+		FormModifier = 80;
+		StrengthModifier = 150;
+		Adjective = "short";
+		NameSingular = "sword";
+		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
+		MaterialConfigChances = { 4, 100, 100, 50, 10; }
+		Roundness = 15;
+	}
+
+	Config BROKEN|SHORT_SWORD;
+	{
+		Possibility = 20;
+		BitmapPos = 48, 272;
 	}
 }
 
@@ -344,7 +441,7 @@ banana /* materialcontainer-> */
 	StrengthModifier = 50;
 	Category = FOOD;
 	BitmapPos = 0, 112;
-	FormModifier = 50;
+	FormModifier = 25;
 	DefaultSize = 20;
 	NameSingular = "banana";
 	MainMaterialConfig == BANANA_PEEL;
@@ -368,7 +465,7 @@ holybanana /* materialcontainer->banana-> */
 	DefaultMainVolume = 400;
 	DefaultSecondaryVolume = 1500;
 	StrengthModifier = 250;
-	FormModifier = 200;
+	FormModifier = 100;
 	DefaultSize = 30;
 	Score = 250;
 	Price = 1000;
@@ -386,14 +483,14 @@ holybanana /* materialcontainer->banana-> */
 
 justifier /* meleeweapon-> */
 {
-	DefaultSize = 200;
+	DefaultSize = 125;
 	Possibility = 0;
 	InHandsPic = 160, 16;
 	WeaponCategory = LARGE_SWORDS;
-	DefaultMainVolume = 6700;
-	DefaultSecondaryVolume = 300;
+	DefaultMainVolume = 200;
+	DefaultSecondaryVolume = 100;
 	BitmapPos = 0, 64;
-	FormModifier = 400;
+	FormModifier = 300;
 	StrengthModifier = 150;
 	Score = 1000;
 	CanBeWished = false;
@@ -421,8 +518,8 @@ justifier /* meleeweapon-> */
 neercseulb /* meleeweapon-> */
 {
 	StrengthModifier = 600;
-	FormModifier = 150;
-	DefaultSize = 200;
+	FormModifier = 250;
+	DefaultSize = 100;
 	Possibility = 0;
 	Score = 1000;
 	CanBeWished = false;
@@ -430,24 +527,22 @@ neercseulb /* meleeweapon-> */
 	InHandsPic = 160, 192;
 	WeaponCategory = MACES;
 	IsMaterialChangeable = false;
-	DefaultMainVolume = 12000;
-	DefaultSecondaryVolume = 6000;
-	DefaultContainedVolume = 2500;
+	DefaultMainVolume = 800;
+	DefaultSecondaryVolume = 500;
 	Adjective = "ancient";
 	NameSingular = "mace";
 	AdjectiveArticle = "an";
 	PostFix = "named Neerc Se-ulb";
 	ArticleMode = DEFINITE_ARTICLE;
-	MainMaterialConfig == DIAMOND;
-	SecondaryMaterialConfig == DIAMOND;
-	ContainedMaterialConfig == FROG_FLESH;
+	MainMaterialConfig == MITHRIL;
+	SecondaryMaterialConfig == MITHRIL;
 	IsPolymorphable = false;
 	Alias == "Neerc Se-ulb";
 	Roundness = 35;
 	IsTwoHanded = true;
 	CanBeCloned = false;
 	CanBeBroken = false;
-	DefaultEnchantment = 13;
+	DefaultEnchantment = 6;
 
 	Config BROKEN; /* for future */
 	{
@@ -457,13 +552,13 @@ neercseulb /* meleeweapon-> */
 
 pickaxe /* meleeweapon-> */
 {
-	DefaultSize = 150;
+	DefaultSize = 75;
 	Possibility = 100;
 	InHandsPic = 160, 64;
-	DefaultMainVolume = 1500;
-	DefaultSecondaryVolume = 2000;
+	DefaultMainVolume = 225;
+	DefaultSecondaryVolume = 400;
 	BitmapPos = 0, 96;
-	FormModifier = 100;
+	FormModifier = 35;
 	NameSingular = "pick-axe";
 	Alias == "pick-ax";
 	Roundness = 20;
@@ -493,7 +588,7 @@ bodyarmor /* armor-> */
 {
 	InHandsPic = 160, 144;
 	Category = BODY_ARMOR;
-	FormModifier = 20;
+	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 70;
 	IsTwoHanded = true;
@@ -516,7 +611,7 @@ bodyarmor /* armor-> */
 	{
 		Possibility = 5;
 		BitmapPos = 48, 208;
-		FormModifier = 30;
+		FormModifier = 20;
 		StrengthModifier = 50;
 	}
 
@@ -539,7 +634,7 @@ bodyarmor /* armor-> */
 		Possibility = 25;
 		StrengthModifier = 75;
 		BitmapPos = 0, 352;
-		FormModifier = 30;
+		FormModifier = 20;
 	}
 }
 
@@ -575,7 +670,7 @@ potion /* materialcontainer-> */
 	DefaultContainedVolume = 1500;
 	StrengthModifier = 50;
 	BitmapPos = 0, 160;
-	FormModifier = 40;
+	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
 	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
@@ -594,7 +689,7 @@ bananapeels
 	DefaultMainVolume = 40;
 	StrengthModifier = 50;
 	BitmapPos = 0, 128;
-	FormModifier = 70;
+	FormModifier = 20;
 	NameSingular = "banana peel";
 	MainMaterialConfig == BANANA_PEEL;
 	Roundness = 10;
@@ -609,7 +704,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	DefaultMainVolume = 60;
 	StrengthModifier = 50;
 	BitmapPos = 16, 160;
-	FormModifier = 100;
+	FormModifier = 50;
 	NameSingular = "bottle";
 	Adjective = "broken";
 	MainMaterialConfig == GLASS;
@@ -623,7 +718,7 @@ scroll
 	DefaultMainVolume = 250;
 	StrengthModifier = 25;
 	BitmapPos = 16, 176;
-	FormModifier = 40;
+	FormModifier = 20;
 	DefaultSize = 30;
 	NameSingular = "scroll";
 	MainMaterialConfig == PARCHMENT;
@@ -663,7 +758,7 @@ nut
 	DefaultMainVolume = 25;
 	StrengthModifier = 50;
 	BitmapPos = 16, 208;
-	FormModifier = 20;
+	FormModifier = 10;
 	MainMaterialConfig == HUMAN_FLESH;
 	NameSingular = "nut";
 	Roundness = 90;
@@ -685,6 +780,7 @@ leftnutofpetrus /* nut-> */
 	IsPolymorphable = false;
 	CanBeWished = false;
 	CanBeCloned = false;
+	FormModifier = 15;
 }
 
 bone
@@ -692,10 +788,10 @@ bone
 	DefaultSize = 50;
 	Possibility = 250;
 	WeaponCategory = CLUBS;
-	DefaultMainVolume = 1500;
+	DefaultMainVolume = 500;
 	StrengthModifier = 100;
 	BitmapPos = 16, 240;
-	FormModifier = 70;
+	FormModifier = 25;
 	Category = MISC;
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
@@ -713,7 +809,7 @@ loaf
 	DefaultMainVolume = 500;
 	StrengthModifier = 100;
 	BitmapPos = 0, 272;
-	FormModifier = 30;
+	FormModifier = 20;
 	NameSingular = "loaf";
 	NamePlural = "loaves";
 	MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
@@ -745,15 +841,16 @@ cheapcopyofleftnutofpetrus /* nut-> */
 	Adjective = "cheap";
 	MainMaterialConfig == GLASS; /* should be plastic */
 	Alias == "left nut of Petrus";
+	FormModifier = 15;
 }
 
 wand
 {
 	Category = WAND;
-	DefaultMainVolume = 200;
+	DefaultMainVolume = 125;
 	StrengthModifier = 50;
 	BitmapPos = 0, 288;
-	FormModifier = 80;
+	FormModifier = 30;
 	DefaultSize = 30;
 	NameSingular = "wand";
 	IsAbstract = true;
@@ -794,7 +891,7 @@ avatarofvalpurus
 	DefaultMainVolume = 250;
 	StrengthModifier = 400;
 	BitmapPos = 0, 320;
-	FormModifier = 20;
+	FormModifier = 15;
 	NameSingular = "Avatar";
 	PostFix = "of Valpurus";
 	ArticleMode = DEFINITE_ARTICLE;
@@ -823,7 +920,7 @@ kiwi
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
 	BitmapPos = 0, 384;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWI_FLESH;
 	Roundness = 80;
@@ -837,7 +934,7 @@ pineapple
 	DefaultMainVolume = 1000;
 	StrengthModifier = 100;
 	BitmapPos = 0, 368;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "pineapple";
 	MainMaterialConfig == PINEAPPLE_FLESH;
 	Roundness = 90;
@@ -853,30 +950,31 @@ palmbranch
 	DefaultMainVolume = 4000;
 	StrengthModifier = 50;
 	BitmapPos = 0, 240;
-	FormModifier = 50;
+	FormModifier = 15;
 	NameSingular = "palm branch";
-	MainMaterialConfig == PALMLEAF;
+	MainMaterialConfig == PALM_LEAF;
 	Roundness = 80;
 	IsTwoHanded = true;
 }
 
 whip /* meleeweapon-> */
 {
-	DefaultSize = 200;
+	DefaultSize = 210;
 	Possibility = 50;
 	InHandsPic = 160, 224;
 	WeaponCategory = WHIPS;
-	DefaultMainVolume = 1000;
-	DefaultSecondaryVolume = 200;
+	DefaultMainVolume = 800;
+	DefaultSecondaryVolume = 40;
 	StrengthModifier = 50;
 	BitmapPos = 32, 0;
 	NameSingular = "whip";
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 2;
-	FormModifier = 75; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 7; /* this is multiplied by MainMaterial's flexibility */
+	CanBeBroken = false;
 
-	Config BROKEN;
+	Config BROKEN; /* for future */
 	{
 		Possibility = 5;
 		BitmapPos = 32, 256;
@@ -893,7 +991,7 @@ backpack /* materialcontainer-> */
 	DefaultContainedVolume = 10000;
 	StrengthModifier = 200;
 	BitmapPos = 32, 16;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "backpack";
 	MainMaterialConfig == LEATHER;
 	ContainedMaterialConfig == GUN_POWDER;
@@ -911,7 +1009,7 @@ holybook
 	DefaultMainVolume = 2000;
 	StrengthModifier = 100;
 	BitmapPos = 32, 32;
-	FormModifier = 30;
+	FormModifier = 20;
 	Adjective = "holy";
 	NameSingular = "book";
 	ArticleMode = DEFINITE_ARTICLE;
@@ -932,7 +1030,7 @@ fiftymillionroubles
 	DefaultMainVolume = 1000;
 	StrengthModifier = 25;
 	BitmapPos = 0, 336;
-	FormModifier = 20;
+	FormModifier = 15;
 	NameSingular = "pile";
 	PostFix = "of 50 million roubles";
 	MainMaterialConfig == PARCHMENT;
@@ -949,7 +1047,7 @@ oillamp
 	DefaultMainVolume = 150;
 	StrengthModifier = 50;
 	BitmapPos = 32, 48;
-	FormModifier = 30;
+	FormModifier = 20;
 	BaseEmitation = rgb24(120, 120, 100);
 	NameSingular = "lamp";
 	Adjective = "oil";
@@ -969,7 +1067,7 @@ stone
 	DefaultMainVolume = 100;
 	StrengthModifier = 100;
 	BitmapPos = 0, 48;
-	FormModifier = 45;
+	FormModifier = 10;
 	NameSingular = "stone";
 	MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
 	MaterialConfigChances = { 5, 30, 20, 15, 10, 5; }
@@ -1016,7 +1114,7 @@ mine /*materialcontainer-> */
 	DefaultContainedVolume = 5000;
 	StrengthModifier = 50;
 	BitmapPos = 32, 288;
-	FormModifier = 30;
+	FormModifier = 10;
 	NameSingular = "mine";
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig == GUN_POWDER;
@@ -1055,7 +1153,7 @@ key
 	DefaultMainVolume = 15;
 	StrengthModifier = 50;
 	BitmapPos = 16, 416;
-	FormModifier = 40;
+	FormModifier = 30;
 	NameSingular = "key";
 	MainMaterialConfig == IRON;
 	Roundness = 10;
@@ -1066,10 +1164,10 @@ shield /* armor-> */
 	DefaultSize = 80;
 	Possibility = 250;
 	Category = SHIELD;
-	DefaultMainVolume = 1500;
-	StrengthModifier= 200;
+	DefaultMainVolume = 500;
+	StrengthModifier = 200;
 	BitmapPos = 32, 336;
-	FormModifier = 30;
+	FormModifier = 15;
 	NameSingular = "shield";
 	MainMaterialConfig = { 5, WOOD, COPPER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 5, 200, 150, 150, 50, 10; }
@@ -1081,7 +1179,7 @@ shield /* armor-> */
 	{
 		Possibility = 25;
 		DefaultSize = 40;
-		FormModifier = 40;
+		FormModifier = 20;
 		BitmapPos = 48, 224;
 	}
 }
@@ -1091,7 +1189,7 @@ cloak /* armor-> */
 	DefaultSize = 200;
 	Possibility = 250;
 	Category = CLOAK;
-	DefaultMainVolume = 4000;
+	DefaultMainVolume = 3000;
 	StrengthModifier = 75;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
@@ -1115,7 +1213,7 @@ boot /* armor-> */
 	DefaultSize = 30;
 	Possibility = 250;
 	Category = BOOT;
-	DefaultMainVolume = 600;
+	DefaultMainVolume = 400;
 	StrengthModifier = 100;
 	BitmapPos = 0, 400;
 	FormModifier = 20;
@@ -1155,7 +1253,7 @@ gauntlet /* armor-> */
 	DefaultSize = 30;
 	Possibility = 250;
 	Category = GAUNTLET;
-	DefaultMainVolume = 400;
+	DefaultMainVolume = 300;
 	StrengthModifier = 75;
 	BitmapPos = 32, 368;
 	FormModifier = 20;
@@ -1196,14 +1294,14 @@ belt /* armor-> */
 	Possibility = 250;
 	WeaponCategory = WHIPS;
 	Category = BELT;
-	DefaultMainVolume = 250;
+	DefaultMainVolume = 300;
 	StrengthModifier = 75;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
 	MainMaterialConfig = { 3, LEATHER, CLOTH, FABRIC; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
 	Roundness = 10;
-	FormModifier = 50; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
 }
 
 ring
@@ -1213,7 +1311,7 @@ ring
 	DefaultMainVolume = 3;
 	StrengthModifier = 100;
 	BitmapPos = 16, 400;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "ring";
 	MainMaterialConfig == DIAMOND;
 	Roundness = 10; /* it is considered here opened */
@@ -1297,10 +1395,10 @@ amulet
 {
 	DefaultSize = 20;
 	Category = AMULET;
-	DefaultMainVolume = 100;
+	DefaultMainVolume = 30;
 	StrengthModifier = 100;
 	BitmapPos = 32, 400;
-	FormModifier = 50;
+	FormModifier = 10;
 	NameSingular = "amulet";
 	Article = "an";
 	MainMaterialConfig == GOLD;
@@ -1343,7 +1441,7 @@ head /* bodypart-> */
 {
 	InHandsPic = 160, 144;
 	StrengthModifier = 150;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "head";
 	Roundness = 70;
 }
@@ -1351,7 +1449,7 @@ head /* bodypart-> */
 torso /* bodypart-> */
 {
 	StrengthModifier = 250;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "torso";
 	IsAbstract = true;
 	Roundness = 60;
@@ -1368,7 +1466,7 @@ humanoidtorso /* bodypart->torso-> */
 arm /* bodypart-> */
 {
 	StrengthModifier = 50;
-	FormModifier = 20;
+	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 15;
 }
@@ -1386,7 +1484,7 @@ leftarm /* bodypart->arm-> */
 groin /* bodypart-> */
 {
 	StrengthModifier = 100;
-	FormModifier = 20;
+	FormModifier = 10;
 	NameSingular = "groin";
 	Roundness = 40;
 }
@@ -1394,7 +1492,7 @@ groin /* bodypart-> */
 leg /* bodypart-> */
 {
 	StrengthModifier = 75;
-	FormModifier = 20;
+	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 20;
 }
@@ -1419,7 +1517,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	Category = MISC;
 	InHandsPic = 160, 144;
 	StrengthModifier = 150;
-	FormModifier = 20;
+	FormModifier = 15;
 	BitmapPos = 16, 0;
 	DefaultMainVolume = 25000;
 	NameSingular = "head of Elpuri";
@@ -1478,7 +1576,7 @@ whistle
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
 	BitmapPos = 0, 416;
-	FormModifier = 85;
+	FormModifier = 25;
 	DefaultSize = 30;
 	NameSingular = "whistle";
 	MainMaterialConfig == TIN;
@@ -1502,7 +1600,7 @@ chest
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
 	IsTwoHanded = true;
-	FormModifier = 35;
+	FormModifier = 15;
 	MainMaterialConfig == WOOD;
 	Roundness = 60;
 	BitmapPos = 48, 80;
@@ -1563,7 +1661,7 @@ beartrap
 	IsTwoHanded = true;
 	DefaultSize = 50;
 	DefaultMainVolume = 500;
-	FormModifier = 100;
+	FormModifier = 30;
 	Roundness = 30;
 	Price = 10;
 	CanBePiled = false;
@@ -1585,10 +1683,10 @@ helmet
 	DefaultSize = 30;
 	Possibility = 250;
 	Category = HELMET;
-	DefaultMainVolume = 600;
+	DefaultMainVolume = 200;
 	StrengthModifier = 100;
 	BitmapPos = 16, 384;
-	FormModifier = 30;
+	FormModifier = 10;
 	NameSingular = "helmet";
 	MainMaterialConfig = 	{ 10, 	LEATHER,BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
 	MaterialConfigChances = { 10, 	30,	30,	10,	10,	2,	4,	20,	5,	3,	30; }
@@ -1651,7 +1749,7 @@ stethoscope
 	DefaultMainVolume = 200;
 	StrengthModifier = 50;	
 	BitmapPos = 48, 96;
-	FormModifier = 50;
+	FormModifier = 10;
 	Roundness = 20;
 	NameSingular = "stethoscope";
 	Price = 250;
@@ -1660,14 +1758,14 @@ stethoscope
 
 flamingsword /* meleeweapon-> */
 {
-	DefaultSize = 150;
+	DefaultSize = 120;
 	Possibility = 25;
 	InHandsPic = 160, 16;
 	WeaponCategory = LARGE_SWORDS;
-	DefaultMainVolume = 2400;
-	DefaultSecondaryVolume = 100;
+	DefaultMainVolume = 130;
+	DefaultSecondaryVolume = 45;
 	BitmapPos = 16, 336;
-	FormModifier = 150;
+	FormModifier = 100;
 	StrengthModifier = 150;
 	NameSingular = "sword";
 	Adjective = "flaming";
@@ -1687,21 +1785,21 @@ flamingsword /* meleeweapon-> */
 
 mjolak /* meleeweapon-> */
 {
-	DefaultSize = 250;
+	DefaultSize = 180;
 	Possibility = 3;
 	InHandsPic = 160, 176;
-	WeaponCategory = AXES;
-	DefaultMainVolume = 3000;
-	DefaultSecondaryVolume = 2600;
+	WeaponCategory = POLE_ARMS;
+	DefaultMainVolume = 400;
+	DefaultSecondaryVolume = 2000;
 	StrengthModifier = 200;
 	BitmapPos = 0, 80;
-	FormModifier = 200;
+	FormModifier = 225;
 	MainMaterialConfig == STEEL;
-	SecondaryMaterialConfig == STEEL;
+	SecondaryMaterialConfig == WOOD;
 	Roundness = 20;
 	IsTwoHanded = true;
 	Adjective = "unholy";
-	NameSingular = "poleaxe";
+	NameSingular = "halberd";
 	PostFix = "named Mjolak";
 	ArticleMode = DEFINITE_ARTICLE;
 	Alias == "Mjolak";
@@ -1718,15 +1816,15 @@ mjolak /* meleeweapon-> */
 
 vermis /* meleeweapon-> */
 {
-	DefaultSize = 250;
+	DefaultSize = 220;
 	Possibility = 5;
 	InHandsPic = 160, 96;
 	WeaponCategory = SPEARS;
 	StrengthModifier = 100;
 	BitmapPos = 16, 144;
-	FormModifier = 1000;
+	FormModifier = 250;
 	DefaultMainVolume = 100;
-	DefaultSecondaryVolume = 1000;
+	DefaultSecondaryVolume = 1800;
 	NameSingular = "spear";
 	PostFix = "named Vermis";
 	MainMaterialConfig == DIAMOND;
@@ -1749,18 +1847,18 @@ vermis /* meleeweapon-> */
 turox /* meleeweapon-> */
 {
 	StrengthModifier = 600; 
-	FormModifier = 150;
-	DefaultSize = 175;
+	FormModifier = 200;
+	DefaultSize = 90;
 	BitmapPos = 0, 32;
 	Possibility = 5;
 	InHandsPic = 160, 192;
-	DefaultMainVolume = 7000;
-	DefaultSecondaryVolume = 3000;
+	DefaultMainVolume = 800;
+	DefaultSecondaryVolume = 600;
 	WeaponCategory = MACES;
 	NameSingular = "mace";
 	PostFix = "named Turox";
 	MainMaterialConfig == STEEL;
-	SecondaryMaterialConfig == STEEL;
+	SecondaryMaterialConfig == WOOD;
 	Roundness = 30; /* we count the handle, too */
 	IsTwoHanded = true;
 	Alias == "Turox";
@@ -1776,24 +1874,23 @@ turox /* meleeweapon-> */
 	}
 }
 
-whipofcleptia /* meleeweapon->whip-> */
+whipofthievery /* meleeweapon->whip-> */
 {
 	DefaultSize = 250;
 	Possibility = 10;
-	DefaultMainVolume = 1250;
-	DefaultSecondaryVolume = 250;
+	DefaultMainVolume = 1000;
+	DefaultSecondaryVolume = 50;
 	StrengthModifier = 100;
 	NameSingular = "whip";
-	PostFix = "of Cleptia";
+	PostFix = "of thievery";
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 2;
-	Alias == "whip of cleptia";
-	FormModifier = 1000; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
 	Price = 500;
 
-	Config BROKEN;
+	Config BROKEN; /* for future */
 	{
 		Possibility = 0;
 		BitmapPos = 32, 256;
@@ -1816,14 +1913,14 @@ wandofcloning /* wand-> */
 
 scrollofenchantweapon /* scroll-> */
 {
-	Possibility = 25;
+	Possibility = 50;
 	Price = 250;
 	PostFix = "of enchant weapon";
 }
 
 scrollofenchantarmor /* scroll-> */
 {
-	Possibility = 50;
+	Possibility = 75;
 	Price = 250;
 	PostFix = "of enchant armor";
 }
@@ -1832,12 +1929,12 @@ skull
 {
 	InHandsPic = 160, 144;
 	StrengthModifier = 100;
-	FormModifier = 20;
+	FormModifier = 15;
 	Roundness = 65;
-	DefaultSize = 17;
+	DefaultSize = 20;
 	Possibility = 30;
 	WeaponCategory = UNCATEGORIZED;
-	DefaultMainVolume = 500;
+	DefaultMainVolume = 600;
 	BitmapPos = 48, 112;
 	FormModifier = 70;
 	Category = MISC;

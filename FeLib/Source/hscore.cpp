@@ -43,7 +43,7 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
 
 void highscore::Draw() const
 {
-  felist List("Adventurers' Hall of Fame", WHITE, 0);
+  felist List("Adventurers' Hall of Fame");
 
   for(ushort c = 0; c < Score.size(); ++c)
     {

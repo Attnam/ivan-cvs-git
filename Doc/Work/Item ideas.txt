@@ -13,6 +13,7 @@ hammer of thunderbolts - lightning animation, electricity damage
 //mace of hellfire - causes an explosion (renamed to Mace named Turox)
 //whip of thievery - disarms the enemy
 staff of archmagi - randomly polymorphs/teleports/slows the enemy
+baseball bat
 
 Armor:
 

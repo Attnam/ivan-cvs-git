@@ -696,6 +696,8 @@ class character : public entity, public id
   virtual void ApplyEquipmentAttributeBonuses(item*);
   virtual void ReceiveAntidote(long);
   virtual void AddAntidoteConsumeEndMessage() const;
+  virtual bool IsDead() const;
+  virtual bool ShowBattleInfo();
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

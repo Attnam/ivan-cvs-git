@@ -90,3 +90,4 @@ Oree's blood golems' HPs' are incorrect.
 Skeletons' health bugs. Some have over 20000 hps.
 "Valpurus shall not carry more continents!"
 Going down from underwater tunnel level 3 in WMode crashes.
+Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.

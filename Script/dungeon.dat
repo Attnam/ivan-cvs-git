@@ -160,6 +160,7 @@ Dungeon ELPURI_CAVE;
 			Square, Pos 3,1;
 			{
 				Item=lantern;
+				Character=mistress(QUEEN);
 			}
 		}
 	}
@@ -696,10 +697,10 @@ Dungeon ATTNAM;
 					b = banana;
 					k = kiwi;
 					p = pineapple;
-					o = IRON meleeweapon(POLE_AXE);
+					o = IRON meleeweapon(HALBERD);
 					l = MITHRIL MITHRIL meleeweapon(LONG_SWORD);
 					t = IRON IRON meleeweapon(TWO_HANDED_SWORD);
-					m = IRON meleeweapon(SPIKED_MACE);
+					m = IRON meleeweapon(MACE);
 					s = IRON meleeweapon(SPEAR);
 					c = bodyarmor(CHAIN_MAIL);
 					e = backpack;

@@ -52,6 +52,7 @@ void oree::CreateInitialEquipment(ushort SpecialFlags)
 
 bool ennerbeast::Hit(character*)
 {
+  msgsystem::EnterBigMessageMode();
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), GetPos(), 30);
 
@@ -81,6 +82,7 @@ bool ennerbeast::Hit(character*)
 
   EditNP(-100);
   EditAP(-10 * GetCWeaponSkill(BITE)->GetAPBonus());
+  msgsystem::LeaveBigMessageMode();
   return true;
 }
 
@@ -301,8 +303,6 @@ bool humanoid::Hit(character* Enemy)
   if(IsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
 
-  Hostility(Enemy);
-
   if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
@@ -331,6 +331,8 @@ bool humanoid::Hit(character* Enemy)
     case USE_ARMS:
       if((GetRightArm() && GetRightArm()->GetDamage()) || (GetLeftArm() && GetLeftArm()->GetDamage()))
 	{
+	  msgsystem::EnterBigMessageMode();
+	  Hostility(Enemy);
 	  long RightAPCost = 0, LeftAPCost = 0;
 
 	  if(GetRightArm() && GetRightArm()->GetDamage())
@@ -347,18 +349,25 @@ bool humanoid::Hit(character* Enemy)
 
 	  EditNP(-50);
 	  EditAP(-Max(RightAPCost, LeftAPCost));
+	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
     case USE_LEGS:
       if(GetRightLeg() && GetLeftLeg())
 	{
+	  msgsystem::EnterBigMessageMode();
+	  Hostility(Enemy);
 	  Kick(Enemy->GetLSquareUnder());
+	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
     case USE_HEAD:
       if(GetHead())
 	{
+	  msgsystem::EnterBigMessageMode();
+	  Hostility(Enemy);
           Bite(Enemy);
+	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
     default:
@@ -1258,14 +1267,14 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
-      SetMainWielded(new meleeweapon(POLE_AXE, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
+      SetMainWielded(new meleeweapon(HALBERD, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
       SetBodyArmor(new bodyarmor(CHAIN_MAIL, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
       GetCWeaponSkill(AXES)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case EVIL:
       {
-	meleeweapon* SpikedMace = new meleeweapon(SPIKED_MACE, NO_MATERIALS);
+	meleeweapon* SpikedMace = new meleeweapon(MACE, NO_MATERIALS);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROG_FLESH), !(SpecialFlags & NO_PIC_UPDATE));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new bodyarmor(BROKEN|PLATE_MAIL, SpecialFlags, MAKE_MATERIAL(RUBY)));
@@ -1465,11 +1474,11 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
     {
     case HEAD_INDEX: return 20;
     case TORSO_INDEX: return (TotalSize - 20) * 2 / 5;
-    case RIGHT_ARMINDEX:
-    case LEFT_ARMINDEX: return (TotalSize - 20) * 3 / 5;
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return (TotalSize - 20) * 3 / 5;
     case GROIN_INDEX: return (TotalSize - 20) / 3;
-    case RIGHT_LEGINDEX:
-    case LEFT_LEGINDEX: return (TotalSize - 20) * 3 / 5;
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return (TotalSize - 20) * 3 / 5;
     default:
       ABORT("Illegal humanoid bodypart size request!");
       return 0;
@@ -1482,11 +1491,11 @@ ulong humanoid::GetBodyPartVolume(ushort Index)
     {
     case HEAD_INDEX: return 4000;
     case TORSO_INDEX: return (GetTotalVolume() - 4000) * 13 / 30;
-    case RIGHT_ARMINDEX:
-    case LEFT_ARMINDEX: return (GetTotalVolume() - 4000) / 10;
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return (GetTotalVolume() - 4000) / 10;
     case GROIN_INDEX: return (GetTotalVolume() - 4000) / 10;
-    case RIGHT_LEGINDEX:
-    case LEFT_LEGINDEX: return (GetTotalVolume() - 4000) * 2 / 15;
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return (GetTotalVolume() - 4000) * 2 / 15;
     default:
       ABORT("Illegal humanoid bodypart volume request!");
       return 0;
@@ -1499,11 +1508,11 @@ bodypart* humanoid::MakeBodyPart(ushort Index)
     {
     case TORSO_INDEX: return new humanoidtorso(0, NO_MATERIALS);
     case HEAD_INDEX: return new head(0, NO_MATERIALS);
-    case RIGHT_ARMINDEX: return new rightarm(0, NO_MATERIALS);
-    case LEFT_ARMINDEX: return new leftarm(0, NO_MATERIALS);
+    case RIGHT_ARM_INDEX: return new rightarm(0, NO_MATERIALS);
+    case LEFT_ARM_INDEX: return new leftarm(0, NO_MATERIALS);
     case GROIN_INDEX: return new groin(0, NO_MATERIALS);
-    case RIGHT_LEGINDEX: return new rightleg(0, NO_MATERIALS);
-    case LEFT_LEGINDEX: return new leftleg(0, NO_MATERIALS);
+    case RIGHT_LEG_INDEX: return new rightleg(0, NO_MATERIALS);
+    case LEFT_LEG_INDEX: return new leftleg(0, NO_MATERIALS);
     default:
       ABORT("Weird bodypart to make for a humanoid. It must be your fault!");
       return 0;
@@ -1516,11 +1525,11 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
     {
     case TORSO_INDEX: return GetTorsoBonePercentile();
     case HEAD_INDEX: return GetHeadBonePercentile();
-    case RIGHT_ARMINDEX: return GetRightArmBonePercentile();
-    case LEFT_ARMINDEX: return GetLeftArmBonePercentile();
+    case RIGHT_ARM_INDEX: return GetRightArmBonePercentile();
+    case LEFT_ARM_INDEX: return GetLeftArmBonePercentile();
     case GROIN_INDEX: return GetGroinBonePercentile();
-    case RIGHT_LEGINDEX: return GetRightLegBonePercentile();
-    case LEFT_LEGINDEX: return GetLeftLegBonePercentile();
+    case RIGHT_LEG_INDEX: return GetRightLegBonePercentile();
+    case LEFT_LEG_INDEX: return GetLeftLegBonePercentile();
     default:
       ABORT("Weird bodypart bone percentile request for a humanoid. It must be your fault!");
       return 0;
@@ -2066,11 +2075,11 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index)
     {
     case TORSO_INDEX: return GetTorsoBitmapPos();
     case HEAD_INDEX: return GetHeadBitmapPos();
-    case RIGHT_ARMINDEX: return GetRightArmBitmapPos();
-    case LEFT_ARMINDEX: return GetLeftArmBitmapPos();
+    case RIGHT_ARM_INDEX: return GetRightArmBitmapPos();
+    case LEFT_ARM_INDEX: return GetLeftArmBitmapPos();
     case GROIN_INDEX: return GetGroinBitmapPos();
-    case RIGHT_LEGINDEX: return GetRightLegBitmapPos();
-    case LEFT_LEGINDEX: return GetLeftLegBitmapPos();
+    case RIGHT_LEG_INDEX: return GetRightLegBitmapPos();
+    case LEFT_LEG_INDEX: return GetLeftLegBitmapPos();
     default:
       ABORT("Weird bodypart BitmapPos request for a humanoid!");
       return vector2d();
@@ -2083,11 +2092,11 @@ ushort humanoid::GetBodyPartColorB(ushort Index)
     {
     case TORSO_INDEX: return GetTorsoMainColor();
     case HEAD_INDEX: return GetCapColor();
-    case RIGHT_ARMINDEX:
-    case LEFT_ARMINDEX: return GetArmMainColor();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return GetArmMainColor();
     case GROIN_INDEX:
-    case RIGHT_LEGINDEX:
-    case LEFT_LEGINDEX: return GetLegMainColor();
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return GetLegMainColor();
     default:
       ABORT("Weird bodypart color B request for a humanoid!");
       return 0;
@@ -2100,11 +2109,11 @@ ushort humanoid::GetBodyPartColorC(ushort Index)
     {
     case TORSO_INDEX: return GetBeltColor();
     case HEAD_INDEX: return GetHairColor();
-    case RIGHT_ARMINDEX:
-    case LEFT_ARMINDEX:
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX:
     case GROIN_INDEX:
-    case RIGHT_LEGINDEX:
-    case LEFT_LEGINDEX: return 0; // reserved for future use
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return 0; // reserved for future use
     default:
       ABORT("Weird bodypart color C request for a humanoid!");
       return 0;
@@ -2117,11 +2126,11 @@ ushort humanoid::GetBodyPartColorD(ushort Index)
     {
     case TORSO_INDEX: return GetTorsoSpecialColor();
     case HEAD_INDEX: return GetEyeColor();
-    case RIGHT_ARMINDEX:
-    case LEFT_ARMINDEX: return GetArmSpecialColor();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return GetArmSpecialColor();
     case GROIN_INDEX:
-    case RIGHT_LEGINDEX:
-    case LEFT_LEGINDEX: return GetLegSpecialColor();
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return GetLegSpecialColor();
     default:
       ABORT("Weird bodypart color D request for a humanoid!");
       return 0;
@@ -2227,7 +2236,7 @@ void nonhumanoid::Load(inputfile& SaveFile)
 
 void nonhumanoid::CalculateUnarmedDamage()
 {
-  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetAttribute(ARM_STRENGTH) * GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  UnarmedDamage = sqrt(GetAttribute(ARM_STRENGTH) * GetBaseUnarmedStrength() / 2000000000.0f) * GetCWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
 void nonhumanoid::CalculateUnarmedToHitValue()
@@ -2245,7 +2254,7 @@ void nonhumanoid::CalculateUnarmedAPCost()
 
 void nonhumanoid::CalculateKickDamage()
 {
-  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEG_STRENGTH) * GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  KickDamage = sqrt(GetAttribute(LEG_STRENGTH) * GetBaseKickStrength() / 2000000000.0f) * GetCWeaponSkill(KICK)->GetEffectBonus();
 }
 
 void nonhumanoid::CalculateKickToHitValue()
@@ -2263,7 +2272,7 @@ void nonhumanoid::CalculateKickAPCost()
 
 void nonhumanoid::CalculateBiteDamage()
 {
-  BiteDamage = float(GetBaseBiteStrength()) * GetAttribute(ARM_STRENGTH) * GetCWeaponSkill(BITE)->GetEffectBonus() / 5000000;
+  BiteDamage = sqrt(GetAttribute(ARM_STRENGTH) * GetBaseBiteStrength() / 2000000000.0f) * GetCWeaponSkill(BITE)->GetEffectBonus();
 }
 
 void nonhumanoid::CalculateBiteToHitValue()
@@ -2328,8 +2337,6 @@ bool nonhumanoid::Hit(character* Enemy)
   if(IsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
 
-  Hostility(Enemy);
-
   if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
@@ -2356,16 +2363,25 @@ bool nonhumanoid::Hit(character* Enemy)
   switch(Chosen)
     {
     case USE_ARMS:
+      msgsystem::EnterBigMessageMode();
+      Hostility(Enemy);
       UnarmedHit(Enemy);
+      msgsystem::LeaveBigMessageMode();
       return true;
     case USE_LEGS:
+      msgsystem::EnterBigMessageMode();
+      Hostility(Enemy);
       Kick(Enemy->GetLSquareUnder());
+      msgsystem::LeaveBigMessageMode();
       return true;
     case USE_HEAD:
+      msgsystem::EnterBigMessageMode();
+      Hostility(Enemy);
       Bite(Enemy);
+      msgsystem::LeaveBigMessageMode();
       return true;
     default:
-      ADD_MESSAGE("Strange alien attack style requested!");
+      ABORT("Strange alien attack style requested!");
       return false;
     }
 }
@@ -2433,6 +2449,12 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
       ++AttackStyles;
     }
 
+  if(StateIsActivated(HASTE))
+    Effectivity *= 2;
+
+  if(StateIsActivated(SLOW))
+    Effectivity /= 2;
+
   return AttackStyles ? AttackStyles / Effectivity : 10000000;
 }
 
@@ -2460,6 +2482,12 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
       Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
+
+  if(StateIsActivated(HASTE))
+    Effectivity *= 2;
+
+  if(StateIsActivated(SLOW))
+    Effectivity /= 2;
 
   return AttackStyles / Effectivity;
 }
@@ -2808,10 +2836,10 @@ ushort humanoid::GetRandomStepperBodyPart() const
   uchar Possible = 0, PossibleArray[3];
 
   if(GetRightLeg())
-    PossibleArray[Possible++] = RIGHT_LEGINDEX;
+    PossibleArray[Possible++] = RIGHT_LEG_INDEX;
 
   if(GetLeftLeg())
-    PossibleArray[Possible++] = LEFT_LEGINDEX;
+    PossibleArray[Possible++] = LEFT_LEG_INDEX;
 
   if(Possible)
     return PossibleArray[RAND() % Possible];
@@ -2892,7 +2920,7 @@ bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
 void hunter::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c != LEFT_ARMINDEX)
+    if(c != LEFT_ARM_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
       SetLeftArm(0);
@@ -3007,16 +3035,16 @@ bool humanoid::DetachBodyPart()
   switch(game::KeyQuestion("What limb do you wish to detach? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg?", KEY_ESC, 4, 'l','r','L','R'))
     {
     case 'l':
-      ToBeDetached = LEFT_ARMINDEX;
+      ToBeDetached = LEFT_ARM_INDEX;
       break;
     case 'r':
-      ToBeDetached = RIGHT_ARMINDEX;
+      ToBeDetached = RIGHT_ARM_INDEX;
       break;
     case 'L':
-      ToBeDetached = LEFT_LEGINDEX;
+      ToBeDetached = LEFT_LEG_INDEX;
       break;
     case 'R':
-      ToBeDetached = RIGHT_LEGINDEX;
+      ToBeDetached = RIGHT_LEG_INDEX;
       break;
     default:
       return false;
@@ -3191,7 +3219,7 @@ ushort kamikazedwarf::GetLegMainColor() const
 void angel::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROIN_INDEX || c == RIGHT_LEGINDEX || c == LEFT_LEGINDEX)
+    if(c == GROIN_INDEX || c == RIGHT_LEG_INDEX || c == LEFT_LEG_INDEX)
       SetBodyPart(c, 0);
     else
       CreateBodyPart(c, SpecialFlags);
@@ -3200,7 +3228,7 @@ void angel::CreateBodyParts(ushort SpecialFlags)
 void genie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROIN_INDEX || c == RIGHT_LEGINDEX || c == LEFT_LEGINDEX)
+    if(c == GROIN_INDEX || c == RIGHT_LEG_INDEX || c == LEFT_LEG_INDEX)
       SetBodyPart(c, 0);
     else
       CreateBodyPart(c, SpecialFlags);
@@ -3519,11 +3547,11 @@ std::string humanoid::GetBodyPartName(ushort Index, bool Articled) const
     {
     case HEAD_INDEX: return Article + "head";
     case TORSO_INDEX: return Article + "torso";
-    case RIGHT_ARMINDEX: return Article + "right arm";
-    case LEFT_ARMINDEX: return Article + "left arm";
+    case RIGHT_ARM_INDEX: return Article + "right arm";
+    case LEFT_ARM_INDEX: return Article + "left arm";
     case GROIN_INDEX: return Article + "groin";
-    case RIGHT_LEGINDEX: return Article + "right leg";
-    case LEFT_LEGINDEX: return Article + "left leg";
+    case RIGHT_LEG_INDEX: return Article + "right leg";
+    case LEFT_LEG_INDEX: return Article + "left leg";
     default:
       ABORT("Illegal humanoid bodypart name request!");
       return 0;
@@ -3555,12 +3583,12 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValu
 
 item* humanoid::SevereBodyPart(ushort BodyPartIndex)
 {
-  if(BodyPartIndex == RIGHT_ARMINDEX && GetCurrentRightSWeaponSkill())
+  if(BodyPartIndex == RIGHT_ARM_INDEX && GetCurrentRightSWeaponSkill())
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
       SetCurrentRightSWeaponSkill(0);
     }
-  else if(BodyPartIndex == LEFT_ARMINDEX && GetCurrentLeftSWeaponSkill())
+  else if(BodyPartIndex == LEFT_ARM_INDEX && GetCurrentLeftSWeaponSkill())
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
       SetCurrentLeftSWeaponSkill(0);

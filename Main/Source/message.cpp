@@ -15,9 +15,11 @@
 
 felist msgsystem::MessageHistory("Message history", WHITE, 128);
 std::string msgsystem::LastMessage;
+std::string msgsystem::BigMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
 bool msgsystem::Enabled = true;
+bool msgsystem::BigMessageMode = false;
 
 void msgsystem::AddMessage(const char* Format, ...)
 {
@@ -42,8 +44,17 @@ void msgsystem::AddMessage(const char* Format, ...)
   /* Comment the first line and uncomment the second before the release! */
 
   if(isalpha(Buffer[Buffer.length() - 1]))
-    Buffer += " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
-    //Buffer += ".";
+    Buffer << " (this sentence isn't terminated correctly because Hex doesn't know grammar rules)";
+    //Buffer << ".";
+
+  if(BigMessageMode)
+    {
+      if(BigMessage.length())
+	BigMessage << ' ';
+
+      BigMessage << Buffer;
+      return;
+    }
 
   if(Buffer == LastMessage)
     {
@@ -82,7 +93,12 @@ void msgsystem::AddMessage(const char* Format, ...)
 
 void msgsystem::Draw()
 {
+  bool WasInBigMessageMode = BigMessageMode;
+  LeaveBigMessageMode();
   MessageHistory.QuickDraw(vector2d(13, RES.Y - 122), (game::GetScreenSize().X << 4) + 6, 8);
+
+  if(WasInBigMessageMode)
+    EnterBigMessageMode();
 }
 
 void msgsystem::DrawMessageHistory()
@@ -120,4 +136,15 @@ void msgsystem::ScrollUp()
 {
   if(MessageHistory.GetSelected())
     MessageHistory.EditSelected(-1);
+}
+
+void msgsystem::LeaveBigMessageMode()
+{
+  BigMessageMode = false;
+
+  if(BigMessage.length())
+    {
+      AddMessage("%s", BigMessage.c_str());
+      BigMessage.resize(0);
+    }
 }

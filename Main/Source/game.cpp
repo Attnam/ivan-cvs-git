@@ -116,6 +116,7 @@ command* game::Command[] =
   new command(&character::Save, "save game", 's', true),
   new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
+  new command(&character::ShowBattleInfo, "show battle info", 'b', true),
   new command(&character::ShowConfigScreen, "show config screen", '\\', true),
   new command(&character::ShowInventory, "show inventory", 'i', true),
   new command(&character::ShowKeyLayout, "show key layout", '?', true),
@@ -265,9 +266,9 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	character* Doggie = new dog;
+	/*character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+	GetWorldMap()->GetPlayerGroup().push_back(Doggie);*/
 
 	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {

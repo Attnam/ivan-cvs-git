@@ -184,8 +184,8 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(IsAbstract);
   ANALYZE_DATA(IsPolymorphable);
   ANALYZE_DATA(BaseUnarmedStrength);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength / 2);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength * 2);
+  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength / 4);
+  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength * 4);
   ANALYZE_DATA(AttackStyle);
   ANALYZE_DATA(CanUseEquipment);
   ANALYZE_DATA(CanKick);

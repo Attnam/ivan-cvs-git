@@ -1668,7 +1668,7 @@ bool character::WalkThroughWalls()
 
 bool character::ShowKeyLayout()
 {
-  felist List("Keyboard Layout", WHITE, 0);
+  felist List("Keyboard Layout");
 
   List.AddDescription("");
   List.AddDescription("Key       Description");
@@ -1769,7 +1769,7 @@ bool character::ClosePos(vector2d APos)
 
 bool character::Pray()
 {
-  felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 0);
+  felist Panthenon("To Whom shall thee address thine prayers?");
   std::vector<uchar> KnownIndex;
 
   if(!GetLSquareUnder()->GetDivineMaster())
@@ -1926,16 +1926,7 @@ bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
   if(!IsEnabled())
     return true;
 
-  bool Dead = false;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(BodyPartVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
-      {
-	Dead = true;
-	break;
-      }
-
-  if(Dead)
+  if(IsDead())
     {
       if(IsPlayer())
 	AddScoreEntry(Msg);
@@ -3037,10 +3028,11 @@ void character::TeleportRandomly()
 
 bool character::SecretKnowledge()
 {
-  felist List("Knowledge of the ancients", WHITE, 0);
+  felist List("Knowledge of the ancients");
   List.AddEntry("Character attack info", LIGHT_GRAY);
   List.AddEntry("Character defence info", LIGHT_GRAY);
   List.AddEntry("Character danger values", LIGHT_GRAY);
+  List.AddEntry("Item attack info", LIGHT_GRAY);
   List.AddEntry("Miscellaneous item info", LIGHT_GRAY);
   game::SetStandardListAttributes(List);
   List.AddFlags(SELECTABLE);
@@ -3117,21 +3109,39 @@ bool character::SecretKnowledge()
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
     }
-  else if(Chosen == 3)
+  else if(Chosen < 5)
     {
       std::vector<item*> Item;
       protosystem::CreateEveryItem(Item);
-      List.AddDescription("                                        \177              OV             NV");
-
-      for(c = 0; c < Item.size(); ++c)
-	{
-	  std::string Entry;
-	  Item[c]->AddName(Entry, UNARTICLED);
-	  List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
-	  Item[c]->AddMiscellaneousInfo(List);
-	}
-
       PageLength = 20;
+
+      switch(Chosen)
+	{
+	case 3:
+	  List.AddDescription("                                        Weight    Size      SR        DAM");
+
+	  for(c = 0; c < Item.size(); ++c)
+	    {
+	      std::string Entry;
+	      Item[c]->AddName(Entry, UNARTICLED);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
+	      Item[c]->AddAttackInfo(List);
+	    }
+
+	  break;
+	case 4:
+	  List.AddDescription("                                        \177              OV             NV");
+
+	  for(c = 0; c < Item.size(); ++c)
+	    {
+	      std::string Entry;
+	      Item[c]->AddName(Entry, UNARTICLED);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
+	      Item[c]->AddMiscellaneousInfo(List);
+	    }
+
+	  break;
+	}
 
       for(c = 0; c < Item.size(); ++c)
 	delete Item[c];
@@ -3244,7 +3254,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	{
 	  GetStackUnder()->AddItem(Severed);
 
-	  if(Direction != 8)
+	  if(Direction != YOURSELF)
 	    Severed->Fly(0, Direction, Damage);
 	}
       else
@@ -3254,11 +3264,11 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 
       if(IsPlayer())
 	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
-      else if(RAND() % 100 < GetPanicLevel())
+      else if(RAND() % 100 < GetPanicLevel() && !IsDead())
 	BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
     }
 
-  if(!IsPlayer())
+  if(!IsPlayer() && !IsDead())
     CheckPanic(500);
 
   return Damage;
@@ -3408,7 +3418,7 @@ bool character::EquipmentScreen()
 
   ushort Chosen = 0;
   bool EquipmentChanged = false;
-  felist List("Equipment menu", WHITE);
+  felist List("Equipment menu");
 
   while(true)
     {
@@ -3606,7 +3616,7 @@ void character::Regenerate()
 
 void character::PrintInfo() const
 {
-  felist Info("Information about " + GetName(DEFINITE), WHITE, 0);
+  felist Info("Information about " + GetName(DEFINITE));
   ushort c;
 
   if(game::WizardModeActivated())
@@ -4363,7 +4373,7 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
     {
       item* Blocker = Arm->GetWielded();
 
-      if(RAND() % ushort(100 + WeaponToHitValue / (Arm->GetToHitValue() * Blocker->GetBlockModifier()) * (100 + Success) * 10000) < 100)
+      if(RAND() % ushort(100 + WeaponToHitValue / Arm->GetBlockValue() * (100 + Success)) < 100)
 	{
 	  ushort NewDamage = BlockStrength < Damage ? Damage - BlockStrength : 0;
 
@@ -4400,7 +4410,7 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 
 bool character::ShowWeaponSkills()
 {
-  felist List("Your experience in weapon categories", WHITE, 0);
+  felist List("Your experience in weapon categories");
 
   List.AddDescription("");
   List.AddDescription("Category name                 Level     Points    Needed    DAM/THV   APC");
@@ -4518,7 +4528,8 @@ void character::CalculateEquipmentState()
       }
 }
 
-/* Counter = duration in tics */
+/* Counter = duration in ticks */
+
 void character::BeginTemporaryState(ushort State, ushort Counter)
 {
   ushort Index;
@@ -5050,7 +5061,8 @@ void character::BeginInvisibility()
     if(GetBodyPart(c))
       GetBodyPart(c)->UpdatePictures();
 
-  GetSquareUnder()->SendNewDrawRequest();
+  if(GetSquareUnder())
+    GetSquareUnder()->SendNewDrawRequest();
 }
 
 void character::BeginInfraVision()
@@ -5178,7 +5190,7 @@ void character::PrintEndTeleportControlMessage() const
 
 void character::DisplayStethoscopeInfo(character*) const
 {
-  felist Info("Information about " + GetName(DEFINITE), WHITE, 0);
+  felist Info("Information about " + GetName(DEFINITE));
   Info.AddEntry(std::string("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
   Info.AddEntry(std::string("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
@@ -5923,8 +5935,28 @@ void character::ReceiveAntidote(long Amount)
 void character::AddAntidoteConsumeEndMessage() const
 {
   if(StateIsActivated(POISONED)) /* true only if the poison didn't cure the poison completely */
+				 /* Comment: Whaaat? */
     {
       if(IsPlayer())
 	ADD_MESSAGE("Your body processes the poison in your vains with rapid speed.");
     }
+}
+
+bool character::IsDead() const
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(BodyPartVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
+      return true;
+
+  return false;
+}
+
+bool character::ShowBattleInfo()
+{
+  felist Info("Your battle info");
+  //static_cast<arm*>(GetBodyPart(RIGHT_ARM_INDEX))->AddWieldedBattleInfo(Info);
+  //static_cast<arm*>(GetBodyPart(LEFT_ARM_INDEX))->AddWieldedBattleInfo(Info);
+  game::SetStandardListAttributes(Info);
+  Info.Draw();
+  return false;
 }

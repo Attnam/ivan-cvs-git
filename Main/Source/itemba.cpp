@@ -136,7 +136,13 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
 
 float item::GetWeaponStrength() const
 {
-  return sqrt(float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight());
+  return GetFormModifier() * GetMainMaterial()->GetStrengthValue() * sqrt(GetMainMaterial()->GetWeight());
+}
+
+ushort item::GetStrengthRequirement() const
+{
+  float WeightTimesSize = GetWeight() * GetSize();
+  return WeightTimesSize * WeightTimesSize / 7500000000.0f;
 }
 
 bool item::Apply(character* Applier)
@@ -515,6 +521,19 @@ void itemdatabase::InitDefaults(ushort Config)
       FormModifier >>= 2;
       StrengthModifier >>= 1;
     }
+}
+
+void item::AddAttackInfo(felist& List) const
+{
+  std::string Entry(40, ' ');
+  Entry << int(GetWeight());
+  Entry.resize(50, ' ');
+  Entry << int(GetSize());
+  Entry.resize(60, ' ');
+  Entry << int(GetStrengthRequirement());
+  Entry.resize(70, ' ');
+  Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
+  List.AddEntry(Entry, LIGHT_GRAY);
 }
 
 void item::AddMiscellaneousInfo(felist& List) const

@@ -1,3 +1,20 @@
+October 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The danger system now takes haste and slow into account
+	* Monster no longer panic when they die
+	* Weapon weights are now *much* more realistic
+	* New weapons added: hammer, sickle, dagger and short sword
+	* Names of the following weapons modified:
+	  * curved two-handed sword -> two-handed scimitar
+	  * poleaxe -> halberd
+	  * spiked mace -> mace
+	* Whips no longer break
+	* Possibility of enchantment scrolls increased
+	* Some search & replace errors corrected
+	* Messages printed out during a hit are now concatenated
+	* The game now aborts if an obligatory room cannot be placed during generation
+	* Game balance is now completely broken and most damage values insane
+
 October 16 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added ANTIDOTE effect

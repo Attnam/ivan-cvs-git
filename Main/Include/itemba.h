@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <cmath>
+
 #include "typedef.h"
 #include "vector2d.h"
 #include "object.h"
@@ -321,10 +323,11 @@ class item : public object
   virtual void SpecialGenerationHandler() { }
   item* Duplicate() const;
   virtual void SetIsActive(bool) { }
-  ushort GetBaseMinDamage() const { return ushort(GetWeaponStrength() * 3 / 20000); }
-  ushort GetBaseMaxDamage() const { return ushort(GetWeaponStrength() * 5 / 20000 + 1); }
+  ushort GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
+  ushort GetBaseMaxDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 1.25f) + 1; }
   ushort GetBaseBlockValue() const { return ushort(12.5f * GetBlockModifier() / (2500 + float(GetWeight() - 500))); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual void AddAttackInfo(felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
   virtual DATA_BASE_BOOL(CanBeCloned);
@@ -343,8 +346,8 @@ class item : public object
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
   virtual void SignalEnchantmentChange();
-  virtual float GetToHitValueBonus() const { return 1.0f; }
-  virtual float GetAPBonus() const { return 1.0f; }
+  virtual ushort GetEffectBonus() const { return 100; }
+  virtual ushort GetAPBonus() const { return 100; }
   virtual void DrawContents(const character*) { }
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
@@ -353,6 +356,7 @@ class item : public object
   virtual char GetEnchantment() const { return 0; }
   virtual ulong GetEnchantedPrice(char) const;
   virtual void Fix();
+  virtual ushort GetStrengthRequirement() const;
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

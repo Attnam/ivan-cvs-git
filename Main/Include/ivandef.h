@@ -107,11 +107,11 @@
 
 #define TORSO_INDEX 0
 #define HEAD_INDEX 1
-#define RIGHT_ARMINDEX 2
-#define LEFT_ARMINDEX 3
+#define RIGHT_ARM_INDEX 2
+#define LEFT_ARM_INDEX 3
 #define GROIN_INDEX 4
-#define RIGHT_LEGINDEX 5
-#define LEFT_LEGINDEX 6
+#define RIGHT_LEG_INDEX 5
+#define LEFT_LEG_INDEX 6
 
 #define NONE_INDEX MAX_BODYPARTS
 
@@ -244,7 +244,7 @@
 #define MACES 9
 #define FLAILS 10
 #define AXES 11
-#define HALBERDS 12
+#define POLE_ARMS 12
 #define SPEARS 13
 #define WHIPS 14
 #define SHIELDS 15
@@ -301,7 +301,7 @@
 #define LEATHER (MATERIAL_ID + 14)
 #define LEAF (MATERIAL_ID + 15)
 #define FABRIC (MATERIAL_ID + 16)
-#define PALMLEAF (MATERIAL_ID + 17)
+#define PALM_LEAF (MATERIAL_ID + 17)
 #define SULFUR (MATERIAL_ID + 18)
 #define UNICORN_HORN (MATERIAL_ID + 19)
 #define DIAMOND (MATERIAL_ID + 20)
@@ -429,11 +429,15 @@
 
 #define LONG_SWORD 1
 #define TWO_HANDED_SWORD 2
-#define CURVED_TWO_HANDED_SWORD 3
+#define TWO_HANDED_SCIMITAR 3
 #define SPEAR 4
 #define AXE 5
-#define POLE_AXE 6
-#define SPIKED_MACE 7
+#define HALBERD 6
+#define MACE 7
+#define HAMMER 8
+#define SICKLE 9
+#define DAGGER 10
+#define SHORT_SWORD 11
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2

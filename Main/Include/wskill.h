@@ -19,6 +19,7 @@ class weaponskill
   uchar GetLevel() const { return Level; }
   ulong GetHits() const { return Hits; }
   ulong GetHitCounter() const { return HitCounter; }
+  bool Tick();
   bool AddHit();
   bool AddHit(ushort);
   bool SubHit();
@@ -38,10 +39,9 @@ class cweaponskill : public weaponskill
 {
  public:
   cweaponskill(uchar Index) : Index(Index) { }
-  bool Tick();
-  ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
-  ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
+  virtual ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
+  virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
+  virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   const std::string& Name() const { return SkillName[Index]; }
   uchar GetEffectBonus() const { return 100 + 10 * Level; }
   uchar GetAPBonus() const { return 100 - 5 * Level; }
@@ -70,10 +70,9 @@ inline inputfile& operator>>(inputfile& SaveFile, cweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
  public:
-  bool Tick();
-  ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
-  ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
+  virtual ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
+  virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
+  virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   uchar GetEffectBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
   uchar GetAPBonus() const { return Level ? 93 - 2 * (Level - 1) : 100; }
   void AddLevelUpMessage(const std::string&) const;

@@ -56,3 +56,7 @@ Dark Bugs (work in progress-name)
 Necromancer
 
 	Should raise corpses as skeletons and zombies.
+
+Mutant tentacle
+
+	Purple skin. Low agility, but very high intelligence. Can use humanoid weapons.

@@ -332,7 +332,7 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, const character* View
 
 void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
 {
-  felist Contents(Topic, WHITE, 0);
+  felist Contents(Topic);
 
   if(!(Flags & NO_SPECIAL_INFO))
     {

@@ -124,7 +124,7 @@ void configuration::ShowConfigScreen()
   ushort Chosen;
   bool BoolChange = false;
 
-  felist List("Which setting do you wish to configure?", WHITE);
+  felist List("Which setting do you wish to configure?");
   List.AddDescription("");
   List.AddDescription("Setting                                    Value");
 

@@ -216,7 +216,7 @@ material
 		Flexibility = 10;
 	}
 
-	Config PALMLEAF;
+	Config PALM_LEAF;
 	{
 		StrengthValue = 10;
 		ConsumeType = CT_MISC_ORGANIC;
@@ -328,7 +328,7 @@ material
 	{
 		StrengthValue = 50;
 		ConsumeType = CT_METAL;
-		Density = 7300; 
+		Density = 7250; 
 		IsSolid = true;
 		Color = rgb16(100, 100, 100);
 		PriceModifier = 15;
@@ -430,7 +430,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config BONE;
 	{
-		StrengthValue = 30;
+		StrengthValue = 35;
 		Density = 2000;
 		ConsumeType = CT_BONE;
 		IsSolid = true;

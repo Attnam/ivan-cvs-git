@@ -28,12 +28,16 @@ class msgsystem
   static void ScrollUp();
   static void EnableMessages() { Enabled = true; }
   static void DisableMessages() { Enabled = false; }
+  static void EnterBigMessageMode() { BigMessageMode = true; }
+  static void LeaveBigMessageMode();
  private:
   static felist MessageHistory;
   static std::string LastMessage;
+  static std::string BigMessage;
   static ushort Times;
   static ulong Begin, End;
   static bool Enabled;
+  static bool BigMessageMode;
 };
 
 #endif

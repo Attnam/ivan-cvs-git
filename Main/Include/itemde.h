@@ -127,8 +127,8 @@ class ITEM
   virtual void EditEnchantment(char);
   virtual float GetWeaponStrength() const;
   virtual ushort GetStrengthValue() const;
-  virtual float GetToHitValueBonus() const { return (20 + Enchantment) / 20.0f; }
-  virtual float GetAPBonus() const { return 20.0f / (20 + Enchantment); }
+  virtual ushort GetEffectBonus() const { return 100 + 5 * Enchantment; }
+  virtual ushort GetAPBonus() const { return 2000 / (20 + Enchantment); }
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
@@ -645,7 +645,7 @@ class ITEM
   virtual ulong GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
-  virtual float GetToHitValueBonus() const { return (10 + Enchantment) / 10.0f; }
+  virtual ushort GetEffectBonus() const { return 100 + 10 * Enchantment; }
 );
 
 class ITEM
@@ -957,6 +957,8 @@ class ABSTRACT_ITEM
   virtual void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
   virtual void CalculateAll();
+  short GetWieldedHitStrength() const;
+  void AddWieldedBattleInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -980,7 +982,7 @@ class ITEM
   arm,
  public:
   rightarm(const rightarm&);
-  virtual uchar GetBodyPartIndex() const { return RIGHT_ARMINDEX; }
+  virtual uchar GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
@@ -994,7 +996,7 @@ class ITEM
   arm,
  public:
   leftarm(const leftarm&);
-  virtual uchar GetBodyPartIndex() const { return  LEFT_ARMINDEX; }
+  virtual uchar GetBodyPartIndex() const { return  LEFT_ARM_INDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
@@ -1074,7 +1076,7 @@ class ITEM
   leg,
  public:
   rightleg(const rightleg&);
-  virtual uchar GetBodyPartIndex() const { return RIGHT_LEGINDEX; }
+  virtual uchar GetBodyPartIndex() const { return RIGHT_LEG_INDEX; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_LEG; }
@@ -1086,7 +1088,7 @@ class ITEM
   leg,
  public:
   leftleg(const leftleg&);
-  virtual uchar GetBodyPartIndex() const { return LEFT_LEGINDEX; }
+  virtual uchar GetBodyPartIndex() const { return LEFT_LEG_INDEX; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
@@ -1325,7 +1327,7 @@ class ITEM
 
 class ITEM
 (
-  whipofcleptia,
+  whipofthievery,
   whip,
  public:
   virtual ulong GetPrice() const;

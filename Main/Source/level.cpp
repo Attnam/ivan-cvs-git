@@ -273,7 +273,7 @@ void level::Generate()
 
       if(RoomIterator != LevelScript->GetRoom().end())
 	{
-	  while(true)
+	  for(ushort i = 0; i < 1000; ++i)
 	    {
 	      RoomScript = RoomIterator->second;
 
@@ -283,6 +283,9 @@ void level::Generate()
 	      if(MakeRoom(RoomScript))
 		break;
 	    }
+
+	  if(i == 1000)
+	    ABORT("Failed to place room #%d!", c);
 	}
       else
 	{

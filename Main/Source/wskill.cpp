@@ -6,7 +6,7 @@ ushort cweaponskill::LevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 
 ulong cweaponskill::UnuseTickMap[] = { 500000, 250000, 200000, 150000, 50000, 30000, 25000, 20000, 15000, 12500, 10000 };
 ushort cweaponskill::UnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000, 2500, 3000 };
 
-std::string cweaponskill::SkillName[] = { "unarmed combat", "kicking", "biting", "uncategorized", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears", "whips", "shields" };
+std::string cweaponskill::SkillName[] = { "unarmed combat", "kicking", "biting", "uncategorized", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "pole arms", "spears", "whips", "shields" };
 
 ushort sweaponskill::LevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
 ulong sweaponskill::UnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
@@ -122,32 +122,13 @@ void sweaponskill::Load(inputfile& SaveFile)
   SaveFile >> ID;
 }
 
-/*
- * This function is could as well be weaponskill's function,
- * but that would mean using a slow GetUnuseTickMap() virtual function
- * 17 times per tick per humanoid which we don't want.
- */
-
-bool cweaponskill::Tick()
+bool weaponskill::Tick()
 {
-  if(Hits && HitCounter++ >= UnuseTickMap[Level])
+  if(Hits && HitCounter++ >= GetUnuseTickMap(Level))
     {
-      HitCounter -= UnuseTickMap[Level];
+      HitCounter -= GetUnuseTickMap(Level);
 
-      if(SubHit(UnusePenaltyMap[Level]))
-	return true;
-    }
-
-  return false;
-}
-
-bool sweaponskill::Tick()
-{
-  if(HitCounter++ >= UnuseTickMap[Level])
-    {
-      HitCounter -= UnuseTickMap[Level];
-
-      if(SubHit(UnusePenaltyMap[Level]))
+      if(SubHit(GetUnusePenaltyMap(Level)))
 	return true;
     }
 

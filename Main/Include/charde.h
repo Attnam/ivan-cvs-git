@@ -30,17 +30,17 @@ class ABSTRACT_CHARACTER
   virtual bool Hit(character*);
   virtual ushort GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
-  rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARMINDEX]); }
-  leftarm* GetLeftArm() const { return static_cast<leftarm*>(*BodyPartSlot[LEFT_ARMINDEX]); }
+  rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
+  leftarm* GetLeftArm() const { return static_cast<leftarm*>(*BodyPartSlot[LEFT_ARM_INDEX]); }
   groin* GetGroin() const { return static_cast<groin*>(*BodyPartSlot[GROIN_INDEX]); }
-  rightleg* GetRightLeg() const { return static_cast<rightleg*>(*BodyPartSlot[RIGHT_LEGINDEX]); }
-  leftleg* GetLeftLeg() const { return static_cast<leftleg*>(*BodyPartSlot[LEFT_LEGINDEX]); }
+  rightleg* GetRightLeg() const { return static_cast<rightleg*>(*BodyPartSlot[RIGHT_LEG_INDEX]); }
+  leftleg* GetLeftLeg() const { return static_cast<leftleg*>(*BodyPartSlot[LEFT_LEG_INDEX]); }
   void SetHead(head* What) { SetBodyPart(HEAD_INDEX, What); }
-  void SetRightArm(rightarm* What) { SetBodyPart(RIGHT_ARMINDEX, What); }
-  void SetLeftArm(leftarm* What) { SetBodyPart(LEFT_ARMINDEX, What); }
+  void SetRightArm(rightarm* What) { SetBodyPart(RIGHT_ARM_INDEX, What); }
+  void SetLeftArm(leftarm* What) { SetBodyPart(LEFT_ARM_INDEX, What); }
   void SetGroin(groin* What) { SetBodyPart(GROIN_INDEX, What); }
-  void SetRightLeg(rightleg* What) { SetBodyPart(RIGHT_LEGINDEX, What); }
-  void SetLeftLeg(leftleg* What) { SetBodyPart(LEFT_LEGINDEX, What); }
+  void SetRightLeg(rightleg* What) { SetBodyPart(RIGHT_LEG_INDEX, What); }
+  void SetLeftLeg(leftleg* What) { SetBodyPart(LEFT_LEG_INDEX, What); }
   item* GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
   item* GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
   item* GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }

@@ -46,11 +46,11 @@ inputfile& operator>>(inputfile&, felistdescription&);
 class felist
 {
  public:
-  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE) { AddDescription(Topic, TopicColor); }
+  felist(const std::string& Topic, ushort TopicColor = WHITE, ushort Maximum = 0) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(const std::string&, ushort, ushort = 0, bitmap* = 0, bool = true);
   void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
-  void AddDescription(const std::string&, ushort = 0xFFFF);
+  void AddDescription(const std::string&, ushort = WHITE);
   ushort Draw();
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
