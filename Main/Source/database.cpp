@@ -176,6 +176,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanWalk);
   ADD_MEMBER(CanSwim);
   ADD_MEMBER(CanFly);
+  ADD_MEMBER(EnergyResistance);
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);

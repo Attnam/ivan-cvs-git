@@ -55,6 +55,7 @@ struct characterdatabase
   bool CanWalk;
   bool CanSwim;
   bool CanFly;
+  ushort EnergyResistance;
   ushort FireResistance;
   ushort PoisonResistance;
   ushort ElectricityResistance;
@@ -394,6 +395,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanWalk);
   DATA_BASE_BOOL(CanSwim);
   DATA_BASE_BOOL(CanFly);
+  DATA_BASE_VALUE(ushort, EnergyResistance);
   DATA_BASE_VALUE(ushort, FireResistance);
   DATA_BASE_VALUE(ushort, PoisonResistance);
   DATA_BASE_VALUE(ushort, ElectricityResistance);
@@ -819,6 +821,7 @@ class character : public entity, public id
   virtual const char* KickNoun() const;
   virtual const char* BiteNoun() const;
   virtual bool AttackIsBlockable(uchar) const { return true; }
+  virtual bool AttackMayDamageArmor() const { return true; }
   virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
   stack* Stack;
   long NP, AP;

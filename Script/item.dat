@@ -1002,7 +1002,7 @@ scrollofteleportation /* scroll-> */
 scrollofcharging /* scroll-> */
 {
 	Possibility = 25;
-	Price = 400;
+	Price = 500;
 	PostFix = "of charging";
 	CanBeCloned = false;
 	IsPolymorphSpawnable = false;
@@ -1149,7 +1149,7 @@ wand
 		Price = 500;
 		PostFix = "of striking";
 		MainMaterialConfig == IRON;
-		BeamRange = 15;
+		BeamRange = 10;
 		MinCharges = 2;
 		MaxCharges = 5;
 		BeamColor = WHITE;
@@ -1219,7 +1219,7 @@ wand
 	Config WAND_OF_RESURRECTION;
 	{
 		Possibility = 25;
-		Price = 500;
+		Price = 750;
 		PostFix = "of resurrection";
 		MainMaterialConfig == BONE;
 		BeamRange = 5;
@@ -1233,7 +1233,7 @@ wand
 	Config WAND_OF_DOOR_CREATION;
 	{
 		Possibility = 50;
-		Price = 200;
+		Price = 250;
 		PostFix = "of door creation";
 		MainMaterialConfig == OAK_WOOD;
 		/* BeamRange has no effect */
@@ -1278,8 +1278,8 @@ wand
 
 	Config WAND_OF_LIGHTNING;
 	{
-		Possibility = 50;
-		Price = 500;
+		Possibility = 75;
+		Price = 250;
 		PostFix = "of lightning";
 		MainMaterialConfig == GOLD;
 		BeamRange = 15;
@@ -1294,7 +1294,7 @@ wand
 
 scrollofchangematerial /* scroll-> */
 {
-	Possibility = 20;
+	Possibility = 25;
 	Price = 1000;
 	PostFix = "of change material";
 	Alias == "SoCM";

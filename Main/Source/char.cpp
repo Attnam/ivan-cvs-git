@@ -2651,7 +2651,9 @@ bool character::AllowDamageTypeBloodSpill(ushort Type)
 ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg, bool CaptureBodyPart)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
-  BodyPart->DamageArmor(Damager, Damage, Type);
+
+  if(!Damager || Damager->AttackMayDamageArmor())
+    BodyPart->DamageArmor(Damager, Damage, Type);
 
   if(!PenetrateResistance)
     Damage -= (BodyPart->GetTotalResistance(Type) >> 1) + RAND() % ((BodyPart->GetTotalResistance(Type) >> 1) + 1);
@@ -2916,10 +2918,10 @@ ushort character::GetResistance(ushort Type) const
     {
     case PHYSICAL_DAMAGE:
     case SOUND:
-    case ENERGY:
     case ACID:
     case DRAIN:
       return 0;
+    case ENERGY: return GetEnergyResistance();
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
     case ELECTRICITY: return GetElectricityResistance();
@@ -2965,6 +2967,7 @@ void character::Regenerate()
       if(!HealHitPoint())
 	break;
 
+      EditNP(-Max(25000 / MaxHP, 1));
       RegenerationCounter -= 1250000;
       EditExperience(ENDURANCE, Max(4000 / MaxHP, 1));
     }

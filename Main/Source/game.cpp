@@ -135,7 +135,7 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
-//#include "confdef.h"
+#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -226,7 +226,7 @@ bool game::Init(const festring& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new guard(MASTER));
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);

@@ -115,6 +115,7 @@ class CHARACTER
   virtual const char* ThirdPersonBiteVerb() const;
   virtual const char* ThirdPersonCriticalBiteVerb() const;
   virtual bool AttackIsBlockable(uchar) const { return false; }
+  virtual bool AttackMayDamageArmor() const { return false; }
 );
 
 class CHARACTER
@@ -366,6 +367,8 @@ class CHARACTER
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
   virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual bool AttackIsBlockable(uchar) const { return false; }
+  virtual bool AttackMayDamageArmor() const { return false; }
   virtual void GetAICommand();
   festring OwnerSoul;
   bool Active;
