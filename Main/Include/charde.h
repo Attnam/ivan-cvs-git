@@ -331,7 +331,7 @@ public:
 protected:
 	virtual vector2d GetBitmapPos() const RETV(96,0)
 	virtual std::string NameSingular() const RET("Enner Beast")
-	virtual float GetMeleeStrength() const RET(50000)
+	virtual float GetMeleeStrength() const RET(100000)
 	virtual void GetAICommand();
 	virtual void CreateCorpse();
 );
@@ -391,6 +391,7 @@ public:
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual void BeTalkedTo(character*);
 	virtual ushort CalculateArmorModifier() const RET(10)
+	virtual bool Hit(character*);
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual vector2d GetBitmapPos() const RETV(64,0)

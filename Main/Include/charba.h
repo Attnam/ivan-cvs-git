@@ -115,7 +115,7 @@ public:
 	virtual bool WhatToEngrave();
 	virtual bool Wield();
 	virtual bool WizardMode();
-	virtual void AddScoreEntry(std::string, float = 1) const;
+	virtual void AddScoreEntry(std::string, float = 1, bool = true) const;
 	virtual long Score() const;
 	virtual float GetAttackStrength() const;
 	virtual item* GetTorsoArmor() const				{ return 0; }

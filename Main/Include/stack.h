@@ -24,10 +24,10 @@ class inputfile;
 class stack
 {
 public:
-	stack(square* = 0);
+	stack(square* = 0, uchar = CENTER);
 	~stack();
 	void Load(inputfile&);
-	bool PositionedDrawToTileBuffer(uchar = CENTER) const;
+	bool DrawToTileBuffer() const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);
 	item* RemoveItem(ushort);
@@ -62,11 +62,15 @@ public:
 	void ReceiveSound(float);
 	void StruckByWandOfStriking(void);
 	void CheckForStepOnEffect(character*);
+	square* GetSquareTrulyUnder() const;
+	levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }
+	void ImpactDamage(ushort, bool);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;
 	item** Item;
 	ushort Items, NonExistent;
+	uchar SquarePosition;
 };
 
 #endif

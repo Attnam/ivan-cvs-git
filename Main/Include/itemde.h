@@ -358,7 +358,7 @@ public:
 	virtual ushort GetArmorValue() const RET(10)
 	virtual std::string NameSingular() const RET("Maakotka shirt")
 	virtual short CalculateOfferValue(char) const RET(750)
-	virtual long Score() const RET(1000)
+	virtual long Score() const RET(2500)
 	virtual bool IsMaakotkaShirt() const RET(true);
 	virtual vector2d GetBitmapPos() const RETV(16,112)
 	virtual bool CanBeWished() const RET(false)
@@ -548,7 +548,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, elpuriflesh::StaticType()))
 	virtual bool IsHeadOfElpuri() const RET(true)
 	virtual std::string NameSingular() const RET("head of Elpuri")
-	virtual long Score() const RET(500);
+	virtual long Score() const RET(1000);
 	virtual vector2d GetBitmapPos() const RETV(16,0)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
@@ -589,7 +589,7 @@ public:
 	virtual bool IsPerttusNut() const RET(true)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, humanflesh::StaticType()))
 	virtual std::string NameSingular() const RET("left nut of Perttu")
-	virtual long Score() const RET(2500)
+	virtual long Score() const RET(5000)
 	virtual item* CreateWishedItem() const;
 	virtual bool Destroyable() const { return false; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }

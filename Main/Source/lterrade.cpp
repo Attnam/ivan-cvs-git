@@ -316,7 +316,7 @@ void throne::SitOn(character* Sitter)
 
 		if(!game::GetWizardMode())
 		{
-			game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
+			game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5, false);
 			highscore HScore;
 			HScore.Draw();
 		}

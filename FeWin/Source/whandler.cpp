@@ -6,6 +6,7 @@
 dynarray<int> globalwindowhandler::KeyBuffer;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
 bool globalwindowhandler::Initialized = false;
+void (*globalwindowhandler::QuitMessageHandler)() = 0;
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -50,6 +51,9 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_CLOSE:
 		{
+			if(QuitMessageHandler)
+				QuitMessageHandler();
+
 			PostQuitMessage(0);
 			return 0;
 		}

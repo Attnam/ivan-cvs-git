@@ -17,11 +17,13 @@ public:
 	static int GetKey(bool = true, bool = false);
 	static void Init(HINSTANCE, HWND*, const char*);
 	static int ReadKey();
-	static void ClearKeyBuffer() { KeyBuffer.Resize(0); } 
+	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
+	static void SetQuitMessageHandler(void (*What)()) { QuitMessageHandler = What; }
 private:
 	static dynarray<int> KeyBuffer;
 	static char KeyboardLayoutName[KL_NAMELENGTH];
 	static bool Initialized;
+	static void (*QuitMessageHandler)();
 };
 
 #endif

@@ -72,7 +72,6 @@ void swatcommando::CreateInitialEquipment()
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(DoomsDay)));
 	}
 
-	GetStack()->FastAddItem(new lamp);
 	GetStack()->FastAddItem(new chainmail(rand() % 5 ? (material*)new iron : (material*)new mithril));
 }
 
@@ -345,9 +344,9 @@ void perttu::HealFully(character* ToBeHealed)
 	ToBeHealed->SetHP(ToBeHealed->GetMaxHP());
 
 	if(ToBeHealed->GetIsPlayer())
-		ADD_MESSAGE("%s heals you fully.", CNAME(DEFINITE));
+		ADD_MESSAGE("%s heals you fully.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 	else
-		ADD_MESSAGE("%s heals %s fully.", CNAME(DEFINITE), ToBeHealed->CNAME(DEFINITE));
+		ADD_MESSAGE("%s heals %s fully.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", ToBeHealed->GetSquareUnder()->CanBeSeen() ? ToBeHealed->CNAME(DEFINITE) : "something");
 }
 
 void perttu::Save(outputfile& SaveFile) const
@@ -437,9 +436,8 @@ float humanoid::GetAttackStrength() const
 
 bool humanoid::Hit(character* Enemy)
 {
-	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
-		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
-			return false;
+	if(GetIsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+		return false;
 
 	Hostility(Enemy);
 
@@ -645,7 +643,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 		if(!game::GetWizardMode())
 		{
-			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 3);
+			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 4, false);
 			highscore HScore;
 			HScore.Draw();
 		}
@@ -686,7 +684,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 		if(!game::GetWizardMode())
 		{
-			AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
+			AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
 			highscore HScore;
 			HScore.Draw();
 		}
@@ -729,10 +727,10 @@ void farmer::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"");
 		break;
 	case 1:
-		ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 2:
-		ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 3:
 		ADD_MESSAGE("\"The prices here are infamous. What a capitalist scum that shopkeeper is!\"");
@@ -755,13 +753,13 @@ void cityguard::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
-		ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 2:
-		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 3:
 		ADD_MESSAGE("\"The Überpriest is my idol. I would want a sword as big as his!\"");
@@ -784,14 +782,14 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
-		ADD_MESSAGE("%s sighs: \"Mutant school food mushrooms ate the last caravan.", CNAME(DEFINITE));
+		ADD_MESSAGE("%s sighs: \"Mutant school food mushrooms ate the last caravan.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", CNAME(DEFINITE));
+		ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since I have a monopoly.\"");
 		break;
 	case 3:
@@ -812,19 +810,19 @@ void priest::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"Receive my blessings, child.\"");
 	else
 	{
-		ADD_MESSAGE("%s talks to you:", CNAME(DEFINITE));
+		ADD_MESSAGE("%s talks to you:", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		game::GetGod(GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
 	}
 }
 
 void oree::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink Pepsi!\"", CNAME(DEFINITE));
+	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink Pepsi!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void swatcommando::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s yells: \"Microsoft powaah! Die Unix!\"", CNAME(DEFINITE));
+	ADD_MESSAGE("%s yells: \"Microsoft powaah! Die Unix!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void ennerbeast::BeTalkedTo(character*)
@@ -852,28 +850,28 @@ void ennerbeast::BeTalkedTo(character*)
 
 void elpuri::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", CNAME(DEFINITE));
+	ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void billswill::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("\"Windows XP is coming. You will install it. Resistance is futile. Prepare to be assimilited.\"", CNAME(DEFINITE));
+	ADD_MESSAGE("\"Windows XP is coming. You will install it. Resistance is futile. Prepare to be assimilited.\"");
 }
 
 void fallenvalpurist::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-		ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 	else
-		ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void froggoblin::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-		ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", CNAME(DEFINITE));
+		ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 	else
-		ADD_MESSAGE("%s yells goblin war cries at you.", CNAME(DEFINITE));
+		ADD_MESSAGE("%s yells goblin war cries at you.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void golem::BeTalkedTo(character* Talker)
@@ -984,7 +982,7 @@ void ivan::BeTalkedTo(character* Talker)
 	}
 	else
 	{
-		ADD_MESSAGE("Ivan seems to be very friendly. \"You make good communist. Ivan go with you!\"");
+		ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. Ivan go with you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		SetTeam(Talker->GetTeam());
 	}
 }
@@ -1044,7 +1042,7 @@ void slave::BeTalkedTo(character* Talker)
 	{
 		if(Talker->GetMoney() >= 50)
 		{
-			ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", CNAME(DEFINITE));
+			ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 
 			if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 			{
@@ -1110,4 +1108,39 @@ void slave::GetAICommand()
 		HomeRoom = 0;
 		MoveRandomly();
 	}
+}
+
+bool elpuri::Hit(character* Enemy)
+{
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	{
+		levelsquare* Square = GetLevelSquareUnder()->GetLevelUnder()->GetLevelSquare(vector2d(DoX, DoY));
+		character* ByStander = Square->GetCharacter();
+
+		if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
+		{
+			Hostility(ByStander);
+
+			short Success = rand() % 26 - rand() % 26;
+
+			switch(ByStander->TakeHit(this, Success))
+			{
+			case HAS_HIT:
+			case HAS_BLOCKED:
+			case HAS_DIED:
+				ByStander->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
+				SetStrengthExperience(GetStrengthExperience() + 50);
+			case HAS_DODGED:
+				SetAgilityExperience(GetAgilityExperience() + 25);
+			}
+		}
+
+		Square->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
+
+		for(uchar c = 0; c < 4; ++c)
+			if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
+				Square->GetSideStack(c)->ImpactDamage(GetStrength(), Square->CanBeSeen());
+	})
+
+	return true;
 }

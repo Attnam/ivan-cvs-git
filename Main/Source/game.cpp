@@ -147,7 +147,7 @@ void game::Init(std::string Name)
 	if(Name == "")
 	{
 		DOUBLEBUFFER->ClearToColor(0);
-		SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 30));
+		SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 20));
 	}
 	else
 		SetPlayerName(Name);
@@ -1142,4 +1142,10 @@ void game::UpdateCamera()
 		Camera.Y = Player->GetPos().Y - 18;
 
 	GetCurrentArea()->SendNewDrawRequest();
+}
+
+void game::HandleQuitMessage()
+{
+	if(Running)
+		RemoveSaves();
 }

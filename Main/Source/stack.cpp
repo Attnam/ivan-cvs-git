@@ -11,8 +11,9 @@
 #include "save.h"
 #include "graphics.h"
 #include "charba.h"
+#include "area.h"
 
-stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
+stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Item(0), Items(0), NonExistent(0)
 {
 }
 
@@ -21,13 +22,13 @@ stack::~stack()
 	Clean();
 }
 
-bool stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
+bool stack::DrawToTileBuffer() const
 {
 	if(!GetItems())
 		return false;
 
 	for(ushort c = 0; c < GetItems(); ++c)
-		GetItem(c)->PositionedDrawToTileBuffer(LevelSquarePosition);
+		GetItem(c)->PositionedDrawToTileBuffer(SquarePosition);
 
 	return true;
 }
@@ -51,15 +52,19 @@ ushort stack::AddItem(item* ToBeAdded)
 
 	if(GetSquareUnder())
 	{
-		if(!game::GetInWilderness())
-			GetLevelSquareUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
-
-		GetSquareUnder()->SendNewDrawRequest();
-		GetSquareUnder()->SendMemorizedUpdateRequest();
 		GetSquareUnder()->SetDescriptionChanged(true);
 
 		if(GetSquareUnder()->CanBeSeen())
 			GetSquareUnder()->UpdateMemorizedDescription();
+	}
+
+	if(GetSquareTrulyUnder())
+	{
+		if(!game::GetInWilderness())
+			GetLevelSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
+
+		GetSquareTrulyUnder()->SendNewDrawRequest();
+		GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 	}
 
 	return GetItems() - 1;
@@ -103,15 +108,19 @@ item* stack::RemoveItem(ushort Index)
 
 		if(GetSquareUnder())
 		{
-			if(!game::GetInWilderness())
-				GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
-
-			GetSquareUnder()->SendNewDrawRequest();
-			GetSquareUnder()->SendMemorizedUpdateRequest();
 			GetSquareUnder()->SetDescriptionChanged(true);
 
 			if(GetSquareUnder()->CanBeSeen())
 				GetSquareUnder()->UpdateMemorizedDescription();
+		}
+
+		if(GetSquareTrulyUnder())
+		{
+			if(!game::GetInWilderness())
+				GetLevelSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
+
+			GetSquareTrulyUnder()->SendNewDrawRequest();
+			GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 		}
 
 		return Removed;
@@ -154,39 +163,43 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
 	if(this == MoveTo)
 		return GetItem(Index);
 
-	if(GetSquareUnder())
+	if(GetSquareTrulyUnder())
 	{
-		GetSquareUnder()->SendNewDrawRequest();
-		GetSquareUnder()->SendMemorizedUpdateRequest();
-		GetSquareUnder()->SetDescriptionChanged(true);
+		GetSquareTrulyUnder()->SendNewDrawRequest();
+		GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 	}
 
+	if(GetSquareUnder())
+		GetSquareUnder()->SetDescriptionChanged(true);
+
 	if(Item && GetItems() > Index && GetItem(Index) && MoveTo)
-		if(MoveTo->GetLevelSquareUnder() == GetLevelSquareUnder())
+		if(MoveTo->GetLevelSquareTrulyUnder() == GetLevelSquareTrulyUnder())
 		{
 			ToBeReturned = MoveTo->FastAddItem(GetItem(Index));
 			FastRemoveItem(Index);
 
-			if(GetLevelSquareUnder()->CanBeSeen())
-				GetLevelSquareUnder()->UpdateMemorizedDescription();
+			if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+				GetSquareUnder()->UpdateMemorizedDescription();
 		}
 		else
 		{
-			if(MoveTo->GetSquareUnder())
+			if(MoveTo->GetSquareTrulyUnder())
 			{
-				MoveTo->GetSquareUnder()->SendNewDrawRequest();
-				MoveTo->GetSquareUnder()->SendMemorizedUpdateRequest();
-				MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
+				MoveTo->GetSquareTrulyUnder()->SendNewDrawRequest();
+				MoveTo->GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 			}
+
+			if(MoveTo->GetSquareUnder())
+				MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
 
 			ToBeReturned = MoveTo->AddItem(GetItem(Index));
 			RemoveItem(Index);
 
-			if(GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
-				GetLevelSquareUnder()->UpdateMemorizedDescription();
+			if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+				GetSquareUnder()->UpdateMemorizedDescription();
 
-			if(MoveTo->GetSquareUnder() && MoveTo->GetLevelSquareUnder()->CanBeSeen())
-				MoveTo->GetLevelSquareUnder()->UpdateMemorizedDescription();
+			if(MoveTo->GetSquareUnder() && MoveTo->GetSquareUnder()->CanBeSeen())
+				MoveTo->GetSquareUnder()->UpdateMemorizedDescription();
 		}
 
 	return MoveTo->GetItem(ToBeReturned);
@@ -273,7 +286,7 @@ ulong stack::SumOfMasses() const
 
 void stack::Save(outputfile& SaveFile) const
 {
-	SaveFile << Items;
+	SaveFile << Items << SquarePosition;
 
 	for(ushort c = 0; c < Items; ++c)
 		SaveFile << Item[c];
@@ -281,7 +294,7 @@ void stack::Save(outputfile& SaveFile) const
 
 void stack::Load(inputfile& SaveFile)
 {
-	SaveFile >> Items;
+	SaveFile >> Items >> SquarePosition;
 
 	if(Items)
 	{
@@ -369,11 +382,7 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 {
 	if(Strength > 3)
 	{
-		// This may jam if an item is destroyed but doesn't leave anything behind
-
-		for(ushort c = 0; c < GetItems();)
-			if(!GetItem(c)->ImpactDamage(Strength >> 1, ShowOnScreen, this))
-				++c;
+		ImpactDamage(Strength, ShowOnScreen);
 
 		if(GetItems())
 			GetItem(0)->Fly(Direction, Strength, this, true);
@@ -414,7 +423,7 @@ bool stack::Polymorph()
 void stack::ReceiveSound(float Strength)
 {
 	for(int x = 0; x < GetItems(); ++x) // PROBLEM!!! This probably has the same problems as kick... So...
-		GetItem(x)->ReceiveSound(Strength, GetLevelSquareUnder()->CanBeSeen(), this);
+		GetItem(x)->ReceiveSound(Strength, GetLevelSquareTrulyUnder()->CanBeSeen(), this);
 }
 
 void stack::StruckByWandOfStriking(void)
@@ -427,4 +436,42 @@ void stack::CheckForStepOnEffect(character* Stepper)
 {
 	for(ushort c = 0; c < GetItems(); c++)
 		GetItem(c)->GetStepOnEffect(Stepper);
+}
+
+square* stack::GetSquareTrulyUnder() const
+{
+	switch(SquarePosition)
+	{
+	case DOWN:
+		if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(0, -1)))
+			return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(0, -1));
+		else
+			return 0;
+	case LEFT:
+		if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(1, 0)))
+			return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(1, 0));
+		else
+			return 0;
+	case UP:
+		if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(0, 1)))
+			return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(0, 1));
+		else
+			return 0;
+	case RIGHT:
+		if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(-1, 0)))
+			return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(-1, 0));
+		else
+			return 0;
+	default:
+		return GetSquareUnder();
+	}
+}
+
+void stack::ImpactDamage(ushort Strength, bool ShowOnScreen)
+{
+	// This may jam if an item is destroyed but doesn't leave anything behind
+
+	for(ushort c = 0; c < GetItems();)
+		if(!GetItem(c)->ImpactDamage(Strength, ShowOnScreen, this))
+			++c;
 }

@@ -157,6 +157,7 @@ public:
 	static void SetPerttu(perttu* What) { Perttu = What; }
 	static ushort GetAutosaveInterval() { return AutosaveInterval; }
 	static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
+	static void HandleQuitMessage();
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];

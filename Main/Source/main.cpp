@@ -11,6 +11,8 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	igraph::Init(hInstance, hWnd);
 
+	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+
 	game::InitLuxTable();
 	game::InitScript();
 

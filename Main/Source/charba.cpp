@@ -85,9 +85,8 @@ void character::Hunger(ushort Turns)
 
 bool character::Hit(character* Enemy)
 {
-	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
-		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
-			return false;
+	if(GetIsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+		return false;
 
 	Hostility(Enemy);
 
@@ -724,7 +723,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 					if(!game::GetWizardMode())
 					{
-						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
+						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 3, false);
 						highscore HScore;
 						HScore.Draw();
 					}
@@ -882,6 +881,8 @@ void character::Die()
 				return;
 			}
 		}
+
+		game::RemoveSaves();
 	}
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
@@ -925,8 +926,6 @@ void character::Die()
 		game::Quit();
 
 		iosystem::TextScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
-
-		game::RemoveSaves();
 
 		if(!game::GetWizardMode())
 		{
@@ -1028,7 +1027,7 @@ void character::AddHitMessage(character* Enemy, const bool Critical) const
 
 void character::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s %s.", CNAME(DEFINITE), TalkVerb().c_str());
+	ADD_MESSAGE("%s %s.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", TalkVerb().c_str());
 }
 
 bool character::Talk()
@@ -1061,7 +1060,7 @@ bool character::Talk()
 				}
 				else
 				{
-					ADD_MESSAGE("There is no one in that square.");
+					ADD_MESSAGE("You get no response.");
 					return false;
 				}
 
@@ -1820,7 +1819,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
 		else
-			if(GetLevelSquareUnder()->CanBeSeen())
+			if(GetSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() + SizeOfEffect / 500);
@@ -1978,14 +1977,19 @@ long character::StatScore() const
 
 long character::Score() const
 {
-	return (game::GetPlayerBackup() ? game::GetPlayerBackup()->StatScore() : StatScore()) + GetMoney() + Stack->Score() + game::GodScore();
+	return (game::GetPlayerBackup() ? game::GetPlayerBackup()->StatScore() : StatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
 }
 
-void character::AddScoreEntry(std::string Description, float Multiplier) const
+void character::AddScoreEntry(std::string Description, float Multiplier, bool AddEndLevel) const
 {
 	highscore HScore;
 
-	HScore.Add(long((Score() - game::GetBaseScore()) * Multiplier), game::GetPlayerName() + ", " + Description);
+	std::string Desc = game::GetPlayerName() + ", " + Description;
+
+	if(AddEndLevel)
+		Desc += " in " + (game::GetInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
+
+	HScore.Add(long((Score() - game::GetBaseScore()) * Multiplier), Desc);
 
 	HScore.Save();
 }
@@ -2077,13 +2081,11 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 
 	SetHP(GetHP() - Damage);
 
-	if(GetLevelSquareUnder()->CanBeSeen())
-	{
-		if(GetIsPlayer())
-			ADD_MESSAGE("%s hits you.", Thingy->CNAME(DEFINITE));
-		else
+	if(GetIsPlayer())
+		ADD_MESSAGE("%s hits you.", Thingy->CNAME(DEFINITE));
+	else
+		if(GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s hits %s.", Thingy->CNAME(DEFINITE), CNAME(DEFINITE));
-	}
 
 	if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen(true))
 		ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
@@ -2303,12 +2305,10 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 		if(KickStrength > 8 + rand() % 4 - rand() % 4)
 		{
 			if(ShowOnScreen)
-			{
 				if(GetIsPlayer())
 					ADD_MESSAGE("The kick throws you off balance.");
 				else
 					ADD_MESSAGE("The kick throws %s off balance.", CNAME(DEFINITE));
-			}
 
 			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
 
@@ -2323,12 +2323,10 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 		else
 		{
 			if(ShowOnScreen)
-			{
 				if(GetIsPlayer())
 					ADD_MESSAGE("The kick hits you, but you remain standing.");
 				else
 					ADD_MESSAGE("The kick hits %s.", CNAME(DEFINITE));
-			}
 
 			ushort Damage = rand() % (KickStrength / 15);
 
@@ -2343,13 +2341,10 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 	}
 	else
 		if(ShowOnScreen)
-		{
 			if(GetIsPlayer())
 				ADD_MESSAGE("The kick misses you.");
 			else
 				ADD_MESSAGE("The kick misses %s.", CNAME(DEFINITE));
-		}
-	
 }
 
 void character::FallTo(vector2d Where, bool OnScreen)
@@ -2357,19 +2352,15 @@ void character::FallTo(vector2d Where, bool OnScreen)
 	SetAP(GetAP() - 500);
 
 	if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(Where)->GetCharacter())
-	{
 		Move(Where, true);
-	}
 
 	if(!game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
 	{
 		if(OnScreen)
-		{
 			if(GetIsPlayer()) 
 				ADD_MESSAGE("You hit your head on the wall.");
 			else
 				ADD_MESSAGE("%s hits %s head on the wall.", Name(DEFINITE).c_str(), game::PossessivePronoun(GetSex()));
-		}
 
 		SetHP(GetHP() - rand() % 2);
 		CheckDeath("killed by hitting a wall");
@@ -2396,7 +2387,6 @@ void character::StandIdleAI()
 bool character::ShowWeaponSkills()
 {
 	ADD_MESSAGE("This race isn't capable of developing weapon skill experience!");
-
 	return false;
 }
 

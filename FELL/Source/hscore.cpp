@@ -31,6 +31,8 @@ void highscore::Add(long NewScore, std::string NewEntry)
 		Entry.push_back(NewEntry);
 		Score.push_back(NewScore);
 	}
+	else
+		LastAdd = 100;
 }
 
 void highscore::Draw() const

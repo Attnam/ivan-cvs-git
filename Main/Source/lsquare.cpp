@@ -20,7 +20,7 @@ levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, P
 	Stack = new stack(this);
 
 	for(ushort c = 0; c < 4; ++c)	//Is there a better way to do this? Only Stroustrup knows...
-		SideStack[c] = new stack(this);
+		SideStack[c] = new stack(this, c);
 }
 
 levelsquare::~levelsquare()
@@ -98,25 +98,25 @@ bool levelsquare::DrawStacks() const
 {
 	bool Items = false;
 
-	if(GetOverTerrain()->GetIsWalkable() && GetStack()->PositionedDrawToTileBuffer())
+	if(GetOverTerrain()->GetIsWalkable() && GetStack()->DrawToTileBuffer())
 		Items = true;
 
 	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
 
 	if(GetPos().X)
-		if(NS(vector2d(-1, 0), 1)->PositionedDrawToTileBuffer(1))
+		if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer())
 			Items = true;
 
 	if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
-		if(NS(vector2d(1, 0), 3)->PositionedDrawToTileBuffer(3))
+		if(NS(vector2d(1, 0), 3)->DrawToTileBuffer())
 			Items = true;
 
 	if(GetPos().Y)
-		if(NS(vector2d(0, -1), 2)->PositionedDrawToTileBuffer(2))
+		if(NS(vector2d(0, -1), 2)->DrawToTileBuffer())
 			Items = true;
 
 	if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
-		if(NS(vector2d(0, 1), 0)->PositionedDrawToTileBuffer(0))
+		if(NS(vector2d(0, 1), 0)->DrawToTileBuffer())
 			Items = true;
 
 	return Items;
