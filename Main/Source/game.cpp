@@ -1,7 +1,13 @@
 #include <cmath>
 #include <ctime>
+#ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
 #include <windows.h>
+#else
+#define IDNO 0
+#define IDYES 1
+#define IDCANCEL 2
+#endif
 
 #include "game.h"
 #include "level.h"
@@ -122,7 +128,7 @@ ulong game::Turns;
 void game::InitScript()
 {
 	femath::SetSeed(time(0));
-	inputfile ScriptFile("Script/Dungeon.dat");
+	inputfile ScriptFile((GAME_DIR + std::string("Script/dungeon.dat")).c_str());
 	GameScript.ReadFrom(ScriptFile);
 }
 
@@ -145,7 +151,7 @@ void game::Init(std::string Name)
 	LOSTurns = 1;
 	WorldMap = 0;
 
-	_mkdir("Save");
+	////////MUST DOO DOOO DOOOD DOOOOD ODOOODDOD D00D!_mkdir("Save");
 
 	if(Name == "")
 		if(configuration::GetDefaultName() == "")
@@ -1104,7 +1110,12 @@ bool game::HandleQuitMessage()
 	if(GetRunning())
 	{
 		if(GetInGetCommand())
-			switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+		  {
+#ifndef WIN32
+		    switch(iosystem::Menu(0, "Do you want to save your game before quitting?","Yes\rNo\rCancel", BLUE, WHITE, false))
+#else
+		    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+#endif
 			{
 			case IDYES:
 				configuration::Save();
@@ -1117,8 +1128,13 @@ bool game::HandleQuitMessage()
 				RemoveSaves();
 				break;
 			}
+		  }
 		else
+#ifdef WIN32
 			if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
+#else
+			  if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
+#endif
 			{
 				configuration::Save();
 				RemoveSaves();
@@ -1133,8 +1149,10 @@ bool game::HandleQuitMessage()
 
 void game::Beep()
 {
+#ifdef WIN32
 	if(configuration::GetBeepOnCritical())
 		::Beep(400, 1000);
+#endif
 }
 
 uchar game::GetDirectionForVector(vector2d Vector)

@@ -19,7 +19,10 @@
 #define GCURSOR		3
 #define GSYMBOL		4
 
+
+#ifdef WIN32
 #include <windows.h>
+#endif
 #include <map>
 
 #include "typedef.h"
@@ -79,7 +82,11 @@ typedef std::map<graphic_id, tile> tilemap;
 class igraph
 {
 public:
+#ifdef WIN32
 	static void Init(HINSTANCE, HWND*);
+#else
+	static void Init();
+#endif
 	static void DeInit();
 	static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
 	static bitmap* GetFOWGraphic() { return Graphic[GFOW]; }

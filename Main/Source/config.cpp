@@ -140,7 +140,9 @@ void configuration::ShowConfigScreen()
 			BoolChange = false;
 			continue;
 		case 3:
-			graphics::SwitchMode();
+#ifdef WIN32
+		        graphics::SwitchMode();
+#endif
 			BoolChange = true;
 			continue;
 		case 4:

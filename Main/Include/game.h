@@ -14,6 +14,12 @@
 
 #define LIGHT_BORDER		160
 
+#ifdef WIN32
+#define GAME_DIR std::string("")
+#else
+
+#define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
+#endif
 #include <string>
 #include <vector>
 

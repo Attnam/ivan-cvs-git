@@ -10,7 +10,11 @@
 #include "config.h"
 #include "bitmap.h"
 
+#ifdef WIN32
 int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
+#else
+int Main()
+#endif
 {
 	/* You are not expected to understand this */
 
@@ -23,7 +27,11 @@ int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 	game::InitLuxTable();
 	game::InitScript();
 	configuration::Load();
+#ifdef WIN32
 	igraph::Init(hInstance, hWnd);
+#else
+	igraph::Init();
+#endif
 	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 
 	elpuri Elpuri(true, false, false, false);
