@@ -460,7 +460,7 @@ truth oillamp::Apply(character* Applier)
     {
       Genie->GetLSquareUnder()->AddSmoke(gas::Spawn(SMOKE, 1000));
 
-      if(!Applier->IsPet())
+      if(!Genie->IsPet())
 	ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
       else
       {

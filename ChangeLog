@@ -13,6 +13,10 @@
 
 December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
+	* Corrected a bug in the genie hostility code
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
 	* The annoying question "Do you want to ERASE..." whatever which appeared
 		after dying if the highscore file was empty or old is now less annoying
 		and doesn't appear unless it's really necessary
