@@ -3119,7 +3119,7 @@ void darkmage::GetAICommand()
   if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(GetPos()) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy))
     return;
 
-  if(Friend.size() && (!NearestEnemy || !(RAND() & 3)))
+  if(Friend.size() && !(RAND() & 3))
     {
       RandomFriend = Friend[RAND() % Friend.size()];
       NearestEnemy = 0;
@@ -3232,7 +3232,7 @@ void darkmage::GetAICommand()
 	  Square->Haste(this, DeathMsg, YOURSELF);
 	  break;
 	case ARCH_MAGE:
-	  if(!(RAND() & 7))
+	  if(!(RAND() & 31))
 	    {
 	      RandomFriend->CloneToNearestSquare(this);
 	      return;

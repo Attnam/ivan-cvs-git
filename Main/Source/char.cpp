@@ -1962,7 +1962,7 @@ void character::ShowNewPosInfo() const
 
       if(PileVector.size() == 1)
 	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).c_str(), PileVector[0].size() == 1 ? "is" : "are");
-      else
+      else if(!PileVector.empty())
 	ADD_MESSAGE("Several items are lying here.");
 		
       if(GetNearLSquare(GetPos())->GetEngraved().length())

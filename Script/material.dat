@@ -792,7 +792,6 @@ gas
 		NameStem = "raw vapourized magic";
 		Alpha = 200;
 		AttachedGod = SOPHOS;
-		/*EffectStrength = 10;*/
 		Effect = EFFECT_MAGIC_VAPOUR;
 		BreatheMessage = "The air is filled with tiny magical bubbles.";
 	}

@@ -899,6 +899,9 @@ void olterraincontainer::VirtualConstructor(bool Load)
 
 bool olterraincontainer::Open(character* Opener)
 {
+  if(!Opener->IsPlayer())
+    return false;
+
   std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
   bool Success;
 
