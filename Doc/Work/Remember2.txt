@@ -13,7 +13,7 @@ Damage estimate kuntoon. (timo)
 //* Itemit sen ympärille.
 //* Attribuutit ja status alle.
 Efektien läpikäyminen. (timo)
-Miina kuntoon. (timo)
+//Miina kuntoon. (timo)
 //Lookmoden messaget kuntoon. (timo)
 (s) Bodypartien ja actioneiden scoret. (timo)
 (s) Luut kuntoon. (timo)
@@ -23,11 +23,11 @@ Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
 //Leather armorin nimi kuntoon. (hex)
 Taistelun tasapainotus. (timo)
 Animaatiot: Artifaktit, lamput...
-/Amulet of life saving. (hex)
-Amulet of ESP.
+//Amulet of life saving. (hex)
+//Amulet of ESP.
 Ring of polymorph. (hex)
 Ring of strength.
-Ring of see invisible. (hex)
+//Ring of infravision. (timo)
 Ring of teleportation. (hex)
 Potion of invisibility. (hex)
 //Magic whistlen kuva. (kahvi)
@@ -57,7 +57,7 @@ NPModifiers. (timo)
 Dipping to corpses, containers etc.
 //Aliases!!!!!!!!!!!!!! (timo)
 Potion of poison. (hex)
-One handed penalties. (timo)
+//One handed penalties. (timo)
 Poisonous snake. (hex)
 //Biting shouldn't make bodyparts fly.
 People shouldn't "die screaming" if their heads are not present.
@@ -65,7 +65,7 @@ People shouldn't "die screaming" if their heads are not present.
 Lower all unarmed to hit values. (timo)
 Skeleton bodyparts.
 //Amuletit, cloak
-Unicorns
+//Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
 Shirt.
 Kamikaze dwarves.
@@ -75,5 +75,5 @@ Cats & rat corpses.
 Things thrown at doors.
 %s"
 CollectCreatures
-Drinking should be separated.
+//Drinking should be separated.
 //Skeleton volume.

@@ -222,9 +222,9 @@
 #define SQUARE 1
 #define TRIANGULAR 2
 
-#define GOOD 0
-#define NEUTRAL 1
-#define EVIL 2
+#define GOOD 1
+#define NEUTRAL 2
+#define EVIL 3
 
 /* ConsumeTypes */
 

@@ -482,12 +482,12 @@ Dungeon 1;
 			IsWorldMapEntry=true;
 		}
 
-		/*Square, Pos 29,60;
+		Square, Pos 29,60;
 		{
-			Character=angel(venius);
+			Character=unicorn;
 		}
 
-		Square, Pos 30,60;
+		/*Square, Pos 30,60;
 		{
 			Character=angel(silva);
 		}

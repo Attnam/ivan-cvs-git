@@ -1554,13 +1554,13 @@ material* unicorn::CreateBodyPartFlesh(ushort, ulong Volume) const
 
 void unicorn::Save(outputfile& SaveFile) const
 {
-  character::Save(SaveFile);
+  nonhumanoid::Save(SaveFile);
   SaveFile << Alignment;
 }
 
 void unicorn::Load(inputfile& SaveFile)
 {
-  character::Load(SaveFile);
+  nonhumanoid::Load(SaveFile);
   SaveFile >> Alignment;
 }
 
@@ -2320,7 +2320,7 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index, ushort Frame)
     }
 }
 
-ushort humanoid::GetBodyPartColor1(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorB(ushort Index, ushort Frame)
 {
   switch(Index)
     {
@@ -2332,12 +2332,12 @@ ushort humanoid::GetBodyPartColor1(ushort Index, ushort Frame)
     case RIGHTLEGINDEX:
     case LEFTLEGINDEX: return GetLegMainColor(Frame);
     default:
-      ABORT("Weird bodypart color 1 request for a humanoid!");
+      ABORT("Weird bodypart color B request for a humanoid!");
       return 0;
     }
 }
 
-ushort humanoid::GetBodyPartColor2(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorC(ushort Index, ushort Frame)
 {
   switch(Index)
     {
@@ -2349,12 +2349,12 @@ ushort humanoid::GetBodyPartColor2(ushort Index, ushort Frame)
     case RIGHTLEGINDEX:
     case LEFTLEGINDEX: return 0; // reserved for future use
     default:
-      ABORT("Weird bodypart color 2 request for a humanoid!");
+      ABORT("Weird bodypart color C request for a humanoid!");
       return 0;
     }
 }
 
-ushort humanoid::GetBodyPartColor3(ushort Index, ushort Frame)
+ushort humanoid::GetBodyPartColorD(ushort Index, ushort Frame)
 {
   switch(Index)
     {
@@ -2366,7 +2366,7 @@ ushort humanoid::GetBodyPartColor3(ushort Index, ushort Frame)
     case RIGHTLEGINDEX:
     case LEFTLEGINDEX: return GetLegSpecialColor(Frame);
     default:
-      ABORT("Weird bodypart color 3 request for a humanoid!");
+      ABORT("Weird bodypart color D request for a humanoid!");
       return 0;
     }
 }

@@ -613,10 +613,10 @@ class character : public entity, public id
   virtual void LoadDataBaseStats();
   void InstallDataBase();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
-  virtual ushort GetBodyPartColor0(ushort, ushort);
-  virtual ushort GetBodyPartColor1(ushort, ushort);
-  virtual ushort GetBodyPartColor2(ushort, ushort);
-  virtual ushort GetBodyPartColor3(ushort, ushort);
+  virtual ushort GetBodyPartColorA(ushort, ushort);
+  virtual ushort GetBodyPartColorB(ushort, ushort);
+  virtual ushort GetBodyPartColorC(ushort, ushort);
+  virtual ushort GetBodyPartColorD(ushort, ushort);
   virtual ushort GetBodyPartAnimationFrames(ushort) const { return 1; }
 
   virtual ulong GetBodyPartSize(ushort, ushort);

@@ -1,5 +1,12 @@
 July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Chest and unicorn look better now
+	* Corrected The Unicorn of Godly Strength and Speed Spawning Bug
+	* Decreased the brightness of palette index 148 by seven in all materialcolorized
+	  graphics files (don't ask why)
+
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Added CreateDivineConfigurations boolean datavalue to all databases, which can be used
 	  to add new god-dependent characters, items, materials and terrains very easily,
 	  and to define varying attributes and specialities for them. It is now used for
@@ -32,6 +39,7 @@ July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Removed more than 1800 lines of obsolete code left commented all around the project
 	  (but I didn't delete anything I wasn't sure to be irrelevant)
 	* Angel and genie don't have legs nor a groin anymore (what a terrible fate)
+	* Animation controller loops are now not run while wieving menus
 
 July 6 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

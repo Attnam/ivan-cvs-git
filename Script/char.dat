@@ -1316,22 +1316,23 @@ unicorn
 	CanBeGenerated = true;
 	CanKick = true;
 	IsAbstract = true;
+	TorsoMainColor = rgb(200, 200, 200); /* the horn */
 
 	Config GOOD;
 	{
-		SkinColor = rgb(48, 48, 48);
+		SkinColor = rgb(200, 200, 200);
 		Adjective = "white";
 	}
 
 	Config NEUTRAL;
 	{
-		SkinColor = rgb(112, 112, 112);
+		SkinColor = rgb(144, 144, 144);
 		Adjective = "gray";
 	}
 
 	Config EVIL;
 	{
-		SkinColor = rgb(160, 160, 160);
+		SkinColor = rgb(80, 80, 80);
 		Adjective = "black";
 	}
 }

@@ -223,7 +223,7 @@ throne /* olterrain-> */
 	BitmapPos = 0, 416;
 }
 
-container /* olterrain->furniture-> */
+container /* olterrain->decoration-> */
 {
 	IsAbstract = true;
 

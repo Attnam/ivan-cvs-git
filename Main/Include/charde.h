@@ -143,9 +143,9 @@ class ABSTRACT_CHARACTER
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
-  virtual ushort GetBodyPartColor1(ushort, ushort);
-  virtual ushort GetBodyPartColor2(ushort, ushort);
-  virtual ushort GetBodyPartColor3(ushort, ushort);
+  virtual ushort GetBodyPartColorB(ushort, ushort);
+  virtual ushort GetBodyPartColorC(ushort, ushort);
+  virtual ushort GetBodyPartColorD(ushort, ushort);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(HUMANFLESH, Volume); }
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);

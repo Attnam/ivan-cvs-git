@@ -701,9 +701,9 @@ class ABSTRACT_ITEM
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
   virtual std::vector<vector2d>& GetBitmapPosVector() { return BitmapPos; }
-  virtual std::vector<ushort>& GetColor1Vector() { return Color1; }
-  virtual std::vector<ushort>& GetColor2Vector() { return Color2; }
-  virtual std::vector<ushort>& GetColor3Vector() { return Color3; }
+  virtual std::vector<ushort>& GetColorBVector() { return ColorB; }
+  virtual std::vector<ushort>& GetColorCVector() { return ColorC; }
+  virtual std::vector<ushort>& GetColorDVector() { return ColorD; }
   virtual void ApplyExperience() { }
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
@@ -720,15 +720,15 @@ class ABSTRACT_ITEM
   virtual bool ShowMaterial() const { return false; }
   virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
   virtual ushort GetMaterialColorA(ushort) const;
-  virtual ushort GetMaterialColorB(ushort Frame) const { return Color1[Frame]; }
-  virtual ushort GetMaterialColorC(ushort Frame) const { return Color2[Frame]; }
-  virtual ushort GetMaterialColorD(ushort Frame) const { return Color3[Frame]; }
+  virtual ushort GetMaterialColorB(ushort Frame) const { return ColorB[Frame]; }
+  virtual ushort GetMaterialColorC(ushort Frame) const { return ColorC[Frame]; }
+  virtual ushort GetMaterialColorD(ushort Frame) const { return ColorD[Frame]; }
   virtual vector2d GetBitmapPos(ushort Frame) const { return BitmapPos[Frame]; }
   std::string OwnerDescription;
   std::vector<vector2d> BitmapPos;
-  std::vector<ushort> Color1;
-  std::vector<ushort> Color2;
-  std::vector<ushort> Color3;
+  std::vector<ushort> ColorB;
+  std::vector<ushort> ColorC;
+  std::vector<ushort> ColorD;
   short HP;
   bool Unique;
   ulong RegenerationCounter;
@@ -1077,6 +1077,7 @@ class ITEM
   virtual bool Polymorph(stack*);
   virtual bool FitsIn(item*) const;
  protected:
+  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(80, 80, 80); }
   virtual std::string GetPostFix() const { return GetLockPostFix(LockType); }
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;

@@ -3499,46 +3499,46 @@ vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
     }
 }
 
-ushort character::GetBodyPartColor0(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorA(ushort Index, ushort Frame)
 {
   if(Index < BodyParts())
     return GetSkinColor(Frame);
   else
     {
-      ABORT("Weird bodypart color 0 request for a character!");
+      ABORT("Weird bodypart color A request for a character!");
       return 0;
     }
 }
 
-ushort character::GetBodyPartColor1(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorB(ushort Index, ushort Frame)
 {
   if(Index == TORSOINDEX)
     return GetTorsoMainColor(Frame);
   else
     {
-      ABORT("Weird bodypart color 1 request for a character!");
+      ABORT("Weird bodypart color B request for a character!");
       return 0;
     }
 }
 
-ushort character::GetBodyPartColor2(ushort Index, ushort)
+ushort character::GetBodyPartColorC(ushort Index, ushort)
 {
   if(Index == TORSOINDEX)
     return 0; // reserved for future use
   else
     {
-      ABORT("Weird bodypart color 2 request for a character!");
+      ABORT("Weird bodypart color C request for a character!");
       return 0;
     }
 }
 
-ushort character::GetBodyPartColor3(ushort Index, ushort Frame)
+ushort character::GetBodyPartColorD(ushort Index, ushort Frame)
 {
   if(Index == TORSOINDEX)
     return GetTorsoSpecialColor(Frame);
   else
     {
-      ABORT("Weird bodypart color 3 request for a character!");
+      ABORT("Weird bodypart color D request for a character!");
       return 0;
     }
 }
@@ -3550,21 +3550,21 @@ void character::UpdateBodyPartPicture(ushort Index)
   if(GetBodyPart(Index))
     {
       std::vector<vector2d>& BitmapPos = GetBodyPart(Index)->GetBitmapPosVector();
-      std::vector<ushort>& Color1 = GetBodyPart(Index)->GetColor1Vector();
-      std::vector<ushort>& Color2 = GetBodyPart(Index)->GetColor2Vector();
-      std::vector<ushort>& Color3 = GetBodyPart(Index)->GetColor3Vector();
+      std::vector<ushort>& ColorB = GetBodyPart(Index)->GetColorBVector();
+      std::vector<ushort>& ColorC = GetBodyPart(Index)->GetColorCVector();
+      std::vector<ushort>& ColorD = GetBodyPart(Index)->GetColorDVector();
 
       BitmapPos.clear();
-      Color1.clear();
-      Color2.clear();
-      Color3.clear();
+      ColorB.clear();
+      ColorC.clear();
+      ColorD.clear();
 
       for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
 	{
 	  BitmapPos.push_back(GetBodyPartBitmapPos(Index, c));
-	  Color1.push_back(GetBodyPartColor1(Index, c));
-	  Color2.push_back(GetBodyPartColor2(Index, c));
-	  Color3.push_back(GetBodyPartColor3(Index, c));
+	  ColorB.push_back(GetBodyPartColorB(Index, c));
+	  ColorC.push_back(GetBodyPartColorC(Index, c));
+	  ColorD.push_back(GetBodyPartColorD(Index, c));
 	}
 
       material* Material = GetBodyPart(Index)->GetMainMaterial();
@@ -3575,7 +3575,7 @@ void character::UpdateBodyPartPicture(ushort Index)
 	  SkinColor.clear();
 
 	  for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
-	    SkinColor.push_back(GetBodyPartColor0(Index, c));
+	    SkinColor.push_back(GetBodyPartColorA(Index, c));
 	}
 
       GetBodyPart(Index)->SetAnimationFrames(GetBodyPartAnimationFrames(Index));
@@ -3624,6 +3624,9 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 
   if(!Load)
     {
+      if(dynamic_cast<unicorn*>(this) != 0)
+	int esko = 2;
+
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();

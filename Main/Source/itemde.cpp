@@ -996,13 +996,13 @@ void scrolloftaming::FinishReading(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << Color1 << Color2 << Color3 << HP << OwnerDescription << Unique << RegenerationCounter;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << HP << OwnerDescription << Unique << RegenerationCounter;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> Color1 >> Color2 >> Color3 >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
