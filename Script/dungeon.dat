@@ -638,6 +638,8 @@ Dungeon 1;
 					h = SAPPHIRE stone;
 					r = RUBY stone;
 					d = DIAMOND stone;
+					C = chest;
+					W = wandofpolymorph;
 				}
 			}
 			{
@@ -674,7 +676,7 @@ Dungeon 1;
 				# . . . . . . . . # . . . . . . . . . . . . . # s s s s . . . c #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # m m . # #
 				. # # . . # . . . . . . . . . . . . . . . . . . . . . # m m # # .
-				. . # # # # . . . . . . . . . . . . . . . . . . . . . # # # # . .
+				. . # # # # . . . . . . C C C C W W . . . . . . . . . # # # # . .
 			}
 
 			CharacterMap

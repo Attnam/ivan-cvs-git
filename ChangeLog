@@ -1,3 +1,8 @@
+June 02 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added chest. It seems to work probably but it can not be sold from a shop yet and the polymorph-code has not been tested, because of crashes in the polymorph code even without polymorphing a chest)
+	* Cans are now more or less disabled.
+	
 May 31 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Menu version description looks now better and is more informative

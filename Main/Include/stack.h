@@ -77,6 +77,8 @@ class stack
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   bool Open(character*);
+  ulong GetTotalVolume() const;
+  void MoveAll(stack*);
  private:
   stacklist* Item;
   square* SquareUnder;

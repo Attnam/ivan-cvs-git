@@ -312,12 +312,10 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     }
 
   while(true)
-    if(KeyBuffer.Length())
+    if(KeyBuffer.size())
       {
 	int Key = KeyBuffer[0];
 	KeyBuffer.erase(KeyBuffer.begin());
-
-	int Key =  KeyBuffer.Remove(0);
 
 	if(Key > 0xE000) 
 	  return Key - 0xE000;

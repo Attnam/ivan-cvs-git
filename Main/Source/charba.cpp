@@ -319,9 +319,9 @@ bool character::Open()
       bool OpenableItems = GetStack()->SortedItems(this, &item::OpenableSorter);
 
       if(OpenableItems)
-	Key = game::AskForKeyPress("Which door do you wish to open?  [press a direction key, space or i]");
+	Key = game::AskForKeyPress("What do you wish to open?  [press a direction key, space or i]");
       else
-	Key = game::AskForKeyPress("Which door do you wish to open?  [press a direction key or space]");
+	Key = game::AskForKeyPress("What do you wish to open?  [press a direction key or space]");
 
       if(Key == 'i' && OpenableItems)
 	return OpenItem();
@@ -401,8 +401,7 @@ bool character::Consume()
       if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
 	return false;
 
-      ConsumeItem(Item);
-      return true;
+      return ConsumeItem(Item);
     }
 
   return false;
@@ -896,7 +895,7 @@ bool character::OpenItem()
   item* Item = Stack->DrawContents(this, "What do you want to open?", &item::OpenableSorter);
 
   if(Item)
-    if(Item->TryToOpen(this))
+    if(Item->Open(this))
       {
 	EditAgilityExperience(25);
 	EditNP(-10);

@@ -92,7 +92,7 @@ class ITEM
   can,
   materialcontainer,
  public:
-  virtual item* TryToOpen(character*);
+  virtual bool Open(character*);
   virtual item* PrepareForConsuming(character*);
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual item* BetterVersion() const;
@@ -1080,16 +1080,27 @@ class ITEM
   virtual void BlowEffect(character*);
 );
 
+
+/* chest probably requires destructor that deletes the Contained stack, but I have got the skill to do that with the current system. By Hex */
 class ITEM
 (
   chest,
   item,
  public: 
-  //virtual item* TryToOpen(character*);
+  virtual bool Open(character*);
   virtual bool IsOpenable(character*) const { return true; }
   virtual bool TryKey(item*, character*);
   virtual void Lock() { Locked = true; }
   virtual uchar GetLockType() const { return LockType; }
+  virtual bool IsLocked() const { return Locked; }
+  virtual stack* GetContained() const { return Contained; }
+  virtual bool TakeSomethingFrom(character*);
+  virtual bool PutSomethingIn(character*);
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual ulong GetStorageVolume() const { return StorageVolume; }
+  virtual ulong GetWeight() const;
+  virtual bool Polymorph(stack*);
  protected:
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;

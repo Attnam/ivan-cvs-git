@@ -538,10 +538,35 @@ bool stack::TryKey(item* Key, character* Applier)
   return false;
 }
 
-bool stack::Open(character*)
+bool stack::Open(character* Opener)
 {
-  return false;
+  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", &item::OpenableSorter);
 
+  if(ToBeOpened == 0)
+    return false;
 
+  //  item* ItemInside = ToBeOpened->TryToOpen(Opener);
 
+  return ToBeOpened->Open(Opener);
+}
+
+ulong stack::GetTotalVolume() const
+{
+  ulong Sum = 0;
+
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    Sum += (**i)->GetVolume();
+
+  return Sum;
+}
+
+void stack::MoveAll(stack* ToStack)
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+  ushort p = 0;
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Exists())
+      ItemVector[c]->MoveTo(ToStack);
 }

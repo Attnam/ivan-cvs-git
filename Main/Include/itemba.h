@@ -109,7 +109,7 @@ class item : public object
   virtual void DrawToTileBuffer(bool) const;
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  virtual item* TryToOpen(character*);
+  virtual bool Open(character*);
   virtual bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }

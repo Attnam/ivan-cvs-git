@@ -360,12 +360,12 @@ void item::GenerateLeftOvers(character*)
   SetExists(false);
 }
 
-item* item::TryToOpen(character* Char)
+bool item::Open(character* Char)
 {
   if(Char->IsPlayer())
     ADD_MESSAGE("You can't open %s.", CHARNAME(DEFINITE));
 
-  return 0;
+  return false;
 }
 
 item* itemprototype::CloneAndLoad(inputfile& SaveFile) const

@@ -168,6 +168,7 @@ class game
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
   static bool PositionQuestionController();
+  static int KeyQuestion(const std::string&, int, int, ...);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

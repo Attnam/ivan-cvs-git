@@ -1,5 +1,6 @@
 #include <cmath>
 #include <ctime>
+#include <algorithm>
 
 #ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
@@ -533,39 +534,22 @@ const char* game::Insult()
     }
 }
 
+/* DefaultAnswer = REQUIRES_ANSWER the question requires an answer */
 bool game::BoolQuestion(const std::string& String, char DefaultAnswer, int OtherKeyForTrue)
 {
-  DrawEverythingNoBlit();
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", String.c_str());
-  graphics::BlitDBToScreen();
+  int LaterDefaultAnswer = 0;
+  
+  if(DefaultAnswer == true)
+    LaterDefaultAnswer = 'y';
 
-  bool Return;
-
-  while(true)
-    {
-      int k = GETKEY();
-
-      if(k == 0x00d || k == 'y' || k == 'Y' || k == OtherKeyForTrue)
-	{
-	  Return = true;
-	  break;
-	}
-
-      if(k == 'n' || k == 'N')
-	{
-	  Return = false;
-	  break;
-	}
-
-      if(DefaultAnswer != 2)
-	{
-	  Return = DefaultAnswer ? true : false;
-	  break;
-	}
-    }
-
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
-  return Return;
+  if(DefaultAnswer == false)
+    LaterDefaultAnswer = 'n';
+  
+  int FromKeyQuestion = KeyQuestion(String, LaterDefaultAnswer , 4, 'y', 'Y', 'n', 'N');
+  if(FromKeyQuestion == 'y' || FromKeyQuestion == 'Y')
+    return true;
+  else
+    return false;
 }
 
 void game::DrawEverything()
@@ -1514,4 +1498,41 @@ void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*B
   SetAnimationControllerActive(false);
   iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
   SetAnimationControllerActive(true);
+}
+
+/* ... all the keys that are acceptable 
+   DefaultAnswer = REQUIRES_ANSWER if this question requires an answer */
+
+int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumber, ...)
+{
+  std::vector<int> KeyVector;
+  va_list Arguments;
+  va_start(Arguments, KeyNumber);
+
+  for(ushort c = 0; c < KeyNumber; ++c)
+    {
+      KeyVector.push_back(va_arg(Arguments,int));
+    }
+
+  va_end(Arguments);
+
+  DrawEverythingNoBlit();
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Message.c_str());
+  graphics::BlitDBToScreen();
+  bool Return;
+  while(true)
+    {
+      int k = GETKEY();
+      DrawEverythingNoBlit(); // Possibily not really needed
+      DOUBLEBUFFER->Fill(0, 0, game::GetScreenSize().X * 16, 30, BLACK);
+      std::vector<int>::iterator i = std::find(KeyVector.begin(), KeyVector.end(), k);
+
+      if(i != KeyVector.end())
+	{
+	  return *i;
+	}
+      else if(DefaultAnswer != REQUIRES_ANSWER)
+	return DefaultAnswer;
+    }
+  return Return;
 }

@@ -31,28 +31,9 @@ ITEM_PROTOTYPE(item, 0);
 #include "save.h"
 #include "team.h"
 
-item* can::TryToOpen(character* Opener)
+bool can::Open(character* Opener)
 {
-  if(Opener->GetStrength() > RAND() % 30)
-    {
-      item* Item = new lump(GetContainedMaterial());
-      DonateSlotTo(Item);
-
-      if(!game::IsInWilderness() && configuration::GetAutoDropLeftOvers())
-	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
-      else
-	  Item->GetSlot()->AddFriendItem(this);
-
-      SetContainedMaterial(0);
-      return Item;
-    }
-  else
-    {
-      if(Opener->IsPlayer())
-	ADD_MESSAGE("The can is shut tight.");
-
-      return 0;
-    }
+  return false;
 }
 
 void banana::GenerateLeftOvers(character* Eater)
@@ -210,9 +191,9 @@ material* lump::CreateDipMaterial()
 
 item* can::PrepareForConsuming(character* Consumer)
 {
-  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", 'y'))
+  /*  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", 'y'))
     return TryToOpen(Consumer);
-  else
+    else*/
     return 0;
 }
 
@@ -2663,4 +2644,103 @@ void meleeweapon::GenerateMaterials()
   InitChosenMaterial(SecondaryMaterial, GetSecondaryMaterialConfig(), GetDefaultSecondaryVolume(), Chosen);
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
   UpdatePictures();
+}
+
+/* Returns true if chest opens fine else false */
+bool chest::Open(character* Opener)
+{
+  std::string Question = "Do you want to (t)ake something from or (p) something in this " + GetName(UNARTICLED) + "? [t,p]";
+  switch(game::KeyQuestion(Question, KEYESC, 3, 't', 'p', KEYESC))
+    {
+    case 't':
+      if(!IsLocked())
+	{
+	  return TakeSomethingFrom(Opener);
+	}
+      else
+	{
+	  ADD_MESSAGE("The chest seems to be locked.");
+	  return false;
+	}
+    case 'p':
+      if(!IsLocked())
+	{
+	  return PutSomethingIn(Opener);
+	}
+      else
+	{
+	  ADD_MESSAGE("The chest seems to be locked.");
+	  return false;
+	}
+    case KEYESC:
+      return false;
+    }
+}
+
+bool chest::TakeSomethingFrom(character* Opener)
+{
+  if(GetContained()->GetItems() == 0)
+    {
+      ADD_MESSAGE("There is nothing in %s.", CHARNAME(DEFINITE));
+      return false;
+    }
+  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
+  if(ToBeTaken)
+    {
+      ToBeTaken->MoveTo(Opener->GetStack());
+      return true;
+    }
+  else
+    return false;
+}
+
+bool chest::PutSomethingIn(character* Opener)
+{
+  if(Opener->GetStack()->GetItems() == 0)
+    {
+      ADD_MESSAGE("You have nothing to put in %s.", CHARNAME(DEFINITE));
+      return false;
+    }
+  std::string Message = "What do you want to put in " + GetName(DEFINITE) + "?";
+  item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message);
+  if(ToBePut)
+    {
+      if(GetContained()->GetTotalVolume() + ToBePut->GetVolume() < GetStorageVolume())
+	{
+	  ToBePut->MoveTo(GetContained());
+	  return true;
+	}
+      else
+	{
+	  ADD_MESSAGE("%s doesn't fit in %s", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	  return false;
+	}
+    }
+  else
+    return false;
+}
+
+void chest::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  GetContained()->Save(SaveFile);
+  SaveFile << StorageVolume << LockType << Locked;
+}
+
+void chest::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  GetContained()->Load(SaveFile);
+  SaveFile >> StorageVolume >> LockType >> Locked;
+}
+
+ulong chest::GetWeight() const
+{
+  return item::GetWeight() + GetContained()->GetTotalWeight();
+}
+
+bool chest::Polymorph(stack* CurrentStack)
+{
+  GetContained()->MoveAll(CurrentStack);
+  item::Polymorph(CurrentStack);
 }
