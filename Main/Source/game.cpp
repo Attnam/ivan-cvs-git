@@ -156,7 +156,7 @@ void game::Init(std::string Name)
 
 		InWilderness = true;
 
-		game::GetPlayer()->GetStack()->FastAddItem(new banana);
+		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
 		WorldMap->GetSquare(vector(18, 18))->AddCharacter(game::GetPlayer());
 		game::GetPlayer()->SetSquareUnder(WorldMap->GetSquare(vector(18, 18)));
 
@@ -193,7 +193,7 @@ void game::DeInit(void)
 		delete Level[c];
 
 	delete [] Level;*/
-
+	if(GetPlayerBackup()) delete GetPlayerBackup();
 	delete WorldMap;
 	delete Dungeon;
 

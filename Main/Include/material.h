@@ -462,7 +462,6 @@ class MATERIAL
 	flesh,
 public:
 	virtual uchar GetConsumeType(void) const				{ return MEAT; }
-	virtual ushort GetEmitation(void) const				{ return 192; }
 	virtual ushort OfferValue(void) const				{ return 30; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }

@@ -618,17 +618,11 @@ void character::Move(vector MoveTo, bool TeleportMove)
 void character::DrawToTileBuffer(void) const
 {
 	igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetFleshColor()) << 4, 0, 0, 16, 16);
-
-	if(GetIsPlayer())
-		igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void golem::DrawToTileBuffer(void) const
 {
 	igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetItemColor()) << 4, 0, 0, 16, 16);
-
-	if(GetIsPlayer())
-		igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void humanoid::DrawToTileBuffer(void) const
@@ -666,14 +660,16 @@ void humanoid::DrawToTileBuffer(void) const
 
 	if(GetWielded() != 0)
 		if(InHandsPic.X != 0 || InHandsPic.Y != 0) igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
-
-	if(GetIsPlayer())
-		igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool character::Wield(void)
 {
 	ushort Index;
+	if(!CanWield())
+	{
+		ADD_MESSAGE("This monster can not wield anything.");
+		return false;
+	}
 	if((Index = GetStack()->DrawContents("What do you want to wield? or press '-' for hands")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to wield.");
@@ -1891,7 +1887,7 @@ void golem::MoveRandomly(void)
 	ushort ToTry = rand() % 9;
 	if(ToTry == 8)
 	{
-		if(!(rand () % 5))
+		if(!(rand () % 100))
 			Engrave("Golem Needs Master");
 	}
 	else
@@ -2273,6 +2269,11 @@ void character::Darkness(long SizeOfEffect)
 bool character::Kick(void)
 {
 	uchar Direction;
+	if(!CanKick())
+	{
+		ADD_MESSAGE("This monster type can not kick.");
+		return false;
+	}
 	ADD_MESSAGE("In what direction do you wish to kick?");
 	game::DrawEverything();
 	vector KickPos = game::AskForDirectionVector();
@@ -2766,7 +2767,7 @@ bool character::Zap(void)
 
 bool character::Polymorph(void)
 {
-	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster());
+	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster(2));
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
 	SetWielded(0);
@@ -2777,7 +2778,8 @@ bool character::Polymorph(void)
 		{
 			game::SetPlayerBackup(this);
 			game::SetPlayer(GetSquareUnder()->GetCharacter());
-			game::SetPolymorphCounter(20);
+			game::SetPolymorphCounter(1000);
+			GetSquareUnder()->GetCharacter()->SetRelations(HOSTILE);
 			return true;
 		}
 		else
@@ -2792,6 +2794,8 @@ bool character::Polymorph(void)
 
 void character::ChangeBackToPlayer(void)
 {
+	game::SendToHell(this);
+
 	GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());

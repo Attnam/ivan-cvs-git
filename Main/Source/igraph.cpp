@@ -32,7 +32,7 @@ void igraph::DeInit(void)
 		delete Graphic[c];
 }
 
-void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
+void igraph::BlitTileBuffer(vector Pos, ushort Luminance, bool WithCursor)
 {
 	Luminance = ushort(Luminance * game::GetSoftGamma());
 
@@ -40,4 +40,6 @@ void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16);
 	else
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
+	if(WithCursor) 
+		igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16);
 }

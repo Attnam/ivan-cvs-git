@@ -202,6 +202,7 @@ public:
 	virtual bool Polymorph(void);
 	virtual bool SetTorsoArmor(item* What) const RET(false)
 	virtual void ChangeBackToPlayer(void);
+	virtual bool CanKick(void) const RET(false)
 protected:
 	virtual void CreateCorpse(void);
 	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
@@ -332,6 +333,7 @@ public:
 	virtual void SetHeadType(uchar Value) { HeadType = Value; }
 	virtual void SetLegType(uchar Value) { LegType = Value; }
 	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(0,0)
 	virtual float GetMeleeStrength(void) const RET(2000)
@@ -440,6 +442,7 @@ public:
 	virtual ulong Danger(void) const RET(30000)
 	virtual bool Charmable(void) const RET(false)
 	virtual bool Polymorph(void) const RET(false)
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(208,0)
 	virtual std::string NameSingular(void) const RET("Oree the Pepsi Daemon King")
@@ -469,6 +472,7 @@ public:
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(750)
 	virtual bool Charmable(void) const RET(false)
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(128,0)
 	virtual std::string NameSingular(void) const RET("Bill's SWAT commando")
@@ -495,6 +499,7 @@ public:
 	virtual ulong Danger(void) const RET(2500);
 	virtual bool Charmable(void) const RET(false)
 	virtual bool Polymorph(void) const RET(false)
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(96,0)
 	virtual std::string NameSingular(void) const RET("Enner Beast")
@@ -607,6 +612,7 @@ public:
 	virtual ushort Possibility(void) const RET(50)
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(25)
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(112,0)
 	virtual std::string NameSingular(void) const RET("fallen valpurist")
@@ -630,8 +636,8 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility(void) const RET(100)
-	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(25)
+	virtual bool CanKick(void) const RET(true)
 protected:
 	virtual vector GetBitmapPos(void) const RETV(144,0)
 	virtual std::string NameSingular(void) const RET("frog-goblin hybrid")

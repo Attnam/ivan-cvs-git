@@ -41,7 +41,7 @@ public:
 	static bitmap* GetFontWGraphic(void)		{ return Graphic[GFONTW]; }
 	static bitmap* GetSymbolGraphic(void)		{ return Graphic[GSYMBOL]; }
 	static bitmap* GetTileBuffer(void)		{ return TileBuffer; }
-	static void BlitTileBuffer(vector, ushort = 256);
+	static void BlitTileBuffer(vector, ushort = 256, bool = false);
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;

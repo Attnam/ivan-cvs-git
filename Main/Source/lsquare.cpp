@@ -79,7 +79,7 @@ void levelsquare::DrawToTileBuffer(void) const
 	GetGroundLevelTerrain()->DrawToTileBuffer();
 
 	if(Fluided)
-		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
+		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, GetLuminance());//ushort(256 - TimeFromSpill));
 
 	GetOverLevelTerrain()->DrawToTileBuffer();
 	GetStack()->PositionedDrawToTileBuffer();
@@ -116,7 +116,8 @@ void levelsquare::UpdateMemorizedAndDraw(void)
 	if(game::GetSeeWholeMapCheat())
 		RealLuminance = 256;
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), RealLuminance);
+	
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), RealLuminance, GetCharacter() && GetCharacter()->GetIsPlayer());
 }
 
 void levelsquare::Emitate(void)

@@ -817,6 +817,7 @@ public:
 	virtual uchar GetCharge(void) const { return Charge; } 
 	virtual void SetCharge(uchar What) { Charge = What; } 
 protected:
+	virtual ushort GetFormModifier(void) const RET(40)
 	uchar Charge;
 );
 
