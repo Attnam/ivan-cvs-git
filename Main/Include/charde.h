@@ -534,6 +534,8 @@ class CHARACTER
 (
   femaleslave,
   humanoid,
+ public:
+  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );

@@ -150,11 +150,6 @@ struct characterdatabase
   std::vector<std::string> FriendlyReplies;
   std::vector<std::string> HostileReplies;
   bool CanZap;
-  vector2d InHandsPicPos;
-  vector2d ShieldPos;
-  ushort InHandsPicColorA;
-  ushort InHandsPicColorB;
-  ushort ShieldColor;
   ushort FleshMaterial;
   bool HasFeet;
   std::string DeathMessage;
@@ -502,11 +497,6 @@ class character : public entity, public id
   DATA_BASE_VALUE(const std::string&, DefaultName);
   DATA_BASE_VALUE(const std::vector<std::string>&, FriendlyReplies);
   DATA_BASE_VALUE(const std::vector<std::string>&, HostileReplies);
-  DATA_BASE_VALUE(vector2d, InHandsPicPos);
-  DATA_BASE_VALUE(vector2d, ShieldPos);
-  DATA_BASE_VALUE(ushort, InHandsPicColorA);
-  DATA_BASE_VALUE(ushort, InHandsPicColorB);
-  DATA_BASE_VALUE(ushort, ShieldColor);
   DATA_BASE_VALUE(ushort, FleshMaterial);
   virtual DATA_BASE_BOOL(HasFeet);
   virtual DATA_BASE_VALUE(const std::string&, DeathMessage);

@@ -3939,3 +3939,16 @@ void mommo::CreateCorpse()
     }
   SendToHell();  
 }
+
+void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetRightArm())
+    {
+      ushort Color = MakeRGB16(0, 160, 0);
+      bitmap* Temp = igraph::GetHumanoidRawGraphic()->Colorize(vector2d(160, 208), vector2d(16, 16), &Color, StateIsActivated(INVISIBLE) ? 150 : 255);
+      Temp->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      delete Temp;
+    }
+}

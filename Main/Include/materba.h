@@ -102,7 +102,7 @@ class material
   virtual bool HasBe() const { return false; }
   virtual void Be() { }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  void AddConsumeEndMessage(character*) const;
+  virtual void AddConsumeEndMessage(character*) const;
   DATA_BASE_VALUE(ushort, StrengthValue);
   DATA_BASE_VALUE(ushort, ConsumeType);
   DATA_BASE_VALUE(ushort, Density);

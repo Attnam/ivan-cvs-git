@@ -1,5 +1,13 @@
 December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Corrected a fatal bug in the monster generation code
+	* Eating spoiled food now yields less messages
+	* Since palm branches are fundamental parts of female slaves/servants, their
+	  inhandspics are now drawn using a gum solution function, even though the general
+	  system doesn't currently exist
+
+December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Corrected a design flaw in the state system that occasionally caused odd permanent
 	  states to be activated
 	* The counter of the confuse effect of spoiled items was usually rounded to zero so

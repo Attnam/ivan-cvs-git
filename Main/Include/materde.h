@@ -24,6 +24,7 @@ class MATERIAL
   virtual void ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
   virtual void EatEffect(character*, ulong, float = 1.0);
   virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI() && !SpoilLevel; }
+  virtual void AddConsumeEndMessage(character*) const;
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;

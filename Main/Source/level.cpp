@@ -674,6 +674,9 @@ void level::FiatLux()
       }
 }
 
+#include <fstream>
+#include <iostream>
+
 void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
@@ -683,11 +686,11 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
       Pos = vector2d(0,0);
       character* Char = protosystem::BalancedCreateMonster();
 
-      for(ushort cc = 0; cc < 30; ++c)
+      for(ushort cc = 0; cc < 30; ++cc)
 	{
 	  Pos = GetRandomSquare(Char);
 			
-	  if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6))
+	  if(!ConsiderPlayer || abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 || abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6)
 	    break;
 	}
 

@@ -93,6 +93,7 @@ class igraph
   static tile AddUser(graphicid);
   static void RemoveUser(graphicid);
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
+  static colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
   static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
   static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
  private:

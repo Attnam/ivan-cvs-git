@@ -222,11 +222,6 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(FriendlyReplies);
   ANALYZE_DATA(HostileReplies);
   ANALYZE_DATA(CanZap);
-  ANALYZE_DATA(InHandsPicPos);
-  ANALYZE_DATA(ShieldPos);
-  ANALYZE_DATA(InHandsPicColorA);
-  ANALYZE_DATA(InHandsPicColorB);
-  ANALYZE_DATA(ShieldColor);
   ANALYZE_DATA(FleshMaterial);
   ANALYZE_DATA(HasFeet);
   ANALYZE_DATA(DeathMessage);
