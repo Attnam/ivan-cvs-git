@@ -1881,13 +1881,13 @@ bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
   ushort c, AttackStyles;
 
   for(c = 0, AttackStyles = 0; c < 8; ++c)
-    if(GetAttackStyle() & (1 << c))
+    if(AttackStyle & (1 << c))
       ++AttackStyles;
 
   ushort Chosen = RAND() % AttackStyles;
 
   for(c = 0, AttackStyles = 0; c < 8; ++c)
-    if(GetAttackStyle() & (1 << c) && AttackStyles++ == Chosen)
+    if(AttackStyle & (1 << c) && AttackStyles++ == Chosen)
       {
 	Chosen = 1 << c;
 	break;
@@ -4043,6 +4043,9 @@ void guard::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
   NextWayPoint = 0;
+
+  if(Config == MASTER)
+    game::SetHaedlac(this);
 }
 
 void guard::GetAICommand()
@@ -4136,3 +4139,8 @@ item* humanoid::GetPairEquipment(ushort Index) const
     }
 }
 
+guard::~guard()
+{
+  if(Config == MASTER)
+    game::SetHaedlac(0);
+}

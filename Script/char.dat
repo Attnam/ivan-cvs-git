@@ -134,32 +134,6 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
-
-	/*DefaultArmStrength = 45;
-	DefaultLegStrength = 45;
-	DefaultDexterity = 35;
-	DefaultAgility = 35;
-	DefaultEndurance = 35;
-	DefaultPerception = 30;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
-	DefaultCharisma = 20;
-	DefaultMana = 20;
-	Helmet = RUBY helmet { Enchantment = 3; }
-	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-	Cloak = ANGEL_HAIR cloak { Enchantment = 3; }
-	Belt = RUBY belt { Enchantment = 3; }
-	RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 4; }
-	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
-	RightRing = ring(RING_OF_INFRA_VISION);
-	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
-	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 3; }
-	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
-	RightSWeaponSkillHits = 500;
-	LeftSWeaponSkillHits = 500;
-	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }*/
 }
 
 petrus
@@ -194,7 +168,7 @@ petrus
 	CanBeWished = false;
 	Alias == "Petrus";
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+	BodyArmor = DIAMOND bodyarmor(PLATE_MAIL) { Enchantment = 4; }
 	Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
 	Belt = RUBY belt { Enchantment = 4; }
 	RightWielded = justifier;
@@ -394,13 +368,13 @@ guard
 	{
 		AttributeBonus = 40;
 		TotalVolume = 120000;
-		Helmet = SAPPHIRE helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
+		Helmet = DIAMOND helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
 		Amulet = amulet(AMULET_OF_ESP);
 		BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
 		RightWielded = VALPURIUM VALPURIUM meleeweapon(LONG_SWORD) { Enchantment = 3; }
 		LeftWielded = VALPURIUM shield { Enchantment = 3; }
-		RightGauntlet = SAPPHIRE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
-		RightBoot = SAPPHIRE boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
+		RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+		RightBoot = MITHRIL boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
 		Adjective = "master";
 		CWeaponSkillHits = { 2, 2000, 2000; }
 		RightSWeaponSkillHits = 200;
@@ -536,9 +510,9 @@ oree
 {
 	DefaultArmStrength = 40;
 	DefaultLegStrength = 40;
-	DefaultDexterity = 90;
-	DefaultAgility = 90;
-	DefaultEndurance = 30;
+	DefaultDexterity = 80;
+	DefaultAgility = 80;
+	DefaultEndurance = 25;
 	DefaultPerception = 30;
 	DefaultIntelligence = 30;
 	DefaultWisdom = 20;
@@ -618,7 +592,7 @@ darkknight
 		AttributeBonus = -20;
 		Helmet = BRONZE helmet(FULL_HELMET);
 		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
-		RightWielded = IRON  meleeweapon(LONG_SWORD);
+		RightWielded = BRONZE meleeweapon(LONG_SWORD);
 		LeftWielded = BRONZE shield;
 		Adjective = "rookie";
 		CWeaponSkillHits = { 2, 200, 200; }
@@ -633,7 +607,7 @@ darkknight
 	{
 		Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
+		RightWielded = IRON IRON meleeweapon(LONG_SWORD) { Enchantment = 1; }
 		LeftWielded = IRON shield { Enchantment = 1; }
 		RightGauntlet = IRON gauntlet { Enchantment = 1; }
 		RightBoot = IRON boot { Enchantment = 1; }
@@ -651,7 +625,7 @@ darkknight
 		AttributeBonus = 20;
 		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-		RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
+		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
 		RightGauntlet = STEEL gauntlet { Enchantment = 2; }
 		RightBoot = STEEL boot { Enchantment = 2; }
 		AdjectiveArticle = "an";

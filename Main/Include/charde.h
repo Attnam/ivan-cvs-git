@@ -293,6 +293,7 @@ class CHARACTER
   guard,
   humanoid,
  public:
+  virtual ~guard();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void GetAICommand();

@@ -82,6 +82,7 @@ float game::AveragePlayerAgility;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
+guard* game::Haedlac = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
 std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
@@ -278,6 +279,7 @@ bool game::Init(const std::string& Name)
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
 	Petrus = 0;
+	Haedlac = 0;
 	InitDungeons();
 	WorldMap = new worldmap(128, 128);
 	WorldMap->Generate();

@@ -30,6 +30,7 @@ class team;
 class bitmap;
 class petrus;
 class gamescript;
+class guard;
 
 #ifdef VC
 #pragma pack(1)
@@ -238,6 +239,8 @@ class game
   static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(vector2d, ushort);
+  static guard* GetHaedlac() { return Haedlac; }
+  static void SetHaedlac(guard* What) { Haedlac = What; }
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -288,6 +291,7 @@ class game
   static float AveragePlayerLegStrength;
   static float AveragePlayerDexterity;
   static float AveragePlayerAgility;
+  static guard* Haedlac;
 };
 
 #endif

@@ -29,10 +29,19 @@ bool attnam::Enter(bool DirectionUp) const
 
   if(game::GetPlayer()->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(ATTNAM_TEAM)->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 2)
     {
-      game::GetCurrentLevel()->GetLSquare(30, 52)->KickAnyoneStandingHereAway();
-      game::GetPetrus()->Move(vector2d(30, 52), true);
+      game::GetCurrentLevel()->GetLSquare(30, 54)->KickAnyoneStandingHereAway();
+      game::GetPetrus()->Move(vector2d(30, 54), true);
       game::GetPetrus()->ChangeTeam(game::GetTeam(FINAL_BATTLE_TEAM));
       game::GetPetrus()->SetStoryState(2);
+      game::GetPetrus()->SetHomePos(vector2d(30, 54));
+
+      if(game::GetHaedlac())
+	{
+	  game::GetCurrentLevel()->GetLSquare(30, 57)->KickAnyoneStandingHereAway();
+	  game::GetHaedlac()->Move(vector2d(30, 57), true);
+	  game::GetHaedlac()->ChangeTeam(game::GetTeam(FINAL_BATTLE_TEAM));
+	  game::GetHaedlac()->SetHomePos(vector2d(30, 57));
+	}
     }
 
   if(configuration::GetAutoSaveInterval())

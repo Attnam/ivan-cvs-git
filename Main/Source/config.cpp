@@ -19,7 +19,7 @@
 #endif
 
 std::string configuration::DefaultName;
-ushort configuration::AutoSaveInterval = 500;
+ushort configuration::AutoSaveInterval = 100;
 ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
 bool configuration::OutlineCharacters = false;

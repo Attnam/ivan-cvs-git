@@ -39,12 +39,6 @@ character* protosystem::BalancedCreateMonster()
 
 	  if(c < 100 || Illegal.size() < 3)
 	    {
-	      /*if(c >= 100)
-		{
-		  game::Save();
-		  ABORT("This is a temporary abort in BalancedCreateMonster() installed by Timo. Do not panic. Your game has been saved. Contact me immediately!");
-		}*/
-
 	      Chosen.first = ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	      Proto = protocontainer<character>::GetProto(ChosenType);
 	      Config = &Proto->GetConfig();
@@ -165,8 +159,8 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 	    }
 	}
 
-      MinPrice -= MinPrice >> 2;
-      MaxPrice += MaxPrice >> 2;
+      MinPrice = MinPrice * 3 / 4;
+      MaxPrice = MaxPrice * 5 / 4;
     }
 }
 
@@ -212,8 +206,8 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 	      }
 	}
 
-      MinDanger -= MinDanger >> 2;
-      MaxDanger += MaxDanger >> 2;
+      MinDanger = MinDanger * 3 / 4;
+      MaxDanger = MaxDanger * 5 / 4;
     }
 }
 
@@ -384,6 +378,3 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
-
-
-

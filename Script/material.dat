@@ -703,7 +703,7 @@ liquid
 
 	Config BLOOD;
 	{
-		StrengthValue = 200;
+		StrengthValue = 150;
 		NutritionValue = 10;
 		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
