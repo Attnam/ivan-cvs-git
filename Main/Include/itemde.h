@@ -6,7 +6,6 @@
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"
-#include "rand.h"
 #include "game.h"
 
 class ITEM

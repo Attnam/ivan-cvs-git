@@ -1,6 +1,5 @@
 #include "pool.h"
 #include "object.h"
-#include "rand.h"
 #include "game.h"
 
 std::list<object*> objectpool::Pool;

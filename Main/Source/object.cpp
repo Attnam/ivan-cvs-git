@@ -6,7 +6,6 @@
 #include "save.h"
 #include "game.h"
 #include "lsquare.h"
-#include "rand.h"
 #include "god.h"
 
 object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), SquareUnder(0)

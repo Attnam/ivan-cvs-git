@@ -7,8 +7,8 @@
 #include "materba.h"
 #include "strover.h"
 #include "save.h"
-#include "rand.h"
 #include "config.h"
+#include "femath.h"
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), MemorizedUpdateRequested(true)
 {
@@ -80,7 +80,7 @@ bool square::CanBeSeen(bool) const
 
 bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
 {
-	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
+	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
 }
 
 void square::SetLastSeen(ulong What)

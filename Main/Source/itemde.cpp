@@ -13,10 +13,10 @@
 #include "save.h"
 #include "feio.h"
 #include "team.h"
-#include "rand.h"
 #include "config.h"
 #include "god.h"
 #include "strover.h"
+#include "femath.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {

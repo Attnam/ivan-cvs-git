@@ -12,10 +12,9 @@
 #include "save.h"
 #include "script.h"
 #include "roomde.h"
-#include "rand.h"
 #include "team.h"
-#include "femath.h"
 #include "config.h"
+#include "femath.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {

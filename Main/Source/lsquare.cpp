@@ -16,9 +16,8 @@
 #include "script.h"
 #include "charba.h"
 #include "team.h"
-#include "femath.h"
-#include "rand.h"
 #include "config.h"
+#include "femath.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0), TemporaryEmitation(0)
 {
@@ -289,7 +288,7 @@ void levelsquare::Emitate()
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
 		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
-			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
 	})
 }
 
@@ -311,7 +310,7 @@ void levelsquare::ReEmitate()
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
 		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
-			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
+			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
 	})
 }
 
@@ -327,7 +326,7 @@ void levelsquare::Noxify()
 	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, Radius,
 	{
 		if(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer) <= RadiusSquare)
-			game::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
+			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
 	})
 }
 
@@ -913,7 +912,7 @@ bool levelsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool Ignore
 	if(!IgnoreDarkness && GetLuminance() < LIGHT_BORDER)
 		return false;
 	else
-		return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
+		return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
 }
 
 void levelsquare::MoveCharacter(levelsquare* To)

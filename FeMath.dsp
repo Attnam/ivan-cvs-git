@@ -60,7 +60,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeMath/Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /Z7 /Od /Ob0 /I "Include" /I "Main/Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Z7 /Od /I "Include" /I "Main/Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -79,7 +79,7 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c,cc,cpp"
 # Begin Source File
 
-SOURCE=.\FeMath\Source\rand.cpp
+SOURCE=.\FeMath\Source\femath.cpp
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -88,10 +88,6 @@ SOURCE=.\FeMath\Source\rand.cpp
 # Begin Source File
 
 SOURCE=.\FeMath\Include\femath.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeMath\Include\rand.h
 # End Source File
 # Begin Source File
 

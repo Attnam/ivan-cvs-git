@@ -23,6 +23,7 @@ public:
 	friend class colorizablebitmap;
 	bitmap(std::string);
 	bitmap(ushort, ushort);
+	bitmap(ushort, ushort, ushort);
 	~bitmap();
 	void Save(outputfile&) const;
 	void Load(inputfile&);

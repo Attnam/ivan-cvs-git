@@ -79,6 +79,12 @@ public:
 	virtual void SetArmType(uchar Value) { ArmType = Value; }
 	virtual void SetHeadType(uchar Value) { HeadType = Value; }
 	virtual void SetShieldType(uchar Value) { ShieldType = Value; }
+	virtual void DrawLegs(vector2d) const;
+	virtual void DrawTorso(vector2d) const;
+	virtual void DrawArms(vector2d) const;
+	virtual void DrawHead(vector2d) const;
+	virtual void DrawShield(vector2d) const;
+	virtual void DrawInHandsPic(vector2d) const;
 protected:
 	uchar LegType;
 	uchar TorsoType;
@@ -1303,10 +1309,19 @@ protected:
 	uchar Master;
 );
 
+class ABSTRACT_CHARACTER
+(
+	dwarf,
+	complexhumanoid,
+public:
+	virtual void DrawLegs(vector2d) const;
+	virtual void DrawHead(vector2d) const;
+);
+
 class CHARACTER
 (
 	kamikazedwarf,
-	humanoid,
+	dwarf,
 	InitMaterials(new dwarfflesh),
 	{
 		SetSize(130);
@@ -1314,6 +1329,11 @@ class CHARACTER
 		SetStrength(20);
 		SetEndurance(20);
 		SetPerception(24);
+		SetLegType(13);
+		SetTorsoType(17);
+		SetArmType(16);
+		SetHeadType(26);
+		SetShieldType(0);
 		SetMaster(1 + RAND() % game::GetGodNumber());
 	},
 public:

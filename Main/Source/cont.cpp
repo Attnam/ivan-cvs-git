@@ -4,7 +4,8 @@
 #include "proto.h"
 #include "wterraba.h"
 #include "error.h"
-#include "rand.h"
+#include "femath.h"
+
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;

@@ -2,7 +2,7 @@
 #include "charba.h"
 #include "save.h"
 #include "error.h"
-#include "rand.h"
+#include "femath.h"
 
 std::string material::Name(uchar Case) const
 {

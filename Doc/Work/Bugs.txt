@@ -3,3 +3,5 @@ Quitting via the corner X doesn't update hscores.
 Item's GetSquareUnder() doesn't work.
 The shopmaster bug.
 The locked shop bug.
+Cannibalism abuse.
+Alt+Enter twice.

@@ -10,7 +10,6 @@
 #include "terra.h"
 #include "error.h"
 #include "femath.h"
-#include "rand.h"
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -81,7 +80,7 @@ void area::UpdateLOS()
 	DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
 	{
 		if(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer) <= RadiusSquare)
-			game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
+			femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
 	})
 
 	game::RemoveLOSUpdateRequest();

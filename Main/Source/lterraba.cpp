@@ -6,7 +6,8 @@
 #include "igraph.h"
 #include "lsquare.h"
 #include "worldmap.h"
-#include "rand.h"
+#include "femath.h"
+#include "femath.h"
 
 bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {

@@ -52,7 +52,6 @@ public:
 	static area* GetCurrentArea();
 	static level* GetCurrentLevel();
 	static bool LOSHandler(vector2d, vector2d);
-	static bool DoLine(long, long, long, long, ulong, bool (*Proc)(vector2d, vector2d));
 	static void DrawPanel();
 	static ushort*** GetLuxTable()		{ return LuxTable; }
 	static ushort* GetLuxTableSize()		{ return LuxTableSize; }

@@ -1,3 +1,8 @@
+#include <cstdio>
+#include <ctime>
+
+#include "femath.h"
+
 /* A C-program for MT19937: Integer     version                   */
 /*  genrand() generates one pseudorandom unsigned integer (32bit) */
 /* which is uniformly distributed among 0 to 2^32-1  for each     */
@@ -26,13 +31,22 @@
 /* see http://www.math.keio.ac.jp/matumoto/emt.html or email       */
 /* matumoto@math.keio.ac.jp                                        */
 
-#include <cstdio>
-#include <ctime>
+/* Period parameters */
+#define M 397
+#define MATRIX_A 0x9908b0df   /* constant vector a */
+#define UPPER_MASK 0x80000000 /* most significant w-r bits */
+#define LOWER_MASK 0x7fffffff /* least significant r bits */
 
-#include "rand.h"
+/* Tempering parameters */   
+#define TEMPERING_MASK_B 0x9d2c5680
+#define TEMPERING_MASK_C 0xefc60000
+#define TEMPERING_SHIFT_U(y)  (y >> 11)
+#define TEMPERING_SHIFT_S(y)  (y << 7)
+#define TEMPERING_SHIFT_T(y)  (y << 15)
+#define TEMPERING_SHIFT_L(y)  (y >> 18)
 
-ulong femath::mt[N]; /* the array for the state vector  */
-long femath::mti = N+1; /* mti==N+1 means mt[N] is not initialized */
+ulong femath::mt[N1]; /* the array for the state vector  */
+long femath::mti = N1+1; /* mti==N+1 means mt[N] is not initialized */
 
 void femath::SetSeed(ulong seed)
 {
@@ -41,7 +55,7 @@ void femath::SetSeed(ulong seed)
     /* [KNUTH 1981, The Art of Computer Programming */
     /*    Vol. 2 (2nd Ed.), pp102]                  */
     mt[0]= seed & 0xffffffff;
-    for (mti=1; mti<N; mti++)
+    for (mti=1; mti<N1; mti++)
         mt[mti] = (69069 * mt[mti-1]) & 0xffffffff;
 }
 
@@ -51,22 +65,22 @@ long femath::Rand()
     static ulong mag01[2]={0x0, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* generate N words at one time */
+    if (mti >= N1) { /* generate N words at one time */
         int kk;
 
-        if (mti == N+1)   /* if sgenrand() has not been called, */
+        if (mti == N1+1)   /* if sgenrand() has not been called, */
             SetSeed(4357); /* a default initial seed is used   */
 
-        for (kk=0;kk<N-M;kk++) {
+        for (kk=0;kk<N1-M;kk++) {
             y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
             mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1];
         }
-        for (;kk<N-1;kk++) {
+        for (;kk<N1-1;kk++) {
             y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1];
+            mt[kk] = mt[kk+(M-N1)] ^ (y >> 1) ^ mag01[y & 0x1];
         }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
+        y = (mt[N1-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
+        mt[N1-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
 
         mti = 0;
     }
@@ -78,4 +92,72 @@ long femath::Rand()
     y ^= TEMPERING_SHIFT_L(y);
 
     return y & 0x7FFFFFFF;
+}
+
+/* Why the f*ck these _insane_ warnings didn't appear in game.cpp??? */
+
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4018)
+
+bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*Proc)(vector2d, vector2d))
+{
+	long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
+
+	#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)			\
+	{										\
+		if(!D##PriC)								\
+		{									\
+			Proc(vector2d(X1, Y1), vector2d(X1, Y1));			\
+			return true;							\
+		}									\
+											\
+		I1 = D##SecC << 1;							\
+		DD = I1 - (SecSign (PriSign D##PriC));					\
+		I2 = DD - (SecSign (PriSign D##PriC));					\
+											\
+		X = X1;									\
+		Y = Y1;									\
+											\
+		while(PriC PriCond PriC##2)						\
+		{									\
+			if(GetHypotSquare((X - X1), (Y - Y1)) > MaxDistance ||		\
+			   !Proc(vector2d(X, Y), vector2d(X1, Y1)))			\
+				return false;						\
+											\
+			if(DD SecCond 0)						\
+			{								\
+				SecC##SecSign##SecSign;					\
+				DD += I2;						\
+			}								\
+			else								\
+				DD += I1;						\
+											\
+			PriC##PriSign##PriSign;						\
+		}									\
+	}
+
+	if(DX >= 0)
+		if(DY >= 0)
+			if(DX >= DY)
+				DO_LINE(+, X, <=, +, Y, >=)
+			else
+				DO_LINE(+, Y, <=, +, X, >=)
+		else
+			if (DX >= -DY)
+				DO_LINE(+, X, <=, -, Y, <=)
+			else
+				DO_LINE(-, Y, >=, +, X, >=)
+	else
+		if (DY >= 0)
+			if (-DX >= DY)
+				DO_LINE(-, X, >=, +, Y, >=)
+			else
+				DO_LINE(+, Y, <=, -, X, <=)
+		else
+			if (-DX >= -DY)
+				DO_LINE(-, X, >=, -, Y, <=)
+			else
+				DO_LINE(-, Y, >=, -, X, <=)
+
+	return true;
 }

@@ -5,7 +5,6 @@
 #include "itemde.h"
 #include "level.h"
 #include "lsquare.h"
-#include "femath.h"
 #include "message.h"
 #include "igraph.h"
 #include "bitmap.h"
@@ -18,7 +17,7 @@
 #include "strover.h"
 #include "team.h"
 #include "lterraba.h"
-#include "rand.h"
+#include "femath.h"
 
 petrus::~petrus()
 {
@@ -197,18 +196,27 @@ void complexhumanoid::DrawToTileBuffer() const
 		ShieldPos.Y = GetShieldType() << 4;
 	}
 
+	DrawLegs(LegPos);
+	DrawTorso(TorsoPos);
+	DrawArms(ArmPos);
+	DrawHead(HeadPos);
+	DrawShield(ShieldPos);
+
 	if(GetWielded())
+	{
 		InHandsPic = GetWielded()->GetInHandsPic();
 
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), LegPos.X,LegPos.Y, 0, 0, 16, 16);
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), TorsoPos.X, TorsoPos.Y, 0, 0, 16, 16);
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ArmPos.X, ArmPos.Y, 0, 0, 16, 16);
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), HeadPos.X, HeadPos.Y, 0, 0, 16, 16);
-	igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), ShieldPos.X, ShieldPos.Y, 0, 0, 16, 16);
-
-	if(GetWielded() && (InHandsPic.X != 0 || InHandsPic.Y != 0))
-		igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16);
+		if(InHandsPic.X != 0 || InHandsPic.Y != 0)
+			DrawInHandsPic(InHandsPic);
+	}
 }
+
+void complexhumanoid::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawTorso(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawArms(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawShield(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
+void complexhumanoid::DrawInHandsPic(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
 
 void skeleton::CreateCorpse()
 {
@@ -1741,3 +1749,6 @@ void human::CreateInitialEquipment()
 {
 	/* Player's initial equipment creation should be added */
 }
+
+void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
+void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }

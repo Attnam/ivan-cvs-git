@@ -4,7 +4,7 @@
 #include "save.h"
 #include "strover.h"
 #include "error.h"
-#include "rand.h"
+#include "femath.h"
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {

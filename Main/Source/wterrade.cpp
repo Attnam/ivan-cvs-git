@@ -10,7 +10,6 @@
 #include "square.h"
 #include "graphics.h"
 #include "team.h"
-#include "rand.h"
 
 bool attnam::GoDown(character* Who) const
 {

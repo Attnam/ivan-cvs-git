@@ -13,7 +13,6 @@
 #include "message.h"
 #include "wskill.h"
 #include "team.h"
-#include "rand.h"
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
 {

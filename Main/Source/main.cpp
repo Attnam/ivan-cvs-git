@@ -5,7 +5,6 @@
 #include "feio.h"
 #include "whandler.h"
 #include "charde.h"
-#include "rand.h"
 #include "config.h"
 #include "bitmap.h"
 

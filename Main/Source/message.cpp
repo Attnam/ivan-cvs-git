@@ -6,7 +6,6 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "colorbit.h"
-#include "rand.h"
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;

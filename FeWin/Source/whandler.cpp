@@ -10,6 +10,12 @@ bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
 bool globalwindowhandler::Active = false;
 
+#include <windows.h>
+#include <ddraw.h>
+#include <mmsystem.h>
+#include "resource.h"
+#include "ddutil.h"
+
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -68,25 +74,22 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_KEYDOWN:
 		{
-			if(wParam == VK_F2)
-			{
-				DOUBLEBUFFER->Save("Scrshot.bmp");
-				return 0;
-			}
+			ushort Index = KeyBuffer.Search(wParam);
 
-			if(wParam == VK_F4)
-			{
-				graphics::SwitchMode();
-				return 0;
-			}
-
-			KeyBuffer.Add(wParam);
+			if(Index == 0xFFFF)
+				KeyBuffer.Add(wParam);
 
 			return 0;
 		}
 
 		case WM_KEYUP:
 		{
+			if(wParam == VK_SNAPSHOT)
+			{
+				DOUBLEBUFFER->Save("Scrshot.bmp");
+				return 0;
+			}
+
 			ushort Index = KeyBuffer.Search(wParam);
 
 			if(Index != 0xFFFF)
@@ -94,6 +97,14 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 			return 0;
 		}
+
+		case WM_SYSKEYUP:
+			if(wParam == VK_RETURN)
+			{
+				graphics::SwitchMode();
+				return 0;
+			}
+				
 	}
 
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
@@ -105,14 +116,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 
 	if(EmptyBuffer)
 	{
-		while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-			if(msg.message == WM_QUIT)
-				exit(0);
-			else
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+		CheckMessages();
 
 		while(KeyBuffer.Length())
 			KeyBuffer.Remove(0);
@@ -199,18 +203,9 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 
 int globalwindowhandler::ReadKey()
 {
-	MSG msg;
-
 	while(true)
 	{
-		while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-			if(msg.message == WM_QUIT)
-				exit(0);
-			else
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+		CheckMessages();
 
 		if(Active)
 			break;
@@ -222,4 +217,18 @@ int globalwindowhandler::ReadKey()
 		return GetKey(false, true);
 	else
 		return 0;
+}
+
+void globalwindowhandler::CheckMessages()
+{
+	MSG msg;
+
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+		if(msg.message == WM_QUIT)
+			exit(0);
+		else
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 }

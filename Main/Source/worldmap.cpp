@@ -11,7 +11,7 @@
 #include "error.h"
 #include "save.h"
 #include "dungeon.h"
-#include "rand.h"
+#include "femath.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {

@@ -19,6 +19,7 @@ std::map<std::string, ushort>		protocontainer<groundworldmapterrain>::CodeNameMa
 std::map<std::string, ushort>		protocontainer<overworldmapterrain>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
+#include "femath.h"
 #include "materde.h"
 #include "itemde.h"
 #include "charde.h"
@@ -26,7 +27,6 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 #include "wterrade.h"
 #include "roomde.h"
 #include "message.h"
-#include "rand.h"
 
 #include "error.h"
 

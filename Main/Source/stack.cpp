@@ -12,7 +12,7 @@
 #include "graphics.h"
 #include "charba.h"
 #include "area.h"
-#include "rand.h"
+#include "femath.h"
 
 stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Item(0), Items(0), NonExistent(0)
 {

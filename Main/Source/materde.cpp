@@ -2,7 +2,6 @@
 #include "charba.h"
 #include "message.h"
 #include "lsquare.h"
-#include "rand.h"
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {

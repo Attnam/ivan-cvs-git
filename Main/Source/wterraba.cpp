@@ -1,6 +1,5 @@
 #include <queue>
 
-#include "area.h"
 #include "wterraba.h"
 #include "wsquare.h"
 #include "igraph.h"
@@ -14,7 +13,7 @@
 #include "message.h"
 #include "charba.h"
 #include "team.h"
-#include "rand.h"
+#include "femath.h"
 
 struct prioritypair
 {

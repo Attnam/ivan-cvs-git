@@ -12,10 +12,10 @@
 #include "worldmap.h"
 #include "charba.h"
 #include "team.h"
-#include "rand.h"
 #include "whandler.h"
 #include "stack.h"
 #include "itemba.h"
+#include "femath.h"
 
 bool door::Open(character* Opener)
 {

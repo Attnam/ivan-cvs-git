@@ -19,12 +19,11 @@
 #include "god.h"
 #include "felist.h"
 #include "team.h"
-#include "femath.h"
 #include "colorbit.h"
 #include "graphics.h"
 #include "script.h"
-#include "rand.h"
 #include "config.h"
+#include "femath.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {

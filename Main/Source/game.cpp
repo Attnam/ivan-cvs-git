@@ -27,8 +27,8 @@
 #include "script.h"
 #include "team.h"
 #include "colorbit.h"
-#include "rand.h"
 #include "config.h"
+#include "femath.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -332,69 +332,6 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo)
 		return true;
 	else
 		return GetCurrentArea()->GetSquare(Pos)->GetOverTerrain()->GetIsWalkable();
-}
-
-bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool (*Proc)(vector2d, vector2d))
-{
-	long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
-
-	#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)			\
-	{										\
-		if(!D##PriC)								\
-		{									\
-			Proc(vector2d(X1, Y1), vector2d(X1, Y1));			\
-			return true;							\
-		}									\
-											\
-		I1 = D##SecC << 1;							\
-		DD = I1 - (SecSign (PriSign D##PriC));					\
-		I2 = DD - (SecSign (PriSign D##PriC));					\
-											\
-		X = X1;									\
-		Y = Y1;									\
-											\
-		while(PriC PriCond PriC##2)						\
-		{									\
-			if((X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) > MaxDistance ||	\
-			   !Proc(vector2d(X, Y), vector2d(X1, Y1)))			\
-				return false;						\
-											\
-			if(DD SecCond 0)						\
-			{								\
-				SecC##SecSign##SecSign;					\
-				DD += I2;						\
-			}								\
-			else								\
-				DD += I1;						\
-											\
-			PriC##PriSign##PriSign;						\
-		}									\
-	}
-
-	if(DX >= 0)
-		if(DY >= 0)
-			if(DX >= DY)
-				DO_LINE(+, X, <=, +, Y, >=)
-			else
-				DO_LINE(+, Y, <=, +, X, >=)
-		else
-			if (DX >= -DY)
-				DO_LINE(+, X, <=, -, Y, <=)
-			else
-				DO_LINE(-, Y, >=, +, X, >=)
-	else
-		if (DY >= 0)
-			if (-DX >= DY)
-				DO_LINE(-, X, >=, +, Y, >=)
-			else
-				DO_LINE(+, Y, <=, -, X, <=)
-		else
-			if (-DX >= -DY)
-				DO_LINE(-, X, >=, -, Y, <=)
-			else
-				DO_LINE(-, Y, >=, -, X, <=)
-
-	return true;
 }
 
 void game::DrawPanel()

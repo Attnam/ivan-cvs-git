@@ -64,6 +64,11 @@ bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), Data(Al
 {
 }
 
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), Data(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+{
+	Fill(Color);
+}
+
 bitmap::~bitmap()
 {
 	delete [] Data;

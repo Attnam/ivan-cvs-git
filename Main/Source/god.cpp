@@ -10,7 +10,7 @@
 #include "script.h"
 #include "lterrade.h"
 #include "team.h"
-#include "rand.h"
+#include "femath.h"
 
 void god::Pray()
 {

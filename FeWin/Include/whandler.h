@@ -23,6 +23,8 @@ public:
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
 	static void SetInitialized(bool What) { Initialized = What; }
+	static void CheckMessages();
+	static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
 private:
 	static dynarray<int> KeyBuffer;
 	static char KeyboardLayoutName[KL_NAMELENGTH];
