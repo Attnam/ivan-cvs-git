@@ -22,29 +22,29 @@ int Main(int, char**)
       char ch;
 
       while(IConfigFile.get(ch))
-	OldDirectory += ch;
+	OldDirectory << ch;
     }
 
   IConfigFile.close();
   std::cout << "Where is the graphics directory? ";
 
   if(OldDirectory.GetSize())
-    std::cout << '[' << OldDirectory << "] ";
+    std::cout << '[' << OldDirectory.CStr() << "] ";
 
   festring Directory;
   char ch;
 
   while((ch = getchar()) != '\n')
-    Directory += ch;
+    Directory << ch;
 
-  if(Directory.empty())
+  if(Directory.IsEmpty())
     Directory = OldDirectory;
 
-  if(!Directory.empty() && Directory[Directory.size() - 1] != '/')
-    Directory += '/';
+  if(!Directory.IsEmpty() && Directory[Directory.GetSize() - 1] != '/')
+    Directory << '/';
 
   std::ofstream OConfigFile("igor.cfg");
-  OConfigFile << Directory;
+  OConfigFile << Directory.CStr();
   OConfigFile.close();
 
   graphics::Init();
@@ -84,6 +84,7 @@ int Main(int, char**)
   Selected = 0;
   ushort Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
   std::vector<vector2d> DrawQueue;
+  uchar TempBuffer[256];
 
   while(true)
     {
@@ -126,13 +127,13 @@ int Main(int, char**)
       else if(k == '<')
 	CBitmap->AlterGradient(Cursor, 16, 16, Selected, -1, true);
       else if(k == KEY_UP) 
-	CBitmap->Roll(Cursor, 16, 16, 0, -1);
+	CBitmap->Roll(Cursor, 16, 16, 0, -1, TempBuffer);
       else if(k == KEY_DOWN)
-	CBitmap->Roll(Cursor, 16, 16, 0, 1);
+	CBitmap->Roll(Cursor, 16, 16, 0, 1, TempBuffer);
       else if(k == KEY_RIGHT)
-	CBitmap->Roll(Cursor, 16, 16, 1, 0);
+	CBitmap->Roll(Cursor, 16, 16, 1, 0, TempBuffer);
       else if(k == KEY_LEFT)
-	CBitmap->Roll(Cursor, 16, 16, -1, 0);
+	CBitmap->Roll(Cursor, 16, 16, -1, 0, TempBuffer);
       else if(k == '=')
 	{
 	  FONT->Printf(DOUBLE_BUFFER, 10, 460, RED, "Select color to swap with [1-4/ESC]");
