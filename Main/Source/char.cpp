@@ -8,16 +8,40 @@
  * doesn't need one.
  */
 
-void (character::*PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage, &character::PrintBeginParasitizedMessage, &character::PrintBeginSearchingMessage, &character::PrintBeginGasImmunityMessage };
-void (character::*PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage, &character::PrintEndParasitizedMessage, &character::PrintEndSearchingMessage, &character::PrintEndGasImmunityMessage };
-void (character::*BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler, &character::SearchingHandler, 0 };
-bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, &character::CanBeConfused, &character::AllowParasitized, 0, 0 };
-std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized", "Searching", "Gas immunity" };
-bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false, false, true };
-bool TemporaryStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false, false, true };
-bool PermanentStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, false, true, false, true };
+struct statedata
+{
+  void (character::*PrintBeginMessage)() const;
+  void (character::*PrintEndMessage)() const;
+  void (character::*BeginHandler)();
+  void (character::*EndHandler)();
+  void (character::*Handler)();
+  bool (character::*IsAllowed)() const;
+  char* Description;
+  ushort Flags;
+};
+
+statedata StateData[STATES] =
+{
+  /* PrintBeginMessage */			    /* PrintEndMessage */			  /* BeginHandler */		  /* EndHandler */		/* Handler */			/* IsAllowed */		      /* Desc */	      /* Flags */
+  { 0,						    0,						  0,				  &character::EndPolymorph,	0,				0,			      "Polymorphed",  0 },
+  { &character::PrintBeginHasteMessage,		    &character::PrintEndHasteMessage,		  0,				  0,				0,				0,			      "Hasted",	      RANDOMIZABLE },
+  { &character::PrintBeginSlowMessage,		    &character::PrintEndSlowMessage,		  0,				  0,				0,				0,			      "Slowed",	      RANDOMIZABLE },
+  { &character::PrintBeginPolymorphControlMessage,  &character::PrintEndPolymorphControlMessage,  0,				  0,				0,				0,			      "PolyControl",  RANDOMIZABLE },
+  { &character::PrintBeginLifeSaveMessage,	    &character::PrintEndLifeSaveMessage,	  0,				  0,				0,				0,			      "LifeSaved",    SECRET },
+  { &character::PrintBeginLycanthropyMessage,	    &character::PrintEndLycanthropyMessage,	  0,				  0,				&character::LycanthropyHandler,	0,			      "Lycanthropy",  SECRET|SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_TEMPORARY },
+  { &character::PrintBeginInvisibilityMessage,	    &character::PrintEndInvisibilityMessage,	  &character::BeginInvisibility,  &character::EndInvisibility,	0,				0,			      "Invisible",    RANDOMIZABLE },
+  { &character::PrintBeginInfraVisionMessage,	    &character::PrintEndInfraVisionMessage,	  &character::BeginInfraVision,	  &character::EndInfraVision,	0,				0,			      "Infravision",  RANDOMIZABLE },
+  { &character::PrintBeginESPMessage,		    &character::PrintEndESPMessage,		  &character::BeginESP,		  &character::EndESP,		0,				0,			      "ESP",	      RANDOMIZABLE },
+  { &character::PrintBeginPoisonedMessage,	    &character::PrintEndPoisonedMessage,	  0,				  0,				&character::PoisonedHandler,	&character::CanBePoisoned,    "Poisoned",     0 },
+  { &character::PrintBeginTeleportMessage,	    &character::PrintEndTeleportMessage,	  0,				  0,				&character::TeleportHandler,	0,			      "Teleporting",  SECRET|RANDOMIZABLE },
+  { &character::PrintBeginPolymorphMessage,	    &character::PrintEndPolymorphMessage,	  0,				  0,				&character::PolymorphHandler,	0,			      "Polymorphing", SECRET|RANDOMIZABLE },
+  { &character::PrintBeginTeleportControlMessage,   &character::PrintEndTeleportControlMessage,	  0,				  0,				0,				0,			      "TeleControl",  RANDOMIZABLE },
+  { &character::PrintBeginPanicMessage,		    &character::PrintEndPanicMessage,		  0,				  0,				0,				0,			      "Panicked",     0 },
+  { &character::PrintBeginConfuseMessage,	    &character::PrintEndConfuseMessage,		  0,				  0,				0,				&character::CanBeConfused,    "Confused",     RANDOMIZABLE&~DUR_PERMANENT },
+  { &character::PrintBeginParasitizedMessage,	    &character::PrintEndParasitizedMessage,	  0,				  0,				&character::ParasitizedHandler,	&character::CanBeParasitized, "Parasitized",  RANDOMIZABLE&~DUR_TEMPORARY },
+  { &character::PrintBeginSearchingMessage,	    &character::PrintEndSearchingMessage,	  0,				  0,				&character::SearchingHandler,	0,			      "Searching",    0 },
+  { &character::PrintBeginGasImmunityMessage,	    &character::PrintEndGasImmunityMessage,	  0,				  0,				0,				0,			      "GasImmunity",  SECRET|RANDOMIZABLE }
+};
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
@@ -1161,7 +1185,7 @@ bool character::ReadItem(item* ToBeRead)
 	      else
 		{
 		  ADD_MESSAGE("%s is very confusing. Or perhaps you are just too confused?", ToBeRead->CHAR_NAME(DEFINITE));
-		  ActivateRandomState(1000 + RAND() % 1500);
+		  ActivateRandomState(SRC_CONFUSE_READ, 1000 + RAND() % 1500);
 		  ToBeRead->RemoveFromSlot();
 		  ToBeRead->SendToHell();
 		}
@@ -3349,8 +3373,8 @@ void character::DrawPanel(bool AnimationDraw) const
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring::CapitalizeCopy(GetAction()->GetDescription()).c_str());
 
   for(ushort c = 0; c < STATES; ++c)
-    if(!StateIsSecret[c] && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateDescription[c].c_str());
+    if(!(StateData[c].Flags & SECRET) && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateData[c].Description);
 
   /* Make this more elegant!!! */
 
@@ -3480,12 +3504,12 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 	      if(!StateIsActivated(1 << c))
 		{
 		  if(!InNoMsgMode)
-		    (this->*PrintBeginStateMessage[c])();
+		    (this->*StateData[c].PrintBeginMessage)();
 
 		  EquipmentState |= 1 << c;
 
-		  if(BeginStateHandler[c])
-		    (this->*BeginStateHandler[c])();
+		  if(StateData[c].BeginHandler)
+		    (this->*StateData[c].BeginHandler)();
 		}
 	      else
 		EquipmentState |= 1 << c;
@@ -3515,16 +3539,16 @@ void character::CalculateEquipmentState()
   for(c = 0; c < STATES; ++c)
     if(Back & (1 << c) && !StateIsActivated(1 << c))
       {
-	if(EndStateHandler[c])
+	if(StateData[c].EndHandler)
 	  {
-	    (this->*EndStateHandler[c])();
+	    (this->*StateData[c].EndHandler)();
 
 	    if(!IsEnabled())
 	      return;
 	  }
 
 	if(!InNoMsgMode)
-	  (this->*PrintEndStateMessage[c])();
+	  (this->*StateData[c].PrintEndMessage)();
       }
 }
 
@@ -3552,17 +3576,17 @@ void character::BeginTemporaryState(ulong State, ushort Counter)
       if(GetTemporaryStateCounter(State) != PERMANENT)
 	EditTemporaryStateCounter(State, Counter);
     }
-  else if(StateIsAllowed[Index] == 0 || (this->*StateIsAllowed[Index])())
+  else if(StateData[Index].IsAllowed == 0 || (this->*StateData[Index].IsAllowed)())
     {
       ActivateTemporaryState(State);
       SetTemporaryStateCounter(State, Counter);
 
       if(!EquipmentStateIsActivated(State))
 	{
-	  (this->*PrintBeginStateMessage[Index])();
+	  (this->*StateData[Index].PrintBeginMessage)();
 
-	  if(BeginStateHandler[Index])
-	    (this->*BeginStateHandler[Index])();
+	  if(StateData[Index].BeginHandler)
+	    (this->*StateData[Index].BeginHandler)();
 	}
     }
 }
@@ -3582,22 +3606,22 @@ void character::HandleStates()
 
 	      if(!(EquipmentState & (1 << c)))
 		{
-		  if(EndStateHandler[c])
+		  if(StateData[c].EndHandler)
 		    {
-		      (this->*EndStateHandler[c])();
+		      (this->*StateData[c].EndHandler)();
 
 		      if(!IsEnabled())
 			return;
 		    }
 
-		  (this->*PrintEndStateMessage[c])();
+		  (this->*StateData[c].PrintEndMessage)();
 		}
 	    }
 	}
 
       if(StateIsActivated(1 << c))
-	if(StateHandler[c])
-	  (this->*StateHandler[c])();
+	if(StateData[c].Handler)
+	  (this->*StateData[c].Handler)();
 
       if(!IsEnabled())
 	return;
@@ -4418,28 +4442,28 @@ void character::EditExperience(ushort Identifier, long Value)
   BaseExperience[Identifier] += Value;
 }
 
-bool character::ActivateRandomState(ushort Time, ulong Seed)
+bool character::ActivateRandomState(ushort Flags, ushort Time, ulong Seed)
 {
   femath::SaveSeed();
 
   if(Seed)
     femath::SetSeed(Seed);
 
-  ulong ToBeActivated = GetRandomNotActivatedState(false);
+  ulong ToBeActivated = GetRandomState(Flags|DUR_TEMPORARY);
   femath::LoadSeed();
 
-  if(ToBeActivated == 0)
+  if(!ToBeActivated)
     return false;
 
   BeginTemporaryState(ToBeActivated, Time);
   return true;
 }
 
-bool character::GainRandomInstric()
+bool character::GainRandomIntrinsic(ushort Flags)
 {
-  ulong ToBeActivated = GetRandomNotActivatedState(true);
+  ulong ToBeActivated = GetRandomState(Flags|DUR_PERMANENT);
 
-  if(ToBeActivated == 0)
+  if(!ToBeActivated)
     return false;
 
   GainIntrinsic(ToBeActivated);
@@ -4447,19 +4471,16 @@ bool character::GainRandomInstric()
 }
 
 /*
- * Returns a state that is 
- * 1) Not active
- * 2) ActivatableRandomly
- * if no such state is found return 0
+ * Returns 0 if state not found
  */
 
-ulong character::GetRandomNotActivatedState(bool MayBePermanent) const
+ulong character::GetRandomState(ushort Flags) const
 {
   ulong OKStates[STATES];
   ushort NumberOfOKStates = 0;
 
   for(ushort c = 0; c < STATES; ++c)
-    if((!MayBePermanent && TemporaryStateCanBeRandomlyActivated[c]) || (MayBePermanent && PermanentStateCanBeRandomlyActivated[c]))
+    if(StateData[c].Flags & Flags & DUR_FLAGS && StateData[c].Flags & Flags & SRC_FLAGS)
       OKStates[NumberOfOKStates++] = 1 << c;
   
   return NumberOfOKStates ? OKStates[RAND() % NumberOfOKStates] : 0;
@@ -5602,9 +5623,9 @@ void character::ResetStates()
       {
 	TemporaryState &= ~(1 << c);
 
-	if(EndStateHandler[c])
+	if(StateData[c].EndHandler)
 	  {
-	    (this->*EndStateHandler[c])();
+	    (this->*StateData[c].EndHandler)();
 
 	    if(!IsEnabled())
 	      return;

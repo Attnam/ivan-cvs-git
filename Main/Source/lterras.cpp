@@ -368,13 +368,13 @@ bool fountain::Drink(character* Drinker)
 	      if(RAND() % 10)
 		{
 		  ADD_MESSAGE("The water tastes normal, but there is an odd after taste.");
-		  Drinker->ActivateRandomState(2000 + RAND() % 3000);
+		  Drinker->ActivateRandomState(SRC_FOUNTAIN, 2000 + RAND() % 3000);
 		}
 	      else
 		{
 		  ADD_MESSAGE("This water tastes very odd.");
 
-		  if(!Drinker->GainRandomInstric())
+		  if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
 		    ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
 		}
 	      break;

@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 31 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* State data has been structuralized to make it more readable
+	* Magical vapour no longer activates lycanthropy, I think
+
 March 30 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a bug in the banana growers' former profession system

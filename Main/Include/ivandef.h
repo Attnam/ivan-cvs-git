@@ -442,4 +442,16 @@
 
 #define ALL_ITEMS 0xFFFF
 
+/* StateData flags */
+
+#define SECRET 1
+#define DUR_TEMPORARY 2
+#define DUR_PERMANENT 4
+#define DUR_FLAGS (2|4)
+#define SRC_FOUNTAIN 8
+#define SRC_MAGIC_VAPOUR 16
+#define SRC_CONFUSE_READ 32
+#define SRC_FLAGS (8|16|32)
+#define RANDOMIZABLE (2|4|8|16|32)
+
 #endif

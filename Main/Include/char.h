@@ -591,9 +591,9 @@ class character : public entity, public id
   void CalculateBodyPartMaxHPs(bool = true);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
-  bool ActivateRandomState(ushort, ulong = 0);
-  ulong GetRandomNotActivatedState(bool) const;
-  bool GainRandomInstric();
+  bool ActivateRandomState(ushort, ushort, ulong = 0);
+  ulong GetRandomState(ushort) const;
+  bool GainRandomIntrinsic(ushort);
   virtual void CalculateBattleInfo() = 0;
   void CalculateBurdenState();
   virtual void CalculateDodgeValue();
@@ -702,8 +702,8 @@ class character : public entity, public id
   virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
   void GetHitByExplosion(const explosion*, ushort);
-  bool AllowPoisoned() const { return IsAlive(); }
-  bool AllowParasitized() const { return IsAlive(); }
+  bool CanBePoisoned() const { return IsAlive(); }
+  bool CanBeParasitized() const { return IsAlive(); }
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   character* GetRandomNeighbourEnemy() const;
   void Search(ushort);

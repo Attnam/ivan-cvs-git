@@ -71,7 +71,7 @@ bool material::Effect(character* Eater, ulong Amount)
     case EFFECT_MAGIC_VAPOUR:
       {
 	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-        Eater->ActivateRandomState(Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+        Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	return true;
       }
     default: return false;

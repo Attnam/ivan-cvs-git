@@ -244,6 +244,7 @@ bool game::Init(const std::string& Name)
 	PetMassacreMap.clear();
 	MiscMassacreMap.clear();
 	PlayerMassacreAmount = PetMassacreAmount = MiscMassacreAmount = 0;
+	DefaultPolymorphTo.resize(0);
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
