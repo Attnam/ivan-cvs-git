@@ -982,7 +982,7 @@ truth stack::PutSomethingIn(character* Opener, const festring& ContainerName, lo
       if(ToPut.size() == 1)
 	ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.CStr());
       else
-	ADD_MESSAGE("None of the %d %s fits in %s.", int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
+	ADD_MESSAGE("None of the %d %s fit in %s.", int(ToPut.size()), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
 
       continue;
     }
