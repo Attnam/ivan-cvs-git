@@ -32,3 +32,5 @@ Fungi.
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.
 Steel halberd on a gravel floor.
+Steel scimitar on a gravel ground.
+Stalker.
