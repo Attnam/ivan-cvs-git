@@ -287,18 +287,18 @@ Dungeon 1;
 		Room 1;
 		{
 			Pos=7,10;
-			Size=17,17;
+			Size=18,17;
 			AltarPossible=false;
 			WallSquare=floor,wall;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=1;
-			Square, Pos 9,17;
+			Square, Pos 9,16;
 			{
 				OverTerrain = empty;
 			}
-			Square, Pos 8,17;
+			Square, Pos 8,16;
 			{
 				OverTerrain = empty;
 			}

@@ -454,10 +454,15 @@ void avatarofvalpuri::CheckPickUpEffect(character* Picker)
 {
 	if(Picker->GetIsPlayer())
 	{
-		character* Temp;
-		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, GetLevelUnder()->GetXSize(), GetLevelUnder()->GetYSize() - 1, 40, 
-			if(Temp = GetLevelUnder()->GetSquare(XPointer, YPointer)->GetCharacter())
-				Temp->SetRelations(HOSTILE);)
+	
+		//CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat	
+		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1 , game::GetCurrentLevel()->GetYSize() - 1, 30, 
+		{
+			character* Temp;
+			if((Temp = game::GetCurrentLevel()->GetSquare(XPointer, YPointer)->GetCharacter()) && !Temp->GetIsPlayer())
+				Temp->SetRelations(HOSTILE);
+			
+		})
 
 	}
 }

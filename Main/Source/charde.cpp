@@ -334,7 +334,7 @@ void perttu::NeutralAICommand()
 			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetHP() < (game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetEndurance() << 1) / 3 && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() == game::GetPlayer() && GetHealTimer() > 100)
 				HealFully(game::GetPlayer());
 		}
-		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() > HOSTILE)
+		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() == HOSTILE)
 			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
 	})
 }

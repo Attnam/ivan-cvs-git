@@ -2279,11 +2279,11 @@ void character::SoldierAICommand()
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetIsPlayer() || game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() > HOSTILE)
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() == game::GetPlayer())
 		{
-
+			
 		}
-		else
+		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() == HOSTILE)
 			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
 	})
 }
