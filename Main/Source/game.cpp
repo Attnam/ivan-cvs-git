@@ -115,7 +115,7 @@ command* game::Command[] =
   new command(&character::OutlineItems, "outline items", 'U', true),
   new command(&character::PickUp, "pick up", ',', false),
   new command(&character::Pray, "pray", 'p', false),
-  new command(&character::Quit, "quit", 'q', true),
+  new command(&character::Quit, "quit", 'Q', true),
   new command(&character::Read, "read", 'r', false),
   new command(&character::RestUntilHealed, "rest/heal", 'h', true),
   new command(&character::Save, "save game", 's', true),
