@@ -1649,7 +1649,7 @@ void bodypart::Regenerate()
       RegenerationCounter += RegenerationBonus;
       bool Increased = false;
 
-      while(RegenerationCounter > 250000)
+      while(RegenerationCounter > 100000)
 	{
 	  if(HP < MaxHP)
 	    {
@@ -1658,7 +1658,7 @@ void bodypart::Regenerate()
 	      Increased = true;
 	    }
 
-	  RegenerationCounter -= 250000;
+	  RegenerationCounter -= 100000;
 	}
 
       if(Increased)

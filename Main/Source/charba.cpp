@@ -5362,7 +5362,7 @@ float character::GetDangerModifier() const
 
 float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
 {
-  float Danger = Enemy->GetEffectivityAgainst(this, UseMaxHP) / GetEffectivityAgainst(Enemy, UseMaxHP);
+  float Danger = Enemy->GetTimeToKill(this, UseMaxHP) / GetTimeToKill(Enemy, UseMaxHP);
   return Limit(Danger, -100.0f, 100.0f);
 }
 

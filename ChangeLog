@@ -1,3 +1,12 @@
+July 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added orc, orc slaughterer, orc squad leader, orc officer and orc general
+	* Added cossack
+	* Goblins look slightly better over wooden parquet
+	* Skeletons look slightly better over marble floor
+	* Corrected a logical error that caused multiple attack style creatures like
+	  mammoths and unicorns to be considered less dangerous than they really were
+
 July 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Equipment screen now shows if a weapon is wielded with both hands
@@ -26,7 +35,7 @@ July 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Added poleaxe named Mjolak 
 	* Added spear named Vermis 
 	* Both have currently _BAD_ messages. The system is not ready yet.
-	
+
 July 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added system to estimate the danger of a monster relative to another

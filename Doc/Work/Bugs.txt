@@ -53,3 +53,4 @@ AddScoreEntry bugs.
 When bear traps become visible, Memorized isn't updated.
 "You are hit by the explosion!" "You are not hurt." "Your torso bleeds."
 StuckTo bugs; it isn't cleared at least when the bodypart is severed, and saving crashes afterwards.
+Lamps can be seen through walls in lookmode.

@@ -22,10 +22,6 @@
 #define DATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
 #define DATABASEBOOL(data) bool data() const { return DataBase->data; }
 
-/*#define PROTODATABASEVALUE(type, data) type Get##data() const { return DataBase.data; }
-#define PROTODATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase.data; }
-#define PROTODATABASEBOOL(data) bool data() const { return DataBase.data; }*/
-
 #if defined WIN32 || defined __DJGPP__
 #define GAME_DIR std::string("")
 #define SAVE_DIR std::string("Save/")
@@ -362,6 +358,7 @@
 #define LIONFLESH FIRSTFLESH + 28
 #define BUFFALOFLESH FIRSTFLESH + 29
 #define SNAKEFLESH FIRSTFLESH + 30
+#define ORCFLESH FIRSTFLESH + 31
 
 #define UNARMEDATTACK 0
 #define WEAPONATTACK 1
@@ -459,6 +456,11 @@
 
 #define CHIEFTAIN 1
 #define LORD 2
+
+#define SLAUGHTERER 1
+#define SQUADLEADER 2
+#define OFFICER 3
+#define GENERAL 4
 
 #define PARQUET 1
 #define FLOOR 2

@@ -350,7 +350,8 @@ void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, sh
   if(!XMove && !YMove)
     return;
 
-  uchar* TempBuffer = new uchar[Width * Height], x, y;
+  ushort x, y;
+  uchar* TempBuffer = new uchar[Width * Height];
 
   for(x = X; x < X + Width; ++x)
     for(y = Y; y < Y + Height; ++y)

@@ -276,3 +276,5 @@ Calamus should haste the player.
 Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
 "Bang your head at" command.
+Whips should sometimes remove the helmet of the target.
+*Pictures to Equipment Screen.

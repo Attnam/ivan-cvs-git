@@ -234,12 +234,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new skeleton(WARLORD));
-	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
-	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
-	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
-	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);*/
-	//Player->CalculateAll();
+	SetPlayer(new human);
 
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));

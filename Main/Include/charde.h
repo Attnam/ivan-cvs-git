@@ -98,7 +98,7 @@ class ABSTRACT_CHARACTER
   virtual bool HandleNoBodyPart(ushort);
   virtual bool CheckWearEquipment() const { return true; }
   virtual void Kick(lsquare*);
-  virtual float GetEffectivityAgainst(const character*, bool) const;
+  virtual float GetTimeToKill(const character*, bool) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
@@ -193,7 +193,7 @@ class ABSTRACT_CHARACTER
   virtual bool Hit(character*);
   virtual void UnarmedHit(character*);
   virtual void InitSpecialAttributes();
-  virtual float GetEffectivityAgainst(const character*, bool) const;
+  virtual float GetTimeToKill(const character*, bool) const;
   virtual void ApplyExperience(bool = false);
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
@@ -252,7 +252,6 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
-  //virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse();
@@ -267,7 +266,6 @@ class CHARACTER
   farmer,
   humanoid,
  public:
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
   virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
@@ -284,7 +282,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -295,7 +292,6 @@ class CHARACTER
  public:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand() { StandIdleAI(); }
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -305,7 +301,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -315,7 +310,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
@@ -333,7 +328,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
 );
 
 class CHARACTER
@@ -408,7 +402,6 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
  protected:
@@ -422,7 +415,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GOBLINOIDFLESH, Volume); }
 );
@@ -499,7 +491,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DONKEYFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " neighs one last time and then dies."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " neighs one last time and dies."; }
 );
 
 class CHARACTER
@@ -508,8 +500,8 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
+  virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
@@ -521,7 +513,6 @@ class CHARACTER
   hunter,
   humanoid,
  public:
-  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
   virtual void CreateBodyPart(ushort);
@@ -591,7 +582,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -641,7 +631,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  //virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment();
 );
 
 class CHARACTER
@@ -664,8 +654,6 @@ class CHARACTER
 (
   kobold,
   humanoid,
- public:
-  //virtual void CreateInitialEquipment();
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLDFLESH, Volume); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
@@ -744,7 +732,7 @@ class CHARACTER
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
-  //virtual void CreateInitialEquipment();
+  virtual void CreateInitialEquipment();
  protected:
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies smiling."; }
 );
@@ -797,7 +785,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LIONFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " growls."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " growls ans is slain."; }
 );
 
 class CHARACTER
@@ -806,7 +794,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " howls."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is destroyed."; }
   virtual ushort GetTorsoSpecialColor(ushort) const { return RAND() % WHITE; } // the flower
   virtual void GetAICommand();
 );
@@ -827,6 +815,27 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKEFLESH, Volume); }
   virtual void SpecialBiteEffect(character*);
+);
+
+class CHARACTER
+(
+  orc,
+  humanoid,
+ public:
+  virtual void BeTalkedTo(character*);
+ protected:
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ORCFLESH, Volume); }
+);
+
+
+class CHARACTER
+(
+  cossack,
+  humanoid,
+ public:
+  virtual void BeTalkedTo(character*);
+ protected:
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " falls groaning bravely: \"Hope there's vodka in hell!"; }
 );
 
 #endif

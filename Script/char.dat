@@ -528,7 +528,7 @@ skeleton
 	DefaultWisdom = 4;
 	DefaultCharisma = 3;
 	DefaultMana = 5;
-	SkinColor = rgb(180, 180, 180);
+	SkinColor = rgb(160, 160, 160);
 	EyeColor = rgb(160, 0, 0);
 	ClothColor = rgb(111, 74, 37);
 	HeadBitmapPos = 96, 96;
@@ -587,9 +587,9 @@ goblin
 	DefaultWisdom = 5;
 	DefaultCharisma = 5;
 	DefaultMana = 5;
-	SkinColor = rgb(0, 128, 0);
-	EyeColor = rgb(160, 0, 0);
-	ClothColor = rgb(111, 74, 37); 
+	SkinColor = rgb(0, 96, 0);
+	EyeColor = rgb(200, 200, 0);
+	ClothColor = rgb(48, 32, 24);
 	HeadBitmapPos = 96, 48;
 	TorsoBitmapPos = 32, 112;
 	ArmBitmapPos = 64, 144;
@@ -628,7 +628,7 @@ goblin
 
 	Config PRINCE;
 	{
-		AttributeBonus = 100;
+		AttributeBonus = 75;
 		Helmet = BRONZE helmet;
 		BodyArmor = LEATHER platemail;
 		RightWielded = BRONZE meleeweapon(POLEAXE);
@@ -641,7 +641,7 @@ goblin
 
 	Config KING;
 	{
-		AttributeBonus = 200;
+		AttributeBonus = 100;
 		Helmet = IRON helmet;
 		BodyArmor = IRON bodyarmor(CHAINMAIL);
 		RightWielded = IRON meleeweapon(POLEAXE);
@@ -1667,6 +1667,7 @@ lion
 	NameSingular = "lion";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
+	CanBeGenerated = true;
 }
 
 carnivorousplant
@@ -1692,6 +1693,7 @@ carnivorousplant
 	TorsoMainColor = rgb(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
 	CanWalk = false;
+	CanBeGenerated = true;
 }
 
 buffalo
@@ -1715,6 +1717,7 @@ buffalo
 	BaseKickStrength = 15000;
 	BaseBiteStrength = 7500;
 	CanKick = true;
+	CanBeGenerated = true;
 }
 
 snake
@@ -1737,4 +1740,127 @@ snake
 	BaseBiteStrength = 10000;
 	CanKick = false;
 	StandVerb = "lying";
+	CanBeGenerated = true;
+}
+
+orc
+{
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 15;
+	DefaultAgility = 20;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 5;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
+	SkinColor = rgb(48, 48, 48);
+	EyeColor = rgb(200, 200, 0);
+	ClothColor = rgb(180, 120, 80);
+	BeltColor = rgb(72, 60, 24);
+	LegMainColor = rgb(100, 96, 64);
+	HeadBitmapPos = 112, 192;
+	TorsoBitmapPos = 48, 48;
+	ArmBitmapPos = 80, 32;
+	LegBitmapPos = 0, 240;
+	TotalVolume = 90000;
+	TotalSize = 180;
+	NameSingular = "orc";
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
+	BodyArmor = LEATHER platemail;
+	RightWielded = BRONZE meleeweapon(AXE);
+	KnownCategoryWeaponSkills == AXES;
+	CategoryWeaponSkillHits == 20;
+	RightSingleWeaponSkillHits = 10;
+
+	Config SLAUGHTERER;
+	{
+		AttributeBonus = 25;
+		Helmet = LEATHER helmet;
+		BodyArmor = COPPER bodyarmor(CHAINMAIL);
+		RightWielded = IRON meleeweapon(AXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 50;
+		RightSingleWeaponSkillHits = 20;
+		PostFix = "slaughterer";
+	}
+
+	Config SQUADLEADER;
+	{
+		AttributeBonus = 50;
+		Helmet = BRONZE helmet;
+		BodyArmor = BRONZE bodyarmor(CHAINMAIL);
+		RightWielded = meleeweapon(POLEAXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 100;
+		RightSingleWeaponSkillHits = 50;
+		PostFix = "squad leader";
+	}
+
+	Config OFFICER;
+	{
+		AttributeBonus = 75;
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(CHAINMAIL);
+		RightWielded = IRON meleeweapon(LONGSWORD);
+		KnownCategoryWeaponSkills == LARGE_SWORDS;
+		CategoryWeaponSkillHits == 200;
+		RightSingleWeaponSkillHits = 100;
+		PostFix = "officer";
+	}
+
+	Config GENERAL;
+	{
+		HairColor = rgb(200, 0, 0);
+		ClothColor = rgb(72, 72, 72);
+		LegMainColor = rgb(48, 48, 48);
+		LegSpecialColor = rgb(96, 64, 32);
+		HeadBitmapPos = 112, 176;
+		TorsoBitmapPos = 48, 32;
+		ArmBitmapPos = 80, 16;
+		LegBitmapPos = 0, 224;
+		AttributeBonus = 100;
+		Helmet = STEEL helmet;
+		BodyArmor = STEEL bodyarmor(CHAINMAIL);
+		RightWielded = meleeweapon(TWOHANDEDSWORD);
+		KnownCategoryWeaponSkills == LARGE_SWORDS;
+		CategoryWeaponSkillHits == 500;
+		RightSingleWeaponSkillHits = 200;
+		PostFix = "general";
+	}
+}
+
+cossack
+{
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 15;
+	DefaultAgility = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 21;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 7;
+	DefaultCharisma = 7;
+	DefaultMana = 0;
+	BeltColor = rgb(48, 48, 48);
+	ClothColor = rgb(64, 56, 24);
+	HeadBitmapPos = 112, 224;
+	TorsoBitmapPos = 48, 80;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 96;
+	TotalVolume = 70000;
+	TotalSize = 190;
+	NameSingular = "cossack";
+	Helmet = LEATHER helmet;
+	Cloak = LEATHER cloak;
+	BodyArmor = IRON bodyarmor(CHAINMAIL);
+	Belt = LEATHER belt;
+	RightWielded = IRON meleeweapon(LONGSWORD);
+	KnownCategoryWeaponSkills == LARGE_SWORDS;
+	CategoryWeaponSkillHits == 100;
+	RightSingleWeaponSkillHits = 100;
+	RightGauntlet = LEATHER gauntlet;
+	RightBoot = LEATHER boot;
 }

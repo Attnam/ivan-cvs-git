@@ -42,58 +42,13 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-/*void petrus::CreateInitialEquipment()
-{
-  SetMainWielded(new valpurusjustifier);
-  SetBodyArmor(new platemail(MAKE_MATERIAL(VALPURIUM)));
-}
-
-void priest::CreateInitialEquipment()
-{
-  SetMainWielded(new meleeweapon(SPIKEDMACE, MAKE_MATERIAL(MITHRIL)));
-  SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(MITHRIL)));
-}
-
 void oree::CreateInitialEquipment()
 {
-  SetBodyArmor(new goldeneagleshirt);
+  humanoid::CreateInitialEquipment();
   can* Can = new can(0, false);
   Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330));
   GetStack()->FastAddItem(Can);
 }
-
-void darkknight::CreateInitialEquipment()
-{
-  if(RAND() % 20)
-    SetMainWielded(RAND() % 5 ? (item*)(new meleeweapon(LONGSWORD)) : RAND() % 20 ? (item*)(new meleeweapon(TWOHANDEDSWORD)) : (item*)(new meleeweapon(CURVEDTWOHANDEDSWORD)));
-  else
-    {
-      meleeweapon* DoomsDay = new meleeweapon(LONGSWORD, false);
-      DoomsDay->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
-      SetMainWielded(DoomsDay);
-    }
-
-  SetBodyArmor(new bodyarmor(CHAINMAIL, RAND() % 5 ? MAKE_MATERIAL(IRON) : MAKE_MATERIAL(MITHRIL)));
-}
-
-void skeleton::CreateInitialEquipment()
-{
-  SetMainWielded(RAND() % 10 ? RAND() % 3 ? (item*)new meleeweapon(AXE) : (item*)new pickaxe : (item*)new meleeweapon(SPIKEDMACE));
-}
-
-void goblin::CreateInitialEquipment()
-{
-  SetMainWielded(RAND() % 3 ? (item*)new meleeweapon(SPEAR) : (item*)new meleeweapon(POLEAXE));
-}
-
-void guard::CreateInitialEquipment()
-{
-  SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
-  SetBodyArmor(new bodyarmor(CHAINMAIL));
-
-  GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
-  //GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(500);
-}*/
 
 bool ennerbeast::Hit(character*)
 {
@@ -454,20 +409,6 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 
   return Something;
 }
-
-/*void shopkeeper::CreateInitialEquipment()
-{
-  SetMainWielded(new pickaxe(MAKE_MATERIAL(MITHRIL)));
-  SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(MITHRIL)));
-
-  GetCategoryWeaponSkill(AXES)->AddHit(5000);
-  GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(5000);
-}
-
-void farmer::CreateInitialEquipment()
-{
-  SetMainWielded(new meleeweapon(AXE));
-}*/
 
 void petrus::BeTalkedTo(character* Talker)
 {
@@ -893,12 +834,11 @@ void communist::BeTalkedTo(character* Talker)
     }
 }
 
-/*void communist::CreateInitialEquipment()
+void communist::CreateInitialEquipment()
 {
-  SetMainWielded(new meleeweapon(SPIKEDMACE, MAKE_MATERIAL(IRON)));
-  SetBodyArmor(new platemail(0, MAKE_MATERIAL(IRON)));
+  humanoid::CreateInitialEquipment();
   GetStack()->FastAddItem(new fiftymillionroubles);
-}*/
+}
 
 void hunter::BeTalkedTo(character* Talker)
 {
@@ -929,11 +869,6 @@ void hunter::BeTalkedTo(character* Talker)
       break;
     }
 }
-
-/*void hunter::CreateInitialEquipment()
-{
-  SetMainWielded(new meleeweapon(SPEAR));
-}*/
 
 void slave::BeTalkedTo(character* Talker)
 {
@@ -1251,11 +1186,6 @@ void librarian::BeTalkedTo(character* Talker)
     }
 }
 
-/*void femaleslave::CreateInitialEquipment()
-{
-  SetMainWielded(new palmbranch);
-}*/
-
 bool communist::MoveRandomly()
 {
   switch(RAND() % 1000)
@@ -1313,24 +1243,16 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
     }
 }
 
-/*void mistress::CreateInitialEquipment()
+void mistress::CreateInitialEquipment()
 {
-  SetMainWielded(new whip);
+  humanoid::CreateInitialEquipment();
 
   if(!(RAND() % 10))
     GetStack()->FastAddItem(new banana);
 
   if(!(RAND() % 100))
     GetStack()->FastAddItem(new holybanana);
-
-  GetCategoryWeaponSkill(WHIPS)->AddHit(10000);
-  GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(10000);
 }
-
-void kobold::CreateInitialEquipment()
-{
-  SetMainWielded(new meleeweapon(SPEAR));
-}*/
 
 void mistress::BeTalkedTo(character* Talker)
 {
@@ -1413,11 +1335,13 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
     }
 }
 
-/*void kamikazedwarf::CreateInitialEquipment()
+void kamikazedwarf::CreateInitialEquipment()
 {
-  SetMainWielded(new holybook(GetConfig()));
+  SetRightWielded(new holybook(GetConfig()));
   GetStack()->FastAddItem(new backpack);
-}*/
+  GetCategoryWeaponSkill(UNCATEGORIZED)->AddHit(100);
+  GetCurrentRightSingleWeaponSkill()->AddHit(100);
+}
 
 bool kamikazedwarf::Hit(character* Enemy)
 {
@@ -2571,30 +2495,18 @@ void nonhumanoid::UnarmedHit(character* Enemy)
 
 /* Returns the average number of APs required to kill Enemy */
 
-float humanoid::GetEffectivityAgainst(const character* Enemy, bool UseMaxHP) const
+float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 {
   float Effectivity = 0;
   ushort AttackStyles = 0;
 
   if(IsUsingArms())
     {
-      float RightEffectivity, LeftEffectivity;
-      bool RightArmUsed = false, LeftArmUsed = false;
-
       if(GetRightArm() && GetRightArm()->GetDamage())
-	{
-	  Effectivity = RightEffectivity = Enemy->GetDurability(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), UseMaxHP) * GetRightArm()->GetAPCost();
-	  RightArmUsed = true;
-	}
+	Effectivity += 1 / (Enemy->GetDurability(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), UseMaxHP) * GetRightArm()->GetAPCost());
 
       if(GetLeftArm() && GetLeftArm()->GetDamage())
-	{
-	  Effectivity = LeftEffectivity = Enemy->GetDurability(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), UseMaxHP) * GetLeftArm()->GetAPCost();
-	  LeftArmUsed = true;
-	}
-
-      if(RightArmUsed && LeftArmUsed)
-	Effectivity = 1 / (1 / RightEffectivity + 1 / LeftEffectivity);
+	Effectivity += 1 / (Enemy->GetDurability(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), UseMaxHP) * GetLeftArm()->GetAPCost());
 
       ++AttackStyles;
     }
@@ -2602,45 +2514,45 @@ float humanoid::GetEffectivityAgainst(const character* Enemy, bool UseMaxHP) con
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Effectivity += Enemy->GetDurability(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), UseMaxHP) * KickLeg->GetKickAPCost();
+      Effectivity += 1 / (Enemy->GetDurability(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), UseMaxHP) * KickLeg->GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += Enemy->GetDurability(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), UseMaxHP) * GetHead()->GetBiteAPCost();
+      Effectivity += 1 / (Enemy->GetDurability(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), UseMaxHP) * GetHead()->GetBiteAPCost());
       ++AttackStyles;
     }
 
-  return AttackStyles ? Effectivity / AttackStyles : 1000;
+  return AttackStyles ? AttackStyles / Effectivity : 10000000;
 }
 
 /* Returns the average number of APs required to kill Enemy */
 
-float nonhumanoid::GetEffectivityAgainst(const character* Enemy, bool UseMaxHP) const
+float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 {
   float Effectivity = 0;
   ushort AttackStyles = 0;
 
   if(IsUsingArms())
     {
-      Effectivity += Enemy->GetDurability(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), UseMaxHP) * GetUnarmedAPCost();
+      Effectivity += 1 / (Enemy->GetDurability(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), UseMaxHP) * GetUnarmedAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      Effectivity += Enemy->GetDurability(ushort(GetKickDamage()), GetKickToHitValue(), UseMaxHP) * GetKickAPCost();
+      Effectivity += 1 / (Enemy->GetDurability(ushort(GetKickDamage()), GetKickToHitValue(), UseMaxHP) * GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += Enemy->GetDurability(ushort(GetBiteDamage()), GetBiteToHitValue(), UseMaxHP) * GetBiteAPCost();
+      Effectivity += 1 / (Enemy->GetDurability(ushort(GetBiteDamage()), GetBiteToHitValue(), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
 
-  return Effectivity / AttackStyles;
+  return AttackStyles / Effectivity;
 }
 
 void nonhumanoid::ApplyExperience(bool Edited)
@@ -3661,4 +3573,34 @@ void humanoid::CreateInitialEquipment()
 
   if(CurrentLeftSingleWeaponSkill)
     CurrentLeftSingleWeaponSkill->AddHit(GetLeftSingleWeaponSkillHits());
+}
+
+void orc::BeTalkedTo(character* Talker)
+{
+  if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
+    ;
+  else
+    ;
+}
+
+void cossack::BeTalkedTo(character* Talker)
+{
+  if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    {
+      return;
+    }
+
+  static bool Said[4];
+
+  switch(RandomizeReply(4, Said))
+    {
+    case 0:
+      break;
+    case 1:
+      break;
+    case 2:
+      break;
+    case 3:
+      break;
+    }
 }

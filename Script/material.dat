@@ -833,4 +833,10 @@ flesh
 		PriceModifier = 600;
 		NameStem = "snake flesh";
 	}
+
+	Config ORCFLESH;
+	{
+		PriceModifier = 600;
+		NameStem = "orc flesh";
+	}
 }

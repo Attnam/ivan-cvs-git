@@ -654,7 +654,7 @@ class character : public entity, public id
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
   virtual float GetRelativeDanger(const character*, bool = false) const;
   virtual float GetDurability(ushort, float, bool) const;
-  virtual float GetEffectivityAgainst(const character*, bool) const = 0;
+  virtual float GetTimeToKill(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
   float GetDangerModifier() const;
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
