@@ -26,6 +26,7 @@ trap::trap(donothing) : entity(HAS_BE), Next(0)
 
 void trap::Save(outputfile& SaveFile) const
 {
+  SaveFile << (ushort)GetType();
 }
 
 void trap::Load(inputfile& SaveFile)
@@ -56,4 +57,11 @@ inputfile& operator>>(inputfile& SaveFile, trapdata& Data)
 {
   SaveFile >> Data.TrapID >> Data.VictimID >> Data.BodyParts;
   return SaveFile;
+}
+
+trap* trapprototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  trap* Trap = Cloner(LOAD);
+  Trap->Load(SaveFile);
+  return Trap;
 }

@@ -147,6 +147,7 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool SpecialBiteEffect(character*, vector2d, int, int, bool);
+  virtual void GetAICommand();
 );
 
 class CHARACTER

@@ -20,6 +20,8 @@
 trap::prototype** protocontainer<trap>::ProtoData;
 valuemap protocontainer<trap>::CodeNameMap;
 int protocontainer<trap>::Size;
+trapprototype trap_ProtoType(0, "trap");
+const trapprototype* trap::GetProtoType() const { return &trap_ProtoType; }
 
 #include "traps.h"
 

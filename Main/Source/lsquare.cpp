@@ -39,7 +39,7 @@ bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() ||
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos)
 : square(LevelUnder, Pos),
-  Fluid(0), Smoke(0), Rain(0),
+  Fluid(0), Smoke(0), Rain(0), Trap(0),
   GLTerrain(0), OLTerrain(0),
   Memorized(0), FowMemorized(0),
   Engraved(0),
@@ -85,6 +85,13 @@ lsquare::~lsquare()
     {
       rain* ToDel = R;
       R = R->Next;
+      delete ToDel;
+    }
+
+  for(trap* T = Trap; T;)
+    {
+      trap* ToDel = T;
+      T = T->Next;
       delete ToDel;
     }
 }
@@ -197,6 +204,9 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance
     DrawStacks(Bitmap, Pos, Luminance, RealDraw);
 
   int Partners = BorderPartnerInfo >> 24;
+
+  for(const trap* T = Trap; T; T = T->Next)
+    T->Draw(Bitmap, Pos, Luminance);
 
   for(int c = 0; c < Partners; ++c)
     BorderPartnerTerrain[c]->Draw(Bitmap, Pos, Luminance, 8 - (BorderPartnerInfo >> ((c << 1) + c) & 7), RealDraw);
@@ -525,9 +535,10 @@ void lsquare::Save(outputfile& SaveFile) const
   SaveLinkedList(SaveFile, Fluid);
   SaveLinkedList(SaveFile, Smoke);
   SaveLinkedList(SaveFile, Rain);
+  SaveLinkedList(SaveFile, Trap);
 }
 
-template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove);
+//template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove);
 
 void lsquare::Load(inputfile& SaveFile)
 {
@@ -546,6 +557,7 @@ void lsquare::Load(inputfile& SaveFile)
   LoadLinkedList(SaveFile, Fluid);
   LoadLinkedList(SaveFile, Smoke);
   LoadLinkedList(SaveFile, Rain);
+  LoadLinkedList(SaveFile, Trap);
   CalculateIsTransparent();
 
   if(Memorized)
@@ -695,6 +707,8 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	  if(FluidIsVisible())
 	    DisplayFluidInfo(MemorizedDescription);
 
+	  DisplayTrapInfo(MemorizedDescription);
+
 	  if(Cheat)
 	    MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << ")";
 	}
@@ -705,6 +719,8 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 
 	  if(FluidIsVisible())
 	    DisplayFluidInfo(MemorizedDescription);
+
+	  DisplayTrapInfo(MemorizedDescription);
 	}
       else
 	MemorizedDescription = CONST_S("darkness");
@@ -979,6 +995,20 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 	  OLTerrain->BeDestroyed();
 	}
     }
+
+  std::vector<trap*> TrapVector;
+
+  for(const trap* T = Trap; T; T = T->Next)
+    TrapVector.push_back(Trap);
+
+  for(uint c = 0; c < TrapVector.size(); ++c)
+    if(TrapVector[c]->Exists())
+      {
+	TrapVector[c]->StepOnEffect(Stepper);
+
+	if(!Stepper->IsEnabled())
+	  return;
+      }
 
   if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);
@@ -2468,7 +2498,6 @@ bool lsquare::Necromancy(const beamdata& Beam)
   return GetStack()->Necromancy(Beam.Owner);
 }
 
-
 // Returns 0 if fails
 
 lsquare* lsquare::GetRandomAdjacentSquare() const
@@ -2522,4 +2551,43 @@ void lsquare::SignalPossibleTransparencyChange()
       if(LastSeen == game::GetLOSTick())
 	game::SendLOSUpdateRequest();
     }
+}
+
+void lsquare::RemoveTrap(trap* ToRemove)
+{
+  trap*& T = ListFind(Trap, pointercomparer<trap>(ToRemove));
+  T = T->Next;
+  SendNewDrawRequest();
+  SendMemorizedUpdateRequest();
+}
+
+struct trapcomparer
+{
+  trapcomparer(int Type) : Type(Type) { }
+  bool operator()(const trap* T) const { return T->GetType() == Type; }
+  int Type;
+};
+
+bool lsquare::AddTrap(trap* ToBeAdded)
+{
+  trap*& T = ListFind(Trap, trapcomparer(ToBeAdded->GetType()));
+
+  if(T)
+    {
+      delete ToBeAdded;
+      return false;
+    }
+  else
+    T = ToBeAdded;
+
+  ToBeAdded->SetLSquareUnder(this);
+  SendNewDrawRequest();
+  SendMemorizedUpdateRequest();
+  return true;
+}
+
+void lsquare::DisplayTrapInfo(festring& Msg) const
+{
+  for(const trap* T = Trap; T; T = T->Next)
+    T->AddDescription(Msg);
 }

@@ -260,6 +260,9 @@ class lsquare : public square
   bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
   lsquare* GetRandomAdjacentSquare() const;
   void SignalPossibleTransparencyChange();
+  bool AddTrap(trap*);
+  void RemoveTrap(trap*);
+  void DisplayTrapInfo(festring&) const;
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);

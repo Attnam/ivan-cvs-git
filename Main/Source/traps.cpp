@@ -25,7 +25,7 @@ void web::VirtualConstructor(bool)
 bool web::TryToUnStick(character* Victim, vector2d)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = GetTrapBaseModifier() * (Max(Victim->GetAttribute(DEXTERITY), 1) + Max(Victim->GetAttribute(ARM_STRENGTH),1));
+  int Modifier = GetTrapBaseModifier() * Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(Modifier <= 1 || !RAND_N(Modifier))
     {
@@ -45,7 +45,8 @@ bool web::TryToUnStick(character* Victim, vector2d)
     {
       Victim->RemoveTrap(TrapID);
       TrapData.VictimID = 0;
-      //      GetLSquareUnder()->RemoveTrap(this);
+      GetLSquareUnder()->RemoveTrap(this);
+      SendToHell();
 
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You are tear the web down.");
@@ -56,11 +57,12 @@ bool web::TryToUnStick(character* Victim, vector2d)
       return true;
     }
 
-  Modifier = GetTrapBaseModifier() * Max(Victim->GetAttribute(DEXTERITY) * 3 / 10, 2);
+  Modifier = GetTrapBaseModifier() * Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH) * 3 / 20, 2);
 
   if(Victim->CanChoke() && !RAND_N(Modifier << 2))
     {
-      Victim->LoseConsciousness(250 + RAND_N(250));      
+      Victim->LoseConsciousness(250 + RAND_N(250));
+
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to choke yourself on the web.");
       else if(Victim->CanBeSeenByPlayer())
@@ -96,13 +98,14 @@ bool web::TryToUnStick(character* Victim, vector2d)
 void web::Save(outputfile& SaveFile) const
 {
   trap::Save(SaveFile);
-  SaveFile << Strength << Picture;
+  SaveFile << TrapData << Strength << Picture;
 }
 
 void web::Load(inputfile& SaveFile)
 {
   trap::Load(SaveFile);
-  SaveFile >> Strength >> Picture;
+  SaveFile >> TrapData >> Strength >> Picture;
+  game::AddTrapID(this, TrapData.TrapID);
 }
 
 void web::StepOnEffect(character* Stepper)
@@ -120,10 +123,16 @@ void web::StepOnEffect(character* Stepper)
     ADD_MESSAGE("You try to step through the web but your %s sticks to it.", Stepper->GetBodyPartName(StepperBodyPart).CStr());
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s gets stuck to the web.", Stepper->CHAR_NAME(DEFINITE));
+}
 
-  if(Stepper->IsPlayer())
-    game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
+void web::AddDescription(festring& Msg) const
+{
+  Msg << "A web envelops the square.";
+}
 
+void web::AddTrapName(festring& String, int) const
+{
+  String << "a spider web";
 }
 
 void web::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const

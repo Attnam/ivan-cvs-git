@@ -2218,3 +2218,66 @@ bool largecreature::PartCanMoveOn(const lsquare* LSquare) const
 
   return false;
 }
+
+void spider::GetAICommand()
+{
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  character* NearestChar = 0;
+  long NearestDistance = 0x7FFFFFFF;
+  vector2d Pos = GetPos();
+  int Hostiles = 0;
+
+  for(int c = 0; c < game::GetTeams(); ++c)
+    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin();
+	  i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
+	  {
+	    long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	    ++Hostiles;
+
+	    if((ThisDistance < NearestDistance
+	     || (ThisDistance == NearestDistance && !(RAND() % 3)))
+	    && (*i)->CanBeSeenBy(this, false, IsGoingSomeWhere())
+	    && (!IsGoingSomeWhere() || HasClearRouteTo((*i)->GetPos())))
+	      {
+		NearestChar = *i;
+		NearestDistance = ThisDistance;
+	      }
+	  }
+
+  if(Hostiles && !RAND_N(Max(20 / Hostiles, 4)))
+    {
+      web* Web = new web;
+      Web->SetStrength(10);
+
+      if(GetLSquareUnder()->AddTrap(Web))
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s spins a web.", CHAR_NAME(DEFINITE));
+
+	  EditAP(-1000);
+	  return;
+	}
+    }
+
+  if(NearestChar)
+    {
+      if(!NearestChar->IsStuck())
+	SetGoingTo(NearestChar->GetPos());
+      else
+	SetGoingTo((Pos << 1) - NearestChar->GetPos());
+
+      if(MoveTowardsTarget(true))
+	return;
+    }
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}

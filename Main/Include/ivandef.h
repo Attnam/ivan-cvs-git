@@ -823,4 +823,6 @@ struct databasebase { int Config; };
 #define MAY_CHANGE_HPS 1
 #define CHECK_USABILITY 2
 
+#define ITEM_TRAP 0x8000
+
 #endif

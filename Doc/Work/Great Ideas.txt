@@ -104,3 +104,4 @@ Languages.
 Moksa state.
 Smells that could be used for tracking monsters.
 Leprosy asylums.
+Breaking TryMove() to parts.

@@ -1083,7 +1083,7 @@ beartrap::beartrap(const beartrap& Trap) : item(Trap), Team(Trap.Team), Discover
 bool beartrap::TryToUnStick(character* Victim, vector2d)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = GetBaseTrapDamage() * 20 / Max(Victim->GetAttribute(DEXTERITY), 1);
+  int Modifier = GetBaseTrapDamage() * 40 / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(Modifier <= 1 || !RAND_N(Modifier))
     {
@@ -1114,7 +1114,7 @@ bool beartrap::TryToUnStick(character* Victim, vector2d)
       return true;
     }
 
-  Modifier = Max(Victim->GetAttribute(DEXTERITY) * 3 / 10, 2);
+  Modifier = Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH) * 3 / 20, 2);
 
   if(!RAND_N(Modifier))
     {

@@ -21,6 +21,7 @@
 class trap;
 class lsquare;
 class character;
+class bitmap;
 
 struct trapdata
 {
@@ -67,6 +68,11 @@ class trap : public entity
   virtual bool IsOnGround() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  int GetType() const { return GetProtoType()->GetIndex(); }
+  virtual void AddDescription(festring&) const = 0;
+  virtual const prototype* GetProtoType() const;
+  virtual void StepOnEffect(character*) = 0;
+  virtual void Draw(bitmap*, vector2d, color24) const = 0;
  protected:
   virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;

@@ -564,6 +564,7 @@ class ITEM
   virtual void UnStick() { TrapData.VictimID = 0; }
   virtual bool TryToUnStick(character*, vector2d);
   virtual void RemoveFromSlot();
+  virtual int GetTrapType() const { return GetType() | ITEM_TRAP; }
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);

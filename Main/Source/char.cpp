@@ -1200,10 +1200,10 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
 			Discard = true;
 		      }
 
-		      if(Discard)
-			delete V[c];
+		    if(Discard)
+		      delete V[c];
 
-		      V.erase(V.begin() + c--);
+		    V.erase(V.begin() + c--);
 		  }
 	    }
 

@@ -45,6 +45,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "lterras.h"
 #include "save.h"
 #include "database.h"
+#include "traps.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

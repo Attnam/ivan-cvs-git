@@ -391,6 +391,20 @@ SOURCE=.\Main\Source\terra.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\trap.cpp
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\traps.cpp
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\trapset.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\wmapset.cpp
 # End Source File
 # Begin Source File
@@ -596,6 +610,14 @@ SOURCE=.\Main\Include\team.h
 # Begin Source File
 
 SOURCE=.\Main\Include\terra.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\trap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\traps.h
 # End Source File
 # Begin Source File
 
