@@ -360,4 +360,3 @@ Scoll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
 Lookmode should show whether a creature is panicked.
-

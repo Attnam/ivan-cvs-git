@@ -101,8 +101,8 @@
 #define TRANSSEXUAL 3
 
 /* The maximum bodyparts a character can have */
-#define MAX_BODYPARTS 7
 
+#define MAX_BODYPARTS 7
 #define HUMANOID_BODYPARTS 7
 
 #define TORSO_INDEX 0
@@ -265,6 +265,7 @@
 #define EFFECT_ANTIDOTE 9
 
 /* CEM = Consume End Message */
+
 #define CEM_NOTHING 0
 #define CEM_SCHOOL_FOOD 1
 #define CEM_BONE 2
@@ -276,6 +277,7 @@
 #define CEM_ANTIDOTE 8
 
 /* HM = Hit Message */
+
 #define HM_NOTHING 0
 #define HM_SCHOOL_FOOD 1
 #define HM_FROG_FLESH 2
@@ -550,7 +552,7 @@
 /* How many turns it takes for a angel to attach a bodypart again */
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
-/* Hard-coded Teams */
+/* Hard-coded teams */
 #define MONSTER_TEAM 1
 #define PLAYER_TEAM 0
 
@@ -583,7 +585,8 @@
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
 
-/* gods 0 = none*/
+/* Gods, 0 == none */
+
 #define VALPURI 1
 #define LEGIFER 2
 #define ATAVUS 3
@@ -596,9 +599,10 @@
 #define CLEPTIA 10
 #define NEFAS 11
 #define SCABIES 12
-#define INFUSCRO 13
+#define INFUSCOR 13
 #define CRUENTUS 14
-#define MORTIFIER 15
+#define MORTIFER 15
 
 #define MAX_PRICE 4294967295UL
+
 #endif

@@ -137,7 +137,7 @@ Solving the Elpuri Cave distance problem.
 Stats of summoned bodyparts must be made more intelligent.
 Ergonomification of corpse consumption.
 //RDAM and similiar unclear attributes should be moved to an own screen.
-?Snake flesh should be poisonous.
+//?Snake flesh should be poisonous.
 ?Some special effect for daemon flesh.
 Checking throw balance.
 Pick-axe available in the lowest levels.
@@ -159,3 +159,4 @@ Tunnel boss.
 ?Something special to tunnel level 2.
 ?Penalty for eating spoiled food.
 Pets shouldn't eat the player's bodyparts.
+?Village duelist.

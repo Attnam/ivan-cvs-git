@@ -406,17 +406,17 @@ class character : public entity, public id
   virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
-  virtual DATA_BASE_VALUE(ushort, DefaultArmStrength);
-  virtual DATA_BASE_VALUE(ushort, DefaultLegStrength);
-  virtual DATA_BASE_VALUE(ushort, DefaultDexterity);
-  virtual DATA_BASE_VALUE(ushort, DefaultAgility);
-  virtual DATA_BASE_VALUE(ushort, DefaultEndurance);
-  virtual DATA_BASE_VALUE(ushort, DefaultPerception);
-  virtual DATA_BASE_VALUE(ushort, DefaultIntelligence);
-  virtual DATA_BASE_VALUE(ushort, DefaultWisdom);
-  virtual DATA_BASE_VALUE(ushort, DefaultCharisma);
-  virtual DATA_BASE_VALUE(ushort, DefaultMana);
-  virtual DATA_BASE_VALUE(ulong, DefaultMoney);
+  DATA_BASE_VALUE(ushort, DefaultArmStrength);
+  DATA_BASE_VALUE(ushort, DefaultLegStrength);
+  DATA_BASE_VALUE(ushort, DefaultDexterity);
+  DATA_BASE_VALUE(ushort, DefaultAgility);
+  DATA_BASE_VALUE(ushort, DefaultEndurance);
+  DATA_BASE_VALUE(ushort, DefaultPerception);
+  DATA_BASE_VALUE(ushort, DefaultIntelligence);
+  DATA_BASE_VALUE(ushort, DefaultWisdom);
+  DATA_BASE_VALUE(ushort, DefaultCharisma);
+  DATA_BASE_VALUE(ushort, DefaultMana);
+  DATA_BASE_VALUE(ulong, DefaultMoney);
   virtual DATA_BASE_VALUE(ushort, TotalSize);
   virtual DATA_BASE_BOOL(CanRead);
   virtual DATA_BASE_BOOL(IsCharmable);
@@ -474,13 +474,13 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(uchar, LeftLegBonePercentile);
   virtual DATA_BASE_BOOL(IsNameable);
   virtual DATA_BASE_VALUE(ulong, BaseEmitation);
-  virtual DATA_BASE_VALUE(const std::string&, Article);
-  virtual DATA_BASE_VALUE(const std::string&, Adjective);
-  virtual DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
-  virtual DATA_BASE_VALUE(const std::string&, NameSingular);
-  virtual DATA_BASE_VALUE(const std::string&, NamePlural);
-  virtual DATA_BASE_VALUE(const std::string&, PostFix);
-  virtual DATA_BASE_VALUE(uchar, ArticleMode);
+  DATA_BASE_VALUE(const std::string&, Article);
+  DATA_BASE_VALUE(const std::string&, Adjective);
+  DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
+  DATA_BASE_VALUE(const std::string&, NameSingular);
+  DATA_BASE_VALUE(const std::string&, NamePlural);
+  DATA_BASE_VALUE(const std::string&, PostFix);
+  DATA_BASE_VALUE(uchar, ArticleMode);
   virtual DATA_BASE_BOOL(IsPolymorphable);
   virtual DATA_BASE_VALUE(ulong, BaseUnarmedStrength);
   virtual DATA_BASE_VALUE(ulong, BaseBiteStrength);
@@ -493,11 +493,12 @@ class character : public entity, public id
   virtual DATA_BASE_BOOL(CanBeWished);
   virtual DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
   virtual DATA_BASE_BOOL(CreateSolidMaterialConfigurations);
-  virtual DATA_BASE_VALUE(short, AttributeBonus);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, KnownCWeaponSkills);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, CWeaponSkillHits);
-  virtual DATA_BASE_VALUE(ushort, RightSWeaponSkillHits);
-  virtual DATA_BASE_VALUE(ushort, LeftSWeaponSkillHits);
+  DATA_BASE_VALUE(short, AttributeBonus);
+  DATA_BASE_VALUE(const std::vector<long>&, KnownCWeaponSkills);
+  DATA_BASE_VALUE(const std::vector<long>&, CWeaponSkillHits);
+  DATA_BASE_VALUE(ushort, RightSWeaponSkillHits);
+  DATA_BASE_VALUE(ushort, LeftSWeaponSkillHits);
+  virtual DATA_BASE_VALUE(uchar, PanicLevel);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -751,7 +752,6 @@ class character : public entity, public id
   virtual std::string BiteNoun() const { return "attack"; }
   virtual bool AttackIsBlockable(uchar) const { return true; }
   virtual uchar GetSpecialBodyPartFlags(ushort) const { return ST_NORMAL; }
-  virtual DATA_BASE_VALUE(uchar, PanicLevel);
   stack* Stack;
   long NP, AP;
   bool Player;

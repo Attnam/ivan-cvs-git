@@ -787,6 +787,7 @@ class ABSTRACT_ITEM
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
+  virtual bool DamageArmor(character*, ushort, uchar) { return false; }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -846,6 +847,7 @@ class ITEM
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
   void AddBiteInfo(felist&) const;
+  virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
@@ -896,6 +898,7 @@ class ITEM
   virtual ushort GetEquipmentSlots() const { return 3; }
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalVolumeAndWeightChange();
+  virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -970,6 +973,7 @@ class ABSTRACT_ITEM
   void AddBattleInfo(felist&) const;
   void AddWieldedInfo(felist&) const;
   void AddUnarmedInfo(felist&) const;
+  virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -1022,6 +1026,7 @@ class ITEM
  public:
   virtual ushort GetTotalResistance(uchar) const;
   virtual uchar GetBodyPartIndex() const { return GROIN_INDEX; }
+  virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_GROIN; }
 );
@@ -1069,6 +1074,7 @@ class ABSTRACT_ITEM
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
   void AddKickInfo(felist&) const;
+  virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -1207,8 +1213,8 @@ class ITEM
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
  protected:
-  ulong LastUsed;
   virtual void VirtualConstructor(bool);
+  ulong LastUsed;
 );
 
 class ITEM

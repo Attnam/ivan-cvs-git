@@ -135,9 +135,6 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word = SaveFile.ReadWord();
 
-  if(Word == ",")
-    int esko = 2;
-
   if(Word == "=" || Word == ",")
     Word = SaveFile.ReadWord();
 
@@ -202,64 +199,44 @@ template <class type> const std::string& contentscripttemplate<type>::GetClassId
   return protocontainer<type>::GetMainClassId();
 }
 
-template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount, ushort SpecialFlags, uchar Chance) const
+template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort SpecialFlags) const
 {
+  type* Instance;
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
-  Instance.resize(Amount, 0);
 
   if(!Config && Proto->IsAbstract())
     {
       const typename type::databasemap& Config = Proto->GetConfig();
-
-      for(ulong c = 0; c < Amount; ++c)
-	if(Chance >= 100 || Chance > RAND() % 100)
-	  {
-	    ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
-
-	    for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	      if(!ChosenConfig--)
-		{
-		  Instance[c] = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
-		  break;
-		}
-	  }
-	else
-	  Instance[c] = 0;
+      ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
+      typename type::databasemap::const_iterator i;
+      for(i = Config.begin(); ChosenConfig; ++i, --ChosenConfig);
+      Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
     }
   else
-    {
-      for(ulong c = 0; c < Amount; ++c)
-	if(Chance >= 100 || Chance > RAND() % 100)
-	  Instance[c] = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
-	else
-	  Instance[c] = 0;
-    }
+    Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
 
   if(GetParameters(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetParameters(*GetParameters());
+    Instance->SetParameters(*GetParameters());
 
   if(GetMainMaterial(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+    Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(GetSecondaryMaterial(false) && Instance[0]->HasSecondaryMaterial())
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+  if(GetSecondaryMaterial(false) && Instance->HasSecondaryMaterial())
+    Instance->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(GetContainedMaterial(false) && Instance[0]->HasContainedMaterial())
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+  if(GetContainedMaterial(false) && Instance->HasContainedMaterial())
+    Instance->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->UpdatePictures();
+    Instance->UpdatePictures();
+
+  return Instance;
 }
+
+template character* contentscripttemplate<character>::BasicInstantiate(ushort) const;
+template item* contentscripttemplate<item>::BasicInstantiate(ushort) const;
+template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(ushort) const;
+template olterrain* contentscripttemplate<olterrain>::BasicInstantiate(ushort) const;
 
 template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
 {
@@ -273,36 +250,18 @@ datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
   return contentscripttemplate<character>::GetData(Identifier);
 }
 
-void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount, ushort SpecialFlags) const
-{
-  if(Random)
-    ABORT("Random monsters aren't yet supported!");
-
-  contentscripttemplate<character>::BasicInstantiate(Instance, Amount, SpecialFlags);
-
-  if(GetTeam(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
-
-  if(GetInventory(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->AddToInventory(*GetInventory(), SpecialFlags);
-
-  for(ulong c = 0; c < Amount; ++c)
-    if(Instance[c])
-      Instance[c]->RestoreHP();
-}
-
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 {
-  if(!IsValid())
-    return 0;
+  character* Instance = contentscripttemplate<character>::BasicInstantiate(SpecialFlags);
 
-  std::vector<character*> Instance;
-  Instantiate(Instance, 1, SpecialFlags);
-  return Instance[0];
+  if(GetTeam(false))
+    Instance->SetTeam(game::GetTeam(*GetTeam()));
+
+  if(GetInventory(false))
+    Instance->AddToInventory(*GetInventory(), SpecialFlags);
+
+  Instance->RestoreHP();
+  return Instance;
 }
 
 datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
@@ -319,73 +278,36 @@ datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
   return contentscripttemplate<item>::GetData(Identifier);
 }
 
-void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount, ushort SpecialFlags) const
+item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 {
-  uchar Chance = GetChance(false) ? *GetChance() : 100;
+  if(GetChance(false) && *GetChance() <= RAND() % 100)
+    return 0;
+
+  item* Instance;
 
   if(Random)
     {
-      Instance.resize(Amount, 0);
       ulong MinPrice = GetMinPrice(false) ? *GetMinPrice() : 0;
       ulong MaxPrice = GetMaxPrice(false) ? *GetMaxPrice() : MAX_PRICE;
       ulong Category = GetCategory(false) ? *GetCategory() : ANY_CATEGORY;
-
-      for(ulong c = 0; c < Amount; ++c)
-	if(Chance >= 100 || Chance > RAND() % 100)
-	  Instance[c] = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
-	else
-	  Instance[c] = 0;
+      Instance = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
     }
   else
-    contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags, Chance);
+    Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
 
   if(GetTeam(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetTeam(*GetTeam());
+    Instance->SetTeam(*GetTeam());
 
   if(GetActive(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetIsActive(*GetActive());
+    Instance->SetIsActive(*GetActive());
 
   if(GetEnchantment(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetEnchantment(*GetEnchantment());
+    Instance->SetEnchantment(*GetEnchantment());
 
   if(GetItemsInside(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->AddItemsInside(*GetItemsInside(), SpecialFlags);
-}
+    Instance->AddItemsInside(*GetItemsInside(), SpecialFlags);
 
-item* contentscript<item>::Instantiate(ushort SpecialFlags) const
-{
-  if(!IsValid())
-    return 0;
-
-  std::vector<item*> Instance;
-  Instantiate(Instance, 1, SpecialFlags);
-  return Instance[0];
-}
-
-void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
-{
-  if(Random)
-    ABORT("Random GroundTerrains aren't yet supported!");
-
-  contentscripttemplate<glterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
-}
-
-glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
-{
-  if(!IsValid())
-    return 0;
-
-  std::vector<glterrain*> Instance;
-  Instantiate(Instance, 1, SpecialFlags);
-  return Instance[0];
+  return Instance;
 }
 
 datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
@@ -397,46 +319,26 @@ datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
   return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
-void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount, ushort SpecialFlags) const
-{
-  if(Random)
-    ABORT("Random OverTerrains aren't yet supported!");
-
-  contentscripttemplate<olterrain>::BasicInstantiate(Instance, Amount, SpecialFlags);
-
-  if(GetVisualEffects(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	{
-	  Instance[c]->SetVisualEffects(*GetVisualEffects());
-	  Instance[c]->UpdatePictures();
-	}
-
-  if(GetAttachedArea(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetAttachedArea(*GetAttachedArea());
-
-  if(GetAttachedEntry(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetAttachedEntry(*GetAttachedEntry());
-
-
-  if(GetText(false))
-    for(ulong c = 0; c < Amount; ++c)
-      if(Instance[c])
-	Instance[c]->SetText(*GetText());
-}
-
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
-  if(!IsValid())
-    return 0;
+  olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
 
-  std::vector<olterrain*> Instance;
-  Instantiate(Instance, 1, SpecialFlags);
-  return Instance[0];
+  if(GetVisualEffects(false))
+    {
+      Instance->SetVisualEffects(*GetVisualEffects());
+      Instance->UpdatePictures();
+    }
+
+  if(GetAttachedArea(false))
+    Instance->SetAttachedArea(*GetAttachedArea());
+
+  if(GetAttachedEntry(false))
+    Instance->SetAttachedEntry(*GetAttachedEntry());
+
+  if(GetText(false))
+    Instance->SetText(*GetText());
+
+  return Instance;
 }
 
 datamemberbase* squarescript::GetData(const std::string& Identifier)

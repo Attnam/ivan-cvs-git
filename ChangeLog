@@ -1,3 +1,16 @@
+October 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Item strength values are now somewhat more balanced
+	* A few gcc warnings corrected
+	* Many devirtualizations
+	* Kahvi's sign pic now uses only two m-colors, one for the text and another for the rest
+	* Optimized contentscript instantiations by removing the older optimizations that slowed
+	  them down
+	* Most inventory initializations are now script's responsibilities
+	* Armor breaks again
+	* Block capacity algorithm remade
+	* Added script support for random squares inside rooms
+
 October 29 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* fixed bug: (In Linux) push X-button, then cancel
@@ -6,7 +19,7 @@ October 29 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Spoiler warnings to all script files added
 	* Snake corpses are poisones
 	* sign (says "under construction" and IS under construction)
-	
+
 October 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* The extremely uninformative battle information of the panel removed

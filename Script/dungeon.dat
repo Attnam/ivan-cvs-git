@@ -1,8 +1,7 @@
 /* 
-NOTICE!!!
-
-This file contains SPOILERS, which might ruin your IVAN experience totally.
-*/
+ * NOTICE!!!
+ * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ */
 
 Dungeons=4;
 Teams=8;
@@ -132,16 +131,6 @@ Dungeon ELPURI_CAVE;
 			Size=7,7;
 			AltarPossible=false;
 
-			Square, Pos 3, 3;
-			{
-				Items == scrollofenchantarmor;
-			}
-
-			Square, Pos 3, 3;
-			{
-				Items == scrollofenchantweapon;
-			}
-
 			CharacterMap
 			{
 				Pos=1,1;
@@ -150,7 +139,7 @@ Dungeon ELPURI_CAVE;
 				Types
 				{
 					w=wolf;
-					W=werewolfhuman;
+					W=werewolfhuman { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
 				}
 			}
 			{
@@ -202,16 +191,6 @@ Dungeon ELPURI_CAVE;
 				Character=shopkeeper { Team=6; }
 			}
 
-			Square, Pos 2,1;
-			{
-                                Items = { 2, IRON gauntlet, IRON gauntlet; }
-			}
-
-			Square, Pos 3,2;
-			{
-                                Items = { 2, IRON boot, IRON boot; }
-			}
-
 			ItemMap
 			{
 				Pos=1,1;
@@ -219,6 +198,8 @@ Dungeon ELPURI_CAVE;
 
 				Types
 				{
+					g = { 2, IRON gauntlet, IRON gauntlet; }
+					b = { 2, IRON boot, IRON boot; }
 					a == Random { MinPrice = 100; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
 					d == Random { MinPrice = 100; MaxPrice = 10000; Category = RING|AMULET; }
 					w == Random { MinPrice = 100; MaxPrice = 10000; Category = WEAPON|SHIELD; }
@@ -228,8 +209,8 @@ Dungeon ELPURI_CAVE;
 				}
 			}
 			{
-			    ...
-			    dd.
+			    .g.
+			    ddb
 			    e.w
 			    auw
 			    .s.
@@ -1269,7 +1250,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times=10;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
@@ -1299,14 +1280,14 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 1;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_UP) { AttachedArea = 2; }
 			EntryIndex = STAIRS_UP + 1;
@@ -1316,14 +1297,14 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 2;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
 			EntryIndex = STAIRS_UP;

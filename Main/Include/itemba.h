@@ -12,7 +12,6 @@
 #include "object.h"
 #include "lsquare.h"
 #include "slot.h"
-#include "script.h"
 
 class felist;
 class bitmap;
@@ -25,6 +24,7 @@ class inputfile;
 class slot;
 class item;
 class felist;
+template <class type> class contentscript;
 template <class type> class database;
 
 struct itemdatabase
@@ -233,16 +233,14 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-  virtual DATA_BASE_VALUE(ushort, Possibility);
   virtual DATA_BASE_VALUE(vector2d, InHandsPic);
   virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
   virtual DATA_BASE_BOOL(CanBeWished);
   virtual DATA_BASE_BOOL(IsMaterialChangeable);
-  virtual DATA_BASE_VALUE(uchar, WeaponCategory);
-  virtual DATA_BASE_BOOL(IsPolymorphSpawnable);
+  DATA_BASE_VALUE(uchar, WeaponCategory);
   virtual DATA_BASE_BOOL(IsAutoInitializable);
-  virtual DATA_BASE_VALUE(ulong, Category);
+  DATA_BASE_VALUE(ulong, Category);
   virtual DATA_BASE_VALUE(ushort, SoundResistance);
   virtual DATA_BASE_VALUE(ushort, EnergyResistance);
   virtual DATA_BASE_VALUE(ushort, AcidResistance);
@@ -266,10 +264,10 @@ class item : public object
   virtual DATA_BASE_VALUE(const std::string&, NamePlural);
   virtual DATA_BASE_VALUE(const std::string&, PostFix);
   virtual DATA_BASE_VALUE(uchar, ArticleMode);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
-  virtual DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
+  DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
+  DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
+  DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
   virtual DATA_BASE_BOOL(IsPolymorphable);
   virtual DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
   virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
@@ -294,6 +292,11 @@ class item : public object
   DATA_BASE_BOOL(AffectsMana);
   virtual DATA_BASE_VALUE(char, DefaultEnchantment);
   virtual DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
+  virtual DATA_BASE_VALUE(uchar, MaxCharges);
+  virtual DATA_BASE_VALUE(uchar, MinCharges);
+  virtual DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
+  virtual DATA_BASE_VALUE(ulong, StorageVolume);
+  virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -340,9 +343,6 @@ class item : public object
   bool CarriedByPlayer() const;
   bool CarriedBy(const character*) const;
   item* DuplicateToStack(stack*);
-  virtual DATA_BASE_VALUE(uchar, MaxCharges);
-  virtual DATA_BASE_VALUE(uchar, MinCharges);
-  virtual DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break();
@@ -352,8 +352,6 @@ class item : public object
   virtual void SignalEnchantmentChange();
   virtual ushort GetBonus() const { return 100; }
   virtual void DrawContents(const character*) { }
-  virtual DATA_BASE_VALUE(ulong, StorageVolume);
-  virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
   bool IsBroken() const { return (Config & BROKEN) != 0; }
   virtual void ReceiveFluidSpill(material*) { }
   virtual char GetEnchantment() const { return 0; }

@@ -187,7 +187,7 @@ template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
   virtual const std::string& GetClassId() const;
-  void BasicInstantiate(std::vector<type*>&, ulong, ushort, uchar = 100) const;
+  type* BasicInstantiate(ushort) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
 
@@ -196,7 +196,6 @@ template <class type> class contentscript;
 class contentscript<character> : public contentscripttemplate<character>
 {
  public:
-  void Instantiate(std::vector<character*>&, ulong, ushort = 0) const;
   character* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
@@ -207,7 +206,6 @@ class contentscript<character> : public contentscripttemplate<character>
 class contentscript<item> : public contentscripttemplate<item>
 {
  public:
-  void Instantiate(std::vector<item*>&, ulong, ushort = 0) const;
   item* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
@@ -225,14 +223,12 @@ class contentscript<item> : public contentscripttemplate<item>
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
  public:
-  void Instantiate(std::vector<glterrain*>&, ulong, ushort = 0) const;
-  glterrain* Instantiate(ushort = 0) const;
+  glterrain* Instantiate(ushort SpecialFlags = 0) const { return contentscripttemplate<glterrain>::BasicInstantiate(SpecialFlags); }
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
-  void Instantiate(std::vector<olterrain*>&, ulong, ushort = 0) const;
   olterrain* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:

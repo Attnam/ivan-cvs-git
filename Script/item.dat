@@ -1,8 +1,7 @@
 /* 
-NOTICE!!!
-
-This file contains SPOILERS, which might ruin your IVAN experience totally.
-*/
+ * NOTICE!!!
+ * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ */
 
 /* Numeric item data loaded during game startup */
 
@@ -169,7 +168,7 @@ meleeweapon
 		DefaultSecondaryVolume = 45;
 		BitmapPos = 16, 336;
 		FormModifier = 100;
-		StrengthModifier = 150;
+		StrengthModifier = 100;
 		NameSingular = "sword";
 		Adjective = "long";
 		MainMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
@@ -192,9 +191,8 @@ meleeweapon
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 350;
 		DefaultSecondaryVolume = 150;
-		StrengthModifier = 250;
+		StrengthModifier = 200;
 		BitmapPos = 0, 0;
-		StrengthModifier = 150; /* Which one is correct? */
 		FormModifier = 135;
 		Adjective = "two-handed";
 		NameSingular = "sword";
@@ -219,9 +217,8 @@ meleeweapon
 		WeaponCategory = LARGE_SWORDS;
 		DefaultMainVolume = 400;
 		DefaultSecondaryVolume = 150;
-		StrengthModifier = 250;
+		StrengthModifier = 175;
 		BitmapPos = 0, 16;
-		StrengthModifier = 150; /* Which one is correct? */
 		FormModifier = 140;
 		Adjective = "two-handed";
 		NameSingular = "scimitar";
@@ -244,7 +241,7 @@ meleeweapon
 		Possibility = 1000;
 		InHandsPic = 160, 96;
 		WeaponCategory = SPEARS;
-		StrengthModifier = 75;
+		StrengthModifier = 70;
 		BitmapPos = 16, 144;
 		FormModifier = 85;
 		DefaultMainVolume = 100;
@@ -271,7 +268,7 @@ meleeweapon
 		WeaponCategory = AXES;
 		DefaultMainVolume = 200;
 		DefaultSecondaryVolume = 400;
-		StrengthModifier = 150;
+		StrengthModifier = 80;
 		BitmapPos = 16, 256;
 		FormModifier = 45;
 		NameSingular = "axe";
@@ -316,7 +313,7 @@ meleeweapon
 
 	Config MACE;
 	{
-		StrengthModifier = 400; 
+		StrengthModifier = 125; 
 		FormModifier = 65; 
 		DefaultSize = 70; 
 		DefaultMainVolume = 300;
@@ -347,7 +344,7 @@ meleeweapon
 		WeaponCategory = HAMMERS;
 		DefaultMainVolume = 250;
 		DefaultSecondaryVolume = 500;
-		StrengthModifier = 150;
+		StrengthModifier = 110;
 		BitmapPos = 48, 160;
 		FormModifier = 55;
 		NameSingular = "hammer";
@@ -375,7 +372,7 @@ meleeweapon
 		DefaultSecondaryVolume = 50;
 		BitmapPos = 48, 144;
 		FormModifier = 45;
-		StrengthModifier = 150;
+		StrengthModifier = 20;
 		NameSingular = "sickle";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
@@ -399,7 +396,7 @@ meleeweapon
 		DefaultSecondaryVolume = 25;
 		BitmapPos = 48, 256;
 		FormModifier = 70;
-		StrengthModifier = 150;
+		StrengthModifier = 50;
 		NameSingular = "dagger";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
@@ -423,7 +420,7 @@ meleeweapon
 		DefaultSecondaryVolume = 35;
 		BitmapPos = 48, 240;
 		FormModifier = 80;
-		StrengthModifier = 150;
+		StrengthModifier = 90;
 		Adjective = "short";
 		NameSingular = "sword";
 		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
@@ -446,7 +443,7 @@ banana /* materialcontainer-> */
 	WeaponCategory = CLUBS;
 	DefaultMainVolume = 40;
 	DefaultSecondaryVolume = 150;
-	StrengthModifier = 50;
+	StrengthModifier = 75;
 	Category = FOOD;
 	BitmapPos = 0, 112;
 	FormModifier = 25;
@@ -472,7 +469,7 @@ holybanana /* materialcontainer->banana-> */
 	Possibility = 5;
 	DefaultMainVolume = 400;
 	DefaultSecondaryVolume = 1500;
-	StrengthModifier = 250;
+	StrengthModifier = 150;
 	FormModifier = 100;
 	DefaultSize = 30;
 	Score = 250;
@@ -499,11 +496,10 @@ justifier /* meleeweapon-> */
 	DefaultSecondaryVolume = 100;
 	BitmapPos = 0, 64;
 	FormModifier = 300;
-	StrengthModifier = 150;
+	StrengthModifier = 300;
 	Score = 1000;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
-	StrengthModifier = 400;
 	NameSingular = "broadsword";
 	Adjective = "holy";
 	PostFix = "named Valpurus's Justifier";
@@ -525,7 +521,7 @@ justifier /* meleeweapon-> */
 
 neercseulb /* meleeweapon-> */
 {
-	StrengthModifier = 600;
+	StrengthModifier = 250;
 	FormModifier = 250;
 	DefaultSize = 100;
 	Possibility = 0;
@@ -571,7 +567,7 @@ pickaxe /* meleeweapon-> */
 	Alias == "pick-ax";
 	Roundness = 20;
 	WeaponCategory = AXES;
-	StrengthModifier = 150;
+	StrengthModifier = 40;
 	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
@@ -683,7 +679,6 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
 	BaseEmitation = rgb24(112, 112, 166);
-	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
 	StrengthModifier = 150;
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
@@ -824,7 +819,7 @@ bone
 	Possibility = 250;
 	WeaponCategory = CLUBS;
 	DefaultMainVolume = 500;
-	StrengthModifier = 100;
+	StrengthModifier = 80;
 	BitmapPos = 16, 240;
 	FormModifier = 25;
 	Category = MISC;
@@ -924,7 +919,7 @@ avatarofvalpurus
 	Price = 1000000;
 	Category = MISC;
 	DefaultMainVolume = 250;
-	StrengthModifier = 400;
+	StrengthModifier = 500;
 	BitmapPos = 0, 320;
 	FormModifier = 15;
 	NameSingular = "Avatar";
@@ -1000,7 +995,7 @@ whip /* meleeweapon-> */
 	WeaponCategory = WHIPS;
 	DefaultMainVolume = 500;
 	DefaultSecondaryVolume = 40;
-	StrengthModifier = 50;
+	StrengthModifier = 10;
 	BitmapPos = 32, 0;
 	NameSingular = "whip";
 	MainMaterialConfig = { 3, LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
@@ -1025,7 +1020,7 @@ backpack /* materialcontainer-> */
 	Category = TOOL;
 	DefaultMainVolume = 1000;
 	DefaultContainedVolume = 10000;
-	StrengthModifier = 200;
+	StrengthModifier = 250;
 	BitmapPos = 32, 16;
 	FormModifier = 10;
 	NameSingular = "backpack";
@@ -1043,7 +1038,7 @@ holybook
 	Possibility = 25; /* this is for each config */
 	Category = BOOK;
 	DefaultMainVolume = 2000;
-	StrengthModifier = 100;
+	StrengthModifier = 150;
 	BitmapPos = 32, 32;
 	FormModifier = 20;
 	Adjective = "holy";
@@ -1643,7 +1638,6 @@ itemcontainer
 	Roundness = 60;
 	BitmapPos = 48, 80;
 	CanBePiled = false;
-	StrengthModifier = 50;
 	IsAbstract = true;
 	IsPolymorphSpawnable = false;
 
@@ -1657,6 +1651,7 @@ itemcontainer
 		Price = 75;
 		Possibility = 100;
 		MaxGeneratedContainedItems = 3;
+		StrengthModifier = 100;
 	}
 
 	Config CHEST;
@@ -1668,6 +1663,7 @@ itemcontainer
 		Price = 150;
 		Possibility = 50;
 		MaxGeneratedContainedItems = 5;
+		StrengthModifier = 500;
 	}
 
 	Config LARGE_CHEST;
@@ -1680,6 +1676,7 @@ itemcontainer
 		Price = 250;
 		Possibility = 10;
 		MaxGeneratedContainedItems = 10;
+		StrengthModifier = 1000;
 	}
 	Config STRONG_BOX;
 	{
@@ -1818,7 +1815,7 @@ flamingsword /* meleeweapon-> */
 	DefaultSecondaryVolume = 45;
 	BitmapPos = 16, 336;
 	FormModifier = 100;
-	StrengthModifier = 150;
+	StrengthModifier = 100;
 	NameSingular = "sword";
 	Adjective = "flaming";
 	MainMaterialConfig =  { 3, BRONZE, IRON, MITHRIL; }
@@ -1898,7 +1895,7 @@ vermis /* meleeweapon-> */
 
 turox /* meleeweapon-> */
 {
-	StrengthModifier = 600; 
+	StrengthModifier = 150; 
 	FormModifier = 200;
 	DefaultSize = 90;
 	BitmapPos = 0, 32;
@@ -1932,7 +1929,7 @@ whipofthievery /* meleeweapon->whip-> */
 	Possibility = 10;
 	DefaultMainVolume = 1000;
 	DefaultSecondaryVolume = 50;
-	StrengthModifier = 100;
+	StrengthModifier = 30;
 	NameSingular = "whip";
 	PostFix = "of thievery";
 	MainMaterialConfig == NYMPH_HAIR;

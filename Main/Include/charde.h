@@ -320,7 +320,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMON_FLESH, Volume); }
@@ -510,7 +509,6 @@ class CHARACTER
  public:
   virtual bool MoveRandomly();
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
@@ -641,7 +639,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment(ushort);
 );
 
 class CHARACTER
@@ -870,7 +867,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment(ushort);
   virtual void GetAICommand();
 );
 

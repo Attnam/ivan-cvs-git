@@ -142,7 +142,7 @@ float item::GetWeaponStrength() const
 ushort item::GetStrengthRequirement() const
 {
   float WeightTimesSize = GetWeight() * GetSize();
-  return WeightTimesSize * WeightTimesSize / 7500000000.0f;
+  return ushort(1.25e-10f * WeightTimesSize * WeightTimesSize);
 }
 
 bool item::Apply(character* Applier)

@@ -1,8 +1,7 @@
 /* 
-NOTICE!!!
-
-This file contains SPOILERS, which might ruin your IVAN experience totally.
-*/
+ * NOTICE!!!
+ * This file contains SPOILERS, which might ruin your IVAN experience totally.
+ */
 
 /* Numeric material data loaded during game startup */
 
@@ -823,6 +822,7 @@ flesh
 	{
 		NameStem = "werewolf flesh";
 		Effect = EFFECT_LYCANTHROPY;
+		EffectStrength = 10;
 	}
 
 	Config KOBOLD_FLESH;

@@ -45,7 +45,9 @@ void material::Load(inputfile& SaveFile)
 bool material::Effect(character* Eater, long Amount)
 {
   /* Receivexxx should return bool! */
+
   Amount = Amount * GetEffectStrength() / 100;
+
   switch(GetEffect())
     {
     case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
@@ -54,7 +56,7 @@ bool material::Effect(character* Eater, long Amount)
     case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); return true;
     case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
     case EFFECT_HEAL: Eater->ReceiveHeal(Amount); return true;
-    case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); return true;
+    case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount); return true;
     case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
     case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
     default: return false;

@@ -193,6 +193,7 @@ bool pickaxe::Apply(character* User)
       ADD_MESSAGE("%s is totally broken.",CHAR_NAME(DEFINITE));
       return false;
     }
+
   uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
 
   vector2d Temp = game::GetMoveVector(Dir);
@@ -1005,7 +1006,7 @@ ushort arm::GetTotalResistance(uchar Type) const
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
       if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3 / 4;
+	Resistance += (GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3) >> 2;
 
       if(GetGauntlet())
 	Resistance += GetGauntlet()->GetResistance(Type);
@@ -1041,7 +1042,7 @@ ushort leg::GetTotalResistance(uchar Type) const
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
       if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3 / 4;
+	Resistance += (GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3) >> 2;
 
       if(GetBoot())
 	Resistance += GetBoot()->GetResistance(Type);
@@ -3223,7 +3224,15 @@ float arm::GetBlockChance(float EnemyToHitValue) const
 
 ushort arm::GetBlockCapability() const
 {
-  return GetWielded() ? GetWielded()->GetStrengthValue() * sqrt(GetAttribute(ARM_STRENGTH) / 10.0f) : 0;
+  if(!GetWielded())
+    return 0;
+
+  short HitStrength = GetWieldedHitStrength();
+
+  if(HitStrength <= 0)
+    return 0;
+
+  return ushort(1e-5f * Min<short>(HitStrength, 10) * GetWielded()->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus());
 }
 
 void arm::WieldedSkillHit()
@@ -4127,10 +4136,8 @@ void magicalwhistle::Load(inputfile& SaveFile)
 
 void magicalwhistle::VirtualConstructor(bool Load)
 {
-  if(!Load)
-    {
-      LastUsed = 0;
-    }
+  whistle::VirtualConstructor(Load);
+  LastUsed = 0;
 }
 
 short arm::GetWieldedHitStrength() const
@@ -4335,10 +4342,18 @@ void arm::AddWieldedInfo(felist& Info) const
 
   Info.AddEntry(std::string("Base block capability: ") + GetWielded()->GetStrengthValue(), LIGHT_GRAY);
 
-  if(HitStrength > 10)
-    Info.AddEntry(std::string("Strength bonus: ") + '+' + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
-  else if(HitStrength < 10)
-    Info.AddEntry(std::string("Strength penalty: ") + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
+  if(HitStrength - Requirement < 10)
+    Info.AddEntry(std::string("Strength penalty: ") + (10 * (HitStrength - Requirement) - 100) + '%', LIGHT_GRAY);
+
+  Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = GetCurrentSWeaponSkill()->GetBonus();
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real block capability: ") + GetBlockCapability(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
@@ -4589,7 +4604,8 @@ void head::AddBiteInfo(felist& Info) const
 void itemcontainer::AddItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
 {
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+    if(ItemVector[c].IsValid())
+      GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
 }
 
 bool meleeweapon::IsFixableBySmith(const character* Smith) const
@@ -4598,10 +4614,120 @@ bool meleeweapon::IsFixableBySmith(const character* Smith) const
     return false;
 
   if(Smith->GetMainWielded())
-    {
-      return Smith->GetMainWielded()->CanBeUsedBySmith() && Smith->GetMainWielded()->GetMainMaterial()->GetStrengthValue() > GetMainMaterial()->GetStrengthValue();
-    }
+    return Smith->GetMainWielded()->CanBeUsedBySmith() && Smith->GetMainWielded()->GetMainMaterial()->GetStrengthValue() > GetMainMaterial()->GetStrengthValue();
+
   return false;
 }
 
+bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
+{
+  std::vector<long> AV(3, 0);
+  item* Armor[3];
+  bool AnyArmor = false;
 
+  if((Armor[0] = GetHelmet()))
+    {
+      AV[0] = Armor[0]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+    {
+      AV[1] = Armor[1]->GetStrengthValue() >> 1;
+      AnyArmor = true;
+    }
+
+  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+    {
+      AV[2] = Armor[2]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
+}
+
+bool humanoidtorso::DamageArmor(character* Damager, ushort Damage, uchar Type)
+{
+  std::vector<long> AV(3, 0);
+  item* Armor[3];
+  bool AnyArmor = false;
+
+  if((Armor[0] = GetBodyArmor()))
+    {
+      AV[0] = Armor[0]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  if((Armor[1] = GetBelt()))
+    {
+      AV[1] = Armor[1]->GetStrengthValue() >> 1;
+      AnyArmor = true;
+    }
+
+  if((Armor[2] = GetCloak()))
+    {
+      AV[2] = Armor[2]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
+}
+
+bool arm::DamageArmor(character* Damager, ushort Damage, uchar Type)
+{
+  std::vector<long> AV(3, 0);
+  item* Armor[3];
+  bool AnyArmor = false;
+
+  if((Armor[0] = GetGauntlet()))
+    {
+      AV[0] = Armor[0]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+    {
+      AV[1] = (Armor[1]->GetStrengthValue() * 3) >> 2;
+      AnyArmor = true;
+    }
+
+  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+    {
+      AV[2] = Armor[2]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
+}
+
+bool groin::DamageArmor(character* Damager, ushort Damage, uchar Type)
+{
+  return GetMaster()->GetTorso()->DamageArmor(Damager, Damage, Type);
+}
+
+bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
+{
+  std::vector<long> AV(3, 0);
+  item* Armor[3];
+  bool AnyArmor = false;
+
+  if((Armor[0] = GetBoot()))
+    {
+      AV[0] = Armor[0]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+    {
+      AV[1] = (Armor[1]->GetStrengthValue() * 3) >> 2;
+      AnyArmor = true;
+    }
+
+  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+    {
+      AV[2] = Armor[2]->GetStrengthValue();
+      AnyArmor = true;
+    }
+
+  return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
+}

@@ -3211,6 +3211,7 @@ bool character::DamageTypeCanSeverBodyPart(uchar Type) const
 ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+  BodyPart->DamageArmor(Damager, Damage, Type);
 
   if(!PenetrateResistance)
     Damage -= BodyPart->GetTotalResistance(Type);
@@ -4383,7 +4384,7 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 	  Arm->EditExperience(ARM_STRENGTH, 25);
 	  Arm->EditExperience(DEXTERITY, 50);
 	  Blocker->WeaponSkillHit();
-	  Blocker->ReceiveDamage(this, Damage - NewDamage, PHYSICAL_DAMAGE);
+	  Blocker->ReceiveDamage(this, Damage, PHYSICAL_DAMAGE);
 
 	  if(Weapon)
 	    Weapon->ReceiveDamage(Enemy, Damage - NewDamage, PHYSICAL_DAMAGE);
@@ -4765,9 +4766,7 @@ void character::EndPolymorph()
   Char->SetHasBe(true);
   Char->SetPolymorphed(false);
   SetSquareUnder(0);
-
   GetStack()->MoveItemsTo(Char->GetStack());
-  //SetSquareUnder(Char->GetSquareUnder()); // might be used afterwards
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     {
@@ -5965,5 +5964,6 @@ void character::AddOriginalBodyPartID(ushort Index, ulong What)
 void character::AddToInventory(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
 {
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    GetStack()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+    if(ItemVector[c].IsValid())
+      GetStack()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
 }

@@ -52,3 +52,4 @@ Repliikkien datafilesaatio.
 Raajarajapinta.
 Jumalten arrayttäminen.
 Tiedostojen tekijätiedottaminen.
+Hyökkäyslajien olioiminen.

@@ -42,14 +42,6 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-void oree::CreateInitialEquipment(ushort SpecialFlags)
-{
-  humanoid::CreateInitialEquipment(SpecialFlags);
-  can* Can = new can(0, NO_MATERIALS);
-  Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330), !(SpecialFlags & NO_PIC_UPDATE));
-  GetStack()->AddItem(Can);
-}
-
 bool ennerbeast::Hit(character*)
 {
   msgsystem::EnterBigMessageMode();
@@ -828,12 +820,6 @@ void communist::BeTalkedTo(character* Talker)
     }
 }
 
-void communist::CreateInitialEquipment(ushort SpecialFlags)
-{
-  humanoid::CreateInitialEquipment(SpecialFlags);
-  GetStack()->AddItem(new fiftymillionroubles(0, SpecialFlags));
-}
-
 void hunter::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
@@ -1228,17 +1214,6 @@ void zombie::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }
 
-void mistress::CreateInitialEquipment(ushort SpecialFlags)
-{
-  humanoid::CreateInitialEquipment(SpecialFlags);
-
-  if(!(RAND() % 10))
-    GetStack()->AddItem(new banana(0, SpecialFlags));
-
-  if(!(RAND() % 100))
-    GetStack()->AddItem(new holybanana(0, SpecialFlags));
-}
-
 void mistress::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
@@ -1341,7 +1316,6 @@ void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   SetRightWielded(new holybook(GetConfig(), SpecialFlags));
-  GetStack()->AddItem(new backpack(0, SpecialFlags));
   GetCWeaponSkill(UNCATEGORIZED)->AddHit(100);
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
@@ -3319,7 +3293,7 @@ void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
 
 /* Yes, this is evil. */
 
-#define INSTANTIATE(name) if((Item = DataBase->name.Instantiate(SpecialFlags))) Set##name(Item);
+#define INSTANTIATE(name) if(DataBase->name.IsValid() && (Item = DataBase->name.Instantiate(SpecialFlags))) Set##name(Item);
 
 void humanoid::CreateInitialEquipment(ushort SpecialFlags)
 {
@@ -3603,14 +3577,6 @@ void bananagrower::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
   SaveFile << Profession;
-}
-
-void imperialist::CreateInitialEquipment(ushort SpecialFlags)
-{
-  humanoid::CreateInitialEquipment(SpecialFlags);
-
-  for(ushort c = 0; c < 5; ++c)
-    GetStack()->AddItem(new stone(0, SpecialFlags));
 }
 
 void imperialist::BeTalkedTo(character* Talker)
