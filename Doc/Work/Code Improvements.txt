@@ -13,7 +13,7 @@ Tasovaihdosten funktionaalisuuden kohotus.
 Syöntisallimusten liputtaminen.
 Karakterin atribuuttien kollektivointi.
 Tarkkailijoiden tuhoaminen?
-Pinon listaimplementaatio.
+Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
 Dynarrayn eliminaatio.
 Osoitinluokat?
 Skriptin perusdatatyyppien luokittaminen.

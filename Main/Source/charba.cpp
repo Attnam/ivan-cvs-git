@@ -3164,7 +3164,7 @@ void character::ChangeTeam(team* What)
 
 void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
 {
-	if(!(RAND() % 5))
+	if(!(RAND() % 3))
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You lose control of your legs and fall down.");

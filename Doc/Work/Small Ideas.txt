@@ -47,8 +47,6 @@ A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
-You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-Werewolves should gain exp.
+You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 World map terrain descriptions shouldn't have an article.
-Cats should be possible to tame with rat corpses.
 Talk idea.

@@ -2,6 +2,7 @@ Goals for IVAN version 0.40 alpha
 ---------------------------------
 
 * = a high priority job
+? = a low priority job
 & = an annoying job
 // = done
 
@@ -29,6 +30,8 @@ Graphic effects for rays.
 Dungeon shops.
 Smithy to Attnam.
 Monster names.
+?Some random encounters in the wilderness.
+*Various fountain effects & fountains to dungeons.
 
 Smaller Jobs (see SourceForge for details):
 
@@ -38,14 +41,14 @@ Heavy item throwing
 A tool for combining high score files
 Throwers want justice
 *Message modes
-Wishing artifacts in WMode
-Sitting worshippers
+?Wishing artifacts in WMode
+?Sitting worshippers
 Confuse
 Exploding wands should be illegal
 Strength requirement for opening things
 Money should weight something
 Chemical warfare from afar
-Golems shouldn't talk
+?Golems shouldn't talk
 Attacking Attnamians should be chaotic
 *Alignment to panel
 Possibility to break armor on criticals
@@ -58,12 +61,12 @@ ADD_MESSAGE parameter suggestion
 Honey
 *Pentagram safety
 Size levels for corpses
-More versatile SeeWholeMapCheat
+?More versatile SeeWholeMapCheat
 The name of "a gold throne" is incorrect
 Household weaponry
-Copulation command
+?Copulation command
 More realistic hungriness
-Mutinous slaves?
+?Mutinous slaves
 Roubles in Ivan's inventory
 Cats should have seven lives
 *Wand recharging
