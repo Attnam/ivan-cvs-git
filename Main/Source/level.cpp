@@ -8,7 +8,6 @@
 #include "bitmap.h"
 #include "game.h"
 #include "item.h"
-#include "macro.h"
 #include "material.h"
 #include "igraph.h"
 #include "lsquare.h"

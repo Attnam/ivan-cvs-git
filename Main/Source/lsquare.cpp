@@ -554,5 +554,5 @@ char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem)
 		ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
 		return 2;
 	}
-	return (COverTerrain()->CanBeDigged());
+	return COverTerrain()->CanBeDigged();
 }

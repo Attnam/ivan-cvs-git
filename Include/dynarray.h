@@ -7,7 +7,6 @@ template <class Type, class SizeType = ushort> class dynarray
 {
 public:
 	dynarray(void);
-	dynarray(SizeType);
 	dynarray(const dynarray<Type, SizeType>*);
 	~dynarray(void);
 	void Add(Type);
