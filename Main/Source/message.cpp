@@ -8,6 +8,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "colorbit.h"
+#include "strover.h"
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
@@ -16,7 +17,6 @@ felist globalmessagingsystem::MessageHistory("Message history", WHITE, 100, true
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {
   char Message[256];
-  char Buffer[256];
 
   va_list AP;
   va_start(AP, Format);
@@ -55,8 +55,47 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
       MessageBuffer[c] = Message[c];
   }
 
-  sprintf(Buffer, "%d - %s", int(game::GetTicks() / 10), Message);
-  MessageHistory.AddEntry(Buffer, LIGHTGRAY);
+  std::string String(Message);
+
+  bool First = true;
+
+  uchar LineLength = 90;
+  ushort Marginal = 0;
+
+  for(ushort c = 0; String.length(); ++c)
+    {
+      long Pos;
+
+      if(String.length() > LineLength)
+	Pos = String.find_last_of(' ', LineLength);
+      else
+	Pos = String.length();
+
+      std::string Temp;
+
+      if(First)
+	{
+	  Temp += int(game::GetTicks() / 10);
+	  Temp += " ";
+	  Marginal = Temp.length();
+	  First = false;
+	}
+      else
+	Temp.resize(Marginal, ' ');
+
+      if(Pos < 0)
+	{
+	  Temp += String.substr(0, LineLength);
+	  String.erase(0, LineLength);
+	}
+      else
+	{
+	  Temp += String.substr(0, Pos);
+	  String.erase(0, Pos + 1);
+	}
+
+      MessageHistory.AddEntryToPos(Temp, c, LIGHTGRAY);
+    }
 }
 
 void globalmessagingsystem::Draw()
@@ -128,7 +167,7 @@ void globalmessagingsystem::Empty()
 
 void globalmessagingsystem::DrawMessageHistory()
 {
-  MessageHistory.Draw(vector2d(10, 42), 780, 30, false);
+  MessageHistory.Draw(vector2d(10, 42), 780, 40, false);
 }
 
 void globalmessagingsystem::Format()

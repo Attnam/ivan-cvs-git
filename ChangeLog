@@ -1,12 +1,15 @@
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* felist.cpp/h: Added AddEntryToPos
+	* message.cpp: Messages are now split correctly
+
 2002-04-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* AUTHORS: Fixed a small typo
-
 	
 2002-04-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* charde.h: Tweaked bitmap positions and colors for Oree, goblin, skeleton, imp, gibberling, kobold, enner beast and dark knight
-
 
 April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

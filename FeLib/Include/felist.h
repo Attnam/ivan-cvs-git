@@ -42,9 +42,9 @@ class felist
   felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool InverseMode = false) : Maximum(Maximum), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(std::string, ushort, bitmap* = 0, bool = true);
+  void AddEntryToPos(std::string, ushort, ushort, bitmap* = 0, bool = true);
   void AddDescription(std::string, ushort = 0xFFFF);
   ushort Draw(vector2d, ushort, ushort = 20, bool = true, bool = true, bool = true, bool = false) const;
-  //ushort DrawFaded(vector2d, ushort, ushort = 20, bool = true) const;
   void Empty();
   std::string GetEntry(ushort Index) { return Entry[Index].String; }
   ushort Length() const { return Entry.size(); }
@@ -53,14 +53,11 @@ class felist
   bool IsEmpty() { return (Length() == 0); }
   void SetSelected(ushort What) { Selected = What; }
  protected:
-  //ushort Draw(vector2d, ushort, ushort, bool, bool, bool, bool) const;
   void DrawDescription(bitmap*, vector2d, ushort) const;
   std::vector<felistentry> Entry;
   std::vector<felistdescription> Description;
-  //ushort PageLength;
   ushort Maximum;
   ushort Selected;
-  //bool Selectable;
   bool InverseMode;
 };
 

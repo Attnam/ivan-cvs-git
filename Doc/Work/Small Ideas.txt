@@ -222,3 +222,5 @@ Kamikaze dwarfs should sometimes have gunpowder golems as pets.
 Skeleton bone flight.
 Mutant monster.
 WhatToLoad menu could show danger level & dungeon level.
+Pocket pick-axe.
+Alias.
