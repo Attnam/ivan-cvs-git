@@ -419,11 +419,17 @@ void game::DrawPanel()
 
   if(Player->StateIsActivated(FAINTED))
     FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
-  else if(Player->GetNP() < CRITICALHUNGERLEVEL)
+  else if(Player->GetHungerState() == VERYHUNGRY)
     FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
   else
-    if(Player->GetNP() < HUNGERLEVEL)
+    if(Player->GetHungerState() == HUNGRY)
       FONT->Printf(DOUBLEBUFFER, 620, 554, BLUE, "Hungry");
+  else 
+    if(Player->GetHungerState() == SATIATED)
+      FONT->Printf(DOUBLEBUFFER, 620, 554, GREEN, "Satiated");
+  else
+    if(Player->GetHungerState() == BLOATED)
+      FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Bloated");
 
   switch(Player->GetBurdenState())
     {

@@ -15,13 +15,22 @@
 #define NUMBER_OF_HUMAN_ARMS  14
 #define NUMBER_OF_HUMAN_HEADS  23
 
-#define HUNGERLEVEL     5000
-#define CRITICALHUNGERLEVEL   1000
+#define BLOATEDLEVEL 40000
+#define SATIATEDLEVEL 30000
+#define NOTHUNGERLEVEL 5000
+#define HUNGERLEVEL 1000
+//#define CRITICALHUNGERLEVEL 0
 
 #define OVERLOADED    0
 #define STRESSED    1
 #define BURDENED    2
 #define UNBURDENED    3
+
+#define VERYHUNGRY 0
+#define HUNGRY 1
+#define NOTHUNGRY 2
+#define SATIATED 3
+#define BLOATED 4
 
 #define STATES      8
 
@@ -318,6 +327,7 @@ class character : public type, public entity
  virtual void Slow(ushort);
  virtual void SlowHandler();
  virtual void EndSlow();
+ virtual uchar GetHungerState() const;
  protected:
 
   virtual void CreateBodyParts();

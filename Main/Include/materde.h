@@ -20,7 +20,6 @@ class MATERIAL
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
   virtual ulong RawPrice() const { return GetVolume() >> 8; }
-  virtual bool CanBeDigged() const { return false; }
  protected:
   virtual std::string NameStem() const { return "iron"; }
   virtual std::string Article() const { return "an"; }
@@ -41,7 +40,6 @@ class MATERIAL
   virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
   virtual bool CanBeWished() const { return false; }
   virtual ulong RawPrice() const { return GetVolume() << 2; }
-  virtual bool CanBeDigged() const { return false; }
  protected:
   virtual std::string NameStem() const { return "valpurium"; }
 );
@@ -462,7 +460,6 @@ class MATERIAL
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(184, 184, 184); }
   virtual ulong RawPrice() const { return GetVolume() >> 1; }
-  virtual bool CanBeDigged() const { return false; }
  protected:
   virtual std::string NameStem() const { return "mithril"; }
 );
@@ -1054,7 +1051,6 @@ class MATERIAL
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(184, 115, 51); }
   virtual ulong RawPrice() const { return GetVolume() >> 7; }
-  virtual bool CanBeDigged() const { return false; }
  protected:
   virtual std::string NameStem() const { return "bronze"; }
 );
@@ -1070,7 +1066,6 @@ class MATERIAL
   virtual ushort OfferValue() const { return 10; } 
   virtual bool IsSolid() const { return true; }
   virtual ulong RawPrice() const { return GetVolume() >> 7; }
-  virtual bool CanBeDigged() const { return false; }
   virtual ushort GetColor() const { return MAKE_RGB(140, 120, 83); }
  protected:
   virtual std::string NameStem() const { return "bronze"; }

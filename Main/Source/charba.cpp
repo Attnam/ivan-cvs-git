@@ -105,7 +105,7 @@ void character::Hunger(ushort Turns)
       break;
     }
 
-  if(GetNP() < HUNGERLEVEL)
+  if(GetHungerState() == HUNGRY || GetHungerState() == VERYHUNGRY)
     EditStrengthExperience(-Turns);
 
   CheckStarvationDeath("starved to death");
@@ -260,7 +260,7 @@ void character::Be()
 	  if(GetHP() < GetMaxHP() / 3)
 	    SpillBlood(RAND() % 2);
 
-	  if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+	  if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
 	    {
 	      DeActivateVoluntaryStates();
 	      Faint();
@@ -500,12 +500,12 @@ bool character::Consume()
 
 bool character::CheckBulimia() const
 {
-  return GetNP() / 10 > (GetSize() << 5) ? true : false;
+  return GetHungerState() == BLOATED;
 }
 
 void character::ReceiveBulimiaDamage()
 {
-  if((GetNP() / 10 - (GetSize() << 5)) / 50 > 0)
+  if(GetHungerState() == BLOATED)
     {
       ADD_MESSAGE("Urgh... Your stomach hurts.");
 
@@ -934,9 +934,9 @@ bool character::Quit()
 void character::CreateCorpse()
 {
   /*corpse* Corpse = new corpse(GetMaterial(0));
-  Corpse->SetBloodColor(GetBloodColor());
-  GetLSquareUnder()->GetStack()->AddItem(Corpse);
-  PreserveMaterial(0);*/
+    Corpse->SetBloodColor(GetBloodColor());
+    GetLSquareUnder()->GetStack()->AddItem(Corpse);
+    PreserveMaterial(0);*/
 }
 
 void character::Die(bool ForceMsg)
@@ -2692,7 +2692,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 	ADD_MESSAGE("You stop resting.");
 
       if(StateIsActivated(DIGGING))
-	  ADD_MESSAGE("You stop digging.");
+	ADD_MESSAGE("You stop digging.");
     }
 
   EndConsuming();
@@ -2799,7 +2799,7 @@ bool character::CheckForDoors()
     {
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 			    if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOLTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->Open(this))
-			      return true;);
+			    return true;);
     }
 
   return false;
@@ -2811,19 +2811,19 @@ bool character::CheckForUsefulItemsOnGround()
     {
       /*if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
-	  {
-	    item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
+	{
+	item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
-	    if(GetTorsoArmor())
-	      GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLSquareUnder()->GetStack());
+	if(GetTorsoArmor())
+	GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLSquareUnder()->GetStack());
 
-	    SetTorsoArmor(ToWear);
+	SetTorsoArmor(ToWear);
 
-	    if(GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
+	if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
 
-	    return true;
-	  }*/
+	return true;
+	}*/
 
       if(CanWield() && long(GetLSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
@@ -3107,23 +3107,24 @@ bool character::Sit()
 void character::SetNP(long What)
 {
   long BNP = GetNP();
-
+  uchar OldGetHungerState = GetHungerState();
   NP = What;
 
   if(GetIsPlayer())
-    if(GetNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL)
-      {
-	game::Beep();
-	ADD_MESSAGE("You are getting very hungry.");
-	DeActivateVoluntaryStates();
-      }
-    else if(GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL)
-      {
-	ADD_MESSAGE("You are getting hungry.");
-	DeActivateVoluntaryStates();
-      }
+    {
+      if(GetHungerState() == VERYHUNGRY && OldGetHungerState != VERYHUNGRY)
+	{
+	  game::Beep();
+	  ADD_MESSAGE("You are getting very hungry.");
+	  DeActivateVoluntaryStates();
+	}
+      else if(GetHungerState() == HUNGRY && OldGetHungerState != HUNGRY && OldGetHungerState != VERYHUNGRY)
+	{
+	  ADD_MESSAGE("You are getting hungry.");
+	  DeActivateVoluntaryStates();
+	}
+    }
 }
-
 void character::ShowNewPosInfo() const
 {
   if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + 48)
@@ -3636,12 +3637,12 @@ bool character::AssignName()
 std::string character::Name(uchar Case) const
 {
   if(AssignedName.size())
-  {
-    if(ShowClassName()) 
-      return AssignedName + " " + NameNormal(DEFINITE, Article(), Adjective());
-    else
-      return AssignedName;
-  }
+    {
+      if(ShowClassName()) 
+	return AssignedName + " " + NameNormal(DEFINITE, Article(), Adjective());
+      else
+	return AssignedName;
+    }
   else
     return NameNormal(Case, Article(), Adjective());
 } 
@@ -3706,7 +3707,7 @@ void character::EndHaste()
 void character::Slow(ushort Counter)
 {
   if(StateIsActivated(SLOW))
-     return;
+    return;
   if(StateIsActivated(HASTE))
     {
       EndHaste();
@@ -3753,4 +3754,21 @@ float character::GetAPStateMultiplier() const
     return 0.5;
   
   return 1;
+}
+
+uchar character::GetHungerState() const
+{
+  if(GetNP() > BLOATEDLEVEL)
+    return BLOATED;
+
+  if(GetNP() > SATIATEDLEVEL)
+    return SATIATED;
+  
+  if(GetNP() > NOTHUNGERLEVEL)
+    return NOTHUNGRY;
+
+  if(GetNP() > HUNGERLEVEL)
+    return HUNGRY;
+  else
+    return VERYHUNGRY;
 }

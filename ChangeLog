@@ -1,3 +1,17 @@
+2002-04-06  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Source/itemde.cpp (pickaxe::Apply): Added new formula for calulation the length of digging
+	* FELL/Include/hscore.h: Add changed to return bool telling whether the score got to the list or not
+	* FELL/Source/hscore.cpp: Add changed to return bool telling whether the score got to the list or not. And if the player doesen't get to the list the result is not drawn in function Draw
+	* Main/Include/charba.h: Added #defines for hungerlevels and hunger states and added GetHungerState function
+	* Main/Source/charba.cpp: Added GetHungerState function and changed every reference to the old (bad) hunger level systems to use it.
+	* Main/Include/materde.h: deleted all CanBeDigged functions
+	* Main/Include/materba.h: 
+	* Main/Source/materba.cpp: CanBeDigged now examines the StrengthValues of the materials.
+	* Main/Source/game.cpp: DrawPanel now draws Satiated and Bloated hunger states also and all hungerstate are calculated by character's GetHungerState function
+	
+
+	
 April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Item.pcx: shield, cloak, gauntlet, belt, amulet and ring added by Kahvi

@@ -1008,7 +1008,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
 	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
-	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged())
+	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMaterial(0)->StrengthValue() < 100)
 	  Square->ChangeOLTerrainAndUpdateLights(new empty);
       }
   });

@@ -50,3 +50,7 @@ void material::EatEffect(character*, float, float)
 }
 
 
+bool material::CanBeDigged(material* ShovelMaterial) const
+{
+  return ShovelMaterial->StrengthValue() > StrengthValue();
+}

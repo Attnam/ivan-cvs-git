@@ -83,7 +83,7 @@ class material : public type
   virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ulong RawPrice() const { return 0; }
   virtual bool GetIsBadFoodForAI() const { return false; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDigged(material*) const;
   virtual bool IsFlexible() const { return false; }
   virtual bool IsExplosive() const { return false; }
   virtual ushort ExplosivePower() const { return 0; }

@@ -6,7 +6,7 @@
 #include "save.h"
 #include "colorbit.h"
 
-void highscore::Add(long NewScore, std::string NewEntry)
+bool highscore::Add(long NewScore, std::string NewEntry)
 {
   for(ushort c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -21,7 +21,7 @@ void highscore::Add(long NewScore, std::string NewEntry)
 	  }
 
 	LastAdd = c;
-	return;
+	return true;
       }
 
   if(Score.size() < 100)
@@ -29,9 +29,13 @@ void highscore::Add(long NewScore, std::string NewEntry)
       LastAdd = Score.size();
       Entry.push_back(NewEntry);
       Score.push_back(NewScore);
+      return true;
     }
   else
+  {
     LastAdd = 100;
+    return false;
+  }
 }
 
 void highscore::Draw() const
@@ -39,12 +43,21 @@ void highscore::Draw() const
   bitmap Buffer(XRES, YRES);
   Buffer.Fill(0);
 
+  if(LastAdd == 100)
+    {
+        FONT->Printf(&Buffer, 30, 50,  WHITE, "You didn't manage to get onto the high score list");
+	Buffer.FadeToScreen();
+	GETKEY();
+	return;
+    }
   FONT->Printf(&Buffer, 30, 30,  WHITE, "Adventurers' Hall of Fame");
 
   ushort Min = 0;
 
   for(ushort c = 0; c < Score.size(); ++c)
     {
+
+	
       if(c - Min == 50)
 	{
 	  Min += 50;

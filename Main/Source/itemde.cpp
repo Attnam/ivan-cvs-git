@@ -263,6 +263,27 @@ item* leftnutofpetrus::CreateWishedItem() const
 {
   return new cheapcopyofleftnutofpetrus;
 }
+/*
+  
+  Few Examples:
+  
+  (moraine - iron)
+  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.2) = 150
+  TimeToBeUsed = 4 * (50 - 25) / (1 - 0.2) = 125
+  TimeToBeUsed = 4 * (50 - 49) / (1 - 0.2) = 5
+  
+  (wood - iron) (0.3)
+  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.3) = 171
+  TimeToBeUsed = 142
+  TimeToBeUsed = 5.7
+
+  (morain - wood)
+  TimeToBeUsed = 4 * (50 - 20) / (1 - 0.2 / 0.3) = 180
+  
+  (moraine - valpurium)
+  TimeToBeUsed = 4 * (50 - 20) / (1 - 20 / 400) = 126
+*/
+
 
 bool pickaxe::Apply(character* User, stack*)
 {
@@ -273,13 +294,13 @@ bool pickaxe::Apply(character* User, stack*)
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
       if(Square->CanBeDigged(User, this))
-	if(Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged())
+	if(Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged(GetMaterial(0)))
 	  {
 	    User->SetSquareBeingDigged(User->GetPos() + Temp);
 	    User->SetOldWieldedItem(User->GetWielded());
 	    User->SetWielded(this);
 	    User->ActivateState(DIGGING);
-	    User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? (200 - (User->GetStrength() << 2)) : 2);
+	    User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? 4 * (50 - User->GetStrength()) / (1 - Square->GetOLTerrain()->GetMaterial(0)->StrengthValue() / GetMaterial(0)->StrengthValue()) : 3);
 	    return true;
 	  }
 	else
