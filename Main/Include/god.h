@@ -87,7 +87,7 @@ class god
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
-  int Relation;
+  int Relation, LastPray;
   long Timer;
   truth Known;
 };

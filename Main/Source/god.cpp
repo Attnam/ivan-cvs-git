@@ -14,11 +14,12 @@
 
 godprototype::godprototype(godspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
-god::god() : Relation(0), Timer(0), Known(false) { }
+god::god() : Relation(0), Timer(0), Known(false), LastPray(-1) { }
 int god::GetBasicAlignment() const { return NEUTRAL; }
 
 void god::Pray()
 {
+  LastPray = 0;
   if(!Timer)
     if(Relation >= -RAND_N(500))
     {
@@ -108,6 +109,7 @@ void god::Pray()
     }
 }
 
+
 festring god::GetCompleteDescription() const
 {
   festring Desc(game::GetAlignment(GetAlignment()));
@@ -115,13 +117,42 @@ festring god::GetCompleteDescription() const
   Desc << GetName();
   Desc.Resize(20);
 
-  if(game::WizardModeIsActive())
-    Desc << Timer << " - " << Relation;
+  if(game::WizardModeIsActive()) {
+    Desc << "Timer: " << Timer << " Relation: " << Relation;
+    return Desc;
+  }
   else
-    Desc << "the " << GetDescription();
-
+    Desc << "You have ";
+  if (LastPray>-1)
+    {
+      int Hour = LastPray / 2000;
+      int Day = Hour / 24;
+      Hour %= 24;
+      int Min = LastPray % 2000 * 60 / 2000;
+      Desc << "last prayed ";
+      if (Day>=7)
+	Desc << "over a week ago.";
+      else
+	{
+	  if (Day>1)
+	    Desc << Day << " days, ";
+	  else if (Day)
+	    Desc << "one day, ";
+	  if (Hour>1)
+	    Desc << Hour << " hours, ";
+	  else if (Hour)
+	    Desc << "one hour, ";
+	  if (Day || Hour)
+	    Desc << "and " << Min << " minutes ago.";
+	  else
+	    Desc << Min << " minutes ago.";
+	}
+    }
+  else
+    Desc << "never prayed to this god.";
   return Desc;
 }
+
 
 void god::AdjustRelation(god* Competitor, int Multiplier, truth Good)
 {
@@ -312,28 +343,12 @@ truth god::ReceiveOffer(item* Sacrifice)
   }
 }
 
-void god::Save(outputfile& SaveFile) const
-{
-  SaveFile << (ushort)GetType();
-  SaveFile << Relation << Timer << Known;
-}
-
-void god::Load(inputfile& SaveFile)
-{
-  SaveFile >> Relation >> Timer >> Known;
-}
 
 god* godprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
   god* God = Spawner();
   God->Load(SaveFile);
   return God;
-}
-
-void god::ApplyDivineTick()
-{
-  if(Timer)
-    --Timer;
 }
 
 truth god::LikesMaterial(const materialdatabase* MDB, const character*) const
@@ -494,3 +509,23 @@ void god::SignalRandomAltarGeneration(const std::vector<v2>& RoomSquare)
     }
   }
 }
+
+void god::Save(outputfile& SaveFile) const
+{
+  SaveFile << (ushort)GetType();
+  SaveFile << Relation << Timer << Known << LastPray;
+}
+
+void god::Load(inputfile& SaveFile)
+{
+  SaveFile >> Relation >> Timer >> Known >> LastPray;
+}
+
+
+void god::ApplyDivineTick()
+{
+  if(Timer)
+    --Timer;
+  if(LastPray > -1 && LastPray < 14000)
+    ++LastPray;
+} 
