@@ -205,6 +205,7 @@ public:
 	virtual void VirtualConstructor() {}
 	virtual ushort GetSpeed() const;
 	virtual void CharacterSpeciality() {}
+	virtual void StruckByWandOfStriking();
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }

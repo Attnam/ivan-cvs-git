@@ -214,3 +214,8 @@ uchar item::GetWeaponCategory() const
 {
 	return UNCATEGORIZED;
 }
+
+void item::StruckByWandOfStriking(stack* What) 
+{ 
+	ImpactDamage(10, What->GetSquareUnder()->CanBeSeen(), What); 
+}

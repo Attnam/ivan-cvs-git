@@ -818,4 +818,21 @@ protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
 
+class ITEM
+(
+	wandofstriking,
+	wand,
+	InitMaterials(new gold(100)),
+	{
+		SetSize(12);
+		SetCharge(rand() % 3 + 1);
+	},
+public:
+	virtual ushort Possibility() const RET(5)
+	virtual std::string NameSingular() const RET("wand of striking")
+	virtual std::string NamePlural() const RET("wands of striking")
+	virtual float OfferModifier() const RET(10)
+	virtual vector2d GetBitmapPos() const RETV(0,288)
+	virtual bool Zap(vector2d, uchar);
+);
 #endif

@@ -479,3 +479,45 @@ item* brokenbottle::BetterVersion(void) const
 	 P->InitMaterials(2, new glass(50), Stuff); 
 	 return P;
 }
+
+
+bool wandofstriking::Zap(vector2d Pos, uchar Direction)
+{
+	vector2d CurrentPos = Pos;
+
+	if(!GetCharge())
+	{
+		ADD_MESSAGE("Nothing happens.");
+		return false;
+	}
+
+	if(Direction != '.')
+		for(ushort Length = 0;Length < 15;Length++)
+		{
+			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
+				break;
+			else
+			{
+				
+				CurrentPos += game::GetMoveVector(Direction);			
+
+				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
+					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->StruckByWandOfStriking();
+				
+				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
+					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
+			}
+		}
+	else
+	{
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
+			game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->StruckByWandOfStriking();
+		
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems())
+			game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
+	}
+
+	SetCharge(GetCharge() - 1);
+
+	return true;
+}

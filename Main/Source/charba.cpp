@@ -2304,3 +2304,15 @@ bool character::ShowWeaponSkills()
 
 	return false;
 }
+
+
+void character::StruckByWandOfStriking()
+{
+	if(GetIsPlayer())
+		ADD_MESSAGE("The wand hits you.");
+	else
+		if(GetSquareUnder()->CanBeSeen()) ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
+	SetHP(GetHP() - 5 - rand() % 3);
+	
+	CheckDeath("killed by a wand of striking");
+}

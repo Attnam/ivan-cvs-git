@@ -61,6 +61,7 @@ public:
 	long Score() const;
 	bool Polymorph();
 	void ReceiveSound(float);
+	void StruckByWandOfStriking(void);
 private:
 	void Optimize(ushort);
 	square* SquareUnder;
