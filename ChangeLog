@@ -1,3 +1,14 @@
+Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Source/charba.cpp: Added a burdenstate checker to Hit function 
+	* Main/Source/lterrade.cpp: Added private function Break() to door to reduce duplicated code.
+	* Main/Include/lterrade.h: Added function Break() to door
+
+Thursday, February 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemde.h: Added scroll of taming
+	* Main/Source/itemde.cpp: Added scroll of taming
+
 Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Main/Include/Makefile.am: Added entity.h and fluid.h (somehow these changes have been lost from CVS)
@@ -11,7 +22,5 @@ Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Include/itemde.h: Wand of strikings color changed from yellow to white. Added Wand of fireballs
 	* Main/Source/charba.cpp character::WizardMode changed so that the player now receives 5 scrolls of wishing also after activating the wizard mode.
 
-Thursday, February 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
-	* Main/Include/itemde.h: Added scroll of taming
-	* Main/Source/itemde.cpp: Added scroll of taming
+

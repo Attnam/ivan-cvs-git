@@ -248,12 +248,7 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 
 	      NewLockedStatus = IsLocked;
 	    }
-
-	  brokendoor* Temp = new brokendoor(false);
-	  Temp->InitMaterials(GetMaterial(0));
-	  PreserveMaterial(0);
-	  GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
-	  Temp->SetIsLocked(NewLockedStatus);
+	  Break(NewLockedStatus);
 	}
       else
 	if(ShowOnScreen)
@@ -616,9 +611,7 @@ bool door::ReceiveStrike()
       if(GetLevelSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The wand strikes the door and the door breaks.");
 
-      brokendoor* Temp;
-      GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
-      Temp->SetIsLocked(NewLockedStatus);
+      Break(NewLockedStatus);
     }
   else
     {
@@ -755,11 +748,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool V
 	    {
 	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
 	    }
-	  brokendoor* Temp = new brokendoor(false);
-	  Temp->InitMaterials(GetMaterial(0));
-	  PreserveMaterial(0);
-	  GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
-	  Temp->SetIsLocked(NewLockedStatus);
+	  Break(NewLockedStatus);
 	} 
       else
 	{
@@ -801,4 +790,15 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, 
 	    }
 	}
     }
+}
+
+
+
+void door::Break(bool NewLockedStatus)
+{
+  brokendoor* Temp = new brokendoor(false);
+  Temp->InitMaterials(GetMaterial(0));
+  PreserveMaterial(0);
+  GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
+  Temp->SetIsLocked(NewLockedStatus);  
 }

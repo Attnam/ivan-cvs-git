@@ -114,7 +114,12 @@ bool character::Hit(character* Enemy)
     return false;
 
   Hostility(Enemy);
-
+  if(GetBurdenState() == OVERLOADED)
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("You try to hit, but the weight of your items is too great for you to cause damage to %s.", Enemy->CNAME(DEFINITE));
+      return true;
+    }
   short Success = RAND() % 26 - RAND() % 26;
 
   switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
