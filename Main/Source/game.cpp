@@ -146,6 +146,7 @@ command* game::Command[] =
 
 int game::MoveCommandKey[] = { KEYHOME, KEYUP, KEYPAGEUP, KEYLEFT, KEYRIGHT, KEYEND, KEYDOWN, KEYPAGEDOWN, '.' };
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
+const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
 
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable = 0;
@@ -246,6 +247,7 @@ bool game::Init(const std::string& Name)
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
+	InitDangerMap();
 	Petrus = 0;
 	InitDungeons();
 	WorldMap = new worldmap(128, 128);
@@ -276,7 +278,6 @@ bool game::Init(const std::string& Name)
 	      Player->GetStack()->AddItem(new oillamp(MAKE_MATERIAL(i->first)));
 	  }*/
 
-	InitDangerMap();
 	ADD_MESSAGE("Game generated successfully.");
 	return true;
       }
@@ -365,7 +366,7 @@ bool game::LevelLOSHandler(long X, long Y)
 
 void game::UpdateCameraX()
 {
-  if(Player->GetPos().X < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X / 2)
     if(!Camera.X)
       return;
     else
@@ -386,7 +387,7 @@ void game::UpdateCameraX()
 
 void game::UpdateCameraY()
 {
-  if(Player->GetPos().Y < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y / 2)
     if(!Camera.Y)
       return;
     else
@@ -600,7 +601,7 @@ bool game::NoxifyHandler(long X, long Y)
 
 void game::UpdateCameraXWithPos(ushort Coord)
 {
-  if(Coord < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Coord < GetScreenSize().X / 2)
     if(!Camera.X)
       return;
     else
@@ -621,7 +622,7 @@ void game::UpdateCameraXWithPos(ushort Coord)
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-  if(Coord < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Coord < GetScreenSize().Y / 2)
     if(!Camera.Y)
       return;
     else
@@ -1048,14 +1049,14 @@ void game::LOSTurn()
 
 void game::UpdateCamera()
 {
-  if(Player->GetPos().X < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X / 2)
     Camera.X = 0;
   else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
     Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
   else
     Camera.X = Player->GetPos().X - GetScreenSize().X / 2;
 
-  if(Player->GetPos().Y < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y / 2)
     Camera.Y = 0;
   else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
     Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
@@ -1174,15 +1175,15 @@ void game::BusyAnimation(bitmap* Buffer)
   static double Rotation = 0;
   static clock_t LastTime = 0;
 
-  if(!ElpuriLoaded)
-    {
-      ushort Color = MakeRGB16(60, 60, 60);
-      igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
-      ElpuriLoaded = true;
-    }
-
   if(!BusyAnimationDisabled && clock() - LastTime > CLOCKS_PER_SEC >> 5)
     {
+      if(!ElpuriLoaded)
+	{
+	  ushort Color = MakeRGB16(60, 60, 60);
+	  igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
+	  ElpuriLoaded = true;
+	}
+
       vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
       Rotation += 0.02;
@@ -1190,7 +1191,7 @@ void game::BusyAnimation(bitmap* Buffer)
       if(Rotation > 2 * PI)
 	Rotation -= 2 * PI;
 
-      Elpuri.MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
+      Elpuri.MaskedBlit(Buffer, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
       ushort x;
 
       for(x = 0; x < 10; ++x)
@@ -1542,6 +1543,7 @@ void game::InitDangerMap()
 
   for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
     {
+      game::BusyAnimation();
       const character::prototype* Proto = protocontainer<character>::GetProto(c);
       const character::databasemap& Config = Proto->GetConfig();
 
@@ -1691,7 +1693,7 @@ char game::CompareLightToInt(ulong L, uchar Int)
     return -1;
 }
 
-void game::AddLight(ulong& L1, ulong L2)
+void game::CombineLights(ulong& L1, ulong L2)
 {
   L1 = MakeRGB24(Max(GetRed24(L1), GetRed24(L2)), Max(GetGreen24(L1), GetGreen24(L2)), Max(GetBlue24(L1), GetBlue24(L2)));
 }

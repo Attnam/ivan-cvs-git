@@ -334,7 +334,7 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
 	SetHasBe(true);
 
       Material->SetMotherEntity(this);
-      game::AddLight(Emitation, Material->GetEmitation());
+      game::CombineLights(Emitation, Material->GetEmitation());
     }
 }
 
@@ -396,7 +396,7 @@ void object::CalculateEmitation()
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      game::AddLight(Emitation, GetMaterial(c)->GetEmitation());
+      game::CombineLights(Emitation, GetMaterial(c)->GetEmitation());
 }
 
 bool object::CalculateHasBe() const

@@ -866,7 +866,7 @@ jackal
 	CWeaponSkillHits == 50;
 }
 
-donkey
+ass
 {
 	DefaultArmStrength = 20;
 	DefaultAgility = 5;
@@ -882,7 +882,7 @@ donkey
 	TotalSize = 150;
 	SkinColor = rgb16(80, 80, 80);
 	Adjective = "mutant";
-	NameSingular = "donkey";
+	NameSingular = "ass";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 2500;
 	CanBeGenerated = true;

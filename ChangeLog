@@ -1,3 +1,16 @@
+September 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Skull's weapon category changed from MISC to UNCATECORIZED;
+	  the former is not a weapon but an inventory category and caused
+	  a crash when the skull was wielded
+	* Sparkles and/or flies over transparent pictures are no longer
+	  themselves transparent
+	* Camera now works even if the area is smaller than the screen
+	* The underwater tunnel and New Attnam are now placed correctly
+	* worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself()
+	  and worldmap::SmoothAltitude() optimized somewhat
+	* Corrected the Mysterious Absence of Elpuri on the Busy Screen Bug
+
 September 26 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added lightning effect to bitmap
@@ -6,7 +19,7 @@ September 26 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 September 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Now compiles on Linux again
-	
+
 September 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Monster generation *might* be a bit better again

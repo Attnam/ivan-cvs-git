@@ -2813,7 +2813,7 @@ void bodypart::CalculateEmitation()
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c))
-      game::AddLight(Emitation, GetEquipment(c)->GetEmitation());
+      game::CombineLights(Emitation, GetEquipment(c)->GetEmitation());
 }
 
 void bodypart::CalculateMaxHP()
@@ -3892,3 +3892,4 @@ void chest::DrawContents(const character* Char)
   std::string Topic = "Contents of your " + GetName(UNARTICLED);
   GetContained()->DrawContents(Char, Topic, false);
 }
+

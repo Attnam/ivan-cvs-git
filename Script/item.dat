@@ -1734,7 +1734,7 @@ skull
 	Roundness = 65;
 	DefaultSize = 17;
 	Possibility = 30;
-	WeaponCategory = MISC;
+	WeaponCategory = UNCATEGORIZED;
 	DefaultMainVolume = 500;
 	BitmapPos = 48, 112;
 	FormModifier = 70;
@@ -1744,5 +1744,3 @@ skull
 	Roundness = 20;
 	IsTwoHanded = true;
 }
-
-

@@ -555,10 +555,10 @@ ulong dig::GetEmitation() const
   ulong Emitation = 0;
 
   if(*RightBackup)
-    game::AddLight(Emitation, RightBackup->GetEmitation());
+    game::CombineLights(Emitation, RightBackup->GetEmitation());
 
   if(*LeftBackup)
-    game::AddLight(Emitation, LeftBackup->GetEmitation());
+    game::CombineLights(Emitation, LeftBackup->GetEmitation());
 
   return Emitation;
 }

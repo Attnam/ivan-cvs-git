@@ -71,19 +71,19 @@ void lsquare::CalculateEmitation()
       stack* Stack = GetSideStackOfAdjacentSquare(c);
 
       if(Stack)
-	game::AddLight(Emitation, Stack->GetEmitation());
+	game::CombineLights(Emitation, Stack->GetEmitation());
     }
 
   if(Character)
-    game::AddLight(Emitation, Character->GetEmitation());
+    game::CombineLights(Emitation, Character->GetEmitation());
 
   if(GLTerrain)
-    game::AddLight(Emitation, GLTerrain->GetEmitation());
+    game::CombineLights(Emitation, GLTerrain->GetEmitation());
 
   if(OLTerrain)
-    game::AddLight(Emitation, OLTerrain->GetEmitation());
+    game::CombineLights(Emitation, OLTerrain->GetEmitation());
 
-  game::AddLight(Emitation, TemporaryEmitation);
+  game::CombineLights(Emitation, TemporaryEmitation);
 }
 
 void lsquare::UpdateMemorized()
@@ -527,12 +527,12 @@ void lsquare::CalculateLuminance()
   if(OLTerrain->IsWalkable())
     {
       for(ushort c = 0; c < Emitter.size(); ++c)
-	game::AddLight(Luminance, Emitter[c].DilatedEmitation);
+	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
     }
   else
     for(ushort c = 0; c < Emitter.size(); ++c)
       if(CalculateBitMask(Emitter[c].Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
-	game::AddLight(Luminance, Emitter[c].DilatedEmitation);
+	game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
 }
 
 ulong lsquare::GetRawLuminance() const
@@ -540,7 +540,7 @@ ulong lsquare::GetRawLuminance() const
   ulong Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
   for(ushort c = 0; c < Emitter.size(); ++c)
-    game::AddLight(Luminance, Emitter[c].DilatedEmitation);
+    game::CombineLights(Luminance, Emitter[c].DilatedEmitation);
 
   return Luminance;
 }

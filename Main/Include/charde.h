@@ -492,10 +492,10 @@ class CHARACTER
 
 class CHARACTER
 (
-  donkey,
+  ass,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DONKEYFLESH, Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ASSFLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " neighs one last time and dies."; }
 );
 

@@ -152,7 +152,7 @@ void lterrain::SignalEmitationIncrease(ulong EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      game::AddLight(Emitation, EmitationUpdate);
+      game::CombineLights(Emitation, EmitationUpdate);
 
       if(LSquareUnder)
 	LSquareUnder->SignalEmitationIncrease(EmitationUpdate);

@@ -69,7 +69,7 @@ character* protosystem::BalancedCreateMonster()
 		  {
 		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 25))
+		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 10))
 		      {
 			character* Monster = Proto->Clone(i->first);
 

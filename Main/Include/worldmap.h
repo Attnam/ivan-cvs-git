@@ -50,7 +50,7 @@ class worldmap : public area
   wsquare*** Map;
   std::vector<continent*> Continent;
   ushort** TypeBuffer, ** OldTypeBuffer;
-  short** AltitudeBuffer;
+  short** AltitudeBuffer, ** OldAltitudeBuffer;
   uchar** ContinentBuffer;
   std::vector<character*> PlayerGroup;
 };

@@ -842,6 +842,19 @@ void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
   graphics::BlitDBToScreen();
 }
 
+void bitmap::ResetAlpha(ushort X, ushort Y)
+{
+  if(IsIndependent)
+    {
+      uchar** AlphaMap = GetAlphaMap();
+
+      if(AlphaMap)
+	AlphaMap[Y][X] = 255;
+    }
+  else
+    GetMotherBitmap()->ResetAlpha(X + GetXPos(), Y + GetYPos());
+}
+
 void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
 {
   if(IsIndependent)
@@ -1102,11 +1115,11 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 		{
 		  MaxDist = FlameLowestPoint[x] - Top;
 		  RelPos = y - Top;
-		  PutPixel(x,y, MakeRGB16((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
+		  SafePutPixelAndResetAlpha(x,y, MakeRGB16((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
 		}
 	    }
 	  else if(RAND() & 1)
-	    PutPixel(x,0, MakeRGB16(0,255,0));
+	    SafePutPixelAndResetAlpha(x,0, MakeRGB16(0,255,0));
 	}
     }
 
@@ -1119,16 +1132,16 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
     return;
 
   ushort Size = (Frame - 1) * (16 - Frame) / 10;
-  SafePutPixel(SparklePos.X, SparklePos.Y, WHITE);
+  SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y, WHITE);
 
   for(ushort c = 1; c < Size; ++c)
     {
       uchar Lightness = 191 + (Size - c) * 64 / Size;
       ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
-      SafePutPixel(SparklePos.X + c, SparklePos.Y, RGB);
-      SafePutPixel(SparklePos.X - c, SparklePos.Y, RGB);
-      SafePutPixel(SparklePos.X, SparklePos.Y + c, RGB);
-      SafePutPixel(SparklePos.X, SparklePos.Y - c, RGB);
+      SafePutPixelAndResetAlpha(SparklePos.X + c, SparklePos.Y, RGB);
+      SafePutPixelAndResetAlpha(SparklePos.X - c, SparklePos.Y, RGB);
+      SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y + c, RGB);
+      SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y - c, RGB);
     }
 }
 
@@ -1147,7 +1160,7 @@ void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp))  * 3);
 
-      SafePutPixel(Where.X, Where.Y, MakeRGB16(100,100,100));
+      SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(100,100,100));
     }
   femath::SetSeed(NewSeed);
 }

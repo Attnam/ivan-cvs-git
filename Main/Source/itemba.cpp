@@ -198,7 +198,7 @@ void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
-  game::AddLight(Emitation, GetBaseEmitation()); // what does this do?
+  game::CombineLights(Emitation, GetBaseEmitation()); // what does this do?
   game::PopItemID(ID);
   SaveFile >> Cannibalised >> Size >> ID;
 }
@@ -408,7 +408,7 @@ void item::SignalEmitationIncrease(ulong EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      game::AddLight(Emitation, EmitationUpdate);
+      game::CombineLights(Emitation, EmitationUpdate);
 
       if(Slot)
 	Slot->SignalEmitationIncrease(EmitationUpdate);

@@ -70,6 +70,7 @@ class game
   static void Run();
   static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
+  static const vector2d GetRelativeMoveVector(ushort Index) { return RelativeMoveVector[Index]; }
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
   static bool WorldMapLOSHandler(long, long);
@@ -208,7 +209,7 @@ class game
   static void EnterArea(std::vector<character*>&, uchar, uchar);
   static char CompareLights(ulong, ulong);
   static char CompareLightToInt(ulong, uchar);
-  static void AddLight(ulong&, ulong);
+  static void CombineLights(ulong&, ulong);
   static bool IsDark(ulong);
  private:
   static std::string Alignment[];
@@ -217,6 +218,7 @@ class game
   static uchar CurrentDungeon;
   static int MoveCommandKey[];
   static const vector2d MoveVector[];
+  static const vector2d RelativeMoveVector[];
   static ushort*** LuxTable;
   static ushort* LuxTableSize;
   static bool Running;

@@ -162,7 +162,7 @@ void stack::Load(inputfile& SaveFile)
       SaveFile >> *Top;
       Volume += (*Top)->GetVolume();
       Weight += (*Top)->GetWeight();
-      game::AddLight(Emitation, (*Top)->GetEmitation());
+      game::CombineLights(Emitation, (*Top)->GetEmitation());
     }
 }
 
@@ -487,7 +487,7 @@ void stack::SignalEmitationIncrease(ulong EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      game::AddLight(Emitation, EmitationUpdate);
+      game::CombineLights(Emitation, EmitationUpdate);
 
       if(MotherEntity)
 	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
@@ -518,7 +518,7 @@ void stack::CalculateEmitation()
   Emitation = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    game::AddLight(Emitation, i->GetEmitation());
+    game::CombineLights(Emitation, i->GetEmitation());
 }
 
 bool stack::CanBeSeenBy(const character* Viewer) const

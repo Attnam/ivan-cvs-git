@@ -355,7 +355,7 @@ void silva::PrayBadEffect()
       game::GetPlayer()->Polymorph(new spider, 1000 + RAND() % 1000);
       break;
     case 1:
-      game::GetPlayer()->Polymorph(new donkey, 1000 + RAND() % 1000);
+      game::GetPlayer()->Polymorph(new ass, 1000 + RAND() % 1000);
       break;
     case 2:
       game::GetPlayer()->Polymorph(new jackal, 1000 + RAND() % 1000);

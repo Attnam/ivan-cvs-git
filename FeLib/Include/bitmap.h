@@ -31,10 +31,15 @@ class bitmap
   void Save(outputfile&) const;
   void Load(inputfile&);
   void Save(const std::string&) const;
+  void ResetAlpha(ushort, ushort);
   void PutPixel(ushort, ushort, ushort);
   void PutPixel(vector2d Pos, ushort Color) { PutPixel(Pos.X, Pos.Y, Color); }
+  void PutPixelAndResetAlpha(ushort X, ushort Y, ushort Color) { PutPixel(X, Y, Color); ResetAlpha(X, Y); }
+  void PutPixelAndResetAlpha(vector2d Pos, ushort Color) { PutPixel(Pos.X, Pos.Y, Color); ResetAlpha(Pos.X, Pos.Y); }
   void SafePutPixel(ushort X, ushort Y, ushort Color) { if(X < XSize && Y < YSize) PutPixel(X, Y, Color); }
   void SafePutPixel(vector2d Pos, ushort Color) { if(Pos.X < XSize && Pos.Y < YSize) PutPixel(Pos.X, Pos.Y, Color); }
+  void SafePutPixelAndResetAlpha(ushort X, ushort Y, ushort Color) { if(X < XSize && Y < YSize) PutPixelAndResetAlpha(X, Y, Color); }
+  void SafePutPixelAndResetAlpha(vector2d Pos, ushort Color) { if(Pos.X < XSize && Pos.Y < YSize) PutPixelAndResetAlpha(Pos.X, Pos.Y, Color); }
   ushort GetPixel(ushort, ushort) const;
   ushort GetPixel(vector2d Pos) const { return GetPixel(Pos.X, Pos.Y); }
 
@@ -154,6 +159,7 @@ class bitmap
   void FadeToScreen(void (*)(bitmap*) = 0);
   void DrawFlames(ushort, ushort = PINK);
   bool IsValidPos(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
+  bool IsValidPos(short X, short Y) const { return (X >= 0 && Y >= 0 && X < XSize && Y < YSize); }
   void CreateSparkle(vector2d, ushort);
   void CreateFlies(ushort, ulong, ushort);
   void CreateLightning();

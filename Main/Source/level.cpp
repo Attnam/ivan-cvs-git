@@ -240,7 +240,7 @@ void level::Generate()
 {
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
-  Map = (lsquare***)area::Map;
+  Map = reinterpret_cast<lsquare***>(area::Map);
 
   if(LevelScript->GetLevelMessage(false))
     LevelMessage = *LevelScript->GetLevelMessage();
@@ -710,7 +710,7 @@ void level::Save(outputfile& SaveFile) const
 void level::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
-  Map = (lsquare***)area::Map;
+  Map = reinterpret_cast<lsquare***>(area::Map);
   SaveFile >> Room;
 
   for(ushort x = 0; x < XSize; ++x)

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstring>
 
 #include "worldmap.h"
 #include "wsquare.h"
@@ -22,7 +23,7 @@
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
-  Map = (wsquare***)area::Map;
+  Map = reinterpret_cast<wsquare***>(area::Map);
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
@@ -70,7 +71,7 @@ void worldmap::Save(outputfile& SaveFile) const
 void worldmap::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
-  Map = (wsquare***)area::Map;
+  Map = reinterpret_cast<wsquare***>(area::Map);
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
   AltitudeBuffer = Alloc2D<short>(XSize, YSize);
   ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
@@ -95,6 +96,9 @@ void worldmap::Load(inputfile& SaveFile)
 
 void worldmap::Generate()
 {
+  OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
+  OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
+
   while(true)
     {
       RandomizeAltitude();
@@ -104,64 +108,143 @@ void worldmap::Generate()
       CalculateContinents();
       std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
-      ushort c;
-
-      for(c = 1; c < Continent.size(); ++c)
-	if(Continent[c]->Size() > 50 && Continent[c]->Size() < 500 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
+      for(ushort c = 1; c < Continent.size(); ++c)
+	if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 300 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
 	  PerfectForAttnam.push_back(Continent[c]);
 
       if(!PerfectForAttnam.size())
 	continue;
 
-      /*for(c = 1; c < Continent.size(); ++c)
-	if(Continent[c]->Size() > 10 && Continent[c]->Size() < 200 && Continent[c]->GetGTerrainAmount(jungle::StaticType()))
-	  PerfectForNewAttnam.push_back(Continent[c]);
+      vector2d AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
+      bool Correct = false;
 
-      if(!PerfectForNewAttnam.size())
-	continue;*/
-
-      vector2d AttnamPos, ElpuriCavePos;
-      ushort CounterOne;
-
-      for(CounterOne = 0;;)
+      for(ushort c1 = 0; c1 < 50; ++c1)
 	{
+	  game::BusyAnimation();
 	  continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 	  AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::StaticType());
-	  ushort CounterTwo = 0;
+	  ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());
 
-	  for(ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());; ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType()))
+	  for(ushort c2 = 1; c2 < 25; ++c2)
 	    {
-	      if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
-		break;
+	      TunnelExit = PetrusLikes->GetMember(RAND() % PetrusLikes->GetSize());
 
-	      if(++CounterTwo == 50)
-		break;
+	      if(AttnamPos != TunnelExit && ElpuriCavePos != TunnelExit)
+		{
+		  for(ushort d1 = 0; d1 < 8; ++d1)
+		    {
+		      vector2d Pos = TunnelExit + game::GetMoveVector(d1);
+
+		      if(IsValidPos(Pos) && AltitudeBuffer[Pos.X][Pos.Y] <= 0)
+			{
+			  ushort Distance = 3 + RAND() % 4;
+			  bool Error = false;
+			  TunnelEntry = Pos;
+
+			  for(ushort c2 = 0; c2 < Distance; ++c2)
+			    {
+			      TunnelEntry += game::GetMoveVector(d1);
+
+			      if(!IsValidPos(TunnelEntry) || AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] > 0)
+				{
+				  Error = true;
+				  break;
+				}
+			    }
+
+			  if(Error)
+			    continue;
+
+			  short x, y;
+
+			  for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
+			    {
+			      for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2; ++y)
+				if(!IsValidPos(x, y) || AltitudeBuffer[x][y] > 0 || AltitudeBuffer[x][y] < -300)
+				  {
+				    Error = true;
+				    break;
+				  }
+
+			      if(Error)
+				break;
+			    }
+
+			  if(Error)
+			    continue;
+
+			  Error = true;
+
+			  for(x = 0; x < XSize; ++x)
+			    if(TypeBuffer[x][TunnelEntry.Y] == jungle::StaticType())
+			      {
+				Error = false;
+				break;
+			      }
+
+			  if(Error)
+			    continue;
+
+			  ushort Counter = 0;
+
+			  for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
+			    for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2; ++y, ++Counter)
+			      if(Counter != 0 && Counter != 4 && Counter != 20 && Counter != 24)
+				AltitudeBuffer[x][y] /= 2;
+
+			  AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] = 1 + RAND() % 50;
+			  TypeBuffer[TunnelEntry.X][TunnelEntry.Y] = jungle::StaticType();
+			  GetWSquare(TunnelEntry)->ChangeGWTerrain(new jungle);
+			  ushort NewAttnamIndex;
+
+			  for(NewAttnamIndex = RAND() % 8; NewAttnamIndex == 7 - d1; NewAttnamIndex = RAND() % 8);
+
+			  NewAttnamPos = TunnelEntry + game::GetMoveVector(NewAttnamIndex);
+
+			  for(ushort d2 = 0; d2 < 8; ++d2)
+			    if(d2 != 7 - d1 && (d2 == NewAttnamIndex || !(RAND() & 3)))
+			      {
+				vector2d Pos = TunnelEntry + game::GetMoveVector(d2);
+				AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
+				TypeBuffer[Pos.X][Pos.Y] = jungle::StaticType();
+				GetWSquare(Pos)->ChangeGWTerrain(new jungle);
+			      }
+
+			  Correct = true;
+			  break;
+			}
+		    }
+
+		  if(Correct)
+		    break;
+		}
 	    }
 
-	  if(CounterTwo != 50)
-	    break;
-
-	  if(++CounterOne == 50)
+	  if(Correct)
 	    break;
 	}
 
-      if(CounterOne == 50)
+      if(!Correct)
 	continue;
 
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       SetEntryPos(ELPURICAVE, ElpuriCavePos);
-      /*GetWSquare(AttnamPos)->ChangeOWTerrain(new underwatertunnel);
-      SetEntryPos(UNDERWATERTUNNEL, AttnamPos);
-      GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new underwatertunnelexit);
-      SetEntryPos(UNDERWATERTUNNELEXIT, ElpuriCavePos);*/
-
-      GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
+      GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
+      SetEntryPos(NEWATTNAM, ElpuriCavePos);
+      GetWSquare(TunnelEntry)->ChangeOWTerrain(new underwatertunnel);
+      SetEntryPos(UNDERWATERTUNNEL, TunnelEntry);
+      GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);
+      SetEntryPos(UNDERWATERTUNNELEXIT, TunnelExit);
+      GetWSquare(NewAttnamPos)->AddCharacter(game::GetPlayer());
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();
       break;
     }
+
+  delete [] OldAltitudeBuffer;
+  delete [] OldTypeBuffer;
 }
 
 void worldmap::RandomizeAltitude()
@@ -170,67 +253,49 @@ void worldmap::RandomizeAltitude()
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      AltitudeBuffer[x][y] = RAND() % 5001 - RAND() % 5000;
+      AltitudeBuffer[x][y] = 4000 - RAND() % 8000;
 }
 
 void worldmap::SmoothAltitude()
 {
-  short** OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
-
   for(ushort c = 0; c < 10; ++c)
     {
       game::BusyAnimation();
-
-      if(c < 8)
-	{
-	  for(ushort c1 = 0; c1 < RAND() % 20; ++c1)
-	    {
-	      ushort PlaceX = 5 + RAND() % (XSize-10), PlaceY = 5 + RAND() % (YSize-10);
-	      short Change = RAND() % 10000 - RAND() % 10000;
-
-	      for(int c2 = 0; c2 < RAND() % 50; ++c2)
-		AltitudeBuffer[(PlaceX + RAND() % 5 - RAND() % 5)][(PlaceY + RAND() % 5 - RAND() % 5)] += Change;
-	    }
-	}
 
       for(ushort y = 0; y < YSize; ++y)
 	for(ushort x = 0; x < XSize; ++x)
 	  {
 	    long HeightNear = 0;
-	    uchar SquaresNear = 0;
-	    OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
-	    ushort d;
+	    ushort d, SquaresNear = 0;
 
 	    for(d = 0; d < 4; ++d)
 	      {
-		vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+		ushort X = x + game::GetMoveVector(d).X;
+		ushort Y = y + game::GetMoveVector(d).Y;
 
-		if(IsValidPos(Pos))
+		if(IsValidPos(X, Y))
 		  {
-		    HeightNear += OldAltitudeBuffer[Pos.X][Pos.Y];
+		    HeightNear += OldAltitudeBuffer[X][Y];
 		    ++SquaresNear;
 		  }
 	      }
 
 	    for(d = 4; d < 8; ++d)
 	      {
-		vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+		ushort X = x + game::GetMoveVector(d).X;
+		ushort Y = y + game::GetMoveVector(d).Y;
 
-		if(IsValidPos(Pos))
+		if(IsValidPos(X, Y))
 		  {
-		    HeightNear += AltitudeBuffer[Pos.X][Pos.Y];
+		    HeightNear += AltitudeBuffer[X][Y];
 		    ++SquaresNear;
 		  }
 	      }
 
+	    OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
 	    AltitudeBuffer[x][y] = HeightNear / SquaresNear;
-
-	    if(c < 8)
-	      AltitudeBuffer[x][y] += RAND() % 100 - RAND() % 100;
 	  }
     }
-
-  delete [] OldAltitudeBuffer;
 }
 
 void worldmap::GenerateClimate()
@@ -300,8 +365,6 @@ void worldmap::GenerateClimate()
 
 void worldmap::SmoothClimate()
 {
-  OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
-
   for(ushort c = 0; c < 3; ++c)
     {
       game::BusyAnimation();
@@ -317,42 +380,40 @@ void worldmap::SmoothClimate()
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       Map[x][y]->ChangeWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
-
-  delete [] OldTypeBuffer;
 }
 
 ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort x, ushort y)
 {
   static ushort Types = protocontainer<gwterrain>::GetProtoAmount() + 1;
-  static uchar* Type = new uchar[Types];
-
-  for(ushort n = 0; n < Types; ++n)
-    Type[n] = 0;
-
-  ushort d;
+  static uchar* Type = new uchar[Types]; // evil
+  uchar UsedType[9];
+  memset(Type, 0, Types * sizeof(uchar));
+  ushort d, u = 0;
 
   for(d = 0; d < 4; ++d)
     {
-      vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+      ushort X = x + game::GetMoveVector(d).X;
+      ushort Y = y + game::GetMoveVector(d).Y;
 
-      if(IsValidPos(Pos))
-	++Type[OldTypeBuffer[Pos.X][Pos.Y]];
+      if(IsValidPos(X, Y))
+	++Type[UsedType[u++] = OldTypeBuffer[X][Y]];
     }
 
   for(d = 4; d < 8; ++d)
     {
-      vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+      ushort X = x + game::GetMoveVector(d).X;
+      ushort Y = y + game::GetMoveVector(d).Y;
 
-      if(IsValidPos(Pos))
-	++Type[TypeBuffer[Pos.X][Pos.Y]];
+      if(IsValidPos(X, Y))
+	++Type[UsedType[u++] = TypeBuffer[X][Y]];
     }
 
-  ++Type[TypeBuffer[x][y]];
+  ++Type[UsedType[u++] = TypeBuffer[x][y]];
   uchar MostCommon = 0;
 
-  for(ushort c = 1; c < Types; ++c)
-    if(Type[c] > Type[MostCommon] && c != ocean::StaticType())
-      MostCommon = c;
+  for(ushort c = 0; c < u; ++c)
+    if(Type[UsedType[c]] > Type[MostCommon] && UsedType[c] != ocean::StaticType())
+      MostCommon = UsedType[c];
 
   return MostCommon;
 }
@@ -365,7 +426,7 @@ void worldmap::CalculateContinents()
     delete Continent[c];
 
   Continent.resize(1, 0);
-  memset(ContinentBuffer[0], 0, XSize * YSize);
+  memset(ContinentBuffer[0], 0, XSize * YSize * sizeof(uchar));
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -385,7 +446,7 @@ void worldmap::CalculateContinents()
 		      if(ContinentBuffer[x][y])
 			{
 			  if(ContinentBuffer[x][y] != ContinentBuffer[Pos.X][Pos.Y])
-			    if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[Pos.X][Pos.Y]]->Size())
+			    if(Continent[ContinentBuffer[x][y]]->GetSize() < Continent[ContinentBuffer[Pos.X][Pos.Y]]->GetSize())
 			      Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[Pos.X][Pos.Y]]);
 			    else
 			      Continent[ContinentBuffer[Pos.X][Pos.Y]]->AttachTo(Continent[ContinentBuffer[x][y]]);
@@ -423,9 +484,9 @@ void worldmap::CalculateContinents()
 void worldmap::RemoveEmptyContinents()
 {
   for(ushort c = 1; c < Continent.size(); ++c)
-    if(!Continent[c]->Size())
+    if(!Continent[c]->GetSize())
       for(ushort i = Continent.size() - 1; i >= c; i--)
-	if(Continent[i]->Size())
+	if(Continent[i]->GetSize())
 	  {
 	    Continent[i]->AttachTo(Continent[c]);
 	    delete Continent[i];

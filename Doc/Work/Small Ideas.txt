@@ -334,4 +334,4 @@ Spruces should block light.
 Reading holy books should aggravate monsters.
 Time bomb.
 Prohibit vomiting over Avatar.
-Monster that only sees in red,green or blue light.
+Monster that only sees in red, green or blue light.

@@ -4992,10 +4992,13 @@ void character::PoisonedHandler()
   if(!(RAND() % 100))
     Vomit(1 + RAND() & 1);
 
+  ushort Damage = 0;
+
   for(ushort Used = 0; Used < GetTemporaryStateCounter(POISONED); Used += 100)
     if(!(RAND() % 50))
-      ReceiveDamage(this, 1, POISON);
+      ++Damage;
 
+  ReceiveDamage(this, Damage, POISON);
   CheckDeath("died of acute poisoning");
 }
 
@@ -5268,7 +5271,7 @@ void character::SignalEmitationIncrease(ulong EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0)
     {
-      game::AddLight(Emitation, EmitationUpdate);
+      game::CombineLights(Emitation, EmitationUpdate);
 
       if(MotherEntity)
 	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
@@ -5300,12 +5303,12 @@ void character::CalculateEmitation()
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      game::AddLight(Emitation, GetBodyPart(c)->GetEmitation());
+      game::CombineLights(Emitation, GetBodyPart(c)->GetEmitation());
 
-  game::AddLight(Emitation, Stack->GetEmitation());
+  game::CombineLights(Emitation, Stack->GetEmitation());
 
   if(Action)
-    game::AddLight(Emitation, Action->GetEmitation());
+    game::CombineLights(Emitation, Action->GetEmitation());
 }
 
 void character::CalculateAll()

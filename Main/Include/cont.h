@@ -25,12 +25,13 @@ class continent
   void Add(vector2d);
   void Save(outputfile&) const;
   void Load(inputfile&);
-  ulong Size() const { return Member.size(); }
+  ulong GetSize() const { return Member.size(); }
   uchar GetIndex() const { return Index; }
   void GenerateInfo();
   std::string GetName() const { return Name; }
-  ushort GetGTerrainAmount(ushort Type) { return GTerrainAmount[Type]; }
+  ushort GetGTerrainAmount(ushort Type) const { return GTerrainAmount[Type]; }
   vector2d GetRandomMember(ushort);
+  vector2d GetMember(ushort Index) const { return Member[Index]; }
  private:
   static ushort** TypeBuffer;
   static short** AltitudeBuffer;
