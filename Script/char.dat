@@ -1,25 +1,875 @@
 /* Numeric character data loaded during game startup */
 
-/*human
+human
 {
-	ReCalculate = true;
-	Agility = 15 + rand%11;
-	Strength = 10 + rand%6;
-	Endurance = 10 + rand%6;
-	Perception = 10 + rand%6;
-	Money = 200 + rand%101;
+	DefaultAgility = 15;
+	DefaultStrength = 10;
+	DefaultEndurance = 10;
+	DefaultPerception = 10;
+	DefaultMoney = 200;
+	HeadBitmapPos = 96, 0;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 0;
 	TotalVolume = 60000;
+	TotalSize = 180;
+	MeleeStrength = 1000;
+}
+
+petrus
+{
+	DefaultAgility = 75;
+	DefaultStrength = 75;
+	DefaultEndurance = 75;
+	DefaultPerception = 75;
+	IsCharmable = false;
+	HasInfraVision = true;
+	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	HairColor = rgb(160, 160, 160);
+	ClothColor = rgb(48, 48, 48);
+	HeadBitmapPos = 96, 144;
+	TorsoBitmapPos = 32, 80;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 0;
+	TotalVolume = 80000;
+	MeleeStrength = 20000;
+	TotalSize = 225;
+}
+
+farmer
+{
+	DefaultAgility = 10;
+	DefaultStrength = 15;
+	DefaultEndurance = 20;
+	DefaultPerception = 18;
+	DefaultMoney = 20;
+	TorsoSpecialColor = rgb(0, 96, 0);
+	TorsoBitmapPos = 32, 32;
+	TotalVolume = 30000;
+	TotalSize = 170;
+	MeleeStrength = 1000;
+}
+
+guard
+{
+	DefaultAgility = 15;
+	DefaultStrength = 20;
+	DefaultEndurance = 20;
+	DefaultPerception = 24;
+	ClothColor = rgb(0, 128, 128);
+	HeadBitmapPos = 96, 112;
+	TorsoBitmapPos = 32, 128;
+	ArmBitmapPos = 64, 80;
+	LegBitmapPos = 0, 64;
+	TotalVolume = 60000;
+	MeleeStrength = 2000;
 	TotalSize = 180;
 }
 
-SkinColor
-CapColor
-HairColor
-TorsoMainColor
-BeltColor
-TorsoSpecialColor
-ArmMainColor
-ArmSpecialColor
-LegMainColor
-LegSpecialColor
-ClothColor*/
+shopkeeper
+{
+
+	DefaultAgility = 10;
+	DefaultStrength = 30;
+	DefaultEndurance = 25;
+	DefaultPerception = 30;
+	DefaultMoney = 3000;
+	TorsoSpecialColor = rgb(0, 96, 0);
+	HeadBitmapPos = 96, 64;
+	TorsoBitmapPos = 32, 32;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 32;
+	TotalVolume = 100000;
+	MeleeStrength = 2000;
+	TotalSize = 160;
+}
+
+priest
+{
+	DefaultAgility = 10;
+	DefaultStrength = 20;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	CanSwim = true;
+	CapColor = rgb(180, 0, 80);
+	TorsoSpecialColor = rgb(0, 96, 0);
+	HeadBitmapPos = 96, 128;
+	TorsoBitmapPos = 32, 32;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 32;
+	TotalVolume = 100000;
+	TotalSize = 180;
+	MeleeStrength = 1000;
+}
+
+oree
+{
+	DefaultAgility = 50;
+	DefaultStrength = 30;
+	DefaultEndurance = 30;
+	DefaultPerception = 30;
+	IsCharmable = false;
+	BloodColor = rgb(0, 0, 0);
+	HasInfraVision = true;
+	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	HeadBitmapPos = 96, 32; 
+	TorsoBitmapPos = 48, 160;
+	ArmBitmapPos = 80, 160;
+	LegBitmapPos = 16, 144;
+	ClothColor = rgb(30, 30, 30);
+	SkinColor = rgb(160, 0, 0);
+	EyeColor = rgb(64, 0, 0);
+	TotalVolume = 110000;
+	MeleeStrength = 30000;
+	TotalSize = 225;
+}
+
+darkknight
+{
+
+	DefaultAgility = 30;
+	DefaultStrength = 30;
+	DefaultEndurance = 30;
+	DefaultPerception = 30;
+	CanBeGenerated = true;
+	HeadBitmapPos = 96, 240; 
+	TorsoBitmapPos = 32, 176;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 64;
+	ClothColor = rgb(0, 0, 30);
+	EyeColor = rgb(100, 0, 0);
+	TotalVolume = 110000;
+	TorsoBitmapPos = 128, 0;
+	MeleeStrength = 5000;
+	TotalSize = 200;
+}
+
+ennerbeast
+{
+	DefaultAgility = 10;
+	DefaultStrength = 10;
+	DefaultEndurance = 25;
+	DefaultPerception = 12;
+	CanOpen = false;
+	CanBeGenerated = false;
+	TotalVolume = 30000;
+	TorsoBitmapPos = 96, 0;
+	MeleeStrength = 100000;
+	TotalSize = 150;
+}
+
+darkfrog
+{
+	DefaultAgility = 30;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 18;
+	CanOpen = false;
+	BloodColor = rgb(0, 0, 0);
+	HasInfraVision = true;
+	TotalVolume = 2500;
+	TorsoBitmapPos = 80, 0;
+	TotalSize = 25;
+	MeleeStrength = 20000;
+	TalkVerb = "croaks";
+}
+
+elpuri
+{
+
+	DefaultAgility = 10;
+	DefaultStrength = 30;
+	DefaultEndurance = 50;
+	DefaultPerception = 30;
+	CanBeGenerated = false;
+	IsCharmable = false;
+	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	BloodColor = rgb(0, 0, 0);
+	TotalVolume = 277500;
+	TorsoBitmapPos = 64, 0;
+	TotalSize = 300;
+	MeleeStrength = 20000;
+	TalkVerb = "croaks";
+}
+
+billswill
+{
+	DefaultAgility = 40;
+	DefaultStrength = 5;
+	DefaultEndurance = 20;
+	DefaultPerception = 27;
+	HasInfraVision = true;
+	StandVerb = "floating";
+	Frequency = 100;
+	CanFly = true;
+	TotalVolume = 500000;
+	TorsoBitmapPos = 48, 0;
+	MeleeStrength = 20000;
+	TotalSize = 100;
+}
+
+skeleton
+{
+	DefaultAgility = 10;
+	DefaultStrength = 5;
+	DefaultEndurance = 10;
+	DefaultPerception = 15;
+	CanBeGenerated = true;
+	SkinColor = rgb(144, 144, 144);
+	EyeColor = rgb(100, 0, 0);
+	ClothColor = rgb(111,74, 37);
+	HeadBitmapPos = 96, 208;
+	TorsoBitmapPos = 32, 96;
+	ArmBitmapPos = 64, 96;
+	LegBitmapPos = 0, 80;
+	TotalVolume = 60000;
+	MeleeStrength = 1000;
+	TotalSize = 150;
+}
+
+goblin
+{
+	DefaultAgility = 15;
+	DefaultStrength = 10;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	CanBeGenerated = true;
+	Sex = UNDEFINED;
+	SkinColor = rgb(0, 128, 0);
+	ClothColor = rgb(111,74,37); 
+	HeadBitmapPos = 96, 48;
+	TorsoBitmapPos = 32,112;
+	ArmBitmapPos = 64, 144;
+	LegBitmapPos = 16, 64;
+	TotalVolume = 25000;
+	TorsoBitmapPos = 144, 0;
+	MeleeStrength = 2000;
+	TotalSize = 100;
+}
+
+conicalmommo
+{
+	DefaultAgility = 2;
+	DefaultStrength = 4;
+	DefaultEndurance = 50;
+	DefaultPerception = 9;
+	BloodColor = rgb(7, 155, 0);
+	TotalVolume = 250000;
+	TorsoBitmapPos = 176, 0;
+	TotalSize = 100;
+	StandVerb = "bubbling";
+	MeleeStrength = 20000;
+	TalkVerb = "vibrates oddly";
+}
+
+flatmommo
+{
+	DefaultAgility = 4;
+	DefaultStrength = 2;
+	DefaultEndurance = 25;
+	DefaultPerception = 9;
+	BloodColor = rgb(7, 155, 0);
+	TotalVolume = 150000;
+	TorsoBitmapPos = 192, 0;
+	TotalSize = 75;
+	StandVerb = "bubbling";
+	MeleeStrength = 20000;
+	TalkVerb = "vibrates oddly";
+}
+
+golem
+{
+	DefaultAgility = 5;
+	DefaultStrength = 20;
+	DefaultEndurance = 20;
+	DefaultPerception = 12;
+	TotalVolume = 100000;
+	TorsoBitmapPos = 256, 0;
+	TotalSize = 250;
+	MeleeStrength = 0; /* Not used */
+}
+
+wolf
+{
+	DefaultAgility = 20;
+	DefaultStrength = 10;
+	DefaultEndurance = 10;
+	DefaultPerception = 24;
+	TotalVolume = 40000;
+	TorsoBitmapPos = 224, 0;
+	MeleeStrength = 7500;
+	TalkVerb = "howls";
+	TotalSize = 100;
+}
+
+dog
+{
+	DefaultAgility = 15;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 21;
+	TotalVolume = 30000;
+	TorsoBitmapPos = 240, 0;
+	MeleeStrength = 5000;
+	TalkVerb = "barks";
+	TotalSize = 70;
+	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONE;
+}
+
+spider
+{
+	DefaultAgility = 5;
+	DefaultStrength = 2;
+	DefaultEndurance = 1;
+	DefaultPerception = 9;
+	BloodColor = rgb(0, 0, 0);
+	HasInfraVision = true;
+	CanOpen = false;
+	TotalVolume = 100;
+	TorsoBitmapPos = 272, 0;
+	MeleeStrength = 10000;
+	TalkVerb = "says nothing";
+	TotalSize = 10;
+}
+
+jackal
+{
+	DefaultAgility = 10;
+	DefaultStrength = 3;
+	DefaultEndurance = 3;
+	DefaultPerception = 18;
+	TotalVolume = 20000;
+	TorsoBitmapPos = 304, 0;
+	MeleeStrength = 5000;
+	TalkVerb = "howls";
+	TotalSize = 80;
+}
+
+donkey
+{
+	DefaultAgility = 5;
+	DefaultStrength = 10;
+	DefaultEndurance = 10;
+	DefaultPerception = 15;
+	TotalVolume = 40000;
+	TorsoBitmapPos = 288, 0;
+	MeleeStrength = 1000;
+	TalkVerb = "neighs";
+	TotalSize = 150;
+}
+
+communist
+{
+	DefaultAgility = 20;
+	DefaultStrength = 50;
+	DefaultEndurance = 50;
+	DefaultPerception = 18;
+	HasInfraVision = true;
+	CriticalModifier = 4;
+	IsNameable = false;
+	BeltColor = rgb(0, 0, 0);
+	ArmSpecialColor = rgb(160, 0, 0);
+	ClothColor = rgb(64, 56, 24);
+	HeadBitmapPos = 96, 176;
+	TorsoBitmapPos = 32, 144;
+	ArmBitmapPos = 64, 112;
+	LegBitmapPos = 0, 0;
+	TotalVolume = 120000;
+	MeleeStrength = 5000;
+	TotalSize = 230;
+}
+
+hunter
+{
+	DefaultAgility = 20;
+	DefaultStrength = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 24;
+	ClothColor = rgb(128, 80, 48);
+	BeltColor = rgb(144, 96, 60);
+	HeadBitmapPos = 96, 192;
+	TorsoBitmapPos = 32, 192;
+	ArmBitmapPos = 64, 128;
+	LegBitmapPos = 0, 96;
+	TotalVolume = 80000;
+	MeleeStrength = 2000;
+	TotalSize = 180;
+}
+
+polarbear
+{
+	DefaultAgility = 10;
+	DefaultStrength = 30;
+	DefaultEndurance = 30;
+	DefaultPerception = 24;
+	CanBeGenerated = false;
+	TotalVolume = 500000;
+	MeleeStrength = 10000;
+	TorsoBitmapPos = 336, 0;
+	TalkVerb = "growls";
+	TotalSize = 250;
+}
+
+dolphin
+{
+	DefaultAgility = 30;
+	DefaultStrength = 10;
+	DefaultEndurance = 10;
+	DefaultPerception = 30;
+	CanBeGenerated = false;
+	StandVerb = "swimming";
+	CanBeDisplaced = false;
+	CanOpen = false;
+	CanWalk = false;
+	CanSwim = true;
+	TotalVolume = 150000;
+	MeleeStrength = 1000;
+	TorsoBitmapPos = 320, 0;
+	TalkVerb = "peeps passionately to you";
+	TotalSize = 300;
+}
+
+
+lightfrog
+{
+	DefaultAgility = 30;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 18;
+	CanBeGenerated = false;
+	CanSwim = true;
+	TotalVolume = 2500;
+	TorsoBitmapPos = 80, 0;
+	TotalSize = 25;
+	CanOpen = false;
+	MeleeStrength = 20000;
+	TalkVerb = "croaks";
+}
+
+slave
+{
+	DefaultAgility = 10;
+	DefaultStrength = 20;
+	DefaultEndurance = 15;
+	DefaultPerception = 15;
+	SkinColor = rgb(128, 80, 48);
+	HairColor = rgb(80, 48, 32);
+	EyeColor = rgb(64, 48, 24);
+	ClothColor = rgb(56, 48, 20);
+	HeadBitmapPos = 96, 0;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0,16;
+	TotalVolume = 60000;
+	TotalSize = 160;
+	MeleeStrength = 1000;
+}
+
+petrusswife
+{
+	DefaultAgility = 10;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 21;
+	Sex = FEMALE;
+	ClothColor = rgb(150, 0, 0);
+	BeltColor = rgb(180, 180, 0);
+	HeadBitmapPos = 112, 0;
+	TorsoBitmapPos = 32, 160;
+	ArmBitmapPos = 64, 160;
+	LegBitmapPos = 0, 112;
+	TotalVolume = 50000;
+	MeleeStrength = 500;
+	TotalSize = 170;
+}
+
+/*petrusswife1
+{
+	HairColor = rgb(0, 0, 0);
+	HeadBitmapPos = 112, 0;
+}
+
+petrusswife2
+{
+	HairColor = rgb(0, 0, 0);
+	HeadBitmapPos = 112, 16;
+}
+
+petrusswife3
+{
+	HairColor = rgb(60, 48, 24);
+	HeadBitmapPos = 112, 0;
+}
+
+petrusswife4
+{
+	HairColor = rgb(200, 96, 0);
+	HeadBitmapPos = 112, 48;
+}
+
+petrusswife5
+{
+	HairColor = rgb(80, 64, 32);
+	HeadBitmapPos = 112, 64;
+}
+
+petrusswife6
+{
+	HairColor = rgb(144, 0, 0);
+	HeadBitmapPos = 112, 80;
+}*/
+
+housewife
+{
+	DefaultAgility = 15;
+	DefaultStrength = 10;
+	DefaultEndurance = 15;
+	DefaultPerception = 24;
+	Sex = FEMALE;
+	TorsoMainColor = rgb(160, 160, 160);
+	ArmMainColor = rgb(100, 100, 100);
+	LegMainColor = rgb(180, 80, 0);
+	HairColor = rgb(60, 48, 24);
+	TorsoBitmapPos = 32, 160;
+	ArmBitmapPos = 64, 160;
+	LegBitmapPos = 0, 112;
+	TotalVolume = 70000;
+	MeleeStrength = 500;
+	TotalSize = 160;
+}
+
+femaleslave
+{
+	DefaultAgility = 10;
+	DefaultStrength = 10;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	Sex = FEMALE;
+	SkinColor = rgb(160, 100, 64);
+	HairColor = rgb(80, 48, 32);
+	HeadBitmapPos = 112, 96;
+	TorsoBitmapPos = 32, 208;
+	ArmBitmapPos = 64, 208;
+	LegBitmapPos = 0, 144;
+	TotalVolume = 40000;
+	MeleeStrength = 500;
+	TotalSize = 170;
+}
+
+librarian
+{
+	DefaultAgility = 5;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 12;
+	HairColor = rgb(160, 160, 160);
+	ClothColor = rgb(48, 48, 48);
+	ArmMainColor = rgb(144, 144, 144);
+	HeadBitmapPos = 96, 224;
+	TorsoBitmapPos = 32, 80;
+	ArmBitmapPos = 64, 16;
+	LegBitmapPos = 0, 0;
+	TotalVolume = 80000;
+	MeleeStrength = 500;
+	TotalSize = 170;
+}
+
+zombie
+{
+	DefaultAgility = 5;
+	DefaultStrength = 10;
+	DefaultEndurance = 5;
+	DefaultPerception = 12;
+	CanBeGenerated = true;
+	MeleeStrength = 1500;
+	Sex = UNDEFINED;
+	SkinColor = rgb(0, 120, 120);
+	EyeColor = rgb(200, 0, 0);
+	ClothColor = rgb(56, 16, 96);
+	HeadBitmapPos = 112, 112;
+	TorsoBitmapPos = 32, 224;
+	ArmBitmapPos = 64, 224;
+	LegBitmapPos = 0, 160;
+	TotalVolume = 50000;
+	TotalSize = 160;
+}
+
+imp
+{
+	DefaultAgility = 15;
+	DefaultStrength = 10;
+	DefaultEndurance = 10;
+	DefaultPerception = 15;
+	Sex = UNDEFINED;
+	SkinColor = rgb(128, 0, 0);
+	EyeColor = rgb(150, 80, 0);
+	ClothColor = rgb(111, 74, 37);
+	CapColor = rgb(30, 0, 0);
+	HeadBitmapPos = 96, 16; 
+	TorsoBitmapPos = 48, 112;
+	ArmBitmapPos = 64, 32;
+	LegBitmapPos = 16, 80;
+	TotalVolume = 40000;
+	MeleeStrength = 20000;
+	TotalSize = 100;
+}
+
+bat
+{
+	DefaultAgility = 40;
+	DefaultStrength = 2;
+	DefaultEndurance = 1;
+	DefaultPerception = 24;
+	StandVerb = "flying";
+	CanOpen = false;
+	HasInfraVision = true;
+	CanFly = true;
+	TotalVolume = 1000;
+	TorsoBitmapPos = 464, 0;
+	MeleeStrength = 20000;
+	TalkVerb = "squeaks";
+	TotalSize = 20;
+}
+
+mistress
+{
+	DefaultAgility = 35;
+	DefaultStrength = 25;
+	DefaultEndurance = 50;
+	DefaultPerception = 30;
+	CanBeGenerated = true;
+	Sex = FEMALE;
+	MeleeStrength = 5000;
+	SkinColor = rgb(255, 212, 192);
+	HairColor = rgb(35, 35, 35);
+	ClothColor = rgb(35, 35, 35);
+	HeadBitmapPos = 112, 240;
+	TorsoBitmapPos = 48, 96;
+	ArmBitmapPos = 80, 80;
+	LegBitmapPos = 16, 32;
+	TotalVolume = 60000;
+	TorsoBitmapPos = 352, 0;
+	TotalSize = 180;
+}
+
+/*werewolf
+{
+	CanBeGenerated = true;
+	Load(inputfile&;
+	Save(outputfile&) const;
+	HasInfraVision = GetIsWolf(;
+	ChangeIntoHuman(;
+	ChangeIntoWolf(;
+	Be(;
+	GetIsWolf() const { return IsWolf; 
+	SetIsWolf(What) { IsWolf = What;
+	SetChangeCounter(What) { ChangeCounter = What;
+	GetChangeCounter() { return ChangeCounter;
+	MaxDanger() const;
+	//CanWield() const { return !GetIsWolf(;
+	Sex = IsWolf ? UNDEFINED : MALE;
+
+	//SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(;
+	EyeColor = rgb(160, 0, 0;
+	ClothColor = rgb(96, 64, 32;
+	GetHeadBitmapPos() const { return IsWolf ? 112, 144) : 96, 0;
+	TorsoBitmapPos = 48, 0;
+	GetArmBitmapPos() const { return IsWolf ? 80, 240) : 64, 0;
+	GetLegBitmapPos() const { return IsWolf ? 0, 192) : 0, 176;
+	TotalVolume = 80000;
+	material* CreateBodyPartFlesh(ushort, Volume) const { return new werewolfflesh(Volume;
+	std::string NameSingular() const { return "werewolf";
+	//float GetMeleeStrength() const;
+	TalkVerb = IsWolf ? "howls" : "screams";
+	TotalSize = 170;
+	ChangeCounter;
+	IsWolf;
+}*/
+
+kobold
+{
+	DefaultAgility = 10;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 12;
+	Sex = UNDEFINED;
+	CanBeGenerated = true;
+	SkinColor = rgb(30, 100, 110);
+	HairColor = rgb(35, 35, 35);
+	ClothColor = rgb(111, 74, 37);
+	HeadBitmapPos = 112, 208;
+	TorsoBitmapPos = 48, 176;
+	ArmBitmapPos = 64, 176;
+	LegBitmapPos = 16, 112;
+	TotalVolume = 30000;
+	MeleeStrength = 2000;
+	TotalSize = 90;
+}
+
+gibberling
+{
+	DefaultAgility = 20;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 15;
+	Sex = UNDEFINED;
+	SkinColor = rgb(100, 100, 200);
+	HairColor = rgb(50, 20, 80);
+	ClothColor = rgb(111, 74, 37);
+	EyeColor = rgb(50, 0, 0);
+	HeadBitmapPos = 112, 32;
+	TorsoBitmapPos = 48, 144;
+	ArmBitmapPos = 80, 144;
+	LegBitmapPos = 16, 128;
+	TotalVolume = 30000;
+	MeleeStrength = 10000;
+	TotalSize = 90;
+}
+
+largecat
+{
+	DefaultAgility = 25;
+	DefaultStrength = 5;
+	DefaultEndurance = 5;
+	DefaultPerception = 21;
+	TotalVolume = 15000;
+	TorsoBitmapPos = 496, 0;
+	MeleeStrength = 20000;
+	TalkVerb = "mews";
+	TotalSize = 60;
+}
+
+largerat
+{
+	DefaultAgility = 10;
+	DefaultStrength = 3;
+	DefaultEndurance = 2;
+	DefaultPerception = 12;
+	CanOpen = false;
+	TotalVolume = 2000;
+	TorsoBitmapPos = 512, 0;
+	MeleeStrength = 20000;
+	TalkVerb = "squeaks";
+	TotalSize = 30;
+}
+
+angel
+{
+	DefaultAgility = 35;
+	DefaultStrength = 35;
+	DefaultEndurance = 35;
+	DefaultPerception = 45;
+	IsCharmable = false;
+	HasInfraVision = true;
+	Sex = FEMALE;
+	CanFly = true;
+	TotalVolume = 60000;
+	TorsoBitmapPos = 432, 0;
+	MeleeStrength = 10000;
+	TotalSize = 180;
+}
+
+kamikazedwarf
+{
+	DefaultAgility = 20;
+	DefaultStrength = 20;
+	DefaultEndurance = 20;
+	DefaultPerception = 24;
+	CanBeGenerated = true;
+	MeleeStrength = 2000;
+	Frequency = 1000;
+	HeadBitmapPos = 112, 160;
+	TorsoBitmapPos = 48, 16;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 208;
+	HairColor = rgb(160, 160, 160);
+	ClothColor = rgb(111, 74, 37);
+	TotalVolume = 60000;
+	TotalSize = 130;
+}
+
+mammoth
+{
+	DefaultAgility = 20;
+	DefaultStrength = 80;
+	DefaultEndurance = 80;
+	DefaultPerception = 18;
+	TotalVolume = 5000000;
+	TorsoBitmapPos = 528, 0;
+	MeleeStrength = 5000;
+	TalkVerb = "roars";
+	TotalSize = 500;
+}
+
+unicorn
+{
+	DefaultAgility = 40;
+	DefaultStrength = 10;
+	DefaultEndurance = 25;
+	DefaultPerception = 18;
+	MeleeStrength = 5000;
+	TalkVerb = "neighs";
+	TotalVolume = 200000;
+	TorsoBitmapPos = 544, 0;
+	TotalSize = 200;
+}
+
+genie
+{
+	DefaultAgility = 30;
+	DefaultStrength = 30;
+	DefaultEndurance = 30;
+	DefaultPerception = 18;
+	StandVerb = "floating";
+	CanFly = true;
+	TotalVolume = 200000;
+	TorsoBitmapPos = 416, 0;
+	MeleeStrength = 5000;
+	TotalSize = 250;
+}
+
+lion
+{
+	DefaultAgility = 40;
+	DefaultStrength = 30;
+	DefaultEndurance = 30;
+	DefaultPerception = 24;
+	TotalVolume = 150000;
+	TorsoBitmapPos = 576, 0;
+	MeleeStrength = 3000;
+	TalkVerb = "growls";
+	TotalSize = 200;
+}
+
+carnivorousplant
+{
+	DefaultAgility = 5;
+	DefaultStrength = 30;
+	DefaultEndurance = 4;
+	DefaultPerception = 5;
+	CanOpen = false;
+	TotalVolume = 20000;
+	TorsoBitmapPos = 0,16;
+	MeleeStrength = 2500;
+	TalkVerb = "is silent";
+	TotalSize = 250;
+}
+
+buffalo
+{
+	DefaultAgility = 4;
+	DefaultStrength = 3;
+	DefaultEndurance = 30;
+	DefaultPerception = 24;
+	TotalVolume = 200000;
+	TorsoBitmapPos = 16,16;
+	MeleeStrength = 500;
+	TalkVerb = "snarls";
+	TotalSize = 250;
+}

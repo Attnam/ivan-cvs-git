@@ -99,6 +99,7 @@ struct character_database
   uchar LegBonePercentile;
   uchar RightLegBonePercentile;
   uchar LeftLegBonePercentile;
+  bool IsNameable;
 };
 
 class character_prototype
@@ -336,7 +337,7 @@ class character : public entity, public id
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(const std::string& What) { AssignedName = What; }
-  virtual bool CanBeAssignedAName() const { return true; }
+  //virtual bool CanBeAssignedAName() const { return true; }
   virtual std::string Description(uchar) const;
   virtual std::string PersonalPronoun() const;
   virtual std::string PossessivePronoun() const;
@@ -483,6 +484,7 @@ class character : public entity, public id
   DATABASEVALUE(uchar, LegBonePercentile);
   DATABASEVALUE(uchar, RightLegBonePercentile);
   DATABASEVALUE(uchar, LeftLegBonePercentile);
+  DATABASEBOOL(IsNameable);
 
   /*virtual ushort GetDefaultAgility() const { return GetDataBase().DefaultAgility; }
   virtual ushort GetDefaultStrength() const { return GetDataBase().DefaultStrength; }

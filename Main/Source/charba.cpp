@@ -3298,7 +3298,7 @@ bool character::AssignName()
 
   if(Character && Character->GetSquareUnder()->CanBeSeen())
     {
-      if(Character->CanBeAssignedAName())
+      if(Character->IsNameable())
 	{
 	  std::string Topic = "What do you want to call this " + Character->Name(UNARTICLED) + "?";
 	  std::string Name = game::StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);

@@ -855,6 +855,7 @@ data<character>::data<character>()
   INITMEMBER(LegBonePercentile);
   INITMEMBER(RightLegBonePercentile);
   INITMEMBER(LeftLegBonePercentile);
+  INITMEMBER(IsNameable);
 }
 
 data<item>::data<item>()
@@ -974,6 +975,11 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
   ValueMap["VALUABLE"] = VALUABLE;
   ValueMap["MISC"] = MISC;
 
+  ValueMap["UNDEFINED"] = UNDEFINED;
+  ValueMap["MALE"] = MALE;
+  ValueMap["FEMALE"] = FEMALE;
+  ValueMap["TRANSSEXUAL"] = TRANSSEXUAL;
+
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       ushort Index = protocontainer<type>::SearchCodeName(Word);
@@ -1077,6 +1083,7 @@ void database<character>::Apply()
 	  SETDATAWITHDEFAULT(LegBonePercentile, 30);
 	  SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase.LegBonePercentile);
 	  SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase.LegBonePercentile);
+	  SETDATAWITHDEFAULT(IsNameable, true);
 	}
       else
 	{
@@ -1139,6 +1146,7 @@ void database<character>::Apply()
 	  DataBase.LegBonePercentile = 30;
 	  DataBase.RightLegBonePercentile = DataBase.LegBonePercentile;
 	  DataBase.LeftLegBonePercentile = DataBase.LegBonePercentile;
+	  DataBase.IsNameable = true;
 	}
     }
 }

@@ -370,6 +370,7 @@ class data<character> : public basedata<character>
   DATAMEMBER(uchar, LegBonePercentile);
   DATAMEMBER(uchar, RightLegBonePercentile);
   DATAMEMBER(uchar, LeftLegBonePercentile);
+  DATAMEMBER(bool, IsNameable);
 };
 
 class data<item> : public basedata<item>
