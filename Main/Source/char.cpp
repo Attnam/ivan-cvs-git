@@ -2845,6 +2845,8 @@ vector character::CPos(void)
 	return SquareUnder->CPos();
 }
 
+// Valpuri r0xx
+
 bool character::ForceVomit(void)
 {
 	ushort Amount = rand() % 3;
