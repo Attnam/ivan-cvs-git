@@ -402,3 +402,4 @@ Ikiros should forge weapons from raw materials provided by the player.
 Kiss command.
 Cloak of fire resistance should protect items in the inventory from fire.
 Eyeglasses.
+Shift + direction should act as go command.
