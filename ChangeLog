@@ -6,7 +6,12 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+May 9 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Primary and secondary wielded are highlighted in '@' menu
+	* Msg for no zappable items when zapping works now.
+	* New insults
+	
 May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Magical whistle now teleports only up to 10 monsters

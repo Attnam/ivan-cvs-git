@@ -951,7 +951,7 @@ void whistle::BlowEffect(character* Whistler)
 struct distancepair
 {
   distancepair(ulong Distance, character* Char) : Distance(Distance), Char(Char) { }
-  bool operator<(const distancepair& D) { return Distance > D.Distance; }
+  bool operator<(const distancepair& D) const { return Distance > D.Distance; }
   ulong Distance;
   character* Char;
 };

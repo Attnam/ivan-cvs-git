@@ -226,7 +226,7 @@ bool game::Init(const festring& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new orc);
+	SetPlayer(new human);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -414,7 +414,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult() // convert to array
 {
-  switch(RAND() & 15)
+  switch(RAND_N(19))
     {
     case 0  : return "moron";
     case 1  : return "silly";
@@ -432,6 +432,8 @@ const char* game::Insult() // convert to array
     case 13 : return "software abuser";
     case 14 : return "loser";
     case 15 : return "peaballs";
+    case 16 : return "person-with-problems";
+    case 17 : return "unimportant user";
     default : return "hugger-mugger";
     }
 }
