@@ -222,7 +222,7 @@ class character : public entity, public id
   //virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState() const { return BurdenState; }
-  virtual bool MakesBurdened(ulong Mass) const { return Mass > 2500 * GetCarryingStrength(); }
+  virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
   virtual ulong CurrentDanger() const;
   virtual ulong MaxDanger() const;
@@ -366,7 +366,6 @@ class character : public entity, public id
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
-  virtual bool DrawSilhouette(bitmap*, vector2d) const { return false; }
   virtual void TalkTo(character*);
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;
@@ -500,8 +499,8 @@ class character : public entity, public id
   virtual bool CheckForAttributeIncrease(ushort&, long&, bool = false);
   virtual bool CheckForAttributeDecrease(ushort&, long&, bool = false);
   virtual bool RawEditAttribute(ushort&, short&, bool = false);
-  virtual void DrawPanel() const;
-  virtual ushort DrawStats() const = 0;
+  virtual void DrawPanel(bool) const;
+  virtual ushort DrawStats(bool) const = 0;
   virtual ushort GetCarryingStrength() const = 0;
   ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
   void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }

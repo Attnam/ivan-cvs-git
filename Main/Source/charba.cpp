@@ -1334,11 +1334,11 @@ void character::CalculateBurdenState()
   uchar OldBurdenState = BurdenState;
   ulong SumOfMasses = GetCarriedWeight();
 
-  if(SumOfMasses > ulong(7500 * GetCarryingStrength()))
+  if(SumOfMasses > ulong(GetCarryingStrength()) * 7500)
     BurdenState = OVERLOADED;
-  else if(SumOfMasses > ulong(5000 * GetCarryingStrength()))
+  else if(SumOfMasses > ulong(GetCarryingStrength()) * 5000)
     BurdenState = STRESSED;
-  else if(SumOfMasses > ulong(2500 * GetCarryingStrength()))
+  else if(SumOfMasses > ulong(GetCarryingStrength()) * 2500)
     BurdenState = BURDENED;
   else
     BurdenState = UNBURDENED;
@@ -4027,14 +4027,20 @@ bool character::RawEditAttribute(ushort& Attribute, short& Amount, bool DoubleAt
     }
 }
 
-void character::DrawPanel() const
+void character::DrawPanel(bool AnimationDraw) const
 {
+  if(AnimationDraw)
+    {
+      DrawStats(true);
+      return;
+    }
+
   DOUBLEBUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
   DOUBLEBUFFER->Fill(16, 45 + game::GetScreenSize().Y * 16, game::GetScreenSize().X << 4, 9, 0);
   FONT->Printf(DOUBLEBUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
 
   ushort PanelPosX = RES.X - 96;
-  ushort PanelPosY = DrawStats() + 1;
+  ushort PanelPosY = DrawStats(false) + 1;
 
   if(game::IsInWilderness())
     FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Worldmap");

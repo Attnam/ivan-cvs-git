@@ -2056,9 +2056,29 @@ vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
     }
 }
 
-bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
+void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDraw) const
 {
-  ushort c, Color[4] = { 0, 0, 0, 0 };
+  ushort c;
+
+  for(c = 0; c < EquipmentSlots(); ++c)
+    if(CanUseEquipment(c))
+      {
+	vector2d Pos = Where + GetEquipmentPanelPos(c);
+
+	if(!AnimationDraw)
+	  DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
+
+	if(GetEquipment(c))
+	  {
+	    DOUBLEBUFFER->Fill(Pos, 16, 16, BLACK);
+	    GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
+	  }
+      }
+
+  if(AnimationDraw)
+    return;
+
+  ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
     Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
@@ -2087,18 +2107,6 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
     Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
-
-  for(c = 0; c < EquipmentSlots(); ++c)
-    if(CanUseEquipment(c))
-      {
-	vector2d Pos = Where + GetEquipmentPanelPos(c);
-	DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
-
-	if(GetEquipment(c))
-	  GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
-      }
-
-  return true;
 }
 
 ushort humanoid::GlobalResistance(uchar Type) const
@@ -2917,9 +2925,12 @@ bool nonhumanoid::LowerStats()
   return character::LowerStats();
 }
 
-ushort humanoid::DrawStats() const
+ushort humanoid::DrawStats(bool AnimationDraw) const
 {
-  DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53));
+  DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
+
+  if(AnimationDraw)
+    return 15;
 
   ushort PanelPosX = RES.X - 96, PanelPosY = 15;
 
@@ -2996,8 +3007,11 @@ ushort humanoid::DrawStats() const
   return PanelPosY;
 }
 
-ushort nonhumanoid::DrawStats() const
+ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 {
+  if(AnimationDraw)
+    return 3;
+
   ushort PanelPosX = RES.X - 96, PanelPosY = 3;
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", GetAttribute(ARMSTRENGTH));

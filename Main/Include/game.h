@@ -77,7 +77,7 @@ class game
   static void SetCurrent(ushort What) { Current = What; }
   static ushort GetCurrent() { return Current; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
-  static void DrawEverythingNoBlit();
+  static void DrawEverythingNoBlit(bool = false);
   static god* GetGod(ushort Index) { return God[Index]; }
   static uchar GetGods() { return God.size(); }
   static const std::string& GetAlignment(ushort Index) { return Alignment[Index]; }

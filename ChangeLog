@@ -1,5 +1,10 @@
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* AnimationController now redraws only the equipment; stats and msg panel is left
+	  untouched
+
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* BurdenState and all non-trivial attack information is now cached
 	* Some recently added bugs in TemporaryStateIsActivated(), EquipmentStateIsActivated()
 	  IsUsingArms(), IsUsingLegs() and IsUsingHead() fixed

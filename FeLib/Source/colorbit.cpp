@@ -224,7 +224,7 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
-  fontcache::iterator Iterator = FontCache.find(Color);
+  fontcache::const_iterator Iterator = FontCache.find(Color);
 
   if(Iterator == FontCache.end())
     {
@@ -254,7 +254,7 @@ void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort C
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
-  fontcache::iterator Iterator = FontCache.find(Color);
+  fontcache::const_iterator Iterator = FontCache.find(Color);
 
   if(Iterator == FontCache.end())
     {

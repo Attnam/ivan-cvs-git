@@ -474,7 +474,7 @@ bool game::OnScreen(vector2d Pos)
     return false;
 }
 
-void game::DrawEverythingNoBlit()
+void game::DrawEverythingNoBlit(bool AnimationDraw)
 {
   if(LOSUpdateRequested)
     GetCurrentArea()->UpdateLOS();
@@ -491,8 +491,10 @@ void game::DrawEverythingNoBlit()
   if(OnScreen(GetPlayer()->GetPos()))
     igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
 
-  GetPlayer()->DrawPanel();
-  msgsystem::Draw();
+  GetPlayer()->DrawPanel(AnimationDraw);
+
+  if(!AnimationDraw)
+    msgsystem::Draw();
 
   if(OnScreen(CursorPos))
     {
@@ -1338,7 +1340,7 @@ void game::LookHandler(vector2d CursorPos)
 
 bool game::AnimationController()
 {
-  game::DrawEverythingNoBlit();
+  game::DrawEverythingNoBlit(true);
   return true;
 }
 

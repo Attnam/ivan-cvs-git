@@ -34,4 +34,4 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.
 Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
 Kirjastorajapinnan organisointi systeemiriippumattomaksi.
-*Projektin kattava kompleksisten datajäsenten cachaus.
+//*Projektin kattava kompleksisten datajäsenten cachaus.

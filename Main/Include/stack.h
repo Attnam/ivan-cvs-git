@@ -91,9 +91,9 @@ class stack
   stacklist* Item;
   square* MotherSquare;
   uchar SquarePosition;
+  entity* MotherEntity;
   ulong Volume;
   ulong Weight;
-  entity* MotherEntity;
   ushort Emitation;
 };
 

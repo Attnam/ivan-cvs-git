@@ -407,8 +407,8 @@ Dungeon 1;
 		Description=Attnam;
 		FillSquare=solidterrain(GRASSTERRAIN),empty;
 
-		Variable XSize = 161;
-		Variable YSize = 162;
+		Variable XSize = 61;
+		Variable YSize = 62;
 
 		Size=XSize, YSize;
 		GenerateMonsters=false;

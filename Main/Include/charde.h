@@ -98,7 +98,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckOffer() const;
   virtual bool (*EquipmentSorter(ushort) const)(item*, character*);
   virtual void SetEquipment(ushort, item*);
-  virtual bool DrawSilhouette(bitmap*, vector2d) const;
+  virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(uchar) const;
   virtual void AddInfo(felist&) const;
   virtual void CompleteRiseFromTheDead();
@@ -109,7 +109,7 @@ class ABSTRACT_CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
-  virtual ushort DrawStats() const;
+  virtual ushort DrawStats(bool) const;
   virtual void Bite(character*);
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH); }
   virtual ushort GetRandomStepperBodyPart() const;
@@ -195,7 +195,7 @@ class ABSTRACT_CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
-  virtual ushort DrawStats() const;
+  virtual ushort DrawStats(bool) const;
   virtual void Bite(character*);
   virtual bool RaiseStats();
   virtual bool LowerStats();
