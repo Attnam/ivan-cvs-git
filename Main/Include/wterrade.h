@@ -14,9 +14,10 @@ class GWTERRAIN
   ocean,
   gwterrain,
  public:
+  virtual void VirtualConstructor(bool) { SetAnimationFrames(16); }
   virtual std::string GetNameStem() const { return "ocean"; }
   virtual bool LongerArticle() const { return true; }
-  virtual vector2d GetBitmapPos(ushort) const { return vector2d(208, 64); }
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(32 + Frame * 16, 160); }
   virtual uchar Priority() const { return 10; }
   virtual bool IsWalkable(character*) const;
   virtual std::string SurviveMessage() const { return "you manage to reach the shore"; }
@@ -109,9 +110,10 @@ class OWTERRAIN
   atmosphere,
   owterrain,
  public:
-  virtual std::string GetNameStem() const { return "atmosphere"; }
+  virtual std::string GetNameStem() const { return ""; }
   virtual bool LongerArticle() const { return true; }
-  virtual vector2d GetBitmapPos(ushort) const { return vector2d(208, 256); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 0); }
+  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const { }
 );
 
 class OWTERRAIN

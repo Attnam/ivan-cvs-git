@@ -351,13 +351,13 @@ void dig::DeleteUsedItems()
     GetLeftBackup()->SendToHell();
 }
 
-void consume::VirtualConstructor()
+void consume::VirtualConstructor(bool)
 {
   Consuming.Init(this);
   SetHasEaten(false);
 }
 
-void dig::VirtualConstructor()
+void dig::VirtualConstructor(bool)
 {
   RightBackup.Init(this);
   LeftBackup.Init(this);
@@ -470,7 +470,7 @@ void read::SetLiterature(item* What)
   What->PlaceToSlot(&Literature);
 }
 
-void read::VirtualConstructor()
+void read::VirtualConstructor(bool)
 {
   Literature.Init(this);
 }

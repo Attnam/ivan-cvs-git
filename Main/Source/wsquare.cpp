@@ -146,7 +146,7 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 	else
 	SetMemorizedDescription(GetGWTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");*/
 
-      if(GetOWTerrain()->Name(UNARTICLED) != "atmosphere")
+      if(GetOWTerrain()->Name(UNARTICLED).length())
 	SetMemorizedDescription(GetOWTerrain()->Name(INDEFINITE) + " surrounded by " + GetGWTerrain()->Name(UNARTICLED));
       else
 	SetMemorizedDescription(GetGWTerrain()->Name(UNARTICLED));

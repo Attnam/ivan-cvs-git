@@ -374,9 +374,8 @@ bool cathedral::Dip(character* Thirsty) const
   return false;
 }
 
-void cathedral::VirtualConstructor()
+void cathedral::VirtualConstructor(bool)
 {
-  room::VirtualConstructor();
   SetEntered(false);
 }
 

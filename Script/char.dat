@@ -748,6 +748,7 @@ dolphin
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
 	SkinColor = rgb(144, 144, 144);
+	EyeColor = rgb(100, 100, 255);
 	Adjective = "female";
 	NameSingular = "dolphin";
 	PostFix = "in season";
@@ -1066,7 +1067,7 @@ werewolfhuman
 	DefaultMana = 15;
 	TotalVolume = 80000;
 	EyeColor = rgb(160, 0, 0);
-	ClothColor = rgb(94, 64, 32);
+	ClothColor = rgb(114, 84, 52);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 0;
@@ -1094,9 +1095,9 @@ werewolfwolf
 	DefaultCharisma = 10;
 	DefaultMana = 0;
 	TotalVolume = 80000;
-	EyeColor = rgb(160, 0, 0);
-	ClothColor = rgb(94, 64, 32);
-	SkinColor = rgb(64, 64, 64);
+	EyeColor = rgb(200, 200, 0);
+	ClothColor = rgb(114, 84, 52);
+	SkinColor = rgb(100, 100, 100);
 	HeadBitmapPos = 112, 144;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 240;

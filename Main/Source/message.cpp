@@ -12,7 +12,7 @@
 #include "error.h"
 #include "save.h"
 
-felist msgsystem::MessageHistory("Message history", WHITE, 200, true);
+felist msgsystem::MessageHistory("Message history", WHITE, 200);
 std::string msgsystem::LastMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
@@ -29,22 +29,22 @@ void msgsystem::AddMessage(const char* Format, ...)
   std::string Buffer(Message);
   Capitalize(Buffer);
 
-  ushort c;
+  short c;
 
   if(!Buffer.length())
     ABORT("Empty message request!");
 
   if(Buffer == LastMessage)
     {
-      while(MessageHistory.Length() && MessageHistory.GetColor(0) == 0xFFFF)
-	MessageHistory.RemoveEntryFromPos(0);
+      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.Length() - 1) == 0xFFFF)
+	MessageHistory.Pop();
 
       ++Times;
       End = game::GetTicks() / 10;
     }
   else
     {
-      for(c = 0; c < MessageHistory.Length() && MessageHistory.GetColor(c) == 0xFFFF; ++c)
+      for(c = MessageHistory.Length() - 1; c >= 0 && MessageHistory.GetColor(c) == 0xFFFF; --c)
 	MessageHistory.SetColor(c, LIGHTGRAY);
 
       Times = 1;
@@ -96,10 +96,10 @@ void msgsystem::AddMessage(const char* Format, ...)
 	  Buffer.erase(0, Pos + 1);
 	}
 
-      MessageHistory.AddEntryToPos(Temp, c, 0xFFFF);
+      MessageHistory.AddEntry(Temp, 0xFFFF);
     }
 
-  MessageHistory.SetSelected(0);
+  MessageHistory.SetSelected(MessageHistory.Length() > 8 ? MessageHistory.Length() - 8 : 0);
 }
 
 void msgsystem::Draw()
@@ -132,7 +132,7 @@ void msgsystem::Load(inputfile& SaveFile)
 
 void msgsystem::ScrollDown()
 {
-  if(MessageHistory.GetSelected() != MessageHistory.Length() - 1)
+  if(MessageHistory.GetSelected() < MessageHistory.Length() - 8)
     MessageHistory.EditSelected(1);
 }
 

@@ -32,7 +32,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
     if(ControlLoop.size())
       {
 	static ulong LastTick = 0;
-	Tick = uclock() * 20 / UCLOCKS_PER_SEC;
+	Tick = uclock() * 10 / UCLOCKS_PER_SEC;
 
 	if(LastTick != Tick)
 	  {
@@ -214,7 +214,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  if(Active && ControlLoop.size())
 	    {
 	      static ulong LastTick = 0;
-	      Tick = clock() * 20 / CLOCKS_PER_SEC;
+	      Tick = clock() * 10 / CLOCKS_PER_SEC;
 
 	      if(LastTick != Tick)
 		{
@@ -341,7 +341,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	    if((SDL_GetAppState() & SDL_APPACTIVE)  && ControlLoop.size())
 	      {
 		static ulong LastTick = 0;
-		Tick = clock() * 20 / CLOCKS_PER_SEC;
+		Tick = clock() * 10 / CLOCKS_PER_SEC;
 
 		if(LastTick != Tick)
 		  {

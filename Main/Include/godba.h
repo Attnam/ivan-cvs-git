@@ -21,13 +21,15 @@ class god;
 class godprototype
 {
  public:
-  godprototype();
-  virtual god* Clone() const = 0;
+  godprototype(god* (*)(bool), const std::string&);
+  god* Clone() const { return Cloner(false); }
   god* CloneAndLoad(inputfile&) const;
-  virtual std::string GetClassId() const = 0;
+  const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
+  god* (*Cloner)(bool);
+  std::string ClassId;
 };
 
 class god
@@ -71,22 +73,9 @@ class god
 };
 
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
-
-#define GOD_PROTOTYPE(name)\
-  \
-  class name##_prototype : public godprototype\
-  {\
-   public:\
-    virtual god* Clone() const { return new name; }\
-    virtual std::string GetClassId() const { return #name; }\
-  } name##_ProtoType;\
-  \
-  const god::prototype* name::GetProtoType() const { return &name##_ProtoType; }
-
+#define GOD_PROTOTYPE(name) godprototype name::name##_ProtoType(&name::Clone, #name);
 #else
-
 #define GOD_PROTOTYPE(name)
-
 #endif
 
 #define GOD(name, base, data)\
@@ -94,7 +83,10 @@ class god
 name : public base\
 {\
  public:\
-  virtual const prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
+  static god* Clone(bool) { return new name; }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; GOD_PROTOTYPE(name);
 

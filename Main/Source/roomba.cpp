@@ -28,12 +28,12 @@ void room::HandleInstantiatedCharacter(character* Character)
 
 room* roomprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  room* Room = Clone();
+  room* Room = Cloner(true);
   Room->Load(SaveFile);
   return Room;
 }
 
-roomprototype::roomprototype()
+roomprototype::roomprototype(room* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<room>::Add(this);
 }

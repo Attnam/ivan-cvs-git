@@ -55,7 +55,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
     }
 
 
-  ushort Min = Selected - Selected % PageLength;
+  PageBegin = Selected - Selected % PageLength;
   ushort Return, c, Selectables = 0;
 
   bool JustSelectMove = false;
@@ -87,13 +87,13 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 
       if(Selectable && Pressed > 64 && Pressed < 91)
 	{
-	  Return = Pressed - 65 + Min < long(Entry.size()) ? Pressed - 65 + Min : 0xFFFF;
+	  Return = Pressed - 65 + PageBegin < long(Entry.size()) ? Pressed - 65 + PageBegin : 0xFFFF;
 	  break;
 	}
 
       if(Selectable && Pressed > 96 && Pressed < 123)
 	{
-	  Return = Pressed - 97 + Min < long(Entry.size()) ? Pressed - 97 + Min : 0xFFFF;
+	  Return = Pressed - 97 + PageBegin < long(Entry.size()) ? Pressed - 97 + PageBegin : 0xFFFF;
 	  break;
 	}
 
@@ -103,10 +103,10 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	    {
 	      --Selected;
 
-	      if(Selected < Min)
+	      if(Selected < PageBegin)
 		{
 		  BackGround.Blit(Buffer);
-		  Min -= PageLength;
+		  PageBegin -= PageLength;
 		}
 	      else
 		JustSelectMove = true;
@@ -117,12 +117,12 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 		if(Entry[c].Selectable)
 		  ++Selected;
 
-	      if(Min == Selected - Selected % PageLength)
+	      if(PageBegin == Selected - Selected % PageLength)
 		JustSelectMove = true;
 	      else
 		{
 		  BackGround.Blit(Buffer);
-		  Min = Selected - Selected % PageLength;
+		  PageBegin = Selected - Selected % PageLength;
 		}
 	    }
 
@@ -135,22 +135,22 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	    {
 	      ++Selected;
 
-	      if(Selected > Min + PageLength - 1)
+	      if(Selected > PageBegin + PageLength - 1)
 		{
 		  BackGround.Blit(Buffer);
-		  Min += PageLength;
+		  PageBegin += PageLength;
 		}
 	      else
 		JustSelectMove = true;
 	    }
 	  else
 	    {
-	      if(!Min)
+	      if(!PageBegin)
 		JustSelectMove = true;
 	      else
 		BackGround.Blit(Buffer);
 
-	      Selected = Min = 0;
+	      Selected = PageBegin = 0;
 	    }
 
 	  continue;
@@ -170,8 +170,10 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
       else
 	{
 	  BackGround.Blit(Buffer);
-	  Min += PageLength;
-	  Selected = Min;
+	  PageBegin += PageLength;
+
+	  if(Selectable)
+	    Selected = PageBegin;
 	}
 
     }
@@ -194,12 +196,12 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 bool felist::DrawPage(bitmap* Buffer) const
 {
   ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
-  ushort Min = Selected - Selected % PageLength;
+  //ushort Min = Selected - Selected % PageLength;
   DrawDescription(Buffer, Pos, Width, BackColor);
 
   ushort c, i; // c == entry index, i == selectable index
 
-  for(c = 0, i = 0; i != Min; ++c)
+  for(c = 0, i = 0; i != PageBegin; ++c)
     if(Entry[c].Selectable)
       ++i;
 
@@ -209,7 +211,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if(Selectable && Entry[c].Selectable)
 	{
-	  Str += 'A' + (i - Min);
+	  Str += 'A' + (i - PageBegin);
 	  Str += ": ";
 	}
 
@@ -239,7 +241,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  LastFillBottom += 10;
 	}
 
-      if(c != Entry.size() - 1 && Entry[c].Selectable && i - Min == PageLength - 1)
+      if(c != Entry.size() - 1 && Entry[c].Selectable && i - PageBegin == PageLength - 1)
 	{
 	  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 30, BackColor);
 	  FONT->Printf(Buffer, Pos.X + 13, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
@@ -252,7 +254,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  LastFillBottom += 10;
 	}
 
-      if(c == Entry.size() - 1 || (Entry[c].Selectable && i - Min == PageLength - 1))
+      if(c == Entry.size() - 1 || (Entry[c].Selectable && i - PageBegin == PageLength - 1))
 	{
 	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
 	  return c == Entry.size() - 1;
@@ -280,11 +282,23 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 {
   DOUBLEBUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
   DOUBLEBUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
+  ushort LastBottom = Pos.Y + 13;
 
-  for(ushort c = 0, LastBottom = Pos.Y + 13; c < PageLength && c + Selected < Length(); ++c, LastBottom += 10)
+  ushort Index = 0;
+
+  if(Selected + PageLength > Length())
+    {
+      Index = PageLength - Length() + Selected;
+      LastBottom += Index * 10;
+    }
+
+  for(ushort c = 0; Index < PageLength; ++c, ++Index, LastBottom += 10)
     {
       ushort Color = Entry[c + Selected].Color;
-      Color = MAKE_RGB(GET_RED(Color) - GET_RED(Color) / (PageLength * 3) * (c * 2), GET_GREEN(Color) - GET_GREEN(Color) / (PageLength * 3) * (c * 2), GET_BLUE(Color) - GET_BLUE(Color) / (PageLength * 3) * (c * 2));
+
+      if(PageLength > 1)
+	Color = MAKE_RGB(((GET_RED(Color) << 1) + GET_RED(Color) * 3 * Index / (PageLength - 1)) / 5, ((GET_GREEN(Color) << 1) + GET_GREEN(Color) * 3 * Index / (PageLength - 1)) / 5, ((GET_BLUE(Color) << 1) + GET_BLUE(Color) * 3 * Index / (PageLength - 1)) / 5);
+
       FONT->Printf(DOUBLEBUFFER, Pos.X + 13, LastBottom, Color, "%s", Entry[c + Selected].String.c_str());
     }
 }
@@ -305,10 +319,10 @@ void felist::AddEntry(const std::string& Str, ushort Color, bitmap* Bitmap, bool
   if(Bitmap)
     BitmapVector.push_back(Bitmap);
 
-  AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, BitmapVector, Selectable);
+  AddEntry(Str, Color, BitmapVector, Selectable);
 }
 
-void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, bitmap* Bitmap, bool Selectable)
+/*void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, bitmap* Bitmap, bool Selectable)
 {
   std::vector<bitmap*> BitmapVector;
 
@@ -316,14 +330,19 @@ void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, bit
     BitmapVector.push_back(Bitmap);
 
   AddEntryToPos(Str, Pos, Color, BitmapVector, Selectable);
-}
+}*/
 
 void felist::AddEntry(const std::string& Str, ushort Color, const std::vector<bitmap*>& Bitmap, bool Selectable)
 {
-  AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, Bitmap, Selectable);
+  //AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, Bitmap, Selectable);
+
+  Entry.push_back(felistentry(Bitmap, Str, Color, Selectable));
+
+  if(Maximum && Entry.size() > Maximum)
+    Entry.erase(Entry.begin());
 }
 
-void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, const std::vector<bitmap*>& Bitmap, bool Selectable)
+/*void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, const std::vector<bitmap*>& Bitmap, bool Selectable)
 {
   Entry.insert(Entry.begin() + Pos, felistentry(Bitmap, Str, Color, Selectable));
 
@@ -332,21 +351,21 @@ void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, con
       Entry.pop_back();
     else
       Entry.erase(Entry.begin());
-}
+}*/
 
-void felist::RemoveEntryFromPos(ushort Pos)
+/*void felist::RemoveEntryFromPos(ushort Pos)
 {
   Entry.erase(Entry.begin() + Pos);
-}
+}*/
 
 void felist::Save(outputfile& SaveFile) const
 {
-  SaveFile << Entry << Description << Pos << Maximum << Selected << Width << PageLength << BackColor << Selectable << InverseMode;
+  SaveFile << Entry << Description << Pos << Maximum << Selected << Width << PageLength << BackColor << Selectable;
 }
 
 void felist::Load(inputfile& SaveFile) 
 {
-  SaveFile >> Entry >> Description >> Pos >> Maximum >> Selected >> Width >> PageLength >> BackColor >> Selectable >> InverseMode;
+  SaveFile >> Entry >> Description >> Pos >> Maximum >> Selected >> Width >> PageLength >> BackColor >> Selectable;
 }
 
 void felist::AddDescription(const std::string& Str, ushort Color)

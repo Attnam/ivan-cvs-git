@@ -45,13 +45,13 @@ inputfile& operator>>(inputfile&, felistdescription&);
 class felist
 {
  public:
-  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool InverseMode = false) : Maximum(Maximum), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
+  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0) : Maximum(Maximum), Selected(0) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
-  void AddEntryToPos(const std::string&, ushort, ushort, bitmap* = 0, bool = true);
+  //void AddEntryToPos(const std::string&, ushort, ushort, bitmap* = 0, bool = true);
   void AddEntry(const std::string&, ushort, const std::vector<bitmap*>&, bool = true);
-  void AddEntryToPos(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
-  void RemoveEntryFromPos(ushort);
+  //void AddEntryToPos(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
+  //void RemoveEntryFromPos(ushort);
   void AddDescription(const std::string&, ushort = 0xFFFF);
   ushort Draw(vector2d, ushort, ushort = 20, ushort = MAKE_RGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;
@@ -67,18 +67,19 @@ class felist
   void SetSelected(ushort What) { Selected = What; }
   void EditSelected(short What) { Selected += What; }
   bool DrawPage(bitmap*) const;
+  void Pop() { Entry.pop_back(); }
  protected:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry> Entry;
   std::vector<felistdescription> Description;
   vector2d Pos;
+  ushort PageBegin;
   ushort Maximum;
   ushort Selected;
   ushort Width;
   ushort PageLength;
   ushort BackColor;
   bool Selectable;
-  bool InverseMode;
 };
 
 #endif

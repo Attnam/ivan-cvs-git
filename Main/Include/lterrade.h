@@ -183,6 +183,9 @@ class GLTERRAIN
   virtual std::string DeathMessage() const { return "you drown"; }
   virtual std::string MonsterDeathVerb() const { return "drowns"; }
   virtual std::string ScoreEntry() const { return "drowned"; }
+ protected:
+  virtual void VirtualConstructor(bool);
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + Frame * 16, 0); } // gum solution, should come from script
 );
 
 #endif

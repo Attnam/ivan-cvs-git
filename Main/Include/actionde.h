@@ -49,7 +49,7 @@ class ACTION
   virtual std::string GetDescription() const { return Description; }
   virtual void SetDescription(const std::string& What) { Description = What; }
  protected:
-  virtual void VirtualConstructor();
+  virtual void VirtualConstructor(bool);
   std::string Description;
   actionslot Consuming;
   bool WasOnGround;
@@ -93,7 +93,7 @@ class ACTION
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return "digging"; }
  protected:
-  virtual void VirtualConstructor();
+  virtual void VirtualConstructor(bool);
   actionslot RightBackup;
   actionslot LeftBackup;
   vector2d SquareDug;
@@ -135,7 +135,7 @@ class ACTION
   virtual ushort GetCounter() const { return Counter; }
   virtual void SetCounter(ushort What) { Counter = What; }
  protected:
-  virtual void VirtualConstructor();
+  virtual void VirtualConstructor(bool);
   actionslot Literature;
   ushort Counter;
 );

@@ -1,3 +1,13 @@
+July 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Oceans and the dolphin pool are now animated
+	* Decreased the global frame rate somewhat
+	* Macro system tweaks
+	* Corrected a bug in the temporary life saving code
+	* Reversed the order of the message history
+	* Corrected some bugs in the message history code, but not all of them
+	* Corrected a minor problem with database Aliases
+
 July 12 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected many warnings given by gcc 3.04 compilation

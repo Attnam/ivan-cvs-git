@@ -4525,24 +4525,7 @@ void character::LycanthropyHandler()
 
 void character::SaveLife()
 {
-  item* LifeSaver;
-
-  if(!TemporaryStateIsActivated(LIFE_SAVED))
-    for(ushort c = 0; c < EquipmentSlots(); ++c)
-      if(GetEquipment(c) && EquipmentHasNoPairProblems(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
-	LifeSaver = GetEquipment(c);
-
-  if(!TemporaryStateIsActivated(LIFE_SAVED) && LifeSaver)
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(UNARTICLED));
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", PossessivePronoun().c_str(), LifeSaver->CHARNAME(UNARTICLED), PersonalPronoun().c_str());
-
-      LifeSaver->RemoveFromSlot();
-      LifeSaver->SendToHell();
-    }
-  else
+  if(TemporaryStateIsActivated(LIFE_SAVED))
     {
       if(IsPlayer())
 	ADD_MESSAGE("But wait! You glow briefly red and seem to be in a better shape!");
@@ -4550,6 +4533,25 @@ void character::SaveLife()
 	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", PersonalPronoun().c_str());
 
       DeActivateTemporaryState(LIFE_SAVED);
+    }
+  else
+    {
+      item* LifeSaver = 0;
+
+      for(ushort c = 0; c < EquipmentSlots(); ++c)
+	if(GetEquipment(c) && EquipmentHasNoPairProblems(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
+	  LifeSaver = GetEquipment(c);
+
+      if(!LifeSaver)
+	ABORT("The Universe can only kill one once!");
+
+      if(IsPlayer())
+	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(UNARTICLED));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", PossessivePronoun().c_str(), LifeSaver->CHARNAME(UNARTICLED), PersonalPronoun().c_str());
+
+      LifeSaver->RemoveFromSlot();
+      LifeSaver->SendToHell();
     }
 
   if(IsPlayer())

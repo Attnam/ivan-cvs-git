@@ -60,7 +60,7 @@ class ROOM
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);
  protected:
-  virtual void VirtualConstructor();
+  virtual void VirtualConstructor(bool);
   bool Entered;
 );
 

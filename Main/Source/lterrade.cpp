@@ -881,3 +881,8 @@ bool fountain::AddAdjective(std::string& String, bool Articled) const
     return false;
 }
 
+void liquidterrain::VirtualConstructor(bool Load) // gum solution
+{
+  glterrain::VirtualConstructor(Load);
+  SetAnimationFrames(16);
+}

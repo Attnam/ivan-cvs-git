@@ -12,6 +12,7 @@
 #include "igraph.h"
 #include "save.h"
 #include "proto.h"
+#include "whandler.h"
 
 struct prioritypair
 {
@@ -46,9 +47,10 @@ vector2d wterrain::GetPos() const
   return GetWSquareUnder()->GetPos();
 }
 
-void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool) const
+void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
 {
-  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(0), Pos, 16, 16, Luminance);
+  ushort Frame = AllowAnimate ? globalwindowhandler::GetTick() % AnimationFrames : 0;
+  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(Frame), Pos, 16, 16, Luminance);
   std::priority_queue<prioritypair> Neighbour;
 
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
@@ -66,9 +68,10 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool)
     }
 }
 
-void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool) const
+void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool AllowAnimate) const
 {
-  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(0), Pos, 16, 16, Luminance);
+  ushort Frame = AllowAnimate ? globalwindowhandler::GetTick() % AnimationFrames : 0;
+  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(Frame), Pos, 16, 16, Luminance);
 }
 
 worldmap* wterrain::GetWorldMapUnder() const
@@ -105,24 +108,24 @@ void owterrain::Save(outputfile& SaveFile) const
 
 gwterrain* gwterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  gwterrain* Terrain = Clone();
+  gwterrain* Terrain = Cloner(true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
 owterrain* owterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  owterrain* Terrain = Clone();
+  owterrain* Terrain = Cloner(true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
-gwterrainprototype::gwterrainprototype()
+gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<gwterrain>::Add(this);
 }
 
-owterrainprototype::owterrainprototype()
+owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<owterrain>::Add(this);
 }

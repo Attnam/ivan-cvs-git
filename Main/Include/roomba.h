@@ -21,20 +21,22 @@ class room;
 class roomprototype
 {
  public:
-  roomprototype();
-  virtual room* Clone() const = 0;
+  roomprototype(room* (*)(bool), const std::string&);
+  room* Clone() const { return Cloner(false); }
   room* CloneAndLoad(inputfile&) const;
-  virtual std::string GetClassId() const = 0;
+  const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
+  room* (*Cloner)(bool);
+  std::string ClassId;
 };
 
 class room
 {
  public:
   typedef roomprototype prototype;
-  room() : Master(0) { }
+  room(donothing) : Master(0) { }
   virtual ~room() { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -65,7 +67,7 @@ class room
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool DestroyTerrain(character*, olterrain*) { return true; }
  protected:
-  virtual void VirtualConstructor() { }
+  virtual void VirtualConstructor(bool) { }
   std::vector<vector2d> Door;
   vector2d Pos, Size;
   character* Master;
@@ -73,22 +75,9 @@ class room
 };
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
-
-#define ROOM_PROTOTYPE(name)\
-  \
-  class name##_prototype : public roomprototype\
-  {\
-   public:\
-    virtual room* Clone() const { return new name; }\
-    virtual std::string GetClassId() const { return #name; }\
-  } name##_ProtoType;\
-  \
-  const room::prototype* name::GetProtoType() const { return &name##_ProtoType; }
-
+#define ROOM_PROTOTYPE(name) roomprototype name::name##_ProtoType(&name::Clone, #name);
 #else
-
 #define ROOM_PROTOTYPE(name)
-
 #endif
 
 #define ROOM(name, base, data)\
@@ -96,8 +85,12 @@ class room
 name : public base\
 {\
  public:\
-  name() { VirtualConstructor(); }\
-  virtual const prototype* GetProtoType() const;\
+  name(bool Load = false) : base(donothing()) { VirtualConstructor(Load); }\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
+  static room* Clone(bool Load) { return new name(Load); }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; ROOM_PROTOTYPE(name);
 

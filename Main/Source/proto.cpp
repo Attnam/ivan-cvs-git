@@ -144,10 +144,9 @@ template <class type> uchar CountCorrectNameParts(const typename type::database&
   if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
     ++Counter;
 
-  if(!Counter)
-    for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-      if(Identifier.find(" " + DataBase.Alias[c] + " ") != ulong(-1))
-	return 0xFF;
+  for(ushort c = 0; c < DataBase.Alias.size(); ++c)
+    if(Identifier.find(" " + DataBase.Alias[c] + " ") != ulong(-1))
+      return 0xFF;
 
   return Counter;
 }

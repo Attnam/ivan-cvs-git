@@ -34,7 +34,6 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
   AltitudeBuffer = Alloc2D<short>(XSize, YSize);
   ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
-
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
@@ -65,7 +64,6 @@ void worldmap::Save(outputfile& SaveFile) const
   SaveFile.Write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
   SaveFile.Write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
   SaveFile.Write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
-
   SaveFile << Continent << PlayerGroup;
 }
 
@@ -85,15 +83,12 @@ void worldmap::Load(inputfile& SaveFile)
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
   AltitudeBuffer = Alloc2D<short>(XSize, YSize);
   ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
-
   SaveFile.Read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
   SaveFile.Read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
   SaveFile.Read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
-
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
-
   SaveFile >> Continent >> PlayerGroup;
 }
 
@@ -106,7 +101,6 @@ void worldmap::Generate()
       GenerateClimate();
       SmoothClimate();
       CalculateContinents();
-
       std::vector<continent*> PerfectForAttnam;
 
       for(ushort c = 1; c < Continent.size(); ++c)
@@ -117,15 +111,12 @@ void worldmap::Generate()
 	continue;
 
       vector2d AttnamPos, ElpuriCavePos;
-
       ushort CounterOne;
 
       for(CounterOne = 0;;)
 	{
 	  continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
-
 	  AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::StaticType());
-
 	  ushort CounterTwo = 0;
 
 	  for(ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());; ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType()))
@@ -151,9 +142,7 @@ void worldmap::Generate()
       game::GetDungeon(1)->SetWorldMapPos(AttnamPos);
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       game::GetDungeon(0)->SetWorldMapPos(ElpuriCavePos);
-
       GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
-
       break;
     }
 }
@@ -192,12 +181,11 @@ void worldmap::SmoothAltitude()
 	  {
 	    long HeightNear = 0;
 	    uchar SquaresNear = 0;
-
 	    OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
 
 	    DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, HeightNear += OldAltitudeBuffer[DoX][DoY], HeightNear += AltitudeBuffer[DoX][DoY], ++SquaresNear)
 
-	      AltitudeBuffer[x][y] = HeightNear / SquaresNear;
+	    AltitudeBuffer[x][y] = HeightNear / SquaresNear;
 
 	    if(c < 8)
 	      AltitudeBuffer[x][y] += RAND() % 100 - RAND() % 100;
@@ -212,9 +200,7 @@ void worldmap::GenerateClimate()
   for(ushort y = 0; y < YSize; ++y)
     {
       game::BusyAnimation();
-
       float DistanceFromEquator = fabs(float(y) / YSize - 0.5f);
-
       bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
 
       for(ushort x = 0; x < XSize; ++x)

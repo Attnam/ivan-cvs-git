@@ -23,12 +23,12 @@ void action::Load(inputfile& SaveFile)
 
 action* actionprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  action* Action = Clone();
+  action* Action = Cloner(true);
   Action->Load(SaveFile);
   return Action;
 }
 
-actionprototype::actionprototype()
+actionprototype::actionprototype(action* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<action>::Add(this);
 }

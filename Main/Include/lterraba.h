@@ -261,7 +261,6 @@ name : public base\
  public:\
   name(ushort Config = 0, bool CallGenerateMaterials = true, bool Load = false) : base(donothing()) { Initialize(Config, CallGenerateMaterials, Load); }\
   name(donothing D) : base(D) { }\
-  static ushort StaticType();\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
  protected:\

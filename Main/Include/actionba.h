@@ -19,21 +19,22 @@ class square;
 class actionprototype
 {
  public:
-  actionprototype();
-  virtual action* Clone() const = 0;
+  actionprototype(action* (*)(bool), const std::string&);
+  action* Clone() const { return Cloner(false); }
   action* CloneAndLoad(inputfile&) const;
-  virtual std::string GetClassId() const = 0;
+  const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
+  action* (*Cloner)(bool);
+  std::string ClassId;
 };
 
 class action
 {
  public:
   typedef actionprototype prototype;
-  action() : Actor(0), Volume(0), Weight(0), DNDMode(false) { }
-  action(character* Actor) : Actor(Actor), Volume(0), Weight(0), DNDMode(false) { }
+  action(donothing) : Actor(0), Volume(0), Weight(0), DNDMode(false) { }
   virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
@@ -62,7 +63,7 @@ class action
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
  protected:
-  virtual void VirtualConstructor() { }
+  virtual void VirtualConstructor(bool) { }
   character* Actor;
   ulong Volume;
   ulong Weight;
@@ -70,22 +71,9 @@ class action
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
-
-#define ACTION_PROTOTYPE(name)\
-  \
-  class name##_prototype : public actionprototype\
-  {\
-   public:\
-    virtual action* Clone() const { return new name; }\
-    virtual std::string GetClassId() const { return #name; }\
-  } name##_ProtoType;\
-  \
-  const action::prototype* name::GetProtoType() const { return &name##_ProtoType; }
-
+#define ACTION_PROTOTYPE(name) actionprototype name::name##_ProtoType(&name::Clone, #name);
 #else
-
 #define ACTION_PROTOTYPE(name)
-
 #endif
 
 #define ACTION(name, base, data)\
@@ -93,8 +81,13 @@ class action
 name : public base\
 {\
  public:\
-  name(character* Actor = 0) : base(Actor) { VirtualConstructor(); }\
-  virtual const prototype* GetProtoType() const;\
+  name(bool Load) : base(donothing()) { VirtualConstructor(Load); }\
+  name(character* NewActor) : base(donothing()) { Actor = NewActor; VirtualConstructor(false); }\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
+  static action* Clone(bool Load) { return new name(Load); }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; ACTION_PROTOTYPE(name);
 

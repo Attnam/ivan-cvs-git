@@ -248,12 +248,12 @@ void god::Load(inputfile& SaveFile)
 
 god* godprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  god* God = Clone();
+  god* God = Cloner(true);
   God->Load(SaveFile);
   return God;
 }
 
-godprototype::godprototype()
+godprototype::godprototype(god* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<god>::Add(this);
 }

@@ -1049,6 +1049,7 @@ ring
 		FireResistance = 10;
 		PostFix = "of fire resistance";
 		MainMaterialConfig == GOLD;
+		Alias == "ring of teleport";
 	}
 
 	Config RINGOFPOLYMORPHCONTROL;
