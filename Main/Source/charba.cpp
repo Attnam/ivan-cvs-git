@@ -1505,7 +1505,7 @@ bool character::ShowKeyLayout()
 
 bool character::Look()
 {
-  vector2d Pos = game::PositionQuestion("Press direction keys to move cursor or esc to exit from the mode.", GetPos(), &game::LookHandler);
+  vector2d Pos = game::PositionQuestion("Press direction keys to move cursor or esc to exit from the mode.", GetPos(), &game::LookHandler, &game::LookBadKeyHandler);
 
   if(game::GetWizardMode() && Pos != vector2d(-1, -1))
     {

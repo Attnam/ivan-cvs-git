@@ -152,7 +152,7 @@ class game
   static vector2d CalculateScreenCoordinates(vector2d);
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
   static uchar GetDirectionIndexForKey(int);
-  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, bool = true);
+  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
   static bool AnimationController();
@@ -169,6 +169,7 @@ class game
   static void SetDoZoom(bool What) { Zoom = What; }
   static bool PositionQuestionController();
   static int KeyQuestion(const std::string&, int, int, ...);
+  static void LookBadKeyHandler(vector2d, int);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

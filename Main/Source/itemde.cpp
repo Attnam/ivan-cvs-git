@@ -2743,4 +2743,5 @@ bool chest::Polymorph(stack* CurrentStack)
 {
   GetContained()->MoveAll(CurrentStack);
   item::Polymorph(CurrentStack);
+  return true;
 }

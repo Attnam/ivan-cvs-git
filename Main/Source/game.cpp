@@ -1353,7 +1353,12 @@ int game::AskForKeyPress(const std::string& Topic)
   return Key;
 }
 
-vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), bool Zoom)
+/* 
+   Handler is called when the key has been identified as a movement key 
+   BadKeyHandler is called when the key has NOT been identified as a movement key
+   Both can be deactivated by passing 0 as parameter
+ */  
+vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*BadKeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
@@ -1392,6 +1397,8 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	  if(short(CursorPos.Y) > GetCurrentArea()->GetYSize() - 1) CursorPos.Y = 0;
 	  if(short(CursorPos.Y) < 0) CursorPos.Y = GetCurrentArea()->GetYSize() - 1;
 	}
+      else if(BadKeyHandler)
+	BadKeyHandler(CursorPos, Key);
 
       if(CursorPos.X < GetCamera().X + 2 || CursorPos.X > GetCamera().X + GetScreenSize().X - 2)
 	UpdateCameraXWithPos(CursorPos.X);
@@ -1449,10 +1456,14 @@ void game::LookHandler(vector2d CursorPos)
 
       ADD_MESSAGE("%s.", Msg.c_str());
 
-      character* Character;
+      character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-      if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::IsInWilderness() || game::GetCurrentLevel()->GetLSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
+      if(Character && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
 	Character->DisplayInfo();
+
+      lsquare* LevelSquare = game::GetCurrentLevel()->GetLSquare(CursorPos);
+      if(!IsInWilderness() && LevelSquare->CanBeSeen() && LevelSquare->GetStack()->GetItems() > 1)
+	ADD_MESSAGE("[press i to see all items]");
     }
   else
     ADD_MESSAGE("You have no idea what might lie here.");
@@ -1535,4 +1546,24 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
 	return DefaultAnswer;
     }
   return Return;
+}
+
+void game::LookBadKeyHandler(vector2d CursorPos, int Key)
+{
+  switch(Key)
+    {
+    case 'i':
+      if(!IsInWilderness() && (game::GetCurrentLevel()->GetLSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
+	{
+	  stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
+	  if(Stack->GetItems() > 1)
+	    {
+	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
+	    }
+	}
+      break;
+    default:
+      /* Bad Key */
+      break;
+    }
 }

@@ -158,6 +158,7 @@ bool item::Zap(character*, vector2d, uchar)
   return false; 
 }
 
+/* returns bool that tells whether the Polymorph really happened */
 bool item::Polymorph(stack* CurrentStack)
 {
   if(!IsPolymorphable())
