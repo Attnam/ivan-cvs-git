@@ -27,10 +27,10 @@ class colorizablebitmap;
 #pragma pack(1)
 #endif
 
-struct graphic_id
+struct graphicid
 {
-  graphic_id() { }
-  bool operator<(const graphic_id& GI) const { return CompareBits(*this, GI); }
+  graphicid() { }
+  bool operator<(const graphicid& GI) const { return CompareBits(*this, GI); }
   vector2d BitmapPos PACKED;
   ushort Color[4] PACKED;
   ushort Frame PACKED;
@@ -49,14 +49,14 @@ struct graphic_id
 #pragma pack()
 #endif
 
-inline outputfile& operator<<(outputfile& SaveFile, const graphic_id& Value)
+inline outputfile& operator<<(outputfile& SaveFile, const graphicid& Value)
 {
   SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
 
-inline inputfile& operator>>(inputfile& SaveFile, graphic_id& Value)
+inline inputfile& operator>>(inputfile& SaveFile, graphicid& Value)
 {
   SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
@@ -70,7 +70,7 @@ struct tile
   ulong Users;
 };
 
-typedef std::map<graphic_id, tile> tilemap;
+typedef std::map<graphicid, tile> tilemap;
 
 class igraph
 {
@@ -81,18 +81,18 @@ class igraph
   static void Init();
 #endif
   static void DeInit();
-  static bitmap* GetWTerrainGraphic() { return Graphic[GRWTERRAIN]; }
-  static bitmap* GetFOWGraphic() { return Graphic[GRFOW]; }
-  static bitmap* GetCursorGraphic() { return Graphic[GRCURSOR]; }
-  static bitmap* GetSymbolGraphic() { return Graphic[GRSYMBOL]; }
-  static bitmap* GetMenuGraphic() { return Graphic[GRMENU]; }
+  static bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
+  static bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
+  static bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
+  static bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
+  static bitmap* GetMenuGraphic() { return Graphic[GR_MENU]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
-  static tile GetTile(graphic_id);
-  static tile AddUser(graphic_id);
-  static void RemoveUser(graphic_id);
+  static tile GetTile(graphicid);
+  static tile AddUser(graphicid);
+  static void RemoveUser(graphicid);
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
-  static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GRCHARACTER]; }
+  static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
   static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
  private:
   static colorizablebitmap* RawGraphic[RAW_TYPES];

@@ -15,13 +15,13 @@ void id::AddName(std::string& Name, uchar Case) const
 {
   bool Articled;
 
-  if((Case & ARTICLEBIT) && (GetArticleMode() == DEFINITEARTICLE || (GetArticleMode() == NORMALARTICLE && !(Case & INDEFINEBIT))))
+  if((Case & ARTICLE_BIT) && (GetArticleMode() == DEFINITE_ARTICLE || (GetArticleMode() == NORMAL_ARTICLE && !(Case & INDEFINE_BIT))))
     {
       Name << "the ";
       Articled = false;
     }
   else
-    Articled = !(Case & PLURAL) && (Case & ARTICLEBIT) && (Case & INDEFINEBIT) && GetArticleMode() != NOARTICLE;
+    Articled = !(Case & PLURAL) && (Case & ARTICLE_BIT) && (Case & INDEFINE_BIT) && GetArticleMode() != NO_ARTICLE;
 
   if(AddAdjective(Name, Articled))
     Articled = false;
@@ -50,11 +50,11 @@ void id::AddName(std::string& Name, uchar Case, ushort Amount) const
     AddName(Name, Case&~PLURAL);
   else
     {
-      if((Case & ARTICLEBIT) && (GetArticleMode() == DEFINITEARTICLE || (GetArticleMode() == NORMALARTICLE && !(Case & INDEFINEBIT))))
+      if((Case & ARTICLE_BIT) && (GetArticleMode() == DEFINITE_ARTICLE || (GetArticleMode() == NORMAL_ARTICLE && !(Case & INDEFINE_BIT))))
 	Name << "the ";
 
       Name << Amount << ' ';
-      AddName(Name, Case&~ARTICLEBIT|PLURAL);
+      AddName(Name, Case&~ARTICLE_BIT|PLURAL);
     }
 }
 
@@ -96,4 +96,3 @@ void id::AddDivineMasterDescription(std::string& String, uchar DivineMaster) con
 {
   String << " of " << game::GetGod(DivineMaster)->Name();
 }
-

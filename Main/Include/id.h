@@ -10,8 +10,8 @@
 #include "typedef.h"
 #include "ivandef.h"
 
-#define CHARNAME(Case) GetName(Case).c_str()
-#define CHARDESCRIPTION(Case) GetDescription(Case).c_str()
+#define CHAR_NAME(Case) GetName(Case).c_str()
+#define CHAR_DESCRIPTION(Case) GetDescription(Case).c_str()
 
 class id
 {
@@ -31,11 +31,10 @@ class id
   virtual bool AddMaterialDescription(std::string&, bool) const = 0;
   virtual const std::string& GetPostFix() const = 0;
   virtual void AddPostFix(std::string&) const;
-  virtual uchar GetArticleMode() const { return NORMALARTICLE; }
+  virtual uchar GetArticleMode() const { return NORMAL_ARTICLE; }
   virtual bool ShowMaterial() const { return false; }
   virtual void AddDivineMasterDescription(std::string&, uchar) const;
   virtual void AddLockPostFix(std::string&, uchar) const;
 };
 
 #endif
-

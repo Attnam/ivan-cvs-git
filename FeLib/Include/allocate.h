@@ -113,4 +113,3 @@ template <class type> inline void Fill3D(type*** Map, ulong CornerXPos, ulong Co
 }
 
 #endif
-

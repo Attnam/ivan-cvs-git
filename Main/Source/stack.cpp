@@ -42,7 +42,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
 
   if(VisibleItems && AllowOutline && configuration::GetOutlineItems())
     {
-      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
+      igraph::GetTileBuffer()->Fill(TRANSPARENT_COLOR);
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
@@ -195,7 +195,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(KickDamage)
     {
-      ReceiveDamage(Kicker, KickDamage, PHYSICALDAMAGE);
+      ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE);
 
       /* Bug: you can kick mines with this. - somebody
 	 Feature: you can kick mines with this. - hex */
@@ -402,12 +402,12 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
       if(Item->GetCategory() != LastCategory)
 	{
 	  LastCategory = Item->GetCategory();
-	  Contents.AddEntry(item::ItemCategoryName(LastCategory), LIGHTGRAY, 0, 0, false);
+	  Contents.AddEntry(item::ItemCategoryName(LastCategory), LIGHT_GRAY, 0, 0, false);
 	}
 
       std::string Entry;
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      Contents.AddEntry(Entry, LIGHTGRAY, 0, Item->GetPicture());
+      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture());
     }
 }
 
@@ -430,7 +430,7 @@ ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Vi
 	  ushort Amount = PileVector[p].size();
 
 	  if(Amount > 1)
-	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), 1, 1, 0, Amount, WHITE, LIGHTGRAY, DARKGRAY);
+	    Amount = game::ScrollBarQuestion("How many " + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), 1, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
 
 	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	  return 0xFFFF;

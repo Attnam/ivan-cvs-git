@@ -74,5 +74,3 @@ inline outputfile& operator<<(outputfile& SaveFile, square* Square)
 }
 
 #endif
-
-

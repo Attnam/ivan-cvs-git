@@ -11,7 +11,7 @@ glterrain
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
 	PostFix = "";
-	ArticleMode = NORMALARTICLE;
+	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
 	/* Obligatory: ContainedMaterialConfig */
@@ -56,7 +56,7 @@ solidterrain /* glterrain-> */
 		BitmapPos = 0, 0;
 	}
 
-	Config GRASSTERRAIN;
+	Config GRASS_TERRAIN;
 	{
 		OKVisualEffects = MIRROR|FLIP|ROTATE;
 		MainMaterialConfig == GRASS;
@@ -78,4 +78,3 @@ liquidterrain /* glterrain-> */
 		SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
 	}
 }
-

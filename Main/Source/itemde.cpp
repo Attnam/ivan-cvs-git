@@ -34,7 +34,7 @@ ITEM_PROTOTYPE(item, 0);
 
 void banana::GenerateLeftOvers(character* Eater)
 {
-  item* Peel = new bananapeels(0, NOMATERIALS);
+  item* Peel = new bananapeels(0, NO_MATERIALS);
   Peel->InitMaterials(GetMainMaterial());
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
@@ -43,7 +43,7 @@ void banana::GenerateLeftOvers(character* Eater)
     Eater->GetStack()->AddItem(Peel);
 
   RemoveFromSlot();
-  SetMainMaterial(0, NOPICUPDATE);
+  SetMainMaterial(0, NO_PIC_UPDATE);
   SendToHell();
 }
 
@@ -84,17 +84,17 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 	  if(Reader->IsPlayer())
 	    {
 	      if(Monster->CanBeSeenByPlayer())
-		ADD_MESSAGE("%s appears.", Monster->CHARNAME(INDEFINITE));
+		ADD_MESSAGE("%s appears.", Monster->CHAR_NAME(INDEFINITE));
 	      else
 		ADD_MESSAGE("You notice no effect.");
 	    }
 	  else if(Reader->CanBeSeenByPlayer())
 	    {
 	      if(Monster->CanBeSeenByPlayer())
-		ADD_MESSAGE("%s summons %s!", Reader->CHARNAME(DEFINITE), Monster->CHARNAME(INDEFINITE));
+		ADD_MESSAGE("%s summons %s!", Reader->CHAR_NAME(DEFINITE), Monster->CHAR_NAME(INDEFINITE));
 	    }
 	  else if(Monster->CanBeSeenByPlayer())
-	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHARNAME(INDEFINITE));
+	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHAR_NAME(INDEFINITE));
 
 	  return;
 	}
@@ -118,7 +118,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   if(Reader->IsPlayer())
     ADD_MESSAGE("Suddenly you realize you have teleported.");
   else if(Reader->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s disappears!", Reader->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s disappears!", Reader->CHAR_NAME(DEFINITE));
 
   Reader->TeleportRandomly();
   RemoveFromSlot();
@@ -130,7 +130,7 @@ bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByA
   if(!BlockedByArmour && RAND() & 1)
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).c_str(), Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).c_str(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       bool Success = GetMainMaterial()->HitEffect(Enemy);
 
@@ -151,7 +151,7 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
   if(!BlockedByArmour && GetContainedMaterial())
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).c_str(), Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).c_str(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       bool Success = GetContainedMaterial()->HitEffect(Enemy);
 
@@ -167,7 +167,7 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
 void meleeweapon::DipInto(material* Material, character* Dipper)
 {
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->GetName(false, false).c_str());
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).c_str());
 
   ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
@@ -190,7 +190,7 @@ bool pickaxe::Apply(character* User)
 {
   if(IsBroken())
     {
-      ADD_MESSAGE("%s is totally broken.",CHARNAME(DEFINITE));
+      ADD_MESSAGE("%s is totally broken.",CHAR_NAME(DEFINITE));
       return false;
     }
   uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
@@ -222,7 +222,7 @@ bool pickaxe::Apply(character* User)
 	    return false;
 	}
       else
-	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
     else
       ADD_MESSAGE(Square->GetOLTerrain()->GetDigMessage().c_str());
 
@@ -232,9 +232,9 @@ bool pickaxe::Apply(character* User)
 bool wand::Apply(character* Terrorist)
 {
   if(Terrorist->IsPlayer())
-    ADD_MESSAGE("%s breaks in two and then explodes!", CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s breaks in two and then explodes!", CHAR_NAME(DEFINITE));
   else if(Terrorist->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+    ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
   else if(GetSquareUnder()->CanBeSeenByPlayer())
     ADD_MESSAGE("Something explodes!");
 
@@ -280,7 +280,7 @@ void scrollofwishing::FinishReading(character* Reader)
       if(TempItem)
 	{
 	  Reader->GetStack()->AddItem(TempItem);
-	  ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHARNAME(INDEFINITE));
+	  ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHAR_NAME(INDEFINITE));
 	  RemoveFromSlot();
 	  SendToHell();
 	  return;
@@ -308,7 +308,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	    {
 	      if(!Item->IsMaterialChangeable())
 		{
-		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHARNAME(DEFINITE));
+		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHAR_NAME(DEFINITE));
 		  break;
 		}
 
@@ -319,11 +319,11 @@ void scrollofchangematerial::FinishReading(character* Reader)
 		{
 		  if(!Item->GetMainMaterial()->IsSameAs(TempMaterial))
 		    {
-		      ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item->CHARNAME(UNARTICLED));
+		      ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item->CHAR_NAME(UNARTICLED));
 		      Item->ChangeMainMaterial(TempMaterial);
 		    }
 		  else
-		    ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item->CHARNAME(UNARTICLED));
+		    ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item->CHAR_NAME(UNARTICLED));
 
 		  break;
 		}
@@ -344,11 +344,11 @@ item* brokenbottle::BetterVersion() const
   material* Stuff;
 
   if(RAND() % 5)
-    Stuff = MAKE_MATERIAL(BANANAFLESH);
+    Stuff = MAKE_MATERIAL(BANANA_FLESH);
   else
-    Stuff = MAKE_MATERIAL(OMLEURINE);
+    Stuff = MAKE_MATERIAL(OMLE_URINE);
 
-  potion* P = new potion(0, NOMATERIALS); 
+  potion* P = new potion(0, NO_MATERIALS); 
   P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
   return P;
 }
@@ -357,19 +357,19 @@ void brokenbottle::StepOnEffect(character* Stepper)
 {
   if(!(RAND() % 10))
     {
-      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, LEGS, YOURSELF, false, false, false, false))
+      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, LEGS, YOURSELF, false, false, false, false))
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
 	  else if(Stepper->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CHAR_NAME(DEFINITE));
 	}
       else
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Some glass splinters are shattered under your feet.");
 	  else if(Stepper->CanBeSeenByPlayer())
-	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHAR_NAME(DEFINITE));
 	}
 
       Stepper->CheckDeath("stepped on a broken bottle");
@@ -401,7 +401,7 @@ void potion::DipInto(material* Material, character* Dipper)
   /* Add alchemy */
 
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->GetName(false, false).c_str());
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).c_str());
 
   ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
@@ -411,7 +411,7 @@ ulong meleeweapon::GetPrice() const
 {
   float WeaponStrengthModifier = float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight();
   WeaponStrengthModifier *= WeaponStrengthModifier;
-  return ulong(WeaponStrengthModifier / (5000000000000.0f * sqrt(GetWeight()))) + item::GetPrice();
+  return ulong(WeaponStrengthModifier / (5000000000000.0f * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
 }
 
 ulong armor::GetPrice() const
@@ -448,11 +448,11 @@ item* potion::BetterVersion() const
       material* Stuff;
 
       if(RAND() % 5)
-	Stuff = MAKE_MATERIAL(BANANAFLESH);
+	Stuff = MAKE_MATERIAL(BANANA_FLESH);
       else
-	Stuff = MAKE_MATERIAL(OMLEURINE);
+	Stuff = MAKE_MATERIAL(OMLE_URINE);
 
-      potion* P = new potion(0, NOMATERIALS); 
+      potion* P = new potion(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
 
       return P;
@@ -468,11 +468,11 @@ item* can::BetterVersion() const
       material* Stuff;
 
       if(RAND() & 1)
-	Stuff = MAKE_MATERIAL(SCHOOLFOOD);
+	Stuff = MAKE_MATERIAL(SCHOOL_FOOD);
       else
-	Stuff = MAKE_MATERIAL(BANANAFLESH);
+	Stuff = MAKE_MATERIAL(BANANA_FLESH);
 
-      can* P = new can(0, NOMATERIALS); 
+      can* P = new can(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(IRON), Stuff); 
 
       return P;
@@ -491,9 +491,9 @@ bool backpack::Apply(character* Terrorist)
   if(IsExplosive())
     {
       if(Terrorist->IsPlayer())
-	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("You light your %s. It explodes!", CHAR_NAME(UNARTICLED));
       else if(Terrorist->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+	ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
       else if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("Something explodes!");
 
@@ -512,7 +512,7 @@ bool backpack::Apply(character* Terrorist)
       return true;
     }
   else if(Terrorist->IsPlayer())
-    ADD_MESSAGE("You are not able to explode yourself with this crummy %s!", CHARNAME(UNARTICLED));
+    ADD_MESSAGE("You are not able to explode yourself with this crummy %s!", CHAR_NAME(UNARTICLED));
 
   return false;
 }
@@ -564,7 +564,7 @@ bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
 	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -587,7 +587,7 @@ bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
 	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -604,7 +604,7 @@ bool scroll::ReceiveDamage(character*, ushort, uchar Type)
   if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
 
       RemoveFromSlot();
       SendToHell();
@@ -671,7 +671,7 @@ bool holybook::ReceiveDamage(character*, ushort, uchar Type)
   if(Type == FIRE && RAND() & 1 && GetMainMaterial()->IsFlammable())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
 
       RemoveFromSlot();
       SendToHell();
@@ -684,7 +684,7 @@ bool holybook::ReceiveDamage(character*, ushort, uchar Type)
 bool oillamp::Apply(character* Applier)
 {
   if(Applier->IsPlayer())
-    ADD_MESSAGE("You rub %s.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("You rub %s.", CHAR_NAME(DEFINITE));
 
   if(GetInhabitedByGenie())
     {
@@ -712,16 +712,16 @@ bool oillamp::Apply(character* Applier)
 	  if(!(RAND() % 5))
 	    {
 	      Genie->SetTeam(game::GetTeam(1));
-	      ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHARNAME(INDEFINITE));
+	      ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
 	    }
 	  else
 	    {
 	      if(Applier->IsPlayer())
 		{
 		  Genie->SetTeam(Applier->GetTeam());
-		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHARNAME(INDEFINITE));
+		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
 		  game::DrawEverything();
-		  GETKEY();
+		  GET_KEY();
 
 		  if(game::BoolQuestion("Do you want to wish? [Y/n]", YES))
 		    {
@@ -735,7 +735,7 @@ bool oillamp::Apply(character* Applier)
 			  if(TempItem)
 			    {
 			      Applier->GetStack()->AddItem(TempItem);
-			      ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CHARNAME(INDEFINITE));
+			      ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
 			      break;
 			    }
 			}
@@ -748,7 +748,7 @@ bool oillamp::Apply(character* Applier)
 		}
 	    }
 
-	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHARNAME(DEFINITE), Genie->GetMainWielded()->CHARNAME(INDEFINITE), Genie->GetMainWielded()->CHARNAME(INDEFINITE), Genie->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
 	}
       else
 	{
@@ -810,7 +810,7 @@ void scrollofcharging::FinishReading(character* Reader)
 	  {
 	    game::DrawEverythingNoBlit();
 	    Item->ChargeFully(Reader);
-	    ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHAR_NAME(DEFINITE));
 	    break;
 	  }
       }
@@ -835,7 +835,7 @@ bool banana::Zap(character*, vector2d, uchar)
 {
   if(Charges)
     {
-      ADD_MESSAGE("BANG! You zap %s!", CHARNAME(DEFINITE));
+      ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
       --Charges;
     }
   else
@@ -849,13 +849,13 @@ void bananapeels::StepOnEffect(character* Stepper)
   if(Stepper->HasFeet() && !(RAND() % 3))
     {
       if(Stepper->IsPlayer())
-	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHARNAME(INDEFINITE));
+	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHAR_NAME(INDEFINITE));
       else if(Stepper->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+	ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
       /* Do damage against any random bodypart except legs */
 
-      Stepper->ReceiveDamage(0, 2 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
+      Stepper->ReceiveDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("slipped on a banana peel.");
       Stepper->EditAP(-1000);
     }
@@ -912,17 +912,17 @@ void scrolloftaming::FinishReading(character* Reader)
       if(Reader->IsPlayer())
 	{
 	  if(ToBeTamed->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHARNAME(INDEFINITE));
+	    ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHAR_NAME(INDEFINITE));
 	  else
 	    ADD_MESSAGE("You notice no effect.");
 	}
       else if(Reader->CanBeSeenByPlayer())
 	{
 	  if(ToBeTamed->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHARNAME(INDEFINITE), Reader->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHAR_NAME(INDEFINITE), Reader->CHAR_NAME(DEFINITE));
 	}
       else if(ToBeTamed->CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHARNAME(INDEFINITE));
+	ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHAR_NAME(INDEFINITE));
     }
 
   RemoveFromSlot();
@@ -1157,7 +1157,7 @@ void mine::Save(outputfile& SaveFile) const
 
 bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
 {
-  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || ((Type == PHYSICALDAMAGE) && WillExplode(0)))
+  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || ((Type == PHYSICAL_DAMAGE) && WillExplode(0)))
     {
       std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -1169,7 +1169,7 @@ bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
 	}
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -1187,9 +1187,9 @@ void mine::StepOnEffect(character* Stepper)
     return;
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s.", CHARNAME(INDEFINITE));
+    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s.", CHAR_NAME(INDEFINITE));
   else if(Stepper->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+    ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
   else if(GetSquareUnder()->CanBeSeenByPlayer())
     ADD_MESSAGE("Something explodes!");
 
@@ -1249,7 +1249,7 @@ float arm::GetUnarmedDamage() const
   if(GetGauntlet())
     WeaponStrength += GetGauntlet()->GetWeaponStrength();
 
-  return WeaponStrength * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  return WeaponStrength * GetAttribute(ARM_STRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
 }
 
 float arm::GetUnarmedToHitValue() const
@@ -1315,10 +1315,10 @@ float arm::GetWieldedDamage() const
   if(GetWielded()->IsShield(Master))
     return 0;
 
-  float HitStrength = GetAttribute(ARMSTRENGTH);
+  float HitStrength = GetAttribute(ARM_STRENGTH);
 
   if(TwoHandWieldIsActive())
-    HitStrength += GetPairArm()->GetAttribute(ARMSTRENGTH);
+    HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
 
   return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus() / 500000000;
 }
@@ -1411,7 +1411,7 @@ void leg::CalculateDamage()
   if(GetBoot())
     WeaponStrength += GetBoot()->GetWeaponStrength();
 
-  KickDamage = WeaponStrength * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  KickDamage = WeaponStrength * GetAttribute(LEG_STRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
 }
 
 void leg::CalculateToHitValue()
@@ -1856,16 +1856,16 @@ void bodypart::VirtualConstructor(bool Load)
 void head::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  HelmetSlot.Init(this, HELMETINDEX);
-  AmuletSlot.Init(this, AMULETINDEX);
+  HelmetSlot.Init(this, HELMET_INDEX);
+  AmuletSlot.Init(this, AMULET_INDEX);
 }
 
 void humanoidtorso::VirtualConstructor(bool Load)
 {
   torso::VirtualConstructor(Load);
-  BodyArmorSlot.Init(this, BODYARMORINDEX);
-  CloakSlot.Init(this, CLOAKINDEX);
-  BeltSlot.Init(this, BELTINDEX);
+  BodyArmorSlot.Init(this, BODY_ARMOR_INDEX);
+  CloakSlot.Init(this, CLOAK_INDEX);
+  BeltSlot.Init(this, BELT_INDEX);
 }
 
 void arm::VirtualConstructor(bool Load)
@@ -1879,17 +1879,17 @@ void arm::VirtualConstructor(bool Load)
 void rightarm::VirtualConstructor(bool Load)
 {
   arm::VirtualConstructor(Load);
-  WieldedSlot.Init(this, RIGHTWIELDEDINDEX);
-  GauntletSlot.Init(this, RIGHTGAUNTLETINDEX);
-  RingSlot.Init(this, RIGHTRINGINDEX);
+  WieldedSlot.Init(this, RIGHT_WIELDED_INDEX);
+  GauntletSlot.Init(this, RIGHT_GAUNTLET_INDEX);
+  RingSlot.Init(this, RIGHT_RING_INDEX);
 }
 
 void leftarm::VirtualConstructor(bool Load)
 {
   arm::VirtualConstructor(Load);
-  WieldedSlot.Init(this, LEFTWIELDEDINDEX);
-  GauntletSlot.Init(this, LEFTGAUNTLETINDEX);
-  RingSlot.Init(this, LEFTRINGINDEX);
+  WieldedSlot.Init(this, LEFT_WIELDED_INDEX);
+  GauntletSlot.Init(this, LEFT_GAUNTLET_INDEX);
+  RingSlot.Init(this, LEFT_RING_INDEX);
 }
 
 void leg::VirtualConstructor(bool Load)
@@ -1903,13 +1903,13 @@ void leg::VirtualConstructor(bool Load)
 void rightleg::VirtualConstructor(bool Load)
 {
   leg::VirtualConstructor(Load);
-  BootSlot.Init(this, RIGHTBOOTINDEX);
+  BootSlot.Init(this, RIGHT_BOOT_INDEX);
 }
 
 void leftleg::VirtualConstructor(bool Load)
 {
   leg::VirtualConstructor(Load);
-  BootSlot.Init(this, LEFTBOOTINDEX);
+  BootSlot.Init(this, LEFT_BOOT_INDEX);
 }
 
 bool whistle::Apply(character* Whistler) 
@@ -1924,7 +1924,7 @@ void whistle::BlowEffect(character* Whistler)
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce an interesting sound.");
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a whistle playing.");
 
@@ -1947,7 +1947,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce a peculiar sound.");
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a strange tune playing.");
 
@@ -1996,16 +1996,16 @@ bool chest::TryKey(item* Key, character* Applier)
       if(IsLocked())
 	{
 	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("You unlock %s.", CHARDESCRIPTION(DEFINITE));
+	    ADD_MESSAGE("You unlock %s.", CHAR_DESCRIPTION(DEFINITE));
 	  else if(Applier->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s unlocks %s.", Applier->CHARNAME(DEFINITE), CHARDESCRIPTION(DEFINITE));
+	    ADD_MESSAGE("%s unlocks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
 	}
       else
 	{
 	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("You lock %s.", CHARDESCRIPTION(DEFINITE));
+	    ADD_MESSAGE("You lock %s.", CHAR_DESCRIPTION(DEFINITE));
 	  else if(Applier->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARDESCRIPTION(DEFINITE));
+	    ADD_MESSAGE("%s locks %s.", Applier->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE));
 	}
 
       SetIsLocked(!IsLocked());
@@ -2013,9 +2013,9 @@ bool chest::TryKey(item* Key, character* Applier)
   else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHAR_NAME(DEFINITE));
       else if(Applier->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHARNAME(DEFINITE), Key->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHAR_NAME(DEFINITE), Key->CHAR_NAME(DEFINITE));
     }
 
   return true;
@@ -2048,7 +2048,7 @@ bool arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2057,7 +2057,7 @@ bool arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2067,7 +2067,7 @@ bool arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels quite dextrous.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2076,7 +2076,7 @@ bool arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels clumsy.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2096,7 +2096,7 @@ bool leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHAR_NAME(DEFINITE));
 
       GetMaster()->CalculateBurdenState();
       Edited = true;
@@ -2106,7 +2106,7 @@ bool leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHAR_NAME(DEFINITE));
 
       GetMaster()->CalculateBurdenState();
       Edited = true;
@@ -2117,7 +2117,7 @@ bool leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels very agile!", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2126,7 +2126,7 @@ bool leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels slower.", GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2136,21 +2136,21 @@ bool leg::ApplyExperience()
 
 void arm::Hit(character* Enemy)
 {
-  switch(Enemy->TakeHit(GetMaster(), GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPONATTACK : UNARMEDATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
+  switch(Enemy->TakeHit(GetMaster(), GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
     {
-    case HASHIT:
-    case HASBLOCKED:
-    case HASDIED:
-    case DIDNODAMAGE:
-      EditExperience(ARMSTRENGTH, 50);
-    case HASDODGED:
+    case HAS_HIT:
+    case HAS_BLOCKED:
+    case HAS_DIED:
+    case DID_NO_DAMAGE:
+      EditExperience(ARM_STRENGTH, 50);
+    case HAS_DODGED:
       EditExperience(DEXTERITY, 25);
     }
 }
 
 ushort arm::GetAttribute(ushort Identifier) const
 {
-  if(Identifier == ARMSTRENGTH)
+  if(Identifier == ARM_STRENGTH)
     {
       if(IsAlive())
 	return Strength + StrengthBonus;
@@ -2173,7 +2173,7 @@ ushort arm::GetAttribute(ushort Identifier) const
 
 bool arm::EditAttribute(ushort Identifier, short Value)
 {
-  if(Identifier == ARMSTRENGTH)
+  if(Identifier == ARM_STRENGTH)
     return IsAlive() && GetMaster()->RawEditAttribute(Strength, Value);
   else if(Identifier == DEXTERITY)
     return IsAlive() && GetMaster()->RawEditAttribute(Dexterity, Value);
@@ -2186,7 +2186,7 @@ bool arm::EditAttribute(ushort Identifier, short Value)
 
 void arm::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier == ARMSTRENGTH)
+  if(Identifier == ARM_STRENGTH)
     {
       if(IsAlive())
 	StrengthExperience += Value << 1;
@@ -2202,7 +2202,7 @@ void arm::EditExperience(ushort Identifier, long Value)
 
 ushort leg::GetAttribute(ushort Identifier) const
 {
-  if(Identifier == LEGSTRENGTH)
+  if(Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
 	return Strength + StrengthBonus;
@@ -2225,7 +2225,7 @@ ushort leg::GetAttribute(ushort Identifier) const
 
 bool leg::EditAttribute(ushort Identifier, short Value)
 {
-  if(Identifier == LEGSTRENGTH)
+  if(Identifier == LEG_STRENGTH)
     return IsAlive() && GetMaster()->RawEditAttribute(Strength, Value);
   else if(Identifier == AGILITY)
     return IsAlive() && GetMaster()->RawEditAttribute(Agility, Value);
@@ -2238,7 +2238,7 @@ bool leg::EditAttribute(ushort Identifier, short Value)
 
 void leg::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier == LEGSTRENGTH)
+  if(Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
 	StrengthExperience += Value << 1;
@@ -2288,7 +2288,7 @@ bool chest::Open(character* Opener)
 
   std::string Question = "Do you want to (t)ake something from or (p)ut something in this chest? [t,p]";
 
-  switch(game::KeyQuestion(Question, KEYESC, 3, 't', 'p', KEYESC))
+  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
     {
     case 't':
       return TakeSomethingFrom(Opener);
@@ -2303,7 +2303,7 @@ bool chest::TakeSomethingFrom(character* Opener)
 {
   if(!GetContained()->GetItems())
     {
-      ADD_MESSAGE("There is nothing in %s.", CHARNAME(DEFINITE));
+      ADD_MESSAGE("There is nothing in %s.", CHAR_NAME(DEFINITE));
       return false;
     }
 
@@ -2325,7 +2325,7 @@ bool chest::TakeSomethingFrom(character* Opener)
 	  for(ushort c = 0; c < ToTake.size(); ++c)
 	    ToTake[c]->MoveTo(Opener->GetStack());
 
-	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), CHAR_NAME(DEFINITE));
 	  Success = true;
 	}
     }
@@ -2343,7 +2343,7 @@ bool chest::PutSomethingIn(character* Opener)
 {
   if(!Opener->GetStack()->GetItems())
     {
-      ADD_MESSAGE("You have nothing to put in %s.", CHARNAME(DEFINITE));
+      ADD_MESSAGE("You have nothing to put in %s.", CHAR_NAME(DEFINITE));
       return false;
     }
 
@@ -2362,7 +2362,7 @@ bool chest::PutSomethingIn(character* Opener)
 
       if(ToPut[0]->GetID() == GetID())
 	{
-	  ADD_MESSAGE("You can't put %s inside itself!", CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You can't put %s inside itself!", CHAR_NAME(DEFINITE));
 	  continue;
 	}
 
@@ -2371,22 +2371,22 @@ bool chest::PutSomethingIn(character* Opener)
       if(!Amount)
 	{
 	  if(ToPut.size() == 1)
-	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	  else
-	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHARNAME(PLURAL), CHARNAME(DEFINITE));
+	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), CHAR_NAME(DEFINITE));
 
 	  continue;
 	}
 
       if(Amount != ToPut.size())
-	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHARNAME(PLURAL), Amount == 1 ? "s" : "", CHARNAME(DEFINITE));
+	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", CHAR_NAME(DEFINITE));
 
       if(!IsOnGround() || !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, ToPut[0], Amount))
 	{
 	  for(ushort c = 0; c < Amount; ++c)
 	    ToPut[c]->MoveTo(GetContained());
 
-	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), CHAR_NAME(DEFINITE));
 	  Success = true;
 	}
     }
@@ -2472,9 +2472,9 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).c_str());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHAR_NAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, 2 + RAND() % 2, PHYSICALDAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->ReceiveBodyPartDamage(0, 2 + RAND() % 2, PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
       Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE));
       return false;
     }
@@ -2482,18 +2482,18 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
   if(!(RAND() % 5))
     {
       Victim->SetStuckTo(0);
-      Victim->SetStuckToBodyPart(NONEINDEX);
+      Victim->SetStuckToBodyPart(NONE_INDEX);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to free yourself from %s.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("You manage to free yourself from %s.", CHAR_NAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHARNAME(DEFINITE), Victim->CHARPERSONALPRONOUN, CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_PERSONAL_PRONOUN, CHAR_NAME(DEFINITE));
 
       return true;
     }
 
   if(Victim->IsPlayer())
-    ADD_MESSAGE("You are unable to escape from %s.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("You are unable to escape from %s.", CHAR_NAME(DEFINITE));
 
   return false;
 }
@@ -2521,19 +2521,19 @@ void beartrap::StepOnEffect(character* Stepper)
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
-      if(StepperBodyPart == NONEINDEX)
+      if(StepperBodyPart == NONE_INDEX)
 	return;
 
       Stepper->SetStuckTo(this);
       Stepper->SetStuckToBodyPart(StepperBodyPart);
 
       if(Stepper->IsPlayer())
-	ADD_MESSAGE("You step in %s and it traps your %s.", CHARNAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).c_str());
+	ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).c_str());
       else if(Stepper->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
       SetIsActive(false);
-      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
       Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE));
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
@@ -2545,7 +2545,7 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   if(Picker->IsStuck() && Picker->GetStuckTo()->GetID() == GetID())
     {
       if(Picker->IsPlayer())
-	ADD_MESSAGE("%s is tightly stuck to your %s.", CHARNAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).c_str());
+	ADD_MESSAGE("%s is tightly stuck to your %s.", CHAR_NAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).c_str());
 
       return false;
     }
@@ -2613,7 +2613,7 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
 
 	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
 	  {
-	    door* Door = new door(0, NOMATERIALS);
+	    door* Door = new door(0, NO_MATERIALS);
 	    Door->InitMaterials(MAKE_MATERIAL(IRON));
 	    Door->Lock();
 	    Square->ChangeOLTerrainAndUpdateLights(Door);
@@ -2926,7 +2926,7 @@ void arm::AddAttackInfo(felist& List) const
       Entry << int(GetToHitValue());
       Entry.resize(70, ' ');
       Entry << GetAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 }
 
@@ -2940,7 +2940,7 @@ void arm::AddDefenceInfo(felist& List) const
       Entry << int(GetBlockValue());
       Entry.resize(70, ' ');
       Entry << GetBlockCapability();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 }
 
@@ -2966,7 +2966,7 @@ bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPart
   if(Enemy->IsEnabled() && RAND() & 1)
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s sword burns %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 3), FIRE, BodyPartIndex, Direction) != 0 || BaseSuccess;
     }
@@ -2988,7 +2988,7 @@ bool arm::TwoHandWieldIsActive() const
 float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
   float Durability;
-  short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
+  short TrueDamage = Damage - GetTotalResistance(PHYSICAL_DAMAGE);
   short HP = UseMaxHP ? GetMaxHP() : GetHP();
 
   if(TrueDamage > 0)
@@ -3063,7 +3063,7 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
   if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) != 0 || BaseSuccess;
     }
@@ -3078,7 +3078,7 @@ bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
   if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       Enemy->TeleportRandomly();
       return true;
@@ -3094,7 +3094,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
   if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHARPERSONALPRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       std::string DeathMSG = "killed by " + Enemy->GetName(DEFINITE); 
       Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 20 + RAND() % 5 - RAND() % 5);
@@ -3111,7 +3111,7 @@ bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
   if(!(IsBroken()) && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
 
       if(Hitter->IsPlayer())
 	{
@@ -3156,7 +3156,7 @@ bool beartrap::CanBeSeenBy(const character* Viewer) const
 bool mine::Apply(character* User)
 {
   if(User->IsPlayer())
-    ADD_MESSAGE("%s is now %sactive.", CHARNAME(DEFINITE), IsActive() ? "in" : "");
+    ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
 
   SetIsActive(!IsActive());
   User->DexterityAction(10);
@@ -3174,7 +3174,7 @@ bool mine::Apply(character* User)
 bool beartrap::Apply(character* User)
 {
   if(User->IsPlayer())
-    ADD_MESSAGE("%s is now %sactive.", CHARNAME(DEFINITE), IsActive() ? "in" : "");
+    ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
 
   SetIsActive(!IsActive());
   User->DexterityAction(10);
@@ -3196,7 +3196,7 @@ float arm::GetBlockChance(float EnemyToHitValue) const
 
 ushort arm::GetBlockCapability() const
 {
-  return GetWielded() ? GetWielded()->GetStrengthValue() * GetAttribute(ARMSTRENGTH) / 10 : 0;
+  return GetWielded() ? GetWielded()->GetStrengthValue() * GetAttribute(ARM_STRENGTH) / 10 : 0;
 }
 
 void arm::WieldedSkillHit()
@@ -3244,15 +3244,15 @@ meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW), Enchantment(MW.Encha
 
 head::head(const head& Head) : bodypart(Head), BaseBiteStrength(Head.BaseBiteStrength)
 {
-  HelmetSlot.Init(this, HELMETINDEX);
-  AmuletSlot.Init(this, AMULETINDEX);
+  HelmetSlot.Init(this, HELMET_INDEX);
+  AmuletSlot.Init(this, AMULET_INDEX);
 }
 
 humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : torso(Torso)
 {
-  BodyArmorSlot.Init(this, BODYARMORINDEX);
-  CloakSlot.Init(this, CLOAKINDEX);
-  BeltSlot.Init(this, BELTINDEX);
+  BodyArmorSlot.Init(this, BODY_ARMOR_INDEX);
+  CloakSlot.Init(this, CLOAK_INDEX);
+  BeltSlot.Init(this, BELT_INDEX);
 }
 
 arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
@@ -3261,16 +3261,16 @@ arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.
 
 rightarm::rightarm(const rightarm& Arm) : arm(Arm)
 {
-  WieldedSlot.Init(this, RIGHTWIELDEDINDEX);
-  GauntletSlot.Init(this, RIGHTGAUNTLETINDEX);
-  RingSlot.Init(this, RIGHTRINGINDEX);
+  WieldedSlot.Init(this, RIGHT_WIELDED_INDEX);
+  GauntletSlot.Init(this, RIGHT_GAUNTLET_INDEX);
+  RingSlot.Init(this, RIGHT_RING_INDEX);
 }
 
 leftarm::leftarm(const leftarm& Arm) : arm(Arm)
 {
-  WieldedSlot.Init(this, LEFTWIELDEDINDEX);
-  GauntletSlot.Init(this, LEFTGAUNTLETINDEX);
-  RingSlot.Init(this, LEFTRINGINDEX);
+  WieldedSlot.Init(this, LEFT_WIELDED_INDEX);
+  GauntletSlot.Init(this, LEFT_GAUNTLET_INDEX);
+  RingSlot.Init(this, LEFT_RING_INDEX);
 }
 
 leg::leg(const leg& Leg) : bodypart(Leg), Strength(Leg.Strength), Agility(Leg.Agility), StrengthExperience(Leg.StrengthExperience), AgilityExperience(Leg.AgilityExperience), BaseKickStrength(Leg.BaseKickStrength)
@@ -3279,12 +3279,12 @@ leg::leg(const leg& Leg) : bodypart(Leg), Strength(Leg.Strength), Agility(Leg.Ag
 
 rightleg::rightleg(const rightleg& Leg) : leg(Leg)
 {
-  BootSlot.Init(this, RIGHTBOOTINDEX);
+  BootSlot.Init(this, RIGHT_BOOT_INDEX);
 }
 
 leftleg::leftleg(const leftleg& Leg) : leg(Leg)
 {
-  BootSlot.Init(this, LEFTBOOTINDEX);
+  BootSlot.Init(this, LEFT_BOOT_INDEX);
 }
 
 corpse::corpse(const corpse& Corpse) : item(Corpse)
@@ -3422,7 +3422,7 @@ void materialcontainer::SignalSpoil(material* Material)
   if(Material == GetMainMaterial())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s becomes so spoiled that it cannot hold its contents anymore.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s becomes so spoiled that it cannot hold its contents anymore.", CHAR_NAME(DEFINITE));
 
       if(GetContainedMaterial()->IsLiquid())
 	{
@@ -3433,9 +3433,9 @@ void materialcontainer::SignalSpoil(material* Material)
 	}
       else
 	{
-	  lump* Lump = new lump(0, NOMATERIALS);
+	  lump* Lump = new lump(0, NO_MATERIALS);
 	  Lump->InitMaterials(GetContainedMaterial());
-	  SetContainedMaterial(0, NOPICUPDATE);
+	  SetContainedMaterial(0, NO_PIC_UPDATE);
 	  GetSlot()->DonateTo(Lump);
 	}
 
@@ -3444,7 +3444,7 @@ void materialcontainer::SignalSpoil(material* Material)
   else if(Material == GetContainedMaterial())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The contents of %s spoil completely.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
 
       Empty();
     }
@@ -3458,12 +3458,12 @@ void banana::SignalSpoil(material* Material)
   if(Material == GetSecondaryMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The inside of %s spoils completely.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("The inside of %s spoils completely.", CHAR_NAME(DEFINITE));
 
-      item* Peel = new bananapeels(0, NOMATERIALS);
+      item* Peel = new bananapeels(0, NO_MATERIALS);
       Peel->InitMaterials(GetMainMaterial());
       GetSlot()->DonateTo(Peel);
-      SetMainMaterial(0, NOPICUPDATE);
+      SetMainMaterial(0, NO_PIC_UPDATE);
       SendToHell();
     }
   else
@@ -3480,7 +3480,7 @@ void meleeweapon::SignalSpoil(material* Material)
       Empty();
 
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s seems cleaner now.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s seems cleaner now.", CHAR_NAME(DEFINITE));
     }
   else
     item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
@@ -3509,7 +3509,7 @@ void bodypart::SignalSpoil(material* Material)
       /* Bug: this isn't shown if the bpart is part of a player-carried corpse */
 
       if(CarriedByPlayer())
-	ADD_MESSAGE("%s feels lighter.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s feels lighter.", CHAR_NAME(DEFINITE));
 
       ChangeContainedMaterial(0);
     }
@@ -3531,7 +3531,7 @@ void corpse::SignalSpoil(material*)
   if(GetDeceased()->GetTorso()->IsVeryCloseToSpoiling())
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s spoils.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
 
       TorsoSpoiled = true;
     }
@@ -3544,7 +3544,7 @@ void corpse::SignalSpoil(material*)
 	if(BodyPart->IsVeryCloseToSpoiling())
 	  {
 	    if(!TorsoSpoiled && CanBeSeenByPlayer())
-	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHAR_NAME(DEFINITE));
 
 	    GetDeceased()->SevereBodyPart(c)->SendToHell();
 	  }
@@ -3656,12 +3656,12 @@ ulong chest::GetPrice() const
 void potion::Break()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("The %s shatters to pieces.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("The %s shatters to pieces.", CHAR_NAME(DEFINITE));
 
   if(GetContainedMaterial()) 
     GetLSquareUnder()->SpillFluid(GetContainedMaterial()->Clone(), 70, 0);
 
-  item* Remains = new brokenbottle(0, NOMATERIALS);
+  item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
   GetSlot()->DonateTo(Remains);
   SendToHell();
@@ -3814,7 +3814,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
 	  if(Item)
 	    {
-	      ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item->CHARNAME(UNARTICLED));
+	      ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item->CHAR_NAME(UNARTICLED));
 	      Item->EditEnchantment(1);
 	      break;
 	    }
@@ -3845,7 +3845,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
 	  if(Item)
 	    {
-	      ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item->CHARNAME(UNARTICLED));
+	      ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item->CHAR_NAME(UNARTICLED));
 	      Item->EditEnchantment(1);
 	      break;
 	    }
@@ -3910,9 +3910,9 @@ void bodypart::SignalEnchantmentChange()
 
 bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if(Type == PHYSICALDAMAGE)
+  if(Type == PHYSICAL_DAMAGE)
     {
-      Contained->ReceiveDamage(Damager, Damage / 2, PHYSICALDAMAGE);
+      Contained->ReceiveDamage(Damager, Damage / 2, PHYSICAL_DAMAGE);
 
       if(IsLocked() && Damage > RAND() % 6)
 	{
@@ -3949,7 +3949,7 @@ void backpack::ReceiveFluidSpill(material* Liquid)
       ulong Amount = Liquid->GetVolume() * (30 + (RAND() % 71)) / 100;
       GetContainedMaterial()->SetWetness(Amount);
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s gets wet.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s gets wet.", CHAR_NAME(DEFINITE));
     }
 }
 

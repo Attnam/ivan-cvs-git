@@ -7,7 +7,7 @@
 #include "colorbit.h"
 #include "felist.h"
 
-#define HIGHSCORE_VERSION 110 // Increment this if changes make highscores incompatible
+#define HIGH_SCORE_VERSION 110 // Increment this if changes make highscores incompatible
 
 bool highscore::Add(long NewScore, const std::string& NewEntry)
 {
@@ -53,7 +53,7 @@ void highscore::Draw() const
       Desc += Score[c];
       Desc.resize(13, ' ');
       Desc += Entry[c];
-      List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHTGRAY, 13);
+      List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHT_GRAY, 13);
     }
 
   List.SetFlags(FADE);
@@ -64,7 +64,7 @@ void highscore::Draw() const
 void highscore::Save(const std::string& File) const
 {
   outputfile HighScore(File);
-  HighScore << ushort(HIGHSCORE_VERSION) << Score << Entry << LastAdd;
+  HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << LastAdd;
 }
 
 void highscore::Load(const std::string& File)
@@ -85,6 +85,6 @@ void highscore::Load(const std::string& File)
   ushort HVersion;
   HighScore >> HVersion;
 
-  if(HVersion == HIGHSCORE_VERSION)
+  if(HVersion == HIGH_SCORE_VERSION)
     HighScore >> Score >> Entry >> LastAdd;
 }

@@ -134,17 +134,17 @@ void lsquare::Draw()
       if(!IsDark() || game::GetSeeWholeMapCheat())
 	{
 	  ulong RealLuminance = game::GetSeeWholeMapCheat() ? configuration::GetContrastLuminance() : configuration::ApplyContrastTo(Luminance);
-	  DrawStaticContents(DOUBLEBUFFER, BitPos, RealLuminance, true);
+	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
-	    Character->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true, true);
 	}
       else
 	{
-	  DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+	  DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
 	  if(Character && Character->CanBeSeenByPlayer())
-	    Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), false, true);
+	    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), false, true);
 	}
 
       NewDrawRequested = false;
@@ -986,7 +986,7 @@ void lsquare::DrawParticles(ushort Color, uchar)
   game::DrawEverythingNoBlit();
 
   for(ushort c = 0; c < 10; ++c)
-    DOUBLEBUFFER->PutPixel(BitPos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
+    DOUBLE_BUFFER->PutPixel(BitPos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   graphics::BlitDBToScreen();
   NewDrawRequested = true; // Clean the pixels from the screen afterwards
@@ -1088,7 +1088,7 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
   else
     {
       if(Dipper->IsPlayer())
-	ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHAR_NAME(DEFINITE));
 
       return false;
     }
@@ -1183,12 +1183,12 @@ void lsquare::DrawMemorized()
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
       if(LastSeen)
-	Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
       else
-	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen != 0, true);
 
       NewDrawRequested = false;
     }
@@ -1283,4 +1283,3 @@ bool lsquare::IsDark() const
 {
   return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
 }
-

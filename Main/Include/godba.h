@@ -91,4 +91,3 @@ name : public base\
 }; GOD_PROTOTYPE(name);
 
 #endif
-

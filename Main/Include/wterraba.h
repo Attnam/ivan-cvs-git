@@ -94,7 +94,7 @@ class owterrain : public wterrain, public oterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual uchar GetAttachedDungeon() const { return 0; }
   virtual uchar GetAttachedArea() const { return 0; }
-  virtual uchar GetAttachedEntry() const { return STAIRSUP; }
+  virtual uchar GetAttachedEntry() const { return STAIRS_UP; }
   virtual bool Enter(bool) const;
 };
 
@@ -138,4 +138,3 @@ WTERRAIN(\
 );
 
 #endif
-

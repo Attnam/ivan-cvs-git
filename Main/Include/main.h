@@ -8,6 +8,3 @@
 extern const bool ValpuriIsAlive;
 
 #endif
-
-
-

@@ -52,5 +52,3 @@ outputfile& operator<<(outputfile&, continent*);
 inputfile& operator>>(inputfile&, continent*&);
 
 #endif
-
-

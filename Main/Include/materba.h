@@ -101,31 +101,31 @@ class material
   virtual void Be() { }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void AddConsumeEndMessage(character*) const;
-  DATABASEVALUE(ushort, StrengthValue);
-  DATABASEVALUE(ushort, ConsumeType);
-  DATABASEVALUE(ushort, Density);
-  DATABASEVALUE(ushort, Color);
-  DATABASEVALUE(ulong, PriceModifier);
-  DATABASEBOOL(IsSolid);
-  DATABASEVALUE(ulong, Emitation);
-  DATABASEBOOL(CanBeWished);
-  DATABASEVALUE(uchar, Alignment);
-  DATABASEVALUE(ushort, NutritionValue);
-  DATABASEBOOL(IsAlive);
-  DATABASEBOOL(IsBadFoodForAI);
-  DATABASEBOOL(IsFlammable);
-  virtual DATABASEBOOL(IsExplosive);
-  DATABASEVALUE(const std::string&, NameStem);
-  DATABASEVALUE(const std::string&, AdjectiveStem);
-  DATABASEVALUE(const std::string&, Article);
-  DATABASEVALUE(uchar, Effect);
-  DATABASEVALUE(uchar, ConsumeEndMessage);
-  DATABASEVALUE(uchar, HitMessage);
-  DATABASEVALUE(ulong, ExplosivePower);
-  DATABASEVALUE(uchar, Alpha);
-  DATABASEVALUE(uchar, Flexibility);
-  DATABASEVALUE(ushort, SpoilModifier);
-  DATABASEBOOL(IsSparkling);
+  DATA_BASE_VALUE(ushort, StrengthValue);
+  DATA_BASE_VALUE(ushort, ConsumeType);
+  DATA_BASE_VALUE(ushort, Density);
+  DATA_BASE_VALUE(ushort, Color);
+  DATA_BASE_VALUE(ulong, PriceModifier);
+  DATA_BASE_BOOL(IsSolid);
+  DATA_BASE_VALUE(ulong, Emitation);
+  DATA_BASE_BOOL(CanBeWished);
+  DATA_BASE_VALUE(uchar, Alignment);
+  DATA_BASE_VALUE(ushort, NutritionValue);
+  DATA_BASE_BOOL(IsAlive);
+  DATA_BASE_BOOL(IsBadFoodForAI);
+  DATA_BASE_BOOL(IsFlammable);
+  virtual DATA_BASE_BOOL(IsExplosive);
+  DATA_BASE_VALUE(const std::string&, NameStem);
+  DATA_BASE_VALUE(const std::string&, AdjectiveStem);
+  DATA_BASE_VALUE(const std::string&, Article);
+  DATA_BASE_VALUE(uchar, Effect);
+  DATA_BASE_VALUE(uchar, ConsumeEndMessage);
+  DATA_BASE_VALUE(uchar, HitMessage);
+  DATA_BASE_VALUE(ulong, ExplosivePower);
+  DATA_BASE_VALUE(uchar, Alpha);
+  DATA_BASE_VALUE(uchar, Flexibility);
+  DATA_BASE_VALUE(ushort, SpoilModifier);
+  DATA_BASE_BOOL(IsSparkling);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
@@ -183,4 +183,3 @@ name : public base\
 }; MATERIAL_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
-

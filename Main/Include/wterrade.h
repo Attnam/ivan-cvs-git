@@ -135,7 +135,7 @@ class OWTERRAIN
  public:
   virtual std::string GetNameStem() const { return "hideous cave entry radiating pure evil"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 48); }
-  virtual uchar GetAttachedDungeon() const { return ELPURICAVE; }
+  virtual uchar GetAttachedDungeon() const { return ELPURI_CAVE; }
 );
 
 class OWTERRAIN
@@ -145,7 +145,7 @@ class OWTERRAIN
  public:
   virtual std::string GetNameStem() const { return "primitive village"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 64); }
-  virtual uchar GetAttachedDungeon() const { return NEWATTNAM; }
+  virtual uchar GetAttachedDungeon() const { return NEW_ATTNAM; }
 );
 
 class OWTERRAIN
@@ -156,7 +156,7 @@ class OWTERRAIN
   virtual std::string GetNameStem() const { return "entrance to an underwater tunnel"; }
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(32, 64); }
-  virtual uchar GetAttachedDungeon() const { return UNDERWATERTUNNEL; }
+  virtual uchar GetAttachedDungeon() const { return UNDER_WATER_TUNNEL; }
 );
 
 class OWTERRAIN
@@ -167,7 +167,7 @@ class OWTERRAIN
   virtual std::string GetNameStem() const { return "exit from an underwater tunnel"; }
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(32, 64); }
-  virtual uchar GetAttachedDungeon() const { return UNDERWATERTUNNEL; }
+  virtual uchar GetAttachedDungeon() const { return UNDER_WATER_TUNNEL; }
   virtual uchar GetAttachedArea() const { return 2; }
 );
 

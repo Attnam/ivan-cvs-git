@@ -34,7 +34,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define FLIP 2
 #define ROTATE 4
 
-#define DEFAULTTRANSPARENT 0xF81F
+#define DEFAULT_TRANSPARENT 0xF81F
 
 #define RED MakeRGB16(255, 0, 0)
 #define GREEN MakeRGB16(0, 255, 0)
@@ -44,21 +44,21 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define PINK MakeRGB16(255, 0, 255)
 
 #define WHITE MakeRGB16(255, 255, 255)
-#define LIGHTGRAY MakeRGB16(180, 180, 180)
-#define DARKGRAY MakeRGB16(80, 80, 80)
+#define LIGHT_GRAY MakeRGB16(180, 180, 180)
+#define DARK_GRAY MakeRGB16(80, 80, 80)
 #define BLACK MakeRGB16(0, 0, 0)
 
-#define KEYBACKSPACE 0x08
-#define KEYESC 0x1B
-#define KEYENTER 0x0D
-#define KEYUP 0x148
-#define KEYDOWN 0x150
-#define KEYRIGHT 0x14D
-#define KEYLEFT 0x14B
-#define KEYHOME 0x147
-#define KEYEND 0x14F
-#define KEYPAGEDOWN 0x151
-#define KEYPAGEUP 0x149
+#define KEY_BACK_SPACE 0x08
+#define KEY_ESC 0x1B
+#define KEY_ENTER 0x0D
+#define KEY_UP 0x148
+#define KEY_DOWN 0x150
+#define KEY_RIGHT 0x14D
+#define KEY_LEFT 0x14B
+#define KEY_HOME 0x147
+#define KEY_END 0x14F
+#define KEY_PAGE_DOWN 0x151
+#define KEY_PAGE_UP 0x149
 
 #define NONE 0
 #define MIRROR 1
@@ -82,4 +82,3 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define FADE 16
 
 #endif
-

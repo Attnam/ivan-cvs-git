@@ -45,8 +45,8 @@ petrus::~petrus()
 void oree::CreateInitialEquipment(ushort SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
-  can* Can = new can(0, NOMATERIALS);
-  Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330), !(SpecialFlags & NOPICUPDATE));
+  can* Can = new can(0, NO_MATERIALS);
+  Can->InitMaterials(MAKE_MATERIAL(IRON, 10), MAKE_MATERIAL(PEPSI, 330), !(SpecialFlags & NO_PIC_UPDATE));
   GetStack()->AddItem(Can);
 }
 
@@ -65,9 +65,9 @@ bool ennerbeast::Hit(character*)
 	  {
 	    if(Char->IsPlayer())
 	      if(RAND() & 1)
-		ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHARDESCRIPTION(DEFINITE));
+		ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHAR_DESCRIPTION(DEFINITE));
 	      else
-		ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
+		ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHAR_DESCRIPTION(DEFINITE));
 
 	    Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
 	    Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
@@ -202,9 +202,9 @@ bool petrus::HealFully(character* ToBeHealed)
 	BodyPart->SetHP(BodyPart->GetMaxHP());
 
 	if(ToBeHealed->IsPlayer())
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), BodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str());
 	else if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHARNAME(DEFINITE), BodyPart->GetBodyPartName().c_str(), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str(), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
 
 	DidSomething = true;
       }
@@ -214,9 +214,9 @@ bool petrus::HealFully(character* ToBeHealed)
       ToBeHealed->RestoreHP();
 
       if(ToBeHealed->IsPlayer())
-	ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s heals you fully.", CHAR_DESCRIPTION(DEFINITE));
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s heals %s fully.", CHARDESCRIPTION(DEFINITE), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s heals %s fully.", CHAR_DESCRIPTION(DEFINITE), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
 
       DidSomething = true;
     }
@@ -250,20 +250,20 @@ bool dog::Catches(item* Thingy, float)
     {
       if(ConsumeItem(Thingy))
 	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
 	else
 	  {
 	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s catches %s and eats it.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
 	  }
       else
 	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
 	else
 	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s catches %s.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
       return true;
     }
@@ -303,7 +303,7 @@ bool humanoid::Hit(character* Enemy)
 
   Hostility(Enemy);
 
-  if(GetBurdenState() == OVERLOADED)
+  if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You cannot fight while carrying so much.");
@@ -375,7 +375,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 
   if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
-      List.AddEntry("", LIGHTGRAY);
+      List.AddEntry("", LIGHT_GRAY);
       std::string Buffer = "right single weapon skill:  ";
       Buffer.resize(30, ' ');
       Buffer << CurrentRightSWeaponSkill->GetLevel();
@@ -392,14 +392,14 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       Buffer << '+' << int(CurrentRightSWeaponSkill->GetEffectBonus() - 100) << '%';
       Buffer.resize(70, ' ');
       Buffer << '-' << int(100 - CurrentRightSWeaponSkill->GetAPBonus()) << '%';
-      List.AddEntry(Buffer, LIGHTGRAY);
+      List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
     }
 
   if(CurrentLeftSWeaponSkill && CurrentLeftSWeaponSkill->GetHits())
     {
       if(!Something)
-	List.AddEntry("", LIGHTGRAY);
+	List.AddEntry("", LIGHT_GRAY);
 
       std::string Buffer = "left single weapon skill:  ";
       Buffer.resize(30, ' ');
@@ -417,7 +417,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       Buffer << '+' << int(CurrentLeftSWeaponSkill->GetEffectBonus() - 100) << '%';
       Buffer.resize(70, ' ');
       Buffer << '-' << int(100 - CurrentLeftSWeaponSkill->GetAPBonus()) << '%';
-      List.AddEntry(Buffer, LIGHTGRAY);
+      List.AddEntry(Buffer, LIGHT_GRAY);
       Something = true;
     }
 
@@ -522,10 +522,10 @@ void farmer::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"");
       break;
     case 1:
-      ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 3:
       ADD_MESSAGE("\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"");
@@ -547,19 +547,19 @@ void guard::BeTalkedTo(character* Talker)
     {
     case 0:
       if(GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", CHAR_DESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 1:
       if(GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CHAR_DESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 2:
       if(GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CHAR_DESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("\"Yes, this is a dangerous place to work, but our boss pays us well.\"");
       break;
@@ -592,12 +592,12 @@ void shopkeeper::BeTalkedTo(character* Talker)
     {
     case 0:
       if(GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CHAR_DESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHARDESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 1:
-      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 2:
       if(GetLevelUnder()->GetOnGround())
@@ -680,17 +680,17 @@ void priest::BeTalkedTo(character* Talker)
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
+    ADD_MESSAGE("%s talks to you: %s", CHAR_DESCRIPTION(DEFINITE), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
 }
 
 void oree::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", CHARDESCRIPTION(DEFINITE));
+  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void darkknight::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s yells: \"For Mortifer I shall slay you!\"", CHARDESCRIPTION(DEFINITE));
+  ADD_MESSAGE("%s yells: \"For Mortifer I shall slay you!\"", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void ennerbeast::BeTalkedTo(character*)
@@ -716,7 +716,7 @@ void ennerbeast::BeTalkedTo(character*)
 
 void elpuri::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", CHARDESCRIPTION(DEFINITE));
+  ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void billswill::BeTalkedTo(character*)
@@ -728,22 +728,22 @@ void skeleton::BeTalkedTo(character* Talker)
 {
   if(!GetHead())
     {
-      ADD_MESSAGE("The headless %s remains silent.", Talker->CHARDESCRIPTION(UNARTICLED));
+      ADD_MESSAGE("The headless %s remains silent.", Talker->CHAR_DESCRIPTION(UNARTICLED));
       return;
     }
 
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHARDESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHAR_DESCRIPTION(DEFINITE));
   else
-    ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CHARDESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void goblin::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", CHARDESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", CHAR_DESCRIPTION(DEFINITE));
   else
-    ADD_MESSAGE("%s yells goblin war cries at you.", CHARDESCRIPTION(DEFINITE));
+    ADD_MESSAGE("%s yells goblin war cries at you.", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void golem::BeTalkedTo(character* Talker)
@@ -758,7 +758,7 @@ void communist::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("\"You capitalist! Lenin want %s kill capitalists!\"", CHARNAME(UNARTICLED));
+      ADD_MESSAGE("\"You capitalist! Lenin want %s kill capitalists!\"", CHAR_NAME(UNARTICLED));
       return;
     }
 
@@ -769,34 +769,34 @@ void communist::BeTalkedTo(character* Talker)
       switch(RandomizeReply(11, Said))
 	{
 	case 0:
-	  ADD_MESSAGE("\"Da, %s like killing.\"", CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Da, %s like killing.\"", CHAR_NAME(UNARTICLED));
 	  break;
 	case 1:
-	  ADD_MESSAGE("\"%s ruski specialist.\"", CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s ruski specialist.\"", CHAR_NAME(UNARTICLED));
 	  break;
 	case 2:
-	  ADD_MESSAGE("\"%s work. Else %s get stapled.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s work. Else %s get stapled.\"", CHAR_NAME(UNARTICLED), CHAR_NAME(UNARTICLED));
 	  break;
 	case 3:
-	  ADD_MESSAGE("\"Party mean big weapons. %s like big weapons. %s kill for Party.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Party mean big weapons. %s like big weapons. %s kill for Party.\"", CHAR_NAME(UNARTICLED), CHAR_NAME(UNARTICLED));
 	  break;
 	case 4:
 	  ADD_MESSAGE("\"CCCP roxxx.\"");
 	  break;
 	case 5:
-	  ADD_MESSAGE("\"%s like throw Ladas. You want compete?\"", CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s like throw Ladas. You want compete?\"", CHAR_NAME(UNARTICLED));
 	  break;
 	case 6:
 	  ADD_MESSAGE("\"Why is AK not invented?\"");
 	  break;
 	case 7:
-	  ADD_MESSAGE("\"%s like Attnam. Petrus communist too.\"", CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s like Attnam. Petrus communist too.\"", CHAR_NAME(UNARTICLED));
 	  break;
 	case 8:
-	  ADD_MESSAGE("\"%s buy kyber eyes. %s see in dark.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s buy kyber eyes. %s see in dark.\"", CHAR_NAME(UNARTICLED), CHAR_NAME(UNARTICLED));
 	  break;
 	case 9:
-	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. %s like.\"", CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. %s like.\"", CHAR_NAME(UNARTICLED));
 	  break;
 	case 10:
 	  if(GetTeam() == Talker->GetTeam())
@@ -808,7 +808,7 @@ void communist::BeTalkedTo(character* Talker)
     }
   else
     {
-      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHARDESCRIPTION(DEFINITE), Talker->CHARNAME(UNARTICLED), CHARNAME(UNARTICLED), Talker->GetObjectPronoun().c_str());
+      ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), Talker->CHAR_NAME(UNARTICLED), CHAR_NAME(UNARTICLED), Talker->GetObjectPronoun().c_str());
       ChangeTeam(Talker->GetTeam());
     }
 }
@@ -839,7 +839,7 @@ void hunter::BeTalkedTo(character* Talker)
       break;
     case 2:
       if(GetMainWielded())
-	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", GetMainWielded()->CHARNAME(UNARTICLED), GetMainWielded()->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", GetMainWielded()->CHAR_NAME(UNARTICLED), GetMainWielded()->CHAR_NAME(UNARTICLED));
       else
 	ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
@@ -863,7 +863,7 @@ void slave::BeTalkedTo(character* Talker)
     {
       if(Talker->GetMoney() >= 50)
 	{
-	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHARDESCRIPTION(DEFINITE));
+	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
 
 	  if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 	    {
@@ -957,14 +957,14 @@ bool elpuri::Hit(character* Enemy)
 	  if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
 	    {
 	      nonhumanoid::Hit(ByStander);
-	      ByStander->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
+	      ByStander->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICAL_DAMAGE);
 	    }
 
-	  Square->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
+	  Square->GetStack()->ReceiveDamage(this, 50 + RAND() % 51, PHYSICAL_DAMAGE);
 
 	  for(ushort c = 0; c < 4; ++c)
 	    if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	      Square->GetSideStack(c)->ReceiveDamage(this, 50 + RAND() % 51, PHYSICALDAMAGE);
+	      Square->GetSideStack(c)->ReceiveDamage(this, 50 + RAND() % 51, PHYSICAL_DAMAGE);
 	}
     }
 
@@ -1174,19 +1174,19 @@ bool communist::MoveRandomly()
     {
     case 0:
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
       Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
       return true;
     case 1:
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
       Engrave("Proletarians of all countries, unite!");
       return true;
     case 2:
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
       Engrave("Capital is therefore not only personal; it is a social power.");
       return true;
@@ -1252,23 +1252,23 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
   switch(GetMasterGod()->BasicAlignment())
     {
     case GOOD:
-      SetMainWielded(new meleeweapon(LONGSWORD, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
-      SetBodyArmor(new bodyarmor(CHAINMAIL, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
+      SetMainWielded(new meleeweapon(LONG_SWORD, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
+      SetBodyArmor(new bodyarmor(CHAIN_MAIL, SpecialFlags, MAKE_MATERIAL(DIAMOND)));
       GetCWeaponSkill(LARGE_SWORDS)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
-      SetMainWielded(new meleeweapon(POLEAXE, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
-      SetBodyArmor(new bodyarmor(CHAINMAIL, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
+      SetMainWielded(new meleeweapon(POLE_AXE, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
+      SetBodyArmor(new bodyarmor(CHAIN_MAIL, SpecialFlags, MAKE_MATERIAL(SAPPHIRE)));
       GetCWeaponSkill(AXES)->AddHit(2000);
       GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case EVIL:
       {
-	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, NOMATERIALS);
-	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH), !(SpecialFlags & NOPICUPDATE));
+	meleeweapon* SpikedMace = new meleeweapon(SPIKED_MACE, NO_MATERIALS);
+	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROG_FLESH), !(SpecialFlags & NO_PIC_UPDATE));
 	SetMainWielded(SpikedMace);
-	SetBodyArmor(new bodyarmor(BROKEN|PLATEMAIL, SpecialFlags, MAKE_MATERIAL(RUBY)));
+	SetBodyArmor(new bodyarmor(BROKEN|PLATE_MAIL, SpecialFlags, MAKE_MATERIAL(RUBY)));
 	GetCWeaponSkill(MACES)->AddHit(2000);
 	GetCurrentRightSWeaponSkill()->AddHit(2000);
 	break;
@@ -1300,10 +1300,10 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Would you like me to teach you the best suicidal bombing tactics?\"");
       break;
     case 1:
-      ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), festring::CapitalizeCopy(GetPersonalPronoun()).c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), festring::CapitalizeCopy(GetPersonalPronoun()).c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1329,9 +1329,9 @@ bool kamikazedwarf::Hit(character* Enemy)
 	if(i->IsExplosive())
 	  {
 	    if(RAND() & 1)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 
 	    if(i->Apply(this))
 	      return true;
@@ -1347,20 +1347,20 @@ bool largecat::Catches(item* Thingy, float)
     {
       if(ConsumeItem(Thingy))
 	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
 	else
 	  {
 	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s catches %s and eats it.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
 	  }
       else
 	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
 	else
 	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s catches %s.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
       return true;
     }
@@ -1373,11 +1373,11 @@ material* unicorn::CreateBodyPartFlesh(ushort, ulong Volume) const
   switch(Alignment)
     {
     case GOOD:
-      return MAKE_MATERIAL(WHITEUNICORNFLESH, Volume);
+      return MAKE_MATERIAL(WHITE_UNICORN_FLESH, Volume);
     case NEUTRAL:
-      return MAKE_MATERIAL(GRAYUNICORNFLESH, Volume);
+      return MAKE_MATERIAL(GRAY_UNICORN_FLESH, Volume);
     default:
-      return MAKE_MATERIAL(BLACKUNICORNFLESH, Volume);
+      return MAKE_MATERIAL(BLACK_UNICORN_FLESH, Volume);
     }
 }
 
@@ -1414,12 +1414,12 @@ bool unicorn::SpecialEnemySightedReaction(character*)
   if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
+      ADD_MESSAGE("%s disappears!", CHAR_NAME(DEFINITE));
 
     Move(GetLevelUnder()->GetRandomSquare(this), true);
 
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s appears from nothing!", CHARNAME(INDEFINITE));
+      ADD_MESSAGE("Suddenly %s appears from nothing!", CHAR_NAME(INDEFINITE));
 
     return true;
   }
@@ -1463,13 +1463,13 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
 {
   switch(Index)
     {
-    case HEADINDEX: return 20;
-    case TORSOINDEX: return (TotalSize - 20) * 2 / 5;
-    case RIGHTARMINDEX:
-    case LEFTARMINDEX: return (TotalSize - 20) * 3 / 5;
-    case GROININDEX: return (TotalSize - 20) / 3;
-    case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return (TotalSize - 20) * 3 / 5;
+    case HEAD_INDEX: return 20;
+    case TORSO_INDEX: return (TotalSize - 20) * 2 / 5;
+    case RIGHT_ARMINDEX:
+    case LEFT_ARMINDEX: return (TotalSize - 20) * 3 / 5;
+    case GROIN_INDEX: return (TotalSize - 20) / 3;
+    case RIGHT_LEGINDEX:
+    case LEFT_LEGINDEX: return (TotalSize - 20) * 3 / 5;
     default:
       ABORT("Illegal humanoid bodypart size request!");
       return 0;
@@ -1480,13 +1480,13 @@ ulong humanoid::GetBodyPartVolume(ushort Index)
 {
   switch(Index)
     {
-    case HEADINDEX: return 4000;
-    case TORSOINDEX: return (GetTotalVolume() - 4000) * 13 / 30;
-    case RIGHTARMINDEX:
-    case LEFTARMINDEX: return (GetTotalVolume() - 4000) / 10;
-    case GROININDEX: return (GetTotalVolume() - 4000) / 10;
-    case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return (GetTotalVolume() - 4000) * 2 / 15;
+    case HEAD_INDEX: return 4000;
+    case TORSO_INDEX: return (GetTotalVolume() - 4000) * 13 / 30;
+    case RIGHT_ARMINDEX:
+    case LEFT_ARMINDEX: return (GetTotalVolume() - 4000) / 10;
+    case GROIN_INDEX: return (GetTotalVolume() - 4000) / 10;
+    case RIGHT_LEGINDEX:
+    case LEFT_LEGINDEX: return (GetTotalVolume() - 4000) * 2 / 15;
     default:
       ABORT("Illegal humanoid bodypart volume request!");
       return 0;
@@ -1497,13 +1497,13 @@ bodypart* humanoid::MakeBodyPart(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return new humanoidtorso(0, NOMATERIALS);
-    case HEADINDEX: return new head(0, NOMATERIALS);
-    case RIGHTARMINDEX: return new rightarm(0, NOMATERIALS);
-    case LEFTARMINDEX: return new leftarm(0, NOMATERIALS);
-    case GROININDEX: return new groin(0, NOMATERIALS);
-    case RIGHTLEGINDEX: return new rightleg(0, NOMATERIALS);
-    case LEFTLEGINDEX: return new leftleg(0, NOMATERIALS);
+    case TORSO_INDEX: return new humanoidtorso(0, NO_MATERIALS);
+    case HEAD_INDEX: return new head(0, NO_MATERIALS);
+    case RIGHT_ARMINDEX: return new rightarm(0, NO_MATERIALS);
+    case LEFT_ARMINDEX: return new leftarm(0, NO_MATERIALS);
+    case GROIN_INDEX: return new groin(0, NO_MATERIALS);
+    case RIGHT_LEGINDEX: return new rightleg(0, NO_MATERIALS);
+    case LEFT_LEGINDEX: return new leftleg(0, NO_MATERIALS);
     default:
       ABORT("Weird bodypart to make for a humanoid. It must be your fault!");
       return 0;
@@ -1514,13 +1514,13 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoBonePercentile();
-    case HEADINDEX: return GetHeadBonePercentile();
-    case RIGHTARMINDEX: return GetRightArmBonePercentile();
-    case LEFTARMINDEX: return GetLeftArmBonePercentile();
-    case GROININDEX: return GetGroinBonePercentile();
-    case RIGHTLEGINDEX: return GetRightLegBonePercentile();
-    case LEFTLEGINDEX: return GetLeftLegBonePercentile();
+    case TORSO_INDEX: return GetTorsoBonePercentile();
+    case HEAD_INDEX: return GetHeadBonePercentile();
+    case RIGHT_ARMINDEX: return GetRightArmBonePercentile();
+    case LEFT_ARMINDEX: return GetLeftArmBonePercentile();
+    case GROIN_INDEX: return GetGroinBonePercentile();
+    case RIGHT_LEGINDEX: return GetRightLegBonePercentile();
+    case LEFT_LEGINDEX: return GetLeftLegBonePercentile();
     default:
       ABORT("Weird bodypart bone percentile request for a humanoid. It must be your fault!");
       return 0;
@@ -1531,16 +1531,16 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
 {
   std::vector<uchar> ChooseFrom;
 
-  if(TargetFlags & RIGHTARM && GetRightArm())
+  if(TargetFlags & RIGHT_ARM && GetRightArm())
     ChooseFrom.push_back(2);
 
-  if(TargetFlags & LEFTARM && GetLeftArm())
+  if(TargetFlags & LEFT_ARM && GetLeftArm())
     ChooseFrom.push_back(3);
 
-  if(TargetFlags & RIGHTLEG && GetRightLeg())
+  if(TargetFlags & RIGHT_LEG && GetRightLeg())
     ChooseFrom.push_back(5);
 
-  if(TargetFlags & LEFTLEG && GetLeftLeg())
+  if(TargetFlags & LEFT_LEG && GetLeftLeg())
     ChooseFrom.push_back(6);
 
   if(TargetFlags & HEAD && GetHead())
@@ -1628,19 +1628,19 @@ std::string humanoid::EquipmentName(ushort Index) const
 {
   switch(Index)
     {
-    case HELMETINDEX: return "helmet";
-    case AMULETINDEX: return "amulet";
-    case CLOAKINDEX: return "cloak";
-    case BODYARMORINDEX: return "body armor";
-    case BELTINDEX: return "belt";
-    case RIGHTWIELDEDINDEX: return "right hand wielded";
-    case LEFTWIELDEDINDEX: return "left hand wielded";
-    case RIGHTRINGINDEX: return "right ring";
-    case LEFTRINGINDEX: return "left ring";
-    case RIGHTGAUNTLETINDEX: return "right gauntlet";
-    case LEFTGAUNTLETINDEX: return "left gauntlet";
-    case RIGHTBOOTINDEX: return "right boot";
-    case LEFTBOOTINDEX: return "left boot";
+    case HELMET_INDEX: return "helmet";
+    case AMULET_INDEX: return "amulet";
+    case CLOAK_INDEX: return "cloak";
+    case BODY_ARMOR_INDEX: return "body armor";
+    case BELT_INDEX: return "belt";
+    case RIGHT_WIELDED_INDEX: return "right hand wielded";
+    case LEFT_WIELDED_INDEX: return "left hand wielded";
+    case RIGHT_RING_INDEX: return "right ring";
+    case LEFT_RING_INDEX: return "left ring";
+    case RIGHT_GAUNTLET_INDEX: return "right gauntlet";
+    case LEFT_GAUNTLET_INDEX: return "left gauntlet";
+    case RIGHT_BOOT_INDEX: return "right boot";
+    case LEFT_BOOT_INDEX: return "left boot";
     default: return "forbidden piece of cloth";
     }
 }
@@ -1649,19 +1649,19 @@ bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, const character*)
 {
   switch(Index)
     {
-    case HELMETINDEX: return &item::HelmetSorter;
-    case AMULETINDEX: return &item::AmuletSorter;
-    case CLOAKINDEX: return &item::CloakSorter;
-    case BODYARMORINDEX: return &item::BodyArmorSorter;
-    case BELTINDEX: return &item::BeltSorter;
-    case RIGHTWIELDEDINDEX:
-    case LEFTWIELDEDINDEX: return 0;
-    case RIGHTRINGINDEX:
-    case LEFTRINGINDEX: return &item::RingSorter;
-    case RIGHTGAUNTLETINDEX:
-    case LEFTGAUNTLETINDEX: return &item::GauntletSorter;
-    case RIGHTBOOTINDEX:
-    case LEFTBOOTINDEX: return &item::BootSorter;
+    case HELMET_INDEX: return &item::HelmetSorter;
+    case AMULET_INDEX: return &item::AmuletSorter;
+    case CLOAK_INDEX: return &item::CloakSorter;
+    case BODY_ARMOR_INDEX: return &item::BodyArmorSorter;
+    case BELT_INDEX: return &item::BeltSorter;
+    case RIGHT_WIELDED_INDEX:
+    case LEFT_WIELDED_INDEX: return 0;
+    case RIGHT_RING_INDEX:
+    case LEFT_RING_INDEX: return &item::RingSorter;
+    case RIGHT_GAUNTLET_INDEX:
+    case LEFT_GAUNTLET_INDEX: return &item::GauntletSorter;
+    case RIGHT_BOOT_INDEX:
+    case LEFT_BOOT_INDEX: return &item::BootSorter;
     default: return 0;
     }
 }
@@ -1670,24 +1670,24 @@ bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
 {
   switch(Index)
     {
-    case HELMETINDEX:
-    case AMULETINDEX:
+    case HELMET_INDEX:
+    case AMULET_INDEX:
       return GetHead();
-    case CLOAKINDEX:
-    case BODYARMORINDEX:
-    case BELTINDEX:
+    case CLOAK_INDEX:
+    case BODY_ARMOR_INDEX:
+    case BELT_INDEX:
       return GetTorso();
-    case RIGHTWIELDEDINDEX:
-    case RIGHTRINGINDEX:
-    case RIGHTGAUNTLETINDEX:
+    case RIGHT_WIELDED_INDEX:
+    case RIGHT_RING_INDEX:
+    case RIGHT_GAUNTLET_INDEX:
       return GetRightArm();
-    case LEFTWIELDEDINDEX:
-    case LEFTRINGINDEX:
-    case LEFTGAUNTLETINDEX:
+    case LEFT_WIELDED_INDEX:
+    case LEFT_RING_INDEX:
+    case LEFT_GAUNTLET_INDEX:
       return GetLeftArm();
-    case RIGHTBOOTINDEX:
+    case RIGHT_BOOT_INDEX:
       return GetRightLeg();
-    case LEFTBOOTINDEX:
+    case LEFT_BOOT_INDEX:
       return GetLeftLeg();
     default:
       return 0;
@@ -1698,19 +1698,19 @@ item* humanoid::GetEquipment(ushort Index) const
 {
   switch(Index)
     {
-    case HELMETINDEX: return GetHelmet();
-    case AMULETINDEX: return GetAmulet();
-    case CLOAKINDEX: return GetCloak();
-    case BODYARMORINDEX: return GetBodyArmor();
-    case BELTINDEX: return GetBelt();
-    case RIGHTWIELDEDINDEX: return GetRightWielded();
-    case LEFTWIELDEDINDEX: return GetLeftWielded();
-    case RIGHTRINGINDEX: return GetRightRing();
-    case LEFTRINGINDEX: return GetLeftRing();
-    case RIGHTGAUNTLETINDEX: return GetRightGauntlet();
-    case LEFTGAUNTLETINDEX: return GetLeftGauntlet();
-    case RIGHTBOOTINDEX: return GetRightBoot();
-    case LEFTBOOTINDEX: return GetLeftBoot();
+    case HELMET_INDEX: return GetHelmet();
+    case AMULET_INDEX: return GetAmulet();
+    case CLOAK_INDEX: return GetCloak();
+    case BODY_ARMOR_INDEX: return GetBodyArmor();
+    case BELT_INDEX: return GetBelt();
+    case RIGHT_WIELDED_INDEX: return GetRightWielded();
+    case LEFT_WIELDED_INDEX: return GetLeftWielded();
+    case RIGHT_RING_INDEX: return GetRightRing();
+    case LEFT_RING_INDEX: return GetLeftRing();
+    case RIGHT_GAUNTLET_INDEX: return GetRightGauntlet();
+    case LEFT_GAUNTLET_INDEX: return GetLeftGauntlet();
+    case RIGHT_BOOT_INDEX: return GetRightBoot();
+    case LEFT_BOOT_INDEX: return GetLeftBoot();
     default: return 0;
     }
 }
@@ -1719,19 +1719,19 @@ void humanoid::SetEquipment(ushort Index, item* What)
 {
   switch(Index)
     {
-    case HELMETINDEX: SetHelmet(What); break;
-    case AMULETINDEX: SetAmulet(What); break;
-    case CLOAKINDEX: SetCloak(What); break;
-    case BODYARMORINDEX: SetBodyArmor(What); break;
-    case BELTINDEX: SetBelt(What); break;
-    case RIGHTWIELDEDINDEX: SetRightWielded(What); break;
-    case LEFTWIELDEDINDEX: SetLeftWielded(What); break;
-    case RIGHTRINGINDEX: SetRightRing(What); break;
-    case LEFTRINGINDEX: SetLeftRing(What); break;
-    case RIGHTGAUNTLETINDEX: SetRightGauntlet(What); break;
-    case LEFTGAUNTLETINDEX: SetLeftGauntlet(What); break;
-    case RIGHTBOOTINDEX: SetRightBoot(What); break;
-    case LEFTBOOTINDEX: SetLeftBoot(What); break;
+    case HELMET_INDEX: SetHelmet(What); break;
+    case AMULET_INDEX: SetAmulet(What); break;
+    case CLOAK_INDEX: SetCloak(What); break;
+    case BODY_ARMOR_INDEX: SetBodyArmor(What); break;
+    case BELT_INDEX: SetBelt(What); break;
+    case RIGHT_WIELDED_INDEX: SetRightWielded(What); break;
+    case LEFT_WIELDED_INDEX: SetLeftWielded(What); break;
+    case RIGHT_RING_INDEX: SetRightRing(What); break;
+    case LEFT_RING_INDEX: SetLeftRing(What); break;
+    case RIGHT_GAUNTLET_INDEX: SetRightGauntlet(What); break;
+    case LEFT_GAUNTLET_INDEX: SetLeftGauntlet(What); break;
+    case RIGHT_BOOT_INDEX: SetRightBoot(What); break;
+    case LEFT_BOOT_INDEX: SetLeftBoot(What); break;
     }
 }
 
@@ -1855,19 +1855,19 @@ vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
 {
   switch(Index)
     {
-    case HELMETINDEX: return vector2d(34, -22);
-    case AMULETINDEX: return vector2d(14, -22);
-    case CLOAKINDEX: return vector2d(-6, -22);
-    case BODYARMORINDEX: return vector2d(54, -22);
-    case BELTINDEX: return vector2d(24, 70);
-    case RIGHTWIELDEDINDEX: return vector2d(-14, 4);
-    case LEFTWIELDEDINDEX: return vector2d(62, 4);
-    case RIGHTRINGINDEX: return vector2d(-14, 44);
-    case LEFTRINGINDEX: return vector2d(62, 44);
-    case RIGHTGAUNTLETINDEX: return vector2d(-14, 24);
-    case LEFTGAUNTLETINDEX: return vector2d(62, 24);
-    case RIGHTBOOTINDEX: return vector2d(4, 70);
-    case LEFTBOOTINDEX: return vector2d(44, 70);
+    case HELMET_INDEX: return vector2d(34, -22);
+    case AMULET_INDEX: return vector2d(14, -22);
+    case CLOAK_INDEX: return vector2d(-6, -22);
+    case BODY_ARMOR_INDEX: return vector2d(54, -22);
+    case BELT_INDEX: return vector2d(24, 70);
+    case RIGHT_WIELDED_INDEX: return vector2d(-14, 4);
+    case LEFT_WIELDED_INDEX: return vector2d(62, 4);
+    case RIGHT_RING_INDEX: return vector2d(-14, 44);
+    case LEFT_RING_INDEX: return vector2d(62, 44);
+    case RIGHT_GAUNTLET_INDEX: return vector2d(-14, 24);
+    case LEFT_GAUNTLET_INDEX: return vector2d(62, 24);
+    case RIGHT_BOOT_INDEX: return vector2d(4, 70);
+    case LEFT_BOOT_INDEX: return vector2d(44, 70);
     default: return vector2d(24, 12);
     }
 }
@@ -1882,12 +1882,12 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	vector2d Pos = Where + GetEquipmentPanelPos(c);
 
 	if(!AnimationDraw)
-	  DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(16, 16), DARKGRAY);
+	  DOUBLE_BUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(16, 16), DARK_GRAY);
 
 	if(GetEquipment(c))
 	  {
-	    DOUBLEBUFFER->Fill(Pos, 16, 16, BLACK);
-	    GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
+	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
+	    GetEquipment(c)->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), false, true);
 	  }
       }
 
@@ -1897,16 +1897,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   if(GetRightArm())
-    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   if(GetLeftArm())
-    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   if(GetTorso())
-    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
@@ -1914,13 +1914,13 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
     Color[c] = 0;
 
   if(GetGroin())
-    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   if(GetRightLeg())
-    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHTGRAY;
+    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
@@ -1932,7 +1932,7 @@ ushort humanoid::GlobalResistance(uchar Type) const
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
 
-  if(Type != PHYSICALDAMAGE)
+  if(Type != PHYSICAL_DAMAGE)
     {
       if(GetAmulet())
 	Resistance += GetAmulet()->GetResistance(Type);
@@ -1954,56 +1954,56 @@ void humanoid::AddInfo(felist& Info) const
 
   if(GetRightArm())
     {
-      Info.AddEntry(std::string("Right arm strength: ") + GetRightArm()->GetAttribute(ARMSTRENGTH), LIGHTGRAY);
-      Info.AddEntry(std::string("Right arm dexterity: ") + GetRightArm()->GetAttribute(DEXTERITY), LIGHTGRAY);
+      Info.AddEntry(std::string("Right arm strength: ") + GetRightArm()->GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+      Info.AddEntry(std::string("Right arm dexterity: ") + GetRightArm()->GetAttribute(DEXTERITY), LIGHT_GRAY);
     }
 
   if(GetLeftArm())
     {
-      Info.AddEntry(std::string("Left arm strength: ") + GetLeftArm()->GetAttribute(ARMSTRENGTH), LIGHTGRAY);
-      Info.AddEntry(std::string("Left arm dexterity: ") + GetLeftArm()->GetAttribute(DEXTERITY), LIGHTGRAY);
+      Info.AddEntry(std::string("Left arm strength: ") + GetLeftArm()->GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+      Info.AddEntry(std::string("Left arm dexterity: ") + GetLeftArm()->GetAttribute(DEXTERITY), LIGHT_GRAY);
     }
 
   if(GetRightLeg())
     {
-      Info.AddEntry(std::string("Right leg strength: ") + GetRightLeg()->GetAttribute(LEGSTRENGTH), LIGHTGRAY);
-      Info.AddEntry(std::string("Right leg agility: ") + GetRightLeg()->GetAttribute(AGILITY), LIGHTGRAY);
+      Info.AddEntry(std::string("Right leg strength: ") + GetRightLeg()->GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
+      Info.AddEntry(std::string("Right leg agility: ") + GetRightLeg()->GetAttribute(AGILITY), LIGHT_GRAY);
     }
 
   if(GetLeftLeg())
     {
-      Info.AddEntry(std::string("Left leg strength: ") + GetLeftLeg()->GetAttribute(LEGSTRENGTH), LIGHTGRAY);
-      Info.AddEntry(std::string("Left leg agility: ") + GetLeftLeg()->GetAttribute(AGILITY), LIGHTGRAY);
+      Info.AddEntry(std::string("Left leg strength: ") + GetLeftLeg()->GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
+      Info.AddEntry(std::string("Left leg agility: ") + GetLeftLeg()->GetAttribute(AGILITY), LIGHT_GRAY);
     }
 
   if(GetRightArm())
     {
-      Info.AddEntry(std::string("Right damage: ") + ushort(GetRightArm()->GetDamage()), LIGHTGRAY);
-      Info.AddEntry(std::string("Right to hit value: ") + ulong(GetRightArm()->GetToHitValue()), LIGHTGRAY);
+      Info.AddEntry(std::string("Right damage: ") + ushort(GetRightArm()->GetDamage()), LIGHT_GRAY);
+      Info.AddEntry(std::string("Right to hit value: ") + ulong(GetRightArm()->GetToHitValue()), LIGHT_GRAY);
     }
 
   if(GetLeftArm())
     {
-      Info.AddEntry(std::string("Left damage: ") + ushort(GetLeftArm()->GetDamage()), LIGHTGRAY);
-      Info.AddEntry(std::string("Left to hit value: ") + ulong(GetLeftArm()->GetToHitValue()), LIGHTGRAY);
+      Info.AddEntry(std::string("Left damage: ") + ushort(GetLeftArm()->GetDamage()), LIGHT_GRAY);
+      Info.AddEntry(std::string("Left to hit value: ") + ulong(GetLeftArm()->GetToHitValue()), LIGHT_GRAY);
     }
 
   if(GetRightLeg())
     {
-      Info.AddEntry(std::string("Right kick damage: ") + ushort(GetRightLeg()->GetKickDamage()), LIGHTGRAY);
-      Info.AddEntry(std::string("Right kick to hit value: ") + ulong(GetRightLeg()->GetKickToHitValue()), LIGHTGRAY);
+      Info.AddEntry(std::string("Right kick damage: ") + ushort(GetRightLeg()->GetKickDamage()), LIGHT_GRAY);
+      Info.AddEntry(std::string("Right kick to hit value: ") + ulong(GetRightLeg()->GetKickToHitValue()), LIGHT_GRAY);
     }
 
   if(GetLeftLeg())
     {
-      Info.AddEntry(std::string("Left kick damage: ") + ushort(GetLeftLeg()->GetKickDamage()), LIGHTGRAY);
-      Info.AddEntry(std::string("Left kick to hit value: ") + ulong(GetLeftLeg()->GetKickToHitValue()), LIGHTGRAY);
+      Info.AddEntry(std::string("Left kick damage: ") + ushort(GetLeftLeg()->GetKickDamage()), LIGHT_GRAY);
+      Info.AddEntry(std::string("Left kick to hit value: ") + ulong(GetLeftLeg()->GetKickToHitValue()), LIGHT_GRAY);
     }
 
   if(GetHead())
     {
-      Info.AddEntry(std::string("Bite damage: ") + ushort(GetHead()->GetBiteDamage()), LIGHTGRAY);
-      Info.AddEntry(std::string("Bite to hit value: ") + ulong(GetHead()->GetBiteToHitValue()), LIGHTGRAY);
+      Info.AddEntry(std::string("Bite damage: ") + ushort(GetHead()->GetBiteDamage()), LIGHT_GRAY);
+      Info.AddEntry(std::string("Bite to hit value: ") + ulong(GetHead()->GetBiteToHitValue()), LIGHT_GRAY);
     }
 }
 
@@ -2041,19 +2041,19 @@ bool humanoid::HandleNoBodyPart(ushort Index)
 {
   switch(Index)
     {
-    case HEADINDEX:
+    case HEAD_INDEX:
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The headless body of %s vibrates violently.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("The headless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
       Die();
       return false;
-    case GROININDEX:
+    case GROIN_INDEX:
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
       Die();
       return true;
-    case TORSOINDEX:
+    case TORSO_INDEX:
       ABORT("The corpse does not have a torso.");
     default:
       return false;
@@ -2064,13 +2064,13 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoBitmapPos();
-    case HEADINDEX: return GetHeadBitmapPos();
-    case RIGHTARMINDEX: return GetRightArmBitmapPos();
-    case LEFTARMINDEX: return GetLeftArmBitmapPos();
-    case GROININDEX: return GetGroinBitmapPos();
-    case RIGHTLEGINDEX: return GetRightLegBitmapPos();
-    case LEFTLEGINDEX: return GetLeftLegBitmapPos();
+    case TORSO_INDEX: return GetTorsoBitmapPos();
+    case HEAD_INDEX: return GetHeadBitmapPos();
+    case RIGHT_ARMINDEX: return GetRightArmBitmapPos();
+    case LEFT_ARMINDEX: return GetLeftArmBitmapPos();
+    case GROIN_INDEX: return GetGroinBitmapPos();
+    case RIGHT_LEGINDEX: return GetRightLegBitmapPos();
+    case LEFT_LEGINDEX: return GetLeftLegBitmapPos();
     default:
       ABORT("Weird bodypart BitmapPos request for a humanoid!");
       return vector2d();
@@ -2081,13 +2081,13 @@ ushort humanoid::GetBodyPartColorB(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoMainColor();
-    case HEADINDEX: return GetCapColor();
-    case RIGHTARMINDEX:
-    case LEFTARMINDEX: return GetArmMainColor();
-    case GROININDEX:
-    case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return GetLegMainColor();
+    case TORSO_INDEX: return GetTorsoMainColor();
+    case HEAD_INDEX: return GetCapColor();
+    case RIGHT_ARMINDEX:
+    case LEFT_ARMINDEX: return GetArmMainColor();
+    case GROIN_INDEX:
+    case RIGHT_LEGINDEX:
+    case LEFT_LEGINDEX: return GetLegMainColor();
     default:
       ABORT("Weird bodypart color B request for a humanoid!");
       return 0;
@@ -2098,13 +2098,13 @@ ushort humanoid::GetBodyPartColorC(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetBeltColor();
-    case HEADINDEX: return GetHairColor();
-    case RIGHTARMINDEX:
-    case LEFTARMINDEX:
-    case GROININDEX:
-    case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return 0; // reserved for future use
+    case TORSO_INDEX: return GetBeltColor();
+    case HEAD_INDEX: return GetHairColor();
+    case RIGHT_ARMINDEX:
+    case LEFT_ARMINDEX:
+    case GROIN_INDEX:
+    case RIGHT_LEGINDEX:
+    case LEFT_LEGINDEX: return 0; // reserved for future use
     default:
       ABORT("Weird bodypart color C request for a humanoid!");
       return 0;
@@ -2115,13 +2115,13 @@ ushort humanoid::GetBodyPartColorD(ushort Index)
 {
   switch(Index)
     {
-    case TORSOINDEX: return GetTorsoSpecialColor();
-    case HEADINDEX: return GetEyeColor();
-    case RIGHTARMINDEX:
-    case LEFTARMINDEX: return GetArmSpecialColor();
-    case GROININDEX:
-    case RIGHTLEGINDEX:
-    case LEFTLEGINDEX: return GetLegSpecialColor();
+    case TORSO_INDEX: return GetTorsoSpecialColor();
+    case HEAD_INDEX: return GetEyeColor();
+    case RIGHT_ARMINDEX:
+    case LEFT_ARMINDEX: return GetArmSpecialColor();
+    case GROIN_INDEX:
+    case RIGHT_LEGINDEX:
+    case LEFT_LEGINDEX: return GetLegSpecialColor();
     default:
       ABORT("Weird bodypart color D request for a humanoid!");
       return 0;
@@ -2134,9 +2134,9 @@ void human::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      EditAttribute(ARMSTRENGTH, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(ARM_STRENGTH, (RAND() & 1) - (RAND() & 1));
       EditAttribute(DEXTERITY, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(LEGSTRENGTH, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(LEG_STRENGTH, (RAND() & 1) - (RAND() & 1));
       EditAttribute(AGILITY, (RAND() & 1) - (RAND() & 1));
       EditAttribute(ENDURANCE, (RAND() & 1) - (RAND() & 1));
       EditAttribute(PERCEPTION, (RAND() & 1) - (RAND() & 1));
@@ -2227,7 +2227,7 @@ void nonhumanoid::Load(inputfile& SaveFile)
 
 void nonhumanoid::CalculateUnarmedDamage()
 {
-  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetAttribute(ARMSTRENGTH) * GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetAttribute(ARM_STRENGTH) * GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateUnarmedToHitValue()
@@ -2245,7 +2245,7 @@ void nonhumanoid::CalculateUnarmedAPCost()
 
 void nonhumanoid::CalculateKickDamage()
 {
-  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEGSTRENGTH) * GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEG_STRENGTH) * GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateKickToHitValue()
@@ -2263,7 +2263,7 @@ void nonhumanoid::CalculateKickAPCost()
 
 void nonhumanoid::CalculateBiteDamage()
 {
-  BiteDamage = float(GetBaseBiteStrength()) * GetAttribute(ARMSTRENGTH) * GetCWeaponSkill(BITE)->GetEffectBonus() / 5000000;
+  BiteDamage = float(GetBaseBiteStrength()) * GetAttribute(ARM_STRENGTH) * GetCWeaponSkill(BITE)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateBiteToHitValue()
@@ -2293,7 +2293,7 @@ void humanoid::Bite(character* Enemy)
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 75);
-  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
+  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()));
 }
 
 void nonhumanoid::Bite(character* Enemy)
@@ -2301,7 +2301,7 @@ void nonhumanoid::Bite(character* Enemy)
   EditNP(-50);
   EditAP(-GetBiteAPCost());
   EditExperience(AGILITY, 75);
-  Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
+  Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()));
 }
 
 void humanoid::Kick(lsquare* Square)
@@ -2309,7 +2309,7 @@ void humanoid::Kick(lsquare* Square)
   leg* KickLeg = GetKickLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
-  KickLeg->EditExperience(LEGSTRENGTH, 25);
+  KickLeg->EditExperience(LEG_STRENGTH, 25);
   KickLeg->EditExperience(AGILITY, 50);
   Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
 }
@@ -2318,7 +2318,7 @@ void nonhumanoid::Kick(lsquare* Square)
 {
   EditNP(-50);
   EditAP(-GetKickAPCost());
-  EditExperience(LEGSTRENGTH, 25);
+  EditExperience(LEG_STRENGTH, 25);
   EditExperience(AGILITY, 50);
   Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
 }
@@ -2330,7 +2330,7 @@ bool nonhumanoid::Hit(character* Enemy)
 
   Hostility(Enemy);
 
-  if(GetBurdenState() == OVERLOADED)
+  if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You cannot fight while carrying so much.");
@@ -2375,14 +2375,14 @@ void nonhumanoid::AddInfo(felist& Info) const
   if(!game::WizardModeActivated())
     return;
 
-  Info.AddEntry(std::string("Strength: ") + GetAttribute(ARMSTRENGTH), LIGHTGRAY);
-  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHTGRAY);
-  Info.AddEntry(std::string("Unarmed damage: ") + ushort(GetUnarmedDamage()), LIGHTGRAY);
-  Info.AddEntry(std::string("Unarmed to hit value: ") + ulong(GetUnarmedToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Kick damage: ") + ushort(GetKickDamage()), LIGHTGRAY);
-  Info.AddEntry(std::string("Kick to hit value: ") + ulong(GetKickToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Bite damage: ") + ushort(GetBiteDamage()), LIGHTGRAY);
-  Info.AddEntry(std::string("Bite to hit value: ") + ulong(GetBiteToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+  Info.AddEntry(std::string("Unarmed damage: ") + ushort(GetUnarmedDamage()), LIGHT_GRAY);
+  Info.AddEntry(std::string("Unarmed to hit value: ") + ulong(GetUnarmedToHitValue()), LIGHT_GRAY);
+  Info.AddEntry(std::string("Kick damage: ") + ushort(GetKickDamage()), LIGHT_GRAY);
+  Info.AddEntry(std::string("Kick to hit value: ") + ulong(GetKickToHitValue()), LIGHT_GRAY);
+  Info.AddEntry(std::string("Bite damage: ") + ushort(GetBiteDamage()), LIGHT_GRAY);
+  Info.AddEntry(std::string("Bite to hit value: ") + ulong(GetBiteToHitValue()), LIGHT_GRAY);
 }
 
 void nonhumanoid::UnarmedHit(character* Enemy)
@@ -2390,14 +2390,14 @@ void nonhumanoid::UnarmedHit(character* Enemy)
   EditNP(-50);
   EditAP(-GetUnarmedAPCost());
 
-  switch(Enemy->TakeHit(this, 0, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMEDATTACK, !(RAND() % GetCriticalModifier())))
+  switch(Enemy->TakeHit(this, 0, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, !(RAND() % GetCriticalModifier())))
     {
-    case HASHIT:
-    case HASBLOCKED:
-    case HASDIED:
-    case DIDNODAMAGE:
-      EditExperience(ARMSTRENGTH, 50);
-    case HASDODGED:
+    case HAS_HIT:
+    case HAS_BLOCKED:
+    case HAS_DIED:
+    case DID_NO_DAMAGE:
+      EditExperience(ARM_STRENGTH, 50);
+    case HAS_DODGED:
       EditExperience(DEXTERITY, 25);
     }
 }
@@ -2412,10 +2412,10 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingArms())
     {
       if(GetRightArm() && GetRightArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
 
       if(GetLeftArm() && GetLeftArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
 
       ++AttackStyles;
     }
@@ -2423,13 +2423,13 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2445,19 +2445,19 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingArms())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), AttackIsBlockable(UNARMEDATTACK), UseMaxHP) * GetUnarmedAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), AttackIsBlockable(UNARMED_ATTACK), UseMaxHP) * GetUnarmedAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetKickDamage()), GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetKickDamage()), GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2477,7 +2477,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
       if(IsPlayer())
 	ADD_MESSAGE("Your feel stronger!");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks stronger.", CHAR_NAME(DEFINITE));
 
       CalculateBurdenState();
       Edited = true;
@@ -2487,7 +2487,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
       if(IsPlayer())
 	ADD_MESSAGE("Your feel weaker.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks weaker.", CHAR_NAME(DEFINITE));
 
       CalculateBurdenState();
       Edited = true;
@@ -2498,7 +2498,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
       if(IsPlayer())
 	ADD_MESSAGE("Your feel very agile!");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks very agile.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks very agile.", CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2507,7 +2507,7 @@ void nonhumanoid::ApplyExperience(bool Edited)
       if(IsPlayer())
 	ADD_MESSAGE("Your feel slower.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks sluggish.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("Suddenly %s looks sluggish.", CHAR_NAME(DEFINITE));
 
       Edited = true;
     }
@@ -2517,13 +2517,13 @@ void nonhumanoid::ApplyExperience(bool Edited)
 
 ushort humanoid::GetAttribute(ushort Identifier) const
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     return character::GetAttribute(Identifier);
   else
     {
       ushort Attrib = 0;
 
-       if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+       if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
 	{
 	  if(GetRightArm())
 	    Attrib += GetRightArm()->GetAttribute(Identifier);
@@ -2531,7 +2531,7 @@ ushort humanoid::GetAttribute(ushort Identifier) const
 	  if(GetLeftArm())
 	    Attrib += GetLeftArm()->GetAttribute(Identifier);
 	}
-      else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+      else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
 	{
 	  if(GetRightLeg())
 	    Attrib += GetRightLeg()->GetAttribute(Identifier);
@@ -2551,9 +2551,9 @@ ushort humanoid::GetAttribute(ushort Identifier) const
 
 bool humanoid::EditAttribute(ushort Identifier, short Value)
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
-  else if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+  else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
     {
       bool Success = false;
 
@@ -2565,7 +2565,7 @@ bool humanoid::EditAttribute(ushort Identifier, short Value)
 
       return Success;
     }
-  else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+  else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
     {
       bool Success = false;
 
@@ -2586,9 +2586,9 @@ bool humanoid::EditAttribute(ushort Identifier, short Value)
 
 void humanoid::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     character::EditExperience(Identifier, Value);
-  else if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
+  else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
     {
       if(GetRightArm())
 	GetRightArm()->EditExperience(Identifier, Value >> 1);
@@ -2596,7 +2596,7 @@ void humanoid::EditExperience(ushort Identifier, long Value)
       if(GetLeftArm())
 	GetLeftArm()->EditExperience(Identifier, Value >> 1);
     }
-  else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
+  else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
     {
       if(GetRightLeg())
 	GetRightLeg()->EditExperience(Identifier, Value >> 1);
@@ -2610,9 +2610,9 @@ void humanoid::EditExperience(ushort Identifier, long Value)
 
 ushort nonhumanoid::GetAttribute(ushort Identifier) const
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     return character::GetAttribute(Identifier);
-  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+  else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
 	return Strength >> 1;
@@ -2635,9 +2635,9 @@ ushort nonhumanoid::GetAttribute(ushort Identifier) const
 
 bool nonhumanoid::EditAttribute(ushort Identifier, short Value)
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
-  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+  else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     return IsAlive() && RawEditAttribute(Strength, Value, true);
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     return IsAlive() && RawEditAttribute(Agility, Value, true);
@@ -2650,9 +2650,9 @@ bool nonhumanoid::EditAttribute(ushort Identifier, short Value)
 
 void nonhumanoid::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier < BASEATTRIBUTES)
+  if(Identifier < BASE_ATTRIBUTES)
     character::EditExperience(Identifier, Value);
-  else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
+  else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
 	StrengthExperience += Value;
@@ -2682,25 +2682,25 @@ bool nonhumanoid::LowerStats()
 
 ushort humanoid::DrawStats(bool AnimationDraw) const
 {
-  DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
+  DrawSilhouette(DOUBLE_BUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
 
   if(AnimationDraw)
     return 15;
 
   ushort PanelPosX = RES.X - 96, PanelPosY = 15;
 
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "ArmStr %d", GetAttribute(ARMSTRENGTH));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LegStr %d", GetAttribute(LEGSTRENGTH));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
 
   ++PanelPosY;
 
@@ -2709,50 +2709,50 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
       if(GetRightArm())
 	if(GetRightWielded() && GetRightWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBS %d", GetRightArm()->GetBlockCapability());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBV %.0f", GetRightArm()->GetBlockValue());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBS %d", GetRightArm()->GetBlockCapability());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBV %.0f", GetRightArm()->GetBlockValue());
 	  }
 	else if(GetRightArm()->GetDamage())
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDAM %d-%d", GetRightArm()->GetMinDamage(), GetRightArm()->GetMaxDamage());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", GetRightArm()->GetToHitValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAPC %d", GetRightArm()->GetAPCost());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDAM %d-%d", GetRightArm()->GetMinDamage(), GetRightArm()->GetMaxDamage());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", GetRightArm()->GetToHitValue());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAPC %d", GetRightArm()->GetAPCost());
 	  }
 
       if(GetLeftArm())
 	if(GetLeftWielded() && GetLeftWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBS %d", GetLeftArm()->GetBlockCapability());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBV %.0f", GetLeftArm()->GetBlockValue());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBS %d", GetLeftArm()->GetBlockCapability());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBV %.0f", GetLeftArm()->GetBlockValue());
 	  }
 	else if(GetLeftArm()->GetDamage())
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDAM %d-%d", GetLeftArm()->GetMinDamage(), GetLeftArm()->GetMaxDamage());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", GetLeftArm()->GetToHitValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAPC %d", GetLeftArm()->GetAPCost());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDAM %d-%d", GetLeftArm()->GetMinDamage(), GetLeftArm()->GetMaxDamage());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", GetLeftArm()->GetToHitValue());
+	    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAPC %d", GetLeftArm()->GetAPCost());
 	  }
     }
 
   if(IsUsingLegs())
     {
       leg* Leg = GetKickLeg();
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KDAM %d-%d", Leg->GetKickMinDamage(), Leg->GetKickMaxDamage());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", Leg->GetKickToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", Leg->GetKickAPCost());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KDAM %d-%d", Leg->GetKickMinDamage(), Leg->GetKickMaxDamage());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", Leg->GetKickToHitValue());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", Leg->GetKickAPCost());
     }
 
   if(IsUsingHead())
     {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BDAM %d-%d", GetHead()->GetBiteMinDamage(), GetHead()->GetBiteMaxDamage());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetHead()->GetBiteToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAPC %d", GetHead()->GetBiteAPCost());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BDAM %d-%d", GetHead()->GetBiteMinDamage(), GetHead()->GetBiteMaxDamage());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetHead()->GetBiteToHitValue());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAPC %d", GetHead()->GetBiteAPCost());
     }
 
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
 
   if(game::WizardModeActivated())
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
 
   return PanelPosY;
 }
@@ -2764,42 +2764,42 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
   ushort PanelPosX = RES.X - 96, PanelPosY = 3;
 
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", GetAttribute(ARMSTRENGTH));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
 
   ++PanelPosY;
 
   if(GetAttackStyle() & USE_ARMS)
     {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DAM %d-%d", GetUnarmedMinDamage(), GetUnarmedMaxDamage());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "THV %.0f", GetUnarmedToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "APC %d", GetUnarmedAPCost());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DAM %d-%d", GetUnarmedMinDamage(), GetUnarmedMaxDamage());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "THV %.0f", GetUnarmedToHitValue());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "APC %d", GetUnarmedAPCost());
     }
 
   if(GetAttackStyle() & USE_LEGS)
     {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KDAM %d-%d", GetKickMinDamage(), GetKickMaxDamage());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", GetKickToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", GetKickAPCost());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KDAM %d-%d", GetKickMinDamage(), GetKickMaxDamage());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KTHV %.0f", GetKickToHitValue());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", GetKickAPCost());
     }
 
   if(GetAttackStyle() & USE_HEAD)
     {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BDAM %d-%d", GetBiteMinDamage(), GetBiteMaxDamage());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetBiteToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAPC %d", GetBiteAPCost());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BDAM %d-%d", GetBiteMinDamage(), GetBiteMaxDamage());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetBiteToHitValue());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAPC %d", GetBiteAPCost());
     }
 
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
   return PanelPosY;
 }
 
@@ -2808,21 +2808,21 @@ ushort humanoid::GetRandomStepperBodyPart() const
   uchar Possible = 0, PossibleArray[3];
 
   if(GetRightLeg())
-    PossibleArray[Possible++] = RIGHTLEGINDEX;
+    PossibleArray[Possible++] = RIGHT_LEGINDEX;
 
   if(GetLeftLeg())
-    PossibleArray[Possible++] = LEFTLEGINDEX;
+    PossibleArray[Possible++] = LEFT_LEGINDEX;
 
   if(Possible)
     return PossibleArray[RAND() % Possible];
 
   if(GetHead())
-    PossibleArray[Possible++] = HEADINDEX;
+    PossibleArray[Possible++] = HEAD_INDEX;
 
   if(GetGroin())
-    PossibleArray[Possible++] = GROININDEX;
+    PossibleArray[Possible++] = GROIN_INDEX;
 
-  PossibleArray[Possible++] = TORSOINDEX;
+  PossibleArray[Possible++] = TORSO_INDEX;
   return PossibleArray[RAND() % Possible];
 }
 
@@ -2842,7 +2842,7 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
 
 bool humanoid::CanWield() const
 {
-  return CanUseEquipment(RIGHTWIELDEDINDEX) || CanUseEquipment(LEFTWIELDEDINDEX);
+  return CanUseEquipment(RIGHT_WIELDED_INDEX) || CanUseEquipment(LEFT_WIELDED_INDEX);
 }
 
 bool humanoid::CheckBalance(float KickDamage)
@@ -2876,13 +2876,13 @@ bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
 {
   switch(Index)
     {
-    case RIGHTGAUNTLETINDEX:
+    case RIGHT_GAUNTLET_INDEX:
       return GetLeftGauntlet() && GetLeftGauntlet()->IsSimiliarTo(GetRightGauntlet());
-    case LEFTGAUNTLETINDEX:
+    case LEFT_GAUNTLET_INDEX:
       return GetRightGauntlet() && GetRightGauntlet()->IsSimiliarTo(GetLeftGauntlet());
-    case RIGHTBOOTINDEX:
+    case RIGHT_BOOT_INDEX:
       return GetLeftBoot() && GetLeftBoot()->IsSimiliarTo(GetRightBoot());
-    case LEFTBOOTINDEX:
+    case LEFT_BOOT_INDEX:
       return GetRightBoot() && GetRightBoot()->IsSimiliarTo(GetLeftBoot());
     }
 
@@ -2892,7 +2892,7 @@ bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
 void hunter::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c != LEFTARMINDEX)
+    if(c != LEFT_ARMINDEX)
       CreateBodyPart(c, SpecialFlags);
     else
       SetLeftArm(0);
@@ -2902,10 +2902,10 @@ bool humanoid::EquipmentEasilyRecognized(ushort Index) const
 {
   switch(Index)
     {
-    case AMULETINDEX:
-    case RIGHTRINGINDEX:
-    case LEFTRINGINDEX:
-    case BELTINDEX:
+    case AMULET_INDEX:
+    case RIGHT_RING_INDEX:
+    case LEFT_RING_INDEX:
+    case BELT_INDEX:
       return false;
     }
 
@@ -2922,7 +2922,7 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 {
   character::SignalEquipmentAdd(EquipmentIndex);
 
-  if(EquipmentIndex == RIGHTWIELDEDINDEX)
+  if(EquipmentIndex == RIGHT_WIELDED_INDEX)
     {
       for(ushort c = 0; c < SWeaponSkill.size(); ++c)
 	if(SWeaponSkill[c]->GetID() == GetRightWielded()->GetID())
@@ -2938,7 +2938,7 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 	  SWeaponSkill.push_back(GetCurrentRightSWeaponSkill());
 	}
     }
-  else if(EquipmentIndex == LEFTWIELDEDINDEX)
+  else if(EquipmentIndex == LEFT_WIELDED_INDEX)
     {
       for(ushort c = 0; c < SWeaponSkill.size(); ++c)
 	if(SWeaponSkill[c]->GetID() == GetLeftWielded()->GetID())
@@ -2963,12 +2963,12 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
 {
   character::SignalEquipmentRemoval(EquipmentIndex);
 
-  if(EquipmentIndex == RIGHTWIELDEDINDEX)
+  if(EquipmentIndex == RIGHT_WIELDED_INDEX)
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
       SetCurrentRightSWeaponSkill(0);
     }
-  else if(EquipmentIndex == LEFTWIELDEDINDEX)
+  else if(EquipmentIndex == LEFT_WIELDED_INDEX)
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
       SetCurrentLeftSWeaponSkill(0);
@@ -3004,19 +3004,19 @@ void humanoid::SWeaponSkillTick()
 bool humanoid::DetachBodyPart()
 {
   uchar ToBeDetached;
-  switch(game::KeyQuestion("What limb do you wish to detach? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg?", KEYESC, 4, 'l','r','L','R'))
+  switch(game::KeyQuestion("What limb do you wish to detach? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg?", KEY_ESC, 4, 'l','r','L','R'))
     {
     case 'l':
-      ToBeDetached = LEFTARMINDEX;
+      ToBeDetached = LEFT_ARMINDEX;
       break;
     case 'r':
-      ToBeDetached = RIGHTARMINDEX;
+      ToBeDetached = RIGHT_ARMINDEX;
       break;
     case 'L':
-      ToBeDetached = LEFTLEGINDEX;
+      ToBeDetached = LEFT_LEGINDEX;
       break;
     case 'R':
-      ToBeDetached = RIGHTLEGINDEX;
+      ToBeDetached = RIGHT_LEGINDEX;
       break;
     default:
       return false;
@@ -3081,9 +3081,9 @@ bool angel::AttachBodyPartsOfFriendsNear()
   if(HurtOne)
     {
       if(HurtOne->IsPlayer())
-	ADD_MESSAGE("%s puts your %s back to its place.", CHARDESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s puts your %s back to its place.", CHAR_DESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().c_str());
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHARDESCRIPTION(DEFINITE), HurtOne->CHARDESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().c_str(), SeveredOne->GetBodyPartName().c_str());
+	ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHAR_DESCRIPTION(DEFINITE), HurtOne->CHAR_DESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().c_str(), SeveredOne->GetBodyPartName().c_str());
 	
       SeveredOne->SetHP(1);
       SeveredOne->RemoveFromSlot();
@@ -3191,7 +3191,7 @@ ushort kamikazedwarf::GetLegMainColor() const
 void angel::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
+    if(c == GROIN_INDEX || c == RIGHT_LEGINDEX || c == LEFT_LEGINDEX)
       SetBodyPart(c, 0);
     else
       CreateBodyPart(c, SpecialFlags);
@@ -3200,7 +3200,7 @@ void angel::CreateBodyParts(ushort SpecialFlags)
 void genie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
+    if(c == GROIN_INDEX || c == RIGHT_LEGINDEX || c == LEFT_LEGINDEX)
       SetBodyPart(c, 0);
     else
       CreateBodyPart(c, SpecialFlags);
@@ -3214,7 +3214,7 @@ ushort housewife::GetHairColor() const
 
 ushort angel::GetAttribute(ushort Identifier) const // temporary until wings are bodyparts
 {
-  if(Identifier == LEGSTRENGTH)
+  if(Identifier == LEG_STRENGTH)
     return GetDefaultLegStrength();
   else if(Identifier == AGILITY)
     return GetDefaultAgility();
@@ -3224,7 +3224,7 @@ ushort angel::GetAttribute(ushort Identifier) const // temporary until wings are
 
 ushort genie::GetAttribute(ushort Identifier) const // temporary until someone invents a better way of doing this
 {
-  if(Identifier == LEGSTRENGTH)
+  if(Identifier == LEG_STRENGTH)
     return GetDefaultLegStrength();
   else if(Identifier == AGILITY)
     return 50; /* Air's flexibility */
@@ -3303,7 +3303,7 @@ void humanoid::AddAttackInfo(felist& List) const
       Entry << int(KickLeg->GetKickToHitValue());
       Entry.resize(70, ' ');
       Entry << KickLeg->GetKickAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingHead())
@@ -3315,7 +3315,7 @@ void humanoid::AddAttackInfo(felist& List) const
       Entry << int(GetHead()->GetBiteToHitValue());
       Entry.resize(70, ' ');
       Entry << GetHead()->GetBiteAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 }
 
@@ -3330,7 +3330,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetUnarmedToHitValue());
       Entry.resize(70, ' ');
       Entry << GetUnarmedAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingLegs())
@@ -3342,7 +3342,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetKickToHitValue());
       Entry.resize(70, ' ');
       Entry << GetKickAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 
   if(IsUsingHead())
@@ -3354,7 +3354,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
       Entry << int(GetBiteToHitValue());
       Entry.resize(70, ' ');
       Entry << GetBiteAPCost();
-      List.AddEntry(Entry, LIGHTGRAY);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
 }
 
@@ -3404,7 +3404,7 @@ leg* humanoid::GetKickLeg() const
 material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
 {
   if(!CreateSolidMaterialConfigurations())
-    return MAKE_MATERIAL(HUMANFLESH, Volume);
+    return MAKE_MATERIAL(HUMAN_FLESH, Volume);
   else
     return MAKE_MATERIAL(Config, Volume);
 }
@@ -3412,14 +3412,14 @@ material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
 item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 {
   item* Bone;
-  if(BodyPartIndex == HEADINDEX)
-    Bone = new skull(0, NOMATERIALS);
+  if(BodyPartIndex == HEAD_INDEX)
+    Bone = new skull(0, NO_MATERIALS);
   else
-    Bone = new bone(0, NOMATERIALS);
+    Bone = new bone(0, NO_MATERIALS);
 
   item* BodyPart = GetBodyPart(BodyPartIndex);
   Bone->InitMaterials(BodyPart->GetContainedMaterial());
-  BodyPart->SetContainedMaterial(0, NOPICUPDATE);
+  BodyPart->SetContainedMaterial(0, NO_PIC_UPDATE);
   BodyPart->SendToHell();
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
@@ -3428,7 +3428,7 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 
   if(StuckToBodyPart == BodyPartIndex)
     {
-      StuckToBodyPart = NONEINDEX;
+      StuckToBodyPart = NONE_INDEX;
       StuckTo = 0;
     }
   return Bone;  
@@ -3443,7 +3443,7 @@ void zombie::CreateBodyParts(ushort SpecialFlags)
 
 void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
 {
-  if((Index == RIGHTWIELDEDINDEX && GetRightArm()->TwoHandWieldIsActive()) || (Index == LEFTWIELDEDINDEX && GetLeftArm()->TwoHandWieldIsActive()))
+  if((Index == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->TwoHandWieldIsActive()))
     String << " (in both hands)";
 }
 
@@ -3488,7 +3488,7 @@ void cossack::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("%s shouts wildly: \"For Tataria!\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s shouts wildly: \"For Tataria!\"", CHAR_DESCRIPTION(DEFINITE));
       return;
     }
 
@@ -3517,13 +3517,13 @@ std::string humanoid::GetBodyPartName(ushort Index, bool Articled) const
 
   switch(Index)
     {
-    case HEADINDEX: return Article + "head";
-    case TORSOINDEX: return Article + "torso";
-    case RIGHTARMINDEX: return Article + "right arm";
-    case LEFTARMINDEX: return Article + "left arm";
-    case GROININDEX: return Article + "groin";
-    case RIGHTLEGINDEX: return Article + "right leg";
-    case LEFTLEGINDEX: return Article + "left leg";
+    case HEAD_INDEX: return Article + "head";
+    case TORSO_INDEX: return Article + "torso";
+    case RIGHT_ARMINDEX: return Article + "right arm";
+    case LEFT_ARMINDEX: return Article + "left arm";
+    case GROIN_INDEX: return Article + "groin";
+    case RIGHT_LEGINDEX: return Article + "right leg";
+    case LEFT_LEGINDEX: return Article + "left leg";
     default:
       ABORT("Illegal humanoid bodypart name request!");
       return 0;
@@ -3555,12 +3555,12 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValu
 
 item* humanoid::SevereBodyPart(ushort BodyPartIndex)
 {
-  if(BodyPartIndex == RIGHTARMINDEX && GetCurrentRightSWeaponSkill())
+  if(BodyPartIndex == RIGHT_ARMINDEX && GetCurrentRightSWeaponSkill())
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
       SetCurrentRightSWeaponSkill(0);
     }
-  else if(BodyPartIndex == LEFTARMINDEX && GetCurrentLeftSWeaponSkill())
+  else if(BodyPartIndex == LEFT_ARMINDEX && GetCurrentLeftSWeaponSkill())
     {
       CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
       SetCurrentLeftSWeaponSkill(0);

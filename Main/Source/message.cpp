@@ -56,7 +56,7 @@ void msgsystem::AddMessage(const char* Format, ...)
   else
     {
       for(c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
-	MessageHistory.SetColor(c, LIGHTGRAY);
+	MessageHistory.SetColor(c, LIGHT_GRAY);
 
       Times = 1;
       Begin = End = game::GetTicks() / 10;
@@ -121,4 +121,3 @@ void msgsystem::ScrollUp()
   if(MessageHistory.GetSelected())
     MessageHistory.EditSelected(-1);
 }
-

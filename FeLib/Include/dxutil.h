@@ -82,5 +82,3 @@ HRESULT _DbgOut( TCHAR*, DWORD, HRESULT, TCHAR* );
 #endif
 
 #endif // DXUTIL_H
-
-

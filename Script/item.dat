@@ -36,7 +36,7 @@ item
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
 	PostFix = "";
-	ArticleMode = NORMALARTICLE;
+	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
 	/* Obligatory: ContainedMaterialConfig */
@@ -68,6 +68,7 @@ item
 	AffectsCharisma = false;
 	AffectsMana = false;
 	DefaultEnchantment = 0;
+	PriceIsProportionalToEnchantment = false;
 }
 
 materialcontainer
@@ -121,7 +122,7 @@ can /* materialcontainer-> */
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
-	ContainedMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
+	ContainedMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
 	Roundness = 60;
 }
@@ -137,7 +138,7 @@ lump
 	BitmapPos = 16, 48;
 	FormModifier = 15;
 	NameSingular = "lump";
-	MainMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
+	MainMaterialConfig = { 2, BANANA_FLESH, SCHOOL_FOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
 	OKVisualEffects = MIRROR|FLIP;
 	Roundness = 75;
@@ -151,7 +152,7 @@ meleeweapon
 	CanBeBroken = true;
 	CanBePiled = false;
 
-	Config LONGSWORD;
+	Config LONG_SWORD;
 	{
 		DefaultSize = 150;
 		Possibility = 250;
@@ -170,13 +171,13 @@ meleeweapon
 		Roundness = 10;
 	}
 
-	Config BROKEN|LONGSWORD;
+	Config BROKEN|LONG_SWORD;
 	{
 		Possibility = 25;
 		BitmapPos = 32, 208;
 	}
 
-	Config TWOHANDEDSWORD;
+	Config TWO_HANDED_SWORD;
 	{
 		DefaultSize = 175;
 		Possibility = 50;
@@ -197,13 +198,13 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|TWOHANDEDSWORD;
+	Config BROKEN|TWO_HANDED_SWORD;
 	{
 		Possibility = 5;
 		BitmapPos = 32, 80;
 	}
 
-	Config CURVEDTWOHANDEDSWORD;
+	Config CURVED_TWO_HANDED_SWORD;
 	{
 		DefaultSize = 175;
 		Possibility = 0;
@@ -224,7 +225,7 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|CURVEDTWOHANDEDSWORD;
+	Config BROKEN|CURVED_TWO_HANDED_SWORD;
 	{
 		Possibility = 0;
 		BitmapPos = 32, 96;
@@ -281,7 +282,7 @@ meleeweapon
 		BitmapPos = 32, 176;
 	}
 
-	Config POLEAXE;
+	Config POLE_AXE;
 	{
 		DefaultSize = 225;
 		Possibility = 250;
@@ -300,13 +301,13 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|POLEAXE;
+	Config BROKEN|POLE_AXE;
 	{
 		Possibility = 25;
 		BitmapPos = 32, 144;
 	}
 
-	Config SPIKEDMACE;
+	Config SPIKED_MACE;
 	{
 		StrengthModifier = 400; 
 		FormModifier = 125; 
@@ -326,7 +327,7 @@ meleeweapon
 		IsTwoHanded = true;
 	}
 
-	Config BROKEN|SPIKEDMACE;
+	Config BROKEN|SPIKED_MACE;
 	{
 		Possibility = 10;
 		BitmapPos = 32, 112;
@@ -346,8 +347,8 @@ banana /* materialcontainer-> */
 	FormModifier = 50;
 	DefaultSize = 20;
 	NameSingular = "banana";
-	MainMaterialConfig == BANANAPEEL;
-	SecondaryMaterialConfig == BANANAFLESH;
+	MainMaterialConfig == BANANA_PEEL;
+	SecondaryMaterialConfig == BANANA_FLESH;
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
@@ -373,7 +374,7 @@ holybanana /* materialcontainer->banana-> */
 	Price = 1000;
 	Adjective = "holy";
 	PostFix = "of Liukas Vipro";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	Roundness = 20;
 
@@ -401,7 +402,7 @@ justifier /* meleeweapon-> */
 	NameSingular = "broadsword";
 	Adjective = "holy";
 	PostFix = "named Valpurus's Justifier";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	SecondaryMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
@@ -436,10 +437,10 @@ neercseulb /* meleeweapon-> */
 	NameSingular = "mace";
 	AdjectiveArticle = "an";
 	PostFix = "named Neerc Se-ulb";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	MainMaterialConfig == DIAMOND;
 	SecondaryMaterialConfig == DIAMOND;
-	ContainedMaterialConfig == FROGFLESH;
+	ContainedMaterialConfig == FROG_FLESH;
 	IsPolymorphable = false;
 	Alias == "Neerc Se-ulb";
 	Roundness = 35;
@@ -491,14 +492,14 @@ armor
 bodyarmor /* armor-> */
 {
 	InHandsPic = 160, 144;
-	Category = BODYARMOR;
+	Category = BODY_ARMOR;
 	FormModifier = 20;
 	IsAbstract = true;
 	Roundness = 70;
 	IsTwoHanded = true;
 	CanBeBroken = true;
 
-	Config CHAINMAIL;
+	Config CHAIN_MAIL;
 	{
 		Possibility = 50;
 		StrengthModifier = 100; 
@@ -511,7 +512,7 @@ bodyarmor /* armor-> */
 		MaterialConfigChances = { 3, 150, 50, 10; }
 	}
 
-	Config BROKEN|CHAINMAIL;
+	Config BROKEN|CHAIN_MAIL;
 	{
 		Possibility = 5;
 		BitmapPos = 48, 208;
@@ -519,7 +520,7 @@ bodyarmor /* armor-> */
 		StrengthModifier = 50;
 	}
 
-	Config PLATEMAIL;
+	Config PLATE_MAIL;
 	{
 		StrengthModifier = 200; 
 		DefaultSize = 75; 
@@ -533,7 +534,7 @@ bodyarmor /* armor-> */
 		Alias == "armor"; /* wishing doesn't yet support FlexibleNameSingular */
 	}
 
-	Config BROKEN|PLATEMAIL;
+	Config BROKEN|PLATE_MAIL;
 	{
 		Possibility = 25;
 		StrengthModifier = 75;
@@ -556,7 +557,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == CLOTH;
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	CanBeBroken = false;
 	CanBeCloned = false;
@@ -577,7 +578,7 @@ potion /* materialcontainer-> */
 	FormModifier = 40;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 5, WATER, HEALINGLIQUID, OMLEURINE, POISONLIQUID, VALDEMAR; }
+	ContainedMaterialConfig = { 5, WATER, HEALING_LIQUID, OMLE_URINE, POISON_LIQUID, VALDEMAR; }
 	MaterialConfigChances = { 5, 100, 75, 50, 75, 1; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
@@ -595,7 +596,7 @@ bananapeels
 	BitmapPos = 0, 128;
 	FormModifier = 70;
 	NameSingular = "banana peel";
-	MainMaterialConfig == BANANAPEEL;
+	MainMaterialConfig == BANANA_PEEL;
 	Roundness = 10;
 }
 
@@ -663,7 +664,7 @@ nut
 	StrengthModifier = 50;
 	BitmapPos = 16, 208;
 	FormModifier = 20;
-	MainMaterialConfig == HUMANFLESH;
+	MainMaterialConfig == HUMAN_FLESH;
 	NameSingular = "nut";
 	Roundness = 90;
 }
@@ -680,7 +681,7 @@ leftnutofpetrus /* nut-> */
 	BaseEmitation = rgb24(166, 112, 112);
 	Adjective = "left";
 	PostFix = "of Petrus";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	CanBeWished = false;
 	CanBeCloned = false;
@@ -766,7 +767,7 @@ wandofpolymorph /* wand-> */
 	Price = 500;
 	IsPolymorphSpawnable = false;
 	PostFix = "of polymorph";
-	MainMaterialConfig == UNICORNHORN;
+	MainMaterialConfig == UNICORN_HORN;
 	BeamRange = 5;
 	MinCharges = 2;
 	MaxCharges = 5;
@@ -796,7 +797,7 @@ avatarofvalpurus
 	FormModifier = 20;
 	NameSingular = "Avatar";
 	PostFix = "of Valpurus";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
 	Roundness = 80;
@@ -824,7 +825,7 @@ kiwi
 	BitmapPos = 0, 384;
 	FormModifier = 20;
 	NameSingular = "kiwi";
-	MainMaterialConfig == KIWIFLESH;
+	MainMaterialConfig == KIWI_FLESH;
 	Roundness = 80;
 }
 
@@ -838,7 +839,7 @@ pineapple
 	BitmapPos = 0, 368;
 	FormModifier = 20;
 	NameSingular = "pineapple";
-	MainMaterialConfig == PINEAPPLEFLESH;
+	MainMaterialConfig == PINEAPPLE_FLESH;
 	Roundness = 90;
 	IsTwoHanded = true;
 }
@@ -895,7 +896,7 @@ backpack /* materialcontainer-> */
 	FormModifier = 20;
 	NameSingular = "backpack";
 	MainMaterialConfig == LEATHER;
-	ContainedMaterialConfig == GUNPOWDER;
+	ContainedMaterialConfig == GUN_POWDER;
 	Alias == "explosives";
 	Roundness = 70;
 	IsTwoHanded = true;
@@ -913,7 +914,7 @@ holybook
 	FormModifier = 30;
 	Adjective = "holy";
 	NameSingular = "book";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	MainMaterialConfig == PARCHMENT;
 	Price = 200;
 	Roundness = 70;
@@ -1018,7 +1019,7 @@ mine /*materialcontainer-> */
 	FormModifier = 30;
 	NameSingular = "mine";
 	MainMaterialConfig == IRON;
-	ContainedMaterialConfig == GUNPOWDER;
+	ContainedMaterialConfig == GUN_POWDER;
 	Roundness = 100;
 	IsTwoHanded = true;
 }
@@ -1100,7 +1101,7 @@ cloak /* armor-> */
 	Roundness = 60;
 	IsTwoHanded = true;
 
-	Config CLOAKOFINVISIBILITY;
+	Config CLOAK_OF_INVISIBILITY;
 	{
 		Possibility = 1;
 		GearStates = INVISIBLE;
@@ -1124,26 +1125,28 @@ boot /* armor-> */
 	Roundness = 50;
 	CanBePiled = true;
 
-	Config BOOTOFSTRENGTH;
+	Config BOOT_OF_STRENGTH;
 	{
 		Possibility = 25;
 		PostFix = "of strength";
 		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
 		AffectsLegStrength = true;
-		Price = 1000;
+		Price = 50;
 		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
 	}
 
-	Config BOOTOFAGILITY;
+	Config BOOT_OF_AGILITY;
 	{
 		Possibility = 25;
 		PostFix = "of agility";
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
 		AffectsAgility = true;
-		Price = 1000;
+		Price = 40;
 		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
 	}
 }
 
@@ -1162,26 +1165,28 @@ gauntlet /* armor-> */
 	Roundness = 60;
 	CanBePiled = true;
 
-	Config GAUNTLETOFSTRENGTH;
+	Config GAUNTLET_OF_STRENGTH;
 	{
 		Possibility = 25;
 		PostFix = "of strength";
 		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
 		AffectsArmStrength = true;
-		Price = 250; /* bug */
+		Price = 75;
 		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
 	}
 
-	Config GAUNTLETOFDEXTERITY;
+	Config GAUNTLET_OF_DEXTERITY;
 	{
 		Possibility = 25;
 		PostFix = "of dexterity";
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
 		AffectsDexterity = true;
-		Price = 250; /* bug */
+		Price = 60;
 		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
 	}
 }
 
@@ -1214,7 +1219,7 @@ ring
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
 
-	Config RINGOFFIRERESISTANCE;
+	Config RING_OF_FIRE_RESISTANCE;
 	{
 		Possibility = 50;
 		FireResistance = 10;
@@ -1223,7 +1228,7 @@ ring
 		Price = 250;
 	}
 
-	Config RINGOFPOLYMORPHCONTROL;
+	Config RING_OF_POLYMORPHCONTROL;
 	{
 		Possibility = 10;
 		PostFix = "of polymorph control";
@@ -1232,16 +1237,16 @@ ring
 		Price = 500;
 	}
 
-	Config RINGOFINFRAVISION;
+	Config RING_OF_INFRA_VISION;
 	{
 		Possibility = 20;
 		PostFix = "of infravision";
 		MainMaterialConfig == SILVER;
-		GearStates = INFRAVISION;
+		GearStates = INFRA_VISION;
 		Price = 500;
 	}
 	
-	Config RINGOFTELEPORTATION;
+	Config RING_OF_TELEPORTATION;
 	{
 		Possibility = 30;
 		PostFix = "of teleportation";
@@ -1251,7 +1256,7 @@ ring
 		Price = 250;
 	}
 
-	Config RINGOFTELEPORTCONTROL;
+	Config RING_OF_TELEPORT_CONTROL;
 	{
 		Possibility = 10;
 		PostFix = "of teleport control";
@@ -1260,16 +1265,16 @@ ring
 		Price = 500;
 	}
 
-	Config RINGOFPOLYMORPH;
+	Config RING_OF_POLYMORPH;
 	{
 		Possibility = 30;
 		PostFix = "of polymorph";
-		MainMaterialConfig == UNICORNHORN;
+		MainMaterialConfig == UNICORN_HORN;
 		GearStates = POLYMORPH;
 		Price = 250;
 	}
 
-	Config RINGOFPOISONRESISTANCE;
+	Config RING_OF_POISON_RESISTANCE;
 	{
 		Possibility = 40;
 		PoisonResistance = 10;
@@ -1278,7 +1283,7 @@ ring
 		Price = 250;
 	}
 
-	Config RINGOFINVISIBILITY;
+	Config RING_OF_INVISIBILITY;
 	{
 		Possibility = 1;
 		PostFix = "of invisibility";
@@ -1302,7 +1307,7 @@ amulet
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
 
-	Config AMULETOFLIFESAVING;
+	Config AMULET_OF_LIFE_SAVING;
 	{
 		Possibility = 5;
 		PostFix = "of life saving";
@@ -1312,7 +1317,7 @@ amulet
 		Price = 5000;
 	}
 
-	Config AMULETOFESP;
+	Config AMULET_OF_ESP;
 	{
 		Possibility = 10;
 		PostFix = "of ESP";
@@ -1418,8 +1423,8 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	BitmapPos = 16, 0;
 	DefaultMainVolume = 25000;
 	NameSingular = "head of Elpuri";
-	ArticleMode = DEFINITEARTICLE;
-	MainMaterialConfig == ELPURIFLESH;
+	ArticleMode = DEFINITE_ARTICLE;
+	MainMaterialConfig == ELPURI_FLESH;
 	IsPolymorphable = false;
 	Roundness = 80;
 	IsTwoHanded = true;
@@ -1506,7 +1511,7 @@ chest
 	IsAbstract = true;
 	IsPolymorphSpawnable = false;
 
-	Config SMALLCHEST;
+	Config SMALL_CHEST;
 	{
 		Adjective = "small";
 		DefaultSize = 50;
@@ -1526,7 +1531,7 @@ chest
 		Possibility = 50;
 		MaxGeneratedContainedItems = 5;
 	}
-	Config LARGECHEST;
+	Config LARGE_CHEST;
 	{
 		Adjective = "large";
 		DefaultSize = 200;
@@ -1588,7 +1593,7 @@ helmet
 	MaterialConfigChances = { 10, 	30,	30,	10,	10,	2,	4,	20,	5,	3,	30; }
 	Roundness = 60;
 
-	Config HELMOFPERCEPTION;
+	Config HELM_OF_PERCEPTION;
 	{
 		Possibility = 25;
 		PostFix = "of piercing perception";
@@ -1596,19 +1601,23 @@ helmet
 		MainMaterialConfig == GLASS;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
+		Price = 50;
+		PriceIsProportionalToEnchantment = true;
 	}
 
-	Config HELMOFUNDERSTANDING;
+	Config HELM_OF_UNDERSTANDING;
 	{
 		Possibility = 25;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
-		MainMaterialConfig == UNICORNHORN;
+		MainMaterialConfig == UNICORN_HORN;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
+		Price = 50;
+		PriceIsProportionalToEnchantment = true;
 	}
 
-	Config HELMOFBRILLIANCE;
+	Config HELM_OF_BRILLIANCE;
 	{
 		Possibility = 25;
 		PostFix = "of brilliance";
@@ -1616,9 +1625,11 @@ helmet
 		MainMaterialConfig == MITHRIL;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
+		Price = 50;
+		PriceIsProportionalToEnchantment = true;
 	}
 
-	Config HELMOFATTRACTIVITY;
+	Config HELM_OF_ATTRACTIVITY;
 	{
 		Possibility = 25;
 		PostFix = "of attractivity";
@@ -1626,6 +1637,8 @@ helmet
 		MainMaterialConfig == GOLD;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
+		Price = 50;
+		PriceIsProportionalToEnchantment = true;
 	}
 }
 
@@ -1641,7 +1654,7 @@ stethoscope
 	Roundness = 20;
 	NameSingular = "stethoscope";
 	Price = 250;
-	MainMaterialConfig == UNICORNHORN;
+	MainMaterialConfig == UNICORN_HORN;
 }
 
 flamingsword /* meleeweapon-> */
@@ -1689,7 +1702,7 @@ mjolak /* meleeweapon-> */
 	Adjective = "unholy";
 	NameSingular = "poleaxe";
 	PostFix = "named Mjolak";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	Alias == "Mjolak";
 	CanBeCloned = false;
 	Price = 500;
@@ -1720,7 +1733,7 @@ vermis /* meleeweapon-> */
 	Roundness = 10;
 	IsTwoHanded = true;
 	Alias == "Vermis";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 500;
 
@@ -1750,7 +1763,7 @@ turox /* meleeweapon-> */
 	Roundness = 30; /* we count the handle, too */
 	IsTwoHanded = true;
 	Alias == "Turox";
-	ArticleMode = DEFINITEARTICLE;
+	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 250;
 

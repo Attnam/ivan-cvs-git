@@ -524,4 +524,3 @@ ulong inputfile::TellLineOfPos(long Pos)
 
   return Line;
 }
-

@@ -86,4 +86,3 @@ inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 
   return SaveFile;
 }
-

@@ -48,4 +48,3 @@ inline std::string operator+(const char* CString, std::string CppString) { retur
 template <class type> inline std::string& operator<<(std::string& String, const type& Type) { return String += Type; }
 
 #endif
-

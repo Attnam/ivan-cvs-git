@@ -69,5 +69,3 @@ inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
 }
 
 #endif
-
-

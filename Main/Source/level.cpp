@@ -710,15 +710,15 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
 	  Pos.Y = 1 + RAND() % (YSize - 2);
 	}
 
-      if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOTWALKABLE))
-      || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HASCHARACTER))
+      if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOT_WALKABLE))
+      || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HAS_CHARACTER))
       || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
 	continue;
 
-      uchar RoomFlags = Flags & (INROOM|NOTINROOM);
+      uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
-      if((RoomFlags == INROOM && !Map[Pos.X][Pos.Y]->GetRoom())
-      || (RoomFlags == NOTINROOM && Map[Pos.X][Pos.Y]->GetRoom()))
+      if((RoomFlags == IN_ROOM && !Map[Pos.X][Pos.Y]->GetRoom())
+      || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoom()))
 	continue;
 
       return Pos;
@@ -834,12 +834,12 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
       uchar Flags = RAND() % 8;
 
       if(!Flags || SizeVect != OldSizeVect)
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
+	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
       else
 	{
 	  bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
 	  igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
-	  ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
+	  ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, configuration::GetContrastLuminance());
 	}
 
       graphics::BlitDBToScreen();
@@ -869,7 +869,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	    lsquare* Square = GetLSquare(x, y);
 	    character* Char = Square->GetCharacter();
 	    ushort Damage = Strength / (DistanceSquare + 1);
-	    uchar DamageDirection = vector2d(x, y) == Pos ? RANDOMDIR : game::CalculateRoughDirection(vector2d(x, y) - Pos);
+	    uchar DamageDirection = vector2d(x, y) == Pos ? RANDOM_DIR : game::CalculateRoughDirection(vector2d(x, y) - Pos);
 
 	    if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
 	      if(Char->IsPlayer())
@@ -889,10 +889,10 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 		    Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, SpillDirection);
 
 		  if(Char->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
+		    ADD_MESSAGE("%s is hit by the explosion.", Char->CHAR_NAME(DEFINITE));
 
 		  Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
-		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true, false, false, false);
+		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
 		  Char->CheckDeath(DeathMsg);
 		}
 
@@ -905,7 +905,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
   if(PlayerHurt)
     {
-      uchar DamageDirection = game::GetPlayer()->GetPos() == Pos ? RANDOMDIR : game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
+      uchar DamageDirection = game::GetPlayer()->GetPos() == Pos ? RANDOM_DIR : game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
 
       if(Terrorist)
 	Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
@@ -917,7 +917,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
       ADD_MESSAGE("You are hit by the explosion!");
       game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true, false, false, false);
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
       game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }
@@ -944,7 +944,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
 	    if(!(*i)->GetAction())
 	      {
-		ADD_MESSAGE("%s follows you.", (*i)->CHARNAME(DEFINITE));
+		ADD_MESSAGE("%s follows you.", (*i)->CHAR_NAME(DEFINITE));
 		CharacterArray.push_back(*i);
 		Leader->GetLevelUnder()->RemoveCharacter((*i)->GetPos());
 	      }
@@ -1001,12 +1001,12 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();
 
-  if(Shape == ROUNDCORNERS && ((Size.X < 4 || Size.Y < 4) || (Size.X == 4 && Size.Y == 4))) /* No wierd shapes this way. */
+  if(Shape == ROUND_CORNERS && ((Size.X < 4 || Size.Y < 4) || (Size.X == 4 && Size.Y == 4))) /* No wierd shapes this way. */
     Shape = RECTANGLE;
 
   for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)
     {
-      if(Shape == ROUNDCORNERS)
+      if(Shape == ROUND_CORNERS)
 	{
 	  if(x == Pos.X)
 	    {
@@ -1030,7 +1030,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, Pos.Y + Size.Y - 1, Room, DivineMaster);
 
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
-      || (Shape == ROUNDCORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
+      || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
 	{
 	  OKForDoor.push_back(vector2d(x,Pos.Y));
 	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));
@@ -1051,7 +1051,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], Pos.X, y, Room, DivineMaster);
       CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], Pos.X + Size.X - 1, y, Room, DivineMaster);
 
-      if(Shape == ROUNDCORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
+      if(Shape == ROUND_CORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
 	{
 	  OKForDoor.push_back(vector2d(Pos.X, y));
 	  OKForDoor.push_back(vector2d(Pos.X + Size.X - 1, y));
@@ -1076,7 +1076,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       {
 	/* if not in the corner */
 
-	if(!(Shape == ROUNDCORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
+	if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
 	  {
 	    CreateRoomSquare(GTerrain[Counter], OTerrain[Counter], x, y, Room, DivineMaster);
 	    Inside.push_back(vector2d(x,y));

@@ -149,14 +149,14 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
       {
 	int Key = 0;
 
-	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = KEYLEFT;
-	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = KEYHOME;
-	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = KEYUP;
-	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEYPAGEUP;
-	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = KEYRIGHT;
-	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEYPAGEDOWN;
-	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = KEYDOWN;
-	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = KEYEND;
+	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = KEY_LEFT;
+	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = KEY_HOME;
+	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = KEY_UP;
+	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEY_PAGE_UP;
+	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = KEY_RIGHT;
+	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEY_PAGE_DOWN;
+	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = KEY_DOWN;
+	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = KEY_END;
 	if(wParam == VK_NUMPAD5) Key = '.';
 
 	if(Key && std::find(KeyBuffer.begin(), KeyBuffer.end(), Key) == KeyBuffer.end())
@@ -176,7 +176,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
     case WM_KEYUP:
       {
 	if(wParam == VK_SNAPSHOT)
-	  DOUBLEBUFFER->Save("Scrshot.bmp");
+	  DOUBLE_BUFFER->Save("Scrshot.bmp");
 
 	return 0;
       }
@@ -407,7 +407,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
       return;
-    case SDL_KEYDOWN:
+    case SDL_KEY_DOWN:
       switch(event->key.keysym.sym)
 	{
 	case SDLK_RETURN:
@@ -419,38 +419,38 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 
 	case SDLK_DOWN:
 	case SDLK_KP2:
-	  KeyPressed = KEYDOWN + 0xE000;
+	  KeyPressed = KEY_DOWN + 0xE000;
 	  break;
 	case SDLK_UP:
 	case SDLK_KP8:
-	  KeyPressed = KEYUP + 0xE000;
+	  KeyPressed = KEY_UP + 0xE000;
 	  break;
 	case SDLK_RIGHT:
 	case SDLK_KP6:
-	  KeyPressed = KEYRIGHT + 0xE000;
+	  KeyPressed = KEY_RIGHT + 0xE000;
 	  break;
 	case SDLK_LEFT:
 	case SDLK_KP4:
-	  KeyPressed = KEYLEFT + 0xE000;
+	  KeyPressed = KEY_LEFT + 0xE000;
 	  break;
 	case SDLK_HOME:
 	case SDLK_KP7:
-	  KeyPressed = KEYHOME + 0xE000;
+	  KeyPressed = KEY_HOME + 0xE000;
 	  break;
 	case SDLK_END:
 	case SDLK_KP1:
-	  KeyPressed = KEYEND + 0xE000;
+	  KeyPressed = KEY_END + 0xE000;
 	  break;
 	case SDLK_PAGEUP:
 	case SDLK_KP9:
-	  KeyPressed = KEYPAGEUP + 0xE000;
+	  KeyPressed = KEY_PAGE_UP + 0xE000;
 	  break;
 	case SDLK_KP3:
 	case SDLK_PAGEDOWN:
-	  KeyPressed = KEYPAGEDOWN + 0xE000;
+	  KeyPressed = KEY_PAGE_DOWN + 0xE000;
 	  break;
 	case SDLK_PRINT:
-	  DOUBLEBUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
+	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
 	default:
 
@@ -464,7 +464,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	  
       break;
 
-    case SDL_KEYUP:
+    case SDL_KEY_UP:
       break;
 
     default:

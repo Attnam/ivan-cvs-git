@@ -44,7 +44,7 @@ bool door::Open(character* Opener)
 	  
 	  return false;
 	}
-      else if(RAND() % 20 < Opener->GetAttribute(ARMSTRENGTH))
+      else if(RAND() % 20 < Opener->GetAttribute(ARM_STRENGTH))
 	{
 	  MakeWalkable();
 
@@ -53,7 +53,7 @@ bool door::Open(character* Opener)
 	  else if(CanBeSeenByPlayer())
 	    {
 	      if(Opener->CanBeSeenByPlayer())
-		ADD_MESSAGE("%s opens the door.", Opener->CHARNAME(DEFINITE));
+		ADD_MESSAGE("%s opens the door.", Opener->CHAR_NAME(DEFINITE));
 	      else
 		ADD_MESSAGE("Something opens the door.");
 	    }
@@ -63,7 +63,7 @@ bool door::Open(character* Opener)
 	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("The door resists.");
 	  else if(CanBeSeenByPlayer() && Opener->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s fails to open the door.", Opener->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s fails to open the door.", Opener->CHAR_NAME(DEFINITE));
 
 	  ActivateBoobyTrap();
 	}
@@ -83,7 +83,7 @@ bool door::Close(character* Closer)
   if(Closer->IsPlayer())
     if(IsWalkable())
       {
-	if(RAND() % 20 < Closer->GetAttribute(ARMSTRENGTH))
+	if(RAND() % 20 < Closer->GetAttribute(ARM_STRENGTH))
 	  {
 	    ADD_MESSAGE("You close the door.");
 	    MakeNotWalkable();
@@ -232,7 +232,7 @@ void altar::BeKicked(character* Kicker, ushort)
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
   else if(Kicker->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s looks like a sinner.", Kicker->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s looks like a sinner.", Kicker->CHAR_NAME(DEFINITE));
 
   if(Kicker->IsPlayer())
     {
@@ -332,7 +332,7 @@ bool fountain::Drink(character* Drinker)
 		      if(TempItem)
 			{
 			  Drinker->GetStack()->AddItem(TempItem);
-			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHARNAME(INDEFINITE));
+			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
 			  break;
 			}
 		    }
@@ -381,7 +381,7 @@ bool fountain::Drink(character* Drinker)
 
 void fountain::DryOut()
 {
-  ADD_MESSAGE("%s dries out.", CHARNAME(DEFINITE));
+  ADD_MESSAGE("%s dries out.", CHAR_NAME(DEFINITE));
   ChangeContainedMaterial(0);
 
   if(GetLSquareUnder())
@@ -433,14 +433,14 @@ bool door::ReceiveDamage(character*, short, uchar)
   if(RAND() & 1)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s breaks.", CHAR_NAME(DEFINITE));
 
       Break();
     }
   else
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s opens.", CHAR_NAME(DEFINITE));
 		
       MakeWalkable();
       SetIsLocked(false);
@@ -454,7 +454,7 @@ bool brokendoor::ReceiveDamage(character*, short, uchar)
   if(RAND() & 1)
     {
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s opens.", CHAR_NAME(DEFINITE));
 
       MakeWalkable();
       SetIsLocked(false);
@@ -466,7 +466,7 @@ bool brokendoor::ReceiveDamage(character*, short, uchar)
 bool altar::Polymorph(character*)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s glows briefly.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s glows briefly.", CHAR_NAME(DEFINITE));
 	
   uchar OldGod = GetConfig(), NewGod = GetConfig();
 
@@ -500,7 +500,7 @@ bool altar::SitOn(character* Sitter)
 	if(Angel)
 	  {
 	    Angel->SetTeam(game::GetPlayer()->GetTeam());
-	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	  }
 
 	GetMasterGod()->AdjustRelation(50);
@@ -534,7 +534,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
       else if(Energy > 300)
@@ -544,7 +544,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	    SetIsLocked(RAND() & 1);
 
 	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
 	  Break();
 	} 
@@ -553,7 +553,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	  // Nothing happens
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
     }
@@ -576,7 +576,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
 
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
       else
@@ -584,7 +584,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	  // Nothing happens
 	  if(CanBeSeenByPlayer())
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 	    }
 	}
     }
@@ -597,12 +597,12 @@ void door::Break()
   else
     {
       bool Open = Opened;
-      brokendoor* Temp = new brokendoor(0, NOMATERIALS);
+      brokendoor* Temp = new brokendoor(0, NO_MATERIALS);
       Temp->InitMaterials(GetMainMaterial());
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
-      SetMainMaterial(0, NOPICUPDATE);
+      SetMainMaterial(0, NO_PIC_UPDATE);
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
 
       if(Open)
@@ -619,7 +619,7 @@ void door::ActivateBoobyTrap()
     case 1:
       // Explosion
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
 
       BoobyTrap = 0;
       GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
@@ -720,9 +720,9 @@ bool door::TryKey(item* Thingy, character* Applier)
       else if(Applier->CanBeSeenByPlayer())
 	{
 	  if(IsLocked())
-	    ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s unlocks the door.", Applier->CHAR_NAME(DEFINITE));
 	  else
-	    ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s locks the door.", Applier->CHAR_NAME(DEFINITE));
 	}
 
       SetIsLocked(!IsLocked());
@@ -731,7 +731,7 @@ bool door::TryKey(item* Thingy, character* Applier)
   else
     {
       if(Applier->IsPlayer())
-	ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHAR_NAME(DEFINITE));
 
       return false;
     }
@@ -795,7 +795,7 @@ bool link::Enter(bool DirectionUp) const
 
   /* "Temporary" gum solutions */
 
-  if(!DirectionUp && AttachedArea == OREELAIR)
+  if(!DirectionUp && AttachedArea == OREE_LAIR)
     {
       ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
 
@@ -803,7 +803,7 @@ bool link::Enter(bool DirectionUp) const
 	return false;
     }
 
-  if(DirectionUp && game::GetCurrent() == OREELAIR)
+  if(DirectionUp && game::GetCurrent() == OREE_LAIR)
     {
       ADD_MESSAGE("Somehow you get the feeling you cannot return.");
 
@@ -813,7 +813,7 @@ bool link::Enter(bool DirectionUp) const
 
   std::vector<character*> Group;
 
-  if(game::LeaveLevel(Group, AttachedArea != WORLDMAP))
+  if(game::LeaveLevel(Group, AttachedArea != WORLD_MAP))
     {
       game::EnterArea(Group, AttachedArea, AttachedEntry);
       return true;
@@ -825,28 +825,28 @@ bool link::Enter(bool DirectionUp) const
 void link::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer()) 
-    ADD_MESSAGE("There is %s here.", CHARNAME(INDEFINITE));
+    ADD_MESSAGE("There is %s here.", CHAR_NAME(INDEFINITE));
 }
 
 void link::VirtualConstructor(bool Load)
 {
   if(!Load)
-    if(Config == STAIRSUP)
+    if(Config == STAIRS_UP)
       {
 	if(game::GetCurrent())
 	  {
 	    AttachedArea = game::GetCurrent() - 1;
-	    AttachedEntry = STAIRSDOWN;
+	    AttachedEntry = STAIRS_DOWN;
 	  }
 	else
 	  {
-	    AttachedArea = WORLDMAP;
+	    AttachedArea = WORLD_MAP;
 	    AttachedEntry = game::GetCurrentDungeon()->GetIndex();
 	  }
       }
-    else if(Config == STAIRSDOWN)
+    else if(Config == STAIRS_DOWN)
       {
 	AttachedArea = game::GetCurrent() + 1;
-	AttachedEntry = STAIRSUP;
+	AttachedEntry = STAIRS_UP;
       }
 }

@@ -95,6 +95,7 @@ struct itemdatabase
   bool AffectsCharisma;
   bool AffectsMana;
   char DefaultEnchantment;
+  bool PriceIsProportionalToEnchantment;
 };
 
 class itemprototype
@@ -227,66 +228,67 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-  virtual DATABASEVALUE(ushort, Possibility);
-  virtual DATABASEVALUE(vector2d, InHandsPic);
-  virtual DATABASEVALUE(long, Score);
-  virtual DATABASEBOOL(IsDestroyable);
-  virtual DATABASEBOOL(CanBeWished);
-  virtual DATABASEBOOL(IsMaterialChangeable);
-  virtual DATABASEVALUE(uchar, WeaponCategory);
-  virtual DATABASEBOOL(IsPolymorphSpawnable);
-  virtual DATABASEBOOL(IsAutoInitializable);
-  virtual DATABASEVALUE(uchar, Category);
-  virtual DATABASEVALUE(ushort, SoundResistance);
-  virtual DATABASEVALUE(ushort, EnergyResistance);
-  virtual DATABASEVALUE(ushort, AcidResistance);
-  virtual DATABASEVALUE(ushort, FireResistance);
-  virtual DATABASEVALUE(ushort, PoisonResistance);
-  virtual DATABASEVALUE(ushort, BulimiaResistance);
-  virtual DATABASEVALUE(ushort, StrengthModifier);
-  virtual DATABASEVALUE(ushort, FormModifier);
-  virtual DATABASEVALUE(ulong, NPModifier);
-  virtual DATABASEVALUE(ushort, DefaultSize);
-  virtual DATABASEVALUE(ulong, DefaultMainVolume);
-  virtual DATABASEVALUE(ulong, DefaultSecondaryVolume);
-  virtual DATABASEVALUE(ulong, DefaultContainedVolume);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  virtual DATABASEVALUE(ulong, Price);
-  virtual DATABASEVALUE(ulong, BaseEmitation);
-  virtual DATABASEVALUE(const std::string&, Article);
-  virtual DATABASEVALUE(const std::string&, Adjective);
-  virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
-  virtual DATABASEVALUE(const std::string&, NameSingular);
-  virtual DATABASEVALUE(const std::string&, NamePlural);
-  virtual DATABASEVALUE(const std::string&, PostFix);
-  virtual DATABASEVALUE(uchar, ArticleMode);
-  virtual DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
-  virtual DATABASEBOOL(IsPolymorphable);
-  virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
-  virtual DATABASEVALUE(uchar, OKVisualEffects);
-  virtual DATABASEBOOL(CanBeGeneratedInContainer);
-  virtual DATABASEVALUE(uchar, ForcedVisualEffects);
-  virtual DATABASEVALUE(uchar, Roundness);
-  virtual DATABASEVALUE(ushort, GearStates);
-  virtual DATABASEBOOL(IsTwoHanded);
-  virtual DATABASEBOOL(CanBeBroken);
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, WallBitmapPos, ushort);
-  virtual DATABASEVALUE(const std::string&, FlexibleNameSingular);
-  virtual DATABASEBOOL(CanBePiled);
-  DATABASEBOOL(AffectsArmStrength);
-  DATABASEBOOL(AffectsLegStrength);
-  DATABASEBOOL(AffectsDexterity);
-  DATABASEBOOL(AffectsAgility);
-  DATABASEBOOL(AffectsEndurance);
-  DATABASEBOOL(AffectsPerception);
-  DATABASEBOOL(AffectsIntelligence);
-  DATABASEBOOL(AffectsWisdom);
-  DATABASEBOOL(AffectsCharisma);
-  DATABASEBOOL(AffectsMana);
-  virtual DATABASEVALUE(char, DefaultEnchantment);
+  virtual DATA_BASE_VALUE(ushort, Possibility);
+  virtual DATA_BASE_VALUE(vector2d, InHandsPic);
+  virtual DATA_BASE_VALUE(long, Score);
+  virtual DATA_BASE_BOOL(IsDestroyable);
+  virtual DATA_BASE_BOOL(CanBeWished);
+  virtual DATA_BASE_BOOL(IsMaterialChangeable);
+  virtual DATA_BASE_VALUE(uchar, WeaponCategory);
+  virtual DATA_BASE_BOOL(IsPolymorphSpawnable);
+  virtual DATA_BASE_BOOL(IsAutoInitializable);
+  virtual DATA_BASE_VALUE(uchar, Category);
+  virtual DATA_BASE_VALUE(ushort, SoundResistance);
+  virtual DATA_BASE_VALUE(ushort, EnergyResistance);
+  virtual DATA_BASE_VALUE(ushort, AcidResistance);
+  virtual DATA_BASE_VALUE(ushort, FireResistance);
+  virtual DATA_BASE_VALUE(ushort, PoisonResistance);
+  virtual DATA_BASE_VALUE(ushort, BulimiaResistance);
+  virtual DATA_BASE_VALUE(ushort, StrengthModifier);
+  virtual DATA_BASE_VALUE(ushort, FormModifier);
+  virtual DATA_BASE_VALUE(ulong, NPModifier);
+  virtual DATA_BASE_VALUE(ushort, DefaultSize);
+  virtual DATA_BASE_VALUE(ulong, DefaultMainVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultContainedVolume);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
+  virtual DATA_BASE_VALUE(ulong, Price);
+  virtual DATA_BASE_VALUE(ulong, BaseEmitation);
+  virtual DATA_BASE_VALUE(const std::string&, Article);
+  virtual DATA_BASE_VALUE(const std::string&, Adjective);
+  virtual DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
+  virtual DATA_BASE_VALUE(const std::string&, NameSingular);
+  virtual DATA_BASE_VALUE(const std::string&, NamePlural);
+  virtual DATA_BASE_VALUE(const std::string&, PostFix);
+  virtual DATA_BASE_VALUE(uchar, ArticleMode);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
+  virtual DATA_BASE_BOOL(IsPolymorphable);
+  virtual DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
+  virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
+  virtual DATA_BASE_BOOL(CanBeGeneratedInContainer);
+  virtual DATA_BASE_VALUE(uchar, ForcedVisualEffects);
+  virtual DATA_BASE_VALUE(uchar, Roundness);
+  virtual DATA_BASE_VALUE(ushort, GearStates);
+  virtual DATA_BASE_BOOL(IsTwoHanded);
+  virtual DATA_BASE_BOOL(CanBeBroken);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
+  virtual DATA_BASE_VALUE(const std::string&, FlexibleNameSingular);
+  virtual DATA_BASE_BOOL(CanBePiled);
+  DATA_BASE_BOOL(AffectsArmStrength);
+  DATA_BASE_BOOL(AffectsLegStrength);
+  DATA_BASE_BOOL(AffectsDexterity);
+  DATA_BASE_BOOL(AffectsAgility);
+  DATA_BASE_BOOL(AffectsEndurance);
+  DATA_BASE_BOOL(AffectsPerception);
+  DATA_BASE_BOOL(AffectsIntelligence);
+  DATA_BASE_BOOL(AffectsWisdom);
+  DATA_BASE_BOOL(AffectsCharisma);
+  DATA_BASE_BOOL(AffectsMana);
+  virtual DATA_BASE_VALUE(char, DefaultEnchantment);
+  virtual DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -325,15 +327,15 @@ class item : public object
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
-  virtual DATABASEBOOL(CanBeCloned);
-  virtual DATABASEVALUE(ushort, BeamRange);
+  virtual DATA_BASE_BOOL(CanBeCloned);
+  virtual DATA_BASE_VALUE(ushort, BeamRange);
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const { return true; }
   bool CarriedByPlayer() const;
   bool CarriedBy(const character*) const;
   item* DuplicateToStack(stack*);
-  virtual DATABASEVALUE(uchar, MaxCharges);
-  virtual DATABASEVALUE(uchar, MinCharges);
+  virtual DATA_BASE_VALUE(uchar, MaxCharges);
+  virtual DATA_BASE_VALUE(uchar, MinCharges);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break();
@@ -344,18 +346,19 @@ class item : public object
   virtual float GetToHitValueBonus() const { return 1.0f; }
   virtual float GetAPBonus() const { return 1.0f; }
   virtual void DrawContents(const character*) { }
-  virtual DATABASEVALUE(ulong, StorageVolume);
-  virtual DATABASEVALUE(ushort, MaxGeneratedContainedItems);
+  virtual DATA_BASE_VALUE(ulong, StorageVolume);
+  virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
   bool IsBroken() const { return Config & BROKEN != 0; }
   virtual void ReceiveFluidSpill(material*) {}
   virtual char GetEnchantment() const { return 0; }
+  virtual ulong GetEnchantedPrice(char) const;
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ushort);
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_ITEM; }
   virtual bool ShowMaterial() const;
   slot* Slot;
   bool Cannibalised;
@@ -379,7 +382,7 @@ name : public base\
 {\
  public:\
   name(ushort Config = 0, ushort SpecialFlags = 0) : base(donothing()) { Initialize(Config, SpecialFlags); }\
-  name(ushort Config, ushort SpecialFlags, material* FirstMaterial) : base(donothing()) { Initialize(Config, SpecialFlags); SetMainMaterial(FirstMaterial, SpecialFlags & NOPICUPDATE); }\
+  name(ushort Config, ushort SpecialFlags, material* FirstMaterial) : base(donothing()) { Initialize(Config, SpecialFlags); SetMainMaterial(FirstMaterial, SpecialFlags & NO_PIC_UPDATE); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static item* Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
@@ -403,4 +406,3 @@ name : public base\
 }; ITEM_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
-

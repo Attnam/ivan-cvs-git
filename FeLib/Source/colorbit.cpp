@@ -115,7 +115,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    {
 	      ushort ThisColor = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 
-	      if(ThisColor != DEFAULTTRANSPARENT)
+	      if(ThisColor != DEFAULT_TRANSPARENT)
 		reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = ThisColor;
 	    }
 	}
@@ -153,7 +153,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	    {
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
 
-	      if(ThisColor != DEFAULTTRANSPARENT)
+	      if(ThisColor != DEFAULT_TRANSPARENT)
 		{
 		  float Gradient = float(Buffer[x] % 16) / 8;
 		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
@@ -163,7 +163,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
 		}
 	      else
-		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULTTRANSPARENT;
+		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULT_TRANSPARENT;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
@@ -207,7 +207,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 
-	      if(ThisColor != DEFAULTTRANSPARENT)
+	      if(ThisColor != DEFAULT_TRANSPARENT)
 		{
 		  float Gradient = float(PaletteElement % 16) / 8;
 		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
@@ -217,7 +217,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
 		}
 	      else
-		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULTTRANSPARENT;
+		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULT_TRANSPARENT;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
@@ -402,8 +402,8 @@ void colorizablebitmap::CreateFontCache(ushort Color)
 
   ushort ShadeColor = MakeShadeColor(Color);
   bitmap* Font = new bitmap(XSize, YSize);
-  Font->Fill(0, 0, 1, YSize, DEFAULTTRANSPARENT);
-  Font->Fill(0, 0, XSize, 1, DEFAULTTRANSPARENT);
+  Font->Fill(0, 0, 1, YSize, DEFAULT_TRANSPARENT);
+  Font->Fill(0, 0, XSize, 1, DEFAULT_TRANSPARENT);
   bitmap* ShadeFont = Colorize(&ShadeColor);
   ShadeFont->Blit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1);
   MaskedBlit(Font, &Color);
@@ -450,4 +450,3 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
   else
     return BITMAP_ERROR_VECTOR;
 }
-

@@ -28,7 +28,7 @@ void god::Pray()
 	    if(Angel)
 	      {
 		Angel->SetTeam(game::GetPlayer()->GetTeam());
-		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
+		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
       }
@@ -63,7 +63,7 @@ void god::Pray()
 	    if(Angel)
 	      {
 		Angel->SetTeam(game::GetTeam(5));
-		ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
+		ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
       }
@@ -138,7 +138,7 @@ void god::PlayerVomitedOnAltar()
       if(Angel)
 	{
 	  Angel->SetTeam(game::GetTeam(5));
-	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
 }
@@ -156,7 +156,7 @@ character* god::CreateAngel()
       if(game::GetCurrentArea()->IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
-	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));
+	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHAR_NAME(INDEFINITE));
 	  return Angel;
 	}
       else
@@ -204,7 +204,7 @@ bool god::ReceiveOffer(item* Sacrifice)
     {
       if(!Sacrifice->IsDestroyable())
 	{
-	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHAR_NAME(DEFINITE));
 	  return false;
 	}
 
@@ -225,7 +225,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	    }
 	}
 

@@ -32,7 +32,7 @@ Bodypartien ja actioneiden scoret. (timo)
 //Amulet of life saving. (hex)
 //Amulet of ESP.
 //Ring of polymorph. (hex)
-(s) Ring of strength.
+(r) Ring of strength.
 //Ring of infravision. (timo)
 //Ring of teleportation. (hex)
 ?Potion of invisibility. (hex)
@@ -73,7 +73,6 @@ Dipping to corpses, containers etc.
 //Amuletit, cloak
 //Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
-Mana should be hidden.
 ?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
@@ -132,3 +131,5 @@ Cut down the size of Elpuri's cave.
 //Mana should be hidden.
 Solving the Elpuri Cave distance problem.
 //Apply + chests.
+Stats of summoned bodyparts must be made more intelligent.
+Ergonomification of corpse consumption.

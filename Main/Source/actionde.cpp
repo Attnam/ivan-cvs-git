@@ -39,8 +39,8 @@ void faint::Handle()
     Terminate(true);
   else
     {
-      GetActor()->EditExperience(ARMSTRENGTH, -3);
-      GetActor()->EditExperience(LEGSTRENGTH, -3);
+      GetActor()->EditExperience(ARM_STRENGTH, -3);
+      GetActor()->EditExperience(LEG_STRENGTH, -3);
     }
 }
 
@@ -49,7 +49,7 @@ void faint::Terminate(bool Finished)
   if(GetActor()->IsPlayer())
     ADD_MESSAGE("You wake up.");
   else if(GetActor()->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s wakes up.", GetActor()->CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s wakes up.", GetActor()->CHAR_NAME(DEFINITE));
 
   action::Terminate(Finished);
 }
@@ -110,9 +110,9 @@ void consume::Terminate(bool Finished)
   if(Finished)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish %s %s.", Description.c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You finish %s %s.", Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -122,9 +122,9 @@ void consume::Terminate(bool Finished)
   else if(*Consuming)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s %s.", Description.c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You stop %s %s.", Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str(), Consuming->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str(), Consuming->CHAR_NAME(DEFINITE));
 
       if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
@@ -139,7 +139,7 @@ void consume::Terminate(bool Finished)
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s.", Description.c_str());
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Description.c_str());
+	ADD_MESSAGE("%s stops %s.", GetActor()->CHAR_NAME(DEFINITE), Description.c_str());
     }
 
   action::Terminate(Finished);
@@ -189,14 +189,14 @@ void rest::Terminate(bool Finished)
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You finish resting.");
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes resting.", GetActor()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s finishes resting.", GetActor()->CHAR_NAME(DEFINITE));
     }
   else
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop resting.");
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops resting.", GetActor()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops resting.", GetActor()->CHAR_NAME(DEFINITE));
     }
 
   action::Terminate(Finished);
@@ -227,7 +227,7 @@ void dig::Handle()
     }
 
   lsquare* Square = GetActor()->GetNearLSquare(SquareDug);
-  Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARMSTRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
+  Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARM_STRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {
@@ -270,7 +270,7 @@ void dig::Terminate(bool Finished)
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop digging.");
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops digging.", GetActor()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops digging.", GetActor()->CHAR_NAME(DEFINITE));
     }
 
   if(GetRightBackup())
@@ -413,9 +413,9 @@ void read::Terminate(bool Finished)
   if(Finished)
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish reading %s.", Literature->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You finish reading %s.", Literature->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHARNAME(DEFINITE), Literature->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
 
       character* Actor = GetActor();
       Literature->FinishReading(Actor);
@@ -431,9 +431,9 @@ void read::Terminate(bool Finished)
   else if(GetLiterature())
     {
       if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop reading %s.", Literature->CHARNAME(DEFINITE));
+	ADD_MESSAGE("You stop reading %s.", Literature->CHAR_NAME(DEFINITE));
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops reading %s.", GetActor()->CHARNAME(DEFINITE), Literature->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
 
       Literature->MoveTo(GetActor()->GetStack());
     }
@@ -442,7 +442,7 @@ void read::Terminate(bool Finished)
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop reading.");
       else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops reading.", GetActor()->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s stops reading.", GetActor()->CHAR_NAME(DEFINITE));
     }
 
   action::Terminate(Finished);
@@ -567,4 +567,3 @@ ulong read::GetEmitation() const
 {
   return *Literature ? Literature->GetEmitation() : 0;
 }
-

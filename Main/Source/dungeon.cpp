@@ -165,4 +165,3 @@ inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 
   return SaveFile;
 }
-

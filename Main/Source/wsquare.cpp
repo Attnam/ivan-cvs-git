@@ -42,11 +42,11 @@ void wsquare::Draw()
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
       ulong RealLuminance = configuration::ApplyContrastTo(Luminance);
-      GWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, false, true);
-      OWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
+      GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, false, true);
+      OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true, true);
 
       if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
+	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
 
       NewDrawRequested = false;
     }
@@ -156,4 +156,3 @@ void wsquare::CalculateLuminance()
   uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
-

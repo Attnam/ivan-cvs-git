@@ -46,5 +46,3 @@ outputfile& operator<<(outputfile&, dungeon*);
 inputfile& operator>>(inputfile&, dungeon*&);
 
 #endif
-
-

@@ -95,6 +95,3 @@ name : public base\
 }; ROOM_PROTOTYPE(name);
 
 #endif
-
-
-

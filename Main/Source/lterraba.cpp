@@ -91,7 +91,7 @@ void lterrain::Initialize(ushort NewConfig, ushort SpecialFlags)
       InstallDataBase();
       RandomizeVisualEffects();
 
-      if(!(SpecialFlags & NOMATERIALS))
+      if(!(SpecialFlags & NO_MATERIALS))
 	GenerateMaterials();
     }
 
@@ -99,11 +99,11 @@ void lterrain::Initialize(ushort NewConfig, ushort SpecialFlags)
 
   if(!(SpecialFlags & LOAD))
     {
-      if(!(SpecialFlags & NOMATERIALS))
+      if(!(SpecialFlags & NO_MATERIALS))
 	{
 	  CalculateAll();
 
-	  if(!(SpecialFlags & NOPICUPDATE))
+	  if(!(SpecialFlags & NO_PIC_UPDATE))
 	    UpdatePictures();
 	}
     }
@@ -196,4 +196,3 @@ bool olterrain::Enter(bool DirectionUp) const
 
   return false;
 }
-

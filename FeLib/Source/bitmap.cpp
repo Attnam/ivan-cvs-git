@@ -723,12 +723,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *reinterpret_cast<ushort*>(Buffer + (XSize << 1));
 
-	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
+	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += XSize << 1;
 
-	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
@@ -744,12 +744,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *reinterpret_cast<ushort*>(Buffer + 2);
 
-	  if((LastColor == DEFAULTTRANSPARENT || !x) && NextColor != DEFAULTTRANSPARENT)
+	  if((LastColor == DEFAULT_TRANSPARENT || !x) && NextColor != DEFAULT_TRANSPARENT)
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += 2;
 
-	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || x == XSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || x == XSize - 2))
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
@@ -762,7 +762,7 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
   if(!IsIndependent)
     ABORT("Subbitmap outline bitmap creation request detected!");
 
-  Bitmap->Fill(DEFAULTTRANSPARENT);
+  Bitmap->Fill(DEFAULT_TRANSPARENT);
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -774,13 +774,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	{
 	  ushort NextColor = *reinterpret_cast<ushort*>(SrcBuffer + (XSize << 1));
 
-	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
+	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += XSize << 1;
 	  DestBuffer += Bitmap->XSize << 1;
 
-	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastColor = NextColor;
@@ -799,13 +799,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	  ushort NextSrcColor = *reinterpret_cast<ushort*>(SrcBuffer + 2);
 	  ushort NextDestColor = *reinterpret_cast<ushort*>(DestBuffer + 2);
 
-	  if((LastSrcColor == DEFAULTTRANSPARENT || !x) && (NextSrcColor != DEFAULTTRANSPARENT || NextDestColor != DEFAULTTRANSPARENT))
+	  if((LastSrcColor == DEFAULT_TRANSPARENT || !x) && (NextSrcColor != DEFAULT_TRANSPARENT || NextDestColor != DEFAULT_TRANSPARENT))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += 2;
 	  DestBuffer += 2;
 
-	  if((LastSrcColor != DEFAULTTRANSPARENT || LastDestColor != DEFAULTTRANSPARENT) && (NextSrcColor == DEFAULTTRANSPARENT || x == XSize - 2))
+	  if((LastSrcColor != DEFAULT_TRANSPARENT || LastDestColor != DEFAULT_TRANSPARENT) && (NextSrcColor == DEFAULT_TRANSPARENT || x == XSize - 2))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastSrcColor = NextSrcColor;
@@ -817,28 +817,28 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
 {
   bitmap Backup(RES);
-  DOUBLEBUFFER->Blit(&Backup);
+  DOUBLE_BUFFER->Blit(&Backup);
 
   for(ushort c = 0; c <= 5; ++c)
     {
       clock_t StartTime = clock();
       ushort Element = 127 - c * 25;
-      Backup.MaskedBlit(DOUBLEBUFFER, MakeRGB24(Element, Element, Element), 0);
+      Backup.MaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
 
       if(BitmapEditor)
 	BitmapEditor(this);
 
-      SimpleAlphaBlit(DOUBLEBUFFER, c * 50, 0);
+      SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
       graphics::BlitDBToScreen();
       while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
     }
 
-  DOUBLEBUFFER->Fill(0);
+  DOUBLE_BUFFER->Fill(0);
 
   if(BitmapEditor)
     BitmapEditor(this);
 
-  MaskedBlit(DOUBLEBUFFER, uchar(0), 0);
+  MaskedBlit(DOUBLE_BUFFER, uchar(0), 0);
   graphics::BlitDBToScreen();
 }
 
@@ -932,7 +932,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
 
-	      if(Pixel != DEFAULTTRANSPARENT)
+	      if(Pixel != DEFAULT_TRANSPARENT)
 		for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
 		  for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
 		    Bitmap->GetImage()[y2][x2] = Pixel;
@@ -953,7 +953,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
 
-	      if(Pixel != DEFAULTTRANSPARENT)
+	      if(Pixel != DEFAULT_TRANSPARENT)
 		Bitmap->GetImage()[ty][tx] = Pixel;
 	    }
 	}

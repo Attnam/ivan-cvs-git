@@ -103,8 +103,8 @@ void area::SendNewDrawRequest()
     for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
       Map[x][y]->SendNewDrawRequest();
 
-  DOUBLEBUFFER->Fill(0);
-  DOUBLEBUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);
+  DOUBLE_BUFFER->Fill(0);
+  DOUBLE_BUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARK_GRAY, true);
 }
 
 void area::MoveCharacter(vector2d From, vector2d To)

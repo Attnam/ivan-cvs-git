@@ -34,7 +34,7 @@ void shop::Enter(character* Customer)
       {
 	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CHAR_NAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("Something welcomes you warmly to the shop.");
       }
@@ -56,7 +56,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(-Price);
 	Master->EditMoney(Price);
 	return true;
@@ -81,9 +81,9 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
       if(Customer->GetMoney() >= Price)
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
@@ -97,9 +97,9 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
       else
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHAR_NAME(PLURAL), Price);
 
 	  return false;
 	}
@@ -126,7 +126,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(Price);
 	Master->EditMoney(-Price);
 	return true;
@@ -151,9 +151,9 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
       if(Master->GetMoney() >= Price)
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"What a fine pile of %d %s. I'll pay %d gold pieces for them.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"What a fine pile of %d %s. I'll pay %d gold pieces for them.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
@@ -187,7 +187,7 @@ void temple::Enter(character* Pilgrim)
       {
 	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHAR_NAME(DEFINITE), Master->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->Name().c_str());
       }
@@ -403,7 +403,7 @@ void library::Enter(character* Customer)
       {
 	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHARNAME(DEFINITE), Master->GetPersonalPronoun().c_str());
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHAR_NAME(DEFINITE), Master->GetPersonalPronoun().c_str());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }
@@ -424,7 +424,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
     {
       if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	  Customer->EditMoney(-Price);
 	  Master->EditMoney(Price);
 	  return true;
@@ -450,9 +450,9 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
       if(Customer->GetMoney() >= Price)
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"Ah! Those %d %s cost %d gold pieces. No haggling, please.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
@@ -466,9 +466,9 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
       else
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"Don't touch those %s, beggar! They are worth %d gold pieces!\"", ForSale->CHAR_NAME(PLURAL), Price);
 
 	  return false;
 	}
@@ -495,7 +495,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
+	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	Master->SetMoney(Master->GetMoney() - Price);
 	return true;
@@ -520,9 +520,9 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
       if(Master->GetMoney() >= Price)
 	{
 	  if(Amount == 1)
-	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
-	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHARNAME(PLURAL), Price);
+	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
@@ -621,4 +621,3 @@ bool shop::DestroyTerrain(character* Infidel, olterrain* Terrain)
   else
     return false; 
 }
-

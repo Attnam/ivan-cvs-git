@@ -127,31 +127,31 @@ class glterrain : public lterrain, public gterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const { return &glterrain_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  virtual DATABASEVALUE(const std::string&, Article);
-  virtual DATABASEVALUE(const std::string&, Adjective);
-  virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
-  virtual DATABASEVALUE(const std::string&, NameSingular);
-  virtual DATABASEVALUE(const std::string&, NamePlural);
-  virtual DATABASEVALUE(const std::string&, PostFix);
-  virtual DATABASEVALUE(uchar, ArticleMode);
-  virtual DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
-  virtual DATABASEVALUE(uchar, OKVisualEffects);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorB, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorC, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorD, ushort);
-  virtual DATABASEVALUE(const std::string&, SitMessage);
-  virtual DATABASEVALUE(ulong, DefaultMainVolume);
-  virtual DATABASEVALUE(ulong, DefaultSecondaryVolume);
-  virtual DATABASEVALUE(ulong, DefaultContainedVolume);
-  virtual DATABASEBOOL(ShowMaterial);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
+  virtual DATA_BASE_VALUE(const std::string&, Article);
+  virtual DATA_BASE_VALUE(const std::string&, Adjective);
+  virtual DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
+  virtual DATA_BASE_VALUE(const std::string&, NameSingular);
+  virtual DATA_BASE_VALUE(const std::string&, NamePlural);
+  virtual DATA_BASE_VALUE(const std::string&, PostFix);
+  virtual DATA_BASE_VALUE(uchar, ArticleMode);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
+  virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
+  virtual DATA_BASE_VALUE(const std::string&, SitMessage);
+  virtual DATA_BASE_VALUE(ulong, DefaultMainVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultContainedVolume);
+  virtual DATA_BASE_BOOL(ShowMaterial);
   static glterrain* Clone(ushort, ushort) { return 0; }
  protected:
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex() const { return GRGLTERRAIN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
   const database* DataBase;
   static prototype glterrain_ProtoType;
 };
@@ -217,39 +217,39 @@ class olterrain : public lterrain, public oterrain
   virtual const prototype* GetProtoType() const { return &olterrain_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual void ShowRestMessage(character*) const;
-  virtual DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  virtual DATABASEVALUE(const std::string&, Article);
-  virtual DATABASEVALUE(const std::string&, Adjective);
-  virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
-  virtual DATABASEVALUE(const std::string&, NameSingular);
-  virtual DATABASEVALUE(const std::string&, NamePlural);
-  virtual DATABASEVALUE(const std::string&, PostFix);
-  virtual DATABASEVALUE(uchar, ArticleMode);
-  virtual DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
-  virtual DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
-  virtual DATABASEVALUE(uchar, OKVisualEffects);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorB, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorC, ushort);
-  virtual DATABASEVALUEWITHPARAMETER(ushort, MaterialColorD, ushort);
-  virtual DATABASEVALUE(const std::string&, SitMessage);
-  virtual DATABASEVALUE(ulong, DefaultMainVolume);
-  virtual DATABASEVALUE(ulong, DefaultSecondaryVolume);
-  virtual DATABASEVALUE(ulong, DefaultContainedVolume);
-  virtual DATABASEBOOL(ShowMaterial);
-  virtual DATABASEVALUE(const std::string&, DigMessage);
-  virtual DATABASEBOOL(CanBeDug);
-  virtual DATABASEBOOL(IsSafeToDestroy);
-  virtual DATABASEVALUE(uchar, RestModifier);
-  virtual DATABASEVALUE(const std::string&, RestMessage);
-  virtual DATABASEBOOL(IsUpLink);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
+  virtual DATA_BASE_VALUE(const std::string&, Article);
+  virtual DATA_BASE_VALUE(const std::string&, Adjective);
+  virtual DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
+  virtual DATA_BASE_VALUE(const std::string&, NameSingular);
+  virtual DATA_BASE_VALUE(const std::string&, NamePlural);
+  virtual DATA_BASE_VALUE(const std::string&, PostFix);
+  virtual DATA_BASE_VALUE(uchar, ArticleMode);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
+  virtual DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
+  virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
+  virtual DATA_BASE_VALUE(const std::string&, SitMessage);
+  virtual DATA_BASE_VALUE(ulong, DefaultMainVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
+  virtual DATA_BASE_VALUE(ulong, DefaultContainedVolume);
+  virtual DATA_BASE_BOOL(ShowMaterial);
+  virtual DATA_BASE_VALUE(const std::string&, DigMessage);
+  virtual DATA_BASE_BOOL(CanBeDug);
+  virtual DATA_BASE_BOOL(IsSafeToDestroy);
+  virtual DATA_BASE_VALUE(uchar, RestModifier);
+  virtual DATA_BASE_VALUE(const std::string&, RestMessage);
+  virtual DATA_BASE_BOOL(IsUpLink);
   static olterrain* Clone(ushort, ushort) { return 0; }
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
  protected:
   virtual void InstallDataBase();
-  virtual uchar GetGraphicsContainerIndex() const { return GROLTERRAIN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
   const database* DataBase;
   short HP;
   static prototype olterrain_ProtoType;
@@ -294,4 +294,3 @@ LTERRAIN(\
 );
 
 #endif
-

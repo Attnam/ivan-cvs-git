@@ -556,5 +556,3 @@ VOID DXUtil_Trace( TCHAR* strMsg, ... )
 #else
 VOID DXUtil_Trace(TCHAR*, ... ) { }
 #endif
-
-

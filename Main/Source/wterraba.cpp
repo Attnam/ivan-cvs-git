@@ -17,18 +17,18 @@
 void wterrain::AddName(std::string& String, uchar Case) const
 {
   if(!(Case & PLURAL))
-    if(!(Case & ARTICLEBIT))
+    if(!(Case & ARTICLE_BIT))
       String << GetNameStem();
     else
-      if(!(Case & INDEFINEBIT))
+      if(!(Case & INDEFINE_BIT))
 	String << "the " << GetNameStem();
       else
 	String << (LongerArticle() ? "an " : "a ") << GetNameStem();
   else
-    if(!(Case & ARTICLEBIT))
+    if(!(Case & ARTICLE_BIT))
       String << GetNameStem() << " terrains";
     else
-      if(!(Case & INDEFINEBIT))
+      if(!(Case & INDEFINE_BIT))
 	String << "the " << GetNameStem() << " terrains";
       else
 	String << GetNameStem() << " terrains";

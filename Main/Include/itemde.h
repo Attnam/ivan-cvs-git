@@ -232,7 +232,7 @@ class ITEM
   bodyarmor,
   armor,
  public:
-  virtual ulong GetPrice() const { return (armor::GetPrice() << 2) + item::GetPrice(); }
+  virtual ulong GetPrice() const { return (armor::GetPrice() << 2) + GetEnchantedPrice(Enchantment); }
   virtual bool IsBodyArmor(const character*) const { return true; }
  protected:
   virtual const std::string& GetNameSingular() const { return GetMainMaterial()->GetFlexibility() > 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
@@ -653,7 +653,7 @@ class ITEM
   cloak,
   armor,
  public:
-    virtual ulong GetPrice() const { return armor::GetPrice() * 20 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() * 20 + GetEnchantedPrice(Enchantment); }
   virtual bool IsCloak(const character*) const { return true; }
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
@@ -664,7 +664,7 @@ class ITEM
   boot,
   armor,
  public:
-    virtual ulong GetPrice() const { return armor::GetPrice() / 5 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
   virtual bool IsBoot(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
@@ -674,7 +674,7 @@ class ITEM
   gauntlet, 
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
   virtual bool IsGauntlet(const character*) const { return true; }
   virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
 );
@@ -684,7 +684,7 @@ class ITEM
   belt, 
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() * 5 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() * 5 + GetEnchantedPrice(Enchantment); }
   virtual bool IsBelt(const character*) const { return true; }
   virtual ushort GetFormModifier() const; 
 );
@@ -717,7 +717,7 @@ class ABSTRACT_ITEM
   friend class corpse;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_HUMANOID; }
   character* GetMaster() const { return Master; }
   humanoid* GetHumanoidMaster() const;
   void SetMaster(character* What) { Master = What; }
@@ -789,7 +789,7 @@ class ABSTRACT_ITEM
   virtual void VirtualConstructor(bool);
   virtual void AddPostFix(std::string&) const;
   virtual bool ShowMaterial() const { return false; }
-  virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
+  virtual uchar GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return ColorB; }
   virtual ushort GetMaterialColorC(ushort) const { return ColorC; }
@@ -826,7 +826,7 @@ class ITEM
   void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
   item* GetAmulet() const { return *AmuletSlot; }
   virtual void DropEquipment();
-  virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
+  virtual uchar GetBodyPartIndex() const { return HEAD_INDEX; }
   float GetBiteDamage() const { return BiteDamage; }
   ushort GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
   ushort GetBiteMaxDamage() const { return ushort(BiteDamage * 1.25f + 1); }
@@ -855,7 +855,7 @@ class ABSTRACT_ITEM
   torso,
   bodypart,
  public:
-  virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
+  virtual uchar GetBodyPartIndex() const { return TORSO_INDEX; }
   virtual float GetRoughChanceToHit(float, float) const;
 );
 
@@ -864,7 +864,7 @@ class ITEM
   normaltorso,
   torso,
  public:
-  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_CHARACTER; }
   virtual ushort GetTotalResistance(uchar) const;
 );
 
@@ -877,7 +877,7 @@ class ITEM
   virtual ~humanoidtorso();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
+  virtual uchar GetGraphicsContainerIndex() const { return GR_HUMANOID; }
   virtual ushort GetTotalResistance(uchar) const;
   void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
   item* GetBodyArmor() const { return *BodyArmorSlot; }
@@ -980,12 +980,12 @@ class ITEM
   arm,
  public:
   rightarm(const rightarm&);
-  virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
+  virtual uchar GetBodyPartIndex() const { return RIGHT_ARMINDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const { return SpecialFlags|STRIGHTARM; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
 );
 
 class ITEM
@@ -994,12 +994,12 @@ class ITEM
   arm,
  public:
   leftarm(const leftarm&);
-  virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
+  virtual uchar GetBodyPartIndex() const { return  LEFT_ARMINDEX; }
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const { return SpecialFlags|STLEFTARM; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_LEFT_ARM; }
 );
 
 class ITEM
@@ -1008,9 +1008,9 @@ class ITEM
   bodypart,
  public:
   virtual ushort GetTotalResistance(uchar) const;
-  virtual uchar GetBodyPartIndex() const { return GROININDEX; }
+  virtual uchar GetBodyPartIndex() const { return GROIN_INDEX; }
  protected:
-  virtual uchar GetSpecialFlags() const { return SpecialFlags|STGROIN; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_GROIN; }
 );
 
 class ABSTRACT_ITEM
@@ -1074,10 +1074,10 @@ class ITEM
   leg,
  public:
   rightleg(const rightleg&);
-  virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
+  virtual uchar GetBodyPartIndex() const { return RIGHT_LEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const { return SpecialFlags|STRIGHTLEG; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_LEG; }
 );
 
 class ITEM
@@ -1086,10 +1086,10 @@ class ITEM
   leg,
  public:
   leftleg(const leftleg&);
-  virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
+  virtual uchar GetBodyPartIndex() const { return LEFT_LEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags() const { return SpecialFlags|STLEFTLEG; }
+  virtual uchar GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
 );
 
 class ITEM
@@ -1276,7 +1276,7 @@ class ITEM
   helmet,
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
   virtual bool IsHelmet(const character*) const { return true; }
 );
 
@@ -1296,7 +1296,7 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
-  virtual uchar GetSpecialFlags() const { return STFLAME; }
+  virtual uchar GetSpecialFlags() const { return ST_FLAME; }
 );
 
 class ITEM
@@ -1364,9 +1364,9 @@ class ITEM
 
 class ITEM
 (
- skull,
- item,
- public:
+  skull,
+  item,
+  ;
 );
-#endif
 
+#endif

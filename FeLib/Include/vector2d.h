@@ -35,5 +35,3 @@ struct vector2d
 };
 
 #endif
-
-

@@ -49,7 +49,7 @@ bool item::IsDrinkable(const character* Eater) const
 
 bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
-  if(Direction == RANDOMDIR)
+  if(Direction == RANDOM_DIR)
     Direction = RAND() % 8;
 
   vector2d StartingPos = GetPos();
@@ -99,7 +99,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
   //MoveTo(GetNearLSquare(Pos)->GetStack());
 
   if(Breaks)
-    ReceiveDamage(Thrower, short(Speed), PHYSICALDAMAGE);
+    ReceiveDamage(Thrower, short(Speed), PHYSICAL_DAMAGE);
 
   if(Pos == StartingPos)
     return false;
@@ -118,9 +118,9 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
   if(Dude->DodgesFlyingItem(this, Speed)) 
     {
       if(Dude->IsPlayer())
-	ADD_MESSAGE("%s misses you.", CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s misses you.", CHAR_NAME(DEFINITE));
       else if(Dude->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s misses %s.", CHARNAME(DEFINITE), Dude->CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s misses %s.", CHAR_NAME(DEFINITE), Dude->CHAR_NAME(DEFINITE));
 
       return false;
     }
@@ -240,7 +240,7 @@ std::string item::ItemCategoryName(uchar Category)
     case HELMET: return "Helmets";
     case AMULET: return "Amulets";
     case CLOAK: return "Cloaks";
-    case BODYARMOR: return "Body armors";
+    case BODY_ARMOR: return "Body armors";
     case WEAPON: return "Weapons";
     case SHIELD: return "Shields";
     case RING: return "Rings";
@@ -263,7 +263,7 @@ ushort item::GetResistance(uchar Type) const
 {
   switch(Type)
     {
-    case PHYSICALDAMAGE: return GetStrengthValue();
+    case PHYSICAL_DAMAGE: return GetStrengthValue();
     case SOUND: return GetSoundResistance();
     case ENERGY: return GetEnergyResistance();
     case ACID: return GetAcidResistance();
@@ -290,7 +290,7 @@ void item::GenerateLeftOvers(character*)
 bool item::Open(character* Char)
 {
   if(Char->IsPlayer())
-    ADD_MESSAGE("You can't open %s.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("You can't open %s.", CHAR_NAME(DEFINITE));
 
   return false;
 }
@@ -317,7 +317,7 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
       LoadDataBaseStats();
       RandomizeVisualEffects();
 
-      if(!(SpecialFlags & NOMATERIALS))
+      if(!(SpecialFlags & NO_MATERIALS))
 	GenerateMaterials();
     }
 
@@ -325,11 +325,11 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
 
   if(!(SpecialFlags & LOAD))
     {
-      if(!(SpecialFlags & NOMATERIALS))
+      if(!(SpecialFlags & NO_MATERIALS))
 	{
 	  CalculateAll();
 
-	  if(!(SpecialFlags & NOPICUPDATE))
+	  if(!(SpecialFlags & NO_PIC_UPDATE))
 	    UpdatePictures();
 	}
     }
@@ -484,7 +484,7 @@ const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
 
 bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(CanBeBroken() && !(IsBroken()) && Type & (PHYSICALDAMAGE|SOUND|ENERGY))
+  if(CanBeBroken() && !(IsBroken()) && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY))
     {
       ushort StrengthValue = GetStrengthValue();
 
@@ -525,7 +525,7 @@ void item::AddMiscellaneousInfo(felist& List) const
   Entry << int(GetOfferValue(NEUTRAL));
   Entry.resize(70, ' ');
   Entry << int(GetNutritionValue());
-  List.AddEntry(Entry, LIGHTGRAY);
+  List.AddEntry(Entry, LIGHT_GRAY);
 }
 
 ulong item::GetNutritionValue() const
@@ -539,7 +539,7 @@ void item::SignalSpoil(material*)
     return;
 
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s spoils completely.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s spoils completely.", CHAR_NAME(DEFINITE));
 
   RemoveFromSlot();
   SendToHell();
@@ -579,7 +579,7 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
 void item::Break()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("%s breaks.", CHAR_NAME(DEFINITE));
 
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);
@@ -616,4 +616,7 @@ void item::SignalEnchantmentChange()
     Slot->SignalEnchantmentChange();
 }
 
-
+ulong item::GetEnchantedPrice(char Enchantment) const
+{
+  return !PriceIsProportionalToEnchantment() ? item::GetPrice() : Max(item::GetPrice() * Enchantment, 0UL);
+}

@@ -58,7 +58,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
-      GETKEY(false);
+      GET_KEY(false);
 }
 
 ulong iosystem::CountChars(char cSF, const std::string& sSH)
@@ -80,7 +80,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
   bool bReady = false;
   ulong iSelected = 0;
   bitmap Backup(RES);
-  DOUBLEBUFFER->Blit(&Backup);
+  DOUBLE_BUFFER->Blit(&Backup);
   bitmap Buffer(RES);
   ushort c = 0;
 
@@ -135,29 +135,29 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
       if(c < 5)
 	{
 	  ushort Element = 127 - c * 25;
-	  Backup.MaskedBlit(DOUBLEBUFFER, MakeRGB24(Element, Element, Element), 0);
-	  Buffer.SimpleAlphaBlit(DOUBLEBUFFER, c++ * 50, 0);
+	  Backup.MaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
+	  Buffer.SimpleAlphaBlit(DOUBLE_BUFFER, c++ * 50, 0);
 	  graphics::BlitDBToScreen();
 	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
-	  k = READKEY();
+	  k = READ_KEY();
 	}
       else
 	{
-	  Buffer.Blit(DOUBLEBUFFER);
+	  Buffer.Blit(DOUBLE_BUFFER);
 	  graphics::BlitDBToScreen();
-	  k = GETKEY(false);
+	  k = GET_KEY(false);
 	}
 		
       switch(k)
 	{	
-	case KEYUP:
+	case KEY_UP:
 	  if(iSelected > 0)
 	    --iSelected;
 	  else
 	    iSelected = (CountChars('\r',sMS)-1);
 	  break;
 
-	case KEYDOWN:
+	case KEY_DOWN:
 	  if(iSelected < (CountChars('\r',sMS)-1))
 	    ++iSelected;
 	  else
@@ -190,31 +190,31 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 
   std::string Input;
   bool TooShort = false;
-  FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
+  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 10, MaxLetters * 8 + 9, 9, 0);
-      FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, MaxLetters * 8 + 9, 9, 0);
+      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 
       if(TooShort)
 	{
-	  FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 30, Color, "Too short!");
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 30, Color, "Too short!");
 	  TooShort = false;
 	}
 
       graphics::BlitDBToScreen();
 
       if(TooShort)
-	DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 30, 81, 9, 0);
+	DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 30, 81, 9, 0);
 		
-      while(!(LastKey >= 0x20 || LastKey == KEYBACKSPACE || LastKey == KEYENTER || LastKey == KEYESC))
-	LastKey = GETKEY(false);
+      while(!(LastKey >= 0x20 || LastKey == KEY_BACK_SPACE || LastKey == KEY_ENTER || LastKey == KEY_ESC))
+	LastKey = GET_KEY(false);
 
-      if(LastKey == KEYESC && AllowExit)
+      if(LastKey == KEY_ESC && AllowExit)
 	return "";
 		
-      if(LastKey == KEYBACKSPACE)
+      if(LastKey == KEY_BACK_SPACE)
 	{
 	  if(Input.length())
 	    Input.resize(Input.length() - 1);
@@ -222,7 +222,7 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 	  continue;
 	}
 
-      if(LastKey == KEYENTER)
+      if(LastKey == KEY_ENTER)
 	if(Input.length() >= MinLetters)
 	  break;
 	else
@@ -257,16 +257,16 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
     }
 
   std::string Input;
-  FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
+  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 10, 105, 9, 0);
-      FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 105, 9, 0);
+      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
       graphics::BlitDBToScreen();
 
       while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()))
-	LastKey = GETKEY(false);
+	LastKey = GET_KEY(false);
 
       if(LastKey == 8)
 	{
@@ -317,18 +317,18 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
       if(Handler)
 	Handler(BarValue);
 
-      DOUBLEBUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
-      DOUBLEBUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
-      FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
-      DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
-      DOUBLEBUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
-      DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
-      DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 12, Pos.X + 1, Pos.Y + 18, Color1, true);
-      DOUBLEBUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
+      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
+      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
+      DOUBLE_BUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
+      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
+      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 12, Pos.X + 1, Pos.Y + 18, Color1, true);
+      DOUBLE_BUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()) && LastKey != '<' && LastKey != '>' && LastKey != KEYRIGHT && LastKey != KEYLEFT)
-	LastKey = GETKEY(false);
+      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()) && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
+	LastKey = GET_KEY(false);
 
       if(LastKey == 8)
 	{
@@ -341,7 +341,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
       if(LastKey == 13)
 	break;
 
-      if(LastKey == '<' || LastKey == KEYLEFT)
+      if(LastKey == '<' || LastKey == KEY_LEFT)
 	{
 	  BarValue -= Step;
 
@@ -353,7 +353,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
 	  continue;
 	}
 
-      if(LastKey == '>' || LastKey == KEYRIGHT)
+      if(LastKey == '>' || LastKey == KEY_RIGHT)
 	{
 	  BarValue += Step;
 
@@ -461,4 +461,3 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
   return Buffer.GetEntry(Check);
 #endif
 }
-

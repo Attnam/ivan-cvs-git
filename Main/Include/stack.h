@@ -120,4 +120,3 @@ class stack
 };
 
 #endif
-

@@ -46,10 +46,10 @@
 #include "wsquare.h"
 #include "allocate.h"
 
-#define SAVEFILE_VERSION 110 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 110 // Increment this if changes make savefiles incompatible
 
 #define LOADED 0
-#define NEWGAME 1
+#define NEW_GAME 1
 #define BACK 2
 
 class quitrequest { };
@@ -144,7 +144,7 @@ command* game::Command[] =
   0
 };
 
-int game::MoveCommandKey[] = { KEYHOME, KEYUP, KEYPAGEUP, KEYLEFT, KEYRIGHT, KEYEND, KEYDOWN, KEYPAGEDOWN, '.' };
+int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
 
@@ -218,7 +218,7 @@ bool game::Init(const std::string& Name)
 	ADD_MESSAGE("Game loaded successfully.");
 	return true;
       }
-    case NEWGAME:
+    case NEW_GAME:
       {
 	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
 			     "Constantly you have had to fight against ultra-violent bears and\n"
@@ -467,7 +467,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
     if(!IsInWilderness() || GetWorldMap()->GetSquare(CursorPos)->GetLastSeen() || GetSeeWholeMapCheat())
       GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
     else
-      DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
+      DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
 
   globalwindowhandler::UpdateTick();
   GetCurrentArea()->Draw();
@@ -485,7 +485,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
       vector2d ScreenCordinates = CalculateScreenCoordinates(CursorPos);
 
       if(DoZoom())
-	DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
+	DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
 
       igraph::DrawCursor(ScreenCordinates);
     }
@@ -494,7 +494,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
 bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
-  SaveFile << ushort(SAVEFILE_VERSION);
+  SaveFile << ushort(SAVE_FILE_VERSION);
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
   SaveFile << LOSTurns;
@@ -519,15 +519,15 @@ uchar game::Load(const std::string& SaveName)
   inputfile SaveFile(SaveName + ".sav", false);
 
   if(!SaveFile.IsOpen())
-    return NEWGAME;
+    return NEW_GAME;
 
   ushort Version;
   SaveFile >> Version;
 
-  if(Version != SAVEFILE_VERSION)
+  if(Version != SAVE_FILE_VERSION)
     {
-      if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", LIGHTGRAY))
-	return NEWGAME;
+      if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", LIGHT_GRAY))
+	return NEW_GAME;
       else
 	return BACK;
     }
@@ -735,18 +735,18 @@ void game::ShowLevelMessage()
 void game::TriggerQuestForGoldenEagleShirt()
 {
   BusyAnimationDisabled = true;
-  GetDungeon(ELPURICAVE)->PrepareLevel(DARKLEVEL, false);
+  GetDungeon(ELPURI_CAVE)->PrepareLevel(DARK_LEVEL, false);
   BusyAnimationDisabled = false;
-  level* DarkLevel = GetDungeon(ELPURICAVE)->GetLevel(DARKLEVEL);
-  olterrain* Stairs = new link(STAIRSDOWN);
-  Stairs->SetAttachedArea(DARKLEVEL + 1);
-  vector2d Pos = DarkLevel->GetRandomSquare(0, INROOM);
+  level* DarkLevel = GetDungeon(ELPURI_CAVE)->GetLevel(DARK_LEVEL);
+  olterrain* Stairs = new link(STAIRS_DOWN);
+  Stairs->SetAttachedArea(DARK_LEVEL + 1);
+  vector2d Pos = DarkLevel->GetRandomSquare(0, IN_ROOM);
   DarkLevel->GetLSquare(Pos)->ChangeOLTerrain(Stairs);
 
   if(!DarkLevel->GetLevelMessage().length())
     DarkLevel->SetLevelMessage("You feel something has changed since you were last here...");
 
-  GetDungeon(ELPURICAVE)->SaveLevel(SaveName(), DARKLEVEL);
+  GetDungeon(ELPURI_CAVE)->SaveLevel(SaveName(), DARK_LEVEL);
 }
 
 uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
@@ -1017,27 +1017,27 @@ void game::CreateTeams()
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
 long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
 long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, TopicColor, Color1, Color2, false, Handler);
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
@@ -1075,7 +1075,7 @@ bool game::HandleQuitMessage()
       if(IsInGetCommand())
 	{
 #ifndef WIN32
-	  switch(game::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHTGRAY))
+	  switch(game::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHT_GRAY))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1099,7 +1099,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHTGRAY))
+	if(game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHT_GRAY))
 #endif
 	  {
 	    RemoveSaves();
@@ -1170,7 +1170,7 @@ void game::CreateGods()
 
 void game::BusyAnimation(bitmap* Buffer)
 {
-  static bitmap Elpuri(16, 16, TRANSPARENTCOL);
+  static bitmap Elpuri(16, 16, TRANSPARENT_COLOR);
   static bool ElpuriLoaded = false;
   static double Rotation = 0;
   static clock_t LastTime = 0;
@@ -1200,7 +1200,7 @@ void game::BusyAnimation(bitmap* Buffer)
       for(x = 0; x < 4; ++x)
 	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB16(255 - 12 * x,0,0));
 
-      if(Buffer == DOUBLEBUFFER)
+      if(Buffer == DOUBLE_BUFFER)
 	graphics::BlitDBToScreen();
 
       LastTime = clock();
@@ -1210,10 +1210,10 @@ void game::BusyAnimation(bitmap* Buffer)
 int game::AskForKeyPress(const std::string& Topic)
 {
   DrawEverythingNoBlit();
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
   graphics::BlitDBToScreen();
-  int Key = GETKEY();
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  int Key = GET_KEY();
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Key;
 }
 
@@ -1235,7 +1235,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
       if(!Square->GetLastSeen() && (!Square->GetCharacter() || !Square->GetCharacter()->CanBeSeenByPlayer()) && !GetSeeWholeMapCheat())
-	DOUBLEBUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
+	DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), vector2d(16, 16), BLACK);
       else
 	GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 
@@ -1245,7 +1245,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	  break;
 	}
 
-      if(Key == KEYESC)
+      if(Key == KEY_ESC)
 	{
 	  Return = vector2d(-1, -1);
 	  break;
@@ -1274,15 +1274,15 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y > GetCamera().Y + GetScreenSize().Y - 2)
 	UpdateCameraYWithPos(CursorPos.Y);
 
-      FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
+      FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.c_str());
       SetCursorPos(CursorPos);
       DrawEverythingNoBlit();
       graphics::BlitDBToScreen();
-      Key = GETKEY();
+      Key = GET_KEY();
     }
 
-  DOUBLEBUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
-  DOUBLEBUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
+  DOUBLE_BUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
   SetDoZoom(false);
   SetCursorPos(vector2d(-1, -1));
   DrawEverythingNoBlit();
@@ -1379,13 +1379,13 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
   va_end(Arguments);
 
   DrawEverythingNoBlit();
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Message.c_str());
+  FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Message.c_str());
   graphics::BlitDBToScreen();
   int Return;
 
   while(true)
     {
-      int k = GETKEY();
+      int k = GET_KEY();
       std::vector<int>::iterator i = std::find(KeyVector.begin(), KeyVector.end(), k);
 
       if(i != KeyVector.end())
@@ -1400,7 +1400,7 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
 	}
     }
 
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
@@ -1450,11 +1450,11 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
       if(Character && Character->CanBeSeenByPlayer())
 	{
 	  if(Character->GetTeam() != GetPlayer()->GetTeam())
-	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHARNAME(DEFINITE), Character->GetPersonalPronoun().c_str());
+	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHAR_NAME(DEFINITE), Character->GetPersonalPronoun().c_str());
 	  else if(Character->IsPlayer())
 	    ADD_MESSAGE("You can't rename yourself!");
 	  else if(!Character->IsNameable())
-	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHARNAME(DEFINITE), Character->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHAR_NAME(DEFINITE), Character->CHAR_NAME(DEFINITE));
 	  else
 	    {
 	      std::string Topic = "What name will you give to " + Character->GetName(UNARTICLED) + "?";
@@ -1557,7 +1557,7 @@ void game::InitDangerMap()
 		First = false;
 	      }
 
-	    character* Char = Proto->Clone(i->first, NOPICUPDATE|NOEQUIPMENTPICUPDATE);
+	    character* Char = Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
 	    DangerMap[configid(c, i->first)] = Char->GetRelativeDanger(Player, true);
 	    delete Char;
 	  }
@@ -1576,7 +1576,7 @@ void game::CalculateNextDanger()
 
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
-      character* Char = Proto->Clone(NextDangerId.Config, NOPICUPDATE|NOEQUIPMENTPICUPDATE);
+      character* Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       DangerIterator->second = (DangerIterator->second * 9 + Char->GetRelativeDanger(Player, true)) / 10;
       delete Char;
 
@@ -1630,7 +1630,7 @@ bool game::LeaveWorldMap(std::vector<character*>& Group)
 
 void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryIndex)
 {
-  if(Area != WORLDMAP)
+  if(Area != WORLD_MAP)
     {
       SetIsInWilderness(false);
       SetCurrent(Area);

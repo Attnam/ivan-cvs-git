@@ -136,7 +136,7 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
   SignalVolumeAndWeightChange();
 
-  if(!(SpecialFlags & NOPICUPDATE))
+  if(!(SpecialFlags & NO_PIC_UPDATE))
     UpdatePictures();
 
   return OldMaterial;
@@ -153,7 +153,7 @@ void object::UpdatePictures()
   ushort FlyAmount = GetFlyAmount(); 
   bool Sparkling = false;
 
-  if(!(SpecialFlags & STFLAME))
+  if(!(SpecialFlags & ST_FLAME))
     {
       bool MColorSparkling[4] = { false, false, false, false };
 
@@ -412,21 +412,3 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
-
-/*void object::CalculateAnimationFrames()
-{
-  InitAnimationFrames();
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->GetAnimationFrames() > AnimationFrames && AllowSparkling())
-      AnimationFrames = GetMaterial(c)->GetAnimationFrames();
-}
-
-void object::InitAnimationFrames()
-{
-  AnimationFrames = GetClassAnimationFrames();
-
-  if(AnimationFrames < 16 && GetSpecialFlags() & FLAME)
-    AnimationFrames = 16;
-}*/
-

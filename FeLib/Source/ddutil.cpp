@@ -793,5 +793,3 @@ HRESULT CSurface::GetBitMaskInfo( DWORD dwBitMask, DWORD* pdwShift, DWORD* pdwBi
 
   return S_OK;
 }
-
-

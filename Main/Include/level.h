@@ -89,5 +89,3 @@ inline inputfile& operator>>(inputfile& SaveFile, level*& Level)
 }
 
 #endif
-
-

@@ -232,13 +232,13 @@ void worldmap::Generate()
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
-      SetEntryPos(ELPURICAVE, ElpuriCavePos);
+      SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
       GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
-      SetEntryPos(NEWATTNAM, NewAttnamPos);
+      SetEntryPos(NEW_ATTNAM, NewAttnamPos);
       GetWSquare(TunnelEntry)->ChangeOWTerrain(new underwatertunnel);
-      SetEntryPos(UNDERWATERTUNNEL, TunnelEntry);
+      SetEntryPos(UNDER_WATER_TUNNEL, TunnelEntry);
       GetWSquare(TunnelExit)->ChangeOWTerrain(new underwatertunnelexit);
-      SetEntryPos(UNDERWATERTUNNELEXIT, TunnelExit);
+      SetEntryPos(UNDER_WATER_TUNNEL_EXIT, TunnelExit);
       GetWSquare(NewAttnamPos)->AddCharacter(game::GetPlayer());
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();

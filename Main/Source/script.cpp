@@ -13,7 +13,7 @@
 #include "materba.h"
 #include "femath.h"
 
-#define ANALYZEMEMBER(name)\
+#define ANALYZE_MEMBER(name)\
 {\
   if(Identifier == #name)\
     return &name;\
@@ -52,9 +52,9 @@ bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 
 datamemberbase* posscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Vector);
-  ANALYZEMEMBER(Flags);
-  ANALYZEMEMBER(Borders);
+  ANALYZE_MEMBER(Vector);
+  ANALYZE_MEMBER(Flags);
+  ANALYZE_MEMBER(Borders);
   return 0;
 }
 
@@ -85,7 +85,7 @@ void posscript::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* materialscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Volume);
+  ANALYZE_MEMBER(Volume);
   return 0;
 }
 
@@ -124,10 +124,10 @@ material* materialscript::Instantiate() const
 
 datamemberbase* basecontentscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(MainMaterial);
-  ANALYZEMEMBER(SecondaryMaterial);
-  ANALYZEMEMBER(ContainedMaterial);
-  ANALYZEMEMBER(Parameters);
+  ANALYZE_MEMBER(MainMaterial);
+  ANALYZE_MEMBER(SecondaryMaterial);
+  ANALYZE_MEMBER(ContainedMaterial);
+  ANALYZE_MEMBER(Parameters);
   return 0;
 }
 
@@ -206,7 +206,7 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
 	  for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!ChosenConfig--)
 	      {
-		Instance[c] = Proto->Clone(i->first, SpecialFlags|NOPICUPDATE);
+		Instance[c] = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
 		break;
 	      }
 	}
@@ -214,7 +214,7 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
   else
     {
       for(ulong c = 0; c < Amount; ++c)
-	Instance[c] = Proto->Clone(Config, SpecialFlags|NOPICUPDATE);
+	Instance[c] = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
     }
 
   if(GetParameters(false))
@@ -223,17 +223,17 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
 
   if(GetMainMaterial(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
+      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(GetSecondaryMaterial(false) && Instance[0]->HasSecondaryMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
+      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(GetContainedMaterial(false) && Instance[0]->HasContainedMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NOPICUPDATE);
+      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(!(SpecialFlags & NOPICUPDATE))
+  if(!(SpecialFlags & NO_PIC_UPDATE))
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->UpdatePictures();
 }
@@ -245,7 +245,7 @@ template <class type> ushort contentscripttemplate<type>::SearchCodeName(const s
 
 datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Team);
+  ANALYZE_MEMBER(Team);
   return contentscripttemplate<character>::GetData(Identifier);
 }
 
@@ -273,10 +273,10 @@ character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 
 datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Team);
-  ANALYZEMEMBER(Active);
-  ANALYZEMEMBER(SideStackIndex);
-  ANALYZEMEMBER(Enchantment);
+  ANALYZE_MEMBER(Team);
+  ANALYZE_MEMBER(Active);
+  ANALYZE_MEMBER(SideStackIndex);
+  ANALYZE_MEMBER(Enchantment);
   return contentscripttemplate<item>::GetData(Identifier);
 }
 
@@ -324,9 +324,9 @@ glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
 
 datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(VisualEffects);
-  ANALYZEMEMBER(AttachedArea);
-  ANALYZEMEMBER(AttachedEntry);
+  ANALYZE_MEMBER(VisualEffects);
+  ANALYZE_MEMBER(AttachedArea);
+  ANALYZE_MEMBER(AttachedEntry);
   return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
@@ -362,14 +362,14 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 
 datamemberbase* squarescript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Position);
-  ANALYZEMEMBER(Character);
-  ANALYZEMEMBER(Item);
-  ANALYZEMEMBER(GTerrain);
-  ANALYZEMEMBER(OTerrain);
-  ANALYZEMEMBER(Times);
-  ANALYZEMEMBER(AttachRequired);
-  ANALYZEMEMBER(EntryIndex);
+  ANALYZE_MEMBER(Position);
+  ANALYZE_MEMBER(Character);
+  ANALYZE_MEMBER(Item);
+  ANALYZE_MEMBER(GTerrain);
+  ANALYZE_MEMBER(OTerrain);
+  ANALYZE_MEMBER(Times);
+  ANALYZE_MEMBER(AttachRequired);
+  ANALYZE_MEMBER(EntryIndex);
   return 0;
 }
 
@@ -398,8 +398,8 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
 
 template <class type> datamemberbase* contentmap<type>::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(Size);
-  ANALYZEMEMBER(Pos);
+  ANALYZE_MEMBER(Size);
+  ANALYZE_MEMBER(Pos);
   return 0;
 }
 
@@ -483,26 +483,26 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* roomscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(CharacterMap);
-  ANALYZEMEMBER(ItemMap);
-  ANALYZEMEMBER(GTerrainMap);
-  ANALYZEMEMBER(OTerrainMap);
-  ANALYZEMEMBER(WallSquare);
-  ANALYZEMEMBER(FloorSquare);
-  ANALYZEMEMBER(DoorSquare);
-  ANALYZEMEMBER(Size);
-  ANALYZEMEMBER(Pos);
-  ANALYZEMEMBER(AltarPossible);
-  ANALYZEMEMBER(GenerateDoor);
-  ANALYZEMEMBER(ReCalculate);
-  ANALYZEMEMBER(GenerateTunnel);
-  ANALYZEMEMBER(DivineMaster);
-  ANALYZEMEMBER(GenerateLanterns);
-  ANALYZEMEMBER(Type);
-  ANALYZEMEMBER(GenerateFountains);
-  ANALYZEMEMBER(AllowLockedDoors);
-  ANALYZEMEMBER(AllowBoobyTrappedDoors);
-  ANALYZEMEMBER(Shape);
+  ANALYZE_MEMBER(CharacterMap);
+  ANALYZE_MEMBER(ItemMap);
+  ANALYZE_MEMBER(GTerrainMap);
+  ANALYZE_MEMBER(OTerrainMap);
+  ANALYZE_MEMBER(WallSquare);
+  ANALYZE_MEMBER(FloorSquare);
+  ANALYZE_MEMBER(DoorSquare);
+  ANALYZE_MEMBER(Size);
+  ANALYZE_MEMBER(Pos);
+  ANALYZE_MEMBER(AltarPossible);
+  ANALYZE_MEMBER(GenerateDoor);
+  ANALYZE_MEMBER(ReCalculate);
+  ANALYZE_MEMBER(GenerateTunnel);
+  ANALYZE_MEMBER(DivineMaster);
+  ANALYZE_MEMBER(GenerateLanterns);
+  ANALYZE_MEMBER(Type);
+  ANALYZE_MEMBER(GenerateFountains);
+  ANALYZE_MEMBER(AllowLockedDoors);
+  ANALYZE_MEMBER(AllowBoobyTrappedDoors);
+  ANALYZE_MEMBER(Shape);
   return 0;
 }
 
@@ -561,20 +561,20 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 datamemberbase* levelscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(RoomDefault);
-  ANALYZEMEMBER(FillSquare);
-  ANALYZEMEMBER(LevelMessage);
-  ANALYZEMEMBER(Size);
-  ANALYZEMEMBER(Items);
-  ANALYZEMEMBER(Rooms);
-  ANALYZEMEMBER(GenerateMonsters);
-  ANALYZEMEMBER(ReCalculate);
-  ANALYZEMEMBER(OnGround);
-  ANALYZEMEMBER(TeamDefault);
-  ANALYZEMEMBER(AmbientLight);
-  ANALYZEMEMBER(Description);
-  ANALYZEMEMBER(LOSModifier);
-  ANALYZEMEMBER(IgnoreDefaultSpecialSquares);
+  ANALYZE_MEMBER(RoomDefault);
+  ANALYZE_MEMBER(FillSquare);
+  ANALYZE_MEMBER(LevelMessage);
+  ANALYZE_MEMBER(Size);
+  ANALYZE_MEMBER(Items);
+  ANALYZE_MEMBER(Rooms);
+  ANALYZE_MEMBER(GenerateMonsters);
+  ANALYZE_MEMBER(ReCalculate);
+  ANALYZE_MEMBER(OnGround);
+  ANALYZE_MEMBER(TeamDefault);
+  ANALYZE_MEMBER(AmbientLight);
+  ANALYZE_MEMBER(Description);
+  ANALYZE_MEMBER(LOSModifier);
+  ANALYZE_MEMBER(IgnoreDefaultSpecialSquares);
   return 0;
 }
 
@@ -664,8 +664,8 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 datamemberbase* dungeonscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(LevelDefault);
-  ANALYZEMEMBER(Levels);
+  ANALYZE_MEMBER(LevelDefault);
+  ANALYZE_MEMBER(Levels);
   return 0;
 }
 
@@ -711,7 +711,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* teamscript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(AttackEvilness);
+  ANALYZE_MEMBER(AttackEvilness);
   return 0;
 }
 
@@ -740,9 +740,9 @@ void teamscript::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* gamescript::GetData(const std::string& Identifier)
 {
-  ANALYZEMEMBER(DungeonDefault);
-  ANALYZEMEMBER(Dungeons);
-  ANALYZEMEMBER(Teams);
+  ANALYZE_MEMBER(DungeonDefault);
+  ANALYZE_MEMBER(Dungeons);
+  ANALYZE_MEMBER(Teams);
   return 0;
 }
 
@@ -787,4 +787,3 @@ void gamescript::ReadFrom(inputfile& SaveFile, bool)
 	ABORT("Odd script term %s encountered in game script line %d!", Word.c_str(), SaveFile.TellLine());
     }
 }
-

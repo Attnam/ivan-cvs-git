@@ -81,7 +81,7 @@ class object : public entity, public id
   material* SetMaterial(material*&, material*, ulong, ushort);
   void ChangeMaterial(material*&, material*, ulong, ushort);
   bool CalculateHasBe() const;
-  virtual uchar GetSpecialFlags() const { return STNORMAL; }
+  virtual uchar GetSpecialFlags() const { return ST_NORMAL; }
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }
@@ -93,7 +93,7 @@ class object : public entity, public id
   virtual uchar GetAlphaB(ushort) const { return 255; }
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
-  virtual ushort GetOutlineColor(ushort) const { return TRANSPARENTCOL; }
+  virtual ushort GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
   virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();
@@ -106,7 +106,7 @@ class object : public entity, public id
   virtual vector2d GetBitmapPos(ushort) const = 0;
   void RandomizeVisualEffects();
   material* MainMaterial;
-  std::vector<graphic_id> GraphicId;
+  std::vector<graphicid> GraphicId;
   std::vector<bitmap*> Picture;
   ushort Config;
   uchar VisualEffects;
@@ -114,4 +114,3 @@ class object : public entity, public id
 };
 
 #endif
-

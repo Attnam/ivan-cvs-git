@@ -21,4 +21,3 @@ class pool
 };
 
 #endif
-

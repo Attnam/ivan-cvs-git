@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#define GETKEY globalwindowhandler::GetKey
-#define READKEY globalwindowhandler::ReadKey
+#define GET_KEY globalwindowhandler::GetKey
+#define READ_KEY globalwindowhandler::ReadKey
 
 typedef std::vector<bool (*)()> controlvector;
 
@@ -83,4 +83,3 @@ class globalwindowhandler
 #endif
 
 #endif
-

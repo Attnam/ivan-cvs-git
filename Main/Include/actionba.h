@@ -86,5 +86,3 @@ name : public base\
 }; ACTION_PROTOTYPE(name);
 
 #endif
-
-

@@ -48,14 +48,14 @@ bool material::Effect(character* Eater, long Amount)
 
   switch(GetEffect())
     {
-    case EPOISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
-    case EDARKNESS: Eater->ReceiveDarkness(Amount); return true;
-    case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); return true;
-    case EPEPSI: Eater->ReceivePepsi(Amount); return true;
-    case EKOBOLDFLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
-    case EHEAL: Eater->ReceiveHeal(Amount); return true;
-    case ELYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); return true;
-    case ESCHOOLFOOD: Eater->ReceiveSchoolFood(Amount); return true;
+    case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
+    case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); return true;
+    case EFFECT_OMLE_URINE: Eater->ReceiveOmleUrine(Amount); return true;
+    case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); return true;
+    case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
+    case EFFECT_HEAL: Eater->ReceiveHeal(Amount); return true;
+    case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); return true;
+    case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
     default: return false;
     }
 }
@@ -72,12 +72,12 @@ bool material::HitEffect(character* Enemy)
 {
   switch(GetHitMessage())
     {
-    case HM_SCHOOLFOOD: Enemy->AddSchoolFoodHitMessage(); break;
-    case HM_FROGFLESH: Enemy->AddFrogFleshConsumeEndMessage(); break;
-    case HM_OMLEURINE: Enemy->AddOmleUrineConsumeEndMessage(); break;
+    case HM_SCHOOL_FOOD: Enemy->AddSchoolFoodHitMessage(); break;
+    case HM_FROG_FLESH: Enemy->AddFrogFleshConsumeEndMessage(); break;
+    case HM_OMLE_URINE: Enemy->AddOmleUrineConsumeEndMessage(); break;
     case HM_PEPSI: Enemy->AddPepsiConsumeEndMessage(); break;
-    case HM_KOBOLDFLESH: Enemy->AddKoboldFleshHitMessage(); break;
-    case HM_HEALINGLIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
+    case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
+    case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
     }
 
   ulong Amount = Min(100UL, GetVolume());
@@ -89,41 +89,15 @@ void material::AddConsumeEndMessage(character* Eater) const
 {
   switch(GetConsumeEndMessage())
     {
-    case CEM_SCHOOLFOOD: Eater->AddSchoolFoodConsumeEndMessage(); break;
+    case CEM_SCHOOL_FOOD: Eater->AddSchoolFoodConsumeEndMessage(); break;
     case CEM_BONE: Eater->AddBoneConsumeEndMessage(); break;
-    case CEM_FROGFLESH: Eater->AddFrogFleshConsumeEndMessage(); break;
-    case CEM_OMLEURINE: Eater->AddOmleUrineConsumeEndMessage(); break;
+    case CEM_FROG_FLESH: Eater->AddFrogFleshConsumeEndMessage(); break;
+    case CEM_OMLE_URINE: Eater->AddOmleUrineConsumeEndMessage(); break;
     case CEM_PEPSI: Eater->AddPepsiConsumeEndMessage(); break;
-    case CEM_KOBOLDFLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
-    case CEM_HEALINGLIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;
+    case CEM_KOBOLD_FLESH: Eater->AddKoboldFleshConsumeEndMessage(); break;
+    case CEM_HEALING_LIQUID: Eater->AddHealingLiquidConsumeEndMessage(); break;
     }
 }
-
-/*long material::GetOfferValue(char GodAlignment) const
-{
-  long Value = 0;
-
-  if(GetAlignment() == EVIL)
-    {
-      if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-	Value += GetVolume() * GetOfferModifier();
-      else
-	if(GodAlignment == GOOD)
-	  Value -= GetVolume() * GetOfferModifier();
-    }
-  else if(GetAlignment() == GOOD)
-    {
-      if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-	Value += GetVolume() * GetOfferModifier();
-      else
-	if(GodAlignment == EVIL)
-	  Value -= GetVolume() * GetOfferModifier();
-    }
-  else
-    Value += GetVolume() * GetOfferModifier();
-
-  return Value;
-}*/
 
 material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
 {
@@ -149,12 +123,12 @@ material* material::MakeMaterial(ushort Config)
 
   switch(Config >> 12)
     {
-    case FIRSTMATERIAL >> 12: return new material(Config, 0);
-    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config, 0);
-    case FIRSTGAS >> 12: return new gas(Config, 0);
-    case FIRSTLIQUID >> 12: return new liquid(Config, 0);
-    case FIRSTFLESH >> 12: return new flesh(Config, 0);
-    case FIRSTPOWDER >> 12: return new powder(Config, 0);
+    case MATERIAL_ID >> 12: return new material(Config, 0);
+    case ORGANIC_SUBSTANCE_ID >> 12: return new organicsubstance(Config, 0);
+    case GAS_ID >> 12: return new gas(Config, 0);
+    case LIQUID_ID >> 12: return new liquid(Config, 0);
+    case FLESH_ID >> 12: return new flesh(Config, 0);
+    case POWDER_ID >> 12: return new powder(Config, 0);
     default:
       ABORT("Odd material configuration number %d requested!", Config);
       return 0;
@@ -168,12 +142,12 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
 
   switch(Config >> 12)
     {
-    case FIRSTMATERIAL >> 12: return new material(Config, Volume);
-    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config, Volume);
-    case FIRSTGAS >> 12: return new gas(Config, Volume);
-    case FIRSTLIQUID >> 12: return new liquid(Config, Volume);
-    case FIRSTFLESH >> 12: return new flesh(Config, Volume);
-    case FIRSTPOWDER >> 12: return new powder(Config, Volume);
+    case MATERIAL_ID >> 12: return new material(Config, Volume);
+    case ORGANIC_SUBSTANCE_ID >> 12: return new organicsubstance(Config, Volume);
+    case GAS_ID >> 12: return new gas(Config, Volume);
+    case LIQUID_ID >> 12: return new liquid(Config, Volume);
+    case FLESH_ID >> 12: return new flesh(Config, Volume);
+    case POWDER_ID >> 12: return new powder(Config, Volume);
     default:
       ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
       return 0;

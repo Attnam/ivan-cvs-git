@@ -348,4 +348,3 @@ class gamescript : public script
 };
 
 #endif
-

@@ -145,4 +145,3 @@ class lsquare : public square
 };
 
 #endif
-

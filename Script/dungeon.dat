@@ -41,7 +41,7 @@ Team 7; /* Ivan */
 	AttackEvilness=100;
 }
 
-Dungeon ELPURICAVE;
+Dungeon ELPURI_CAVE;
 {
 	Levels=10;
 
@@ -63,7 +63,7 @@ Dungeon ELPURICAVE;
 		LOSModifier=16;
 		IgnoreDefaultSpecialSquares = false;
 
-		Square, Random NOTWALKABLE|NOTINROOM;
+		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
 			Item = stone;
 			Times = 25+rand%25;
@@ -81,17 +81,17 @@ Dungeon ELPURICAVE;
 			Times = rand%4;
 		}
 
-		Square, Random NOTWALKABLE|ATTACHABLE;
+		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP);
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
-		Square, Random NOTWALKABLE|ATTACHABLE;
+		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSDOWN);
-			EntryIndex = STAIRSDOWN;
+			OTerrain = link(STAIRS_DOWN);
+			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
 
@@ -137,10 +137,10 @@ Dungeon ELPURICAVE;
 			Times=10;
 		}
 
-		Square, Random NOTWALKABLE|ATTACHABLE;
+		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSDOWN);
-			EntryIndex = STAIRSDOWN;
+			OTerrain = link(STAIRS_DOWN);
+			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
 
@@ -149,12 +149,12 @@ Dungeon ELPURICAVE;
 			Size=5,5;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
-			Shape = ROUNDCORNERS;
+			Shape = ROUND_CORNERS;
 
 			Square, Pos 2,2;
 			{
-				OTerrain = link(STAIRSUP);
-				EntryIndex = STAIRSUP;
+				OTerrain = link(STAIRS_UP);
+				EntryIndex = STAIRS_UP;
 			}
 
 			Square, Pos 3,1;
@@ -254,8 +254,8 @@ Dungeon ELPURICAVE;
 				Types
 				{
 					c = scrollofchangematerial;
-					L = STEEL STEEL meleeweapon(LONGSWORD);
-					C = IRON bodyarmor(CHAINMAIL);
+					L = STEEL STEEL meleeweapon(LONG_SWORD);
+					C = IRON bodyarmor(CHAIN_MAIL);
 					s = wandofstriking;
 					a = lantern;
                                         l = IRON helmet;
@@ -278,7 +278,7 @@ Dungeon ELPURICAVE;
 		LevelMessage="You hear a wailing scream in the distance. An enner beast must dwell in the level!";
 		Rooms=10+rand%21;
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=ennerbeast { Team=4; }
 		}
@@ -289,13 +289,13 @@ Dungeon ELPURICAVE;
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=communist { Team=7; }
 		}
 	}
 
-	Level DARKLEVEL;
+	Level DARK_LEVEL;
 	{
 		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
@@ -311,15 +311,15 @@ Dungeon ELPURICAVE;
 			GenerateLanterns=false;
 		}
 
-		Square, Random INROOM;
+		Square, Random IN_ROOM;
 		{
 			Character=elpuri;
 		}
 
-		Square, Random NOTWALKABLE|ATTACHABLE;
+		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP);
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 	}
@@ -357,10 +357,10 @@ Dungeon ELPURICAVE;
 	{
 		IgnoreDefaultSpecialSquares = true;
 
-		Square, Random NOTWALKABLE|ATTACHABLE;
+		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP);
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
@@ -374,17 +374,17 @@ Dungeon ELPURICAVE;
 
 			Square, Pos 3,3;
 			{
-				OTerrain = IRON link(STAIRSDOWN);
+				OTerrain = IRON link(STAIRS_DOWN);
 			}
 
 			Square, Pos 3,5;
 			{
-				EntryIndex = STAIRSDOWN;
+				EntryIndex = STAIRS_DOWN;
 			}
 		}
 	}
 
-	Level OREELAIR;
+	Level OREE_LAIR;
 	{
 		Description=OreeLair;
 		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
@@ -413,12 +413,12 @@ Dungeon ELPURICAVE;
 
 			Square, Pos 3,3;
 			{
-				EntryIndex = STAIRSUP;
+				EntryIndex = STAIRS_UP;
 			}
 
 			Square, Pos 3,5;
 			{
-				OTerrain = IRON link(STAIRSUP);
+				OTerrain = IRON link(STAIRS_UP);
 			}
 
 			CharacterMap
@@ -451,7 +451,7 @@ Dungeon ATTNAM;
 	Level 0;
 	{
 		Description=Attnam;
-		FillSquare=solidterrain(GRASSTERRAIN),empty;
+		FillSquare=solidterrain(GRASS_TERRAIN),empty;
 
 		Variable XSize = 61;
 		Variable YSize = 62;
@@ -472,7 +472,7 @@ Dungeon ATTNAM;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
@@ -487,37 +487,37 @@ Dungeon ATTNAM;
 			Shape = RECTANGLE;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain=decoration(PINE);
 			Times=50;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain=decoration(SPRUCE);
 			Times=200;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=hunter;
 			Times=10;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=polarbear;
 			Times=5;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=farmer;
 			Times=5;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=housewife;
 			Times=5;
@@ -525,7 +525,7 @@ Dungeon ATTNAM;
 
 		Square, Pos 30,61;
 		{
-			EntryIndex = STAIRSUP;
+			EntryIndex = STAIRS_UP;
 		}
 	
 		Room 0;
@@ -533,8 +533,8 @@ Dungeon ATTNAM;
 			Pos=10,10;
 			Size=41,42;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),STONE wall(BRICK_FINE);
-			FloorSquare=solidterrain(GRASSTERRAIN),empty;
+			WallSquare=solidterrain(GRASS_TERRAIN),STONE wall(BRICK_FINE);
+			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineMaster=valpurus;
@@ -628,17 +628,17 @@ Dungeon ATTNAM;
 					D = MARBLE door;
 					L = MARBLE door { Parameters = LOCKED; }
 					b = decoration(LINDEN);
-					1 = decoration(POOLCORNER) { VisualEffects = NONE; }
-					2 = decoration(POOLCORNER) { VisualEffects = MIRROR; }
-					3 = decoration(POOLCORNER) { VisualEffects = MIRROR | FLIP; }
-					4 = decoration(POOLCORNER) { VisualEffects = FLIP; }
-					5 = decoration(POOLBORDER) { VisualEffects = NONE; }
-					6 = decoration(POOLBORDER) { VisualEffects = ROTATE; }
-					7 = decoration(POOLBORDER) { VisualEffects = FLIP; }
-					8 = decoration(POOLBORDER) { VisualEffects = MIRROR | ROTATE; }
+					1 = decoration(POOL_CORNER) { VisualEffects = NONE; }
+					2 = decoration(POOL_CORNER) { VisualEffects = MIRROR; }
+					3 = decoration(POOL_CORNER) { VisualEffects = MIRROR | FLIP; }
+					4 = decoration(POOL_CORNER) { VisualEffects = FLIP; }
+					5 = decoration(POOL_BORDER) { VisualEffects = NONE; }
+					6 = decoration(POOL_BORDER) { VisualEffects = ROTATE; }
+					7 = decoration(POOL_BORDER) { VisualEffects = FLIP; }
+					8 = decoration(POOL_BORDER) { VisualEffects = MIRROR | ROTATE; }
 					s = decoration(COUCH);
 					f = fountain;
-					d = decoration(DOUBLEBED);
+					d = decoration(DOUBLE_BED);
 				}
 			}
 			{
@@ -695,12 +695,12 @@ Dungeon ATTNAM;
 					b = banana;
 					k = kiwi;
 					p = pineapple;
-					o = IRON meleeweapon(POLEAXE);
-					l = MITHRIL MITHRIL meleeweapon(LONGSWORD);
-					t = IRON IRON meleeweapon(TWOHANDEDSWORD);
-					m = IRON meleeweapon(SPIKEDMACE);
+					o = IRON meleeweapon(POLE_AXE);
+					l = MITHRIL MITHRIL meleeweapon(LONG_SWORD);
+					t = IRON IRON meleeweapon(TWO_HANDED_SWORD);
+					m = IRON meleeweapon(SPIKED_MACE);
 					s = IRON meleeweapon(SPEAR);
-					c = bodyarmor(CHAINMAIL);
+					c = bodyarmor(CHAIN_MAIL);
 					e = backpack;
 					g = GOLD stone;
 					i = SILVER stone;
@@ -817,7 +817,7 @@ Dungeon ATTNAM;
 			Pos=32,54;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -849,14 +849,14 @@ Dungeon ATTNAM;
 					t = scrollofteleportation;
 					s = meleeweapon(SPEAR);
 					p = pickaxe;
-					A = potion { ContainedMaterial = HEALINGLIQUID; }
+					A = potion { ContainedMaterial = HEALING_LIQUID; }
 					b = banana;
-					l = WOLFFLESH lump;
-					i = can { ContainedMaterial = POLARBEARFLESH; }
+					l = WOLF_FLESH lump;
+					i = can { ContainedMaterial = POLAR_BEAR_FLESH; }
 					L = BREAD loaf;
 					a = lantern;
-					P = potion { ContainedMaterial = OMLEURINE; }
-					C = bodyarmor(CHAINMAIL);
+					P = potion { ContainedMaterial = OMLE_URINE; }
+					C = bodyarmor(CHAIN_MAIL);
 					x = meleeweapon(AXE);
 				}
 			}
@@ -871,7 +871,7 @@ Dungeon ATTNAM;
 		{
 			Pos=54,55;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),STEEL wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),STEEL wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=legifer;
 			Type=temple;
@@ -897,7 +897,7 @@ Dungeon ATTNAM;
 		{
 			Pos=2,55;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),MARBLE wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),MARBLE wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=dulcis;
 			Type=temple;
@@ -923,7 +923,7 @@ Dungeon ATTNAM;
 		{
 			Pos=54,2;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),WOOD wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=seges;
 			Type=temple;
@@ -949,7 +949,7 @@ Dungeon ATTNAM;
 		{
 			Pos=2,2;
 			Size=5,5;
-			WallSquare=solidterrain(GRASSTERRAIN),PARCHMENT wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),PARCHMENT wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=sophos;
 			Type=temple;
@@ -976,7 +976,7 @@ Dungeon ATTNAM;
 			Pos=22,54;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -1019,7 +1019,7 @@ Dungeon ATTNAM;
 				Size=5,3;
 				Types
 				{
-					= = container(BOOKCASE);
+					= = container(BOOK_CASE);
 				}
 			}
 			{
@@ -1032,33 +1032,33 @@ Dungeon ATTNAM;
 		Room 7;
 		{
 			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare=solidterrain(FLOOR), door;
 		}
 
 		Room 8;
 		{
 			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare=solidterrain(FLOOR), door;
 		}
 
 		Room 9;
 		{
 			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare=solidterrain(FLOOR), door;
 		}
 	}
 }
 
-Dungeon NEWATTNAM;
+Dungeon NEW_ATTNAM;
 {
 	Levels = 1;
 	Level 0;
 	{
 		Description="New Attnam";
-		FillSquare=solidterrain(GRASSTERRAIN),empty;
+		FillSquare=solidterrain(GRASS_TERRAIN),empty;
 
 		Variable XSize = 50;
 		Variable YSize = 50;
@@ -1079,7 +1079,7 @@ Dungeon NEWATTNAM;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
@@ -1091,23 +1091,23 @@ Dungeon NEWATTNAM;
 			GenerateFountains=false;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
-			Shape = ROUNDCORNERS;
+			Shape = ROUND_CORNERS;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=hunter;
 			Times=10;
 		}
 
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=farmer;
 			Times=5;
 		}
 
-		Square, Random NOTINROOM;
+		Square, Random NOT_IN_ROOM;
 		{
 			Character=housewife;
 			Times=5;
@@ -1115,12 +1115,12 @@ Dungeon NEWATTNAM;
 
 		Square, Pos 30,61;
 		{
-			EntryIndex = STAIRSUP;
+			EntryIndex = STAIRS_UP;
 		}
 	}
 }
 
-Dungeon UNDERWATERTUNNEL;
+Dungeon UNDER_WATER_TUNNEL;
 {
 	Levels=3;
 
@@ -1171,54 +1171,52 @@ Dungeon UNDERWATERTUNNEL;
 
 	Level 0;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP);
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSDOWN);
-			EntryIndex = STAIRSDOWN;
+			OTerrain = link(STAIRS_DOWN);
+			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
 	}
 
 	Level 1;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP);
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP) { AttachedArea = 2; }
-			EntryIndex = STAIRSUP + 1;
+			OTerrain = link(STAIRS_UP) { AttachedArea = 2; }
+			EntryIndex = STAIRS_UP + 1;
 			AttachRequired = true;
 		}
 	}
 
 	Level 2;
 	{
-		Square, BoundedRandom 1, 1, 19, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 1, 1, 19, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSDOWN) { AttachedArea = 1; AttachedEntry = STAIRSUP + 1; }
-			EntryIndex = STAIRSDOWN;
+			OTerrain = link(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
+			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 79, 19, NOTWALKABLE|ATTACHABLE;
+		Square, BoundedRandom 61, 1, 79, 19, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRSUP) { AttachedArea = WORLDMAP; AttachedEntry = UNDERWATERTUNNELEXIT; }
-			EntryIndex = STAIRSUP;
+			OTerrain = link(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
+			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 	}
 }
-
-

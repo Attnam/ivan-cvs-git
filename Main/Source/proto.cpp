@@ -301,4 +301,3 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
-

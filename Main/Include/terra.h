@@ -42,6 +42,3 @@ class oterrain : public terrain
 };
 
 #endif
-
-
-

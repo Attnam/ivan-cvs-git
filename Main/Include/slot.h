@@ -137,4 +137,3 @@ inline inputfile& operator>>(inputfile& SaveFile, slot& Slot)
 }
 
 #endif
-

@@ -13,7 +13,7 @@ const felist* FelistCurrentlyDrawn = 0;
 
 bool FelistDrawController()
 {
-  FelistCurrentlyDrawn->DrawPage(DOUBLEBUFFER);
+  FelistCurrentlyDrawn->DrawPage(DOUBLE_BUFFER);
   return true;
 }
 
@@ -48,8 +48,8 @@ ushort felist::Draw()
     }
   else
     {
-      Buffer = DOUBLEBUFFER;
-      DOUBLEBUFFER->Blit(&BackGround);
+      Buffer = DOUBLE_BUFFER;
+      DOUBLE_BUFFER->Blit(&BackGround);
     }
 
   ushort c, Return, Selectables = 0;
@@ -78,7 +78,7 @@ ushort felist::Draw()
 	{
 	  if(JustSelectMove)
 	    {
-	      Buffer->Blit(DOUBLEBUFFER);
+	      Buffer->Blit(DOUBLE_BUFFER);
 	      graphics::BlitDBToScreen();
 	    }
 	  else
@@ -89,7 +89,7 @@ ushort felist::Draw()
       else
 	graphics::BlitDBToScreen();
 
-      int Pressed = GETKEY(false);
+      int Pressed = GET_KEY(false);
 
       if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 + PageBegin < long(Entry.size()))
 	{
@@ -103,7 +103,7 @@ ushort felist::Draw()
 	  break;
 	}
 
-      if(Flags & SELECTABLE && Pressed == KEYUP)
+      if(Flags & SELECTABLE && Pressed == KEY_UP)
 	{
 	  if(Selected)
 	    {
@@ -135,7 +135,7 @@ ushort felist::Draw()
 	  continue;
 	}
 
-      if(Flags & SELECTABLE && Pressed == KEYDOWN)
+      if(Flags & SELECTABLE && Pressed == KEY_DOWN)
 	{
 	  if(!AtTheEnd || Selected != Selectables - 1)
 	    {
@@ -162,13 +162,13 @@ ushort felist::Draw()
 	  continue;
 	}
 
-      if(Flags & SELECTABLE && Pressed == KEYENTER)
+      if(Flags & SELECTABLE && Pressed == KEY_ENTER)
 	{
 	  Return = Selected;
 	  break;
 	}
 
-      if(Pressed == KEYESC || (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
+      if(Pressed == KEY_ESC || (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
 	{
 	  Return = 0xFFFF;
 	  break;
@@ -190,7 +190,7 @@ ushort felist::Draw()
   if(!(Flags & FADE))
     {
       if(Flags & DRAW_BACKGROUND_AFTERWARDS)
-	BackGround.Blit(DOUBLEBUFFER);
+	BackGround.Blit(DOUBLE_BUFFER);
 
       if(Flags & BLIT_AFTERWARDS)
 	graphics::BlitDBToScreen();
@@ -294,7 +294,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	      LastFillBottom += 10;
 	    }
 
-	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARK_GRAY, true);
 	  return c == Entry.size() - 1;
 	}
 
@@ -320,8 +320,8 @@ void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort 
 
 void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 {
-  DOUBLEBUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
-  DOUBLEBUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
+  DOUBLE_BUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
+  DOUBLE_BUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARK_GRAY, true);
 
   if(!PageLength)
     return;
@@ -339,7 +339,7 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 	{
 	  ushort Color = CurrentEntry.Color;
 	  Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * Index / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * Index / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * Index / PageLength) >> 2));
-	  FONT->Printf(DOUBLEBUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[Chapter.size() - c2 - 1].c_str());
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[Chapter.size() - c2 - 1].c_str());
 	  Bottom -= 10;
 
 	  if(++Index == PageLength)
@@ -448,4 +448,3 @@ void felist::PrintToFile(const std::string& FileName)
       SaveFile << Entry[c].String << std::endl;
     }
 }
-

@@ -20,7 +20,7 @@
 #include "vector2d.h"
 #include "felibdef.h"
 
-#define DOUBLEBUFFER graphics::GetDoubleBuffer()
+#define DOUBLE_BUFFER graphics::GetDoubleBuffer()
 #define RES graphics::GetRes()
 #define FONT graphics::GetDefaultFont()
 
@@ -127,4 +127,3 @@ class graphics
 };
 
 #endif
-

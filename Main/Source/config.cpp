@@ -133,25 +133,25 @@ void configuration::ShowConfigScreen()
       if(game::IsRunning())
 	{
 	  game::DrawEverythingNoBlit();
-	  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+	  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
 	}
 
       List.Empty();
-      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHTGRAY);
+      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHT_GRAY);
 
       if(AutoSaveInterval)
-	List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHTGRAY);
+	List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHT_GRAY);
       else
-	List.AddEntry(std::string("Autosave interval:                      disabled"), LIGHTGRAY);
+	List.AddEntry(std::string("Autosave interval:                      disabled"), LIGHT_GRAY);
 
-      List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
-      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
-      List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);
-      List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHT_GRAY);
+      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
 
 #ifdef WIN32
-      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHTGRAY);
-      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
 #endif
 
       if(game::IsRunning())
@@ -171,7 +171,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  continue;
 	case 2:
-	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, WHITE, LIGHTGRAY, DARKGRAY, !game::IsRunning(), &ContrastHandler);
+	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
 	  BoolChange = false;
 	  continue;
 	case 3:

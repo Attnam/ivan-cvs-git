@@ -44,7 +44,7 @@ void igraph::Init()
 #ifdef __DJGPP__
       graphics::SetMode(0x114);
 #endif
-      DOUBLEBUFFER->Fill(0);
+      DOUBLE_BUFFER->Fill(0);
       graphics::BlitDBToScreen();
 #ifdef WIN32
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
@@ -56,10 +56,10 @@ void igraph::Init()
       FONT->CreateFontCache(BLUE);
       FONT->CreateFontCache(YELLOW);
       FONT->CreateFontCache(WHITE);
-      FONT->CreateFontCache(LIGHTGRAY);
-      FONT->CreateFontCache(DARKGRAY);
+      FONT->CreateFontCache(LIGHT_GRAY);
+      FONT->CreateFontCache(DARK_GRAY);
       felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
-      felist::CreateQuickDrawFontCaches(FONT, LIGHTGRAY, 8);
+      felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
 
       ushort c;
 
@@ -90,10 +90,10 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
+  igraph::GetCursorGraphic()->MaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-tile igraph::GetTile(graphic_id GI)
+tile igraph::GetTile(graphicid GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
@@ -103,7 +103,7 @@ tile igraph::GetTile(graphic_id GI)
   return Iterator->second;
 }
 
-tile igraph::AddUser(graphic_id GI)
+tile igraph::AddUser(graphicid GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
@@ -116,13 +116,13 @@ tile igraph::AddUser(graphic_id GI)
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
 
-      if((GI.SpecialFlags & 0x38) == STRIGHTARM)
-	Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
+      if((GI.SpecialFlags & 0x38) == ST_RIGHT_ARM)
+	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
 
-      if((GI.SpecialFlags & 0x38) == STLEFTARM)
-	Bitmap->Fill(0, 0, 8, 16, TRANSPARENTCOL);
+      if((GI.SpecialFlags & 0x38) == ST_LEFT_ARM)
+	Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
 
-      if((GI.SpecialFlags & 0x38) == STGROIN)
+      if((GI.SpecialFlags & 0x38) == ST_GROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -130,40 +130,40 @@ tile igraph::AddUser(graphic_id GI)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
 	      Pixel[i++] = Bitmap->GetPixel(x, y);
 
-	  Bitmap->Fill(0, 10, 16, 6, TRANSPARENTCOL);
+	  Bitmap->Fill(0, 10, 16, 6, TRANSPARENT_COLOR);
 
 	  for(y = 10, i = 0; y < 13; ++y)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
 
-      if((GI.SpecialFlags & 0x38) == STRIGHTLEG)
+      if((GI.SpecialFlags & 0x38) == ST_RIGHT_LEG)
 	{
 	  /* Right leg from the character's, NOT the player's point of view */
 
-	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(8, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(9, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
-	  Bitmap->PutPixel(8, 11, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
+	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
 
-      if((GI.SpecialFlags & 0x38) == STLEFTLEG)
+      if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
 	{
 	  /* Left leg from the character's, NOT the player's point of view */
 
-	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
-	  Bitmap->PutPixel(5, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(6, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 10, TRANSPARENTCOL);
-	  Bitmap->PutPixel(6, 11, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
-	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
+	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(5, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(6, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(6, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
+	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
 
-      if(GI.OutlineColor != TRANSPARENTCOL)
+      if(GI.OutlineColor != TRANSPARENT_COLOR)
 	Bitmap->Outline(GI.OutlineColor);
 
       if(GI.SparklePos != BITMAP_ERROR_VECTOR)
@@ -179,8 +179,8 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap = Temp;
 	}
 
-      if(GI.SpecialFlags & STFLAME)
-	Bitmap->DrawFlames(GI.Frame, TRANSPARENTCOL);
+      if(GI.SpecialFlags & ST_FLAME)
+	Bitmap->DrawFlames(GI.Frame, TRANSPARENT_COLOR);
 
       tile Tile(Bitmap);
       TileMap[GI] = Tile;
@@ -188,7 +188,7 @@ tile igraph::AddUser(graphic_id GI)
     }
 }
 
-void igraph::RemoveUser(graphic_id GI)
+void igraph::RemoveUser(graphicid GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
@@ -199,4 +199,3 @@ void igraph::RemoveUser(graphic_id GI)
 	TileMap.erase(Iterator);
       }
 }
-

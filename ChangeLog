@@ -1,3 +1,8 @@
+October 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Underscores now separate the words of all macros in the game
+	* The prices of the items added in the last commit are now sane
+
 October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Optimized the generation of characters somewhat by disallowing

@@ -11,7 +11,7 @@
 fluid::fluid(square* SquareUnder) : entity(true), Picture(0), Material(0), SquareUnder(SquareUnder)
 {
   Picture = new bitmap(16, 16);
-  Picture->Fill(TRANSPARENTCOL);
+  Picture->Fill(TRANSPARENT_COLOR);
   Picture->CreateAlphaMap(0);
 }
 
@@ -107,4 +107,3 @@ inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
 
   return SaveFile;
 }
-

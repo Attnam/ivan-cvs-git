@@ -80,5 +80,5 @@ class ROOM
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);
 );
-#endif
 
+#endif

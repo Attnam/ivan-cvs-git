@@ -175,7 +175,7 @@ class game
   static vector2d GetScreenSize() { return ScreenSize; }
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
   static vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
-  static void BusyAnimation(bitmap* = DOUBLEBUFFER);
+  static void BusyAnimation(bitmap* = DOUBLE_BUFFER);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
@@ -261,4 +261,3 @@ class game
 };
 
 #endif
-

@@ -21,7 +21,7 @@ material
 	/* Obligatory: NameStem */
 	/* NameStem by default: AdjectiveStem */
 	Article = "a";
-	Effect = ENOTHING;
+	Effect = EFFECT_NOTHING;
 	ConsumeEndMessage = CEM_NOTHING;
 	HitMessage = HM_NOTHING;
 	ExplosivePower = 0;
@@ -33,7 +33,7 @@ material
 	Config IRON;
 	{
 		StrengthValue = 100;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 8000;
 		Color = rgb16(96, 96, 96);
 		PriceModifier = 40;
@@ -45,7 +45,7 @@ material
 	Config VALPURIUM;
 	{
 		StrengthValue = 400;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 3000;
 		Color = rgb16(232, 232, 0);
 		IsSolid = true;
@@ -60,7 +60,7 @@ material
 	Config STONE;
 	{
 		StrengthValue = 60;
-		ConsumeType = MINERAL; 
+		ConsumeType = CT_MINERAL; 
 		Density = 3000;
 		IsSolid = true; 
 		Color = rgb16(80, 80, 80);
@@ -70,7 +70,7 @@ material
 	Config GRAVEL;
 	{
 		StrengthValue = 40;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 2500;
 		Color = rgb16(112, 112, 112);
 		NameStem = "gravel";
@@ -79,7 +79,7 @@ material
 	Config MORAINE;
 	{
 		StrengthValue = 20;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 2500;
 		Color = rgb16(111, 74, 37);
 		NameStem = "moraine";
@@ -88,7 +88,7 @@ material
 	Config WOOD;
 	{
 		StrengthValue = 30;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
 		Color = rgb16(140, 96, 48);
@@ -99,7 +99,7 @@ material
 	Config GLASS;
 	{
 		StrengthValue = 30;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 2500;
 		IsSolid = true;
 		Color = rgb16(180, 180, 255);
@@ -110,7 +110,7 @@ material
 	Config PARCHMENT;
 	{
 		StrengthValue = 15;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 600;
 		IsSolid = true;
 		Color = rgb16(200, 200, 200);
@@ -122,7 +122,7 @@ material
 	Config CLOTH;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 100;
 		IsSolid = true;
 		Color = rgb16(80, 80, 176);
@@ -134,7 +134,7 @@ material
 	Config MITHRIL;
 	{
 		StrengthValue = 200;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 5000;
 		IsSolid = true;
 		Color = rgb16(224, 224, 224);
@@ -146,7 +146,7 @@ material
 	Config MARBLE;
 	{
 		StrengthValue = 50;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 3000;
 		IsSolid = true;
 		Color = rgb16(200, 200, 200);
@@ -156,7 +156,7 @@ material
 	Config GOLD;
 	{
 		StrengthValue = 30;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 20000;
 		IsSolid = true;
 		Color = rgb16(224, 224, 0);
@@ -171,7 +171,7 @@ material
 	Config GRASS;
 	{
 		StrengthValue = 2;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 100;
 		Color = rgb16(32, 96, 32);
 		IsFlammable = true;
@@ -183,7 +183,7 @@ material
 	Config LEATHER;
 	{
 		StrengthValue = 15;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
 		Color = rgb16(111, 64, 37);
@@ -195,7 +195,7 @@ material
 	Config LEAF;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
 		Color = rgb16(0, 160, 0);
@@ -207,7 +207,7 @@ material
 	Config FABRIC;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 100;
 		IsSolid = true;
 		IsFlammable = true;
@@ -219,7 +219,7 @@ material
 	Config PALMLEAF;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		IsSolid = true;
 		Color = rgb16(0, 160, 0);
@@ -231,17 +231,17 @@ material
 	Config SULFUR;
 	{
 		StrengthValue = 50;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 2000;
 		IsSolid = true;
 		Color = rgb16(128, 0, 0);
 		NameStem = "sulfur";
 	}
 
-	Config UNICORNHORN;
+	Config UNICORN_HORN;
 	{
 		StrengthValue = 200;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 2000;
 		Color = rgb16(200, 200, 200);
 		NameStem = "unicorn horn";
@@ -250,7 +250,7 @@ material
 	Config DIAMOND;
 	{
 		StrengthValue = 300;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 3500;
 		IsSolid = true;
 		Color = rgb16(240, 240, 240);
@@ -264,7 +264,7 @@ material
 	Config SILVER;
 	{
 		StrengthValue = 50;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 10500;
 		IsSolid = true;
 		Color = rgb16(200, 200, 200);
@@ -277,7 +277,7 @@ material
 	Config SAPPHIRE;
 	{
 		StrengthValue = 250;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 3500;
 		IsSolid = true;
 		Color = rgb16(96, 96, 200);
@@ -291,7 +291,7 @@ material
 	Config RUBY;
 	{
 		StrengthValue = 250;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 3500;
 		IsSolid = true;
 		Color = rgb16(180, 0, 0);
@@ -305,7 +305,7 @@ material
 	Config BRONZE;
 	{
 		StrengthValue = 80;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 8300;
 		IsSolid = true;
 		Color = rgb16(150, 100, 50);
@@ -316,7 +316,7 @@ material
 	Config COPPER;
 	{
 		StrengthValue = 70;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 9000; /* rounded from 8920 */
 		IsSolid = true;
 		Color = rgb16(96, 64, 32);
@@ -327,7 +327,7 @@ material
 	Config TIN;
 	{
 		StrengthValue = 50;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 7300; 
 		IsSolid = true;
 		Color = rgb16(100, 100, 100);
@@ -338,7 +338,7 @@ material
 	Config STEEL;
 	{
 		StrengthValue = 175;
-		ConsumeType = METAL;
+		ConsumeType = CT_METAL;
 		Density = 7500;
 		Color = rgb16(128, 128, 128);
 		IsSolid = true;
@@ -352,11 +352,11 @@ organicsubstance /* substances that spoil but are not flesh */
 	IsAlive = true;
 	SpoilModifier = 5000;
 
-	Config BANANAFLESH;
+	Config BANANA_FLESH;
 	{
 		StrengthValue = 5;
 		Density = 1200;
-		ConsumeType = FRUIT;
+		ConsumeType = CT_FRUIT;
 		NutritionValue = 100;
 		Color = rgb16(240, 240, 0);
 		PriceModifier = 600;
@@ -364,26 +364,26 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 5;
 	}
 
-	Config SCHOOLFOOD;
+	Config SCHOOL_FOOD;
 	{
 		StrengthValue = 5;
-		ConsumeType = MEAT;
+		ConsumeType = CT_MEAT;
 		Density = 1500;
 		Alignment = EVIL;
 		NutritionValue = 50;
 		Color = rgb16(111, 74, 37);
 		IsBadFoodForAI = true;
 		NameStem = "school food";
-		Effect = ESCHOOLFOOD;
-		ConsumeEndMessage = CEM_SCHOOLFOOD;
-		HitMessage = HM_SCHOOLFOOD;
+		Effect = EFFECT_SCHOOL_FOOD;
+		ConsumeEndMessage = CEM_SCHOOL_FOOD;
+		HitMessage = HM_SCHOOL_FOOD;
 		Flexibility = 5;
 	}
 
-	Config BANANAPEEL;
+	Config BANANA_PEEL;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(224, 224, 0);
 		NameStem = "banana peel";
@@ -392,10 +392,10 @@ organicsubstance /* substances that spoil but are not flesh */
 		IsSolid = true;
 	}
 
-	Config KIWIFLESH;
+	Config KIWI_FLESH;
 	{
 		StrengthValue = 5;
-		ConsumeType = FRUIT;
+		ConsumeType = CT_FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
 		Color = rgb16(160, 112, 32);
@@ -404,10 +404,10 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 5;
 	}
 
-	Config PINEAPPLEFLESH;
+	Config PINEAPPLE_FLESH;
 	{
 		StrengthValue = 10;
-		ConsumeType = FRUIT;
+		ConsumeType = CT_FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
 		Color = rgb16(192, 112, 96);
@@ -419,7 +419,7 @@ organicsubstance /* substances that spoil but are not flesh */
 	Config FIBER;
 	{
 		StrengthValue = 10;
-		ConsumeType = MISC_ORGANIC;
+		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
@@ -432,7 +432,7 @@ organicsubstance /* substances that spoil but are not flesh */
 	{
 		StrengthValue = 30;
 		Density = 2000;
-		ConsumeType = BONY;
+		ConsumeType = CT_BONE;
 		IsSolid = true;
 		Color = rgb16(180, 180, 180);
 		NutritionValue = 50;
@@ -444,7 +444,7 @@ organicsubstance /* substances that spoil but are not flesh */
 	Config BREAD;
 	{
 		StrengthValue = 10;
-		ConsumeType = PROCESSED;
+		ConsumeType = CT_PROCESSED;
 		Density = 250;
 		NutritionValue = 100;
 		Color = rgb16(180, 96, 64);
@@ -464,7 +464,7 @@ gas
 		StrengthValue = 1;
 		Density = 1;
 		Color = rgb16(180, 180, 255);
-		ConsumeType = GAS;
+		ConsumeType = CT_GAS;
 		NameStem = "air";
 		Article = "an";
 		Alpha = 150;
@@ -474,12 +474,12 @@ gas
 
 liquid
 {
-	ConsumeType = LIQUID;
+	ConsumeType = CT_LIQUID;
 	CanBeWished = false;
 	Density = 1000;
 	Flexibility = 25;
 
-	Config OMLEURINE;
+	Config OMLE_URINE;
 	{
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
@@ -488,9 +488,9 @@ liquid
 		PriceModifier = 2500;
 		NameStem = "Omle urine";
 		Article = "an";
-		Effect = EOMLEURINE;
-		ConsumeEndMessage = CEM_OMLEURINE;
-		HitMessage = HM_OMLEURINE;
+		Effect = EFFECT_OMLE_URINE;
+		ConsumeEndMessage = CEM_OMLE_URINE;
+		HitMessage = HM_OMLE_URINE;
 		Alpha = 150;
 	}
 
@@ -503,7 +503,7 @@ liquid
 		Color = rgb16(48, 48, 48);
 		IsBadFoodForAI = true;
 		NameStem = "pepsi";
-		Effect = EPEPSI;
+		Effect = EFFECT_PEPSI;
 		ConsumeEndMessage = CEM_PEPSI;
 		HitMessage = HM_PEPSI;
 	}
@@ -517,16 +517,16 @@ liquid
 		Alpha = 150;
 	}
 
-	Config HEALINGLIQUID;
+	Config HEALING_LIQUID;
 	{
 		StrengthValue = 1;
 		NutritionValue = 25;
 		Color = rgb16(180, 0, 0);
 		PriceModifier = 1000;
 		NameStem = "healing liquid";
-		Effect = EHEAL;
-		ConsumeEndMessage = CEM_HEALINGLIQUID;
-		HitMessage = HM_HEALINGLIQUID;
+		Effect = EFFECT_HEAL;
+		ConsumeEndMessage = CEM_HEALING_LIQUID;
+		HitMessage = HM_HEALING_LIQUID;
 		Alpha = 150;
 	}
 
@@ -542,7 +542,7 @@ liquid
 		Flexibility = 20;
 	}
 
-	Config BROWNSLIME;
+	Config BROWN_SLIME;
 	{
 		StrengthValue = 2;
 		Density = 400;
@@ -554,7 +554,7 @@ liquid
 		Flexibility = 10;
 	}
 
-	Config POISONLIQUID;
+	Config POISON_LIQUID;
 	{
 		StrengthValue = 1;
 		Alignment = EVIL;
@@ -562,7 +562,7 @@ liquid
 		Color = rgb16(0, 128, 0);
 		IsBadFoodForAI = true;
 		NameStem = "poison";
-		Effect = EPOISON;
+		Effect = EFFECT_POISON;
 		Alpha = 150;
 	}
 
@@ -574,7 +574,7 @@ liquid
 		Color = rgb16(50, 0, 0);
 		IsBadFoodForAI = true;
 		NameStem = "Valdemar";
-		Effect = EPOISON;
+		Effect = EFFECT_POISON;
 		Alpha = 200;
 	}
 }
@@ -582,7 +582,7 @@ liquid
 flesh
 {
 	StrengthValue = 10;
-	ConsumeType = MEAT;
+	ConsumeType = CT_MEAT;
 	Density = 1200;
 	NutritionValue = 200;
 	Color = rgb16(160, 32, 16);
@@ -592,7 +592,7 @@ flesh
 	SpoilModifier = 5000;
 	PriceModifier = 600;
 
-	Config GOBLINOIDFLESH;
+	Config GOBLINOID_FLESH;
 	{
 		Color = rgb16(0, 128, 0);
 		PriceModifier = 600;
@@ -617,23 +617,23 @@ flesh
 		PriceModifier = 800;
 	}
 
-	Config FROGFLESH;
+	Config FROG_FLESH;
 	{
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
-		Effect = EDARKNESS;
-		ConsumeEndMessage = CEM_FROGFLESH;
-		HitMessage = HM_FROGFLESH;
+		Effect = EFFECT_DARKNESS;
+		ConsumeEndMessage = CEM_FROG_FLESH;
+		HitMessage = HM_FROG_FLESH;
 		NameStem = "frog flesh";
 	}
 
-	Config ELPURIFLESH;
+	Config ELPURI_FLESH;
 	{
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
-		Effect = EDARKNESS;
-		ConsumeEndMessage = CEM_FROGFLESH;
-		HitMessage = HM_FROGFLESH;
+		Effect = EFFECT_DARKNESS;
+		ConsumeEndMessage = CEM_FROG_FLESH;
+		HitMessage = HM_FROG_FLESH;
 		StrengthValue = 30;
 		Density = 2400;
 		NameStem = "Elpuri's flesh";
@@ -641,34 +641,34 @@ flesh
 		Color = rgb16(60, 60, 60);
 	}
 
-	Config HUMANFLESH;
+	Config HUMAN_FLESH;
 	{
 		Alignment = EVIL;
 		NameStem = "human flesh";
 	}
 
-	Config DOLPHINFLESH;
+	Config DOLPHIN_FLESH;
 	{
 		NameStem = "dolphin flesh";
 	}
 
-	Config POLARBEARFLESH;
+	Config POLAR_BEAR_FLESH;
 	{
 		NameStem = "polar bear flesh";
 	}
 
-	Config WOLFFLESH;
+	Config WOLF_FLESH;
 	{
 		NameStem = "wolf flesh";
 	}
 
-	Config DOGFLESH;
+	Config DOG_FLESH;
 	{
 		Alignment = EVIL;
 		NameStem = "dog flesh";
 	}
 
-	Config ENNERBEASTFLESH;
+	Config ENNER_BEAST_FLESH;
 	{
 		StrengthValue = 30;
 		Density = 1800;
@@ -677,81 +677,81 @@ flesh
 		Article = "an";
 	}
 
-	Config SPIDERFLESH;
+	Config SPIDER_FLESH;
 	{
 		NameStem = "spider flesh";
 		NutritionValue = 100;
 	}
 
-	Config JACKALFLESH;
+	Config JACKAL_FLESH;
 	{
 		NameStem = "jackal flesh";
 	}
 
-	Config ASSFLESH;
+	Config ASS_FLESH;
 	{
 		NameStem = "donkey flesh";
 	}
 
-	Config BATFLESH;
+	Config BAT_FLESH;
 	{
 		NameStem = "bat flesh";
 	}
 
-	Config WEREWOLFFLESH;
+	Config WERE_WOLF_FLESH;
 	{
 		NameStem = "werewolf flesh";
-		Effect = ELYCANTHROPY;
+		Effect = EFFECT_LYCANTHROPY;
 	}
 
-	Config KOBOLDFLESH;
+	Config KOBOLD_FLESH;
 	{
 		NutritionValue = 100;
 		IsBadFoodForAI = true;
 		NameStem = "kobold flesh";
-		Effect = EKOBOLDFLESH;
-		ConsumeEndMessage = CEM_KOBOLDFLESH;
-		HitMessage = HM_KOBOLDFLESH;
+		Effect = EFFECT_KOBOLD_FLESH;
+		ConsumeEndMessage = CEM_KOBOLD_FLESH;
+		HitMessage = HM_KOBOLD_FLESH;
 		PriceModifier = 200;
 	}
 
-	Config GIBBERLINGFLESH;
+	Config GIBBERLING_FLESH;
 	{
 		NameStem = "gibberling flesh";
 	}
 
-	Config CATFLESH;
+	Config CAT_FLESH;
 	{
 		NameStem = "cat flesh";
 	}
 
-	Config RATFLESH;
+	Config RAT_FLESH;
 	{
 		NameStem = "rat flesh";
 	}
 
-	Config ANGELFLESH;
+	Config ANGEL_FLESH;
 	{
 		NameStem = "angel flesh";
 	}
 
-	Config DWARFFLESH;
+	Config DWARF_FLESH;
 	{
 		NameStem = "dwarf flesh";
 	}
 
-	Config DAEMONFLESH;
+	Config DAEMON_FLESH;
 	{
 		Color = rgb16(180, 0, 0);
 		NameStem = "daemon flesh";
 	}
 
-	Config MAMMOTHFLESH;
+	Config MAMMOTH_FLESH;
 	{
 		NameStem = "mammoth flesh";
 	}
 
-	Config BLACKUNICORNFLESH;
+	Config BLACK_UNICORN_FLESH;
 	{
 		Color = rgb16(48, 48, 48);
 		/* Slightly strange. This means that the good gods like to receive this sacrifice */
@@ -759,13 +759,13 @@ flesh
 		NameStem = "black unicorn flesh";
 	}
 
-	Config GRAYUNICORNFLESH;
+	Config GRAY_UNICORN_FLESH;
 	{
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
 	}
 
-	Config WHITEUNICORNFLESH;
+	Config WHITE_UNICORN_FLESH;
 	{
 		Color = rgb16(160, 160, 160);
 		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
@@ -773,22 +773,22 @@ flesh
 		NameStem = "white unicorn flesh";
 	}
 
-	Config LIONFLESH;
+	Config LION_FLESH;
 	{
 		NameStem = "lion flesh";
 	}
 
-	Config BUFFALOFLESH;
+	Config BUFFALO_FLESH;
 	{
 		NameStem = "buffalo flesh";
 	}
 
-	Config SNAKEFLESH;
+	Config SNAKE_FLESH;
 	{
 		NameStem = "snake flesh";
 	}
 
-	Config ORCFLESH;
+	Config ORC_FLESH;
 	{
 		NameStem = "orc flesh";
 	}
@@ -796,10 +796,10 @@ flesh
 
 powder
 {
-	Config GUNPOWDER;
+	Config GUN_POWDER;
 	{
 		StrengthValue = 5;
-		ConsumeType = MINERAL;
+		ConsumeType = CT_MINERAL;
 		Density = 250;
 		Color = rgb16(30, 30, 30);
 		CanBeWished = false;

@@ -49,4 +49,3 @@ class wsquare : public square
 };
 
 #endif
-

@@ -11,7 +11,7 @@ olterrain
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
 	PostFix = "";
-	ArticleMode = NORMALARTICLE;
+	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
 	/* Obligatory: ContainedMaterialConfig */
@@ -144,7 +144,7 @@ decoration
 		RestMessage = "You rest well on the soft sofa.";
 	}
 
-	Config DOUBLEBED;
+	Config DOUBLE_BED;
 	{
 		CanBeDug = true;
 		DigMessage = "You smash the bed into pieces.";
@@ -159,7 +159,7 @@ decoration
 		RestMessage = "You lay yourself on the confortable bed.";
 	}
 
-	Config POOLBORDER;
+	Config POOL_BORDER;
 	{
 		DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
 		MainMaterialConfig == MARBLE;
@@ -167,7 +167,7 @@ decoration
 		BitmapPos = 32, 320;
 	}
 
-	Config POOLCORNER;
+	Config POOL_CORNER;
 	{
 		DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
 		MainMaterialConfig == MARBLE;
@@ -199,7 +199,7 @@ link /* olterrain-> */
 {
 	IsAbstract = true;
 
-	Config STAIRSUP;
+	Config STAIRS_UP;
 	{
 		DigMessage = "The stairs are too hard to dig.";
 		MainMaterialConfig == STONE;
@@ -210,7 +210,7 @@ link /* olterrain-> */
 		IsUpLink = true;
 	}
 
-	Config STAIRSDOWN;
+	Config STAIRS_DOWN;
 	{
 		DigMessage = "The stairs are too hard to dig.";
 		MainMaterialConfig == STONE;
@@ -246,7 +246,7 @@ container /* olterrain->decoration-> */
 {
 	IsAbstract = true;
 
-	Config BOOKCASE;
+	Config BOOK_CASE;
 	{
 		CanBeDug = true;
 		DigMessage = "You smash the bookcase into pieces.";
@@ -275,5 +275,3 @@ brokendoor /* olterrain->door-> */
 	Adjective = "broken";
 	/* BitmapPos depends on being open or not */
 }
-
-
