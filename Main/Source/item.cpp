@@ -20,12 +20,12 @@ item::item(bool CreateMaterials, bool SetStats)
 		ABORT("Boo!");
 }
 
-void item::PositionedDrawToTileBuffer(uchar)
+void item::PositionedDrawToTileBuffer(uchar) const
 {
 	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
 }
 
-void can::PositionedDrawToTileBuffer(uchar)
+void can::PositionedDrawToTileBuffer(uchar) const
 {
 	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
 }
@@ -34,17 +34,14 @@ ushort can::TryToOpen(stack* Stack)
 {
 	ADD_MESSAGE("You succeed in opening the can!");
 
-	item* Lump = new lump(false);
-	Lump->InitMaterials(CMaterial(1));
-
-	ushort x = Stack->AddItem(Lump);
+	ushort x = Stack->AddItem(new lump(CMaterial(1)));
 
 	SMaterial(1,0);
 
 	return x;
 }
 
-ulong item::CWeight(void)
+ulong item::CWeight(void) const
 {
 	ulong TotalWeight = 0;
 
@@ -115,27 +112,16 @@ bool potion::Consume(character* Eater, float Amount)
 	{
 		delete Material[1];
 		SMaterial(1,0);
-	//	Eater->CLevelSquareUnder()->CStack()->AddItem(this);
 	}	
 	return false;
 }
 
-void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
 	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), (CBitmapPos().Y + (LevelSquarePosition << 4)), 0, 0, 16, 16);
 }
 
-bool item::CanBeRead(character*)
-{
-	return false;
-}
-
-bool item::Read(character*)
-{
-	return false;
-}
-
-bool scroll::CanBeRead(character* Reader)
+bool scroll::CanBeRead(character* Reader) const
 {
 	return Reader->CanRead();
 }
@@ -207,15 +193,15 @@ void meleeweapon::DipInto(item* DipTo)
 
 material* lump::BeDippedInto(void)
 {
-	return game::CreateMaterial(CMaterial(0)->Type(), CMaterial(0)->TakeDipVolumeAway());
+	return CMaterial(0)->Clone(CMaterial(0)->TakeDipVolumeAway());
 }
 
-bool item::Consumable(character* Eater)
+bool item::Consumable(character* Eater) const
 {
 	return Eater->ConsumeItemType(GetConsumeType());
 }
 
-ushort item::CEmitation(void)
+ushort item::CEmitation(void) const
 {
 	ushort Emitation = 0;
 
@@ -230,13 +216,13 @@ ushort item::CEmitation(void)
 void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
 	game::CCurrentLevel()->CLevelSquare(ItemStack->CPos())->CStack()->AddItem(new brokenbottle);
-	ItemStack->RemoveItem(ItemStack->FindItem(this));
+	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	delete this;
 }
 
 
-void potion::PositionedDrawToTileBuffer(uchar)
+void potion::PositionedDrawToTileBuffer(uchar) const
 {
 	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (Material[0]->CItemColor() << 4), CBitmapPos().Y+16, 0, 0, 16, 16);
 
@@ -259,7 +245,7 @@ bool loaf::Consume(character* Eater, float Amount)
 	return (Amount > 99);
 }
 
-short item::CalculateOfferValue(char GodAlignment)
+short item::CalculateOfferValue(char GodAlignment) const
 {
 	float OfferValue = 0;
 	for(ushort c = 0; c < CMaterials(); c++)
@@ -287,14 +273,6 @@ short item::CalculateOfferValue(char GodAlignment)
 		}
 	}
 	return short(OfferValue * (OfferModifier() / 250));
-}
-
-bool item::Destroyable(void)
-{
-	if(IsHeadOfElpuri() || IsPerttusNut() || IsMaakotkaShirt())
-		return false;
-	else
-		return true;
 }
 
 bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
@@ -371,13 +349,6 @@ bool abone::Consume(character* Consumer, float Amount)
 	return (Amount > 99);
 }
 
-/*void item::ReactWith(character* Dude)
-{
-	if(CanBeDipped())
-		if(CMaterial(GetDipMaterialNumber()))
-			CMaterial(GetDipMaterialNumber())->HitEffect(Dude);
-}*/
-
 ushort can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
 	if(Consumer != game::CPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
@@ -393,7 +364,7 @@ ushort item::PrepareForConsuming(character*, stack* Stack)
 	return Stack->SearchItem(this);
 }
 
-float item::GetWeaponStrength(void)
+float item::GetWeaponStrength(void) const
 {
 	return sqrt(float(CFormModifier()) * Material[0]->GetHitValue() * CWeight());
 }
@@ -415,12 +386,12 @@ bool scrollofwishing::Read(character* Reader)
 	return false;
 }
 
-item* leftnutofperttu::CreateWishedItem(void)
+item* leftnutofperttu::CreateWishedItem(void) const
 {
 	return new cheapcopyofleftnutofperttu;
 }
 
-void item::DrawToTileBuffer(void)
+void item::DrawToTileBuffer(void) const
 {
 	PositionedDrawToTileBuffer(CENTER);
 }

@@ -1,10 +1,6 @@
 #include "char.h"
 #include "material.h"
 
-material::material(ulong Volume) : Volume(Volume)
-{
-}
-
 ushort material::TakeDipVolumeAway(void)
 {
 	ulong Amount = rand() % 100;
@@ -17,14 +13,14 @@ ushort material::TakeDipVolumeAway(void)
 	return Amount;
 }
 
-void material::Save(std::ofstream* SaveFile)
+void material::Save(std::ofstream* SaveFile) const
 {
 	ushort TypeVar = Type();
 	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
 	SaveFile->write((char*)&Volume, sizeof(Volume));
 }
 
-material::material(std::ifstream* SaveFile)
+void material::Load(std::ifstream* SaveFile)
 {
 	SaveFile->read((char*)&Volume, sizeof(Volume));
 }

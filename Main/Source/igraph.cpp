@@ -46,13 +46,3 @@ void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
 	else
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
-
-/*void igraph::MaskedBlitTileBuffer(vector Pos, ushort Luminance)
-{
-	Luminance = ushort(Luminance * game::CSoftGamma());
-
-	if(Luminance == 256)
-		TileBuffer->MaskedBlitToDB(0, 0, Pos.X, Pos.Y, 16, 16);
-	else
-		TileBuffer->MaskedBlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
-}*/

@@ -125,7 +125,7 @@ bitmap::~bitmap(void)
 			graphics::BitmapContainer.erase(graphics::BitmapContainer.begin() + c);
 }
 
-void bitmap::Save(std::ofstream* SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
+void bitmap::Save(std::ofstream* SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -155,7 +155,7 @@ void bitmap::Load(std::ifstream* SaveFile, ushort XPos, ushort YPos, ushort XSiz
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
-void bitmap::Save(std::string FileName)
+void bitmap::Save(std::string FileName) const
 {
 	std::ofstream SaveFile(FileName.c_str(), std::ios::out | std::ios::binary);
 
@@ -200,7 +200,7 @@ void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
-ushort bitmap::GetPixel(ushort X, ushort Y)
+ushort bitmap::GetPixel(ushort X, ushort Y) const
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -228,7 +228,7 @@ void bitmap::ClearToColor(ushort DestX, ushort DestY, ushort SizeX, ushort SizeY
 	Temp.Blit(this, 0,0, DestX, DestY, SizeX, SizeY);
 }
 
-void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags)
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
 	Flags &= 0x7;
 
@@ -502,7 +502,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance)
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
 	DDSURFACEDESC2 srcddsd;
 	ZeroMemory( &srcddsd,sizeof(srcddsd) );
@@ -599,7 +599,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags)
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
 	Flags &= 0x7;
 
@@ -931,7 +931,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance)
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
 	DDSURFACEDESC2 srcddsd;
 	ZeroMemory( &srcddsd,sizeof(srcddsd) );
@@ -1036,37 +1036,37 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height)
+void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height) const
 {
 	Blit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height);
 }
 
-void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Bright)
+void bitmap::BlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Bright) const
 {
 	Blit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height, Bright);
 }
 
-void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height)
+void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height) const
 {
 	MaskedBlit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height);
 }
 
-void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance)
+void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
 	MaskedBlit(DOUBLEBUFFER, SourceX, SourceY, DestX, DestY, Width, Height, Luminance);
 }
 
-void bitmap::FastBlit(bitmap* Bitmap)
+void bitmap::FastBlit(bitmap* Bitmap) const
 {
 	Bitmap->CDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT);
 }
 
-void bitmap::FastMaskedBlit(bitmap* Bitmap)
+void bitmap::FastMaskedBlit(bitmap* Bitmap) const
 {
 	Bitmap->CDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT | DDBLTFAST_SRCCOLORKEY);
 }
 
-void bitmap::Printf(bitmap* Font, ushort X, ushort Y, const char* Format, ...)
+void bitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, const char* Format, ...) const
 {
 	char Buffer[256];
 
@@ -1079,7 +1079,7 @@ void bitmap::Printf(bitmap* Font, ushort X, ushort Y, const char* Format, ...)
 	{
 		ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
 
-		Font->MaskedBlit(this, FX, FY, X + (c << 3), Y, 8, 8);
+		MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8);
 	}
 }
 
@@ -1088,12 +1088,12 @@ void bitmap::ReadFromDB(ushort X, ushort Y)
 	DOUBLEBUFFER->Blit(this, X, Y, 0, 0, XSize, YSize);
 }
 
-void bitmap::WriteToDB(ushort X, ushort Y)
+void bitmap::WriteToDB(ushort X, ushort Y) const
 {
 	Blit(DOUBLEBUFFER, 0, 0, X, Y, XSize, YSize);
 }
 
-void bitmap::PrintfToDB(ushort X, ushort Y, const char* Format, ...)
+void bitmap::PrintfToDB(ushort X, ushort Y, const char* Format, ...) const
 {
 	char Buffer[256];
 
@@ -1102,7 +1102,7 @@ void bitmap::PrintfToDB(ushort X, ushort Y, const char* Format, ...)
 	vsprintf(Buffer, Format, AP);
 	va_end(AP);
 
-	DOUBLEBUFFER->Printf(this, X, Y, Buffer);
+	Printf(DOUBLEBUFFER, X, Y, Buffer);
 }
 
 void bitmap::Backup(ushort X, ushort Y, bool DestroySurface)

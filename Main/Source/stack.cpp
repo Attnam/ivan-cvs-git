@@ -10,10 +10,8 @@
 #include "whandler.h"
 #include "lsquare.h"
 
-stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0), Emitation(0)
+stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {
-	for(ushort c = 0; c < CItems(); c++)		// What in dev/null this does? Who wrote this?
-		SItem(c, 0);				//   Confess immediately!
 }
 
 stack::~stack(void)
@@ -21,11 +19,11 @@ stack::~stack(void)
 	Clean();
 }
 
-void stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+void stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
 	for(ushort c = 0; c < CItems(); c++)
-		if(CItem()[c])
-			CItem()[c]->PositionedDrawToTileBuffer(LevelSquarePosition);
+		if(CItem(c))
+			CItem(c)->PositionedDrawToTileBuffer(LevelSquarePosition);
 
 	if(CItems() > 1)
 		igraph::CSymbolGraphic()->MaskedBlit(igraph::CTileBuffer(), 0, 16, 0, 0, 16, 16);
@@ -36,7 +34,7 @@ ushort stack::AddItem(item* ToBeAdded)
 	item** TempItem = new item*[CItems() + 1];
 
 	for(ushort c = 0; c < CItems(); c++)
-		TempItem[c] = CItem()[c];
+		TempItem[c] = CItem(c);
 
 	delete [] Item;
 
@@ -64,7 +62,7 @@ ushort stack::FastAddItem(item* ToBeAdded)
 	item** TempItem = new item*[Items + 1];
 
 	for(ushort c = 0; c < CItems(); c++)
-		TempItem[c] = CItem()[c];
+		TempItem[c] = CItem(c);
 
 	delete [] Item;
 
@@ -79,11 +77,11 @@ ushort stack::FastAddItem(item* ToBeAdded)
 
 item* stack::RemoveItem(ushort Index)
 {
-	if(CItem() && Index < CItems())
+	if(Item && Index < CItems())
 	{
 		item* Removed;
 
-		ushort IEmit = Item[Index]->CEmitation();
+		ushort IEmit = CEmitation();
 
 		Removed = Item[Index];
 
@@ -93,13 +91,8 @@ item* stack::RemoveItem(ushort Index)
 
 		Optimize(0);
 
-		if(IEmit == CEmitation())
-		{
-			Emitation = CEmitation();
-
-			if(IEmit != CEmitation())
-				CLevelSquareUnder()->SignalEmitationDecrease(IEmit);
-		}
+		if(IEmit > CEmitation())
+			CLevelSquareUnder()->SignalEmitationDecrease(IEmit);
 
 		if(CLevelSquareUnder()->CanBeSeen())
 			CLevelSquareUnder()->UpdateItemMemory();
@@ -112,7 +105,7 @@ item* stack::RemoveItem(ushort Index)
 
 void stack::FastRemoveItem(ushort Index)
 {
-	if(CItem())
+	if(Item)
 	{
 		SItem(Index, 0);
 
@@ -125,7 +118,7 @@ void stack::FastRemoveItem(ushort Index)
 void stack::Clean(void)
 {
 	for(ushort c = 0; c < CItems(); c++)
-		if(CItem()[c])
+		if(CItem(c))
 			delete Item[c];
 
 	delete [] Item;
@@ -142,10 +135,10 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 	ushort ToBeReturned;
 	if(this == MoveTo)
 		return Index;
-	if(CItem() && CItems() > Index && CItem()[Index] && MoveTo)
+	if(Item && CItems() > Index && CItem(Index) && MoveTo)
 		if(MoveTo->CLevelSquareUnder() == CLevelSquareUnder())
 		{
-			ToBeReturned = MoveTo->FastAddItem(CItem()[Index]);
+			ToBeReturned = MoveTo->FastAddItem(CItem(Index));
 			FastRemoveItem(Index);
 
 			if(CLevelSquareUnder()->CanBeSeen())
@@ -153,7 +146,7 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 		}
 		else
 		{
-			ToBeReturned = MoveTo->AddItem(CItem()[Index]);
+			ToBeReturned = MoveTo->AddItem(CItem(Index));
 			RemoveItem(Index);
 
 			if(CLevelSquareUnder()->CanBeSeen())
@@ -175,8 +168,8 @@ void stack::Optimize(ushort OptimizeBoundary) // Optimizes the inventory
 			item** TempItem = new item*[CItems() - NonExistent];
 
 			for(ushort c = 0, i = 0; c < CItems(); c++)
-				if(CItem()[c])
-					TempItem[i++] = CItem()[c];
+				if(CItem(c))
+					TempItem[i++] = CItem(c);
 
 			delete [] Item;
 
@@ -197,7 +190,7 @@ void stack::Optimize(ushort OptimizeBoundary) // Optimizes the inventory
 	}
 }
 
-ushort stack::DrawContents(const char* Topic) 	// Draws a list of the items in this stack on the screen
+ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the items in this stack on the screen
 {							// Displays Topic on the screen also...
 	if(!CItems()) return 0xFFFF;
 	list ItemNames(Topic);
@@ -205,40 +198,42 @@ ushort stack::DrawContents(const char* Topic) 	// Draws a list of the items in t
 	ItemNames.AddDescription("Name                                                 Weight       Armor  Strength");
 	for(ushort c = 0; c < CItems(); c++)
 	{
-		std::string Buffer = CItem()[c]->Name(INDEFINITE);
+		std::string Buffer = CItem(c)->Name(INDEFINITE);
 		Buffer.resize(50,' ');
-		Buffer += int(CItem()[c]->CWeight());
+		Buffer += int(CItem(c)->CWeight());
 		Buffer.resize(63, ' ');
-		Buffer += int(CItem()[c]->GetArmorValue());
+		Buffer += int(CItem(c)->GetArmorValue());
 		Buffer.resize(70, ' ');
-		Buffer += int(CItem()[c]->GetWeaponStrength());
+		Buffer += int(CItem(c)->GetWeaponStrength());
 
 		ItemNames.AddString(Buffer);
 	}
 	return ItemNames.Draw();
 }
 
-ushort stack::CEmitation(void) // Calculates the biggest light emmision of the levelsquare...
+ushort stack::CEmitation(void) const // Calculates the biggest light emmision of the levelsquare...
 {
-	Emitation = 0;
+	ushort Emitation = 0;
 
 	for(ushort c = 0; c < CItems(); c++)
-		if(CItem()[c])
-			if(CItem()[c]->CEmitation() > Emitation)
-				Emitation = CItem()[c]->CEmitation();
+		if(CItem(c))
+			if(CItem(c)->CEmitation() > Emitation)
+				Emitation = CItem(c)->CEmitation();
 
 	return Emitation;
 }
 
-ulong stack::SumOfMasses(void)
+ulong stack::SumOfMasses(void) const
 {
 	ulong Sum = 0;
+
 	for(ushort c = 0; c < CItems(); c++)
-		Sum += CItem()[c]->CWeight();
+		Sum += CItem(c)->CWeight();
+
 	return Sum;
 }
 
-void stack::Save(std::ofstream* SaveFile)
+void stack::Save(std::ofstream* SaveFile) const
 {
 	SaveFile->write((char*)&Items, sizeof(Items));
 
@@ -263,10 +258,10 @@ stack::stack(std::ifstream* SaveFile)
 	NonExistent = 0;
 }
 
-ushort stack::SearchItem(item* ToBeSearched)
+ushort stack::SearchItem(item* ToBeSearched) const
 {
 	for(ushort c = 0; c < CItems(); c++)
-		if(CItem()[c] == ToBeSearched)
+		if(CItem(c) == ToBeSearched)
 			return c;
 
 	return 0xFFFF;
@@ -274,12 +269,12 @@ ushort stack::SearchItem(item* ToBeSearched)
 
 void stack::Move(levelsquare* To)
 {
-	CLevelSquareUnder()->SignalEmitationDecrease(Emitation);
+	CLevelSquareUnder()->SignalEmitationDecrease(CEmitation());
 	SSquareUnder(To);
-	CLevelSquareUnder()->SignalEmitationIncrease(Emitation);
+	CLevelSquareUnder()->SignalEmitationIncrease(CEmitation());
 }
 
-vector stack::CPos(void)
+vector stack::CPos(void) const
 {
 	return CLevelSquareUnder()->CPos();
 }
@@ -287,23 +282,25 @@ vector stack::CPos(void)
 ushort stack::ConsumableItems(character* Eater)
 {
 	ushort Counter = 0;
+
 	for(ushort c = 0; c < CItems(); c++)
 	{
-		if(CItem()[c]->Consumable(Eater))
+		if(CItem(c)->Consumable(Eater))
 			Counter++;
 	}
+
 	return Counter;
 }
 
-ushort stack::DrawConsumableContents(const char* Topic, character* Eater)
+ushort stack::DrawConsumableContents(const char* Topic, character* Eater) const
 {
 	stack ConsumableStack;
 	item* TheItem;
 	ushort Key;
 	for(ushort c = 0; c < CItems(); c++)
 	{
-		if(CItem()[c]->Consumable(Eater))
-			ConsumableStack.FastAddItem(CItem()[c]);
+		if(CItem(c)->Consumable(Eater))
+			ConsumableStack.FastAddItem(CItem(c));
 	}
 	Key = ConsumableStack.DrawContents(Topic);
 
@@ -313,14 +310,11 @@ ushort stack::DrawConsumableContents(const char* Topic, character* Eater)
 		return 0xFFFF;
 	}
 
-	TheItem = ConsumableStack.CItem()[Key];
+	TheItem = ConsumableStack.CItem(Key);
 	ConsumableStack.DeletePointers();
-	return FindItem(TheItem);
+	return SearchItem(TheItem);
 
 }
-
-
-
 
 void stack::DeletePointers(void)
 {
@@ -328,40 +322,27 @@ void stack::DeletePointers(void)
 		FastRemoveItem(0);
 }
 
-
-void stack::StackMerge(stack ToBeMerged)
+void stack::StackMerge(stack* ToBeMerged)
 {
-	for(ushort c = 0; c < ToBeMerged.CItems(); c++)
-	{
-		FastAddItem(ToBeMerged.CItem()[c]);
-	}
-	ToBeMerged.DeletePointers();
-}
+	for(ushort c = 0; c < ToBeMerged->CItems(); c++)
+		FastAddItem(ToBeMerged->CItem(c));
 
-ushort stack::FindItem(item* ToBeSearched)
-{
-	for(ushort c = 0; c < CItems(); c++)
-	{
-		if(CItem()[c] == ToBeSearched)
-			return c;
-	}
-	return 0xFFFF;
+	ToBeMerged->DeletePointers();
 }
-
 
 void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 {
 	if(Strength > 3)
 		for(ushort c = 0; c < CItems(); c++)
 		{
-			CItem()[c]->ImpactDamage(Strength >> 1, ShowOnScreen, this);
+			CItem(c)->ImpactDamage(Strength >> 1, ShowOnScreen, this);
 			CItem(c)->Fly(Direction, Strength, this, true);
 		}
 	else
 		if(ShowOnScreen) ADD_MESSAGE("Your weak kick does no damage.");
 }
 
-long stack::Score(void)
+long stack::Score(void) const
 {
 	long Score = 0;
 

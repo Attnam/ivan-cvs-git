@@ -12,11 +12,11 @@ public:
 	list(std::string Topic) { Description.Add(Topic); }
 	void AddString(std::string S) { String.Add(S); }
 	void AddDescription(std::string S) { Description.Add(S); }
-	void DrawDescription(void);
-	ushort Draw(bool = true);
+	void DrawDescription(void) const;
+	ushort Draw(bool = true) const;
 	void Empty(void);
 	std::string GetString(ushort Index) { return String.Access(Index); }
-	ushort Length(void) { return String.Length(); }
+	ushort Length(void) const { return String.Length(); }
 	dynarray<std::string>* CString(void) { return &String; }
 protected:
 	dynarray<std::string> String;

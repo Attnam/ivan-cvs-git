@@ -47,7 +47,6 @@ public:
 	static bitmap* CSymbolGraphic(void)	{return Graphic[GSYMBOL];}
 	static bitmap* CTileBuffer(void)	{ return TileBuffer; }
 	static void BlitTileBuffer(vector, ushort = 256);
-	//static void MaskedBlitTileBuffer(vector, ushort = 256);
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;

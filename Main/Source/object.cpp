@@ -7,7 +7,7 @@ object::~object(void)
 	EraseMaterials();
 }
 
-void object::Save(std::ofstream* SaveFile)
+void object::Save(std::ofstream* SaveFile) const
 {
 	independency::Save(SaveFile);
 
@@ -28,7 +28,7 @@ void object::Save(std::ofstream* SaveFile)
 	SaveFile->write((char*)&Size, sizeof(Size));
 }
 
-object::object(std::ifstream* SaveFile) : independency(SaveFile)
+void object::Load(std::ifstream* SaveFile)
 {
 	ushort Materials;
 
@@ -57,7 +57,7 @@ void object::InitMaterials(material* FirstMaterial)
 	Material.push_back(FirstMaterial);
 }
 
-ushort object::CEmitation(void)
+ushort object::CEmitation(void) const
 {
 	ushort Emitation = 0;
 
@@ -69,11 +69,11 @@ ushort object::CEmitation(void)
 	return Emitation;
 }
 
-std::string object::NameArtifact(uchar Case, uchar DefaultMaterial)
+std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const
 {
 	std::string Temp;
 
-	if(CMaterial(0)->Type() != DefaultMaterial)
+	if(!CMaterial(0)->IsType(DefaultMaterial))
 		Temp = CMaterial(0)->Name() + " " + NameSingular();
 	else
 		Temp = NameSingular();
@@ -90,7 +90,7 @@ std::string object::NameArtifact(uchar Case, uchar DefaultMaterial)
 	}
 }
 
-std::string object::NameWithMaterial(uchar Case)
+std::string object::NameWithMaterial(uchar Case) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
@@ -110,15 +110,15 @@ std::string object::NameWithMaterial(uchar Case)
 				return Material[0]->Name() + " " + NamePlural();
 }
 
-std::string object::NameHandleDefaultMaterial(uchar Case, std::string Article, uchar DefaultMaterial)
+std::string object::NameHandleDefaultMaterial(uchar Case, std::string Article, uchar DefaultMaterial) const
 {
-	if(CMaterial(0)->Type() != DefaultMaterial)
+	if(!CMaterial(0)->IsType(DefaultMaterial))
 		return NameWithMaterial(Case);
 	else
 		return NameNormal(Case, Article);
 }
 
-std::string object::NameContainer(uchar Case)
+std::string object::NameContainer(uchar Case) const
 {
 	if(!CMaterial(1))
 	{
@@ -160,7 +160,7 @@ std::string object::NameContainer(uchar Case)
 	}
 }
 
-std::string object::NameSized(uchar Case, std::string Article, ushort LillaBorder, ushort StoraBorder)
+std::string object::NameSized(uchar Case, std::string Article, ushort LillaBorder, ushort StoraBorder) const
 {
 	std::string Temp;
 
@@ -186,7 +186,7 @@ std::string object::NameSized(uchar Case, std::string Article, ushort LillaBorde
 				return Temp + NamePlural();
 }
 
-std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article)
+std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))

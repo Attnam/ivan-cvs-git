@@ -1,6 +1,8 @@
 #ifndef __WHANDLER_H__
 #define __WHANDLER_H__
 
+#define GETKEY globalwindowhandler::GetKey
+
 #include <windows.h>
 
 #include "typedef.h"

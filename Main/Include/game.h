@@ -46,7 +46,7 @@ public:
 	static void Init(std::string = "");
 	static void DeInit(void);
 	static void Run(void);
-	static const int Menu(std::string sMS); // hihi :-) (MENU)
+	static int Menu(std::string sMS); // hihi :-) (MENU)
 	static int* CMoveCommandKey(void)	{return MoveCommandKey;}
 	static const vector* CMoveVector(void)	{return MoveVector;}
 	static level* CCurrentLevel(void)		{return Level[Current];}
@@ -57,10 +57,10 @@ public:
 	public:
 		globalmessagingsystem(void) : MessageBuffer(0), BufferLength(0) {}
 		void AddMessage(const char*, ...);
-		void Draw(void);
+		void Draw(void) const;
 		void Empty(void);
-		const char* CBuffer(void)	{return MessageBuffer;}
-		void DrawMessageHistory(void);
+		const char* CBuffer(void) const {return MessageBuffer;}
+		void DrawMessageHistory(void) const;
 		void Format(void);
 	private:
 		char* MessageBuffer;
@@ -70,14 +70,14 @@ public:
 	static class panel
 	{
 	public:
-		void Draw(void);
+		void Draw(void) const;
 	private:
 	} Panel;
 	static ushort*** CLuxTable(void)		{return LuxTable;}
 	static ushort* CLuxTableSize(void)		{return LuxTableSize;}
 	static void Quit(void);
 	static character* CPlayer(void) {return Player;}
-	static void SPlayer(character* NP) {Player = NP;}
+	static void SPlayer(character*);
 	static vector CCamera(void) {return Camera;}
 	static void UpDateCameraX(void);
 	static void UpDateCameraY(void);
@@ -90,11 +90,10 @@ public:
 	static character* BalancedCreateMonster(void);
 	static item* BalancedCreateItem(void);
 	static const char* Insult(void);
-	static bool BoolQuestion(std::string, char = 0, int = 0, int (*)(void) = game::GetKey);
+	static bool BoolQuestion(std::string, char = 0, int = 0);
 	static const char* PersonalPronoun(uchar Index);
 	static const char* PossessivePronoun(uchar Index);
 	static void DrawEverything(bool = true);
-	static void DrawEverythingWithDebug(bool = true);
 	static void StoryScreen(const char*, bool = true);
 	static bool Save(std::string = game::SaveName());
 	static bool Load(std::string = game::SaveName());
@@ -113,9 +112,6 @@ public:
 	static uchar EditGamma(short Value) {if(Value > 255 - Gamma) Gamma = 255; else if(Value + Gamma < 0) Gamma = 0; else Gamma += Value; return Gamma;}
 	static bool EmitationHandler(ushort, ushort, ushort, ushort);
 	static bool NoxifyHandler(ushort, ushort, ushort, ushort);
-	static clock_t HandlePlayTim; //Public for debug
-	static int GetKey(void);
-	static int MonsGetKey(void);
 	static bool CGoThroughWallsCheat(void) { return GoThroughWallsCheat; }
 	static void GoThroughWalls(void) { GoThroughWallsCheat = !GoThroughWallsCheat; }
 	static void UpdateCameraXWithPos(ushort);
@@ -155,11 +151,17 @@ public:
 	static ulong CTurns(void) { return Turns; }
 	static std::string CAutoSaveFileName(void) { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true);
-	static command** CCommand(void) { return Command; }
-	static const character* const CCharacterPrototype(const ushort Index) { return CharacterPrototype[Index]; }
-	static prototypecontainer<character>& CCharacterPrototype(void) { return CharacterPrototype; }
-	static const item* const CItemPrototype(const ushort Index) { return ItemPrototype[Index]; }
-	static prototypecontainer<item>& CItemPrototype(void) { return ItemPrototype; }
+	static command* CCommand(ushort Index) { return Command[Index]; }
+	static const material* const CMaterialPrototype(ushort Index) { return MaterialPrototype[Index]; }
+	static const character* const CCharacterPrototype(ushort Index) { return CharacterPrototype[Index]; }
+	static const item* const CItemPrototype(ushort Index) { return ItemPrototype[Index]; }
+	static const groundterrain* const CGroundTerrainPrototype(ushort Index) { return GroundTerrainPrototype[Index]; }
+	static const overterrain* const COverTerrainPrototype(ushort Index) { return OverTerrainPrototype[Index]; }
+	static ushort AddProtoType(material* Material);
+	static ushort AddProtoType(character* Character);
+	static ushort AddProtoType(item* Item);
+	static ushort AddProtoType(groundterrain* GroundTerrain);
+	static ushort AddProtoType(overterrain* OverTerrain);
 	static void SaveLevel(std::string = SaveName(), ushort = CCurrent(), bool = true);
 	static void LoadLevel(std::string = SaveName(), ushort = CCurrent());
 	static void RemoveSaves(void);
@@ -167,10 +169,13 @@ public:
 private:
 	static dynarray<character*> Hell;
 	static std::string Alignment[];
+	static prototypecontainer<material> MaterialPrototype;
 	static prototypecontainer<character> CharacterPrototype;
 	static prototypecontainer<item> ItemPrototype;
+	static prototypecontainer<groundterrain> GroundTerrainPrototype;
+	static prototypecontainer<overterrain> OverTerrainPrototype;
 	static god* God[];
-	static const unsigned int CountChars(const char cSF,std::string sSH); // (MENU)
+	static unsigned int CountChars(char cSF,std::string sSH); // (MENU)
 	static level** Level;
 	static ushort Levels, Current;
 	static int MoveCommandKey[DIRECTION_COMMAND_KEYS];
@@ -184,7 +189,6 @@ private:
 	static bool SeeWholeMapCheat;
 	static uchar Gamma;
 	static bool GoThroughWallsCheat;
-	static clock_t HandleCharTim;
 	static std::string PlayerName;
 	static std::string LevelMsg[];
 	static uchar GodNumber;

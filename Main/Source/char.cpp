@@ -22,7 +22,7 @@
 #include "lsquare.h"
 #include "level.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
 	SConsumingCurrently(0xFFFF);
 
@@ -38,9 +38,7 @@ character::~character(void)
 void perttu::CreateInitialEquipment(void)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new valpurijustifier)));
-	item* VPlate = new platemail(false);
-	VPlate->InitMaterials(new valpurium(4000));
-	WearItem(CStack()->CItem(CStack()->FastAddItem(VPlate)));
+	WearItem(CStack()->CItem(CStack()->FastAddItem(new platemail(new valpurium(4000)))));
 }
 
 void oree::CreateInitialEquipment(void)
@@ -72,13 +70,10 @@ void froggoblin::CreateInitialEquipment(void)
 
 void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 {
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 		ADD_MESSAGE(Pointer);
 
 	ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 20000);
-
-	//if(game::CWizardMode())
-	//	ADD_MESSAGE("(damage: %d)", Damage);
 
 	SHP(HP - Damage);
 
@@ -110,8 +105,8 @@ void character::Hunger(ushort Turns)
 	if(CNP() < HUNGERLEVEL)
 		SStrengthExperience(CStrengthExperience() - 10 * Turns);
 
-	if(CNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL) if(game::CPlayer() == this) ADD_MESSAGE("You are getting hungry.");
-	if(CNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL) if(game::CPlayer() == this) ADD_MESSAGE("You are getting very hungry.");
+	if(CNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL) if(CIsPlayer()) ADD_MESSAGE("You are getting hungry.");
+	if(CNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL) if(CIsPlayer()) ADD_MESSAGE("You are getting very hungry.");
 	if(CNP() < 1)
 	{
 		if(!game::CWizardMode())
@@ -125,7 +120,7 @@ bool character::Hit(character* Enemy)
 {
 	if(Enemy->CRelations() != 0)
 	{
-	if(game::CPlayer() == this)
+	if(CIsPlayer())
 		if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
 			return false;
 	}
@@ -151,19 +146,19 @@ bool character::Hit(character* Enemy)
 	return true;
 }
 
-ushort character::CalculateArmorModifier(void)
+ushort character::CalculateArmorModifier(void) const
 {
 	return 100;
 }
 
-ushort humanoid::CalculateArmorModifier(void)
+ushort humanoid::CalculateArmorModifier(void) const
 {
 	return Armor.Torso ? Armor.Torso->GetArmorValue() : 100;
 }
 
 uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, character* Enemy)
 {
-	if(Enemy == game::CPlayer())
+	if(Enemy->CIsPlayer())
 		SRelations(0);
 	if(CConsumingCurrently() != 0xFFFF) StopEating();
 	if(!(rand() % 20))
@@ -179,8 +174,7 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 		}
 
 		SHP(CHP() - Damage);
-		//if(Enemy->CWielded())
-		//	Enemy->CWielded()->ReactWith(this);
+
 		if(rand() % 4) SpillBlood(rand() % 3);
 
 		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE))) { return HAS_DIED; }
@@ -204,8 +198,7 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 		else
 		{
 			if(CLevelSquareUnder()->CanBeSeen()) Enemy->AddHitMessage(this);
-			//if(Enemy->CWielded())
-			//	Enemy->CWielded()->ReactWith(this);
+
 			SHP(CHP() - Damage);
 
 			if(game::CWizardMode())
@@ -268,7 +261,7 @@ void character::Act(void)
 			}
 			if(CConsumingCurrently() != 0xFFFF) ContinueEating();
 
-			if(CNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !CFainted() && this == game::CPlayer())
+			if(CNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !CFainted() && CIsPlayer())
 			{
 				ADD_MESSAGE("You faint.");
 				SAP(CAP() - 7000 + rand() % 10000);
@@ -284,7 +277,7 @@ void character::Act(void)
 			SConsumingCurrently(0xFFFF);
 			if(CFainted()) SFainted(false);
 
-			if(this == game::CPlayer())
+			if(CIsPlayer())
 			{
 				static ushort Timer = 0;
 				if(Timer++ == 20)
@@ -348,7 +341,7 @@ bool character::Open(void)
 
 	while(true)
 	{
-		int Key = game::GetKey();
+		int Key = GETKEY();
 
 		if(Key == 'i') 
 			return OpenItem();
@@ -375,7 +368,7 @@ bool character::Close(void)
 
 	while(true)
 	{
-		int Key = game::GetKey();
+		int Key = GETKEY();
 
 		if(Key == 0x1B)
 			return false;
@@ -397,8 +390,8 @@ bool character::Drop(void)
 {
 	ushort Index = CStack()->DrawContents("What do you want to drop?");
 
-	if(Index < CStack()->CItems() && CStack()->CItem()[Index])
-		if(CStack()->CItem()[Index] == CWielded())
+	if(Index < CStack()->CItems() && CStack()->CItem(Index))
+		if(CStack()->CItem(Index) == CWielded())
 			ADD_MESSAGE("You can't drop something you wield!");
 		else
 		{
@@ -414,10 +407,10 @@ bool humanoid::Drop(void)
 {
 	ushort Index = CStack()->DrawContents("What do you want to drop?");
 
-	if(Index < CStack()->CItems() && CStack()->CItem()[Index])
-		if(CStack()->CItem()[Index] == CWielded())
+	if(Index < CStack()->CItems() && CStack()->CItem(Index))
+		if(CStack()->CItem(Index) == CWielded())
 			ADD_MESSAGE("You can't drop something you wield!");
-		else if(CStack()->CItem()[Index] == Armor.Torso)
+		else if(CStack()->CItem(Index) == Armor.Torso)
 			ADD_MESSAGE("You can't drop something you wear!");
 		else
 		{
@@ -481,7 +474,7 @@ bool character::Consume(void)
 	return false;
 }
 
-bool character::CheckBulimia(void)
+bool character::CheckBulimia(void) const
 {
 	return CNP() > (CSize() << 5) ? true : false;
 }
@@ -498,31 +491,33 @@ void character::ReceiveBulimiaDamage(void)
 	}
 }
 
-bool character::CheckIfConsumable(ushort Index)
+bool character::CheckIfConsumable(ushort Index) const
 {
-	return (CTorsoArmor() != CStack()->CItem()[Index] && CWielded() != CStack()->CItem()[Index]);
+	return (CTorsoArmor() != CStack()->CItem(Index) && CWielded() != CStack()->CItem(Index));
 }
 
 bool character::ConsumeItem(int ToBeEaten, stack* ItemsStack)
 {
 	ushort ItemNumber;
-	if(ConsumeItemType(ItemsStack->CItem()[ToBeEaten]->GetConsumeType()))
+	if(ConsumeItemType(ItemsStack->CItem(ToBeEaten)->GetConsumeType()))
 	{
 		if((ItemNumber = ItemsStack->CItem(ToBeEaten)->PrepareForConsuming(this, ItemsStack)) != 0xFFFF)
 		{
 			SConsumingCurrently(ItemsStack->MoveItem(ItemNumber, CLevelSquareUnder()->CStack()));
-			APsToBeEaten = ItemsStack->CItem()[ToBeEaten]->CWeight();
+			APsToBeEaten = ItemsStack->CItem(ToBeEaten)->CWeight();
 			SAP(1000 - APsToBeEaten);
 			return true;
 		}
 	}
-	if(this == game::CPlayer()) ADD_MESSAGE("You can't consume this.");
+
+	if(CIsPlayer())
+		ADD_MESSAGE("You can't consume this.");
 
 	return false;
 
 }
 
-bool character::ConsumeItemType(uchar Type)
+bool character::ConsumeItemType(uchar Type) const
 {
 	switch(Type)
 	{
@@ -570,7 +565,7 @@ void character::Move(vector MoveTo, bool TeleportMove)
 
 	game::CCurrentLevel()->AddCharacter(MoveTo, this);
 
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 	{
 		if(CPos().X < game::CCamera().X + 2 || CPos().X > game::CCamera().X + 48)
 			game::UpDateCameraX();
@@ -583,32 +578,32 @@ void character::Move(vector MoveTo, bool TeleportMove)
 	}
 	SNP(CNP() - 1);
 	SAgilityExperience(CAgilityExperience() + 10);
-	if (this == game::CPlayer() && CLevelSquareUnder()->CStack()->CItems() > 0)
+	if(CIsPlayer() && CLevelSquareUnder()->CStack()->CItems() > 0)
 	{
 		if (CLevelSquareUnder()->CStack()->CItems() > 1)
 		ADD_MESSAGE("Several items are lying here.");
-		else	ADD_MESSAGE("%s is lying here.", CLevelSquareUnder()->CStack()->CItem()[0]->CNAME(INDEFINITE));
+		else	ADD_MESSAGE("%s is lying here.", CLevelSquareUnder()->CStack()->CItem(0)->CNAME(INDEFINITE));
 	}
 	}
 }
 
-void character::DrawToTileBuffer(void)
+void character::DrawToTileBuffer(void) const
 {
 	igraph::CCharacterGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X, (Material[0]->CFleshColor()) << 4, 0, 0, 16, 16);
 
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 		igraph::CCharacterGraphic()->MaskedBlit(igraph::CTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-void golem::DrawToTileBuffer(void)
+void golem::DrawToTileBuffer(void) const
 {
 	igraph::CCharacterGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X, (Material[0]->CItemColor()) << 4, 0, 0, 16, 16);
 
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 		igraph::CCharacterGraphic()->MaskedBlit(igraph::CTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-void humanoid::DrawToTileBuffer(void)
+void humanoid::DrawToTileBuffer(void) const
 {	
 	vector InHandsPic, ArmPos, HeadPos;
 
@@ -644,7 +639,7 @@ void humanoid::DrawToTileBuffer(void)
 	if(CWielded() != 0)
 		if(InHandsPic.X != 0 || InHandsPic.Y != 0) igraph::CHumanGraphic()->MaskedBlit(igraph::CTileBuffer(), InHandsPic.X , InHandsPic.Y, 0, 0, 16, 16); // Wielded
 
-	if (this == game::CPlayer())
+	if(CIsPlayer())
 		igraph::CCharacterGraphic()->MaskedBlit(igraph::CTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
@@ -660,7 +655,7 @@ bool character::Wield(void)
 		SWielded(0);
 	else
 		if(Index < CStack()->CItems())
-			SWielded(CStack()->CItem()[Index]);
+			SWielded(CStack()->CItem(Index));
 		else
 			return false;
 
@@ -681,8 +676,8 @@ bool humanoid::Wield(void)
 	else
 		if(Index < CStack()->CItems())
 	{
-	if(CStack()->CItem()[Index] != Armor.Torso)
-		SWielded(CStack()->CItem()[Index]);
+	if(CStack()->CItem(Index) != Armor.Torso)
+		SWielded(CStack()->CItem(Index));
 	else ADD_MESSAGE("You can't wield something that you wear!");
 	}
 
@@ -694,6 +689,7 @@ bool humanoid::Wield(void)
 }
 
 void character::GetAICommand(void) // Freedom is slavery. Love is hate. War is peace.
+				   // Shouldn't it be "Ignorance is strength", not "Love is hate"?
 {
 	switch(CRelations())
 	{
@@ -805,18 +801,18 @@ bool character::TryMove(vector MoveTo)
 	if(MoveTo.X < game::CCurrentLevel()->CXSize() && MoveTo.Y < game::CCurrentLevel()->CYSize())
 	{
 		if(game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter())
-			if(this == game::CPlayer() || (!CRelations() && game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter()->CRelations() > 0) || (CRelations() > 0 && !game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter()->CRelations()))
+			if(CIsPlayer() || (!CRelations() && game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter()->CRelations() > 0) || (CRelations() > 0 && !game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter()->CRelations()))
 				return Hit(game::CCurrentLevel()->CLevelSquare(MoveTo)->CCharacter());
 			else
 				return false;
 		else
-			if(game::CCurrentLevel()->CLevelSquare(MoveTo)->COverTerrain()->CIsWalkable() || (game::CGoThroughWallsCheat() && game::CPlayer() == this))
+			if(game::CCurrentLevel()->CLevelSquare(MoveTo)->COverTerrain()->CIsWalkable() || (game::CGoThroughWallsCheat() && CIsPlayer()))
 			{
 				Move(MoveTo);
 
 				return true;
 			}
-			else if(game::CPlayer() == this && game::CCurrentLevel()->CLevelSquare(MoveTo)->COverTerrain()->CanBeOpened())
+			else if(CIsPlayer() && game::CCurrentLevel()->CLevelSquare(MoveTo)->COverTerrain()->CanBeOpened())
 			{
 				if(game::BoolQuestion("Do you want to open this door? [Y/N]", false, game::GetMoveCommandKey(game::CPlayer()->CPos(), MoveTo)))
 				{
@@ -859,9 +855,9 @@ bool character::PickUp(void)
 				Index = CLevelSquareUnder()->CStack()->DrawContents("What do you want to pick up?");
 
 				if(Index < CLevelSquareUnder()->CStack()->CItems())
-					if(CLevelSquareUnder()->CStack()->CItem()[Index])
+					if(CLevelSquareUnder()->CStack()->CItem(Index))
 					{
-						ADD_MESSAGE("%s picked up.", CLevelSquareUnder()->CStack()->CItem()[Index]->CNAME(INDEFINITE));
+						ADD_MESSAGE("%s picked up.", CLevelSquareUnder()->CStack()->CItem(Index)->CNAME(INDEFINITE));
 						CLevelSquareUnder()->CStack()->MoveItem(Index, CStack());
 						ToBeReturned = true;
 					}
@@ -874,7 +870,7 @@ bool character::PickUp(void)
 		}
 		else
 		{
-			ADD_MESSAGE("%s picked up.", CLevelSquareUnder()->CStack()->CItem()[0]->CNAME(INDEFINITE));
+			ADD_MESSAGE("%s picked up.", CLevelSquareUnder()->CStack()->CItem(0)->CNAME(INDEFINITE));
 			CLevelSquareUnder()->CStack()->MoveItem(0, CStack());
 			return true;
 		}
@@ -911,7 +907,7 @@ void character::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this)
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("You die.");
 
@@ -919,7 +915,7 @@ void character::Die(void)
 		{
 			game::DrawEverything(false);
 
-			if(!game::BoolQuestion("Do you want to do this, cheater? [Y/N]", 2, 'y', game::MonsGetKey))
+			if(!game::BoolQuestion("Do you want to do this, cheater? [Y/N]", 2, 'y'))
 			{
 				SHP(Endurance << 1);
 				SNP(1000);
@@ -947,7 +943,7 @@ void character::Die(void)
 
 	game::SendToHell(this);
 
-	if(game::CPlayer() == this)
+	if(CIsPlayer())
 	{
 		game::Quit();
 
@@ -955,7 +951,7 @@ void character::Die(void)
 		{
 			game::DrawEverything();
 
-			globalwindowhandler::GetKey();
+			GETKEY();
 		}
 
 		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
@@ -972,7 +968,7 @@ bool character::OpenItem(void)
 	ushort Index = Stack->DrawContents("What do you want to open?");
 
 	if(Index < CStack()->CItems())
-		if(CStack()->CItem()[Index]->TryToOpen(Stack) != 0xFFFF)
+		if(CStack()->CItem(Index)->TryToOpen(Stack) != 0xFFFF)
 		{
 			SAgilityExperience(CAgilityExperience() + 25);
 			SNP(CNP() - 1);
@@ -980,7 +976,7 @@ bool character::OpenItem(void)
 		}
 		else
 		{
-			ADD_MESSAGE("You can't open %s.", CStack()->CItem()[Index]->CNAME(DEFINITE));
+			ADD_MESSAGE("You can't open %s.", CStack()->CItem(Index)->CNAME(DEFINITE));
 			return false;
 		}
 
@@ -1008,13 +1004,13 @@ void fallenvalpurist::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this) 
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("You die.");
 
 		game::DrawEverything();
 
-		globalwindowhandler::GetKey();
+		GETKEY();
 
 		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
@@ -1045,13 +1041,13 @@ void elpuri::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this) 
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("You die and your head drops off.");
 
 		game::DrawEverything();
 
-		globalwindowhandler::GetKey();
+		GETKEY();
 
 		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
@@ -1087,13 +1083,13 @@ void perttu::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this) 
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("You die and your left nut falls off.");
 
 		game::DrawEverything();
 
-		globalwindowhandler::GetKey();
+		GETKEY();
 
 		game::StoryScreen("Unfortunately thee died during thine journey. Thee are not happy.");
 
@@ -1129,13 +1125,13 @@ void billswill::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this) 
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("You die and disappear in a whisp of smoke."); // Shouldn't this smoke be poison?
 
 		game::DrawEverything();
 
-		globalwindowhandler::GetKey();
+		GETKEY();
 
 		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
@@ -1159,12 +1155,9 @@ void billswill::Die(void)
 bool humanoid::WearArmor(void)
 {
 	ushort Index;
-	if((Index = CStack()->DrawContents("What do you want to wear? or press '-' for nothing")) == 0xFFFF)
-	{
-		//ADD_MESSAGE("You have nothing to wear.");
-		return false;
-	}
 
+	if((Index = CStack()->DrawContents("What do you want to wear? or press '-' for nothing")) == 0xFFFF)
+		return false;
 
 	if(Index == 0xFFFE)
 	{
@@ -1174,11 +1167,11 @@ bool humanoid::WearArmor(void)
 	else
 		if(Index < CStack()->CItems())		// Other Armor types should be coded...
 		{
-			if(CStack()->CItem()[Index]->CanBeWorn())
+			if(CStack()->CItem(Index)->CanBeWorn())
 			{
-				if(CStack()->CItem()[Index] != CWielded())
+				if(CStack()->CItem(Index) != CWielded())
 				{
-					Armor.Torso = CStack()->CItem()[Index];
+					Armor.Torso = CStack()->CItem(Index);
 					return true;
 				}
 				else
@@ -1198,37 +1191,37 @@ bool character::WearArmor(void)
 	return false;
 }
 
-void character::AddBlockMessage(character* Enemy)
+void character::AddBlockMessage(character* Enemy) const
 {
-	if(Enemy == game::CPlayer())
+	if(Enemy->CIsPlayer())
 		ADD_MESSAGE("You block %s!", CNAME(DEFINITE));
 	else
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("%s blocks you!", Enemy->CNAME(DEFINITE));
 		else
 			if(CLevelSquareUnder()->RetrieveFlag()) ADD_MESSAGE("%s blocks %s!", Enemy->CNAME(DEFINITE), CNAME(DEFINITE));
 }
 
-void character::AddDodgeMessage(character* Enemy)
+void character::AddDodgeMessage(character* Enemy) const
 {
-	if(Enemy == game::CPlayer())
+	if(Enemy->CIsPlayer())
 		ADD_MESSAGE("You dodge %s!", CNAME(DEFINITE));
 	else
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("%s dodges you!", Enemy->CNAME(DEFINITE));
 		else
 			if(CLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s dodges %s!", Enemy->CNAME(DEFINITE), CNAME(DEFINITE));
 }
 
-void character::AddHitMessage(character* Enemy, const bool Critical)
+void character::AddHitMessage(character* Enemy, const bool Critical) const
 {
-	if(Enemy == game::CPlayer())
+	if(Enemy->CIsPlayer())
 		if(CWielded())
 			ADD_MESSAGE("%s %s you with %s %s!", CNAME(DEFINITE), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
 		else
 			ADD_MESSAGE("%s %s you!", CNAME(DEFINITE), ThirdPersonMeleeHitVerb(Critical).c_str());
 	else
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), Enemy->CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("%s %s %s!", CNAME(DEFINITE), AICombatHitVerb(Enemy, Critical).c_str(), Enemy->CNAME(DEFINITE));
@@ -1304,7 +1297,7 @@ bool character::Talk(void)
 
 		while(!CorrectKey)
 		{
-			k = game::GetKey();
+			k = GETKEY();
 
 			if(k == 0x1B)
 				CorrectKey = true;
@@ -1344,7 +1337,7 @@ void character::ApplyExperience(void)
 {
 	if(CStrengthExperience() > pow(1.18, long(CStrength())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You feel you could lift Bill with one hand!");
 
 		SStrength(CStrength() + 1);
@@ -1354,7 +1347,7 @@ void character::ApplyExperience(void)
 
 	if(CStrengthExperience() < -pow(1.18, long(100 - CStrength())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You collapse under your load.");
 
 		SStrength(CStrength() - 1);
@@ -1364,7 +1357,7 @@ void character::ApplyExperience(void)
 
 	if(CEnduranceExperience() > pow(1.18, long(CEndurance())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You feel Valpuri's toughness around you!");
 
 		SEndurance(CEndurance() + 1);
@@ -1374,7 +1367,7 @@ void character::ApplyExperience(void)
 
 	if(CEnduranceExperience() < -pow(1.18, long(100 - CEndurance())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You seem as tough as Jari.");
 
 		SEndurance(CEndurance() - 1);
@@ -1384,7 +1377,7 @@ void character::ApplyExperience(void)
 
 	if(CAgilityExperience() > pow(1.18, long(CAgility())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("Your agility challenges even the Valpuri's angels!");
 
 		SAgility(CAgility() + 1);
@@ -1394,7 +1387,7 @@ void character::ApplyExperience(void)
 
 	if(CAgilityExperience() < -pow(1.18, long(100 - CAgility())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You seem as fast as a flat mommo.");
 
 		SAgility(CAgility() - 1);
@@ -1404,7 +1397,7 @@ void character::ApplyExperience(void)
 
 	if(CPerceptionExperience() > pow(1.18, long(CPerception())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("Your sight seem to sharpen. This is bad. Very bad.");
 
 		SPerception(CPerception() + 1);
@@ -1414,7 +1407,7 @@ void character::ApplyExperience(void)
 
 	if(CPerceptionExperience() < -pow(1.18, long(100 - CPerception())) * 193)
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You feel very guru.");
 
 		SPerception(CPerception() - 1);
@@ -1425,7 +1418,7 @@ void character::ApplyExperience(void)
 	}
 }
 
-bool character::HasHeadOfElpuri(void)
+bool character::HasHeadOfElpuri(void) const
 {
 	for(ushort c = 0; c < CStack()->CItems(); c++)
 		if(CStack()->CItem(c)->IsHeadOfElpuri())
@@ -1434,7 +1427,7 @@ bool character::HasHeadOfElpuri(void)
 	return false;
 }
 
-bool character::HasPerttusNut(void)
+bool character::HasPerttusNut(void) const
 {
 	for(ushort c = 0; c < CStack()->CItems(); c++)
 		if(CStack()->CItem(c)->IsPerttusNut())
@@ -1443,7 +1436,7 @@ bool character::HasPerttusNut(void)
 	return false;
 }
 
-bool character::HasMaakotkaShirt(void)
+bool character::HasMaakotkaShirt(void) const
 {
 	for(ushort c = 0; c < CStack()->CItems(); c++)
 		if(CStack()->CItem(c)->IsMaakotkaShirt())
@@ -1478,16 +1471,17 @@ bool character::Read(void)
 
 bool character::ReadItem(int ToBeRead, stack* ItemsStack)
 {
-	if(ItemsStack->CItem()[ToBeRead]->CanBeRead(this))
+	if(ItemsStack->CItem(ToBeRead)->CanBeRead(this))
 	{
-		if(ItemsStack->CItem()[ToBeRead]->Read(this))
+		if(ItemsStack->CItem(ToBeRead)->Read(this))
 			ItemsStack->RemoveItem(ToBeRead);
 
 		return true;
 	}
 	else
 	{
-		if(this == game::CPlayer()) ADD_MESSAGE("You can't read this.");
+		if(CIsPlayer())
+			ADD_MESSAGE("You can't read this.");
 
 		return false;
 	}
@@ -1497,7 +1491,7 @@ bool character::ReadItem(int ToBeRead, stack* ItemsStack)
 // 5000 * S Stressed
 // 7000 * S Overload
 
-uchar character::GetBurdenState(ulong Mass)
+uchar character::GetBurdenState(ulong Mass) const
 {
 	ulong SumOfMasses;
 	if(!Mass)
@@ -1517,15 +1511,15 @@ bool character::Dip(void)
 {
 	ushort What = CStack()->DrawContents("What do you want to dip?");
 
-	if(What < CStack()->CItems() && CStack()->CItem()[What]->CanBeDipped())
+	if(What < CStack()->CItems() && CStack()->CItem(What)->CanBeDipped())
 	{
 		game::DrawEverything();
 		ushort To = CStack()->DrawContents("In what do you wish to dip it into?");
-		if(To < CStack()->CItems() && CStack()->CItem()[To] && CStack()->CItem()[What] != CStack()->CItem()[To])
+		if(To < CStack()->CItems() && CStack()->CItem(To) && CStack()->CItem(What) != CStack()->CItem(To))
 		{
-			if(CStack()->CItem()[To]->CanBeDippedInto(CStack()->CItem()[What]))
+			if(CStack()->CItem(To)->CanBeDippedInto(CStack()->CItem(What)))
 			{
-				CStack()->CItem()[What]->DipInto(CStack()->CItem()[To]);
+				CStack()->CItem(What)->DipInto(CStack()->CItem(To));
 				return true;
 			}
 		}
@@ -1534,7 +1528,7 @@ bool character::Dip(void)
         return false;
 }
 
-void character::Save(std::ofstream* SaveFile)
+void character::Save(std::ofstream* SaveFile) const
 {
 	object::Save(SaveFile);
 
@@ -1564,8 +1558,10 @@ void character::Save(std::ofstream* SaveFile)
 	SaveFile->write((char*)&Dead, sizeof(Dead)); // ?
 }
 
-character::character(std::ifstream* SaveFile) : object(SaveFile)
+void character::Load(std::ifstream* SaveFile)
 {
+	object::Load(SaveFile);
+
 	Stack = new stack(SaveFile);
 
 	ushort Index;
@@ -1594,7 +1590,7 @@ character::character(std::ifstream* SaveFile) : object(SaveFile)
 	SaveFile->read((char*)&Dead, sizeof(Dead)); // ?
 }
 
-void humanoid::Save(std::ofstream* SaveFile)
+void humanoid::Save(std::ofstream* SaveFile) const
 {
 	character::Save(SaveFile);
 
@@ -1608,10 +1604,21 @@ void humanoid::Save(std::ofstream* SaveFile)
 	SaveFile->write((char*)&TorsoType, sizeof(TorsoType));
 }
 
-/*void humanoid::LoadSpecialVariables(std::ifstream* SaveFile)
+void humanoid::Load(std::ifstream* SaveFile)
 {
-	
-}*/
+	character::Load(SaveFile);
+
+	ushort Index;
+
+	SaveFile->read((char*)&Index, sizeof(Index));
+
+	Armor.Torso = Index != 0xFFFF ? Stack->CItem(Index) : 0;
+
+	SaveFile->read((char*)&ArmType, sizeof(ArmType));
+	SaveFile->read((char*)&HeadType, sizeof(HeadType));
+	SaveFile->read((char*)&LegType, sizeof(LegType));
+	SaveFile->read((char*)&TorsoType, sizeof(TorsoType));
+}
 
 bool character::WizardMode(void)
 {
@@ -1713,7 +1720,7 @@ bool character::DecreaseSoftGamma(void)
 	return false;
 }
 
-ushort character::CEmitation(void)
+ushort character::CEmitation(void) const
 {
 	ushort Emitation = 0;
 
@@ -1743,11 +1750,10 @@ bool character::WalkThroughWalls(void)
 }
 
 
-float character::CWeaponStrength(void)
+float character::CWeaponStrength(void) const
 {
 	return CWielded() ? CWielded()->GetWeaponStrength() : GetMeleeStrength();
 }
-
 
 bool character::ShowKeyLayout(void)
 {
@@ -1756,12 +1762,12 @@ bool character::ShowKeyLayout(void)
 	List.AddDescription("");
 	List.AddDescription("Key       Description");
 
-	for(uchar c = 1; game::CCommand()[c]; c++)
+	for(uchar c = 1; game::CCommand(c); c++)
 	{
 		std::string Buffer;
-		Buffer += game::CCommand()[c]->CKey();
+		Buffer += game::CCommand(c)->CKey();
 		Buffer.resize(10, ' ');
-		List.AddString(Buffer + game::CCommand()[c]->CDescription());
+		List.AddString(Buffer + game::CCommand(c)->CDescription());
 	}
 
 	List.Draw(false);
@@ -1794,7 +1800,8 @@ bool character::Look(void)
 				if (short(CursorPos.Y) > game::CCurrentLevel()->CYSize()-1)	CursorPos.Y = 0;
 				if (short(CursorPos.Y) < 0)					CursorPos.Y = game::CCurrentLevel()->CYSize()-1;
 				}
-			if(this == game::CPlayer())
+
+			if(CIsPlayer())
 			{
 				if(CursorPos.X < game::CCamera().X + 2 || CursorPos.X > game::CCamera().X + 48)
 					game::UpdateCameraXWithPos(CursorPos.X);
@@ -1868,7 +1875,7 @@ bool character::Look(void)
 		graphics::BlitDBToScreen();
 		EMPTY_MESSAGES;
 
-		Key = game::GetKey();
+		Key = GETKEY();
 	}
 	return false;
 }
@@ -1883,13 +1890,13 @@ void golem::Die(void)
 	if(Dead)
 		return;
 
-	if(game::CPlayer() == this) 
+	if(CIsPlayer())
 	{
 		ADD_MESSAGE("Your Holy Words fly out of your nose and you collapse and die.");
 
 		game::DrawEverything();
 
-		globalwindowhandler::GetKey();
+		GETKEY();
 
 		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
@@ -1918,17 +1925,17 @@ void golem::Die(void)
 	game::SendToHell(this);
 }
 
-float golem::GetMeleeStrength(void)
+float golem::GetMeleeStrength(void) const
 {
 	return 75 * CMaterial(0)->GetHitValue();
 }
 
-float character::CDifficulty(void)
+float character::CDifficulty(void) const
 {
 	return float(CStrength()) * CEndurance() * CAgility() * CWeaponStrength() / (float(CalculateArmorModifier()) * 25000);
 }
 
-float character::CAttackStrength(void)
+float character::CAttackStrength(void) const
 {
 	return CWielded() ? CWielded()->GetWeaponStrength() : GetMeleeStrength();
 }
@@ -1954,7 +1961,7 @@ void character::MoveRandomly(void)
 		TryMove(CPos() + game::CMoveVector()[ToTry]);
 }
 
-ushort golem::CalculateArmorModifier(void)
+ushort golem::CalculateArmorModifier(void) const
 {
 	if(CMaterial(0)->CArmorValue() / 2 > 90)
 		return 10;
@@ -1976,14 +1983,12 @@ void golem::MoveRandomly(void)
 }
 
 
-bool character::TestForPickup(item* ToBeTested)
+bool character::TestForPickup(item* ToBeTested) const
 {
 	if(GetBurdenState(ToBeTested->CWeight() + CStack()->SumOfMasses()) != UNBURDENED)
 		return false;
 	return true;
 }
-
-//humanoid::humanoid(ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar ArmType, uchar HeadType, uchar LegType, uchar TorsoType, uchar Relations, bool CreateMaterials)  : character(Size, Agility, Strength, Endurance, Perception, Relations, CreateMaterials), ArmType(ArmType), HeadType(HeadType), LegType(LegType), TorsoType(TorsoType) {}
 
 bool character::OpenPos(vector APos)
 {
@@ -2079,7 +2084,7 @@ void character::NeutralAICommand(void)
 	if(CLevelSquareUnder()->CStack()->CItems())
 	{
 		ushort ItemToTry = rand() % CLevelSquareUnder()->CStack()->CItems();
-		if(TestForPickup(CLevelSquareUnder()->CStack()->CItem()[ItemToTry]))
+		if(TestForPickup(CLevelSquareUnder()->CStack()->CItem(ItemToTry)))
 		{
 			CLevelSquareUnder()->CStack()->MoveItem(ItemToTry, CStack());
 			SHasActed(true);
@@ -2087,42 +2092,43 @@ void character::NeutralAICommand(void)
 		for(ushort c = 0; c < CStack()->CItems(); c++)
 		{
 			if(CanWield())
-				if(CStack()->CItem()[c]->GetWeaponStrength() > CWeaponStrength())
+				if(CStack()->CItem(c)->GetWeaponStrength() > CWeaponStrength())
 				{
-					SWielded(CStack()->CItem()[c]);
+					SWielded(CStack()->CItem(c));
 					break;
 				}
-			if(CanWear() && CStack()->CItem()[c]->CanBeWorn())
-				if(CStack()->CItem()[c]->GetArmorValue() < CalculateArmorModifier())
+			if(CanWear() && CStack()->CItem(c)->CanBeWorn())
+				if(CStack()->CItem(c)->GetArmorValue() < CalculateArmorModifier())
 				{
-					WearItem(CStack()->CItem()[c]);
+					WearItem(CStack()->CItem(c));
 					break;
 				}
-			if(CStack()->CItem()[c]->Consumable(this))
+			if(CStack()->CItem(c)->Consumable(this))
 			{
-				item* Temp = CStack()->CItem()[c];
+				item* Temp = CStack()->CItem(c);
 				CStack()->RemoveItem(c);
 				delete Temp;
 			}
 
 			for(ushort c = 0; c < CLevelSquareUnder()->CStack()->CItems(); c++)
 			{
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem()[c]->CWeight()) == UNBURDENED && CanWield())
+				if(CLevelSquareUnder()->CStack()->CItem(c)->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem(c)->CWeight()) == UNBURDENED && CanWield())
 				{
 					if(CWielded())
 						CStack()->MoveItem(CStack()->SearchItem(CWielded()), CLevelSquareUnder()->CStack());
 
-					SWielded(CStack()->CItem()[CLevelSquareUnder()->CStack()->MoveItem(c, CStack())]);
+					SWielded(CStack()->CItem(CLevelSquareUnder()->CStack()->MoveItem(c, CStack())));
 				}
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem()[c]->CWeight()) == UNBURDENED && CanWear())
+				if(CLevelSquareUnder()->CStack()->CItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem(c)->CWeight()) == UNBURDENED && CanWear())
 				{
 					if(CTorsoArmor())
 						CStack()->MoveItem(CStack()->SearchItem(CTorsoArmor()), CLevelSquareUnder()->CStack());
-					WearItem(CStack()->CItem()[CLevelSquareUnder()->CStack()->MoveItem(c, CStack())]);
+
+					WearItem(CStack()->CItem(CLevelSquareUnder()->CStack()->MoveItem(c, CStack())));
 				}
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->Consumable(this))
+				if(CLevelSquareUnder()->CStack()->CItem(c)->Consumable(this))
 				{
-					item* Temp = CLevelSquareUnder()->CStack()->CItem()[c];
+					item* Temp = CLevelSquareUnder()->CStack()->CItem(c);
 					CLevelSquareUnder()->CStack()->RemoveItem(c);
 					delete Temp;
 				}
@@ -2190,20 +2196,20 @@ void character::HostileAICommand(void)
 		for(ushort c = 0; c < CStack()->CItems(); c++)
 		{
 			if(CanWield())
-				if(CStack()->CItem()[c]->GetWeaponStrength() > CWeaponStrength())
+				if(CStack()->CItem(c)->GetWeaponStrength() > CWeaponStrength())
 				{
-					SWielded(CStack()->CItem()[c]);
+					SWielded(CStack()->CItem(c));
 					return;
 				}
-			if(CanWear() && CStack()->CItem()[c]->CanBeWorn())
-				if(CStack()->CItem()[c]->GetArmorValue() < CalculateArmorModifier())
+			if(CanWear() && CStack()->CItem(c)->CanBeWorn())
+				if(CStack()->CItem(c)->GetArmorValue() < CalculateArmorModifier())
 				{
-					WearItem(CStack()->CItem()[c]);
+					WearItem(CStack()->CItem(c));
 					return;
 				}
-			if(CStack()->CItem()[c]->Consumable(this))
+			if(CStack()->CItem(c)->Consumable(this))
 			{
-				item* Temp = CStack()->CItem()[c];
+				item* Temp = CStack()->CItem(c);
 				CStack()->RemoveItem(c);
 				delete Temp;
 				return;
@@ -2211,7 +2217,7 @@ void character::HostileAICommand(void)
 
 			for(ushort c = 0; c < CLevelSquareUnder()->CStack()->CItems(); c++)
 			{
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem()[c]->CWeight()) && CanWield())
+				if(CLevelSquareUnder()->CStack()->CItem(c)->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem(c)->CWeight()) && CanWield())
 				{
 					if(CWielded())
 						CStack()->MoveItem(CStack()->SearchItem(CWielded()), CLevelSquareUnder()->CStack());
@@ -2219,7 +2225,7 @@ void character::HostileAICommand(void)
 					SWielded(CStack()->CItem(CLevelSquareUnder()->CStack()->MoveItem(c, CStack())));
 					return;
 				}
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem()[c]->CWeight()) && CanWear())
+				if(CLevelSquareUnder()->CStack()->CItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(CStack()->SumOfMasses() + CLevelSquareUnder()->CStack()->CItem(c)->CWeight()) && CanWear())
 				{
 					if(CTorsoArmor())
 						CStack()->MoveItem(CStack()->SearchItem(CTorsoArmor()), CLevelSquareUnder()->CStack());
@@ -2227,9 +2233,9 @@ void character::HostileAICommand(void)
 					WearItem(CStack()->CItem(CLevelSquareUnder()->CStack()->MoveItem(c, CStack())));
 					return;
 				}
-				if(CLevelSquareUnder()->CStack()->CItem()[c]->Consumable(this))
+				if(CLevelSquareUnder()->CStack()->CItem(c)->Consumable(this))
 				{
-					item* Temp = CLevelSquareUnder()->CStack()->CItem()[c];
+					item* Temp = CLevelSquareUnder()->CStack()->CItem(c);
 					CLevelSquareUnder()->CStack()->RemoveItem(c);
 					delete Temp;
 					return;
@@ -2237,7 +2243,7 @@ void character::HostileAICommand(void)
 			}
 		}
 		ushort ItemToTry = rand() % CLevelSquareUnder()->CStack()->CItems();
-		if(TestForPickup(CLevelSquareUnder()->CStack()->CItem()[ItemToTry]))
+		if(TestForPickup(CLevelSquareUnder()->CStack()->CItem(ItemToTry)))
 		{
 			CLevelSquareUnder()->CStack()->MoveItem(ItemToTry, CStack());
 			SHasActed(true);
@@ -2287,17 +2293,14 @@ void perttu::HealFully(character* ToBeHealed)
 {
 	SHealTimer(0);
 	ToBeHealed->SHP(ToBeHealed->CEndurance() << 1);
-	if(ToBeHealed == game::CPlayer())
+	if(ToBeHealed->CIsPlayer())
 		ADD_MESSAGE("%s heals you fully.", CNAME(DEFINITE));
 }
 
 void character::ReceiveSchoolFoodEffect(long)
 {
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 		ADD_MESSAGE("Yuck! This stuff tastes like vomit and old mousepads.");
-	//else
-	//	if(CLevelSquareUnder()->CanBeSeen())
-	//		ADD_MESSAGE("%s vomits.", CNAME(DEFINITE));
 
 	SHP(CHP() - 1 - rand() % 5);
 	Vomit(2);
@@ -2305,7 +2308,7 @@ void character::ReceiveSchoolFoodEffect(long)
 
 	if(!(rand() % 10))
 	{
-		if(this == game::CPlayer())
+		if(CIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
 
 		SEndurance(CEndurance() + 1 + rand() % 5);
@@ -2319,7 +2322,9 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmleUrineEffect(long)
 {
-	if(this == game::CPlayer()) ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
+	if(CIsPlayer())
+		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
+
 	SStrength(CStrength() + 1 + rand() % 5);
 	SHP(CHP() + 2);
 }
@@ -2337,7 +2342,8 @@ void character::Darkness(long SizeOfEffect)
 {
 	if(SizeOfEffect == 0) SizeOfEffect++; // Gum solution... It appears that while eating Elpuries corpse this *might* result a division by zero error
 	ushort x = 30 + rand() % SizeOfEffect;
-	if(this == game::CPlayer()) ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
+	if(CIsPlayer())
+		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
 	if(CStrength() - x / 30 > 1) SStrength(CStrength() - x / 30); // Old comment was about eating... This
 	else SStrength(1);                                        // can happen with drinkin, hitting etc.
 	if(CEndurance() - x / 30 > 1) SEndurance(CEndurance() - x / 30);
@@ -2369,14 +2375,19 @@ bool character::Kick(void)
 }
 
 
-void perttu::Save(std::ofstream* SaveFile)
+void perttu::Save(std::ofstream* SaveFile) const
 {
 	humanoid::Save(SaveFile);
 
 	SaveFile->write((char*)&HealTimer, sizeof(HealTimer));
 }
 
+void perttu::Load(std::ifstream* SaveFile)
+{
+	humanoid::Load(SaveFile);
 
+	SaveFile->read((char*)&HealTimer, sizeof(HealTimer));
+}
 
 bool character::ScreenShot(void)
 {
@@ -2396,12 +2407,12 @@ bool character::Offer(void)
 		ushort Index = CStack()->DrawContents("What do you want to offer?");
 		if(Index < CStack()->CItems())
 		{
-			if(CStack()->CItem()[Index] == CWielded())
+			if(CStack()->CItem(Index) == CWielded())
 			{
 				ADD_MESSAGE("You can't offer something that you wield.");
 				return false;
 			}
-			if(CStack()->CItem()[Index] == CTorsoArmor())
+			if(CStack()->CItem(Index) == CTorsoArmor())
 			{
 				ADD_MESSAGE("You can't offer something that you wear.");
 				return false;
@@ -2409,7 +2420,7 @@ bool character::Offer(void)
 
 			if(game::CGod(CLevelSquareUnder()->COverTerrain()->COwnerGod())->ReceiveOffer(CStack()->CItem(Index)))
 			{
-				item* Temp = CStack()->CItem()[Index];
+				item* Temp = CStack()->CItem(Index);
 				CStack()->RemoveItem(Index);
 				delete Temp;
 				return true;
@@ -2426,7 +2437,7 @@ bool character::Offer(void)
 	return false;
 }
 
-long character::Score(void)
+long character::Score(void) const
 {
 	long Score = CHP() * 5 + CNP() / 10 + CEndurance() * 30 + (CStrength() + CAgility() + CPerception()) * 40;
 
@@ -2437,7 +2448,7 @@ long character::Score(void)
 	return Score;
 }
 
-long character::AddScoreEntry(std::string Description, float Multiplier)
+long character::AddScoreEntry(std::string Description, float Multiplier) const
 {
 	highscore HScore;
 
@@ -2452,7 +2463,7 @@ bool character::CheckDeath(std::string Msg)
 {
 	if(CHP() < 1)
 	{
-		if(this == game::CPlayer() && !game::CWizardMode())
+		if(CIsPlayer() && !game::CWizardMode())
 			AddScoreEntry(Msg);
 
 		Die();
@@ -2463,7 +2474,7 @@ bool character::CheckDeath(std::string Msg)
 		return false;
 }
 
-ulong golem::Danger(void)
+ulong golem::Danger(void) const
 {
 	return ulong(GetMeleeStrength() * 100 / (CalculateArmorModifier() * 15));
 }
@@ -2471,7 +2482,8 @@ ulong golem::Danger(void)
 bool character::DrawMessageHistory(void)
 {
 	game::GlobalMessagingSystem.DrawMessageHistory();
-	return true;
+
+	return false;
 }
 
 bool character::Throw(void)
@@ -2485,7 +2497,7 @@ bool character::Throw(void)
 
 	if(Index < CStack()->CItems())
 	{
-		if(CStack()->CItem()[Index] == CWielded())
+		if(CStack()->CItem(Index) == CWielded())
 		{
 			ADD_MESSAGE("You can't throw something that you wield.");
 			return false;
@@ -2493,7 +2505,7 @@ bool character::Throw(void)
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?", 8, false);
 		if(Answer == 0xFF)
 			return false;
-		ThrowItem(Answer, CStack()->CItem()[Index]);
+		ThrowItem(Answer, CStack()->CItem(Index));
 
 	}
 	else
@@ -2514,12 +2526,12 @@ bool humanoid::Throw(void)
 
 	if(Index < CStack()->CItems())
 	{
-		if(CStack()->CItem()[Index] == CWielded())
+		if(CStack()->CItem(Index) == CWielded())
 		{
 			ADD_MESSAGE("You can't throw something that you wield.");
 			return false;
 		}
-		if(CStack()->CItem()[Index] == CTorsoArmor())
+		if(CStack()->CItem(Index) == CTorsoArmor())
 		{
 			ADD_MESSAGE("You can't throw something that you wear.");
 			return false;
@@ -2539,7 +2551,7 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown) // Note to C++ peop
 {
 	if(Direction > 7)
 		ABORT("Throw in TOO odd direction...");
-	return ToBeThrown->Fly(Direction, CStrength(), CStack(), game::CPlayer() == this);
+	return ToBeThrown->Fly(Direction, CStrength(), CStack(), CIsPlayer());
 }
 
 void character::HasBeenHitByItem(item* Thingy, float Speed, bool CanBeSeen)
@@ -2548,7 +2560,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed, bool CanBeSeen)
 
 	SHP(CHP() - Damage);
 
-	if(CanBeSeen && game::CPlayer() != this)
+	if(CanBeSeen && !CIsPlayer())
 	{
 		ADD_MESSAGE("%s hits %s.", Thingy->CNAME(DEFINITE), CNAME(DEFINITE));
 
@@ -2556,7 +2568,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed, bool CanBeSeen)
 			ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 	}
 
-	if(game::CPlayer() == this)
+	if(CIsPlayer())
 		ADD_MESSAGE("%s hits you.", Thingy->CNAME(DEFINITE));
 
 	SpillBlood(1 + rand() % 1);
@@ -2567,7 +2579,7 @@ bool dog::Catches(item* Thingy, float, bool CanBeSeen)
 {
 	if(Thingy->DogWillCatchAndConsume())
 	{
-		if(game::CPlayer() == this)
+		if(CIsPlayer())
 			ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
 		else
 			if(CanBeSeen) ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
@@ -2577,7 +2589,7 @@ bool dog::Catches(item* Thingy, float, bool CanBeSeen)
 	return false;
 }
 
-bool dog::ConsumeItemType(uchar Type)     // We need a better system for this... Writing this to every F***ing character that needs one
+bool dog::ConsumeItemType(uchar Type) const     // We need a better system for this... Writing this to every F***ing character that needs one
 {					  // is Stoo-bit
 	switch(Type)
 	{
@@ -2620,9 +2632,6 @@ bool dog::ConsumeItemType(uchar Type)     // We need a better system for this...
 
 bool character::DodgesFlyingItem(item*, float Speed, bool)
 {			// Formula requires a little bit a tweaking...
-	//if(Speed * 25 - (rand() % CAgility()) * 100 + CSize() * 3< 0)
-	//	return true;
-
 	if(!(rand() % 20))
 		return rand() % 2 ? true : false;
 
@@ -2634,20 +2643,20 @@ bool character::DodgesFlyingItem(item*, float Speed, bool)
 
 void character::ReceiveFireDamage(long SizeOfEffect)
 {
-	if(game::CPlayer() == this) ADD_MESSAGE("You burn.");
+	if(CIsPlayer())
+		ADD_MESSAGE("You burn.");
+
 	SHP(CHP() - (rand() % SizeOfEffect + SizeOfEffect));
 }
 
 void character::GetPlayerCommand(void)
 {
-
 	while(!CHasActed())
 	{
-		game::DrawEverythingWithDebug();
+		game::DrawEverything();
 
-		clock_t Tim = clock();
+		int Key = GETKEY();
 
-		int Key = game::GetKey();
 		bool ValidKeyPressed = false;
 
 		{
@@ -2659,14 +2668,13 @@ void character::GetPlayerCommand(void)
 			}
 		}
 
-		for(uchar c = 1; game::CCommand()[c]; c++)
-			if(Key == game::CCommand()[c]->CKey())
+		for(uchar c = 1; game::CCommand(c); c++)
+			if(Key == game::CCommand(c)->CKey())
 			{
-				HasActed = (this->*game::CCommand()[c]->CLinkedFunction())();
+				HasActed = (this->*game::CCommand(c)->CLinkedFunction())();
 				ValidKeyPressed = true;
 			}
 
-		game::HandlePlayTim += clock() - Tim;
 		if (!ValidKeyPressed) ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
 	}
 }
@@ -2675,7 +2683,9 @@ void character::ContinueEating(void)
 {
 	if(CAPsToBeEaten() + CAP() > 50000)
 	{
-		if(this == game::CPlayer()) ADD_MESSAGE("You have eaten for a long time now...");
+		if(CIsPlayer())
+			ADD_MESSAGE("You have eaten for a long time now...");
+
 		StopEating();
 	}
 	else if(CAP() >= 1000)
@@ -2708,7 +2718,7 @@ void character::StopEating(void)
 
 void character::Vomit(ushort HowMuch)
 {
-	if(this == game::CPlayer())
+	if(CIsPlayer())
 		ADD_MESSAGE("You vomit.");
 	else
 		if(CLevelSquareUnder()->CanBeSeen())
@@ -2728,13 +2738,13 @@ bool character::Apply(void)
 
 	if(Index < CStack()->CItems())
 	{
-		if(CStack()->CItem()[Index] == CWielded())
+		if(CStack()->CItem(Index) == CWielded())
 		{
 			ADD_MESSAGE("You can't throw something that you wield.");
 			return false;
 		}
 
-		if(!CStack()->CItem()[Index]->Apply(this))
+		if(!CStack()->CItem(Index)->Apply(this))
 			return false;
 	}
 	else
@@ -2756,18 +2766,18 @@ bool humanoid::Apply(void)
 
 	if(Index < CStack()->CItems())
 	{
-		if(CStack()->CItem()[Index] == CWielded())
+		if(CStack()->CItem(Index) == CWielded())
 		{
 			ADD_MESSAGE("You can't apply something that you wield.");
 			return false;
 		}
-		if(CStack()->CItem()[Index] == CTorsoArmor())
+		if(CStack()->CItem(Index) == CTorsoArmor())
 		{
 			ADD_MESSAGE("You can't apply something that you wear.");
 			return false;
 		}
 		
-		if(!CStack()->CItem()[Index]->Apply(this))
+		if(!CStack()->CItem(Index)->Apply(this))
 			return false;
 	}
 	else
@@ -2776,7 +2786,7 @@ bool humanoid::Apply(void)
 	return true;
 }
 
-vector character::CPos(void)
+vector character::CPos(void) const
 {
 	return SquareUnder->CPos();
 }

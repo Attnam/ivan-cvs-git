@@ -2,8 +2,11 @@
 
 #include "game.h"
 
+prototypecontainer<material> game::MaterialPrototype;
 prototypecontainer<character> game::CharacterPrototype;
 prototypecontainer<item> game::ItemPrototype;
+prototypecontainer<groundterrain> game::GroundTerrainPrototype;
+prototypecontainer<overterrain> game::OverTerrainPrototype;
 
 #include <cstdarg>
 #include <cstdio>
@@ -96,8 +99,6 @@ vector game::Camera(0, 0);
 bool game::WizardMode;
 bool game::SeeWholeMapCheat;
 uchar game::Gamma = 255;
-clock_t game::HandleCharTim;
-clock_t game::HandlePlayTim;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 std::string game::PlayerName;
@@ -161,20 +162,19 @@ void game::Init(std::string Name)
 			Level[c] = new level(36, 36, c);
 		}
 
-		vector Pos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
+		vector PerttuPos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
 
 		{
-		for(ushort c = 0; !Level[0]->MakeRoom(Pos + vector(-2, -2), vector(5, 5), false); c++)
-			Pos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
+		for(ushort c = 0; !Level[0]->MakeRoom(PerttuPos + vector(-2, -2), vector(5, 5), false); c++)
+			PerttuPos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
 		}
 
-		Level[0]->CLevelSquare(Pos)->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new stairsup(NewMaterial(1, new stone(3))));
+		Level[0]->CLevelSquare(PerttuPos)->ChangeTerrain(new parquet, new stairsup);
 
-		Level[0]->CLevelSquare(Pos)->FastAddCharacter(new perttu);
-		Level[0]->CLevelSquare(Pos)->CStack()->Clean();
-		Level[0]->PutPlayerAround(Pos);
+		Level[0]->CLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
+		Level[0]->PutPlayerAround(PerttuPos);
 
-		Pos = vector(6 + rand() % (Level[8]->CXSize() - 12), 6 + rand() % (Level[8]->CYSize() - 12));
+		vector Pos = vector(6 + rand() % (Level[8]->CXSize() - 12), 6 + rand() % (Level[8]->CYSize() - 12));
 
 		{
 		for(ushort c = 0; !Level[8]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false); c++)
@@ -183,26 +183,22 @@ void game::Init(std::string Name)
 
 		Level[9]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false, 16);
 
-		Level[8]->CLevelSquare(Pos)->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new stairsdown(NewMaterial(1, new stone(3))));
-		Level[8]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new pepsi(3))));
-		Level[8]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new pepsi(3))));
-		Level[8]->CLevelSquare(Pos + vector(-2, 0))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new pepsi(3))));
-		Level[8]->CLevelSquare(Pos + vector( 2, 0))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new pepsi(3))));
-		Level[9]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new stairsup(NewMaterial(1, new stone(3))));
-		Level[9]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new altar(NewMaterial(1, new pepsi(3)), 16));
+		Level[8]->CLevelSquare(Pos)->ChangeTerrain(new parquet, new stairsdown(new pepsi(1)));
+		Level[8]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->CLevelSquare(Pos + vector(-2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->CLevelSquare(Pos + vector( 2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[9]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new stairsup(new pepsi(1)));
+		altar* Altar = new altar(new pepsi(1));
+		Altar->SOwnerGod(16);
+		Level[9]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, Altar); //GGG
 
 		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->CXSize() - 1, Level[9]->CYSize() - 1, Level[9]->CLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
 		Level[9]->CLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
 
-		golem* Golem[3] = { new golem(false), new golem(false), new golem(false) };
-
-		Golem[0]->InitMaterials(new pepsi(100000));
-		Golem[1]->InitMaterials(new pepsi(100000));
-		Golem[2]->InitMaterials(new pepsi(100000));
-
-		Level[9]->CLevelSquare(Pos + vector(0,  2))->FastAddCharacter(Golem[0]);
-		Level[9]->CLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(Golem[1]);
-		Level[9]->CLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(Golem[2]);
+		Level[9]->CLevelSquare(Pos + vector(0,  2))->FastAddCharacter(new golem(new pepsi(100000)));
+		Level[9]->CLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
+		Level[9]->CLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
 
 		{
 		for(ushort c = 0; c < game::CLevels() - 1; c++)
@@ -213,6 +209,8 @@ void game::Init(std::string Name)
 				Level[c]->CreateDownStairs();
 		}
 		}
+
+		Level[0]->CLevelSquare(PerttuPos)->CStack()->Clean();
 
 		Pos = Level[3]->RandomSquare(true);
 		Level[3]->CLevelSquare(Pos)->FastAddCharacter(new ennerbeast);
@@ -260,8 +258,6 @@ void game::DeInit(void)
 
 void game::Run(void)
 {
-	HandleCharTim = HandlePlayTim = 0;
-
 	while(CRunning())
 	{
 		game::CPlayer()->Act();
@@ -269,13 +265,9 @@ void game::Run(void)
 		if(!CRunning())
 			break;
 
-		clock_t Tim = clock();
-
 		Level[Current]->HandleCharacters();
 
 		BurnHellsContents();
-
-		HandleCharTim += clock() - Tim;
 	}
 }
 
@@ -329,7 +321,7 @@ void game::globalmessagingsystem::AddMessage(const char* Format, ...)
 		game::GlobalMessagingSystem.MessageHistory.CString()->Remove(0);
 }
 
-void game::globalmessagingsystem::Draw(void)
+void game::globalmessagingsystem::Draw(void) const
 {
 	graphics::ClearDBToColor(0, 0, 800, 32);
 	//GGG DOUBLEBUFFER->ClearToColor(0, 0, 800, 16);
@@ -396,7 +388,7 @@ void game::globalmessagingsystem::Draw(void)
 
 			//GGG DOUBLEBUFFER->ClearToColor(0, 0, 800, 16);
 
-			globalwindowhandler::GetKey();
+			GETKEY();
 
 			graphics::ClearDBToColor(0, 0, 800, 32);
 		}
@@ -554,7 +546,7 @@ bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, u
 	return true;
 }
 
-void game::panel::Draw(void)
+void game::panel::Draw(void) const
 {
 	character* Player = game::CPlayer();
 
@@ -697,7 +689,7 @@ switch(rand()%11)
 	}
 }
 
-const unsigned int game::CountChars(const char cSF,std::string sSH) // (MENU)
+unsigned int game::CountChars(char cSF,std::string sSH) // (MENU)
 {
 	unsigned int iReturnCounter = 0;
 	for(unsigned int i = 0; i < sSH.length(); i++)
@@ -706,7 +698,7 @@ const unsigned int game::CountChars(const char cSF,std::string sSH) // (MENU)
 	return iReturnCounter;
 }
 
-const int game::Menu(std::string sMS) // (MENU)
+int game::Menu(std::string sMS) // (MENU)
 {
 	if(CountChars('\r',sMS) < 1)
 		return (-1);
@@ -725,7 +717,7 @@ const int game::Menu(std::string sMS) // (MENU)
 
 		graphics::BlitDBToScreen();
 		int k;
-		switch (k = globalwindowhandler::GetKey())
+		switch (k = GETKEY())
 		{
 		// I don't know if you have included keys.h, so...
 			case 0x148:
@@ -754,22 +746,20 @@ const int game::Menu(std::string sMS) // (MENU)
 }
 
 
-bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForTrue, int (*Key)(void))
+bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForTrue)
 {
 	int ch;
 	ADD_MESSAGE(String.c_str());
 	DRAW_MESSAGES;
 	graphics::BlitDBToScreen();
-	//GGG DOUBLEBUFFER->Blit(SCREEN,0,0,0,0,800,16);
 	for(;;)
 	{
-	ch = Key();
+	ch = GETKEY();
 	if (ch == 0x00d || ch == 'y' || ch == 'Y' || ch == OtherKeyForTrue) { EMPTY_MESSAGES; graphics::BlitDBToScreen(); return true;  }
 	if (ch == 'n' || ch == 'N') { EMPTY_MESSAGES; graphics::BlitDBToScreen(); return false; }
 	if(DefaultAnswer == 2) continue;
 	EMPTY_MESSAGES;
 	graphics::BlitDBToScreen();
-	//GGG DOUBLEBUFFER->Blit(SCREEN,0,0,0,0,800,16);
 	return DefaultAnswer ? true : false;
 	}
 }
@@ -804,27 +794,6 @@ const char* game::PossessivePronoun(uchar Sex)
 		ABORT("Illegal sex encountered.");
 		return "xxx";
 	}
-}
-
-void game::DrawEverythingWithDebug(bool EmptyMsg)
-{
-	clock_t Tim = clock(), Temp[5];
-
-	graphics::ClearDBToColor(0);
-	Tim += Temp[0] = clock() - Tim;
-	game::CCurrentLevel()->Draw();
-	Tim += Temp[1] = clock() - Tim;
-	game::Panel.Draw();
-	Tim += Temp[2] = clock() - Tim;
-	DRAW_MESSAGES;
-	Tim += Temp[3] = clock() - Tim;
-	if(EmptyMsg) EMPTY_MESSAGES;
-	Temp[4] = clock() - Tim;
-	//FONTW->PrintfToDB(16, 574, "Player: %lld, Monst: %lld, Clear: %lld.", HandlePlayTim, HandleCharTim, Temp[0]);
-	//FONTW->PrintfToDB(16, 584, "Draw: %lld, Panel: %lld, DrawMess: %lld, EmptyMess: %lld.", Temp[1], Temp[2], Temp[3], Temp[4]);
-	HandleCharTim = 0;
-	HandlePlayTim = 0;
-	graphics::BlitDBToScreen();
 }
 
 void game::DrawEverything(bool EmptyMsg)
@@ -876,10 +845,9 @@ void game::StoryScreen(const char* Text, bool GKey)
 	FONTW->PrintfToDB(400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, "%s", Line);
 
 	graphics::BlitDBToScreen();
-	//FONTW->PrintfToDB(100, 550 , "Press any key to continue");
 
 	if(GKey)
-		globalwindowhandler::GetKey();
+		GETKEY();
 }
 
 bool game::Save(std::string SaveName)
@@ -993,155 +961,16 @@ std::string game::SaveName(void)
 
 material* game::CreateRandomSolidMaterial(ulong Volume)
 {
-	switch ( rand() % NUMB_OF_SOLID_MATERIALS )
-	{
-	case 0:
-		return new iron(Volume);
-	break;
-	case 1:
-		return new valpurium(Volume);
-	break;
-	case 2:
-		return new stone(Volume);
-	break;
-	case 3:
-		return new wood(Volume);
-	break;
-	case 4:
-		return new glass(Volume);
-	break;
-	case 5:
-		return new parchment(Volume);
-	break;
-	case 6:
-                return new cloth(Volume);
-	break;
-	case 7:
-		return new bone(Volume);
-	break;
-	case 8:
-		return new mithril(Volume);
-	break;
-	default:
-		ABORT("Thisss Golemmm refusesss to have this materialll");
-		return 0;
-	break;
-	}
+	for(ushort c = 1, Materials = 0; CMaterialPrototype(c++); Materials++);
+
+	for(c = 1 + rand() % Materials;; c = 1 + rand() % Materials)
+		if(CMaterialPrototype(c)->IsSolid())
+			return CMaterialPrototype(c)->Clone(Volume);
 }
 
 material* game::CreateMaterial(ushort Index, ulong Volume)
 {
-	switch(Index)
-	{
-	case IIRON:
-                return new iron(Volume);
-	case IVALPURIUM:
-		return new valpurium(Volume);
-	case ISTONE:
-		return new stone(Volume);
-	case IBANANAFLESH:
-		return new bananaflesh(Volume);
-	case IGRAVEL:
-		return new gravel(Volume);
-	case IMORAINE:
-		return new moraine(Volume);
-	case ISCHOOLFOOD:
-		return new schoolfood(Volume);
-	case IAIR:
-		return new air(Volume);
-	case IWOOD:
-		return new wood(Volume);
-	case IFLESH:
-		return new flesh(Volume);
-	case IBONE:
-		return new bone(Volume);
-	case IDARKFROGFLESH:
-		return new darkfrogflesh(Volume);
-	case IELPURIFLESH:
-		return new elpuriflesh(Volume);
-	case IGLASS:
-		return new glass(Volume);
-	case IOMLEURINE:
-		return new omleurine(Volume);
-	case IBANANAPEAL:
-		return new bananapeal(Volume);
-	case IPARCHMENT:
-		return new parchment(Volume);
-	case ICLOTH:
-		return new cloth(Volume);
-	case IHUMANFLESH:
-		return new humanflesh(Volume);
-	case ISLIME:
-		return new slime(Volume);
-	case IBROWNSLIME:
-		return new brownslime(Volume);
-	case IGOBLINOIDFLESH:
-		return new goblinoidflesh(Volume);
-	case IPORK:
-		return new pork(Volume);
-	case IBEEF:
-		return new beef(Volume);
-	case IPEPSI:
-		return new pepsi(Volume);
-	case IENNERBEASTFLESH:
-		return new ennerbeastflesh(Volume);
-	case IWOLFFLESH:
-		return new wolfflesh(Volume);
-	case IDOGFLESH:
-		return new dogflesh(Volume);
-	case IMITHRIL:
-		return new mithril(Volume);
-	default:
-		ABORT("Loosing lifesupport in create material...");
-	break;
-	}
-	return 0;
-}
-
-groundterrain* game::LoadGroundTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	switch(Type)
-	{
-	case IPARQUET:
-		return new parquet(SaveFile);
-	case IFLOORY:
-		return new floory(SaveFile);
-	default:
-		ABORT("The time-space-vacuum of this savefile has been corrupted. Aborting Universe.");
-		return 0;
-	}
-}
-
-overterrain* game::LoadOverTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	switch(Type)
-	{
-	case IEARTH:
-		return new earth(SaveFile);
-	case IWALL:
-		return new wall(SaveFile);
-	case IEMPTY:
-		return new empty(SaveFile);
-	case IDOOR:
-		return new door(SaveFile);
-	case ISTAIRSUP:
-		return new stairsup(SaveFile);
-	case ISTAIRSDOWN:
-		return new stairsdown(SaveFile);
-	case IALTAR:
-		return new altar(SaveFile);
-	default:
-		ABORT("The time-space-vacuum of this savefile has been corrupted. Aborting Universe.");
-		return 0;
-	}
+	return MaterialPrototype[Index]->Clone(Volume);
 }
 
 material* game::LoadMaterial(std::ifstream* SaveFile)
@@ -1150,72 +979,14 @@ material* game::LoadMaterial(std::ifstream* SaveFile)
 
 	SaveFile->read((char*)&Type, sizeof(Type));
 
-	switch(Type)
+	if(Type)
 	{
-	case 0:
-		return 0;
-	case IIRON:
-                return new iron(SaveFile);
-	case IVALPURIUM:
-		return new valpurium(SaveFile);
-	case ISTONE:
-		return new stone(SaveFile);
-	case IBANANAFLESH:
-		return new bananaflesh(SaveFile);
-	case IGRAVEL:
-		return new gravel(SaveFile);
-	case IMORAINE:
-		return new moraine(SaveFile);
-	case ISCHOOLFOOD:
-		return new schoolfood(SaveFile);
-	case IAIR:
-		return new air(SaveFile);
-	case IWOOD:
-		return new wood(SaveFile);
-	case IFLESH:
-		return new flesh(SaveFile);
-	case IBONE:
-		return new bone(SaveFile);
-	case IDARKFROGFLESH:
-		return new darkfrogflesh(SaveFile);
-	case IELPURIFLESH:
-		return new elpuriflesh(SaveFile);
-	case IGLASS:
-		return new glass(SaveFile);
-	case IOMLEURINE:
-		return new omleurine(SaveFile);
-	case IBANANAPEAL:
-		return new bananapeal(SaveFile);
-	case IPARCHMENT:
-		return new parchment(SaveFile);
-	case ICLOTH:
-		return new cloth(SaveFile);
-	case IHUMANFLESH:
-		return new humanflesh(SaveFile);
-	case ISLIME:
-		return new slime(SaveFile);
-	case IBROWNSLIME:
-		return new brownslime(SaveFile);
-	case IGOBLINOIDFLESH:
-		return new goblinoidflesh(SaveFile);
-	case IPORK:
-		return new pork(SaveFile);
-	case IBEEF:
-		return new beef(SaveFile);
-	case IPEPSI:
-		return new pepsi(SaveFile);
-	case IENNERBEASTFLESH:
-		return new ennerbeastflesh(SaveFile);
-	case IWOLFFLESH:
-		return new wolfflesh(SaveFile);
-	case IDOGFLESH:
-		return new dogflesh(SaveFile);
-	case IMITHRIL:
-		return new mithril(SaveFile);
-	default:
-		ABORT("Unidentified evil substance detected while loading. Most likely Windows-garbage is again infecting innocent savefiles; destroy and reinstall your OS and try again.");
-		return 0;
+		material* Material = MaterialPrototype[Type]->Clone();
+		Material->Load(SaveFile);
+		return Material;
 	}
+	else
+		return 0;
 }
 
 item* game::LoadItem(std::ifstream* SaveFile)
@@ -1224,7 +995,14 @@ item* game::LoadItem(std::ifstream* SaveFile)
 
 	SaveFile->read((char*)&Type, sizeof(Type));
 
-	return Type ? ItemPrototype[Type]->Load(SaveFile) : 0;
+	if(Type)
+	{
+		item* Item = ItemPrototype[Type]->Clone(false, false);
+		Item->Load(SaveFile);
+		return Item;
+	}
+	else
+		return 0;
 }
 
 character* game::LoadCharacter(std::ifstream* SaveFile)
@@ -1234,9 +1012,45 @@ character* game::LoadCharacter(std::ifstream* SaveFile)
 	SaveFile->read((char*)&Type, sizeof(Type));
 
 	if(Type)
-		int esko = 2;
+	{
+		character* Character = CharacterPrototype[Type]->Clone(false, false, false);
+		Character->Load(SaveFile);
+		return Character;
+	}
+	else
+		return 0;
+}
 
-	return Type ? CharacterPrototype[Type]->Load(SaveFile) : 0;
+groundterrain* game::LoadGroundTerrain(std::ifstream* SaveFile)
+{
+	ushort Type;
+
+	SaveFile->read((char*)&Type, sizeof(Type));
+
+	if(Type)
+	{
+		groundterrain* GroundTerrain = GroundTerrainPrototype[Type]->Clone(false, false);
+		GroundTerrain->Load(SaveFile);
+		return GroundTerrain;
+	}
+	else
+		return 0;
+}
+
+overterrain* game::LoadOverTerrain(std::ifstream* SaveFile)
+{
+	ushort Type;
+
+	SaveFile->read((char*)&Type, sizeof(Type));
+
+	if(Type)
+	{
+		overterrain* OverTerrain = OverTerrainPrototype[Type]->Clone(false, false);
+		OverTerrain->Load(SaveFile);
+		return OverTerrain;
+	}
+	else
+		return 0;
 }
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
@@ -1266,28 +1080,6 @@ bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 		return true;
 	else
 		return Level[Current]->CLevelSquare(vector(CX, CY))->COverTerrain()->CIsWalkable();
-}
-
-int game::GetKey(void)
-{
-	clock_t Tim = clock();
-
-	int Key = globalwindowhandler::GetKey();
-
-	HandlePlayTim -= clock() - Tim;
-
-	return Key;
-}
-
-int game::MonsGetKey(void)
-{
-	clock_t Tim = clock();
-
-	int Key = globalwindowhandler::GetKey();
-
-	HandleCharTim -= clock() - Tim;
-
-	return Key;
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -1322,7 +1114,7 @@ std::string game::StringQuestion(const char* String, ushort MaxLetters)
 
 		while(!(game::KeyIsOK(LastKey) || LastKey == 8 || LastKey == 13) )
 		{
-			LastKey = globalwindowhandler::GetKey();
+			LastKey = GETKEY();
 		}
 
 		if(LastKey == 8)
@@ -1403,7 +1195,7 @@ vector game::AskForDirectionVector(std::string String)
 		FONTW->PrintfToDB(40, 35, "%s", String.c_str());
 		graphics::BlitDBToScreen();
 	}
-	return GetDirectionVectorForKey(globalwindowhandler::GetKey());
+	return GetDirectionVectorForKey(GETKEY());
 }
 
 std::string game::StringQuestionWithClear(std::string String, ushort MaxLetters)
@@ -1422,7 +1214,7 @@ std::string game::StringQuestionWithClear(std::string String, ushort MaxLetters)
 
 		while(!(game::KeyIsOK(LastKey) || LastKey == 8 || LastKey == 13) )
 		{
-			LastKey = globalwindowhandler::GetKey();
+			LastKey = GETKEY();
 		}
 
 		if(LastKey == 8)
@@ -1542,7 +1334,7 @@ void game::WhatToLoadMenu(void) // for some _very_ strange reason "LoadMenu" occ
 		graphics::ClearDBToColor(0);
 		FONTW->PrintfToDB(260, 200, "You don't have any previous saves.");
 		graphics::BlitDBToScreen();
-		globalwindowhandler::GetKey();
+		GETKEY();
 		return;
 	}
 	while(!Check)
@@ -1566,7 +1358,7 @@ void game::WhatToLoadMenu(void) // for some _very_ strange reason "LoadMenu" occ
 	game::DeInit();
 }
 
-void game::globalmessagingsystem::DrawMessageHistory(void)
+void game::globalmessagingsystem::DrawMessageHistory(void) const
 {
 	MessageHistory.Draw(false);
 }
@@ -1588,7 +1380,7 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 
 	while(true)
 	{
-		int Key = game::GetKey();
+		int Key = GETKEY();
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
 			if(Key == game::CMoveCommandKey()[c])
@@ -1648,29 +1440,23 @@ void game::RemoveSaves(void)
 
 item* game::CreateItem(std::string What)
 {
-	for(ushort x = 1; true; x++)
-	{
-		if(ItemPrototype[x])
-		{
-			item* Item = ItemPrototype[x]->Clone();
-			if(Item->CanBeWished())
-				if(Item->CNameSingular() == What)
-				{
-					if(item* Wished = Item->CreateWishedItem())
-					{
-						delete Item;
-						return Wished;
-					}
-					else
-						return Item;
-				}
-			delete Item;
-		}
-		else
-		{
-			//ADD_MESSAGE("There is no such item!");
-			return 0;
-		}
-	}
+	for(ushort x = 1; ItemPrototype[x]; x++)
+		if(ItemPrototype[x]->CanBeWished() && ItemPrototype[x]->CNameSingular() == What)
+			return ItemPrototype[x]->CreateWishedItem();
+
 	return 0;
 }
+
+void game::SPlayer(character* NP)
+{
+	Player = NP;
+
+	if(Player)
+		Player->SIsPlayer(true);
+}
+
+ushort game::AddProtoType(material* What)	{ return MaterialPrototype.Add(What); }
+ushort game::AddProtoType(character* What)	{ return CharacterPrototype.Add(What); }
+ushort game::AddProtoType(item* What)		{ return ItemPrototype.Add(What); }
+ushort game::AddProtoType(overterrain* What)	{ return OverTerrainPrototype.Add(What); }
+ushort game::AddProtoType(groundterrain* What)	{ return GroundTerrainPrototype.Add(What); }

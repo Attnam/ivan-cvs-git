@@ -274,10 +274,10 @@ void atavus::PrayBadEffect(void)
 	if(game::CPlayer()->CStack()->CItems())
 	{
 		ushort ToBeDeleted = rand() % game::CPlayer()->CStack()->CItems();
-		item* Disappearing = game::CPlayer()->CStack()->CItem()[ToBeDeleted];
+		item* Disappearing = game::CPlayer()->CStack()->CItem(ToBeDeleted);
 		if(Disappearing->Destroyable())
 		{
-			ADD_MESSAGE("Your %s disappears.", Disappearing->CNAME(INDEFINITE));
+			ADD_MESSAGE("Your %s disappears.", Disappearing->CNAME(UNARTICLED));
 			game::CPlayer()->CStack()->RemoveItem(ToBeDeleted);
 			if(game::CPlayer()->CWielded() == Disappearing) game::CPlayer()->SWielded(0);
 			if(game::CPlayer()->CTorsoArmor() == Disappearing) game::CPlayer()->WearItem(0);
@@ -285,7 +285,7 @@ void atavus::PrayBadEffect(void)
 		}
 		else
 		{
-			ADD_MESSAGE("%s tries to remove your %s, but fails.", GOD_NAME, Disappearing->CNAME(INDEFINITE));
+			ADD_MESSAGE("%s tries to remove your %s, but fails.", GOD_NAME, Disappearing->CNAME(UNARTICLED));
 			ADD_MESSAGE("You feel you are not so gifted anymore.");
 			game::CPlayer()->SAgility(game::CPlayer()->CAgility() - 1);
 			game::CPlayer()->SStrength(game::CPlayer()->CStrength() - 1);
@@ -343,7 +343,7 @@ void calamus::PrayBadEffect(void)
 		ADD_MESSAGE("Suprisingly you feel nothing.");
 }
 
-void god::Save(std::ofstream* SaveFile)
+void god::Save(std::ofstream* SaveFile) const
 {
 	SaveFile->write((char*)&Relation, sizeof(Relation));
 	SaveFile->write((char*)&Timer, sizeof(Timer));
@@ -377,29 +377,30 @@ void mellis::PrayGoodEffect(void)
 {
 	bool Success = false;
 	ushort JustCreated;
+
 	if(game::CPlayer()->CStack()->CItems())
 	{
 		ADD_MESSAGE("%s tries to trade some of your items into better ones.", GOD_NAME);
 		bool Cont = true;
 		while(Cont)
 		{
-		Cont = false;
-		for(ushort c = 0; c < game::CPlayer()->CStack()->CItems(); c++)
-		{
-			if(game::CPlayer()->CStack()->CItem()[c] && game::CPlayer()->CStack()->CItem()[c]->BetterVersion())
+			Cont = false;
+			for(ushort c = 0; c < game::CPlayer()->CStack()->CItems(); c++)
 			{
-				item* ToBeDeleted = game::CPlayer()->CStack()->CItem()[c];
-				game::CPlayer()->CStack()->RemoveItem(c);
-				JustCreated = game::CPlayer()->CStack()->AddItem(ToBeDeleted->BetterVersion());
-				Success = true;
-				ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::CPlayer()->CStack()->CItem()[JustCreated]->CNAME(DEFINITE));
-				if(ToBeDeleted == game::CPlayer()->CWielded()) game::CPlayer()->SWielded(0);
-				if(ToBeDeleted == game::CPlayer()->CTorsoArmor()) game::CPlayer()->WearItem(0);
-				delete ToBeDeleted;
-				Cont = true;
-				break;
+				if(game::CPlayer()->CStack()->CItem(c) && game::CPlayer()->CStack()->CItem(c)->BetterVersion())
+				{
+					item* ToBeDeleted = game::CPlayer()->CStack()->CItem(c);
+					game::CPlayer()->CStack()->RemoveItem(c);
+					JustCreated = game::CPlayer()->CStack()->AddItem(ToBeDeleted->BetterVersion());
+					Success = true;
+					ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::CPlayer()->CStack()->CItem(JustCreated)->CNAME(INDEFINITE));
+					if(ToBeDeleted == game::CPlayer()->CWielded()) game::CPlayer()->SWielded(0);
+					if(ToBeDeleted == game::CPlayer()->CTorsoArmor()) game::CPlayer()->WearItem(0);
+					delete ToBeDeleted;
+					Cont = true;
+					break;
+				}
 			}
-		}
 		}
 	}
 	if(!Success) ADD_MESSAGE("You have no good items for trade.");
@@ -408,7 +409,6 @@ void mellis::PrayGoodEffect(void)
 void mellis::PrayBadEffect(void)
 {
 	for(ushort c = 1;; c++)
-	{
 		if(game::CGod(c))
 		{
 			if(game::CGod(c) != this)
@@ -416,19 +416,20 @@ void mellis::PrayBadEffect(void)
 		}
 		else
 			break;
-	}
+
 	ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);
 }
 
 void pestifer::PrayGoodEffect(void)
 {
-	ADD_MESSAGE("%s increases your endurance by howling horrible sounds into your ear.", GOD_NAME);
+	ADD_MESSAGE("Suddenly a very ugly head appears beside you, groaning horribly into your ear!");
+	game::CPlayer()->CLevelSquareUnder()->CStack()->AddItem(new head);
 	game::CPlayer()->SEndurance(game::CPlayer()->CEndurance() + 1);
 }
 
 void pestifer::PrayBadEffect(void)
 {
-	//game::CCurrentLevel()->CLevelSquare(game::CCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
+	game::CCurrentLevel()->CLevelSquare(game::CCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
 	ADD_MESSAGE("You hear the shouts of a new enner beast!");
 }
 
@@ -638,7 +639,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	}
 }
 
-void god::PrintRelation(void)
+void god::PrintRelation(void) const
 {
 	std::string VerbalRelation;
 	if(CRelation() == 1000)

@@ -5,7 +5,7 @@
 #include "igraph.h"
 #include "whandler.h"
 
-ushort list::Draw(bool WillDrawNumbers)
+ushort list::Draw(bool WillDrawNumbers) const
 {
 	DrawDescription();
 
@@ -22,20 +22,17 @@ ushort list::Draw(bool WillDrawNumbers)
 		else
 			FONTR->PrintfToDB(30, 56 + (c - Min + Description.Length()) * 10, "%s", String.Access(c).c_str());
 
-		if(c - Min == 19)
+		if(c - Min == 19 && c != String.Length() - 1)
 		{
-			if(c != String.Length() - 1)
-			{
-				graphics::ClearDBToColor(20, 266 + Description.Length() * 10, 758, 20, 128);
-				FONTW->PrintfToDB(30, 266 + Description.Length() * 10, "- Press SPACE to continue, ESC to exit -");
-			}
+			graphics::ClearDBToColor(20, 266 + Description.Length() * 10, 758, 20, 128);
+			FONTW->PrintfToDB(30, 266 + Description.Length() * 10, "- Press SPACE to continue, ESC to exit -");
 		}
 
-		if(c == String.Length() - 1 || c - Min == 19)
+		if(c - Min == 19 || c == String.Length() - 1)
 		{
 			graphics::BlitDBToScreen();
 
-			int Pressed = globalwindowhandler::GetKey();
+			int Pressed = GETKEY();
 
 			if(Pressed > 64 && Pressed < 91)
 			{
@@ -76,7 +73,7 @@ ushort list::Draw(bool WillDrawNumbers)
 	}
 }
 
-void list::DrawDescription(void)
+void list::DrawDescription(void) const
 {
 	graphics::ClearDBToColor(20, 36, 758, 20, 128);
 

@@ -19,29 +19,29 @@ public:
 	bitmap(const char*);
 	bitmap(ushort, ushort);
 	~bitmap(void);
-	void Save(std::ofstream*, ushort, ushort, ushort, ushort);
+	void Save(std::ofstream*, ushort, ushort, ushort, ushort) const;
 	void Load(std::ifstream*, ushort, ushort, ushort, ushort);
-	void Save(std::string);
+	void Save(std::string) const;
 	void PutPixel(ushort, ushort, ushort);
-	ushort GetPixel(ushort, ushort);
+	ushort GetPixel(ushort, ushort) const;
 	void ClearToColor(ushort = 0);
 	void ClearToColor(ushort, ushort, ushort, ushort, ushort = 0);
-	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0);
-	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
-	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0);
-	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort);
-	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort);
-	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort);
-	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort);
-	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort);
+	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
+	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
+	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void BlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort) const;
+	void MaskedBlitToDB(ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
 	void ReadFromDB(ushort, ushort);
-	void WriteToDB(ushort, ushort);
-	void FastBlit(bitmap*);
-	void FastMaskedBlit(bitmap*);
-	void Printf(bitmap*, ushort, ushort, const char*, ...);
-	void PrintfToDB(ushort, ushort, const char*, ...);
-	ushort GetXSize(void) { return XSize; }
-	ushort GetYSize(void) { return YSize; }
+	void WriteToDB(ushort, ushort) const;
+	void FastBlit(bitmap*) const;
+	void FastMaskedBlit(bitmap*) const;
+	void Printf(bitmap*, ushort, ushort, const char*, ...) const;
+	void PrintfToDB(ushort, ushort, const char*, ...) const;
+	ushort GetXSize(void) const { return XSize; }
+	ushort GetYSize(void) const { return YSize; }
 protected:
 	bitmap(IDirectDrawSurface7*);
 	void AttachSurface(IDirectDrawSurface7*);

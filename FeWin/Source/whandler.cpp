@@ -81,12 +81,10 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 }
 
 int globalwindowhandler::GetKey(void)
-{
-	
+{	
 	bool Shift = false;
 	while(KeyBuffer.Length())
 		KeyBuffer.Remove(0); // Shift-key == 0x10
-			
 
 	KeyPressed = false;
 
@@ -110,18 +108,14 @@ int globalwindowhandler::GetKey(void)
 		}
 		else										// If There Are No Messages
 		{
-
 			if(KeyBuffer.Length())
 			{
 				int Key =  KeyBuffer.Remove(0);
 				int BackUp = Key;
-				
-				
 
 				unsigned int ScanCode = MapVirtualKeyEx(Key, 0, CKeyboardLayoutName());
 				unsigned short ToBeReturned;	
 				unsigned char KeyboardBuffer[256];
-
 
 				if(Key == VK_LEFT) return 0x14B;
 				if(Key == VK_HOME) return 0x147;
@@ -132,16 +126,12 @@ int globalwindowhandler::GetKey(void)
 				if(Key == VK_DOWN) return 0x150;
 				if(Key == VK_END) return 0x14F;
 
-
-
 				if(!GetKeyboardState(KeyboardBuffer))
 					return 'x';
 				ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(CKeyboardLayoutName(), KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
 
-				
 				if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
 					return ToBeReturned;
-
 			}
 		}
 	}

@@ -1,6 +1,0 @@
-Draw:
-
-Tuplapiirron uusiohävitys.
-Drawblood.
-CLuminance & soft gamma.
-Stack.

@@ -611,6 +611,3 @@ VOID DXUtil_Trace( TCHAR* strMsg, ... )
     OutputDebugString( strBuffer );
 #endif
 }
-
-
-

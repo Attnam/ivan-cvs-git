@@ -28,46 +28,43 @@ public:
 	stack(square* = 0);
 	stack(std::ifstream*);
 	~stack(void);
-	void PositionedDrawToTileBuffer(uchar = CENTER);
+	void PositionedDrawToTileBuffer(uchar = CENTER) const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);
 	item* RemoveItem(ushort);
 	void FastRemoveItem(ushort);
-	item** CItem(void)	{ return Item; }
-	item* CItem(ushort I)	{ return Item[I]; }
-	ushort CItems(void)	{ return Items; }
+	item* CItem(ushort I) const	{ return Item[I]; }
+	ushort CItems(void) const	{ return Items; }
 	void SSquareUnder(square*);
-	ushort DrawContents(const char*);
-	void DrawPartOfContents(ushort, ushort, bool, const char*);
+	ushort DrawContents(const char*) const;
+	void DrawPartOfContents(ushort, ushort, bool, const char*) const;
 	ushort MoveItem(ushort, stack*);
-	ushort CEmitation(void);
-	vector CPos(void);
+	ushort CEmitation(void) const;
+	vector CPos(void) const;
 	void Clean(void);
-	ulong SumOfMasses(void);
-	void Save(std::ofstream*);
-	ushort SearchItem(item*);
+	ulong SumOfMasses(void) const;
+	void Save(std::ofstream*) const;
+	ushort SearchItem(item*) const;
 	void Move(levelsquare*);
-	square* CSquareUnder(void) { return SquareUnder; }
-	levelsquare* CLevelSquareUnder(void) { return (levelsquare*)SquareUnder; }
+	square* CSquareUnder(void) const { return SquareUnder; }
+	levelsquare* CLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
 	void SItem(ushort Where, item* What) { Item[Where] = What; }
-	void SEmitation(ushort What) { Emitation = What; }
 	void SItems(ushort What) { Items = What; }
-	ushort CNonExistent(void) { return NonExistent; }
+	ushort CNonExistent(void) const { return NonExistent; }
 	void SNonExistent(ushort What) { NonExistent = What; }
 	ushort ConsumableItems(character*);
-	void DrawItemData(ushort, ushort);
-	ushort DrawConsumableContents(const char*, character*);
+	void DrawItemData(ushort, ushort) const;
+	ushort DrawConsumableContents(const char*, character*) const;
 	void DeletePointers(void);
-	void StackMerge(stack);
-	ushort FindItem(item* ToBeSearched);
-	ushort MultiselectDrawContents(const char*);
+	void StackMerge(stack*);
+	ushort MultiselectDrawContents(const char*) const;
 	void Kick(ushort, bool, uchar);
-	long Score(void);
+	long Score(void) const;
 private:
 	void Optimize(ushort);
 	square* SquareUnder;
 	item** Item;
-	ushort Items, NonExistent, Emitation;
+	ushort Items, NonExistent;
 };
 
 #endif

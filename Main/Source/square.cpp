@@ -7,7 +7,7 @@
 #include "area.h"
 #include "level.h"
 
-square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), GroundTerrain(0), OverTerrain(0), Rider(0), Character(0), Flyer(0), /*Memorized(new bitmap(16, 16)), */Known(false), Pos(Pos)
+square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), GroundTerrain(0), OverTerrain(0), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
 {
 }
 
@@ -20,7 +20,7 @@ square::~square(void)
 	delete Flyer;
 }
 
-void square::Save(std::ofstream* SaveFile)
+void square::Save(std::ofstream* SaveFile) const
 {
 	GroundTerrain->Save(SaveFile);
 	OverTerrain->Save(SaveFile);
@@ -56,7 +56,7 @@ square::square(area* MotherArea, std::ifstream* SaveFile, vector Pos) : MotherAr
 		CMotherArea()->CMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 }
 
-void square::DrawCheat(void)
+void square::DrawCheat(void) const
 {
 	DrawToTileBuffer();
 
@@ -66,7 +66,7 @@ void square::DrawCheat(void)
 	igraph::BlitTileBuffer(vector((CPos().X - game::CCamera().X) << 4, (CPos().Y - game::CCamera().Y + 2) << 4));
 }
 
-void square::DrawMemorized(void)
+void square::DrawMemorized(void) const
 {
 	if(CKnown())
 	{

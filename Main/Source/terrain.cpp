@@ -11,16 +11,6 @@
 #include "level.h"
 #include "lsquare.h"
 
-terrain::terrain(material** Material2, vector)
-{
-	Material.push_back(Material2[0]);
-
-	delete [] Material2;
-
-	Size = 0xFFFF;
-	HandleVisualEffects();
-}
-
 bool overterrain::GoUp(character* Who) // Try to go up
 {
 	if(game::CCurrent() != 0 && game::CCurrent() != 9 && game::CWizardMode())
@@ -65,39 +55,42 @@ bool overterrain::GoDown(character* Who) // Try to go down
 	}
 }
 
-void overterrain::Save(std::ofstream* SaveFile)
+void terrain::Save(std::ofstream* SaveFile) const
 {
 	object::Save(SaveFile);
 
-	SaveFile->write((char*)&IsWalkable, sizeof(IsWalkable));
 	SaveFile->write((char*)&VisualFlags, sizeof(VisualFlags));
 }
 
-overterrain::overterrain(std::ifstream* SaveFile, ushort MaterialQuantity) : terrain(SaveFile, MaterialQuantity)
+void terrain::Load(std::ifstream* SaveFile)
 {
-	SaveFile->read((char*)&IsWalkable, sizeof(IsWalkable));
+	object::Load(SaveFile);
+
 	SaveFile->read((char*)&VisualFlags, sizeof(VisualFlags));
 }
 
-void overterrain::DrawToTileBuffer(void)
+void overterrain::Save(std::ofstream* SaveFile) const
+{
+	terrain::Save(SaveFile);
+
+	SaveFile->write((char*)&IsWalkable, sizeof(IsWalkable));
+}
+
+void overterrain::Load(std::ifstream* SaveFile)
+{
+	terrain::Load(SaveFile);
+
+	SaveFile->read((char*)&IsWalkable, sizeof(IsWalkable));
+}
+
+void overterrain::DrawToTileBuffer(void) const
 {
 	igraph::CTerrainGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16, CVisualFlags());
 }
 
-void groundterrain::DrawToTileBuffer(void)
+void groundterrain::DrawToTileBuffer(void) const
 {
 	igraph::CTerrainGraphic()->Blit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
-}
-
-void groundterrain::Save(std::ofstream* SaveFile)
-{
-	object::Save(SaveFile);
-	SaveFile->write((char*)&VisualFlags, sizeof(VisualFlags));
-}
-
-groundterrain::groundterrain(std::ifstream* SaveFile, ushort MaterialQuantity) : terrain(SaveFile, MaterialQuantity)
-{
-	SaveFile->read((char*)&VisualFlags, sizeof(VisualFlags));
 }
 
 bool stairsup::GoUp(character* Who)  // Try to go up
@@ -180,7 +173,7 @@ bool stairsdown::GoDown(character* Who)  // Try to go down
 			if(!game::BoolQuestion("Something with ultimate sinister power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
 				return false;
 
-			Who->CLevelSquareUnder()->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new empty(NewMaterial(1, new air(3))));
+			Who->CLevelSquareUnder()->ChangeTerrain(new parquet, new empty);
 		}
 
 		game::CCurrentLevel()->RemoveCharacter(Who->CPos());
@@ -201,16 +194,6 @@ bool stairsdown::GoDown(character* Who)  // Try to go down
 
 		return false;
 	}
-}
-
-door::door(material** Material, const bool Opened) : overterrain(Material, vector(0, 0), true)
-{
-	IsWalkable = Opened;
-	HandleVisualEffects();
-	/*if(Opened)
-		BitmapPos.Y = 48;
-	else
-		BitmapPos.Y = 176;*/
 }
 
 bool door::Open(character* Opener)
@@ -288,20 +271,12 @@ void overterrain::MakeNotWalkable(void)
 		game::CCurrentLevel()->UpdateLOS();
 }
 
-vector terrain::CPos(void)
+vector terrain::CPos(void) const
 {
 	return CLevelSquareUnder()->CPos();
 }
 
-door::door(std::ifstream* SaveFile) : overterrain(SaveFile, 1)
-{
-	/*if(CIsWalkable())
-		CBitmapPos().Y = 48;
-	else
-		CBitmapPos().Y = 176;*/
-}
-
-std::string altar::Name(uchar Case)
+std::string altar::Name(uchar Case) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
@@ -326,18 +301,20 @@ void terrain::SSquareUnder(square* Square)
 	SquareUnder = Square;
 }
 
-void altar::DrawToTileBuffer(void)
+void altar::DrawToTileBuffer(void) const
 {
 	igraph::CTerrainGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
 	igraph::CSymbolGraphic()->MaskedBlit(igraph::CTileBuffer(), (COwnerGod()-1) << 4, 0, 0, 0, 16, 16);
 }
 
-altar::altar(std::ifstream* SaveFile, ushort MaterialQuantity) : overterrain(SaveFile, MaterialQuantity)
+void altar::Load(std::ifstream* SaveFile)
 {
+	overterrain::Load(SaveFile);
+
 	SaveFile->read((char*)&OwnerGod, sizeof(OwnerGod));
 }
 
-void altar::Save(std::ofstream* SaveFile)
+void altar::Save(std::ofstream* SaveFile) const
 {
 	overterrain::Save(SaveFile);
 
@@ -346,12 +323,11 @@ void altar::Save(std::ofstream* SaveFile)
 
 void terrain::HandleVisualEffects(void)
 {
-	
 	uchar Flags = 0, AcceptedFlags = OKVisualEffects();
+
 	for(uchar c = 0; c < 8; c++)
-	{
 		if((AcceptedFlags & (1 << c)) && (rand() % 2))
 			Flags |= 1 << c;
-	}
+
 	SVisualFlags(Flags);
 }

@@ -13,11 +13,11 @@ public:
 	void Add(const dynarray<Type, SizeType>*);
 	void Put(Type, SizeType);
 	Type Remove(SizeType);
-	Type& Access(SizeType);
-	SizeType Length(void);
-	Type& operator[](SizeType);
+	Type& Access(SizeType) const;
+	SizeType Length(void) const;
+	Type& operator[](SizeType) const;
 	Type& operator<<(Type&);
-	SizeType Search(Type);
+	SizeType Search(Type) const;
 	void Resize(SizeType);
 private:
 	Type* Data;
@@ -37,12 +37,12 @@ template <class Type, class SizeType> inline dynarray<Type, SizeType>::~dynarray
 	delete [] Data;
 }
 
-template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::Access(SizeType Index)
+template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::Access(SizeType Index) const
 {
 	return Data[Index];
 }
 
-template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Length(void)
+template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Length(void) const
 {
 	return Elements;
 }
@@ -133,7 +133,7 @@ template <class Type, class SizeType> inline Type dynarray<Type, SizeType>::Remo
 	return Backup;
 }
 
-template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::operator[](SizeType Index)
+template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::operator[](SizeType Index) const
 {
 	return Access(Index);
 }
@@ -145,7 +145,7 @@ template <class Type, class SizeType> inline Type& dynarray<Type, SizeType>::ope
 	return Element;
 }
 
-template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Search(Type Element)
+template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::Search(Type Element) const
 {
 	for(SizeType c = 0; c < Elements; c++)
 		if(Data[c] == Element)

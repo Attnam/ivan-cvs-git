@@ -1,6 +1,8 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
+#define ABORT globalerrorhandler::Abort
+
 #include <windows.h>
 
 #include "typedef.h"
@@ -17,7 +19,5 @@ private:
 	static int (*OldNewHandler)(size_t);
 	static HWND* hWnd;
 };
-
-#define ABORT globalerrorhandler::Abort
 
 #endif

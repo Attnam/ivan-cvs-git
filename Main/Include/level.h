@@ -2,8 +2,8 @@
 #define __LEVEL_H__
 
 #define FORBIDDEN		1
-#define ON_POshortBLE_ROUTE	2
-#define STILL_ON_POshortBLE_ROUTE	4
+#define ON_POSSIBLE_ROUTE	2
+#define STILL_ON_POSSIBLE_ROUTE	4
 #define PREFERRED		8
 
 #define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)	\
@@ -167,31 +167,31 @@ public:
 	level(std::ifstream*, ushort);
 	~level(void);
 	virtual void Generate(void);
-	virtual void Draw(void);
+	virtual void Draw(void) const;
 	virtual void FastAddCharacter(vector, character*);
 	virtual void HandleCharacters(void);
 	virtual void EmptyFlags(void);
-	virtual levelsquare* CLevelSquare(vector Pos) {return Map[Pos.X][Pos.Y];}
-	virtual void PutPlayer(const bool);
+	virtual levelsquare* CLevelSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector Pos);
-	virtual dynarray<vector, uchar>* CKeyPoint(void) {return &KeyPoint;}
-	virtual void GenerateTunnel(const vector, const vector, const bool);
-	virtual void PutStairs(const vector);
-	virtual void ExpandPossibleRoute(const vector, const vector, const bool);
-	virtual void ExpandStillPossibleRoute(const vector, const vector, const bool);
-	virtual void Save(std::ofstream*);
+	virtual dynarray<vector, uchar>* CKeyPoint(void) {return &KeyPoint;} //should be inspector
+	virtual void GenerateTunnel(vector, vector, bool);
+	virtual void PutStairs(vector);
+	virtual void ExpandPossibleRoute(vector, vector, bool);
+	virtual void ExpandStillPossibleRoute(vector, vector, bool);
+	virtual void Save(std::ofstream*) const;
 	virtual void Luxify(void);
 	virtual void UpdateLOS(void);
-	virtual ushort CPopulation(void) { return Population; }
-	virtual ushort CIdealPopulation(void) { return 25; }
+	virtual ushort CPopulation(void) const { return Population; }
+	virtual ushort CIdealPopulation(void) const { return 25; }
 	virtual void GenerateNewMonsters(ushort);
-	virtual void AttachPos(const vector);
+	virtual void AttachPos(vector);
 	virtual void CreateRandomTunnel(void);
-	virtual void CreateItems(const ushort);
-	virtual void CreateMonsters(const ushort);
+	virtual void CreateItems(ushort);
+	virtual void CreateMonsters(ushort);
 	virtual vector CreateDownStairs(void);
-	virtual bool MakeRoom(const vector, const vector, const bool = true, uchar = 0);
-	virtual bitmap* CFluidBuffer(void) { return FluidBuffer; }
+	virtual bool MakeRoom(vector, vector, bool = true, uchar = 0);
+	virtual bitmap* CFluidBuffer(void) const { return FluidBuffer; }
 protected:
 	levelsquare*** Map;
 	bitmap* FluidBuffer;

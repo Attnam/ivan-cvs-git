@@ -20,7 +20,7 @@
 #include "bitmap.h"
 #include "item.h"
 
-levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), MotherLevel(MotherLevel), Emitation(0), DivineOwner(0), /*FluidBuffer(new bitmap(16,16)), */Fluided(false)
+levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), MotherLevel(MotherLevel), Emitation(0), DivineOwner(0), Fluided(false)
 {
 	Stack = new stack(this);
 
@@ -54,7 +54,7 @@ void levelsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 		ReEmitate();
 }
 
-ushort levelsquare::CalculateEmitation(void)
+ushort levelsquare::CalculateEmitation(void) const
 {
 	ushort Emitation = CStack()->CEmitation();
 
@@ -82,7 +82,7 @@ ushort levelsquare::CalculateEmitation(void)
 	return Emitation;
 }
 
-void levelsquare::DrawToTileBuffer(void)
+void levelsquare::DrawToTileBuffer(void) const
 {
 	GroundTerrain->DrawToTileBuffer();
 
@@ -191,7 +191,7 @@ void levelsquare::NoxifyEmitter(vector Dir)
 	Emitter.Access(Index) = DirEmitter;
 }
 
-uchar levelsquare::CalculateBitMask(vector Dir)
+uchar levelsquare::CalculateBitMask(vector Dir) const
 {
 	uchar BitMask = 0;
 
@@ -296,7 +296,7 @@ bool levelsquare::Close(character* Closer)
 	}
 }
 
-void levelsquare::Save(std::ofstream* SaveFile)
+void levelsquare::Save(std::ofstream* SaveFile) const
 {
 	square::Save(SaveFile);
 
@@ -406,7 +406,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	}
 }
 
-ushort levelsquare::CLuminance(void)
+ushort levelsquare::CLuminance(void) const
 {
 	ushort Luminance = 0;
 
@@ -495,7 +495,7 @@ void levelsquare::UpdateItemMemory(void)
 	}
 }
 
-bool levelsquare::CanBeSeen(void)
+bool levelsquare::CanBeSeen(void) const
 {
 	float xDist = (float(CPos().X) - game::CPlayer()->CPos().X), yDist = (float(CPos().Y) - game::CPlayer()->CPos().Y);
 
@@ -510,7 +510,7 @@ void levelsquare::Kick(ushort Strength, uchar KickWay)
 	CStack()->Kick(Strength, RetrieveFlag(), KickWay);
 }
 
-bool levelsquare::CanBeSeenFrom(vector FromPos)
+bool levelsquare::CanBeSeenFrom(vector FromPos) const
 {
 	return game::DoLine(FromPos.X, FromPos.Y, CPos().X, CPos().Y, game::EyeHandler);
 }
@@ -533,7 +533,7 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 	if(Result == 1)
 	{
 		delete OverTerrain;
-		SOverTerrain(new empty(NewMaterial(1, new air(3))));
+		SOverTerrain(new empty);
 		ForceEmitterEmitation();
 		game::CCurrentLevel()->UpdateLOS();
 	}
@@ -543,11 +543,10 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 			CSideStack(c)->MoveItem(x, CStack());
 	}
 
-//	DiggerCharacter->SAP(DiggerCharacter->CAP() - 2000);
 	return Result ? true : false;
 }
 
-char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem)
+char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
 {
 	if(CPos().X == 0 || CPos().Y == 0 || CPos().X == game::CCurrentLevel()->CXSize() - 1 || CPos().Y == game::CCurrentLevel()->CYSize() - 1)
 	{

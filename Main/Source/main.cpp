@@ -16,30 +16,26 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	game::InitLuxTable();
 
-	clock();
-
 	game::StoryScreen("Iter Vehemens ad Necem v. 0.240 alpha\n\nAntivalpuri is rising and dark times are ahead;\nDark frogs pillage towns and tomatoes are growing.\nBut fortunately, there is hope, you!");
 
-	int Select;
-
-	while((Select = game::Menu("Start Game\rContinue a game\rView Highscores\rQuit\r")) != 3)
-	{
-		if(!Select)
+	while(true)
+		switch(game::Menu("Start Game\rContinue a game\rView Highscores\rQuit\r"))
 		{
+		case 0:
 			game::Init();
 			game::Run();
 			game::DeInit();
-		}
-		else if(Select == 1)
-		{
+			break;
+		case 1:
 			game::WhatToLoadMenu();
-		}
-		else
+			break;
+		case 2:
 		{
 			highscore HScore;
 			HScore.Draw();
+			break;
 		}
-	}
-
-	return 0;
+		case 3:
+			return 0;
+		}
 }

@@ -27,7 +27,7 @@ area::~area(void)
 	delete Memorized;
 }
 
-void area::Save(std::ofstream* SaveFile)
+void area::Save(std::ofstream* SaveFile) const
 {
 	SaveFile->write((char*)&XSize, sizeof(XSize));
 	SaveFile->write((char*)&YSize, sizeof(YSize));
@@ -61,7 +61,7 @@ void area::AddCharacter(vector Pos, character* Guy)
 	Map[Pos.X][Pos.Y]->AddCharacter(Guy);
 }
 
-vector area::RandomSquare(const bool Walkablility)
+vector area::RandomSquare(bool Walkablility) const
 {
 	vector Pos(rand() % XSize, rand() % YSize);
 

@@ -1,29 +1,11 @@
 #ifndef __TERRAIN_H__
 #define __TERRAIN_H__
 
-#define OVER_TERRAIN_TYPES	7
-#define GROUND_TERRAIN_TYPES	3
-
-#define ITERRAIN	0xFFFF
-
-#define IOVERTERRAIN	0xFFFF
-#define IEARTH		1
-#define IWALL		2
-#define IEMPTY		3
-#define IDOOR		4
-#define ISTAIRSUP	5
-#define ISTAIRSDOWN	6
-#define IALTAR		7
-
-#define IGROUNDTERRAIN	0xFFFF
-#define IPARQUET	1
-#define IFLOORY		2
-
+#include "game.h"
+#include "bitmap.h"
+#include "object.h"
 #include "typedef.h"
 #include "vector.h"
-#include "bitmap.h"
-#include "game.h"
-#include "object.h"
 
 class bitmap;
 class character;
@@ -39,192 +21,274 @@ class square;
 class terrain : public object
 {
 public:
-	terrain(material**, vector);
-	terrain(std::ifstream* SaveFile, ushort M = 1) : object(SaveFile) {}
+	virtual void Load(std::ifstream*);
 	virtual void SSquareUnder(square*);
 	virtual bool Open(character* Opener);
 	virtual bool Close(character* Closer);
-	virtual vector CPos(void);
-	virtual square* CSquareUnder(void) { return SquareUnder; }
-	virtual levelsquare* CLevelSquareUnder(void) { return (levelsquare*)SquareUnder; }
-	virtual bool CanBeOpened(void) { return false; }
-	virtual bool CanBeOffered(void) { return false; }
-	virtual std::string Name(uchar Case) {return NameWithMaterial(Case);}
-	virtual bool CanBeDigged(void) { return false; }
-	virtual uchar OKVisualEffects(void) { return MIRROR | FLIP | ROTATE_90; }
-	virtual uchar CVisualFlags(void) { return VisualFlags; }
+	virtual vector CPos(void) const;
+	virtual square* CSquareUnder(void) const { return SquareUnder; }
+	virtual levelsquare* CLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	virtual bool CanBeOpened(void) const { return false; }
+	virtual bool CanBeOffered(void) const { return false; }
+	virtual std::string Name(uchar Case) const {return NameWithMaterial(Case);}
+	virtual bool CanBeDigged(void) const { return false; }
+	virtual uchar OKVisualEffects(void) const { return 0; }
+	virtual uchar CVisualFlags(void) const { return VisualFlags; }
 	virtual void SVisualFlags(uchar What) { VisualFlags = What; }
 	virtual void HandleVisualEffects(void);
+	virtual void Save(std::ofstream*) const;
 protected:
 	virtual std::string NameSingular() const				{return "terrain";}
 	virtual std::string NamePlural() const					{return "terrains";}
-	virtual ushort Type(void) {return ITERRAIN;}
 	square* SquareUnder;
 	uchar VisualFlags;
-};
-
-class overterrain : public terrain
-{
-public:
-	overterrain(material** Material, vector BitmapPos, bool IW) : terrain(Material, BitmapPos), IsWalkable(IW) {}
-	overterrain(std::ifstream*, ushort);
-	virtual void DrawToTileBuffer(void);
-	virtual bool GoUp(character*);
-	virtual bool GoDown(character*);
-	virtual bool CIsWalkable(void)			{return IsWalkable;}
-	virtual void Save(std::ofstream*);
-	virtual uchar COwnerGod(void) { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
-protected:
-	virtual void MakeWalkable(void);
-	virtual void MakeNotWalkable(void);
-	virtual ushort Type(void) {return IOVERTERRAIN;}
-	bool IsWalkable;
 };
 
 class groundterrain : public terrain
 {
 public:
-	groundterrain(material** Material, vector BitmapPos) : terrain(Material, BitmapPos)	{}
-	groundterrain(std::ifstream*, ushort);
-	virtual void DrawToTileBuffer(void);
-	virtual void Save(std::ofstream*);
-protected:
-	virtual ushort Type(void) {return IGROUNDTERRAIN;}
+	groundterrain::groundterrain(bool = true, bool = true) {}
+	virtual void DrawToTileBuffer(void) const;
+	virtual groundterrain* Clone(bool = true, bool = true) const = 0;
 };
 
-class earth : public overterrain
+class overterrain : public terrain
 {
 public:
-	earth(material** Material) : overterrain(Material, vector(0, 336), false) {HandleVisualEffects();}
-	earth(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : overterrain(SaveFile, MaterialQuantity) {}
+	overterrain::overterrain(bool = true, bool = true) {}
+	virtual void Load(std::ifstream*);
+	virtual void DrawToTileBuffer(void) const;
+	virtual bool GoUp(character*);
+	virtual bool GoDown(character*);
+	virtual void SIsWalkable(bool What)			{ IsWalkable = What; }
+	virtual bool CIsWalkable(void) const			{ return IsWalkable; }
+	virtual void Save(std::ofstream*) const;
+	virtual uchar COwnerGod(void) const { return 0; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
+	virtual overterrain* Clone(bool = true, bool = true) const = 0;
 protected:
-	virtual ushort Type(void) {return IEARTH;}
+	virtual void MakeWalkable(void);
+	virtual void MakeNotWalkable(void);
+	bool IsWalkable;
+};
+
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+
+	#define TERRAIN(name, base, initmaterials, setstats, data)\
+	\
+	class name : public base\
+	{\
+	public:\
+		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	protected:\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void) const;\
+		data\
+	};\
+	\
+	class proto_##name\
+	{\
+	public:\
+		proto_##name(void) : Index(game::AddProtoType(new name(false, false))) {}\
+		ushort GetIndex(void) const { return Index; }\
+	private:\
+		ushort Index;\
+	} static Proto_##name;\
+	\
+	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
+
+#else
+
+	#define TERRAIN(name, base, initmaterials, setstats, data)\
+	\
+	class name : public base\
+	{\
+	public:\
+		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	protected:\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void) const;\
+		data\
+	};
+
+#endif
+
+#define GROUNDTERRAIN(name, base, initmaterials, setstats, data)\
+\
+TERRAIN(\
+	name,\
+	base,\
+	initmaterials,\
+	setstats,\
+	virtual groundterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+	data\
+);
+
+#define OVERTERRAIN(name, base, initmaterials, setstats, data)\
+\
+TERRAIN(\
+	name,\
+	base,\
+	initmaterials,\
+	setstats,\
+	virtual overterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+	data\
+);
+
+OVERTERRAIN(
+	earth,
+	overterrain,
+	InitMaterials(new moraine(1)),
+	{
+		SIsWalkable(false);
+	},
+public:
+	virtual uchar OKVisualEffects(void) const { return MIRROR | FLIP | ROTATE_90; }
+	virtual bool CanBeDigged(void) const { return true; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is fairly easy to dig."); }
+protected:
 	virtual std::string NameSingular() const				{return "earth";}
 	virtual std::string NamePlural() const					{return "earths";}
-	virtual vector CBitmapPos(void)						{ return vector(0, 336); }
-	virtual bool CanBeDigged(void) { return true; }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is fairly easy to dig."); }
-};
+	virtual vector CBitmapPos(void) const					{ return vector(0, 336); }
+);
 
-class wall : public overterrain
-{
+OVERTERRAIN(
+	wall,
+	overterrain,
+	InitMaterials(new stone(1)),
+	{
+		SIsWalkable(false);
+	},
 public:
-	wall(material** Material) : overterrain(Material, vector(0, 240), false) {HandleVisualEffects();}
-	wall(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : overterrain(SaveFile, MaterialQuantity) {}
-	virtual uchar OKVisualEffects(void) { return 0; }
+	virtual uchar OKVisualEffects(void) const { return 0; }
+	virtual bool CanBeDigged(void) const { return true; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The wall is pretty hard, but you still manage to go through it."); }
 protected:
 	virtual std::string NameSingular() const				{return "wall";}
 	virtual std::string NamePlural() const					{return "walls";}
-	virtual ushort Type(void) {return IWALL;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 240); }
-	virtual bool CanBeDigged(void) { return true; }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The wall is pretty hard, but you still manage to go through it."); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 240); }
+);
 
-class empty : public overterrain
-{
+OVERTERRAIN(
+	empty,
+	overterrain,
+	InitMaterials(new air(1)),
+	{
+		SIsWalkable(true);
+	},
 public:
-	empty(material** Material) : overterrain(Material, vector(0, 480), true) {HandleVisualEffects();}
-	empty(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : overterrain(SaveFile, MaterialQuantity) {}
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The square you are trying to dig is empty."); }
 protected:
 	virtual std::string NameSingular() const				{return "atmosphere";}
 	virtual std::string NamePlural() const					{return "atmospheres";}
-	virtual ushort Type(void) {return IEMPTY;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 480); }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The square you are trying to dig is empty."); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 480); }
+);
 
-class door : public overterrain
-{
+OVERTERRAIN(
+	door,
+	overterrain,
+	InitMaterials(new stone(1)),
+	{
+		SIsWalkable(false);
+	},
 public:
-	door(material**, const bool = false);
-	door(std::ifstream*);
 	virtual bool Open(character*);
 	virtual bool Close(character*);
-	virtual bool CanBeOpened(void) { return !CIsWalkable(); }
-	virtual uchar OKVisualEffects(void) { return MIRROR; }
+	virtual bool CanBeOpened(void) const { return !CIsWalkable(); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The door is too hard to dig through."); }
 protected:
 	virtual std::string NameSingular() const				{return "door";}
 	virtual std::string NamePlural() const					{return "doors";}
-	virtual ushort Type(void) {return IDOOR;}
-	virtual vector CBitmapPos(void)						{ return vector(0, CIsWalkable() ? 48 : 176); }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The door is too hard to dig through."); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, CIsWalkable() ? 48 : 176); }
+);
 
-class stairsup : public overterrain
-{
+OVERTERRAIN(
+	stairsup,
+	overterrain,
+	InitMaterials(new stone(1)),
+	{
+		SIsWalkable(true);
+	},
 public:
-	stairsup(material** Material) : overterrain(Material, vector(0, 192), true) {HandleVisualEffects();}
-	stairsup(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : overterrain(SaveFile, MaterialQuantity) {}
 	virtual bool GoUp(character*);
-	virtual uchar OKVisualEffects(void) { return 0; }
+	virtual uchar OKVisualEffects(void) const { return 0; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
 protected:
 	virtual std::string NameSingular() const				{return "stairway upwards";}
 	virtual std::string NamePlural() const					{return "stairways upwards";}
-	virtual ushort Type(void) {return ISTAIRSUP;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 192); }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 192); }
+);
 
-class stairsdown : public overterrain
-{
+OVERTERRAIN(
+	stairsdown,
+	overterrain,
+	InitMaterials(new stone(1)),
+	{
+		SIsWalkable(true);
+	},
 public:
-	stairsdown(material** Material) : overterrain(Material, vector(0, 208), true) {HandleVisualEffects();}
-	stairsdown(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : overterrain(SaveFile, MaterialQuantity) {}
 	virtual bool GoDown(character*);
-	virtual uchar OKVisualEffects(void) { return 0; }
+	virtual uchar OKVisualEffects(void) const { return 0; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
 protected:
 	virtual std::string NameSingular() const				{return "stairway downwards";}
 	virtual std::string NamePlural() const					{return "stairways downwards";}
-	virtual ushort Type(void) {return ISTAIRSDOWN;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 208); }
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 208); }
+);
 
-class parquet : public groundterrain
-{
+GROUNDTERRAIN(
+	parquet,
+	groundterrain,
+	InitMaterials(new wood(1)),
+	{
+	},
 public:
-	parquet(material** Material) : groundterrain(Material, vector(0, 240)) {HandleVisualEffects();}
-	parquet(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : groundterrain(SaveFile, MaterialQuantity) {}
-	virtual uchar OKVisualEffects(void) { return 0; }
+	virtual uchar OKVisualEffects(void) const { return 0; }
 protected:
 	virtual std::string NameSingular() const				{return "parquet";}
 	virtual std::string NamePlural() const					{return "parquette";}
-	virtual ushort Type(void) {return IPARQUET;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 240); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 240); }
+);
 
-class floory : public groundterrain
-{
+GROUNDTERRAIN(
+	floory,
+	groundterrain,
+	InitMaterials(new gravel(1)),
+	{
+	},
 public:
-	floory(material** Material) : groundterrain(Material, vector(0, 352)) {HandleVisualEffects();}
-	floory(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : groundterrain(SaveFile, MaterialQuantity) {}
+	virtual uchar OKVisualEffects(void) const { return MIRROR | FLIP | ROTATE_90; }
 protected:
 	virtual std::string NameSingular() const				{return "floor";}
 	virtual std::string NamePlural() const					{return "floors";}
-	virtual ushort Type(void) {return IFLOORY;}
-	virtual vector CBitmapPos(void)						{ return vector(0, 352); }
-};
+	virtual vector CBitmapPos(void) const						{ return vector(0, 352); }
+);
 
-class altar : public overterrain
-{
+OVERTERRAIN(
+	altar,
+	overterrain,
+	InitMaterials(new stone(1)),
+	{
+		SIsWalkable(true);
+		SOwnerGod(rand() % game::CGodNumber() + 1);
+	},
 public:
-	altar(material** Material, uchar OwnerGod) : overterrain(Material, vector(0, 368),true), OwnerGod(OwnerGod) {HandleVisualEffects();}
-	altar(std::ifstream*, ushort = 1);
-	bool CanBeOffered(void) { return true; }
-	virtual std::string Name(uchar);
-	virtual void DrawToTileBuffer(void);
-	virtual uchar COwnerGod(void) { return OwnerGod; }
-	virtual void Save(std::ofstream*);
-	virtual void ShowDigMessage(character* Who, item*) { if(Who == game::CPlayer()) ADD_MESSAGE("An invisible wall stops your feeble attempt."); }
-	virtual uchar OKVisualEffects(void) { return 0; }
+	virtual bool CanBeOffered(void) const { return true; }
+	virtual std::string Name(uchar) const;
+	virtual void DrawToTileBuffer(void) const;
+	virtual uchar COwnerGod(void) const { return OwnerGod; }
+	virtual void SOwnerGod(uchar What) { OwnerGod = What; }
+	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
+	virtual uchar OKVisualEffects(void) const { return 0; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("An invisible wall stops your feeble attempt."); }
 protected:
 	virtual std::string NameSingular() const		{return "altar";}
 	virtual std::string NamePlural() const			{return "altars";}
-	virtual ushort Type(void) {return IALTAR;}
-	virtual vector CBitmapPos(void)				{ return vector(0, 368); }
+	virtual vector CBitmapPos(void) const				{ return vector(0, 368); }
 	uchar OwnerGod;
-};
+);
 
 #endif

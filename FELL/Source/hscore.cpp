@@ -28,7 +28,7 @@ void highscore::Add(long NewScore, std::string NewEntry)
 	}
 }
 
-void highscore::Draw(void)
+void highscore::Draw(void) const
 {
 	graphics::ClearDBToColor(0);
 
@@ -46,7 +46,7 @@ void highscore::Draw(void)
 
 			graphics::BlitDBToScreen();
 
-			if(globalwindowhandler::GetKey() == 0x1B)
+			if(GETKEY() == 0x1B)
 				return;
 
 			graphics::ClearDBToColor(0);
@@ -71,10 +71,10 @@ void highscore::Draw(void)
 
 	graphics::BlitDBToScreen();
 
-	globalwindowhandler::GetKey();
+	GETKEY();
 }
 
-void highscore::Save(std::string File)
+void highscore::Save(std::string File) const
 {
 	std::ofstream HighScore(File.c_str(), std::ios::out | std::ios::binary);
 

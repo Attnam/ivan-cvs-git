@@ -23,7 +23,7 @@ level::level(ushort XSize, ushort YSize, ushort Index) : area(XSize, YSize), Lev
 		for(ulong y = 0; y < YSize; y++)
 		{
 			Map[x][y] = new levelsquare(this, vector(x, y));
-			Map[x][y]->ChangeTerrain(new floory(NewMaterial(1, new gravel(3))), new earth(NewMaterial(1, new moraine(3))));
+			Map[x][y]->ChangeTerrain(new floory, new earth);
 		}
 
 	FluidBuffer = new bitmap(XSize << 4, YSize << 4);
@@ -48,10 +48,10 @@ level::~level(void)
 			if(FlagMap[x][y] & FORBIDDEN)															\
 				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 0);	\
 																					\
-			if(FlagMap[x][y] & ON_POshortBLE_ROUTE)														\
+			if(FlagMap[x][y] & ON_POSSIBLE_ROUTE)														\
 				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 128);	\
 																					\
-			if(FlagMap[x][y] & STILL_ON_POshortBLE_ROUTE)													\
+			if(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE)													\
 				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 256);	\
 																					\
 			if(FlagMap[x][y] & PREFERRED)															\
@@ -63,19 +63,19 @@ level::~level(void)
 	getkey();						\
 }*/
 
-void level::ExpandPossibleRoute(const vector Origo, const vector Target, const bool XMode)
+void level::ExpandPossibleRoute(vector Origo, vector Target, bool XMode)
 {
-	#define CHECK(x, y) (!(FlagMap[x][y] & ON_POshortBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
+	#define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
 
 	#define CALL_EXPAND(x, y)					\
 	{								\
 		ExpandPossibleRoute(vector(x, y), Target, XMode);	\
 									\
-		if(FlagMap[Target.X][Target.Y] & ON_POshortBLE_ROUTE)	\
+		if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)	\
 			return;						\
 	}
 
-	FlagMap[Origo.X][Origo.Y] |= ON_POshortBLE_ROUTE;
+	FlagMap[Origo.X][Origo.Y] |= ON_POSSIBLE_ROUTE;
 
 	if(XMode)
 	{
@@ -151,19 +151,19 @@ void level::ExpandPossibleRoute(const vector Origo, const vector Target, const b
 	#undef CALL_EXPAND
 }
 
-void level::ExpandStillPossibleRoute(const vector Origo, const vector Target, const bool XMode)
+void level::ExpandStillPossibleRoute(vector Origo, vector Target, bool XMode)
 {
-	#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POshortBLE_ROUTE) && (FlagMap[x][y] & ON_POshortBLE_ROUTE))
+	#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
 
 	#define CALL_EXPAND(x, y)						\
 	{									\
 		ExpandStillPossibleRoute(vector(x, y), Target, XMode);		\
 										\
-		if(FlagMap[Target.X][Target.Y] & STILL_ON_POshortBLE_ROUTE)	\
+		if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE)	\
 			return;							\
 	}
 
-	FlagMap[Origo.X][Origo.Y] |= STILL_ON_POshortBLE_ROUTE;
+	FlagMap[Origo.X][Origo.Y] |= STILL_ON_POSSIBLE_ROUTE;
 
 	if(XMode)
 	{
@@ -239,49 +239,49 @@ void level::ExpandStillPossibleRoute(const vector Origo, const vector Target, co
 	#undef CALL_EXPAND
 }
 
-void level::GenerateTunnel(const vector From, const vector Target, const bool XMode)
+void level::GenerateTunnel(vector From, vector Target, bool XMode)
 {
-	FlagMap[From.X][From.Y] |= ON_POshortBLE_ROUTE;
+	FlagMap[From.X][From.Y] |= ON_POSSIBLE_ROUTE;
 
 	ExpandPossibleRoute(From, Target, XMode);
 
 	DRAW
 
-	if(!(FlagMap[Target.X][Target.Y] & ON_POshortBLE_ROUTE))
+	if(!(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE))
 		globalerrorhandler::Abort("Route code error during level generate! Contact Timo!");
 
 	{
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-			if((FlagMap[x][y] & ON_POshortBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
+			if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
 			{
-				FlagMap[x][y] &= ~ON_POshortBLE_ROUTE;
+				FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 
-				FlagMap[From.X][From.Y] |= STILL_ON_POshortBLE_ROUTE;
+				FlagMap[From.X][From.Y] |= STILL_ON_POSSIBLE_ROUTE;
 
 				ExpandStillPossibleRoute(From, Target, XMode);
 
-				if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POshortBLE_ROUTE))
+				if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
 				{
-					FlagMap[x][y] |= ON_POshortBLE_ROUTE | PREFERRED;
+					FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
 
-					Map[x][y]->ChangeTerrain(new floory(NewMaterial(1, new gravel(3))), new empty(NewMaterial(1, new air(3))));
+					Map[x][y]->ChangeTerrain(new floory, new empty);
 				}
 
 				for(ushort X = 0; X < XSize; X++)
 					for(ushort Y = 0; Y < YSize; Y++)
-						FlagMap[X][Y] &= ~STILL_ON_POshortBLE_ROUTE;
+						FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
 			}
 	}
 
 	for(ushort x = 1; x < XSize - 1; x++)
 		for(ushort y = 1; y < YSize - 1; y++)
-			FlagMap[x][y] &= ~ON_POshortBLE_ROUTE;
+			FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
-void level::PutStairs(const vector Pos)
+void level::PutStairs(vector Pos)
 {
-	Map[Pos.X][Pos.Y]->ChangeTerrain(new floory(NewMaterial(1, new gravel(3))), new stairsup(NewMaterial(1, new stone(3))));
+	Map[Pos.X][Pos.Y]->ChangeTerrain(new floory, new stairsup);
 
 	FlagMap[Pos.X][Pos.Y] |= FORBIDDEN;
 
@@ -319,7 +319,7 @@ void level::Generate(void)
 	CreateItems(40);
 }
 
-void level::AttachPos(const vector What)
+void level::AttachPos(vector What)
 {
 	vector Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
@@ -350,7 +350,7 @@ void level::CreateRandomTunnel(void)
 	GenerateTunnel(Pos, T, rand() % 2 ? true : false);
 }
 
-void level::CreateItems(const ushort Amount)
+void level::CreateItems(ushort Amount)
 {
 	for(uchar x = 0; x < Amount; x++)
 	{
@@ -361,7 +361,7 @@ void level::CreateItems(const ushort Amount)
 }
 
 
-void level::CreateMonsters(const ushort Amount)
+void level::CreateMonsters(ushort Amount)
 {
 	for(uchar x = 0; x < Amount; x++)
 	{
@@ -381,7 +381,7 @@ vector level::CreateDownStairs(void)
 
 	game::CLevel(LevelIndex + 1)->PutStairs(Pos);
 
-	Map[Pos.X][Pos.Y]->ChangeTerrain(new floory(NewMaterial(1, new gravel(3))), new stairsdown(NewMaterial(1, new stone(3))));
+	Map[Pos.X][Pos.Y]->ChangeTerrain(new floory, new stairsdown);
 
 	vector Target = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
@@ -396,7 +396,7 @@ vector level::CreateDownStairs(void)
 	return Pos;
 }
 
-bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossible, uchar DivineOwner)
+bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOwner)
 {
 	ushort XPos = Pos.X, YPos = Pos.Y, Width = Size.X, Height = Size.Y;
 
@@ -419,10 +419,10 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 	{
 	for(ushort x = XPos; x < XPos + Width; x++)
 	{
-		Map[x][YPos]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new stone(3))));
+		Map[x][YPos]->ChangeTerrain(new parquet, new wall);
 		FlagMap[x][YPos] |= FORBIDDEN;
 
-		Map[x][YPos + Height - 1]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new stone(3))));
+		Map[x][YPos + Height - 1]->ChangeTerrain(new parquet, new wall);
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
 		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
@@ -435,9 +435,9 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 
 	for(ushort y = YPos; y < YPos + Height; y++)
 	{
-		Map[XPos][y]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new stone(3))));
+		Map[XPos][y]->ChangeTerrain(new parquet, new wall);
 		FlagMap[XPos][y] |= FORBIDDEN;
-		Map[XPos + Width - 1][y]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new wall(NewMaterial(1, new stone(3))));
+		Map[XPos + Width - 1][y]->ChangeTerrain(new parquet, new wall);
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
 		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
@@ -450,7 +450,7 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 	for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
 		for(ushort y = YPos + 1; y < YPos + Height - 1; y++)
 		{
-			Map[x][y]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new empty(NewMaterial(1, new air(3))));
+			Map[x][y]->ChangeTerrain(new parquet, new empty);
 
 			FlagMap[x][y] |= FORBIDDEN;
 		}
@@ -458,7 +458,7 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 	if(AltarPossible && !(rand() % 4))
 	{
 		vector Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
-		Map[Pos.X][Pos.Y]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new altar(NewMaterial(1, new stone(3)), rand() % game::CGodNumber() + 1));
+		Map[Pos.X][Pos.Y]->ChangeTerrain(new parquet, new altar);
 
 		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->COverTerrain())->COwnerGod();
 
@@ -481,7 +481,7 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 		FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
 		FlagMap[LXPos][LYPos] |= PREFERRED;
 
-		Map[LXPos][LYPos]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new door(NewMaterial(1, new stone(3))));
+		Map[LXPos][LYPos]->ChangeTerrain(new parquet, new door);
 
 		Map[LXPos][LYPos]->Clean();
 
@@ -505,7 +505,7 @@ bool level::MakeRoom(const vector Pos, const vector Size, const bool AltarPossib
 		FlagMap[XPos][YPos] &= ~FORBIDDEN;
 		FlagMap[XPos][YPos] |= PREFERRED;
 
-		Map[XPos][YPos]->ChangeTerrain(new parquet(NewMaterial(1, new wood(3))), new door(NewMaterial(1, new stone(3))));
+		Map[XPos][YPos]->ChangeTerrain(new parquet, new door);
 
 		Map[XPos][YPos]->Clean();
 
@@ -575,7 +575,7 @@ void level::EmptyFlags(void)
 			Map[x][y]->EmptyFlag();
 }
 
-void level::PutPlayer(const bool)
+void level::PutPlayer(bool)
 {
 	vector Pos = RandomSquare(true);
 	Map[Pos.X][Pos.Y]->FastAddCharacter(game::CPlayer());
@@ -586,7 +586,7 @@ void level::PutPlayerAround(vector Pos)
 	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->COverTerrain()->CIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::CPlayer()); game::CPlayer()->SSquareUnder(Map[DoX][DoY]); return;});
 }
 
-void level::Save(std::ofstream* SaveFile)
+void level::Save(std::ofstream* SaveFile) const
 {
 	area::Save(SaveFile);
 
@@ -657,7 +657,7 @@ void level::FastAddCharacter(vector Pos, character* Guy)
 	Map[Pos.X][Pos.Y]->FastAddCharacter(Guy);
 }
 
-void level::Draw(void)
+void level::Draw(void) const
 {
 	ushort XMax = game::CCurrentLevel()->CXSize() < game::CCamera().X + 50 ? game::CCurrentLevel()->CXSize() : game::CCamera().X + 50;
 	ushort YMax = game::CCurrentLevel()->CYSize() < game::CCamera().Y + 30 ? game::CCurrentLevel()->CYSize() : game::CCamera().Y + 30;
