@@ -2,10 +2,13 @@
 
 #include "proto.h"
 
-std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData;
-std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData;
-std::map<std::string, ushort>		protocontainer<groundlevelterrain>::CodeNameMap;
-std::map<std::string, ushort>		protocontainer<overlevelterrain>::CodeNameMap;
+class glterrain;
+class olterrain;
+
+std::vector<glterrain*>		protocontainer<glterrain>::ProtoData;
+std::vector<olterrain*>		protocontainer<olterrain>::ProtoData;
+std::map<std::string, ushort>	protocontainer<glterrain>::CodeNameMap;
+std::map<std::string, ushort>	protocontainer<olterrain>::CodeNameMap;
 
 #include "femath.h"
 #include "lterrade.h"
@@ -13,7 +16,7 @@ std::map<std::string, ushort>		protocontainer<overlevelterrain>::CodeNameMap;
 #undef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
 #include "message.h"
-#include "god.h"
+#include "godba.h"
 #include "level.h"
 #include "dungeon.h"
 #include "feio.h"
@@ -43,9 +46,9 @@ bool door::Open(character* Opener)
 
 	  if(Opener->GetIsPlayer())
 	    ADD_MESSAGE("You open the door.");
-	  else if(GetLevelSquareUnder()->CanBeSeen())
+	  else if(GetLSquareUnder()->CanBeSeen())
 	    {
-	      if(Opener->GetLevelSquareUnder()->CanBeSeen())
+	      if(Opener->GetLSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("%s opens the door.", Opener->CNAME(DEFINITE));
 	      else
 		ADD_MESSAGE("Something opens the door.");
@@ -57,8 +60,8 @@ bool door::Open(character* Opener)
 	{
 	  if(Opener->GetIsPlayer())
 	    ADD_MESSAGE("The door resists.");
-	  else if(GetLevelSquareUnder()->CanBeSeen())
-	    if(Opener->GetLevelSquareUnder()->CanBeSeen())
+	  else if(GetLSquareUnder()->CanBeSeen())
+	    if(Opener->GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
 
 	  return true;
@@ -100,14 +103,14 @@ void altar::DrawToTileBuffer() const
 
 void altar::Load(inputfile& SaveFile)
 {
-  levelterrain::Load(SaveFile);
+  lterrain::Load(SaveFile);
 
   SaveFile >> OwnerGod;
 }
 
 void altar::Save(outputfile& SaveFile) const
 {
-  levelterrain::Save(SaveFile);
+  lterrain::Save(SaveFile);
 
   SaveFile << OwnerGod;
 }
@@ -122,7 +125,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 
       std::vector<character*> MonsterList;
 
-      if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+      if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
 	return false;
 
       game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
@@ -149,7 +152,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 	{
 	  std::vector<character*> TempPlayerGroup;
 
-	  if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
+	  if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
 	    return false;
 
 	  game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
@@ -187,11 +190,11 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
 
       std::vector<character*> MonsterList;
 
-      if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
+      if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
 	return false;
 
       if(game::GetCurrent() == 8)
-	Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);
+	Who->GetLSquareUnder()->ChangeLTerrain(new parquet, new empty);
 
       game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
@@ -248,6 +251,7 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 
 	      NewLockedStatus = IsLocked;
 	    }
+
 	  Break(NewLockedStatus);
 	}
       else
@@ -260,7 +264,7 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 
 void door::Save(outputfile& SaveFile) const
 {
-  levelterrain::Save(SaveFile);
+  lterrain::Save(SaveFile);
 
   SaveFile << IsOpen;
   SaveFile << IsLocked;
@@ -268,7 +272,7 @@ void door::Save(outputfile& SaveFile) const
 
 void door::Load(inputfile& SaveFile)
 {
-  levelterrain::Load(SaveFile);
+  lterrain::Load(SaveFile);
 
   SaveFile >> IsOpen;
   SaveFile >> IsLocked;
@@ -280,29 +284,29 @@ void door::MakeWalkable()
 
   UpdatePicture();
 
-  GetLevelSquareUnder()->SendNewDrawRequest();
-  GetLevelSquareUnder()->SendMemorizedUpdateRequest();
-  GetLevelSquareUnder()->SetDescriptionChanged(true);
-  GetLevelSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->SendNewDrawRequest();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SetDescriptionChanged(true);
+  GetLSquareUnder()->ForceEmitterEmitation();
 
-  if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     game::SendLOSUpdateRequest();
 }
 
 void door::MakeNotWalkable()
 {
-  GetLevelSquareUnder()->ForceEmitterNoxify();
+  GetLSquareUnder()->ForceEmitterNoxify();
 
   IsOpen = false;
 
   UpdatePicture();
 
-  GetLevelSquareUnder()->SendNewDrawRequest();
-  GetLevelSquareUnder()->SendMemorizedUpdateRequest();
-  GetLevelSquareUnder()->SetDescriptionChanged(true);
-  GetLevelSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->SendNewDrawRequest();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SetDescriptionChanged(true);
+  GetLSquareUnder()->ForceEmitterEmitation();
 
-  if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     game::SendLOSUpdateRequest();
 }
 
@@ -367,19 +371,19 @@ void altar::Kick(ushort, bool ShowOnScreen, uchar)
   if(ShowOnScreen)
     ADD_MESSAGE("You feel like a sinner.");
 
-  game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerKickedAltar();
+  game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerKickedAltar();
 
-  if(GetLevelSquareUnder()->GetDivineOwner() > 1)
-    game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
+  if(GetLSquareUnder()->GetDivineOwner() > 1)
+    game::GetGod(GetLSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
 
-  if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber())
-    game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
+  if(GetLSquareUnder()->GetDivineOwner() < game::GetGods() - 1)
+    game::GetGod(GetLSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
 }
 
 void altar::ReceiveVomit(character* Who)
 {
   if(Who->GetIsPlayer())
-    game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
+    game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
 }
 
 std::string door::Name(uchar Case) const
@@ -440,7 +444,7 @@ bool fountain::SitOn(character* Char)
       return true;
     }
   else
-    return overlevelterrain::SitOn(Char);
+    return olterrain::SitOn(Char);
 }
 
 bool doublebed::SitOn(character*)
@@ -455,9 +459,9 @@ bool fountain::Consume(character* Drinker)
     {
       if(GetMaterial(1)->GetType() == water::StaticType()) 
 	{
-	  if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->HasDrinkHandler())
+	  if(GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
 	    {
-	      if(!GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->Drink(Drinker))
+	      if(!GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->Drink(Drinker))
 		return false;
 	    }
 	  else
@@ -608,14 +612,14 @@ bool door::ReceiveStrike()
     {
       bool NewLockedStatus = IsLocked;
 
-      if(GetLevelSquareUnder()->CanBeSeen())
+      if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The wand strikes the door and the door breaks.");
 
       Break(NewLockedStatus);
     }
   else
     {
-      if(GetLevelSquareUnder()->CanBeSeen())
+      if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The wand strikes the door and the door opens.");
 		
       MakeWalkable();
@@ -631,7 +635,7 @@ bool brokendoor::ReceiveStrike()
     {
       MakeWalkable();
       IsLocked = false;
-      if(GetLevelSquareUnder()->CanBeSeen())
+      if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The wand strikes the door and the door opens.");
     }
   else
@@ -648,7 +652,7 @@ bool altar::Polymorph(character*)
   uchar OldGod = OwnerGod;
 
   while(OwnerGod == OldGod)
-    OwnerGod = RAND() % game::GetGodNumber() + 1;
+    OwnerGod = 1 + RAND() % (game::GetGods() - 1);
 
   GetSquareUnder()->SendNewDrawRequest();
   GetSquareUnder()->SendMemorizedUpdateRequest();
@@ -740,7 +744,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool V
 	  // The door breaks
 	  bool NewLockedStatus;
 	  if(GetIsLocked())
-	    NewLockedStatus = RAND() % 2;
+	    NewLockedStatus = RAND() % 2 ? true : false;
 	  else
 	    NewLockedStatus = false;
 
@@ -748,6 +752,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool V
 	    {
 	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
 	    }
+
 	  Break(NewLockedStatus);
 	} 
       else
@@ -760,7 +765,6 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool V
 	}
     }
 }
-
 
 void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
 {
@@ -792,13 +796,11 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, 
     }
 }
 
-
-
 void door::Break(bool NewLockedStatus)
 {
   brokendoor* Temp = new brokendoor(false);
   Temp->InitMaterials(GetMaterial(0));
   PreserveMaterial(0);
-  GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
+  GetLSquareUnder()->ChangeOLTerrain(Temp);
   Temp->SetIsLocked(NewLockedStatus);  
 }

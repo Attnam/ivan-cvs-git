@@ -12,11 +12,17 @@
 #include "whandler.h"
 #include "charde.h"
 #include "config.h"
+#include "itemde.h"
+
+const bool ValpuriIsAlive = true;
 
 #ifdef WIN32
+
 int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 {
+
 #else
+
 int Main(int argc, char **argv)
 {
   if(argc > 1 && std::string(argv[1]) == "--version")
@@ -24,13 +30,24 @@ int Main(int argc, char **argv)
     std::cout << "IVAN version " << VERSION << std::endl;
     return 0;
   }
+
 #endif
+
 #ifdef VC
+
+  /* You are not expected to understand this. */
+
   __asm _emit(1 << 0x04)|(1 << 0x07);
+
 #endif
+
 #ifdef __DJGPP__
+
+  /* Saves numlock state and toggles it off */
+
   char ShiftByteState = _farpeekb(_dos_ds, 0x417);
   _farpokeb(_dos_ds, 0x417, 0);
+
 #endif
 
   game::InitLuxTable();
@@ -50,7 +67,7 @@ int Main(int argc, char **argv)
   elpuri Elpuri(true, false, false, false);
 
   while(true)
-    switch(iosystem::Menu(Elpuri.GetPicture(), "Iter Vehemens ad Necem\rMain Menu\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
+    switch(iosystem::Menu(Elpuri.GetTorso()->GetPicture(), "Iter Vehemens ad Necem\rMain Menu\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
       {
       case 0:
 	game::Init();
@@ -82,9 +99,15 @@ int Main(int argc, char **argv)
 	}
       case 4:
 	configuration::Save();
+
 #ifdef __DJGPP__
+
+	/* Loads numlock state */
+
 	_farpokeb(_dos_ds, 0x417, ShiftByteState);
+
 #endif
+
 	return 0;
       }
 }

@@ -210,7 +210,7 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 	    if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
 	      {
 		FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
-		Map[x][y]->ChangeOverLevelTerrain(new empty);
+		Map[x][y]->ChangeOLTerrain(new empty);
 	      }
 
 	    for(ushort X = 0; X < XSize; ++X)
@@ -229,7 +229,7 @@ void level::Generate(levelscript* GenLevelScript)
 
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
 
-  Map = (levelsquare***)area::Map;
+  Map = (lsquare***)area::Map;
 
   if(LevelScript->GetLevelMessage(false))
     LevelMessage = *LevelScript->GetLevelMessage();
@@ -237,8 +237,8 @@ void level::Generate(levelscript* GenLevelScript)
   for(ushort x = 0; x < XSize; ++x)
     for(ulong y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new levelsquare(this, vector2d(x, y));
-	Map[x][y]->ChangeLevelTerrain(LevelScript->GetFillSquare()->GetGroundTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOverTerrain()->Instantiate());
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->ChangeLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
       }
 
   ushort c;
@@ -267,7 +267,7 @@ void level::Generate(levelscript* GenLevelScript)
 	}
       else
 	{
-	  for(uchar i = 0; i < 10; ++i)
+	  for(ushort i = 0; i < 10; ++i)
 	    {
 	      RoomScript = LevelScript->GetRoomDefault();
 
@@ -295,7 +295,7 @@ void level::Generate(levelscript* GenLevelScript)
     {
       squarescript* Square = LevelScript->GetSquare()[c];
 
-      ApplyLevelSquareScript(Square);
+      ApplyLSquareScript(Square);
     }
 
   if(LevelScript->GetBase())
@@ -303,15 +303,15 @@ void level::Generate(levelscript* GenLevelScript)
       {
 	squarescript* Square = LevelScript->GetBase()->GetSquare()[c];
 
-	ApplyLevelSquareScript(Square);
+	ApplyLSquareScript(Square);
       }
 }
 
-void level::ApplyLevelSquareScript(squarescript* Square)
+void level::ApplyLSquareScript(squarescript* Square)
 {
   uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
 
-  for(uchar c = 0; c < Times; ++c)
+  for(ushort c = 0; c < Times; ++c)
     {
       vector2d Pos;
 
@@ -320,7 +320,7 @@ void level::ApplyLevelSquareScript(squarescript* Square)
 	  if(Square->GetPosScript()->GetIsInRoom(false))
 	    for(Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable()))
 	      {
-		if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
+		if((!GetLSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
 		  break;
 	      }
 	  else
@@ -366,7 +366,7 @@ void level::CreateRandomTunnel()
 
 void level::CreateItems(ushort Amount)
 {
-  for(uchar x = 0; x < Amount; ++x)
+  for(ushort x = 0; x < Amount; ++x)
     {
       vector2d Pos = RandomSquare(0, true);
 
@@ -381,7 +381,7 @@ void level::CreateStairs(bool Up)
   while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN))
     Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(Up ? (overlevelterrain*)(new stairsup) : (overlevelterrain*)(new stairsdown));
+  Map[Pos.X][Pos.Y]->ChangeOLTerrain(Up ? (olterrain*)(new stairsup) : (olterrain*)(new stairsdown));
 
   if(Up)
     UpStairs = Pos;
@@ -429,10 +429,10 @@ bool level::MakeRoom(roomscript* RoomScript)
   {
     for(ushort x = XPos; x < XPos + Width; ++x)
       {
-	Map[x][YPos]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
+	Map[x][YPos]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
 	FlagMap[x][YPos] |= FORBIDDEN;
 
-	Map[x][YPos + Height - 1]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
+	Map[x][YPos + Height - 1]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
 	FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
 	if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
@@ -462,9 +462,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   for(ushort y = YPos; y < YPos + Height; ++y)
     {
-      Map[XPos][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
+      Map[XPos][y]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
       FlagMap[XPos][y] |= FORBIDDEN;
-      Map[XPos + Width - 1][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
+      Map[XPos + Width - 1][y]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
       FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
       if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
@@ -494,7 +494,7 @@ bool level::MakeRoom(roomscript* RoomScript)
   for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
     for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
       {
-	Map[x][y]->ChangeLevelTerrain(RoomScript->GetFloorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetFloorSquare()->GetOverTerrain()->Instantiate());
+	Map[x][y]->ChangeLTerrain(RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate());
 
 	FlagMap[x][y] |= FORBIDDEN;
 
@@ -507,15 +507,15 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(*RoomScript->GetGenerateFountains() && !(RAND() % 10))
     {
       vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
-      Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new fountain);
+      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new fountain);
     }
 
   if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
     {
       vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
-      Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new altar);
+      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new altar);
 
-      uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOverLevelTerrain())->GetOwnerGod();
+      uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOLTerrain())->GetOwnerGod();
 
       for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 	for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
@@ -528,12 +528,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       ushort LXPos = LPos.X, LYPos = LPos.Y;
 
-      overlevelterrain* Door = RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate(); //Bug! Wrong room!
+      olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
 	Door->Lock();
 
-      Map[LXPos][LYPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), Door);
+      Map[LXPos][LYPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[LXPos][LYPos]->Clean();
 
       FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
@@ -559,12 +559,12 @@ bool level::MakeRoom(roomscript* RoomScript)
       FlagMap[XPos][YPos] &= ~FORBIDDEN;
       FlagMap[XPos][YPos] |= PREFERRED;
 
-      Door = RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate();
+      Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
 	Door->Lock();
 
-      Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), Door);
+      Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[XPos][YPos]->Clean();
 
       GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() % 2 ? true : false);
@@ -599,7 +599,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       if(!*RoomScript->GetGenerateTunnel())
 	{
-	  Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
+	  Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
 	  Map[XPos][YPos]->Clean();
 	}
     }
@@ -610,7 +610,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
 
-      for(uchar c = 0; c < Times; ++c)
+      for(ushort c = 0; c < Times; ++c)
 	{
 	  vector2d Pos;
 
@@ -657,33 +657,33 @@ bool level::MakeRoom(roomscript* RoomScript)
 	    Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
     }
 
-  if(RoomScript->GetGroundTerrainMap(false))
+  if(RoomScript->GetGTerrainMap(false))
     {
-      XPos = BXPos + RoomScript->GetGroundTerrainMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetGroundTerrainMap()->GetPos()->Y;
+      XPos = BXPos + RoomScript->GetGTerrainMap()->GetPos()->X;
+      YPos = BYPos + RoomScript->GetGTerrainMap()->GetPos()->Y;
 
-      contentscript<groundlevelterrain>* GroundTerrainScript;
+      contentscript<glterrain>* GTerrainScript;
 
-      for(ushort x = 0; x < RoomScript->GetGroundTerrainMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetGroundTerrainMap()->GetSize()->Y; ++y)
-	  if((GroundTerrainScript = RoomScript->GetGroundTerrainMap()->GetContentScript(x, y)))
-	    Map[XPos + x][YPos + y]->ChangeGroundLevelTerrain(GroundTerrainScript->Instantiate());
+      for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
+	for(ushort y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
+	  if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
+	    Map[XPos + x][YPos + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
     }
 
-  if(RoomScript->GetOverTerrainMap(false))
+  if(RoomScript->GetOTerrainMap(false))
     {
-      XPos = BXPos + RoomScript->GetOverTerrainMap()->GetPos()->X;
-      YPos = BYPos + RoomScript->GetOverTerrainMap()->GetPos()->Y;
+      XPos = BXPos + RoomScript->GetOTerrainMap()->GetPos()->X;
+      YPos = BYPos + RoomScript->GetOTerrainMap()->GetPos()->Y;
 
-      contentscript<overlevelterrain>* OverTerrainScript;
+      contentscript<olterrain>* OTerrainScript;
 
-      for(ushort x = 0; x < RoomScript->GetOverTerrainMap()->GetSize()->X; ++x)
-	for(ushort y = 0; y < RoomScript->GetOverTerrainMap()->GetSize()->Y; ++y)
-	  if((OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y)))
+      for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
+	for(ushort y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
+	  if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
 	    {
-	      overlevelterrain* Terrain = OverTerrainScript->Instantiate();
-	      Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(Terrain);
-	      RoomClass->HandleInstantiatedOverLevelTerrain(Terrain);
+	      olterrain* Terrain = OTerrainScript->Instantiate();
+	      Map[XPos + x][YPos + y]->ChangeOLTerrain(Terrain);
+	      RoomClass->HandleInstantiatedOLTerrain(Terrain);
 	    }
     }
 
@@ -738,14 +738,14 @@ void level::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
 
-  Map = (levelsquare***)area::Map;
+  Map = (lsquare***)area::Map;
 
   SaveFile >> Room;
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new levelsquare(this, vector2d(x, y));
+	Map[x][y] = new lsquare(this, vector2d(x, y));
 	Map[x][y]->Load(SaveFile);
       }
 
@@ -794,13 +794,13 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
 
-  for(uchar c = 0; c < HowMany; ++c)
+  for(ushort c = 0; c < HowMany; ++c)
     {
       Pos = vector2d(0,0);
 
       character* Char = protosystem::BalancedCreateMonster();
 
-      for(uchar cc = 0; cc < 30; ++c)
+      for(ushort cc = 0; cc < 30; ++c)
 	{
 	  Pos = RandomSquare(Char, true);
 			
@@ -840,7 +840,7 @@ bool level::GetOnGround() const
 
 void level::MoveCharacter(vector2d From, vector2d To)
 {
-  GetLevelSquare(From)->MoveCharacter(GetLevelSquare(To));
+  GetLSquare(From)->MoveCharacter(GetLSquare(To));
 }
 
 ushort level::GetIdealPopulation() const 
@@ -880,7 +880,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
   if(EmitChange > 511)
     EmitChange = 511;
 
-  GetLevelSquare(Pos)->SetTemporaryEmitation(EmitChange);
+  GetLSquare(Pos)->SetTemporaryEmitation(EmitChange);
 
   ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
@@ -889,7 +889,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 
   uchar Size = 6;
 
-  for(uchar c = 0; c < 6; ++c)
+  for(ushort c = 0; c < 6; ++c)
     if(Strength >= StrengthLimit[c])
       {
         Size = c;
@@ -952,7 +952,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
       break;
     }
 
-  GetLevelSquare(Pos)->SetTemporaryEmitation(0);
+  GetLSquare(Pos)->SetTemporaryEmitation(0);
 
   ushort Radius = 8 - Size;
   ushort RadiusSquare = Radius * Radius;
@@ -965,7 +965,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 
     if(DistanceSquare <= RadiusSquare)
       {
-	levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
+	lsquare* Square = GetLSquare(vector2d(XPointer, YPointer));
 	character* Char = Square->GetCharacter();
 	ushort Damage = Strength / (DistanceSquare + 1);
 
@@ -986,7 +986,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 		  {
 		    vector2d Where(DoX, DoY);
 
-		    if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable())
+		    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->GetIsWalkable())
 		      Char->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
 		  }
 	      });
@@ -1000,8 +1000,8 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
 	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
-	if(Damage >= 20 && Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
-	  Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
+	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged())
+	  Square->ChangeOLTerrainAndUpdateLights(new empty);
       }
   });
 
@@ -1016,7 +1016,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	  {
 	    vector2d Where(DoX, DoY);
 
-	    if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable())
+	    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->GetIsWalkable())
 	      game::GetPlayer()->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
 	  }
       });
@@ -1033,10 +1033,10 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   if(!AllowHostiles)
     DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
     {
-      character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
+      character* Char = GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
       if(Char)
-	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	  {
 	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	    return false;
@@ -1045,10 +1045,10 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
   DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
   {
-    character* Char = GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
+    character* Char = GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
     if(Char)
-      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLevelSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	{
 	  ADD_MESSAGE("%s follows you.", Char->CNAME(DEFINITE));
 
@@ -1070,3 +1070,5 @@ bool level::IsValid(vector2d Vector) const
   else
     return false;
 }
+
+

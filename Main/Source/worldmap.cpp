@@ -11,13 +11,13 @@
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
-  Map = (worldmapsquare***)area::Map;
+  Map = (wsquare***)area::Map;
 
   for(ushort x = 0; x < XSize; ++x)
     for(ulong y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new worldmapsquare(this, vector2d(x, y));
-	Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
+	Map[x][y] = new wsquare(this, vector2d(x, y));
+	Map[x][y]->ChangeWTerrain(new ocean, new atmosphere);
       }
 
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
@@ -62,12 +62,12 @@ void worldmap::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
 
-  Map = (worldmapsquare***)area::Map;
+  Map = (wsquare***)area::Map;
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       {
-	Map[x][y] = new worldmapsquare(this, vector2d(x, y));
+	Map[x][y] = new wsquare(this, vector2d(x, y));
 	Map[x][y]->Load(SaveFile);
       }
 
@@ -98,8 +98,8 @@ void worldmap::Generate()
 
       std::vector<continent*> PerfectForAttnam;
 
-      for(uchar c = 1; c < Continent.size(); ++c)
-	if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGroundTerrainAmount(snow::StaticType()))
+      for(ushort c = 1; c < Continent.size(); ++c)
+	if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
 	  PerfectForAttnam.push_back(Continent[c]);
 
       if(!PerfectForAttnam.size())
@@ -136,12 +136,12 @@ void worldmap::Generate()
       if(CounterOne == 50)
 	continue;
 
-      GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
+      GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       game::GetDungeon(1)->SetWorldMapPos(AttnamPos);
-      GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
+      GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       game::GetDungeon(0)->SetWorldMapPos(ElpuriCavePos);
 
-      GetWorldMapSquare(AttnamPos)->AddCharacter(game::GetPlayer());
+      GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
 
       break;
     }
@@ -158,11 +158,11 @@ void worldmap::SmoothAltitude()
 {
   short** OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
 
-  for(uchar c = 0; c < 10; ++c)
+  for(ushort c = 0; c < 10; ++c)
     {
       if(c < 8)
 	{
-	  for(uchar c1 = 0; c1 < RAND() % 20; ++c1)
+	  for(ushort c1 = 0; c1 < RAND() % 20; ++c1)
 	    {
 	      ushort PlaceX = 5 + RAND() % (XSize-10), PlaceY = 5 + RAND() % (YSize-10);
 	      short Change = RAND() % 10000 - RAND() % 10000;
@@ -269,14 +269,14 @@ void worldmap::SmoothClimate()
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      Map[x][y]->ChangeWorldMapTerrain(protocontainer<groundworldmapterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
+      Map[x][y]->ChangeWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
 
   delete [] OldTypeBuffer;
 }
 
 ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort x, ushort y)
 {
-  static ushort Types = protocontainer<groundworldmapterrain>::GetProtoAmount() + 1;
+  static ushort Types = protocontainer<gwterrain>::GetProtoAmount() + 1;
   static uchar* Type = new uchar[Types];
 
   for(ushort n = 0; n < Types; ++n)
@@ -354,9 +354,9 @@ void worldmap::CalculateContinents()
 
 void worldmap::RemoveEmptyContinents()
 {
-  for(uchar c = 1; c < Continent.size(); ++c)
+  for(ushort c = 1; c < Continent.size(); ++c)
     if(!Continent[c]->Size())
-      for(uchar i = Continent.size() - 1; i >= c; i--)
+      for(ushort i = Continent.size() - 1; i >= c; i--)
 	if(Continent[i]->Size())
 	  {
 	    Continent[i]->AttachTo(Continent[c]);
@@ -370,3 +370,5 @@ void worldmap::RemoveEmptyContinents()
 	    Continent.pop_back();
 	  }
 }
+
+

@@ -1,77 +1,16 @@
-#ifndef __GOD_H__
-#define __GOD_H__
+#ifndef __GODDE_H__
+#define __GODDE_H__
 
 #ifdef VC
 #pragma warning(disable : 4786)
 #endif
 
-#define GOD_NAME Name().c_str()
+#include "godba.h"
 
-#define ALPP	0   // A = Alignment
-#define ALP	1   // L = Lawful
-#define AL	2   // N = Neutral
-#define ALM	3   // C = Chaotic
-#define ANP	4   // P = Plus
-#define AN	5   // M = Minus
-#define ANM	6
-#define ACP	7
-#define AC	8
-#define ACM	9
-#define ACMM	10
-
-#include <string>
-
-#include "typedef.h"
-#include "materba.h"
-
-class item;
-class outputfile;
-class inputfile;
-
-class god
-{
- public:
-  god() : Relation(0), Timer(0), Known(false) { }
-  virtual void Pray();
-  virtual std::string Name() const = 0;
-  virtual std::string Description() const = 0;
-  virtual uchar Alignment() const = 0;
-  virtual std::string CompleteDescription() const;
-  virtual void ApplyDivineTick(ushort Turns) { Timer -= Turns; if(Timer < 0) Timer = 0; }
-  virtual void AdjustRelation(god*, bool, short = 25);
-  virtual void AdjustRelation(short Amount);
-  virtual void AdjustTimer(long Amount);
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual void SetRelation(short Value) { Relation = Value; }
-  virtual void SetTimer(long Value) { Timer = Value; }
-  virtual bool ReceiveOffer(item*);
-  virtual uchar BasicAlignment() const { return NEUTRAL; }
-  virtual short GetRelation() const { return Relation; }
-  virtual void PrintRelation() const;
-  virtual void SetKnown(bool What) { Known = What; }
-  virtual bool GetKnown() const { return Known; }
-  virtual void AddPriestMessage() const;
-  virtual void PlayerKickedAltar() { AdjustRelation(-100); }
-  virtual void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
-  virtual void PlayerVomitedOnAltar();
-  virtual character* CreateAngel();
- protected:
-  virtual void PrayGoodEffect();
-  virtual void PrayBadEffect();
-  short Relation;
-  long Timer;
-  bool Known;
-};
-
-inline outputfile& operator<<(outputfile& SaveFile, god* God)
-{
-  God->Save(SaveFile);
-  return SaveFile;
-}
-
-class valpurus : public god
-{
+class GOD
+(
+  valpurus,
+  god,
  public:
   virtual std::string Name() const { return "Valpurus"; }
   virtual std::string Description() const { return "king of gods"; }
@@ -82,10 +21,12 @@ class valpurus : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class venius : public god
-{
+class GOD
+(
+  venius,
+  god,
  public:
   virtual std::string Name() const { return "Venius"; }
   virtual std::string Description() const { return "god of paladins and holy fire"; }
@@ -95,10 +36,12 @@ class venius : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class atavus : public god
-{
+class GOD
+(
+  atavus,
+  god,
  public:
   virtual std::string Name() const { return "Atavus"; }
   virtual std::string Description() const { return "god of gifts"; }
@@ -108,10 +51,12 @@ class atavus : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class dulcis : public god
-{
+class GOD
+(
+  dulcis,
+  god,
  public:
   virtual std::string Name() const { return "Dulcis"; }
   virtual std::string Description() const { return "goddess of music"; }
@@ -121,10 +66,12 @@ class dulcis : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class inasnum : public god
-{
+class GOD
+(
+  inasnum,
+  god,
  public:
   virtual std::string Name() const { return "Inasnum"; }
   virtual std::string Description() const { return "god of prophecies and dreams"; }
@@ -133,10 +80,12 @@ class inasnum : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class seges : public god
-{
+class GOD
+(
+  seges,
+  god,
  public:
   virtual std::string Name() const { return "Seges"; }
   virtual std::string Description() const { return "goddess of health and nutrition"; }
@@ -146,10 +95,12 @@ class seges : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class consummo : public god
-{
+class GOD
+(
+  consummo,
+  god,
  public:
   virtual std::string Name() const { return "Consummo"; }
   virtual std::string Description() const { return "god of knowledge, wisdom and understanding"; }
@@ -159,10 +110,12 @@ class consummo : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class silva : public god
-{
+class GOD
+(
+  silva,
+  god,
  public:
   virtual std::string Name() const { return "Silva"; }
   virtual std::string Description() const { return "goddess of nature"; }
@@ -171,10 +124,12 @@ class silva : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class loricatus : public god
-{
+class GOD
+(
+  loricatus,
+  god,
  public:
   virtual std::string Name() const { return "Loricatus"; }
   virtual std::string Description() const { return "god of fire, machines and weaponry"; }
@@ -183,10 +138,12 @@ class loricatus : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class mellis : public god
-{
+class GOD
+(
+  mellis,
+  god,
  public:
   virtual std::string Name() const { return "Mellis"; }
   virtual std::string Description() const { return "god of money, trade and politics"; }
@@ -195,10 +152,12 @@ class mellis : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class calamus : public god
-{
+class GOD
+(
+  calamus,
+  god,
  public:
   virtual std::string Name() const { return "Calamus"; }
   virtual std::string Description() const { return "god of assassins and thieves"; }
@@ -207,10 +166,12 @@ class calamus : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class pestifer : public god
-{
+class GOD
+(
+  pestifer,
+  god,
  public:
   virtual std::string Name() const { return "Pestifer"; }
   virtual std::string Description() const { return "god of pain, misery and annoying noise"; }
@@ -219,10 +180,12 @@ class pestifer : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class macellarius : public god
-{
+class GOD
+(
+  macellarius,
+  god,
  public:
   virtual std::string Name() const { return "Macellarius"; }
   virtual std::string Description() const { return "god of greed and forbidden pleasures"; }
@@ -231,10 +194,12 @@ class macellarius : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class scabies : public god
-{
+class GOD
+(
+  scabies,
+  god,
  public:
   virtual std::string Name() const { return "Scabies"; }
   virtual std::string Description() const { return "goddess of mutations, deseases and famine"; }
@@ -244,10 +209,12 @@ class scabies : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class infuscor : public god
-{
+class GOD
+(
+  infuscor,
+  god,
  public:
   virtual std::string Name() const { return "Infuscor"; }
   virtual std::string Description() const { return "goddess of wrong knowledge and vile magic"; }
@@ -256,10 +223,12 @@ class infuscor : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class cruentus : public god
-{
+class GOD
+(
+  cruentus,
+  god,
  public:
   virtual std::string Name() const { return "Cruentus"; }
   virtual std::string Description() const { return "god of war and blood"; }
@@ -269,10 +238,12 @@ class cruentus : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
-class erado : public god
-{
+class GOD
+(
+  erado,
+  god,
  public:
   virtual std::string Name() const { return "Erado"; }
   virtual std::string Description() const { return "destroyer of worlds"; }
@@ -282,8 +253,6 @@ class erado : public god
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-};
+);
 
 #endif
-
-

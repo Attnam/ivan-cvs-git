@@ -5,8 +5,9 @@
 #include "game.h"
 #include "lsquare.h"
 #include "materba.h"
+#include "igraph.h"
 
-fluid::fluid() : entity(true, true)
+fluid::fluid() : unit(true, true)
 {
   Picture = new bitmap(16, 16);
   Picture->Fill(0xF81F);
@@ -31,7 +32,7 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
 	  {
 	    char Change[3];
 
-	    for(uchar x = 0; x < 3; ++x)
+	    for(ushort x = 0; x < 3; ++x)
 	      Change[x] = RAND() % Variation - RAND() % Variation;
 
 	    if(short(GET_RED(Color) + Change[0]) < 0) Change[0] = -GET_RED(Color);
@@ -52,11 +53,11 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
 
 void fluid::Be()
 {
-  if(!(RAND() % 10))
+  if(!(RAND() % 25))
     {
       if(!GetPicture()->ChangeAlpha(-1))
 	{
-	  GetLevelSquareUnder()->RemoveFluid();
+	  GetLSquareUnder()->RemoveFluid();
 	  SetExists(false);
 	}
 
@@ -67,13 +68,13 @@ void fluid::Be()
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  entity::Save(SaveFile);
+  unit::Save(SaveFile);
   SaveFile << Picture;
 }
 
 void fluid::Load(inputfile& SaveFile)
 {
-  entity::Load(SaveFile);
+  unit::Load(SaveFile);
   SaveFile >> Picture;
 }
 
@@ -81,3 +82,4 @@ void fluid::DrawToTileBuffer() const
 {
   Picture->AlphaBlit(igraph::GetTileBuffer(), 0, 0);
 }
+

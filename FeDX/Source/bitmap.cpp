@@ -383,7 +383,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 
   static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
 
-  for(uchar c = 0; c < (Wide ? 5 : 1); ++c)
+  for(ushort c = 0; c < (Wide ? 5 : 1); ++c)
     {
       ushort FromX = OrigFromX + Point[c].X;
       ushort FromY = OrigFromY + Point[c].Y;
@@ -581,7 +581,7 @@ void bitmap::FadeToScreen()
   bitmap Backup(XRES, YRES);
   DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
 
-  for(uchar c = 0; c <= 5; ++c)
+  for(ushort c = 0; c <= 5; ++c)
     {
       clock_t StartTime = clock();
       Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(255 - c * 50), 0);
@@ -594,3 +594,4 @@ void bitmap::FadeToScreen()
   MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, uchar(0), 0);
   graphics::BlitDBToScreen();
 }
+

@@ -158,7 +158,7 @@ ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Colo
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
-  for(uchar c = 0; c < strlen(Buffer); ++c)
+  for(ushort c = 0; c < strlen(Buffer); ++c)
     {
       ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
 
@@ -167,3 +167,4 @@ ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Colo
 
   return strlen(Buffer);
 }
+

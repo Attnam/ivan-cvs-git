@@ -12,19 +12,19 @@ room::room(bool SetStats) : Master(0)
 
 void room::Save(outputfile& SaveFile) const
 {
-  typeable::Save(SaveFile);
+  type::Save(SaveFile);
 
   SaveFile << Pos << Size << Door << Index << DivineOwner;
 }
 
 void room::Load(inputfile& SaveFile)
 {
-  typeable::Load(SaveFile);
+  type::Load(SaveFile);
 
   SaveFile >> Pos >> Size >> Door >> Index >> DivineOwner;
 }
 
-void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
+void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
 {
   if(Terrain->IsDoor())
     Door.push_back(Terrain->GetPos());
@@ -45,3 +45,5 @@ void room::HandleInstantiatedCharacter(character* Character)
       ((holybook*)Character->GetWielded())->SetOwnerGod(DivineOwner);
     }
 }
+
+

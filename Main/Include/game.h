@@ -6,7 +6,7 @@
 #endif
 
 #define VERSION			"0.311"
-#define SAVEFILE_VERSION	100	// Increment this if changes make savefiles incompatible
+#define SAVEFILE_VERSION	110	// Increment this if changes make savefiles incompatible
 
 #define DIRECTION_COMMAND_KEYS	8
 
@@ -116,6 +116,7 @@ class game
   static int GetMoveCommandKey(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = true);
   static god* GetGod(uchar Index) { return God[Index]; }
+  static uchar GetGods() { return God.size(); }
   static std::string CAlignment(uchar Index) { return Alignment[Index]; }
   static void ApplyDivineTick(ushort = 1);
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
@@ -130,8 +131,8 @@ class game
   static float Difficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
-  static void SetGodNumber(uchar What) { GodNumber = What; }
-  static uchar GetGodNumber() { return GodNumber; }
+  //static void SetGodNumber(uchar What) { GodNumber = What; }
+  //static uchar GetGodNumber() { return GodNumber; }
   static long GetBaseScore() { return BaseScore; }
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
@@ -163,8 +164,8 @@ class game
   static void SaveWorldMap(std::string = SaveName(), bool = false);
   static void LoadWorldMap(std::string = SaveName());
   static void UpdateCamera();
-  static ulong CreateNewEntityID();
-  static void PopEntityID(ulong ID) { if(NextEntityID == ID + 1) --NextEntityID; }
+  static ulong CreateNewItemID();
+  static void PopItemID(ulong ID) { if(NextItemID == ID + 1) --NextItemID; }
   static team* GetTeam(ushort Index) { return Team[Index]; }
   static uchar GetTeams() { return Team.size(); }
   static void Hostility(team*, team*);
@@ -186,9 +187,10 @@ class game
   static void SetInGetCommand(bool What) { InGetCommand = What; }
   static bool GetInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
+  static void CreateGods();
  private:
   static std::string Alignment[];
-  static god* God[];
+  static std::vector<god*> God;
   static ushort Current;
   static uchar CurrentDungeon;
   static int MoveCommandKey[DIRECTION_COMMAND_KEYS];
@@ -202,7 +204,7 @@ class game
   static bool SeeWholeMapCheat;
   static bool GoThroughWallsCheat;
   static std::string PlayerName;
-  static uchar GodNumber;
+  //static uchar GodNumber;
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;
@@ -214,7 +216,7 @@ class game
   static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
   static gamescript GameScript;
-  static ulong NextEntityID;
+  static ulong NextItemID;
   static std::vector<team*> Team;
   static ulong LOSTurns;
   static bool LOSUpdateRequested;

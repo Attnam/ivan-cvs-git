@@ -8,39 +8,39 @@
 #include "graphics.h"
 #include "config.h"
 
-worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GroundWorldMapTerrain(0), OverWorldMapTerrain(0)
+wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0)
 {
 }
 
-worldmapsquare::~worldmapsquare()
+wsquare::~wsquare()
 {
-  delete GetGroundWorldMapTerrain();
-  delete GetOverWorldMapTerrain();
+  delete GetGWTerrain();
+  delete GetOWTerrain();
 }
 
-void worldmapsquare::Save(outputfile& SaveFile) const
+void wsquare::Save(outputfile& SaveFile) const
 {
   square::Save(SaveFile);
 
-  SaveFile << GroundWorldMapTerrain << OverWorldMapTerrain;
+  SaveFile << GWTerrain << OWTerrain;
 }
 
-void worldmapsquare::Load(inputfile& SaveFile)
+void wsquare::Load(inputfile& SaveFile)
 {
   square::Load(SaveFile);
 
-  SaveFile >> GroundWorldMapTerrain >> OverWorldMapTerrain;
+  SaveFile >> GWTerrain >> OWTerrain;
 }
 
-bool worldmapsquare::DrawTerrain() const
+bool wsquare::DrawTerrain() const
 {
-  GetGroundWorldMapTerrain()->DrawToTileBuffer();
-  GetOverWorldMapTerrain()->DrawToTileBuffer();
+  GetGWTerrain()->DrawToTileBuffer();
+  GetOWTerrain()->DrawToTileBuffer();
 
   return true;
 }
 
-bool worldmapsquare::DrawCharacters() const
+bool wsquare::DrawCharacters() const
 {
   if(GetCharacter())
     {
@@ -51,7 +51,7 @@ bool worldmapsquare::DrawCharacters() const
     return false;
 }
 
-void worldmapsquare::UpdateMemorized()
+void wsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
@@ -66,7 +66,7 @@ void worldmapsquare::UpdateMemorized()
     }
 }
 
-void worldmapsquare::Draw()
+void wsquare::Draw()
 {
   if(NewDrawRequested)
     {
@@ -101,68 +101,69 @@ void worldmapsquare::Draw()
     }
 }
 
-void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, overworldmapterrain* NewOver)
+void wsquare::ChangeWTerrain(gwterrain* NewGround, owterrain* NewOver)
 {
-  ChangeGroundWorldMapTerrain(NewGround);
-  ChangeOverWorldMapTerrain(NewOver);
+  ChangeGWTerrain(NewGround);
+  ChangeOWTerrain(NewOver);
 }
 
-void worldmapsquare::ChangeGroundWorldMapTerrain(groundworldmapterrain* NewGround)
+void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 {
-  delete GetGroundWorldMapTerrain();
-  SetGroundWorldMapTerrain(NewGround);
+  delete GetGWTerrain();
+  SetGWTerrain(NewGround);
   DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
 }
 
-void worldmapsquare::ChangeOverWorldMapTerrain(overworldmapterrain* NewOver)
+void wsquare::ChangeOWTerrain(owterrain* NewOver)
 {
-  delete GetOverWorldMapTerrain();
-  SetOverWorldMapTerrain(NewOver);
+  delete GetOWTerrain();
+  SetOWTerrain(NewOver);
   DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
 }
 
-void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
+void wsquare::SetGWTerrain(gwterrain* What)
 {
-  GroundWorldMapTerrain = What;
+  GWTerrain = What;
 
   if(What)
-    What->SetWorldMapSquareUnder(this);
+    What->SetWSquareUnder(this);
 }
 
-void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
+void wsquare::SetOWTerrain(owterrain* What)
 {
-  OverWorldMapTerrain = What;
+  OWTerrain = What;
 
   if(What)
-    What->SetWorldMapSquareUnder(this);
+    What->SetWSquareUnder(this);
 }
 
-void worldmapsquare::UpdateMemorizedDescription(bool)
+void wsquare::UpdateMemorizedDescription(bool)
 {
   if(DescriptionChanged)
     {
       /*std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? " of continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
 
-	if(GetOverWorldMapTerrain()->Name(UNARTICLED) != "atmosphere")
-	SetMemorizedDescription(GetOverWorldMapTerrain()->Name(INDEFINITE) + " on " + GetGroundWorldMapTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+	if(GetOWTerrain()->Name(UNARTICLED) != "atmosphere")
+	SetMemorizedDescription(GetOWTerrain()->Name(INDEFINITE) + " on " + GetGWTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
 	else
-	SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");*/
+	SetMemorizedDescription(GetGWTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");*/
 
-      if(GetOverWorldMapTerrain()->Name(UNARTICLED) != "atmosphere")
-	SetMemorizedDescription(GetOverWorldMapTerrain()->Name(INDEFINITE) + " surrounded by " + GetGroundWorldMapTerrain()->Name(UNARTICLED));
+      if(GetOWTerrain()->Name(UNARTICLED) != "atmosphere")
+	SetMemorizedDescription(GetOWTerrain()->Name(INDEFINITE) + " surrounded by " + GetGWTerrain()->Name(UNARTICLED));
       else
-	SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(UNARTICLED));
+	SetMemorizedDescription(GetGWTerrain()->Name(UNARTICLED));
 
       DescriptionChanged = false;
     }
 }
 
-groundterrain* worldmapsquare::GetGroundTerrain() const
+gterrain* wsquare::GetGTerrain() const
 {
-  return GroundWorldMapTerrain;
+  return GWTerrain;
 }
 
-overterrain* worldmapsquare::GetOverTerrain() const
+oterrain* wsquare::GetOTerrain() const
 {
-  return OverWorldMapTerrain;
+  return OWTerrain;
 }
+

@@ -17,9 +17,9 @@ class game;
 class bitmap;
 class character;
 class stack;
-class levelterrain;
-class groundlevelterrain;
-class overlevelterrain;
+class lterrain;
+class glterrain;
+class olterrain;
 class material;
 class square;
 class item;
@@ -28,14 +28,14 @@ class inputfile;
 class room;
 class fluid;
 
-/* Presentation of the levelsquare class */
+/* Presentation of the lsquare class */
 
-class levelsquare : public square
+class lsquare : public square
 {
  public:
   friend class level;
-  levelsquare(level*, vector2d);
-  virtual ~levelsquare();
+  lsquare(level*, vector2d);
+  virtual ~lsquare();
   virtual void FastAddCharacter(character* Guy);
   virtual void AddCharacter(character* Guy);
   virtual void RemoveCharacter();
@@ -73,30 +73,30 @@ class levelsquare : public square
   virtual void UpdateMemorized();
   virtual bool CanBeDigged(character*, item*) const;
   virtual bool Dig(character*, item*);
-  virtual groundterrain* GetGroundTerrain() const;
-  virtual overterrain* GetOverTerrain() const;
-  virtual groundlevelterrain* GetGroundLevelTerrain() const { return GroundLevelTerrain; }
-  virtual overlevelterrain* GetOverLevelTerrain() const { return OverLevelTerrain; }
-  virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
+  virtual gterrain* GetGTerrain() const;
+  virtual oterrain* GetOTerrain() const;
+  virtual glterrain* GetGLTerrain() const { return GLTerrain; }
+  virtual olterrain* GetOLTerrain() const { return OLTerrain; }
+  virtual void ChangeLTerrain(glterrain*, olterrain*);
   virtual level* GetLevelUnder() const { return (level*)AreaUnder; }
   virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
-  virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
-  virtual void ChangeOverLevelTerrain(overlevelterrain*);
+  virtual void ChangeGLTerrain(glterrain*);
+  virtual void ChangeOLTerrain(olterrain*);
   //virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
   virtual void ApplyScript(squarescript*, room*);
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
-  virtual void MoveCharacter(levelsquare*);
+  virtual void MoveCharacter(lsquare*);
   virtual ushort GetRawLuminance() const;
   virtual void StepOn(character*, square*);
   virtual uchar GetRoom() const { return Room; }
   virtual void SetRoom(uchar What) { Room = What; }
-  virtual void SwapCharacter(levelsquare*);
+  virtual void SwapCharacter(lsquare*);
   virtual void ReceiveVomit(character*);
   virtual room* GetRoomClass() const;
   virtual void SetTemporaryEmitation(ushort);
   virtual ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
-  virtual void ChangeOverLevelTerrainAndUpdateLights(overlevelterrain*);
+  virtual void ChangeOLTerrainAndUpdateLights(olterrain*);
   virtual void DrawParticles(ushort, uchar);
   virtual void PolymorphEverything(character*);
   virtual void StrikeEverything(character*, std::string, uchar);
@@ -106,8 +106,8 @@ class levelsquare : public square
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual bool TeleportEverything(character*);
  protected:
-  groundlevelterrain* GroundLevelTerrain;
-  overlevelterrain* OverLevelTerrain;
+  glterrain* GLTerrain;
+  olterrain* OLTerrain;
   ushort CalculateEmitation() const;
   struct emitter
   {

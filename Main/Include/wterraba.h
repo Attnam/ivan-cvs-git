@@ -9,16 +9,16 @@
 #include "terra.h"
 #include "proto.h"
 
-class worldmapsquare;
+class wsquare;
 class worldmap;
 
-class worldmapterrain : public typeable
+class wterrain : public type
 {
  public:
-  worldmapterrain() : WorldMapSquareUnder(0) { }
+  wterrain() : WSquareUnder(0) { }
   virtual vector2d GetPos() const;
-  virtual worldmapsquare* GetWorldMapSquareUnder() const { return WorldMapSquareUnder; }
-  virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
+  virtual wsquare* GetWSquareUnder() const { return WSquareUnder; }
+  virtual void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   virtual worldmap* GetWorldMapUnder() const;
   virtual std::string Name(uchar = 0) const;
   virtual void Load(inputfile&);
@@ -26,32 +26,32 @@ class worldmapterrain : public typeable
   virtual std::string NameStem() const = 0;
   virtual std::string Article() const { return "a"; }
   virtual vector2d GetBitmapPos() const = 0;
-  worldmapsquare* WorldMapSquareUnder;
+  wsquare* WSquareUnder;
 };
 
-class groundworldmapterrain : public worldmapterrain, public groundterrain
+class gwterrain : public wterrain, public gterrain
 {
  public:
-  groundworldmapterrain(bool = true) { }
+  gwterrain(bool = true) { }
   virtual void DrawToTileBuffer() const;
-  virtual groundworldmapterrain* Clone(bool = true) const = 0;
+  virtual gwterrain* Clone(bool = true) const = 0;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
 };
 
-class overworldmapterrain : public worldmapterrain, public overterrain
+class owterrain : public wterrain, public oterrain
 {
  public:
-  overworldmapterrain(bool = true) { }
+  owterrain(bool = true) { }
   virtual void DrawToTileBuffer() const;
-  virtual overworldmapterrain* Clone(bool = true) const = 0;
+  virtual owterrain* Clone(bool = true) const = 0;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)\
+#define WTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)\
   \
   static class name##_protoinstaller\
   {\
@@ -69,11 +69,11 @@ class overworldmapterrain : public worldmapterrain, public overterrain
 
 #else
 
-#define WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
+#define WTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
 
 #endif
 
-#define WORLDMAPTERRAIN(name, base, protobase, setstats, data)\
+#define WTERRAIN(name, base, protobase, setstats, data)\
 \
 name : public base\
 {\
@@ -86,32 +86,33 @@ name : public base\
   virtual void SetDefaultStats();\
   virtual ushort Type() const;\
   data\
-}; WORLDMAPTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
+}; WTERRAIN_PROTOINSTALLER(name, base, protobase, setstats)
 
-#define GROUNDWORLDMAPTERRAIN(name, base, setstats, data)\
+#define GWTERRAIN(name, base, setstats, data)\
 \
-WORLDMAPTERRAIN(\
+WTERRAIN(\
   name,\
   base,\
-  groundworldmapterrain,\
+  gwterrain,\
   setstats,\
-  virtual groundworldmapterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { groundworldmapterrain* G = new name(false); G->Load(SaveFile); return G; }\
+  virtual gwterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { gwterrain* G = new name(false); G->Load(SaveFile); return G; }\
   data\
 );
 
-#define OVERWORLDMAPTERRAIN(name, base, setstats, data)\
+#define OWTERRAIN(name, base, setstats, data)\
 \
-WORLDMAPTERRAIN(\
+WTERRAIN(\
   name,\
   base,\
-  overworldmapterrain,\
+  owterrain,\
   setstats,\
-  virtual overworldmapterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { overworldmapterrain* O = new name(false); O->Load(SaveFile); return O; }\
+  virtual owterrain* Clone(bool SetStats = true) const { return new name(SetStats); }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { owterrain* O = new name(false); O->Load(SaveFile); return O; }\
   data\
 );
 
 #endif
+
 
 

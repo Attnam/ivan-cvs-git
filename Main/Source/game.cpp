@@ -21,7 +21,7 @@
 #include "level.h"
 #include "charde.h"
 #include "itemba.h"
-#include "god.h"
+#include "godba.h"
 #include "strover.h"
 #include "felist.h"
 #include "whandler.h"
@@ -49,7 +49,7 @@ square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 uchar game::CurrentDungeon;
-ulong game::NextEntityID = 0;
+ulong game::NextItemID = 0;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 
@@ -60,7 +60,8 @@ petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
-god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
+//god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
+std::vector<god*> game::God;
 
 command* game::Command[] = {0,
 			    new command(&character::Apply, "apply", 'a', false),
@@ -124,7 +125,7 @@ bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 std::string game::PlayerName;
-uchar game::GodNumber;
+//uchar game::GodNumber;
 ulong game::Ticks;
 
 void game::InitScript()
@@ -165,7 +166,7 @@ void game::Init(std::string Name)
   PlayerBackup = 0;
 
   femath::SetSeed(time(0));
-  game::CalculateGodNumber();
+  //game::CalculateGodNumber();
   LOSTurns = 1;
   WorldMap = 0;
 
@@ -209,6 +210,7 @@ void game::Init(std::string Name)
 	Running = true;
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 	CreateTeams();
+	CreateGods();
 	SetPlayer(new human);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -222,12 +224,12 @@ void game::Init(std::string Name)
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
 
-	for(ushort c = 1; GetGod(c); ++c)
+	/*for(ushort c = 1; GetGod(c); ++c)
 	  {
 	    GetGod(c)->SetKnown(false);
 	    GetGod(c)->SetRelation(0);
 	    GetGod(c)->SetTimer(0);
-	  }
+	  }*/
 
 	GetGod(1)->SetKnown(true);
 	GetGod(2)->SetKnown(true);
@@ -265,6 +267,11 @@ void game::DeInit()
     delete Dungeon[c];
 
   Dungeon.clear();
+
+  for(c = 1; c < GetGods(); ++c)
+    delete GetGod(c); // sorry, Valpuri!
+
+  God.clear();
 
   entitypool::BurnTheDead();
 
@@ -321,9 +328,9 @@ void game::InitLuxTable()
 
 	      for(long y = 0; y < MaxSize; ++y)
 		{
-		  long xLevelSquare = abs((int)x - MaxDist), yLevelSquare = abs((int)y - MaxDist);
+		  long xLSquare = abs((int)x - MaxDist), yLSquare = abs((int)y - MaxDist);
 
-		  LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 128 + 1));
+		  LuxTable[c][x][y] = ushort(float(c) / (float(xLSquare * xLSquare + yLSquare * yLSquare) / 128 + 1));
 		}
 	    }
 	}
@@ -371,7 +378,7 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentArea()->GetSquare(Pos)->GetOverTerrain()->GetIsWalkable();
+    return GetCurrentArea()->GetSquare(Pos)->GetOTerrain()->GetIsWalkable();
 }
 
 void game::DrawPanel()
@@ -585,7 +592,7 @@ bool game::Save(std::string SaveName)
 
   SaveFile << ushort(SAVEFILE_VERSION) << PlayerName;
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextEntityID;
+  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
   SaveFile << LOSTurns;
 
   ulong Time = time(0);
@@ -599,8 +606,10 @@ bool game::Save(std::string SaveName)
   else
     GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
-  for(ushort c = 1; GetGod(c); ++c)
-    SaveFile << GetGod(c);
+  SaveFile << God;
+
+  //for(ushort c = 1; GetGod(c); ++c)
+  //  SaveFile << GetGod(c);
 
   SaveFile << game::GetPlayer()->GetPos();
 
@@ -629,7 +638,7 @@ uchar game::Load(std::string SaveName)
 
   SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextEntityID;
+  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextItemID;
   SaveFile >> LOSTurns;
 
   ulong Time;
@@ -643,8 +652,10 @@ uchar game::Load(std::string SaveName)
   else
     GetCurrentDungeon()->LoadLevel(SaveName);
 
-  for(ushort c = 1; GetGod(c); ++c)
-    GetGod(c)->Load(SaveFile);
+  SaveFile >> God;
+
+  //for(ushort c = 1; GetGod(c); ++c)
+  //  GetGod(c)->Load(SaveFile);
 
   vector2d Pos;
 
@@ -683,7 +694,7 @@ bool game::EmitationHandler(vector2d Pos, vector2d Origo)
   if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
     return false;
 
-  ushort Emit = GetLevel(Current)->GetLevelSquare(Origo)->GetEmitation();
+  ushort Emit = GetLevel(Current)->GetLSquare(Origo)->GetEmitation();
 
   ushort MaxSize = game::GetLuxTableSize()[Emit] >> 1;
 
@@ -692,12 +703,12 @@ bool game::EmitationHandler(vector2d Pos, vector2d Origo)
   else
     Emit = game::GetLuxTable()[Emit][long(Pos.X) - long(Origo.X) + MaxSize][long(Pos.Y) - long(Origo.Y) + MaxSize];
 
-  GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->AlterLuminance(Origo, Emit);
+  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->AlterLuminance(Origo, Emit);
 
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
 }
 
 bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
@@ -705,12 +716,12 @@ bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
   if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
     return false;
 
-  GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->NoxifyEmitter(Origo);
+  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->NoxifyEmitter(Origo);
 
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -747,7 +758,7 @@ void game::UpdateCameraYWithPos(ushort Coord)
 
 int game::GetMoveCommandKey(vector2d A, vector2d B)
 {
-  for(uchar c = 0; c < 8; ++c)
+  for(ushort c = 0; c < 8; ++c)
     if((A + game::GetMoveVector(c)) == B)
       return game::MoveCommandKey[c];
 
@@ -756,20 +767,20 @@ int game::GetMoveCommandKey(vector2d A, vector2d B)
 
 void game::ApplyDivineTick(ushort Ticks)
 {
-  for(ushort c = 1; GetGod(c); ++c)
+  for(ushort c = 1; c < GetGods(); ++c)
     GetGod(c)->ApplyDivineTick(Ticks);
 }
 
 void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Multiplier)
 {
-  for(ushort c = 1; GetGod(c); ++c)
+  for(ushort c = 1; c < GetGods(); ++c)
     if(GetGod(c) != CompareTarget)
       GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
 
 vector2d game::GetDirectionVectorForKey(ushort Key)
 {
-  for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+  for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c))
       return game::GetMoveVector(c);
 
@@ -794,14 +805,14 @@ bool game::EyeHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
 }
 
 long game::GodScore()
 {
   long Score = -1000;
 
-  for(ushort c = 1; GetGod(c); ++c)
+  for(ushort c = 1; c < GetGods(); ++c)
     if(GetGod(c)->GetRelation() > Score)
       Score = GetGod(c)->GetRelation();
 
@@ -863,7 +874,7 @@ void game::TriggerQuestForGoldenEagleShirt()
   GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
 
-void game::CalculateGodNumber()
+/*void game::CalculateGodNumber()
 {
   for(ushort c = 1;; ++c)
     if(game::GetGod(c) == 0)
@@ -871,7 +882,7 @@ void game::CalculateGodNumber()
 	SetGodNumber(c - 1);
 	break;
       }
-}
+}*/
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
 {
@@ -890,7 +901,7 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
       if(AcceptYourself && Key == '.')
 	return '.';
 
-      for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+      for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 	if(Key == game::GetMoveCommandKey(c))
 	  return c;
 
@@ -972,7 +983,7 @@ void game::InitDungeons()
 {
   Dungeon.resize(2);
 
-  for(uchar c = 0; c < Dungeon.size(); ++c)
+  for(ushort c = 0; c < Dungeon.size(); ++c)
     {
       Dungeon[c] = new dungeon(c);
       Dungeon[c]->SetIndex(c);
@@ -984,11 +995,11 @@ void game::DoGoodDeed(ushort Amount)
   if(!Amount)
     return;
 	
-  for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
+  for(ushort c = 1; c < game::GetGods(); ++c)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
+      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineOwner() == c)
 	if(GetGod(c)->GetRelation() + Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1022,11 +1033,11 @@ void game::DoEvilDeed(ushort Amount)
   if(!Amount)
     return;
 
-  for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
+  for(ushort c = 1; c < game::GetGods(); ++c)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
+      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineOwner() == c)
 	if(GetGod(c)->GetRelation() - Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1078,12 +1089,12 @@ void game::LoadWorldMap(std::string SaveName)
   SaveFile >> WorldMap;
 }
 
-ulong game::CreateNewEntityID()
+ulong game::CreateNewItemID()
 {
-  if(NextEntityID == 0xFFFFFFFF)
+  if(NextItemID == 0xFFFFFFFF)
     ABORT("Suddenly the Universe ends!");
 
-  return NextEntityID++;
+  return NextItemID++;
 }
 
 void game::Hostility(team* Attacker, team* Defender)
@@ -1256,7 +1267,7 @@ void game::Beep()
 
 uchar game::GetDirectionForVector(vector2d Vector)
 {
-  for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+  for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
     if(Vector == game::GetMoveVector(c))
       return c;
 
@@ -1268,7 +1279,7 @@ std::string game::GetVerbalPlayerAlignment()
 {
   long Sum = 0;
 
-  for(uchar c = 1; game::GetGod(c); c++)
+  for(ushort c = 1; c < game::GetGods(); c++)
     {
       if(GetGod(c)->GetRelation() > 0)
 	Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
@@ -1293,3 +1304,12 @@ std::string game::GetVerbalPlayerAlignment()
 
   return std::string("extremely chaotic");
 }
+
+void game::CreateGods()
+{
+  God.resize(1, 0);
+
+  for(ushort c = 1; c <= protocontainer<god>::GetProtoAmount(); ++c)
+    God.push_back(protocontainer<god>::GetProto(c)->Clone());
+}
+

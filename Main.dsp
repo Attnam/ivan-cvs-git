@@ -137,7 +137,11 @@ SOURCE=.\Main\Source\game.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\god.cpp
+SOURCE=.\Main\Source\godba.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\godde.cpp
 # End Source File
 # Begin Source File
 
@@ -225,7 +229,11 @@ SOURCE=.\Main\Source\terra.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\typeable.cpp
+SOURCE=.\Main\Source\type.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\unit.cpp
 # End Source File
 # Begin Source File
 
@@ -293,7 +301,11 @@ SOURCE=.\Main\Include\game.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\god.h
+SOURCE=.\Main\Include\godba.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\godde.h
 # End Source File
 # Begin Source File
 
@@ -377,7 +389,11 @@ SOURCE=.\Main\Include\terra.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\typeable.h
+SOURCE=.\Main\Include\type.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\unit.h
 # End Source File
 # Begin Source File
 

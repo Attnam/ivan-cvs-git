@@ -2,6 +2,8 @@
 
 #include "proto.h"
 
+class material;
+
 std::vector<material*>			protocontainer<material>::ProtoData;
 std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
 
@@ -69,7 +71,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
     if(Eater->GetIsPlayer())
       ADD_MESSAGE("You feel like a hippie.");
     else
-      if(GetMotherEntity()->GetLevelSquareUnder()->CanBeSeen())
+      if(GetMotherEntity()->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s barks happily.", Eater->CNAME(DEFINITE));
 
   NormalFoodEffect(Eater, Amount, NPModifier);
@@ -82,3 +84,4 @@ void koboldflesh::EatEffect(character* Eater, float Amount, float NPModifier)
   NormalFoodEffect(Eater, Amount, NPModifier);
   MinusAmount(Amount);
 }
+

@@ -30,7 +30,7 @@ class continent
   uchar GetIndex() const { return Index; }
   void GenerateInfo();
   std::string GetName() const { return Name; }
-  ushort GetGroundTerrainAmount(ushort Type) { return GroundTerrainAmount[Type]; }
+  ushort GetGTerrainAmount(ushort Type) { return GTerrainAmount[Type]; }
   vector2d GetRandomMember(ushort);
  private:
   static ushort** TypeBuffer;
@@ -38,7 +38,7 @@ class continent
   static uchar** ContinentBuffer;
   std::string Name;
   std::vector<vector2d> Member;
-  std::vector<ushort> GroundTerrainAmount;
+  std::vector<ushort> GTerrainAmount;
   uchar Index;
 };
 

@@ -14,7 +14,7 @@
 #include "wterraba.h"
 #include "cont.h"
 
-class worldmapsquare;
+class wsquare;
 class outputfile;
 class inputfile;
 class character;
@@ -28,8 +28,8 @@ class worldmap : public area
   virtual void Generate();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual worldmapsquare* GetWorldMapSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
-  virtual worldmapsquare* GetWorldMapSquare(ushort x, ushort y) const {return Map[x][y];}
+  virtual wsquare* GetWSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
+  virtual wsquare* GetWSquare(ushort x, ushort y) const {return Map[x][y];}
   virtual void GenerateClimate();
   virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
   virtual void CalculateContinents();
@@ -43,7 +43,7 @@ class worldmap : public area
   virtual std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
   virtual character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
  protected:
-  worldmapsquare*** Map;
+  wsquare*** Map;
   std::vector<continent*> Continent;
   ushort** TypeBuffer, ** OldTypeBuffer;
   short** AltitudeBuffer;

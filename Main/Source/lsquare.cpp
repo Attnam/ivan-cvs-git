@@ -15,7 +15,7 @@
 #include "femath.h"
 #include "fluid.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Room(0), TemporaryEmitation(0), Fluid(0)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineOwner(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
   Stack = new stack(this);
 
@@ -23,10 +23,10 @@ levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, P
     SideStack[c] = new stack(this, c);
 }
 
-levelsquare::~levelsquare()
+lsquare::~lsquare()
 {
-  delete GetGroundLevelTerrain();
-  delete GetOverLevelTerrain();
+  delete GetGLTerrain();
+  delete GetOLTerrain();
 
   delete Stack;
 
@@ -36,23 +36,23 @@ levelsquare::~levelsquare()
   delete Fluid;
 }
 
-void levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
+void lsquare::SignalEmitationIncrease(ushort EmitationUpdate)
 {
   if(EmitationUpdate > Emitation)
     Emitate();
 }
 
-void levelsquare::SignalEmitationDecrease(ushort EmitationUpdate)
+void lsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 {
   if(EmitationUpdate == GetEmitation() && EmitationUpdate != CalculateEmitation())
     ReEmitate();
 }
 
-ushort levelsquare::CalculateEmitation() const
+ushort lsquare::CalculateEmitation() const
 {
   ushort Emitation = GetStack()->GetEmitation();
 
-#define NE(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)->GetEmitation()
+#define NE(D, S) game::GetCurrentLevel()->GetLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
 
   if(GetPos().X)
     if(NE(vector2d(-1, 0), 1) > Emitation)
@@ -73,11 +73,11 @@ ushort levelsquare::CalculateEmitation() const
   if(GetCharacter() && GetCharacter()->GetEmitation() > Emitation)
     Emitation = GetCharacter()->GetEmitation();
 
-  if(GetGroundLevelTerrain() && GetGroundLevelTerrain()->GetEmitation() > Emitation)
-    Emitation = GetGroundLevelTerrain()->GetEmitation();
+  if(GetGLTerrain() && GetGLTerrain()->GetEmitation() > Emitation)
+    Emitation = GetGLTerrain()->GetEmitation();
 
-  if(GetOverLevelTerrain() && GetOverLevelTerrain()->GetEmitation() > Emitation)
-    Emitation = GetOverLevelTerrain()->GetEmitation();
+  if(GetOLTerrain() && GetOLTerrain()->GetEmitation() > Emitation)
+    Emitation = GetOLTerrain()->GetEmitation();
 
   if(TemporaryEmitation > Emitation)
     Emitation = TemporaryEmitation;
@@ -85,28 +85,28 @@ ushort levelsquare::CalculateEmitation() const
   return Emitation;
 }
 
-bool levelsquare::DrawTerrain() const
+bool lsquare::DrawTerrain() const
 {
-  GetGroundLevelTerrain()->DrawToTileBuffer();
+  GetGLTerrain()->DrawToTileBuffer();
 
   if(GetFluid())
     GetFluid()->DrawToTileBuffer();
 	
-  GetOverLevelTerrain()->DrawToTileBuffer();
+  GetOLTerrain()->DrawToTileBuffer();
 
   return true;
 }
 
-bool levelsquare::DrawStacks() const
+bool lsquare::DrawStacks() const
 {
   bool Items = false;
 
-  if(GetOverTerrain()->GetIsWalkable())
+  if(GetOTerrain()->GetIsWalkable())
     {
       if(GetStack()->DrawToTileBuffer())
 	Items = true;
 
-#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
+#define NS(D, S) game::GetCurrentLevel()->GetLSquare(Pos + D)->GetSideStack(S)
 
       if(GetPos().X)
 	if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer())
@@ -128,7 +128,7 @@ bool levelsquare::DrawStacks() const
   return Items;
 }
 
-bool levelsquare::DrawCharacters() const
+bool lsquare::DrawCharacters() const
 {
   if(GetCharacter())
     {
@@ -139,7 +139,7 @@ bool levelsquare::DrawCharacters() const
     return false;
 }
 
-void levelsquare::UpdateMemorized()
+void lsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
@@ -152,7 +152,7 @@ void levelsquare::UpdateMemorized()
 
 	  igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
-	  if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
+	  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
 	    igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
 
 	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
@@ -167,7 +167,7 @@ void levelsquare::UpdateMemorized()
     }
 }
 
-void levelsquare::Draw()
+void lsquare::Draw()
 {
   if(NewDrawRequested)
     {
@@ -194,7 +194,7 @@ void levelsquare::Draw()
 		  {
 		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
-		    if(GetOverTerrain()->GetIsWalkable())
+		    if(GetOTerrain()->GetIsWalkable())
 		      igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 		    if(GetCharacter())
@@ -208,7 +208,7 @@ void levelsquare::Draw()
 		{
 		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 
-		  if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable()) 
+		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable()) 
 		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
@@ -233,7 +233,7 @@ void levelsquare::Draw()
 		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 		  igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
 
-		  if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
+		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
 		    igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
 
 		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
@@ -263,7 +263,7 @@ void levelsquare::Draw()
     }
 }
 
-void levelsquare::Emitate()
+void lsquare::Emitate()
 {
   SetEmitation(CalculateEmitation());
 
@@ -284,7 +284,7 @@ void levelsquare::Emitate()
   });
 }
 
-void levelsquare::ReEmitate()
+void lsquare::ReEmitate()
 {
   ushort OldEmitation = GetEmitation();
   SetEmitation(CalculateEmitation());
@@ -306,7 +306,7 @@ void levelsquare::ReEmitate()
   });
 }
 
-void levelsquare::Noxify()
+void lsquare::Noxify()
 {
   ushort Radius = GetLevelUnder()->CalculateMinimumEmitationRadius(Emitation);
 
@@ -322,19 +322,19 @@ void levelsquare::Noxify()
   });
 }
 
-void levelsquare::ForceEmitterNoxify()
+void lsquare::ForceEmitterNoxify()
 {
   for(ushort c = 0; c < Emitter.Length(); ++c)
-    game::GetCurrentLevel()->GetLevelSquare(Emitter.Access(c).Pos)->Noxify();
+    game::GetCurrentLevel()->GetLSquare(Emitter.Access(c).Pos)->Noxify();
 }
 
-void levelsquare::ForceEmitterEmitation()
+void lsquare::ForceEmitterEmitation()
 {
   for(ushort c = 0; c < Emitter.Length(); ++c)
-    game::GetCurrentLevel()->GetLevelSquare(Emitter.Access(c).Pos)->Emitate();
+    game::GetCurrentLevel()->GetLSquare(Emitter.Access(c).Pos)->Emitate();
 }
 
-void levelsquare::NoxifyEmitter(vector2d Dir)
+void lsquare::NoxifyEmitter(vector2d Dir)
 {
   emitter DirEmitter(Dir, 0);
 
@@ -350,11 +350,11 @@ void levelsquare::NoxifyEmitter(vector2d Dir)
     }
 }
 
-uchar levelsquare::CalculateBitMask(vector2d Dir) const
+uchar lsquare::CalculateBitMask(vector2d Dir) const
 {
   uchar BitMask = 0;
 
-#define IW(X, Y) game::GetCurrentLevel()->GetLevelSquare(Pos + vector2d(X, Y))->GetOverLevelTerrain()->GetIsWalkable()
+#define IW(X, Y) game::GetCurrentLevel()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->GetIsWalkable()
 
   if(Dir.X < Pos.X)
     {
@@ -411,7 +411,7 @@ uchar levelsquare::CalculateBitMask(vector2d Dir) const
   return BitMask;
 }
 
-void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
+void lsquare::AlterLuminance(vector2d Dir, ushort AiL)
 {                                 // What does AL mean? Comments r0x0r
 
   /* 
@@ -477,15 +477,15 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
     game::SendLOSUpdateRequest();
 }
 
-bool levelsquare::Open(character* Opener)
+bool lsquare::Open(character* Opener)
 {
-  return GetOverLevelTerrain()->Open(Opener);
+  return GetOLTerrain()->Open(Opener);
 }
 
-bool levelsquare::Close(character* Closer)
+bool lsquare::Close(character* Closer)
 {
   if(!GetStack()->GetItems() && !Character)
-    return GetOverLevelTerrain()->Close(Closer);
+    return GetOLTerrain()->Close(Closer);
   else
     {
       ADD_MESSAGE("There's something in the way...");
@@ -493,13 +493,13 @@ bool levelsquare::Close(character* Closer)
     }
 }
 
-void levelsquare::Save(outputfile& SaveFile) const
+void lsquare::Save(outputfile& SaveFile) const
 {
   GetStack()->Save(SaveFile); // This must be before square::Save!
 
   square::Save(SaveFile);
 
-  SaveFile << GroundLevelTerrain << OverLevelTerrain;
+  SaveFile << GLTerrain << OLTerrain;
 
   {
     for(ushort c = 0; c < 4; ++c)
@@ -518,7 +518,7 @@ void levelsquare::Save(outputfile& SaveFile) const
   SaveFile << Engraved << Room;
 }
 
-void levelsquare::Load(inputfile& SaveFile)
+void lsquare::Load(inputfile& SaveFile)
 {
   game::SetSquareInLoad(this);
 
@@ -526,7 +526,7 @@ void levelsquare::Load(inputfile& SaveFile)
 
   square::Load(SaveFile);
 
-  SaveFile >> GroundLevelTerrain >> OverLevelTerrain;
+  SaveFile >> GLTerrain >> OLTerrain;
 
   {
     for(ushort c = 0; c < 4; ++c)
@@ -551,7 +551,7 @@ void levelsquare::Load(inputfile& SaveFile)
   SaveFile >> Engraved >> Room;
 }
 
-void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
+void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
 {
   if(!Amount)
     return;
@@ -568,11 +568,11 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
   GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
 }
 
-ushort levelsquare::GetLuminance() const
+ushort lsquare::GetLuminance() const
 {
   ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
-  if(GetOverLevelTerrain()->GetIsWalkable())
+  if(GetOLTerrain()->GetIsWalkable())
     {
       for(ushort c = 0; c < Emitter.Length(); ++c)
 	if(Emitter.Access(c).DilatedEmitation > Luminance)
@@ -587,7 +587,7 @@ ushort levelsquare::GetLuminance() const
   return Luminance > 511 ? 511 : Luminance;
 }
 
-ushort levelsquare::GetRawLuminance() const
+ushort lsquare::GetRawLuminance() const
 {
   ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
@@ -598,7 +598,7 @@ ushort levelsquare::GetRawLuminance() const
   return Luminance > 511 ? 511 : Luminance;
 }
 
-void levelsquare::AddCharacter(character* Guy)
+void lsquare::AddCharacter(character* Guy)
 {
   if(Character)
     ABORT("Overgrowing of square population detected!");
@@ -609,7 +609,7 @@ void levelsquare::AddCharacter(character* Guy)
   NewDrawRequested = true;
 }
 
-void levelsquare::FastAddCharacter(character* Guy)
+void lsquare::FastAddCharacter(character* Guy)
 {
   if(Character)
     ABORT("Overgrowing of square population detected!");
@@ -618,15 +618,15 @@ void levelsquare::FastAddCharacter(character* Guy)
   Guy->SetSquareUnder(this);
 }
 
-void levelsquare::Clean()
+void lsquare::Clean()
 {
   GetStack()->Clean();
 
-  for(uchar c = 0; c < 4; ++c)
+  for(ushort c = 0; c < 4; ++c)
     GetSideStack(c)->Clean();
 }
 
-void levelsquare::RemoveCharacter()
+void lsquare::RemoveCharacter()
 {
   if(Character)
     {
@@ -637,18 +637,18 @@ void levelsquare::RemoveCharacter()
     }
 }
 
-void levelsquare::UpdateMemorizedDescription(bool Cheat)
+void lsquare::UpdateMemorizedDescription(bool Cheat)
 {
   if(DescriptionChanged || Cheat)
     {
       if(GetLuminance() >= LIGHT_BORDER || Cheat)
-	if(GetOverTerrain()->GetIsWalkable())
+	if(GetOTerrain()->GetIsWalkable())
 	  {
 	    bool Anything = false;
 
-	    if(GetOverLevelTerrain()->GetNameSingular() != "")
+	    if(GetOLTerrain()->GetNameSingular() != "")
 	      {
-		SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetOLTerrain()->Name(INDEFINITE));
 		Anything = true;
 	      }
 
@@ -667,20 +667,20 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 
 		Anything = true;
 
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->Name(INDEFINITE));
 	      }
 	    else
 	      if(Anything)
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->Name(INDEFINITE));
 	      else
-		SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetGLTerrain()->Name(INDEFINITE));
 	  }
 	else
 	  {
 	    uchar HasItems = 0;
 	    bool HasManyItems = false;
 
-	    for(uchar c = 0; c < 4; ++c)
+	    for(ushort c = 0; c < 4; ++c)
 	      if(GetSideStack(c)->GetItems())
 		{
 		  if(++HasItems > 1)
@@ -694,18 +694,18 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
 		}
 
 	    if(HasItems > 1 || HasManyItems)
-	      SetMemorizedDescription("many items on " + GetOverLevelTerrain()->Name(INDEFINITE));
+	      SetMemorizedDescription("many items on " + GetOLTerrain()->Name(INDEFINITE));
 	    else if(HasItems == 1)
-	      for(uchar c = 0; c < 4; ++c)
+	      for(ushort c = 0; c < 4; ++c)
 		{
 		  if(GetSideStack(c)->GetItems())
 		    {
-		      SetMemorizedDescription(GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on " + GetOverLevelTerrain()->Name(INDEFINITE));
+		      SetMemorizedDescription(GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on " + GetOLTerrain()->Name(INDEFINITE));
 		      break;
 		    }
 		}
 	    else
-	      SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
+	      SetMemorizedDescription(GetOLTerrain()->Name(INDEFINITE));
 	  }
       else
 	SetMemorizedDescription("darkness");
@@ -714,7 +714,7 @@ void levelsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
+bool lsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 {
   if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
     if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
@@ -730,21 +730,21 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
   if(GetCharacter())
     GetCharacter()->BeKicked(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay, Kicker);
 
-  GetOverLevelTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
+  GetOLTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
   Kicker->EditStrengthExperience(25);
   Kicker->EditAgilityExperience(50);
   Kicker->EditNP(-50);
   return true;
 }
 
-bool levelsquare::Dig(character*, item*) // early prototype. Probably should include more checking with levelterrains etc
+bool lsquare::Dig(character*, item*) // early prototype. Probably should include more checking with lterrains etc
 {
-  ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
-  ChangeOverLevelTerrainAndUpdateLights(new empty);
+  ADD_MESSAGE(GetOLTerrain()->DigMessage().c_str());
+  ChangeOLTerrainAndUpdateLights(new empty);
   return true;
 }
 
-bool levelsquare::CanBeDigged(character*, item*) const
+bool lsquare::CanBeDigged(character*, item*) const
 {
   if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
     {
@@ -752,19 +752,19 @@ bool levelsquare::CanBeDigged(character*, item*) const
       return false;
     }
 
-  return GetOverLevelTerrain()->CanBeDigged();
+  return GetOLTerrain()->CanBeDigged();
 }
 
-void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)
+void lsquare::ChangeLTerrain(glterrain* NewGround, olterrain* NewOver)
 {
-  ChangeGroundLevelTerrain(NewGround);
-  ChangeOverLevelTerrain(NewOver);
+  ChangeGLTerrain(NewGround);
+  ChangeOLTerrain(NewOver);
 }
 
-void levelsquare::ChangeGroundLevelTerrain(groundlevelterrain* NewGround)
+void lsquare::ChangeGLTerrain(glterrain* NewGround)
 {
-  delete GetGroundLevelTerrain();
-  GroundLevelTerrain = NewGround;
+  delete GetGLTerrain();
+  GLTerrain = NewGround;
 
   if(NewGround)
     NewGround->SetSquareUnder(this);
@@ -774,10 +774,10 @@ void levelsquare::ChangeGroundLevelTerrain(groundlevelterrain* NewGround)
   DescriptionChanged = true;
 }
 
-void levelsquare::ChangeOverLevelTerrain(overlevelterrain* NewOver)
+void lsquare::ChangeOLTerrain(olterrain* NewOver)
 {
-  delete GetOverLevelTerrain();
-  OverLevelTerrain = NewOver;
+  delete GetOLTerrain();
+  OLTerrain = NewOver;
 
   if(NewOver)
     NewOver->SetSquareUnder(this);
@@ -787,17 +787,17 @@ void levelsquare::ChangeOverLevelTerrain(overlevelterrain* NewOver)
   DescriptionChanged = true;
 }
 
-groundterrain* levelsquare::GetGroundTerrain() const
+gterrain* lsquare::GetGTerrain() const
 {
-  return GroundLevelTerrain;
+  return GLTerrain;
 }
 
-overterrain* levelsquare::GetOverTerrain() const
+oterrain* lsquare::GetOTerrain() const
 {
-  return OverLevelTerrain;
+  return OLTerrain;
 }
 
-void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
+void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
   if(SquareScript->GetCharacter(false))
     {
@@ -815,19 +815,19 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
   if(SquareScript->GetItem(false))
     GetStack()->FastAddItem(SquareScript->GetItem()->Instantiate());
 
-  if(SquareScript->GetGroundTerrain(false))
-    ChangeGroundLevelTerrain(SquareScript->GetGroundTerrain()->Instantiate());
+  if(SquareScript->GetGTerrain(false))
+    ChangeGLTerrain(SquareScript->GetGTerrain()->Instantiate());
 
-  if(SquareScript->GetOverTerrain(false))
+  if(SquareScript->GetOTerrain(false))
     {
       Clean();
 
-      overlevelterrain* Terrain = SquareScript->GetOverTerrain()->Instantiate();
+      olterrain* Terrain = SquareScript->GetOTerrain()->Instantiate();
 
-      ChangeOverLevelTerrain(Terrain);
+      ChangeOLTerrain(Terrain);
 
       if(Room)
-	Room->HandleInstantiatedOverLevelTerrain(Terrain);
+	Room->HandleInstantiatedOLTerrain(Terrain);
     }
 
   if(SquareScript->GetIsUpStairs(false) && *SquareScript->GetIsUpStairs())
@@ -840,7 +840,7 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
     GetLevelUnder()->SetWorldMapEntry(Pos);
 }
 
-bool levelsquare::CanBeSeen(bool IgnoreDarkness) const
+bool lsquare::CanBeSeen(bool IgnoreDarkness) const
 {
   if((IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns())
     return true;
@@ -848,7 +848,7 @@ bool levelsquare::CanBeSeen(bool IgnoreDarkness) const
     return false;
 }
 
-bool levelsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
+bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
   if(!IgnoreDarkness && GetLuminance() < LIGHT_BORDER)
     return false;
@@ -856,7 +856,7 @@ bool levelsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool Ignore
     return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
 }
 
-void levelsquare::MoveCharacter(levelsquare* To)
+void lsquare::MoveCharacter(lsquare* To)
 {
   if(Character)
     {
@@ -876,17 +876,17 @@ void levelsquare::MoveCharacter(levelsquare* To)
     }
 }
 
-void levelsquare::StepOn(character* Stepper, square* ComingFrom)
+void lsquare::StepOn(character* Stepper, square* ComingFrom)
 {
-  if(Room && ((levelsquare*)ComingFrom)->GetRoom() != Room)
+  if(Room && ((lsquare*)ComingFrom)->GetRoom() != Room)
     GetLevelUnder()->GetRoom(Room)->Enter(Stepper);
 
-  GetGroundLevelTerrain()->StepOn(Stepper);
-  GetOverLevelTerrain()->StepOn(Stepper);
+  GetGLTerrain()->StepOn(Stepper);
+  GetOLTerrain()->StepOn(Stepper);
   GetStack()->CheckForStepOnEffect(Stepper);
 }
 
-void levelsquare::SwapCharacter(levelsquare* With)
+void lsquare::SwapCharacter(lsquare* With)
 {
   if(Character)
     if(!With->Character)
@@ -913,13 +913,13 @@ void levelsquare::SwapCharacter(levelsquare* With)
       With->MoveCharacter(this);
 }
 
-void levelsquare::ReceiveVomit(character* Who)
+void lsquare::ReceiveVomit(character* Who)
 {
   SpillFluid(1, MAKE_RGB(10,230,10),5,60);
-  GetOverLevelTerrain()->ReceiveVomit(Who);
+  GetOLTerrain()->ReceiveVomit(Who);
 }
 
-room* levelsquare::GetRoomClass() const
+room* lsquare::GetRoomClass() const
 {
   if(Room)
     return GetLevelUnder()->GetRoom(Room);
@@ -927,7 +927,7 @@ room* levelsquare::GetRoomClass() const
     return 0;
 }
 
-void levelsquare::SetTemporaryEmitation(ushort What)
+void lsquare::SetTemporaryEmitation(ushort What)
 {
   ushort Old = TemporaryEmitation;
   TemporaryEmitation = What;
@@ -938,20 +938,20 @@ void levelsquare::SetTemporaryEmitation(ushort What)
     SignalEmitationDecrease(Old);
 }
 
-void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTerrain)
+void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 {
-  ushort Emit = GetOverLevelTerrain()->GetEmitation();
-  ChangeOverLevelTerrain(NewTerrain);
+  ushort Emit = GetOLTerrain()->GetEmitation();
+  ChangeOLTerrain(NewTerrain);
   SignalEmitationDecrease(Emit);
   ForceEmitterEmitation();
   game::SendLOSUpdateRequest();
 
-  for(uchar c = 0; c < 4; ++c)
-    for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
+  for(ushort c = 0; c < 4; ++c)
+    for(ushort x = 0; x < GetSideStack(c)->GetItems(); ++x)
       GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
 }
 
-void levelsquare::PolymorphEverything(character* Zapper)
+void lsquare::PolymorphEverything(character* Zapper)
 {
   character* Character;
 
@@ -964,10 +964,10 @@ void levelsquare::PolymorphEverything(character* Zapper)
     }
 
   GetStack()->Polymorph();
-  GetOverLevelTerrain()->Polymorph(Zapper);
+  GetOLTerrain()->Polymorph(Zapper);
 }
 
-void levelsquare::DrawParticles(ushort Color, uchar)
+void lsquare::DrawParticles(ushort Color, uchar)
 {
   if(GetPos().X < game::GetCamera().X || GetPos().Y < game::GetCamera().Y || GetPos().X >= game::GetCamera().X + 50 || GetPos().Y >= game::GetCamera().Y + 30)
     return;
@@ -989,7 +989,7 @@ void levelsquare::DrawParticles(ushort Color, uchar)
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void levelsquare::StrikeEverything(character* Zapper, std::string DeathMsg, uchar Direction)
+void lsquare::StrikeEverything(character* Zapper, std::string DeathMsg, uchar Direction)
 {
   GetStack()->StruckByWandOfStriking(Zapper, DeathMsg);
 
@@ -1033,10 +1033,10 @@ void levelsquare::StrikeEverything(character* Zapper, std::string DeathMsg, ucha
       Zapper->Hostility(Char);
     }
 
-  GetOverLevelTerrain()->ReceiveStrike();	
+  GetOLTerrain()->ReceiveStrike();	
 }
 
-void levelsquare::RemoveFluid()
+void lsquare::RemoveFluid()
 {
   if(GetFluid())
     {
@@ -1048,12 +1048,12 @@ void levelsquare::RemoveFluid()
     }
 }
 
-void levelsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+void lsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
 {
-  GetOverLevelTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
+  GetOLTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
 }
 
-bool levelsquare::TeleportEverything(character* Teleporter)
+bool lsquare::TeleportEverything(character* Teleporter)
 {
   bool HasHitSomething = false; 
   if(GetCharacter())
@@ -1072,7 +1072,3 @@ bool levelsquare::TeleportEverything(character* Teleporter)
   Teleporter->EditNP(-50);
   return true;  
 }
-
-
-
-

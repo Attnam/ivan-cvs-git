@@ -1,9 +1,10 @@
 #ifndef __FLUID_H__
 #define __FLUID_H__
 
-#include "object.h"
+#include "unit.h"
+#include "save.h"
 
-class fluid : public entity
+class fluid : public unit
 {
  public:
   fluid();

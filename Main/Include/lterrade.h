@@ -7,10 +7,10 @@
 
 #include "lterraba.h"
 
-class GROUNDLEVELTERRAIN
+class GLTERRAIN
 (
   parquet,
-  groundlevelterrain,
+  glterrain,
   InitMaterials(new wood),
   {
   },
@@ -22,10 +22,10 @@ class GROUNDLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
 );
 
-class GROUNDLEVELTERRAIN
+class GLTERRAIN
 (
   floor,
-  groundlevelterrain,
+  glterrain,
   InitMaterials(new gravel),
   {
   },
@@ -36,10 +36,10 @@ class GROUNDLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
 );
 
-class GROUNDLEVELTERRAIN
+class GLTERRAIN
 (
   ground,
-  groundlevelterrain,
+  glterrain,
   InitMaterials(new gravel),
   {
   },
@@ -50,10 +50,10 @@ class GROUNDLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 352); }
 );
 
-class GROUNDLEVELTERRAIN
+class GLTERRAIN
 (
   grassterrain,
-  groundlevelterrain,
+  glterrain,
   InitMaterials(new grass),
   {
   },
@@ -65,10 +65,10 @@ class GROUNDLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(16, 336); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   earth,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new moraine, new stone),
   {
   },
@@ -82,10 +82,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 336); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   wall,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new stone),
   {
   },
@@ -99,10 +99,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 240); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   empty,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new air),
   {
   },
@@ -113,10 +113,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 480); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   door,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new stone),
   {
     SetIsOpen(false);
@@ -153,10 +153,10 @@ class OVERLEVELTERRAIN
   bool IsLocked;
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   stairsup,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new stone),
   {
   },
@@ -172,10 +172,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 192); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   stairsdown,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new stone),
   {
   },
@@ -191,13 +191,13 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 208); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   altar,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new stone),
   {
-    SetOwnerGod(RAND() % game::GetGodNumber() + 1);
+    SetOwnerGod(1 + RAND() % (game::GetGods() - 1));
   },
  public:
   virtual bool CanBeOffered() const { return true; }
@@ -220,10 +220,10 @@ class OVERLEVELTERRAIN
   uchar OwnerGod;
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   throne,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new gold, new gold),
   {
   },
@@ -235,10 +235,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 416); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   pine,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new leaf, new wood),
   {
   },
@@ -252,10 +252,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(16, 320); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   spruce,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new leaf, new wood),
   {
   },
@@ -269,10 +269,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(16, 352); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   linden,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new leaf, new wood),
   {
   },
@@ -286,10 +286,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(32, 336); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   carpet,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new expensivefabric),
   {
   },
@@ -300,10 +300,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 272); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   couch,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new expensivefabric, new gold),
   {
   },
@@ -318,10 +318,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   bookcase,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new wood),
   {
   },
@@ -335,10 +335,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(16, 272); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   fountain,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new marble, new water),
   {
   },
@@ -354,10 +354,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(GetMaterial(1) ? 16 : 32, 288); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   doublebed,
-  overlevelterrain,
+  olterrain,
   InitMaterials(2, new gold, new expensivefabric),
   {
   },
@@ -373,7 +373,7 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(48, 304); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   brokendoor,
   door,
@@ -393,10 +393,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
 
-class GROUNDLEVELTERRAIN
+class GLTERRAIN
 (
   pool,
-  groundlevelterrain,
+  glterrain,
   InitMaterials(new water),
   {
   },
@@ -413,10 +413,10 @@ class GROUNDLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   poolborder,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new marble),
   {
   },
@@ -427,10 +427,10 @@ class OVERLEVELTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(32, 320); }
 );
 
-class OVERLEVELTERRAIN
+class OLTERRAIN
 (
   poolcorner,
-  overlevelterrain,
+  olterrain,
   InitMaterials(new marble),
   {
   },
@@ -442,3 +442,4 @@ class OVERLEVELTERRAIN
 );
 
 #endif
+

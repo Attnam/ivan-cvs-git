@@ -2,6 +2,8 @@
 
 #include "proto.h"
 
+class room;
+
 std::vector<room*>			protocontainer<room>::ProtoData;
 std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
@@ -12,7 +14,7 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 #include "charba.h"
 #include "message.h"
 #include "itemba.h"
-#include "god.h"
+#include "godba.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "team.h"
@@ -177,7 +179,7 @@ void temple::Enter(character* Pilgrim)
       ADD_MESSAGE("The temple appears to be deserted.");
 }
 
-void shop::KickSquare(character* Infidel, levelsquare* Square)
+void shop::KickSquare(character* Infidel, lsquare* Square)
 {
   if(!Master)
     return;
@@ -263,7 +265,7 @@ bool cathedral::DropItem(character* Visitor, item* Item)
   return false;
 }
 
-void cathedral::KickSquare(character* Kicker, levelsquare* Square)
+void cathedral::KickSquare(character* Kicker, lsquare* Square)
 {
   if(game::GetTeam(2)->GetRelation(Kicker->GetTeam()) == HOSTILE)
     return;
@@ -328,7 +330,7 @@ bool cathedral::Drink(character* Thirsty) const
   return false;
 }
 
-void shop::TeleportSquare(character* Infidel, levelsquare* Square)
+void shop::TeleportSquare(character* Infidel, lsquare* Square)
 {
   if(!Master)
     return;
@@ -340,7 +342,7 @@ void shop::TeleportSquare(character* Infidel, levelsquare* Square)
     }
 }
 
-void cathedral::TeleportSquare(character* Teleporter, levelsquare* Square)
+void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
 {
   if(game::GetTeam(2)->GetRelation(Teleporter->GetTeam()) == HOSTILE)
     return;

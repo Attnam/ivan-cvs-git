@@ -12,12 +12,12 @@
 class outputfile;
 class inputfile;
 
-class typeable
+class type
 {
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&) { }
-  virtual typeable* CloneAndLoad(inputfile&) const = 0;
+  virtual type* CloneAndLoad(inputfile&) const = 0;
   virtual ushort GetType() { return Type(); }
   virtual std::string ClassName() const = 0;
  protected:
@@ -25,5 +25,6 @@ class typeable
 };
 
 #endif
+
 
 

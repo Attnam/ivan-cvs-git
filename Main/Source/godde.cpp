@@ -1,139 +1,26 @@
-#include <cstdio>
+#define __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
 
-#include "god.h"
-#include "level.h"
-#include "lsquare.h"
-#include "charde.h"
-#include "itemde.h"
-#include "stack.h"
+#include "proto.h"
+
+class god;
+
+std::vector<god*>			protocontainer<god>::ProtoData;
+std::map<std::string, ushort>		protocontainer<god>::CodeNameMap;
+
+#include "godde.h"
+
+#undef __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
+
 #include "message.h"
+#include "charde.h"
+#include "level.h"
+#include "femath.h"
+#include "stack.h"
+#include "itemde.h"
+#include "lsquare.h"
+#include "team.h"
 #include "script.h"
 #include "lterrade.h"
-#include "team.h"
-#include "femath.h"
-
-void god::Pray()
-{
-  if(!Timer)
-    if(Relation > -(RAND() % 501))
-      {
-	ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
-	PrayGoodEffect();
-	AdjustTimer(5000);
-	AdjustRelation(50);
-	game::ApplyDivineAlignmentBonuses(this, true);
-
-	if(Relation > 500 && !(RAND() % 100))
-	  {
-	    character* Angel = CreateAngel();
-
-	    if(Angel)
-	      {
-		Angel->SetTeam(game::GetPlayer()->GetTeam());
-		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
-	      }
-	  }
-      }
-    else
-      {
-	ADD_MESSAGE("You feel %s is displeased today.", GOD_NAME);
-	PrayBadEffect();
-	AdjustTimer(10000);
-	game::ApplyDivineAlignmentBonuses(this, false);
-      }
-  else
-    if(Relation >= RAND() % 501)
-      {
-	ADD_MESSAGE("You feel %s is displeased, but helps you anyway.", GOD_NAME);
-	PrayGoodEffect();
-	AdjustTimer(25000);
-	AdjustRelation(-50);
-	game::ApplyDivineAlignmentBonuses(this, false);
-      }
-    else
-      {
-	ADD_MESSAGE("You feel %s is angry.", GOD_NAME);
-	PrayBadEffect();
-	AdjustTimer(50000);
-	AdjustRelation(-100);
-	game::ApplyDivineAlignmentBonuses(this, false);
-
-	if(Relation < -500 && !(RAND() % 50))
-	  {
-	    character* Angel = CreateAngel();
-
-	    if(Angel)
-	      {
-		Angel->SetTeam(game::GetTeam(5));
-		ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
-	      }
-	  }
-      }
-}
-
-std::string god::CompleteDescription() const
-{
-  std::string Desc = game::CAlignment(Alignment());
-
-  Desc.resize(4, ' ');
-
-  Desc += Name();
-
-  Desc.resize(30, ' ');
-
-  if(game::GetWizardMode())
-    {
-      char Buffer[256];
-
-      sprintf(Buffer, "%d - %d", int(Timer), int(Relation));
-
-      return Desc + Buffer;
-    }
-
-  return Desc + "the " + Description();
-}
-
-void god::PrayGoodEffect()
-{
-  ADD_MESSAGE("%s doesn't know what good he could do to you for now.", GOD_NAME);
-}
-
-void god::PrayBadEffect()
-{
-  ADD_MESSAGE("%s doesn't know how to punish at the moment.", GOD_NAME);
-}
-
-void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
-{
-  short Adjustment = 2 * Multiplier - abs((schar)(Alignment()) - Competitor->Alignment()) * Multiplier;
-
-  if(!Good && Adjustment > 0)
-    Adjustment = -Adjustment;
-
-  AdjustRelation(Adjustment);
-}
-
-void god::AdjustRelation(short Amount)
-{
-  Relation += Amount;
-
-  if(Relation < -1000)
-    Relation = -1000;
-
-  if(Relation > 1000)
-    Relation = 1000;
-}
-
-void god::AdjustTimer(long Amount)
-{
-  Timer += Amount;
-
-  if(Timer < 0)
-    Timer = 0;
-
-  if(Timer > 1000000000)
-    Timer = 1000000000;
-}
 
 void consummo::PrayGoodEffect()
 {
@@ -187,7 +74,7 @@ void dulcis::PrayGoodEffect()
   ADD_MESSAGE("A beautiful melody echoes around you.");
   DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
-    character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+    character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter();
 
     if(Char)
       if(Char->Charmable())
@@ -347,7 +234,7 @@ void silva::PrayGoodEffect()
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOTerrain()->GetIsWalkable())
 		{
 		  Correct = true;
 		  break;
@@ -356,10 +243,10 @@ void silva::PrayGoodEffect()
 
 	    if(Correct)
 	      {
-		game::GetCurrentLevel()->GetLevelSquare(Pos)->ChangeOverLevelTerrain(new empty);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrain(new empty);
 
-		for(uchar p = 0; p < 4; ++p)
-		  game::GetCurrentLevel()->GetLevelSquare(Pos)->GetSideStack(p)->Clean();
+		for(ushort p = 0; p < 4; ++p)
+		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
 
 		break;
 	      }
@@ -372,22 +259,22 @@ void silva::PrayGoodEffect()
 	  {
 	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, true, RAND() % 2 ? true : false);
 
-	    character* Char = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter();
+	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
-	    if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetType() != empty::StaticType() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
+	    if(game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->GetType() != empty::StaticType() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
 	      continue;
 
 	    uchar Walkables = 0;
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOTerrain()->GetIsWalkable())
 		++Walkables;
 	    });
 
 	    if(Walkables > 6)
 	      {
-		game::GetCurrentLevel()->GetLevelSquare(Pos)->ChangeOverLevelTerrain(new earth);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrain(new earth);
 
 		if(Char)
 		  {
@@ -398,15 +285,15 @@ void silva::PrayGoodEffect()
 		    Char->CheckDeath("killed by an earthquake");
 		  }
 
-		game::GetCurrentLevel()->GetLevelSquare(Pos)->KickAnyoneStandingHereAway();
+		game::GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
 
 		ushort p;
 
 		for(p = 0; p < 4; ++p)
-		  game::GetCurrentLevel()->GetLevelSquare(Pos)->GetSideStack(p)->Clean();
+		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
 
-		for(p = 0; p < game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems();)
-		  if(!game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()))
+		for(p = 0; p < game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItems();)
+		  if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()))
 		    ++p;
 
 		break;
@@ -416,9 +303,9 @@ void silva::PrayGoodEffect()
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
 	  {
-	    game::GetCurrentLevel()->GetLevelSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLevelSquare(x,y)->CanBeSeen());
-	    for(uchar c = 0; c < 4; ++c)
-	      game::GetCurrentLevel()->GetLevelSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLevelSquare(x,y)->CanBeSeen());
+	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLSquare(x,y)->CanBeSeen());
+	    for(ushort c = 0; c < 4; ++c)
+	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLSquare(x,y)->CanBeSeen());
 	  }
     }
   else
@@ -429,10 +316,10 @@ void silva::PrayGoodEffect()
       {
 	wolf* Wolf = new wolf;
 
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter())
 	  {
 	    Wolf->SetTeam(game::GetPlayer()->GetTeam());
-	    game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->AddCharacter(Wolf);
+	    game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->AddCharacter(Wolf);
 	    ++Created;
 	  }
 	else
@@ -548,16 +435,6 @@ void calamus::PrayBadEffect()
     ADD_MESSAGE("Suprisingly you feel nothing.");
 }
 
-void god::Save(outputfile& SaveFile) const
-{
-  SaveFile << Relation << Timer << Known;
-}
-
-void god::Load(inputfile& SaveFile)
-{
-  SaveFile >> Relation >> Timer >> Known;
-}
-
 void erado::PrayGoodEffect()
 {
   ADD_MESSAGE("The air vibrates violently around you.");
@@ -624,14 +501,9 @@ void mellis::PrayGoodEffect()
 
 void mellis::PrayBadEffect()
 {
-  for(ushort c = 1;; ++c)
-    if(game::GetGod(c))
-      {
-	if(game::GetGod(c) != this)
-	  game::GetGod(c)->AdjustRelation(-100);
-      }
-    else
-      break;
+  for(ushort c = 1; c < game::GetGods(); ++c)
+    if(game::GetGod(c) != this)
+      game::GetGod(c)->AdjustRelation(-100);
 
   ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);
 }
@@ -647,7 +519,7 @@ void pestifer::PrayBadEffect()
 {
   character* EnnerBeast = new ennerbeast;
   EnnerBeast->SetTeam(game::GetTeam(4));
-  game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(EnnerBeast, true))->AddCharacter(EnnerBeast);
+  game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(EnnerBeast, true))->AddCharacter(EnnerBeast);
   ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
 
@@ -796,7 +668,7 @@ void macellarius::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
-  game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new brokenbottle);
+  game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
 }
 
@@ -804,7 +676,7 @@ void scabies::PrayGoodEffect()
 {
   ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
 
-  for(uchar c = 0; c < 5; ++c)
+  for(ushort c = 0; c < 5; ++c)
     {
       item* Reward = new can(false);
       Reward->InitMaterials(2, new iron, new schoolfood);
@@ -816,7 +688,7 @@ void scabies::PrayBadEffect()
 {
   ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
 
-  for(uchar c = 0; c < 5; ++c)
+  for(ushort c = 0; c < 5; ++c)
     {
       material* SchoolFood = new schoolfood(600);
       SchoolFood->EatEffect(game::GetPlayer(), 600);
@@ -833,7 +705,7 @@ void infuscor::PrayGoodEffect()
 {
   ADD_MESSAGE("Suddenly five scrolls appear from nothing!");
 
-  for(uchar c = 0; c < 5; ++c)
+  for(ushort c = 0; c < 5; ++c)
     game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleport);
 }
 
@@ -910,79 +782,6 @@ void cruentus::Pray()
     }
 }
 
-bool god::ReceiveOffer(item* Sacrifice)
-{
-  short OfferValue = Sacrifice->CalculateOfferValue(BasicAlignment());
-
-  if(abs(OfferValue) > 5)
-    {
-      if(!Sacrifice->Destroyable())
-	{
-	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CNAME(DEFINITE));
-
-	  return false;
-	}
-
-      AdjustRelation(OfferValue);
-      game::ApplyDivineAlignmentBonuses(this, OfferValue > 0 ? true : false);
-
-      if(OfferValue > 0)
-	ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);
-      else
-	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GOD_NAME);
-
-      PrintRelation();
-
-      if(OfferValue > 0 && Relation > 500 && !(RAND() % 100))
-	{
-	  character* Angel = CreateAngel();
-
-	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
-	    }
-	}
-
-      return true;
-    }
-  else
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return false;
-    }
-}
-
-void god::PrintRelation() const
-{
-  std::string VerbalRelation;
-
-  if(GetRelation() == 1000)
-    VerbalRelation = "greets you as a Champion of the Cause!";
-  else if(GetRelation() > 750)
-    VerbalRelation = "is extremely pleased.";
-  else if(GetRelation() > 250)
-    VerbalRelation = "is very pleased.";
-  else if(GetRelation() > 50)
-    VerbalRelation = "is pleased.";
-  else if(GetRelation() > -50)
-    VerbalRelation = "is content.";
-  else if(GetRelation() > -250)
-    VerbalRelation = "is angry.";
-  else if(GetRelation() > -750)
-    VerbalRelation = "is very angry.";
-  else if(GetRelation() > -1000)
-    VerbalRelation = "is extremely angry.";
-  else VerbalRelation = "hates you more than any other mortal.";
-
-  ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
-}
-
-void god::AddPriestMessage() const
-{
-  ADD_MESSAGE("\"Not currently implemented.\"");
-}
-
 void venius::AddPriestMessage() const
 {
   ADD_MESSAGE("\"%s is the Great Protector of all Law and Order.", GOD_NAME);
@@ -1010,26 +809,6 @@ void consummo::AddPriestMessage() const
   ADD_MESSAGE("Alas, beware! Soon thou may find thyself in an even worse situation!\"");
 }
 
-void god::PlayerVomitedOnAltar()
-{
-  ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
-  ADD_MESSAGE("The vomit lands on your face.");
-  AdjustRelation(-200);
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
-  game::GetPlayer()->CheckDeath("chocked to death by own vomit");
-
-  if(!(RAND() % 50))
-    {
-      character* Angel = CreateAngel();
-
-      if(Angel)
-	{
-	  Angel->SetTeam(game::GetTeam(5));
-	  ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
-	}
-    }
-}
-
 void scabies::PlayerVomitedOnAltar()
 {
   ADD_MESSAGE("%s feels that you are indeed her follower.", GOD_NAME); 
@@ -1045,31 +824,3 @@ void valpurus::AddPriestMessage() const
   ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
 }
 
-character* god::CreateAngel()
-{
-  vector2d TryToCreate;
-
-  for(uchar c = 0; c < 100; ++c)
-    {
-      TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-
-      angel* Angel = new angel;
-
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
-	{
-	  /* This is a most unitelligent gum solution, but... */
-
-	  for(uchar c = 1; game::GetGod(c); ++c)
-	    if(game::GetGod(c) == this)
-	      Angel->SetMaster(c);
-
-	  game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Angel);
-	  ADD_MESSAGE("Suddenly %s appears!", Angel->CNAME(INDEFINITE));
-	  return Angel;
-	}
-      else
-	delete Angel;
-    }
-
-  return 0;
-}

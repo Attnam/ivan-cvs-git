@@ -8,7 +8,7 @@
 #include "femath.h"
 #include "config.h"
 
-bool overlevelterrain::GoUp(character* Who) const // Try to go up
+bool olterrain::GoUp(character* Who) const // Try to go up
 {
   if(game::GetCurrent() && game::GetCurrent() != 9 && game::GetWizardMode())
     {
@@ -33,7 +33,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 	  {
 	    std::vector<character*> TempPlayerGroup;
 
-	    if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
+	    if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
 	      return false;
 
 	    game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
@@ -63,7 +63,7 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
       }
 }
 
-bool overlevelterrain::GoDown(character* Who) const // Try to go down
+bool olterrain::GoDown(character* Who) const // Try to go down
 {
   if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
     {
@@ -90,31 +90,31 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
     }
 }
 
-void levelterrain::Save(outputfile& SaveFile) const
+void lterrain::Save(outputfile& SaveFile) const
 {
   object::Save(SaveFile);
 
   SaveFile << VisualFlags;
 }
 
-void levelterrain::Load(inputfile& SaveFile)
+void lterrain::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
 
   SaveFile >> VisualFlags;
 }
 
-void groundlevelterrain::DrawToTileBuffer() const
+void glterrain::DrawToTileBuffer() const
 {
   Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
-void overlevelterrain::DrawToTileBuffer() const
+void olterrain::DrawToTileBuffer() const
 {
   Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
-bool levelterrain::Open(character* Opener)
+bool lterrain::Open(character* Opener)
 {
   if(Opener->GetIsPlayer())
     ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
@@ -122,7 +122,7 @@ bool levelterrain::Open(character* Opener)
   return false;
 }
 
-bool levelterrain::Close(character* Closer)
+bool lterrain::Close(character* Closer)
 {
   if(Closer->GetIsPlayer())
     ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
@@ -130,24 +130,25 @@ bool levelterrain::Close(character* Closer)
   return false;
 }
 
-vector2d levelterrain::GetPos() const
+vector2d lterrain::GetPos() const
 {
-  return GetLevelSquareUnder()->GetPos();
+  return GetLSquareUnder()->GetPos();
 }
 
-void levelterrain::HandleVisualEffects()
+void lterrain::HandleVisualEffects()
 {
   uchar Flags = 0, AcceptedFlags = OKVisualEffects();
 
-  for(uchar c = 0; c < 8; ++c)
+  for(ushort c = 0; c < 8; ++c)
     if((AcceptedFlags & (1 << c)) && (RAND() % 2))
       Flags |= 1 << c;
 
   SetVisualFlags(Flags);
 }
 
-bool groundlevelterrain::SitOn(character*)
+bool glterrain::SitOn(character*)
 {
   ADD_MESSAGE("You sit for some time. Nothing happens.");
   return true;
 }
+

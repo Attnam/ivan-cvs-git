@@ -14,6 +14,8 @@
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool, false), Cannibalised(false)
 {
+  ID = game::CreateNewItemID();
+
   if(CreateMaterials || SetStats)
     ABORT("Boo!");
 }
@@ -27,7 +29,7 @@ ulong item::GetWeight() const
 {
   ulong TotalWeight = 0;
 
-  for(uchar c = 0; c < GetMaterials(); ++c)
+  for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       TotalWeight += GetMaterial(c)->GetWeight();
 
@@ -99,8 +101,8 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
     {
       if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
-      levelsquare* JustHit = game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction));
-      if(!(JustHit->GetOverLevelTerrain()->GetIsWalkable()))
+      lsquare* JustHit = game::GetCurrentLevel()->GetLSquare(Pos + game::GetMoveVector(Direction));
+      if(!(JustHit->GetOLTerrain()->GetIsWalkable()))
 	{
 	  Breaks = true;
 	  JustHit->HasBeenHitBy(this, Speed, Direction, JustHit->CanBeSeen());
@@ -116,16 +118,16 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	  if(Speed < 0.5)
 	    break;
 
-	  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+	  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 	  game::DrawEverything(false);
-	  Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
+	  Start = game::GetCurrentLevel()->GetLSquare(Pos)->GetStack();
 
-	  if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
+	  if(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter())
 	    {
 	      if(Hostile)
-		game::GetPlayer()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter());
+		game::GetPlayer()->Hostility(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
 
-	      if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed, game::GetPlayer()))
+	      if(HitCharacter(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter(), Speed, game::GetPlayer()))
 		{
 		  Breaks = true;
 		  break;
@@ -136,10 +138,10 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	}
     }
 
-  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 
   if(Breaks)
-    ImpactDamage(ushort(Speed), game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
+    ImpactDamage(ushort(Speed), game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 
   if(Pos == StartingPos)
     return false;
@@ -157,7 +159,7 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
       if(Dude->GetIsPlayer())
 	ADD_MESSAGE("%s misses you.", CNAME(DEFINITE));
       else
-	if(Dude->GetLevelSquareUnder()->CanBeSeen())
+	if(Dude->GetLSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
 
       return false;
@@ -222,7 +224,7 @@ uchar item::GetWeaponCategory() const
 
 bool item::StruckByWandOfStriking(character*, std::string, stack* What) 
 { 
-  return ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What);
+  return ImpactDamage(10, What->GetLSquareUnder()->CanBeSeen(), What);
 }
 
 bool item::Consume(character* Eater, float Amount)
@@ -251,18 +253,20 @@ void item::Save(outputfile& SaveFile) const
 {
   object::Save(SaveFile);
 
-  SaveFile << Cannibalised << Size;
+  SaveFile << Cannibalised << Size << ID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
 
-  SaveFile >> Cannibalised >> Size;
+  game::PopItemID(ID);
+
+  SaveFile >> Cannibalised >> Size >> ID;
 }
 
 void item::Teleport(stack* Start)
 {
-  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
+  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
 }

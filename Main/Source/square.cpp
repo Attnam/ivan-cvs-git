@@ -84,7 +84,7 @@ void square::SetLastSeen(ulong What)
   if(!GetLastSeen())
     Memorized = new bitmap(16, 16);
 
-  if(GetLastSeen() < What - 1 || !GetOverTerrain()->GetIsWalkable())
+  if(GetLastSeen() < What - 1 || !GetOTerrain()->GetIsWalkable())
     SendNewDrawRequest();
 
   UpdateMemorized();
@@ -104,47 +104,48 @@ void square::KickAnyoneStandingHereAway()
 
 bool square::GetIsWalkable(character* Char) const
 {
-  return GetOverTerrain()->GetIsWalkable() && GetGroundTerrain()->GetIsWalkable(Char);
+  return GetOTerrain()->GetIsWalkable() && GetGTerrain()->GetIsWalkable(Char);
 }
 
 std::string square::SurviveMessage(character*) const
 {
-  if(!GetOverTerrain()->GetIsWalkable())
-    return GetOverTerrain()->SurviveMessage();
+  if(!GetOTerrain()->GetIsWalkable())
+    return GetOTerrain()->SurviveMessage();
   else
-    return GetGroundTerrain()->SurviveMessage();
+    return GetGTerrain()->SurviveMessage();
 }
 
 std::string square::DeathMessage(character*) const
 {
-  if(!GetOverTerrain()->GetIsWalkable())
-    return GetOverTerrain()->DeathMessage();
+  if(!GetOTerrain()->GetIsWalkable())
+    return GetOTerrain()->DeathMessage();
   else
-    return GetGroundTerrain()->DeathMessage();
+    return GetGTerrain()->DeathMessage();
 }
 
 std::string square::MonsterDeathVerb(character*) const
 {
-  if(!GetOverTerrain()->GetIsWalkable())
-    return GetOverTerrain()->MonsterDeathVerb();
+  if(!GetOTerrain()->GetIsWalkable())
+    return GetOTerrain()->MonsterDeathVerb();
   else
-    return GetGroundTerrain()->MonsterDeathVerb();
+    return GetGTerrain()->MonsterDeathVerb();
 }
 
 std::string square::ScoreEntry(character*) const
 {
-  if(!GetOverTerrain()->GetIsWalkable())
-    return GetOverTerrain()->ScoreEntry();
+  if(!GetOTerrain()->GetIsWalkable())
+    return GetOTerrain()->ScoreEntry();
   else
-    return GetGroundTerrain()->ScoreEntry();
+    return GetGTerrain()->ScoreEntry();
 }
 
 ushort square::GetEntryAPRequirement() const
 {
-  return GetGroundTerrain()->GetEntryAPRequirement();
+  return GetGTerrain()->GetEntryAPRequirement();
 }
 
 uchar square::RestModifier() const
 {
-  return GetOverTerrain()->RestModifier();
+  return GetOTerrain()->RestModifier();
 }
+

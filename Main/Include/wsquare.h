@@ -13,37 +13,38 @@
 class area;
 class material;
 class worldmap;
-class groundworldmapterrain;
-class overworldmapterrain;
+class gwterrain;
+class owterrain;
 class outputfile;
 class inputfile;
 
-class worldmapsquare : public square
+class wsquare : public square
 {
  public:
-  worldmapsquare(worldmap*, vector2d);
-  virtual ~worldmapsquare();
+  wsquare(worldmap*, vector2d);
+  virtual ~wsquare();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool DrawTerrain() const;
   virtual bool DrawCharacters() const;
   virtual void Draw();
   virtual void UpdateMemorized();
-  virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
-  virtual void SetOverWorldMapTerrain(overworldmapterrain*);
-  virtual groundworldmapterrain* GetGroundWorldMapTerrain() const { return GroundWorldMapTerrain; }
-  virtual overworldmapterrain* GetOverWorldMapTerrain() const { return OverWorldMapTerrain; }
-  virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
+  virtual void SetGWTerrain(gwterrain*);
+  virtual void SetOWTerrain(owterrain*);
+  virtual gwterrain* GetGWTerrain() const { return GWTerrain; }
+  virtual owterrain* GetOWTerrain() const { return OWTerrain; }
+  virtual void ChangeWTerrain(gwterrain*, owterrain*);
   virtual worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
   virtual void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
   virtual void UpdateMemorizedDescription(bool = false);
-  virtual groundterrain* GetGroundTerrain() const;
-  virtual overterrain* GetOverTerrain() const;
-  virtual void ChangeGroundWorldMapTerrain(groundworldmapterrain*);
-  virtual void ChangeOverWorldMapTerrain(overworldmapterrain*);
+  virtual gterrain* GetGTerrain() const;
+  virtual oterrain* GetOTerrain() const;
+  virtual void ChangeGWTerrain(gwterrain*);
+  virtual void ChangeOWTerrain(owterrain*);
  protected:
-  groundworldmapterrain* GroundWorldMapTerrain;
-  overworldmapterrain* OverWorldMapTerrain;
+  gwterrain* GWTerrain;
+  owterrain* OWTerrain;
 };
 
 #endif
+

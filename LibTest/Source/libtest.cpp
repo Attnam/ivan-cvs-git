@@ -72,7 +72,7 @@ int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)
   OutGreen->MaskedBlit(DOUBLEBUFFER, 0, 0, 384, 308, 32, 32);
   OutBlue->MaskedBlit(DOUBLEBUFFER, 0, 0, 416, 308, 32, 32);
 
-  for(uchar x = 0; x < 8; ++x)
+  for(ushort x = 0; x < 8; ++x)
     {
       Bill->Blit(DOUBLEBUFFER, 0, 0, 336 + (x << 4), 356, 16, 16, x);
       Bill->MaskedBlit(DOUBLEBUFFER, 0, 0, 336 + (x << 4), 372, 16, 16, x);
@@ -157,3 +157,4 @@ int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)
 
   return 0;
 }
+

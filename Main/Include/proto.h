@@ -11,17 +11,6 @@
 
 #include "typedef.h"
 
-class material;
-class character;
-class item;
-class groundlevelterrain;
-class overlevelterrain;
-class groundworldmapterrain;
-class overworldmapterrain;
-class room;
-class outputfile;
-class inputfile;
-
 template <class type> class protocontainer
 {
  public:
@@ -59,6 +48,12 @@ template <class type> ushort protocontainer<type>::SearchCodeName(std::string Na
     return 0;
 }
 
+class character;
+class item;
+class material;
+class outputfile;
+class inputfile;
+
 class protosystem
 {
  public:
@@ -66,7 +61,7 @@ class protosystem
   static item*			BalancedCreateItem(bool = false);
   static character*		CreateMonster(bool = true);
   static item*			CreateItem(std::string, bool = true);
-  static material*		CreateRandomSolidMaterial(ulong = 0);
+  static material*		CreateRandomSolidMaterial(ulong);
   static material*		CreateMaterial(ushort, ulong);
   static material*		CreateMaterial(std::string, ulong, bool = true);
 };
@@ -94,3 +89,4 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 }
 
 #endif
+

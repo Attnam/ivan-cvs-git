@@ -27,10 +27,10 @@ class ROOM
   virtual void Enter(character*);
   virtual bool PickupItem(character*, item*);
   virtual bool DropItem(character*, item*);
-  virtual void KickSquare(character*, levelsquare*);
+  virtual void KickSquare(character*, lsquare*);
   virtual bool ConsumeItem(character*, item*);
   virtual bool AllowDropGifts() const { return false; }
-  virtual void TeleportSquare(character*, levelsquare*);
+  virtual void TeleportSquare(character*, lsquare*);
 );
 
 class ROOM
@@ -55,7 +55,7 @@ class ROOM
   virtual void Enter(character*);
   virtual bool PickupItem(character*, item*);
   virtual bool DropItem(character*, item*);
-  virtual void KickSquare(character*, levelsquare*);
+  virtual void KickSquare(character*, lsquare*);
   virtual bool ConsumeItem(character*, item*);
   virtual void SetEntered(bool What) { Entered = What; }
   virtual void Save(outputfile&) const;
@@ -63,9 +63,10 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual bool Drink(character*) const;
   virtual bool HasDrinkHandler() const { return true; }
-  virtual void TeleportSquare(character*, levelsquare*);
+  virtual void TeleportSquare(character*, lsquare*);
  protected:
   bool Entered;
 );
 
 #endif
+

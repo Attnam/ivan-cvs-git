@@ -7,6 +7,8 @@
 #include "team.h"
 #include "itemba.h"
 
+class room;
+
 void posscript::ReadFrom(inputfile& SaveFile)
 {
   std::string Word = SaveFile.ReadWord();
@@ -189,7 +191,7 @@ character* contentscript<character>::Instantiate() const
   return Instance;
 }
 
-void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
+void contentscript<olterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
   ValueMap["NONE"] = 0;
   ValueMap["MIRROR"] = 1;
@@ -219,15 +221,15 @@ void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::s
 	    continue;
 	  }
 
-	ABORT("Odd script term %s encountered in overlevelterrain script!", Word.c_str());
+	ABORT("Odd script term %s encountered in olterrain script!", Word.c_str());
       }
   else
-    basecontentscript<overlevelterrain>::ReadParameters(SaveFile, LastWord);
+    basecontentscript<olterrain>::ReadParameters(SaveFile, LastWord);
 }
 
-overlevelterrain* contentscript<overlevelterrain>::Instantiate() const
+olterrain* contentscript<olterrain>::Instantiate() const
 {
-  overlevelterrain* Instance = basecontentscript<overlevelterrain>::Instantiate();
+  olterrain* Instance = basecontentscript<olterrain>::Instantiate();
 
   if(GetLocked(false) && *GetLocked())
     Instance->Lock();
@@ -277,24 +279,24 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 	      continue;
 	    }
 
-	  if(Word == "GroundTerrain")
+	  if(Word == "GTerrain")
 	    {
-	      if(!GroundTerrain)
-		GroundTerrain = new contentscript<groundlevelterrain>;
+	      if(!GTerrain)
+		GTerrain = new contentscript<glterrain>;
 
-	      GroundTerrain->SetValueMap(ValueMap);
-	      GroundTerrain->ReadFrom(SaveFile);
+	      GTerrain->SetValueMap(ValueMap);
+	      GTerrain->ReadFrom(SaveFile);
 
 	      continue;
 	    }
 
-	  if(Word == "OverTerrain")
+	  if(Word == "OTerrain")
 	    {
-	      if(!OverTerrain)
-		OverTerrain = new contentscript<overlevelterrain>;
+	      if(!OTerrain)
+		OTerrain = new contentscript<olterrain>;
 
-	      OverTerrain->SetValueMap(ValueMap);
-	      OverTerrain->ReadFrom(SaveFile);
+	      OTerrain->SetValueMap(ValueMap);
+	      OTerrain->ReadFrom(SaveFile);
 
 	      continue;
 	    }
@@ -344,17 +346,17 @@ void squarescript::ReadFrom(inputfile& SaveFile)
     }
   else
     {
-      if(!GroundTerrain)
-	GroundTerrain = new contentscript<groundlevelterrain>;
+      if(!GTerrain)
+	GTerrain = new contentscript<glterrain>;
 
-      GroundTerrain->SetValueMap(ValueMap);
-      GroundTerrain->ReadFrom(SaveFile);
+      GTerrain->SetValueMap(ValueMap);
+      GTerrain->ReadFrom(SaveFile);
 
-      if(!OverTerrain)
-	OverTerrain = new contentscript<overlevelterrain>;
+      if(!OTerrain)
+	OTerrain = new contentscript<olterrain>;
 
-      OverTerrain->SetValueMap(ValueMap);
-      OverTerrain->ReadFrom(SaveFile);
+      OTerrain->SetValueMap(ValueMap);
+      OTerrain->ReadFrom(SaveFile);
     }
 }
 
@@ -502,24 +504,24 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  continue;
 	}
 
-      if(Word == "GroundTerrainMap")
+      if(Word == "GTerrainMap")
 	{
-	  if(!GroundTerrainMap)
-	    GroundTerrainMap = new contentmap<groundlevelterrain>;
+	  if(!GTerrainMap)
+	    GTerrainMap = new contentmap<glterrain>;
 
-	  GroundTerrainMap->SetValueMap(ValueMap);
-	  GroundTerrainMap->ReadFrom(SaveFile);
+	  GTerrainMap->SetValueMap(ValueMap);
+	  GTerrainMap->ReadFrom(SaveFile);
 
 	  continue;
 	}
 
-      if(Word == "OverTerrainMap")
+      if(Word == "OTerrainMap")
 	{
-	  if(!OverTerrainMap)
-	    OverTerrainMap = new contentmap<overlevelterrain>;
+	  if(!OTerrainMap)
+	    OTerrainMap = new contentmap<olterrain>;
 
-	  OverTerrainMap->SetValueMap(ValueMap);
-	  OverTerrainMap->ReadFrom(SaveFile);
+	  OTerrainMap->SetValueMap(ValueMap);
+	  OTerrainMap->ReadFrom(SaveFile);
 
 	  continue;
 	}
@@ -1077,3 +1079,4 @@ void gamescript::ReadFrom(inputfile& SaveFile)
       ABORT("Odd script term %s encountered in game script!", Word.c_str());
     }
 }
+

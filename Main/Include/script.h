@@ -43,8 +43,8 @@
 #include "error.h"
 
 class inputfile;
-class groundlevelterrain;
-class overlevelterrain;
+class glterrain;
+class olterrain;
 class character;
 class item;
 
@@ -103,14 +103,14 @@ class contentscript<character> : public basecontentscript<character>
 };
 
 class contentscript<item> : public basecontentscript<item> { };
-class contentscript<groundlevelterrain> : public basecontentscript<groundlevelterrain> { };
+class contentscript<glterrain> : public basecontentscript<glterrain> { };
 
-class contentscript<overlevelterrain> : public basecontentscript<overlevelterrain>
+class contentscript<olterrain> : public basecontentscript<olterrain>
 {
  public:
-  contentscript<overlevelterrain>() : Locked(0), VisualFlags(0) { }
+  contentscript<olterrain>() : Locked(0), VisualFlags(0) { }
   virtual void ReadParameters(inputfile&, std::string);
-  virtual overlevelterrain* Instantiate() const;
+  virtual olterrain* Instantiate() const;
   virtual bool* GetLocked(bool AOE = true) const { SCRIPT_RETURN(Locked) }
   virtual uchar* GetVisualFlags(bool AOE = true) const { SCRIPT_RETURN(VisualFlags) }
  protected:
@@ -121,13 +121,13 @@ class contentscript<overlevelterrain> : public basecontentscript<overlevelterrai
 class squarescript : public script
 {
  public:
-  squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) { }
+  squarescript() : PosScript(0), Character(0), Item(0), GTerrain(0), OTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) { }
   void ReadFrom(inputfile&);
   posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
   contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
   contentscript<item>* GetItem(bool AOE = true) const { SCRIPT_RETURN(Item) }
-  contentscript<groundlevelterrain>* GetGroundTerrain(bool AOE = true) const { SCRIPT_RETURN(GroundTerrain) }
-  contentscript<overlevelterrain>* GetOverTerrain(bool AOE = true) const { SCRIPT_RETURN(OverTerrain) }
+  contentscript<glterrain>* GetGTerrain(bool AOE = true) const { SCRIPT_RETURN(GTerrain) }
+  contentscript<olterrain>* GetOTerrain(bool AOE = true) const { SCRIPT_RETURN(OTerrain) }
   bool* GetIsUpStairs(bool AOE = true) const { SCRIPT_RETURN(IsUpStairs) }
   bool* GetIsDownStairs(bool AOE = true) const { SCRIPT_RETURN(IsDownStairs) }
   bool* GetIsWorldMapEntry(bool AOE = true) const { SCRIPT_RETURN(IsWorldMapEntry) }
@@ -136,8 +136,8 @@ class squarescript : public script
   posscript* PosScript;
   contentscript<character>* Character;
   contentscript<item>* Item;
-  contentscript<groundlevelterrain>* GroundTerrain;
-  contentscript<overlevelterrain>* OverTerrain;
+  contentscript<glterrain>* GTerrain;
+  contentscript<olterrain>* OTerrain;
   bool* IsUpStairs;
   bool* IsDownStairs;
   bool* IsWorldMapEntry;
@@ -161,14 +161,14 @@ template <class type> class contentmap : public script
 class roomscript : public script
 {
  public:
-  roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) { }
+  roomscript() : CharacterMap(0), ItemMap(0), GTerrainMap(0), OTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) { }
   void ReadFrom(inputfile&, bool = false);
   void SetBase(roomscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
   contentmap<character>* GetCharacterMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(CharacterMap) }
   contentmap<item>* GetItemMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ItemMap) }
-  contentmap<groundlevelterrain>* GetGroundTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GroundTerrainMap) }
-  contentmap<overlevelterrain>* GetOverTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OverTerrainMap) }
+  contentmap<glterrain>* GetGTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GTerrainMap) }
+  contentmap<olterrain>* GetOTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OTerrainMap) }
   squarescript* GetWallSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(WallSquare) }
   squarescript* GetFloorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(FloorSquare) }
   squarescript* GetDoorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DoorSquare) }
@@ -188,8 +188,8 @@ class roomscript : public script
   std::vector<squarescript*> Square;
   contentmap<character>* CharacterMap;
   contentmap<item>* ItemMap;
-  contentmap<groundlevelterrain>* GroundTerrainMap;
-  contentmap<overlevelterrain>* OverTerrainMap;
+  contentmap<glterrain>* GTerrainMap;
+  contentmap<olterrain>* OTerrainMap;
   squarescript* WallSquare;
   squarescript* FloorSquare;
   squarescript* DoorSquare;

@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "typeable.h"
+#include "type.h"
 
 class outputfile;
 class inputfile;
@@ -22,14 +22,14 @@ class terrain
   virtual std::string ScoreEntry() const { return "died on unfriendly terrain"; }
 };
 
-class groundterrain : public terrain
+class gterrain : public terrain
 {
  public:
   virtual bool GetIsWalkable(character*) const;
   virtual ushort GetEntryAPRequirement() const = 0;
 };
 
-class overterrain : public terrain
+class oterrain : public terrain
 {
  public:
   virtual bool GoUp(character*) const = 0;
@@ -39,5 +39,6 @@ class overterrain : public terrain
 };
 
 #endif
+
 
 

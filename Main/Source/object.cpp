@@ -3,11 +3,11 @@
 #include "object.h"
 #include "error.h"
 #include "game.h"
-#include "god.h"
+#include "godba.h"
 
-object::object(bool AddToPool, bool HasBe) : entity(AddToPool, HasBe)
+object::object(bool AddToPool, bool HasBe) : unit(AddToPool, HasBe)
 {
-  *(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
+  //*(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
 }
 
 object::~object()
@@ -17,16 +17,16 @@ object::~object()
 
 void object::Save(outputfile& SaveFile) const
 {
-  typeable::Save(SaveFile);
-  entity::Save(SaveFile);
+  type::Save(SaveFile);
+  unit::Save(SaveFile);
 
   SaveFile << GraphicId;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  typeable::Load(SaveFile);
-  entity::Load(SaveFile);
+  type::Load(SaveFile);
+  unit::Load(SaveFile);
 
   SaveFile >> GraphicId;
 
@@ -88,34 +88,6 @@ void object::InitMaterials(material* FirstMaterial)
   Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
-std::string object::NameNormal(uchar Case, std::string Article, std::string Adjective) const
-{
-  if(!(Case & PLURAL))
-    if(!(Case & DEFINEBIT))
-      return Adjective + NameSingular();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Adjective + NameSingular();
-      else
-	return Article + " " + Adjective + NameSingular();
-  else
-    if(!(Case & DEFINEBIT))
-      return Adjective + NamePlural();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Adjective + NamePlural();
-      else
-	return Adjective + NamePlural();
-}
-
-std::string object::NameProperNoun(uchar Case) const
-{
-  if(!(Case & PLURAL))
-    return NameSingular();
-  else
-    return NamePlural();
-}
-
 std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const
 {
   std::string Temp;
@@ -133,7 +105,7 @@ std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const
   else
     {
       ABORT("The %s spawn error detected!", NameSingular().c_str());
-      return "there can be only one";
+      return "";
     }
 }
 
@@ -278,3 +250,5 @@ std::string object::OwnerGodDescription(uchar OwnerGod) const
 {
   return std::string(" of ") + game::GetGod(OwnerGod)->Name();
 }
+
+

@@ -4,6 +4,8 @@
 #include "error.h"
 #include "femath.h"
 
+class gwterrain;
+
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;
@@ -34,10 +36,10 @@ void continent::AttachTo(continent* Continent)
 
 void continent::GenerateInfo()
 {
-  GroundTerrainAmount.resize(protocontainer<groundworldmapterrain>::GetProtoAmount() + 1);
+  GTerrainAmount.resize(protocontainer<gwterrain>::GetProtoAmount() + 1);
 
   for(ulong c = 0; c < Member.size(); ++c)
-    ++GroundTerrainAmount[TypeBuffer[Member[c].X][Member[c].Y]];
+    ++GTerrainAmount[TypeBuffer[Member[c].X][Member[c].Y]];
 
   Name = std::string("number ") + Index;
 }
@@ -46,7 +48,7 @@ vector2d continent::GetRandomMember(ushort Type)
 {
   std::vector<vector2d> TypeContainer;
 
-  if(!GroundTerrainAmount[Type])
+  if(!GTerrainAmount[Type])
     ABORT("Shortage of terrain!");
 
   for(ulong c = 0; c < Member.size(); ++c)
@@ -54,9 +56,10 @@ vector2d continent::GetRandomMember(ushort Type)
       {
 	TypeContainer.push_back(Member[c]);
 
-	if(TypeContainer.size() == GroundTerrainAmount[Type])
+	if(TypeContainer.size() == GTerrainAmount[Type])
 	  break;
       }
 
   return TypeContainer[RAND() % TypeContainer.size()];
 }
+

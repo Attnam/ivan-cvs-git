@@ -26,14 +26,6 @@ void weaponskill::Load(inputfile& SaveFile)
   SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
 }
 
-/*bool weaponskill::Turn()
-{
-  if(HitCounter++ == GetUnuseTickMap(Level))
-    return SubHit(GetUnusePenaltyMap(Level));
-  else
-    return false;
-}*/
-
 bool weaponskill::Turn(ushort Turns)
 {
   HitCounter += Turns;

@@ -24,13 +24,13 @@ ushort material::TakeDipVolumeAway()
 
 void material::Save(outputfile& SaveFile) const
 {
-  typeable::Save(SaveFile);
+  type::Save(SaveFile);
   SaveFile << Volume;
 }
 
 void material::Load(inputfile& SaveFile)
 {
-  typeable::Load(SaveFile);
+  type::Load(SaveFile);
   SaveFile >> Volume;
 }
 
@@ -48,3 +48,5 @@ void material::EatEffect(character*, float, float)
 { 
   ABORT("Calling material that does not have eat effect!");
 }
+
+

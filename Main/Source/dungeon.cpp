@@ -7,7 +7,7 @@ dungeon::dungeon(uchar Index) : Index(Index)
 {
   Initialize();
 
-  for(uchar c = 0; c < GetLevels(); ++c)
+  for(ushort c = 0; c < GetLevels(); ++c)
     Generated[c] = false;
 }
 
@@ -31,7 +31,7 @@ void dungeon::Initialize()
   Level = new level*[GetLevels()];
   Generated = new bool[GetLevels()];
 
-  for(uchar c = 0; c < GetLevels(); ++c)
+  for(ushort c = 0; c < GetLevels(); ++c)
     Level[c] = 0;
 }
 
@@ -109,7 +109,7 @@ void dungeon::Save(outputfile& SaveFile) const
 {
   SaveFile << Index << WorldMapPos;
 
-  for(uchar c = 0; c < GetLevels(); ++c)
+  for(ushort c = 0; c < GetLevels(); ++c)
     SaveFile << Generated[c];
 }
 
@@ -119,7 +119,7 @@ void dungeon::Load(inputfile& SaveFile)
 
   Initialize();
 
-  for(uchar c = 0; c < GetLevels(); ++c)
+  for(ushort c = 0; c < GetLevels(); ++c)
     SaveFile >> Generated[c];
 }
 
@@ -135,3 +135,4 @@ std::string dungeon::GetLevelDescription(uchar Index)
   else
     return std::string("level ") + (Index + 1);
 }
+

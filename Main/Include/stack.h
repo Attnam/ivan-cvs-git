@@ -19,7 +19,7 @@
 
 class item;
 class character;
-class levelsquare;
+class lsquare;
 class bitmap;
 class square;
 class outputfile;
@@ -51,7 +51,7 @@ class stack
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
-  levelsquare* GetLevelSquareUnder() const { return (levelsquare*)SquareUnder; }
+  lsquare* GetLSquareUnder() const { return (lsquare*)SquareUnder; }
   void SetItem(ushort Where, item* What) { Item[Where] = What; }
   void SetItems(ushort What) { Items = What; }
   ushort CNonExistent() const { return NonExistent; }
@@ -69,7 +69,7 @@ class stack
   void StruckByWandOfStriking(character*, std::string);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
-  levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }
+  lsquare* GetLSquareTrulyUnder() const { return (lsquare*)GetSquareTrulyUnder(); }
   void ImpactDamage(ushort, bool);
   void ReceiveFireDamage(character*, std::string, long);
   bool Teleport();
@@ -82,3 +82,4 @@ class stack
 };
 
 #endif
+

@@ -7,17 +7,17 @@
 
 #define RAW_TYPES	3
 
-#define GLTERRAIN	0
-#define GITEM		1
-#define GCHARACTER	2
+#define GRLTERRAIN	0
+#define GRITEM		1
+#define GRCHARACTER	2
 
 #define GRAPHIC_TYPES	5
 
-#define GHUMAN		0
-#define GWTERRAIN	1
-#define GFOW		2
-#define GCURSOR		3
-#define GSYMBOL		4
+#define GRHUMAN		0
+#define GRWTERRAIN	1
+#define GRFOW		2
+#define GRCURSOR	3
+#define GRSYMBOL	4
 
 #ifdef WIN32
 #include <windows.h>
@@ -88,11 +88,11 @@ class igraph
   static void Init();
 #endif
   static void DeInit();
-  static bitmap* GetWorldMapTerrainGraphic() { return Graphic[GWTERRAIN]; }
-  static bitmap* GetFOWGraphic() { return Graphic[GFOW]; }
-  static bitmap* GetCursorGraphic() { return Graphic[GCURSOR]; }
-  static bitmap* GetHumanGraphic() { return Graphic[GHUMAN]; }
-  static bitmap* GetSymbolGraphic() { return Graphic[GSYMBOL]; }
+  static bitmap* GetWTerrainGraphic() { return Graphic[GRWTERRAIN]; }
+  static bitmap* GetFOWGraphic() { return Graphic[GRFOW]; }
+  static bitmap* GetCursorGraphic() { return Graphic[GRCURSOR]; }
+  static bitmap* GetHumanGraphic() { return Graphic[GRHUMAN]; }
+  static bitmap* GetSymbolGraphic() { return Graphic[GRSYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
   static tile GetTile(graphic_id);

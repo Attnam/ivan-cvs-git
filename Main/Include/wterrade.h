@@ -7,10 +7,10 @@
 
 #include "wterraba.h"
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   ocean,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -24,10 +24,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual std::string ScoreEntry() const { return "drowned"; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   glacier,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -36,10 +36,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 90; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   desert,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -48,10 +48,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 20; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   snow,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -60,10 +60,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 80; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   jungle,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -72,10 +72,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 50; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   swamp,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -84,10 +84,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 40; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   leafyforest,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
   virtual std::string NameStem() const { return "leafy forest"; }
@@ -95,10 +95,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 60; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   evergreenforest,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -108,10 +108,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 70; }
 );
 
-class GROUNDWORLDMAPTERRAIN
+class GWTERRAIN
 (
   steppe,
-  groundworldmapterrain,
+  gwterrain,
   {
   },
  public:
@@ -120,10 +120,10 @@ class GROUNDWORLDMAPTERRAIN
   virtual uchar Priority() const { return 30; }
 );
 
-class OVERWORLDMAPTERRAIN
+class OWTERRAIN
 (
   atmosphere,
-  overworldmapterrain,
+  owterrain,
   {
   },
  public:
@@ -132,10 +132,10 @@ class OVERWORLDMAPTERRAIN
   virtual vector2d GetBitmapPos() const { return vector2d(208, 256); }
 );
 
-class OVERWORLDMAPTERRAIN
+class OWTERRAIN
 (
   attnam,
-  overworldmapterrain,
+  owterrain,
   {
   },
  public:
@@ -144,10 +144,10 @@ class OVERWORLDMAPTERRAIN
   virtual bool GoDown(character*) const;
 );
 
-class OVERWORLDMAPTERRAIN
+class OWTERRAIN
 (
   elpuricave,
-  overworldmapterrain,
+  owterrain,
   {
   },
  public:
@@ -157,3 +157,4 @@ class OVERWORLDMAPTERRAIN
 );
 
 #endif
+

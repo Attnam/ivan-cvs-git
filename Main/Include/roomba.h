@@ -8,16 +8,16 @@
 #include <vector>
 
 #include "vector2d.h"
-#include "typeable.h"
+#include "type.h"
 
 class outputfile;
 class inputfile;
 class character;
-class overlevelterrain;
+class olterrain;
 class item;
-class levelsquare;
+class lsquare;
 
-class room : public typeable
+class room : public type
 {
  public:
   room(bool);
@@ -31,7 +31,7 @@ class room : public typeable
   virtual vector2d GetSize() const { return Size; }
   virtual void SetSize(vector2d What) { Size = What; }
   virtual void HandleInstantiatedCharacter(character*);
-  virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
+  virtual void HandleInstantiatedOLTerrain(olterrain*);
   virtual void SetIndex(uchar What) { Index = What; }
   virtual uchar GetIndex() const { return Index; }
   virtual character* GetMaster() const { return Master; }
@@ -40,12 +40,12 @@ class room : public typeable
   virtual bool DropItem(character*, item*) { return true; }
   virtual uchar GetDivineOwner() const { return DivineOwner; }
   virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
-  virtual void KickSquare(character*, levelsquare*) { }
+  virtual void KickSquare(character*, lsquare*) { }
   virtual bool ConsumeItem(character*, item*) { return true; }
   virtual bool AllowDropGifts() const { return true; }
   virtual bool Drink(character*) const { return true; }
   virtual bool HasDrinkHandler() const { return false; }
-  virtual void TeleportSquare(character*, levelsquare*) { }
+  virtual void TeleportSquare(character*, lsquare*) { }
  protected:
   virtual void SetDefaultStats() = 0;
   std::vector<vector2d> Door;
@@ -85,7 +85,7 @@ name : public base\
  public:\
   name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
   virtual room* Clone() const { return new name; }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
   static ushort StaticType();\
   static const room* const GetPrototype();\
   virtual std::string ClassName() const { return #name; }\
@@ -96,5 +96,6 @@ name : public base\
 }; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
+
 
 

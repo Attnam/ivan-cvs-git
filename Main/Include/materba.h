@@ -32,7 +32,7 @@
 
 #include "typedef.h"
 
-#include "typeable.h"
+#include "type.h"
 #include "proto.h"
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -49,7 +49,7 @@ class entity;
 class outputfile;
 class inputfile;
 
-class material : public typeable
+class material : public type
 {
  public:
   material() : Volume(0), MotherEntity(0) { }
@@ -130,7 +130,7 @@ name : public base\
   name() { }\
   virtual material* Clone(ulong Volume) const { return new name(Volume); }\
   virtual material* Clone() const { return new name; }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
   static ushort StaticType();\
   static const material* const GetPrototype();\
   virtual std::string ClassName() const { return #name; }\
@@ -140,5 +140,6 @@ name : public base\
 }; MATERIAL_PROTOINSTALLER(name, base)
 
 #endif
+
 
 

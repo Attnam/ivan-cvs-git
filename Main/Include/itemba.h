@@ -69,7 +69,7 @@ class item : public object
   virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
   virtual bool ReceiveSound(float, bool, stack*) { return false; }
-  virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
   virtual bool IsMaterialChangeable() const { return true; }
   virtual void ChangeMainMaterial(material*);
   virtual void CheckPickUpEffect(character*) { }
@@ -96,6 +96,8 @@ class item : public object
   virtual bool IsChargable() const { return false; }
   virtual void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
+  virtual ulong GetID() const { return ID; }
+  virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport(stack*);
  protected:
   virtual void SetDefaultStats() = 0;
@@ -103,6 +105,7 @@ class item : public object
   virtual float NPModifier() const { return 1.0f; }
   bool Cannibalised;
   ushort Size;
+  ulong ID;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
@@ -139,7 +142,7 @@ name : public base\
   name(bool = true, bool = true, bool = true);\
   name(material*, bool = true);\
   virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
   static ushort StaticType();\
   static const item* const GetPrototype();\
   virtual std::string ClassName() const { return #name; }\
@@ -159,5 +162,6 @@ name : public base\
 };
 
 #endif
+
 
 

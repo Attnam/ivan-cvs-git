@@ -8,7 +8,7 @@
 
 void highscore::Add(long NewScore, std::string NewEntry)
 {
-  for(uchar c = 0; c < Score.size(); ++c)
+  for(ushort c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
       {
 	Entry.insert(Entry.begin() + c, NewEntry);
@@ -43,7 +43,7 @@ void highscore::Draw() const
 
   ushort Min = 0;
 
-  for(uchar c = 0; c < Score.size(); ++c)
+  for(ushort c = 0; c < Score.size(); ++c)
     {
       if(c - Min == 50)
 	{
@@ -111,3 +111,4 @@ void highscore::Load(std::string File)
   if(HVersion == 110)
     HighScore >> Score >> Entry >> LastAdd;
 }
+

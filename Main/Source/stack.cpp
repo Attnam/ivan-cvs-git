@@ -57,7 +57,7 @@ ushort stack::AddItem(item* ToBeAdded)
   if(GetSquareTrulyUnder())
     {
       if(!game::GetInWilderness())
-	GetLevelSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
+	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
 
       GetSquareTrulyUnder()->SendNewDrawRequest();
       GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
@@ -116,7 +116,7 @@ item* stack::RemoveItem(ushort Index)
       if(GetSquareTrulyUnder())
 	{
 	  if(!game::GetInWilderness())
-	    GetLevelSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
+	    GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
 
 	  GetSquareTrulyUnder()->SendNewDrawRequest();
 	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
@@ -147,7 +147,7 @@ void stack::Clean()
 {
   for(ushort c = 0; c < GetItems(); ++c)
     if(GetItem(c))
-      delete Item[c];
+      Item[c]->SetExists(false);
 
   delete [] Item;
 
@@ -175,7 +175,7 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
     GetSquareUnder()->SetDescriptionChanged(true);
 
   if(Item && GetItems() > Index && GetItem(Index) && MoveTo)
-    if(MoveTo->GetLevelSquareTrulyUnder() == GetLevelSquareTrulyUnder())
+    if(MoveTo->GetLSquareTrulyUnder() == GetLSquareTrulyUnder())
       {
 	ToBeReturned = MoveTo->FastAddItem(GetItem(Index));
 	FastRemoveItem(Index);
@@ -274,7 +274,7 @@ ushort stack::DrawContents(character* Viewer, std::string Topic) const // Draws 
   return ItemNames.Draw(false);
 }
 
-ushort stack::GetEmitation() const // Calculates the biggest light emmision of the levelsquare...
+ushort stack::GetEmitation() const // Calculates the biggest light emmision of the lsquare...
 {
   ushort Emitation = 0;
 
@@ -334,7 +334,7 @@ ushort stack::SearchItem(item* ToBeSearched) const
 
 vector2d stack::GetPos() const
 {
-  return GetLevelSquareUnder()->GetPos();
+  return GetLSquareUnder()->GetPos();
 }
 
 ushort stack::ConsumableItems(character* Eater)
@@ -434,7 +434,7 @@ bool stack::Polymorph()
 void stack::ReceiveSound(float Strength)
 {
   for(int x = 0; x < GetItems(); ++x) // PROBLEM!!! This probably has the same problems as kick... So...
-    GetItem(x)->ReceiveSound(Strength, GetLevelSquareTrulyUnder()->CanBeSeen(), this);
+    GetItem(x)->ReceiveSound(Strength, GetLSquareTrulyUnder()->CanBeSeen(), this);
 }
 
 void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
@@ -504,5 +504,7 @@ bool stack::Teleport()
     {
       GetItem(0)->Teleport(this);
     }
+
   return FoundItems;
 }
+

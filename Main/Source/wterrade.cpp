@@ -2,10 +2,13 @@
 
 #include "proto.h"
 
-std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData;
-std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData;
-std::map<std::string, ushort>		protocontainer<groundworldmapterrain>::CodeNameMap;
-std::map<std::string, ushort>		protocontainer<overworldmapterrain>::CodeNameMap;
+class gwterrain;
+class owterrain;
+
+std::vector<gwterrain*>		protocontainer<gwterrain>::ProtoData;
+std::vector<owterrain*>		protocontainer<owterrain>::ProtoData;
+std::map<std::string, ushort>	protocontainer<gwterrain>::CodeNameMap;
+std::map<std::string, ushort>	protocontainer<owterrain>::CodeNameMap;
 
 #include "wterrade.h"
 
@@ -36,7 +39,7 @@ bool attnam::GoDown(character* Who) const
   game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
-  for(uchar c = 0; c < Temp.size(); ++c)
+  for(ushort c = 0; c < Temp.size(); ++c)
     game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
@@ -73,7 +76,7 @@ bool elpuricave::GoDown(character* Who) const
   game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 
-  for(uchar c = 0; c < Temp.size(); ++c)
+  for(ushort c = 0; c < Temp.size(); ++c)
     game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
   game::GetCurrentLevel()->Luxify();
@@ -91,3 +94,4 @@ bool ocean::GetIsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
+

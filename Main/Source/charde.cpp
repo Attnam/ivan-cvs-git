@@ -2,11 +2,12 @@
 
 #include "proto.h"
 
+class character;
+
 std::vector<character*>			protocontainer<character>::ProtoData;
 std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 
 #include "femath.h"
-#include "materde.h"
 #include "charde.h"
 
 #undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
@@ -19,7 +20,7 @@ std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 #include "lsquare.h"
 #include "message.h"
 #include "hscore.h"
-#include "god.h"
+#include "godba.h"
 #include "feio.h"
 #include "wskill.h"
 #include "felist.h"
@@ -36,7 +37,7 @@ petrus::~petrus()
 
 void humanoid::VirtualConstructor()
 {
-  for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     CategoryWeaponSkill[c] = new gweaponskill(c);
 
   CurrentSingleWeaponSkill = 0;
@@ -44,8 +45,16 @@ void humanoid::VirtualConstructor()
 
 humanoid::~humanoid()
 {
-  for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     delete CategoryWeaponSkill[c];
+
+  /* Do not delete these! */
+
+  GetHead()->SetExists(false);
+  GetRightArm()->SetExists(false);
+  GetLeftArm()->SetExists(false);
+  GetRightLeg()->SetExists(false);
+  GetLeftLeg()->SetExists(false);
 }
 
 void petrus::CreateInitialEquipment()
@@ -123,28 +132,23 @@ bool ennerbeast::Hit(character*)
 
   DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
   {
-    character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
+    character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
     float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
 
     if(Char && Char != this)
       Char->ReceiveSound(Message, RAND() % 26 - RAND() % 26,ScreamStrength);
 
-    game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
+    game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
 
-    for(uchar x = 0; x < 4; ++x)
-      game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
+    for(ushort x = 0; x < 4; ++x)
+      game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
   });
 
   EditStrengthExperience(100);
   EditNP(-100);
 
   return true;
-}
-
-void golem::DrawToTileBuffer() const
-{
-  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void complexhumanoid::DrawToTileBuffer() const
@@ -233,26 +237,26 @@ void skeleton::CreateCorpse()
   ushort Amount = 2 + RAND() % 4;
 
   for(ushort c = 0; c < Amount; ++c)
-    GetLevelSquareUnder()->GetStack()->AddItem(new abone);
+    GetLSquareUnder()->GetStack()->AddItem(new abone);
 }
 
 void elpuri::CreateCorpse()
 {
   character::CreateCorpse();
 
-  GetLevelSquareUnder()->GetStack()->AddItem(new headofelpuri);
+  GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
 }
 
 void petrus::CreateCorpse()
 {
-  GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
+  GetLSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
 }
 
 void ennerbeast::CreateCorpse()
 {
   character::CreateCorpse();
 
-  GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
+  GetLSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 }
 
 bool humanoid::WearArmor()
@@ -296,7 +300,7 @@ void humanoid::Save(outputfile& SaveFile) const
 
   SaveFile << Index << SingleWeaponSkill;
 
-  for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile << GetCategoryWeaponSkill(c);
 }
 
@@ -310,7 +314,7 @@ void humanoid::Load(inputfile& SaveFile)
 
   Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 
-  for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
 
   if(GetWielded())
@@ -338,15 +342,15 @@ void complexhumanoid::Load(inputfile& SaveFile)
 
 float golem::GetMeleeStrength() const
 {
-  return 150 * GetMaterial(0)->GetHitValue();
+  return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
 }
 
 ushort golem::CalculateArmorModifier() const
 {
-  if(((GetMaterial(0)->GetArmorValue() * 3) >> 2) > 90)
+  if(((GetTorso()->GetMaterial(0)->GetArmorValue() * 3) >> 2) > 90)
     return 10;
   else
-    return 100 - ((GetMaterial(0)->GetArmorValue() * 3) >> 2);
+    return 100 - ((GetTorso()->GetMaterial(0)->GetArmorValue() * 3) >> 2);
 }
 
 bool golem::MoveRandomly()
@@ -385,7 +389,7 @@ void petrus::GetAICommand()
   character* Char;
 
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			if((Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()))
+			if((Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter()))
   {
     if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
       {
@@ -438,12 +442,12 @@ bool dog::Catches(item* Thingy, float)
 {
   if(Thingy->DogWillCatchAndConsume())
     {
-      if(ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack()))
+      if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
 	else
 	  {
-	    if(GetLevelSquareUnder()->CanBeSeen())
+	    if(GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
@@ -452,7 +456,7 @@ bool dog::Catches(item* Thingy, float)
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
 	else
-	  if(GetLevelSquareUnder()->CanBeSeen())
+	  if(GetLSquareUnder()->CanBeSeen())
 	    ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
       return true;
@@ -528,7 +532,7 @@ bool humanoid::Hit(character* Enemy)
 	  if(GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
 	    GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
 
-	  if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
+	  if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLSquareUnder()->CanBeSeen(), GetStack()))
 	    SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
 
 	}
@@ -543,7 +547,7 @@ bool humanoid::Hit(character* Enemy)
 
 void humanoid::CharacterSpeciality(ushort Turns)
 {
-  for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     if(GetCategoryWeaponSkill(c)->Turn(Turns) && GetIsPlayer())
       GetCategoryWeaponSkill(c)->AddLevelDownMessage();
 
@@ -576,7 +580,7 @@ bool humanoid::ShowWeaponSkills()
     List.AddDescription("");
     List.AddDescription("Category name                 Level     Points    To next level");
 
-    for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+    for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
       {
 	std::string Buffer;
 
@@ -682,11 +686,11 @@ void petrus::AddHitMessage(character* Enemy, const bool Critical) const
    * which would at present make the message history quite ugly.
    */
 
-  std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? "Petrus" : "something";
-  std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+  std::string ThisDescription = GetLSquareUnder()->CanBeSeen() ? "Petrus" : "something";
+  std::string EnemyDescription = Enemy->GetLSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
 
   if(Enemy->GetIsPlayer())
-    if(GetWielded() && GetLevelSquareUnder()->CanBeSeen())
+    if(GetWielded() && GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s %s you with %s %s!", ThisDescription.c_str(), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
     else
       ADD_MESSAGE("%s %s you!", ThisDescription.c_str(), ThirdPersonMeleeHitVerb(Critical).c_str());
@@ -694,7 +698,7 @@ void petrus::AddHitMessage(character* Enemy, const bool Critical) const
     if(GetIsPlayer())
       ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
     else
-      if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
+      if(GetLSquareUnder()->CanBeSeen() || Enemy->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
 }
 
@@ -838,25 +842,25 @@ void guard::BeTalkedTo(character* Talker)
   switch(RandomizeReply(4, Said))
     {
     case 0:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       else
 	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       break;
     case 1:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       else
 	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       break;
     case 2:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       else
 	ADD_MESSAGE("\"Yes, this is a dangerous place to work, but our boss pays us well.\"");
       break;
     case 3:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
       else
         {
@@ -880,7 +884,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
   switch(RandomizeReply(4, Said))
     {
     case 0:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
       else
 	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
@@ -890,7 +894,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
       ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
       break;
     case 2:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	{
 	  ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 	  ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
@@ -899,7 +903,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	ADD_MESSAGE("\"The topmost reason why I work here is that monsters devour tax collectors.\"");
       break;
     case 3:
-      if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"Don't try anything. The High Priest is a LAN friend of mine.\"");
       else
 	ADD_MESSAGE("\"The monsters don't attack me, because of our mutually profitable contract.\"");
@@ -920,7 +924,7 @@ void priest::BeTalkedTo(character* Talker)
   else
     {
       ADD_MESSAGE("%s talks to you:", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
-      game::GetGod(GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
+      game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
     }
 }
 
@@ -1142,7 +1146,7 @@ void slave::BeTalkedTo(character* Talker)
 
   character* Master;
 
-  if(HomeRoom && (Master = GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
+  if(HomeRoom && (Master = GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
     {
       if(Talker->GetMoney() >= 50)
 	{
@@ -1212,7 +1216,7 @@ void slave::GetAICommand()
   if(FollowLeader())
     return;
 
-  if(!HomeRoom || !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
+  if(!HomeRoom || !GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
     {
       HomeRoom = 0;
       MoveRandomly();
@@ -1223,7 +1227,7 @@ bool elpuri::Hit(character* Enemy)
 {
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
-    levelsquare* Square = GetLevelSquareUnder()->GetLevelUnder()->GetLevelSquare(vector2d(DoX, DoY));
+    lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(vector2d(DoX, DoY));
     character* ByStander = Square->GetCharacter();
 
     if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
@@ -1247,7 +1251,7 @@ bool elpuri::Hit(character* Enemy)
 
     Square->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
 
-    for(uchar c = 0; c < 4; ++c)
+    for(ushort c = 0; c < 4; ++c)
       if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
 	Square->GetSideStack(c)->ImpactDamage(GetStrength(), Square->CanBeSeen());
   });
@@ -1509,10 +1513,10 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 
   if(!game::GetInWilderness()) 
     {
-      game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+      game::GetCurrentLevel()->GetLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 
       if(!(RAND() % 10)) 
-	game::GetCurrentLevel()->GetLevelSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
+	game::GetCurrentLevel()->GetLSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
     }
 }
 
@@ -1798,12 +1802,12 @@ bool largecat::Catches(item* Thingy, float)
 {
   if(Thingy->CatWillCatchAndConsume())
     {
-      if(ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack()))
+      if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
 	else
 	  {
-	    if(GetLevelSquareUnder()->CanBeSeen())
+	    if(GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
@@ -1812,7 +1816,7 @@ bool largecat::Catches(item* Thingy, float)
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
 	else
-	  if(GetLevelSquareUnder()->CanBeSeen())
+	  if(GetLSquareUnder()->CanBeSeen())
 	    ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
       return true;
@@ -1826,7 +1830,7 @@ void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit
 
 void unicorn::RandomizeFleshMaterial()
 {
-  SetAlignment(RAND() % 3);
+  /*SetAlignment(RAND() % 3);
   switch(GetAlignment())
     {
     case GOOD:
@@ -1838,7 +1842,7 @@ void unicorn::RandomizeFleshMaterial()
     default:
       InitMaterials(2, new blackunicornflesh, new unicornhorn);
       return;
-    }
+    }*/
 }
 
 void unicorn::Save(outputfile& SaveFile) const
@@ -1889,12 +1893,12 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 {
   if((RAND() % 3 && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
   {
-    if(GetLevelSquareUnder()->CanBeSeen())
+    if(GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s disappears!", CNAME(DEFINITE));
 
-    Move(GetLevelSquareUnder()->GetLevelUnder()->RandomSquare(this, true), true);
+    Move(GetLSquareUnder()->GetLevelUnder()->RandomSquare(this, true), true);
 
-    if(GetLevelSquareUnder()->CanBeSeen())
+    if(GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("Suddenly %s appears from nothing!", CNAME(INDEFINITE));
 
     return true;
@@ -1914,3 +1918,93 @@ void unicorn::CreateInitialEquipment()
   if(RAND() % 2)
     GetStack()->FastAddItem(new astone);
 }
+
+void humanoid::SetSize(ushort Size)
+{
+  GetHead()->SetSize(18 + RAND() % 5);
+  GetTorso()->SetSize((Size - GetHead()->GetSize()) * 2 / 5);
+  GetTorso()->SetSize((Size - GetHead()->GetSize()) * 3 / 5);
+}
+
+ushort humanoid::GetSize() const
+{
+  return GetHead()->GetSize() + GetTorso()->GetSize() + Max(GetLeftLeg()->GetSize(), GetRightLeg()->GetSize());
+}
+
+ulong humanoid::HeadVolume() const
+{
+  return 1800 + RAND() % 401;
+}
+
+ulong humanoid::TorsoVolume() const
+{
+  return TotalVolume() - HeadVolume() - ArmVolume() * 2 - LegVolume() * 2;
+}
+
+ulong humanoid::ArmVolume() const
+{
+  return (TotalVolume() - HeadVolume()) >> 4;
+}
+
+ulong humanoid::LegVolume() const
+{
+  return (TotalVolume() - HeadVolume()) >> 3;
+}
+
+void humanoid::CreateBodyParts()
+{
+  BodyPart = new bodypart*[BodyParts()];
+  CreateHead();
+  CreateTorso(true);
+  CreateRightArm();
+  CreateLeftArm();
+  CreateRightLeg();
+  CreateLeftLeg();
+}
+
+void humanoid::CreateHead()
+{
+  SetHead(new head(false, false));
+  GetHead()->SetBitmapPos(vector2d(0,0));
+  GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+}
+
+void humanoid::CreateRightArm()
+{
+  SetRightArm(new arm(false, false));
+  GetRightArm()->SetBitmapPos(vector2d(0,0));
+  GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+}
+
+void humanoid::CreateLeftArm()
+{
+  SetLeftArm(new arm(false, false));
+  GetLeftArm()->SetBitmapPos(vector2d(0,0));
+  GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+}
+
+void humanoid::CreateRightLeg()
+{
+  SetRightLeg(new leg(false, false));
+  GetRightLeg()->SetBitmapPos(vector2d(0,0));
+  GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+}
+
+void humanoid::CreateLeftLeg()
+{
+  SetLeftLeg(new leg(false, false));
+  GetLeftLeg()->SetBitmapPos(vector2d(0,0));
+  GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+}
+
+head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
+void humanoid::SetHead(head* What) { SetBodyPart(1, What); }
+arm* humanoid::GetRightArm() const { return (arm*)GetBodyPart(2); }
+void humanoid::SetRightArm(arm* What) { SetBodyPart(2, What); }
+arm* humanoid::GetLeftArm() const { return (arm*)GetBodyPart(3); }
+void humanoid::SetLeftArm(arm* What) { SetBodyPart(3, What); }
+leg* humanoid::GetRightLeg() const { return (leg*)GetBodyPart(4); }
+void humanoid::SetRightLeg(leg* What) { SetBodyPart(4, What); }
+leg* humanoid::GetLeftLeg() const { return (leg*)GetBodyPart(5); }
+void humanoid::SetLeftLeg(leg* What) { SetBodyPart(5, What); }
+

@@ -21,17 +21,17 @@ class character;
 class material;
 class game;
 class object;
-class levelsquare;
+class lsquare;
 class square;
 class outputfile;
 class inputfile;
 
-/* Presentation of the levelterrain class & subclasses */
+/* Presentation of the lterrain class & subclasses */
 
-class levelterrain : public object
+class lterrain : public object
 {
  public:
-  levelterrain(bool AddToPool) : object(AddToPool, false) { }
+  lterrain(bool AddToPool) : object(AddToPool, false) { }
   virtual void Load(inputfile&);
   virtual bool Open(character* Opener);
   virtual bool Close(character* Closer);
@@ -45,7 +45,7 @@ class levelterrain : public object
   virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   virtual void HandleVisualEffects();
   virtual void Save(outputfile&) const;
-  virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
+  virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
@@ -56,28 +56,28 @@ class levelterrain : public object
   uchar VisualFlags;
 };
 
-class groundlevelterrain : public levelterrain, public groundterrain
+class glterrain : public lterrain, public gterrain
 {
  public:
-  groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) { }
+  glterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
-  virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
-  virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+  virtual glterrain* Clone(bool = true, bool = true) const = 0;
+  virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
 };
 
-class overlevelterrain : public levelterrain, public overterrain
+class olterrain : public lterrain, public oterrain
 {
  public:
-  overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) { }
+  olterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
   virtual uchar GetOwnerGod() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
-  virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
-  virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+  virtual olterrain* Clone(bool = true, bool = true) const = 0;
+  virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual void Kick(ushort, bool, uchar) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
@@ -89,7 +89,7 @@ class overlevelterrain : public levelterrain, public overterrain
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
+#define LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
   \
   static class name##_protoinstaller\
   {\
@@ -109,11 +109,11 @@ class overlevelterrain : public levelterrain, public overterrain
 
 #else
 
-#define LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
+#define LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
 
 #endif
 
-#define LEVELTERRAIN(name, base, protobase, initmaterials, setstats, data)\
+#define LTERRAIN(name, base, protobase, initmaterials, setstats, data)\
 \
 name : public base\
 {\
@@ -127,34 +127,35 @@ name : public base\
   virtual void SetDefaultStats();\
   virtual ushort Type() const;\
   data\
-}; LEVELTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
+}; LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
 
-#define GROUNDLEVELTERRAIN(name, base, initmaterials, setstats, data)\
+#define GLTERRAIN(name, base, initmaterials, setstats, data)\
 \
-LEVELTERRAIN(\
+LTERRAIN(\
   name,\
   base,\
-  groundlevelterrain,\
+  glterrain,\
   initmaterials,\
   setstats,\
-  virtual groundlevelterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { groundlevelterrain* G = new name(false, false); G->Load(SaveFile); return G; }\
+  virtual glterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { glterrain* G = new name(false, false); G->Load(SaveFile); return G; }\
   data\
 );
 
-#define OVERLEVELTERRAIN(name, base, initmaterials, setstats, data)\
+#define OLTERRAIN(name, base, initmaterials, setstats, data)\
 \
-LEVELTERRAIN(\
+LTERRAIN(\
   name,\
   base,\
-  overlevelterrain,\
+  olterrain,\
   initmaterials,\
   setstats,\
-  virtual overlevelterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { overlevelterrain* O = new name(false, false); O->Load(SaveFile); return O; }\
+  virtual olterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+  virtual type* CloneAndLoad(inputfile& SaveFile) const { olterrain* O = new name(false, false); O->Load(SaveFile); return O; }\
   data\
 );
 
 #endif
+
 
 

@@ -14,8 +14,8 @@ class area;
 class material;
 class bitmap;
 class character;
-class groundterrain;
-class overterrain;
+class gterrain;
+class oterrain;
 class outputfile;
 class inputfile;
 class squarescript;
@@ -41,8 +41,8 @@ class square
   virtual void SetLastSeen(ulong);
   virtual ushort GetPopulation() const { if(Character) return 1; else return 0; }
   virtual area* GetAreaUnder() const { return AreaUnder; }
-  virtual groundterrain* GetGroundTerrain() const = 0;
-  virtual overterrain* GetOverTerrain() const = 0;
+  virtual gterrain* GetGTerrain() const = 0;
+  virtual oterrain* GetOTerrain() const = 0;
   virtual std::string GetMemorizedDescription() { return MemorizedDescription; }
   virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
   virtual void UpdateMemorizedDescription(bool = false) = 0;

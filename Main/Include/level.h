@@ -15,7 +15,7 @@
 #include "area.h"
 #include "roomba.h"
 
-class levelsquare;
+class lsquare;
 class character;
 class area;
 class bitmap;
@@ -36,8 +36,8 @@ class level : public area
   virtual vector2d RandomSquare(character*, bool, bool = false) const;
   virtual void FastAddCharacter(vector2d, character*);
   virtual void HandleCharacters();
-  virtual levelsquare* GetLevelSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
-  virtual levelsquare* GetLevelSquare(ushort x, ushort y) const { return Map[x][y]; }
+  virtual lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
+  virtual lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }
   virtual void GenerateTunnel(vector2d, vector2d, bool);
   virtual void ExpandPossibleRoute(vector2d, vector2d, bool);
   virtual void ExpandStillPossibleRoute(vector2d, vector2d, bool);
@@ -72,9 +72,9 @@ class level : public area
   virtual void AddRoom(room*);
   virtual void Explosion(character*, std::string, vector2d, ushort, bool = true);
   virtual bool CollectCreatures(std::vector<character*>&, character*, bool);
-  virtual void ApplyLevelSquareScript(squarescript*);
+  virtual void ApplyLSquareScript(squarescript*);
  protected:
-  levelsquare*** Map;
+  lsquare*** Map;
   levelscript* LevelScript;
   std::string LevelMessage;
   dynarray<vector2d, uchar> KeyPoint, Door;

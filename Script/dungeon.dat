@@ -115,7 +115,7 @@ Dungeon 0;
 			Square, Pos 2,2;
 			{
 				IsWorldMapEntry=true;
-				OverTerrain=stairsup;
+				OTerrain=stairsup;
 			}
 
 			Square, Pos 3,1;
@@ -310,7 +310,7 @@ Dungeon 0;
 
 			Square, Pos 3,3;
 			{
-				OverTerrain=iron stairsdown;
+				OTerrain=iron stairsdown;
 			}
 
 			Square, Pos 3,5;
@@ -345,7 +345,7 @@ Dungeon 0;
 
 			Square, Pos 3,1;
 			{
-				OverTerrain = iron altar;
+				OTerrain = iron altar;
 			}
 
 			Square, Pos 3,3;
@@ -355,7 +355,7 @@ Dungeon 0;
 
 			Square, Pos 3,5;
 			{
-				OverTerrain=iron stairsup;
+				OTerrain=iron stairsup;
 			}
 
 			CharacterMap
@@ -421,13 +421,13 @@ Dungeon 1;
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			OverTerrain=pine;
+			OTerrain=pine;
 			Times=50;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			OverTerrain=spruce;
+			OTerrain=spruce;
 			Times=200;
 		}
 
@@ -475,20 +475,20 @@ Dungeon 1;
 			
 			Square, Pos 19, 41;
 			{
-				OverTerrain = empty;
+				OTerrain = empty;
 			}
 
 			Square, Pos 20, 41;
 			{
-				OverTerrain = empty;
+				OTerrain = empty;
 			}
 
 			Square, Pos 21, 41;
 			{
-				OverTerrain = empty;
+				OTerrain = empty;
 			}
 			
-			GroundTerrainMap
+			GTerrainMap
 			{
 				Pos=4,4;
 				Size=33,34;
@@ -496,7 +496,7 @@ Dungeon 1;
 				{
 					# = marble floor;
 					- = marble floor;
-					o = pool;
+					~ = pool;
 				}
 			}
 			{
@@ -520,13 +520,13 @@ Dungeon 1;
 				. . . . . . # # # - # - - - - - - - - - - - # - # # # . . . . . .
 				. . # # # # # - # - # - - - - - - - - - - - # - # - # # # # # . .
 				. # # - - - - - - - # - - - - - - - - - - - # - - - - - - - # # .
-				. # - - - o o o # - # - - - - - - - - - - - # - # - - - - - - # .
-				. # - - - o o o # - # - - - - - - - - - - - # - # - - - - - - # .
-				. # # - - o o o # - # - - - - - - - - - - - # - # - - - - - # # .
-				. . # # - o o o # - # - - - - - - - - - - - # - # - - - - # # . .
-				. . . # # o o o # - # # # # # # - # # # # # # - # - - - # # . . .
-				. . . . # o o o # - - - - - - - - - - - - - - - # - - - # . . . .
-				. . . . # o o o # - - - - - - - - - - - - - - - # - - - # . . . .
+				. # - - - ~ ~ ~ # - # - - - - - - - - - - - # - # - - - - - - # .
+				. # - - - ~ ~ ~ # - # - - - - - - - - - - - # - # - - - - - - # .
+				. # # - - ~ ~ ~ # - # - - - - - - - - - - - # - # - - - - - # # .
+				. . # # - ~ ~ ~ # - # - - - - - - - - - - - # - # - - - - # # . .
+				. . . # # ~ ~ ~ # - # # # # # # - # # # # # # - # - - - # # . . .
+				. . . . # ~ ~ ~ # - - - - - - - - - - - - - - - # - - - # . . . .
+				. . . . # ~ ~ ~ # - - - - - - - - - - - - - - - # - - - # . . . .
 				. . . # # # # # # # - - - # # # - # # # - - - # # # # # # # . . .
 				# # # # - - - - - - - - - # . . . . . # - - - - - - - - - # # # #
 				# - - - - - - - - # # # # # . . . . . # # # # # - - - - - - - - #
@@ -536,7 +536,7 @@ Dungeon 1;
 				. . # # # # . . . . . . . . . . . . . . . . . . . . . # # # # . .
 			}
 
-			OverTerrainMap
+			OTerrainMap
 			{
 				Pos=1,1;
 				Size=39,40;
@@ -743,8 +743,8 @@ Dungeon 1;
 			
 			Square, Pos 3, 4;
 			{
-				GroundTerrain = parquet;
-				OverTerrain = door;
+				GTerrain = parquet;
+				OTerrain = door;
 			}
 
 			Square, Pos 1, 1;
@@ -795,13 +795,13 @@ Dungeon 1;
 
 			Square, Pos 2, 0;
 			{
-				GroundTerrain = parquet;
-				OverTerrain = gold door;
+				GTerrain = parquet;
+				OTerrain = gold door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OverTerrain = gold altar;
+				OTerrain = gold altar;
 			}
 
 			Square, Pos 2, 3;
@@ -821,13 +821,13 @@ Dungeon 1;
 
 			Square, Pos 4, 2;
 			{
-				GroundTerrain = parquet;
-				OverTerrain = marble door;
+				GTerrain = parquet;
+				OTerrain = marble door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OverTerrain = marble altar;
+				OTerrain = marble altar;
 			}
 
 			Square, Pos 1, 2;
@@ -847,13 +847,13 @@ Dungeon 1;
 
 			Square, Pos 0, 2;
 			{
-				GroundTerrain = parquet;
-				OverTerrain = bananaflesh door;
+				GTerrain = parquet;
+				OTerrain = bananaflesh door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OverTerrain = bananaflesh altar;
+				OTerrain = bananaflesh altar;
 			}
 
 			Square, Pos 3, 2;
@@ -873,13 +873,13 @@ Dungeon 1;
 
 			Square, Pos 2, 4;
 			{
-				GroundTerrain = parquet;
-				OverTerrain = parchment door;
+				GTerrain = parquet;
+				OTerrain = parchment door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OverTerrain = parchment altar;
+				OTerrain = parchment altar;
 			}
 
 			Square, Pos 2, 1;

@@ -2,6 +2,8 @@
 
 #include "proto.h"
 
+class item;
+
 std::vector<item*>			protocontainer<item>::ProtoData;
 std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 
@@ -19,7 +21,7 @@ std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 #include "lsquare.h"
 #include "lterraba.h"
 #include "config.h"
-#include "god.h"
+#include "godba.h"
 #include "strover.h"
 #include "whandler.h"
 
@@ -42,7 +44,7 @@ item* can::TryToOpen(character* Opener, stack* Stack)
 	  ushort Index = Opener->GetStack()->SearchItem(this);
 
 	  if(Index != 0xFFFF)
-	    Opener->GetStack()->MoveItem(Index, Opener->GetLevelSquareUnder()->GetStack());
+	    Opener->GetStack()->MoveItem(Index, Opener->GetLSquareUnder()->GetStack());
 	}
 
       return Item;
@@ -74,7 +76,7 @@ bool banana::Consume(character* Eater, float Amount)
       PreserveMaterial(0);
 
       if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
-	Eater->GetLevelSquareUnder()->GetStack()->AddItem(Peals);
+	Eater->GetLSquareUnder()->GetStack()->AddItem(Peals);
       else
 	Eater->GetStack()->AddItem(Peals);
     }
@@ -103,7 +105,7 @@ bool potion::Consume(character* Eater, float Amount)
       ushort Index = Eater->GetStack()->SearchItem(this);
 
       if(Index != 0xFFFF)
-	Eater->GetStack()->MoveItem(Index, Eater->GetLevelSquareUnder()->GetStack());
+	Eater->GetStack()->MoveItem(Index, Eater->GetLSquareUnder()->GetStack());
     }
 
   if(GetSquareUnder())
@@ -114,7 +116,7 @@ bool potion::Consume(character* Eater, float Amount)
 	GetSquareUnder()->UpdateMemorizedDescription();
 
       if(!game::GetInWilderness())
-	GetLevelSquareUnder()->SignalEmitationDecrease(Emit);
+	GetLSquareUnder()->SignalEmitationDecrease(Emit);
 
       GetSquareUnder()->SendNewDrawRequest();
       GetSquareUnder()->SendMemorizedUpdateRequest();
@@ -126,9 +128,9 @@ bool potion::Consume(character* Eater, float Amount)
   return false;
 }
 
-void lantern::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
+void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition) const
 {
-  switch(LevelSquarePosition)
+  switch(LSquarePosition)
     {
     case CENTER:
     case DOWN:
@@ -155,20 +157,20 @@ bool scrollofcreatemonster::Read(character* Reader)
 {
   vector2d TryToCreate;
 
-  for(uchar c = 0; c < 100; ++c)
+  for(ushort c = 0; c < 100; ++c)
     {
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
       character* Monster = protosystem::CreateMonster();
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Monster) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Monster) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Monster);
+	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Monster);
 
 	  if(Reader->GetIsPlayer())
 	    ADD_MESSAGE("As you read the scroll a monster appears.");
 	  else
-	    if(Reader->GetLevelSquareUnder()->CanBeSeen())
+	    if(Reader->GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
 	  return true;
@@ -186,7 +188,7 @@ bool scrollofteleport::Read(character* Reader)
   if(Reader->GetIsPlayer())
     ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
   else
-    if(Reader->GetLevelSquareUnder()->CanBeSeen())
+    if(Reader->GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
   Reader->Teleport();
@@ -197,7 +199,7 @@ void lump::ReceiveHitEffect(character* Enemy, character*)
 {
   if(RAND() % 2)
     {
-      if(Enemy->GetLevelSquareUnder()->CanBeSeen())
+      if(Enemy->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
 
       GetMaterial(0)->HitEffect(Enemy);
@@ -211,7 +213,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
       if(Enemy->GetIsPlayer())
 	ADD_MESSAGE("The %s reacts with you!", GetMaterial(2)->CNAME(UNARTICLED));
       else
-	if(Enemy->GetLevelSquareUnder()->CanBeSeen())
+	if(Enemy->GetLSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("The %s reacts with %s.", GetMaterial(2)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
 
       GetMaterial(2)->HitEffect(Enemy);
@@ -233,7 +235,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
   item* Remains = new brokenbottle(false);
   if(GetMaterial(1)) 
-    GetLevelSquareUnder()->SpillFluid(5, GetMaterial(1)->GetColor());
+    GetLSquareUnder()->SpillFluid(5, GetMaterial(1)->GetColor());
   Remains->InitMaterials(GetMaterial(0));
   SetMaterial(0,0);
   ItemStack->AddItem(Remains);
@@ -267,10 +269,10 @@ bool pickaxe::Apply(character* User, stack*)
 	
   if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
     {
-      levelsquare* Square = game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp);
+      lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
       if(Square->CanBeDigged(User, this))
-	if(Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
+	if(Square->GetOLTerrain()->GetMaterial(0)->CanBeDigged())
 	  {
 	    User->SetSquareBeingDigged(User->GetPos() + Temp);
 	    User->SetOldWieldedItem(User->GetWielded());
@@ -280,9 +282,9 @@ bool pickaxe::Apply(character* User, stack*)
 	    return true;
 	  }
 	else
-	  ADD_MESSAGE("%s is too hard to dig.", Square->GetOverLevelTerrain()->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s is too hard to dig.", Square->GetOLTerrain()->CNAME(DEFINITE));
       else
-	ADD_MESSAGE(Square->GetOverLevelTerrain()->DigMessage().c_str());
+	ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
     }
 
   return false;
@@ -332,7 +334,7 @@ bool wand::Apply(character* Terrorist, stack* MotherStack)
   if(Terrorist->GetIsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CNAME(DEFINITE));
   else
-    if(Terrorist->GetLevelSquareUnder()->CanBeSeen())
+    if(Terrorist->GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CNAME(DEFINITE), CNAME(INDEFINITE));
 
   MotherStack->RemoveItem(MotherStack->SearchItem(this));
@@ -345,7 +347,7 @@ bool wand::Apply(character* Terrorist, stack* MotherStack)
   else
     DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
 
-  Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLevelSquareUnder()->GetPos(), 40);
+  Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
   return true;
 }
 
@@ -569,7 +571,7 @@ void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 {
   if(!Index)
     {
-      for(uchar c = 1; c < 4 && c < Material.size(); ++c)
+      for(ushort c = 1; c < 4 && c < Material.size(); ++c)
 	if(!Material[c])
 	  GraphicId.Color[c] = GraphicId.Color[0];
     }
@@ -673,7 +675,7 @@ bool backpack::Apply(character* Terrorist, stack* MotherStack)
       if(Terrorist->GetIsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CNAME(UNARTICLED));
       else
-	if(Terrorist->GetLevelSquareUnder()->CanBeSeen())
+	if(Terrorist->GetLSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CNAME(DEFINITE), CNAME(INDEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
@@ -686,7 +688,7 @@ bool backpack::Apply(character* Terrorist, stack* MotherStack)
       else
 	DeathMsg = std::string("kamikazed by ") + Terrorist->Name(INDEFINITE);
 
-      Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else
@@ -743,12 +745,12 @@ bool wand::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* Mot
 {
   if(!(RAND() % 10))
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire and explodes!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 40);
       return true;
     }
   else
@@ -759,12 +761,12 @@ bool backpack::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack*
 {
   if(!(RAND() % 3))
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes in the heat!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else
@@ -785,7 +787,7 @@ bool scroll::ReceiveFireDamage(character*, std::string, stack* MotherStack, long
 {
   if(!(RAND() % 10) && GetMaterial(0)->IsFlammable())
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
@@ -806,9 +808,9 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
 	if(!game::GetCurrentLevel()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
 	  break;
 
-	levelsquare* CurrentSquare = game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction));
+	lsquare* CurrentSquare = game::GetCurrentLevel()->GetLSquare(CurrentPos + game::GetMoveVector(Direction));
 
-	if(!(CurrentSquare->GetOverLevelTerrain()->GetIsWalkable()))
+	if(!(CurrentSquare->GetOLTerrain()->GetIsWalkable()))
 	  {
 	    BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
 	    break;
@@ -825,7 +827,7 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
       }
   else
     {
-      levelsquare* Where = Zapper->GetLevelSquareUnder();
+      lsquare* Where = Zapper->GetLSquareUnder();
       BeamEffect(Zapper, DeathMsg, Direction, Where);
 
       if(Where->CanBeSeen(true))
@@ -833,13 +835,13 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
     }
 }
 
-bool wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, levelsquare* LevelSquare)
+bool wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
 {
-  LevelSquare->PolymorphEverything(Zapper);
+  LSquare->PolymorphEverything(Zapper);
   return false;
 }
 
-bool wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+bool wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
 { 
   Where->StrikeEverything(Who, DeathMsg, Dir); 
   return false;
@@ -849,7 +851,7 @@ bool holybook::ReceiveFireDamage(character*, std::string, stack* MotherStack, lo
 {
   if(!(RAND() % 2) && GetMaterial(0)->IsFlammable())
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
@@ -864,12 +866,12 @@ bool wand::StruckByWandOfStriking(character* Striker, std::string DeathMsg, stac
 { 
   if(!(RAND() % 10))
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 40);
       return true;
     }
   else
@@ -880,12 +882,12 @@ bool backpack::StruckByWandOfStriking(character* Striker, std::string DeathMsg, 
 { 
   if(RAND() % 3)
     {
-      if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s explodes!", CNAME(DEFINITE));
 
       MotherStack->RemoveItem(MotherStack->SearchItem(this));
       SetExists(false);
-      MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
       return true;
     }
   else
@@ -924,9 +926,9 @@ bool oillamp::Apply(character* Applier, stack*)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Genie) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Genie) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	    {
-	      game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Genie);
+	      game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
 	      SetInhabitedByGenie(false);
 	      break;
@@ -1147,9 +1149,9 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
 { 
-  if(!Where->GetOverTerrain()->GetIsWalkable() || Where->GetCharacter())
+  if(!Where->GetOTerrain()->GetIsWalkable() || Where->GetCharacter())
     {
       Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 1 + RAND() % 40);
       return true;
@@ -1166,7 +1168,7 @@ bool scrolloftaming::Read(character* Reader)
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
       if(game::IsValidPos(Test))
 	{
-	  character* CharacterInSquare = game::GetCurrentLevel()->GetLevelSquare(Test)->GetCharacter();
+	  character* CharacterInSquare = game::GetCurrentLevel()->GetLSquare(Test)->GetCharacter();
 	  if(CharacterInSquare && CharacterInSquare->Charmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
 	    CharactersNearBy.push_back(CharacterInSquare);
 	}
@@ -1187,6 +1189,30 @@ bool scrolloftaming::Read(character* Reader)
   return true;
 }
 
+void bodypart::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << BitmapPos;
+}
+
+void bodypart::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> BitmapPos;
+}
+
+void torso::Save(outputfile& SaveFile) const
+{
+  bodypart::Save(SaveFile);
+  SaveFile << GraphicsContainerIndex;
+}
+
+void torso::Load(inputfile& SaveFile)
+{
+  bodypart::Load(SaveFile);
+  SaveFile >> GraphicsContainerIndex;
+}
+
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
 {
   if(GetCharges() <= GetTimesUsed())
@@ -1202,8 +1228,7 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-
-bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
 { 
   Where->TeleportEverything(Who);
   return false;

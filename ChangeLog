@@ -1,3 +1,239 @@
+March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Unit class added
+	  * This class holds materials. It is derived from entity and is base for object and fluid.
+	  * Modified files:
+	    * object.cpp
+	    * object.h
+	    * fluid.cpp
+	    * fluid.h
+	    * entity.cpp
+	      * see unit.cpp
+	    * entity.h
+	      * see unit.h
+	  * Added files:
+	    * unit.cpp
+	      * unit::unit(bool AddToPool, bool HasBe) added
+	      * unit::~unit() added
+	      * void unit::Save(outputfile& SaveFile) const added
+	      * void unit::Load(inputfile& SaveFile) added
+	      * ushort unit::GetEmitation() const moved here from entity.cpp
+	      * void unit::PreserveMaterial(ushort Index) moved here from entity.cpp
+	      * material* unit::GetMaterial(ushort Index) const moved here from entity.cpp
+	      * ushort unit::GetMaterials() const moved here from entity.cpp
+	    * unit.h
+	      * material* unit::GetMaterial(ushort) const moved here from entity.h
+	      * ushort unit::GetEmitation() const moved here from entity.h
+	      * ushort unit::GetMaterials() const moved here from entity.h
+	      * bitmap* unit::GetPicture() const moved here from entity.h
+	      * void unit::PreserveMaterial(ushort) moved here from entity.h
+	* Bodyparts added
+	  * These are stored as an array of items in character, although they can't be severed yet :(
+	  * Character is not a unit and so contains materials no more; use bodypart materials from here on.
+	  * Modified files:
+	    * itemde.cpp
+	      * void bodypart::Save(outputfile& SaveFile) const added
+	      * void bodypart::Load(inputfile& SaveFile) added
+	      * void torso::Save(outputfile& SaveFile) const added
+	      * void torso::Load(inputfile& SaveFile) added
+	    * itemde.h
+	      * bodypart abstract class added
+	      * head class changed to bodypart child
+	      * torso class added
+	      * arm class added
+	      * leg class added
+	    * charba.cpp
+	      * void character::CreateBodyParts() added
+	      * material* character::CreateTorsoBone(ulong Volume) const added
+	      * void character::SetSize(ushort Size) added (this sets torso size)
+	      * ushort character::GetSize() const added
+	      * void character::CreateTorso(bool Humanoid) added
+	      * torso* character::GetTorso() const added
+	      * void character::SetTorso(torso* What) added
+	      * void character::SetMaterial(uchar Index, material* NewMaterial) added (this sets bodypart materials)
+	    * charba.h
+	      * see charba.cpp
+	      * character's base class changed to type + entity
+	      * bodypart* GetBodyPart(ushort Index) const added
+	      * void SetBodyPart(ushort Index, bodypart* What) added
+	      * uchar TorsoBonePercentile() const added
+	      * ulong TorsoVolume() const added
+	      * material* CreateTorsoFlesh(ulong) const = 0 added
+	      * ulong TotalVolume() const = 0 added (used by create functions to calculate bodypart volumes)
+	      * uchar BodyParts() const added
+	      * vector2d GetBitmapPos() const = 0 temporarily added
+	      * macro modifications, see charde.h
+	    * charde.cpp
+	      * void humanoid::SetSize(ushort Size) added (this sets bodypart sizes)
+	      * ushort humanoid::GetSize() const added (this calculates humanoid size based on bodypart sizes)
+	      * ulong humanoid::HeadVolume() const added (this and following are used only during construction)
+	      * ulong humanoid::TorsoVolume() const added
+	      * ulong humanoid::ArmVolume() const added
+	      * ulong humanoid::LegVolume() const added
+	      * void humanoid::CreateBodyParts() added
+	      * void humanoid::CreateHead() added
+	      * void humanoid::CreateRightArm() added
+	      * void humanoid::CreateLeftArm() added
+	      * void humanoid::CreateRightLeg() added
+	      * void humanoid::CreateLeftLeg() added
+	      * head* humanoid::GetHead() const added
+	      * void humanoid::SetHead(head* What) added
+	      * arm* humanoid::GetRightArm() const added
+	      * void humanoid::SetRightArm(arm* What) added
+	      * arm* humanoid::GetLeftArm() const added
+	      * void humanoid::SetLeftArm(arm* What) added
+	      * leg* humanoid::GetRightLeg() const added
+	      * void humanoid::SetRightLeg(leg* What) added
+	      * leg* humanoid::GetLeftLeg() added
+	      * void humanoid::SetLeftLeg(leg* What) added
+	    * charde.h
+	      * see charde.cpp
+	      * material* humanoid::CreateHeadFlesh(ulong Volume) const added
+	      * material* humanoid::CreateHeadBone(ulong Volume) const added
+	      * material* humanoid::CreateRightArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateRightArmBone(ulong Volume) const added
+	      * material* humanoid::CreateLeftArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLeftArmBone(ulong Volume) const added
+	      * material* humanoid::CreateArmFlesh(ulong Volume) const added
+	      * material* humanoid::CreateArmBone(ulong Volume) const added
+	      * material* humanoid::CreateRightLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateRightLegBone(ulong Volume) const added
+	      * material* humanoid::CreateLeftLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLeftLegBone(ulong Volume) const added
+	      * material* humanoid::CreateLegFlesh(ulong Volume) const added
+	      * material* humanoid::CreateLegBone(ulong Volume) const added
+	      * material* humanoid::CreateTorsoFlesh(ulong Volume) const added
+	      * uchar humanoid::HeadBonePercentile() const added
+	      * uchar humanoid::TorsoBonePercentile() const added
+	      * uchar humanoid::RightArmBonePercentile() const added
+	      * uchar humanoid::LeftArmBonePercentile() const added
+	      * uchar humanoid::ArmBonePercentile() const added
+	      * uchar humanoid::RightLegBonePercentile() const added
+	      * uchar humanoid::LeftLegBonePercentile() const added
+	      * uchar humanoid::LegBonePercentile() const added
+	      * ulong humanoid::RightArmVolume() const added
+	      * ulong humanoid::LeftArmVolume() const added
+	      * ulong humanoid::RightLegVolume() const added
+	      * ulong humanoid::LeftLegVolume() const added
+	      * uchar humanoid::BodyParts() const added
+	      * nearly infinite amount of ulong xxx::GetDefaultVolume(ushort Index) consts removed
+	      * equally many respective ulong xxx:TotalVolume() consts added
+	      * InitMaterials line removed from macro and class definitions
+	      * nearly infinite amound of material* xxx::CreateTorsoFlesh(ulong Volume) consts added
+	* Gods prototyped
+	  * They now are derived from type and use the same macro system as characters, items etc.
+	  * Modified files:
+	    * game.cpp
+	      * void game::CreateGods() added
+	    * game.h
+	      * void game::SetGodNumber(uchar What) removed
+	      * uchar game::GetGodNumber() removed
+	      * uchar game::GetGods() added (note: this returns former GetGodNumber() + 1)
+	  * Removed files:
+	    * god.cpp
+	    * god.h
+	  * Added files:
+	    * godba.cpp
+	    * godba.h
+	      * these files are reserved for base god layer routines
+	    * godde.cpp
+	    * godde.h
+	      * these files are reserved for derived gods' routines
+	* Routine transportation
+	  * Some name routines moved temporarily from object to entity to make them available to the non-object character class
+	  * Routines:
+	    * std::string Name(uchar Case) const
+	    * std::string GetNameSingular() const
+	    * std::string GetNamePlural() const
+	    * std::string NameSingular() const
+	    * std::string NamePlural() const
+	    * std::string object::NameNormal(uchar Case, std::string Article, std::string Adjective) const
+	    * std::string object::NameProperNoun(uchar Case) const
+	  * Modified files:
+	    * object.cpp
+	    * object.h
+	    * entity.cpp
+	    * entity.h
+	* Name changes
+	  * Modifications:
+	    * typeable -> type
+	    * levelsquare -> lsquare
+	    * worldmapsquare -> wsquare
+	    * groundterrain -> gterrain
+	    * overterrain -> oterrain
+	    * levelterrain -> lterrain
+	    * worldmapterrain -> wterrain
+	    * groundlevelterrain -> glterrain
+	    * overlevelterrain -> olterrain
+	    * groundworldmapterrain -> gwterrain
+	    * overworldmapterrain -> owterrain
+	    * partially capitalized and fully capitalized versions of the preceding
+	    * changed igraph.h's graphics file #define prefixes from G to GR (e.g. GLTERRAIN -> GRLTERRAIN)
+	  * Modified files:
+	    * wterraba.cpp
+	    * wterraba.h
+	    * wterrade.cpp
+	    * wterrade.h
+	    * wsquare.cpp
+	    * wsquare.h
+	    * worldmap.cpp
+	    * worldmap.h
+	    * terra.cpp
+	    * terra.h
+	    * stack.cpp
+	    * stack.h
+	    * square.cpp
+	    * square.h
+	    * script.cpp
+	    * script.h
+	    * roomba.cpp
+	    * roomba.h
+	    * roomde.cpp
+	    * roomde.h
+	    * materba.cpp
+	    * materba.h
+	    * materde.cpp
+	    * lterraba.cpp
+	    * lterraba.h
+	    * lterrade.cpp
+	    * lterrade.h
+	    * level.cpp
+	    * level.h
+	    * itemba.cpp
+	    * itemba.h
+	    * itemde.cpp
+	    * itemde.h
+	    * igraph.h
+	    * game.cpp
+	    * entity.cpp
+	    * entity.h
+	    * cont.cpp
+	    * cont.h
+	    * charba.cpp
+	    * charba.h
+	    * charde.cpp
+	    * dungeon.dat
+	  * Removed files:
+	    * typeable.cpp
+	    * typeable.h
+	  * Added files:
+	    * type.cpp
+	    * type.h
+	* EntityID removed and ItemID added. Names changed everywhere.
+	  * Modified files:
+	    * itemba.h
+	    * itemba.cpp
+	    * game.h
+	    * game.cpp
+	    * entity.h
+	    * entity.cpp
+	* itemde.h: Genie possibility increased
+	* fluid.cpp: Fluid degeneration rate is now lower
+	* Symbol.pcx: mounted symbol added by Kahvi
+	* LTerrain.pcx: stunt trees added by Kahvi
+	* Human.pcx: Cossack added by Kahvi and mistress teared apart by Kahvi
+	* Char.pcx: raven, lion, carnivorous plant, bison, horse and dragon added by Kahvi
+
 Sunday, March 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Main/Include/itemba.h: Teleport(stack*) function added
@@ -12,8 +248,6 @@ Sunday, March 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Source/lsquare.cpp: Added TeleportEverything
 	* Main/Source/roomde.cpp: TeleportSquare function added to catedral and shop
 	* Main/Source/stack.cpp: Teleport function added
-	
-
 
 Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

@@ -18,7 +18,7 @@ Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia
 Kloonaus.
 Size of player increases from eating.
 How can you change the window to the rigth size? (stickiness)
-*Banana peals should be slippery.
+/*Banana peals should be slippery.
 Weapons should break.
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
@@ -26,7 +26,7 @@ Blindness of pets.
 Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
-You must be able to open door by throwing items.
+/You must be able to open door by throwing items.
 One should be able to summon tame Bill's Wills from Windoze keys in WMode.
 Teleport disabling.
 Teleport should bounce back from valpurium.
@@ -46,59 +46,59 @@ Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
-You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
-Script should have an initial blood level of square option.
-Balancing offervalues.
-Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
+*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
+*Script should have an initial blood level of square option.
+*Balancing offervalues.
+*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
 Donkey should be named "an ass".
 Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
-Cube-like screenshot system.
+*Cube-like screenshot system.
 Atavus should do something special on Christmas.
-A graphical equipment screen.
+A graphical equipment screen. (from JM)
 Gurus.
 Meditation command.
-Opening a banana should remove its peals.
-Specialities to daemon flesh.
-Pressing X while in WMode should give more scrolls of wishing.
+*Opening a banana should remove its peals.
+*Specialities to daemon flesh.
+/*Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
-Random item option to script.
-As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit.
-Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.
+*Random item option to script.
+As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
+Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
 Punishment of cathedral terrain destruction.
-Ivan should break doors.
+/*Ivan should break doors.
 Monsters that change colors.
 Drugs.
 Karateka.
-Change material tweaking.
+Chance-value correlation to change material scrolls.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
-WMap terrain height should be shown in WMode.
+*WMap terrain height should be shown in WMode.
 Special "enemy sighted" rections.
 Vampires should be able to polymorph into a bat.
-Kicking a throne should yield precious stones.
-Weapon skills should affect attack AP costs as in ADOM.
+Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
+*Weapon skills should affect attack AP costs as in ADOM.
 Throw remake using linear extrapolation.
 Throw flipping.
 Throw speed to conf.
-Monsters that block light.
+*Monsters that block light.
 Parasites.
-*Savefile versions.
+//*Savefile versions.
 Monster data in corpses + resurrection.
 Pets that resurrect the player.
 Compressed savefiles.
 Inventory screen could be categorised.
 Crash save.
 The Great Line Algorithm Idea. (GLAI)
-"You didn't manage to get onto the high score list"
+*"You didn't manage to get onto the high score list"
 Cats and dogs should attack each other even if team comrades.
-It should be possible to unequip party members.
+*It should be possible to unequip party members.
 It should be possible to command party members to flee.
 Lanterns should dim over time. (from Antti)
 Oil lamps should use oil as their fuel.
 Oil could have other uses as well.
-Tuukka's alternative walls should be integrated.
+*Tuukka's alternative walls should be integrated.
 Fungi that grow around the player and paralyze him.
 Stat point based character generation? (from Antti & others)
 //Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
@@ -106,11 +106,11 @@ Guilds. (from Tapani Tiilikainen)
 Option to change the size of font. (from sturmkoenig2k)
 Practise dungeon? (from JM)
 Elemental damage. (from JM)
-Zombies should lose weight when they drop lumps of flesh.
+*Zombies should lose weight when they drop lumps of flesh.
 Consummo should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
 Fix wear-time AV inconsistency.
-Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
+*Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
 Elpuri's lair could be even more frightening.
 Fluid should handle melded metals.
@@ -120,3 +120,31 @@ Valpurus's altar rooms should be frog-shaped.
 When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into a donkey.")
 Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
 Intelligent polymorphed monsters should have unique replies?
+*Fluid disappears too fast.
+*Mommos should not leave corpses but just slime.
+***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
+*Dipping an empty bottle in a fountain should fill it with water.
+*The librarian should sell scrolls of charging.
+*Wand's explosive power should depend on its charges.
+Hirelings. (from JM)
+Books of <skill>. (from JM)
+Fighting tactics. (from JM)
+Attack magic scrolls. (from JM)
+Socketed items. (from JM)
+Gambling. (from JM)
+Inns. (from JM)
+Double wielding. (from JM)
+Thief monsters. (from JM)
+Invisible monsters. (from JM)
+/*There should be more ways to gain pets for non-lawfuls.
+If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack full of gunpowder anymore.
+Explosions should be stopped by walls.
+**Message splitting.
+One should be able to buy better bodyparts somewhere in the game.
+One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
+Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
+Gems should increase score.
+Non-fatal battles.
+Angels should carry holy books of their respective OwnerGods.
+Angels as enemies.
+Amputation.
