@@ -2790,8 +2790,16 @@ void game::Wish(character* Wisher, const char* MsgSingle, const char* MsgPair)
 
 festring game::DefaultQuestion(festring Topic, festring& Default, stringkeyhandler KeyHandler)
 {
+  festring ShortDefault = Default;
+
+  if(Default.GetSize() > 29)
+    {
+      ShortDefault.Resize(27);
+      ShortDefault = ShortDefault << CONST_S("...");
+    }
+
   if(!Default.IsEmpty())
-    Topic << " [" << Default << ']';
+    Topic << " [" << ShortDefault << ']';
 
   festring Answer = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false, KeyHandler);
 

@@ -2327,11 +2327,11 @@ bool character::Displace(character* Who, bool Forced)
 	return false;
     }
 
-  if(IsSmall() && Who->IsSmall() &&
-  (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0))
-  && !IsStuck() && !Who->IsStuck()
-  && (!Who->GetAction() || Who->GetAction()->TryDisplace())
-  && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
+  if(IsSmall() && Who->IsSmall() 
+   && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0))
+   && !IsStuck() && !Who->IsStuck()
+   && (!Who->GetAction() || Who->GetAction()->TryDisplace())
+   && CanMove() && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -3790,7 +3790,7 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
-  //FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
+  //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 
