@@ -335,7 +335,10 @@ truth commandsystem::Consume(character* Char, const char* ConsumeVerb, sorter So
 
 truth commandsystem::ShowInventory(character* Char)
 {
-  Char->GetStack()->DrawContents(Char, CONST_S("Your inventory"), NO_SELECT);
+  festring Title("Your inventory (total weight: ");
+  Title << Char->GetStack()->GetWeight();
+  Title << "g)";
+  Char->GetStack()->DrawContents(Char, Title, NO_SELECT);
   return false;
 }
 
