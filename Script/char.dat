@@ -464,6 +464,7 @@ shopkeeper
 	HostileReplies == "\"Criminal! Mellis bless my efforts of removing you!\"";
 	IsAbstract = true;
 	IsUnique = true;
+	CanBeWished = true;
 	IsNameable = false;
 	CanBeCloned = false;
 	IsPolymorphable = false;
@@ -784,6 +785,7 @@ darkknight
 		PanicLevel = 0;
 		IsCharmable = false;
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Golgor Dhan";
 		DangerModifier = 1500;
 		IsNameable = false;
@@ -1110,6 +1112,7 @@ skeleton
 		LeftSWeaponSkillHits = 200;
 		NameSingular = "skeleton warlord";
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Xinroch";
 		DangerModifier = 1500;
 		IsNameable = false;
@@ -1220,6 +1223,7 @@ goblin
 		LeftSWeaponSkillHits = 100;
 		NameSingular = "goblin king";
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Guugzamesh";
 		DangerModifier = 2000;
 		IsNameable = false;
@@ -1358,6 +1362,7 @@ golem
 		DefaultName = "experiment ZQ-29";
 		DangerModifier = 1500;
 		IsUnique = true;
+		CanBeWished = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL); }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
 		IsNameable = false;
@@ -1569,6 +1574,7 @@ communist /* Ivan */
 	PanicLevel = 33;
 	Inventory = { 4, lantern, fiftymillionroubles, potion { SecondaryMaterial = VODKA; }, potion { SecondaryMaterial = VODKA; } }
 	IsUnique = true;
+	CanBeWished = true;
 	DefaultName = "Ivan";
 	DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";
 	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
@@ -2218,6 +2224,7 @@ mistress
 		ClassStates = INVISIBLE|HASTE|INFRA_VISION|ESP;
 		IsCharmable = false;
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Sherarax";
 		DangerModifier = 1500;
 		IsNameable = false;
@@ -2378,6 +2385,7 @@ kobold
 		RightSWeaponSkillHits = 50;
 		NameSingular = "kobold patriarch";
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Rondol";
 		DangerModifier = 2500;
 		IsNameable = false;
@@ -3005,6 +3013,7 @@ orc
 		NameSingular = "orc marshal";
 		PanicLevel = 0;
 		IsUnique = true;
+		CanBeWished = true;
 		DefaultName = "Ur-Khan";
 		DangerModifier = 1500;
 		IsNameable = false;
@@ -4204,6 +4213,7 @@ sumowrestler
 	CWeaponSkillHits = { 2, 1000, 1000; }
 	AttackStyle = USE_ARMS|USE_LEGS;
 	IsUnique = true;
+	CanBeWished = true;
 	IsPolymorphable = false;
 	FriendlyReplies =
 	{

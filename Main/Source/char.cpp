@@ -5457,7 +5457,7 @@ void character::PrintBeginPanicMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You panic!");
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s panics.", CHAR_NAME(DEFINITE));  
+    ADD_MESSAGE("%s panics.", CHAR_NAME(DEFINITE));
 }
 
 void character::PrintEndPanicMessage() const
@@ -7364,7 +7364,7 @@ void character::SignalSeen()
 int character::GetPolymorphIntelligenceRequirement(const character* Polymorpher) const
 {
   if(DataBase->PolymorphIntelligenceRequirement == DEPENDS_ON_DANGER)
-    return int(GetRelativeDanger(Polymorpher, true) * 10);
+    return Min(int(GetRelativeDanger(Polymorpher, true) * 10), 100);
   else
     return DataBase->PolymorphIntelligenceRequirement;
 }
@@ -7607,6 +7607,8 @@ void character::BeginPanic()
 {
   if(IsPlayer() && GetTirednessState() != FAINTING)
     game::SetPlayerIsRunning(true);
+
+  DeActivateVoluntaryAction();
 }
 
 void character::EndPanic()

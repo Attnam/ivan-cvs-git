@@ -2826,17 +2826,37 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
 {
   if(Key == '*')
     {
-      felist List(CONST_S("List of known creatures"));
+      felist List(CONST_S("List of known creatures and their intelligence requirements"));
       SetStandardListAttributes(List);
       List.SetPageLength(15);
       List.AddFlags(SELECTABLE);
       protosystem::CreateEverySeenCharacter(CharacterDrawVector);
       std::sort(CharacterDrawVector.begin(), CharacterDrawVector.end(), NameOrderer);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
+      std::vector<festring> StringVector;
       uint c;
 
       for(c = 0; c < CharacterDrawVector.size(); ++c)
-	List.AddEntry(CharacterDrawVector[c]->GetName(UNARTICLED), LIGHT_GRAY, 0, c);
+	{
+	  character* Char = CharacterDrawVector[c];
+
+	  if(Char->CanBeWished())
+	    {
+	      festring Entry;
+	      Char->AddName(Entry, UNARTICLED);
+	      StringVector.push_back(Entry);
+	      int Req = Char->GetPolymorphIntelligenceRequirement(PLAYER);
+
+	      if(Char->IsSameAs(PLAYER)
+	      || (PLAYER->GetPolymorphBackup()
+	       && PLAYER->GetPolymorphBackup()->IsSameAs(Char)))
+		Req = 0;
+
+	      Entry << " (" << Req << ')';
+	      int Int = PLAYER->GetAttribute(INTELLIGENCE);
+	      List.AddEntry(Entry, Req > Int ? RED : LIGHT_GRAY, 0, c);
+	    }
+	}
 
       int Chosen = List.Draw();
 
@@ -2844,7 +2864,7 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
 	delete CharacterDrawVector[c];
 
       if(!(Chosen & FELIST_ERROR_BIT))
-	String = List.GetEntry(Chosen);
+	String = StringVector[Chosen];
 
       CharacterDrawVector.clear();
       return true;

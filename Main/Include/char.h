@@ -442,6 +442,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanUseEquipment);
   DATA_BASE_BOOL(CanKick);
   DATA_BASE_BOOL(CanTalk);
+  DATA_BASE_BOOL(CanBeWished);
   DATA_BASE_VALUE(long, ClassStates);
   DATA_BASE_VALUE(const fearray<festring>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
