@@ -433,4 +433,27 @@ protected:
 	virtual std::string NameStem() const	{ return "mithril"; }
 );
 
+class MATERIAL
+(
+	spiderflesh,
+	flesh,
+public:
+	virtual uchar GetConsumeType() const				{ return MEAT; }
+	virtual ushort OfferValue() const				{ return 4; }
+	virtual uchar GetItemColor() const			{ return BLACK; }
+protected:
+	virtual std::string NameStem() const	{ return "spider flesh"; }
+);
+
+class MATERIAL
+(
+	jackalflesh,
+	flesh,
+public:
+	virtual uchar GetConsumeType() const				{ return MEAT; }
+	virtual ushort OfferValue() const				{ return 6; }
+	virtual uchar GetItemColor() const			{ return WHITE; }
+protected:
+	virtual std::string NameStem() const	{ return "jackal flesh"; }
+);
 #endif

@@ -554,4 +554,56 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 );
 
+class CHARACTER
+(
+	spider,
+	character,
+	InitMaterials(new spiderflesh(50)),
+	{
+		SetSize(10);
+		SetAgility(4);
+		SetStrength(1);
+		SetEndurance(1);
+		SetPerception(5);
+	},
+public:
+	virtual ushort Possibility() const RET(100)
+	virtual ulong Danger() const RET(5)
+protected:
+	virtual vector2d GetBitmapPos() const RETV(272,0)
+	virtual std::string NameSingular() const RET("spider")
+	virtual std::string NamePlural() const RET("spiders")
+	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual float GetMeleeStrength() const RET(2000)
+);
+
+class CHARACTER
+(
+	jackal,
+	character,
+	InitMaterials(new jackalflesh(20000)),
+	{
+		SetSize(80);
+		SetAgility(6);
+		SetStrength(6);
+		SetEndurance(4);
+		SetPerception(20);
+	},
+public:
+	virtual ushort Possibility() const RET(100)
+	virtual ulong Danger() const RET(6)
+protected:
+	virtual vector2d GetBitmapPos() const RETV(288,0)
+	virtual std::string NameSingular() const RET("jackal")
+	virtual std::string NamePlural() const RET("jackals")
+	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual float GetMeleeStrength() const RET(3000)
+);
+
+
+
 #endif
