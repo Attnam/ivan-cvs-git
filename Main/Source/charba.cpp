@@ -330,32 +330,39 @@ bool character::Open()
 
 bool character::Close()
 {
-	ADD_MESSAGE("Where is this door you wish to close? [press a direction key or space]");
-
-	DRAW_MESSAGES();
-
-	EMPTY_MESSAGES();
-
-	graphics::BlitDBToScreen();
-
-	while(true)
+	if(CanOpenDoors())
 	{
-		int Key = GETKEY();
+		ADD_MESSAGE("Where is this door you wish to close? [press a direction key or space]");
 
-		if(Key == 0x1B || Key == ' ')
-			return false;
+		DRAW_MESSAGES();
 
-		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-			if(Key == game::GetMoveCommandKey(c))
-				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->Close(this))
-				{
-					SetAgilityExperience(GetAgilityExperience() + 25);
-					SetNP(GetNP() - 1);
-					return true;
-				}
-				else
-					return false;
+		EMPTY_MESSAGES();
+
+		graphics::BlitDBToScreen();
+
+		while(true)
+		{
+			int Key = GETKEY();
+
+			if(Key == 0x1B || Key == ' ')
+				return false;
+
+			for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+				if(Key == game::GetMoveCommandKey(c))
+					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->Close(this))
+					{
+						SetAgilityExperience(GetAgilityExperience() + 25);
+						SetNP(GetNP() - 1);
+						return true;
+					}
+					else
+						return false;
+		}
 	}
+	else
+		ADD_MESSAGE("This monster type cannot close doors.");
+	
+	return false;
 }
 
 bool character::Drop()
@@ -721,13 +728,23 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 				}
 				else
 					if(GetIsPlayer() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->CanBeOpened())
-						if(game::BoolQuestion("Do you want to open this door? [y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+					{
+						if(CanOpenDoors())
 						{
-							OpenPos(MoveTo);
-							return true;
+							if(game::BoolQuestion("Do you want to open this door? [y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+							{
+								OpenPos(MoveTo);
+								return true;
+							}
+							else
+								return false;
 						}
 						else
+						{
+							ADD_MESSAGE("This monster type cannot open doors.");
 							return false;
+						}
+					}
 					else
 						return false;
 		}
