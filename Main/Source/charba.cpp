@@ -744,13 +744,21 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 					{
 						if(CanOpenDoors())
 						{
-							if(game::BoolQuestion("Do you want to open this door? [y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+							if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetOverLevelTerrain()->GetIsLocked())
 							{
-								OpenPos(MoveTo);
-								return true;
+								ADD_MESSAGE("The door is locked.");
+								return false;
 							}
 							else
-								return false;
+							{
+								if(game::BoolQuestion("Do you want to open this door? [y/N]", false, game::GetMoveCommandKey(game::GetPlayer()->GetPos(), MoveTo)))
+								{
+									OpenPos(MoveTo);
+									return true;
+								}
+								else
+									return false;
+							}
 						}
 						else
 						{

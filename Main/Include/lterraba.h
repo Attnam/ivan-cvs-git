@@ -48,6 +48,7 @@ public:
 	virtual void ReceiveVomit(character*) {}
 	virtual bool CanBeOpenedByAI() { return false; }
 	virtual bool ReceiveStrike() { return false; }
+	virtual bool GetIsLocked() const { return false; }
 protected:
 	uchar VisualFlags;
 };
