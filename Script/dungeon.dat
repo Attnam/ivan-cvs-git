@@ -12,7 +12,8 @@ Teams = 10;
  * 1 == MONSTER_TEAM == Monsters, default relation to other teams == hostile
  * 2 == ATTNAM_TEAM == Residents of Attnam
  * 3 == FINAL_BATTLE_TEAM == Petrus's team during the Final Battle
- * 8 == NEW_ATTNAM_TEAM == banana growers and ostriches
+ * 8 == NEW_ATTNAM_TEAM == natives and ostriches of New Attnam
+ * 9 == COLONIST_TEAM == colonists of New Attnam
  */
 
 Team ATTNAM_TEAM;
@@ -50,14 +51,14 @@ Team 7; /* Ivan */
 	AttackEvilness = 100;
 }
 
-Team NEW_ATTNAM_TEAM; /* Residents of New Attnam */
+Team NEW_ATTNAM_TEAM;
 {
 	Relation 0, FRIEND;
 	Relation 4, HOSTILE;
 	AttackEvilness = 200;
 }
 
-Team 9; /* Richel Decos and his guards */
+Team COLONIST_TEAM;
 {
 	Relation 4, HOSTILE;
 	Relation 1, UNCARING;
@@ -184,7 +185,7 @@ Dungeon ELPURI_CAVE;
 		{
 			Size = 5,9;
 			AltarPossible = false;
-			DivineMaster = mellis;
+			DivineMaster = MELLIS;
 			Type = shop;
 			GenerateFountains = false;
 
@@ -451,13 +452,13 @@ Dungeon ELPURI_CAVE;
 			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
 			FloorSquare = solidterrain(PARQUET),empty;
 			GenerateDoor = false;
-			DivineMaster = mortifer;
+			DivineMaster = MORTIFER;
 			GenerateFountains = false;
 			GenerateLanterns = false;
 
 			Square, Pos 4,1;
 			{
-				OTerrain = STEEL altar(mortifer);
+				OTerrain = STEEL altar(MORTIFER);
 			}
 
 			Square, Pos 4,4;
@@ -506,7 +507,7 @@ Dungeon ATTNAM;
 	{
 		Description = Attnam;
 		ShortDescription = Attnam;
-		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		FillSquare = solidterrain(SNOW_TERRAIN),empty;
 		Size = XSize, YSize;
 		GenerateMonsters = false;
 		Rooms = 20 + rand % 6;
@@ -514,7 +515,7 @@ Dungeon ATTNAM;
 		ReCalculate = false;
 		OnGround = true;
 		TeamDefault = ATTNAM_TEAM;
-		AmbientLight = rgb24(115, 115, 115);
+		AmbientLight = rgb24(110, 110, 110);
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
 
@@ -523,7 +524,7 @@ Dungeon ATTNAM;
 			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
 			Size = 4+rand%8,4+rand%8;
 			AltarPossible = false;
-			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
 			FloorSquare = solidterrain(PARQUET),empty;
 			DoorSquare = solidterrain(PARQUET),door;
 			GenerateDoor = true;
@@ -540,13 +541,7 @@ Dungeon ATTNAM;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain = decoration(PINE);
-			Times = 50;
-		}
-
-		Square, Random NOT_IN_ROOM;
-		{
-			OTerrain = decoration(SPRUCE);
+			OTerrain = decoration(SNOW_PINE);
 			Times = 200;
 		}
 
@@ -583,11 +578,11 @@ Dungeon ATTNAM;
 		{
 			Pos = 10,10;
 			Size = 41,42;
-			WallSquare = solidterrain(GRASS_TERRAIN),STONE wall(BRICK_FINE);
-			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
+			WallSquare = solidterrain(SNOW_TERRAIN),STONE wall(BRICK_FINE);
+			FloorSquare = solidterrain(SNOW_TERRAIN),empty;
 			GenerateDoor = false;
 			ReCalculate = false;
-			DivineMaster = valpurus;
+			DivineMaster = VALPURUS;
 			GenerateLanterns = false;
 			Type = cathedral;
 
@@ -604,16 +599,6 @@ Dungeon ATTNAM;
 			Square, Pos 21, 41;
 			{
 				OTerrain = empty;
-			}
-
-			Square, Pos 31, 41;
-			{
-				OTerrain = STONE wall(BRICK_PROPAGANDA);
-			}
-
-			Square, Pos 9, 41;
-			{
-				OTerrain = STONE wall(BRICK_PROPAGANDA);
 			}
 			
 			GTerrainMap
@@ -673,11 +658,11 @@ Dungeon ATTNAM;
 					# = MARBLE wall(BRICK_FINE);
 					@ = MARBLE wall(BRICK_PROPAGANDA);
 					T = throne;
-					c = decoration(CARPET);
-					A = VALPURIUM altar(valpurus);
+					| = decoration(CARPET);
+					A = VALPURIUM altar(VALPURUS);
 					D = MARBLE door;
 					L = MARBLE door { Parameters = LOCKED; }
-					b = decoration(LINDEN);
+					b = decoration(SNOW_FIR);
 					1 = decoration(POOL_CORNER) { VisualEffects = NONE; }
 					2 = decoration(POOL_CORNER) { VisualEffects = MIRROR; }
 					3 = decoration(POOL_CORNER) { VisualEffects = MIRROR | FLIP; }
@@ -687,7 +672,7 @@ Dungeon ATTNAM;
 					7 = decoration(POOL_BORDER) { VisualEffects = FLIP; }
 					8 = decoration(POOL_BORDER) { VisualEffects = MIRROR | ROTATE; }
 					s = decoration(COUCH);
-					f = fountain;
+					f = fountain { ContainedMaterial = ICE; }
 					d = decoration(DOUBLE_BED);
 					B = GOLD boulder; 
 				}
@@ -702,36 +687,36 @@ Dungeon ATTNAM;
 				b.b#..#.b....#...........#....b.#.B#b.b
 				...#..#....###...........###....#..#...
 				b.b#..#b..b#.....T...T.....#b..b#..#b.b
-				...#..###..#.......c.......#..###.B#...
-				b.b#....#.b#.......c.......#b.#....#b.b
-				...#....#..#.......c.......#..#B...#...
-				b.b###..#b.###.....c.....###.b#..###b.b
-				....b#..#@#.b#.....c.....#b.#@#.B#b....
-				b....#....#..#.....c.....#..#..B.#....b
-				..bb.###..####.....c.....####..###.bb..
-				b.....b#.....#.....c.....#...B.#b.....b
-				.b..b..#.....#.....c.....#.B...#..b..b.
-				b..b...####..#.....c.....#..####...b..b
-				b....b....#..#.....c.....#.B#....b....b
-				.b.b....b###D#.....c.....#D###b....b.b.
-				b...b#####.#.#.....c.....#.#.#####b.b.b
-				....##.....D.#.....c.....#.D.....##....
-				b..b#.s.152#.#.....c.....#.#......#b..b
-				.b..#...8.6#.#.....c.....#.#..A...#..b.
-				b...##..8.6#.#.....c.....#.#.....##...b
+				...#..###..#.......|.......#..###.B#...
+				b.b#....#.b#.......|.......#b.#....#b.b
+				...#....#..#.......|.......#..#B...#...
+				b.b###..#b.###.....|.....###.b#..###b.b
+				....b#..#@#.b#.....|.....#b.#@#.B#b....
+				b....#....#..#.....|.....#..#..B.#....b
+				..bb.###..####.....|.....####..###.bb..
+				b.....b#.....#.....|.....#...B.#b.....b
+				.b..b..#.....#.....|.....#.B...#..b..b.
+				b..b...####..#.....|.....#..####...b..b
+				b....b....#..#.....|.....#.B#....b....b
+				.b.b....b###D#.....|.....#D###b....b.b.
+				b...b#####.#.#.....|.....#.#.#####b.b.b
+				....##.....D.#.....|.....#.D.....##....
+				b..b#.s.152#.#.....|.....#.#......#b..b
+				.b..#...8.6#.#.....|.....#.#..A...#..b.
+				b...##..8.6#.#.....|.....#.#.....##...b
 				....b##.8.6#.#...........#.#....##b....
 				b.b..b##8.6#.######D######.#...##b..b.b
 				.......#8.6#...............#...#.......
 				b...b.b#473#...............#...#b.b...b
 				.b....##@####...###D###...####@##....b.
 				b..####.s.s.D...#.b.b.#...L.....####..b
-				..b#.d......#####.....#####........#b..
+				..b#.d......#####.f.f.#####........#b..
 				b..#....s.s.#b..b.....b..b#........#..b
 				.b.##...#####.bb..b.b..bb.#####...##.b.
 				b..b##s.#b.b......f.f......b.b#..##b..b
 				....b####....b...........b....####b....
 				b.b...b...b.......b.b.......b...b...b.b
-				...............bb.....bb...............
+				...............bb.f.f.bb...............
 				b.b.b.b.b.b.b.b..b...b..b.b.b.b.b.b.b.b
 			}
 
@@ -827,14 +812,14 @@ Dungeon ATTNAM;
 					d = dolphin;
 					l = frog(LIGHT);
 					f = frog(GREATER_LIGHT);
-					s = femaleslave;
+					s = femaleslave(ATTNAM);
 					1 = petrusswife(1);
 					2 = petrusswife(2);
 					3 = petrusswife(3);
 					4 = petrusswife(4);
 					5 = petrusswife(5);
 					6 = petrusswife(6);
-					k = kamikazedwarf(valpurus);
+					k = kamikazedwarf(VALPURUS);
 				}
 			}
 			{
@@ -877,14 +862,15 @@ Dungeon ATTNAM;
 
 		Room 1;
 		{
-			Pos = 32,53;
-			Size = 8,6;
-			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			Pos=32,53;
+			Size = 7,6;
+			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
 			FloorSquare = solidterrain(PARQUET),empty;
 			GenerateDoor = false;
-			ReCalculate = false;
-			DivineMaster = mellis;
+			DivineMaster = MELLIS;
 			Type = shop;
+			GenerateLanterns = false;
+			ReCalculate = false;
 			
 			Square, Pos 3, 5;
 			{
@@ -897,17 +883,24 @@ Dungeon ATTNAM;
 				Character = slave;
 			}
 
-			Square, Pos 6, 1;
+			Square, Pos 5, 1;
 			{
 				Character = shopkeeper(ATTNAM) { IsMaster = true; }
 			}
 
+
+			Square, Pos 3, 0;
+			{
+				OTerrain = STONE wall(BRICK_PROPAGANDA);
+			}
+
 			ItemMap
 			{
-				Pos = 1,1;
-				Size = 6,4;
+				Pos = 1,0;
+				Size = 5,5;
 				Types
 				{
+					# == 0;
 					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
 					d == Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
 					w == Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
@@ -917,24 +910,28 @@ Dungeon ATTNAM;
 					f == WOLF_FLESH lump;
 					i == can { ContainedMaterial = POLAR_BEAR_FLESH; }
 					l == lantern;
+					2 == lantern { SideStackIndex = DOWN; }
 				}
 			}
 			{
-				.aaaa.
-				eddwww
-				eefvuw 
-				eeiluu
+				2###2
+				.aaa.
+				edduw
+				efvuw
+				eeilw
 			}
 		}
 
 		Room 2;
 		{
-			Pos = 54,55;
+			Pos=54,55;
 			Size = 5,5;
-			WallSquare = solidterrain(GRASS_TERRAIN),STEEL wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),STEEL wall(BRICK_FINE);
 			GenerateDoor = false;
-			DivineMaster = legifer;
+			DivineMaster = LEGIFER;
 			Type = temple;
+			GenerateLanterns = false;
+			ReCalculate = false;
 
 			Square, Pos 2, 0;
 			{
@@ -942,9 +939,14 @@ Dungeon ATTNAM;
 				OTerrain = STEEL door;
 			}
 
+			Square, Pos 3, 0;
+			{
+				Items == lantern { SideStackIndex = DOWN; }
+			}
+
 			Square, Pos 2, 2;
 			{
-				OTerrain = STEEL altar(legifer);
+				OTerrain = STEEL altar(LEGIFER);
 			}
 
 			Square, Pos 2, 3;
@@ -955,12 +957,14 @@ Dungeon ATTNAM;
 
 		Room 3;
 		{
-			Pos = 2,55;
+			Pos=2,55;
 			Size = 5,5;
-			WallSquare = solidterrain(GRASS_TERRAIN),MARBLE wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),MARBLE wall(BRICK_FINE);
 			GenerateDoor = false;
-			DivineMaster = dulcis;
+			DivineMaster = DULCIS;
 			Type = temple;
+			GenerateLanterns = false;
+			ReCalculate = false;
 
 			Square, Pos 4, 2;
 			{
@@ -968,9 +972,14 @@ Dungeon ATTNAM;
 				OTerrain = MARBLE door;
 			}
 
+			Square, Pos 4, 3;
+			{
+				Items == lantern { SideStackIndex = LEFT; }
+			}
+
 			Square, Pos 2, 2;
 			{
-				OTerrain = MARBLE altar(dulcis);
+				OTerrain = MARBLE altar(DULCIS);
 			}
 
 			Square, Pos 1, 2;
@@ -981,12 +990,14 @@ Dungeon ATTNAM;
 
 		Room 4;
 		{
-			Pos = 54,2;
+			Pos=54,2;
 			Size = 5,5;
-			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),WOOD wall(BRICK_FINE);
 			GenerateDoor = false;
-			DivineMaster = seges;
+			DivineMaster = SEGES;
 			Type = temple;
+			GenerateLanterns = false;
+			ReCalculate = false;
 
 			Square, Pos 0, 2;
 			{
@@ -994,9 +1005,14 @@ Dungeon ATTNAM;
 				OTerrain = WOOD door;
 			}
 
+			Square, Pos 0, 1;
+			{
+				Items == lantern { SideStackIndex = RIGHT; }
+			}
+
 			Square, Pos 2, 2;
 			{
-				OTerrain = WOOD altar(seges);
+				OTerrain = WOOD altar(SEGES);
 			}
 
 			Square, Pos 3, 2;
@@ -1007,12 +1023,19 @@ Dungeon ATTNAM;
 
 		Room 5;
 		{
-			Pos = 2,2;
+			Pos=2,2;
 			Size = 5,5;
-			WallSquare = solidterrain(GRASS_TERRAIN),PARCHMENT wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),PARCHMENT wall(BRICK_FINE);
 			GenerateDoor = false;
-			DivineMaster = sophos;
+			DivineMaster = SOPHOS;
 			Type = temple;
+			GenerateLanterns = false;
+			ReCalculate = false;
+
+			Square, Pos 1, 4;
+			{
+				Items == lantern { SideStackIndex = UP; }
+			}
 
 			Square, Pos 2, 4;
 			{
@@ -1022,7 +1045,7 @@ Dungeon ATTNAM;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = PARCHMENT altar(sophos);
+				OTerrain = PARCHMENT altar(SOPHOS);
 			}
 
 			Square, Pos 2, 1;
@@ -1033,14 +1056,15 @@ Dungeon ATTNAM;
 
 		Room 6;
 		{
-			Pos = 21,53;
-			Size = 8,6;
-			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			Pos=27,2;
+			Size = 7,6;
+			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
 			FloorSquare = solidterrain(PARQUET),empty;
 			GenerateDoor = false;
-			ReCalculate = false;
-			DivineMaster = sophos;
+			DivineMaster = SOPHOS;
 			Type = library;
+			GenerateLanterns = false;
+			ReCalculate = false;
 			
 			Square, Pos 3, 5;
 			{
@@ -1048,87 +1072,121 @@ Dungeon ATTNAM;
 				OTerrain = door;
 			}
 
+			Square, Pos 3, 0;
+			{
+				OTerrain = STONE wall(BRICK_PROPAGANDA);
+			}
 
-			Square, Pos 4, 4;
+			Square, Pos 3, 3;
 			{
 				Character = librarian { IsMaster = true; }
 			}
 
 			ItemMap
 			{
-				Pos = 1,1;
-				Size = 6,4;
+				Pos = 1,0;
+				Size = 5,6;
 
 				Types
 				{
+					# == 0;
 					r == Random { MaxPrice = 500; Category = SCROLL|BOOK; }
+					2 == lantern { SideStackIndex = DOWN; }
 				}
 			}
 			{
-			    rrrrrr
-			    r....r
-			    r....r
-				r....r
+				##2##
+			    rrrrr
+			    r...r
+			    r...r
+				r...r
+				#2#2#
 			}
 
 			OTerrainMap
 			{
 				Pos = 1,1;
-				Size = 6,4;
+				Size = 5,4;
 				Types
 				{
 					= = olterraincontainer(BOOK_CASE);
 				}
 			}
 			{
-				======
-				=....=
-				=....=
-				=....=
+				=====
+				=...=
+				=...=
+				=...=
 			}
 		}
 
 		Room 7;
 		{
-			Pos = 2,47;
-			Size = 7,5;
+			Pos=22,53;
+			Size = 7,6;
 			AltarPossible = false;
-			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
 			FloorSquare = solidterrain(PARQUET),empty;
 			GenerateDoor = false;
+			DivineMaster = LORICATUS;
+			GenerateLanterns = false;
 			ReCalculate = false;
-			DivineMaster = loricatus;
 
-			Square, Pos 3, 4;
+			Square, Pos 3, 5;
 			{
 				GTerrain = solidterrain(PARQUET);
 				OTerrain = door;
 			}
 
+			Square, Pos 3, 0;
+			{
+				OTerrain = STONE wall(BRICK_PROPAGANDA);
+			}
+
+			Square, Pos 0, 3;
+			{
+				Items == lantern { SideStackIndex = RIGHT; }
+			}
+
+			Square, Pos 6, 3;
+			{
+				Items == lantern { SideStackIndex = LEFT; }
+			}
+
+			Square, Pos 2, 0;
+			{
+				Items == lantern { SideStackIndex = DOWN; }
+			}
+
+			Square, Pos 4, 0;
+			{
+				Items == lantern { SideStackIndex = DOWN; }
+			}
 
 			Square, Pos 3, 2;
 			{
 				Character = smith;
 			}
 		}
+
 		Room 8;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
-			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room 9;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
-			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room 10;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
-			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
@@ -1138,11 +1196,12 @@ Dungeon ATTNAM;
 Dungeon NEW_ATTNAM;
 {
 	Levels = 1;
-	Variable XSize = 50;
-	Variable YSize = 50;
+	Variable XSize = 55;
+	Variable YSize = 55;
 
 	Level 0;
 	{
+		LevelMessage = "You hear someone shouting: \"Faster! Faster! The Empire wants yer bananas!\"";
 		Description = "New Attnam";
 		ShortDescription = "New Attnam";
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
@@ -1182,12 +1241,12 @@ Dungeon NEW_ATTNAM;
 		{
 			Pos = 4,4;
 			Size = 17,19;
-			WallSquare = solidterrain(FLOOR),WOOD wall(BRICK_FINE);
+			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
 			FloorSquare = solidterrain(FLOOR),empty;
 			DoorSquare = solidterrain(FLOOR), WOOD door;
 			GenerateDoor = false;
 			ReCalculate = false;
-			DivineMaster = silva;
+			DivineMaster = SILVA;
 			GenerateLanterns = false;
 
 			OTerrainMap
@@ -1227,9 +1286,9 @@ Dungeon NEW_ATTNAM;
 				{
 					_ = 0;
 					# = 0;
-					I = imperialist { Team = 9; }
-					f = femaleslave;
-					g = guard(ROOKIE) { Team = 9; }
+					I = imperialist { Team = COLONIST_TEAM; }
+					f = femaleslave(NEW_ATTNAM);
+					g = guard(ROOKIE) { Team = COLONIST_TEAM; }
 				}
 			}
 			{
@@ -1280,7 +1339,6 @@ Dungeon NEW_ATTNAM;
 			Type = landingsite;
 			Size = 3, 3;
 			Pos = 44, 44;
-
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),decoration(PALM);
 			FloorSquare = solidterrain(LANDING_SITE),empty;
@@ -1317,6 +1375,11 @@ Dungeon NEW_ATTNAM;
 		{
 			OTerrain = decoration(PALM);
 			Times = 100;
+		}
+
+		Square, Pos 20, 44;
+		{
+			Character = encourager { Team = COLONIST_TEAM; }
 		}
 
 		Square, Pos 0, 45;
@@ -1357,6 +1420,11 @@ Dungeon NEW_ATTNAM;
 		Square, Pos 45, 30;
 		{
 			Character = ostrich;
+		}
+
+		Square, BoundedRandom 0, 22, 28, 54, NOT_IN_ROOM;
+		{
+			Character = elder;
 		}
 
 		Square, Pos 11, 23;
@@ -1479,7 +1547,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,1;
 			{
-				Items =  = lantern;
+				Items == lantern;
 			}
 		}
 	}

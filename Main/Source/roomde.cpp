@@ -60,7 +60,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 
   if(Customer->CanBeSeenBy(Master))
     {
-      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
 	  ADD_MESSAGE("\"I think it is yours. Take it.\"");
 	  return true;
@@ -130,7 +130,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 
   if(Customer->CanBeSeenBy(Master))
     {
-      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
 	  ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
 	  return false;
@@ -239,7 +239,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
 
   if(Visitor->IsPlayer())
     {
-      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetPrice())
+      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetPrice() || Item->IsEncryptedScroll())
 	return true;
 
       ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
@@ -261,7 +261,7 @@ bool cathedral::DropItem(character* Visitor, item* Item, ushort)
 
   if(Visitor->IsPlayer())
     {
-      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || Item->IsTheAvatar())
+      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || Item->IsTheAvatar() || Item->IsEncryptedScroll())
 	{
 	  ADD_MESSAGE("Donating this to the Cathedral wouldn't be wise. You may still need it.");
 	  return false;
@@ -422,7 +422,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 
   if(Customer->CanBeSeenBy(Master))
     {
-      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
 	  ADD_MESSAGE("\"I think it is yours. Take it.\"");
 	  return true;
@@ -492,7 +492,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 
   if(Customer->CanBeSeenBy(Master))
     {
-      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
 	  ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
 	  return false;

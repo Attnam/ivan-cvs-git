@@ -148,7 +148,7 @@ void character::Hunger()
   CheckStarvationDeath("starved to death");
 }
 
-uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical)
+uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
   uchar Dir = Type == BITE_ATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = GetDodgeValue();
@@ -163,7 +163,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
-  if(!Critical && RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) < 100)
+  if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) < 100 && !Critical && !ForceHit)
     {
       Enemy->AddMissMessage(this);
       EditExperience(AGILITY, 50);
@@ -715,7 +715,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		    if(GetTeam() == Character->GetTeam() && DisplaceAllowed && MoveToSquare->IsWalkable(this))
 		      return Displace(Character);
 		    else
-		      return false;
+		      return HandleCharacterBlockingTheWay(Character);
 		}
 	    }
 	  else
@@ -766,8 +766,8 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    {
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
-		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
-		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
+		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!");
+		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 4, false);
 		  game::End();
 		  return true;
 		}
@@ -876,7 +876,7 @@ bool character::PickUp()
 
 bool character::Quit()
 {
-  if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [y/N]"))
+  if(game::BoolQuestion("Your quest is not yet compeleted! Really quit? [y/N]"))
     {
       AddScoreEntry("cowardly quit the game", 0.75f);
       game::End(!game::WizardModeIsActive() || game::BoolQuestion("Remove saves? [y/N]"));
@@ -1013,7 +1013,7 @@ void character::Die(bool ForceMsg)
 
   if(IsPlayer())
     {
-      game::TextScreen("Unfortunately thee died during thine journey. The High Priest is not happy.");
+      game::TextScreen("Unfortunately you died during your journey. The high priest is not happy.");
       game::End();
     }
 }
@@ -1355,9 +1355,22 @@ bool character::HasGoldenEagleShirt() const
   return false;
 }
 
+bool character::HasEncryptedScroll() const
+{
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsEncryptedScroll())
+      return true;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->IsEncryptedScroll())
+      return true;
+
+  return false;
+}
+
 bool character::Save()
 {
-  if(game::BoolQuestion("Dost thee truly wish to save and flee? [y/N]"))
+  if(game::BoolQuestion("Do you truly wish to save and flee? [y/N]"))
     {
       game::Save();
       game::End(false);
@@ -1782,7 +1795,7 @@ bool character::ClosePos(vector2d APos)
 
 bool character::Pray()
 {
-  felist Panthenon("To Whom shall thee address thine prayers?");
+  felist Panthenon("To Whom you want to address your prayers?");
   std::vector<uchar> KnownIndex;
 
   if(!GetLSquareUnder()->GetDivineMaster())
@@ -2222,9 +2235,9 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   return true;
 }
 
-void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float ToHitValue, short Success, bool Critical)
+void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float ToHitValue, short Success, bool Critical, bool ForceHit)
 {
-  switch(TakeHit(Kicker, Boot, KickDamage, ToHitValue, Success, KICK_ATTACK, Critical))
+  switch(TakeHit(Kicker, Boot, KickDamage, ToHitValue, Success, KICK_ATTACK, Critical, ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -2609,7 +2622,7 @@ bool character::GainDivineKnowledge()
   return false;
 }
 
-bool character::Displace(character* Who)
+bool character::Displace(character* Who, bool Forced)
 {
   if(GetBurdenState() == OVER_LOADED)
     {
@@ -2619,7 +2632,7 @@ bool character::Displace(character* Who)
       return true;
     }
 
-  if(GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced() && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()) && GetSquareUnder()->IsWalkable(Who))
+  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()) && GetSquareUnder()->IsWalkable(Who))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -6044,9 +6057,7 @@ bool character::SummonMonster()
   return false;
 }
 
-#define SEARCH_N_REPLACE(what, with) if(Msg.find(what, 0) != std::string::npos) festring::SearchAndReplace(Msg, what, with);
-
-void character::ProcessAndAddMessage(std::string Msg) const
+std::string& character::ProcessMessage(std::string& Msg) const
 {
   SEARCH_N_REPLACE("@nu", GetName(UNARTICLED));
   SEARCH_N_REPLACE("@ni", GetName(INDEFINITE));
@@ -6067,7 +6078,12 @@ void character::ProcessAndAddMessage(std::string Msg) const
   SEARCH_N_REPLACE("@Sp", festring::CapitalizeCopy(GetPossessivePronoun()));
   SEARCH_N_REPLACE("@Op", festring::CapitalizeCopy(GetObjectPronoun()));
   SEARCH_N_REPLACE("@Gd", GetMasterGod()->Name());
-  ADD_MESSAGE("%s", Msg.c_str());
+  return Msg;
+}
+
+void character::ProcessAndAddMessage(std::string Msg) const
+{
+  ADD_MESSAGE("%s", ProcessMessage(Msg).c_str());
 }
 
 void character::BeTalkedTo()
@@ -6198,7 +6214,7 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
   if(InventoryPossible)
     List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
 
-  bool UseSorterFunction = SorterFunction != 0;
+  bool Any = false, UseSorterFunction = SorterFunction != 0;
   std::vector<item*> Item;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
@@ -6210,18 +6226,24 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
 	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	AddSpecialEquipmentInfo(Entry, c);
 	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture());
+	Any = true;
       }
 
-  game::SetStandardListAttributes(List);
-  List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
-  ushort Chosen = List.Draw();
+  if(Any)
+    {
+      game::SetStandardListAttributes(List);
+      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+      ushort Chosen = List.Draw();
 
-  if(Chosen == ESCAPED)
-    return 0;
-  else if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
-    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+      if(Chosen == ESCAPED)
+	return 0;
+      else if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
+	return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+      else
+	return Item[InventoryPossible ? Chosen - 1 : Chosen];
+    }
   else
-    return Item[InventoryPossible ? Chosen - 1 : Chosen];
+    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
 }
 
 bool character::EquipsSomething(bool (*SorterFunction)(const item*, const character*))

@@ -200,13 +200,13 @@ bool throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() != 1000)
     {
-      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
+      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt be a Our Champion first!\"");
       return true;
     }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
+      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt wear Our shining armor first!\"");
       return true;
     }
 
@@ -218,8 +218,8 @@ bool throne::SitOn(character* Sitter)
 
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
-      game::GetPlayer()->AddScoreEntry("became the new High Priest of the Great Frog", 5, false);
+      game::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleased Us greatly during thy adventures!\nWe hereby title thee as Our new high priest!\"\n\nYou are victorious!");
+      game::GetPlayer()->AddScoreEntry("became the new high priest of the Great Frog", 5, false);
       game::End();
       return true;
     }
@@ -361,52 +361,48 @@ bool fountain::Drink(character* Drinker)
 	    case 5:
 	      {
 		bool Created = false;
+		character* Monster = 0;
 
-		for(ushort c = 0; c < 3; ++c)
+		switch(RAND() % 4)
 		  {
-		    character* Monster;
+		  case 0:
+		    Monster = new snake;
+		    break;
+		  case 1:
+		    Monster = new mommo(RAND() & 1 ? CONICAL : FLAT);
+		    break;
+		  case 2:
+		    Monster = new spider;
+		    break;
+		  case 3:
+		    Monster = new frog(RAND() % 5 ? DARK : GREATER_DARK);
+		    break;
+		  }
 
-		    switch(RAND() % 3)
+		for(ushort p = 0; p < 10; ++p)
+		  {
+		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+		    if(GetLevelUnder()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
 		      {
-		      case 0:
-			Monster = new snake;
-			break;
-		      case 1:
-			if(RAND() & 1)
-			  Monster = new mommo(CONICAL);
-			else
-			  Monster = new mommo(FLAT);
-			break;
-		      case 2:
-			Monster = new spider;
+			Created = true;
+			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
+			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+
+			if(Monster->CanBeSeenByPlayer())
+			  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+
 			break;
 		      }
-
-		    for(ushort p = 0; p < 10; ++p)
-		      {
-			vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-
-			if(GetLevelUnder()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
-			  {
-			    Created = true;
-			    GetNearLSquare(TryToCreate)->AddCharacter(Monster);
-			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-
-			    if(Monster->CanBeSeenByPlayer())
-			      ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
-
-			    break;
-			  }
-		      }
-
-		    if(!Created)
-		      delete Monster;
 		  }
 
 		if(!Created)
-		  ADD_MESSAGE("Weird water...");
+		  {
+		    ADD_MESSAGE("Weird water...");
+		    delete Monster;
+		  }
 
-		return true;
+		break;
 	      }
 	    case 6:
 	      if(!(RAND() % 5))

@@ -99,14 +99,18 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount, float NPModifie
   if(GetSpoilLevel() > 0)
     {
       if(Eater->IsPlayer() && GetSpoilLevel() <= 5)
-	ADD_MESSAGE("Ugh. This stuff is slightly spoiled!");
-      Eater->BeginTemporaryState(CONFUSED, long(Amount * GetSpoilLevel() * NPModifier / 250000));
+	ADD_MESSAGE("Ugh. This stuff is slightly spoiled.");
+
+      Eater->BeginTemporaryState(CONFUSED, Amount * GetSpoilLevel() * NPModifier / 250000);
     }
+
   if(GetSpoilLevel() > 5)
     {
       if(Eater->IsPlayer())
-	ADD_MESSAGE("Ugh. This stuff is terribly spoiled.");
-      Eater->BeginTemporaryState(POISONED, long(Amount * (GetSpoilLevel() - 5) * NPModifier / 50000));
+	ADD_MESSAGE("Ugh. This stuff is terribly spoiled!");
+
+      Eater->BeginTemporaryState(POISONED, Amount * (GetSpoilLevel() - 5) * NPModifier / 50000);
     }
+
   SetVolume(Volume - Amount);
 }

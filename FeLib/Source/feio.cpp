@@ -46,7 +46,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
     if(Text[c] == '\n')
       {
 	Line[c - LastBeginningOfLine] = 0;
-	FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 3 / 8 - (LineNumber - Lines) * 15, Color, Line);
+	FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 2 / 5 - (LineNumber - Lines) * 15, Color, Line);
 	++Lines;
 	LastBeginningOfLine = c + 1;
       }
@@ -54,7 +54,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
       Line[c - LastBeginningOfLine] = Text[c];
 
   Line[c - LastBeginningOfLine] = 0;
-  FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 3 / 8 - (LineNumber - Lines) * 15, Color, Line);
+  FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 2 / 5 - (LineNumber - Lines) * 15, Color, Line);
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)

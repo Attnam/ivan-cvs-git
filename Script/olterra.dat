@@ -109,7 +109,7 @@ decoration
 		BitmapPos = 16, 320;
 	}
 
-	Config SPRUCE;
+	Config FIR;
 	{
 		OKVisualEffects = MIRROR;
 		CanBeDug = true;
@@ -117,7 +117,7 @@ decoration
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 100, 32);
-		NameSingular = "spruce";
+		NameSingular = "fir";
 		BitmapPos = 16, 352;
 	}
 
@@ -211,6 +211,32 @@ decoration
 		MainMaterialConfig == MARBLE;
 		NameSingular = "";
 		BitmapPos = 48, 320;
+	}
+
+	Config SNOW_PINE;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(220, 220, 220);
+		NameSingular = "pine";
+		PostFix = "covered with snow";
+		BitmapPos = 16, 320;
+	}
+
+	Config SNOW_FIR;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(220, 220, 220);
+		NameSingular = "fir";
+		PostFix = "covered with snow";
+		BitmapPos = 16, 352;
 	}
 }
 
@@ -333,11 +359,20 @@ boulder /* olterrain-> */
 	DigMessage = "You smash the boulder to tiny bits.";
 	MainMaterialConfig == STONE;
 	DefaultMainVolume = 523500;
-	/* Uses ContainerPostFix() */
 	NameSingular = "boulder";
-	BitmapPos = 64, 304;
 	SitMessage = "The boulder is rather hard to sit on.";
 	CanBeDug = true;
+	IsAbstract = true;
+
+	Config 1;
+	{
+		BitmapPos = 64, 288;
+	}
+
+	Config 2;
+	{
+		BitmapPos = 64, 304;
+	}
 }
 
 sign

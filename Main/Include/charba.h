@@ -200,7 +200,7 @@ class character : public entity, public id
   virtual bool CheckBulimia() const { return GetHungerState() == BLOATED; }
   virtual bool CheckDeath(const std::string&, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
-  virtual bool Hit(character*) = 0;
+  virtual bool Hit(character*, bool = false) = 0;
   virtual bool OpenItem();
   virtual bool OpenPos(vector2d);
   virtual bool ReadItem(item*);
@@ -210,6 +210,7 @@ class character : public entity, public id
   virtual bool HasHeadOfElpuri() const;
   virtual bool HasGoldenEagleShirt() const;
   virtual bool HasPetrussNut() const;
+  virtual bool HasEncryptedScroll() const;
   bool IsPlayer() const { return Player; }
   virtual bool Apply();
   virtual bool Close();
@@ -252,7 +253,7 @@ class character : public entity, public id
   stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState() const { return BurdenState; }
   virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
-  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
+  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   ushort LOSRange() const;
   ushort LOSRangeSquare() const;
   ushort ESPRange() const;
@@ -280,7 +281,7 @@ class character : public entity, public id
   virtual void Be();
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
-  virtual void BeKicked(character*, item*, float, float, short, bool);
+  virtual void BeKicked(character*, item*, float, float, short, bool, bool);
   virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(const material*) const;
   void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
@@ -310,7 +311,7 @@ class character : public entity, public id
   void EditMoney(long What) { Money += What; }
   void SetHomeRoom(uchar What) { HomeRoom = What; }
   uchar GetHomeRoom() const { return HomeRoom; }
-  virtual bool Displace(character*);
+  virtual bool Displace(character*, bool = false);
   virtual bool Sit();
   virtual long GetStatScore() const;
   virtual bool CheckStarvationDeath(const std::string&);
@@ -515,7 +516,7 @@ class character : public entity, public id
   static character* Clone(ushort, ushort) { return 0; }
   virtual bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
-  virtual void Kick(lsquare*) = 0;
+  virtual void Kick(lsquare*, bool = false) = 0;
   virtual ushort GetAttribute(ushort Identifier) const { return Max(BaseAttribute[Identifier] + AttributeBonus[Identifier], 1); }
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
@@ -730,6 +731,8 @@ class character : public entity, public id
   virtual void AddConfuseHitMessage() const;
   virtual item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
   virtual bool EquipsSomething(bool (*)(const item*, const character*) = 0);
+  virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
+  virtual std::string& ProcessMessage(std::string&) const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

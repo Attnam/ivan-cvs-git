@@ -298,7 +298,7 @@ class roomscript : public script
   DATA_MEMBER(bool, GenerateDoor);
   DATA_MEMBER(bool, ReCalculate);
   DATA_MEMBER(bool, GenerateTunnel);
-  PROTO_NAMED_MEMBER(god, DivineMaster);
+  DATA_MEMBER(uchar, DivineMaster);
   DATA_MEMBER(bool, GenerateLanterns);
   PROTO_NAMED_MEMBER(room, Type);
   DATA_MEMBER(bool, GenerateFountains);

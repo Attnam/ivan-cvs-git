@@ -161,7 +161,7 @@ material
 		ConsumeType = CT_MINERAL;
 		Density = 3000;
 		IsGolemMaterial = true;
-		Color = rgb16(200, 200, 200);
+		Color = rgb16(224, 224, 224);
 		NameStem = "marble";
 	}
 
@@ -471,6 +471,18 @@ material
 		Flexibility = 25;
 		CanBeWished = false;
 	}
+
+	Config ICE;
+	{
+		StrengthValue = 30;
+		ConsumeType = CT_MINERAL; /* correct someday */
+		Density = 750;
+		IsGolemMaterial = true;
+		Color = rgb16(220, 220, 255);
+		Article = "an";
+		NameStem = "ice";
+		Alpha = 150;
+	}
 }
 
 organicsubstance /* substances that spoil but are not flesh */
@@ -602,8 +614,7 @@ gas
 		Density = 1;
 		Color = rgb16(180, 180, 255);
 		ConsumeType = CT_GAS;
-		Article = "magical";
-		NameStem = "air";
+		NameStem = "magical air";
 		Alpha = 150;
 		Flexibility = 75;
 		IsAlive = true;
@@ -969,5 +980,18 @@ powder
 		PriceModifier = 600;
 		NameStem = "gunpowder";
 		ExplosivePower = 10000;
+		Flexibility = 35;
+	}
+
+	Config SNOW;
+	{
+		StrengthValue = 2;
+		ConsumeType = CT_MINERAL; /* add something appropriate for this */
+		Density = 500;
+		Color = rgb16(200, 200, 200);
+		CanBeWished = false;
+		NameStem = "snow";
+		AdjectiveStem = "snowy";
+		Flexibility = 40;
 	}
 }

@@ -154,17 +154,18 @@ New background story.
 //?Armor breaking.
 //Tunnel boss.
 ?Something special to tunnel level 2.
-?Penalty for eating spoiled food.
+//?Penalty for eating spoiled food.
 //Pets shouldn't eat the player's bodyparts.
 ?Village duelist.
 ?olterraincontainer
 Smith prices.
 ?Kamikaze dwarf generation.
 Renaming "single weapon skills".
-?Scroll of repair.
+//?Scroll of repair.
 Prices of golden items.
 ?If a monster is polymorphed and kills the player, this should be shown in the high score entry.
 //High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
 //Invisibility + selling.
 Bear traps should break eventually.
-More color states to silhouette.
+//More color states to silhouette.
+Digging walls should yield stones.

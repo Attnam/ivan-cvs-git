@@ -329,6 +329,7 @@
 #define ANGEL_HAIR (MATERIAL_ID + 34)
 #define PHOENIX_FEATHER (MATERIAL_ID + 35)
 #define GOLDEN_EAGLE_FEATHER (MATERIAL_ID + 36)
+#define ICE (MATERIAL_ID + 37)
 
 #define ORGANIC_SUBSTANCE_ID (4096 * 2)
 
@@ -396,6 +397,7 @@
 #define POWDER_ID (4096 * 6)
 
 #define GUN_POWDER (POWDER_ID + 1)
+#define SNOW (POWDER_ID + 2)
 
 #define UNARMED_ATTACK 0
 #define WEAPON_ATTACK 1
@@ -542,6 +544,7 @@
 #define GROUND 3
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
+#define SNOW_TERRAIN 6
 
 #define POOL 1
 
@@ -552,7 +555,7 @@
 #define EARTH 5
 
 #define PINE 1
-#define SPRUCE 2
+#define FIR 2
 #define LINDEN 3
 #define HOLY_TREE 4
 #define CARPET 5
@@ -561,6 +564,8 @@
 #define POOL_BORDER 8
 #define POOL_CORNER 9
 #define PALM 10
+#define SNOW_PINE 11
+#define SNOW_FIR 12
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
@@ -584,6 +589,7 @@
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
 #define NEW_ATTNAM_TEAM 8
+#define COLONIST_TEAM 9
 
 #define LOAD 1
 #define NO_PIC_UPDATE 2

@@ -78,6 +78,14 @@ solidterrain /* glterrain-> */
 		BitmapPos = 32, 16;
 		ShowMaterial = false;
 	}
+
+	Config SNOW_TERRAIN;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == SNOW;
+		NameSingular = "ground";
+		BitmapPos = 16, 16;
+	}
 }
 
 liquidterrain /* glterrain-> */

@@ -224,17 +224,36 @@ bool game::Init(const std::string& Name)
       }
     case NEW_GAME:
       {
-	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
-			     "Constantly you have had to fight against ultra-violent bears and\n"
-			     "goblins that roam freely in this area. Screams of enner beasts have\n"
-			     "wailed in the distance and the cold air has almost freezed your body.\n"
-			     "But now your eyes catch the destination: A small settlement of a few\n"
-			     "houses build around a frog-shaped tower. The town has recently tried\n"
-			     "to advertise itself as a perfect place for adventurous tourists who\n"
-			     "seek to face an untouched nature. Unfortunately you were among those\n"
-			     "few who didn't understand they really meant what they said.\n\n"
-			     "You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
-			     "And you know nothing about the adventures that await you here.");
+	iosystem::TextScreen( "You couldn't possibly have guessed this day would differ from any other.\n"
+			      "It began just as always. You woke up at dawn and drove off the giant spider\n"
+			      "resting on your face. On your way to work you had serious trouble avoiding\n"
+			      "the lions and pythons roaming wild around the village. After getting kicked\n"
+			      "by colony masters for being late you performed your twelve-hour routine of\n"
+			      "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
+			      "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
+			      "and trying to look happy when meals (real food, not bananas) were distributed.\n\n"
+			      "Finally you were about to enjoy your free time by taking a quick dip in the\n"
+			      "nearby crocodile bay. However, at this point something unusual happened.\n"
+			      "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
+			      "colony, and were led directly to him.");
+
+	iosystem::TextScreen( "\"I have a task for you, citizen\", said the viceroy picking his teeth,\n"
+			      "\"The market price of bananas has took a deep dive and yet the central\n"
+			      "government is about to raise taxes. I have sent appeals to high priest\n"
+			      "Petrus but received no response. I fear that my enemies in Attnam are\n"
+			      "plotting against me and intercepting my messages before they reach him!\"\n\n"
+			      "\"That is why you must travel to Attnam with a letter I'll give you and\n"
+			      "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
+			      "between. Because it's winter, all Attnamian ships are trapped by ice and\n"
+			      "I have none. Therefore you must venture through the small underwater tunnel\n"
+			      "connecting our islands. It is infested with monsters, but since you have\n"
+			      "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
+			      "You have never been so happy! According to the mansion's traveling\n"
+			      "brochures, Attnam is a peaceful but bustling world city on a beautiful\n"
+			      "snowy fell surrounded by frozen lakes glittering in the arctic sun just\n"
+			      "like the diamonds of the imperial treasury. Not that you would believe a\n"
+			      "word. The point is that tomorrow you can finally forget your home and\n"
+			      "face the untold adventures ahead.");
 
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
@@ -742,7 +761,7 @@ void game::ShowLevelMessage()
   GetLevel(GetCurrent())->SetLevelMessage("");
 }
 
-void game::TriggerQuestForGoldenEagleShirt()
+/*void game::TriggerQuestForGoldenEagleShirt()
 {
   BusyAnimationDisabled = true;
   GetDungeon(ELPURI_CAVE)->PrepareLevel(DARK_LEVEL, false);
@@ -757,7 +776,7 @@ void game::TriggerQuestForGoldenEagleShirt()
     DarkLevel->SetLevelMessage("You feel something has changed since you were last here...");
 
   GetDungeon(ELPURI_CAVE)->SaveLevel(SaveName(), DARK_LEVEL);
-}
+}*/
 
 uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
 {
@@ -1349,7 +1368,6 @@ bool game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  GlobalValueMap = protocontainer<god>::GetCodeNameMap();
   inputfile SaveFile(GAME_DIR + "Script/define.dat");
   std::string Word;
 

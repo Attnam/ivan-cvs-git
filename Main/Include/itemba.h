@@ -372,6 +372,7 @@ class item : public object
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
   virtual short GetCarryingBonus() const { return 0; }
   virtual bool IsBanana() const { return false; }
+  virtual bool IsEncryptedScroll() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

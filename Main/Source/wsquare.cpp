@@ -153,6 +153,10 @@ void wsquare::SetLastSeen(ulong What)
 
 void wsquare::CalculateLuminance()
 {
+  /*short Altitude = GetWorldMapUnder()->GetAltitude(Pos);
+  ushort Element = Min(128 - ushort(37.5f * log(1.0f + (Altitude < 0 ? -0.0005f * Altitude : 0.002f * Altitude))), 255);
+  Luminance = MakeRGB24(Element, Element, Element);*/
+
   uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }

@@ -27,7 +27,7 @@ class ABSTRACT_CHARACTER
  public:
   humanoid(const humanoid&);
   virtual bool CanWield() const;
-  virtual bool Hit(character*);
+  virtual bool Hit(character*, bool = false);
   virtual ushort GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
   rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
@@ -94,13 +94,13 @@ class ABSTRACT_CHARACTER
   virtual ushort GlobalResistance(uchar) const;
   virtual void CompleteRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
-  virtual void Kick(lsquare*);
+  virtual void Kick(lsquare*, bool = false);
   virtual float GetTimeToKill(const character*, bool) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
-  virtual void Bite(character*);
+  virtual void Bite(character*, bool = false);
   virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH), 1) + CarryingBonus; }
   virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
@@ -195,9 +195,9 @@ class ABSTRACT_CHARACTER
   long GetUnarmedAPCost() const { return UnarmedAPCost; }
   long GetKickAPCost() const { return KickAPCost; }
   long GetBiteAPCost() const { return BiteAPCost; }
-  virtual void Kick(lsquare*);
-  virtual bool Hit(character*);
-  virtual void UnarmedHit(character*);
+  virtual void Kick(lsquare*, bool = false);
+  virtual bool Hit(character*, bool = false);
+  virtual void UnarmedHit(character*, bool = false);
   virtual void InitSpecialAttributes();
   virtual float GetTimeToKill(const character*, bool) const;
   virtual void ApplyExperience(bool = false);
@@ -205,7 +205,7 @@ class ABSTRACT_CHARACTER
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
-  virtual void Bite(character*);
+  virtual void Bite(character*, bool = false);
   virtual bool RaiseStats();
   virtual bool LowerStats();
   virtual ushort GetCarryingStrength() const { return (Max<ushort>(GetAttribute(LEG_STRENGTH), 1) << 1) + CarryingBonus; }
@@ -282,9 +282,6 @@ class CHARACTER
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
   virtual vector2d GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) * 16); }
   virtual vector2d GetLeftArmBitmapPos() const { return GetRightArmBitmapPos(); }
-  virtual vector2d GetGroinBitmapPos() const { return vector2d(0, (RAND() & 1) * 16); }
-  virtual vector2d GetRightLegBitmapPos() const { return GetGroinBitmapPos(); }
-  virtual vector2d GetLeftLegBitmapPos() const { return GetGroinBitmapPos(); }
 );
 
 class CHARACTER
@@ -337,7 +334,7 @@ class CHARACTER
   ennerbeast,
   humanoid,
  public:
-  virtual bool Hit(character*);
+  virtual bool Hit(character*, bool = false);
  protected:
   virtual void GetAICommand();
   virtual bool AttackIsBlockable(uchar) const { return false; }
@@ -356,7 +353,7 @@ class CHARACTER
   elpuri,
   frog,
  public:
-  virtual bool Hit(character*);
+  virtual bool Hit(character*, bool = false);
  protected:
   virtual void CreateCorpse();
 );
@@ -644,7 +641,7 @@ class CHARACTER
   humanoid,
  public:
   virtual float GetTimeToKill(const character*, bool) const;
-  virtual bool Hit(character*);
+  virtual bool Hit(character*, bool = false);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(ushort);
@@ -732,10 +729,13 @@ class CHARACTER
   bananagrower,
   humanoid,
  public:
-  virtual void BeTalkedTo();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual void BeTalkedTo();
+  virtual std::string& ProcessMessage(std::string&) const;
+  virtual std::string GetProfessionDescription() const;
  protected:
+  virtual bool HandleCharacterBlockingTheWay(character*);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   uchar Profession;
@@ -772,12 +772,35 @@ class CHARACTER
 (
   ostrich,
   nonhumanoid,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+ protected:
+  virtual bool HandleCharacterBlockingTheWay(character*);
+  virtual void VirtualConstructor(bool);
+  virtual void GetAICommand();
+  bool HasBeenOnLandingSite;
+);
+
+class CHARACTER
+(
+  elder,
+  humanoid,
+ protected:
+  virtual void CreateBodyParts(ushort);
+);
+
+class CHARACTER
+(
+  encourager,
+  humanoid,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  bool HasBeenOnLandingSite;
+  ulong LastHit;
 );
 
 #endif

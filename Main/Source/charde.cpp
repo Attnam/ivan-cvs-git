@@ -36,13 +36,14 @@ CHARACTER_PROTOTYPE(character, 0);
 #include "colorbit.h"
 #include "save.h"
 #include "game.h"
+#include "wterrade.h"
 
 petrus::~petrus()
 {
   game::SetPetrus(0);
 }
 
-bool ennerbeast::Hit(character*)
+bool ennerbeast::Hit(character*, bool)
 {
   if(RAND() & 1)
     ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHAR_DESCRIPTION(DEFINITE));
@@ -307,7 +308,7 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-bool humanoid::Hit(character* Enemy)
+bool humanoid::Hit(character* Enemy, bool ForceHit)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
@@ -347,13 +348,13 @@ bool humanoid::Hit(character* Enemy)
 	  if(GetRightArm() && GetRightArm()->GetDamage())
 	    {
 	      RightAPCost = GetRightArm()->GetAPCost();
-	      GetRightArm()->Hit(Enemy);
+	      GetRightArm()->Hit(Enemy, ForceHit);
 	    }
 
 	  if(IsEnabled() && Enemy->IsEnabled() && GetLeftArm() && GetLeftArm()->GetDamage())
 	    {
 	      LeftAPCost = GetLeftArm()->GetAPCost();
-	      GetLeftArm()->Hit(Enemy);
+	      GetLeftArm()->Hit(Enemy, ForceHit);
 	    } 
 
 	  EditNP(-50);
@@ -366,7 +367,7 @@ bool humanoid::Hit(character* Enemy)
 	{
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
-	  Kick(Enemy->GetLSquareUnder());
+	  Kick(Enemy->GetLSquareUnder(), ForceHit);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -375,7 +376,7 @@ bool humanoid::Hit(character* Enemy)
 	{
 	  msgsystem::EnterBigMessageMode();
 	  Hostility(Enemy);
-          Bite(Enemy);
+          Bite(Enemy, ForceHit);
 	  msgsystem::LeaveBigMessageMode();
 	  return true;
 	}
@@ -448,18 +449,22 @@ void petrus::BeTalkedTo()
 
   if(game::GetPlayer()->HasGoldenEagleShirt())
     {
-      ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life! And thou possess the Shirt of the Golden Eagle, the symbol of my status! Return it now, please.\"");
+      ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Mayst thou be blessed by Valpurus for the rest of thy life! And thou possess the Shirt of the Golden Eagle, the symbol of Our status! Return it now, please.\"");
 
       if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [y/n]", REQUIRES_ANSWER))
 	{
-	  game::TextScreen("Thou hast slain the Blood Daemon King, and Petrus is happy!\n\nYou are victorious!");
-	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and became the Avatar of Law", 4, false);
+	  game::TextScreen( "The Holy Shirt is returned to its old owner and you kneel down to receive your reward.\n"
+			    "Petrus taps your shoulder with the Justifier and raises you to nobility. Later you\n"
+			    "receive a small dukedom in the middle of tundra where you rule with justice till\n"
+			    "the end of your content life.\n\nYou are victorious!");
+
+	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and was raised to nobility", 3, false);
 	  game::End();
 	  return;
 	}
       else
 	{
-	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+	  ADD_MESSAGE("\"I see. Thy greed hast overcome thy wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
 	  /* And now we actually make his face change color ;-) */
 
@@ -470,52 +475,77 @@ void petrus::BeTalkedTo()
 	  return;
 	}
     }
-  else
-    if(StoryState >= 2)
-      {
-	ADD_MESSAGE("Petrus says: \"Bring me the Shirt of the Golden Eagle and we'll talk.\"");
-	return;
-      }
 
   if(game::GetPlayer()->HasHeadOfElpuri())
     {
-      if(game::GetGod(1)->GetRelation() >= 0)// && game::GetPlayer()->MaxDanger() >= 250000)
-	{
-	  ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee.");
+      game::TextScreen(	"You have slain Elpuri, and Petrus grants you the freedom you desire.\n"
+			"You spend the next months in Attnam as an honored hero and when the\n"
+			"sea finally melts, you board the first ship and leave your past forever\n"
+			"behind.\n\nYou are victorious!");
 
-	  if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [y/n]", REQUIRES_ANSWER))
-	    {
-	      game::TextScreen(	"Champion of Law!\n\n"
-				"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
-				"Oree the Blood Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
-				"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
-
-	      GetAreaUnder()->SendNewDrawRequest();
-	      game::TriggerQuestForGoldenEagleShirt();
-	      StoryState = 2;
-	      return;
-	    }
-	}
-
-      game::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
       AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
       game::End();
     }
   else
-    if(!StoryState)
-      {
-	game::TextScreen(	"Petrus raises his hand as a salutation, and talks:\n"
-				"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
-				"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
-				"Valpurus hast told that this vile beast can be found in a nearby cave.\n"
-				"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
+    {
+      if(!StoryState)
+	{
+	  if(game::GetPlayer()->HasEncryptedScroll())
+	    {
+	      game::TextScreen( "You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
+				"Petrus raises his hand, the scroll glows yellow, and lo! The letters are clear and\n"
+				"readable. Petrus asks you to voice them aloud. The first two thousand words praise\n"
+				"Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
+				"Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
+				"are some sentences actually concerning your mission:\n\n"
+				"\"Alas, I fear dirty tongues have spread lies to my Lord's Ears. I assure all tales\n"
+				"of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
+				"The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
+				"not question the wisdom of the government's decisions. I will contribute what I can:\n"
+				"the ostriches will deliver an extra 10000 bananas to the capital and additionally the\n"
+				"slave that brought the message will henceforth be at Your disposal. I am certain this\n"
+				"satisfies the crown's needs.\"\n\n"
+				"\"Yours sincerely,\n"
+				"Richel Decos, the Viceroy of New Attnam\"");
 
-	GetAreaUnder()->SendNewDrawRequest();
-	ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
-	StoryState = 1;
-      }
-    else
-      ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");
+	      game::TextScreen( "You almost expected the last bit. Petrus seems to be deep in his thoughts and you\n"
+				"wonder what shape your is destiny taking in his mind. Suddenly he seems to return\n"
+				"to this reality and talks to you.\n\n"
+				"\"Oh, thou art still here. We were just discussing telepathically with Sir Galladon.\n"
+				"We started doubting Decos's alleged poverty a while back when he bought a couple of\n"
+				"medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
+				"vast riches seized from them. Our law says all such stolen valuables belong to \n"
+				"the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
+				"and even if such was provided, we couldn't send soldiers over the snow fields\n"
+				"ere spring.\"");
+
+	      game::TextScreen(	"\"However, since thou now servest Us, We ought to find thee something to do. Sir\n"
+				"Galladon hath told Us his agents witnessed thou leaving the dreaded underwater tunnel.\n"
+				"This means thou most likely hast defeated genetrix vesana and art a talented warrior.\n"
+				"We happen to have a task perfect for such a person. An evil dark frog named Elpuri who\n"
+				"hates Valpurus and Attnam more than anything hath taken control over an abandonned mine\n"
+				"nearby. It is pestering our fine city in many ways and reconnaissance has reported an\n"
+				"army of monsters gathering in the cave. Our guards are not trained to fight underground\n"
+				"and We dare not send them. To make things worse, someone hath recently stolen Us the\n"
+				"greatest armor in existence - the Shirt of the Golden Eagle. Elpuri cannot wear\n"
+				"it but he who can is now nearly immortal.\"\n\n"
+				"\"We want you to dive into the cave of gloom and slay the vile frog. Bring Us its head\n"
+				"and We reward thee with freedom. Shouldst thou also find the Shirt, We'll knight thee.\n"
+				"Good luck, and return when thou hast succeeded.\"");
+
+	      game::LoadWorldMap();
+	      game::GetWorldMap()->GetWSquare(game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE))->ChangeOWTerrain(new elpuricave);
+	      game::SaveWorldMap();
+	      GetAreaUnder()->SendNewDrawRequest();
+	      ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
+	      StoryState = 1;
+	    }
+	  else
+	    ADD_MESSAGE("\"Yes, citizen? We are quite busy now, thou shalt not disturb us without proper cause.\"");
+	}
+      else /* StoryState == 1 */
+	ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");
+    }
 }
 
 void priest::BeTalkedTo()
@@ -688,7 +718,7 @@ void slave::GetAICommand()
   EditAP(-1000);
 }
 
-bool elpuri::Hit(character* Enemy)
+bool elpuri::Hit(character* Enemy, bool ForceHit)
 {
   for(ushort d = 0; d < 9; ++d)
     {
@@ -702,7 +732,7 @@ bool elpuri::Hit(character* Enemy)
 
 	      if(ByStander && (ByStander == Enemy || GetRelation(ByStander) == HOSTILE))
 		{
-		  nonhumanoid::Hit(ByStander);
+		  nonhumanoid::Hit(ByStander, ForceHit);
 		  ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
 		}
 	    }
@@ -733,64 +763,56 @@ void librarian::BeTalkedTo()
     {
     case 0:
       if(game::GetPetrus() && !game::GetPetrus()->GetStoryState())
-	ADD_MESSAGE("\"Thou should visit Petrus if thou areth in need of adventure.\"");
+	ADD_MESSAGE("\"Thou shouldst visit Petrus if thou art in need of further adventures.\"");
       else
-	ADD_MESSAGE("\"It is said that a wand of polymorph has dozens of uses.\"");
+	ADD_MESSAGE("\"They say a wand of polymorph hath dozens of uses.\"");
 
       break;
     case 1:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
-	ADD_MESSAGE("\"Thou are going to fight Elpuri? Beware! It is a powerful enemy. Other monsters are very vulnerable if surrounded by thine party, but not that beast, for it may slay a horde of thine friends at once with its horrendous tail attack.\"");
+	ADD_MESSAGE("\"Thou art going to fight Elpuri? Beware! It is a powerful enemy. Other monsters are very vulnerable if surrounded by thy party, but not that beast, for it may slay a horde of thy friends at once with its horrendous tail attack.\"");
       else
-	ADD_MESSAGE("\"Remember: Scientia est potentia.\"");
+	ADD_MESSAGE("\"Thou shalt remember: Scientia est potentia.\"");
 
       break;
     case 2:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 	ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");
       else
-	ADD_MESSAGE("\"Shh! Be silent in the library.\"");
+	ADD_MESSAGE("\"Shh! Thou shalt be silent in the library.\"");
 
       break;
     case 3:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
-	ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thine precious items.\"");
+	ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thy precious items.\"");
       else
 	ADD_MESSAGE("\"Dost thou not smell all the knowledge floating around here?\"");
 
       break;
     case 4:
-      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
-	ADD_MESSAGE("\"Thou wish to confront the Blood Daemon King? Heed my advice: He is a cunning enemy and shall seek to ambush thee. A powerful party and a means of quick escape at hand would help thee greatly.\"");
-      else
-	ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can enchant thine weapons' material.\"");
-
+      ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can upgrade thy weapons' materials.\"");
       break;
     case 5:
-      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
+      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 	ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
       else
 	ADD_MESSAGE("\"In this book they talk about Mortifer, the great chaos god. He hates us mortals more than anything and will respond only to Champions of Evil.\"");
 
       break;
     case 6:
-      ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog. He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
+      ADD_MESSAGE("\"Attnam is traditionally ruled by the high priest of the Great Frog. He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
       break;
     case 7:
-      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
-	ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the High Priests. Things will get *very* rough if one denies it from Petrus.\"");
-      else
-	ADD_MESSAGE("\"They say thou should keep all the artifacts thou find. They shalt make thee famous after thine retirement.\"");
-
+      ADD_MESSAGE("\"They say thou shouldst keep all the artifacts thou findst. They shall make thee famous after thy retirement.\"");
       break;
     case 8:
-      ADD_MESSAGE("\"If thou shalt ever encounter an enner beast, know this: It is a horrible foe. It may shatter thine items and armor with its scream that penetrates iron and stone. Thou should not engage it in melee. Kill it from afar.\"");
+      ADD_MESSAGE("\"If thou wilt ever encounter an enner beast, know this: It is a horrible foe. It may shatter thy items and armor with its scream that penetrates iron and stone. Thou shouldst not engage it in melee but rather kill it from afar.\"");
       break;
     case 9:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
-	ADD_MESSAGE("\"Thou areth not alone in thine attempth to defeat Elpuri. A brave adventurer called Ivan also dived into its cave not long ago.\"");
+	ADD_MESSAGE("\"Thou art not alone in thy attempt to defeat Elpuri. A brave adventurer called Ivan also diveth into its cave not long ago.\"");
       else
-	ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers. But thou must remember: unlike lawfuls, they shalt not help thee when things go bad.\"");
+	ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers. But thou must remember: unlike lawfuls, they shall not help thee when things go bad.\"");
 
       break;
     case 10:
@@ -934,10 +956,10 @@ void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
 
-bool kamikazedwarf::Hit(character* Enemy)
+bool kamikazedwarf::Hit(character* Enemy, bool ForceHit)
 {
   if(IsPlayer())
-    return humanoid::Hit(Enemy);
+    return humanoid::Hit(Enemy, ForceHit);
   else
     {
       for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -952,7 +974,7 @@ bool kamikazedwarf::Hit(character* Enemy)
 	      return true;
 	  }
 
-      return humanoid::Hit(Enemy);
+      return humanoid::Hit(Enemy, ForceHit);
     }
 }
 
@@ -1403,11 +1425,8 @@ void carnivorousplant::GetAICommand()
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && GetRelation(Char) == HOSTILE)
-	    {
-	      Hit(Char);
-	      return;
-	    }
+	  if(Char && GetRelation(Char) == HOSTILE && Hit(Char))
+	    return;
 	}
     }
 
@@ -1757,44 +1776,44 @@ void nonhumanoid::InitSpecialAttributes()
   StrengthExperience = AgilityExperience = 0;
 }
 
-void humanoid::Bite(character* Enemy)
+void humanoid::Bite(character* Enemy, bool ForceHit)
 {
   /* This function ought not to be called without a head */
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
   EditExperience(AGILITY, 75);
-  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()));
+  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-void nonhumanoid::Bite(character* Enemy)
+void nonhumanoid::Bite(character* Enemy, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
   EditExperience(AGILITY, 75);
-  Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()));
+  Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-void humanoid::Kick(lsquare* Square)
+void humanoid::Kick(lsquare* Square, bool ForceHit)
 {
   leg* KickLeg = GetKickLeg();
   EditNP(-50);
   EditAP(-KickLeg->GetKickAPCost());
   KickLeg->EditExperience(LEG_STRENGTH, 25);
   KickLeg->EditExperience(AGILITY, 50);
-  Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+  Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-void nonhumanoid::Kick(lsquare* Square)
+void nonhumanoid::Kick(lsquare* Square, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetKickAPCost());
   EditExperience(LEG_STRENGTH, 25);
   EditExperience(AGILITY, 50);
-  Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+  Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-bool nonhumanoid::Hit(character* Enemy)
+bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 {
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
@@ -1827,19 +1846,19 @@ bool nonhumanoid::Hit(character* Enemy)
     case USE_ARMS:
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      UnarmedHit(Enemy);
+      UnarmedHit(Enemy, ForceHit);
       msgsystem::LeaveBigMessageMode();
       return true;
     case USE_LEGS:
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Kick(Enemy->GetLSquareUnder());
+      Kick(Enemy->GetLSquareUnder(), ForceHit);
       msgsystem::LeaveBigMessageMode();
       return true;
     case USE_HEAD:
       msgsystem::EnterBigMessageMode();
       Hostility(Enemy);
-      Bite(Enemy);
+      Bite(Enemy, ForceHit);
       msgsystem::LeaveBigMessageMode();
       return true;
     default:
@@ -1848,12 +1867,12 @@ bool nonhumanoid::Hit(character* Enemy)
     }
 }
 
-void nonhumanoid::UnarmedHit(character* Enemy)
+void nonhumanoid::UnarmedHit(character* Enemy, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetUnarmedAPCost());
 
-  switch(Enemy->TakeHit(this, 0, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, !(RAND() % GetCriticalModifier())))
+  switch(Enemy->TakeHit(this, 0, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMED_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -2998,63 +3017,45 @@ ulong angel::GetBaseEmitation() const
 
 void bananagrower::BeTalkedTo()
 {
-  std::string ProfStr;
+  if(GetRelation(game::GetPlayer()) != HOSTILE && !Profession && !(RAND() % 10))
+    ADD_MESSAGE("\"I'm glad that Petrus spared my life even though I was the president.\"");
+  else
+    character::BeTalkedTo();
+}
+
+std::string bananagrower::GetProfessionDescription() const
+{
+  std::string String;
+
   switch(Profession)
     {
     case 0:
-      ProfStr = "the president of Twerajf";
+      String = "the president of Tweraif";
       break;
     case 1:
-      ProfStr = "a doctor";
+      String = "a diplomat";
       break;
     case 2:
-      ProfStr = "a computer engineer";
+      String = "a teacher";
       break;
     case 3:
-      ProfStr = "a physicist";
+      String = "a philosopher";
       break;
     case 4:
-      ProfStr = "a journalist";
+      String = "a journalist";
       break;
     case 5:
-      ProfStr = "a chemist";
+      String = "an alchemist";
       break;
     case 6:
-      ProfStr = "a quantum mechanic";
+      String = "a renown mathematician";
       break;
     case 7:
-      ProfStr = "a priest of Silva";
+      String = "a priest of Silva";
       break;
     }
 
-  if(GetRelation(game::GetPlayer()) == HOSTILE)
-    {
-      ADD_MESSAGE("\"Banana POWER!\"");
-      return;
-    }
-
-  static std::vector<bool> Said(5);
-
-  switch(RandomizeReply(Said))
-    {
-    case 0:
-      ADD_MESSAGE("\"I was %s before that darn Petrus invaded our peaceful land.\"", ProfStr.c_str());
-      break;
-    case 1:
-      ADD_MESSAGE("\"When this place was still called Twerajf, everybody was happy.\"");
-      break;
-    case 2:
-      ADD_MESSAGE("\"I hate bananas. I wish I still was %s.\"", ProfStr.c_str());
-      break;
-    case 3:
-      ADD_MESSAGE("\"1 + 1 = 3. I still don't believe it.\"");
-      break;
-    case 4:
-      if(Profession == 0)
-	ADD_MESSAGE("\"I'm glad that Petrus spared my life even though I was the president.\"");
-      else
-	ADD_MESSAGE("\"I wish it would rain soon, the bananas are starting to die.\"");
-    }
+  return String;
 }
 
 void bananagrower::VirtualConstructor(bool Load)
@@ -3554,11 +3555,8 @@ void genetrixvesana::GetAICommand()
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && GetRelation(Char) == HOSTILE)
-	    {
-	      Hit(Char);
-	      return;
-	    }
+	  if(Char && GetRelation(Char) == HOSTILE && Hit(Char))
+	    return;
 	}
     }
 
@@ -3634,7 +3632,7 @@ void bananagrower::GetAICommand()
       if(MoveTowards(vector2d(45, 45)))
 	return;
     }
-  else if(GetPos().X == 49)
+  else if(GetPos().X == 54)
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s leaves the town to gather more bananas.", CHAR_NAME(DEFINITE));
@@ -3648,6 +3646,10 @@ void bananagrower::GetAICommand()
 	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
+      Profession = RAND() % 8;
+      RestoreBodyParts();
+      RestoreHP();
+      TemporaryState = 0;
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
@@ -3656,7 +3658,7 @@ void bananagrower::GetAICommand()
     }
   else
     {
-      if(MoveTowards(vector2d(49, 45)))
+      if(MoveTowards(vector2d(54, 45)))
 	return;
     }
 
@@ -3696,7 +3698,7 @@ void ostrich::GetAICommand()
       if(MoveTowards(vector2d(45, 45)))
 	return;
     }
-  else if(GetPos().Y == 49)
+  else if(GetPos().Y == 54)
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s leaves the town.", CHAR_NAME(DEFINITE));
@@ -3716,6 +3718,8 @@ void ostrich::GetAICommand()
 	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
+      RestoreHP();
+      TemporaryState = 0;
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
@@ -3724,7 +3728,7 @@ void ostrich::GetAICommand()
     }
   else
     {
-      if(MoveTowards(vector2d(45, 49)))
+      if(MoveTowards(vector2d(45, 54)))
 	return;
     }
 
@@ -3746,4 +3750,84 @@ void ostrich::Load(inputfile& SaveFile)
 void ostrich::VirtualConstructor(bool)
 {
   HasBeenOnLandingSite = false;
+}
+
+bool bananagrower::HandleCharacterBlockingTheWay(character* Char)
+{
+  return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char));
+}
+
+bool ostrich::HandleCharacterBlockingTheWay(character* Char)
+{
+  return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char));
+}
+
+std::string& bananagrower::ProcessMessage(std::string& Msg) const
+{
+  character::ProcessMessage(Msg);
+  SEARCH_N_REPLACE("@pd", GetProfessionDescription());
+  SEARCH_N_REPLACE("@Pd", festring::CapitalizeCopy(GetProfessionDescription()));
+  return Msg;
+}
+
+void elder::CreateBodyParts(ushort SpecialFlags)
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
+    if(c != LEFT_LEG_INDEX)
+      CreateBodyPart(c, SpecialFlags);
+    else
+      SetLeftLeg(0);
+}
+
+void encourager::GetAICommand()
+{
+  if(CheckForEnemies(true, true))
+    return;
+
+  if(CheckForUsefulItemsOnGround())
+    return;
+
+  if(CheckForDoors())
+    return;
+
+  if(game::GetTicks() - LastHit > 200)
+    {
+      static ushort NotDiagonal[] = { 1, 3, 4, 6 };
+
+      for(ushort d = 0; d < 4; ++d)
+	{
+	  square* Square = GetNeighbourSquare(NotDiagonal[d]);
+
+	  if(Square)
+	    {
+	      character* Char = Square->GetCharacter();
+
+	      if(Char && Char->GetTeam()->GetID() == NEW_ATTNAM_TEAM && Hit(Char, true))
+		{
+		  LastHit = game::GetTicks();
+		  return;
+		}
+	    }
+	}
+    }
+
+  EditAP(-1000);
+}
+
+void encourager::Save(outputfile& SaveFile) const
+{
+  character::Save(SaveFile);
+  SaveFile << LastHit;
+}
+
+void encourager::Load(inputfile& SaveFile)
+{
+  character::Load(SaveFile);
+  SaveFile >> LastHit;
+}
+
+void encourager::VirtualConstructor(bool)
+{
+  humanoid::VirtualConstructor(Load);
+  LastHit = 0;
 }

@@ -28,11 +28,16 @@ void team::Hostility(team* Enemy)
 {
   if(this != Enemy && GetRelation(Enemy) != HOSTILE)
     {
+      /* This is a gum solution. The behaviour should come from the script. */
+
+      if(GetID() == COLONIST_TEAM && Enemy->GetID() == NEW_ATTNAM_TEAM)
+	return;
+
       game::Hostility(this, Enemy);
 
       if(this == game::GetPlayer()->GetTeam())
 	{
-	  if(Enemy->GetID() == 2)
+	  if(Enemy->GetID() == ATTNAM_TEAM)
 	    {
 	      /* This is a gum solution. The message should come from the script. */
 

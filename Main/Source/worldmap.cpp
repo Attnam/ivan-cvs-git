@@ -246,7 +246,6 @@ void worldmap::Generate()
 
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);
-      GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
       SetEntryPos(ELPURI_CAVE, ElpuriCavePos);
       GetWSquare(NewAttnamPos)->ChangeOWTerrain(new newattnam);
       SetEntryPos(NEW_ATTNAM, NewAttnamPos);

@@ -658,7 +658,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical)
+void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical, bool ForceHit)
 {
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
@@ -666,7 +666,7 @@ void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float Ki
   GetStack()->BeKicked(Kicker, ushort(KickDamage));
 
   if(GetCharacter())
-    GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical);
+    GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical, ForceHit);
 
   GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage));
 }

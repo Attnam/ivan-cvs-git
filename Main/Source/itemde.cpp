@@ -2143,9 +2143,9 @@ bool leg::ApplyExperience()
   return Edited;
 }
 
-void arm::Hit(character* Enemy)
+void arm::Hit(character* Enemy, bool ForceHit)
 {
-  switch(Enemy->TakeHit(GetMaster(), GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
+  switch(Enemy->TakeHit(GetMaster(), GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % GetMaster()->GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -4930,12 +4930,20 @@ item* brokenbottle::Fix()
   
 ushort bodypart::GetConditionColor() const
 {
-  if(HP * 3 < MaxHP)
-    return MakeRGB16(100, 0, 0);
+  if(HP <= 1 && MaxHP > 1)
+    return MakeRGB16(32, 32, 32);
+  else if(HP * 3 < MaxHP)
+    return MakeRGB16(120, 0, 0);
   else if(HP * 3 < MaxHP << 1)
-    return MakeRGB16(160, 60, 60);
+    return MakeRGB16(180, 0, 0);
   else if(HP < MaxHP)
-    return MakeRGB16(180, 100, 100);
+    return MakeRGB16(180, 120, 120);
   else
     return LIGHT_GRAY;
+}
+
+bool encryptedscroll::Read(character*)
+{
+  ADD_MESSAGE("You could never hope to decipher this top secret message. It is meant for Petrus's eyes only.");
+  return false;
 }

@@ -129,6 +129,7 @@ human
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
+	Inventory == encryptedscroll;
 	/*Inventory = { 128, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels; }*/
 	/*Inventory == wandofpolymorph;
 	RightRing = ring(RING_OF_POLYMORPH_CONTROL);*/
@@ -378,7 +379,7 @@ petrus
 	PanicLevel = 0;
 	CanBeCloned = false;
 	DefaultName = "Petrus";
-	DeathMessage = "The High Priest disappears in a bright light and only his left nut is left behind.";
+	DeathMessage = "The high priest disappears in a bright light and only his left nut is left behind.";
 	/* Replies overridden */
 }
 
@@ -396,11 +397,11 @@ farmer
 	DefaultMana = 5;
 	DefaultMoney = 20;
 	TorsoSpecialColor = rgb16(0, 96, 0);
-	BootColor = rgb16(90, 50, 10);
 	TotalVolume = 50000;
 	TotalSize = 170;
 	NameSingular = "farmer";
 	TorsoBitmapPos = 32, 16;
+	LegBitmapPos = 0, 0;
 	Belt = LEATHER belt;
 	RightWielded = meleeweapon(AXE);
 	KnownCWeaponSkills == AXES;
@@ -455,8 +456,8 @@ guard
 		FriendlyReplies =
 		{
 			4,
-			"@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got a transferred?\"",
-			"\"Lions ate a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
+			"@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got transferred?\"",
+			"\"Lions killed a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
 			"\"This place's as hot as the elemental plane of fire! I want back home.\"",
 			"\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
 		}
@@ -477,9 +478,9 @@ guard
 		{
 			5,
 			"@Dd says gravely: \"You don't have a life. Get it in the army.\"",
-			"@Dd seems very suspicious. \"Don't even think of damaging anything.\"",
-			"\"The High Priest is my idol. I would want a sword as big as his!\"",
-			"\"Can you imagine how cold our winter is if you wear only a rusty plate mail?\"",
+			"@Dd seems very suspicious. \"Don't even think of breaking rules.\"",
+			"\"The high priest is my idol. I would want a sword as big as his!\"",
+			"\"Can you imagine how cold this winter is if you wear only a rusty plate mail?\"",
 			"@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
 		}
 	}
@@ -528,7 +529,7 @@ guard
 			"\"Don't believe Haedlac if he boasts with that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
 			"@Dd shouts excited: \"Attnam victoor!\"",
 			"\"We are the Imperial Guard. Bow.\"",
-			"\"If you even touch the shadow of our Magnificent High Priest, I'll squash you.\"";
+			"\"If you even touch the shadow of our magnificent high priest, I'll squash you.\"";
 		}
 	}
 
@@ -550,7 +551,7 @@ guard
 		PanicLevel = 5;
 		IsCharmable = false;
 		IsUnique = true;
-		DefaultName = "Haedlac Galladon VII";
+		DefaultName = "Sir Haedlac Galladon VII";
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeWished = false;
@@ -608,6 +609,7 @@ shopkeeper
 	CanBeCloned = false;
 	IsPolymorphable = false;
 	Inventory == holybook(MELLIS);
+	IsCharmable = false;
 
 	Config ATTNAM;
 	{
@@ -618,7 +620,7 @@ shopkeeper
 			"@Dd sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"",
 			"@Dd sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"",
 			"\"You truly can't find better prices in this city! Indeed, you can't find ANY prices, since my store is a monopoly.\"",
-			"\"Don't try anything. The High Priest is a friend of mine.\"";
+			"\"Don't try anything. The high priest is a friend of mine.\"";
 		}
 	}
 
@@ -668,6 +670,7 @@ priest
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
 	CanBeCloned = false;
+	IsCharmable = false;
 	/* Replies overridden */
 }
 
@@ -1695,11 +1698,12 @@ petrusswife
 	HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
 	FriendlyReplies =
 	{
-		4,
+		5,
 		"\"I'm so sick jealous to those dolphins...\"",
 		"\"I'm Petrus's favorite, not she!\"",
 		"\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
 		"\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
+		"\"That head on the wall looks really scary sometimes. Just like we were watched.\"";
 	}
 
 	Config 1;
@@ -1794,8 +1798,8 @@ femaleslave
 	DefaultAgility = 10;
 	DefaultEndurance = 10;
 	DefaultPerception = 18;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 25;
 	DefaultCharisma = 25;
 	DefaultMana = 5;
 	Sex = FEMALE;
@@ -1808,17 +1812,41 @@ femaleslave
 	TotalVolume = 40000;
 	TotalSize = 170;
 	Adjective = "female";
-	NameSingular = "slave";
 	RightWielded = palmbranch;
 	BaseUnarmedStrength = 200;
 	HostileReplies == "\"Yikes!\"";
-	FriendlyReplies =
+	IsAbstract = true;
+
+	Config ATTNAM;
 	{
-		4,
-		"\"Praise our lord Petrus!\"",
-		"\"Does that toy frog really need us serving it?\"",
-		"\"I'm not a slave. I'm a high-ranking palm branch officer with a good career history.\"",
-		"\"Palm leaves are good for health. Petrus loves their smell.\"";
+		NameSingular = "slave";
+		FriendlyReplies =
+		{
+			5,
+			"\"Praise our lord Petrus!\"",
+			"\"Does that toy frog really need us serving it?\"",
+			"\"I'm not a slave. I'm a high-ranking palm branch officer with a good career history.\"",
+			"\"I can tell you, serving Petrus is much more fun than pleasing that Decos bastard.\"",
+			"\"You seem oddly familiar. Oh! Isn't that the monkey smell of my home village!\"";
+		}
+	}
+
+	Config NEW_ATTNAM;
+	{
+		DefaultAgility = 15;
+		DefaultEndurance = 15;
+		DefaultIntelligence = 20;
+		DefaultWisdom = 30;
+		DefaultCharisma = 20;
+		NameSingular = "servant";
+		FriendlyReplies = 
+		{
+			4,
+			"\"Thank Silva I don't have to gather bananas!\"",
+			"\"My sister got a promotion last year. I've heard she is now a very successful slave in the Cathedral of Attnam. I am so jealous!\"",
+			"\"Palm leaves are good for health. Mr. Decos loves their smell.\"",
+			"\"When I was a highly educated doctor in independent Tweraif, I didn't have to I wear stupid bikinis all day long.\"";
+		}
 	}
 }
 
@@ -1852,6 +1880,7 @@ librarian
 	IsUnique = true;
 	IsNameable = false;
 	DefaultName = "Haathbar";
+	IsCharmable = false;
 }
 
 zombie
@@ -2060,7 +2089,7 @@ mistress
 		CanBeWished = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
-		Inventory = { 4, scrolloftaming, scrolloftaming, wandofhaste, scrollofwishing; }
+		Inventory = { 6, scrolloftaming, scrolloftaming, wandofhaste, wandofhaste, scrollofwishing, scrollofwishing; }
 	}
 }
 
@@ -2837,7 +2866,7 @@ bananagrower
 	DefaultLegStrength = 15;
 	DefaultDexterity = 10;
 	DefaultAgility = 20;
-	DefaultEndurance = 10;
+	DefaultEndurance = 15;
 	DefaultPerception = 15;
 	DefaultIntelligence = 20;
 	DefaultWisdom = 30;
@@ -2856,6 +2885,18 @@ bananagrower
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 16;
 	Inventory = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
+	IsCharmable = false; /* AI will go insane if he leaves New Attnam */
+	HostileReplies == "\"Banana POWER!\"";
+	FriendlyReplies =
+	{
+		6,
+		"@Dd curses: \"I hate bananas. I wish I still was @pd.\"",
+		"\"I was @pd before Attnam invaded our peaceful land.\"",
+		"@Dd glances thoughtfully to the cloudless sky: \"I wish it would rain soon. The bananas are starting to die.\"",
+		"\"1 + 1 = 3. I still don't believe it.\"",
+		"@Dd sighs: \"I had a girlfriend a while back but one day piranhas ate her...\"",
+		"@Dd seems irritated. \"Go away! I know you can leave and I can't, and I'd prefer to forget that fact.\"";
+	}
 }
 
 imperialist
@@ -2900,14 +2941,17 @@ imperialist
 	DefaultName = "Richel Decos";
 	AttackStyle = USE_ARMS|USE_LEGS;
 	CriticalModifier = 4;
+	IsCharmable = false;
 	FriendlyReplies =
 	{
-		5,
-		"\"They said that levitating ostriches had no future! HAHAHAAHHA!\"",
-		"\"Ostriches Corp. was a high risk investment, but more than worth it.\"",
-		"\"I'm originally from Attnam, but I like the climate here in New Attnam more.\"",
-		"\"The tax laws of Attnam don't encourage free enterprise.\"",
-		"\"Poor people shouldn't complain - after all it's their own fault.\"";
+		7,
+		"\"And they said levitating ostriches had no future! BUWAHAAHAHAHAAHHA!\" (foam drips from the imperialist's mouth as @pp laughs almost insanely)",
+		"\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"",
+		"\"Poor people shouldn't complain - after all it's their own fault.\"",
+		"\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if this room has something to do with it?\"",
+		"\"I couldn't possibly thank this city enough for making Decos Bananas Co. the world's greatest fruit producer. So I don't do it all.\"",
+		"\"Low work and transportation costs have allowed me to thrive in a way envied by all rivals.\"",
+		"\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"";
 	}
 }
 
@@ -2949,6 +2993,7 @@ smith
 	IsNameable = false;
 	CanBeCloned = false;
 	DefaultName = "Ikiros";
+	IsCharmable = false;
 }
 
 genetrixvesana
@@ -2997,7 +3042,7 @@ ostrich
 	TotalVolume = 120000;
 	TorsoBitmapPos = 64, 16;
 	HostileReplies == "@Dd cackles diabolically.";
-	FriendlyReplies == "@Dd cackles cheerfully.";
+	FriendlyReplies == "@Dd cackles cheerfully. @Pp likes @sp work.";
 	TotalSize = 230;
 	SkinColor = rgb16(160, 140, 140);
 	TorsoMainColor = rgb16(48, 48, 48); /* the body feathers */
@@ -3012,4 +3057,86 @@ ostrich
 	FleshMaterial = OSTRICH_FLESH;
 	DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
 	StandVerb = "floating";
+	IsCharmable = false; /* AI will go insane if it leaves New Attnam */
+}
+
+elder
+{
+	DefaultArmStrength = 7;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 7;
+	DefaultAgility = 15;
+	DefaultEndurance = 7;
+	DefaultPerception = 21;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 40;
+	DefaultCharisma = 20;
+	DefaultMana = 20;
+	TotalVolume = 70000;
+	TotalSize = 160;
+	NameSingular = "village elder";
+	SkinColor = rgb16(128, 80, 48);
+	HairColor = rgb16(32, 32, 32);
+	ClothColor = rgb16(56, 48, 20);
+	HeadBitmapPos = 96, 224;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 16;
+	IsUnique = true;
+	DefaultName = "Kaethos";
+	IsCharmable = false;
+	HostileReplies == "\"I knew those hippos couldn't raise anything decent!\"";
+	FriendlyReplies =
+	{
+		9,
+		"\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. But good luck anyway.\"",
+		"\"I remember still clearly when we first found in the jungle. You were five and had seemingly been raised by a family of two male hippos.\"",
+		"\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
+		"\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",
+		"@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
+		"\"For a decade I served this Decos lad as a banana grower like everyone else, but then an elephant stepped on my toe and my leg was amputated. I could climb trees no more so they made me a tourist guide.\"",
+		"\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven feet wings and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
+		"\"Previously we could use donkeys to carry the bananas. Then one day Attnamians tested a fierce magical bomb nearby and all the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
+		"\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"";
+	}
+}
+
+encourager
+{
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
+	DefaultAgility = 10;
+	DefaultEndurance = 15;
+	DefaultPerception = 21;
+	DefaultIntelligence = 7;
+	DefaultWisdom = 7;
+	DefaultCharisma = 7;
+	DefaultMana = 0;
+	CapColor = rgb16(80, 80, 80);
+	EyeColor = rgb16(140, 100, 70);
+	HeadBitmapPos = 96, 240;
+	TorsoBitmapPos = 32, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 16;
+	TotalVolume = 90000;
+	TotalSize = 170;
+	NameSingular = "banana grower encourager";
+	Belt = LEATHER belt;
+	RightWielded = whip;
+	RightBoot = HARDENED_LEATHER boot;
+	KnownCWeaponSkills = { 2, KICK, WHIPS; }
+	CWeaponSkillHits = { 2, 100, 100; }
+	RightSWeaponSkillHits = 100;
+	AttackStyle = USE_ARMS|USE_LEGS;
+	IsCharmable = false;
+	HostileReplies == "\"Ah! Again me kick ye!\"";
+	FriendlyReplies =
+	{
+		4;
+		"@Dd shouts harshly: \"Work! Work! Bring food to yer betters!\"",
+		"@Dd shouts almost sadly: \"Gonna leave, man? Pity. Me kinda liked kicking ye.\"",
+		"@Dd screams at your face: \"Me talented shouter. That made everyone in Attnam jealous. Me was sent here and told to never come back.\"",
+		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouragering workers.\"";
+	}
 }

@@ -1,3 +1,27 @@
+November 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Decreased the amount of wolves Silva creates in towns
+	* The fly symbol is a bit clearer now
+	* Banana growers and ostriches now displace any movable creature on the landing
+	  platform; if it isn't possible (the creature is a plant something), they'll
+	  attack it
+	* Added yet another silhouette color level; colors of old ones adjusted
+	* Dark frogs and rarely even greater ones appear in fountains (Hex forgot them)
+	* Added ice and snow materials
+	* Added snowy ground & pines and firs covered with snow
+	* Winter has arrived in Attnam
+	* Added new background story
+	* Corrected Decos's female servants' replies
+	* Richel Decos's and the banana growers' replies adjusted heavily
+	* Added new characters: banana grower encourager and Kaethos the village elder
+	* The banana grower encourager now occasionally whips or kicks the passing banana
+	  growers
+	* Added new quest artifact: encrypted scroll
+	* Finally added the new starting quest
+	* Elpuri's cave is now hidden until the Player finishes the starting quest
+	* All Petrus's replies rewritten
+	* The archaic English used by Petrus, Haathbar, priests and gods is now more correct
+
 November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Kahvi's levitation & fly symbol integrated

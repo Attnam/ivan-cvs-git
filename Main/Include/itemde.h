@@ -933,7 +933,7 @@ class ABSTRACT_ITEM
   virtual void DropEquipment();
   float GetUnarmedToHitValue() const;
   float GetUnarmedDamage() const;
-  virtual void Hit(character*);
+  virtual void Hit(character*, bool = false);
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
@@ -1432,6 +1432,17 @@ class ITEM
  public:
   virtual bool Read(character*);
   virtual void FinishReading(character*);
+);
+
+class ITEM
+(
+  encryptedscroll,
+  scroll,
+ public:
+  virtual void Be() { }
+  virtual bool Read(character*);
+  virtual bool ReceiveDamage(character*, ushort, uchar) { return false; }
+  virtual bool IsEncryptedScroll() const { return true; }
 );
 
 #endif

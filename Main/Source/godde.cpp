@@ -329,25 +329,22 @@ void silva::PrayGoodEffect()
     }
   else
     {
+      ushort TryToCreate = 1 + RAND() % 7;
       ushort Created = 0;
 
-      for(ushort d = 0; d < 8; ++d)
+      for(; Created < TryToCreate; ++Created)
 	{
-	  square* Square = game::GetPlayer()->GetNeighbourSquare(d);
+	  wolf* Wolf = new wolf;
+	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Wolf, game::GetPlayer()->GetPos());
 
-	  if(Square)
+	  if(Pos == DIR_ERROR_VECTOR)
 	    {
-	      wolf* Wolf = new wolf;
-
-	      if(Square->IsWalkable(Wolf) && !Square->GetCharacter())
-		{
-		  Wolf->SetTeam(game::GetPlayer()->GetTeam());
-		  Square->AddCharacter(Wolf);
-		  ++Created;
-		}
-	      else
-		delete Wolf;
+	      delete Wolf;
+	      break;
 	    }
+
+	  Wolf->SetTeam(game::GetPlayer()->GetTeam());
+	  game::GetCurrentLevel()->AddCharacter(Pos, Wolf);
 	}
 
       if(!Created)
@@ -434,13 +431,13 @@ void cleptia::PrayBadEffect()
 
 void mortifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
+  ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHy ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
   game::GetPlayer()->GetGiftStack()->AddItem(new neercseulb);
 }
 
 void mortifer::PrayBadEffect()
 {
-  ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
+  ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! ThOu ArT nOt WoRtHy! I sHaLl dEsTrOy ThEe LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
   game::GetPlayer()->EditAttribute(AGILITY, -1);
   game::GetPlayer()->EditAttribute(ARM_STRENGTH, -1);
@@ -839,22 +836,22 @@ void cruentus::Pray()
 
 std::string legifer::GetPriestMessage() const
 {
-  return "\"" + Name() + " is the Great Protector of all Law and Order. Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"";
+  return "\"" + Name() + " is the Great Protector of all Law and Order. Prayed upon, He may burn thy enemies with the Fire of Justice, if thou art worthy.\"";
 }
 
 std::string dulcis::GetPriestMessage() const
 {
-  return "\"" + Name() + " is the Creator of everything that we call Art and Beauty. When thou pray for Her help, She may calm thine worst enemies with Her love. But beware! There areth some villains that may resist even Her call!\"";
+  return "\"" + Name() + " is the Creator of everything we call Art and Beauty. When thou prayest for Her help, She may calm thy worst enemies with Her love. But beware! There are villains that may resist even Her call!\"";
 }
 
 std::string seges::GetPriestMessage() const
 {
-  return "\"" + Name() + " brings Life, Health and Nutrition to all who follow Her. When thou call upon Her with an empty stomach, a miracle may indeed fill it.";
+  return "\"" + Name() + " brings Life, Health and Nutrition to all who follow Her. When thou callest upon Her with an empty stomach, a miracle may indeed fill it.";
 }
 
 std::string sophos::GetPriestMessage() const
 {
-  return "\"The Wise bow before " + Name() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou may find thyself in an even worse situation!\"";
+  return "\"The Wise bow before " + Name() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou mayst find thyself in an even worse situation!\"";
 }
 
 void scabies::PlayerVomitedOnAltar()
@@ -865,5 +862,5 @@ void scabies::PlayerVomitedOnAltar()
 
 std::string valpurus::GetPriestMessage() const
 {
-  return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
+  return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"";
 }

@@ -93,7 +93,7 @@ lantern
 	StrengthModifier = 50;
 	FormModifier = 20;
 	Price = 50;
-	BaseEmitation = rgb24(130, 130, 120);
+	BaseEmitation = rgb24(135, 135, 125);
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
 	Alias == "light";
@@ -2092,4 +2092,15 @@ scrollofrepair /* scroll-> */
 	Price = 250;
 	PostFix = "of repair";
 	Alias == "scroll of repairing";
+}
+
+encryptedscroll /* scroll-> */
+{
+	AdjectiveArticle = "an";
+	Adjective = "encrypted";
+	CanBeWished = false;
+	IsDestroyable = false;
+	IsMaterialChangeable = false;
+	IsPolymorphable = false;
+	CanBeCloned = false;
 }

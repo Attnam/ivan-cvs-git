@@ -44,6 +44,10 @@ inline void festring::SearchAndReplace(std::string& Where, const std::string& Wh
     }
 }
 
+/* This macro doesn't evaluate with if what is not found so it's often faster */
+
+#define SEARCH_N_REPLACE(what, with) if(Msg.find(what, 0) != std::string::npos) festring::SearchAndReplace(Msg, what, with);
+
 /* Overloaded operators that make std::string use much more convenient */
 
 inline std::string operator+(std::string String, short Int) { return String.append(festring::IntegerToChar(Int)); }

@@ -69,7 +69,7 @@ class lsquare : public square
   bool Engrave(const std::string& What) { Engraved = What; return true; }
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
-  void BeKicked(character*, item*, float, float, short, bool);
+  void BeKicked(character*, item*, float, float, short, bool, bool);
   uchar GetDivineMaster() const { return DivineMaster; }
   void SetDivineMaster(uchar What) { DivineMaster = What; }
   void Draw();

@@ -6,7 +6,7 @@ lp - low priority
 //Stethoscope. (hp)
 Inhandspics of broken weapons. (lp)
 Hit symbol.
-Village Elder.
+(r) Village Elder.
 //Thief.
 Black Mage.
 //Grave digger.
@@ -34,9 +34,9 @@ Jackals on gravel floor.
 Ring of teleportation + gravel floor.
 //Smith.
 Forge.
-Anvil. (lp)
+//Anvil. (lp)
 //Levitating ostrich.
-M-color for boots. (hp)
+//M-color for boots. (hp)
 Animation for mommos.
 Several types of key pictures. (lp)
 Harp.
@@ -49,8 +49,8 @@ Jungle bays.
 Better helmet.
 Robe.
 Ring of poison resistance, triangular key on a gravel floor.
-Corpse of a black unicorn looks odd.
+//Corpse of a black unicorn looks odd.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
-Small, medium and large chests (one is probably already done...)
+//Small, medium and large chests (one is probably already done...)
 The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
