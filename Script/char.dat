@@ -329,8 +329,7 @@ playerkind
   NameSingular = "human";
   AttachedGod = SEGES;
   DisplacePriority = 2;
-  Inventory == holybook(MELLIS);
-/* amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; } */
+  Inventory == amulet(AMULET_OF_LIFE_SAVING) { Times = BONUS_LIVES; } 
 }
 
 petrus

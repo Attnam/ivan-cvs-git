@@ -6,6 +6,12 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+March 4 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
+
+  * forgot a small test in the script. Now deleted.
+  * AUTHORS file now updated
+  * small bug fixes included
+	
 March 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
 
   * Ighalli's god changed integrated. AUTHORS file may need tweaking in the future.

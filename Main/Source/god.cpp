@@ -526,6 +526,6 @@ void god::ApplyDivineTick()
 {
   if(Timer)
     --Timer;
-  if(LastPray > -1 && LastPray < 14000)
+  if(LastPray > -1 && LastPray < 336000)
     ++LastPray;
 } 
