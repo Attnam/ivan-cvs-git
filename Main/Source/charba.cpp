@@ -100,9 +100,15 @@ bool character::Hit(character* Enemy)
 	case HAS_HIT:
 	case HAS_BLOCKED:
 		if(GetWielded())
+		{
 			GetWielded()->ReceiveHitEffect(Enemy, this);
+			
+		}
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
+		if(GetWielded()) 
+			if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
+				SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
 	}

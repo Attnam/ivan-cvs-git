@@ -500,8 +500,14 @@ bool humanoid::Hit(character* Enemy)
 		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
 			GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
 		if(GetWielded())
+		{
 			if(GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
 				GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
+
+			if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
+				SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
+
+		}
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
 	}
