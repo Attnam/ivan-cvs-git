@@ -371,18 +371,6 @@ material
 		NameStem = "copper";
 	}
 
-	Config ORMOPIUM;
-	{
-		StrengthValue = 1000;
-		ConsumeType = METAL;
-		Density = 20000;
-		OfferValue = 100;
-		IsSolid = true;
-		Color = rgb(0, 150, 0);
-		PriceModifier = 100000;
-		NameStem = "örmöpium";
-		Article = "an";
-	}
 	Config TIN;
 	{
 		StrengthValue = 50;
@@ -583,7 +571,7 @@ flesh
 	Config GOBLINOIDFLESH;
 	{
 		OfferValue = 10;
-		Color = rgb(0, 128, 0);
+		/*Color = rgb(0, 128, 0);*/
 		PriceModifier = 600;
 		NameStem = "green flesh";
 	}
@@ -606,19 +594,16 @@ flesh
 		NameStem = "beef";
 	}
 
-	Config DARKFROGFLESH;
+	Config FROGFLESH;
 	{
 		OfferValue = 500;
 		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
-		NameStem = "frog flesh";
 		Effect = EDARKNESS;
 		ConsumeEndMessage = CEM_FROGFLESH;
 		HitMessage = HM_FROGFLESH;
-
-		Color = rgb(48, 48, 48);
-		NameStem = "dark frog flesh";
+		NameStem = "frog flesh";
 	}
 
 	Config ELPURIFLESH;
@@ -627,11 +612,9 @@ flesh
 		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
-		NameStem = "frog flesh";
 		Effect = EDARKNESS;
 		ConsumeEndMessage = CEM_FROGFLESH;
 		HitMessage = HM_FROGFLESH;
-
 		StrengthValue = 30;
 		Density = 2400;
 		OfferValue = 1;
@@ -639,38 +622,23 @@ flesh
 		Article = "an";
 	}
 
-	Config LIGHTFROGFLESH;
-	{
-		OfferValue = 500;
-		NutritionValue = 1000;
-		Alignment = EVIL;
-		IsBadFoodForAI = true;
-		NameStem = "frog flesh";
-		Effect = EDARKNESS;
-		ConsumeEndMessage = CEM_FROGFLESH;
-		HitMessage = HM_FROGFLESH;
-
-		Color = rgb(32, 88, 32);
-		NameStem = "light frog flesh";
-	}
-
 	Config HUMANFLESH;
 	{
 		OfferValue = 30;
-		Color = rgb(64, 64, 64);
+		/*Color = rgb(64, 64, 64);*/
 		Alignment = EVIL;
 		NameStem = "human flesh";
 	}
 
 	Config DOLPHINFLESH;
 	{
-		Color = rgb(64, 64, 64);
+		/*Color = rgb(64, 64, 64);*/
 		NameStem = "dolphin flesh";
 	}
 
 	Config POLARBEARFLESH;
 	{
-		Color = rgb(128, 128, 128);
+		/*Color = rgb(128, 128, 128);*/
 		PriceModifier = 600;
 		NameStem = "polar bear flesh";
 	}
@@ -678,7 +646,7 @@ flesh
 	Config WOLFFLESH;
 	{
 		OfferValue = 15;
-		Color = rgb(64, 64, 64);
+		/*Color = rgb(64, 64, 64);*/
 		PriceModifier = 600;
 		NameStem = "wolf flesh";
 	}
@@ -686,10 +654,8 @@ flesh
 	Config DOGFLESH;
 	{
 		OfferValue = 15;
-		Color = rgb(64, 64, 64);
 		PriceModifier = 600;
-
-		Color = rgb(111, 74, 37);
+		/*Color = rgb(111, 74, 37);*/
 		Alignment = EVIL;
 		NameStem = "dog flesh";
 	}
@@ -699,7 +665,7 @@ flesh
 		StrengthValue = 30;
 		Density = 1800;
 		OfferValue = 5;
-		Color = rgb(112, 112, 64);
+		/*Color = rgb(112, 112, 64);*/
 		IsBadFoodForAI = true;
 		NameStem = "enner beast flesh";
 		Article = "an";
@@ -708,35 +674,35 @@ flesh
 	Config SPIDERFLESH;
 	{
 		OfferValue = 4;
-		Color = rgb(160, 160, 160);
+		/*Color = rgb(160, 160, 160);*/
 		NameStem = "spider flesh";
 	}
 
 	Config JACKALFLESH;
 	{
 		OfferValue = 6;
-		Color = rgb(224, 224, 224);
+		/*Color = rgb(224, 224, 224);*/
 		NameStem = "jackal flesh";
 	}
 
 	Config DONKEYFLESH;
 	{
 		OfferValue = 6;
-		Color = rgb(80, 80, 80);
+		/*Color = rgb(80, 80, 80);*/
 		NameStem = "donkey flesh";
 	}
 
 	Config BATFLESH;
 	{
 		OfferValue = 7;
-		Color = rgb(48, 48, 48);
+		/*Color = rgb(48, 48, 48);*/
 		NameStem = "bat flesh";
 	}
 
 	Config WEREWOLFFLESH;
 	{
 		OfferValue = 13;
-		Color = rgb(90, 64, 64);
+		/*Color = rgb(90, 64, 64);*/
 		NameStem = "werewolf flesh";
 	}
 
@@ -744,7 +710,7 @@ flesh
 	{
 		OfferValue = 14;
 		NutritionValue = 100;
-		Color = rgb(30, 100, 110);
+		/*Color = rgb(30, 100, 110);*/
 		IsBadFoodForAI = true;
 		NameStem = "kobold flesh";
 		Effect = EKOBOLDFLESH;
@@ -755,34 +721,34 @@ flesh
 	Config GIBBERLINGFLESH;
 	{
 		OfferValue = 12;
-		Color = rgb(100, 100, 200);
+		/*Color = rgb(100, 100, 200);*/
 		NameStem = "gibberling flesh";
 	}
 
 	Config CATFLESH;
 	{
 		OfferValue = 12;
-		Color = rgb(50, 50, 50);
+		/*Color = rgb(50, 50, 50);*/
 		NameStem = "cat flesh";
 	}
 
 	Config RATFLESH;
 	{
 		OfferValue = 8;
-		Color = rgb(180, 100, 40);
+		/*Color = rgb(180, 100, 40);*/
 		NameStem = "rat flesh";
 	}
 
 	Config ANGELFLESH;
 	{
 		OfferValue = 8;
-		Color = rgb(200, 200, 200);
+		/*Color = rgb(200, 200, 200);*/
 		NameStem = "angel flesh";
 	}
 
 	Config DWARFFLESH;
 	{
-		Color = rgb(180, 120, 90);
+		/*Color = rgb(180, 120, 90);*/
 		NameStem = "dwarf flesh";
 	}
 
@@ -794,7 +760,7 @@ flesh
 
 	Config MAMMOTHFLESH;
 	{
-		Color = rgb(100, 130, 160);
+		/*Color = rgb(100, 130, 160);*/
 		NameStem = "mammoth flesh";
 	}
 
@@ -825,14 +791,14 @@ flesh
 
 	Config LIONFLESH;
 	{
-		Color = rgb(192, 160, 112);
+		/*Color = rgb(192, 160, 112);*/
 		PriceModifier = 600;
 		NameStem = "lion flesh";
 	}
 
 	Config BUFFALOFLESH;
 	{
-		Color = rgb(60, 55, 50);
+		/*Color = rgb(60, 55, 50);*/
 		PriceModifier = 600;
 		NameStem = "buffalo flesh";
 	}

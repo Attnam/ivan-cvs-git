@@ -206,7 +206,7 @@ void game::Init(const std::string& Name)
       }
     case NEWGAME:
       {
-	iosystem::TextScreen("For many days you have wandeRED through a thick and gloomy forest.\n"
+	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
 			     "Constantly you have had to fight against ultra-violent bears and\n"
 			     "goblins that roam freely in this area. Screams of enner beasts have\n"
 			     "wailed in the distance and the cold air has almost freezed your body.\n"

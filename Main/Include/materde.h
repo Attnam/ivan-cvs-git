@@ -45,6 +45,7 @@ class MATERIAL
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual std::vector<ushort>& GetSkinColorVector() { return SkinColor; }
+  virtual ushort GetSkinColor(ushort Frame) const { return SkinColor[Frame]; }
   virtual bool IsFlesh() const { return true; }
  protected:
   std::vector<ushort> SkinColor;

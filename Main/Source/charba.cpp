@@ -1155,7 +1155,7 @@ bool character::Save()
 
 bool character::Read()
 {
-  if(!CanRead())
+  if(!CanRead() && !game::GetSeeWholeMapCheat())
     {
       ADD_MESSAGE("You can't read.");
       return false;

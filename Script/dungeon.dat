@@ -468,7 +468,6 @@ Dungeon 1;
 		Square, Pos 30,61;
 		{
 			IsWorldMapEntry=true;
-			Item = ORMOPIUM longsword;
 		}
 	
 		Room 0;

@@ -179,7 +179,6 @@ oree
 	DefaultEndurance = 30;
 	DefaultPerception = 30;
 	IsCharmable = false;
-	BloodColor = rgb(0, 0, 0);
 	HasInfraVision = true;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -230,6 +229,7 @@ ennerbeast
 	TorsoBitmapPos = 96, 0;
 	MeleeStrength = 100000;
 	TotalSize = 150;
+	SkinColor = rgb(112, 112, 64);
 }
 
 darkfrog
@@ -246,6 +246,7 @@ darkfrog
 	TotalSize = 25;
 	MeleeStrength = 20000;
 	TalkVerb = "croaks";
+	SkinColor = rgb(48, 48, 48);
 }
 
 elpuri
@@ -376,6 +377,7 @@ wolf
 	MeleeStrength = 7500;
 	TalkVerb = "howls";
 	TotalSize = 100;
+	SkinColor = rgb(64, 64, 64);
 }
 
 dog
@@ -389,7 +391,8 @@ dog
 	MeleeStrength = 5000;
 	TalkVerb = "barks";
 	TotalSize = 70;
-	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONE;
+	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
+	SkinColor = rgb(111, 74, 37);
 }
 
 spider
@@ -406,6 +409,7 @@ spider
 	MeleeStrength = 10000;
 	TalkVerb = "says nothing";
 	TotalSize = 10;
+	SkinColor = rgb(160, 160, 160);
 }
 
 jackal
@@ -419,6 +423,7 @@ jackal
 	MeleeStrength = 5000;
 	TalkVerb = "howls";
 	TotalSize = 80;
+	SkinColor = rgb(224, 224, 224);
 }
 
 donkey
@@ -432,6 +437,7 @@ donkey
 	MeleeStrength = 1000;
 	TalkVerb = "neighs";
 	TotalSize = 150;
+	SkinColor = rgb(80, 80, 80);
 }
 
 communist
@@ -485,6 +491,7 @@ polarbear
 	TorsoBitmapPos = 336, 0;
 	TalkVerb = "growls";
 	TotalSize = 250;
+	SkinColor = rgb(128, 128, 128);
 }
 
 dolphin
@@ -504,8 +511,8 @@ dolphin
 	TorsoBitmapPos = 320, 0;
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
+	SkinColor = rgb(64, 64, 64);
 }
-
 
 lightfrog
 {
@@ -521,6 +528,7 @@ lightfrog
 	CanOpen = false;
 	MeleeStrength = 20000;
 	TalkVerb = "croaks";
+	SkinColor = rgb(32, 88, 32);
 }
 
 slave
@@ -580,19 +588,19 @@ petrusswife
 	Config 4;
 	{
 		HairColor = rgb(200, 96, 0);
-		HeadBitmapPos = 112, 48;
+		HeadBitmapPos = 112, 32;
 	}
 
 	Config 5;
 	{
 		HairColor = rgb(80, 64, 32);
-		HeadBitmapPos = 112, 64;
+		HeadBitmapPos = 112, 48;
 	}
 
 	Config 6;
 	{
 		HairColor = rgb(144, 0, 0);
-		HeadBitmapPos = 112, 80;
+		HeadBitmapPos = 112, 64;
 	}
 }
 
@@ -625,7 +633,7 @@ femaleslave
 	Sex = FEMALE;
 	SkinColor = rgb(160, 100, 64);
 	HairColor = rgb(80, 48, 32);
-	HeadBitmapPos = 112, 96;
+	HeadBitmapPos = 112, 80;
 	TorsoBitmapPos = 32, 208;
 	ArmBitmapPos = 64, 208;
 	LegBitmapPos = 0, 144;
@@ -708,6 +716,7 @@ bat
 	MeleeStrength = 20000;
 	TalkVerb = "squeaks";
 	TotalSize = 20;
+	SkinColor = rgb(48, 48, 48);
 }
 
 mistress
@@ -764,6 +773,7 @@ mistress
 	TotalSize = 170;
 	ChangeCounter;
 	IsWolf;
+	TorsoColor = rgb(90, 64, 64);
 }*/
 
 kobold
@@ -784,6 +794,7 @@ kobold
 	TotalVolume = 30000;
 	MeleeStrength = 2000;
 	TotalSize = 90;
+	SkinColor = rgb(30, 100, 110);
 }
 
 gibberling
@@ -797,13 +808,14 @@ gibberling
 	HairColor = rgb(50, 20, 80);
 	ClothColor = rgb(111, 74, 37);
 	EyeColor = rgb(50, 0, 0);
-	HeadBitmapPos = 112, 32;
+	HeadBitmapPos = 112, 96;
 	TorsoBitmapPos = 48, 144;
 	ArmBitmapPos = 80, 144;
 	LegBitmapPos = 16, 128;
 	TotalVolume = 30000;
 	MeleeStrength = 10000;
 	TotalSize = 90;
+	SkinColor = rgb(100, 100, 200);
 }
 
 largecat
@@ -817,6 +829,7 @@ largecat
 	MeleeStrength = 20000;
 	TalkVerb = "mews";
 	TotalSize = 60;
+	SkinColor = rgb(50, 50, 50);
 }
 
 largerat
@@ -831,6 +844,7 @@ largerat
 	MeleeStrength = 20000;
 	TalkVerb = "squeaks";
 	TotalSize = 30;
+	SkinColor = rgb(180, 100, 40);
 }
 
 angel
@@ -848,6 +862,7 @@ angel
 	MeleeStrength = 10000;
 	TotalSize = 180;
 	CanRead = true;
+	SkinColor = rgb(200, 200, 200);
 }
 
 kamikazedwarf
@@ -881,6 +896,7 @@ mammoth
 	MeleeStrength = 5000;
 	TalkVerb = "roars";
 	TotalSize = 500;
+	SkinColor = rgb(100, 130, 160);
 }
 
 unicorn
@@ -894,6 +910,21 @@ unicorn
 	TotalVolume = 200000;
 	TorsoBitmapPos = 544, 0;
 	TotalSize = 200;
+
+	Config GOOD;
+	{
+		SkinColor = rgb(48, 48, 48);
+	}
+
+	Config NEUTRAL;
+	{
+		SkinColor = rgb(112, 112, 112);
+	}
+
+	Config EVIL;
+	{
+		SkinColor = rgb(160, 160, 160);
+	}
 }
 
 genie
@@ -922,6 +953,7 @@ lion
 	MeleeStrength = 3000;
 	TalkVerb = "growls";
 	TotalSize = 200;
+	SkinColor = rgb(192, 160, 112);
 }
 
 carnivorousplant
@@ -936,6 +968,7 @@ carnivorousplant
 	MeleeStrength = 2500;
 	TalkVerb = "is silent";
 	TotalSize = 250;
+	SkinColor = rgb(0, 160, 0);
 }
 
 buffalo
@@ -949,4 +982,5 @@ buffalo
 	MeleeStrength = 500;
 	TalkVerb = "snarls";
 	TotalSize = 250;
+	SkinColor = rgb(60, 55, 50);
 }

@@ -102,7 +102,7 @@ void darkknight::CreateInitialEquipment()
   else
     {
       longsword* DoomsDay = new longsword;
-      DoomsDay->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(IRON), MAKE_MATERIAL(DARKFROGFLESH));
+      DoomsDay->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
       SetMainWielded(DoomsDay);
     }
 
@@ -1566,7 +1566,7 @@ void angel::SetDivineMaster(uchar NewMaster)
       {
 	SetStrength(99);
 	spikedmace* SpikedMace = new spikedmace(0, false);
-	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(DARKFROGFLESH));
+	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
 	RestoreHP();
@@ -2408,31 +2408,30 @@ void humanoid::AddInfo(felist& Info) const
 void humanoid::CompleteRiseFromTheDead()
 {
   ushort c;
+
   for(c = 0; c < BodyParts(); ++c)
-    {
-      if(!GetBodyPart(c))
-	{
-	  stack* Stack = GetLSquareUnder()->GetStack(); 
-	  for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
-	    {
-	      if((**i)->FitsBodyPartIndex(c, this))
-		{
-		  item* Item = ***i;
-		  Item->RemoveFromSlot();
-		  SetBodyPart(c, (bodypart*)Item);
-		  break;
-		}
-	    }
-	}
-    }
+    if(!GetBodyPart(c))
+      {
+	stack* Stack = GetLSquareUnder()->GetStack(); 
+
+	for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
+	  {
+	    if((**i)->FitsBodyPartIndex(c, this))
+	      {
+		item* Item = ***i;
+		Item->RemoveFromSlot();
+		SetBodyPart(c, (bodypart*)Item);
+		break;
+	      }
+	  }
+      }
 
   for(c = 0; c < BodyParts(); ++c)
     {
       if(BodyPartVital(c) && !GetBodyPart(c))
-	{
-	  if(!HandleNoBodyPart(c))
-	    return;
-	}
+	if(!HandleNoBodyPart(c))
+	  return;
+
       GetBodyPart(c)->SetHP(1);
     }
 }

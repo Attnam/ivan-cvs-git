@@ -93,10 +93,10 @@ character* protosystem::CreateMonster(bool CreateItems)
 
 item* protosystem::CreateItem(const std::string& What, bool Output)
 {
-  /*for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     if(protocontainer<item>::GetProto(c)->IsConcrete())
       {
-	/ "Temporary" gum solution! /
+	/* "Temporary" gum solution! */
 
 	item* Temp = protocontainer<item>::GetProto(c)->Clone(0, false);
 
@@ -111,7 +111,7 @@ item* protosystem::CreateItem(const std::string& What, bool Output)
       }
 
   if(Output)
-    ADD_MESSAGE("There is no such item.");*/
+    ADD_MESSAGE("There is no such item.");
 
   return 0;
 }

@@ -1,3 +1,11 @@
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Bug with bodypart volumes corrected
+	* A minor bug with skin colors removed
+	* Örmöpium removed
+	* Wishing works somehow again
+	* Even dummies can read if SeeWholeMapCheat is on
+
 May 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added a lot of #include <string> s because this is somehow required by Linux's GCC.
@@ -25,6 +33,7 @@ May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Prototype and database security tightened
 	* Database initialization code rewritten:
 	  project's release compilation time decreased by about 10%
+	* Most of StaticType()s removed so that Hex cannot make more gum solutions with them
 
 May 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

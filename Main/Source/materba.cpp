@@ -39,7 +39,7 @@ void material::Effect(character* Eater, long Amount)
 {
   switch(GetEffect())
     {
-    case ENOTHING: Eater->ReceivePoison(Amount); break;
+    case EPOISON: Eater->ReceivePoison(Amount); break;
     case EDARKNESS: Eater->ReceiveDarkness(Amount); break;
     case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); break;
     case EPEPSI: Eater->ReceivePepsi(Amount); break;
@@ -150,56 +150,28 @@ material* material::MakeMaterial(ushort Config)
 {
   switch(Config >> 12)
     {
-    case 1: return new material(Config);
-    case 2: return new organicsubstance(Config);
-    case 3: return new gas(Config);
-    case 4: return new liquid(Config);
-    case 5: return new flesh(Config);
+    case FIRSTMATERIAL >> 12: return new material(Config);
+    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config);
+    case FIRSTGAS >> 12: return new gas(Config);
+    case FIRSTLIQUID >> 12: return new liquid(Config);
+    case FIRSTFLESH >> 12: return new flesh(Config);
     default:
       ABORT("Odd material configuration number %d requested!", Config);
       return 0;
     }
-  /*if(Config )
-    return new material(Config);
-  else if(Config < ORGANIC_SEPARATOR)
-    return new organicsubstance(Config);
-  else if(Config < GAS_SEPARATOR)
-    return new gas(Config);
-  else if(Config < LIQUID_SEPARATOR)
-    return new liquid(Config);
-  else if(Config < FLESH_SEPARATOR)
-    return new flesh(Config);
-  else
-    */
 }
 
 material* material::MakeMaterial(ushort Config, ulong Volume)
 {
   switch(Config >> 12)
     {
-    case 1: return new material(Config);
-    case 2: return new organicsubstance(Config);
-    case 3: return new gas(Config);
-    case 4: return new liquid(Config);
-    case 5: return new flesh(Config);
+    case FIRSTMATERIAL >> 12: return new material(Config, Volume);
+    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config, Volume);
+    case FIRSTGAS >> 12: return new gas(Config, Volume);
+    case FIRSTLIQUID >> 12: return new liquid(Config, Volume);
+    case FIRSTFLESH >> 12: return new flesh(Config, Volume);
     default:
       ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
       return 0;
     }
-
-  /*if(Config < MATERIAL_SEPARATOR)
-    return new material(Config, Volume);
-  else if(Config < ORGANIC_SEPARATOR)
-    return new organicsubstance(Config, Volume);
-  else if(Config < GAS_SEPARATOR)
-    return new gas(Config, Volume);
-  else if(Config < LIQUID_SEPARATOR)
-    return new liquid(Config, Volume);
-  else if(Config < FLESH_SEPARATOR)
-    return new flesh(Config, Volume);
-  else
-    {
-      ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
-      return 0;
-    }*/
 }

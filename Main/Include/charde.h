@@ -166,35 +166,20 @@ class CHARACTER
   virtual ~petrus();
   virtual void Load(inputfile&);
   virtual void BeTalkedTo(character*);
-  //virtual ushort GetEmitation() const { return 333; }
   virtual void HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() { return HealTimer; }
   virtual void Save(outputfile&) const;
-  //virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
-  //virtual bool HasInfraVision() const { return true; }
-  //virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
-  //virtual bool CanBeAssignedAName() const { return false; }
-  //virtual bool IsUnique() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
-  /*virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
-  virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 144); }
-  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 80); }
-  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
-  virtual vector2d GetLegBitmapPos() const { return vector2d(0,0); }
-  virtual ulong TotalVolume() const { return 80000; }*/
   virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
   virtual void CreateCorpse();
   virtual std::string GetDeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
-  //virtual float GetMeleeStrength() const { return 20000; }
   virtual void GetAICommand();
-  //virtual ushort TotalSize() const { return 225; }
   ushort HealTimer;
   uchar StoryState;
 );
@@ -214,15 +199,11 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
-  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual ushort GetHairColor(ushort Frame) const { return RAND() % 2 ? humanoid::GetHairColor(Frame) : MAKE_RGB(160, 160, 160); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + RAND() % 2) * 16); }
-  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 32); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, (RAND() % 2) * 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0,(RAND() % 3) * 16); }
-  virtual ulong TotalVolume() const { return 30000; }
   virtual std::string NameSingular() const { return "farmer"; }
-  virtual ushort TotalSize() const { return 170; }
 );
 
 class CHARACTER
@@ -439,7 +420,7 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 2500; }
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DARKFROGFLESH, Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROGFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "dark frog"; }
   virtual ushort TotalSize() const { return 25; }
@@ -703,7 +684,6 @@ class CHARACTER
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string TalkVerb() const { return "barks"; }
   virtual ushort TotalSize() const { return 70; }
-  virtual ushort GetEatFlags() const { return character::GetEatFlags()|BONE; }
 );
 
 class CHARACTER
@@ -910,7 +890,7 @@ class CHARACTER
   virtual bool CanSwim() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 2500; }
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LIGHTFROGFLESH, Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROGFLESH, Volume); }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "light frog"; }
   virtual ushort TotalSize() const { return 25; }

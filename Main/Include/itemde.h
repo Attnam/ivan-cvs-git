@@ -445,7 +445,7 @@ class ITEM
   virtual bool Polymorph(stack*) { return false; }
  protected:
   virtual std::string NameSingular() const { return "mace \"Neerc Se-Ulb\""; }
-  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(DARKFROGFLESH)); }
+  virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(FROGFLESH)); }
   virtual std::string Adjective() const { return "ancient"; }
   virtual std::string AdjectiveArticle() const { return "an"; }
   virtual bool ShowAdjective() const { return true; }
@@ -1288,8 +1288,8 @@ class ITEM
 
 class ITEM
 (
- whistle,
- item,
+  whistle,
+  item,
  public:
   virtual bool Apply(character*);
   virtual bool IsAppliable(character*) const { return true; }
@@ -1301,13 +1301,14 @@ class ITEM
 
 class ITEM
 (
- magicalwhistle,
- whistle,
+  magicalwhistle,
+  whistle,
  public:
   virtual void BlowEffect(character*);
  protected:
   virtual std::string NameSingular() const { return "super whistle"; }
   virtual std::string Adjective() const { return "magical"; }
 );
+
 #endif
 
