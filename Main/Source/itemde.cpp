@@ -1055,6 +1055,47 @@ void astone::GenerateStoneMaterials()
     }
 }
 
+bool scrollofcharging::Read(character* Reader)
+{
+  ushort Index;
+
+  if(!Reader->CanRead())
+    {
+      ADD_MESSAGE("This monster can't read anything.");
+      return false;
+    }
+
+  if((Index = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?")) == 0xFFFF)
+    {
+      ADD_MESSAGE("You have nothing to charge.");
+      return false;
+    }
+
+  if(Index == 0xFFFE)
+    return false;
+  else
+    if(!(Index < Reader->GetStack()->GetItems()))
+      return false;
+
+  if(Reader->GetStack()->GetItem(Index) == this)
+    {
+      ADD_MESSAGE("This would cause a rift to appear in the space-time continuum and that wouldn't be nice.");
+      return false;
+    }
+
+  if(!Reader->GetStack()->GetItem(Index)->IsChargable())
+    {
+      ADD_MESSAGE("You can't charge %s.", Reader->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
+      return false;
+    }
+
+  EMPTY_MESSAGES();
+  game::DrawEverythingNoBlit();
+  Reader->GetStack()->GetItem(Index)->ChargeFully(Reader);
+  ADD_MESSAGE("You charge %s and the scroll burns.", Reader->GetStack()->GetItem(Index)->CNAME(DEFINITE));
+  return true;
+}
+
 void banana::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -1081,3 +1122,4 @@ bool banana::Zap(character* Zapper, vector2d, uchar Direction)
 
   return true;
 }
+

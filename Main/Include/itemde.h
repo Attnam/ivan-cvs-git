@@ -39,6 +39,8 @@ class ITEM
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool IsChargable() const { return true; }
+  virtual void ChargeFully(character*) { SetCharges(6); }
  protected:
   virtual ushort GetFormModifier() const { return 50; }
   uchar Charges;
@@ -532,6 +534,23 @@ class ITEM
 
 class ITEM
 (
+  scrollofcharging,
+  scroll,
+  InitMaterials(new parchment),
+  {
+    SetSize(30);
+  },
+ public:
+  virtual ushort Possibility() const { return 50; }
+  virtual std::string NameSingular() const { return "scroll of charging"; }
+  virtual std::string NamePlural() const { return "scrolls of charging"; }
+  virtual float OfferModifier() const { return 5; }
+  virtual bool Read(character*);
+  virtual ulong Price() const { return 50; }
+);
+
+class ITEM
+(
   head,
   item,
   InitMaterials(new humanflesh),
@@ -777,6 +796,8 @@ class ABSTRACT_ITEM
   virtual void BeamEffect(character*, std::string, uchar, levelsquare*) {};
   virtual ushort GetBeamColor() const = 0;
   virtual bool StruckByWandOfStriking(character*, std::string, stack*);
+  virtual void ChargeFully(character*) { SetTimesUsed(0); }
+  virtual bool IsChargable() const { return true; }
  protected:
   virtual ushort GetFormModifier() const { return 80; }
   uchar Charges;

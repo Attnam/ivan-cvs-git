@@ -338,7 +338,7 @@ int globalwindowhandler::ReadKey()
 	ProcessMessage(event);
     }
   if(KeyBuffer.Length())
-    return GetKey(false, true);
+    return GetKey(false);
   else
     return 0;
 }

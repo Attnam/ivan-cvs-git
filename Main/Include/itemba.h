@@ -92,6 +92,8 @@ class item : public object
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual void ChargeFully(character*) {}
+  virtual bool IsChargable() const { return false; }
  protected:
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }
