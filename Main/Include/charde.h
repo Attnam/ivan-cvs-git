@@ -230,15 +230,15 @@ class ABSTRACT_CHARACTER
   virtual ulong LeftLegVolume() const { return LegVolume(); }
   virtual ulong LegVolume() const;
 
-  virtual ushort HeadSize() const;
-  virtual ushort TorsoSize() const;
-  virtual ushort RightArmSize() const { return ArmSize(); }
-  virtual ushort LeftArmSize() const { return ArmSize(); }
-  virtual ushort ArmSize() const;
-  virtual ushort GroinSize() const;
-  virtual ushort RightLegSize() const { return LegSize(); }
-  virtual ushort LeftLegSize() const { return LegSize(); }
-  virtual ushort LegSize() const;
+  virtual ushort HeadSize(ushort) const;
+  virtual ushort TorsoSize(ushort) const;
+  virtual ushort RightArmSize(ushort TotalSize) const { return ArmSize(TotalSize); }
+  virtual ushort LeftArmSize(ushort TotalSize) const { return ArmSize(TotalSize); }
+  virtual ushort ArmSize(ushort) const;
+  virtual ushort GroinSize(ushort) const;
+  virtual ushort RightLegSize(ushort TotalSize) const { return LegSize(TotalSize); }
+  virtual ushort LeftLegSize(ushort TotalSize) const { return LegSize(TotalSize); }
+  virtual ushort LegSize(ushort) const;
 
   virtual uchar BodyParts() const { return 7; }
 

@@ -51,7 +51,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   bool First = true;
 
-  uchar LineLength = 80;
+  ushort LineLength = 80;
   ushort Marginal = 0;
 
   for(c = 0; Buffer.length(); ++c)
@@ -77,7 +77,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 
       long Pos;
 
-      if(Buffer.length() > LineLength - Marginal)
+      if(ushort(Buffer.length()) > LineLength - Marginal)
 	Pos = Buffer.find_last_of(' ', LineLength - Marginal);
       else
 	Pos = Buffer.length();

@@ -136,8 +136,7 @@ bool ennerbeast::Hit(character*)
   DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
   {
     character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
-
-    ushort ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
+    ushort ScreamStrength = ushort(GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
 
     if(Char && Char != this)
       {
@@ -1791,25 +1790,25 @@ void unicorn::CreateInitialEquipment()
 void humanoid::SetSize(ushort Size)
 {
   if(GetHead())
-    GetHead()->SetSize(HeadSize());
+    GetHead()->SetSize(HeadSize(Size));
 
   if(GetTorso())
-    GetTorso()->SetSize(TorsoSize());
+    GetTorso()->SetSize(TorsoSize(Size));
 
   if(GetGroin())
-    GetGroin()->SetSize(GroinSize());
+    GetGroin()->SetSize(GroinSize(Size));
 
   if(GetRightArm())
-    GetRightArm()->SetSize(ArmSize());
+    GetRightArm()->SetSize(ArmSize(Size));
 
   if(GetLeftArm())
-    GetLeftArm()->SetSize(ArmSize());
+    GetLeftArm()->SetSize(ArmSize(Size));
 
   if(GetRightLeg())
-    GetRightLeg()->SetSize(LegSize());
+    GetRightLeg()->SetSize(LegSize(Size));
 
   if(GetLeftLeg())
-    GetLeftLeg()->SetSize(LegSize());
+    GetLeftLeg()->SetSize(LegSize(Size));
 }
 
 ushort humanoid::GetSize() const
@@ -1834,29 +1833,29 @@ ushort humanoid::GetSize() const
   return Size;
 }
 
-ushort humanoid::HeadSize() const
+ushort humanoid::HeadSize(ushort TotalSize) const
 {
   return 20;
 }
 
-ushort humanoid::TorsoSize() const
+ushort humanoid::TorsoSize(ushort TotalSize) const
 {
-  return (TotalSize() - HeadSize()) * 2 / 5;
+  return (TotalSize - HeadSize(TotalSize)) * 2 / 5;
 }
 
-ushort humanoid::ArmSize() const
+ushort humanoid::ArmSize(ushort TotalSize) const
 {
-  return (TotalSize() - HeadSize()) * 3 / 5;
+  return (TotalSize - HeadSize(TotalSize)) * 3 / 5;
 }
 
-ushort humanoid::GroinSize() const
+ushort humanoid::GroinSize(ushort TotalSize) const
 {
-  return (TotalSize() - HeadSize()) / 3;
+  return (TotalSize - HeadSize(TotalSize)) / 3;
 }
 
-ushort humanoid::LegSize() const
+ushort humanoid::LegSize(ushort TotalSize) const
 {
-  return (TotalSize() - HeadSize()) * 3 / 5;
+  return (TotalSize - HeadSize(TotalSize)) * 3 / 5;
 }
 
 ulong humanoid::HeadVolume() const
@@ -1936,7 +1935,7 @@ void humanoid::CreateHead()
   UpdateHeadPicture(false);
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
   GetHead()->PlaceToSlot(GetHeadSlot());
-  GetHead()->SetSize(HeadSize());
+  GetHead()->SetSize(HeadSize(TotalSize()));
 }
 
 void humanoid::UpdateHeadPicture(bool CallUpdatePicture)
@@ -1960,7 +1959,7 @@ void humanoid::CreateTorso()
   UpdateTorsoPicture(false);
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
   GetTorso()->PlaceToSlot(GetTorsoSlot());
-  GetTorso()->SetSize(TorsoSize());
+  GetTorso()->SetSize(TorsoSize(TotalSize()));
 }
 
 void humanoid::UpdateTorsoPicture(bool CallUpdatePicture)
@@ -1984,7 +1983,7 @@ void humanoid::CreateRightArm()
   UpdateRightArmPicture(false);
   GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
   GetRightArm()->PlaceToSlot(GetRightArmSlot());
-  GetRightArm()->SetSize(RightArmSize());
+  GetRightArm()->SetSize(RightArmSize(TotalSize()));
 }
 
 void humanoid::UpdateRightArmPicture(bool CallUpdatePicture)
@@ -2007,7 +2006,7 @@ void humanoid::CreateLeftArm()
   UpdateLeftArmPicture(false);
   GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
   GetLeftArm()->PlaceToSlot(GetLeftArmSlot());
-  GetLeftArm()->SetSize(LeftArmSize());
+  GetLeftArm()->SetSize(LeftArmSize(TotalSize()));
 }
 
 void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture)
@@ -2030,7 +2029,7 @@ void humanoid::CreateGroin()
   UpdateGroinPicture(false);
   GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
   GetGroin()->PlaceToSlot(GetGroinSlot());
-  GetGroin()->SetSize(GroinSize());
+  GetGroin()->SetSize(GroinSize(TotalSize()));
 }
 
 void humanoid::UpdateGroinPicture(bool CallUpdatePicture)
@@ -2053,7 +2052,7 @@ void humanoid::CreateRightLeg()
   UpdateRightLegPicture(false);
   GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
   GetRightLeg()->PlaceToSlot(GetRightLegSlot());
-  GetRightLeg()->SetSize(RightLegSize());
+  GetRightLeg()->SetSize(RightLegSize(TotalSize()));
 }
 
 void humanoid::UpdateRightLegPicture(bool CallUpdatePicture)
@@ -2076,7 +2075,7 @@ void humanoid::CreateLeftLeg()
   UpdateLeftLegPicture(false);
   GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
   GetLeftLeg()->PlaceToSlot(GetLeftLegSlot());
-  GetLeftLeg()->SetSize(LeftLegSize());
+  GetLeftLeg()->SetSize(LeftLegSize(TotalSize()));
 }
 
 void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture)

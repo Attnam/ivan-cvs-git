@@ -90,7 +90,7 @@ void wterrain::Save(outputfile& SaveFile) const
   SaveFile << Type();
 }
 
-void wterrain::Load(inputfile& SaveFile)
+void wterrain::Load(inputfile&)
 {
   WSquareUnder = (wsquare*)game::GetSquareInLoad();
 }

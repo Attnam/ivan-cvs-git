@@ -772,7 +772,7 @@ bool holybook::Read(character* Reader)
   return false;
 }
 
-bool wand::ReceiveDamage(character* Damager, short Damage, uchar Type)
+bool wand::ReceiveDamage(character* Damager, short, uchar Type)
 {
   if((Type == FIRE && !(RAND() % 10)) || (Type == ENERGY && !(RAND() % 10)))
     {
@@ -796,7 +796,7 @@ bool wand::ReceiveDamage(character* Damager, short Damage, uchar Type)
   return false;
 }
 
-bool backpack::ReceiveDamage(character* Damager, short Damage, uchar Type)
+bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
 {
   if((Type == FIRE && !(RAND() % 3)) || (Type == ENERGY && RAND() % 3))
     {
@@ -862,7 +862,7 @@ std::string wand::PostFix() const
     return std::string("(used ") + TimesUsed + " times)";
 }
 
-bool scroll::ReceiveDamage(character* Damager, short Damage, uchar Type)
+bool scroll::ReceiveDamage(character*, short, uchar Type)
 {
   if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
     {
@@ -941,7 +941,7 @@ bool wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir,
   return false;
 }
 
-bool holybook::ReceiveDamage(character* Damager, short Damage, uchar Type)
+bool holybook::ReceiveDamage(character*, short, uchar Type)
 {
   if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->IsFlammable())
     {
@@ -1556,7 +1556,7 @@ bool mine::StruckByWandOfStriking(character* Striker, std::string DeathMsg)
     return false;
 }*/
 
-bool mine::ReceiveDamage(character* Damager, short Damage, uchar Type)
+bool mine::ReceiveDamage(character* Damager, short, uchar Type)
 {
   if((Type == FIRE && !(RAND() % 2)) || (Type == ENERGY && !(RAND() % 2)))
     {
