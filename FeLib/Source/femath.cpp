@@ -35,6 +35,7 @@
 /* matumoto@math.keio.ac.jp                                        */
 
 /* Period parameters */
+#define N1 624
 #define M 397
 #define MATRIX_A 0x9908b0df   /* constant vector a */
 #define UPPER_MASK 0x80000000 /* most significant w-r bits */
@@ -236,4 +237,24 @@ float femath::CalculateAngle(vector2d Direction)
 	  return 0;
 	}
     }
+}
+
+void femath::CalculateEnvironmentRectangle(rect& Rect, const rect& MotherRect, vector2d Origo, ushort Radius)
+{
+  Rect.X1 = Origo.X - Radius;
+  Rect.Y1 = Origo.Y - Radius;
+  Rect.X2 = Origo.X + Radius;
+  Rect.Y2 = Origo.Y + Radius;
+
+  if(Rect.X1 < MotherRect.X1)
+    Rect.X1 = MotherRect.X1;
+
+  if(Rect.Y1 < MotherRect.Y1)
+    Rect.Y1 = MotherRect.Y1;
+
+  if(Rect.X2 > MotherRect.X2)
+    Rect.X2 = MotherRect.X2;
+
+  if(Rect.Y2 > MotherRect.Y2)
+    Rect.Y2 = MotherRect.Y2;
 }

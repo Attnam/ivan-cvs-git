@@ -38,7 +38,7 @@ void banana::GenerateLeftOvers(character* Eater)
   Peals->InitMaterials(GetMainMaterial());
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    Eater->GetLSquareUnder()->GetStack()->AddItem(Peals);
+    Eater->GetStackUnder()->AddItem(Peals);
   else
     Eater->GetStack()->AddItem(Peals);
 
@@ -51,7 +51,7 @@ void potion::GenerateLeftOvers(character* Eater)
   ChangeConsumeMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    MoveTo(Eater->GetLSquareUnder()->GetStack());
+    MoveTo(Eater->GetStackUnder());
   else
     MoveTo(Eater->GetStack());
 }
@@ -76,9 +76,9 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(game::IsValidPos(TryToCreate) && GetLevelUnder()->GetLSquare(TryToCreate)->IsWalkable(Monster) && GetLevelUnder()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+      if(GetAreaUnder()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Monster) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  GetLevelUnder()->GetLSquare(TryToCreate)->AddCharacter(Monster);
+	  GetNearLSquare(TryToCreate)->AddCharacter(Monster);
 
 	  if(Reader->IsPlayer())
 	    {
@@ -124,7 +124,7 @@ void scrollofteleportation::FinishReading(character* Reader)
 
 void lump::ReceiveHitEffect(character* Enemy, character*)
 {
-  if(RAND() % 2)
+  if(RAND() & 1)
     {
       if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("The %s touches %s.", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
@@ -168,10 +168,10 @@ bool pickaxe::Apply(character* User)
 
   vector2d Temp = game::GetMoveVector(Dir);
 
-  if(Dir == DIR_ERROR || !game::IsValidPos(User->GetPos() + Temp))
+  if(Dir == DIR_ERROR || !GetAreaUnder()->IsValidPos(User->GetPos() + Temp))
     return false;
 
-  lsquare* Square = GetLevelUnder()->GetLSquare(User->GetPos() + Temp);
+  lsquare* Square = GetNearLSquare(User->GetPos() + Temp);
 
   if(Square->GetCharacter())
     if(User->Hit(Square->GetCharacter()))
@@ -405,7 +405,7 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
 {
   if(!(RAND() % 10))
     {
-      if(Stepper->ReceiveDamage(0, 1 + RAND() % 2, PHYSICALDAMAGE, LEGS))
+      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, LEGS))
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
@@ -503,7 +503,7 @@ item* can::BetterVersion() const
     {
       material* Stuff;
 
-      if(RAND() % 2)
+      if(RAND() & 1)
 	Stuff = MAKE_MATERIAL(SCHOOLFOOD);
       else
 	Stuff = MAKE_MATERIAL(BANANAFLESH);
@@ -666,10 +666,10 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
   if(Direction != YOURSELF)
     for(ushort Length = 0; Length < Range; ++Length)
       {
-	if(!GetLevelUnder()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
+	if(!GetAreaUnder()->IsValidPos(CurrentPos + game::GetMoveVector(Direction)))
 	  break;
 
-	lsquare* CurrentSquare = GetLevelUnder()->GetLSquare(CurrentPos + game::GetMoveVector(Direction));
+	lsquare* CurrentSquare = GetNearLSquare(CurrentPos + game::GetMoveVector(Direction));
 
 	if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
 	  {
@@ -710,7 +710,7 @@ bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uch
 
 bool holybook::ReceiveDamage(character*, short, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->IsFlammable())
+  if(Type == FIRE && RAND() & 1 && GetMainMaterial()->IsFlammable())
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
@@ -740,9 +740,9 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(game::IsValidPos(TryToCreate) && GetLevelUnder()->GetLSquare(TryToCreate)->IsWalkable(Genie) && GetLevelUnder()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+	  if(GetAreaUnder()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Genie) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
 	    {
-	      GetLevelUnder()->GetLSquare(TryToCreate)->AddCharacter(Genie);
+	      GetNearSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
 	      SetInhabitedByGenie(false);
 	      break;
@@ -899,7 +899,7 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       /* Do damage against any random bodypart except legs */
-      Stepper->ReceiveDamage(0, 1 + RAND() % 2, PHYSICALDAMAGE, ALL&~LEGS);
+      Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("stepped on a banana peal.");
       Stepper->EditAP(-1000);
     }
@@ -947,9 +947,9 @@ void scrolloftaming::FinishReading(character* Reader)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
 
-      if(game::IsValidPos(Test))
+      if(GetAreaUnder()->IsValidPos(Test))
 	{
-	  character* CharacterInSquare = GetLevelUnder()->GetLSquare(Test)->GetCharacter();
+	  character* CharacterInSquare = GetNearSquare(Test)->GetCharacter();
 
 	  if(CharacterInSquare && CharacterInSquare->IsCharmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
 	    CharactersNearBy.push_back(CharacterInSquare);
@@ -1267,7 +1267,7 @@ void mine::Save(outputfile& SaveFile) const
 
 bool mine::ReceiveDamage(character* Damager, short, uchar Type)
 {
-  if((Type == FIRE && !(RAND() % 2)) || (Type == ENERGY && !(RAND() % 2)))
+  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1))
     {
       std::string DeathMsg = "explosion of ";
       DeathMsg << GetName(INDEFINITE);
@@ -1369,9 +1369,9 @@ bool key::Apply(character* User)
 
       vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
 
-      if(game::IsValidPos(ApplyPos))
+      if(GetAreaUnder()->IsValidPos(ApplyPos))
 	{
-	  GetLevelUnder()->GetLSquare(ApplyPos)->TryKey(this, User);
+	  GetNearLSquare(ApplyPos)->TryKey(this, User);
 	  User->DexterityAction(5);
 	}
       else
@@ -1488,7 +1488,7 @@ long leg::CalculateKickAPCost() const
 
 humanoid* bodypart::GetHumanoidMaster() const
 {
-  return (humanoid*)GetMaster();
+  return Slot->IsCharacterSlot() ? static_cast<humanoid*>(static_cast<characterslot*>(Slot)->GetMaster()) : 0;
 }
 
 ushort belt::GetFormModifier() const
@@ -1498,15 +1498,7 @@ ushort belt::GetFormModifier() const
 
 character* bodypart::GetMaster() const
 {
-  if(Slot->IsCharacterSlot())
-    return GetCharacterSlot()->GetMaster();
-  else
-    return 0;
-}
-
-characterslot* bodypart::GetCharacterSlot() const
-{
-  return (characterslot*)GetSlot();
+  return Slot->IsCharacterSlot() ? static_cast<characterslot*>(Slot)->GetMaster() : 0;
 }
 
 bool pickaxe::IsAppliable(const character* Who) const
@@ -1543,7 +1535,8 @@ void corpse::Load(inputfile& SaveFile)
 
 void corpse::AddPostFix(std::string& String) const
 {
-  String += "of " + GetDeceased()->GetName(INDEFINITE);
+  String << "of ";
+  GetDeceased()->AddName(String, INDEFINITE);
 }
 
 bool corpse::Consume(character* Eater, long Amount)
@@ -2057,7 +2050,7 @@ void oillamp::VirtualConstructor(bool Load)
   item::VirtualConstructor(Load);
   
   if(!Load)
-    SetInhabitedByGenie(!(RAND() % 2));
+    SetInhabitedByGenie(RAND() & 1);
 }
 
 void wandoffireballs::VirtualConstructor(bool Load)
@@ -2190,7 +2183,7 @@ void wandofresurrection::VirtualConstructor(bool Load)
   wand::VirtualConstructor(Load);
   
   if(!Load)
-    SetCharges(1 + RAND() % 2);
+    SetCharges(1 + (RAND() & 1));
 }
 
 const std::string& platemail::GetNameSingular() const
@@ -2632,11 +2625,6 @@ chest::~chest()
   delete Contained;
 }
 
-/*void key::AddAdjective(std::string& String) const
-{
-  String +
-}*/
-
 const std::string& key::GetAdjective() const
 {
   return game::GetLockDescription(LockType);
@@ -2878,9 +2866,9 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
   bool Succeeded = false;
 
   for(ushort c = 0; c < 3; ++c)
-    if(game::IsValidPos(Zapper->GetPos() + Pos[c]))
+    if(GetAreaUnder()->IsValidPos(Zapper->GetPos() + Pos[c]))
       {
-	lsquare* Square = GetLevelUnder()->GetLSquare(Zapper->GetPos() + Pos[c]);
+	lsquare* Square = GetNearLSquare(Zapper->GetPos() + Pos[c]);
 
 	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
 	  {
@@ -2979,7 +2967,7 @@ void can::GenerateLeftOvers(character* Eater)
   ChangeConsumeMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    MoveTo(Eater->GetLSquareUnder()->GetStack());
+    MoveTo(Eater->GetStackUnder());
   else
     MoveTo(Eater->GetStack());
 }
@@ -3050,7 +3038,7 @@ bool stethoscope::Apply(character* Doctor)
   if(Dir == DIR_ERROR)
     return false;
 
-  return ListenTo(GetLevelUnder()->GetLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
+  return ListenTo(GetNearLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
 } 
 
 /* Returns true if successful else false */

@@ -112,8 +112,3 @@ ushort fluid::GetEmitation() const
 {
   return 0;//GetMaterial()->GetEmitation();
 }
-
-lsquare* fluid::GetLSquareUnder() const
-{
-  return static_cast<lsquare*>(SquareUnder);
-}

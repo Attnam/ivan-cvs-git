@@ -128,7 +128,7 @@ void characterslot::AddFriendItem(item* Item) const
   Item->RemoveFromSlot();
 
   if(!game::IsInWilderness())
-    GetMaster()->GetLSquareUnder()->GetStack()->AddItem(Item);
+    GetMaster()->GetStackUnder()->AddItem(Item);
   else
     GetMaster()->GetStack()->AddItem(Item);
 }

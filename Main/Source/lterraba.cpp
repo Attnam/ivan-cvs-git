@@ -220,12 +220,12 @@ void olterrain::ShowRestMessage(character*) const
     ADD_MESSAGE("%s", GetRestMessage().c_str());
 }
 
-lsquare* lterrain::GetLSquareUnder() const
+/*lsquare* lterrain::GetLSquareUnder() const
 {
   return static_cast<lsquare*>(SquareUnder);
 }
 
 level* lterrain::GetLevelUnder() const
 { 
-  return GetLSquareUnder()->GetLevelUnder(); 
-}
+  return static_cast<level*>(SquareUnder->GetAreaUnder());
+}*/

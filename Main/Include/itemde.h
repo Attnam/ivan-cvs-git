@@ -676,42 +676,41 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRHUMANOID; }
-  virtual character* GetMaster() const;
-  virtual humanoid* GetHumanoidMaster() const;
+  character* GetMaster() const;
+  humanoid* GetHumanoidMaster() const;
   virtual ushort GetStrengthValue() const;
-  virtual short GetMaxHP() const;
-  virtual void SetHP(short What) { HP = What; }
-  virtual short GetHP() const { return HP; }
-  virtual void EditHP(short What) { HP += What; }
+  short GetMaxHP() const;
+  void SetHP(short What) { HP = What; }
+  short GetHP() const { return HP; }
+  void EditHP(short What) { HP += What; }
   virtual ushort GetTotalResistance(uchar) const = 0;
   virtual bool ReceiveDamage(character*, short, uchar);
-  virtual std::string GetOwnerDescription() const { return OwnerDescription; }
-  virtual void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
-  virtual bool GetUnique() const { return Unique; }
-  virtual void SetUnique(bool What) { Unique = What; }
-  virtual characterslot* GetCharacterSlot() const;
-  virtual ulong GetRegenerationCounter() const { return RegenerationCounter; }
-  virtual void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
-  virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
-  virtual void Regenerate(ushort);
+  const std::string& GetOwnerDescription() const { return OwnerDescription; }
+  void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
+  bool GetUnique() const { return Unique; }
+  void SetUnique(bool What) { Unique = What; }
+  ulong GetRegenerationCounter() const { return RegenerationCounter; }
+  void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
+  void EditRegenerationCounter(long What) { RegenerationCounter += What; }
+  void Regenerate(ushort);
   virtual ushort DangerWeight() const = 0;
   virtual ushort Danger(ulong, bool) const;
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
-  virtual std::vector<vector2d>& GetBitmapPosVector() { return BitmapPos; }
-  virtual std::vector<ushort>& GetColorBVector() { return ColorB; }
-  virtual std::vector<ushort>& GetColorCVector() { return ColorC; }
-  virtual std::vector<ushort>& GetColorDVector() { return ColorD; }
-  virtual std::vector<uchar>& GetSpecialFlagsVector() { return SpecialFlags; }
+  std::vector<vector2d>& GetBitmapPosVector() { return BitmapPos; }
+  std::vector<ushort>& GetColorBVector() { return ColorB; }
+  std::vector<ushort>& GetColorCVector() { return ColorC; }
+  std::vector<ushort>& GetColorDVector() { return ColorD; }
+  std::vector<uchar>& GetSpecialFlagsVector() { return SpecialFlags; }
   virtual void ApplyExperience() { }
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
   virtual void InitSpecialAttributes() { }
-  virtual void LoadGearSlot(inputfile&, gearslot&);
-  virtual void SignalEquipmentAdd(gearslot*);
-  virtual void SignalEquipmentRemoval(gearslot*);
+  void LoadGearSlot(inputfile&, gearslot&);
+  void SignalEquipmentAdd(gearslot*);
+  void SignalEquipmentRemoval(gearslot*);
   virtual void Mutate();
  protected:
   virtual uchar GetMaxAlpha(ushort) const;

@@ -356,8 +356,7 @@ bool inputfile::ReadBool()
     return false;
 
   ABORT("Odd bool value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
-
-  return RAND() % 2 ? true : false;
+  return false;
 }
 
 outputfile& operator<<(outputfile& SaveFile, const std::string& String)

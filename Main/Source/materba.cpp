@@ -96,11 +96,6 @@ void material::AddConsumeEndMessage(character* Eater) const
     }
 }
 
-bool material::CanBeDug(material* ShovelMaterial) const
-{
-  return ShovelMaterial->GetStrengthValue() > GetStrengthValue();
-}
-
 long material::CalculateOfferValue(char GodAlignment) const
 {
   long Value = 0;

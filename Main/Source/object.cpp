@@ -254,14 +254,25 @@ uchar object::GetAlphaA(ushort) const
 
 void object::RandomizeVisualEffects()
 {
-  uchar Flags = 0, AcceptedFlags = GetOKVisualEffects();
-  ushort c;
+  uchar AcceptedFlags = GetOKVisualEffects();
 
-  for(c = 0; c < 8; ++c)
-    if((AcceptedFlags & (1 << c)) && (RAND() % 2))
-      Flags |= 1 << c;
+  if(AcceptedFlags)
+    {
+      uchar Flags = RAND() & 0x7;
 
-  SetVisualEffects(Flags | GetForcedVisualEffects());
+      if(!(AcceptedFlags & MIRROR))
+	Flags &= ~MIRROR;
+
+      if(!(AcceptedFlags & FLIP))
+	Flags &= ~FLIP;
+
+      if(!(AcceptedFlags & ROTATE))
+	Flags &= ~ROTATE;
+
+      SetVisualEffects(Flags | GetForcedVisualEffects());
+    }
+  else
+    SetVisualEffects(GetForcedVisualEffects());
 }
 
 void object::LoadMaterial(inputfile& SaveFile, material*& Material)

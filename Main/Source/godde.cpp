@@ -262,7 +262,7 @@ void silva::PrayGoodEffect()
       for(c = 0; c < ToGround; ++c)
 	for(ushort i = 0; i < 50; ++i)
 	  {
-	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, true, RAND() % 2 ? true : false);
+	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, true, RAND() & 1);
 
 	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
@@ -688,7 +688,7 @@ void macellarius::PrayBadEffect()
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   game::GetPlayer()->ReceiveDamage(0, RAND() % 7, PHYSICALDAMAGE, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
-  game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
+  game::GetPlayer()->GetStackUnder()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath("killed while enjoying the company of " + Name());
 }
 

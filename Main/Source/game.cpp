@@ -1018,14 +1018,6 @@ void game::CreateTeams()
   }
 }
 
-bool game::IsValidPos(vector2d Pos)
-{
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < GetCurrentArea()->GetXSize() && Pos.Y < GetCurrentArea()->GetYSize())
-    return true;
-  else
-    return false;
-}
-
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();

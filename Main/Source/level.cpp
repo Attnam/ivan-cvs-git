@@ -364,7 +364,7 @@ void level::AttachPos(vector2d What)
   FlagMap[What.X][What.Y] &= ~FORBIDDEN;
   FlagMap[What.X][What.Y] |= PREFERRED;
 
-  GenerateTunnel(What, Pos, RAND() % 2 ? true : false);
+  GenerateTunnel(What, Pos, RAND() & 1);
 
   FlagMap[What.X][What.Y] |= FORBIDDEN;
   FlagMap[What.X][What.Y] &= ~PREFERRED;
@@ -382,7 +382,7 @@ void level::CreateRandomTunnel()
   while(FlagMap[T.X][T.Y] & FORBIDDEN)
     T = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  GenerateTunnel(Pos, T, RAND() % 2 ? true : false);
+  GenerateTunnel(Pos, T, RAND() & 1);
 }
 
 void level::CreateItems(ushort Amount)
@@ -413,7 +413,7 @@ void level::CreateStairs(bool Up)
   while(!(FlagMap[Target.X][Target.Y] & PREFERRED))
     Target = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  GenerateTunnel(Pos, Target, RAND() % 2 ? true : false);
+  GenerateTunnel(Pos, Target, RAND() & 1);
 
   FlagMap[Pos.X][Pos.Y] |= FORBIDDEN;
   FlagMap[Pos.X][Pos.Y] &= ~PREFERRED;
@@ -530,18 +530,18 @@ bool level::MakeRoom(roomscript* RoomScript)
       FlagMap[LXPos][LYPos] |= PREFERRED;
       ushort BXPos = XPos, BYPos = YPos;
 
-      if(RAND() % 2)
+      if(RAND() & 1)
 	{
 	  XPos += RAND() % (Width - 2) + 1;
 
-	  if(RAND() % 2)
+	  if(RAND() & 1)
 	    YPos += Height - 1;
 	}
       else
 	{
 	  YPos += RAND() % (Height - 2) + 1;
 
-	  if(RAND() % 2)
+	  if(RAND() & 1)
 	    XPos += Width - 1;
 	}
 
@@ -559,7 +559,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[XPos][YPos]->Clean();
-      GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() % 2 ? true : false);
+      GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() & 1);
       FlagMap[LXPos][LYPos] |= FORBIDDEN;
       FlagMap[LXPos][LYPos] &= ~PREFERRED;
       FlagMap[XPos][YPos] |= FORBIDDEN;
@@ -571,18 +571,18 @@ bool level::MakeRoom(roomscript* RoomScript)
     {
       game::BusyAnimation();
 
-      if(RAND() % 2)
+      if(RAND() & 1)
 	{
 	  XPos += RAND() % (Width - 2) + 1;
 
-	  if(RAND() % 2)
+	  if(RAND() & 1)
 	    YPos += Height - 1;
 	}
       else
 	{
 	  YPos += RAND() % (Height - 2) + 1;
 
-	  if(RAND() % 2)
+	  if(RAND() & 1)
 	    XPos += Width - 1;
 	}
 
@@ -942,47 +942,52 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
   ushort PlayerDamage = 0;
   bool PlayerHurt = false;
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
-  {
-    ushort DistanceSquare = GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer);
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Pos, Radius);
 
-    if(DistanceSquare <= RadiusSquare)
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	lsquare* Square = GetLSquare(XPointer, YPointer);
-	character* Char = Square->GetCharacter();
-	ushort Damage = Strength / (DistanceSquare + 1);
-	uchar DamageDirection = game::CalculateRoughDirection(vector2d(XPointer, YPointer) - Pos);
+	ushort DistanceSquare = GetHypotSquare(Pos.X - x, Pos.Y - y);
 
-	if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
-	  if(Char->IsPlayer())
-	    {
-	      PlayerDamage = Damage;
-	      PlayerHurt = true;
-	    }
-	  else
-	    {
-	      if(Terrorist)
-		Terrorist->GetTeam()->Hostility(Char->GetTeam());
+	if(DistanceSquare <= RadiusSquare)
+	  {
+	    lsquare* Square = GetLSquare(x, y);
+	    character* Char = Square->GetCharacter();
+	    ushort Damage = Strength / (DistanceSquare + 1);
+	    uchar DamageDirection = game::CalculateRoughDirection(vector2d(x, y) - Pos);
 
-	      Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+	    if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
+	      if(Char->IsPlayer())
+		{
+		  PlayerDamage = Damage;
+		  PlayerHurt = true;
+		}
+	      else
+		{
+		  if(Terrorist)
+		    Terrorist->GetTeam()->Hostility(Char->GetTeam());
 
-	      if(game::IsValidPos(vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection)))
-		Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection));
+		  Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+		  vector2d SpillDirection = vector2d(x, y) + game::GetMoveVector(DamageDirection);
 
-	      if(Char->CanBeSeenByPlayer())
-		ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
+		  if(IsValidPos(SpillDirection))
+		    Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, SpillDirection);
 
-	      Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
-	      Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true);
-	      Char->CheckDeath(DeathMsg);
-	    }
+		  if(Char->CanBeSeenByPlayer())
+		    ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
 
-	Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
+		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
+		  Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true);
+		  Char->CheckDeath(DeathMsg);
+		}
 
-	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
-	  Square->GetOLTerrain()->Break();
+	    Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
+
+	    if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
+	      Square->GetOLTerrain()->Break();
+	  }
       }
-  });
 
   if(PlayerHurt)
     {
@@ -993,7 +998,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
       game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
-      if(game::IsValidPos(game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection)))
+      if(IsValidPos(game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection)))
 	game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection));
 
       ADD_MESSAGE("You are hit by the explosion!");
@@ -1006,46 +1011,48 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 bool level::CollectCreatures(std::vector<character*>& CharacterArray, character* Leader, bool AllowHostiles)
 {
   if(!AllowHostiles)
-    DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
     {
-      character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
+      rect Rect;
+      femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Leader->GetPos(), Leader->LOSRange());
 
-      if(Char)
-	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->CanBeSeenBy(Leader))
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
 	  {
-	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
-	    return false;
+	    character* Char = GetLSquare(x, y)->GetCharacter();
+
+	    if(Char)
+	      if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->CanBeSeenBy(Leader))
+		{
+		  ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
+		  return false;
+		}
 	  }
-    });
+    }
 
-  DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
-  {
-    character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Leader->GetPos(), Leader->LOSRange());
 
-    if(Char)
-      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->CanBeSeenBy(Leader))
-	{
-	  if(Char->GetAction() && Char->GetAction()->IsVoluntary())
-	    Char->GetAction()->Terminate(false);
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      {
+	character* Char = GetLSquare(x, y)->GetCharacter();
 
-	  if(!Char->GetAction())
+	if(Char)
+	  if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->CanBeSeenBy(Leader))
 	    {
-	      ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
-	      CharacterArray.push_back(Char);
-	      game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
+	      if(Char->GetAction() && Char->GetAction()->IsVoluntary())
+		Char->GetAction()->Terminate(false);
+
+	      if(!Char->GetAction())
+		{
+		  ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
+		  CharacterArray.push_back(Char);
+		  game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
+		}
 	    }
-	}
-  });
+      }
 
   return true;
-}
-
-bool level::IsValid(vector2d Vector) const
-{
-  if(Vector.X >= 0 && Vector.Y >= 0 && Vector.X < GetXSize() && Vector.Y < GetYSize())
-    return true;
-  else
-    return false;
 }
 
 void level::Draw() const

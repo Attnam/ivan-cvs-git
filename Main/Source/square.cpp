@@ -53,10 +53,7 @@ void square::RemoveCharacter()
 
 bool square::CanBeSeenByPlayer(bool) const
 {
-  if(GetLastSeen() == game::GetLOSTurns())
-    return true;
-  else
-    return false;
+  return GetLastSeen() == game::GetLOSTurns();
 }
 
 bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
@@ -70,7 +67,7 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
       character* Char = GetCharacter();
 
       if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
-	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeenByPlayer(true);
+	return GetNearSquare(FromPos)->CanBeSeenByPlayer(true);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
     }
@@ -138,9 +135,4 @@ bool square::CanBeSeenBy(character* Who) const
     return CanBeSeenByPlayer();
   else
     return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
-}
-
-square* square::GetNeighbourSquare(ushort Index) const
-{
-  return AreaUnder->GetNeighbourSquare(Pos, Index);
 }

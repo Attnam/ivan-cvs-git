@@ -8,18 +8,18 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "object.h"
+#include "lsquare.h"
+#include "slot.h"
 
 class bitmap;
 class character;
 class humanoid;
 class material;
-class object;
 class stack;
 class outputfile;
 class inputfile;
 class slot;
 class item;
-class level;
 template <class type> class database;
 
 struct itemdatabase
@@ -132,9 +132,9 @@ class item : public object
   virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
-  virtual item* PrepareForConsuming(character*);
+  virtual item* PrepareForConsuming(character*) { return this; }
   virtual bool Apply(character*);
-  virtual bool Zap(character*, vector2d, uchar);
+  virtual bool Zap(character*, vector2d, uchar) { return false; }
   virtual bool Polymorph(stack*);
   virtual bool CheckPickUpEffect(character*) { return true; }
   virtual bool GetStepOnEffect(character*) { return false; }
@@ -155,7 +155,7 @@ class item : public object
   virtual ushort GetStrengthValue() const;
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }
-  virtual void PlaceToSlot(slot*);
+  virtual void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
   virtual void DonateSlotTo(item*);
@@ -196,11 +196,11 @@ class item : public object
   virtual bool IsBelt(const character*) const { return false; }
   virtual bool IsBoot(const character*) const { return false; }
   virtual bool IsShield(const character*) const { return false; }
-  virtual bool IsOnGround() const;
+  virtual bool IsOnGround() const { return GetSlot()->IsOnGround(); }
   virtual ushort GetResistance(uchar) const;
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
-  virtual bool RemoveMaterial(uchar);
+  virtual bool RemoveMaterial(uchar) { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
@@ -211,53 +211,53 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-  DATABASEVALUE(ushort, Possibility);
-  DATABASEVALUE(vector2d, InHandsPic);
-  DATABASEVALUE(ulong, OfferModifier);
-  DATABASEVALUE(long, Score);
-  DATABASEBOOL(IsDestroyable);
-  DATABASEBOOL(CanBeWished);
-  DATABASEBOOL(IsMaterialChangeable);
-  DATABASEVALUE(uchar, WeaponCategory);
-  DATABASEBOOL(IsPolymorphSpawnable);
-  DATABASEBOOL(IsAutoInitializable);
-  DATABASEVALUE(uchar, Category);
-  DATABASEVALUE(ushort, SoundResistance);
-  DATABASEVALUE(ushort, EnergyResistance);
-  DATABASEVALUE(ushort, AcidResistance);
-  DATABASEVALUE(ushort, FireResistance);
-  DATABASEVALUE(ushort, PoisonResistance);
-  DATABASEVALUE(ushort, BulimiaResistance);
-  DATABASEBOOL(IsStackable);
-  DATABASEVALUE(ushort, StrengthModifier);
-  DATABASEVALUE(ushort, FormModifier);
-  DATABASEVALUE(ulong, NPModifier);
-  DATABASEVALUE(ushort, DefaultSize);
-  DATABASEVALUE(ulong, DefaultMainVolume);
-  DATABASEVALUE(ulong, DefaultSecondaryVolume);
-  DATABASEVALUE(ulong, DefaultContainedVolume);
-  DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  DATABASEVALUE(ulong, Price);
-  DATABASEVALUE(ushort, BaseEmitation);
-  DATABASEVALUE(const std::string&, Article);
-  DATABASEVALUE(const std::string&, Adjective);
-  DATABASEVALUE(const std::string&, AdjectiveArticle);
-  DATABASEVALUE(const std::string&, NameSingular);
-  DATABASEVALUE(const std::string&, NamePlural);
-  DATABASEVALUE(const std::string&, PostFix);
-  DATABASEVALUE(uchar, ArticleMode);
-  DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
-  DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
-  DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
-  DATABASEBOOL(IsPolymorphable);
-  DATABASEVALUE(const std::vector<std::string>&, Alias);
-  DATABASEVALUE(uchar, OKVisualEffects);
-  DATABASEBOOL(CanBeGeneratedInContainer);
-  DATABASEVALUE(uchar, ForcedVisualEffects);
-  DATABASEVALUE(uchar, Roundness);
-  DATABASEVALUE(ushort, GearStates);
-  DATABASEBOOL(IsTwoHanded);
+  virtual DATABASEVALUE(ushort, Possibility);
+  virtual DATABASEVALUE(vector2d, InHandsPic);
+  virtual DATABASEVALUE(ulong, OfferModifier);
+  virtual DATABASEVALUE(long, Score);
+  virtual DATABASEBOOL(IsDestroyable);
+  virtual DATABASEBOOL(CanBeWished);
+  virtual DATABASEBOOL(IsMaterialChangeable);
+  virtual DATABASEVALUE(uchar, WeaponCategory);
+  virtual DATABASEBOOL(IsPolymorphSpawnable);
+  virtual DATABASEBOOL(IsAutoInitializable);
+  virtual DATABASEVALUE(uchar, Category);
+  virtual DATABASEVALUE(ushort, SoundResistance);
+  virtual DATABASEVALUE(ushort, EnergyResistance);
+  virtual DATABASEVALUE(ushort, AcidResistance);
+  virtual DATABASEVALUE(ushort, FireResistance);
+  virtual DATABASEVALUE(ushort, PoisonResistance);
+  virtual DATABASEVALUE(ushort, BulimiaResistance);
+  virtual DATABASEBOOL(IsStackable);
+  virtual DATABASEVALUE(ushort, StrengthModifier);
+  virtual DATABASEVALUE(ushort, FormModifier);
+  virtual DATABASEVALUE(ulong, NPModifier);
+  virtual DATABASEVALUE(ushort, DefaultSize);
+  virtual DATABASEVALUE(ulong, DefaultMainVolume);
+  virtual DATABASEVALUE(ulong, DefaultSecondaryVolume);
+  virtual DATABASEVALUE(ulong, DefaultContainedVolume);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
+  virtual DATABASEVALUE(ulong, Price);
+  virtual DATABASEVALUE(ushort, BaseEmitation);
+  virtual DATABASEVALUE(const std::string&, Article);
+  virtual DATABASEVALUE(const std::string&, Adjective);
+  virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
+  virtual DATABASEVALUE(const std::string&, NameSingular);
+  virtual DATABASEVALUE(const std::string&, NamePlural);
+  virtual DATABASEVALUE(const std::string&, PostFix);
+  virtual DATABASEVALUE(uchar, ArticleMode);
+  virtual DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
+  virtual DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  virtual DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
+  virtual DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
+  virtual DATABASEBOOL(IsPolymorphable);
+  virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
+  virtual DATABASEVALUE(uchar, OKVisualEffects);
+  virtual DATABASEBOOL(CanBeGeneratedInContainer);
+  virtual DATABASEVALUE(uchar, ForcedVisualEffects);
+  virtual DATABASEVALUE(uchar, Roundness);
+  virtual DATABASEVALUE(ushort, GearStates);
+  virtual DATABASEBOOL(IsTwoHanded);
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -271,17 +271,20 @@ class item : public object
   virtual ulong GetBlockModifier(const character*) const;
   virtual ulong GetCarriedWeight() const { return CarriedWeight; }
   virtual void SetCarriedWeight(ulong What) { CarriedWeight = What; }
-  virtual bool IsSimiliarTo(item*) const;
+  virtual bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(character*) const;
   virtual std::string Description(uchar) const;
   virtual bool IsVisible() const { return true; }
   virtual void SetIsVisible(bool) { }
-  virtual square* GetSquareUnder() const;
-  lsquare* GetLSquareUnder() const;
-  level* GetLevelUnder() const;
-  vector2d GetPos() const;
+  virtual square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
+  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
+  level* GetLevelUnder() const { return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder()); }
+  area* GetAreaUnder() const { return Slot->GetSquareUnder()->GetAreaUnder(); }
+  vector2d GetPos() const { return Slot->GetSquareUnder()->GetPos(); }
+  square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos)); }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

@@ -124,7 +124,6 @@ class game
   static uchar GetTeams() { return Team.size(); }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static bool IsValidPos(vector2d);
   static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool);
   static long NumberQuestion(const std::string&, vector2d, ushort);
   static void LOSTurn();

@@ -81,24 +81,24 @@ class material
   material(ushort NewConfig, ulong InitVolume, bool Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material(donothing) : MotherEntity(0) { }
   virtual ~material() { }
-  virtual void AddName(std::string&, bool = false, bool = true) const;
-  virtual std::string GetName(bool = false, bool = true) const;
+  void AddName(std::string&, bool = false, bool = true) const;
+  std::string GetName(bool = false, bool = true) const;
   ulong GetVolume() const { return Volume; }
-  virtual ushort TakeDipVolumeAway();
+  ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SetVolume(ulong);
-  virtual void Effect(character*, long);
-  virtual void EatEffect(character*, ulong, float = 1.0);
-  virtual void HitEffect(character*);
+  void SetVolume(ulong);
+  void Effect(character*, long);
+  void EatEffect(character*, ulong, float = 1.0);
+  void HitEffect(character*);
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
-  virtual ulong RawPrice() const { return 0; }
-  virtual bool CanBeDug(material*) const;
-  virtual bool HasBe() const { return false; }
+  ulong RawPrice() const { return 0; }
+  bool CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
+  bool HasBe() const { return false; }
   virtual bool Be() { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void AddConsumeEndMessage(character*) const;
-  virtual long CalculateOfferValue(char GodAlignment) const;
+  void AddConsumeEndMessage(character*) const;
+  long CalculateOfferValue(char GodAlignment) const;
   DATABASEVALUE(ushort, StrengthValue);
   DATABASEVALUE(ushort, ConsumeType);
   DATABASEVALUE(ushort, Density);
@@ -126,8 +126,7 @@ class material
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
-  //material* Clone() const { return GetProtoType()->Clone(Config, 0); }
-  virtual ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
+  ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
   ushort GetConfig() const { return Config; }
   static material* MakeMaterial(ushort);
   static material* MakeMaterial(ushort, ulong);

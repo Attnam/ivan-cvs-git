@@ -61,10 +61,10 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 
   for(;;)
     {
-      if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
+      if(!GetLevelUnder()->IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
 
-      lsquare* JustHit = GetLevelUnder()->GetLSquare(Pos + game::GetMoveVector(Direction));
+      lsquare* JustHit = GetNearLSquare(Pos + game::GetMoveVector(Direction));
 
       if(!(JustHit->GetOLTerrain()->IsWalkable()))
 	{
@@ -82,12 +82,12 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 	  if(Speed < 0.5)
 	    break;
 
-	  MoveTo(GetLevelUnder()->GetLSquare(Pos)->GetStack());
+	  MoveTo(GetNearLSquare(Pos)->GetStack());
 	  game::DrawEverything();
 
-	  if(GetLevelUnder()->GetLSquare(Pos)->GetCharacter())
+	  if(GetNearSquare(Pos)->GetCharacter())
 	    {
-	      if(HitCharacter(Thrower, GetLevelUnder()->GetLSquare(Pos)->GetCharacter(), Speed))
+	      if(HitCharacter(Thrower, GetNearSquare(Pos)->GetCharacter(), Speed))
 		{
 		  Breaks = true;
 		  break;
@@ -98,7 +98,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 	}
     }
 
-  MoveTo(GetLevelUnder()->GetLSquare(Pos)->GetStack());
+  MoveTo(GetNearLSquare(Pos)->GetStack());
 
   if(Breaks)
     ReceiveDamage(Thrower, short(Speed), PHYSICALDAMAGE);
@@ -127,16 +127,11 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
       return false;
     }
 
-  if(RAND() % 2)
+  if(RAND() & 1)
     ReceiveHitEffect(Dude, Thrower);
 
   Dude->HasBeenHitByItem(Thrower, this, Speed);
   return true;
-}
-
-item* item::PrepareForConsuming(character*)
-{
-  return this;
 }
 
 float item::GetWeaponStrength() const
@@ -150,11 +145,6 @@ bool item::Apply(character* Applier)
     ADD_MESSAGE("You can't apply this!");
 
   return false;
-}
-
-bool item::Zap(character*, vector2d, uchar)
-{
-  return false; 
 }
 
 /* returns bool that tells whether the Polymorph really happened */
@@ -217,17 +207,12 @@ void item::TeleportRandomly()
 {
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
 
-  MoveTo(GetLevelUnder()->GetLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+  MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
 }
 
 ushort item::GetStrengthValue() const
 {
   return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
-}
-
-void item::PlaceToSlot(slot* Slot)
-{
-  Slot->PutInItem(this);
 }
 
 void item::RemoveFromSlot()
@@ -280,11 +265,6 @@ std::string item::ItemCategoryName(uchar Category)
     }
 }
 
-bool item::IsOnGround() const
-{
-  return GetSlot()->IsOnGround();
-}
-
 ushort item::GetResistance(uchar Type) const
 {
   switch(Type)
@@ -313,11 +293,6 @@ void item::Be()
 	SendToHell();
 	break;
       }
-}
-
-bool item::RemoveMaterial(uchar)
-{
-  return true;
 }
 
 void item::AddConsumeEndMessage(character* Eater) const
@@ -421,11 +396,6 @@ ulong item::GetBlockModifier(const character* User) const
     return GetSize() * GetRoundness() << 1;
 }
 
-bool item::IsSimiliarTo(item* Item) const
-{
-  return Item->GetType() == GetType() && Item->GetConfig() == GetConfig();
-}
-
 bool item::CanBeSeenByPlayer() const
 {
   return GetSquareUnder()->CanBeSeenByPlayer();
@@ -452,25 +422,25 @@ void item::InstallDataBase()
   ::database<item>::InstallDataBase(this);
 }
 
-square* item::GetSquareUnder() const
+/*square* item::GetSquareUnder() const
 {
   if(Slot)
     return Slot->GetSquareUnder();
   else
     return 0;
-}
+}*/
 
-lsquare* item::GetLSquareUnder() const
+/*lsquare* item::GetLSquareUnder() const
 {
   return static_cast<lsquare*>(Slot->GetSquareUnder());
 }
 
 level* item::GetLevelUnder() const
 { 
-  return GetLSquareUnder()->GetLevelUnder(); 
+  return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder());
 }
 
 vector2d item::GetPos() const
 {
   return GetSquareUnder()->GetPos();
-}
+}*/

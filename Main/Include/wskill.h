@@ -80,8 +80,8 @@ class sweaponskill : public weaponskill
   float GetAPBonus() const { return Level ? 0.93f - 0.02f * (Level - 1) : 1.0f; }
   void AddLevelUpMessage(const std::string&) const;
   void AddLevelDownMessage(const std::string&) const;
-  void Save(outputfile&) const;
-  void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
  private:

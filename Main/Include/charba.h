@@ -9,23 +9,16 @@
 #include <map>
 #include <vector>
 
-#include "typedef.h"
-#include "vector2d.h"
-#include "id.h"
-#include "entity.h"
-#include "ivandef.h"
+#include "wsquare.h"
+#include "itemde.h"
 
 #define CHARDESCRIPTION(Case) Description(Case).c_str()
 
 class felist;
-class square;
 class bitmap;
 class character;
-class item;
 class stack;
 class material;
-class lsquare;
-class wsquare;
 class outputfile;
 class inputfile;
 class team;
@@ -38,8 +31,6 @@ class go;
 class gweaponskill;
 class stackslot;
 class god;
-class level;
-class area;
 typedef std::list<stackslot*>::iterator stackiterator;
 template <class type> class database;
 
@@ -176,7 +167,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*, float) { return false; }
-  virtual bool CheckBulimia() const;
+  virtual bool CheckBulimia() const { return GetHungerState() == BLOATED; }
   virtual bool CheckDeath(const std::string&, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*) = 0;
@@ -239,7 +230,6 @@ class character : public entity, public id
   virtual ushort LOSRangeSquare() const;
   virtual ushort ESPRange() const;
   virtual ushort ESPRangeSquare() const;
-  virtual vector2d GetPos() const;
   virtual void AddMissMessage(character*) const;
   virtual void AddPrimitiveHitMessage(character*, const std::string&, const std::string&, uchar) const;
   virtual void AddWeaponHitMessage(character*, item*, uchar, bool = false) const;
@@ -323,11 +313,11 @@ class character : public entity, public id
   virtual void EditNP(long What) { NP += What; }
   virtual void SetSize(ushort);
   virtual ushort GetSize() const;
-  virtual torso* GetTorso() const;
-  virtual humanoidtorso* GetHumanoidTorso() const;
-  virtual void SetTorso(torso* What);
-  virtual bodypart* GetBodyPart(ushort) const;
-  virtual void SetBodyPart(ushort, bodypart*);
+  torso* GetTorso() const { return static_cast<torso*>(*BodyPartSlot[TORSOINDEX]); }
+  humanoidtorso* GetHumanoidTorso() const { return static_cast<humanoidtorso*>(*BodyPartSlot[TORSOINDEX]); }
+  void SetTorso(torso* What) { SetBodyPart(TORSOINDEX, What); }
+  bodypart* GetBodyPart(ushort Index) const { return static_cast<bodypart*>(*BodyPartSlot[Index]); }
+  void SetBodyPart(ushort, bodypart*);
   virtual void SetMainMaterial(material*);
   virtual void ChangeMainMaterial(material*);
   virtual void SetSecondaryMaterial(material*);
@@ -359,8 +349,6 @@ class character : public entity, public id
   virtual void SetSecondaryWielded(item*) { }
   virtual void SetBodyArmor(item*) { }
   virtual uchar GetHungerState() const;
-  virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
-  virtual characterslot* GetBodyPartSlot(ushort) const;
   virtual bool ConsumeItem(item*);
   virtual bool CanConsume(material*) const;
   virtual action* GetAction() const { return Action; }
@@ -412,92 +400,92 @@ class character : public entity, public id
   virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
-  DATABASEVALUE(ushort, DefaultArmStrength);
-  DATABASEVALUE(ushort, DefaultLegStrength);
-  DATABASEVALUE(ushort, DefaultDexterity);
-  DATABASEVALUE(ushort, DefaultAgility);
-  DATABASEVALUE(ushort, DefaultEndurance);
-  DATABASEVALUE(ushort, DefaultPerception);
-  DATABASEVALUE(ushort, DefaultIntelligence);
-  DATABASEVALUE(ushort, DefaultWisdom);
-  DATABASEVALUE(ushort, DefaultCharisma);
-  DATABASEVALUE(ushort, DefaultMana);
-  DATABASEVALUE(ulong, DefaultMoney);
-  DATABASEVALUE(ushort, TotalSize);
-  DATABASEBOOL(CanRead);
-  DATABASEBOOL(IsCharmable);
-  DATABASEVALUE(uchar, Sex);
-  DATABASEVALUE(ulong, BloodColor);
-  DATABASEBOOL(CanBeGenerated);
-  DATABASEVALUE(uchar, CriticalModifier);
-  DATABASEVALUE(const std::string&, StandVerb);
-  DATABASEBOOL(CanOpen);
-  DATABASEBOOL(CanBeDisplaced);
-  DATABASEVALUE(ushort, Frequency);
-  DATABASEBOOL(CanWalk);
-  DATABASEBOOL(CanSwim);
-  DATABASEBOOL(CanFly);
-  DATABASEVALUE(ushort, PhysicalDamageResistance);
-  DATABASEVALUE(ushort, SoundResistance);
-  DATABASEVALUE(ushort, EnergyResistance);
-  DATABASEVALUE(ushort, AcidResistance);
-  DATABASEVALUE(ushort, FireResistance);
-  DATABASEVALUE(ushort, PoisonResistance);
-  DATABASEVALUE(ushort, BulimiaResistance);
-  DATABASEBOOL(IsUnique);
-  DATABASEVALUE(ushort, ConsumeFlags);
-  DATABASEVALUE(ulong, TotalVolume);
-  DATABASEVALUE(const std::string&, TalkVerb);
-  DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, TorsoBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, ArmBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, LegBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, RightArmBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, LeftArmBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, RightLegBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, LeftLegBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(vector2d, GroinBitmapPos, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, ClothColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, SkinColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, CapColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, HairColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, EyeColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, TorsoMainColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, BeltColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, TorsoSpecialColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, ArmMainColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, ArmSpecialColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, LegMainColor, ushort);
-  DATABASEVALUEWITHPARAMETER(ushort, LegSpecialColor, ushort);
-  DATABASEVALUE(uchar, HeadBonePercentile);
-  DATABASEVALUE(uchar, TorsoBonePercentile);
-  DATABASEVALUE(uchar, ArmBonePercentile);
-  DATABASEVALUE(uchar, RightArmBonePercentile);
-  DATABASEVALUE(uchar, LeftArmBonePercentile);
-  DATABASEVALUE(uchar, GroinBonePercentile);
-  DATABASEVALUE(uchar, LegBonePercentile);
-  DATABASEVALUE(uchar, RightLegBonePercentile);
-  DATABASEVALUE(uchar, LeftLegBonePercentile);
-  DATABASEBOOL(IsNameable);
-  DATABASEVALUE(ushort, BaseEmitation);
-  DATABASEVALUE(const std::string&, Article);
-  DATABASEVALUE(const std::string&, Adjective);
-  DATABASEVALUE(const std::string&, AdjectiveArticle);
-  DATABASEVALUE(const std::string&, NameSingular);
-  DATABASEVALUE(const std::string&, NamePlural);
-  DATABASEVALUE(const std::string&, PostFix);
-  DATABASEVALUE(uchar, ArticleMode);
-  DATABASEBOOL(IsPolymorphable);
-  DATABASEVALUE(ulong, UnarmedStrength);
-  DATABASEVALUE(ulong, BiteStrength);
-  DATABASEVALUE(ulong, KickStrength);
-  DATABASEVALUE(uchar, AttackStyle);
-  DATABASEBOOL(CanUseEquipment);
-  DATABASEBOOL(CanKick);
-  DATABASEBOOL(CanTalk);
-  DATABASEVALUE(ushort, ClassStates);
-  DATABASEBOOL(CanBeWished);
-  DATABASEVALUE(const std::vector<std::string>&, Alias);
+  virtual DATABASEVALUE(ushort, DefaultArmStrength);
+  virtual DATABASEVALUE(ushort, DefaultLegStrength);
+  virtual DATABASEVALUE(ushort, DefaultDexterity);
+  virtual DATABASEVALUE(ushort, DefaultAgility);
+  virtual DATABASEVALUE(ushort, DefaultEndurance);
+  virtual DATABASEVALUE(ushort, DefaultPerception);
+  virtual DATABASEVALUE(ushort, DefaultIntelligence);
+  virtual DATABASEVALUE(ushort, DefaultWisdom);
+  virtual DATABASEVALUE(ushort, DefaultCharisma);
+  virtual DATABASEVALUE(ushort, DefaultMana);
+  virtual DATABASEVALUE(ulong, DefaultMoney);
+  virtual DATABASEVALUE(ushort, TotalSize);
+  virtual DATABASEBOOL(CanRead);
+  virtual DATABASEBOOL(IsCharmable);
+  virtual DATABASEVALUE(uchar, Sex);
+  virtual DATABASEVALUE(ulong, BloodColor);
+  virtual DATABASEBOOL(CanBeGenerated);
+  virtual DATABASEVALUE(uchar, CriticalModifier);
+  virtual DATABASEVALUE(const std::string&, StandVerb);
+  virtual DATABASEBOOL(CanOpen);
+  virtual DATABASEBOOL(CanBeDisplaced);
+  virtual DATABASEVALUE(ushort, Frequency);
+  virtual DATABASEBOOL(CanWalk);
+  virtual DATABASEBOOL(CanSwim);
+  virtual DATABASEBOOL(CanFly);
+  virtual DATABASEVALUE(ushort, PhysicalDamageResistance);
+  virtual DATABASEVALUE(ushort, SoundResistance);
+  virtual DATABASEVALUE(ushort, EnergyResistance);
+  virtual DATABASEVALUE(ushort, AcidResistance);
+  virtual DATABASEVALUE(ushort, FireResistance);
+  virtual DATABASEVALUE(ushort, PoisonResistance);
+  virtual DATABASEVALUE(ushort, BulimiaResistance);
+  virtual DATABASEBOOL(IsUnique);
+  virtual DATABASEVALUE(ushort, ConsumeFlags);
+  virtual DATABASEVALUE(ulong, TotalVolume);
+  virtual DATABASEVALUE(const std::string&, TalkVerb);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, TorsoBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, ArmBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, LegBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, RightArmBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, LeftArmBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, RightLegBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, LeftLegBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(vector2d, GroinBitmapPos, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, ClothColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, SkinColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, CapColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, HairColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, EyeColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, TorsoMainColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, BeltColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, TorsoSpecialColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, ArmMainColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, ArmSpecialColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, LegMainColor, ushort);
+  virtual DATABASEVALUEWITHPARAMETER(ushort, LegSpecialColor, ushort);
+  virtual DATABASEVALUE(uchar, HeadBonePercentile);
+  virtual DATABASEVALUE(uchar, TorsoBonePercentile);
+  virtual DATABASEVALUE(uchar, ArmBonePercentile);
+  virtual DATABASEVALUE(uchar, RightArmBonePercentile);
+  virtual DATABASEVALUE(uchar, LeftArmBonePercentile);
+  virtual DATABASEVALUE(uchar, GroinBonePercentile);
+  virtual DATABASEVALUE(uchar, LegBonePercentile);
+  virtual DATABASEVALUE(uchar, RightLegBonePercentile);
+  virtual DATABASEVALUE(uchar, LeftLegBonePercentile);
+  virtual DATABASEBOOL(IsNameable);
+  virtual DATABASEVALUE(ushort, BaseEmitation);
+  virtual DATABASEVALUE(const std::string&, Article);
+  virtual DATABASEVALUE(const std::string&, Adjective);
+  virtual DATABASEVALUE(const std::string&, AdjectiveArticle);
+  virtual DATABASEVALUE(const std::string&, NameSingular);
+  virtual DATABASEVALUE(const std::string&, NamePlural);
+  virtual DATABASEVALUE(const std::string&, PostFix);
+  virtual DATABASEVALUE(uchar, ArticleMode);
+  virtual DATABASEBOOL(IsPolymorphable);
+  virtual DATABASEVALUE(ulong, UnarmedStrength);
+  virtual DATABASEVALUE(ulong, BiteStrength);
+  virtual DATABASEVALUE(ulong, KickStrength);
+  virtual DATABASEVALUE(uchar, AttackStyle);
+  virtual DATABASEBOOL(CanUseEquipment);
+  virtual DATABASEBOOL(CanKick);
+  virtual DATABASEBOOL(CanTalk);
+  virtual DATABASEVALUE(ushort, ClassStates);
+  virtual DATABASEBOOL(CanBeWished);
+  virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -516,8 +504,8 @@ class character : public entity, public id
   virtual void DrawPanel() const;
   virtual ushort DrawStats() const = 0;
   virtual ushort GetCarryingStrength() const = 0;
-  virtual ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
-  virtual void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
+  ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
+  void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
   virtual bool DamageTypeAffectsInventory(uchar) const;
   virtual void SetStuckTo(item* What) {  StuckTo = What; }
   virtual item* GetStuckTo() const { return StuckTo; }
@@ -597,10 +585,6 @@ class character : public entity, public id
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
   void SetConfig(ushort);
   virtual god* GetMasterGod() const;
-  virtual square* GetSquareUnder() const { return SquareUnder; }
-  void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const;
-  wsquare* GetWSquareUnder() const;
   virtual void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
   void PrintEndTeleportMessage() const;
@@ -611,16 +595,26 @@ class character : public entity, public id
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
   void DisplayStethoscopeInfo(character*) const;
-  level* GetLevelUnder() const;
-  area* GetAreaUnder() const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS ? true : false; }
   virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS ? true : false; }
   virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD ? true : false; }
   virtual void AddAttackInfo(felist&) const = 0;
-  square* GetNeighbourSquare(ushort) const;
-  lsquare* GetNeighbourLSquare(ushort) const;
-  wsquare* GetNeighbourWSquare(ushort) const;
+  level* GetLevelUnder() const { return static_cast<level*>(SquareUnder->GetAreaUnder()); }
+  area* GetAreaUnder() const { return SquareUnder->GetAreaUnder(); }
+  square* GetNeighbourSquare(ushort Index) const { return SquareUnder->GetNeighbourSquare(Index); }
+  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<lsquare*>(SquareUnder)->GetNeighbourLSquare(Index); }
+  wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(SquareUnder)->GetNeighbourWSquare(Index); }
+  stack* GetStackUnder() const { return static_cast<lsquare*>(SquareUnder)->GetStack(); }
+  square* GetNearSquare(vector2d Pos) const { return SquareUnder->GetAreaUnder()->GetSquare(Pos); }
+  square* GetNearSquare(ushort x, ushort y) const { return SquareUnder->GetAreaUnder()->GetSquare(x, y); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(x, y)); }
+  vector2d GetPos() const { return SquareUnder->GetPos(); }
+  virtual square* GetSquareUnder() const { return SquareUnder; }
+  void SetSquareUnder(square* What) { SquareUnder = What; }
+  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
+  wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(SquareUnder); }
  protected:
   virtual void SpecialTurnHandler() { }
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }

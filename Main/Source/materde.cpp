@@ -22,7 +22,6 @@ MATERIAL_PROTOTYPE(material, 0);
 bool organicsubstance::Be()
 {
   ABORT("Illegal item::Be()!");
-
   return true;
 }
 

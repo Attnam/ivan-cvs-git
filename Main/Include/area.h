@@ -6,7 +6,7 @@
 #endif
 
 #include "typedef.h"
-#include "vector2d.h"
+#include "femath.h"
 
 class character;
 class square;
@@ -39,11 +39,13 @@ class area
   virtual ushort GetLOSModifier() const { return 16; }
   square* GetNeighbourSquare(vector2d, ushort) const;
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
+  const rect& GetBorder() const { return Border; }
  protected:
   square*** Map;
   ushort** FlagMap;
   ushort XSize, YSize;
   ulong XSizeTimesYSize;
+  rect Border;
 };
 
 #endif

@@ -118,7 +118,7 @@ void consume::Terminate(bool Finished)
 	Consuming->AddConsumeEndMessage(GetActor());
 
       if(GetWasOnGround())
-	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+	Consuming->MoveTo(GetActor()->GetStackUnder());
       else
 	Consuming->MoveTo(GetActor()->GetStack());
     }
@@ -211,7 +211,7 @@ void dig::Handle()
       return;
     }
 
-  lsquare* Square = GetActor()->GetLevelUnder()->GetLSquare(SquareDug);
+  lsquare* Square = GetActor()->GetNearLSquare(SquareDug);
   Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARMSTRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
@@ -316,7 +316,7 @@ void consume::DropUsedItems()
 {
   if(GetConsuming())
     if(!game::IsInWilderness())
-      GetConsuming()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      GetConsuming()->MoveTo(GetActor()->GetStackUnder());
     else
       GetConsuming()->MoveTo(GetActor()->GetStack());
 }
@@ -331,13 +331,13 @@ void dig::DropUsedItems()
 {
   if(GetRightBackup())
     if(!game::IsInWilderness())
-      GetRightBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      GetRightBackup()->MoveTo(GetActor()->GetStackUnder());
     else
       GetRightBackup()->MoveTo(GetActor()->GetStack());
 
   if(GetLeftBackup())
     if(!game::IsInWilderness())
-      GetLeftBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      GetLeftBackup()->MoveTo(GetActor()->GetStackUnder());
     else
       GetLeftBackup()->MoveTo(GetActor()->GetStack());
 }
@@ -445,7 +445,7 @@ void read::DropUsedItems()
 {
   if(GetLiterature())
     if(!game::IsInWilderness())
-      GetLiterature()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      GetLiterature()->MoveTo(GetActor()->GetStackUnder());
     else
       GetLiterature()->MoveTo(GetActor()->GetStack());
 }

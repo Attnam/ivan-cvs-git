@@ -124,7 +124,7 @@ void god::PlayerVomitedOnAltar()
 {
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
   AdjustRelation(-200);
-  game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
+  game::GetPlayer()->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 
@@ -150,7 +150,7 @@ character* god::CreateAngel()
 
       angel* Angel = new angel(GetType());
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+      if(game::GetCurrentArea()->IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));

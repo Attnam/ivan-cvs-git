@@ -12,203 +12,16 @@
 
 #define RAND femath::Rand
 
-#define N1 624
+template <class type> inline type GetHypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
+template <class type> inline const type& Max(const type& X, const type& Y) { return X > Y ? X : Y; }
+template <class type> inline const type& Min(const type& X, const type& Y) { return X < Y ? X : Y; }
 
-/* Boy these macros are evil :( */
-
-/*#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)\
-{\
-  while(true)\
-  {\
-    ushort DoX, DoY, DoIndex = 0;\
-    \
-    if(X && Y)\
-    {\
-      DoX = X - 1; DoY = Y - 1;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(Y)\
-    {\
-      DoX = X; DoY = Y - 1;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1 && Y)\
-    {\
-      DoX = X + 1; DoY = Y - 1;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X)\
-    {\
-      DoX = X - 1; DoY = Y;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1)\
-    {\
-      DoX = X + 1; DoY = Y;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X && Y < BorderY - 1)\
-    {\
-      DoX = X - 1; DoY = Y + 1;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(Y < BorderY - 1)\
-    {\
-      DoX = X; DoY = Y + 1;\
-      \
-      Then;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1 && Y < BorderY - 1)\
-    {\
-      DoX = X + 1; DoY = Y + 1;\
-      \
-      Then;\
-    }\
-    \
-    break;\
-  }\
-}
-
-#define DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(X, Y, BorderX, BorderY, FirstCommand, SecondCommand, CommonCommand)\
-{\
-  while(true)\
-  {\
-    ushort DoX, DoY, DoIndex = 0;\
-    \
-    if(X && Y)\
-    {\
-      DoX = X - 1; DoY = Y - 1;\
-      \
-      FirstCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(Y)\
-    {\
-      DoX = X; DoY = Y - 1;\
-      \
-      FirstCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1 && Y)\
-    {\
-      DoX = X + 1; DoY = Y - 1;\
-      \
-      FirstCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X)\
-    {\
-      DoX = X - 1; DoY = Y;\
-      \
-      FirstCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1)\
-    {\
-      DoX = X + 1; DoY = Y;\
-      \
-      SecondCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X && Y < BorderY - 1)\
-    {\
-      DoX = X - 1; DoY = Y + 1;\
-      \
-      SecondCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(Y < BorderY - 1)\
-    {\
-      DoX = X; DoY = Y + 1;\
-      \
-      SecondCommand;\
-      CommonCommand;\
-    }\
-    \
-    ++DoIndex;\
-    \
-    if(X < BorderX - 1 && Y < BorderY - 1)\
-    {\
-      DoX = X + 1; DoY = Y + 1;\
-      \
-      SecondCommand;\
-      CommonCommand;\
-    }\
-    \
-    break;\
-  }\
-}*/
-
-#define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRight, ClipBottom, Radius, DoWhat)\
-{\
-  long	Left    = (CenterX) - (Radius),\
-	Top     = (CenterY) - (Radius),\
-	Right   = (CenterX) + (Radius),\
-	Bottom  = (CenterY) + (Radius);\
-  \
-  if(Left   < (ClipLeft))   Left   = (ClipLeft);\
-  if(Top    < (ClipTop))    Top    = (ClipTop);\
-  if(Right  > (ClipRight))  Right  = (ClipRight);\
-  if(Bottom > (ClipBottom)) Bottom = (ClipBottom);\
-  \
-  if(Left <= (ClipRight) && Top <= (ClipBottom) && Right >= (ClipLeft) && Bottom >= (ClipTop))\
-  {\
-    for(long XPointer = Left; XPointer <= Right; ++XPointer)\
-      for(long YPointer = Top; YPointer <= Bottom; ++YPointer)\
-	{\
-	  DoWhat;\
-	}\
-  }\
-}
-
-template <class type> inline type GetHypotSquare(type X, type Y) { return X * X + Y * Y; }
-template <class type> inline type Max(type X, type Y) { return X > Y ? X : Y; }
-template <class type> inline type Min(type X, type Y) { return X < Y ? X : Y; }
+struct rect
+{
+  rect() { }
+  rect(short X1, short Y1, short X2, short Y2) : X1(X1), Y1(Y1), X2(X2), Y2(Y2) { }
+  short X1, Y1, X2, Y2;
+};
 
 class femath
 {
@@ -218,8 +31,9 @@ public:
   static bool DoLine(long, long, long, long, bool (*Proc)(long, long));
   static ushort WeightedRand(const std::vector<long>&);
   static float CalculateAngle(vector2d);
+  static void CalculateEnvironmentRectangle(rect&, const rect&, vector2d, ushort);
 protected:
-  static ulong mt[N1];
+  static ulong mt[];
   static long mti;
 };
 

@@ -10,10 +10,10 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "square.h"
+#include "worldmap.h"
 
 class area;
 class material;
-class worldmap;
 class gwterrain;
 class owterrain;
 class outputfile;
@@ -42,7 +42,7 @@ class wsquare : public square
   void SetWTerrain(gwterrain*, owterrain*);
   void SetLastSeen(ulong);
   void CalculateLuminance();
-  wsquare* GetNeighbourWSquare(ushort) const;
+  wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, Index); }
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

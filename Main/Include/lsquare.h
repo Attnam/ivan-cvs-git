@@ -10,6 +10,7 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "square.h"
+#include "level.h"
 
 class game;
 class bitmap;
@@ -19,7 +20,6 @@ class lterrain;
 class glterrain;
 class olterrain;
 class material;
-class square;
 class item;
 class outputfile;
 class inputfile;
@@ -120,7 +120,8 @@ class lsquare : public square
   void DrawMemorized();
   bitmap* GetMemorized() const { return Memorized; }
   void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
-  lsquare* GetNeighbourLSquare(ushort) const;
+  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

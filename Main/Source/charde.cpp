@@ -120,28 +120,32 @@ void guard::CreateInitialEquipment()
 
 bool ennerbeast::Hit(character*)
 {
-  DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, 30,
-  {
-    character* Char = GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetCharacter();
-    ushort ScreamStrength = ushort(1000000 / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), GetPos(), 30);
 
-    if(Char && Char != this)
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	if(Char->IsPlayer())
-	  if(RAND() % 2)
-	    ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHARDESCRIPTION(DEFINITE));
-	  else
-	    ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
+	character* Char = GetNearSquare(x, y)->GetCharacter();
+	ushort ScreamStrength = 1000000 / GetHypotSquare(GetPos().X - x, GetPos().Y - y);
 
-	Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, 8, true);
-	Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
+	if(Char && Char != this)
+	  {
+	    if(Char->IsPlayer())
+	      if(RAND() & 1)
+		ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHARDESCRIPTION(DEFINITE));
+	      else
+		ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
+
+	    Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, 8, true);
+	    Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
+	  }
+
+	GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
+
+	for(ushort x = 0; x < 4; ++x)
+	  GetNearLSquare(x, y)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
       }
-
-    GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
-
-    for(ushort x = 0; x < 4; ++x)
-      GetLevelUnder()->GetLSquare(XPointer, YPointer)->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
-  });
 
   EditNP(-100);
   EditAP(long(-1000 * GetCategoryWeaponSkill(BITE)->GetAPBonus()));
@@ -153,21 +157,21 @@ void skeleton::CreateCorpse()
   ushort Amount = 2 + RAND() % 4;
 
   for(ushort c = 0; c < Amount; ++c)
-    GetLSquareUnder()->GetStack()->AddItem(new bone);
+    GetStackUnder()->AddItem(new bone);
 
   SendToHell();
 }
 
 void petrus::CreateCorpse()
 {
-  GetLSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
+  GetStackUnder()->AddItem(new leftnutofpetrus);
   SendToHell();
 }
 
 void elpuri::CreateCorpse()
 {
   character::CreateCorpse();
-  GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
+  GetStackUnder()->AddItem(new headofelpuri);
 }
 
 void humanoid::Save(outputfile& SaveFile) const
@@ -1387,10 +1391,10 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 
   if(!game::IsInWilderness()) 
     {
-      GetLevelUnder()->GetLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+      GetNearLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 
       if(!(RAND() % 10)) 
-	GetLevelUnder()->GetLSquare(GetPos)->GetStack()->AddItem(new lump(MAKE_MATERIAL(HUMANFLESH, 1000)));
+	GetNearLSquare(GetPos)->GetStack()->AddItem(new lump(MAKE_MATERIAL(HUMANFLESH, 1000)));
     }
 }
 
@@ -1508,7 +1512,7 @@ bool kamikazedwarf::Hit(character* Enemy)
       for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
 	if((**i)->IsExplosive())
 	  {
-	    if(RAND() % 2)
+	    if(RAND() & 1)
 	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 	    else
 	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
@@ -1612,10 +1616,10 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 
 void unicorn::CreateInitialEquipment()
 {
-  if(RAND() % 2)
+  if(RAND() & 1)
     GetStack()->FastAddItem(new stone);
 
-  if(RAND() % 2)
+  if(RAND() & 1)
     GetStack()->FastAddItem(new stone);
 }
 
@@ -1707,30 +1711,6 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
       ABORT("Weird bodypart bone percentile request for a humanoid. It must be your fault!");
       return 0;
     }
-}
-
-head* humanoid::GetHead() const { return (head*)GetBodyPart(HEADINDEX); }
-void humanoid::SetHead(head* What) { SetBodyPart(HEADINDEX, What); }
-rightarm* humanoid::GetRightArm() const { return (rightarm*)GetBodyPart(RIGHTARMINDEX); }
-void humanoid::SetRightArm(rightarm* What) { SetBodyPart(RIGHTARMINDEX, What); }
-leftarm* humanoid::GetLeftArm() const { return (leftarm*)GetBodyPart(LEFTARMINDEX); }
-void humanoid::SetLeftArm(leftarm* What) { SetBodyPart(LEFTARMINDEX, What); }
-groin* humanoid::GetGroin() const { return (groin*)GetBodyPart(GROININDEX); }
-void humanoid::SetGroin(groin* What) { SetBodyPart(GROININDEX, What); }
-rightleg* humanoid::GetRightLeg() const { return (rightleg*)GetBodyPart(RIGHTLEGINDEX); }
-void humanoid::SetRightLeg(rightleg* What) { SetBodyPart(RIGHTLEGINDEX, What); }
-leftleg* humanoid::GetLeftLeg() const { return (leftleg*)GetBodyPart(LEFTLEGINDEX); }
-void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(LEFTLEGINDEX, What); }
-
-humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(TORSOINDEX); }
-void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(TORSOINDEX, What); }
-
-bool humanoid::BodyPartCanBeSevered(ushort Index) const
-{
-  if(!GetBodyPart(Index) || Index == TORSOINDEX || Index == GROININDEX)
-    return false;
-  else
-    return true;
 }
 
 bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
@@ -1921,20 +1901,6 @@ item* humanoid::GetEquipment(ushort Index) const
     }
 }
 
-item* humanoid::GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
-item* humanoid::GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
-item* humanoid::GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }
-item* humanoid::GetBodyArmor() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBodyArmor() : 0; }
-item* humanoid::GetBelt() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBelt() : 0; }
-item* humanoid::GetRightWielded() const { return GetRightArm() ? GetRightArm()->GetWielded() : 0; }
-item* humanoid::GetLeftWielded() const { return GetLeftArm() ? GetLeftArm()->GetWielded() : 0; }
-item* humanoid::GetRightRing() const { return GetRightArm() ? GetRightArm()->GetRing() : 0; }
-item* humanoid::GetLeftRing() const { return GetLeftArm() ? GetLeftArm()->GetRing() : 0; }
-item* humanoid::GetRightGauntlet() const { return GetRightArm() ? GetRightArm()->GetGauntlet() : 0; }
-item* humanoid::GetLeftGauntlet() const { return GetLeftArm() ? GetLeftArm()->GetGauntlet() : 0; }
-item* humanoid::GetRightBoot() const { return GetRightLeg() ? GetRightLeg()->GetBoot() : 0; }
-item* humanoid::GetLeftBoot() const { return GetLeftLeg() ? GetLeftLeg()->GetBoot() : 0; }
-
 void humanoid::SetEquipment(ushort Index, item* What)
 {
   switch(Index)
@@ -1954,22 +1920,6 @@ void humanoid::SetEquipment(ushort Index, item* What)
     case LEFTBOOTINDEX: SetLeftBoot(What); break;
     }
 }
-
-/* Add aborts! */
-
-void humanoid::SetHelmet(item* What) { if(GetHead()) GetHead()->SetHelmet(What); }
-void humanoid::SetAmulet(item* What) { if(GetHead()) GetHead()->SetAmulet(What); }
-void humanoid::SetCloak(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetCloak(What); }
-void humanoid::SetBodyArmor(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetBodyArmor(What); }
-void humanoid::SetBelt(item* What) { if(GetHumanoidTorso()) GetHumanoidTorso()->SetBelt(What); }
-void humanoid::SetRightWielded(item* What) { if(GetRightArm()) GetRightArm()->SetWielded(What); }
-void humanoid::SetLeftWielded(item* What) { if(GetLeftArm()) GetLeftArm()->SetWielded(What); }
-void humanoid::SetRightRing(item* What) { if(GetRightArm()) GetRightArm()->SetRing(What); }
-void humanoid::SetLeftRing(item* What) { if(GetLeftArm()) GetLeftArm()->SetRing(What); }
-void humanoid::SetRightGauntlet(item* What) { if(GetRightArm()) GetRightArm()->SetGauntlet(What); }
-void humanoid::SetLeftGauntlet(item* What) { if(GetLeftArm()) GetLeftArm()->SetGauntlet(What); }
-void humanoid::SetRightBoot(item* What) { if(GetRightLeg()) GetRightLeg()->SetBoot(What); }
-void humanoid::SetLeftBoot(item* What) { if(GetLeftLeg()) GetLeftLeg()->SetBoot(What); }
 
 void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 {
@@ -2040,22 +1990,6 @@ uchar humanoid::GetArms() const
     ++Arms;
 
   return Arms;
-}
-
-uchar humanoid::OpenMultiplier() const
-{ 
-  if(GetRightArm() || GetLeftArm())
-    return 1;
-  else
-    return 3;
-}
-
-uchar humanoid::CloseMultiplier() const
-{
-  if(GetRightArm() || GetLeftArm())
-    return 1;
-  else
-    return 2;
 }
 
 bool humanoid::CheckThrow() const
@@ -2249,7 +2183,7 @@ void humanoid::CompleteRiseFromTheDead()
   for(c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
-	stack* Stack = GetLSquareUnder()->GetStack();
+	stack* Stack = GetStackUnder();
 
 	/* Let's search for the original bodypart */
 
@@ -2384,16 +2318,16 @@ void human::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      EditAttribute(ARMSTRENGTH, RAND() % 2 - RAND() % 2);
-      EditAttribute(DEXTERITY, RAND() % 2 - RAND() % 2);
-      EditAttribute(LEGSTRENGTH, RAND() % 2 - RAND() % 2);
-      EditAttribute(AGILITY, RAND() % 2 - RAND() % 2);
-      EditAttribute(ENDURANCE, RAND() % 2 - RAND() % 2);
-      EditAttribute(PERCEPTION, RAND() % 2 - RAND() % 2);
-      EditAttribute(INTELLIGENCE, RAND() % 2 - RAND() % 2);
-      EditAttribute(WISDOM, RAND() % 2 - RAND() % 2);
-      EditAttribute(CHARISMA, RAND() % 2 - RAND() % 2);
-      EditAttribute(MANA, RAND() % 2 - RAND() % 2);
+      EditAttribute(ARMSTRENGTH, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(DEXTERITY, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(LEGSTRENGTH, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(AGILITY, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(ENDURANCE, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(PERCEPTION, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(INTELLIGENCE, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(WISDOM, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(CHARISMA, (RAND() & 1) - (RAND() & 1));
+      EditAttribute(MANA, (RAND() & 1) - (RAND() & 1));
       SetMoney(GetMoney() + RAND() % 101);
       SetSize(character::GetTotalSize() + RAND() % 51);
     }

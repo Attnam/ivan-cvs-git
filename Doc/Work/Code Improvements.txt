@@ -8,9 +8,9 @@ done nor understood by anyone else than the writer.
 (r) rejected
 (s) suspended
 
-*Funktioiden verkottaminen.
+//*Funktioiden verkottaminen.
 (r) Assistenttioperaattorien integrointi? (<- osoitinluokat)
-*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
+//*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 //Tilojen luokittaminen.
 //*Tuonpuoleisen prototyypitys.
 Tasovaihdosten funktionaalisuuden kohotus.
@@ -25,8 +25,8 @@ Osoitinluokat?
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 (s) Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
 //Merkkijonoviittausten regularisoiminen.
-/(r) Merkkitaulukoiden hävittäminen.
-*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
+//Merkkitaulukoiden hävittäminen.
+//*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
 (s) MS-koodin poisajo grafiikkakirjastosta.
 //Kirjastoniputus.

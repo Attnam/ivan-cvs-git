@@ -31,25 +31,49 @@ class ABSTRACT_CHARACTER
   virtual void AddSpecialItemInfo(std::string&, item*);
   virtual void AddSpecialItemInfoDescription(std::string&);
   virtual ushort GetSize() const;
-  virtual head* GetHead() const;
-  virtual void SetHead(head* What);
-  virtual rightarm* GetRightArm() const;
-  virtual void SetRightArm(rightarm* What);
-  virtual leftarm* GetLeftArm() const;
-  virtual void SetLeftArm(leftarm* What);
-  virtual groin* GetGroin() const;
-  virtual void SetGroin(groin* What);
-  virtual rightleg* GetRightLeg() const;
-  virtual void SetRightLeg(rightleg* What);
-  virtual leftleg* GetLeftLeg() const;
-  virtual void SetLeftLeg(leftleg* What);
-  virtual humanoidtorso* GetHumanoidTorso() const;
-  virtual void SetHumanoidTorso(humanoidtorso* What);
+  head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEADINDEX]); }
+  rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHTARMINDEX]); }
+  leftarm* GetLeftArm() const { return static_cast<leftarm*>(*BodyPartSlot[LEFTARMINDEX]); }
+  groin* GetGroin() const { return static_cast<groin*>(*BodyPartSlot[GROININDEX]); }
+  rightleg* GetRightLeg() const { return static_cast<rightleg*>(*BodyPartSlot[RIGHTLEGINDEX]); }
+  leftleg* GetLeftLeg() const { return static_cast<leftleg*>(*BodyPartSlot[LEFTLEGINDEX]); }
+  void SetHead(head* What) { SetBodyPart(HEADINDEX, What); }
+  void SetRightArm(rightarm* What) { SetBodyPart(RIGHTARMINDEX, What); }
+  void SetLeftArm(leftarm* What) { SetBodyPart(LEFTARMINDEX, What); }
+  void SetGroin(groin* What) { SetBodyPart(GROININDEX, What); }
+  void SetRightLeg(rightleg* What) { SetBodyPart(RIGHTLEGINDEX, What); }
+  void SetLeftLeg(leftleg* What) { SetBodyPart(LEFTLEGINDEX, What); }
+  item* GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
+  item* GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
+  item* GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }
+  item* GetBodyArmor() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBodyArmor() : 0; }
+  item* GetBelt() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetBelt() : 0; }
+  item* GetRightWielded() const { return GetRightArm() ? GetRightArm()->GetWielded() : 0; }
+  item* GetLeftWielded() const { return GetLeftArm() ? GetLeftArm()->GetWielded() : 0; }
+  item* GetRightRing() const { return GetRightArm() ? GetRightArm()->GetRing() : 0; }
+  item* GetLeftRing() const { return GetLeftArm() ? GetLeftArm()->GetRing() : 0; }
+  item* GetRightGauntlet() const { return GetRightArm() ? GetRightArm()->GetGauntlet() : 0; }
+  item* GetLeftGauntlet() const { return GetLeftArm() ? GetLeftArm()->GetGauntlet() : 0; }
+  item* GetRightBoot() const { return GetRightLeg() ? GetRightLeg()->GetBoot() : 0; }
+  item* GetLeftBoot() const { return GetLeftLeg() ? GetLeftLeg()->GetBoot() : 0; }
+  void SetHelmet(item* What) { GetHead()->SetHelmet(What); }
+  void SetAmulet(item* What) { GetHead()->SetAmulet(What); }
+  void SetCloak(item* What) { GetHumanoidTorso()->SetCloak(What); }
+  void SetBodyArmor(item* What) { GetHumanoidTorso()->SetBodyArmor(What); }
+  void SetBelt(item* What) { GetHumanoidTorso()->SetBelt(What); }
+  void SetRightWielded(item* What) { GetRightArm()->SetWielded(What); }
+  void SetLeftWielded(item* What) { GetLeftArm()->SetWielded(What); }
+  void SetRightRing(item* What) { GetRightArm()->SetRing(What); }
+  void SetLeftRing(item* What) { GetLeftArm()->SetRing(What); }
+  void SetRightGauntlet(item* What) { GetRightArm()->SetGauntlet(What); }
+  void SetLeftGauntlet(item* What) { GetLeftArm()->SetGauntlet(What); }
+  void SetRightBoot(item* What) { GetRightLeg()->SetBoot(What); }
+  void SetLeftBoot(item* What) { GetLeftLeg()->SetBoot(What); }
   virtual arm* GetMainArm() const;
   virtual arm* GetSecondaryArm() const;
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX || Index == GROININDEX; }
-  virtual bool BodyPartCanBeSevered(ushort) const;
+  virtual bool BodyPartCanBeSevered(ushort Index) const { return Index != TORSOINDEX && Index != GROININDEX && GetBodyPart(Index); }
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
@@ -64,40 +88,14 @@ class ABSTRACT_CHARACTER
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
   virtual ushort EquipmentSlots() const { return 13; }
-  virtual item* GetHelmet() const;
-  virtual item* GetAmulet() const;
-  virtual item* GetCloak() const;
-  virtual item* GetBodyArmor() const;
-  virtual item* GetBelt() const;
-  virtual item* GetRightWielded() const;
-  virtual item* GetLeftWielded() const;
-  virtual item* GetRightRing() const;
-  virtual item* GetLeftRing() const;
-  virtual item* GetRightGauntlet() const;
-  virtual item* GetLeftGauntlet() const;
-  virtual item* GetRightBoot() const;
-  virtual item* GetLeftBoot() const;
   virtual void SwitchToDig(item*, vector2d);
   virtual uchar GetLegs() const;
   virtual uchar GetArms() const;
   virtual bool CheckKick() const;
-  virtual uchar OpenMultiplier() const;
-  virtual uchar CloseMultiplier() const;
+  virtual uchar OpenMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 3; }
+  virtual uchar CloseMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 2; }
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
-  virtual void SetHelmet(item*);
-  virtual void SetAmulet(item*);
-  virtual void SetCloak(item*);
-  virtual void SetBodyArmor(item*);
-  virtual void SetBelt(item*);
-  virtual void SetRightWielded(item*);
-  virtual void SetLeftWielded(item*);
-  virtual void SetRightRing(item*);
-  virtual void SetLeftRing(item*);
-  virtual void SetRightGauntlet(item*);
-  virtual void SetLeftGauntlet(item*);
-  virtual void SetRightBoot(item*);
-  virtual void SetLeftBoot(item*);
   virtual bool (*EquipmentSorter(ushort) const)(item*, character*);
   virtual void SetEquipment(ushort, item*);
   virtual bool DrawSilhouette(bitmap*, vector2d) const;
@@ -245,10 +243,10 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
-  virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(96, (4 + RAND() % 2) * 16); }
-  virtual vector2d GetRightArmBitmapPos(ushort) const { return vector2d(64, (RAND() % 2) * 16); }
+  virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
+  virtual vector2d GetRightArmBitmapPos(ushort) const { return vector2d(64, (RAND() & 1) * 16); }
   virtual vector2d GetLeftArmBitmapPos(ushort Frame) const { return GetRightArmBitmapPos(Frame); }
-  virtual vector2d GetGroinBitmapPos(ushort) const { return vector2d(0, (RAND() % 2) * 16); }
+  virtual vector2d GetGroinBitmapPos(ushort) const { return vector2d(0, (RAND() & 1) * 16); }
   virtual vector2d GetRightLegBitmapPos(ushort Frame) const { return GetGroinBitmapPos(Frame); }
   virtual vector2d GetLeftLegBitmapPos(ushort Frame) const { return GetGroinBitmapPos(Frame); }
 );

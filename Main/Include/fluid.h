@@ -3,6 +3,7 @@
 
 #include "vector2d.h"
 #include "entity.h"
+#include "lsquare.h"
 
 class outputfile;
 class inputfile;
@@ -23,11 +24,9 @@ class fluid : public entity
   ushort GetEmitation() const;
   bitmap* GetPicture() const { return Picture; }
   material* GetMaterial() const { return Material; }
-
   virtual square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const;
-
+  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
  protected:
   bitmap* Picture;
   material* Material;

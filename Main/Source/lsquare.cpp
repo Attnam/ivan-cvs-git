@@ -57,7 +57,7 @@ ushort lsquare::CalculateEmitation() const
 {
   ushort Emitation = GetStack()->GetEmitation();
 
-#define NE(D, S) GetLevelUnder()->GetLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
+  #define NE(D, S) GetNearLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
 
   if(GetPos().X)
     if(NE(vector2d(-1, 0), 1) > Emitation)
@@ -119,7 +119,7 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance,
     {
       Stack->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
-      #define NS(D, S) GetLevelUnder()->GetLSquare(GetPos() + D)->GetSideStack(S)
+      #define NS(D, S) GetNearLSquare(GetPos() + D)->GetSideStack(S)
 
       if(GetPos().X)
 	NS(vector2d(-1, 0), 1)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
@@ -177,11 +177,13 @@ void lsquare::Emitate()
   game::SetCurrentEmitterEmitation(GetEmitation());
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
-  {
-    if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::EmitationHandler);
-  });
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), Pos, Radius);
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
 void lsquare::ReEmitate()
@@ -201,11 +203,13 @@ void lsquare::ReEmitate()
   game::SetCurrentEmitterEmitation(GetEmitation());
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
-  {
-    if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::EmitationHandler);
-  });
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), Pos, Radius);
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+	femath::DoLine(Pos.X, Pos.Y, x, y, game::EmitationHandler);
 }
 
 void lsquare::Noxify()
@@ -218,23 +222,25 @@ void lsquare::Noxify()
   ulong RadiusSquare = Radius * Radius;
   game::SetCurrentEmitterPos(GetPos());
 
-  DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetLevelUnder()->GetXSize() - 1, GetLevelUnder()->GetYSize() - 1, Radius,
-  {
-    if(ulong(GetHypotSquare(long(Pos.X) - XPointer, long(Pos.Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(Pos.X, Pos.Y, XPointer, YPointer, game::NoxifyHandler);
-  });
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), Pos, Radius);
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+	femath::DoLine(Pos.X, Pos.Y, x, y, game::NoxifyHandler);
 }
 
 void lsquare::ForceEmitterNoxify()
 {
   for(ushort c = 0; c < Emitter.size(); ++c)
-    GetLevelUnder()->GetLSquare(Emitter[c].Pos)->Noxify();
+    GetNearLSquare(Emitter[c].Pos)->Noxify();
 }
 
 void lsquare::ForceEmitterEmitation()
 {
   for(ushort c = 0; c < Emitter.size(); ++c)
-    GetLevelUnder()->GetLSquare(Emitter[c].Pos)->Emitate();
+    GetNearLSquare(Emitter[c].Pos)->Emitate();
 }
 
 void lsquare::NoxifyEmitter(vector2d Dir)
@@ -281,7 +287,7 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
 {
   uchar BitMask = 0;
 
-#define IW(X, Y) GetLevelUnder()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
+  #define IW(X, Y) GetNearLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
 
   if(Dir.X < Pos.X)
     {
@@ -811,10 +817,7 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 {
-  if((IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns())
-    return true;
-  else
-    return false;
+  return (IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns();
 }
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
@@ -828,7 +831,7 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
       character* Char = GetCharacter();
 
       if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
-	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeenByPlayer(true);
+	return GetNearSquare(FromPos)->CanBeSeenByPlayer(true);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
     }
@@ -1220,9 +1223,4 @@ void lsquare::DrawMemorized()
 
       NewDrawRequested = false;
     }
-}
-
-lsquare* lsquare::GetNeighbourLSquare(ushort Index) const
-{
-  return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index);
 }

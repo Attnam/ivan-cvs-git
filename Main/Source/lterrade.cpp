@@ -229,7 +229,7 @@ void door::BeKicked(character*, float KickStrength)
 	}
       else if(KickStrength > RAND() % 200000)
 	{
-	  if(IsLocked() && RAND() % 2)	// _can't really think of a good formula for this... 
+	  if(IsLocked() && RAND() & 1)	// _can't really think of a good formula for this... 
 	    {				//Strength isn't everything
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
@@ -554,7 +554,7 @@ void brokendoor::BeKicked(character*, float KickStrength)
 
 bool door::ReceiveDamage(character*, short, uchar)
 {
-  if(RAND() % 2)
+  if(RAND() & 1)
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
@@ -575,7 +575,7 @@ bool door::ReceiveDamage(character*, short, uchar)
 
 bool brokendoor::ReceiveDamage(character*, short, uchar)
 {
-  if(RAND() % 2)
+  if(RAND() & 1)
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
@@ -673,7 +673,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 	{
 	  // The door breaks
 	  if(IsLocked())
-	    SetIsLocked(RAND() % 2 ? true : false);
+	    SetIsLocked(RAND() & 1);
 
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));

@@ -12,12 +12,11 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "ivandef.h"
+#include "lsquare.h"
 
 class item;
 class character;
-class lsquare;
 class bitmap;
-class square;
 class outputfile;
 class inputfile;
 class stackslot;
@@ -58,7 +57,7 @@ class stack
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const;
-  lsquare* GetLSquareUnder() const;
+  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(character*, bool (*)(item*, character*)) const;
   void DeletePointers();
   void BeKicked(character*, float);
@@ -66,7 +65,7 @@ class stack
   void Polymorph();
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
-  lsquare* GetLSquareTrulyUnder() const;
+  lsquare* GetLSquareTrulyUnder() const { return static_cast<lsquare*>(GetSquareTrulyUnder()); }
   void ReceiveDamage(character*, short, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
@@ -88,7 +87,8 @@ class stack
 
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-
+  area* GetAreaUnder() const { return GetSquareUnder()->GetAreaUnder(); }
+  square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
  private:
   stacklist* Item;
   square* MotherSquare;

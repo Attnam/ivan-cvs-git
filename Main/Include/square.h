@@ -9,8 +9,8 @@
 
 #include "typedef.h"
 #include "vector2d.h"
+#include "area.h"
 
-class area;
 class character;
 class gterrain;
 class oterrain;
@@ -53,7 +53,8 @@ class square
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(character*) const;
   ushort GetLuminance() const { return Luminance; }
-  square* GetNeighbourSquare(ushort) const;
+  square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
+  square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

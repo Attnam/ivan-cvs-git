@@ -18,9 +18,8 @@ void area::Initialize(ushort InitXSize, ushort InitYSize)
 {
   XSize = InitXSize;
   YSize = InitYSize;
-
   XSizeTimesYSize = XSize * YSize;
-
+  Border = rect(0, 0, XSize - 1, YSize - 1);
   Alloc2D(Map, XSize, YSize);
   Alloc2D(FlagMap, XSize, YSize);
 
@@ -48,6 +47,7 @@ void area::Load(inputfile& SaveFile)
   game::SetAreaInLoad(this);
   SaveFile >> XSize >> YSize;
   XSizeTimesYSize = XSize * YSize;
+  Border = rect(0, 0, XSize - 1, YSize - 1);
   Alloc2D(Map, XSize, YSize);
   Alloc2D(FlagMap, XSize, YSize);
   SaveFile.Read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
@@ -68,30 +68,31 @@ void area::UpdateLOS()
   game::LOSTurn();
   ushort Radius = game::GetPlayer()->LOSRange();
   ulong RadiusSquare = Radius * Radius;
-  long PosX = game::GetPlayer()->GetPos().X;
-  long PosY = game::GetPlayer()->GetPos().Y;
+  vector2d Pos = game::GetPlayer()->GetPos();
 
-  ushort MaxDist = PosX;
+  ushort MaxDist = Pos.X;
 
-  if(PosY > MaxDist)
-    MaxDist = PosY;
+  if(Pos.Y > MaxDist)
+    MaxDist = Pos.Y;
 
-  if(GetXSize() - PosX - 1 > MaxDist)
-    MaxDist = GetXSize() - PosX - 1;
+  if(XSize - Pos.X - 1 > MaxDist)
+    MaxDist = XSize - Pos.X - 1;
 
-  if(GetYSize() - PosY - 1 > MaxDist)
-    MaxDist = GetYSize() - PosY - 1;
+  if(YSize - Pos.Y - 1 > MaxDist)
+    MaxDist = YSize - Pos.Y - 1;
 
   if(Radius > MaxDist)
     Radius = MaxDist;
 
   bool (*LOSHandler)(long, long) = game::IsInWilderness() ? game::WorldMapLOSHandler : game::LevelLOSHandler;
 
-  DO_FILLED_RECTANGLE(PosX, PosY, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
-  {
-    if(ulong(GetHypotSquare(PosX - XPointer, PosY - YPointer)) <= RadiusSquare)
-      femath::DoLine(PosX, PosY, XPointer, YPointer, LOSHandler);
-  });
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, Border, Pos, Radius);
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      if(ulong(GetHypotSquare(Pos.X - x, Pos.Y - y)) <= RadiusSquare)
+	femath::DoLine(Pos.X, Pos.Y, x, y, LOSHandler);
 
   game::RemoveLOSUpdateRequest();
 }

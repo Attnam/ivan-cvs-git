@@ -60,7 +60,6 @@ class level : public area
   void SetLevelMessage(const std::string& What) { LevelMessage = What; }
   void SetLevelScript(levelscript* What) { LevelScript = What; }
   bool GetOnGround() const;
-  bool IsValid(vector2d) const;
   levelscript* GetLevelScript() const { return LevelScript; }
   virtual void MoveCharacter(vector2d, vector2d);
   virtual ushort GetLOSModifier() const;

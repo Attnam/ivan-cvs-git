@@ -268,7 +268,7 @@ void stack::BeKicked(character* Kicker, float KickStrength)
 
       /* Bug: you can kick mines with this. */
 
-      for(ushort c = 0; c < 1 + RAND() % 2; ++c)
+      for(ushort c = 0; c < 1 + (RAND() & 1); ++c)
 	if(GetItems())
 	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), short(KickStrength / 5000));
     }
@@ -313,23 +313,23 @@ square* stack::GetSquareTrulyUnder() const
   switch(SquarePosition)
     {
     case DOWN:
-      if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(0, -1)))
-	return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(0, -1));
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, -1)))
+	return GetNearSquare(GetPos() + vector2d(0, -1));
       else
 	return 0;
     case LEFT:
-      if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(1, 0)))
-	return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(1, 0));
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(1, 0)))
+	return GetNearSquare(GetPos() + vector2d(1, 0));
       else
 	return 0;
     case UP:
-      if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(0, 1)))
-	return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(0, 1));
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, 1)))
+	return GetNearSquare(GetPos() + vector2d(0, 1));
       else
 	return 0;
     case RIGHT:
-      if(game::IsValidPos(GetSquareUnder()->GetPos() + vector2d(-1, 0)))
-	return GetSquareUnder()->GetAreaUnder()->GetSquare(GetSquareUnder()->GetPos() + vector2d(-1, 0));
+      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(-1, 0)))
+	return GetNearSquare(GetPos() + vector2d(-1, 0));
       else
 	return 0;
     default:
@@ -355,16 +355,6 @@ void stack::TeleportRandomly()
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists())
       ItemVector[c]->TeleportRandomly();
-}
-
-lsquare* stack::GetLSquareTrulyUnder() const
-{
-  return static_cast<lsquare*>(GetSquareTrulyUnder());
-}
-
-lsquare* stack::GetLSquareUnder() const
-{
-  return static_cast<lsquare*>(GetSquareUnder());
 }
 
 void stack::FillItemVector(itemvector& ItemVector) const
@@ -533,6 +523,7 @@ bool stack::RaiseTheDead(character* Summoner)
       if((**i)->RaiseTheDead(Summoner))
 	return true;
     }
+
   return false;
 }
 
