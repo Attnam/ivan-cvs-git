@@ -492,6 +492,7 @@ class ITEM
   virtual bool Open(character*);
   virtual bool IsOpenable(const character*) const { return true; }
   virtual bool TryKey(item*, character*);
+  virtual bool HasLock() const { return true; }
   virtual void Lock() { Locked = true; }
   virtual uchar GetLockType() const { return LockType; }
   virtual void SetLockType(uchar What) { LockType = What; }

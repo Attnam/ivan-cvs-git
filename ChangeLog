@@ -6,7 +6,10 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* bug corrected: If multiple chests are stacked, only the top one can be opened with key.
+	
 March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* (u)longlong type is no longer used

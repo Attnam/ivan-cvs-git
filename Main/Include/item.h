@@ -197,6 +197,7 @@ class item : public object
   static bool FixableBySmithSorter(const item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
   static bool BrokenSorter(const item* Item, const character*) { return Item->IsBroken(); }
   static bool EnchantableSorter(const item* Item, const character* Char) { return Item->IsEnchantable(Char); }
+  static bool HasLockSorter(const item* Item, const character* Char) { return Item->HasLock(); }
   virtual bool IsConsumable(const character*) const;
   virtual bool IsEatable(const character*) const;
   virtual bool IsDrinkable(const character*) const;
@@ -392,6 +393,7 @@ class item : public object
   virtual bool IsStupidToConsume() const;
   virtual head* Behead() { return 0; }
   virtual bool IsGorovitsFamilyRelic() const { return false; }
+  virtual bool HasLock() const { return false; }
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

@@ -458,10 +458,15 @@ bool stack::RaiseTheDead(character* Summoner)
 
 bool stack::TryKey(item* Key, character* Applier)
 {
-  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if((IgnoreVisibility || i->CanBeSeenBy(Applier)) && i->TryKey(Key, Applier))
-      return true;
-  return false;
+  if(!Applier->IsPlayer())
+    return false;
+
+  item* ToBeOpened = DrawContents(Applier, "What do you wish to unlock?", 0, &item::HasLockSorter);
+
+  if(ToBeOpened == 0)
+    return false;
+
+  return ToBeOpened->TryKey(Key, Applier);
 }
 
 bool stack::Open(character* Opener)

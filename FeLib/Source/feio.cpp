@@ -437,7 +437,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
 
   if(dp)
     {
-      while(ep = readdir(dp))
+      while((ep = readdir(dp)))
 	{
 	  Buffer = ep->d_name;
 
@@ -461,6 +461,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
 	}
 
     }
+  return "";
 #endif
 
 #ifdef __DJGPP__
