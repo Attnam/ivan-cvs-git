@@ -880,10 +880,22 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
       || femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
-void lsquare::StepOn(character* Stepper, lsquare* ComingFrom)
+void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 {
-  if(RoomIndex && ComingFrom->GetRoomIndex() != RoomIndex)
-    GetLevel()->GetRoom(RoomIndex)->Enter(Stepper);
+  if(RoomIndex)
+    {
+      bool WasInRoom = false;
+
+      for(ushort c = 0; c < Stepper->GetSquaresUnder(); ++c)
+	if(ComingFrom[c]->GetRoomIndex() == RoomIndex)
+	  {
+	    WasInRoom = true;
+	    break;
+	  }
+
+      if(!WasInRoom)
+	GetLevel()->GetRoom(RoomIndex)->Enter(Stepper);
+    }
 
   GLTerrain->StepOn(Stepper);
 

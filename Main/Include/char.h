@@ -787,6 +787,7 @@ class character : public entity, public id
   void SendNewDrawRequest() const;
   square* GetNaturalNeighbourSquare(ushort Index) const { return character::GetNeighbourSquare(Index); }
   lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
+  void SignalStepFrom(lsquare**);
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

@@ -89,7 +89,7 @@ class lsquare : public square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   ulong GetRawLuminance() const;
-  void StepOn(character*, lsquare*);
+  void StepOn(character*, lsquare**);
   uchar GetRoomIndex() const { return RoomIndex; }
   void SetRoomIndex(uchar What) { RoomIndex = What; }
   void ReceiveVomit(character*, ushort);

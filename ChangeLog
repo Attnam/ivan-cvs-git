@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* StepOn effects work again
+
+July 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Added support for multi-tile characters and items
 	* 32x32 genetrix vesana and Elpuri added to char.pcx by Kahvi
 	* Genetrix vesana, Elpuri and their corpses are now 2x2 squares large
@@ -86,7 +90,7 @@ May 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Compiles with gcc 3.3
 	* Almost everything crashes. (started to make new world map idea)
-	
+
 May 13 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* interupt -> interrupt. We suck in English. Thanks Tuukka!

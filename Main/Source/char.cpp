@@ -656,8 +656,17 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
   if(GetBurdenState() != OVER_LOADED || TeleportMove)
     {
+      lsquare* OldSquareUnder[MAX_SQUARES_UNDER];
+
+      if(!game::IsInWilderness())
+	for(ushort c = 0; c < GetSquaresUnder(); ++c)
+	  OldSquareUnder[c] = GetLSquareUnder(c);
+
       Remove();
       PutTo(MoveTo);
+
+      if(!game::IsInWilderness())
+	SignalStepFrom(OldSquareUnder);
 
       if(IsPlayer())
 	ShowNewPosInfo();
@@ -2272,11 +2281,24 @@ bool character::Displace(character* Who, bool Forced)
       else if(CanBeSeenByPlayer() || Who->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s displaces %s!", CHAR_DESCRIPTION(DEFINITE), Who->CHAR_DESCRIPTION(DEFINITE));
 
+      lsquare* OldSquareUnder1[MAX_SQUARES_UNDER];
+      lsquare* OldSquareUnder2[MAX_SQUARES_UNDER];
+      ushort c;
+
+      for(c = 0; c < GetSquaresUnder(); ++c)
+	OldSquareUnder1[c] = GetLSquareUnder(c);
+
+      for(c = 0; c < Who->GetSquaresUnder(); ++c)
+	OldSquareUnder2[c] = Who->GetLSquareUnder(c);
+
       Remove();
       Who->Remove();
       vector2d Pos = GetPos();
       PutTo(Who->GetPos());
       Who->PutTo(Pos);
+
+      SignalStepFrom(OldSquareUnder1);
+      Who->SignalStepFrom(OldSquareUnder2);
 
       if(IsPlayer())
 	ShowNewPosInfo();
@@ -6586,4 +6608,17 @@ void character::AttackAdjacentEnemyAI()
     }
 
   EditAP(-1000);
+}
+
+void character::SignalStepFrom(lsquare** OldSquareUnder)
+{
+  ushort c;
+  lsquare* NewSquareUnder[MAX_SQUARES_UNDER];
+
+  for(c = 0; c < GetSquaresUnder(); ++c)
+    NewSquareUnder[c] = GetLSquareUnder(c);
+
+  for(c = 0; c < GetSquaresUnder(); ++c)
+    if(IsEnabled() && GetLSquareUnder(c) == NewSquareUnder[c])
+      NewSquareUnder[c]->StepOn(this, OldSquareUnder);
 }
