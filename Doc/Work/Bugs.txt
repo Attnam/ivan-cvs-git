@@ -137,3 +137,4 @@ The bad pray effect of Sophos can sometimes leave the player in a state where he
 Amulet of Life saving generates high score entry.
 Offering chests in prohibited. (They are too important according to the game)
 Skeletons can be poisoned.
+If multiple chests are stacked, only the top one can be opened with key.

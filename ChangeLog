@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Hitting a non-polymorphed chameleon no longer crashes
+
+February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Corrected an abusable bug in the item polymorph code
 	* Polypiling may no longer create scrolls of charging
 	* Wands of polymorph may no longer be cloned

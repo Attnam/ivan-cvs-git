@@ -1145,7 +1145,7 @@ bool chameleon::SpecialEnemySightedReaction(character*)
 
 ushort chameleon::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
-  ushort Return = TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+  ushort Return = nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
 
   if(Return != HAS_DIED)
     {
