@@ -13,8 +13,9 @@ template <class type> class database
 {
  public:
   static void ReadFrom(inputfile&);
+  static void InstallDataBase(type*);
  private:
-  static void AnalyzeData(inputfile&, const std::string&, typename type::database*);
+  static bool AnalyzeData(inputfile&, const std::string&, typename type::database*);
 };
 
 class databasesystem
@@ -22,5 +23,21 @@ class databasesystem
  public:
   static void Initialize();
 };
+
+template <class type> void database<type>::InstallDataBase(type* Instance)
+{
+  if(!Instance->Config)
+    Instance->DataBase = Instance->GetProtoType()->GetDataBase();
+  else
+    {
+      const type::databasemap& Configs = Instance->GetProtoType()->GetConfig();
+      type::databasemap::const_iterator i = Configs.find(Instance->Config);
+
+      if(i != Configs.end())
+	Instance->DataBase = &i->second;
+      else
+	ABORT("Undefined %s configuration #%d sought!", typeid(type).name(), Instance->Config);
+    }
+}
 
 #endif

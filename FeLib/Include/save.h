@@ -51,8 +51,12 @@ class inputfile
   void SeekPosEnd(long Offset) { fseek(Buffer, Offset, SEEK_END); }
   long TellPos() { return ftell(Buffer); }
   int Peek();
+  ulong TellLine() { return TellLineOfPos(TellPos()); }
+  ulong TellLineOfPos(long);
+  const std::string& GetFileName() const { return FileName; }
  private:
   FILE* Buffer;
+  std::string FileName;
 };
 
 /*

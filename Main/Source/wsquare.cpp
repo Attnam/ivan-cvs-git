@@ -37,41 +37,11 @@ void wsquare::Load(inputfile& SaveFile)
   SaveFile >> GWTerrain >> OWTerrain;
 }
 
-/*bool wsquare::DrawTerrain(bool Animate) const
-{
-  GetGWTerrain()->DrawToTileBuffer(Animate);
-  GetOWTerrain()->DrawToTileBuffer(Animate);
-
-  return true;
-}
-
-bool wsquare::DrawCharacter(bool Animate) const
-{
-  if(Character && Character->CanBeSeenByPlayer())
-    {
-      Character->DrawToTileBuffer(Animate);
-      return true;
-    }
-  else
-    return false;
-}*/
-
 void wsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool RealDraw) const
 {
   GWTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
   OWTerrain->Draw(Bitmap, Pos, Luminance, true, RealDraw);
 }
-
-/*void wsquare::DrawCharacter(bool Animate) const
-{
-  if(Character && Character->CanBeSeenByPlayer())
-    {
-      Character->DrawToTileBuffer(Animate);
-      return true;
-    }
-  else
-    return false;
-}*/
 
 void wsquare::UpdateMemorized()
 {
@@ -79,13 +49,7 @@ void wsquare::UpdateMemorized()
     {
       ushort Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
       DrawStaticContents(Memorized, vector2d(0, 0), Luminance, false);
-      igraph::GetFOWGraphic()->MaskedBlit(Memorized);
-
-      //DrawTerrain(false);
-
-      //igraph::GetTileBuffer()->Blit(GetMemorized(), Luminance);
-      //igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
-
+      igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
       MemorizedUpdateRequested = false;
     }
 }
@@ -100,30 +64,6 @@ void wsquare::Draw()
 
       if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
 	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
-
-      //ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
-
-      //DrawTerrain(true);
-
-      //igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), Luminance);
-
-      /*if(!configuration::GetOutlineCharacters())
-	{
-	  DrawCharacter(true);
-	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-	}
-      else
-	{
-	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-
-	  if(GetCharacter())
-	    {
-	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-	      DrawCharacter(true);
-	      igraph::GetTileBuffer()->Outline(configuration::GetCharacterOutlineColor());
-	      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-	    }
-	}*/
 
       NewDrawRequested = false;
     }
@@ -195,9 +135,9 @@ void wsquare::SetOWTerrain(owterrain* What)
     }
 }
 
-void wsquare::UpdateMemorizedDescription(bool)
+void wsquare::UpdateMemorizedDescription(bool Cheat)
 {
-  if(DescriptionChanged)
+  if(DescriptionChanged || Cheat)
     {
       /*std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? " of continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
 

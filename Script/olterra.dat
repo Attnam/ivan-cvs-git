@@ -1,0 +1,258 @@
+/* Numeric olterrain data loaded during game startup */
+
+/* Default values: */
+
+olterrain
+{
+	/* Obligatory: BitmapPos */
+	Article = "a";
+	Adjective = "";
+	AdjectiveArticle = "a";
+	/* Obligatory: NameSingular */
+	/* NameSingular + "s" by default: NamePlural */
+	PostFix = "";
+	ArticleMode = NORMALARTICLE;
+	/* Obligatory: MainMaterialConfig */
+	/* Obligatory: SecondaryMaterialConfig */
+	/* Obligatory: ContainedMaterialConfig */
+	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
+	IsAbstract = true; /* This is false by default and does not inherit! */
+	OKVisualEffects = NONE;
+	MaterialColorB = 0;
+	MaterialColorC = 0;
+	MaterialColorD = 0;
+	SitMessage = "You sit for some time. Nothing happens.";
+	/* Obligatory: DigMessage */
+	CanBeDug = false;
+	IsSafeToDestroy = false;
+	RestModifier = 1;
+	RestMessage = "";
+	DefaultMainVolume = 10000000;
+	DefaultSecondaryVolume = 0;
+	DefaultContainedVolume = 0;
+	ShowMaterial = true;
+}
+
+wall
+{
+	IsAbstract = true;
+	CanBeDug = true;
+
+	Config BRICK_FINE;
+	{
+		DigMessage = "The wall is pretty hard, but you still manage to go through it.";
+		MainMaterialConfig == STONE;
+		NameSingular = "wall";
+		BitmapPos = 64, 272;
+	}
+
+	Config BRICK_OLD;
+	{
+		DigMessage = "The wall is pretty hard, but you still manage to go through it.";
+		MainMaterialConfig == STONE;
+		NameSingular = "wall";
+		BitmapPos = 16, 256;
+	}
+
+	Config EARTH;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		DigMessage = "The ground is fairly easy to dig.";
+		MainMaterialConfig == MORAINE;
+		MaterialColorB = rgb(56, 56, 56);
+		Article = "an";
+		NameSingular = "earth";
+		BitmapPos = 0, 336;
+	}
+}
+
+decoration
+{
+	IsAbstract = true;
+
+	Config PINE;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb(0, 160, 0);
+		NameSingular = "pine";
+		BitmapPos = 16, 320;
+	}
+
+	Config SPRUCE;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb(0, 160, 0);
+		NameSingular = "spruce";
+		BitmapPos = 16, 352;
+	}
+
+	Config LINDEN;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb(0, 160, 0);
+		Adjective = "lovely";
+		NameSingular = "linden";
+		BitmapPos = 32, 336;
+	}
+
+	Config CARPET;
+	{
+		DigMessage = "You can't force yourself to ruin this wonderful carpet.";
+		MainMaterialConfig == FABRIC;
+		AdjectiveArticle = "an";
+		Adjective = "expensive";
+		NameSingular = "carpet";
+		BitmapPos = 0, 272;
+	}
+
+	Config COUCH;
+	{
+		CanBeDug = true;
+		DigMessage = "The destroy the couch.";
+		MainMaterialConfig == FABRIC;
+		AdjectiveArticle = "an";
+		Adjective = "expensive";
+		NameSingular = "couch";
+		BitmapPos = 0, 400;
+		RestModifier = 2;
+		MaterialColorB = rgb(200, 200, 0);
+		SitMessage = "The couch is extremely soft and confortable. You relax well.";
+		RestMessage = "You rest well on the soft sofa.";
+	}
+
+	Config DOUBLEBED;
+	{
+		CanBeDug = true;
+		DigMessage = "You smash the bed into pieces.";
+		MainMaterialConfig == FABRIC;
+		Adjective = "luxurious";
+		NameSingular = "double bed";
+		BitmapPos = 48, 304;
+		MaterialColorB = rgb(200, 200, 0);
+		ShowMaterial = false;
+		RestModifier = 5;
+		SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
+		RestMessage = "You lay yourself on the confortable bed.";
+	}
+
+	Config POOLBORDER;
+	{
+		DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
+		MainMaterialConfig == MARBLE;
+		NameSingular = "";
+		BitmapPos = 32, 320;
+	}
+
+	Config POOLCORNER;
+	{
+		DigMessage = "The water splashes a bit."; /* Only correct if over a water pool */
+		MainMaterialConfig == MARBLE;
+		NameSingular = "";
+		BitmapPos = 48, 320;
+	}
+}
+
+empty /* olterrain-> */
+{
+	DigMessage = "The square you are trying to dig is empty.";
+	IsSafeToDestroy = true;
+	MainMaterialConfig == AIR;
+	NameSingular = "";
+	BitmapPos = 0, 480;
+}
+
+door /* olterrain-> */
+{
+	DigMessage = "You break the door.";
+	CanBeDug = true;
+	MainMaterialConfig == STONE;
+	NameSingular = "door";
+	/* BitmapPos depends on being open or not */
+	/* PostFix depends on LockType */
+}
+
+stairsup /* olterrain-> */
+{
+	DigMessage = "The stairs are too hard to dig.";
+	MainMaterialConfig == STONE;
+	MaterialColorB = rgb(160, 64, 0);
+	NameSingular = "stairway";
+	PostFix = "upwards";
+	BitmapPos = 0, 192;
+}
+
+stairsdown /* olterrain-> */
+{
+	DigMessage = "The stairs are too hard to dig.";
+	MainMaterialConfig == STONE;
+	MaterialColorB = rgb(160, 64, 0);
+	NameSingular = "stairway";
+	PostFix = "downwards";
+	BitmapPos = 0, 208;
+}
+
+altar /* olterrain-> */
+{
+	DigMessage = "An invisible wall stops your feeble attempt.";
+	MainMaterialConfig == STONE;
+	Article = "an";
+	NameSingular = "altar";
+	BitmapPos = 0, 368;
+	/* PostFix depends on Config */
+	CreateDivineConfigurations = true;
+}
+
+throne /* olterrain-> */
+{
+	DigMessage = "The throne resists.";
+	MainMaterialConfig == GOLD;
+	MaterialColorB = rgb(200, 200, 0);
+	NameSingular = "throne";
+	BitmapPos = 0, 416;
+}
+
+container /* olterrain->furniture-> */
+{
+	IsAbstract = true;
+
+	Config BOOKCASE;
+	{
+		CanBeDug = true;
+		DigMessage = "You smash the bookcase into pieces.";
+		MainMaterialConfig == WOOD;
+		NameSingular = "bookcase";
+		BitmapPos = 16, 272;
+		SitMessage = "The bookcase is very unconfortable to sit on.";
+	}
+}
+
+fountain /* olterrain-> */
+{
+	DigMessage = "The water splashes a bit."; /* Wrong if ContainedMaterial != WATER. */
+	MainMaterialConfig == MARBLE;
+	ContainedMaterialConfig == WATER;
+	DefaultContainedVolume = 10000;
+	/* Uses ContainerPostFix() */
+	/* Adjective depends on being dried out or not */
+	NameSingular = "fountain";
+	/* BitmapPos depends on being dried out or not */
+}
+
+brokendoor /* olterrain->door-> */
+{
+	DigMessage = "You destroy the broken door.";
+	Adjective = "broken";
+	/* BitmapPos depends on being open or not */
+}

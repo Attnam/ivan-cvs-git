@@ -101,16 +101,7 @@ void darkknight::CreateInitialEquipment()
 
 void skeleton::CreateInitialEquipment()
 {
-  if(RAND() % 10)
-    SetMainWielded(RAND() % 3 ? (item*)new meleeweapon(AXE) : (item*)new pickaxe);
-  else
-    {
-      SetMainWielded(new meleeweapon(SPIKEDMACE));
-      SetSize(200);
-      /*Sety(15);
-      SetStrength(18);
-      SetEndurance(15);*/
-    }
+  SetMainWielded(RAND() % 10 ? RAND() % 3 ? (item*)new meleeweapon(AXE) : (item*)new pickaxe : (item*)new meleeweapon(SPIKEDMACE));
 }
 
 void goblin::CreateInitialEquipment()
@@ -206,37 +197,6 @@ void humanoid::Load(inputfile& SaveFile)
 	  break;
 	}
 }
-
-/*void humanoid::SetRightWielded(item* Item)
-{
-  WieldedSlot.PutInItem(Item);
-
-  if(Item)
-    {
-      for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	if((*i)->GetID() == Item->GetID())
-	  {
-	    SetCurrentSingleWeaponSkill(*i);
-	    break;
-	  }
-
-      if(!GetCurrentSingleWeaponSkill())
-	{
-	  SetCurrentSingleWeaponSkill(new sweaponskill);
-	  GetCurrentSingleWeaponSkill()->SetID(Item->GetID());
-	  SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
-	}
-    }
-
-  if(GetSquareUnder())
-    GetSquareUnder()->SendNewDrawRequest();
-}*/
-
-/*float golem::GetMeleeStrength() const
-{
-  return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
-  return 0;
-}*/
 
 bool golem::MoveRandomly()
 {
@@ -545,11 +505,6 @@ bool humanoid::Hit(character* Enemy)
       return false;
     }
 }
-
-/*void humanoid::CharacterSpeciality(ushort Turns)
-{
-
-}*/
 
 bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
@@ -944,23 +899,6 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
   Description.resize(62, ' ');
   Description += GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
   Description.resize(66, ' ');
-
-  /*if(GetRightArm())
-    {
-      bool Added = false;
-
-      for(ushort c = 0; c < GetRightArm()->GetSingleWeaponSkills(); ++c)
-	if(Item->GetID() == GetRightArm()->GetSingleWeaponSkill(c)->GetID())
-	  {
-	    Description += GetRightArm()->GetSingleWeaponSkill(c)->GetLevel();
-	    Added = true;
-	    break;
-	  }
-
-      if(!Added)
-	Description += 0;
-    }*/
-
   bool Added = false;
 
   for(ushort c = 0; c < GetSingleWeaponSkills(); ++c)
@@ -973,22 +911,6 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 
   if(!Added)
     Description += 0;
-
-  /*if(GetLeftArm())
-    {
-      bool Added = false;
-
-      for(ushort c = 0; c < GetLeftArm()->GetSingleWeaponSkills(); ++c)
-	if(Item->GetID() == GetLeftArm()->GetSingleWeaponSkill(c)->GetID())
-	  {
-	    Description += GetLeftArm()->GetSingleWeaponSkill(c)->GetLevel();
-	    Added = true;
-	    break;
-	  }
-
-      if(!Added)
-	Description += 0;
-    }*/
 }
 
 void humanoid::AddSpecialItemInfoDescription(std::string& Description)
@@ -1495,61 +1417,51 @@ void mistress::BeTalkedTo(character* Talker)
 void angel::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << DivineMaster << HealTimer;
+  SaveFile << HealTimer;
 }
 
 void angel::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> DivineMaster >> HealTimer;
+  SaveFile >> HealTimer;
 }
 
-void angel::SetDivineMaster(uchar NewMaster)
+void angel::CreateInitialEquipment()
 {
-  character::SetDivineMaster(NewMaster);
-
-  switch(game::GetGod(NewMaster)->BasicAlignment())
+  switch(GetMasterGod()->BasicAlignment())
     {
     case GOOD:
-      EditAttribute(AGILITY, 100);
       SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(DIAMOND)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(DIAMOND)));
-      RestoreHP();
       break;
     case NEUTRAL:
-      EditAttribute(ENDURANCE, 100);
       SetMainWielded(new meleeweapon(POLEAXE, MAKE_MATERIAL(SAPPHIRE)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(SAPPHIRE)));
-      RestoreHP();
       break;
     case EVIL:
       {
-	EditAttribute(ARMSTRENGTH, 100);
 	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, false);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
-	RestoreHP();
 	break;
       }
     }
-
-  DivineMaster = NewMaster;
 }
 
 void angel::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", game::GetGod(DivineMaster)->Name().c_str());
+    ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", GetMasterGod()->Name().c_str());
   else
-    ADD_MESSAGE("\"%s be with you, mortal.\"", game::GetGod(DivineMaster)->Name().c_str());
+    ADD_MESSAGE("\"%s be with you, mortal.\"", GetMasterGod()->Name().c_str());
 }
 
 void kamikazedwarf::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(DivineMaster)->Name().c_str());
+      ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", GetMasterGod()->Name().c_str());
       return;
     }
 
@@ -1564,7 +1476,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str(), PersonalPronoun().c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), PersonalPronoun().c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1574,9 +1486,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
 
 void kamikazedwarf::CreateInitialEquipment()
 {
-  item* HolyBook = new holybook;
-  HolyBook->SetDivineMaster(DivineMaster);
-  SetMainWielded(HolyBook);
+  SetMainWielded(new holybook(GetConfig()));
   GetStack()->FastAddItem(new backpack);
 }
 
@@ -1590,9 +1500,9 @@ bool kamikazedwarf::Hit(character* Enemy)
 	if((**i)->IsExplosive())
 	  {
 	    if(RAND() % 2)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str());
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str());
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str());
 
 	    if((**i)->Apply(this))
 	      return true;
@@ -1600,18 +1510,6 @@ bool kamikazedwarf::Hit(character* Enemy)
 
       return humanoid::Hit(Enemy);
     }
-}
-
-void kamikazedwarf::Save(outputfile& SaveFile) const
-{
-  humanoid::Save(SaveFile);
-  SaveFile << DivineMaster;
-}
-
-void kamikazedwarf::Load(inputfile& SaveFile)
-{
-  humanoid::Load(SaveFile);
-  SaveFile >> DivineMaster;
 }
 
 bool largecat::Catches(item* Thingy, float)
@@ -1818,14 +1716,6 @@ void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(LEFTLEGINDEX, What); }
 humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(TORSOINDEX); }
 void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(TORSOINDEX, What); }
 
-bool humanoid::BodyPartVital(ushort Index)
-{
-  if(Index == TORSOINDEX || Index == HEADINDEX || Index == GROININDEX)
-    return true;
-  else
-    return false;
-}
-
 bool humanoid::BodyPartCanBeSevered(ushort Index) const
 {
   if(!GetBodyPart(Index) || Index == TORSOINDEX || Index == GROININDEX)
@@ -1833,69 +1723,6 @@ bool humanoid::BodyPartCanBeSevered(ushort Index) const
   else
     return true;
 }
-
-/*void humanoid::DrawToTileBuffer(bool Animate) const
-{
-  /static ushort DrawOrder[] = { GROININDEX, RIGHTLEGINDEX, LEFTLEGINDEX, TORSOINDEX, RIGHTARMINDEX, LEFTARMINDEX, HEADINDEX };
-
-  if(game::GetPlayer()->StateIsActivated(ESP))
-    {
-  for(ushort c = 0; c < HUMANOID_BODYPARTS; ++c)
-    if(GetBodyPart(DrawOrder[c]))
-      GetBodyPart(DrawOrder[c])->DrawToTileBuffer(Animate);
-
-  if(game::GetPlayer()->StateIsActivated(INFRAVISION))
-  for(ushort c = 0; c < HUMANOID_BODYPARTS; ++c)
-    if(GetBodyPart(DrawOrder[c]) && GetBodyPart(DrawOrder[c])->GetMainMaterial()->IsAlive())
-      GetBodyPart(DrawOrder[c])->DrawToTileBuffer(Animate);/
-
-  / Order is important, so don't use a loop /
-
-  if(GetGroin())
-    GetGroin()->DrawToTileBuffer(Animate);
-
-  if(GetRightLeg())
-    GetRightLeg()->DrawToTileBuffer(Animate);
-
-  if(GetLeftLeg())
-    GetLeftLeg()->DrawToTileBuffer(Animate);
-
-  if(GetTorso())
-    GetTorso()->DrawToTileBuffer(Animate);
-
-  if(GetRightArm())
-    GetRightArm()->DrawToTileBuffer(Animate);
-
-  if(GetLeftArm())
-    GetLeftArm()->DrawToTileBuffer(Animate);
-
-  if(GetHead())
-    GetHead()->DrawToTileBuffer(Animate);
-}
-
-void dwarf::DrawToTileBuffer(bool Animate) const
-{
-  if(GetGroin())
-    GetGroin()->DrawToTileBuffer(vector2d(0, -1), Animate);
-
-  if(GetRightLeg())
-    GetRightLeg()->DrawToTileBuffer(vector2d(0, -1), Animate);
-
-  if(GetLeftLeg())
-    GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1), Animate);
-
-  if(GetTorso())
-    GetTorso()->DrawToTileBuffer(Animate);
-  
-  if(GetRightArm())
-    GetRightArm()->DrawToTileBuffer(Animate);
-
-  if(GetLeftArm())
-    GetLeftArm()->DrawToTileBuffer(Animate);
-
-  if(GetHead())
-    GetHead()->DrawToTileBuffer(vector2d(0, 1), Animate);
-}*/
 
 bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
 {
@@ -2206,31 +2033,6 @@ uchar humanoid::GetArms() const
   return Arms;
 }
 
-/*float humanoid::GetAPStateMultiplier() const
-{
-  float Multiplier = 1.0f;
-
-  switch(GetLegs())
-    {
-    case 0:
-      Multiplier = 0.10f;
-      break;
-    case 1:
-      Multiplier = 0.33f;
-      break;
-    case 2:
-      Multiplier = 1.00f;
-    }
-
-  if(StateIsActivated(HASTE))
-    Multiplier *= 2;
-
-  if(StateIsActivated(SLOW))
-    Multiplier *= 0.5;
-  
-  return Multiplier;
-}*/
-
 uchar humanoid::OpenMultiplier() const
 { 
   if(GetRightArm() || GetLeftArm())
@@ -2346,13 +2148,14 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
   for(c = 0; c < EquipmentSlots(); ++c)
-    {
-      vector2d Pos = Where + GetEquipmentPanelPos(c);
-      DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
+    if(CanUseEquipment(c))
+      {
+	vector2d Pos = Where + GetEquipmentPanelPos(c);
+	DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
 
-      if(GetEquipment(c))
-	GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
-    }
+	if(GetEquipment(c))
+	  GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
+      }
 
   return true;
 }
@@ -2377,12 +2180,6 @@ ushort humanoid::GlobalResistance(uchar Type) const
     }
 
   return Resistance;
-}
-
-void kamikazedwarf::SetDivineMaster(uchar Master)
-{
-  character::SetDivineMaster(Master);
-  DivineMaster = Master;
 }
 
 void humanoid::AddInfo(felist& Info) const
@@ -2640,14 +2437,6 @@ void communist::VirtualConstructor(bool Load)
     SetAssignedName("Ivan");
 }
 
-void kamikazedwarf::VirtualConstructor(bool Load)
-{
-  dwarf::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
-}
-
 void unicorn::CreateBodyParts()
 {
   SetAlignment(RAND() % 3);
@@ -2677,36 +2466,6 @@ void nonhumanoid::Load(inputfile& SaveFile)
   character::Load(SaveFile);
   SaveFile >> Strength >> Agility >> StrengthExperience >> AgilityExperience;
 }
-
-/*float nonhumanoid::CalculateUnarmedToHitValue() const
-{
-  return float(GetMaster()->GetMoveEase()) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * ((Dexterity << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) / 200;
-}
-
-float nonhumanoid::CalculateKickToHitValue() const
-{
-  return float(GetMaster()->GetMoveEase()) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * ((Dexterity << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) / 1000;
-}
-
-float nonhumanoid::CalculateBiteToHitValue() const
-{
-  return float(GetMaster()->GetMoveEase()) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * ((Dexterity << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) / 500;
-}
-
-float nonhumanoid::CalculateUnarmedStrength() const
-{
-  return GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetUnarmedStrength() * (Strength >> 1);
-}
-
-float nonhumanoid::CalculateKickStrength() const
-{
-  return GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetKickStrength() * (Strength >> 1);
-}
-
-float nonhumanoid::CalculateBiteStrength() const
-{
-  return GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetBiteStrength() * (Strength >> 1);
-}*/
 
 float nonhumanoid::CalculateUnarmedStrength() const
 {
@@ -3358,7 +3117,7 @@ material* golem::CreateBodyPartFlesh(ushort Index, ulong Volume) const
 
 bool humanoid::CanWield() const
 {
-  return CanUseEquipment() && (GetRightArm() || GetLeftArm());
+  return CanUseEquipment(RIGHTWIELDEDINDEX) || CanUseEquipment(LEFTWIELDEDINDEX);
 }
 
 bool humanoid::CheckBalance(float KickStrength)
@@ -3371,6 +3130,9 @@ bool humanoid::CheckBalance(float KickStrength)
 
 long humanoid::CalculateMoveAPRequirement(uchar Difficulty) const
 {
+  if(CanFly())
+    return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20;
+
   switch(GetLegs())
     {
     case 0:
@@ -3433,9 +3195,6 @@ void humanoid::VirtualConstructor(bool Load)
 
 void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 {
-  //if(EquipmentHasNoPairProblems(EquipmentIndex))
-    //PermanentState |= GetEquipment(EquipmentIndex)->GetGearStates();
-
   character::SignalEquipmentAdd(EquipmentIndex);
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
@@ -3570,11 +3329,13 @@ bool humanoid::DetachBodyPart()
 void angel::GetAICommand()
 {
   SetHealTimer(GetHealTimer() + 1);
+
   if(GetHealTimer() > LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP && AttachBodyPartsOfFriendsNear())
     {
       SetHealTimer(0);
       return;
     }
+
   humanoid::GetAICommand();
 }
 
@@ -3585,6 +3346,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
   
   /* Now analize HurtFriendsAround for really hurt friends and delete unhurt ones. */
   std::vector<character*>::iterator i;
+
   for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
       if((*i)->HasAllBodyParts() == 0)
 	HurtFriends.erase(i);
@@ -3628,11 +3390,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
 void angel::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
-
-  if(!Load)
-    {
-      SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
-    }
+  SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
 }
 
 void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
@@ -3683,4 +3441,30 @@ void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool A
 
   if(GetHead())
     GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAlpha, AllowAnimate);
+}
+
+ushort angel::GetTorsoMainColor(ushort) const
+{
+  return GetMasterGod()->GetColor();
+}
+
+ushort angel::GetArmMainColor(ushort) const
+{
+  return GetMasterGod()->GetColor();
+}
+
+void angel::CreateBodyPart(ushort Index)
+{
+  if(Index == GROININDEX || Index == RIGHTLEGINDEX || Index == LEFTLEGINDEX)
+    SetBodyPart(Index, 0);
+  else
+    character::CreateBodyPart(Index);
+}
+
+void genie::CreateBodyPart(ushort Index)
+{
+  if(Index == GROININDEX || Index == RIGHTLEGINDEX || Index == LEFTLEGINDEX)
+    SetBodyPart(Index, 0);
+  else
+    character::CreateBodyPart(Index);
 }

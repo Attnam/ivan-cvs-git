@@ -66,7 +66,7 @@ ulong game::NextItemID = 1;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
-bool game::AnimationControllerActive = true;
+//bool game::AnimationControllerActive = true;
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
 ushort game::CurrentEmitterEmitation;
@@ -166,7 +166,7 @@ void game::InitScript()
 #include "itemde.h"
 #include "stack.h"*/
 
-void game::Init(const std::string& Name)
+bool game::Init(const std::string& Name)
 {
   std::string PlayerName;
 
@@ -176,26 +176,12 @@ void game::Init(const std::string& Name)
 	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
 
 	if(PlayerName == "")
-	  return;
+	  return false;
       }
     else
       PlayerName = configuration::GetDefaultName();
   else
     PlayerName = Name;
-
-  static ushort Counter = 0;
-
-  Ticks = 0;
-  ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
-  msgsystem::Format();
-
-  WizardMode = false;
-  SeeWholeMapCheat = false;
-  GoThroughWallsCheat = false;
-  //PlayerBackup = 0;
-
-  LOSTurns = 1;
-  WorldMap = 0;
 
 #ifdef WIN32
   _mkdir("Save");
@@ -213,12 +199,13 @@ void game::Init(const std::string& Name)
     {
     case LOADED:
       {
+	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
 	SetIsLoading(true);
 	GetCurrentArea()->SendNewDrawRequest();
 	game::SendLOSUpdateRequest();
 	ADD_MESSAGE("Game loaded successfully.");
-	break;
+	return true;
       }
     case NEWGAME:
       {
@@ -234,8 +221,15 @@ void game::Init(const std::string& Name)
 			     "You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
 			     "And you know nothing about the adventures that await you here.");
 
+	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
+	Ticks = 0;
+	msgsystem::Format();
+	WizardMode = false;
+	SeeWholeMapCheat = false;
+	GoThroughWallsCheat = false;
+	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
 	SetPlayer(new human);
@@ -273,23 +267,17 @@ void game::Init(const std::string& Name)
 	  }*/
 
 	ADD_MESSAGE("Game generated successfully.");
-	break;
+	return true;
       }
-    case BACK:
-      {
-	SetIsRunning(false);
-	break;
-      }
+    default:
+      return false;
     }
 }
 
 void game::DeInit()
 {
-  //delete GetPlayerBackup();
-  //SetPlayerBackup(0);
   delete GetWorldMap();
   SetWorldMap(0);
-
   ushort c;
 
   for(c = 0; c < Dungeon.size(); ++c)
@@ -301,9 +289,7 @@ void game::DeInit()
     delete GetGod(c); // sorry, Valpuri!
 
   God.clear();
-
   hell::Burn();
-  //entitypool::BurnTheDead();
 
   for(c = 0; c < Team.size(); ++c)
     delete GetTeam(c);
@@ -313,8 +299,8 @@ void game::DeInit()
 
 void game::Run()
 {
-  while(IsRunning())
-    {	
+  while(true)
+    {
       if(!InWilderness)
 	GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
 
@@ -326,10 +312,10 @@ void game::Run()
 	  Tick();
 	  ApplyDivineTick();
 	}
-      catch(quitrequest) { }
-
-      if(!IsRunning())
-	break;
+      catch(quitrequest)
+	{
+	  break;
+	}
     }
 }
 
@@ -519,16 +505,13 @@ void game::DrawEverythingNoBlit()
 bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
-
   SaveFile << ushort(SAVEFILE_VERSION);
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
   SaveFile << LOSTurns;
-
   ulong Time = time(0);
   femath::SetSeed(Time);
   SaveFile << Time;
-
   SaveFile << Dungeon << Team;
 
   if(InWilderness)
@@ -538,7 +521,6 @@ bool game::Save(const std::string& SaveName)
 
   SaveFile << God;
   SaveFile << game::GetPlayer()->GetPos();
-  //SaveFile << PlayerBackup;
   msgsystem::Save(SaveFile);
   return true;
 }
@@ -564,11 +546,9 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextItemID;
   SaveFile >> LOSTurns;
-
   ulong Time;
   SaveFile >> Time;
   femath::SetSeed(Time);
-
   SaveFile >> Dungeon >> Team;
 
   if(InWilderness)
@@ -577,14 +557,9 @@ uchar game::Load(const std::string& SaveName)
     GetCurrentDungeon()->LoadLevel(SaveName);
 
   SaveFile >> God;
-
   vector2d Pos;
-
   SaveFile >> Pos;
-
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
-
-  //SaveFile >> PlayerBackup;
   msgsystem::Load(SaveFile);
   return LOADED;
 }
@@ -617,7 +592,7 @@ std::string game::SaveName(const std::string& Base)
 
 bool game::EmitationHandler(long X, long Y)
 {
-  ushort Emit = CurrentEmitterEmitation;//GetLevel(Current)->GetLSquare(Origo)->GetEmitation();
+  ushort Emit = CurrentEmitterEmitation;
   ushort MaxSize = game::GetLuxTableSize()[Emit] >> 1;
 
   if(X - CurrentEmitterPosX > MaxSize || CurrentEmitterPosX - X > MaxSize || Y - CurrentEmitterPosY > MaxSize || CurrentEmitterPosY - Y > MaxSize)
@@ -698,15 +673,6 @@ void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Mult
     if(GetGod(c) != CompareTarget)
       GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
-
-/*uchar game::GetDirectionIndexForKey(int Key)
-{
-  for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
-    if(Key == game::GetMoveCommandKey(c))
-      return c;
-
-  return DIR_ERROR;
-}*/
 
 vector2d game::GetDirectionVectorForKey(int Key)
 {
@@ -1264,16 +1230,15 @@ int game::AskForKeyPress(const std::string& Topic)
 }
 
 /* 
-   Handler is called when the key has been identified as a movement key 
-   KeyHandler is called when the key has NOT been identified as a movement key
-   Both can be deactivated by passing 0 as parameter
+ * Handler is called when the key has been identified as a movement key 
+ * KeyHandler is called when the key has NOT been identified as a movement key
+ * Both can be deactivated by passing 0 as parameter
  */  
 
 vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
   graphics::BlitDBToScreen();
-  //globalwindowhandler::InstallControlLoop(PositionQuestionController);
   SetDoZoom(Zoom);
   vector2d Return;
 
@@ -1322,31 +1287,17 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
       SetCursorPos(CursorPos);
       DrawEverythingNoBlit();
-      //PositionQuestionController();
       graphics::BlitDBToScreen();
       Key = GETKEY();
     }
 
   DOUBLEBUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
   DOUBLEBUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
-  //globalwindowhandler::DeInstallControlLoop(PositionQuestionController);
   SetDoZoom(false);
   SetCursorPos(vector2d(-1, -1));
   DrawEverythingNoBlit();
   return Return;
 }
-
-/*bool game::PositionQuestionController()
-{
-  GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
-  vector2d ScreenCordinates = CalculateScreenCoordinates(GetCursorPos());
-
-  if(DoZoom())
-    DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
-
-  igraph::DrawCursor(ScreenCordinates);
-  return true;
-}*/
 
 void game::LookHandler(vector2d CursorPos)
 {
@@ -1395,17 +1346,13 @@ void game::LookHandler(vector2d CursorPos)
 
 bool game::AnimationController()
 {
-  if(IsRunning() && AnimationControllerIsActive())
-    {
-      game::DrawEverythingNoBlit();
-      return true;
-    }
-  else
-    return false;
+  game::DrawEverythingNoBlit();
+  return true;
 }
 
 void game::InitGlobalValueMap()
 {
+  GlobalValueMap = protocontainer<god>::GetCodeNameMap();
   inputfile SaveFile(GAME_DIR + "Script/define.dat");
   std::string Word;
 
@@ -1421,9 +1368,9 @@ void game::InitGlobalValueMap()
 
 void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
-  SetAnimationControllerActive(false);
+  globalwindowhandler::DeInstallControlLoop(AnimationController);
   iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
-  SetAnimationControllerActive(true);
+  globalwindowhandler::InstallControlLoop(AnimationController);
 }
 
 /* ... all the keys that are acceptable 
@@ -1535,6 +1482,7 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
 
 void game::End(bool Permanently, bool AndGoToMenu)
 {
+  globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
   RemoveSaves(Permanently);
 

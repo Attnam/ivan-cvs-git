@@ -48,7 +48,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 	  }
       }
 
-  return getkey();			
+  return getkey();
 }
 
 int globalwindowhandler::ReadKey()
@@ -178,7 +178,6 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	  graphics::SwitchMode();
 	  return 0;
 	}
-				
     }
 
   return DefWindowProc(hWnd,uMsg,wParam,lParam);
@@ -356,7 +355,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    if(Draw)
 		      graphics::BlitDBToScreen();
 
-		    SDL_Delay(5);
+		    SDL_Delay(50);
 		  }
 	      }
 	    else

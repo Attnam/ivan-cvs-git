@@ -74,13 +74,9 @@ class lsquare : public square
   void BeKicked(character*, float, float, short, bool);
   uchar GetDivineMaster() const { return DivineMaster; }
   void SetDivineMaster(uchar What) { DivineMaster = What; }
-  /*bool DrawTerrain(bool) const;
-  bool DrawStacks(bool) const;
-  bool DrawCharacter(bool) const;*/
   void Draw();
   void UpdateMemorized();
   bool CanBeDug() const;
-  //bool Dig(character*, item*);
   virtual gterrain* GetGTerrain() const;
   virtual oterrain* GetOTerrain() const;
   glterrain* GetGLTerrain() const { return GLTerrain; }

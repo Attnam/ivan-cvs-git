@@ -159,9 +159,9 @@ uchar square::GetEntryDifficulty() const
   return GetGTerrain()->GetEntryDifficulty();
 }
 
-uchar square::RestModifier() const
+uchar square::GetRestModifier() const
 {
-  return GetOTerrain()->RestModifier();
+  return GetOTerrain()->GetRestModifier();
 }
 
 bool square::CanBeSeenBy(character* Who) const
@@ -171,9 +171,3 @@ bool square::CanBeSeenBy(character* Who) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
-
-/*void square::DrawCharacterSymbols()
-{
-  if(Character && Character->GetTeam() == game::GetPlayer()->GetTeam() && Character->CanBeSeenByPlayer() && !Character->IsPlayer())
-    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, game::CalculateScreenCoordinates(Pos), 16, 16, ushort((configuration::GetContrast() << 8) / 100));
-}*/

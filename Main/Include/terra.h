@@ -36,7 +36,7 @@ class oterrain : public terrain
  public:
   virtual bool GoUp(character*) const = 0;
   virtual bool GoDown(character*) const = 0;
-  virtual uchar RestModifier() const { return 1; }
+  virtual uchar GetRestModifier() const { return 1; }
   virtual void ShowRestMessage(character*) const { }
 };
 

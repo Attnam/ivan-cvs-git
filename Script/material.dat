@@ -28,6 +28,7 @@ material
 	HitMessage = HM_NOTHING;
 	ExplosivePower = 0;
 	Alpha = 255;
+	CreateDivineConfigurations = false;
 
 	Config IRON;
 	{

@@ -56,28 +56,6 @@ void potion::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetStack());
 }
 
-/*void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
-{
-  bitmap* Bitmap = !Animate || AnimationFrames == 1 ? Picture[0] : Picture[globalwindowhandler::GetTick() % AnimationFrames];
-
-  switch(LSquarePosition)
-    {
-    case CENTER:
-    case DOWN:
-      Bitmap->AlphaBlit(igraph::GetTileBuffer());
-      break;
-    case LEFT:
-      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(ROTATE));
-      break;
-    case UP:
-      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(FLIP));
-      break;
-    case RIGHT:
-      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(ROTATE | MIRROR));
-      break;
-    }
-}*/
-
 bool scroll::CanBeRead(character* Reader) const
 {
   return Reader->CanRead() || game::GetSeeWholeMapCheat();
@@ -255,7 +233,6 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  //Zapper->EditAP(500);
   return true;
 }
 
@@ -578,18 +555,6 @@ bool backpack::Apply(character* Terrorist)
   return false;
 }
 
-void holybook::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> DivineMaster;
-}
-
-void holybook::Save(outputfile& SaveFile) const
-{
-  item::Save(SaveFile);
-  SaveFile << DivineMaster;
-}
-
 bool holybook::CanBeRead(character* Reader) const
 {
   return Reader->CanRead() || game::GetSeeWholeMapCheat();
@@ -605,11 +570,11 @@ void holybook::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
     {
-      if(game::GetGod(GetDivineMaster())->GetKnown())
+      if(GetMasterGod()->GetKnown())
 	{
-	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", game::GetGod(DivineMaster)->GOD_NAME);
-	  game::GetGod(DivineMaster)->AdjustRelation(75);
-	  game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true);
+	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GOD_NAME);
+	  GetMasterGod()->AdjustRelation(75);
+	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
 
 	  if(!(RAND() % 3))
 	    {
@@ -620,8 +585,8 @@ void holybook::FinishReading(character* Reader)
 	}
       else
 	{
-	  game::GetGod(GetDivineMaster())->SetKnown(true);
-	  ADD_MESSAGE("You feel you master the magical rites of %s.", game::GetGod(DivineMaster)->GOD_NAME);
+	  GetMasterGod()->SetKnown(true);
+	  ADD_MESSAGE("You feel you master the magical rites of %s.", GetMasterGod()->GOD_NAME);
 	}
     }
 }
@@ -640,10 +605,10 @@ bool wand::ReceiveDamage(character* Damager, short, uchar Type)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
-      level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
+      lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), 40);
+      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), 40);
       return true;
     }
 
@@ -664,10 +629,10 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
-      level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
+      lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -861,15 +826,9 @@ void oillamp::Load(inputfile& SaveFile)
   SaveFile >> InhabitedByGenie;
 }
 
-void holybook::SetDivineMaster(uchar NewDivineMaster)
+ushort holybook::GetMaterialColorA(ushort) const
 {
-  DivineMaster = NewDivineMaster;
-  UpdatePictures();
-}
-
-ushort holybook::GetMaterialColor0(ushort) const
-{
-  return game::GetGod(DivineMaster)->GetColor();
+  return GetMasterGod()->GetColor();
 }
 
 bool scrollofcharging::Read(character* Reader)
@@ -1229,7 +1188,7 @@ void humanoidtorso::Load(inputfile& SaveFile)
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << /*SingleWeaponSkill << */UnarmedStrength;
+  SaveFile << UnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot;
   SaveFile << GauntletSlot;
@@ -1239,20 +1198,11 @@ void arm::Save(outputfile& SaveFile) const
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> /*SingleWeaponSkill >> */UnarmedStrength;
+  SaveFile >> UnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   LoadGearSlot(SaveFile, WieldedSlot);
   LoadGearSlot(SaveFile, GauntletSlot);
   LoadGearSlot(SaveFile, RingSlot);
-  //SetCurrentSingleWeaponSkill(0);
-
-  /*if(GetWielded())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-      if((*i)->GetID() == GetWielded()->GetID())
-	{
-	  SetCurrentSingleWeaponSkill(*i);
-	  break;
-	}*/
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -1334,10 +1284,10 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
-      level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
+      lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), 30);
+      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -1348,15 +1298,15 @@ bool mine::GetStepOnEffect(character* Stepper)
 {
   if(GetCharged())
     {
-      level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
-      RemoveFromSlot();
-      SendToHell();
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
-      GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by a land mine", Stepper->GetPos(), 30);
+      lsquare* Square = GetLSquareUnder();
+      RemoveFromSlot();
+      SendToHell();
+      Square->GetLevelUnder()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
     }
 
   return false;
@@ -1436,59 +1386,6 @@ bool key::Apply(character* User)
 
   return true;
 }
-
-/*void arm::SetWielded(item* Item)
-{
-  WieldedSlot.PutInItem(Item);
-
-  if(Item)
-    {
-      for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	if((*i)->GetID() == Item->GetID())
-	  {
-	    SetCurrentSingleWeaponSkill(*i);
-	    break;
-	  }
-
-      if(!GetCurrentSingleWeaponSkill())
-	{
-	  SetCurrentSingleWeaponSkill(new sweaponskill);
-	  GetCurrentSingleWeaponSkill()->SetID(Item->GetID());
-	  SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
-	}
-    }
-
-  if(GetSquareUnder())
-    GetSquareUnder()->SendNewDrawRequest();
-}
-
-void arm::Be()
-{
-  for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
-    {
-      if((*i)->Turn(1) && Slot->IsCharacterSlot())
-	{
-	  character* Master = ((characterslot*)Slot)->GetMaster();
-
-	  if(Master->IsPlayer())
-	    for(stackiterator j = Master->GetStack()->GetBottomSlot(); j != Master->GetStack()->GetSlotAboveTop(); ++j)
-	      if((*i)->GetID() == (**j)->GetID())
-		{
-		  (*i)->AddLevelDownMessage((**j)->GetName(UNARTICLED));
-		  break;
-		}
-	}
-
-      if(!(*i)->GetHits() && *i != GetCurrentSingleWeaponSkill())
-	{
-	  SingleWeaponSkill.erase(i);
-	  i = SingleWeaponSkill.begin();
-	  continue;
-	}
-
-      ++i;
-    }
-}*/
 
 float arm::CalculateUnarmedStrength() const
 {
@@ -1638,21 +1535,6 @@ void key::Load(inputfile& SaveFile)
   SaveFile >> LockType;
 }
 
-/*void helmet::GenerateMaterials()
-{
-  static ushort Possibility[] = { 250, 50, 100, 150, 50, 10 };
-
-  switch(femath::WeightedRand(6, Possibility))
-    {
-    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
-    case 1: InitMaterials(MAKE_MATERIAL(BONE)); break;
-    case 2: InitMaterials(MAKE_MATERIAL(COPPER)); break;
-    case 3: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
-    case 4: InitMaterials(MAKE_MATERIAL(IRON)); break;
-    case 5: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
-    }
-}*/
-
 void corpse::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -1729,17 +1611,6 @@ ushort corpse::GetStrengthValue() const
   return ulong(GetStrengthModifier()) * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() / 1000;
 }
 
-/*ulong corpse::GetVolume() const
-{
-  ulong Volume = 0;
-
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c))
-      Volume += GetDeceased()->GetBodyPart(c)->GetVolume();
-
-  return Volume;
-}*/
-
 corpse::~corpse()
 {
   if(GetDeceased())
@@ -1766,17 +1637,17 @@ void corpse::ChangeContainedMaterial(material* NewMaterial)
   GetDeceased()->ChangeContainedMaterial(NewMaterial);
 }
 
-ushort corpse::GetMaterialColor0(ushort) const
+ushort corpse::GetMaterialColorA(ushort) const
 {
   return GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
 }
 
-uchar corpse::GetAlpha0(ushort) const
+uchar corpse::GetAlphaA(ushort) const
 {
   return GetDeceased()->GetTorso()->GetMainMaterial()->GetAlpha();
 }
 
-ushort corpse::GetMaterialColor1(ushort) const
+ushort corpse::GetMaterialColorB(ushort) const
 {
   return GetDeceased()->GetBloodColor();
 }
@@ -1812,7 +1683,7 @@ void bodypart::Regenerate(ushort Turns)
       ulong RegenerationBonus = ulong(GetMaxHP()) * GetMaster()->GetAttribute(ENDURANCE) * Turns;
 
       if(GetMaster()->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
-	RegenerationBonus *= GetMaster()->GetSquareUnder()->RestModifier();
+	RegenerationBonus *= GetMaster()->GetSquareUnder()->GetRestModifier();
 
       EditRegenerationCounter(RegenerationBonus);
 
@@ -1866,61 +1737,6 @@ ushort bodypart::Danger(ulong DangerEstimate, bool MaxDanger) const
   return HP / (Damage - GetResistance(PHYSICALDAMAGE));
 }
 
-/*ulong head::GetTotalWeight() const
-{
-  ulong Weight = GetWeight();
-
-  if(GetHelmet())
-    Weight += GetHelmet()->GetWeight();
-
-  if(GetAmulet())
-    Weight += GetAmulet()->GetWeight();
-
-  return Weight;
-}
-
-ulong humanoidtorso::GetTotalWeight() const
-{
-  ulong Weight = GetWeight();
-
-  if(GetBodyArmor())
-    Weight += GetBodyArmor()->GetWeight();
-
-  if(GetCloak())
-    Weight += GetCloak()->GetWeight();
-
-  if(GetBelt())
-    Weight += GetBelt()->GetWeight();
-
-  return Weight;
-}
-
-ulong arm::GetTotalWeight() const
-{
-  ulong Weight = GetWeight();
-
-  if(GetWielded())
-    Weight += GetWielded()->GetWeight();
-
-  if(GetGauntlet())
-    Weight += GetGauntlet()->GetWeight();
-
-  if(GetRing())
-    Weight += GetRing()->GetWeight();
-
-  return Weight;
-}
-
-ulong leg::GetTotalWeight() const
-{
-  ulong Weight = GetWeight();
-
-  if(GetBoot())
-    Weight += GetBoot()->GetWeight();
-
-  return Weight;
-}*/
-
 void head::DropEquipment()
 {
   if(GetHelmet())
@@ -1964,31 +1780,6 @@ void corpse::AddConsumeEndMessage(character* Eater) const
 {
   GetDeceased()->GetTorso()->AddConsumeEndMessage(Eater);
 }
-
-/*bool arm::AddCurrentSingleWeaponSkillInfo(felist& List) const
-{
-  if(CurrentSingleWeaponSkill && CurrentSingleWeaponSkill->GetHits())
-    {
-      List.AddEntry("", RED);
-
-      std::string Buffer = "current " + GetName(UNARTICLED) + " single weapon skill:  ";
-
-      Buffer += CurrentSingleWeaponSkill->GetLevel();
-      Buffer.resize(40, ' ');
-
-      Buffer += CurrentSingleWeaponSkill->GetHits();
-      Buffer.resize(50, ' ');
-
-      if(CurrentSingleWeaponSkill->GetLevel() != 10)
-	List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
-      else
-	List.AddEntry(Buffer + '-', RED);
-
-      return true;
-    }
-  else
-    return false;
-}*/
 
 head::~head()
 {
@@ -2059,17 +1850,6 @@ ulong corpse::Price() const
 
   return Price;
 }
-
-/*ulong corpse::GetWeight() const
-{
-  ulong Weight = 0;
-
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c))
-      Weight += GetDeceased()->GetBodyPart(c)->GetWeight();
-
-  return Weight;
-}*/
 
 item* corpse::PrepareForConsuming(character*)
 {
@@ -2163,23 +1943,23 @@ material* corpse::GetMaterial(ushort Index) const
     }
 }
 
-ushort materialcontainer::GetMaterialColor1(ushort Frame) const
+ushort materialcontainer::GetMaterialColorB(ushort Frame) const
 {
   if(GetContainedMaterial())
     return GetContainedMaterial()->GetColor();
   else
-    return GetMaterialColor0(Frame);
+    return GetMaterialColorA(Frame);
 }
 
-uchar materialcontainer::GetAlpha1(ushort Frame) const
+uchar materialcontainer::GetAlphaB(ushort Frame) const
 {
-  if(GetContainedMaterial() && GetContainedMaterial()->GetAlpha() > GetAlpha0(Frame))
+  if(GetContainedMaterial() && GetContainedMaterial()->GetAlpha() > GetAlphaA(Frame))
     return GetContainedMaterial()->GetAlpha();
   else
-    return GetAlpha0(Frame);
+    return GetAlphaA(Frame);
 }
 
-ushort meleeweapon::GetMaterialColor1(ushort) const
+ushort meleeweapon::GetMaterialColorB(ushort) const
 {
   if(GetSecondaryMaterial())
     return GetSecondaryMaterial()->GetColor();
@@ -2187,7 +1967,7 @@ ushort meleeweapon::GetMaterialColor1(ushort) const
     return 0;
 }
 
-uchar meleeweapon::GetAlpha1(ushort) const
+uchar meleeweapon::GetAlphaB(ushort) const
 {
   if(GetSecondaryMaterial())
     return GetSecondaryMaterial()->GetAlpha();
@@ -2195,7 +1975,7 @@ uchar meleeweapon::GetAlpha1(ushort) const
     return 0;
 }
 
-ushort bodypart::GetMaterialColor0(ushort Frame) const
+ushort bodypart::GetMaterialColorA(ushort Frame) const
 {
   if(GetMainMaterial())
     return GetMainMaterial()->GetSkinColor(Frame);
@@ -2203,9 +1983,9 @@ ushort bodypart::GetMaterialColor0(ushort Frame) const
     return 0;
 }
 
-ushort banana::GetMaterialColor0(ushort Frame) const
+ushort banana::GetMaterialColorA(ushort Frame) const
 {
-  ushort Color = object::GetMaterialColor0(Frame);
+  ushort Color = object::GetMaterialColorA(Frame);
 
   if(!Frame)
     return Color;
@@ -2279,16 +2059,6 @@ void wandofstriking::VirtualConstructor(bool Load)
   
   if(!Load)
     SetCharges(2 + RAND() % 5);
-}
-
-void holybook::VirtualConstructor(bool Load)
-{
-  item::VirtualConstructor(Load);
-
-  /* Don't use SetDivineMaster, since it calls UpdatePictures()! */
-
-  if(!Load)
-    DivineMaster = 1 + RAND() % (game::GetGods() - 1);
 }
 
 void oillamp::VirtualConstructor(bool Load)
@@ -2375,8 +2145,6 @@ void humanoidtorso::VirtualConstructor(bool Load)
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  //SetCurrentSingleWeaponSkill(0);
-  //SetHasBe(true);
 
   if(!Load)
     StrengthExperience = DexterityExperience = 0;
@@ -2848,11 +2616,6 @@ void chest::Load(inputfile& SaveFile)
   SaveFile >> StorageVolume >> LockType >> Locked;
 }
 
-/*ulong chest::GetWeight() const
-{
-  return item::GetWeight() + GetContained()->GetWeight();
-}*/
-
 bool chest::Polymorph(stack* CurrentStack)
 {
   GetContained()->MoveAll(CurrentStack);
@@ -2954,12 +2717,6 @@ std::string corpse::GetConsumeVerb() const
   return GetDeceased()->GetTorso()->GetConsumeVerb();
 }
 
-void chest::SetSquareUnder(square* Square)
-{
-  item::SetSquareUnder(Square);
-  GetContained()->SetSquareUnder(Square);
-}
-
 /* Victim is of course the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
 bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 {
@@ -2969,7 +2726,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s", Victim->CHARNAME(DEFINITE), Victim->PossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->PossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
       std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
@@ -2982,7 +2739,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       Victim->SetStuckToBodyPart(NONEINDEX);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to free yourself from %s", CHARNAME(DEFINITE));
+	ADD_MESSAGE("You manage to free yourself from %s.", CHARNAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
 	{
 	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->PersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
@@ -2992,7 +2749,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       return true;
     }
 
-  ADD_MESSAGE("You are unable to escape from %s", CHARNAME(DEFINITE));
+  ADD_MESSAGE("You are unable to escape from %s.", CHARNAME(DEFINITE));
   return false;
 }
 
@@ -3031,9 +2788,9 @@ bool beartrap::GetStepOnEffect(character* Stepper)
       Stepper->SetStuckTo(this);
       Stepper->SetStuckToBodyPart(StepperBodyPart);
       if(Stepper->IsPlayer())
-	ADD_MESSAGE("You step in %s and it traps your %s. ", CHARNAME(INDEFINITE), Stepper->GetBodyPart(Stepper->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("You step in %s and it traps your %s.", CHARNAME(INDEFINITE), Stepper->GetBodyPart(Stepper->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
       else if(Stepper->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is trapped in %s", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       Stepper->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
       Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE) + ".");
@@ -3045,6 +2802,7 @@ bool beartrap::GetStepOnEffect(character* Stepper)
 	ADD_MESSAGE("You step on %s but luckily it isn't active.", CHARNAME(INDEFINITE));
       /* My English seems to be a bit rusty. It might be good to choose some other word than "active" */
     }
+
   return false;
 }
 
@@ -3053,17 +2811,13 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   if(Picker->GetStuckTo() == this)
     {
       if(Picker->IsPlayer())
-	ADD_MESSAGE("%s is tightly stuck to %s", CHARNAME(DEFINITE), Picker->GetBodyPart(Picker->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s is tightly stuck to %s.", CHARNAME(DEFINITE), Picker->GetBodyPart(Picker->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
       return false;
     }
+
   IsActivated = false; /* Just in case something wierd is going on */
   return true;
 }
-
-/*bool wandofdoorcreation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
-{ 
-  return Where->LockEverything(Who); 
-}*/
 
 bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
 {
@@ -3164,25 +2918,6 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
   if(GetMaster())
     GetMaster()->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
 }
-
-/*void arm::SignalEquipmentRemoval(gearslot* Slot)
-{
-  bodypart::SignalEquipmentRemoval(Slot);
-
-  if(Slot == &WieldedSlot && GetCurrentSingleWeaponSkill())
-    {
-      if(!GetCurrentSingleWeaponSkill()->GetHits())
-	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	  if(*i == GetCurrentSingleWeaponSkill())
-	    {
-	      delete *i;
-	      SingleWeaponSkill.erase(i);
-	      break;
-	    }
-
-      SetCurrentSingleWeaponSkill(0);
-    }
-}*/
 
 bool beartrap::IsPickable(character* Picker) const
 {

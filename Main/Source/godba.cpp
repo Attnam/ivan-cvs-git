@@ -149,12 +149,10 @@ character* god::CreateAngel()
     {
       TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-      angel* Angel = new angel;
+      angel* Angel = new angel(GetType());
 
       if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  Angel->SetDivineMaster(GetType());
-
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));
 	  return Angel;

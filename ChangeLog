@@ -1,3 +1,38 @@
+July 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added CreateDivineConfigurations boolean datavalue to all databases, which can be used
+	  to add new god-dependent characters, items, materials and terrains very easily,
+	  and to define varying attributes and specialities for them. It is now used for
+	  angels, kamikaze dwarves, holy books and altars and reduces their overlapping code a lot,
+	  and unique holy waters for each god and other similiar wonderful features are
+	  a piece of cake with the new system
+	* Angel, golem and genie graphics have been converted to humanoids by me. (btw, Kahvi is a moron)
+	* All lterrains have been datafiled to glterra.dat and olterra.dat;
+	  it is now possible to add new terrains without modifying code and blaah blaah
+	* All glterrains have been converted as configurations of solidterrain and liquidterrain
+	* Most olterrains have been converted as configurations of wall, decoration and container
+	  (the latter holds the bookcase and is reserved for future use)
+	* Integrated Kahvi's older looking walls for dungeon rooms
+	* Finally integrated Kahvi's new chest picture
+	* AnimationController no longer crashes when a full screen DOS prompt is activated in Windows
+	* Cheated lookmode wilderness terrain descriptions don't disappear after the first glance anymore
+	* Added periods at the end of some of Hex's incomplete messages
+	* Corrected a memory leak in the fluid load code
+	* Removed the seemingly ever-lasting problems with item's SquareUnder by removing it.
+	  Instead, GetSquareUnder() now passes the request for position to Slot
+	* The game now aborts if an unrecognized datavalue is found in the datafiles
+	  (previously it just discarded it)
+	* All script and datafile aborts now print the line number of the respective error
+	* All low level inputfile aborts (like ReadNumber syntax errors) now print the file name and
+	  the line number of the error (the latter only if it's appropriate, as it isn't for instance
+	  in the case of an unexpected EOF error, since it always happens in the last line)
+	* If the player isn't able to use certain equipment (usually due to a lost limb),
+	  its slot isn't shown in the panel anymore even as an empty rectangle
+	* Mine's explosion power now depends on its ContainedMaterial
+	* Removed more than 1800 lines of obsolete code left commented all around the project
+	  (but I didn't delete anything I wasn't sure to be irrelevant)
+	* Angel and genie don't have legs nor a groin anymore (what a terrible fate)
+
 July 6 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Poison state added.

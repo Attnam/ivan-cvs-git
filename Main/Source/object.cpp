@@ -24,7 +24,6 @@ void object::Save(outputfile& SaveFile) const
 
 void object::Load(inputfile& SaveFile)
 {
-  entity::Load(SaveFile);
   SaveFile >> GraphicId >> Config >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
   Picture.resize(GraphicId.size());
@@ -129,6 +128,8 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
   return OldMaterial;
 }
 
+#include "lterrade.h"
+
 void object::UpdatePictures()
 {
   if(GraphicId.size())
@@ -140,10 +141,10 @@ void object::UpdatePictures()
 
   for(ushort c = 0; c < GraphicId.size(); ++c)
     {
-      GraphicId[c].Color[0] = GetMaterialColor0(c);
-      GraphicId[c].Color[1] = GetMaterialColor1(c);
-      GraphicId[c].Color[2] = GetMaterialColor2(c);
-      GraphicId[c].Color[3] = GetMaterialColor3(c);
+      GraphicId[c].Color[0] = GetMaterialColorA(c);
+      GraphicId[c].Color[1] = GetMaterialColorB(c);
+      GraphicId[c].Color[2] = GetMaterialColorC(c);
+      GraphicId[c].Color[3] = GetMaterialColorD(c);
 
       ushort MaxAlpha = GetMaxAlpha(c);
 
@@ -152,22 +153,22 @@ void object::UpdatePictures()
       if(GraphicId[c].BaseAlpha > MaxAlpha)
 	GraphicId[c].BaseAlpha = MaxAlpha;
 
-      GraphicId[c].Alpha[0] = GetAlpha0(c);
+      GraphicId[c].Alpha[0] = GetAlphaA(c);
 
       if(GraphicId[c].Alpha[0] > MaxAlpha)
 	GraphicId[c].Alpha[0] = MaxAlpha;
 
-      GraphicId[c].Alpha[1] = GetAlpha1(c);
+      GraphicId[c].Alpha[1] = GetAlphaB(c);
 
       if(GraphicId[c].Alpha[1] > MaxAlpha)
 	GraphicId[c].Alpha[1] = MaxAlpha;
 
-      GraphicId[c].Alpha[2] = GetAlpha2(c);
+      GraphicId[c].Alpha[2] = GetAlphaC(c);
 
       if(GraphicId[c].Alpha[2] > MaxAlpha)
 	GraphicId[c].Alpha[2] = MaxAlpha;
 
-      GraphicId[c].Alpha[3] = GetAlpha3(c);
+      GraphicId[c].Alpha[3] = GetAlphaD(c);
 
       if(GraphicId[c].Alpha[3] > MaxAlpha)
 	GraphicId[c].Alpha[3] = MaxAlpha;
@@ -179,7 +180,7 @@ void object::UpdatePictures()
     }
 }
 
-ushort object::GetMaterialColor0(ushort) const
+ushort object::GetMaterialColorA(ushort) const
 {
   if(GetMainMaterial())
     return GetMainMaterial()->GetColor();
@@ -240,7 +241,7 @@ void object::ChangeContainedMaterial(material*)
   ABORT("Illegal object::ChangeContainedMaterial call!");
 }
 
-uchar object::GetAlpha0(ushort) const
+uchar object::GetAlphaA(ushort) const
 {
   if(GetMainMaterial())
     return GetMainMaterial()->GetAlpha();
@@ -291,4 +292,35 @@ void object::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlph
       else
 	Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
     }
+}
+
+god* object::GetMasterGod() const
+{
+  return game::GetGod(GetConfig());
+}
+
+ushort object::RandomizeMaterialConfiguration()
+{
+  return GetMaterialConfigChances().size() > 1 ? femath::WeightedRand(GetMaterialConfigChances()) : 0;
+}
+
+void object::GenerateMaterials()
+{
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
+}
+
+void object::InitChosenMaterial(material*& Material, const std::vector<long>& MaterialConfig, ulong DefaultVolume, ushort Chosen)
+{
+  if(MaterialConfig.size() == 1)
+    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[0]), DefaultVolume);
+  else if(MaterialConfig.size() == GetMaterialConfigChances().size())
+    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
+  else
+    ABORT("MaterialConfig array of illegal size detected!");
+}
+
+void object::SetConfig(ushort NewConfig)
+{
+  Config = NewConfig;
+  InstallDataBase();
 }

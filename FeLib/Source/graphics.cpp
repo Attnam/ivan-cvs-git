@@ -164,10 +164,15 @@ void graphics::BlitDBToScreen()
       ZeroMemory(&ddsd,sizeof(ddsd));
       ddsd.dwSize = sizeof(ddsd);
 
+      HRESULT Result;
+
       if(FullScreen)
-	DXDisplay->GetFrontBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+	Result = DXDisplay->GetFrontBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
       else
-	DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+	Result = DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+
+      if(Result != DD_OK)
+	return;
 
       ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
       ulong TrueDestOffset = ulong(ddsd.lpSurface);

@@ -14,9 +14,9 @@ Bats get damage from splinters.
 Potion name bugs.
 Do slimes slip down on banana peals?
 Hex's buggy messages.
-Pressing esc in stringquestion crashes game!!!
+//Pressing esc in stringquestion crashes game!!!
 Backround problem with config screen.
-Wishing for head crashes.
+Wishing for corpse or any bodypart crashes.
 Can one eat a can MADE of bananaflesh?
 Dos-kehote.
 Walls & moving light.
@@ -27,3 +27,5 @@ If an Attnamian severs a bodypart which hits the player, the city should become 
 Multiple message boxes.
 It is possible to protect items from explosions by putting them in hand digging, or eating them (very low priority).
 Chests.
+Petrus's wives' corpses use indefinite article.
+Entering a dungeon and loading an autosave saves some time.

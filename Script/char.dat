@@ -62,6 +62,7 @@ character
 	CanTalk = false;
 	ClassStates = 0;
 	CanBeWished = true;
+	CreateDivineConfigurations = false;
 }
 
 humanoid
@@ -527,6 +528,12 @@ golem
 	NameSingular = "golem";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	EyeColor = rgb(160, 0, 0);
+	HeadBitmapPos = 96, 256;
+	TorsoBitmapPos = 32, 256;
+	ArmBitmapPos = 64, 256;
+	LegBitmapPos = 0, 256;
+	CanUseEquipment = false;
 }
 
 wolf
@@ -980,6 +987,7 @@ imp
 	Article = "an";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	CanUseEquipment = false;
 }
 
 bat
@@ -1216,11 +1224,19 @@ angel
 	TorsoBitmapPos = 432, 0;
 	TotalSize = 180;
 	CanRead = true;
-	SkinColor = rgb(200, 200, 200);
 	NameSingular = "angel";
 	Article = "an";
 	CanBeWished = false;
 	ClassStates = ESP;
+	SkinColor = rgb(200, 200, 200);
+	HairColor = rgb(180, 180, 0);
+	EyeColor = rgb(48, 48, 255);
+	HeadBitmapPos = 112, 256;
+	TorsoBitmapPos = 48, 256;
+	ArmBitmapPos = 80, 256;
+	/* LegBitmapPos is not used */
+	CreateDivineConfigurations = true;
+	IsAbstract = true;
 }
 
 dwarf
@@ -1252,6 +1268,8 @@ kamikazedwarf
 	CanRead = true;
 	NameSingular = "kamikaze dwarf";
 	CanBeGenerated = true;
+	CreateDivineConfigurations = true;
+	IsAbstract = true;
 }
 
 mammoth
@@ -1333,10 +1351,16 @@ genie
 	StandVerb = "floating";
 	CanFly = true;
 	TotalVolume = 200000;
-	TorsoBitmapPos = 416, 0;
 	TotalSize = 250;
 	CanRead = true;
 	NameSingular = "genie";
+
+	SkinColor = rgb(180, 180, 255);
+	ClothColor = rgb(180, 180, 255);
+	HeadBitmapPos = 96, 272;
+	TorsoBitmapPos = 32, 272;
+	ArmBitmapPos = 64, 272;
+	/* LegBitmapPos is not used */
 }
 
 lion

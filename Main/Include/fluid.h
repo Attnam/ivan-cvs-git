@@ -12,7 +12,8 @@ class bitmap;
 class fluid : public entity
 {
  public:
-  fluid();
+  fluid() : entity(true) { }
+  fluid(square*);
   virtual ~fluid();
   void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
   virtual void Be();
@@ -22,9 +23,15 @@ class fluid : public entity
   ushort GetEmitation() const;
   bitmap* GetPicture() const { return Picture; }
   material* GetMaterial() const { return Material; }
+
+  virtual square* GetSquareUnder() const { return SquareUnder; }
+  void SetSquareUnder(square* What) { SquareUnder = What; }
+  lsquare* GetLSquareUnder() const;
+
  protected:
   bitmap* Picture;
   material* Material;
+  square* SquareUnder;
 };
 
 outputfile& operator<<(outputfile&, fluid*);

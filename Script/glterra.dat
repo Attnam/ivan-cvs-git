@@ -1,0 +1,81 @@
+/* Numeric glterrain data loaded during game startup */
+
+/* Default values: */
+
+glterrain
+{
+	/* Obligatory: BitmapPos */
+	Article = "a";
+	Adjective = "";
+	AdjectiveArticle = "a";
+	/* Obligatory: NameSingular */
+	/* NameSingular + "s" by default: NamePlural */
+	PostFix = "";
+	ArticleMode = NORMALARTICLE;
+	/* Obligatory: MainMaterialConfig */
+	/* Obligatory: SecondaryMaterialConfig */
+	/* Obligatory: ContainedMaterialConfig */
+	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
+	IsAbstract = true; /* This is false by default and does not inherit! */
+	OKVisualEffects = NONE;
+	MaterialColorB = 0;
+	MaterialColorC = 0;
+	MaterialColorD = 0;
+	SitMessage = "You sit for some time. Nothing happens.";
+	DefaultMainVolume = 10000000;
+	DefaultSecondaryVolume = 0;
+	DefaultContainedVolume = 0;
+	ShowMaterial = true;
+}
+
+solidterrain /* glterrain-> */
+{
+	IsAbstract = true;
+
+	Config PARQUET;
+	{
+		MainMaterialConfig == WOOD;
+		NameSingular = "parquet";
+		NamePlural = "parquette";
+		BitmapPos = 32, 0;
+	}
+
+	Config FLOOR;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == GRAVEL;
+		NameSingular = "floor";
+		BitmapPos = 0, 0;
+	}
+
+	Config GROUND;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == GRAVEL;
+		NameSingular = "floor";
+		BitmapPos = 0, 0;
+	}
+
+	Config GRASSTERRAIN;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == GRASS;
+		NameSingular = "ground";
+		BitmapPos = 16, 16;
+	}
+}
+
+liquidterrain /* glterrain-> */
+{
+	MainMaterialConfig == WATER;
+	BitmapPos = 16, 0;
+	IsAbstract = true;
+	ShowMaterial = false;
+
+	Config POOL;
+	{
+		NameSingular = "pool";
+		SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
+	}
+}
+

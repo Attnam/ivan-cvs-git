@@ -8,6 +8,8 @@
 #include "proto.h"
 #include "error.h"
 #include "game.h"
+#include "godba.h"
+#include "lterraba.h"
 
 template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {
@@ -18,7 +20,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       ushort Index = protocontainer<type>::SearchCodeName(Word);
 
       if(!Index)
-	ABORT("Odd term %s encountered in %s datafile!", Word.c_str(), typeid(type).name());
+	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), typeid(type).name(), SaveFile.TellLine());
 
       typename type::prototype* Proto = protocontainer<type>::ProtoData[Index];
 
@@ -28,7 +30,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       Proto->DataBase.InitDefaults();
 
       if(SaveFile.ReadWord() != "{")
-	ABORT("Bracket missing in the data script of %s!", typeid(type).name());
+	ABORT("Bracket missing in %s datafile line %d!", typeid(type).name(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
@@ -39,16 +41,29 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	      TempDataBase.InitDefaults();
 
 	      if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in the data script of %s!", typeid(type).name());
+		ABORT("Bracket missing in %s datafile line %d!", typeid(type).name(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-		AnalyzeData(SaveFile, Word, &TempDataBase);
+		if(!AnalyzeData(SaveFile, Word, &TempDataBase))
+		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), typeid(*Proto).name(), ConfigNumber, SaveFile.TellLine());
 
 	      Proto->Config[ConfigNumber] = TempDataBase;
 	      continue;
 	    }
 
-	  AnalyzeData(SaveFile, Word, &Proto->DataBase);
+	  if(!AnalyzeData(SaveFile, Word, &Proto->DataBase))
+	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), typeid(*Proto).name(), SaveFile.TellLine());
+	}
+
+      if(Proto->DataBase.CreateDivineConfigurations)
+	{
+	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
+	    if(Proto->Config.find(c) == Proto->Config.end())
+	      {
+		typename type::database TempDataBase = Proto->DataBase;
+		TempDataBase.InitDefaults();
+		Proto->Config[c] = TempDataBase;
+	      }
 	}
     }
 }
@@ -56,13 +71,19 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 #define ANALYZEDATA(data)\
 {\
   if(Word == #data)\
-    ReadData(DataBase->data, SaveFile, ValueMap);\
+    {\
+      ReadData(DataBase->data, SaveFile, ValueMap);\
+      Found = true;\
+    }\
 }
 
 #define ANALYZEDATAWITHDEFAULT(data, defaultdata)\
 {\
   if(Word == #data)\
-    ReadData(DataBase->data, SaveFile, ValueMap);\
+    {\
+      ReadData(DataBase->data, SaveFile, ValueMap);\
+      Found = true;\
+    }\
   \
   if(Word == #defaultdata)\
     DataBase->data = DataBase->defaultdata;\
@@ -71,15 +92,19 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 #define ANALYZEDATAWITHCOMPLEXDEFAULT(data, defaultdata, statement)\
 {\
   if(Word == #data)\
-    ReadData(DataBase->data, SaveFile, ValueMap);\
+    {\
+      ReadData(DataBase->data, SaveFile, ValueMap);\
+      Found = true;\
+    }\
   \
   if(Word == #defaultdata)\
     DataBase->data = statement;\
 }
 
-void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database* DataBase)
+bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database* DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
+  bool Found = false;
 
   ANALYZEDATA(DefaultArmStrength);
   ANALYZEDATA(DefaultLegStrength);
@@ -98,7 +123,6 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Sex);
   ANALYZEDATA(BloodColor);
   ANALYZEDATA(CanBeGenerated);
-  //ANALYZEDATA(HasInfraVision);
   ANALYZEDATA(CriticalModifier);
   ANALYZEDATA(StandVerb);
   ANALYZEDATA(CanOpen);
@@ -169,11 +193,15 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(ClassStates);
   ANALYZEDATA(CanBeWished);
   ANALYZEDATA(Alias);
+  ANALYZEDATA(CreateDivineConfigurations);
+
+  return Found;
 }
 
-void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
+bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
+  bool Found = false;
 
   ANALYZEDATA(Possibility);
   ANALYZEDATA(InHandsPic);
@@ -223,11 +251,85 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(Roundness);
   ANALYZEDATA(GearStates);
   ANALYZEDATA(IsTwoHanded);
+  ANALYZEDATA(CreateDivineConfigurations);
+
+  return Found;
 }
 
-void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)
+bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database* DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
+  bool Found = false;
+
+  ANALYZEDATA(BitmapPos);
+  ANALYZEDATA(Article);
+  ANALYZEDATA(Adjective);
+  ANALYZEDATA(AdjectiveArticle);
+  ANALYZEDATA(NameSingular);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATA(PostFix);
+  ANALYZEDATA(ArticleMode);
+  ANALYZEDATA(MainMaterialConfig);
+  ANALYZEDATA(SecondaryMaterialConfig);
+  ANALYZEDATA(ContainedMaterialConfig);
+  ANALYZEDATA(MaterialConfigChances);
+  ANALYZEDATA(IsAbstract);
+  ANALYZEDATA(OKVisualEffects);
+  ANALYZEDATA(MaterialColorB);
+  ANALYZEDATA(MaterialColorC);
+  ANALYZEDATA(MaterialColorD);
+  ANALYZEDATA(SitMessage);
+  ANALYZEDATA(DefaultMainVolume);
+  ANALYZEDATA(DefaultSecondaryVolume);
+  ANALYZEDATA(DefaultContainedVolume);
+  ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(ShowMaterial);
+
+  return Found;
+}
+
+bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database* DataBase)
+{
+  const valuemap& ValueMap = game::GetGlobalValueMap();
+  bool Found = false;
+
+  ANALYZEDATA(BitmapPos);
+  ANALYZEDATA(Article);
+  ANALYZEDATA(Adjective);
+  ANALYZEDATA(AdjectiveArticle);
+  ANALYZEDATA(NameSingular);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATA(PostFix);
+  ANALYZEDATA(ArticleMode);
+  ANALYZEDATA(MainMaterialConfig);
+  ANALYZEDATA(SecondaryMaterialConfig);
+  ANALYZEDATA(ContainedMaterialConfig);
+  ANALYZEDATA(MaterialConfigChances);
+  ANALYZEDATA(IsAbstract);
+  ANALYZEDATA(OKVisualEffects);
+  ANALYZEDATA(MaterialColorB);
+  ANALYZEDATA(MaterialColorC);
+  ANALYZEDATA(MaterialColorD);
+  ANALYZEDATA(SitMessage);
+  ANALYZEDATA(DefaultMainVolume);
+  ANALYZEDATA(DefaultSecondaryVolume);
+  ANALYZEDATA(DefaultContainedVolume);
+  ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(ShowMaterial);
+
+  ANALYZEDATA(DigMessage);
+  ANALYZEDATA(CanBeDug);
+  ANALYZEDATA(IsSafeToDestroy);
+  ANALYZEDATA(RestModifier);
+  ANALYZEDATA(RestMessage);
+
+  return Found;
+}
+
+bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)
+{
+  const valuemap& ValueMap = game::GetGlobalValueMap();
+  bool Found = false;
 
   ANALYZEDATA(StrengthValue);
   ANALYZEDATA(ConsumeType);
@@ -253,6 +355,9 @@ void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(HitMessage);
   ANALYZEDATA(ExplosivePower);
   ANALYZEDATA(Alpha);
+  ANALYZEDATA(CreateDivineConfigurations);
+
+  return Found;
 }
 
 void databasesystem::Initialize()
@@ -265,6 +370,16 @@ void databasesystem::Initialize()
   {
     inputfile ScriptFile(GAME_DIR + "Script/item.dat");
     database<item>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/glterra.dat");
+    database<glterrain>::ReadFrom(ScriptFile);
+  }
+
+  {
+    inputfile ScriptFile(GAME_DIR + "Script/olterra.dat");
+    database<olterrain>::ReadFrom(ScriptFile);
   }
 
   {

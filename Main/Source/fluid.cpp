@@ -8,7 +8,7 @@
 #include "igraph.h"
 #include "save.h"
 
-fluid::fluid() : entity(true), Picture(0), Material(0)
+fluid::fluid(square* SquareUnder) : entity(true), Picture(0), Material(0), SquareUnder(SquareUnder)
 {
   Picture = new bitmap(16, 16);
   Picture->Fill(TRANSPARENTCOL);
@@ -67,13 +67,12 @@ void fluid::Be()
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  //entity::Save(SaveFile);
   SaveFile << Picture;
 }
 
 void fluid::Load(inputfile& SaveFile)
 {
-  entity::Load(SaveFile);
+  SquareUnder = game::GetSquareInLoad();
   SaveFile >> Picture;
 }
 
@@ -114,3 +113,7 @@ ushort fluid::GetEmitation() const
   return 0;//GetMaterial()->GetEmitation();
 }
 
+lsquare* fluid::GetLSquareUnder() const
+{
+  return static_cast<lsquare*>(SquareUnder);
+}

@@ -121,8 +121,6 @@ void consume::Terminate(bool Finished)
 	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
       else
 	Consuming->MoveTo(GetActor()->GetStack());
-
-      //Consuming.SetItem(0);
     }
   else
     {
@@ -166,7 +164,7 @@ void rest::Handle()
   if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP())
     Terminate(true);
   else
-    GetActor()->EditExperience(AGILITY, -GetActor()->GetSquareUnder()->RestModifier());
+    GetActor()->EditExperience(AGILITY, -1);
 }
 
 void rest::Terminate(bool Finished)
@@ -314,27 +312,6 @@ void go::Handle()
   GetActor()->GoOn(this);
 }
 
-/*ulong consume::GetWeight() const
-{
-  if(GetConsuming())
-    return GetConsuming()->GetWeight();
-  else
-    return 0;
-}
-
-ulong dig::GetWeight() const
-{
-  ulong Weight = 0;
-
-  if(GetRightBackup())
-    Weight += GetRightBackup()->GetWeight();
-
-  if(GetLeftBackup())
-    Weight += GetLeftBackup()->GetWeight();
-
-  return Weight;
-}*/
-
 void consume::DropUsedItems()
 {
   if(GetConsuming())
@@ -384,27 +361,6 @@ void dig::VirtualConstructor()
 {
   RightBackup.Init(this);
   LeftBackup.Init(this);
-}
-
-void dig::SetSquareUnder(square* Square)
-{
-  if(GetRightBackup())
-      GetRightBackup()->SetSquareUnder(Square);
-
-  if(GetLeftBackup())
-    GetLeftBackup()->SetSquareUnder(Square);
-}
-
-/*void read::SetSquareUnder(square* Square)
-{
-  if(GetLiterature())
-      GetLiterature()->SetSquareUnder(Square);
-}*/
-
-void consume::SetSquareUnder(square* Square)
-{
-  if(GetConsuming())
-      GetConsuming()->SetSquareUnder(Square);
 }
 
 void read::Handle()

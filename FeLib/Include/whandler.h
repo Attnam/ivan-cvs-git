@@ -26,6 +26,7 @@ class globalwindowhandler
   static ulong GetTick() { return Tick; }
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
+  static bool ControlLoopsInstalled() { return ControlLoop.size() ? true : false; }
  protected:
   static controlvector ControlLoop;
   static ulong Tick;
@@ -64,6 +65,7 @@ class globalwindowhandler
   static void DeInstallControlLoop(bool (*)());
   static void SetInitialized(bool What) { Initialized = What; }
   static ulong GetTick() { return Tick; }
+  static bool ControlLoopsInstalled() { return ControlLoop.size() ? true : false; }
  private:
   static std::vector<int> KeyBuffer;
   static bool Initialized;

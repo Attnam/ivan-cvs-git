@@ -18,6 +18,7 @@ class inputfile;
 class stack;
 class bodypart;
 class action;
+class square;
 
 typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -43,6 +44,7 @@ class slot
   virtual void EditWeight(long) = 0;
   virtual void PutInItem(item*);
   virtual void EditCarriedWeight(long) { }
+  virtual square* GetSquareUnder() const = 0;
  protected:
   item* Item;
 };
@@ -62,6 +64,7 @@ class stackslot : public slot
   virtual bool IsOnGround() const;
   virtual void EditVolume(long);
   virtual void EditWeight(long);
+  virtual square* GetSquareUnder() const;
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;
@@ -93,6 +96,7 @@ class characterslot : public slot
   virtual void EditVolume(long);
   virtual void EditWeight(long) { }
   virtual void EditCarriedWeight(long);
+  virtual square* GetSquareUnder() const;
  protected:
   character* Master;
 };
@@ -125,6 +129,7 @@ class gearslot : public slot
   virtual uchar GetEquipmentIndex() const { return EquipmentIndex; }
   virtual void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
   virtual void PutInItem(item*);
+  virtual square* GetSquareUnder() const;
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;
@@ -155,6 +160,7 @@ class actionslot : public slot
   void Init(action*);
   virtual void EditVolume(long);
   virtual void EditWeight(long);
+  virtual square* GetSquareUnder() const;
  protected:
   action* Action;
 };

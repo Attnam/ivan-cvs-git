@@ -37,6 +37,7 @@ class action;
 class go;
 class gweaponskill;
 class stackslot;
+class god;
 typedef std::list<stackslot*>::iterator stackiterator;
 template <class type> class database;
 
@@ -60,7 +61,6 @@ struct characterdatabase
   uchar Sex;
   ulong BloodColor;
   bool CanBeGenerated;
-  //bool HasInfraVision;
   uchar CriticalModifier;
   std::string StandVerb;
   bool CanOpen;
@@ -131,6 +131,7 @@ struct characterdatabase
   ushort ClassStates;
   bool CanBeWished;
   std::vector<std::string> Alias;
+  bool CreateDivineConfigurations;
 };
 
 class characterprototype
@@ -163,10 +164,11 @@ class characterprototype
 class character : public entity, public id
 {
  public:
+  friend class database<character>;
+  friend class corpse;
   typedef characterprototype prototype;
   typedef characterdatabase database;
   typedef std::map<ushort, characterdatabase> databasemap;
-  friend class corpse;
   character(donothing);
   virtual ~character();
   virtual character* Clone(bool = true, bool = true) const;
@@ -224,7 +226,6 @@ class character : public entity, public id
   virtual bool WizardMode();
   virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
   virtual long GetScore() const;
-  virtual wsquare* GetWSquareUnder() const;
   virtual long GetAP() const { return AP; }
   virtual long GetNP() const { return NP; }
   virtual short GetHP() const;
@@ -246,7 +247,6 @@ class character : public entity, public id
   virtual void BeTalkedTo(character*);
   virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
-  //virtual void DrawToTileBuffer(bool) const;
   virtual void HasBeenHitByItem(character*, item*, float);
   virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
@@ -260,7 +260,6 @@ class character : public entity, public id
   virtual void SetAP(long What) { AP = What; }
   virtual void SetIsPlayer(bool What) { Player = What; }
   virtual void SetNP(long);
-  virtual void SetSquareUnder(square* Square);
   virtual void SpillBlood(uchar);
   virtual void SpillBlood(uchar, vector2d);
   virtual void Vomit(ushort);
@@ -270,7 +269,6 @@ class character : public entity, public id
   virtual void BeKicked(character*, float, float, short, bool);
   virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(ushort) const;
-  //virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
   virtual void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
   virtual void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
@@ -279,10 +277,8 @@ class character : public entity, public id
   virtual bool EquipmentStateIsActivated(ushort What) const { return EquipmentState & What ? true : false; }
   virtual bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
   virtual void Faint();
-  //virtual void TemporaryPolymorphHandler();
   virtual void SetTemporaryStateCounter(ushort, ushort);
   virtual void DeActivateVoluntaryAction(const std::string& = "");
-  //virtual void EndTemporaryPolymorph();
   virtual void ActionAutoTermination();
   virtual team* GetTeam() const { return Team; }
   virtual void SetTeam(team*);
@@ -343,7 +339,7 @@ class character : public entity, public id
   virtual void RestoreHP();
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool ReceiveBodyPartDamage(character*, short, uchar, uchar, uchar = 8, bool = false, bool = false);
-  virtual bool BodyPartVital(ushort);
+  virtual bool BodyPartVital(ushort) const { return true; }
   virtual void RestoreBodyParts();
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
@@ -355,13 +351,6 @@ class character : public entity, public id
   virtual bool BodyPartCanBeSevered(ushort) const;
   virtual std::string GetName(uchar) const;
   virtual void ReceiveHeal(long);
-  /*virtual void TemporaryHaste(ushort);
-  virtual void EndTemporaryHaste();
-  virtual void TemporaryHasteHandler();*/
-  //virtual float GetAPStateMultiplier() const;
-  /*virtual void TemporarySlow(ushort);
-  virtual void TemporarySlowHandler();
-  virtual void EndTemporarySlow();*/
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   virtual item* GetBodyArmor() const { return 0; }
@@ -394,7 +383,6 @@ class character : public entity, public id
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;
   virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
-  virtual void SetDivineMaster(uchar);
   virtual std::string EquipmentName(ushort) const { return ""; }
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
@@ -412,7 +400,6 @@ class character : public entity, public id
   virtual void AddKoboldFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshHitMessage() const;
   virtual void AddBoneConsumeEndMessage() const;
-  //virtual ulong GetTotalWeight() const;
   virtual void AddInfo(felist&) const = 0;
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(ushort);
@@ -420,7 +407,7 @@ class character : public entity, public id
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
-  virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
+  virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
@@ -441,7 +428,6 @@ class character : public entity, public id
   DATABASEVALUE(uchar, Sex);
   DATABASEVALUE(ulong, BloodColor);
   DATABASEBOOL(CanBeGenerated);
-  //DATABASEBOOL(HasInfraVision);
   DATABASEVALUE(uchar, CriticalModifier);
   DATABASEVALUE(const std::string&, StandVerb);
   DATABASEBOOL(CanOpen);
@@ -512,7 +498,6 @@ class character : public entity, public id
   DATABASEBOOL(CanBeWished);
   DATABASEVALUE(const std::vector<std::string>&, Alias);
 
-  //virtual item* GetLifeSaver() const;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -558,7 +543,6 @@ class character : public entity, public id
   virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  //virtual void CalculateEquipmentStates();
   ushort GetConfig() const { return Config; }
 
   virtual void BeginTemporaryState(ushort, ushort);
@@ -613,13 +597,21 @@ class character : public entity, public id
   virtual void CalculateEquipmentState();
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  void SetConfig(ushort);
+  virtual god* GetMasterGod() const;
+
+  virtual square* GetSquareUnder() const { return SquareUnder; }
+  void SetSquareUnder(square* What) { SquareUnder = What; }
+  lsquare* GetLSquareUnder() const;
+  wsquare* GetWSquareUnder() const;
+
   virtual void PoisonedHandler();
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool);
   virtual void LoadDataBaseStats();
-  virtual void InstallDataBase();
+  void InstallDataBase();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor0(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -695,6 +687,7 @@ class character : public entity, public id
   static void (character::*BeginStateHandler[STATES])();
   static void (character::*EndStateHandler[STATES])();
   static void (character::*StateHandler[STATES])();
+  square* SquareUnder;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

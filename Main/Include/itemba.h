@@ -72,6 +72,7 @@ struct itemdatabase
   uchar Roundness;
   ushort GearStates;
   bool IsTwoHanded;
+  bool CreateDivineConfigurations;
 };
 
 class itemprototype
@@ -109,15 +110,12 @@ class itemprototype
 class item : public object
 {
  public:
+  friend class database<item>;
   typedef itemprototype prototype;
   typedef itemdatabase database;
   typedef std::map<ushort, itemdatabase> databasemap;
   item(donothing);
   virtual float GetWeaponStrength() const;
-  //virtual void DrawToTileBuffer(bool) const;
-  //virtual void DrawToTileBuffer(vector2d Pos, bool) const;
-  //virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  //virtual void DrawTo(bitmap*, vector2d, bool = true) const;
   virtual bool Open(character*);
   virtual bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
@@ -204,12 +202,10 @@ class item : public object
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
-  //virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
@@ -264,13 +260,9 @@ class item : public object
   DATABASEVALUE(ushort, GearStates);
   DATABASEBOOL(IsTwoHanded);
 
-  //virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
-  //virtual uchar GetVisualFlags() const { return VisualFlags; }
-  //virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
-  //  virtual void HandleVisualEffects();
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual uchar GetVisualEffects() const { return VisualEffects; }
   virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
@@ -290,15 +282,15 @@ class item : public object
   virtual bool IsVisible() const { return true; }
   virtual void SetIsVisible(bool) { }
 
+  virtual square* GetSquareUnder() const;
+  lsquare* GetLSquareUnder() const;
+
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
   virtual void Initialize(uchar, bool, bool);
   virtual void InstallDataBase();
-  virtual void GenerateMaterials();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
-  virtual ushort RandomizeMaterialConfiguration();
-  virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
   virtual bool ShowMaterial() const;
   slot* Slot;
   bool Cannibalised;

@@ -125,7 +125,7 @@ void seges::PrayGoodEffect()
 	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
 	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
 	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-	  ADD_MESSAGE("You grow a new %s", NewBodyPart->GetNameSingular().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str()); 
 	}
     }
 }
@@ -209,7 +209,7 @@ void silva::PrayGoodEffect()
 	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
 	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
 	  NewBodyPart->SetHP(1);
-	  ADD_MESSAGE("You grow a new %s", NewBodyPart->GetNameSingular().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str()); 
 	}
       return;
     }
@@ -272,7 +272,7 @@ void silva::PrayGoodEffect()
 
 	    if(Walkables > 6)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new earth);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new wall(EARTH));
 
 		if(Char)
 		  {

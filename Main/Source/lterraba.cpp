@@ -10,6 +10,8 @@
 #include "whandler.h"
 #include "save.h"
 #include "proto.h"
+#include "error.h"
+#include "database.h"
 
 bool olterrain::GoUp(character* Who) const // Try to go up
 {
@@ -93,10 +95,22 @@ bool olterrain::GoDown(character* Who) const // Try to go down
     }
 }
 
+void lterrain::Load(inputfile& SaveFile)
+{
+  SquareUnder = game::GetSquareInLoad();
+  object::Load(SaveFile);
+}
+
 void glterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   lterrain::Save(SaveFile);
+}
+
+void glterrain::Load(inputfile& SaveFile)
+{
+  lterrain::Load(SaveFile);
+  InstallDataBase();
 }
 
 void olterrain::Save(outputfile& SaveFile) const
@@ -109,35 +123,25 @@ void olterrain::Save(outputfile& SaveFile) const
 void olterrain::Load(inputfile& SaveFile)
 {
   lterrain::Load(SaveFile);
+  InstallDataBase();
   SaveFile >> HP;
 }
-
-/*void glterrain::DrawToTileBuffer(bool Animate) const
-{
-  if(!Animate || AnimationFrames == 1)
-    Picture[0]->MaskedBlit(igraph::GetTileBuffer());
-  else
-    Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(igraph::GetTileBuffer());
-}
-
-void olterrain::DrawToTileBuffer(bool Animate) const
-{
-  if(!Animate || AnimationFrames == 1)
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
-  else
-    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
-}*/
 
 vector2d lterrain::GetPos() const
 {
   return GetLSquareUnder()->GetPos();
 }
 
-bool glterrain::SitOn(character* Sitter)
+bool lterrain::SitOn(character* Sitter)
 {
-  ADD_MESSAGE("You sit for some time. Nothing happens.");
-  Sitter->EditAP(-1000);
-  return true;
+  if(GetSitMessage() != "")
+    {
+      ADD_MESSAGE("%s", GetSitMessage().c_str());
+      Sitter->EditAP(-1000);
+      return true;
+    }
+  else
+    return false;
 }
 
 void olterrain::Break()
@@ -164,6 +168,7 @@ void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load
   if(!Load)
     {
       Config = NewConfig;
+      InstallDataBase();
       RandomizeVisualEffects();
 
       if(CallGenerateMaterials)
@@ -176,12 +181,12 @@ void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load
     UpdatePictures();
 }
 
-glterrainprototype::glterrainprototype()
+glterrainprototype::glterrainprototype(glterrainprototype* Base) : Base(Base)
 {
   Index = protocontainer<glterrain>::Add(this);
 }
 
-olterrainprototype::olterrainprototype()
+olterrainprototype::olterrainprototype(olterrainprototype* Base) : Base(Base)
 {
   Index = protocontainer<olterrain>::Add(this);
 }
@@ -197,4 +202,25 @@ bool lterrain::CanBeSeenBy(character* Who) const
     return CanBeSeenByPlayer();
   else
     return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+}
+
+void glterrain::InstallDataBase()
+{
+  ::database<glterrain>::InstallDataBase(this);
+}
+
+void olterrain::InstallDataBase()
+{
+  ::database<olterrain>::InstallDataBase(this);
+}
+
+void olterrain::ShowRestMessage(character*) const
+{
+  if(GetRestMessage() != "")
+    ADD_MESSAGE("%s", GetRestMessage().c_str());
+}
+
+lsquare* lterrain::GetLSquareUnder() const
+{
+  return static_cast<lsquare*>(SquareUnder);
 }

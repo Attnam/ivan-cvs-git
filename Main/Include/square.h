@@ -53,12 +53,11 @@ class square
   std::string MonsterDeathVerb(character*) const;
   std::string ScoreEntry(character*) const;
   uchar GetEntryDifficulty() const;
-  uchar RestModifier() const;
+  uchar GetRestModifier() const;
   ushort GetAnimatedEntities() const { return AnimatedEntities; }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(character*) const;
-  //void DrawCharacterSymbols();
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

@@ -26,7 +26,7 @@ item
 	/* Obligatory: FormModifier */
 	NPModifier = 10000;
 	/* Obligatory: DefaultSize */
-	DefaultMainVolume;
+	/* Obligatory: DefaultMainVolume */
 	DefaultSecondaryVolume = 0;
 	DefaultContainedVolume = 0;
 	/* Obligatory: BitmapPos */
@@ -50,6 +50,7 @@ item
 	/* Obligatory: Roundness */
 	GearStates = 0;
 	IsTwoHanded = false;
+	CreateDivineConfigurations = false;
 }
 
 materialcontainer
@@ -97,19 +98,19 @@ holybanana /* materialcontainer->banana-> */
 
 lantern
 {
-	DefaultSize = 30;
+        DefaultSize = 30;
 	Possibility = 50;
 	InHandsPic = 160, 160;
-	Category = TOOL;
+        Category = TOOL;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
-	/* BitmapPos depends on being on the wall or not */
+        /* BitmapPos depends on being on the wall or not */
 	FormModifier = 30;
 	Price = 50;
 	BaseEmitation = 300;
 	OfferModifier = 10000;
 	NameSingular = "lantern";
-	MainMaterialConfig == GLASS;
+        MainMaterialConfig == GLASS;
 	Alias == "light";
 	Roundness = 75;
 }
@@ -810,6 +811,8 @@ holybook
 	Price = 200;
 	Roundness = 70;
 	IsTwoHanded = true;
+	CreateDivineConfigurations = true;
+	IsAbstract = true;
 }
 
 fiftymillionroubles
@@ -895,7 +898,7 @@ mine /*materialcontainer-> */
 	Possibility = 20;
 	Category = TOOL;
 	DefaultMainVolume = 100;
-	DefaultSecondaryVolume = 10000;
+	DefaultContainedVolume = 10000;
 	StrengthModifier = 50;
 	BitmapPos = 32, 288;
 	FormModifier = 30;
@@ -1260,6 +1263,7 @@ chest
 	MainMaterialConfig == WOOD;
 	Roundness = 50;
 	DefaultMainVolume = 100000;
+	BitmapPos = 48, 80;
 }
 
 wandofdoorcreation /* wand-> */
@@ -1276,7 +1280,6 @@ beartrap
 	NameSingular = "bear trap";
 	Possibility = 100;
 	CanBeGeneratedInContainer = false; /* Activated code might cause problems otherwise */
-	IsPickableByAI = false;
 	BitmapPos = 32, 304;
 	IsTwoHanded = true;
 	DefaultSize = 30;
@@ -1298,12 +1301,12 @@ helmet
 	DefaultSize = 30;
 	Possibility = 40;
 	Category = HELMET;
-	DefaultMainVolume = 600;
+        DefaultMainVolume = 600;
 	StrengthModifier = 100;
 	BitmapPos = 16, 384;
 	FormModifier = 35;
 	OfferModifier = 4000;
-	NameSingular = "helmet";
+        NameSingular = "helmet";
 	MainMaterialConfig = { 9, 	BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
 	MaterialConfigChances = { 9, 	30,	10,	10,	2,	4,	20,	5,	3,	30; }
 	Roundness = 50;

@@ -17,18 +17,11 @@
 #include "whandler.h"
 #include "materba.h"
 #include "save.h"
+#include "database.h"
 
 item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()), CarriedWeight(0)
 {
 }
-
-/*void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
-{
-  if(!Animate || AnimationFrames == 1)
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
-  else
-    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
-}*/
 
 bool item::IsConsumable(const character* Eater) const
 {
@@ -151,11 +144,6 @@ float item::GetWeaponStrength() const
   return sqrt(float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight());
 }
 
-/*void item::DrawToTileBuffer(bool Animate) const
-{
-  PositionedDrawToTileBuffer(CENTER, Animate);
-}*/
-
 bool item::Apply(character* Applier)
 {
   if(Applier->IsPlayer())
@@ -231,42 +219,6 @@ void item::TeleportRandomly()
 
   MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(0, true, false))->GetStack());
 }
-
-/*void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
-{
-  vector2d From, To, BlitSize;
-
-  if(Pos.X < 0)
-    {
-      From.X = -Pos.X;
-      To.X = 0;
-      BlitSize.X = 16 + Pos.X;
-    }
-  else
-    {
-      From.X = 0;
-      To.X = Pos.X;
-      BlitSize.X = 16 - Pos.X;
-    }
-
-  if(Pos.Y < 0)
-    {
-      From.Y = -Pos.Y;
-      To.Y = 0;
-      BlitSize.Y = 16 + Pos.Y;
-    }
-  else
-    {
-      From.Y = 0;
-      To.Y = Pos.Y;
-      BlitSize.Y = 16 - Pos.Y;
-    }
-
-  if(!Animate || AnimationFrames == 1)
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
-  else
-    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
-}*/
 
 ushort item::GetStrengthValue() const
 {
@@ -424,48 +376,12 @@ itemprototype::itemprototype(itemprototype* Base) : Base(Base)
   Index = protocontainer<item>::Add(this);
 }
 
-void item::InstallDataBase()
-{
-  if(!Config)
-    DataBase = GetProtoType()->GetDataBase();
-  else
-    {
-      const item::databasemap& Configs = GetProtoType()->GetConfig();
-      item::databasemap::const_iterator i = Configs.find(Config);
-
-      if(i != Configs.end())
-	DataBase = &i->second;
-      else
-	ABORT("Undefined item configuration #%d sought!", Config);
-    }
-}
-
 bool item::ShowMaterial() const
 {
   if(GetMainMaterialConfig().size() == 1)
     return GetMainMaterial()->GetConfig() != GetMainMaterialConfig()[0];
   else
     return true;
-}
-
-void item::GenerateMaterials()
-{
-  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
-}
-
-ushort item::RandomizeMaterialConfiguration()
-{
-  return GetMaterialConfigChances().size() > 1 ? femath::WeightedRand(GetMaterialConfigChances()) : 0;
-}
-
-void item::InitChosenMaterial(material*& Material, const std::vector<long>& MaterialConfig, ulong DefaultVolume, ushort Chosen)
-{
-  if(MaterialConfig.size() == 1)
-    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[0]), DefaultVolume);
-  else if(MaterialConfig.size() == GetMaterialConfigChances().size())
-    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
-  else
-    ABORT("MaterialConfig array of illegal size detected!");
 }
 
 std::string item::GetConsumeVerb() const
@@ -510,14 +426,6 @@ bool item::IsSimiliarTo(item* Item) const
   return Item->GetType() == GetType() && Item->GetConfig() == GetConfig();
 }
 
-/*void item::DrawTo(bitmap* Bitmap, vector2d Pos, bool Animate) const
-{
-  if(!Animate || AnimationFrames == 1)
-    Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
-  else
-    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
-}*/
-
 bool item::CanBeSeenByPlayer() const
 {
   return GetSquareUnder()->CanBeSeenByPlayer();
@@ -539,20 +447,20 @@ std::string item::Description(uchar Case) const
     return "something";
 }
 
-/*void item::Draw(bitmap* Bitmap, vector2d Pos, bool AllowAlpha, bool AllowAnimate) const
+void item::InstallDataBase()
 {
-  if(AllowAlpha)
-    {
-      if(!AllowAnimate || AnimationFrames == 1)
-	Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
-      else
-	Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
-    }
+  ::database<item>::InstallDataBase(this);
+}
+
+square* item::GetSquareUnder() const
+{
+  if(Slot)
+    return Slot->GetSquareUnder();
   else
-    {
-      if(!AllowAnimate || AnimationFrames == 1)
-	Picture[0]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16);
-      else
-	Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16);
-    }
-}*/
+    return 0;
+}
+
+lsquare* item::GetLSquareUnder() const
+{
+  return static_cast<lsquare*>(Slot->GetSquareUnder());
+}

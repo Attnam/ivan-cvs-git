@@ -200,3 +200,9 @@ void material::SetVolume(ulong What)
       MotherEntity->EditWeight(long(Weight) - OldWeight);
     }
 }
+
+void material::SetConfig(ushort NewConfig)
+{
+  Config = NewConfig;
+  InstallDataBase();
+}

@@ -13,13 +13,13 @@ outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fo
     ABORT("Can't open %s for output!", FileName.c_str());
 }
 
-inputfile::inputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb"))
+inputfile::inputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb")), FileName(FileName)
 {
   if(AbortOnErr && !IsOpen())
     ABORT("File %s not found!", FileName.c_str());
 }
 
-/* This function is a gum solution */
+/* This function is a gum solution. */
 
 bool inputfile::Eof()
 {
@@ -58,7 +58,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
       if(Eof())
 	{
 	  if(AbortOnEOF)
-	    ABORT("Unexpected end of script file!");
+	    ABORT("Unexpected end of file %s!", FileName.c_str());
 
 	  return;
 	}
@@ -99,12 +99,14 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      if(!Eof())
 		if(Peek() == '*')
 		  {
+		    long StartPos = TellPos();
+
 		    for(;;)
 		      {
 			Char = Get();
 
 			if(Eof())
-			  ABORT("Script error: Unterminated comment!");
+			  ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
 			if(Char == '*' && Peek() == '/')
 			  {
@@ -132,10 +134,11 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 
 	  if(Char == '"')
 	    {
+	      long StartPos = TellPos();
 	      Get();
 
 	      if(Eof())
-		ABORT("Script error: Unterminated string.");
+		ABORT("Unterminated string in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
 	      if(Peek() == '"')
 		{
@@ -148,7 +151,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 		  Char = Get();
 
 		  if(Eof())
-		    ABORT("Script error: Unterminated string.");
+		    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
 		  if(Peek() == '"')
 		    if(Char == '\\')
@@ -191,7 +194,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
       if(Eof())
 	{
 	  if(AbortOnEOF)
-	    ABORT("Unexpected end of script file!");
+	    ABORT("Unexpected end of file %s!", FileName.c_str());
 
 	  return 0;
 	}
@@ -208,12 +211,14 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 	      if(!Eof())
 		if(Peek() == '*')
 		  {
+		    long StartPos = TellPos();
+
 		    for(;;)
 		      {
 			Char = Get();
 
 			if(Eof())
-			  ABORT("Script error: Unterminated comment!");
+			  ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
 			if(Char == '*' && Peek() == '/')
 			  {
@@ -319,7 +324,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  return Value;
 	}
 
-      ABORT("Odd script value \"%s\" encountered!", Word.c_str());
+      ABORT("Odd numeric value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
     }
 }
 
@@ -342,7 +347,7 @@ bool inputfile::ReadBool()
     ReadWord(Word);
 
   if(ReadWord() != ";")
-    ABORT("Bool value terminated incorrectly!");
+    ABORT("Bool value terminated incorrectly in file %s, line %d!", FileName.c_str(), TellLine());
 
   if(Word == "true" || Word == "1")
     return true;
@@ -350,7 +355,7 @@ bool inputfile::ReadBool()
   if(Word == "false" || Word == "0")
     return false;
 
-  ABORT("Odd bool value \"%s\" encountered!", Word.c_str());
+  ABORT("Odd bool value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
 
   return RAND() % 2 ? true : false;
 }
@@ -417,7 +422,7 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& Va
     }
 
   if(Word != "{")
-    ABORT("Array syntax error \"%s\" found!", Word.c_str());
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
   ushort Size = SaveFile.ReadNumber(ValueMap);
 
@@ -425,7 +430,7 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& Va
     Vector.push_back(SaveFile.ReadNumber(ValueMap));
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Illegal array terminator \"%s\" encountered!", Word.c_str());
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 }
 
 void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
@@ -442,13 +447,13 @@ void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const value
       Vector.push_back(SaveFile.ReadWord());
 
       if(SaveFile.ReadWord() != ";")
-	ABORT("Array syntax error \"%s\" found!", Word.c_str());
+	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
       return;
     }
 
   if(Word != "{")
-    ABORT("Array syntax error \"%s\" found!", Word.c_str());
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
   ushort Size = SaveFile.ReadNumber(ValueMap);
 
@@ -458,9 +463,25 @@ void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const value
       SaveFile.ReadWord(Word);
 
       if(Word != "," && Word != ";")
-	ABORT("Array syntax error \"%s\" found!", Word.c_str());
+	ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
     }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Illegal array terminator \"%s\" encountered!", Word.c_str());
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+}
+
+ulong inputfile::TellLineOfPos(long Pos)
+{
+  ulong Line = 1;
+  long BackupPos = TellPos();
+  SeekPosBeg(0);
+
+  while(TellPos() != Pos)
+    if(Get() == '\n')
+      ++Line;
+
+  if(TellPos() != BackupPos)
+    SeekPosBeg(BackupPos);
+
+  return Line;
 }

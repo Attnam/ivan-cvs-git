@@ -21,13 +21,9 @@ class entity
  public:
   entity(bool);
   virtual ~entity();
-  void Load(inputfile&);
   virtual void Be() { }
   bool Exists() const { return ExistsBool; }
   void SendToHell();
-  square* GetSquareUnder() const { return SquareUnder; }
-  virtual void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const;
   bool HasBe() const { return HasBeBool; }
   void SetHasBe(bool);
   bool IsEnabled() const { return Exists() && HasBe(); }
@@ -37,10 +33,10 @@ class entity
   ulong GetWeight() const { return Weight; }
   void SetWeight(ulong What) { Weight = What; }
   virtual void EditWeight(long What) { Weight += What; }
+  virtual square* GetSquareUnder() const = 0;
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool InPool;
-  square* SquareUnder;
   bool ExistsBool;
   bool HasBeBool;
   ulong Volume;

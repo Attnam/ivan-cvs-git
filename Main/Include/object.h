@@ -20,6 +20,7 @@ class inputfile;
 class bitmap;
 class lsquare;
 class square;
+class god;
 
 class object : public entity, public id
 {
@@ -60,6 +61,10 @@ class object : public entity, public id
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual god* GetMasterGod() const;
+  virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
+  virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
+  void SetConfig(ushort);
  protected:
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -72,17 +77,21 @@ class object : public entity, public id
   bool CalculateHasBe() const;
   virtual uchar GetSpecialFlags(ushort) const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex(ushort) const = 0;
-  virtual ushort GetMaterialColor0(ushort) const;
-  virtual ushort GetMaterialColor1(ushort) const { return 0; }
-  virtual ushort GetMaterialColor2(ushort) const { return 0; }
-  virtual ushort GetMaterialColor3(ushort) const { return 0; }
+  virtual ushort GetMaterialColorA(ushort) const;
+  virtual ushort GetMaterialColorB(ushort) const { return 0; }
+  virtual ushort GetMaterialColorC(ushort) const { return 0; }
+  virtual ushort GetMaterialColorD(ushort) const { return 0; }
   virtual uchar GetMaxAlpha(ushort) const { return 255; }
   virtual uchar GetBaseAlpha(ushort) const { return 255; }
-  virtual uchar GetAlpha0(ushort) const;
-  virtual uchar GetAlpha1(ushort) const { return 255; }
-  virtual uchar GetAlpha2(ushort) const { return 255; }
-  virtual uchar GetAlpha3(ushort) const { return 255; }
+  virtual uchar GetAlphaA(ushort) const;
+  virtual uchar GetAlphaB(ushort) const { return 255; }
+  virtual uchar GetAlphaC(ushort) const { return 255; }
+  virtual uchar GetAlphaD(ushort) const { return 255; }
   virtual std::string GetMaterialDescription(bool) const;
+  virtual ushort RandomizeMaterialConfiguration();
+  virtual void GenerateMaterials();
+  virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
+  virtual void InstallDataBase() = 0;
   std::string ContainerPostFix() const;
   std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;

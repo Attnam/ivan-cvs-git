@@ -46,7 +46,6 @@ class action
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GetRestRegenerationBonus() const { return false; }
-  //virtual ulong GetWeight() const { return 0; }
   virtual void DropUsedItems() { }
   virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
@@ -60,7 +59,6 @@ class action
   void SetVolume(ulong What) { Volume = What; }
   ulong GetWeight() const { return Weight; }
   void SetWeight(ulong What) { Weight = What; }
-  virtual void SetSquareUnder(square*) {}
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
  protected:

@@ -83,9 +83,6 @@ void dungeon::PrepareLevel(ushort Index)
 
       if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
-
-      //game::UpdateCamera();
-      //game::GetCurrentArea()->SendNewDrawRequest();
     }
 }
 

@@ -32,7 +32,6 @@ class wterrain
   virtual std::string GetNameStem() const = 0;
   virtual std::string GetArticle() const { return "a"; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
-  //virtual ushort GetType() const = 0;
   wsquare* WSquareUnder;
 };
 
@@ -53,7 +52,6 @@ class gwterrain : public wterrain, public gterrain
  public:
   typedef gwterrainprototype prototype;
   virtual void Save(outputfile&) const;
-  //virtual void DrawToTileBuffer(bool) const;
   void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual uchar Priority() const = 0;
   virtual uchar GetEntryDifficulty() const { return 10; }
@@ -78,7 +76,6 @@ class owterrain : public wterrain, public oterrain
  public:
   typedef owterrainprototype prototype;
   virtual void Save(outputfile&) const;
-  //virtual void DrawToTileBuffer(bool) const;
   void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;

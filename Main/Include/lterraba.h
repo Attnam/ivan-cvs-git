@@ -21,89 +21,185 @@ class inputfile;
 class glterrain;
 class olterrain;
 class item;
+template <class type> class database;
+
+struct terraindatabase
+{
+  void InitDefaults() { IsAbstract = false; }
+  vector2d BitmapPos;
+  std::string Article;
+  std::string Adjective;
+  std::string AdjectiveArticle;
+  std::string NameSingular;
+  std::string NamePlural;
+  std::string PostFix;
+  uchar ArticleMode;
+  std::vector<long> MainMaterialConfig;
+  std::vector<long> SecondaryMaterialConfig;
+  std::vector<long> ContainedMaterialConfig;
+  std::vector<long> MaterialConfigChances;
+  bool IsAbstract;
+  uchar OKVisualEffects;
+  ushort MaterialColorB;
+  ushort MaterialColorC;
+  ushort MaterialColorD;
+  std::string SitMessage;
+  ulong DefaultMainVolume;
+  ulong DefaultSecondaryVolume;
+  ulong DefaultContainedVolume;
+  bool CreateDivineConfigurations;
+  bool ShowMaterial;
+};
 
 /* Presentation of the lterrain class & subclasses */
 
 class lterrain : public object
 {
  public:
+  lterrain() : SquareUnder(0) { }
+  virtual void Load(inputfile&);
   virtual bool Open(character*) { return false; }
   virtual bool Close(character*) { return false; }
   virtual vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
-  virtual bool CanBeOffered() const { return false; }
-  virtual bool CanBeDug() const { return false; }
+  virtual bool AcceptsOffers() const { return false; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool Polymorph(character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
-  virtual void SetDivineMaster(uchar) { }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(character*) const;
+  virtual const std::string& GetSitMessage() const = 0;
+  virtual bool SitOn(character*);
+
+  virtual square* GetSquareUnder() const { return SquareUnder; }
+  void SetSquareUnder(square* What) { SquareUnder = What; }
+  lsquare* GetLSquareUnder() const;
+
  protected:
-  virtual void GenerateMaterials() = 0;
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }
-  virtual ulong GetDefaultMainVolume() const { return 10000000; }
-  virtual bool ShowMaterial() const { return true; }
+  square* SquareUnder;
+};
+
+struct glterraindatabase : public terraindatabase
+{
 };
 
 class glterrainprototype
 {
  public:
-  glterrainprototype();
+  friend class database<glterrain>;
+  glterrainprototype(glterrainprototype*);
   virtual glterrain* Clone(ushort = 0, bool = true, bool = false) const = 0;
   glterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
+  PROTODATABASEBOOL(IsAbstract);
+  PROTODATABASEBOOL(CreateDivineConfigurations);
+  const glterraindatabase* GetDataBase() const { return &DataBase; }
+  const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
+  const glterrainprototype* GetBase() const { return Base; }
  protected:
   ushort Index;
+  glterraindatabase DataBase;
+  glterrainprototype* Base;
+  std::map<ushort, glterraindatabase> Config;
 };
 
 class glterrain : public lterrain, public gterrain
 {
  public:
+  friend class database<glterrain>;
   typedef glterrainprototype prototype;
+  typedef glterraindatabase database;
+  typedef std::map<ushort, glterraindatabase> databasemap;
   glterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  virtual bool SitOn(character*);
+  virtual void Load(inputfile&);
   virtual uchar GetEntryDifficulty() const { return 1; }
-  virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  //virtual void DrawToTileBuffer(bool) const;
+  virtual const prototype* GetProtoType() const;
+  const database* GetDataBase() const { return DataBase; }
+
+  DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
+  DATABASEVALUE(std::string, Article);
+  DATABASEVALUE(std::string, Adjective);
+  DATABASEVALUE(std::string, AdjectiveArticle);
+  DATABASEVALUE(std::string, NameSingular);
+  DATABASEVALUE(std::string, NamePlural);
+  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(uchar, ArticleMode);
+  DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
+  DATABASEVALUE(uchar, OKVisualEffects);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorB, ushort);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorC, ushort);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorD, ushort);
+  DATABASEVALUE(const std::string&, SitMessage);
+  DATABASEVALUE(ulong, DefaultMainVolume);
+  DATABASEVALUE(ulong, DefaultSecondaryVolume);
+  DATABASEVALUE(ulong, DefaultContainedVolume);
+  DATABASEBOOL(ShowMaterial);
+
+  static glterrain* Clone(ushort, bool, bool) { return 0; }
+
  protected:
+  virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
+  const database* DataBase;
+};
+
+struct olterraindatabase : public terraindatabase
+{
+  std::string DigMessage;
+  bool CanBeDug;
+  bool IsSafeToDestroy;
+  uchar RestModifier;
+  std::string RestMessage;
 };
 
 class olterrainprototype
 {
  public:
-  olterrainprototype();
+  friend class database<olterrain>;
+  olterrainprototype(olterrainprototype*);
   virtual olterrain* Clone(ushort = 0, bool = true, bool = false) const = 0;
   olterrain* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
+  PROTODATABASEBOOL(IsAbstract);
+  PROTODATABASEBOOL(CreateDivineConfigurations);
+  const olterraindatabase* GetDataBase() const { return &DataBase; }
+  const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
+  const olterrainprototype* GetBase() const { return Base; }
  protected:
   ushort Index;
+  olterraindatabase DataBase;
+  olterrainprototype* Base;
+  std::map<ushort, olterraindatabase> Config;
 };
 
 class olterrain : public lterrain, public oterrain
 {
  public:
+  friend class database<olterrain>;
   typedef olterrainprototype prototype;
+  typedef olterraindatabase database;
+  typedef std::map<ushort, olterraindatabase> databasemap;
   olterrain(donothing) : HP(1000) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual uchar GetDivineMaster() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual void BeKicked(character*, float) { }
   virtual bool IsDoor() const { return false; }
-  virtual bool SitOn(character*) { return false; }
   virtual bool HasEatEffect() const { return false; } 
   virtual bool HasDrinkEffect() const { return false; } 
   virtual bool Eat(character*) { return false; }
@@ -116,32 +212,66 @@ class olterrain : public lterrain, public oterrain
   virtual short GetHP() const { return HP; }
   virtual void SetHP(short What) { HP = What; }
   virtual void EditHP(short What) { HP += What; }
-  virtual bool IsSafeToDestroy() const { return false; }
-  virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool IsEmpty() const { return false; }
-  //virtual void DrawToTileBuffer(bool) const;
+  virtual const prototype* GetProtoType() const;
+  const database* GetDataBase() const { return DataBase; }
+  virtual void ShowRestMessage(character*) const;
+
+  DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
+  DATABASEVALUE(std::string, Article);
+  DATABASEVALUE(std::string, Adjective);
+  DATABASEVALUE(std::string, AdjectiveArticle);
+  DATABASEVALUE(std::string, NameSingular);
+  DATABASEVALUE(std::string, NamePlural);
+  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(uchar, ArticleMode);
+  DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, ContainedMaterialConfig);
+  DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
+  DATABASEVALUE(uchar, OKVisualEffects);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorB, ushort);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorC, ushort);
+  DATABASEVALUEWITHPARAMETER(ushort, MaterialColorD, ushort);
+  DATABASEVALUE(const std::string&, SitMessage);
+  DATABASEVALUE(ulong, DefaultMainVolume);
+  DATABASEVALUE(ulong, DefaultSecondaryVolume);
+  DATABASEVALUE(ulong, DefaultContainedVolume);
+  DATABASEBOOL(ShowMaterial);
+
+  DATABASEVALUE(std::string, DigMessage);
+  DATABASEBOOL(CanBeDug);
+  DATABASEBOOL(IsSafeToDestroy);
+  DATABASEVALUE(uchar, RestModifier);
+  DATABASEVALUE(std::string, RestMessage);
+
+  static olterrain* Clone(ushort, bool, bool) { return 0; }
+
  protected:
+  virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }
+  const database* DataBase;
   short HP;
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define LTERRAIN_PROTOTYPE(name, protobase)\
+#define LTERRAIN_PROTOTYPE(name, baseproto, protobase)\
   \
   class name##_prototype : public protobase::prototype\
   {\
    public:\
-    virtual protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) const { return new name(Config, CallGenerateMaterials, Load); }\
+    typedef protobase::prototype basetype;\
+    name##_prototype(basetype* Base) : basetype(Base) { }\
+    virtual protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) const { return name::Clone(Config, CallGenerateMaterials, Load); }\
     virtual std::string ClassName() const { return #name; }\
-  } name##_ProtoType;\
+  } name##_ProtoType(baseproto);\
   \
   const protobase::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define LTERRAIN_PROTOTYPE(name, protobase)
+#define LTERRAIN_PROTOTYPE(name, baseproto, protobase)
 
 #endif
 
@@ -154,8 +284,9 @@ name : public base\
   name(donothing D) : base(D) { }\
   static ushort StaticType();\
   virtual const prototype* GetProtoType() const;\
+  static protobase* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
   data\
-}; LTERRAIN_PROTOTYPE(name, protobase);
+}; LTERRAIN_PROTOTYPE(name, &base##_ProtoType, protobase);
 
 #define GLTERRAIN(name, base, data)\
 \

@@ -165,9 +165,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  continue;
 	case 2:
-	  //SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::IsRunning()));
 	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, WHITE, LIGHTGRAY, DARKGRAY, !game::IsRunning(), &ContrastHandler);
-	  //if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = false;
 	  continue;
 	case 3:

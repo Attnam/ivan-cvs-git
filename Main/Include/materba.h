@@ -50,6 +50,7 @@ struct materialdatabase
   uchar HitMessage;
   ulong ExplosivePower;
   uchar Alpha;
+  bool CreateDivineConfigurations;
 };
 
 class materialprototype
@@ -142,8 +143,9 @@ class material
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   bool IsSameAs(material* What) const { return What->GetConfig() == GetConfig(); }
+  void SetConfig(ushort);
  protected:
-  virtual void InstallDataBase();
+  void InstallDataBase();
   const database* DataBase;
   entity* MotherEntity;
   ulong Volume;

@@ -8,6 +8,9 @@ std::vector<olterrain::prototype*> protocontainer<olterrain>::ProtoData;
 valuemap protocontainer<glterrain>::CodeNameMap;
 valuemap protocontainer<olterrain>::CodeNameMap;
 
+LTERRAIN_PROTOTYPE(glterrain, 0, glterrain);
+LTERRAIN_PROTOTYPE(olterrain, 0, olterrain);
+
 #include "femath.h"
 #include "lterrade.h"
 
@@ -100,19 +103,7 @@ bool door::Close(character* Closer)
 void altar::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   olterrain::Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
-  igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetDivineMaster() << 4, 0, Pos, 16, 16, Luminance);
-}
-
-void altar::Load(inputfile& SaveFile)
-{
-  olterrain::Load(SaveFile);
-  SaveFile >> DivineMaster;
-}
-
-void altar::Save(outputfile& SaveFile) const
-{
-  olterrain::Save(SaveFile);
-  SaveFile << DivineMaster;
+  igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
 bool stairsup::GoUp(character* Who) const // Try to go up
@@ -194,7 +185,7 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
 	return false;
 
       if(game::GetCurrent() == 8)
-	Who->GetLSquareUnder()->ChangeLTerrain(new parquet, new empty);
+	Who->GetLSquareUnder()->ChangeLTerrain(new solidterrain(PARQUET), new empty);
 
       game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
       game::GetCurrentDungeon()->SaveLevel();
@@ -311,10 +302,10 @@ void door::MakeNotWalkable()
 
 void altar::StepOn(character* Stepper)
 {
-  if(Stepper->IsPlayer() && DivineMaster && !game::GetGod(DivineMaster)->GetKnown())
+  if(Stepper->IsPlayer() && !GetMasterGod()->GetKnown())
     {
-      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", game::GetGod(DivineMaster)->Name().c_str(), game::GetGod(DivineMaster)->Description().c_str());
-      game::GetGod(DivineMaster)->SetKnown(true);
+      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->Name().c_str(), GetMasterGod()->Description().c_str());
+      GetMasterGod()->SetKnown(true);
     }
 }
 
@@ -361,20 +352,20 @@ void altar::BeKicked(character* Kicker, float)
 
   if(Kicker->IsPlayer())
     {
-      game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerKickedAltar();
+      GetMasterGod()->PlayerKickedAltar();
 
-      if(GetLSquareUnder()->GetDivineMaster() > 1)
-	game::GetGod(GetLSquareUnder()->GetDivineMaster() - 1)->PlayerKickedFriendsAltar();
+      if(GetConfig() > 1)
+	game::GetGod(GetConfig() - 1)->PlayerKickedFriendsAltar();
 
-      if(GetLSquareUnder()->GetDivineMaster() < game::GetGods() - 1)
-	game::GetGod(GetLSquareUnder()->GetDivineMaster() + 1)->PlayerKickedFriendsAltar();
+      if(GetConfig() < game::GetGods() - 1)
+	game::GetGod(GetConfig() + 1)->PlayerKickedFriendsAltar();
     }
 }
 
 void altar::ReceiveVomit(character* Who)
 {
   if(Who->IsPlayer())
-    game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerVomitedOnAltar();
+    GetMasterGod()->PlayerVomitedOnAltar();
 }
 
 std::string door::GetAdjective(bool Articled) const
@@ -392,20 +383,6 @@ std::string door::GetAdjective(bool Articled) const
   return Adj;
 }
 
-bool couch::SitOn(character* Sitter)
-{
-  ADD_MESSAGE("The couch is extremely soft and confortable. You relax well.");
-  Sitter->EditAP(-1000);
-  return true;
-}
-
-bool poolterrain::SitOn(character* Sitter)
-{
-  ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
-  Sitter->EditAP(-1000);
-  return true;
-}
-
 void stairsup::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer()) 
@@ -418,13 +395,6 @@ void stairsdown::StepOn(character* Stepper)
     ADD_MESSAGE("There is stairway leading downwards here.");
 }
 
-bool bookcase::SitOn(character* Sitter)
-{
-  ADD_MESSAGE("The bookcase is very unconfortable to sit on.");
-  Sitter->EditAP(-1000);
-  return true;
-}
-
 bool fountain::SitOn(character* Sitter)
 {
   if(GetContainedMaterial())
@@ -435,13 +405,6 @@ bool fountain::SitOn(character* Sitter)
     }
   else
     return olterrain::SitOn(Sitter);
-}
-
-bool doublebed::SitOn(character* Sitter)
-{
-  ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
-  Sitter->EditAP(-1000);
-  return true;
 }
 
 bool fountain::Drink(character* Drinker)
@@ -628,10 +591,12 @@ bool altar::Polymorph(character*)
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s glows briefly.", CHARNAME(DEFINITE));
 	
-  uchar OldGod = DivineMaster;
+  uchar OldGod = GetConfig(), NewGod = GetConfig();
 
-  while(DivineMaster == OldGod)
-    DivineMaster = 1 + RAND() % (game::GetGods() - 1);
+  while(NewGod == OldGod)
+    NewGod = 1 + RAND() % (game::GetGods() - 1);
+
+  SetConfig(NewGod);
 
   GetSquareUnder()->SendNewDrawRequest();
   GetSquareUnder()->SendMemorizedUpdateRequest();
@@ -648,20 +613,20 @@ bool altar::Polymorph(character*)
 
 bool altar::SitOn(character* Sitter)
 {
-  ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(DivineMaster)->GOD_NAME);
+  ADD_MESSAGE("You kneel down and worship %s for a moment.", GetMasterGod()->GOD_NAME);
 
-  if(game::GetGod(DivineMaster)->GetRelation() < 500)
+  if(GetMasterGod()->GetRelation() < 500)
     {
       if(!(RAND() % 20))
 	{
-	  game::GetGod(DivineMaster)->AdjustRelation(2);
-	  game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true, 1);
+	  GetMasterGod()->AdjustRelation(2);
+	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true, 1);
 	}
     }
   else
     if(!(RAND() % 2500))
       {
-	character* Angel = game::GetGod(DivineMaster)->CreateAngel();
+	character* Angel = GetMasterGod()->CreateAngel();
 
 	if(Angel)
 	  {
@@ -669,27 +634,17 @@ bool altar::SitOn(character* Sitter)
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	  }
 
-	game::GetGod(DivineMaster)->AdjustRelation(50);
-	game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true);
+	GetMasterGod()->AdjustRelation(50);
+	game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
       }
 
   Sitter->EditAP(-1000);
   return true;
 }
 
-bool poolterrain::IsWalkable(character* ByWho) const
+bool liquidterrain::IsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
-}
-
-void couch::ShowRestMessage(character*) const
-{
-  ADD_MESSAGE("You rest well on the soft sofa.");
-}
-
-void doublebed::ShowRestMessage(character*) const
-{
-  ADD_MESSAGE("You lay yourself on the confortable bed.");
 }
 
 void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
@@ -837,7 +792,7 @@ material* fountain::GetMaterial(ushort Index) const
     }
 }
 
-ushort fountain::GetMaterialColor1(ushort) const
+ushort fountain::GetMaterialColorB(ushort) const
 {
   if(GetContainedMaterial())
     return GetContainedMaterial()->GetColor();
@@ -845,7 +800,7 @@ ushort fountain::GetMaterialColor1(ushort) const
     return 0;
 }
 
-uchar fountain::GetAlpha1(ushort) const
+uchar fountain::GetAlphaB(ushort) const
 {
   if(GetContainedMaterial())
     return GetContainedMaterial()->GetAlpha();
@@ -866,14 +821,6 @@ void door::VirtualConstructor(bool Load)
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
       SetHP(500);
     }
-}
-
-void altar::VirtualConstructor(bool Load)
-{
-  olterrain::VirtualConstructor(Load);
-
-  if(!Load)
-    SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
 }
 
 void door::SetParameters(uchar Param)
@@ -915,3 +862,9 @@ bool door::TryKey(item* Thingy, character* Applier)
     }
 }
 
+void fountain::GenerateMaterials()
+{
+  ushort Chosen = RandomizeMaterialConfiguration();
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
+  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+}

@@ -37,14 +37,13 @@ class gamescript;
 class game
 {
  public:
-  static void Init(const std::string& = "");
+  static bool Init(const std::string& = "");
   static void DeInit();
   static void Run();
   static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
-  //static bool LOSHandler(vector2d, vector2d);
   static bool WorldMapLOSHandler(long, long);
   static bool LevelLOSHandler(long, long);
   static ushort*** GetLuxTable() { return LuxTable; }
@@ -109,8 +108,6 @@ class game
   static void SetSquareInLoad(square* What) { SquareInLoad = What; }
   static area* GetAreaInLoad() { return AreaInLoad; }
   static square* GetSquareInLoad() { return SquareInLoad; }
-  //static character* GetPlayerBackup() { return PlayerBackup; }
-  //static void SetPlayerBackup(character* What) { PlayerBackup = What; }
   static uchar GetLevels();
   static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
@@ -151,7 +148,6 @@ class game
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
   static vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
-  //static uchar GetDirectionIndexForKey(int);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
@@ -160,14 +156,11 @@ class game
   static void InitScript();
   static const valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
-  static void SetAnimationControllerActive(bool What) { AnimationControllerActive = What; }
-  static bool AnimationControllerIsActive() { return AnimationControllerActive; }
   static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
   static vector2d GetCursorPos() { return CursorPos; }
   static void SetCursorPos(vector2d What) { CursorPos = What; }
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
-  //static bool PositionQuestionController();
   static int KeyQuestion(const std::string&, int, int, ...);
   static void LookKeyHandler(vector2d, int);
   static void NameKeyHandler(vector2d, int);
@@ -200,7 +193,6 @@ class game
   static worldmap* WorldMap;
   static area* AreaInLoad;
   static square* SquareInLoad;
-  //static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
   static ulong NextItemID;
   static std::vector<team*> Team;
@@ -212,7 +204,6 @@ class game
   static vector2d ScreenSize;
   static gamescript* GameScript;
   static valuemap GlobalValueMap;
-  static bool AnimationControllerActive;
   static vector2d CursorPos;
   static bool Zoom;
   static std::string LockDescription[];

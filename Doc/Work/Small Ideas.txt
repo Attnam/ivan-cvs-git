@@ -246,12 +246,14 @@ WoDC should clone its own material to created doors.
 One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
 Wishing for corpse should give something.
 In script, Square, Random's Walkability should default to true.
-Poison should spread from bodypart from bodypart.
-Titles and bonuses.
-Informative pictures to message panel.
+Poison should spread from bodypart from bodypart. (from JM)
+Titles and bonuses. (from JM)
+Informative pictures to message panel. (from JM)
 If one the player mounts an ass and has a carrot in the inventory, it should be held automatically in front of the "vehicle" to increase speed.
 The player shouldn't be able to fly over oceans if all members of his team aren't able to do it. (currently a bat and a pet dog can cross any sea without trouble)
 An amulet of life saving worn by a skeleton or zombie should either kill it or transform it into a living human.
 Healing liquid should severely damage undead.
 In my (Timo's) opinion, we should add some powerful undead monsters and maybe a boss soon after the latter is done, as dipping a weapon into healing liquid then becomes rather a useful tactic.
 Wand of resurrection should behave correctly when zapped at undead.
+Werewolves (wolf form) should be nonhumanoids.
+One should be also able to wish for terrains.

@@ -47,7 +47,7 @@ Dungeon 0;
 
 	LevelDefault
 	{
-		FillSquare=ground,earth;
+		FillSquare=solidterrain(GROUND),wall(EARTH);
 
 		Variable XSize = 64;
 		Variable YSize = 36;
@@ -70,7 +70,7 @@ Dungeon 0;
 			Times = 25+rand%25;
 		}
 
-		Square, Random { Walkable=true; }
+                Square, Random { Walkable=true; }
 		{
 			Item = mine { IsVisible = false; }
 			Times = 1+rand%10;
@@ -87,13 +87,13 @@ Dungeon 0;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=true;
-			WallSquare=ground,wall;
-			FloorSquare=parquet,empty;
-			DoorSquare=parquet,door;
+			WallSquare=solidterrain(GROUND),wall(BRICK_OLD);
+			FloorSquare=solidterrain(PARQUET),empty;
+			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
 			ReCalculate=true;
-			DivineMaster=0;
-			GenerateTunnel=true;
+                        DivineMaster=0;
+                        GenerateTunnel=true;
 			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=true;
@@ -158,16 +158,16 @@ Dungeon 0;
 
 				Types
 				{
-					W=wolf;
-					w=werewolfhuman;
+					w=wolf;
+					W=werewolfhuman;
 				}
 			}
 			{
-				WWWWW
-				WWWWW
-				WWwWW
-				WWWWW
-				WWWWW
+				wwwww
+				wwwww
+				wwWww
+				wwwww
+				wwwww
 			}
 		}
 	}
@@ -223,7 +223,7 @@ Dungeon 0;
 					C = MITHRIL bodyarmor(CHAINMAIL);
 					s = wandofstriking;
 					a = lantern;
-					l = BREAD loaf;
+                                        l = BREAD loaf;
 					t = scrollofteleportation;
 					g = IRON can { ContainedMaterial = GOBLINOIDFLESH; }
 					p = IRON meleeweapon(POLEAXE);
@@ -266,15 +266,15 @@ Dungeon 0;
 	{
 		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare=floor, IRON wall;
+		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Items=0;
 		GenerateDownStairs=false;
 
 		RoomDefault
 		{
 			AltarPossible=false;
-			WallSquare=floor, IRON wall;
-			DoorSquare=parquet, IRON door;
+			WallSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
+			DoorSquare=solidterrain(PARQUET), IRON door;
 			GenerateLanterns=false;
 		}
 
@@ -321,9 +321,9 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=ground,IRON wall;
-			FloorSquare=parquet,empty;
-			DoorSquare=parquet,IRON door;
+			WallSquare=solidterrain(GROUND),IRON wall(BRICK_OLD);
+			FloorSquare=solidterrain(PARQUET),empty;
+			DoorSquare=solidterrain(PARQUET),IRON door;
 
 			Square, Pos 3,3;
 			{
@@ -341,7 +341,7 @@ Dungeon 0;
 	{
 		Description=OreeLair;
 		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
-		FillSquare=floor, IRON wall;
+		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Rooms=1;
 		GenerateMonsters=false;
 		GenerateUpStairs=false;
@@ -353,8 +353,8 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=floor, IRON wall;
-			FloorSquare=parquet,empty;
+			WallSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
+			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineMaster=erado;
@@ -405,7 +405,7 @@ Dungeon 1;
 	Level 0;
 	{
 		Description=Attnam;
-		FillSquare=grassterrain,empty;
+		FillSquare=solidterrain(GRASSTERRAIN),empty;
 
 		Variable XSize = 61;
 		Variable YSize = 62;
@@ -427,9 +427,9 @@ Dungeon 1;
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=false;
-			WallSquare=grassterrain,wall;
-			FloorSquare=parquet,empty;
-			DoorSquare=parquet,door;
+			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			FloorSquare=solidterrain(PARQUET),empty;
+			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
 			ReCalculate=true;
 			DivineMaster=0;
@@ -443,13 +443,13 @@ Dungeon 1;
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			OTerrain=pine;
+			OTerrain=decoration(PINE);
 			Times=50;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
-			OTerrain=spruce;
+			OTerrain=decoration(SPRUCE);
 			Times=200;
 		}
 
@@ -481,14 +481,29 @@ Dungeon 1;
 		{
 			IsWorldMapEntry=true;
 		}
+
+		/*Square, Pos 29,60;
+		{
+			Character=angel(venius);
+		}
+
+		Square, Pos 30,60;
+		{
+			Character=angel(silva);
+		}
+
+		Square, Pos 31,60;
+		{
+			Character=angel(scabies);
+		}*/
 	
 		Room 0;
 		{
 			Pos=10,10;
 			Size=41,42;
 			AltarPossible=false;
-			WallSquare=grassterrain,MITHRIL wall;
-			FloorSquare=grassterrain,empty;
+			WallSquare=solidterrain(GRASSTERRAIN),MITHRIL wall(BRICK_FINE);
+			FloorSquare=solidterrain(GRASSTERRAIN),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineMaster=valpurus;
@@ -516,9 +531,9 @@ Dungeon 1;
 				Size=33,34;
 				Types
 				{
-					# = MARBLE floor;
-					- = MARBLE floor;
-					~ = poolterrain;
+					# = MARBLE solidterrain(FLOOR);
+					- = MARBLE solidterrain(FLOOR);
+					~ = liquidterrain(POOL);
 				}
 			}
 			{
@@ -564,24 +579,24 @@ Dungeon 1;
 				Size=39,40;
 				Types
 				{
-					# = VALPURIUM wall;
+					# = VALPURIUM wall(BRICK_FINE);
 					T = throne;
-					c = carpet;
+					c = decoration(CARPET);
 					A = VALPURIUM altar;
 					D = VALPURIUM door;
 					L = VALPURIUM door { Parameters = LOCKED; }
-					b = linden;
-					1 = poolcorner { VisualEffects = NONE; }
-					2 = poolcorner { VisualEffects = MIRROR; }
-					3 = poolcorner { VisualEffects = MIRROR | FLIP; }
-					4 = poolcorner { VisualEffects = FLIP; }
-					5 = poolborder { VisualEffects = NONE; }
-					6 = poolborder { VisualEffects = ROTATE; }
-					7 = poolborder { VisualEffects = FLIP; }
-					8 = poolborder { VisualEffects = MIRROR | ROTATE; }
-					s = couch;
+					b = decoration(LINDEN);
+					1 = decoration(POOLCORNER) { VisualEffects = NONE; }
+					2 = decoration(POOLCORNER) { VisualEffects = MIRROR; }
+					3 = decoration(POOLCORNER) { VisualEffects = MIRROR | FLIP; }
+					4 = decoration(POOLCORNER) { VisualEffects = FLIP; }
+					5 = decoration(POOLBORDER) { VisualEffects = NONE; }
+					6 = decoration(POOLBORDER) { VisualEffects = ROTATE; }
+					7 = decoration(POOLBORDER) { VisualEffects = FLIP; }
+					8 = decoration(POOLBORDER) { VisualEffects = MIRROR | ROTATE; }
+					s = decoration(COUCH);
 					f = fountain;
-					d = doublebed;
+					d = decoration(DOUBLEBED);
 				}
 			}
 			{
@@ -710,7 +725,7 @@ Dungeon 1;
 					4 = petrusswife(4);
 					5 = petrusswife(5);
 					6 = petrusswife(6);
-					k = kamikazedwarf;
+					k = kamikazedwarf(valpurus);
 					A = oree;
 					B = goblin;
 					C = skeleton;
@@ -767,8 +782,8 @@ Dungeon 1;
 			Pos=32,54;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=grassterrain,wall;
-			FloorSquare=parquet,empty;
+			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineMaster=mellis;
@@ -776,7 +791,7 @@ Dungeon 1;
 			
 			Square, Pos 3, 4;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = door;
 			}
 
@@ -821,14 +836,14 @@ Dungeon 1;
 		{
 			Pos=54,55;
 			Size=5,5;
-			WallSquare=grassterrain,GOLD wall;
+			WallSquare=solidterrain(GRASSTERRAIN),GOLD wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=venius;
 			Type=temple;
 
 			Square, Pos 2, 0;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = GOLD door;
 			}
 
@@ -847,14 +862,14 @@ Dungeon 1;
 		{
 			Pos=2,55;
 			Size=5,5;
-			WallSquare=grassterrain,MARBLE wall;
+			WallSquare=solidterrain(GRASSTERRAIN),MARBLE wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=dulcis;
 			Type=temple;
 
 			Square, Pos 4, 2;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = MARBLE door;
 			}
 
@@ -873,14 +888,14 @@ Dungeon 1;
 		{
 			Pos=54,2;
 			Size=5,5;
-			WallSquare=grassterrain,BANANAFLESH wall;
+			WallSquare=solidterrain(GRASSTERRAIN),BANANAFLESH wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=seges;
 			Type=temple;
 
 			Square, Pos 0, 2;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = BANANAFLESH door;
 			}
 
@@ -899,14 +914,14 @@ Dungeon 1;
 		{
 			Pos=2,2;
 			Size=5,5;
-			WallSquare=grassterrain,PARCHMENT wall;
+			WallSquare=solidterrain(GRASSTERRAIN),PARCHMENT wall(BRICK_FINE);
 			GenerateDoor=false;
 			DivineMaster=consummo;
 			Type=temple;
 
 			Square, Pos 2, 4;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = PARCHMENT door;
 			}
 
@@ -926,8 +941,8 @@ Dungeon 1;
 			Pos=22,54;
 			Size=7,5;
 			AltarPossible=false;
-			WallSquare=grassterrain,wall;
-			FloorSquare=parquet,empty;
+			WallSquare=solidterrain(GRASSTERRAIN),wall(BRICK_FINE);
+			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineMaster=consummo;
@@ -935,7 +950,7 @@ Dungeon 1;
 			
 			Square, Pos 3, 4;
 			{
-				GTerrain = parquet;
+				GTerrain = solidterrain(PARQUET);
 				OTerrain = door;
 			}
 
@@ -969,7 +984,7 @@ Dungeon 1;
 				Size=5,3;
 				Types
 				{
-					= = bookcase;
+					= = container(BOOKCASE);
 				}
 			}
 			{
@@ -981,23 +996,24 @@ Dungeon 1;
 
 		Room 7;
 		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
+			FloorSquare=solidterrain(FLOOR),empty;
+			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare=solidterrain(FLOOR), door;
 		}
 
 		Room 8;
 		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
+			FloorSquare=solidterrain(FLOOR),empty;
+			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare=solidterrain(FLOOR), door;
 		}
 
 		Room 9;
 		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
+			FloorSquare=solidterrain(FLOOR),empty;
+			WallSquare=solidterrain(GRASSTERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare=solidterrain(FLOOR), door;
 		}
 	}
 }
+

@@ -26,8 +26,6 @@ class wsquare : public square
   virtual ~wsquare();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  /*bool DrawTerrain(bool) const;
-  bool DrawCharacter(bool) const;*/
   void Draw();
   void UpdateMemorized();
   void SetGWTerrain(gwterrain*);

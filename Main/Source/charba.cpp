@@ -26,6 +26,8 @@
 #include "command.h"
 #include "proto.h"
 #include "save.h"
+#include "database.h"
+#include "wsquare.h"
 
 void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage };
 void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage };
@@ -36,7 +38,7 @@ void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &charact
 std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
 
 
-character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0)
+character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -399,7 +401,7 @@ bool character::Eat()
   item* Item;
 
   if(!game::IsInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::EatableSorter))
-      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to eat?", "Items in your inventory", "Items on ground", &item::EatableSorter);
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", &item::EatableSorter);
   else
       Item = GetStack()->DrawContents(this, "What do you wish to eat?", &item::EatableSorter);
 
@@ -431,7 +433,7 @@ bool character::Drink()
   item* Item;
 
   if(!game::IsInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::DrinkableSorter))
-      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to drink?", "Items in your inventory", "Items on ground", &item::DrinkableSorter);
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", &item::DrinkableSorter);
   else
       Item = GetStack()->DrawContents(this, "What do you wish to drink?", &item::DrinkableSorter);
 
@@ -499,12 +501,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
       EditAP(-1000);
     }
 }
-
-/*void character::DrawToTileBuffer(bool Animate) const
-{
-  if(GetTorso())
-    GetTorso()->DrawToTileBuffer(Animate);
-}*/
 
 void character::GetAICommand()
 {
@@ -1297,20 +1293,6 @@ uchar character::GetBurdenState(ulong Mass) const
   return UNBURDENED;
 }
 
-/*ulong character::GetTotalWeight() const
-{
-  ulong Weight = GetStack()->GetTotalWeight();
-
-  for(ushort c = 0; c < BodyParts(); ++c)
-    if(GetBodyPart(c))
-      Weight += GetBodyPart(c)->GetWeight();
-
-  if(GetAction())
-    Weight += GetAction()->GetWeight();
-
-  return Weight;
-}*/
-
 bool character::Dip()
 {
   if(!GetStack()->SortedItems(this, &item::DippableSorter))
@@ -1352,8 +1334,6 @@ bool character::Dip()
 void character::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
-  //entity::Save(SaveFile);
-
   Stack->Save(SaveFile);
 
   ushort c;
@@ -1402,7 +1382,7 @@ void character::Save(outputfile& SaveFile) const
 
 void character::Load(inputfile& SaveFile)
 {
-  entity::Load(SaveFile);
+  SquareUnder = game::GetSquareInLoad();
   Stack->Load(SaveFile);
 
   ushort c;
@@ -1550,18 +1530,6 @@ ushort character::GetEmitation() const
     Emitation = GetStack()->GetEmitation();
 
   return Emitation;
-}
-
-void character::SetSquareUnder(square* Square)
-{
-  for(ushort c = 0; c < BodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->SetSquareUnder(Square);
-
-  if(GetAction())
-    GetAction()->SetSquareUnder(Square);
-  entity::SetSquareUnder(Square);
-  Stack->SetSquareUnder(Square);
 }
 
 bool character::WalkThroughWalls()
@@ -1757,7 +1725,7 @@ bool character::Offer()
   if(!CheckOffer())
     return false;
 
-  if(GetLSquareUnder()->GetOLTerrain()->CanBeOffered())
+  if(GetLSquareUnder()->GetOLTerrain()->AcceptsOffers())
     {
       if(!GetStack()->GetItems())
 	{
@@ -1769,7 +1737,7 @@ bool character::Offer()
 
       if(Item)
 	{
-	  if(game::GetGod(GetLSquareUnder()->GetOLTerrain()->GetDivineMaster())->ReceiveOffer(Item))
+	  if(game::GetGod(GetLSquareUnder()->GetDivineMaster())->ReceiveOffer(Item))
 	    {
 	      Item->RemoveFromSlot();
 	      Item->SendToHell();
@@ -1969,8 +1937,8 @@ void character::GetPlayerCommand()
 	ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
     }
 }
-/* What on earth is that ushort for? */
-void character::Vomit(ushort)
+
+void character::Vomit(ushort) /* What on earth is that ushort for? */
 {
   if(IsPlayer())
     ADD_MESSAGE("You vomit.");
@@ -2088,7 +2056,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 
       if(Item)
 	{
-	  if(NewForm->CanUseEquipment() && NewForm->CanUseEquipment(c))
+	  if(NewForm->CanUseEquipment(c))
 	    {
 	      Item->RemoveFromSlot();
 	      NewForm->SetEquipment(c, Item);
@@ -2110,11 +2078,6 @@ bool character::Polymorph(character* NewForm, ushort Counter)
     }
 
   return true;
-}
-
-wsquare* character::GetWSquareUnder() const
-{
-  return (wsquare*)SquareUnder;
 }
 
 void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue, short Success, bool Critical)
@@ -2183,12 +2146,6 @@ void character::StandIdleAI()
   if(CheckForDoors())
     return;
 }
-
-/*bool character::ShowWeaponSkills()
-{
-  ADD_MESSAGE("This race isn't capable of developing weapon skill experience!");
-  return false;
-}*/
 
 void character::Faint()
 {
@@ -2330,57 +2287,6 @@ bool character::CheckForUsefulItemsOnGround()
 
   for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottomSlot(); i != GetLSquareUnder()->GetStack()->GetSlotAboveTop(); ++i)
     {
-//<<<charba.cpp
-      /*if(CanWear() && (**i)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + (**i)->GetWeight() - (GetBodyArmor() ? GetBodyArmor()->GetWeight() : 0)) == UNBURDENED)
-	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, ***i))
-	  {
-	    item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-      /if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
-	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
-	{
-	item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
->>1.202
-
-	    if(GetBodyArmor())
-	      GetStack()->MoveItem(GetStack()->SearchItem(GetBodyArmor()), GetLSquareUnder()->GetStack());
-==
-	if(GetTorsoArmor())
-	GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLSquareUnder()->GetStack());
->> 1.202
-
-	    SetBodyArmor(ToWear);
-=
-	SetTorsoArmor(ToWear);
-
-<< charba.cpp
-	    if(GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s picks up and wears %s.", CHARNAME(DEFINITE), ToWear->CHARNAME(DEFINITE));
-=
-	if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s picks up and wears %s.", CGetName(DEFINITE), ToWear->CGetName(DEFINITE));
-
-	return true;
-	}*/
-
-      /*if(CanWield() && long((**i)->GetWeaponStrength()) > long(GetAttackStrength()) && GetBurdenState(GetStack()->SumOfMasses() + (**i)->GetWeight() - (GetWielded() ? GetWielded()->GetWeight() : 0)) == UNBURDENED)
-	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, ***i))
-	  {
-	    //item* ToWield = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
-	    item* ToWield = ***i;
-	    ToWield->MoveTo(GetStack());
-
-	    if(GetWielded())
-	      GetWielded()->MoveTo(GetLSquareUnder()->GetStack());
-
-	    SetWielded(ToWield);
-
-	    if(GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s picks up and wields %s.", CHARNAME(DEFINITE), ToWield->CHARNAME(DEFINITE));
-
-	    return true;
-	  }*/
-
       if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this) && (**i)->IsPickable(this))
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
 	  {
@@ -2888,9 +2794,7 @@ void character::TestWalkability()
 	  if(IsPlayer())
 	    {
 	      GetSquareUnder()->RemoveCharacter();
-	      ADD_MESSAGE("%s.", GetSquareUnder()->DeathMessage(this).c_str());
-	      game::DrawEverything();
-	      GETKEY();
+	      game::AskForKeyPress(GetSquareUnder()->DeathMessage(this) + ".");
 	      game::GetPlayer()->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
 	      game::End();
 	    }
@@ -3094,8 +2998,6 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
   if(!PenetrateResistance)
     Damage -= BodyPart->GetTotalResistance(Type);
 
-  //Damage = SpecialProtection(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical);
-
   if(Damage < 1)
     if(Critical)
       Damage = 1;
@@ -3182,14 +3084,6 @@ bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, ucha
   return Affected;
 }
 
-bool character::BodyPartVital(ushort Index)
-{
-  if(Index == 0)
-    return true;
-  else
-    return false;
-}
-
 bool character::BodyPartCanBeSevered(ushort Index) const
 {
   if(Index == 0)
@@ -3259,16 +3153,6 @@ std::string character::GetName(uchar Case) const
   else
     return id::GetName(Case);
 }
-
-/*float character::GetAPStateMultiplier() const
-{
-  if(StateIsActivated(HASTE))
-    return 2.0f;
-  else if(StateIsActivated(SLOW))
-    return 0.5f;
-  else
-    return 1.0f;
-}*/
 
 uchar character::GetHungerState() const
 {
@@ -3427,12 +3311,6 @@ ushort character::GetResistance(uchar Type) const
       ABORT("Resistance lack detected!");
       return 0;
     }
-}
-
-void character::SetDivineMaster(uchar Master)
-{
-  for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
-    (**i)->SetDivineMaster(Master);
 }
 
 bool character::ScrollMessagesDown()
@@ -3728,18 +3606,6 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
   return Char;
 }
 
-/*item* character::GetLifeSaver() const
-{
-  for(ushort c = 0; c < EquipmentSlots(); ++c)
-    {
-      item* Item = GetEquipment(c);
-
-      if(Item && Item->SavesLifeWhenWorn())
-	return Item;
-    }
-  return 0;
-}*/
-
 void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 {
   BodyPartSlot = new characterslot[BodyParts()];
@@ -3798,22 +3664,6 @@ bool character::TeleportNear(character* Caller)
 void character::Teleport(vector2d Pos)
 {
   Move(Pos, true);
-}
-
-void character::InstallDataBase()
-{
-  if(!Config)
-    DataBase = GetProtoType()->GetDataBase();
-  else
-    {
-      const character::databasemap& Configs = GetProtoType()->GetConfig();
-      character::databasemap::const_iterator i = Configs.find(Config);
-
-      if(i != Configs.end())
-	DataBase = &i->second;
-      else
-	ABORT("Undefined character configuration #%d sought!", Config);
-    }
 }
 
 void character::ReceiveHeal(long Amount)
@@ -4615,7 +4465,7 @@ void character::EndPolymorph()
 
       if(Item)
 	{
-	  if(Char->CanUseEquipment() && Char->CanUseEquipment(c))
+	  if(Char->CanUseEquipment(c))
 	    {
 	      Item->RemoveFromSlot();
 	      Char->SetEquipment(c, Item);
@@ -4845,7 +4695,7 @@ std::vector<character*> character::GetFriendsAround() const
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), 
   {
     Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter();
-    if(Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
+    if(Char && Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
       ToBeReturned.push_back(Char);
   });
   return ToBeReturned;
@@ -4974,4 +4824,35 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowA
 void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+}
+
+void character::SetConfig(ushort NewConfig)
+{
+  Config = NewConfig;
+  InstallDataBase();
+}
+
+god* character::GetMasterGod() const
+{
+  return game::GetGod(GetConfig());
+}
+
+void character::InstallDataBase()
+{
+  /*
+   * Plain database without preceding colons would mean
+   * characterdatabase and cause a syntax error. Sorry for bad naming.
+   */
+
+  ::database<character>::InstallDataBase(this);
+}
+
+lsquare* character::GetLSquareUnder() const
+{
+  return static_cast<lsquare*>(SquareUnder);
+}
+
+wsquare* character::GetWSquareUnder() const
+{
+  return static_cast<wsquare*>(SquareUnder);
 }

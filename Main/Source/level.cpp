@@ -441,7 +441,6 @@ bool level::MakeRoom(roomscript* RoomScript)
   RoomClass->SetSize(vector2d(Width, Height));
 
   AddRoom(RoomClass);
-
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
 
   game::BusyAnimation();
@@ -536,9 +535,8 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
     {
       vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
-      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new altar);
-
-      uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOLTerrain())->GetDivineMaster();
+      uchar Owner = 1 + RAND() % (game::GetGods() - 1);
+      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new altar(Owner));
 
       for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 	for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)

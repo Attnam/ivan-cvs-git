@@ -48,7 +48,7 @@ class stack
   item* GetBottomVisibleItem() const;
   ushort GetItems() const { return Item->size(); }
   ushort GetVisibleItems() const;
-  void SetSquareUnder(square*);
+  void SetMotherSquare(square* What) { MotherSquare = What; }
   item* DrawContents(character*, const std::string&, bool (*)(item*, character*) = 0) const;
   item* DrawContents(character*, const std::string&, bool, bool (*)(item*, character*) = 0) const;
   item* DrawContents(stack*, character*, const std::string&, const std::string&, const std::string&, bool (*)(item*, character*) = 0) const;
@@ -57,10 +57,9 @@ class stack
   ushort GetEmitation() const;
   vector2d GetPos() const;
   void Clean(bool = true);
-  //ulong GetTotalWeight() const;
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
-  square* GetSquareUnder() const { return SquareUnder; }
+  square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const;
   bool SortedItems(character*, bool (*)(item*, character*)) const;
   void DeletePointers();
@@ -79,7 +78,6 @@ class stack
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   bool Open(character*);
-  //ulong GetTotalVolume() const;
   void MoveAll(stack*);
 
   ulong GetVolume() const { return Volume; }
@@ -95,7 +93,7 @@ class stack
 
  private:
   stacklist* Item;
-  square* SquareUnder;
+  square* MotherSquare;
   uchar SquarePosition;
 
   ulong Volume;

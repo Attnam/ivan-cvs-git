@@ -75,15 +75,15 @@ int Main(int argc, char **argv)
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 #endif
 
-  globalwindowhandler::InstallControlLoop(game::AnimationController);
-
   while(true)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, std::string("IVAN v. ") + VERSION + "\rBuild " + __DATE__ + "\r"))
       {
       case 0:
-	game::Init();
-	game::Run();
-	game::DeInit();
+	if(game::Init())
+	  {
+	    game::Run();
+	    game::DeInit();
+	  }
 	break;
       case 1:
 	{
@@ -92,9 +92,12 @@ int Main(int argc, char **argv)
 	  if(LoadName != "")
 	    {
 	      LoadName.resize(LoadName.size() - 4);
-	      game::Init(LoadName);
-	      game::Run();
-	      game::DeInit();
+
+	      if(game::Init(LoadName))
+		{
+		  game::Run();
+		  game::DeInit();
+		}
 	    }
 
 	  break;

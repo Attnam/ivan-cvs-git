@@ -19,17 +19,11 @@ void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
 {
   if(Terrain->IsDoor())
     Door.push_back(Terrain->GetPos());
-
-  if(DivineMaster)
-    Terrain->SetDivineMaster(DivineMaster);
 }
 
 void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
-
-  if(DivineMaster)
-    Character->SetDivineMaster(DivineMaster);
 }
 
 room* roomprototype::CloneAndLoad(inputfile& SaveFile) const

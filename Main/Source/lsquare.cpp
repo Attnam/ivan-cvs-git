@@ -89,59 +89,6 @@ ushort lsquare::CalculateEmitation() const
   return Emitation;
 }
 
-/*bool lsquare::DrawTerrain(bool Animate) const
-{
-  GLTerrain->DrawToTileBuffer(Animate);
-
-  if(Fluid)
-    Fluid->DrawToTileBuffer(Animate);
-	
-  OLTerrain->DrawToTileBuffer(Animate);
-  return true;
-}
-
-bool lsquare::DrawStacks(bool Animate) const
-{
-  bool Items = false;
-
-  if(OLTerrain->IsWalkable())
-    {
-      if(Stack->DrawToTileBuffer(Animate))
-	Items = true;
-
-      #define NS(D, S) game::GetCurrentLevel()->GetLSquare(Pos + D)->GetSideStack(S)
-
-      if(GetPos().X)
-	if(NS(vector2d(-1, 0), 1)->DrawToTileBuffer(Animate))
-	  Items = true;
-
-      if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
-	if(NS(vector2d(1, 0), 3)->DrawToTileBuffer(Animate))
-	  Items = true;
-
-      if(GetPos().Y)
-	if(NS(vector2d(0, -1), 2)->DrawToTileBuffer(Animate))
-	  Items = true;
-
-      if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
-	if(NS(vector2d(0, 1), 0)->DrawToTileBuffer(Animate))
-	  Items = true;
-    }
-
-  return Items;
-}
-
-bool lsquare::DrawCharacter(bool Animate) const
-{
-  if(Character && Character->CanBeSeenByPlayer())
-    {
-      Character->DrawToTileBuffer(Animate);
-      return true;
-    }
-  else
-    return false;
-}*/
-
 void lsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
@@ -149,13 +96,10 @@ void lsquare::UpdateMemorized()
       if(Luminance >= LIGHT_BORDER)
 	{
 	  DrawStaticContents(Memorized, vector2d(0, 0), 256, false);
-	  igraph::GetFOWGraphic()->MaskedBlit(Memorized);
+	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
 	}
       else
-	{
-	  Memorized->Fill(0);
-	  igraph::GetFOWGraphic()->MaskedBlit(Memorized);
-	}
+	igraph::GetFOWGraphic()->Blit(Memorized);
 
       MemorizedUpdateRequested = false;
     }
@@ -203,134 +147,6 @@ void lsquare::Draw()
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
 	    Character->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
-
-	  /*if(Character && Character->CanBeSeenByPlayer())
-	    {
-	      if(Character->ImageIsClear())
-		{
-		  igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-		  Character->DrawToTileBuffer(Animate);
-		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-		}
-	      else
-		{
-		  Character->DrawToTileBuffer(Animate);
-		  igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-		}
-
-	      DrawCharacterSymbols();
-	    }*/
-
-
-	  /*ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
-	  ushort RealLuminance = game::GetSeeWholeMapCheat() ? 256 : Luminance;
-
-	  if(!configuration::GetOutlineItems())
-	    {
-	      DrawTerrain(true);
-	      DrawStacks(true);
-
-	      if(!configuration::GetOutlineCharacters())
-		if(Stack->GetItems() <= 1)
-		  {
-		    if(Character && Character->CanBeSeenByPlayer())
-		      {
-			if(Character->ImageIsClear())
-			  {
-			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-			    Character->DrawToTileBuffer(Animate);
-			    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-			  }
-			else
-			  {
-			    Character->DrawToTileBuffer(Animate);
-			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-			    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-			  }
-
-			DrawCharacterSymbols();
-		      }
-		  }
-		else
-		  {
-		    if(Character && Character->CanBeSeenByPlayer())
-		      {
-			if(Character->ImageIsClear())
-			  {
-			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-			    Character->DrawToTileBuffer(Animate);
-			  }
-			else
-			  {
-			    Character->DrawToTileBuffer(Animate);
-			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-			  }
-		      }
-		    else
-		      igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
-
-		    if(OLTerrain->IsWalkable())
-		      igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
-
-		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-		    DrawCharacterSymbols();
-		  }
-	      else
-		{
-		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-
-		  if(Stack->GetItems() > 1 && OLTerrain->IsWalkable()) 
-		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
-
-		  if(Character && Character->CanBeSeenByPlayer())
-		    {
-		      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-		      DrawCharacter(true);
-		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-		      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
-		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-		      DrawCharacterSymbols();
-		    }
-		}
-	    }
-	  else
-	    {
-	      DrawTerrain(true);
-	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-
-	      if(DrawStacks(true))
-		{
-		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-		  igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
-
-		  if(Stack->GetItems() > 1 && OLTerrain->IsWalkable())
-		    igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
-
-		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-
-		  if(Character && Character->CanBeSeenByPlayer())
-		    igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-		}
-
-	      if(!configuration::GetOutlineCharacters())
-		{
-		  if(DrawCharacter(true))
-		    {
-		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-		      DrawCharacterSymbols();
-		    }
-		}
-	      else
-		if(DrawCharacter(true))
-		  {
-		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-		    igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
-		    igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
-		    DrawCharacterSymbols();
-		  }
-	    }*/
 	}
       else
 	{
@@ -424,7 +240,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 {
   /*
    * DO NOT remove the iterator, or ForceEmitterEmitation() will not work properly!
-   * (had to add add this comment when I came here for nth time and thought not to do it is really stupid...)
+   * (had to add add this comment when I came here for the nth time and thought not to do it is really stupid...)
    */
 
   for(std::vector<emitter>::iterator i = Emitter.begin(); i != Emitter.end(); ++i)
@@ -549,6 +365,8 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 		    if(GetLastSeen() == game::GetLOSTurns())
 		      {
+			/* Bug bug bug! */
+
 			UpdateMemorized();
 			UpdateMemorizedDescription();
 		      }
@@ -639,7 +457,7 @@ bool lsquare::Close(character* Closer)
 
 void lsquare::Save(outputfile& SaveFile) const
 {
-  GetStack()->Save(SaveFile); // This must be before square::Save!
+  GetStack()->Save(SaveFile); // This must be before square::Save! (Note: This comment is years old. It's probably obsolete)
   square::Save(SaveFile);
   SaveFile << GLTerrain << OLTerrain;
 
@@ -651,12 +469,16 @@ void lsquare::Save(outputfile& SaveFile) const
 
 void lsquare::Load(inputfile& SaveFile)
 {
-  GetStack()->Load(SaveFile); // This must be before square::Load!
+  GetStack()->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
+  GetStack()->SetMotherSquare(this);
   square::Load(SaveFile);
   SaveFile >> GLTerrain >> OLTerrain;
 
   for(ushort c = 0; c < 4; ++c)
-    SideStack[c]->Load(SaveFile);
+    {
+      SideStack[c]->Load(SaveFile);
+      SideStack[c]->SetMotherSquare(this);
+    }
 
   SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> Room >> Luminance;
 }
@@ -670,10 +492,7 @@ void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Var
   MemorizedUpdateRequested = true;
 	
   if(!GetFluid())
-    {
-      SetFluid(new fluid);
-      GetFluid()->SetSquareUnder(this);
-    }
+    SetFluid(new fluid(this));
 
   GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
 }
@@ -696,7 +515,6 @@ void lsquare::CalculateLuminance()
 
   if(Luminance > 511)
     Luminance = 511;
-  //return Luminance > 511 ? 511 : Luminance;
 }
 
 ushort lsquare::GetRawLuminance() const
@@ -767,7 +585,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	  {
 	    bool Anything = false;
 
-	    if(!GetOLTerrain()->IsEmpty())
+	    if(GetOLTerrain()->GetNameSingular() != "")
 	      {
 		SetMemorizedDescription(GetOLTerrain()->GetName(INDEFINITE));
 		Anything = true;
@@ -1246,9 +1064,6 @@ void lsquare::TeleportEverything(character* Teleporter)
     GetLevelUnder()->GetRoom(Room)->TeleportSquare(Teleporter, this);
 
   GetStack()->TeleportRandomly();
-
-  //Teleporter->EditPerceptionExperience(50);
-  //Teleporter->EditNP(-50);
 }
 
 bool lsquare::DipInto(item* Thingy, character* Dipper)

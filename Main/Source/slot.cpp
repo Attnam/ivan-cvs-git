@@ -219,3 +219,23 @@ void gearslot::PutInItem(item* What)
       GetBodyPart()->SignalEquipmentAdd(this);
     }
 }
+
+square* stackslot::GetSquareUnder() const
+{
+  return GetMotherStack()->GetSquareUnder();
+}
+
+square* characterslot::GetSquareUnder() const
+{
+  return GetMaster()->GetSquareUnder();
+}
+
+square* gearslot::GetSquareUnder() const
+{
+  return GetBodyPart()->GetSquareUnder();
+}
+
+square* actionslot::GetSquareUnder() const
+{
+  return GetAction()->GetActor()->GetSquareUnder();
+}

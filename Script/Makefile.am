@@ -1,2 +1,2 @@
-dungeondir = $(datadir)/ivan/Script/
-dungeon_DATA = char.dat define.dat dungeon.dat item.dat material.dat
+scriptdir = $(datadir)/ivan/Script/
+script_DATA = char.dat define.dat dungeon.dat glterra.dat item.dat material.dat olterra.dat

@@ -97,7 +97,6 @@
 #define LIFE_SAVED 16
 #define LYCANTHROPY 32
 #define INVISIBLE 64
-#define SEE_INVISIBLE 128
 #define INFRAVISION 128
 #define ESP 256
 #define POISONED 512
@@ -453,14 +452,34 @@
 #define CONICALMOMMO 1
 #define FLATMOMMO 2
 
+#define PARQUET 1
+#define FLOOR 2
+#define GROUND 3
+#define GRASSTERRAIN 4
+
+#define POOL 1
+
+#define BRICK_FINE 1
+#define BRICK_OLD 2
+#define EARTH 3
+
+#define PINE 1
+#define SPRUCE 2
+#define LINDEN 3
+#define CARPET 4
+#define COUCH 5
+#define DOUBLEBED 6
+#define POOLBORDER 7
+#define POOLCORNER 8
+
+#define BOOKCASE 1
 
 /* Prices */
+/* The logic will go bad, if a new limb cost less than an old one */
 #define PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR 50
 #define PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR 100
-/* The logic will go bad, if a new limb cost less than an old one */
 
-#define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 /* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
-
+#define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
 #endif

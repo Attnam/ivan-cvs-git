@@ -13,7 +13,7 @@
 #include "save.h"
 #include "config.h"
 
-stack::stack(square* SquareUnder, entity* MotherEntity, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Volume(0), Weight(0), MotherEntity(MotherEntity)
+stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition) : MotherSquare(MotherSquare), SquarePosition(SquarePosition), Volume(0), Weight(0), MotherEntity(MotherEntity)
 {
   Item = new stacklist;
 }
@@ -57,7 +57,6 @@ void stack::AddItem(item* ToBeAdded)
   StackSlot->SetMotherStack(this);
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
-  ToBeAdded->SetSquareUnder(GetSquareUnder());
 
   if(GetSquareUnder() && SquarePosition != HIDDEN)
     {
@@ -92,7 +91,6 @@ void stack::FastAddItem(item* ToBeAdded)
   StackSlot->SetMotherStack(this);
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
-  ToBeAdded->SetSquareUnder(GetSquareUnder());
 
   if(SquarePosition != HIDDEN && ToBeAdded->IsAnimated() && GetSquareTrulyUnder())
     GetSquareTrulyUnder()->IncAnimatedEntities();
@@ -215,16 +213,6 @@ ushort stack::GetEmitation() const
   return Emitation;
 }
 
-/*ulong stack::GetTotalWeight() const
-{
-  ulong Sum = 0;
-
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    Sum += (**i)->GetWeight();
-
-  return Sum;
-}*/
-
 void stack::Save(outputfile& SaveFile) const
 {
   SaveFile << *Item << SquarePosition;
@@ -241,13 +229,11 @@ void stack::Load(inputfile& SaveFile)
       EditVolume((**i)->GetVolume());
       EditWeight((**i)->GetWeight());
     }
-
-  SquareUnder = game::GetSquareInLoad();
 }
 
 vector2d stack::GetPos() const
 {
-  return GetLSquareUnder()->GetPos();
+  return GetSquareUnder()->GetPos();
 }
 
 bool stack::SortedItems(character* Viewer, bool (*SorterFunction)(item*, character*)) const
@@ -301,13 +287,13 @@ long stack::Score() const
   return Score;
 }
 
-void stack::SetSquareUnder(square* Square)
+/*void stack::SetSquareUnder(square* Square)
 {
   SquareUnder = Square;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     (**i)->SetSquareUnder(Square);
-}
+}*/
 
 void stack::Polymorph()
 {
@@ -381,12 +367,12 @@ void stack::TeleportRandomly()
 
 lsquare* stack::GetLSquareTrulyUnder() const
 {
-  return (lsquare*)GetSquareTrulyUnder();
+  return static_cast<lsquare*>(GetSquareTrulyUnder());
 }
 
 lsquare* stack::GetLSquareUnder() const
 {
-  return (lsquare*)SquareUnder;
+  return static_cast<lsquare*>(GetSquareUnder());
 }
 
 void stack::FillItemVector(itemvector& ItemVector) const
@@ -497,9 +483,11 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 	  {
 	    if(!DescDrawn && Desc != "")
 	      {
-		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
-		ItemNames.AddEntry(Desc, LIGHTGRAY, 0, false);
-		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
+		if(!ItemNames.IsEmpty())
+		  ItemNames.AddEntry("", WHITE, 0, false);
+
+		ItemNames.AddEntry(Desc, WHITE, 0, false);
+		ItemNames.AddEntry("", WHITE, 0, false);
 		DescDrawn = true;
 	      }
 
@@ -577,16 +565,6 @@ bool stack::Open(character* Opener)
   return ToBeOpened->Open(Opener);
 }
 
-/*ulong stack::GetTotalVolume() const
-{
-  ulong Sum = 0;
-
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    Sum += (**i)->GetVolume();
-
-  return Sum;
-}*/
-
 void stack::MoveAll(stack* ToStack)
 {
   while(GetItems())
@@ -627,4 +605,12 @@ item* stack::GetBottomVisibleItem() const
       return ***i;
 
   return 0;
+}
+
+square* stack::GetSquareUnder() const
+{
+  if(MotherEntity)
+    return MotherEntity->GetSquareUnder();
+  else
+    return MotherSquare;
 }
