@@ -642,7 +642,9 @@ Dungeon 1;
 					c = scrollofchangematerial;
 					b = banana;
 					l = bananaflesh lump;
+					i = iron bananaflesh can;
 					L = pork loaf;
+					B = beef loaf;
 					P = glass omleurine potion;
 					C = chainmail;
 					w = wandofstriking;
@@ -650,8 +652,8 @@ Dungeon 1;
 			}
 			{
 			    .spwt
-			    blLcP
-			    L.Clt
+			    biLcP
+			    B.Clt
 			}
 		}
 

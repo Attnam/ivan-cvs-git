@@ -283,10 +283,10 @@ protected:
 	virtual std::string ThirdPersonBiteVerb(bool Critical) const		{ return Critical ? "critically bites" : "bites"; }
 	virtual std::string FirstPersonPSIVerb(bool Critical) const		{ return Critical ? "emit powerful psi waves at" : "emit psi waves at"; }
 	virtual std::string ThirdPersonPSIVerb(bool Critical) const		{ return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
-	virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomit extremely acidous brown slime at" : "vomit brown slime at"; }
-	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits extremely acidous brown slime at" : "vomits brown slime at"; }
-	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit extremely stale pepsi at" : "vomit pepsi at"; }
-	virtual std::string ThirdPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomits extremely stale pepsi at" : "vomits pepsi at"; }
+	virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomit very acidous brown slime at" : "vomit brown slime at"; }
+	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
+	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit very stale pepsi at" : "vomit pepsi at"; }
+	virtual std::string ThirdPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomits very stale pepsi at" : "vomits pepsi at"; }
 	virtual std::string TalkVerb() const { return "grunts"; }
 	stack* Stack;
 	item* Wielded;

@@ -365,7 +365,7 @@ class CHARACTER
 	frog,
 	InitMaterials(new darkfrogflesh),
 	{
-		SetSize(15);
+		SetSize(25);
 		SetAgility(30);
 		SetStrength(5);
 		SetEndurance(5);
@@ -826,7 +826,7 @@ class CHARACTER
 	frog,
 	InitMaterials(new lightfrogflesh),
 	{
-		SetSize(15);
+		SetSize(25);
 		SetAgility(30);
 		SetStrength(5);
 		SetEndurance(5);
@@ -1064,7 +1064,7 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(150);
+		SetSize(160);
 		SetAgility(10);
 		SetStrength(8);
 		SetEndurance(5);

@@ -1,4 +1,4 @@
-Name		Size	Agil.	Str.	End.	Perc.	MelStr.
+Name		Size	Agil.	Str.	End.	Perc.	MelStr.		Volume
 player		150-200	15-25	10-15	10-15	10-15	20000
 perttu		225	75	75	75	75	1000
 farmer		170	10	15	20	18	1000
@@ -8,7 +8,7 @@ priest		180	10	20	15	18	1000
 oree		225	50	30	30	30	30000
 swatcommando	200	30	25	30	30	5000
 ennerbeast	150	10	10	25	12	100000
-frog		15	30	5	5	18	20000
+frog		25	30	5	5	18	20000
 elpuri		300	10	30	50	30	20000
 billswill	100	40	5	20	27	20000
 fallenvalpurist	150	10	5	10	15	1000
@@ -24,10 +24,30 @@ jackal		80	10	5	5	18	5000
 donkey		150	5	10	10	15	1000
 ivan		230	20	30	50	18	5000
 hunter		180	20	15	15	24	2000
-*polarbear	250	10	30	30	24	10000
-*dolphin	300	30	10	10	30	1000
+polarbear	250	10	30	30	24	10000
+dolphin		300	30	10	10	30	1000
 slave		160	10	20	15	15	1000
 perttuswife	170	10	5	5	21	500
 housewife	160	15	10	15	24	500
 femaleslave	170	10	10	15	18	500
 librarian	170	5	5	5	12	500
+angel		180
+bat		20
+beholder
+genie
+gibberling
+gnoll
+imp
+kobold
+large cat	60
+large rat	30
+lion		300							150000
+mammoth		500							5000000
+raven		60
+unicorn
+werewolf (h)	170
+werewolf (w)	120
+zombie		160
+mistress	180
+orc		160							50000
+troll		230							200000

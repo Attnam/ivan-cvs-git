@@ -1100,8 +1100,8 @@ void slave::BeTalkedTo(character* Talker)
 		}
 		else
 		{
-			ADD_MESSAGE("\"Don't touch me! Master does not want people to touch sale items.");
-			ADD_MESSAGE("\"I'm worth 50 squirrels, you know!\"");
+			ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch sale items.");
+			ADD_MESSAGE("I'm worth 50 squirrels, you know!\"");
 		}
 
 		return;

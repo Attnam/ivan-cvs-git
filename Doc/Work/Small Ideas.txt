@@ -57,3 +57,4 @@ The inventory screen should show the total weigth of items and burdened/stressed
 Name of gamma should be corrected.
 Some more variation to death messages.
 The librarian could charge wand or sell scrolls?
+Swatcommando, froggoblin, skeleton, Oree, etc. should be humanoids.
