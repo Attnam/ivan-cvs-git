@@ -526,3 +526,20 @@ bool stack::RaiseTheDead(character* Summoner)
   return false;
 }
 
+bool stack::TryKey(key* Key, character* Applier)
+{
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    {
+      if((**i)->TryKey(Key, Applier))
+	return true;
+    }  
+  return false;
+}
+
+bool stack::Open(character*)
+{
+  
+
+
+
+}

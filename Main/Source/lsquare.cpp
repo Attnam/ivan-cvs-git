@@ -495,7 +495,9 @@ void lsquare::AlterLuminance(vector2d Dir, ushort AiL)
 
 bool lsquare::Open(character* Opener)
 {
-  return GetOLTerrain()->Open(Opener);
+  if(!GetOLTerrain()->Open(Opener) && !GetStack()->Open(Opener))
+    if(Opener->IsPlayer())
+      ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
 }
 
 bool lsquare::Close(character* Closer)
@@ -1160,7 +1162,7 @@ void lsquare::TeleportEverything(character* Teleporter)
 
 bool lsquare::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(GetGLTerrain()->ReceiveApply(Thingy, Applier) || GetOLTerrain()->ReceiveApply(Thingy,Applier))
+  if(GetGLTerrain()->ReceiveApply(Thingy, Applier) || GetOLTerrain()->ReceiveApply(Thingy,Applier) || GetStack()->ReceiveApply(Thingy, Applier))
     {
       return true;
     }
@@ -1229,3 +1231,16 @@ bool lsquare::RaiseTheDead(character* Summoner)
   return false;
 }
 
+bool lsquare::TryKey(key* Key, character* Applier)
+{
+  if(GetOLTerrain()->TryKey(Key,Applier) || GetStack()->TryKey(Key, Applier))
+    {
+      return true;
+    }
+  else
+    {
+      if(Applier->IsPlayer()) 
+	ADD_MESSAGE("There's no keyhole here!");
+      return false;
+    }
+}

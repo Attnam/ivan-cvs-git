@@ -216,6 +216,8 @@ class item : public object
   DATABASEVALUE(ulong, Price);
   DATABASEVALUE(ushort, BaseEmitation);
   virtual bool SavesLifeWhenWorn() const { return false; }
+  virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
+  virtual bool ReceiveApply(character*) { return false; }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

@@ -62,5 +62,20 @@ class ROOM
   bool Entered;
 );
 
+class ROOM
+(
+ library,
+ room,
+ public:
+ public:
+  virtual void HandleInstantiatedCharacter(character*);
+  virtual void Enter(character*);
+  virtual bool PickupItem(character*, item*);
+  virtual bool DropItem(character*, item*);
+  virtual void KickSquare(character*, lsquare*);
+  virtual bool ConsumeItem(character*, item*);
+  virtual bool AllowDropGifts() const { return false; }
+  virtual void TeleportSquare(character*, lsquare*);
+);
 #endif
 

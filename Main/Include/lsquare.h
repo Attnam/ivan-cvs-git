@@ -109,6 +109,7 @@ class lsquare : public square
   virtual void DrawCharacterSymbols(vector2d, ushort);
   virtual bool LockEverything(character*);
   virtual bool RaiseTheDead(character*);
+  virtual bool TryKey(key*, character*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

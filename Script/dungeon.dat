@@ -568,7 +568,6 @@ Dungeon 1;
 					7 = poolborder { VisualFlags = FLIP; }
 					8 = poolborder { VisualFlags = MIRROR | ROTATE; }
 					s = couch;
-					= = bookcase;
 					f = fountain;
 					d = doublebed;
 				}
@@ -580,19 +579,19 @@ Dungeon 1;
 				. . b . . . b . . . . . . . . # # # # # # # # # . . . . . . . . b . . . b . .
 				b . . . . b . . . . . . . b b # . . . . . . . # b b . . . . . . . b . . . . b
 				. . . # # # # b . . b . . # # # . . . . . . . # # # . . b . . b # # # # . . .
-				b . b # . . # . b . . . . # . . . . . . . . . . . # . . . . b . # . = # b . b
-				. . . # . . # . . . . # # # . . . . . . . . . . . # # # . . . . # . = # . . .
-				b . b # . . # b . . b # . . . . . T . . . T . . . . . # b . . b # . = # b . b
-				. . . # . . # # # . . # . . . . . . . c . . . . . . . # . . # # # . = # . . .
-				b . b # . . . . # . b # . . . . . . . c . . . . . . . # b . # . . . = # b . b
-				. . . # . . . . # . . # . . . . . . . c . . . . . . . # . . # . . . = # . . .
-				b . b # # # . . # b . # # # . . . . . c . . . . . # # # . b # . = # # # b . b
-				. . . . b # . . # # # . b # . . . . . c . . . . . # b . # # # . = # b . . . .
-				b . . . . # . . . . # . . # . . . . . c . . . . . # . . # . . . = # . . . . b
-				. . b b . # # # . . # # # # . . . . . c . . . . . # # # # . = # # # . b b . .
-				b . . . . . b # . . . . . # . . . . . c . . . . . # = . . . = # b . . . . . b
-				. b . . b . . # . . . . . # . . . . . c . . . . . # = . . . = # . . b . . b .
-				b . . b . . . # # # # . . # . . . . . c . . . . . # = . # # # # . . . b . . b
+				b . b # . . # . b . . . . # . . . . . . . . . . . # . . . . b . # . . # b . b
+				. . . # . . # . . . . # # # . . . . . . . . . . . # # # . . . . # . . # . . .
+				b . b # . . # b . . b # . . . . . T . . . T . . . . . # b . . b # . . # b . b
+				. . . # . . # # # . . # . . . . . . . c . . . . . . . # . . # # # . . # . . .
+				b . b # . . . . # . b # . . . . . . . c . . . . . . . # b . # . . . . # b . b
+				. . . # . . . . # . . # . . . . . . . c . . . . . . . # . . # . . . . # . . .
+				b . b # # # . . # b . # # # . . . . . c . . . . . # # # . b # . . # # # b . b
+				. . . . b # . . # # # . b # . . . . . c . . . . . # b . # # # . . # b . . . .
+				b . . . . # . . . . # . . # . . . . . c . . . . . # . . # . . . . # . . . . b
+				. . b b . # # # . . # # # # . . . . . c . . . . . # # # # . . # # # . b b . .
+				b . . . . . b # . . . . . # . . . . . c . . . . . # . . . . . # b . . . . . b
+				. b . . b . . # . . . . . # . . . . . c . . . . . # . . . . . # . . b . . b .
+				b . . b . . . # # # # . . # . . . . . c . . . . . # . . # # # # . . . b . . b
 				b . . . . b . . . . # . . # . . . . . c . . . . . # . . # . . . . b . . . . b
 				. b . b . . . . b # # # D # . . . . . c . . . . . # D # # # b . . . . b . b .
 				b . . . b # # # # # . # . # . . . . . c . . . . . # . # . # # # # # b . b . b
@@ -690,7 +689,6 @@ Dungeon 1;
 					p = priest;
 					d = dolphin;
 					l = lightfrog;
-					8 = librarian;
 					s = femaleslave;
 					1 = petrusswife { Config = 1; }
 					2 = petrusswife { Config = 2; }
@@ -726,7 +724,7 @@ Dungeon 1;
 				. . # . . # # # . . # . . . . . . . . . . . # . . # # # . . # . .
 				. . # . . . . # . . # c . l . . . . . l . c # . . # . . . . # . .
 				. . # # # k . # # # # . . . . . . . . . . . # # # # . . # # # . .
-				. . . . # k . . . k # . . . . . . . . . . . # . . 8 . . # . . . .
+				. . . . # k . . . k # . . . . . . . . . . . # . . . . . # . . . .
 				. . . . # k . . . k # . . . . . . . . . . . # . . . . . # . . . .
 				. . . . # # # # . k # c . . . . . . . . . c # . . # # # # . . . .
 				. . . . . . . # . . # . . . . . . . . . . . # . . # . . . . . . .
@@ -928,6 +926,62 @@ Dungeon 1;
 			FloorSquare=floor,empty;
 			WallSquare=grassterrain, WOOD wall;
 			DoorSquare=floor, door;
+		}
+		Room 9;
+		{
+			Pos=22,54;
+			Size=7,5;
+			AltarPossible=false;
+			WallSquare=grassterrain,wall;
+			FloorSquare=parquet,empty;
+			GenerateDoor=false;
+			ReCalculate=false;
+			DivineMaster=consummo;
+			Type=library;
+			
+			Square, Pos 3, 4;
+			{
+				GTerrain = parquet;
+				OTerrain = door;
+			}
+
+
+			Square, Pos 3, 2;
+			{
+				Character = librarian;
+			}
+
+			ItemMap
+			{
+				Pos=1,1;
+				Size=5,3;
+				Types
+				{
+					t = scrollofteleport;
+					c = scrollofcreatemonster;
+					C = scrollofcharging;
+					h = holybook;
+				}
+			}
+			{
+			    Chhhh
+			    c...h
+			    t...h
+			}
+			OTerrainMap
+			{
+				Pos=1,1;
+				Size=5,3;
+				Types
+				{
+					= = bookcase;
+				}
+			}
+			{
+				=====
+				=...=
+				=...=
+			}
 		}
 	}
 }

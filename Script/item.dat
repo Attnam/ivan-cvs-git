@@ -573,6 +573,7 @@ holybook
 	BitmapPos = 32, 32;
 	FormModifier = 30;
 	OfferModifier = 4000;
+	Price = 200;
 }
 
 fiftymillionroubles

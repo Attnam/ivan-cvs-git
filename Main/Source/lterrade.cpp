@@ -792,44 +792,6 @@ void door::CreateBoobyTrap()
   SetBoobyTrap(1); 
 }
 
-bool door::ReceiveApply(item* Thingy, character* Applier)
-{
-  if(Thingy->CanOpenDoors())
-    {
-      if(Opened)
-	return false;
-
-      if(Thingy->GetLockType() == GetLockType())
-	{
-	  if(Applier->IsPlayer())
-	    {
-	      if(IsLocked())
-		ADD_MESSAGE("You unlock the door.");
-	      else
-		ADD_MESSAGE("You lock the door.");
-	    }
-	  else if(Applier->GetLSquareUnder()->CanBeSeen())
-	    {
-	      if(IsLocked())
-		ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
-	      else
-		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
-	    }
-
-	  SetIsLocked(!IsLocked());	      
-	}
-      else
-	{
-	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
-
-	}
-      return true;
-    }
-  else
-    return false;
-}
-
 bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
   if(GetContainedMaterial())
@@ -898,3 +860,39 @@ void door::SetParameters(uchar Param)
   SetIsLocked(Param & LOCKED);
 }
 
+bool door::TryKey(key* Thingy, character* Applier)
+{
+  if(Thingy->CanOpenDoors())
+    {
+      if(Opened)
+	return false;
+
+      if(Thingy->FitsLockType(GetLockType()))
+	{
+	  if(Applier->IsPlayer())
+	    {
+	      if(IsLocked())
+		ADD_MESSAGE("You unlock the door.");
+	      else
+		ADD_MESSAGE("You lock the door.");
+	    }
+	  else if(Applier->GetLSquareUnder()->CanBeSeen())
+	    {
+	      if(IsLocked())
+		ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
+	      else
+		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
+	    }
+
+	  SetIsLocked(!IsLocked());
+	}
+      else
+	{
+	  if(Applier->IsPlayer())
+	    ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
+	}
+      return true;
+    }
+  else
+    return false;
+}

@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include "felist.h"
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"
@@ -828,6 +829,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool CanOpenDoors() const { return true; }
+  virtual bool FitsLockType(uchar What) const { return What == LockType; }
  protected:
   virtual std::string NameSingular() const { return "key"; }
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(IRON)); }
@@ -1309,5 +1311,22 @@ class ITEM
   virtual std::string Adjective() const { return "magical"; }
 );
 
+class ITEM
+(
+ chest,
+ item,
+ public: 
+  virtual item* TryToOpen(character*);
+  virtual bool IsOpenable(character*) const { return true; }
+  virtual bool TryKey(key*, character*);
+  virtual bool Lock() { Locked = true; }
+ protected:
+  virtual std::string NameSingular() const { return "chest"; }
+  virtual ulong StorageVolume;
+  virtual void VirtualConstructor(bool);
+  stack* Contained;
+  uchar LockType;
+  bool Locked;
+);
 #endif
 

@@ -127,9 +127,6 @@ void lterrain::DrawToTileBuffer(bool Animate) const
 
 bool lterrain::Open(character* Opener)
 {
-  if(Opener->IsPlayer())
-    ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
-
   return false;
 }
 

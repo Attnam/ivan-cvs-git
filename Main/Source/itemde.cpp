@@ -1373,7 +1373,7 @@ bool key::Apply(character* User)
 {
   if(User->IsPlayer())
     {
-      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key or space]", 0xFF, false);
+      uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key or space]", 0xFF, true);
 
       if(Dir == 0xFF)
 	return false;
@@ -1381,7 +1381,7 @@ bool key::Apply(character* User)
       vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
 
       if(game::IsValidPos(ApplyPos))
-	game::GetCurrentLevel()->GetLSquare(ApplyPos)->ReceiveApply(this, User);
+	game::GetCurrentLevel()->GetLSquare(ApplyPos)->TryKey(this, User);
       else
 	ADD_MESSAGE("Can't do that, sir!");
 
@@ -2595,3 +2595,30 @@ void magicalwhistle::BlowEffect(character* Whistler)
     if(Whistler != (*i)) (*i)->TeleportNear(Whistler);
 }
 
+
+void chest::VirtualConstructor(bool Load)
+{
+  item::VirtualConstructor(Load);
+  StorageVolume = 1000;
+  Contained = new stack;
+}
+
+bool chest::TryKey(key* Key, character* Applier)
+{
+  if(Key->FitsLockType(GetLockType()))
+    {
+      Lock();
+
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("You lock %s.", Key->CHARNAME(DEFINITE));
+      else if(Applier->GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+    }
+  else
+    {
+      if(Applier->IsPlayer())
+	ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHARNAME(DEFINITE));
+      else
+	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHARNAME(DEFINITE), Key->CHARNAME(DEFINITE));
+    }
+}

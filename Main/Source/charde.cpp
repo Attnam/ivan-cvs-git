@@ -35,6 +35,7 @@ CHARACTER_PROTOTYPE(character, 0, 0, false);
 #include "actionde.h"
 #include "colorbit.h"
 #include "save.h"
+#include "game.h"
 
 petrus::~petrus()
 {
@@ -2317,17 +2318,17 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 
   if(GetLeftLeg())
     {
-      Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   if(GetRightLeg())
     {
-      Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   if(GetGroin())
     {
-      Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
@@ -2337,22 +2338,22 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 
   if(GetTorso())
     {
-      Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   if(GetLeftArm())
     {
-      Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   if(GetRightArm())
     {
-      Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   if(GetHead())
     {
-      Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? RED : LIGHTGRAY;
+      Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
     }
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);

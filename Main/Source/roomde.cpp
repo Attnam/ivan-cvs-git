@@ -75,7 +75,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
       if(Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"Ah! That %s costs %d squirrels. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
 
 	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
 	    {
@@ -88,7 +88,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d squirrels!\"", ForSale->CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED));
 	  return false;
 	}
     }
@@ -136,7 +136,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
       if(Master->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"What a fine %s. I'll pay %d squirrels for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
@@ -149,7 +149,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d squirrels for it, but I don't have so much. Sorry.\"", Price);
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for it, but I don't have so much. Sorry.\"", Price);
 	  return false;
 	}
     }
@@ -381,3 +381,170 @@ void cathedral::VirtualConstructor()
   SetEntered(false);
 }
 
+
+void library::HandleInstantiatedCharacter(character* Character)
+{
+  room::HandleInstantiatedCharacter(Character);
+  Master = Character;
+}
+
+void library::Enter(character* Customer)
+{
+  if(Customer->IsPlayer())
+    if(Master)
+      {
+	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+	  if(Master->GetSquareUnder()->CanBeSeenFrom(Customer->GetSquareUnder()->GetPos(), Customer->LOSRangeSquare()))
+	    ADD_MESSAGE("%s looks at you suspiciously.", Master->CHARNAME(DEFINITE));
+	  else
+	    ADD_MESSAGE("You feel somebody staring at you.");
+      }
+    else
+      ADD_MESSAGE("The library appears to be deserted.");
+}
+
+bool library::PickupItem(character* Customer, item* ForSale)
+{
+  if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
+    return true;
+
+  ulong Price = ForSale->GetPrice();
+
+  if(!Customer->IsPlayer())
+    {
+      if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
+	{
+	  ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	  Customer->SetMoney(Customer->GetMoney() - Price);
+	  Master->SetMoney(Master->GetMoney() + Price);
+	  return true;
+	}
+      else
+	return false;
+    }
+  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+    {
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+	{
+	  ADD_MESSAGE("\"I think it is yours. Take it.\"");
+	  return true;
+	}
+
+      if(!Price || !ForSale->CanBeSoldInLibrary(Master))
+	{
+	  ADD_MESSAGE("\"Thank you for cleaning that junk out of my floor.\"");
+	  return true;
+	}
+
+      if(Customer->GetMoney() >= Price)
+	{
+	  ADD_MESSAGE("\"Ah! That %s costs %d gold pieces. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
+
+	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
+	    {
+	      Customer->SetMoney(Customer->GetMoney() - Price);
+	      Master->SetMoney(Master->GetMoney() + Price);
+	      return true;
+	    }
+	  else
+	    return false;
+	}
+      else
+	{
+	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED));
+	  return false;
+	}
+    }
+  else
+    if(game::BoolQuestion("Are you sure you want to steal this item? [y/N]"))
+      {
+	Customer->Hostility(Master);
+	return true;
+      }
+    else
+      return false;
+}
+
+bool library::DropItem(character* Customer, item* ForSale)
+{
+  if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
+    return true;
+
+  ulong Price = (ForSale->GetPrice() >> 1);
+
+  if(!Customer->IsPlayer())
+    if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
+      {
+	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
+	Customer->SetMoney(Customer->GetMoney() + Price);
+	Master->SetMoney(Master->GetMoney() - Price);
+	return true;
+      }
+    else
+      return false;
+
+  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+    {
+      if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
+	{
+	  ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
+	  return false;
+	}
+
+      if(!Price || !ForSale->CanBeSoldInLibrary(Master))
+	{
+	  ADD_MESSAGE("\"Sorry I don't think that fits into my collection.\"");
+	  return false;
+	}
+
+      if(Master->GetMoney() >= Price)
+	{
+	  ADD_MESSAGE("\"What a interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+
+	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
+	    {
+	      Customer->SetMoney(Customer->GetMoney() + Price);
+	      Master->SetMoney(Master->GetMoney() - Price);
+	      return true;
+	    }
+	  else
+	    return false;
+	}
+      else
+	{
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for it, but I don't have so much. Sorry.\"", Price);
+	  return false;
+	}
+    }
+  else
+    return true;
+}
+
+void library::KickSquare(character* Infidel, lsquare* Square)
+{
+  if(!Master)
+    return;
+
+  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+    {
+      ADD_MESSAGE("\"You book hater!\"");
+      Infidel->Hostility(Master);
+    }
+}
+
+bool library::ConsumeItem(character* Customer, item*)
+{
+  return true;
+}
+
+void library::TeleportSquare(character* Infidel, lsquare* Square)
+{
+  if(!Master)
+    return;
+
+  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+    {
+      ADD_MESSAGE("\"You book hater!\"");
+      Infidel->Hostility(Master);
+    }
+}

@@ -48,6 +48,7 @@ class lterrain : public object
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
   virtual void DrawToTileBuffer(bool) const;
+  virtual bool TryKey(key*, character*) { return false; }
  protected:
   virtual void GenerateMaterials() = 0;
   virtual void Initialize(uchar, bool, bool);

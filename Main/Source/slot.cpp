@@ -6,6 +6,7 @@
 #include "lsquare.h"
 #include "actionba.h"
 #include "proto.h"
+#include "game.h"
 
 void slot::Save(outputfile& SaveFile) const
 {
