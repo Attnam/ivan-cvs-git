@@ -476,3 +476,6 @@ Levitating mushrooms should be able to move.
 Maybe players with 0 points shouldn't be recoreded in highscores.
 Drinking vodka (maybe just getting confused) should improve relations with Nefas.
 Items Bonefiles should spoil a bit before player enters again. 
+Equipment weight to inventory.
+Leviting mushrooms should be able to move.
+Running and levitating

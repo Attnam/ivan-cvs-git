@@ -464,40 +464,43 @@ bool fountain::Drink(character* Drinker)
 		}
 	    case 7:
 	      {
-		olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
-
-		if(Drinker->IsStuck())
+		if(!RAND_N(2))
 		  {
-		    Drinker->SetStuckTo(0);
-		    Drinker->SetStuckToBodyPart(NONE_INDEX);
-		  }
+		    olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
 
-		if(Found)
-		  {
-		    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
-		    Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
-		    Drinker->Move(Found->GetPos(), true);
-		  }
-		else
-		  {
-		    int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
-		    int From = GetLevel()->GetIndex();
+		    if(Drinker->IsStuck())
+		      {
+			Drinker->SetStuckTo(0);
+			Drinker->SetStuckToBodyPart(NONE_INDEX);
+		      }
 
-		    if(To == From)
-		      game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);		   
-		    else
-		      game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
-
-		    olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
-
-		    if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
+		    if(Found)
 		      {
 			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+			Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
+			Drinker->Move(Found->GetPos(), true);
 		      }
 		    else
 		      {
-			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
-			Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 1000 + RAND() % 501), false, false);
+			int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
+			int From = GetLevel()->GetIndex();
+
+			if(To == From)
+			  game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);		   
+			else
+			  game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
+
+			olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
+
+			if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
+			  {
+			    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+			  }
+			else
+			  {
+			    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
+			    Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 1000 + RAND() % 501), false, false);
+			  }
 		      }
 		  }
 	      }
