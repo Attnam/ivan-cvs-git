@@ -1,8 +1,8 @@
 /* Compiled through itemset.cpp */
 
-void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultContainedVolume(), CUP); }
+void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
+void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
 void materialcontainer::InitMaterials(const materialscript* M, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
 int holybanana::GetSpecialFlags() const { return ST_FLAME_1; }
@@ -516,7 +516,7 @@ bool oillamp::Apply(character* Applier)
 	    }
 
 	  meleeweapon* Weapon = new meleeweapon(TWO_HANDED_SCIMITAR, NO_MATERIALS);
-	  Weapon->InitMaterials(MAKE_MATERIAL(ARCANITE), MAKE_MATERIAL(ARCANITE), 0);
+	  Weapon->InitMaterials(MAKE_MATERIAL(ARCANITE), MAKE_MATERIAL(ARCANITE), true);
 	  Genie->SetRightWielded(Weapon);
 	  ADD_MESSAGE("%s wishes for a two-handed scimitar. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
 	}
@@ -979,7 +979,7 @@ void materialcontainer::GenerateMaterials()
   const fearray<long>& SMC = GetSecondaryMaterialConfig();
   InitMaterial(SecondaryMaterial,
 	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
-	       GetDefaultContainedVolume());
+	       GetDefaultSecondaryVolume());
 }
 
 /* Returns true if container opens fine else false */

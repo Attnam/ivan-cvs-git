@@ -1015,7 +1015,7 @@ void arm::EditExperience(int Identifier, double Value, double Speed)
 	      const char* Adj = Change > 0 ? "quite dextrous" : "clumsy";
 
 	      if(Master->IsPlayer())
-		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+		ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
 	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
 		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
 
@@ -1084,7 +1084,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 	      const char* Adj = Change > 0 ? "stronger" : "weaker";
 
 	      if(Master->IsPlayer())
-		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+		ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
 	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
 		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
 
@@ -1106,7 +1106,7 @@ void leg::EditExperience(int Identifier, double Value, double Speed)
 	      const char* Adj = Change > 0 ? "very agile" : "slower";
 
 	      if(Master->IsPlayer())
-		ADD_MESSAGE("Your %s feel %s!", GetBodyPartName().CStr(), Adj);
+		ADD_MESSAGE("Your %s feels %s!", GetBodyPartName().CStr(), Adj);
 	      else if(Master->IsPet() && Master->CanBeSeenByPlayer())
 		ADD_MESSAGE("Suddenly %s looks %s.", Master->CHAR_NAME(DEFINITE), Adj);
 

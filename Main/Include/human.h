@@ -476,11 +476,11 @@ class CHARACTER
   virtual bool CanCreateBodyPart(int) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
   virtual void FinalProcessForBone();
+  virtual void CreateInitialEquipment(int);
  protected:
   virtual int GetTorsoMainColor() const;
   virtual int GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
-  virtual void CreateInitialEquipment(int);
   virtual void GetAICommand();
   ulong LastHealed;
 );
@@ -499,6 +499,8 @@ class CHARACTER
   virtual int GetGauntletColor() const;
   virtual int GetLegMainColor() const;
   virtual vector2d GetDrawDisplacement(int) const;
+  virtual int GetWSkillHits() const { return 10000; }
+  virtual bool IsElite() const { return false; }
 );
 
 class CHARACTER
@@ -626,6 +628,29 @@ class CHARACTER
   virtual character* GetLeader() const;
  protected:
   virtual void GetAICommand();
+);
+
+class CHARACTER
+(
+  veterankamikazedwarf,
+  kamikazedwarf,
+ protected:
+  virtual int GetTorsoMainColor() const;
+  virtual int GetGauntletColor() const;
+  virtual int GetLegMainColor() const;
+  virtual int GetWSkillHits() const { return 50000; }
+  virtual bool IsElite() const { return true; }
+);
+
+class CHARACTER  
+(        
+  archangel,
+  angel,
+ public:
+  virtual void CreateInitialEquipment(int);
+ protected:
+  virtual int GetTorsoMainColor() const;
+  virtual int GetArmMainColor() const;
 );
 
 #endif

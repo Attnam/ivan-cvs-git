@@ -17,9 +17,9 @@ void god::Pray()
 	game::ApplyDivineAlignmentBonuses(this, 10, true);
 	PLAYER->EditExperience(WISDOM, 20, 1 << 10);
 
-	if(Relation > 500 && !(RAND() % 100))
+	if(Relation > 250 && !(RAND() % 20))
 	  {
-	    character* Angel = CreateAngel();
+	    character* Angel = CreateAngel(1000);
 
 	    if(Angel)
 	      {
@@ -56,9 +56,9 @@ void god::Pray()
 	game::ApplyDivineAlignmentBonuses(this, 20, false);
 	PLAYER->EditExperience(WISDOM, -100, 1 << 11);
 
-	if(Relation < -500 && !(RAND() % 50))
+	if(Relation < -250 && !(RAND() % 10))
 	  {
-	    character* Angel = CreateAngel();
+	    character* Angel = CreateAngel(10000);
 
 	    if(Angel)
 	      {
@@ -139,9 +139,9 @@ bool god::PlayerVomitedOnAltar(liquid* Liquid)
   AdjustRelation(-200);
   PLAYER->CheckDeath(CONST_S("killed by a flying lump of vomit"), 0);
 
-  if(!(RAND() % 50))
+  if(!(RAND() % 10))
     {
-      character* Angel = CreateAngel();
+      character* Angel = CreateAngel(10000);
 
       if(Angel)
 	{
@@ -153,7 +153,7 @@ bool god::PlayerVomitedOnAltar(liquid* Liquid)
   return true;
 }
 
-character* god::CreateAngel()
+character* god::CreateAngel(int LifeBase)
 {
   vector2d TryToCreate;
 
@@ -163,7 +163,16 @@ character* god::CreateAngel()
 
       if(game::GetCurrentArea()->IsValidPos(TryToCreate))
 	{
-	  angel* Angel = new angel(GetType());
+	  angel* Angel;
+
+	  if(LifeBase && !(RAND() % 5))
+	    Angel = new archangel(GetType());
+	  else
+	    Angel = new angel(GetType());
+
+	  if(LifeBase)
+	    Angel->SetLifeExpectancy(LifeBase, 0);
+
 	  lsquare* Square = game::GetCurrentLevel()->GetLSquare(TryToCreate);
 
 	  if(Angel->CanMoveOn(Square) && Angel->IsFreeForMe(Square))
@@ -243,7 +252,7 @@ bool god::ReceiveOffer(item* Sacrifice)
       PrintRelation();
       int RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
-      if(OfferValue > 0 && Relation > 500 && !(RAND() % RandModifier))
+      if(OfferValue > 0 && Relation > 250 && !(RAND() % RandModifier))
 	{
 	  character* Angel = CreateAngel();
 

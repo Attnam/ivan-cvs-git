@@ -1002,8 +1002,8 @@ void kamikazedwarf::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   SetRightWielded(new holybook(GetConfig(), SpecialFlags));
-  GetCWeaponSkill(UNCATEGORIZED)->AddHit(10000);
-  GetCurrentRightSWeaponSkill()->AddHit(10000);
+  GetCWeaponSkill(UNCATEGORIZED)->AddHit(GetWSkillHits());
+  GetCurrentRightSWeaponSkill()->AddHit(GetWSkillHits());
 }
 
 bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
@@ -1012,7 +1012,9 @@ bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, int Direction, bool F
     for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
       if(i->IsExplosive())
 	{
-	  if(RAND() & 1)
+	  if(IsElite() && RAND() & 1)
+	    ADD_MESSAGE("%s shouts: \"This time I won't fail, O Great %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+	  else if(RAND() & 1)
 	    ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
 	  else
 	    ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
@@ -4324,4 +4326,80 @@ void humanoid::DuplicateEquipment(character* Receiver, ulong Flags)
   character::DuplicateEquipment(Receiver, Flags);
   EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, GetRightWielded());
   EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, GetLeftWielded());
+}
+
+color16 veterankamikazedwarf::GetTorsoMainColor() const
+{
+  return GetMasterGod()->GetEliteColor();
+}
+
+color16 veterankamikazedwarf::GetGauntletColor() const
+{
+  return GetMasterGod()->GetEliteColor();
+}
+
+color16 veterankamikazedwarf::GetLegMainColor() const
+{
+  return GetMasterGod()->GetEliteColor();
+}
+
+color16 archangel::GetTorsoMainColor() const
+{
+  return GetMasterGod()->GetEliteColor();
+}
+
+color16 archangel::GetArmMainColor() const
+{
+  return GetMasterGod()->GetEliteColor();
+}
+
+void archangel::CreateInitialEquipment(int SpecialFlags)
+{
+  humanoid::CreateInitialEquipment(SpecialFlags);
+  GetStack()->AddItem(new holybook(GetConfig(), SpecialFlags));
+  armor* Equipment;
+  meleeweapon* Weapon;
+
+  switch(GetMasterGod()->GetBasicAlignment())
+    {
+    case GOOD:
+      Weapon = new flamingsword(0, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(ADAMANT), !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->SetEnchantment(4);
+      SetRightWielded(Weapon);
+      Equipment = new shield(0, SpecialFlags|NO_MATERIALS);
+      Equipment->InitMaterials(MAKE_MATERIAL(ARCANITE), !(SpecialFlags & NO_PIC_UPDATE));
+      Equipment->SetEnchantment(4);
+      SetLeftWielded(Equipment);
+      GetCWeaponSkill(LARGE_SWORDS)->AddHit(200000);
+      GetCWeaponSkill(SHIELDS)->AddHit(500000);
+      GetCurrentRightSWeaponSkill()->AddHit(200000);
+      GetCurrentLeftSWeaponSkill()->AddHit(200000);
+      GetRightArm()->SetDexterity(80);
+      GetLeftArm()->SetDexterity(80);
+      break;
+    case NEUTRAL:
+      Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->SetEnchantment(4);
+      SetRightWielded(Weapon);
+      Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->SetEnchantment(4);
+      SetLeftWielded(Weapon);
+      GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500000);
+      GetCurrentRightSWeaponSkill()->AddHit(500000);
+      GetCurrentLeftSWeaponSkill()->AddHit(500000);
+      SetEndurance(80);
+      break;
+    case EVIL:
+      Weapon = new meleeweapon(HALBERD, SpecialFlags|NO_MATERIALS);
+      Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->SetEnchantment(4);
+      SetRightWielded(Weapon);
+      GetCWeaponSkill(POLE_ARMS)->AddHit(1000000);
+      GetCurrentRightSWeaponSkill()->AddHit(1000000);
+      GetRightArm()->SetStrength(80);
+      GetLeftArm()->SetStrength(80);
+    }
 }

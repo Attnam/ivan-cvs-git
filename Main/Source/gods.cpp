@@ -1,94 +1,118 @@
 /* Compiled through godset.cpp */
 
+#define LAWFUL_BASIC_COLOR MakeRGB16(160, 160, 0)
+#define LAWFUL_ELITE_COLOR MakeRGB16(220, 220, 220)
+
+#define NEUTRAL_BASIC_COLOR MakeRGB16(20, 120, 200)
+#define NEUTRAL_ELITE_COLOR MakeRGB16(120, 120, 120)
+
+#define CHAOS_BASIC_COLOR MakeRGB16(200, 0, 0)
+#define CHAOS_ELITE_COLOR MakeRGB16(40, 40, 40)
+
 const char* valpurus::GetName() const { return "Valpurus"; }
 const char* valpurus::GetDescription() const { return "King of Gods"; }
 int valpurus::GetAlignment() const { return ALPP; }
 int valpurus::GetBasicAlignment() const { return GOOD; }
-color16 valpurus::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 valpurus::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 valpurus::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* legifer::GetName() const { return "Legifer"; }
 const char* legifer::GetDescription() const { return "god of law and order"; }
 int legifer::GetAlignment() const { return ALP; }
 int legifer::GetBasicAlignment() const { return GOOD; }
-color16 legifer::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 legifer::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 legifer::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* atavus::GetName() const { return "Atavus"; }
 const char* atavus::GetDescription() const { return "god of charity and munificence"; }
 int atavus::GetAlignment() const { return ALP; }
 int atavus::GetBasicAlignment() const { return GOOD; }
-color16 atavus::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 atavus::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 atavus::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* dulcis::GetName() const { return "Dulcis"; }
 const char* dulcis::GetDescription() const { return "goddess of love and art"; }
 int dulcis::GetAlignment() const { return AL; }
 int dulcis::GetBasicAlignment() const { return GOOD; }
-color16 dulcis::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 dulcis::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 dulcis::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* seges::GetName() const { return "Seges"; }
 const char* seges::GetDescription() const { return "goddess of health and nutrition"; }
 int seges::GetAlignment() const { return AL; }
 int seges::GetBasicAlignment() const { return GOOD; }
-color16 seges::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 seges::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 seges::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* sophos::GetName() const { return "Sophos"; }
 const char* sophos::GetDescription() const { return "god of knowledge and magic"; }
 int sophos::GetAlignment() const { return ALM; }
 int sophos::GetBasicAlignment() const { return GOOD; }
-color16 sophos::GetColor() const { return MakeRGB16(160, 160, 0); }
+color16 sophos::GetColor() const { return LAWFUL_BASIC_COLOR; }
+color16 sophos::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* silva::GetName() const { return "Silva"; }
 const char* silva::GetDescription() const { return "goddess of nature"; }
 int silva::GetAlignment() const { return ANP; }
 int silva::GetBasicAlignment() const { return NEUTRAL; }
-color16 silva::GetColor() const { return MakeRGB16(20, 120, 200); }
+color16 silva::GetColor() const { return NEUTRAL_BASIC_COLOR; }
+color16 silva::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
 const char* loricatus::GetName() const { return "Loricatus"; }
 const char* loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
 int loricatus::GetAlignment() const { return AN; }
 int loricatus::GetBasicAlignment() const { return NEUTRAL; }
-color16 loricatus::GetColor() const { return MakeRGB16(20, 120, 200); }
+color16 loricatus::GetColor() const { return NEUTRAL_BASIC_COLOR; }
+color16 loricatus::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
 const char* mellis::GetName() const { return "Mellis"; }
 const char* mellis::GetDescription() const { return "god of money, trade and politics"; }
 int mellis::GetAlignment() const { return ANM; }
 int mellis::GetBasicAlignment() const { return NEUTRAL; }
-color16 mellis::GetColor() const { return MakeRGB16(20, 120, 200); }
+color16 mellis::GetColor() const { return NEUTRAL_BASIC_COLOR; }
+color16 mellis::GetEliteColor() const { return NEUTRAL_ELITE_COLOR; }
 
 const char* cleptia::GetName() const { return "Cleptia"; }
 const char* cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
 int cleptia::GetAlignment() const { return ACP; }
 int cleptia::GetBasicAlignment() const { return EVIL; }
-color16 cleptia::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 cleptia::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 cleptia::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 const char* nefas::GetName() const { return "Nefas"; }
 const char* nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
 int nefas::GetAlignment() const { return AC; }
 int nefas::GetBasicAlignment() const { return EVIL; }
-color16 nefas::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 nefas::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 nefas::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 const char* scabies::GetName() const { return "Scabies"; }
 const char* scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
 int scabies::GetAlignment() const { return AC; }
 int scabies::GetBasicAlignment() const { return EVIL; }
-color16 scabies::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 scabies::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 scabies::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 const char* infuscor::GetName() const { return "Infuscor"; }
 const char* infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
 int infuscor::GetAlignment() const { return ACM; }
 int infuscor::GetBasicAlignment() const { return EVIL; }
-color16 infuscor::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 infuscor::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 infuscor::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 const char* cruentus::GetName() const { return "Cruentus"; }
 const char* cruentus::GetDescription() const { return "god of war and blood"; }
 int cruentus::GetAlignment() const { return ACM; }
 int cruentus::GetBasicAlignment() const { return EVIL; }
-color16 cruentus::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 cruentus::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 cruentus::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 const char* mortifer::GetName() const { return "Mortifer"; }
 const char* mortifer::GetDescription() const { return "Destroyer of Worlds"; }
 int mortifer::GetAlignment() const { return ACMM; }
 int mortifer::GetBasicAlignment() const { return EVIL; }
-color16 mortifer::GetColor() const { return MakeRGB16(200, 0, 0); }
+color16 mortifer::GetColor() const { return CHAOS_BASIC_COLOR; }
+color16 mortifer::GetEliteColor() const { return CHAOS_ELITE_COLOR; }
 
 void sophos::PrayGoodEffect()
 {
@@ -116,7 +140,7 @@ void valpurus::PrayGoodEffect()
     {
       ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
       meleeweapon* Weapon = new meleeweapon(TWO_HANDED_SWORD);
-      Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0);
+      Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), true);
       PLAYER->GetGiftStack()->AddItem(Weapon);
     }
 }
@@ -130,7 +154,7 @@ void valpurus::PrayBadEffect()
 
 void legifer::PrayGoodEffect()
 {
-  ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge firestorm engulfs everything around you.");
+  ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
   game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed accidentally by ") + GetName(), PLAYER->GetPos(), 40, false);
 }
 
@@ -707,9 +731,9 @@ void valpurus::Pray()
       game::ApplyDivineAlignmentBonuses(this, 100, true);
       PLAYER->EditExperience(WISDOM, 300, 1 << 11);
 
-      if(Relation > 500 && !(RAND() % 5))
+      if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel();
+	  character* Angel = CreateAngel(10000);
 
 	  if(Angel)
 	    {
@@ -727,9 +751,9 @@ void valpurus::Pray()
       game::ApplyDivineAlignmentBonuses(this, 20, false);
       PLAYER->EditExperience(WISDOM, -50, 1 << 10);
 
-      if(Relation < -500 && !(RAND() % 25))
+      if(Relation < -250 && !(RAND() % 3))
 	{
-	  character* Angel = CreateAngel();
+	  character* Angel = CreateAngel(10000);
 
 	  if(Angel)
 	    {
@@ -751,9 +775,9 @@ void mortifer::Pray()
       game::ApplyDivineAlignmentBonuses(this, 100, true);
       PLAYER->EditExperience(WISDOM, 300, 1 << 11);
 
-      if(Relation > 500 && !(RAND() % 5))
+      if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel();
+	  character* Angel = CreateAngel(10000);
 
 	  if(Angel)
 	    {
@@ -771,9 +795,9 @@ void mortifer::Pray()
       game::ApplyDivineAlignmentBonuses(this, 20, false);
       PLAYER->EditExperience(WISDOM, -50, 1 << 10);
 
-      if(Relation < -500 && !(RAND() % 5))
+      if(Relation < -250 && !(RAND() % 3))
 	{
-	  character* Angel = CreateAngel();
+	  character* Angel = CreateAngel(10000);
 
 	  if(Angel)
 	    {

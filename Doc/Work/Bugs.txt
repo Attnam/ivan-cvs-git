@@ -77,3 +77,4 @@ Polymorph default bugs if the string is very long.
 If you hit someone with one hand and either one of you teleports, you can still hit the opponent with the other hand.
 Leprosy can cause player to become overloaded in world map and there is no way to drop items.
 Lyre of charm works on monsters that don't hear. (like headless zombie)
+Go shouldn't walk adjacent to mushrooms.

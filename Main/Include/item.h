@@ -51,7 +51,6 @@ struct itemdatabase : public databasebase
   int DefaultSize;
   long DefaultMainVolume;
   long DefaultSecondaryVolume;
-  long DefaultContainedVolume;
   vector2d BitmapPos;
   long Price;
   color24 BaseEmitation;
@@ -255,7 +254,6 @@ class item : public object
   DATA_BASE_VALUE(int, DefaultSize);
   DATA_BASE_VALUE(long, DefaultMainVolume);
   DATA_BASE_VALUE(long, DefaultSecondaryVolume);
-  DATA_BASE_VALUE(long, DefaultContainedVolume);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, int);
   virtual DATA_BASE_VALUE(long, Price);
   virtual DATA_BASE_VALUE(color24, BaseEmitation);

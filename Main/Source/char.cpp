@@ -7648,12 +7648,22 @@ bodypart* character::SearchForOriginalBodyPart(int I) const
 
 void character::SetLifeExpectancy(int Base, int RandPlus)
 {
-  for(int c = 0; c < BodyParts; ++c)
+  int c;
+
+  for(c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
       if(BodyPart)
 	BodyPart->SetLifeExpectancy(Base, RandPlus);
+    }
+
+  for(c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->SetLifeExpectancy(Base, RandPlus);
     }
 }
 

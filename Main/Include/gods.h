@@ -18,6 +18,7 @@ class GOD
   virtual void Pray();
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -33,6 +34,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -48,6 +50,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -63,6 +66,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -78,6 +82,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -93,6 +98,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -108,6 +114,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -123,6 +130,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -138,6 +146,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -153,6 +162,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -168,6 +178,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -184,6 +195,7 @@ class GOD
   virtual int GetBasicAlignment() const;
   virtual bool PlayerVomitedOnAltar(liquid*);
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -199,6 +211,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -214,6 +227,7 @@ class GOD
   virtual int GetAlignment() const;
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -230,6 +244,7 @@ class GOD
   virtual void Pray();
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
+  virtual color16 GetEliteColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

@@ -2575,7 +2575,7 @@ kamikazedwarf
 		4,
 		"\"Would you like me to teach you the best suicidal bombing tactics?\"",
 		"@Dd shouts: \"Death to disbelievers!\"",
-		"@Dd praises @Gd with numerous hymns. %s is obviously a very devoted follower.",
+		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
 		"\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
 	}
 }
@@ -3051,7 +3051,7 @@ cossack
 	RightBoot = HARDENED_LEATHER boot;
 	PanicLevel = 10;
 	DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
-	HostileReplies == "%s shouts wildly: \"For Tataria!\"";
+	HostileReplies == "@Dd shouts wildly: \"For Tataria!\"";
 	AttachedGod = SILVA;
 	FriendlyReplies =
 	{
@@ -4352,4 +4352,124 @@ blinkdog
 	AttachedGod = SOPHOS;
 	DangerModifier = 50;
 	FleshMaterial = BLINK_DOG_FLESH;
+}
+
+veterankamikazedwarf
+{
+	AttributeBonus = 50;
+	Adjective = "veteran";
+	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
+	HPRequirementForGeneration = 120;
+	Frequency = 200;
+	IsAbstract = true;
+	CreateDivineConfigurations = true;
+	FriendlyReplies =
+	{
+		6,
+		"\"Everyone believes I failed intentionally. Never! My loyalty to @Gd is spotless!\"",
+		"\"The commander gave me too few explosives! It wasn't my fault!\"",
+		"@Dd shouts: \"Death to disbelievers!\"",
+		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
+		"@Dd seems very sorrowful. \"You can't believe how much I've been despised since that fateful mission...\"",
+		"@Dd almost sheds tears. \"I've lost all my friends and self-confidence due of the failure.\"";
+	}
+}
+
+archangel
+{
+	DefaultLegStrength = 50; /* gum */
+	DefaultAgility = 50; /* gum */
+	AttributeBonus = 100;
+	IsAbstract = true;
+	ClassStates = TELEPORT|HASTE|INFRA_VISION|ESP|TELEPORT_CONTROL|POLYMORPH_CONTROL|GAS_IMMUNITY|LIFE_SAVED;
+	IsCharmable = false;
+	IsUnique = true;
+	IsNameable = false;
+	CanBeDisplaced = false;
+	CanBeCloned = false;
+	IsPolymorphable = false;
+	CanBeConfused = false;
+	FireResistance = 40;
+	ElectricityResistance = 40;
+	EnergyResistance = 40;
+	NameSingular = "archangel";
+	BodyArmor = ANGEL_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+	Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
+	Belt = ANGEL_HAIR belt { Enchantment = 4; }
+	RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+
+	Config VALPURUS;
+	{
+		DefaultName = "Inlux";
+	}
+
+	Config LEGIFER;
+	{
+		DefaultName = "Iustitia";
+	}
+
+	Config ATAVUS;
+	{
+		DefaultName = "Beneficus";
+	}
+
+	Config DULCIS;
+	{
+		DefaultName = "Amatrix";
+	}
+
+	Config SEGES;
+	{
+		DefaultName = "Salubris";
+	}
+
+	Config SOPHOS;
+	{
+		DefaultName = "Magus";
+	}
+
+	Config SILVA;
+	{
+		DefaultName = "Nux";
+	}
+
+	Config LORICATUS;
+	{
+		DefaultName = "Ignigena";
+	}
+
+	Config MELLIS;
+	{
+		DefaultName = "Leguleius";
+	}
+
+	Config CLEPTIA;
+	{
+		DefaultName = "Latro";
+	}
+
+	Config NEFAS;
+	{
+		DefaultName = "Rapax";
+	}
+
+	Config SCABIES;
+	{
+		DefaultName = "Pestilentia";
+	}
+
+	Config INFUSCOR;
+	{
+		DefaultName = "Sinistra";
+	}
+
+	Config CRUENTUS;
+	{
+		DefaultName = "Gladius";
+	}
+
+	Config MORTIFER;
+	{
+		DefaultName = "Erado";
+	}
 }

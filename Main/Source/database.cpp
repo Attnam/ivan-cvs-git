@@ -138,7 +138,7 @@ template <class type> int databasecreator<type>::CreateDivineConfigurations(cons
 
       if(!ConfigDataBase)
 	{
-	  ConfigDataBase = new database(**TempConfig);//&Proto->Config.insert(std::pair<int, database>(c, *DataBase)).first->second;
+	  ConfigDataBase = new database(**TempConfig);
 	  ConfigDataBase->InitDefaults(Proto, c1);
 	  Created = true;
 	}
@@ -369,7 +369,6 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(DefaultSize);
   ADD_MEMBER(DefaultMainVolume);
   ADD_MEMBER(DefaultSecondaryVolume);
-  ADD_MEMBER(DefaultContainedVolume);
   ADD_MEMBER(BitmapPos);
   ADD_MEMBER(Price);
   ADD_MEMBER(BaseEmitation);

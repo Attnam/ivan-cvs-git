@@ -27,7 +27,6 @@ item
 	/* Obligatory: DefaultSize */
 	/* Obligatory: DefaultMainVolume */
 	DefaultSecondaryVolume = 0;
-	DefaultContainedVolume = 0;
 	/* Obligatory: BitmapPos */
 	Price = 0;
 	BaseEmitation = 0;
@@ -144,7 +143,7 @@ can /* materialcontainer-> */
 	Possibility = 450;
 	Category = FOOD;
 	DefaultMainVolume = 50;
-	DefaultContainedVolume = 500;
+	DefaultSecondaryVolume = 500;
 	StrengthModifier = 50;
 	/* BitmapPos depends on being full or not */
 	FormModifier = 15;
@@ -656,7 +655,7 @@ banana /* materialcontainer-> */
 	Possibility = 150;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 40;
-	DefaultContainedVolume = 150;
+	DefaultSecondaryVolume = 150;
 	StrengthModifier = 75;
 	Category = FOOD;
 	BitmapPos = 0, 112;
@@ -685,7 +684,7 @@ holybanana /* materialcontainer->banana-> */
 {
 	Possibility = 5;
 	DefaultMainVolume = 100;
-	DefaultContainedVolume = 500;
+	DefaultSecondaryVolume = 500;
 	StrengthModifier = 150;
 	FormModifier = 250;
 	DefaultSize = 30;
@@ -937,7 +936,7 @@ potion /* materialcontainer-> */
 	WeaponCategory = BLUNT_WEAPONS;
 	Category = POTION;
 	DefaultMainVolume = 60;
-	DefaultContainedVolume = 1000;
+	DefaultSecondaryVolume = 1000;
 	StrengthModifier = 50;
 	BitmapPos = 0, 160;
 	FormModifier = 25;
@@ -1473,7 +1472,7 @@ backpack /* materialcontainer-> */
 	Possibility = 25;
 	Category = TOOL;
 	DefaultMainVolume = 1000;
-	DefaultContainedVolume = 10000;
+	DefaultSecondaryVolume = 10000;
 	StrengthModifier = 250;
 	BitmapPos = 32, 16;
 	FormModifier = 10;
@@ -1585,7 +1584,7 @@ mine /*materialcontainer-> */
 	Possibility = 50;
 	Category = TOOL;
 	DefaultMainVolume = 100;
-	DefaultContainedVolume = 5000;
+	DefaultSecondaryVolume = 5000;
 	StrengthModifier = 50;
 	BitmapPos = 32, 288;
 	FormModifier = 10;
@@ -1602,7 +1601,7 @@ mine /*materialcontainer-> */
 		DefaultSize = 65;
 		Possibility = 10;
 		DefaultMainVolume = 250;
-		DefaultContainedVolume = 12500;
+		DefaultSecondaryVolume = 12500;
 		NameSingular = "big mine";
 		BitmapPos = 80, 288;
 	}
