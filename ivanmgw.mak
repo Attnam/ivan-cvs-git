@@ -1,6 +1,6 @@
-# Iter Vehemens ad Necem makefile
+# Iter Vehemens ad Necem makefile for MinGW environment
 
-# Copyrights (C) Timo Kiviluoto / Fatal Error Productions 2002
+# Copyrights (C) Timo Kiviluoto / IvanDev 2002
 
 AR       = ar rs
 CC       = gcc -o
@@ -36,7 +36,7 @@ IVANOBJ  = $(IVANDIR)/Object/charba.o $(IVANDIR)/Object/area.o $(IVANDIR)/Object
            $(IVANDIR)/Object/wsquare.o $(IVANDIR)/Object/typeable.o $(IVANDIR)/Object/worldmap.o\
            $(IVANDIR)/Object/wskill.o $(IVANDIR)/Object/wterraba.o $(IVANDIR)/Object/wterrade.o\
            $(IVANDIR)/Object/config.o
-FLAGS = -IInclude -IFeDX/Include -IFEEL/Include -IFeFile/Include -IFeIO/Include -IFELL/Include -IFeMath/Include -IFeWin/Include -O3 -ffast-math -W -Wall -fvtable-thunks
+FLAGS = -IInclude -IFeDX/Include -IFEEL/Include -IFeFile/Include -IFeIO/Include -IFELL/Include -IFeMath/Include -IFeWin/Include -s -O3 -ffast-math -W -Wall -fvtable-thunks
 LIBS = -lstdc++ -lddraw -ldxguid -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lwinmm
 
 ivan:	$(IVANBIN)
