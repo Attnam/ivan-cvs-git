@@ -2081,13 +2081,8 @@ vector2d character::GetPos() const
 
 bool character::ForceVomit()
 {
-	ADD_MESSAGE("You push your fingers down to your throat.");
-
-	if(Amount) 
-		Vomit(rand() % 3);
-	else
-		ADD_MESSAGE("You are not able to vomit.");
-
+	ADD_MESSAGE("You push your fingers down to your throat and vomit.");
+	Vomit(rand() % 3);
 	return true;
 }
 
