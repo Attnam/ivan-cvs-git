@@ -1083,5 +1083,49 @@ protected:
 	virtual std::string NameSingular() const RET("zombie")
 );
 
+
+class CHARACTER
+(
+	imp,
+	character,
+	InitMaterials(new impflesh),
+	{
+		SetSize(50);
+		SetAgility(25);
+		SetStrength(10);
+		SetEndurance(7);
+		SetPerception(12);
+	},
+public:
+	virtual ushort Possibility() const RET(75)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(368,0)
+	virtual std::string NameSingular() const RET("imp")
+	virtual float GetMeleeStrength() const RET(15000)
+);
+
+
+class CHARACTER
+(
+	bat,
+	character,
+	InitMaterials(new batflesh),
+	{
+		SetSize(20);
+		SetAgility(45);
+		SetStrength(2);
+		SetEndurance(1);
+		SetPerception(25);
+	},
+public:
+	virtual ushort Possibility() const RET(125)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
+	virtual std::string StandVerb() const { return "flying"; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(464,0)
+	virtual std::string NameSingular() const RET("bat")
+	virtual float GetMeleeStrength() const RET(5000)
+);
 #endif
 

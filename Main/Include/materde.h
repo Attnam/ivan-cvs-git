@@ -664,4 +664,28 @@ protected:
 	virtual std::string NameStem() const	{ return "palm leaf"; }
 );
 
+class MATERIAL
+(
+	impflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 20; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(128, 0, 0); }
+	virtual short NutritionValue() const			{ return 250; }
+protected:
+	virtual std::string NameStem() const	{ return "imp flesh"; }
+);
+
+class MATERIAL
+(
+	batflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 7; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(5, 5, 5); }
+	virtual short NutritionValue() const			{ return 350; }
+protected:
+	virtual std::string NameStem() const	{ return "bat flesh"; }
+);
+
 #endif

@@ -32,12 +32,12 @@ housewife	160	15	10	15	24	500
 femaleslave	170	10	10	15	18	500
 librarian	170	5	5	5	12	500
 angel		180
-bat		20
+bat		20	45	2	1	25	3000
 beholder
 genie
 gibberling
 gnoll
-imp
+imp		50	25	10	7	12	15000
 kobold
 large cat	60
 large rat	30
