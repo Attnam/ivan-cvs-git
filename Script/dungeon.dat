@@ -118,7 +118,6 @@ Dungeon 0;
 			Square, Pos 3,1;
 			{
 				Item=lantern;
-				Character=unicorn;
 			}
 		}
 	}
