@@ -1693,8 +1693,8 @@ mommo
 		TorsoBitmapPos = 176, 0;
 		TotalSize = 100;
 		Adjective = "conical";
-		HPRequirementForGeneration = 80;
-		DayRequirementForGeneration = 3;
+		HPRequirementForGeneration = 120;
+		DayRequirementForGeneration = 4;
 		Frequency = 1000;
 	}
 
@@ -1710,8 +1710,8 @@ mommo
 		TorsoBitmapPos = 192, 0;
 		TotalSize = 75;
 		Adjective = "flat";
-		HPRequirementForGeneration = 60;
-		DayRequirementForGeneration = 2;
+		HPRequirementForGeneration = 80;
+		DayRequirementForGeneration = 3;
 		Frequency = 1500;
 		CanHear = false;
 	}

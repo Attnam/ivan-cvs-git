@@ -286,7 +286,7 @@ bool ironalloy::TryToRust(long Modifier, long Volume)
       if(!Volume)
 	Volume = GetVolume();
 
-      long Chance = long(10000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
+      long Chance = long(30000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
 
       if(Chance <= 1 || !(RAND() % Chance))
 	return true;

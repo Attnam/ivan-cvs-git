@@ -1863,7 +1863,7 @@ bool mommo::Hit(character* Enemy, vector2d Pos, int, bool)
   else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
     ADD_MESSAGE("%s spills acidous slime at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-  Vomit(Pos, 500 + RAND() % 500, false);
+  Vomit(Pos, 250 + RAND() % 250, false);
   EditAP(-1000);
   return true;  
 }
@@ -1877,7 +1877,7 @@ void mommo::GetAICommand()
 
   if(!(RAND() % 10))
     {
-      Vomit(GetPos(), 500 + RAND() % 500);
+      Vomit(GetPos(), 350 + RAND() % 350);
       EditAP(-1000);
       return;
     }
@@ -2244,7 +2244,7 @@ void spider::GetAICommand()
 	      }
 	  }
 
-  if(Hostiles && !RAND_N(Max(60 / Hostiles, 8)))
+  if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
     {
       web* Web = new web;
       Web->SetStrength(10);
