@@ -95,37 +95,12 @@ void graphics::BlitDBToScreen()
 			DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
 
 		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
-		//ulong TrueSourceXMove = 0;
 		ulong TrueDestOffset = ulong(ddsd.lpSurface);
 		ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
 		ushort Width = XRES;
 		ushort Height = YRES;
 
 		BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
-
-		/*__asm
-		{
-			pushad
-			push es
-			mov ax, ds
-			mov esi, TrueSourceOffset
-			mov edi, TrueDestOffset
-			mov es, ax
-			xor ecx, ecx
-			mov dx, Width
-			mov bx, Height
-			shr dx, 0x01
-			cld
-		MaskedLoop3:
-			mov cx, dx
-			rep movsd
-			add esi, TrueSourceXMove
-			add edi, TrueDestXMove
-			dec bx
-			jnz MaskedLoop3
-			pop es
-			popad
-		}*/
 
 		if(FullScreen)
 			DXDisplay->GetFrontBuffer()->Unlock(NULL);
