@@ -23,7 +23,7 @@ dungeon::~dungeon()
 
 void dungeon::Initialize()
 {
-  std::map<uchar, dungeonscript*>::iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
+  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
 
   if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
     DungeonScript = DungeonIterator->second;
@@ -39,7 +39,7 @@ void dungeon::Initialize()
 
 levelscript* dungeon::GetLevelScript(ushort Index)
 {
-  std::map<uchar, levelscript*>::iterator LevelIterator = DungeonScript->GetLevel().find(Index);
+  std::map<uchar, levelscript*>::const_iterator LevelIterator = DungeonScript->GetLevel().find(Index);
 
   levelscript* LevelScript;
 

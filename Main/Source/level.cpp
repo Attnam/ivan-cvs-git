@@ -251,7 +251,7 @@ void level::Generate(levelscript* GenLevelScript)
   for(c = 0; c < *LevelScript->GetRooms(); ++c)
     {
       game::BusyAnimation();
-      std::map<uchar, roomscript*>::iterator RoomIterator = LevelScript->GetRoom().find(c);
+      std::map<uchar, roomscript*>::const_iterator RoomIterator = LevelScript->GetRoom().find(c);
       roomscript* RoomScript;
 
       if(RoomIterator != LevelScript->GetRoom().end())

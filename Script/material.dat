@@ -31,3 +31,823 @@ iron
 	PriceModifier = 40;
 	IsSolid = true;
 }
+
+valpurium
+{
+	StrengthValue = 400;
+	ConsumeType = METAL;
+	Density = 3000;
+	OfferValue = 100;
+	Color = rgb(192, 192, 192);
+	PriceModifier = 40;
+	IsSolid = true;
+	CanBeWished = false;
+}	
+
+stone
+{
+	StrengthValue = 60;
+	ConsumeType = MINERAL; 
+	Density = 3000;
+	OfferValue = 5; 
+	IsSolid = true; 
+	Color = rgb(56, 56, 56); 
+}
+
+bananaflesh
+{
+	StrengthValue = 5;
+	ConsumeType = FRUIT;
+	OfferValue = 10;
+	NutritionValue = 200;
+	Color = rgb(200,200,0);
+	IsAlive = true;
+}
+
+gravel
+{
+	StrengthValue = 40;
+	ConsumeType = MINERAL;
+	Density = 2500;
+	OfferValue = 1;
+	Color = rgb(72,72,72);
+}
+
+moraine
+{
+	StrengthValue = 20;
+	ConsumeType = MINERAL;
+	Density = 2500;
+	OfferValue = 2;
+	Color = rgb(111,74,37);
+}
+
+
+schoolfood
+{
+	StrengthValue = 5;
+	ConsumeType = MEAT;
+	Density = 1500;
+	OfferValue = 20;
+	Alignment = EVIL;
+	NutritionValue = 100;
+	Color = rgb(111,74,37);
+	IsBadFoodForAI = true;
+	IsAlive = true;
+}
+
+air
+{
+	StrengthValue = 0;
+	Density = 1;
+	OfferValue = 0;
+	Color = rgb(112,112,200);
+	ConsumeType = GAS;
+}
+
+wood
+{
+	StrengthValue = 30;
+	ConsumeType = MISC_ORGANIC;
+	Density = 500;
+	OfferValue = 5;
+	IsSolid = true;
+	Color = rgb(140,100,60);
+}
+
+flesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+}
+
+goblinoidflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 30;
+	NutritionValue = 200;
+	Color = rgb(0,128,0);
+	IsAlive = true;
+}
+
+pork
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 20;
+	NutritionValue = 400;
+	Color = rgb(128,128,128);
+	IsAlive = true;
+}
+
+beef
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 20;
+	NutritionValue = 400;
+	Color = rgb(128,128,128);
+	IsAlive = true;
+}
+
+bone
+{
+	StrengthValue = 30;
+	Density = 2000;
+	OfferValue = 5;
+	ConsumeType = BONE;
+	IsSolid = true;
+	Color = rgb(144,144,144);
+	NutritionValue = 20;
+}
+
+frogflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 500;
+	NutritionValue = 1000;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+	Alignment = EVIL;
+	IsBadFoodForAI = true;
+}
+
+darkfrogflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 500;
+	NutritionValue = 1000;
+	Color = rgb(48,48,48);
+	IsAlive = true;
+	Alignment = EVIL;
+	IsBadFoodForAI = true;
+}
+
+elpuriflesh
+{
+	StrengthValue = 30;
+	ConsumeType = MEAT;
+	Density = 2400;
+	OfferValue = 1;
+	NutritionValue = 1000;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+	Alignment = EVIL;
+	IsBadFoodForAI = true;
+}
+
+glass
+{
+	StrenghtValue = 30;
+	ConsumeType = MINERAL;
+	Density = 2500;
+	OfferValue = 5;
+	IsSolid = true;
+	Color = rgb(128,128,255);
+}
+
+omleurine
+{
+	StrengthValue = 1;
+	ConsumeType = LIQUID;
+	Density = 1000;
+	OfferValue = 100;
+	Color = rgb(128,128,0);
+	CanBeWished = false;
+	IsAlive = true;
+}
+
+bananapeal
+{
+	StrengthValue = 10;
+	ConsumeType = MISC_ORGANIC;
+	Density = 500;
+	OfferValue = 1;
+	Color = rgb(176,176,0);
+	IsAlive = true;
+}
+
+parchment
+{
+	StrenghtValue = 15;
+	ConsumeType = MISC_ORGANIC;
+	Density = 600;
+	OfferValue = 5;
+	IsSolid = true;
+	Color = rgb(176,176,176);
+	IsFlammable = true;
+}
+
+cloth
+{
+	StrengthValue = 5;
+	ConsumeType = MISC_ORGANIC;
+	Density = 100;
+	OfferValue = 5;
+	IsSolid = true;
+	Color = rgb(64,64,160);
+	IsFlammable = true;
+}
+
+humanflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 30;
+	NutritionValue = 200;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+	Alignment = EVIL;
+	/* 
+	Possibly missing from this script:
+	SkinColor = rgb(180, 120, 90);
+	*/
+}
+
+negroid /* Have to hope that his is politically correct. */
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 30;
+	NutritionValue = 200;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+	Alignment = EVIL;
+	/* 
+	Possibly missing from this script:
+	SkinColor = rgb(160, 100, 64);
+	*/
+}	
+
+slime
+{
+	StrengthValue = 2;
+	ConsumeType = LIQUID;
+	Density = 400;
+	OfferValue = 1;
+	NutritionValue = 100;
+	Color = rgb(0,128,0);
+	IsAlive = true;
+}
+
+brownslime
+{
+	StrengthValue = 2;
+	ConsumeType = LIQUID;
+	Density = 400;
+	OfferValue = 1;
+	NutritionValue = 100;
+	Color = rgb(111,74,37);
+	IsAlive = true;
+}
+
+wolfflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+}
+
+dogflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(111,74,37);
+	IsAlive = true;
+	Alignment = EVIL;
+}
+
+ennerbeastflesh
+{
+	StrengthValue = 30;
+	ConsumeType = MEAT;
+	Density = 1800;
+	OfferValue = 5;
+	NutritionValue = 200;
+	Color = rgb(112,112,64);
+	IsAlive = true;
+	Alignment = EVIL; /* Atleast this is questionable... */
+	IsBadFoodForAI = true;
+	/* 
+	Possibly missing from this script:
+	SkinColor = rgb(180, 120, 90);
+	*/
+}
+
+pepsi
+{
+	StrengthValue = 200;
+	ConsumeType = LIQUID;
+	Density = 1500;
+	OfferValue = 50;
+	Alignment = EVIL;
+	NutritionValue = 400;
+	Color = rgb(48,48,48);
+	IsBadFoodForAi = true;
+}
+
+mithril
+{
+	StrengthValue = 200;
+	ConsumeType = METAL;
+	Density = 5000;
+	OfferValue = 25;
+	IsSolid = true;
+	Color = rgb(184,184,184);
+}
+
+spiderflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 4;
+	NutritionValue = 200;
+	Color = rgb(160,160,160);
+	IsAlive = true;
+}
+
+jackalflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 6;
+	NutritionValue = 200;
+	Color = rgb(224,224,224);
+	IsAlive = true;
+}
+	
+donkeyflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 6;
+	NutritionValue = 200;
+	Color = rgb(80,80,80);
+	IsAlive = true;
+}
+	
+marble
+{
+	StrengthValue = 50;
+	ConsumeType = MINERAL;
+	Density = 3000;
+	OfferValue = 7;
+	IsSolid = true;
+	Color = rgb(160,160,160);
+}
+
+gold
+{
+	StrengthValue = 30;
+	ConsumeType = METAL;
+	Density = 20000;
+	OfferValue = 50;
+	IsSolid = true;
+	Color = rgb(200,200,0);
+	CanBeWished = false;
+}
+
+grass
+{
+	StrengthValue = 2;
+	ConsumeType = MISC_ORGANIC;
+	Density = 100;
+	OfferValue = 2;
+	Color = rgb(32,96,32);
+	IsFlammable = true;
+}
+
+kiwiflesh
+{
+	StrengthValue = 5;
+	ConsumeType = FRUIT;
+	Density = 1200;
+	OfferValue = 11;
+	NutritionValue = 150;
+	Color = rgb(160, 112, 32);
+	IsAlive = true;
+}
+
+pineappleflesh
+{
+	StrengthValue = 10;
+	ConsumeType = FRUIT;
+	Density = 1200;
+	OfferValue = 12;
+	Color = rgb(192,112,96);
+	IsAlive = true;
+}
+
+leather
+{
+	StrengthValue = 10;
+	ConsumeType = MISC_ORGANIC;
+	Density = 500;
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(111,64,37);
+	IsFlexible = true;
+	IsFlammable = true;
+}
+
+
+lightfrogflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 500;
+	NutritionValue = 1000;
+	Color = rgb(32,88,32);
+	IsAlive = true;
+	Alignment = EVIL;
+	IsBadFoodForAI = true;
+}
+
+dolphinflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(64,64,64);
+	IsAlive = true;
+}
+
+flesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(128,128,128);
+	IsAlive = true;
+}
+
+leaf
+{
+	StrengthValue = 5;
+	ConsumeType = MISC_ORGANIC;
+	Density = 500;
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(0,160,0);
+	IsFlammable = true;
+	IsAlive = true;
+}
+
+fabric
+{
+	StrengthValue = 5;
+	ConsumeType = MISC_ORGANIC;
+	Density = 100;
+	OfferValue = 5;
+	IsSolid = true;
+	Color = rgb(176,0,0);
+	IsFlammable = true;
+}
+
+water
+{
+	StrengthValue = 1;
+	ConsumeType = LIQUID;
+	Density = 1000;
+	OfferValue = 1;
+	NutritionValue = 10;
+	Color = rgb(64,64,192);
+	CanBeWished = false;
+}
+
+palmleaf
+{
+	StrengthValue = 5;
+	ConsumeType = MISC_ORGANIC;
+	Density = 500;
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(0,160,0);
+	IsFlammable = true;
+	IsAlive = true;
+}
+
+sulfur
+{
+	StrenthValue = 50;
+	ConsumeType = MINERAL;
+	Density = 2000;
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(128,0,0);
+}
+
+batflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 7;
+	NutritionValue = 200;
+	Color = rgb(48,48,48);
+	IsAlive = true;
+}
+
+werewolfflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 13;
+	NutritionValue = 200;
+	Color = rgb(90,64,64);
+	IsAlive = true;
+}
+
+koboldflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 14;
+	NutritionValue = 100;
+	Color = rgb(30,100,110);
+	IsAlive = true;
+	IsBadFoodForAi = true;
+}
+
+gibberlingflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 12;
+	NutritionValue = 200;
+	Color = rgb(100,100,200);
+	IsAlive = true;
+}
+
+catflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 12;
+	NutritionValue = 200;
+	Color = rgb(50,50,50);
+	IsAlive = true;
+}
+
+ratflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 8;
+	NutritionValue = 200;
+	Color = rgb(180,100,40);
+	IsAlive = true;
+}
+
+angelflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 8;
+	NutritionValue = 200;
+	Color = rgb(200,200,200);
+	IsAlive = true;
+}
+
+dwarfflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(180,120,90);
+	IsAlive = true;
+}
+
+gunpowder
+{
+	StrengthValue = 5;
+	ConsumeType = MINERAL;
+	Density = 250;
+	OfferValue = 5;
+	Color = rgb(30,30,30);
+	CanBeWished = false;
+	IsExplosive = true;
+	/* Explosive power is not done yet. (it depents on Volume and the script doesn't support it */
+}
+
+daemonflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(180,0,0);
+	IsAlive = true;
+}
+
+blood
+{
+	StrengthValue = 200;
+	ConsumeType = LIQUID;
+	Density = 1000;
+	OfferValue = 50;
+	NutritionValue = 10;
+	Color = rgb(160,0,0);
+	CanBeWished = false;
+	Alignment = EVIL;
+	IsAlive = true;
+}
+
+mammothflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(100,130,160);
+	IsAlive = true;
+}
+
+bread
+{
+	StrengthValue = 10;
+	ConsumeType = PROCESSED;
+	Density = 200;
+	OfferValue = 7;
+	NutritionValue = 200;
+	Color = rgb(200,110,60);
+}
+
+unicornhorn
+{
+	StrengthValue = 125;
+	ConsumeType = MISC_ORGANIC;
+	Density = 2000;
+	OfferValue = 10;
+	Color = rgb(180,180,180);
+	IsAlive = true;
+}
+
+blackunicornhorn
+{
+	StrengthValue = 125;
+	ConsumeType = MISC_ORGANIC;
+	Density = 2000;
+	OfferValue = 35;
+	Color = rgb(48,48,48);
+	IsAlive = true;
+	Alignment = GOOD; 
+	/* Slightly strange. This means the the good gods like to receive this sacrifice */
+}
+
+grayunicornhorn
+{
+	StrengthValue = 125;
+	ConsumeType = MISC_ORGANIC;
+	Density = 2000;
+	OfferValue = 35;
+	Color = rgb(112,112,112);
+	IsAlive = true;
+	/* Slightly strange. This means the the good gods like to receive this sacrifice */
+}
+
+whiteunicornhorn
+{
+	StrengthValue = 125;
+	ConsumeType = MISC_ORGANIC;
+	Density = 2000;
+	OfferValue = 35;
+	Color = rgb(160,160,160);
+	IsAlive = true;
+	Alignment = EVIL; 
+	/* Slightly strange. This means the the evil gods like to receive this sacrifice */
+}
+
+diamond
+{
+	StrengthValue = 300;
+	ConsumeType = MINERAL;
+	Density = 3500;
+	OfferValue = 50;
+	IsSolid = true;
+	Color = rgb(180,180,180);
+}
+
+silver
+{
+	StrengthValue = 50;
+	ConsumeType = METAL;
+	Density = 10500;
+	OfferValue = 30;
+	IsSolid = true;
+	Color = rgb(160,160,160);
+	CanBeWished = false;
+}
+
+sapphire
+{
+	StrengthValue = 250;
+	ConsumeType = MINERAL;
+	Density = 3500;
+	OfferValue = 50;
+	IsSolid = true;
+	Color = rgb(96,96,200);
+}
+
+ruby
+{
+	StrengthValue = 250;
+	ConsumeType = MINERAL;
+	Density = 3500;
+	OfferValue = 50;
+	IsSolid = true;
+	Color = rgb(200, 60, 60);
+}
+
+healingliquid
+{
+	StrengthValue = 1;
+	ConsumeType = LIQUID;
+	Density = 1100;
+	OfferValue = 70;
+	NutritionValue = 30;
+	Color = rgb(128,0,0);
+}
+
+bronze
+{
+	StrengthValue = 80;
+	ConsumeType = METAL;
+	Density = 8300;
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(150,100,50);
+}
+
+copper
+{
+	StrengthValue = 60;
+	ConsumeType = METAL;
+	Density = 9000; /* rounded from 8920 */
+	OfferValue = 10;
+	IsSolid = true;
+	Color = rgb(96, 64, 32);
+}
+
+lionflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(192,160,112);
+	IsAlive = true;
+}
+
+buffaloflesh
+{
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
+	OfferValue = 15;
+	NutritionValue = 200;
+	Color = rgb(60,55,50);
+	IsAlive = true;
+}
+

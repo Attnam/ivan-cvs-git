@@ -2123,6 +2123,21 @@ class ITEM
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
 );
 
+class ITEM
+(
+ ringoffireresistance,
+ ring,
+ InitMaterials(new gold),
+ {
+  SetSize(3);
+ },
+ public:
+  static ushort Possibility() { return 15; }
+  virtual std::string NameSingular() const { return "ring of fire resistance"; }
+  virtual std::string NamePlural() const { return "rings of fire resistance"; }
+  virtual ushort FireResistance() const { return 10; }
+);
+
 #endif
 
 
