@@ -385,22 +385,25 @@ stackiterator stack::GetSlotAboveTop() const
   return Item->end();
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
 {
-  return DrawContents(0, Viewer, Topic, "", "", true, SorterFunction);
+  return DrawContents(0, Viewer, Topic, "", "", true, IgnoreVisibility, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool (*SorterFunction)(item*, const character*)) const
+/* For showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
+
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
 {
-  return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, SorterFunction);
+  return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, IgnoreVisibility, SorterFunction);
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
 {
-  return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
+  return DrawContents(0, Viewer, Topic, "", "", SelectItem, IgnoreVisibility, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+/* MergeStack ignores always visibility */
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
 {
   felist ItemNames(Topic, WHITE, 0);
 
@@ -413,9 +416,9 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
   ItemNames.AddDescription(Buffer);
 
   if(MergeStack)
-    MergeStack->AddContentsToList(ItemNames, Viewer, ThatDesc, SelectItem, SorterFunction);
+    MergeStack->AddContentsToList(ItemNames, Viewer, ThatDesc, SelectItem, false, SorterFunction);
 
-  AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
+  AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, IgnoreVisibility, SorterFunction);
   ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
@@ -436,7 +439,7 @@ item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std:
   return Item;
 }
 
-void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
+void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const std::string& Desc, bool SelectItem, bool IgnoreVisibility, bool (*SorterFunction)(item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
   bool DescDrawn = false;
@@ -446,7 +449,7 @@ void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const 
       bool CatDescDrawn = false;
 
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->CanBeSeenBy(Viewer))
+	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && ((**i)->CanBeSeenBy(Viewer) || IgnoreVisibility))
 	  {
 	    if(!DescDrawn && Desc.length())
 	      {
@@ -526,7 +529,7 @@ bool stack::TryKey(item* Key, character* Applier)
 
 bool stack::Open(character* Opener)
 {
-  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", &item::OpenableSorter);
+  item* ToBeOpened = DrawContents(Opener, "What do you wish to open?", false, &item::OpenableSorter);
 
   if(ToBeOpened == 0)
     return false;

@@ -340,7 +340,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?", true);
 
 	if(Item)
 	  {
@@ -857,7 +857,7 @@ void scrollofcharging::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", &item::ChargeableSorter);
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", true, &item::ChargeableSorter);
 
 	if(Item)
 	  {
@@ -2060,7 +2060,7 @@ void mine::VirtualConstructor(bool Load)
   if(!Load)
     {
       Team = MONSTER_TEAM;
-      Active = false;
+      Active = true;
     }
 }
 
@@ -2540,7 +2540,7 @@ bool chest::TakeSomethingFrom(character* Opener)
       return false;
     }
 
-  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
+  item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?", false);
   uchar RoomNumber = GetLSquareUnder()->GetRoom();
 
   if(ToBeTaken && (!RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
@@ -2562,7 +2562,7 @@ bool chest::PutSomethingIn(character* Opener)
     }
 
   std::string Message = "What do you want to put in " + GetName(DEFINITE) + "?";
-  item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message);
+  item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message, true);
 
   if(ToBePut)
     {
@@ -3431,7 +3431,6 @@ bool mine::WillExplode(const character* Stepper) const
 {
   return GetContainedMaterial()->IsExplosive() && Stepper->GetWeight() > 500;
 }
-<<<<<<< itemde.cpp
 
 materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
 {

@@ -205,6 +205,7 @@ class contentscript<item> : public contentscripttemplate<item>
   item* Instantiate() const;
  protected:
   DATAMEMBER(ushort, Team);
+  DATAMEMBER(bool, Active);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>

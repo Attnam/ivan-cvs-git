@@ -1427,7 +1427,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Stack->GetVisibleItems(game::GetPlayer()))
-	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
+	      Stack->DrawContents(game::GetPlayer(), "Items here", false, false);
 	    else
 	      ADD_MESSAGE("You see no items here.");
 	  }

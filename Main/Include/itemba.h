@@ -281,6 +281,7 @@ class item : public object
   virtual void SetTeam(ushort What) { }
   virtual void SpecialGenerationHandler() { }
   item* Duplicate() const;
+  virtual void SetIsActive(bool) { }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

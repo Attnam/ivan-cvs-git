@@ -46,10 +46,10 @@ class stack
   ushort GetItems() const { return Item->size(); }
   ushort GetVisibleItems(const character*) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(const character*, const std::string&, bool (*)(item*, const character*) = 0) const;
   item* DrawContents(const character*, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
-  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool (*)(item*, const character*) = 0) const;
   item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
+  item* stack::DrawContents(const character*, const std::string&, bool, bool, bool (*)(item*, const character*) = 0) const;
+  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool, bool, bool (*)(item*, const character*) = 0) const;
   item* MoveItem(stackiterator, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);
@@ -68,7 +68,7 @@ class stack
   void ReceiveDamage(character*, ushort, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, const character*, const std::string&, bool, bool (*)(item*, const character*)) const;
+  void AddContentsToList(felist&, const character*, const std::string&, bool, bool, bool (*)(item*, const character*)) const;
   item* SearchChosen(ushort&, ushort, const character*, bool (*)(item*, const character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
   bool RaiseTheDead(character*);
