@@ -11,6 +11,8 @@
 
 class CSurface;
 struct IDirectDrawSurface7;
+struct _DDSURFACEDESC2;
+typedef _DDSURFACEDESC2 DDSURFACEDESC2;
 
 class outputfile;
 class inputfile;
@@ -28,6 +30,10 @@ public:
 	void Save(std::string) const;
 	void PutPixel(ushort, ushort, ushort);
 	ushort GetPixel(ushort, ushort) const;
+	void Lock();
+	void Release();
+	void FastPutPixel(ushort, ushort, ushort);
+	ushort FastGetPixel(ushort, ushort) const;
 	void ClearToColor(ushort);
 	void ClearToColor(ushort, ushort, ushort, ushort, ushort);
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
@@ -37,7 +43,7 @@ public:
 	void FastBlit(bitmap*) const;
 	void FastMaskedBlit(bitmap*) const;
 	void Printf(bitmap*, ushort, ushort, const char*, ...) const;
-	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF);
+	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF, bool = false);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
 	void DrawPolygon(ushort, vector2d, bool, double = 0, ushort = 255, ushort = 100);
@@ -50,6 +56,7 @@ protected:
 	CSurface* DXSurface;
 	ushort XSize, YSize;
 	ushort* BackupBuffer;
+	DDSURFACEDESC2* TempDDSD;
 };
 
 #endif

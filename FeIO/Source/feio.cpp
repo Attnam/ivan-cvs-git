@@ -1,12 +1,14 @@
 #include <io.h>
-#include <windows.h>
+//#include <windows.h>
 
 #include "graphics.h"
 #include "bitmap.h"
 #include "feio.h"
 #include "whandler.h"
 #include "list.h"
+
 #define PENT_WIDTH 70
+
 void iosystem::TextScreen(bitmap* Font, std::string Text, bool GKey)
 {
 	char Line[200];
@@ -70,15 +72,17 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 			Rotation = 0;
 		else
 			Rotation += 0.003;
+
 		DOUBLEBUFFER->ClearToColor(0);
-		for(int x = 0; x < 40; x++)
-			DOUBLEBUFFER->DrawPolygon(5,vector2d(200,200), true, Rotation + double(x) / 400, MAKE_RGB(int(255 - 6.375 * (40 - x)),0,0), 100);
+
+		for(int x = 0; x < 10; x++)
+			DOUBLEBUFFER->DrawPolygon(5,vector2d(150,150), true, Rotation + double(x) / 50, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), 100);
 		
 		std::string sCopyOfMS = sMS;
-		
-		
-		for(x = 0; x < 5; x++)
-			DOUBLEBUFFER->DrawPolygon(50,vector2d(200,200), false, 0, MAKE_RGB(255,0,0), 100 + x);
+
+		for(x = 0; x < 4; x++)
+			DOUBLEBUFFER->DrawPolygon(50,vector2d(150,150), false, 0, MAKE_RGB(int(255 - 12 * x),0,0), 100 + x);
+
 		for(unsigned int i = 0; i < CountChars('\r',sMS); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
@@ -89,7 +93,7 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 		graphics::BlitDBToScreen();
 		int k;
 
-		MSG		msg;
+		/*MSG		msg;
 
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
@@ -102,7 +106,7 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 				TranslateMessage(&msg);				// Translate The Message
 				DispatchMessage(&msg);				// Dispatch The Message
 			}
-		}
+		}*/
 		
 		switch(k = globalwindowhandler::ReadKey())
 		{

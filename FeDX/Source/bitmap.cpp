@@ -207,6 +207,30 @@ ushort bitmap::GetPixel(ushort X, ushort Y) const
 	return Color;
 }
 
+void bitmap::Lock()
+{
+	TempDDSD = new DDSURFACEDESC2;
+	ZeroMemory( TempDDSD,sizeof(*TempDDSD) );
+	TempDDSD->dwSize = sizeof(*TempDDSD);
+	DXSurface->GetDDrawSurface()->Lock( NULL, TempDDSD, DDLOCK_WAIT, NULL );
+}
+
+void bitmap::Release()
+{
+	DXSurface->GetDDrawSurface()->Unlock(NULL); 
+	delete TempDDSD;
+}
+
+void bitmap::FastPutPixel(ushort X, ushort Y, ushort Color)
+{
+	((ushort*)TempDDSD->lpSurface)[Y * (TempDDSD->lPitch >> 1) + X] = Color;
+}
+
+ushort bitmap::FastGetPixel(ushort X, ushort Y) const
+{
+	return ((ushort*)TempDDSD->lpSurface)[Y * (TempDDSD->lPitch >> 1) + X];
+}
+
 void bitmap::ClearToColor(ushort Color)
 {
 	DDBLTFX ddbltfx;
@@ -1059,7 +1083,7 @@ void bitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, const char* Format, ...)
 	}
 }
 
-void bitmap::DrawLine(ushort FromX, ushort FromY, ushort ToX, ushort ToY, ushort Color)
+void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -1070,189 +1094,199 @@ void bitmap::DrawLine(ushort FromX, ushort FromY, ushort ToX, ushort ToY, ushort
 
 	ulong Pitch = ddsd.lPitch, Surface = ulong(ddsd.lpSurface);
 
-	__asm
+	static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
+
+	for(uchar c = 0; c < (Wide ? 5 : 1); ++c)
 	{
-		push	ax
-		push	bx
-		push	cx
-		push	dx
-		xor	eax,	eax
-		xor	ebx,	ebx
-		mov	bx,	FromX
-		mov	ax,	FromY
-		mov	dx,	ToX
-		mov	cx,	ToY
-		cmp	bx,	dx
-		jnz	LineNotVertical
-		cmp	ax,	cx
-		jl	VerticalLinePlus
-		jg	VerticalLineMinus
-		jmp	LineQuickEnd
-	VerticalLinePlus:
-		call	NPutPixel
-		inc	ax
-		cmp	ax,	cx
-		jl	VerticalLinePlus
-		jmp	LineQuickEnd
-	VerticalLineMinus:
-		call	NPutPixel
-		dec	ax
-		cmp	ax,	cx
-		jg	VerticalLineMinus
-		jmp	LineQuickEnd
-	LineNotVertical:	
-		cmp	ax,	cx
-		jnz	LineNotHorizontal
-		cmp	ax,	dx
-		jl	LineHorizontalPlus
-		jg	LineHorizontalMinus
-	LineHorizontalPlus:
-		call	NPutPixel
-		inc	bx
-		cmp	bx,	dx
-		jl	LineHorizontalPlus
-		jmp	LineQuickEnd
-	LineHorizontalMinus:
-		call	NPutPixel
-		dec	bx
-		cmp	bx,	dx
-		jg	LineHorizontalMinus
-	LineQuickEnd:
-		call	NPutPixel
-		pop	dx
-		pop	cx
-		pop	bx
-		pop	ax
-		jmp	End
-	LineNotHorizontal:
-		push	si
-		push	di
-		cmp	dx,	bx
-		jl	LineXSwapNeeded
-		sub	dx,	bx
-		mov	si,	0x0001
-		jmp	LineNext1
-	LineXSwapNeeded:
-		push	bx
-		sub	bx,	dx
-		mov	dx,	bx
-		pop	bx
-		mov	si,	0xFFFF
-	LineNext1:
-		cmp	cx,	ax
-		jl	LineYSwapNeeded
-		sub	cx,	ax
-		mov	di,	0x0001
-		jmp	LineNext2
-	LineYSwapNeeded:
-		push	ax
-		sub	ax,	cx
-		mov	cx,	ax
-		pop	ax
-		mov	di,	0xFFFF
-	LineNext2:
-		cmp	dx,	cx
-		jl	LineXYSwap
-		mov	DistaX,	dx
-		mov	DistaY,	cx
-		mov	bx,	FromX
-		mov	ax,	FromY
-		xor	cl,	cl
-		jmp	LineXYNoSwap
-	LineXYSwap:
-		mov	DistaY,	dx
-		mov	DistaX,	cx
-		mov	ax,	FromX
-		mov	bx,	FromY
-		mov	dx,	ToX
-		mov	cx,	ToY
-		mov	ToY,	dx
-		mov	ToX,	cx
-		mov	cx,	si
-		mov	dx,	di
-		mov	di,	cx
-		mov	si,	dx
-		mov	dx,	DistaX
-		mov	cl,	0x01
-	LineXYNoSwap:
-		shr	dx,	0x01
-		inc	dx
-		mov	BTemp,	dx
-		mov	dh,	cl
-		xor	cx,	cx
-		jmp	LineLoopBegin
-	LineXPlus:
-		add	cx,	DistaY
-	LineLoopBegin:
-		cmp	cx,	BTemp
-		jl	LineNotYPlus
-		sub	cx,	DistaX
-		add	ax,	di
-	LineNotYPlus:
-		call	SPutPixel
-		add	bx,	si
-		cmp	bx,	ToX
-		jnz	LineXPlus
-		add	cx,	DistaY
-		cmp	cx,	BTemp
-		jl	LineEnd
-		add	ax,	di
-	LineEnd:call	SPutPixel
-		pop	di
-		pop	si
-		pop	dx
-		pop	cx
-		pop	bx
-		pop	ax
-		jmp	End
+		ushort FromX = OrigFromX + Point[c].X;
+		ushort FromY = OrigFromY + Point[c].Y;
+		ushort ToX = OrigToX + Point[c].X;
+		ushort ToY = OrigToY + Point[c].Y;
 
-	NPutPixel:
-		cmp	bx,	ThisXSize
-		jae	NPutPixelEnd
-		cmp	ax,	ThisYSize
-		jae	NPutPixelEnd
-		push	eax
-		push	ebx
-		push	edx
-		mul	Pitch
-		add	eax,	Surface
-		shl	ebx,	0x01
-		add	eax,	ebx
-		mov	ebx,	eax
-		mov	ax,	Color
-		mov	[ebx],	ax
-		pop	edx
-		pop	ebx
-		pop	eax
-	NPutPixelEnd:
-		ret
+		__asm
+		{
+			push	ax
+			push	bx
+			push	cx
+			push	dx
+			xor	eax,	eax
+			xor	ebx,	ebx
+			mov	bx,	FromX
+			mov	ax,	FromY
+			mov	dx,	ToX
+			mov	cx,	ToY
+			cmp	bx,	dx
+			jnz	LineNotVertical
+			cmp	ax,	cx
+			jl	VerticalLinePlus
+			jg	VerticalLineMinus
+			jmp	LineQuickEnd
+		VerticalLinePlus:
+			call	NPutPixel
+			inc	ax
+			cmp	ax,	cx
+			jl	VerticalLinePlus
+			jmp	LineQuickEnd
+		VerticalLineMinus:
+			call	NPutPixel
+			dec	ax
+			cmp	ax,	cx
+			jg	VerticalLineMinus
+			jmp	LineQuickEnd
+		LineNotVertical:	
+			cmp	ax,	cx
+			jnz	LineNotHorizontal
+			cmp	ax,	dx
+			jl	LineHorizontalPlus
+			jg	LineHorizontalMinus
+		LineHorizontalPlus:
+			call	NPutPixel
+			inc	bx
+			cmp	bx,	dx
+			jl	LineHorizontalPlus
+			jmp	LineQuickEnd
+		LineHorizontalMinus:
+			call	NPutPixel
+			dec	bx
+			cmp	bx,	dx
+			jg	LineHorizontalMinus
+		LineQuickEnd:
+			call	NPutPixel
+			pop	dx
+			pop	cx
+			pop	bx
+			pop	ax
+			jmp	End
+		LineNotHorizontal:
+			push	si
+			push	di
+			cmp	dx,	bx
+			jl	LineXSwapNeeded
+			sub	dx,	bx
+			mov	si,	0x0001
+			jmp	LineNext1
+		LineXSwapNeeded:
+			push	bx
+			sub	bx,	dx
+			mov	dx,	bx
+			pop	bx
+			mov	si,	0xFFFF
+		LineNext1:
+			cmp	cx,	ax
+			jl	LineYSwapNeeded
+			sub	cx,	ax
+			mov	di,	0x0001
+			jmp	LineNext2
+		LineYSwapNeeded:
+			push	ax
+			sub	ax,	cx
+			mov	cx,	ax
+			pop	ax
+			mov	di,	0xFFFF
+		LineNext2:
+			cmp	dx,	cx
+			jl	LineXYSwap
+			mov	DistaX,	dx
+			mov	DistaY,	cx
+			mov	bx,	FromX
+			mov	ax,	FromY
+			xor	cl,	cl
+			jmp	LineXYNoSwap
+		LineXYSwap:
+			mov	DistaY,	dx
+			mov	DistaX,	cx
+			mov	ax,	FromX
+			mov	bx,	FromY
+			mov	dx,	ToX
+			mov	cx,	ToY
+			mov	ToY,	dx
+			mov	ToX,	cx
+			mov	cx,	si
+			mov	dx,	di
+			mov	di,	cx
+			mov	si,	dx
+			mov	dx,	DistaX
+			mov	cl,	0x01
+		LineXYNoSwap:
+			shr	dx,	0x01
+			inc	dx
+			mov	BTemp,	dx
+			mov	dh,	cl
+			xor	cx,	cx
+			jmp	LineLoopBegin
+		LineXPlus:
+			add	cx,	DistaY
+		LineLoopBegin:
+			cmp	cx,	BTemp
+			jl	LineNotYPlus
+			sub	cx,	DistaX
+			add	ax,	di
+		LineNotYPlus:
+			call	SPutPixel
+			add	bx,	si
+			cmp	bx,	ToX
+			jnz	LineXPlus
+			add	cx,	DistaY
+			cmp	cx,	BTemp
+			jl	LineEnd
+			add	ax,	di
+		LineEnd:call	SPutPixel
+			pop	di
+			pop	si
+			pop	dx
+			pop	cx
+			pop	bx
+			pop	ax
+			jmp	End
 
-	SPutPixel:
-		push	eax
-		push	ebx
-		or	dh,	dh
-		jz	SPutPixelNoSwap
-		xchg	ax,	bx
-	SPutPixelNoSwap:
-		cmp	bx,	ThisXSize
-		jae	SPutPixelEnd
-		cmp	ax,	ThisYSize
-		jae	SPutPixelEnd
-		push	edx
-		mul	Pitch
-		add	eax,	Surface
-		shl	ebx,	0x01
-		add	eax,	ebx
-		mov	ebx,	eax
-		mov	ax,	Color
-		mov	[ebx],	ax
-		pop	edx
-	SPutPixelEnd:
-		pop	ebx
-		pop	eax
-		ret
+		NPutPixel:
+			cmp	bx,	ThisXSize
+			jae	NPutPixelEnd
+			cmp	ax,	ThisYSize
+			jae	NPutPixelEnd
+			push	eax
+			push	ebx
+			push	edx
+			mul	Pitch
+			add	eax,	Surface
+			shl	ebx,	0x01
+			add	eax,	ebx
+			mov	ebx,	eax
+			mov	ax,	Color
+			mov	[ebx],	ax
+			pop	edx
+			pop	ebx
+			pop	eax
+		NPutPixelEnd:
+			ret
 
-	End:
+		SPutPixel:
+			push	eax
+			push	ebx
+			or	dh,	dh
+			jz	SPutPixelNoSwap
+			xchg	ax,	bx
+		SPutPixelNoSwap:
+			cmp	bx,	ThisXSize
+			jae	SPutPixelEnd
+			cmp	ax,	ThisYSize
+			jae	SPutPixelEnd
+			push	edx
+			mul	Pitch
+			add	eax,	Surface
+			shl	ebx,	0x01
+			add	eax,	ebx
+			mov	ebx,	eax
+			mov	ax,	Color
+			mov	[ebx],	ax
+			pop	edx
+		SPutPixelEnd:
+			pop	ebx
+			pop	eax
+			ret
+
+		End:
+		}
 	}
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
@@ -1342,14 +1376,14 @@ void bitmap::DrawPolygon(ushort NumberOfSides, vector2d Center, bool DrawDiamete
 		{
 			for(ushort a = 0; a < Points.size(); ++a)
 			{
-				if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1)) DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color);
+				if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1)) DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
 			}
 		}
 	else
 	{
 		for(c = 0; c < NumberOfSides; ++c)
 		{
-			DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color);
+			DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
 		}
 	}
 

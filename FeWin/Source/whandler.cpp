@@ -144,7 +144,7 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	// Register the Window Class
 	wc.lpszClassName = Title;
 	wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
-	wc.style         = CS_NOCLOSE | CS_OWNDC;
+	wc.style         = CS_OWNDC;
 	wc.hInstance     = hInst;
 	wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
 	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
@@ -173,6 +173,19 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 
 int globalwindowhandler::ReadKey()
 {
+	MSG msg;
+
+	if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+		if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
+		{
+			exit(0);
+		}
+		else									// If Not, Deal With Window Messages
+		{
+			TranslateMessage(&msg);				// Translate The Message
+			DispatchMessage(&msg);				// Dispatch The Message
+		}
+
 	if(KeyBuffer.Length())
 		return GetKey(false);
 	else

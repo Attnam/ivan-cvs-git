@@ -1,30 +1,30 @@
-*Pentagrammi menuun.
+////*Pentagrammi menuun.
 *Monsujen väheneminen.
 Change material scroll.
 Syönnin keskeytys kun monsu tulee näköpiiriin.
-Dark frogeista plussaa kaaottisille jumalille.
-Kannibalismi.
-Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
+////Dark frogeista plussaa kaaottisille jumalille.
+////Kannibalismi.
+////Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
 (läheltä huutaminen voisi hajottaa myös plate maileja)
 Pimeydelle vaikutuksia.
 ////Kickille vielä muutakin käyttöä = ovien potkiminen.
 ////Avatut cannit.
-Asetaidot.
-Tiimit.
-*Script.
-*Attnam.
+%Asetaidot.
+%Tiimit.
+////*Script.
+%*Attnam.
 *Player must not be the Only Son anymore.
-Garbage monsters.
-*New material color system.
+////Garbage monsters.
+%*New material color system.
 Ääriviivat itemeille ja monsuille.
-Space should = esc in the inventory.
+////Space should = esc in the inventory.
 ////Help should be organised.
 ////*Do you really want to pray to somebody.
 Pick-axejen sääteleminen (kesto, expat, valot).
 *Mellis abuse.
-*Alpha blend.
+%*Alpha blend.
 Rest until fully healed.
 Messagebuffer should be reordered.
 Messagebuffer should be saved.
-*DOS-portti.
+%*DOS-portti.
 DX lack warning.

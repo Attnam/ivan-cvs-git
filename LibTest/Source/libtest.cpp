@@ -1,3 +1,4 @@
+#include <complex>
 #include <ctime>
 
 #include "graphics.h"
@@ -11,42 +12,43 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
 
+	DOUBLEBUFFER->ClearToColor(MAKE_RGB(255, 255, 255));
+
+	for(ushort y = 0; y < 600; y++)
+	{
+		DOUBLEBUFFER->Lock();
+
+		for(ushort x = 0; x < 800; x++)
+		{
+			std::complex<double> C(-2.0f + double(y) / 230, -1.25f + double(x) / 320);
+
+			std::complex<double> Value = 0;
+
+			for(ushort Depth = 0; Depth < 31; ++Depth)
+			{
+				Value = Value * Value + C;
+
+				if(std::abs(Value) >= 2)
+					break;
+			}
+
+			Depth <<= 3;
+
+			DOUBLEBUFFER->FastPutPixel(x, y, MAKE_RGB(255 - Depth, 255 - Depth, 255 - Depth));
+		}
+
+		DOUBLEBUFFER->Release();
+
+		graphics::BlitDBToScreen();
+
+		if(globalwindowhandler::ReadKey())
+			return 0;
+	}
+
 	bitmap Font("Graphics/FontR.pcx");
 	bitmap Pertti("Graphics/Char.pcx");
 
-	inputfile IFile("Script/test.dat");
-
-	std::string Buffer;
-
-	srand(time(0));
-
-	//std::map<std::string, long> Map;
-
-	/*Map["pepe"] = 4;
-
-	Buffer += IFile.ReadWord();
-	Buffer += " " + IFile.ReadWord();
-	Buffer += " " + IFile.ReadWord();
-	bool B = IFile.ReadBool();
-
-	long Value = IFile.ReadNumber(Map);
-
-	Buffer += " " + IFile.ReadWord();
-	Buffer += " " + IFile.ReadWord(false);*/
-
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-	Buffer += IFile.ReadLetter();
-
-	DOUBLEBUFFER->ClearToColor(0xFFFF);
-	DOUBLEBUFFER->ClearToColor(50, 350, 700, 200, 0xF81F);
-	Font.Printf(DOUBLEBUFFER, 212, 16, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
+	Font.Printf(DOUBLEBUFFER, 212, 450, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
 
 	for(uchar x = 0; x < 8; x++)
 	{
@@ -56,7 +58,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	Pertti.MaskedBlit(DOUBLEBUFFER, 96, 128, 392, 292, 16, 16, ushort(256));
 
-	for(ushort z = 511; z >= 256; z--)
+	for(ushort z = 0; z <= 256; z++)
 	{
 		Pertti.MaskedBlit(DOUBLEBUFFER, 96, 128, 392, 292, 16, 16, z);
 		graphics::BlitDBToScreen();
@@ -69,17 +71,13 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 		ushort x = ushort(400 + c * 100), y = ushort(300 - (c * c * c * c * a + c * c * c * b + c * c * d + c * e));
 
 		if(c)
-			DOUBLEBUFFER->DrawLine(LastX, LastY, x, y, 0);
+			DOUBLEBUFFER->DrawLine(LastX, LastY, x, y, MAKE_RGB(128, 128, 32), true);
 
 		LastX = x;
 		LastY = y;
 
 		graphics::BlitDBToScreen();
 	}
-
-	outputfile O("p.bmp");
-
-	Font.Save(O);
 
 	GETKEY();
 
