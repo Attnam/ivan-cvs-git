@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <ctime>
 #include <cstdio>
 #include <vector>
 #include <list>
@@ -205,6 +206,18 @@ inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, unsigned Value)
+{
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, unsigned& Value)
 {
   SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
