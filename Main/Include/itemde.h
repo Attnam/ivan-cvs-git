@@ -434,7 +434,6 @@ class ITEM
   virtual uchar GetWeaponCategory() const { return CLUBS; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; case 1: return 1500; default: return 0; } }
   virtual vector2d GetInHandsPic() const { return vector2d(160,128); }
-  //virtual void ColorChangeSpeciality(uchar, bool);
   virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
   virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
   virtual uchar GetConsumeMaterial() const { return 1; }

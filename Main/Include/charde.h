@@ -173,38 +173,6 @@ class ABSTRACT_CHARACTER
 
 inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
 
-/*class ABSTRACT_CHARACTER
-(
-  complexhumanoid,
-  humanoid,
- public:
-  virtual void DrawToTileBuffer() const;
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual uchar GetLegType() const { return LegType; }
-  virtual uchar GetTorsoType() const { return TorsoType; }
-  virtual uchar GetArmType() const { return ArmType; }
-  virtual uchar GetHeadType() const { return HeadType; }
-  virtual uchar GetShieldType() const { return ShieldType; }
-  virtual void SetLegType(uchar Value) { LegType = Value; }
-  virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
-  virtual void SetArmType(uchar Value) { ArmType = Value; }
-  virtual void SetHeadType(uchar Value) { HeadType = Value; }
-  virtual void SetShieldType(uchar Value) { ShieldType = Value; }
-  virtual void DrawLegs(vector2d) const;
-  virtual void DrawTorso(vector2d) const;
-  virtual void DrawArms(vector2d) const;
-  virtual void DrawHead(vector2d) const;
-  virtual void DrawShield(vector2d) const;
-  virtual void DrawInHandsPic(vector2d) const;
- protected:
-  uchar LegType;
-  uchar TorsoType;
-  uchar ArmType;
-  uchar HeadType;
-  uchar ShieldType;
-);*/
-
 class CHARACTER
 (
   human,
@@ -969,6 +937,9 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void GetAICommand();
  protected:
+  virtual ushort SkinColor() const { return MAKE_RGB(128, 80, 48); }
+  virtual ushort HairColor() const { return MAKE_RGB(80, 48, 32); }
+  virtual ushort EyeColor() const { return MAKE_RGB(64, 48, 24); }
   virtual ushort ClothColor() const { return MAKE_RGB(56, 48, 20); }
   virtual uchar GetHeadType() const { return 0; }
   virtual uchar GetTorsoType() const { return 0; }
@@ -1012,7 +983,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(16);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
@@ -1026,7 +996,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(17);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
@@ -1040,7 +1009,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(18);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
@@ -1054,7 +1022,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(19);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(200, 96, 0); }
@@ -1068,7 +1035,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(20);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(80, 64, 32); }
@@ -1082,7 +1048,6 @@ class CHARACTER
   petrusswife,
   {
     petrusswife::SetDefaultStats();
-    //SetHeadType(21);
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
@@ -1109,7 +1074,7 @@ class CHARACTER
   virtual ushort ArmMainColor() const { return MAKE_RGB(100, 100, 100); }
   virtual ushort LegMainColor() const { return MAKE_RGB(180, 80, 0); }
   virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
-  virtual uchar GetHeadType() const { return 16 + RAND() % 6; } //may produce headless housewife...
+  virtual uchar GetHeadType() const { return 16 + RAND() % 6; } //may produce headless housewives...
   virtual uchar GetTorsoType() const { return 10; }
   virtual uchar GetArmType() const { return 10; }
   virtual uchar GetLegType() const { return 7; }
@@ -1134,7 +1099,8 @@ class CHARACTER
   virtual uchar GetSex() const { return FEMALE; }
   virtual void CreateInitialEquipment();
  protected:
-  virtual ushort HairColor() const { return MAKE_RGB(112, 80, 48); }
+  virtual ushort SkinColor() const { return MAKE_RGB(160, 100, 64); }
+  virtual ushort HairColor() const { return MAKE_RGB(80, 48, 32); }
   virtual uchar GetHeadType() const { return 22; }
   virtual uchar GetTorsoType() const { return 13; }
   virtual uchar GetArmType() const { return 13; }

@@ -1,5 +1,9 @@
 March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* charde.h: Bodypart color tweaks
+
+March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* New bodypart: groin
 	  * Modified files:
 	    * charde.cpp
