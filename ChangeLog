@@ -7,6 +7,26 @@
 
 -----------------------------------------------------------------------------
 
+October 8 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* BugFix: items on the ground were sometimes not animated
+	* BugFix: armor pictures were not always updated correctly when
+	  polymorphing
+	* BugFix: polymorphing into a nonhumanoid while wearing a belt of
+		levitation crashed
+	* Founders.jpg added to Doc/Data
+	* Hunters now have unique science talk particles
+	* The body of science talk msgs ("You have a rather pleasant chat...")
+		is now more vivid, having ten different forms
+	* Removed the scroll of create monster; it was never used for anything
+		sensible save abuse
+	* The game now displays more informative break/destroy msgs, eg.
+		"something on the ground explodes", "the slave's leather armor breaks",
+		etc.
+	* The game now says "xxx stabs/strikes/slashes" instead of "xxx hits"
+		if xxx is armed; the verb depends on the weapon
+	*	Some other msgs changed, but there are still problems with these
+
 October 3 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* Some mind worms added to char.pcx by Kahvi

@@ -66,6 +66,7 @@ class entity
   void AddFlags(ulong What) { Flags |= What; }
   void RemoveFlags(ulong What) { Flags &= ~What; }
   virtual truth IsStuckTo(const character*) const { return false; }
+  virtual const character* FindCarrier() const { return 0; }
  protected:
   col24 Emitation;
   ulong Flags;

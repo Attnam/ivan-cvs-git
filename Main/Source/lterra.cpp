@@ -572,3 +572,9 @@ truth olterrain::IsAnimated() const
 {
   return GraphicData.AnimationFrames > (UseBorderTiles() ? 9 : 1);
 }
+
+void lterrain::AddLocationDescription(festring& String) const
+{
+  String << " on the " << GetNameSingular();
+}
+

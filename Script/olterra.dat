@@ -598,6 +598,6 @@ monsterportal
 	DigMessage = "The portal is magically protected from your feeble attack.";
 	MainMaterialConfig == SILVER;
 	MaterialColorB = rgb16(0, 0, 90);
-	NameSingular = "magical portal";
+	NameSingular = "magic portal";
 	AttachedGod = MORTIFER;
 }

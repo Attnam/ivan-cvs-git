@@ -1390,7 +1390,7 @@ void bodypart::SignalVolumeAndWeightChange()
     Master->SignalBodyPartVolumeAndWeightChange();
     square* SquareUnder = GetSquareUnder();
 
-    if(SquareUnder && UpdateArmorPictures())
+    if(UpdateArmorPictures() && SquareUnder)
       SquareUnder->SendNewDrawRequest();
   }
 }

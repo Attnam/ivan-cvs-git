@@ -128,7 +128,7 @@ character
 	IsEnormous = false;
 	ScienceTalkAdjectiveAttribute =
 	{
-		141,
+		142,
 		"", "applied", "recent", "dark", "linear",
 		"molecular", "theoretical", "classical", "the future of", "queer",
 		"multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
@@ -162,7 +162,7 @@ character
 		"sentient", "silksteel", "dead", "temporal", "transcendent",
 		"unified", "the threshold of", "finite", "postmodern", "selective",
 		"arctic", "the proofs of", "mortal", "teleological", "hybrid",
-		"the principle of";
+		"the principle of", "the art of";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
@@ -189,7 +189,7 @@ character
 	}
 	ScienceTalkName =
 	{
-		260,
+		261,
 		"sanitation", "relativity", "physics", "mathematics", "philosophy",
 		"numerology", "slavery", "mechanics", "magicks", "architecture",
 		"archaeology", "logic", "fiction", "questions", "theology",
@@ -251,11 +251,12 @@ character
 		"masonry", "pottery", "religions", "burial", "working",
 
 		"!Sid Meier's games",
-		"!the Art and Science of Computer Programming",
+		"!the Art of Computer Programming",
 		"!the Theory of Everything",
 		"!the greatness of IVAN",
 		"!free software ideology",
-		"lobotomy", "circle squaring", "angle trisection", "cosmetics", "love";
+		"lobotomy", "circle squaring", "angle trisection", "cosmetics", "love",
+		"autopsies";
 	}
 	ScienceTalkPossibility = 0;
 	/* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
@@ -2009,6 +2010,48 @@ hunter
 		"\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"";
 	}
 	AttachedGod = LORICATUS;
+	ScienceTalkAdjectiveAttribute =
+	{
+		15,
+		"!hunting", "!laying traps for", "!tracking", "!stuffing", "!techniques of slaying",
+		"!the locations of the vital organs of", "!the joy of defeating", "!capturing", "!ambushing", "!sharpshooting",
+		"!preemptively striking against", "!ridding the world of all", "!skinning", "!lynching", "!eliminating the threat of";
+	}
+	ScienceTalkSubstantiveAttribute =
+	{
+		16,
+		"black", "dangerous", "baby", "young", "wild",
+		"fierce", "endangered", "mad", "rare", "giant",
+		"evil", "malicious", "injured", "weak", "tasty",
+		"sick";
+	}
+	ScienceTalkPrefix == "";
+	ScienceTalkName =
+	{
+		73,
+		"slaves", "farmers", "communists", "prisoners", "witches",
+		"goblins", "orcs", "kobolds", "gibberlings", "stray cats",
+		"neighbour's pets", "reindeer", "deer", "elk", "moose",
+		"bears", "polar bears", "mammoths", "ducks", "mules",
+		"cows", "levitating ostriches", "ankhegs", "rabbits", "fish",
+
+		"wolves", "hamsters", "vegetables", "moles", "lemmings",
+		"hedgehogs", "foxes", "vixens", "beavers", "geese",
+		"wives", "women", "lice", "oxen", "wildebeest",
+		"grouse", "roe", "sheep", "rhinoceros", "heathen",
+		"chamois", "mushrooms", "hippopotami", "dwarves", "elves",
+
+		"land octopi", "outlaws", "bunnies", "jackals", "hippies",
+		"bats", "scientists", "dragons", "goats", "falcons",
+		"ravens", "trolls", "werewolves", "zombies", "Siberian tigers",
+		"gnus", "llamas", "nerds", "people you don't like", "squirrels",
+		"flying squirrels", "lynxes", "chickens";
+	}
+	ScienceTalkPossibility = 95;
+	ScienceTalkIntelligenceModifier = 2;
+	ScienceTalkWisdomModifier = 1;
+	ScienceTalkIntelligenceRequirement = 6;
+	ScienceTalkWisdomRequirement = 3;
 }
 
 bear
@@ -2537,7 +2580,7 @@ mistress
 	}
 	ScienceTalkAdjectiveAttribute =
 	{
-		50,
+		51,
 		"applied", "theoretical", "classical", "the future of", "queer",
 		"practical", "the secrets of", "ancient", "empirical", "statistical",
 		"the axioms of", "forbidden", "popular", "obscene", "ceremonial",
@@ -2548,7 +2591,8 @@ mistress
 		"motorized",  "tropical", "the purpose of", "happy", "political",
 		"the history of", "creative uses of", "chaotic", "erotic", "arctic",
 		"experimental", "lewd", "clinical", "electrical", "nymphomaniacal",
-		"intellectual", "the origin of", "hot", "frictionless", "lesbian";
+		"intellectual", "the origin of", "hot", "frictionless", "lesbian",
+		"the art of";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
@@ -2579,10 +2623,10 @@ mistress
 		"poker", "reproduction", "sake", "idolatry";
 	}
 	ScienceTalkPossibility = 95;
-	ScienceTalkIntelligenceModifier = 1;
+	ScienceTalkIntelligenceModifier = 2;
 	ScienceTalkWisdomModifier = 1;
-	ScienceTalkIntelligenceRequirement = 5;
-	ScienceTalkWisdomRequirement = 5;
+	ScienceTalkIntelligenceRequirement = 6;
+	ScienceTalkWisdomRequirement = 3;
 
 	Config TORTURING_CHIEF;
 	{
@@ -3019,7 +3063,7 @@ kamikazedwarf
 	IsAbstract = true;
 	/* Equipment initialization overridden */
 	PanicLevel = 1;
-	/*Inventory == backpack;*/
+	Inventory == backpack;
 	FleshMaterial = DWARF_FLESH;
 	DeathMessage = "@Dd dies smiling.";
 	IgnoreDanger = true;
@@ -3037,7 +3081,7 @@ kamikazedwarf
 		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
 		"\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
 	}
-	Inventory == wand(WAND_OF_ACID_RAIN);
+	/*Inventory == wand(WAND_OF_ACID_RAIN);*/
 }
 
 mammoth
@@ -4935,7 +4979,7 @@ veterankamikazedwarf
 	DefaultIntelligence = 3;
 	DefaultWisdom = 2;
 	Adjective = "veteran";
-	/*Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }*/
+	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
 	HPRequirementForGeneration = 200;
 	DayRequirementForGeneration = 10;
 	Frequency = 200;

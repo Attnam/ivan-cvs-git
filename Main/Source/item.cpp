@@ -740,7 +740,7 @@ truth item::CanBePiledWith(const item* Item, const character* Viewer) const
 void item::Break(character* Breaker, int)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s%s %s.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr(), GetBreakVerb());
+    ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakVerb());
 
   if(Breaker && IsOnGround())
   {
@@ -1141,6 +1141,7 @@ const rawbitmap* item::GetRawPicture() const
 
 void item::RemoveFluid(fluid* ToBeRemoved)
 {
+  truth WasAnimated = IsAnimated();
   truth HasFluids = false;
 
   for(int c = 0; c < SquaresUnder; ++c)
@@ -1172,7 +1173,7 @@ void item::RemoveFluid(fluid* ToBeRemoved)
     delete [] Fluid;
     Fluid = 0;
 
-    if(!IsAnimated() && Slot[0]->IsVisible())
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
       GetSquareUnder()->DecStaticAnimatedEntities();
   }
 
@@ -1182,13 +1183,10 @@ void item::RemoveFluid(fluid* ToBeRemoved)
 
 void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, truth IsInside)
 {
-  if(Slot[0])
-  {
-    if(!IsAnimated() && !Fluid && Slot[0]->IsVisible() && ToBeAdded->GetVolume())
-      GetSquareUnder()->IncStaticAnimatedEntities();
+  if(!ToBeAdded->GetVolume())
+    int esko = 2;
 
-    SendNewDrawAndMemorizedUpdateRequest();
-  }
+  truth WasAnimated = IsAnimated();
 
   if(Fluid)
   {
@@ -1227,6 +1225,14 @@ void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, t
   UpdatePictures();
   SignalVolumeAndWeightChange();
   SignalEmitationIncrease(ToBeAdded->GetEmitation());
+
+  if(Slot[0])
+  {
+    if(!IsAnimated() != !WasAnimated && Slot[0]->IsVisible())
+      GetSquareUnder()->IncStaticAnimatedEntities();
+
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
 }
 
 void item::SendNewDrawAndMemorizedUpdateRequest() const
@@ -1337,7 +1343,7 @@ void item::DonateFluidsTo(item* Item)
 void item::Destroy(character* Destroyer, int)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s%s is destroyed.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
+    ADD_MESSAGE("%s is destroyed.", GetExtendedDescription().CStr());
 
   if(Destroyer && IsOnGround())
   {
@@ -1551,15 +1557,40 @@ inputfile& operator>>(inputfile& SaveFile, idholder*& IdHolder)
   return SaveFile;
 }
 
-festring item::GetLocationDescription() const
+festring item::GetExtendedDescription() const
 {
-  return "";
-  /*if(IsOnGround())
-  {
-    GetSquareUnder()->
-    festring Desc = CONST_S(" on ");
+  if(!CanBeSeenByPlayer())
+    return CONST_S("something");
 
+  festring Desc;
+  const character* Carrier = FindCarrier();
+
+  if(Carrier)
+  {
+    if(Carrier->IsPlayer())
+    {
+      Desc << "your ";
+      AddName(Desc, UNARTICLED);
+      return Desc;
+    }
+    else if(Carrier->CanBeSeenByPlayer())
+    {
+      Carrier->AddName(Desc, DEFINITE);
+      Desc << "'s ";
+      AddName(Desc, UNARTICLED);
+      return Desc;
+    }
   }
-  else
-    return CONST_S("");*/
+
+  AddName(Desc, DEFINITE);
+
+  if(IsOnGround())
+    GetLSquareUnder()->AddLocationDescription(Desc);
+
+  return Desc;
+}
+
+const character* item::FindCarrier() const
+{
+  return Slot[0]->FindCarrier();
 }

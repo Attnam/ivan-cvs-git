@@ -60,6 +60,9 @@ class square
   }
   void DecStaticAnimatedEntities()
   {
+    if(!StaticAnimatedEntities)
+      int esko = esko = 2;
+
     --StaticAnimatedEntities;
     --AnimatedEntities;
   }

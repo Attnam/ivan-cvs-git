@@ -250,7 +250,7 @@ Coconuts falling from palms.
 Changing keyboard layout (some people don't seem to like numpad).
 Reflecting items (mirror and shield of reflection).
 Mellis could act as a small shop when prayed to.
-Msg from hit should depend more on weapon and there should be more variation. ("the monster STABS you with its wooden spear").
+//Msg from hit should depend more on weapon and there should be more variation. ("the monster STABS you with its wooden spear").
 Some monster types should taunt the player.
 //Breaking different wands should cause different effects.
 Scroll of level teleport.

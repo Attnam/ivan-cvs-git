@@ -250,3 +250,13 @@ truth stackslot::IsVisible() const
 {
   return GetMotherStack()->IsVisible();
 }
+
+const character* stackslot::FindCarrier() const
+{
+  return GetMotherStack()->FindCarrier();
+}
+
+const character* gearslot::FindCarrier() const
+{
+  return GetBodyPart()->FindCarrier();
+}

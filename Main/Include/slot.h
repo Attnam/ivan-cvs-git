@@ -44,6 +44,7 @@ class slot
   virtual void SignalEnchantmentChange() { }
   virtual truth IsVisible() const = 0;
   virtual truth IsGearSlot() const { return false; }
+  virtual const character* FindCarrier() const = 0;
  protected:
   item* Item;
 };
@@ -68,6 +69,7 @@ class stackslot : public slot
   virtual truth IsVisible() const;
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
+  virtual const character* FindCarrier() const;
  protected:
   stack* MotherStack;
   stackslot* Last;
@@ -89,6 +91,7 @@ class bodypartslot : public slot
   virtual void Load(inputfile&);
   virtual truth CanBeSeenBy(const character*) const;
   virtual truth IsVisible() const { return false; }
+  virtual const character* FindCarrier() const { return Master; }
  protected:
   character* Master;
 };
@@ -112,6 +115,7 @@ class gearslot : public slot
   virtual void SignalEnchantmentChange();
   virtual truth IsVisible() const { return false; }
   virtual truth IsGearSlot() const { return true; }
+  virtual const character* FindCarrier() const;
  protected:
   bodypart* BodyPart;
   int EquipmentIndex;

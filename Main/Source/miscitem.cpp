@@ -61,49 +61,6 @@ truth scroll::CanBeRead(character* Reader) const
   return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
 }
 
-void scrollofcreatemonster::FinishReading(character* Reader)
-{
-  v2 TryToCreate;
-
-  for(int c = 0; c < 100; ++c)
-  {
-    TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-    character* Monster = protosystem::CreateMonster();
-
-    if(GetArea()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
-    {
-      Monster->PutTo(TryToCreate);
-
-      if(Reader->IsPlayer())
-      {
-	if(Monster->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s appears.", Monster->CHAR_NAME(INDEFINITE));
-	else
-	  ADD_MESSAGE("You notice no effect.");
-      }
-      else if(Reader->CanBeSeenByPlayer())
-      {
-	if(Monster->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s summons %s!", Reader->CHAR_NAME(DEFINITE), Monster->CHAR_NAME(INDEFINITE));
-      }
-      else if(Monster->CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s appears.", Monster->CHAR_NAME(INDEFINITE));
-
-      Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
-      RemoveFromSlot();
-      SendToHell();
-      return;
-    }
-    else
-      delete Monster;
-  }
-
-  ADD_MESSAGE("You feel a lost soul fly by you.");
-  RemoveFromSlot();
-  SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
-}
-
 void scrollofteleportation::FinishReading(character* Reader)
 {
   if(!Reader->IsPlayer() && Reader->CanBeSeenByPlayer())
@@ -402,7 +359,7 @@ truth wand::ReceiveDamage(character* Damager, int Damage, int Type, int)
       DeathMsg << " caused @bk";
 
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s %s.", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr(), GetBreakMsg().CStr());
+      ADD_MESSAGE("%s %s.", GetExtendedDescription().CStr(), GetBreakMsg().CStr());
 
     BreakEffect(Damager, DeathMsg);
     return true;
@@ -421,8 +378,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
+    if(GetSquareUnder()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -441,7 +398,7 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s catches fire!", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
+      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
@@ -458,7 +415,7 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s catches fire!", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
+      ADD_MESSAGE("%s catches fire!", GetExtendedDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
@@ -707,8 +664,8 @@ truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
+    if(GetSquareUnder()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -1503,7 +1460,7 @@ long itemcontainer::GetTruePrice() const
 void potion::Break(character* Breaker, int Dir)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s%s shatters to pieces.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
+    ADD_MESSAGE("%s shatters to pieces.", GetExtendedDescription().CStr());
   else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear something shattering.");
 
@@ -2207,8 +2164,8 @@ truth potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
+    if(GetSquareUnder()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -2331,8 +2288,8 @@ truth holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
+    if(GetSquareUnder()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s explodes!", GetExtendedDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();

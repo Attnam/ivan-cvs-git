@@ -150,6 +150,7 @@ class stack
   void SetLifeExpectancy(int, int);
   truth Necromancy(character*);
   void CalculateEnchantments();
+  const character* FindCarrier() const;
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;

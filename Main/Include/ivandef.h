@@ -870,6 +870,8 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define BLUE_FRACTAL 3
 #define YELLOW_FRACTAL 4
 
+#define DAMAGE_TYPES 3
+
 #define BLUNT 1
 #define SLASH 2
 #define PIERCE 4
@@ -1089,6 +1091,6 @@ const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
 #define TALENT_HEALTHY 2
 #define TALENT_CLEVER 3
 
-#define BORDER_PARTNER_ANIMATED (8 << 24)
+#define BORDER_PARTNER_ANIMATED (16 << 24)
 
 #endif

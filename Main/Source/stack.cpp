@@ -1205,3 +1205,8 @@ void stack::CalculateEnchantments()
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->CalculateEnchantment();
 }
+
+const character* stack::FindCarrier() const
+{
+  return MotherEntity ? MotherEntity->FindCarrier() : 0;
+}

@@ -178,12 +178,6 @@ ITEM(scroll, item)
   virtual truth ReceiveDamage(character*, int, int, int);
 };
 
-ITEM(scrollofcreatemonster, scroll)
-{
- public:
-  virtual void FinishReading(character*);
-};
-
 ITEM(scrollofteleportation, scroll)
 {
  public:

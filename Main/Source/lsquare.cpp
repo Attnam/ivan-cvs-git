@@ -225,7 +225,7 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
     GLTerrain->Draw(BlitData);
 
   int c;
-  int GroundPartners = GroundBorderPartnerInfo >> 24 & 7;
+  int GroundPartners = GroundBorderPartnerInfo >> 24 & 15;
 
   for(c = 0; c < GroundPartners; ++c)
   {
@@ -259,7 +259,7 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
   for(const trap* T = Trap; T; T = T->Next)
     T->Draw(BlitData);
 
-  int OverPartners = OverBorderPartnerInfo >> 24 & 7;
+  int OverPartners = OverBorderPartnerInfo >> 24 & 15;
 
   for(c = 0; c < OverPartners; ++c)
   {
@@ -2081,6 +2081,9 @@ void lsquare::CalculateOverBorderPartners()
   }
 
   OverBorderPartnerInfo |= Index << 24;
+
+  if(OverBorderPartnerInfo & BORDER_PARTNER_ANIMATED)
+    int esko = esko = 2;
 }
 
 void lsquare::RequestForGroundBorderPartnerUpdates()
@@ -2168,13 +2171,7 @@ void lsquare::DisplayFluidInfo(festring& Msg) const
   {
     Msg << ". There is ";
     fluid::AddFluidInfo(Fluid, Msg);
-
-    /* Does this cause problems? Ans: It does. */
-
-    if(IsFlyable())
-      Msg << " on the ground";
-    else
-      Msg << " on the wall";
+    AddLocationDescription(Msg);
   }
 }
 
@@ -2790,4 +2787,12 @@ truth lsquare::HasDangerousFluids(const character* Who) const
 truth lsquare::HasNoBorderPartners() const
 {
   return !(GroundBorderPartnerInfo >> 24) && !(OverBorderPartnerInfo >> 24);
+}
+
+void lsquare::AddLocationDescription(festring& String) const
+{
+  if(IsFlyable())
+    GLTerrain->AddLocationDescription(String);
+  else
+    OLTerrain->AddLocationDescription(String);
 }

@@ -510,15 +510,13 @@ truth fountain::Drink(character* Drinker)
 	      olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
 
 	      if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
-	      {
 		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
-	      }
 	      else
-	      {
 		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
-		Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
-	      }
+
+	      Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
 	    }
+
 	    break;
 	  }
 	}
@@ -1193,4 +1191,9 @@ v2 liquidterrain::GetBitmapPos(int F) const
 {
   /* gum solution, should come from script */
   return GetBorderBitmapPos(v2(64 + (F >> 1 & 3) * 48, 32 + (F >> 3 & 3) * 48), F);
+}
+
+void liquidterrain::AddLocationDescription(festring& String) const
+{
+  String << " in the " << GetNameSingular();
 }

@@ -106,6 +106,7 @@ class lterrain : public object
   virtual const fearray<long>& GetMainMaterialConfig() const = 0;
   virtual void SurviveEffect(character*) { }
   virtual void RestoreHP() { }
+  virtual void AddLocationDescription(festring&) const;
  protected:
   void Initialize(int, int);
   virtual void PostConstruct() { }

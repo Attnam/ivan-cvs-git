@@ -1451,6 +1451,9 @@ void character::AddPrimitiveHitMessage(const character* Enemy, const festring& F
   ADD_MESSAGE("%s", Msg.CStr());
 }
 
+const char*const HitVerb[] = { "strike", "slash", "stab" };
+const char*const HitVerb3rdPersonEnd[] = { "s", "es", "s" };
+
 void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, int BodyPart, truth Critical) const
 {
   festring Msg;
@@ -1459,9 +1462,29 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
   if(BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()))
     BodyPartDescription << " in the " << Enemy->GetBodyPartName(BodyPart);
 
+  int FittingTypes = 0;
+  int DamageFlags = Weapon->GetDamageFlags();
+  int DamageType;
+
+  for(int c = 0; c < DAMAGE_TYPES; ++c)
+    if(1 << c & DamageFlags)
+    {
+      if(!FittingTypes || !RAND_N(FittingTypes + 1))
+	DamageType = c;
+
+      ++FittingTypes;
+    }
+
+  if(!FittingTypes)
+    ABORT("No damage flags specified for %s!", Weapon->CHAR_NAME(UNARTICLED));
+
+  festring NewHitVerb = Critical ? " critically " : " ";
+  NewHitVerb << HitVerb[DamageType];
+  const char*const E = HitVerb3rdPersonEnd[DamageType];
+
   if(Enemy->IsPlayer())
   {
-    Msg << GetDescription(DEFINITE) << (Critical ? " critically hits you" : " hits you") << BodyPartDescription;
+    Msg << GetDescription(DEFINITE) << NewHitVerb << E << " you" << BodyPartDescription;
 
     if(CanBeSeenByPlayer())
       Msg << " with " << GetPossessivePronoun() << ' ' << Weapon->GetName(UNARTICLED);
@@ -1469,10 +1492,10 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
     Msg << '!';
   }
   else if(IsPlayer())
-    Msg << "You " << (Critical ? "critically hit " : "hit ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription << '!';
+    Msg << "You" << NewHitVerb << ' ' << Enemy->GetDescription(DEFINITE) << BodyPartDescription << '!';
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
   {
-    Msg << GetDescription(DEFINITE) << (Critical ? " critically hits " : " hits ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription;
+    Msg << GetDescription(DEFINITE) << NewHitVerb << E << ' ' << Enemy->GetDescription(DEFINITE) << BodyPartDescription;
 
     if(CanBeSeenByPlayer())
       Msg << " with " << GetPossessivePronoun() << ' ' << Weapon->GetName(UNARTICLED);
@@ -8497,12 +8520,13 @@ truth character::CheckApply() const
 
 void character::EndLevitation()
 {
-  if(!IsFlying() && !GetLSquareUnder()->IsFreezed())
+  if(!IsFlying() && GetSquareUnder())
   {
     if(!game::IsInWilderness())
       SignalStepFrom(0);
 
-    TestWalkability();
+    if(game::IsInWilderness() || !GetLSquareUnder()->IsFreezed())
+      TestWalkability();
   }
 }
 
@@ -8801,7 +8825,13 @@ void character::AddRandomScienceName(festring& String) const
 
   festring Attribute = GetScienceTalkAdjectiveAttribute().GetRandomElement();
   festring Prefix;
-  truth NoAttrib = Attribute.IsEmpty();
+  truth NoAttrib = Attribute.IsEmpty(), NoSecondAdjective = false;
+
+  if(!Attribute.IsEmpty() && Attribute[0] == '!')
+  {
+    NoSecondAdjective = true;
+    Attribute.Erase(0, 1);
+  }
 
   if(!Science.Find("the "))
   {
@@ -8829,9 +8859,9 @@ void character::AddRandomScienceName(festring& String) const
   if(L && Prefix[L - 1] == Science[0])
     Science.Erase(0, 1);
 
-  if(!NoAttrib && !RAND_N(3))
+  if(!NoAttrib && !NoSecondAdjective == !RAND_N(3))
   {
-    int S1 = GetScienceTalkAdjectiveAttribute().Size;
+    int S1 = NoSecondAdjective ? 0 : GetScienceTalkAdjectiveAttribute().Size;
     int S2 = GetScienceTalkSubstantiveAttribute().Size;
     festring OtherAttribute;
     int Chosen = RAND_N(S1 + S2);
@@ -8890,7 +8920,40 @@ truth character::TryToTalkAboutScience()
       AddRandomScienceName(Science);
   }
 
-  ADD_MESSAGE("You have a rather pleasant chat about %s with %s.", Science.CStr(), CHAR_NAME(DEFINITE));
+  switch((RAND() + GET_TICK()) % 10)
+  {
+   case 0:
+    ADD_MESSAGE("You have a rather pleasant chat about %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 1:
+    ADD_MESSAGE("%s explains a few of %s opinions regarding %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
+    break;
+   case 2:
+    ADD_MESSAGE("%s reveals a number of %s insightful views about %s to you.", CHAR_DESCRIPTION(DEFINITE), CHAR_POSSESSIVE_PRONOUN, Science.CStr());
+    break;
+   case 3:
+    ADD_MESSAGE("You exhange some information pertaining to %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 4:
+    ADD_MESSAGE("You engage in a pretty intriguing conversation about %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 5:
+    ADD_MESSAGE("You discuss at length about %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 6:
+    ADD_MESSAGE("You have a somewhat boring talk concerning %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 7:
+    ADD_MESSAGE("You are drawn into a heated argument regarding %s with %s.", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+   case 8:
+    ADD_MESSAGE("%s delivers a long monologue concerning eg. %s.", CHAR_DESCRIPTION(DEFINITE), Science.CStr());
+    break;
+   case 9:
+    ADD_MESSAGE("You dive into a brief but thought-provoking debate pertaining to %s with %s", Science.CStr(), CHAR_DESCRIPTION(DEFINITE));
+    break;
+  }
+
   PLAYER->EditExperience(INTELLIGENCE, 1000, 50. * GetScienceTalkIntelligenceModifier() / ++ScienceTalks);
   PLAYER->EditExperience(WISDOM, 1000, 50. * GetScienceTalkWisdomModifier() / ++ScienceTalks);
   return true;
@@ -9260,4 +9323,9 @@ void character::RemoveLifeSavers()
       Equipment->RemoveFromSlot();
     }
   }
+}
+
+const character* character::FindCarrier() const
+{
+  return this; //check
 }

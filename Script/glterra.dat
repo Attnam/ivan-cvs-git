@@ -91,8 +91,9 @@ solidterrain /* glterrain-> */
 	{
 		MainMaterialConfig == GRASS;
 		MaterialColorB = rgb16(230, 230, 230);
-		UsesLongArticle = true;
-		NameSingular = "ostrich landing site";
+		UsesLongAdjectiveArticle = true;
+		Adjective = "ostrich";
+		NameSingular = "landing site";
 		BitmapPos = 32, 16;
 		ShowMaterial = false;
 	}
@@ -138,8 +139,9 @@ liquidterrain /* glterrain-> */
 
 	Config UNDERGROUND_LAKE;
 	{
-		NameSingular = "underground lake";
-		UsesLongArticle = true;
+		UsesLongAdjectiveArticle = true;
+		Adjective = "underground";
+		NameSingular = "lake";
 		/*SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";*/
 		UseBorderTiles = true;
 		BorderTilePriority = 10;

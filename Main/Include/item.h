@@ -540,6 +540,9 @@ class item : public object
   truth HasPrice() const;
   virtual void Disappear();
   festring GetLocationDescription() const;
+  truth IsEquipped() const;
+  festring GetExtendedDescription() const;
+  virtual const character* FindCarrier() const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

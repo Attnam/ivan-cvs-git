@@ -1099,15 +1099,6 @@ scroll
 	TeleportPriority = 300;
 }
 
-scrollofcreatemonster /* scroll-> */
-{
-	Possibility = 75;
-	Price = 25;
-	PostFix = "of create monster";
-	AttachedGod = CRUENTUS;
-	ReadDifficulty = 200;
-}
-
 scrollofteleportation /* scroll-> */
 {
 	Possibility = 100;
@@ -1608,6 +1599,7 @@ whip /* meleeweapon-> */
 	WieldedBitmapPos = 160, 224;
 	EnchantmentPlusChance = 30;
 	FlexibilityIsEssential = true;
+	DamageFlags = SLASH;
 
 	Config RUNED_WHIP;
 	{
@@ -2153,6 +2145,7 @@ belt /* armor-> */
 	BeltBitmapPos = 48, 432;
 	CanBeBroken = true;
 	EnchantmentPlusChance = 10;
+	DamageFlags = SLASH;
 
 	Config BROKEN;
 	{

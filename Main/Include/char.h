@@ -1008,6 +1008,7 @@ class character : public entity, public id
   void VomitAtRandomDirection(int);
   virtual truth SpecialSaveLife() { return false; }
   void RemoveLifeSavers();
+  virtual const character* FindCarrier() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
