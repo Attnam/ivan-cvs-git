@@ -95,7 +95,7 @@ bool ennerbeast::Hit(character*)
 		if(Char && Char != this)
 			Char->ReceiveSound(Message, rand() % 26 - rand() % 26,ScreamStrength);
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
-		for(int x = 0; x < 4; x++)
+		for(int x = 0; x < 4; ++x)
 			game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
 	});
 
@@ -256,7 +256,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasMaakotkaShirt())
 	{
-		iosystem::TextScreen(FONTW, "Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
+		iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
 		game::RemoveSaves();
 		game::Quit();
 
@@ -264,7 +264,7 @@ void perttu::BeTalkedTo(character* Talker)
 		{
 			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 3);
 			highscore HScore;
-			HScore.Draw(FONTW, FONTB);
+			HScore.Draw();
 		}
 	}
 	else
@@ -275,7 +275,7 @@ void perttu::BeTalkedTo(character* Talker)
 	{
 		if(game::GetGod(1)->GetRelation() >= 500 && Talker->GetDifficulty() >= 2500 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay in the dungeon for a while more and complete another quest for me?\" (Y/n)", 'y'))
 		{
-			iosystem::TextScreen(FONTW, "Champion of Law!\n\nSeek out the Master Evil: Oree the Pepsi Daemon King,\nwho hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+			iosystem::TextScreen("Champion of Law!\n\nSeek out the Master Evil: Oree the Pepsi Daemon King,\nwho hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
 
 			game::TriggerQuestForMaakotkaShirt();
 
@@ -283,16 +283,16 @@ void perttu::BeTalkedTo(character* Talker)
 		}
 		else
 		{
-		iosystem::TextScreen(FONTW, "Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
-		game::RemoveSaves();
-		game::Quit();
+			iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
+			game::RemoveSaves();
+			game::Quit();
 
-		if(!game::GetWizardMode())
-		{
-			AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
-			highscore HScore;
-			HScore.Draw(FONTW, FONTB);
-		}
+			if(!game::GetWizardMode())
+			{
+				AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
+				highscore HScore;
+				HScore.Draw();
+			}
 		}
 	}
 	else
@@ -363,7 +363,12 @@ void golem::MoveRandomly()
 
 void ennerbeast::GetAICommand()
 {
+	SeekLeader();
+
 	if(CheckForEnemies())
+		return;
+
+	if(FollowLeader())
 		return;
 
 	if(rand() % 3)
@@ -376,6 +381,8 @@ void perttu::GetAICommand()
 {
 	SetHealTimer(GetHealTimer() + 1);
 
+	SeekLeader();
+
 	if(CheckForEnemies())
 		return;
 
@@ -383,6 +390,9 @@ void perttu::GetAICommand()
 		return;
 
 	if(CheckForUsefulItemsOnGround())
+		return;
+
+	if(FollowLeader())
 		return;
 
 	character* Char;
@@ -464,7 +474,7 @@ bool dog::Catches(item* Thingy, float)
 		if(GetIsPlayer())
 			ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
 		else
-			if(GetSquareUnder()->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
 		ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack());
@@ -509,7 +519,7 @@ bool dog::ConsumeItemType(uchar Type) const     // We need a better system for t
 
 
 	default:
-		ADD_MESSAGE("ERRRRORRRRRR in dog::Consumeitemtype."); //All hail SpykoS! He is the author of this file, and his might is over that of PMGR!!!
+		ADD_MESSAGE("ERRRRORRRRRR in dog::Consumeitemtype.");
 	}
 		
 	return false;
@@ -624,12 +634,12 @@ bool humanoid::ShowWeaponSkills()
 			Buffer.resize(40, ' ');
 
 			if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-				List.AddString(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()));
+				List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), RED);
 			else
-				List.AddString(Buffer + '-');
+				List.AddEntry(Buffer + '-', RED);
 		}
 
-		List.Draw(FONTW, FONTR, false);
+		List.Draw();
 	}
 
 	if(SingleWeaponSkill.size())
@@ -653,12 +663,12 @@ bool humanoid::ShowWeaponSkills()
 			Buffer.resize(40, ' ');
 
 			if(GetSingleWeaponSkill(c)->GetLevel() != 10)
-				List.AddString(Buffer + (GetSingleWeaponSkill(c)->GetLevelMap(GetSingleWeaponSkill(c)->GetLevel() + 1) - GetSingleWeaponSkill(c)->GetHits()));
+				List.AddEntry(Buffer + (GetSingleWeaponSkill(c)->GetLevelMap(GetSingleWeaponSkill(c)->GetLevel() + 1) - GetSingleWeaponSkill(c)->GetHits()), RED);
 			else
-				List.AddString(Buffer + '-');
+				List.AddEntry(Buffer + '-', RED);
 		}
 
-		List.Draw(FONTW, FONTR, false);
+		List.Draw();
 	}
 
 	return false;

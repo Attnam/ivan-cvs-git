@@ -79,6 +79,8 @@ public:
 	virtual void ChangeOverLevelTerrain(overlevelterrain*);
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
 	virtual void ApplyScript(squarescript*);
+	virtual bool CanBeSeen() const;
+	virtual bool CanBeSeenFrom(vector2d) const;
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

@@ -2,35 +2,35 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
-#include "save.h"
+#include "colorbit.h"
 
-ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) const
+ushort felist::Draw() const
 {
-	if(!String.Length())
+	if(!Entry.size())
 		return 0xFFFF;
 
 	bitmap BackGround(XRES, YRES);
 
 	DOUBLEBUFFER->Blit(&BackGround, 0, 0, 0, 0, XRES, YRES);
 
-	DrawDescription(TopicFont);
+	DrawDescription();
 
 	for(ushort Min = 0, c = 0;; ++c)
 	{
-		DOUBLEBUFFER->ClearToColor(20, 56 + (c - Min + Description.Length()) * 10, 758, 20, 128);
+		DOUBLEBUFFER->ClearToColor(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
 
-		if(WillDrawNumbers)
-			ListFont->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.Length()) * 10, "%c: %s", 'A' + c - Min, String.Access(c).c_str());
+		if(DrawLetters)
+			FONT->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%c: %s", 'A' + c - Min, Entry[c].String.c_str());
 		else
-			ListFont->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.Length()) * 10, "%s", String.Access(c).c_str());
+			FONT->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%s", Entry[c].String.c_str());
 
-		if(c - Min == 19 && c != String.Length() - 1)
+		if(c - Min == 19 && c != Entry.size() - 1)
 		{
-			DOUBLEBUFFER->ClearToColor(20, 266 + Description.Length() * 10, 758, 20, 128);
-			TopicFont->Printf(DOUBLEBUFFER, 30, 266 + Description.Length() * 10, "- Press SPACE to continue, ESC to exit -");
+			DOUBLEBUFFER->ClearToColor(20, 266 + Description.size() * 10, 758, 20, 128);
+			FONT->Printf(DOUBLEBUFFER, 30, 266 + Description.size() * 10, WHITE, "- Press SPACE to continue, ESC to exit -");
 		}
 
-		if(c - Min == 19 || c == String.Length() - 1)
+		if(c - Min == 19 || c == Entry.size() - 1)
 		{
 			graphics::BlitDBToScreen();
 
@@ -40,14 +40,14 @@ ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) c
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
-				return Pressed - 65 + Min < String.Length() ? Pressed - 65 + Min : 0xFFFF;
+				return Pressed - 65 + Min < Entry.size() ? Pressed - 65 + Min : 0xFFFF;
 			}
 
 			if(Pressed > 96 && Pressed < 123)
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
-				return Pressed - 97 + Min < String.Length() ? Pressed - 97 + Min : 0xFFFF;
+				return Pressed - 97 + Min < Entry.size() ? Pressed - 97 + Min : 0xFFFF;
 			}
 
 			if(Pressed == '-')
@@ -57,14 +57,14 @@ ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) c
 				return 0xFFFE;
 			}
 
-			if(Pressed == 0x1B || (Pressed == 0x20 && c == String.Length() - 1))
+			if(Pressed == 0x1B || (Pressed == 0x20 && c == Entry.size() - 1))
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
 				return 0xFFFD;
 			}
 
-			if(c == String.Length() - 1)
+			if(c == Entry.size() - 1)
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
@@ -74,76 +74,51 @@ ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) c
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 				graphics::BlitDBToScreen();
-				DrawDescription(TopicFont);
+				DrawDescription();
 				Min += 20;
 			}
 		}
 	}
 }
 
-void felist::DrawDescription(bitmap* TopicFont) const
+void felist::DrawDescription() const
 {
 	DOUBLEBUFFER->ClearToColor(20, 36, 758, 20, 128);
 
-	for(ushort c = 0; c < Description.Length(); ++c)
+	for(ushort c = 0; c < Description.size(); ++c)
 	{
 		DOUBLEBUFFER->ClearToColor(20, 46 + c * 10, 758, 10, 128);
-		TopicFont->Printf(DOUBLEBUFFER, 30, 46 + c * 10, Description.Access(c).c_str());
+		FONT->Printf(DOUBLEBUFFER, 30, 46 + c * 10, Description[c].Color, Description[c].String.c_str());
 	}
 
-	DOUBLEBUFFER->ClearToColor(20, 46 + Description.Length() * 10, 758, 10, 128);
+	DOUBLEBUFFER->ClearToColor(20, 46 + Description.size() * 10, 758, 10, 128);
 }
 
 void felist::Empty()
 {
-	while(String.Length())
-		String.Remove(0);
+	Entry.clear();
 }
 
-void felist::AddString(std::string S, bool WriteToEnd)
+void felist::AddEntry(std::string Str, ushort Color)
 {
-	if(WriteToEnd)
-		String.Add(S);
+	if(InverseMode)
+		Entry.insert(Entry.begin(), felistentry(Str, Color));
 	else
-		String.Put(S, 0);
-	if(Maximum && String.Length() > Maximum)
-		String.Remove(String.Length() - 1);
+		Entry.push_back(felistentry(Str, Color));
+
+	if(Maximum && Entry.size() > Maximum)
+		if(InverseMode)
+			Entry.pop_back();
+		else
+			Entry.erase(Entry.begin());
 }
 
-void felist::Save(outputfile& Temp) const
+void felist::Save(outputfile& SaveFile) const
 {
-	ushort c;
-	Temp << String.Length();
-
-	for(c = 0; c < String.Length(); ++c)
-	{
-		Temp << String.Access(c);
-	}
-	
-	Temp << Description.Length();
-
-	for(c = 0; c < Description.Length(); ++c)
-		Temp << Description.Access(c);
+	SaveFile << Entry << Description << Maximum << InverseMode << DrawLetters;
 }
 
-void felist::Load(inputfile& Temp) 
+void felist::Load(inputfile& SaveFile) 
 {
-	ushort TempLength, c;
-
-	Temp >> TempLength;
-	
-
-	for(c = 0; c < TempLength; ++c)
-	{
-		std::string LoadedEntry;
-		Temp >> LoadedEntry;
-		String.Add(LoadedEntry);
-	}
-	Temp >> TempLength;
-	for(c = 0; c < TempLength; ++c)
-	{
-		std::string LoadedEntry;
-		Temp >> LoadedEntry;
-		String.Add(LoadedEntry);
-	}
+	SaveFile >> Entry >> Description >> Maximum >> InverseMode >> DrawLetters;
 }

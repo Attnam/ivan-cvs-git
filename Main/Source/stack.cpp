@@ -9,6 +9,7 @@
 #include "proto.h"
 #include "message.h"
 #include "save.h"
+#include "graphics.h"
 
 stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {
@@ -212,7 +213,7 @@ void stack::Optimize(ushort OptimizeBoundary)
 ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the items in this stack on the screen
 {							// Displays Topic on the screen also...
 	if(!GetItems()) return 0xFFFF;
-	felist ItemNames(Topic);
+	felist ItemNames(Topic, WHITE, 0, true);
 	ItemNames.AddDescription("");
 	ItemNames.AddDescription("Name                                                 Weight       Armor  Strength");
 
@@ -226,10 +227,10 @@ ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the item
 		Buffer.resize(70, ' ');
 		Buffer += int(GetItem(c)->GetWeaponStrength());
 
-		ItemNames.AddString(Buffer);
+		ItemNames.AddEntry(Buffer, RED);
 	}
 
-	return ItemNames.Draw(FONTW, FONTR);
+	return ItemNames.Draw();
 }
 
 ushort stack::GetEmitation() const // Calculates the biggest light emmision of the levelsquare...
@@ -320,7 +321,7 @@ ushort stack::ConsumableItems(character* Eater)
 	for(ushort c = 0; c < GetItems(); ++c)
 	{
 		if(GetItem(c)->Consumable(Eater))
-			Counter++;
+			++Counter;
 	}
 
 	return Counter;
@@ -370,7 +371,7 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 {
 	if(Strength > 3)
 	{
-		/* This may jam if an item is destroyed but doesn't leave anything behind */
+		// This may jam if an item is destroyed but doesn't leave anything behind
 
 		for(ushort c = 0; c < GetItems();)
 			if(!GetItem(c)->ImpactDamage(Strength >> 1, ShowOnScreen, this))
@@ -411,12 +412,12 @@ bool stack::Polymorph()
 
 void stack::ReceiveSound(float Strength)
 {
-	for(int x = 0; x < GetItems(); x++) // PROBLEM!!! This probably has the same problems as kick... So...
-		GetItem(x)->ReceiveSound(Strength, GetSquareUnder()->CanBeSeen(), this);
+	for(int x = 0; x < GetItems(); ++x) // PROBLEM!!! This probably has the same problems as kick... So...
+		GetItem(x)->ReceiveSound(Strength, GetLevelSquareUnder()->CanBeSeen(), this);
 }
 
 void stack::StruckByWandOfStriking(void)
 {
-	for(int x = 0; x < GetItems(); x++) // Not Stroustrup style. Punish.
+	for(int x = 0; x < GetItems(); ++x)
 		GetItem(x)->StruckByWandOfStriking(this);
 }

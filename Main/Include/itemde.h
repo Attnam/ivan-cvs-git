@@ -689,8 +689,8 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility() const RET(10)
-	virtual std::string NameSingular() const RET("cheap copy of left nut of Perttu")
-	virtual std::string NamePlural() const RET("cheap copies of left nut of Perttu")
+	virtual std::string NameSingular() const RET("cheap copy of the left nut of Perttu")
+	virtual std::string NamePlural() const RET("cheap copies of the left nut of Perttu")
 	virtual long Score() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(16,208)
 );

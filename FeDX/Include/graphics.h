@@ -4,6 +4,7 @@
 #define DOUBLEBUFFER	graphics::GetDoubleBuffer()
 #define XRES		graphics::GetXRes()
 #define YRES		graphics::GetYRes()
+#define FONT		graphics::GetDefaultFont()
 
 #define MAKE_RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
 
@@ -11,14 +12,23 @@
 #define GET_GREEN(Color)	((Color >> 3) & 0xFC)
 #define GET_BLUE(Color)		((Color << 3) & 0xF8)
 
-#define PINK 0xF81F
+#define RED	MAKE_RGB(255, 0, 0)
+#define GREEN	MAKE_RGB(0, 255, 0)
+#define BLUE	MAKE_RGB(0, 0, 255)
+
+#define YELLOW	MAKE_RGB(255, 255, 0)
+#define PINK	MAKE_RGB(255, 0, 255)
+
+#define WHITE	MAKE_RGB(255, 255, 255)
+#define BLACK	MAKE_RGB(0, 0, 0)
 
 #include <windows.h>
-#include <vector>
+#include <list>
 
 #include "typedef.h"
 
 class bitmap;
+class colorizablebitmap;
 class CDisplay;
 
 class graphics
@@ -35,6 +45,11 @@ public:
 	static CDisplay* GetDXDisplay() { return DXDisplay; }
 	static void UpdateBounds();
 	static void SwitchMode();
+	static void LoadDefaultFont(std::string);
+	static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
+	static void Backup();
+	static void Restore();
+	static bool GetFullScreen() { return FullScreen; }
 private:
 	static HWND hWnd;
 	static bool FullScreen;
@@ -43,7 +58,8 @@ private:
 	static ushort XRes;
 	static ushort YRes;
 	static uchar ColorDepth;
-	static std::vector<bitmap*> BitmapContainer;
+	static std::list<bitmap*> BitmapContainer;
+	static colorizablebitmap* DefaultFont;
 };
 
 #endif

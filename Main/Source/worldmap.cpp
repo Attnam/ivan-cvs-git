@@ -15,8 +15,8 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
 	Map = (worldmapsquare***)area::Map;
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ulong y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ulong y = 0; y < YSize; ++y)
 		{
 			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
 			Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
@@ -61,8 +61,8 @@ void worldmap::Load(inputfile& SaveFile)
 
 	Map = (worldmapsquare***)area::Map;
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ulong y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ulong y = 0; y < YSize; ++y)
 		{
 			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);
@@ -89,8 +89,8 @@ void worldmap::Draw() const
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
 	if(game::GetSeeWholeMapCheat())
-		for(ushort x = game::GetCamera().X; x < XMax; x++)
-			for(ushort y = game::GetCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
 				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
@@ -100,8 +100,8 @@ void worldmap::Draw() const
 					Map[x][y]->DrawCheat();
 			}
 	else
-		for(ushort x = game::GetCamera().X; x < XMax; x++)
-			for(ushort y = game::GetCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
 				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
@@ -171,8 +171,8 @@ void worldmap::Generate()
 
 void worldmap::RandomizeAltitude()
 {
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			AltitudeBuffer[x][y] = rand() % 5001 - rand() % 5000;
 }
 
@@ -184,25 +184,25 @@ void worldmap::SmoothAltitude()
 	{
 		if(c < 8)
 		{
-			for(uchar c1 = 0; c1 < rand() % 20; c1++)
+			for(uchar c1 = 0; c1 < rand() % 20; ++c1)
 			{
 				ushort PlaceX = 5 + rand() % (XSize-10), PlaceY = 5 + rand() % (YSize-10);
 				short Change = rand() % 10000 - rand() % 10000;
 
-				for(int c2 = 0; c2 < rand() % 50; c2++)
+				for(int c2 = 0; c2 < rand() % 50; ++c2)
 					AltitudeBuffer[(PlaceX + rand() % 5 - rand() % 5)][(PlaceY + rand() % 5 - rand() % 5)] += Change;
 			}
 		}
 
-		for(ushort y = 0; y < YSize; y++)
-			for(ushort x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; ++y)
+			for(ushort x = 0; x < XSize; ++x)
 			{
 				long HeightNear = 0;
 				uchar SquaresNear = 0;
 
 				OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
 
-				DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, HeightNear += OldAltitudeBuffer[DoX][DoY], HeightNear += AltitudeBuffer[DoX][DoY], SquaresNear++)
+				DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, HeightNear += OldAltitudeBuffer[DoX][DoY], HeightNear += AltitudeBuffer[DoX][DoY], ++SquaresNear)
 
 				AltitudeBuffer[x][y] = HeightNear / SquaresNear;
 
@@ -225,13 +225,13 @@ void worldmap::SmoothAltitude()
 
 void worldmap::GenerateClimate()
 {
-	for(ushort y = 0; y < YSize; y++)
+	for(ushort y = 0; y < YSize; ++y)
 	{
 		float DistanceFromEquator = fabs(float(y) / YSize - 0.5f);
 
 		bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
 
-		for(ushort x = 0; x < XSize; x++)
+		for(ushort x = 0; x < XSize; ++x)
 		{
 			if(AltitudeBuffer[x][y] <= 0)
 			{
@@ -284,13 +284,13 @@ void worldmap::SmoothClimate()
 	OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
 
 	for(ushort c = 0; c < 3; ++c)
-		for(ushort y = 0; y < YSize; y++)
-			for(ushort x = 0, NewType; x < XSize; x++)
+		for(ushort y = 0; y < YSize; ++y)
+			for(ushort x = 0, NewType; x < XSize; ++x)
 				if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
 					TypeBuffer[x][y] = NewType;
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			Map[x][y]->ChangeWorldMapTerrain(protocontainer<groundworldmapterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
 
 	delete [] OldTypeBuffer;
@@ -301,12 +301,12 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 	static ushort Types = protocontainer<groundworldmapterrain>::GetProtoAmount() + 1;
 	static uchar* Type = new uchar[Types];
 
-	for(ushort n = 0; n < Types; n++)
+	for(ushort n = 0; n < Types; ++n)
 		Type[n] = 0;
 
-	DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, Type[OldTypeBuffer[DoX][DoY]]++, Type[TypeBuffer[DoX][DoY]]++, ;)
+	DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, ++Type[OldTypeBuffer[DoX][DoY]], ++Type[TypeBuffer[DoX][DoY]], ;)
 
-	Type[TypeBuffer[x][y]]++;
+	++Type[TypeBuffer[x][y]];
 
 	uchar MostCommon = 0;
 
@@ -327,8 +327,8 @@ void worldmap::CalculateContinents()
 	Continent.resize(1, 0);
 	memset(ContinentBuffer[0], 0, XSize * YSize);
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			if(AltitudeBuffer[x][y] > 0)
 			{
 				bool Attached = false;

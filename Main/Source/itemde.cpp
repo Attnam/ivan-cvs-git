@@ -102,7 +102,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 		if(Reader->GetIsPlayer())
 			ADD_MESSAGE("As you read the scroll a monster appears.");
 		else
-			if(Reader->GetSquareUnder()->CanBeSeen())
+			if(Reader->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 	}
 	else
@@ -123,7 +123,7 @@ bool scrollofteleport::Read(character* Reader)
 	if(Reader->GetIsPlayer())
 		ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
 	else
-		if(Reader->GetSquareUnder()->CanBeSeen())
+		if(Reader->GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
 	Reader->Move(Pos, true);
@@ -134,10 +134,10 @@ void lump::ReceiveHitEffect(character* Enemy, character*)
 {
 	if(rand() % 2)
 	{
-	if(Enemy->GetSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
+		if(Enemy->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
 
-	GetMaterial(0)->HitEffect(Enemy);
+		GetMaterial(0)->HitEffect(Enemy);
 	}
 }
 
@@ -148,7 +148,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 		if(Enemy->GetIsPlayer())
 			ADD_MESSAGE("The %s reacts with you!", GetMaterial(2)->CNAME(UNARTICLED));
 		else
-			if(Enemy->GetSquareUnder()->CanBeSeen())
+			if(Enemy->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("The %s reacts with %s.", GetMaterial(2)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
 
 		GetMaterial(2)->HitEffect(Enemy);
@@ -255,8 +255,9 @@ bool wand::Apply(character* StupidPerson, stack* MotherStack)
 	if(StupidPerson->GetIsPlayer())
 		ADD_MESSAGE("The wand brakes in two and then explodes.");
 	else
-		if(StupidPerson->GetSquareUnder()->CanBeSeen())
+		if(StupidPerson->GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s brakes a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
+
 	MotherStack->RemoveItem(MotherStack->SearchItem(this));
 	SetExists(false);	
 
@@ -286,7 +287,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	}
 
 	if(Direction != '.')
-		for(ushort Length = 0;Length < 5;Length++)
+		for(ushort Length = 0; Length < 5; ++Length)
 		{
 			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
 				break;
@@ -338,7 +339,7 @@ bool scrollofwishing::Read(character* Reader)
 {
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = game::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 0, 256);
+	std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 256);
 
 	item* TempItem = protosystem::CreateItem(Temp);
 
@@ -421,7 +422,7 @@ bool scrollofchangematerial::Read(character* Reader)
 
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = game::StringQuestion(FONTW, "What material do you want to wish for?", vector2d(7,7), 0, 256);
+	std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(7,7), WHITE, 0, 256);
 
 	material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());
 	
@@ -474,7 +475,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	}
 
 	if(Direction != '.')
-		for(ushort Length = 0;Length < 15;Length++)
+		for(ushort Length = 0; Length < 15; ++Length)
 		{
 			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
 				break;

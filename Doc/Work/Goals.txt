@@ -28,4 +28,4 @@ Pick-axejen s‰‰teleminen (kesto, expat, valot).
 ////Messagebuffer should be saved.
 %*DOS-portti.
 DX lack warning.
-Last game should be highlighted in the high scores.
+////Last game should be highlighted in the high scores.

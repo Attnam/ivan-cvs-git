@@ -3,23 +3,19 @@
 
 #pragma warning(disable : 4786)
 
-#define GRAPHIC_TYPES	11
+#define RAW_TYPES	3
 
 #define GLTERRAIN	0
 #define GITEM		1
 #define GCHARACTER	2
-#define GHUMAN		3
-#define GWTERRAIN	4
-#define GFOW		5
-#define GCURSOR		6
-#define GFONTR		7
-#define GFONTB		8
-#define GFONTW		9
-#define GSYMBOL		10
 
-#define FONTR		igraph::GetFontRGraphic()
-#define FONTB		igraph::GetFontBGraphic()
-#define FONTW		igraph::GetFontWGraphic()
+#define GRAPHIC_TYPES	5
+
+#define GHUMAN		0
+#define GWTERRAIN	1
+#define GFOW		2
+#define GCURSOR		3
+#define GSYMBOL		4
 
 #include <windows.h>
 #include <map>
@@ -30,6 +26,7 @@
 #include "save.h"
 
 class bitmap;
+class colorizablebitmap;
 
 struct graphic_id
 {
@@ -88,9 +85,6 @@ public:
 	static bitmap* GetFOWGraphic() { return Graphic[GFOW]; }
 	static bitmap* GetCursorGraphic() { return Graphic[GCURSOR]; }
 	static bitmap* GetHumanGraphic() { return Graphic[GHUMAN]; }
-	static bitmap* GetFontRGraphic() { return Graphic[GFONTR]; }
-	static bitmap* GetFontBGraphic() { return Graphic[GFONTB]; }
-	static bitmap* GetFontWGraphic() { return Graphic[GFONTW]; }
 	static bitmap* GetSymbolGraphic() { return Graphic[GSYMBOL]; }
 	static bitmap* GetTileBuffer() { return TileBuffer; }
 	static void BlitTileBuffer(vector2d, ushort = 256);
@@ -99,8 +93,10 @@ public:
 	static tile AddUser(graphic_id);
 	static void RemoveUser(graphic_id);
 private:
+	static colorizablebitmap* RawGraphic[RAW_TYPES];
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;
+	static char* RawGraphicFileName[];
 	static char* GraphicFileName[];
 	static tilemap TileMap;
 };

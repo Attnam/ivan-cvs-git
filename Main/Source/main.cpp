@@ -18,10 +18,10 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	sprintf(Buffer, "Iter Vehemens ad Necem v. 0.240 alpha\n\nLast build %s at %s.\n\nAntivalpuri is rising and dark times are ahead;\nDark frogs pillage towns and tomatoes are growing.\nBut fortunately, there is hope, you!", __DATE__, __TIME__);
 
-	iosystem::TextScreen(FONTW, Buffer);
+	iosystem::TextScreen(Buffer);
 
 	while(true)
-		switch(iosystem::Menu(FONTB, FONTW, "Start Game\rContinue a game\rView Highscores\rQuit\r"))
+		switch(iosystem::Menu("Start Game\rContinue a game\rView Highscores\rQuit\r", BLUE, WHITE))
 		{
 		case 0:
 			game::Init();
@@ -30,7 +30,7 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 			break;
 		case 1:
 		{
-			std::string LoadName = iosystem::WhatToLoadMenu(FONTW, FONTB);
+			std::string LoadName = iosystem::WhatToLoadMenu(WHITE, BLUE);
 
 			if(LoadName != "")
 			{
@@ -45,7 +45,7 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 		case 2:
 		{
 			highscore HScore;
-			HScore.Draw(FONTW, FONTB);
+			HScore.Draw();
 			break;
 		}
 		case 3:

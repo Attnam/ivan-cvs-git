@@ -5,17 +5,6 @@
 #define NEUTRAL 1
 #define EVIL 2
 
-#define BLACK 0
-#define DGRAY 1
-#define LGRAY 2
-#define WHITE 3
-#define YELLOW 4
-#define BROWN 5
-#define RED 6
-#define BLUE 7
-#define GREEN 8
-#define FLESH 8
-
 /* ConsumeTypes */
 
 #define ODD 		0

@@ -134,7 +134,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 					{
 						game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
 						highscore HScore;
-						HScore.Draw(FONTW, FONTB);
+						HScore.Draw();
 					}
 					return true;
 				}
@@ -148,7 +148,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 					{
 						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
 						highscore HScore;
-						HScore.Draw(FONTW, FONTB);
+						HScore.Draw();
 					}
 					return true;
 				}
@@ -163,7 +163,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 				{
 					game::GetPlayer()->AddScoreEntry("escaped from the dungeon and was executed for cowardice");
 					highscore HScore;
-					HScore.Draw(FONTW, FONTB);
+					HScore.Draw();
 				}
 				return true;
 			}

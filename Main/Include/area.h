@@ -19,7 +19,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(Y)							\
 		{							\
@@ -28,7 +28,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1 && Y)				\
 		{							\
@@ -37,7 +37,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X)							\
 		{							\
@@ -46,7 +46,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1)					\
 		{							\
@@ -55,7 +55,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X && Y < BorderY - 1)				\
 		{							\
@@ -64,7 +64,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(Y < BorderY - 1)					\
 		{							\
@@ -73,7 +73,7 @@
 			Then;						\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1 && Y < BorderY - 1)			\
 		{							\
@@ -100,7 +100,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(Y)							\
 		{							\
@@ -110,7 +110,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1 && Y)				\
 		{							\
@@ -120,7 +120,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X)							\
 		{							\
@@ -130,7 +130,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1)					\
 		{							\
@@ -140,7 +140,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X && Y < BorderY - 1)				\
 		{							\
@@ -150,7 +150,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(Y < BorderY - 1)					\
 		{							\
@@ -160,7 +160,7 @@
 			CommonCommand;					\
 		}							\
 									\
-		DoIndex++;						\
+		++DoIndex;						\
 									\
 		if(X < BorderX - 1 && Y < BorderY - 1)			\
 		{							\
@@ -190,12 +190,12 @@
 	{															\
 		ushort XPointer, YPointer;											\
 																\
-		for(XPointer = Left; XPointer <= Rigth; XPointer++)								\
+		for(XPointer = Left; XPointer <= Rigth; ++XPointer)								\
 		{														\
 			DoOne;													\
 		}														\
 																\
-		for(YPointer = Top; YPointer <= Bottom; YPointer++)								\
+		for(YPointer = Top; YPointer <= Bottom; ++YPointer)								\
 		{														\
 			DoTwo;													\
 		}														\
@@ -218,8 +218,8 @@
 	{															\
 		ushort XPointer, YPointer;											\
 																\
-		for(XPointer = Left; XPointer <= Rigth; XPointer++)								\
-			for(YPointer = Top; YPointer <= Bottom; YPointer++)							\
+		for(XPointer = Left; XPointer <= Rigth; ++XPointer)								\
+			for(YPointer = Top; YPointer <= Bottom; ++YPointer)							\
 			{													\
 				DoWhat;												\
 			}													\

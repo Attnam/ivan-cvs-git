@@ -11,7 +11,7 @@ template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize)
 
 	ulong XPointer = ulong(Map) + MapXSize, TrueYSize = YSize * sizeof(Type);
 
-	for(ulong x = 0; x < XSize; x++, XPointer += TrueYSize)
+	for(ulong x = 0; x < XSize; ++x, XPointer += TrueYSize)
 		Map[x] = (Type*)XPointer;
 }
 
@@ -32,11 +32,11 @@ template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize,
 
 	ulong XPointer = ulong(Map) + MapXSize, TrueYSize = YSize * sizeof(Type);
 
-	for(ulong x = 0; x < XSize; x++, XPointer += TrueYSize)
+	for(ulong x = 0; x < XSize; ++x, XPointer += TrueYSize)
 	{
 		Map[x] = (Type*)XPointer;
 
-		for(ulong y = 0; y < YSize; y++)
+		for(ulong y = 0; y < YSize; ++y)
 			Map[x][y] = Initializer;
 	}
 }
@@ -52,8 +52,8 @@ template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize, Type Initi
 
 template <class Type> inline void Fill2D(Type** Map, ulong CornerXPos, ulong CornerYPos, ulong XSize, ulong YSize, Type Value)
 {
-	for(ulong x = CornerXPos; x < CornerXPos + XSize; x++)
-		for(ulong y = CornerYPos; y < CornerYPos + YSize; y++)
+	for(ulong x = CornerXPos; x < CornerXPos + XSize; ++x)
+		for(ulong y = CornerYPos; y < CornerYPos + YSize; ++y)
 			Map[x][y] = Value;
 }
 
@@ -66,11 +66,11 @@ template <class Type> inline void Alloc3D(Type***& Map, ulong XSize, ulong YSize
 
 	ulong XPointer = ulong(Map) + MapXSize, YPointer = XPointer + MapYSize, TrueYSize = YSize * sizeof(Type*), TrueZSize = ZSize * sizeof(Type);
 
-	for(ulong x = 0; x < XSize; x++, XPointer += TrueYSize)
+	for(ulong x = 0; x < XSize; ++x, XPointer += TrueYSize)
 	{
 		Map[x] = (Type**)XPointer;
 
-		for(ulong y = 0; y < YSize; y++, YPointer += TrueZSize)
+		for(ulong y = 0; y < YSize; ++y, YPointer += TrueZSize)
 			Map[x][y] = (Type*)YPointer;
 	}
 }
@@ -93,15 +93,15 @@ template <class Type> inline void Alloc3D(Type***& Map, ulong XSize, ulong YSize
 
 	ulong XPointer = ulong(Map) + MapXSize, YPointer = XPointer + MapYSize, TrueYSize = YSize * sizeof(Type*), TrueZSize = ZSize * sizeof(Type);
 
-	for(ulong x = 0; x < XSize; x++, XPointer += TrueYSize)
+	for(ulong x = 0; x < XSize; ++x, XPointer += TrueYSize)
 	{
 		Map[x] = (Type**)XPointer;
 
-		for(ulong y = 0; y < YSize; y++, YPointer += TrueZSize)
+		for(ulong y = 0; y < YSize; ++y, YPointer += TrueZSize)
 		{
 			Map[x][y] = (Type*)YPointer;
 
-			for(ulong z = 0; z < ZSize; z++)
+			for(ulong z = 0; z < ZSize; ++z)
 				Map[x][y][z] = Initializer;
 		}
 	}
@@ -118,9 +118,9 @@ template <class Type> inline Type*** Alloc3D(ulong XSize, ulong YSize, ulong ZSi
 
 template <class Type> inline void Fill3D(Type*** Map, ulong CornerXPos, ulong CornerYPos, ulong CornerZPos, ulong XSize, ulong YSize, ulong ZSize, Type Value)
 {
-	for(ulong x = CornerXPos; x < CornerXPos + XSize; x++)
-		for(ulong y = CornerYPos; y < CornerYPos + YSize; y++)
-			for(ulong z = CornerZPos; z < CornerZPos + ZSize; z++)
+	for(ulong x = CornerXPos; x < CornerXPos + XSize; ++x)
+		for(ulong y = CornerYPos; y < CornerYPos + YSize; ++y)
+			for(ulong z = CornerZPos; z < CornerZPos + ZSize; ++z)
 				Map[x][y] = Value;
 }
 

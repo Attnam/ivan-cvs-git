@@ -9,6 +9,8 @@ bool globalwindowhandler::InGetKey = false;
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	static bool Active = true;
+
 	switch (uMsg)									// Check For Windows Messages
 	{	
 		case WM_SIZE:
@@ -17,6 +19,34 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				graphics::SwitchMode();
 				break;
 			}
+
+			/*if(wParam == SIZE_MAXHIDE || wParam == SIZE_MINIMIZED)
+			{
+				if(graphics::GetFullScreen())
+				{
+					//graphics::Backup();
+				}
+	
+				Active = false;
+				break;
+			}
+			else
+				Active = true;*/
+
+			/*if(wParam == SIZE_RESTORED)
+			{
+				if(!Active)
+				{
+					if(graphics::GetFullScreen())
+					{
+						//graphics::Restore();
+						//graphics::BlitDBToScreen();
+					}
+
+					Active = true;
+				}
+				break;
+			}*/
 		case WM_MOVE:
 			graphics::UpdateBounds();
 			if(InGetKey)

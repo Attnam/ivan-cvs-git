@@ -1,7 +1,4 @@
-Sokeaksi tuleminen pepsistä bugittaa.
-Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
-Fullscreen + F10.
 Lights should be updated when terrain changes.
 Material volume is undefined in script created instances.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
@@ -11,3 +8,10 @@ Dark frog effect is far too high.
 "The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
 Residents of Attnam grunt when talked to.
 Single weapon skill's name isn't updated when the name of the item changes.
+Blood isn't saved anymore.
+"You can't throw something that you wield!"
+Using Alt+Tab in fullscreen seems to behave oddly.
+Dipping to dark frog flesh doesn't work.
+One can kill Attnamian farmers with Holy Fire without becoming outlawed.
+Attacking team members doesn't work correctly.
+Characters not in LOS aren't shown in WMode lookmode.

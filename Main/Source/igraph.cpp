@@ -3,10 +3,13 @@
 #include "igraph.h"
 #include "game.h"
 #include "error.h"
+#include "colorbit.h"
 
+colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
-char* igraph::GraphicFileName[] = {"Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/FontR.pcx", "Graphics/FontB.pcx", "Graphics/FontW.pcx", "Graphics/Symbol.pcx"};
+char* igraph::RawGraphicFileName[] = { "Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx" };
+char* igraph::GraphicFileName[] = { "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx" };
 tilemap igraph::TileMap;
 
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
@@ -18,13 +21,14 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 		AlreadyInstalled = true;
 
 		graphics::SetMode(hInst, hWnd, "IVAN 0.240a", 800, 600, 16, false);
+		graphics::LoadDefaultFont("Graphics/Font.pcx");
 
 		uchar c;
 
-		for(c = 0; c < 3; ++c)
-			Graphic[c] = new bitmap(GraphicFileName[c], false);
+		for(c = 0; c < RAW_TYPES; ++c)
+			RawGraphic[c] = new colorizablebitmap(RawGraphicFileName[c]);
 
-		for(c = 3; c < GRAPHIC_TYPES; ++c)
+		for(c = 0; c < GRAPHIC_TYPES; ++c)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
 		TileBuffer = new bitmap(16, 16);
@@ -35,7 +39,12 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 
 void igraph::DeInit()
 {
-	for(uchar c = 0; c < GRAPHIC_TYPES; ++c)
+	uchar c;
+
+	for(c = 0; c < RAW_TYPES; ++c)
+		delete RawGraphic[c];
+
+	for(c = 0; c < GRAPHIC_TYPES; ++c)
 		delete Graphic[c];
 }
 
@@ -71,10 +80,10 @@ tile igraph::AddUser(graphic_id GI)
 	tilemap::iterator Iterator = TileMap.find(GI);
 
 	if(Iterator != TileMap.end())
-		++(Iterator->second.Users);
+		++Iterator->second.Users;
 	else
 	{
-		bitmap* Bitmap = Graphic[GI.FileIndex]->ColorizeTo16Bit(GI.BitmapPos, vector2d(16, 16), GI.Color);
+		bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
 
 		tile Tile(Bitmap, 1);
 
@@ -96,7 +105,7 @@ void igraph::RemoveUser(graphic_id GI)
 	tilemap::iterator Iterator = TileMap.find(GI);
 
 	if(Iterator != TileMap.end())
-		if(!(--Iterator->second.Users))
+		if(!--Iterator->second.Users)
 		{
 			delete Iterator->second.Bitmap;
 			delete [] Iterator->first.Color;

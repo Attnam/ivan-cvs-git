@@ -148,7 +148,7 @@ bool item::HitCharacter(character* Dude, float Speed)
 		if(Dude->GetIsPlayer())
 			ADD_MESSAGE("%s misses you.", CNAME(DEFINITE));
 		else
-			if(Dude->GetSquareUnder()->CanBeSeen())
+			if(Dude->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
 
 		return false;
@@ -211,5 +211,5 @@ uchar item::GetWeaponCategory() const
 
 void item::StruckByWandOfStriking(stack* What) 
 { 
-	ImpactDamage(10, What->GetSquareUnder()->CanBeSeen(), What); 
+	ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What); 
 }

@@ -195,8 +195,8 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 		ABORT("Route code error during level generate! Contact Timo!");
 
 	{
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
 			{
 				FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
@@ -212,14 +212,14 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 					Map[x][y]->ChangeOverLevelTerrain(new empty);
 				}
 
-				for(ushort X = 0; X < XSize; X++)
-					for(ushort Y = 0; Y < YSize; Y++)
+				for(ushort X = 0; X < XSize; ++X)
+					for(ushort Y = 0; Y < YSize; ++Y)
 						FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
 			}
 	}
 
-	for(ushort x = 1; x < XSize - 1; x++)
-		for(ushort y = 1; y < YSize - 1; y++)
+	for(ushort x = 1; x < XSize - 1; ++x)
+		for(ushort y = 1; y < YSize - 1; ++y)
 			FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
@@ -234,8 +234,8 @@ void level::Generate(levelscript* GenLevelScript)
 	if(LevelScript->GetLevelMessage(false))
 		LevelMessage = *LevelScript->GetLevelMessage();
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ulong y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ulong y = 0; y < YSize; ++y)
 		{
 			Map[x][y] = new levelsquare(this, vector2d(x, y));
 			Map[x][y]->ChangeLevelTerrain(LevelScript->GetFillSquare()->GetGroundTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOverTerrain()->Instantiate());
@@ -265,7 +265,7 @@ void level::Generate(levelscript* GenLevelScript)
 		}
 		else
 		{
-			for(uchar i = 0; i < 10; i++)
+			for(uchar i = 0; i < 10; ++i)
 			{
 				RoomScript = LevelScript->GetRoomDefault();
 
@@ -337,7 +337,7 @@ void level::CreateRandomTunnel()
 
 void level::CreateItems(ushort Amount)
 {
-	for(uchar x = 0; x < Amount; x++)
+	for(uchar x = 0; x < Amount; ++x)
 	{
 		vector2d Pos = RandomSquare(true);
 
@@ -348,7 +348,7 @@ void level::CreateItems(ushort Amount)
 
 void level::CreateMonsters(ushort Amount)
 {
-	for(uchar x = 0; x < Amount; x++)
+	for(uchar x = 0; x < Amount; ++x)
 	{
 		vector2d Pos = RandomSquare(true);
 
@@ -395,14 +395,14 @@ bool level::MakeRoom(roomscript* RoomScript)
 		return false;
 
 	{
-	for(ushort x = XPos - 1; x <= XPos + Width; x++)
-		for(ushort y = YPos - 1; y <= YPos + Height; y++)
+	for(ushort x = XPos - 1; x <= XPos + Width; ++x)
+		for(ushort y = YPos - 1; y <= YPos + Height; ++y)
 			if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
 				return false;
 	}
 
 	{
-	for(ushort x = XPos; x < XPos + Width; x++)
+	for(ushort x = XPos; x < XPos + Width; ++x)
 	{
 		Map[x][YPos]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[x][YPos] |= FORBIDDEN;
@@ -424,7 +424,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
 	}
 
-	for(ushort y = YPos; y < YPos + Height; y++)
+	for(ushort y = YPos; y < YPos + Height; ++y)
 	{
 		Map[XPos][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[XPos][y] |= FORBIDDEN;
@@ -444,8 +444,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 		}
 	}
 
-	for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
-		for(ushort y = YPos + 1; y < YPos + Height - 1; y++)
+	for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
+		for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
 		{
 			Map[x][y]->ChangeLevelTerrain(RoomScript->GetFloorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetFloorSquare()->GetOverTerrain()->Instantiate());
 
@@ -462,8 +462,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOverLevelTerrain())->GetOwnerGod();
 
-		for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
-			for(ushort y = YPos + 1; y < YPos + Height - 1; y++)
+		for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
+			for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
 				Map[x][y]->SetDivineOwner(Owner);
 	}
 
@@ -620,8 +620,8 @@ void level::HandleCharacters()
 	Population = 0;
 
 	{
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 		{	
 			Population += Map[x][y]->GetPopulation();
 
@@ -679,8 +679,8 @@ void level::Load(inputfile& SaveFile)
 
 	Map = (levelsquare***)area::Map;
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ulong y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ulong y = 0; y < YSize; ++y)
 		{
 			Map[x][y] = new levelsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);
@@ -715,8 +715,8 @@ void level::Load(inputfile& SaveFile)
 
 void level::Luxify()
 {
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			Map[x][y]->Emitate();
 }
 
@@ -731,8 +731,8 @@ void level::Draw() const
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
 	if(game::GetSeeWholeMapCheat())
-		for(ushort x = game::GetCamera().X; x < XMax; x++)
-			for(ushort y = game::GetCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
 				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
@@ -742,8 +742,8 @@ void level::Draw() const
 					Map[x][y]->DrawCheat();
 			}
 	else
-		for(ushort x = game::GetCamera().X; x < XMax; x++)
-			for(ushort y = game::GetCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
 				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 

@@ -478,7 +478,6 @@ protected:
 	virtual std::string NameStem() const	{ return "donkey flesh"; }
 );
 
-
 class MATERIAL
 (
 	marble,
@@ -488,7 +487,6 @@ public:
 	virtual uchar GetConsumeType() const			{ return HARD; }
 	virtual ushort GetDensity() const				{ return 3100; }
 	virtual ushort OfferValue() const				{ return 7; }
-	virtual uchar GetItemColor() const			{ return LGRAY; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
 protected:

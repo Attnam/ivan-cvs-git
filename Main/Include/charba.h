@@ -213,13 +213,15 @@ public:
 	virtual void StateAutoDeactivation();
 	virtual team* GetTeam() const { return Team; }
 	virtual void SetTeam(team* What) { Team = What; }
-	virtual bool CheckForUsefulItemsOnGround();
-	virtual bool CheckForDoors();
-	virtual bool CheckForEnemies();
 	virtual bool RestUntilHealed();
 	virtual void RestHandler();
 	virtual void EndRest();
 protected:
+	virtual void SeekLeader();
+	virtual bool CheckForUsefulItemsOnGround();
+	virtual bool CheckForDoors();
+	virtual bool CheckForEnemies();
+	virtual bool FollowLeader();
 	virtual void SoldierAICommand();
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
@@ -227,7 +229,7 @@ protected:
 	virtual void SetDefaultStats() = 0;
 	virtual void GetPlayerCommand();
 	virtual void GetAICommand();
-	virtual void Charge(character*);
+	virtual void MoveTowards(vector2d);
 	virtual float GetMeleeStrength() const				{ return 0; }
 	virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
@@ -255,6 +257,7 @@ protected:
 	ushort StateCounter[STATES];
 	void (character::*StateHandler[STATES])();
 	team* Team;
+	vector2d WayPoint;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

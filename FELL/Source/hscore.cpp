@@ -5,41 +5,49 @@
 #include "hscore.h"
 #include "whandler.h"
 #include "save.h"
+#include "colorbit.h"
 
 void highscore::Add(long NewScore, std::string NewEntry)
 {
-	for(ushort c = 0; c < Score.Length(); ++c)
-		if(Score.Access(c) < NewScore)
+	for(uchar c = 0; c < Score.size(); ++c)
+		if(Score[c] < NewScore)
 		{
-			Entry.Put(NewEntry, c);
-			Score.Put(NewScore, c);
-			Entry.Resize(100);
-			Score.Resize(100);
+			Entry.insert(Entry.begin() + c, NewEntry);
+			Score.insert(Score.begin() + c, NewScore);
+
+			if(Score.size() > 100)
+			{
+				Entry.resize(100, std::string());
+				Score.resize(100);
+			}
+
+			LastAdd = c;
 			return;
 		}
 
-	if(Score.Length() < 100)
+	if(Score.size() < 100)
 	{
-		Entry.Add(NewEntry);
-		Score.Add(NewScore);
+		Entry.push_back(NewEntry);
+		Score.push_back(NewScore);
+		LastAdd = 99;
 	}
 }
 
-void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
+void highscore::Draw() const
 {
 	DOUBLEBUFFER->ClearToColor(0);
 
-	TopicFont->Printf(DOUBLEBUFFER, 30, 30, "Adventurers' Hall of Fame");
+	FONT->Printf(DOUBLEBUFFER, 30, 30,  WHITE, "Adventurers' Hall of Fame");
 
 	ushort Min = 0;
 
-	for(ushort c = 0; c < Score.Length(); ++c)
+	for(uchar c = 0; c < Score.size(); ++c)
 	{
 		if(c - Min == 50)
 		{
 			Min += 50;
 
-			TopicFont->Printf(DOUBLEBUFFER, 30, 560, "-- Press ESC to exit, any other key for next page --");
+			FONT->Printf(DOUBLEBUFFER, 30, 560, WHITE, "-- Press ESC to exit, any other key for next page --");
 
 			graphics::BlitDBToScreen();
 
@@ -48,7 +56,7 @@ void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
 
 			DOUBLEBUFFER->ClearToColor(0);
 
-			TopicFont->Printf(DOUBLEBUFFER, 30, 30, "Adventurers' Hall of Fame");
+			FONT->Printf(DOUBLEBUFFER, 30, 30, WHITE, "Adventurers' Hall of Fame");
 		}
 
 		std::string Desc;
@@ -57,13 +65,13 @@ void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
 
 		Desc.resize(5, ' ');
 
-		Desc += int(Score.Access(c));
+		Desc += int(Score[c]);
 
 		Desc.resize(13, ' ');
 
-		Desc += Entry.Access(c);
+		Desc += Entry[c];
 
-		ListFont->Printf(DOUBLEBUFFER, 30, 50 + (c - Min) * 10, "%s", Desc.c_str());
+		FONT->Printf(DOUBLEBUFFER, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : BLUE, "%s", Desc.c_str());
 	}
 
 	graphics::BlitDBToScreen();
@@ -75,13 +83,7 @@ void highscore::Save(std::string File) const
 {
 	outputfile HighScore(File);
 
-	HighScore << Score.Length();
-
-	for(ushort c = 0; c < Score.Length(); ++c)
-	{
-		HighScore << Score.Access(c);
-		HighScore << Entry.Access(c);
-	}
+	HighScore << Score << Entry << LastAdd;
 }
 
 void highscore::Load(std::string File)
@@ -91,18 +93,5 @@ void highscore::Load(std::string File)
 	if(!HighScore.GetBuffer().is_open())
 		return;
 
-	ushort EntryAmount;
-
-	HighScore >> EntryAmount;
-
-	for(ushort c = 0; c < EntryAmount; ++c)
-	{
-		long LoadedScore;
-		HighScore >> LoadedScore;
-		Score.Add(LoadedScore);
-
-		std::string LoadedEntry;
-		HighScore >> LoadedEntry;
-		Entry.Add(LoadedEntry);
-	}
+	HighScore >> Score >> Entry >> LastAdd;
 }

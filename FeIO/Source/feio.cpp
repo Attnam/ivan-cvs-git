@@ -5,10 +5,11 @@
 #include "feio.h"
 #include "whandler.h"
 #include "felist.h"
+#include "colorbit.h"
 
 #define PENT_WIDTH 70
 
-void iosystem::TextScreen(bitmap* Font, std::string Text, bool GKey)
+void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
 {
 	char Line[200];
         ushort LastBeginningOfLine = 0;
@@ -24,21 +25,22 @@ void iosystem::TextScreen(bitmap* Font, std::string Text, bool GKey)
 	}
 
 	for(ushort cc = 0; cc < Text.length(); ++cc)
-		if(Text[cc] == '\n') ++LineNumber;
+		if(Text[cc] == '\n')
+			++LineNumber;
 
 	for(c = 0; Text[c] != 0; ++c)
 		if(Text[c] == '\n')
 		{
-			Font->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, "%s", Line);
+			FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, Color, "%s", Line);
                         LastBeginningOfLine = c + 1;
-                        Lines++;
+                        ++Lines;
                         for(ushort cc = 0; cc < 200; ++cc)
                         	Line[cc] = 0;
                 }
 		else
 			Line[c - LastBeginningOfLine] = Text[c];
 
-	Font->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, "%s", Line);
+	FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, Color, "%s", Line);
 
 	graphics::BlitDBToScreen();
 
@@ -57,7 +59,7 @@ unsigned int iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 	return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sMS) // (MENU)
+int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelected) // (MENU)
 {
 	if(CountChars('\r',sMS) < 1)
 		return (-1);
@@ -74,19 +76,19 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 
 		DOUBLEBUFFER->ClearToColor(0);
 
-		for(int x = 0; x < 10; x++)
+		for(int x = 0; x < 10; ++x)
 			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
 		
 		std::string sCopyOfMS = sMS;
 
-		for(x = 0; x < 4; x++)
+		for(x = 0; x < 4; ++x)
 			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
 
 		for(unsigned int i = 0; i < CountChars('\r',sMS); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-			(i == iSelected ? FontSelected : FontNotSelected)->Printf(DOUBLEBUFFER, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2),200+(i*50),"%d. %s",i + 1,HYVINEPAGURUPRINTF.c_str());
+			FONT->Printf(DOUBLEBUFFER, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 200+(i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 		}
 
 		graphics::BlitDBToScreen();
@@ -124,7 +126,7 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 	return signed(iSelected);
 }
 
-std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d Pos, ushort MinLetters, ushort MaxLetters)
+std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters)
 {
 	std::string Input;
 
@@ -134,8 +136,8 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 	for(int LastKey = 0;; LastKey = 0)
 	{
 		Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, "%s", Topic.c_str());
-		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
+		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
+		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
 
 		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 8 || LastKey == 13))
@@ -163,7 +165,7 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 	return Input;
 }
 
-long iosystem::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
+long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 {
 	std::string Input;
 
@@ -173,8 +175,8 @@ long iosystem::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
 	for(int LastKey = 0;; LastKey = 0)
 	{
 		Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, "%s", Topic.c_str());
-		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
+		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
+		FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
 
 		while(!(isdigit(LastKey) || LastKey == 8 || LastKey == 13))
@@ -203,18 +205,18 @@ long iosystem::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
 	return atoi(Input.c_str());
 }
 
-std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
+std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
 {
 	struct _finddata_t Found;
 	long hFile;
 	int Check = 0;
-	felist Buffer("Chooseth a file and be sorry");
+	felist Buffer("Chooseth a file and be sorry", TopicColor);
 	hFile = _findfirst("Save/*.sav", &Found);
 
 	if(hFile == -1L)
 	{
 		DOUBLEBUFFER->ClearToColor(0);
-		TopicFont->Printf(DOUBLEBUFFER, 260, 200, "You don't have any previous saves.");
+		FONT->Printf(DOUBLEBUFFER, 260, 200, TopicColor, "You don't have any previous saves.");
 		graphics::BlitDBToScreen();
 		GETKEY();
 		return "";
@@ -222,7 +224,7 @@ std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for
 
 	while(!Check)
 	{
-		Buffer.AddString(Found.name);
+		Buffer.AddEntry(Found.name, ListColor);
 		Check = _findnext(hFile, &Found);
 	}
 
@@ -231,11 +233,11 @@ std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for
 	while(Check > 0xFFFD)
 	{
 		DOUBLEBUFFER->ClearToColor(0);
-		Check = Buffer.Draw(TopicFont, ListFont);
+		Check = Buffer.Draw();
 	}
 
 	if(Check == 0xFFFD)
 		return "";
 
-	return Buffer.GetString(Check);
+	return Buffer.GetEntry(Check);
 }

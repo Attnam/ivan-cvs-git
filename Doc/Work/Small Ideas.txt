@@ -58,4 +58,5 @@ Some kind of option screen.
 Autosave interval as a user-defined option.
 Mellis should fill also intact empty bottles.
 List of killed monsters and list of monsters killed by pets.
-Prepare bug-report fuctions that would make bug-reporting easier.
+Prepare bug-report functions that would make bug-reporting easier.
+Weapon name should be affected by dip material.

@@ -80,8 +80,8 @@ void area::UpdateLOS()
 
 void area::EmptyFlags()
 {
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; ++x)
+		for(ushort y = 0; y < YSize; ++y)
 			Map[x][y]->EmptyFlag();
 }
 
@@ -90,8 +90,8 @@ void area::SendNewDrawRequest()
 	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
-	for(ushort x = game::GetCamera().X; x < XMax; x++)
-		for(ushort y = game::GetCamera().Y; y < YMax; y++)
+	for(ushort x = game::GetCamera().X; x < XMax; ++x)
+		for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			Map[x][y]->SendNewDrawRequest();
 
 	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480, 0);

@@ -13,7 +13,6 @@
 #include "whandler.h"
 #include "level.h"
 #include "worldmap.h"
-#include "graphics.h"
 #include "igraph.h"
 #include "hscore.h"
 #include "feio.h"
@@ -21,8 +20,10 @@
 #include "felist.h"
 #include "team.h"
 #include "femath.h"
+#include "colorbit.h"
+#include "graphics.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), ConsumingCurrently(0), Team(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), ConsumingCurrently(0), Team(0), WayPoint(0xFFFF, 0xFFFF)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -128,13 +129,10 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 	{
 		ushort Damage = ushort(WeaponStrength * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 5 ? 2 : 1);
 
-		if(GetLevelSquareUnder()->CanBeSeen())
-		{
-			Enemy->AddHitMessage(this,true);
+		Enemy->AddHitMessage(this,true);
 
-			if(game::GetWizardMode())
-				ADD_MESSAGE("(damage: %d)", Damage);
-		}
+		if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("(damage: %d)", Damage);
 
 		SetHP(GetHP() - Damage);
 
@@ -152,7 +150,7 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 
 		if(!Damage)
 		{
-			if(GetLevelSquareUnder()->CanBeSeen()) Enemy->AddBlockMessage(this);
+			Enemy->AddBlockMessage(this);
 
 			SetStrengthExperience(GetStrengthExperience() + 25);
 			SetEnduranceExperience(GetEnduranceExperience() + 25);
@@ -161,13 +159,10 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 		}
 		else
 		{
-			if(GetLevelSquareUnder()->CanBeSeen())
-			{
-				Enemy->AddHitMessage(this);
+			Enemy->AddHitMessage(this);
 
-				if(game::GetWizardMode())
-					ADD_MESSAGE("(damage: %d)", Damage);
-			}
+			if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("(damage: %d)", Damage);
 
 			SetHP(GetHP() - Damage);
 
@@ -179,7 +174,7 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 	}
 	else
 	{
-		if(GetLevelSquareUnder()->CanBeSeen()) Enemy->AddDodgeMessage(this);
+		Enemy->AddDodgeMessage(this);
 
 		SetAgilityExperience(GetAgilityExperience() + 100);
 
@@ -559,6 +554,8 @@ bool character::Wield()
 void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace.
 			       // Shouldn't it be "Ignorance is strength", not "Love is hate"?
 {
+	SeekLeader();
+
 	if(CheckForEnemies())
 		return;
 
@@ -568,13 +565,14 @@ void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace
 	if(CheckForUsefulItemsOnGround())
 		return;
 
+	if(FollowLeader())
+		return;
+
 	MoveRandomly();
 }
 
-void character::Charge(character* Target)
+void character::MoveTowards(vector2d TPos)
 {
-	vector2d TPos = Target->GetPos();
-
 	vector2d MoveTo[3];
 
 	if(TPos.X < GetPos().X)
@@ -779,7 +777,7 @@ bool character::Quit()
 		{
 			AddScoreEntry("cowardly quit the game", 0.75f);
 			highscore HScore;
-			HScore.Draw(FONTW, FONTB);
+			HScore.Draw();
 		}
 
 		return true;
@@ -797,7 +795,7 @@ void character::CreateCorpse()
 
 void character::Die()
 {
-	/* Not for programmers: This function MUST NOT delete any objects! */
+	// Not for programmers: This function MUST NOT delete any objects!
 
 	if(!Exists)
 		return;
@@ -850,12 +848,12 @@ void character::Die()
 			GETKEY();
 		}
 
-		iosystem::TextScreen(FONTW, "Unfortunately thee died during thine journey. The Überpriest is not happy.");
+		iosystem::TextScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
 		game::RemoveSaves();
 
 		highscore HScore;
-		HScore.Draw(FONTW, FONTB);
+		HScore.Draw();
 	}
 }
 
@@ -904,38 +902,50 @@ bool character::WearArmor()
 
 void character::AddBlockMessage(character* Enemy) const
 {
+	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something";
+	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+
 	if(Enemy->GetIsPlayer())
-		ADD_MESSAGE("You block %s!", CNAME(DEFINITE));
+		ADD_MESSAGE("You block %s!", ThisDescription.c_str());
 	else
 		if(GetIsPlayer())
-			ADD_MESSAGE("%s blocks you!", Enemy->CNAME(DEFINITE));
+			ADD_MESSAGE("%s blocks you!", EnemyDescription.c_str());
 		else
-			if(GetLevelSquareUnder()->RetrieveFlag()) ADD_MESSAGE("%s blocks %s!", Enemy->CNAME(DEFINITE), CNAME(DEFINITE));
+			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s blocks %s!", EnemyDescription.c_str(), ThisDescription.c_str());
 }
 
 void character::AddDodgeMessage(character* Enemy) const
 {
+	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something";
+	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+
 	if(Enemy->GetIsPlayer())
-		ADD_MESSAGE("You dodge %s!", CNAME(DEFINITE));
+		ADD_MESSAGE("You dodge %s!", ThisDescription.c_str());
 	else
 		if(GetIsPlayer())
-			ADD_MESSAGE("%s dodges you!", Enemy->CNAME(DEFINITE));
+			ADD_MESSAGE("%s dodges you!", EnemyDescription.c_str());
 		else
-			if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s dodges %s!", Enemy->CNAME(DEFINITE), CNAME(DEFINITE));
+			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s dodges %s!", EnemyDescription.c_str(), ThisDescription.c_str());
 }
 
 void character::AddHitMessage(character* Enemy, const bool Critical) const
 {
+	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something";
+	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+
 	if(Enemy->GetIsPlayer())
-		if(GetWielded())
+		if(GetWielded() && GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s %s you with %s %s!", CNAME(DEFINITE), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
 		else
-			ADD_MESSAGE("%s %s you!", CNAME(DEFINITE), ThirdPersonMeleeHitVerb(Critical).c_str());
+			ADD_MESSAGE("%s %s you!", ThisDescription.c_str(), ThirdPersonMeleeHitVerb(Critical).c_str());
 	else
 		if(GetIsPlayer())
-			ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), Enemy->CNAME(DEFINITE));
+			ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
 		else
-			ADD_MESSAGE("%s %s %s!", CNAME(DEFINITE), AICombatHitVerb(Enemy, Critical).c_str(), Enemy->CNAME(DEFINITE));
+			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
 }
 
 void character::BeTalkedTo(character*)
@@ -998,7 +1008,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You feel you could lift Bill with one hand!");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks stronger.", CNAME(DEFINITE));
 
 		SetStrength(GetStrength() + 1);
@@ -1011,7 +1021,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You collapse under your load.");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks weaker.", CNAME(DEFINITE));
 
 		SetStrength(GetStrength() - 1);
@@ -1024,7 +1034,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You feel Valpuri's toughness around you!");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() + 1);
@@ -1037,7 +1047,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You seem as tough as Jari.");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks less tough.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() - 1);
@@ -1050,7 +1060,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("Your agility challenges even the Valpuri's angels!");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks faster.", CNAME(DEFINITE));
 
 		SetAgility(GetAgility() + 1);
@@ -1063,7 +1073,7 @@ void character::ApplyExperience()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You seem as fast as a flat mommo.");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks slower.", CNAME(DEFINITE));
 
 		SetAgility(GetAgility() - 1);
@@ -1242,6 +1252,11 @@ void character::Save(outputfile& SaveFile) const
 	}
 	else
 		SaveFile << uchar(0);
+
+	if(GetTeam()->GetLeader() == this)
+		SaveFile << uchar(1);
+	else
+		SaveFile << uchar(0);
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1293,6 +1308,13 @@ void character::Load(inputfile& SaveFile)
 		if(Stacky == 2)
 			SetConsumingCurrently(GetLevelSquareUnder()->GetStack()->GetItem(Index));
 	}
+
+	uchar Leader;
+
+	SaveFile >> Leader;
+
+	if(Leader)
+		GetTeam()->SetLeader(this);
 }
 
 bool character::WizardMode()
@@ -1303,7 +1325,7 @@ bool character::WizardMode()
 		{
 			game::EnableWizardMode();
 
-			for(ushort x = 0; x < 5; x++)
+			for(ushort x = 0; x < 5; ++x)
 				GetStack()->AddItem(new scrollofwishing);
 		}
 	}
@@ -1432,10 +1454,10 @@ bool character::ShowKeyLayout()
 		std::string Buffer;
 		Buffer += game::GetCommand(c)->GetKey();
 		Buffer.resize(10, ' ');
-		List.AddString(Buffer + game::GetCommand(c)->GetDescription());
+		List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), RED);
 	}
 
-	List.Draw(FONTW, FONTR, false);
+	List.Draw();
 
 	return false;
 }
@@ -1446,7 +1468,7 @@ bool character::Look()
 	std::string OldMemory;
 	vector2d CursorPos = GetPos();
 	game::DrawEverythingNoBlit();
-	FONTW->Printf(DOUBLEBUFFER, 16, 514, "Press direction keys to move cursor or esc to exit from the mode.");
+	FONT->Printf(DOUBLEBUFFER, 16, 514, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
 	DRAW_MESSAGES();
 	EMPTY_MESSAGES();
 	graphics::BlitDBToScreen();
@@ -1511,7 +1533,7 @@ bool character::Look()
 		game::DrawEverythingNoBlit();
 		igraph::DrawCursor((CursorPos - game::GetCamera() + vector2d(0,2)) << 4);
 		game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
-		FONTW->Printf(DOUBLEBUFFER, 16, 514, "Press direction keys to move cursor or esc to exit from the mode.");
+		FONT->Printf(DOUBLEBUFFER, 16, 514, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
 		graphics::BlitDBToScreen();
 		EMPTY_MESSAGES();
 
@@ -1541,7 +1563,7 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
-	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 0, 50));
+	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion("What do you want to engrave here?", vector2d(7,7), WHITE, 0, 50));
 	return false;
 }
 
@@ -1578,15 +1600,15 @@ bool character::OpenPos(vector2d APos)
 
 bool character::Pray()
 {
-	felist Panthenon("To Whom shall thee address thine prayers?");
+	felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 0, true);
 
 	if(!GetLevelSquareUnder()->GetDivineOwner())
 		for(ushort c = 1; game::GetGod(c); ++c)
-			Panthenon.AddString(game::GetGod(c)->CompleteDescription());
+			Panthenon.AddEntry(game::GetGod(c)->CompleteDescription(), RED);
 	else
-		Panthenon.AddString(game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->CompleteDescription());
+		Panthenon.AddEntry(game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->CompleteDescription(), RED);
 
-	ushort Select = Panthenon.Draw(FONTW, FONTR);
+	ushort Select = Panthenon.Draw();
 
 	if(Select & 0x8000)
 		return false;
@@ -1637,7 +1659,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
 		else
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
 		SetEndurance(GetEndurance() + SizeOfEffect / 500);
@@ -1654,7 +1676,7 @@ void character::ReceiveOmleUrineEffect(long SizeOfEffect)
 	if(GetIsPlayer())
 		ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
 	else
-		if(SquareUnder->CanBeSeen())
+		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s looks more powerful.", CNAME(DEFINITE));
 
 	SetStrength(GetStrength() + 1 + rand() % 2);
@@ -1687,7 +1709,7 @@ void character::Darkness(long SizeOfEffect)
 	if(GetIsPlayer())
 		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
 	else
-		if(SquareUnder->CanBeSeen())
+		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("Suddenly %s looks like a navastater.", CNAME(DEFINITE));
 
 	if(GetStrength() - x / 30 > 1) SetStrength(GetStrength() - x / 30); // Old comment was about eating... This
@@ -1851,7 +1873,7 @@ bool character::Throw()
 	return true;
 }
 
-bool character::ThrowItem(uchar Direction, item* ToBeThrown) // Note to C++ people. This is throw in the GAME not the throw in ++c!
+bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 {
 	if(Direction > 7)
 		ABORT("Throw in TOO odd direction...");
@@ -1865,7 +1887,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 
 	SetHP(GetHP() - Damage);
 
-	if(SquareUnder->CanBeSeen())
+	if(GetLevelSquareUnder()->CanBeSeen())
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("%s hits you.", Thingy->CNAME(DEFINITE));
@@ -1881,7 +1903,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 }
 
 bool character::DodgesFlyingItem(item*, float Speed)
-{			// Formula requires a little bit a tweaking...
+{			// Formula requires a little bit of tweaking...
 	if(!(rand() % 20))
 		return rand() % 2 ? true : false;
 
@@ -1896,7 +1918,7 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 	if(GetIsPlayer())
 		ADD_MESSAGE("You burn.");
 	else
-		if(SquareUnder->CanBeSeen())
+		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s is hurt by the fire.", CNAME(DEFINITE));
 
 	SetHP(GetHP() - (rand() % SizeOfEffect + SizeOfEffect));
@@ -2036,6 +2058,9 @@ bool character::Polymorph()
 
 	NewForm->SetTeam(GetTeam());
 
+	if(GetTeam()->GetLeader() == this)
+		GetTeam()->SetLeader(NewForm);
+
 	if(GetIsPlayer())
 	{
 		ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CNAME(INDEFINITE));
@@ -2132,6 +2157,8 @@ bool character::CheckCannibalism(ushort What)
 
 void character::SoldierAICommand()
 {
+	SeekLeader();
+
 	if(CheckForEnemies())
 		return;
 
@@ -2161,7 +2188,7 @@ void character::Faint()
 	if(GetIsPlayer())
 		ADD_MESSAGE("You faint.");
 	else
-		if(SquareUnder->CanBeSeen())
+		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s faints.", CNAME(DEFINITE));
 
 	SetStrengthExperience(GetStrengthExperience() - 100);
@@ -2176,7 +2203,7 @@ void character::FaintHandler()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You wake up.");
 		else
-			if(GetSquareUnder()->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s wakes up.", CNAME(DEFINITE));
 
 		EndFainted();
@@ -2195,7 +2222,7 @@ void character::EatHandler()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You finish eating %s.", ToBeDeleted->CNAME(DEFINITE));
 		else
-			if(GetSquareUnder()->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), ToBeDeleted->CNAME(DEFINITE));
 
 		EndEating();
@@ -2208,7 +2235,7 @@ void character::EatHandler()
 		if(GetIsPlayer())
 			ADD_MESSAGE("You have eaten for a long time now. You stop eating.");
 		else
-			if(GetSquareUnder()->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
 		EndEating();
@@ -2255,6 +2282,9 @@ void character::EndPolymorph()
 
 		game::SetPlayer(game::GetPlayerBackup());
 		game::SetPlayerBackup(0);
+
+		if(GetTeam()->GetLeader() == this)
+			GetTeam()->SetLeader(game::GetPlayer());
 	}
 }
 
@@ -2268,13 +2298,18 @@ bool character::CanMove()
 
 void character::DeActivateVoluntaryStates(std::string Reason)
 {
-	if((StateIsActivated(EATING) || StateIsActivated(RESTING)) && Reason != "")
-		ADD_MESSAGE("%s.", Reason.c_str());
+	if(GetIsPlayer())
+	{
+		if((StateIsActivated(EATING) || StateIsActivated(RESTING)) && Reason != "")
+			ADD_MESSAGE("%s.", Reason.c_str());
 
-	if(StateIsActivated(EATING))
-		ADD_MESSAGE("You stop eating.");
-	if(StateIsActivated(RESTING))
-		ADD_MESSAGE("You stop resting.");
+		if(StateIsActivated(EATING))
+			ADD_MESSAGE("You stop eating.");
+
+		if(StateIsActivated(RESTING))
+			ADD_MESSAGE("You stop resting.");
+	}
+
 	EndEating();
 	EndRest();
 }
@@ -2288,7 +2323,7 @@ void character::StateAutoDeactivation()
 	{
 		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Character && ((GetIsPlayer() && Character->SquareUnder->CanBeSeen()) || (!GetIsPlayer() && Character->SquareUnder->CanBeSeenFrom(GetPos()))))
+		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos()))))
 			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 			{
 				DeActivateVoluntaryStates(Character->Name(DEFINITE) + " seems to be hostile");
@@ -2302,7 +2337,7 @@ void character::StruckByWandOfStriking()
 	if(GetIsPlayer())
 		ADD_MESSAGE("The wand hits you.");
 	else
-		if(GetSquareUnder()->CanBeSeen())
+		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
 	SetHP(GetHP() - 10 - rand() % 10);
@@ -2333,7 +2368,7 @@ bool character::CheckForEnemies()
 
 	if(NearestChar)
 	{
-		Charge(NearestChar);
+		MoveTowards(NearestChar->GetPos());
 		return true;
 	}
 	else
@@ -2370,7 +2405,7 @@ bool character::CheckForUsefulItemsOnGround()
 
 			SetWielded(ToWield);
 
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
 
 			return true;
@@ -2385,7 +2420,7 @@ bool character::CheckForUsefulItemsOnGround()
 
 			SetTorsoArmor(ToWear);
 
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
 
 			return true;
@@ -2393,7 +2428,7 @@ bool character::CheckForUsefulItemsOnGround()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
 		{
-			if(SquareUnder->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
 
 			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
@@ -2405,16 +2440,52 @@ bool character::CheckForUsefulItemsOnGround()
 	return false;
 }
 
+bool character::FollowLeader()
+{
+	if(!GetTeam()->GetLeader())
+		return false;
+
+	if(GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+	{
+		vector2d Distance = GetPos() - WayPoint;
+
+		if(abs(long(Distance.X)) <= 2 && abs(long(Distance.Y)) <= 2)
+			return false;
+		else
+		{
+			MoveTowards(WayPoint);
+			return true;
+		}
+	}
+	else
+		if(WayPoint.X != 0xFFFF && WayPoint != GetPos())
+		{
+			MoveTowards(WayPoint);
+			return true;
+		}
+		else
+			return false;
+}
+
+void character::SeekLeader()
+{
+	if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+		WayPoint = GetTeam()->GetLeader()->GetPos();
+}
+
 bool character::RestUntilHealed(void)
 {
-	long HPToRest = game::NumberQuestion(FONTW, "Rest until X HP", vector2d(7,7));
+	long HPToRest = game::NumberQuestion("Rest until X HP", vector2d(7,7), WHITE);
+
 	if(HPToRest < GetHP())
 	{
 		ADD_MESSAGE("Your HP is already %d", GetHP());
 		return false;
 	}
-	if(HPToRest > GetEndurance() * 2)
-		HPToRest = GetEndurance() * 2;
+
+	if(HPToRest > GetEndurance() << 1)
+		HPToRest = GetEndurance() << 1;
+
 	StateCounter[RESTING] = HPToRest;
 	ActivateState(RESTING);
 	return true;

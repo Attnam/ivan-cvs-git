@@ -428,7 +428,7 @@ HRESULT CDisplay::CreatePaletteFromBitmap( LPDIRECTDRAWPALETTE* ppPalette,
 
         //  A DIB color table has its colors stored BGR not RGB
         //  so flip them around.
-        for( iColor = 0; iColor < dwColors; iColor++ )
+        for( iColor = 0; iColor < dwColors; ++iColor )
         {
             aPalette[iColor].peRed   = pRGB[iColor].rgbRed;
             aPalette[iColor].peGreen = pRGB[iColor].rgbGreen;
@@ -482,7 +482,7 @@ HRESULT CDisplay::CreatePaletteFromBitmap( LPDIRECTDRAWPALETTE* ppPalette,
 
     //  A DIB color table has its colors stored BGR not RGB
     //  so flip them around since DirectDraw uses RGB
-    for( iColor = 0; iColor < dwColors; iColor++ )
+    for( iColor = 0; iColor < dwColors; ++iColor )
     {
         BYTE r = aPalette[iColor].peRed;
         aPalette[iColor].peRed  = aPalette[iColor].peBlue;
@@ -888,14 +888,14 @@ HRESULT CSurface::GetBitMaskInfo( DWORD dwBitMask, DWORD* pdwShift, DWORD* pdwBi
     {
         while( (dwBitMask & 1) == 0 )
         {
-            dwShift++;
+            ++dwShift;
             dwBitMask >>= 1;
         }
     }
 
     while( (dwBitMask & 1) != 0 )
     {
-        dwBits++;
+        ++dwBits;
         dwBitMask >>= 1;
     }
 

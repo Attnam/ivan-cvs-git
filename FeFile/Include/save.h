@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <queue>
 
 #include "typedef.h"
 #include "vector2d.h"

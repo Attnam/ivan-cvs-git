@@ -2,31 +2,56 @@
 #define __LIST_H__
 
 #include <string>
+#include <vector>
 
-#include "dynarray.h"
+#include "typedef.h"
+#include "save.h"
 
-class bitmap;
+class colorizablebitmap;
 class inputfile;
 class outputfile;
+
+struct felistentry
+{
+	felistentry() {}
+	felistentry(std::string String, ushort Color) : String(String), Color(Color) {}
+	std::string String;
+	ushort Color;
+};
+
 class felist
 {
 public:
-	felist(ushort Maximum = 0) : Maximum(Maximum) {}
-	felist(std::string Topic, ushort Maximum = 0) : Maximum(Maximum) { Description.Add(Topic); }
-	void AddString(std::string S, bool = true);
-	void AddDescription(std::string S) { Description.Add(S); }
-	void DrawDescription(bitmap*) const;
-	ushort Draw(bitmap*, bitmap*, bool = true) const;
+	felist(ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) {}
+	felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
+	void AddEntry(std::string, ushort);
+	void AddDescription(std::string Str, ushort Color = 0xFFFF) { Description.push_back(felistentry(Str, Color)); }
+	void DrawDescription() const;
+	ushort Draw() const;
 	void Empty();
-	std::string GetString(ushort Index) { return String.Access(Index); }
-	ushort Length() const { return String.Length(); }
+	std::string GetEntry(ushort Index) { return Entry[Index].String; }
+	ushort Length() const { return Entry.size(); }
 	void Load(inputfile&);
 	void Save(outputfile&) const;
 protected:
-	dynarray<std::string> String;
-	dynarray<std::string> Description;
-	std::string Topic;
+	std::vector<felistentry> Entry;
+	std::vector<felistentry> Description;
 	ushort Maximum;
+	bool DrawLetters;
+	bool InverseMode;
 };
+
+inline outputfile& operator<<(outputfile& SaveFile, felistentry Entry)
+{
+	SaveFile << Entry.String << Entry.Color;
+	return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
+{
+	SaveFile >> Entry.String >> Entry.Color;
+	return SaveFile;
+}
+
 
 #endif

@@ -60,7 +60,7 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Add(
 
 	Data[Elements] = Element;
 
-	Elements++;
+	++Elements;
 }
 
 template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Add(const dynarray<Type, SizeType>* DynArray)
@@ -100,7 +100,7 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Put(
 
 	Data = TempData;
 
-	Elements++;
+	++Elements;
 }
 
 template <class Type, class SizeType> inline Type dynarray<Type, SizeType>::Remove(SizeType Index)

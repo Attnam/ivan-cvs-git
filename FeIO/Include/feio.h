@@ -7,15 +7,16 @@
 #include "vector2d.h"
 
 class bitmap;
+class colorizablebitmap;
 
 class iosystem
 {
 public:
-	static std::string WhatToLoadMenu(bitmap*, bitmap*);
-	static std::string StringQuestion(bitmap*, std::string, vector2d, ushort, ushort);
-	static long NumberQuestion(bitmap*, std::string, vector2d);
-	static int Menu(bitmap*, bitmap*, std::string);
-	static void TextScreen(bitmap*, std::string, bool = true);
+	static std::string WhatToLoadMenu(ushort, ushort);
+	static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort);
+	static long NumberQuestion(std::string, vector2d, ushort);
+	static int Menu(std::string, ushort, ushort);
+	static void TextScreen(std::string, ushort = 0xFFFF, bool = true);
 private:
 	static unsigned int CountChars(char, std::string);
 };

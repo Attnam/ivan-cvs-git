@@ -5,10 +5,11 @@
 #include "igraph.h"
 #include "bitmap.h"
 #include "whandler.h"
+#include "colorbit.h"
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
-felist globalmessagingsystem::MessageHistory(200);
+felist globalmessagingsystem::MessageHistory(200, false, true);
 
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {
@@ -57,7 +58,7 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
 
 	sprintf(Buffer, "%d - %s", int(game::GetTurns()), Message);
 
-	MessageHistory.AddString(Buffer, false);
+	MessageHistory.AddEntry(Buffer, BLUE);
 }
 
 void globalmessagingsystem::Draw()
@@ -73,7 +74,7 @@ void globalmessagingsystem::Draw()
 	if(MessageBuffer)
 	while(Length)
 	{
-		for(ushort y = 0; y < 2; y++)
+		for(ushort y = 0; y < 2; ++y)
 		{
 			if(Length <= 98)
 			{
@@ -82,7 +83,7 @@ void globalmessagingsystem::Draw()
 
 				Buffer[Length] = 0;
 
-				FONTW->Printf(DOUBLEBUFFER, 7, 7 + y * 10, "%s", Buffer);
+				FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
 
 				Length = 0;
 
@@ -117,7 +118,7 @@ void globalmessagingsystem::Draw()
 					Length -= 98;
 				}
 
-				FONTW->Printf(DOUBLEBUFFER, 7, 7 + y * 10, "%s", Buffer);
+				FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
 			}
 		}
 		if(Length)
@@ -142,7 +143,7 @@ void globalmessagingsystem::Empty()
 
 void globalmessagingsystem::DrawMessageHistory()
 {
-	MessageHistory.Draw(FONTW, FONTB, false);
+	MessageHistory.Draw();
 }
 
 void globalmessagingsystem::Format()

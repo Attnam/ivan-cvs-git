@@ -44,11 +44,11 @@ public:
 	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
 	virtual void UpdateMemorizedDescription() = 0;
 	virtual bool CanBeSeen() const;
+	virtual bool CanBeSeenFrom(vector2d) const;
 	virtual void DrawCheat() = 0;
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
 	virtual void SetDescriptionChanged(bool) {}
-	virtual bool CanBeSeenFrom(vector2d) const;
 protected:
 	std::string MemorizedDescription;
 	area* AreaUnder;

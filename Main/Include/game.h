@@ -145,8 +145,8 @@ public:
 	static void Hostility(team*, team*);
 	static void CreateTeams();
 	static bool IsValidPos(vector2d);
-	static std::string StringQuestion(bitmap*, std::string, vector2d, ushort, ushort);
-	static long NumberQuestion(bitmap*, std::string, vector2d);
+	static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort);
+	static long NumberQuestion(std::string, vector2d, ushort);
 private:
 	static std::string Alignment[];
 	static god* God[];

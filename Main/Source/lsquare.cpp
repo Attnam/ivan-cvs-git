@@ -390,12 +390,12 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	{
 		vector2d Cords(1 + rand() % 14, 1 + rand() % 14);
 		GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
-		for(ushort d = 0; d < 8; d++)
+		for(ushort d = 0; d < 8; ++d)
 		{
 			if((rand() % Lumpiness))
 			{
 				char Change[3];
-				for(uchar x = 0; x < 3; x++)
+				for(uchar x = 0; x < 3; ++x)
 				{
 					Change[x] = rand() % Variation - rand() % Variation;
 				}
@@ -478,6 +478,7 @@ void levelsquare::RemoveCharacter()
 void levelsquare::UpdateMemorizedDescription()
 {
 	bool Anything = false;
+
 	if(GetLuminance() > 63 || game::GetSeeWholeMapCheat())
 	{
 		if(GetOverLevelTerrain()->Name(UNARTICLED) != "air atmosphere")
@@ -573,7 +574,7 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 	}
 	for(uchar c = 0; c < 4; ++c)
 	{
-		for(uchar x = 0; x < GetSideStack(c)->GetItems(); x++)
+		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
 			GetSideStack(c)->MoveItem(x, GetStack());
 	}
 
@@ -692,4 +693,25 @@ void levelsquare::ApplyScript(squarescript* SquareScript)
 
 	if(SquareScript->GetIsWorldMapEntry(false) && *SquareScript->GetIsWorldMapEntry())
 		GetLevelUnder()->SetWorldMapEntry(Pos);
+}
+
+bool levelsquare::CanBeSeen() const
+{
+	if(!game::GetPlayer()->GetSquareUnder() || GetLuminance() < 64)
+		return false;
+
+	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
+
+	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
+		return true;
+	else
+		return false;
+}
+
+bool levelsquare::CanBeSeenFrom(vector2d FromPos) const
+{
+	if(GetLuminance() < 64)
+		return false;
+	else
+		return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
 }

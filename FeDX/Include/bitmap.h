@@ -6,8 +6,10 @@
 #define ROTATE_90 4
 
 #include <string>
+#include <list>
 
 #include "typedef.h"
+#include "vector2d.h"
 
 class CSurface;
 struct IDirectDrawSurface7;
@@ -16,13 +18,13 @@ typedef _DDSURFACEDESC2 DDSURFACEDESC2;
 
 class outputfile;
 class inputfile;
-class vector2d;
 
 class bitmap
 {
 public:
 	friend class graphics;
-	bitmap(std::string, bool = true);
+	friend class colorizablebitmap;
+	bitmap(std::string);
 	bitmap(ushort, ushort);
 	~bitmap();
 	void Save(outputfile&) const;
@@ -41,28 +43,29 @@ public:
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
 	void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar) const;
+	void AlphaBlit(bitmap*, ushort, ushort) const;
 	void FastBlit(bitmap*) const;
 	void FastMaskedBlit(bitmap*) const;
-	void Printf(bitmap*, ushort, ushort, const char*, ...) const;
 	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF, bool = false);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
 	void DrawPolygon(vector2d, ushort, ushort, ushort, bool = false, double = 0);
-	bitmap* ColorizeTo16Bit(ushort*);
-	bitmap* ColorizeTo16Bit(vector2d, vector2d, ushort*);
+	void CreateAlphaMap(uchar);
+	void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[X][Y] = Alpha; }
+	uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[X][Y]; }
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);
 	void AttachSurface(IDirectDrawSurface7*, ushort, ushort);
-	void Backup(bool = true);
-	void Restore(bool = true);
+	void Backup();
+	void Restore();
 	CSurface* GetDXSurface() { return DXSurface; }
 	CSurface* DXSurface;
 	ushort XSize, YSize;
 	ushort* BackupBuffer;
 	DDSURFACEDESC2* TempDDSD;
-	bool Is16Bit;
-	uchar* Palette;
-	uchar* PaletteBuffer;
+	std::list<bitmap*>::iterator BitmapContainerIterator;
+	bool DoubleBuffer;
+	uchar** AlphaMap;
 };
 
 #endif

@@ -93,6 +93,10 @@ SOURCE=.\FeDX\Source\bitmap.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeDX\Source\colorbit.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeDX\Source\ddutil.cpp
 # End Source File
 # Begin Source File
@@ -110,6 +114,10 @@ SOURCE=.\FeDX\Source\graphics.cpp
 # Begin Source File
 
 SOURCE=.\FeDX\Include\bitmap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeDX\Include\colorbit.h
 # End Source File
 # Begin Source File
 

@@ -1,8 +1,6 @@
 #include <cmath>
 #include <ctime>
-
-	#include <direct.h>
-	// Needed for _mkdir
+#include <direct.h>	// Needed for _mkdir
 
 #include "game.h"
 #include "level.h"
@@ -27,6 +25,7 @@
 #include "graphics.h"
 #include "script.h"
 #include "team.h"
+#include "colorbit.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -143,7 +142,7 @@ void game::Init(std::string Name)
 	if(Name == "")
 	{
 		DOUBLEBUFFER->ClearToColor(0);
-		SetPlayerName(iosystem::StringQuestion(FONTW, "What is your name?", vector2d(30, 50), 3, 30));
+		SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 30));
 	}
 	else
 		SetPlayerName(Name);
@@ -157,15 +156,16 @@ void game::Init(std::string Name)
 	}
 	else
 	{
-		iosystem::TextScreen(FONTW, "On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
+		iosystem::TextScreen("On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
 
-		iosystem::TextScreen(FONTW, "Generating game...\n\nThis may take some time, please wait.", false);
+		iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 
 		CreateTeams();
 
 		SetPlayer(new human);
 
 		Player->SetTeam(GetTeam(0));
+		GetTeam(0)->SetLeader(Player);
 
 		BaseScore = Player->Score();
 
@@ -248,11 +248,11 @@ void game::InitLuxTable()
 
 			LuxTable[c] = new ushort*[MaxSize];
 
-			for(long x = 0; x < MaxSize; x++)
+			for(long x = 0; x < MaxSize; ++x)
 			{
 				LuxTable[c][x] = new ushort[MaxSize];
 
-				for(long y = 0; y < MaxSize; y++)
+				for(long y = 0; y < MaxSize; ++y)
 				{
 					long xLevelSquare = abs(x - MaxDist), yLevelSquare = abs(y - MaxDist);
 
@@ -271,7 +271,7 @@ void game::DeInitLuxTable()
 	{
 		for(ushort c = 0; c < 0x200; ++c)
 		{
-			for(ushort x = 0; x < LuxTableSize[c]; x++)
+			for(ushort x = 0; x < LuxTableSize[c]; ++x)
 				delete [] LuxTable[c][x];
 
 			delete [] LuxTable[c];
@@ -376,49 +376,50 @@ void game::panel::Draw() const
 
 	character* Player = game::GetPlayer();
 
-	FONTW->Printf(DOUBLEBUFFER, 16, 524, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
+	FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
 
-	FONTW->Printf(DOUBLEBUFFER, 16, 534, "Strength: %d", Player->GetStrength());
-	FONTW->Printf(DOUBLEBUFFER, 16, 544, "Endurance: %d", Player->GetEndurance());
-	FONTW->Printf(DOUBLEBUFFER, 16, 554, "Agility: %d", Player->GetAgility());
-	FONTW->Printf(DOUBLEBUFFER, 16, 564, "Perception: %d", Player->GetPerception());
-	FONTW->Printf(DOUBLEBUFFER, 16, 574, "Size: %d", Player->GetSize());
-	(Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? FONTR : FONTW)->Printf(DOUBLEBUFFER, 16, 584, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
+	FONT->Printf(DOUBLEBUFFER, 16, 534, WHITE, "Strength: %d", Player->GetStrength());
+	FONT->Printf(DOUBLEBUFFER, 16, 544, WHITE, "Endurance: %d", Player->GetEndurance());
+	FONT->Printf(DOUBLEBUFFER, 16, 554, WHITE, "Agility: %d", Player->GetAgility());
+	FONT->Printf(DOUBLEBUFFER, 16, 564, WHITE, "Perception: %d", Player->GetPerception());
+	FONT->Printf(DOUBLEBUFFER, 16, 574, WHITE, "Size: %d", Player->GetSize());
+	FONT->Printf(DOUBLEBUFFER, 16, 584, Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? RED : WHITE, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
 
-	FONTW->Printf(DOUBLEBUFFER, 160, 534, "Exp: %d", Player->GetStrengthExperience());
-	FONTW->Printf(DOUBLEBUFFER, 160, 544, "Exp: %d", Player->GetEnduranceExperience());
-	FONTW->Printf(DOUBLEBUFFER, 160, 554, "Exp: %d", Player->GetAgilityExperience());
-	FONTW->Printf(DOUBLEBUFFER, 160, 564, "Exp: %d", Player->GetPerceptionExperience());
+	FONT->Printf(DOUBLEBUFFER, 160, 534, WHITE, "Exp: %d", Player->GetStrengthExperience());
+	FONT->Printf(DOUBLEBUFFER, 160, 544, WHITE, "Exp: %d", Player->GetEnduranceExperience());
+	FONT->Printf(DOUBLEBUFFER, 160, 554, WHITE, "Exp: %d", Player->GetAgilityExperience());
+	FONT->Printf(DOUBLEBUFFER, 160, 564, WHITE, "Exp: %d", Player->GetPerceptionExperience());
 
 	if(Player->GetWielded())
-		FONTW->Printf(DOUBLEBUFFER, 160, 574, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
-        if(Player->GetTorsoArmor())
-		FONTW->Printf(DOUBLEBUFFER, 160, 584, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
+		FONT->Printf(DOUBLEBUFFER, 160, 574, WHITE, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
 
-	FONTW->Printf(DOUBLEBUFFER, 320, 534, "Speed: %d", Player->GetSpeed());
-	FONTW->Printf(DOUBLEBUFFER, 320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
-	FONTW->Printf(DOUBLEBUFFER, 320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
-	FONTW->Printf(DOUBLEBUFFER, 320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
-	FONTW->Printf(DOUBLEBUFFER, 600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
-	FONTW->Printf(DOUBLEBUFFER, 600, 554, "NP: %d", Player->GetNP());
-	FONTW->Printf(DOUBLEBUFFER, 600, 564, "Turns: %d", game::GetTurns());
+        if(Player->GetTorsoArmor())
+		FONT->Printf(DOUBLEBUFFER, 160, 584, WHITE, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
+
+	FONT->Printf(DOUBLEBUFFER, 320, 534, WHITE, "Speed: %d", Player->GetSpeed());
+	FONT->Printf(DOUBLEBUFFER, 320, 544, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
+	FONT->Printf(DOUBLEBUFFER, 320, 554, WHITE, "Weaponstrength: %.0f", Player->GetAttackStrength());
+	FONT->Printf(DOUBLEBUFFER, 320, 564, WHITE, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
+	FONT->Printf(DOUBLEBUFFER, 600, 544, WHITE, "Dungeon level: %d", game::GetCurrent() + 1);
+	FONT->Printf(DOUBLEBUFFER, 600, 554, WHITE, "NP: %d", Player->GetNP());
+	FONT->Printf(DOUBLEBUFFER, 600, 564, WHITE, "Turns: %d", game::GetTurns());
 
 	if(Player->GetNP() < CRITICALHUNGERLEVEL)
-		FONTR->Printf(DOUBLEBUFFER, 600, 574, "Fainting");
+		FONT->Printf(DOUBLEBUFFER, 600, 574, WHITE, "Fainting");
 	else
 		if(Player->GetNP() < HUNGERLEVEL)
-			FONTB->Printf(DOUBLEBUFFER, 600, 574, "Hungry");
+			FONT->Printf(DOUBLEBUFFER, 600, 574, BLUE, "Hungry");
 
 	switch(Player->GetBurdenState())
 	{
 		case OVERLOADED:
-			FONTR->Printf(DOUBLEBUFFER, 600, 584, "Overload!");
+			FONT->Printf(DOUBLEBUFFER, 600, 584, RED, "Overload!");
 		break;
 		case STRESSED:
-			FONTB->Printf(DOUBLEBUFFER, 600, 584, "Stressed");
+			FONT->Printf(DOUBLEBUFFER, 600, 584, BLUE, "Stressed");
 		break;
 		case BURDENED:
-			FONTB->Printf(DOUBLEBUFFER, 600, 584, "Burdened!");
+			FONT->Printf(DOUBLEBUFFER, 600, 584, BLUE, "Burdened!");
                 case UNBURDENED:
 		break;
 	}
@@ -1003,16 +1004,16 @@ bool game::IsValidPos(vector2d Pos)
 		return false;
 }
 
-std::string game::StringQuestion(bitmap* Font, std::string Topic, vector2d Pos, ushort MinLetters, ushort MaxLetters)
+std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters)
 {
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	return iosystem::StringQuestion(Font, Topic, Pos, MinLetters, MaxLetters);
+	return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters);
 }
 
-long game::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
+long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 {
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	return iosystem::NumberQuestion(Font, Topic, Pos);
+	return iosystem::NumberQuestion(Topic, Pos, Color);
 }

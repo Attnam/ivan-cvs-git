@@ -13,12 +13,13 @@
 
 class outputfile;
 class inputfile;
+class character;
 
 class team
 {
 public:
-	team() {}
-	team(ushort ID) : ID(ID) {}
+	team() : Leader(0) {}
+	team(ushort ID) : ID(ID), Leader(0) {}
 	void SetRelation(team*, uchar);
 	uchar GetRelation(team*);
 	void Hostility(team*);
@@ -26,7 +27,10 @@ public:
 	void SetID(ushort What) { ID = What; }
 	void Save(outputfile&) const;
 	void Load(inputfile&);
+	void SetLeader(character* What) { Leader = What; }
+	character* GetLeader() const { return Leader; }
 private:
+	character* Leader;
 	std::map<ulong, uchar> Relation;
 	ushort ID;
 };
