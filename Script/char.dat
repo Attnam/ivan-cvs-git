@@ -3851,6 +3851,7 @@ bunny
 	AttachedGod = SILVA;
 	IsAbstract = true;
 	DangerModifier = 25;
+	CanOpen = false;
 
 	Config BABY_MALE;
 	{
