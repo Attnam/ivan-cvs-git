@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 #ifndef __WORLDMAP_H__
 #define __WORLDMAP_H__
 

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 #ifndef __ROOM_H__
 #define __ROOM_H__
 

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 #ifndef __SLOT_H__
 #define __SLOT_H__
 

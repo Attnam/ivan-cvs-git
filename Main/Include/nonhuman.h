@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 #ifndef __NONHUMAN_H__
 #define __NONHUMAN_H__
 

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 #define __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through charsset.cpp */
 
 int nonhumanoid::GetUnarmedMinDamage() const { return int(UnarmedDamage * 0.75); }

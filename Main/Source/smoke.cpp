@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through materset.cpp */
 
 smoke::smoke() : entity(HAS_BE), Next(0) { }

@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through materset.cpp */
 
 void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }

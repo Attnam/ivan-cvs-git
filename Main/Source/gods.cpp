@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through godset.cpp */
 
 #define LAWFUL_BASIC_COLOR MakeRGB16(160, 160, 0)

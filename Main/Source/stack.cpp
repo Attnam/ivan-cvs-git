@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through slotset.cpp */
 
 /* If REMEMBER_SELECTED flag is used, DrawContents() will use this to determine

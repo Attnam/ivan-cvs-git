@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through charset.cpp */
 
 /* These statedata structs contain functions and values used for handling states. Remember to update them.
@@ -6042,8 +6050,8 @@ bool character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Chos
 					   this,
 					   CONST_S("Choose ") + GetEquipmentName(Chosen) + ':',
 					   SecStack ? CONST_S("Items in your inventory") : CONST_S(""),
-					   SecStack ? CONST_S("Items in ") + GetPossessivePronoun() + " inventory" : CONST_S(""),
-					   SecStack ? GetDescription(DEFINITE) + " is " + GetVerbalBurdenState() : CONST_S(""),
+					   SecStack ? festring(CONST_S("Items in ") + GetPossessivePronoun() + " inventory") : CONST_S(""),
+					   SecStack ? festring(GetDescription(DEFINITE) + " is " + GetVerbalBurdenState()) : CONST_S(""),
 					   GetVerbalBurdenStateColor(),
 					   NONE_AS_CHOICE|NO_MULTI_SELECT,
 					   Sorter);

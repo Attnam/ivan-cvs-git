@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through materset.cpp */
 
 rain::rain(liquid* Liquid, lsquare* LSquareUnder, vector2d Speed, int Team, bool OwnLiquid) : entity(OwnLiquid ? HAS_BE : 0), Next(0), Drop(0), Liquid(Liquid), LSquareUnder(LSquareUnder), Speed(Speed), SpeedAbs(long(sqrt(Speed.GetLengthSquare()))), Drops(0), OwnLiquid(OwnLiquid), Team(Team)

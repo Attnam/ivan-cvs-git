@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through areaset.cpp */
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), Luminance(0), Flags(IS_TRANSPARENT|MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE), AnimatedEntities(0), LastSeen(0) { }

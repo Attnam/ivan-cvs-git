@@ -1,3 +1,11 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  See LICENSING which should included with this file
+ *
+ */
+
 /* Compiled through levelset.cpp */
 
 glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(int, int), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<glterrain>::Add(this); }
