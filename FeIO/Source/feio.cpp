@@ -84,7 +84,9 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 
 		Buffer.Fill(0);
 
-		for(int x = 0; x < 10; ++x)
+		uchar x;
+
+		for(x = 0; x < 10; ++x)
 			Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
 		
 		std::string sCopyOfMS = sMS;

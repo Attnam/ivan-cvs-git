@@ -1,6 +1,7 @@
 BITS 32
 
-GLOBAL ?BlitToDB@@YAHKKKGG@Z
+GLOBAL ?Fill@@YAXKKGGG@Z
+GLOBAL ?BlitToDB@@YAXKKKGG@Z
 GLOBAL ?BlitNoFlags@@YAXKKKKGG@Z
 GLOBAL ?BlitMirrorFlipRotate90@@YAXKKKKKGG@Z
 GLOBAL ?BlitFlipRotate90@@YAXKKKKKGG@Z
@@ -23,35 +24,50 @@ GLOBAL ?AlphaBlit@@YAXKKKKGGEG@Z
 GLOBAL ?AlphaBlit@@YAXKKKKGGG@Z
 GLOBAL ?DrawLine@@YAXKKGGGGGGG@Z
 
-GLOBAL _BlitToDB__FUlUlUlUsUs
-GLOBAL _BlitNoFlags__FUlUlUlUlUsUs
-GLOBAL _BlitMirror__FUlUlUlUlUsUs
-GLOBAL _BlitFlip__FUlUlUlUlUsUs
-GLOBAL _BlitMirrorFlip__FUlUlUlUlUsUs
-GLOBAL _BlitRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitMirrorRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitLuminated__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitNoFlags__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirror__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitFlip__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
-GLOBAL _AlphaBlit__FUlUlUlUlUsUsUcUs
-GLOBAL _AlphaBlit__FUlUlUlUlUsUsUs
-GLOBAL _DrawLine__FUlUlUsUsUsUsUsUsUs
-
 SECTION .text
 
 ;-------------------------------------
 
+?Fill@@YAXKKGGG@Z
+_Fill__FUlUlUsUsUs
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+24]
+	mov [Color], ax
+	mov ax, [ebp+20]
+	mov [Height], ax
+	mov ax, [ebp+16]
+	mov [Width], ax
+	mov eax, [ebp+12]
+	mov [TrueDestXMove], eax
+	mov eax, [ebp+8]
+	mov [TrueDestOffset], eax
+	pop ebp
+
+	pushad
+	push es
+	mov ax, ds
+	mov edi, [TrueDestOffset]
+	mov es, ax
+	xor ecx, ecx
+	mov dx, [Width]
+	mov bx, [Height]
+	mov ax, [Color]
+	cld
+MaskedLoop38:
+	mov cx, dx
+	rep stosw
+	add edi, [TrueDestXMove]
+	dec bx
+	jnz MaskedLoop38
+	pop es
+	popad
+	ret
+
+;-------------------------------------
+
 _BlitToDB__FUlUlUlUsUs
-?BlitToDB@@YAHKKKGG@Z
+?BlitToDB@@YAXKKKGG@Z
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+24]
@@ -75,11 +91,10 @@ _BlitToDB__FUlUlUlUsUs
 	xor ecx, ecx
 	mov dx, [Width]
 	mov bx, [Height]
-	shr dx, 0x01
 	cld
 MaskedLoop3:
 	mov cx, dx
-	rep movsd
+	rep movsw
 	add edi, [TrueDestXMove]
 	dec bx
 	jnz MaskedLoop3
@@ -116,11 +131,10 @@ _BlitNoFlags__FUlUlUlUlUsUs
 	xor ecx, ecx
 	mov dx, [Width]
 	mov bx, [Height]
-	shr dx, 0x01
 	cld
 MaskedLoop39:
 	mov cx, dx
-	rep movsd
+	rep movsw
 	add esi, [TrueSourceXMove]
 	add edi, [TrueDestXMove]
 	dec bx
@@ -205,11 +219,10 @@ _BlitFlip__FUlUlUlUlUsUs
 	xor ecx, ecx
 	mov dx, [Width]
 	mov bx, [Height]
-	shr dx, 0x01
 	cld
 BlitFlip3:
 	mov cx, dx
-	rep movsd
+	rep movsw
 	add esi, [TrueSourceXMove]
 	sub edi, [TrueDestXMove]
 	dec bx

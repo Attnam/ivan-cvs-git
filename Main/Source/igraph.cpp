@@ -5,6 +5,7 @@
 #include "error.h"
 #include "colorbit.h"
 #include "config.h"
+#include "resource.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
@@ -22,7 +23,7 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 	{
 		AlreadyInstalled = true;
 
-		graphics::SetMode(hInst, hWnd, "IVAN 0.301a", 800, 600, 16, configuration::GetFullScreenMode());
+		graphics::SetMode(hInst, hWnd, "IVAN 0.301a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 		DOUBLEBUFFER->Fill(0);
 		graphics::BlitDBToScreen();
 		graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);

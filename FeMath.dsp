@@ -39,7 +39,7 @@ CPP=cl.exe
 # PROP Intermediate_Dir "FeMath/Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /Ob2 /I "Include" /I "Main/Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /Ob2 /I "Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -60,7 +60,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeMath/Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /Z7 /Od /I "Include" /I "Main/Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Z7 /Od /I "Include" /I "FeMath/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FEIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo

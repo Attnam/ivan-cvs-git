@@ -2,7 +2,6 @@
 #include "graphics.h"
 #include "error.h"
 #include "bitmap.h"
-#include "resource.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -13,7 +12,6 @@ bool globalwindowhandler::Active = false;
 #include <windows.h>
 #include <ddraw.h>
 #include <mmsystem.h>
-#include "resource.h"
 #include "ddutil.h"
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -168,7 +166,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 				WaitMessage();
 }
 
-void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
+void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title, LPCTSTR IconName)
 {
 	WNDCLASS wc;
 	HWND hWnd;
@@ -177,7 +175,7 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
 	wc.style         = CS_OWNDC;
 	wc.hInstance     = hInst;
-	wc.hIcon         = LoadIcon(hInst, MAKEINTRESOURCE(IDI_LOGO));
+	wc.hIcon         = LoadIcon(hInst, IconName);
 	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
 	wc.lpszMenuName  = NULL;
@@ -187,7 +185,7 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	if(!RegisterClass( &wc ))
 		ABORT("No Window register.");
 
-	hWnd = CreateWindowEx(NULL, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInst, NULL );
+	hWnd = CreateWindowEx(0, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInst, 0 );
 
 	if(!hWnd)
 		ABORT("No Windows.");

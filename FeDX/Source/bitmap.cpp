@@ -9,28 +9,6 @@
 #include "allocate.h"
 #include "femath.h"
 
-/*GLOBAL _BlitNoFlags__FUlUlUlUlUsUs
-GLOBAL _BlitMirror__FUlUlUlUlUsUs
-GLOBAL _BlitFlip__FUlUlUlUlUsUs
-GLOBAL _BlitMirrorFlip__FUlUlUlUlUsUs
-GLOBAL _BlitRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitMirrorRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
-GLOBAL _BlitLuminated__FUlUlUlUlUlUsUs
-GLOBAL _MaskedBlitNoFlags__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirror__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitFlip__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
-GLOBAL _MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
-GLOBAL _AlphaBlit__FUlUlUlUlUsUsUcUs
-GLOBAL _AlphaBlit__FUlUlUlUlUsUsUs
-GLOBAL _DrawLine__FUlUlUsUsUsUsUsUsUs*/
-
 void BlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitMirror(ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitFlip(ulong, ulong, ulong, ulong, ushort, ushort);
@@ -175,32 +153,36 @@ void bitmap::Save(std::string FileName) const
 		}
 }
 
+void Fill(ulong, ulong, ushort, ushort, ushort);
+
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
 	ulong TrueOffset = ulong(&Data[Y][X]);
 	ulong TrueXMove = (XSize - Width) << 1;
 
-	__asm
+	::Fill(TrueOffset, TrueXMove, Width, Height, Color);
+
+	/*__asm
 	{
-		pushad
-		push es
-		mov ax, ds
-		mov edi, TrueOffset
-		mov es, ax
-		xor ecx, ecx
-		mov dx, Width
-		mov bx, Height
-		mov ax, Color
-		cld
-	MaskedLoop3:
-		mov cx, dx
-		rep stosw
-		add edi, TrueXMove
-		dec bx
-		jnz MaskedLoop3
-		pop es
-		popad
-	}
+	pushad
+	push es
+	mov ax, ds
+	mov edi, TrueOffset
+	mov es, ax
+	xor ecx, ecx
+	mov dx, Width
+	mov bx, Height
+	mov ax, Color
+	cld
+MaskedLoop3:
+	mov cx, dx
+	rep stosw
+	add edi, TrueXMove
+	dec bx
+	jnz MaskedLoop3
+	pop es
+	popad
+	}*/
 }
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
@@ -628,9 +610,6 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		{
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
 			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-
-			if(short(Height) < 0)
-				int esko = 2;
 
 			MaskedBlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
 
@@ -1525,8 +1504,10 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawDiameters, double Rotation)
 {
 	std::vector<vector2d> Points;
-	
-	for(ushort c = 0; c < NumberOfSides; ++c)
+
+	ushort c;
+
+	for(c = 0; c < NumberOfSides; ++c)
 	{
 		float PosX = sin((2 * PI / NumberOfSides) * c + Rotation) * Radius;
 		float PosY = cos((2 * PI / NumberOfSides) * c + Rotation) * Radius;

@@ -26,6 +26,7 @@
 
 #include <windows.h>
 #include <list>
+#include <string>
 
 #include "typedef.h"
 
@@ -39,7 +40,7 @@ public:
 	friend class bitmap;
 	static void Init();
 	static void DeInit();
-	static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool);
+	static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, LPCTSTR);
 	static void BlitDBToScreen();
 	static ushort GetXRes() { return XRes; }
 	static ushort GetYRes() { return YRes; }

@@ -2150,7 +2150,7 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 
 void character::HasBeenHitByItem(item* Thingy, float Speed)
 {
-	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000) + (RAND() % 5 ? 1 : 0);
+	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000.0f) + (RAND() % 5 ? 1 : 0);
 
 	SetHP(GetHP() - Damage);
 

@@ -556,7 +556,7 @@ HRESULT CDisplay::InitClipper()
 CSurface::CSurface()
 {
     m_pdds = NULL;
-    m_bColorKeyed = NULL;
+    m_bColorKeyed = 0;
 }
 
 

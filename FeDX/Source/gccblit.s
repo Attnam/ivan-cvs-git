@@ -1,5 +1,6 @@
 .intel_syntax noprefix
 
+.globl _Fill__FUlUlUsUsUs
 .globl _BlitToDB__FUlUlUlUsUs
 .globl _BlitNoFlags__FUlUlUlUlUsUs
 .globl _BlitMirror__FUlUlUlUlUsUs
@@ -27,6 +28,43 @@
 
 /*-------------------------------------*/
 
+_Fill__FUlUlUsUsUs:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+24]
+	mov Color, ax
+	mov ax, [ebp+20]
+	mov Height, ax
+	mov ax, [ebp+16]
+	mov Width, ax
+	mov eax, [ebp+12]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+8]
+	mov TrueDestOffset, eax
+	pop ebp
+
+	pushad
+	push es
+	mov ax, ds
+	mov edi, TrueDestOffset
+	mov es, ax
+	xor ecx, ecx
+	mov dx, Width
+	mov bx, Height
+	mov ax, Color
+	cld
+MaskedLoop38:
+	mov cx, dx
+	rep stosw
+	add edi, TrueDestXMove
+	dec bx
+	jnz MaskedLoop38
+	pop es
+	popad
+	ret
+
+/*-------------------------------------*/
+
 _BlitToDB__FUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
@@ -51,11 +89,10 @@ _BlitToDB__FUlUlUlUsUs:
 	xor ecx, ecx
 	mov dx, Width
 	mov bx, Height
-	shr dx, 0x01
 	cld
 MaskedLoop3:
 	mov cx, dx
-	rep movsd
+        rep movsw
 	add edi, TrueDestXMove
 	dec bx
 	jnz MaskedLoop3
@@ -90,12 +127,11 @@ _BlitNoFlags__FUlUlUlUlUsUs:
 	mov es, ax
 	xor ecx, ecx
 	mov dx, Width
-	mov bx, Height
-	shr dx, 0x01
+        mov bx, Height
 	cld
 MaskedLoop39:
 	mov cx, dx
-	rep movsd
+        rep movsw
 	add esi, TrueSourceXMove
 	add edi, TrueDestXMove
 	dec bx
@@ -178,11 +214,10 @@ _BlitFlip__FUlUlUlUlUsUs:
 	xor ecx, ecx
 	mov dx, Width
 	mov bx, Height
-	shr dx, 0x01
 	cld
 BlitFlip3:
 	mov cx, dx
-	rep movsd
+        rep movsw
 	add esi, TrueSourceXMove
 	sub edi, TrueDestXMove
 	dec bx
@@ -1211,7 +1246,7 @@ _AlphaBlit__FUlUlUlUlUsUsUs:
 	mov es, ax
 	mov esi, TrueSourceOffset
 	mov edi, TrueDestOffset
-	pushl AlphaMapOffset
+        pushd AlphaMapOffset
 	cld
 AlphaBlit21:
 	mov cx, Width
@@ -1460,7 +1495,7 @@ NPutPixel:
 	push	eax
 	push	ebx
 	push	edx
-	mull	Pitch
+        muld     Pitch
 	add	eax,	Surface
 	shl	ebx,	0x01
 	add	eax,	ebx
@@ -1485,7 +1520,7 @@ SPutPixelNoSwap:
 	cmp	ax,	ThisYSize
 	jae	SPutPixelEnd
 	push	edx
-	mull	Pitch
+        muld    Pitch
 	add	eax,	Surface
 	shl	ebx,	0x01
 	add	eax,	ebx

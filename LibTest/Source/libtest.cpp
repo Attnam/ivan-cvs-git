@@ -14,7 +14,8 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	clock_t STim = clock();
 
-	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
+	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false, NULL);
+
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
 
 	DOUBLEBUFFER->Fill(0xF81F);
@@ -108,7 +109,9 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 			std::complex<double> Value = 0;
 
-			for(ushort Depth = 0; Depth < 31; ++Depth)
+			ushort Depth;
+
+			for(Depth = 0; Depth < 31; ++Depth)
 			{
 				Value = Value * Value + C;
 

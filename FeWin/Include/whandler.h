@@ -18,7 +18,7 @@ class globalwindowhandler
 public:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static int GetKey(bool = true, bool = false);
-	static void Init(HINSTANCE, HWND*, const char*);
+	static void Init(HINSTANCE, HWND*, const char*, LPCTSTR);
 	static int ReadKey();
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }

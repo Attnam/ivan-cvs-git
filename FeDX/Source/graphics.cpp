@@ -36,11 +36,11 @@ void graphics::DeInit()
 	delete DefaultFont;
 }
 
-void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen)
+void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
 	FullScreen = FScreen;
 
-	globalwindowhandler::Init(hInst, phWnd, Title);
+	globalwindowhandler::Init(hInst, phWnd, Title, IconName);
 
 	hWnd = *phWnd;
 
@@ -79,7 +79,7 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 	globalwindowhandler::SetInitialized(true);
 }
 
-BlitToDB(ulong, ulong, ulong, ushort, ushort);
+void BlitToDB(ulong, ulong, ulong, ushort, ushort);
 
 void graphics::BlitDBToScreen()
 {
