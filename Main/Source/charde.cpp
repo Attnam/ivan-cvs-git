@@ -16,6 +16,7 @@
 #include "wskill.h"
 #include "felist.h"
 #include "strover.h"
+#include "team.h"
 
 void humanoid::VirtualConstructor()
 {
@@ -360,42 +361,46 @@ void golem::MoveRandomly()
 			TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 
-void ennerbeast::HostileAICommand()
+void ennerbeast::GetAICommand()
 {
-	if(GetLevelSquareUnder()->RetrieveFlag() && (float(GetPos().X) - game::GetPlayer()->GetPos().X) * (float(GetPos().X) - game::GetPlayer()->GetPos().X) + (float(GetPos().Y) - game::GetPlayer()->GetPos().Y) * (float(GetPos().Y) - game::GetPlayer()->GetPos().Y) <= LOSRange())
-	{
-		Charge(game::GetPlayer());
+	if(CheckForEnemies())
 		return;
-	}
+
+	if(rand() % 3)
+		Hit(0);
 	else
-	{
-		if(rand() % 3)
-			Hit(0);
-		else
-			MoveRandomly();
-	}
+		MoveRandomly();
 }
 
-void perttu::NeutralAICommand()
+void perttu::GetAICommand()
 {
 	SetHealTimer(GetHealTimer() + 1);
+
+	if(CheckForEnemies())
+		return;
+
+	if(CheckForDoors())
+		return;
+
+	if(CheckForUsefulItemsOnGround())
+		return;
+
+	character* Char;
+
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	if(Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() == game::GetPlayer())
-		{
-			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetHP() < (game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetEndurance() << 1) / 3 && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() == game::GetPlayer() && GetHealTimer() > 100)
-				HealFully(game::GetPlayer());
-		}
-		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() == HOSTILE)
-			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
+		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < (Char->GetEndurance() << 1) / 3 && GetHealTimer() > 100)
+			HealFully(Char);
 	})
 }
 
 void perttu::HealFully(character* ToBeHealed)
 {
 	SetHealTimer(0);
+
 	ToBeHealed->SetHP(ToBeHealed->GetEndurance() << 1);
+
 	if(ToBeHealed->GetIsPlayer())
 		ADD_MESSAGE("%s heals you fully.", CNAME(DEFINITE));
 }
@@ -554,10 +559,11 @@ ushort humanoid::GetSpeed() const
 
 bool humanoid::Hit(character* Enemy)
 {
-	if(Enemy->GetRelations())
-		if(GetIsPlayer())
-			if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
-				return false;
+	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
+		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+			return false;
+
+	GetTeam()->Hostility(Enemy->GetTeam());
 
 	short Success = rand() % 26 - rand() % 26;
 

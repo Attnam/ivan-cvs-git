@@ -2,7 +2,6 @@ Pitkän matkan aseet (aluksi jousi ja nuolet).
 Tutoriaali.
 Sid Meier.
 Joulupukki. (Renneltä)
-Ääriviivat itemeille ja monsuille.
 Hiirivetoisuus.
 Config-ruutu.
 Vuorokaudenajat.
@@ -12,3 +11,4 @@ Smithing.
 Ghost-Überpriestit.
 Thougth Control.
 Mikroaaltouuni.
+In-code documentation!

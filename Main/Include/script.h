@@ -161,7 +161,7 @@ protected:
 class levelscript : public script
 {
 public:
-	levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), OnGround(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), Base(0) {}
+	levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), OnGround(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), TeamDefault(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(levelscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -177,6 +177,7 @@ public:
 	bool* GetGenerateUpStairs(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateUpStairs) }
 	bool* GetGenerateDownStairs(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDownStairs) }
 	bool* GetOnGround(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OnGround) }
+	uchar* GetTeamDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(TeamDefault) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -189,6 +190,7 @@ protected:
 	uchar* Rooms;
 	bool* GenerateMonsters, * ReCalculate;
 	bool* GenerateUpStairs, * GenerateDownStairs, * OnGround;
+	uchar* TeamDefault;
 	levelscript* Base;
 };
 
@@ -208,18 +210,31 @@ protected:
 	dungeonscript* Base;
 };
 
+class teamscript : public script
+{
+public:
+	void ReadFrom(inputfile&);
+	std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
+protected:
+	std::vector<std::pair<uchar, uchar> > Relation;
+};
+
 class gamescript : public script
 {
 public:
-	gamescript() : DungeonDefault(0), Dungeons(0) {}
+	gamescript() : DungeonDefault(0), Dungeons(0), Teams(0) {}
 	void ReadFrom(inputfile&);
 	std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
 	dungeonscript* GetDungeonDefault(bool AOE = true) const { SCRIPT_RETURN(DungeonDefault) }
 	uchar* GetDungeons(bool AOE = true) const { SCRIPT_RETURN(Dungeons) }
+	uchar* GetTeams(bool AOE = true) const { SCRIPT_RETURN(Teams) }
+	std::vector<std::pair<uchar, teamscript*> >& GetTeam() { return Team; }
 protected:
 	std::map<uchar, dungeonscript*> Dungeon;
 	dungeonscript* DungeonDefault;
 	uchar* Dungeons;
+	uchar* Teams;
+	std::vector<std::pair<uchar, teamscript*> > Team;
 };
 
 #endif

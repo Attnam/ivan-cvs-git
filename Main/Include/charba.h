@@ -6,10 +6,6 @@
 #define HAS_DODGED 2
 #define HAS_DIED 3
 
-#define HOSTILE 0
-#define NEUTRAL 1
-#define FRIEND 2
-
 #define NUMBER_OF_HUMAN_ARMS	7
 #define NUMBER_OF_HUMAN_HEADS	12
 #define NUMBER_OF_HUMAN_LEGS	6
@@ -23,7 +19,7 @@
 #define BURDENED		2
 #define UNBURDENED		3
 
-#define STATES			2
+#define STATES			3
 
 #define FAINTED			0
 #define EATING			1
@@ -45,6 +41,7 @@ class levelsquare;
 class worldmapsquare;
 class outputfile;
 class inputfile;
+class team;
 
 /* Presentation of the character class */
 
@@ -131,7 +128,6 @@ public:
 	virtual short GetHP() const					{ return HP; }
 	virtual stack* GetStack() const				{ return Stack; }
 	virtual uchar GetBurdenState(ulong = 0) const;
-	virtual uchar GetRelations() const { return Relations; }
 	virtual uchar GetSex() const { return UNDEFINED; }
 	virtual uchar TakeHit(ushort, short, float, character*);
 	virtual ulong Danger() const = 0;
@@ -181,7 +177,6 @@ public:
 	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
 	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
 	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
-	virtual void SetRelations(uchar What) { Relations = What; }
 	virtual void SetSquareUnder(square* Square);
 	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
 	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
@@ -197,7 +192,6 @@ public:
 	virtual void FallTo(vector2d, bool);
 	virtual bool CheckCannibalism(ushort);
 	virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
-	virtual void SoldierAICommand();
 	virtual void VirtualConstructor() {}
 	virtual ushort GetSpeed() const;
 	virtual void CharacterSpeciality() {}
@@ -216,7 +210,13 @@ public:
 	virtual void EndPolymorph();
 	virtual void StruckByWandOfStriking();
 	virtual void StateAutoDeactivation();
+	virtual team* GetTeam() const { return Team; }
+	virtual void SetTeam(team* What) { Team = What; }
+	virtual bool CheckForUsefulItemsOnGround();
+	virtual bool CheckForDoors();
+	virtual bool CheckForEnemies();
 protected:
+	virtual void SoldierAICommand();
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
 	virtual void CreateInitialEquipment() {}
@@ -225,9 +225,6 @@ protected:
 	virtual void GetAICommand();
 	virtual void Charge(character*);
 	virtual float GetMeleeStrength() const				{ return 0; }
-	virtual void HostileAICommand();
-	virtual void NeutralAICommand();
-	virtual void FriendAICommand();
 	virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const	{ return NormalFirstPersonHitVerb(Critical); }
@@ -248,12 +245,12 @@ protected:
 	short HP;
 	long NP, AP;
 	long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
-	uchar Relations;
 	item* ConsumingCurrently;
 	bool IsPlayer;
 	uchar State;
 	ushort StateCounter[STATES];
 	void (character::*StateHandler[STATES])();
+	team* Team;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

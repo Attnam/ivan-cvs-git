@@ -23,6 +23,7 @@
 #include "feio.h"
 #include "graphics.h"
 #include "script.h"
+#include "team.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -34,6 +35,7 @@ std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 uchar game::CurrentDungeon;
 ulong game::NextObjectID = 0;
+std::vector<team*> game::Team;
 
 gamescript game::GameScript;
 
@@ -153,11 +155,13 @@ void game::Init(std::string Name)
 
 		iosystem::TextScreen(FONTW, "Generating game...\n\nThis may take some time, please wait.", false);
 
+		CreateTeams();
+
 		SetPlayer(new human);
 
-		BaseScore = Player->Score();
+		Player->SetTeam(GetTeam(0));
 
-		GetPlayer()->SetRelations(2);
+		BaseScore = Player->Score();
 
 		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
 
@@ -193,8 +197,15 @@ void game::DeInit()
 	delete GetPlayerBackup();
 	delete WorldMap;
 
-	for(uchar c = 0; c < Dungeon.size(); ++c)
+	ushort c;
+
+	for(c = 0; c < Dungeon.size(); ++c)
 		delete Dungeon[c];
+
+	for(c = 0; c < Team.size(); ++c)
+		delete GetTeam(c);
+
+	Team.clear();
 }
 
 void game::Run()
@@ -536,7 +547,7 @@ bool game::Save(std::string SaveName)
 	srand(Time);
 	SaveFile << Time;
 
-	SaveFile << Dungeon;
+	SaveFile << Dungeon << Team;
 
 	if(InWilderness)
 		SaveWorldMap();
@@ -568,7 +579,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> Time;
 	srand(Time);
 
-	SaveFile >> Dungeon;
+	SaveFile >> Dungeon >> Team;
 
 	if(InWilderness)
 		LoadWorldMap();
@@ -893,7 +904,7 @@ void game::DoNeutralDeed(short Amount)
 {
 	if(!Amount) return;
 
-	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
+	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed!");
 }
 
 void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
@@ -919,4 +930,72 @@ ulong game::CreateNewObjectID()
 		ABORT("Suddenly the Universe ends!");
 
 	return NextObjectID++;
+}
+
+void game::Hostility(team* Attacker, team* Defender)
+{
+	for(ushort c = 0; c < Team.size(); ++c)
+		if(GetTeam(c) != Attacker && GetTeam(c) != Defender)
+			switch(GetTeam(c)->GetRelation(Defender))
+			{
+				case HOSTILE:
+				{
+					if(GetTeam(c)->GetRelation(Attacker) == NEUTRAL)
+						GetTeam(c)->SetRelation(Attacker, FRIEND);
+
+					break;
+				}
+				case NEUTRAL:
+				{
+					if(GetTeam(c)->GetRelation(Attacker) == HOSTILE)
+						GetTeam(c)->SetRelation(Defender, FRIEND);
+
+					break;
+				}
+				case FRIEND:
+				{
+					GetTeam(c)->SetRelation(Attacker, HOSTILE);
+
+					break;
+				}
+				default:
+					ABORT("Enemy unknown!");
+			}
+}
+
+/*team* game::CreateNewTeam()
+{
+	team* NewTeam = new team;
+
+	NewTeam->SetID(Team.size());
+
+	for(ushort c = 0; c < Team.size(); ++c)
+		GetTeam(c)->SetRelation(NewTeam, NEUTRAL);
+
+	Team.push_back(NewTeam);
+
+	return NewTeam;
+}*/
+
+void game::CreateTeams()
+{
+	ushort c;
+
+	for(c = 0; c < *GameScript.GetTeams(); ++c)
+	{
+		team* NewTeam = new team(c);
+
+		for(ushort i = 0; i < Team.size(); ++i)
+			GetTeam(i)->SetRelation(NewTeam, NEUTRAL);
+
+		Team.push_back(NewTeam);
+	}
+
+	for(c = 0; c < GameScript.GetTeam().size(); ++c)
+		for(ushort i = 0; i < GameScript.GetTeam()[c].second->GetRelation().size(); ++i)
+			GetTeam(GameScript.GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GameScript.GetTeam()[c].first), GameScript.GetTeam()[c].second->GetRelation()[i].second);
+
+	for(c = 0; c < Team.size(); ++c)
+		if(c != 1)
+			GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
 }

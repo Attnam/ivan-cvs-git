@@ -10,7 +10,7 @@ Verestä voisi myös tehdä valuvaa.
 Jumalille pitää olla muuten muitakin efektejä kuin vain nuo kaksi.
 Jumalten roolien miettiminen.
 Valoja irti seinästä.
-Attribuuttibonusten expoittaminen.
+Attribuuttibonusten osittainen expoittaminen.
 Pitää tehdä ruokamyrkytyksestä joku tila characterille.
 Humanoidin armorkuvat.
 Screenshot toimimaan getkeyn aikanakin, kuten F4.
@@ -43,7 +43,6 @@ Multiple material support to script.
 Lamps on walls option to script.
 Teleport disabling.
 Teleport should bounce back from valpurium.
-Highscores should be crypted somehow.
 It should be possible to determine line height as a felist draw function argument.
 Vomiting in a shop should have a special effect.
 Intelligent monsters should read scrolls of create monster.
@@ -53,4 +52,8 @@ Lookmode should show whether a monster is neutral.
 Highscores should be crypted somehow.
 Wood types. (wood is a _bit_ generic)
 Script should be crypted.
-Golems shouldn't be able to eat.
+Golems should be able to eat things made of their material to increase size and stats.
+Golems shouldn't be able to eat anything else.
+Some kind of option screen.
+Autosave interval as a user-defined option.
+List of killed monsters and list of monsters killed by pets.

@@ -19,5 +19,11 @@ Various graphics have become buggy after the Material Color Change.
 Game crashes when a brokable item hits a monster.
 Felist crashes when an empty list ougth to be drawn.
 Dark frog effect is far too high.
+"The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
+Screen isn't updated after an item on the ground has been eaten.
+Kicking has a strange bug with direction! A poleaxe flew inside a wall once. And you could kick it further there! Could not reproduce the problem.
+Farmers can be born inside walls.
+Throwing things outside Attnam's borders results in a horrible crash.
+Residents of Attnam grunt when talked to.
+Omle urine effect is applied twice.
 Single weapon skill's name isn't updated when the name of the item changes.
-Throwing a bone to dog now crashes the game.

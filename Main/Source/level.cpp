@@ -563,7 +563,14 @@ bool level::MakeRoom(roomscript* RoomScript)
 		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
 				if(CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y))
-					Map[XPos + x][YPos + y]->FastAddCharacter(CharacterScript->Instantiate());
+				{
+					character* Char = CharacterScript->Instantiate();
+
+					if(!Char->GetTeam())
+						Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
+
+					Map[XPos + x][YPos + y]->FastAddCharacter(Char);
+				}
 	}
 
 	if(RoomScript->GetItemMap(false))

@@ -7,6 +7,7 @@
 #include "charba.h"
 #include "allocate.h"
 #include "itemba.h"
+#include "team.h"
 
 template contentscript<character>;
 template contentscript<item>;
@@ -669,6 +670,16 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
+		if(Word == "TeamDefault")
+		{
+			if(!TeamDefault)
+				TeamDefault = new uchar;
+
+			*TeamDefault = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
+
 		ABORT("Odd script term %s encountered in level script!", Word.c_str());
 	}
 }
@@ -732,6 +743,33 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 	}
 }
 
+void teamscript::ReadFrom(inputfile& SaveFile)
+{
+	ValueMap["HOSTILE"] = HOSTILE;
+	ValueMap["NEUTRAL"] = NEUTRAL;
+	ValueMap["FRIEND"] = FRIEND;
+
+	if(SaveFile.ReadWord() != "{")
+		ABORT("Bracket missing in team script!");
+
+	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+	{
+		if(Word == "Relation")
+		{
+			std::pair<uchar, uchar> Rel;
+
+			Rel.first = SaveFile.ReadNumber(ValueMap);
+			Rel.second = SaveFile.ReadNumber(ValueMap);
+
+			Relation.push_back(Rel);
+
+			continue;
+		}
+
+		ABORT("Odd script term %s encountered in team script!", Word.c_str());
+	}
+}
+
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
 	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.GetBuffer().eof(); Word = SaveFile.ReadWord(false))
@@ -770,6 +808,29 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 				Dungeons = new uchar;
 
 			*Dungeons = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
+
+		if(Word == "Teams")
+		{
+			if(!Teams)
+				Teams = new uchar;
+
+			*Teams = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
+
+		if(Word == "Team")
+		{
+			ushort Index = SaveFile.ReadNumber(ValueMap);
+			teamscript* TS = new teamscript;
+
+			TS->SetValueMap(ValueMap);
+			TS->ReadFrom(SaveFile);
+
+			Team.push_back(std::pair<uchar, teamscript*>(Index, TS));
 
 			continue;
 		}

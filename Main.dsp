@@ -198,6 +198,10 @@ SOURCE=.\Main\Source\stack.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\team.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\typeable.cpp
 # End Source File
 # Begin Source File
@@ -319,6 +323,10 @@ SOURCE=.\Main\Include\square.h
 # Begin Source File
 
 SOURCE=.\Main\Include\stack.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\team.h
 # End Source File
 # Begin Source File
 

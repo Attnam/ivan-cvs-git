@@ -61,6 +61,7 @@ public:
 	virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
 	virtual bool GetOnGround() const;
 	virtual bool IsValid(vector2d Vector) const { return Vector.X < XSize ? Vector.Y < YSize ? true : false : false; }
+	virtual levelscript* GetLevelScript() const { return LevelScript; }
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

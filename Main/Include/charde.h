@@ -107,7 +107,6 @@ class CHARACTER
 		SetHeadType(10);
 		SetLegType(1);
 		SetTorsoType(5);
-		SetRelations(1);
 		SetHealTimer(100);
 	},
 public:
@@ -131,7 +130,7 @@ protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " disappears in a bright light and his left nut is left behind."; }
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(10000)
-	virtual void NeutralAICommand();
+	virtual void GetAICommand();
 	ushort HealTimer;
 );
 
@@ -150,7 +149,6 @@ class CHARACTER
 		SetHeadType(4 + rand() % 3);
 		SetLegType(rand() % 3);
 		SetTorsoType(2 + rand() % 2);
-		SetRelations(1);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
@@ -175,11 +173,10 @@ class CHARACTER
 		SetHeadType(7);
 		SetLegType(3);
 		SetTorsoType(1);
-		SetRelations(1);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual void NeutralAICommand() { SoldierAICommand(); }
+	virtual void GetAICommand() { SoldierAICommand(); }
 	virtual void CreateInitialEquipment();
 protected:
 	virtual std::string NameSingular() const RET("city guard")
@@ -202,7 +199,6 @@ class CHARACTER
 		SetHeadType(9);
 		SetLegType(2);
 		SetTorsoType(8);
-		SetRelations(1);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
@@ -296,7 +292,7 @@ protected:
 	virtual std::string NameSingular() const RET("Enner Beast")
 	virtual std::string NamePlural() const RET("Enner Beasts")
 	virtual float GetMeleeStrength() const RET(200000)
-	virtual void HostileAICommand();
+	virtual void GetAICommand();
 	virtual void CreateCorpse();
 );
 

@@ -173,11 +173,11 @@ void dulcis::PrayGoodEffect()
 	ADD_MESSAGE("A beatiful melody echoes through the dungeon.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
-	if(Char && Char->GetRelations() == 0)
+	if(Char)
 	{
 		if(Char->Charmable())
 		{
-			Char->SetRelations(1);
+			Char->SetTeam(game::GetPlayer()->GetTeam());
 			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
 		}
 		else

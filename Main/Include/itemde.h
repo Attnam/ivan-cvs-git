@@ -718,7 +718,7 @@ class ITEM
 	InitMaterials(new glass(100)),
 	{
 		SetSize(10);
-		SetCharge(rand() % 5 + 1);
+		SetCharge(2 + rand() % 4);
 	},
 public:
 	virtual ushort Possibility() const RET(20)
@@ -828,7 +828,7 @@ class ITEM
 	InitMaterials(new gold(100)),
 	{
 		SetSize(12);
-		SetCharge(rand() % 3 + 1);
+		SetCharge(1 + rand() % 3);
 	},
 public:
 	virtual ushort Possibility() const RET(10)

@@ -1,4 +1,10 @@
 Dungeons=2;
+Teams=3;
+
+Team 2;
+{
+	Relation 0, FRIEND;
+}
 
 Dungeon 0;
 {
@@ -16,6 +22,7 @@ Dungeon 0;
 		GenerateUpStairs=true;
 		GenerateDownStairs=true;
 		OnGround=false;
+		TeamDefault=1;
 
 		RoomDefault
 		{
@@ -224,12 +231,13 @@ Dungeon 1;
 		FillSquare=floor,empty;
 		Size=64,64;
 		GenerateMonsters=false;
-		Rooms=25 + rand() % 5;
+		Rooms=25 + rand % 5;
 		Items=0;
 		ReCalculate=false;
 		GenerateUpStairs=false;
 		GenerateDownStairs=false;
 		OnGround=true;
+		TeamDefault=2;
 		
 		RoomDefault
 		{

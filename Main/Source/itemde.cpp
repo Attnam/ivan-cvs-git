@@ -12,6 +12,7 @@
 #include "lterraba.h"
 #include "save.h"
 #include "feio.h"
+#include "team.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
@@ -431,7 +432,7 @@ void avatarofvalpuri::CheckPickUpEffect(character* Picker)
 		{
 			character* Temp;
 			if((Temp = game::GetCurrentLevel()->GetSquare(XPointer, YPointer)->GetCharacter()) && !Temp->GetIsPlayer())
-				Temp->SetRelations(HOSTILE);
+				Picker->GetTeam()->Hostility(Temp->GetTeam());
 		})
 }
 

@@ -19,8 +19,10 @@
 #include "feio.h"
 #include "god.h"
 #include "felist.h"
+#include "team.h"
+#include "femath.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), IsPlayer(false), State(0), ConsumingCurrently(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), ConsumingCurrently(0), Team(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -87,10 +89,11 @@ void character::Hunger(ushort Turns)
 
 bool character::Hit(character* Enemy)
 {
-	if(Enemy->GetRelations())
-		if(GetIsPlayer())
-			if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
-				return false;
+	if(GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE)
+		if(GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+			return false;
+
+	GetTeam()->Hostility(Enemy->GetTeam());
 
 	short Success = rand() % 26 - rand() % 26;
 
@@ -118,9 +121,6 @@ ushort character::CalculateArmorModifier() const
 
 uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, character* Enemy)
 {
-	if(Enemy->GetIsPlayer())
-		SetRelations(0);
-
 	DeActivateVoluntaryStates();
 
 	if(!(rand() % 20))
@@ -556,21 +556,16 @@ bool character::Wield()
 void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace.
 			       // Shouldn't it be "Ignorance is strength", not "Love is hate"?
 {
-	switch(GetRelations())
-	{
-	case HOSTILE:
-		HostileAICommand();
-		break;
-	case NEUTRAL:
-		NeutralAICommand();
-		break;
-	case FRIEND:
-		FriendAICommand();
-		break;
-	default:
-		ABORT("Illegal relationship(s) encountered");
-	}
+	if(CheckForEnemies())
+		return;
 
+	if(CheckForDoors())
+		return;
+
+	if(CheckForUsefulItemsOnGround())
+		return;
+
+	MoveRandomly();
 }
 
 void character::Charge(character* Target)
@@ -666,7 +661,7 @@ bool character::TryMove(vector2d MoveTo)
 	if(!game::GetInWilderness())
 		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
 			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter())
-				if(GetIsPlayer() || (!GetRelations() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetRelations() > 0) || (GetRelations() > 0 && !game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetRelations()))
+				if(GetIsPlayer() || GetTeam()->GetRelation(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetTeam()) == HOSTILE)
 					return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter());
 				else
 					return false;
@@ -1203,7 +1198,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << Relations << State;
+	SaveFile << State;
 
 	if(ConsumingCurrently)
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(ConsumingCurrently);
@@ -1212,6 +1207,28 @@ void character::Save(outputfile& SaveFile) const
 
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile << StateCounter[c];
+
+	SaveFile << Team->GetID();
+
+	if(GetConsumingCurrently())
+	{
+		Index = GetStack()->SearchItem(GetConsumingCurrently());
+
+		if(Index != 0xFFFF)
+			SaveFile << uchar(1) << Index;
+		else
+		{
+			if(!game::GetInWilderness())
+				Index = GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
+
+			if(Index == 0xFFFF)
+				ABORT("Consuming unknown item!");
+
+			SaveFile << uchar(2) << Index;
+		}
+	}
+	else
+		SaveFile << uchar(0);
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1233,7 +1250,7 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
 	SaveFile >> HP >> NP >> AP;
 	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> Relations >> State;
+	SaveFile >> State;
 
 	SaveFile >> Index;
 
@@ -1242,6 +1259,27 @@ void character::Load(inputfile& SaveFile)
 
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile >> StateCounter[c];
+
+	ushort TeamID;
+
+	SaveFile >> TeamID;
+
+	Team = game::GetTeam(TeamID);
+
+	uchar Stacky;
+
+	SaveFile >> Stacky;
+
+	if(Stacky)
+	{
+		SaveFile >> Index;
+
+		if(Stacky == 1)
+			SetConsumingCurrently(GetStack()->GetItem(Index));
+
+		if(Stacky == 2)
+			SetConsumingCurrently(GetLevelSquareUnder()->GetStack()->GetItem(Index));
+	}
 }
 
 bool character::WizardMode()
@@ -1566,168 +1604,6 @@ bool character::Pray()
 void character::SpillBlood(uchar HowMuch)
 {
 	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),5,40);
-}
-
-void character::NeutralAICommand()
-{
-	dynarray<character*> SeenCharacters;
-
-	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter())
-			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter());
-	});
-
-	for(ushort c = 0; c < SeenCharacters.Length(); ++c)
-		if(!SeenCharacters.Access(c)->GetRelations() && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
-		{
-			Charge(SeenCharacters.Access(c));
-			return;
-		}
-
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
-			else
-				ADD_MESSAGE("Something opens the door.");
-
-		return;
-	})
-
-	for(c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
-	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
-		{
-			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-			if(GetWielded())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
-
-			SetWielded(ToWield);
-
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
-
-			return;
-		}
-
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
-		{
-			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-			if(GetTorsoArmor())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
-
-			SetTorsoArmor(ToWear);
-
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
-
-			return;
-		}
-
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
-		{
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
-
-			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
-
-			return;
-		}
-	}
-
-	MoveRandomly();
-}
-
-void character::FriendAICommand()
-{
-}
-
-void character::HostileAICommand()
-{
-	dynarray<character*> SeenCharacters;
-
-	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter())
-			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter());
-	});
-
-	ushort NumberFor;
-
-	if((NumberFor = SeenCharacters.Search(game::GetPlayer())) != 0xFFFF && GetLevelSquareUnder()->RetrieveFlag())
-	{
-		Charge(SeenCharacters.Access(NumberFor));
-		return;
-	}
-	else
-		for(ushort c = 0; c < SeenCharacters.Length(); ++c)
-			if(SeenCharacters.Access(c)->GetRelations() > 0 && SeenCharacters.Access(c)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
-			{
-				Charge(SeenCharacters.Access(c));
-				return;
-			}
-
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
-			else
-				ADD_MESSAGE("Something opens the door.");
-
-		return;
-	})
-
-	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
-	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
-		{
-			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-			if(GetWielded())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
-
-			SetWielded(ToWield);
-
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
-
-			return;
-		}
-
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
-		{
-			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
-
-			if(GetTorsoArmor())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
-
-			SetTorsoArmor(ToWear);
-
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
-
-			return;
-		}
-
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
-		{
-			if(SquareUnder->CanBeSeen())
-				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
-
-			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
-
-			return;
-		}
-	}
-
-	MoveRandomly();
 }
 
 void character::ReceiveSchoolFoodEffect(long)
@@ -2143,7 +2019,7 @@ bool character::Polymorph()
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
 		NewForm->SetStateCounter(POLYMORPHED, 1000);
-		NewForm->SetRelations(FRIEND);
+		//Team should be changed
 	}
 	else
 		SetExists(false);
@@ -2231,16 +2107,14 @@ bool character::CheckCannibalism(ushort What)
 
 void character::SoldierAICommand()
 {
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() == game::GetPlayer())
-		{
-			
-		}
-		else if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() == HOSTILE)
-			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
-	})
+	if(CheckForEnemies())
+		return;
+
+	if(CheckForDoors())
+		return;
+
+	if(CheckForUsefulItemsOnGround())
+		return;
 }
 
 ushort character::GetSpeed() const
@@ -2278,7 +2152,10 @@ void character::EatHandler()
 {
 	if(GetConsumingCurrently()->Consume(this, 1000))
 	{
-		item* ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
+		item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
+
+		if(!ToBeDeleted)
+			ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
 
 		EndEating();
 
@@ -2372,7 +2249,7 @@ void character::StateAutoDeactivation()
 		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
 		if(Character && ((GetIsPlayer() && Character->SquareUnder->CanBeSeen()) || (!GetIsPlayer() && Character->SquareUnder->CanBeSeenFrom(GetPos()))))
-			if((!GetRelations() && Character->GetRelations()) || (GetRelations() && !Character->GetRelations()))
+			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 			{
 				DeActivateVoluntaryStates();
 				return;
@@ -2391,4 +2268,99 @@ void character::StruckByWandOfStriking()
 	SetHP(GetHP() - 10 - rand() % 10);
 	
 	CheckDeath("killed by a wand of striking");
+}
+
+bool character::CheckForEnemies()
+{
+	character* NearestChar = 0;
+	ulong NearestDistance = 0xFFFFFFFF;
+
+	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
+	{
+		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter();
+
+		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+		{
+			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
+
+			if(ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(rand() % 3)))
+			{
+				NearestChar = Char;
+				NearestDistance = ThisDistance;
+			}
+		}
+	});
+
+	if(NearestChar)
+	{
+		Charge(NearestChar);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool character::CheckForDoors()
+{
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
+	{
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
+			if(GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
+			else
+				ADD_MESSAGE("Something opens the door.");
+
+		return true;
+	})
+
+	return false;
+}
+
+bool character::CheckForUsefulItemsOnGround()
+{
+	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
+	{
+		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
+		{
+			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
+
+			if(GetWielded())
+				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
+
+			SetWielded(ToWield);
+
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
+
+			return true;
+		}
+
+		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
+		{
+			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
+
+			if(GetTorsoArmor())
+				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
+
+			SetTorsoArmor(ToWear);
+
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
+
+			return true;
+		}
+
+		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
+		{
+			if(SquareUnder->CanBeSeen())
+				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
+
+			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
+
+			return true;
+		}
+	}
+
+	return false;
 }

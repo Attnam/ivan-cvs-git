@@ -12,6 +12,7 @@
 #include "lterraba.h"
 #include "message.h"
 #include "wskill.h"
+#include "team.h"
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
 {
@@ -113,7 +114,8 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
 			{
 				if(Hostile)
-					game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->SetRelations(HOSTILE);
+					game::GetPlayer()->GetTeam()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->GetTeam());
+
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
 					break;
 				

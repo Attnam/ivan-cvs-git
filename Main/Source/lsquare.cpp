@@ -11,6 +11,7 @@
 #include "save.h"
 #include "graphics.h"
 #include "script.h"
+#include "team.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
 {
@@ -306,11 +307,11 @@ bool levelsquare::Close(character* Closer)
 
 void levelsquare::Save(outputfile& SaveFile) const
 {
+	GetStack()->Save(SaveFile); // This must be before square::Save!
+
 	square::Save(SaveFile);
 
 	SaveFile << GroundLevelTerrain << OverLevelTerrain;
-
-	GetStack()->Save(SaveFile);
 
 	{
 	for(ushort c = 0; c < 4; ++c)
@@ -335,11 +336,11 @@ void levelsquare::Save(outputfile& SaveFile) const
 
 void levelsquare::Load(inputfile& SaveFile)
 {
+	GetStack()->Load(SaveFile); // This must be before square::Load!
+
 	square::Load(SaveFile);
 
 	SaveFile >> GroundLevelTerrain >> OverLevelTerrain;
-
-	Stack->Load(SaveFile);
 
 	{
 	for(ushort c = 0; c < 4; ++c)
@@ -537,20 +538,17 @@ void levelsquare::UpdateMemorizedDescription()
 
 bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 {
-	if(GetCharacter() && GetCharacter()->GetRelations() != 0)
-	{
-	if(Kicker->GetIsPlayer())
-		if(!game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
+	if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
+		if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [Y/N]"))
 			return false;
 		else
-			GetCharacter()->SetRelations(HOSTILE);
-	}
-
-
+			Kicker->GetTeam()->Hostility(GetCharacter()->GetTeam());
 
 	GetStack()->Kick(Strength, RetrieveFlag(), KickWay);
+
 	if(GetCharacter())
 		GetCharacter()->BeKicked(Strength, RetrieveFlag(), KickWay, Kicker);
+
 	GetOverLevelTerrain()->Kick(Strength, RetrieveFlag(), KickWay);
 	return true;
 }
@@ -666,7 +664,14 @@ void levelsquare::DrawCheat()
 void levelsquare::ApplyScript(squarescript* SquareScript)
 {
 	if(SquareScript->GetCharacter(false))
-		FastAddCharacter(SquareScript->GetCharacter()->Instantiate());
+	{
+		character* Char = SquareScript->GetCharacter()->Instantiate();
+
+		if(!Char->GetTeam())
+			Char->SetTeam(game::GetTeam(*GetLevelUnder()->GetLevelScript()->GetTeamDefault()));
+
+		FastAddCharacter(Char);
+	}
 
 	if(SquareScript->GetItem(false))
 		GetStack()->FastAddItem(SquareScript->GetItem()->Instantiate());

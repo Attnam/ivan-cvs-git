@@ -27,7 +27,6 @@ public:
 	groundworldmapterrain(bool = true) {}
 	virtual void DrawToTileBuffer() const;
 	virtual groundworldmapterrain* Clone(bool = true) const = 0;
-	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
 	virtual uchar Priority() const = 0;
 };
 
@@ -37,7 +36,6 @@ public:
 	overworldmapterrain(bool = true) {}
 	virtual void DrawToTileBuffer() const;
 	virtual overworldmapterrain* Clone(bool = true) const = 0;
-	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
 	virtual bool GoUp(character*) const;
 	virtual bool GoDown(character*) const;
 };

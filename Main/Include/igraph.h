@@ -51,8 +51,8 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 	if(GI1.BitmapPos.Y != GI2.BitmapPos.Y)
 		return GI1.BitmapPos.Y < GI2.BitmapPos.Y;
 
-	if(!GI1.Color || !GI2.Color)
-		return false;
+	if(!GI1.Color || !GI2.Color)	// This shouldn't be possible, but if it is, it's better to behave oddly
+		return false;		// than to crash horribly and undebuggablely
 
 	if(GI1.Color[0] != GI2.Color[0])
 		return GI1.Color[0] < GI2.Color[0];
@@ -84,18 +84,15 @@ class igraph
 public:
 	static void Init(HINSTANCE, HWND*);
 	static void DeInit();
-	static bitmap* GetLevelTerrainGraphic()	{ return Graphic[GLTERRAIN]; }
 	static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
-	static bitmap* GetItemGraphic()		{ return Graphic[GITEM]; }
-	static bitmap* GetCharacterGraphic()	{ return Graphic[GCHARACTER]; }
-	static bitmap* GetFOWGraphic()		{ return Graphic[GFOW]; }
-	static bitmap* GetCursorGraphic()		{ return Graphic[GCURSOR]; }
-	static bitmap* GetHumanGraphic()		{ return Graphic[GHUMAN]; }
-	static bitmap* GetFontRGraphic()		{ return Graphic[GFONTR]; }
-	static bitmap* GetFontBGraphic()		{ return Graphic[GFONTB]; }
-	static bitmap* GetFontWGraphic()		{ return Graphic[GFONTW]; }
-	static bitmap* GetSymbolGraphic()		{ return Graphic[GSYMBOL]; }
-	static bitmap* GetTileBuffer()		{ return TileBuffer; }
+	static bitmap* GetFOWGraphic() { return Graphic[GFOW]; }
+	static bitmap* GetCursorGraphic() { return Graphic[GCURSOR]; }
+	static bitmap* GetHumanGraphic() { return Graphic[GHUMAN]; }
+	static bitmap* GetFontRGraphic() { return Graphic[GFONTR]; }
+	static bitmap* GetFontBGraphic() { return Graphic[GFONTB]; }
+	static bitmap* GetFontWGraphic() { return Graphic[GFONTW]; }
+	static bitmap* GetSymbolGraphic() { return Graphic[GSYMBOL]; }
+	static bitmap* GetTileBuffer() { return TileBuffer; }
 	static void BlitTileBuffer(vector2d, ushort = 256);
 	static void DrawCursor(vector2d);
 	static tile GetTile(graphic_id);

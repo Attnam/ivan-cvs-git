@@ -2,6 +2,7 @@
 #include "charba.h"
 #include "message.h"
 #include "lsquare.h"
+
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	Eater->ReceiveSchoolFoodEffect(Volume > Amount ? Amount : Volume);
@@ -52,12 +53,13 @@ void pepsi::HitEffect(character* Enemy)
 
 void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->SetRelations(NEUTRAL);
+	Eater->SetTeam(game::GetPlayer()->GetTeam());
 
 	if(Eater == game::GetPlayer())
 		ADD_MESSAGE("You feel like a hippie.");
 	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s doesn't seem to care about you anymore.", Eater->CNAME(DEFINITE));
+		//if(GetLevelSquareUnder()->CanBeSeen()) // This is commented because it may crash
+			ADD_MESSAGE("%s barks to you happily.", Eater->CNAME(DEFINITE));
 
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);

@@ -10,7 +10,7 @@ Pimeydelle vaikutuksia.
 ////Kickille vielä muutakin käyttöä = ovien potkiminen.
 ////Avatut cannit.
 ////%Asetaidot.
-%Tiimit.
+////%Tiimit.
 ////*Script.
 %*Attnam.
 ////*Player must not be the Only Son anymore.

@@ -175,4 +175,35 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vec
 	return SaveFile;
 }
 
+template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, std::map<type1, type2> Map)
+{
+	ulong Size = Map.size();
+
+	SaveFile.GetBuffer().write((char*)&Size, sizeof(Size));
+
+	for(std::map<ulong, uchar>::iterator i = Map.begin(); i != Map.end(); ++i)
+		SaveFile << (*i).first << (*i).second;
+
+	return SaveFile;
+}
+
+template <class type1, class type2> inline inputfile& operator>>(inputfile& SaveFile, std::map<type1, type2>& Map)
+{
+	ulong Size;
+
+	SaveFile.GetBuffer().read((char*)&Size, sizeof(Size));
+
+	for(ushort c = 0; c < Size; ++c)
+	{
+		type1 First;
+		type2 Second;
+
+		SaveFile >> First >> Second;
+
+		Map[First] = Second;
+	}
+
+	return SaveFile;
+}	
+
 #endif

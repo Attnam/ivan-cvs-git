@@ -31,6 +31,7 @@ class dungeon;
 class outputfile;
 class inputfile;
 class gamescript;
+class team;
 
 /* Presentation of the game class */
 
@@ -139,6 +140,9 @@ public:
 	static void UpdateCamera() { UpdateCameraX(); UpdateCameraY(); }
 	static ulong CreateNewObjectID();
 	static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) NextObjectID--; }
+	static team* GetTeam(ushort Index) { return Team[Index]; }
+	static void Hostility(team*, team*);
+	static void CreateTeams();
 private:
 	static std::string Alignment[];
 	static god* God[];
@@ -169,6 +173,7 @@ private:
 	static std::vector<dungeon*> Dungeon;
 	static gamescript GameScript;
 	static ulong NextObjectID;
+	static std::vector<team*> Team;
 };
 
 #endif

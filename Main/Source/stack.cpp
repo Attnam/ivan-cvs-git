@@ -205,7 +205,7 @@ void stack::Optimize(ushort OptimizeBoundary)
 	}
 }
 
-ushort stack::DrawContents(const char* Topic) const 	// Draws a felist of the items in this stack on the screen
+ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the items in this stack on the screen
 {							// Displays Topic on the screen also...
 	if(!GetItems()) return 0xFFFF;
 	felist ItemNames(Topic);
@@ -324,11 +324,13 @@ ushort stack::DrawConsumableContents(const char* Topic, character* Eater) const
 	stack ConsumableStack;
 	item* TheItem;
 	ushort Key;
+
 	for(ushort c = 0; c < GetItems(); ++c)
 	{
 		if(GetItem(c)->Consumable(Eater))
 			ConsumableStack.FastAddItem(GetItem(c));
 	}
+
 	Key = ConsumableStack.DrawContents(Topic);
 
 	if(Key == 0xFFFF || Key == 0x1B || Key > ConsumableStack.GetItems())
@@ -400,7 +402,6 @@ void stack::ReceiveSound(float Strength)
 
 void stack::StruckByWandOfStriking(void)
 {
-	for(int x = 0; x < GetItems(); x++)
+	for(int x = 0; x < GetItems(); x++) // Not Stroustrup style. Punish.
 		GetItem(x)->StruckByWandOfStriking(this);
-
 }

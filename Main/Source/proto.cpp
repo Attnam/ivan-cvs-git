@@ -37,7 +37,10 @@ character* protosystem::BalancedCreateMonster(float Multiplier)
 		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone();
 
 		if(c == 99 || (Monster->Danger() < game::Difficulty() * Multiplier * 1.5f && Monster->Danger() > game::Difficulty() * 0.5f))
+		{
+			Monster->SetTeam(game::GetTeam(1));
 			return Monster;
+		}
 		else
 			delete Monster;
 	}
