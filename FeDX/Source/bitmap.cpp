@@ -11,6 +11,9 @@ bitmap::bitmap(std::string FileName, bool Is16Bit) : BackupBuffer(0), Is16Bit(Is
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
+	if(!File.is_open())
+		ABORT("Bitmap %s not found!", FileName.c_str());
+
 	File.seekg(-768, std::ios::end);
 
 	Palette = new uchar[768];

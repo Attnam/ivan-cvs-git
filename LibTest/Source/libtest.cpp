@@ -16,19 +16,28 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	DOUBLEBUFFER->ClearToColor(0xF81F);
 
-	bitmap NovaChar("Graphics/NovaChar.pcx", false);
+	bitmap Pertti("Graphics/Char.pcx", false);
 
-	ushort Color[1];
+	ushort Color[4];
 
 	Color[0] = MAKE_RGB(128, 0, 0);
-	bitmap* CharRed = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
+	bitmap* CharRed = Pertti.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 	Color[0] = MAKE_RGB(0, 128, 0);
-	bitmap* CharGreen = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
+	bitmap* CharGreen = Pertti.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 	Color[0] = MAKE_RGB(0, 0, 128);
-	bitmap* CharBlue = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
+	bitmap* CharBlue = Pertti.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 
 	bitmap Font("Graphics/FontR.pcx");
-	bitmap Pertti("Graphics/Char.pcx");
+	Color[0] = MAKE_RGB(255, 255, 0);
+	Color[1] = MAKE_RGB(0, 0, 255);
+	Color[2] = MAKE_RGB(0, 0, 0);
+	Color[3] = MAKE_RGB(0, 0, 0);
+	bitmap* Enner = Pertti.ColorizeTo16Bit(vector2d(96, 0), vector2d(16, 16), Color);
+	Color[0] = MAKE_RGB(255, 255, 0);
+	Color[1] = MAKE_RGB(0, 0, 255);
+	Color[2] = MAKE_RGB(255, 255, 255);
+	Color[3] = MAKE_RGB(0, 0, 0);
+	bitmap* Bill = Pertti.ColorizeTo16Bit(vector2d(160, 0), vector2d(16, 16), Color);
 
 	Font.Printf(DOUBLEBUFFER, 212, 450, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
 
@@ -38,13 +47,13 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	for(uchar x = 0; x < 8; x++)
 	{
-		Pertti.Blit(DOUBLEBUFFER, 160, 128, 336 + (x << 4), 356, 16, 16, x);
-		Pertti.MaskedBlit(DOUBLEBUFFER, 160, 128, 336 + (x << 4), 372, 16, 16, x);
+		Bill->Blit(DOUBLEBUFFER, 0, 0, 336 + (x << 4), 356, 16, 16, x);
+		Bill->MaskedBlit(DOUBLEBUFFER, 0, 0, 336 + (x << 4), 372, 16, 16, x);
 	}
 
 	for(ushort z = 0; z <= 256; z++)
 	{
-		Pertti.MaskedBlit(DOUBLEBUFFER, 96, 128, 392, 292, 16, 16, z);
+		Enner->MaskedBlit(DOUBLEBUFFER, 0, 0, 392, 292, 16, 16, z);
 		graphics::BlitDBToScreen();
 	}
 

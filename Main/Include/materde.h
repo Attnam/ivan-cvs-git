@@ -92,7 +92,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return ODD; }
 	virtual ushort GetDensity() const				{ return 2500; }
 	virtual ushort OfferValue() const				{ return 2; }
-	virtual ushort GetColor() const { return MAKE_RGB(0, 0, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
 protected:
 	virtual std::string NameStem() const	{ return "moraine"; }
 );
