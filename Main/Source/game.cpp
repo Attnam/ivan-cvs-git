@@ -80,7 +80,7 @@ bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 guard* game::Haedlac = 0;
 
-std::string game::AutoSaveFileName = SAVE_DIR "AutoSave";
+std::string game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 std::string game::LockDescription[] = { "round", "square", "triangular", "broken" };
 std::vector<god*> game::God;
@@ -174,7 +174,7 @@ characteridmap game::CharacterIDMap;
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GAME_DIR "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
   delete GameScript;
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
@@ -210,7 +210,7 @@ bool game::Init(const std::string& Name)
 #endif
 
 #ifdef LINUX
-  mkdir(SAVE_DIR, S_IRWXU | S_IRWXG);
+  mkdir(GetSaveDir().c_str(), S_IRWXU | S_IRWXG);
 #endif
 
   switch(Load(SaveName(PlayerName)))
@@ -587,7 +587,7 @@ uchar game::Load(const std::string& SaveName)
 
 std::string game::SaveName(const std::string& Base)
 {
-  std::string SaveName = SAVE_DIR;
+  std::string SaveName = GetSaveDir();
 
   if(!Base.length())
     SaveName << game::GetPlayer()->GetAssignedName();
@@ -1288,7 +1288,7 @@ bool game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GAME_DIR "Script/define.dat", &GlobalValueMap);
+  inputfile SaveFile(GetGameDir() + "Script/define.dat", &GlobalValueMap);
   std::string Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -1833,3 +1833,36 @@ character* game::SearchCharacter(ulong ID)
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
 }
 
+
+std::string game::GetHomeDir()
+{
+#ifdef LINUX
+  return std::string(getenv("HOME")) + "/";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "";
+#endif
+}
+
+std::string game::GetSaveDir()
+{
+#ifdef LINUX
+  return std::string(getenv("HOME")) + "/IvanSave/";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "Save/";
+#endif
+}
+
+std::string game::GetGameDir()
+{
+#ifdef LINUX
+  return DATADIR "/ivan/";
+#endif
+
+#if defined(WIN32) || defined(__DJGPP__)
+  return "";
+#endif
+}

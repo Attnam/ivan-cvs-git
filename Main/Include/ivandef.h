@@ -22,16 +22,11 @@
 
 #if defined(WIN32) || defined(__DJGPP__)
 #define GAME_DIR ""
-#define SAVE_DIR "Save/"
-#define HOME_DIR ""
 #endif
 
 /* The program can only create directories to the deepness of one, no more... */
 
 #ifdef LINUX
-#define GAME_DIR (DATADIR "/ivan/")
-#define SAVE_DIR (getenv("HOME") "/IvanSave/")
-#define HOME_DIR (getenv("HOME") "/")
 #endif
 
 #define HAS_HIT 0

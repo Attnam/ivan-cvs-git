@@ -26,7 +26,7 @@ void igraph::Init()
       graphics::Init();
 
 #ifdef USE_SDL
-      graphics::SetMode("IVAN " IVAN_VERSION, GAME_DIR "Graphics/Icon.bmp", vector2d(800, 600), 16, configuration::GetFullScreenMode());
+      graphics::SetMode("IVAN " IVAN_VERSION, std::string(game::GetGameDir() + "Graphics/Icon.bmp").c_str(), vector2d(800, 600), 16, configuration::GetFullScreenMode());
 #endif
 
 #ifdef __DJGPP__
@@ -36,7 +36,7 @@ void igraph::Init()
       DOUBLE_BUFFER->Fill(0);
       graphics::BlitDBToScreen();
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
-      graphics::LoadDefaultFont(GAME_DIR "Graphics/Font.pcx");
+      graphics::LoadDefaultFont(game::GetGameDir() + "Graphics/Font.pcx");
       FONT->CreateFontCache(RED);
       FONT->CreateFontCache(BLUE);
       FONT->CreateFontCache(WHITE);
@@ -47,10 +47,10 @@ void igraph::Init()
       ushort c;
 
       for(c = 0; c < RAW_TYPES; ++c)
-	RawGraphic[c] = new colorizablebitmap(GAME_DIR + RawGraphicFileName[c]);
+	RawGraphic[c] = new colorizablebitmap(game::GetGameDir() + RawGraphicFileName[c]);
 
       for(c = 0; c < GRAPHIC_TYPES; ++c)
-	Graphic[c] = new bitmap(GAME_DIR + GraphicFileName[c]);
+	Graphic[c] = new bitmap(game::GetGameDir() + GraphicFileName[c]);
 
       Graphic[GR_TRANSPARENT_COLOR_TILE] = new bitmap(16, 16, TRANSPARENT_COLOR);
 

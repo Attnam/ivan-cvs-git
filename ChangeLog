@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Smith now fixes damaged bodyparts if they are made from a metal
+	* Bug with highscores corrected (makefiles)
+	* CanThrow added to script
+	* Handling Home,save and data directories changed
+	* chameleon whip added
+	* whip of thievery can be cloned
+	
 January 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Fixed a bug that sometimes prevented Haedlac from being teleported to aid

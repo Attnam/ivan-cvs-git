@@ -228,6 +228,7 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(SpillsBlood);
   ANALYZE_DATA(HasEyes);
   ANALYZE_DATA(HasHead);
+  ANALYZE_DATA(CanThrow);
 
   return Found;
 }
@@ -430,27 +431,27 @@ void databasesystem::Initialize()
   {
     /* Must be before character */
 
-    inputfile ScriptFile(GAME_DIR "Script/material.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetGameDir() + "Script/material.dat", &game::GetGlobalValueMap());
     database<material>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR "Script/char.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetGameDir() + "Script/char.dat", &game::GetGlobalValueMap());
     database<character>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR "Script/item.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetGameDir() + "Script/item.dat", &game::GetGlobalValueMap());
     database<item>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR "Script/glterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetGameDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
     database<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR "Script/olterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(game::GetGameDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }

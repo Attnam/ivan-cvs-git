@@ -255,6 +255,9 @@ class game
   static character* SearchCharacter(ulong);
   static void AddCharacterID(character* Char, ulong ID) { CharacterIDMap[ID] = Char; }
   static void RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
+  static std::string GetHomeDir();
+  static std::string GetSaveDir();
+  static std::string GetGameDir();
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

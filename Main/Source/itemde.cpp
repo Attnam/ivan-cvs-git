@@ -5074,3 +5074,41 @@ bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   return Type != ELECTRICITY ? meleeweapon::ReceiveDamage(Damager, Damage, Type) : false;
 }
+
+bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && ScabiesHelps(Enemy, Hitter))
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->CHAR_DESCRIPTION(DEFINITE));
+
+      if(Hitter->IsPlayer())
+	{
+	  game::DoEvilDeed(25);
+	  game::GetGod(10)->AdjustRelation(10);
+	}
+      ushort CurrentDanger = ushort(Enemy->GetRelativeDanger(game::GetPlayer()) * 100);
+      Enemy->PolymorphRandomly(CurrentDanger / 4, CurrentDanger, 100 + RAND() % 400);
+      return true;
+    }
+  else
+    return BaseSuccess;
+}
+
+bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter) const
+{
+  if(!Enemy->IsPolymorphable())
+    return false;
+
+  if(Hitter->IsPlayer())
+    {
+      if(game::GetGod(SCABIES)->GetRelation() < 0)
+	return false;
+      else
+	return !(RAND() % (20 - game::GetGod(SCABIES)->GetRelation() / 150));
+    }
+  else
+    return !(RAND() % 20);
+}

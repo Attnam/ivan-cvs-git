@@ -58,7 +58,6 @@ int Main(int argc, char **argv)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" IVAN_VERSION "\r"))
       {
       case 0:
-	ABORT("oke");
 	if(game::Init())
 	  {
 	    game::Run();
@@ -67,7 +66,7 @@ int Main(int argc, char **argv)
 	break;
       case 1:
 	{
-	  std::string LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, SAVE_DIR);
+	  std::string LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
 
 	  if(LoadName.length())
 	    {

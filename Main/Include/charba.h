@@ -159,6 +159,7 @@ struct characterdatabase
   bool SpillsBlood;
   bool HasEyes;
   bool HasHead;
+  bool CanThrow;
 };
 
 class characterprototype
@@ -377,7 +378,7 @@ class character : public entity, public id
   virtual bool CheckKick() const;
   virtual uchar OpenMultiplier() const { return 2; }
   virtual uchar CloseMultiplier() const { return 2; }
-  virtual bool CheckThrow() const { return true; }  
+  virtual bool CheckThrow() const;
   virtual bool CheckOffer() const { return true; }
   ushort GetTemporaryStateCounter(ushort) const;
   void EditTemporaryStateCounter(ushort, short);
@@ -752,6 +753,7 @@ class character : public entity, public id
   void RemoveHomeData();
   ulong GetID() const { return ID; }
   virtual void AddESPConsumeMessage() const;
+  DATA_BASE_BOOL(CanThrow);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

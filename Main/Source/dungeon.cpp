@@ -53,7 +53,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
 
       if(*LevelScript->ReCalculate())
 	{
-	  inputfile ScriptFile(GAME_DIR "Script/dungeon.dat", &game::GetGlobalValueMap());
+	  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &game::GetGlobalValueMap());
 	  LevelScript->ReadFrom(ScriptFile, true);
 	}
     }
@@ -63,7 +63,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
 
       if(*LevelScript->ReCalculate())
 	{
-	  inputfile ScriptFile(GAME_DIR "Script/dungeon.dat", &game::GetGlobalValueMap());
+	  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &game::GetGlobalValueMap());
 	  LevelScript->ReadFrom(ScriptFile, true);
 	}
     }

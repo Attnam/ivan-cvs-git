@@ -81,6 +81,7 @@ character
 	SpillsBlood = true;
 	HasEyes = true;
 	HasHead = true;
+	CanThrow = false;
 }
 
 humanoid
@@ -103,6 +104,7 @@ humanoid
 	CanZap = true; /* if has at least one hand (hard coded) */
 	FleshMaterial = HUMAN_FLESH;
 	DeathMessage = "@Dd dies screaming."; /* overridden if has no head */
+	CanThrow = true;
 }
 
 nonhumanoid

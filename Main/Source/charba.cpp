@@ -3282,8 +3282,8 @@ bool character::SecretKnowledge()
   game::SetStandardListAttributes(List);
   List.SetPageLength(PageLength);
   List.Draw();
-  List.PrintToFile(std::string(HOME_DIR "secret") + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR, Chosen);
+  List.PrintToFile(game::GetHomeDir() + std::string("secret") + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetHomeDir().c_str(), Chosen);
   return false;
 }
 
@@ -6585,3 +6585,12 @@ void character::AddESPConsumeMessage() const
     ADD_MESSAGE("You feel a strange mental activity.");
 }
 
+bool character::CheckThrow() const
+{
+  if(!CanThrow())
+    {
+      ADD_MESSAGE("This monster type cannot throw.");
+      return false;
+    }
+  return true;
+}

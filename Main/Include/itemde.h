@@ -1382,4 +1382,14 @@ class ITEM
   ;
 );
 
+class ITEM
+(
+  chameleonwhip,
+  whip,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+ protected:
+  virtual bool ScabiesHelps(const character*, const character*) const;
+);
+
 #endif

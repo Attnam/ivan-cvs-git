@@ -1434,6 +1434,9 @@ uchar humanoid::GetArms() const
 
 bool humanoid::CheckThrow() const
 {
+  if(!character::CheckThrow())
+    return false;
+
   switch(GetArms())
     {
     case 0:
@@ -3133,6 +3136,30 @@ void smith::BeTalkedTo()
       ADD_MESSAGE("\"Sorry, I need an intact hammer to practise the art of smithing.\"");
       return;
     }
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(game::GetPlayer()->GetBodyPart(c))
+      {
+	if(!game::GetPlayer()->GetBodyPart(c)->GetMainMaterial()->IsMetal())
+	  continue;
+	
+	if(game::GetPlayer()->GetBodyPart(c)->GetHP() >= game::GetPlayer()->GetBodyPart(c)->GetMaxHP())
+	  continue;
+
+	if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= game::GetPlayer()->GetBodyPart(c)->GetMainMaterial()->GetStrengthValue())
+	  {
+	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", game::GetPlayer()->GetBodyPart(c)->GetBodyPartName().c_str(), GetMainWielded()->CHAR_NAME(UNARTICLED));
+	    continue;
+	  }
+
+	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", game::GetPlayer()->GetBodyPart(c)->GetBodyPartName().c_str()); 
+	
+	if(game::BoolQuestion("Do you accept this deal? [y/N]"))
+	  {
+	    game::GetPlayer()->GetBodyPart(c)->RestoreHP();
+	    game::GetPlayer()->EditMoney(-25);
+	  }
+	
+      }
 
   if(game::GetPlayer()->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
     {

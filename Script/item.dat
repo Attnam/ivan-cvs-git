@@ -2223,8 +2223,7 @@ whipofthievery /* meleeweapon->whip-> */
 	SecondaryMaterialConfig == DIAMOND;
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
-	CanBeCloned = false;
-	Price = 1000;
+	Price = 500;
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -2413,4 +2412,19 @@ saalthul
 		Price = 100;
 		GearStates = 0;
 	}
+}
+
+chameleonwhip
+{
+	DefaultSize = 250;
+	Possibility = 10;
+	DefaultMainVolume = 1000;
+	DefaultSecondaryVolume = 50;
+	StrengthModifier = 30;
+	NameSingular = "chameleon whip";
+	MainMaterialConfig == OMMEL_HAIR;
+	SecondaryMaterialConfig == SILVER;
+	Roundness = 2;
+	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
+	Price = 500;
 }
