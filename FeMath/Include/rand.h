@@ -1,7 +1,8 @@
 #ifndef __RAND_H__
 #define __RAND_H__
 
-#define RAND() femath::FeRand()
+#define RAND() femath::Rand()
+
 /* Period parameters */  
 #define N 624
 #define M 397
@@ -17,12 +18,10 @@
 #define TEMPERING_SHIFT_T(y)  (y << 15)
 #define TEMPERING_SHIFT_L(y)  (y >> 18)
 
-
-
 class femath
 {
 public: 
-	static unsigned long FeRand();
+	static long Rand();
 	static void SetSeed(unsigned long);
 protected:
 	static unsigned long mt[N]; /* the array for the state vector  */

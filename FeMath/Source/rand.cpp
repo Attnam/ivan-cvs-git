@@ -86,7 +86,7 @@ void femath::SetSeed(unsigned long seed)
         mt[mti] = (69069 * mt[mti-1]) & 0xffffffff;
 }
 
-unsigned long femath::FeRand()
+long femath::Rand()
 {
     unsigned long y;
     static unsigned long mag01[2]={0x0, MATRIX_A};
@@ -118,8 +118,5 @@ unsigned long femath::FeRand()
     y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
     y ^= TEMPERING_SHIFT_L(y);
 
-    return y; 
+    return y & 0x7FFFFFFF;
 }
-
-
-

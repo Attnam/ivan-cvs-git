@@ -2724,9 +2724,6 @@ bool character::RestUntilHealed(void)
 		return false;
 	}
 
-	if(HPToRest > GetMaxHP())
-		HPToRest = GetMaxHP();
-
 	StateCounter[RESTING] = HPToRest;
 	ActivateState(RESTING);
 	return true;
@@ -2735,7 +2732,7 @@ bool character::RestUntilHealed(void)
 
 void character::RestHandler(void)
 {
-	if(GetHP() >= StateCounter[RESTING])
+	if(GetHP() >= StateCounter[RESTING] || GetHP() == GetMaxHP())
 		EndRest();
 }
 

@@ -241,7 +241,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 
 		if(Word == "rand")
 		{
-			Value = RAND() & 0x7FFFFFFF;
+			Value = RAND();
 			continue;
 		}
 

@@ -1,1 +1,2 @@
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+The game crashes horribly if you leave a level with an eating pet adjacent to you.

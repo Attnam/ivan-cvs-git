@@ -51,3 +51,4 @@ Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 Replacing rand().
+Description of wands should show how many times it has been used.

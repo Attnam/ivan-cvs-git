@@ -28,7 +28,7 @@ Dungeon 0;
 		FillSquare=ground,earth;
 
 		Size=64,36;
-		Rooms=5+rand%16;
+		Rooms=10+rand%21;
 		Items=10+rand%21;
 		GenerateMonsters=true;
 		ReCalculate=true;
@@ -94,7 +94,7 @@ Dungeon 0;
 
 	Level 4+rand%2;
 	{
-		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
+		Rooms=10+rand%21;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
 
@@ -129,7 +129,7 @@ Dungeon 0;
 	Level 2+rand%2;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
-		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
+		Rooms=10+rand%21;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		Room 1;
 		{
@@ -158,7 +158,7 @@ Dungeon 0;
 
 	Level 5+rand%4;
 	{
-		Rooms=5+rand%16;  /* Due to a bug in the recalculation code this must be repeated! */
+		Rooms=10+rand%21;  /* Due to a bug in the recalculation code this must be repeated! */
 
 		Room 1;
 		{
