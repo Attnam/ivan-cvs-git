@@ -764,7 +764,7 @@ class ITEM
   virtual std::string NamePlural() const { return "cheap copies of the left nut of Petrus"; }
   virtual long Score() const { return 1; }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
-  virtual ulong Price() const { return 500; }
+  virtual ulong Price() const { return 500; } 
  protected:
   virtual ushort StrengthModifier() const { return 50; }
 );
@@ -1553,5 +1553,48 @@ class ITEM
   virtual ushort GetFormModifier() const { return 40; }
   uchar LockType;
 );
+
+class ITEM
+(
+  shield,
+  item,
+  InitMaterials(new iron),
+  {  
+    SetSize(40);
+  },
+ public:
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "shield"; }
+  virtual float OfferModifier() const { return 0.4f; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4800; default: return 0; } }
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the shield can be calculated somehow
+ protected:
+  virtual ushort StrengthModifier() const { return 50; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32,336); }
+  virtual ushort GetFormModifier() const { return 30; } 
+);
+
+class ITEM
+(
+  cloak,
+  item,
+  GenerateCloakMaterials(),
+  {  
+    SetSize(220);
+  },
+ public:
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "cloak"; }
+  virtual float OfferModifier() const { return 0.4f; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 10000; default: return 0; } }
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the cloak can be calculated somehow
+  virtual void GenerateCloakMaterials();
+ protected:
+  virtual ushort StrengthModifier() const { return 30; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32,352); }
+  virtual ushort GetFormModifier() const { return 20; } 
+ 
+);
+
 #endif
 

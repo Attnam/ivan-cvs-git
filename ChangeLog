@@ -1,3 +1,8 @@
+2002-04-06 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+ 	* Main/Include/itemde.h: Added cloak and shield	(actually did this a week ago, but didn't commit)
+
+
 April 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Symbol.pcx: battle, tame, peaceful and hostile symbols added by Kahvi
@@ -18,7 +23,8 @@ April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Main/Include/materba.h: 
 	* Main/Source/materba.cpp: CanBeDigged now examines the StrengthValues of the materials.
 	* Main/Source/game.cpp: DrawPanel now draws Satiated and Bloated hunger states also and all hungerstate are calculated by character's GetHungerState function
-	
+
+
 April 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Item.pcx: shield, cloak, gauntlet, belt, amulet and ring added by Kahvi

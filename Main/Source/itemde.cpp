@@ -1397,3 +1397,13 @@ bool potion::HasBeenDippedInFountain(character* Dipper,fountain* Fountain)
   ChangeMaterial(1, new water);
   return true;
 }
+
+void cloak::GenerateCloakMaterials()
+{ 
+  switch(RAND() % 3)
+    {
+    case 0: InitMaterials(new expensivefabric); break;
+    case 1: InitMaterials(new leather); break;
+    case 2: InitMaterials(new cloth); break;
+    }
+}
