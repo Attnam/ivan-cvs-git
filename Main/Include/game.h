@@ -138,6 +138,7 @@ public:
 	static ulong CreateNewObjectID();
 	static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) --NextObjectID; }
 	static team* GetTeam(ushort Index) { return Team[Index]; }
+	static uchar GetTeams() { return Team.size(); }
 	static void Hostility(team*, team*);
 	static void CreateTeams();
 	static bool IsValidPos(vector2d);

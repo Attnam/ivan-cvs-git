@@ -41,6 +41,9 @@ character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, 
 
 character::~character()
 {
+	if(GetTeam())
+		GetTeam()->Remove(GetTeamIterator());
+
 	delete Stack;
 }
 
@@ -929,6 +932,9 @@ void character::Die(bool ForceMsg)
 	if(!game::GetInWilderness())
 		CreateCorpse();
 
+	if(GetTeam()->GetLeader() == this)
+		GetTeam()->SetLeader(0);
+
 	SetExists(false);
 
 	if(GetIsPlayer())
@@ -1088,7 +1094,6 @@ bool character::Talk()
 bool character::NOP()
 {
 	SetAgilityExperience(GetAgilityExperience() - 5);
-
 	return true;
 }
 
@@ -1446,7 +1451,7 @@ void character::Load(inputfile& SaveFile)
 
 	SaveFile >> TeamID;
 
-	Team = game::GetTeam(TeamID);
+	SetTeam(game::GetTeam(TeamID));
 
 	uchar Stacky;
 
@@ -2519,8 +2524,6 @@ void character::EndPolymorph()
 		game::SetPlayer(game::GetPlayerBackup());
 		game::SetPlayerBackup(0);
 
-		game::GetPlayer()->SetTeam(GetTeam());
-
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
 
@@ -2567,17 +2570,14 @@ void character::StateAutoDeactivation()
 	if(!StateIsActivated(CONSUMING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING) && !StateIsActivated(GOING))
 		return;
 
-	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),
-	{
-		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
-
-		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
-			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
-			{
-				DeActivateVoluntaryStates(Character->Name(DEFINITE) + " seems to be hostile");
-				return;
-			}
-	});
+	for(uchar c = 0; c < game::GetTeams(); ++c)
+		if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+			for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+				if((*i)->GetExists() && ((GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
+				{
+					DeActivateVoluntaryStates((*i)->Name(DEFINITE) + " seems to be hostile");
+					return;
+				}
 }
 
 void character::StruckByWandOfStriking()
@@ -2598,21 +2598,19 @@ bool character::CheckForEnemies()
 	character* NearestChar = 0;
 	ulong NearestDistance = 0xFFFFFFFF;
 
-	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
-	{
-		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter();
+	for(uchar c = 0; c < game::GetTeams(); ++c)
+		if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+			for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+				if((*i)->GetExists())
+				{
+					ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
-		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
-		{
-			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
-
-			if(ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3)))
-			{
-				NearestChar = Char;
-				NearestDistance = ThisDistance;
-			}
-		}
-	});
+					if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))
+					{
+						NearestChar = *i;
+						NearestDistance = ThisDistance;
+					}
+				}
 
 	if(NearestChar)
 	{
@@ -2999,7 +2997,7 @@ void character::Hostility(character* Enemy)
 		if(Enemy->GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s becomes enraged.", Enemy->CNAME(DEFINITE));
 
-		Enemy->SetTeam(game::GetTeam(1));
+		Enemy->ChangeTeam(game::GetTeam(1));
 	}
 }
 
@@ -3119,4 +3117,20 @@ bool character::ShowConfigScreen()
 {
 	configuration::ShowConfigScreen();
 	return true;
+}
+
+void character::SetTeam(team* What)
+{
+	Team = What;
+
+	SetTeamIterator(GetTeam()->Add(this));
+}
+
+void character::ChangeTeam(team* What)
+{
+	GetTeam()->Remove(GetTeamIterator());
+
+	Team = What;
+
+	SetTeamIterator(GetTeam()->Add(this));
 }

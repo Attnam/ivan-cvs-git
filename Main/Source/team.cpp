@@ -6,7 +6,6 @@
 #include "message.h"
 #include "rand.h"
 
-
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {
 	this->Relation[AnotherTeam->GetID()] = AnotherTeam->Relation[GetID()] = Relation;

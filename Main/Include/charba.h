@@ -28,8 +28,9 @@
 #define DIGGING			4
 #define GOING			5
 
-
 #define CHARACTER_OUTLINE_COLOR	BLUE
+
+#include <list>
 
 #include "game.h"
 #include "object.h"
@@ -216,7 +217,8 @@ public:
 	virtual void StruckByWandOfStriking();
 	virtual void StateAutoDeactivation();
 	virtual team* GetTeam() const { return Team; }
-	virtual void SetTeam(team* What) { Team = What; }
+	virtual void SetTeam(team*);
+	virtual void ChangeTeam(team*);
 	virtual bool RestUntilHealed();
 	virtual void RestHandler();
 	virtual void EndRest();
@@ -258,6 +260,8 @@ public:
 	virtual void EndGoing();
 	virtual bool Go();
 	virtual bool ShowConfigScreen();
+	virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
+	virtual void SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -315,12 +319,12 @@ protected:
 		struct going
 		{
 			uchar Direction;
-			//bool FirstSquare;
 			bool WalkingInOpen;
 		} Going;
 	} StateVariables;
 	ulong Money;
 	uchar HomeRoom;
+	std::list<character*>::iterator TeamIterator;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

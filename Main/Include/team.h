@@ -8,6 +8,7 @@
 #define FRIEND 2
 
 #include <map>
+#include <list>
 
 #include "typedef.h"
 
@@ -29,9 +30,13 @@ public:
 	void Load(inputfile&);
 	void SetLeader(character* What) { Leader = What; }
 	character* GetLeader() const { return Leader; }
+	std::list<character*>::iterator Add(character* Char) { return Member.insert(Member.end(), Char); }
+	void Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
+	std::list<character*>& GetMember() { return Member; }
 private:
 	character* Leader;
 	std::map<ulong, uchar> Relation;
+	std::list<character*> Member;
 	ushort ID;
 };
 

@@ -187,7 +187,7 @@ void dulcis::PrayGoodEffect()
 					else
 						ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CNAME(DEFINITE));
 
-					Char->SetTeam(game::GetPlayer()->GetTeam());
+					Char->ChangeTeam(game::GetPlayer()->GetTeam());
 				}
 				else
 					ADD_MESSAGE("%s resists its charming call.", Char->CNAME(DEFINITE));

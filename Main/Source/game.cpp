@@ -233,6 +233,8 @@ void game::DeInit()
 	for(c = 0; c < Dungeon.size(); ++c)
 		delete Dungeon[c];
 
+	objectpool::Be(); // this removes dirt from the last be
+
 	for(c = 0; c < Team.size(); ++c)
 		delete GetTeam(c);
 

@@ -113,7 +113,7 @@ bool ennerbeast::Hit(character*)
 	if(RAND() % 2) sprintf(Message,"The Enner Beast yells: UGH UGHAaaa!");
 	else sprintf(Message, "The Enner Beast yells: Uga Ugar Ugade Ugat!");
 
-	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 100,
+	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
@@ -409,7 +409,7 @@ bool dog::Catches(item* Thingy, float)
 				if(GetLevelSquareUnder()->CanBeSeen())
 					ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
-				SetTeam(game::GetPlayer()->GetTeam());
+				ChangeTeam(game::GetPlayer()->GetTeam());
 			}
 		else
 			if(GetIsPlayer())
@@ -1029,7 +1029,7 @@ void ivan::BeTalkedTo(character* Talker)
 	else
 	{
 		ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. Ivan go with you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
-		SetTeam(Talker->GetTeam());
+		ChangeTeam(Talker->GetTeam());
 	}
 }
 
@@ -1094,7 +1094,7 @@ void slave::BeTalkedTo(character* Talker)
 			{
 				Talker->SetMoney(Talker->GetMoney() - 50);
 				Master->SetMoney(Master->GetMoney() + 50);
-				SetTeam(Talker->GetTeam());
+				ChangeTeam(Talker->GetTeam());
 				SetHomeRoom(0);
 			}
 		}
