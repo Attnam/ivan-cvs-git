@@ -3753,6 +3753,28 @@ void ostrich::VirtualConstructor(bool)
   HasBeenOnLandingSite = false;
 }
 
+bool humanoid::CheckTalk()
+{
+  if(!character::CheckTalk())
+    return false;
+  if(!GetHead())
+    {
+      ADD_MESSAGE("You need a head for talking.");
+      return false;
+    }
+  return true;
+}
+
+bool angel::CanCreateBodyPart(ushort C) const
+{
+  return C == TORSO_INDEX || C == HEAD_INDEX || C == RIGHT_ARM_INDEX || C == LEFT_ARM_INDEX;
+}
+
+bool genie::CanCreateBodyPart(ushort C) const
+{
+  return C == TORSO_INDEX || C == HEAD_INDEX || C == RIGHT_ARM_INDEX || C == LEFT_ARM_INDEX;
+}
+
 bool bananagrower::HandleCharacterBlockingTheWay(character* Char)
 {
   return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char));
@@ -3832,3 +3854,4 @@ void encourager::VirtualConstructor(bool)
   humanoid::VirtualConstructor(Load);
   LastHit = 0;
 }
+

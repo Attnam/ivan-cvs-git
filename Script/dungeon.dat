@@ -804,7 +804,7 @@ Dungeon ATTNAM;
 				Types
 				{
 					# = 0;
-					P = petrus;
+					P = petrus { IsMaster = true; }
 					g = guard(VETERAN);
 					e = guard(ELITE);
 					m = guard(MASTER);
@@ -1165,7 +1165,7 @@ Dungeon ATTNAM;
 
 			Square, Pos 3, 2;
 			{
-				Character = smith;
+				Character = smith { Team = 6; IsMaster = true; }
 			}
 		}
 
@@ -1286,6 +1286,8 @@ Dungeon NEW_ATTNAM;
 				{
 					_ = 0;
 					# = 0;
+					I = imperialist { Team = COLONIST_TEAM; IsMaster = true; }
+					g = guard(ROOKIE) { Team = COLONIST_TEAM; }
 					I = imperialist { Team = COLONIST_TEAM; }
 					f = femaleslave(NEW_ATTNAM);
 					g = guard(ROOKIE) { Team = COLONIST_TEAM; }

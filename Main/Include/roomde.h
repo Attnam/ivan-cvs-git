@@ -26,7 +26,6 @@ class ROOM
   virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual bool AllowSpoil() const { return false; }
 );
 
@@ -57,9 +56,8 @@ class ROOM
   virtual bool Dip(character*) const;
   virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual bool AllowSpoil() const { return false; }
-  virtual void DestroyTerrain(character*, olterrain*);
+  virtual ushort GetGodRelationAdjustment() const { return 150; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;
@@ -77,7 +75,6 @@ class ROOM
   virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual bool CheckDestroyTerrain(character*, olterrain*);
 );
 
 class ROOM

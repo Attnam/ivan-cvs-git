@@ -2496,7 +2496,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to free yourself from %s.", CHAR_NAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_PERSONAL_PRONOUN, CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
       return true;
     }

@@ -3,6 +3,8 @@
 #include "error.h"
 #include "charde.h"
 #include "save.h"
+#include "godba.h"
+#include "message.h"
 
 void room::Save(outputfile& SaveFile) const
 {
@@ -42,4 +44,24 @@ void room::DestroyTerrain(character* Who, olterrain*)
 {
   if(Master)
     Who->Hostility(Master);
+  if(DivineMaster)
+    game::GetGod(DivineMaster)->AdjustRelation(GetGodRelationAdjustment());
+}
+
+/* returns true if player agrees to continue */
+
+bool room::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
+{
+  if(!Master || Infidel == Master || Master->GetRelation(Infidel) == HOSTILE)
+    return true;
+
+  ADD_MESSAGE("%s might not like this.", Master->CHAR_NAME(DEFINITE));
+
+  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
+    {
+      DestroyTerrain(Infidel, Terrain);
+      return true;
+    }
+  else
+    return false; 
 }

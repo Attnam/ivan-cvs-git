@@ -1,3 +1,12 @@
+November 28 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Bugs corrected:
+	- Headless player zombie + Chat.
+	- Seges and others may give genies and angels a groin and legs.
+	- Teleportation state works in the wilderness.
+	- "0 scrolls of wishing dropped"
+	- Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
+	- The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
+	
 November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* A lethal bug in the banana grower encourager's and a minor one in the ostriches'

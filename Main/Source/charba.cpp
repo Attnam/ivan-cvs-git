@@ -458,9 +458,10 @@ bool character::Drop()
 
   if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, ToDrop[0], ToDrop.size()))
     {
+      if(ToDrop.empty())
+	return false;
       for(ushort c = 0; c < ToDrop.size(); ++c)
 	ToDrop[c]->MoveTo(GetStackUnder());
-
       ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).c_str());
       DexterityAction(1);
       return true;
@@ -1105,9 +1106,8 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
 
 bool character::Talk()
 {
-  if(!CanTalk())
+  if(!CheckTalk())
     {
-      ADD_MESSAGE("This race does not know the art of talking.");
       return false;
     }
 
@@ -1820,7 +1820,11 @@ bool character::Pray()
   game::SetStandardListAttributes(Panthenon);
   Panthenon.AddFlags(SELECTABLE);
   ushort Select = Panthenon.Draw();
-
+  if(Select == LIST_WAS_EMPTY)
+    {
+      ADD_MESSAGE("You do not know any gods.");
+      return false;
+    }
   if(Select & FELIST_ERROR_BIT)
     return false;
   else
@@ -4974,7 +4978,7 @@ void character::AttachBodyPart(bodypart* BodyPart)
 bool character::HasAllBodyParts() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c))
+    if(!GetBodyPart(c) && CanCreateBodyPart(c))
       return false;
 
   return true;
@@ -4985,7 +4989,7 @@ bodypart* character::GenerateRandomBodyPart()
   std::vector<ushort> NeededBodyParts;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c))
+    if(!GetBodyPart(c) && CanCreateBodyPart(c))
       NeededBodyParts.push_back(c);
 
   if(NeededBodyParts.empty())
@@ -5160,7 +5164,7 @@ void character::PrintEndTeleportMessage() const
 
 void character::TeleportHandler()
 {
-  if(!(RAND() % 1500))
+  if(!(RAND() % 1500) && !game::IsInWilderness())
     TeleportRandomly();
 }
 
@@ -6261,3 +6265,14 @@ material* character::CreateBodyPartMaterial(ushort, ulong Volume) const
 {
   return MAKE_MATERIAL(GetFleshMaterial(), Volume);
 }
+
+bool character::CheckTalk()
+{
+  if(!CanTalk())
+    {
+      ADD_MESSAGE("This monster does not know the art of talking."); 
+      return false;
+    }
+  return true;
+}
+

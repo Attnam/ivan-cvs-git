@@ -731,6 +731,8 @@ class character : public entity, public id
   virtual void AddConfuseHitMessage() const;
   virtual item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
   virtual bool EquipsSomething(bool (*)(const item*, const character*) = 0);
+  virtual bool CheckTalk();
+  virtual bool CanCreateBodyPart(ushort) const { return false; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
   virtual std::string& ProcessMessage(std::string&) const;
  protected:

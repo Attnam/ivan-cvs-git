@@ -149,6 +149,8 @@ class ABSTRACT_CHARACTER
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
   virtual void AddAttributeInfo(std::string&) const;
+  virtual bool CheckTalk();
+  virtual bool CanCreateBodyPart(ushort) { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -624,6 +626,7 @@ class CHARACTER
   virtual bool BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
   virtual ushort GetAttribute(ushort) const;
   virtual ulong GetBaseEmitation() const;
+  virtual bool CanCreateBodyPart(ushort) const;
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;
@@ -675,6 +678,7 @@ class CHARACTER
   virtual void CreateBodyParts(ushort);
   virtual bool BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
   virtual ushort GetAttribute(ushort) const;
+  virtual bool CanCreateBodyPart(ushort) const;
  protected:
   virtual void CreateCorpse() { SendToHell(); }
 );

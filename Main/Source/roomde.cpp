@@ -560,67 +560,6 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
     }
 }
 
-/* returns true if player agrees to continue */
-
-bool library::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
-{ 
-  if(!Master || Infidel == Master || Master->GetRelation(Infidel) == HOSTILE || !Terrain->CanBeSeenBy(Master))
-    return true;
-
-  ADD_MESSAGE("The librarian might not like this.");
-
-  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
-    {
-      ADD_MESSAGE("\"You book worm!\"");
-      DestroyTerrain(Infidel, Terrain);
-      return true;
-    }
-  else
-    return false; 
-}
-
-/* returns true if player agrees to continue */
-
-bool cathedral::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
-{
-  if(game::GetTeam(ATTNAM_TEAM)->GetRelation(Infidel->GetTeam()) == HOSTILE)
-    return true;
-
-  ADD_MESSAGE("This is prohibited in the cathedral.");
-
-  if(game::BoolQuestion("Are you sure? [y/N]"))
-    {
-      DestroyTerrain(Infidel, Terrain);
-      return true;
-    }
-  else
-    return false; 
-}
-
-/* returns true if player agrees to continue */
-
-bool shop::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
-{
-  if(!Master || Infidel == Master || Master->GetRelation(Infidel) == HOSTILE || !Terrain->CanBeSeenBy(Master))
-    return true;
-
-  ADD_MESSAGE("The shopkeeper might not like this.");
-
-  if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
-    {
-      ADD_MESSAGE("\"You communist!\"");
-      DestroyTerrain(Infidel, Terrain);
-      return true;
-    }
-  else
-    return false; 
-}
-
-void cathedral::DestroyTerrain(character* Who, olterrain*)
-{
-  Who->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));  
-}
-
 bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
 {
   if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Hungry->GetTeam()) == HOSTILE)
