@@ -32,7 +32,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "wskill.h"
 #include "materia.h"
 #include "bitmap.h"
-#include "lterra.h"
+#include "lterras.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

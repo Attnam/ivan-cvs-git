@@ -317,6 +317,7 @@ class CHARACTER
   virtual bool Hit(character*, bool = false);
   virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual bool IsAnimated() const { return true; }
+  virtual bool MoveRandomly();
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
 );
@@ -363,4 +364,14 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool = false);
 );
+
+class CHARACTER
+(
+  magpie,
+  nonhumanoid,
+ public:
+  virtual void GetAICommand();
+  virtual bool IsRetreating() const;
+);
+
 #endif

@@ -159,6 +159,7 @@ class material
   virtual void ResetSpoiling() { }
   bool CanBeEatenByAI(const character*) const;
   virtual void SetSpoilCounter(ushort) { }
+  virtual bool IsStupidToConsume();
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

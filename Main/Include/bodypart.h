@@ -448,6 +448,7 @@ class ITEM
   virtual uchar GetSpoilLevel() const;
   virtual bool Consume(character*, long);
   virtual material* GetMaterial(ushort) const;
+  virtual bool IsStupidToConsume() const;
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual void GenerateMaterials() { }

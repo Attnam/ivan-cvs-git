@@ -385,6 +385,8 @@ class item : public object
   virtual bool AllowAlphaEverywhere() const { return false; }
   virtual uchar GetAttachedGod() const;
   virtual ulong GetTruePrice() const;
+  virtual bool IsSparkling() const;
+  virtual bool IsStupidToConsume() const;
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

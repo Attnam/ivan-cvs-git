@@ -1142,6 +1142,11 @@ flesh
 		NameStem = "moose flesh";
 		AttachedGod = MORTIFER;
 	}
+	Config MAGPIE_FLESH;
+	{
+		NameStem = "moose flesh";
+		AttachedGod = MORTIFER;
+	}
 }
 
 powder

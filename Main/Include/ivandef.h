@@ -222,9 +222,9 @@
 #define CENTER 4
 #define HIDDEN 5
 
-#define HOSTILE 0
-#define UNCARING 1
-#define FRIEND 2
+#define HOSTILE 1
+#define UNCARING 2
+#define FRIEND 4
 
 #define MARTIAL_SKILL_CATEGORIES 3
 #define WEAPON_SKILL_CATEGORIES 11

@@ -1607,7 +1607,7 @@ belt /* armor-> */
 	WeaponCategory = WHIPS;
 	Category = BELT;
 	DefaultMainVolume = 250;
-	StrengthModifier = 75;
+	StrengthModifier = 100;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
 	MainMaterialConfig = { 4, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }

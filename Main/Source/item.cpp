@@ -754,3 +754,18 @@ ulong item::GetTruePrice() const
   return Max(GetPrice(), GetMaterialPrice());
 }
 
+bool item::IsSparkling() const
+{
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      {
+	if(GetMaterial(c)->IsSparkling())
+	  return true;
+      }
+  return false;
+}
+
+bool item::IsStupidToConsume() const
+{
+  return GetConsumeMaterial()->IsStupidToConsume();
+}

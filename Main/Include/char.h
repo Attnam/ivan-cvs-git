@@ -698,8 +698,9 @@ class character : public entity, public id
   bool AllowParasitized() const { return IsAlive(); }
   virtual ushort GetSpecies() const { return 0; }
   virtual void SortAllItems(std::vector<item*>&, const character* = 0, bool (*)(const item*, const character*) = 0);
-  virtual character* GetRandomNeighbourEnemy() const;
+  virtual character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
   DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
+  virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -1271,6 +1271,7 @@ dog
 	CWeaponSkillHits == 20;
 	FleshMaterial = DOG_FLESH;
 	AttachedGod = SILVA;
+	Alias == "dog";
 }
 
 spider
@@ -3163,6 +3164,7 @@ floatingeye
 	UsesNutrition = false;
 	AttackWisdomLimit = 10;
 	AttachedGod = LEGIFER;
+	ClassStates == SEARCHING;
 }
 
 eddy
@@ -3348,4 +3350,35 @@ twoheadedmoose
 	FleshMaterial = MOOSE_FLESH;
 	DeathMessage = "@Dd collapses and dies.";
 	AttachedGod = SCABIES;
+}
+
+magpie
+{
+	DefaultArmStrength = 2;
+	DefaultAgility = 40;
+	DefaultEndurance = 10;
+	DefaultPerception = 15;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
+	DefaultCharisma = 6;
+	DefaultMana = 0;
+	StandVerb = "flying";
+	CanOpen = false;
+	CanFly = true;
+	TotalVolume = 1000;
+	TorsoBitmapPos = 560, 0;
+	HostileReplies == "@Dd peeps evilly.";
+	FriendlyReplies == "@Dd chirps happily.";
+	TotalSize = 20;
+	SkinColor = rgb16(64, 64, 64);
+	NameSingular = "magpie";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 150;
+	CanBeGenerated = true;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 20;
+	PanicLevel = 75;
+	FleshMaterial = MAGPIE_FLESH;
+	DangerModifier = 50;
+	AttachedGod = CLEPTIA;
 }

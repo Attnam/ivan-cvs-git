@@ -1074,7 +1074,11 @@ bool floatingeye::Hit(character* Enemy, bool)
 ushort floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
   if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(150 + RAND() % 150)) /* Changes for fainting 2 out of 3 */
-    return HAS_FAILED;
+    {
+      if(!Enemy->IsPlayer())
+	Enemy->EditExperience(WISDOM, 100);
+      return HAS_FAILED;
+    }
   else
     return nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
 }
@@ -1270,9 +1274,65 @@ void ghost::GetAICommand()
 bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
 {
   nonhumanoid::Hit(Enemy, ForceHit);
-  character* ToBeHit = GetRandomNeighbourEnemy();
+  character* ToBeHit = GetRandomNeighbour(HOSTILE);
   if(ToBeHit)
     nonhumanoid::Hit(ToBeHit, ForceHit);
 
   return true;
 }
+
+bool magpie::IsRetreating() const
+{
+  if(StateIsActivated(PANIC))
+    return true;
+
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    {
+      if((*i)->IsSparkling())
+	return true;
+    }
+  return false;
+}
+
+void magpie::GetAICommand()
+{
+  character* Char = GetRandomNeighbour();
+  if(Char)
+    {
+      std::vector<item*> Sparkling;
+      for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
+	{
+	  if((*i)->IsSparkling() && !(MakesBurdened((*i)->GetWeight())))
+	    Sparkling.push_back(*i);
+	}
+      if(!Sparkling.empty())
+	{
+	  item* ToSteal = Sparkling[RAND() % Sparkling.size()];
+	  ToSteal->RemoveFromSlot();
+	  GetStack()->AddItem(ToSteal);
+	  if(Char->IsPlayer())
+	    {
+	      ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+	    }
+	  EditAP(-500);
+	  return;
+	}
+    }
+  nonhumanoid::GetAICommand();
+}
+
+
+bool eddy::MoveRandomly()
+{
+  if(!(RAND() % 500))
+    {
+      decoration* Couch = new decoration(COUCH);
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s spits out %s.", CHAR_NAME(DEFINITE), Couch->CHAR_NAME(INDEFINITE));
+      GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Couch);
+      return true;
+    }
+  else
+    return character::MoveRandomly();
+}
+

@@ -188,6 +188,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   uchar Dir = Type == BITE_ATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = GetDodgeValue();
 
+  if(!Enemy->IsPlayer() && GetAttackWisdomLimit() != NO_LIMIT)
+    Enemy->EditExperience(WISDOM, 100);
+
   if(!Enemy->CanBeSeenBy(this))
     ToHitValue *= 2;
 
@@ -1739,7 +1742,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	  BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	}
 
-      if(!StateIsActivated(PANIC))
+      if(!IsRetreating())
 	WayPoint = NearestChar->GetPos();
       else
 	WayPoint = (GetPos() << 1) - NearestChar->GetPos();
@@ -3466,13 +3469,13 @@ void character::BeginTemporaryState(ulong State, ushort Counter)
   if(!Counter)
     return;
 
-  ushort Index;
-
+  ulong Index;
+  
   if(State == POLYMORPHED)
     ABORT("No Polymorphing with BeginTemporaryState!");
 
   for(Index = 0; Index < STATES; ++Index)
-    if(1 << Index == State)
+    if(1UL << Index == State)
       break;
 
   if(Index == STATES)
@@ -4631,6 +4634,10 @@ bool character::TryToConsume(item* Item)
 {
   if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
     {
+      if(Item->IsStupidToConsume())
+	{
+	  EditExperience(WISDOM, 200);
+	}
       ConsumeItem(Item);
       return true;
     }
@@ -5267,7 +5274,7 @@ void character::ParasitizedHandler()
 
 bool character::CanFollow() const
 {
-  return CanWalk() && !StateIsActivated(PANIC);
+  return CanWalk() && !IsRetreating();
 }
 
 std::string character::GetKillName() const
@@ -5473,7 +5480,7 @@ void character::SearchingHandler()
 }
 
 // surprisingly returns 0 if fails
-character* character::GetRandomNeighbourEnemy() const
+character* character::GetRandomNeighbour(uchar RelationFlags) const
 {
   std::vector<character*> Chars;
   character* Char;
@@ -5484,7 +5491,7 @@ character* character::GetRandomNeighbourEnemy() const
       if(LSquare) 
 	{
 	  Char = LSquare->GetCharacter();
-	  if(Char && GetRelation(Char) == HOSTILE)
+	  if(Char && (GetRelation(Char) & RelationFlags))
 	    Chars.push_back(Char);
 	}
     }
@@ -5493,3 +5500,5 @@ character* character::GetRandomNeighbourEnemy() const
   else
     return 0;
 }
+
+

@@ -3137,3 +3137,6 @@ void zombie::GetAICommand()
     }
   humanoid::GetAICommand();
 }
+
+
+

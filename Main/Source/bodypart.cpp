@@ -2520,3 +2520,15 @@ uchar corpse::GetArticleMode() const
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
 
+
+bool corpse::IsStupidToConsume() const
+{
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsStupidToConsume())
+	return true;
+    }
+  return false;
+}

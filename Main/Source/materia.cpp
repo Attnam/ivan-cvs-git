@@ -192,3 +192,8 @@ bool material::CanBeEatenByAI(const character* Eater) const
 {
   return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() && !GetSpoilLevel();
 }
+
+bool material::IsStupidToConsume()
+{
+  return GetConsumeWisdomLimit() != NO_LIMIT;
+}
