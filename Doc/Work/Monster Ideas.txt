@@ -79,3 +79,7 @@ Monkey
 Eddies in space-time continuum
 
        These horrible "creatures" teleport the player randomly around and sometimes create weird couches. 
+
+Mutated giant mushroom
+	
+	Most of the time stand idle and sometimes teleport from place to place. Sometimes shoot spores at player

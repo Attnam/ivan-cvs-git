@@ -391,3 +391,5 @@ Using sickle against plants should yield a bonus.
 "Select the direction you wish to enter Attnam from"
 Petrus should offer a small meal for player when he first visits him.
 Food in can's should spoil _much_ slower
+Mushrooms in forest. Cause odd effects when eaten.
+Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)

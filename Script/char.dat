@@ -1717,9 +1717,9 @@ zombie
 {
 	DefaultArmStrength = 12;
 	DefaultLegStrength = 12;
-	DefaultDexterity = 5;
-	DefaultAgility = 5;
-	DefaultEndurance = 7;
+	DefaultDexterity = 3;
+	DefaultAgility = 4;
+	DefaultEndurance = 10;
 	DefaultPerception = 12;
 	DefaultIntelligence = 4;
 	DefaultWisdom = 4;

@@ -3912,7 +3912,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	  return true;
 	}
       else if(Damager && Damager->IsPlayer())
-	ADD_MESSAGE("THUMB!");
+	ADD_MESSAGE("THUMP!");
     }
 
   return false;
