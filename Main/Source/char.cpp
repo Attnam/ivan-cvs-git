@@ -1776,7 +1776,7 @@ void character::GetPlayerCommand()
       for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 	if(Key == game::GetMoveCommandKey(c))
 	  {
-	    HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), false, game::PlayerIsRunning());
+	    HasActed = TryMove(ApplyStateModification(game::GetMoveVector(c)), true, game::PlayerIsRunning());
 	    ValidKeyPressed = true;
 	  }
 
