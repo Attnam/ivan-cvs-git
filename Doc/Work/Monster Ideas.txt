@@ -344,3 +344,5 @@ Game abuser
 	Stupid monster who has a lair on a secret level where he uses
 	mushrooms, banana peels, broken bottles, gods etc. to gain infinite
 	exp.
+
+Panda

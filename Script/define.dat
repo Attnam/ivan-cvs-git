@@ -43,8 +43,6 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 17
-
 #define POLYMORPHED 1
 #define HASTE 2
 #define SLOW 4
@@ -63,6 +61,7 @@
 #define PARASITIZED 32768
 #define SEARCHING 65536
 #define GAS_IMMUNITY 131072
+#define LEVITATION 262144
 
 #define HEAD 1
 #define TORSO 2
@@ -326,6 +325,7 @@
 #define VOMIT (LIQUID_ID + 14)
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
 #define SULPHURIC_ACID (LIQUID_ID + 16)
+#define DOG_DROOL (LIQUID_ID + 17)
 
 #define FLESH_ID (4096 * 5)
 

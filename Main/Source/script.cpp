@@ -206,8 +206,6 @@ void posscript::Load(inputfile& SaveFile)
   SaveFile >> Random;
 }
 
-materialscript::materialscript() : INIT(Volume, 0) { }
-
 void materialscript::InitDataMap()
 {
   INIT_ENTRY(Volume);
@@ -221,12 +219,17 @@ void materialscript::ReadFrom(inputfile& SaveFile)
   if(Word == "=")
     SaveFile.ReadWord(Word);
 
-  valuemap::const_iterator i = game::GetGlobalValueMap().find(Word);
-
-  if(i != game::GetGlobalValueMap().end())
-    Config = i->second;
+  if(Word == "0")
+    Config = 0;
   else
-    ABORT("Unconfigured material script detected at line %d!", SaveFile.TellLine());
+    {
+      valuemap::const_iterator i = game::GetGlobalValueMap().find(Word);
+
+      if(i != game::GetGlobalValueMap().end())
+	Config = i->second;
+      else
+	ABORT("Unconfigured material script detected at line %d!", SaveFile.TellLine());
+    }
 
   if(SaveFile.ReadWord() != "{")
     return;
@@ -238,19 +241,19 @@ void materialscript::ReadFrom(inputfile& SaveFile)
 
 material* materialscript::Instantiate() const
 {
-  return MAKE_MATERIAL(Config, GetVolume());
+  return MAKE_MATERIAL(Config, GetVolume() ? GetVolume()->Randomize() : 0);
 }
 
 void materialscript::Save(outputfile& SaveFile) const
 {
   script::Save(SaveFile);
-  SaveFile << Config;
+  SaveFile << (ushort)Config;
 }
 
 void materialscript::Load(inputfile& SaveFile)
 {
   script::Load(SaveFile);
-  SaveFile >> Config;
+  SaveFile >> (ushort&)Config;
 }
 
 void basecontentscript::InitDataMap()
@@ -294,7 +297,13 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 	}
     }
 
-  if(Word == "Random")
+  if(Word == "NaturalMaterialForm")
+    {
+      Random = false;
+      ContentType = NATURAL_MATERIAL_FORM;
+      SaveFile.ReadWord(Word);
+    }
+  else if(Word == "Random")
     {
       Random = true;
       SaveFile.ReadWord(Word);
@@ -480,7 +489,6 @@ contentscript<item>::contentscript<item>()
   INIT(Chance, 100),
   INIT(ConfigFlags, 0),
   INIT(SpoilPercentage, 0),
-  INIT(Times, 1),
   INIT(Enchantment, 0),
   INIT(IsActive, false)
 { }
@@ -488,6 +496,7 @@ contentscript<item>::contentscript<item>()
 void contentscript<item>::InitDataMap()
 {
   INIT_ENTRY(ItemsInside);
+  INIT_ENTRY(Times);
   INIT_ENTRY(MinPrice);
   INIT_ENTRY(MaxPrice);
   INIT_ENTRY(Team);
@@ -496,9 +505,21 @@ void contentscript<item>::InitDataMap()
   INIT_ENTRY(Chance);
   INIT_ENTRY(ConfigFlags);
   INIT_ENTRY(SpoilPercentage);
-  INIT_ENTRY(Times);
   INIT_ENTRY(Enchantment);
   INIT_ENTRY(IsActive);
+}
+
+item* contentscript<item>::InstantiateBasedOnMaterial(int MaterialConfig, int SpecialFlags) const
+{
+  if(ContentType == NATURAL_MATERIAL_FORM)
+    {
+      const materialscript* MainMaterial = GetMainMaterial();
+      long Volume = MainMaterial && MainMaterial->GetVolume()
+		  ? MainMaterial->GetVolume()->Randomize() : 0;
+      return material::CreateNaturalForm(MaterialConfig, Volume);
+    }
+  else
+    return Instantiate(SpecialFlags);
 }
 
 item* contentscript<item>::Instantiate(int SpecialFlags) const

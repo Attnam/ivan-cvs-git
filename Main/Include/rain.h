@@ -11,7 +11,7 @@ class rain : public entity
   /* Come To The Dark Side */
   rain* Next;
  public:
-  rain() : entity(HAS_BE), Next(0), Drops(0), OwnLiquid(false) { }
+  rain() : entity(HAS_BE), Next(0), Drop(0), Drops(0), OwnLiquid(false) { }
   rain(liquid*, lsquare*, vector2d, int, bool);
   ~rain();
   virtual void Be();

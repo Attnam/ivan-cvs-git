@@ -205,6 +205,14 @@ INST_ADD_MEMBER(olterrain, long);
 INST_ADD_MEMBER(olterrain, vector2d);
 INST_ADD_MEMBER(olterrain, festring);
 INST_ADD_MEMBER(olterrain, fearray<long>);
+INST_ADD_MEMBER(olterrain, fearray<contentscript<item> >);
+
+INST_ADD_MEMBER(material, bool);
+INST_ADD_MEMBER(material, int);
+INST_ADD_MEMBER(material, long);
+INST_ADD_MEMBER(material, color24);
+INST_ADD_MEMBER(material, festring);
+INST_ADD_MEMBER(material, contentscript<item>);
 
 #define ADD_MEMBER(data) AddMember(DataBaseMemberMap, #data, &database::data);
 
@@ -428,7 +436,6 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BeltBitmapPos);
   ADD_MEMBER(GauntletBitmapPos);
   ADD_MEMBER(BootBitmapPos);
-  ADD_MEMBER(GrantsLevitation);
   ADD_MEMBER(HasSecondaryMaterial);
   ADD_MEMBER(AllowEquip);
   ADD_MEMBER(ReadDifficulty);
@@ -484,6 +491,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(CreateWindowConfigurations);
   ADD_MEMBER(WindowBitmapPos);
   ADD_MEMBER(ShowThingsUnder);
+  ADD_MEMBER(LeftOverItems);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()
@@ -528,6 +536,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsBlood);
   ADD_MEMBER(Acidicity);
   ADD_MEMBER(IsImmuneToAcid);
+  ADD_MEMBER(NaturalForm);
 }
 
 template <class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

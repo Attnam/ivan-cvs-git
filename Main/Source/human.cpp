@@ -1974,7 +1974,7 @@ bool humanoid::CanWield() const
 
 bool humanoid::CheckBalance(double KickDamage)
 {
-  return !(GetMoveType() & WALK) || !KickDamage || IsStuck() || (GetLegs() != 1 && KickDamage * 10 < RAND() % GetSize());
+  return !CanMove() || IsStuck() || !KickDamage || (GetLegs() != 1 && !(GetMoveType() & FLY) && KickDamage * 5 < RAND() % GetSize());
 }
 
 long humanoid::GetMoveAPRequirement(int Difficulty) const
@@ -3921,6 +3921,9 @@ void necromancer::RaiseSkeleton()
 
 void humanoid::StayOn(liquid* Liquid)
 {
+  if(GetMoveType() & FLY)
+    return;
+
   bool Standing = false;
 
   if(GetRightLeg())

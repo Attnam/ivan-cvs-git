@@ -196,13 +196,14 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       switch(Event->key.keysym.sym)
 	{
 	case SDLK_RETURN:
+	case SDLK_KP_ENTER:
 	  if(Event->key.keysym.mod & KMOD_ALT)
 	    {
 	      graphics::SwitchMode();
 	      return;
 	    }
 	  else
-	    KeyPressed = Event->key.keysym.unicode;
+	    KeyPressed = KEY_ENTER;//Event->key.keysym.unicode;
 
 	  break;
 	case SDLK_DOWN:
@@ -238,7 +239,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	  KeyPressed = KEY_PAGE_DOWN + 0xE000;
 	  break;
 	case SDLK_KP5:
-	  KeyPressed = KEY_NUMPAD_5;
+	  KeyPressed = '.';
 	  break;
 	case SDLK_SYSREQ:
 	case SDLK_PRINT:
@@ -254,7 +255,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	      KeyPressed = '\177';
 	      break;
 	    }
-
 	default:
 	  KeyPressed = Event->key.keysym.unicode;
 

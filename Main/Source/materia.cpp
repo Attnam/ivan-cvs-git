@@ -284,3 +284,25 @@ void materialdatabase::InitDefaults(const materialprototype* NewProtoType, int N
   DigProductMaterial = Config = NewConfig;
   IsAbstract = true; // dummy value for configcontainer
 }
+
+/*material* material::CloneDigMaterial(long Volume) const
+{
+  if(GetDigProductMaterial() == GetConfig())
+    return Clone(Volume);
+  else
+    return MAKE_MATERIAL(GetDigProductMaterial(), Volume);
+}*/
+
+item* material::CreateNaturalForm(int Config, long Volume)
+{
+  item* Item = GetDataBase(Config)->NaturalForm.Instantiate(NO_MATERIALS|NO_PIC_UPDATE);
+  Item->InitMaterials(MAKE_MATERIAL(Config, Volume));
+  return Item;
+}
+
+item* material::CreateNaturalForm(long Volume) const
+{
+  item* Item = GetNaturalForm().Instantiate(NO_MATERIALS|NO_PIC_UPDATE);
+  Item->InitMaterials(Clone(Volume));
+  return Item;
+}

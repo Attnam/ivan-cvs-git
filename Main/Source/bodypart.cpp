@@ -47,13 +47,13 @@ int leftleg::GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
 
 vector2d eddytorso::GetBitmapPos(int Frame) const { return torso::GetBitmapPos(Frame) + vector2d((Frame&0x6) << 3, 0); }
 
-vector2d mommotorso::GetBitmapPos(int Frame) const { return Frame >> 4 ? torso::GetBitmapPos(Frame) : torso::GetBitmapPos(Frame) + vector2d((Frame&0xE) << 3, 0); }
-
 head* corpse::Behead() { return Deceased->Behead(); }
 bool corpse::CanBeCloned() const { return GetDeceased()->CanBeCloned(); }
 int corpse::GetAttachedGod() const { return GetDeceased()->GetTorso()->GetAttachedGod(); }
 
 vector2d ennerhead::GetBitmapPos(int Frame) const { return Frame & 16 ? head::GetBitmapPos(Frame) : head::GetBitmapPos(Frame) + vector2d(16, 0); }
+
+alpha blinkdogtorso::GetAlphaA(int Frame) const { return (Frame & 31) != 31 ? 255 : 0; }
 
 void bodypart::Save(outputfile& SaveFile) const
 {
@@ -2118,7 +2118,9 @@ void bodypart::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareI
   else
     P->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 
-  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+  if(Fluid && ShowFluids())
+    DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+
   DrawArmor(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
@@ -2200,19 +2202,9 @@ double arm::GetTypeDamage(const character* Enemy) const
     return Damage * 1.5;
 }
 
-void largetorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
-{
-  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
-}
-
 void largetorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
 {
   LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate, AllowAlpha);
-}
-
-void largecorpse::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
-{
-  LargeDraw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
 }
 
 void largecorpse::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
@@ -2860,4 +2852,61 @@ void leg::CopyAttributes(const bodypart* BodyPart)
 bool corpse::DetectMaterial(const material* Material) const
 {
   return GetDeceased()->DetectMaterial(Material);
+}
+
+void bodypart::DestroyBodyPart(stack* Stack)
+{
+  int Lumps = 1 + RAND() % 3;
+  long LumpVolume = Volume / Lumps >> 2;
+
+  if(LumpVolume >= 10)
+    for(int c = 0; c < Lumps; ++c)
+      {
+	item* Lump = GetMainMaterial()->CreateNaturalForm(LumpVolume + RAND() % LumpVolume);
+	Stack->AddItem(Lump);
+      }
+
+  SendToHell();
+}
+
+vector2d magicmushroomtorso::GetBitmapPos(int Frame) const
+{
+  vector2d BasePos = torso::GetBitmapPos(Frame);
+  Frame &= 0x3F;
+
+  if(!(Frame & 0x30))
+    {
+      if(Frame <= 8)
+	return vector2d(BasePos.X + 64 - (abs(Frame - 4) << 4), BasePos.Y);
+      else
+	return vector2d(BasePos.X + 64 - (abs(Frame - 12) << 4), BasePos.Y + 16);
+    }
+  else
+    return BasePos;
+}
+
+vector2d dogtorso::GetBitmapPos(int Frame) const
+{
+  vector2d BasePos = torso::GetBitmapPos(Frame);
+
+  if(Frame >= GraphicData.AnimationFrames >> 1)
+    BasePos.X += 32;
+
+  return vector2d(BasePos.X + ((Frame & 4) << 2), BasePos.Y);
+}
+
+void dogtorso::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+{
+  const int AF = GraphicData.AnimationFrames >> 1;
+  int Index = !AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF;
+
+  if(GetHP() << 1 <= GetMaxHP())
+    Index += AF;
+
+  const bitmap* P = GraphicData.Picture[Index];
+
+  if(AllowAlpha)
+    P->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    P->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

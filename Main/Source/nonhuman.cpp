@@ -15,8 +15,11 @@ const char* billswill::FirstPersonBiteVerb() const { return "emit psi waves at";
 const char* billswill::FirstPersonCriticalBiteVerb() const { return "emit powerful psi waves at"; }
 const char* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
 const char* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
+int billswill::GetSpecialBodyPartFlags(int, bool) const { return ST_WOBBLE_HORIZONTALLY; }
 
-bodypart* mommo::MakeBodyPart(int) const { return new mommotorso(0, NO_MATERIALS); }
+int mommo::GetSpecialBodyPartFlags(int, bool) const { return GetConfig() == CONICAL ? ST_WOBBLE_HORIZONTALLY : ST_WOBBLE_VERTICALLY; }
+
+bodypart* dog::MakeBodyPart(int) const { return new dogtorso(0, NO_MATERIALS); }
 
 int dolphin::GetSpecialBodyPartFlags(int, bool) const { return RAND() & (MIRROR|ROTATE); }
 
@@ -26,11 +29,14 @@ void floatingeye::SetWayPoints(const fearray<packedvector2d>& What) { ArrayToVec
 
 bodypart* eddy::MakeBodyPart(int) const { return new eddytorso(0, NO_MATERIALS); }
 
+bodypart* magicmushroom::MakeBodyPart(int) const { return new magicmushroomtorso(0, NO_MATERIALS); }
+
 const char* ghost::FirstPersonBiteVerb() const { return "touch"; }
 const char* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch"; }
 const char* ghost::ThirdPersonBiteVerb() const { return "touches"; }
 const char* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
 bool ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
+int ghost::GetSpecialBodyPartFlags(int, bool) const { return ST_WOBBLE_HORIZONTALLY; }
 
 const char* magpie::FirstPersonBiteVerb() const { return "peck"; }
 const char* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
@@ -41,9 +47,11 @@ bodypart* largecreature::MakeBodyPart(int) const { return new largetorso(0, NO_M
 lsquare* largecreature::GetNeighbourLSquare(int I) const { return static_cast<lsquare*>(GetNeighbourSquare(I)); }
 wsquare* largecreature::GetNeighbourWSquare(int I) const { return static_cast<wsquare*>(GetNeighbourSquare(I)); }
 
-bodypart* hattifattener::MakeBodyPart(int) const { return new hattifattenertorso(0, NO_MATERIALS); }
+int hattifattener::GetSpecialBodyPartFlags(int, bool) const { return ST_LIGHTNING|ST_WOBBLE_HORIZONTALLY; }
 
 color16 vladimir::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
+
+bodypart* blinkdog::MakeBodyPart(int) const { return new blinkdogtorso(0, NO_MATERIALS); }
 
 bool elpuri::Hit(character* Enemy, vector2d, int, bool ForceHit)
 {
@@ -115,18 +123,17 @@ bool dog::Catches(item* Thingy)
 
 bool unicorn::SpecialEnemySightedReaction(character*)
 {
-  if((RAND() % 2 && IsInBadCondition()) || !(RAND() % 20))
-  {
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s disappears!", CHAR_NAME(DEFINITE));
+  if(!(RAND() & 15))
+    {
+      MonsterTeleport("neighs happily");
+      return true;
+    }
 
-    Move(GetLevel()->GetRandomSquare(this), true);
-
-    if(CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s appears from nothing!", CHAR_NAME(INDEFINITE));
-
-    return true;
-  }
+  if(StateIsActivated(PANIC) || (RAND() & 1 && IsInBadCondition()))
+    {
+      MonsterTeleport("neighs");
+      return true;
+    }
 
   if(!(RAND() % 3) && MoveRandomly())
     return true;
@@ -1197,19 +1204,6 @@ void skunk::GetAICommand()
   nonhumanoid::GetAICommand();
 }
 
-int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, bool Critical, bool ForceHit)
-{
-  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
-
-  if(Return != HAS_DIED)
-    {
-      if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))
-	TeleportRandomly();
-    }
-
-  return Return;
-}
-
 bool elpuri::TryToRiseFromTheDead()
 {
   character::TryToRiseFromTheDead();
@@ -1843,6 +1837,123 @@ void mommo::GetAICommand()
 
   if(MoveRandomly())
     return;
+
+  EditAP(-1000);
+}
+
+void dog::GetAICommand()
+{
+  if(!game::IsInWilderness() && !(RAND() & 3))
+    GetLSquareUnder()->SpillFluid(this, new liquid(DOG_DROOL, 25 + RAND() % 50), false, false);
+
+  character::GetAICommand();
+}
+
+bool blinkdog::SpecialEnemySightedReaction(character*)
+{
+  if(!(RAND() & 15))
+    {
+      SummonFriend();
+      return true;
+    }
+
+  if(!(RAND() & 31))
+    {
+      MonsterTeleport("playful bark");
+      return true;
+    }
+
+  if((!(RAND() & 3) && StateIsActivated(PANIC))
+  || (!(RAND() & 7) && IsInBadCondition()))
+    {
+      MonsterTeleport("frightened howl");
+      return true;
+    }
+
+  return false;
+}
+
+void blinkdog::MonsterTeleport(const char* BarkMsg)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("You hear a %s inside your head as %s vanishes!", BarkMsg, CHAR_NAME(DEFINITE));
+  else
+    ADD_MESSAGE("You hear a %s inside your head.", BarkMsg);
+
+  vector2d Pos = GetPos();
+  rect Border(Pos + vector2d(-5, -5), Pos + vector2d(5, 5));
+  Pos = GetLevel()->GetRandomSquare(this, 0, &Border);
+
+  if(Pos == ERROR_VECTOR)
+    Pos = GetLevel()->GetRandomSquare(this);
+
+  Move(Pos, true);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s materializes from nowhere!", CHAR_NAME(INDEFINITE));
+
+  EditAP(-1000);
+}
+
+int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, bool Critical, bool ForceHit)
+{
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+
+  if(Return != HAS_DIED
+  && (StateIsActivated(PANIC)
+   || (RAND() & 1 && IsInBadCondition())
+   || !(RAND() & 7)));
+    MonsterTeleport("neighs in terror");
+
+  return Return;
+}
+
+int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, bool Critical, bool ForceHit)
+{
+  int Return = nonhumanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+
+  if(Return != HAS_DIED)
+    {
+      if(!(RAND() & 15))
+	SummonFriend();
+
+      if((RAND() & 1 && StateIsActivated(PANIC))
+       || (!(RAND() & 3) && IsInBadCondition())
+       || !(RAND() & 15));
+	MonsterTeleport("terrified yelp");
+    }
+
+  return Return;
+}
+
+void unicorn::MonsterTeleport(const char* NeighMsg)
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s and disappears!", CHAR_NAME(DEFINITE), NeighMsg);
+
+  Move(GetLevel()->GetRandomSquare(this), true);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s appears from nothing!", CHAR_NAME(INDEFINITE));
+
+  EditAP(-1000);
+}
+
+void blinkdog::SummonFriend()
+{
+  blinkdog* Buddy = new blinkdog;
+  Buddy->SetTeam(GetTeam());
+  Buddy->PutNear(GetPos());
+
+  if(CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s wags its tail in a mysterious pattern.", CHAR_NAME(DEFINITE));
+
+      if(Buddy->CanBeSeenByPlayer())
+	ADD_MESSAGE("Another of its kin appears!");
+    }
+  else if(Buddy->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s appears!", Buddy->CHAR_NAME(INDEFINITE));
 
   EditAP(-1000);
 }

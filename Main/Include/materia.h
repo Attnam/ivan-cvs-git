@@ -5,21 +5,25 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <map>
+//#include <map>
 
-#include "typedef.h"
+//#include "ivandef.h"
+
+#include "script.h"
 #include "ivandef.h"
-#include "festring.h"
 
 #define MAKE_MATERIAL material::MakeMaterial
 
-class character;
+/*class character;
 class item;
 class entity;
 class outputfile;
 class inputfile;
 class material;
 class festring;
+class materialprototype;
+template <class type> class databasecreator;*/
+class entity;
 class materialprototype;
 template <class type> class databasecreator;
 
@@ -69,6 +73,7 @@ struct materialdatabase : public databasebase
   bool IsBlood;
   int Acidicity;
   bool IsImmuneToAcid;
+  contentscript<item> NaturalForm;
 };
 
 class materialprototype
@@ -158,6 +163,7 @@ class material
   DATA_BASE_BOOL(IsBlood);
   DATA_BASE_VALUE(int, Acidicity);
   DATA_BASE_BOOL(IsImmuneToAcid);
+  DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(GetConfig(), Volume); }
@@ -201,6 +207,8 @@ class material
   void SetVolume(long);
   void SetVolumeNoSignals(long What) { Volume = What; }
   virtual bool IsPowder() const { return false; }
+  static item* CreateNaturalForm(int, long);
+  item* CreateNaturalForm(long) const;
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(int, long, bool);

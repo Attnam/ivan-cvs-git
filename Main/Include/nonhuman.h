@@ -90,6 +90,7 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
+  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
@@ -103,8 +104,8 @@ class CHARACTER
   mommo,
   nonhumanoid,
  protected:
+  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   virtual bool CanVomit() const { return true; }
-  virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
   virtual bool Hit(character*, vector2d, int, bool);
   virtual void GetAICommand();
@@ -125,6 +126,9 @@ class CHARACTER
  public:
   virtual bool Catches(item*);
   virtual void BeTalkedTo();
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  virtual void GetAICommand();
 );
 
 class CHARACTER
@@ -200,6 +204,8 @@ class CHARACTER
  public:
   virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
+ protected:
+  void MonsterTeleport(const char*);
 );
 
 class CHARACTER
@@ -312,6 +318,7 @@ class CHARACTER
   magicmushroom,
   mushroom,
  protected:
+  virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
 );
 
@@ -332,6 +339,7 @@ class CHARACTER
   virtual bool IsPolymorphable() const { return MaxHP < 100; }
  protected:
   virtual void VirtualConstructor(bool);
+  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
@@ -482,9 +490,22 @@ class CHARACTER
  public:
   bool Hit(character*, vector2d, int, bool) { return false; }
  protected:
+  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   virtual void GetAICommand();
-  virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
+);
+
+class CHARACTER
+(
+  blinkdog,
+  dog,
+ public:
+  virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
+  virtual bool SpecialEnemySightedReaction(character*);
+ protected:
+  virtual bodypart* MakeBodyPart(int) const;
+  void MonsterTeleport(const char*);
+  void SummonFriend();
 );
 
 #endif

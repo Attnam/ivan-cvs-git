@@ -46,7 +46,7 @@ struct databasebase { int Config; };
 #define BLOATED 4
 #define OVER_FED 5
 
-#define STATES 18
+#define STATES 19
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -66,6 +66,7 @@ struct databasebase { int Config; };
 #define PARASITIZED 32768
 #define SEARCHING 65536
 #define GAS_IMMUNITY 131072
+#define LEVITATION 262144
 
 #define TORSO 1
 #define HEAD 2
@@ -171,6 +172,10 @@ struct databasebase { int Config; };
 #define ST_FLAME 128
 #define ST_LIGHTNING 256
 #define ST_DISALLOW_R_COLORS 512
+#define ST_WOBBLE 1024
+#define ST_WOBBLE_HORIZONTALLY_BIT 2048
+#define ST_WOBBLE_VERTICALLY ST_WOBBLE
+#define ST_WOBBLE_HORIZONTALLY (ST_WOBBLE|ST_WOBBLE_HORIZONTALLY_BIT)
 
 #define SILHOUETTE_X_SIZE 48
 #define SILHOUETTE_Y_SIZE 64
@@ -664,5 +669,7 @@ struct databasebase { int Config; };
 #define SP_BOTTOM (SP_BOTTOM_LEFT|SP_BOTTOM_RIGHT)
 
 #define CONDITION_COLORS 5
+
+#define NATURAL_MATERIAL_FORM 0x7FFF
 
 #endif

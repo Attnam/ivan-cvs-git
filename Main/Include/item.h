@@ -123,7 +123,6 @@ struct itemdatabase : public databasebase
   vector2d BeltBitmapPos;
   vector2d GauntletBitmapPos;
   vector2d BootBitmapPos;
-  bool GrantsLevitation;
   bool HasSecondaryMaterial;
   bool AllowEquip;
   int ReadDifficulty;
@@ -321,7 +320,6 @@ class item : public object
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BeltBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, GauntletBitmapPos, int);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BootBitmapPos, int);
-  DATA_BASE_BOOL(GrantsLevitation);
   DATA_BASE_BOOL(AllowEquip);
   DATA_BASE_VALUE(int, ReadDifficulty);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
@@ -422,10 +420,8 @@ class item : public object
   const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
   virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
   virtual int GetSquareIndex(vector2d) const { return 0; }
-  virtual void Draw(bitmap*, vector2d, color24, int, bool) const;
   virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
   vector2d GetLargeBitmapPos(vector2d, int) const;
-  void LargeDraw(bitmap*, vector2d, color24, int, bool) const;
   void LargeDraw(bitmap*, vector2d, color24, int, bool, bool) const;
   virtual bool BunnyWillCatchAndConsume(const character*) const { return false; }
   void DonateIDTo(item*);
@@ -454,7 +450,6 @@ class item : public object
   void RemoveRust();
   virtual bool IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
-  int GetEquipmentMoveType() const { return GrantsLevitation() ? FLY : 0; }
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   void RedistributeFluids();
   virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
@@ -467,6 +462,7 @@ class item : public object
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }
   virtual bool IsLanternOnWall() const { return false; }
+  virtual void DestroyBodyPart(stack*) { }
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

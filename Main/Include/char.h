@@ -806,7 +806,6 @@ class character : public entity, public id
   void ResetSpoiling();
   virtual character* GetLeader() const;
   int GetMoveType() const;
-  void CalculateEquipmentMoveType();
   virtual bool IsSumoWrestler() const { return false; }
   void InitMaterials(const materialscript*, const materialscript*, bool) { }
   item* SearchForItem(const character*, sorter) const;
@@ -815,6 +814,8 @@ class character : public entity, public id
   virtual bool CanAttack() const { return true; }
   bool DetectMaterial(const material*) const;
   bool CheckIfTooScaredToHit(const character*) const;
+  void PrintBeginLevitatingMessage() const;
+  void PrintEndLevitatingMessage() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -916,7 +917,6 @@ class character : public entity, public id
   std::vector<vector2d> Route;
   std::set<vector2d> Illegal;
   ulong LastAcidMsgMin;
-  int EquipmentMoveType;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

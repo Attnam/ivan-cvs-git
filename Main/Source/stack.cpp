@@ -21,7 +21,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, color24 
     if(i->GetSquarePosition() == RequiredSquarePosition
     && (i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode()))
       {
-	i->Draw(Bitmap, Pos, Luminance, i->GetSquareIndex(StackPos), AllowAnimate);
+	i->Draw(Bitmap, Pos, Luminance, i->GetSquareIndex(StackPos), AllowAnimate, true);
 	++VisibleItems;
       }
 
@@ -100,6 +100,13 @@ void stack::Clean(bool LastClean)
 
   stackslot* Slot = Bottom;
 
+  if(!LastClean)
+    {
+      Bottom = Top = 0;
+      Volume = Weight = Items = 0;
+      SignalVolumeAndWeightChange();
+    }
+
   while(Slot)
     {
       item* Item = Slot->GetItem();
@@ -123,13 +130,6 @@ void stack::Clean(bool LastClean)
 
       if(!LastClean)
 	SignalEmitationDecrease(Item->GetSquarePosition(), Item->GetEmitation());
-    }
-
-  if(!LastClean)
-    {
-      Bottom = Top = 0;
-      Volume = Weight = Items = 0;
-      SignalVolumeAndWeightChange();
     }
 }
 
@@ -171,7 +171,9 @@ void stack::Load(inputfile& SaveFile)
       SaveFile >> *Top;
       Volume += (*Top)->GetVolume();
       Weight += (*Top)->GetWeight();
-      Emitation = game::CombineConstLights(Emitation, (*Top)->GetEmitation());
+
+      if((*Top)->GetSquarePosition() == CENTER)
+	Emitation = game::CombineConstLights(Emitation, (*Top)->GetEmitation());
     }
 
   Items += SavedItems;
@@ -380,10 +382,11 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, CENTER, SorterFunction);
 
   AddContentsToList(Contents, Viewer, ThisDesc, Flags, CENTER, SorterFunction);
+  static const char* WallDescription[] = { "western", "southern", "nothern", "eastern" };
 
   for(c = 0; c < 4; ++c)
     if(AdjacentStack[c])
-      AdjacentStack[c]->AddContentsToList(Contents, Viewer, "Items on the wall:", Flags, 3 - c, SorterFunction);
+      AdjacentStack[c]->AddContentsToList(Contents, Viewer, CONST_S("Items on the ") + WallDescription[c] + " wall:", Flags, 3 - c, SorterFunction);
 
   game::SetStandardListAttributes(Contents);
   Contents.SetPageLength(12);

@@ -193,6 +193,7 @@ struct olterraindatabase : public lterraindatabase
   bool CreateWindowConfigurations;
   vector2d WindowBitmapPos;
   bool ShowThingsUnder;
+  fearray<contentscript<item> > LeftOverItems;
 };
 
 class olterrainprototype
@@ -281,6 +282,7 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_BOOL(CreateWindowConfigurations);
   DATA_BASE_VALUE(vector2d, WindowBitmapPos);
   DATA_BASE_BOOL(ShowThingsUnder);
+  DATA_BASE_VALUE(const fearray<contentscript<item> >&, LeftOverItems);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
   virtual void SetText(const festring&) { }

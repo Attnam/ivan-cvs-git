@@ -78,7 +78,6 @@ class object : public entity, public id
   bool AddEmptyAdjective(festring&, bool) const;
   virtual vector2d GetBitmapPos(int) const = 0;
   void RandomizeVisualEffects();
-  virtual bool HasSpecialAnimation() const { return false; }
   virtual void ModifyAnimationFrames(int&) const { }
   virtual int GetRustDataA() const;
   virtual int GetRustDataB() const { return NOT_RUSTED; }

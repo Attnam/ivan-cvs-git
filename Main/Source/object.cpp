@@ -142,7 +142,7 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
   int Seed = 0;
   int FlyAmount = GetSpoilLevel(); 
   bool Sparkling = false;
-  bool FrameNeeded = HasSpecialAnimation();
+  bool FrameNeeded = false;
   vector2d BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;
 
@@ -229,10 +229,12 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
 	  FrameNeeded = true;
 	}
     }
-  else if(SpecialFlags & ST_FLAME && AnimationFrames <= 16)
+  else if(SpecialFlags & ST_FLAME)
     {
-      AnimationFrames = 16;
       FrameNeeded = true;
+
+      if(AnimationFrames <= 16)
+	AnimationFrames = 16;
     }
   else if(SpecialFlags & ST_LIGHTNING)
     {
@@ -245,6 +247,9 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
       if(AnimationFrames <= 128)
 	AnimationFrames = 128;
     }
+
+  if(SpecialFlags & ST_WOBBLE && AnimationFrames <= 128)
+    AnimationFrames = 128;
 
   ModifyAnimationFrames(AnimationFrames);
   int c;
@@ -311,7 +316,11 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
 	  GI.SparkleFrame = 0;
 	}
 
-      GI.Frame = !c || FrameNeeded || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7)) ? c : 0;
+      GI.Frame = !c
+	      || FrameNeeded
+	      || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
+	      || (SpecialFlags & ST_WOBBLE && !(c & 0x60))
+	       ? c : 0;
       GI.OutlineColor = GetOutlineColor(c);
       GI.OutlineAlpha = GetOutlineAlpha(c);
       GI.Seed = Seed;

@@ -78,7 +78,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -93,7 +92,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -171,7 +169,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -186,7 +183,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -258,7 +254,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -377,7 +372,6 @@ class ITEM
   virtual int GetClassAnimationFrames() const;
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM

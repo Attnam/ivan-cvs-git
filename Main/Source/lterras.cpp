@@ -65,7 +65,9 @@ bool door::Open(character* Opener)
     }
   else
     {
-      if(Opener->IsPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
+      if(Opener->IsPlayer())
+	ADD_MESSAGE("The door is already open, %s.", game::Insult());
+
       return false;
     }
 }
@@ -864,10 +866,8 @@ void stairs::VirtualConstructor(bool Load)
       }
 }
 
-void boulder::Break()
+/*void boulder::Break()
 {
-  /* If this used the volume of the boulder the pieces would be huge or there would be just hundreds of them so I jsut use normal sized stones and just a few of them too... */
-
   int HowManyParts = RAND() % 5 + 1;
 
   for(int c = 0; c < HowManyParts; ++c)
@@ -876,11 +876,10 @@ void boulder::Break()
       item* Stone = new stone(0, NO_MATERIALS);
       Stone->InitMaterials(StonesMaterial);
       GetLSquareUnder()->AddItem(Stone);
-      
     }
 
   olterrain::Break();
-}
+}*/
 
 void sign::AddPostFix(festring& String) const
 {
@@ -955,7 +954,8 @@ void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& Ite
   for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
     if(ItemArray[c1].IsValid())
       {
-	int Times = ItemArray[c1].GetTimes();
+	const interval* TimesPtr = ItemArray[c1].GetTimes();
+	int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
 	for(int c2 = 0; c2 < Times; ++c2)
 	  {
@@ -970,7 +970,7 @@ void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& Ite
       }
 }
 
-void wall::Break()
+/*void wall::Break()
 {
   int DigProduct = GetMainMaterial()->GetDigProductMaterial();
 
@@ -987,7 +987,7 @@ void wall::Break()
     }
 
   olterrain::Break();
-}
+}*/
 
 void door::ReceiveDamage(character* Villain, int Damage, int)
 {
@@ -1106,7 +1106,7 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
   return true;
 }
 
-void earth::Break()
+/*void earth::Break()
 {
   int DigProduct = GetMainMaterial()->GetDigProductMaterial();
 
@@ -1123,7 +1123,7 @@ void earth::Break()
     }
 
   olterrain::Break();
-}
+}*/
 
 void earth::VirtualConstructor(bool Load)
 {

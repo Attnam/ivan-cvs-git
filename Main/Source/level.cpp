@@ -504,7 +504,8 @@ bool level::MakeRoom(const roomscript* RoomScript)
 	    if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
 	      for(uint c1 = 0; c1 < ItemScript->Size; ++c1)
 		{
-		  int Times = ItemScript->Data[c1].GetTimes();
+		  const interval* TimesPtr = ItemScript->Data[c1].GetTimes();
+		  int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
 		  for(int c2 = 0; c2 < Times; ++c2)
 		    {
@@ -654,6 +655,7 @@ void level::Load(inputfile& SaveFile)
     GlobalRainLiquid->SetVolumeNoSignals(0);
 
   game::SetGlobalRainLiquid(GlobalRainLiquid);
+  game::SetGlobalRainSpeed(GlobalRainSpeed);
   int x, y;
 
   for(x = 0; x < XSize; ++x)
@@ -736,11 +738,11 @@ vector2d level::GetRandomSquare(const character* Char, int Flags, const rect* Bo
 
   for(int c = 0;; ++c)
     {
-      if(c == 100)
+      if(c == 50)
 	Char = 0;
 
-      if(c == 10000)
-	ABORT("GetRandomSquare request failed!");
+      if(c == 500)
+	return ERROR_VECTOR;
 
       vector2d Pos;
 

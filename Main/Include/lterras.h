@@ -11,8 +11,7 @@ class OLTERRAIN
 (
   wall,
   olterrain,
- public:
-  virtual void Break();
+  ;
 );
 
 class OLTERRAIN
@@ -96,7 +95,6 @@ class OLTERRAIN
  protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class OLTERRAIN
@@ -198,15 +196,13 @@ class GLTERRAIN
  protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class OLTERRAIN
 (
   boulder,
   olterrain,
- public:
-  virtual void Break();
+  ;
 );
 
 class OLTERRAIN
@@ -231,7 +227,6 @@ class OLTERRAIN
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void Break();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(int) const;

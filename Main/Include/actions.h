@@ -36,14 +36,14 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetConsumingID(long What) { ConsumingID = What; }
+  void SetConsumingID(ulong What) { ConsumingID = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual const char* GetDescription() const;
   virtual void SetDescription(const festring&);
  protected:
   festring Description;
-  long ConsumingID;
+  ulong ConsumingID;
 );
 
 class ACTION
@@ -74,15 +74,15 @@ class ACTION
   virtual void Handle();
   void SetSquareDug(vector2d What) { SquareDug = What; }
   virtual void Terminate(bool);
-  void SetRightBackupID(long What) { RightBackupID = What; }
-  void SetLeftBackupID(long What) { LeftBackupID = What; }
+  void SetRightBackupID(ulong What) { RightBackupID = What; }
+  void SetLeftBackupID(ulong What) { LeftBackupID = What; }
   virtual bool TryDisplace() { return false; }
   virtual const char* GetDescription() const;
   virtual bool ShowEnvironment() const { return false; }
   void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
-  long RightBackupID;
-  long LeftBackupID;
+  ulong RightBackupID;
+  ulong LeftBackupID;
   vector2d SquareDug;
   bool MoveDigger;
 );
@@ -116,11 +116,11 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetLiteratureID(long What) { LiteratureID = What; }
+  void SetLiteratureID(ulong What) { LiteratureID = What; }
   virtual const char* GetDescription() const;
   void SetCounter(int What) { Counter = What; }
  protected:
-  long LiteratureID;
+  ulong LiteratureID;
   int Counter;
 );
 

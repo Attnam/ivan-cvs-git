@@ -821,12 +821,10 @@ material* meleeweapon::RemoveMainMaterial()
 {
   if(SecondaryMaterial->GetVolume())
     {
-      item* Lump = new lump(0, NO_MATERIALS);
-      Lump->InitMaterials(SecondaryMaterial);
+      item* Lump = SecondaryMaterial->CreateNaturalForm(SecondaryMaterial->GetVolume());
       DonateFluidsTo(Lump);
       DonateIDTo(Lump);
       DonateSlotTo(Lump);
-      SetSecondaryMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
     }
   else
     RemoveFromSlot();

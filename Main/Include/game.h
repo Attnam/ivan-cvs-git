@@ -313,6 +313,7 @@ class game
   static const festring& GetPlayerName() { return PlayerName; }
   static rain* ConstructGlobalRain();
   static void SetGlobalRainLiquid(liquid* What) { GlobalRainLiquid = What; }
+  static void SetGlobalRainSpeed(vector2d What) { GlobalRainSpeed = What; }
   static bool PlayerIsSumoChampion() { return PlayerSumoChampion; }
   static vector2d GetSunLightDirectionVector();
   static int CalculateMinimumEmitationRadius(color24);

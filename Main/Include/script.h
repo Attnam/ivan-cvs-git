@@ -174,8 +174,8 @@ class materialscript : public script
 {
  public:
   typedef materialscript scripttype;
-  materialscript();
   virtual void ReadFrom(inputfile&);
+  int GetConfig() const { return Config; }
   void SetConfig(int What) { Config = What; }
   material* Instantiate() const;
   virtual void Save(outputfile&) const;
@@ -184,8 +184,8 @@ class materialscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  FAST_SCRIPT_MEMBER(long, Volume);
-  ushort Config;
+  SCRIPT_MEMBER(interval, Volume);
+  int Config;
 };
 
 class basecontentscript : public script
@@ -246,6 +246,7 @@ class contentscript<item> : public contentscripttemplate<item>
  public:
   typedef contentscript<item> scripttype;
   contentscript<item>();
+  item* InstantiateBasedOnMaterial(int, int = 0) const;
   item* Instantiate(int = 0) const;
   static void InitDataMap();
  protected:
@@ -253,6 +254,7 @@ class contentscript<item> : public contentscripttemplate<item>
   virtual const char* GetClassID() const;
   static datamap DataMap;
   SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(interval, Times);
   FAST_SCRIPT_MEMBER(ulong, Category);
   FAST_SCRIPT_MEMBER(long, MinPrice);
   FAST_SCRIPT_MEMBER(long, MaxPrice);
@@ -261,7 +263,6 @@ class contentscript<item> : public contentscripttemplate<item>
   FAST_SCRIPT_MEMBER(uchar, Chance);
   FAST_SCRIPT_MEMBER(uchar, ConfigFlags);
   FAST_SCRIPT_MEMBER(uchar, SpoilPercentage);
-  FAST_SCRIPT_MEMBER(uchar, Times);
   FAST_SCRIPT_MEMBER(char, Enchantment);
   FAST_SCRIPT_BOOL(IsActive);
 };

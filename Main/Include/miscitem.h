@@ -89,7 +89,6 @@ class ITEM
   virtual int GetSpecialFlags() const;
   virtual bool IsLanternOnWall() const { return GetSquarePosition() != CENTER; }
  protected:
-  virtual bool HasSpecialAnimation() const { return !IsBroken(); }
   virtual int GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
   virtual color16 GetMaterialColorA(int) const;
   virtual color16 GetMaterialColorB(int) const;
@@ -649,6 +648,15 @@ class ITEM
   scroll,
  public:
   virtual void FinishReading(character*);
+);
+
+class ITEM
+(
+  stick,
+  item,
+ protected:
+  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
+  virtual bool ShowMaterial() const { return false; }
 );
 
 #endif

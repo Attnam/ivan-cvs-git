@@ -984,14 +984,6 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
   return Configs;
 }
 
-void item::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
-{
-  const int AF = GraphicData.AnimationFrames;
-  const bitmap* P = GraphicData.Picture[!AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF];
-  P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
-}
-
 void item::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
 {
   const int AF = GraphicData.AnimationFrames;
@@ -1002,7 +994,8 @@ void item::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex
   else
     P->LuminanceMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 
-  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+  if(Fluid && ShowFluids())
+    DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
 }
 
 vector2d item::GetLargeBitmapPos(vector2d BasePos, int I) const
@@ -1011,25 +1004,15 @@ vector2d item::GetLargeBitmapPos(vector2d BasePos, int I) const
   return vector2d(SquareIndex & 1 ? BasePos.X + 16 : BasePos.X, SquareIndex & 2 ? BasePos.Y + 16 : BasePos.Y);
 }
 
-void item::LargeDraw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
-{
-  const int TrueAF = GraphicData.AnimationFrames >> 2;
-  const bitmap* P = GraphicData.Picture[!AllowAnimate ? 0 : SquareIndex * TrueAF + (GET_TICK() % TrueAF)];
-  P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
-}
-
 void item::LargeDraw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
 {
   const int TrueAF = GraphicData.AnimationFrames >> 2;
-  const bitmap* P = GraphicData.Picture[!AllowAnimate ? 0 : SquareIndex * TrueAF + (GET_TICK() % TrueAF)];
+  const bitmap* P = GraphicData.Picture[!AllowAnimate ? SquareIndex * TrueAF : SquareIndex * TrueAF + (GET_TICK() % TrueAF)];
 
   if(AllowAlpha)
     P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
     P->LuminanceMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-
-  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
 }
 
 void item::DonateIDTo(item* Item)
@@ -1214,9 +1197,8 @@ void item::DrawFluidBodyArmorPictures(bitmap* Bitmap, vector2d Pos, color24 Lumi
 
 void item::DrawFluids(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
 {
-  if(Fluid && ShowFluids())
-    for(const fluid* F = Fluid[SquareIndex]; F; F = F->Next)
-      F->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+  for(const fluid* F = Fluid[SquareIndex]; F; F = F->Next)
+    F->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
 void item::ReceiveAcid(material*, long Modifier)

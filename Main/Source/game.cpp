@@ -130,11 +130,36 @@ int game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
 
-void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
-void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
-void game::AddItemID(item* Item, ulong ID) { ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
-void game::RemoveItemID(ulong ID) { if(ID) ItemIDMap.erase(ItemIDMap.find(ID)); }
-void game::UpdateItemID(item* Item, ulong ID) { ItemIDMap.find(ID)->second = Item; }
+void game::AddCharacterID(character* Char, ulong ID) {
+if(CharacterIDMap.find(ID) != CharacterIDMap.end())
+  int esko = 2;
+CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char));
+}
+void game::RemoveCharacterID(ulong ID) {
+if(CharacterIDMap.find(ID) == CharacterIDMap.end())
+  int esko = 2;
+CharacterIDMap.erase(CharacterIDMap.find(ID));
+}
+void game::AddItemID(item* Item, ulong ID) {
+if(ID == 1)
+  int esko = 2;
+
+if(ItemIDMap.find(ID) != ItemIDMap.end())
+  int esko = 2;
+ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
+}
+void game::RemoveItemID(ulong ID)
+{
+if(ID && ItemIDMap.find(ID) == ItemIDMap.end())
+  int esko = 2;
+
+if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
+}
+void game::UpdateItemID(item* Item, ulong ID) {
+if(ItemIDMap.find(ID) == ItemIDMap.end())
+  int esko = 2;
+ItemIDMap.find(ID)->second = Item;
+}
 const dangermap& game::GetDangerMap() { return DangerMap; }
 void game::ClearItemDrawVector() { ItemDrawVector.clear(); }
 void game::ClearCharacterDrawVector() { CharacterDrawVector.clear(); }
@@ -235,6 +260,8 @@ bool game::Init(const festring& Name)
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
 	iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
+	NextCharacterID = 1;
+	NextItemID = 1;
 	InitScript();
 	CreateTeams();
 	CreateGods();
@@ -1904,6 +1931,10 @@ inputfile& operator>>(inputfile& SaveFile, homedata*& HomeData)
 ulong game::CreateNewCharacterID(character* NewChar)
 {
   ulong ID = NextCharacterID++;
+
+if(CharacterIDMap.find(ID) != CharacterIDMap.end())
+  int esko = 2;
+
   CharacterIDMap.insert(std::pair<ulong, character*>(ID, NewChar));
   return ID;
 }
@@ -1911,6 +1942,9 @@ ulong game::CreateNewCharacterID(character* NewChar)
 ulong game::CreateNewItemID(item* NewItem)
 {
   ulong ID = NextItemID++;
+
+if(ItemIDMap.find(ID) != ItemIDMap.end())
+  int esko = 2;
 
   if(NewItem)
     ItemIDMap.insert(std::pair<ulong, item*>(ID, NewItem));
@@ -2631,7 +2665,7 @@ vector2d game::GetSunLightDirectionVector()
 int game::CalculateMinimumEmitationRadius(color24 E)
 {
   int MaxElement = Max(GetRed24(E), GetGreen24(E), GetBlue24(E));
-  return int(sqrt(double(MaxElement << 7) / LIGHT_BORDER));
+  return int(sqrt(double(MaxElement << 7) / LIGHT_BORDER - 120.));
 }
 
 ulong game::IncreaseSquarePartEmitationTicks()

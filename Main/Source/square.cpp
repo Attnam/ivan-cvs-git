@@ -34,7 +34,7 @@ void square::Load(inputfile& SaveFile)
 void square::AddCharacter(character* Guy)
 {
   Character = Guy;
-  Flags |= NEW_DRAW_REQUEST;
+  Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
 }
 
@@ -44,7 +44,7 @@ void square::RemoveCharacter()
     DecAnimatedEntities();
 
   Character = 0;
-  Flags |= NEW_DRAW_REQUEST;
+  Flags |= STRONG_NEW_DRAW_REQUEST;
 }
 
 const char* square::SurviveMessage(character* Char) const

@@ -119,7 +119,7 @@ void consume::Terminate(bool Finished)
 	{
 	  Consuming->RemoveFromSlot();
 	  Actor->GetStackUnder()->AddItem(Consuming);
-	  Actor->DexterityAction(1);
+	  Actor->DexterityAction(2);
 	}
     }
   else if(Consuming && Consuming->Exists())

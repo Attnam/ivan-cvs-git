@@ -92,7 +92,6 @@ item
 	BeltBitmapPos
 	GauntletBitmapPos
 	BootBitmapPos */
-	GrantsLevitation = false;
 	HasSecondaryMaterial = false;
 	AllowEquip = true;
 	/* Obligatory if scroll: ReadDifficulty */
@@ -112,7 +111,7 @@ lantern
 	DefaultMainVolume = 400;
 	StrengthModifier = 50;
 	FormModifier = 20;
-	Price = 50;
+	Price = 10;
 	BaseEmitation = rgb24(125, 125, 105);
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
@@ -603,7 +602,7 @@ meleeweapon
 		NameSingular = "quarterstaff";
 		MainMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
 		SecondaryMaterialConfig = { 9, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, ARCANITE, OCTIRON; }
-		MaterialConfigChances = { 9, 400, 350, 300, 250, 200, 150, 100, 75, 25; }
+		MaterialConfigChances = { 9, 100, 350, 300, 250, 200, 150, 100, 75, 25; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = SILVA;
@@ -1954,7 +1953,7 @@ belt /* armor-> */
 	{
 		Possibility = 0;
 		PostFix = "of levitation";
-		GrantsLevitation = true;
+		GearStates = LEVITATION;
 		Price = 500;
 		AttachedGod = SILVA;
 		MainMaterialConfig == ANGEL_HAIR;
@@ -1964,7 +1963,7 @@ belt /* armor-> */
 	Config BROKEN|BELT_OF_LEVITATION;
 	{
 		DefaultSize = 150;
-		GrantsLevitation = false;
+		GearStates = 0;
 		Price = 100;
 		BitmapPos = 80, 384;
 	}
@@ -2258,12 +2257,6 @@ corpse
 
 eddytorso /* normaltorso-> */
 {
-	AttachedGod = NONE;
-}
-
-mommotorso /* normaltorso-> */
-{
-	AttachedGod = NONE;
 }
 
 playerkindhead { }
@@ -2273,6 +2266,18 @@ playerkindleftarm { }
 playerkindgroin { }
 playerkindrightleg { }
 playerkindleftleg { }
+
+magicmushroomtorso /* normaltorso-> */
+{
+}
+
+dogtorso /* normaltorso-> */
+{
+}
+
+blinkdogtorso /* dogtorso-> */
+{
+}
 
 whistle
 {
@@ -2417,7 +2422,7 @@ helmet
 	FormModifier = 10;
 	NameSingular = "helmet";
 	MainMaterialConfig = { 21, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL; }
-	MaterialConfigChances = { 21, 500, 750, 300, 80, 70, 60, 50, 40, 30, 20, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25, 25; }
+	MaterialConfigChances = { 21, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 500, 100, 750, 500, 250, 100, 25, 25, 25, 25; }
 	Roundness = 60;
 	CanBeBroken = true;
 	WieldedBitmapPos = 160, 128;
@@ -3068,11 +3073,6 @@ ennerhead /* head-> */
 {
 }
 
-hattifattenertorso /* normaltorso-> */
-{
-	AttachedGod = NONE;
-}
-
 decosadshirt /* armor->bodyarmor-> */
 {
 	DefaultSize = 60;
@@ -3097,4 +3097,23 @@ scrollofdetectmaterial /* scroll-> */
 	PostFix = "of detect material";
 	AttachedGod = LEGIFER;
 	ReadDifficulty = 200;
+}
+
+stick
+{
+	DefaultSize = 50;
+	Possibility = 0;
+	WeaponCategory = BLUNT_WEAPONS;
+	Category = MISC;
+	DefaultMainVolume = 150;
+	StrengthModifier = 75;
+	BitmapPos = 80, 240;
+	FormModifier = 40;
+	NameSingular = "stick";
+	MainMaterialConfig = { 7, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD; }
+	MaterialConfigChances = { 7, 100, 350, 300, 250, 200, 150, 100; }
+	OKVisualEffects = MIRROR|FLIP;
+	Roundness = 10;
+	AttachedGod = NONE;
+	WieldedBitmapPos = 160, 352;
 }

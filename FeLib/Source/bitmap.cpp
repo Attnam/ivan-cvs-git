@@ -2092,3 +2092,67 @@ void cachedfont::CreateMaskMap()
     else
       *MaskPtr = 0;
 }
+
+const int WaveDelta[] = { 1, 2, 2, 2, 1, 0, -1, -2, -2, -2, -1 };
+
+void bitmap::Wobble(int Frame, bool Horizontally)
+{
+  int WavePos = (Frame << 1) - 14;
+
+  if(Horizontally)
+    {
+      for(int c = 0; c < 11; ++c)
+	if(WavePos + c >= 0 && WavePos + c < YSize)
+	  MoveLineHorizontally(WavePos + c, WaveDelta[c]);
+    }
+  else
+    {
+      for(int c = 0; c < 11; ++c)
+	if(WavePos + c >= 0 && WavePos + c < XSize)
+	  MoveLineVertically(WavePos + c, WaveDelta[c]);
+    }
+}
+
+void bitmap::MoveLineVertically(int X, int Delta)
+{
+  int y;
+
+  if(Delta < 0)
+    {
+      for(y = 0; y < YSize + Delta; ++y)
+	PowerPutPixel(X, y, GetPixel(X, y - Delta), AlphaMap ? GetAlpha(X, y - Delta) : 255, AVERAGE_PRIORITY);
+
+      for(int y = -1; y >= Delta; --y)
+	PowerPutPixel(X, YSize + y, TRANSPARENT_COLOR, 255, AVERAGE_PRIORITY);
+    }
+  else if(Delta > 0)
+    {
+      for(y = YSize - 1; y >= Delta; --y)
+	PowerPutPixel(X, y, GetPixel(X, y - Delta), AlphaMap ? GetAlpha(X, y - Delta) : 255, AVERAGE_PRIORITY);
+
+      for(y = 0; y < Delta; ++y)
+	PowerPutPixel(X, y, TRANSPARENT_COLOR, 255, AVERAGE_PRIORITY);
+    }
+}
+
+void bitmap::MoveLineHorizontally(int Y, int Delta)
+{
+  int x;
+
+  if(Delta < 0)
+    {
+      for(x = 0; x < XSize + Delta; ++x)
+	PowerPutPixel(x, Y, GetPixel(x - Delta, Y), AlphaMap ? GetAlpha(x - Delta, Y) : 255, AVERAGE_PRIORITY);
+
+      for(x = -1; x >= Delta; --x)
+	PowerPutPixel(XSize + x, Y, TRANSPARENT_COLOR, 255, AVERAGE_PRIORITY);
+    }
+  else if(Delta > 0)
+    {
+      for(x = XSize - 1; x >= Delta; --x)
+	PowerPutPixel(x, Y, GetPixel(x - Delta, Y), AlphaMap ? GetAlpha(x - Delta, Y) : 255, AVERAGE_PRIORITY);
+
+      for(x = 0; x < Delta; ++x)
+	PowerPutPixel(x, Y, TRANSPARENT_COLOR, 255, AVERAGE_PRIORITY);
+    }
+}

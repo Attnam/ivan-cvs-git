@@ -1652,7 +1652,8 @@ void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArra
   for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
     if(ItemArray[c1].IsValid())
       {
-	int Times = ItemArray[c1].GetTimes();
+	const interval* TimesPtr = ItemArray[c1].GetTimes();
+	int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
 	for(int c2 = 0; c2 < Times; ++c2)
 	  {

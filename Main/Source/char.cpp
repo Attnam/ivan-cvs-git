@@ -183,6 +183,15 @@ statedata StateData[STATES] =
     0,
     0,
     0
+  }, {
+    "Levitating",
+    RANDOMIZABLE&~SRC_EVIL,
+    &character::PrintBeginLevitatingMessage,
+    &character::PrintEndLevitatingMessage,
+    0,
+    0,
+    0,
+    0
   }
 };
 
@@ -246,7 +255,7 @@ int character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 bool character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 character* character::GetLeader() const { return GetTeam()->GetLeader(); }
-int character::GetMoveType() const { return DataBase->MoveType | EquipmentMoveType; }
+int character::GetMoveType() const { return !StateIsActivated(LEVITATION) ? DataBase->MoveType : DataBase->MoveType | FLY; }
 festring character::GetZombieDescription() const { return " of " + GetName(INDEFINITE); }
 bool character::BodyPartCanBeSevered(int I) const { return !!I; }
 
@@ -2021,7 +2030,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, vector2d 
 
 bool character::CheckBalance(double KickDamage)
 {
-  return !(GetMoveType() & WALK) || !KickDamage || IsStuck() || KickDamage * 5 < RAND() % GetSize();
+  return !CanMove() || IsStuck() || !KickDamage || (!(GetMoveType() & FLY) && KickDamage * 5 < RAND() % GetSize());
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -2928,7 +2937,10 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 
 	  GetBodyPart(BodyPartIndex)->DropEquipment();
 	  item* Severed = SevereBodyPart(BodyPartIndex);
-	  Severed->SendToHell();
+
+	  if(Severed)
+	    Severed->DestroyBodyPart(!game::IsInWilderness() ? GetStackUnder() : GetStack());
+
 	  SendNewDrawRequest();
 
 	  if(IsPlayer())
@@ -2969,7 +2981,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 	    game::AskForKeyPress(CONST_S("Bodypart severed! [press any key to continue]"));
 	}
 
-      if(RAND() % 100 < GetPanicLevel() && !IsDead())
+      if(RAND() % 100 < GetPanicLevel() && !StateIsActivated(PANIC) && !IsDead())
 	BeginTemporaryState(PANIC, 1000 + RAND() % 1001);
     }
 
@@ -4029,8 +4041,6 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
 	      else
 		EquipmentState |= 1 << c;
 	    }
-
-      EquipmentMoveType |= Equipment->GetEquipmentMoveType();
     }
 
   if(!Initializing && Equipment->IsInCorrectSlot(EquipmentIndex))
@@ -4039,10 +4049,9 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
 
 void character::SignalEquipmentRemoval(int)
 {
+  bool CouldFly = !!(GetMoveType() & FLY);
   CalculateEquipmentState();
   CalculateAttributeBonuses();
-  bool CouldFly = !!(EquipmentMoveType & FLY);
-  CalculateEquipmentMoveType();
 
   if(CouldFly && !(GetMoveType() & FLY))
     {
@@ -4895,9 +4904,8 @@ void character::TeleportSomePartsAway(int NumberToTeleport)
 		break;
 	      
 	      long Amount = (RAND() % TorsosVolume) + 1;
-	      lump* Lump = new lump(0, NO_MATERIALS); 
-	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
-	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
+	      item* Lump = GetTorso()->GetMainMaterial()->CreateNaturalForm(Amount);
+	      GetTorso()->GetMainMaterial()->EditVolume(-Amount);
 	      Lump->MoveTo(GetNearLSquare(GetLevel()->GetRandomSquare())->GetStack());
 
 	      if(IsPlayer())
@@ -5036,7 +5044,6 @@ void character::CalculateAll()
   CalculateBodyPartMaxHPs(false);
   CalculateBurdenState();
   CalculateBattleInfo();
-  CalculateEquipmentMoveType();
   Initializing = false;
 }
 
@@ -5230,18 +5237,18 @@ double character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
     Danger *= 0.80;
 
   if(!Enemy->CanBeSeenBy(this, true))
-    Danger *= 0.2;
+    Danger *= Enemy->IsPlayer() ? 0.2 : 0.5;
 
   if(!CanBeSeenBy(Enemy, true))
-    Danger *= 5.0;
+    Danger *= IsPlayer() ? 5.0 : 2.0;
 
-  if(GetAttribute(INTELLIGENCE) >= 10 && !IsPlayer())
-    Danger *= 1.25;
-
-  if(Enemy->GetAttribute(INTELLIGENCE) >= 10 && !Enemy->IsPlayer())
+  if(GetAttribute(INTELLIGENCE) < 10 && !IsPlayer())
     Danger *= 0.80;
 
-  return Limit(Danger, -100.0, 100.0);
+  if(Enemy->GetAttribute(INTELLIGENCE) < 10 && !Enemy->IsPlayer())
+    Danger *= 1.25;
+
+  return Limit(Danger, 0.01, 100.0);
 }
 
 festring character::GetBodyPartName(int I, bool Articled) const
@@ -5485,7 +5492,7 @@ void character::PrintEndPanicMessage() const
 
 void character::CheckPanic(int Ticks)
 {
-  if(GetPanicLevel()
+  if(GetPanicLevel() && !StateIsActivated(PANIC)
   && GetHP() * 100 < RAND() % (GetPanicLevel() * GetMaxHP() << 1))
     BeginTemporaryState(PANIC, ((Ticks * 3) >> 2) + RAND() % ((Ticks >> 1) + 1)); // 25% randomness to ticks...
 }
@@ -5708,7 +5715,8 @@ void character::AddToInventory(const fearray<contentscript<item> >& ItemArray, i
   for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
     if(ItemArray[c1].IsValid())
       {
-	int Times = ItemArray[c1].GetTimes();
+	const interval* TimesPtr = ItemArray[c1].GetTimes();
+	int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
 	for(int c2 = 0; c2 < Times; ++c2)
 	  {
@@ -6484,7 +6492,7 @@ bool character::PostProcessForBone(double& DangerSum, int& Enemies)
 
 bool character::PostProcessForBone()
 {
-  long NewID = game::CreateNewCharacterID(this);
+  ulong NewID = game::CreateNewCharacterID(this);
   game::GetBoneCharacterIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
   game::RemoveCharacterID(ID);
   ID = NewID;
@@ -7100,19 +7108,6 @@ void character::ResetSpoiling()
       GetBodyPart(c)->ResetSpoiling();
 }
 
-void character::CalculateEquipmentMoveType()
-{
-  EquipmentMoveType = 0;
-
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	EquipmentMoveType |= Equipment->GetEquipmentMoveType();
-    }
-}
-
 item* character::SearchForItem(const character* Char, sorter Sorter) const
 {
   for(int c = 0; c < GetEquipmentSlots(); ++c)
@@ -7162,9 +7157,9 @@ bool character::CheckIfTooScaredToHit(const character* Enemy) const
 
 	if(Square)
 	  {
-	    if(!CanMoveOn(Square)
-	    || !Square->GetCharacter()
-	    || Square->GetCharacter()->IsPet())
+	    if(CanMoveOn(Square)
+	    && (!Square->GetCharacter()
+	     || Square->GetCharacter()->IsPet()))
 	      {
 		ADD_MESSAGE("You are too scared to attack %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
 		return true;
@@ -7173,4 +7168,22 @@ bool character::CheckIfTooScaredToHit(const character* Enemy) const
       }
 
   return false;
+}
+
+void character::PrintBeginLevitatingMessage() const
+{
+  if(!(GetMoveType() & FLY))
+    if(IsPlayer())
+      ADD_MESSAGE("Your rise into the air like a small hot-air balloon.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s begins to float.", CHAR_NAME(DEFINITE));
+}
+
+void character::PrintEndLevitatingMessage() const
+{
+  if(!(GetMoveType() & FLY))
+    if(IsPlayer())
+      ADD_MESSAGE("You descent gently onto the ground.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s drops onto the ground.", CHAR_NAME(DEFINITE));
 }

@@ -98,6 +98,7 @@
 #define VOMIT (LIQUID_ID + 14)
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
 #define SULPHURIC_ACID (LIQUID_ID + 16)
+#define DOG_DROOL (LIQUID_ID + 17)
 
 #define FLESH_ID (5 << 12)
 

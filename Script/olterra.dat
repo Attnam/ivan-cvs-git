@@ -59,6 +59,7 @@ wall
 	MaterialColorC = rgb16(140, 96, 48);
 	MaterialColorD = rgb16(180, 180, 255);
 	ShowThingsUnder = false;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
 
 	Config BRICK_FINE;
 	{
@@ -138,6 +139,7 @@ wall
 decoration
 {
 	IsAbstract = true;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
 
 	Config PINE;
 	{
@@ -206,7 +208,7 @@ decoration
 	Config COUCH;
 	{
 		CanBeDestroyed = true;
-		DigMessage = "The destroy the couch.";
+		DigMessage = "The destroy the couch and find some valuables dropped by its owners.";
 		MainMaterialConfig == FABRIC;
 		NameSingular = "couch";
 		BitmapPos = 0, 400;
@@ -215,6 +217,7 @@ decoration
 		SitMessage = "The couch is extremely soft and confortable. You relax well.";
 		RestMessage = "You rest well on the soft sofa.";
 		HPModifier = 25;
+		LeftOverItems == stone { Times = 1:2; }
 	}
 
 	Config DOUBLE_BED;
@@ -231,6 +234,7 @@ decoration
 		SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
 		RestMessage = "You lay yourself on the confortable bed.";
 		HPModifier = 25;
+		LeftOverItems == 0;
 	}
 
 	Config POOL_BORDER;
@@ -287,6 +291,7 @@ decoration
 		NameSingular = "anvil";
 		BitmapPos = 16, 432;
 		HPModifier = 25;
+		LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
 	}
 
 	Config SHARD;
@@ -299,6 +304,7 @@ decoration
 		HPModifier = 5;
 		MainMaterialConfig = { 3, BLUE_CRYSTAL, PURPLE_CRYSTAL, GREEN_CRYSTAL; }
 		MaterialConfigChances = { 3, 100, 100, 100; }
+		LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 100:200; } Times = 1:3; }
 	}
 
 	Config CACTUS;
@@ -313,6 +319,7 @@ decoration
 		NamePlural = "cactuses";
 		BitmapPos = 16, 352;
 		HPModifier = 20;
+		LeftOverItems == 0;
 	}
 	
 	Config OAK;
@@ -379,6 +386,7 @@ door /* olterrain-> */
 	/* PostFix depends on LockType */
 	HPModifier = 20;
 	CreateLockConfigurations = true;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:3; }
 }
 
 stairs /* olterrain-> */
@@ -470,6 +478,7 @@ olterraincontainer /* olterrain->decoration-> */
 		StorageVolume = 100000;
 		HPModifier = 20;
 		AttachedGod = SOPHOS;
+		LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
 	}
 }
 
@@ -502,6 +511,7 @@ boulder /* olterrain-> */
 	CanBeDestroyed = true;
 	IsAbstract = true;
 	HPModifier = 50;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
 
 	Config 1;
 	{
@@ -542,6 +552,7 @@ sign
 	CanBeDestroyed = true;
 	MaterialColorB = rgb16(48, 48, 48);
 	HPModifier = 10;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:500; } }
 }
 
 earth
@@ -562,4 +573,5 @@ earth
 	BorderTilePriority = 10;
 	UseBorderTiles = true;
 	ShowThingsUnder = false;
+	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
 }

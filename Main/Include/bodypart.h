@@ -109,6 +109,7 @@ class ABSTRACT_ITEM
   virtual bool AllowFluidBe() const;
   virtual material* RemoveMaterial(material*);
   virtual void CopyAttributes(const bodypart*) { }
+  virtual void DestroyBodyPart(stack*);
  protected:
   virtual bool AllowFluids() const { return true; }
   virtual bool IsSparkling(int) const;
@@ -513,20 +514,9 @@ class ITEM
 (
   eddytorso,
   normaltorso,
- public:
+ protected:
   virtual int GetClassAnimationFrames() const { return 8; }
   virtual vector2d GetBitmapPos(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
-);
-
-class ITEM
-(
-  mommotorso,
-  normaltorso,
- public:
-  virtual int GetClassAnimationFrames() const { return 64; }
-  virtual vector2d GetBitmapPos(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -536,7 +526,6 @@ class ITEM
  public:
   virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
   virtual int GetSquareIndex(vector2d) const;
-  virtual void Draw(bitmap*, vector2d, color24, int, bool) const;
   virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 4; }
  protected:
@@ -551,7 +540,6 @@ class ITEM
  public:
   virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
   virtual int GetSquareIndex(vector2d) const;
-  virtual void Draw(bitmap*, vector2d, color24, int, bool) const;
   virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 4; }
  protected:
@@ -563,18 +551,9 @@ class ITEM
 (
   ennerhead,
   head,
- public:
+ protected:
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(int) const;
-  virtual bool HasSpecialAnimation() const { return true; }
-);
-
-class ITEM
-(
-  hattifattenertorso,
-  normaltorso,
- public:
-  virtual int GetSpecialFlags() const { return ST_LIGHTNING; }
 );
 
 class ITEM
@@ -687,6 +666,34 @@ class ITEM
  protected:
   graphicdata LegArmorGraphicData;
   graphicdata BootGraphicData;
+);
+
+class ITEM
+(
+  magicmushroomtorso,
+  normaltorso,
+ protected:
+  virtual int GetClassAnimationFrames() const { return 64; }
+  virtual vector2d GetBitmapPos(int) const;
+);
+
+class ITEM
+(
+  dogtorso,
+  normaltorso,
+ protected:
+  virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
+  virtual int GetClassAnimationFrames() const { return 16; }
+  virtual vector2d GetBitmapPos(int) const;
+);
+
+class ITEM
+(
+  blinkdogtorso,
+  dogtorso,
+ protected:
+  virtual alpha GetAlphaA(int) const;
+  virtual int GetClassAnimationFrames() const { return 64; }
 );
 
 #endif

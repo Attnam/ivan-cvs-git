@@ -101,9 +101,6 @@ void lsquare::SignalEmitationDecrease(color24 EmitationUpdate)
 
 void lsquare::CalculateEmitation()
 {
-  if(Pos == vector2d(12,33))
-    int esko = 2;
-
   Emitation = Stack->GetEmitation();
   int c;
 
@@ -154,7 +151,7 @@ void lsquare::UpdateMemorized()
 
 void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool RealDraw) const
 {
-  if(RealDraw && !AnimatedEntities && Memorized && game::GetSeeWholeMapCheatMode() != SHOW_MAP_IN_UNIFORM_LIGHT)
+  if(RealDraw && !AnimatedEntities && Memorized && !game::GetSeeWholeMapCheatMode())
     {
       Memorized->LuminanceBlit(Bitmap, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
       return;
@@ -576,7 +573,7 @@ void lsquare::AddCharacter(character* Guy)
 
   Character = Guy;
   SignalEmitationIncrease(Guy->GetEmitation());
-  Flags |= NEW_DRAW_REQUEST;
+  Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
 }
 
@@ -593,7 +590,7 @@ void lsquare::RemoveCharacter()
       character* Backup = Character;
       Character = 0;
       SignalEmitationDecrease(Backup->GetEmitation());
-      Flags |= NEW_DRAW_REQUEST;
+      Flags |= STRONG_NEW_DRAW_REQUEST;
     }
 }
 
@@ -762,10 +759,10 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   delete OLTerrain;
   OLTerrain = NewOver;
   Flags |= NEW_DRAW_REQUEST;
-  SendMemorizedUpdateRequest();
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
   CalculateBorderPartners();
   CalculateIsTransparent();
+  SendMemorizedUpdateRequest();
 
   if(WasUsingBorderTiles || (NewOver && NewOver->UseBorderTiles()))
     RequestForBorderPartnerUpdates();
@@ -845,7 +842,8 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   if(Items)
     for(uint c1 = 0; c1 < Items->Size; ++c1)
       {
-	int Times = Items->Data[c1].GetTimes();
+	const interval* TimesPtr = Items->Data[c1].GetTimes();
+	int Times = TimesPtr ? TimesPtr->Randomize() : 1;
 
 	for(int c2 = 0; c2 < Times; ++c2)
 	  {
@@ -1026,7 +1024,7 @@ void lsquare::DrawParticles(long Color, bool DrawHere)
   for(int c = 0; c < 10; ++c)
     DOUBLE_BUFFER->PutPixel(Pos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
-  Flags |= NEW_DRAW_REQUEST; // Clean the pixels from the screen afterwards
+  Flags |= STRONG_NEW_DRAW_REQUEST; // Clean the pixels from the screen afterwards
 
   if(DrawHere)
     {
@@ -1138,7 +1136,7 @@ void lsquare::DrawMemorizedCharacter()
 	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
       Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
-      Flags &= ~STRONG_NEW_DRAW_REQUEST;
+      Flags |= STRONG_NEW_DRAW_REQUEST;
     }
 }
 
@@ -1257,7 +1255,7 @@ vector2d lsquare::DrawLightning(vector2d StartPos, long Color, int Direction, bo
     game::DrawEverythingNoBlit();
 
   Empty.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, game::CalculateScreenCoordinates(GetPos()), 16, 16);
-  Flags |= NEW_DRAW_REQUEST;
+  Flags |= STRONG_NEW_DRAW_REQUEST;
 
   if(DrawHere)
     {
@@ -2295,7 +2293,7 @@ bool lsquare::AcidRain(character* Who, const festring&, int Dir)
 	  Stack[c]->Flags &= ~IN_SQUARE_STACK;
 	}
 
-      if(Who && Character->GetTeam() != Who->GetTeam())
+      if(Who && Character && Character->GetTeam() != Who->GetTeam())
 	Who->Hostility(Character);
 
       return true;

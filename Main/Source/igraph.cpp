@@ -84,6 +84,8 @@ void igraph::DrawCursor(vector2d Pos)
   igraph::GetCursorGraphic()->LuminanceMaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 }
 
+const vector2d SizeVect = vector2d(16, 16);
+
 tilemap::iterator igraph::AddUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
@@ -96,11 +98,11 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
   else
     {
-      static const vector2d SizeVect = vector2d(16, 16);
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(vector2d(GI.BitmapPosX, GI.BitmapPosY), SizeVect, GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
       Bitmap->ActivateFastFlag();
       const int SpecialFlags = GI.SpecialFlags;
       const int BodyPartFlags = SpecialFlags & 0x38;
+      const int Frame = GI.Frame;
 
       if(BodyPartFlags)
 	EditBodyPartTile(Bitmap, BodyPartFlags);
@@ -121,13 +123,16 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	Bitmap->CreateSparkle(SparklePos + GI.Position, GI.SparkleFrame);
 
       if(GI.FlyAmount)
-	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
+	Bitmap->CreateFlies(GI.Seed, Frame, GI.FlyAmount);
+
+      if(SpecialFlags & ST_WOBBLE && !(Frame & 0x60))
+	Bitmap->Wobble(Frame, !!(SpecialFlags & ST_WOBBLE_HORIZONTALLY_BIT));
 
       if(SpecialFlags & ST_FLAME)
-	Bitmap->CreateFlames(GI.Frame);
+	Bitmap->CreateFlames(Frame);
 
-      if(SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
-	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
+      if(SpecialFlags & ST_LIGHTNING && !((Frame + 1) & 7))
+	Bitmap->CreateLightning(GI.Seed + Frame, WHITE);
 
       return TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap))).first;
     }
