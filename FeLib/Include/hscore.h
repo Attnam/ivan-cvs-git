@@ -10,7 +10,7 @@
 
 #include "typedef.h"
 
-#if defined(WIN32) || defined(__DJGPP__)
+#if (defined(WIN32) || defined(__DJGPP__)) && !defined(HIGH_SCORE_FILENAME)
 #define HIGH_SCORE_FILENAME "HScore.dat"
 #endif
 

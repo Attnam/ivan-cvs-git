@@ -1,10 +1,10 @@
-AC_INIT(igor, 0.1)
+AC_INIT(mihail,0.9)
 AC_CANONICAL_TARGET
 
 AC_CONFIG_SRCDIR(Source/mihail.cpp)
 AM_INIT_AUTOMAKE([foreign])
 AM_PROG_AS 
-AM_INIT_AUTOMAKE([foreign], mihail,0.9)
+AM_INIT_AUTOMAKE([foreign],mihail,0.9)
 AC_PROG_CC
 
 AC_PROG_CXX
