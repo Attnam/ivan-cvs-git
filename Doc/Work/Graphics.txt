@@ -15,7 +15,7 @@ Forge.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-Visible invisible stalker.
+//Visible invisible stalker.
 Lada.
 Jungle bays.
 Robe.

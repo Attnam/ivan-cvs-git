@@ -381,3 +381,9 @@ Nymph hair should burn.
 //You should be able to can corpses.
 If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
 Mistresses should sometimes kick male players in the groin.
+Banana peels should become bananas if zapped with a wand of resurrection.
+Wand of digging.
+Skeletons should throw bones at dogs.
+Uses for engraving. (random magic word?)
+One should get some score for pets.
+Message for bottles breaking inside chests.

@@ -97,3 +97,5 @@ Money item.
 Some kind of rank/danger level system.
 
 Removing worldmap.
+
+Zombie state.
