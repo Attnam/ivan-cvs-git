@@ -103,6 +103,8 @@ struct itemdatabase
   bool CanBeUsedBySmith;
   bool AffectsCarryingCapacity;
   uchar DamageDivider;
+  bool HandleInPairs;
+  bool CanBeEnchanted;
 };
 
 class itemprototype
@@ -302,6 +304,8 @@ class item : public object
   virtual DATA_BASE_VALUE(ushort, BeamRange);
   virtual DATA_BASE_BOOL(CanBeUsedBySmith);
   DATA_BASE_VALUE(uchar, DamageDivider);
+  DATA_BASE_BOOL(HandleInPairs);
+  virtual DATA_BASE_BOOL(CanBeEnchanted);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -333,7 +337,7 @@ class item : public object
   virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
   virtual void SetTeam(ushort) { }
-  virtual void SpecialGenerationHandler() { }
+  void SpecialGenerationHandler();
   item* Duplicate() const;
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
@@ -379,6 +383,7 @@ class item : public object
   virtual const std::string& GetBaseToHitValueDescription() const;
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_INDEX || Index == LEFT_WIELDED_INDEX; }
   bool IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(Slot)->GetEquipmentIndex()); }
+  ushort GetEquipmentIndex() const { return static_cast<gearslot*>(Slot)->GetEquipmentIndex(); }
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();

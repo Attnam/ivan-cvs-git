@@ -359,7 +359,13 @@ bool fountain::Drink(character* Drinker)
 		      if(TempItem)
 			{
 			  Drinker->GetStack()->AddItem(TempItem);
-			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
+			  TempItem->SpecialGenerationHandler();
+
+			  if(TempItem->HandleInPairs())
+			    ADD_MESSAGE("Two %s appear from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(PLURAL));
+			  else
+			    ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
+
 			  break;
 			}
 		    }
@@ -939,7 +945,15 @@ void olterraincontainer::SetItemsInside(const std::vector<contentscript<item> >&
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
-      GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+      {
+	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+
+	if(Item)
+	  {
+	    Contained->AddItem(Item);
+	    Item->SpecialGenerationHandler();
+	  }
+      }
 }
 
 void wall::Break()

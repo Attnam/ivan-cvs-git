@@ -153,6 +153,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
+  virtual item* GetPairEquipment(ushort) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);

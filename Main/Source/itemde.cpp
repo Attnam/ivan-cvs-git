@@ -292,7 +292,13 @@ void scrollofwishing::FinishReading(character* Reader)
       if(TempItem)
 	{
 	  Reader->GetStack()->AddItem(TempItem);
-	  ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHAR_NAME(INDEFINITE));
+	  TempItem->SpecialGenerationHandler();
+
+	  if(TempItem->HandleInPairs())
+	    ADD_MESSAGE("Two %s appear from nothing and the scroll burns!", TempItem->CHAR_NAME(PLURAL));
+	  else
+	    ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHAR_NAME(INDEFINITE));
+
 	  RemoveFromSlot();
 	  SendToHell();
 	  return;
@@ -314,28 +320,53 @@ void scrollofchangematerial::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  item* Item = Reader->SelectFromPossessions("What item do you wish to change?");
+	  std::vector<item*> Item;
+	  Reader->SelectFromPossessions(Item, "What item do you wish to change?", NO_MULTI_SELECT|SELECT_PAIR);
 
-	  if(Item)
+	  if(!Item.empty())
 	    {
-	      if(!Item->IsMaterialChangeable())
+	      if(!Item[0]->IsMaterialChangeable())
 		{
-		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHAR_NAME(DEFINITE));
+		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
 		  break;
 		}
 
+	      if(Item[0]->HandleInPairs() && Item.size() == 1)
+		{
+		  ADD_MESSAGE("Only one %s will be altered.", Item[0]->CHAR_NAME(UNARTICLED));
+
+		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		    continue;
+		}
+
 	      std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-	      material* TempMaterial = protosystem::CreateMaterial(Temp, Item->GetMainMaterial()->GetVolume());
+	      material* TempMaterial = protosystem::CreateMaterial(Temp, Item[0]->GetMainMaterial()->GetVolume());
 
 	      if(TempMaterial)
 		{
-		  if(!Item->GetMainMaterial()->IsSameAs(TempMaterial))
+		  if(Item.size() == 1)
 		    {
-		      ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item->CHAR_NAME(UNARTICLED));
-		      Item->ChangeMainMaterial(TempMaterial);
+		      if(!Item[0]->GetMainMaterial()->IsSameAs(TempMaterial))
+			{
+			  ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item[0]->CHAR_NAME(UNARTICLED));
+			  Item[0]->ChangeMainMaterial(TempMaterial);
+			}
+		      else
+			ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item[0]->CHAR_NAME(UNARTICLED));
 		    }
 		  else
-		    ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks unchanged.", Item->CHAR_NAME(UNARTICLED));
+		    {
+		      if(!Item[0]->GetMainMaterial()->IsSameAs(TempMaterial))
+			{
+			  ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look greatly altered.", Item[0]->CHAR_NAME(PLURAL));
+			  Item[0]->ChangeMainMaterial(TempMaterial);
+
+			  for(ushort c = 1; c < Item.size(); ++c)
+			    Item[c]->ChangeMainMaterial(TempMaterial->Clone());
+			}
+		      else
+			ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look unchanged.", Item[0]->CHAR_NAME(PLURAL));
+		    }
 
 		  break;
 		}
@@ -736,7 +767,13 @@ bool oillamp::Apply(character* Applier)
 			  if(TempItem)
 			    {
 			      Applier->GetStack()->AddItem(TempItem);
-			      ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
+			      TempItem->SpecialGenerationHandler();
+
+			      if(TempItem->HandleInPairs())
+				ADD_MESSAGE("Two %s appear from nothing and the genie flies happily away!", TempItem->CHAR_NAME(PLURAL));
+			      else
+				ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
+
 			      break;
 			    }
 			}
@@ -805,13 +842,23 @@ void scrollofcharging::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->SelectFromPossessions("Which item do you wish to charge?", &item::ChargeableSorter);
+	std::vector<item*> Item;
+	Reader->SelectFromPossessions(Item, "Which item do you wish to charge?", NO_MULTI_SELECT|SELECT_PAIR, &item::ChargeableSorter);
 
-	if(Item)
+	if(!Item.empty())
 	  {
-	    game::DrawEverythingNoBlit();
-	    Item->ChargeFully(Reader);
-	    ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHAR_NAME(DEFINITE));
+	    if(Item[0]->HandleInPairs() && Item.size() == 1)
+	      {
+		ADD_MESSAGE("Only one %s will be charged.", Item[0]->CHAR_NAME(UNARTICLED));
+
+		if(!game::BoolQuestion("Still continue? [y/N]"))
+		  continue;
+	      }
+
+	    for(ushort c = 0; c < Item.size(); ++c)
+	      Item[c]->ChargeFully(Reader);
+
+	    ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
 	    break;
 	  }
 	else if(game::BoolQuestion("Really cancel read? [y/N]"))
@@ -1975,8 +2022,12 @@ void itemcontainer::VirtualConstructor(bool Load)
       for(ushort c = 0; c < ItemNumber; ++c)
 	{
 	  item* NewItem = protosystem::BalancedCreateItem();
+	  ulong Volume = NewItem->GetVolume();
 
-	  if(NewItem->CanBeGeneratedInContainer() && (GetStorageVolume() - GetContained()->GetVolume()) / NewItem->GetVolume())
+	  if(NewItem->HandleInPairs())
+	    Volume <<= 1;
+
+	  if(NewItem->CanBeGeneratedInContainer() && (GetStorageVolume() - GetContained()->GetVolume()) >= Volume)
 	    {
 	      GetContained()->AddItem(NewItem);
 	      NewItem->SpecialGenerationHandler();
@@ -2513,6 +2564,7 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
       return true;
     }
 
+  Zapper->EditExperience(PERCEPTION, 250);
   vector2d Pos[3];
   Pos[0] = game::GetMoveVector(Direction);
 
@@ -3336,6 +3388,7 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
       return true;
     }
 
+  Zapper->EditExperience(PERCEPTION, 250);
   std::string DeathMSG = "killed by " + GetName(INDEFINITE);
   Beam(Zapper, DeathMSG, Direction, GetBeamRange());
   SetTimesUsed(GetTimesUsed() + 1);
@@ -3825,12 +3878,43 @@ void scrollofenchantweapon::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  item* Item = Reader->SelectFromPossessions("Choose a weapon to enchant:", &item::WeaponSorter);
+	  std::vector<item*> Item;
+	  Reader->SelectFromPossessions(Item, "Choose a weapon to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::WeaponSorter);
 
-	  if(Item)
+	  if(!Item.empty())
 	    {
-	      ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item->CHAR_NAME(UNARTICLED));
-	      Item->EditEnchantment(1);
+	      if(!Item[0]->CanBeEnchanted())
+		{
+		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+		  break;
+		}
+
+	      if(Item[0]->HandleInPairs() && Item.size() == 1)
+		{
+		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+
+		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		    continue;
+		}
+
+	      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+		{
+		  if(Item.size() == 1)
+		    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
+		  else
+		    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
+
+		  break;
+		}
+
+	      if(Item.size() == 1)
+		ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+	      else
+		ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+
+	      for(ushort c = 0; c < Item.size(); ++c)
+		Item[c]->EditEnchantment(1);
+
 	      break;
 	    }
 	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
@@ -3864,12 +3948,43 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  item* Item = Reader->SelectFromPossessions("Choose an armor to enchant:", &item::ArmorSorter);
+	  std::vector<item*> Item;
+	  Reader->SelectFromPossessions(Item, "Choose an armor to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::ArmorSorter);
 
-	  if(Item)
+	  if(!Item.empty())
 	    {
-	      ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item->CHAR_NAME(UNARTICLED));
-	      Item->EditEnchantment(1);
+	      if(!Item[0]->CanBeEnchanted())
+		{
+		  ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
+		  break;
+		}
+
+	      if(Item[0]->HandleInPairs() && Item.size() == 1)
+		{
+		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+
+		  if(!game::BoolQuestion("Still continue? [y/N]"))
+		    continue;
+		}
+
+	      if(Item[0]->GetEnchantment() >= 5 && RAND() % (Item[0]->GetEnchantment() - 3))
+		{
+		  if(Item.size() == 1)
+		    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant it further!", Item[0]->CHAR_NAME(DEFINITE));
+		  else
+		    ADD_MESSAGE("Magic energies swirl around %s, but they fail to enchant them further!", Item[0]->CHAR_NAME(DEFINITE|PLURAL));
+
+		  break;
+		}
+
+	      if(Item.size() == 1)
+		ADD_MESSAGE("Your %s glows briefly blue. It feels very warm now.", Item[0]->CHAR_NAME(UNARTICLED));
+	      else
+		ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
+
+	      for(ushort c = 0; c < Item.size(); ++c)
+		Item[c]->EditEnchantment(1);
+
 	      break;
 	    }
 	  else if(game::BoolQuestion("Really cancel read? [y/N]"))
@@ -4687,7 +4802,15 @@ void itemcontainer::SetItemsInside(const std::vector<contentscript<item> >& Item
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
-      GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+      {
+	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+
+	if(Item)
+	  {
+	    Contained->AddItem(Item);
+	    Item->SpecialGenerationHandler();
+	  }
+      }
 }
 
 bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
@@ -4858,14 +4981,27 @@ void scrollofrepair::FinishReading(character* Reader)
   else
     while(true)
       {
-	item* Item = Reader->SelectFromPossessions("Which item do you wish to repair?", &item::BrokenSorter);
+	std::vector<item*> Item;
+	Reader->SelectFromPossessions(Item, "Which item do you wish to repair?", NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
 
-	if(Item)
+	if(!Item.empty())
 	  {
-	    if(Reader->IsPlayer())
-	      ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item->CHAR_NAME(DEFINITE));
+	    if(Item[0]->HandleInPairs() && Item.size() == 1)
+	      {
+		ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
 
-	    Item->Fix();
+		if(!game::BoolQuestion("Still continue? [y/N]"))
+		  continue;
+	      }
+
+	    if(Item.size() == 1)
+	      ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item[0]->CHAR_NAME(DEFINITE));
+	    else
+	      ADD_MESSAGE("As you read the scroll, %s glow green and fix themselves.", Item[0]->CHAR_NAME(PLURAL));
+
+	    for(ushort c = 0; c < Item.size(); ++c)
+	      Item[c]->Fix();
+
 	    break;
 	  }
 	else if(game::BoolQuestion("Really cancel read? [y/N]"))

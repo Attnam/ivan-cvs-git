@@ -311,6 +311,8 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(CanBeUsedBySmith);
   ANALYZE_DATA(AffectsCarryingCapacity);
   ANALYZE_DATA(DamageDivider);
+  ANALYZE_DATA(HandleInPairs);
+  ANALYZE_DATA(CanBeEnchanted);
 
   return Found;
 }

@@ -811,6 +811,7 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 	      }
 
 	    Stack->AddItem(Item);
+	    Item->SpecialGenerationHandler();
 	  }
       }
 

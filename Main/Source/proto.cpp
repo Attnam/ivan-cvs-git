@@ -91,7 +91,7 @@ character* protosystem::BalancedCreateMonster()
 
 		    character* Monster = Proto->Clone(i->first);
 
-		     if(c >= 100 || i->second.IsUnique || (Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 100000))
+		     if(c >= 100 || (Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && (i->second.IsUnique || game::GetPlayer()->GetTimeToKill(Monster, true) < 100000)))
 		      {
 			game::SignalGeneration(ChosenType, i->first);
 			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -146,6 +146,9 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 			      return Item;
 
 			    ulong Price = Item->GetPrice();
+
+			    if(Item->HandleInPairs())
+			      Price <<= 1;
 
 			    if(Price >= MinPrice && Price <= MaxPrice)
 			      return Item;

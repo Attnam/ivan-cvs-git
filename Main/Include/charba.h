@@ -542,7 +542,7 @@ class character : public entity, public id
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
   long GetStateAPGain(long) const;
-  virtual long GetMoveAPRequirement(uchar Difficulty) const { return 10000000 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase()); }
+  virtual long GetMoveAPRequirement(uchar) const;
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   ushort GetConfig() const { return Config; }
@@ -725,6 +725,7 @@ class character : public entity, public id
   vector2d ApplyStateModification(vector2d) const;
   virtual void AddConfuseHitMessage() const;
   virtual item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
+  virtual void SelectFromPossessions(std::vector<item*>&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
   virtual bool EquipsSomething(bool (*)(const item*, const character*) = 0);
   virtual bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return false; }
@@ -749,6 +750,7 @@ class character : public entity, public id
   std::string GetKillName() const;
   std::string GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
+  virtual item* GetPairEquipment(ushort) const { return 0; }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

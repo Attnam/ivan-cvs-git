@@ -72,7 +72,7 @@
 //Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
-//Effect and exp for charisma.
+//Effects and exps for wisdom and charisma.
 (s) ?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
@@ -96,7 +96,7 @@
 //Boots and gauntlets should be generated in pairs of two.
 (s) Re-enable Golden Eagle Quest danger requirement.
 //Prevent escape from Oree.
-?Configurations should be visually separated with colors.
+//?Configurations should be visually separated with colors.
 //Blocking and visibility should be considered when calculating relative danger.
 //Spiders must not trigger mines.
 //Hit effects of thrown items.

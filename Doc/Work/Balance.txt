@@ -10,3 +10,5 @@
 //Bats should be made more dangerous or easier
 //Snakes are too fast. (normal snakes can all be easily outrun by a human)
 Halberd requires too much strength (weapons experts opinion).
+Phoenix feather limbs may be too powerful. (I'm not sure, I just discovered they even are possible to gain)
+//Guy with beginning stats and no equipment in gloomy cave level 2 -> Ur-Khan the orc marshal appears. (I was in WMode, but still...)

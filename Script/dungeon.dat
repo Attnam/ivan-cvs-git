@@ -217,8 +217,8 @@ Dungeon ELPURI_CAVE;
 
 				Types
 				{
-					g = { 2, IRON gauntlet, IRON gauntlet; }
-					b = { 2, IRON boot, IRON boot; }
+					g == Random { MinPrice = 200; MaxPrice = 10000; Category = GAUNTLET; }
+					b == Random { MinPrice = 200; MaxPrice = 10000; Category = BOOT; }
 					a == Random { MinPrice = 200; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
 					d == Random { MinPrice = 200; MaxPrice = 10000; Category = RING|AMULET; }
 					w == Random { MinPrice = 200; MaxPrice = 10000; Category = WEAPON|SHIELD; }
@@ -979,7 +979,7 @@ Dungeon ATTNAM;
 				Types
 				{
 					# == 0;
-					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
 					d == Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
 					w == Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
 					e == Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
@@ -1191,7 +1191,6 @@ Dungeon NEW_ATTNAM;
 			Size = 17,19;
 			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
 			FloorSquare = solidterrain(FLOOR),empty;
-			DoorSquare = solidterrain(FLOOR), door;
 			GenerateDoor = false;
 			ReCalculate = false;
 			DivineMaster = SILVA;
@@ -1304,8 +1303,9 @@ Dungeon NEW_ATTNAM;
 			}
 		}
 
-		Square, Pos 12, 22;
+		Square, Pos 12, 22; /* odd place? */
 		{
+			GTerrain = solidterrain(FLOOR);
 			OTerrain = door;
 		}
 

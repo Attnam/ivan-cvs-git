@@ -729,3 +729,9 @@ const std::string& item::GetStrengthValueDescription() const
   else
     return StrengthValueDescription[6];
 }
+
+void item::SpecialGenerationHandler()
+{
+  if(HandleInPairs())
+    GetSlot()->AddFriendItem(Duplicate());
+}

@@ -429,19 +429,34 @@ void loricatus::PrayGoodEffect()
 	game::GetPlayer()->GetEquipment(c)->Fix();
 	return;
       }
+
+  item* MainWielded = game::GetPlayer()->GetMainWielded();
 	
-  if(game::GetPlayer()->GetMainWielded())
+  if(MainWielded)
     {
-      if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
+      if(MainWielded->IsMaterialChangeable())
 	{
-	  std::string OldName;
 	  ushort StrengthValue = protocontainer<material>::GetProto(1)->GetConfig().find(STEEL)->second.StrengthValue;
 
-	  if(StrengthValue > game::GetPlayer()->GetMainWielded()->GetMainMaterial()->GetStrengthValue())
+	  if(StrengthValue > MainWielded->GetMainMaterial()->GetStrengthValue())
 	    {
-	      game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
-	      game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
-	      ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHAR_NAME(INDEFINITE));
+	      std::string Desc;
+	      item* SecondaryWielded;
+
+	      if(MainWielded->HandleInPairs() && (SecondaryWielded = game::GetPlayer()->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, game::GetPlayer()))
+		{
+		  MainWielded->AddName(Desc, PLURAL);
+		  Desc << " glow and sparkle like they were";
+		  SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
+		}
+	      else
+		{
+		  MainWielded->AddName(Desc, UNARTICLED);
+		  Desc << " glows and sparkles like it was";
+		}
+
+	      MainWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
+	      ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.c_str());
 	    }
 	  else
 	    {
@@ -457,7 +472,7 @@ void loricatus::PrayGoodEffect()
 	  return;
 	}
       else
-	ADD_MESSAGE("%s glows in a strange light but remains unchanged.", game::GetPlayer()->GetMainWielded()->CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("%s emits strange light but remains unchanged.", MainWielded->CHAR_NAME(DEFINITE));
     }
   else
     ADD_MESSAGE("You feel a slight tingling in your hands.");
@@ -465,17 +480,31 @@ void loricatus::PrayGoodEffect()
 
 void loricatus::PrayBadEffect()
 {
-  std::string OldName;
+  item* MainWielded = game::GetPlayer()->GetMainWielded();
 
-  if(game::GetPlayer()->GetMainWielded())
-    if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
+  if(MainWielded)
+    if(MainWielded->IsMaterialChangeable())
       {
-	game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
-	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHAR_NAME(INDEFINITE));
+	std::string Desc;
+	item* SecondaryWielded;
+
+	if(MainWielded->HandleInPairs() && (SecondaryWielded = game::GetPlayer()->GetSecondaryWielded()) && SecondaryWielded->CanBePiledWith(MainWielded, game::GetPlayer()))
+	  {
+	    MainWielded->AddName(Desc, PLURAL);
+	    Desc << " vibrate and soften";
+	    SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
+	  }
+	else
+	  {
+	    MainWielded->AddName(Desc, UNARTICLED);
+	    Desc << " vibrates and softens";
+	  }
+
+	MainWielded->ChangeMainMaterial(MAKE_MATERIAL(BANANA_FLESH));
+	ADD_MESSAGE("Your %s.", Desc.c_str());
       }
     else
-      ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetMainWielded()->CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s emits strange light but remain unchanged.", MainWielded->CHAR_NAME(DEFINITE));
   else
     ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
@@ -955,7 +984,7 @@ void cruentus::PrayGoodEffect()
   if(!Weapon || !Weapon->IsWeapon(game::GetPlayer()))
     Weapon = game::GetPlayer()->GetSecondaryWielded();
 
-  if(Weapon && Weapon->IsWeapon(game::GetPlayer()) && !(RAND() % 10))
+  if(Weapon && Weapon->IsWeapon(game::GetPlayer()) && Weapon->CanBeEnchanted() && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
     {
       ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
       Weapon->EditEnchantment(1);

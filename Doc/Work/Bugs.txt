@@ -37,7 +37,7 @@ Skeletons are probably seen by infravision.
 //ESP + Wmode look bugs.
 //Wishing for ring of teleport bugs.
 //Teleportation in Attnam bugs.
-Corpse + loricatus.
+//Corpse + loricatus.
 //Visual bugs with close in Linux with the X-button.
 //Unicorns can eat silver stones.
 //Exp is gained even if bodypart is non-living, even though it affects nothing.
@@ -94,7 +94,7 @@ Corpse + loricatus.
 //Consuming chests probably crashes the game.
 //Go seems to be slower than manual walking.
 (s) Strength bonus is shown in the battle info screen even for Bill's wills.
-(example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
+(s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 //Bear trap + level change crashes.
 //Polymorphing while wearing a ring of infravision crashes.
 //Message history may crash if many many very long messages are successively printed.

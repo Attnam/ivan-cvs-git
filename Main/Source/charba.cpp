@@ -2210,7 +2210,6 @@ bool character::Zap()
 
       if(Item->Zap(this, GetPos(), Answer))
 	{
-	  EditExperience(PERCEPTION, 250);
 	  EditAP(-100000 / APBonus(GetAttribute(PERCEPTION)));
 	  return true;
 	}
@@ -6051,7 +6050,15 @@ void character::AddToInventory(const std::vector<contentscript<item> >& ItemVect
 {
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
-      GetStack()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
+      {
+	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+
+	if(Item)
+	  {
+	    Stack->AddItem(Item);
+	    Item->SpecialGenerationHandler();
+	  }
+      }
 }
 
 void character::ShowDodgeAndMoveInfo() const
@@ -6286,8 +6293,18 @@ void character::AddConfuseHitMessage() const
 
 item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(const item*, const character*))
 {
+  std::vector<item*> ReturnVector;
+  SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, SorterFunction);
+  return !ReturnVector.empty() ? ReturnVector[0] : 0;
+}
+
+void character::SelectFromPossessions(std::vector<item*>& ReturnVector, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*))
+{
   if(!CanUseEquipment())
-    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+    {
+      GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
+      return;
+    }
 
   felist List(Topic);
   bool InventoryPossible = GetStack()->SortedItems(this, SorterFunction);
@@ -6295,7 +6312,7 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
   if(InventoryPossible)
     List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
 
-  bool Any = false, UseSorterFunction = SorterFunction != 0;
+  bool Any = false, UseSorterFunction = (SorterFunction != 0);
   std::vector<item*> Item;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
@@ -6316,15 +6333,26 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
       List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
       ushort Chosen = List.Draw();
 
-      if(Chosen == ESCAPED)
-	return 0;
-      else if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
-	return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
-      else
-	return Item[InventoryPossible ? Chosen - 1 : Chosen];
+      if(Chosen != ESCAPED)
+	{
+	  if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
+	    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
+	  else
+	    {
+	      ReturnVector.push_back(Item[InventoryPossible ? Chosen - 1 : Chosen]);
+
+	      if(Flags & SELECT_PAIR && ReturnVector[0]->HandleInPairs())
+		{
+		  item* PairEquipment = GetPairEquipment(ReturnVector[0]->GetEquipmentIndex());
+
+		  if(PairEquipment && PairEquipment->CanBePiledWith(ReturnVector[0], this))
+		    ReturnVector.push_back(PairEquipment);
+		}
+	    }
+	}
     }
   else
-    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+    GetStack()->DrawContents(ReturnVector, this, Topic, Flags, SorterFunction);
 }
 
 bool character::EquipsSomething(bool (*SorterFunction)(const item*, const character*))
@@ -6493,4 +6521,9 @@ std::string character::GetPanelName() const
   Name << AssignedName << " the " << game::GetVerbalPlayerAlignment() << ' ';
   id::AddName(Name, UNARTICLED);
   return Name;
+}
+
+long character::GetMoveAPRequirement(uchar Difficulty) const
+{
+  return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
 }

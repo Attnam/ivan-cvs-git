@@ -1,3 +1,26 @@
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Wishing for a (special) boot or gauntlet now yields a pair
+	* Loricatus can now change the material of two identical gauntlets/boots
+	  if they are placed to both hands simultaneously before praying
+	* Item-affecting scrolls now handle gauntlets/boots as pairs, so for
+	  example a scroll of enchant armor will give the +1 bonus to both items
+	* Zapping chargeless wands and bananas no longer trains perception, since
+	  this could be abused
+	* Valpurus's Justifier and the Shirt of the Golden Eagle can no longer be
+	  enchanted further under any circumstances (why wouldn't Petrus have done it
+	  already?)
+	* There is now a chance of failure if one tries to enchant items beyound +5
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Praying to Loricatus while wielding a corpse no longer crashes
+	* Added unique replies for patrol guards
+	* Patrol guards now use helmets of piercing perception and rings of infravision
+	* Moving is now 25% faster when panicked
+	* All guard and dark knight configurations look now different
+	* The graphics files of IVAN are now much cleaner
+
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Bats' bite strength decreased a bit
@@ -53,7 +76,7 @@ December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Cloak and ring of invisibility can no more be wished, since they were so
+	* Cloaks and rings of invisibility can no more be wished, since they were so
 	  much more powerful than any other wishable items
 	* Charisma now affects shop prices (both buying and selling)
 	* Dealing with shopkeepers now trains charisma

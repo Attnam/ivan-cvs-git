@@ -395,8 +395,6 @@ ushort stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, 
   return 0;
 }
 
-/* fix selectitem warning! */
-
 void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   std::vector<std::vector<item*> > PileVector;
@@ -442,7 +440,8 @@ ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Vi
     if(Pos++ == Chosen)
       if(Flags & NO_MULTI_SELECT)
 	{
-	  ReturnVector.assign(1, PileVector[p].back());
+	  ushort Amount = Flags & SELECT_PAIR && PileVector[p][0]->HandleInPairs() && PileVector[p].size() >= 2 ? 2 : 1;
+	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	  return 0xFFFF;
 	}
       else

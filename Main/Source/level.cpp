@@ -550,6 +550,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 			}
 
 		      Stack->AddItem(Item);
+		      Item->SpecialGenerationHandler();
 		    }
 		}
 	}

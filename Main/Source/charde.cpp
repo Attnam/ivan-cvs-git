@@ -2299,16 +2299,16 @@ bool humanoid::CheckBalance(float KickDamage)
 long humanoid::GetMoveAPRequirement(uchar Difficulty) const
 {
   if(CanFly())
-    return 10000000 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+    return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
 
   switch(GetLegs())
     {
     case 0:
-      return 20000000 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+      return (!StateIsActivated(PANIC) ? 20000000 : 16000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
     case 1:
-      return 13333333 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+      return (!StateIsActivated(PANIC) ? 13333333 : 10666667) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
     case 2:
-      return 10000000 * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+      return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
     default:
       ABORT("A %d legged humanoid invaded the dungeon!", GetLegs());
       return 0;
@@ -4109,3 +4109,18 @@ void zombie::CreateCorpse()
     if(Exists() && GetBodyPart(c))
       GetBodyPart(c)->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
 }
+
+item* humanoid::GetPairEquipment(ushort Index) const
+{
+  switch(Index)
+    {
+    case RIGHT_WIELDED_INDEX: return GetLeftWielded();
+    case LEFT_WIELDED_INDEX: return GetRightWielded();
+    case RIGHT_GAUNTLET_INDEX: return GetLeftGauntlet();
+    case LEFT_GAUNTLET_INDEX: return GetRightGauntlet();
+    case RIGHT_BOOT_INDEX: return GetLeftBoot();
+    case LEFT_BOOT_INDEX: return GetRightBoot();
+    default: return 0;
+    }
+}
+

@@ -234,8 +234,7 @@ guard
 	DefaultWisdom = 10;
 	DefaultCharisma = 15;
 	DefaultMana = 10;
-	ClothColor = rgb16(0, 128, 128);
-	HairColor = rgb16(100, 100, 100); /* horns */
+	HairColor = rgb16(140, 60, 60); /* horns */
 	HeadBitmapPos = 96, 112;
 	TorsoBitmapPos = 32, 128;
 	ArmBitmapPos = 64, 80;
@@ -257,6 +256,7 @@ guard
 		Adjective = "rookie";
 		CWeaponSkillHits = { 2, 20, 20; }
 		PanicLevel = 50;
+		ClothColor = rgb16(150, 100, 50);
 		FriendlyReplies =
 		{
 			4,
@@ -277,37 +277,39 @@ guard
 		CWeaponSkillHits = { 2, 100, 100; }
 		RightSWeaponSkillHits = 10;
 		LeftSWeaponSkillHits = 10;
-		PanicLevel = 20;
+		PanicLevel = 25;
+		ClothColor = rgb16(80, 80, 80);
 		FriendlyReplies =
 		{
-			5,
+			4,
 			"@Dd says gravely: \"You don't have a life. Get it in the army.\"",
-			"@Dd seems very suspicious. \"Don't even think of breaking rules.\"",
+			"\"Don't even think of breaking rules.\"",
 			"\"The high priest is my idol. I would want a sword as big as his!\"",
-			"\"Can you imagine how cold this winter is if you wear only a rusty plate mail?\"",
 			"@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
 		}
 	}
 
-	Config PATROL; /* make more unique */
+	Config PATROL;
 	{
-		Helmet = IRON helmet(FULL_HELMET);
+		Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
 		BodyArmor = IRON bodyarmor(PLATE_MAIL);
 		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
 		LeftWielded = IRON shield;
+		RightRing = ring(RING_OF_INFRA_VISION);
 		Adjective = "patrol";
-		CWeaponSkillHits = { 2, 100, 100; }
-		RightSWeaponSkillHits = 10;
-		LeftSWeaponSkillHits = 10;
+		CWeaponSkillHits = { 2, 200, 200; }
+		RightSWeaponSkillHits = 100;
+		LeftSWeaponSkillHits = 100;
 		PanicLevel = 20;
+		ClothColor = rgb16(220, 220, 220);
 		FriendlyReplies =
 		{
 			5,
-			"@Dd says gravely: \"You don't have a life. Get it in the army.\"",
-			"@Dd seems very suspicious. \"Don't even think of breaking rules.\"",
-			"\"The high priest is my idol. I would want a sword as big as his!\"",
-			"\"Can you imagine how cold this winter is if you wear only a rusty plate mail?\"",
-			"@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
+			"@Dd shudders in the freezing air. \"Boy this rusty plate mail is cold in winter!\"",
+			"@Dd sighs: \"Why didn't I choose an office work...\"",
+			"@Dd seems very suspicious. \"Do you have the papers?\"",
+			"\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
+			"\"Again I'm all white! The master guard doesn't me bringing snow in the barracks...\"";
 		}
 	}
 
@@ -322,6 +324,7 @@ guard
 		RightSWeaponSkillHits = 200;
 		LeftSWeaponSkillHits = 200;
 		PanicLevel = 15;
+		ClothColor = rgb16(144, 144, 144);
 		FriendlyReplies =
 		{
 			5,
@@ -349,6 +352,7 @@ guard
 		LeftSWeaponSkillHits = 50;
 		PanicLevel = 10;
 		TotalVolume = 80000;
+		ClothColor = rgb16(255, 255, 255);
 		FriendlyReplies =
 		{
 			5,
@@ -384,12 +388,13 @@ guard
 		CanBeWished = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
+		ClothColor = rgb16(144, 144, 200);
 		FriendlyReplies =
 		{
 			5,
 			"\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
 			"\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
-			"\"In addition to all my other responsibilities, I am the head of the Attnamian Bureau of Investigation (ABI). By the way, mangos are your favorite fruit.\"",
+			"\"In addition to all my other responsibilities, I am the head of the Attnamian Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
 			"\"See the amulet? Don't think badly of the Government.\"",
 			"\"The house of Galladon has served Petrus ever since he took over.\"";
 		}
@@ -570,7 +575,7 @@ darkknight
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 48;
 	ClothColor = rgb16(0, 0, 100);
-	EyeColor = rgb16(200, 0, 0);
+	EyeColor = rgb16(255, 255, 0);
 	TotalVolume = 80000;
 	TotalSize = 200;
 	CanRead = true;
@@ -594,6 +599,8 @@ darkknight
 		RightSWeaponSkillHits = 100;
 		LeftSWeaponSkillHits = 100;
 		PanicLevel = 15;
+		ClothColor = rgb16(70, 70, 70);
+		CapColor = rgb16(48, 48, 48);
 	}
 
 	Config VETERAN;
@@ -609,6 +616,8 @@ darkknight
 		RightSWeaponSkillHits = 200;
 		LeftSWeaponSkillHits = 200;
 		PanicLevel = 10;
+		ClothColor = rgb16(40, 40, 40);
+		CapColor = rgb16(48, 48, 48);
 	}
 
 	Config ELITE;
@@ -626,6 +635,8 @@ darkknight
 		RightSWeaponSkillHits = 500;
 		PanicLevel = 5;
 		TotalVolume = 90000;
+		ClothColor = rgb16(20, 20, 120);
+		CapColor = rgb16(48, 48, 48);
 	}
 
 	Config GRAND_MASTER;
@@ -654,6 +665,10 @@ darkknight
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		Inventory = { 4, scrollofenchantarmor, scrollofenchantarmor, scrollofenchantweapon, scrollofenchantweapon; }
+		HeadBitmapPos = 96, 112;
+		ClothColor = rgb16(100, 0, 0);
+		CapColor = rgb16(48, 48, 48);
+		HairColor = rgb16(32, 32, 32);
 	}
 }
 

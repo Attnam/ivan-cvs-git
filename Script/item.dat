@@ -76,6 +76,8 @@ item
 	PriceIsProportionalToEnchantment = false;
 	CanBeUsedBySmith = false;
 	AffectsCarryingCapacity = false;
+	HandleInPairs = false;
+	CanBeEnchanted = true;
 }
 
 materialcontainer
@@ -516,6 +518,7 @@ justifier /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeBroken = false;
 	DefaultEnchantment = 16;
+	CanBeEnchanted = false;
 }
 
 neercseulb /* meleeweapon-> */
@@ -640,15 +643,15 @@ bodyarmor /* armor-> */
 	Config ARMOR_OF_GREAT_HEALTH;
 	{
 		StrengthModifier = 150; 
-		DefaultSize = 80; 
+		DefaultSize = 80;
 		DefaultMainVolume = 5000; 
 		BitmapPos = 16, 128;
-		Possibility = 25;
+		Possibility = 20;
 		NameSingular = "armor";
 		PostFix = "of great health";
 		MainMaterialConfig = { 3, LEATHER, HARDENED_LEATHER, TROLL_HIDE; }
 		MaterialConfigChances = { 3, 150, 75, 50; }
-		InElasticityPenaltyModifier = 25;
+		InElasticityPenaltyModifier = 30;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
 		Price = 250;
@@ -685,6 +688,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	CanBeCloned = false;
 	DefaultEnchantment = 10;
 	InElasticityPenaltyModifier = 30;
+	CanBeEnchanted = false;
 } 
 
 potion /* materialcontainer-> */
@@ -1259,6 +1263,7 @@ boot /* armor-> */
 	Roundness = 50;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 10;
+	HandleInPairs = true;
 
 	Config BOOT_OF_STRENGTH;
 	{
@@ -1310,6 +1315,7 @@ gauntlet /* armor-> */
 	Roundness = 60;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 30;
+	HandleInPairs = true;
 
 	Config GAUNTLET_OF_STRENGTH;
 	{
@@ -1604,6 +1610,7 @@ corpse
 	Roundness = 50;
 	IsTwoHanded = true;
 	CanBeWished = false; /* temporary */
+	IsMaterialChangeable = false;
 }
 
 wandoflocking /* wand-> */
@@ -2077,7 +2084,7 @@ scrollofenchantweapon /* scroll-> */
 
 scrollofenchantarmor /* scroll-> */
 {
-	Possibility = 75;
+	Possibility = 100;
 	Price = 250;
 	PostFix = "of enchant armor";
 }

@@ -393,7 +393,7 @@ Small shadows for items. (one pixel right and down from the items graphic)
 Using sickle against plants should yield a bonus.
 "Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
-Food in can's should spoil _much_ slower.
+//Food in can's should spoil _much_ slower.
 Skeletons' stomachs shouldn't be able to contain liquids.
 Unlike their colleagues, Nefas's angels should have a groin.
 Priests, Petrus and angels should be able to resurrect dead pets.
@@ -411,4 +411,4 @@ When many same kind of items on ground the message should say "5 Xs here" not ".
 Movement modes. (walk, run, stealth)
 "No load" mode. (if weight of stack < 1 kg)
 Lanterns inside glass chests should still emit light.
-
+The smith should fix damaged metal limbs for a fee.

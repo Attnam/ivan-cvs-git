@@ -678,7 +678,6 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
   virtual bool IsBoot(const character*) const { return true; }
-  virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_BOOT_INDEX || Index == LEFT_BOOT_INDEX; }
 );
 
@@ -689,7 +688,6 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
   virtual bool IsGauntlet(const character*) const { return true; }
-  virtual void SpecialGenerationHandler() { GetSlot()->AddFriendItem(Duplicate()); }
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_GAUNTLET_INDEX || Index == LEFT_GAUNTLET_INDEX; }
 );
 
