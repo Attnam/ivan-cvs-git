@@ -3,7 +3,7 @@
 #include "terra.h"
 #include "area.h"
 #include "materba.h"
-#include "stdover.h"
+#include "festring.h"
 #include "config.h"
 #include "femath.h"
 #include "bitmap.h"
@@ -136,3 +136,4 @@ bool square::CanBeSeenBy(character* Who) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
+

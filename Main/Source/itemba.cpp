@@ -127,8 +127,10 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
       return false;
     }
 
-  if(RAND() & 1)
-    ReceiveHitEffect(Dude, Thrower);
+  /* Fix! */
+
+  //if(RAND() & 1)
+    //HitEffect(Dude, Thrower);
 
   Dude->HasBeenHitByItem(Thrower, this, Speed);
   return true;
@@ -443,4 +445,11 @@ void item::CalculateAll()
 {
   CalculateVolumeAndWeight();
   CalculateEmitation();
+}
+
+/* Somewhat temporary. */
+
+void item::WeaponSkillHit()
+{
+  static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }

@@ -114,7 +114,7 @@ class item : public object
   virtual bool CanBeRead(character*) const { return false; }
   virtual bool Read(character*) { return false; }
   virtual void FinishReading(character*) { }
-  virtual void ReceiveHitEffect(character*, character*) { }
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool) { return false; }
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
@@ -277,6 +277,7 @@ class item : public object
   virtual void SignalEmitationDecrease(ushort);
   virtual void CalculateAll();
   virtual void DropEquipment() { }
+  void WeaponSkillHit();
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

@@ -1,7 +1,7 @@
 #include "id.h"
 #include "game.h"
 #include "godba.h"
-#include "stdover.h"
+#include "festring.h"
 
 void id::AddNameSingular(std::string& String, bool Articled) const
 {
@@ -75,3 +75,4 @@ void id::AddDivineMasterDescription(std::string& String, uchar DivineMaster) con
 {
   String << " of " << game::GetGod(DivineMaster)->Name();
 }
+

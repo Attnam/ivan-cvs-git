@@ -8,7 +8,7 @@
 #include "femath.h"
 #include "wterraba.h"
 #include "game.h"
-#include "stdover.h"
+#include "festring.h"
 #include "igraph.h"
 #include "save.h"
 #include "proto.h"
@@ -139,3 +139,4 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 
   std::sort(Neighbour.begin(), Neighbour.end(), DrawOrderer);
 }
+

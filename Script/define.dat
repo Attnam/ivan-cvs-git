@@ -191,7 +191,8 @@
 #define UNCARING 1
 #define FRIEND 2
 
-#define WEAPON_SKILL_GATEGORIES 13
+#define MARTIAL_SKILL_CATEGORIES 3
+#define WEAPON_SKILL_CATEGORIES 16
 
 #define UNARMED 0
 #define KICK 1
@@ -208,6 +209,7 @@
 #define HALBERDS 12
 #define SPEARS 13
 #define WHIPS 14
+#define SHIELDS 15
 
 #define LOCKED 1
 

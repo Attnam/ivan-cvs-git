@@ -20,7 +20,7 @@
 #include "colorbit.h"
 #include "config.h"
 #include "femath.h"
-#include "stdover.h"
+#include "festring.h"
 #include "slot.h"
 #include "actionde.h"
 #include "command.h"
@@ -76,9 +76,9 @@ character::~character()
     PolymorphBackup->SendToHell();
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
-    delete CategoryWeaponSkill[c];
+    delete CWeaponSkill[c];
 
-  delete [] CategoryWeaponSkill;
+  delete [] CWeaponSkill;
 }
 
 void character::Hunger(ushort Ticks) 
@@ -145,7 +145,12 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 	  break;
 	}
 
-      ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
+      bool DidDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
+
+      if((HitEffect(Enemy, Weapon, Type, BodyPart, Dir, !DidDamage) || DidDamage) && Enemy->IsEnabled())
+	Enemy->WeaponSkillHit(Weapon, Type);
+      else
+	return DIDNODAMAGE;
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
 	return HASDIED;
@@ -176,21 +181,20 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 	  break;
 	}
 
-      if(Enemy->AttackIsBlockable(Type))
-	TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue, TrueDamage, Success, Type);
+      if(TrueDamage && Enemy->AttackIsBlockable(Type))
+	{
+	  TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue, TrueDamage, Success, Type);
 
-      if(!TrueDamage)
-	return HASBLOCKED;
-
-      if(!ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir))
-	  {
-	    if(IsPlayer())
-	      ADD_MESSAGE("You are not hurt.");
-	    else if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
-
+	  if(!TrueDamage)
 	    return HASBLOCKED;
-	  }
+	}
+
+      bool DidDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir);
+
+      if((HitEffect(Enemy, Weapon, Type, BodyPart, Dir, !DidDamage) || DidDamage) && Enemy->IsEnabled())
+	Enemy->WeaponSkillHit(Weapon, Type);
+      else
+	return DIDNODAMAGE;
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
 	return HASDIED;
@@ -265,10 +269,10 @@ void character::Be()
       if(GetTeam() == game::GetPlayer()->GetTeam())
 	{
 	  for(ushort c = 0; c < AllowedWeaponSkillCategories; ++c)
-	    if(CategoryWeaponSkill[c]->Tick())
-	      CategoryWeaponSkill[c]->AddLevelDownMessage();
+	    if(CWeaponSkill[c]->Tick())
+	      CWeaponSkill[c]->AddLevelDownMessage();
 
-	  SingleWeaponSkillTick();
+	  SWeaponSkillTick();
 	}
 
       if(IsPlayer())
@@ -1451,7 +1455,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << AssignedName << PolymorphBackup;
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
-    SaveFile << GetCategoryWeaponSkill(c);
+    SaveFile << GetCWeaponSkill(c);
 
   SaveFile << StuckTo << StuckToBodyPart;
 }
@@ -1494,7 +1498,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> AssignedName >> PolymorphBackup;
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
-    SaveFile >> GetCategoryWeaponSkill(c);
+    SaveFile >> GetCWeaponSkill(c);
 
   SaveFile >> StuckTo >> StuckToBodyPart;
   InstallDataBase();
@@ -1811,7 +1815,7 @@ long character::GetStatScore() const
   long SkillScore = 0;
 
   for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
-    SkillScore += GetCategoryWeaponSkill(c)->GetHits();
+    SkillScore += GetCWeaponSkill(c)->GetHits();
 
   return (SkillScore >> 2) + (GetAttribute(ARMSTRENGTH) + GetAttribute(LEGSTRENGTH) + GetAttribute(DEXTERITY) + GetAttribute(AGILITY) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 40;
 }
@@ -1845,6 +1849,9 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
 
 bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
 {
+  if(!IsEnabled())
+    return true;
+
   bool Dead = false;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
@@ -2132,12 +2139,13 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   return true;
 }
 
-void character::BeKicked(character* Kicker, float KickDamage, float ToHitValue, short Success, bool Critical)
+void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float ToHitValue, short Success, bool Critical)
 {
-  switch(TakeHit(Kicker, 0, KickDamage, ToHitValue, Success, KICKATTACK, Critical))
+  switch(TakeHit(Kicker, Boot, KickDamage, ToHitValue, Success, KICKATTACK, Critical))
     {
     case HASHIT:
     case HASBLOCKED:
+    case DIDNODAMAGE:
       if(CheckBalance(KickDamage))
 	{
 	  if(IsPlayer())
@@ -2781,7 +2789,7 @@ void character::DisplayInfo(std::string& Msg)
     Msg << " You are " << GetStandVerb() << " here.";
   else
     {
-      Msg << " " << CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << CapitalizeCopy(GetPersonalPronoun());
+      Msg << " " << festring::CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << festring::CapitalizeCopy(GetPersonalPronoun());
 
       /*if(GetTeam() == game::GetPlayer()->GetTeam())
 	Msg << " is at danger level " << DangerLevel() << " and";*/
@@ -3039,7 +3047,7 @@ void character::RestoreHP()
   HP = MaxHP;
 }
 
-void character::BlockDamageType(uchar Type)
+void character::ResistDamageType(uchar Type)
 {
   switch(Type)
     {
@@ -3087,7 +3095,7 @@ bool character::DamageTypeCanSeverBodyPart(uchar Type) const
     }
 }
 /* Returns true if the damage really does some damage */
-bool character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical)
+bool character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
@@ -3099,7 +3107,16 @@ bool character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar T
       Damage = 1;
     else
       {
-	BlockDamageType(Type);
+	ResistDamageType(Type);
+
+	if(ShowNoDamageMsg)
+	  {
+	    if(IsPlayer())
+	      ADD_MESSAGE("You are not hurt.");
+	    else if(CanBeSeenByPlayer())
+	      ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
+	  }
+
 	return false;
       }
 
@@ -3161,14 +3178,6 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 bool character::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
   bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical);
-
-  if(!Affected)
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("You are not hurt.");
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
-    }
 
   if(DamageTypeAffectsInventory(Type))
     {
@@ -3718,21 +3727,21 @@ void character::LoadDataBaseStats()
   BaseAttribute[MANA] = GetDefaultMana() * (100 + GetAttributeBonus()) / 100;
   SetMoney(GetDefaultMoney());
 
-  const std::vector<long>& Skills = GetKnownCategoryWeaponSkills();
+  const std::vector<long>& Skills = GetKnownCWeaponSkills();
 
   if(Skills.size())
     {
-      const std::vector<long>& Hits = GetCategoryWeaponSkillHits();
+      const std::vector<long>& Hits = GetCWeaponSkillHits();
 
       if(Hits.size() == 1)
 	{
 	  for(ushort c = 0; c < Skills.size(); ++c)
-	    CategoryWeaponSkill[Skills[c]]->AddHit(Hits[0]);
+	    CWeaponSkill[Skills[c]]->AddHit(Hits[0]);
 	}
       else if(Hits.size() == Skills.size())
 	{
 	  for(ushort c = 0; c < Skills.size(); ++c)
-	    CategoryWeaponSkill[Skills[c]]->AddHit(Hits[c]);
+	    CWeaponSkill[Skills[c]]->AddHit(Hits[c]);
 	}
       else
 	ABORT("Illegal weapon skill hit array size detected!");
@@ -3754,7 +3763,7 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
   CalculateAllowedWeaponSkillCategories();
   BodyPartSlot = new characterslot[BodyParts];
   OriginalBodyPartID = new ulong[BodyParts];
-  CategoryWeaponSkill = new gweaponskill*[AllowedWeaponSkillCategories];
+  CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
 
   ushort c;
 
@@ -3762,7 +3771,7 @@ void character::Initialize(ushort NewConfig, bool CreateEquipment, bool Load)
     BodyPartSlot[c].SetMaster(this);
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
-    CategoryWeaponSkill[c] = new gweaponskill(c);
+    CWeaponSkill[c] = new cweaponskill(c);
 
   if(!Load)
     {
@@ -4158,7 +4167,7 @@ void character::DrawPanel(bool AnimationDraw) const
   ++PanelPosY;
 
   if(GetAction())
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", CapitalizeCopy(GetAction()->GetDescription()).c_str());
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(GetAction()->GetDescription()).c_str());
 
   for(ushort c = 0; c < STATES; ++c)
     if(!StateIsSecret[c] && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
@@ -4218,7 +4227,7 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
     }
 }
 
-ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, float WeaponToHitValue, float BlockerToHitValue, ushort Damage, short Success, uchar Type)
+ushort character::CheckForBlockWithItem(character* Enemy, item* Weapon, item* Blocker, float WeaponToHitValue, float BlockerToHitValue, ushort Damage, short Success, uchar Type)
 {
   if(Blocker->GetStrengthValue())
     if(RAND() % ushort(100 + WeaponToHitValue / (BlockerToHitValue * Blocker->GetBlockModifier(this)) * (100 + Success) * 10000) < 100)
@@ -4241,6 +4250,10 @@ ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, 
 	    break;
 	  }
 
+	Blocker->WeaponSkillHit();
+
+	/* Add clash effect here. */
+
 	if(Partial)
 	  return Damage - Blocker->GetStrengthValue();
 	else
@@ -4260,25 +4273,25 @@ bool character::ShowWeaponSkills()
   bool Something = false;
 
   for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
-    if(GetCategoryWeaponSkill(c)->GetHits())
+    if(GetCWeaponSkill(c)->GetHits())
       {
 	std::string Buffer;
-	Buffer << GetCategoryWeaponSkill(c)->Name();
+	Buffer << GetCWeaponSkill(c)->Name();
 	Buffer.resize(30, ' ');
-	Buffer << GetCategoryWeaponSkill(c)->GetLevel();
+	Buffer << GetCWeaponSkill(c)->GetLevel();
 	Buffer.resize(40, ' ');
-	Buffer << GetCategoryWeaponSkill(c)->GetHits();
+	Buffer << GetCWeaponSkill(c)->GetHits();
 	Buffer.resize(50, ' ');
 
-	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-	  Buffer << (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits());
+	if(GetCWeaponSkill(c)->GetLevel() != 10)
+	  Buffer << (GetCWeaponSkill(c)->GetLevelMap(GetCWeaponSkill(c)->GetLevel() + 1) - GetCWeaponSkill(c)->GetHits());
 	else
 	  Buffer << '-';
 
 	Buffer.resize(60, ' ');
-	Buffer << '+' << int(GetCategoryWeaponSkill(c)->GetEffectBonus() - 100) << '%';
+	Buffer << '+' << int(GetCWeaponSkill(c)->GetEffectBonus() - 100) << '%';
 	Buffer.resize(70, ' ');
-	Buffer << '-' << int(100 - GetCategoryWeaponSkill(c)->GetAPBonus()) << '%';
+	Buffer << '-' << int(100 - GetCWeaponSkill(c)->GetAPBonus()) << '%';
 	List.AddEntry(Buffer, LIGHTGRAY);
 	Something = true;
       }
@@ -5322,14 +5335,14 @@ material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
     }
 }
 
-float character::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float character::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
   float MinHits = 1000;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(BodyPartVital(c) && GetBodyPart(c))
       {
-	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, UseMaxHP);
+	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, AttackIsBlockable, UseMaxHP);
 
 	if(Hits < MinHits)
 	  MinHits = Hits;
@@ -5378,3 +5391,52 @@ item* character::SearchForItemWithID(ulong ID) const
 
   return 0;
 }
+
+bool character::HitEffect(character* Enemy, item* Weapon, uchar Type, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  if(Weapon)
+    return Weapon->HitEffect(this, Enemy, BodyPartIndex, Direction, BlockedByArmour);
+
+  switch(Type)
+    {
+    case UNARMEDATTACK:
+      return Enemy->SpecialUnarmedEffect(this, BodyPartIndex, Direction, BlockedByArmour);
+    case KICKATTACK:
+      return Enemy->SpecialKickEffect(this, BodyPartIndex, Direction, BlockedByArmour);
+    case BITEATTACK:
+      return Enemy->SpecialBiteEffect(this, BodyPartIndex, Direction, BlockedByArmour);
+    }
+
+  return false;
+}
+
+void character::WeaponSkillHit(item* Weapon, uchar Type)
+{
+  ushort Category;
+
+  switch(Type)
+    {
+    case UNARMEDATTACK:
+      Category = UNARMED;
+      break;
+    case WEAPONATTACK:
+      Weapon->WeaponSkillHit();
+      return;
+    case KICKATTACK:
+      Category = KICK;
+      break;
+    case BITEATTACK:
+      Category = BITE;
+      break;
+    }
+
+  if(GetCWeaponSkill(Category)->AddHit())
+    {
+      CalculateBattleInfo();
+
+      if(IsPlayer())
+	GetCWeaponSkill(Category)->AddLevelUpMessage();
+    }
+}
+
+

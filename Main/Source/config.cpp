@@ -3,7 +3,7 @@
 #include "config.h"
 #include "felist.h"
 #include "graphics.h"
-#include "stdover.h"
+#include "festring.h"
 #include "feio.h"
 #include "game.h"
 #include "area.h"
@@ -141,7 +141,12 @@ void configuration::ShowConfigScreen()
 
       List.Empty();
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHTGRAY);
-      List.AddEntry(std::string("Autosave interval:                      ") + (AutoSaveInterval ? AutoSaveInterval + std::string(" turn") + (AutoSaveInterval != 1 ? "s" : "") : "disabled"), LIGHTGRAY);
+
+      if(AutoSaveInterval)
+	List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHTGRAY);
+      else
+	List.AddEntry(std::string("Autosave interval:                      disabled"), LIGHTGRAY);
+
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);

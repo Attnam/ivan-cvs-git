@@ -24,7 +24,7 @@
 #include "felist.h"
 #include "colorbit.h"
 #include "femath.h"
-#include "stdover.h"
+#include "festring.h"
 
 #define PENT_WIDTH 70
 

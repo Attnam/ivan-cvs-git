@@ -138,6 +138,10 @@ SOURCE=.\FeLib\Source\femath.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Source\festring.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Source\graphics.cpp
 # End Source File
 # Begin Source File
@@ -206,6 +210,10 @@ SOURCE=.\FeLib\Include\femath.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\festring.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\graphics.h
 # End Source File
 # Begin Source File
@@ -215,10 +223,6 @@ SOURCE=.\FeLib\Include\hscore.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\save.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Include\stdover.h
 # End Source File
 # Begin Source File
 

@@ -11,7 +11,7 @@
 #include "game.h"
 #include "lterraba.h"
 #include "save.h"
-#include "stdover.h"
+#include "festring.h"
 
 template <class type> void protocontainer<type>::GenerateCodeNameMap()
 {
@@ -119,17 +119,17 @@ template <class type> ushort CountCorrectNameLetters(const typename type::databa
 {
   ushort Counter = 0;
 
-  if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1))
+  if(Identifier.find(" " + DataBase.NameSingular + " ") != std::string::npos)
     Counter += DataBase.NameSingular.length();
 
-  if(DataBase.Adjective.length() && Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1))
+  if(DataBase.Adjective.length() && Identifier.find(" " + DataBase.Adjective + " ") != std::string::npos)
     Counter += DataBase.Adjective.length();
 
-  if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
+  if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != std::string::npos)
     Counter += DataBase.PostFix.length();
 
   for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-    if(Identifier.find(" " + DataBase.Alias[c] + " ") != ulong(-1))
+    if(Identifier.find(" " + DataBase.Alias[c] + " ") != std::string::npos)
       Counter += DataBase.Alias[c].length();
 
   return Counter;
@@ -150,18 +150,6 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
     {
       const prototype* Proto = protocontainer<type>::GetProto(c);
       const databasemap& Config = Proto->GetConfig();
-
-      /*ushort Correct = CountCorrectNameLetters<type>(*Proto->GetDataBase(), Identifier);
-
-      if(!Proto->IsAbstract() && Correct > Best)
-	if(Proto->CanBeWished() || game::WizardModeActivated())
-	  {
-	    Id.first = Proto;
-	    Id.second = 0;
-	    Best = Correct;
-	  }
-	else
-	  Illegal = true;*/
 
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!i->second.IsAbstract)
@@ -274,3 +262,4 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
+

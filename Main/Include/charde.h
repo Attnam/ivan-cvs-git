@@ -114,14 +114,14 @@ class ABSTRACT_CHARACTER
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
   virtual bool EquipmentEasilyRecognized(ushort) const;
-  virtual sweaponskill* GetCurrentRightSingleWeaponSkill() const { return CurrentRightSingleWeaponSkill; }
-  virtual void SetCurrentRightSingleWeaponSkill(sweaponskill* What) { CurrentRightSingleWeaponSkill = What; }
-  virtual sweaponskill* GetCurrentLeftSingleWeaponSkill() const { return CurrentLeftSingleWeaponSkill; }
-  virtual void SetCurrentLeftSingleWeaponSkill(sweaponskill* What) { CurrentLeftSingleWeaponSkill = What; }
-  virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
-  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
-  virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
-  virtual void SingleWeaponSkillTick();
+  sweaponskill* GetCurrentRightSWeaponSkill() const { return CurrentRightSWeaponSkill; }
+  void SetCurrentRightSWeaponSkill(sweaponskill* What) { CurrentRightSWeaponSkill = What; }
+  sweaponskill* GetCurrentLeftSWeaponSkill() const { return CurrentLeftSWeaponSkill; }
+  void SetCurrentLeftSWeaponSkill(sweaponskill* What) { CurrentLeftSWeaponSkill = What; }
+  sweaponskill* GetSWeaponSkill(ushort Index) const { return SWeaponSkill[Index]; }
+  void SetSWeaponSkill(ushort Index, sweaponskill* What) { SWeaponSkill[Index] = What; }
+  ushort GetSWeaponSkills() const { return SWeaponSkill.size(); }
+  virtual void SWeaponSkillTick();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
@@ -141,6 +141,9 @@ class ABSTRACT_CHARACTER
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
   virtual void CreateInitialEquipment();
   virtual std::string GetBodyPartName(ushort, bool = false) const;
+  virtual void CreateBlockPossibilityVector(blockvector&, float) const;
+  void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
+  virtual item* SevereBodyPart(ushort);
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -153,9 +156,9 @@ class ABSTRACT_CHARACTER
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
-  std::vector<sweaponskill*> SingleWeaponSkill;
-  sweaponskill* CurrentRightSingleWeaponSkill;
-  sweaponskill* CurrentLeftSingleWeaponSkill;
+  std::vector<sweaponskill*> SWeaponSkill;
+  sweaponskill* CurrentRightSWeaponSkill;
+  sweaponskill* CurrentLeftSWeaponSkill;
 );
 
 class ABSTRACT_CHARACTER
@@ -344,6 +347,7 @@ class CHARACTER
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNERBEASTFLESH, Volume); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual void GetAICommand();
+  virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
 class ABSTRACT_CHARACTER
@@ -472,7 +476,7 @@ class CHARACTER
   spider,
   nonhumanoid,
  public:
-  virtual void SpecialBiteEffect(character*);
+  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SPIDERFLESH, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
@@ -815,7 +819,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKEFLESH, Volume); }
-  virtual void SpecialBiteEffect(character*);
+  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
 );
 
 class CHARACTER

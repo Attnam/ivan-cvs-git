@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "stdover.h"
+#include "festring.h"
 #include "wsquare.h"
 #include "charba.h"
 #include "worldmap.h"
@@ -155,3 +155,4 @@ void wsquare::CalculateLuminance()
 {
   Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
 }
+

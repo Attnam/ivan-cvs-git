@@ -88,9 +88,9 @@ class material
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void SetVolume(ulong);
-  void Effect(character*, long);
+  bool Effect(character*, long);
   void EatEffect(character*, ulong, float = 1.0);
-  void HitEffect(character*);
+  bool HitEffect(character*);
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   ulong RawPrice() const { return 0; }
   bool CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }

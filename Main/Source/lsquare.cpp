@@ -7,7 +7,7 @@
 #include "level.h"
 #include "itemba.h"
 #include "message.h"
-#include "stdover.h"
+#include "festring.h"
 #include "script.h"
 #include "charba.h"
 #include "team.h"
@@ -689,7 +689,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-void lsquare::BeKicked(character* Kicker, float KickDamage, float KickToHitValue, short Success, bool Critical)
+void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float KickToHitValue, short Success, bool Critical)
 {
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
@@ -697,7 +697,7 @@ void lsquare::BeKicked(character* Kicker, float KickDamage, float KickToHitValue
   GetStack()->BeKicked(Kicker, ushort(KickDamage));
 
   if(GetCharacter())
-    GetCharacter()->BeKicked(Kicker, KickDamage, KickToHitValue, Success, Critical);
+    GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical);
 
   GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage));
 }

@@ -21,7 +21,7 @@ valuemap protocontainer<god>::CodeNameMap;
 #include "script.h"
 #include "lterrade.h"
 #include "slot.h"
-#include "stdover.h"
+#include "festring.h"
 
 void consummo::PrayGoodEffect()
 {

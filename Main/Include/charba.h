@@ -13,6 +13,12 @@
 #include "itemde.h"
 #include "script.h"
 
+#define CHARPERSONALPRONOUN GetPersonalPronoun().c_str()
+#define CHARPOSSESSIVEPRONOUN GetPossessivePronoun().c_str()
+#define CHAROBJECTPRONOUN GetObjectPronoun().c_str()
+
+typedef std::vector<std::pair<float, ushort> > blockvector;
+
 class felist;
 class bitmap;
 class character;
@@ -27,7 +33,7 @@ class bodypart;
 class characterslot;
 class action;
 class go;
-class gweaponskill;
+class cweaponskill;
 class stackslot;
 class god;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -139,10 +145,10 @@ struct characterdatabase
   contentscript<item> RightBoot;
   contentscript<item> LeftBoot;
   short AttributeBonus;
-  std::vector<long> KnownCategoryWeaponSkills;
-  std::vector<long> CategoryWeaponSkillHits;
-  ushort RightSingleWeaponSkillHits;
-  ushort LeftSingleWeaponSkillHits;
+  std::vector<long> KnownCWeaponSkills;
+  std::vector<long> CWeaponSkillHits;
+  ushort RightSWeaponSkillHits;
+  ushort LeftSWeaponSkillHits;
 };
 
 class characterprototype
@@ -266,7 +272,7 @@ class character : public entity, public id
   virtual void Be();
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
-  virtual void BeKicked(character*, float, float, short, bool);
+  virtual void BeKicked(character*, item*, float, float, short, bool);
   virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(ushort) const;
   void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
@@ -336,7 +342,7 @@ class character : public entity, public id
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
-  virtual bool ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false);
+  virtual bool ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartVital(ushort) const { return true; }
   virtual void RestoreBodyParts();
   virtual bool AssignName();
@@ -371,7 +377,7 @@ class character : public entity, public id
   virtual bool CheckOffer() const { return true; }
   ushort GetTemporaryStateCounter(ushort) const;
   void EditTemporaryStateCounter(ushort, short);
-  virtual void BlockDamageType(uchar);
+  virtual void ResistDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
   virtual bool ClosePos(vector2d);
@@ -493,10 +499,10 @@ class character : public entity, public id
   virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
   virtual DATABASEBOOL(CreateSolidMaterialConfigurations);
   virtual DATABASEVALUE(short, AttributeBonus);
-  virtual DATABASEVALUE(const std::vector<long>&, KnownCategoryWeaponSkills);
-  virtual DATABASEVALUE(const std::vector<long>&, CategoryWeaponSkillHits);
-  virtual DATABASEVALUE(ushort, RightSingleWeaponSkillHits);
-  virtual DATABASEVALUE(ushort, LeftSingleWeaponSkillHits);
+  virtual DATABASEVALUE(const std::vector<long>&, KnownCWeaponSkills);
+  virtual DATABASEVALUE(const std::vector<long>&, CWeaponSkillHits);
+  virtual DATABASEVALUE(ushort, RightSWeaponSkillHits);
+  virtual DATABASEVALUE(ushort, LeftSWeaponSkillHits);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -504,7 +510,6 @@ class character : public entity, public id
   virtual bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*) = 0;
-  virtual void SpecialBiteEffect(character*) { }
   virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort Identifier, long Value) { BaseExperience[Identifier] += Value; }
@@ -530,7 +535,7 @@ class character : public entity, public id
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
   virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
   virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
-  gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
+  cweaponskill* GetCWeaponSkill(ushort Index) const { return CWeaponSkill[Index]; }
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
   long GetStateAPGain(long) const;
@@ -566,7 +571,7 @@ class character : public entity, public id
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
   virtual void StartReading(item*, ulong);
   virtual void DexterityAction(ushort);
-  virtual void SingleWeaponSkillTick() { }
+  virtual void SWeaponSkillTick() { }
   virtual void PrintBeginInvisibilityMessage() const;
   virtual void PrintEndInvisibilityMessage() const;
   virtual void PrintBeginInfraVisionMessage() const;
@@ -648,7 +653,7 @@ class character : public entity, public id
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
   virtual float GetRelativeDanger(const character*, bool = false) const;
-  virtual float GetTimeToDie(ushort, float, bool) const;
+  virtual float GetTimeToDie(ushort, float, bool, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
   float GetDangerModifier() const;
@@ -656,7 +661,13 @@ class character : public entity, public id
   virtual bool ReloadDatafiles();
   virtual std::string GetBodyPartName(ushort, bool = false) const;
   virtual item* SearchForItemWithID(ulong) const;
-  virtual std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
+  std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
+  virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
+  virtual bool SpecialUnarmedEffect(character*, uchar, uchar, bool) { return false; }
+  virtual bool SpecialKickEffect(character*, uchar, uchar, bool) { return false; }
+  virtual bool SpecialBiteEffect(character*, uchar, uchar, bool) { return false; }
+  virtual bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
+  virtual void WeaponSkillHit(item*, uchar);
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
@@ -731,7 +742,7 @@ class character : public entity, public id
   ulong* OriginalBodyPartID;
   entity* MotherEntity;
   character* PolymorphBackup;
-  gweaponskill** CategoryWeaponSkill;
+  cweaponskill** CWeaponSkill;
   ushort EquipmentState;
   static void (character::*PrintBeginStateMessage[])() const;
   static void (character::*PrintEndStateMessage[])() const;
@@ -790,4 +801,5 @@ name : public base\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
+
 

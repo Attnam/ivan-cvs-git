@@ -31,7 +31,7 @@ LTERRAIN_PROTOTYPE(olterrain, 0, olterrain);
 #include "config.h"
 #include "itemba.h"
 #include "save.h"
-#include "stdover.h"
+#include "festring.h"
 
 bool door::Open(character* Opener)
 {

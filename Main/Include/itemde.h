@@ -106,7 +106,7 @@ class ITEM
   lump,
   item,
  public:
-  virtual void ReceiveHitEffect(character*, character*);
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual material* CreateDipMaterial();
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
   virtual bool IsDipDestination(const character*) const { return true; }
@@ -121,7 +121,7 @@ class ITEM
   item,
  public:
   virtual ~meleeweapon();
-  virtual void ReceiveHitEffect(character*, character*);
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual void DipInto(material*, character*);
   virtual ulong Price() const;
   virtual bool IsDippable(const character*) const { return true; }
@@ -726,7 +726,8 @@ class ABSTRACT_ITEM
   virtual void CalculateToHitValue() { }
   virtual void CalculateAPCost() { }
   void CalculateAttackInfo();
-  virtual float GetTimeToDie(ushort, float, bool) const;
+  float GetTimeToDie(ushort, float, bool, bool) const;
+  virtual float GetRoughChanceToHit(float) const;
   const std::string& GetBodyPartName() const { return GetNameSingular(); }
   void RandomizePosition();
   void ResetPosition();
@@ -802,7 +803,7 @@ class ABSTRACT_ITEM
   bodypart,
  public:
   virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
-  virtual float GetTimeToDie(ushort, float, bool) const;
+  virtual float GetRoughChanceToHit(float) const;
  protected:
   virtual bool ReceiveDamage(character*, ushort, uchar);
 );
@@ -876,7 +877,7 @@ class ABSTRACT_ITEM
   ushort GetDexterity() const { return Dexterity; }
   ushort GetStrength() const { return Strength; }
   virtual arm* GetPairArm() const = 0;
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const = 0;
+  virtual sweaponskill* GetCurrentSWeaponSkill() const = 0;
   long GetWieldedAPCost() const;
   long GetUnarmedAPCost() const;
   virtual item* GetEquipment(ushort) const;
@@ -895,6 +896,9 @@ class ABSTRACT_ITEM
   void AddAttackInfo(felist&) const;
   virtual void SignalVolumeAndWeightChange();
   bool TwoHandWieldIsActive() const;
+  float GetBlockChance(float) const;
+  ushort GetBlockCapability() const;
+  void WieldedSkillHit();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -917,7 +921,7 @@ class ITEM
  public:
   virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
   virtual arm* GetPairArm() const;
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
+  virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STRIGHTARM; }
@@ -930,7 +934,7 @@ class ITEM
  public:
   virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
   virtual arm* GetPairArm() const;
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
+  virtual sweaponskill* GetCurrentSWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STLEFTARM; }
@@ -1197,56 +1201,56 @@ class ITEM
 
 class ITEM
 (
- stethoscope,
- item,
+  stethoscope,
+  item,
  public:
- virtual bool Apply(character*);
- virtual bool IsAppliable(const character*) const { return true; };
- virtual bool ListenTo(lsquare*,character*);
+  virtual bool Apply(character*);
+  virtual bool IsAppliable(const character*) const { return true; };
+  virtual bool ListenTo(lsquare*,character*);
 );
 
 class ITEM
 (
- flamingsword,
- meleeweapon,
+  flamingsword,
+  meleeweapon,
  public:
- virtual void ReceiveHitEffect(character*, character*);
- virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
- virtual void VirtualConstructor(bool);
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual uchar GetSpecialFlags(ushort) const { return STFLAME; }
+  virtual void VirtualConstructor(bool);
 );
 
 class ITEM
 (
- mjolak,
- meleeweapon,
-public:
- virtual void ReceiveHitEffect(character*, character*);
+  mjolak,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
 );
 
 
 class ITEM
 (
- vermis,
- meleeweapon,
-public:
- virtual void ReceiveHitEffect(character*,character*);
+  vermis,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
 );
 
 class ITEM
 (
- turox,
- meleeweapon,
-public:
- virtual void ReceiveHitEffect(character*, character*);
+  turox,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
 );
 
 class ITEM
 (
- whipofcalamus,
- meleeweapon,
-public:
- virtual void ReceiveHitEffect(character*, character*);
+  whipofcalamus,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
 );
+
 #endif
-
 

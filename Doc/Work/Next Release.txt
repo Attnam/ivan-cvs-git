@@ -12,7 +12,7 @@ Nostoteko‰ly.
 //V‰rien tarkistusl‰pik‰yminen.
 //Enner beast ihmiseksi + p‰‰ kuntoon. (timo)
 //Menua vasemmalle.
-Damage estimate kuntoon. (timo)
+(r) Damage estimate kuntoon. (timo)
 //Werewolfit kuntoon. (timo)
 //Paneeli kuntoon:
 //* Uusi siluetti. (kahvi)
@@ -96,3 +96,5 @@ Re-enable Golden Eagle Quest danger requirement.
 Prevent escape from Oree.
 Configurations should be visually separated with colors.
 Blocking and visibility should be considered when calculating relative danger.
+Spiders must not trigger mines.
+Hit effects of thrown items.

@@ -24,7 +24,7 @@
 #include "charde.h"
 #include "itemba.h"
 #include "godba.h"
-#include "stdover.h"
+#include "festring.h"
 #include "whandler.h"
 #include "lsquare.h"
 #include "lterraba.h"

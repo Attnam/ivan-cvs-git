@@ -212,10 +212,10 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(RightBoot);
   ANALYZEDATAWITHDEFAULT(LeftBoot, RightBoot);
   ANALYZEDATA(AttributeBonus);
-  ANALYZEDATA(KnownCategoryWeaponSkills);
-  ANALYZEDATA(CategoryWeaponSkillHits);
-  ANALYZEDATA(RightSingleWeaponSkillHits);
-  ANALYZEDATA(LeftSingleWeaponSkillHits);
+  ANALYZEDATA(KnownCWeaponSkills);
+  ANALYZEDATA(CWeaponSkillHits);
+  ANALYZEDATA(RightSWeaponSkillHits);
+  ANALYZEDATA(LeftSWeaponSkillHits);
 
   return Found;
 }
@@ -411,3 +411,4 @@ void databasesystem::Initialize()
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }
+

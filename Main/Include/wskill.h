@@ -34,10 +34,10 @@ class weaponskill
   ushort HitCounter;
 };
 
-class gweaponskill : public weaponskill
+class cweaponskill : public weaponskill
 {
  public:
-  gweaponskill(uchar Index) : Index(Index) { }
+  cweaponskill(uchar Index) : Index(Index) { }
   bool Tick();
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
@@ -55,13 +55,13 @@ class gweaponskill : public weaponskill
   uchar Index;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, gweaponskill* WeaponSkill)
+inline outputfile& operator<<(outputfile& SaveFile, cweaponskill* WeaponSkill)
 {
   WeaponSkill->Save(SaveFile);
   return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
+inline inputfile& operator>>(inputfile& SaveFile, cweaponskill* WeaponSkill)
 {
   WeaponSkill->Load(SaveFile);
   return SaveFile;

@@ -1,6 +1,6 @@
 #include "graphics.h"
 #include "bitmap.h"
-#include "stdover.h"
+#include "festring.h"
 #include "hscore.h"
 #include "whandler.h"
 #include "save.h"
@@ -85,4 +85,5 @@ void highscore::Load(const std::string& File)
   if(HVersion == 110)
     HighScore >> Score >> Entry >> LastAdd;
 }
+
 

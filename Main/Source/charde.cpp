@@ -26,7 +26,7 @@ CHARACTER_PROTOTYPE(character, 0);
 #include "feio.h"
 #include "wskill.h"
 #include "felist.h"
-#include "stdover.h"
+#include "festring.h"
 #include "team.h"
 #include "lterraba.h"
 #include "error.h"
@@ -80,7 +80,7 @@ bool ennerbeast::Hit(character*)
       }
 
   EditNP(-100);
-  EditAP(-10 * GetCategoryWeaponSkill(BITE)->GetAPBonus());
+  EditAP(-10 * GetCWeaponSkill(BITE)->GetAPBonus());
   return true;
 }
 
@@ -109,27 +109,27 @@ void elpuri::CreateCorpse()
 void humanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
-  SaveFile << SingleWeaponSkill;
+  SaveFile << SWeaponSkill;
 }
 
 void humanoid::Load(inputfile& SaveFile)
 {
   character::Load(SaveFile);
-  SaveFile >> SingleWeaponSkill;
+  SaveFile >> SWeaponSkill;
 
   if(GetRightWielded())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
       if((*i)->GetID() == GetRightWielded()->GetID())
 	{
-	  SetCurrentRightSingleWeaponSkill(*i);
+	  SetCurrentRightSWeaponSkill(*i);
 	  break;
 	}
 
   if(GetLeftWielded())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
       if((*i)->GetID() == GetLeftWielded()->GetID())
 	{
-	  SetCurrentLeftSingleWeaponSkill(*i);
+	  SetCurrentLeftSWeaponSkill(*i);
 	  break;
 	}
 }
@@ -373,50 +373,50 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
   bool Something = false;
 
-  if(CurrentRightSingleWeaponSkill && CurrentRightSingleWeaponSkill->GetHits())
+  if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
       List.AddEntry("", LIGHTGRAY);
       std::string Buffer = "right single weapon skill:  ";
       Buffer.resize(30, ' ');
-      Buffer << CurrentRightSingleWeaponSkill->GetLevel();
+      Buffer << CurrentRightSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
-      Buffer << CurrentRightSingleWeaponSkill->GetHits();
+      Buffer << CurrentRightSWeaponSkill->GetHits();
       Buffer.resize(50, ' ');
 
-      if(CurrentRightSingleWeaponSkill->GetLevel() != 10)
-	Buffer << (CurrentRightSingleWeaponSkill->GetLevelMap(CurrentRightSingleWeaponSkill->GetLevel() + 1) - CurrentRightSingleWeaponSkill->GetHits());
+      if(CurrentRightSWeaponSkill->GetLevel() != 10)
+	Buffer << (CurrentRightSWeaponSkill->GetLevelMap(CurrentRightSWeaponSkill->GetLevel() + 1) - CurrentRightSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
       Buffer.resize(60, ' ');
-      Buffer << '+' << int(CurrentRightSingleWeaponSkill->GetEffectBonus() - 100) << '%';
+      Buffer << '+' << int(CurrentRightSWeaponSkill->GetEffectBonus() - 100) << '%';
       Buffer.resize(70, ' ');
-      Buffer << '-' << int(100 - CurrentRightSingleWeaponSkill->GetAPBonus()) << '%';
+      Buffer << '-' << int(100 - CurrentRightSWeaponSkill->GetAPBonus()) << '%';
       List.AddEntry(Buffer, LIGHTGRAY);
       Something = true;
     }
 
-  if(CurrentLeftSingleWeaponSkill && CurrentLeftSingleWeaponSkill->GetHits())
+  if(CurrentLeftSWeaponSkill && CurrentLeftSWeaponSkill->GetHits())
     {
       if(!Something)
 	List.AddEntry("", LIGHTGRAY);
 
       std::string Buffer = "left single weapon skill:  ";
       Buffer.resize(30, ' ');
-      Buffer << CurrentLeftSingleWeaponSkill->GetLevel();
+      Buffer << CurrentLeftSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
-      Buffer << CurrentLeftSingleWeaponSkill->GetHits();
+      Buffer << CurrentLeftSWeaponSkill->GetHits();
       Buffer.resize(50, ' ');
 
-      if(CurrentLeftSingleWeaponSkill->GetLevel() != 10)
-	Buffer << (CurrentLeftSingleWeaponSkill->GetLevelMap(CurrentLeftSingleWeaponSkill->GetLevel() + 1) - CurrentLeftSingleWeaponSkill->GetHits());
+      if(CurrentLeftSWeaponSkill->GetLevel() != 10)
+	Buffer << (CurrentLeftSWeaponSkill->GetLevelMap(CurrentLeftSWeaponSkill->GetLevel() + 1) - CurrentLeftSWeaponSkill->GetHits());
       else
 	Buffer << '-';
 
       Buffer.resize(60, ' ');
-      Buffer << '+' << int(CurrentLeftSingleWeaponSkill->GetEffectBonus() - 100) << '%';
+      Buffer << '+' << int(CurrentLeftSWeaponSkill->GetEffectBonus() - 100) << '%';
       Buffer.resize(70, ' ');
-      Buffer << '-' << int(100 - CurrentLeftSingleWeaponSkill->GetAPBonus()) << '%';
+      Buffer << '-' << int(100 - CurrentLeftSWeaponSkill->GetAPBonus()) << '%';
       List.AddEntry(Buffer, LIGHTGRAY);
       Something = true;
     }
@@ -763,14 +763,14 @@ void golem::BeTalkedTo(character* Talker)
 void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 {
   Description.resize(62, ' ');
-  Description << GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
+  Description << GetCWeaponSkill(Item->GetWeaponCategory())->GetLevel();
   Description.resize(66, ' ');
   bool Added = false;
 
-  for(ushort c = 0; c < GetSingleWeaponSkills(); ++c)
-    if(Item->GetID() == GetSingleWeaponSkill(c)->GetID())
+  for(ushort c = 0; c < GetSWeaponSkills(); ++c)
+    if(Item->GetID() == GetSWeaponSkill(c)->GetID())
       {
-	Description << GetSingleWeaponSkill(c)->GetLevel();
+	Description << GetSWeaponSkill(c)->GetLevel();
 	Added = true;
 	break;
       }
@@ -1298,14 +1298,14 @@ void angel::CreateInitialEquipment()
     case GOOD:
       SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(DIAMOND)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(DIAMOND)));
-      GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(2000);
-      GetCurrentRightSingleWeaponSkill()->AddHit(2000);
+      GetCWeaponSkill(LARGE_SWORDS)->AddHit(2000);
+      GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
       SetMainWielded(new meleeweapon(POLEAXE, MAKE_MATERIAL(SAPPHIRE)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(SAPPHIRE)));
-      GetCategoryWeaponSkill(AXES)->AddHit(2000);
-      GetCurrentRightSingleWeaponSkill()->AddHit(2000);
+      GetCWeaponSkill(AXES)->AddHit(2000);
+      GetCurrentRightSWeaponSkill()->AddHit(2000);
       break;
     case EVIL:
       {
@@ -1313,8 +1313,8 @@ void angel::CreateInitialEquipment()
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
-	GetCategoryWeaponSkill(MACES)->AddHit(2000);
-	GetCurrentRightSingleWeaponSkill()->AddHit(2000);
+	GetCWeaponSkill(MACES)->AddHit(2000);
+	GetCurrentRightSWeaponSkill()->AddHit(2000);
 	break;
       }
     }
@@ -1347,7 +1347,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), CapitalizeCopy(GetPersonalPronoun()).c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), festring::CapitalizeCopy(GetPersonalPronoun()).c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1359,8 +1359,8 @@ void kamikazedwarf::CreateInitialEquipment()
 {
   SetRightWielded(new holybook(GetConfig()));
   GetStack()->FastAddItem(new backpack);
-  GetCategoryWeaponSkill(UNCATEGORIZED)->AddHit(100);
-  GetCurrentRightSingleWeaponSkill()->AddHit(100);
+  GetCWeaponSkill(UNCATEGORIZED)->AddHit(100);
+  GetCurrentRightSWeaponSkill()->AddHit(100);
 }
 
 bool kamikazedwarf::Hit(character* Enemy)
@@ -1605,16 +1605,16 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
   for(c = 0; c < ChooseFrom.size(); ++c)
     TotalVolume += GetBodyPart(ChooseFrom[c])->GetBodyPartVolume();
 
-  bool Affected = false;
+  bool Affected;
 
   if(Divide)
     {
       for(c = 0; c < ChooseFrom.size(); ++c)
-	if(ReceiveBodyPartDamage(Damager, long(Damage) * GetBodyPart(ChooseFrom[c])->GetBodyPartVolume() / TotalVolume, Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
+	if(ReceiveBodyPartDamage(Damager, long(Damage) * GetBodyPart(ChooseFrom[c])->GetBodyPartVolume() / TotalVolume, Type, ChooseFrom[c], Direction, PenetrateArmor, Critical, false))
 	  Affected = true;
     }
   else
-    Affected = ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
+    Affected = ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical, false);
 
   if(!Affected)
     {
@@ -2286,17 +2286,17 @@ void nonhumanoid::Load(inputfile& SaveFile)
 
 void nonhumanoid::CalculateUnarmedDamage()
 {
-  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetAttribute(ARMSTRENGTH) * GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateUnarmedToHitValue()
 {
-  UnarmedToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 10000;
+  UnarmedToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 10000;
 }
 
 void nonhumanoid::CalculateUnarmedAPCost()
 {
-  UnarmedAPCost = long(float(GetCategoryWeaponSkill(UNARMED)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMoveEase());
+  UnarmedAPCost = long(float(GetCWeaponSkill(UNARMED)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMoveEase());
 
   if(UnarmedAPCost < 100)
     UnarmedAPCost = 100;
@@ -2304,17 +2304,17 @@ void nonhumanoid::CalculateUnarmedAPCost()
 
 void nonhumanoid::CalculateKickDamage()
 {
-  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEGSTRENGTH) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEGSTRENGTH) * GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateKickToHitValue()
 {
-  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 20000;
+  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 20000;
 }
 
 void nonhumanoid::CalculateKickAPCost()
 {
-  KickAPCost = long(float(GetCategoryWeaponSkill(KICK)->GetAPBonus()) * (200 - GetAttribute(AGILITY)) * 10 / GetMoveEase());
+  KickAPCost = long(float(GetCWeaponSkill(KICK)->GetAPBonus()) * (200 - GetAttribute(AGILITY)) * 10 / GetMoveEase());
 
   if(KickAPCost < 100)
     KickAPCost = 100;
@@ -2322,17 +2322,17 @@ void nonhumanoid::CalculateKickAPCost()
 
 void nonhumanoid::CalculateBiteDamage()
 {
-  BiteDamage = float(GetBaseBiteStrength()) * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() / 5000000;
+  BiteDamage = float(GetBaseBiteStrength()) * GetAttribute(ARMSTRENGTH) * GetCWeaponSkill(BITE)->GetEffectBonus() / 5000000;
 }
 
 void nonhumanoid::CalculateBiteToHitValue()
 {
-  BiteToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 20000;
+  BiteToHitValue = float((GetAttribute(DEXTERITY) << 2) + GetAttribute(PERCEPTION)) * GetCWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 20000;
 }
 
 void nonhumanoid::CalculateBiteAPCost()
 {
-  BiteAPCost = long(float(GetCategoryWeaponSkill(BITE)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMoveEase());
+  BiteAPCost = long(float(GetCWeaponSkill(BITE)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMoveEase());
 
   if(BiteAPCost < 100)
     BiteAPCost = 100;
@@ -2351,80 +2351,35 @@ void humanoid::Bite(character* Enemy)
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
-
-  switch(Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier())))
-    {
-    case HASHIT:
-    case HASBLOCKED:
-      SpecialBiteEffect(Enemy);
-    case HASDIED:
-      if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	{
-	  GetHead()->CalculateAttackInfo();
-	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
-	}
-    case HASDODGED:
-      EditExperience(AGILITY, 50);
-    }
+  EditExperience(AGILITY, 50);
+  Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
 }
 
 void nonhumanoid::Bite(character* Enemy)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-
-  switch(Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier())))
-    {
-    case HASHIT:
-    case HASBLOCKED:
-      SpecialBiteEffect(Enemy);
-    case HASDIED:
-      if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	{
-	  CalculateBiteAttackInfo();
-	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
-	}
-    case HASDODGED:
-      EditExperience(AGILITY, 50);
-    }
+  EditExperience(AGILITY, 50);
+  Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
 }
 
 void humanoid::Kick(lsquare* Square)
 {
   leg* KickLeg = GetKickLeg();
-  EditAP(-KickLeg->GetKickAPCost());
-  Square->BeKicked(this, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
-
-  /* Leg might be destroyed in the process, check needed */
-
-  if(KickLeg == GetKickLeg())
-    {
-      KickLeg->EditExperience(LEGSTRENGTH, 25);
-      KickLeg->EditExperience(AGILITY, 50);
-    }
-
   EditNP(-50);
-
-  if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
-    {
-      GetKickLeg()->CalculateAttackInfo(); // check existence
-      GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
-    }
+  EditAP(-KickLeg->GetKickAPCost());
+  KickLeg->EditExperience(LEGSTRENGTH, 25);
+  KickLeg->EditExperience(AGILITY, 50);
+  Square->BeKicked(this, KickLeg->GetBoot(), KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
 }
 
 void nonhumanoid::Kick(lsquare* Square)
 {
-  Square->BeKicked(this, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
-  EditExperience(LEGSTRENGTH, 25);
-  EditExperience(AGILITY, 50);
   EditNP(-50);
   EditAP(-GetKickAPCost());
-
-  if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
-    {
-      CalculateKickAttackInfo();
-      GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
-    }
+  EditExperience(LEGSTRENGTH, 25);
+  EditExperience(AGILITY, 50);
+  Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
 }
 
 bool nonhumanoid::Hit(character* Enemy)
@@ -2491,25 +2446,19 @@ void nonhumanoid::AddInfo(felist& Info) const
 
 void nonhumanoid::UnarmedHit(character* Enemy)
 {
+  EditNP(-50);
+  EditAP(-GetUnarmedAPCost());
+
   switch(Enemy->TakeHit(this, 0, GetUnarmedDamage(), GetUnarmedToHitValue(), RAND() % 26 - RAND() % 26, UNARMEDATTACK, !(RAND() % GetCriticalModifier())))
     {
     case HASHIT:
     case HASBLOCKED:
-      SpecialBiteEffect(Enemy);
     case HASDIED:
+    case DIDNODAMAGE:
       EditExperience(ARMSTRENGTH, 50);
-
-      if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
-	{
-	  CalculateUnarmedAttackInfo();
-	  GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
-	}
     case HASDODGED:
       EditExperience(DEXTERITY, 25);
     }
-
-  EditNP(-50);
-  EditAP(-GetUnarmedAPCost());
 }
 
 /* Returns the average number of APs required to kill Enemy */
@@ -2522,10 +2471,10 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingArms())
     {
       if(GetRightArm() && GetRightArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), UseMaxHP) * GetRightArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
 
       if(GetLeftArm() && GetLeftArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), UseMaxHP) * GetLeftArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPONATTACK : UNARMEDATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
 
       ++AttackStyles;
     }
@@ -2533,13 +2482,13 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), UseMaxHP) * KickLeg->GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * KickLeg->GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), UseMaxHP) * GetHead()->GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2555,19 +2504,19 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingArms())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), UseMaxHP) * GetUnarmedAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), AttackIsBlockable(UNARMEDATTACK), UseMaxHP) * GetUnarmedAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetKickDamage()), GetKickToHitValue(), UseMaxHP) * GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetKickDamage()), GetKickToHitValue(), AttackIsBlockable(KICKATTACK), UseMaxHP) * GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetBiteDamage()), GetBiteToHitValue(), UseMaxHP) * GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetBiteDamage()), GetBiteToHitValue(), AttackIsBlockable(BITEATTACK), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2944,6 +2893,9 @@ ushort humanoid::GetRandomStepperBodyPart() const
 
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
 {
+  if(GetAction())
+    return Damage;
+
   if(GetRightWielded())
     Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightArm()->GetToHitValue(), Damage, Success, Type);
 
@@ -3027,8 +2979,8 @@ bool humanoid::EquipmentEasilyRecognized(ushort Index) const
 
 void humanoid::VirtualConstructor(bool)
 {
-  SetCurrentRightSingleWeaponSkill(0);
-  SetCurrentLeftSingleWeaponSkill(0);
+  SetCurrentRightSWeaponSkill(0);
+  SetCurrentLeftSWeaponSkill(0);
 }
 
 void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
@@ -3037,34 +2989,34 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
     {
-      for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+      for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
 	if((*i)->GetID() == GetRightWielded()->GetID())
 	  {
-	    SetCurrentRightSingleWeaponSkill(*i);
+	    SetCurrentRightSWeaponSkill(*i);
 	    break;
 	  }
 
-      if(!GetCurrentRightSingleWeaponSkill())
+      if(!GetCurrentRightSWeaponSkill())
 	{
-	  SetCurrentRightSingleWeaponSkill(new sweaponskill);
-	  GetCurrentRightSingleWeaponSkill()->SetID(GetRightWielded()->GetID());
-	  SingleWeaponSkill.push_back(GetCurrentRightSingleWeaponSkill());
+	  SetCurrentRightSWeaponSkill(new sweaponskill);
+	  GetCurrentRightSWeaponSkill()->SetID(GetRightWielded()->GetID());
+	  SWeaponSkill.push_back(GetCurrentRightSWeaponSkill());
 	}
     }
   else if(EquipmentIndex == LEFTWIELDEDINDEX)
     {
-      for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+      for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
 	if((*i)->GetID() == GetLeftWielded()->GetID())
 	  {
-	    SetCurrentLeftSingleWeaponSkill(*i);
+	    SetCurrentLeftSWeaponSkill(*i);
 	    break;
 	  }
 
-      if(!GetCurrentLeftSingleWeaponSkill())
+      if(!GetCurrentLeftSWeaponSkill())
 	{
-	  SetCurrentLeftSingleWeaponSkill(new sweaponskill);
-	  GetCurrentLeftSingleWeaponSkill()->SetID(GetLeftWielded()->GetID());
-	  SingleWeaponSkill.push_back(GetCurrentLeftSingleWeaponSkill());
+	  SetCurrentLeftSWeaponSkill(new sweaponskill);
+	  GetCurrentLeftSWeaponSkill()->SetID(GetLeftWielded()->GetID());
+	  SWeaponSkill.push_back(GetCurrentLeftSWeaponSkill());
 	}
     }
 
@@ -3077,37 +3029,21 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
     {
-      if(!GetCurrentRightSingleWeaponSkill()->GetHits())
-	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	  if(*i == GetCurrentRightSingleWeaponSkill())
-	    {
-	      delete *i;
-	      SingleWeaponSkill.erase(i);
-	      break;
-	    }
-
-      SetCurrentRightSingleWeaponSkill(0);
+      CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
+      SetCurrentRightSWeaponSkill(0);
     }
   else if(EquipmentIndex == LEFTWIELDEDINDEX)
     {
-      if(!GetCurrentLeftSingleWeaponSkill()->GetHits())
-	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	  if(*i == GetCurrentLeftSingleWeaponSkill())
-	    {
-	      delete *i;
-	      SingleWeaponSkill.erase(i);
-	      break;
-	    }
-
-      SetCurrentLeftSingleWeaponSkill(0);
+      CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
+      SetCurrentLeftSWeaponSkill(0);
     }
 
   CalculateBattleInfo();
 }
 
-void humanoid::SingleWeaponSkillTick()
+void humanoid::SWeaponSkillTick()
 {
-  for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
+  for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end();)
     {
       if((*i)->Tick())
 	{
@@ -3126,10 +3062,10 @@ void humanoid::SingleWeaponSkillTick()
 	      }
 	}
 
-      if(!(*i)->GetHits() && *i != GetCurrentRightSingleWeaponSkill() && *i != GetCurrentLeftSingleWeaponSkill())
+      if(!(*i)->GetHits() && *i != GetCurrentRightSWeaponSkill() && *i != GetCurrentLeftSWeaponSkill())
 	{
 	  std::vector<sweaponskill*>::iterator Dirt = i++;
-	  SingleWeaponSkill.erase(Dirt);
+	  SWeaponSkill.erase(Dirt);
 	  continue;
 	}
       else
@@ -3288,10 +3224,15 @@ void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool A
     GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAlpha, AllowAnimate);
 }
 
-
-void snake::SpecialBiteEffect(character* Char)
+bool snake::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmour)
 {
-  Char->BeginTemporaryState(POISONED, 500);
+  if(!BlockedByArmour)
+    {
+      Char->BeginTemporaryState(POISONED, 500);
+      return true;
+    }
+  else
+    return false;
 }
 
 ushort angel::GetTorsoMainColor(ushort) const
@@ -3350,12 +3291,18 @@ ushort genie::GetAttribute(ushort Identifier) const // temporary until someone i
 
 void billswill::CalculateUnarmedDamage()
 {
-  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() / 1000000;
+  UnarmedDamage = float(GetBaseUnarmedStrength()) * GetCWeaponSkill(UNARMED)->GetEffectBonus() / 1000000;
 }
 
-void spider::SpecialBiteEffect(character* Char)
+bool spider::SpecialBiteEffect(character* Char, uchar, uchar, bool BlockedByArmour)
 {
-  Char->BeginTemporaryState(POISONED, 50);
+  if(!BlockedByArmour)
+    {
+      Char->BeginTemporaryState(POISONED, 50);
+      return true;
+    }
+  else
+    return false;
 }
 
 bool humanoid::CanUseStethoscope(bool PrintReason) const
@@ -3580,11 +3527,11 @@ void humanoid::CreateInitialEquipment()
   INSTANTIATE(RightBoot);
   INSTANTIATE(LeftBoot);
 
-  if(CurrentRightSingleWeaponSkill)
-    CurrentRightSingleWeaponSkill->AddHit(GetRightSingleWeaponSkillHits());
+  if(CurrentRightSWeaponSkill)
+    CurrentRightSWeaponSkill->AddHit(GetRightSWeaponSkillHits());
 
-  if(CurrentLeftSingleWeaponSkill)
-    CurrentLeftSingleWeaponSkill->AddHit(GetLeftSingleWeaponSkillHits());
+  if(CurrentLeftSWeaponSkill)
+    CurrentLeftSWeaponSkill->AddHit(GetLeftSWeaponSkillHits());
 }
 
 void orc::BeTalkedTo(character* Talker)
@@ -3640,3 +3587,55 @@ std::string humanoid::GetBodyPartName(ushort Index, bool Articled) const
       return 0;
     }
 }
+
+void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValue) const
+{
+  float RightBlockChance = GetRightArm() ? GetRightArm()->GetBlockChance(ToHitValue) : 0;
+  float LeftBlockChance = GetLeftArm() ? GetLeftArm()->GetBlockChance(ToHitValue) : 0;
+  ushort RightBlockCapability = GetRightArm() ? GetRightArm()->GetBlockCapability() : 0;
+  ushort LeftBlockCapability = GetLeftArm() ? GetLeftArm()->GetBlockCapability() : 0;
+
+  /* Double block */
+
+  if(RightBlockCapability + LeftBlockCapability)
+    Vector.push_back(std::pair<float, ushort>(RightBlockChance * LeftBlockChance, RightBlockCapability + LeftBlockCapability));
+
+  /* Right block */
+
+  if(RightBlockCapability)
+    Vector.push_back(std::pair<float, ushort>(RightBlockChance * (1 - LeftBlockChance), RightBlockCapability));
+
+  /* Left block */
+
+  if(LeftBlockCapability)
+    Vector.push_back(std::pair<float, ushort>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
+}
+
+item* humanoid::SevereBodyPart(ushort BodyPartIndex)
+{
+  if(BodyPartIndex == RIGHTARMINDEX && GetCurrentRightSWeaponSkill())
+    {
+      CheckIfSWeaponSkillRemovalNeeded(GetCurrentRightSWeaponSkill());
+      SetCurrentRightSWeaponSkill(0);
+    }
+  else if(BodyPartIndex == LEFTARMINDEX && GetCurrentLeftSWeaponSkill())
+    {
+      CheckIfSWeaponSkillRemovalNeeded(GetCurrentLeftSWeaponSkill());
+      SetCurrentLeftSWeaponSkill(0);
+    }
+
+  return character::SevereBodyPart(BodyPartIndex);
+}
+
+void humanoid::CheckIfSWeaponSkillRemovalNeeded(sweaponskill* Skill)
+{
+  if(!Skill->GetHits())
+    for(std::vector<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+      if(*i == Skill)
+	{
+	  delete *i;
+	  SWeaponSkill.erase(i);
+	  break;
+	}
+}
+

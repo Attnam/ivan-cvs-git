@@ -6,7 +6,7 @@
 #include "level.h"
 #include "lsquare.h"
 #include "itemba.h"
-#include "stdover.h"
+#include "festring.h"
 #include "game.h"
 #include "save.h"
 

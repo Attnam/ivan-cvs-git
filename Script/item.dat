@@ -957,6 +957,7 @@ shield
 	MainMaterialConfig = { 5, WOOD, COPPER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 5, 250, 150, 150, 50, 10; }
 	Roundness = 80;
+	WeaponCategory = SHIELDS;
 }
 
 cloak

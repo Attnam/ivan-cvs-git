@@ -4,7 +4,7 @@
 #include "femath.h"
 #include "save.h"
 #include "proto.h"
-#include "stdover.h"
+#include "festring.h"
 #include "database.h"
 
 void material::AddName(std::string& Name, bool Articled, bool Adjective) const
@@ -46,18 +46,21 @@ void material::Load(inputfile& SaveFile)
   CalculateWeight();
 }
 
-void material::Effect(character* Eater, long Amount)
+bool material::Effect(character* Eater, long Amount)
 {
+  /* Receivexxx should return bool! */
+
   switch(GetEffect())
     {
-    case EPOISON: Eater->BeginTemporaryState(POISON, Amount / 10); break;
-    case EDARKNESS: Eater->ReceiveDarkness(Amount); break;
-    case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); break;
-    case EPEPSI: Eater->ReceivePepsi(Amount); break;
-    case EKOBOLDFLESH: Eater->ReceiveKoboldFlesh(Amount); break;
-    case EHEAL: Eater->ReceiveHeal(Amount); break;
-    case ELYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); break;
-    case ESCHOOLFOOD: Eater->ReceiveSchoolFood(Amount); break;
+    case EPOISON: Eater->BeginTemporaryState(POISON, Amount / 10); return true;
+    case EDARKNESS: Eater->ReceiveDarkness(Amount); return true;
+    case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); return true;
+    case EPEPSI: Eater->ReceivePepsi(Amount); return true;
+    case EKOBOLDFLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
+    case EHEAL: Eater->ReceiveHeal(Amount); return true;
+    case ELYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); return true;
+    case ESCHOOLFOOD: Eater->ReceiveSchoolFood(Amount); return true;
+    default: return false;
     }
 }
 
@@ -69,10 +72,8 @@ void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
   Volume -= Amount;
 }
 
-void material::HitEffect(character* Enemy)
+bool material::HitEffect(character* Enemy)
 {
-  Effect(Enemy, Volume); // should be less than Volume!
-
   switch(GetHitMessage())
     {
     case HM_SCHOOLFOOD: Enemy->AddSchoolFoodHitMessage(); break;
@@ -82,6 +83,8 @@ void material::HitEffect(character* Enemy)
     case HM_KOBOLDFLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALINGLIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
     }
+
+  return Effect(Enemy, Volume); // should be less than Volume!
 }
 
 void material::AddConsumeEndMessage(character* Eater) const

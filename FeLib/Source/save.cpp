@@ -1,7 +1,7 @@
 #include <ctype.h>
 
 #include "save.h"
-#include "stdover.h"
+#include "festring.h"
 #include "error.h"
 #include "femath.h"
 #include "graphics.h"

@@ -38,6 +38,7 @@
 #define HASBLOCKED 1
 #define HASDODGED 2
 #define HASDIED 3
+#define DIDNODAMAGE 4
 
 #define BLOATEDLEVEL 40000
 #define SATIATEDLEVEL 30000
@@ -225,7 +226,7 @@
 #define FRIEND 2
 
 #define MARTIAL_SKILL_CATEGORIES 3
-#define WEAPON_SKILL_CATEGORIES 15
+#define WEAPON_SKILL_CATEGORIES 16
 
 #define UNARMED 0
 #define KICK 1
@@ -242,6 +243,7 @@
 #define HALBERDS 12
 #define SPEARS 13
 #define WHIPS 14
+#define SHIELDS 15
 
 #define LOCKED 1
 

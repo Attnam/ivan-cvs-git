@@ -1,3 +1,18 @@
+August 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Blocking is no longer possible when fainted
+	* Shields now affect RelativeDanger
+	* Blocking now increases weapon skills
+	* Added SHIELDS weapon skill category
+	* Added more parameters for hit effects
+	* Hit effects of gauntlets and boots now work
+	* Added system for special unarmed and kick effects
+	* Some S&R done:
+	  * SingleWeaponSkill -> SWeaponSkill
+	  * CategoryWeaponSkill -> CWeaponSkill
+	  * gweaponskill -> cweaponskill (where the dev/null did that g come from?)
+	* Single weapon skill is now removed correctly when an arm is severed
+
 July 31 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added whip of Calamus

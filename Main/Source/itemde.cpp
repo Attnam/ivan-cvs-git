@@ -23,7 +23,7 @@ ITEM_PROTOTYPE(item, 0);
 #include "lterraba.h"
 #include "config.h"
 #include "godba.h"
-#include "stdover.h"
+#include "festring.h"
 #include "whandler.h"
 #include "lterrade.h"
 #include "actionba.h"
@@ -125,29 +125,34 @@ void scrollofteleportation::FinishReading(character* Reader)
   SendToHell();
 }
 
-void lump::ReceiveHitEffect(character* Enemy, character*)
+bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
 {
-  if(RAND() & 1)
+  if(!BlockedByArmour && RAND() & 1)
     {
-      if(Enemy->CanBeSeenByPlayer())
+      if(Enemy->IsPlayer())
+	ADD_MESSAGE("The %s touches you!", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
+      else if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("The %s touches %s.", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
 
-      GetMainMaterial()->HitEffect(Enemy);
+      return GetMainMaterial()->HitEffect(Enemy);
     }
+  else
+    return false;
 }
 
-void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
+bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
 {
-  if(GetContainedMaterial())
+  if(!BlockedByArmour && GetContainedMaterial())
     {
       if(Enemy->IsPlayer())
 	ADD_MESSAGE("The %s reacts with you!", GetContainedMaterial()->CHARNAME(UNARTICLED));
-      else
-	if(Enemy->CanBeSeenByPlayer())
-	  ADD_MESSAGE("The %s reacts with %s.", GetContainedMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
+      else if(Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("The %s reacts with %s.", GetContainedMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
 
-      GetContainedMaterial()->HitEffect(Enemy);
+      return GetContainedMaterial()->HitEffect(Enemy);
     }
+  else
+    return false;
 }
 
 void meleeweapon::DipInto(material* Material, character* Dipper)
@@ -1351,17 +1356,17 @@ float arm::GetUnarmedDamage() const
   if(GetGauntlet())
     WeaponStrength += GetGauntlet()->GetWeaponStrength();
 
-  return WeaponStrength * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  return WeaponStrength * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
 }
 
 float arm::GetUnarmedToHitValue() const
 {
-  return float((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 10000;
+  return float((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 10000;
 }
 
 long arm::GetUnarmedAPCost() const
 {
-  return long(float(GetMaster()->GetCategoryWeaponSkill(UNARMED)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMaster()->GetMoveEase());
+  return long(float(GetMaster()->GetCWeaponSkill(UNARMED)->GetAPBonus()) * (200 - GetAttribute(DEXTERITY)) * 5 / GetMaster()->GetMoveEase());
 }
 
 void arm::CalculateDamage()
@@ -1422,7 +1427,7 @@ float arm::GetWieldedDamage() const
   if(TwoHandWieldIsActive())
     HitStrength += GetPairArm()->GetAttribute(ARMSTRENGTH);
 
-  return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus() / 500000000;
+  return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus() / 500000000;
 }
 
 float arm::GetWieldedToHitValue() const
@@ -1433,7 +1438,7 @@ float arm::GetWieldedToHitValue() const
   if(Weight < 500)
     Weight = 500;
 
-  float Bonus = float(GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus()) * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() / (1000000 + (Weight - 500) * 400);
+  float Bonus = float(GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus()) * GetCurrentSWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() / (1000000 + (Weight - 500) * 400);
   float ThisToHit = ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION));
 
   if(PairArm)
@@ -1460,7 +1465,7 @@ float arm::GetWieldedToHitValue() const
 long arm::GetWieldedAPCost() const
 {
   arm* PairArm = GetPairArm();
-  float SkillPenalty = 0.01f * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSingleWeaponSkill()->GetAPBonus() / GetMaster()->GetMoveEase();
+  float SkillPenalty = 0.01f * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSWeaponSkill()->GetAPBonus() / GetMaster()->GetMoveEase();
 
   if(PairArm)
     {
@@ -1481,7 +1486,7 @@ void head::CalculateDamage()
   if(!Master)
     return;
 
-  BiteDamage = float(GetBaseBiteStrength()) * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetEffectBonus() / 500000;
+  BiteDamage = float(GetBaseBiteStrength()) * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetEffectBonus() / 500000;
 }
 
 void head::CalculateToHitValue()
@@ -1489,7 +1494,7 @@ void head::CalculateToHitValue()
   if(!Master)
     return;
 
-  BiteToHitValue = float((Master->GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
+  BiteToHitValue = float((Master->GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
 }
 
 void head::CalculateAPCost()
@@ -1497,7 +1502,7 @@ void head::CalculateAPCost()
   if(!Master)
     return;
 
-  BiteAPCost = long(float(GetMaster()->GetCategoryWeaponSkill(BITE)->GetAPBonus()) * (200 - GetMaster()->GetAttribute(AGILITY)) * 5 / GetMaster()->GetMoveEase());
+  BiteAPCost = long(float(GetMaster()->GetCWeaponSkill(BITE)->GetAPBonus()) * (200 - GetMaster()->GetAttribute(AGILITY)) * 5 / GetMaster()->GetMoveEase());
 
   if(BiteAPCost < 100)
     BiteAPCost = 100;
@@ -1513,7 +1518,7 @@ void leg::CalculateDamage()
   if(GetBoot())
     WeaponStrength += GetBoot()->GetWeaponStrength();
 
-  KickDamage = WeaponStrength * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  KickDamage = WeaponStrength * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetEffectBonus() / 5000000;
 }
 
 void leg::CalculateToHitValue()
@@ -1521,7 +1526,7 @@ void leg::CalculateToHitValue()
   if(!Master)
     return;
 
-  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
+  KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
 }
 
 void leg::CalculateAPCost()
@@ -1529,7 +1534,7 @@ void leg::CalculateAPCost()
   if(!Master)
     return;
 
-  KickAPCost = long(float(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus()) * (200 - GetAttribute(AGILITY)) * 10 / GetMaster()->GetMoveEase());
+  KickAPCost = long(float(GetMaster()->GetCWeaponSkill(KICK)->GetAPBonus()) * (200 - GetAttribute(AGILITY)) * 10 / GetMaster()->GetMoveEase());
 
   if(KickAPCost < 100)
     KickAPCost = 100;
@@ -2381,31 +2386,13 @@ bool leg::ApplyExperience()
 
 void arm::Hit(character* Enemy)
 {
-  switch(Enemy->TakeHit(GetMaster(), GetWielded(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPONATTACK : UNARMEDATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
+  switch(Enemy->TakeHit(GetMaster(), GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPONATTACK : UNARMEDATTACK, !(RAND() % GetMaster()->GetCriticalModifier())))
     {
     case HASHIT:
     case HASBLOCKED:
-      if(GetWielded())
-	GetWielded()->ReceiveHitEffect(Enemy, GetMaster());
     case HASDIED:
+    case DIDNODAMAGE:
       EditExperience(ARMSTRENGTH, 50);
-
-      if(GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetMaster()->IsPlayer())
-	{
-	  CalculateAttackInfo();
-	  GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
-	}
-
-      if(GetWielded())
-	{
-	  if(GetCurrentSingleWeaponSkill()->AddHit() && GetMaster()->IsPlayer())
-	    {
-	      CalculateAttackInfo();
-	      GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->GetName(UNARTICLED));
-	    }
-
-	  GetWielded()->ReceiveDamage(GetMaster(), GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
-	}
     case HASDODGED:
       EditExperience(DEXTERITY, 25);
     }
@@ -2670,13 +2657,12 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 {
   if(!(RAND() % 5))
     {
-
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
+      Victim->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
       std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
       Victim->CheckDeath(DeathMessage);
       return false;
@@ -2741,7 +2727,7 @@ bool beartrap::StepOnEffect(character* Stepper)
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
-      Stepper->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
+      Stepper->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
       Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE) + ".");
       IsActivated = false;
     }
@@ -2908,14 +2894,14 @@ arm* leftarm::GetPairArm() const
     return 0;
 }
 
-sweaponskill* rightarm::GetCurrentSingleWeaponSkill() const
+sweaponskill* rightarm::GetCurrentSWeaponSkill() const
 {
-  return GetHumanoidMaster()->GetCurrentRightSingleWeaponSkill();
+  return GetHumanoidMaster()->GetCurrentRightSWeaponSkill();
 }
 
-sweaponskill* leftarm::GetCurrentSingleWeaponSkill() const
+sweaponskill* leftarm::GetCurrentSWeaponSkill() const
 {
-  return GetHumanoidMaster()->GetCurrentLeftSingleWeaponSkill();
+  return GetHumanoidMaster()->GetCurrentLeftSWeaponSkill();
 }
 
 void can::GenerateLeftOvers(character* Eater)
@@ -3184,15 +3170,15 @@ void bodypart::CalculateAttackInfo()
   CalculateAPCost();
 }
 
-void flamingsword::ReceiveHitEffect(character* Enemy, character* Hitter)
+bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
   if(RAND() & 1)
     {
-      if(Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), FIRE, ALL))
-	{
-	  ADD_MESSAGE("BURN BURN BURN! FIX FIX FIX!");
-	}
+      ADD_MESSAGE("BURN BURN BURN! FIX FIX FIX!");
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), FIRE, BodyPartIndex, Direction);
     }
+  else
+    return false;
 }
 
 void flamingsword::VirtualConstructor(bool Load)
@@ -3212,7 +3198,7 @@ bool arm::TwoHandWieldIsActive() const
     return false;
 }
 
-float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
   float Durability;
   short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
@@ -3220,7 +3206,35 @@ float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) con
 
   if(TrueDamage > 0)
     {
-      Durability = (Master->GetDodgeValue() / ToHitValue + 1) * Master->GetDodgeValue() * Master->GetBodyVolume() * 100 * HP / (TrueDamage * GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume());
+      float AverageDamage;
+
+      if(AttackIsBlockable)
+	{
+	  blockvector Block;
+	  Master->CreateBlockPossibilityVector(Block, ToHitValue);
+
+	  if(Block.size())
+	    {
+	      float ChanceForNoBlock = 1.0f;
+	      AverageDamage = 0;
+
+	      for(ushort c = 0; c < Block.size(); ++c)
+		{
+		  ChanceForNoBlock -= Block[c].first;
+
+		  if(TrueDamage - Block[c].second > 0)
+		    AverageDamage += Block[c].first * (TrueDamage - Block[c].second);
+		}
+
+	      AverageDamage += ChanceForNoBlock * TrueDamage;
+	    }
+	  else
+	    AverageDamage = TrueDamage;
+	}
+      else
+	AverageDamage = TrueDamage;
+
+      Durability = HP / (AverageDamage * GetRoughChanceToHit(ToHitValue));
 
       if(Durability < 1)
 	Durability = 1;
@@ -3234,26 +3248,14 @@ float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) con
   return Durability;
 }
 
-float torso::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float bodypart::GetRoughChanceToHit(float ToHitValue) const
 {
-  float Durability;
-  short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
-  short HP = UseMaxHP ? GetMaxHP() : GetHP();
+  return GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume() / ((Master->GetDodgeValue() / ToHitValue + 1) * Master->GetDodgeValue() * Master->GetBodyVolume() * 100);
+}
 
-  if(TrueDamage > 0)
-    {
-      Durability = (Master->GetDodgeValue() / ToHitValue + 1) * HP / TrueDamage;
-
-      if(Durability < 1)
-	Durability = 1;
-
-      if(Durability > 1000)
-	Durability = 1000;
-    }
-  else
-    Durability = 1000;
-
-  return Durability;
+float torso::GetRoughChanceToHit(float ToHitValue) const
+{
+  return 1 / (Master->GetDodgeValue() / ToHitValue + 1);
 }
 
 materialcontainer::~materialcontainer()
@@ -3267,27 +3269,32 @@ meleeweapon::~meleeweapon()
   delete ContainedMaterial;
 }
 
-void mjolak::ReceiveHitEffect(character* Enemy, character* Hitter)
+bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
   if(!(RAND() % 5))
     {
-      if(Enemy->ReceiveDamage(Hitter, 2 + (RAND() & 1), FIRE, ALL))
-	{
-	  ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
-	}
+      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), ENERGY, BodyPartIndex, Direction);
     }
+  else
+    return false;
 }
 
-void vermis::ReceiveHitEffect(character* Enemy, character* Hitter)
+bool vermis::HitEffect(character* Enemy, character*, uchar, uchar, bool)
 {
   if(RAND() & 1)
     {
       Enemy->TeleportRandomly();
       ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
+      return true;
     }
+  else
+    return false;
 }
 
-void turox::ReceiveHitEffect(character* Enemy, character* Hitter)
+bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
   if(!(RAND() % 5))
     {
@@ -3295,16 +3302,22 @@ void turox::ReceiveHitEffect(character* Enemy, character* Hitter)
       std::string DeathMSG = "Killed by " + Enemy->GetName(DEFINITE); 
       Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Square->GetPos(), 20);
       ADD_MESSAGE("BANG BANG BANG! FIX FIX FIX!");
-    }  
+      return true;
+    }
+  else
+    return false;
 }
 
-void whipofcalamus::ReceiveHitEffect(character* Enemy, character* Hitter)
+bool whipofcalamus::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
   if(Enemy->GetMainWielded() && !(RAND() % 7))
     {
       ADD_MESSAGE("THIEF THIEF THIEF. FIX FIX FIX.");
       Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
+      return true;
     }
+  else
+    return false;
 }
 
 void bodypart::RandomizePosition()
@@ -3323,4 +3336,32 @@ void bodypart::ResetPosition()
   UpdatePictures();
 }
 
+float arm::GetBlockChance(float EnemyToHitValue) const
+{
+  return GetWielded() ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * GetWielded()->GetBlockModifier(Master)) * 10000), 1.0f) : 0;
+}
+
+ushort arm::GetBlockCapability() const
+{
+  return GetWielded() ? GetWielded()->GetStrengthValue() : 0;
+}
+
+void arm::WieldedSkillHit()
+{
+  if(Master->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->AddHit())
+    {
+      CalculateAttackInfo();
+
+      if(Master->IsPlayer())
+	GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->AddLevelUpMessage();
+    }
+
+  if(GetCurrentSWeaponSkill()->AddHit())
+    {
+      CalculateAttackInfo();
+
+      if(Master->IsPlayer())
+	GetCurrentSWeaponSkill()->AddLevelUpMessage(GetWielded()->GetName(UNARTICLED));
+    }
+}
 

@@ -9,7 +9,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "colorbit.h"
-#include "stdover.h"
+#include "festring.h"
 #include "error.h"
 #include "save.h"
 
@@ -28,7 +28,7 @@ void msgsystem::AddMessage(const char* Format, ...)
   va_end(AP);
 
   std::string Buffer(Message);
-  Capitalize(Buffer);
+  festring::Capitalize(Buffer);
 
   short c;
 
