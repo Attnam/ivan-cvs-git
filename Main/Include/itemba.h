@@ -96,6 +96,7 @@ class item : public object
   virtual bool IsChargable() const { return false; }
   virtual void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
+  virtual void Teleport(stack*);
  protected:
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }

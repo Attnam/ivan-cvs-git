@@ -189,7 +189,7 @@ bool scrollofteleport::Read(character* Reader)
     if(Reader->GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("The %s reads %s and disappears!", Reader->CNAME(DEFINITE), CNAME(DEFINITE));
 
-  Reader->Move(game::GetCurrentLevel()->RandomSquare(Reader, true), true);
+  Reader->Teleport();
   return true;
 }
 
@@ -1185,4 +1185,26 @@ bool scrolloftaming::Read(character* Reader)
     }
 
   return true;
+}
+
+bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a bug in the teleportation code", Direction, 5);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}
+
+
+bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+{ 
+  Where->TeleportEverything(Who);
+  return false;
 }

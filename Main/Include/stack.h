@@ -72,6 +72,7 @@ class stack
   levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }
   void ImpactDamage(ushort, bool);
   void ReceiveFireDamage(character*, std::string, long);
+  bool Teleport();
  private:
   void Optimize(ushort);
   square* SquareUnder;

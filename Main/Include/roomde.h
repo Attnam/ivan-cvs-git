@@ -30,6 +30,7 @@ class ROOM
   virtual void KickSquare(character*, levelsquare*);
   virtual bool ConsumeItem(character*, item*);
   virtual bool AllowDropGifts() const { return false; }
+  virtual void TeleportSquare(character*, levelsquare*);
 );
 
 class ROOM
@@ -62,6 +63,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual bool Drink(character*) const;
   virtual bool HasDrinkHandler() const { return true; }
+  virtual void TeleportSquare(character*, levelsquare*);
  protected:
   bool Entered;
 );

@@ -3494,3 +3494,8 @@ void character::TestWalkability()
 	}
     }
 }
+
+void character::Teleport()
+{
+  Move(game::GetCurrentLevel()->RandomSquare(this, true), true);
+}

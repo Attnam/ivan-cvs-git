@@ -1235,4 +1235,24 @@ class ITEM
   virtual ulong Price() const { return 350; }
 );
 
+class ITEM
+(
+  wandofteleportation,
+  wand,
+  InitMaterials(new gold),
+  {
+    SetSize(10);
+    SetCharges(2 + RAND() % 4);
+    SetTimesUsed(0);
+  },
+ public:
+  virtual ushort Possibility() const { return 20; }
+  virtual std::string NameSingular() const { return "wand of teleportation"; }
+  virtual std::string NamePlural() const { return "wands of teleportation"; }
+  virtual float OfferModifier() const { return 30; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual ulong Price() const { return 500; }
+  virtual bool BeamEffect(character*, std::string, uchar, levelsquare*);
+  virtual ushort GetBeamColor() const { return GREEN; }
+);
 #endif

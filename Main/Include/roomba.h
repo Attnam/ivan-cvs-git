@@ -45,6 +45,7 @@ class room : public typeable
   virtual bool AllowDropGifts() const { return true; }
   virtual bool Drink(character*) const { return true; }
   virtual bool HasDrinkHandler() const { return false; }
+  virtual void TeleportSquare(character*, levelsquare*) { }
  protected:
   virtual void SetDefaultStats() = 0;
   std::vector<vector2d> Door;

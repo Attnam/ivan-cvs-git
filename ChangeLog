@@ -1,3 +1,20 @@
+Sunday, March 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemba.h: Teleport(stack*) function added
+	* Main/Include/itemde.h: Wand of Teleportation added
+	* Main/Include/roomba.h: TeleportSquare function added
+	* Main/Include/roomde.h: TeleportSquare function added to catedral and shop
+	* Main/Include/charba.h: Teleport function added
+	* Main/Include/lsquare.h: Added TeleportEverything
+	* Main/Source/stack.cpp: Teleport function added
+	* Main/Source/itemba.cpp: Teleport(stack*) function added, which currently uses Player's character to determine walkability of square. This probably should be still fixed.
+	* Main/Source/itemde.cpp: Wand of Teleportation added
+	* Main/Source/lsquare.cpp: Added TeleportEverything
+	* Main/Source/roomde.cpp: TeleportSquare function added to catedral and shop
+	* Main/Source/stack.cpp: Teleport function added
+	
+
+
 Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Main/Source/god.cpp: silva::PrayGoodEffect now also ImpactDamages all items in the level

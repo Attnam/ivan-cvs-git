@@ -1052,3 +1052,27 @@ void levelsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection,
 {
   GetOverLevelTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
 }
+
+bool levelsquare::TeleportEverything(character* Teleporter)
+{
+  bool HasHitSomething = false; 
+  if(GetCharacter())
+    {
+      Teleporter->Hostility(GetCharacter());
+      GetCharacter()->Teleport();
+      HasHitSomething = true;
+    }
+  if(Room)
+    GetLevelUnder()->GetRoom(Room)->TeleportSquare(Teleporter, this);
+
+  if(GetStack()->Teleport())
+    HasHitSomething = true;
+
+  Teleporter->EditPerceptionExperience(50);
+  Teleporter->EditNP(-50);
+  return true;  
+}
+
+
+
+

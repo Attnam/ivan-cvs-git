@@ -104,6 +104,7 @@ class levelsquare : public square
   virtual void SetFluid(fluid* What) { Fluid = What; }
   virtual void RemoveFluid();
   virtual void HasBeenHitBy(item*, float, uchar, bool);
+  virtual bool TeleportEverything(character*);
  protected:
   groundlevelterrain* GroundLevelTerrain;
   overlevelterrain* OverLevelTerrain;

@@ -288,6 +288,7 @@ class character : public object
   virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
   virtual void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
+  virtual void Teleport();
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();

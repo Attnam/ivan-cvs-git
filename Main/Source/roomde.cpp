@@ -327,3 +327,28 @@ bool cathedral::Drink(character* Thirsty) const
 
   return false;
 }
+
+void shop::TeleportSquare(character* Infidel, levelsquare* Square)
+{
+  if(!Master)
+    return;
+
+  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+    {
+      ADD_MESSAGE("\"You infidel!\"");
+      Infidel->Hostility(Master);
+    }
+}
+
+void cathedral::TeleportSquare(character* Teleporter, levelsquare* Square)
+{
+  if(game::GetTeam(2)->GetRelation(Teleporter->GetTeam()) == HOSTILE)
+    return;
+
+  if(Teleporter->GetIsPlayer() && Square->GetStack()->GetItems())
+    {
+      ADD_MESSAGE("You have done unnatural things to the property of the Cathedral!");
+
+      Teleporter->GetTeam()->Hostility(game::GetTeam(2));
+    }
+}

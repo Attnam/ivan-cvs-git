@@ -495,3 +495,14 @@ void stack::ReceiveFireDamage(character* Burner, std::string DeathMsg, long Size
     if(!GetItem(c)->ReceiveFireDamage(Burner, DeathMsg, this, SizeOfEffect))
       ++c;
 }
+
+bool stack::Teleport()
+{
+  bool FoundItems = GetItems() > 0;
+
+  while(GetItems())
+    {
+      GetItem(0)->Teleport(this);
+    }
+  return FoundItems;
+}
