@@ -760,19 +760,19 @@ bool fountain::IsSparkling(ushort ColorIndex) const
   return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
 }
 
-void link::Save(outputfile& SaveFile) const
+void stairs::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
   SaveFile << AttachedArea << AttachedEntry;
 }
 
-void link::Load(inputfile& SaveFile)
+void stairs::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
   SaveFile >> AttachedArea >> AttachedEntry;
 }
 
-bool link::Enter(bool DirectionUp) const
+bool stairs::Enter(bool DirectionUp) const
 {
   if(DirectionUp != IsUpLink())
     return olterrain::Enter(DirectionUp);
@@ -813,13 +813,13 @@ bool link::Enter(bool DirectionUp) const
   return game::TryTravel(game::GetCurrentDungeonIndex(), GetAttachedArea(), GetAttachedEntry(), GetAttachedArea() != WORLD_MAP);
 }
 
-void link::StepOn(character* Stepper)
+void stairs::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer()) 
     ADD_MESSAGE("There is %s here.", CHAR_NAME(INDEFINITE));
 }
 
-void link::VirtualConstructor(bool Load)
+void stairs::VirtualConstructor(bool Load)
 {
   olterrain::VirtualConstructor(Load);
 

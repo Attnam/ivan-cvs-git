@@ -32,4 +32,7 @@ A puppy can polymorph into a puppy.
 (s) Do new bodyparts of player clones work properly? (no)
 Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
+Mistresses like shields more than their whips.
+"You manage to hurt your left leg even more" (even though leg is not hurt)
 Headless zombies can eat.
+

@@ -2224,7 +2224,8 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 	{
 	  if(IsActive())
 	    {
-	      ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
 	      SetIsActive(false);
 	      GetLSquareUnder()->SendMemorizedUpdateRequest();
 	      GetLSquareUnder()->SendNewDrawRequest();	  

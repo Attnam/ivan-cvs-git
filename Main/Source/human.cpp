@@ -3162,9 +3162,9 @@ void darkmage::GetAICommand()
 	}
 
       if(CanBeSeenByPlayer())
-	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE) + CONST_S(" interupts you."));
+	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE) + CONST_S(" interrupts you."));
       else
-	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interupts you."));
+	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
 
       return;
     }

@@ -3,7 +3,7 @@
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
  */
 
-Dungeons = 4;
+Dungeons = 6;
 Teams = 9;
 
 /*
@@ -101,14 +101,14 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP);
+			OTerrain = stairs(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_DOWN);
+			OTerrain = stairs(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
@@ -272,14 +272,14 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP);
+			OTerrain = stairs(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_DOWN);
+			OTerrain = stairs(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
@@ -431,7 +431,7 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP);
+			OTerrain = stairs(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
@@ -474,7 +474,7 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_DOWN);
+			OTerrain = stairs(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
@@ -489,7 +489,7 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP);
+			OTerrain = stairs(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
@@ -1491,7 +1491,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_DOWN);
+			OTerrain = stairs(STAIRS_DOWN);
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
@@ -1506,7 +1506,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,2;
 			{
-				OTerrain = link(STAIRS_UP);
+				OTerrain = stairs(STAIRS_UP);
 				EntryIndex = STAIRS_UP;
 			}
 
@@ -1540,14 +1540,14 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP);
+			OTerrain = stairs(STAIRS_UP);
 			EntryIndex = STAIRS_UP;
 			AttachRequired = true;
 		}
 
 		Square, BoundedRandom 141, 1, 158, 18, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_UP) { AttachedArea = 2; }
+			OTerrain = stairs(STAIRS_UP) { AttachedArea = 2; }
 			EntryIndex = STAIRS_UP + 1;
 			AttachRequired = true;
 		}
@@ -1560,7 +1560,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
-			OTerrain = link(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
+			OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
 			EntryIndex = STAIRS_DOWN;
 			AttachRequired = true;
 		}
@@ -1576,7 +1576,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,2;
 			{
-				OTerrain = link(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
+				OTerrain = stairs(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
 				EntryIndex = STAIRS_UP;				
 			}
 
@@ -1596,5 +1596,43 @@ Dungeon UNDER_WATER_TUNNEL;
 				.c.
 			}
 		}
+	}
+}
+Dungeon MONDEDR;
+{
+	Levels = 1;
+
+	Level 0;
+	{
+		Description = "FOO";
+		ShortDescription = "Foo";
+		Size = 50, 50;
+		GenerateMonsters = false;
+		Items = 0;
+		IsOnGround = true;
+		TeamDefault = MONSTER_TEAM;
+		AmbientLight = rgb24(118, 118, 118);
+		LOSModifier = 48;
+	}
+}
+
+
+Dungeon FOO;
+{
+	Levels = 1;
+
+	Level 0;
+	{
+		Description = "FOO";
+		ShortDescription = "Foo";
+		Size = 50, 50;
+		GenerateMonsters = false;
+		Items = 0;
+		IsOnGround = true;
+		TeamDefault = MONSTER_TEAM;
+		AmbientLight = rgb24(118, 118, 118);
+		LOSModifier = 48;
+		Type = JUNGLE;
+		CanGenerateBone = true;
 	}
 }

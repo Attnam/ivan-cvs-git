@@ -7,6 +7,17 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Compiles with gcc 3.3
+	* Almost everything crashes. (started to make new world map idea)
+	
+May 13 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* interupt -> interrupt. We suck in English. Thanks Tuukka!
+	* No more weird msgs from unseen bear traps.
+	* Bugs with many rooms and no-guy-who-is-responsable-for-the-attack fixed
+
 May 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Docs (especially bugs.txt) have been cleaned up a bit

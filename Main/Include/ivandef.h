@@ -374,6 +374,7 @@
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
 #define MONDEDR 5
+#define FOO 6
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
@@ -480,5 +481,13 @@
 
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
+
+#define DESERT 1
+#define JUNGLE 2
+#define STEPPE 3
+#define LEAFY_FOREST 4
+#define EVERGREEN_FOREST 5
+#define TUNDRA 6
+#define GLACIER 7
 
 #endif

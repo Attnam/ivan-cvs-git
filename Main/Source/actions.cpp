@@ -7,7 +7,7 @@ void consume::SetDescription(const festring& What) { Description = What; }
 const char* rest::GetDescription() const { return "resting"; }
 const char* dig::GetDescription() const { return "digging"; }
 const char* go::GetDescription() const { return "going"; }
-const char* read::GetDescription() const { return "reading"; }
+const char* study::GetDescription() const { return "reading"; }
 
 void faint::Save(outputfile& SaveFile) const
 {
@@ -375,7 +375,7 @@ void dig::VirtualConstructor(bool)
   LeftBackup.Init(this);
 }
 
-void read::Handle()
+void study::Handle()
 {
   if(!*Literature)
     {
@@ -405,7 +405,7 @@ void read::Handle()
     Counter -= GetActor()->GetAttribute(INTELLIGENCE);
 }
 
-void read::Terminate(bool Finished)
+void study::Terminate(bool Finished)
 {
   if(Finished)
     {
@@ -417,7 +417,6 @@ void read::Terminate(bool Finished)
       character* Actor = GetActor();
       Literature->FinishReading(Actor);
 
-      /* Actor may have died and Action may have been deleted, check needed */
 
       if(!Actor->IsEnabled())
 	return;
@@ -446,21 +445,21 @@ void read::Terminate(bool Finished)
 }
 
 
-void read::Save(outputfile& SaveFile) const
+void study::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
   SaveFile << Counter;
   SaveFile << Literature;
 }
 
-void read::Load(inputfile& SaveFile)
+void study::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
   SaveFile >> Counter;
   LoadActionSlot(SaveFile, Literature);
 }
 
-void read::DropUsedItems()
+void study::DropUsedItems()
 {
   if(*Literature)
     if(!game::IsInWilderness())
@@ -469,13 +468,13 @@ void read::DropUsedItems()
       Literature->MoveTo(GetActor()->GetStack());
 }
 
-void read::DeleteUsedItems()
+void study::DeleteUsedItems()
 {
   if(*Literature)
     Literature->SendToHell();
 }
 
-void read::SetLiterature(item* What)
+void study::SetLiterature(item* What)
 {
   if(!What)
     ABORT("Reading nothing!");
@@ -484,7 +483,7 @@ void read::SetLiterature(item* What)
   What->PlaceToSlot(&Literature);
 }
 
-void read::VirtualConstructor(bool)
+void study::VirtualConstructor(bool)
 {
   Literature.Init(this);
 }
@@ -527,12 +526,12 @@ ulong dig::GetWeight() const
   return Weight;
 }
 
-ulong read::GetVolume() const
+ulong study::GetVolume() const
 {
   return *Literature ? Literature->GetVolume() : 0;
 }
 
-ulong read::GetWeight() const
+ulong study::GetWeight() const
 {
   return *Literature ? Literature->GetWeight() : 0;
 }
@@ -555,7 +554,7 @@ ulong dig::GetEmitation() const
   return Emitation;
 }
 
-ulong read::GetEmitation() const
+ulong study::GetEmitation() const
 {
   return *Literature ? Literature->GetEmitation() : 0;
 }
@@ -578,7 +577,7 @@ long dig::GetScore() const
   return Score;
 }
 
-long read::GetScore() const
+long study::GetScore() const
 {
   return *Literature ? Literature->GetScore() : 0;
 }

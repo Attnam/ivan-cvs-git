@@ -299,7 +299,7 @@ bool cathedral::Drink(character* Thirsty) const
 
 void shop::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Infidel->Hostility(GetMaster());
@@ -308,7 +308,7 @@ void shop::TeleportSquare(character* Infidel, lsquare* Square)
 
 void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
 {
-  if(game::GetStoryState() == 2 || game::GetTeam(ATTNAM_TEAM)->GetRelation(Teleporter->GetTeam()) == HOSTILE)
+  if(game::GetStoryState() == 2 || !Teleporter || game::GetTeam(ATTNAM_TEAM)->GetRelation(Teleporter->GetTeam()) == HOSTILE)
     return;
 
   if(Teleporter->IsPlayer() && Square->GetStack()->GetItems())
@@ -513,7 +513,7 @@ bool library::ConsumeItem(character*, item*, ushort)
 
 void library::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You book hater!\"");
       Infidel->Hostility(GetMaster());
@@ -583,7 +583,7 @@ bool landingsite::ConsumeItem(character* HungryMan, item* Item, ushort)
 
 void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Infidel->GetTeam()) == HOSTILE)
+  if(!Infidel || game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Infidel->GetTeam()) == HOSTILE)
     return;
 
   for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -622,7 +622,7 @@ bool landingsite::AllowKick(const character* Char, const lsquare*) const
 
 void shop::HostileAction(character* Guilty) const
 {
-  if(MasterIsActive() && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
+  if(MasterIsActive() && Guilty && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Guilty->Hostility(GetMaster());
@@ -631,13 +631,13 @@ void shop::HostileAction(character* Guilty) const
 
 void cathedral::HostileAction(character* Guilty) const
 {
-  if(game::GetStoryState() != 2)
+  if(game::GetStoryState() != 2 && Guilty)
     Guilty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 }
 
 void library::HostileAction(character* Guilty) const
 {
-  if(MasterIsActive() && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
+  if(MasterIsActive() && Guilty && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Guilty->Hostility(GetMaster());

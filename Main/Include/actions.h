@@ -128,7 +128,7 @@ class ACTION
 
 class ACTION
 (
-  read,
+  study,
   action,
  public:
   virtual void Save(outputfile&) const;

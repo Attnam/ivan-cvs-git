@@ -401,9 +401,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       EditExperience(PERCEPTION, 10);
 
       if(Enemy->CanBeSeenByPlayer())
-	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
+	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
       else
-	DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
+	DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
       return HAS_DODGED;
     }
@@ -462,9 +462,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       if(!TrueDamage || (Weapon && !Weapon->Exists()))
 	{
 	  if(Enemy->CanBeSeenByPlayer())
-	    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
+	    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
 	  else
-	    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
+	    DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
 	  return HAS_BLOCKED;
 	}
@@ -482,9 +482,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   if(!Succeeded)
     {
       if(Enemy->CanBeSeenByPlayer())
-	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
+	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
       else
-	DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
+	DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
       return DID_NO_DAMAGE;
     }
@@ -495,9 +495,9 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
     return HAS_DIED;
 
   if(Enemy->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interupts you."));
+    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
   else
-    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
+    DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
   return HAS_HIT;
 }
@@ -1686,9 +1686,9 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
     return;
 
   if(Thrower->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction(CONST_S("The attack of ") + Thrower->GetName(DEFINITE) + CONST_S(" interupts you."));
+    DeActivateVoluntaryAction(CONST_S("The attack of ") + Thrower->GetName(DEFINITE) + CONST_S(" interrupts you."));
   else
-    DeActivateVoluntaryAction(CONST_S("The attack interupts you."));
+    DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 }
 
 bool character::DodgesFlyingItem(item* Item, float ToHitValue)
@@ -4185,7 +4185,7 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
 
 void character::StartReading(item* Item, ulong Time)
 {
-  read* Read = new read(this);
+  study* Read = new study(this);
   Read->SetLiterature(Item); // slot cleared automatically
 
   if(game::WizardModeIsActive())

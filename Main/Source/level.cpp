@@ -225,94 +225,37 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = reinterpret_cast<lsquare***>(area::Map);
-  const festring* Msg = LevelScript->GetLevelMessage();
 
-  if(Msg)
-    LevelMessage = *Msg;
-
-  if(*LevelScript->GenerateMonsters())
+  ushort Type = *LevelScript->GetType() ? *LevelScript->GetType() : 0;
+  switch(Type)
     {
-      MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
-      IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
-      Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
+    case 0:
+      GenerateDungeon(Index);
+      break;
+    case DESERT:
+      GenerateDesert();
+      break;
+    case JUNGLE:
+      GenerateJungle();
+      break;
+    case STEPPE:
+      GenerateSteppe();
+      break;
+    case LEAFY_FOREST:
+      GenerateLeafyForest();
+      break;
+    case EVERGREEN_FOREST:
+      GenerateEvergreenForest();
+      break;
+    case TUNDRA:
+      GenerateTundra();
+      break;
+    case GLACIER:
+      GenerateGlacier();
+      break;
+    default:
+      ABORT("You are a terrorist. Please stop creating wterrains that are stupid.");
     }
-
-  const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
-  const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
-  ulong Counter = 0;
-
-  for(ushort x = 0; x < XSize; ++x)
-    {
-      game::BusyAnimation();
-
-      for(ushort y = 0; y < YSize; ++y, ++Counter)
-	{
-	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
-	}
-    }
-
-  ushort c;
-  ushort Rooms = LevelScript->GetRooms()->Randomize();
-  const std::list<roomscript>& RoomList = LevelScript->GetRoom();
-  std::list<roomscript>::const_iterator Iterator = RoomList.begin();
-
-  for(c = 0; c < Rooms; ++c)
-    {
-      game::BusyAnimation();
-
-      if(c < RoomList.size())
-	{
-	  ushort i;
-
-	  for(i = 0; i < 1000; ++i)
-	    if(MakeRoom(&*Iterator))
-	      break;
-
-	  if(i == 1000)
-	    ABORT("Failed to place special room #%d!", c);
-
-	  ++Iterator;
-	}
-      else
-	{
-	  const roomscript* RoomScript = LevelScript->GetRoomDefault();
-
-	  for(ushort i = 0; i < 50; ++i)
-	    if(MakeRoom(RoomScript))
-	      break;
-	}
-    }
-
-  game::BusyAnimation();
-
-  if(!*LevelScript->IgnoreDefaultSpecialSquares())
-    {
-      /* Gum solution */
-
-      const levelscript* LevelBase = static_cast<const levelscript*>(LevelScript->GetBase());
-
-      if(LevelBase)
-	{
-	  const std::list<squarescript>& Square = LevelBase->GetSquare();
-
-	  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
-	    {
-	      game::BusyAnimation();
-	      ApplyLSquareScript(&*i);
-	    }
-	}
-    }
-
-  const std::list<squarescript>& Square = LevelScript->GetSquare();
-
-  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
-    {
-      game::BusyAnimation();
-      ApplyLSquareScript(&*i);
-    }
-
-  CreateItems(LevelScript->GetItems()->Randomize());
 }
 
 void level::ApplyLSquareScript(const squarescript* Script)
@@ -1578,4 +1521,126 @@ void level::FinalProcessForBone()
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       Map[x][y]->FinalProcessForBone();
+}
+
+void level::GenerateDungeon(ushort Index)
+{
+  const festring* Msg = LevelScript->GetLevelMessage();
+
+  if(Msg)
+    LevelMessage = *Msg;
+
+  if(*LevelScript->GenerateMonsters())
+    {
+      MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
+      IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
+      Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
+    }
+
+  const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
+  const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
+  ulong Counter = 0;
+
+  for(ushort x = 0; x < XSize; ++x)
+    {
+      game::BusyAnimation();
+
+      for(ushort y = 0; y < YSize; ++y, ++Counter)
+	{
+	  Map[x][y] = new lsquare(this, vector2d(x, y));
+	  Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
+	}
+    }
+
+  ushort c;
+  ushort Rooms = LevelScript->GetRooms()->Randomize();
+  const std::list<roomscript>& RoomList = LevelScript->GetRoom();
+  std::list<roomscript>::const_iterator Iterator = RoomList.begin();
+
+  for(c = 0; c < Rooms; ++c)
+    {
+      game::BusyAnimation();
+
+      if(c < RoomList.size())
+	{
+	  ushort i;
+
+	  for(i = 0; i < 1000; ++i)
+	    if(MakeRoom(&*Iterator))
+	      break;
+
+	  if(i == 1000)
+	    ABORT("Failed to place special room #%d!", c);
+
+	  ++Iterator;
+	}
+      else
+	{
+	  const roomscript* RoomScript = LevelScript->GetRoomDefault();
+
+	  for(ushort i = 0; i < 50; ++i)
+	    if(MakeRoom(RoomScript))
+	      break;
+	}
+    }
+
+  game::BusyAnimation();
+
+  if(!*LevelScript->IgnoreDefaultSpecialSquares())
+    {
+      /* Gum solution */
+
+      const levelscript* LevelBase = static_cast<const levelscript*>(LevelScript->GetBase());
+
+      if(LevelBase)
+	{
+	  const std::list<squarescript>& Square = LevelBase->GetSquare();
+
+	  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+	    {
+	      game::BusyAnimation();
+	      ApplyLSquareScript(&*i);
+	    }
+	}
+    }
+
+  const std::list<squarescript>& Square = LevelScript->GetSquare();
+
+  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+    {
+      game::BusyAnimation();
+      ApplyLSquareScript(&*i);
+    }
+
+  CreateItems(LevelScript->GetItems()->Randomize());
+}
+
+void level::GenerateJungle()
+{
+  ushort **DataMap;
+  DataMap = new (ushort*)[XSize];
+  for(ushort x = 0; x < XSize; ++x)
+    DataMap[x] = new ushort[YSize];
+  
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      DataMap[x][y] = 0;
+  DataMap[2][2] = 1;
+
+  for(ushort x = 0; x < XSize; ++x)
+    {
+      game::BusyAnimation();
+
+      for(ushort y = 0; y < YSize; ++y)
+	{
+	  Map[x][y] = new lsquare(this, vector2d(x, y));
+	  if(DataMap[x][y] != 0)
+	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), new decoration(PALM));
+	  else
+	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
+	}
+    }
+  for(ushort x = 0; x < XSize; ++x)
+    delete DataMap[x];
+  delete DataMap;
 }

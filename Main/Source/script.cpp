@@ -754,6 +754,7 @@ void levelscript::InitDataMap()
   INIT_MEMBER(CanGenerateBone);
   INIT_MEMBER(ItemMinPriceBase);
   INIT_MEMBER(ItemMinPriceDelta);
+  INIT_MEMBER(Type);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)

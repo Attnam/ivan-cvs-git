@@ -75,7 +75,7 @@ class OLTERRAIN
 
 class OLTERRAIN
 (
-  link,
+  stairs,
   olterrain,
  public:
   virtual void Save(outputfile&) const;
@@ -95,7 +95,7 @@ class OLTERRAIN
 class OLTERRAIN
 (
   portal,
-  link,
+  stairs,
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(ushort) const;

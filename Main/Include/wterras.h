@@ -158,4 +158,14 @@ class OWTERRAIN
   virtual uchar GetAttachedDungeon() const;
 );
 
+class OWTERRAIN
+(
+  foo,
+  owterrain,
+ public:
+  virtual const char* GetNameStem() const;
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual uchar GetAttachedDungeon() const;
+);
+
 #endif

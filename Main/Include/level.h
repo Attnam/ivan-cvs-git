@@ -94,6 +94,14 @@ class level : public area
   bool PreProcessForBone();
   bool PostProcessForBone();
   void FinalProcessForBone();
+  void GenerateDungeon(ushort);
+  void GenerateDesert() {}
+  void GenerateJungle();
+  void GenerateSteppe() {}
+  void GenerateLeafyForest() {}
+  void GenerateEvergreenForest() {}
+  void GenerateTundra() {}
+  void GenerateGlacier() {}
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;

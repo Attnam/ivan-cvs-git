@@ -52,6 +52,10 @@ const char* mondedr::GetNameStem() const { return "very unattractive place"; }
 vector2d mondedr::GetBitmapPos(ushort) const { return vector2d(0, 64); }
 uchar mondedr::GetAttachedDungeon() const { return MONDEDR; }
 
+const char* foo::GetNameStem() const { return "foo"; }
+vector2d foo::GetBitmapPos(ushort) const { return vector2d(0, 64); }
+uchar foo::GetAttachedDungeon() const { return FOO; }
+
 bool ocean::IsWalkable(const character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());

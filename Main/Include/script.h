@@ -387,6 +387,7 @@ class levelscript : public scriptwithbase
   SCRIPT_BOOL_WITH_BASE(CanGenerateBone);
   SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceBase);
   SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceDelta);
+  SCRIPT_MEMBER_WITH_BASE(ushort, Type);
 };
 
 class dungeonscript : public script
