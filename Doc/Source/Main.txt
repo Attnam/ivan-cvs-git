@@ -2071,8 +2071,10 @@ SOverTerrain(overterrain* What)
 	Changes the OverTerrain to What.
 
 area* CMotherArea(void)
+	Returns the pointer to the area where the square is.
 
-	Return the pointer to the area where the square is.
+ushort CPopulation(void)
+	Returns the amount of characters in the square. (currently 1 or 0)
 
 material (material.h)
 ---------------------
@@ -2169,12 +2171,13 @@ uchar Alignment(void)
 		NEUTRAL (2)
 		EVIL    (3)
 
-EatEffect(character* Eater, float Amount = 100, float NPModifier = 1.0f)
+EatEffect(character* Eater, float Amount, float NPModifier)
+	Eater recives an eat effect of this material.
+	Amount is the percent of the whole Volume that 
+	the character has eaten. NPModifier is a number
+	that is used to multiply the actual amount, which
+	is used by some items.
 
-	Eater receives an eat effect of this material. Amount is the percent
-	of the whole Volume that the character has eaten. NPModifier is a
-	number that is used to multiply the actual amount, which is used by
-	some items.
 
 HitEffect(character* Enemy)
 
@@ -2187,15 +2190,81 @@ short NutritionValue()
 	in NPs per 1000 grams. 
 
 MinusAmount(float Amount)
-
-	Decreases the volume of the material by Amount percent.
+	decreases the volume of the material by Amount percent.
 
 NormalFoodEffect(character* Eater, float Amount, float NPModifier)
+	Eater reseaves the normal food effect. Amount is the percent
+	of the volume that is going to be eaten and NPModifier is 
+	floating point number that is used to multiply this volume.
+	NPModifier is used by some items.
 
-	Eater reseives the normal food effect. Amount is the percent of the
-	volume that is going to be eaten and NPModifier is floating point
-	number that is used to multiply this volume. NPModifier is used by
-	some items.
+
+stack (stack.h)
+---------------
+
+stack(square* SqureUnder)
+	Stack's constructor. SquareUnder is surprisingly the square
+	under the stack.
+
+stack(std::ifstream* SaveFile)
+	Saves the stack to SaveFile
+
+PositionedDrawToTileBuffer(uchar LevelSquarePosition)
+	Draws the stack to the right place on the TileBuffer.	
+	LevelSquarePosition is NOT used for ANYTHING.
+ushort AddItem(item* ToBeAdded)
+	Adds ToBeAdded to the stack and then returns the index
+	of ToBeAdded.
+
+ushort FastAddItem(item* ToBeAdded)
+	Same as the above, but does not update lights.
+
+item* RemoveItem(ushort Index)
+	Removes item number Index and then returns
+	a pointer to that file.
+
+FastRemoveItem(ushort Index)
+	Just removes the number Index item and does 
+	not update lights.
+
+Clean()
+	Cleans the stack of 0 pointered items. 
+
+ushort MoveItem(ushort Index, stack* MoveTo)
+	Moves item number Index to the stack that MoveTo
+	is pointing at. Then returns the new index of the
+	item in question.
+
+Optimize(ushort OptimizeBoundary)
+	Optimizes the inventory from the index OptimeBoundary
+	onwards.
+
+ushort DrawContents(const char* Topic)
+	Draws the contents on the screen as a neatly organized
+	list. The Topic is also dislplayed on the screen.
+
+ushort CEmitation()
+	Returns the total emitation of all the items in the
+	stack.
+
+ulong stack::SumOfMasses()
+	returns the sum of the masses in this stack.
+
+Save(std::ofstream* SaveFile)
+	Saves the stack in SaveFile.
+
+stack::stack(std::ifstream* SaveFile)
+	Constructor of stack that loads itself from SaveFile.
+
+ushort SearchItem(item* ToBeSearched)
+	Searches for item ToBeSearched in the stack and then returns
+	its index.
+
+void stack::Move(levelsquare* To)
+	Moves the whole stack to levelsquare To.
+
+vector CPos(void)
+	returns the position of the stack.
 
 ----------------------------------------------------------------------------
 
