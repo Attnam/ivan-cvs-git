@@ -124,13 +124,13 @@ void configuration::ShowConfigScreen()
 		List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), BLUE);
 		List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", BLUE);
 		List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", BLUE);
-		List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), BLUE);
 
 #ifdef WIN32
 		List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
+		List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
 #endif
 
 		switch(List.Draw(false, !game::GetRunning() && !BoolChange))
@@ -148,27 +148,28 @@ void configuration::ShowConfigScreen()
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = false;
 			continue;
+
 		case 3:
-			SetBeepOnCritical(!GetBeepOnCritical());
-			BoolChange = true;
-			continue;
-		case 4:
 			SetAutodropLeftOvers(!GetAutodropLeftOvers());
 			BoolChange = true;
 			continue;
-		case 5:
+		case 4:
 			SetOutlineCharacters(!GetOutlineCharacters());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
 			continue;
-		case 6:
+		case 5:
 			SetOutlineItems(!GetOutlineItems());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
 			continue;
 #ifdef WIN32
-		case 7:
+		case 6:
 		        graphics::SwitchMode();
+			BoolChange = true;
+			continue;
+		case 7:
+			SetBeepOnCritical(!GetBeepOnCritical());
 			BoolChange = true;
 			continue;
 #endif

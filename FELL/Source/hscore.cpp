@@ -91,10 +91,18 @@ void highscore::Save(std::string File) const
 
 void highscore::Load(std::string File)
 {
+
+  {
 	inputfile HighScore(File, false);
 
 	if(!HighScore.GetBuffer().is_open())
 		return;
+
+	HighScore.GetBuffer().get();
+	if(HighScore.GetBuffer().eof())
+	  return;
+  }
+	inputfile HighScore(File, false);
 
 	ushort HVersion;
 

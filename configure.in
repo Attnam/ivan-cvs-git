@@ -19,7 +19,7 @@ AC_PROG_INSTALL
 
 AC_PROG_RANLIB
 
-AC_OUTPUT(Makefile FEEL/Makefile FEEL/Include/Makefile FEEL/Source/Makefile FeDX/Makefile FeDX/Include/Makefile FeDX/Source/Makefile FeIO/Makefile FeIO/Include/Makefile FeIO/Source/Makefile FeWin/Makefile FeWin/Include/Makefile FeWin/Source/Makefile FELL/Makefile FELL/Include/Makefile FELL/Source/Makefile FeFile/Makefile FeFile/Include/Makefile FeFile/Source/Makefile FeMath/Makefile FeMath/Include/Makefile FeMath/Source/Makefile LibTest/Makefile LibTest/Source/Makefile Graphics/Makefile Main/Makefile Main/Include/Makefile Main/Resource/Makefile Main/Source/Makefile Script/Makefile)
+AC_OUTPUT(Makefile FEEL/Makefile FEEL/Include/Makefile FEEL/Source/Makefile FeDX/Makefile Script/Makefile FeDX/Include/Makefile FeDX/Source/Makefile FeIO/Makefile FeIO/Include/Makefile FeIO/Source/Makefile FeWin/Makefile FeWin/Include/Makefile FeWin/Source/Makefile FELL/Makefile FELL/Include/Makefile FELL/Source/Makefile FeFile/Makefile FeFile/Include/Makefile FeFile/Source/Makefile FeMath/Makefile FeMath/Include/Makefile FeMath/Source/Makefile Graphics/Makefile Include/Makefile Main/Makefile Main/Include/Makefile Main/Resource/Makefile Main/Source/Makefile)
 
 
 
