@@ -105,6 +105,7 @@ public:
 	virtual vector2d GetBitmapPos() const { return vector2d(16, GetMaterial(1) ? 288 : 304); }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 500; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
+	virtual item* can::BetterVersion(void) const;
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -420,6 +421,7 @@ public:
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
 	virtual uchar GetConsumeMaterial() const { return 1; }
+	virtual item* BetterVersion() const;
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );

@@ -398,7 +398,7 @@ void mellis::PrayGoodEffect()
 {
 	bool Success = false;
 	ushort JustCreated;
-
+	item* NewVersion;
 	if(game::GetPlayer()->GetStack()->GetItems())
 	{
 		ADD_MESSAGE("%s tries to trade some of your items into better ones.", GOD_NAME);
@@ -408,18 +408,22 @@ void mellis::PrayGoodEffect()
 			Cont = false;
 			for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
 			{
-				if(game::GetPlayer()->GetStack()->GetItem(c) && game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion())
+				if(game::GetPlayer()->GetStack()->GetItem(c))
 				{
-					item* ToBeDeleted = game::GetPlayer()->GetStack()->GetItem(c);
-					game::GetPlayer()->GetStack()->RemoveItem(c);
-					JustCreated = game::GetPlayer()->GetStack()->AddItem(ToBeDeleted->BetterVersion());
-					Success = true;
-					ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::GetPlayer()->GetStack()->GetItem(JustCreated)->CNAME(INDEFINITE));
-					if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
-					if(ToBeDeleted == game::GetPlayer()->GetTorsoArmor()) game::GetPlayer()->SetTorsoArmor(0);
-					delete ToBeDeleted;
-					Cont = true;
-					break;
+					NewVersion = game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion();
+					if(NewVersion)
+					{
+						item* ToBeDeleted = game::GetPlayer()->GetStack()->GetItem(c);
+						game::GetPlayer()->GetStack()->RemoveItem(c);
+						JustCreated = game::GetPlayer()->GetStack()->AddItem(NewVersion);
+						Success = true;
+						ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::GetPlayer()->GetStack()->GetItem(JustCreated)->CNAME(INDEFINITE));
+						if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
+						if(ToBeDeleted == game::GetPlayer()->GetTorsoArmor()) game::GetPlayer()->SetTorsoArmor(0);
+						delete ToBeDeleted;
+						Cont = true;
+						break;
+					}
 				}
 			}
 		}

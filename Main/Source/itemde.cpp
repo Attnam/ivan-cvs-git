@@ -637,3 +637,44 @@ void corpse::SetBloodColor(ushort Color)
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
+item* potion::BetterVersion(void) const
+{
+	if(!GetMaterial(1))
+	{
+		material* Stuff;
+
+		if(rand() % 5)
+			Stuff = new bananaflesh;
+		else
+			Stuff = new omleurine;
+
+		 item* P = new potion(false); 
+		 P->InitMaterials(2, new glass, Stuff); 
+
+		 return P;
+	}
+	else
+		return 0;
+}
+
+item* can::BetterVersion(void) const
+{
+	if(!GetMaterial(1))
+	{
+		material* Stuff;
+
+		if(rand() % 2)
+			Stuff = new schoolfood;
+		else
+			Stuff = new bananaflesh;
+
+		 item* P = new potion(false); 
+		 P->InitMaterials(2, new glass, Stuff); 
+
+		 return P;
+	}
+	else
+		return 0;
+}
+
+
