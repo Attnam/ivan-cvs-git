@@ -12,6 +12,7 @@
 #include "save.h"
 #include "graphics.h"
 #include "rand.h"
+#include "config.h"
 
 worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0)
 {
@@ -78,7 +79,7 @@ void worldmapsquare::Draw()
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
 		ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
-		ushort ContrastLuminance = ushort(256 * game::GetSoftContrast());
+		ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
 		DrawTerrain();
 

@@ -115,9 +115,9 @@ bool KeyIsOK(char);
 std::string game::PlayerName;
 uchar game::GodNumber;
 ulong game::Turns;
-float game::SoftContrast = 0.9f;
+//float game::SoftContrast = 0.9f;
 bool game::OutlineItems = false, game::OutlineCharacters = false;
-ushort game::AutosaveInterval = 100;
+//ushort game::AutosaveInterval = 100;
 
 void game::InitScript()
 {
@@ -597,8 +597,8 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftContrast << InWilderness << NextObjectID;
-	SaveFile << OutlineItems << OutlineCharacters << LOSTurns << AutosaveInterval;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << /*SoftContrast << */InWilderness << NextObjectID;
+	SaveFile << OutlineItems << OutlineCharacters << LOSTurns;// << AutosaveInterval;
 
 	time_t Time = time(0);
 	femath::SetSeed(Time);
@@ -630,8 +630,8 @@ bool game::Load(std::string SaveName)
 
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftContrast >> InWilderness >> NextObjectID;
-	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns >> AutosaveInterval;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> /*SoftContrast >> */InWilderness >> NextObjectID;
+	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns;// >> AutosaveInterval;
 
 	time_t Time;
 	SaveFile >> Time;

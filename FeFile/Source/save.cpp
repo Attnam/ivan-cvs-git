@@ -96,6 +96,12 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 				if(GetBuffer().eof())
 					ABORT("Script error: Unterminated comment");
 
+				if(GetBuffer().peek() == '"')
+				{
+					GetBuffer().get();
+					return Buffer;
+				}
+
 				for(;;)
 				{
 					Char = GetBuffer().get();

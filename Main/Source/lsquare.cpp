@@ -15,6 +15,7 @@
 #include "team.h"
 #include "femath.h"
 #include "rand.h"
+#include "config.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0)
 {
@@ -175,8 +176,8 @@ void levelsquare::Draw()
 
 		if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
 		{
-			ushort ContrastLuminance = ushort(256 * game::GetSoftContrast());
-			ushort RealLuminance = game::GetSeeWholeMapCheat() ? ContrastLuminance : ushort(Luminance * game::GetSoftContrast());
+			ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
+			ushort RealLuminance = game::GetSeeWholeMapCheat() ? ContrastLuminance : ushort(float(Luminance) * configuration::GetContrast() / 100);
 
 			if(!game::GetOutlineItems())
 			{

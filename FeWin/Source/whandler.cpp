@@ -118,7 +118,9 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			int Key =  KeyBuffer.Remove(0);
 			int BackUp = Key;
 
-			unsigned int ScanCode = MapVirtualKeyEx(Key, 0, KeyboardLayoutName);
+			HKL MappedVirtualKey = LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE );
+
+			unsigned int ScanCode = MapVirtualKeyEx(Key, 0, MappedVirtualKey);
 			unsigned short ToBeReturned;	
 			unsigned char KeyboardBuffer[256];
 
@@ -135,7 +137,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			if(!GetKeyboardState(KeyboardBuffer))
 				return 'x';
 
-			ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
+			ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, MappedVirtualKey);
 
 			if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
 				return ToBeReturned;

@@ -24,6 +24,7 @@
 #include "graphics.h"
 #include "script.h"
 #include "rand.h"
+#include "config.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
@@ -224,7 +225,7 @@ void character::Be()
 			{
 				static ushort Timer = 0;
 
-				if(game::GetAutosaveInterval() && CanMove() && !game::GetInWilderness() && ++Timer >= game::GetAutosaveInterval())
+				if(configuration::GetAutosaveInterval() && CanMove() && !game::GetInWilderness() && ++Timer >= configuration::GetAutosaveInterval())
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -1528,7 +1529,7 @@ bool character::SeeWholeMap()
 
 bool character::IncreaseSoftContrast()
 {
-	game::EditSoftContrast(0.05f);
+	configuration::EditContrast(5);
 
 	game::GetCurrentArea()->SendNewDrawRequest();
 
@@ -1537,7 +1538,7 @@ bool character::IncreaseSoftContrast()
 
 bool character::DecreaseSoftContrast()
 {
-	game::EditSoftContrast(-0.05f);
+	configuration::EditContrast(-5);
 
 	game::GetCurrentArea()->SendNewDrawRequest();
 
@@ -3010,7 +3011,7 @@ bool character::SetAutosaveInterval()
 		return false;
 	}
 
-	game::SetAutosaveInterval(Interval);
+	configuration::SetAutosaveInterval(Interval);
 	return false;
 }
 
@@ -3084,6 +3085,7 @@ void character::GoHandler(void)
 			OKDirectionsCounter++;	
 		}
 	});
+
 	if((!MoveToSquare->GetOverTerrain()->GetIsWalkable()
 	|| MoveToSquare->GetLuminance() < LIGHT_BORDER
 	|| OKDirectionsCounter > 2

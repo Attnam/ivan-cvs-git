@@ -5,6 +5,7 @@
 #include "error.h"
 #include "colorbit.h"
 #include "rand.h"
+#include "config.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
@@ -56,7 +57,7 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256 * game::GetSoftContrast()));
+	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
 }
 
 tile igraph::GetTile(graphic_id GI)
