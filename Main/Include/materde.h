@@ -701,8 +701,6 @@ protected:
 	virtual std::string NameStem() const	{ return "werewolf flesh"; }
 );
 
-
-
 class MATERIAL
 (
 	koboldflesh,
