@@ -391,6 +391,7 @@ class game
   static void SetMonsterPortal(olterrain* What) { MonsterPortal = What; }
   static bool GetCausePanicFlag() { return CausePanicFlag; }
   static void SetCausePanicFlag(bool What) { CausePanicFlag = What; }
+  static long GetTimeSpent();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
@@ -488,6 +489,9 @@ class game
   static int CursorData;
   static olterrain* MonsterPortal;
   static bool CausePanicFlag;
+  static time_t TimePlayedBeforeLastLoad;
+  static time_t LastLoad;
+  static time_t GameBegan;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

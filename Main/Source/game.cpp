@@ -45,6 +45,7 @@
 #include "materias.h"
 #include "rain.h"
 #include "gear.h"
+#include "fetime.h"
 
 #define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
@@ -107,6 +108,9 @@ bool game::CausePanicFlag;
 bool game::Loading = false;
 bool game::InGetCommand = false;
 character* game::Petrus = 0;
+time_t game::TimePlayedBeforeLastLoad;
+time_t game::LastLoad;
+time_t game::GameBegan;
 
 festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
@@ -368,6 +372,10 @@ bool game::Init(const festring& Name)
 	PlayerRunning = false;
 	InitAttributeMemory();
 	NecroCounter = 0;
+	GameBegan = time(0);
+	LastLoad = time(0);
+	TimePlayedBeforeLastLoad = time::ZeroTime();
+
 	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
 
 	if(game::IsXMas())
@@ -794,6 +802,9 @@ bool game::Save(const festring& SaveName)
   SaveFile << DangerMap << NextDangerIDType << NextDangerIDConfigIndex;
   SaveFile << DefaultPolymorphTo << DefaultSummonMonster;
   SaveFile << DefaultWish << DefaultChangeMaterial << DefaultDetectMaterial;
+  SaveFile << GetTimeSpent(); 
+  /* or in more readable format: time() - LastLoad + TimeAtLastLoad */
+
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
   return true;
 }
@@ -871,6 +882,9 @@ int game::Load(const festring& SaveName)
   SaveFile >> DangerMap >> NextDangerIDType >> NextDangerIDConfigIndex;
   SaveFile >> DefaultPolymorphTo >> DefaultSummonMonster;
   SaveFile >> DefaultWish >> DefaultChangeMaterial >> DefaultDetectMaterial;
+  SaveFile >> TimePlayedBeforeLastLoad;
+  LastLoad = time(0);
+
   protosystem::LoadCharacterDataBaseFlags(SaveFile);
   return LOADED;
 }
@@ -3463,4 +3477,9 @@ double game::GetGameSituationDanger()
     }
 
   return SituationDanger;
+}
+
+long game::GetTimeSpent() 
+{
+  return time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
 }

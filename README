@@ -72,8 +72,8 @@ Q: What do these strange markings like Dex, Agi mean in
 right sidebar?
 
 A: 
-ArmStr = Arm Strength - Increases damage inflicted on enemies
-LegStr = Leg Strength - Increases carrying capacity and kicking damage
+AStr = Arm Strength - Increases damage inflicted on enemies
+LStr = Leg Strength - Increases carrying capacity and kicking damage
 Dex = Dexterity - Increases accuracy and hit speed
 Agi = Agility - Increase movement speed and ability to dodge attacks
 End = Endurance - Increases maximum health points and healing rate
@@ -81,10 +81,23 @@ Per = Perception - Increases sight range and accuracy
 Int = Intelligence - Increases your ability to read and learn
 Wis = Wisdom - Increases your ability to deal with gods
 Cha = Charisma - Improves your ability to negotiate and make deals
+
+If there are two numbers visible after these the first is the attribute
+after bonuses and minuses obtained from your equipment or some other
+temporary reason. The second number shows the base attribute without the
+said bonuses and minuses. If there is no net-bonus or net-minus, only the
+base attribute is shown.
+
+If the first number is green, then it has increased a short time ago and 
+if it is red it has decreased.
+
+
 Siz = Size or height - Increases your enemies' chance to hit you
 HP = Health Points - The sum of your bodyparts' HPs
 Gold = The amount of money you have
 Time = The turns you have used in this game
+
+
 
 Q: I had 20 HPs, but I still died. Is this a bug?
 

@@ -26,6 +26,7 @@
 #include "wterras.h"
 #include "materia.h"
 #include "database.h"
+#include "fetime.h"
 
 #ifdef WIZARD
 #include "proto.h"
@@ -500,6 +501,23 @@ bool commandsystem::Talk(character* Char)
 
 bool commandsystem::NOP(character* Char)
 {
+  /*igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
+  graphics::BlitDBToScreen();
+  GET_KEY();*/
+  //  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
+  //  return false;
+
+  /*{
+    //humanoid* H = static_cast<humanoid*>(Char);
+
+    for(int c = 0; c < Char->GetBodyParts(); ++c)
+      Char->GetBodyPart(c)->EditHP(-Char->GetBodyPart(c)->GetHP() / 2);
+  }*/
+
+  //game::GetScore();
+
+  ADD_MESSAGE("%s", time::VerbalizeAsTimeSpent(game::GetTimeSpent()).CStr());
+
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);
   Char->EditAP(-Char->GetStateAPGain(1000));

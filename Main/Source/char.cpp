@@ -4033,6 +4033,8 @@ void character::DrawPanel(bool AnimationDraw) const
 
   if(game::PlayerIsRunning())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Running");
+  /* test */
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "T: %d", game::GetTimeSpent());
 }
 
 void character::CalculateDodgeValue()
