@@ -1,12 +1,12 @@
 /* Compiled through charsset.cpp */
 
-ushort humanoid::DrawOrder[] = { TORSO_INDEX, HEAD_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX };
+int humanoid::DrawOrder[] = { TORSO_INDEX, HEAD_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX };
 
-bool humanoid::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX || Index == GROIN_INDEX; }
-bool humanoid::BodyPartCanBeSevered(ushort Index) const { return Index != TORSO_INDEX && Index != GROIN_INDEX; }
-uchar humanoid::OpenMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 3; }
-uchar humanoid::CloseMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 2; }
-ushort humanoid::GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH), 1) + CarryingBonus; }
+bool humanoid::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX || I == GROIN_INDEX; }
+bool humanoid::BodyPartCanBeSevered(int I) const { return I != TORSO_INDEX && I != GROIN_INDEX; }
+int humanoid::OpenMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 3; }
+int humanoid::CloseMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 2; }
+int humanoid::GetCarryingStrength() const { return Max(GetAttribute(LEG_STRENGTH), 1) + CarryingBonus; }
 void humanoid::CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
 void humanoid::CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
 bool humanoid::HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
@@ -14,7 +14,7 @@ bool humanoid::HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
 vector2d farmer::GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) << 4); }
 vector2d farmer::GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) << 4); }
 
-void guard::SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+void guard::SetWayPoints(const fearray<packedvector2d>& What) { ArrayToVector(What, WayPoints); }
 
 const char* oree::FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
 const char* oree::FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
@@ -22,30 +22,33 @@ const char* oree::ThirdPersonBiteVerb() const { return "vomits acidous blood at"
 const char* oree::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
 const char* oree::BiteNoun() const { return "liquid"; }
 
-bool skeleton::BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
+bool skeleton::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 
 bool communist::ShowClassDescription() const { return GetAssignedName() != "Ivan"; }
 
 vector2d housewife::GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) << 4); }
 
-bool zombie::BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
+bool zombie::BodyPartIsVital(int I) const { return I == GROIN_INDEX || I == TORSO_INDEX; }
 festring zombie::GetZombieDescription() const { return Description; }
 
-bool angel::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
+bool angel::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
-bool genie::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
+bool genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD_INDEX; }
 
-material* golem::CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
+material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
 
-bool sumowrestler::CanUseEquipment(ushort Index) const { return Index == BELT_INDEX && character::CanUseEquipment(Index); }
+bool sumowrestler::CanUseEquipment(int I) const { return I == BELT_INDEX && character::CanUseEquipment(I); }
 
 petrus::~petrus()
 {
   game::SetPetrus(0);
 }
 
-bool ennerbeast::Hit(character*, vector2d, uchar, bool)
+bool ennerbeast::Hit(character* Enemy, vector2d, int, bool)
 {
+  if(CheckIfTooScaredToHit(Enemy))
+    return false;
+
   if(RAND() & 1)
     ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHAR_DESCRIPTION(DEFINITE));
   else
@@ -54,10 +57,10 @@ bool ennerbeast::Hit(character*, vector2d, uchar, bool)
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 30);
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
+    for(int y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(70 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
+	int ScreamStrength = int(70 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {
@@ -79,9 +82,6 @@ bool ennerbeast::Hit(character*, vector2d, uchar, bool)
 	      }
 
 	    GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
-
-	    for(ushort c = 0; c < 4; ++c)
-	      GetNearLSquare(x, y)->GetSideStack(c)->ReceiveDamage(this, ScreamStrength, SOUND);
 	  }
       }
 
@@ -98,9 +98,9 @@ void skeleton::CreateCorpse(lsquare* Square)
       Square->AddItem(Skull);
     }
 
-  ushort Amount = 2 + (RAND() & 3);
+  int Amount = 2 + (RAND() & 3);
 
-  for(ushort c = 0; c < Amount; ++c)
+  for(int c = 0; c < Amount; ++c)
     Square->AddItem(new bone);
 
   SendToHell();
@@ -147,7 +147,7 @@ bool golem::MoveRandomly()
 {
   if(!(RAND() % 500))
     {
-      Engrave("Golem Needs Master");
+      Engrave(CONST_S("Golem Needs Master"));
       EditAP(-1000);
       return true;
     }
@@ -187,8 +187,8 @@ void petrus::GetAICommand()
       return;
     }
 
-  if(!LastHealed || game::GetTicks() - LastHealed > 16384)
-    for(ushort d = 0; d < GetNeighbourSquares(); ++d)
+  if(!LastHealed || game::GetTick() - LastHealed > 16384)
+    for(int d = 0; d < GetNeighbourSquares(); ++d)
       {
 	square* Square = GetNeighbourSquare(d);
 
@@ -208,7 +208,7 @@ bool petrus::HealFully(character* ToBeHealed)
 {
   bool DidSomething = false;
 
-  for(ushort c = 0; c < ToBeHealed->GetBodyParts(); ++c)
+  for(int c = 0; c < ToBeHealed->GetBodyParts(); ++c)
     if(!ToBeHealed->GetBodyPart(c))
       {
 	bodypart* BodyPart = 0;
@@ -259,7 +259,7 @@ bool petrus::HealFully(character* ToBeHealed)
 
   if(DidSomething)
     {
-      LastHealed = game::GetTicks();
+      LastHealed = game::GetTick();
       DexterityAction(5);
       return true;
     }
@@ -305,8 +305,11 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-bool humanoid::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
+bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
+  if(CheckIfTooScaredToHit(Enemy))
+    return false;
+
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
     return false;
 
@@ -321,13 +324,13 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool Forc
       return false;
     }
 
-  ushort c, AttackStyles;
+  int c, AttackStyles;
 
   for(c = 0, AttackStyles = 0; c < 8; ++c)
     if(GetAttackStyle() & (1 << c))
       ++AttackStyles;
 
-  ushort Chosen = RAND() % AttackStyles;
+  int Chosen = RAND() % AttackStyles;
 
   for(c = 0, AttackStyles = 0; c < 8; ++c)
     if(GetAttackStyle() & (1 << c) && AttackStyles++ == Chosen)
@@ -581,7 +584,7 @@ void priest::BeTalkedTo()
 
   if(PLAYER->TemporaryStateIsActivated(POISONED))
     {
-      ulong Price = GetConfig() == VALPURUS ? 25 : 5;
+      long Price = GetConfig() == VALPURUS ? 25 : 5;
 
       if(PLAYER->GetMoney() >= Price)
 	{
@@ -600,7 +603,7 @@ void priest::BeTalkedTo()
 	ADD_MESSAGE("\"You seem to be rather ill. Get %d gold pieces and I'll fix that.\"", Price);
     }
 
-  for(ushort c = 0; c < PLAYER->GetBodyParts(); ++c)
+  for(int c = 0; c < PLAYER->GetBodyParts(); ++c)
     if(!PLAYER->GetBodyPart(c) && PLAYER->CanCreateBodyPart(c))
       {
 	bool HasOld = false;
@@ -612,7 +615,7 @@ void priest::BeTalkedTo()
 	    if(OldBodyPart)
 	      {
 		HasOld = true;
-		ulong Price = GetConfig() == VALPURUS ? 50 : 10;
+		long Price = GetConfig() == VALPURUS ? 50 : 10;
 
 		if(PLAYER->GetMoney() >= Price)
 		  {
@@ -638,7 +641,7 @@ void priest::BeTalkedTo()
 	      }
 	  }
 
-	ulong Price = GetConfig() == VALPURUS ? 100 : 20;
+	long Price = GetConfig() == VALPURUS ? 100 : 20;
 
 	if(PLAYER->GetMoney() >= Price)
 	  {
@@ -673,7 +676,7 @@ void skeleton::BeTalkedTo()
 
 void communist::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5f)
+  if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5)
     {
       ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
 
@@ -782,7 +785,7 @@ void librarian::BeTalkedTo()
       return;
     }
 
-  static ulong Said;
+  static long Said;
 
   switch(RandomizeReply(Said, 12))
     {
@@ -857,19 +860,19 @@ bool communist::MoveRandomly()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
-      Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
+      Engrave(CONST_S("The bourgeois is a bourgeois -- for the benefit of the working class."));
       return true;
     case 1:
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
-      Engrave("Proletarians of all countries, unite!");
+      Engrave(CONST_S("Proletarians of all countries, unite!"));
       return true;
     case 2:
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engraves something to the ground.", CHAR_NAME(UNARTICLED));
 
-      Engrave("Capital is therefore not only personal; it is a social power.");
+      Engrave(CONST_S("Capital is therefore not only personal; it is a social power."));
       return true;
     default:
       return character::MoveRandomly();
@@ -906,7 +909,7 @@ void angel::Load(inputfile& SaveFile)
   SaveFile >> LastHealed;
 }
 
-void angel::CreateInitialEquipment(ushort SpecialFlags)
+void angel::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   GetStack()->AddItem(new holybook(GetConfig(), SpecialFlags));
@@ -973,7 +976,7 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
     }
 }
 
-void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
+void kamikazedwarf::CreateInitialEquipment(int SpecialFlags)
 {
   humanoid::CreateInitialEquipment(SpecialFlags);
   SetRightWielded(new holybook(GetConfig(), SpecialFlags));
@@ -981,7 +984,7 @@ void kamikazedwarf::CreateInitialEquipment(ushort SpecialFlags)
   GetCurrentRightSWeaponSkill()->AddHit(100);
 }
 
-bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
+bool kamikazedwarf::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
   if(!IsPlayer())
     for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -1007,9 +1010,9 @@ void kamikazedwarf::GetAICommand()
     character::GetAICommand();
 }
 
-ushort humanoid::GetSize() const
+int humanoid::GetSize() const
 {
-  ushort Size = 0;
+  int Size = 0;
 
   if(GetHead())
     Size += GetHead()->GetSize();
@@ -1030,9 +1033,9 @@ ushort humanoid::GetSize() const
   return Size;
 }
 
-ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize) const
+long humanoid::GetBodyPartSize(int I, int TotalSize) const
 {
-  switch(Index)
+  switch(I)
     {
     case HEAD_INDEX: return 20;
     case TORSO_INDEX: return ((TotalSize - 20) << 1) / 5;
@@ -1047,9 +1050,9 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize) const
   return 0;
 }
 
-ulong humanoid::GetBodyPartVolume(ushort Index) const
+long humanoid::GetBodyPartVolume(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case HEAD_INDEX: return 4000;
     case TORSO_INDEX: return (GetTotalVolume() - 4000) * 13 / 30;
@@ -1064,9 +1067,9 @@ ulong humanoid::GetBodyPartVolume(ushort Index) const
   return 0;
 }
 
-bodypart* humanoid::MakeBodyPart(ushort Index) const
+bodypart* humanoid::MakeBodyPart(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return new humanoidtorso(0, NO_MATERIALS);
     case HEAD_INDEX: return new head(0, NO_MATERIALS);
@@ -1081,10 +1084,9 @@ bodypart* humanoid::MakeBodyPart(ushort Index) const
   return 0;
 }
 
-bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
+bool humanoid::ReceiveDamage(character* Damager, int Damage, int Type, int TargetFlags, int Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
-  uchar ChooseFrom[MAX_BODYPARTS];
-  ushort BodyParts = 0;
+  int ChooseFrom[MAX_BODYPARTS], BodyParts = 0;
 
   if(TargetFlags & RIGHT_ARM && GetRightArm())
     ChooseFrom[BodyParts++] = 2;
@@ -1114,25 +1116,26 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
 
   if(Divide)
     {
-      ushort c;
-      ulong TotalVolume = 0;
+      int c;
+      long TotalVolume = 0;
 
       for(c = 0; c < BodyParts; ++c)
 	TotalVolume += GetBodyPart(ChooseFrom[c])->GetBodyPartVolume();
 
       for(c = 0; c < BodyParts; ++c)
-	if(ReceiveBodyPartDamage(Damager, ulong(Damage) * GetBodyPart(ChooseFrom[c])->GetBodyPartVolume() / TotalVolume, Type, ChooseFrom[c], Direction, PenetrateArmor, Critical, false))
+	if(ReceiveBodyPartDamage(Damager, long(Damage) * GetBodyPart(ChooseFrom[c])->GetBodyPartVolume() / TotalVolume, Type, ChooseFrom[c], Direction, PenetrateArmor, Critical, false))
 	  Affected = true;
     }
   else
     {
-      long Possibility[MAX_BODYPARTS];
-      ushort Possibilities = 0;
+      long Possibility[MAX_BODYPARTS], PossibilitySum = 0;
+      int Index = 0;
 
-      for(ushort c = 0; c < BodyParts; ++c)
-	Possibility[Possibilities++] = GetBodyPart(ChooseFrom[c])->GetBodyPartVolume();
+      for(int c = 0; c < BodyParts; ++c)
+	PossibilitySum += Possibility[Index++] = GetBodyPart(ChooseFrom[c])->GetBodyPartVolume();
 
-      Affected = !!ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[femath::WeightedRand(Possibility, Possibilities)], Direction, PenetrateArmor, Critical, false);
+      Index = femath::WeightedRand(Possibility, PossibilitySum);
+      Affected = !!ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[Index], Direction, PenetrateArmor, Critical, false);
     }
 
   if(!Affected && ShowMsg)
@@ -1145,7 +1148,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
 
   if(DamageTypeAffectsInventory(Type))
     {
-      for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipmentSlots(); ++c)
 	{
 	  item* Equipment = GetEquipment(c);
 
@@ -1191,9 +1194,9 @@ void humanoid::SetSecondaryWielded(item* Item)
     ABORT("Left hand in wrong place!");
 }
 
-const char* humanoid::GetEquipmentName(ushort Index) const // convert to array
+const char* humanoid::GetEquipmentName(int I) const // convert to array
 {
-  switch(Index)
+  switch(I)
     {
     case HELMET_INDEX: return "helmet";
     case AMULET_INDEX: return "amulet";
@@ -1213,31 +1216,31 @@ const char* humanoid::GetEquipmentName(ushort Index) const // convert to array
   return "forbidden piece of cloth";
 }
 
-bool (*humanoid::EquipmentSorter(ushort Index) const)(const item*, const character*)
+sorter humanoid::EquipmentSorter(int I) const
 {
-  switch(Index)
+  switch(I)
     {
-    case HELMET_INDEX: return &item::HelmetSorter;
-    case AMULET_INDEX: return &item::AmuletSorter;
-    case CLOAK_INDEX: return &item::CloakSorter;
-    case BODY_ARMOR_INDEX: return &item::BodyArmorSorter;
-    case BELT_INDEX: return &item::BeltSorter;
+    case HELMET_INDEX: return &item::IsHelmet;
+    case AMULET_INDEX: return &item::IsAmulet;
+    case CLOAK_INDEX: return &item::IsCloak;
+    case BODY_ARMOR_INDEX: return &item::IsBodyArmor;
+    case BELT_INDEX: return &item::IsBelt;
     case RIGHT_WIELDED_INDEX:
     case LEFT_WIELDED_INDEX: return 0;
     case RIGHT_RING_INDEX:
-    case LEFT_RING_INDEX: return &item::RingSorter;
+    case LEFT_RING_INDEX: return &item::IsRing;
     case RIGHT_GAUNTLET_INDEX:
-    case LEFT_GAUNTLET_INDEX: return &item::GauntletSorter;
+    case LEFT_GAUNTLET_INDEX: return &item::IsGauntlet;
     case RIGHT_BOOT_INDEX:
-    case LEFT_BOOT_INDEX: return &item::BootSorter;
+    case LEFT_BOOT_INDEX: return &item::IsBoot;
     }
 
   return 0;
 }
 
-bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
+bodypart* humanoid::GetBodyPartOfEquipment(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case HELMET_INDEX:
     case AMULET_INDEX:
@@ -1263,9 +1266,9 @@ bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
   return 0;
 }
 
-item* humanoid::GetEquipment(ushort Index) const
+item* humanoid::GetEquipment(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case HELMET_INDEX: return GetHelmet();
     case AMULET_INDEX: return GetAmulet();
@@ -1285,9 +1288,9 @@ item* humanoid::GetEquipment(ushort Index) const
   return 0;
 }
 
-void humanoid::SetEquipment(ushort Index, item* What)
+void humanoid::SetEquipment(int I, item* What)
 {
-  switch(Index)
+  switch(I)
     {
     case HELMET_INDEX: SetHelmet(What); break;
     case AMULET_INDEX: SetAmulet(What); break;
@@ -1365,9 +1368,9 @@ bool humanoid::CheckKick() const
     return true;
 }
 
-uchar humanoid::GetLegs() const
+int humanoid::GetLegs() const
 {
-  ushort Legs = 0;
+  int Legs = 0;
 
   if(GetRightLeg())
     ++Legs;
@@ -1378,9 +1381,9 @@ uchar humanoid::GetLegs() const
   return Legs;
 }
 
-uchar humanoid::GetArms() const
+int humanoid::GetArms() const
 {
-  ushort Arms = 0;
+  int Arms = 0;
 
   if(GetRightArm())
     ++Arms;
@@ -1416,9 +1419,9 @@ bool humanoid::CheckOffer() const
     }
 }
 
-vector2d humanoid::GetEquipmentPanelPos(ushort Index) const // convert to array
+vector2d humanoid::GetEquipmentPanelPos(int I) const // convert to array
 {
-  switch(Index)
+  switch(I)
     {
     case HELMET_INDEX: return vector2d(34, -22);
     case AMULET_INDEX: return vector2d(14, -22);
@@ -1440,7 +1443,7 @@ vector2d humanoid::GetEquipmentPanelPos(ushort Index) const // convert to array
 
 void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDraw) const
 {
-  ushort c;
+  int c;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
     if(CanUseEquipment(c))
@@ -1459,43 +1462,23 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	  }
       }
 
-  if(AnimationDraw)
-    return;
+  if(!AnimationDraw)
+    for(int c = 0; c < BodyParts; ++c)
+      {
+	bodypart* BodyPart = GetBodyPart(c);
 
-  ushort Color[4] = { 0, 0, 0, 0 };
-
-  if(GetHead())
-    Color[0] = GetHead()->GetConditionColor();
-
-  if(GetRightArm())
-    Color[1] = GetRightArm()->GetConditionColor();
-
-  if(GetLeftArm())
-    Color[2] = GetLeftArm()->GetConditionColor();
-
-  if(GetTorso())
-    Color[3] = GetTorso()->GetConditionColor();
-
-  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
-
-  for(c = 0; c < 4; ++c)
-    Color[c] = 0;
-
-  if(GetGroin())
-    Color[1] = GetGroin()->GetConditionColor();
-
-  if(GetRightLeg())
-    Color[2] = GetRightLeg()->GetConditionColor();
-
-  if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->GetConditionColor();
-
-  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
+	if(BodyPart)
+	  {
+	    bitmap* Cache = igraph::GetSilhouetteCache(c, BodyPart->GetConditionColorIndex());
+	    Cache->NormalMaskedBlit(ToBitmap, 0, 0, Where.X + 8, Where.Y,
+				    SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, 0, 0);
+	  }
+      }
 }
 
-ushort humanoid::GlobalResistance(ushort Type) const
+int humanoid::GlobalResistance(int Type) const
 {
-  ushort Resistance = GetResistance(Type);
+  int Resistance = GetResistance(Type);
 
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
@@ -1517,7 +1500,7 @@ ushort humanoid::GlobalResistance(ushort Type) const
 
 bool humanoid::TryToRiseFromTheDead()
 {
-  ushort c;
+  int c;
 
   for(c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c))
@@ -1562,9 +1545,9 @@ bool humanoid::TryToRiseFromTheDead()
   return true;
 }
 
-bool humanoid::HandleNoBodyPart(ushort Index)
+bool humanoid::HandleNoBodyPart(int I)
 {
-  switch(Index)
+  switch(I)
     {
     case HEAD_INDEX:
       if(CanBeSeenByPlayer())
@@ -1583,9 +1566,9 @@ bool humanoid::HandleNoBodyPart(ushort Index)
     }
 }
 
-vector2d humanoid::GetBodyPartBitmapPos(ushort Index, bool) const
+vector2d humanoid::GetBodyPartBitmapPos(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return GetTorsoBitmapPos();
     case HEAD_INDEX: return GetHeadBitmapPos();
@@ -1600,9 +1583,9 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index, bool) const
   return vector2d();
 }
 
-ushort humanoid::GetBodyPartColorB(ushort Index, bool) const
+color16 humanoid::GetBodyPartColorB(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return GetTorsoMainColor();
     case HEAD_INDEX: return GetCapColor();
@@ -1617,9 +1600,9 @@ ushort humanoid::GetBodyPartColorB(ushort Index, bool) const
   return 0;
 }
 
-ushort humanoid::GetBodyPartColorC(ushort Index, bool) const
+color16 humanoid::GetBodyPartColorC(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return GetBeltColor();
     case HEAD_INDEX: return GetHairColor();
@@ -1634,9 +1617,9 @@ ushort humanoid::GetBodyPartColorC(ushort Index, bool) const
   return 0;
 }
 
-ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
+color16 humanoid::GetBodyPartColorD(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return GetTorsoSpecialColor();
     case HEAD_INDEX: return GetEyeColor();
@@ -1651,51 +1634,51 @@ ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
   return 0;
 }
 
-bool humanoid::BodyPartColorBIsSparkling(ushort Index, bool) const
+bool humanoid::BodyPartColorBIsSparkling(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
-    case TORSO_INDEX: return TorsoMainColorIsSparkling();
-    case HEAD_INDEX: return CapColorIsSparkling();
+    case TORSO_INDEX: return !!(GetSparklingFlags() & TORSO_MAIN_COLOR);
+    case HEAD_INDEX: return !!(GetSparklingFlags() & CAP_COLOR);
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return ArmMainColorIsSparkling();
+    case LEFT_ARM_INDEX: return !!(GetSparklingFlags() & ARM_MAIN_COLOR);
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return LegMainColorIsSparkling();
+    case LEFT_LEG_INDEX: return !!(GetSparklingFlags() & LEG_MAIN_COLOR);
     }
 
   ABORT("Weird bodypart color B request for a humanoid!");
   return 0;
 }
 
-bool humanoid::BodyPartColorCIsSparkling(ushort Index, bool) const
+bool humanoid::BodyPartColorCIsSparkling(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
-    case TORSO_INDEX: return BeltColorIsSparkling();
-    case HEAD_INDEX: return HairColorIsSparkling();
+    case TORSO_INDEX: return !!(GetSparklingFlags() & BELT_COLOR);
+    case HEAD_INDEX: return !!(GetSparklingFlags() & HAIR_COLOR);
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return GauntletColorIsSparkling();
+    case LEFT_ARM_INDEX: return !!(GetSparklingFlags() & GAUNTLET_COLOR);
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return BootColorIsSparkling();
+    case LEFT_LEG_INDEX: return !!(GetSparklingFlags() & BOOT_COLOR);
     }
 
   ABORT("Weird bodypart color C request for a humanoid!");
   return 0;
 }
 
-bool humanoid::BodyPartColorDIsSparkling(ushort Index, bool) const
+bool humanoid::BodyPartColorDIsSparkling(int I, bool) const
 {
-  switch(Index)
+  switch(I)
     {
-    case TORSO_INDEX: return TorsoSpecialColorIsSparkling();
-    case HEAD_INDEX: return EyeColorIsSparkling();
+    case TORSO_INDEX: return !!(GetSparklingFlags() & TORSO_SPECIAL_COLOR);
+    case HEAD_INDEX: return !!(GetSparklingFlags() & EYE_COLOR);
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return ArmSpecialColorIsSparkling();
+    case LEFT_ARM_INDEX: return !!(GetSparklingFlags() & ARM_SPECIAL_COLOR);
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return LegSpecialColorIsSparkling();
+    case LEFT_LEG_INDEX: return !!(GetSparklingFlags() & LEG_SPECIAL_COLOR);
     }
 
   ABORT("Weird bodypart color D request for a humanoid!");
@@ -1741,7 +1724,7 @@ void shopkeeper::VirtualConstructor(bool Load)
     SetMoney(GetMoney() + RAND() % 2001);
 }
 
-void humanoid::Bite(character* Enemy, vector2d HitPos, uchar Direction, bool ForceHit)
+void humanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
 {
   /* This function ought not to be called without a head */
 
@@ -1751,7 +1734,7 @@ void humanoid::Bite(character* Enemy, vector2d HitPos, uchar Direction, bool For
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
-void humanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
+void humanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
 {
   leg* KickLeg = GetRandomLeg();
   EditNP(-50);
@@ -1766,10 +1749,10 @@ void humanoid::Kick(lsquare* Square, uchar Direction, bool ForceHit)
 
 /* Returns the average number of APs required to kill Enemy */
 
-float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
+double humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 {
-  float Effectivity = 0;
-  ushort AttackStyles = 0;
+  double Effectivity = 0;
+  int AttackStyles = 0;
 
   if(IsUsingArms())
     {
@@ -1777,20 +1760,20 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
       if(RightArm)
 	{
-	  float Damage = RightArm->GetDamage();
+	  double Damage = RightArm->GetDamage();
 
 	  if(Damage)
-	    Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Damage) + 1, RightArm->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * RightArm->GetAPCost());
+	    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(Damage) + 1, RightArm->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * RightArm->GetAPCost());
 	}
 
       leftarm* LeftArm = GetLeftArm();
 
       if(LeftArm)
 	{
-	  float Damage = LeftArm->GetDamage();
+	  double Damage = LeftArm->GetDamage();
 
 	  if(Damage)
-	    Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Damage) + 1, LeftArm->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * LeftArm->GetAPCost());
+	    Effectivity += 1 / (Enemy->GetTimeToDie(this, int(Damage) + 1, LeftArm->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * LeftArm->GetAPCost());
 	}
 
       ++AttackStyles;
@@ -1800,8 +1783,8 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
     {
       leg* RightLeg = GetRightLeg();
       leg* LeftLeg = GetLeftLeg();
-      float TimeToDie = Enemy->GetTimeToDie(this, ushort(RightLeg->GetKickDamage()) + 1, RightLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * RightLeg->GetKickAPCost()
-		      + Enemy->GetTimeToDie(this, ushort(LeftLeg->GetKickDamage()) + 1, LeftLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * LeftLeg->GetKickAPCost();
+      double TimeToDie = Enemy->GetTimeToDie(this, int(RightLeg->GetKickDamage()) + 1, RightLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * RightLeg->GetKickAPCost()
+		      + Enemy->GetTimeToDie(this, int(LeftLeg->GetKickDamage()) + 1, LeftLeg->GetKickToHitValue(), AttackIsBlockable(KICK_ATTACK), UseMaxHP) * LeftLeg->GetKickAPCost();
       Effectivity += 2 / TimeToDie;
       ++AttackStyles;
     }
@@ -1809,7 +1792,7 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingHead())
     {
       head* Head = GetHead();
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Head->GetBiteDamage()) + 1, Head->GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * Head->GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, int(Head->GetBiteDamage()) + 1, Head->GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * Head->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -1822,13 +1805,13 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   return AttackStyles ? AttackStyles / Effectivity : 10000000;
 }
 
-ushort humanoid::GetAttribute(ushort Identifier) const
+int humanoid::GetAttribute(int Identifier) const
 {
   if(Identifier < BASE_ATTRIBUTES)
     return character::GetAttribute(Identifier);
   else
     {
-      ushort Attrib = 0;
+      int Attrib = 0;
 
        if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
 	{
@@ -1864,7 +1847,7 @@ ushort humanoid::GetAttribute(ushort Identifier) const
     }
 }
 
-bool humanoid::EditAttribute(ushort Identifier, short Value)
+bool humanoid::EditAttribute(int Identifier, int Value)
 {
   if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
@@ -1899,7 +1882,7 @@ bool humanoid::EditAttribute(ushort Identifier, short Value)
     }
 }
 
-void humanoid::EditExperience(ushort Identifier, long Value)
+void humanoid::EditExperience(int Identifier, long Value)
 {
   if(Identifier < BASE_ATTRIBUTES)
     character::EditExperience(Identifier, Value);
@@ -1929,14 +1912,14 @@ void humanoid::EditExperience(ushort Identifier, long Value)
     ABORT("Illegal humanoid attribute %d experience edit request!", Identifier);
 }
 
-ushort humanoid::DrawStats(bool AnimationDraw) const
+int humanoid::DrawStats(bool AnimationDraw) const
 {
-  DrawSilhouette(DOUBLE_BUFFER, vector2d(RES_X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
+  DrawSilhouette(DOUBLE_BUFFER, vector2d(RES_X - SILHOUETTE_X_SIZE - 39, 53), AnimationDraw);
 
   if(AnimationDraw)
     return 15;
 
-  ushort PanelPosX = RES_X - 96, PanelPosY = 15;
+  int PanelPosX = RES_X - 96, PanelPosY = 15;
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
@@ -1945,9 +1928,9 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
   return PanelPosY;
 }
 
-ushort humanoid::GetRandomStepperBodyPart() const
+int humanoid::GetRandomStepperBodyPart() const
 {
-  uchar Possible = 0, PossibleArray[3];
+  int Possible = 0, PossibleArray[3];
 
   if(GetRightLeg())
     PossibleArray[Possible++] = RIGHT_LEG_INDEX;
@@ -1968,7 +1951,7 @@ ushort humanoid::GetRandomStepperBodyPart() const
   return PossibleArray[RAND() % Possible];
 }
 
-ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
+int humanoid::CheckForBlock(character* Enemy, item* Weapon, double ToHitValue, int Damage, int Success, int Type)
 {
   if(GetAction())
     return Damage;
@@ -1989,12 +1972,12 @@ bool humanoid::CanWield() const
 
 /* return true if still in balance */
 
-bool humanoid::CheckBalance(float KickDamage)
+bool humanoid::CheckBalance(double KickDamage)
 {
   return !(GetMoveType() & WALK) || !KickDamage || IsStuck() || (GetLegs() != 1 && KickDamage * 10 < RAND() % GetSize());
 }
 
-long humanoid::GetMoveAPRequirement(uchar Difficulty) const
+long humanoid::GetMoveAPRequirement(int Difficulty) const
 {
   if(GetMoveType() & FLY)
     return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
@@ -2013,21 +1996,21 @@ long humanoid::GetMoveAPRequirement(uchar Difficulty) const
   return 0;
 }
 
-void hunter::CreateBodyParts(ushort SpecialFlags)
+void hunter::CreateBodyParts(int SpecialFlags)
 {
-  for(ushort c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c) 
     if(c != LEFT_ARM_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
       SetBodyPart(LEFT_ARM_INDEX, 0);
 }
 
-bool humanoid::EquipmentEasilyRecognized(ushort Index) const
+bool humanoid::EquipmentEasilyRecognized(int I) const
 {
   if(GetRelation(PLAYER) != HOSTILE)
     return true;
 
-  switch(Index)
+  switch(I)
     {
     case AMULET_INDEX:
     case RIGHT_RING_INDEX:
@@ -2045,7 +2028,7 @@ void humanoid::VirtualConstructor(bool)
   SetCurrentLeftSWeaponSkill(0);
 }
 
-void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
+void humanoid::SignalEquipmentAdd(int EquipmentIndex)
 {
   character::SignalEquipmentAdd(EquipmentIndex);
 
@@ -2058,7 +2041,7 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
     CalculateBattleInfo();
 }
 
-void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
+void humanoid::SignalEquipmentRemoval(int EquipmentIndex)
 {
   character::SignalEquipmentRemoval(EquipmentIndex);
 
@@ -2095,7 +2078,7 @@ void humanoid::SWeaponSkillTick()
 
 void angel::GetAICommand()
 {
-  if((LastHealed || game::GetTicks() - LastHealed > 10000) && AttachBodyPartsOfFriendsNear())
+  if((LastHealed || game::GetTick() - LastHealed > 10000) && AttachBodyPartsOfFriendsNear())
     return;
 
   humanoid::GetAICommand();
@@ -2108,7 +2091,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
   character* HurtOne = 0;
   bodypart* SeveredOne = 0;
 
-  for(ushort d = 0; d < GetNeighbourSquares(); ++d)
+  for(int d = 0; d < GetNeighbourSquares(); ++d)
     {
       square* Square = GetNeighbourSquare(d);
 
@@ -2139,7 +2122,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
       SeveredOne->SetHP(1);
       SeveredOne->RemoveFromSlot();
       HurtOne->AttachBodyPart(SeveredOne);
-      LastHealed = game::GetTicks();
+      LastHealed = game::GetTick();
       DexterityAction(5);
       return true;
     }
@@ -2153,13 +2136,13 @@ void angel::VirtualConstructor(bool Load)
   LastHealed = 0;
 }
 
-void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, color24 Luminance, int, bool AllowAnimate, bool AllowAlpha) const
 {
   bitmap* TileBuffer = igraph::GetTileBuffer();
-  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
+  Bitmap->NormalBlit(TileBuffer, Pos, 0, 0, 16, 16);
   TileBuffer->FillPriority(0);
 
-  for(ushort c = 0; c < BodyParts; ++c)
+  for(int c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(DrawOrder[c]);
 
@@ -2167,53 +2150,57 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, usho
 	BodyPart->Draw(TileBuffer, GetDrawDisplacement(c), Luminance, 0, AllowAnimate, AllowAlpha);
     }
 
-  if(GetLeftArm())
-    GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+  leftarm* LeftArm = GetLeftArm();
 
-  if(GetRightArm())
-    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+  if(LeftArm)
+    LeftArm->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
 
-  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
+  rightarm* RightArm = GetRightArm();
+
+  if(RightArm)
+    RightArm->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+
+  TileBuffer->NormalBlit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
-vector2d kamikazedwarf::GetDrawDisplacement(ushort Index) const
+vector2d kamikazedwarf::GetDrawDisplacement(int I) const
 {
   static vector2d DrawDisplacement[] = { vector2d(0, 0), vector2d(0, 1), vector2d(0, -1), vector2d(0, -1), vector2d(0, -1), vector2d(0, 0), vector2d(0, 0) };
-  return DrawDisplacement[Index];
+  return DrawDisplacement[I];
 }
 
-ushort angel::GetTorsoMainColor() const
+color16 angel::GetTorsoMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort angel::GetArmMainColor() const
+color16 angel::GetArmMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort kamikazedwarf::GetTorsoMainColor() const
+color16 kamikazedwarf::GetTorsoMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort kamikazedwarf::GetGauntletColor() const
+color16 kamikazedwarf::GetGauntletColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort kamikazedwarf::GetLegMainColor() const
+color16 kamikazedwarf::GetLegMainColor() const
 {
   return GetMasterGod()->GetColor();
 }
 
-ushort housewife::GetHairColor() const
+color16 housewife::GetHairColor() const
 {
-  static ushort HouseWifeHairColor[] = { MakeRGB16(48, 40, 8), MakeRGB16(60, 48, 24),  MakeRGB16(200, 0, 0) };
+  static color16 HouseWifeHairColor[] = { MakeRGB16(48, 40, 8), MakeRGB16(60, 48, 24),  MakeRGB16(200, 0, 0) };
   return HouseWifeHairColor[RAND() % 3];
 }
 
-ushort angel::GetAttribute(ushort Identifier) const // temporary until wings are bodyparts
+int angel::GetAttribute(int Identifier) const // temporary until wings are bodyparts
 {
   if(Identifier == LEG_STRENGTH)
     return GetDefaultLegStrength();
@@ -2223,7 +2210,7 @@ ushort angel::GetAttribute(ushort Identifier) const // temporary until wings are
     return humanoid::GetAttribute(Identifier);
 }
 
-ushort genie::GetAttribute(ushort Identifier) const // temporary until someone invents a better way of doing this
+int genie::GetAttribute(int Identifier) const // temporary until someone invents a better way of doing this
 {
   if(Identifier == LEG_STRENGTH)
     return GetDefaultLegStrength();
@@ -2273,7 +2260,7 @@ void humanoid::CalculateBattleInfo()
 {
   CalculateDodgeValue();
 
-  for(ushort c = 0; c < BodyParts; ++c)
+  for(int c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -2290,7 +2277,7 @@ leg* humanoid::GetRandomLeg() const
     return GetLeftLeg();
 }
 
-item* skeleton::SevereBodyPart(ushort BodyPartIndex)
+item* skeleton::SevereBodyPart(int BodyPartIndex)
 {
   item* Bone;
 
@@ -2317,9 +2304,9 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
   return Bone;  
 }
 
-void zombie::CreateBodyParts(ushort SpecialFlags)
+void zombie::CreateBodyParts(int SpecialFlags)
 {
-  for(ushort c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c) 
     if(BodyPartIsVital(c) || RAND() % 3)
       {
 	bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
@@ -2327,9 +2314,9 @@ void zombie::CreateBodyParts(ushort SpecialFlags)
       }
 }
 
-void humanoid::AddSpecialEquipmentInfo(festring& String, ushort Index) const
+void humanoid::AddSpecialEquipmentInfo(festring& String, int I) const
 {
-  if((Index == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->TwoHandWieldIsActive()))
+  if((I == RIGHT_WIELDED_INDEX && GetRightArm()->TwoHandWieldIsActive()) || (I == LEFT_WIELDED_INDEX && GetLeftArm()->TwoHandWieldIsActive()))
     String << " (in both hands)";
 }
 
@@ -2337,7 +2324,7 @@ void humanoid::AddSpecialEquipmentInfo(festring& String, ushort Index) const
 
 #define INSTANTIATE(name) if(DataBase->name.IsValid() && (Item = DataBase->name.Instantiate(SpecialFlags))) Set##name(Item);
 
-void humanoid::CreateInitialEquipment(ushort SpecialFlags)
+void humanoid::CreateInitialEquipment(int SpecialFlags)
 {
   character::CreateInitialEquipment(SpecialFlags);
   item* Item;
@@ -2363,14 +2350,14 @@ void humanoid::CreateInitialEquipment(ushort SpecialFlags)
     CurrentLeftSWeaponSkill->AddHit(GetLeftSWeaponSkillHits());
 }
 
-festring humanoid::GetBodyPartName(ushort Index, bool Articled) const
+festring humanoid::GetBodyPartName(int I, bool Articled) const
 {
   festring Article;
 
   if(Articled)
     Article << 'a';
 
-  switch(Index)
+  switch(I)
     {
     case HEAD_INDEX: return Article + "head";
     case TORSO_INDEX: return Article + "torso";
@@ -2385,12 +2372,12 @@ festring humanoid::GetBodyPartName(ushort Index, bool Articled) const
   return "";
 }
 
-void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValue) const
+void humanoid::CreateBlockPossibilityVector(blockvector& Vector, double ToHitValue) const
 {
-  float RightBlockChance = 0;
-  ushort RightBlockCapability = 0;
-  float LeftBlockChance = 0;
-  ushort LeftBlockCapability = 0;
+  double RightBlockChance = 0;
+  int RightBlockCapability = 0;
+  double LeftBlockChance = 0;
+  int LeftBlockCapability = 0;
   rightarm* RightArm = GetRightArm();
   leftarm* LeftArm = GetLeftArm();
 
@@ -2409,20 +2396,20 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValu
   /* Double block */
 
   if(RightBlockCapability + LeftBlockCapability)
-    Vector.push_back(std::pair<float, ushort>(RightBlockChance * LeftBlockChance, RightBlockCapability + LeftBlockCapability));
+    Vector.push_back(std::pair<double, int>(RightBlockChance * LeftBlockChance, RightBlockCapability + LeftBlockCapability));
 
   /* Right block */
 
   if(RightBlockCapability)
-    Vector.push_back(std::pair<float, ushort>(RightBlockChance * (1 - LeftBlockChance), RightBlockCapability));
+    Vector.push_back(std::pair<double, int>(RightBlockChance * (1 - LeftBlockChance), RightBlockCapability));
 
   /* Left block */
 
   if(LeftBlockCapability)
-    Vector.push_back(std::pair<float, ushort>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
+    Vector.push_back(std::pair<double, int>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
 }
 
-item* humanoid::SevereBodyPart(ushort BodyPartIndex)
+item* humanoid::SevereBodyPart(int BodyPartIndex)
 {
   if(BodyPartIndex == RIGHT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
@@ -2448,7 +2435,7 @@ const festring& humanoid::GetDeathMessage() const
   return GetHead() || character::GetDeathMessage() != "@Dd dies screaming." ? character::GetDeathMessage() : HeadlessDeathMsg;
 }
 
-uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
+int humanoid::GetSWeaponSkillLevel(const item* Item) const
 {
   std::list<sweaponskill*>::const_iterator i;
 
@@ -2468,7 +2455,7 @@ uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
 
 bool humanoid::UseMaterialAttributes() const
 {
-  for(ushort c = 0; c < BodyParts; ++c)
+  for(int c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -2479,7 +2466,7 @@ bool humanoid::UseMaterialAttributes() const
   return true;
 }
 
-ulong angel::GetBaseEmitation() const
+color24 angel::GetBaseEmitation() const
 {
   switch(GetMasterGod()->GetBasicAlignment())
     {
@@ -2493,10 +2480,10 @@ ulong angel::GetBaseEmitation() const
 
 void bananagrower::BeTalkedTo()
 {
-  static ulong Said;
+  static long Said;
 
   if(GetRelation(PLAYER) == HOSTILE)
-    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
   else if(!game::TweraifIsFree())
     {
       if(GetRelation(PLAYER) != HOSTILE && !Profession && !(RAND() % 7))
@@ -2580,7 +2567,7 @@ void smith::BeTalkedTo()
       return;
     }
 
-  for(ushort c = 0; c < BodyParts; ++c)
+  for(int c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
@@ -2602,9 +2589,9 @@ void smith::BeTalkedTo()
 	}
     }
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith))
     {
-      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::FixableBySmithSorter);
+      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::IsFixableBySmith);
 
       if(!Item)
 	return;
@@ -2639,16 +2626,16 @@ void smith::BeTalkedTo()
 
 void humanoid::CalculateDodgeValue()
 {
-  DodgeValue = 0.05f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
+  DodgeValue = 0.05 * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
   if(GetMoveType() & FLY)
     DodgeValue *= 2;
   else
     {
       if(!GetRightLeg() && !GetRightLeg())
-	DodgeValue *= 0.50f;
+	DodgeValue *= 0.50;
       else if(!GetRightLeg() || !GetRightLeg())
-	DodgeValue *= 0.75f;
+	DodgeValue *= 0.75;
     }
 
   if(DodgeValue < 1)
@@ -2686,8 +2673,8 @@ void bananagrower::GetAICommand()
     {
       itemvector ItemVector;
       GetStack()->FillItemVector(ItemVector);
-      ushort BananasDropped = 0;
-      ushort c;
+      int BananasDropped = 0;
+      uint c;
 
       for(c = 0; c < ItemVector.size(); ++c)
 	if(ItemVector[c]->IsBanana())
@@ -2706,7 +2693,7 @@ void bananagrower::GetAICommand()
 
       ItemVector.clear();
       GetStackUnder()->FillItemVector(ItemVector);
-      ushort PeelsPickedUp = 0;
+      int PeelsPickedUp = 0;
 
       for(c = 0; c < ItemVector.size(); ++c)
 	if(ItemVector[c]->IsBananaPeel())
@@ -2741,9 +2728,9 @@ void bananagrower::GetAICommand()
       GetStack()->Clean();
       character* Sumo = game::GetSumo();
       FeedingSumo = Sumo && Sumo->GetNP() < (SATIATED_LEVEL + BLOATED_LEVEL) >> 1 && !(RAND() % 15);
-      ushort Bananas = FeedingSumo ? 3 : 10;
+      int Bananas = FeedingSumo ? 3 : 10;
 
-      for(ushort c = 0; c < Bananas; ++c)
+      for(int c = 0; c < Bananas; ++c)
 	GetStack()->AddItem(new banana);
 
       vector2d Where = GetLevel()->GetNearestFreeSquare(this, vector2d(0, 45));
@@ -2788,17 +2775,17 @@ bool humanoid::CheckTalk()
   return true;
 }
 
-bool angel::CanCreateBodyPart(ushort C) const
+bool angel::CanCreateBodyPart(int I) const
 {
-  return C == TORSO_INDEX || C == HEAD_INDEX || C == RIGHT_ARM_INDEX || C == LEFT_ARM_INDEX;
+  return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
 }
 
-bool genie::CanCreateBodyPart(ushort C) const
+bool genie::CanCreateBodyPart(int I) const
 {
-  return C == TORSO_INDEX || C == HEAD_INDEX || C == RIGHT_ARM_INDEX || C == LEFT_ARM_INDEX;
+  return I == TORSO_INDEX || I == HEAD_INDEX || I == RIGHT_ARM_INDEX || I == LEFT_ARM_INDEX;
 }
 
-bool bananagrower::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, uchar Dir)
+bool bananagrower::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, int Dir)
 {
   return Char->GetPos() == vector2d(45, 45) && (Displace(Char, true) || Hit(Char, Pos, Dir));
 }
@@ -2811,9 +2798,9 @@ festring& bananagrower::ProcessMessage(festring& Msg) const
   return Msg;
 }
 
-void elder::CreateBodyParts(ushort SpecialFlags)
+void elder::CreateBodyParts(int SpecialFlags)
 {
-  for(ushort c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c) 
     if(c != LEFT_LEG_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
@@ -2831,11 +2818,11 @@ void encourager::GetAICommand()
   if(CheckForDoors())
     return;
 
-  if(game::GetTicks() - LastHit > 200)
+  if(game::GetTick() - LastHit > 200)
     {
-      static ushort NotDiagonal[] = { 1, 3, 4, 6 };
+      static int NotDiagonal[] = { 1, 3, 4, 6 };
 
-      for(ushort d = 0; d < 4; ++d)
+      for(int d = 0; d < 4; ++d)
 	{
 	  square* Square = GetNeighbourSquare(NotDiagonal[d]);
 
@@ -2845,7 +2832,7 @@ void encourager::GetAICommand()
 
 	      if(Char && Char->IsBananaGrower() && Hit(Char, Square->GetPos(), NotDiagonal[d], true))
 		{
-		  LastHit = game::GetTicks();
+		  LastHit = game::GetTick();
 		  TerminateGoingTo();
 		  return;
 		}
@@ -2877,9 +2864,9 @@ void encourager::VirtualConstructor(bool Load)
   LastHit = 0;
 }
 
-ulong skeleton::GetBodyPartVolume(ushort Index) const
+long skeleton::GetBodyPartVolume(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case HEAD_INDEX: return 600;
     case TORSO_INDEX: return (GetTotalVolume() - 600) * 13 / 30;
@@ -2894,17 +2881,17 @@ ulong skeleton::GetBodyPartVolume(ushort Index) const
   return 0;
 }
 
-bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
+bool humanoid::CheckIfEquipmentIsNotUsable(int I) const
 {
-  return (Index == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy("this item"))
-      || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy("this item"))
-      || (Index == RIGHT_WIELDED_INDEX && GetLeftWielded() && GetLeftWielded()->IsTwoHanded() && GetLeftArm()->CheckIfWeaponTooHeavy("your other wielded item"))
-      || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
+  return (I == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy("this item"))
+      || (I == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy("this item"))
+      || (I == RIGHT_WIELDED_INDEX && GetLeftWielded() && GetLeftWielded()->IsTwoHanded() && GetLeftArm()->CheckIfWeaponTooHeavy("your other wielded item"))
+      || (I == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-ushort mistress::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, float Damage, float ToHitValue, short Success, uchar Type, uchar Direction, bool Critical, bool ForceHit)
+int mistress::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, bool Critical, bool ForceHit)
 {
-  ushort Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
+  int Return = humanoid::TakeHit(Enemy, Weapon, EnemyBodyPart, HitPos, Damage, ToHitValue, Success, Type, Direction, Critical, ForceHit);
 
   if(Return == HAS_HIT && Critical)
     {
@@ -2984,7 +2971,7 @@ void guard::GetAICommand()
   StandIdleAI();
 }
 
-bool mistress::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
+bool mistress::ReceiveDamage(character* Damager, int Damage, int Type, int TargetFlags, int Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
   bool Success = humanoid::ReceiveDamage(Damager, Damage, Type, TargetFlags, Direction, Divide, PenetrateArmor, Critical, ShowMsg);
 
@@ -3009,9 +2996,9 @@ void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
   Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
-item* humanoid::GetPairEquipment(ushort Index) const
+item* humanoid::GetPairEquipment(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case RIGHT_WIELDED_INDEX: return GetLeftWielded();
     case LEFT_WIELDED_INDEX: return GetRightWielded();
@@ -3038,19 +3025,19 @@ void darkmage::GetAICommand()
     return;
 
   character* NearestEnemy = 0;
-  ulong NearestEnemyDistance = 0xFFFFFFFF;
+  long NearestEnemyDistance = 0x7FFFFFFF;
   character* RandomFriend = 0;
   charactervector Friend;
   vector2d Pos = GetPos();
 
-  for(ushort c = 0; c < game::GetTeams(); ++c)
+  for(int c = 0; c < game::GetTeams(); ++c)
     {
       if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 	{
 	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	    if((*i)->IsEnabled())
 	      {
-		ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+		long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
 
 		if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
 		  {
@@ -3269,9 +3256,9 @@ head* humanoid::Behead()
   return Head;
 }
 
-bool communist::BoundToUse(const item* Item, ushort Index) const
+bool communist::BoundToUse(const item* Item, int I) const
 {
-  return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(Index);
+  return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(I);
 }
 
 festring werewolfwolf::GetKillName() const
@@ -3282,7 +3269,7 @@ festring werewolfwolf::GetKillName() const
   return humanoid::GetKillName();
 }
 
-ushort humanoid::GetRandomApplyBodyPart() const
+int humanoid::GetRandomApplyBodyPart() const
 {
   if(GetRightArm() && GetLeftArm())
     {
@@ -3306,12 +3293,12 @@ ushort humanoid::GetRandomApplyBodyPart() const
 
 void golem::BeTalkedTo()
 {
-  static ulong Said;
+  static long Said;
 
   if(GetRelation(PLAYER) == HOSTILE)
-    Engrave(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+    Engrave(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
   else
-    Engrave(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size())]);
+    Engrave(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s engraves something.", CHAR_NAME(DEFINITE));
@@ -3377,7 +3364,7 @@ void humanoid::AddDefenceInfo(felist& List) const
 
 void humanoid::DetachBodyPart()
 {
-  uchar ToBeDetached;
+  int ToBeDetached;
 
   switch(game::KeyQuestion(CONST_S("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?"), KEY_ESC, 5, 'l','r','L','R', 'h'))
     {
@@ -3560,7 +3547,7 @@ void playerkind::BeTalkedTo()
 	  return;
 	}
 
-      static ulong Said;
+      static long Said;
 
       switch(RandomizeReply(Said, 4))
 	{
@@ -3586,7 +3573,7 @@ void playerkind::BeTalkedTo()
 	  return;
 	}
 
-      static ulong Said;
+      static long Said;
 
       switch(RandomizeReply(Said, 4))
 	{
@@ -3612,7 +3599,7 @@ void playerkind::BeTalkedTo()
 	  return;
 	}
 
-      static ulong Said;
+      static long Said;
 
       switch(RandomizeReply(Said, 4))
 	{
@@ -3733,15 +3720,15 @@ bool guard::MoveTowardsHomePos()
     return humanoid::MoveTowardsHomePos();
 }
 
-bodypart* ennerbeast::MakeBodyPart(ushort Index) const
+bodypart* ennerbeast::MakeBodyPart(int I) const
 {
-  if(Index == HEAD_INDEX)
+  if(I == HEAD_INDEX)
     return new ennerhead(0, NO_MATERIALS);
   else
-    return humanoid::MakeBodyPart(Index);
+    return humanoid::MakeBodyPart(I);
 }
 
-ulong humanoid::GetSumOfAttributes() const
+long humanoid::GetSumOfAttributes() const
 {
   return GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(ARM_STRENGTH) + GetAttribute(AGILITY) + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) ;
 }
@@ -3766,7 +3753,7 @@ bool humanoid::CanConsume(material* Material) const
 
 void femaleslave::BeTalkedTo()
 {
-  static ulong Said;
+  static long Said;
 
   if(GetConfig() != NEW_ATTNAM || GetRelation(PLAYER) == HOSTILE)
     humanoid::BeTalkedTo();
@@ -3784,16 +3771,16 @@ void necromancer::GetAICommand()
     return;
 
   character* NearestEnemy = 0;
-  ulong NearestEnemyDistance = 0xFFFFFFFF;
+  long NearestEnemyDistance = 0x7FFFFFFF;
   vector2d Pos = GetPos();
 
-  for(ushort c = 0; c < game::GetTeams(); ++c)
+  for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       {
 	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	  if((*i)->IsEnabled())
 	    {
-	      ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+	      long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
 
 	      if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
 		{
@@ -3876,7 +3863,7 @@ void necromancer::GetAICommand()
 
 bool necromancer::TryToRaiseZombie()
 {
-  for(ushort c = 0; c < game::GetTeams(); ++c)
+  for(int c = 0; c < game::GetTeams(); ++c)
     for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
       if(!(*i)->IsEnabled() && (*i)->GetMotherEntity() && (*i)->GetMotherEntity()->Exists() && (GetConfig() == MASTER_NECROMANCER || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
 	{
@@ -3951,9 +3938,9 @@ void humanoid::StayOn(liquid* Liquid)
   if(!Standing)
     {
       bodypart* BodyPart[MAX_BODYPARTS];
-      ushort Index = 0;
+      int Index = 0;
 
-      for(ushort c = 0; c < GetBodyParts(); ++c)
+      for(int c = 0; c < GetBodyParts(); ++c)
 	if(GetBodyPart(c))
 	  BodyPart[Index++] = GetBodyPart(c);
 
@@ -3961,9 +3948,9 @@ void humanoid::StayOn(liquid* Liquid)
     }
 }
 
-bodypart* playerkind::MakeBodyPart(ushort Index) const
+bodypart* playerkind::MakeBodyPart(int I) const
 {
-  switch(Index)
+  switch(I)
     {
     case TORSO_INDEX: return new playerkindtorso(0, NO_MATERIALS);
     case HEAD_INDEX: return new playerkindhead(0, NO_MATERIALS);
@@ -3980,9 +3967,9 @@ bodypart* playerkind::MakeBodyPart(ushort Index) const
 
 bool golem::AddAdjective(festring& String, bool Articled) const
 {
-  ushort TotalRustLevel = 0;
+  int TotalRustLevel = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(int c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       TotalRustLevel += GetBodyPart(c)->GetMainMaterial()->GetRustLevel();
 
@@ -4005,7 +3992,7 @@ bool golem::AddAdjective(festring& String, bool Articled) const
     }
 }
 
-void oree::Bite(character* Enemy, vector2d HitPos, uchar, bool)
+void oree::Bite(character* Enemy, vector2d HitPos, int, bool)
 {
   if(IsPlayer())
     ADD_MESSAGE("You vomit acidous blood at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -4022,7 +4009,7 @@ void sumowrestler::GetAICommand()
   if(CheckForUsefulItemsOnGround())
     return;
 
-  if(CheckForFood(5))
+  if(CheckForFood(4))
     return;
 
   StandIdleAI();
@@ -4030,10 +4017,10 @@ void sumowrestler::GetAICommand()
 
 void sumowrestler::BeTalkedTo()
 {
-  static ulong Said;
+  static long Said;
 
   if(GetRelation(PLAYER) == HOSTILE)
-    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
   else if(!game::TweraifIsFree())
     ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 6)]);
   else
@@ -4088,7 +4075,7 @@ void tourist::GetAICommand()
 
 void imperialist::BeTalkedTo()
 {
-  decosadshirt* Shirt = static_cast<decosadshirt*>(PLAYER->SearchForItem(this, &item::DecosAdShirtSorter));
+  decosadshirt* Shirt = static_cast<decosadshirt*>(PLAYER->SearchForItem(this, &item::IsDecosAdShirt));
 
   if(Shirt)
     {
@@ -4108,20 +4095,21 @@ void imperialist::BeTalkedTo()
 	}
     }
 
-  static ulong Said;
+  static long Said;
 
   if(GetRelation(PLAYER) == HOSTILE)
-    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().Size)]);
   else if(!game::PlayerIsSumoChampion())
-    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size())]);
+    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size)]);
   else
-    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size() - 1)]);
+    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().Size - 1)]);
 }
 
 character* humanoid::CreateZombie() const
 {
   zombie* Zombie = new zombie;
-  ushort c;
+  int c;
+
   for(c = 0; c < GetBodyParts(); ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);

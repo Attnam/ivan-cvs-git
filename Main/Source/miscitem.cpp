@@ -1,66 +1,59 @@
 /* Compiled through itemset.cpp */
 
-void materialcontainer::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void materialcontainer::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
-void materialcontainer::InitMaterials(const materialscript* M, const materialscript*, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
+void materialcontainer::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
+void materialcontainer::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
+void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultContainedVolume(), CUP); }
+void materialcontainer::InitMaterials(const materialscript* M, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
-ushort holybanana::GetSpecialFlags() const { return ST_FLAME; }
+int holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
-vector2d lantern::GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
-ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB16(255, 255, 240); }
-ushort lantern::GetMaterialColorB(ushort) const { return MakeRGB16(255, 255, 100); }
-ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB16(255, 255, 100); }
-ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB16(255, 255, 100); }
+color16 lantern::GetMaterialColorA(int) const { return MakeRGB16(255, 255, 240); }
+color16 lantern::GetMaterialColorB(int) const { return MakeRGB16(255, 255, 100); }
+color16 lantern::GetMaterialColorC(int) const { return MakeRGB16(255, 255, 100); }
+color16 lantern::GetMaterialColorD(int) const { return MakeRGB16(255, 255, 100); }
 
 bool can::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
-vector2d can::GetBitmapPos(ushort) const { return vector2d(16, ContainedMaterial ? 288 : 304); }
-bool can::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
+vector2d can::GetBitmapPos(int) const { return vector2d(16, SecondaryMaterial ? 288 : 304); }
+bool can::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
-bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
+bool potion::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
 bool potion::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
-bool potion::EffectIsGood() const { return GetContainedMaterial() && GetContainedMaterial()->EffectIsGood(); }
-bool potion::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
+bool potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->EffectIsGood(); }
+bool potion::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
 bool bananapeels::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
 
 bool brokenbottle::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
 
-ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
+long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
-bool backpack::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
-ulong backpack::GetTotalExplosivePower() const { return GetContainedMaterial() ? GetContainedMaterial()->GetTotalExplosivePower() : 0; }
+bool backpack::IsExplosive() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive(); }
+long backpack::GetTotalExplosivePower() const { return GetSecondaryMaterial() ? GetSecondaryMaterial()->GetTotalExplosivePower() : 0; }
 
-ulong stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1; }
+long stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1; }
 
-ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
+color16 whistle::GetMaterialColorB(int) const { return MakeRGB16(80, 32, 16); }
 
-ushort itemcontainer::GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
+color16 itemcontainer::GetMaterialColorB(int) const { return MakeRGB16(80, 80, 80); }
 
 bool mine::AddAdjective(festring& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
 bool beartrap::AddAdjective(festring& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
 
-ushort carrot::GetMaterialColorB(ushort) const { return MakeRGB16(80, 100, 16); }
+color16 carrot::GetMaterialColorB(int) const { return MakeRGB16(80, 100, 16); }
 
-ushort charmlyre::GetMaterialColorB(ushort) const { return MakeRGB16(150, 130, 110); }
+color16 charmlyre::GetMaterialColorB(int) const { return MakeRGB16(150, 130, 110); }
 
 bool scroll::CanBeRead(character* Reader) const
 {
   return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
 }
 
-bool scrollofcreatemonster::Read(character* Reader)
-{
-  Reader->StartReading(this, 200);
-  return true;
-}
-
 void scrollofcreatemonster::FinishReading(character* Reader)
 {
   vector2d TryToCreate;
 
-  for(ushort c = 0; c < 100; ++c)
+  for(int c = 0; c < 100; ++c)
     {
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
@@ -98,12 +91,6 @@ void scrollofcreatemonster::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 500);
 }
 
-bool scrollofteleportation::Read(character* Reader)
-{
-  Reader->StartReading(this, 50);
-  return true;
-}
-
 void scrollofteleportation::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
@@ -117,7 +104,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 500);
 }
 
-bool lump::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool BlockedByArmour)
+bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
 {
   if(!BlockedByArmour && RAND() & 1)
     {
@@ -152,43 +139,15 @@ void wand::Load(inputfile& SaveFile)
   SaveFile >> TimesUsed >> Charges;
 }
 
-bool scrollofwishing::Read(character* Reader)
-{
-  Reader->StartReading(this, 2500);
-  return true;
-}
-
 void scrollofwishing::FinishReading(character* Reader)
 {
-  festring Temp;
+  game::Wish(Reader,
+	     "%s appears from nothing and the scroll burns!",
+	     "Two %s appear from nothing and the scroll burns!");
 
-  while(true)
-    {
-      Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
-      item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
-
-      if(TempItem)
-	{
-	  Reader->GetStack()->AddItem(TempItem);
-	  TempItem->SpecialGenerationHandler();
-
-	  if(TempItem->HandleInPairs())
-	    ADD_MESSAGE("Two %s appear from nothing and the scroll burns!", TempItem->CHAR_NAME(PLURAL));
-	  else
-	    ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHAR_NAME(INDEFINITE));
-
-	  RemoveFromSlot();
-	  SendToHell();
-	  Reader->EditExperience(INTELLIGENCE, 5000);
-	  return;
-	}
-    }
-}
-
-bool scrollofchangematerial::Read(character* Reader)
-{
-  Reader->StartReading(this, 1000);
-  return true;
+  RemoveFromSlot();
+  SendToHell();
+  Reader->EditExperience(INTELLIGENCE, 5000);
 }
 
 void scrollofchangematerial::FinishReading(character* Reader)
@@ -197,7 +156,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     ADD_MESSAGE("You notice you have lost anything you wished to alter.");
   else
     {
-      while(true)
+      for(;;)
 	{
 	  itemvector Item;
 	  Reader->SelectFromPossessions(Item, CONST_S("What item do you wish to change?"), NO_MULTI_SELECT|SELECT_PAIR);
@@ -218,7 +177,8 @@ void scrollofchangematerial::FinishReading(character* Reader)
 		    continue;
 		}
 
-	      festring Temp = game::StringQuestion(CONST_S("What material do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
+	      festring Temp = game::DefaultQuestion(CONST_S("What material do you want to wish for?"),
+						    game::GetDefaultChangeMaterial());
 	      material* TempMaterial = protosystem::CreateMaterial(Temp);
 
 	      if(TempMaterial)
@@ -247,12 +207,12 @@ void scrollofchangematerial::FinishReading(character* Reader)
 			  ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look greatly altered.", Item[0]->CHAR_NAME(PLURAL));
 
 			  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
-			    for(ushort c = 0; c < Item.size(); ++c)
+			    for(uint c = 0; c < Item.size(); ++c)
 			      Item[c]->ChangeSecondaryMaterial(TempMaterial->Clone());
 
 			  Item[0]->ChangeMainMaterial(TempMaterial);
 
-			  for(ushort c = 1; c < Item.size(); ++c)
+			  for(uint c = 1; c < Item.size(); ++c)
 			    Item[c]->ChangeMainMaterial(TempMaterial->Clone());
 			}
 		      else
@@ -295,12 +255,12 @@ void brokenbottle::StepOnEffect(character* Stepper)
 
 liquid* can::CreateDipLiquid()
 {
-  return static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()));
+  return static_cast<liquid*>(GetSecondaryMaterial()->Clone(GetSecondaryMaterial()->TakeDipVolumeAway()));
 }
 
 liquid* potion::CreateDipLiquid()
 {
-  return static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()));
+  return static_cast<liquid*>(GetSecondaryMaterial()->Clone(GetSecondaryMaterial()->TakeDipVolumeAway()));
 }
 
 void potion::DipInto(liquid* Liquid, character* Dipper)
@@ -310,34 +270,20 @@ void potion::DipInto(liquid* Liquid, character* Dipper)
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeContainedMaterial(Liquid);
+  ChangeSecondaryMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
-void lantern::SignalSquarePositionChange(uchar NewSquarePosition)
+void lantern::SignalSquarePositionChange(int SquarePosition)
 {
-  if(SquarePosition != NewSquarePosition)
-    {
-      SquarePosition = NewSquarePosition;
-      UpdatePictures();
-    }
+  item::SignalSquarePositionChange(SquarePosition);
+  UpdatePictures();
 }
 
-void lantern::Save(outputfile& SaveFile) const
-{
-  item::Save(SaveFile);
-  SaveFile << SquarePosition;
-}
-
-void lantern::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> SquarePosition;
-}
 
 item* potion::BetterVersion() const
 {
-  if(!GetContainedMaterial())
+  if(!GetSecondaryMaterial())
     return new potion;
   else
     return 0;
@@ -345,7 +291,7 @@ item* potion::BetterVersion() const
 
 item* can::BetterVersion() const
 {
-  if(!GetContainedMaterial())
+  if(!GetSecondaryMaterial())
     {
       material* Stuff;
 
@@ -384,7 +330,7 @@ bool backpack::Apply(character* Terrorist)
 	DeathMsg = CONST_S("kamikazed by ") + Terrorist->GetKillName();
 
       Terrorist->DexterityAction(5);
-      Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return true;
     }
   else if(Terrorist->IsPlayer())
@@ -396,12 +342,6 @@ bool backpack::Apply(character* Terrorist)
 bool holybook::CanBeRead(character* Reader) const
 {
   return Reader->CanRead() || game::GetSeeWholeMapCheatMode();
-}
-
-bool holybook::Read(character* Reader)
-{
-  Reader->StartReading(this, 1000);
-  return true;
 }
 
 void holybook::FinishReading(character* Reader)
@@ -432,7 +372,7 @@ void holybook::FinishReading(character* Reader)
     }
 }
 
-bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool wand::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(Type & (FIRE|ENERGY|PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -446,7 +386,7 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
   return false;
 }
 
-bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(Type & (FIRE|ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
     {
@@ -462,14 +402,14 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return true;
     }
 
   return false;
 }
 
-bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type, uchar)
+bool scroll::ReceiveDamage(character*, int Damage, int Type, int)
 {
   if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -484,7 +424,7 @@ bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type, uchar)
   return false;
 }
 
-bool holybook::ReceiveDamage(character*, ushort Damage, ushort Type, uchar)
+bool holybook::ReceiveDamage(character*, int Damage, int Type, int)
 {
   if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -512,7 +452,7 @@ bool oillamp::Apply(character* Applier)
 
       /* First try to create a genie nearby (10 tries - if all of them fail then stop trying) */
 
-      for(ushort c = 0; c < 10 && !FoundPlace; ++c)
+      for(int c = 0; c < 10 && !FoundPlace; ++c)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
@@ -544,25 +484,9 @@ bool oillamp::Apply(character* Applier)
 		  if(game::BoolQuestion(CONST_S("Do you want to wish? [Y/n]"), YES))
 		    {
 		      ADD_MESSAGE("You may wish for an item.");
-
-		      while(true)
-			{
-			  festring Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
-			  item* TempItem = protosystem::CreateItem(Temp, Applier->IsPlayer());
-
-			  if(TempItem)
-			    {
-			      Applier->GetStack()->AddItem(TempItem);
-			      TempItem->SpecialGenerationHandler();
-
-			      if(TempItem->HandleInPairs())
-				ADD_MESSAGE("Two %s appear from nothing and the genie flies happily away!", TempItem->CHAR_NAME(PLURAL));
-			      else
-				ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
-
-			      break;
-			    }
-			}
+		      game::Wish(Applier,
+				 "%s appears from nothing and the genie flies happily away!",
+				 "Two %s appear from nothing and the genie flies happily away!");
 
 		      Genie->Remove();
 		      delete Genie;
@@ -605,34 +529,34 @@ void oillamp::Load(inputfile& SaveFile)
   SaveFile >> InhabitedByGenie;
 }
 
-ushort holybook::GetMaterialColorA(ushort) const
+color16 holybook::GetMaterialColorA(int) const
 {
   return GetMasterGod()->GetColor();
 }
 
 bool scrollofcharging::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter) && !Reader->EquipsSomething(&item::ChargeableSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsChargeable) && !Reader->EquipsSomething(&item::IsChargeable))
     {
       ADD_MESSAGE("You have nothing to charge.");
       return false;
     }
   else
     {
-      Reader->StartReading(this, 500);
+      Reader->StartReading(this, GetReadDifficulty());
       return true;
     }
 }
 
 void scrollofcharging::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter) && !Reader->EquipsSomething(&item::ChargeableSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsChargeable) && !Reader->EquipsSomething(&item::IsChargeable))
     ADD_MESSAGE("You have lost whatever you wished to charge.");
   else
-    while(true)
+    for(;;)
       {
 	itemvector Item;
-	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::ChargeableSorter);
+	Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to charge?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsChargeable);
 
 	if(!Item.empty())
 	  {
@@ -644,7 +568,7 @@ void scrollofcharging::FinishReading(character* Reader)
 		  continue;
 	      }
 
-	    for(ushort c = 0; c < Item.size(); ++c)
+	    for(uint c = 0; c < Item.size(); ++c)
 	      Item[c]->ChargeFully(Reader);
 
 	    ADD_MESSAGE("You charge %s and the scroll burns.", Item[0]->CHAR_NAME(DEFINITE|(Item.size() == 1 ? 0 : PLURAL)));
@@ -676,20 +600,14 @@ void bananapeels::StepOnEffect(character* Stepper)
     }
 }
 
-bool scrolloftaming::Read(character* Reader)
-{
-  Reader->StartReading(this, 100);
-  return true;
-}
-
 void scrolloftaming::FinishReading(character* Reader)
 {
   // First find all characters in the squares around Reader
 
   character* CharacterNear[8];
-  ushort Index = 0;
+  int Index = 0;
 
-  for(ushort c = 0; c < 8; ++c)
+  for(int c = 0; c < 8; ++c)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
 
@@ -747,7 +665,7 @@ void mine::Save(outputfile& SaveFile) const
   SaveFile << Active << Team << DiscoveredByTeam;
 }
 
-bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
     {
@@ -763,7 +681,7 @@ bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -791,7 +709,7 @@ void mine::StepOnEffect(character* Stepper)
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
-  Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+  Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
 }
 
 bool key::Apply(character* User)
@@ -804,7 +722,7 @@ bool key::Apply(character* User)
 	  return false;
 	}
       int Key;
-      bool OpenableItems = User->GetStack()->SortedItems(User, &item::HasLockSorter);
+      bool OpenableItems = User->GetStack()->SortedItems(User, &item::HasLock);
 
       if(OpenableItems)
 	Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? [press a direction key, space or i]"));
@@ -813,7 +731,7 @@ bool key::Apply(character* User)
 
       if(Key == 'i' && OpenableItems)
 	{
-	  item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want to lock or unlock?"), 0, &item::OpenableSorter);
+	  item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want to lock or unlock?"), 0, &item::IsOpenable);
 	  return Item && Item->TryKey(this, User);
 	}
 
@@ -828,39 +746,34 @@ bool key::Apply(character* User)
 void materialcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << ContainedMaterial;
+  SaveFile << SecondaryMaterial;
 }
 
 void materialcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  LoadMaterial(SaveFile, ContainedMaterial);
+  LoadMaterial(SaveFile, SecondaryMaterial);
 }
 
-material* materialcontainer::GetMaterial(ushort Index) const
+material* materialcontainer::GetMaterial(int I) const
 {
-  return !Index ? MainMaterial : ContainedMaterial;
+  return !I ? MainMaterial : SecondaryMaterial;
 }
 
-ushort materialcontainer::GetMaterialColorB(ushort Frame) const
+color16 materialcontainer::GetMaterialColorB(int Frame) const
 {
-  if(GetContainedMaterial())
-    return GetContainedMaterial()->GetColor();
+  if(GetSecondaryMaterial())
+    return GetSecondaryMaterial()->GetColor();
   else
     return GetMaterialColorA(Frame);
 }
 
-uchar materialcontainer::GetAlphaB(ushort Frame) const
+alpha materialcontainer::GetAlphaB(int Frame) const
 {
-  if(GetContainedMaterial() && GetContainedMaterial()->GetAlpha() > GetAlphaA(Frame))
-    return GetContainedMaterial()->GetAlpha();
+  if(GetSecondaryMaterial() && GetSecondaryMaterial()->GetAlpha() > GetAlphaA(Frame))
+    return GetSecondaryMaterial()->GetAlpha();
   else
     return GetAlphaA(Frame);
-}
-
-void lantern::VirtualConstructor(bool)
-{
-  SetSquarePosition(CENTER);
 }
 
 void wand::VirtualConstructor(bool Load)
@@ -904,21 +817,21 @@ void whistle::BlowEffect(character* Whistler)
 
 struct distancepair
 {
-  distancepair(ulong Distance, character* Char) : Distance(Distance), Char(Char) { }
+  distancepair(long Distance, character* Char) : Distance(Distance), Char(Char) { }
   bool operator<(const distancepair& D) const { return Distance > D.Distance; }
-  ulong Distance;
+  long Distance;
   character* Char;
 };
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && game::GetTicks() - LastUsed < 2500)
+  if(LastUsed && game::GetTick() - LastUsed < 2500)
     {
       whistle::BlowEffect(Whistler);
       return;
     }
   else 
-    LastUsed = game::GetTicks();
+    LastUsed = game::GetTick();
 
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce a peculiar sound.");
@@ -938,7 +851,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
   if(ToSort.size() > 10)
     std::sort(ToSort.begin(), ToSort.end());
 
-  for(ushort c = 0; c < 10 && c < ToSort.size(); ++c)
+  for(uint c = 0; c < 10 && c < ToSort.size(); ++c)
     ToSort[c].Char->TeleportNear(Whistler);
 
   game::CallForAttention(GetPos(), 400);
@@ -946,38 +859,44 @@ void magicalwhistle::BlowEffect(character* Whistler)
 
 void itemcontainer::VirtualConstructor(bool Load)
 {
-  Contained = new stack(0, this, HIDDEN, true);
+  Contained = new stack(0, this, HIDDEN);
 
   if(!Load)
     {
       SetIsLocked(!!RAND_N(3));
-      ulong ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
+      long ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
       /* Terrible gum solution! */
 
       if(!(GetConfig() & LOCK_BITS))
 	{
-	  ushort NormalLockTypes = 0;
-	  databasemap::const_iterator i;
+	  int NormalLockTypes = 0;
+	  const database*const* ConfigData = GetProtoType()->GetConfigData();
+	  int c, ConfigSize = GetProtoType()->GetConfigSize();
 
-	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
-	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID))
+	  for(c = 0; c < ConfigSize; ++c)
+	    if(ConfigData[c]->Config & LOCK_BITS
+	    && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	    && !(ConfigData[c]->Config & S_LOCK_ID))
 	      ++NormalLockTypes;
 
-	  ushort ChosenLock = RAND() % NormalLockTypes;
+	  int ChosenLock = RAND() % NormalLockTypes;
 
-	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
-	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
+	  for(c = 0; c < ConfigSize; ++c)
+	    if(ConfigData[c]->Config & LOCK_BITS
+	    && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	    && !(ConfigData[c]->Config & S_LOCK_ID)
+	    && !ChosenLock--)
 	      {
-		SetConfig(i->first, NO_PIC_UPDATE);
+		SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
 		break;
 	      }
 	}
 
-      for(ushort c = 0; c < ItemNumber; ++c)
+      for(int c = 0; c < ItemNumber; ++c)
 	{
 	  item* NewItem = protosystem::BalancedCreateItem();
-	  ulong Volume = NewItem->GetVolume();
+	  long Volume = NewItem->GetVolume();
 
 	  if(NewItem->HandleInPairs())
 	    Volume <<= 1;
@@ -1033,9 +952,15 @@ bool itemcontainer::TryKey(item* Key, character* Applier)
 
 void materialcontainer::GenerateMaterials()
 {
-  ushort Chosen = RandomizeMaterialConfiguration();
-  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
-  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+  int Chosen = RandomizeMaterialConfiguration();
+  const fearray<long>& MMC = GetMainMaterialConfig();
+  InitMaterial(MainMaterial,
+	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+	       GetDefaultMainVolume());
+  const fearray<long>& SMC = GetSecondaryMaterialConfig();
+  InitMaterial(SecondaryMaterial,
+	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
+	       GetDefaultContainedVolume());
 }
 
 /* Returns true if container opens fine else false */
@@ -1097,7 +1022,7 @@ itemcontainer::~itemcontainer()
 
 /* Victim is the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
 
-bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
+bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
 {
   if(IsBroken())
     {
@@ -1172,7 +1097,7 @@ void beartrap::StepOnEffect(character* Stepper)
 {
   if(IsActive() && !Stepper->IsStuck() && !IsBroken())
     {
-      ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
+      int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
       if(StepperBodyPart == NONE_INDEX)
 	return;
@@ -1210,12 +1135,12 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   return true;
 }
 
-ushort lantern::GetSpecialFlags() const
+int lantern::GetSpecialFlags() const
 {
-  switch(SquarePosition)
+  switch(GetSquarePosition())
     {
-    case DOWN: return FLIP;
     case LEFT: return ROTATE|MIRROR;
+    case DOWN: return FLIP;
     case UP: return 0;
     case RIGHT: return ROTATE; 
     }
@@ -1231,7 +1156,7 @@ bool stethoscope::Apply(character* Doctor)
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
-  uchar Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);  
+  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);  
 
   if(Dir == DIR_ERROR)
     return false;
@@ -1258,7 +1183,7 @@ void itemcontainer::CalculateVolumeAndWeight()
 
 materialcontainer::~materialcontainer()
 {
-  delete ContainedMaterial;
+  delete SecondaryMaterial;
 }
 
 bool itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
@@ -1268,13 +1193,13 @@ bool itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
 
 bool mine::CanBeSeenBy(const character* Viewer) const
 { 
-  ushort ViewerTeam = Viewer->GetTeam()->GetID();
+  int ViewerTeam = Viewer->GetTeam()->GetID();
   return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer);
 }
 
 bool beartrap::CanBeSeenBy(const character* Viewer) const
 {
-  ushort ViewerTeam = Viewer->GetTeam()->GetID();
+  int ViewerTeam = Viewer->GetTeam()->GetID();
   return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && item::CanBeSeenBy(Viewer);
 }
 
@@ -1324,7 +1249,7 @@ bool beartrap::Apply(character* User)
 
   if(User->GetAttribute(DEXTERITY) < RAND() % 15)
     {
-      ushort StepperBodyPart = User->GetRandomApplyBodyPart();
+      int StepperBodyPart = User->GetRandomApplyBodyPart();
 
       if(User->IsPlayer())
 	ADD_MESSAGE("Somehow you manage to trap your %s in %s.", User->GetBodyPartName(StepperBodyPart).CStr(), CHAR_NAME(DEFINITE));
@@ -1362,7 +1287,7 @@ bool beartrap::Apply(character* User)
   return true;
 }
 
-vector2d beartrap::GetBitmapPos(ushort Frame) const
+vector2d beartrap::GetBitmapPos(int Frame) const
 {
   if(!IsBroken())
     return IsActive() ? vector2d(32, 304) : vector2d(32, 320);
@@ -1372,24 +1297,24 @@ vector2d beartrap::GetBitmapPos(ushort Frame) const
 
 bool mine::WillExplode(const character* Stepper) const
 {
-  return IsActive() && GetContainedMaterial() && GetContainedMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 5000);
+  return IsActive() && GetSecondaryMaterial() && GetSecondaryMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 5000);
 }
 
 materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
 {
-  CopyMaterial(MC.ContainedMaterial, ContainedMaterial);
+  CopyMaterial(MC.SecondaryMaterial, SecondaryMaterial);
 }
 
 itemcontainer::itemcontainer(const itemcontainer& Container) : item(Container), Locked(Container.Locked)
 {
-  Contained = new stack(0, this, HIDDEN, true);
+  Contained = new stack(0, this, HIDDEN);
 }
 
 oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
 {
 }
 
-bool wand::Zap(character* Zapper, vector2d, uchar Direction)
+bool wand::Zap(character* Zapper, vector2d, int Direction)
 {
   if(Charges <= TimesUsed)
     {
@@ -1404,7 +1329,7 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-void wand::AddInventoryEntry(const character*, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
+void wand::AddInventoryEntry(const character*, festring& Entry, int, bool ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -1438,7 +1363,7 @@ void materialcontainer::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
 
-      RemoveContainedMaterial();
+      RemoveSecondaryMaterial();
     }
 }
 
@@ -1449,21 +1374,21 @@ bool materialcontainer::CanBePiledWith(const item* Item, const character* Viewer
 
   const materialcontainer* Weapon = static_cast<const materialcontainer*>(Item);
 
-  if(!ContainedMaterial && !Weapon->ContainedMaterial)
+  if(!SecondaryMaterial && !Weapon->SecondaryMaterial)
     return true;
 
-  return ContainedMaterial
-      && Weapon->ContainedMaterial
-      && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
-      && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
+  return SecondaryMaterial
+      && Weapon->SecondaryMaterial
+      && SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial)
+      && SecondaryMaterial->GetSpoilLevel() == Weapon->SecondaryMaterial->GetSpoilLevel();
 }
 
-ulong itemcontainer::GetTruePrice() const
+long itemcontainer::GetTruePrice() const
 {
   return GetContained()->GetTruePrice() + item::GetTruePrice();
 }
 
-void potion::Break(character* Breaker, uchar Dir)
+void potion::Break(character* Breaker, int Dir)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
@@ -1485,9 +1410,9 @@ void potion::Break(character* Breaker, uchar Dir)
   DonateSlotTo(Remains);
   SendToHell();
 
-  if(GetContainedMaterial() && GetContainedMaterial()->IsLiquid())
+  if(GetSecondaryMaterial() && GetSecondaryMaterial()->IsLiquid())
     {
-      liquid* Liquid = static_cast<liquid*>(GetContainedMaterial());
+      liquid* Liquid = static_cast<liquid*>(GetSecondaryMaterial());
 
       if(Dir != YOURSELF)
 	{
@@ -1495,7 +1420,7 @@ void potion::Break(character* Breaker, uchar Dir)
 
 	  if(Remains->GetLevel()->IsValidPos(Pos))
 	    {
-	      ulong HalfVolume = GetContainedMaterial()->GetVolume() >> 1;
+	      long HalfVolume = GetSecondaryMaterial()->GetVolume() >> 1;
 	      Liquid->EditVolume(-HalfVolume);
 	      Remains->GetNearLSquare(Pos)->SpillFluid(Breaker, Liquid->CloneLiquid(HalfVolume));
 	    }
@@ -1513,39 +1438,39 @@ void materialcontainer::Be()
 {
   MainMaterial->Be();
 
-  if(Exists() && ContainedMaterial)
-    ContainedMaterial->Be();
+  if(Exists() && SecondaryMaterial)
+    SecondaryMaterial->Be();
 }
 
-bool materialcontainer::IsSparkling(ushort ColorIndex) const
+bool materialcontainer::IsSparkling(int I) const
 {
-  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
+  return (I == 0 && MainMaterial->IsSparkling()) || (I == 1 && SecondaryMaterial && SecondaryMaterial->IsSparkling());
 }
 
 bool scrollofenchantweapon::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::WeaponSorter) && !Reader->EquipsSomething(&item::WeaponSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsWeapon) && !Reader->EquipsSomething(&item::IsWeapon))
     {
       ADD_MESSAGE("You have nothing to enchant.");
       return false;
     }
   else
     {
-      Reader->StartReading(this, 1000);
+      Reader->StartReading(this, GetReadDifficulty());
       return true;
     }
 }
 
 void scrollofenchantweapon::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::WeaponSorter) && !Reader->EquipsSomething(&item::WeaponSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsWeapon) && !Reader->EquipsSomething(&item::IsWeapon))
     ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
   else
     {
-      while(true)
+      for(;;)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::WeaponSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Choose a weapon to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsWeapon);
 
 	  if(!Item.empty())
 	    {
@@ -1578,7 +1503,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 	      else
 		ADD_MESSAGE("Your %s glow briefly red. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
 
-	      for(ushort c = 0; c < Item.size(); ++c)
+	      for(uint c = 0; c < Item.size(); ++c)
 		Item[c]->EditEnchantment(1);
 
 	      break;
@@ -1595,28 +1520,28 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
 bool scrollofenchantarmor::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ArmorSorter) && !Reader->EquipsSomething(&item::ArmorSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsArmor) && !Reader->EquipsSomething(&item::IsArmor))
     {
       ADD_MESSAGE("You have nothing to enchant.");
       return false;
     }
   else
     {
-      Reader->StartReading(this, 1000);
+      Reader->StartReading(this, GetReadDifficulty());
       return true;
     }
 }
 
 void scrollofenchantarmor::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ArmorSorter) && !Reader->EquipsSomething(&item::ArmorSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsArmor) && !Reader->EquipsSomething(&item::IsArmor))
     ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
   else
     {
-      while(true)
+      for(;;)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::ArmorSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Choose an armor to enchant:"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsArmor);
 
 	  if(!Item.empty())
 	    {
@@ -1649,7 +1574,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 	      else
 		ADD_MESSAGE("Your %s glow briefly blue. They feel very warm now.", Item[0]->CHAR_NAME(PLURAL));
 
-	      for(ushort c = 0; c < Item.size(); ++c)
+	      for(uint c = 0; c < Item.size(); ++c)
 		Item[c]->EditEnchantment(1);
 
 	      break;
@@ -1664,12 +1589,12 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     }
 }
 
-bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(Type & (PHYSICAL_DAMAGE|SOUND))
     {
       Contained->ReceiveDamage(Damager, Damage / GetDamageDivider(), Type);
-      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      int SV = Max(GetStrengthValue(), 1);
 
       if(IsLocked() && Damage > SV && RAND() % (100 * Damage / SV) >= 100)
 	{
@@ -1715,23 +1640,23 @@ void magicalwhistle::VirtualConstructor(bool Load)
   LastUsed = 0;
 }
 
-uchar materialcontainer::GetSpoilLevel() const
+int materialcontainer::GetSpoilLevel() const
 {
-  return Max<uchar>(MainMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
+  return Max(MainMaterial->GetSpoilLevel(), SecondaryMaterial ? SecondaryMaterial->GetSpoilLevel() : 0);
 }
 
-void itemcontainer::SetItemsInside(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)
+void itemcontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 
-  for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
-    if(i->IsValid())
+  for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
+    if(ItemArray[c1].IsValid())
       {
-	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
+	int Times = ItemArray[c1].GetTimes();
 
-	for(ushort c = 0; c < Times; ++c)
+	for(int c2 = 0; c2 < Times; ++c2)
 	  {
-	    item* Item = i->Instantiate(SpecialFlags);
+	    item* Item = ItemArray[c1].Instantiate(SpecialFlags);
 
 	    if(Item)
 	      {
@@ -1749,7 +1674,7 @@ bool mine::CheckPickUpEffect(character*)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevel()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return false;
     }
 
@@ -1758,23 +1683,23 @@ bool mine::CheckPickUpEffect(character*)
 
 bool scrollofrepair::Read(character* Reader)
 {
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::RepairableSorter) && !Reader->EquipsSomething(&item::RepairableSorter))
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
     {
       ADD_MESSAGE("You have nothing to repair.");
       return false;
     }
 
-  Reader->StartReading(this, 1000);
+  Reader->StartReading(this, GetReadDifficulty());
   return true;
 }
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::RepairableSorter) && !Reader->EquipsSomething(&item::RepairableSorter))
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
     ADD_MESSAGE("You have lost whatever you wished to repair.");
   else
     {
-      for(ushort c = 0; c < Reader->GetBodyParts(); ++c)
+      for(int c = 0; c < Reader->GetBodyParts(); ++c)
 	{
 	  bodypart* BodyPart = Reader->GetBodyPart(c);
 
@@ -1790,10 +1715,10 @@ void scrollofrepair::FinishReading(character* Reader)
 	    }
 	}
       
-      while(true)
+      for(;;)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::RepairableSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::IsRepairable);
 
 	  if(!Item.empty())
 	    {
@@ -1810,7 +1735,7 @@ void scrollofrepair::FinishReading(character* Reader)
 	      else
 		ADD_MESSAGE("As you read the scroll, %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
 
-	      for(ushort c = 0; c < Item.size(); ++c)
+	      for(uint c = 0; c < Item.size(); ++c)
 		{
 		  Item[c]->RemoveRust();
 		  Item[c]->Fix();
@@ -1848,9 +1773,9 @@ bool encryptedscroll::Read(character*)
 
 bool horn::Apply(character* Blower) 
 {
-  if(!LastUsed || game::GetTicks() - LastUsed >= 2500)
+  if(!LastUsed || game::GetTick() - LastUsed >= 2500)
     {
-      LastUsed = game::GetTicks();
+      LastUsed = game::GetTick();
       const char* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
 
       if(Blower->IsPlayer())
@@ -1863,8 +1788,8 @@ bool horn::Apply(character* Blower)
       rect Rect;
       femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 10);
 
-      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      for(int x = Rect.X1; x <= Rect.X2; ++x)
+	for(int y = Rect.Y1; y <= Rect.Y2; ++y)
 	  {
 	    character* Audience = GetNearSquare(x, y)->GetCharacter();
 
@@ -1940,7 +1865,7 @@ void banana::Load(inputfile& SaveFile)
   SaveFile >> TimesUsed >> Charges;
 }
 
-bool banana::Zap(character*, vector2d, uchar)
+bool banana::Zap(character*, vector2d, int)
 {
   if(IsBroken())
     {
@@ -1975,12 +1900,12 @@ void banana::SignalSpoil(material* Material)
   if(!Exists())
     return;
 
-  if(Material == GetContainedMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
+  if(Material == GetSecondaryMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The inside of %s spoils completely.", CHAR_NAME(DEFINITE));
 
-      RemoveContainedMaterial();
+      RemoveSecondaryMaterial();
     }
   else
     item::SignalSpoil(Material);
@@ -1996,11 +1921,11 @@ bool stone::ShowMaterial() const
   return GetMainMaterial()->GetConfig() != STONE; // gum solution
 }
 
-short itemcontainer::GetOfferValue(uchar Receiver) const
+int itemcontainer::GetOfferValue(int Receiver) const
 {
-  short Sum = 0;
+  int Sum = 0;
 
-  for(ushort c = 0; c < GetContained()->GetItems(); ++c)
+  for(int c = 0; c < GetContained()->GetItems(); ++c)
     Sum += GetContained()->GetItem(c)->GetOfferValue(Receiver);
 
   return item::GetOfferValue(Receiver) + Sum;
@@ -2008,47 +1933,47 @@ short itemcontainer::GetOfferValue(uchar Receiver) const
 
 bool itemcontainer::IsDestroyable() const
 {
-  for(ushort c = 0; c < GetContained()->GetItems(); ++c)
+  for(int c = 0; c < GetContained()->GetItems(); ++c)
     if(!GetContained()->GetItem(c)->IsDestroyable())
       return false;
 
   return true;
 }
 
-uchar lantern::GetAlphaB(ushort Frame) const
+alpha lantern::GetAlphaB(int Frame) const
 {
   Frame &= 31;
   return (Frame * (31 - Frame) >> 1);
 }
 
-uchar lantern::GetAlphaC(ushort Frame) const
+alpha lantern::GetAlphaC(int Frame) const
 {
   Frame &= 31;
   return (Frame * (31 - Frame) >> 2);
 }
 
-uchar lantern::GetAlphaD(ushort Frame) const
+alpha lantern::GetAlphaD(int Frame) const
 {
   Frame &= 31;
   return (Frame * (31 - Frame) >> 3);
 }
 
-void itemcontainer::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
+void itemcontainer::SortAllItems(itemvector& AllItems, const character* Character, sorter Sorter) const
 {
-  if(Sorter == 0 || Sorter(this, Character))
+  if(Sorter == 0 || (this->*Sorter)(Character))
     AllItems.push_back(const_cast<itemcontainer*>(this));
 
   GetContained()->SortAllItems(AllItems, Character, Sorter);
 }
 
-uchar materialcontainer::GetAttachedGod() const
+int materialcontainer::GetAttachedGod() const
 {
-  return DataBase->AttachedGod ? DataBase->AttachedGod : ContainedMaterial ? ContainedMaterial->GetAttachedGod() : 0;
+  return DataBase->AttachedGod ? DataBase->AttachedGod : SecondaryMaterial ? SecondaryMaterial->GetAttachedGod() : 0;
 }
 
-void beartrap::Search(const character* Char, ushort Perception)
+void beartrap::Search(const character* Char, int Perception)
 {
-  ushort ViewerTeam = Char->GetTeam()->GetID();
+  int ViewerTeam = Char->GetTeam()->GetID();
 
   if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
     {
@@ -2063,9 +1988,9 @@ void beartrap::Search(const character* Char, ushort Perception)
     }
 }
 
-void mine::Search(const character* Char, ushort Perception)
+void mine::Search(const character* Char, int Perception)
 {
-  ushort ViewerTeam = Char->GetTeam()->GetID();
+  int ViewerTeam = Char->GetTeam()->GetID();
 
   if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
     {
@@ -2098,19 +2023,23 @@ void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
   vector2d Pos = GetPos();
   level* Level = GetLevel();
   RemoveFromSlot();
+  ulong StackSize = Level->AddRadiusToSquareStack(Pos, GetBreakEffectRangeSquare());
+  lsquare** SquareStack = Level->GetSquareStack();
+  ulong c;
 
-  rect Rect;
-  femath::CalculateEnvironmentRectangle(Rect, Level->GetBorder(), Pos, GetBreakEffectRange());
-  (Level->*level::GetBeamEffectVisualizer(GetBeamStyle()))(Rect, GetBeamColor());
+  for(c = 0; c < StackSize; ++c)
+    SquareStack[c]->RemoveFlags(IN_SQUARE_STACK);
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      (Level->GetLSquare(x, y)->*lsquare::GetBeamEffect(GetBeamEffect()))(Terrorist, DeathMsg, YOURSELF);
+  fearray<lsquare*> Stack(SquareStack, StackSize);
+  (Level->*level::GetBeamEffectVisualizer(GetBeamStyle()))(Stack, GetBeamColor());
+
+  for(c = 0; c < Stack.Size; ++c)
+    (Stack[c]->*lsquare::GetBeamEffect(GetBeamEffect()))(Terrorist, DeathMsg, YOURSELF);
 
   SendToHell();
 }
 
-bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool beartrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(!IsStuck() && !IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
@@ -2137,7 +2066,7 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
   return false;
 }
 
-bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar Dir)
+bool potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
   if(Type & FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
@@ -2153,13 +2082,13 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return true;
     }
 
   if(Type & THROW)
     {
-      ushort StrengthValue = GetStrengthValue();
+      int StrengthValue = GetStrengthValue();
 
       if(!StrengthValue)
 	StrengthValue = 1;
@@ -2180,7 +2109,7 @@ bool beartrap::IsStuck() const
   return Char && Char->GetStuckTo() && Char->GetStuckTo()->GetID() == GetID();
 }
 
-void beartrap::Fly(character* Thrower, uchar Direction, ushort Force)
+void beartrap::Fly(character* Thrower, int Direction, int Force)
 {
   if(!IsStuck())
     item::Fly(Thrower, Direction, Force);
@@ -2193,11 +2122,11 @@ void can::DipInto(liquid* Liquid, character* Dipper)
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeContainedMaterial(Liquid);
+  ChangeSecondaryMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
-bool holybanana::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+bool holybanana::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
 {
   bool BaseSuccess = banana::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
@@ -2212,7 +2141,7 @@ bool holybanana::HitEffect(character* Enemy, character* Hitter, vector2d HitPos,
     return BaseSuccess;
 }
 
-bool holybanana::Zap(character* Zapper, vector2d, uchar Direction)
+bool holybanana::Zap(character* Zapper, vector2d, int Direction)
 {
   if(Charges > TimesUsed)
     {
@@ -2228,7 +2157,7 @@ bool holybanana::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ushort, bool ShowSpecialInfo) const // never piled
+void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, int, bool ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
@@ -2239,8 +2168,8 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ush
       if(!IsBroken())
 	Entry << ", " << GetStrengthValueDescription();
 
-      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+      int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+      int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
       if(CWeaponSkillLevel || SWeaponSkillLevel)
 	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
@@ -2254,7 +2183,7 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ush
     }
 }
 
-bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
+bool holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(TimesUsed != 6 && Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
@@ -2302,7 +2231,7 @@ void mine::FinalProcessForBone()
   if(Team == PLAYER_TEAM)
     Team = MONSTER_TEAM;
 
-  std::set<ushort>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
+  std::set<int>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
 
   if(i != DiscoveredByTeam.end())
     DiscoveredByTeam.erase(i);
@@ -2315,7 +2244,7 @@ void beartrap::FinalProcessForBone()
   if(Team == PLAYER_TEAM)
     Team = MONSTER_TEAM;
 
-  std::set<ushort>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
+  std::set<int>::iterator i = DiscoveredByTeam.find(PLAYER_TEAM);
 
   if(i != DiscoveredByTeam.end())
     DiscoveredByTeam.erase(i);
@@ -2335,7 +2264,7 @@ void horn::FinalProcessForBone()
 
 bool charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed && game::GetTicks() - LastUsed < 10000)
+  if(LastUsed && game::GetTick() - LastUsed < 10000)
     {
       if(Charmer->IsPlayer())
 	ADD_MESSAGE("You produce a highly alluring sound.");
@@ -2346,7 +2275,7 @@ bool charmlyre::Apply(character* Charmer)
     }
   else
     {
-      LastUsed = game::GetTicks();
+      LastUsed = game::GetTick();
 
       if(Charmer->IsPlayer())
 	ADD_MESSAGE("You produce a mesmerizing sound.");
@@ -2355,7 +2284,7 @@ bool charmlyre::Apply(character* Charmer)
       else 
 	ADD_MESSAGE("You hear a mesmerizing tune playing.");
 
-      for(ushort d = 0; d < Charmer->GetNeighbourSquares(); ++d)
+      for(int d = 0; d < Charmer->GetNeighbourSquares(); ++d)
 	{
 	  square* Square = Charmer->GetNeighbourSquare(d);
 
@@ -2365,7 +2294,7 @@ bool charmlyre::Apply(character* Charmer)
 
 	      if(Char)
 		if(Char->IsCharmable())
-		  if(Charmer->GetRelativeDanger(Char) > 4.0f)
+		  if(Charmer->GetRelativeDanger(Char) > 4.0)
 		    {
 		      if(Char->GetTeam() == Charmer->GetTeam())
 			ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
@@ -2432,16 +2361,16 @@ void mine::TeleportRandomly()
   item::TeleportRandomly();
 }
 
-uchar materialcontainer::GetRustDataB() const
+int materialcontainer::GetRustDataB() const
 {
-  return ContainedMaterial ? ContainedMaterial->GetRustData() : GetRustDataA();
+  return SecondaryMaterial ? SecondaryMaterial->GetRustData() : GetRustDataA();
 }
 
-void backpack::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex)
+void backpack::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
 {
   if(!Liquid->IsExplosive())
     {
-      GetContainedMaterial()->AddWetness(Liquid->GetVolume() * 25);
+      GetSecondaryMaterial()->AddWetness(Liquid->GetVolume() * 25);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s gets wet.", CHAR_NAME(DEFINITE));
@@ -2452,10 +2381,10 @@ void backpack::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex
 
 material* materialcontainer::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
 {
-  if(ContainedMaterial
-  && (ContainedMaterial->*Predicate)()
-  && Consumer->CanConsume(ContainedMaterial))
-    return ContainedMaterial;
+  if(SecondaryMaterial
+  && (SecondaryMaterial->*Predicate)()
+  && Consumer->CanConsume(SecondaryMaterial))
+    return SecondaryMaterial;
   else
     return item::GetConsumeMaterial(Consumer, Predicate);
 }
@@ -2465,21 +2394,21 @@ material* materialcontainer::RemoveMaterial(material* Material)
   if(Material == MainMaterial)
     return RemoveMainMaterial();
   else
-    return RemoveContainedMaterial();
+    return RemoveSecondaryMaterial();
 }
 
 material* materialcontainer::RemoveMainMaterial()
 {
-  if(!ContainedMaterial)
+  if(!SecondaryMaterial)
     RemoveFromSlot();
-  else if(ContainedMaterial->IsLiquid())
+  else if(SecondaryMaterial->IsLiquid())
     {
       if(!game::IsInWilderness())
 	{
 	  lsquare* Square = GetLSquareUnder();
 	  RemoveFromSlot();
-	  Square->SpillFluid(0, static_cast<liquid*>(ContainedMaterial));
-	  SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+	  Square->SpillFluid(0, static_cast<liquid*>(SecondaryMaterial));
+	  SetSecondaryMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
 	}
       else
 	RemoveFromSlot();
@@ -2487,26 +2416,26 @@ material* materialcontainer::RemoveMainMaterial()
   else
     {
       item* Lump = new lump(0, NO_MATERIALS);
-      Lump->InitMaterials(ContainedMaterial);
+      Lump->InitMaterials(SecondaryMaterial);
       DonateFluidsTo(Lump);
       DonateIDTo(Lump);
       DonateSlotTo(Lump);
-      SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+      SetSecondaryMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
     }
 
   SendToHell();
   return 0;
 }
 
-material* materialcontainer::RemoveContainedMaterial()
+material* materialcontainer::RemoveSecondaryMaterial()
 {
-  material* Material = ContainedMaterial;
-  SetContainedMaterial(0);
+  material* Material = SecondaryMaterial;
+  SetSecondaryMaterial(0);
   SendNewDrawAndMemorizedUpdateRequest();
   return Material;
 }
 
-material* banana::RemoveContainedMaterial()
+material* banana::RemoveSecondaryMaterial()
 {
   item* Peel = new bananapeels(0, NO_MATERIALS);
   Peel->InitMaterials(MainMaterial);
@@ -2530,11 +2459,70 @@ void materialcontainer::CalculateEmitation()
   if(MainMaterial)
     game::CombineLights(Emitation, MainMaterial->GetEmitation());
 
-  if(ContainedMaterial)
-    game::CombineLights(Emitation, ContainedMaterial->GetEmitation());
+  if(SecondaryMaterial)
+    game::CombineLights(Emitation, SecondaryMaterial->GetEmitation());
 }
 
 bool materialcontainer::CalculateHasBe() const
 {
-  return (MainMaterial && MainMaterial->HasBe()) || (ContainedMaterial && ContainedMaterial->HasBe());
+  return (MainMaterial && MainMaterial->HasBe())
+      || (SecondaryMaterial && SecondaryMaterial->HasBe());
+}
+
+vector2d lantern::GetBitmapPos(int Frame) const
+{
+  return GetSquarePosition() == CENTER
+       ? item::GetBitmapPos(Frame)
+       : item::GetWallBitmapPos(Frame);
+}
+
+long materialcontainer::GetMaterialPrice() const
+{
+  return MainMaterial->GetRawPrice()
+       + (SecondaryMaterial ? SecondaryMaterial->GetRawPrice() : 0);
+}
+
+void scrollofdetectmaterial::FinishReading(character* Reader)
+{
+  material* TempMaterial;
+
+  for(;;)
+    {
+      festring Temp = game::DefaultQuestion(CONST_S("What material do you want to detect?"),
+					    game::GetDefaultDetectMaterial());
+      TempMaterial = protosystem::CreateMaterial(Temp);
+
+      if(TempMaterial)
+	break;
+      else
+	game::DrawEverythingNoBlit();
+    }
+
+  level* Level = GetLevel();
+  int Squares = Level->DetectMaterial(TempMaterial);
+  RemoveFromSlot();
+  SendToHell();
+
+  if(Squares > Reader->GetAttribute(INTELLIGENCE) * (25 + RAND() % 51))
+    {
+      ADD_MESSAGE("An enormous burst of geographical information overwhelms your consciousness. Your mind cannot cope with it and your memories blur.");
+      Level->BlurMemory();
+      Reader->BeginTemporaryState(CONFUSED, 1000 + RAND() % 1000);
+      Reader->EditExperience(INTELLIGENCE, -5000);
+    }
+  else if(!Squares)
+    {
+      ADD_MESSAGE("You feel a sudden urge to imagine the dark void of a starless night sky.");
+      Reader->EditExperience(INTELLIGENCE, 250);
+    }
+  else
+    {
+      ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
+      game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), Reader->GetPos(), 0, 0, false);
+      Reader->EditExperience(INTELLIGENCE, 1000);
+    }
+
+  delete TempMaterial;
+  Level->CalculateLuminances();
+  game::SendLOSUpdateRequest();
 }

@@ -17,12 +17,18 @@ void shop::Enter(character* Customer)
 
 /* item* ForSale can also be in chest or other container, so don't assume anything else in this function */
 
-bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
+bool shop::PickupItem(character* Customer, item* ForSale, int Amount)
 {
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetTruePrice();
+  if(ForSale->IsLanternOnWall())
+    {
+      ADD_MESSAGE("I'd appreciate it if you left my light sources alone, thank you.");
+      return false;
+    }
+
+  long Price = ForSale->GetTruePrice();
 
   if(Price)
     {
@@ -104,7 +110,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
       return false;
 }
 
-bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
+bool shop::DropItem(character* Customer, item* ForSale, int Amount)
 {
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
@@ -115,7 +121,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
       return false;
     }
 
-  ulong Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+  long Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
@@ -165,7 +171,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporary short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporarily short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
 	  return false;
 	}
     }
@@ -185,7 +191,7 @@ void shop::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool shop::ConsumeItem(character* Customer, item*, ushort)
+bool shop::ConsumeItem(character* Customer, item*, int)
 {
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
@@ -219,7 +225,7 @@ void cathedral::Enter(character* Visitor)
 
 /* Item can also be in a chest, so don't assume anything else... */
 
-bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
+bool cathedral::PickupItem(character* Visitor, item* Item, int)
 {
   if(game::GetStoryState() == 2 || game::GetTeam(ATTNAM_TEAM)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
@@ -241,7 +247,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item, ushort)
   return false;
 }
 
-bool cathedral::DropItem(character* Visitor, item* Item, ushort)
+bool cathedral::DropItem(character* Visitor, item* Item, int)
 {
   if(game::GetStoryState() == 2 || game::GetTeam(ATTNAM_TEAM)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
@@ -270,7 +276,7 @@ void cathedral::KickSquare(character* Kicker, lsquare* Square)
     }
 }
 
-bool cathedral::ConsumeItem(character* HungryMan, item*, ushort)
+bool cathedral::ConsumeItem(character* HungryMan, item*, int)
 {
   if(game::GetStoryState() == 2 || game::GetTeam(ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
     return true;
@@ -382,12 +388,18 @@ void library::Enter(character* Customer)
       ADD_MESSAGE("The library appears to be deserted.");
 }
 
-bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
+bool library::PickupItem(character* Customer, item* ForSale, int Amount)
 {
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetTruePrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
+  if(ForSale->IsLanternOnWall())
+    {
+      ADD_MESSAGE("I'd appreciate it if you left my light sources alone, thank you.");
+      return false;
+    }
+
+  long Price = ForSale->GetTruePrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
     {
@@ -454,12 +466,12 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
       return false;
 }
 
-bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
+bool library::DropItem(character* Customer, item* ForSale, int Amount)
 {
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
+  long Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
@@ -509,14 +521,14 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporary short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
+	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporarily short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
 	  return false;
 	}
     }
   else
     {
       ADD_MESSAGE("The librarian doesn't see you, so you cannot trade with him.");
-      return game::BoolQuestion(CONST_S("Still drop ") +  + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+      return game::BoolQuestion(CONST_S("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
     }
 }
 
@@ -529,7 +541,7 @@ void library::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool library::ConsumeItem(character*, item*, ushort)
+bool library::ConsumeItem(character*, item*, int)
 {
   return true;
 }
@@ -543,14 +555,14 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool bananadroparea::PickupItem(character* Hungry, item* Item, ushort)
+bool bananadroparea::PickupItem(character* Hungry, item* Item, int)
 {
   if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Hungry->GetTeam()) == HOSTILE)
     return true;
 
   if(Hungry->IsPlayer())
     {
-      if(!Item->IsBanana())
+      if(!Item->IsBanana() && !Item->IsLanternOnWall())
 	return true;
 
       ADD_MESSAGE("That would be stealing.");
@@ -565,9 +577,9 @@ bool bananadroparea::PickupItem(character* Hungry, item* Item, ushort)
   return false;
 }
 
-bool bananadroparea::DropItem(character* Dropper, item* Item, ushort)
+bool bananadroparea::DropItem(character* Dropper, item* Item, int)
 {
-  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && (!Item->IsBanana() || game::BoolQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
+  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && ((!Item->IsBanana() && !Item->IsLanternOnWall()) || game::BoolQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
 }
 
 void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
@@ -575,7 +587,7 @@ void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
   if(AllowKick(Kicker, Square) && Kicker->IsPlayer() && game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) != HOSTILE)
     {
       for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
-	if(i->IsBanana())
+	if(i->IsBanana() || i->IsLanternOnWall())
 	  {
 	    ADD_MESSAGE("You have harmed the property of the town!");
 	    Kicker->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
@@ -584,14 +596,14 @@ void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
     }
 }
 
-bool bananadroparea::ConsumeItem(character* HungryMan, item* Item, ushort)
+bool bananadroparea::ConsumeItem(character* HungryMan, item* Item, int)
 {
   if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
     return true;
 
   if(HungryMan->IsPlayer())
     {
-      if(Item->IsBanana())
+      if(Item->IsBanana() || Item->IsLanternOnWall())
 	ADD_MESSAGE("Eating this is forbidden.");
 
       if(game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
@@ -610,7 +622,7 @@ void bananadroparea::TeleportSquare(character* Infidel, lsquare* Square)
     return;
 
   for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
-    if(i->IsBanana())
+    if(i->IsBanana() || i->IsLanternOnWall())
       {
 	Infidel->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
 	return;
@@ -619,7 +631,7 @@ void bananadroparea::TeleportSquare(character* Infidel, lsquare* Square)
 
 bool shop::AllowSpoil(const item* Item) const
 {
-  character* Master = game::SearchCharacter(MasterID);
+  character* Master = GetMaster();
   return !Master || !Master->IsEnabled() || !Item->GetTruePrice();
 }
 

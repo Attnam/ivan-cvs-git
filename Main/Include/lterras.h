@@ -37,7 +37,7 @@ class OLTERRAIN
   virtual bool Open(character*);
   virtual bool Close(character*);
   virtual bool CanBeOpened() const { return !Opened; }
-  virtual void BeKicked(character*, ushort, uchar);
+  virtual void BeKicked(character*, int, int);
   virtual void SetIsOpened(bool What) { Opened = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -45,29 +45,29 @@ class OLTERRAIN
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual bool IsLocked() const { return Locked; }
   virtual bool CanBeOpenedByAI();
-  virtual void ReceiveDamage(character*, ushort, ushort);
+  virtual void ReceiveDamage(character*, int, int);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
   virtual bool TryKey(item*, character*);
-  virtual void SetParameters(uchar);
+  virtual void SetParameters(int);
   virtual void Lock() { SetIsLocked(true); }
-  virtual void HasBeenHitByItem(character*, item*, ushort);
+  virtual void HasBeenHitByItem(character*, item*, int);
   virtual bool IsTransparent() const;
-  virtual uchar GetWalkability() const;
-  virtual uchar GetTheoreticalWalkability() const;
+  virtual int GetWalkability() const;
+  virtual int GetTheoreticalWalkability() const;
   virtual void BeDestroyed();
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool AddAdjective(festring&, bool) const;
   virtual void Break();
-  virtual vector2d GetBitmapPos(ushort) const;
+  virtual vector2d GetBitmapPos(int) const;
   virtual void MakeWalkable();
   virtual void MakeNotWalkable();
-  virtual uchar GetBoobyTrap() { return BoobyTrap; }
-  virtual void SetBoobyTrap(uchar What) { BoobyTrap = What; }
+  virtual int GetBoobyTrap() { return BoobyTrap; }
+  virtual void SetBoobyTrap(int What) { BoobyTrap = What; }
   bool Opened;
   bool Locked;
-  uchar BoobyTrap;
+  int BoobyTrap;
 );
 
 class OLTERRAIN
@@ -79,14 +79,14 @@ class OLTERRAIN
   virtual void Load(inputfile&);
   virtual bool Enter(bool) const;
   virtual void StepOn(character*);
-  virtual void SetAttachedArea(uchar What) { AttachedArea = What; }
-  virtual void SetAttachedEntry(uchar What) { AttachedEntry = What; }
-  uchar GetAttachedArea() const { return AttachedArea; }
-  uchar GetAttachedEntry() const { return AttachedEntry; }
+  virtual void SetAttachedArea(int What) { AttachedArea = What; }
+  virtual void SetAttachedEntry(int What) { AttachedEntry = What; }
+  int GetAttachedArea() const { return AttachedArea; }
+  int GetAttachedEntry() const { return AttachedEntry; }
  protected:
   virtual void VirtualConstructor(bool);
-  uchar AttachedArea;
-  uchar AttachedEntry;
+  int AttachedArea;
+  int AttachedEntry;
 );
 
 class OLTERRAIN
@@ -94,8 +94,8 @@ class OLTERRAIN
   portal,
   stairs,
  protected:
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual vector2d GetBitmapPos(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual vector2d GetBitmapPos(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -106,11 +106,11 @@ class OLTERRAIN
  public:
   virtual bool AcceptsOffers() const { return true; }
   virtual void StepOn(character*);
-  virtual void BeKicked(character*, ushort, uchar);
+  virtual void BeKicked(character*, int, int);
   virtual bool ReceiveVomit(character*, liquid*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
-  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void Draw(bitmap*, vector2d, color24, int, bool) const;
 );
 
 class OLTERRAIN
@@ -132,7 +132,7 @@ class OLTERRAIN
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort);
+  virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
   virtual void Break();
   virtual bool AllowContentEmitation() const { return false; }
  protected:
@@ -152,24 +152,23 @@ class OLTERRAIN
   virtual void DryOut();
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const;
-  virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material*, ushort = 0);
-  virtual void ChangeContainedMaterial(material*, ushort = 0);
+  virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
+  virtual void SetSecondaryMaterial(material*, int = 0);
+  virtual void ChangeSecondaryMaterial(material*, int = 0);
   void InitMaterials(material*, material*, bool = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetMaterials() const { return 2; }
-  virtual material* GetMaterial(ushort) const;
-  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
+  virtual int GetMaterials() const { return 2; }
+  virtual material* GetMaterial(int) const;
+  virtual void InitMaterials(const materialscript*, const materialscript*, bool);
  protected:
-  virtual bool IsSparkling(ushort) const;
+  virtual bool IsSparkling(int) const;
   virtual void GenerateMaterials();
-  virtual ushort GetMaterialColorB(ushort) const;
-  virtual uchar GetAlphaB(ushort) const;
+  virtual color16 GetMaterialColorB(int) const;
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(festring&, bool) const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  material* ContainedMaterial;
+  virtual vector2d GetBitmapPos(int) const;
+  material* SecondaryMaterial;
 );
 
 class OLTERRAIN
@@ -177,9 +176,9 @@ class OLTERRAIN
   brokendoor,
   door,
  public:
-  virtual void BeKicked(character*, ushort, uchar);
-  virtual void ReceiveDamage(character*, ushort, ushort);
-  virtual void HasBeenHitByItem(character*, item*, ushort);
+  virtual void BeKicked(character*, int, int);
+  virtual void ReceiveDamage(character*, int, int);
+  virtual void HasBeenHitByItem(character*, item*, int);
   virtual void Break() { olterrain::Break(); }
 );
 
@@ -197,8 +196,8 @@ class GLTERRAIN
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }
  protected:
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual vector2d GetBitmapPos(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual vector2d GetBitmapPos(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -235,8 +234,8 @@ class OLTERRAIN
   virtual void Break();
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBitmapPos(ushort) const;
-  uchar PictureIndex;
+  virtual vector2d GetBitmapPos(int) const;
+  int PictureIndex;
 );
 
 #endif

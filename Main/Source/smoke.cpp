@@ -1,19 +1,21 @@
 /* Compiled through materset.cpp */
 
-smoke::smoke() : entity(HAS_BE) { }
+smoke::smoke() : entity(HAS_BE), Next(0) { }
 
-smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
+smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
   Gas->SetMotherEntity(this);
   Picture.resize(16);
-  ushort Color = Gas->GetColor();
+  packedcolor16 Color = Gas->GetColor();
   bitmap Temp(16, 16, TRANSPARENT_COLOR);
-  ushort Frame[16];
-  uchar Flags[16];
+  Temp.ActivateFastFlag();
+  int Frame[16];
+  int Flags[16];
 
-  for(ushort c = 0; c < 16; ++c)
+  for(int c = 0; c < 16; ++c)
     {
       Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
+      Picture[c]->ActivateFastFlag();
       Picture[c]->CreateAlphaMap(Alpha);
       bool Correct = false;
 
@@ -23,7 +25,7 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
 	  Flags[c] = RAND() & 7;
 	  Correct = true;
 
-	  for(ushort i = 0; i < c; ++i)
+	  for(int i = 0; i < c; ++i)
 	    if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
 	      {
 		Correct = false;
@@ -32,7 +34,7 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
 	}
 
       igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, Frame[c] << 4, 32, 0, 0, 16, 16, &Color);
-      Temp.Blit(Picture[c], Flags[c]);
+      Temp.NormalBlit(Picture[c], Flags[c]);
     }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);
@@ -40,7 +42,7 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
 
 smoke::~smoke()
 {
-  for(ushort c = 0; c < Picture.size(); ++c)
+  for(uint c = 0; c < Picture.size(); ++c)
     delete Picture[c];
 
   delete Gas;
@@ -60,7 +62,7 @@ void smoke::Be()
 	  return;
 	}
 
-      for(ushort c = 0; c < 16; ++c)
+      for(int c = 0; c < 16; ++c)
 	Picture[c]->FillAlpha(Alpha);
 
       Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
@@ -72,12 +74,12 @@ void smoke::Be()
     Gas->BreatheEffect(Char);
 }
 
-square* smoke::GetSquareUnderEntity(ushort) const
+square* smoke::GetSquareUnderEntity(int) const
 { 
   return LSquareUnder;
 }
 
-void smoke::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance) const
+void smoke::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
 {
   Picture[(GET_TICK() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
@@ -119,13 +121,14 @@ void smoke::Merge(gas* OtherGas)
   LSquareUnder->SignalSmokeAlphaChange(OtherGas->GetAlpha() - Alpha);
   Alpha = OtherGas->GetAlpha();
 
-  for(ushort c = 0; c < 16; ++c)
+  for(int c = 0; c < 16; ++c)
     Picture[c]->FillAlpha(Alpha);
 
   delete OtherGas;
 }
 
-bool smoke::IsDangerousForAIToBreathe(const character* Who)
+bool smoke::IsDangerousForAIToBreathe(const character* Who) const
 {
-  return !Who->StateIsActivated(GAS_IMMUNITY) && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
+  return !Who->StateIsActivated(GAS_IMMUNITY)
+      && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
 }

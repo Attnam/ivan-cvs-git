@@ -19,9 +19,9 @@ class roomprototype
   room* Clone() const { return Cloner(false); }
   room* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
+  int GetIndex() const { return Index; }
  private:
-  ushort Index;
+  int Index;
   room* (*Cloner)(bool);
   const char* ClassID;
 };
@@ -39,16 +39,16 @@ class room
   void SetPos(vector2d What) { Pos = What; }
   vector2d GetSize() const { return Size; }
   void SetSize(vector2d What) { Size = What; }
-  void SetIndex(uchar What) { Index = What; }
-  uchar GetIndex() const { return Index; }
+  void SetIndex(int What) { Index = What; }
+  int GetIndex() const { return Index; }
   character* GetMaster() const;
   void SetMasterID(ulong What) { MasterID = What; }
-  virtual bool PickupItem(character*, item*, ushort) { return true; }
-  virtual bool DropItem(character*, item*, ushort) { return true; }
-  uchar GetDivineMaster() const { return DivineMaster; }
-  void SetDivineMaster(uchar What) { DivineMaster = What; }
+  virtual bool PickupItem(character*, item*, int) { return true; }
+  virtual bool DropItem(character*, item*, int) { return true; }
+  int GetDivineMaster() const { return DivineMaster; }
+  void SetDivineMaster(int What) { DivineMaster = What; }
   virtual void KickSquare(character*, lsquare*) { }
-  virtual bool ConsumeItem(character*, item*, ushort) { return true; }
+  virtual bool ConsumeItem(character*, item*, int) { return true; }
   virtual bool AllowDropGifts() const { return true; }
   virtual bool Drink(character*) const { return true; }
   virtual bool HasDrinkHandler() const { return false; }
@@ -56,11 +56,11 @@ class room
   virtual bool HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void DestroyTerrain(character*);
   virtual bool AllowSpoil(const item*) const { return true; }
   virtual bool CheckDestroyTerrain(character*);
-  virtual short GetGodRelationAdjustment() const { return -50; }
+  virtual int GetGodRelationAdjustment() const { return -50; }
   virtual bool AllowKick(const character*, const lsquare*) const { return true; }
   bool MasterIsActive() const;
   bool CheckKickSquare(const character*, const lsquare*) const;
@@ -69,11 +69,13 @@ class room
   virtual bool AllowFoodSearch() const { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
+  mutable character* Master;
+  mutable ulong LastMasterSearchTick;
   vector2d Pos;
   vector2d Size;
   ulong MasterID;
-  uchar Index;
-  uchar DivineMaster;
+  int Index;
+  int DivineMaster;
 };
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__

@@ -17,8 +17,8 @@ vector2d NormalSparkleValidityArray[256];
 vector2d PossibleSparkleBuffer[256];
 
 object::object() : entity(0), MainMaterial(0) { }
-ushort object::GetSpecialFlags() const { return ST_NORMAL; }
-ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
+int object::GetSpecialFlags() const { return ST_NORMAL; }
+color16 object::GetOutlineColor(int) const { return TRANSPARENT_COLOR; }
 const bitmap*const* object::GetPicture() const { return GraphicData.Picture; }
 
 object::object(const object& Object) : entity(Object), id(Object), VisualEffects(Object.VisualEffects)
@@ -44,17 +44,17 @@ void object::CopyMaterial(material* const& Source, material*& Dest)
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << GraphicData << VisualEffects;
+  SaveFile << GraphicData << (int)VisualEffects;
   SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  SaveFile >> GraphicData >> VisualEffects;
+  SaveFile >> GraphicData >> (int&)VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, bool CallUpdatePictures)
+void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, long FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, long SecondDefaultVolume, bool CallUpdatePictures)
 {
   InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
   InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
@@ -64,18 +64,7 @@ void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMat
     UpdatePictures();
 }
 
-void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, material*& ThirdMaterial, material* ThirdNewMaterial, ulong ThirdDefaultVolume, bool CallUpdatePictures)
-{
-  InitMaterial(FirstMaterial, FirstNewMaterial, FirstDefaultVolume);
-  InitMaterial(SecondMaterial, SecondNewMaterial, SecondDefaultVolume);
-  InitMaterial(ThirdMaterial, ThirdNewMaterial, ThirdDefaultVolume);
-  SignalVolumeAndWeightChange();
-
-  if(CallUpdatePictures)
-    UpdatePictures();
-}
-
-void object::InitMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume)
+void object::InitMaterial(material*& Material, material* NewMaterial, long DefaultVolume)
 {
   Material = NewMaterial;
 
@@ -84,7 +73,7 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
       if(Material->HasBe())
 	Enable();
 
-      if(!Material->GetVolume())
+      if(DefaultVolume && !Material->GetVolume())
 	Material->SetVolume(DefaultVolume);
 
       Material->SetMotherEntity(this);
@@ -92,12 +81,12 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
     }
 }
 
-void object::ChangeMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume, ushort SpecialFlags)
+void object::ChangeMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
 {
   delete SetMaterial(Material, NewMaterial, DefaultVolume, SpecialFlags);
 }
 
-material* object::SetMaterial(material*& Material, material* NewMaterial, ulong DefaultVolume, ushort SpecialFlags)
+material* object::SetMaterial(material*& Material, material* NewMaterial, long DefaultVolume, int SpecialFlags)
 {
   material* OldMaterial = Material;
   Material = NewMaterial;
@@ -141,19 +130,21 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  UpdatePictures(GraphicData, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  static const vector2d ZeroPos(0, 0);
+  UpdatePictures(GraphicData, ZeroPos, VisualEffects|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
+void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int SpecialFlags, alpha MaxAlpha, int GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
 {
-  ushort AnimationFrames = GetClassAnimationFrames();
+  int AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
-  uchar SparkleTime = 0;
-  ushort Seed = 0;
-  uchar FlyAmount = GetSpoilLevel(); 
+  int SparkleTime = 0;
+  int Seed = 0;
+  int FlyAmount = GetSpoilLevel(); 
   bool Sparkling = false;
   bool FrameNeeded = HasSpecialAnimation();
   vector2d BPos = (this->*BitmapPosRetriever)(0);
+  alpha Alpha;
 
   if(!(SpecialFlags & (ST_FLAME|ST_LIGHTNING)))
     {
@@ -161,13 +152,13 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 	{
 	  bool MColorSparkling[4] = { false, false, false, false };
 
-	  for(ushort c = 0; c < 4; ++c)
+	  for(int c = 0; c < 4; ++c)
 	    if(IsSparkling(c))
 	      Sparkling = MColorSparkling[c] = true;
 
 	  if(Sparkling)
 	    {
-	      static ushort SeedModifier = 1;
+	      static int SeedModifier = 1;
 	      femath::SaveSeed();
 	      femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
@@ -175,7 +166,7 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 		SeedModifier = 1;
 
 	      vector2d* ValidityArray;
-	      ushort ValidityArraySize;
+	      int ValidityArraySize;
 
 	      if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
 		{
@@ -226,7 +217,7 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 
       if(FlyAmount)
 	{
-	  static ushort SeedModifier = 1;
+	  static int SeedModifier = 1;
 	  Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
 
 	  if(++SeedModifier > 0x10)
@@ -245,7 +236,7 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
     }
   else if(SpecialFlags & ST_LIGHTNING)
     {
-      static ushort SeedModifier = 1;
+      static int SeedModifier = 1;
       Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 0x42;
 
       if(++SeedModifier > 0x10)
@@ -256,8 +247,8 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
     }
 
   ModifyAnimationFrames(AnimationFrames);
-  ushort c;
-  ushort OldAnimationFrames = GraphicData.AnimationFrames;
+  int c;
+  int OldAnimationFrames = GraphicData.AnimationFrames;
 
   for(c = 0; c < OldAnimationFrames; ++c)
     igraph::RemoveUser(GraphicData.GraphicIterator[c]);
@@ -276,10 +267,10 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 
   GraphicData.AnimationFrames = AnimationFrames;
   graphicid GI;
-  uchar RustDataA = GetRustDataA();
-  uchar RustDataB = GetRustDataB();
-  uchar RustDataC = GetRustDataC();
-  uchar RustDataD = GetRustDataD();
+  int RustDataA = GetRustDataA();
+  int RustDataB = GetRustDataB();
+  int RustDataC = GetRustDataC();
+  int RustDataD = GetRustDataD();
 
   if(!AllowRegularColors())
     SpecialFlags |= ST_DISALLOW_R_COLORS;
@@ -290,32 +281,18 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
       GI.Color[1] = GetMaterialColorB(c);
       GI.Color[2] = GetMaterialColorC(c);
       GI.Color[3] = GetMaterialColorD(c);
-      GI.BaseAlpha = GetBaseAlpha(c);
-
-      if(GI.BaseAlpha > MaxAlpha)
-	GI.BaseAlpha = MaxAlpha;
-
-      GI.Alpha[0] = GetAlphaA(c);
-
-      if(GI.Alpha[0] > MaxAlpha)
-	GI.Alpha[0] = MaxAlpha;
-
-      GI.Alpha[1] = GetAlphaB(c);
-
-      if(GI.Alpha[1] > MaxAlpha)
-	GI.Alpha[1] = MaxAlpha;
-
-      GI.Alpha[2] = GetAlphaC(c);
-
-      if(GI.Alpha[2] > MaxAlpha)
-	GI.Alpha[2] = MaxAlpha;
-
-      GI.Alpha[3] = GetAlphaD(c);
-
-      if(GI.Alpha[3] > MaxAlpha)
-	GI.Alpha[3] = MaxAlpha;
-
-      GI.BitmapPos = (this->*BitmapPosRetriever)(c);
+      GI.BaseAlpha = MaxAlpha;
+      Alpha = GetAlphaA(c);
+      GI.Alpha[0] = Alpha < MaxAlpha ? Alpha : MaxAlpha;
+      Alpha = GetAlphaB(c);
+      GI.Alpha[1] = Alpha < MaxAlpha ? Alpha : MaxAlpha;
+      Alpha = GetAlphaC(c);
+      GI.Alpha[2] = Alpha < MaxAlpha ? Alpha : MaxAlpha;
+      Alpha = GetAlphaD(c);
+      GI.Alpha[3] = Alpha < MaxAlpha ? Alpha : MaxAlpha;
+      vector2d BPos = (this->*BitmapPosRetriever)(c);
+      GI.BitmapPosX = BPos.X;
+      GI.BitmapPosY = BPos.Y;
       GI.FileIndex = GraphicsContainerIndex;
       GI.SpecialFlags = SpecialFlags;
 
@@ -323,12 +300,14 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 
       if(SparkleInfoNeeded)
 	{
-	  GI.SparklePos = SparklePos;
+	  GI.SparklePosX = SparklePos.X;
+	  GI.SparklePosY = SparklePos.Y;
 	  GI.SparkleFrame = c - SparkleTime;
 	}
       else
 	{
-	  GI.SparklePos = ERROR_VECTOR;
+	  GI.SparklePosX = SPARKLE_POS_X_ERROR;
+	  GI.SparklePosY = 0;
 	  GI.SparkleFrame = 0;
 	}
 
@@ -342,11 +321,13 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
       GI.RustData[1] = RustDataB;
       GI.RustData[2] = RustDataC;
       GI.RustData[3] = RustDataD;
-      GraphicData.Picture[c] = (GraphicData.GraphicIterator[c] = igraph::AddUser(GI))->second.Bitmap;
+      tilemap::iterator Iterator = igraph::AddUser(GI);
+      GraphicData.GraphicIterator[c] = Iterator;
+      GraphicData.Picture[c] = Iterator->second.Bitmap;
     }
 }
 
-ushort object::GetMaterialColorA(ushort) const
+color16 object::GetMaterialColorA(int) const
 {
   return MainMaterial->GetColor();
 }
@@ -360,8 +341,8 @@ bool object::AddMaterialDescription(festring& String, bool Articled) const
 
 void object::AddContainerPostFix(festring& String) const
 {
-  if(GetContainedMaterial())
-    GetContainedMaterial()->AddName(String << " full of ");
+  if(GetSecondaryMaterial())
+    GetSecondaryMaterial()->AddName(String << " full of ");
 }
 
 void object::AddLumpyPostFix(festring& String) const
@@ -369,14 +350,14 @@ void object::AddLumpyPostFix(festring& String) const
   MainMaterial->AddName(String << " of ");
 }
 
-uchar object::GetAlphaA(ushort) const
+alpha object::GetAlphaA(int) const
 {
   return MainMaterial->GetAlpha();
 }
 
 void object::RandomizeVisualEffects()
 {
-  uchar AcceptedFlags = GetOKVisualEffects();
+  int AcceptedFlags = GetOKVisualEffects();
 
   if(AcceptedFlags)
     SetVisualEffects(RAND() & 0x7 & AcceptedFlags | GetForcedVisualEffects());
@@ -398,25 +379,17 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
     }
 }
 
-ushort object::RandomizeMaterialConfiguration()
+int object::RandomizeMaterialConfiguration()
 {
-  const std::vector<long>& MaterialConfigChances = GetMaterialConfigChances();
-  return MaterialConfigChances.size() > 1 ? femath::WeightedRand(MaterialConfigChances) : 0;
-}
-
-void object::InitChosenMaterial(material*& Material, const std::vector<long>& MaterialConfig, ulong DefaultVolume, ushort Chosen)
-{
-  if(MaterialConfig.size() == 1)
-    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[0]), DefaultVolume);
-  else if(MaterialConfig.size() == GetMaterialConfigChances().size())
-    InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
-  else
-    ABORT("MaterialConfig array of illegal size detected!");
+  const fearray<long>& MCC = GetMaterialConfigChances();
+  return MCC.Size > 1
+       ? femath::WeightedRand(MCC.Data, GetMaterialConfigChanceSum())
+       : 0;
 }
 
 bool object::AddEmptyAdjective(festring& String, bool Articled) const
 {
-  if(GetContainedMaterial())
+  if(GetSecondaryMaterial())
     return false;
   else
     {
@@ -438,14 +411,14 @@ bool object::CalculateHasBe() const
   return MainMaterial && MainMaterial->HasBe();
 }
 
-bool object::IsSparkling(ushort ColorIndex) const
+bool object::IsSparkling(int I) const
 {
-  return !ColorIndex && MainMaterial->IsSparkling();
+  return !I && MainMaterial->IsSparkling();
 }
 
 void object::InitSparkleValidityArrays()
 {
-  ushort y, x, Index = 0;
+  int y, x, Index = 0;
 
   for(y = 0; y < 16; ++y)
     for(x = 0; x < 8; ++x)
@@ -488,7 +461,16 @@ void object::InitSparkleValidityArrays()
       NormalSparkleValidityArray[Index++] = vector2d(x, y);
 }
 
-uchar object::GetRustDataA() const
+int object::GetRustDataA() const
 {
   return MainMaterial->GetRustData();
+}
+
+bool object::DetectMaterial(const material* Material) const
+{
+  for(int c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && GetMaterial(c)->IsSameAs(Material))
+      return true;
+
+  return false;
 }

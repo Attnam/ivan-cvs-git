@@ -1,6 +1,5 @@
 #include "allocate.h"
 #include "char.h"
-#include "team.h"
 #include "game.h"
 #include "graphics.h"
 #include "bitmap.h"

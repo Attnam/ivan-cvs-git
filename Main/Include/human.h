@@ -17,8 +17,8 @@ class ABSTRACT_CHARACTER
   humanoid(const humanoid&);
   virtual ~humanoid();
   virtual bool CanWield() const;
-  virtual bool Hit(character*, vector2d, uchar, bool = false);
-  virtual ushort GetSize() const;
+  virtual bool Hit(character*, vector2d, int, bool = false);
+  virtual int GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
   rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
   leftarm* GetLeftArm() const { return static_cast<leftarm*>(*BodyPartSlot[LEFT_ARM_INDEX]); }
@@ -53,46 +53,46 @@ class ABSTRACT_CHARACTER
   void SetLeftBoot(item* What) { GetLeftLeg()->SetBoot(What); }
   arm* GetMainArm() const;
   arm* GetSecondaryArm() const;
-  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
-  virtual bool BodyPartIsVital(ushort) const;
-  virtual bool BodyPartCanBeSevered(ushort) const;
+  virtual bool ReceiveDamage(character*, int, int, int = ALL, int = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual bool BodyPartIsVital(int) const;
+  virtual bool BodyPartCanBeSevered(int) const;
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  virtual const char* GetEquipmentName(ushort) const;
-  virtual bodypart* GetBodyPartOfEquipment(ushort) const;
-  virtual item* GetEquipment(ushort) const;
-  virtual ushort GetEquipmentSlots() const { return 13; }
+  virtual const char* GetEquipmentName(int) const;
+  virtual bodypart* GetBodyPartOfEquipment(int) const;
+  virtual item* GetEquipment(int) const;
+  virtual int GetEquipmentSlots() const { return 13; }
   virtual void SwitchToDig(item*, vector2d);
-  virtual uchar GetLegs() const;
-  virtual uchar GetArms() const;
+  virtual int GetLegs() const;
+  virtual int GetArms() const;
   virtual bool CheckKick() const;
-  virtual uchar OpenMultiplier() const;
-  virtual uchar CloseMultiplier() const;
+  virtual int OpenMultiplier() const;
+  virtual int CloseMultiplier() const;
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
-  virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*);
-  virtual void SetEquipment(ushort, item*);
+  virtual sorter EquipmentSorter(int) const;
+  virtual void SetEquipment(int, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
-  virtual ushort GlobalResistance(ushort) const;
+  virtual int GlobalResistance(int) const;
   virtual bool TryToRiseFromTheDead();
-  virtual bool HandleNoBodyPart(ushort);
-  virtual void Kick(lsquare*, uchar, bool = false);
-  virtual float GetTimeToKill(const character*, bool) const;
-  virtual ushort GetAttribute(ushort) const;
-  virtual bool EditAttribute(ushort, short);
-  virtual void EditExperience(ushort, long);
-  virtual ushort DrawStats(bool) const;
-  virtual void Bite(character*, vector2d, uchar, bool = false);
-  virtual ushort GetCarryingStrength() const;
-  virtual ushort GetRandomStepperBodyPart() const;
-  virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
+  virtual bool HandleNoBodyPart(int);
+  virtual void Kick(lsquare*, int, bool = false);
+  virtual double GetTimeToKill(const character*, bool) const;
+  virtual int GetAttribute(int) const;
+  virtual bool EditAttribute(int, int);
+  virtual void EditExperience(int, long);
+  virtual int DrawStats(bool) const;
+  virtual void Bite(character*, vector2d, int, bool = false);
+  virtual int GetCarryingStrength() const;
+  virtual int GetRandomStepperBodyPart() const;
+  virtual int CheckForBlock(character*, item*, double, int, int, int);
   virtual bool AddSpecialSkillInfo(felist&) const;
-  virtual bool CheckBalance(float);
-  virtual long GetMoveAPRequirement(uchar) const;
-  virtual vector2d GetEquipmentPanelPos(ushort) const;
-  virtual bool EquipmentEasilyRecognized(ushort) const;
+  virtual bool CheckBalance(double);
+  virtual long GetMoveAPRequirement(int) const;
+  virtual vector2d GetEquipmentPanelPos(int) const;
+  virtual bool EquipmentEasilyRecognized(int) const;
   sweaponskill* GetCurrentRightSWeaponSkill() const { return CurrentRightSWeaponSkill; }
   void SetCurrentRightSWeaponSkill(sweaponskill* What) { CurrentRightSWeaponSkill = What; }
   sweaponskill* GetCurrentLeftSWeaponSkill() const { return CurrentLeftSWeaponSkill; }
@@ -100,9 +100,9 @@ class ABSTRACT_CHARACTER
   virtual void SWeaponSkillTick();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SignalEquipmentAdd(ushort);
-  virtual void SignalEquipmentRemoval(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
+  virtual void SignalEquipmentAdd(int);
+  virtual void SignalEquipmentRemoval(int);
+  virtual void DrawBodyParts(bitmap*, vector2d, color24, int, bool, bool = true) const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
@@ -112,20 +112,20 @@ class ABSTRACT_CHARACTER
   virtual void CalculateBodyParts();
   virtual void CalculateAllowedWeaponSkillCategories();
   virtual bool HasFeet() const;
-  virtual void AddSpecialEquipmentInfo(festring&, ushort) const;
-  virtual void CreateInitialEquipment(ushort);
-  virtual festring GetBodyPartName(ushort, bool = false) const;
-  virtual void CreateBlockPossibilityVector(blockvector&, float) const;
-  virtual item* SevereBodyPart(ushort);
-  virtual uchar GetSWeaponSkillLevel(const item*) const;
+  virtual void AddSpecialEquipmentInfo(festring&, int) const;
+  virtual void CreateInitialEquipment(int);
+  virtual festring GetBodyPartName(int, bool = false) const;
+  virtual void CreateBlockPossibilityVector(blockvector&, double) const;
+  virtual item* SevereBodyPart(int);
+  virtual int GetSWeaponSkillLevel(const item*) const;
   virtual bool UseMaterialAttributes() const;
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
   virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
-  virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
+  virtual bool CheckIfEquipmentIsNotUsable(int) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
-  virtual item* GetPairEquipment(ushort) const;
+  virtual item* GetPairEquipment(int) const;
   virtual bool HasHead() const { return !!GetHead(); }
   virtual const festring& GetStandVerb() const;
   virtual head* Behead();
@@ -133,9 +133,9 @@ class ABSTRACT_CHARACTER
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
-  virtual ushort GetRandomApplyBodyPart() const;
+  virtual int GetRandomApplyBodyPart() const;
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
-  virtual ulong GetSumOfAttributes() const;
+  virtual long GetSumOfAttributes() const;
   virtual bool CheckConsume(const festring&) const;
   virtual bool CanConsume(material*) const;
   virtual bool PreProcessForBone();
@@ -145,22 +145,22 @@ class ABSTRACT_CHARACTER
   virtual character* CreateZombie() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorD(ushort, bool = false) const;
-  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorDIsSparkling(ushort, bool = false) const;
-  virtual ulong GetBodyPartSize(ushort, ushort) const;
-  virtual ulong GetBodyPartVolume(ushort) const;
-  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
+  virtual color16 GetBodyPartColorB(int, bool = false) const;
+  virtual color16 GetBodyPartColorC(int, bool = false) const;
+  virtual color16 GetBodyPartColorD(int, bool = false) const;
+  virtual bool BodyPartColorBIsSparkling(int, bool = false) const;
+  virtual bool BodyPartColorCIsSparkling(int, bool = false) const;
+  virtual bool BodyPartColorDIsSparkling(int, bool = false) const;
+  virtual long GetBodyPartSize(int, int) const;
+  virtual long GetBodyPartVolume(int) const;
+  virtual bodypart* MakeBodyPart(int) const;
   virtual const festring& GetDeathMessage() const;
-  virtual vector2d GetDrawDisplacement(ushort) const { return vector2d(0, 0); }
+  virtual vector2d GetDrawDisplacement(int) const { return vector2d(0, 0); }
   std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
-  static ushort DrawOrder[];
+  static int DrawOrder[];
 );
 
 class CHARACTER
@@ -179,7 +179,7 @@ class CHARACTER
   virtual bool IsHuman() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual bodypart* MakeBodyPart(int) const;
   ulong SoulID;
   bool IsBonePlayer;
   bool IsClone;
@@ -202,7 +202,7 @@ class CHARACTER
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse(lsquare*);
   virtual void GetAICommand();
-  ushort LastHealed;
+  ulong LastHealed;
 );
 
 class CHARACTER
@@ -223,13 +223,13 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void GetAICommand();
-  virtual void SetWayPoints(const std::vector<vector2d>&);
+  virtual void SetWayPoints(const fearray<packedvector2d>&);
   virtual void TeleportRandomly();
   virtual bool MoveTowardsHomePos();
  protected:
   virtual void VirtualConstructor(bool);
   std::vector<vector2d> WayPoints;
-  ushort NextWayPoint;
+  uint NextWayPoint;
 );
 
 class CHARACTER
@@ -255,7 +255,7 @@ class CHARACTER
   oree,
   humanoid,
  public:
-  virtual void Bite(character*, vector2d, uchar, bool = false);
+  virtual void Bite(character*, vector2d, int, bool = false);
  protected:
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
@@ -276,12 +276,12 @@ class CHARACTER
   ennerbeast,
   humanoid,
  public:
-  virtual bool Hit(character*, vector2d, uchar, bool = false);
+  virtual bool Hit(character*, vector2d, int, bool = false);
   virtual bool MustBeRemovedFromBone() const;
  protected:
-  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual bodypart* MakeBodyPart(int) const;
   virtual void GetAICommand();
-  virtual bool AttackIsBlockable(uchar) const { return false; }
+  virtual bool AttackIsBlockable(int) const { return false; }
 );
 
 class CHARACTER
@@ -290,9 +290,9 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo();
-  virtual item* SevereBodyPart(ushort);
-  virtual bool BodyPartIsVital(ushort) const;
-  virtual ulong GetBodyPartVolume(ushort) const;
+  virtual item* SevereBodyPart(int);
+  virtual bool BodyPartIsVital(int) const;
+  virtual long GetBodyPartVolume(int) const;
  protected:
   virtual void CreateCorpse(lsquare*);
 );
@@ -314,7 +314,7 @@ class CHARACTER
   virtual void BeTalkedTo();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
-  virtual material* CreateBodyPartMaterial(ushort, ulong) const;
+  virtual material* CreateBodyPartMaterial(int, long) const;
 );
 
 class CHARACTER
@@ -324,7 +324,7 @@ class CHARACTER
  public:
   virtual bool MoveRandomly();
   virtual void BeTalkedTo();
-  virtual bool BoundToUse(const item*, ushort) const;
+  virtual bool BoundToUse(const item*, int) const;
   virtual bool MustBeRemovedFromBone() const;
  protected:
   virtual bool ShowClassDescription() const;
@@ -337,7 +337,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo();
  protected:
-  virtual void CreateBodyParts(ushort);
+  virtual void CreateBodyParts(int);
 );
 
 class CHARACTER
@@ -365,7 +365,7 @@ class CHARACTER
  public:
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
-  virtual ushort GetHairColor() const;
+  virtual int GetHairColor() const;
   virtual vector2d GetHeadBitmapPos() const;
 );
 
@@ -395,8 +395,8 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo();
-  virtual bool BodyPartIsVital(ushort Index) const;
-  virtual void CreateBodyParts(ushort);
+  virtual bool BodyPartIsVital(int) const;
+  virtual void CreateBodyParts(int);
   virtual bool AllowSpoil() const { return true; }
   void SetDescription(const festring What) { Description = What; }
   virtual void Save(outputfile&) const;
@@ -420,8 +420,8 @@ class CHARACTER
   mistress,
   humanoid,
  public:
-  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
-  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
+  virtual bool ReceiveDamage(character*, int, int, int = ALL, int = 8, bool = false, bool = false, bool = false, bool = true);
 );
 
 class CHARACTER
@@ -461,19 +461,19 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool AttachBodyPartsOfFriendsNear(); 
-  virtual bool BodyPartIsVital(ushort) const;
-  virtual ushort GetAttribute(ushort) const;
-  virtual ulong GetBaseEmitation() const;
-  virtual bool CanCreateBodyPart(ushort) const;
+  virtual bool BodyPartIsVital(int) const;
+  virtual int GetAttribute(int) const;
+  virtual color24 GetBaseEmitation() const;
+  virtual bool CanCreateBodyPart(int) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
   virtual void FinalProcessForBone();
  protected:
-  virtual ushort GetTorsoMainColor() const;
-  virtual ushort GetArmMainColor() const;
+  virtual int GetTorsoMainColor() const;
+  virtual int GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
-  virtual void CreateInitialEquipment(ushort);
+  virtual void CreateInitialEquipment(int);
   virtual void GetAICommand();
-  ushort LastHealed;
+  ulong LastHealed;
 );
 
 class CHARACTER
@@ -481,15 +481,15 @@ class CHARACTER
   kamikazedwarf,
   humanoid,
  public:
-  virtual bool Hit(character*, vector2d, uchar, bool = false);
+  virtual bool Hit(character*, vector2d, int, bool = false);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
-  virtual void CreateInitialEquipment(ushort);
+  virtual void CreateInitialEquipment(int);
  protected:
-  virtual ushort GetTorsoMainColor() const;
-  virtual ushort GetGauntletColor() const;
-  virtual ushort GetLegMainColor() const;
-  virtual vector2d GetDrawDisplacement(ushort) const;
+  virtual int GetTorsoMainColor() const;
+  virtual int GetGauntletColor() const;
+  virtual int GetLegMainColor() const;
+  virtual vector2d GetDrawDisplacement(int) const;
 );
 
 class CHARACTER
@@ -497,9 +497,9 @@ class CHARACTER
   genie,
   humanoid,
  public:
-  virtual bool BodyPartIsVital(ushort) const;
-  virtual ushort GetAttribute(ushort) const;
-  virtual bool CanCreateBodyPart(ushort) const;
+  virtual bool BodyPartIsVital(int) const;
+  virtual int GetAttribute(int) const;
+  virtual bool CanCreateBodyPart(int) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
 );
 
@@ -529,10 +529,10 @@ class CHARACTER
   festring GetProfessionDescription() const;
   virtual bool IsBananaGrower() const { return true; }
  protected:
-  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar);
+  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, int);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
-  uchar Profession;
+  int Profession;
   bool HasDroppedBananas;
   bool FeedingSumo;
 );
@@ -561,7 +561,7 @@ class CHARACTER
   humanoid,
  protected:
   virtual void GetAICommand();
-  virtual void CreateBodyParts(ushort);
+  virtual void CreateBodyParts(int);
 );
 
 class CHARACTER
@@ -604,7 +604,7 @@ class CHARACTER
   virtual void BeTalkedTo();
   virtual bool CheckIfSatiated() { return GetNP() > BLOATED_LEVEL; }
   virtual bool IsSumoWrestler() const { return true; }
-  virtual bool CanUseEquipment(ushort) const;
+  virtual bool CanUseEquipment(int) const;
  protected:
   virtual void GetAICommand();
 );

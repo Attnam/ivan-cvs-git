@@ -73,11 +73,11 @@ template void scriptmember< type >::Load(inputfile&);
 INST_SCRIPT_MEMBER(bool);
 INST_SCRIPT_MEMBER(uchar);
 INST_SCRIPT_MEMBER(short);
-INST_SCRIPT_MEMBER(ushort);
-INST_SCRIPT_MEMBER(ulong);
+INST_SCRIPT_MEMBER(int);
+INST_SCRIPT_MEMBER(long);
 INST_SCRIPT_MEMBER(vector2d);
 INST_SCRIPT_MEMBER(festring);
-INST_SCRIPT_MEMBER(std::vector<vector2d>);
+INST_SCRIPT_MEMBER(fearray<vector2d>);
 INST_SCRIPT_MEMBER(rect);
 INST_SCRIPT_MEMBER(interval);
 INST_SCRIPT_MEMBER(region);
@@ -87,13 +87,40 @@ INST_SCRIPT_MEMBER(squarescript);
 INST_SCRIPT_MEMBER(roomscript);
 INST_SCRIPT_MEMBER(levelscript);
 INST_SCRIPT_MEMBER(contentscript<character>);
-INST_SCRIPT_MEMBER(std::list<contentscript<item> >);
+INST_SCRIPT_MEMBER(fearray<contentscript<item> >);
 INST_SCRIPT_MEMBER(contentscript<glterrain>);
 INST_SCRIPT_MEMBER(contentscript<olterrain>);
 INST_SCRIPT_MEMBER(charactercontentmap);
 INST_SCRIPT_MEMBER(itemcontentmap);
 INST_SCRIPT_MEMBER(glterraincontentmap);
 INST_SCRIPT_MEMBER(olterraincontentmap);
+
+template <class type> void fastscriptmember<type>::ReadFrom(inputfile& SaveFile)
+{
+  ReadData(Member, SaveFile);
+}
+
+template <class type> void fastscriptmember<type>::Replace(scriptmemberbase& Base)
+{
+  fastscriptmember<type>& Data = static_cast<fastscriptmember<type>&>(Base);
+  Member = Data.Member;
+}
+
+template <class type> void fastscriptmember<type>::Save(outputfile& SaveFile) const
+{
+  SaveFile << Member;
+}
+
+template <class type> void fastscriptmember<type>::Load(inputfile& SaveFile)
+{
+  SaveFile >> Member;
+}
+
+#define INST_FAST_SCRIPT_MEMBER(type)\
+template void fastscriptmember< type >::ReadFrom(inputfile&);\
+template void fastscriptmember< type >::Replace(scriptmemberbase&);\
+template void fastscriptmember< type >::Save(outputfile&) const;\
+template void fastscriptmember< type >::Load(inputfile&);
 
 bool script::ReadMember(inputfile& SaveFile, const festring& Word)
 {
@@ -126,18 +153,20 @@ void script::LoadDataMap(const datamap& DataMap, inputfile& SaveFile)
     (this->*i->second).Load(SaveFile);
 }
 
-template<class type, class scripttype> void InitMember(script::datamap& DataMap, const char* Identifier, scriptmember<type> scripttype::* DataMember)
+template <class scriptmemberptr> void InitMember(script::datamap& DataMap, const char* Identifier, scriptmemberptr DataMember)
 {
   DataMap[Identifier] = reinterpret_cast<scriptmemberbase script::*>(DataMember);
 }
 
-#define INIT_MEMBER(name) InitMember(DataMap, #name, &scripttype::name##Holder)
+#define INIT_ENTRY(name) InitMember(DataMap, #name, &scripttype::name##Holder)
+
+#define INIT(name, value) name##Holder(value)
 
 void posscript::InitDataMap()
 {
-  INIT_MEMBER(Vector);
-  INIT_MEMBER(Flags);
-  INIT_MEMBER(Borders);
+  INIT_ENTRY(Vector);
+  INIT_ENTRY(Flags);
+  INIT_ENTRY(Borders);
 }
 
 void posscript::ReadFrom(inputfile& SaveFile)
@@ -177,9 +206,11 @@ void posscript::Load(inputfile& SaveFile)
   SaveFile >> Random;
 }
 
+materialscript::materialscript() : INIT(Volume, 0) { }
+
 void materialscript::InitDataMap()
 {
-  INIT_MEMBER(Volume);
+  INIT_ENTRY(Volume);
 }
 
 void materialscript::ReadFrom(inputfile& SaveFile)
@@ -207,8 +238,7 @@ void materialscript::ReadFrom(inputfile& SaveFile)
 
 material* materialscript::Instantiate() const
 {
-  const ulong* Volume = GetVolume();
-  return !Volume ? MAKE_MATERIAL(Config) : MAKE_MATERIAL(Config, *Volume);
+  return MAKE_MATERIAL(Config, GetVolume());
 }
 
 void materialscript::Save(outputfile& SaveFile) const
@@ -225,13 +255,15 @@ void materialscript::Load(inputfile& SaveFile)
 
 void basecontentscript::InitDataMap()
 {
-  INIT_MEMBER(MainMaterial);
-  INIT_MEMBER(SecondaryMaterial);
-  INIT_MEMBER(ContainedMaterial);
-  INIT_MEMBER(Parameters);
+  INIT_ENTRY(MainMaterial);
+  INIT_ENTRY(SecondaryMaterial);
+  INIT_ENTRY(Parameters);
 }
 
-basecontentscript::basecontentscript() : ContentType(0), Config(0), Random(false) { }
+basecontentscript::basecontentscript()
+: ContentType(0), Random(false), Config(0),
+  INIT(Parameters, 0)
+{ }
 
 void basecontentscript::ReadFrom(inputfile& SaveFile)
 {
@@ -246,18 +278,18 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   if(i != game::GetGlobalValueMap().end())
     {
       if(!GetMainMaterial())
-	MainMaterialHolder.SetMember(new materialscript);
+	MainMaterialHolder.Member = new materialscript;
 
-      MainMaterialHolder.GetMember()->SetConfig(i->second);
+      MainMaterialHolder.Member->SetConfig(i->second);
       SaveFile.ReadWord(Word);
       i = game::GetGlobalValueMap().find(Word);
 
       if(i != game::GetGlobalValueMap().end())
 	{
 	  if(!GetSecondaryMaterial())
-	    SecondaryMaterialHolder.SetMember(new materialscript);
+	    SecondaryMaterialHolder.Member = new materialscript;
 
-	  SecondaryMaterialHolder.GetMember()->SetConfig(i->second);
+	  SecondaryMaterialHolder.Member->SetConfig(i->second);
 	  SaveFile.ReadWord(Word);
 	}
     }
@@ -307,51 +339,55 @@ void basecontentscript::Save(outputfile& SaveFile) const
 {
   SaveDataMap(GetDataMap(), SaveFile);
   SaveDataMap(DataMap, SaveFile);
-  SaveFile << ContentType << Config << Random;
+  SaveFile << ContentType;
+  SaveFile << Random;
+  SaveFile << Config;
 }
 
 void basecontentscript::Load(inputfile& SaveFile)
 {
   LoadDataMap(GetDataMap(), SaveFile);
   LoadDataMap(DataMap, SaveFile);
-  SaveFile >> ContentType >> Config >> Random;
+  ContentType = ReadType<ushort>(SaveFile);
+  Random = ReadType<bool>(SaveFile);
+  SaveFile >> Config;
 }
 
-template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort SpecialFlags) const
+template <class type> type* contentscripttemplate<type>::BasicInstantiate(int SpecialFlags) const
 {
   type* Instance = 0;
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
-  const typename type::databasemap& ProtoConfig = Proto->GetConfig();
+  const typename type::database*const* ConfigData = Proto->GetConfigData();
   const materialscript* MainMaterial = GetMainMaterial();
   const materialscript* SecondaryMaterial = GetSecondaryMaterial();
-  const materialscript* ContainedMaterial = GetContainedMaterial();
-  const typename type::database* DataBase = &ProtoConfig.begin()->second;
+  const typename type::database* DataBase = *ConfigData;
   bool UseOverriddenMaterials = false;
 
   if(!Config && DataBase->IsAbstract)
     {
       while(!Instance)
 	{
-	  ushort ChosenConfig = 1 + RAND() % (ProtoConfig.size() - 1);
-	  typename type::databasemap::const_iterator i;
-	  for(i = ProtoConfig.begin(); ChosenConfig; ++i, --ChosenConfig);
-	  DataBase = &i->second;
+	  DataBase = ConfigData[1 + RAND() % (Proto->GetConfigSize() - 1)];
 
 	  if(DataBase->AllowRandomInstantiation())
 	    {
-	      if(!(SpecialFlags & NO_MATERIALS) && MainMaterial && (!DataBase->HasSecondaryMaterial || SecondaryMaterial) && (!DataBase->HasContainedMaterial || ContainedMaterial))
+	      if(!(SpecialFlags & NO_MATERIALS)
+	      && MainMaterial
+	      && (!DataBase->HasSecondaryMaterial || SecondaryMaterial))
 		{
 		  SpecialFlags |= NO_MATERIALS;
 		  UseOverriddenMaterials = true;
 		}
 
-	      Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+	      Instance = Proto->Clone(DataBase->Config, SpecialFlags|NO_PIC_UPDATE);
 	    }
 	}
     }
   else
     {
-      if(!(SpecialFlags & NO_MATERIALS) && MainMaterial && (!DataBase->HasSecondaryMaterial || SecondaryMaterial) && (!DataBase->HasContainedMaterial || ContainedMaterial))
+      if(!(SpecialFlags & NO_MATERIALS)
+      && MainMaterial
+      && (!DataBase->HasSecondaryMaterial || SecondaryMaterial))
 	{
 	  SpecialFlags |= NO_MATERIALS;
 	  UseOverriddenMaterials = true;
@@ -360,13 +396,11 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
       Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
     }
 
-  const ulong* Parameters = GetParameters();
-
-  if(Parameters)
-    Instance->SetParameters(*Parameters);
+  if(GetParameters())
+    Instance->SetParameters(GetParameters());
 
   if(UseOverriddenMaterials)
-    Instance->InitMaterials(MainMaterial, SecondaryMaterial, ContainedMaterial, false);
+    Instance->InitMaterials(MainMaterial, SecondaryMaterial, false);
   else
     {
       if(MainMaterial)
@@ -374,9 +408,6 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
 
       if(SecondaryMaterial)
 	Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
-
-      if(ContainedMaterial)
-	Instance->ChangeContainedMaterial(ContainedMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
     }
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
@@ -387,19 +418,19 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
 
 /* Called by an inline function in script.h... */
 
-template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(ushort) const;
+template glterrain* contentscripttemplate<glterrain>::BasicInstantiate(int) const;
 
-template <class type> ushort contentscripttemplate<type>::SearchCodeName(const festring& String) const
+template <class type> int contentscripttemplate<type>::SearchCodeName(const festring& String) const
 {
   return protocontainer<type>::SearchCodeName(String);
 }
 
 /* GCC 2.952 SUCKS!!! IT MUST BURN!!! */
 
-template ushort contentscripttemplate<character>::SearchCodeName(const festring&) const;
-template ushort contentscripttemplate<item>::SearchCodeName(const festring&) const;
-template ushort contentscripttemplate<glterrain>::SearchCodeName(const festring&) const;
-template ushort contentscripttemplate<olterrain>::SearchCodeName(const festring&) const;
+template int contentscripttemplate<character>::SearchCodeName(const festring&) const;
+template int contentscripttemplate<item>::SearchCodeName(const festring&) const;
+template int contentscripttemplate<glterrain>::SearchCodeName(const festring&) const;
+template int contentscripttemplate<olterrain>::SearchCodeName(const festring&) const;
 
 const char* contentscript<character>::GetClassID() const { return "character"; }
 const char* contentscript<item>::GetClassID() const { return "item"; }
@@ -408,27 +439,30 @@ const char* contentscript<olterrain>::GetClassID() const { return "olterrain"; }
 
 void contentscript<character>::InitDataMap()
 {
-  INIT_MEMBER(Team);
-  INIT_MEMBER(Inventory);
-  INIT_MEMBER(IsMaster);
-  INIT_MEMBER(WayPoint);
-  INIT_MEMBER(IsLeader);
+  INIT_ENTRY(Inventory);
+  INIT_ENTRY(WayPoint);
+  INIT_ENTRY(Team);
+  INIT_ENTRY(Flags);
 }
 
-character* contentscript<character>::Instantiate(ushort SpecialFlags) const
+contentscript<character>::contentscript<character>()
+: INIT(Team, DEFAULT_TEAM),
+  INIT(Flags, 0)
+{ }
+
+character* contentscript<character>::Instantiate(int SpecialFlags) const
 {
   character* Instance = contentscripttemplate<character>::BasicInstantiate(SpecialFlags);
-  const ushort* Team = GetTeam();
 
-  if(Team)
-    Instance->SetTeam(game::GetTeam(*Team));
+  if(GetTeam() != DEFAULT_TEAM)
+    Instance->SetTeam(game::GetTeam(GetTeam()));
 
-  const std::list<contentscript<item> >* Inventory = GetInventory();
+  const fearray<contentscript<item> >* Inventory = GetInventory();
 
   if(Inventory)
     Instance->AddToInventory(*Inventory, SpecialFlags);
 
-  const std::vector<vector2d>* WayPoint = GetWayPoint();
+  const fearray<packedvector2d>* WayPoint = GetWayPoint();
 
   if(WayPoint)
     Instance->SetWayPoints(*WayPoint);
@@ -437,118 +471,124 @@ character* contentscript<character>::Instantiate(ushort SpecialFlags) const
   return Instance;
 }
 
+contentscript<item>::contentscript<item>()
+: INIT(Category, ANY_CATEGORY),
+  INIT(MinPrice, 0),
+  INIT(MaxPrice, MAX_PRICE),
+  INIT(Team, DEFAULT_TEAM),
+  INIT(SquarePosition, CENTER),
+  INIT(Chance, 100),
+  INIT(ConfigFlags, 0),
+  INIT(SpoilPercentage, 0),
+  INIT(Times, 1),
+  INIT(Enchantment, 0),
+  INIT(IsActive, false)
+{ }
+
 void contentscript<item>::InitDataMap()
 {
-  INIT_MEMBER(Team);
-  INIT_MEMBER(IsActive);
-  INIT_MEMBER(SideStackIndex);
-  INIT_MEMBER(Enchantment);
-  INIT_MEMBER(MinPrice);
-  INIT_MEMBER(MaxPrice);
-  INIT_MEMBER(Category);
-  INIT_MEMBER(ItemsInside);
-  INIT_MEMBER(Chance);
-  INIT_MEMBER(ConfigFlags);
-  INIT_MEMBER(SpoilPercentage);
-  INIT_MEMBER(Times);
+  INIT_ENTRY(ItemsInside);
+  INIT_ENTRY(MinPrice);
+  INIT_ENTRY(MaxPrice);
+  INIT_ENTRY(Team);
+  INIT_ENTRY(Category);
+  INIT_ENTRY(SquarePosition);
+  INIT_ENTRY(Chance);
+  INIT_ENTRY(ConfigFlags);
+  INIT_ENTRY(SpoilPercentage);
+  INIT_ENTRY(Times);
+  INIT_ENTRY(Enchantment);
+  INIT_ENTRY(IsActive);
 }
 
-item* contentscript<item>::Instantiate(ushort SpecialFlags) const
+item* contentscript<item>::Instantiate(int SpecialFlags) const
 {
-  const uchar* Chance = GetChance();
+  int Chance = GetChance();
 
-  if(Chance && *Chance <= RAND() % 100)
+  if(Chance != 100 && Chance <= RAND() % 100)
     return 0;
 
   item* Instance;
 
   if(Random)
-    {
-      const ulong* MinPrice = GetMinPrice();
-      const ulong* MaxPrice = GetMaxPrice();
-      const ulong* Category = GetCategory();
-      const ushort* ConfigFlags = GetConfigFlags();
-      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY, SpecialFlags, ConfigFlags ? *ConfigFlags : 0);
-    }
+    Instance = protosystem::BalancedCreateItem(GetMinPrice(), GetMaxPrice(), GetCategory(), SpecialFlags, GetConfigFlags());
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
 
-  const ushort* Team = GetTeam();
+  if(GetTeam() != DEFAULT_TEAM)
+    Instance->SetTeam(GetTeam());
 
-  if(Team)
-    Instance->SetTeam(*Team);
+  if(IsActive())
+    Instance->SetIsActive(true);
 
-  const bool* Active = IsActive();
+  if(GetEnchantment() != 0)
+    Instance->SetEnchantment(GetEnchantment());
 
-  if(Active)
-    Instance->SetIsActive(*Active);
-
-  const short* Enchantment = GetEnchantment();
-
-  if(Enchantment)
-    Instance->SetEnchantment(*Enchantment);
-
-  const std::list<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
 
-  const uchar* SpoilPercentage = GetSpoilPercentage();
-
-  if(SpoilPercentage)
-    Instance->SetSpoilPercentage(*SpoilPercentage);
+  if(GetSpoilPercentage() != 0)
+    Instance->SetSpoilPercentage(GetSpoilPercentage());
 
   return Instance;
 }
 
-bool IsValidScript(const std::list<contentscript<item> >* List)
+bool IsValidScript(const fearray<contentscript<item> >* Array)
 {
-  for(std::list<contentscript<item> >::const_iterator i = List->begin(); i != List->end(); ++i)
-    if(IsValidScript(&*i))
+  for(uint c = 0; c < Array->Size; ++c)
+    if(IsValidScript(&Array->Data[c]))
       return true;
 
   return false;
 }
 
-void contentscript<olterrain>::InitDataMap()
+void contentscript<glterrain>::InitDataMap()
 {
-  INIT_MEMBER(VisualEffects);
-  INIT_MEMBER(AttachedArea);
-  INIT_MEMBER(AttachedEntry);
-  INIT_MEMBER(Text);
-  INIT_MEMBER(ItemsInside);
+  INIT_ENTRY(IsInside);
 }
 
-olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
+contentscript<olterrain>::contentscript<olterrain>()
+: INIT(VisualEffects, 0),
+  INIT(AttachedArea, DEFAULT_ATTACHED_AREA),
+  INIT(AttachedEntry, DEFAULT_ATTACHED_ENTRY)
+{ }
+
+void contentscript<olterrain>::InitDataMap()
+{
+  INIT_ENTRY(ItemsInside);
+  INIT_ENTRY(Text);
+  INIT_ENTRY(VisualEffects);
+  INIT_ENTRY(AttachedArea);
+  INIT_ENTRY(AttachedEntry);
+}
+
+olterrain* contentscript<olterrain>::Instantiate(int SpecialFlags) const
 {
   if(!ContentType)
     return 0;
 
   olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
-  const uchar* VisualEffects = GetVisualEffects();
 
-  if(VisualEffects)
+  if(GetVisualEffects())
     {
-      Instance->SetVisualEffects(*VisualEffects);
+      Instance->SetVisualEffects(GetVisualEffects());
       Instance->UpdatePictures();
     }
 
-  const uchar* AttachedArea = GetAttachedArea();
+  if(GetAttachedArea() != DEFAULT_ATTACHED_AREA)
+    Instance->SetAttachedArea(GetAttachedArea());
 
-  if(AttachedArea)
-    Instance->SetAttachedArea(*AttachedArea);
-
-  const uchar* AttachedEntry = GetAttachedEntry();
-
-  if(AttachedEntry)
-    Instance->SetAttachedEntry(*AttachedEntry);
+  if(GetAttachedEntry() != DEFAULT_ATTACHED_ENTRY)
+    Instance->SetAttachedEntry(GetAttachedEntry());
 
   const festring* Text = GetText();
 
   if(Text)
     Instance->SetText(*Text);
 
-  const std::list<contentscript<item> >* ItemsInside = GetItemsInside();
+  const fearray<contentscript<item> >* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -556,16 +596,21 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
   return Instance;
 }
 
+squarescript::squarescript()
+: INIT(EntryIndex, NO_ENTRY),
+  INIT(AttachRequired, false)
+{ }
+
 void squarescript::InitDataMap()
 {
-  INIT_MEMBER(Position);
-  INIT_MEMBER(Character);
-  INIT_MEMBER(Items);
-  INIT_MEMBER(GTerrain);
-  INIT_MEMBER(OTerrain);
-  INIT_MEMBER(Times);
-  INIT_MEMBER(AttachRequired);
-  INIT_MEMBER(EntryIndex);
+  INIT_ENTRY(Position);
+  INIT_ENTRY(Character);
+  INIT_ENTRY(Items);
+  INIT_ENTRY(GTerrain);
+  INIT_ENTRY(OTerrain);
+  INIT_ENTRY(Times);
+  INIT_ENTRY(EntryIndex);
+  INIT_ENTRY(AttachRequired);
 }
 
 void squarescript::ReadFrom(inputfile& SaveFile)
@@ -600,13 +645,13 @@ template <class type, class contenttype> contentmap<type, contenttype>::~content
 
 template <class type, class contenttype> void contentmap<type, contenttype>::InitDataMap()
 {
-  INIT_MEMBER(Size);
-  INIT_MEMBER(Pos);
+  INIT_ENTRY(Size);
+  INIT_ENTRY(Pos);
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::ReadFrom(inputfile& SaveFile)
 {
-  typedef std::map<char, contenttype> maptype;
+  typedef std::map<int, contenttype> maptype;
   typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
@@ -615,7 +660,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
-  SymbolMap.insert(std::pair<char, contenttype>('.', contenttype()));
+  SymbolMap.insert(std::pair<int, contenttype>('.', contenttype()));
   static festring Word1, Word2;
 
   for(SaveFile.ReadWord(Word1); Word1 != "}"; Word1 = SaveFile.ReadWord())
@@ -627,7 +672,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 
 	  for(SaveFile.ReadWord(Word2); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
-	      std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<char, contenttype>(Word2[0], contenttype()));
+	      std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<int, contenttype>(Word2[0], contenttype()));
 
 	      if(Return.second)
 		ReadData(Return.first->second, SaveFile);
@@ -648,14 +693,14 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   if(SaveFile.ReadWord() != "{")
     ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
-  for(ushort y = 0; y < Size.Y; ++y)
-    for(ushort x = 0; x < Size.X; ++x)
+  for(int y = 0; y < Size.Y; ++y)
+    for(int x = 0; x < Size.X; ++x)
       {
-	char Char = SaveFile.ReadLetter();
-	typename std::map<char, contenttype>::iterator i = SymbolMap.find(Char);
+	int Char = SaveFile.ReadLetter();
+	typename std::map<int, contenttype>::iterator i = SymbolMap.find(Char);
 
 	if(i != SymbolMap.end())
-	  ContentMap[x][y] = std::pair<char, contenttype*>(Char, &i->second);
+	  ContentMap[x][y] = std::pair<int, contenttype*>(Char, &i->second);
 	else
 	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
       }
@@ -670,9 +715,9 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Sav
   SaveFile << SymbolMap;
   vector2d Size = *GetSize();
 
-  for(ushort y = 0; y < Size.Y; ++y)
-    for(ushort x = 0; x < Size.X; ++x)
-      SaveFile << ContentMap[x][y].first;
+  for(int y = 0; y < Size.Y; ++y)
+    for(int x = 0; x < Size.X; ++x)
+      SaveFile << char(ContentMap[x][y].first);
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::Load(inputfile& SaveFile)
@@ -682,11 +727,11 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Loa
   vector2d Size = *GetSize();
   Alloc2D(ContentMap, Size.X, Size.Y);
 
-  for(ushort y = 0; y < Size.Y; ++y)
-    for(ushort x = 0; x < Size.X; ++x)
+  for(int y = 0; y < Size.Y; ++y)
+    for(int x = 0; x < Size.X; ++x)
       {
-	char Char = ReadType<char>(SaveFile);
-	ContentMap[x][y] = std::pair<char, contenttype*>(Char, &SymbolMap.find(Char)->second);
+	int Char = ReadType<char>(SaveFile);
+	ContentMap[x][y] = std::pair<int, contenttype*>(Char, &SymbolMap.find(Char)->second);
       }
 }
 
@@ -694,25 +739,27 @@ const std::list<squarescript>& roomscript::GetSquare() const { return Square; }
 
 void roomscript::InitDataMap()
 {
-  INIT_MEMBER(CharacterMap);
-  INIT_MEMBER(ItemMap);
-  INIT_MEMBER(GTerrainMap);
-  INIT_MEMBER(OTerrainMap);
-  INIT_MEMBER(WallSquare);
-  INIT_MEMBER(FloorSquare);
-  INIT_MEMBER(DoorSquare);
-  INIT_MEMBER(Size);
-  INIT_MEMBER(Pos);
-  INIT_MEMBER(AltarPossible);
-  INIT_MEMBER(GenerateDoor);
-  INIT_MEMBER(GenerateTunnel);
-  INIT_MEMBER(DivineMaster);
-  INIT_MEMBER(GenerateLanterns);
-  INIT_MEMBER(Type);
-  INIT_MEMBER(GenerateFountains);
-  INIT_MEMBER(AllowLockedDoors);
-  INIT_MEMBER(AllowBoobyTrappedDoors);
-  INIT_MEMBER(Shape);
+  INIT_ENTRY(CharacterMap);
+  INIT_ENTRY(ItemMap);
+  INIT_ENTRY(GTerrainMap);
+  INIT_ENTRY(OTerrainMap);
+  INIT_ENTRY(WallSquare);
+  INIT_ENTRY(FloorSquare);
+  INIT_ENTRY(DoorSquare);
+  INIT_ENTRY(Size);
+  INIT_ENTRY(Pos);
+  INIT_ENTRY(AltarPossible);
+  INIT_ENTRY(GenerateDoor);
+  INIT_ENTRY(GenerateTunnel);
+  INIT_ENTRY(DivineMaster);
+  INIT_ENTRY(GenerateLanterns);
+  INIT_ENTRY(Type);
+  INIT_ENTRY(GenerateFountains);
+  INIT_ENTRY(AllowLockedDoors);
+  INIT_ENTRY(AllowBoobyTrappedDoors);
+  INIT_ENTRY(Shape);
+  INIT_ENTRY(IsInside);
+  INIT_ENTRY(GenerateWindows);
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile)
@@ -753,31 +800,30 @@ const std::list<roomscript>& levelscript::GetRoom() const { return Room; }
 
 void levelscript::InitDataMap()
 {
-  INIT_MEMBER(RoomDefault);
-  INIT_MEMBER(FillSquare);
-  INIT_MEMBER(LevelMessage);
-  INIT_MEMBER(Size);
-  INIT_MEMBER(Items);
-  INIT_MEMBER(Rooms);
-  INIT_MEMBER(GenerateMonsters);
-  INIT_MEMBER(IsOnGround);
-  INIT_MEMBER(TeamDefault);
-  INIT_MEMBER(AmbientLight);
-  INIT_MEMBER(Description);
-  INIT_MEMBER(LOSModifier);
-  INIT_MEMBER(IgnoreDefaultSpecialSquares);
-  INIT_MEMBER(DifficultyBase);
-  INIT_MEMBER(DifficultyDelta);
-  INIT_MEMBER(MonsterAmountBase);
-  INIT_MEMBER(MonsterAmountDelta);
-  INIT_MEMBER(MonsterGenerationIntervalBase);
-  INIT_MEMBER(MonsterGenerationIntervalDelta);
-  INIT_MEMBER(AutoReveal);
-  INIT_MEMBER(ShortDescription);
-  INIT_MEMBER(CanGenerateBone);
-  INIT_MEMBER(ItemMinPriceBase);
-  INIT_MEMBER(ItemMinPriceDelta);
-  INIT_MEMBER(Type);
+  INIT_ENTRY(RoomDefault);
+  INIT_ENTRY(FillSquare);
+  INIT_ENTRY(LevelMessage);
+  INIT_ENTRY(Size);
+  INIT_ENTRY(Items);
+  INIT_ENTRY(Rooms);
+  INIT_ENTRY(GenerateMonsters);
+  INIT_ENTRY(IsOnGround);
+  INIT_ENTRY(TeamDefault);
+  INIT_ENTRY(Description);
+  INIT_ENTRY(LOSModifier);
+  INIT_ENTRY(IgnoreDefaultSpecialSquares);
+  INIT_ENTRY(DifficultyBase);
+  INIT_ENTRY(DifficultyDelta);
+  INIT_ENTRY(MonsterAmountBase);
+  INIT_ENTRY(MonsterAmountDelta);
+  INIT_ENTRY(MonsterGenerationIntervalBase);
+  INIT_ENTRY(MonsterGenerationIntervalDelta);
+  INIT_ENTRY(AutoReveal);
+  INIT_ENTRY(ShortDescription);
+  INIT_ENTRY(CanGenerateBone);
+  INIT_ENTRY(ItemMinPriceBase);
+  INIT_ENTRY(ItemMinPriceDelta);
+  INIT_ENTRY(Type);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)
@@ -831,8 +877,8 @@ void levelscript::ReadFrom(inputfile& SaveFile)
 
   const levelscript* LevelBase = static_cast<const levelscript*>(Base);
 
-  if(LevelBase && RoomDefaultHolder.GetMember())
-    RoomDefaultHolder.GetMember()->SetBase(LevelBase->RoomDefaultHolder.GetMember());
+  if(LevelBase && RoomDefaultHolder.Member)
+    RoomDefaultHolder.Member->SetBase(LevelBase->RoomDefaultHolder.Member);
 
   valuemap::iterator i = game::GetGlobalValueMap().find("XSize");
 
@@ -860,11 +906,11 @@ void levelscript::Combine(levelscript& Script)
 void levelscript::SetBase(const scriptwithbase* What)
 {
   const levelscript* LevelBase = static_cast<const levelscript*>(Base = What);
-  roomscript* BaseRoomDefault = LevelBase->RoomDefaultHolder.GetMember();
+  roomscript* BaseRoomDefault = LevelBase->RoomDefaultHolder.Member;
 
   if(BaseRoomDefault)
     {
-      roomscript* ThisRoomDefault = RoomDefaultHolder.GetMember();
+      roomscript* ThisRoomDefault = RoomDefaultHolder.Member;
 
       if(!ThisRoomDefault)
 	for(std::list<roomscript>::iterator i = Room.begin(); i != Room.end(); ++i)
@@ -893,14 +939,14 @@ void levelscript::Load(inputfile& SaveFile)
 
 dungeonscript::dungeonscript() { }
 dungeonscript::~dungeonscript() { }
-const std::map<uchar, levelscript>& dungeonscript::GetLevel() const { return Level; }
+const std::map<int, levelscript>& dungeonscript::GetLevel() const { return Level; }
 
 void dungeonscript::InitDataMap()
 {
-  INIT_MEMBER(LevelDefault);
-  INIT_MEMBER(Levels);
-  INIT_MEMBER(Description);
-  INIT_MEMBER(ShortDescription);
+  INIT_ENTRY(LevelDefault);
+  INIT_ENTRY(Levels);
+  INIT_ENTRY(Description);
+  INIT_ENTRY(ShortDescription);
 }
 
 void dungeonscript::ReadFrom(inputfile& SaveFile)
@@ -914,8 +960,8 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
     {
       if(Word == "Level")
 	{
-	  uchar Index = SaveFile.ReadNumber();
-	  std::pair<std::map<uchar, levelscript>::iterator, bool> Return = Level.insert(std::pair<uchar, levelscript>(Index, levelscript()));
+	  int Index = SaveFile.ReadNumber();
+	  std::pair<std::map<int, levelscript>::iterator, bool> Return = Level.insert(std::pair<int, levelscript>(Index, levelscript()));
 
 	  if(Return.second)
 	    {
@@ -956,7 +1002,7 @@ void dungeonscript::RandomizeLevels()
 {
   for(std::list<std::pair<interval, levelscript> >::iterator i = RandomLevel.begin(); i != RandomLevel.end(); ++i)
     {
-      uchar Index = i->first.Randomize();
+      int Index = i->first.Randomize();
       Level[Index].Combine(i->second);
     }
 
@@ -977,7 +1023,7 @@ void dungeonscript::Load(inputfile& SaveFile)
 
   if(LevelDefault)
     {
-      for(std::map<uchar, levelscript>::iterator i1 = Level.begin(); i1 != Level.end(); ++i1)
+      for(std::map<int, levelscript>::iterator i1 = Level.begin(); i1 != Level.end(); ++i1)
 	i1->second.SetBase(LevelDefault);
 
       for(std::list<std::pair<interval, levelscript> >::iterator i2 = RandomLevel.begin(); i2 != RandomLevel.end(); ++i2)
@@ -985,11 +1031,11 @@ void dungeonscript::Load(inputfile& SaveFile)
     }
 }
 
-const std::vector<std::pair<uchar, uchar> >& teamscript::GetRelation() const { return Relation; }
+const std::vector<std::pair<int, int> >& teamscript::GetRelation() const { return Relation; }
 
 void teamscript::InitDataMap()
 {
-  INIT_MEMBER(KillEvilness);
+  INIT_ENTRY(KillEvilness);
 }
 
 void teamscript::ReadFrom(inputfile& SaveFile)
@@ -1003,7 +1049,7 @@ void teamscript::ReadFrom(inputfile& SaveFile)
     {
       if(Word == "Relation")
 	{
-	  std::pair<uchar, uchar> Rel;
+	  std::pair<int, int> Rel;
 	  Rel.first = SaveFile.ReadNumber();
 	  Rel.second = SaveFile.ReadNumber();
 	  Relation.push_back(Rel);
@@ -1027,13 +1073,13 @@ void teamscript::Load(inputfile& SaveFile)
   SaveFile >> Relation;
 }
 
-const std::list<std::pair<uchar, teamscript> >& gamescript::GetTeam() const { return Team; }
-const std::map<uchar, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
+const std::list<std::pair<int, teamscript> >& gamescript::GetTeam() const { return Team; }
+const std::map<int, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
 
 void gamescript::InitDataMap()
 {
-  INIT_MEMBER(Dungeons);
-  INIT_MEMBER(Teams);
+  INIT_ENTRY(Dungeons);
+  INIT_ENTRY(Teams);
 }
 
 void gamescript::ReadFrom(inputfile& SaveFile)
@@ -1044,8 +1090,8 @@ void gamescript::ReadFrom(inputfile& SaveFile)
     {
       if(Word == "Dungeon")
 	{
-	  ushort Index = SaveFile.ReadNumber();
-	  std::pair<std::map<uchar, dungeonscript>::iterator, bool> Return = Dungeon.insert(std::pair<uchar, dungeonscript>(Index, dungeonscript()));
+	  int Index = SaveFile.ReadNumber();
+	  std::pair<std::map<int, dungeonscript>::iterator, bool> Return = Dungeon.insert(std::pair<int, dungeonscript>(Index, dungeonscript()));
 
 	  if(Return.second)
 	    Return.first->second.ReadFrom(SaveFile);
@@ -1057,8 +1103,8 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 
       if(Word == "Team")
 	{
-	  ushort Index = SaveFile.ReadNumber();
-	  Team.push_back(std::pair<uchar, teamscript>(Index, teamscript()));
+	  int Index = SaveFile.ReadNumber();
+	  Team.push_back(std::pair<int, teamscript>(Index, teamscript()));
 	  Team.back().second.ReadFrom(SaveFile);
 	  continue;
 	}
@@ -1070,7 +1116,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 
 void gamescript::RandomizeLevels()
 {
-  for(std::map<uchar, dungeonscript>::iterator i = Dungeon.begin(); i != Dungeon.end(); ++i)
+  for(std::map<int, dungeonscript>::iterator i = Dungeon.begin(); i != Dungeon.end(); ++i)
     i->second.RandomizeLevels();
 }
 

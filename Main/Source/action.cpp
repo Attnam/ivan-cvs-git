@@ -13,7 +13,7 @@ void action::Terminate(bool)
 
 void action::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType() << DNDMode;
+  SaveFile << (ushort)GetType() << DNDMode;
 }
 
 void action::Load(inputfile& SaveFile)

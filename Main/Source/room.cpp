@@ -2,13 +2,12 @@
 
 roomprototype::roomprototype(room* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
 
-room::room(donothing) : MasterID(0) { }
+room::room(donothing) : LastMasterSearchTick(0), MasterID(0) { }
 room::~room() { }
-character* room::GetMaster() const { return game::SearchCharacter(MasterID); }
 
 void room::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << (ushort)GetType();
   SaveFile << Pos << Size << Index << DivineMaster << MasterID;
 }
 
@@ -67,4 +66,17 @@ bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) cons
 	return false;
     }
   return true;
+}
+
+character* room::GetMaster() const
+{
+  ulong Tick = game::GetTick();
+
+  if(LastMasterSearchTick == Tick)
+    return Master;
+  else
+    {
+      LastMasterSearchTick = Tick;
+      return Master = game::SearchCharacter(MasterID);
+    }
 }

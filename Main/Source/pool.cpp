@@ -1,8 +1,10 @@
 /* Compiled through coreset.cpp */
 
-entitylist pool::Pool;
-entitylist::iterator pool::CurrentEntity = pool::Pool.end();
-entitylist pool::Hell;
+entity* pool::FirstEntity = 0;
+entity* pool::LastEntity = 0;
+entity* pool::FirstDoomed = 0;
+entity* pool::LastDoomed = 0;
+entity* pool::CurrentEntity = 0;
 
 /* Calls the Be() function of each self-changeable entity during each tick,
  * thus allowing acting characters, spoiling food etc.
@@ -10,22 +12,49 @@ entitylist pool::Hell;
 
 void pool::Be()
 {
-  for(CurrentEntity = Pool.begin(); CurrentEntity != Pool.end(); ++CurrentEntity)
-    (*CurrentEntity)->Be();
-}
+  CurrentEntity = FirstEntity;
 
-void pool::Remove(entitylist::iterator Iterator)
-{
-  if(Iterator == CurrentEntity)
-    ++CurrentEntity;
+  while(CurrentEntity)
+    {
+      CurrentEntity->Be();
 
-  Pool.erase(Iterator);
+      if(CurrentEntity)
+	CurrentEntity = CurrentEntity->Next;
+    }
 }
 
 void pool::BurnHell()
 {
-  for(entitylist::iterator i = Hell.begin(); i != Hell.end(); ++i)
-    delete *i;
+  entity* Entity = FirstDoomed;
 
-  Hell.clear();
+  while(Entity)
+    {
+      entity* Next = Entity->Next;
+      delete Entity;
+      Entity = Next;
+    }
+
+  FirstDoomed = 0;
+}
+
+void pool::Add(entity* Entity)
+{
+  Entity->Last = LastEntity;
+  Entity->Next = 0;
+  LastEntity = (FirstEntity ? LastEntity->Next : FirstEntity) = Entity;
+}
+
+void pool::Remove(entity* Entity)
+{
+  if(CurrentEntity == Entity)
+    CurrentEntity = Entity->Next;
+
+  (Entity->Last ? Entity->Last->Next : FirstEntity) = Entity->Next;
+  (Entity->Next ? Entity->Next->Last : LastEntity) = Entity->Last;
+}
+
+void pool::AddToHell(entity* Entity)
+{
+  Entity->Next = 0;
+  LastDoomed = (FirstDoomed ? LastDoomed->Next : FirstDoomed) = Entity;
 }

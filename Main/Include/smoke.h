@@ -19,12 +19,15 @@ class outputfile;
 class smoke : public entity
 {
  public:
+  /* Come To The Dark Side */
+  smoke* Next;
+ public:
   smoke();
   smoke(gas*, lsquare*);
   virtual ~smoke();
   virtual void Be();
-  virtual void Draw(bitmap*, vector2d, ulong) const;
-  virtual square* GetSquareUnderEntity(ushort = 0) const;
+  virtual void Draw(bitmap*, vector2d, color24) const;
+  virtual square* GetSquareUnderEntity(int = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   void Save(outputfile&) const;
@@ -33,12 +36,12 @@ class smoke : public entity
   void AddBreatheMessage() const;
   void Merge(gas*);
   const material* GetGas() const { return Gas; }
-  bool IsDangerousForAIToBreathe(const character*);
+  bool IsDangerousForAIToBreathe(const character*) const;
  protected:
   material* Gas;
   std::vector<bitmap*> Picture;
   lsquare* LSquareUnder;
-  uchar Alpha;
+  alpha Alpha;
 };
 
 outputfile& operator<<(outputfile&, const smoke*);

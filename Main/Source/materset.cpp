@@ -3,10 +3,9 @@
 #include "proto.h"
 #include "materia.h"
 
-material::prototype** protocontainer<material>::ProtoData;
+materialprototype** protocontainer<material>::ProtoData;
 valuemap protocontainer<material>::CodeNameMap;
-ushort protocontainer<material>::ProtoAmount;
-//material* material_Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
+int protocontainer<material>::Size;
 materialprototype material_ProtoType(0, 0, "material");
 const materialprototype* material::GetProtoType() const { return &material_ProtoType; }
 

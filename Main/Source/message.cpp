@@ -12,8 +12,8 @@
 felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
 festring msgsystem::LastMessage;
 festring msgsystem::BigMessage;
-ushort msgsystem::Times;
-ulong msgsystem::Begin, msgsystem::End;
+int msgsystem::Times;
+vector2d msgsystem::Begin, msgsystem::End;
 bool msgsystem::Enabled = true;
 bool msgsystem::BigMessageMode = false;
 bool msgsystem::MessagesChanged = true;
@@ -53,41 +53,56 @@ void msgsystem::AddMessage(const char* Format, ...)
       return;
     }
 
+  ivantime Time;
+  game::GetTime(Time);
+
   if(Buffer == LastMessage)
     {
       while(MessageHistory.GetLength() && MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
 	MessageHistory.Pop();
 
       ++Times;
-      End = game::GetTicks() / 10;
+      End = vector2d(Time.Hour, Time.Min);
     }
   else
     {
-      for(short c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
+      for(int c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
 	MessageHistory.SetColor(c, LIGHT_GRAY);
 
       Times = 1;
-      Begin = End = game::GetTicks() / 10;
+      Begin = End = vector2d(Time.Hour, Time.Min);
       LastMessage = Buffer;
     }
 
   festring Temp;
-  Temp << Begin;
+  Temp << Begin.X << ':';
+
+  if(Begin.Y < 10)
+    Temp << '0';
+
+  Temp << Begin.Y;
 
   if(Begin != End)
-    Temp << '-' << End;
+    {
+      Temp << '-' << End.X << ':';
+
+      if(End.Y < 10)
+	Temp << '0';
+
+      Temp << End.Y;
+    }
 
   if(Times != 1)
     Temp << " (" << Times << "x)";
 
   Temp << ' ';
-  ushort Marginal = Temp.GetSize();
+  int Marginal = Temp.GetSize();
   Temp << Buffer;
 
   std::vector<festring> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
 
-  for(ushort c = 0; c < Chapter.size(); ++c)
+  for(uint c = 0; c < Chapter.size(); ++c)
     MessageHistory.AddEntry(Chapter[c], WHITE);
 
   MessageHistory.SetSelected(MessageHistory.GetLastEntryIndex());
@@ -105,7 +120,7 @@ void msgsystem::Draw()
       MessagesChanged = false;
     }
 
-  QuickDrawCache->Blit(DOUBLE_BUFFER, 0, 0, 13, RES_Y - 122, QuickDrawCache->GetSize());
+  QuickDrawCache->NormalBlit(DOUBLE_BUFFER, 0, 0, 13, RES_Y - 122, QuickDrawCache->GetSize());
 
   if(WasInBigMessageMode)
     EnterBigMessageMode();
@@ -168,6 +183,7 @@ void msgsystem::LeaveBigMessageMode()
 void msgsystem::Init()
 {
   QuickDrawCache = new bitmap((game::GetScreenXSize() << 4) + 6, 106);
+  QuickDrawCache->ActivateFastFlag();
   game::SetStandardListAttributes(MessageHistory);
   MessageHistory.AddFlags(INVERSE_MODE);
 }

@@ -5,7 +5,7 @@
 
 god::prototype** protocontainer<god>::ProtoData;
 valuemap protocontainer<god>::CodeNameMap;
-ushort protocontainer<god>::ProtoAmount;
+int protocontainer<god>::Size;
 
 #include "gods.h"
 

@@ -13,21 +13,23 @@ void wsquare::Save(outputfile& SaveFile) const
 {
   square::Save(SaveFile);
   SaveFile << GWTerrain << OWTerrain;
+  SaveFile << bool(!!LastSeen);
 }
 
 void wsquare::Load(inputfile& SaveFile)
 {
   square::Load(SaveFile);
   SaveFile >> GWTerrain >> OWTerrain;
+  LastSeen = ReadType<bool>(SaveFile) ? 1 : 0;
   CalculateLuminance();
 }
 
 void wsquare::Draw()
 {
-  if(NewDrawRequested || AnimatedEntities)
+  if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-      ulong RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
+      long RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
       GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(OWTerrain)
@@ -36,7 +38,7 @@ void wsquare::Draw()
       if(Character && Character->CanBeSeenByPlayer())
 	Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
 
-      NewDrawRequested = false;
+      Flags &= ~STRONG_NEW_DRAW_REQUEST;
     }
 }
 
@@ -53,7 +55,7 @@ void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 
   delete GWTerrain;
   SetGWTerrain(NewGround);
-  DescriptionChanged = NewDrawRequested = true;
+  Flags |= DESCRIPTION_CHANGE|NEW_DRAW_REQUEST;
 }
 
 void wsquare::ChangeOWTerrain(owterrain* NewOver)
@@ -63,7 +65,7 @@ void wsquare::ChangeOWTerrain(owterrain* NewOver)
 
   delete OWTerrain;
   SetOWTerrain(NewOver);
-  DescriptionChanged = NewDrawRequested = true;
+  Flags |= DESCRIPTION_CHANGE|NEW_DRAW_REQUEST;
 }
 
 void wsquare::SetWTerrain(gwterrain* NewGround, owterrain* NewOver)
@@ -100,7 +102,7 @@ void wsquare::SetOWTerrain(owterrain* What)
 
 void wsquare::UpdateMemorizedDescription(bool Cheat)
 {
-  if(DescriptionChanged || Cheat)
+  if(Flags & DESCRIPTION_CHANGE || Cheat)
     {
       MemorizedDescription.Empty();
 
@@ -123,7 +125,7 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 	  MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
 	}
 
-      DescriptionChanged = false;
+      Flags &= ~DESCRIPTION_CHANGE;
     }
 }
 
@@ -137,19 +139,30 @@ oterrain* wsquare::GetOTerrain() const
   return OWTerrain;
 }
 
-void wsquare::SetLastSeen(ulong What)
+bool wsquare::SignalSeen()
 {
   UpdateMemorizedDescription();
-  LastSeen = What;
+  LastSeen = 1;
+  return true;
 }
 
 void wsquare::CalculateLuminance()
 {
-  uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0f))), 255);
+  int Element = Min((128 - int(37.5 * log(1.0 + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
 
-uchar wsquare::GetWalkability() const 
+int wsquare::GetWalkability() const 
 { 
   return OWTerrain ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability() : GWTerrain->GetWalkability(); 
+}
+
+bool wsquare::CanBeSeenByPlayer(bool) const
+{
+  return !!LastSeen;
+}
+
+bool wsquare::CanBeSeenFrom(vector2d FromPos, long MaxDistance, bool) const
+{
+  return (Pos - FromPos).GetLengthSquare() <= MaxDistance;
 }

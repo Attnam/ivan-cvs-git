@@ -1,12 +1,10 @@
 /* Compiled through materset.cpp */
 
-materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
-const materialdatabase& materialprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
+materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(int, long, bool), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
 
-void material::InstallDataBase(ushort Config) { databasecreator<material>::InstallDataBase(this, Config); }
-ulong material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
+long material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
 bool material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
-ulong material::GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
+long material::GetTotalExplosivePower() const { return long(double(Volume) * GetExplosivePower() / 1000000); }
 const char* material::GetConsumeVerb() const { return "eating"; }
 
 materialpredicate TrueMaterialPredicate = &material::True;
@@ -27,9 +25,9 @@ festring material::GetName(bool Articled, bool Adjective) const
   return Name;
 }
 
-ushort material::TakeDipVolumeAway()
+int material::TakeDipVolumeAway()
 {
-  ulong Amount = 100;
+  long Amount = 100;
 
   if(Amount < Volume)
     EditVolume(-Amount);
@@ -44,19 +42,18 @@ ushort material::TakeDipVolumeAway()
 
 void material::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << (ushort)GetType();
   SaveFile << Volume;
-  SaveFile << GetConfig();
+  SaveFile << (ushort)GetConfig();
 }
 
 void material::Load(inputfile& SaveFile)
 {
   SaveFile >> Volume;
-  InstallDataBase(ReadType<ushort>(SaveFile));
-  CalculateWeight();
+  databasecreator<material>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 }
 
-bool material::Effect(character* Eater, ulong Amount)
+bool material::Effect(character* Eater, long Amount)
 {
   /* Receivexxx should return bool! */
 
@@ -106,7 +103,7 @@ bool material::Effect(character* Eater, ulong Amount)
   return true;
 }
 
-material* material::EatEffect(character* Eater, ulong Amount)
+material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
@@ -139,7 +136,7 @@ bool material::HitEffect(character* Enemy)
     case HM_HOLY_BANANA: Enemy->AddHolyBananaConsumeEndMessage(); break;
     }
 
-  ulong Amount = Min(GetVolume() >> 1, 1UL);
+  long Amount = Max<long>(GetVolume() >> 1, 1);
   bool Success = Effect(Enemy, Amount);
 
   if(Amount != Volume)
@@ -174,7 +171,7 @@ material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
   return Material;
 }
 
-material* material::MakeMaterial(ushort Config)
+/*material* material::MakeMaterial(int Config)
 {
   if(!Config)
     return 0;
@@ -192,9 +189,9 @@ material* material::MakeMaterial(ushort Config)
 
   ABORT("Odd material configuration number %d requested!", Config);
   return 0;
-}
+}*/
 
-material* material::MakeMaterial(ushort Config, ulong Volume)
+material* material::MakeMaterial(int Config, long Volume)
 {
   if(!Config)
     return 0;
@@ -214,34 +211,26 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
   return 0;
 }
 
-void material::SetVolume(ulong What)
+void material::SetVolume(long What)
 {
   Volume = What;
-  CalculateWeight();
 
   if(MotherEntity)
     MotherEntity->SignalVolumeAndWeightChange();
 }
 
-void material::SetVolumeNoSignals(ulong What)
-{
-  Volume = What;
-  CalculateWeight();
-}
-
-void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
+void material::Initialize(int NewConfig, long InitVolume, bool Load)
 {
   if(!Load)
     {
-      InstallDataBase(NewConfig);
+      databasecreator<material>::InstallDataBase(this, NewConfig);
       Volume = InitVolume;
-      CalculateWeight();
     }
 
   VirtualConstructor(Load);
 }
 
-ulong material::GetTotalNutritionValue() const
+long material::GetTotalNutritionValue() const
 { 
   return GetNutritionValue() * GetVolume() * 15 / 1000;
 }
@@ -253,32 +242,29 @@ bool material::CanBeEatenByAI(const character* Eater) const
 
 bool material::BreatheEffect(character* Enemy)
 {
-  return Effect(Enemy, Max<ulong>(GetVolume() / 10, 50));
+  return Effect(Enemy, Max<long>(GetVolume() / 10, 50));
 }
 
-const materialdatabase* material::GetDataBase(ushort Config)
+const materialdatabase* material::GetDataBase(int Config)
 {
-  const prototype* ProtoType = 0;
+  const prototype* Proto = 0;
 
   switch(Config >> 12)
     {
-    case SOLID_ID >> 12: ProtoType = &solid_ProtoType; break;
-    case ORGANIC_ID >> 12: ProtoType = &organic_ProtoType; break;
-    case GAS_ID >> 12: ProtoType = &gas_ProtoType; break;
-    case LIQUID_ID >> 12: ProtoType = &liquid_ProtoType; break;
-    case FLESH_ID >> 12: ProtoType = &flesh_ProtoType; break;
-    case POWDER_ID >> 12: ProtoType = &powder_ProtoType; break;
-    case IRON_ALLOY_ID >> 12: ProtoType = &ironalloy_ProtoType; break;
+    case SOLID_ID >> 12: Proto = &solid_ProtoType; break;
+    case ORGANIC_ID >> 12: Proto = &organic_ProtoType; break;
+    case GAS_ID >> 12: Proto = &gas_ProtoType; break;
+    case LIQUID_ID >> 12: Proto = &liquid_ProtoType; break;
+    case FLESH_ID >> 12: Proto = &flesh_ProtoType; break;
+    case POWDER_ID >> 12: Proto = &powder_ProtoType; break;
+    case IRON_ALLOY_ID >> 12: Proto = &ironalloy_ProtoType; break;
     }
 
-  if(ProtoType)
-    {
-      const databasemap& ConfigMap = ProtoType->GetConfig();
-      const databasemap::const_iterator i = ConfigMap.find(Config);
+  const database* DataBase;
+  databasecreator<material>::FindDataBase(DataBase, Proto, Config);
 
-      if(i != ConfigMap.end())
-	return &i->second;
-    }
+  if(DataBase)
+    return DataBase;
 
   ABORT("Odd material configuration number %d requested!", Config);
   return 0;
@@ -290,4 +276,11 @@ void material::FinishConsuming(character* Consumer)
     Consumer->EditExperience(WISDOM, 500);
 
   AddConsumeEndMessage(Consumer);
+}
+
+void materialdatabase::InitDefaults(const materialprototype* NewProtoType, int NewConfig)
+{
+  ProtoType = NewProtoType;
+  DigProductMaterial = Config = NewConfig;
+  IsAbstract = true; // dummy value for configcontainer
 }

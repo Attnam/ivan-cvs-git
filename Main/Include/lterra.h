@@ -17,8 +17,36 @@ class stack;
 class room;
 class liquid;
 class materialscript;
+class glterrainprototype;
+class olterrainprototype;
 template <class type> class contentscript;
 template <class type> class databasecreator;
+
+struct lterraindatabase : public databasebase
+{
+  vector2d BitmapPos;
+  festring Article;
+  festring Adjective;
+  festring AdjectiveArticle;
+  festring NameSingular;
+  festring NamePlural;
+  festring PostFix;
+  int ArticleMode;
+  fearray<long> MainMaterialConfig;
+  fearray<long> SecondaryMaterialConfig;
+  fearray<long> MaterialConfigChances;
+  long MaterialConfigChanceSum;
+  bool IsAbstract;
+  int OKVisualEffects;
+  color16 MaterialColorB;
+  color16 MaterialColorC;
+  color16 MaterialColorD;
+  festring SitMessage;
+  bool ShowMaterial;
+  int AttachedGod;
+  int Walkability;
+  bool HasSecondaryMaterial;
+};
 
 class lterrain : public object
 {
@@ -40,83 +68,63 @@ class lterrain : public object
   bool CanBeSeenBy(character*) const;
   virtual const festring& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-  virtual square* GetSquareUnderEntity(ushort = 0) const;
+  virtual square* GetSquareUnderEntity(int = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   level* GetLevel() const;
   lsquare* GetNearLSquare(vector2d) const;
-  lsquare* GetNearLSquare(ushort, ushort) const;
+  lsquare* GetNearLSquare(int, int) const;
   virtual void CalculateAll() { CalculateEmitation(); }
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
+  virtual void SignalEmitationIncrease(color24);
+  virtual void SignalEmitationDecrease(color24);
   virtual bool HasKeyHole() const { return CanBeOpened(); }
   virtual bool IsOnGround() const { return true; }
   room* GetRoom() const;
-  void Draw(bitmap*, vector2d, ulong, bool) const;
-  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual void SignalRustLevelChange();
-  virtual void TryToRust(ulong);
-  virtual void ReceiveAcid(material*, ulong) { }
+  virtual void TryToRust(long);
+  virtual void ReceiveAcid(material*, long) { }
   void InitMaterials(material*, bool = true);
-  void SetMainMaterial(material*, ushort = 0);
-  void ChangeMainMaterial(material*, ushort = 0);
+  void SetMainMaterial(material*, int = 0);
+  void ChangeMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
-  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
+  virtual void InitMaterials(const materialscript*, const materialscript*, bool);
+  virtual const fearray<long>& GetMainMaterialConfig() const = 0;
  protected:
-  void Initialize(ushort, ushort);
+  void Initialize(int, int);
   virtual void VirtualConstructor(bool) { }
+  virtual void InstallDataBase(int) = 0;
   lsquare* LSquareUnder;
 };
 
-struct glterraindatabase
+struct glterraindatabase : public lterraindatabase
 {
-  void InitDefaults(ushort NewConfig) { Config = NewConfig; }
+  typedef glterrainprototype prototype;
+  void InitDefaults(const prototype*, int);
   bool AllowRandomInstantiation() const { return true; }
-  ushort Config;
-  vector2d BitmapPos;
-  festring Article;
-  festring Adjective;
-  festring AdjectiveArticle;
-  festring NameSingular;
-  festring NamePlural;
-  festring PostFix;
-  uchar ArticleMode;
-  std::vector<long> MainMaterialConfig;
-  std::vector<long> SecondaryMaterialConfig;
-  std::vector<long> ContainedMaterialConfig;
-  std::vector<long> MaterialConfigChances;
-  bool IsAbstract;
-  uchar OKVisualEffects;
-  ushort MaterialColorB;
-  ushort MaterialColorC;
-  ushort MaterialColorD;
-  festring SitMessage;
-  bool CreateDivineConfigurations;
-  bool ShowMaterial;
-  uchar AttachedGod;
-  uchar Walkability;
-  bool HasSecondaryMaterial;
-  bool HasContainedMaterial;
+  const prototype* ProtoType;
 };
 
 class glterrainprototype
 {
  public:
   friend class databasecreator<glterrain>;
-  glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, ushort), const char*);
-  glterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
+  glterrainprototype(glterrainprototype*, glterrain* (*)(int, int), const char*);
+  glterrain* Clone(int Config = 0, int SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   glterrain* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
-  const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
+  int GetIndex() const { return Index; }
   const glterrainprototype* GetBase() const { return Base; }
-  void CreateSpecialConfigurations() { }
-  const glterraindatabase& ChooseBaseForConfig(ushort);
+  int CreateSpecialConfigurations(glterraindatabase**, int Configs) { return Configs; }
+  const glterraindatabase* ChooseBaseForConfig(glterraindatabase** TempConfig, int, int) { return *TempConfig; }
+  const glterraindatabase*const* GetConfigData() const { return ConfigData; }
+  int GetConfigSize() const { return ConfigSize; }
  private:
-  ushort Index;
+  int Index;
   glterrainprototype* Base;
-  std::map<ushort, glterraindatabase> Config;
-  glterrain* (*Cloner)(ushort, ushort);
+  glterraindatabase** ConfigData;
+  glterraindatabase** ConfigTable[CONFIG_TABLE_SIZE];
+  int ConfigSize;
+  glterrain* (*Cloner)(int, int);
   const char* ClassID;
 };
 
@@ -126,104 +134,88 @@ class glterrain : public lterrain, public gterrain
   friend class databasecreator<glterrain>;
   typedef glterrainprototype prototype;
   typedef glterraindatabase database;
-  typedef std::map<ushort, glterraindatabase> databasemap;
   glterrain(donothing) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetEntryDifficulty() const { return 1; }
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual int GetEntryDifficulty() const { return 1; }
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  DATA_BASE_VALUE(ushort, Config);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
+  DATA_BASE_VALUE(int, Config);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, int);
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
   DATA_BASE_VALUE(const festring&, AdjectiveArticle);
   DATA_BASE_VALUE(const festring&, NameSingular);
   DATA_BASE_VALUE(const festring&, NamePlural);
   DATA_BASE_VALUE(const festring&, PostFix);
-  DATA_BASE_VALUE(uchar, ArticleMode);
-  DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
-  DATA_BASE_VALUE(uchar, OKVisualEffects);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
+  DATA_BASE_VALUE(int, ArticleMode);
+  virtual DATA_BASE_VALUE(const fearray<long>&, MainMaterialConfig);
+  DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
+  virtual DATA_BASE_VALUE(const fearray<long>&, MaterialConfigChances);
+  virtual DATA_BASE_VALUE(long, MaterialConfigChanceSum);
+  DATA_BASE_VALUE(int, OKVisualEffects);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorB, int);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorC, int);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorD, int);
   virtual DATA_BASE_VALUE(const festring&, SitMessage);
   DATA_BASE_BOOL(ShowMaterial);
-  DATA_BASE_VALUE(uchar, Walkability);
-  virtual uchar GetAttachedGod() const;
-  virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
+  DATA_BASE_VALUE(int, Walkability);
+  virtual int GetAttachedGod() const;
+  virtual int GetTheoreticalWalkability() const { return DataBase->Walkability; }
+  void Draw(bitmap*, vector2d, color24, bool) const;
  protected:
-  virtual void InstallDataBase(ushort);
-  virtual uchar GetGraphicsContainerIndex() const;
+  virtual void InstallDataBase(int);
+  virtual int GetGraphicsContainerIndex() const;
   const database* DataBase;
 };
 
-struct olterraindatabase
+struct olterraindatabase : public lterraindatabase
 {
-  void InitDefaults(ushort);
+  typedef olterrainprototype prototype;
+  void InitDefaults(const prototype*, int);
   bool AllowRandomInstantiation() const;
-  ushort Config;
-  vector2d BitmapPos;
-  festring Article;
-  festring Adjective;
-  festring AdjectiveArticle;
-  festring NameSingular;
-  festring NamePlural;
-  festring PostFix;
-  uchar ArticleMode;
-  std::vector<long> MainMaterialConfig;
-  std::vector<long> SecondaryMaterialConfig;
-  std::vector<long> ContainedMaterialConfig;
-  std::vector<long> MaterialConfigChances;
-  bool IsAbstract;
-  uchar OKVisualEffects;
-  ushort MaterialColorB;
-  ushort MaterialColorC;
-  ushort MaterialColorD;
-  festring SitMessage;
+  const prototype* ProtoType;
   bool CreateDivineConfigurations;
-  bool ShowMaterial;
-  uchar AttachedGod;
   festring DigMessage;
   bool CanBeDestroyed;
-  uchar RestModifier;
+  int RestModifier;
   festring RestMessage;
   bool IsUpLink;
-  ulong StorageVolume;
-  uchar HPModifier;
+  long StorageVolume;
+  int HPModifier;
   bool IsSafeToCreateDoor;
   vector2d OpenBitmapPos;
-  bool CreateLockConfigurations;
-  uchar Walkability;
+  bool CreateLockConfigurations;  
   bool IsAlwaysTransparent;
   bool UseBorderTiles;
-  ushort BorderTilePriority;
-  bool HasSecondaryMaterial;
-  bool HasContainedMaterial;
+  int BorderTilePriority;
+  bool CreateWindowConfigurations;
+  vector2d WindowBitmapPos;
+  bool ShowThingsUnder;
 };
 
 class olterrainprototype
 {
  public:
   friend class databasecreator<olterrain>;
-  olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, ushort), const char*);
-  olterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
+  olterrainprototype(olterrainprototype*, olterrain* (*)(int, int), const char*);
+  olterrain* Clone(int Config = 0, int SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   olterrain* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
-  const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
+  int GetIndex() const { return Index; }
   const olterrainprototype* GetBase() const { return Base; }
-  void CreateSpecialConfigurations();
-  const olterraindatabase& ChooseBaseForConfig(ushort);
+  int CreateSpecialConfigurations(olterraindatabase**, int);
+  const olterraindatabase* ChooseBaseForConfig(olterraindatabase** TempConfig, int, int) { return *TempConfig; }
+  const olterraindatabase*const* GetConfigData() const { return ConfigData; }
+  int GetConfigSize() const { return ConfigSize; }
  private:
-  ushort Index;
+  int Index;
   olterrainprototype* Base;
-  std::map<ushort, olterraindatabase> Config;
-  olterrain* (*Cloner)(ushort, ushort);
+  olterraindatabase** ConfigData;
+  olterraindatabase** ConfigTable[CONFIG_TABLE_SIZE];
+  int ConfigSize;
+  olterrain* (*Cloner)(int, int);
   const char* ClassID;
 };
 
@@ -233,12 +225,11 @@ class olterrain : public lterrain, public oterrain
   friend class databasecreator<olterrain>;
   typedef olterrainprototype prototype;
   typedef olterraindatabase database;
-  typedef std::map<ushort, olterraindatabase> databasemap;
   olterrain(donothing) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Enter(bool) const;
-  virtual void BeKicked(character*, ushort, uchar);
+  virtual void BeKicked(character*, int, int);
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
   virtual bool HasDrinkEffect() const { return false; } 
@@ -247,79 +238,81 @@ class olterrain : public lterrain, public oterrain
   virtual void Lock() { }
   virtual bool IsLocked() const { return false; }
   virtual void CreateBoobyTrap() { }
-  virtual void HasBeenHitByItem(character*, item*, ushort) { }
+  virtual void HasBeenHitByItem(character*, item*, int) { }
   virtual void Break();
-  short GetHP() const { return HP; }
-  void EditHP(short What) { HP += What; }
-  virtual void ReceiveDamage(character*, ushort, ushort);
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  int GetHP() const { return HP; }
+  void EditHP(int What) { HP += What; }
+  virtual void ReceiveDamage(character*, int, int);
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   void ShowRestMessage(character*) const;
-  DATA_BASE_VALUE(ushort, Config);
+  DATA_BASE_VALUE(int, Config);
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
   DATA_BASE_VALUE(const festring&, AdjectiveArticle);
   DATA_BASE_VALUE(const festring&, NameSingular);
   DATA_BASE_VALUE(const festring&, NamePlural);
   DATA_BASE_VALUE(const festring&, PostFix);
-  DATA_BASE_VALUE(uchar, ArticleMode);
-  DATA_BASE_VALUE(const std::vector<long>&, MainMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
-  DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
-  DATA_BASE_VALUE(uchar, OKVisualEffects);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorB, ushort);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
+  DATA_BASE_VALUE(int, ArticleMode);
+  virtual DATA_BASE_VALUE(const fearray<long>&, MainMaterialConfig);
+  DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
+  virtual DATA_BASE_VALUE(const fearray<long>&, MaterialConfigChances);
+  virtual DATA_BASE_VALUE(long, MaterialConfigChanceSum);
+  DATA_BASE_VALUE(int, OKVisualEffects);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorB, int);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorC, int);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(color16, MaterialColorD, int);
   virtual DATA_BASE_VALUE(const festring&, SitMessage);
   DATA_BASE_BOOL(ShowMaterial);
   DATA_BASE_VALUE(const festring&, DigMessage);
   bool CanBeDestroyed() const;
-  DATA_BASE_VALUE(uchar, RestModifier);
+  DATA_BASE_VALUE(int, RestModifier);
   DATA_BASE_VALUE(const festring&, RestMessage);
   DATA_BASE_BOOL(IsUpLink);
-  DATA_BASE_VALUE(ulong, StorageVolume);
-  DATA_BASE_VALUE(uchar, HPModifier);
+  DATA_BASE_VALUE(long, StorageVolume);
+  DATA_BASE_VALUE(int, HPModifier);
   DATA_BASE_BOOL(IsSafeToCreateDoor);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, int);
   DATA_BASE_BOOL(UseBorderTiles);
-  DATA_BASE_VALUE(ushort, BorderTilePriority);
-  virtual DATA_BASE_VALUE(uchar, Walkability);
+  DATA_BASE_VALUE(int, BorderTilePriority);
+  virtual DATA_BASE_VALUE(int, Walkability);
   DATA_BASE_BOOL(IsAlwaysTransparent);
-  virtual void SetAttachedArea(uchar) { }
-  virtual void SetAttachedEntry(uchar) { }
+  DATA_BASE_BOOL(CreateWindowConfigurations);
+  DATA_BASE_VALUE(vector2d, WindowBitmapPos);
+  DATA_BASE_BOOL(ShowThingsUnder);
+  virtual void SetAttachedArea(int) { }
+  virtual void SetAttachedEntry(int) { }
   virtual void SetText(const festring&) { }
   virtual festring GetText() const;
-  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
-  ushort GetStrengthValue() const;
+  virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
+  int GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { HP = CalculateMaxHP(); }
-  short CalculateMaxHP();
-  virtual uchar GetAttachedGod() const;
-  void SetConfig(ushort, ushort = 0);
+  int CalculateMaxHP();
+  virtual int GetAttachedGod() const;
+  void SetConfig(int, int = 0);
   god* GetMasterGod() const;
   virtual bool IsTransparent() const;
-  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
-  virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
-  virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
+  virtual void Draw(bitmap*, vector2d, color24, int, bool) const;
+  virtual int GetTheoreticalWalkability() const { return DataBase->Walkability; }
   virtual void BeDestroyed() { Break(); }
-  virtual void ReceiveAcid(material*, ulong);
+  virtual void ReceiveAcid(material*, long);
   virtual void SignalRustLevelChange();
  protected:
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual void ModifyAnimationFrames(ushort&) const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual void ModifyAnimationFrames(int&) const;
   virtual void VirtualConstructor(bool);
-  virtual void InstallDataBase(ushort);
-  virtual uchar GetGraphicsContainerIndex() const;
+  virtual void InstallDataBase(int);
+  virtual int GetGraphicsContainerIndex() const;
   const database* DataBase;
-  short HP;
+  int HP;
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DEFINITIONS__
 #define LTERRAIN_PROTOTYPE(name, base, baseproto, protobase)\
-protobase* name##_Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
+protobase* name##_Clone(int Config, int SpecialFlags) { return new name(Config, SpecialFlags); }\
 protobase##prototype name##_ProtoType(baseproto, &name##_Clone, #name);\
-name::name(ushort Config, ushort SpecialFlags) : base(donothing()) { Initialize(Config, SpecialFlags); }\
+name::name(int Config, int SpecialFlags) : base(donothing()) { Initialize(Config, SpecialFlags); }\
 name::name(donothing D) : base(D) { }\
 const protobase##prototype* name::GetProtoType() const { return &name##_ProtoType; }
 #else
@@ -331,7 +324,7 @@ const protobase##prototype* name::GetProtoType() const { return &name##_ProtoTyp
 name : public base\
 {\
  public:\
-  name(ushort = 0, ushort = 0);\
+  name(int = 0, int = 0);\
   name(donothing);\
   virtual const prototype* GetProtoType() const;\
   data\

@@ -15,10 +15,10 @@ class festring;
 class id
 {
  public:
-  virtual void AddName(festring&, uchar, ushort) const;
-  virtual festring GetName(uchar, ushort) const;
-  virtual void AddName(festring&, uchar) const;
-  virtual festring GetName(uchar) const;
+  virtual void AddName(festring&, int, int) const;
+  virtual festring GetName(int, int) const;
+  virtual void AddName(festring&, int) const;
+  virtual festring GetName(int) const;
  protected:
   virtual const festring& GetNameSingular() const = 0;
   virtual void AddNameSingular(festring&, bool) const;
@@ -30,7 +30,7 @@ class id
   virtual bool AddMaterialDescription(festring&, bool) const { return false; }
   virtual const festring& GetPostFix() const = 0;
   virtual void AddPostFix(festring&) const;
-  virtual uchar GetArticleMode() const;
+  virtual int GetArticleMode() const;
   virtual bool ShowMaterial() const { return false; }
   virtual bool AddActiveAdjective(festring&, bool) const;
 };

@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "typedef.h"
+#include "vector2d.h"
 
 #define ADD_MESSAGE msgsystem::AddMessage
 
@@ -35,8 +35,8 @@ class msgsystem
   static felist MessageHistory;
   static festring LastMessage;
   static festring BigMessage;
-  static ushort Times;
-  static ulong Begin, End;
+  static int Times;
+  static vector2d Begin, End;
   static bool Enabled;
   static bool BigMessageMode;
   static bool MessagesChanged;

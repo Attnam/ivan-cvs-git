@@ -14,56 +14,57 @@ class ITEM
  public:
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
   virtual void DipInto(liquid*, character*);
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsDippable(const character*) const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
-  virtual void SetSecondaryMaterial(material*, ushort = 0);
-  virtual void ChangeSecondaryMaterial(material*, ushort = 0);
+  virtual void SetSecondaryMaterial(material*, int = 0);
+  virtual void ChangeSecondaryMaterial(material*, int = 0);
   void InitMaterials(material*, material*, bool = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetMaterials() const { return 3; }
-  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
+  virtual int GetMaterials() const { return 2; }
+  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
   virtual void SignalSpoil(material*);
   virtual void Be();
   virtual bool IsWeapon(const character*) const { return true; }
-  virtual char GetEnchantment() const { return Enchantment; }
-  virtual void SetEnchantment(char);
-  virtual void EditEnchantment(char);
-  virtual float GetWeaponStrength() const;
-  virtual ushort GetStrengthValue() const;
-  virtual ushort GetEffectBonus() const;
-  virtual ushort GetAPBonus() const;
+  virtual int GetEnchantment() const { return Enchantment; }
+  virtual void SetEnchantment(int);
+  virtual void EditEnchantment(int);
+  virtual double GetWeaponStrength() const;
+  virtual int GetStrengthValue() const;
+  virtual int GetEffectBonus() const;
+  virtual int GetAPBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
-  virtual ushort GetBonus() const;
-  virtual uchar GetSpoilLevel() const;
-  virtual material* GetMaterial(ushort) const;
-  virtual void TryToRust(ulong);
+  virtual int GetBonus() const;
+  virtual int GetSpoilLevel() const;
+  virtual material* GetMaterial(int) const;
+  virtual void TryToRust(long);
   virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   virtual material* RemoveMaterial(material*);
   material* RemoveMainMaterial();
   material* RemoveSecondaryMaterial();
-  virtual vector2d GetWieldedBitmapPos(ushort) const;
+  virtual vector2d GetWieldedBitmapPos(int) const;
   virtual void CalculateEmitation();
-  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
+  virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   virtual item* Fix();
  protected:
+  virtual long GetMaterialPrice() const;
   virtual bool CalculateHasBe() const;
   virtual bool AllowFluids() const { return true; }
   virtual void VirtualConstructor(bool);
-  virtual bool IsSparkling(ushort) const;
+  virtual bool IsSparkling(int) const;
   virtual void AddPostFix(festring&) const;
   virtual void GenerateMaterials();
-  virtual ushort GetMaterialColorB(ushort) const;
-  virtual uchar GetAlphaB(ushort) const;
-  virtual uchar GetRustDataB() const;
-  virtual ushort GetDripColor() const;
+  virtual color16 GetMaterialColorB(int) const;
+  virtual alpha GetAlphaB(int) const;
+  virtual int GetRustDataB() const;
+  virtual color16 GetDripColor() const;
   virtual bool AllowRegularColors() const;
   material* SecondaryMaterial;
-  char Enchantment;
+  int Enchantment;
 );
 
 class ITEM
@@ -74,9 +75,9 @@ class ITEM
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -85,13 +86,13 @@ class ITEM
   neercseulb,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -111,7 +112,7 @@ class ITEM
  public:
   virtual bool IsWhip() const { return true; }
  protected:
-  virtual ushort GetFormModifier() const;
+  virtual int GetFormModifier() const;
 );
 
 class ITEM
@@ -119,8 +120,8 @@ class ITEM
   flamingsword,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
-  virtual ushort GetSpecialFlags() const;
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
+  virtual int GetSpecialFlags() const;
 );
 
 class ITEM
@@ -128,7 +129,7 @@ class ITEM
   mjolak,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
 );
 
 class ITEM
@@ -136,7 +137,7 @@ class ITEM
   vermis,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
 );
 
 class ITEM
@@ -144,7 +145,7 @@ class ITEM
   turox,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
 );
 
 class ITEM
@@ -152,8 +153,8 @@ class ITEM
   whipofthievery,
   whip,
  public:
-  virtual ulong GetPrice() const;
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual long GetPrice() const;
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
  protected:
   virtual bool CleptiaHelps(const character*, const character*) const;
 );
@@ -167,9 +168,9 @@ class ITEM
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -182,9 +183,9 @@ class ITEM
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -193,9 +194,9 @@ class ITEM
   thunderhammer,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
-  virtual ushort GetSpecialFlags() const;
-  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
+  virtual int GetSpecialFlags() const;
+  virtual bool ReceiveDamage(character*, int, int, int);
 );
 
 class ITEM
@@ -210,24 +211,24 @@ class ABSTRACT_ITEM
   armor,
   item,
  public:
-  virtual ulong GetPrice() const;
-  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
+  virtual long GetPrice() const;
+  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsArmor(const character*) const { return true; }
-  virtual char GetEnchantment() const { return Enchantment; }
-  virtual void SetEnchantment(char);
-  virtual void EditEnchantment(char);
-  virtual ushort GetStrengthValue() const;
+  virtual int GetEnchantment() const { return Enchantment; }
+  virtual void SetEnchantment(int);
+  virtual void EditEnchantment(int);
+  virtual int GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
-  virtual ushort GetInElasticityPenalty(ushort) const;
-  virtual short GetCarryingBonus() const;
+  virtual int GetInElasticityPenalty(int) const;
+  virtual int GetCarryingBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
   virtual bool AllowFluids() const { return true; }
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
-  char Enchantment;
+  int Enchantment;
 );
 
 class ITEM
@@ -235,9 +236,9 @@ class ITEM
   bodyarmor,
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsBodyArmor(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
@@ -254,9 +255,9 @@ class ITEM
   virtual bool IsConsumable(const character*) const { return false; }
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -265,10 +266,10 @@ class ITEM
   shield,
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
-  virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
-  virtual ushort GetBonus() const;
+  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
+  virtual int GetBonus() const;
 );
 
 class ITEM
@@ -276,15 +277,15 @@ class ITEM
   cloak,
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsCloak(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
-  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
+  virtual bool IsInCorrectSlot(int) const;
+  virtual bool ReceiveDamage(character*, int, int, int);
  protected:
-  virtual ushort GetSpecialFlags() const;
+  virtual int GetSpecialFlags() const;
   virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
-  virtual ushort GetMaterialColorB(ushort) const;
+  virtual color16 GetMaterialColorB(int) const;
 );
 
 class ITEM
@@ -292,9 +293,9 @@ class ITEM
   boot,
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsBoot(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
 );
 
 class ITEM
@@ -302,9 +303,9 @@ class ITEM
   gauntlet, 
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsGauntlet(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
 );
 
 class ITEM
@@ -312,11 +313,11 @@ class ITEM
   belt, 
   armor,
  public:
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsBelt(const character*) const { return true; }
-  virtual ushort GetFormModifier() const; 
-  virtual bool IsInCorrectSlot(ushort) const;
-  virtual ushort GetMaterialColorB(ushort Frame) const { return GetMaterialColorA(Frame); }
+  virtual int GetFormModifier() const; 
+  virtual bool IsInCorrectSlot(int) const;
+  virtual color16 GetMaterialColorB(int Frame) const { return GetMaterialColorA(Frame); }
 );
 
 class ITEM
@@ -325,9 +326,9 @@ class ITEM
   item,
  public:
   virtual bool IsRing(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
  protected:
-  virtual ushort GetMaterialColorB(ushort) const;
+  virtual color16 GetMaterialColorB(int) const;
 );
 
 class ITEM
@@ -336,9 +337,9 @@ class ITEM
   item,
  public:
   virtual bool IsAmulet(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
  protected:
-  virtual ushort GetMaterialColorB(ushort) const;
+  virtual color16 GetMaterialColorB(int) const;
 );
 
 class ITEM
@@ -347,12 +348,12 @@ class ITEM
   armor,
  public:
   virtual bool IsGorovitsFamilyRelic() const;
-  virtual ulong GetPrice() const;
+  virtual long GetPrice() const;
   virtual bool IsHelmet(const character*) const { return true; }
-  virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool IsInCorrectSlot(int) const;
  protected:
-  virtual ushort GetMaterialColorB(ushort) const;
-  virtual ushort GetMaterialColorC(ushort) const;
+  virtual color16 GetMaterialColorB(int) const;
+  virtual color16 GetMaterialColorC(int) const;
 );
 
 class ITEM 
@@ -360,7 +361,7 @@ class ITEM
   chameleonwhip, 
   whip, 
  public: 
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool); 
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool); 
  protected: 
   virtual bool ScabiesHelps(const character*, const character*) const; 
 );
@@ -370,12 +371,12 @@ class ITEM
   wondersmellstaff,
   meleeweapon,
  public:
-  virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  virtual ushort GetClassAnimationFrames() const;
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const;
+  virtual int GetClassAnimationFrames() const;
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -389,7 +390,7 @@ class ITEM
   virtual void Load(inputfile&);
   ulong GetEquippedTicks() { return EquippedTicks; }
   void SetEquippedTicks(ulong What) { EquippedTicks = What; }
-  virtual bool IsDecosAdShirt() const { return true; }
+  virtual bool IsDecosAdShirt(const character*) const { return true; }
  protected:
   virtual bool CalculateHasBe() const { return true; }
   virtual void VirtualConstructor(bool);

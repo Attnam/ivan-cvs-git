@@ -11,6 +11,7 @@
 
 #define EXISTS 1
 #define HAS_BE 2
+#define ENTITY_FLAGS 3
 
 class square;
 class material;
@@ -19,20 +20,21 @@ class character;
 class entity
 {
  public:
-  entity(uchar);
+  friend class pool;
+  entity(int);
   entity(const entity&);
   virtual ~entity();
   virtual void Be() { }
-  bool Exists() const { return !!(EntityFlags & EXISTS); }
+  bool Exists() const { return !!(Flags & EXISTS); }
   void SendToHell();
-  bool IsEnabled() const { return !!(EntityFlags & HAS_BE); }
+  bool IsEnabled() const { return !!(Flags & HAS_BE); }
   void Enable();
   void Disable();
-  virtual square* GetSquareUnderEntity(ushort = 0) const = 0;
+  virtual square* GetSquareUnderEntity(int = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() { }
-  ulong GetEmitation() const { return Emitation; }
-  virtual void SignalEmitationIncrease(ulong) { }
-  virtual void SignalEmitationDecrease(ulong) { }
+  color24 GetEmitation() const { return Emitation; }
+  virtual void SignalEmitationIncrease(color24) { }
+  virtual void SignalEmitationDecrease(color24) { }
   virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
   virtual bool AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
@@ -43,9 +45,11 @@ class entity
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
  protected:
-  std::list<entity*>::iterator PoolIterator;
-  ulong Emitation;
-  uchar EntityFlags;
+  color24 Emitation;
+  ulong Flags;
+ private:
+  entity* Last;
+  entity* Next;
 };
 
 #endif

@@ -1,21 +1,21 @@
 /* Compiled through coreset.cpp */
 
-entity::entity(const entity& Entity) : Emitation(Entity.Emitation), EntityFlags(Entity.EntityFlags)
+entity::entity(const entity& Entity) : Emitation(Entity.Emitation), Flags(Entity.Flags)
 {
-  if(EntityFlags & HAS_BE)
-    PoolIterator = pool::Add(this);
+  if(Flags & HAS_BE)
+    pool::Add(this);
 }
 
-entity::entity(uchar EntityFlags) : Emitation(0), EntityFlags(EntityFlags|EXISTS)
+entity::entity(int Flags) : Emitation(0), Flags(Flags|EXISTS)
 {
-  if(EntityFlags & HAS_BE)
-    PoolIterator = pool::Add(this);
+  if(Flags & HAS_BE)
+    pool::Add(this);
 }
 
 entity::~entity()
 {
-  if(EntityFlags & HAS_BE)
-    pool::Remove(PoolIterator);
+  if(Flags & HAS_BE)
+    pool::Remove(this);
 }
 
 /* Calling SendToHell() marks the entity dead,
@@ -25,16 +25,16 @@ entity::~entity()
 
 void entity::SendToHell()
 {
-  if(EntityFlags & EXISTS)
+  if(Flags & EXISTS)
     {
-      pool::AddToHell(this);
-      EntityFlags ^= EXISTS;
-
-      if(EntityFlags & HAS_BE)
+      if(Flags & HAS_BE)
 	{
-	  pool::Remove(PoolIterator);
-	  EntityFlags ^= HAS_BE;
+	  pool::Remove(this);
+	  Flags ^= HAS_BE;
 	}
+
+      pool::AddToHell(this);
+      Flags ^= EXISTS;
     }
 }
 
@@ -44,18 +44,18 @@ void entity::SendToHell()
 
 void entity::Enable()
 {
-  if(!(EntityFlags & HAS_BE))
+  if(!(Flags & HAS_BE))
     {
-      PoolIterator = pool::Add(this);
-      EntityFlags |= HAS_BE;
+      pool::Add(this);
+      Flags |= HAS_BE;
     }
 }
 
 void entity::Disable()
 {
-  if(EntityFlags & HAS_BE)
+  if(Flags & HAS_BE)
     {
-      pool::Remove(PoolIterator);
-      EntityFlags ^= HAS_BE;
+      pool::Remove(this);
+      Flags ^= HAS_BE;
     }
 }

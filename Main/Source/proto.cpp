@@ -1,27 +1,35 @@
 /* Compiled through dataset.cpp */
 
+itemdatabase** protosystem::ItemConfigData;
+int protosystem::ItemConfigDataSize;
+itemdatabase** protosystem::ItemCategoryData[ITEM_CATEGORIES];
+int protosystem::ItemCategorySize[ITEM_CATEGORIES];
+long protosystem::ItemCategoryPossibility[ITEM_CATEGORIES];
+long protosystem::TotalItemPossibility;
+
 character* protosystem::BalancedCreateMonster()
 {
-  for(ushort c = 0;; ++c)
+  for(int c = 0;; ++c)
     {
-      float MinDifficulty = game::GetMinDifficulty(), MaxDifficulty = MinDifficulty * 25;
+      double MinDifficulty = game::GetMinDifficulty(), MaxDifficulty = MinDifficulty * 25;
       std::vector<configid> Possible;
 
-      for(ushort Type = 1; Type < protocontainer<character>::GetProtoAmount(); ++Type)
+      for(int Type = 1; Type < protocontainer<character>::GetSize(); ++Type)
 	{
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Type);
-	  const character::databasemap& Config = Proto->GetConfig();
+	  const character::database*const* ConfigData = Proto->GetConfigData();
+	  int ConfigSize = Proto->GetConfigSize();
 
-	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	  for(int c = 0; c < ConfigSize; ++c)
 	    {
-	      const character::database& DataBase = i->second;
+	      const character::database* DataBase = ConfigData[c];
 
-	      if(!DataBase.IsAbstract && DataBase.CanBeGenerated)
+	      if(!DataBase->IsAbstract && DataBase->CanBeGenerated)
 		{
-		  configid ConfigID(Type, i->first);
+		  configid ConfigID(Type, ConfigData[c]->Config);
 		  const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 
-		  if(DataBase.IsUnique && DangerID.HasBeenGenerated)
+		  if(DataBase->IsUnique && DangerID.HasBeenGenerated)
 		    continue;
 
 		  if(c >= 100)
@@ -30,20 +38,20 @@ character* protosystem::BalancedCreateMonster()
 		      continue;
 		    }
 
-		  if(!DataBase.IgnoreDanger)
+		  if(!DataBase->IgnoreDanger)
 		    {
-		      float Danger = DangerID.EquippedDanger;
+		      double Danger = DangerID.EquippedDanger;
 
-		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 3.0f))
+		      if(Danger > 99.0 || Danger < 0.01 || (DataBase->IsUnique && Danger < 3.0))
 			continue;
 
-		      float DangerModifier = DataBase.DangerModifier == 100 ? Danger : Danger * 100 / DataBase.DangerModifier;
+		      double DangerModifier = DataBase->DangerModifier == 100 ? Danger : Danger * 100 / DataBase->DangerModifier;
 
 		      if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
 			continue;
 		    }
 
-		  if(PLAYER->GetMaxHP() < DataBase.HPRequirementForGeneration)
+		  if(PLAYER->GetMaxHP() < DataBase->HPRequirementForGeneration)
 		    continue;
 
 		  Possible.push_back(ConfigID);
@@ -54,7 +62,7 @@ character* protosystem::BalancedCreateMonster()
       if(Possible.empty())
 	continue;
 
-      for(ushort i = 0; i < 25; ++i)
+      for(int i = 0; i < 25; ++i)
 	{
 	  configid Chosen = Possible[RAND() % Possible.size()];
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
@@ -76,61 +84,115 @@ character* protosystem::BalancedCreateMonster()
   return 0;
 }
 
-item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, ushort SpecialFlags, ushort ConfigFlags, bool Polymorph)
+item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long RequiredCategory, int SpecialFlags, int ConfigFlags, bool Polymorph)
 {
-  ulong SumOfPossibilities = 0;
+  typedef item::database database;
+  database** PossibleCategory[ITEM_CATEGORIES];
+  int PossibleCategorySize[ITEM_CATEGORIES];
+  long PartialCategoryPossibilitySum[ITEM_CATEGORIES];
+  int PossibleCategories = 0;
+  long TotalPossibility = 0;
+  long database::*PartialPossibilitySumPtr;
 
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  if(RequiredCategory == ANY_CATEGORY)
     {
-      const item::databasemap& Config = protocontainer<item>::GetProto(c)->GetConfig();
+      PartialPossibilitySumPtr = &database::PartialPossibilitySum;
+      PossibleCategory[0] = ItemConfigData;
+      PossibleCategorySize[0] = ItemConfigDataSize;
+      TotalPossibility = TotalItemPossibility;
+      PartialCategoryPossibilitySum[0] = TotalPossibility;
+      PossibleCategories = 1;
+    }
+  else
+    {
+      PartialPossibilitySumPtr = &database::PartialCategoryPossibilitySum;
 
-      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract && (!Category || Category & i->second.Category) && (!(ConfigFlags & NO_BROKEN) || !(i->first & BROKEN)))
-	  SumOfPossibilities += i->second.Possibility;
+      for(long CategoryIndex = 0, Category = 1; CategoryIndex < ITEM_CATEGORIES; ++CategoryIndex, Category <<= 1)
+	if(Category & RequiredCategory)
+	  {
+	    PossibleCategory[PossibleCategories] = ItemCategoryData[CategoryIndex];
+	    PossibleCategorySize[PossibleCategories] = ItemCategorySize[CategoryIndex];
+	    TotalPossibility += ItemCategoryPossibility[CategoryIndex];
+	    PartialCategoryPossibilitySum[PossibleCategories] = TotalPossibility;
+	    ++PossibleCategories;
+	  }
     }
 
-  while(true)
+  for(;;)
     {
-      for(ushort c1 = 0; c1 < 100; ++c1)
+      for(int c1 = 0; c1 < BALANCED_CREATE_ITEM_ITERATIONS; ++c1)
 	{
-	  ulong Counter = 0, RandomOne = 1 + RAND() % (SumOfPossibilities);
+	  long Rand = RAND_N(TotalPossibility);
+	  int Category;
 
-	  for(ushort c2 = 1; c2 < protocontainer<item>::GetProtoAmount(); ++c2)
+	  if(RequiredCategory == ANY_CATEGORY)
+	    Category = 0;
+	  else
 	    {
-	      const item::prototype* Proto = protocontainer<item>::GetProto(c2);
-	      const item::databasemap& Config = Proto->GetConfig();
-
-	      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-		if(!i->second.IsAbstract && (!Category || Category & i->second.Category) && (!(ConfigFlags & NO_BROKEN) || !(i->first & BROKEN)))
+	      for(int c2 = 0;; ++c2)
+		if(PartialCategoryPossibilitySum[c2] > Rand)
 		  {
-		    Counter += i->second.Possibility;
-
-		    if(Counter >= RandomOne)
-		      {
-			if(!Polymorph || i->second.IsPolymorphSpawnable)
-			  {
-			    item* Item = Proto->Clone(i->first, SpecialFlags);
-
-			    if((MinPrice == 0 && MaxPrice == MAX_PRICE) || (i->first & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE)) // optimization, GetTruePrice() may be rather slow
-			      return Item;
-
-			    ulong Price = Item->GetTruePrice();
-
-			    if(Item->HandleInPairs())
-			      Price <<= 1;
-
-			    if(Price >= MinPrice && Price <= MaxPrice)
-			      return Item;
-			    else
-			      delete Item;
-			  }
-
-			break;
-		      }
+		    Category = c2;
+		    break;
 		  }
 
-	      if(Counter >= RandomOne)
-		break;
+	      if(Category)
+		Rand -= PartialCategoryPossibilitySum[Category - 1];
+	    }
+
+	  const database*const* ChosenCategory = PossibleCategory[Category];
+	  const database* ChosenDataBase;
+
+	  if(ChosenCategory[0]->PartialCategoryPossibilitySum > Rand)
+	    ChosenDataBase = ChosenCategory[0];
+	  else
+	    {
+	      long A = 0;
+	      long B = PossibleCategorySize[Category] - 1;
+
+	      for(;;)
+		{
+		  long C = (A + B) >> 1;
+
+		  if(A != C)
+		    {
+		      if(ChosenCategory[C]->*PartialPossibilitySumPtr > Rand)
+			B = C;
+		      else
+			A = C;
+		    }
+		  else
+		    {
+		      ChosenDataBase = ChosenCategory[B];
+		      break;
+		    }
+		}
+	    }
+
+	  int Config = ChosenDataBase->Config;
+
+	  if((!(ConfigFlags & NO_BROKEN)
+	   || !(Config & BROKEN))
+	  && (!Polymorph
+	   || ChosenDataBase->IsPolymorphSpawnable))
+	    {
+	      item* Item = ChosenDataBase->ProtoType->Clone(Config, SpecialFlags);
+
+	      /* Optimization, GetTruePrice() may be rather slow */
+
+	      if((MinPrice == 0 && MaxPrice == MAX_PRICE)
+	      || (Config & BROKEN && ConfigFlags & IGNORE_BROKEN_PRICE))
+		return Item;
+
+	      long Price = Item->GetTruePrice();
+
+	      if(Item->HandleInPairs())
+		Price <<= 1;
+
+	      if(Price >= MinPrice && Price <= MaxPrice)
+		return Item;
+
+	      delete Item;
 	    }
 	}
 
@@ -139,31 +201,32 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
     }
 }
 
-character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort SpecialFlags)
+character* protosystem::CreateMonster(int MinDanger, int MaxDanger, int SpecialFlags)
 {
   std::vector<configid> Possible;
   character* Monster = 0;
 
-  for(ushort c = 0; !Monster; ++c)
+  for(int c = 0; !Monster; ++c)
     {
-      for(ushort Type = 1; Type < protocontainer<character>::GetProtoAmount(); ++Type)
+      for(int Type = 1; Type < protocontainer<character>::GetSize(); ++Type)
 	{
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Type);
-	  const character::databasemap& Config = Proto->GetConfig();
+	  const character::database*const* ConfigData = Proto->GetConfigData();
+	  int ConfigSize = Proto->GetConfigSize();
 
-	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	  for(int c = 0; c < ConfigSize; ++c)
 	    {
-	      const character::database& DataBase = i->second;
+	      const character::database* DataBase = ConfigData[c];
 
-	      if(!DataBase.IsAbstract && DataBase.CanBeGenerated && DataBase.CanBeWished && !DataBase.IsUnique && (DataBase.Frequency == 10000 || DataBase.Frequency > RAND() % 10000))
+	      if(!DataBase->IsAbstract && DataBase->CanBeGenerated && DataBase->CanBeWished && !DataBase->IsUnique && (DataBase->Frequency == 10000 || DataBase->Frequency > RAND() % 10000))
 		{
-		  configid ConfigID(Type, i->first);
+		  configid ConfigID(Type, DataBase->Config);
 
 		  if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
 		    {
 		      const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-		      float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
-		      ushort Danger = ushort(DataBase.DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / DataBase.DangerModifier);
+		      double RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
+		      int Danger = int(DataBase->DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / DataBase->DangerModifier);
 
 		      if(Danger < MinDanger || Danger > MaxDanger)
 			continue;
@@ -176,8 +239,8 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 
       if(Possible.empty())
 	{
-	  MinDanger = MinDanger > 0 ? Max<ushort>(MinDanger * 3 >> 2, 1) : 0;
-	  MaxDanger = MaxDanger < 10000 ? Min<ushort>(MaxDanger * 5 >> 2, 9999) : 10000;
+	  MinDanger = MinDanger > 0 ? Max(MinDanger * 3 >> 2, 1) : 0;
+	  MaxDanger = MaxDanger < 10000 ? Min(MaxDanger * 5 >> 2, 9999) : 10000;
 	  continue;
 	}
 
@@ -190,68 +253,69 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
   return Monster;
 }
 
-template <class type> std::pair<ushort, ushort> CountCorrectNameLetters(const typename type::database& DataBase, const festring& Identifier)
+template <class type> std::pair<int, int> CountCorrectNameLetters(const typename type::database* DataBase, const festring& Identifier)
 {
-  std::pair<ushort, ushort> Result(0, 0);
+  std::pair<int, int> Result(0, 0);
 
-  if(!DataBase.NameSingular.IsEmpty())
+  if(!DataBase->NameSingular.IsEmpty())
     ++Result.second;
 
-  if(festring::IgnoreCaseFind(Identifier, " " + DataBase.NameSingular + ' ') != festring::NPos)
-    Result.first += DataBase.NameSingular.GetSize();
+  if(festring::IgnoreCaseFind(Identifier, " " + DataBase->NameSingular + ' ') != festring::NPos)
+    Result.first += DataBase->NameSingular.GetSize();
 
-  if(!DataBase.Adjective.IsEmpty())
+  if(!DataBase->Adjective.IsEmpty())
     ++Result.second;
 
-  if(DataBase.Adjective.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase.Adjective + ' ') != festring::NPos)
-    Result.first += DataBase.Adjective.GetSize();
+  if(DataBase->Adjective.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase->Adjective + ' ') != festring::NPos)
+    Result.first += DataBase->Adjective.GetSize();
 
-  if(!DataBase.PostFix.IsEmpty())
+  if(!DataBase->PostFix.IsEmpty())
     ++Result.second;
 
-  if(DataBase.PostFix.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase.PostFix + ' ') != festring::NPos)
-    Result.first += DataBase.PostFix.GetSize();
+  if(DataBase->PostFix.GetSize() && festring::IgnoreCaseFind(Identifier, " " + DataBase->PostFix + ' ') != festring::NPos)
+    Result.first += DataBase->PostFix.GetSize();
 
-  for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-    if(festring::IgnoreCaseFind(Identifier, " " + DataBase.Alias[c] + ' ') != festring::NPos)
-      Result.first += DataBase.Alias[c].GetSize();
+  for(uint c = 0; c < DataBase->Alias.Size; ++c)
+    if(festring::IgnoreCaseFind(Identifier, " " + DataBase->Alias[c] + ' ') != festring::NPos)
+      Result.first += DataBase->Alias[c].GetSize();
 
   return Result;
 }
 
-template <class type> std::pair<const typename type::prototype*, ushort> SearchForProto(const festring& What, bool Output)
+template <class type> std::pair<const typename type::prototype*, int> SearchForProto(const festring& What, bool Output)
 {
   typedef typename type::prototype prototype;
-  typedef typename type::databasemap databasemap;
+  typedef typename type::database database;
 
   festring Identifier;
   Identifier << ' ' << What << ' ';
   bool Illegal = false, Conflict = false;
-  std::pair<const prototype*, ushort> ID(0, 0);
-  std::pair<ushort, ushort> Best(0, 0);
+  std::pair<const prototype*, int> ID(0, 0);
+  std::pair<int, int> Best(0, 0);
 
-  for(ushort c = 1; c < protocontainer<type>::GetProtoAmount(); ++c)
+  for(int c = 1; c < protocontainer<type>::GetSize(); ++c)
     {
       const prototype* Proto = protocontainer<type>::GetProto(c);
-      const databasemap& Config = Proto->GetConfig();
+      const database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract)
+      for(int c = 0; c < ConfigSize; ++c)
+	if(!ConfigData[c]->IsAbstract)
 	  {
 	    bool BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
 
-	    if(BrokenRequested == !(i->first & BROKEN))
+	    if(BrokenRequested == !(ConfigData[c]->Config & BROKEN))
 	      continue;
 
-	    std::pair<ushort, ushort> Correct = CountCorrectNameLetters<type>(i->second, Identifier);
+	    std::pair<int, int> Correct = CountCorrectNameLetters<type>(ConfigData[c], Identifier);
 
 	    if(Correct == Best)
 	      Conflict = true;
 	    else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
-	      if(i->second.CanBeWished || game::WizardModeIsActive())
+	      if(ConfigData[c]->CanBeWished || game::WizardModeIsActive())
 		{
 		  ID.first = Proto;
-		  ID.second = i->first;
+		  ID.second = ConfigData[c]->Config;
 		  Best = Correct;
 		  Conflict = false;
 		}
@@ -272,16 +336,16 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       else if(Conflict)
 	{
 	  ADD_MESSAGE("Be more precise!");
-	  return std::pair<const prototype*, ushort>(0, 0);
+	  return std::pair<const prototype*, int>(0, 0);
 	}
     }
 
   return ID;
 }
 
-character* protosystem::CreateMonster(const festring& What, ushort SpecialFlags, bool Output)
+character* protosystem::CreateMonster(const festring& What, int SpecialFlags, bool Output)
 {
-  std::pair<const character::prototype*, ushort> ID = SearchForProto<character>(What, Output);
+  std::pair<const character::prototype*, int> ID = SearchForProto<character>(What, Output);
 
   if(ID.first)
     return ID.first->Clone(ID.second, SpecialFlags);
@@ -291,7 +355,7 @@ character* protosystem::CreateMonster(const festring& What, ushort SpecialFlags,
 
 item* protosystem::CreateItem(const festring& What, bool Output)
 {
-  std::pair<const item::prototype*, ushort> ID = SearchForProto<item>(What, Output);
+  std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, Output);
 
   if(ID.first)
     return ID.first->Clone(ID.second);
@@ -299,17 +363,18 @@ item* protosystem::CreateItem(const festring& What, bool Output)
     return 0;
 }
 
-material* protosystem::CreateMaterial(const festring& What, ulong Volume, bool Output)
+material* protosystem::CreateMaterial(const festring& What, long Volume, bool Output)
 {
-  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+  for(int c1 = 1; c1 < protocontainer<material>::Size; ++c1)
     {
-      const material::prototype* Proto = protocontainer<material>::GetProto(c);
-      const material::databasemap& Config = Proto->GetConfig();
+      const material::prototype* Proto = protocontainer<material>::GetProto(c1);
+      const material::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(i->first && i->second.NameStem == What)
-	  if(i->second.CanBeWished || game::WizardModeIsActive())
-	    return Proto->Clone(i->first, Volume);
+      for(int c2 = 1; c2 < ConfigSize; ++c2)
+	if(ConfigData[c2]->NameStem == What)
+	  if(ConfigData[c2]->CanBeWished || game::WizardModeIsActive())
+	    return ConfigData[c2]->ProtoType->Clone(ConfigData[c2]->Config, Volume);
 	  else if(Output)
 	    {
 	      ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
@@ -327,39 +392,42 @@ material* protosystem::CreateMaterial(const festring& What, ulong Volume, bool O
 
 void protosystem::CreateEveryCharacter(charactervector& Character)
 {
-  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+  for(int c1 = 1; c1 < protocontainer<character>::GetSize(); ++c1)
     {
-      const character::prototype* Proto = protocontainer<character>::GetProto(c);
-      const character::databasemap& Config = Proto->GetConfig();
+      const character::prototype* Proto = protocontainer<character>::GetProto(c1);
+      const character::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract)
-	  Character.push_back(Proto->Clone(i->first));
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	if(!ConfigData[c2]->IsAbstract)
+	  Character.push_back(Proto->Clone(ConfigData[c2]->Config));
     }
 }
 
 void protosystem::CreateEveryItem(itemvector& Item)
 {
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  for(int c = 1; c < protocontainer<item>::GetSize(); ++c)
     {
       const item::prototype* Proto = protocontainer<item>::GetProto(c);
-      const item::databasemap& Config = Proto->GetConfig();
+      const item::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract && i->second.IsAutoInitializable)
-	  Item.push_back(Proto->Clone(i->first));
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->IsAutoInitializable)
+	  Item.push_back(Proto->Clone(ConfigData[c2]->Config));
     }
 }
 
 void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 {
-  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+  for(int c = 1; c < protocontainer<material>::Size; ++c)
     {
       const material::prototype* Proto = protocontainer<material>::GetProto(c);
-      const material::databasemap& Config = Proto->GetConfig();
+      const material::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(material::databasemap::const_iterator i = ++Config.begin(); i != Config.end(); ++i)
-	Material.push_back(Proto->Clone(i->first));
+      for(int c2 = 1; c2 < ConfigSize; ++c2)
+	Material.push_back(Proto->Clone(ConfigData[c2]->Config));
     }
 }
 
@@ -367,13 +435,82 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 
 void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
 {
-  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+  for(int c = 1; c < protocontainer<character>::GetSize(); ++c)
     {
       const character::prototype* Proto = protocontainer<character>::GetProto(c);
-      const character::databasemap& Config = Proto->GetConfig();
+      const character::database*const* ConfigData = Proto->GetConfigData();
+      int ConfigSize = Proto->GetConfigSize();
 
-      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract && !i->second.IsUnique && i->second.CanBeGenerated)
-	  EnemyVector.push_back(Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
+      for(int c2 = 0; c2 < ConfigSize; ++c2)
+	if(!ConfigData[c2]->IsAbstract && !ConfigData[c2]->IsUnique && ConfigData[c2]->CanBeGenerated)
+	  EnemyVector.push_back(Proto->Clone(ConfigData[c2]->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE));
+    }
+}
+
+void protosystem::Initialize()
+{
+  typedef item::prototype prototype;
+  typedef item::database database;
+  int c;
+
+  for(c = 1; c < protocontainer<item>::Size; ++c)
+    {
+      const prototype* Proto = protocontainer<item>::ProtoData[c];
+      ItemConfigDataSize += Proto->GetConfigSize();
+
+      if(Proto->GetConfigData()[0]->IsAbstract)
+	--ItemConfigDataSize;
+    }
+
+  ItemConfigData = new database*[ItemConfigDataSize];
+  int Index = 0;
+
+  for(c = 1; c < protocontainer<item>::Size; ++c)
+    {
+      const prototype* Proto = protocontainer<item>::ProtoData[c];
+      const database*const* ProtoConfigData = Proto->GetConfigData();
+      const database* MainDataBase = *ProtoConfigData;
+
+      if(!MainDataBase->IsAbstract)
+	ItemConfigData[Index++] = const_cast<database*>(MainDataBase);
+
+      int ConfigSize = Proto->GetConfigSize();
+
+      for(int c2 = 1; c2 < ConfigSize; ++c2)
+	ItemConfigData[Index++] = const_cast<database*>(ProtoConfigData[c2]);
+    }
+
+  database** DataBaseBuffer = new database*[ItemConfigDataSize];
+
+  for(int CategoryIndex = 0, Category = 1; CategoryIndex < ITEM_CATEGORIES; ++CategoryIndex, Category <<= 1)
+    {
+      long TotalPossibility = 0;
+      int CSize = 0;
+
+      for(int c = 0; c < ItemConfigDataSize; ++c)
+	{
+	  database* DataBase = ItemConfigData[c];
+
+	  if(DataBase->Category == Category)
+	    {
+	      DataBaseBuffer[CSize++] = DataBase;
+	      TotalPossibility += DataBase->Possibility;
+	      DataBase->PartialCategoryPossibilitySum = TotalPossibility;
+	    }
+	}
+
+      ItemCategoryData[CategoryIndex] = new database*[CSize];
+      ItemCategorySize[CategoryIndex] = CSize;
+      ItemCategoryPossibility[CategoryIndex] = TotalPossibility;
+      memcpy(ItemCategoryData[CategoryIndex], DataBaseBuffer, CSize * sizeof(database*));
+    }
+
+  delete [] DataBaseBuffer;
+
+  for(c = 0; c < ItemConfigDataSize; ++c)
+    {
+      database* DataBase = ItemConfigData[c];
+      TotalItemPossibility += DataBase->Possibility;
+      DataBase->PartialPossibilitySum = TotalItemPossibility;
     }
 }

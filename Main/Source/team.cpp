@@ -1,20 +1,20 @@
 /* Compiled through charset.cpp */
 
 team::team() : Leader(0) { }
-team::team(ushort ID) : Leader(0), ID(ID), KillEvilness(0) { }
+team::team(ulong ID) : Leader(0), ID(ID), KillEvilness(0) { }
 std::list<character*>::iterator team::Add(character* Char) { return Member.insert(Member.end(), Char); }
 void team::Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
 
-void team::SetRelation(team* AnotherTeam, uchar Relation)
+void team::SetRelation(team* AnotherTeam, int Relation)
 {
   this->Relation[AnotherTeam->ID] = AnotherTeam->Relation[ID] = Relation;
 }
 
-uchar team::GetRelation(const team* AnotherTeam) const
+int team::GetRelation(const team* AnotherTeam) const
 {
   if(AnotherTeam != this)
     {
-      std::map<ulong, uchar>::const_iterator Iterator = Relation.find(AnotherTeam->ID);
+      std::map<ulong, int>::const_iterator Iterator = Relation.find(AnotherTeam->ID);
 
       if(Iterator != Relation.end())
 	return Iterator->second;
@@ -50,10 +50,10 @@ void team::Hostility(team* Enemy)
 	      if(game::GetStoryState() != 2)
 		{
 		  vector2d AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : vector2d(28, 20);
-		  ushort Seen = 0;
+		  int Seen = 0;
 		  angel* Angel;
 
-		  for(ushort c = 0; c < 3; ++c)
+		  for(int c = 0; c < 3; ++c)
 		    {
 		      Angel = new angel(VALPURUS);
 		      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
@@ -98,16 +98,16 @@ void team::Load(inputfile& SaveFile)
 
 bool team::HasEnemy() const
 {
-  for(ushort c = 0; c < game::GetTeams(); ++c)
+  for(int c = 0; c < game::GetTeams(); ++c)
     if(!game::GetTeam(c)->GetMember().empty() && GetRelation(game::GetTeam(c)) == HOSTILE)
       return true;
       
   return false;
 }
 
-ushort team::GetEnabledMembers() const
+int team::GetEnabledMembers() const
 {
-  ushort Amount = 0;
+  int Amount = 0;
 
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
     if((*i)->IsEnabled())

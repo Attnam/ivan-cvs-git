@@ -3,9 +3,9 @@
 #include "proto.h"
 #include "item.h"
 
-item::prototype** protocontainer<item>::ProtoData;
+itemprototype** protocontainer<item>::ProtoData;
 valuemap protocontainer<item>::CodeNameMap;
-ushort protocontainer<item>::ProtoAmount;
+int protocontainer<item>::Size;
 itemprototype item_ProtoType(0, 0, "item");
 const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 
@@ -22,7 +22,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "message.h"
 #include "database.h"
 #include "stack.h"
-#include "wskill.h"
 #include "felist.h"
 #include "confdef.h"
 #include "room.h"
@@ -30,7 +29,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "materias.h"
 #include "human.h"
 #include "team.h"
-#include "wskill.h"
 #include "god.h"
 #include "team.h"
 #include "smoke.h"

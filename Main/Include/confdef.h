@@ -97,6 +97,7 @@
 #define SPIDER_BLOOD (LIQUID_ID + 13)
 #define VOMIT (LIQUID_ID + 14)
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
+#define SULPHURIC_ACID (LIQUID_ID + 16)
 
 #define FLESH_ID (5 << 12)
 
@@ -187,8 +188,11 @@
 #define WAND_OF_INVISIBILITY 9
 #define WAND_OF_CLONING 10
 #define WAND_OF_LIGHTNING 11
+#define WAND_OF_ACID_RAIN 12
 
 #define RUNED_WHIP 1
+
+#define BIG_MINE 1
 
 #define CLOAK_OF_INVISIBILITY 1
 #define CLOAK_OF_FIRE_RESISTANCE 2
@@ -316,8 +320,9 @@
 #define BRICK_PROPAGANDA 2
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
-#define STONE_WALL 5
-#define ICE_WALL 6
+#define BRICK_PRIMITIVE_PROPAGANDA 5
+#define STONE_WALL 6
+#define ICE_WALL 7
 
 #define PINE 1
 #define FIR 2

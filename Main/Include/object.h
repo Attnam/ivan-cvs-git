@@ -8,11 +8,12 @@
 #include "igraph.h"
 #include "entity.h"
 #include "id.h"
+#include "fearray.h"
 
 class god;
 class object;
 
-typedef vector2d (object::*bposretriever)(ushort) const;
+typedef vector2d (object::*bposretriever)(int) const;
 
 class object : public entity, public id
 {
@@ -25,76 +26,70 @@ class object : public entity, public id
   virtual void UpdatePictures();
   material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
-  virtual material* GetContainedMaterial() const { return 0; }
-  virtual void SetSecondaryMaterial(material*, ushort = 0) { }
-  virtual void ChangeSecondaryMaterial(material*, ushort = 0) { }
-  virtual void SetContainedMaterial(material*, ushort = 0) { }
-  virtual void ChangeContainedMaterial(material*, ushort = 0) { }
-  virtual ushort GetMaterials() const { return 1; }
-  virtual material* GetMaterial(ushort) const { return MainMaterial; }
+  virtual void SetSecondaryMaterial(material*, int = 0) { }
+  virtual void ChangeSecondaryMaterial(material*, int = 0) { }
+  virtual int GetMaterials() const { return 1; }
+  virtual material* GetMaterial(int) const { return MainMaterial; }
   const bitmap*const* GetPicture() const;
-  virtual ulong GetBaseEmitation() const { return 0; }
-  virtual void SetParameters(uchar) { }
-  virtual uchar GetOKVisualEffects() const { return 0; }
-  uchar GetVisualEffects() const { return VisualEffects; }
-  void SetVisualEffects(uchar What) { VisualEffects = What; }
-  virtual uchar GetForcedVisualEffects() const { return 0; }
-  ushort GetAnimationFrames() const { return GraphicData.AnimationFrames; }
+  virtual color24 GetBaseEmitation() const { return 0; }
+  virtual void SetParameters(int) { }
+  virtual int GetOKVisualEffects() const { return 0; }
+  int GetVisualEffects() const { return VisualEffects; }
+  void SetVisualEffects(int What) { VisualEffects = What; }
+  virtual int GetForcedVisualEffects() const { return 0; }
+  int GetAnimationFrames() const { return GraphicData.AnimationFrames; }
   virtual bool IsAnimated() const { return GraphicData.AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
-  virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
-  virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
+  virtual const fearray<long>& GetMaterialConfigChances() const = 0;
+  virtual long GetMaterialConfigChanceSum() const = 0;
   virtual void CalculateAll() = 0;
-  virtual uchar GetSpoilLevel() const { return 0; }
+  virtual int GetSpoilLevel() const { return 0; }
   void CreateWieldedBitmap(graphicid&) const;
-  virtual ushort GetSpecialFlags() const;
+  virtual int GetSpecialFlags() const;
   static void InitSparkleValidityArrays();
-  void UpdatePictures(graphicdata&, vector2d, ushort, uchar, uchar, bposretriever) const;
-  void InitMaterial(material*&, material*, ulong);
+  void UpdatePictures(graphicdata&, vector2d, int, alpha, int, bposretriever) const;
+  void InitMaterial(material*&, material*, long);
+  virtual bool DetectMaterial(const material*) const;
  protected:
-  virtual bool IsSparkling(ushort) const;
+  virtual bool IsSparkling(int) const;
   void CopyMaterial(material* const&, material*&);
-  void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
-  void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
-  material* SetMaterial(material*&, material*, ulong, ushort);
-  void ChangeMaterial(material*&, material*, ulong, ushort);
+  void ObjectInitMaterials(material*&, material*, long, material*&, material*, long, bool);
+  material* SetMaterial(material*&, material*, long, int);
+  void ChangeMaterial(material*&, material*, long, int);
   virtual bool CalculateHasBe() const;
-  virtual uchar GetGraphicsContainerIndex() const = 0;
-  virtual ushort GetMaterialColorA(ushort) const;
-  virtual ushort GetMaterialColorB(ushort) const { return 0; }
-  virtual ushort GetMaterialColorC(ushort) const { return 0; }
-  virtual ushort GetMaterialColorD(ushort) const { return 0; }
-  virtual uchar GetMaxAlpha() const { return 255; }
-  virtual uchar GetBaseAlpha(ushort) const { return 255; }
-  virtual uchar GetAlphaA(ushort) const;
-  virtual uchar GetAlphaB(ushort) const { return 255; }
-  virtual uchar GetAlphaC(ushort) const { return 255; }
-  virtual uchar GetAlphaD(ushort) const { return 255; }
-  virtual ushort GetOutlineColor(ushort) const;
-  virtual uchar GetOutlineAlpha(ushort) const { return 255; }
+  virtual int GetGraphicsContainerIndex() const = 0;
+  virtual color16 GetMaterialColorA(int) const;
+  virtual color16 GetMaterialColorB(int) const { return 0; }
+  virtual color16 GetMaterialColorC(int) const { return 0; }
+  virtual color16 GetMaterialColorD(int) const { return 0; }
+  virtual alpha GetMaxAlpha() const { return 255; }
+  virtual alpha GetAlphaA(int) const;
+  virtual alpha GetAlphaB(int) const { return 255; }
+  virtual alpha GetAlphaC(int) const { return 255; }
+  virtual alpha GetAlphaD(int) const { return 255; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const { return 255; }
   virtual bool AddMaterialDescription(festring&, bool) const;
-  virtual ushort RandomizeMaterialConfiguration();
-  virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
-  virtual void InstallDataBase(ushort) = 0;
-  virtual ushort GetClassAnimationFrames() const { return 1; }
+  int RandomizeMaterialConfiguration();
+  virtual int GetClassAnimationFrames() const { return 1; }
   void AddContainerPostFix(festring&) const;
   void AddLumpyPostFix(festring&) const;
   bool AddEmptyAdjective(festring&, bool) const;
-  virtual vector2d GetBitmapPos(ushort) const = 0;
+  virtual vector2d GetBitmapPos(int) const = 0;
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }
-  virtual void ModifyAnimationFrames(ushort&) const { }
-  virtual uchar GetRustDataA() const;
-  virtual uchar GetRustDataB() const { return NOT_RUSTED; }
-  virtual uchar GetRustDataC() const { return NOT_RUSTED; }
-  virtual uchar GetRustDataD() const { return NOT_RUSTED; }
-  virtual ushort GetDripColor() const { return 0; }
+  virtual void ModifyAnimationFrames(int&) const { }
+  virtual int GetRustDataA() const;
+  virtual int GetRustDataB() const { return NOT_RUSTED; }
+  virtual int GetRustDataC() const { return NOT_RUSTED; }
+  virtual int GetRustDataD() const { return NOT_RUSTED; }
+  virtual color16 GetDripColor() const { return 0; }
   virtual bool AllowSparkling() const { return true; }
   virtual bool AllowRegularColors() const { return true; }
   graphicdata GraphicData;
   material* MainMaterial;
-  uchar VisualEffects;
+  int VisualEffects;
 };
 
 #endif

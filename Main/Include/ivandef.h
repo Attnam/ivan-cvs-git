@@ -15,6 +15,8 @@
 
 #define IVAN_VERSION "0.440"
 
+struct databasebase { int Config; };
+
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
 #define DATA_BASE_BOOL(data) bool data() const { return DataBase->data; }
@@ -150,14 +152,12 @@
 #define GR_HUMANOID 4
 #define GR_EFFECT 5
 
-#define GRAPHIC_TYPES 5
+#define GRAPHIC_TYPES 4
 
 #define GR_WTERRAIN 0
 #define GR_FOW 1
 #define GR_CURSOR 2
 #define GR_SYMBOL 3
-#define GR_MENU 4
-#define GR_TRANSPARENT_COLOR_TILE 5
 
 #define ST_NORMAL 0
 #define ST_RIGHT_ARM 8
@@ -172,12 +172,12 @@
 #define ST_LIGHTNING 256
 #define ST_DISALLOW_R_COLORS 512
 
-#define SILHOUETTE_X_SIZE 64
+#define SILHOUETTE_X_SIZE 48
 #define SILHOUETTE_Y_SIZE 64
 
 #define ITEM_CATEGORIES 18
 
-#define ANY_CATEGORY 0
+#define ANY_CATEGORY 0x7FFFFFFF
 #define HELMET 1
 #define AMULET 2
 #define CLOAK 4
@@ -222,15 +222,14 @@
 #define CT_PLASTIC 256
 #define CT_GAS 512
 
-/* Possible square positions for stack. The first four are used for stacks
+/* Possible square positions for item. The first four are used for items
    on walls */
 
-#define DOWN 0
-#define LEFT 1
+#define LEFT 0
+#define DOWN 1
 #define UP 2
 #define RIGHT 3
-#define CENTER 4 // stack on ground
-#define HIDDEN 5 // stack which is never drawn
+#define CENTER 4 // item on ground
 
 #define HOSTILE 1
 #define UNCARING 2
@@ -331,7 +330,7 @@
 
 #define DIR_ERROR 0xFF
 
-#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0f
+#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0
 
 #define HELMET_INDEX 0
 #define AMULET_INDEX 1
@@ -349,7 +348,10 @@
 
 #define WORLD_MAP 255
 
+#define DEFAULT_TEAM 0xFF
+
 /* Hard-coded teams */
+
 #define PLAYER_TEAM 0
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
@@ -373,6 +375,10 @@
 #define IN_ROOM 4
 #define NOT_IN_ROOM 8
 #define ATTACHABLE (16|NOT_IN_ROOM) /* overrides IN_ROOM */
+
+#define DEFAULT_ATTACHED_AREA 0xFE
+#define DEFAULT_ATTACHED_ENTRY 0xFE
+#define NO_ENTRY 0
 
 #define RANDOM 0
 #define ELPURI_CAVE 1
@@ -423,7 +429,7 @@
 #define MORTIFER 15
 #define ATHEIST 16
 
-#define MAX_PRICE 4294967295UL
+#define MAX_PRICE 2147483647L
 
 #define PERMANENT 0xFFFF
 
@@ -431,7 +437,7 @@
 #define HIT 1
 #define CATCHED 2
 
-#define BEAM_EFFECTS 11
+#define BEAM_EFFECTS 12
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -444,6 +450,7 @@
 #define BEAM_CLONE 8
 #define BEAM_LIGHTNING 9
 #define BEAM_DOOR_CREATION 10
+#define BEAM_ACID_RAIN 11
 
 #define BEAM_STYLES 3
 
@@ -483,10 +490,14 @@
 
 #define DIM_LUMINANCE 0x6E6E6E
 
-#define BROKEN 256
-#define DEVOUT 512
+#define BROKEN 128
+#define WINDOW 1024
 
-#define CANNIBALIZED 1
+/* item flags */
+
+#define CANNIBALIZED 4
+#define SQUARE_POSITION_BITS (16|32|64)
+#define SQUARE_POSITION_SHIFT 4
 
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
@@ -561,5 +572,97 @@
 #define WON 0
 #define LOST 1
 #define DISQUALIFIED 2
+
+#define EMITTER_IDENTIFIER_BITS 0xFFFF
+#define EMITTER_SQUARE_PART_BITS 0xF000000
+#define EMITTER_SHADOW_BITS 0xF0000000
+#define EMITTER_SQUARE_PART_SHIFT 24
+#define EMITTER_SHADOW_SHIFT 28
+
+#define RE_SUN_EMITATED 0x200000
+#define ID_X_COORDINATE 0x400000
+#define ID_BEGIN 0x800000
+
+#define FORCE_ADD 0x400000
+#define SECONDARY_SUN_LIGHT 0x800000
+
+/* square & lsquare flags */
+
+#define ALLOW_EMITATION_CONTINUE 1
+#define FREEZED 2 /* also a stack flag */
+#define INSIDE 4
+#define NEW_DRAW_REQUEST 8
+#define STRONG_BIT 16
+#define STRONG_NEW_DRAW_REQUEST (NEW_DRAW_REQUEST|STRONG_BIT)
+#define DESCRIPTION_CHANGE 32
+#define MEMORIZED_UPDATE_REQUEST 128
+#define IN_SQUARE_STACK 256
+#define CHECK_SUN_LIGHT_NEEDED 512
+#define IS_TRANSPARENT 1024
+#define PERFECTLY_QUADRI_HANDLED 2048
+
+/* Slows down protosystem::BalancedCreateItem() but makes it produce more
+   accurate results */
+
+#define BALANCED_CREATE_ITEM_ITERATIONS 50
+
+#define CONFIG_TABLE_SIZE 256
+
+#define SPARKLE_POS_X_ERROR 128
+
+#define SKIN_COLOR 1
+#define CAP_COLOR 2
+#define HAIR_COLOR 4
+#define EYE_COLOR 8
+#define TORSO_MAIN_COLOR 16
+#define BELT_COLOR 32
+#define BOOT_COLOR 64
+#define TORSO_SPECIAL_COLOR 128
+#define ARM_MAIN_COLOR 256
+#define GAUNTLET_COLOR 512
+#define ARM_SPECIAL_COLOR 1024
+#define LEG_MAIN_COLOR 2048
+#define LEG_SPECIAL_COLOR 4096
+#define CLOTH_COLOR (CAP_COLOR\
+		    |TORSO_MAIN_COLOR\
+		    |ARM_MAIN_COLOR\
+		    |GAUNTLET_COLOR\
+		    |LEG_MAIN_COLOR)
+
+/* contentscript<character> flags */
+
+#define IS_LEADER 1
+#define IS_MASTER 2
+
+/* stack flags */
+
+/* If set, all items are always considered visible, so CanBeSeenBy calls
+   become unneeded */
+
+#define HIDDEN 1
+
+/* All costly updates (like emitation's) are avoided if this is set.
+   Allows much faster removing and adding items, but make sure the stack is
+   returned to the original state (excluding item order) before switching
+   this off. Note: also an lsquare flag */
+
+#define FREEZED 2
+
+/* End stack Flags */
+
+#define SUN_BEAM_DIRECTIONS 48
+
+/* Square part flags */
+
+#define SP_TOP_LEFT 1
+#define SP_TOP_RIGHT 2
+#define SP_BOTTOM_LEFT 4
+#define SP_BOTTOM_RIGHT 8
+#define SP_TOP (SP_TOP_LEFT|SP_TOP_RIGHT)
+#define SP_LEFT (SP_TOP_LEFT|SP_BOTTOM_LEFT)
+#define SP_RIGHT (SP_TOP_RIGHT|SP_BOTTOM_RIGHT)
+#define SP_BOTTOM (SP_BOTTOM_LEFT|SP_BOTTOM_RIGHT)
+
+#define CONDITION_COLORS 5
 
 #endif

@@ -1,6 +1,6 @@
 /* Compiled through areaset.cpp */
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), AnimatedEntities(0), DescriptionChanged(true) { }
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), Luminance(0), Flags(IS_TRANSPARENT|MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE), AnimatedEntities(0), LastSeen(0) { }
 
 square::~square()
 {
@@ -8,7 +8,7 @@ square::~square()
 
   if(Char)
     {
-      for(ushort c = 0; c < Char->GetSquaresUnder(); ++c)
+      for(int c = 0; c < Char->GetSquaresUnder(); ++c)
 	Char->GetSquareUnder(c)->Character = 0;
 
       delete Char;
@@ -20,7 +20,7 @@ void square::Save(outputfile& SaveFile) const
   if(!Character || Character->IsMainPos(Pos))
     SaveFile << Character;
 
-  SaveFile << LastSeen << AnimatedEntities << MemorizedDescription;
+  SaveFile << AnimatedEntities << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
@@ -28,13 +28,13 @@ void square::Load(inputfile& SaveFile)
   if(!Character)
     SaveFile >> Character;
 
-  SaveFile >> LastSeen >> AnimatedEntities >> MemorizedDescription;
+  SaveFile >> AnimatedEntities >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
 {
   Character = Guy;
-  NewDrawRequested = true;
+  Flags |= NEW_DRAW_REQUEST;
   IncAnimatedEntities();
 }
 
@@ -44,29 +44,7 @@ void square::RemoveCharacter()
     DecAnimatedEntities();
 
   Character = 0;
-  NewDrawRequested = true;
-}
-
-bool square::CanBeSeenByPlayer(bool) const
-{
-  return GetLastSeen() == game::GetLOSTurns();
-}
-
-bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
-{
-  ulong Distance = (GetPos() - FromPos).GetLengthSquare();
-
-  if(Distance > MaxDistance)
-    return false;
-  else
-    {
-      character* Char = GetCharacter();
-
-      if(Char && Char->IsPlayer() && Distance < Char->GetLOSRangeSquare())
-	return GetNearSquare(FromPos)->CanBeSeenByPlayer(true);
-      else
-	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
-    }
+  Flags |= NEW_DRAW_REQUEST;
 }
 
 const char* square::SurviveMessage(character* Char) const
@@ -114,12 +92,12 @@ bool square::IsFatalToStay() const
   return GetGTerrain()->IsFatalToStay() || (GetOTerrain() && GetOTerrain()->IsFatalToStay());
 }
 
-uchar square::GetEntryDifficulty() const
+int square::GetEntryDifficulty() const
 {
   return GetGTerrain()->GetEntryDifficulty();
 }
 
-uchar square::GetRestModifier() const
+int square::GetRestModifier() const
 {
   return GetOTerrain() ? GetOTerrain()->GetRestModifier() : 1;
 }

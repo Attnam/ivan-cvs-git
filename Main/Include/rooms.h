@@ -20,10 +20,10 @@ class ROOM
   room,
  public:
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*, ushort);
-  virtual bool DropItem(character*, item*, ushort);
+  virtual bool PickupItem(character*, item*, int);
+  virtual bool DropItem(character*, item*, int);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*, ushort);
+  virtual bool ConsumeItem(character*, item*, int);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const;
@@ -38,10 +38,10 @@ class ROOM
   room,
  public:
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*, ushort);
-  virtual bool DropItem(character*, item*, ushort);
+  virtual bool PickupItem(character*, item*, int);
+  virtual bool DropItem(character*, item*, int);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*, ushort);
+  virtual bool ConsumeItem(character*, item*, int);
   virtual void SetEntered(bool What) { Entered = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -52,7 +52,7 @@ class ROOM
   virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const { return false; }
-  virtual short GetGodRelationAdjustment() const { return -150; }
+  virtual int GetGodRelationAdjustment() const { return -150; }
   virtual bool AllowKick(const character*,const lsquare*) const;
   virtual void HostileAction(character*) const;
   virtual bool AllowAltarPolymorph() const { return false; }
@@ -68,10 +68,10 @@ class ROOM
   room,
  public:
   virtual void Enter(character*);
-  virtual bool PickupItem(character*, item*, ushort);
-  virtual bool DropItem(character*, item*, ushort);
+  virtual bool PickupItem(character*, item*, int);
+  virtual bool DropItem(character*, item*, int);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*, ushort);
+  virtual bool ConsumeItem(character*, item*, int);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;
@@ -83,10 +83,10 @@ class ROOM
   bananadroparea,
   room,
  public:
-  virtual bool PickupItem(character*, item*, ushort);
-  virtual bool DropItem(character*, item*, ushort);
+  virtual bool PickupItem(character*, item*, int);
+  virtual bool DropItem(character*, item*, int);
   virtual void KickSquare(character*, lsquare*);
-  virtual bool ConsumeItem(character*, item*, ushort);
+  virtual bool ConsumeItem(character*, item*, int);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;

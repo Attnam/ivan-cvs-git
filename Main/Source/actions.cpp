@@ -136,19 +136,19 @@ void consume::Terminate(bool Finished)
 void rest::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << GoalHP << TurnToStop;
+  SaveFile << GoalHP << MinToStop;
 }
 
 void rest::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> GoalHP >> TurnToStop;
+  SaveFile >> GoalHP >> MinToStop;
 }
 
 void rest::Handle()
 {
   if((GoalHP && (GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP() || !GetActor()->CanHeal()))
-  || (TurnToStop && game::GetTicks() / 10 >= TurnToStop))
+  || (MinToStop && game::GetTotalMinutes() >= MinToStop))
     Terminate(true);
   else
     {
@@ -209,8 +209,8 @@ void dig::Handle()
       return;
     }
 
-  ushort Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
-  Terrain->EditHP(-Max<ushort>(Damage, 1));
+  int Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
+  Terrain->EditHP(-Max(Damage, 1));
   Actor->EditExperience(ARM_STRENGTH, 10);
   Actor->EditAP(-100000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-30);

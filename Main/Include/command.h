@@ -10,6 +10,8 @@
 class item;
 class character;
 
+typedef bool (item::*sorter)(const character*) const;
+
 class command
 {
  public:
@@ -30,7 +32,7 @@ class command
 class commandsystem
 {
 public:
-  static command* GetCommand(ushort Index) { return Command[Index]; }
+  static command* GetCommand(int I) { return Command[I]; }
 private:
   static bool Apply(character*);
   static bool Close(character*);
@@ -70,7 +72,7 @@ private:
   static bool WieldInLeftArm(character*);
   static bool AssignName(character*);
   static bool Search(character*);
-  static bool Consume(character*, const char*, bool (*)(const item*, const character*));
+  static bool Consume(character*, const char*, sorter);
 #ifdef WIZARD
   static bool WizardMode(character*);
   static bool RaiseStats(character*);

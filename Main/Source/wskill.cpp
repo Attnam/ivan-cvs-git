@@ -1,38 +1,37 @@
 #include "wskill.h"
 #include "message.h"
-#include "ivandef.h"
 #include "save.h"
 #include "item.h"
 
-ushort CWeaponSkillLevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 65535 };
+int CWeaponSkillLevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 65535 };
 ulong CWeaponSkillUnuseTickMap[] = { 500000, 250000, 200000, 150000, 50000, 30000, 25000, 20000, 15000, 12500, 10000 };
-ushort CWeaponSkillUnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000, 2500, 3000 };
+int CWeaponSkillUnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000, 2500, 3000 };
 const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES] = { "unarmed combat", "kicking", "biting", "uncategorized", "small swords", "large swords", "blunt weapons", "axes", "polearms", "whips", "shields" };
 
-ushort SWeaponSkillLevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
+int SWeaponSkillLevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
 ulong SWeaponSkillUnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
-ushort SWeaponSkillUnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
+int SWeaponSkillUnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
 
-ushort cweaponskill::GetLevelMap(ushort Index) const { return CWeaponSkillLevelMap[Index]; }
-ulong cweaponskill::GetUnuseTickMap(ushort Index) const { return CWeaponSkillUnuseTickMap[Index]; }
-ushort cweaponskill::GetUnusePenaltyMap(ushort Index) const { return CWeaponSkillUnusePenaltyMap[Index]; }
-const char* cweaponskill::GetName() const { return CWeaponSkillName[Index]; }
+int cweaponskill::GetLevelMap(int I) const { return CWeaponSkillLevelMap[I]; }
+ulong cweaponskill::GetUnuseTickMap(int I) const { return CWeaponSkillUnuseTickMap[I]; }
+int cweaponskill::GetUnusePenaltyMap(int I) const { return CWeaponSkillUnusePenaltyMap[I]; }
+const char* cweaponskill::GetName(int Category) const { return CWeaponSkillName[Category]; }
 
 sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
-ushort sweaponskill::GetLevelMap(ushort Index) const { return SWeaponSkillLevelMap[Index]; }
-ulong sweaponskill::GetUnuseTickMap(ushort Index) const { return SWeaponSkillUnuseTickMap[Index]; }
-ushort sweaponskill::GetUnusePenaltyMap(ushort Index) const { return SWeaponSkillUnusePenaltyMap[Index]; }
+int sweaponskill::GetLevelMap(int I) const { return SWeaponSkillLevelMap[I]; }
+ulong sweaponskill::GetUnuseTickMap(int I) const { return SWeaponSkillUnuseTickMap[I]; }
+int sweaponskill::GetUnusePenaltyMap(int I) const { return SWeaponSkillUnusePenaltyMap[I]; }
 bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
 bool sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
-  SaveFile << Level << Hits << HitCounter;
+  SaveFile << (int)Level << (int)Hits << (int)HitCounter;
 }
 
 void weaponskill::Load(inputfile& SaveFile)
 {
-  SaveFile >> Level >> Hits >> HitCounter;
+  SaveFile >> (int&)Level >> (int&)Hits >> (int&)HitCounter;
 }
 
 bool weaponskill::AddHit()
@@ -49,7 +48,7 @@ bool weaponskill::AddHit()
   return false;
 }
 
-bool weaponskill::AddHit(ushort AddHits)
+bool weaponskill::AddHit(int AddHits)
 {
   if(!AddHits)
     return false;
@@ -61,7 +60,7 @@ bool weaponskill::AddHit(ushort AddHits)
   else
     Hits = 50000;
 
-  uchar OldLevel = Level;
+  int OldLevel = Level;
 
   while(Hits >= GetLevelMap(Level + 1))
     ++Level;
@@ -85,7 +84,7 @@ bool weaponskill::SubHit()
   return false;
 }
 
-bool weaponskill::SubHit(ushort SubHits)
+bool weaponskill::SubHit(int SubHits)
 {
   if(!SubHits)
     return false;
@@ -95,7 +94,7 @@ bool weaponskill::SubHit(ushort SubHits)
   else
     Hits = 0;
 
-  uchar OldLevel = Level;
+  int OldLevel = Level;
 
   while(Level && Hits < GetLevelMap(Level))
     --Level;
@@ -103,14 +102,14 @@ bool weaponskill::SubHit(ushort SubHits)
   return Level != OldLevel;
 }
 
-void cweaponskill::AddLevelUpMessage() const
+void cweaponskill::AddLevelUpMessage(int Category) const
 {
-  ADD_MESSAGE("You advance to skill level %d with %s!", Level, CWeaponSkillName[Index]);
+  ADD_MESSAGE("You advance to skill level %d with %s!", Level, CWeaponSkillName[Category]);
 }
 
-void cweaponskill::AddLevelDownMessage() const
+void cweaponskill::AddLevelDownMessage(int Category) const
 {
-  ADD_MESSAGE("You have not practised enough with %s lately. Your skill level is reduced to %d!", CWeaponSkillName[Index], Level);
+  ADD_MESSAGE("You have not practised enough with %s lately. Your skill level is reduced to %d!", CWeaponSkillName[Category], Level);
 }
 
 void sweaponskill::AddLevelUpMessage(const char* WeaponName) const
@@ -126,13 +125,13 @@ void sweaponskill::AddLevelDownMessage(const char* WeaponName) const
 void sweaponskill::Save(outputfile& SaveFile) const
 {
   weaponskill::Save(SaveFile);
-  SaveFile << ID << Weight << Config;
+  SaveFile << ID << Weight << (int)Config;
 }
 
 void sweaponskill::Load(inputfile& SaveFile)
 {
   weaponskill::Load(SaveFile);
-  SaveFile >> ID >> Weight >> Config;
+  SaveFile >> ID >> Weight >> (int&)Config;
 }
 
 bool weaponskill::Tick()

@@ -1,70 +1,91 @@
 /* Compiled through materset.cpp */
 
-rain::rain(liquid* Liquid, lsquare* LSquareUnder, vector2d Speed, bool OwnLiquid) : entity(HAS_BE), Liquid(Liquid), LSquareUnder(LSquareUnder), Speed(Speed), SpeedAbs(sqrt(Speed.GetLengthSquare())), OwnLiquid(OwnLiquid), Drops(0)
+rain::rain(liquid* Liquid, lsquare* LSquareUnder, vector2d Speed, int Team, bool OwnLiquid) : entity(OwnLiquid ? HAS_BE : 0), Next(0), Drop(0), Liquid(Liquid), LSquareUnder(LSquareUnder), Speed(Speed), SpeedAbs(long(sqrt(Speed.GetLengthSquare()))), Drops(0), OwnLiquid(OwnLiquid), Team(Team)
 {
   Emitation = Liquid->GetEmitation();
 }
 
 rain::~rain()
 {
+  delete [] Drop;
+
   if(OwnLiquid)
     delete Liquid;
 }
 
-void rain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance) const
+void rain::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
 {
-  ulong Volume = Liquid->GetVolume();
+  long Volume = Liquid->GetVolume();
+  int Drops = this->Drops;
 
   if(!Volume && !Drops)
     return;
 
-  ushort DropMax = Volume ? Limit<ushort>(Volume / 50, 1, MAX_RAIN_DROPS) : 0, c;
-
-  for(c = 0; c < Drops && c < DropMax; ++c)
-    if(!MaxDropAge[c])
-      RandomizeDropPos(c);
+  int c, DropMax = Volume ? Limit<int>(Volume / 50, 1, MAX_RAIN_DROPS) : 0;
 
   if(Drops < DropMax)
     {
+      drop* OldDrop = Drop;
+      Drop = new drop[DropMax];
+
+      for(c = 0; c < Drops; ++c)
+	if(OldDrop[c].MaxAge)
+	  Drop[c] = OldDrop[c];
+	else
+	  RandomizeDropPos(c);
+
+      delete [] OldDrop;
+
       for(; Drops < DropMax; ++Drops)
 	RandomizeDropPos(Drops);
     }
-  else if(Drops > DropMax)
+  else
     {
-      for(; Drops > DropMax && !MaxDropAge[Drops - 1]; --Drops);
+      for(c = 0; c < DropMax; ++c)
+	if(!Drop[c].MaxAge)
+	  RandomizeDropPos(c);
+
+      for(; Drops > DropMax && !Drop[Drops - 1].MaxAge; --Drops);
 
       if(!Drops)
-	return;
+	{
+	  this->Drops = 0;
+	  delete [] Drop;
+	  Drop = 0;
+	  return;
+	}
     }
 
-  ushort Color = Liquid->GetColor();
+  color16 Color = Liquid->GetRainColor();
 
   for(c = 0; c < Drops; ++c)
-    if(MaxDropAge[c])
+    if(Drop[c].MaxAge)
       {
-	ulong Age = GET_TICK() - DropStartTick[c];
+	ulong Age = ushort(GET_TICK()) - Drop[c].StartTick;
 
-	if(Age > MaxDropAge[c])
+	if(Age > Drop[c].MaxAge)
 	  {
-	    MaxDropAge[c] = 0;
+	    Drop[c].MaxAge = 0;
 	    continue;
 	  }
 
-	vector2d DropPos = DropStartPos[c] + (Speed * short(Age) >> 8);
+	vector2d DropPos = vector2d(Drop[c].StartPos) + (Speed * int(Age) >> 8);
 
 	if(DropPos.X < 0 || DropPos.Y < 0 || DropPos.X >= 16 || DropPos.Y >= 16)
 	  {
-	    MaxDropAge[c] = 0;
+	    Drop[c].MaxAge = 0;
 	    continue;
 	  }
 
 	Bitmap->AlphaPutPixel(Pos + DropPos, Color, Luminance, 255);
       }
+
+  this->Drops = Drops;
 }
 
-void rain::RandomizeDropPos(ushort Index) const
+void rain::RandomizeDropPos(int I) const
 {
-  DropStartTick[Index] = GET_TICK() - (RAND() & 3);
+  Drop[I].StartTick = GET_TICK() - (RAND() & 3);
   vector2d Pos;
 
   if(Speed.X && (!Speed.Y || RAND() & 1))
@@ -78,23 +99,27 @@ void rain::RandomizeDropPos(ushort Index) const
       Pos.Y = Speed.Y > 0 ? 0 : 15;
     }
 
-  DropStartPos[Index] = Pos;
-  ulong AgeModifier = 5000 / SpeedAbs;
-  MaxDropAge[Index] = AgeModifier > 1 ? 1 + RAND() % AgeModifier : 1;
+  Drop[I].StartPos = Pos;
+  int AgeModifier = 5000 / SpeedAbs;
+  Drop[I].MaxAge = AgeModifier > 1 ? 1 + RAND() % AgeModifier : 1;
 }
 
 void rain::Be()
 {
-  ulong Volume = Liquid->GetVolume();
+  long Volume = Liquid->GetVolume();
 
-  if(Volume)
+  if(Volume && !Liquid->IsPowder()) // gum
     {
-      ulong Rand = 250000000 / (Liquid->GetVolume() * SpeedAbs);
+      long Rand = 250000000 / (Volume * SpeedAbs);
+
+      if(OwnLiquid)
+	Rand >>= 3;
 
       if(Rand < 1 || !(RAND() % Rand))
 	{
-	  ulong DropVolume = Min(Volume, 50UL);
-	  LSquareUnder->SpillFluid(0, Liquid->CloneLiquid(DropVolume), false);
+	  long DropVolume = Min(Volume, 50L);
+	  /* Gum */
+	  LSquareUnder->SpillFluid(Team == PLAYER_TEAM ? PLAYER : 0, Liquid->CloneLiquid(DropVolume), true, OwnLiquid);
 
 	  if(OwnLiquid)
 	    if(Volume == DropVolume)
@@ -103,14 +128,14 @@ void rain::Be()
 		SendToHell();
 	      }
 	    else
-	      Liquid->EditVolume(DropVolume);
+	      Liquid->EditVolume(-DropVolume);
 	}
     }
 }
 
 void rain::Save(outputfile& SaveFile) const
 {
-  SaveFile << Liquid << Speed;
+  SaveFile << Liquid << Speed << (uchar)Team;
 }
 
 void rain::Load(inputfile& SaveFile)
@@ -120,7 +145,8 @@ void rain::Load(inputfile& SaveFile)
   Liquid->SetMotherEntity(this);
   Emitation = Liquid->GetEmitation();
   SaveFile >> Speed;
-  SpeedAbs = sqrt(Speed.GetLengthSquare());
+  Team = ReadType<uchar>(SaveFile);
+  SpeedAbs = long(sqrt(Speed.GetLengthSquare()));
 }
 
 outputfile& operator<<(outputfile& SaveFile, const rain* Rain)

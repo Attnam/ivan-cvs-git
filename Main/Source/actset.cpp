@@ -5,7 +5,7 @@
 
 action::prototype** protocontainer<action>::ProtoData;
 valuemap protocontainer<action>::CodeNameMap;
-ushort protocontainer<action>::ProtoAmount;
+int protocontainer<action>::Size;
 
 #include "actions.h"
 

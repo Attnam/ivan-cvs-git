@@ -14,7 +14,7 @@
 
 #define SCRIPT_MEMBER(type, name)\
  public:\
-  const type* Get##name() const { return name##Holder.GetMember(); }\
+  const type* Get##name() const { return name##Holder.Member; }\
  protected:\
   scriptmember< type > name##Holder;
 
@@ -24,9 +24,15 @@
  protected:\
   scriptmember< type > name##Holder;
 
+#define FAST_SCRIPT_MEMBER(type, name)\
+ public:\
+  type Get##name() const { return name##Holder.Member; }\
+ protected:\
+  fastscriptmember< type > name##Holder;
+
 #define SCRIPT_BOOL(name)\
  public:\
-  const bool* name() const { return name##Holder.GetMember(); }\
+  const bool* name() const { return name##Holder.Member; }\
  protected:\
   scriptmember<bool> name##Holder;
 
@@ -35,6 +41,12 @@
   const bool* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
  protected:\
   scriptmember<bool> name##Holder;
+
+#define FAST_SCRIPT_BOOL(name)\
+ public:\
+  bool name() const { return name##Holder.Member; }\
+ protected:\
+  fastscriptmember<bool> name##Holder;
 
 class glterrain;
 class olterrain;
@@ -45,9 +57,8 @@ class scriptwithbase;
 class outputfile;
 class inputfile;
 
-class scriptmemberbase
+struct scriptmemberbase
 {
- public:
   virtual ~scriptmemberbase() { }
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile&) const = 0;
@@ -55,26 +66,22 @@ class scriptmemberbase
   virtual void Replace(scriptmemberbase&) = 0;
 };
 
-template <class type> class scriptmember : public scriptmemberbase
+template <class type> struct scriptmember : public scriptmemberbase
 {
- public:
   virtual ~scriptmember() { delete Member; }
   scriptmember() : Member(0) { }
   scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
   scriptmember& operator=(const scriptmember&);
-  type* GetMember() const { return Member; }
-  void SetMember(type* What) { Member = What; }
   virtual void ReadFrom(inputfile&);
   virtual void Replace(scriptmemberbase&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
- protected:
   type* Member;
 };
 
 template <class type, class scripttype> inline const type* GetMemberOf(const scriptmember<type>& Data, const scriptwithbase* Base, const type* (scripttype::*MemberRetriever)() const)
 {
-  return Data.GetMember() ? Data.GetMember() : Base ? (static_cast<const scripttype*>(Base)->*MemberRetriever)() : 0;
+  return Data.Member ? Data.Member : Base ? (static_cast<const scripttype*>(Base)->*MemberRetriever)() : 0;
 }
 
 template <class type> inline scriptmember<type>& scriptmember<type>::operator=(const scriptmember<type>& Data)
@@ -94,6 +101,25 @@ template <class type> inline scriptmember<type>& scriptmember<type>::operator=(c
 
   return *this;
 }
+
+#ifdef VC
+#pragma pack(1)
+#endif
+
+template <class type> struct fastscriptmember : public scriptmemberbase
+{
+  fastscriptmember() { }
+  fastscriptmember(type Member) : Member(Member) { }
+  virtual void ReadFrom(inputfile&);
+  virtual void Replace(scriptmemberbase&);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  type Member NO_ALIGNMENT;
+};
+
+#ifdef VC
+#pragma pack()
+#endif
 
 class script
 {
@@ -138,18 +164,19 @@ class posscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  bool Random;
-  SCRIPT_MEMBER(vector2d, Vector);
-  SCRIPT_MEMBER(uchar, Flags);
   SCRIPT_MEMBER(rect, Borders);
+  FAST_SCRIPT_MEMBER(packedvector2d, Vector);
+  FAST_SCRIPT_MEMBER(uchar, Flags);
+  bool Random;
 };
 
 class materialscript : public script
 {
  public:
   typedef materialscript scripttype;
+  materialscript();
   virtual void ReadFrom(inputfile&);
-  void SetConfig(ushort What) { Config = What; }
+  void SetConfig(int What) { Config = What; }
   material* Instantiate() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -157,7 +184,7 @@ class materialscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  SCRIPT_MEMBER(ulong, Volume);
+  FAST_SCRIPT_MEMBER(long, Volume);
   ushort Config;
 };
 
@@ -167,7 +194,7 @@ class basecontentscript : public script
   typedef basecontentscript scripttype;
   basecontentscript();
   virtual void ReadFrom(inputfile&);
-  ushort GetContentType() const { return ContentType; }
+  int GetContentType() const { return ContentType; }
   bool IsValid() const { return ContentType || Random; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -175,16 +202,15 @@ class basecontentscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual scriptmemberbase* GetData(const char*);
-  virtual ushort SearchCodeName(const festring&) const = 0;
+  virtual int SearchCodeName(const festring&) const = 0;
   virtual const char* GetClassID() const = 0;
   static datamap DataMap;
   SCRIPT_MEMBER(materialscript, MainMaterial);
   SCRIPT_MEMBER(materialscript, SecondaryMaterial);
-  SCRIPT_MEMBER(materialscript, ContainedMaterial);
-  SCRIPT_MEMBER(ulong, Parameters);
-  ushort ContentType;
+  ushort ContentType : 15;
+  bool Random : 1;
   ushort Config;
-  bool Random;
+  FAST_SCRIPT_MEMBER(uchar, Parameters);
 };
 
 inline bool IsValidScript(const basecontentscript* S) { return S->IsValid(); }
@@ -192,8 +218,8 @@ inline bool IsValidScript(const basecontentscript* S) { return S->IsValid(); }
 template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
-  type* BasicInstantiate(ushort) const;
-  virtual ushort SearchCodeName(const festring&) const;
+  type* BasicInstantiate(int) const;
+  virtual int SearchCodeName(const festring&) const;
 };
 
 template <class type> class contentscript;
@@ -202,78 +228,82 @@ class contentscript<character> : public contentscripttemplate<character>
 {
  public:
   typedef contentscript<character> scripttype;
-  character* Instantiate(ushort = 0) const;
+  contentscript<character>();
+  character* Instantiate(int = 0) const;
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual const char* GetClassID() const;
   static datamap DataMap;
-  SCRIPT_MEMBER(ushort, Team);
-  SCRIPT_MEMBER(std::list<contentscript<item> >, Inventory);
-  SCRIPT_BOOL(IsMaster);
-  SCRIPT_MEMBER(std::vector<vector2d>, WayPoint);
-  SCRIPT_BOOL(IsLeader);
+  SCRIPT_MEMBER(fearray<contentscript<item> >, Inventory);
+  SCRIPT_MEMBER(fearray<packedvector2d>, WayPoint);
+  FAST_SCRIPT_MEMBER(uchar, Team);
+  FAST_SCRIPT_MEMBER(uchar, Flags);
 };
 
 class contentscript<item> : public contentscripttemplate<item>
 {
  public:
   typedef contentscript<item> scripttype;
-  item* Instantiate(ushort = 0) const;
+  contentscript<item>();
+  item* Instantiate(int = 0) const;
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual const char* GetClassID() const;
   static datamap DataMap;
-  SCRIPT_MEMBER(ushort, Team);
-  SCRIPT_BOOL(IsActive);
-  SCRIPT_MEMBER(uchar, SideStackIndex);
-  SCRIPT_MEMBER(short, Enchantment);
-  SCRIPT_MEMBER(ulong, MinPrice);
-  SCRIPT_MEMBER(ulong, MaxPrice);
-  SCRIPT_MEMBER(ulong, Category);
-  SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
-  SCRIPT_MEMBER(uchar, Chance);
-  SCRIPT_MEMBER(ushort, ConfigFlags);
-  SCRIPT_MEMBER(uchar, SpoilPercentage);
-  SCRIPT_MEMBER(ushort, Times);
+  SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
+  FAST_SCRIPT_MEMBER(ulong, Category);
+  FAST_SCRIPT_MEMBER(long, MinPrice);
+  FAST_SCRIPT_MEMBER(long, MaxPrice);
+  FAST_SCRIPT_MEMBER(uchar, Team);
+  FAST_SCRIPT_MEMBER(uchar, SquarePosition);
+  FAST_SCRIPT_MEMBER(uchar, Chance);
+  FAST_SCRIPT_MEMBER(uchar, ConfigFlags);
+  FAST_SCRIPT_MEMBER(uchar, SpoilPercentage);
+  FAST_SCRIPT_MEMBER(uchar, Times);
+  FAST_SCRIPT_MEMBER(char, Enchantment);
+  FAST_SCRIPT_BOOL(IsActive);
 };
 
-bool IsValidScript(const std::list<contentscript<item> >*);
+bool IsValidScript(const fearray<contentscript<item> >*);
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
  public:
   typedef contentscript<glterrain> scripttype;
-  glterrain* Instantiate(ushort SpecialFlags = 0) const { return contentscripttemplate<glterrain>::BasicInstantiate(SpecialFlags); }
-  static void InitDataMap() { }
+  glterrain* Instantiate(int SpecialFlags = 0) const { return contentscripttemplate<glterrain>::BasicInstantiate(SpecialFlags); }
+  static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   virtual const char* GetClassID() const;
+  SCRIPT_BOOL(IsInside);
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
   typedef contentscript<olterrain> scripttype;
-  olterrain* Instantiate(ushort = 0) const;
+  contentscript<olterrain>();
+  olterrain* Instantiate(int = 0) const;
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   virtual const char* GetClassID() const;
-  SCRIPT_MEMBER(uchar, VisualEffects);
-  SCRIPT_MEMBER(uchar, AttachedArea);
-  SCRIPT_MEMBER(uchar, AttachedEntry);
+  SCRIPT_MEMBER(fearray<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(festring, Text);
-  SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
+  FAST_SCRIPT_MEMBER(uchar, VisualEffects);
+  FAST_SCRIPT_MEMBER(uchar, AttachedArea);
+  FAST_SCRIPT_MEMBER(uchar, AttachedEntry);
 };
 
 class squarescript : public script
 {
  public:
   typedef squarescript scripttype;
+  squarescript();
   virtual void ReadFrom(inputfile&);
   static void InitDataMap();
  protected:
@@ -281,12 +311,12 @@ class squarescript : public script
   static datamap DataMap;
   SCRIPT_MEMBER(posscript, Position);
   SCRIPT_MEMBER(contentscript<character>, Character);
-  SCRIPT_MEMBER(std::list<contentscript<item> >, Items);
+  SCRIPT_MEMBER(fearray<contentscript<item> >, Items);
   SCRIPT_MEMBER(contentscript<glterrain>, GTerrain);
   SCRIPT_MEMBER(contentscript<olterrain>, OTerrain);
   SCRIPT_MEMBER(interval, Times);
-  SCRIPT_BOOL(AttachRequired);
-  SCRIPT_MEMBER(uchar, EntryIndex);
+  FAST_SCRIPT_MEMBER(uchar, EntryIndex);
+  FAST_SCRIPT_BOOL(AttachRequired);
 };
 
 template <class type, class contenttype = contentscript<type> > class contentmap : public script
@@ -296,20 +326,20 @@ template <class type, class contenttype = contentscript<type> > class contentmap
   contentmap();
   virtual ~contentmap();
   virtual void ReadFrom(inputfile&);
-  const contenttype* GetContentScript(ushort X, ushort Y) const { return ContentMap[X][Y].second; }
+  const contenttype* GetContentScript(int X, int Y) const { return ContentMap[X][Y].second; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  std::pair<char, contenttype*>** ContentMap;
-  std::map<char, contenttype> SymbolMap;
+  std::pair<int, contenttype*>** ContentMap;
+  std::map<int, contenttype> SymbolMap;
   SCRIPT_MEMBER(vector2d, Size);
   SCRIPT_MEMBER(vector2d, Pos);
 };
 
-typedef contentmap<item, std::list<contentscript<item> > > itemcontentmap;
+typedef contentmap<item, fearray<contentscript<item> > > itemcontentmap;
 typedef contentmap<character> charactercontentmap;
 typedef contentmap<glterrain> glterraincontentmap;
 typedef contentmap<olterrain> olterraincontentmap;
@@ -339,13 +369,15 @@ class roomscript : public scriptwithbase
   SCRIPT_BOOL_WITH_BASE(AltarPossible);
   SCRIPT_BOOL_WITH_BASE(GenerateDoor);
   SCRIPT_BOOL_WITH_BASE(GenerateTunnel);
-  SCRIPT_MEMBER_WITH_BASE(uchar, DivineMaster);
+  SCRIPT_MEMBER_WITH_BASE(int, DivineMaster);
   SCRIPT_BOOL_WITH_BASE(GenerateLanterns);
-  SCRIPT_MEMBER_WITH_BASE(ushort, Type);
+  SCRIPT_MEMBER_WITH_BASE(int, Type);
   SCRIPT_BOOL_WITH_BASE(GenerateFountains);
   SCRIPT_BOOL_WITH_BASE(AllowLockedDoors);
   SCRIPT_BOOL_WITH_BASE(AllowBoobyTrappedDoors);
-  SCRIPT_MEMBER_WITH_BASE(uchar, Shape);
+  SCRIPT_MEMBER_WITH_BASE(int, Shape);
+  SCRIPT_BOOL_WITH_BASE(IsInside);
+  SCRIPT_BOOL_WITH_BASE(GenerateWindows);
 };
 
 class levelscript : public scriptwithbase
@@ -373,23 +405,22 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(interval, Rooms);
   SCRIPT_BOOL_WITH_BASE(GenerateMonsters);
   SCRIPT_BOOL_WITH_BASE(IsOnGround);
-  SCRIPT_MEMBER_WITH_BASE(uchar, TeamDefault);
-  SCRIPT_MEMBER_WITH_BASE(ulong, AmbientLight);
+  SCRIPT_MEMBER_WITH_BASE(int, TeamDefault);
   SCRIPT_MEMBER_WITH_BASE(festring, Description);
-  SCRIPT_MEMBER_WITH_BASE(uchar, LOSModifier);
+  SCRIPT_MEMBER_WITH_BASE(int, LOSModifier);
   SCRIPT_BOOL_WITH_BASE(IgnoreDefaultSpecialSquares);
-  SCRIPT_MEMBER_WITH_BASE(short, DifficultyBase);
-  SCRIPT_MEMBER_WITH_BASE(short, DifficultyDelta);
-  SCRIPT_MEMBER_WITH_BASE(short, MonsterAmountBase);
-  SCRIPT_MEMBER_WITH_BASE(short, MonsterAmountDelta);
-  SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalBase);
-  SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, DifficultyBase);
+  SCRIPT_MEMBER_WITH_BASE(int, DifficultyDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, MonsterAmountBase);
+  SCRIPT_MEMBER_WITH_BASE(int, MonsterAmountDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, MonsterGenerationIntervalBase);
+  SCRIPT_MEMBER_WITH_BASE(int, MonsterGenerationIntervalDelta);
   SCRIPT_BOOL_WITH_BASE(AutoReveal);
   SCRIPT_MEMBER_WITH_BASE(festring, ShortDescription);
   SCRIPT_BOOL_WITH_BASE(CanGenerateBone);
-  SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceBase);
-  SCRIPT_MEMBER_WITH_BASE(ushort, ItemMinPriceDelta);
-  SCRIPT_MEMBER_WITH_BASE(ushort, Type);
+  SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceBase);
+  SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, Type);
 };
 
 class dungeonscript : public script
@@ -399,7 +430,7 @@ class dungeonscript : public script
   dungeonscript();
   virtual ~dungeonscript();
   virtual void ReadFrom(inputfile&);
-  const std::map<uchar, levelscript>& GetLevel() const;
+  const std::map<int, levelscript>& GetLevel() const;
   void RandomizeLevels();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -407,10 +438,10 @@ class dungeonscript : public script
   static void InitDataMap();
  protected:
   static datamap DataMap;
-  std::map<uchar, levelscript> Level;
+  std::map<int, levelscript> Level;
   std::list<std::pair<interval, levelscript> > RandomLevel;
   SCRIPT_MEMBER(levelscript, LevelDefault);
-  SCRIPT_MEMBER(uchar, Levels);
+  SCRIPT_MEMBER(int, Levels);
   SCRIPT_MEMBER(festring, Description);
   SCRIPT_MEMBER(festring, ShortDescription);
 };
@@ -420,15 +451,15 @@ class teamscript : public script
  public:
   typedef teamscript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::vector<std::pair<uchar, uchar> >& GetRelation() const;
+  const std::vector<std::pair<int, int> >& GetRelation() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  std::vector<std::pair<uchar, uchar> > Relation;
-  SCRIPT_MEMBER(ushort, KillEvilness);
+  std::vector<std::pair<int, int> > Relation;
+  SCRIPT_MEMBER(int, KillEvilness);
 };
 
 class gamescript : public script
@@ -436,8 +467,8 @@ class gamescript : public script
  public:
   typedef gamescript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::list<std::pair<uchar, teamscript> >& GetTeam() const;
-  const std::map<uchar, dungeonscript>& GetDungeon() const;
+  const std::list<std::pair<int, teamscript> >& GetTeam() const;
+  const std::map<int, dungeonscript>& GetDungeon() const;
   void RandomizeLevels();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -445,10 +476,10 @@ class gamescript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  std::list<std::pair<uchar, teamscript> > Team;
-  std::map<uchar, dungeonscript> Dungeon;
-  SCRIPT_MEMBER(uchar, Dungeons);
-  SCRIPT_MEMBER(uchar, Teams);
+  std::list<std::pair<int, teamscript> > Team;
+  std::map<int, dungeonscript> Dungeon;
+  SCRIPT_MEMBER(int, Dungeons);
+  SCRIPT_MEMBER(int, Teams);
 };
 
 outputfile& operator<<(outputfile&, const gamescript*);

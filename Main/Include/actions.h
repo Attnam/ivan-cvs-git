@@ -16,7 +16,7 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetCounter(ushort What) { Counter = What; }
+  void SetCounter(int What) { Counter = What; }
   virtual bool IsVoluntary() const { return false; }
   virtual void Terminate(bool);
   virtual bool AllowFaint() const { return false; }
@@ -24,7 +24,7 @@ class ACTION
   virtual const char* GetDeathExplanation() const;
   virtual bool CanBeTalkedTo() const { return false; }
  protected:
-  ushort Counter;
+  int Counter;
 );
 
 class ACTION
@@ -36,14 +36,14 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetConsumingID(ulong What) { ConsumingID = What; }
+  void SetConsumingID(long What) { ConsumingID = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual const char* GetDescription() const;
   virtual void SetDescription(const festring&);
  protected:
   festring Description;
-  ulong ConsumingID;
+  long ConsumingID;
 );
 
 class ACTION
@@ -54,14 +54,14 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetGoalHP(short What) { GoalHP = What; }
+  void SetGoalHP(int What) { GoalHP = What; }
   virtual void Terminate(bool);
   virtual bool IsRest() const { return true; }
   virtual const char* GetDescription() const;
-  void SetTurnToStop(ulong What) { TurnToStop = What; }
+  void SetMinToStop(int What) { MinToStop = What; }
  protected:
-  short GoalHP;
-  ulong TurnToStop;
+  int GoalHP;
+  int MinToStop;
 );
 
 class ACTION
@@ -74,15 +74,15 @@ class ACTION
   virtual void Handle();
   void SetSquareDug(vector2d What) { SquareDug = What; }
   virtual void Terminate(bool);
-  void SetRightBackupID(ulong What) { RightBackupID = What; }
-  void SetLeftBackupID(ulong What) { LeftBackupID = What; }
+  void SetRightBackupID(long What) { RightBackupID = What; }
+  void SetLeftBackupID(long What) { LeftBackupID = What; }
   virtual bool TryDisplace() { return false; }
   virtual const char* GetDescription() const;
   virtual bool ShowEnvironment() const { return false; }
   void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
-  ulong RightBackupID;
-  ulong LeftBackupID;
+  long RightBackupID;
+  long LeftBackupID;
   vector2d SquareDug;
   bool MoveDigger;
 );
@@ -95,15 +95,15 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  uchar GetDirection() const { return Direction; }
-  void SetDirection(uchar What) { Direction = What; }
+  int GetDirection() const { return Direction; }
+  void SetDirection(int What) { Direction = What; }
   bool IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(bool What) { WalkingInOpen = What; }
   virtual bool TryDisplace();
   virtual const char* GetDescription() const;
   virtual bool ShowEnvironment() const { return false; }
  protected:
-  uchar Direction;
+  int Direction;
   bool WalkingInOpen;
 );
 
@@ -116,12 +116,12 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  void SetLiteratureID(ulong What) { LiteratureID = What; }
+  void SetLiteratureID(long What) { LiteratureID = What; }
   virtual const char* GetDescription() const;
-  void SetCounter(ushort What) { Counter = What; }
+  void SetCounter(int What) { Counter = What; }
  protected:
-  ulong LiteratureID;
-  ushort Counter;
+  long LiteratureID;
+  int Counter;
 );
 
 #endif

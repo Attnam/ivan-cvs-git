@@ -15,14 +15,14 @@ class GWTERRAIN
   virtual void VirtualConstructor(bool) { SetAnimationFrames(32); }
   virtual const char* GetNameStem() const;
   virtual bool LongerArticle() const { return true; }
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 10; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 10; }
   virtual const char* SurviveMessage() const;
   virtual const char* MonsterSurviveMessage() const;
   virtual const char* DeathMessage() const;
   virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
-  virtual uchar GetWalkability() const;
+  virtual int GetWalkability() const;
 );
 
 class GWTERRAIN
@@ -31,8 +31,8 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 90; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 90; }
 );
 
 class GWTERRAIN
@@ -41,8 +41,8 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 20; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 20; }
 );
 
 class GWTERRAIN
@@ -51,8 +51,8 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 80; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 80; }
 );
 
 class GWTERRAIN
@@ -61,8 +61,8 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 50; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 50; }
 );
 
 class GWTERRAIN
@@ -70,8 +70,8 @@ class GWTERRAIN
   leafyforest,
   gwterrain,
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 60; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 60; }
 );
 
 class GWTERRAIN
@@ -80,9 +80,9 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
+  virtual vector2d GetBitmapPos(int) const;
   virtual bool LongerArticle() const { return true; }
-  virtual ushort GetPriority() const { return 70; }
+  virtual int GetPriority() const { return 70; }
 );
 
 class GWTERRAIN
@@ -91,8 +91,8 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual ushort GetPriority() const { return 30; }
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetPriority() const { return 30; }
 );
 
 class OWTERRAIN
@@ -101,8 +101,8 @@ class OWTERRAIN
   owterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar GetAttachedDungeon() const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetAttachedDungeon() const;
 );
 
 class OWTERRAIN
@@ -111,8 +111,8 @@ class OWTERRAIN
   owterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar GetAttachedDungeon() const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetAttachedDungeon() const;
 );
 
 class OWTERRAIN
@@ -121,8 +121,8 @@ class OWTERRAIN
   owterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar GetAttachedDungeon() const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetAttachedDungeon() const;
 );
 
 class OWTERRAIN
@@ -131,8 +131,8 @@ class OWTERRAIN
   owterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar GetAttachedDungeon() const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetAttachedDungeon() const;
   virtual bool LongerArticle() const { return true; }
 );
 
@@ -142,10 +142,10 @@ class OWTERRAIN
   owterrain,
  public:
   virtual const char* GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar GetAttachedDungeon() const;
+  virtual vector2d GetBitmapPos(int) const;
+  virtual int GetAttachedDungeon() const;
   virtual bool LongerArticle() const { return true; }
-  virtual uchar GetAttachedArea() const { return 2; }
+  virtual int GetAttachedArea() const { return 2; }
 );
 
 #endif

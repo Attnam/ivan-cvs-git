@@ -33,11 +33,13 @@ class wsquare : public square
   void ChangeGWTerrain(gwterrain*);
   void ChangeOWTerrain(owterrain*);
   void SetWTerrain(gwterrain*, owterrain*);
-  void SetLastSeen(ulong);
+  bool SignalSeen();
   void CalculateLuminance();
-  wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, Index); }
-  uchar GetWalkability() const;
-  virtual uchar GetSquareWalkability() const { return GetWalkability(); }
+  wsquare* GetNeighbourWSquare(int I) const { return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, I); }
+  int GetWalkability() const;
+  virtual int GetSquareWalkability() const { return GetWalkability(); }
+  virtual bool CanBeSeenByPlayer(bool = false) const;
+  virtual bool CanBeSeenFrom(vector2d, long, bool = false) const;
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

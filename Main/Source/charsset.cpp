@@ -3,9 +3,9 @@
 #include "proto.h"
 #include "char.h"
 
-character::prototype** protocontainer<character>::ProtoData;
+characterprototype** protocontainer<character>::ProtoData;
 valuemap protocontainer<character>::CodeNameMap;
-ushort protocontainer<character>::ProtoAmount;
+int protocontainer<character>::Size;
 characterprototype character_ProtoType(0, 0, "character");
 const characterprototype* character::GetProtoType() const { return &character_ProtoType; }
 
@@ -29,7 +29,6 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "room.h"
 #include "game.h"
 #include "graphics.h"
-#include "wskill.h"
 #include "materias.h"
 #include "bitmap.h"
 #include "lterras.h"

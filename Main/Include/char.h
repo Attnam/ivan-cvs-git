@@ -7,6 +7,7 @@
 
 #include "bodypart.h"
 #include "script.h"
+#include "wskill.h"
 
 #define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).CStr()
 #define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).CStr()
@@ -20,91 +21,115 @@ class team;
 class wsquare;
 class cweaponskill;
 class action;
+class characterprototype;
 struct homedata;
 
-typedef std::vector<std::pair<float, ushort> > blockvector;
+typedef std::vector<std::pair<double, int> > blockvector;
+typedef bool (item::*sorter)(const character*) const;
 
-inline long APBonus(long Attribute) { return Attribute >= 10 ? 90 + Attribute : 50 + Attribute * 5; }
-
-struct characterdatabase
+inline int APBonus(int Attribute)
 {
-  void InitDefaults(ushort);
+  return Attribute >= 10 ? 90 + Attribute : 50 + Attribute * 5;
+}
+
+struct characterdatabase : databasebase
+{
+  typedef characterprototype prototype;
+  void InitDefaults(const prototype*, int);
   bool AllowRandomInstantiation() const { return CanBeGenerated && !IsUnique; }
-  ushort Config;
-  ushort DefaultArmStrength;
-  ushort DefaultLegStrength;
-  ushort DefaultDexterity;
-  ushort DefaultAgility;
-  ushort DefaultEndurance;
-  ushort DefaultPerception;
-  ushort DefaultIntelligence;
-  ushort DefaultWisdom;
-  ushort DefaultCharisma;
-  ushort DefaultMana;
-  ulong DefaultMoney;
-  ushort TotalSize;
+  const prototype* ProtoType;
+  bool IsAbstract;
   bool CanRead;
   bool IsCharmable;
-  uchar Sex;
   bool CanBeGenerated;
-  uchar CriticalModifier;
-  festring StandVerb;
   bool CanOpen;
   bool CanBeDisplaced;
-  ushort Frequency;
-  ushort EnergyResistance;
-  ushort FireResistance;
-  ushort PoisonResistance;
-  ushort ElectricityResistance;
   bool IsUnique;
-  ushort ConsumeFlags;
-  ulong TotalVolume;
-  vector2d HeadBitmapPos;
-  vector2d TorsoBitmapPos;
-  vector2d ArmBitmapPos;
-  vector2d LegBitmapPos;
-  vector2d RightArmBitmapPos;
-  vector2d LeftArmBitmapPos;
-  vector2d RightLegBitmapPos;
-  vector2d LeftLegBitmapPos;
-  vector2d GroinBitmapPos;
-  ushort ClothColor;
-  ushort SkinColor;
-  ushort CapColor;
-  ushort HairColor;
-  ushort EyeColor;
-  ushort TorsoMainColor;
-  ushort BeltColor;
-  ushort BootColor;
-  ushort TorsoSpecialColor;
-  ushort ArmMainColor;
-  ushort GauntletColor;
-  ushort ArmSpecialColor;
-  ushort LegMainColor;
-  ushort LegSpecialColor;
   bool IsNameable;
-  ulong BaseEmitation;
+  bool IsPolymorphable;
+  bool CanUseEquipment;
+  bool CanKick;
+  bool CanTalk;
+  bool CanBeWished;
+  bool CreateDivineConfigurations;
+  bool CreateGolemMaterialConfigurations;
+  bool CanBeCloned;
+  bool CanZap;
+  bool HasFeet;
+  bool IgnoreDanger;
+  bool IsExtraCoward;
+  bool SpillsBlood;
+  bool HasEyes;
+  bool HasHead;
+  bool CanThrow;
+  bool UsesNutrition;
+  bool BodyPartsDisappearWhenSevered;
+  bool CanBeConfused;
+  bool CanApply;
+  bool BiteCapturesBodyPart;
+  bool IsPlant;
+  bool DestroysWalls;
+  bool CanMove;
+  bool HasSecondaryMaterial;
+  int DefaultArmStrength;
+  int DefaultLegStrength;
+  int DefaultDexterity;
+  int DefaultAgility;
+  int DefaultEndurance;
+  int DefaultPerception;
+  int DefaultIntelligence;
+  int DefaultWisdom;
+  int DefaultCharisma;
+  int DefaultMana;
+  long DefaultMoney;
+  int TotalSize;
+  int Sex;
+  int CriticalModifier;
+  festring StandVerb;
+  int Frequency;
+  int EnergyResistance;
+  int FireResistance;
+  int PoisonResistance;
+  int ElectricityResistance;
+  int ConsumeFlags;
+  long TotalVolume;
+  packedvector2d HeadBitmapPos;
+  packedvector2d TorsoBitmapPos;
+  packedvector2d ArmBitmapPos;
+  packedvector2d LegBitmapPos;
+  packedvector2d RightArmBitmapPos;
+  packedvector2d LeftArmBitmapPos;
+  packedvector2d RightLegBitmapPos;
+  packedvector2d LeftLegBitmapPos;
+  packedvector2d GroinBitmapPos;
+  packedcolor16 ClothColor;
+  packedcolor16 SkinColor;
+  packedcolor16 CapColor;
+  packedcolor16 HairColor;
+  packedcolor16 EyeColor;
+  packedcolor16 TorsoMainColor;
+  packedcolor16 BeltColor;
+  packedcolor16 BootColor;
+  packedcolor16 TorsoSpecialColor;
+  packedcolor16 ArmMainColor;
+  packedcolor16 GauntletColor;
+  packedcolor16 ArmSpecialColor;
+  packedcolor16 LegMainColor;
+  packedcolor16 LegSpecialColor;
+  color24 BaseEmitation;
   festring Article;
   festring Adjective;
   festring AdjectiveArticle;
   festring NameSingular;
   festring NamePlural;
   festring PostFix;
-  uchar ArticleMode;
-  bool IsAbstract;
-  bool IsPolymorphable;
-  ulong BaseUnarmedStrength;
-  ulong BaseBiteStrength;
-  ulong BaseKickStrength;
-  uchar AttackStyle;
-  bool CanUseEquipment;
-  bool CanKick;
-  bool CanTalk;
-  ulong ClassStates;
-  bool CanBeWished;
-  std::vector<festring> Alias;
-  bool CreateDivineConfigurations;
-  bool CreateGolemMaterialConfigurations;
+  int ArticleMode;
+  int BaseUnarmedStrength;
+  int BaseBiteStrength;
+  int BaseKickStrength;
+  int AttackStyle;
+  long ClassStates;
+  fearray<festring> Alias;
   contentscript<item> Helmet;
   contentscript<item> Amulet;
   contentscript<item> Cloak;
@@ -118,80 +143,50 @@ struct characterdatabase
   contentscript<item> LeftGauntlet;
   contentscript<item> RightBoot;
   contentscript<item> LeftBoot;
-  short AttributeBonus;
-  std::vector<long> KnownCWeaponSkills;
-  std::vector<long> CWeaponSkillHits;
-  ushort RightSWeaponSkillHits;
-  ushort LeftSWeaponSkillHits;
-  uchar PanicLevel;
-  bool CanBeCloned;
-  std::list<contentscript<item> > Inventory;
-  ushort DangerModifier;
+  int AttributeBonus;
+  fearray<long> KnownCWeaponSkills;
+  fearray<long> CWeaponSkillHits;
+  int RightSWeaponSkillHits;
+  int LeftSWeaponSkillHits;
+  int PanicLevel;
+  fearray<contentscript<item> > Inventory;
+  int DangerModifier;
   festring DefaultName;
-  std::vector<festring> FriendlyReplies;
-  std::vector<festring> HostileReplies;
-  bool CanZap;
-  ushort FleshMaterial;
-  bool HasFeet;
+  fearray<festring> FriendlyReplies;
+  fearray<festring> HostileReplies;
+  int FleshMaterial;
   festring DeathMessage;
-  bool IgnoreDanger;
-  ushort HPRequirementForGeneration;
-  bool IsExtraCoward;
-  bool SpillsBlood;
-  bool HasEyes;
-  bool HasHead;
-  bool CanThrow;
-  bool UsesNutrition;
-  ushort AttackWisdomLimit;
-  uchar AttachedGod;
-  bool BodyPartsDisappearWhenSevered;
-  bool CanBeConfused;
-  bool CanAttack;
-  bool CanApply;
-  vector2d WieldedPosition;
-  bool ClothColorIsSparkling;
-  bool SkinColorIsSparkling;
-  bool CapColorIsSparkling;
-  bool HairColorIsSparkling;
-  bool EyeColorIsSparkling;
-  bool TorsoMainColorIsSparkling;
-  bool BeltColorIsSparkling;
-  bool BootColorIsSparkling;
-  bool TorsoSpecialColorIsSparkling;
-  bool ArmMainColorIsSparkling;
-  bool GauntletColorIsSparkling;
-  bool ArmSpecialColorIsSparkling;
-  bool LegMainColorIsSparkling;
-  bool LegSpecialColorIsSparkling;
-  bool BiteCapturesBodyPart;
-  bool IsPlant;
-  uchar MoveType;
-  bool DestroysWalls;
-  bool CanMove;
-  ushort BloodMaterial;
-  ushort VomitMaterial;
-  bool HasSecondaryMaterial;
-  bool HasContainedMaterial;
+  int HPRequirementForGeneration;
+  int AttackWisdomLimit;
+  int AttachedGod;
+  packedvector2d WieldedPosition;
+  int SparklingFlags;
+  int MoveType;
+  int BloodMaterial;
+  int VomitMaterial;
 };
 
 class characterprototype
 {
  public:
   friend class databasecreator<character>;
-  characterprototype(characterprototype*, character* (*)(ushort, ushort), const char*);
-  character* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
+  characterprototype(characterprototype*, character* (*)(int, int), const char*);
+  character* Clone(int Config = 0, int SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   character* CloneAndLoad(inputfile&) const;
-  ushort GetIndex() const { return Index; }
+  int GetIndex() const { return Index; }
   const characterprototype* GetBase() const { return Base; }
-  const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
   const char* GetClassID() const { return ClassID; }
-  void CreateSpecialConfigurations();
-  const characterdatabase& ChooseBaseForConfig(ushort);
+  int CreateSpecialConfigurations(characterdatabase**, int);
+  const characterdatabase* ChooseBaseForConfig(characterdatabase** TempConfig, int, int) { return *TempConfig; }
+  const characterdatabase*const* GetConfigData() const { return ConfigData; }
+  int GetConfigSize() const { return ConfigSize; }
  private:
-  ushort Index;
+  int Index;
   characterprototype* Base;
-  std::map<ushort, characterdatabase> Config;
-  character* (*Cloner)(ushort, ushort);
+  characterdatabase** ConfigData;
+  characterdatabase** ConfigTable[CONFIG_TABLE_SIZE];
+  int ConfigSize;
+  character* (*Cloner)(int, int);
   const char* ClassID;
 };
 
@@ -202,7 +197,6 @@ class character : public entity, public id
   friend class corpse;
   typedef characterprototype prototype;
   typedef characterdatabase database;
-  typedef std::map<ushort, characterdatabase> databasemap;
   character(donothing);
   character(const character&);
   virtual ~character();
@@ -211,12 +205,12 @@ class character : public entity, public id
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
   bool CheckDeath(const festring&, const character* = 0, bool = false, bool = false, bool = true);
-  bool DodgesFlyingItem(item*, float);
-  virtual bool Hit(character*, vector2d, uchar, bool = false) = 0;
+  bool DodgesFlyingItem(item*, double);
+  virtual bool Hit(character*, vector2d, int, bool = false) = 0;
   bool OpenPos(vector2d);
   bool ReadItem(item*);
   bool TestForPickup(item*) const;
-  void ThrowItem(uchar, item*);
+  void ThrowItem(int, item*);
   bool TryMove(vector2d, bool = true);
   bool HasHeadOfElpuri() const;
   bool HasGoldenEagleShirt() const;
@@ -224,25 +218,25 @@ class character : public entity, public id
   bool RemoveEncryptedScroll();
   bool IsPlayer() const { return Player; }
   bool Engrave(const festring&);
-  void AddScoreEntry(const festring&, float = 1, bool = true) const;
+  void AddScoreEntry(const festring&, double = 1, bool = true) const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
   stack* GetStack() const { return Stack; }
-  uchar GetBurdenState() const { return BurdenState; }
-  bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
-  virtual ushort TakeHit(character*, item*, bodypart*, vector2d, float, float, short, uchar, uchar, bool, bool);
-  ushort GetLOSRange() const;
-  ushort GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
-  ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
-  ushort GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
+  int GetBurdenState() const { return BurdenState; }
+  bool MakesBurdened(long What) const { return long(GetCarryingStrength()) * 2500 < What; }
+  virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
+  int GetLOSRange() const;
+  int GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
+  int GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
+  int GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
   void AddMissMessage(const character*) const;
-  void AddPrimitiveHitMessage(const character*, const festring&, const festring&, ushort) const;
-  void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;
+  void AddPrimitiveHitMessage(const character*, const festring&, const festring&, int) const;
+  void AddWeaponHitMessage(const character*, const item*, int, bool = false) const;
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
   void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true);
-  void HasBeenHitByItem(character*, item*, ushort, float, uchar);
+  void HasBeenHitByItem(character*, item*, int, double, int);
   void Hunger();
   void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
@@ -254,30 +248,30 @@ class character : public entity, public id
   void SetAP(long What) { AP = What; }
   void SetIsPlayer(bool What) { Player = What; }
   void SetNP(long);
-  void Vomit(vector2d, ushort, bool = true);
+  void Vomit(vector2d, int, bool = true);
   virtual void Be();
-  bool Polymorph(character*, ushort);
-  void BeKicked(character*, item*, bodypart*, vector2d, float, float, short, uchar, bool, bool);
+  bool Polymorph(character*, int);
+  void BeKicked(character*, item*, bodypart*, vector2d, double, double, int, int, bool, bool);
   void FallTo(character*, vector2d);
   bool CheckCannibalism(const material*) const;
-  void ActivateTemporaryState(ulong What) { TemporaryState |= What; }
-  void DeActivateTemporaryState(ulong What) { TemporaryState &= ~What; }
-  void ActivateEquipmentState(ulong What) { EquipmentState |= What; }
-  void DeActivateEquipmentState(ulong What) { EquipmentState &= ~What; }
-  bool TemporaryStateIsActivated(ulong What) const { return !!(TemporaryState & What); }	
-  bool EquipmentStateIsActivated(ulong What) const { return !!(EquipmentState & What); }
-  bool StateIsActivated(ulong What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual bool Faint(ushort, bool = false);
-  void SetTemporaryStateCounter(ulong, ushort);
+  void ActivateTemporaryState(long What) { TemporaryState |= What; }
+  void DeActivateTemporaryState(long What) { TemporaryState &= ~What; }
+  void ActivateEquipmentState(long What) { EquipmentState |= What; }
+  void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
+  bool TemporaryStateIsActivated(long What) const { return !!(TemporaryState & What); }	
+  bool EquipmentStateIsActivated(long What) const { return !!(EquipmentState & What); }
+  bool StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
+  virtual bool Faint(int, bool = false);
+  void SetTemporaryStateCounter(long, int);
   void DeActivateVoluntaryAction(const festring&);
   void ActionAutoTermination();
   team* GetTeam() const { return Team; }
   void SetTeam(team*);
   void ChangeTeam(team*);
-  virtual ushort GetMoveEase() const;
-  float GetDodgeValue() const { return DodgeValue; }
-  ulong GetMoney() const { return Money; }
-  void SetMoney(ulong What) { Money = What; }
+  virtual int GetMoveEase() const;
+  double GetDodgeValue() const { return DodgeValue; }
+  long GetMoney() const { return Money; }
+  void SetMoney(long What) { Money = What; }
   void EditMoney(long What) { Money += What; }
   bool Displace(character*, bool = false);
   bool CheckStarvationDeath(const festring&);
@@ -288,47 +282,45 @@ class character : public entity, public id
   std::list<character*>::iterator GetTeamIterator();
   void SetTeamIterator(std::list<character*>::iterator);
   void ReceiveKoboldFlesh(long);
-  bool ChangeRandomStat(short);
-  ushort RandomizeReply(ulong&, ushort);
-  virtual void CreateInitialEquipment(ushort);
+  bool ChangeRandomAttribute(int);
+  int RandomizeReply(long&, int);
+  virtual void CreateInitialEquipment(int);
   void DisplayInfo(festring&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   void TestWalkability();
   void EditAP(long);
   void EditNP(long What) { NP += What; }
-  void SetSize(ushort);
-  virtual ushort GetSize() const;
+  void SetSize(int);
+  virtual int GetSize() const;
   torso* GetTorso() const { return static_cast<torso*>(*BodyPartSlot[TORSO_INDEX]); }
   humanoidtorso* GetHumanoidTorso() const { return static_cast<humanoidtorso*>(*BodyPartSlot[TORSO_INDEX]); }
   void SetTorso(torso* What) { SetBodyPart(TORSO_INDEX, What); }
-  bodypart* GetBodyPart(ushort Index) const { return static_cast<bodypart*>(*BodyPartSlot[Index]); }
-  void SetBodyPart(ushort, bodypart*);
-  void SetMainMaterial(material*, ushort = 0);
-  void ChangeMainMaterial(material*, ushort = 0);
-  void SetSecondaryMaterial(material*, ushort = 0);
-  void ChangeSecondaryMaterial(material*, ushort = 0);
-  void SetContainedMaterial(material*, ushort = 0);
-  void ChangeContainedMaterial(material*, ushort = 0);
+  bodypart* GetBodyPart(int I) const { return static_cast<bodypart*>(*BodyPartSlot[I]); }
+  void SetBodyPart(int, bodypart*);
+  void SetMainMaterial(material*, int = 0);
+  void ChangeMainMaterial(material*, int = 0);
+  void SetSecondaryMaterial(material*, int = 0);
+  void ChangeSecondaryMaterial(material*, int = 0);
   void RestoreHP();
   void RestoreLivingHP();
-  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true, bool = false);
-  virtual bool BodyPartIsVital(ushort) const { return true; }
+  virtual bool ReceiveDamage(character*, int, int, int = ALL, int = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, bool = false, bool = false, bool = true, bool = false);
+  virtual bool BodyPartIsVital(int) const { return true; }
   void RestoreBodyParts();
   const festring& GetAssignedName() const { return AssignedName; }
   void SetAssignedName(const festring& What) { AssignedName = What; }
-  festring GetDescription(uchar) const;
+  festring GetDescription(int) const;
   festring GetPersonalPronoun(bool = true) const;
   festring GetPossessivePronoun(bool = true) const;
   festring GetObjectPronoun(bool = true) const;
-  virtual bool BodyPartCanBeSevered(ushort) const;
-  virtual void AddName(festring&, uchar) const;
+  virtual bool BodyPartCanBeSevered(int) const;
+  virtual void AddName(festring&, int) const;
   void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   virtual void SetMainWielded(item*) { }
   virtual void SetSecondaryWielded(item*) { }
-  uchar GetHungerState() const;
+  int GetHungerState() const;
   bool ConsumeItem(item*, const festring&);
   virtual bool CanConsume(material*) const;
   action* GetAction() const { return Action; }
@@ -338,22 +330,22 @@ class character : public entity, public id
   virtual void SetLeftWielded(item*) { }
   void GoOn(go*, bool = false);
   virtual bool CheckKick() const;
-  virtual uchar OpenMultiplier() const { return 2; }
-  virtual uchar CloseMultiplier() const { return 2; }
+  virtual int OpenMultiplier() const { return 2; }
+  virtual int CloseMultiplier() const { return 2; }
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const { return true; }
-  ushort GetTemporaryStateCounter(ulong) const;
-  void EditTemporaryStateCounter(ulong, short);
-  static bool AllowDamageTypeBloodSpill(ushort);
+  int GetTemporaryStateCounter(long) const;
+  void EditTemporaryStateCounter(long, int);
+  static bool AllowDamageTypeBloodSpill(int);
   bool ClosePos(vector2d);
-  ushort GetResistance(ushort) const;
-  virtual ushort GlobalResistance(ushort Type) const { return GetResistance(Type); }
-  virtual const char* GetEquipmentName(ushort) const;
-  virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
-  virtual item* GetEquipment(ushort) const { return 0; }
-  virtual ushort GetEquipmentSlots() const { return 0; }
-  virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*) { return 0; }
-  virtual void SetEquipment(ushort, item*) { }
+  int GetResistance(int) const;
+  virtual int GlobalResistance(int Type) const { return GetResistance(Type); }
+  virtual const char* GetEquipmentName(int) const;
+  virtual bodypart* GetBodyPartOfEquipment(int) const { return 0; }
+  virtual item* GetEquipment(int) const { return 0; }
+  virtual int GetEquipmentSlots() const { return 0; }
+  virtual sorter EquipmentSorter(int) const { return 0; }
+  virtual void SetEquipment(int, item*) { }
   void AddHealingLiquidConsumeEndMessage() const;
   void AddSchoolFoodConsumeEndMessage() const;
   void AddSchoolFoodHitMessage() const;
@@ -364,41 +356,41 @@ class character : public entity, public id
   void AddKoboldFleshHitMessage() const;
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
-  virtual item* SevereBodyPart(ushort);
+  virtual item* SevereBodyPart(int);
   virtual bool TryToRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
-  bodypart* CreateBodyPart(ushort, ushort = 0);
-  virtual bool CanUseEquipment(ushort) const;
+  bodypart* CreateBodyPart(int, int = 0);
+  virtual bool CanUseEquipment(int) const;
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  void SetParameters(uchar) { }
-  DATA_BASE_VALUE(ushort, Config);
-  DATA_BASE_VALUE(ushort, DefaultArmStrength);
-  DATA_BASE_VALUE(ushort, DefaultLegStrength);
-  DATA_BASE_VALUE(ushort, DefaultDexterity);
-  DATA_BASE_VALUE(ushort, DefaultAgility);
-  DATA_BASE_VALUE(ushort, DefaultEndurance);
-  DATA_BASE_VALUE(ushort, DefaultPerception);
-  DATA_BASE_VALUE(ushort, DefaultIntelligence);
-  DATA_BASE_VALUE(ushort, DefaultWisdom);
-  DATA_BASE_VALUE(ushort, DefaultCharisma);
-  DATA_BASE_VALUE(ushort, DefaultMana);
-  DATA_BASE_VALUE(ulong, DefaultMoney);
-  DATA_BASE_VALUE(ushort, TotalSize);
+  void SetParameters(int) { }
+  DATA_BASE_VALUE(int, Config);
+  DATA_BASE_VALUE(int, DefaultArmStrength);
+  DATA_BASE_VALUE(int, DefaultLegStrength);
+  DATA_BASE_VALUE(int, DefaultDexterity);
+  DATA_BASE_VALUE(int, DefaultAgility);
+  DATA_BASE_VALUE(int, DefaultEndurance);
+  DATA_BASE_VALUE(int, DefaultPerception);
+  DATA_BASE_VALUE(int, DefaultIntelligence);
+  DATA_BASE_VALUE(int, DefaultWisdom);
+  DATA_BASE_VALUE(int, DefaultCharisma);
+  DATA_BASE_VALUE(int, DefaultMana);
+  DATA_BASE_VALUE(long, DefaultMoney);
+  DATA_BASE_VALUE(int, TotalSize);
   DATA_BASE_BOOL(CanRead);
   DATA_BASE_BOOL(IsCharmable);
-  DATA_BASE_VALUE(uchar, Sex);
+  DATA_BASE_VALUE(int, Sex);
   DATA_BASE_BOOL(CanBeGenerated);
-  DATA_BASE_VALUE(uchar, CriticalModifier);
+  DATA_BASE_VALUE(int, CriticalModifier);
   virtual DATA_BASE_VALUE(const festring&, StandVerb);
   DATA_BASE_BOOL(CanOpen);
   DATA_BASE_BOOL(CanBeDisplaced);
-  DATA_BASE_VALUE(ushort, EnergyResistance);
-  DATA_BASE_VALUE(ushort, FireResistance);
-  DATA_BASE_VALUE(ushort, PoisonResistance);
-  DATA_BASE_VALUE(ushort, ElectricityResistance);
-  DATA_BASE_VALUE(ushort, ConsumeFlags);
-  DATA_BASE_VALUE(ulong, TotalVolume);
+  DATA_BASE_VALUE(int, EnergyResistance);
+  DATA_BASE_VALUE(int, FireResistance);
+  DATA_BASE_VALUE(int, PoisonResistance);
+  DATA_BASE_VALUE(int, ElectricityResistance);
+  DATA_BASE_VALUE(int, ConsumeFlags);
+  DATA_BASE_VALUE(long, TotalVolume);
   virtual DATA_BASE_VALUE(vector2d, HeadBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, TorsoBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, ArmBitmapPos);
@@ -408,52 +400,52 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(vector2d, RightLegBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, LeftLegBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, GroinBitmapPos);
-  virtual DATA_BASE_VALUE(ushort, ClothColor);
-  virtual DATA_BASE_VALUE(ushort, SkinColor);
-  virtual DATA_BASE_VALUE(ushort, CapColor);
-  virtual DATA_BASE_VALUE(ushort, HairColor);
-  virtual DATA_BASE_VALUE(ushort, EyeColor);
-  virtual DATA_BASE_VALUE(ushort, TorsoMainColor);
-  virtual DATA_BASE_VALUE(ushort, BeltColor);
-  virtual DATA_BASE_VALUE(ushort, BootColor);
-  virtual DATA_BASE_VALUE(ushort, TorsoSpecialColor);
-  virtual DATA_BASE_VALUE(ushort, ArmMainColor);
-  virtual DATA_BASE_VALUE(ushort, GauntletColor);
-  virtual DATA_BASE_VALUE(ushort, ArmSpecialColor);
-  virtual DATA_BASE_VALUE(ushort, LegMainColor);
-  virtual DATA_BASE_VALUE(ushort, LegSpecialColor);
+  virtual DATA_BASE_VALUE(color16, ClothColor);
+  virtual DATA_BASE_VALUE(color16, SkinColor);
+  virtual DATA_BASE_VALUE(color16, CapColor);
+  virtual DATA_BASE_VALUE(color16, HairColor);
+  virtual DATA_BASE_VALUE(color16, EyeColor);
+  virtual DATA_BASE_VALUE(color16, TorsoMainColor);
+  virtual DATA_BASE_VALUE(color16, BeltColor);
+  virtual DATA_BASE_VALUE(color16, BootColor);
+  virtual DATA_BASE_VALUE(color16, TorsoSpecialColor);
+  virtual DATA_BASE_VALUE(color16, ArmMainColor);
+  virtual DATA_BASE_VALUE(color16, GauntletColor);
+  virtual DATA_BASE_VALUE(color16, ArmSpecialColor);
+  virtual DATA_BASE_VALUE(color16, LegMainColor);
+  virtual DATA_BASE_VALUE(color16, LegSpecialColor);
   virtual DATA_BASE_BOOL(IsNameable);
-  virtual DATA_BASE_VALUE(ulong, BaseEmitation); // devirtualize ASAP
+  virtual DATA_BASE_VALUE(color24, BaseEmitation); // devirtualize ASAP
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
   DATA_BASE_VALUE(const festring&, AdjectiveArticle);
   DATA_BASE_VALUE(const festring&, NameSingular);
   DATA_BASE_VALUE(const festring&, NamePlural);
   DATA_BASE_VALUE(const festring&, PostFix);
-  DATA_BASE_VALUE(uchar, ArticleMode);
+  DATA_BASE_VALUE(int, ArticleMode);
   DATA_BASE_BOOL(CanZap);
   virtual DATA_BASE_BOOL(IsPolymorphable);
-  DATA_BASE_VALUE(ulong, BaseUnarmedStrength);
-  DATA_BASE_VALUE(ulong, BaseBiteStrength);
-  DATA_BASE_VALUE(ulong, BaseKickStrength);
-  DATA_BASE_VALUE(uchar, AttackStyle);
+  DATA_BASE_VALUE(int, BaseUnarmedStrength);
+  DATA_BASE_VALUE(int, BaseBiteStrength);
+  DATA_BASE_VALUE(int, BaseKickStrength);
+  DATA_BASE_VALUE(int, AttackStyle);
   DATA_BASE_BOOL(CanUseEquipment);
   DATA_BASE_BOOL(CanKick);
   DATA_BASE_BOOL(CanTalk);
-  DATA_BASE_VALUE(ulong, ClassStates);
-  DATA_BASE_VALUE(const std::vector<festring>&, Alias);
+  DATA_BASE_VALUE(long, ClassStates);
+  DATA_BASE_VALUE(const fearray<festring>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
-  DATA_BASE_VALUE(short, AttributeBonus);
-  DATA_BASE_VALUE(const std::vector<long>&, KnownCWeaponSkills);
-  DATA_BASE_VALUE(const std::vector<long>&, CWeaponSkillHits);
-  DATA_BASE_VALUE(ushort, RightSWeaponSkillHits);
-  DATA_BASE_VALUE(ushort, LeftSWeaponSkillHits);
-  DATA_BASE_VALUE(uchar, PanicLevel);
+  DATA_BASE_VALUE(int, AttributeBonus);
+  DATA_BASE_VALUE(const fearray<long>&, KnownCWeaponSkills);
+  DATA_BASE_VALUE(const fearray<long>&, CWeaponSkillHits);
+  DATA_BASE_VALUE(int, RightSWeaponSkillHits);
+  DATA_BASE_VALUE(int, LeftSWeaponSkillHits);
+  DATA_BASE_VALUE(int, PanicLevel);
   DATA_BASE_BOOL(CanBeCloned);
   DATA_BASE_VALUE(const festring&, DefaultName);
-  DATA_BASE_VALUE(const std::vector<festring>&, FriendlyReplies);
-  DATA_BASE_VALUE(const std::vector<festring>&, HostileReplies);
-  DATA_BASE_VALUE(ushort, FleshMaterial);
+  DATA_BASE_VALUE(const fearray<festring>&, FriendlyReplies);
+  DATA_BASE_VALUE(const fearray<festring>&, HostileReplies);
+  DATA_BASE_VALUE(int, FleshMaterial);
   virtual DATA_BASE_BOOL(HasFeet);
   virtual DATA_BASE_VALUE(const festring&, DeathMessage);
   DATA_BASE_BOOL(IsExtraCoward);
@@ -462,74 +454,60 @@ class character : public entity, public id
   virtual DATA_BASE_BOOL(HasHead);
   DATA_BASE_BOOL(CanThrow);
   DATA_BASE_BOOL(UsesNutrition);
-  DATA_BASE_VALUE(ushort, AttackWisdomLimit);
+  DATA_BASE_VALUE(int, AttackWisdomLimit);
   DATA_BASE_BOOL(IsUnique);
-  DATA_BASE_VALUE(uchar, AttachedGod);
+  DATA_BASE_VALUE(int, AttachedGod);
   DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
-  DATA_BASE_VALUE(ushort, Frequency);
+  DATA_BASE_VALUE(int, Frequency);
   DATA_BASE_BOOL(CanBeConfused);
-  DATA_BASE_BOOL(CanAttack);
   DATA_BASE_BOOL(CanApply);
   DATA_BASE_VALUE(vector2d, WieldedPosition);
-  DATA_BASE_BOOL(ClothColorIsSparkling);
-  DATA_BASE_BOOL(SkinColorIsSparkling);
-  DATA_BASE_BOOL(CapColorIsSparkling);
-  DATA_BASE_BOOL(HairColorIsSparkling);
-  DATA_BASE_BOOL(EyeColorIsSparkling);
-  DATA_BASE_BOOL(TorsoMainColorIsSparkling);
-  DATA_BASE_BOOL(BeltColorIsSparkling);
-  DATA_BASE_BOOL(BootColorIsSparkling);
-  DATA_BASE_BOOL(TorsoSpecialColorIsSparkling);
-  DATA_BASE_BOOL(ArmMainColorIsSparkling);
-  DATA_BASE_BOOL(GauntletColorIsSparkling);
-  DATA_BASE_BOOL(ArmSpecialColorIsSparkling);
-  DATA_BASE_BOOL(LegMainColorIsSparkling);
-  DATA_BASE_BOOL(LegSpecialColorIsSparkling);
+  DATA_BASE_VALUE(int, SparklingFlags);
   DATA_BASE_BOOL(IgnoreDanger);
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
   DATA_BASE_BOOL(DestroysWalls);
   DATA_BASE_BOOL(CanMove);
-  DATA_BASE_VALUE(ushort, BloodMaterial);
-  DATA_BASE_VALUE(ushort, VomitMaterial);
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  DATA_BASE_VALUE(int, BloodMaterial);
+  DATA_BASE_VALUE(int, VomitMaterial);
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
   bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
-  virtual void Kick(lsquare*, uchar, bool = false) = 0;
-  virtual ushort GetAttribute(ushort) const;
-  virtual bool EditAttribute(ushort, short);
-  virtual void EditExperience(ushort, long);
-  bool CheckForAttributeIncrease(ushort&, long&, bool = false);
-  bool CheckForAttributeDecrease(ushort&, long&, bool = false);
-  bool RawEditAttribute(ushort&, short&, bool = false) const;
+  virtual void Kick(lsquare*, int, bool = false) = 0;
+  virtual int GetAttribute(int) const;
+  virtual bool EditAttribute(int, int);
+  virtual void EditExperience(int, long);
+  bool CheckForAttributeIncrease(int&, long&, bool = false);
+  bool CheckForAttributeDecrease(int&, long&, bool = false);
+  bool RawEditAttribute(int&, int&, bool = false) const;
   void DrawPanel(bool) const;
-  virtual ushort DrawStats(bool) const = 0;
-  virtual ushort GetCarryingStrength() const = 0;
-  static bool DamageTypeAffectsInventory(ushort);
+  virtual int DrawStats(bool) const = 0;
+  virtual int GetCarryingStrength() const = 0;
+  static bool DamageTypeAffectsInventory(int);
   void SetStuckTo(item* What) { StuckTo = What; }
   item* GetStuckTo() const { return StuckTo; }
-  void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
-  ushort GetStuckToBodyPart() const { return StuckToBodyPart; }
+  void SetStuckToBodyPart(int What) { StuckToBodyPart = What; }
+  int GetStuckToBodyPart() const { return StuckToBodyPart; }
   bool TryToUnstuck(vector2d);
-  virtual ushort GetRandomStepperBodyPart() const;
+  virtual int GetRandomStepperBodyPart() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
-  ushort CheckForBlockWithArm(character*, item*, arm*, float, ushort, short, uchar);
+  virtual int CheckForBlock(character*, item*, double, int Damage, int, int) { return Damage; }
+  int CheckForBlockWithArm(character*, item*, arm*, double, int, int, int);
   void AddBlockMessage(const character*, const item*, const festring&, bool) const;
   character* GetPolymorphBackup() const { return PolymorphBackup; }
   void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
-  cweaponskill* GetCWeaponSkill(ushort Index) const { return CWeaponSkill[Index]; }
+  cweaponskill* GetCWeaponSkill(int I) const { return &CWeaponSkill[I]; }
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
-  virtual bool CheckBalance(float);
+  virtual bool CheckBalance(double);
   long GetStateAPGain(long) const;
-  virtual long GetMoveAPRequirement(uchar) const;
-  virtual void SignalEquipmentAdd(ushort);
-  virtual void SignalEquipmentRemoval(ushort);
-  void BeginTemporaryState(ulong, ushort);
-  void GainIntrinsic(ulong);
+  virtual long GetMoveAPRequirement(int) const;
+  virtual void SignalEquipmentAdd(int);
+  virtual void SignalEquipmentRemoval(int);
+  void BeginTemporaryState(long, int);
+  void GainIntrinsic(long);
   void HandleStates();
   void PrintBeginPolymorphControlMessage() const;
   void PrintEndPolymorphControlMessage() const;
@@ -553,11 +531,11 @@ class character : public entity, public id
   void EndInvisibility();
   void EndInfraVision();
   void EndESP();
-  character* PolymorphRandomly(ushort, ushort, ushort);
-  virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
-  void StartReading(item*, ulong);
-  void DexterityAction(ushort);
-  void IntelligenceAction(ushort);
+  character* PolymorphRandomly(int, int, int);
+  virtual bool EquipmentEasilyRecognized(int) const { return true; }
+  void StartReading(item*, long);
+  void DexterityAction(int);
+  void IntelligenceAction(int);
   virtual void SWeaponSkillTick() { }
   void PrintBeginInvisibilityMessage() const;
   void PrintEndInvisibilityMessage() const;
@@ -575,8 +553,8 @@ class character : public entity, public id
   void PrintEndPoisonedMessage() const;
   bool IsWarm() const;
   void CalculateEquipmentState();
-  void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
+  void Draw(bitmap*, vector2d, color24, int, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, color24, int, bool, bool = true) const;
   god* GetMasterGod() const;
   void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
@@ -595,76 +573,76 @@ class character : public entity, public id
   dungeon* GetDungeon() const { return static_cast<level*>(GetSquareUnder()->GetArea())->GetDungeon(); }
   level* GetLevel() const { return static_cast<level*>(GetSquareUnder()->GetArea()); }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
-  virtual square* GetNeighbourSquare(ushort) const;
-  virtual lsquare* GetNeighbourLSquare(ushort) const;
-  virtual wsquare* GetNeighbourWSquare(ushort) const;
-  stack* GetStackUnder(ushort Index = 0) const { return static_cast<lsquare*>(GetSquareUnder(Index))->GetStack(); }
+  virtual square* GetNeighbourSquare(int) const;
+  virtual lsquare* GetNeighbourLSquare(int) const;
+  virtual wsquare* GetNeighbourWSquare(int) const;
+  stack* GetStackUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I))->GetStack(); }
   square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
-  square* GetNearSquare(ushort x, ushort y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
+  square* GetNearSquare(int x, int y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
+  lsquare* GetNearLSquare(int x, int y) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
   wsquare* GetNearWSquare(vector2d) const;
-  wsquare* GetNearWSquare(ushort, ushort) const;
-  vector2d GetPos(ushort Index = 0) const { return GetSquareUnder(Index)->GetPos(); }
-  square* GetSquareUnder(ushort Index = 0) const { return !MotherEntity ? SquareUnder[Index] : MotherEntity->GetSquareUnderEntity(Index); }
-  virtual square* GetSquareUnderEntity(ushort Index = 0) const { return GetSquareUnder(Index); }
-  lsquare* GetLSquareUnder(ushort Index = 0) const { return static_cast<lsquare*>(GetSquareUnder(Index)); }
-  ushort GetRandomNonVitalBodyPart();
-  void TeleportSomePartsAway(ushort);
+  wsquare* GetNearWSquare(int, int) const;
+  vector2d GetPos(int I = 0) const { return GetSquareUnder(I)->GetPos(); }
+  square* GetSquareUnder(int I = 0) const { return !MotherEntity ? SquareUnder[I] : MotherEntity->GetSquareUnderEntity(I); }
+  virtual square* GetSquareUnderEntity(int I = 0) const { return GetSquareUnder(I); }
+  lsquare* GetLSquareUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I)); }
+  int GetRandomNonVitalBodyPart();
+  void TeleportSomePartsAway(int);
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalBodyPartVolumeAndWeightChange() { }
   void CalculateVolumeAndWeight();
-  ulong GetVolume() const { return Volume; }
-  ulong GetBodyVolume() const { return BodyVolume; }
-  ulong GetWeight() const { return Weight; }
-  ulong GetCarriedWeight() const { return CarriedWeight; }
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
+  long GetVolume() const { return Volume; }
+  long GetBodyVolume() const { return BodyVolume; }
+  long GetWeight() const { return Weight; }
+  long GetCarriedWeight() const { return CarriedWeight; }
+  virtual void SignalEmitationIncrease(color24);
+  virtual void SignalEmitationDecrease(color24);
   void CalculateEmitation();
   void CalculateAll();
   void CalculateHP();
   void CalculateMaxHP();
-  short GetHP() const { return HP; }
-  short GetMaxHP() const { return MaxHP; }
+  int GetHP() const { return HP; }
+  int GetMaxHP() const { return MaxHP; }
   void CalculateBodyPartMaxHPs(bool = true);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
-  bool ActivateRandomState(ushort, ushort, ulong = 0);
-  ulong GetRandomState(ushort) const;
-  bool GainRandomIntrinsic(ushort);
+  bool ActivateRandomState(int, int, long = 0);
+  long GetRandomState(int) const;
+  bool GainRandomIntrinsic(int);
   virtual void CalculateBattleInfo() = 0;
   void CalculateBurdenState();
   virtual void CalculateDodgeValue();
   virtual void CalculateBodyParts() { BodyParts = 1; }
   virtual void CalculateAllowedWeaponSkillCategories();
-  uchar GetBodyParts() const { return BodyParts; }
-  uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
-  float GetRelativeDanger(const character*, bool = false) const;
-  float GetTimeToDie(const character*, ushort, float, bool, bool) const;
-  virtual float GetTimeToKill(const character*, bool) const = 0;
-  virtual void AddSpecialEquipmentInfo(festring&, ushort) const { }
-  virtual festring GetBodyPartName(ushort, bool = false) const;
+  int GetBodyParts() const { return BodyParts; }
+  int GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
+  double GetRelativeDanger(const character*, bool = false) const;
+  double GetTimeToDie(const character*, int, double, bool, bool) const;
+  virtual double GetTimeToKill(const character*, bool) const = 0;
+  virtual void AddSpecialEquipmentInfo(festring&, int) const { }
+  virtual festring GetBodyPartName(int, bool = false) const;
   item* SearchForItem(ulong) const;
   bool SearchForItem(const item*) const;
   item* SearchForItem(const sweaponskill*) const;
   bool ContentsCanBeSeenBy(const character*) const;
   festring GetBeVerb() const;
-  virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
-  virtual bool SpecialUnarmedEffect(character*, vector2d, uchar, uchar, bool) { return false; }
-  virtual bool SpecialKickEffect(character*, vector2d, uchar, uchar, bool) { return false; }
-  virtual bool SpecialBiteEffect(character*, vector2d, uchar, uchar, bool) { return false; }
-  bool HitEffect(character*, item*, vector2d, uchar, uchar, uchar, bool);
-  void WeaponSkillHit(item*, uchar);
+  virtual void CreateBlockPossibilityVector(blockvector&, double) const { }
+  virtual bool SpecialUnarmedEffect(character*, vector2d, int, int, bool) { return false; }
+  virtual bool SpecialKickEffect(character*, vector2d, int, int, bool) { return false; }
+  virtual bool SpecialBiteEffect(character*, vector2d, int, int, bool) { return false; }
+  bool HitEffect(character*, item*, vector2d, int, int, int, bool);
+  void WeaponSkillHit(item*, int);
   character* Duplicate() const;
-  room* GetRoom(ushort Index = 0) const { return GetLSquareUnder(Index)->GetRoom(); }
+  room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   bool TryToEquip(item*);
   bool TryToConsume(item*);
   void UpdateESPLOS() const;
-  uchar GetCWeaponSkillLevel(const item*) const;
-  virtual uchar GetSWeaponSkillLevel(const item*) const { return 0; }
+  int GetCWeaponSkillLevel(const item*) const;
+  virtual int GetSWeaponSkillLevel(const item*) const { return 0; }
   void PrintBeginPanicMessage() const;
   void PrintEndPanicMessage() const;
-  void CheckPanic(ushort);
+  void CheckPanic(int);
   character* CloneToNearestSquare(character*) const;
   void SignalSpoil();
   void SignalSpoilLevelChange();
@@ -672,48 +650,48 @@ class character : public entity, public id
   bool IsPolymorphed() const { return Polymorphed; }
   void SetPolymorphed(bool What) { Polymorphed = What; }
   bool IsInBadCondition() const { return HP * 3 < MaxHP; }
-  bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP; }
-  ushort GetCondition() const;
+  bool IsInBadCondition(int HP) const { return HP * 3 < MaxHP; }
+  int GetCondition() const;
   void UpdatePictures();
   bool CanHeal() const;
   void SetGoingTo(vector2d);
-  uchar GetRelation(const character*) const;
+  int GetRelation(const character*) const;
   void CalculateAttributeBonuses();
   void ApplyEquipmentAttributeBonuses(item*);
   void ReceiveAntidote(long);
   void AddAntidoteConsumeEndMessage() const;
   bool IsDead() const;
-  void AddOriginalBodyPartID(ushort, ulong);
-  void AddToInventory(const std::list<contentscript<item> >&, ushort);
+  void AddOriginalBodyPartID(int, ulong);
+  void AddToInventory(const fearray<contentscript<item> >&, int);
   bool HasHadBodyPart(const item*) const;
   void ProcessAndAddMessage(festring) const;
   virtual bool CheckZap();
-  void SetEndurance(ushort);
-  void SetPerception(ushort);
-  void SetIntelligence(ushort);
-  void SetWisdom(ushort);
-  void SetCharisma(ushort);
-  void SetMana(ushort);
-  void DamageAllItems(character*, ushort, ushort);
+  void SetEndurance(int);
+  void SetPerception(int);
+  void SetIntelligence(int);
+  void SetWisdom(int);
+  void SetCharisma(int);
+  void SetMana(int);
+  void DamageAllItems(character*, int, int);
   bool Equips(const item*) const;
   void PrintBeginConfuseMessage() const;
   void PrintEndConfuseMessage() const;
   vector2d ApplyStateModification(vector2d) const;
   void AddConfuseHitMessage() const;
-  item* SelectFromPossessions(const festring&, bool (*)(const item*, const character*) = 0);
-  void SelectFromPossessions(itemvector&, const festring&, uchar, bool (*)(const item*, const character*) = 0);
-  bool EquipsSomething(bool (*)(const item*, const character*) = 0);
+  item* SelectFromPossessions(const festring&, sorter = 0);
+  void SelectFromPossessions(itemvector&, const festring&, int, sorter = 0);
+  bool EquipsSomething(sorter = 0);
   bool CheckTalk();
-  virtual bool CanCreateBodyPart(ushort) const { return true; }
-  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar) { return false; }
+  virtual bool CanCreateBodyPart(int) const { return true; }
+  virtual bool HandleCharacterBlockingTheWay(character*, vector2d, int) { return false; }
   virtual festring& ProcessMessage(festring&) const;
   virtual bool IsHumanoid() const { return false; }
   virtual bool IsHuman() const { return false; }
   bool IsOnGround() const;
-  virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
+  virtual bool CheckIfEquipmentIsNotUsable(int) const { return false; }
   virtual bool MoveTowardsHomePos();
-  virtual void SetWayPoints(const std::vector<vector2d>&) { }
-  bool TryToChangeEquipment(ushort);
+  virtual void SetWayPoints(const fearray<packedvector2d>&) { }
+  bool TryToChangeEquipment(int);
   void PrintBeginParasitizedMessage() const;
   void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
@@ -722,7 +700,7 @@ class character : public entity, public id
   virtual festring GetKillName() const;
   festring GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
-  virtual item* GetPairEquipment(ushort) const { return 0; }
+  virtual item* GetPairEquipment(int) const { return 0; }
   bool HealHitPoint();
   void CreateHomeData();
   room* GetHomeRoom() const;
@@ -731,14 +709,14 @@ class character : public entity, public id
   void RemoveHomeData();
   ulong GetID() const { return ID; }
   void AddESPConsumeMessage() const;
-  const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
-  void GetHitByExplosion(const explosion*, ushort);
+  const std::list<ulong>& GetOriginalBodyPartID(int) const;
+  void GetHitByExplosion(const explosion*, int);
   bool CanBePoisoned() const { return TorsoIsAlive(); }
   bool CanBeParasitized() const { return TorsoIsAlive(); }
-  void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
+  void SortAllItems(itemvector&, const character* = 0, sorter = 0);
   character* GetRandomNeighbourEnemy() const;
-  void Search(ushort);
-  character* GetRandomNeighbour(uchar = (HOSTILE|UNCARING|FRIEND)) const;
+  void Search(int);
+  character* GetRandomNeighbour(int = (HOSTILE|UNCARING|FRIEND)) const;
   virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
   virtual bool IsMushroom() const { return false; }
   void ResetStates();
@@ -746,9 +724,9 @@ class character : public entity, public id
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
   void ShowAdventureInfo() const;
-  virtual bool BoundToUse(const item*, ushort) const { return false; }
+  virtual bool BoundToUse(const item*, int) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
-  virtual ushort GetRandomApplyBodyPart() const;
+  virtual int GetRandomApplyBodyPart() const;
 #ifdef WIZARD
   virtual void AddAttributeInfo(festring&) const;
   virtual void AddAttackInfo(felist&) const = 0;
@@ -758,17 +736,17 @@ class character : public entity, public id
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
   virtual bool PreProcessForBone();
-  bool PostProcessForBone(float&, ushort&);
+  bool PostProcessForBone(double&, int&);
   bool PostProcessForBone();
   bool HasRepairableBodyParts() const;
   virtual void FinalProcessForBone();
-  virtual bool EditAllAttributes(short);
+  virtual bool EditAllAttributes(int);
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*) { return false; }
   virtual bool MustBeRemovedFromBone() const;
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
-  virtual uchar GetArms() const { return 0; }
+  virtual int GetArms() const { return 0; }
   bool IsPet() const;
   virtual void PutTo(vector2d);
   void PutTo(lsquare*);
@@ -780,7 +758,7 @@ class character : public entity, public id
   bool IsOver(const item*) const;
   bool SquareUnderCanBeSeenByPlayer(bool) const;
   bool SquareUnderCanBeSeenBy(const character*, bool) const;
-  ushort GetDistanceSquareFrom(const character*) const;
+  int GetDistanceSquareFrom(const character*) const;
   virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
   virtual bool CanMoveOn(const lsquare*) const;
   virtual bool CanMoveOn(const square*) const;
@@ -788,76 +766,79 @@ class character : public entity, public id
   bool CanMoveOn(const oterrain*) const;
   bool IsMainPos(vector2d What) const { return GetPos() == What; }
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
-  ushort GetSquaresUnder() const { return SquaresUnder; }
-  virtual ushort GetSquareIndex(vector2d) const { return 0; }
-  virtual ushort GetNeighbourSquares() const { return 8; }
-  virtual ushort GetExtendedNeighbourSquares() const { return 9; }
-  virtual ushort CalculateNewSquaresUnder(lsquare**, vector2d) const;
+  int GetSquaresUnder() const { return SquaresUnder; }
+  virtual int GetSquareIndex(vector2d) const { return 0; }
+  virtual int GetNeighbourSquares() const { return 8; }
+  virtual int GetExtendedNeighbourSquares() const { return 9; }
+  virtual int CalculateNewSquaresUnder(lsquare**, vector2d) const;
   virtual bool IsFreeForMe(square*) const;
   void SendNewDrawRequest() const;
-  square* GetNaturalNeighbourSquare(ushort Index) const { return character::GetNeighbourSquare(Index); }
-  lsquare* GetNaturalNeighbourLSquare(ushort Index) const { return character::GetNeighbourLSquare(Index); }
+  square* GetNaturalNeighbourSquare(int I) const { return character::GetNeighbourSquare(I); }
+  lsquare* GetNaturalNeighbourLSquare(int I) const { return character::GetNeighbourLSquare(I); }
   void SignalStepFrom(lsquare**);
-  virtual void SpecialBodyDefenceEffect(character*, bodypart*, uchar) { }
-  virtual ulong GetSumOfAttributes() const;
+  virtual void SpecialBodyDefenceEffect(character*, bodypart*, int) { }
+  virtual long GetSumOfAttributes() const;
   bool IsGoingSomeWhere() const { return GoingTo != ERROR_VECTOR; }
   virtual bool CreateRoute();
   void TerminateGoingTo();
   virtual bool IsSpy() const { return false; }
-  bool CheckForFood(ushort);
+  bool CheckForFood(int);
   bool CheckForFoodInSquare(vector2d);
   virtual bool CheckIfSatiated() { return GetNP() > SATIATED_LEVEL; }
   virtual void SignalNaturalGeneration() { }
   virtual bool IsBunny() const { return false; }
-  void SetConfig(ushort, ushort = 0);
-  bodypartslot* GetBodyPartSlot(ushort c) { return &BodyPartSlot[c]; }
+  void SetConfig(int, int = 0);
+  bodypartslot* GetBodyPartSlot(int I) { return &BodyPartSlot[I]; }
   virtual bool CheckConsume(const festring&) const;
-  virtual ushort GetTameSymbolSquareIndex() const { return 0; }
-  virtual ushort GetFlySymbolSquareIndex() const { return 0; }
+  virtual int GetTameSymbolSquareIndex() const { return 0; }
+  virtual int GetFlySymbolSquareIndex() const { return 0; }
   virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
-  liquid* CreateBlood(ulong) const;
-  void SpillFluid(character*, liquid*, ushort = 0);
+  liquid* CreateBlood(long) const;
+  void SpillFluid(character*, liquid*, int = 0);
   virtual void StayOn(liquid*);
   virtual head* GetVirtualHead() const { return 0; }
   bool IsAlly(const character*) const;
   virtual bool CanVomit() const { return TorsoIsAlive(); }
-  ulong GetLastAcidMsgTurn() const { return LastAcidMsgTurn; }
-  void SetLastAcidMsgTurn(ulong What) { LastAcidMsgTurn = What; }
+  ulong GetLastAcidMsgMin() const { return LastAcidMsgMin; }
+  void SetLastAcidMsgMin(ulong What) { LastAcidMsgMin = What; }
   virtual bool AllowSpoil() const { return false; }
   void Spoil(corpse*);
   void ResetSpoiling();
   virtual character* GetLeader() const;
-  uchar GetMoveType() const;
+  int GetMoveType() const;
   void CalculateEquipmentMoveType();
   virtual bool IsSumoWrestler() const { return false; }
-  void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool) { }
-  item* SearchForItem(const character*, bool (*)(const item*, const character*)) const;
+  void InitMaterials(const materialscript*, const materialscript*, bool) { }
+  item* SearchForItem(const character*, sorter) const;
   virtual character* CreateZombie() const { return 0; }
   virtual festring GetZombieDescription() const;
+  virtual bool CanAttack() const { return true; }
+  bool DetectMaterial(const material*) const;
+  bool CheckIfTooScaredToHit(const character*) const;
  protected:
+  static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
-  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual bodypart* MakeBodyPart(int) const;
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
-  void Initialize(ushort, ushort);
+  void Initialize(int, int);
   virtual void VirtualConstructor(bool) { }
   void LoadDataBaseStats();
-  void InstallDataBase(ushort);
-  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorA(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorD(ushort, bool = false) const;
-  virtual bool BodyPartColorAIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorDIsSparkling(ushort, bool = false) const;
-  virtual ulong GetBodyPartSize(ushort, ushort) const;
-  virtual ulong GetBodyPartVolume(ushort) const;
-  void UpdateBodyPartPicture(ushort, bool = false);
-  ushort ChooseBodyPartToReceiveHit(float, float);
-  virtual void CreateBodyParts(ushort);
-  virtual material* CreateBodyPartMaterial(ushort, ulong) const;
+  virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
+  virtual color16 GetBodyPartColorA(int, bool = false) const;
+  virtual color16 GetBodyPartColorB(int, bool = false) const;
+  virtual color16 GetBodyPartColorC(int, bool = false) const;
+  virtual color16 GetBodyPartColorD(int, bool = false) const;
+  virtual bool BodyPartColorAIsSparkling(int, bool = false) const;
+  virtual bool BodyPartColorBIsSparkling(int, bool = false) const;
+  virtual bool BodyPartColorCIsSparkling(int, bool = false) const;
+  virtual bool BodyPartColorDIsSparkling(int, bool = false) const;
+  virtual long GetBodyPartSize(int, int) const;
+  virtual long GetBodyPartVolume(int) const;
+  void UpdateBodyPartPicture(int, bool = false);
+  int ChooseBodyPartToReceiveHit(double, double);
+  virtual void CreateBodyParts(int);
+  virtual material* CreateBodyPartMaterial(int, long) const;
   virtual bool ShowClassDescription() const { return true; }
   void SeekLeader(const character*);
   virtual bool CheckForUsefulItemsOnGround();
@@ -884,65 +865,65 @@ class character : public entity, public id
   virtual const char* UnarmedHitNoun() const;
   virtual const char* KickNoun() const;
   virtual const char* BiteNoun() const;
-  virtual bool AttackIsBlockable(uchar) const { return true; }
+  virtual bool AttackIsBlockable(int) const { return true; }
   virtual bool AttackMayDamageArmor() const { return true; }
-  virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
+  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
   void AttackAdjacentEnemyAI();
-  ushort RandomizeBabyAttribute(ushort);
+  int RandomizeBabyAttribute(int);
   stack* Stack;
   long NP, AP;
   bool Player;
-  ulong TemporaryState;
-  ushort TemporaryStateCounter[STATES];
+  long TemporaryState;
+  int TemporaryStateCounter[STATES];
   team* Team;
   vector2d GoingTo;
-  ulong Money;
+  long Money;
   std::list<character*>::iterator TeamIterator;
   bodypartslot* BodyPartSlot;
   festring AssignedName;
   action* Action;
   const database* DataBase;
-  ushort StuckToBodyPart;
+  int StuckToBodyPart;
   item* StuckTo; // Bad naming. Sorry.
-  ushort BaseAttribute[BASE_ATTRIBUTES];
+  int BaseAttribute[BASE_ATTRIBUTES];
   long BaseExperience[BASE_ATTRIBUTES];
   std::list<ulong>* OriginalBodyPartID;
   entity* MotherEntity;
   character* PolymorphBackup;
-  cweaponskill** CWeaponSkill;
-  ulong EquipmentState;
+  cweaponskill* CWeaponSkill;
+  long EquipmentState;
   square** SquareUnder;
-  ulong Volume;
-  ulong Weight;
-  ulong CarriedWeight;
-  ulong BodyVolume;
-  short HP;
-  short MaxHP;
+  long Volume;
+  long Weight;
+  long CarriedWeight;
+  long BodyVolume;
+  int HP;
+  int MaxHP;
   bool Initializing;
-  uchar BurdenState;
-  float DodgeValue;
-  uchar AllowedWeaponSkillCategories;
-  uchar BodyParts;
+  int BurdenState;
+  double DodgeValue;
+  int AllowedWeaponSkillCategories;
+  int BodyParts;
   bool Polymorphed;
   bool InNoMsgMode;
-  ulong RegenerationCounter;
-  short AttributeBonus[BASE_ATTRIBUTES];
-  short CarryingBonus;
+  long RegenerationCounter;
+  int AttributeBonus[BASE_ATTRIBUTES];
+  int CarryingBonus;
   homedata* HomeData;
   ulong ID;
   bool PictureUpdatesForbidden;
-  ushort SquaresUnder;
+  int SquaresUnder;
   std::vector<vector2d> Route;
   std::set<vector2d> Illegal;
-  ulong LastAcidMsgTurn;
-  uchar EquipmentMoveType;
+  ulong LastAcidMsgMin;
+  int EquipmentMoveType;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 #define CHARACTER_PROTOTYPE(name, base, baseproto)\
-character* name##_Clone(ushort Config, ushort SpecialFlags) { return new name(Config, SpecialFlags); }\
+character* name##_Clone(int Config, int SpecialFlags) { return new name(Config, SpecialFlags); }\
 characterprototype name##_ProtoType(baseproto, &name##_Clone, #name);\
-name::name(ushort Config, ushort SpecialFlags) : base(donothing()) { Initialize(Config, SpecialFlags); }\
+name::name(int Config, int SpecialFlags) : base(donothing()) { Initialize(Config, SpecialFlags); }\
 name::name(donothing D) : base(D) { }\
 const characterprototype* name::GetProtoType() const { return &name##_ProtoType; }\
 character* name::RawDuplicate() const { return new name(*this); }
@@ -960,7 +941,7 @@ const characterprototype* name::GetProtoType() const { return &name##_ProtoType;
 name : public base\
 {\
  public:\
-  name(ushort = 0, ushort = 0);\
+  name(int = 0, int = 0);\
   name(donothing);\
   virtual const prototype* GetProtoType() const;\
   data\

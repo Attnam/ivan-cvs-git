@@ -27,58 +27,95 @@ class liquid;
 class rain;
 
 typedef std::vector<item*> itemvector;
-typedef std::list<fluid*> fluidlist;
-typedef std::list<smoke*> smokelist;
+typedef bool (item::*sorter)(const character*) const;
+
+#ifdef VC
+#pragma pack(1)
+#endif
 
 struct emitter
 {
-  emitter(vector2d Pos, ulong DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
-  emitter() { }
-  vector2d Pos;
-  ulong DilatedEmitation;
+  emitter(ulong ID, color24 Emitation) : ID(ID), Emitation(Emitation) { }
+  explicit emitter() { }
+  ulong ID NO_ALIGNMENT;
+  color24 Emitation NO_ALIGNMENT;
 };
+
+#ifdef VC
+#pragma pack()
+#endif
+
+inline ulong MakeEmitterID(vector2d Pos)
+{
+  return Pos.X + (Pos.Y << 8);
+}
+
+inline vector2d ExtractPosFromEmitterID(ulong ID)
+{
+  return vector2d(ID & 0xFF, (ID >> 8) & 0xFF);
+}
+
+typedef std::vector<emitter> emittervector;
 
 outputfile& operator<<(outputfile&, const emitter&);
 inputfile& operator>>(inputfile&, emitter&);
 
-struct borderpartner
+struct eyecontroller
 {
-  olterrain* Terrain;
-  ushort SquareIndex;
+  static bool Handler(int, int);
+  static lsquare*** Map;
+};
+
+struct stackcontroller
+{
+  static lsquare*** Map;
+  static lsquare** Stack;
+  static long StackIndex;
+  static int LevelXSize, LevelYSize;
+  static vector2d Center;
+};
+
+struct tickcontroller
+{
+  static void PrepareShiftedTick();
+  static ulong Tick;
+  static ulong ShiftedTick[4];
+  static ulong ShiftedQuadriTick[4];
 };
 
 class lsquare : public square
 {
  public:
   friend class level;
+  friend struct loscontroller;
+  friend struct sunbeamcontroller;
+  friend struct areacontroller;
+  friend struct emitationcontroller;
+  friend struct noxifycontroller;
   lsquare(level*, vector2d);
   virtual ~lsquare();
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   stack* GetStack() const { return Stack; }
-  void AlterLuminance(vector2d, ulong);
-  void Emitate();
-  void ReEmitate(ulong);
-  stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
+  void AlterLuminance(ulong, color24);
+  void Emitate() { Emitate(Emitation); }
+  void Emitate(color24, ulong = 0);
   void Clean();
   bool Open(character*);
   bool Close(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SignalEmitationIncrease(ulong);
-  void SignalEmitationDecrease(ulong);
-  ulong GetEmitation() const { return Emitation; }
-  void ForceEmitterNoxify();
-  void ForceEmitterEmitation();
-  void Noxify();
-  void NoxifyEmitter(vector2d);
-  uchar CalculateBitMask(vector2d) const;
-  festring GetEngraved() const { return Engraved; }
-  bool Engrave(const festring& What) { Engraved = What; return true; }
-  void SetEmitation(ulong What) { Emitation = What; }
+  void SignalEmitationIncrease(color24);
+  void SignalEmitationDecrease(color24);
+  color24 GetEmitation() const { return Emitation; }
+  void Noxify() { Noxify(Emitation); }
+  void Noxify(color24, ulong = 0);
+  bool NoxifyEmitter(ulong);
+  const char* GetEngraved() const { return Engraved; }
+  bool Engrave(const festring&);
   void UpdateMemorizedDescription(bool = false);
-  bool BeKicked(character*, item*, bodypart*, float, float, short, uchar, bool, bool);
-  uchar GetDivineMaster() const;
+  bool BeKicked(character*, item*, bodypart*, double, double, int, int, bool, bool);
+  int GetDivineMaster() const;
   void Draw();
   void UpdateMemorized();
   bool CanBeDug() const;
@@ -96,61 +133,58 @@ class lsquare : public square
   void SetOLTerrain(olterrain*);
   void ApplyScript(const squarescript*, room*);
   virtual bool CanBeSeenByPlayer(bool = false) const;
-  virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
-  ulong GetRawLuminance() const;
+  virtual bool CanBeSeenFrom(vector2d, long, bool = false) const ;
   void StepOn(character*, lsquare**);
-  uchar GetRoomIndex() const { return RoomIndex; }
-  void SetRoomIndex(uchar What) { RoomIndex = What; }
+  uint GetRoomIndex() const { return RoomIndex; }
+  void SetRoomIndex(uint What) { RoomIndex = What; }
   void ReceiveVomit(character*, liquid*);
   room* GetRoom() const { return RoomIndex ? GetLevel()->GetRoom(RoomIndex) : 0; }
-  void SetTemporaryEmitation(ulong);
-  ulong GetTemporaryEmitation() const { return TemporaryEmitation; }
+  void SetTemporaryEmitation(color24);
+  color24 GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
-  void DrawParticles(ulong, bool = true);
-  vector2d DrawLightning(vector2d, ulong, uchar, bool = true);
+  void DrawParticles(long, bool = true);
+  vector2d DrawLightning(vector2d, long, int, bool = true);
   bool DipInto(item*, character*);
   bool TryKey(item*, character*);
-  void SetLastSeen(ulong);
+  void SignalSeen(ulong);
   void CalculateLuminance();
-  void DrawStaticContents(bitmap*, vector2d, ulong, bool) const;
+  void DrawStaticContents(bitmap*, vector2d, color24, bool) const;
   void DrawMemorized();
   void DrawMemorizedCharacter();
-  bitmap* GetMemorized() const { return Memorized; }
   void SendMemorizedUpdateRequest();
-  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
+  lsquare* GetNeighbourLSquare(int) const;
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
   bool IsDangerousForAIToStepOn(const character*) const;
-  stack* GetSideStackOfAdjacentSquare(ushort) const;
+  stack* GetStackOfAdjacentSquare(int) const;
   void KickAnyoneStandingHereAway();
   bool IsDark() const;
   void AddItem(item*);
-  static bool (lsquare::*GetBeamEffect(ushort))(character*, const festring&, uchar);
-  bool Polymorph(character*, const festring&, uchar);
-  bool Strike(character*, const festring&, uchar);
-  bool FireBall(character*, const festring&, uchar);
-  bool Teleport(character*, const festring&, uchar);
-  bool Haste(character*, const festring&, uchar);
-  bool Slow(character*, const festring&, uchar);
-  bool Resurrect(character*, const festring&, uchar);
-  bool Invisibility(character*, const festring&, uchar);
-  bool Clone(character*, const festring&, uchar);
-  bool Lightning(character*, const festring&, uchar);
-  bool DoorCreation(character*, const festring&, uchar);
-  stack* GetFirstSideStackUnderAttack(uchar) const;
-  stack* GetSecondSideStackUnderAttack(uchar) const;
-  uchar GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
-  uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
+  static bool (lsquare::*GetBeamEffect(int))(character*, const festring&, int);
+  bool Polymorph(character*, const festring&, int);
+  bool Strike(character*, const festring&, int);
+  bool FireBall(character*, const festring&, int);
+  bool Teleport(character*, const festring&, int);
+  bool Haste(character*, const festring&, int);
+  bool Slow(character*, const festring&, int);
+  bool Resurrect(character*, const festring&, int);
+  bool Invisibility(character*, const festring&, int);
+  bool Clone(character*, const festring&, int);
+  bool Lightning(character*, const festring&, int);
+  bool DoorCreation(character*, const festring&, int);
+  bool AcidRain(character*, const festring&, int);
+  int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
+  int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
   bool CheckKick(const character*) const;
   void GetHitByExplosion(const explosion*);
-  ushort GetSpoiledItems() const;
-  void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
-  bool LowerEnchantment(character*, const festring&, uchar);
+  int GetSpoiledItems() const;
+  void SortAllItems(itemvector&, const character* = 0, sorter = 0);
+  bool LowerEnchantment(character*, const festring&, int);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
   bool IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
-  bool IsTransparent() const { return (!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175; }
-  void SignalSmokeAlphaChange(short);
+  bool IsTransparent() const { return !!(Flags & IS_TRANSPARENT); }
+  void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;
   void DisplaySmokeInfo(festring&) const;
   bool IsDipDestination() const;
@@ -158,57 +192,98 @@ class lsquare : public square
   bool IsDangerous(character*) const;
   bool CanBeFeltByPlayer() const;
   void PreProcessForBone();
-  void PostProcessForBone(float&, ushort&);
+  void PostProcessForBone(double&, int&);
   void DisplayEngravedInfo(festring&) const;
   bool EngravingsCanBeReadByPlayer();
-  bool HasEngravings() const { return !Engraved.IsEmpty(); }
+  bool HasEngravings() const { return !!Engraved; }
   void FinalProcessForBone();
-  bool IsFreezed() const { return Freezed; }
-  void SetIsFreezed(bool What) { Freezed = What; }
+  bool IsFreezed() const { return !!(Flags & FREEZED); }
   bool IsDangerousForAIToBreathe(const character*) const;
-  uchar GetWalkability() const;
-  uchar GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
-  virtual uchar GetSquareWalkability() const { return GetWalkability(); }
+  int GetWalkability() const;
+  int GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
+  virtual int GetSquareWalkability() const { return GetWalkability(); }
   void CalculateBorderPartners();
   void RequestForBorderPartnerUpdates();
-  void SpillFluid(character*, liquid*, bool = true);
+  void SpillFluid(character*, liquid*, bool = false, bool = true);
   void DisplayFluidInfo(festring&) const;
   void RemoveFluid(fluid*);
   void AddFluid(liquid*);
-  void DrawStacks(bitmap*, vector2d, ulong, bool) const;
+  void DrawStacks(bitmap*, vector2d, color24, bool) const;
   bool FluidIsVisible() const { return SmokeAlphaSum < 175; }
   void RemoveRain(rain*);
-  void AddRain(liquid*, vector2d, bool);
-  void SetIsOutside(bool What) { Outside = What; }
-  bool IsOutside() const { return Outside; }
+  void AddRain(liquid*, vector2d, int, bool);
+  bool IsInside() const { return !!(Flags & INSIDE); }
+  void RemoveSunLight();
+  void CheckIfIsSecondarySunLightEmitter();
+  void CalculateNeighbourLSquares();
+  const emittervector& GetEmitter() const { return Emitter; }
+  void EnableGlobalRain();
+  void DisableGlobalRain();
+  void Freeze() { Flags |= FREEZED; }
+  void UnFreeze() { Flags &= ~FREEZED; }
+  void InitLastSeen();
+  void GetSideItemDescription(festring&, bool = false) const;
+  void AddSunLightEmitter(ulong);
+  void SendSunLightSignals();
+  const sunemittervector& GetSunEmitter() const { return SunEmitter; }
+  void ZeroReSunEmitatedFlags();
+  virtual bool HasBeenSeen() const { return !!Memorized; }
+  bool CalculateIsTransparent();
+  void CalculateSunLightLuminance(ulong);
+  void CreateMemorized();
+  bool DetectMaterial(const material*) const;
+  void Reveal(ulong, bool = false);
+  void DestroyMemorized();
+  void SwapMemorized(lsquare*);
+  bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
  protected:
+  void ChangeLuminance(color24&, color24);
+  void RemoveLuminance(color24&);
+  void CalculateEmitation();
+  fluid* Fluid;
+  smoke* Smoke;
+  rain* Rain;
+  emittervector Emitter;
+  sunemittervector SunEmitter;
   glterrain* GLTerrain;
   olterrain* OLTerrain;
-  void CalculateEmitation();
-  std::vector<emitter> Emitter;
   stack* Stack;
-  stack* SideStack[4];
-  ulong Emitation;
-  festring Engraved;
-  uchar RoomIndex;
-  ulong TemporaryEmitation;
-  fluidlist Fluid;
   bitmap* Memorized;
-  bool MemorizedUpdateRequested;
-  ulong LastExplosionID;
-  smokelist Smoke;
-  ushort SmokeAlphaSum;
-  bool Freezed;
-  borderpartner BorderPartner[8];
-  bool HasFluids;
-  std::vector<rain*> Rain;
-  bool HasRain;
-  bool Outside;
+  bitmap* FowMemorized;
+  char* Engraved;
+  olterrain* BorderPartnerTerrain[8];
+  ulong BorderPartnerInfo;
+  ulong SquarePartEmitationTick;
+  ulong SquarePartLastSeen;
+  color24 Emitation;
+  int SmokeAlphaSum;
+  lsquare* NeighbourLSquare[8];
+  color24 AmbientLuminance;
+  color24 SunLightLuminance;
+  color24 TemporaryEmitation;
+  color24 SecondarySunLightEmitation;
+  ushort LastExplosionID;
+  uchar RoomIndex;
 };
 
 inline bool lsquare::IsDark() const
 {
-  return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
+  color24 Light = Luminance;
+
+  return !Light
+      || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
+       && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+       && (Light & 0x0000FF) < LIGHT_BORDER);
+}
+
+inline bool eyecontroller::Handler(int x, int y)
+{
+  return Map[x][y]->IsTransparent();
+}
+
+inline lsquare* lsquare::GetNeighbourLSquare(int I) const
+{
+  return I < 8 ? NeighbourLSquare[I] : const_cast<lsquare*>(this);
 }
 
 #endif

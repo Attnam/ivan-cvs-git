@@ -2,93 +2,93 @@
 
 const char* valpurus::GetName() const { return "Valpurus"; }
 const char* valpurus::GetDescription() const { return "King of Gods"; }
-uchar valpurus::GetAlignment() const { return ALPP; }
-uchar valpurus::GetBasicAlignment() const { return GOOD; }
-ushort valpurus::GetColor() const { return MakeRGB16(160, 160, 0); }
+int valpurus::GetAlignment() const { return ALPP; }
+int valpurus::GetBasicAlignment() const { return GOOD; }
+color16 valpurus::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* legifer::GetName() const { return "Legifer"; }
 const char* legifer::GetDescription() const { return "god of law and order"; }
-uchar legifer::GetAlignment() const { return ALP; }
-uchar legifer::GetBasicAlignment() const { return GOOD; }
-ushort legifer::GetColor() const { return MakeRGB16(160, 160, 0); }
+int legifer::GetAlignment() const { return ALP; }
+int legifer::GetBasicAlignment() const { return GOOD; }
+color16 legifer::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* atavus::GetName() const { return "Atavus"; }
 const char* atavus::GetDescription() const { return "god of charity and munificence"; }
-uchar atavus::GetAlignment() const { return ALP; }
-uchar atavus::GetBasicAlignment() const { return GOOD; }
-ushort atavus::GetColor() const { return MakeRGB16(160, 160, 0); }
+int atavus::GetAlignment() const { return ALP; }
+int atavus::GetBasicAlignment() const { return GOOD; }
+color16 atavus::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* dulcis::GetName() const { return "Dulcis"; }
 const char* dulcis::GetDescription() const { return "goddess of love and art"; }
-uchar dulcis::GetAlignment() const { return AL; }
-uchar dulcis::GetBasicAlignment() const { return GOOD; }
-ushort dulcis::GetColor() const { return MakeRGB16(160, 160, 0); }
+int dulcis::GetAlignment() const { return AL; }
+int dulcis::GetBasicAlignment() const { return GOOD; }
+color16 dulcis::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* seges::GetName() const { return "Seges"; }
 const char* seges::GetDescription() const { return "goddess of health and nutrition"; }
-uchar seges::GetAlignment() const { return AL; }
-uchar seges::GetBasicAlignment() const { return GOOD; }
-ushort seges::GetColor() const { return MakeRGB16(160, 160, 0); }
+int seges::GetAlignment() const { return AL; }
+int seges::GetBasicAlignment() const { return GOOD; }
+color16 seges::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* sophos::GetName() const { return "Sophos"; }
 const char* sophos::GetDescription() const { return "god of knowledge and magic"; }
-uchar sophos::GetAlignment() const { return ALM; }
-uchar sophos::GetBasicAlignment() const { return GOOD; }
-ushort sophos::GetColor() const { return MakeRGB16(160, 160, 0); }
+int sophos::GetAlignment() const { return ALM; }
+int sophos::GetBasicAlignment() const { return GOOD; }
+color16 sophos::GetColor() const { return MakeRGB16(160, 160, 0); }
 
 const char* silva::GetName() const { return "Silva"; }
 const char* silva::GetDescription() const { return "goddess of nature"; }
-uchar silva::GetAlignment() const { return ANP; }
-uchar silva::GetBasicAlignment() const { return NEUTRAL; }
-ushort silva::GetColor() const { return MakeRGB16(20, 120, 200); }
+int silva::GetAlignment() const { return ANP; }
+int silva::GetBasicAlignment() const { return NEUTRAL; }
+color16 silva::GetColor() const { return MakeRGB16(20, 120, 200); }
 
 const char* loricatus::GetName() const { return "Loricatus"; }
 const char* loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
-uchar loricatus::GetAlignment() const { return AN; }
-uchar loricatus::GetBasicAlignment() const { return NEUTRAL; }
-ushort loricatus::GetColor() const { return MakeRGB16(20, 120, 200); }
+int loricatus::GetAlignment() const { return AN; }
+int loricatus::GetBasicAlignment() const { return NEUTRAL; }
+color16 loricatus::GetColor() const { return MakeRGB16(20, 120, 200); }
 
 const char* mellis::GetName() const { return "Mellis"; }
 const char* mellis::GetDescription() const { return "god of money, trade and politics"; }
-uchar mellis::GetAlignment() const { return ANM; }
-uchar mellis::GetBasicAlignment() const { return NEUTRAL; }
-ushort mellis::GetColor() const { return MakeRGB16(20, 120, 200); }
+int mellis::GetAlignment() const { return ANM; }
+int mellis::GetBasicAlignment() const { return NEUTRAL; }
+color16 mellis::GetColor() const { return MakeRGB16(20, 120, 200); }
 
 const char* cleptia::GetName() const { return "Cleptia"; }
 const char* cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
-uchar cleptia::GetAlignment() const { return ACP; }
-uchar cleptia::GetBasicAlignment() const { return EVIL; }
-ushort cleptia::GetColor() const { return MakeRGB16(200, 0, 0); }
+int cleptia::GetAlignment() const { return ACP; }
+int cleptia::GetBasicAlignment() const { return EVIL; }
+color16 cleptia::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 const char* nefas::GetName() const { return "Nefas"; }
 const char* nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
-uchar nefas::GetAlignment() const { return AC; }
-uchar nefas::GetBasicAlignment() const { return EVIL; }
-ushort nefas::GetColor() const { return MakeRGB16(200, 0, 0); }
+int nefas::GetAlignment() const { return AC; }
+int nefas::GetBasicAlignment() const { return EVIL; }
+color16 nefas::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 const char* scabies::GetName() const { return "Scabies"; }
 const char* scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
-uchar scabies::GetAlignment() const { return AC; }
-uchar scabies::GetBasicAlignment() const { return EVIL; }
-ushort scabies::GetColor() const { return MakeRGB16(200, 0, 0); }
+int scabies::GetAlignment() const { return AC; }
+int scabies::GetBasicAlignment() const { return EVIL; }
+color16 scabies::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 const char* infuscor::GetName() const { return "Infuscor"; }
 const char* infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
-uchar infuscor::GetAlignment() const { return ACM; }
-uchar infuscor::GetBasicAlignment() const { return EVIL; }
-ushort infuscor::GetColor() const { return MakeRGB16(200, 0, 0); }
+int infuscor::GetAlignment() const { return ACM; }
+int infuscor::GetBasicAlignment() const { return EVIL; }
+color16 infuscor::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 const char* cruentus::GetName() const { return "Cruentus"; }
 const char* cruentus::GetDescription() const { return "god of war and blood"; }
-uchar cruentus::GetAlignment() const { return ACM; }
-uchar cruentus::GetBasicAlignment() const { return EVIL; }
-ushort cruentus::GetColor() const { return MakeRGB16(200, 0, 0); }
+int cruentus::GetAlignment() const { return ACM; }
+int cruentus::GetBasicAlignment() const { return EVIL; }
+color16 cruentus::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 const char* mortifer::GetName() const { return "Mortifer"; }
 const char* mortifer::GetDescription() const { return "Destroyer of Worlds"; }
-uchar mortifer::GetAlignment() const { return ACMM; }
-uchar mortifer::GetBasicAlignment() const { return EVIL; }
-ushort mortifer::GetColor() const { return MakeRGB16(200, 0, 0); }
+int mortifer::GetAlignment() const { return ACMM; }
+int mortifer::GetBasicAlignment() const { return EVIL; }
+color16 mortifer::GetColor() const { return MakeRGB16(200, 0, 0); }
 
 void sophos::PrayGoodEffect()
 {
@@ -145,7 +145,7 @@ void dulcis::PrayGoodEffect()
 {
   ADD_MESSAGE("A beautiful melody echoes around you.");
 
-  for(ushort d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
     {
       square* Square = PLAYER->GetNeighbourSquare(d);
 
@@ -155,7 +155,7 @@ void dulcis::PrayGoodEffect()
 
 	  if(Char)
 	    if(Char->IsCharmable())
-	      if(PLAYER->GetRelativeDanger(Char) > 2.0f)
+	      if(PLAYER->GetRelativeDanger(Char) > 2.0)
 		{
 		  if(Char->GetTeam() == PLAYER->GetTeam())
 		    ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
@@ -266,7 +266,7 @@ void atavus::PrayBadEffect()
 
   if(PLAYER->GetStack()->GetItems())
     {
-      ushort ToBeDeleted = RAND() % PLAYER->GetStack()->GetItems();
+      int ToBeDeleted = RAND() % PLAYER->GetStack()->GetItems();
       item* Disappearing = PLAYER->GetStack()->GetItem(ToBeDeleted);
 
       if(Disappearing->IsDestroyable())
@@ -324,22 +324,22 @@ void silva::PrayGoodEffect()
   if(!game::GetCurrentLevel()->IsOnGround())
     {
       ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
-      ushort c, Tunnels = 2 + RAND() % 3;
+      int c, Tunnels = 2 + RAND() % 3;
 
       for(c = 0; c < Tunnels; ++c)
 	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE|ATTACHABLE));
 
-      uchar ToEmpty = 10 + RAND() % 11;
+      int ToEmpty = 10 + RAND() % 11;
 
       for(c = 0; c < ToEmpty; ++c)
-	for(ushort i = 0; i < 50; ++i)
+	for(int i = 0; i < 50; ++i)
 	  {
 	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOT_WALKABLE);
 	    bool Correct = false;
 
-	    for(ushort d = 0; d < 8; ++d)
+	    for(int d = 0; d < 8; ++d)
 	      {
-		lsquare* Square = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
+		lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
 
 		if(Square && Square->IsFlyable())
 		  {
@@ -351,18 +351,14 @@ void silva::PrayGoodEffect()
 	    if(Correct)
 	      {
 		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
-
-		for(ushort p = 0; p < 4; ++p)
-		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
-
 		break;
 	      }
 	  }
 
-      ushort ToGround = 20 + RAND() % 21;
+      int ToGround = 20 + RAND() % 21;
 
       for(c = 0; c < ToGround; ++c)
-	for(ushort i = 0; i < 50; ++i)
+	for(int i = 0; i < 50; ++i)
 	  {
 	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
 	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
@@ -371,11 +367,11 @@ void silva::PrayGoodEffect()
 	    if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
 	      continue;
 
-	    ushort Walkables = 0;
+	    int Walkables = 0;
 
-	    for(ushort d = 0; d < 8; ++d)
+	    for(int d = 0; d < 8; ++d)
 	      {
-		lsquare* NearSquare = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
+		lsquare* NearSquare = game::GetCurrentLevel()->GetLSquare(Pos)->GetNeighbourLSquare(d);
 
 		if(NearSquare && NearSquare->IsFlyable())
 		  ++Walkables;
@@ -395,12 +391,6 @@ void silva::PrayGoodEffect()
 		  }
 
 		Square->KickAnyoneStandingHereAway();
-
-		ushort p;
-
-		for(p = 0; p < 4; ++p)
-		  Square->GetSideStack(p)->Clean();
-
 		Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
 		break;
 	      }
@@ -408,7 +398,7 @@ void silva::PrayGoodEffect()
 
       // Generate a few boulders in the level
 
-      ushort BoulderNumber = 10 + RAND() % 10;
+      int BoulderNumber = 10 + RAND() % 10;
 
       for(c = 0; c < BoulderNumber; ++c)
 	{
@@ -429,14 +419,14 @@ void silva::PrayGoodEffect()
 
       // Damage to items in the level
 
-      for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
-	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+      for(int x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+	for(int y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
 	  game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
     }
   else
     {
-      ushort TryToCreate = 1 + RAND() % 7;
-      ushort Created = 0;
+      int TryToCreate = 1 + RAND() % 7;
+      int Created = 0;
 
       for(; Created < TryToCreate; ++Created)
 	{
@@ -491,7 +481,7 @@ void loricatus::PrayGoodEffect()
       return;
     }
 
-  for(ushort c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
+  for(int c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
     {
       item* Equipment = PLAYER->GetEquipment(c);
 
@@ -509,7 +499,7 @@ void loricatus::PrayGoodEffect()
     {
       if(MainWielded->IsMaterialChangeable())
 	{
-	  ushort StrengthValue = material::GetDataBase(STEEL)->StrengthValue;
+	  int StrengthValue = material::GetDataBase(STEEL)->StrengthValue;
 
 	  if(StrengthValue > MainWielded->GetMainMaterial()->GetStrengthValue())
 	    {
@@ -616,7 +606,7 @@ void cleptia::PrayGoodEffect()
     }
 
   ADD_MESSAGE("Cleptia helps you, but you really don't know how.");  
-  ushort StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
+  int StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
   PLAYER->BeginTemporaryState(StateToActivate, 2500);
 }
 
@@ -658,7 +648,7 @@ void mellis::PrayGoodEffect()
 
   item* NewVersion;
 
-  for(ushort c = 0; !OKItems.empty() && c < 5; ++c)
+  for(int c = 0; !OKItems.empty() && c < 5; ++c)
     {
       item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
       NewVersion = ToBeDeleted->BetterVersion();
@@ -671,16 +661,16 @@ void mellis::PrayGoodEffect()
 
   if((Success && !(RAND() % 5)) || (!Success && !(RAND() % 3)))
     {
-      uchar Possible[GODS];
-      ushort PossibleSize = 0;
+      int Possible[GODS];
+      int PossibleSize = 0;
 
-      for(uchar c = 1; c <= GODS; ++c)
+      for(int c = 1; c <= GODS; ++c)
 	if(!game::GetGod(c)->IsKnown())
 	  Possible[PossibleSize++] = c;
 
       if(PossibleSize)
 	{
-	  uchar NewKnownGod = Possible[RAND() % PossibleSize];
+	  int NewKnownGod = Possible[RAND() % PossibleSize];
 	  game::GetGod(NewKnownGod)->SetIsKnown(true);
 	  ADD_MESSAGE("%s shares his knowledge of %s, the %s.", GetName(), game::GetGod(NewKnownGod)->GetName(), game::GetGod(NewKnownGod)->GetDescription());
 	  return;
@@ -693,7 +683,7 @@ void mellis::PrayGoodEffect()
 
 void mellis::PrayBadEffect()
 {
-  for(ushort c = 1; c <= GODS; ++c)
+  for(int c = 1; c <= GODS; ++c)
     if(c != GetType())
       game::GetGod(c)->AdjustRelation(-100);
 
@@ -800,9 +790,9 @@ void nefas::PrayGoodEffect()
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   bool AudiencePresent = false;
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
     {
-      for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      for(int y = Rect.Y1; y <= Rect.Y2; ++y)
 	{
 	  character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
@@ -819,8 +809,8 @@ void nefas::PrayGoodEffect()
 
   if(AudiencePresent)
     {
-      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      for(int x = Rect.X1; x <= Rect.X2; ++x)
+	for(int y = Rect.Y1; y <= Rect.Y2; ++y)
 	  {
 	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
@@ -897,7 +887,7 @@ void scabies::PrayGoodEffect()
     {
       ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
 
-      for(ushort c = 0; c < 5; ++c)
+      for(int c = 0; c < 5; ++c)
 	{
 	  can* Reward = new can(0, NO_MATERIALS);
 	  Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOL_FOOD));
@@ -909,7 +899,7 @@ void scabies::PrayGoodEffect()
 
   bool Success = false;
 
-  for(ushort d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
+  for(int d = 0; d < PLAYER->GetNeighbourSquares(); ++d)
     {
       lsquare* Square = PLAYER->GetNeighbourLSquare(d);
 
@@ -968,7 +958,7 @@ void infuscor::PrayGoodEffect()
 
   ADD_MESSAGE("Suddenly three scrolls appear almost under your feet.");
 
-  for(ushort c = 0; c < 3; ++c)
+  for(int c = 0; c < 3; ++c)
     PLAYER->GetGiftStack()->AddItem(new scrollofteleportation);
 }
 
@@ -987,9 +977,9 @@ void cruentus::PrayGoodEffect()
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
   bool AudiencePresent = false;
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+  for(int x = Rect.X1; x <= Rect.X2; ++x)
     {
-      for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      for(int y = Rect.Y1; y <= Rect.Y2; ++y)
 	{
 	  character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
@@ -1008,12 +998,12 @@ void cruentus::PrayGoodEffect()
     {
       ADD_MESSAGE("The thundering voice of a godly battle drum shakes everything around you.");
 
-      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      for(int x = Rect.X1; x <= Rect.X2; ++x)
+	for(int y = Rect.Y1; y <= Rect.Y2; ++y)
 	  {
 	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
-	    if(Audience && !Audience->TemporaryStateIsActivated(PANIC) && PLAYER->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 100)
+	    if(Audience && !Audience->TemporaryStateIsActivated(PANIC) && PLAYER->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
 	      Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	  }
 

@@ -46,7 +46,7 @@ booloption ivanconfig::FullScreenMode(	  "FullScreenMode",
 					  &configsystem::NormalBoolChangeInterface,
 					  &FullScreenModeChanger);
 #endif
-ulong ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
+color24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 
 vector2d ivanconfig::GetQuestionPos() { return game::IsRunning() ? vector2d(16, 6) : vector2d(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
@@ -155,13 +155,17 @@ void ivanconfig::ContrastHandler(long Value)
     }
 }
 
+#ifndef __DJGPP__
+
 void ivanconfig::SwitchModeHandler()
 {
   FullScreenMode.Value = !FullScreenMode.Value;
   Save();
 }
 
-ulong ivanconfig::ApplyContrastTo(ulong L)
+#endif
+
+long ivanconfig::ApplyContrastTo(long L)
 {
   long Contrast = GetContrast();
   return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
@@ -169,7 +173,7 @@ ulong ivanconfig::ApplyContrastTo(ulong L)
 
 void ivanconfig::CalculateContrastLuminance()
 {
-  ushort Element = Min<long>((GetContrast() << 7) / 100, 255);
+  int Element = Min<long>((GetContrast() << 7) / 100, 255);
   ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 

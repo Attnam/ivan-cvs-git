@@ -1,14 +1,14 @@
 /* Compiled through wmapset.cpp */
 
-ushort** continent::TypeBuffer;
+uchar** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;
 
 continent::continent() { }
-continent::continent(ushort Index) : Index(Index) { }
-ulong continent::GetSize() const { return Member.size(); }
-ushort continent::GetGTerrainAmount(ushort Type) const { return GTerrainAmount[Type]; }
-vector2d continent::GetMember(ushort Index) const { return Member[Index]; }
+continent::continent(int Index) : Index(Index) { }
+long continent::GetSize() const { return Member.size(); }
+int continent::GetGTerrainAmount(int Type) const { return GTerrainAmount[Type]; }
+vector2d continent::GetMember(int I) const { return Member[I]; }
 
 void continent::Save(outputfile& SaveFile) const
 {
@@ -36,7 +36,7 @@ void continent::AttachTo(continent* Continent)
 
 void continent::GenerateInfo()
 {
-  GTerrainAmount.resize(protocontainer<gwterrain>::GetProtoAmount() + 1);
+  GTerrainAmount.resize(protocontainer<gwterrain>::GetSize() + 1);
 
   for(ulong c = 0; c < Member.size(); ++c)
     ++GTerrainAmount[TypeBuffer[Member[c].X][Member[c].Y]];
@@ -45,13 +45,13 @@ void continent::GenerateInfo()
   Name << Index;
 }
 
-vector2d continent::GetRandomMember(ushort Type)
+vector2d continent::GetRandomMember(int Type)
 {
   if(!GTerrainAmount[Type])
     ABORT("Shortage of terrain!");
 
   vector2d* TypeContainer = new vector2d[Member.size()];
-  ulong Index = 0;
+  long Index = 0;
 
   for(ulong c = 0; c < Member.size(); ++c)
     if(TypeBuffer[Member[c].X][Member[c].Y] == Type)

@@ -14,10 +14,10 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
+  virtual int GetAlignment() const;
   virtual void Pray();
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -30,9 +30,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -45,9 +45,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -60,9 +60,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -75,9 +75,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -90,9 +90,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -105,9 +105,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -120,9 +120,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -135,9 +135,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -150,9 +150,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -165,9 +165,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -180,10 +180,10 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
   virtual bool PlayerVomitedOnAltar(liquid*);
-  virtual ushort GetColor() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -196,9 +196,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -211,9 +211,9 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetAlignment() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -226,10 +226,10 @@ class GOD
  public:
   virtual const char* GetName() const;
   virtual const char* GetDescription() const;
-  virtual uchar GetAlignment() const;
+  virtual int GetAlignment() const;
   virtual void Pray();
-  virtual uchar GetBasicAlignment() const;
-  virtual ushort GetColor() const;
+  virtual int GetBasicAlignment() const;
+  virtual color16 GetColor() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

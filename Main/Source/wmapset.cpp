@@ -7,8 +7,8 @@ gwterrain::prototype** protocontainer<gwterrain>::ProtoData;
 owterrain::prototype** protocontainer<owterrain>::ProtoData;
 valuemap protocontainer<gwterrain>::CodeNameMap;
 valuemap protocontainer<owterrain>::CodeNameMap;
-ushort protocontainer<gwterrain>::ProtoAmount;
-ushort protocontainer<owterrain>::ProtoAmount;
+int protocontainer<gwterrain>::Size;
+int protocontainer<owterrain>::Size;
 
 #include "wterras.h"
 

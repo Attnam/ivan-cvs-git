@@ -1,26 +1,26 @@
 /* Compiled through levelset.cpp */
 
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
-void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
-vector2d door::GetBitmapPos(ushort Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
-uchar door::GetTheoreticalWalkability() const { return ANY_MOVE; }
+void door::HasBeenHitByItem(character* Thrower, item*, int Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
+vector2d door::GetBitmapPos(int Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
+int door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 
-vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
+vector2d portal::GetBitmapPos(int Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
-void fountain::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, 0, SpecialFlags); }
-void fountain::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, 0, SpecialFlags); }
-void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, 0, ContainedMaterial, M2, 0, CUP); }
-vector2d fountain::GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
-void fountain::InitMaterials(const materialscript* M, const materialscript*, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
+void fountain::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
+void fountain::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, 0, SpecialFlags); }
+void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, 0, SecondaryMaterial, M2, 0, CUP); }
+vector2d fountain::GetBitmapPos(int) const { return vector2d(GetSecondaryMaterial() ? 16 : 32, 288); }
+void fountain::InitMaterials(const materialscript* M, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
-void brokendoor::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
+void brokendoor::HasBeenHitByItem(character* Thrower, item*, int Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 
 const char* liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
 const char* liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
 const char* liquidterrain::DeathMessage() const { return "you drown"; }
 const char* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
 const char* liquidterrain::ScoreEntry() const { return "drowned"; }
-vector2d liquidterrain::GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
+vector2d liquidterrain::GetBitmapPos(int Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
 
 festring sign::GetText() const { return Text; }
 
@@ -93,13 +93,13 @@ bool door::Close(character* Closer)
   return true;
 }
 
-void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate) const
+void altar::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
 {
   olterrain::Draw(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
-  igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
+  igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
-void door::BeKicked(character* Kicker, ushort KickDamage, uchar)
+void door::BeKicked(character* Kicker, int KickDamage, int)
 {
   if(!Opened) 
     {
@@ -121,7 +121,7 @@ void door::BeKicked(character* Kicker, ushort KickDamage, uchar)
 	}
 
       EditHP(GetStrengthValue() - KickDamage);
-      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      int SV = Max(GetStrengthValue(), 1);
       bool LockBreaks = IsLocked() && RAND() % (100 * KickDamage / SV) >= 100;
 
       if(LockBreaks)
@@ -178,10 +178,12 @@ void door::MakeWalkable()
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->CalculateIsTransparent();
+  GetLevel()->ForceEmitterEmitation(GetLSquareUnder()->GetEmitter(),
+				    GetLSquareUnder()->GetSunEmitter());
   GetLSquareUnder()->CalculateLuminance();
 
-  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTick())
     game::SendLOSUpdateRequest();
 
   ActivateBoobyTrap();
@@ -189,15 +191,19 @@ void door::MakeWalkable()
 
 void door::MakeNotWalkable()
 {
-  GetLSquareUnder()->ForceEmitterNoxify();
+  emittervector EmitterBackup = GetLSquareUnder()->GetEmitter();
+  GetLevel()->ForceEmitterNoxify(EmitterBackup);
   SetIsOpened(false);
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->CalculateIsTransparent();
+  GetLevel()->ForceEmitterEmitation(EmitterBackup,
+				    GetLSquareUnder()->GetSunEmitter(),
+				    FORCE_ADD);
   GetLSquareUnder()->CalculateLuminance();
 
-  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+  if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTick())
     game::SendLOSUpdateRequest();
 }
 
@@ -247,7 +253,7 @@ bool throne::SitOn(character* Sitter)
   return true;
 }
 
-void altar::BeKicked(character* Kicker, ushort, uchar)
+void altar::BeKicked(character* Kicker, int, int)
 {
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
@@ -302,7 +308,7 @@ bool door::AddAdjective(festring& String, bool Articled) const
 
 bool fountain::SitOn(character* Sitter)
 {
-  if(GetContainedMaterial())
+  if(GetSecondaryMaterial())
     {
       ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
       Sitter->EditAP(-1000);
@@ -314,9 +320,9 @@ bool fountain::SitOn(character* Sitter)
 
 bool fountain::Drink(character* Drinker)
 {
-  if(GetContainedMaterial())
+  if(GetSecondaryMaterial())
     {
-      if(GetContainedMaterial()->GetConfig() == WATER) 
+      if(GetSecondaryMaterial()->GetConfig() == WATER) 
 	{
 	  room* Room = GetRoom();
 
@@ -339,39 +345,23 @@ bool fountain::Drink(character* Drinker)
 	      if(!(RAND() % 5))
 		Drinker->PolymorphRandomly(0, 10000, 2500 + RAND() % 2500);
 	      else
-		Drinker->ChangeRandomStat(-1);
+		Drinker->ChangeRandomAttribute(-1);
 
 	      break;
 	
 	    case 1:
 	      ADD_MESSAGE("The water tasted very good.");
 	      Drinker->EditNP(2500);
-	      Drinker->ChangeRandomStat(1);
+	      Drinker->ChangeRandomAttribute(1);
 	      break;
 
 	    case 2:
 	      if(!(RAND() % 15))
 		{
 		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
-
-		  while(true)
-		    {
-		      festring Temp = game::StringQuestion(CONST_S("What do you want to wish for?"), vector2d(16, 6), WHITE, 0, 80, false);
-		      item* TempItem = protosystem::CreateItem(Temp, Drinker->IsPlayer());
-
-		      if(TempItem)
-			{
-			  Drinker->GetStack()->AddItem(TempItem);
-			  TempItem->SpecialGenerationHandler();
-
-			  if(TempItem->HandleInPairs())
-			    ADD_MESSAGE("Two %s appear from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(PLURAL));
-			  else
-			    ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHAR_NAME(INDEFINITE));
-
-			  break;
-			}
-		    }
+		  game::Wish(Drinker,
+			     "%s appears from nothing and the spirit flies happily away!",
+			     "Two %s appear from nothing and the spirit flies happily away!");
 		}
 	      else
 		DryOut();
@@ -414,7 +404,7 @@ bool fountain::Drink(character* Drinker)
 		    break;
 		  }
 
-		for(ushort p = 0; p < 10; ++p)
+		for(int p = 0; p < 10; ++p)
 		  {
 		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
@@ -488,7 +478,7 @@ bool fountain::Drink(character* Drinker)
 void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CHAR_NAME(DEFINITE));
-  ChangeContainedMaterial(0);
+  ChangeSecondaryMaterial(0);
 
   if(GetLSquareUnder())
     {
@@ -497,7 +487,7 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::BeKicked(character* Kicker, ushort KickDamage, uchar)
+void brokendoor::BeKicked(character* Kicker, int KickDamage, int)
 {
   if(!Opened) 
     {
@@ -512,7 +502,7 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage, uchar)
 
       if(IsLocked())
 	{
-	  ushort SV = Max<ushort>(GetStrengthValue(), 1);
+	  int SV = Max(GetStrengthValue(), 1);
 
 	  if(KickDamage > SV && RAND() % (100 * KickDamage / SV) >= 100)
 	    {
@@ -551,7 +541,7 @@ bool altar::Polymorph(character*)
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s glows briefly.", CHAR_NAME(DEFINITE));
 	
-  uchar OldGod = GetConfig(), NewGod = GetConfig();
+  int OldGod = GetConfig(), NewGod = GetConfig();
 
   while(NewGod == OldGod)
     NewGod = 1 + RAND() % GODS;
@@ -642,40 +632,32 @@ void door::CreateBoobyTrap()
 
 bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetContainedMaterial()->Clone(100)), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetSecondaryMaterial()->Clone(100)), Who);
   return true;
 }
 
 void fountain::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
-  SaveFile << ContainedMaterial;
+  SaveFile << SecondaryMaterial;
 }
 
 void fountain::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
-  LoadMaterial(SaveFile, ContainedMaterial);
+  LoadMaterial(SaveFile, SecondaryMaterial);
 
 }
 
-material* fountain::GetMaterial(ushort Index) const
+material* fountain::GetMaterial(int I) const
 {
-  return !Index ? MainMaterial : ContainedMaterial;
+  return !I ? MainMaterial : SecondaryMaterial;
 }
 
-ushort fountain::GetMaterialColorB(ushort) const
+color16 fountain::GetMaterialColorB(int) const
 {
-  if(GetContainedMaterial())
-    return GetContainedMaterial()->GetColor();
-  else
-    return 0;
-}
-
-uchar fountain::GetAlphaB(ushort) const
-{
-  if(GetContainedMaterial())
-    return GetContainedMaterial()->GetAlpha();
+  if(GetSecondaryMaterial())
+    return GetSecondaryMaterial()->GetColor();
   else
     return 0;
 }
@@ -690,19 +672,25 @@ void door::VirtualConstructor(bool Load)
 
       if(!(GetConfig() & LOCK_BITS))
 	{
-	  ushort NormalLockTypes = 0;
-	  databasemap::const_iterator i;
+	  int NormalLockTypes = 0;
+	  const database*const* ConfigData = GetProtoType()->GetConfigData();
+	  int c, ConfigSize = GetProtoType()->GetConfigSize();
 
-	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
-	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID))
+	  for(c = 0; c < ConfigSize; ++c)
+	    if(ConfigData[c]->Config & LOCK_BITS
+	    && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	    && !(ConfigData[c]->Config & S_LOCK_ID))
 	      ++NormalLockTypes;
 
-	  ushort ChosenLock = RAND() % NormalLockTypes;
+	  int ChosenLock = RAND() % NormalLockTypes;
 
-	  for(i = GetProtoType()->GetConfig().begin(); i != GetProtoType()->GetConfig().end(); ++i)
-	    if(i->first & LOCK_BITS && (i->first & ~LOCK_BITS) == GetConfig() && !(i->first & S_LOCK_ID) && !ChosenLock--)
+	  for(c = 0; c < ConfigSize; ++c)
+	    if(ConfigData[c]->Config & LOCK_BITS
+	    && (ConfigData[c]->Config & ~LOCK_BITS) == GetConfig()
+	    && !(ConfigData[c]->Config & S_LOCK_ID)
+	    && !ChosenLock--)
 	      {
-		SetConfig(i->first, NO_PIC_UPDATE);
+		SetConfig(ConfigData[c]->Config, NO_PIC_UPDATE);
 		break;
 	      }
 	}
@@ -713,7 +701,7 @@ void door::VirtualConstructor(bool Load)
     }
 }
 
-void door::SetParameters(uchar Param)
+void door::SetParameters(int Param)
 {
   SetIsLocked(Param & LOCKED);
 }
@@ -754,14 +742,20 @@ bool door::TryKey(item* Thingy, character* Applier)
 
 void fountain::GenerateMaterials()
 {
-  ushort Chosen = RandomizeMaterialConfiguration();
-  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), 0, Chosen);
-  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), 0, Chosen);
+  int Chosen = RandomizeMaterialConfiguration();
+  const fearray<long>& MMC = GetMainMaterialConfig();
+  InitMaterial(MainMaterial,
+	       MAKE_MATERIAL(MMC.Data[MMC.Size == 1 ? 0 : Chosen]),
+	       0);
+  const fearray<long>& SMC = GetSecondaryMaterialConfig();
+  InitMaterial(SecondaryMaterial,
+	       MAKE_MATERIAL(SMC.Data[SMC.Size == 1 ? 0 : Chosen]),
+	       0);
 }
 
 bool fountain::AddAdjective(festring& String, bool Articled) const
 {
-  if(!GetContainedMaterial())
+  if(!GetSecondaryMaterial())
     {
       String << (Articled ? "a dried out " : "dried out ");
       return true;
@@ -772,12 +766,12 @@ bool fountain::AddAdjective(festring& String, bool Articled) const
 
 fountain::~fountain()
 {
-  delete ContainedMaterial;
+  delete SecondaryMaterial;
 }
 
-bool fountain::IsSparkling(ushort ColorIndex) const
+bool fountain::IsSparkling(int I) const
 {
-  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
+  return (I == 0 && MainMaterial->IsSparkling()) || (I == 1 && SecondaryMaterial && SecondaryMaterial->IsSparkling());
 }
 
 void stairs::Save(outputfile& SaveFile) const
@@ -873,9 +867,10 @@ void stairs::VirtualConstructor(bool Load)
 void boulder::Break()
 {
   /* If this used the volume of the boulder the pieces would be huge or there would be just hundreds of them so I jsut use normal sized stones and just a few of them too... */
-  ushort HowManyParts = RAND() % 5 + 1;
 
-  for(ushort c = 0; c < HowManyParts; ++c)
+  int HowManyParts = RAND() % 5 + 1;
+
+  for(int c = 0; c < HowManyParts; ++c)
     {
       material* StonesMaterial = GetMainMaterial()->Clone(1000);
       item* Stone = new stone(0, NO_MATERIALS);
@@ -925,7 +920,7 @@ void olterraincontainer::Load(inputfile& SaveFile)
 void olterraincontainer::VirtualConstructor(bool Load)
 {
   olterrain::VirtualConstructor(Load);
-  Contained = new stack(0, this, HIDDEN, true);
+  Contained = new stack(0, this, HIDDEN);
 }
 
 bool olterraincontainer::Open(character* Opener)
@@ -953,18 +948,18 @@ bool olterraincontainer::Open(character* Opener)
   return Success;
 }
 
-void olterraincontainer::SetItemsInside(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)
+void olterraincontainer::SetItemsInside(const fearray<contentscript<item> >& ItemArray, int SpecialFlags)
 {
   GetContained()->Clean();
 
-  for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
-    if(i->IsValid())
+  for(uint c1 = 0; c1 < ItemArray.Size; ++c1)
+    if(ItemArray[c1].IsValid())
       {
-	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
+	int Times = ItemArray[c1].GetTimes();
 
-	for(ushort c = 0; c < Times; ++c)
+	for(int c2 = 0; c2 < Times; ++c2)
 	  {
-	    item* Item = i->Instantiate(SpecialFlags);
+	    item* Item = ItemArray[c1].Instantiate(SpecialFlags);
 
 	    if(Item)
 	      {
@@ -977,13 +972,13 @@ void olterraincontainer::SetItemsInside(const std::list<contentscript<item> >& I
 
 void wall::Break()
 {
-  ushort DigProduct = GetMainMaterial()->GetDigProductMaterial();
+  int DigProduct = GetMainMaterial()->GetDigProductMaterial();
 
   if(DigProduct)
     {
-      ushort HowManyParts = 1 + (RAND() & 3);
+      int HowManyParts = 1 + (RAND() & 3);
 
-      for(ushort c = 0; c < HowManyParts; ++c)
+      for(int c = 0; c < HowManyParts; ++c)
 	{
 	  item* Stone = new stone(0, NO_MATERIALS);
 	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
@@ -994,7 +989,7 @@ void wall::Break()
   olterrain::Break();
 }
 
-void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
+void door::ReceiveDamage(character* Villain, int Damage, int)
 {
   if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {
@@ -1008,7 +1003,7 @@ void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
   if(CanBeDestroyed() && Damage > GetStrengthValue())
     {
       EditHP(GetStrengthValue() - Damage);
-      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      int SV = Max(GetStrengthValue(), 1);
       bool LockBreaks = IsLocked() && RAND() % (100 * Damage / SV) >= 100;
 
       if(LockBreaks)
@@ -1038,7 +1033,7 @@ void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
     }
 }
 
-void brokendoor::ReceiveDamage(character* Villain, ushort Damage, ushort)
+void brokendoor::ReceiveDamage(character* Villain, int Damage, int)
 {
   if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {
@@ -1052,7 +1047,7 @@ void brokendoor::ReceiveDamage(character* Villain, ushort Damage, ushort)
   if(CanBeDestroyed() && Damage > GetStrengthValue())
     {
       EditHP(GetStrengthValue() - Damage);
-      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      int SV = Max(GetStrengthValue(), 1);
       bool LockBreaks = IsLocked() && RAND() % (100 * Damage / SV) >= 100;
 
       if(LockBreaks)
@@ -1092,10 +1087,10 @@ void olterraincontainer::Break()
 
 bool fountain::IsDipDestination() const
 {
- return ContainedMaterial && ContainedMaterial->IsLiquid(); 
+ return SecondaryMaterial && SecondaryMaterial->IsLiquid(); 
 }
 
-uchar door::GetWalkability() const
+int door::GetWalkability() const
 {
   return Opened ? ANY_MOVE : ANY_MOVE&~(WALK|FLY);
 }
@@ -1113,13 +1108,13 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
 
 void earth::Break()
 {
-  ushort DigProduct = GetMainMaterial()->GetDigProductMaterial();
+  int DigProduct = GetMainMaterial()->GetDigProductMaterial();
 
   if(DigProduct)
     {
-      ushort HowManyParts = 1 + (RAND() & 3);
+      int HowManyParts = 1 + (RAND() & 3);
 
-      for(ushort c = 0; c < HowManyParts; ++c)
+      for(int c = 0; c < HowManyParts; ++c)
 	{
 	  item* Stone = new stone(0, NO_MATERIALS);
 	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
@@ -1149,9 +1144,9 @@ void earth::Load(inputfile& SaveFile)
   SaveFile >> PictureIndex;
 }
 
-vector2d earth::GetBitmapPos(ushort Index) const
+vector2d earth::GetBitmapPos(int I) const
 {
-  return olterrain::GetBitmapPos(Index) + vector2d(PictureIndex * 48, 0);
+  return olterrain::GetBitmapPos(I) + vector2d(PictureIndex * 48, 0);
 }
 
 void door::BeDestroyed()

@@ -9,7 +9,6 @@
 #include "iconf.h"
 #include "bitmap.h"
 #include "actions.h"
-#include "wskill.h"
 #include "miscitem.h"
 #include "worldmap.h"
 #include "wsquare.h"
@@ -175,7 +174,7 @@ bool commandsystem::Open(character* Char)
   if(Char->CanOpen())
     {
       int Key;
-      bool OpenableItems = Char->GetStack()->SortedItems(Char, &item::OpenableSorter);
+      bool OpenableItems = Char->GetStack()->SortedItems(Char, &item::IsOpenable);
 
       if(OpenableItems)
 	Key = game::AskForKeyPress(CONST_S("What do you wish to open? [press a direction key, space or i]"));
@@ -184,7 +183,7 @@ bool commandsystem::Open(character* Char)
 
       if(Key == 'i' && OpenableItems)
 	{
-	  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::OpenableSorter);
+	  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to open?"), 0, &item::IsOpenable);
 	  return Item && Item->Open(Char);
 	}
 
@@ -203,7 +202,7 @@ bool commandsystem::Close(character* Char)
 {
   if(Char->CanOpen())
     {
-      uchar Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
+      int Dir = game::DirectionQuestion(CONST_S("What do you wish to close?  [press a direction key]"), false);
 
       if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
 	return Char->ClosePos(Char->GetPos() + game::GetMoveVector(Dir));
@@ -236,7 +235,7 @@ bool commandsystem::Drop(character* Char)
 
       if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
 	{
-	  for(ushort c = 0; c < ToDrop.size(); ++c)
+	  for(uint c = 0; c < ToDrop.size(); ++c)
 	    ToDrop[c]->MoveTo(Char->GetStackUnder());
 
 	  ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).CStr());
@@ -266,7 +265,7 @@ bool commandsystem::Eat(character* Char)
 	return true;
     }
 
-  return Consume(Char, "eat", &item::EatableSorter);
+  return Consume(Char, "eat", &item::IsEatable);
 }
 
 bool commandsystem::Drink(character* Char)
@@ -282,10 +281,10 @@ bool commandsystem::Drink(character* Char)
 	return true;
     }
 
-  return Consume(Char, "drink", &item::DrinkableSorter);
+  return Consume(Char, "drink", &item::IsDrinkable);
 }
 
-bool commandsystem::Consume(character* Char, const char* ConsumeVerb, bool (*Sorter)(const item*, const character*))
+bool commandsystem::Consume(character* Char, const char* ConsumeVerb, sorter Sorter)
 {
   lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
@@ -323,12 +322,20 @@ bool commandsystem::PickUp(character* Char)
     }
 
   std::vector<itemvector> PileVector;
-  Char->GetStackUnder()->Pile(PileVector, Char);
+  Char->GetStackUnder()->Pile(PileVector, Char, CENTER);
+
+  for(int c = 0; c < 4; ++c)
+    {
+      stack* Stack = Char->GetLSquareUnder()->GetStackOfAdjacentSquare(c);
+
+      if(Stack)
+	Stack->Pile(PileVector, Char, 3 - c);
+    }
 
   if(PileVector.size() == 1)
     if(PileVector[0][0]->CanBePickedUp())
       {
-	ushort Amount = PileVector[0].size();
+	int Amount = PileVector[0].size();
 
 	if(Amount > 1)
 	  Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
@@ -338,7 +345,7 @@ bool commandsystem::PickUp(character* Char)
 
 	if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(Char))
 	  {
-	    for(ushort c = 0; c < Amount; ++c)
+	    for(int c = 0; c < Amount; ++c)
 	      PileVector[0][c]->MoveTo(Char->GetStack());
 
 	    ADD_MESSAGE("%s picked up.", PileVector[0][0]->GetName(INDEFINITE, Amount).CStr());
@@ -370,7 +377,7 @@ bool commandsystem::PickUp(character* Char)
 	{
 	  if((!Char->GetRoom() || Char->GetRoom()->PickupItem(Char, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(Char))
 	    {
-	      for(ushort c = 0; c < ToPickup.size(); ++c)
+	      for(uint c = 0; c < ToPickup.size(); ++c)
 		ToPickup[c]->MoveTo(Char->GetStack());
 
 	      ADD_MESSAGE("%s picked up.", ToPickup[0]->GetName(INDEFINITE, ToPickup.size()).CStr());
@@ -395,7 +402,7 @@ bool commandsystem::Quit(character* Char)
   if(game::BoolQuestion(CONST_S("Your quest is not yet compeleted! Really quit? [y/N]")))
     {
       Char->ShowAdventureInfo();
-      Char->AddScoreEntry(CONST_S("cowardly quit the game"), 0.75f);
+      Char->AddScoreEntry(CONST_S("cowardly quit the game"), 0.75);
       game::End(!game::WizardModeIsActive() || game::BoolQuestion(CONST_S("Remove saves? [y/N]")));
       return true;
     }
@@ -409,9 +416,9 @@ bool commandsystem::Talk(character* Char)
     return false;
 
   character* ToTalk = 0;
-  ushort Characters = 0;
+  int Characters = 0;
 
-  for(ushort d = 0; d < 8; ++d)
+  for(int d = 0; d < 8; ++d)
     {
       lsquare* Square = Char->GetNaturalNeighbourLSquare(d);
 
@@ -448,7 +455,7 @@ bool commandsystem::Talk(character* Char)
     }
   else
     {
-      uchar Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk to? [press a direction key]"), false, true);
+      int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk to? [press a direction key]"), false, true);
 
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
 	return false;
@@ -511,7 +518,7 @@ bool commandsystem::Read(character* Char)
       return false;
     }
 
-  if(!Char->GetStack()->SortedItems(Char, &item::ReadableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::IsReadable))
     {
       ADD_MESSAGE("You have nothing to read!");
       return false;
@@ -523,22 +530,22 @@ bool commandsystem::Read(character* Char)
       return false;
     }
 
-  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to read?"), 0, &item::ReadableSorter);
+  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to read?"), 0, &item::IsReadable);
   return Item && Char->ReadItem(Item);
 }
 
 bool commandsystem::Dip(character* Char)
 {
-  if(!Char->GetStack()->SortedItems(Char, &item::DippableSorter) && !Char->EquipsSomething(&item::DippableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::IsDippable) && !Char->EquipsSomething(&item::IsDippable))
     {
       ADD_MESSAGE("You have nothing to dip!");
       return false;
     }
 
-  bool HasDipDestination = Char->GetStack()->SortedItems(Char, &item::DipDestinationSorter) || Char->EquipsSomething(&item::DippableSorter);
+  bool HasDipDestination = Char->GetStack()->SortedItems(Char, &item::IsDipDestination) || Char->EquipsSomething(&item::IsDipDestination);
   bool DipDestinationNear = false;
 
-  for(ushort d = 0; d < 9; ++d)
+  for(int d = 0; d < 9; ++d)
     {
       lsquare* Square = Char->GetNaturalNeighbourLSquare(d);
 
@@ -552,13 +559,13 @@ bool commandsystem::Dip(character* Char)
       return false;
     }
 
-  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to dip?"), &item::DippableSorter);
+  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to dip?"), &item::IsDippable);
 
   if(Item)
     {
       if(!HasDipDestination || (DipDestinationNear && game::BoolQuestion(CONST_S("Do you wish to dip in a nearby square? [y/N]"))))
 	{
-	  uchar Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
+	  int Dir = game::DirectionQuestion(CONST_S("Where do you want to dip ") + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
 	  vector2d Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
 	  if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
@@ -568,7 +575,7 @@ bool commandsystem::Dip(character* Char)
 	}
       else
 	{
-	  item* DipTo = Char->SelectFromPossessions(CONST_S("Into what do you wish to dip it?"), &item::DipDestinationSorter);
+	  item* DipTo = Char->SelectFromPossessions(CONST_S("Into what do you wish to dip it?"), &item::IsDipDestination);
 
 	  if(DipTo)
 	    {
@@ -594,7 +601,7 @@ bool commandsystem::ShowKeyLayout(character*)
   List.AddDescription(CONST_S("Key       Description"));
   festring Buffer;
 
-  for(ushort c = 1; GetCommand(c); ++c)
+  for(int c = 1; GetCommand(c); ++c)
     if(!GetCommand(c)->IsWizardModeFunction())
       {
 	Buffer.Empty();
@@ -609,7 +616,7 @@ bool commandsystem::ShowKeyLayout(character*)
       List.AddEntry(CONST_S("Wizard mode functions:"), WHITE);
       List.AddEntry(CONST_S(""), WHITE);
 
-      for(ushort c = 1; GetCommand(c); ++c)
+      for(int c = 1; GetCommand(c); ++c)
 	if(GetCommand(c)->IsWizardModeFunction())
 	  {
 	    Buffer.Empty();
@@ -653,9 +660,9 @@ bool commandsystem::Pray(character* Char)
 {
   felist Panthenon(CONST_S("To Whom you want to address your prayers?"));
   Panthenon.SetEntryDrawer(game::GodEntryDrawer);
-  ushort Known[GODS];
-  ushort Index = 0;
-  uchar DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
+  int Known[GODS];
+  int Index = 0;
+  int DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
 
   if(DivineMaster == ATHEIST)
     {
@@ -665,7 +672,7 @@ bool commandsystem::Pray(character* Char)
 
   if(!DivineMaster)
     {
-      for(ushort c = 1; c <= GODS; ++c)
+      for(int c = 1; c <= GODS; ++c)
 	if(game::GetGod(c)->IsKnown())
 	  {
 	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
@@ -686,7 +693,7 @@ bool commandsystem::Pray(character* Char)
 
   game::SetStandardListAttributes(Panthenon);
   Panthenon.AddFlags(SELECTABLE);
-  ushort Select = Panthenon.Draw();
+  int Select = Panthenon.Draw();
 
   if(Select == LIST_WAS_EMPTY)
     {
@@ -737,7 +744,7 @@ bool commandsystem::Kick(character* Char)
       return true;
     }
 
-  uchar Dir = game::DirectionQuestion(CONST_S("In what direction do you wish to kick? [press a direction key]"), false);
+  int Dir = game::DirectionQuestion(CONST_S("In what direction do you wish to kick? [press a direction key]"), false);
 
   if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
     return false;
@@ -816,7 +823,7 @@ bool commandsystem::Throw(character* Char)
 
   if(Item)
     {
-      uchar Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  [press a direction key]"), false);
+      int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to throw?  [press a direction key]"), false);
 
       if(Answer == DIR_ERROR)
 	return false;
@@ -840,13 +847,13 @@ bool commandsystem::Apply(character* Char)
       ADD_MESSAGE("This monster type cannot apply.");
       return false;
     }
-  if(!Char->GetStack()->SortedItems(Char, &item::AppliableSorter) && !Char->EquipsSomething(&item::AppliableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::IsAppliable) && !Char->EquipsSomething(&item::IsAppliable))
     {
       ADD_MESSAGE("You have nothing to apply!");
       return false;
     }
 
-  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::AppliableSorter);
+  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to apply?"), &item::IsAppliable);
   return Item && Item->Apply(Char);
 }
 
@@ -854,7 +861,7 @@ bool commandsystem::ForceVomit(character* Char)
 {
   if(Char->CanVomit())
     {
-      uchar Dir = game::DirectionQuestion(CONST_S("Where do you wish to vomit?  [press a direction key]"), false, true);
+      int Dir = game::DirectionQuestion(CONST_S("Where do you wish to vomit?  [press a direction key]"), false, true);
 
       if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
 	{
@@ -875,17 +882,17 @@ bool commandsystem::Zap(character* Char)
   if(!Char->CheckZap())
     return false;
 
-  if(!Char->GetStack()->SortedItems(Char, &item::ZappableSorter) && !Char->EquipsSomething(&item::ZappableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::IsZappable) && !Char->EquipsSomething(&item::IsZappable))
     {
       ADD_MESSAGE("You have nothing to zap with, %s.", game::Insult());
       return false;
     }
 
-  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to zap with?"), &item::ZappableSorter);
+  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to zap with?"), &item::IsZappable);
 
   if(Item)
     {
-      uchar Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  [press a direction key or '.']"), false, true);
+      int Answer = game::DirectionQuestion(CONST_S("In what direction do you wish to zap?  [press a direction key or '.']"), false, true);
 
       if(Answer == DIR_ERROR)
 	return false;
@@ -919,9 +926,9 @@ bool commandsystem::Rest(character* Char)
 
   if(Error)
     {
-      long TurnsToRest = game::NumberQuestion(CONST_S("How much time to wait?"), vector2d(16, 6), WHITE);
+      long MinutesToRest = game::NumberQuestion(CONST_S("How many minutes to wait?"), vector2d(16, 6), WHITE);
 
-      if(TurnsToRest > 0)
+      if(MinutesToRest > 0)
 	{
 	  oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
 
@@ -929,7 +936,7 @@ bool commandsystem::Rest(character* Char)
 	    Terrain->ShowRestMessage(Char);
 
 	  rest* Rest = new rest(Char);
-	  Rest->SetTurnToStop(game::GetTicks() / 10 + TurnsToRest);
+	  Rest->SetMinToStop(game::GetTotalMinutes() + MinutesToRest);
 	  Rest->SetGoalHP(0);
 	  Char->SetAction(Rest);
 	  return true;
@@ -952,7 +959,7 @@ bool commandsystem::Rest(character* Char)
     Terrain->ShowRestMessage(Char);
 
   rest* Rest = new rest(Char);
-  Rest->SetTurnToStop(0);
+  Rest->SetMinToStop(0);
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
   return true;
@@ -972,16 +979,16 @@ bool commandsystem::Go(character* Char)
       return false;
     }
 
-  uchar Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key]"), false);
+  int Dir = game::DirectionQuestion(CONST_S("In what direction do you want to go? [press a direction key]"), false);
 
   if(Dir == DIR_ERROR)
     return false;
 
   go* Go = new go(Char);
   Go->SetDirection(Dir);
-  uchar OKDirectionsCounter = 0;
+  int OKDirectionsCounter = 0;
 
-  for(ushort d = 0; d < Char->GetNeighbourSquares(); ++d)
+  for(int d = 0; d < Char->GetNeighbourSquares(); ++d)
     {
       lsquare* Square = Char->GetNeighbourLSquare(d);
 
@@ -1016,16 +1023,16 @@ bool commandsystem::EquipmentScreen(character* Char)
       return false;
     }
 
-  ushort Chosen = 0;
+  int Chosen = 0;
   bool EquipmentChanged = false;
   felist List(CONST_S("Equipment menu"));
   festring Entry;
 
-  while(true)
+  for(;;)
     {
       List.Empty();
 
-      for(ushort c = 0; c < Char->GetEquipmentSlots(); ++c)
+      for(int c = 0; c < Char->GetEquipmentSlots(); ++c)
 	{
 	  Entry = Char->GetEquipmentName(c);
 	  Entry << ':';
@@ -1036,7 +1043,7 @@ bool commandsystem::EquipmentScreen(character* Char)
 	    {
 	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
 	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      ushort ImageKey = game::AddToItemDrawVector(Equipment);
+	      int ImageKey = game::AddToItemDrawVector(Equipment);
 	      List.AddEntry(Entry, LIGHT_GRAY, 20, ImageKey, true);
 	    }
 	  else
@@ -1085,13 +1092,13 @@ bool commandsystem::ShowWeaponSkills(character* Char)
   bool Something = false;
   festring Buffer;
 
-  for(ushort c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
+  for(int c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
     {
       cweaponskill* Skill = Char->GetCWeaponSkill(c);
 
       if(Skill->GetHits())
 	{
-	  Buffer = Skill->GetName();
+	  Buffer = Skill->GetName(c);
 	  Buffer.Resize(30);
 	  Buffer << Skill->GetLevel();
 	  Buffer.Resize(40);
@@ -1173,7 +1180,7 @@ bool commandsystem::WizardMode(character* Char)
 	  game::ActivateWizardMode();
 	  ADD_MESSAGE("Wizard mode activated.");
 
-	  for(ushort x = 0; x < 5; ++x)
+	  for(int c = 0; c < 5; ++c)
 	    Char->GetStack()->AddItem(new scrollofwishing);
 
 	  if(game::IsInWilderness())
@@ -1201,7 +1208,7 @@ bool commandsystem::WizardMode(character* Char)
     {
       ADD_MESSAGE("Got some scrolls of wishing.");
 
-      for(ushort x = 0; x < 5; ++x)
+      for(int c = 0; c < 5; ++c)
 	Char->GetStack()->AddItem(new scrollofwishing);
     }
 
@@ -1226,7 +1233,7 @@ bool commandsystem::GainAllItems(character* Char)
   protosystem::CreateEveryItem(AllItems);
   stack* Stack = game::IsInWilderness() ? Char->GetStack() : Char->GetStackUnder();
 
-  for(ushort c = 0; c < AllItems.size(); ++c)
+  for(uint c = 0; c < AllItems.size(); ++c)
     Stack->AddItem(AllItems[c]);
 
   return false;
@@ -1246,7 +1253,7 @@ bool commandsystem::WalkThroughWalls(character*)
 
 bool commandsystem::RaiseGodRelations(character*)
 {
-  for(ushort c = 1; c <= GODS; ++c)
+  for(int c = 1; c <= GODS; ++c)
     game::GetGod(c)->AdjustRelation(50);
 
   return false;
@@ -1254,7 +1261,7 @@ bool commandsystem::RaiseGodRelations(character*)
 
 bool commandsystem::LowerGodRelations(character*)
 {
-  for(ushort c = 1; c <= GODS; ++c)
+  for(int c = 1; c <= GODS; ++c)
     game::GetGod(c)->AdjustRelation(-50);
 
   return false;
@@ -1262,7 +1269,7 @@ bool commandsystem::LowerGodRelations(character*)
 
 bool commandsystem::GainDivineKnowledge(character*)
 {
-  for(ushort c = 1; c <= GODS; ++c)
+  for(int c = 1; c <= GODS; ++c)
     game::GetGod(c)->SetIsKnown(true);
 
   return false;
@@ -1280,8 +1287,7 @@ bool commandsystem::SecretKnowledge(character* Char)
   List.AddEntry(CONST_S("Material info"), LIGHT_GRAY);
   game::SetStandardListAttributes(List);
   List.AddFlags(SELECTABLE);
-  ushort Chosen = List.Draw();
-  ushort c;
+  uint c, Chosen = List.Draw();
   festring Entry;
 
   if(Chosen & FELIST_ERROR_BIT)
@@ -1430,7 +1436,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	  Entry.Empty();
 	  Material[c]->AddName(Entry, false, false);
 	  Entry.Resize(40);
-	  Entry << int(Material[c]->GetStrengthValue());
+	  Entry << Material[c]->GetStrengthValue();
 	  Entry.Resize(55);
 	  Entry << int(Material[c]->GetFlexibility());
 	  Entry.Resize(70);
@@ -1466,7 +1472,11 @@ bool commandsystem::SummonMonster(character* Char)
   character* Summoned = 0;
 
   while(!Summoned)
-    Summoned = protosystem::CreateMonster(game::StringQuestion(CONST_S("Summon which monster?"), vector2d(16, 6), WHITE, 0, 80, false));
+    {
+      festring Temp = game::DefaultQuestion(CONST_S("Summon which monster?"),
+					    game::GetDefaultSummonMonster());
+      Summoned = protosystem::CreateMonster(Temp);
+    }
 
   Summoned->SetTeam(game::GetTeam(MONSTER_TEAM));
   Summoned->PutNear(Char->GetPos());
@@ -1494,7 +1504,7 @@ bool commandsystem::LevelTeleport(character*)
 
 bool commandsystem::Possess(character* Char)
 {
-  uchar Dir = game::DirectionQuestion(CONST_S("Choose creature to possess. [press a direction key]"), false);
+  int Dir = game::DirectionQuestion(CONST_S("Choose creature to possess. [press a direction key]"), false);
 
   if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
     return false;

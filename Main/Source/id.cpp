@@ -12,7 +12,7 @@ void id::AddNameSingular(festring& String, bool Articled) const
   String << GetNameSingular();
 }
 
-void id::AddName(festring& Name, uchar Case) const
+void id::AddName(festring& Name, int Case) const
 {
   bool Articled;
 
@@ -38,7 +38,7 @@ void id::AddName(festring& Name, uchar Case) const
   AddPostFix(Name);
 }
 
-festring id::GetName(uchar Case) const
+festring id::GetName(int Case) const
 {
   static festring Name;
   Name.Empty();
@@ -46,7 +46,7 @@ festring id::GetName(uchar Case) const
   return Name;
 }
 
-void id::AddName(festring& Name, uchar Case, ushort Amount) const
+void id::AddName(festring& Name, int Case, int Amount) const
 {
   if(Amount == 1)
     AddName(Name, Case&~PLURAL);
@@ -60,7 +60,7 @@ void id::AddName(festring& Name, uchar Case, ushort Amount) const
     }
 }
 
-festring id::GetName(uchar Case, ushort Amount) const
+festring id::GetName(int Case, int Amount) const
 {
   static festring Name;
   Name.Empty();
@@ -88,7 +88,7 @@ void id::AddPostFix(festring& String) const
     String << ' ' << GetPostFix();
 }
 
-uchar id::GetArticleMode() const
+int id::GetArticleMode() const
 {
   return NORMAL_ARTICLE;
 }

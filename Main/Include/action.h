@@ -19,9 +19,9 @@ class actionprototype
   action* Clone() const { return Cloner(false); }
   action* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
+  int GetIndex() const { return Index; }
  private:
-  ushort Index;
+  int Index;
   action* (*Cloner)(bool);
   const char* ClassID;
 };
@@ -44,7 +44,7 @@ class action
   virtual void Load(inputfile&);
   virtual bool IsRest() const { return false; }
   virtual const prototype* GetProtoType() const = 0;
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual const char* GetDescription() const = 0;
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }

@@ -7,30 +7,38 @@
 #define ICE_TERRAIN 16
 #define STONE_TERRAIN 32
 
-level::level() : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0) { }
-void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
+level::level() : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0), SunLightEmitation(0), AmbientLuminance(0), SquareStack(0), NightAmbientLuminance(0) { }
+void level::SetRoom(int I, room* What) { Room[I] = What; }
 void level::AddToAttachQueue(vector2d Pos) { AttachQueue.push_back(Pos); }
 
+ulong level::NextExplosionID = 1;
+
 node*** node::NodeMap;
-uchar node::RequiredWalkability;
+int node::RequiredWalkability;
 const character* node::SpecialMover;
 vector2d node::To;
 uchar** node::WalkabilityMap;
-ushort node::XSize, node::YSize;
+int node::XSize, node::YSize;
 nodequeue* node::NodeQueue;
 
 level::~level()
 {
-  for(ushort c = 0; c < Room.size(); ++c)
+  ulong c;
+
+  for(c = 0; c < XSizeTimesYSize; ++c)
+    delete NodeMap[0][c];
+
+  for(c = 0; c < Room.size(); ++c)
     delete Room[c];
 
   delete [] NodeMap;
   delete [] WalkabilityMap;
   delete GlobalRainLiquid;
+  delete [] SquareStack;
   game::SetGlobalRainLiquid(0);
 }
 
-void level::ExpandPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
+void level::ExpandPossibleRoute(int OrigoX, int OrigoY, int TargetX, int TargetY, bool XMode)
 {
 #define CHECK(x, y) !(FlagMap[x][y] & (ON_POSSIBLE_ROUTE|FORBIDDEN))
 
@@ -118,7 +126,7 @@ void level::ExpandPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, us
 #undef CALL_EXPAND
 }
 
-void level::ExpandStillPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
+void level::ExpandStillPossibleRoute(int OrigoX, int OrigoY, int TargetX, int TargetY, bool XMode)
 {
 #define CHECK(x, y) (FlagMap[x][y] & (STILL_ON_POSSIBLE_ROUTE|ON_POSSIBLE_ROUTE)) == ON_POSSIBLE_ROUTE
 
@@ -206,14 +214,14 @@ void level::ExpandStillPossibleRoute(ushort OrigoX, ushort OrigoY, ushort Target
 #undef CALL_EXPAND
 }
 
-void level::GenerateTunnel(ushort FromX, ushort FromY, ushort TargetX, ushort TargetY, bool XMode)
+void level::GenerateTunnel(int FromX, int FromY, int TargetX, int TargetY, bool XMode)
 {
   FlagMap[FromX][FromY] |= ON_POSSIBLE_ROUTE;
   ExpandPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
 
   if(FlagMap[TargetX][TargetY] & ON_POSSIBLE_ROUTE)
-    for(ushort x = 0; x < XSize; ++x)
-      for(ushort y = 0; y < YSize; ++y)
+    for(int x = 0; x < XSize; ++x)
+      for(int y = 0; y < YSize; ++y)
 	if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE && !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
 	  {
 	    FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
@@ -226,32 +234,45 @@ void level::GenerateTunnel(ushort FromX, ushort FromY, ushort TargetX, ushort Ta
 		Map[x][y]->ChangeOLTerrain(0);
 	      }
 
-	    for(ushort X = 0; X < XSize; ++X)
-	      for(ushort Y = 0; Y < YSize; ++Y)
+	    for(int X = 0; X < XSize; ++X)
+	      for(int Y = 0; Y < YSize; ++Y)
 		FlagMap[X][Y] &= ~STILL_ON_POSSIBLE_ROUTE;
 	  }
 
-  for(ushort x = 1; x < XSize - 1; ++x)
-    for(ushort y = 1; y < YSize - 1; ++y)
+  for(int x = 1; x < XSize - 1; ++x)
+    for(int y = 1; y < YSize - 1; ++y)
       FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
-void level::Generate(ushort Index)
+void level::Generate(int Index)
 {
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
+  game::SetCurrentArea(this);
+  game::SetCurrentLevel(this);
   Alloc2D(NodeMap, XSize, YSize);
   Alloc2D(WalkabilityMap, XSize, YSize);
   Map = reinterpret_cast<lsquare***>(area::Map);
+  SquareStack = new lsquare*[XSizeTimesYSize];
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  if((Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
+  || (Index == 0 && GetDungeon()->GetIndex() == ATTNAM))
+    NightAmbientLuminance = MakeRGB24(95, 95, 95);
+
+  int x, y;
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	NodeMap[x][y] = new node(x, y, Map[x][y]);
       }
 
-  ushort Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      Map[x][y]->CalculateNeighbourLSquares();
+
+  int Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
 
   switch(Type)
     {
@@ -287,25 +308,25 @@ void level::Generate(ushort Index)
 void level::ApplyLSquareScript(const squarescript* Script)
 {
   const interval* ScriptTimes = Script->GetTimes();
-  ushort Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
+  int Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
-  for(ushort c = 0; c < Times; ++c)
+  for(int c = 0; c < Times; ++c)
     {
       vector2d Pos;
 
       if(Script->GetPosition()->GetRandom())
-	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders());
+	Pos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders());
       else
-	Pos = *Script->GetPosition()->GetVector();
+	Pos = Script->GetPosition()->GetVector();
 
       Map[Pos.X][Pos.Y]->ApplyScript(Script, 0);
     }
 }
 
-void level::AttachPos(ushort WhatX, ushort WhatY)
+void level::AttachPos(int WhatX, int WhatY)
 {
-  ushort PosX = 1 + RAND() % (XSize - 2);
-  ushort PosY = 1 + RAND() % (YSize - 2);
+  int PosX = 1 + RAND() % (XSize - 2);
+  int PosY = 1 + RAND() % (YSize - 2);
 
   while(!(FlagMap[PosX][PosY] & PREFERRED))
     {
@@ -320,16 +341,16 @@ void level::AttachPos(ushort WhatX, ushort WhatY)
   FlagMap[WhatX][WhatY] &= ~PREFERRED;
 }
 
-void level::CreateItems(ushort Amount)
+void level::CreateItems(int Amount)
 {
   if(Amount)
     {
-      ulong MinPrice = *LevelScript->GetItemMinPriceBase() + *LevelScript->GetItemMinPriceDelta() * Index;
+      long MinPrice = *LevelScript->GetItemMinPriceBase() + *LevelScript->GetItemMinPriceDelta() * Index;
 
-      for(ushort x = 0; x < Amount; ++x)
+      for(int x = 0; x < Amount; ++x)
 	{
 	  vector2d Pos = GetRandomSquare();
-	  item* Item = protosystem::BalancedCreateItem(MinPrice, MAX_PRICE, 0, 0, IGNORE_BROKEN_PRICE);
+	  item* Item = protosystem::BalancedCreateItem(MinPrice, MAX_PRICE, ANY_CATEGORY, 0, IGNORE_BROKEN_PRICE);
 	  Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
 	  Item->SpecialGenerationHandler();
 	}
@@ -341,7 +362,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
   game::BusyAnimation();
   vector2d Pos = RoomScript->GetPos()->Randomize();
   vector2d Size = RoomScript->GetSize()->Randomize();
-  ushort x, y;
+  int x, y;
 
   if(Pos.X + Size.X > XSize - 2)
     return false;
@@ -370,7 +391,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
 
   if(*RoomScript->AltarPossible() && !(RAND() % 5))
     {
-      uchar Owner = 1 + RAND() % GODS;
+      int Owner = 1 + RAND() % GODS;
       GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
       RoomClass->SetDivineMaster(Owner);
     }
@@ -444,7 +465,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
       vector2d CharPos(Pos + *CharacterMap->GetPos());
       const contentscript<character>* CharacterScript;
 
-      for(ushort x = 0; x < CharacterMap->GetSize()->X; ++x)
+      for(int x = 0; x < CharacterMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
@@ -456,14 +477,13 @@ bool level::MakeRoom(const roomscript* RoomScript)
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
-		if(CharacterScript->IsLeader() && *CharacterScript->IsLeader())
+		if(CharacterScript->GetFlags() & IS_LEADER)
 		  Char->GetTeam()->SetLeader(Char);
 
 		Char->PutTo(CharPos + vector2d(x, y));
 		Char->CreateHomeData();
-		const bool* IsMaster = CharacterScript->IsMaster();
 
-		if(IsMaster && *IsMaster)
+		if(CharacterScript->GetFlags() & IS_MASTER)
 		  RoomClass->SetMasterID(Char->GetID());
 	      }
 	}
@@ -474,36 +494,30 @@ bool level::MakeRoom(const roomscript* RoomScript)
   if(ItemMap)
     {
       vector2d ItemPos(Pos + *ItemMap->GetPos());
-      const std::list<contentscript<item> >* ItemScript;
+      const fearray<contentscript<item> >* ItemScript;
 
-      for(ushort x = 0; x < ItemMap->GetSize()->X; ++x)
+      for(int x = 0; x < ItemMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
 	  for(y = 0; y < ItemMap->GetSize()->Y; ++y)
 	    if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
-	      for(std::list<contentscript<item> >::const_iterator i = ItemScript->begin(); i != ItemScript->end(); ++i)
+	      for(uint c1 = 0; c1 < ItemScript->Size; ++c1)
 		{
-		  stack* Stack;
-		  ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
+		  int Times = ItemScript->Data[c1].GetTimes();
 
-		  for(ushort c = 0; c < Times; ++c)
+		  for(int c2 = 0; c2 < Times; ++c2)
 		    {
-		      item* Item = i->Instantiate();
+		      item* Item = ItemScript->Data[c1].Instantiate();
 
 		      if(Item)
 			{
-			  const uchar* SideStackIndex = i->GetSideStackIndex();
+			  int SquarePosition = ItemScript->Data[c1].GetSquarePosition();
 
-			  if(!SideStackIndex)
-			    Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
-			  else
-			    {
-			      Item->SignalSquarePositionChange(*SideStackIndex);
-			      Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
-			    }
+			  if(SquarePosition != CENTER)
+			    Item->SignalSquarePositionChange(SquarePosition);
 
-			  Stack->AddItem(Item);
+			  Map[ItemPos.X + x][ItemPos.Y + y]->GetStack()->AddItem(Item);
 			  Item->SpecialGenerationHandler();
 			}
 		    }
@@ -518,13 +532,22 @@ bool level::MakeRoom(const roomscript* RoomScript)
       vector2d GTerrainPos(Pos + *GTerrainMap->GetPos());
       const contentscript<glterrain>* GTerrainScript;
 
-      for(ushort x = 0; x < GTerrainMap->GetSize()->X; ++x)
+      for(int x = 0; x < GTerrainMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
 	  for(y = 0; y < GTerrainMap->GetSize()->Y; ++y)
 	    if(IsValidScript(GTerrainScript = GTerrainMap->GetContentScript(x, y)))
-	      Map[GTerrainPos.X + x][GTerrainPos.Y + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
+	      {
+		lsquare* Square = Map[GTerrainPos.X + x][GTerrainPos.Y + y];
+		Square->ChangeGLTerrain(GTerrainScript->Instantiate());
+
+		if(GTerrainScript->IsInside())
+		  if(*GTerrainScript->IsInside())
+		    Square->Flags |= INSIDE;
+		  else
+		    Square->Flags &= ~INSIDE;
+	      }
 	}
     }
 
@@ -535,7 +558,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
       vector2d OTerrainPos(Pos + *OTerrainMap->GetPos());
       const contentscript<olterrain>* OTerrainScript;
 
-      for(ushort x = 0; x < OTerrainMap->GetSize()->X; ++x)
+      for(int x = 0; x < OTerrainMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
@@ -555,9 +578,9 @@ bool level::MakeRoom(const roomscript* RoomScript)
       game::BusyAnimation();
       const squarescript* Script = &*i;
       const interval* ScriptTimes = Script->GetTimes();
-      ushort Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
+      int Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
-      for(ushort t = 0; t < Times; ++t)
+      for(int t = 0; t < Times; ++t)
 	{
 	  vector2d SquarePos;
 
@@ -565,10 +588,10 @@ bool level::MakeRoom(const roomscript* RoomScript)
 	    {
 	      const rect* ScriptBorders = Script->GetPosition()->GetBorders();
 	      rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - vector2d(1, 1));
-	      SquarePos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
+	      SquarePos = GetRandomSquare(0, Script->GetPosition()->GetFlags(), &Borders);
 	    }
 	  else
-	    SquarePos = Pos + *Script->GetPosition()->GetVector();
+	    SquarePos = Pos + Script->GetPosition()->GetVector();
 
 	  Map[SquarePos.X][SquarePos.Y]->ApplyScript(Script, RoomClass);
 	}
@@ -577,22 +600,25 @@ bool level::MakeRoom(const roomscript* RoomScript)
   return true;
 }
 
-void level::GenerateLanterns(ushort X, ushort Y, uchar SquarePos) const
+bool level::GenerateLanterns(int X, int Y, int SquarePos) const
 {
   if(!(RAND() % 7))
     {
       lantern* Lantern = new lantern;
       Lantern->SignalSquarePositionChange(SquarePos);
-      Map[X][Y]->GetSideStack(SquarePos)->AddItem(Lantern);
+      Map[X][Y]->GetStack()->AddItem(Lantern);//GetSideStack(SquarePos)->AddItem(Lantern);
+      return true;
     }
+
+  return false;
 }
 
-void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room) const
+void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, int X, int Y, int Room, int Flags) const
 {
   Map[X][Y]->ChangeLTerrain(GLTerrain, OLTerrain);
   FlagMap[X][Y] |= FORBIDDEN;
   Map[X][Y]->SetRoomIndex(Room);
-  Map[X][Y]->SetIsOutside(false);
+  Map[X][Y]->AddFlags(Flags);
 }
 
 void level::GenerateMonsters()
@@ -606,12 +632,13 @@ void level::GenerateMonsters()
 void level::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
-  SaveFile << Room << GlobalRainLiquid;
+  SaveFile << Room << GlobalRainLiquid << GlobalRainSpeed;
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
   SaveFile << Door << LevelMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
+  SaveFile << SunLightEmitation << SunLightDirection << AmbientLuminance << NightAmbientLuminance;
 }
 
 void level::Load(inputfile& SaveFile)
@@ -621,8 +648,13 @@ void level::Load(inputfile& SaveFile)
   Map = reinterpret_cast<lsquare***>(area::Map);
   SaveFile >> Room;
   GlobalRainLiquid = static_cast<liquid*>(ReadType<material*>(SaveFile));
+  SaveFile >> GlobalRainSpeed;
+
+  if(GlobalRainLiquid)
+    GlobalRainLiquid->SetVolumeNoSignals(0);
+
   game::SetGlobalRainLiquid(GlobalRainLiquid);
-  ushort x, y;
+  int x, y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -633,48 +665,56 @@ void level::Load(inputfile& SaveFile)
       {
 	game::SetSquareInLoad(Map[x][y]);
 	Map[x][y]->Load(SaveFile);
+	Map[x][y]->CalculateNeighbourLSquares();
       }
 
   SaveFile >> Door >> LevelMessage >> IdealPopulation >> MonsterGenerationInterval >> Difficulty;
+  SaveFile >> SunLightEmitation >> SunLightDirection >> AmbientLuminance >> NightAmbientLuminance;
   Alloc2D(NodeMap, XSize, YSize);
   Alloc2D(WalkabilityMap, XSize, YSize);
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
       {
+	if(!Map[x][y]->IsInside())
+	  Map[x][y]->AmbientLuminance = AmbientLuminance;
+
 	NodeMap[x][y] = new node(x, y, Map[x][y]);
 	WalkabilityMap[x][y] = Map[x][y]->GetTheoreticalWalkability();
 	Map[x][y]->CalculateBorderPartners();
       }
 
+  SquareStack = new lsquare*[XSizeTimesYSize];
   game::SetIsGenerating(false);
 }
 
 void level::FiatLux()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y]->CalculateEmitation();
 	Map[x][y]->Emitate();
 	Map[x][y]->CalculateLuminance();
       }
+
+  CheckSunLight();
 }
 
-void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
+void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
 
-  for(ushort c1 = 0; c1 < HowMany; ++c1)
+  for(int c1 = 0; c1 < HowMany; ++c1)
     {
       Pos = vector2d(0, 0);
       character* Char = protosystem::BalancedCreateMonster();
 
-      for(ushort c2 = 0; c2 < 30; ++c2)
+      for(int c2 = 0; c2 < 30; ++c2)
 	{
 	  Pos = GetRandomSquare(Char);
 			
-	  if(!ConsiderPlayer || abs(short(Pos.X) - PLAYER->GetPos().X) > 6 || abs(short(Pos.Y) - PLAYER->GetPos().Y) > 6)
+	  if(!ConsiderPlayer || abs(int(Pos.X) - PLAYER->GetPos().X) > 6 || abs(int(Pos.Y) - PLAYER->GetPos().Y) > 6)
 	    break;
 	}
 
@@ -690,11 +730,11 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 
 /* Example of the usage: GetRandomSquare() gives out a random walkable square */
 
-vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
+vector2d level::GetRandomSquare(const character* Char, int Flags, const rect* Borders) const
 {
   lsquare* LSquare;
 
-  for(ushort c = 0;; ++c)
+  for(int c = 0;; ++c)
     {
       if(c == 100)
 	Char = 0;
@@ -722,7 +762,7 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
       || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
 	continue;
 
-      uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
+      int RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
       if((RoomFlags == IN_ROOM && !LSquare->GetRoomIndex())
       || (RoomFlags == NOT_IN_ROOM && LSquare->GetRoomIndex()))
@@ -743,18 +783,9 @@ bool level::IsOnGround() const
   return *LevelScript->IsOnGround();
 }
 
-ushort level::GetLOSModifier() const
+int level::GetLOSModifier() const
 {
   return *LevelScript->GetLOSModifier();
-}
-
-ushort level::CalculateMinimumEmitationRadius(ulong E) const
-{
-  ulong A = *LevelScript->GetAmbientLight();
-  ushort RedRadius = ushort(sqrt(float(GetRed24(E) << 7) / Max<uchar>(GetRed24(A), LIGHT_BORDER)));
-  ushort GreenRadius = ushort(sqrt(float(GetGreen24(E) << 7) / Max<uchar>(GetGreen24(A), LIGHT_BORDER)));
-  ushort BlueRadius = ushort(sqrt(float(GetBlue24(E) << 7) / Max<uchar>(GetBlue24(A), LIGHT_BORDER)));
-  return Max(RedRadius, GreenRadius, BlueRadius);
 }
 
 void level::AddRoom(room* NewRoom)
@@ -763,19 +794,19 @@ void level::AddRoom(room* NewRoom)
   Room.push_back(NewRoom);
 }
 
-room* level::GetRoom(ushort Index) const
+room* level::GetRoom(int I) const
 {
-  if(!Index)
+  if(!I)
     ABORT("Access to room zero denied!");
 
-  return Room[Index];
+  return Room[I];
 }
 
-void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
+void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d Pos, int Strength, bool HurtNeutrals)
 {
-  static ushort StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
-  ushort c;
-  uchar Size = 6;
+  static int StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
+  uint c;
+  int Size = 6;
 
   for(c = 0; c < 6; ++c)
     if(Strength >= StrengthLimit[c])
@@ -785,25 +816,25 @@ void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d P
       }
 
   PlayerHurt.resize(PlayerHurt.size() + 1);
-  explosion* E = new explosion;
-  E->Terrorist = Terrorist;
-  E->DeathMsg = DeathMsg;
-  E->Pos = Pos;
-  E->ID = game::CreateNewExplosionID();
-  E->Strength = Strength;
-  E->RadiusSquare = (8 - Size) * (8 - Size);
-  E->Size = Size;
-  E->HurtNeutrals = HurtNeutrals;
-  ExplosionQueue.push_back(E);
+  explosion* Exp = new explosion;
+  Exp->Terrorist = Terrorist;
+  Exp->DeathMsg = DeathMsg;
+  Exp->Pos = Pos;
+  Exp->ID = NextExplosionID++;
+  Exp->Strength = Strength;
+  Exp->RadiusSquare = (8 - Size) * (8 - Size);
+  Exp->Size = Size;
+  Exp->HurtNeutrals = HurtNeutrals;
+  ExplosionQueue.push_back(Exp);
 
   if(ExplosionQueue.size() == 1)
     {
-      ushort Explosions = 0;
+      uint Explosions = 0;
 
       while(Explosions != ExplosionQueue.size())
 	{
 	  for(c = Explosions; c != ExplosionQueue.size(); c = TriggerExplosions(c));
-	  ushort NewExplosions = c;
+	  uint NewExplosions = c;
 
 	  for(c = Explosions; c < NewExplosions; ++c)
 	    if(PlayerHurt[c] && PLAYER->IsEnabled())
@@ -812,11 +843,16 @@ void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d P
 	  Explosions = NewExplosions;
 	}
 
-      for(ushort c = 0; c < ExplosionQueue.size(); ++c)
+      for(uint c = 0; c < ExplosionQueue.size(); ++c)
 	delete ExplosionQueue[c];
 
       ExplosionQueue.clear();
       PlayerHurt.clear();
+      NextExplosionID = 1;
+
+      for(int x = 0; x < XSize; ++x)
+	for(int y = 0; y < YSize; ++y)
+	  Map[x][y]->LastExplosionID = 0;
     }
 }
 
@@ -828,8 +864,8 @@ bool level::DrawExplosion(const explosion* Explosion) const
   vector2d OldSizeVect = SizeVect;
   vector2d PicPos = StrengthPicPos[Explosion->Size];
 
-  if(short(BPos.X) < 0)
-    if(short(BPos.X) + SizeVect.X <= 0)
+  if(BPos.X < 0)
+    if(BPos.X + SizeVect.X <= 0)
       return false;
     else
       {
@@ -838,8 +874,8 @@ bool level::DrawExplosion(const explosion* Explosion) const
 	BPos.X = 0;
       }
 
-  if(short(BPos.Y) < 0)
-    if(short(BPos.Y) + SizeVect.Y <= 0)
+  if(BPos.Y < 0)
+    if(BPos.Y + SizeVect.Y <= 0)
       return false;
     else
       {
@@ -857,29 +893,46 @@ bool level::DrawExplosion(const explosion* Explosion) const
   if(BPos.Y + SizeVect.Y > RES_Y)
     SizeVect.Y = RES_Y - BPos.Y;
 
-  uchar Flags = RAND() & 7;
+  int Flags = RAND() & 7;
 
   if(!Flags || SizeVect != OldSizeVect)
-    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, ivanconfig::GetContrastLuminance());
+    igraph::GetSymbolGraphic()->LuminanceMaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, ivanconfig::GetContrastLuminance());
   else
     {
+      /* Cache these */
       bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
-      igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
-      ExplosionPic.MaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, ivanconfig::GetContrastLuminance());
+      ExplosionPic.ActivateFastFlag();
+      igraph::GetSymbolGraphic()->NormalBlit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
+      ExplosionPic.LuminanceMaskedBlit(DOUBLE_BUFFER, 0, 0, BPos, SizeVect, ivanconfig::GetContrastLuminance());
     }
 
   return true;
 }
 
-ushort level::TriggerExplosions(ushort MinIndex)
+struct explosioncontroller
 {
-  ushort LastExplosion = ExplosionQueue.size();
-  ushort NotSeen = 0;
-  ushort c;
+  static bool Handler(int x, int y)
+  {
+    lsquare* Square = Map[x][y];
+    Square->GetHitByExplosion(CurrentExplosion);
+    return Square->IsFlyable();
+  }
+  static lsquare*** Map;
+  static explosion* CurrentExplosion;
+};
+
+lsquare*** explosioncontroller::Map;
+explosion* explosioncontroller::CurrentExplosion;
+
+int level::TriggerExplosions(int MinIndex)
+{
+  int LastExplosion = ExplosionQueue.size();
+  int NotSeen = 0;
+  int c;
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      ushort EmitChange = Min(50 + ExplosionQueue[c]->Strength, 255);
+      int EmitChange = Min(50 + ExplosionQueue[c]->Strength, 255);
       GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
 
       if(!GetSquare(ExplosionQueue[c]->Pos)->CanBeSeenByPlayer())
@@ -906,29 +959,30 @@ ushort level::TriggerExplosions(ushort MinIndex)
       graphics::BlitDBToScreen();
       game::GetCurrentArea()->SendNewDrawRequest();
       clock_t StartTime = clock();
-      while(clock() - StartTime < 0.3f * CLOCKS_PER_SEC);
+      while(clock() - StartTime < 0.3 * CLOCKS_PER_SEC);
     }
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
       explosion* Explosion = ExplosionQueue[c];
-      ushort Radius = 8 - Explosion->Size;
-      game::SetCurrentExplosion(Explosion);
+      int Radius = 8 - Explosion->Size;
       game::SetPlayerWasHurtByExplosion(false);
+      explosioncontroller::Map = Map;
+      explosioncontroller::CurrentExplosion = Explosion;
 
       rect Rect;
       femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Explosion->Pos, Radius);
 
-      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+      for(int x = Rect.X1; x <= Rect.X2; ++x)
 	{
-	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y1, game::ExplosionHandler);
-	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y2, game::ExplosionHandler);
+	  mapmath<explosioncontroller>::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y1);
+	  mapmath<explosioncontroller>::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y2);
 	}
 
-      for(ushort y = Rect.Y1 + 1; y < Rect.Y2; ++y)
+      for(int y = Rect.Y1 + 1; y < Rect.Y2; ++y)
 	{
-	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X1, y, game::ExplosionHandler);
-	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X2, y, game::ExplosionHandler);
+	  mapmath<explosioncontroller>::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X1, y);
+	  mapmath<explosioncontroller>::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X2, y);
 	}
 
       PlayerHurt[c] = game::PlayerWasHurtByExplosion();
@@ -945,7 +999,7 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
 bool level::CollectCreatures(charactervector& CharacterArray, character* Leader, bool AllowHostiles)
 {
-  ushort c;
+  int c;
 
   if(!AllowHostiles)
     for(c = 0; c < game::GetTeams(); ++c)
@@ -987,39 +1041,39 @@ bool level::CollectCreatures(charactervector& CharacterArray, character* Leader,
 
 void level::Draw(bool AnimationDraw) const
 {
-  const ushort XMin = game::GetCamera().X;
-  const ushort YMin = game::GetCamera().Y;
-  const ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
-  const ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
-  const ulong LOSTurns = game::GetLOSTurns();
+  const int XMin = game::GetCamera().X;
+  const int YMin = game::GetCamera().Y;
+  const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  const ulong LOSTick = game::GetLOSTick();
 
   if(!game::GetSeeWholeMapCheatMode())
     {
       if(!AnimationDraw)
 	{
-	  for(ushort x = XMin; x < XMax; ++x)
+	  for(int x = XMin; x < XMax; ++x)
 	    {
 	      lsquare** Square = &Map[x][YMin];
 
-	      for(ushort y = YMin; y < YMax; ++y, ++Square)
+	      for(int y = YMin; y < YMax; ++y, ++Square)
 		{
 		  ulong LastSeen = (*Square)->LastSeen;
 
-		  if(LastSeen == LOSTurns)
+		  if(LastSeen == LOSTick)
 		    (*Square)->Draw();
-		  else if((*Square)->NewDrawRequested || LastSeen == LOSTurns - 1)
+		  else if((*Square)->Flags & STRONG_BIT || LastSeen == LOSTick - 2)
 		    (*Square)->DrawMemorized();
 		}
 	    }
 	}
       else
 	{
-	  for(ushort x = XMin; x < XMax; ++x)
+	  for(int x = XMin; x < XMax; ++x)
 	    {
 	      lsquare** Square = &Map[x][YMin];
 
-	      for(ushort y = YMin; y < YMax; ++y, ++Square)
-		if((*Square)->LastSeen == LOSTurns)
+	      for(int y = YMin; y < YMax; ++y, ++Square)
+		if((*Square)->LastSeen == LOSTick)
 		  (*Square)->Draw();
 		else
 		  (*Square)->DrawMemorizedCharacter();
@@ -1028,29 +1082,19 @@ void level::Draw(bool AnimationDraw) const
     }
   else
     {
-      for(ushort x = XMin; x < XMax; ++x)
+      for(int x = XMin; x < XMax; ++x)
 	{
 	  lsquare** Square = &Map[x][YMin];
 
-	  for(ushort y = YMin; y < YMax; ++y, ++Square)
+	  for(int y = YMin; y < YMax; ++y, ++Square)
 	    (*Square)->Draw();
 	}
     }
 }
 
-lsquare* level::GetNeighbourLSquare(vector2d Pos, ushort Index) const
+vector2d level::GetEntryPos(const character* Char, int I) const
 {
-  Pos += game::GetMoveVector(Index);
-
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize)
-    return Map[Pos.X][Pos.Y];
-  else
-    return 0;
-}
-
-vector2d level::GetEntryPos(const character* Char, uchar Index) const
-{
-  std::map<uchar, vector2d>::const_iterator i = EntryMap.find(Index);
+  std::map<int, vector2d>::const_iterator i = EntryMap.find(I);
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
 
@@ -1058,11 +1102,13 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 {
   const contentscript<glterrain>* GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
-  uchar Room = RoomClass->GetIndex();
-  ulong Counter = 0;
+  int Room = RoomClass->GetIndex();
+  long Counter = 0;
   bool AllowLanterns = *RoomScript->GenerateLanterns();
-  ushort x, y;
-  uchar Shape = *RoomScript->GetShape();
+  bool AllowWindows = *RoomScript->GenerateWindows();
+  int x, y;
+  int Shape = *RoomScript->GetShape();
+  int Flags = (GTerrain->IsInside() ? *GTerrain->IsInside() : *RoomScript->IsInside()) ? INSIDE : 0;
 
   if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
     Shape = RECTANGLE;
@@ -1073,24 +1119,24 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	{
 	  if(x == Pos.X)
 	    {
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room);
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room, Flags);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room, Flags);
 	      Border.push_back(vector2d(x + 1, Pos.Y + 1));
 	      Border.push_back(vector2d(x + 1, Pos.Y + Size.Y - 2));
 	      continue;
 	    }
 	  else if(x == Pos.X + Size.X - 1)
 	    {
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room);
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room, Flags);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room, Flags);
 	      Border.push_back(vector2d(x - 1, Pos.Y + 1));
 	      Border.push_back(vector2d(x - 1, Pos.Y + Size.Y - 2));
 	      continue;
 	    }
 	}
 
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y, Room);
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y + Size.Y - 1, Room);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y, Room, Flags);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y + Size.Y - 1, Room, Flags);
 
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
       || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
@@ -1098,11 +1144,11 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	  OKForDoor.push_back(vector2d(x, Pos.Y));
 	  OKForDoor.push_back(vector2d(x, Pos.Y + Size.Y - 1));
 
-	  if(AllowLanterns)
-	    {
-	      GenerateLanterns(x, Pos.Y, DOWN);
-	      GenerateLanterns(x, Pos.Y + Size.Y - 1, UP);
-	    }
+	  if((!AllowLanterns || !GenerateLanterns(x, Pos.Y, DOWN)) && AllowWindows)
+	    GenerateWindows(x, Pos.Y);
+
+	  if((!AllowLanterns || !GenerateLanterns(x, Pos.Y + Size.Y - 1, UP)) && AllowWindows)
+	    GenerateWindows(x, Pos.Y + Size.Y - 1);
 	}
 
       Border.push_back(vector2d(x, Pos.Y));
@@ -1113,19 +1159,19 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 
   for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, Counter += 2)
     {
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room);
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room, Flags);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room, Flags);
 
       if(Shape == RECTANGLE || (Shape == ROUND_CORNERS && y != Pos.Y + 1 && y != Pos.Y + Size.Y - 2))
 	{
 	  OKForDoor.push_back(vector2d(Pos.X, y));
 	  OKForDoor.push_back(vector2d(Pos.X + Size.X - 1, y));
 
-	  if(AllowLanterns)
-	    {
-	      GenerateLanterns(Pos.X, y, RIGHT);
-	      GenerateLanterns(Pos.X + Size.X - 1, y, LEFT);
-	    }
+	  if((!AllowLanterns || !GenerateLanterns(Pos.X, y, RIGHT)) && AllowWindows)
+	    GenerateWindows(Pos.X, y);
+
+	  if((!AllowLanterns || !GenerateLanterns(Pos.X + Size.X - 1, y, LEFT)) && AllowWindows)
+	    GenerateWindows(Pos.X + Size.X - 1, y);
 	}
 
       Border.push_back(vector2d(Pos.X, y));
@@ -1135,6 +1181,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   GTerrain = RoomScript->GetFloorSquare()->GetGTerrain();
   OTerrain = RoomScript->GetFloorSquare()->GetOTerrain();
   Counter = 0;
+  Flags = (GTerrain->IsInside() ? *GTerrain->IsInside() : *RoomScript->IsInside()) ? INSIDE : 0;
 
   for(x = Pos.X + 1; x < Pos.X + Size.X - 1; ++x)
     for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, ++Counter)
@@ -1143,7 +1190,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 
 	if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
 	  {
-	    CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room);
+	    CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, Flags);
 	    Inside.push_back(vector2d(x,y));
 	  }
       }
@@ -1151,27 +1198,18 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 
 void level::Reveal()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      {
-	if(!Map[x][y]->LastSeen)
-	  {
-	    Map[x][y]->Memorized = new bitmap(16, 16);
-	    Map[x][y]->LastSeen = game::GetLOSTurns();
-	  }
+  ulong Tick = game::GetLOSTick();
 
-	Map[x][y]->MemorizedUpdateRequested = true;
-	Map[x][y]->DescriptionChanged = true;
-	Map[x][y]->UpdateMemorized();
-	Map[x][y]->UpdateMemorizedDescription();
-      }
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->Reveal(Tick);
 }
 
-void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int Range)
 {
   if(Direction != YOURSELF)
     {
-      for(ushort Length = 0; Length < Range; ++Length)
+      for(int Length = 0; Length < Range; ++Length)
 	{
 	  CurrentPos += game::GetMoveVector(Direction);
 
@@ -1204,13 +1242,13 @@ void level::ParticleBeam(character* BeamOwner, const festring& DeathMsg, vector2
 
 /* Note: You will most likely need some help from supernatural entities to comprehend this code. Sorry. */
 
-void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int Range)
 {
   if(Direction == YOURSELF)
     {
       lsquare* Where = GetLSquare(CurrentPos);
 
-      for(ushort c = 0; c < 4; ++c)
+      for(int c = 0; c < 4; ++c)
 	Where->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF);
 
       (Where->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
@@ -1231,7 +1269,7 @@ void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector
     case 7: StartPos = vector2d(0, 0); break;
     }
 
-  for(ushort Length = 0; Length < Range; ++Length)
+  for(int Length = 0; Length < Range; ++Length)
     {
       CurrentPos += game::GetMoveVector(Direction);
 
@@ -1345,7 +1383,7 @@ void level::LightningBeam(character* BeamOwner, const festring& DeathMsg, vector
     }
 }
 
-void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar)
+void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d CurrentPos, color16 BeamColor, int BeamEffect, int Direction, int)
 {
   vector2d Pos[3];
 
@@ -1397,7 +1435,7 @@ void level::ShieldBeam(character* BeamOwner, const festring& DeathMsg, vector2d 
       return;
     }
 
-  for(ushort c = 0; c < 3; ++c)
+  for(int c = 0; c < 3; ++c)
     if(IsValidPos(CurrentPos + Pos[c]))
       {
 	GetLSquare(CurrentPos + Pos[c])->DrawParticles(BeamColor);
@@ -1418,15 +1456,15 @@ inputfile& operator>>(inputfile& SaveFile, level*& Level)
   return SaveFile;
 }
 
-void (level::*level::GetBeam(ushort Index))(character*, const festring&, vector2d, ulong, uchar, uchar, uchar)
+void (level::*level::GetBeam(int I))(character*, const festring&, vector2d, color16, int, int, int)
 {
-  static void (level::*Beam[BEAM_STYLES])(character*, const festring&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
-  return Beam[Index];
+  static void (level::*Beam[BEAM_STYLES])(character*, const festring&, vector2d, color16, int, int, int) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+  return Beam[I];
 }
 
-vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance, bool AllowStartPos) const
+vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, int MaxDistance, bool AllowStartPos) const
 {
-  ushort c;
+  int c;
 
   for(c = 0; c < 8; ++c)
     {
@@ -1463,7 +1501,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, b
   if(AllowStartPos && Char->CanMoveOn(GetLSquare(StartPos)) && Char->IsFreeForMe(GetLSquare(StartPos)))
     return StartPos;
 
-  ushort c;
+  int c;
 
   for(c = 0; c < 8; ++c)
     {
@@ -1473,7 +1511,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, b
 	return Pos;
     }
 
-  for(ushort Dist = 0; Dist < 5; ++Dist)
+  for(int Dist = 0; Dist < 5; ++Dist)
     for(c = 0; c < 8; ++c)
       {
 	vector2d Pos = StartPos + game::GetMoveVector(c);
@@ -1492,11 +1530,11 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, b
 
 vector2d level::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, bool AllowCharacter) const
 {
-  ushort PossibleDir[8];
-  ushort Index = 0;
+  int PossibleDir[8];
+  int Index = 0;
   lsquare* Origo = GetLSquare(StartPos);
 
-  for(ushort d = 0; d < 8; ++d)
+  for(int d = 0; d < 8; ++d)
     {
       lsquare* Square = Origo->GetNeighbourLSquare(d);
 
@@ -1507,36 +1545,34 @@ vector2d level::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, 
   return Index ? StartPos + game::GetMoveVector(PossibleDir[RAND() % Index]) : ERROR_VECTOR;
 }
 
-void (level::*level::GetBeamEffectVisualizer(ushort Index))(const rect&, ushort) const
+void (level::*level::GetBeamEffectVisualizer(int I))(const fearray<lsquare*>&, color16) const
 {
-  static void (level::*Visualizer[BEAM_STYLES])(const rect&, ushort) const = { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
-  return Visualizer[Index];
+  static void (level::*Visualizer[BEAM_STYLES])(const fearray<lsquare*>&, color16) const = { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
+  return Visualizer[I];
 }
 
-void level::ParticleVisualizer(const rect& Rect, ushort BeamColor) const
+void level::ParticleVisualizer(const fearray<lsquare*>& Stack, color16 BeamColor) const
 {
   clock_t StartTime = clock();
   game::DrawEverythingNoBlit();
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      Map[x][y]->DrawParticles(BeamColor, false);
+  for(fearray<lsquare*>::sizetype c = 0; c < Stack.Size; ++c)
+    Stack[c]->DrawParticles(BeamColor, false);
 
   graphics::BlitDBToScreen();
-  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+  while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
 }
 
-void level::LightningVisualizer(const rect& Rect, ushort BeamColor) const
+void level::LightningVisualizer(const fearray<lsquare*>& Stack, color16 BeamColor) const
 {
   clock_t StartTime = clock();
   game::DrawEverythingNoBlit();
 
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      Map[x][y]->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF, false);
+  for(fearray<lsquare*>::sizetype c = 0; c < Stack.Size; ++c)
+    Stack[c]->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF, false);
 
   graphics::BlitDBToScreen();
-  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+  while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
 }
 
 bool level::PreProcessForBone()
@@ -1548,11 +1584,11 @@ bool level::PreProcessForBone()
 
   game::SetQuestMonstersFound(0);
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       Map[x][y]->PreProcessForBone();
 
-  uchar DungeonIndex = GetDungeon()->GetIndex();
+  int DungeonIndex = GetDungeon()->GetIndex();
 
   return !(DungeonIndex == ELPURI_CAVE && Index == IVAN_LEVEL && game::GetQuestMonstersFound() < 5)
       &&  (game::GetQuestMonstersFound()
@@ -1563,14 +1599,14 @@ bool level::PreProcessForBone()
 bool level::PostProcessForBone()
 {
   game::SetTooGreatDangerFound(false);
-  float DangerSum = 0;
-  ushort Enemies = 0;
+  double DangerSum = 0;
+  int Enemies = 0;
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       Map[x][y]->PostProcessForBone(DangerSum, Enemies);
 
-  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > float(Difficulty) / 100))
+  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > double(Difficulty) / 100))
     return false;
 
   return true;
@@ -1578,12 +1614,12 @@ bool level::PostProcessForBone()
 
 void level::FinalProcessForBone()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       Map[x][y]->FinalProcessForBone();
 }
 
-void level::GenerateDungeon(ushort Index)
+void level::GenerateDungeon(int Index)
 {
   const festring* Msg = LevelScript->GetLevelMessage();
 
@@ -1599,19 +1635,16 @@ void level::GenerateDungeon(ushort Index)
 
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
-  ulong Counter = 0;
-  ushort x;
+  long Counter = 0;
+  int x;
+  game::BusyAnimation();
 
   for(x = 0; x < XSize; ++x)
-    {
-      game::BusyAnimation();
+    for(int y = 0; y < YSize; ++y, ++Counter)
+      Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
 
-      for(ushort y = 0; y < YSize; ++y, ++Counter)
-	Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
-    }
-
-  ushort c;
-  ushort Rooms = LevelScript->GetRooms()->Randomize();
+  uint c;
+  uint Rooms = LevelScript->GetRooms()->Randomize();
   const std::list<roomscript>& RoomList = LevelScript->GetRoom();
   std::list<roomscript>::const_iterator Iterator = RoomList.begin();
 
@@ -1621,7 +1654,7 @@ void level::GenerateDungeon(ushort Index)
 
       if(c < RoomList.size())
 	{
-	  ushort i;
+	  int i;
 
 	  for(i = 0; i < 1000; ++i)
 	    if(MakeRoom(&*Iterator))
@@ -1636,7 +1669,7 @@ void level::GenerateDungeon(ushort Index)
 	{
 	  const roomscript* RoomScript = LevelScript->GetRoomDefault();
 
-	  for(ushort i = 0; i < 50; ++i)
+	  for(int i = 0; i < 50; ++i)
 	    if(MakeRoom(RoomScript))
 	      break;
 	}
@@ -1674,7 +1707,7 @@ void level::GenerateDungeon(ushort Index)
     AttachPos(AttachQueue[c].X, AttachQueue[c].Y);
 
   for(x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+    for(int y = 0; y < YSize; ++y)
       Map[x][y]->CalculateBorderPartners();
 
   AttachQueue.clear();
@@ -1683,7 +1716,7 @@ void level::GenerateDungeon(ushort Index)
 
 void level::GenerateJungle()
 {
-  ushort x,y;
+  int x,y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -1692,12 +1725,12 @@ void level::GenerateJungle()
 	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
       }
 
-  while(true)
+  for(;;)
     {
       CreateTunnelNetwork(1, 4, 20, 120, vector2d(0, YSize / 2));
       CreateTunnelNetwork(1, 4, 20, 120, vector2d(XSize - 1, YSize / 2));
 
-      for(ushort c = 0; c < 25; ++c)
+      for(int c = 0; c < 25; ++c)
 	{
 	  vector2d StartPos;
 
@@ -1737,19 +1770,19 @@ void level::GenerateJungle()
     }
 }
 
-void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNodes, ushort MaxNodes, vector2d StartPos)
+void level::CreateTunnelNetwork(int MinLength, int MaxLength, int MinNodes, int MaxNodes, vector2d StartPos)
 {
   vector2d Pos = StartPos, Direction;
-  ushort Length;
+  int Length;
   game::BusyAnimation();
   FlagMap[Pos.X][Pos.Y] = PREFERRED;
 
-  for(ushort c1 = 0; c1 < MaxNodes; ++c1)
+  for(int c1 = 0; c1 < MaxNodes; ++c1)
     {
       Direction = game::GetBasicMoveVector(RAND() % 4);
       Length = MinLength + RAND_N(MaxLength - MinLength + 1);
 
-      for(ushort c2 = 0; c2 < Length; ++c2)
+      for(int c2 = 0; c2 < Length; ++c2)
 	{
 	  if(IsValidPos(Direction + Pos))
 	    {
@@ -1769,21 +1802,21 @@ void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNo
 
 void level::GenerateDesert()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	Map[x][y]->SetLTerrain(new solidterrain(SAND_TERRAIN), 0);
       }
 
   game::BusyAnimation();
-  ushort AmountOfCactuses = RAND_N(10);
-  ushort c;
+  int AmountOfCactuses = RAND_N(10);
+  int c;
 
   for(c = 0; c < AmountOfCactuses; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new decoration(CACTUS));
 
-  ushort AmountOfBoulders = RAND_N(10);
+  int AmountOfBoulders = RAND_N(10);
   
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(1 + RAND_2));
@@ -1791,17 +1824,17 @@ void level::GenerateDesert()
 
 void level::GenerateSteppe()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
       }
 
   game::BusyAnimation();
-  ushort c;
+  int c;
   
-  ushort AmountOfBoulders = RAND_N(20) + 5;
+  int AmountOfBoulders = RAND_N(20) + 5;
   
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(1 + RAND_2));
@@ -1809,8 +1842,8 @@ void level::GenerateSteppe()
 
 void level::GenerateLeafyForest()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	olterrain* OLTerrain;
@@ -1844,8 +1877,8 @@ void level::GenerateLeafyForest()
 
 void level::GenerateEvergreenForest()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	olterrain* OLTerrain = 0;
@@ -1874,22 +1907,22 @@ void level::GenerateEvergreenForest()
 
 void level::GenerateTundra()
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
 	Map[x][y]->SetLTerrain(new solidterrain(SNOW_TERRAIN), 0);
       }
 
   game::BusyAnimation();
-  ushort c;
+  int c;
 
-  ushort AmountOfBoulders = RAND_N(20) + 8; 
+  int AmountOfBoulders = RAND_N(20) + 8; 
 
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(SNOW_BOULDER));
 
-  ushort AmountOfDwarfBirches = RAND_N(10);
+  int AmountOfDwarfBirches = RAND_N(10);
 
   for(c = 0; c < AmountOfDwarfBirches; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new decoration(DWARF_BIRCH));
@@ -1897,7 +1930,7 @@ void level::GenerateTundra()
 
 void level::GenerateGlacier()
 {
-  ushort x,y;
+  int x,y;
 
   for(x = 0; x < XSize; ++x)
     for(y = 0; y < YSize; ++y)
@@ -1906,17 +1939,17 @@ void level::GenerateGlacier()
 	Map[x][y]->SetLTerrain(new solidterrain(SNOW_TERRAIN), 0);
       }
 
-  ushort AmountOfBoulders = RAND_N(20) + 5;
+  int AmountOfBoulders = RAND_N(20) + 5;
 
-  for(ushort c = 0; c < AmountOfBoulders; ++c)
+  for(int c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(SNOW_BOULDER));
 
-  while(true)
+  for(;;)
     {
       CreateTunnelNetwork(1,4,20, 120, vector2d(0,YSize / 2));
       CreateTunnelNetwork(1,4,20, 120, vector2d(XSize - 1,YSize / 2));
 
-      for(ushort c = 0; c < 20; ++c)
+      for(int c = 0; c < 20; ++c)
 	{
 	  vector2d StartPos;
 
@@ -1954,10 +1987,10 @@ void level::GenerateGlacier()
 	    {
 	      if(!(FlagMap[x][y] & PREFERRED)) 
 		{
-		  ushort SquaresAround = 0;
-		  ushort IceAround = 0;
+		  int SquaresAround = 0;
+		  int IceAround = 0;
 	      
-		  for(ushort d = 0; d < 8; ++d)
+		  for(int d = 0; d < 8; ++d)
 		    {
 		      vector2d Pos = vector2d(x,y) + game::GetMoveVector(d);
 		      if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
@@ -2004,9 +2037,9 @@ bool nodepointerstorer::operator<(const nodepointerstorer& N) const
 
 void node::CalculateNextNodes()
 {
-  static ushort TryOrder[8] = { 1, 3, 4, 6, 0, 2, 5, 7 };
+  static int TryOrder[8] = { 1, 3, 4, 6, 0, 2, 5, 7 };
 
-  for(ushort d = 0; d < 8; ++d)
+  for(int d = 0; d < 8; ++d)
     {
       vector2d NodePos = Pos + game::GetMoveVector(TryOrder[d]);
 
@@ -2052,7 +2085,7 @@ void node::CalculateNextNodes()
    a route can't be found. Calling FindRoute again may invalidate the node, so you must
    store the path in another format ASAP. */
 
-node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Illegal, uchar RequiredWalkability, const character* SpecialMover)
+node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Illegal, int RequiredWalkability, const character* SpecialMover)
 {
   node::NodeMap = NodeMap;
   node::RequiredWalkability = RequiredWalkability;
@@ -2065,8 +2098,8 @@ node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Ill
   if(!Illegal.empty() && Illegal.find(To) != Illegal.end())
     return 0;
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       NodeMap[x][y]->Processed = false;
 
   node* Node = NodeMap[From.X][From.Y]; 
@@ -2097,8 +2130,8 @@ node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Ill
 
 void level::CollectEverything(itemvector& IVector, charactervector& CVector)
 {
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
       {
 	lsquare* LS = Map[x][y];
 	LS->GetStack()->MoveItemsTo(IVector);
@@ -2115,9 +2148,554 @@ void level::CollectEverything(itemvector& IVector, charactervector& CVector)
 void level::CreateGlobalRain(liquid* Liquid, vector2d Speed)
 {
   GlobalRainLiquid = Liquid;
+  GlobalRainSpeed = Speed;
 
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      if(Map[x][y]->IsOutside())
-	Map[x][y]->AddRain(Liquid, Speed, false);
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      if(!Map[x][y]->IsInside())
+	Map[x][y]->AddRain(Liquid, Speed, MONSTER_TEAM, false);
+}
+
+void level::CheckSunLight()
+{
+  if(Index == 0 && GetDungeon()->GetIndex() == NEW_ATTNAM)
+    {
+      double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+      if(Cos > 0.01)
+	{
+	  int E = int(100 + Cos * 30);
+	  SunLightEmitation = MakeRGB24(E, E, E);
+	  AmbientLuminance = MakeRGB24(E - 6, E - 6, E - 6);
+	}
+      else
+	{
+	  SunLightEmitation = 0;
+	  AmbientLuminance = NightAmbientLuminance;
+	}
+    }
+  else if(Index == 0 && GetDungeon()->GetIndex() == ATTNAM)
+    {
+      double Cos = cos(FPI * (game::GetTick() % 48000) / 24000.);
+
+      if(Cos > 0.41)
+	{
+	  int E = int(100 + (Cos - 0.40) * 40);
+	  SunLightEmitation = MakeRGB24(E, E, E);
+	  AmbientLuminance = MakeRGB24(E - 8, E - 8, E - 8);
+	}
+      else
+	{
+	  SunLightEmitation = 0;
+	  AmbientLuminance = NightAmbientLuminance;
+	}
+    }
+  else
+    return;
+
+  SunLightDirection = game::GetSunLightDirectionVector();
+  ChangeSunLight();
+}
+
+void level::ChangeSunLight()
+{
+  bool SunSet = game::IsDark(SunLightEmitation);
+  ulong c;
+
+  for(c = 0; c < XSizeTimesYSize; ++c)
+    Map[0][c]->RemoveSunLight();
+
+  if(!SunSet)
+    EmitSunBeams();
+
+  for(c = 0; c < XSizeTimesYSize; ++c)
+    {
+      lsquare* Square = Map[0][c];
+
+      if(Square->Flags & IS_TRANSPARENT)
+	Square->CalculateSunLightLuminance(EMITTER_SQUARE_PART_BITS);
+
+      if(!Square->IsInside())
+	Square->AmbientLuminance = AmbientLuminance;
+
+      Square->SendSunLightSignals();
+    }
+
+  for(c = 0; c < XSizeTimesYSize; ++c)
+    Map[0][c]->CheckIfIsSecondarySunLightEmitter();
+}
+
+void level::InitSquarePartEmitationTicks()
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->SquarePartEmitationTick = 0;
+}
+
+bool level::GenerateWindows(int X, int Y) const
+{
+  olterrain* Terrain = Map[X][Y]->GetOLTerrain();
+
+  if(Terrain && Terrain->CreateWindowConfigurations() && !(RAND() % 6))
+    {
+      Terrain->SetConfig(Terrain->GetConfig() | WINDOW);
+      Map[X][Y]->CalculateIsTransparent();
+      return true;
+    }
+
+  return false;
+}
+
+struct sunbeamcontroller : public stackcontroller
+{
+  static bool Handler(int, int);
+  static void ProcessStack();
+  static ulong ID;
+  static int SunLightBlockHeight;
+  static vector2d SunLightBlockPos;
+  static bool ReSunEmitation;
+};
+
+ulong sunbeamcontroller::ID;
+int sunbeamcontroller::SunLightBlockHeight;
+vector2d sunbeamcontroller::SunLightBlockPos;
+bool sunbeamcontroller::ReSunEmitation;
+
+void level::ForceEmitterNoxify(const emittervector& Emitter) const
+{
+  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+    {
+      ulong ID = i->ID;
+      lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
+
+      if(ID & SECONDARY_SUN_LIGHT)
+	Square->Noxify(Square->SecondarySunLightEmitation, SECONDARY_SUN_LIGHT);
+      else
+	Square->Noxify(Square->Emitation);
+    }
+}
+
+void level::ForceEmitterEmitation(const emittervector& Emitter, const sunemittervector& SunEmitter, ulong IDFlags) const
+{
+  for(emittervector::const_iterator i = Emitter.begin(); i != Emitter.end(); ++i)
+    {
+      ulong ID = i->ID;
+      lsquare* Square = GetLSquare(ExtractPosFromEmitterID(ID));
+
+      if(ID & SECONDARY_SUN_LIGHT)
+	Square->Emitate(Square->SecondarySunLightEmitation, SECONDARY_SUN_LIGHT|IDFlags);
+      else
+	Square->Emitate(Square->Emitation, IDFlags);
+    }
+
+  {
+  stackcontroller::Map = Map;
+  stackcontroller::Stack = SquareStack;
+  stackcontroller::StackIndex = 0;
+  stackcontroller::LevelXSize = XSize;
+  stackcontroller::LevelYSize = YSize;
+  sunbeamcontroller::ReSunEmitation = true;
+
+  for(sunemittervector::const_iterator i = SunEmitter.begin(); i != SunEmitter.end(); ++i)
+    {
+      ulong ID = *i & ~(EMITTER_SHADOW_BITS|EMITTER_SQUARE_PART_BITS) | RE_SUN_EMITATED, SourceFlags;
+      int X, Y;
+
+      if(ID & ID_X_COORDINATE)
+	{
+	  X = (ID & EMITTER_IDENTIFIER_BITS) - (XSize << 3);
+	  Y = ID & ID_BEGIN ? -1 : YSize;
+	  SourceFlags = ID & ID_BEGIN ? SP_BOTTOM : SP_TOP;
+	}
+      else
+	{
+	  X = ID & ID_BEGIN ? -1 : XSize;
+	  Y = (ID & EMITTER_IDENTIFIER_BITS) - (YSize << 3);
+	  SourceFlags = ID & ID_BEGIN ? SP_RIGHT : SP_LEFT;
+	}
+
+      EmitSunBeam(vector2d(X, Y), ID, SourceFlags);
+    }
+
+  sunbeamcontroller::ProcessStack();
+  }
+}
+
+struct loscontroller : public tickcontroller, public stackcontroller
+{
+  static int Handler(int x, int y)
+  {
+    lsquare* Square = Map[x >> 1][y >> 1];
+    const ulong SquareFlags = Square->Flags;
+
+    if(SquareFlags & PERFECTLY_QUADRI_HANDLED)
+      return true;
+
+    if(!(SquareFlags & IN_SQUARE_STACK))
+      {
+	Square->Flags |= IN_SQUARE_STACK;
+	Stack[StackIndex++] = Square;
+      }
+
+    if(SquareFlags & IS_TRANSPARENT)
+      {
+	Square->Flags |= PERFECTLY_QUADRI_HANDLED;
+	return true;
+      }
+
+    const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
+    Square->SquarePartLastSeen = Square->SquarePartLastSeen
+			       & ~SquarePartTickMask[SquarePartIndex]
+			       | ShiftedTick[SquarePartIndex];
+    return false;
+  }
+  static ulong& GetTickReference(int X, int Y)
+  {
+    return Map[X][Y]->SquarePartLastSeen;
+  }
+  static void ProcessStack()
+  {
+    for(long c = 0; c < StackIndex; ++c)
+      Stack[c]->SignalSeen(Tick);
+  }
+};
+
+void level::UpdateLOS()
+{
+  stackcontroller::Map = Map;
+  stackcontroller::Stack = SquareStack;
+  stackcontroller::StackIndex = 0;
+  tickcontroller::Tick = game::IncreaseLOSTick();
+  tickcontroller::PrepareShiftedTick();
+  int Radius = PLAYER->GetLOSRange();
+
+  for(int c = 0; c < PLAYER->GetSquaresUnder(); ++c)
+    mapmath<loscontroller>::DoQuadriArea(PLAYER->GetPos(c).X, PLAYER->GetPos(c).Y,
+					 Radius * Radius, XSize, YSize);
+
+  loscontroller::ProcessStack();
+
+  if(PLAYER->StateIsActivated(INFRA_VISION))
+    for(int c = 0; c < game::GetTeams(); ++c)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	  (*i)->SendNewDrawRequest();
+
+  game::RemoveLOSUpdateRequest();
+}
+
+void level::EnableGlobalRain()
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->EnableGlobalRain();
+}
+
+void level::DisableGlobalRain()
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->DisableGlobalRain();
+}
+
+void level::InitLastSeen()
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->InitLastSeen();
+}
+
+void level::EmitSunBeams()
+{
+  stackcontroller::Map = Map;
+  stackcontroller::LevelXSize = XSize;
+  stackcontroller::LevelYSize = YSize;
+  sunbeamcontroller::ReSunEmitation = false;
+  vector2d Dir = SunLightDirection;
+  int x, y, X = 0, Y = 0, SourceFlags;
+  ulong IDFlags;
+
+  /* Do not try to understand the logic behind the starting points of
+     sunbeams. I determined the formulas by trial and error since all
+     understandable loops produced strange shapes for the shadows of
+     either small of large objects probably due to rounding errors
+     made during line calculations. */
+
+  if(!Dir.X || (Dir.Y && abs(Dir.Y) < abs(Dir.X)))
+    {
+      if(Dir.Y > 0)
+	{
+	  Y = -1;
+	  SourceFlags = SP_BOTTOM;
+	  IDFlags = ID_X_COORDINATE|ID_BEGIN;
+	}
+      else
+	{
+	  Y = YSize;
+	  SourceFlags = SP_TOP;
+	  IDFlags = ID_X_COORDINATE;
+	}
+    }
+  else
+    {
+      if(Dir.X > 0)
+	{
+	  X = -1;
+	  SourceFlags = SP_RIGHT;
+	  IDFlags = ID_BEGIN;
+	}
+      else
+	{
+	  X = XSize;
+	  SourceFlags = SP_LEFT;
+	  IDFlags = 0;
+	}
+    }
+
+  if(!Dir.X)
+    {
+      int Index = XSize << 3;
+
+      for(x = 0; x < XSize; ++x, ++Index)
+	EmitSunBeam(vector2d(x, Y), Index | IDFlags, SourceFlags);
+    }
+  else if(!Dir.Y)
+    {
+      int Index = YSize << 3;
+
+      for(y = 0; y < YSize; ++y, ++Index)
+	EmitSunBeam(vector2d(X, y), Index | IDFlags, SourceFlags);
+    }
+  else if(abs(Dir.Y) < abs(Dir.X))
+    {
+      int Index = Dir.X > 0 ? 0 : XSize << 3;
+      int StartX = Dir.X > 0 ? -XSize << 3 : 0;
+      int EndX = Dir.X > 0 ? XSize : (XSize << 3) + XSize;
+
+      for(x = StartX; x < EndX; ++x, ++Index)
+	EmitSunBeam(vector2d(x, Y), Index | IDFlags, SourceFlags);
+    }
+  else
+    {
+      int Index = Dir.Y > 0 ? 0 : YSize << 3;
+      int StartY = Dir.Y > 0 ? -YSize << 3 : 0;
+      int EndY = Dir.Y > 0 ? YSize : (YSize << 3) + YSize;
+
+      for(y = StartY; y < EndY; ++y, ++Index)
+	EmitSunBeam(vector2d(X, y), Index | IDFlags, SourceFlags);
+    }
+}
+
+void level::EmitSunBeam(vector2d S, ulong ID, int SourceFlags) const
+{
+  S <<= 1;
+  vector2d D = S + SunLightDirection;
+  sunbeamcontroller::ID = ID;
+
+  if(SourceFlags & SP_TOP_LEFT)
+    {
+      sunbeamcontroller::SunLightBlockHeight = 0;
+      mapmath<sunbeamcontroller>::DoLine(S.X,     S.Y,     D.X,     D.Y, SKIP_FIRST);
+    }
+
+  if(SourceFlags & SP_TOP_RIGHT)
+    {
+      sunbeamcontroller::SunLightBlockHeight = 0;
+      mapmath<sunbeamcontroller>::DoLine(S.X + 1, S.Y,     D.X + 1, D.Y, SKIP_FIRST);
+    }
+
+  if(SourceFlags & SP_BOTTOM_LEFT)
+    {
+      sunbeamcontroller::SunLightBlockHeight = 0;
+      mapmath<sunbeamcontroller>::DoLine(S.X,     S.Y + 1, D.X,     D.Y + 1, SKIP_FIRST);
+    }
+
+  if(SourceFlags & SP_BOTTOM_RIGHT)
+    {
+      sunbeamcontroller::SunLightBlockHeight = 0;
+      mapmath<sunbeamcontroller>::DoLine(S.X + 1, S.Y + 1, D.X + 1, D.Y + 1, SKIP_FIRST);
+    }
+}
+
+bool sunbeamcontroller::Handler(int x, int y)
+{
+  int X = x >> 1, Y = y >> 1;
+
+  if(X < 0 || Y < 0 || X >= LevelXSize || Y >= LevelYSize)
+    return (X >= -1 && X <= LevelXSize) || (Y >= -1 && Y <= LevelYSize);
+
+  lsquare* Square = Map[X][Y];
+  int SquarePartIndex = (x & 1) + ((y & 1) << 1);
+
+  if(SunLightBlockHeight && !Square->IsInside()
+  && HypotSquare(x - SunLightBlockPos.X, y - SunLightBlockPos.Y) > SunLightBlockHeight)
+    SunLightBlockHeight = 0;
+
+  if(!SunLightBlockHeight)
+    {
+      ulong Flag = 1 << EMITTER_SQUARE_PART_SHIFT << SquarePartIndex;
+      Square->AddSunLightEmitter(ID | Flag);
+    }
+  else
+    {
+      ulong Flags = ((1 << EMITTER_SQUARE_PART_SHIFT)
+		   | (1 << EMITTER_SHADOW_SHIFT))
+		  << SquarePartIndex;
+
+      Square->AddSunLightEmitter(ID | Flags);
+    }
+
+  if(ReSunEmitation)
+    {
+      if(!(Square->Flags & IN_SQUARE_STACK))
+	Stack[StackIndex++] = Square;
+
+      Square->Flags |= IN_SQUARE_STACK|CHECK_SUN_LIGHT_NEEDED;
+
+      for(int d = 0; d < 8; ++d)
+	{
+	  lsquare* Neighbour = Square->GetNeighbourLSquare(d);
+
+	  if(Neighbour && !(Neighbour->Flags & IN_SQUARE_STACK))
+	    {
+	      Neighbour->Flags |= IN_SQUARE_STACK;
+	      Stack[StackIndex++] = Neighbour;
+	    }
+	}
+    }
+
+  if(!(Square->Flags & IS_TRANSPARENT) || (SunLightBlockHeight && Square->IsInside()))
+    {
+      /* This should depend on the square */
+      SunLightBlockHeight = 81;
+      SunLightBlockPos = vector2d(x, y);
+    }
+
+  return true;
+}
+
+void sunbeamcontroller::ProcessStack()
+{
+  long c;
+
+  for(c = 0; c < StackIndex; ++c)
+    {
+      lsquare* Square = Stack[c];
+
+      if(Square->Flags & CHECK_SUN_LIGHT_NEEDED)
+	{
+	  if(Square->Flags & IS_TRANSPARENT)
+	    Square->CalculateSunLightLuminance(EMITTER_SQUARE_PART_BITS);
+
+	  Square->SendSunLightSignals();
+	  Square->ZeroReSunEmitatedFlags();
+	}
+
+      Square->Flags &= ~(IN_SQUARE_STACK|CHECK_SUN_LIGHT_NEEDED);
+    }
+
+  for(c = 0; c < StackIndex; ++c)
+    Stack[c]->CheckIfIsSecondarySunLightEmitter();
+}
+
+int level::DetectMaterial(const material* Material)
+{
+  ulong Tick = game::IncreaseLOSTick();
+  int Squares = 0;
+
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      {
+	lsquare* Square = Map[x][y];
+
+	if(Square->DetectMaterial(Material))
+	  {
+	    Square->Reveal(Tick, true);
+	    ++Squares;
+	  }
+      }
+
+  return Squares;
+}
+
+void level::BlurMemory()
+{
+  int x, y, SquareStackSize = 0;
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      {
+	lsquare* Square = Map[x][y];
+
+	if(Square->HasNoBorderPartners())
+	  SquareStack[SquareStackSize++] = Square;
+      }
+
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      {
+	lsquare* Square = Map[x][y];
+	Square->Flags |= STRONG_NEW_DRAW_REQUEST
+		       | MEMORIZED_UPDATE_REQUEST
+		       | DESCRIPTION_CHANGE;
+
+	if(Square->HasNoBorderPartners()
+	&& RAND() & 1
+	&& SquareStackSize)
+	  Square->SwapMemorized(SquareStack[RAND() % SquareStackSize]);
+	else if(RAND() & 1)
+	  Square->DestroyMemorized();
+      }
+}
+
+void level::CalculateLuminances()
+{
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      {
+	lsquare* Square = Map[x][y];
+	Square->CalculateLuminance();
+	Square->Flags |= MEMORIZED_UPDATE_REQUEST
+		       | DESCRIPTION_CHANGE;
+      }
+}
+
+struct areacontroller : public stackcontroller
+{
+  static bool Handler(int x, int y)
+  {
+    if(x >= 0 && y >= 0 && x < LevelXSize && y < LevelYSize
+    && HypotSquare(x - Center.X, y - Center.Y) <= RadiusSquare)
+      {
+	lsquare* Square = Map[x][y];
+
+	if(!(Square->Flags & IN_SQUARE_STACK))
+	  {
+	    Stack[StackIndex++] = Square;
+	    Square->Flags |= IN_SQUARE_STACK;
+	    return Square->IsFlyable();
+	  }
+      }
+
+    return false;
+  }
+  static int GetStartX(int) { return Center.X; }
+  static int GetStartY(int) { return Center.Y; }
+  static long RadiusSquare;
+};
+
+long areacontroller::RadiusSquare;
+
+int level::AddRadiusToSquareStack(vector2d Center, long RadiusSquare) const
+{
+  stackcontroller::Map = Map;
+  stackcontroller::Stack = SquareStack;
+  SquareStack[0] = GetLSquare(Center);
+  stackcontroller::StackIndex = 1;
+  stackcontroller::LevelXSize = XSize;
+  stackcontroller::LevelYSize = YSize;
+  stackcontroller::Center = Center;
+  areacontroller::RadiusSquare = RadiusSquare;
+  mapmath<areacontroller>::DoArea();
+  return stackcontroller::StackIndex;
 }

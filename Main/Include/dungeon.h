@@ -18,30 +18,30 @@ class dungeon
 {
  public:
   dungeon();
-  dungeon(uchar);
+  dungeon(int);
   ~dungeon();
-  bool PrepareLevel(ushort, bool = true);
-  void SaveLevel(const festring&, ushort, bool = true);
-  level* LoadLevel(const festring&, ushort);
-  level* GetLevel(ushort Index) const { return Level[Index]; }
-  ushort GetLevels() const;
+  bool PrepareLevel(int, bool = true);
+  void SaveLevel(const festring&, int, bool = true);
+  level* LoadLevel(const festring&, int);
+  level* GetLevel(int I) const { return Level[I]; }
+  int GetLevels() const;
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void SetIndex(uchar What) { Index = What; }
-  uchar GetIndex() const { return Index; }
-  const levelscript* GetLevelScript(ushort);
+  void SetIndex(int What) { Index = What; }
+  int GetIndex() const { return Index; }
+  const levelscript* GetLevelScript(int);
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
-  festring GetLevelDescription(ushort);
-  festring GetShortLevelDescription(ushort);
-  level* LoadLevel(inputfile&, ushort);
-  bool IsGenerated(ushort Index) const { return Generated[Index]; }
-  void SetIsGenerated(ushort Index, bool What) { Generated[Index] = What; }
+  festring GetLevelDescription(int);
+  festring GetShortLevelDescription(int);
+  level* LoadLevel(inputfile&, int);
+  bool IsGenerated(int I) const { return Generated[I]; }
+  void SetIsGenerated(int I, bool What) { Generated[I] = What; }
  private:
   void Initialize();
   const dungeonscript* DungeonScript;
   level** Level;
-  uchar Index;
+  int Index;
   bool* Generated;
   vector2d WorldMapPos;
 };

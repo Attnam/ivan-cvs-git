@@ -27,10 +27,10 @@ class slot
   virtual void AddFriendItem(item*) const = 0;
   virtual bool IsOnGround() const { return false; }
   virtual void PutInItem(item*) = 0;
-  virtual square* GetSquareUnder(ushort = 0) const = 0;
+  virtual square* GetSquareUnder(int = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() = 0;
-  virtual void SignalEmitationIncrease(ulong) = 0;
-  virtual void SignalEmitationDecrease(ulong) = 0;
+  virtual void SignalEmitationIncrease(color24) = 0;
+  virtual void SignalEmitationDecrease(color24) = 0;
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const = 0;
   virtual void SignalEnchantmentChange() { }
@@ -49,10 +49,10 @@ class stackslot : public slot
   virtual void Empty();
   virtual void AddFriendItem(item*) const;
   virtual bool IsOnGround() const;
-  virtual square* GetSquareUnder(ushort = 0) const;
+  virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
+  virtual void SignalEmitationIncrease(color24);
+  virtual void SignalEmitationDecrease(color24);
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const;
   stack* GetMotherStack() const { return MotherStack; }
@@ -73,10 +73,10 @@ class bodypartslot : public slot
   character* GetMaster() const { return Master; }
   void SetMaster(character* What) { Master = What; }
   virtual void AddFriendItem(item*) const;
-  virtual square* GetSquareUnder(ushort = 0) const;
+  virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
+  virtual void SignalEmitationIncrease(color24);
+  virtual void SignalEmitationDecrease(color24);
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
   virtual bool CanBeSeenBy(const character*) const;
@@ -92,21 +92,21 @@ class gearslot : public slot
   bodypart* GetBodyPart() const { return BodyPart; }
   void SetBodyPart(bodypart* What) { BodyPart = What; }
   virtual void AddFriendItem(item*) const;
-  void Init(bodypart*, uchar);
-  uchar GetEquipmentIndex() const { return EquipmentIndex; }
-  void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
+  void Init(bodypart*, int);
+  int GetEquipmentIndex() const { return EquipmentIndex; }
+  void SetEquipmentIndex(int What) { EquipmentIndex = What; }
   virtual void PutInItem(item*);
-  virtual square* GetSquareUnder(ushort = 0) const;
+  virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(ulong);
-  virtual void SignalEmitationDecrease(ulong);
+  virtual void SignalEmitationIncrease(color24);
+  virtual void SignalEmitationDecrease(color24);
   virtual bool CanBeSeenBy(const character*) const;
   virtual void SignalEnchantmentChange();
   virtual bool IsVisible() const { return false; }
   virtual bool IsGearSlot() const { return true; }
  protected:
   bodypart* BodyPart;
-  uchar EquipmentIndex;
+  int EquipmentIndex;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, const slot& Slot)

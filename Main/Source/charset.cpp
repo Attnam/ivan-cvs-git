@@ -11,7 +11,6 @@
 #include "proto.h"
 #include "stack.h"
 #include "wsquare.h"
-#include "wskill.h"
 #include "actions.h"
 #include "iconf.h"
 #include "whandler.h"

@@ -5,7 +5,7 @@
 
 room::prototype** protocontainer<room>::ProtoData;
 valuemap protocontainer<room>::CodeNameMap;
-ushort protocontainer<room>::ProtoAmount;
+int protocontainer<room>::Size;
 
 #include "rooms.h"
 

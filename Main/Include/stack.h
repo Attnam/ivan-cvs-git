@@ -27,7 +27,7 @@ typedef std::vector<item*> itemvector;
    itemvector ItemVector;
    Stack->FillItemVector(ItemVector);
 
-   for(ushort c = 0; c < ItemVector.size(); ++c)
+   for(int c = 0; c < ItemVector.size(); ++c)
      {
        item* Item = ItemVector[c];
        ItemVector[c]->ItemMemberFunction();
@@ -58,35 +58,37 @@ private:
 class stack
 {
  public:
-  stack(square*, entity*, uchar, bool);
+  stack(square*, entity*, ulong = 0);
   ~stack();
   void Load(inputfile&);
-  void Draw(const character*, bitmap*, vector2d, ulong, bool) const;
+  void Draw(const character*, bitmap*, vector2d, color24, int, bool) const;
   void AddItem(item*);
   void RemoveItem(stackslot*);
-  item* GetItem(ushort) const;
+  item* GetItem(int) const;
   stackiterator GetBottom() const { return stackiterator(Bottom); }
   stackiterator GetTop() const { return stackiterator(Top); }
-  ushort GetItems() const { return Items; }
-  ushort GetVisibleItems(const character*) const;
+  int GetItems() const { return Items; }
+  int GetSideItems(int) const;
+  int GetVisibleItems(const character*) const;
+  int GetNativeVisibleItems(const character*) const;
+  int GetVisibleSideItems(const character*, int) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(const character*, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(itemvector&, const character*, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  item* DrawContents(const character*, const festring&, int = 0, sorter = 0) const;
+  int DrawContents(itemvector&, const character*, const festring&, int = 0, sorter = 0) const;
+  int DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, int = 0, sorter = 0) const;
   vector2d GetPos() const;
   void Clean(bool = false);
   void Save(outputfile&) const;
-  ushort SearchItem(item*) const;
+  int SearchItem(item*) const;
   square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
-  bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
-  void BeKicked(character*, ushort, uchar);
+  bool SortedItems(const character*, sorter) const;
+  void BeKicked(character*, int, int);
   void Polymorph(character*);
   void CheckForStepOnEffect(character*);
-  square* GetSquareTrulyUnder() const;
-  lsquare* GetLSquareTrulyUnder() const { return static_cast<lsquare*>(GetSquareTrulyUnder()); }
-  void ReceiveDamage(character*, ushort, ushort);
-  void TeleportRandomly(ushort = 0xFFFF);
+  lsquare* GetLSquareTrulyUnder(int) const;
+  void ReceiveDamage(character*, int, int, int = YOURSELF);
+  void TeleportRandomly(uint = 0xFFFF);
   void FillItemVector(itemvector&) const;
   bool IsOnGround() const;
   bool RaiseTheDead(character*);
@@ -94,66 +96,63 @@ class stack
   bool Open(character*);
   void SignalVolumeAndWeightChange();
   void CalculateVolumeAndWeight();
-  ulong GetVolume() const { return Volume; }
-  ulong GetWeight() const { return Weight; }
+  long GetVolume() const { return Volume; }
+  long GetWeight() const { return Weight; }
+  long GetWeight(const character*, int) const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
-  square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
-  ulong GetEmitation() const { return Emitation; }
-  void SignalEmitationIncrease(ulong);
-  void SignalEmitationDecrease(ulong);
+  lsquare* GetNearLSquare(vector2d Pos) const { return GetLSquareUnder()->GetLevel()->GetLSquare(Pos); }
+  color24 GetEmitation() const { return Emitation; }
+  void SignalEmitationIncrease(int, color24);
+  void SignalEmitationDecrease(int, color24);
   void CalculateEmitation();
-  bool CanBeSeenBy(const character*) const;
+  color24 GetSideEmitation(int);
+  bool CanBeSeenBy(const character*, int) const;
   bool IsDangerousForAIToStepOn(const character*) const;
-  bool Clone(ushort);
+  bool Clone(int);
   void MoveItemsTo(stack*);
   void MoveItemsTo(slot*);
-  item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;
-  void Pile(std::vector<itemvector>&, const character*, bool (*)(const item*, const character*) = 0) const;
-  ulong GetTruePrice() const;
-  ulong GetTotalExplosivePower() const;
-  static ushort GetSelected() { return Selected; }
-  static void SetSelected(ushort What) { Selected = What; }
+  item* GetBottomVisibleItem(const character*) const;
+  item* GetBottomSideItem(const character*, int, bool) const;
+  void Pile(std::vector<itemvector>&, const character*, int, sorter = 0) const;
+  long GetTruePrice() const;
+  static int GetSelected() { return Selected; }
+  static void SetSelected(int What) { Selected = What; }
   bool TakeSomethingFrom(character*, const festring&);
-  bool PutSomethingIn(character*, const festring&, ulong, ulong);
-  bool IsVisible() const { return SquarePosition != HIDDEN; }
-  ushort GetSpoiledItems() const;
-  void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
-  void Search(const character*, ushort);
+  bool PutSomethingIn(character*, const festring&, long, ulong);
+  bool IsVisible() const { return !(Flags & HIDDEN); }
+  int GetSpoiledItems() const;
+  void SortAllItems(itemvector&, const character* = 0, sorter = 0) const;
+  void Search(const character*, int);
   bool IsDangerous(const character*) const;
   void PreProcessForBone();
   void PostProcessForBone();
   void FinalProcessForBone();
-  void SetIsFreezed(bool What) { Freezed = What; }
   void AddElement(item*);
-  void SpillFluid(character*, liquid*, ulong);
+  void SpillFluid(character*, liquid*, long);
   void AddItems(const itemvector&);
   void MoveItemsTo(itemvector&);
+  void Freeze() { Flags |= FREEZED; }
+  void UnFreeze() { Flags &= ~FREEZED; }
+  void DropSideItems();
+  bool DetectMaterial(const material*) const;
  private:
   void RemoveElement(stackslot*);
-  void AddContentsToList(felist&, const character*, const festring&, uchar, bool (*)(const item*, const character*)) const;
-  ushort SearchChosen(itemvector&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
-  static ushort Selected;
+  void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;
+  int SearchChosen(itemvector&, const character*, int, int, int, int, sorter = 0) const;
+  static bool AllowDamage(int, int);
+  static int Selected;
   stackslot* Bottom;
   stackslot* Top;
   square* MotherSquare;
   entity* MotherEntity;
-  /* for drawing purposes. See ivandef.h */
-  const uchar SquarePosition;
-  ulong Volume;
-  ulong Weight;
-  ulong Emitation;
-  ushort Items;
-  /* if true, all items are always considered visible, so CanBeSeenBy calls
-     become unneeded */
-  const bool IgnoreVisibility;
-  /* All costly updates (like emitation's) are avoided if this is true.
-     Allows much faster removing and adding items, but make sure the stack is
-     returned to the original state (excluding item order) before switching
-     this off */
-  bool Freezed;
+  long Volume;
+  long Weight;
+  color24 Emitation : 24;
+  ulong Flags : 8;
+  int Items;
 };
 
 #endif

@@ -7,8 +7,8 @@ glterrain::prototype** protocontainer<glterrain>::ProtoData;
 olterrain::prototype** protocontainer<olterrain>::ProtoData;
 valuemap protocontainer<glterrain>::CodeNameMap;
 valuemap protocontainer<olterrain>::CodeNameMap;
-ushort protocontainer<glterrain>::ProtoAmount;
-ushort protocontainer<olterrain>::ProtoAmount;
+int protocontainer<glterrain>::Size;
+int protocontainer<olterrain>::Size;
 glterrainprototype glterrain_ProtoType(0, 0, "glterrain");
 olterrainprototype olterrain_ProtoType(0, 0, "olterrain");
 const glterrainprototype* glterrain::GetProtoType() const { return &glterrain_ProtoType; }

@@ -10,45 +10,51 @@ bool ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustL
 
 void organic::Be()
 {
-  if(MotherEntity->AllowSpoil())
+  if(++SpoilCheckCounter >= 50)
     {
-      if(++SpoilCounter < GetSpoilModifier())
+      if(MotherEntity->AllowSpoil())
 	{
-	  if(SpoilCounter << 1 >= GetSpoilModifier())
+	  if((SpoilCounter += 50) < GetSpoilModifier())
 	    {
-	      uchar NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
-
-	      if(NewSpoilLevel != SpoilLevel)
+	      if(SpoilCounter << 1 >= GetSpoilModifier())
 		{
-		  SpoilLevel = NewSpoilLevel;
-		  MotherEntity->SignalSpoilLevelChange(this);
+		  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+
+		  if(NewSpoilLevel != SpoilLevel)
+		    {
+		      SpoilLevel = NewSpoilLevel;
+		      MotherEntity->SignalSpoilLevelChange(this);
+		    }
 		}
 	    }
+	  else
+	    MotherEntity->SignalSpoil(this);
 	}
-      else
-	MotherEntity->SignalSpoil(this);
+
+      SpoilCheckCounter = 0;
     }
 }
 
 void organic::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
-  SaveFile << SpoilCounter << SpoilLevel;
+  SaveFile << SpoilCounter << SpoilCheckCounter << SpoilLevel;
 }
 
 void organic::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
-  SaveFile >> SpoilCounter >> SpoilLevel;
+  SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
 }
 
 void organic::VirtualConstructor(bool Load)
 {
+  SpoilLevel = SpoilCheckCounter = 0;
+
   if(!Load)
-    {
-      SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
-      SpoilLevel = 0;
-    }
+    SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
+  else
+    SpoilCounter = 0;
 }
 
 void flesh::Save(outputfile& SaveFile) const
@@ -81,7 +87,7 @@ void powder::Load(inputfile& SaveFile)
   SaveFile >> Wetness;
 }
 
-material* organic::EatEffect(character* Eater, ulong Amount)
+material* organic::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
@@ -89,14 +95,14 @@ material* organic::EatEffect(character* Eater, ulong Amount)
 
   if(GetSpoilLevel() > 0)
     {
-      Eater->BeginTemporaryState(CONFUSED, ushort(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
+      Eater->BeginTemporaryState(CONFUSED, int(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
 
       if(CanHaveParasite() && !(RAND() % (1000 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 
   if(GetSpoilLevel() > 4)
-    Eater->BeginTemporaryState(POISONED, ushort(Amount * (GetSpoilLevel() - 4) * sqrt(GetNutritionValue()) / 1000));
+    Eater->BeginTemporaryState(POISONED, int(Amount * (GetSpoilLevel() - 4) * sqrt(GetNutritionValue()) / 1000));
 
   if(Volume != Amount)
     {
@@ -120,7 +126,7 @@ void organic::AddConsumeEndMessage(character* Eater) const
   material::AddConsumeEndMessage(Eater);
 }
 
-void organic::SetSpoilCounter(ushort What)
+void organic::SetSpoilCounter(int What)
 {
   SpoilCounter = What;
 
@@ -128,7 +134,7 @@ void organic::SetSpoilCounter(ushort What)
     {
       if(SpoilCounter << 1 >= GetSpoilModifier())
 	{
-	  uchar NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+	  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
 	  if(NewSpoilLevel != SpoilLevel)
 	    {
@@ -141,7 +147,7 @@ void organic::SetSpoilCounter(ushort What)
     MotherEntity->SignalSpoil(this);
 }
 
-void ironalloy::SetRustLevel(uchar What)
+void ironalloy::SetRustLevel(int What)
 {
   if(GetRustLevel() != What)
     {
@@ -157,9 +163,9 @@ void ironalloy::SetRustLevel(uchar What)
     }
 }
 
-ushort ironalloy::GetStrengthValue() const
+int ironalloy::GetStrengthValue() const
 {
-  ushort Base = material::GetStrengthValue();
+  int Base = material::GetStrengthValue();
 
   switch(GetRustLevel())
     {
@@ -226,7 +232,7 @@ void liquid::TouchEffect(lterrain* Terrain)
     Terrain->ReceiveAcid(this, Volume * GetAcidicity());
 }
 
-void liquid::TouchEffect(character* Char, ushort BodyPartIndex)
+void liquid::TouchEffect(character* Char, int BodyPartIndex)
 {
   if(GetAcidicity())
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, Volume * GetAcidicity() >> 1);
@@ -234,11 +240,11 @@ void liquid::TouchEffect(character* Char, ushort BodyPartIndex)
 
 /* Doesn't do the actual rusting, just returns whether it should happen */
 
-bool ironalloy::TryToRust(ulong Modifier)
+bool ironalloy::TryToRust(long Modifier)
 {
   if(GetRustLevel() != VERY_RUSTED)
     {
-      ulong Chance = 5000000. * sqrt(GetVolume()) / (Modifier * GetRustModifier());
+      long Chance = long(5000000. * sqrt(GetVolume()) / (Modifier * GetRustModifier()));
 
       if(Chance <= 1 || !(RAND() % Chance))
 	return true;

@@ -3,7 +3,7 @@
 godprototype::godprototype(god* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<god>::Add(this); }
 
 god::god() : Relation(0), Timer(0), Known(false) { }
-uchar god::GetBasicAlignment() const { return NEUTRAL; }
+int god::GetBasicAlignment() const { return NEUTRAL; }
 
 void god::Pray()
 {
@@ -84,9 +84,9 @@ festring god::GetCompleteDescription() const
   return Desc;
 }
 
-void god::AdjustRelation(god* Competitor, short Multiplier, bool Good)
+void god::AdjustRelation(god* Competitor, int Multiplier, bool Good)
 {
-  short Adjustment = (Multiplier << 1) - abs((schar)(GetAlignment()) - Competitor->GetAlignment()) * Multiplier;
+  int Adjustment = (Multiplier << 1) - abs(GetAlignment() - Competitor->GetAlignment()) * Multiplier;
 
   if(!Good && Adjustment > 0)
     Adjustment = -Adjustment;
@@ -94,7 +94,7 @@ void god::AdjustRelation(god* Competitor, short Multiplier, bool Good)
   AdjustRelation(Adjustment);
 }
 
-void god::AdjustRelation(short Amount)
+void god::AdjustRelation(int Amount)
 {
   if(Amount < 0)
     Amount = Amount * 100 / (100 + PLAYER->GetAttribute(WISDOM));
@@ -157,7 +157,7 @@ character* god::CreateAngel()
 {
   vector2d TryToCreate;
 
-  for(ushort c = 0; c < 100; ++c)
+  for(int c = 0; c < 100; ++c)
     {
       TryToCreate = PLAYER->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
@@ -207,7 +207,7 @@ void god::PrintRelation() const
 
 bool god::ReceiveOffer(item* Sacrifice)
 {
-  short OfferValue = Sacrifice->GetOfferValue(GetType());
+  int OfferValue = Sacrifice->GetOfferValue(GetType());
 
   if(OfferValue)
     {
@@ -240,7 +240,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
       PrintRelation();
-      ushort RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
+      int RandModifier = Sacrifice->GetAttachedGod() == GetType() ? 50 : 100;
 
       if(OfferValue > 0 && Relation > 500 && !(RAND() % RandModifier))
 	{
@@ -264,7 +264,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 void god::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << (ushort)GetType();
   SaveFile << Relation << Timer << Known;
 }
 

@@ -20,51 +20,54 @@ class outputfile;
 class inputfile;
 class material;
 class festring;
+class materialprototype;
 template <class type> class databasecreator;
 
-struct materialdatabase
+struct materialdatabase : public databasebase
 {
-  void InitDefaults(ushort NewConfig) { DigProductMaterial = Config = NewConfig; }
-  ushort Config;
-  ushort StrengthValue;
-  ushort ConsumeType;
-  ushort Density;
-  ushort Color;
-  ulong PriceModifier;
+  typedef materialprototype prototype;
+  void InitDefaults(const prototype*, int);
+  const prototype* ProtoType;
+  bool IsAbstract;
+  int StrengthValue;
+  int ConsumeType;
+  int Density;
+  int Color;
+  int RainColor;
+  long PriceModifier;
   bool IsGolemMaterial;
-  ulong Emitation;
+  color24 Emitation;
   bool CanBeWished;
-  ushort NutritionValue;
+  int NutritionValue;
   bool IsAlive;
   bool IsFlammable;
   bool IsExplosive;
   festring NameStem;
   festring AdjectiveStem;
   festring Article;
-  uchar Effect;
-  uchar ConsumeEndMessage;
-  uchar HitMessage;
-  ulong ExplosivePower;
-  uchar Alpha;
-  bool CreateDivineConfigurations;
-  ushort Flexibility;
-  ushort SpoilModifier;
+  int Effect;
+  int ConsumeEndMessage;
+  int HitMessage;
+  long ExplosivePower;
+  alpha Alpha;
+  int Flexibility;
+  int SpoilModifier;
   bool IsSparkling;
-  ushort EffectStrength;
+  int EffectStrength;
   bool IsMetal;
   bool CanHaveParasite;
-  ushort DigProductMaterial;
-  ushort ConsumeWisdomLimit;
-  uchar AttachedGod;
+  int DigProductMaterial;
+  int ConsumeWisdomLimit;
+  int AttachedGod;
   festring BreatheMessage;
   bool EffectIsGood;
   bool IsWarm;
   bool UseMaterialAttributes;
   bool CanRegenerate;
-  ushort BreatheWisdomLimit;
-  ushort RustModifier;
+  int BreatheWisdomLimit;
+  int RustModifier;
   bool IsBlood;
-  ushort Acidicity;
+  int Acidicity;
   bool IsImmuneToAcid;
 };
 
@@ -72,20 +75,23 @@ class materialprototype
 {
  public:
   friend class databasecreator<material>;
-  materialprototype(materialprototype*, material* (*)(ushort, ulong, bool), const char*);
-  material* Clone(ushort Config, ulong Volume = 0) const { return Cloner(Config, Volume, false); }
+  materialprototype(materialprototype*, material* (*)(int, long, bool), const char*);
+  material* Clone(int Config, long Volume = 0) const { return Cloner(Config, Volume, false); }
   material* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
+  int GetIndex() const { return Index; }
   const materialprototype* GetBase() const { return Base; }
-  const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
-  void CreateSpecialConfigurations() { }
-  const materialdatabase& ChooseBaseForConfig(ushort);
+  int CreateSpecialConfigurations(materialdatabase**, int Configs) { return Configs; }
+  const materialdatabase* ChooseBaseForConfig(materialdatabase** TempConfig, int, int) { return *TempConfig; }
+  const materialdatabase*const* GetConfigData() const { return ConfigData; }
+  int GetConfigSize() const { return ConfigSize; }
  private:
-  ushort Index;
+  int Index;
   materialprototype* Base;
-  std::map<ushort, materialdatabase> Config;
-  material* (*Cloner)(ushort, ulong, bool);
+  materialdatabase** ConfigData;
+  materialdatabase** ConfigTable[CONFIG_TABLE_SIZE];
+  int ConfigSize;
+  material* (*Cloner)(int, long, bool);
   const char* ClassID;
 };
 
@@ -95,70 +101,69 @@ class material
   friend class databasecreator<material>;
   typedef materialprototype prototype;
   typedef materialdatabase database;
-  typedef std::map<ushort, materialdatabase> databasemap;
-  material(ushort NewConfig, ulong InitVolume = 0, bool Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
+  material(int NewConfig, long InitVolume = 0, bool Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material(donothing) : MotherEntity(0) { }
   virtual ~material() { }
   virtual void AddName(festring&, bool = false, bool = true) const;
   festring GetName(bool = false, bool = true) const;
-  ushort TakeDipVolumeAway();
+  int TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  bool Effect(character*, ulong);
-  virtual material* EatEffect(character*, ulong);
+  bool Effect(character*, long);
+  virtual material* EatEffect(character*, long);
   bool HitEffect(character*);
-  virtual ushort GetSkinColor() const { return GetColor(); }
-  virtual void SetSkinColor(ushort) { }
-  ulong GetRawPrice() const;
+  virtual color16 GetSkinColor() const { return GetColor(); }
+  virtual void SetSkinColor(int) { }
+  long GetRawPrice() const;
   bool CanBeDug(material* ShovelMaterial) const;
   virtual bool HasBe() const { return false; }
   virtual void Be() { }
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const;
-  DATA_BASE_VALUE(ushort, Config);
-  virtual DATA_BASE_VALUE(ushort, StrengthValue);
-  DATA_BASE_VALUE(ushort, ConsumeType);
-  DATA_BASE_VALUE(ushort, Density);
-  DATA_BASE_VALUE(ushort, Color);
-  DATA_BASE_VALUE(ulong, PriceModifier);
+  DATA_BASE_VALUE(int, Config);
+  virtual DATA_BASE_VALUE(int, StrengthValue);
+  DATA_BASE_VALUE(int, ConsumeType);
+  DATA_BASE_VALUE(int, Density);
+  DATA_BASE_VALUE(int, Color);
+  DATA_BASE_VALUE(int, RainColor);
+  DATA_BASE_VALUE(long, PriceModifier);
   DATA_BASE_BOOL(IsGolemMaterial);
-  DATA_BASE_VALUE(ulong, Emitation);
+  DATA_BASE_VALUE(color24, Emitation);
   DATA_BASE_BOOL(CanBeWished);
-  DATA_BASE_VALUE(ushort, NutritionValue);
+  DATA_BASE_VALUE(int, NutritionValue);
   DATA_BASE_BOOL(IsAlive);
   DATA_BASE_BOOL(IsFlammable);
   virtual DATA_BASE_BOOL(IsExplosive);
   DATA_BASE_VALUE(const festring&, NameStem);
   DATA_BASE_VALUE(const festring&, AdjectiveStem);
   DATA_BASE_VALUE(const festring&, Article);
-  DATA_BASE_VALUE(uchar, Effect);
-  DATA_BASE_VALUE(uchar, ConsumeEndMessage);
-  DATA_BASE_VALUE(uchar, HitMessage);
-  DATA_BASE_VALUE(ulong, ExplosivePower);
-  DATA_BASE_VALUE(uchar, Alpha);
-  DATA_BASE_VALUE(ushort, Flexibility);
-  DATA_BASE_VALUE(ushort, SpoilModifier);
+  DATA_BASE_VALUE(int, Effect);
+  DATA_BASE_VALUE(int, ConsumeEndMessage);
+  DATA_BASE_VALUE(int, HitMessage);
+  DATA_BASE_VALUE(long, ExplosivePower);
+  DATA_BASE_VALUE(alpha, Alpha);
+  DATA_BASE_VALUE(int, Flexibility);
+  DATA_BASE_VALUE(int, SpoilModifier);
   virtual DATA_BASE_BOOL(IsSparkling);
   DATA_BASE_BOOL(IsMetal);
   DATA_BASE_BOOL(CanHaveParasite);
-  DATA_BASE_VALUE(ushort, EffectStrength);
-  DATA_BASE_VALUE(ushort, DigProductMaterial);
-  DATA_BASE_VALUE(ushort, ConsumeWisdomLimit);
-  DATA_BASE_VALUE(uchar, AttachedGod);
+  DATA_BASE_VALUE(int, EffectStrength);
+  DATA_BASE_VALUE(int, DigProductMaterial);
+  DATA_BASE_VALUE(int, ConsumeWisdomLimit);
+  DATA_BASE_VALUE(int, AttachedGod);
   DATA_BASE_BOOL(EffectIsGood);
   DATA_BASE_BOOL(UseMaterialAttributes);
   DATA_BASE_BOOL(CanRegenerate);
-  DATA_BASE_VALUE(ushort, RustModifier);
+  DATA_BASE_VALUE(int, RustModifier);
   DATA_BASE_BOOL(IsBlood);
-  DATA_BASE_VALUE(ushort, Acidicity);
+  DATA_BASE_VALUE(int, Acidicity);
   DATA_BASE_BOOL(IsImmuneToAcid);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(GetConfig(), Volume); }
-  material* Clone(ulong Volume) const { return GetProtoType()->Clone(GetConfig(), Volume); }
-  ulong GetTotalExplosivePower() const;
-  static material* MakeMaterial(ushort);
-  static material* MakeMaterial(ushort, ulong);
+  material* Clone(long Volume) const { return GetProtoType()->Clone(GetConfig(), Volume); }
+  long GetTotalExplosivePower() const;
+  static material* MakeMaterial(int, long = 0);
   virtual bool IsFlesh() const { return false; }
   virtual bool IsLiquid() const { return false; }
   virtual const char* GetConsumeVerb() const;
@@ -167,50 +172,48 @@ class material
   bool IsSameAs(const material* What) const { return What->GetConfig() == GetConfig(); }
   bool IsTransparent() const { return GetAlpha() != 255; }
   virtual material* Duplicate() const = 0;
-  virtual ulong GetTotalNutritionValue() const;
+  virtual long GetTotalNutritionValue() const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
-  virtual void AddWetness(ulong) { }
-  virtual uchar GetSpoilLevel() const { return 0; }
+  virtual void AddWetness(long) { }
+  virtual int GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
   bool CanBeEatenByAI(const character*) const;
-  virtual void SetSpoilCounter(ushort) { }
+  virtual void SetSpoilCounter(int) { }
   DATA_BASE_VALUE(const festring&, BreatheMessage);
   bool BreatheEffect(character*);
   virtual bool SkinColorIsSparkling() const { return IsSparkling(); }
   virtual void SetSkinColorIsSparkling(bool) { }
   DATA_BASE_BOOL(IsWarm);
-  DATA_BASE_VALUE(ushort, BreatheWisdomLimit);
-  virtual void SetRustLevel(uchar) { }
-  virtual uchar GetRustLevel() const { return NOT_RUSTED; }
-  virtual uchar GetRustData() const { return NOT_RUSTED; }
-  virtual bool TryToRust(ulong) { return false; }
-  static const database* GetDataBase(ushort);
+  DATA_BASE_VALUE(int, BreatheWisdomLimit);
+  virtual void SetRustLevel(int) { }
+  virtual int GetRustLevel() const { return NOT_RUSTED; }
+  virtual int GetRustData() const { return NOT_RUSTED; }
+  virtual bool TryToRust(long) { return false; }
+  static const database* GetDataBase(int);
   virtual bool CanSpoil() const { return false; }
   bool IsSolid() const { return !IsLiquid(); }
   /* A dummy materialpredicate */
   bool True() const { return true; }
   void FinishConsuming(character*);
-  ulong GetVolume() const { return Volume; }
-  ulong GetWeight() const { return Weight; }
+  long GetVolume() const { return Volume; }
+  long GetWeight() const { return Volume ? Volume * GetDensity() / 1000 : 0; }
   void EditVolume(long What) { SetVolume(Volume + What); }
-  void SetVolume(ulong);
-  void SetVolumeNoSignals(ulong);
-  void CalculateWeight() { Weight = Volume ? Volume * GetDensity() / 1000 : 0; }
+  void SetVolume(long);
+  void SetVolumeNoSignals(long What) { Volume = What; }
+  virtual bool IsPowder() const { return false; }
  protected:
   virtual void VirtualConstructor(bool) { }
-  void Initialize(ushort, ulong, bool);
-  void InstallDataBase(ushort);
+  void Initialize(int, long, bool);
   const database* DataBase;
   entity* MotherEntity;
-  ulong Volume;
-  ulong Weight;
+  long Volume;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 #define MATERIAL_PROTOTYPE(name, base, baseproto)\
-material* name##_Clone(ushort NewConfig, ulong Volume, bool Load) { return new name(NewConfig, Volume, Load); }\
+material* name##_Clone(int NewConfig, long Volume, bool Load) { return new name(NewConfig, Volume, Load); }\
 materialprototype name##_ProtoType(baseproto, &name##_Clone, #name);\
-name::name(ushort NewConfig, ulong InitVolume, bool Load) : base(donothing()) { Initialize(NewConfig, InitVolume, Load); }\
+name::name(int NewConfig, long InitVolume, bool Load) : base(donothing()) { Initialize(NewConfig, InitVolume, Load); }\
 name::name(donothing D) : base(D) { }\
 const materialprototype* name::GetProtoType() const { return &name##_ProtoType; }\
 material* name::Duplicate() const { return new name(*this); }
@@ -222,7 +225,7 @@ material* name::Duplicate() const { return new name(*this); }
 name : public base\
 {\
  public:\
-  name(ushort, ulong = 0, bool = false);\
+  name(int, long = 0, bool = false);\
   name(donothing);\
   virtual const prototype* GetProtoType() const;\
   virtual material* Duplicate() const;\

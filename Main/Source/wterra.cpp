@@ -3,11 +3,11 @@
 gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
 
-uchar gwterrain::GetWalkability() const { return ANY_MOVE; }
-uchar owterrain::GetWalkability() const { return ANY_MOVE; }
-uchar owterrain::GetAttachedEntry() const { return STAIRS_UP; }
+int gwterrain::GetWalkability() const { return ANY_MOVE; }
+int owterrain::GetWalkability() const { return ANY_MOVE; }
+int owterrain::GetAttachedEntry() const { return STAIRS_UP; }
 
-void wterrain::AddName(festring& String, uchar Case) const
+void wterrain::AddName(festring& String, int Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & ARTICLE_BIT))
@@ -27,7 +27,7 @@ void wterrain::AddName(festring& String, uchar Case) const
 	String << GetNameStem() << " terrains";
 }
 
-festring wterrain::GetName(uchar Case) const
+festring wterrain::GetName(int Case) const
 {
   static festring Name;
   Name.Empty();
@@ -35,19 +35,19 @@ festring wterrain::GetName(uchar Case) const
   return Name;
 }
 
-void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool AllowAnimate) const
 {
   vector2d BP = GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : GET_TICK() % AnimationFrames);
-  igraph::GetWTerrainGraphic()->Blit(Bitmap, BP, Pos, 16, 16, Luminance);
+  igraph::GetWTerrainGraphic()->LuminanceBlit(Bitmap, BP, Pos, 16, 16, Luminance);
 
-  for(ushort c = 0; c < 8 && Neighbour[c].second; ++c)
-    igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
+  for(int c = 0; c < 8 && Neighbour[c].second; ++c)
+    igraph::GetWTerrainGraphic()->LuminanceMaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
 }
 
-void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void owterrain::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool AllowAnimate) const
 {
   vector2d BP = GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : GET_TICK() % AnimationFrames);
-  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, BP, Pos, 16, 16, Luminance);
+  igraph::GetWTerrainGraphic()->LuminanceMaskedBlit(Bitmap, BP, Pos, 16, 16, Luminance);
 }
 
 void wterrain::Load(inputfile&)
@@ -57,12 +57,12 @@ void wterrain::Load(inputfile&)
 
 void gwterrain::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << (ushort)GetType();
 }
 
 void owterrain::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << (ushort)GetType();
 }
 
 gwterrain* gwterrainprototype::CloneAndLoad(inputfile& SaveFile) const
@@ -79,26 +79,26 @@ owterrain* owterrainprototype::CloneAndLoad(inputfile& SaveFile) const
   return Terrain;
 }
 
-bool DrawOrderer(const std::pair<vector2d, uchar>& Pair1, const std::pair<vector2d, uchar>& Pair2)
+bool DrawOrderer(const std::pair<vector2d, int>& Pair1, const std::pair<vector2d, int>& Pair2)
 {
   return Pair1.second < Pair2.second;
 }
 
 void gwterrain::CalculateNeighbourBitmapPoses()
 {
-  ushort Index = 0;
+  int Index = 0;
   vector2d Pos = GetPos();
   worldmap* WorldMap = GetWorldMap();
-  ushort Priority = GetPriority();
+  int Priority = GetPriority();
 
-  for(ushort d = 0; d < 8; ++d)
+  for(int d = 0; d < 8; ++d)
     {
       wsquare* NeighbourSquare = WorldMap->GetNeighbourWSquare(Pos, d);
 
       if(NeighbourSquare)
 	{
 	  gwterrain* DoNeighbour = NeighbourSquare->GetGWTerrain();
-	  ushort NeighbourPriority = DoNeighbour->GetPriority();
+	  int NeighbourPriority = DoNeighbour->GetPriority();
 
 	  if(NeighbourPriority > Priority)
 	    {

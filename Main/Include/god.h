@@ -22,9 +22,9 @@ class godprototype
   god* Clone() const { return Cloner(false); }
   god* CloneAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
-  ushort GetIndex() const { return Index; }
+  int GetIndex() const { return Index; }
  private:
-  ushort Index;
+  int Index;
   god* (*Cloner)(bool);
   const char* ClassID;
 };
@@ -37,19 +37,19 @@ class god
   virtual void Pray();
   virtual const char* GetName() const = 0;
   virtual const char* GetDescription() const = 0;
-  virtual uchar GetAlignment() const = 0;
+  virtual int GetAlignment() const = 0;
   festring GetCompleteDescription() const;
   void ApplyDivineTick();
-  void AdjustRelation(god*, short, bool);
-  void AdjustRelation(short);
+  void AdjustRelation(god*, int, bool);
+  void AdjustRelation(int);
   void AdjustTimer(long);
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void SetRelation(short Value) { Relation = Value; }
+  void SetRelation(int Value) { Relation = Value; }
   void SetTimer(long Value) { Timer = Value; }
   bool ReceiveOffer(item*);
-  virtual uchar GetBasicAlignment() const;
-  short GetRelation() const { return Relation; }
+  virtual int GetBasicAlignment() const;
+  int GetRelation() const { return Relation; }
   void PrintRelation() const;
   void SetIsKnown(bool What) { Known = What; }
   bool IsKnown() const { return Known; }
@@ -57,13 +57,13 @@ class god
   void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
   virtual bool PlayerVomitedOnAltar(liquid*);
   character* CreateAngel();
-  virtual ushort GetColor() const = 0;
+  virtual color16 GetColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;
-  ushort GetType() const { return GetProtoType()->GetIndex(); }
+  int GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
-  short Relation;
+  int Relation;
   long Timer;
   bool Known;
 };

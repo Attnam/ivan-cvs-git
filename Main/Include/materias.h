@@ -26,15 +26,16 @@ class MATERIAL
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsVeryCloseToSpoiling() const { return SpoilLevel == 8; }
-  virtual uchar GetSpoilLevel() const { return SpoilLevel; }
+  virtual int GetSpoilLevel() const { return SpoilLevel; }
   virtual void ResetSpoiling();
-  virtual material* EatEffect(character*, ulong);
+  virtual material* EatEffect(character*, long);
   virtual void AddConsumeEndMessage(character*) const;
-  virtual void SetSpoilCounter(ushort);
+  virtual void SetSpoilCounter(int);
   virtual bool CanSpoil() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;
+  uchar SpoilCheckCounter;
   uchar SpoilLevel;
 );
 
@@ -53,10 +54,9 @@ class MATERIAL
   virtual const char* GetConsumeVerb() const;
   virtual bool IsLiquid() const { return true; }
   void TouchEffect(item*);
-  void TouchEffect(character*, ushort);
+  void TouchEffect(character*, int);
   void TouchEffect(lterrain*);
-  //liquid* CloneLiquid() const { return static_cast<liquid*>(Clone(Volume)); }
-  liquid* CloneLiquid(ulong Volume) const { return static_cast<liquid*>(Clone(Volume)); }
+  liquid* CloneLiquid(long Volume) const { return static_cast<liquid*>(Clone(Volume)); }
 );
 
 class MATERIAL
@@ -66,13 +66,13 @@ class MATERIAL
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetSkinColor() const { return SkinColor; }
-  virtual void SetSkinColor(ushort What) { SkinColor = What; }
+  virtual color16 GetSkinColor() const { return SkinColor; }
+  virtual void SetSkinColor(int What) { SkinColor = What; }
   virtual bool SkinColorIsSparkling() const { return SkinColorSparkling; }
   virtual void SetSkinColorIsSparkling(bool What) { SkinColorSparkling = What; }
   virtual bool IsFlesh() const { return true; }
  protected:
-  ushort SkinColor;
+  color16 SkinColor;
   bool SkinColorSparkling;
 );
 
@@ -83,14 +83,14 @@ class MATERIAL
  public:
   virtual bool IsPowder() const { return true; }
   virtual bool IsExplosive() const;
-  virtual void AddWetness(ulong What) { Wetness += What; }
+  virtual void AddWetness(long What) { Wetness += What; }
   virtual void Be();
   virtual bool HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
   virtual void VirtualConstructor(bool) { Wetness = 0; }
-  ulong Wetness;
+  long Wetness;
 );
 
 /* Materials that can rust */
@@ -101,17 +101,17 @@ class MATERIAL
   solid,
  public:
   virtual void AddName(festring&, bool = false, bool = true) const;
-  virtual void SetRustLevel(uchar);
-  virtual ushort GetStrengthValue() const;
-  virtual uchar GetRustLevel() const { return RustData & 3; }
+  virtual void SetRustLevel(int);
+  virtual int GetStrengthValue() const;
+  virtual int GetRustLevel() const { return RustData & 3; }
   virtual bool IsSparkling() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetRustData() const { return RustData; }
-  virtual bool TryToRust(ulong);
+  virtual int GetRustData() const { return RustData; }
+  virtual bool TryToRust(long);
  protected:
   virtual void VirtualConstructor(bool) { RustData = NOT_RUSTED; }
-  uchar RustData;
+  int RustData;
 );
 
 #endif

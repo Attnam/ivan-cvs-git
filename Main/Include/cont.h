@@ -18,26 +18,26 @@ class continent
  public:
   friend class worldmap;
   continent();
-  continent(ushort);
+  continent(int);
   void AttachTo(continent*);
   void Add(vector2d);
   void Save(outputfile&) const;
   void Load(inputfile&);
-  ulong GetSize() const;
-  uchar GetIndex() const { return Index; }
+  long GetSize() const;
+  int GetIndex() const { return Index; }
   void GenerateInfo();
   festring GetName() const { return Name; }
-  ushort GetGTerrainAmount(ushort) const;
-  vector2d GetRandomMember(ushort);
-  vector2d GetMember(ushort) const;
+  int GetGTerrainAmount(int) const;
+  vector2d GetRandomMember(int);
+  vector2d GetMember(int) const;
  private:
-  static ushort** TypeBuffer;
+  static uchar** TypeBuffer;
   static short** AltitudeBuffer;
   static uchar** ContinentBuffer;
   festring Name;
   std::vector<vector2d> Member;
   std::vector<long> GTerrainAmount;
-  uchar Index;
+  int Index;
 };
 
 outputfile& operator<<(outputfile&, const continent*);
