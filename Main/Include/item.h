@@ -835,7 +835,7 @@ public:
 	virtual std::string NameSingular(void) const RET("wand of polymorph")
 	virtual std::string NamePlural(void) const RET("wands of polymorph")
 	virtual float OfferModifier(void) const RET(30)
-	virtual vector GetBitmapPos(void) const RETV(144,176)
+	virtual vector GetBitmapPos(void) const RETV(0,288)
 	virtual bool Zap(vector, uchar);
 );
 
