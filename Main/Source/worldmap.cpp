@@ -11,6 +11,7 @@
 #include "error.h"
 #include "save.h"
 #include "dungeon.h"
+#include "rand.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -128,7 +129,7 @@ void worldmap::Generate()
 
 		for(ushort CounterOne = 0;;)
 		{
-			continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
+			continent* PerttuLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 
 			AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
 
@@ -168,7 +169,7 @@ void worldmap::RandomizeAltitude()
 {
 	for(ushort x = 0; x < XSize; ++x)
 		for(ushort y = 0; y < YSize; ++y)
-			AltitudeBuffer[x][y] = rand() % 5001 - rand() % 5000;
+			AltitudeBuffer[x][y] = RAND() % 5001 - RAND() % 5000;
 }
 
 void worldmap::SmoothAltitude()
@@ -179,13 +180,13 @@ void worldmap::SmoothAltitude()
 	{
 		if(c < 8)
 		{
-			for(uchar c1 = 0; c1 < rand() % 20; ++c1)
+			for(uchar c1 = 0; c1 < RAND() % 20; ++c1)
 			{
-				ushort PlaceX = 5 + rand() % (XSize-10), PlaceY = 5 + rand() % (YSize-10);
-				short Change = rand() % 10000 - rand() % 10000;
+				ushort PlaceX = 5 + RAND() % (XSize-10), PlaceY = 5 + RAND() % (YSize-10);
+				short Change = RAND() % 10000 - RAND() % 10000;
 
-				for(int c2 = 0; c2 < rand() % 50; ++c2)
-					AltitudeBuffer[(PlaceX + rand() % 5 - rand() % 5)][(PlaceY + rand() % 5 - rand() % 5)] += Change;
+				for(int c2 = 0; c2 < RAND() % 50; ++c2)
+					AltitudeBuffer[(PlaceX + RAND() % 5 - RAND() % 5)][(PlaceY + RAND() % 5 - RAND() % 5)] += Change;
 			}
 		}
 
@@ -202,7 +203,7 @@ void worldmap::SmoothAltitude()
 				AltitudeBuffer[x][y] = HeightNear / SquaresNear;
 
 				if(c < 8)
-					AltitudeBuffer[x][y] += rand() % 100 - rand() % 100;
+					AltitudeBuffer[x][y] += RAND() % 100 - RAND() % 100;
 			}
 	}
 

@@ -12,6 +12,7 @@
 #include "worldmap.h"
 #include "charba.h"
 #include "team.h"
+#include "rand.h"
 
 bool door::Open(character* Opener)
 {

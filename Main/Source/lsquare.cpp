@@ -14,6 +14,7 @@
 #include "charba.h"
 #include "team.h"
 #include "femath.h"
+#include "rand.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0)
 {
@@ -578,17 +579,17 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 
 	for(ushort c = 0; c < Amount; ++c)
 	{
-		vector2d Cords(1 + rand() % 14, 1 + rand() % 14);
+		vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
 		GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
-		GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y, 200 + rand() % 56);
+		GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y, 200 + RAND() % 56);
 
 		for(ushort d = 0; d < 8; ++d)
-			if(rand() % Lumpiness)
+			if(RAND() % Lumpiness)
 			{
 				char Change[3];
 
 				for(uchar x = 0; x < 3; ++x)
-					Change[x] = rand() % Variation - rand() % Variation;
+					Change[x] = RAND() % Variation - RAND() % Variation;
 
 				if(short(GET_RED(Color) + Change[0]) < 0) Change[0] = -GET_RED(Color);
 				if(short(GET_GREEN(Color) + Change[1]) < 0) Change[1] = -GET_GREEN(Color);
@@ -601,7 +602,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 				GetFluidBuffer()->PutPixel(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y,
 				MAKE_RGB(GET_RED(Color) + Change[0], GET_GREEN(Color) + Change[1], GET_BLUE(Color) + Change[2]));
 
-				GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y, 200 + rand() % 56);
+				GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y, 200 + RAND() % 56);
 			}
 	}
 }
@@ -803,7 +804,7 @@ bool levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) cons
 
 void levelsquare::HandleFluids()
 {
-	if(Fluided && !(rand() % 10))
+	if(Fluided && !(RAND() % 10))
 	{
 		if(!GetFluidBuffer()->FadeAlpha(1))
 		{

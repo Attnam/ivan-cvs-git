@@ -11,6 +11,7 @@
 #include "bitmap.h"
 #include "save.h"
 #include "graphics.h"
+#include "rand.h"
 
 worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0)
 {

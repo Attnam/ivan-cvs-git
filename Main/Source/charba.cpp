@@ -23,6 +23,7 @@
 #include "colorbit.h"
 #include "graphics.h"
 #include "script.h"
+#include "rand.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
@@ -90,7 +91,7 @@ bool character::Hit(character* Enemy)
 
 	Hostility(Enemy);
 
-	short Success = rand() % 26 - rand() % 26;
+	short Success = RAND() % 26 - RAND() % 26;
 
 	switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
 	{
@@ -118,9 +119,9 @@ uchar character::TakeHit(character* Enemy, short Success)
 {
 	DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
 
-	if(!(rand() % Enemy->CriticalModifier()))
+	if(!(RAND() % Enemy->CriticalModifier()))
 	{
-		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2500000) + (rand() % 3 ? 2 : 1);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2500000) + (RAND() % 3 ? 2 : 1);
 
 		Enemy->AddHitMessage(this,true);
 
@@ -129,14 +130,14 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 		SetHP(GetHP() - Damage);
 
-		SpillBlood(3 + rand() % 3);
+		SpillBlood(3 + RAND() % 3);
 
 		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 		{
 			vector2d Where(DoX, DoY);
 
 			if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverTerrain()->GetIsWalkable()) 
-				SpillBlood(2 + rand() % 2, Where);
+				SpillBlood(2 + RAND() % 2, Where);
 		});
 
 		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE), Enemy->GetIsPlayer()))
@@ -145,9 +146,9 @@ uchar character::TakeHit(character* Enemy, short Success)
 		return HAS_HIT;
 	}
 
-	if(rand() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
+	if(RAND() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
 	{
-		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 5000000) + (rand() % 3 ? 1 : 0);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 5000000) + (RAND() % 3 ? 1 : 0);
 
 		if(!Damage)
 		{
@@ -194,9 +195,9 @@ void character::Be()
 			ApplyExperience();
 
 			if(GetHP() < GetMaxHP() / 3)
-				SpillBlood(rand() % 2);
+				SpillBlood(RAND() % 2);
 
-			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
 				Faint();
 
 			switch(GetBurdenState())
@@ -654,7 +655,7 @@ void character::MoveTowards(vector2d TPos)
 
 	if(TryMove(GetPos() + MoveTo[0])) return;
 
-	if(rand() % 2)
+	if(RAND() % 2)
 	{
 		if(TryMove(GetPos() + MoveTo[1])) return;
 		if(TryMove(GetPos() + MoveTo[2])) return;
@@ -1716,7 +1717,7 @@ void character::MoveRandomly()
 
 	for(uchar c = 0; c < 10 && !OK; ++c)
 	{
-		ushort ToTry = rand() % 8;
+		ushort ToTry = RAND() % 8;
 
 		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
@@ -1817,7 +1818,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 	if(CheckDeath("was poisoned by school food"))
 		return;
 
-	if(!(rand() % 5) && SizeOfEffect / 500)
+	if(!(RAND() % 5) && SizeOfEffect / 500)
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
@@ -1842,7 +1843,7 @@ void character::ReceiveOmleUrineEffect(long SizeOfEffect)
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s looks more powerful.", CNAME(DEFINITE));
 
-	SetStrength(GetStrength() + 1 + rand() % 2);
+	SetStrength(GetStrength() + 1 + RAND() % 2);
 	SetHP(GetHP() + 2);
 }
 
@@ -1873,7 +1874,7 @@ void character::Darkness(long SizeOfEffect)
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("Suddenly %s looks like a navastater.", CNAME(DEFINITE));
 
-	long Penalty = 1 + SizeOfEffect * (100 + rand() % 26 - rand() % 26) / 100000;
+	long Penalty = 1 + SizeOfEffect * (100 + RAND() % 26 - RAND() % 26) / 100000;
 
 	if(GetStrength() - Penalty > 1)
 		SetStrength(GetStrength() - Penalty);
@@ -2080,7 +2081,7 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 
 void character::HasBeenHitByItem(item* Thingy, float Speed)
 {
-	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000) + (rand() % 5 ? 1 : 0);
+	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000) + (RAND() % 5 ? 1 : 0);
 
 	SetHP(GetHP() - Damage);
 
@@ -2093,16 +2094,16 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 	if(game::GetWizardMode() && GetLevelSquareUnder()->CanBeSeen(true))
 		ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 
-	SpillBlood(1 + rand() % 1);
+	SpillBlood(1 + RAND() % 1);
 	CheckDeath(std::string("died by thrown ") + Thingy->CNAME(INDEFINITE) );
 }
 
 bool character::DodgesFlyingItem(item*, float Speed)
 {			// Formula requires a little bit of tweaking...
-	if(!(rand() % 20))
-		return rand() % 2 ? true : false;
+	if(!(RAND() % 20))
+		return RAND() % 2 ? true : false;
 
-	if(rand() % ulong(sqrt(Speed) * GetSize() / GetAgility() * 10 + 1) > 40)
+	if(RAND() % ulong(sqrt(Speed) * GetSize() / GetAgility() * 10 + 1) > 40)
 		return false;
 	else
 		return true;
@@ -2116,7 +2117,7 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s is hurt by the fire.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - (rand() % SizeOfEffect + SizeOfEffect));
+	SetHP(GetHP() - (RAND() % SizeOfEffect + SizeOfEffect));
 }
 
 void character::GetPlayerCommand()
@@ -2165,7 +2166,7 @@ void character::Vomit(ushort HowMuch)
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s vomits.", CNAME(DEFINITE));
 
-	SetNP(GetNP() - 20 - rand() % 21);
+	SetNP(GetNP() - 20 - RAND() % 21);
 
 	GetLevelSquareUnder()->ReceiveVomit(this);
 }
@@ -2208,7 +2209,7 @@ vector2d character::GetPos() const
 bool character::ForceVomit()
 {
 	ADD_MESSAGE("You push your fingers down to your throat and vomit.");
-	Vomit(1 + rand() % 3);
+	Vomit(1 + RAND() % 3);
 	return true;
 }
 
@@ -2303,9 +2304,9 @@ ulong character::GetBloodColor() const
 
 void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction, character* Kicker)
 {
-	if(rand() % 10 + rand() % 3 * KickStrength / 2 > GetAgility())
+	if(RAND() % 10 + RAND() % 3 * KickStrength / 2 > GetAgility())
 	{
-		if(KickStrength > 8 + rand() % 4 - rand() % 4)
+		if(KickStrength > 8 + RAND() % 4 - RAND() % 4)
 		{
 			if(ShowOnScreen)
 				if(GetIsPlayer())
@@ -2315,7 +2316,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 
 			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
 
-			ushort Damage = rand() % (KickStrength / 10);
+			ushort Damage = RAND() % (KickStrength / 10);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);
@@ -2331,7 +2332,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 				else
 					ADD_MESSAGE("The kick hits %s.", CNAME(DEFINITE));
 
-			ushort Damage = rand() % (KickStrength / 15);
+			ushort Damage = RAND() % (KickStrength / 15);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);
@@ -2365,7 +2366,7 @@ void character::FallTo(vector2d Where, bool OnScreen)
 			else
 				ADD_MESSAGE("%s hits %s head on the wall.", Name(DEFINITE).c_str(), game::PossessivePronoun(GetSex()));
 
-		SetHP(GetHP() - rand() % 2);
+		SetHP(GetHP() - RAND() % 2);
 		CheckDeath("killed by hitting a wall");
 	}
 
@@ -2405,7 +2406,7 @@ void character::Faint()
 
 	SetStrengthExperience(GetStrengthExperience() - 100);
 	ActivateState(FAINTED);
-	StateCounter[FAINTED] = 100 + rand() % 101;
+	StateCounter[FAINTED] = 100 + RAND() % 101;
 }
 
 void character::FaintHandler()
@@ -2577,7 +2578,7 @@ void character::StruckByWandOfStriking()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - 20 - rand() % 11);
+	SetHP(GetHP() - 20 - RAND() % 11);
 
 	CheckDeath("killed by a wand of striking");
 }
@@ -2595,7 +2596,7 @@ bool character::CheckForEnemies()
 		{
 			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
 
-			if(ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(rand() % 3)))
+			if(ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3)))
 			{
 				NearestChar = Char;
 				NearestDistance = ThisDistance;
@@ -3000,7 +3001,7 @@ void character::MoveRandomlyInRoom()
 
 	for(uchar c = 0; c < 10 && !OK; ++c)
 	{
-		ushort ToTry = rand() % 8;
+		ushort ToTry = RAND() % 8;
 
 		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter() && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);

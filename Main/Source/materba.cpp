@@ -2,6 +2,8 @@
 #include "charba.h"
 #include "save.h"
 #include "error.h"
+#include "rand.h"
+
 std::string material::Name(uchar Case) const
 {
 	return Case & INDEFINEBIT ? Article() + " " + NameStem() : NameStem();
@@ -9,10 +11,10 @@ std::string material::Name(uchar Case) const
 
 ushort material::TakeDipVolumeAway()
 {
-	ulong Amount = rand() % 100;
+	ulong Amount = RAND() % 100;
 
 	if(GetVolume() < Amount)
-		Amount = rand() % GetVolume();
+		Amount = RAND() % GetVolume();
 
 	SetVolume(GetVolume() - Amount);
 

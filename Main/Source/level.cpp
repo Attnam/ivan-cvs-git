@@ -11,6 +11,7 @@
 #include "save.h"
 #include "script.h"
 #include "roomde.h"
+#include "rand.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -319,15 +320,15 @@ void level::Generate(levelscript* GenLevelScript)
 
 void level::AttachPos(vector2d What)
 {
-	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	FlagMap[What.X][What.Y] &= ~FORBIDDEN;
 	FlagMap[What.X][What.Y] |= PREFERRED;
 
-	GenerateTunnel(What, Pos, rand() % 2 ? true : false);
+	GenerateTunnel(What, Pos, RAND() % 2 ? true : false);
 
 	FlagMap[What.X][What.Y] |= FORBIDDEN;
 	FlagMap[What.X][What.Y] &= ~PREFERRED;
@@ -335,17 +336,17 @@ void level::AttachPos(vector2d What)
 
 void level::CreateRandomTunnel()
 {
-	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-	vector2d T(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d T(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	while(FlagMap[T.X][T.Y] & FORBIDDEN)
-		T = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		T = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-	GenerateTunnel(Pos, T, rand() % 2 ? true : false);
+	GenerateTunnel(Pos, T, RAND() % 2 ? true : false);
 }
 
 void level::CreateItems(ushort Amount)
@@ -360,10 +361,10 @@ void level::CreateItems(ushort Amount)
 
 void level::CreateStairs(bool Up)
 {
-	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN))
-		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(Up ? (overlevelterrain*)(new stairsup) : (overlevelterrain*)(new stairsdown));
 
@@ -372,12 +373,12 @@ void level::CreateStairs(bool Up)
 	else
 		DownStairs = Pos;
 
-	vector2d Target = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Target = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	while(!(FlagMap[Target.X][Target.Y] & PREFERRED))
-		Target = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+		Target = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-	GenerateTunnel(Pos, Target, rand() % 2 ? true : false);
+	GenerateTunnel(Pos, Target, RAND() % 2 ? true : false);
 
 	FlagMap[Pos.X][Pos.Y] |= FORBIDDEN;
 	FlagMap[Pos.X][Pos.Y] &= ~PREFERRED;
@@ -419,14 +420,14 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[x][YPos + Height - 1]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
-		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 		{
 			lamp* Lamp = new lamp;
 			Lamp->SignalSquarePositionChange(true);
 			Map[x][YPos]->GetSideStack(2)->FastAddItem(Lamp);
 		}
 
-		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 		{
 			lamp* Lamp = new lamp;
 			Lamp->SignalSquarePositionChange(true);
@@ -451,14 +452,14 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[XPos + Width - 1][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
-		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 		{
 			lamp* Lamp = new lamp;
 			Lamp->SignalSquarePositionChange(true);
 			Map[XPos][y]->GetSideStack(1)->FastAddItem(Lamp);
 		}
 
-		if(*RoomScript->GetGenerateLamps() && !(rand() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 		{
 			lamp* Lamp = new lamp;
 			Lamp->SignalSquarePositionChange(true);
@@ -488,9 +489,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][y]->SetRoom(RoomClass->GetIndex());
 		}
 
-	if(*RoomScript->GetAltarPossible() && !(rand() % 3))
+	if(*RoomScript->GetAltarPossible() && !(RAND() % 3))
 	{
-		vector2d Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
+		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
 		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new altar);
 
 		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOverLevelTerrain())->GetOwnerGod();
@@ -502,7 +503,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	if(*RoomScript->GetGenerateTunnel() && Door.Length())
 	{
-		vector2d LPos = Door.Access(rand() % Door.Length());
+		vector2d LPos = Door.Access(RAND() % Door.Length());
 
 		ushort LXPos = LPos.X, LYPos = LPos.Y;
 
@@ -514,18 +515,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		ushort BXPos = XPos, BYPos = YPos;
 
-		if(rand() % 2)
+		if(RAND() % 2)
 		{
-			XPos += rand() % (Width - 2) + 1;
+			XPos += RAND() % (Width - 2) + 1;
 
-			if(rand() % 2)
+			if(RAND() % 2)
 				YPos += Height - 1;
 		}
 		else
 		{
-			YPos += rand() % (Height - 2) + 1;
+			YPos += RAND() % (Height - 2) + 1;
 
-			if(rand() % 2)
+			if(RAND() % 2)
 				XPos += Width - 1;
 		}
 
@@ -535,7 +536,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
 		Map[XPos][YPos]->Clean();
 
-		GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), rand() % 2 ? true : false);
+		GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() % 2 ? true : false);
 
 		FlagMap[LXPos][LYPos] |= FORBIDDEN;
 		FlagMap[LXPos][LYPos] &= ~PREFERRED;
@@ -548,18 +549,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	if(*RoomScript->GetGenerateDoor())
 	{
-		if(rand() % 2)
+		if(RAND() % 2)
 		{
-			XPos += rand() % (Width - 2) + 1;
+			XPos += RAND() % (Width - 2) + 1;
 
-			if(rand() % 2)
+			if(RAND() % 2)
 				YPos += Height - 1;
 		}
 		else
 		{
-			YPos += rand() % (Height - 2) + 1;
+			YPos += RAND() % (Height - 2) + 1;
 
-			if(rand() % 2)
+			if(RAND() % 2)
 				XPos += Width - 1;
 		}
 
@@ -673,7 +674,7 @@ void level::HandleCharacters()
 	}
 
 	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
-		if(!(rand() % (2 << (11 - game::GetCurrent()))))
+		if(!(RAND() % (2 << (11 - game::GetCurrent()))))
 			GenerateNewMonsters(1);
 }
 
@@ -814,12 +815,12 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 
 vector2d level::RandomSquare(bool Walkablility, bool HasCharacter) const
 {
-	vector2d Pos(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
+	vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
 	for(ushort c = 0; (Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
 	{
-		Pos.X = 1 + rand() % (XSize - 2);
-		Pos.Y = 1 + rand() % (YSize - 2);
+		Pos.X = 1 + RAND() % (XSize - 2);
+		Pos.Y = 1 + RAND() % (YSize - 2);
 	}
 
 	return Pos;

@@ -4,6 +4,7 @@
 #include "game.h"
 #include "error.h"
 #include "colorbit.h"
+#include "rand.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];

@@ -10,7 +10,7 @@
 #include "save.h"
 #include "materde.h"
 #include "script.h"
-
+#include "rand.h"
 dungeon::dungeon(uchar Index) : Index(Index)
 {
 	Initialize();

@@ -10,7 +10,7 @@
 #include "square.h"
 #include "graphics.h"
 #include "team.h"
-
+#include "rand.h"
 bool attnam::GoDown(character* Who) const
 {
 	iosystem::TextScreen("Entering dungeon...\n\nThis may take some time, please wait.", WHITE, false);

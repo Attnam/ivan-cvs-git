@@ -10,7 +10,7 @@
 #include "terra.h"
 #include "error.h"
 #include "femath.h"
-
+#include "rand.h"
 area::area(ushort InitXSize, ushort InitYSize)
 {
 	Initialize(InitXSize, InitYSize);

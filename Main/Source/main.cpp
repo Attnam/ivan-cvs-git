@@ -5,6 +5,7 @@
 #include "feio.h"
 #include "whandler.h"
 #include "charde.h"
+#include "rand.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {

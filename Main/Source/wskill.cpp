@@ -1,6 +1,7 @@
 #include "wskill.h"
 #include "message.h"
 #include "save.h"
+#include "rand.h"
 
 ushort gweaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
 ushort gweaponskill::UnuseTurnMap[] = { 65535, 10000, 5000, 4000, 3000, 1500, 1000, 800, 400, 200, 100 };

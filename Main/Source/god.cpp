@@ -10,11 +10,12 @@
 #include "script.h"
 #include "lterrade.h"
 #include "team.h"
+#include "rand.h"
 
 void god::Pray()
 {
 	if(!Timer)
-		if(Relation > -(rand() % 501))
+		if(Relation > -(RAND() % 501))
 		{
 			ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
 			PrayGoodEffect();
@@ -30,7 +31,7 @@ void god::Pray()
 			game::ApplyDivineAlignmentBonuses(this, false);
 		}
 	else
-		if(Relation >= rand() % 501)
+		if(Relation >= RAND() % 501)
 		{
 			ADD_MESSAGE("You feel %s is displeased, but helps you anyway.", GOD_NAME);
 			PrayGoodEffect();
@@ -125,7 +126,7 @@ void consummo::PrayBadEffect()
 	ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
 	ADD_MESSAGE("Some parts of you teleport away!");
 
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % game::GetPlayer()->GetMaxHP());
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
 	game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
 
@@ -198,7 +199,7 @@ void dulcis::PrayGoodEffect()
 void dulcis::PrayBadEffect()
 {
 	ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 9 + 1);
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
 	game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
 }
 
@@ -206,7 +207,7 @@ void inasnum::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
 
-	switch(rand() % 7)
+	switch(RAND() % 7)
 	{
 	case 0:
 		ADD_MESSAGE("His eye was found in a mug.");
@@ -238,7 +239,7 @@ void inasnum::PrayGoodEffect()
 void inasnum::PrayBadEffect()
 {
 	ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
-	switch(rand() % 3)
+	switch(RAND() % 3)
 	{
 	case 0:
 		ADD_MESSAGE("Dancing in front of Bill's SWAT professional will calm him down.");
@@ -283,7 +284,7 @@ void atavus::PrayBadEffect()
 
 	if(game::GetPlayer()->GetStack()->GetItems())
 	{
-		ushort ToBeDeleted = rand() % game::GetPlayer()->GetStack()->GetItems();
+		ushort ToBeDeleted = RAND() % game::GetPlayer()->GetStack()->GetItems();
 		item* Disappearing = game::GetPlayer()->GetStack()->GetItem(ToBeDeleted);
 
 		if(Disappearing->Destroyable())
@@ -318,12 +319,12 @@ void silva::PrayGoodEffect()
 	{
 		ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
 
-		uchar c, Tunnels = 2 + rand() % 3;
+		uchar c, Tunnels = 2 + RAND() % 3;
 
 		for(c = 0; c < Tunnels; ++c)
 			game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(false));
 
-		uchar ToEmpty = 10 + rand() % 11;
+		uchar ToEmpty = 10 + RAND() % 11;
 
 		for(c = 0; c < ToEmpty; ++c)
 			for(ushort i = 0; i < 50; ++i)
@@ -351,12 +352,12 @@ void silva::PrayGoodEffect()
 				}
 			}
 
-		uchar ToGround = 20 + rand() % 21;
+		uchar ToGround = 20 + RAND() % 21;
 
 		for(c = 0; c < ToGround; ++c)
 			for(ushort i = 0; i < 50; ++i)
 			{
-				vector2d Pos = game::GetCurrentLevel()->RandomSquare(true, rand() % 2 ? true : false);
+				vector2d Pos = game::GetCurrentLevel()->RandomSquare(true, RAND() % 2 ? true : false);
 
 				character* Char = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter();
 
@@ -380,7 +381,7 @@ void silva::PrayGoodEffect()
 						if(Char->GetSquareUnder()->CanBeSeen())
 							ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CNAME(DEFINITE));
 
-						Char->SetHP(Char->GetHP() - 20 - rand() % 21);
+						Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
 						Char->CheckDeath("killed by an earthquake");
 					}
 
@@ -427,7 +428,7 @@ void silva::PrayGoodEffect()
 
 void silva::PrayBadEffect()
 {
-	switch(rand() % 300 / 100)
+	switch(RAND() % 300 / 100)
 	{
 	case 0:
 		game::GetPlayer()->Polymorph(new spider(true, true, false));
@@ -648,7 +649,7 @@ void valpuri::Pray()
 
 void atavus::Pray()
 {
-	if(!Timer && Relation > 500 + rand() % 500)
+	if(!Timer && Relation > 500 + RAND() % 500)
 	{
 		ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
 		PrayGoodEffect();
@@ -706,7 +707,7 @@ void macellarius::PrayGoodEffect()
 void macellarius::PrayBadEffect()
 {
 	ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 7);
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new brokenbottle);
 	game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
 }
@@ -774,14 +775,14 @@ void cruentus::PrayBadEffect()
 	else
 	{
 		ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
-		game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 20);
+		game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
 		game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
 	}
 }
 
 void cruentus::Pray()
 {
-	if(!Timer && Relation > 500 + rand() % 500)
+	if(!Timer && Relation > 500 + RAND() % 500)
 	{
 		ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
 		PrayGoodEffect();
@@ -893,7 +894,7 @@ void god::PlayerVomitedOnAltar()
 	ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
 	ADD_MESSAGE("The vomit lands on your face.");
 	AdjustRelation(-200);
-	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - rand() % 2);
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
 	game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 }
 

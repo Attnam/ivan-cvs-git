@@ -14,6 +14,7 @@
 #include "message.h"
 #include "charba.h"
 #include "team.h"
+#include "rand.h"
 
 struct prioritypair
 {

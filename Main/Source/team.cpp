@@ -4,6 +4,8 @@
 #include "save.h"
 #include "charba.h"
 #include "message.h"
+#include "rand.h"
+
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {

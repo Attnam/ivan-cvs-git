@@ -6,6 +6,7 @@
 #include "igraph.h"
 #include "lsquare.h"
 #include "worldmap.h"
+#include "rand.h"
 
 bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {
@@ -138,7 +139,7 @@ void levelterrain::HandleVisualEffects()
 	uchar Flags = 0, AcceptedFlags = OKVisualEffects();
 
 	for(uchar c = 0; c < 8; ++c)
-		if((AcceptedFlags & (1 << c)) && (rand() % 2))
+		if((AcceptedFlags & (1 << c)) && (RAND() % 2))
 			Flags |= 1 << c;
 
 	SetVisualFlags(Flags);

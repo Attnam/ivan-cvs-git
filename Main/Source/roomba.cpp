@@ -3,6 +3,7 @@
 #include "lterrade.h"
 #include "error.h"
 #include "charba.h"
+#include "rand.h"
 
 room::room(bool SetStats) : Master(0)
 {

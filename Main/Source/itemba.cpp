@@ -13,7 +13,7 @@
 #include "message.h"
 #include "wskill.h"
 #include "team.h"
-
+#include "rand.h"
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
 {
 	if(CreateMaterials || SetStats)
@@ -193,7 +193,7 @@ bool item::Zap(character*, vector2d, uchar)
 
 bool item::Polymorph(stack* CurrentStack)
 {
-	if(rand() % 3)
+	if(RAND() % 3)
 		CurrentStack->AddItem(protosystem::BalancedCreateItem());
 
 	SetExists(false);

@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Include" /I "Main/Include" /I "Main/Resource" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Include" /I "Main/Include" /I "Main/Resource" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /I "FeMath/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -52,7 +52,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib ddraw.lib FEEL/Release/FEEL.lib FELL/Release/FELL.lib FeFile/Release/FeFile.lib FeDX/Release/FeDX.lib FeWin/Release/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 dxguid.lib ddraw.lib FeMath/Release/FeMath.lib FEEL/Release/FEEL.lib FELL/Release/FELL.lib FeFile/Release/FeFile.lib FeDX/Release/FeDX.lib FeWin/Release/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy LibTest\Release\LibTest.exe LibTest.exe
@@ -82,7 +82,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib ddraw.lib FEEL/Debug/FEEL.lib FeFile/Debug/FeFile.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 dxguid.lib ddraw.lib FeMath/Debug/FeMath.lib FEEL/Debug/FEEL.lib FeFile/Debug/FeFile.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy LibTest\Debug\LibTest.exe LibTest.exe

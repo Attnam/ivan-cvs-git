@@ -26,6 +26,7 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 #include "wterrade.h"
 #include "roomde.h"
 #include "message.h"
+#include "rand.h"
 
 #include "error.h"
 
@@ -33,7 +34,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 {
 	for(ushort c = 0;; ++c)
 	{
-		ushort Chosen = 1 + rand() % protocontainer<character>::GetProtoAmount();
+		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 
 		if(!protocontainer<character>::GetProto(Chosen)->Possibility())
 			continue;
@@ -61,7 +62,7 @@ item* protosystem::BalancedCreateItem()
 	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 		SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
 		
-	RandomOne = 1 + rand() % (SumOfPossibilities);
+	RandomOne = 1 + RAND() % (SumOfPossibilities);
 	
 	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
 	{
@@ -124,7 +125,7 @@ material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Outpu
 
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
-	for(ushort c = 1 + rand() % protocontainer<material>::GetProtoAmount();; c = 1 + rand() % protocontainer<material>::GetProtoAmount())
+	for(ushort c = 1 + RAND() % protocontainer<material>::GetProtoAmount();; c = 1 + RAND() % protocontainer<material>::GetProtoAmount())
 		if(protocontainer<material>::GetProto(c)->IsSolid())
 			return protocontainer<material>::GetProto(c)->Clone(Volume);
 }

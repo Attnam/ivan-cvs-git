@@ -182,7 +182,7 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone),
 	{
-		SetOwnerGod(rand() % game::GetGodNumber() + 1);
+		SetOwnerGod(RAND() % game::GetGodNumber() + 1);
 	},
 public:
 	virtual bool CanBeOffered() const { return true; }

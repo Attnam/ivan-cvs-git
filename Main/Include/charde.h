@@ -79,17 +79,17 @@ class CHARACTER
 	humanoid,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(150 + rand() % 51);
-		SetAgility(15 + rand() % 11);
-		SetStrength(10 + rand() % 6);
-		SetEndurance(10 + rand() % 6);
-		SetPerception(10 + rand() % 6);
-		SetLegType(rand() % 3);
+		SetSize(150 + RAND() % 51);
+		SetAgility(15 + RAND() % 11);
+		SetStrength(10 + RAND() % 6);
+		SetEndurance(10 + RAND() % 6);
+		SetPerception(10 + RAND() % 6);
+		SetLegType(RAND() % 3);
 		SetTorsoType(0);
-		SetArmType(rand() % 5);
-		SetHeadType(rand() % 15);
+		SetArmType(RAND() % 5);
+		SetHeadType(RAND() % 15);
 		SetShieldType(0);
-		SetMoney(200 + rand() % 101);
+		SetMoney(200 + RAND() % 101);
 	},
 public:
 	virtual ushort Possibility() const RET(0)
@@ -159,10 +159,10 @@ class CHARACTER
 		SetStrength(15);
 		SetEndurance(20);
 		SetPerception(18);
-		SetLegType(rand() % 3);
-		SetTorsoType(2 + rand() % 2);
-		SetArmType(rand() % 5);
-		SetHeadType(5 + rand() % 2);
+		SetLegType(RAND() % 3);
+		SetTorsoType(2 + RAND() % 2);
+		SetArmType(RAND() % 5);
+		SetHeadType(5 + RAND() % 2);
 		SetShieldType(0);
 		SetMoney(20);
 	},
@@ -219,7 +219,7 @@ class CHARACTER
 		SetArmType(6);
 		SetHeadType(4);
 		SetShieldType(0);
-		SetMoney(3000 + rand() % 2001);
+		SetMoney(3000 + RAND() % 2001);
 	},
 public:
 	virtual void GetAICommand() { StandIdleAI(); }
@@ -882,7 +882,7 @@ class CHARACTER
 		SetLegType(7);
 		SetTorsoType(10);
 		SetArmType(10);
-		SetHeadType(16 + rand() % 6);
+		SetHeadType(16 + RAND() % 6);
 		SetShieldType(0);
 	},
 public:
@@ -989,7 +989,7 @@ class CHARACTER
 		SetLegType(8);
 		SetTorsoType(11);
 		SetArmType(11);
-		SetHeadType(16 + rand() % 6);
+		SetHeadType(16 + RAND() % 6);
 		SetShieldType(0);
 	},
 public:

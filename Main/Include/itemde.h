@@ -4,7 +4,7 @@
 #include "itemba.h"
 #include "materde.h"
 #include "wskill.h"
-
+#include "rand.h"
 
 class ITEM
 (
@@ -89,7 +89,7 @@ class ITEM
 (
 	can,
 	item,
-	InitMaterials(2, new iron, rand() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
+	InitMaterials(2, new iron, RAND() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},
@@ -116,7 +116,7 @@ class ITEM
 (
 	lump,
 	item,
-	InitMaterials(rand() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
+	InitMaterials(RAND() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},
@@ -152,7 +152,7 @@ class ITEM
 (
 	longsword,
 	meleeweapon,
-	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
+	InitMaterials(3, RAND() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
 	{
 		SetSize(150);
 	},
@@ -172,7 +172,7 @@ class ITEM
 (
 	twohandedsword,
 	longsword,
-	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
+	InitMaterials(3, RAND() % 50 ? (material*)new iron : (material*)new mithril, new iron, 0),
 	{
 		SetSize(175);
 	},
@@ -233,7 +233,7 @@ class ITEM
 (
 	axe,
 	meleeweapon,
-	InitMaterials(3, rand() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
+	InitMaterials(3, RAND() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(125);
 	},
@@ -253,7 +253,7 @@ class ITEM
 (
 	pickaxe,
 	axe,
-	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
+	InitMaterials(3, RAND() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(150);
 	},
@@ -273,7 +273,7 @@ class ITEM
 (
 	spear,
 	meleeweapon,
-	InitMaterials(3, rand() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
+	InitMaterials(3, RAND() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(200);
 	},
@@ -399,7 +399,7 @@ class ITEM
 (
 	potion,
 	item,
-	InitMaterials(2, new glass, rand() % 2 ? (material*)new water : (material*)new omleurine),
+	InitMaterials(2, new glass, RAND() % 2 ? (material*)new water : (material*)new omleurine),
 	{
 		SetSize(30);
 	},
@@ -625,7 +625,7 @@ class ITEM
 (
 	poleaxe,
 	axe,
-	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
+	InitMaterials(3, RAND() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(225);
 	},
@@ -643,7 +643,7 @@ class ITEM
 (
 	spikedmace,
 	meleeweapon,
-	InitMaterials(3, rand() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
+	InitMaterials(3, RAND() % 50 ? (material*)new iron : (material*)new mithril, new wood, 0),
 	{
 		SetSize(150);
 	},
@@ -685,7 +685,7 @@ class ITEM
 (
 	loaf,
 	item,
-	InitMaterials(rand() % 2 ? (material*)new pork : (material*)new beef),
+	InitMaterials(RAND() % 2 ? (material*)new pork : (material*)new beef),
 	{
 		SetSize(40);
 	},
@@ -764,7 +764,7 @@ class ITEM
 	InitMaterials(new glass),
 	{
 		SetSize(10);
-		SetCharge(2 + rand() % 4);
+		SetCharge(2 + RAND() % 4);
 	},
 public:
 	virtual ushort Possibility() const RET(20)
@@ -885,7 +885,7 @@ class ITEM
 	InitMaterials(new marble),
 	{
 		SetSize(12);
-		SetCharge(1 + rand() % 3);
+		SetCharge(1 + RAND() % 3);
 	},
 public:
 	virtual ushort Possibility() const RET(20)

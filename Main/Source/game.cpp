@@ -26,6 +26,7 @@
 #include "script.h"
 #include "team.h"
 #include "colorbit.h"
+#include "rand.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -118,7 +119,7 @@ ushort game::AutosaveInterval = 0;
 
 void game::InitScript()
 {
-	srand(time(0));
+	femath::SetSeed(time(0));
 	inputfile ScriptFile("Script/Dungeon.dat");
 	GameScript.ReadFrom(ScriptFile);
 }
@@ -137,7 +138,8 @@ void game::Init(std::string Name)
 	SeeWholeMapCheat = false;
 	GoThroughWallsCheat = false;
 	PlayerBackup = 0;
-	srand(time(0));
+
+	femath::SetSeed(time(0));
 	game::CalculateGodNumber();
 	LOSTurns = 1;
 	WorldMap = 0;
@@ -481,24 +483,24 @@ void game::UpdateCameraY()
 
 const char* game::Insult()
 {
-	switch(rand() % 1500 / 100)
+	switch(RAND() % 1500 / 100)
 	{
 	case 0  : return "moron";
 	case 1  : return "silly";
-        case 2  : return "idiot";
-        case 3  : return "airhead";
-        case 4  : return "jerk";
-        case 5  : return "dork";
-        case 6  : return "Mr. Mole";
-        case 7  : return "navastater";
-        case 8  : return "potatoes-for-eyes";
-        case 9  : return "lamer";
-        case 10 : return "mommo-for-brains";
+	case 2  : return "idiot";
+	case 3  : return "airhead";
+	case 4  : return "jerk";
+	case 5  : return "dork";
+	case 6  : return "Mr. Mole";
+	case 7  : return "navastater";
+	case 8  : return "potatoes-for-eyes";
+	case 9  : return "lamer";
+	case 10 : return "mommo-for-brains";
 	case 11 : return "pinhead";
 	case 12 : return "stupid-headed person";
 	case 13 : return "software abuser";
 	case 14 : return "loser";
-        default : return "hugger-mugger";
+	default : return "hugger-mugger";
 	}
 }
 
@@ -595,7 +597,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << OutlineItems << OutlineCharacters << LOSTurns << AutosaveInterval;
 
 	time_t Time = time(0);
-	srand(Time);
+	femath::SetSeed(Time);
 	SaveFile << Time;
 
 	SaveFile << Dungeon << Team;
@@ -629,7 +631,7 @@ bool game::Load(std::string SaveName)
 
 	time_t Time;
 	SaveFile >> Time;
-	srand(Time);
+	femath::SetSeed(Time);
 
 	SaveFile >> Dungeon >> Team;
 
@@ -802,7 +804,7 @@ float game::Difficulty()
 
 	while(true)
 	{
-		float Dice = float(rand() % 5);
+		float Dice = float(RAND() % 5);
 
 		if(!Dice)
 		{

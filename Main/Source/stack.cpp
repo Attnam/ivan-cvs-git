@@ -12,6 +12,7 @@
 #include "graphics.h"
 #include "charba.h"
 #include "area.h"
+#include "rand.h"
 
 stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Item(0), Items(0), NonExistent(0)
 {
@@ -387,7 +388,7 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 		if(GetItems())
 			GetItem(0)->Fly(Direction, Strength, this, true);
 
-		if(GetItems() && rand() % 2)
+		if(GetItems() && RAND() % 2)
 			GetItem(0)->Fly(Direction, Strength, this, true);
 	}
 	else

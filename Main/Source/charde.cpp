@@ -18,7 +18,7 @@
 #include "strover.h"
 #include "team.h"
 #include "lterraba.h"
-
+#include "rand.h"
 perttu::~perttu()
 {
 	game::SetPerttu(0);
@@ -64,8 +64,8 @@ void oree::CreateInitialEquipment()
 
 void swatcommando::CreateInitialEquipment()
 {
-	if(rand() % 20)
-		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 5 ? (item*)(new longsword) : rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+	if(RAND() % 20)
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
 	else
 	{
 		item* DoomsDay = new longsword;
@@ -73,13 +73,13 @@ void swatcommando::CreateInitialEquipment()
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(DoomsDay)));
 	}
 
-	GetStack()->FastAddItem(new chainmail(rand() % 5 ? (material*)new iron : (material*)new mithril));
+	GetStack()->FastAddItem(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril));
 }
 
 void fallenvalpurist::CreateInitialEquipment()
 {
-	if(rand() % 10)
-		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)new axe : (item*)new pickaxe)));
+	if(RAND() % 10)
+		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new axe : (item*)new pickaxe)));
 	else
 	{
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
@@ -92,7 +92,7 @@ void fallenvalpurist::CreateInitialEquipment()
 
 void froggoblin::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 3 ? (item*)new spear : (item*)new poleaxe)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new spear : (item*)new poleaxe)));
 }
 
 void cityguard::CreateInitialEquipment()
@@ -109,7 +109,7 @@ ushort humanoid::CalculateArmorModifier() const
 bool ennerbeast::Hit(character*)
 {
 	char Message[256] ;
-	if(rand() % 2) sprintf(Message,"The Enner Beast yells: UGH UGHAaaa!");
+	if(RAND() % 2) sprintf(Message,"The Enner Beast yells: UGH UGHAaaa!");
 	else sprintf(Message, "The Enner Beast yells: Uga Ugar Ugade Ugat!");
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 100,
@@ -119,7 +119,7 @@ bool ennerbeast::Hit(character*)
 		float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
 
 		if(Char && Char != this)
-			Char->ReceiveSound(Message, rand() % 26 - rand() % 26,ScreamStrength);
+			Char->ReceiveSound(Message, RAND() % 26 - RAND() % 26,ScreamStrength);
 
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
 
@@ -211,7 +211,7 @@ void humanoid::DrawToTileBuffer() const
 
 void fallenvalpurist::CreateCorpse()
 {
-	ushort Amount = 2 + rand() % 4;
+	ushort Amount = 2 + RAND() % 4;
 
 	for(ushort c = 0; c < Amount; ++c)
 		GetLevelSquareUnder()->GetStack()->AddItem(new abone);
@@ -316,11 +316,11 @@ ushort golem::CalculateArmorModifier() const
 
 void golem::MoveRandomly()
 {
-	ushort ToTry = rand() % 9;
+	ushort ToTry = RAND() % 9;
 
 	if(ToTry == 8)
 	{
-		if(!(rand () % 100))
+		if(!(RAND() % 100))
 			Engrave("Golem Needs Master");
 	}
 	else
@@ -338,7 +338,7 @@ void ennerbeast::GetAICommand()
 	if(FollowLeader())
 		return;
 
-	if(rand() % 3)
+	if(RAND() % 3)
 		Hit(0);
 	else
 		MoveRandomly();
@@ -478,7 +478,7 @@ bool humanoid::Hit(character* Enemy)
 
 	Hostility(Enemy);
 
-	short Success = rand() % 26 - rand() % 26;
+	short Success = RAND() % 26 - RAND() % 26;
 
 	switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
 	{
@@ -769,7 +769,7 @@ void farmer::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -798,7 +798,7 @@ void cityguard::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -827,7 +827,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -879,7 +879,7 @@ void swatcommando::BeTalkedTo(character*)
 void ennerbeast::BeTalkedTo(character*)
 {
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -988,7 +988,7 @@ void ivan::BeTalkedTo(character* Talker)
 	if(GetTeam() == Talker->GetTeam() || Talker->Danger() < 50000)
 	{
 		static uchar LastSaid = 0xFF, ToSay;
-		while((ToSay = rand() % 11) == LastSaid);
+		while((ToSay = RAND() % 11) == LastSaid);
 		LastSaid = ToSay;
 
 		switch(ToSay)
@@ -1053,7 +1053,7 @@ void hunter::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -1115,7 +1115,7 @@ void slave::BeTalkedTo(character* Talker)
 	if(GetTeam() == Talker->GetTeam())
 	{
 		static uchar LastSaid = 0xFF, ToSay;
-		while((ToSay = rand() % 4) == LastSaid);
+		while((ToSay = RAND() % 4) == LastSaid);
 		LastSaid = ToSay;
 
 		switch(ToSay)
@@ -1172,7 +1172,7 @@ bool elpuri::Hit(character* Enemy)
 		{
 			Hostility(ByStander);
 
-			short Success = rand() % 26 - rand() % 26;
+			short Success = RAND() % 26 - RAND() % 26;
 
 			switch(ByStander->TakeHit(this, Success))
 			{
@@ -1205,7 +1205,7 @@ void perttuswife::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -1235,7 +1235,7 @@ void housewife::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -1267,7 +1267,7 @@ void femaleslave::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = RAND() % 4) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -1296,7 +1296,7 @@ void librarian::BeTalkedTo(character* Talker)
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 9) == LastSaid);
+	while((ToSay = RAND() % 9) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
@@ -1405,7 +1405,7 @@ void femaleslave::CreateInitialEquipment()
 void ivan::MoveRandomly()
 {
 	char ToTry = rand() % 8;
-	switch(rand () % 200)
+	switch(RAND() % 200)
 	{
 		case 0:
 			Engrave("The weapons with which the bourgeoisie felled feudalism to the ground are now turned against the bourgeoisie itself.");

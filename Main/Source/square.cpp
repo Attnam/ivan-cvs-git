@@ -7,6 +7,7 @@
 #include "materba.h"
 #include "strover.h"
 #include "save.h"
+#include "rand.h"
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), MemorizedUpdateRequested(true)
 {

@@ -13,7 +13,7 @@
 #include "save.h"
 #include "feio.h"
 #include "team.h"
-
+#include "rand.h"
 void can::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -96,7 +96,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 	for(;;) // Bug bug bug! This can cause an infinite loop if there's no walkable squares around.
 	{
-		TryToCreate = (Reader->GetPos() + game::GetMoveVector(rand() % DIRECTION_COMMAND_KEYS));
+		TryToCreate = (Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS));
 		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable())
 			break;
 	}
@@ -132,7 +132,7 @@ bool scrollofteleport::Read(character* Reader)
 
 void lump::ReceiveHitEffect(character* Enemy, character*)
 {
-	if(rand() % 2)
+	if(RAND() % 2)
 	{
 		if(Enemy->GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The %s touches %s.", GetMaterial(0)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
@@ -382,7 +382,7 @@ bool lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 
 bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
-	if(!(rand() % 75) && Strength > 10 + rand() % 10)
+	if(!(RAND() % 75) && Strength > 10 + RAND() % 10)
 	{
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
 		return true;
@@ -393,7 +393,7 @@ bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
-	if(!(rand() % 75) && Strength > 10 + rand() % 10)
+	if(!(RAND() % 75) && Strength > 10 + RAND() % 10)
 	{
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
 		if(Shown)
@@ -459,7 +459,7 @@ item* brokenbottle::BetterVersion(void) const
 {
 	material* Stuff;
 
-	if(rand() % 5)
+	if(RAND() % 5)
 		Stuff = new bananaflesh;
 	else
 		Stuff = new omleurine;
@@ -517,7 +517,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
-	if(Strength > 20000 + rand() % 40000)
+	if(Strength > 20000 + RAND() % 40000)
 	{
 		character* Wearer = ItemsStack->GetSquareUnder()->GetCharacter();
 
@@ -537,7 +537,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 {
-	if(Strength > 2500.0f / GetArmorValue() + rand() % 11 - rand() % 11)
+	if(Strength > 2500.0f / GetArmorValue() + RAND() % 11 - RAND() % 11)
 	{
 		if (IsShown)
 			ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
@@ -556,7 +556,7 @@ bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 
 void brokenbottle::GetStepOnEffect(character* Stepper)
 {
-	if(!(rand() % 10))
+	if(!(RAND() % 10))
 	{
 		if(Stepper->GetIsPlayer())
 			ADD_MESSAGE("Auch. You step on sharp glass splinters.");
@@ -564,7 +564,7 @@ void brokenbottle::GetStepOnEffect(character* Stepper)
 			if(Stepper->GetSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CNAME(DEFINITE));
 
-		Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
+		Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
 		Stepper->CheckDeath("stepped on a broken bottle");
 	}
 }
@@ -635,7 +635,7 @@ item* potion::BetterVersion(void) const
 	{
 		material* Stuff;
 
-		if(rand() % 5)
+		if(RAND() % 5)
 			Stuff = new bananaflesh;
 		else
 			Stuff = new omleurine;
@@ -655,7 +655,7 @@ item* can::BetterVersion(void) const
 	{
 		material* Stuff;
 
-		if(rand() % 2)
+		if(RAND() % 2)
 			Stuff = new schoolfood;
 		else
 			Stuff = new bananaflesh;

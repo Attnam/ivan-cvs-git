@@ -4,6 +4,7 @@
 #include "save.h"
 #include "strover.h"
 #include "error.h"
+#include "rand.h"
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {
@@ -240,7 +241,7 @@ long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel
 
 		if(Word == "rand")
 		{
-			Value = rand();
+			Value = RAND() & 0x7FFFFFFF;
 			continue;
 		}
 
@@ -287,7 +288,7 @@ bool inputfile::ReadBool()
 
 	ABORT("Odd bool value \"%s\" encountered!", Word.c_str());
 
-	return rand() % 2 ? true : false;
+	return RAND() % 2 ? true : false;
 }
 
 outputfile& operator<<(outputfile& SaveFile, std::string String)

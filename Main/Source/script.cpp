@@ -8,6 +8,7 @@
 #include "allocate.h"
 #include "itemba.h"
 #include "team.h"
+#include "rand.h"
 
 template contentscript<character>;
 template contentscript<item>;

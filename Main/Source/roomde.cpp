@@ -8,6 +8,7 @@
 #include "lsquare.h"
 #include "stack.h"
 #include "team.h"
+#include "rand.h"
 
 void shop::HandleInstantiatedCharacter(character* Character)
 {
