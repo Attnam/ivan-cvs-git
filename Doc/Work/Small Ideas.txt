@@ -410,3 +410,6 @@ New fountain effect: random level teleport.
 Carnivorous plants should be carnivorous, not anorectic.
 There should be an option to display weapon skills at the end of the game.
 Loricatus shouldn't change whips to steel.
+Ikiros should forge weapons from raw materials provided by the player.
+Kiss command.
+Cloak of fire resistance should protect items in the inventory from fire.
