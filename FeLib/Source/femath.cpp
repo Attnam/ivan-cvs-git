@@ -248,3 +248,5 @@ bool femath::CompareBits(const void* V1, const void* V2, ushort Size)
 
   return false;
 }
+
+ulong femath::Rand() { return (Seed = Seed * RAND_MULTIPLIER + 1) >> 21; }

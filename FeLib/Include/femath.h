@@ -33,7 +33,7 @@ template <class f, class type> inline type Recurse(f F, type Value, ushort Amoun
 class femath
 {
 public: 
-  static ulong Rand() { return (Seed = Seed * RAND_MULTIPLIER + 1) >> 21; }
+  static ulong Rand();
   static long RandN(long N) { return Rand() % N; }
   static ulonglong GetSeed() { return Seed; }
   static void SetSeed(ulonglong What) { Seed = What; }

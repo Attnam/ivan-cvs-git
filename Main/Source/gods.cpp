@@ -238,7 +238,7 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  if(Relation > 500 + RAND_N(500))
+  if(!Timer && Relation > 500 + RAND_N(500))
     {
       item* Reward = new bodyarmor(PLATE_MAIL, NO_MATERIALS);
       Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
@@ -253,6 +253,8 @@ void atavus::PrayGoodEffect()
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
       ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().c_str());
     }
+  else
+    ADD_MESSAGE("Nothing happens.");
 }
 
 void atavus::PrayBadEffect()
