@@ -348,7 +348,7 @@ bool game::Init(const festring& Name)
 	    game::GetPlayer()->GetStack()->AddItem(Present);
 	    ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
 	  }
-
+	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, > to enter a square and ? to view other commands.");
 	return true;
       }
     default:
@@ -3336,7 +3336,7 @@ void game::InitAttributeMemory()
 void game::TeleportHandler(vector2d CursorPos)
 {
   if((CursorPos - Player->GetPos()).GetLengthSquare() > Player->GetTeleportRangeSquare())
-    CursorData = DARK_CURSOR|TARGET;
+    CursorData = BLUE_CURSOR|TARGET;
   else
     CursorData = NORMAL_CURSOR|TARGET;
 }

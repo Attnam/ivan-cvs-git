@@ -268,7 +268,7 @@ class character : public entity, public id
   int GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
   int GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
   int GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
-  int GetTeleportRange() const { return (GetAttribute(INTELLIGENCE) * 3) >> 2; }
+  int GetTeleportRange() const { return GetAttribute(INTELLIGENCE); }
   int GetTeleportRangeSquare() const { return GetTeleportRange() * GetTeleportRange(); }
   void AddMissMessage(const character*) const;
   void AddPrimitiveHitMessage(const character*, const festring&, const festring&, int) const;

@@ -4794,14 +4794,15 @@ tourist
 		TotalSize = 170;
 		Sex = FEMALE;
 		NameSingular = "female tourist";
-		HeadBitmapPos = 112, 336;
-		TorsoBitmapPos = 32, 368;
-		ArmBitmapPos = 80, 48;
-		LegBitmapPos = 16, 224;
-		BootColor = rgb16(60, 60, 60);
+		HeadBitmapPos = 112, 48;
+		TorsoBitmapPos = 48, 368;
+		ArmBitmapPos = 64, 160;
+		LegBitmapPos = 16, 192;
+		BootColor = rgb16(20, 20, 20);
 		HairColor = rgb16(60, 48, 24);
 		ClothColor = rgb16(50, 200, 50);
-		LegMainColor = rgb16(50, 100, 132);
+		LegMainColor = rgb16(60, 60, 60);
+		LegSpecialColor = rgb16(60,50,60);
 		AttackStyle = USE_ARMS|USE_LEGS;
 		HostileReplies == "\"Help! A horribly hideous cannibal aborigine wants to capture me, hit me in the head with his club, drag me into a smelly sinister cave and mate with me!\"";
 		FriendlyReplies =

@@ -2908,7 +2908,7 @@ void bodypart::ReceiveAcid(material* Material, const festring& LocationName, lon
 	    }
 
 	  Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
-	  Master->CheckDeath(CONST_S("died of deadly acid damage"), 0);
+	  Master->CheckDeath(CONST_S("dissolved by ") + Material->GetName(), 0);
 	}
     }
 }
