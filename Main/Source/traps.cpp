@@ -177,3 +177,8 @@ void web::Destroy()
   GetLSquareUnder()->RemoveTrap(this);
   SendToHell();
 }
+
+bool web::CanBeSeenBy(const character* Who) const
+{
+  return GetLSquareUnder()->CanBeSeenBy(Who);
+}

@@ -42,6 +42,8 @@ class TRAP
   virtual bool IsStuckToBodyPart(int) const;
   virtual void ReceiveDamage(character*, int, int, int);
   virtual void Destroy();
+  virtual bool IsDangerousFor(const character* Char) const { return CanBeSeenBy(Char); }
+  virtual bool CanBeSeenBy(const character*) const;
  protected:
   virtual void VirtualConstructor(bool);
   trapdata TrapData;

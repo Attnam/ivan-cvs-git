@@ -1229,7 +1229,7 @@ bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
   return (!(Who->GetMoveType() & FLY)
        && Stack->IsDangerousForAIToStepOn(Who))
-      || IsDangerousForAIToBreathe(Who);
+      || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who);
 }
 
 bool lsquare::IsScaryForAIToStepOn(const character* Who) const
@@ -2612,4 +2612,13 @@ void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Di
     {
       TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
     }
+}
+ 
+bool lsquare::HasDangerousTraps(const character* Who) const
+{
+  for(trap* T = Trap; T; T = T->Next)
+    if(T->IsDangerousFor(Who))
+      return true;
+
+  return false;
 }

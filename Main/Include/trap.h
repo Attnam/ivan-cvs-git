@@ -74,6 +74,7 @@ class trap : public entity
   virtual void StepOnEffect(character*) = 0;
   virtual void Draw(bitmap*, vector2d, color24) const = 0;
   virtual void ReceiveDamage(character*, int, int, int) { }
+  virtual bool IsDangerousFor(const character*) const { return false; } 
  protected:
   virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;

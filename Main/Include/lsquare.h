@@ -265,6 +265,7 @@ class lsquare : public square
   void DisplayTrapInfo(festring&) const;
   void FillTrapVector(std::vector<trap*>&) const;
   void ReceiveTrapDamage(character*, int, int, int = YOURSELF);
+  bool HasDangerousTraps(const character*) const;
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);
