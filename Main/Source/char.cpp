@@ -285,7 +285,7 @@ wsquare* character::GetNearWSquare(v2 Pos) const { return static_cast<wsquare*>(
 wsquare* character::GetNearWSquare(int x, int y) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
 col16 character::GetBodyPartColorA(int, truth) const { return GetSkinColor(); }
 col16 character::GetBodyPartColorB(int, truth) const { return GetTorsoMainColor(); }
-col16 character::GetBodyPartColorC(int, truth) const { return 0; } // reserved for future use
+col16 character::GetBodyPartColorC(int, truth) const { return GetBeltColor(); } // sorry...
 col16 character::GetBodyPartColorD(int, truth) const { return GetTorsoSpecialColor(); }
 int character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 truth character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
@@ -8779,33 +8779,65 @@ void character::LeprosySituationDangerModifier(double& Danger) const
 
 void character::AddRandomScienceName(festring& String) const
 {
-  const festring& Attribute = GetScienceTalkAttribute().GetRandomElement();
   festring Science = GetScienceTalkName().GetRandomElement().CStr();
-  festring Prefix;
 
-  if(islower(Science[0]) && Science.Find(' ') != festring::NPos)
+  if(Science[0] == '!')
+  {
+    String << Science.CStr() + 1;
+    return;
+  }
+
+  festring Attribute = GetScienceTalkAdjectiveAttribute().GetRandomElement();
+  festring Prefix;
+  truth NoAttrib = Attribute.IsEmpty();
+
+  if(!Science.Find("the "))
+  {
+    Science.Erase(0, 4);
+
+    if(!Attribute.Find("the ", 0, 4))
+      Attribute << " the";
+    else
+      Attribute.Insert(0, "the ", 4);
+  }
+
+  if(islower(Science[0]) && Science.Find(' ') == festring::NPos && Science.Find("phobia") == festring::NPos)
+  {
     Prefix = GetScienceTalkPrefix().GetRandomElement();
+
+    if(!Prefix.IsEmpty() && Science.Find(Prefix) != festring::NPos)
+      Prefix.Empty();
+  }
 
   int L = Prefix.GetSize();
 
   if(L && Prefix[L - 1] == Science[0])
     Science.Erase(0, 1);
 
-  if(!Attribute.IsEmpty() && !RAND_N(3))
+  if(!NoAttrib && !RAND_N(3))
   {
-    const festring& OtherAttribute = GetScienceTalkAttribute().GetRandomElement();
+    int S1 = GetScienceTalkAdjectiveAttribute().Size;
+    int S2 = GetScienceTalkSubstantiveAttribute().Size;
+    festring OtherAttribute;
+    int Chosen = RAND_N(S1 + S2);
+    
+    if(Chosen < S1)
+      OtherAttribute = GetScienceTalkAdjectiveAttribute()[Chosen];
+    else
+      OtherAttribute = GetScienceTalkSubstantiveAttribute()[Chosen - S1];
 
     if(!OtherAttribute.IsEmpty() && OtherAttribute.Find("the ", 0, 4)
-       && OtherAttribute != Attribute)
-      String << Attribute << ' ' << OtherAttribute << ' ';
+       && Attribute.Find(OtherAttribute) == festring::NPos)
+    {
+      String << Attribute << ' ' << OtherAttribute << ' ' << Prefix << Science;
+      return;
+    }
   }
-  else
-  {
-    String << Attribute;
 
-    if(!Attribute.IsEmpty())
-      String << ' ';
-  }
+  String << Attribute;
+
+  if(!NoAttrib)
+    String << ' ';
 
   String << Prefix << Science;
 }
@@ -8824,16 +8856,23 @@ truth character::TryToTalkAboutScience()
     AddRandomScienceName(Science);
   else
   {
-    switch(RAND_N(3))
-    {
-     case 0: Science = "the relation of "; break;
-     case 1: Science = "the differences of "; break;
-     case 2: Science = "the similarities of "; break;
-    }
+    festring S1, S2;
+    AddRandomScienceName(S1);
+    AddRandomScienceName(S2);
 
-    AddRandomScienceName(Science);
-    Science << " and ";
-    AddRandomScienceName(Science);
+    if(S1.Find(S2) == festring::NPos && S2.Find(S1) == festring::NPos)
+    {
+      switch(RAND_N(3))
+      {
+       case 0: Science = "the relation of "; break;
+       case 1: Science = "the differences of "; break;
+       case 2: Science = "the similarities of "; break;
+      }
+
+      Science << S1 << " and " << S2;
+    }
+    else
+      AddRandomScienceName(Science);
   }
 
   ADD_MESSAGE("You have a rather pleasant chat about %s with %s.", Science.CStr(), CHAR_NAME(DEFINITE));
@@ -9181,6 +9220,9 @@ const char* character::GetRunDescriptionLine(int I) const
 
 void character::VomitAtRandomDirection(int Amount)
 {
+  if(game::IsInWilderness())
+    return;
+
   lsquare* Where = GetLSquareUnder()->GetRandomAdjacentSquare();
 
   /* Slightly more probable to vomit on self than other squares */

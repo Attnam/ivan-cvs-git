@@ -806,7 +806,8 @@ v2 level::GetRandomSquare(const character* Char, int Flags, const rect* Borders)
 
     if(((Char ? Char->CanMoveOn(LSquare) : (LSquare->GetWalkability() & WALK)) != !(Flags & NOT_WALKABLE))
        || ((Char ? Char->IsFreeForMe(LSquare) : !LSquare->GetCharacter()) != !(Flags & HAS_CHARACTER))
-       || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
+       || (Flags & ATTACHABLE && FlagMap[Pos.X][Pos.Y] & FORBIDDEN)
+       || (Flags & HAS_NO_OTERRAIN && LSquare->GetOTerrain()))
       continue;
 
     int RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);

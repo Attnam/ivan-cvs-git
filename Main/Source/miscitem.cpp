@@ -275,12 +275,12 @@ void brokenbottle::StepOnEffect(character* Stepper)
 
 liquid* can::CreateDipLiquid()
 {
-  return static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(GetSecondaryMaterial()->TakeDipVolumeAway()));
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
 }
 
 liquid* potion::CreateDipLiquid()
 {
-  return static_cast<liquid*>(GetSecondaryMaterial()->SpawnMore(GetSecondaryMaterial()->TakeDipVolumeAway()));
+  return static_cast<liquid*>(GetSecondaryMaterial()->TakeDipVolumeAway());
 }
 
 void potion::DipInto(liquid* Liquid, character* Dipper)

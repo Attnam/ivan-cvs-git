@@ -414,7 +414,7 @@ truth fountain::Drink(character* Drinker)
 	    Monster = mommo::Spawn(RAND_2 ? CONICAL : FLAT);
 	    break;
 	   case 2:
-	    Monster = spider::Spawn();
+	    Monster = spider::Spawn(LARGE);
 	    break;
 	   case 3:
 	    if(!RAND_N(50))

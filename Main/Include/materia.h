@@ -103,7 +103,7 @@ class material
   virtual ~material() { }
   void AddName(festring&, truth = false, truth = true) const;
   festring GetName(truth = false, truth = true) const;
-  int TakeDipVolumeAway();
+  material* TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   truth Effect(character*, long);

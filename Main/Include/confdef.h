@@ -139,6 +139,7 @@
 #define SWEAT (LIQUID_ID + 22)
 #define GLOWING_BLOOD (LIQUID_ID + 23)
 #define YELLOW_SLIME (LIQUID_ID + 24)
+#define SICK_BLOOD (LIQUID_ID + 25)
 
 #define FLESH_ID (5 << 12)
 
@@ -185,6 +186,7 @@
 #define HATTIFATTENER_FLESH (FLESH_ID + 41)
 #define BLINK_DOG_FLESH (FLESH_ID + 42)
 #define MAGIC_MUSHROOM_FLESH (FLESH_ID + 43)
+#define SICK_SPIDER_FLESH (FLESH_ID + 44)
 
 #define POWDER_ID (6 << 12)
 
@@ -313,6 +315,9 @@
 
 #define CONICAL 1
 #define FLAT 2
+
+#define LARGE 1
+#define GIANT 2
 
 #define BLACK_BEAR 1
 #define GRIZZLY_BEAR 2

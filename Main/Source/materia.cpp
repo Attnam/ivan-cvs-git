@@ -40,19 +40,15 @@ festring material::GetName(truth Articled, truth Adjective) const
   return Name;
 }
 
-int material::TakeDipVolumeAway()
+material* material::TakeDipVolumeAway()
 {
-  long Amount = 500;
-
-  if(Amount < Volume)
-    EditVolume(-Amount);
-  else
+  if(Volume > 500)
   {
-    Amount = Volume;
-    delete MotherEntity->RemoveMaterial(this);
+    EditVolume(-500);
+    return SpawnMore(500);
   }
-
-  return Amount;
+  else
+    return MotherEntity->RemoveMaterial(this);
 }
 
 void material::Save(outputfile& SaveFile) const

@@ -58,7 +58,7 @@ character* protosystem::BalancedCreateMonster()
 
 	    if(Danger > 99.0
 	       || Danger < 0.0011
-	       || (DataBase->IsUnique && Danger < 3.0))
+	       || (DataBase->IsUnique && Danger < 3.5))
 	      continue;
 
 	    double DangerModifier
@@ -97,7 +97,7 @@ character* protosystem::BalancedCreateMonster()
 	      || Monster->GetFrequency() > RAND_GOOD(10000))
 	     && (Monster->IsUnique()
 		 || (Monster->GetTimeToKill(PLAYER, true) > 5000
-		     && PLAYER->GetTimeToKill(Monster, true) < 75000))))
+		     && PLAYER->GetTimeToKill(Monster, true) < 200000))))
       {
 	Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 	return Monster;

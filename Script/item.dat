@@ -2503,6 +2503,19 @@ eddytorso /* normaltorso-> */
 {
 }
 
+largetorso /* normaltorso-> */
+{
+	AttachedGod = NONE;
+	CanBePickedUp = false;
+}
+
+largecorpse /* corpse -> */
+{
+	BitmapPos = 48, 0;
+	CanBePickedUp = false;
+	OKVisualEffects = NONE;
+}
+
 playerkindhead { }
 playerkindtorso { }
 playerkindrightarm { }
@@ -2524,6 +2537,10 @@ blinkdogtorso /* dogtorso-> */
 }
 
 mysticfrogtorso /* normaltorso-> */
+{
+}
+
+lobhsetorso /* largetorso-> */
 {
 }
 
@@ -3358,19 +3375,6 @@ charmlyre
 	CanBePiled = false;
 	AttachedGod = DULCIS;
 	WieldedBitmapPos = 176, 352;
-}
-
-largetorso /* normaltorso-> */
-{
-	AttachedGod = NONE;
-	CanBePickedUp = false;
-}
-
-largecorpse /* corpse -> */
-{
-	BitmapPos = 48, 0;
-	CanBePickedUp = false;
-	OKVisualEffects = NONE;
 }
 
 ennerhead /* head-> */

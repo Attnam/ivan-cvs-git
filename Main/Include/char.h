@@ -201,7 +201,8 @@ struct characterdatabase : public databasebase
   ulong ConstantCommandFlags;
   festring ForceVomitMessage;
   int SweatMaterial;
-  fearray<festring> ScienceTalkAttribute;
+  fearray<festring> ScienceTalkAdjectiveAttribute;
+  fearray<festring> ScienceTalkSubstantiveAttribute;
   fearray<festring> ScienceTalkPrefix;
   fearray<festring> ScienceTalkName;
   int ScienceTalkPossibility;
@@ -534,7 +535,8 @@ class character : public entity, public id
   DATA_BASE_TRUTH(IsImmuneToItemTeleport);
   DATA_BASE_TRUTH(AlwaysUseMaterialAttributes);
   DATA_BASE_TRUTH(IsEnormous);
-  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkAttribute);
+  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkAdjectiveAttribute);
+  DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkSubstantiveAttribute);
   DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkPrefix);
   DATA_BASE_VALUE(const fearray<festring>&, ScienceTalkName);
   DATA_BASE_VALUE(int, ScienceTalkPossibility);

@@ -454,4 +454,14 @@ CHARACTER(mysticfrog, frog)
   int GetSpellAPCost() const { return 1500; }
 };
 
+CHARACTER(lobhse, largecreature)
+{
+ protected:
+  virtual truth SpecialBiteEffect(character*, v2, int, int, truth);
+  virtual void GetAICommand();
+  virtual void CreateCorpse(lsquare*);
+  virtual truth MustBeRemovedFromBone() const;
+  virtual bodypart* MakeBodyPart(int) const;
+};
+
 #endif

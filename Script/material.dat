@@ -1718,6 +1718,18 @@ liquid
 		AttachedGod = SILVA;
 		RustModifier = 5;
 	}
+
+	Config SICK_BLOOD;
+	{
+		StrengthValue = 1;
+		NutritionValue = 40;
+		Color = rgb16(50, 0, 0);
+		NameStem = "sick blood";
+		Alpha = 175;
+		Flexibility = 40;
+		AttachedGod = SCABIES;
+		CategoryFlags = IS_BLOOD;
+	}
 }
 
 flesh
@@ -2092,6 +2104,12 @@ flesh
 		EffectStrength = 20;
 		PriceModifier = 150;
 		BodyFlags = Base&~IS_WARM;
+	}
+
+	Config SICK_SPIDER_FLESH;
+	{
+		NameStem = "sick spider flesh";
+		AttachedGod = SCABIES;
 	}
 }
 

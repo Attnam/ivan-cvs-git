@@ -691,4 +691,11 @@ ITEM(mysticfrogtorso, normaltorso)
   virtual alpha GetOutlineAlpha(int) const;
 };
 
+ITEM(lobhsetorso, largetorso)
+{
+ protected:
+  virtual int GetClassAnimationFrames() const { return 32; }
+  virtual col16 GetMaterialColorD(int) const;
+};
+
 #endif

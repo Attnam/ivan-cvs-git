@@ -70,6 +70,8 @@ bodypart* blinkdog::MakeBodyPart(int) const { return blinkdogtorso::Spawn(0, NO_
 int mysticfrog::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(3 << WOBBLE_FREQ_SHIFT); }
 bodypart* mysticfrog::MakeBodyPart(int) const { return mysticfrogtorso::Spawn(0, NO_MATERIALS); }
 
+bodypart* lobhse::MakeBodyPart(int) const { return lobhsetorso::Spawn(0, NO_MATERIALS); }
+
 truth elpuri::Hit(character* Enemy, v2, int, truth ForceHit)
 {
   if(CheckIfTooScaredToHit(Enemy))
@@ -857,7 +859,7 @@ truth snake::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArm
 {
   if(!BlockedByArmour)
   {
-    Char->BeginTemporaryState(POISONED, 400 + RAND() % 200);
+    Char->BeginTemporaryState(POISONED, 400 + RAND_N(200));
     return true;
   }
   else
@@ -868,7 +870,7 @@ truth spider::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByAr
 {
   if(!BlockedByArmour)
   {
-    Char->BeginTemporaryState(POISONED, 80 + RAND() % 40);
+    Char->BeginTemporaryState(POISONED, GetConfig() == LARGE ? 80 + RAND_N(40) : 400 + RAND_N(200));
     return true;
   }
   else
@@ -2218,7 +2220,7 @@ void spider::GetAICommand()
   if(Hostiles && !RAND_N(Max(80 / Hostiles, 8)))
   {
     web* Web = web::Spawn();
-    Web->SetStrength(10);
+    Web->SetStrength(GetConfig() == LARGE ? 10 : 50);
 
     if(GetLSquareUnder()->AddTrap(Web))
     {
@@ -2299,4 +2301,36 @@ truth largecat::SpecialSaveLife()
     GetAction()->Terminate(false);
 
   return true;
+}
+
+truth lobhse::MustBeRemovedFromBone() const
+{
+  return !IsEnabled() || GetTeam()->GetID() != MONSTER_TEAM || GetDungeon()->GetIndex() != UNDER_WATER_TUNNEL || GetLevel()->GetIndex() != SPIDER_LEVEL;
+}
+
+truth lobhse::SpecialBiteEffect(character* Char, v2, int, int, truth BlockedByArmour)
+{
+  if(!BlockedByArmour)
+  {
+    Char->BeginTemporaryState(POISONED, 80 + RAND() % 40);
+    return true;
+  }
+  else
+    return false;
+}
+
+void lobhse::GetAICommand()
+{
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
+}
+
+void lobhse::CreateCorpse(lsquare* Square)
+{
+//  for(int c = 0; c < 3; ++c)
+//    Square->AddItem(pineapple::Spawn());
+
+  largecreature::CreateCorpse(Square);
 }

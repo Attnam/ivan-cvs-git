@@ -116,7 +116,7 @@ truth commandsystem::GoUp(character* Char)
 {
   if(Char->IsStuck())
   {
-    ADD_MESSAGE("You unable to go up when caught in %s.", Char->GetTrapDescription().CStr());
+    ADD_MESSAGE("You are unable to go up when caught in %s.", Char->GetTrapDescription().CStr());
     return false;
   }
 
@@ -156,7 +156,7 @@ truth commandsystem::GoDown(character* Char)
 {
   if(Char->IsStuck())
   {
-    ADD_MESSAGE("You unable to go down when caught in %s.", Char->GetTrapDescription().CStr());
+    ADD_MESSAGE("You are unable to go down when caught in %s.", Char->GetTrapDescription().CStr());
     return false;
   }
 

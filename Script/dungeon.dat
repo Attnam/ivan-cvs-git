@@ -224,7 +224,7 @@ Dungeon ELPURI_CAVE;
 
 			Square, Random;
 			{
-				Character = spider;
+				Character = spider(LARGE);
 				Times = 20;
 			}
 
@@ -460,13 +460,13 @@ Dungeon ELPURI_CAVE;
 			GenerateLanterns = false;
 			GenerateFountains = false;
 
-			Square, BoundedRandom 1, 1, 25, 58, 0;
+			Square, BoundedRandom 1, 1, 25, 58, HAS_NO_OTERRAIN;
 			{
 				OTerrain = stairs(STAIRS_UP);
 				EntryIndex = STAIRS_UP;
 			}
 
-			Square, BoundedRandom 35, 1, 58, 58, 0;
+			Square, BoundedRandom 35, 1, 58, 58, HAS_NO_OTERRAIN;
 			{
 				Character = veterankamikazedwarf;
 				OTerrain = stairs(STAIRS_DOWN);
@@ -1290,7 +1290,7 @@ Dungeon ATTNAM;
 		Square, Pos 54, 59; { Character = guard(VETERAN); }
 		Square, Pos 56, 59; { Character = guard(VETERAN); }
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = decoration(SNOW_PINE);
 			Times = 200;
@@ -2363,19 +2363,19 @@ Dungeon NEW_ATTNAM;
 			EntryIndex = STAIRS_UP;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = boulder(1);
 			Times = 10;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = boulder(2);
 			Times = 10;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = decoration(PALM);
 			Times = 100;
@@ -2563,7 +2563,7 @@ Dungeon NEW_ATTNAM;
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-	Levels = 4;
+	Levels = 5;
 	Description = "underwater tunnel";
 	ShortDescription = "UT";
 
@@ -2643,7 +2643,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random;
 		{
-			Character = spider;
+			Character = spider(LARGE);
 			Times = 2;
 		}
 
@@ -2767,8 +2767,8 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 5,5;
 			{
-				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
-				EntryIndex = STAIRS_DOWN + 1;
+				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; }
+				EntryIndex = STAIRS_DOWN;
 			}
 
 			Square, Pos 5,0;
@@ -2865,19 +2865,34 @@ Dungeon UNDER_WATER_TUNNEL;
 			AltarPossible = false;
 		}
 
-		Square, Random;
+		Room
+		{
+			Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+			{
+					OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; }
+					EntryIndex = STAIRS_UP;
+			}
+
+			/*Square, Random IN_ROOM|HAS_NO_OTERRAIN;
+			{
+					OTerrain = stairs(STAIRS_DOWN);
+					EntryIndex = STAIRS_DOWN;
+			}*/
+		}
+
+		Square, Random HAS_NO_OTERRAIN;
 		{
 			OTerrain = decoration(SHARD);
 			Times = 10:30;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = boulder(1);
 			Times = 5:15;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Random NOT_IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = boulder(2);
 			Times = 5:15;
@@ -2889,7 +2904,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times = 0:10;
 		}
 
-		Square, Random IN_ROOM;
+		Square, Random IN_ROOM|HAS_NO_OTERRAIN;
 		{
 			OTerrain = BASALT altar(TERRA);
 		}
@@ -2911,14 +2926,12 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random;
 		{
-			Character = spider;
+			Character = spider(LARGE);
 			Times = 15;
 		}
+	}
 
-		Square, Random IN_ROOM; /* this *must* be last currently */
-		{
-		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = STAIRS_DOWN + 1; }
-		    EntryIndex = 200;
-		}
+	Level SPIDER_LEVEL;
+	{
 	}
 }

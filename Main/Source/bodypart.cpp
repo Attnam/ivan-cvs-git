@@ -3379,3 +3379,10 @@ truth bodypart::ShowMaterial() const
 {
   return MainMaterial->GetConfig() != NormalMaterial;
 }
+
+col16 lobhsetorso::GetMaterialColorD(int Frame) const
+{
+  Frame &= 31;
+  int Modifier = Frame * (31 - Frame);
+  return MakeRGB16(220 - (Modifier >> 2), 220 - (Modifier >> 1), 0);
+}
