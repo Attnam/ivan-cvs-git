@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __TERRA_H__
 #define __TERRA_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "typedef.h"
 
@@ -30,7 +27,7 @@ class terrain
   virtual const char* DeathMessage() const;
   virtual const char* MonsterDeathVerb() const;
   virtual const char* ScoreEntry() const;
-  virtual bool IsFatalToStay() const { return false; }
+  virtual truth IsFatalToStay() const { return false; }
   virtual void SurviveEffect(character*) { };
 };
 
@@ -43,7 +40,7 @@ class gterrain : public terrain
 class oterrain : public terrain
 {
  public:
-  virtual bool Enter(bool) const = 0;
+  virtual truth Enter(truth) const = 0;
   virtual int GetRestModifier() const { return 1; }
   virtual void ShowRestMessage(character*) const { }
   virtual int GetWalkability() const = 0;

@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <list>
 #include <map>
@@ -27,37 +24,37 @@
  public:\
   const type* Get##name() const { return name##Holder.Member; }\
  protected:\
-  scriptmember< type > name##Holder;
+  scriptmember< type > name##Holder
 
 #define SCRIPT_MEMBER_WITH_BASE(type, name)\
  public:\
   const type* Get##name() const { return GetMemberOf(name##Holder, Base, &scripttype::Get##name); }\
  protected:\
-  scriptmember< type > name##Holder;
+  scriptmember< type > name##Holder
 
 #define FAST_SCRIPT_MEMBER(type, name)\
  public:\
   type Get##name() const { return name##Holder.Member; }\
  protected:\
-  fastscriptmember< type > name##Holder;
+  fastscriptmember< type > name##Holder
 
-#define SCRIPT_BOOL(name)\
+#define SCRIPT_TRUTH(name)\
  public:\
-  const bool* name() const { return name##Holder.Member; }\
+  const truth* name() const { return name##Holder.Member; }\
  protected:\
-  scriptmember<bool> name##Holder;
+  scriptmember<truth> name##Holder
 
-#define SCRIPT_BOOL_WITH_BASE(name)\
+#define SCRIPT_TRUTH_WITH_BASE(name)\
  public:\
-  const bool* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
+  const truth* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
  protected:\
-  scriptmember<bool> name##Holder;
+  scriptmember<truth> name##Holder
 
-#define FAST_SCRIPT_BOOL(name)\
+#define FAST_SCRIPT_TRUTH(name)\
  public:\
-  bool name() const { return name##Holder.Member; }\
+  truth name() const { return name##Holder.Member; }\
  protected:\
-  fastscriptmember<bool> name##Holder;
+  fastscriptmember<truth> name##Holder
 
 class glterrain;
 class olterrain;
@@ -98,15 +95,15 @@ template <class type, class scripttype> inline const type* GetMemberOf(const scr
 template <class type> inline scriptmember<type>& scriptmember<type>::operator=(const scriptmember<type>& Data)
 {
   if(Member)
+  {
+    if(Data.Member)
+      *Member = *Data.Member;
+    else
     {
-      if(Data.Member)
-	*Member = *Data.Member;
-      else
-	{
-	  delete Member;
-	  Member = 0;
-	}
+      delete Member;
+      Member = 0;
     }
+  }
   else if(Data.Member)
     Member = new type(*Data.Member);
 
@@ -141,7 +138,7 @@ class script
   virtual void Save(outputfile& SaveFile) const { SaveDataMap(GetDataMap(), SaveFile); }
   virtual void Load(inputfile& SaveFile) { LoadDataMap(GetDataMap(), SaveFile); }
  protected:
-  bool ReadMember(inputfile&, const festring&);
+  truth ReadMember(inputfile&, const festring&);
   virtual scriptmemberbase* GetDataFromMap(const datamap&, const char*);
   virtual scriptmemberbase* GetData(const char* String) { return GetDataFromMap(GetDataMap(), String); }
   virtual const datamap& GetDataMap() const = 0;
@@ -168,7 +165,7 @@ class posscript : public script
  public:
   typedef posscript scripttype;
   virtual void ReadFrom(inputfile&);
-  bool GetRandom() const { return Random; }
+  truth GetRandom() const { return Random; }
   static void InitDataMap();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -176,9 +173,9 @@ class posscript : public script
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   SCRIPT_MEMBER(rect, Borders);
-  FAST_SCRIPT_MEMBER(packedvector2d, Vector);
+  FAST_SCRIPT_MEMBER(packv2, Vector);
   FAST_SCRIPT_MEMBER(uchar, Flags);
-  bool Random;
+  truth Random;
 };
 
 class materialscript : public script
@@ -206,7 +203,7 @@ class basecontentscript : public script
   basecontentscript();
   virtual void ReadFrom(inputfile&);
   int GetContentType() const { return ContentType; }
-  bool IsValid() const { return ContentType || Random; }
+  truth IsValid() const { return ContentType || Random; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
@@ -219,12 +216,12 @@ class basecontentscript : public script
   SCRIPT_MEMBER(materialscript, MainMaterial);
   SCRIPT_MEMBER(materialscript, SecondaryMaterial);
   ushort ContentType : 15;
-  bool Random : 1;
+  truth Random : 1;
   ushort Config;
   FAST_SCRIPT_MEMBER(uchar, Parameters);
 };
 
-inline bool IsValidScript(const basecontentscript* S) { return S->IsValid(); }
+inline truth IsValidScript(const basecontentscript* S) { return S->IsValid(); }
 
 template <class type> class contentscripttemplate : public basecontentscript
 {
@@ -235,23 +232,7 @@ template <class type> class contentscripttemplate : public basecontentscript
 
 template <class type> class contentscript;
 
-class contentscript<character> : public contentscripttemplate<character>
-{
- public:
-  typedef contentscript<character> scripttype;
-  contentscript<character>();
-  character* Instantiate(int = 0) const;
-  static void InitDataMap();
- protected:
-  virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual const char* GetClassID() const;
-  static datamap DataMap;
-  SCRIPT_MEMBER(fearray<contentscript<item> >, Inventory);
-  SCRIPT_MEMBER(fearray<packedvector2d>, WayPoint);
-  FAST_SCRIPT_MEMBER(uchar, Team);
-  FAST_SCRIPT_MEMBER(uchar, Flags);
-};
-
+template<>
 class contentscript<item> : public contentscripttemplate<item>
 {
  public:
@@ -276,11 +257,30 @@ class contentscript<item> : public contentscripttemplate<item>
   FAST_SCRIPT_MEMBER(uchar, ConfigFlags);
   FAST_SCRIPT_MEMBER(uchar, SpoilPercentage);
   FAST_SCRIPT_MEMBER(char, Enchantment);
-  FAST_SCRIPT_BOOL(IsActive);
+  FAST_SCRIPT_TRUTH(IsActive);
 };
 
-bool IsValidScript(const fearray<contentscript<item> >*);
+truth IsValidScript(const fearray<contentscript<item> >*);
 
+template <>
+class contentscript<character> : public contentscripttemplate<character>
+{
+ public:
+  typedef contentscript<character> scripttype;
+  contentscript<character>();
+  character* Instantiate(int = 0) const;
+  static void InitDataMap();
+ protected:
+  virtual const datamap& GetDataMap() const { return DataMap; }
+  virtual const char* GetClassID() const;
+  static datamap DataMap;
+  SCRIPT_MEMBER(fearray<contentscript<item> >, Inventory);
+  SCRIPT_MEMBER(fearray<packv2>, WayPoint);
+  FAST_SCRIPT_MEMBER(uchar, Team);
+  FAST_SCRIPT_MEMBER(uchar, Flags);
+};
+
+template <>
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
  public:
@@ -291,9 +291,10 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   virtual const char* GetClassID() const;
-  SCRIPT_BOOL(IsInside);
+  SCRIPT_TRUTH(IsInside);
 };
 
+template <>
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
@@ -329,7 +330,7 @@ class squarescript : public script
   SCRIPT_MEMBER(contentscript<olterrain>, OTerrain);
   SCRIPT_MEMBER(interval, Times);
   FAST_SCRIPT_MEMBER(uchar, EntryIndex);
-  FAST_SCRIPT_BOOL(AttachRequired);
+  FAST_SCRIPT_TRUTH(AttachRequired);
 };
 
 template <class type, class contenttype = contentscript<type> > class contentmap : public script
@@ -348,8 +349,8 @@ template <class type, class contenttype = contentscript<type> > class contentmap
   static datamap DataMap;
   std::pair<int, contenttype*>** ContentMap;
   std::map<int, contenttype> SymbolMap;
-  SCRIPT_MEMBER(vector2d, Size);
-  SCRIPT_MEMBER(vector2d, Pos);
+  SCRIPT_MEMBER(v2, Size);
+  SCRIPT_MEMBER(v2, Pos);
 };
 
 typedef contentmap<item, fearray<contentscript<item> > > itemcontentmap;
@@ -379,19 +380,19 @@ class roomscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(squarescript, DoorSquare);
   SCRIPT_MEMBER_WITH_BASE(region, Size);
   SCRIPT_MEMBER_WITH_BASE(region, Pos);
-  SCRIPT_BOOL_WITH_BASE(AltarPossible);
-  SCRIPT_BOOL_WITH_BASE(GenerateDoor);
-  SCRIPT_BOOL_WITH_BASE(GenerateTunnel);
+  SCRIPT_TRUTH_WITH_BASE(AltarPossible);
+  SCRIPT_TRUTH_WITH_BASE(GenerateDoor);
+  SCRIPT_TRUTH_WITH_BASE(GenerateTunnel);
   SCRIPT_MEMBER_WITH_BASE(int, DivineMaster);
-  SCRIPT_BOOL_WITH_BASE(GenerateLanterns);
+  SCRIPT_TRUTH_WITH_BASE(GenerateLanterns);
   SCRIPT_MEMBER_WITH_BASE(int, Type);
-  SCRIPT_BOOL_WITH_BASE(GenerateFountains);
-  SCRIPT_BOOL_WITH_BASE(AllowLockedDoors);
-  SCRIPT_BOOL_WITH_BASE(AllowBoobyTrappedDoors);
+  SCRIPT_TRUTH_WITH_BASE(GenerateFountains);
+  SCRIPT_TRUTH_WITH_BASE(AllowLockedDoors);
+  SCRIPT_TRUTH_WITH_BASE(AllowBoobyTrappedDoors);
   SCRIPT_MEMBER_WITH_BASE(int, Shape);
-  SCRIPT_BOOL_WITH_BASE(IsInside);
-  SCRIPT_BOOL_WITH_BASE(GenerateWindows);
-  SCRIPT_BOOL_WITH_BASE(UseFillSquareWalls);
+  SCRIPT_TRUTH_WITH_BASE(IsInside);
+  SCRIPT_TRUTH_WITH_BASE(GenerateWindows);
+  SCRIPT_TRUTH_WITH_BASE(UseFillSquareWalls);
 };
 
 class levelscript : public scriptwithbase
@@ -415,24 +416,24 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(squarescript, FillSquare);
   SCRIPT_MEMBER_WITH_BASE(squarescript, TunnelSquare);
   SCRIPT_MEMBER_WITH_BASE(festring, LevelMessage);
-  SCRIPT_MEMBER_WITH_BASE(vector2d, Size);
+  SCRIPT_MEMBER_WITH_BASE(v2, Size);
   SCRIPT_MEMBER_WITH_BASE(interval, Items);
   SCRIPT_MEMBER_WITH_BASE(interval, Rooms);
-  SCRIPT_BOOL_WITH_BASE(GenerateMonsters);
-  SCRIPT_BOOL_WITH_BASE(IsOnGround);
+  SCRIPT_TRUTH_WITH_BASE(GenerateMonsters);
+  SCRIPT_TRUTH_WITH_BASE(IsOnGround);
   SCRIPT_MEMBER_WITH_BASE(int, TeamDefault);
   SCRIPT_MEMBER_WITH_BASE(festring, Description);
   SCRIPT_MEMBER_WITH_BASE(int, LOSModifier);
-  SCRIPT_BOOL_WITH_BASE(IgnoreDefaultSpecialSquares);
+  SCRIPT_TRUTH_WITH_BASE(IgnoreDefaultSpecialSquares);
   SCRIPT_MEMBER_WITH_BASE(int, DifficultyBase);
   SCRIPT_MEMBER_WITH_BASE(int, DifficultyDelta);
   SCRIPT_MEMBER_WITH_BASE(int, MonsterAmountBase);
   SCRIPT_MEMBER_WITH_BASE(int, MonsterAmountDelta);
   SCRIPT_MEMBER_WITH_BASE(int, MonsterGenerationIntervalBase);
   SCRIPT_MEMBER_WITH_BASE(int, MonsterGenerationIntervalDelta);
-  SCRIPT_BOOL_WITH_BASE(AutoReveal);
+  SCRIPT_TRUTH_WITH_BASE(AutoReveal);
   SCRIPT_MEMBER_WITH_BASE(festring, ShortDescription);
-  SCRIPT_BOOL_WITH_BASE(CanGenerateBone);
+  SCRIPT_TRUTH_WITH_BASE(CanGenerateBone);
   SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceBase);
   SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceDelta);
   SCRIPT_MEMBER_WITH_BASE(int, Type);

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -20,33 +21,54 @@ stack::stack(square* MotherSquare, entity* MotherEntity, ulong Flags) : Bottom(0
 stack::~stack() { Clean(true); }
 square* stack::GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
 
-void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, color24 Luminance, int RequiredSquarePosition, bool AllowAnimate) const
+/* Modifies the square index bits of BlitData.CustomData */
+
+void stack::Draw(const character* Viewer, blitdata& BlitData, int RequiredSquarePosition) const
 {
   if(!Items)
     return;
 
   int VisibleItems = 0;
-  vector2d StackPos = GetPos();
+  v2 StackPos = GetPos();
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->GetSquarePosition() == RequiredSquarePosition
-    && (i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode()))
-      {
-	i->Draw(Bitmap, Pos, Luminance, i->GetSquareIndex(StackPos), AllowAnimate, true);
-	++VisibleItems;
-      }
+       && (i->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheatMode()))
+    {
+      BlitData.CustomData |= i->GetSquareIndex(StackPos);
+      i->Draw(BlitData);//Bitmap, Pos, Luminance, , AllowAnimate, true);
+      BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+      ++VisibleItems;
+    }
 
   if(RequiredSquarePosition == CENTER)
-    {
-      if(VisibleItems > 1)
-	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, 0, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
+  {
+    truth PlusSymbol = VisibleItems > 1, Dangerous = IsDangerous(Viewer);
 
-      if(IsDangerous(Viewer))
-	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, 160, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
+    if(PlusSymbol || Dangerous)
+    {
+      col24 L = BlitData.Luminance;
+      BlitData.Luminance = ivanconfig::GetContrastLuminance();
+
+      if(PlusSymbol)
+      {
+	BlitData.Src.Y = 16;
+	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+      }
+
+      if(Dangerous)
+      {
+	BlitData.Src.X = 160;
+	igraph::GetSymbolGraphic()->LuminanceMaskedBlit(BlitData);
+      }
+
+      BlitData.Src.X = BlitData.Src.Y = 0; /// check
+      BlitData.Luminance = L;
     }
+  }
 }
 
-void stack::AddItem(item* ToBeAdded, bool RunRoomEffects)
+void stack::AddItem(item* ToBeAdded, truth RunRoomEffects)
 {
   if(!ToBeAdded)
     return;
@@ -62,24 +84,25 @@ void stack::AddItem(item* ToBeAdded, bool RunRoomEffects)
     return;
 
   if(ToBeAdded->IsAnimated())
-    SquareUnder->IncAnimatedEntities();
+    SquareUnder->IncStaticAnimatedEntities();
 
   if(!game::IsGenerating())
+  {
+    if(RunRoomEffects && GetLSquareUnder()->GetRoom())
     {
-      if(RunRoomEffects && GetLSquareUnder()->GetRoom())
-	{
-	  GetLSquareUnder()->GetRoom()->GetAddItemEffect(ToBeAdded);
-	}
-      SquareUnder->SendNewDrawRequest();
-      SquareUnder->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->GetRoom()->GetAddItemEffect(ToBeAdded);
     }
+
+    SquareUnder->SendNewDrawRequest();
+    SquareUnder->SendMemorizedUpdateRequest();
+  }
 }
 
 void stack::RemoveItem(stackslot* Slot)
 {
   item* Item = Slot->GetItem();
-  bool WasAnimated = Item->IsAnimated();
-  color24 Emit = Item->GetEmitation();
+  truth WasAnimated = Item->IsAnimated();
+  col24 Emit = Item->GetEmitation();
   RemoveElement(Slot);
   SignalVolumeAndWeightChange();
   SignalEmitationDecrease(Item->GetSquarePosition(), Emit);
@@ -96,19 +119,19 @@ void stack::RemoveItem(stackslot* Slot)
     return;
 
   if(WasAnimated)
-    SquareUnder->DecAnimatedEntities();
+    SquareUnder->DecStaticAnimatedEntities();
 
   if(!game::IsGenerating())
-    {
-      SquareUnder->SendNewDrawRequest();
-      SquareUnder->SendMemorizedUpdateRequest();
-    }
+  {
+    SquareUnder->SendNewDrawRequest();
+    SquareUnder->SendMemorizedUpdateRequest();
+  }
 }
 
 /* Removes all items. LastClean should be true only if the stack is being
    deleted (the default is false) */
 
-void stack::Clean(bool LastClean)
+void stack::Clean(truth LastClean)
 {
   if(!Items)
     return;
@@ -116,45 +139,45 @@ void stack::Clean(bool LastClean)
   stackslot* Slot = Bottom;
 
   if(!LastClean)
-    {
-      Bottom = Top = 0;
-      Volume = Weight = Items = 0;
-      SignalVolumeAndWeightChange();
-    }
+  {
+    Bottom = Top = 0;
+    Volume = Weight = Items = 0;
+    SignalVolumeAndWeightChange();
+  }
 
   while(Slot)
+  {
+    item* Item = Slot->GetItem();
+
+    if(!(Flags & HIDDEN) && Item->IsAnimated() && !LastClean)
     {
-      item* Item = Slot->GetItem();
+      lsquare* Square = GetLSquareTrulyUnder(Item->GetSquarePosition());
 
-      if(!(Flags & HIDDEN) && Item->IsAnimated() && !LastClean)
-	{
-	  lsquare* Square = GetLSquareTrulyUnder(Item->GetSquarePosition());
-
-	  if(Square)
-	    Square->DecAnimatedEntities();
-	}
-
-      if(LastClean && Item->GetSquaresUnder() == 1)
-	delete Item;
-      else
-	Item->SendToHell();
-
-      stackslot* Rubbish = Slot;
-      Slot = Slot->Next;
-      delete Rubbish;
-
-      if(!LastClean)
-	SignalEmitationDecrease(Item->GetSquarePosition(), Item->GetEmitation());
+      if(Square)
+	Square->DecStaticAnimatedEntities();
     }
+
+    if(LastClean && Item->GetSquaresUnder() == 1)
+      delete Item;
+    else
+      Item->SendToHell();
+
+    stackslot* Rubbish = Slot;
+    Slot = Slot->Next;
+    delete Rubbish;
+
+    if(!LastClean)
+      SignalEmitationDecrease(Item->GetSquarePosition(), Item->GetEmitation());
+  }
 }
 
 void stack::Save(outputfile& SaveFile) const
 {
   if(!Items)
-    {
-      SaveFile << ushort(0);
-      return;
-    }
+  {
+    SaveFile << ushort(0);
+    return;
+  }
 
   int SavedItems = 0;
 
@@ -177,24 +200,24 @@ void stack::Load(inputfile& SaveFile)
   SaveFile >> (ushort&)SavedItems;
 
   for(int c = 0; c < SavedItems; ++c)
-    {
-      if(!c && !Items)
-	Bottom = Top = new stackslot(this, 0);
-      else
-	Top = Top->Next = new stackslot(this, Top);
+  {
+    if(!c && !Items)
+      Bottom = Top = new stackslot(this, 0);
+    else
+      Top = Top->Next = new stackslot(this, Top);
 
-      SaveFile >> *Top;
-      Volume += (*Top)->GetVolume();
-      Weight += (*Top)->GetWeight();
+    SaveFile >> *Top;
+    Volume += (*Top)->GetVolume();
+    Weight += (*Top)->GetWeight();
 
-      if((*Top)->GetSquarePosition() == CENTER)
-	Emitation = game::CombineConstLights(Emitation, (*Top)->GetEmitation());
-    }
+    if((*Top)->GetSquarePosition() == CENTER)
+      Emitation = game::CombineConstLights(Emitation, (*Top)->GetEmitation());
+  }
 
   Items += SavedItems;
 }
 
-vector2d stack::GetPos() const
+v2 stack::GetPos() const
 {
   return GetSquareUnder()->GetPos();
 }
@@ -202,12 +225,12 @@ vector2d stack::GetPos() const
 /* Returns whether there are any items satisfying the sorter or any visible
    items if it is zero */
 
-bool stack::SortedItems(const character* Viewer, sorter SorterFunction) const
+truth stack::SortedItems(const character* Viewer, sorter SorterFunction) const
 {
   if(Items)
     for(stackiterator i = GetBottom(); i.HasItem(); ++i)
       if((SorterFunction == 0 || ((*i)->*SorterFunction)(Viewer))
-      && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
+	 && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
 	return true;
 
   return false;
@@ -216,19 +239,19 @@ bool stack::SortedItems(const character* Viewer, sorter SorterFunction) const
 void stack::BeKicked(character* Kicker, int KickDamage, int Direction)
 {
   if(KickDamage)
+  {
+    ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE, Direction);
+
+    if(GetItems() && GetLSquareUnder()->IsFlyable())//&& SquarePosition == CENTER)
     {
-      ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE, Direction);
+      item* Item1 = *GetTop();
+      item* Item2 = RAND() & 1 && GetItems() > 1 ? *--GetTop() : 0;
+      Item1->Fly(Kicker, Direction, KickDamage * 3);
 
-      if(GetItems() && GetLSquareUnder()->IsFlyable())//&& SquarePosition == CENTER)
-	{
-	  item* Item1 = *GetTop();
-	  item* Item2 = RAND() & 1 && GetItems() > 1 ? *--GetTop() : 0;
-	  Item1->Fly(Kicker, Direction, KickDamage * 3);
-
-	  if(Item2)
-	    Item2->Fly(Kicker, Direction, KickDamage * 3);
-	}
+      if(Item2)
+	Item2->Fly(Kicker, Direction, KickDamage * 3);
     }
+  }
   else if(Kicker->IsPlayer() && GetNativeVisibleItems(Kicker))
     ADD_MESSAGE("Your weak kick has no effect.");
 }
@@ -241,8 +264,8 @@ void stack::Polymorph(character* Polymorpher)
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists()
-    && ItemVector[c]->Polymorph(Polymorpher, this)
-    && ++p == 5)
+       && ItemVector[c]->Polymorph(Polymorpher, this)
+       && ++p == 5)
       break;
 }
 
@@ -253,39 +276,39 @@ void stack::CheckForStepOnEffect(character* Stepper)
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists())
-      {
-	ItemVector[c]->StepOnEffect(Stepper);
+    {
+      ItemVector[c]->StepOnEffect(Stepper);
 
-	if(!Stepper->IsEnabled())
-	  return;
-      }
+      if(!Stepper->IsEnabled())
+	return;
+    }
 }
 
 lsquare* stack::GetLSquareTrulyUnder(int SquarePosition) const
 {
   switch(SquarePosition)
-    {
-    case DOWN:
-      if(GetArea()->IsValidPos(GetPos() + vector2d(0, 1)))
-	return GetNearLSquare(GetPos() + vector2d(0, 1));
-      else
-	return 0;
-    case LEFT:
-      if(GetArea()->IsValidPos(GetPos() + vector2d(-1, 0)))
-	return GetNearLSquare(GetPos() + vector2d(-1, 0));
-      else
-	return 0;
-    case UP:
-      if(GetArea()->IsValidPos(GetPos() + vector2d(0, -1)))
-	return GetNearLSquare(GetPos() + vector2d(0, -1));
-      else
-	return 0;
-    case RIGHT:
-      if(GetArea()->IsValidPos(GetPos() + vector2d(1, 0)))
-	return GetNearLSquare(GetPos() + vector2d(1, 0));
-      else
-	return 0; 
-    }
+  {
+   case DOWN:
+    if(GetArea()->IsValidPos(GetPos() + v2(0, 1)))
+      return GetNearLSquare(GetPos() + v2(0, 1));
+    else
+      return 0;
+   case LEFT:
+    if(GetArea()->IsValidPos(GetPos() + v2(-1, 0)))
+      return GetNearLSquare(GetPos() + v2(-1, 0));
+    else
+      return 0;
+   case UP:
+    if(GetArea()->IsValidPos(GetPos() + v2(0, -1)))
+      return GetNearLSquare(GetPos() + v2(0, -1));
+    else
+      return 0;
+   case RIGHT:
+    if(GetArea()->IsValidPos(GetPos() + v2(1, 0)))
+      return GetNearLSquare(GetPos() + v2(1, 0));
+    else
+      return 0; 
+  }
 
   return GetLSquareUnder();
 }
@@ -297,7 +320,7 @@ void stack::ReceiveDamage(character* Damager, int Damage, int Type, int Directio
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists()
-    && AllowDamage(Direction, ItemVector[c]->GetSquarePosition()))
+       && AllowDamage(Direction, ItemVector[c]->GetSquarePosition()))
       ItemVector[c]->ReceiveDamage(Damager, Damage, Type);
 }
 
@@ -364,7 +387,7 @@ int stack::DrawContents(itemvector& ReturnVector, const character* Viewer, const
 /* MergeStack is used for showing two stacks together. Like when eating when
    there are items on the ground and in the character's stack */
 
-int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, const festring& SpecialDesc, color16 SpecialDescColor, int Flags, sorter SorterFunction) const
+int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, const festring& SpecialDesc, col16 SpecialDescColor, int Flags, sorter SorterFunction) const
 {
   felist Contents(Topic);
   lsquare* Square = GetLSquareUnder();
@@ -376,31 +399,31 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
       AdjacentStack[c] = Square->GetStackOfAdjacentSquare(c);
 
   if(!SpecialDesc.IsEmpty())
-    {
-      Contents.AddDescription(CONST_S(""));
-      Contents.AddDescription(SpecialDesc.CapitalizeCopy(), SpecialDescColor);
-    }
+  {
+    Contents.AddDescription(CONST_S(""));
+    Contents.AddDescription(SpecialDesc.CapitalizeCopy(), SpecialDescColor);
+  }
 
   /*if(!(Flags & NO_SPECIAL_INFO))
     {
-      Contents.AddDescription(CONST_S(""));
-      long Weight = GetWeight(Viewer, CENTER);
+    Contents.AddDescription(CONST_S(""));
+    long Weight = GetWeight(Viewer, CENTER);
 
-      if(MergeStack)
-	Weight += MergeStack->GetWeight(Viewer, CENTER);
+    if(MergeStack)
+    Weight += MergeStack->GetWeight(Viewer, CENTER);
 
-      for(c = 0; c < 4; ++c)
-	if(AdjacentStack[c])
-	  Weight += AdjacentStack[c]->GetWeight(Viewer, 3 - c);
+    for(c = 0; c < 4; ++c)
+    if(AdjacentStack[c])
+    Weight += AdjacentStack[c]->GetWeight(Viewer, 3 - c);
 
-      Contents.AddDescription(CONST_S("Overall weight: ") + Weight + " grams");
+    Contents.AddDescription(CONST_S("Overall weight: ") + Weight + " grams");
     }*/
 
   if(Flags & NONE_AS_CHOICE)
-    {
-      int ImageKey = game::AddToItemDrawVector(itemvector());
-      Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, ImageKey);
-    }
+  {
+    int ImageKey = game::AddToItemDrawVector(itemvector());
+    Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, ImageKey);
+  }
 
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, CENTER, SorterFunction);
@@ -428,10 +451,10 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
   game::ClearItemDrawVector();
 
   if(Chosen & FELIST_ERROR_BIT)
-    {
-      Selected = 0;
-      return Chosen;
-    }
+  {
+    Selected = 0;
+    return Chosen;
+  }
   else
     Selected = Chosen;
 
@@ -444,12 +467,12 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
       ++Pos;
 
   if(MergeStack)
-    {
-      Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, CENTER, SorterFunction);
+  {
+    Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, CENTER, SorterFunction);
 
-      if(!ReturnVector.empty())
-	return 0;
-    }
+    if(!ReturnVector.empty())
+      return 0;
+  }
 
   Pos = SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, CENTER, SorterFunction);
 
@@ -458,12 +481,12 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
 
   for(c = 0; c < 4; ++c)
     if(AdjacentStack[c])
-      {
-	AdjacentStack[c]->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, 3 - c, SorterFunction);
+    {
+      AdjacentStack[c]->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, 3 - c, SorterFunction);
 
-	if(!ReturnVector.empty())
-	  break;
-      }
+      if(!ReturnVector.empty())
+	break;
+    }
 
   return 0;
 }
@@ -475,35 +498,35 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
   itemvectorvector PileVector;
   Pile(PileVector, Viewer, RequiredSquarePosition, SorterFunction);
 
-  bool DrawDesc = !!Desc.GetSize();
+  truth DrawDesc = Desc.GetSize();
   long LastCategory = 0;
   festring Entry;
 
   for(uint p = 0; p < PileVector.size(); ++p)
+  {
+    if(DrawDesc)
     {
-      if(DrawDesc)
-	{
-	  if(!Contents.IsEmpty())
-	    Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
+      if(!Contents.IsEmpty())
+	Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
 
-	  Contents.AddEntry(Desc, WHITE, 0, NO_IMAGE, false);
-	  Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
-	  DrawDesc = false;
-	}
-
-      item* Item = PileVector[p].back();
-
-      if(Item->GetCategory() != LastCategory)
-	{
-	  LastCategory = Item->GetCategory();
-	  Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, NO_IMAGE, false);
-	}
-
-      Entry.Empty();
-      Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      int ImageKey = game::AddToItemDrawVector(PileVector[p]);
-      Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
+      Contents.AddEntry(Desc, WHITE, 0, NO_IMAGE, false);
+      Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
+      DrawDesc = false;
     }
+
+    item* Item = PileVector[p].back();
+
+    if(Item->GetCategory() != LastCategory)
+    {
+      LastCategory = Item->GetCategory();
+      Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, NO_IMAGE, false);
+    }
+
+    Entry.Empty();
+    Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
+    int ImageKey = game::AddToItemDrawVector(PileVector[p]);
+    Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
+  }
 }
 
 /* Internal function which fills ReturnVector according to Chosen,
@@ -520,26 +543,26 @@ int stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, int P
   for(uint p = 0; p < PileVector.size(); ++p)
     if(Pos++ == Chosen)
       if(Flags & NO_MULTI_SELECT)
-	{
-	  int Amount = Flags & SELECT_PAIR && PileVector[p][0]->HandleInPairs() && PileVector[p].size() >= 2 ? 2 : 1;
-	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
-	  return -1;
-	}
+      {
+	int Amount = Flags & SELECT_PAIR && PileVector[p][0]->HandleInPairs() && PileVector[p].size() >= 2 ? 2 : 1;
+	ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
+	return -1;
+      }
       else
-	{
-	  int Amount = PileVector[p].size();
+      {
+	int Amount = PileVector[p].size();
 
-	  if(Amount > 1)
-	    Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[p][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	if(Amount > 1)
+	  Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[p][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
-	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
-	  return -1;
-	}
+	ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
+	return -1;
+      }
 
   return Pos;
 }
 
-bool stack::RaiseTheDead(character* Summoner)
+truth stack::RaiseTheDead(character* Summoner)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);
@@ -553,7 +576,7 @@ bool stack::RaiseTheDead(character* Summoner)
 
 /* Returns false if the Applier didn't try to use the key */
 
-bool stack::TryKey(item* Key, character* Applier)
+truth stack::TryKey(item* Key, character* Applier)
 {
   if(!Applier->IsPlayer())
     return false;
@@ -568,7 +591,7 @@ bool stack::TryKey(item* Key, character* Applier)
 
 /* Returns false if the Applier didn't try to open anything */
 
-bool stack::Open(character* Opener)
+truth stack::Open(character* Opener)
 {
   if(!Opener->IsPlayer())
     return false;
@@ -599,12 +622,12 @@ int stack::GetVisibleItems(const character* Viewer) const
   lsquare* Square = GetLSquareUnder();
 
   for(int c = 0; c < 4; ++c)
-    {
-      stack* Stack = Square->GetStackOfAdjacentSquare(c);
+  {
+    stack* Stack = Square->GetStackOfAdjacentSquare(c);
 
-      if(Stack)
-	VisibleItems += Stack->GetVisibleSideItems(Viewer, 3 - c);
-    }
+    if(Stack)
+      VisibleItems += Stack->GetVisibleSideItems(Viewer, 3 - c);
+  }
 
   return VisibleItems;
 }
@@ -646,12 +669,12 @@ item* stack::GetBottomVisibleItem(const character* Viewer) const
 void stack::SignalVolumeAndWeightChange()
 {
   if(!(Flags & FREEZED))
-    {
-      CalculateVolumeAndWeight();
+  {
+    CalculateVolumeAndWeight();
 
-      if(MotherEntity)
-	MotherEntity->SignalVolumeAndWeightChange();
-    }
+    if(MotherEntity)
+      MotherEntity->SignalVolumeAndWeightChange();
+  }
 }
 
 void stack::CalculateVolumeAndWeight()
@@ -659,66 +682,66 @@ void stack::CalculateVolumeAndWeight()
   Volume = Weight = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    {
-      Volume += i->GetVolume();
-      Weight += i->GetWeight();
-    }
+  {
+    Volume += i->GetVolume();
+    Weight += i->GetWeight();
+  }
 }
 
-void stack::SignalEmitationIncrease(int ItemSquarePosition, color24 EmitationUpdate)
+void stack::SignalEmitationIncrease(int ItemSquarePosition, col24 EmitationUpdate)
 {
   if(ItemSquarePosition < CENTER)
-    {
-      stack* Stack = GetLSquareUnder()->GetStackOfAdjacentSquare(ItemSquarePosition);
+  {
+    stack* Stack = GetLSquareUnder()->GetStackOfAdjacentSquare(ItemSquarePosition);
 
-      if(Stack)
-	Stack->SignalEmitationIncrease(CENTER, EmitationUpdate);
+    if(Stack)
+      Stack->SignalEmitationIncrease(CENTER, EmitationUpdate);
 
-      return;
-    }
+    return;
+  }
 
   if(!(Flags & FREEZED) && game::CompareLights(EmitationUpdate, Emitation) > 0)
-    {
-      Emitation = game::CombineConstLights(Emitation, EmitationUpdate);
+  {
+    Emitation = game::CombineConstLights(Emitation, EmitationUpdate);
 
-      if(MotherEntity)
-	{
-	  if(MotherEntity->AllowContentEmitation())
-	    MotherEntity->SignalEmitationIncrease(EmitationUpdate);
-	}
-      else
-	GetLSquareUnder()->SignalEmitationIncrease(EmitationUpdate);
+    if(MotherEntity)
+    {
+      if(MotherEntity->AllowContentEmitation())
+	MotherEntity->SignalEmitationIncrease(EmitationUpdate);
     }
+    else
+      GetLSquareUnder()->SignalEmitationIncrease(EmitationUpdate);
+  }
 }
 
-void stack::SignalEmitationDecrease(int ItemSquarePosition, color24 EmitationUpdate)
+void stack::SignalEmitationDecrease(int ItemSquarePosition, col24 EmitationUpdate)
 {
   if(ItemSquarePosition < CENTER)
-    {
-      stack* Stack = GetLSquareUnder()->GetStackOfAdjacentSquare(ItemSquarePosition);
+  {
+    stack* Stack = GetLSquareUnder()->GetStackOfAdjacentSquare(ItemSquarePosition);
 
-      if(Stack)
-	Stack->SignalEmitationDecrease(CENTER, EmitationUpdate);
+    if(Stack)
+      Stack->SignalEmitationDecrease(CENTER, EmitationUpdate);
 
-      return;
-    }
+    return;
+  }
 
   if(!(Flags & FREEZED) && game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
-    {
-      color24 Backup = Emitation;
-      CalculateEmitation();
+  {
+    col24 Backup = Emitation;
+    CalculateEmitation();
 
-      if(Backup != Emitation)
-	{
-	  if(MotherEntity)
-	    {
-	      if(MotherEntity->AllowContentEmitation())
-		MotherEntity->SignalEmitationDecrease(EmitationUpdate);
-	    }
-	  else
-	    GetLSquareUnder()->SignalEmitationDecrease(EmitationUpdate);
-	}
+    if(Backup != Emitation)
+    {
+      if(MotherEntity)
+      {
+	if(MotherEntity->AllowContentEmitation())
+	  MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+      }
+      else
+	GetLSquareUnder()->SignalEmitationDecrease(EmitationUpdate);
     }
+  }
 }
 
 void stack::CalculateEmitation()
@@ -726,9 +749,9 @@ void stack::CalculateEmitation()
   Emitation = GetSideEmitation(CENTER);
 }
 
-color24 stack::GetSideEmitation(int RequiredSquarePosition)
+col24 stack::GetSideEmitation(int RequiredSquarePosition)
 {
-  color24 Emitation = 0;
+  col24 Emitation = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->GetSquarePosition() == RequiredSquarePosition)
@@ -737,18 +760,18 @@ color24 stack::GetSideEmitation(int RequiredSquarePosition)
   return Emitation;
 }
 
-bool stack::CanBeSeenBy(const character* Viewer, int SquarePosition) const
+truth stack::CanBeSeenBy(const character* Viewer, int SquarePosition) const
 {
   if(MotherEntity)
     return MotherEntity->ContentsCanBeSeenBy(Viewer);
   else
-    {
-      lsquare* Square = GetLSquareTrulyUnder(SquarePosition);
-      return Viewer->IsOver(Square->GetPos()) || Square->CanBeSeenBy(Viewer);
-    }
+  {
+    lsquare* Square = GetLSquareTrulyUnder(SquarePosition);
+    return Viewer->IsOver(Square->GetPos()) || Square->CanBeSeenBy(Viewer);
+  }
 }
 
-bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
+truth stack::IsDangerousForAIToStepOn(const character* Stepper) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->IsDangerousForAI(Stepper) && i->CanBeSeenBy(Stepper))
@@ -759,7 +782,7 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 
 /* Returns true if something was duplicated. Max is the cap of items to be affected */
 
-bool stack::Duplicate(int Max, ulong Flags)
+truth stack::Duplicate(int Max, ulong Flags)
 {
   if(!GetItems())
     return false;
@@ -777,7 +800,7 @@ bool stack::Duplicate(int Max, ulong Flags)
 
 /* Adds the item without any external update requests */
 
-void stack::AddElement(item* Item,bool)
+void stack::AddElement(item* Item,truth)
 {
   ++Items;
 
@@ -808,7 +831,7 @@ void stack::MoveItemsTo(slot* Slot)
     Slot->AddFriendItem(*GetBottom());
 }
 
-item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) const
+item* stack::GetBottomItem(const character* Char, truth ForceIgnoreVisibility) const
 {
   if((Flags & HIDDEN) || ForceIgnoreVisibility)
     return Bottom ? **Bottom : 0;
@@ -816,17 +839,17 @@ item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) co
     return GetBottomVisibleItem(Char);
 }
 
-item* stack::GetBottomSideItem(const character* Char, int RequiredSquarePosition, bool ForceIgnoreVisibility) const
+item* stack::GetBottomSideItem(const character* Char, int RequiredSquarePosition, truth ForceIgnoreVisibility) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->GetSquarePosition() == RequiredSquarePosition
-    && (Flags & HIDDEN) || ForceIgnoreVisibility || i->CanBeSeenBy(Char))
+       && (Flags & HIDDEN) || ForceIgnoreVisibility || i->CanBeSeenBy(Char))
       return *i;
 
   return 0;
 }
 
-bool CategorySorter(const itemvector& V1, const itemvector& V2)
+truth CategorySorter(const itemvector& V1, const itemvector& V2)
 {
   return (*V1.begin())->GetCategory() < (*V2.begin())->GetCategory();
 }
@@ -844,31 +867,31 @@ void stack::Pile(itemvectorvector& PileVector, const character* Viewer, int Requ
 
   for(stackiterator s = GetBottom(); s.HasItem(); ++s)
     if(s->GetSquarePosition() == RequiredSquarePosition
-    && (SorterFunction == 0 || ((*s)->*SorterFunction)(Viewer))
-    && ((Flags & HIDDEN) || s->CanBeSeenBy(Viewer)))
+       && (SorterFunction == 0 || ((*s)->*SorterFunction)(Viewer))
+       && ((Flags & HIDDEN) || s->CanBeSeenBy(Viewer)))
       List.push_back(*s);
 
   for(std::list<item*>::iterator i = List.begin(); i != List.end(); ++i)
+  {
+    PileVector.resize(PileVector.size() + 1);
+    itemvector& Pile = PileVector.back();
+    Pile.push_back(*i);
+
+    if((*i)->CanBePiled())
     {
-      PileVector.resize(PileVector.size() + 1);
-      itemvector& Pile = PileVector.back();
-      Pile.push_back(*i);
+      std::list<item*>::iterator j = i;
 
-      if((*i)->CanBePiled())
+      for(++j; j != List.end();)
+	if((*j)->CanBePiled() && (*i)->CanBePiledWith(*j, Viewer))
 	{
-	  std::list<item*>::iterator j = i;
-
-	  for(++j; j != List.end();)
-	    if((*j)->CanBePiled() && (*i)->CanBePiledWith(*j, Viewer))
-	      {
-		Pile.push_back(*j);
-		std::list<item*>::iterator Dirt = j++;
-		List.erase(Dirt);
-	      }
-	    else
-	      ++j;
+	  Pile.push_back(*j);
+	  std::list<item*>::iterator Dirt = j++;
+	  List.erase(Dirt);
 	}
+	else
+	  ++j;
     }
+  }
 
   std::stable_sort(PileVector.begin(), PileVector.end(), CategorySorter);
 }
@@ -887,36 +910,36 @@ long stack::GetTruePrice() const
 
 /* GUI used for instance by chests and bookcases. Returns whether anything was done. */
 
-bool stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
+truth stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
 {
   if(!GetItems())
-    {
-      ADD_MESSAGE("There is nothing in %s.", ContainerName.CStr());
-      return false;
-    }
+  {
+    ADD_MESSAGE("There is nothing in %s.", ContainerName.CStr());
+    return false;
+  }
 
-  bool Success = false;
+  truth Success = false;
   room* Room = GetLSquareUnder()->GetRoom();
   SetSelected(0);
 
   for(;;)
+  {
+    itemvector ToTake;
+    game::DrawEverythingNoBlit();
+    DrawContents(ToTake, Opener, CONST_S("What do you want to take from ") + ContainerName + '?', REMEMBER_SELECTED);
+
+    if(ToTake.empty())
+      break;
+
+    if(!IsOnGround() || !Room || Room->PickupItem(Opener, ToTake[0], ToTake.size()))
     {
-      itemvector ToTake;
-      game::DrawEverythingNoBlit();
-      DrawContents(ToTake, Opener, CONST_S("What do you want to take from ") + ContainerName + '?', REMEMBER_SELECTED);
+      for(uint c = 0; c < ToTake.size(); ++c)
+	ToTake[c]->MoveTo(Opener->GetStack());
 
-      if(ToTake.empty())
-	break;
-
-      if(!IsOnGround() || !Room || Room->PickupItem(Opener, ToTake[0], ToTake.size()))
-	{
-	  for(uint c = 0; c < ToTake.size(); ++c)
-	    ToTake[c]->MoveTo(Opener->GetStack());
-
-	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr(), ContainerName.CStr());
-	  Success = true;
-	}
+      ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr(), ContainerName.CStr());
+      Success = true;
     }
+  }
 
   return Success;
 }
@@ -924,62 +947,62 @@ bool stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
 /* GUI used for instance by chests and bookcases (use ContainerID == 0 if
    the container isn't an item). Returns whether anything was done. */
 
-bool stack::PutSomethingIn(character* Opener, const festring& ContainerName, long StorageVolume, ulong ContainerID)
+truth stack::PutSomethingIn(character* Opener, const festring& ContainerName, long StorageVolume, ulong ContainerID)
 {
   if(!Opener->GetStack()->GetItems())
-    {
-      ADD_MESSAGE("You have nothing to put in %s.", ContainerName.CStr());
-      return false;
-    }
+  {
+    ADD_MESSAGE("You have nothing to put in %s.", ContainerName.CStr());
+    return false;
+  }
 
-  bool Success = false;
+  truth Success = false;
   room* Room = GetLSquareUnder()->GetRoom();
   SetSelected(0);
 
   for(;;)
+  {
+    itemvector ToPut;
+    game::DrawEverythingNoBlit();
+    Opener->GetStack()->DrawContents(ToPut, Opener, CONST_S("What do you want to put in ") + ContainerName + '?', REMEMBER_SELECTED);
+
+    if(ToPut.empty())
+      break;
+
+    if(ToPut[0]->GetID() == ContainerID)
     {
-      itemvector ToPut;
-      game::DrawEverythingNoBlit();
-      Opener->GetStack()->DrawContents(ToPut, Opener, CONST_S("What do you want to put in ") + ContainerName + '?', REMEMBER_SELECTED);
-
-      if(ToPut.empty())
-	break;
-
-      if(ToPut[0]->GetID() == ContainerID)
-	{
-	  ADD_MESSAGE("You can't put %s inside itself!", ContainerName.CStr());
-	  continue;
-	}
-
-      uint Amount = Min<uint>((StorageVolume - GetVolume()) / ToPut[0]->GetVolume(), ToPut.size());
-
-      if(!Amount)
-	{
-	  if(ToPut.size() == 1)
-	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.CStr());
-	  else
-	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
-
-	  continue;
-	}
-
-      if(Amount != ToPut.size())
-	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.CStr());
-
-      if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
-	{
-	  for(uint c = 0; c < Amount; ++c)
-	    ToPut[c]->MoveTo(this);
-
-	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).CStr(), ContainerName.CStr());
-	  Success = true;
-	}
+      ADD_MESSAGE("You can't put %s inside itself!", ContainerName.CStr());
+      continue;
     }
+
+    uint Amount = Min<uint>((StorageVolume - GetVolume()) / ToPut[0]->GetVolume(), ToPut.size());
+
+    if(!Amount)
+    {
+      if(ToPut.size() == 1)
+	ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.CStr());
+      else
+	ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.CStr());
+
+      continue;
+    }
+
+    if(Amount != ToPut.size())
+      ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.CStr());
+
+    if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
+    {
+      for(uint c = 0; c < Amount; ++c)
+	ToPut[c]->MoveTo(this);
+
+      ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).CStr(), ContainerName.CStr());
+      Success = true;
+    }
+  }
 
   return Success;
 }
 
-bool stack::IsOnGround() const
+truth stack::IsOnGround() const
 {
   return !MotherEntity || MotherEntity->IsOnGround();
 }
@@ -1012,7 +1035,7 @@ void stack::Search(const character* Char, int Perception)
 
 /* Used to determine whether the danger symbol should be shown */
 
-bool stack::IsDangerous(const character* Viewer) const
+truth stack::IsDangerous(const character* Viewer) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->IsDangerous() && i->CanBeSeenBy(Viewer))
@@ -1024,25 +1047,25 @@ bool stack::IsDangerous(const character* Viewer) const
 void stack::PreProcessForBone()
 {
   if(Items)
-    {
-      itemvector ItemVector;
-      FillItemVector(ItemVector);
+  {
+    itemvector ItemVector;
+    FillItemVector(ItemVector);
 
-      for(uint c = 0; c < ItemVector.size(); ++c)
-	ItemVector[c]->PreProcessForBone();
-    }
+    for(uint c = 0; c < ItemVector.size(); ++c)
+      ItemVector[c]->PreProcessForBone();
+  }
 }
 
 void stack::PostProcessForBone()
 {
   if(Items)
-    {
-      itemvector ItemVector;
-      FillItemVector(ItemVector);
+  {
+    itemvector ItemVector;
+    FillItemVector(ItemVector);
 
-      for(uint c = 0; c < ItemVector.size(); ++c)
-	ItemVector[c]->PostProcessForBone();
-    }
+    for(uint c = 0; c < ItemVector.size(); ++c)
+      ItemVector[c]->PostProcessForBone();
+  }
 }
 
 void stack::FinalProcessForBone()
@@ -1068,24 +1091,24 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, long VolumeModifier)
 
   for(int c = ItemVector.size() - 1; c >= 0; --c)
     if(ItemVector[c]->Exists() && ItemVector[c]->AllowFluids())
+    {
+      long ItemVolume = ItemVector[c]->GetVolume();
+      double Root = sqrt(ItemVolume);
+
+      if(Root > RAND() % 400 || Root > RAND() % 400)
       {
-	long ItemVolume = ItemVector[c]->GetVolume();
-	double Root = sqrt(ItemVolume);
+	long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
 
-	if(Root > RAND() % 400 || Root > RAND() % 400)
-	  {
-	    long SpillVolume = long(VolumeModifier * Root * ChanceMultiplier);
+	if(SpillVolume)
+	{
+	  Liquid->EditVolume(-Max(SpillVolume, Liquid->GetVolume()));
+	  ItemVector[c]->SpillFluid(Spiller, Liquid->SpawnMoreLiquid(SpillVolume), ItemVector[c]->GetSquareIndex(GetPos()));
 
-	    if(SpillVolume)
-	      {
-		Liquid->EditVolume(-Max(SpillVolume, Liquid->GetVolume()));
-		ItemVector[c]->SpillFluid(Spiller, Liquid->CloneLiquid(SpillVolume), ItemVector[c]->GetSquareIndex(GetPos()));
-
-		if(!Liquid->GetVolume())
-		  return;
-	      }
-	  }
+	  if(!Liquid->GetVolume())
+	    return;
+	}
       }
+    }
 }
 
 void stack::AddItems(const itemvector& ItemVector)
@@ -1101,43 +1124,43 @@ void stack::MoveItemsTo(itemvector& ToVector, int RequiredSquarePosition)
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetSquarePosition() == RequiredSquarePosition)
-      {
-	ItemVector[c]->RemoveFromSlot();
-	ToVector.push_back(ItemVector[c]);
-      }
+    {
+      ItemVector[c]->RemoveFromSlot();
+      ToVector.push_back(ItemVector[c]);
+    }
 }
 
 void stack::DropSideItems()
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    {
-      int SquarePosition = i->GetSquarePosition();
+  {
+    int SquarePosition = i->GetSquarePosition();
 
-      if(SquarePosition != CENTER)
-	{
-	  i->SignalSquarePositionChange(CENTER);
-	  SignalEmitationDecrease(SquarePosition, i->GetEmitation());
-	  SignalEmitationIncrease(CENTER, i->GetEmitation());
-	}
+    if(SquarePosition != CENTER)
+    {
+      i->SignalSquarePositionChange(CENTER);
+      SignalEmitationDecrease(SquarePosition, i->GetEmitation());
+      SignalEmitationIncrease(CENTER, i->GetEmitation());
     }
+  }
 }
 
-bool stack::AllowDamage(int Direction, int SquarePosition)
+truth stack::AllowDamage(int Direction, int SquarePosition)
 {
   if(SquarePosition == CENTER)
     return true;
 
   switch(Direction)
-    {
-    case 0: return SquarePosition == DOWN || SquarePosition == RIGHT;
-    case 1: return SquarePosition == DOWN;
-    case 2: return SquarePosition == DOWN || SquarePosition == LEFT;
-    case 3: return SquarePosition == RIGHT;
-    case 4: return SquarePosition == LEFT;
-    case 5: return SquarePosition == UP || SquarePosition == RIGHT;
-    case 6: return SquarePosition == UP;
-    case 7: return SquarePosition == UP || SquarePosition == LEFT;
-    }
+  {
+   case 0: return SquarePosition == DOWN || SquarePosition == RIGHT;
+   case 1: return SquarePosition == DOWN;
+   case 2: return SquarePosition == DOWN || SquarePosition == LEFT;
+   case 3: return SquarePosition == RIGHT;
+   case 4: return SquarePosition == LEFT;
+   case 5: return SquarePosition == UP || SquarePosition == RIGHT;
+   case 6: return SquarePosition == UP;
+   case 7: return SquarePosition == UP || SquarePosition == LEFT;
+  }
 
   return true;
 }
@@ -1148,13 +1171,13 @@ long stack::GetWeight(const character* Viewer, int SquarePosition) const
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->GetSquarePosition() == SquarePosition
-    && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
+       && ((Flags & HIDDEN) || i->CanBeSeenBy(Viewer)))
       Weight += i->GetWeight();
 
   return Weight;
 }
 
-bool stack::DetectMaterial(const material* Material) const
+truth stack::DetectMaterial(const material* Material) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     if(i->DetectMaterial(Material))
@@ -1169,7 +1192,7 @@ void stack::SetLifeExpectancy(int Base, int RandPlus)
     i->SetLifeExpectancy(Base, RandPlus);
 }
 
-bool stack::Necromancy(character* Necromancer)
+truth stack::Necromancy(character* Necromancer)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);

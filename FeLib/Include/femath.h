@@ -1,25 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FEMATH_H__
 #define __FEMATH_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <vector>
 #include <cmath>
 
-#include "vector2d.h"
+#include "v2.h"
 #include "rect.h"
 
 #define RAND femath::Rand
@@ -40,22 +37,23 @@ template <class type> struct fearray;
 
 class femath
 {
-public:
+ public:
   static long Rand();
   static void SetSeed(ulong);
   static long RandN(long N) { return Rand() % N; }
-  static long RandGood(long N) { return long(double(N) * Rand() / 0x80000000); }
+  static long RandGood(long N)
+  { return long(double(N) * Rand() / 0x80000000); }
   static int WeightedRand(long*, long);
   static int WeightedRand(const std::vector<long>&, long);
-  static double CalculateAngle(vector2d);
-  static void CalculateEnvironmentRectangle(rect&, const rect&, vector2d, int);
-  static bool Clip(int&, int&, int&, int&, int&, int&, int, int, int, int);
+  static double CalculateAngle(v2);
+  static void CalculateEnvironmentRectangle(rect&, const rect&, v2, int);
+  static truth Clip(int&, int&, int&, int&, int&, int&, int, int, int, int);
   static void SaveSeed();
   static void LoadSeed();
   static long SumArray(const fearray<long>&);
   static int LoopRoll(int, int);
   static void GenerateFractalMap(int**, int, int, int);
-protected:
+ protected:
   static ulong mt[];
   static long mti;
   static ulong mtb[];
@@ -64,14 +62,15 @@ protected:
 
 struct interval
 {
-  long Randomize() const { return Min < Max ? Min + RAND() % (Max - Min + 1) : Min; }
+  long Randomize() const
+  { return Min < Max ? Min + RAND() % (Max - Min + 1) : Min; }
   long Min;
   long Max;
 };
 
 struct region
 {
-  vector2d Randomize() const { return vector2d(X.Randomize(), Y.Randomize()); }
+  v2 Randomize() const { return v2(X.Randomize(), Y.Randomize()); }
   interval X;
   interval Y;
 };
@@ -87,13 +86,14 @@ inputfile& operator>>(inputfile&, region&);
 template <class controller> class mapmath
 {
  public:
-  static bool DoLine(int, int, int, int, int = 0);
+  static truth DoLine(int, int, int, int, int = 0);
   static void DoArea();
   static void DoQuadriArea(int, int, int, int, int);
 };
 
 template <class controller>
-inline bool mapmath<controller>::DoLine(int X1, int Y1, int X2, int Y2, int Flags)
+inline truth mapmath<controller>::DoLine(int X1, int Y1,
+					 int X2, int Y2, int Flags)
 {
   if(!(Flags & SKIP_FIRST))
     controller::Handler(X1, Y1);
@@ -107,45 +107,45 @@ inline bool mapmath<controller>::DoLine(int X1, int Y1, int X2, int Y2, int Flag
   int x = X1, y = Y1;
 
   if(DeltaX >= DeltaY)
+  {
+    int c = DeltaX;
+    const int End = X2;
+
+    while(x != End)
     {
-      int c = DeltaX;
-      const int End = X2;
+      x += XChange;
+      c += DoubleDeltaY;
 
-      while(x != End)
-	{
-	  x += XChange;
-	  c += DoubleDeltaY;
+      if(c >= DoubleDeltaX)
+      {
+	c -= DoubleDeltaX;
+	y += YChange;
+      }
 
-	  if(c >= DoubleDeltaX)
-	    {
-	      c -= DoubleDeltaX;
-	      y += YChange;
-	    }
-
-	  if(!controller::Handler(x, y))
-	    return x == End && !(Flags & ALLOW_END_FAILURE);
-	}
+      if(!controller::Handler(x, y))
+	return x == End && !(Flags & ALLOW_END_FAILURE);
     }
+  }
   else
+  {
+    int c = DeltaY;
+    const int End = Y2;
+
+    while(y != End)
     {
-      int c = DeltaY;
-      const int End = Y2;
+      y += YChange;
+      c += DoubleDeltaX;
 
-      while(y != End)
-	{
-	  y += YChange;
-	  c += DoubleDeltaX;
+      if(c >= DoubleDeltaY)
+      {
+	c -= DoubleDeltaY;
+	x += XChange;
+      }
 
-	  if(c >= DoubleDeltaY)
-	    {
-	      c -= DoubleDeltaY;
-	      x += XChange;
-	    }
-
-	  if(!controller::Handler(x, y))
-	    return y == End && !(Flags & ALLOW_END_FAILURE);
-	}
+      if(!controller::Handler(x, y))
+	return y == End && !(Flags & ALLOW_END_FAILURE);
     }
+  }
 
   return true;
 }
@@ -158,13 +158,13 @@ struct basequadricontroller
   static int StartX, StartY;
   static int XSize, YSize;
   static int RadiusSquare;
-  static bool SectorCompletelyClear;
+  static truth SectorCompletelyClear;
 };
 
 template <class controller>
 struct quadricontroller : public basequadricontroller
 {
-  static bool Handler(int, int);
+  static truth Handler(int, int);
   static int GetStartX(int I)
   {
     SectorCompletelyClear = true;
@@ -176,39 +176,40 @@ struct quadricontroller : public basequadricontroller
   }
 };
 
-template <class controller> bool quadricontroller<controller>::Handler(int x, int y)
+template <class controller>
+truth quadricontroller<controller>::Handler(int x, int y)
 {
   const int HalfX = x >> 1, HalfY = y >> 1;
 
   if(HalfX >= 0 && HalfY >= 0 && HalfX < XSize && HalfY < YSize)
+  {
+    ulong& SquareTick = controller::GetTickReference(HalfX, HalfY);
+    const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
+    const ulong Mask = SquarePartTickMask[SquarePartIndex];
+
+    if((SquareTick & Mask) < controller::ShiftedTick[SquarePartIndex])
     {
-      ulong& SquareTick = controller::GetTickReference(HalfX, HalfY);
-      const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
-      const ulong Mask = SquarePartTickMask[SquarePartIndex];
+      SquareTick = SquareTick & ~Mask
+		   | controller::ShiftedQuadriTick[SquarePartIndex];
+      int DeltaX = OrigoX - HalfX, DeltaY = OrigoY - HalfY;
 
-      if((SquareTick & Mask) < controller::ShiftedTick[SquarePartIndex])
+      if(DeltaX * DeltaX + DeltaY * DeltaY <= RadiusSquare)
+      {
+	if(SectorCompletelyClear)
 	{
-	  SquareTick = SquareTick & ~Mask
-		     | controller::ShiftedQuadriTick[SquarePartIndex];
-	  int DeltaX = OrigoX - HalfX, DeltaY = OrigoY - HalfY;
-
-	  if(DeltaX * DeltaX + DeltaY * DeltaY <= RadiusSquare)
-	    {
-	      if(SectorCompletelyClear)
-		{
-		  if(controller::Handler(x, y))
-		    return true;
-		  else
-		    SectorCompletelyClear = false;
-		}
-	      else
-		return mapmath<controller>::DoLine(StartX, StartY,
-						   x, y,
-						   SKIP_FIRST
-						  |ALLOW_END_FAILURE);
-	    }
+	  if(controller::Handler(x, y))
+	    return true;
+	  else
+	    SectorCompletelyClear = false;
 	}
+	else
+	  return mapmath<controller>::DoLine(StartX, StartY,
+					     x, y,
+					     SKIP_FIRST
+					     |ALLOW_END_FAILURE);
+      }
     }
+  }
 
   return false;
 }
@@ -229,46 +230,48 @@ inline void mapmath<controller>::DoArea()
 					  {  0,  1,  1 } };
 
   for(int c1 = 0; c1 < 4; ++c1)
+  {
+    const int* ChangeX = ChangeXArray[c1], * ChangeY = ChangeYArray[c1];
+    int OldStackPos = 0, NewStackPos = 0;
+    int StartX = controller::GetStartX(c1);
+    int StartY = controller::GetStartY(c1);
+
+    for(int c2 = 0; c2 < 3; ++c2)
     {
-      const int* ChangeX = ChangeXArray[c1], * ChangeY = ChangeYArray[c1];
-      int OldStackPos = 0, NewStackPos = 0;
-      int StartX = controller::GetStartX(c1);
-      int StartY = controller::GetStartY(c1);
-
-      for(int c2 = 0; c2 < 3; ++c2)
-	{
-	  OldStack[OldStackPos] = StartX + ChangeX[c2];
-	  OldStack[OldStackPos + 1] = StartY + ChangeY[c2];
-	  OldStackPos += 2;
-	}
-
-      while(OldStackPos)
-	{
-	  while(OldStackPos)
-	    {
-	      OldStackPos -= 2;
-	      const int X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
-
-	      if(controller::Handler(X, Y))
-		for(int c2 = 0; c2 < 3; ++c2)
-		  {
-		    NewStack[NewStackPos] = X + ChangeX[c2];
-		    NewStack[NewStackPos + 1] = Y + ChangeY[c2];
-		    NewStackPos += 2;
-		  }
-	    }
-
-	  OldStackPos = NewStackPos;
-	  NewStackPos = 0;
-	  int* T = OldStack;
-	  OldStack = NewStack;
-	  NewStack = T;
-	}
+      OldStack[OldStackPos] = StartX + ChangeX[c2];
+      OldStack[OldStackPos + 1] = StartY + ChangeY[c2];
+      OldStackPos += 2;
     }
+
+    while(OldStackPos)
+    {
+      while(OldStackPos)
+      {
+	OldStackPos -= 2;
+	const int X = OldStack[OldStackPos], Y = OldStack[OldStackPos + 1];
+
+	if(controller::Handler(X, Y))
+	  for(int c2 = 0; c2 < 3; ++c2)
+	  {
+	    NewStack[NewStackPos] = X + ChangeX[c2];
+	    NewStack[NewStackPos + 1] = Y + ChangeY[c2];
+	    NewStackPos += 2;
+	  }
+      }
+
+      OldStackPos = NewStackPos;
+      NewStackPos = 0;
+      int* T = OldStack;
+      OldStack = NewStack;
+      NewStack = T;
+    }
+  }
 }
 
 template <class controller>
-inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY, int RadiusSquare, int XSize, int YSize)
+inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY,
+					      int RadiusSquare,
+					      int XSize, int YSize)
 {
   basequadricontroller::OrigoX = OrigoX;
   basequadricontroller::OrigoY = OrigoY;
@@ -302,7 +305,7 @@ template <class type>
 struct pointercomparer
 {
   pointercomparer(const type* Element) : Element(Element) { }
-  bool operator()(const type* E) const { return E == Element; }
+  truth operator()(const type* E) const { return E == Element; }
   const type* Element;
 };
 

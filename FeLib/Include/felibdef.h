@@ -1,27 +1,30 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FELIBDEF_H__
 #define __FELIBDEF_H__
 
-/* Global defines for the project FeLib.
-   This file is created to decrease the need of including headers in other
-   headers just for the sake of some silly macros, because it decreases
-   compilation efficiency and may cause cross-including
-
-   List of macros that should be gathered here:
-   1. all numeric defines used in multiple .cpp or .h files
-   2. all inline functions used in multiple .cpp or .h files and independent
-      enough (do not require other headers)
-   3. class construction macros used in multiple .h files */
+/*
+ * Global defines for the project FeLib.
+ * This file is created to decrease the need of including headers in
+ * other headers just for the sake of some silly macros, because it
+ * decreases compilation efficiency and may cause cross-including
+ *
+ * List of macros that should be gathered here:
+ * 1. all numeric defines used in multiple .cpp or .h files
+ * 2. all inline functions used in multiple .cpp or .h files
+ *    and independent enough (do not require other headers)
+ * 3. class construction macros used in multiple .h files
+ */
 
 #include "typedef.h"
 
@@ -32,30 +35,38 @@ const ulong SquarePartTickMask[4] = { 0xFF, 0xFF00, 0xFF0000, 0xFF000000 };
 
 #define FPI 3.1415926535897932384626433832795
 
+/* Btw, both __attribute__ ((regparm(3))) and __fastcall SUCK! */
+
+#ifdef GCC
+#define NO_ALIGNMENT __attribute__ ((packed))
+#define NO_RETURN __attribute__ ((noreturn))
+#define LIKE_PRINTF(p1, p2) __attribute__ ((format(printf, p1, p2)))
+#else
+#define NO_ALIGNMENT
+#define NO_RETURN
+#define LIKE_PRINTF(p1, p2)
+#endif
+
 template <class type>
 inline type Max(type X, type Y) { return X >= Y ? X : Y; }
 
-template <class type> inline type Max(type X, type Y, type Z)
-{
-  return X >= Y ? (X >= Z ? X : Z) : (Y >= Z ? Y : Z);
-}
+template <class type>
+inline type Max(type X, type Y, type Z)
+{ return X >= Y ? (X >= Z ? X : Z) : (Y >= Z ? Y : Z); }
 
 template <class type>
 inline type Min(type X, type Y) { return X <= Y ? X : Y; }
 
-template <class type> inline type Min(type X, type Y, type Z)
-{
-  return X <= Y ? (X <= Z ? X : Z) : (Y <= Z ? Y : Z);
-}
+template <class type>
+inline type Min(type X, type Y, type Z)
+{ return X <= Y ? (X <= Z ? X : Z) : (Y <= Z ? Y : Z); }
 
 template <class type>
 inline type HypotSquare(type X, type Y) { return X * X + Y * Y; }
 
 template <class type>
 inline type Limit(type Value, type Minimum, type Maximum)
-{
-  return Value >= Minimum ? Value <= Maximum ? Value : Maximum : Minimum;
-}
+{ return Value >= Minimum ? Value <= Maximum ? Value : Maximum : Minimum; }
 
 template <class type>
 inline void LimitRef(type& Value, type Minimum, type Maximum)
@@ -66,44 +77,45 @@ inline void LimitRef(type& Value, type Minimum, type Maximum)
     Value = Maximum;
 }
 
-template <class type> inline void Swap(type& X, type& Y)
+template <class type>
+inline void Swap(type& X, type& Y)
 {
   const type T = X;
   X = Y;
   Y = T;
 }
 
-inline color16 GetRed16(color16 Color) { return Color >> 8 & 0xF8; }
-inline color16 GetGreen16(color16 Color) { return Color >> 3 & 0xFC; }
-inline color16 GetBlue16(color16 Color) { return Color << 3 & 0xF8; }
+inline col16 GetRed16(col16 Color) { return Color >> 8 & 0xF8; }
+inline col16 GetGreen16(col16 Color) { return Color >> 3 & 0xFC; }
+inline col16 GetBlue16(col16 Color) { return Color << 3 & 0xF8; }
 
-inline color16 MakeRGB16(int Red, int Green, int Blue)
+inline col16 MakeRGB16(int Red, int Green, int Blue)
 {
   return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F);
 }
 
-inline color16 MakeShadeColor(color16 Color)
+inline col16 MakeShadeColor(col16 Color)
 {
   return MakeRGB16(GetRed16(Color) / 3,
 		   GetGreen16(Color) / 3,
 		   GetBlue16(Color) / 3);
 }
 
-inline color24 GetRed24(color24 Color) { return Color >> 16 & 0xFF; }
-inline color24 GetGreen24(color24 Color) { return Color >> 8 & 0xFF; }
-inline color24 GetBlue24(color24 Color) { return Color & 0xFF; }
+inline col24 GetRed24(col24 Color) { return Color >> 16 & 0xFF; }
+inline col24 GetGreen24(col24 Color) { return Color >> 8 & 0xFF; }
+inline col24 GetBlue24(col24 Color) { return Color & 0xFF; }
 
-inline color24 MakeRGB24(int Red, int Green, int Blue)
+inline col24 MakeRGB24(int Red, int Green, int Blue)
 {
   return (Red << 16 & 0xFF0000) | (Green << 8 & 0xFF00) | (Blue & 0xFF);
 }
 
-inline int GetMaxColor24(color24 Color)
+inline int GetMaxColor24(col24 Color)
 {
   return Max(GetRed24(Color), GetGreen24(Color), GetBlue24(Color));
 }
 
-inline int GetMinColor24(color24 Color)
+inline int GetMinColor24(col24 Color)
 {
   return Min(GetRed24(Color), GetGreen24(Color), GetBlue24(Color));
 }
@@ -144,12 +156,6 @@ inline int GetMinColor24(color24 Color)
 #define KEY_NUMPAD_5 2
 
 #define NO_FLAME 0xFFFF
-
-#ifdef GCC
-#define NO_ALIGNMENT __attribute__ ((packed))
-#else
-#define NO_ALIGNMENT
-#endif
 
 #define SELECTABLE 1
 #define INVERSE_MODE 2
@@ -195,5 +201,12 @@ inline int GetMinColor24(color24 Color)
 #define TRANSPARENT_PALETTE_INDEX 191
 
 #define MAX_HIGHSCORES 100
+
+/* sparkling flags */
+
+#define SPARKLING_A 1
+#define SPARKLING_B 2
+#define SPARKLING_C 4
+#define SPARKLING_D 8
 
 #endif

@@ -1,19 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* 
  * NOTICE!!!
- * This file contains SPOILERS, which might ruin your IVAN experience totally.
- * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
- * don't know what you're doing. So from here on, proceed at your own risk!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
  */
 
 /* Team and dungeon data for the game */
@@ -74,6 +77,7 @@ Team COLONIST_TEAM;
 Team TOURIST_GUIDE_TEAM;
 {
 	Relation 7, FRIEND;
+	Relation 8, FRIEND;
 	KillEvilness = 50;
 }
 

@@ -61,7 +61,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /Ob1 /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -170,6 +170,10 @@ SOURCE=.\FeLib\Include\bitmap.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\config.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\error.h
 # End Source File
 # Begin Source File
@@ -202,11 +206,19 @@ SOURCE=.\FeLib\Include\festring.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\fetime.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\graphics.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\FeLib\Include\hscore.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeLib\Include\pragmas.h
 # End Source File
 # Begin Source File
 
@@ -226,7 +238,7 @@ SOURCE=.\FeLib\Include\typedef.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\vector2d.h
+SOURCE=.\FeLib\Include\v2.h
 # End Source File
 # Begin Source File
 

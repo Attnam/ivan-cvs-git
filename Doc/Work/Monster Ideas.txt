@@ -411,3 +411,7 @@ Babel fish
 	decode the brainwave matrix which has been fed into your mind by your
 	Babel fish."
 	(The Hitchhiker's Guide to the Galaxy by Douglas Adams)
+
+Mutant turtle
+
+	Very good in martial arts.

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -43,13 +44,13 @@ void dungeon::Initialize()
   if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
     DungeonScript = &DungeonIterator->second;
   else
-    {
-      ABORT("Unknown dungeon #%d requested!", int(Index));
-      return;
-    }
+  {
+    ABORT("Unknown dungeon #%d requested!", int(Index));
+    return;
+  }
 
   Level = new level*[GetLevels()];
-  Generated = new bool[GetLevels()];
+  Generated = new truth[GetLevels()];
 
   for(int c = 0; c < GetLevels(); ++c)
     Level[c] = 0;
@@ -71,48 +72,48 @@ const levelscript* dungeon::GetLevelScript(int I)
 
 /* Returns whether the level has been visited before */
 
-bool dungeon::PrepareLevel(int Index, bool Visual)
+truth dungeon::PrepareLevel(int Index, truth Visual)
 {
   if(Generated[Index])
-    {
-      level* NewLevel = LoadLevel(game::SaveName(), Index);
-      game::SetCurrentArea(NewLevel);
-      game::SetCurrentLevel(NewLevel);
-      game::SetCurrentLSquareMap(NewLevel->GetMap());
-      return true;
-    }
+  {
+    level* NewLevel = LoadLevel(game::SaveName(), Index);
+    game::SetCurrentArea(NewLevel);
+    game::SetCurrentLevel(NewLevel);
+    game::SetCurrentLSquareMap(NewLevel->GetMap());
+    return true;
+  }
   else
-    {
-      level* NewLevel = Level[Index] = new level;
-      NewLevel->SetDungeon(this);
-      NewLevel->SetIndex(Index);
-      NewLevel->SetLevelScript(GetLevelScript(Index));
+  {
+    level* NewLevel = Level[Index] = new level;
+    NewLevel->SetDungeon(this);
+    NewLevel->SetIndex(Index);
+    NewLevel->SetLevelScript(GetLevelScript(Index));
 
-      if(Visual)
-	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), WHITE, false, &game::BusyAnimation);
+    if(Visual)
+      game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), WHITE, false, &game::BusyAnimation);
 
-      NewLevel->Generate(Index);
-      game::SetCurrentLSquareMap(NewLevel->GetMap());
-      Generated[Index] = true;
-      game::BusyAnimation();
+    NewLevel->Generate(Index);
+    game::SetCurrentLSquareMap(NewLevel->GetMap());
+    Generated[Index] = true;
+    game::BusyAnimation();
 
-      if(*NewLevel->GetLevelScript()->GenerateMonsters())
-	NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
+    if(*NewLevel->GetLevelScript()->GenerateMonsters())
+      NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
-      return false;
-    }
+    return false;
+  }
 }
 
-void dungeon::SaveLevel(const festring& SaveName, int Number, bool DeleteAfterwards)
+void dungeon::SaveLevel(const festring& SaveName, int Number, truth DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + '.' + Index + Number);
   SaveFile << Level[Number];
 
   if(DeleteAfterwards)
-    {
-      delete Level[Number];
-      Level[Number] = 0;
-    }
+  {
+    delete Level[Number];
+    Level[Number] = 0;
+  }
 }
 
 level* dungeon::LoadLevel(const festring& SaveName, int Number)
@@ -162,10 +163,10 @@ festring dungeon::GetShortLevelDescription(int I)
 outputfile& operator<<(outputfile& SaveFile, const dungeon* Dungeon)
 {
   if(Dungeon)
-    {
-      SaveFile.Put(1);
-      Dungeon->Save(SaveFile);
-    }
+  {
+    SaveFile.Put(1);
+    Dungeon->Save(SaveFile);
+  }
   else
     SaveFile.Put(0);
 
@@ -175,10 +176,10 @@ outputfile& operator<<(outputfile& SaveFile, const dungeon* Dungeon)
 inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 {
   if(SaveFile.Get())
-    {
-      Dungeon = new dungeon;
-      Dungeon->Load(SaveFile);
-    }
+  {
+    Dungeon = new dungeon;
+    Dungeon->Load(SaveFile);
+  }
 
   return SaveFile;
 }
@@ -197,24 +198,24 @@ int dungeon::GetLevelTeleportDestination(int From) const
   int To;
 
   if(Index == ELPURI_CAVE)
+  {
+    if(RAND_2)
     {
-      if(RAND_2)
-	{
-	  To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
+      To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
 
-	  if(From > DARK_LEVEL)
-	    To = From;	    
-	}
-      else
-	{
-	  To = From - RAND_2 - RAND_2 - RAND_2 - RAND_2 - 1;
-
-	  if(To < 0)
-	    To = 0;
-	}
-
-      return To;
+      if(From > DARK_LEVEL)
+	To = From;	    
     }
+    else
+    {
+      To = From - RAND_2 - RAND_2 - RAND_2 - RAND_2 - 1;
+
+      if(To < 0)
+	To = 0;
+    }
+
+    return To;
+  }
 
   if(Index == UNDER_WATER_TUNNEL)
     return RAND_N(3);

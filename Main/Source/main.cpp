@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -31,10 +32,10 @@
 int Main(int argc, char **argv)
 {
   if(argc > 1 && festring(argv[1]) == "--version")
-    {
-      std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
-      return 0;
-    }
+  {
+    std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
+    return 0;
+  }
 
 #ifdef __DJGPP__
 
@@ -59,71 +60,71 @@ int Main(int argc, char **argv)
   igraph::LoadMenu();
 
   for(;;)
+  {
+    int Select = iosystem::Menu(igraph::GetMenuGraphic(),
+				v2(RES.X / 2, RES.Y / 2 - 20),
+				CONST_S("\r"),
+				CONST_S("Start Game\rContinue Game\r"
+					"Configuration\rHighscores\r"
+					"Quit\r"),
+				LIGHT_GRAY,
+				CONST_S("Released under the GNU\r"
+					"General Public License\r"
+					"More info: see COPYING\r"),
+				CONST_S("IVAN v" IVAN_VERSION "\r"));
+
+    switch(Select)
     {
-      int Select = iosystem::Menu(igraph::GetMenuGraphic(),
-				  vector2d(RES_X / 2, RES_Y / 2 - 20),
-				  CONST_S("\r"),
-				  CONST_S("Start Game\rContinue Game\r"
-					  "Configuration\rHighscores\r"
-					  "Quit\r"),
-				  LIGHT_GRAY,
-				  CONST_S("Released under the GNU\r"
-					  "General Public License\r"
-					  "More info: see COPYING\r"),
-				  CONST_S("IVAN v" IVAN_VERSION "\r"));
+     case 0:
+      if(game::Init())
+      {
+	igraph::UnLoadMenu();
 
-      switch(Select)
+	game::Run();
+	game::DeInit();
+	igraph::LoadMenu();
+      }
+
+      break;
+     case 1:
+      {
+	festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
+
+	if(LoadName.GetSize())
 	{
-	case 0:
-	  if(game::Init())
-	    {
-	      igraph::UnLoadMenu();
+	  LoadName.Resize(LoadName.GetSize() - 4);
 
-	      game::Run();
-	      game::DeInit();
-	      igraph::LoadMenu();
-	    }
-
-	  break;
-	case 1:
+	  if(game::Init(LoadName))
 	  {
-	    festring LoadName = iosystem::ContinueMenu(WHITE, LIGHT_GRAY, game::GetSaveDir());
-
-	    if(LoadName.GetSize())
-	      {
-		LoadName.Resize(LoadName.GetSize() - 4);
-
-		if(game::Init(LoadName))
-		  {
-		    igraph::UnLoadMenu();
-		    game::Run();
-		    game::DeInit();
-		    igraph::LoadMenu();
-		  }
-	      }
-
-	    break;
+	    igraph::UnLoadMenu();
+	    game::Run();
+	    game::DeInit();
+	    igraph::LoadMenu();
 	  }
-	case 2:
-	  ivanconfig::Show();
-	  break;
-	case 3:
-	  {
-	    highscore HScore;
-	    HScore.Draw();
-	    break;
-	  }
-	case 4:
-
-  #ifdef __DJGPP__
-
-	  /* Loads numlock state */
-
-	  _farpokeb(_dos_ds, 0x417, ShiftByteState);
-
-  #endif
-
-	  return 0;
 	}
+
+	break;
+      }
+     case 2:
+      ivanconfig::Show();
+      break;
+     case 3:
+      {
+	highscore HScore;
+	HScore.Draw();
+	break;
+      }
+     case 4:
+
+#ifdef __DJGPP__
+
+      /* Loads numlock state */
+
+      _farpokeb(_dos_ds, 0x417, ShiftByteState);
+
+#endif
+
+      return 0;
     }
+  }
 }

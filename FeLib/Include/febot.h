@@ -12,10 +12,6 @@
 #ifndef __FEBOT_H__
 #define __FEBOT_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <set>
 #include <list>
 
@@ -33,7 +29,7 @@ class febot
   void BeTalkedTo(festring);
   void Reply(festring&) const;
   void Amnesify() { Initialize(ChainLength); }
-  bool IsIgnorant() const { return WordChainSet.size() <= 1; }
+  truth IsIgnorant() const { return WordChainSet.size() <= 1; }
  private:
   struct wordchain
   {
@@ -51,7 +47,16 @@ class febot
   ushort ChainLength;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, const febot& Febot) { Febot.Save(SaveFile); return SaveFile; }
-inline inputfile& operator>>(inputfile& SaveFile, febot& Febot) { Febot.Load(SaveFile); return SaveFile; }
+inline outputfile& operator<<(outputfile& SaveFile, const febot& Febot)
+{
+  Febot.Save(SaveFile);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, febot& Febot)
+{
+  Febot.Load(SaveFile);
+  return SaveFile;
+}
 
 #endif

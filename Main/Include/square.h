@@ -1,33 +1,33 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __SQUARE_H__
 #define __SQUARE_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "area.h"
 #include "festring.h"
 #include "ivandef.h"
+#include "v2.h"
 
+class area;
 class gterrain;
 class oterrain;
-class festring;
+class outputfile;
+class inputfile;
+class character;
 
 class square
 {
  public:
-  square(area*, vector2d);
+  square(area*, v2);
   virtual ~square();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -35,14 +35,14 @@ class square
   virtual void RemoveCharacter();
   virtual character* GetCharacter() const { return Character; }
   ulong GetLastSeen() const { return LastSeen; }
-  vector2d GetPos() const { return Pos; }
+  v2 GetPos() const { return Pos; }
   area* GetArea() const { return AreaUnder; }
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
   festring GetMemorizedDescription() { return MemorizedDescription; }
   void SetMemorizedDescription(const festring& What) { MemorizedDescription = What; }
-  virtual bool CanBeSeenByPlayer(bool = false) const = 0;
-  virtual bool CanBeSeenFrom(vector2d, long, bool = false) const = 0;
+  virtual truth CanBeSeenByPlayer(truth = false) const = 0;
+  virtual truth CanBeSeenFrom(v2, long, truth = false) const = 0;
   void SendNewDrawRequest() { Flags |= NEW_DRAW_REQUEST; }
   void SendStrongNewDrawRequest() { Flags |= STRONG_NEW_DRAW_REQUEST; }
   const char* SurviveMessage(character*) const;
@@ -50,28 +50,39 @@ class square
   const char* DeathMessage(character*) const;
   const char* MonsterDeathVerb(character*) const;
   const char* ScoreEntry(character*) const;
-  bool IsFatalToStay() const;
+  truth IsFatalToStay() const;
   int GetEntryDifficulty() const;
   int GetRestModifier() const;
+  void IncStaticAnimatedEntities()
+  {
+    ++StaticAnimatedEntities;
+    ++AnimatedEntities;
+  }
+  void DecStaticAnimatedEntities()
+  {
+    --StaticAnimatedEntities;
+    --AnimatedEntities;
+  }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
-  bool CanBeSeenBy(const character*, bool = false) const;
-  color24 GetLuminance() const { return Luminance; }
-  square* GetNeighbourSquare(int I) const { return AreaUnder->GetNeighbourSquare(Pos, I); }
-  square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
+  truth CanBeSeenBy(const character*, truth = false) const;
+  col24 GetLuminance() const { return Luminance; }
+  square* GetNeighbourSquare(int) const;
+  square* GetNearSquare(v2) const;
   virtual int GetSquareWalkability() const = 0;
   void SetCharacter(character* What) { Character = What; }
   void AddFlags(ulong What) { Flags |= What; }
   void RemoveFlags(ulong What) { Flags &= ~What; }
-  virtual bool HasBeenSeen() const { return !!LastSeen; }
+  virtual truth HasBeenSeen() const { return LastSeen; }
   virtual void SurviveEffect(character*);
  protected:
   festring MemorizedDescription;
   area* AreaUnder;
   character* Character;
-  vector2d Pos;
-  color24 Luminance;
+  v2 Pos;
+  col24 Luminance;
   ulong Flags;
+  ushort StaticAnimatedEntities;
   ushort AnimatedEntities;
   uchar LastSeen;
 };

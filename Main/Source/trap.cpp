@@ -1,17 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through trapset.cpp */
 
-trapprototype::trapprototype(trap* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<trap>::Add(this); }
+trapprototype::trapprototype(trapspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<trap>::Add(this); }
 
 trap::trap() : entity(HAS_BE), Next(0) { }
 square* trap::GetSquareUnderEntity(int) const { return LSquareUnder; }
@@ -20,16 +21,12 @@ trap::~trap()
 {
 }
 
-trap::trap(donothing) : entity(HAS_BE), Next(0)
-{
-}
-
 void trap::Save(outputfile& SaveFile) const
 {
   SaveFile << (ushort)GetType();
 }
 
-void trap::Load(inputfile& SaveFile)
+void trap::Load(inputfile&)
 {
   LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
 }
@@ -59,9 +56,9 @@ inputfile& operator>>(inputfile& SaveFile, trapdata& Data)
   return SaveFile;
 }
 
-trap* trapprototype::CloneAndLoad(inputfile& SaveFile) const
+trap* trapprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  trap* Trap = Cloner(LOAD);
+  trap* Trap = Spawner();
   Trap->Load(SaveFile);
   return Trap;
 }

@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __WHANDLER_H__
 #define __WHANDLER_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #ifdef USE_SDL
 #include <vector>
@@ -34,34 +31,35 @@
 class globalwindowhandler
 {
  public:
-  static int GetKey(bool = true);
+  static int GetKey(truth = true);
   static int ReadKey();
-  static void InstallControlLoop(bool (*)());
-  static void DeInstallControlLoop(bool (*)());
+  static void InstallControlLoop(truth (*)());
+  static void DeInstallControlLoop(truth (*)());
   static ulong GetTick() { return Tick; }
-  static bool ControlLoopsInstalled() { return !!Controls; }
+  static truth ControlLoopsInstalled() { return Controls; }
   static void EnableControlLoops() { ControlLoopsEnabled = true; }
   static void DisableControlLoops() { ControlLoopsEnabled = false; }
 #ifdef USE_SDL
   static void Init();
-  static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
+  static void SetQuitMessageHandler(truth (*What)())
+  { QuitMessageHandler = What; }
   static void UpdateTick() { Tick = SDL_GetTicks() / 40; }
 #endif
 #ifdef __DJGPP__
   static void Init() { }
-  static void SetQuitMessageHandler(bool (*)()) { }
+  static void SetQuitMessageHandler(truth (*)()) { }
   static void UpdateTick() { Tick = uclock() * 25 / UCLOCKS_PER_SEC; }
 #endif
  private:
 #ifdef USE_SDL
   static void ProcessMessage(SDL_Event*);
   static std::vector<int> KeyBuffer;
-  static bool (*QuitMessageHandler)();
+  static truth (*QuitMessageHandler)();
 #endif
-  static bool (*ControlLoop[MAX_CONTROLS])();
+  static truth (*ControlLoop[MAX_CONTROLS])();
   static int Controls;
   static ulong Tick;
-  static bool ControlLoopsEnabled;
+  static truth ControlLoopsEnabled;
 };
 
 #endif

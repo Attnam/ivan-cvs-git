@@ -1,29 +1,30 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through areaset.cpp */
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), Luminance(0), Flags(IS_TRANSPARENT|MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE), AnimatedEntities(0), LastSeen(0) { }
+square::square(area* AreaUnder, v2 Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), Luminance(0), Flags(IS_TRANSPARENT|MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE), StaticAnimatedEntities(0), AnimatedEntities(0), LastSeen(0) { }
 
 square::~square()
 {
   character* Char = GetCharacter();
 
   if(Char)
-    {
-      for(int c = 0; c < Char->GetSquaresUnder(); ++c)
-	Char->GetSquareUnder(c)->Character = 0;
+  {
+    for(int c = 0; c < Char->GetSquaresUnder(); ++c)
+      Char->GetSquareUnder(c)->Character = 0;
 
-      delete Char;
-    }
+    delete Char;
+  }
 }
 
 void square::Save(outputfile& SaveFile) const
@@ -31,7 +32,7 @@ void square::Save(outputfile& SaveFile) const
   if(!Character || Character->IsMainPos(Pos))
     SaveFile << Character;
 
-  SaveFile << AnimatedEntities << MemorizedDescription;
+  SaveFile << StaticAnimatedEntities << AnimatedEntities << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
@@ -39,7 +40,7 @@ void square::Load(inputfile& SaveFile)
   if(!Character)
     SaveFile >> Character;
 
-  SaveFile >> AnimatedEntities >> MemorizedDescription;
+  SaveFile >> StaticAnimatedEntities >> AnimatedEntities >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
@@ -99,7 +100,7 @@ const char* square::ScoreEntry(character* Char) const
     return GetGTerrain()->ScoreEntry();
 }
 
-bool square::IsFatalToStay() const
+truth square::IsFatalToStay() const
 {
   return GetGTerrain()->IsFatalToStay() || (GetOTerrain() && GetOTerrain()->IsFatalToStay());
 }
@@ -114,7 +115,7 @@ int square::GetRestModifier() const
   return GetOTerrain() ? GetOTerrain()->GetRestModifier() : 1;
 }
 
-bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
+truth square::CanBeSeenBy(const character* Who, truth IgnoreDarkness) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer(IgnoreDarkness);
@@ -128,4 +129,14 @@ void square::SurviveEffect(character* Who)
     GetOTerrain()->SurviveEffect(Who);
 
   GetGTerrain()->SurviveEffect(Who);
+}
+
+square* square::GetNeighbourSquare(int I) const
+{
+  return AreaUnder->GetNeighbourSquare(Pos, I);
+}
+
+square* square::GetNearSquare(v2 Pos) const
+{
+  return AreaUnder->GetSquare(Pos);
 }

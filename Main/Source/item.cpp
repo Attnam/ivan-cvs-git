@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -14,45 +15,50 @@
 const char* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
 const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
 
-itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(int, int), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(const itemprototype* Base, itemspawner Spawner, itemcloner Cloner, const char* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
-bool itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
+truth itemdatabase::AllowRandomInstantiation() const { return !(Config & S_LOCK_ID); }
 
-item::item(donothing) : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0) { }
-bool item::IsOnGround() const { return Slot[0]->IsOnGround(); }
-bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
+item::item() : Slot(0), CloneMotherID(0), Fluid(0), LifeExpectancy(0) { }
+truth item::IsOnGround() const { return Slot[0]->IsOnGround(); }
+truth item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 double item::GetBaseDamage() const { return sqrt(5e-5 * GetWeaponStrength()) + GetDamageBonus(); }
 int item::GetBaseMinDamage() const { return int(GetBaseDamage() * 0.75); }
 int item::GetBaseMaxDamage() const { return int(GetBaseDamage() * 1.25) + 1; }
 int item::GetBaseToHitValue() const { return int(10000. / (1000 + GetWeight()) + GetTHVBonus()); }
 int item::GetBaseBlockValue() const { return int((10000. / (1000 + GetWeight()) + GetTHVBonus()) * GetBlockModifier() / 10000.); }
-bool item::IsInCorrectSlot(int I) const { return I == RIGHT_WIELDED_INDEX || I == LEFT_WIELDED_INDEX; }
-bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(*Slot)->GetEquipmentIndex()); }
+truth item::IsInCorrectSlot(int I) const { return I == RIGHT_WIELDED_INDEX || I == LEFT_WIELDED_INDEX; }
+truth item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(*Slot)->GetEquipmentIndex()); }
 int item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 int item::GetGraphicsContainerIndex() const { return GR_ITEM; }
-bool item::IsBroken() const { return !!(GetConfig() & BROKEN); }
+truth item::IsBroken() const { return GetConfig() & BROKEN; }
 const char* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(int I) const { return GetSquareUnder(I); }
 square* item::GetSquareUnder(int I) const { return Slot[I] ? Slot[I]->GetSquareUnder() : 0; }
 lsquare* item::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Slot[I]->GetSquareUnder()); }
-void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*,bool)) { Slot[0] = StackSlot; }
-bool item::IsAnimated() const { return object::IsAnimated() || Fluid; }
-bool item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
-bool item::IsConsumable(const character* Eater) const { return !!GetConsumeMaterial(Eater); }
-bool item::IsEatable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsSolid); }
-bool item::IsDrinkable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsLiquid); }
+void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*,truth)) { Slot[0] = StackSlot; }
+truth item::IsAnimated() const { return object::IsAnimated() || Fluid; }
+truth item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
+truth item::IsEatable(const character* Eater) const { return GetConsumeMaterial(Eater, &material::IsSolid) && IsConsumable(); }
+truth item::IsDrinkable(const character* Eater) const { return GetConsumeMaterial(Eater, &material::IsLiquid) && IsConsumable(); }
 pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &rawbitmap::IsTransparent; }
 void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void item::InitMaterials(const materialscript* M, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), CUP); }
+void item::InitMaterials(const materialscript* M, const materialscript*, truth CUP) { InitMaterials(M->Instantiate(), CUP); }
 int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
-item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), CloneMotherID(Item.CloneMotherID), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
+item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
 {
   Flags &= ENTITY_FLAGS|SQUARE_POSITION_BITS;
   ID = game::CreateNewItemID(this);
-  CloneMotherID.push_back(Item.ID);
+  CloneMotherID = new idholder(Item.ID);
+  idholder* TI = CloneMotherID;
+
+  for(idholder* II = Item.CloneMotherID; II; II = II->Next)
+    TI = TI->Next = new idholder(II->ID);
+
+  TI->Next = 0;
   Slot = new slot*[SquaresUnder];
 
   for(int c = 0; c < SquaresUnder; ++c)
@@ -67,17 +73,17 @@ item::~item()
   fluid** FP = Fluid;
 
   if(FP)
-    {
-      for(int c = 0; c < SquaresUnder; ++c)
-	for(fluid* F = FP[c]; F;)
-	  {
-	    fluid* ToDel = F;
-	    F = F->Next;
-	    delete ToDel;
-	  }
+  {
+    for(int c = 0; c < SquaresUnder; ++c)
+      for(fluid* F = FP[c]; F;)
+      {
+	fluid* ToDel = F;
+	F = F->Next;
+	delete ToDel;
+      }
 
-      delete [] FP;
-    }
+    delete [] FP;
+  }
 }
 
 void item::Fly(character* Thrower, int Direction, int Force)
@@ -89,78 +95,78 @@ void item::Fly(character* Thrower, int Direction, int Force)
   LSquareUnder->GetStack()->AddItem(this, false);
 
   if(!Range || GetSquaresUnder() != 1)
-    {
-      if(GetLSquareUnder()->GetRoom())
-	GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
-      return;
-    }
+  {
+    if(GetLSquareUnder()->GetRoom())
+      GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
+    return;
+  }
 
   if(Direction == RANDOM_DIR)
     Direction = RAND() & 7;
 
-  vector2d StartingPos = GetPos();
-  vector2d Pos = StartingPos;
-  vector2d DirVector = game::GetMoveVector(Direction);
-  bool Breaks = false;
+  v2 StartingPos = GetPos();
+  v2 Pos = StartingPos;
+  v2 DirVector = game::GetMoveVector(Direction);
+  truth Breaks = false;
   double BaseDamage, BaseToHitValue;
 
   /*** check ***/
 
   if(Thrower)
-    {
-      int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 1000;
-      BaseDamage = sqrt(5e-12 * GetWeaponStrength() * Force / Range) * Bonus;
-      BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
-    }
+  {
+    int Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 1000;
+    BaseDamage = sqrt(5e-12 * GetWeaponStrength() * Force / Range) * Bonus;
+    BaseToHitValue = 10 * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8 * Thrower->GetAttribute(PERCEPTION)) / Range;
+  }
   else
-    {
-      BaseDamage = sqrt(5e-6 * GetWeaponStrength() * Force / Range);
-      BaseToHitValue = 10 * 100 / (500 + GetWeight()) / Range;
-    }
+  {
+    BaseDamage = sqrt(5e-6 * GetWeaponStrength() * Force / Range);
+    BaseToHitValue = 10 * 100 / (500 + GetWeight()) / Range;
+  }
 
   int RangeLeft;
 
   for(RangeLeft = Range; RangeLeft; --RangeLeft)
+  {
+    if(!GetLevel()->IsValidPos(Pos + DirVector))
+      break;
+
+    lsquare* JustHit = GetNearLSquare(Pos + DirVector);
+
+    if(!JustHit->IsFlyable())
     {
-      if(!GetLevel()->IsValidPos(Pos + DirVector))
-	break;
-
-      lsquare* JustHit = GetNearLSquare(Pos + DirVector);
-
-      if(!JustHit->IsFlyable())
-	{
-	  Breaks = true;
-	  JustHit->GetOLTerrain()->HasBeenHitByItem(Thrower, this, int(BaseDamage * sqrt(RangeLeft)));
-	  break;
-	}
-      else
-	{
-	  clock_t StartTime = clock();
-	  Pos += DirVector;
-	  RemoveFromSlot();
-	  JustHit->GetStack()->AddItem(this, false);
-	  bool Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
-
-	  if(Draw)
-	    game::DrawEverything();
-
-	  if(JustHit->GetCharacter())
-	    {
-	      int Damage = int(BaseDamage * sqrt(RangeLeft));
-	      double ToHitValue = BaseToHitValue * RangeLeft;
-	      int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
-
-	      if(Returned == HIT)
-		Breaks = true;
-
-	      if(Returned != MISSED)
-		break;
-	    }
-
-	  if(Draw)
-	    while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
-	}
+      Breaks = true;
+      JustHit->GetOLTerrain()->HasBeenHitByItem(Thrower, this, int(BaseDamage * sqrt(RangeLeft)));
+      break;
     }
+    else
+    {
+      clock_t StartTime = clock();
+      Pos += DirVector;
+      RemoveFromSlot();
+      JustHit->GetStack()->AddItem(this, false);
+      truth Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
+
+      if(Draw)
+	game::DrawEverything();
+
+      if(JustHit->GetCharacter())
+      {
+	int Damage = int(BaseDamage * sqrt(RangeLeft));
+	double ToHitValue = BaseToHitValue * RangeLeft;
+	int Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
+
+	if(Returned == HIT)
+	  Breaks = true;
+
+	if(Returned != MISSED)
+	  break;
+      }
+
+      if(Draw)
+	while(clock() - StartTime < 0.03 * CLOCKS_PER_SEC);
+    }
+  }
 
   if(Breaks)
     ReceiveDamage(Thrower, int(sqrt(GetWeight() * RangeLeft) / 10), THROW|PHYSICAL_DAMAGE, Direction);
@@ -177,14 +183,14 @@ int item::HitCharacter(character* Thrower, character* Dude, int Damage, double T
     Thrower->Hostility(Dude);
 
   if(Dude->DodgesFlyingItem(this, ToHitValue)) 
-    {
-      if(Dude->IsPlayer())
-	ADD_MESSAGE("%s misses you.", CHAR_NAME(DEFINITE));
-      else if(Dude->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s misses %s.", CHAR_NAME(DEFINITE), Dude->CHAR_NAME(DEFINITE));
+  {
+    if(Dude->IsPlayer())
+      ADD_MESSAGE("%s misses you.", CHAR_NAME(DEFINITE));
+    else if(Dude->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s misses %s.", CHAR_NAME(DEFINITE), Dude->CHAR_NAME(DEFINITE));
 
-      return MISSED;
-    }
+    return MISSED;
+  }
 
   Dude->HasBeenHitByItem(Thrower, this, Damage, ToHitValue, Direction);
   return HIT;
@@ -201,7 +207,7 @@ int item::GetStrengthRequirement() const
   return int(1.25e-10 * WeightTimesSize * WeightTimesSize);
 }
 
-bool item::Apply(character* Applier)
+truth item::Apply(character* Applier)
 {
   if(Applier->IsPlayer())
     ADD_MESSAGE("You can't apply this!");
@@ -209,40 +215,40 @@ bool item::Apply(character* Applier)
   return false;
 }
 
-/* Returns bool that tells whether the Polymorph really happened */
+/* Returns truth that tells whether the Polymorph really happened */
 
-bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
+truth item::Polymorph(character* Polymorpher, stack* CurrentStack)
 {
   if(!IsPolymorphable())
     return false;
   else
+  {
+    if(Polymorpher && IsOnGround())
     {
-      if(Polymorpher && IsOnGround())
-	{
-	  room* Room = GetRoom();
+      room* Room = GetRoom();
 
-	  if(Room)
-	    Room->HostileAction(Polymorpher);
-	}
-
-      if(GetSquarePosition() != CENTER)
-	{
-	  stack* Stack = CurrentStack->GetLSquareUnder()->GetStackOfAdjacentSquare(GetSquarePosition());
-
-	  if(Stack)
-	    CurrentStack = Stack;
-	}
-
-      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true));
-      RemoveFromSlot();
-      SendToHell();
-      return true;
+      if(Room)
+	Room->HostileAction(Polymorpher);
     }
+
+    if(GetSquarePosition() != CENTER)
+    {
+      stack* Stack = CurrentStack->GetLSquareUnder()->GetStackOfAdjacentSquare(GetSquarePosition());
+
+      if(Stack)
+	CurrentStack = Stack;
+    }
+
+    CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, ANY_CATEGORY, 0, 0, 0, true));
+    RemoveFromSlot();
+    SendToHell();
+    return true;
+  }
 }
 
 /* Returns whether the Eater must stop eating the item */
 
-bool item::Consume(character* Eater, long Amount)
+truth item::Consume(character* Eater, long Amount)
 {
   material* ConsumeMaterial = GetConsumeMaterial(Eater);
 
@@ -250,11 +256,11 @@ bool item::Consume(character* Eater, long Amount)
     return true;
 
   if(Eater->IsPlayer() && !(Flags & CANNIBALIZED) && Eater->CheckCannibalism(ConsumeMaterial))
-    {
-      game::DoEvilDeed(25);
-      ADD_MESSAGE("You feel that this was an evil deed.");
-      Cannibalize();
-    }
+  {
+    game::DoEvilDeed(25);
+    ADD_MESSAGE("You feel that this was an evil deed.");
+    Cannibalize();
+  }
 
   ulong ID = GetID();
   material* Garbage = ConsumeMaterial->EatEffect(Eater, Amount);
@@ -262,20 +268,23 @@ bool item::Consume(character* Eater, long Amount)
   material* NewConsumeMaterial = NewConsuming->GetConsumeMaterial(Eater);
 
   if(!NewConsuming->Exists()
-  || !NewConsumeMaterial
-  || !NewConsumeMaterial->IsSameAs(ConsumeMaterial))
+     || !NewConsumeMaterial
+     || !NewConsumeMaterial->IsSameAs(ConsumeMaterial))
     ConsumeMaterial->FinishConsuming(Eater);
 
   delete Garbage;
   return !NewConsuming->Exists() || !NewConsumeMaterial;
 }
 
-bool item::CanBeEatenByAI(const character* Eater) const
+truth item::CanBeEatenByAI(const character* Eater) const
 {
+  material* ConsumeMaterial = GetConsumeMaterial(Eater);
+
   return (!Eater->IsPet()
-       || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
-       || !IsValuable())
-      && GetConsumeMaterial(Eater)->CanBeEatenByAI(Eater);
+	  || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
+	  || !IsValuable())
+    && IsConsumable()
+    && ConsumeMaterial && ConsumeMaterial->CanBeEatenByAI(Eater);
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -284,17 +293,18 @@ void item::Save(outputfile& SaveFile) const
   object::Save(SaveFile);
   SaveFile << (ushort)GetConfig();
   SaveFile << (ushort)Flags;
-  SaveFile << Size << ID << CloneMotherID << LifeExpectancy;
+  SaveFile << Size << ID << LifeExpectancy;
+  SaveLinkedList(SaveFile, CloneMotherID);
 
   if(Fluid)
-    {
-      SaveFile << bool(true);
+  {
+    SaveFile.Put(true);
 
-      for(int c = 0; c < SquaresUnder; ++c)
-	SaveLinkedList(SaveFile, Fluid[c]);
-    }
+    for(int c = 0; c < SquaresUnder; ++c)
+      SaveLinkedList(SaveFile, Fluid[c]);
+  }
   else
-    SaveFile << bool(false);
+    SaveFile.Put(false);
 }
 
 void item::Load(inputfile& SaveFile)
@@ -302,37 +312,38 @@ void item::Load(inputfile& SaveFile)
   object::Load(SaveFile);
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
   Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
-  SaveFile >> Size >> ID >> CloneMotherID >> LifeExpectancy;
+  SaveFile >> Size >> ID >> LifeExpectancy;
+  LoadLinkedList(SaveFile, CloneMotherID);
 
   if(LifeExpectancy)
     Enable();
 
   game::AddItemID(this, ID);
 
-  if(ReadType<bool>(SaveFile))
+  if(SaveFile.Get())
+  {
+    Fluid = new fluid*[SquaresUnder];
+
+    for(int c = 0; c < SquaresUnder; ++c)
     {
-      Fluid = new fluid*[SquaresUnder];
+      LoadLinkedList(SaveFile, Fluid[c]);
 
-      for(int c = 0; c < SquaresUnder; ++c)
-	{
-	  LoadLinkedList(SaveFile, Fluid[c]);
-
-	  for(fluid* F = Fluid[c]; F; F = F->Next)
-	    F->SetMotherItem(this);
-	}
+      for(fluid* F = Fluid[c]; F; F = F->Next)
+	F->SetMotherItem(this);
     }
+  }
 }
 
 void item::TeleportRandomly()
 {
   if(GetSquaresUnder() == 1) // gum solution
-    {
-      lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
-      MoveTo(Square->GetStack());
+  {
+    lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
+    MoveTo(Square->GetStack());
 
-      if(Square->CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s appears!", CHAR_NAME(INDEFINITE));
-    }
+    if(Square->CanBeSeenByPlayer())
+      ADD_MESSAGE("Suddenly %s appears!", CHAR_NAME(INDEFINITE));
+  }
 }
 
 int item::GetStrengthValue() const
@@ -344,19 +355,19 @@ void item::RemoveFromSlot()
 {
   for(int c = 0; c < SquaresUnder; ++c)
     if(Slot[c])
+    {
+      try
       {
-	try
-	  {
-	    Slot[c]->Empty();
-	  }
-	catch(quitrequest)
-	  {
-	    SendToHell();
-	    throw;
-	  }
-
-	Slot[c] = 0;
+	Slot[c]->Empty();
       }
+      catch(quitrequest)
+      {
+	SendToHell();
+	throw;
+      }
+
+      Slot[c] = 0;
+    }
 }
 
 void item::MoveTo(stack* Stack)
@@ -368,26 +379,26 @@ void item::MoveTo(stack* Stack)
 const char* item::GetItemCategoryName(long Category) // convert to array
 {
   switch(Category)
-    {
-    case HELMET: return "Helmets";
-    case AMULET: return "Amulets";
-    case CLOAK: return "Cloaks";
-    case BODY_ARMOR: return "Body armors";
-    case WEAPON: return "Weapons";
-    case SHIELD: return "Shields";
-    case RING: return "Rings";
-    case GAUNTLET: return "Gauntlets";
-    case BELT: return "Belts";
-    case BOOT: return "Boots";
-    case FOOD: return "Food";
-    case POTION: return "Potions";
-    case SCROLL: return "Scrolls";
-    case BOOK: return "Books";
-    case WAND: return "Wands";
-    case TOOL: return "Tools";
-    case VALUABLE: return "Valuables";
-    case MISC: return "Miscellaneous items";
-    }
+  {
+   case HELMET: return "Helmets";
+   case AMULET: return "Amulets";
+   case CLOAK: return "Cloaks";
+   case BODY_ARMOR: return "Body armors";
+   case WEAPON: return "Weapons";
+   case SHIELD: return "Shields";
+   case RING: return "Rings";
+   case GAUNTLET: return "Gauntlets";
+   case BELT: return "Belts";
+   case BOOT: return "Boots";
+   case FOOD: return "Food";
+   case POTION: return "Potions";
+   case SCROLL: return "Scrolls";
+   case BOOK: return "Books";
+   case WAND: return "Wands";
+   case TOOL: return "Tools";
+   case VALUABLE: return "Valuables";
+   case MISC: return "Miscellaneous items";
+  }
 
   return "Warezzz";
 }
@@ -395,23 +406,23 @@ const char* item::GetItemCategoryName(long Category) // convert to array
 int item::GetResistance(int Type) const
 {
   switch(Type&0xFFF)
-    {
-    case PHYSICAL_DAMAGE: return GetStrengthValue();
-    case SOUND:
-    case ENERGY:
-    case DRAIN:
-      return 0;
-    case FIRE: return GetFireResistance();
-    case POISON: return GetPoisonResistance();
-    case ELECTRICITY: return GetElectricityResistance();
-    case ACID: return GetAcidResistance();
-    }
+  {
+   case PHYSICAL_DAMAGE: return GetStrengthValue();
+   case SOUND:
+   case ENERGY:
+   case DRAIN:
+    return 0;
+   case FIRE: return GetFireResistance();
+   case POISON: return GetPoisonResistance();
+   case ELECTRICITY: return GetElectricityResistance();
+   case ACID: return GetAcidResistance();
+  }
 
   ABORT("Resistance lack detected!");
   return 0;
 }
 
-bool item::Open(character* Char)
+truth item::Open(character* Char)
 {
   if(Char->IsPlayer())
     ADD_MESSAGE("You can't open %s.", CHAR_NAME(DEFINITE));
@@ -419,9 +430,9 @@ bool item::Open(character* Char)
   return false;
 }
 
-item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
+item* itemprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  item* Item = Cloner(0, LOAD);
+  item* Item = Spawner(0, LOAD);
   Item->Load(SaveFile);
   Item->CalculateAll();
   return Item;
@@ -441,29 +452,30 @@ void item::Initialize(int NewConfig, int SpecialFlags)
     Slot[c] = 0;
 
   if(!(SpecialFlags & LOAD))
-    {
-      ID = game::CreateNewItemID(this);
-      databasecreator<item>::InstallDataBase(this, NewConfig);
-      LoadDataBaseStats();
-      RandomizeVisualEffects();
-      Flags |= CENTER << SQUARE_POSITION_SHIFT;
+  {
+    ID = game::CreateNewItemID(this);
+    databasecreator<item>::InstallDataBase(this, NewConfig);
+    LoadDataBaseStats();
+    RandomizeVisualEffects();
+    Flags |= CENTER << SQUARE_POSITION_SHIFT;
 
-      if(!(SpecialFlags & NO_MATERIALS))
-	GenerateMaterials();
-    }
+    if(!(SpecialFlags & NO_MATERIALS))
+      GenerateMaterials();
+  }
 
-  VirtualConstructor(SpecialFlags & LOAD);
+  if(!(SpecialFlags & LOAD))
+    PostConstruct();
 
   if(!(SpecialFlags & (LOAD|NO_MATERIALS)))
-    {
-      CalculateAll();
+  {
+    CalculateAll();
 
-      if(!(SpecialFlags & NO_PIC_UPDATE))
-	UpdatePictures();
-    }
+    if(!(SpecialFlags & NO_PIC_UPDATE))
+      UpdatePictures();
+  }
 }
 
-bool item::ShowMaterial() const
+truth item::ShowMaterial() const
 {
   if(GetMainMaterialConfig().Size == 1)
     return GetMainMaterial()->GetConfig() != GetMainMaterialConfig()[0];
@@ -479,12 +491,12 @@ long item::GetBlockModifier() const
     return GetSize() * GetRoundness() << 2;
 }
 
-bool item::CanBeSeenByPlayer() const
+truth item::CanBeSeenByPlayer() const
 {
   return CanBeSeenBy(PLAYER);
 }
 
-bool item::CanBeSeenBy(const character* Who) const
+truth item::CanBeSeenBy(const character* Who) const
 {
   for(int c = 0; c < SquaresUnder; ++c)
     if(Slot[c] && Slot[c]->CanBeSeenBy(Who))
@@ -516,36 +528,36 @@ void item::CalculateVolumeAndWeight()
 
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
-      {
-	Volume += GetMaterial(c)->GetVolume();
-	Weight += GetMaterial(c)->GetWeight();
-      }
+    {
+      Volume += GetMaterial(c)->GetVolume();
+      Weight += GetMaterial(c)->GetWeight();
+    }
 }
 
-void item::SignalEmitationIncrease(color24 EmitationUpdate)
+void item::SignalEmitationIncrease(col24 EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0)
-    {
-      game::CombineLights(Emitation, EmitationUpdate);
+  {
+    game::CombineLights(Emitation, EmitationUpdate);
 
-      for(int c = 0; c < SquaresUnder; ++c)
-	if(Slot[c])
-	  Slot[c]->SignalEmitationIncrease(EmitationUpdate);
-    }
+    for(int c = 0; c < SquaresUnder; ++c)
+      if(Slot[c])
+	Slot[c]->SignalEmitationIncrease(EmitationUpdate);
+  }
 }
 
-void item::SignalEmitationDecrease(color24 EmitationUpdate)
+void item::SignalEmitationDecrease(col24 EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
-    {
-      color24 Backup = Emitation;
-      CalculateEmitation();
+  {
+    col24 Backup = Emitation;
+    CalculateEmitation();
 
-      if(Backup != Emitation)
-	for(int c = 0; c < SquaresUnder; ++c)
-	  if(Slot[c])
-	    Slot[c]->SignalEmitationDecrease(EmitationUpdate);
-    }
+    if(Backup != Emitation)
+      for(int c = 0; c < SquaresUnder; ++c)
+	if(Slot[c])
+	  Slot[c]->SignalEmitationDecrease(EmitationUpdate);
+  }
 }
 
 void item::CalculateAll()
@@ -567,36 +579,38 @@ void item::WeaponSkillHit(int Hits)
 item* item::Duplicate(ulong Flags)
 {
   if(!(Flags & IGNORE_PROHIBITIONS)
-  && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
-   || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
-    || (MainMaterial
-     && !MainMaterial->CanBeMirrored())
-    || (GetSecondaryMaterial()
-     && !GetSecondaryMaterial()->CanBeMirrored())))))
+     && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
+	 || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
+				      || (MainMaterial
+					  && !(MainMaterial->GetCommonFlags() & CAN_BE_MIRRORED))
+				      || (GetSecondaryMaterial()
+					  && !(GetSecondaryMaterial()->GetCommonFlags() & CAN_BE_MIRRORED))))))
     return 0;
 
-  item* Clone = RawDuplicate();
+  item* Clone = GetProtoType()->Clone(this);
 
   if(Flags & MIRROR_IMAGE)
     Clone->SetLifeExpectancy(Flags >> LE_BASE_SHIFT & LE_BASE_RANGE,
 			     Flags >> LE_RAND_SHIFT & LE_RAND_RANGE);
 
-  CloneMotherID.push_back(ID);
+  idholder* I = new idholder(ID);
+  I->Next = CloneMotherID;
+  CloneMotherID = I;
   game::RemoveItemID(ID);
   ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
 }
 
-void item::AddInventoryEntry(const character*, festring& Entry, int Amount, bool ShowSpecialInfo) const
+void item::AddInventoryEntry(const character*, festring& Entry, int Amount, truth ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
-    {
-      Entry << Amount << ' ';
-      AddName(Entry, PLURAL);
-    }
+  {
+    Entry << Amount << ' ';
+    AddName(Entry, PLURAL);
+  }
 
   if(ShowSpecialInfo)
     Entry << " [" << GetWeight() * Amount << "g]";
@@ -607,46 +621,46 @@ const itemdatabase* itemprototype::ChooseBaseForConfig(itemdatabase** TempConfig
   if(!(ConfigNumber & BROKEN))
     return *TempConfig;
   else
-    {
-      ConfigNumber ^= BROKEN;
+  {
+    ConfigNumber ^= BROKEN;
 
-      for(int c = 0; c < Configs; ++c)
-	if(TempConfig[c]->Config == ConfigNumber)
-	  return TempConfig[c];
+    for(int c = 0; c < Configs; ++c)
+      if(TempConfig[c]->Config == ConfigNumber)
+	return TempConfig[c];
 
-      return *TempConfig;
-    }
+    return *TempConfig;
+  }
 }
 
-bool item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
+truth item::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY|ACID))
+  {
+    int StrengthValue = GetStrengthValue();
+
+    if(!StrengthValue)
+      StrengthValue = 1;
+
+    if(Damage > StrengthValue << 2 && RAND() & 3 && RAND() % (25 * Damage / StrengthValue) >= 100)
     {
-      int StrengthValue = GetStrengthValue();
-
-      if(!StrengthValue)
-	StrengthValue = 1;
-
-      if(Damage > StrengthValue << 2 && RAND() & 3 && RAND() % (25 * Damage / StrengthValue) >= 100)
-	{
-	  Break(Damager, Dir);
-	  return true;
-	}
+      Break(Damager, Dir);
+      return true;
     }
+  }
 
   if(Type & ACID && IsBroken() && IsDestroyable(Damager))
+  {
+    int StrengthValue = GetStrengthValue();
+
+    if(!StrengthValue)
+      StrengthValue = 1;
+
+    if(Damage > StrengthValue << 4 && !(RAND() & 3) && RAND() % (100 * Damage / StrengthValue) >= 100)
     {
-      int StrengthValue = GetStrengthValue();
-
-      if(!StrengthValue)
-	StrengthValue = 1;
-
-      if(Damage > StrengthValue << 4 && !(RAND() & 3) && RAND() % (100 * Damage / StrengthValue) >= 100)
-	{
-	  Destroy(Damager, Dir);
-	  return true;
-	}
+      Destroy(Damager, Dir);
+      return true;
     }
+  }
 
   return false;
 }
@@ -658,16 +672,16 @@ void itemdatabase::InitDefaults(const itemprototype* NewProtoType, int NewConfig
   Config = NewConfig;
 
   if(NewConfig & BROKEN)
-    {
-      if(Adjective.GetSize())
-	Adjective.Insert(0, "broken ");
-      else
-	Adjective = CONST_S("broken");
+  {
+    if(Adjective.GetSize())
+      Adjective.Insert(0, "broken ");
+    else
+      Adjective = CONST_S("broken");
 
-      DefaultSize >>= 1;
-      FormModifier >>= 2;
-      StrengthModifier >>= 1;
-    }
+    DefaultSize >>= 1;
+    FormModifier >>= 2;
+    StrengthModifier >>= 1;
+  }
 }
 
 long item::GetNutritionValue() const
@@ -689,7 +703,7 @@ void item::SignalSpoil(material*)
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s spoils completely.", CHAR_NAME(DEFINITE));
 
-  bool Equipped = PLAYER->Equips(this);
+  truth Equipped = PLAYER->Equips(this);
   Disappear();
 
   if(Equipped)
@@ -707,18 +721,18 @@ item* item::DuplicateToStack(stack* CurrentStack, ulong Flags)
   return Duplicated;
 }
 
-bool item::CanBePiledWith(const item* Item, const character* Viewer) const
+truth item::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return GetType() == Item->GetType()
-      && GetConfig() == Item->GetConfig()
-      && (WeightIsIrrelevant() || Weight == Item->Weight)
-      && MainMaterial->IsSameAs(Item->MainMaterial)
-      && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
-      && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
-      && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
-      && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
-      && !Fluid && !Item->Fluid
-      && !LifeExpectancy == !Item->LifeExpectancy;
+    && GetConfig() == Item->GetConfig()
+		    && (WeightIsIrrelevant() || Weight == Item->Weight)
+		    && MainMaterial->IsSameAs(Item->MainMaterial)
+ && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
+ && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
+ && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
+ && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
+		    && !Fluid && !Item->Fluid
+ && !LifeExpectancy == !Item->LifeExpectancy;
 }
 
 void item::Break(character* Breaker, int)
@@ -727,14 +741,14 @@ void item::Break(character* Breaker, int)
     ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetBreakVerb());
 
   if(Breaker && IsOnGround())
-    {
-      room* Room = GetRoom();
+  {
+    room* Room = GetRoom();
 
-      if(Room)
-	Room->HostileAction(Breaker);
-    }
+    if(Room)
+      Room->HostileAction(Breaker);
+  }
 
-  item* Broken = RawDuplicate();
+  item* Broken = GetProtoType()->Clone(this);
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
   DonateFluidsTo(Broken);
@@ -752,16 +766,16 @@ void item::Be()
 
   if(Exists() && LifeExpectancy)
     if(LifeExpectancy == 1)
-      {
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
 
-	bool Equipped = PLAYER->Equips(this);
-	Disappear();
+      truth Equipped = PLAYER->Equips(this);
+      Disappear();
 
-	if(Equipped)
-	  game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
-      }
+      if(Equipped)
+	game::AskForKeyPress(CONST_S("Equipment destroyed! [press any key to continue]"));
+    }
     else
       --LifeExpectancy;
 }
@@ -797,15 +811,15 @@ item* item::Fix()
   item* Fixed = this;
 
   if(IsBroken())
-    {
-      Fixed = RawDuplicate();
-      Fixed->SetConfig(GetConfig() ^ BROKEN);
-      Fixed->SetSize(Fixed->GetSize() << 1);
-      DonateFluidsTo(Fixed);
-      DonateIDTo(Fixed);
-      DonateSlotTo(Fixed);
-      SendToHell();
-    }
+  {
+    Fixed = GetProtoType()->Clone(this);
+    Fixed->SetConfig(GetConfig() ^ BROKEN);
+    Fixed->SetSize(Fixed->GetSize() << 1);
+    DonateFluidsTo(Fixed);
+    DonateIDTo(Fixed);
+    DonateSlotTo(Fixed);
+    SendToHell();
+  }
 
   return Fixed;
 }
@@ -813,17 +827,17 @@ item* item::Fix()
 void item::DonateSlotTo(item* Item)
 {
   if(Slot[0])
-    {
-      Slot[0]->DonateTo(Item);
-      Slot[0] = 0;
+  {
+    Slot[0]->DonateTo(Item);
+    Slot[0] = 0;
 
-      for(int c = 1; c < SquaresUnder; ++c)
-	if(Slot[c])
-	  {
-	    Slot[c]->Empty();
-	    Slot[c] = 0;
-	  }
-    }
+    for(int c = 1; c < SquaresUnder; ++c)
+      if(Slot[c])
+      {
+	Slot[c]->Empty();
+	Slot[c] = 0;
+      }
+  }
 }
 
 int item::GetSpoilLevel() const
@@ -835,20 +849,20 @@ void item::SignalSpoilLevelChange(material*)
 {
   if(!IsAnimated() && GetSpoilLevel() && Slot[0] && Slot[0]->IsVisible())
     for(int c = 0; c < SquaresUnder; ++c)
-      GetSquareUnder(c)->IncAnimatedEntities();
+      GetSquareUnder(c)->IncStaticAnimatedEntities();
 
   SignalVolumeAndWeightChange(); // gum
   UpdatePictures();
 }
 
-bool item::AllowSpoil() const
+truth item::AllowSpoil() const
 {
   if(IsOnGround())
-    {
-      lsquare* Square = GetLSquareUnder();
-      int RoomNumber = Square->GetRoomIndex();
-      return !RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->AllowSpoil(this);
-    }
+  {
+    lsquare* Square = GetLSquareUnder();
+    int RoomNumber = Square->GetRoomIndex();
+    return !RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->AllowSpoil(this);
+  }
   else
     return true;
 }
@@ -931,15 +945,6 @@ long item::GetTruePrice() const
   return Price;
 }
 
-bool item::IsSparkling() const
-{
-  for(int c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->IsSparkling())
-      return true;
-
-  return false;
-}
-
 #ifdef WIZARD
 
 void item::AddAttackInfo(felist& List) const
@@ -971,16 +976,16 @@ void item::AddMiscellaneousInfo(felist& List) const
 void item::PreProcessForBone()
 {
   if(IsQuestItem())
-    {
-      RemoveFromSlot();
-      SendToHell();
-    }
+  {
+    RemoveFromSlot();
+    SendToHell();
+  }
   else
-    {
-      game::RemoveItemID(ID);
-      ID = -ID;
-      game::AddItemID(this, ID);
-    }
+  {
+    game::RemoveItemID(ID);
+    ID = -ID;
+    game::AddItemID(this, ID);
+  }
 }
 
 void item::PostProcessForBone()
@@ -989,33 +994,33 @@ void item::PostProcessForBone()
   game::RemoveItemID(ID);
 
   if(BI == game::GetBoneItemIDMap().end())
-    {
-      ulong NewID = game::CreateNewItemID(this);
-      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
-      ID = NewID;
-    }
+  {
+    ulong NewID = game::CreateNewItemID(this);
+    game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(-ID, NewID));
+    ID = NewID;
+  }
   else
+  {
+    if(game::SearchItem(BI->second))
+      int esko = esko = 2;
+
+    ID = BI->second;
+    game::AddItemID(this, ID);
+  }
+
+  for(idholder* I = CloneMotherID; I; I = I->Next)
+  {
+    BI = game::GetBoneItemIDMap().find(I->ID);
+
+    if(BI == game::GetBoneItemIDMap().end())
     {
-      if(game::SearchItem(BI->second))
-	int esko = esko = 2;
-
-      ID = BI->second;
-      game::AddItemID(this, ID);
+      ulong NewCloneMotherID = game::CreateNewItemID(0);
+      game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(I->ID, NewCloneMotherID));
+      I->ID = NewCloneMotherID;
     }
-
-  for(uint c = 0; c < CloneMotherID.size(); ++c)
-    {
-      BI = game::GetBoneItemIDMap().find(CloneMotherID[c]);
-
-      if(BI == game::GetBoneItemIDMap().end())
-	{
-	  ulong NewCloneMotherID = game::CreateNewItemID(0);
-	  game::GetBoneItemIDMap().insert(std::pair<ulong, ulong>(CloneMotherID[c], NewCloneMotherID));
-	  CloneMotherID[c] = NewCloneMotherID;
-	}
-      else
-	CloneMotherID[c] = BI->second;
-    }
+    else
+      I->ID = BI->second;
+  }
 }
 
 void item::SetConfig(int NewConfig, int SpecialFlags)
@@ -1040,66 +1045,76 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
   /* Gum solution */
 
   if(TempConfig[0]->CreateLockConfigurations)
-    {
-      const item::database*const* KeyConfigData = key_ProtoType.GetConfigData();
-      int KeyConfigSize = key_ProtoType.GetConfigSize();
-      int OldConfigs = Configs;
+  {
+    const item::database*const* KeyConfigData = key::ProtoType.GetConfigData();
+    int KeyConfigSize = key::ProtoType.GetConfigSize();
+    int OldConfigs = Configs;
 
-      for(int c1 = 0; c1 < OldConfigs; ++c1)
-	if(!TempConfig[c1]->IsAbstract)
-	  {
-	    int BaseConfig = TempConfig[c1]->Config;
-	    int NewConfig = BaseConfig | BROKEN_LOCK;
-	    itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);//Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
-	    ConfigDataBase->InitDefaults(this, NewConfig);
-	    ConfigDataBase->PostFix << "with a broken lock";
-	    ConfigDataBase->Possibility = 0;
-	    TempConfig[Configs++] = ConfigDataBase;
+    for(int c1 = 0; c1 < OldConfigs; ++c1)
+      if(!TempConfig[c1]->IsAbstract)
+      {
+	int BaseConfig = TempConfig[c1]->Config;
+	int NewConfig = BaseConfig | BROKEN_LOCK;
+	itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);//Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	ConfigDataBase->InitDefaults(this, NewConfig);
+	ConfigDataBase->PostFix << "with a broken lock";
+	ConfigDataBase->Possibility = 0;
+	TempConfig[Configs++] = ConfigDataBase;
 
-	    for(int c2 = 0; c2 < KeyConfigSize; ++c2)
-	      {
-		NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-		ConfigDataBase = new itemdatabase(*TempConfig[c1]);// = Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
-		ConfigDataBase->InitDefaults(this, NewConfig);
-		ConfigDataBase->PostFix << "with " << KeyConfigData[c2]->AdjectiveArticle << ' ' << KeyConfigData[c2]->Adjective << " lock";
-		ConfigDataBase->Possibility = 0;
-		TempConfig[Configs++] = ConfigDataBase;
-	      }
-	  }
-    }
+	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
+	{
+	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
+	  ConfigDataBase = new itemdatabase(*TempConfig[c1]);// = Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	  ConfigDataBase->InitDefaults(this, NewConfig);
+	  ConfigDataBase->PostFix << "with ";
+
+	  if(KeyConfigData[c2]->UsesLongAdjectiveArticle)
+	    ConfigDataBase->PostFix << "an ";
+	  else
+	    ConfigDataBase->PostFix << "a ";
+
+	  ConfigDataBase->PostFix << KeyConfigData[c2]->Adjective << " lock";
+	  ConfigDataBase->Possibility = 0;
+	  TempConfig[Configs++] = ConfigDataBase;
+	}
+      }
+  }
 
   return Configs;
 }
 
-void item::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+void item::Draw(blitdata& BlitData) const
 {
   const int AF = GraphicData.AnimationFrames;
-  const bitmap* P = GraphicData.Picture[!AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF];
+  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
+  const bitmap* P = GraphicData.Picture[F];
 
-  if(AllowAlpha)
-    P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  if(BlitData.CustomData & ALLOW_ALPHA)
+    P->AlphaLuminanceBlit(BlitData);
   else
-    P->LuminanceMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->LuminanceMaskedBlit(BlitData);
 
   if(Fluid && ShowFluids())
-    DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+    DrawFluids(BlitData);
 }
 
-vector2d item::GetLargeBitmapPos(vector2d BasePos, int I) const
+v2 item::GetLargeBitmapPos(v2 BasePos, int I) const
 {
   const int SquareIndex = I ? I / (GraphicData.AnimationFrames >> 2) : 0;
-  return vector2d(SquareIndex & 1 ? BasePos.X + 16 : BasePos.X, SquareIndex & 2 ? BasePos.Y + 16 : BasePos.Y);
+  return v2(SquareIndex & 1 ? BasePos.X + 16 : BasePos.X, SquareIndex & 2 ? BasePos.Y + 16 : BasePos.Y);
 }
 
-void item::LargeDraw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate, bool AllowAlpha) const
+void item::LargeDraw(blitdata& BlitData) const
 {
   const int TrueAF = GraphicData.AnimationFrames >> 2;
-  const bitmap* P = GraphicData.Picture[!AllowAnimate ? SquareIndex * TrueAF : SquareIndex * TrueAF + (GET_TICK() % TrueAF)];
+  const int SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
+  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) ? SquareIndex * TrueAF : SquareIndex * TrueAF + (GET_TICK() & (TrueAF - 1));
+  const bitmap* P = GraphicData.Picture[F];
 
-  if(AllowAlpha)
-    P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  if(BlitData.CustomData & ALLOW_ALPHA)
+    P->AlphaLuminanceBlit(BlitData);
   else
-    P->LuminanceMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->LuminanceMaskedBlit(BlitData);
 }
 
 void item::DonateIDTo(item* Item)
@@ -1124,88 +1139,88 @@ const rawbitmap* item::GetRawPicture() const
 
 void item::RemoveFluid(fluid* ToBeRemoved)
 {
-  bool HasFluids = false;
+  truth HasFluids = false;
 
   for(int c = 0; c < SquaresUnder; ++c)
+  {
+    fluid* F = Fluid[c];
+
+    if(F == ToBeRemoved)
+      Fluid[c] = F->Next;
+    else if(F)
     {
-      fluid* F = Fluid[c];
+      fluid* LF = F;
 
-      if(F == ToBeRemoved)
-	Fluid[c] = F->Next;
-      else if(F)
+      for(F = F->Next; F; LF = F, F = F->Next)
+	if(F == ToBeRemoved)
 	{
-	  fluid* LF = F;
-
-	  for(F = F->Next; F; LF = F, F = F->Next)
-	    if(F == ToBeRemoved)
-	      {
-		LF->Next = F->Next;
-		break;
-	      }
+	  LF->Next = F->Next;
+	  break;
 	}
-
-      if(Fluid[c])
-	HasFluids = true;
     }
+
+    if(Fluid[c])
+      HasFluids = true;
+  }
 
   UpdatePictures();
 
   if(!HasFluids)
-    {
-      delete [] Fluid;
-      Fluid = 0;
+  {
+    delete [] Fluid;
+    Fluid = 0;
 
-      if(!IsAnimated() && Slot[0]->IsVisible())
-	GetSquareUnder()->DecAnimatedEntities();
-    }
+    if(!IsAnimated() && Slot[0]->IsVisible())
+      GetSquareUnder()->DecStaticAnimatedEntities();
+  }
 
   SignalEmitationDecrease(ToBeRemoved->GetEmitation());
   SignalVolumeAndWeightChange();
 }
 
-void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, bool IsInside)
+void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, truth IsInside)
 {
   if(Slot[0])
-    {
-      if(!IsAnimated() && !Fluid && Slot[0]->IsVisible() && ToBeAdded->GetVolume())
-	GetSquareUnder()->IncAnimatedEntities();
+  {
+    if(!IsAnimated() && !Fluid && Slot[0]->IsVisible() && ToBeAdded->GetVolume())
+      GetSquareUnder()->IncStaticAnimatedEntities();
 
-      SendNewDrawAndMemorizedUpdateRequest();
-    }
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
 
   if(Fluid)
-    {
-      fluid* F = Fluid[SquareIndex];
+  {
+    fluid* F = Fluid[SquareIndex];
 
-      if(!F)
-	Fluid[SquareIndex] = new fluid(ToBeAdded, this, LocationName, IsInside);
-      else
-	{
-	  fluid* LF;
-
-	  do
-	    {
-	      if(ToBeAdded->IsSameAs(F->GetLiquid()))
-		{
-		  F->AddLiquidAndVolume(ToBeAdded->GetVolume());
-		  delete ToBeAdded;
-		  return;
-		}
-
-	      LF = F;
-	      F = F->Next;
-	    }
-	  while(F);
-
-	  LF->Next = new fluid(ToBeAdded, this, LocationName, IsInside);
-	}
-    }
-  else
-    {
-      Fluid = new fluid*[SquaresUnder];
-      memset(Fluid, 0, SquaresUnder * sizeof(fluid*));
+    if(!F)
       Fluid[SquareIndex] = new fluid(ToBeAdded, this, LocationName, IsInside);
+    else
+    {
+      fluid* LF;
+
+      do
+      {
+	if(ToBeAdded->IsSameAs(F->GetLiquid()))
+	{
+	  F->AddLiquidAndVolume(ToBeAdded->GetVolume());
+	  delete ToBeAdded;
+	  return;
+	}
+
+	LF = F;
+	F = F->Next;
+      }
+      while(F);
+
+      LF->Next = new fluid(ToBeAdded, this, LocationName, IsInside);
     }
+  }
+  else
+  {
+    Fluid = new fluid*[SquaresUnder];
+    memset(Fluid, 0, SquaresUnder * sizeof(fluid*));
+    Fluid[SquareIndex] = new fluid(ToBeAdded, this, LocationName, IsInside);
+  }
 
   UpdatePictures();
   SignalVolumeAndWeightChange();
@@ -1217,11 +1232,11 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
   if(!game::IsInWilderness())
     for(int c = 0; c < SquaresUnder; ++c)
       if(Slot[c])
-	{
-	  lsquare* Square = GetLSquareUnder(c);
-	  Square->SendNewDrawRequest();
-	  Square->SendMemorizedUpdateRequest();
-	}
+      {
+	lsquare* Square = GetLSquareUnder(c);
+	Square->SendNewDrawRequest();
+	Square->SendMemorizedUpdateRequest();
+      }
 }
 
 void item::CalculateEmitation()
@@ -1252,56 +1267,58 @@ void item::SpillFluid(character*, liquid* Liquid, int SquareIndex)
 void item::TryToRust(long LiquidModifier)
 {
   if(MainMaterial->TryToRust(LiquidModifier))
-    {
-      if(CanBeSeenByPlayer())
-	if(MainMaterial->GetRustLevel() == NOT_RUSTED)
-	  ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+  {
+    if(CanBeSeenByPlayer())
+      if(MainMaterial->GetRustLevel() == NOT_RUSTED)
+	ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
+      else
+	ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
 
-      MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
-    }
+    MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
+  }
 }
 
-void item::CheckFluidGearPictures(vector2d ShadowPos, int SpecialFlags, bool BodyArmor)
+void item::CheckFluidGearPictures(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
 {
   if(Fluid)
     for(fluid* F = Fluid[0]; F; F = F->Next)
       F->CheckGearPicture(ShadowPos, SpecialFlags, BodyArmor);
 }
 
-void item::DrawFluidGearPictures(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SpecialFlags, bool AllowAnimate) const
+void item::DrawFluidGearPictures(blitdata& BlitData, int SpecialFlags) const
 {
   if(Fluid)
     for(const fluid* F = Fluid[0]; F; F = F->Next)
-      F->DrawGearPicture(Bitmap, Pos, Luminance, SpecialFlags, AllowAnimate);
+      F->DrawGearPicture(BlitData, SpecialFlags);
 }
 
-void item::DrawFluidBodyArmorPictures(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SpecialFlags, bool AllowAnimate) const
+void item::DrawFluidBodyArmorPictures(blitdata& BlitData, int SpecialFlags) const
 {
   if(Fluid)
     for(const fluid* F = Fluid[0]; F; F = F->Next)
-      F->DrawBodyArmorPicture(Bitmap, Pos, Luminance, SpecialFlags, AllowAnimate);
+      F->DrawBodyArmorPicture(BlitData, SpecialFlags);
 }
 
-void item::DrawFluids(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
+void item::DrawFluids(blitdata& BlitData) const
 {
+  const int SquareIndex = BlitData.CustomData & SQUARE_INDEX_MASK;
+
   for(const fluid* F = Fluid[SquareIndex]; F; F = F->Next)
-    F->Draw(Bitmap, Pos, Luminance, AllowAnimate);
+    F->Draw(BlitData);
 }
 
 void item::ReceiveAcid(material*, const festring&, long Modifier)
 {
-  if(!GetMainMaterial()->IsImmuneToAcid())
-    {
-      int Damage = Modifier / 1000;
+  if(GetMainMaterial()->GetInteractionFlags() & CAN_DISSOLVE)
+  {
+    int Damage = Modifier / 1000;
 
-      if(Damage)
-	{
-	  Damage += RAND() % Damage;
-	  ReceiveDamage(0, Damage, ACID);
-	}
+    if(Damage)
+    {
+      Damage += RAND() % Damage;
+      ReceiveDamage(0, Damage, ACID);
     }
+  }
 }
 
 void item::DonateFluidsTo(item* Item)
@@ -1309,10 +1326,10 @@ void item::DonateFluidsTo(item* Item)
   if(Fluid)
     for(int c = 0; c < GetSquaresUnder(); ++c)
       for(fluid* F = Fluid[c]; F; F = F->Next)
-	{
-	  liquid* Liquid = F->GetLiquid();
-	  Item->AddFluid(Liquid->CloneLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
-	}
+      {
+	liquid* Liquid = F->GetLiquid();
+	Item->AddFluid(Liquid->SpawnMoreLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
+      }
 }
 
 void item::Destroy(character* Destroyer, int)
@@ -1321,14 +1338,14 @@ void item::Destroy(character* Destroyer, int)
     ADD_MESSAGE("%s is destroyed.", CHAR_NAME(DEFINITE));
 
   if(Destroyer && IsOnGround())
-    {
-      room* Room = GetRoom();
+  {
+    room* Room = GetRoom();
 
-      if(Room)
-	Room->HostileAction(Destroyer);
-    }
+    if(Room)
+      Room->HostileAction(Destroyer);
+  }
 
-  bool Equipped = PLAYER->Equips(this);
+  truth Equipped = PLAYER->Equips(this);
   RemoveFromSlot();
   SendToHell();
 
@@ -1346,12 +1363,12 @@ void item::RemoveRust()
 void item::SetSpoilPercentage(int Value)
 {
   for(int c = 0; c < GetMaterials(); ++c)
-    {
-      material* Material = GetMaterial(c);
+  {
+    material* Material = GetMaterial(c);
 
-      if(Material && Material->CanSpoil())
-	Material->SetSpoilCounter(Material->GetSpoilModifier() * Value / 100);
-    }
+    if(Material && Material->CanSpoil())
+      Material->SetSpoilCounter(Material->GetSpoilModifier() * Value / 100);
+  }
 }
 
 void item::RedistributeFluids()
@@ -1376,7 +1393,7 @@ material* item::RemoveMaterial(material*)
   return 0;
 }
 
-void item::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
+void item::InitMaterials(material* FirstMaterial, truth CallUpdatePictures)
 {
   InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
   SignalVolumeAndWeightChange();
@@ -1400,13 +1417,13 @@ void item::SignalSquarePositionChange(int Position)
   Flags |= Position << SQUARE_POSITION_SHIFT;
 }
 
-bool item::Read(character* Reader)
+truth item::Read(character* Reader)
 {
   Reader->StartReading(this, GetReadDifficulty());
   return true;
 }
 
-bool item::CanBeHardened(const character*) const
+truth item::CanBeHardened(const character*) const
 {
   return MainMaterial->GetHardenedMaterial(this) != NONE;
 }
@@ -1417,7 +1434,7 @@ void item::SetLifeExpectancy(int Base, int RandPlus)
   Enable();
 }
 
-bool item::IsVeryCloseToSpoiling() const
+truth item::IsVeryCloseToSpoiling() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && !GetMaterial(c)->IsVeryCloseToSpoiling())
@@ -1426,18 +1443,18 @@ bool item::IsVeryCloseToSpoiling() const
   return true;
 }
 
-bool item::IsValuable() const
+truth item::IsValuable() const
 {
   if(DataBase->IsValuable)
     return true;
 
   for(int c = 0; c < GetMaterials(); ++c)
-    {
-      material* M = GetMaterial(c);
+  {
+    material* M = GetMaterial(c);
 
-      if(M && M->IsValuable())
-	return true;
-    }
+    if(M && M->GetCommonFlags() & IS_VALUABLE)
+      return true;
+  }
 
   return false;
 }
@@ -1447,11 +1464,11 @@ int item::GetHinderVisibilityBonus(const character* Char) const
   int Bonus = 0;
 
   if(GetGearStates() & INFRA_VISION
-  && !Char->TemporaryStateIsActivated(INFRA_VISION))
+     && !Char->TemporaryStateIsActivated(INFRA_VISION))
     Bonus += 20000;
 
   if(GetGearStates() & ESP
-  && !Char->TemporaryStateIsActivated(ESP))
+     && !Char->TemporaryStateIsActivated(ESP))
     Bonus += 20000;
 
   if(!game::IsDark(GetEmitation()))
@@ -1462,7 +1479,7 @@ int item::GetHinderVisibilityBonus(const character* Char) const
 
 long item::GetFixPrice() const
 {
-  item* Clone = RawDuplicate();
+  item* Clone = GetProtoType()->Clone(this);
   Clone = Clone->Fix();
   Clone->RemoveRust();
   long FixPrice = Clone->GetTruePrice();
@@ -1475,21 +1492,21 @@ void item::AddTrapName(festring& String, int Amount) const
   if(Amount == 1)
     AddName(String, DEFINITE);
   else
-    {
-      String << Amount << ' ';
-      AddName(String, PLURAL);
-    }
+  {
+    String << Amount << ' ';
+    AddName(String, PLURAL);
+  }
 }
 
-bool item::WillSpoil() const
+truth item::WillSpoil() const
 {
   for(int c = 0; c < GetMaterials(); ++c)
-    {
-      const material* Material = GetMaterial(c);
+  {
+    const material* Material = GetMaterial(c);
 
-      if(Material && Material->Spoils())
-	return true;
-    }
+    if(Material && Material->Spoils())
+      return true;
+  }
 
   return false;
 }
@@ -1499,17 +1516,17 @@ int item::GetMaxSpoilPercentage() const
   int MaxPercentage = 0;
 
   for(int c = 0; c < GetMaterials(); ++c)
-    {
-      const material* Material = GetMaterial(c);
+  {
+    const material* Material = GetMaterial(c);
 
-      if(Material)
-	MaxPercentage = Max(MaxPercentage, Material->GetSpoilPercentage());
-    }
+    if(Material)
+      MaxPercentage = Max(MaxPercentage, Material->GetSpoilPercentage());
+  }
 
   return MaxPercentage;
 }
 
-bool item::HasPrice() const
+truth item::HasPrice() const
 {
   return GetPrice() || GetMaterialPrice();
 }
@@ -1518,4 +1535,16 @@ void item::Disappear()
 {
   RemoveFromSlot();
   SendToHell();
+}
+
+outputfile& operator<<(outputfile& SaveFile, const idholder* IdHolder)
+{
+  SaveFile << IdHolder->ID;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, idholder*& IdHolder)
+{
+  IdHolder = new idholder(ReadType<ulong>(SaveFile));
+  return SaveFile;
 }

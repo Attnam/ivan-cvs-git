@@ -1,19 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* 
  * NOTICE!!!
- * This file contains SPOILERS, which might ruin your IVAN experience totally.
- * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
- * don't know what you're doing. So from here on, proceed at your own risk!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
  */
 
 /* Numerical item data loaded during game startup */
@@ -42,13 +45,13 @@ item
 	/* Obligatory: BitmapPos */
 	Price = 0;
 	BaseEmitation = 0;
-	Article = "a";
+	UsesLongArticle = false;
 	Adjective = "";
-	AdjectiveArticle = "a";
+	UsesLongAdjectiveArticle = false;
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
 	PostFix = "";
-	ArticleMode = NORMAL_ARTICLE;
+	ArticleMode = 0;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
@@ -348,7 +351,7 @@ meleeweapon
 		BitmapPos = 16, 256;
 		FormModifier = 60;
 		NameSingular = "axe";
-		Article = "an";
+		UsesLongArticle = true;
 		MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_TOOTH; }
 		SecondaryMaterialConfig == PINE_WOOD;
 		MaterialConfigChances = { 7, 1250, 1000, 500, 100, 25, 25, 5; }
@@ -765,7 +768,7 @@ holybanana /* materialcontainer->banana-> */
 	Price = 1000;
 	Adjective = "holy";
 	PostFix = "of Oily Orpiv";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	IsPolymorphable = false;
 	Roundness = 20;
 	WieldedBitmapPos = 160, 320;
@@ -794,7 +797,7 @@ justifier /* meleeweapon-> */
 	NameSingular = "broadsword";
 	Adjective = "holy";
 	PostFix = "named Valpurus's Justifier";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	MainMaterialConfig == VALPURIUM;
 	SecondaryMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
@@ -826,9 +829,9 @@ neercseulb /* meleeweapon-> */
 	DefaultSecondaryVolume = 500;
 	Adjective = "ancient";
 	NameSingular = "mace";
-	AdjectiveArticle = "an";
+	UsesLongAdjectiveArticle = true;
 	PostFix = "named Neerc Se-ulb";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	MainMaterialConfig == MITHRIL;
 	SecondaryMaterialConfig == MITHRIL;
 	IsPolymorphable = false;
@@ -1003,7 +1006,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	StrengthModifier = 200;
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	IsPolymorphable = false;
 	CanBeBroken = false;
 	CanBeCloned = false;
@@ -1152,7 +1155,7 @@ leftnutofpetrus /* nut-> */
 	BaseEmitation = rgb24(166, 112, 112);
 	Adjective = "left";
 	PostFix = "of Petrus";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	IsPolymorphable = false;
 	CanBeWished = false;
 	CanBeCloned = false;
@@ -1240,6 +1243,7 @@ copyofleftnutofpetrus /* nut-> */
 		Possibility = 5;
 		Price = 500;
 		MainMaterialConfig == DIAMOND;
+		UsesLongAdjectiveArticle = true;
 		Adjective = "expensive";
 	}
 }
@@ -1500,10 +1504,10 @@ avatarofvalpurus
 	StrengthModifier = 500;
 	BitmapPos = 0, 320;
 	FormModifier = 15;
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "Avatar";
 	PostFix = "of Valpurus";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	MainMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
 	Roundness = 80;
@@ -1634,7 +1638,7 @@ holybook
 	FormModifier = 20;
 	Adjective = "holy";
 	NameSingular = "book";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	MainMaterialConfig == PARCHMENT;
 	Price = 200;
 	Roundness = 70;
@@ -1677,7 +1681,7 @@ oillamp
 	BitmapPos = 32, 48;
 	FormModifier = 20;
 	BaseEmitation = rgb24(110, 110, 90);
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "oil lamp";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
@@ -1773,7 +1777,7 @@ key
 	Config OCTAGONAL_LOCK;
 	{
 		MainMaterialConfig == OCTIRON;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "octagonal";
 	}
 }
@@ -2330,7 +2334,7 @@ amulet
 	StrengthModifier = 100;
 	BitmapPos = 32, 400;
 	FormModifier = 10;
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "amulet";
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
@@ -2462,7 +2466,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	DefaultMainVolume = 25000;
 	NameSingular = "head";
 	PostFix = "of Elpuri";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	MainMaterialConfig == ELPURI_FLESH;
 	IsPolymorphable = false;
 	Roundness = 80;
@@ -2852,7 +2856,7 @@ helmet
 		AttachedGod = LORICATUS;
 		CanBeBroken = false;
 		CanBeWished = false;
-		ArticleMode = DEFINITE_ARTICLE;
+		ArticleMode = FORCE_THE;
 		GearStates = GAS_IMMUNITY;
 		IsQuestItem = true;
 		CoverPercentile = 100;
@@ -2931,7 +2935,7 @@ mjolak /* meleeweapon-> */
 	Adjective = "unholy";
 	NameSingular = "halberd";
 	PostFix = "named Mjolak";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	Alias == "Mjolak";
 	CanBeCloned = false;
 	CanBeMirrored = true;
@@ -2969,7 +2973,7 @@ vermis /* meleeweapon-> */
 	Roundness = 10;
 	IsTwoHanded = true;
 	Alias == "Vermis";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	CanBeCloned = false;
 	CanBeMirrored = true;
 	Price = 500;
@@ -3005,7 +3009,7 @@ turox /* meleeweapon-> */
 	Roundness = 30; /* we count the handle, too */
 	IsTwoHanded = true;
 	Alias == "Turox";
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	CanBeCloned = false;
 	CanBeMirrored = true;
 	Price = 250;
@@ -3099,7 +3103,7 @@ gorovitshammer
 	CanBeBroken = false;
 	CanBeWished = false;
 	BaseEnchantment = 3;
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	Price = 250;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 176, 16;
@@ -3124,7 +3128,7 @@ gorovitssickle
 	CanBeBroken = false;
 	CanBeWished = false;
 	BaseEnchantment = 3;
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	Price = 250;
 	AttachedGod = SEGES;
 	WieldedBitmapPos = 176, 32;
@@ -3144,7 +3148,7 @@ scrollofrepair /* scroll-> */
 
 encryptedscroll /* scroll-> */
 {
-	AdjectiveArticle = "an";
+	UsesLongAdjectiveArticle = true;
 	Adjective = "encrypted";
 	CanBeWished = false;
 	IsDestroyable = false;
@@ -3241,7 +3245,7 @@ saalthul
 	Roundness = 10;
 	Price = 500;
 	GearStates = INVISIBLE;
-	ArticleMode = DEFINITE_ARTICLE;
+	ArticleMode = FORCE_THE;
 	CanBeCloned = false;
 	CanBeMirrored = true;
 	Alias == "Saal'thul";

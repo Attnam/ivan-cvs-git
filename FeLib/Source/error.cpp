@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -39,9 +40,10 @@
 
 /* Shouldn't be initialized here! */
 
-const char* globalerrorhandler::BugMsg = "\n\nPlease send bug report to ivan-users@sourceforge.net\n"
-					 "including a brief description of what you did, what version\n"
-					 "you are running and which kind of system you are using.";
+const char* globalerrorhandler::BugMsg
+= "\n\nPlease send bug report to ivan-users@sourceforge.net\n"
+"including a brief description of what you did, what version\n"
+"you are running and which kind of system you are using.";
 
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
@@ -51,25 +53,26 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 
 #ifdef __DJGPP__
 void (*globalerrorhandler::OldSignal[SIGNALS])(int);
-int globalerrorhandler::Signal[SIGNALS] = { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
+int globalerrorhandler::Signal[SIGNALS]
+= { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
 #endif
 
 void globalerrorhandler::Install()
 {
-  static bool AlreadyInstalled = false;
+  static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
-    {
-      AlreadyInstalled = true;
-      OldNewHandler = set_new_handler(NewHandler);
+  {
+    AlreadyInstalled = true;
+    OldNewHandler = set_new_handler(NewHandler);
 
 #ifdef __DJGPP__
-      for(int c = 0; c < SIGNALS; ++c)
-	OldSignal[c] = signal(Signal[c], SignalHandler);
+    for(int c = 0; c < SIGNALS; ++c)
+      OldSignal[c] = signal(Signal[c], SignalHandler);
 #endif
 
-      atexit(globalerrorhandler::DeInstall);
-    }
+    atexit(globalerrorhandler::DeInstall);
+  }
 }
 
 void globalerrorhandler::DeInstall()
@@ -95,7 +98,8 @@ void globalerrorhandler::Abort(const char* Format, ...)
 
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
-  MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
+  MessageBox(NULL, Buffer, "Program aborted!",
+	     MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
 #endif
 #ifdef LINUX
   std::cout << Buffer << std::endl;
@@ -111,10 +115,11 @@ void globalerrorhandler::Abort(const char* Format, ...)
 #ifdef VC
 int globalerrorhandler::NewHandler(size_t)
 #else
-void globalerrorhandler::NewHandler()
+  void globalerrorhandler::NewHandler()
 #endif
 {
-  const char* Msg = "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.";
+  const char* Msg = "Fatal Error: Memory depleted.\n"
+		    "Get more RAM and hard disk space.";
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
   MessageBox(NULL, Msg, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
@@ -138,51 +143,51 @@ void globalerrorhandler::NewHandler()
 
 void globalerrorhandler::SignalHandler(int Signal)
 {
-  static bool AlreadySignalled = false;
+  static truth AlreadySignalled = false;
 
   if(!AlreadySignalled)
+  {
+    AlreadySignalled = true;
+    graphics::DeInit();
+    std::cout << "Fatal Error: ";
+
+    switch (Signal)
     {
-      AlreadySignalled = true;
-      graphics::DeInit();
-      std::cout << "Fatal Error: ";
-
-      switch (Signal)
-	{
-	case SIGABRT:
-	  std::cout << "Abort";
-	  break;
-	case SIGFPE:
-	  std::cout << "Divide by zero";
-	  break;
-	case SIGILL:
-	  std::cout << "Invalid/unknown";
-	  break;
-	case SIGSEGV:
-	  std::cout << "Segmentation violation";
-	  break;
-	case SIGTERM:
-	  std::cout << "Termination request";
-	  break;
-	case SIGINT:
-	  std::cout << "Break interrupt";
-	  break;
-	case SIGKILL:
-	  std::cout << "Kill";
-	  break;
-	case SIGQUIT:
-	  std::cout << "Quit";
-	  break;
-	default:
-	  std::cout << "Unknown";
-	}
-
-      std::cout << " exception signalled.";
-
-      if(Signal != SIGINT)
-	std::cout << BugMsg;
-
-      std::cout << std::endl;
+     case SIGABRT:
+      std::cout << "Abort";
+      break;
+     case SIGFPE:
+      std::cout << "Divide by zero";
+      break;
+     case SIGILL:
+      std::cout << "Invalid/unknown";
+      break;
+     case SIGSEGV:
+      std::cout << "Segmentation violation";
+      break;
+     case SIGTERM:
+      std::cout << "Termination request";
+      break;
+     case SIGINT:
+      std::cout << "Break interrupt";
+      break;
+     case SIGKILL:
+      std::cout << "Kill";
+      break;
+     case SIGQUIT:
+      std::cout << "Quit";
+      break;
+     default:
+      std::cout << "Unknown";
     }
+
+    std::cout << " exception signalled.";
+
+    if(Signal != SIGINT)
+      std::cout << BugMsg;
+
+    std::cout << std::endl;
+  }
 
   exit(2);
 }

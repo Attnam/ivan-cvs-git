@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -13,12 +14,9 @@
 
 #include "proto.h"
 #include "item.h"
+#include "database.h"
 
-itemprototype** protocontainer<item>::ProtoData;
-valuemap protocontainer<item>::CodeNameMap;
-int protocontainer<item>::Size;
-itemprototype item_ProtoType(0, 0, "item");
-const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
+EXTENDED_SYSTEM_SPECIALIZATIONS(item)(0, 0, 0, "item");
 
 #include "bodypart.h"
 #include "gear.h"
@@ -31,7 +29,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 
 #include "char.h"
 #include "message.h"
-#include "database.h"
 #include "stack.h"
 #include "felist.h"
 #include "confdef.h"
@@ -48,6 +45,7 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "bitmap.h"
 #include "fluid.h"
 #include "rawbit.h"
+#include "balance.h"
 
 #include "item.cpp"
 #include "bodypart.cpp"

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -17,11 +18,7 @@
 #include "igraph.h"
 #include "rawbit.h"
 
-trap::prototype** protocontainer<trap>::ProtoData;
-valuemap protocontainer<trap>::CodeNameMap;
-int protocontainer<trap>::Size;
-trapprototype trap_ProtoType(0, "trap");
-const trapprototype* trap::GetProtoType() const { return &trap_ProtoType; }
+SYSTEM_SPECIALIZATIONS(trap)
 
 #include "traps.h"
 
@@ -33,7 +30,6 @@ const trapprototype* trap::GetProtoType() const { return &trap_ProtoType; }
 #include "message.h"
 #include "lsquare.h"
 #include "bitmap.h"
-
 
 #include "trap.cpp"
 #include "traps.cpp"

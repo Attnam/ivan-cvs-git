@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -15,12 +16,12 @@
 #include "bitmap.h"
 #include "festring.h"
 
-bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
+truth (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
-bool globalwindowhandler::ControlLoopsEnabled = true;
+truth globalwindowhandler::ControlLoopsEnabled = true;
 
-void globalwindowhandler::InstallControlLoop(bool (*What)())
+void globalwindowhandler::InstallControlLoop(truth (*What)())
 {
   if(Controls == MAX_CONTROLS)
     ABORT("Animation control frenzy!");
@@ -28,7 +29,7 @@ void globalwindowhandler::InstallControlLoop(bool (*What)())
   ControlLoop[Controls++] = What;
 }
 
-void globalwindowhandler::DeInstallControlLoop(bool (*What)())
+void globalwindowhandler::DeInstallControlLoop(truth (*What)())
 {
   int c;
 
@@ -37,12 +38,12 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
       break;
 
   if(c != Controls)
-    {
-      --Controls;
+  {
+    --Controls;
 
-      for(; c < Controls; ++c)
-	ControlLoop[c] = ControlLoop[c + 1];
-    }
+    for(; c < Controls; ++c)
+      ControlLoop[c] = ControlLoop[c + 1];
+  }
 }
 
 #ifdef __DJGPP__
@@ -50,7 +51,7 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 #include <pc.h>
 #include <keys.h>
 
-int globalwindowhandler::GetKey(bool EmptyBuffer)
+int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   if(EmptyBuffer)
     while(kbhit())
@@ -59,35 +60,35 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
   int Key = 0;
 
   while(!Key)
-    {
-      while(!kbhit())
-	if(Controls && ControlLoopsEnabled)
-	  {
-	    static ulong LastTick = 0;
-	    UpdateTick();
+  {
+    while(!kbhit())
+      if(Controls && ControlLoopsEnabled)
+      {
+	static ulong LastTick = 0;
+	UpdateTick();
 
-	    if(LastTick != Tick)
-	      {
-		LastTick = Tick;
-		bool Draw = false;
-
-		for(int c = 0; c < Controls; ++c)
-		  if(ControlLoop[c]())
-		    Draw = true;
-
-		if(Draw)
-		  graphics::BlitDBToScreen();
-	      }
-	  }
-
-      Key = getkey();
-
-      if(Key == K_Control_Print)
+	if(LastTick != Tick)
 	{
-	  DOUBLE_BUFFER->Save("Scrshot.bmp");
-	  Key = 0;
+	  LastTick = Tick;
+	  truth Draw = false;
+
+	  for(int c = 0; c < Controls; ++c)
+	    if(ControlLoop[c]())
+	      Draw = true;
+
+	  if(Draw)
+	    graphics::BlitDBToScreen();
 	}
+      }
+
+    Key = getkey();
+
+    if(Key == K_Control_Print)
+    {
+      DOUBLE_BUFFER->Save("Scrshot.bmp");
+      Key = 0;
     }
+  }
 
   return Key;
 }
@@ -104,7 +105,7 @@ int globalwindowhandler::ReadKey()
 #include <algorithm>
 
 std::vector<int> globalwindowhandler::KeyBuffer;
-bool (*globalwindowhandler::QuitMessageHandler)() = 0;
+truth (*globalwindowhandler::QuitMessageHandler)() = 0;
 
 void globalwindowhandler::Init()
 {
@@ -112,63 +113,64 @@ void globalwindowhandler::Init()
   SDL_EnableKeyRepeat(500, 30);
 }
 
-int globalwindowhandler::GetKey(bool EmptyBuffer)
+int globalwindowhandler::GetKey(truth EmptyBuffer)
 {
   SDL_Event Event;
 
   if(EmptyBuffer)
-    {
-      while(SDL_PollEvent(&Event))
-	ProcessMessage(&Event);
+  {
+    while(SDL_PollEvent(&Event))
+      ProcessMessage(&Event);
 
-      KeyBuffer.clear();
-    }
+    KeyBuffer.clear();
+  }
 
   for(;;)
     if(!KeyBuffer.empty())
-      {
-	int Key = KeyBuffer[0];
-	KeyBuffer.erase(KeyBuffer.begin());
+    {
+      int Key = KeyBuffer[0];
+      KeyBuffer.erase(KeyBuffer.begin());
 
-	if(Key > 0xE000)
-	  return Key - 0xE000;
+      if(Key > 0xE000)
+	return Key - 0xE000;
 
-	if(Key && Key < 0x81)
-	  return Key;
-      }
+      if(Key && Key < 0x81)
+	return Key;
+    }
     else
+    {
+      if(SDL_PollEvent(&Event))
+	ProcessMessage(&Event);
+      else
       {
-	if(SDL_PollEvent(&Event))
-	  ProcessMessage(&Event);
-	else
+	if(SDL_GetAppState() & SDL_APPACTIVE
+	   && Controls && ControlLoopsEnabled)
+	{
+	  static ulong LastTick = 0;
+	  UpdateTick();
+
+	  if(LastTick != Tick)
 	  {
-	    if(SDL_GetAppState() & SDL_APPACTIVE && Controls && ControlLoopsEnabled)
-	      {
-		static ulong LastTick = 0;
-		UpdateTick();
+	    LastTick = Tick;
+	    truth Draw = false;
 
-		if(LastTick != Tick)
-		  {
-		    LastTick = Tick;
-		    bool Draw = false;
+	    for(int c = 0; c < Controls; ++c)
+	      if(ControlLoop[c]())
+		Draw = true;
 
-		    for(int c = 0; c < Controls; ++c)
-		      if(ControlLoop[c]())
-			Draw = true;
-
-		    if(Draw)
-		      graphics::BlitDBToScreen();
-		  }
-
-		SDL_Delay(10);
-	      }
-	    else
-	      {
-		SDL_WaitEvent(&Event);
-		ProcessMessage(&Event);
-	      }
+	    if(Draw)
+	      graphics::BlitDBToScreen();
 	  }
+
+	  SDL_Delay(10);
+	}
+	else
+	{
+	  SDL_WaitEvent(&Event);
+	  ProcessMessage(&Event);
+	}
       }
+    }
 }
 
 int globalwindowhandler::ReadKey()
@@ -176,15 +178,15 @@ int globalwindowhandler::ReadKey()
   SDL_Event Event;
 
   if(SDL_GetAppState() & SDL_APPACTIVE)
-    {
-      while(SDL_PollEvent(&Event))
-	ProcessMessage(&Event);
-    }
-  else
-    {
-      SDL_WaitEvent(&Event);
+  {
+    while(SDL_PollEvent(&Event))
       ProcessMessage(&Event);
-    }
+  }
+  else
+  {
+    SDL_WaitEvent(&Event);
+    ProcessMessage(&Event);
+  }
 
   return KeyBuffer.size() ? GetKey(false) : 0;
 }
@@ -194,90 +196,93 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
   int KeyPressed;
  
   switch(Event->active.type)
-    {
-    case SDL_VIDEOEXPOSE:
-      graphics::BlitDBToScreen();
-      break;
-    case SDL_QUIT:
-      if(!QuitMessageHandler || QuitMessageHandler())
-	exit(0);
+  {
+   case SDL_VIDEOEXPOSE:
+    graphics::BlitDBToScreen();
+    break;
+   case SDL_QUIT:
+    if(!QuitMessageHandler || QuitMessageHandler())
+      exit(0);
 	
-      return;
-    case SDL_KEYDOWN:
-      switch(Event->key.keysym.sym)
-	{
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
-	  if(Event->key.keysym.mod & KMOD_ALT)
-	    {
-	      graphics::SwitchMode();
-	      return;
-	    }
-	  else
-	    KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
+    return;
+   case SDL_KEYDOWN:
+    switch(Event->key.keysym.sym)
+    {
+     case SDLK_RETURN:
+     case SDLK_KP_ENTER:
+      if(Event->key.keysym.mod & KMOD_ALT)
+      {
+	graphics::SwitchMode();
+	return;
+      }
+      else
+	KeyPressed = KEY_ENTER; //Event->key.keysym.unicode;
 
-	  break;
-	case SDLK_DOWN:
-	case SDLK_KP2:
-	  KeyPressed = KEY_DOWN + 0xE000;
-	  break;
-	case SDLK_UP:
-	case SDLK_KP8:
-	  KeyPressed = KEY_UP + 0xE000;
-	  break;
-	case SDLK_RIGHT:
-	case SDLK_KP6:
-	  KeyPressed = KEY_RIGHT + 0xE000;
-	  break;
-	case SDLK_LEFT:
-	case SDLK_KP4:
-	  KeyPressed = KEY_LEFT + 0xE000;
-	  break;
-	case SDLK_HOME:
-	case SDLK_KP7:
-	  KeyPressed = KEY_HOME + 0xE000;
-	  break;
-	case SDLK_END:
-	case SDLK_KP1:
-	  KeyPressed = KEY_END + 0xE000;
-	  break;
-	case SDLK_PAGEUP:
-	case SDLK_KP9:
-	  KeyPressed = KEY_PAGE_UP + 0xE000;
-	  break;
-	case SDLK_KP3:
-	case SDLK_PAGEDOWN:
-	  KeyPressed = KEY_PAGE_DOWN + 0xE000;
-	  break;
-	case SDLK_KP5:
-	  KeyPressed = '.';
-	  break;
-	case SDLK_SYSREQ:
-	case SDLK_PRINT:
-#ifdef WIN32
-	  DOUBLE_BUFFER->Save("Scrshot.bmp");
-#else
-	  DOUBLE_BUFFER->Save(festring(getenv("HOME")) + "/Scrshot.bmp");
-#endif
-	  return;
-	case SDLK_e:
-	  if(Event->key.keysym.mod & KMOD_ALT && (Event->key.keysym.mod & KMOD_LCTRL || Event->key.keysym.mod & KMOD_RCTRL))
-	    {
-	      KeyPressed = '\177';
-	      break;
-	    }
-	default:
-	  KeyPressed = Event->key.keysym.unicode;
-
-	  if(!KeyPressed)
-	    return;
-	}
-
-      if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end())
-	KeyBuffer.push_back(KeyPressed);
-	  
       break;
+     case SDLK_DOWN:
+     case SDLK_KP2:
+      KeyPressed = KEY_DOWN + 0xE000;
+      break;
+     case SDLK_UP:
+     case SDLK_KP8:
+      KeyPressed = KEY_UP + 0xE000;
+      break;
+     case SDLK_RIGHT:
+     case SDLK_KP6:
+      KeyPressed = KEY_RIGHT + 0xE000;
+      break;
+     case SDLK_LEFT:
+     case SDLK_KP4:
+      KeyPressed = KEY_LEFT + 0xE000;
+      break;
+     case SDLK_HOME:
+     case SDLK_KP7:
+      KeyPressed = KEY_HOME + 0xE000;
+      break;
+     case SDLK_END:
+     case SDLK_KP1:
+      KeyPressed = KEY_END + 0xE000;
+      break;
+     case SDLK_PAGEUP:
+     case SDLK_KP9:
+      KeyPressed = KEY_PAGE_UP + 0xE000;
+      break;
+     case SDLK_KP3:
+     case SDLK_PAGEDOWN:
+      KeyPressed = KEY_PAGE_DOWN + 0xE000;
+      break;
+     case SDLK_KP5:
+      KeyPressed = '.';
+      break;
+     case SDLK_SYSREQ:
+     case SDLK_PRINT:
+#ifdef WIN32
+      DOUBLE_BUFFER->Save("Scrshot.bmp");
+#else
+      DOUBLE_BUFFER->Save(festring(getenv("HOME")) + "/Scrshot.bmp");
+#endif
+      return;
+     case SDLK_e:
+      if(Event->key.keysym.mod & KMOD_ALT
+	 && (Event->key.keysym.mod & KMOD_LCTRL
+	     || Event->key.keysym.mod & KMOD_RCTRL))
+      {
+	KeyPressed = '\177';
+	break;
+      }
+     default:
+      KeyPressed = Event->key.keysym.unicode;
+
+      if(!KeyPressed)
+	return;
     }
+
+    if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
+       == KeyBuffer.end())
+      KeyBuffer.push_back(KeyPressed);
+	  
+    break;
+  }
 }
 
 #endif

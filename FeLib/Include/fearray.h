@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FEARRAY_H__
 #define __FEARRAY_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "femath.h"
 
@@ -37,14 +34,16 @@ template <class type> struct fearray
 };
 
 template <class type>
-inline fearray<type>::fearray<type>(const fearray<type>& A) : Data(A.Data), Size(A.Size)
+inline fearray<type>::fearray<type>(const fearray<type>& A)
+: Data(A.Data), Size(A.Size)
 {
   if(Data)
     ++REFS(Data);
 }
 
 template <class type>
-inline fearray<type>::fearray<type>(const type* Array, sizetype Size) : Size(Size)
+inline fearray<type>::fearray<type>(const type* Array, sizetype Size)
+: Size(Size)
 {
   char* Ptr = new char[Size * sizeof(type) + sizeof(ulong)];
   *reinterpret_cast<ulong*>(Ptr) = 0;
@@ -59,14 +58,14 @@ template <class type> inline fearray<type>::~fearray<type>()
   type* Ptr = Data;
 
   if(Ptr && !REFS(Ptr)--)
-    {
-      type* TempPtr = Ptr, * EndPtr = Ptr + Size;
+  {
+    type* TempPtr = Ptr, * EndPtr = Ptr + Size;
 
-      for(; TempPtr != EndPtr; ++TempPtr)
-	TempPtr->~type();
+    for(; TempPtr != EndPtr; ++TempPtr)
+      TempPtr->~type();
 
-      delete [] &REFS(Ptr);
-    }
+    delete [] &REFS(Ptr);
+  }
 }
 
 template <class type>
@@ -84,18 +83,18 @@ template <class type> inline void fearray<type>::Clear()
   type* Ptr = Data;
 
   if(Ptr)
+  {
+    if(!REFS(Ptr)--)
     {
-      if(!REFS(Ptr)--)
-	{
-	  for(sizetype c = 0; c < Size; ++c)
-	    Ptr[c].~type();
+      for(sizetype c = 0; c < Size; ++c)
+	Ptr[c].~type();
 
-	  delete [] &REFS(Ptr);
-	}
-
-      Data = 0;
-      Size = 0;
+      delete [] &REFS(Ptr);
     }
+
+    Data = 0;
+    Size = 0;
+  }
 }
 
 template <class type> inline void fearray<type>::Allocate(sizetype What)
@@ -114,41 +113,42 @@ template <class type> inline void fearray<type>::Add(const type& Type)
   type* Ptr = Data;
 
   if(Ptr)
+  {
+    sizetype Size = this->Size++;
+    char* NewPtr = new char[(Size + 1) * sizeof(type) + sizeof(ulong)];
+    *reinterpret_cast<ulong*>(NewPtr) = 0;
+    type* NewData = reinterpret_cast<type*>(NewPtr + sizeof(ulong));
+
+    if(!REFS(Ptr)--)
     {
-      sizetype Size = this->Size++;
-      char* NewPtr = new char[(Size + 1) * sizeof(type) + sizeof(ulong)];
-      *reinterpret_cast<ulong*>(NewPtr) = 0;
-      type* NewData = reinterpret_cast<type*>(NewPtr + sizeof(ulong));
+      for(sizetype c = 0; c < Size; ++c)
+      {
+	new(&NewData[c]) type(Ptr[c]);
+	Ptr[c].~type();
+      }
 
-      if(!REFS(Ptr)--)
-	{
-	  for(sizetype c = 0; c < Size; ++c)
-	    {
-	      new(&NewData[c]) type(Ptr[c]);
-	      Ptr[c].~type();
-	    }
-
-	  delete [] &REFS(Ptr);
-	}
-      else
-	for(sizetype c = 0; c < Size; ++c)
-	  new(&NewData[c]) type(Ptr[c]);
-
-      Data = NewData;
-      new(&NewData[Size]) type(Type);
+      delete [] &REFS(Ptr);
     }
+    else
+      for(sizetype c = 0; c < Size; ++c)
+	new(&NewData[c]) type(Ptr[c]);
+
+    Data = NewData;
+    new(&NewData[Size]) type(Type);
+  }
   else
-    {
-      char* NewPtr = new char[sizeof(type) + sizeof(ulong)];
-      *reinterpret_cast<ulong*>(NewPtr) = 0;
-      Data = reinterpret_cast<type*>(NewPtr + sizeof(ulong));
-      Size = 1;
-      new(Data) type(Type);
-    }
+  {
+    char* NewPtr = new char[sizeof(type) + sizeof(ulong)];
+    *reinterpret_cast<ulong*>(NewPtr) = 0;
+    Data = reinterpret_cast<type*>(NewPtr + sizeof(ulong));
+    Size = 1;
+    new(Data) type(Type);
+  }
 }
 
 template <class type1, class type2>
-inline void ArrayToVector(const fearray<type1>& Array, std::vector<type2>& Vect)
+inline void ArrayToVector(const fearray<type1>& Array,
+			  std::vector<type2>& Vect)
 {
   Vect.resize(Array.Size, type2());
 

@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __TRAP_H__
 #define __TRAP_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "entity.h"
 
@@ -22,6 +19,11 @@ class trap;
 class lsquare;
 class character;
 class bitmap;
+class outputfile;
+class inputfile;
+struct blitdata;
+
+typedef trap* (*trapspawner)();
 
 struct trapdata
 {
@@ -41,14 +43,14 @@ inputfile& operator>>(inputfile&, trapdata&);
 class trapprototype
 {
  public:
-  trapprototype(trap* (*)(bool), const char*);
-  trap* Clone() const { return Cloner(false); }
-  trap* CloneAndLoad(inputfile&) const;
+  trapprototype(trapspawner truth, const char*);
+  //trap* Spawn() const { return Spawner(false); }
+  trap* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
-  trap* (*Cloner)(bool);
+  trapspawner Spawner;
   const char* ClassID;
 };
 
@@ -60,48 +62,37 @@ class trap : public entity
  public:
   typedef trapprototype prototype;
   trap();
-  trap(donothing);
   virtual ~trap();
   virtual square* GetSquareUnderEntity(int = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  virtual bool IsOnGround() const { return true; }
+  virtual truth IsOnGround() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddDescription(festring&) const = 0;
-  virtual const prototype* GetProtoType() const;
+  virtual const prototype* GetProtoType() const = 0;
   virtual void StepOnEffect(character*) = 0;
-  virtual void Draw(bitmap*, vector2d, color24) const = 0;
+  virtual void Draw(blitdata&) const = 0;
   virtual void ReceiveDamage(character*, int, int, int) { }
-  virtual bool IsDangerousFor(const character*) const { return false; }
+  virtual truth IsDangerousFor(const character*) const { return false; }
   virtual void PreProcessForBone() { }
   virtual void PostProcessForBone() { }
  protected:
-  virtual void VirtualConstructor(bool) { }
   lsquare* LSquareUnder;
 };
 
 #ifdef __FILE_OF_STATIC_TRAP_PROTOTYPE_DEFINITIONS__
-#define TRAP_PROTOTYPE(name, base)\
-trap* name##_Clone(bool Load) { return new name(Load); }\
-trapprototype name##_ProtoType(&name##_Clone, #name);\
-name::name(bool Load) : base(donothing()) { VirtualConstructor(Load); }\
-name::name(donothing D) : base(D) { }\
-const trapprototype* name::GetProtoType() const { return &name##_ProtoType; }
+#define TRAP_PROTO(name)\
+template<> const trapprototype name##sysbase::ProtoType(trapspawner(&name##sysbase::Spawn), #name);
 #else
-#define TRAP_PROTOTYPE(name, base)
+#define TRAP_PROTO(name)
 #endif
 
-#define TRAP(name, base, data)\
-\
-name : public base\
-{\
- public:\
-  name(bool = false);\
-  name(donothing);\
-  virtual const prototype* GetProtoType() const;\
-  data\
-}; TRAP_PROTOTYPE(name, base);
+#define TRAP(name, base)\
+class name;\
+typedef simplesysbase<name, base, trapprototype> name##sysbase;\
+TRAP_PROTO(name)\
+class name : public name##sysbase
 
 #endif

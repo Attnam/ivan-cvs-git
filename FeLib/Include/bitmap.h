@@ -1,22 +1,19 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __BITMAP_H__
 #define __BITMAP_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "vector2d.h"
+#include "v2.h"
 
 class bitmap;
 class rawbitmap;
@@ -26,198 +23,129 @@ class festring;
 
 typedef void (*bitmapeditor)(bitmap*);
 
+struct blitdata
+{
+  bitmap* Bitmap;
+  podv2 Src;
+  podv2 Dest;
+  podv2 Border;
+  union
+  {
+    int Flags, Stretch;
+    col24 Luminance;
+  };
+  col16 MaskColor;
+  ulong CustomData;
+};
+
 class bitmap
 {
  public:
   friend class cachedfont;
   bitmap(const festring&);
-  bitmap(const bitmap*, int = 0, bool = true);
-  bitmap(int, int);
-  bitmap(vector2d);
-  bitmap(int, int, color16);
-  bitmap(vector2d, color16);
+  bitmap(const bitmap*, int = 0, truth = true);
+  bitmap(v2);
+  bitmap(v2, col16);
   ~bitmap();
   void Save(outputfile&) const;
   void Load(inputfile&);
   void Save(const festring&) const;
-  void PutPixel(int X, int Y, color16 Color) { Image[Y][X] = Color; }
-  void PutPixel(vector2d Pos, color16 Color) { Image[Pos.Y][Pos.X] = Color; }
-  void PowerPutPixel(int, int, color16, alpha, priority);
-  color16 GetPixel(int X, int Y) const { return Image[Y][X]; }
-  color16 GetPixel(vector2d Pos) const { return Image[Pos.Y][Pos.X]; }
+  void PutPixel(int X, int Y, col16 Color) { Image[Y][X] = Color; }
+  void PutPixel(v2 Pos, col16 Color) { Image[Pos.Y][Pos.X] = Color; }
+  void PowerPutPixel(int, int, col16, alpha, priority);
+  col16 GetPixel(int X, int Y) const { return Image[Y][X]; }
+  col16 GetPixel(v2 Pos) const { return Image[Pos.Y][Pos.X]; }
 
-  void Fill(int, int, int, int, color16);
-  void Fill(vector2d, int, int, color16);
-  void Fill(int, int, vector2d, color16);
-  void Fill(vector2d, vector2d, color16);
+  void Fill(int, int, int, int, col16);
+  void Fill(v2, int, int, col16);
+  void Fill(int, int, v2, col16);
+  void Fill(v2, v2, col16);
 
-  void ClearToColor(color16);
-
-  void NormalBlit(bitmap*, int, int, int, int, int, int, int = 0) const;
-  void NormalBlit(bitmap*, vector2d, int, int, int, int, int = 0) const;
-  void NormalBlit(bitmap*, int, int, vector2d, int, int, int = 0) const;
-  void NormalBlit(bitmap*, int, int, int, int, vector2d, int = 0) const;
-  void NormalBlit(bitmap*, vector2d, vector2d, int, int, int = 0) const;
-  void NormalBlit(bitmap*, vector2d, int, int, vector2d, int = 0) const;
-  void NormalBlit(bitmap*, int, int, vector2d, vector2d, int = 0) const;
-  void NormalBlit(bitmap*, vector2d, vector2d, vector2d, int = 0) const;
+  void ClearToColor(col16);
+  void NormalBlit(const blitdata&) const;
   void NormalBlit(bitmap*, int = 0) const;
-
   void FastBlit(bitmap*) const;
+  void FastBlit(bitmap*, v2) const;
 
-  void LuminanceBlit(bitmap*, int, int, int, int, int, int, color24) const;
-  void LuminanceBlit(bitmap*, vector2d, int, int, int, int, color24) const;
-  void LuminanceBlit(bitmap*, int, int, vector2d, int, int, color24) const;
-  void LuminanceBlit(bitmap*, int, int, int, int, vector2d, color24) const;
-  void LuminanceBlit(bitmap*, vector2d, vector2d, int, int, color24) const;
-  void LuminanceBlit(bitmap*, vector2d, int, int, vector2d, color24) const;
-  void LuminanceBlit(bitmap*, int, int, vector2d, vector2d, color24) const;
-  void LuminanceBlit(bitmap*, vector2d, vector2d, vector2d, color24) const;
-  void LuminanceBlit(bitmap*, color24) const;
+  void LuminanceBlit(const blitdata&) const;
+  void NormalMaskedBlit(const blitdata&) const;
+  void LuminanceMaskedBlit(const blitdata&) const;
+  void SimpleAlphaBlit(bitmap*, alpha, col16 = TRANSPARENT_COLOR) const;
+  void AlphaMaskedBlit(const blitdata&) const;
+  void AlphaLuminanceBlit(const blitdata&) const;
 
-  void NormalMaskedBlit(bitmap*, int, int, int, int, int, int, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, vector2d, int, int, int, int, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, int, int, vector2d, int, int, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, int, int, int, int, vector2d, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, vector2d, vector2d, int, int, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, vector2d, int, int, vector2d, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, int, int, vector2d, vector2d, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, vector2d, vector2d, vector2d, int = 0, color16 = TRANSPARENT_COLOR) const;
-  void NormalMaskedBlit(bitmap*, int = 0, color16 = TRANSPARENT_COLOR) const;
+  void DrawLine(int, int, int, int, col16, truth = false);
+  void DrawLine(v2, int, int, col16, truth = false);
+  void DrawLine(int, int, v2, col16, truth = false);
+  void DrawLine(v2, v2, col16, truth = false);
 
-  void LuminanceMaskedBlit(bitmap*, int, int, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, vector2d, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, int, int, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, int, int, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, vector2d, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, vector2d, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, int, int, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, vector2d, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void LuminanceMaskedBlit(bitmap*, color24, color16 = TRANSPARENT_COLOR) const;
+  void DrawVerticalLine(int, int, int, col16, truth = false);
+  void DrawHorizontalLine(int, int, int, col16, truth = false);
 
-  void SimpleAlphaBlit(bitmap*, alpha, color16 = TRANSPARENT_COLOR) const;
+  void StretchBlit(const blitdata&) const;
 
-  void AlphaBlit(bitmap*, int, int, int, int, int, int, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, int, int, int, int, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, vector2d, int, int, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, int, int, vector2d, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, int, int, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, int, int, vector2d, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, vector2d, vector2d, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, vector2d, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, color16 = TRANSPARENT_COLOR) const;
-
-  void AlphaBlit(bitmap*, int, int, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, int, int, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, vector2d, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaBlit(bitmap*, color24, color16 = TRANSPARENT_COLOR) const;
-
-  void DrawLine(int, int, int, int, color16, bool = false);
-  void DrawLine(vector2d, int, int, color16, bool = false);
-  void DrawLine(int, int, vector2d, color16, bool = false);
-  void DrawLine(vector2d, vector2d, color16, bool = false);
-
-  void DrawVerticalLine(int, int, int, color16, bool = false);
-  void DrawHorizontalLine(int, int, int, color16, bool = false);
-
-  void StretchBlit(bitmap*, int, int, int, int, int, int, int) const;
-  void StretchBlit(bitmap*, vector2d, int, int, int, int, int) const;
-  void StretchBlit(bitmap*, int, int, vector2d, int, int, int) const;
-  void StretchBlit(bitmap*, int, int, int, int, vector2d, int) const;
-  void StretchBlit(bitmap*, vector2d, vector2d, int, int, int) const;
-  void StretchBlit(bitmap*, vector2d, int, int, vector2d, int) const;
-  void StretchBlit(bitmap*, int, int, vector2d, vector2d, int) const;
-  void StretchBlit(bitmap*, vector2d, vector2d, vector2d, int) const;
-  void StretchBlit(bitmap*, int) const;
-
-  void DrawRectangle(int, int, int, int, color16, bool = false);
-  void DrawRectangle(vector2d, int, int, color16, bool = false);
-  void DrawRectangle(int, int, vector2d, color16, bool = false);
-  void DrawRectangle(vector2d, vector2d, color16, bool = false);
+  void DrawRectangle(int, int, int, int, col16, truth = false);
+  void DrawRectangle(v2, int, int, col16, truth = false);
+  void DrawRectangle(int, int, v2, col16, truth = false);
+  void DrawRectangle(v2, v2, col16, truth = false);
 
   void BlitAndCopyAlpha(bitmap*, int = 0) const;
-
-  void MaskedPriorityBlit(bitmap*, int, int, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, vector2d, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, int, int, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, int, int, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, vector2d, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, vector2d, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, int, int, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, vector2d, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void MaskedPriorityBlit(bitmap*, color24, color16 = TRANSPARENT_COLOR) const;
-
-  void AlphaPriorityBlit(bitmap*, int, int, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, vector2d, int, int, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, int, int, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, int, int, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, vector2d, vector2d, int, int, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, vector2d, int, int, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, int, int, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, vector2d, vector2d, vector2d, color24, color16 = TRANSPARENT_COLOR) const;
-  void AlphaPriorityBlit(bitmap*, color24, color16 = TRANSPARENT_COLOR) const;
-
+  void MaskedPriorityBlit(const blitdata&) const;
+  void AlphaPriorityBlit(const blitdata&) const;
   void FastBlitAndCopyAlpha(bitmap*) const;
-  int GetXSize() const { return XSize; }
-  int GetYSize() const { return YSize; }
-  vector2d GetSize() const { return vector2d(XSize, YSize); }
-  void DrawPolygon(int, int, int, int, color16, bool = true, bool = false, double = 0);
+  v2 GetSize() const { return Size; }
+  void DrawPolygon(int, int, int, int, col16, truth = true, truth = false, double = 0);
   void CreateAlphaMap(alpha);
-  bool Fade(long&, packedalpha&, int);
+  truth Fade(long&, packalpha&, int);
   void SetAlpha(int X, int Y, alpha Alpha) { AlphaMap[Y][X] = Alpha; }
-  void SetAlpha(vector2d Pos, alpha Alpha) { AlphaMap[Pos.Y][Pos.X] = Alpha; }
+  void SetAlpha(v2 Pos, alpha Alpha) { AlphaMap[Pos.Y][Pos.X] = Alpha; }
   alpha GetAlpha(int X, int Y) const { return AlphaMap[Y][X]; }
-  alpha GetAlpha(vector2d Pos) const { return AlphaMap[Pos.Y][Pos.X]; }
-  void Outline(color16, alpha, priority);
+  alpha GetAlpha(v2 Pos) const { return AlphaMap[Pos.Y][Pos.X]; }
+  void Outline(col16, alpha, priority);
   void FadeToScreen(bitmapeditor = 0);
-  void CreateFlames(rawbitmap*, vector2d, ulong, int);
-  bool IsValidPos(vector2d What) const { return What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize; }
-  bool IsValidPos(int X, int Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
-  void CreateSparkle(vector2d, int);
+  void CreateFlames(rawbitmap*, v2, ulong, int);
+  truth IsValidPos(v2 What) const { return What.X >= 0 && What.Y >= 0 && What.X < Size.X && What.Y < Size.Y; }
+  truth IsValidPos(int X, int Y) const { return X >= 0 && Y >= 0 && X < Size.X && Y < Size.Y; }
+  void CreateSparkle(v2, int);
   void CreateFlies(ulong, int, int);
-  void CreateLightning(ulong, color16);
-  bool CreateLightning(vector2d, vector2d, int, color16);
-  packedcolor16** GetImage() const { return Image; }
-  packedalpha** GetAlphaMap() const { return AlphaMap; }
-  static bool PixelVectorHandler(long, long);
+  void CreateLightning(ulong, col16);
+  truth CreateLightning(v2, v2, int, col16);
+  packcol16** GetImage() const { return Image; }
+  packalpha** GetAlphaMap() const { return AlphaMap; }
+  static truth PixelVectorHandler(long, long);
   void FillAlpha(alpha);
   void CreatePriorityMap(priority);
   void FillPriority(priority);
   void SafeSetPriority(int, int, priority);
-  void SafeSetPriority(vector2d Pos, priority What) { SafeSetPriority(Pos.X, Pos.Y, What); }
-  void SafeUpdateRandMap(vector2d, bool);
-  void UpdateRandMap(long, bool);
+  void SafeSetPriority(v2 Pos, priority What) { SafeSetPriority(Pos.X, Pos.Y, What); }
+  void SafeUpdateRandMap(v2, truth);
+  void UpdateRandMap(long, truth);
   void InitRandMap();
-  vector2d RandomizePixel() const;
-  void AlphaPutPixel(int, int, color16, color24, alpha);
-  void AlphaPutPixel(vector2d Pos, color16 Color, color24 Luminance, alpha Alpha) { AlphaPutPixel(Pos.X, Pos.Y, Color, Luminance, Alpha); }
+  v2 RandomizePixel() const;
+  void AlphaPutPixel(int, int, col16, col24, alpha);
+  void AlphaPutPixel(v2 Pos, col16 Color, col24 Luminance, alpha Alpha) { AlphaPutPixel(Pos.X, Pos.Y, Color, Luminance, Alpha); }
   void CalculateRandMap();
   alpha CalculateAlphaAverage() const;
   void ActivateFastFlag() { FastFlag = 1; }
   void DeactivateFastFlag() { FastFlag = 0; }
-  void Wobble(int, int, bool);
+  void Wobble(int, int, truth);
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
   void InterLace();
  protected:
-  int XSize, YSize;
+  v2 Size;
   ulong XSizeTimesYSize : 31;
   ulong FastFlag : 1;
-  packedcolor16** Image;
-  packedalpha** AlphaMap;
-  packedpriority** PriorityMap;
-  bool* RandMap;
+  packcol16** Image;
+  packalpha** AlphaMap;
+  packpriority** PriorityMap;
+  truth* RandMap;
 };
 
-inline void bitmap::SafeUpdateRandMap(vector2d Pos, bool What)
+inline void bitmap::SafeUpdateRandMap(v2 Pos, truth What)
 {
   if(RandMap)
-    UpdateRandMap(Pos.Y * XSize + Pos.X, What);
+    UpdateRandMap(Pos.Y * Size.X + Pos.X, What);
 }
 
 inline void bitmap::SafeSetPriority(int x, int y, priority What)
@@ -226,19 +154,47 @@ inline void bitmap::SafeSetPriority(int x, int y, priority What)
     PriorityMap[y][x] = What;
 }
 
+inline void bitmap::FastBlit(bitmap* Bitmap) const
+{
+  memcpy(Bitmap->Image[0], Image[0], XSizeTimesYSize * sizeof(packcol16));
+}
+
+inline void bitmap::FastBlit(bitmap* Bitmap, v2 Pos) const
+{
+  packcol16** SrcImage = Image;
+  packcol16** DestImage = Bitmap->Image;
+  const int Bytes = Size.X * sizeof(packcol16);
+  const int Height = Size.Y;
+
+  for(int y = 0; y < Height; ++y)
+    memcpy(&DestImage[Pos.Y + y][Pos.X], SrcImage[y], Bytes);
+}
+
+inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
+{
+  blitdata B = { Bitmap,
+		 { 0, 0 },
+		 { 0, 0 },
+		 { Size.X, Size.Y },
+		 Flags,
+		 0,
+		 0 };
+  NormalBlit(B);
+}
+
 outputfile& operator<<(outputfile&, const bitmap*);
 inputfile& operator>>(inputfile&, bitmap*&);
 
 class cachedfont : public bitmap
 {
  public:
-  cachedfont(int, int);
-  cachedfont(int, int, color16);
+  cachedfont(v2);
+  cachedfont(v2, col16);
   ~cachedfont() { delete [] MaskMap; }
-  void PrintCharacter(bitmap*, int, int, int, int) const;
+  void PrintCharacter(bitmap*, v2, v2) const;
   void CreateMaskMap();
  private:
-  packedcolor16** MaskMap;
+  packcol16** MaskMap;
 };
 
 #endif

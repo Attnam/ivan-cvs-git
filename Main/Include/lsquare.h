@@ -1,22 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __LSQUARE_H__
 #define __LSQUARE_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "square.h"
 #include "level.h"
 #include "dungeon.h"
 #include "lterra.h"
@@ -40,32 +36,24 @@ class trap;
 struct sortdata;
 
 typedef std::vector<item*> itemvector;
-typedef bool (item::*sorter)(const character*) const;
-
-#ifdef VC
-#pragma pack(1)
-#endif
+typedef truth (item::*sorter)(const character*) const;
 
 struct emitter
 {
-  emitter(ulong ID, color24 Emitation) : ID(ID), Emitation(Emitation) { }
+  emitter(ulong ID, col24 Emitation) : ID(ID), Emitation(Emitation) { }
   explicit emitter() { }
-  ulong ID NO_ALIGNMENT;
-  color24 Emitation NO_ALIGNMENT;
+  ulong ID;
+  col24 Emitation;
 };
 
-#ifdef VC
-#pragma pack()
-#endif
-
-inline ulong MakeEmitterID(vector2d Pos)
+inline ulong MakeEmitterID(v2 Pos)
 {
   return Pos.X + (Pos.Y << 8);
 }
 
-inline vector2d ExtractPosFromEmitterID(ulong ID)
+inline v2 ExtractPosFromEmitterID(ulong ID)
 {
-  return vector2d(ID & 0xFF, (ID >> 8) & 0xFF);
+  return v2(ID & 0xFF, (ID >> 8) & 0xFF);
 }
 
 typedef std::vector<emitter> emittervector;
@@ -75,13 +63,13 @@ inputfile& operator>>(inputfile&, emitter&);
 
 struct eyecontroller
 {
-  static bool Handler(int, int);
+  static truth Handler(int, int);
   static lsquare*** Map;
 };
 
 struct pathcontroller
 {
-  static bool Handler(int, int);
+  static truth Handler(int, int);
   static lsquare*** Map;
   static const character* Character;
 };
@@ -92,7 +80,7 @@ struct stackcontroller
   static lsquare** Stack;
   static long StackIndex;
   static int LevelXSize, LevelYSize;
-  static vector2d Center;
+  static v2 Center;
 };
 
 struct tickcontroller
@@ -112,33 +100,33 @@ class lsquare : public square
   friend struct areacontroller;
   friend struct emitationcontroller;
   friend struct noxifycontroller;
-  lsquare(level*, vector2d);
+  lsquare(level*, v2);
   virtual ~lsquare();
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   stack* GetStack() const { return Stack; }
-  void AlterLuminance(ulong, color24);
+  void AlterLuminance(ulong, col24);
   void Emitate() { Emitate(Emitation); }
-  void Emitate(color24, ulong = 0);
+  void Emitate(col24, ulong = 0);
   void Clean();
-  bool Open(character*);
-  bool Close(character*);
+  truth Open(character*);
+  truth Close(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SignalEmitationIncrease(color24);
-  void SignalEmitationDecrease(color24);
-  color24 GetEmitation() const { return Emitation; }
+  void SignalEmitationIncrease(col24);
+  void SignalEmitationDecrease(col24);
+  col24 GetEmitation() const { return Emitation; }
   void Noxify() { Noxify(Emitation); }
-  void Noxify(color24, ulong = 0);
-  bool NoxifyEmitter(ulong);
+  void Noxify(col24, ulong = 0);
+  truth NoxifyEmitter(ulong);
   const char* GetEngraved() const { return Engraved; }
-  bool Engrave(const festring&);
-  void UpdateMemorizedDescription(bool = false);
-  bool BeKicked(character*, item*, bodypart*, double, double, int, int, bool, bool);
+  truth Engrave(const festring&);
+  void UpdateMemorizedDescription(truth = false);
+  truth BeKicked(character*, item*, bodypart*, double, double, int, int, truth, truth);
   int GetDivineMaster() const;
-  void Draw();
+  void Draw(blitdata&);
   void UpdateMemorized();
-  bool CanBeDug() const;
+  truth CanBeDug() const;
   virtual gterrain* GetGTerrain() const { return GLTerrain; }
   virtual oterrain* GetOTerrain() const { return OLTerrain; }
   glterrain* GetGLTerrain() const { return GLTerrain; }
@@ -150,90 +138,90 @@ class lsquare : public square
   void ChangeOLTerrain(olterrain*);
   void SetLTerrain(glterrain*, olterrain*);
   void ApplyScript(const squarescript*, room*);
-  virtual bool CanBeSeenByPlayer(bool = false) const;
-  virtual bool CanBeSeenFrom(vector2d, long, bool = false) const ;
+  virtual truth CanBeSeenByPlayer(truth = false) const;
+  virtual truth CanBeSeenFrom(v2, long, truth = false) const ;
   void StepOn(character*, lsquare**);
   uint GetRoomIndex() const { return RoomIndex; }
   void SetRoomIndex(uint What) { RoomIndex = What; }
   void ReceiveVomit(character*, liquid*);
   room* GetRoom() const { return RoomIndex ? GetLevel()->GetRoom(RoomIndex) : 0; }
-  void SetTemporaryEmitation(color24);
-  color24 GetTemporaryEmitation() const { return TemporaryEmitation; }
+  void SetTemporaryEmitation(col24);
+  col24 GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
-  void DrawParticles(long, bool = true);
-  vector2d DrawLightning(vector2d, long, int, bool = true);
-  bool DipInto(item*, character*);
-  bool TryKey(item*, character*);
+  void DrawParticles(long, truth = true);
+  v2 DrawLightning(v2, long, int, truth = true);
+  truth DipInto(item*, character*);
+  truth TryKey(item*, character*);
   void SignalSeen(ulong);
   void CalculateLuminance();
-  void DrawStaticContents(bitmap*, vector2d, color24, bool) const;
-  void DrawMemorized();
-  void DrawMemorizedCharacter();
+  void DrawStaticContents(blitdata&) const;
+  void DrawMemorized(blitdata&);
+  void DrawMemorizedCharacter(blitdata&);
   void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(int) const;
-  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
-  bool IsDangerousForAIToStepOn(const character*) const;
-  bool IsScaryForAIToStepOn(const character*) const;
+  lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
+  truth IsDangerousForAIToStepOn(const character*) const;
+  truth IsScaryForAIToStepOn(const character*) const;
   stack* GetStackOfAdjacentSquare(int) const;
   void KickAnyoneStandingHereAway();
-  bool IsDark() const;
+  truth IsDark() const;
   void AddItem(item*);
-  static bool (lsquare::*GetBeamEffect(int))(const beamdata&);
-  bool Polymorph(const beamdata&);
-  bool Strike(const beamdata&);
-  bool FireBall(const beamdata&);
-  bool Teleport(const beamdata&);
-  bool Haste(const beamdata&);
-  bool Slow(const beamdata&);
-  bool Resurrect(const beamdata&);
-  bool Invisibility(const beamdata&);
-  bool Duplicate(const beamdata&);
-  bool Lightning(const beamdata&);
-  bool DoorCreation(const beamdata&);
-  bool AcidRain(const beamdata&);
-  bool Necromancy(const beamdata&);
+  static truth (lsquare::*GetBeamEffect(int))(const beamdata&);
+  truth Polymorph(const beamdata&);
+  truth Strike(const beamdata&);
+  truth FireBall(const beamdata&);
+  truth Teleport(const beamdata&);
+  truth Haste(const beamdata&);
+  truth Slow(const beamdata&);
+  truth Resurrect(const beamdata&);
+  truth Invisibility(const beamdata&);
+  truth Duplicate(const beamdata&);
+  truth Lightning(const beamdata&);
+  truth DoorCreation(const beamdata&);
+  truth AcidRain(const beamdata&);
+  truth Necromancy(const beamdata&);
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
-  bool CheckKick(const character*) const;
+  truth CheckKick(const character*) const;
   void GetHitByExplosion(const explosion*);
   int GetSpoiledItems() const;
   void SortAllItems(const sortdata&);
-  bool LowerEnchantment(const beamdata&);
+  truth LowerEnchantment(const beamdata&);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
-  bool IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
-  bool IsTransparent() const { return !!(Flags & IS_TRANSPARENT); }
+  truth IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
+  truth IsTransparent() const { return Flags & IS_TRANSPARENT; }
   void SignalSmokeAlphaChange(int);
   void ShowSmokeMessage() const;
   void DisplaySmokeInfo(festring&) const;
-  bool IsDipDestination() const;
+  truth IsDipDestination() const;
   void ReceiveEarthQuakeDamage();
-  bool IsDangerous(character*) const;
-  bool CanBeFeltByPlayer() const;
+  truth IsDangerous(character*) const;
+  truth CanBeFeltByPlayer() const;
   void PreProcessForBone();
   void PostProcessForBone(double&, int&);
   void DisplayEngravedInfo(festring&) const;
-  bool EngravingsCanBeReadByPlayer();
-  bool HasEngravings() const { return !!Engraved; }
+  truth EngravingsCanBeReadByPlayer();
+  truth HasEngravings() const { return truth(Engraved); }
   void FinalProcessForBone();
-  bool IsFreezed() const { return !!(Flags & FREEZED); }
-  bool IsDangerousForAIToBreathe(const character*) const;
-  bool IsScaryForAIToBreathe(const character*) const;
+  truth IsFreezed() const { return Flags & FREEZED; }
+  truth IsDangerousForAIToBreathe(const character*) const;
+  truth IsScaryForAIToBreathe(const character*) const;
   int GetWalkability() const;
   int GetTheoreticalWalkability() const { return OLTerrain ? OLTerrain->GetTheoreticalWalkability() & GLTerrain->GetTheoreticalWalkability() : GLTerrain->GetTheoreticalWalkability(); }
   virtual int GetSquareWalkability() const { return GetWalkability(); }
   void CalculateBorderPartners();
   void RequestForBorderPartnerUpdates();
-  void SpillFluid(character*, liquid*, bool = false, bool = true);
+  void SpillFluid(character*, liquid*, truth = false, truth = true);
   void DisplayFluidInfo(festring&) const;
   void RemoveFluid(fluid*);
   void AddFluid(liquid*);
-  void DrawStacks(bitmap*, vector2d, color24, bool) const;
-  bool FluidIsVisible() const { return SmokeAlphaSum < 175; }
+  void DrawStacks(blitdata&) const;
+  truth FluidIsVisible() const { return SmokeAlphaSum < 175; }
   void RemoveRain(rain*);
-  void AddRain(liquid*, vector2d, int, bool);
-  bool IsInside() const { return !!(Flags & INSIDE); }
+  void AddRain(liquid*, v2, int, truth);
+  truth IsInside() const { return Flags & INSIDE; }
   void RemoveSunLight();
   void CheckIfIsSecondarySunLightEmitter();
   void CalculateNeighbourLSquares();
@@ -243,32 +231,39 @@ class lsquare : public square
   void Freeze() { Flags |= FREEZED; }
   void UnFreeze() { Flags &= ~FREEZED; }
   void InitLastSeen();
-  void GetSideItemDescription(festring&, bool = false) const;
+  void GetSideItemDescription(festring&, truth = false) const;
   void AddSunLightEmitter(ulong);
   void SendSunLightSignals();
   const sunemittervector& GetSunEmitter() const { return SunEmitter; }
   void ZeroReSunEmitatedFlags();
-  virtual bool HasBeenSeen() const { return !!Memorized; }
-  bool CalculateIsTransparent();
+  virtual truth HasBeenSeen() const { return truth(Memorized); }
+  truth CalculateIsTransparent();
   void CalculateSunLightLuminance(ulong);
   void CreateMemorized();
-  bool DetectMaterial(const material*) const;
-  void Reveal(ulong, bool = false);
+  truth DetectMaterial(const material*) const;
+  void Reveal(ulong, truth = false);
   void DestroyMemorized();
   void SwapMemorized(lsquare*);
-  bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
+  truth HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
   lsquare* GetRandomAdjacentSquare() const;
   void SignalPossibleTransparencyChange();
-  bool AddTrap(trap*);
+  truth AddTrap(trap*);
   void RemoveTrap(trap*);
   void DisplayTrapInfo(festring&) const;
   void FillTrapVector(std::vector<trap*>&) const;
   void ReceiveTrapDamage(character*, int, int, int = YOURSELF);
-  bool HasDangerousTraps(const character*) const;
+  truth HasDangerousTraps(const character*) const;
  protected:
-  void ChangeLuminance(color24&, color24);
-  void RemoveLuminance(color24&);
+  void ChangeLuminance(col24&, col24);
+  void RemoveLuminance(col24&);
   void CalculateEmitation();
+  void UpdateStaticContentCache(col24) const;
+  mutable struct staticcontentcache
+  {
+    staticcontentcache() : Bitmap(0), Luminance(0) { }
+    bitmap* Bitmap;
+    col24 Luminance;
+  } StaticContentCache;
   fluid* Fluid;
   smoke* Smoke;
   rain* Rain;
@@ -285,28 +280,28 @@ class lsquare : public square
   ulong BorderPartnerInfo;
   ulong SquarePartEmitationTick;
   ulong SquarePartLastSeen;
-  color24 Emitation;
+  col24 Emitation;
   int SmokeAlphaSum;
   lsquare* NeighbourLSquare[8];
-  color24 AmbientLuminance;
-  color24 SunLightLuminance;
-  color24 TemporaryEmitation;
-  color24 SecondarySunLightEmitation;
+  col24 AmbientLuminance;
+  col24 SunLightLuminance;
+  col24 TemporaryEmitation;
+  col24 SecondarySunLightEmitation;
   ushort LastExplosionID;
   uchar RoomIndex;
 };
 
-inline bool lsquare::IsDark() const
+inline truth lsquare::IsDark() const
 {
-  color24 Light = Luminance;
+  col24 Light = Luminance;
 
-  return !Light
-      || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
-       && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
-       && (Light & 0x0000FF) < LIGHT_BORDER);
+  return (!Light
+	  || ((Light & 0xFF0000) < (LIGHT_BORDER << 16)
+	      && (Light & 0x00FF00) < (LIGHT_BORDER << 8)
+	      && (Light & 0x0000FF) < LIGHT_BORDER));
 }
 
-inline bool eyecontroller::Handler(int x, int y)
+inline truth eyecontroller::Handler(int x, int y)
 {
   return Map[x][y]->IsTransparent();
 }

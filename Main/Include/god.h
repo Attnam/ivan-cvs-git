@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __GOD_H__
 #define __GOD_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "typedef.h"
 
@@ -28,17 +25,19 @@ class liquid;
 class team;
 struct materialdatabase;
 
+typedef god* (*godspawner)();
+
 class godprototype
 {
  public:
-  godprototype(god* (*)(bool), const char*);
-  god* Clone() const { return Cloner(false); }
-  god* CloneAndLoad(inputfile&) const;
+  godprototype(godspawner, const char*);
+  god* Spawn() const { return Spawner(); }
+  god* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
-  god* (*Cloner)(bool);
+  godspawner Spawner;
   const char* ClassID;
 };
 
@@ -53,57 +52,70 @@ class god
   virtual int GetAlignment() const = 0;
   festring GetCompleteDescription() const;
   void ApplyDivineTick();
-  void AdjustRelation(god*, int, bool);
+  void AdjustRelation(god*, int, truth);
   void AdjustRelation(int);
   void AdjustTimer(long);
   void Save(outputfile&) const;
   void Load(inputfile&);
   void SetRelation(int Value) { Relation = Value; }
   void SetTimer(long Value) { Timer = Value; }
-  bool ReceiveOffer(item*);
+  truth ReceiveOffer(item*);
   virtual int GetBasicAlignment() const;
   int GetRelation() const { return Relation; }
   void PrintRelation() const;
-  void SetIsKnown(bool What) { Known = What; }
-  bool IsKnown() const { return Known; }
+  void SetIsKnown(truth What) { Known = What; }
+  truth IsKnown() const { return Known; }
   void PlayerKickedAltar() { AdjustRelation(-100); }
   void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
-  virtual bool PlayerVomitedOnAltar(liquid*);
+  virtual truth PlayerVomitedOnAltar(liquid*);
   character* CreateAngel(team*, int = 0);
-  virtual color16 GetColor() const = 0;
-  virtual color16 GetEliteColor() const = 0;
+  virtual col16 GetColor() const = 0;
+  virtual col16 GetEliteColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ForceGiveBodyPart() const { return false; }
-  virtual bool HealRegeneratingBodyParts() const { return false; }
-  virtual bool LikesMaterial(const materialdatabase*, const character*) const;
-  bool TryToAttachBodyPart(character*);
-  bool TryToHardenBodyPart(character*);
-  virtual bool MutatesBodyParts() const { return false; }
+  virtual truth ForceGiveBodyPart() const { return false; }
+  virtual truth HealRegeneratingBodyParts() const { return false; }
+  virtual truth LikesMaterial(const materialdatabase*, const character*) const;
+  truth TryToAttachBodyPart(character*);
+  truth TryToHardenBodyPart(character*);
+  virtual truth MutatesBodyParts() const { return false; }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;
   int Relation;
   long Timer;
-  bool Known;
+  truth Known;
 };
 
-#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
-#define GOD_PROTOTYPE(name)\
-god* name##_Clone(bool) { return new name; }\
-godprototype name##_ProtoType(&name##_Clone, #name);\
-const godprototype* name::GetProtoType() const { return &name##_ProtoType; }
-#else
-#define GOD_PROTOTYPE(name)
-#endif
+/*#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
+  #define GOD_PROTOTYPE(name)\
+  god* name##_Spawn(truth) { return new name; }\
+  godprototype name##_ProtoType(&name##_Spawn, #name);\
+  const godprototype* name::GetProtoType() const { return &name##_ProtoType; }
+  #else
+  #define GOD_PROTOTYPE(name)
+  #endif
 
-#define GOD(name, base, data)\
-\
-name : public base\
-{\
- public:\
+  #define GOD(name, base, data)\
+  \
+  class name : public base\
+  {\
+  public:\
   virtual const prototype* GetProtoType() const;\
   data\
-}; GOD_PROTOTYPE(name);
+  }; GOD_PROTOTYPE(name)*/
+
+#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
+#define GOD_PROTO(name)\
+template<> const godprototype name##sysbase::ProtoType(godspawner(&name##sysbase::Spawn), #name);
+#else
+#define GOD_PROTO(name)
+#endif
+
+#define GOD(name, base)\
+class name;\
+typedef simplesysbase<name, base, godprototype> name##sysbase;\
+GOD_PROTO(name)\
+class name : public name##sysbase
 
 #endif

@@ -1,22 +1,19 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __DUNGEON_H__
 #define __DUNGEON_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "vector2d.h"
+#include "v2.h"
 
 class level;
 class outputfile;
@@ -31,8 +28,8 @@ class dungeon
   dungeon();
   dungeon(int);
   ~dungeon();
-  bool PrepareLevel(int, bool = true);
-  void SaveLevel(const festring&, int, bool = true);
+  truth PrepareLevel(int, truth = true);
+  void SaveLevel(const festring&, int, truth = true);
   level* LoadLevel(const festring&, int);
   level* GetLevel(int I) const { return Level[I]; }
   int GetLevels() const;
@@ -41,21 +38,21 @@ class dungeon
   void SetIndex(int What) { Index = What; }
   int GetIndex() const { return Index; }
   const levelscript* GetLevelScript(int);
-  vector2d GetWorldMapPos() { return WorldMapPos; }
-  void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
+  v2 GetWorldMapPos() { return WorldMapPos; }
+  void SetWorldMapPos(v2 What) { WorldMapPos = What; }
   festring GetLevelDescription(int);
   festring GetShortLevelDescription(int);
   level* LoadLevel(inputfile&, int);
-  bool IsGenerated(int I) const { return Generated[I]; }
-  void SetIsGenerated(int I, bool What) { Generated[I] = What; }
+  truth IsGenerated(int I) const { return Generated[I]; }
+  void SetIsGenerated(int I, truth What) { Generated[I] = What; }
   int GetLevelTeleportDestination(int) const;
  private:
   void Initialize();
   const dungeonscript* DungeonScript;
   level** Level;
   int Index;
-  bool* Generated;
-  vector2d WorldMapPos;
+  truth* Generated;
+  v2 WorldMapPos;
 };
 
 outputfile& operator<<(outputfile&, const dungeon*);

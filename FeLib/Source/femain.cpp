@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -36,28 +37,28 @@ int main(int argc, char* argv[])
   return Main(argc, argv);
 
   /*try
-    {
-      return Main(argc, argv);
-    }
+  {
+    return Main(argc, argv);
+  }
   catch(...)
-    {
-      const char* Msg = "Fatal Error: Unknown exception thrown.";
+  {
+    const char* Msg = "Fatal Error: Unknown exception thrown.";
 #ifdef WIN32
-      ShowWindow(GetActiveWindow(), SW_HIDE);
-      char Buffer[256];
-      strcpy(Buffer, Msg);
-      strcat(Buffer, globalerrorhandler::GetBugMsg());
-      MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
+    ShowWindow(GetActiveWindow(), SW_HIDE);
+    char Buffer[256];
+    strcpy(Buffer, Msg);
+    strcat(Buffer, globalerrorhandler::GetBugMsg());
+    MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef LINUX
-      std::cout << Msg << globalerrorhandler::GetBugMsg() << std::endl;
+    std::cout << Msg << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
 #ifdef __DJGPP__
-      graphics::DeInit();
-      std::cout << Msg << globalerrorhandler::GetBugMsg() << std::endl;
+    graphics::DeInit();
+    std::cout << Msg << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
-      exit(3);
-    }*/
+    exit(3);
+  }*/
 
   exit(0);
 }

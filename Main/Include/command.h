@@ -1,109 +1,106 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __COMMAND_H__
 #define __COMMAND_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include "typedef.h"
 
 class item;
 class character;
 
-typedef bool (item::*sorter)(const character*) const;
+typedef truth (item::*sorter)(const character*) const;
 
 class command
 {
  public:
-  command(bool (*)(character*), const char*, char, char, bool, bool = false);
-  bool (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
+  command(truth (*)(character*), const char*, char, char, truth, truth = false);
+  truth (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   const char* GetDescription() const { return Description; }
   char GetKey() const;
-  bool IsUsableInWilderness() const { return UsableInWilderness; }
-  bool IsWizardModeFunction() const { return WizardModeFunction; }
+  truth IsUsableInWilderness() const { return UsableInWilderness; }
+  truth IsWizardModeFunction() const { return WizardModeFunction; }
  private:
-  bool (*LinkedFunction)(character*);
+  truth (*LinkedFunction)(character*);
   const char* Description;
   char Key1;
   char Key2;
-  bool UsableInWilderness;
-  bool WizardModeFunction;
+  truth UsableInWilderness;
+  truth WizardModeFunction;
 };
 
 class commandsystem
 {
-public:
+ public:
   static command* GetCommand(int I) { return Command[I]; }
-private:
-  static bool Apply(character*);
-  static bool Close(character*);
-  static bool Eat(character*);
-  static bool Drink(character*);
-  static bool Dip(character*);
-  static bool DrawMessageHistory(character*);
-  static bool Drop(character*);
-  static bool ForceVomit(character*);
-  static bool GoDown(character*);
-  static bool GoUp(character*);
-  static bool Kick(character*);
-  static bool Look(character*);
-  static bool NOP(character*);
-  static bool Offer(character*);
-  static bool Open(character*);
-  static bool PickUp(character*);
-  static bool Pray(character*);
-  static bool Quit(character*);
-  static bool Read(character*);
-  static bool Save(character*);
-  static bool ShowInventory(character*);
-  static bool ShowKeyLayout(character*);
-  static bool ShowWeaponSkills(character*);
-  static bool Talk(character*);
-  static bool Throw(character*);
-  static bool EquipmentScreen(character*);
-  static bool WhatToEngrave(character*);
-  static bool Zap(character*);
-  static bool Rest(character*);
-  static bool Sit(character*);
-  static bool Go(character*);
-  static bool ShowConfigScreen(character*);
-  static bool ScrollMessagesDown(character*);
-  static bool ScrollMessagesUp(character*);
-  static bool WieldInRightArm(character*);
-  static bool WieldInLeftArm(character*);
-  static bool AssignName(character*);
-  static bool Search(character*);
-  static bool Consume(character*, const char*, sorter);
+ private:
+  static truth Apply(character*);
+  static truth Close(character*);
+  static truth Eat(character*);
+  static truth Drink(character*);
+  static truth Dip(character*);
+  static truth DrawMessageHistory(character*);
+  static truth Drop(character*);
+  static truth ForceVomit(character*);
+  static truth GoDown(character*);
+  static truth GoUp(character*);
+  static truth Kick(character*);
+  static truth Look(character*);
+  static truth NOP(character*);
+  static truth Offer(character*);
+  static truth Open(character*);
+  static truth PickUp(character*);
+  static truth Pray(character*);
+  static truth Quit(character*);
+  static truth Read(character*);
+  static truth Save(character*);
+  static truth ShowInventory(character*);
+  static truth ShowKeyLayout(character*);
+  static truth ShowWeaponSkills(character*);
+  static truth Talk(character*);
+  static truth Throw(character*);
+  static truth EquipmentScreen(character*);
+  static truth WhatToEngrave(character*);
+  static truth Zap(character*);
+  static truth Rest(character*);
+  static truth Sit(character*);
+  static truth Go(character*);
+  static truth ShowConfigScreen(character*);
+  static truth ScrollMessagesDown(character*);
+  static truth ScrollMessagesUp(character*);
+  static truth WieldInRightArm(character*);
+  static truth WieldInLeftArm(character*);
+  static truth AssignName(character*);
+  static truth Search(character*);
+  static truth Consume(character*, const char*, sorter);
 #ifdef WIZARD
-  static bool WizardMode(character*);
-  static bool RaiseStats(character*);
-  static bool LowerStats(character*);
-  static bool SeeWholeMap(character*);
-  static bool WalkThroughWalls(character*);
-  static bool RaiseGodRelations(character*);
-  static bool LowerGodRelations(character*);
-  static bool GainDivineKnowledge(character*);
-  static bool GainAllItems(character*);
-  static bool SecretKnowledge(character*);
-  static bool DetachBodyPart(character*);
-  static bool SummonMonster(character*);
-  static bool LevelTeleport(character*);
-  static bool Possess(character*);
-  static bool Polymorph(character*);
+  static truth WizardMode(character*);
+  static truth RaiseStats(character*);
+  static truth LowerStats(character*);
+  static truth SeeWholeMap(character*);
+  static truth WalkThroughWalls(character*);
+  static truth RaiseGodRelations(character*);
+  static truth LowerGodRelations(character*);
+  static truth GainDivineKnowledge(character*);
+  static truth GainAllItems(character*);
+  static truth SecretKnowledge(character*);
+  static truth DetachBodyPart(character*);
+  static truth SummonMonster(character*);
+  static truth LevelTeleport(character*);
+  static truth Possess(character*);
+  static truth Polymorph(character*);
 #endif
-  static bool ToggleRunning(character*);
-  static bool IssueCommand(character*);
+  static truth ToggleRunning(character*);
+  static truth IssueCommand(character*);
   static command* Command[];
 };
 

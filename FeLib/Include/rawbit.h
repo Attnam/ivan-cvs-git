@@ -1,25 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __COLORBIT_H__
 #define __COLORBIT_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <map>
 #include <vector>
 
-#include "vector2d.h"
+#include "v2.h"
 
 class outputfile;
 class inputfile;
@@ -27,69 +24,88 @@ class bitmap;
 class cachedfont;
 class festring;
 
-typedef std::map<color16, std::pair<cachedfont*, cachedfont*> > fontcache;
+typedef std::map<col16, std::pair<cachedfont*, cachedfont*> > fontcache;
 
 class rawbitmap
 {
  public:
   rawbitmap(const festring&);
-  rawbitmap(int, int);
+  rawbitmap(v2);
   ~rawbitmap();
   void Save(const festring&);
 
-  void MaskedBlit(bitmap*, int, int, int, int, int, int, packedcolor16*) const;
-  void MaskedBlit(bitmap*, vector2d, int, int, int, int, packedcolor16*) const;
-  void MaskedBlit(bitmap*, int, int, vector2d, int, int, packedcolor16*) const;
-  void MaskedBlit(bitmap*, int, int, int, int, vector2d, packedcolor16*) const;
-  void MaskedBlit(bitmap*, vector2d, vector2d, int, int, packedcolor16*) const;
-  void MaskedBlit(bitmap*, vector2d, int, int, vector2d, packedcolor16*) const;
-  void MaskedBlit(bitmap*, int, int, vector2d, vector2d, packedcolor16*) const;
-  void MaskedBlit(bitmap*, vector2d, vector2d, vector2d, packedcolor16*) const;
-  void MaskedBlit(bitmap*, packedcolor16*) const;
+  /*void MaskedBlit(bitmap*, int, int, int, int,
+		  int, int, packcol16*) const;
+  void MaskedBlit(bitmap*, v2, int, int,
+		  int, int, packcol16*) const;
+  void MaskedBlit(bitmap*, int, int, v2,
+		  int, int, packcol16*) const;
+  void MaskedBlit(bitmap*, int, int, int, int,
+		  v2, packcol16*) const;
+  void MaskedBlit(bitmap*, v2, v2,
+		  int, int, packcol16*) const;
+  void MaskedBlit(bitmap*, v2, int, int,
+		  v2, packcol16*) const;
+  void MaskedBlit(bitmap*, int, int, v2,
+		  v2, packcol16*) const;*/
+  void MaskedBlit(bitmap*, v2, v2,
+		  v2, packcol16*) const;
+  void MaskedBlit(bitmap*, packcol16*) const;
 
-  void Printf(bitmap*, int, int, packedcolor16, const char*, ...) const;
-  void PrintfUnshaded(bitmap*, int, int, packedcolor16, const char*, ...) const;
-  cachedfont* Colorize(const packedcolor16*, alpha = 255, const packedalpha* = 0) const;
-  bitmap* Colorize(vector2d, vector2d, vector2d, const packedcolor16*, alpha = 255, const packedalpha* = 0, const uchar* = 0, bool = true) const;
-  int GetXSize() const { return XSize; }
-  int GetYSize() const { return YSize; }
-  vector2d GetSize() const { return vector2d(XSize, YSize); }
+  void LIKE_PRINTF(5, 6) Printf(bitmap*, v2, packcol16,
+				const char*, ...) const;
+  void LIKE_PRINTF(5, 6) PrintfUnshaded(bitmap*, v2, packcol16,
+					const char*, ...) const;
+  cachedfont* Colorize(const packcol16*, alpha = 255,
+		       const packalpha* = 0) const;
+  bitmap* Colorize(v2, v2, v2,
+		   const packcol16*, alpha = 255,
+		   const packalpha* = 0,
+		   const uchar* = 0, truth = true) const;
+  /*int GetXSize() const { return XSize; }
+  int GetYSize() const { return YSize; }*/
+  v2 GetSize() const { return Size; }
 
-  void AlterGradient(int, int, int, int, int, int, bool);
-  void AlterGradient(vector2d, int, int, int, int, bool);
-  void AlterGradient(int, int, vector2d, int, int, bool);
-  void AlterGradient(vector2d, vector2d, int, int, bool);
+  /*void AlterGradient(int, int, int, int, int, int, truth);
+  void AlterGradient(v2, int, int, int, int, truth);
+  void AlterGradient(int, int, v2, int, int, truth);*/
+  void AlterGradient(v2, v2, int, int, truth);
 
-  void SwapColors(int, int, int, int, int, int);
-  void SwapColors(vector2d, int, int, int, int);
-  void SwapColors(int, int, vector2d, int, int);
-  void SwapColors(vector2d, vector2d, int, int);
+  /*void SwapColors(int, int, int, int, int, int);
+  void SwapColors(v2, int, int, int, int);
+  void SwapColors(int, int, v2, int, int);*/
+  void SwapColors(v2, v2, int, int);
 
-  void Roll(int, int, int, int, int, int, paletteindex*);
-  void Roll(vector2d, int, int, int, int, paletteindex*);
-  void Roll(int, int, vector2d, int, int, paletteindex*);
-  void Roll(int, int, int, int, vector2d, paletteindex*);
-  void Roll(vector2d, vector2d, int, int, paletteindex*);
-  void Roll(vector2d, int, int, vector2d, paletteindex*);
-  void Roll(int, int, vector2d, vector2d, paletteindex*);
-  void Roll(vector2d, vector2d, vector2d, paletteindex*);
+  /*void Roll(int, int, int, int, int, int, paletteindex*);
+  void Roll(v2, int, int, int, int, paletteindex*);
+  void Roll(int, int, v2, int, int, paletteindex*);
+  void Roll(int, int, int, int, v2, paletteindex*);
+  void Roll(v2, v2, int, int, paletteindex*);
+  void Roll(v2, int, int, v2, paletteindex*);
+  void Roll(int, int, v2, v2, paletteindex*);*/
+  void Roll(v2, v2, v2, paletteindex*);
 
-  void CreateFontCache(packedcolor16);
-  static bool IsMaterialColor(int Color) { return Color >= 192; }
+  void CreateFontCache(packcol16);
+  static truth IsMaterialColor(int Color) { return Color >= 192; }
   static int GetMaterialColorIndex(int Color) { return Color - 192 >> 4; }
-  int GetMaterialColorIndex(int X, int Y) const { return PaletteBuffer[Y][X] - 192 >> 4; }
-  bool IsTransparent(vector2d) const;
-  bool IsMaterialColor1(vector2d) const;
-  vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, int, bool*) const;
+  int GetMaterialColorIndex(int X, int Y) const
+  { return PaletteBuffer[Y][X] - 192 >> 4; }
+  truth IsTransparent(v2) const;
+  truth IsMaterialColor1(v2) const;
+  v2 RandomizeSparklePos(const v2*, v2*, v2,
+			       v2, int, int) const;
   void CopyPaletteFrom(rawbitmap*);
-  void PutPixel(int X, int Y, paletteindex Color) { PaletteBuffer[Y][X] = Color; }
-  void PutPixel(vector2d Pos, paletteindex Color) { PaletteBuffer[Pos.Y][Pos.X] = Color; }
-  paletteindex GetPixel(int X, int Y) const { return PaletteBuffer[Y][X]; }
-  paletteindex GetPixel(vector2d Pos) const { return PaletteBuffer[Pos.Y][Pos.X]; }
+  /*void PutPixel(int X, int Y, paletteindex Color)
+  { PaletteBuffer[Y][X] = Color; }*/
+  void PutPixel(v2 Pos, paletteindex Color)
+  { PaletteBuffer[Pos.Y][Pos.X] = Color; }
+  //paletteindex GetPixel(int X, int Y) const { return PaletteBuffer[Y][X]; }
+  paletteindex GetPixel(v2 Pos) const
+  { return PaletteBuffer[Pos.Y][Pos.X]; }
   void Clear();
-  void NormalBlit(rawbitmap*, int, int, int, int, int, int, int = 0) const;
+  void NormalBlit(rawbitmap*, v2, v2, v2, int = 0) const;
  protected:
-  int XSize, YSize;
+  v2 Size;
   uchar* Palette;
   paletteindex** PaletteBuffer;
   fontcache FontCache;

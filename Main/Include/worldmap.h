@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __WORLDMAP_H__
 #define __WORLDMAP_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <vector>
 
@@ -34,7 +31,7 @@ class worldmap : public area
   void Generate();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  wsquare* GetWSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
+  wsquare* GetWSquare(v2 Pos) const { return Map[Pos.X][Pos.Y]; }
   wsquare* GetWSquare(int x, int y) const { return Map[x][y]; }
   void GenerateClimate();
   int WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(int, int);
@@ -42,18 +39,18 @@ class worldmap : public area
   void SmoothAltitude();
   void SmoothClimate();
   void RandomizeAltitude();
-  continent* GetContinentUnder(vector2d) const;
+  continent* GetContinentUnder(v2) const;
   continent* GetContinent(int) const;
   void RemoveEmptyContinents();
-  int GetAltitude(vector2d);
+  int GetAltitude(v2);
   charactervector& GetPlayerGroup();
   character* GetPlayerGroupMember(int);
-  virtual void Draw(bool) const;
+  virtual void Draw(truth) const;
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
-  wsquare* GetNeighbourWSquare(vector2d, int) const;
-  vector2d GetEntryPos(const character*, int) const;
-  void RevealEnvironment(vector2d, int);
+  wsquare* GetNeighbourWSquare(v2, int) const;
+  v2 GetEntryPos(const character*, int) const;
+  void RevealEnvironment(v2, int);
   void SafeSmooth(int, int);
   void FastSmooth(int, int);
   wsquare*** GetMap() const { return Map; }

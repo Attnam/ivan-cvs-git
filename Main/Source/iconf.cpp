@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -40,40 +41,40 @@ scrollbaroption ivanconfig::Contrast(	  "Contrast",
 					  &ContrastChangeInterface,
 					  &ContrastChanger,
 					  &ContrastHandler);
-booloption ivanconfig::WarnAboutDanger(	  "WarnAboutVeryDangerousMonsters",
-					  "Warn about very dangerous monsters",
-					  true);
-booloption ivanconfig::AutoDropLeftOvers( "AutoDropLeftOvers",
-					  "drop food leftovers automatically",
-					  true);
-booloption ivanconfig::LookZoom(	  "LookZoom",
+truthoption ivanconfig::WarnAboutDanger(	  "WarnAboutVeryDangerousMonsters",
+						  "Warn about very dangerous monsters",
+						  true);
+truthoption ivanconfig::AutoDropLeftOvers( "AutoDropLeftOvers",
+					   "drop food leftovers automatically",
+					   true);
+truthoption ivanconfig::LookZoom(	  "LookZoom",
 					  "zoom feature in look mode",
 					  false);
-booloption ivanconfig::UseAlternativeKeys("UseAlternativeKeys",
-					  "use alternative direction keys",
-					  false);
+truthoption ivanconfig::UseAlternativeKeys("UseAlternativeKeys",
+					   "use alternative direction keys",
+					   false);
 #ifndef __DJGPP__
-booloption ivanconfig::FullScreenMode(	  "FullScreenMode",
+truthoption ivanconfig::FullScreenMode(	  "FullScreenMode",
 					  "run the game in full screen mode",
 					  false,
-					  &configsystem::NormalBoolDisplayer,
-					  &configsystem::NormalBoolChangeInterface,
+					  &configsystem::NormalTruthDisplayer,
+					  &configsystem::NormalTruthChangeInterface,
 					  &FullScreenModeChanger);
 #endif
-color24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
+col24 ivanconfig::ContrastLuminance = NORMAL_LUMINANCE;
 
-vector2d ivanconfig::GetQuestionPos() { return game::IsRunning() ? vector2d(16, 6) : vector2d(30, 30); }
+v2 ivanconfig::GetQuestionPos() { return game::IsRunning() ? v2(16, 6) : v2(30, 30); }
 void ivanconfig::BackGroundDrawer() { game::DrawEverythingNoBlit(); }
 
 void ivanconfig::AutoSaveIntervalDisplayer(const numberoption* O, festring& Entry)
 {
   if(O->Value)
-    {
-      Entry << O->Value << " turn";
+  {
+    Entry << O->Value << " turn";
 
-      if(O->Value != 1)
-	Entry << 's';
-    }
+    if(O->Value != 1)
+      Entry << 's';
+  }
   else
     Entry << "disabled";
 }
@@ -83,7 +84,7 @@ void ivanconfig::ContrastDisplayer(const numberoption* O, festring& Entry)
   Entry << O->Value << "/100";
 }
 
-bool ivanconfig::DefaultNameChangeInterface(stringoption* O)
+truth ivanconfig::DefaultNameChangeInterface(stringoption* O)
 {
   festring String;
 
@@ -91,12 +92,12 @@ bool ivanconfig::DefaultNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
 }
 
-bool ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
+truth ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
 {
   festring String;
 
@@ -104,27 +105,27 @@ bool ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
 }
 
-bool ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
+truth ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
 {
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"), GetQuestionPos(), WHITE, !game::IsRunning()));
 
   if(game::IsRunning())
-    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
 }
 
-bool ivanconfig::ContrastChangeInterface(numberoption* O)
+truth ivanconfig::ContrastChangeInterface(numberoption* O)
 {
   iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY, game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX), !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
-    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
+    igraph::BlitBackGround(v2(16, 6), v2(game::GetScreenXSize() << 4, 23));
 
   return false;
 }
@@ -146,7 +147,7 @@ void ivanconfig::ContrastChanger(numberoption* O, long What)
 
 #ifndef __DJGPP__
 
-void ivanconfig::FullScreenModeChanger(booloption*, bool)
+void ivanconfig::FullScreenModeChanger(truthoption*, truth)
 {
   graphics::SwitchMode();
 }
@@ -163,10 +164,10 @@ void ivanconfig::ContrastHandler(long Value)
   ContrastChanger(&Contrast, Value);
 
   if(game::IsRunning())
-    {
-      game::GetCurrentArea()->SendNewDrawRequest();
-      game::DrawEverythingNoBlit();
-    }
+  {
+    game::GetCurrentArea()->SendNewDrawRequest();
+    game::DrawEverythingNoBlit();
+  }
 }
 
 #ifndef __DJGPP__
@@ -178,12 +179,6 @@ void ivanconfig::SwitchModeHandler()
 }
 
 #endif
-
-long ivanconfig::ApplyContrastTo(long L)
-{
-  long Contrast = GetContrast();
-  return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
-}
 
 void ivanconfig::CalculateContrastLuminance()
 {

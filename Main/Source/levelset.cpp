@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -13,17 +14,10 @@
 
 #include "proto.h"
 #include "lterra.h"
+#include "database.h"
 
-glterrain::prototype** protocontainer<glterrain>::ProtoData;
-olterrain::prototype** protocontainer<olterrain>::ProtoData;
-valuemap protocontainer<glterrain>::CodeNameMap;
-valuemap protocontainer<olterrain>::CodeNameMap;
-int protocontainer<glterrain>::Size;
-int protocontainer<olterrain>::Size;
-glterrainprototype glterrain_ProtoType(0, 0, "glterrain");
-olterrainprototype olterrain_ProtoType(0, 0, "olterrain");
-const glterrainprototype* glterrain::GetProtoType() const { return &glterrain_ProtoType; }
-const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_ProtoType; }
+EXTENDED_SYSTEM_SPECIALIZATIONS(glterrain)(0, 0, "glterrain");
+EXTENDED_SYSTEM_SPECIALIZATIONS(olterrain)(0, 0, "olterrain");
 
 #include "lterras.h"
 
@@ -48,13 +42,13 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 #include "materias.h"
 #include "confdef.h"
 #include "fluid.h"
-#include "database.h"
 #include "nonhuman.h"
 #include "smoke.h"
 #include "save.h"
 #include "allocate.h"
 #include "whandler.h"
 #include "rain.h"
+#include "balance.h"
 
 #include "level.cpp"
 #include "lsquare.cpp"

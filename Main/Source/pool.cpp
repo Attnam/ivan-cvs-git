@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -26,12 +27,12 @@ void pool::Be()
   CurrentEntity = FirstEntity;
 
   while(CurrentEntity)
-    {
-      CurrentEntity->Be();
+  {
+    CurrentEntity->Be();
 
-      if(CurrentEntity)
-	CurrentEntity = CurrentEntity->Next;
-    }
+    if(CurrentEntity)
+      CurrentEntity = CurrentEntity->Next;
+  }
 }
 
 void pool::BurnHell()
@@ -39,11 +40,11 @@ void pool::BurnHell()
   entity* Entity = FirstDoomed;
 
   while(Entity)
-    {
-      entity* Next = Entity->Next;
-      delete Entity;
-      Entity = Next;
-    }
+  {
+    entity* Next = Entity->Next;
+    delete Entity;
+    Entity = Next;
+  }
 
   FirstDoomed = 0;
 }

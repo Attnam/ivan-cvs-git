@@ -1,22 +1,19 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "typedef.h"
+#include "felibdef.h"
 
 #define ABORT globalerrorhandler::Abort
 
@@ -29,7 +26,7 @@ class globalerrorhandler
  public:
   static void Install();
   static void DeInstall();
-  static void Abort(const char*, ...);
+  static void NO_RETURN LIKE_PRINTF(1, 2) Abort(const char*, ...);
   static const char* GetBugMsg() { return BugMsg; }
  private:
   static const char* BugMsg;

@@ -38,7 +38,8 @@ Burial.
 Wars.
 Homes.
 Family. And lost siblings that can be found by digging on the World Map.
-(r) Diapers which can be applied to babies to prevent them from spilling yellow and brown fluids to the floor.
+(r) Diapers which can be applied to babies to prevent them from spilling
+    yellow and brown fluids to the floor.
 The Reaper.
 Script event system.
 Intergame pets.
@@ -66,16 +67,19 @@ Unique angels for each god, for instance giant frogs for Valpurus.
 Fallout-like perks.
 Flaming bushes.
 Global warming.
-Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
+Specialities for highest SWSkills like unwield prohibition and Stormbringer
+    effect.
 Game saga.
 Pregnancy state for female players.
 Storks. (alternative for the last one)
-One day, the dolphins in the cathedral should vanish, leaving behind only a glass bowl.
+One day, the dolphins in the cathedral should vanish, leaving behind only a
+    glass bowl.
 Inquisition in Attnam.
 Random ruins in the wilderness.
 Random artifacts.
 Random demigods.
-On the world map, there should be a sign in the middle of nowhere with text "All your base are belong to us."
+On the world map, there should be a sign in the middle of nowhere with text
+    "All your base are belong to us."
 Graphical statistics of kills per 100 turns etc. to endgame.
 Player-creatable magic.
 Nobility ranks.
@@ -96,7 +100,8 @@ Gradual stoning/freezing system.
 Steam-powered vodka flame thrower.
 //Stamina.
 Winds.
-Undead disko where multicolored lights flicker and skeletons sing "Hip bone is connected to the leg bone..."
+Undead disko where multicolored lights flicker and skeletons sing "Hip bone
+    is connected to the leg bone..."
 Sampo.
 Avalanches & landslides.
 Strange drool jokes.
@@ -105,3 +110,8 @@ Moksa state.
 Smells that could be used for tracking monsters.
 Leprosy asylums.
 Breaking TryMove() to parts.
+Richel Decos should have a mistress in his closet.
+Halfling village where a number of hobbits carry tomatoes (eg) from their
+    vegetable fields to be transported away by levitating ostriches.
+    Officially a colony of Attnam, but led ruthlessly by Mrs Fortuna
+    Decos, the wife of Richel, who has an athlete lover in her closet.

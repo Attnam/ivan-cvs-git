@@ -1,17 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through wmapset.cpp */
 
-wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
+wsquare::wsquare(worldmap* WorldMapUnder, v2 Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
 
 wsquare::~wsquare()
 {
@@ -23,33 +24,36 @@ void wsquare::Save(outputfile& SaveFile) const
 {
   square::Save(SaveFile);
   SaveFile << GWTerrain << OWTerrain;
-  SaveFile << bool(!!LastSeen);
+  SaveFile.Put(!!LastSeen);
 }
 
 void wsquare::Load(inputfile& SaveFile)
 {
   square::Load(SaveFile);
   SaveFile >> GWTerrain >> OWTerrain;
-  LastSeen = ReadType<bool>(SaveFile) ? 1 : 0;
+  LastSeen = SaveFile.Get();
   CalculateLuminance();
 }
 
-void wsquare::Draw()
+void wsquare::Draw(blitdata& BlitData)
 {
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
+  {
+    BlitData.Luminance = ivanconfig::ApplyContrastTo(Luminance);
+    GWTerrain->Draw(BlitData);
+
+    if(OWTerrain)
+      OWTerrain->Draw(BlitData);
+
+    if(Character && Character->CanBeSeenByPlayer())
     {
-      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-      long RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
-      GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
-
-      if(OWTerrain)
-	OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
-
-      if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
-
-      Flags &= ~STRONG_NEW_DRAW_REQUEST;
+      BlitData.Luminance = ivanconfig::GetContrastLuminance();
+      BlitData.CustomData = Character->GetSquareIndex(Pos)|ALLOW_ANIMATE;
+      Character->Draw(BlitData);
     }
+
+    Flags &= ~STRONG_NEW_DRAW_REQUEST;
+  }
 }
 
 void wsquare::ChangeWTerrain(gwterrain* NewGround, owterrain* NewOver)
@@ -61,7 +65,7 @@ void wsquare::ChangeWTerrain(gwterrain* NewGround, owterrain* NewOver)
 void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 {
   if(GWTerrain->IsAnimated())
-    DecAnimatedEntities();
+    DecStaticAnimatedEntities();
 
   delete GWTerrain;
   SetGWTerrain(NewGround);
@@ -71,7 +75,7 @@ void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 void wsquare::ChangeOWTerrain(owterrain* NewOver)
 {
   if(OWTerrain && OWTerrain->IsAnimated())
-    DecAnimatedEntities();
+    DecStaticAnimatedEntities();
 
   delete OWTerrain;
   SetOWTerrain(NewOver);
@@ -89,12 +93,12 @@ void wsquare::SetGWTerrain(gwterrain* What)
   GWTerrain = What;
 
   if(What)
-    {
-      What->SetWSquareUnder(this);
+  {
+    What->SetWSquareUnder(this);
 
-      if(What->IsAnimated())
-	IncAnimatedEntities();
-    }
+    if(What->IsAnimated())
+      IncStaticAnimatedEntities();
+  }
 }
 
 void wsquare::SetOWTerrain(owterrain* What)
@@ -102,41 +106,41 @@ void wsquare::SetOWTerrain(owterrain* What)
   OWTerrain = What;
 
   if(What)
-    {
-      What->SetWSquareUnder(this);
+  {
+    What->SetWSquareUnder(this);
 
-      if(What->IsAnimated())
-	IncAnimatedEntities();
-    }
+    if(What->IsAnimated())
+      IncStaticAnimatedEntities();
+  }
 }
 
-void wsquare::UpdateMemorizedDescription(bool Cheat)
+void wsquare::UpdateMemorizedDescription(truth Cheat)
 {
   if(Flags & DESCRIPTION_CHANGE || Cheat)
+  {
+    MemorizedDescription.Empty();
+
+    if(OWTerrain)
     {
-      MemorizedDescription.Empty();
-
-      if(OWTerrain)
-	{
-	  OWTerrain->AddName(MemorizedDescription, INDEFINITE);
-	  MemorizedDescription << " surrounded by ";
-	  GWTerrain->AddName(MemorizedDescription, UNARTICLED);
-	}
-      else
-	GWTerrain->AddName(MemorizedDescription, UNARTICLED);
-
-      if(Cheat)
-	{
-	  festring Continent;
-
-	  if(GetWorldMap()->GetContinentUnder(Pos))
-	    Continent << ", continent " << GetWorldMap()->GetContinentUnder(Pos)->GetName();
-
-	  MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
-	}
-
-      Flags &= ~DESCRIPTION_CHANGE;
+      OWTerrain->AddName(MemorizedDescription, INDEFINITE);
+      MemorizedDescription << " surrounded by ";
+      GWTerrain->AddName(MemorizedDescription, UNARTICLED);
     }
+    else
+      GWTerrain->AddName(MemorizedDescription, UNARTICLED);
+
+    if(Cheat)
+    {
+      festring Continent;
+
+      if(GetWorldMap()->GetContinentUnder(Pos))
+	Continent << ", continent " << GetWorldMap()->GetContinentUnder(Pos)->GetName();
+
+      MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
+    }
+
+    Flags &= ~DESCRIPTION_CHANGE;
+  }
 }
 
 gterrain* wsquare::GetGTerrain() const
@@ -149,7 +153,7 @@ oterrain* wsquare::GetOTerrain() const
   return OWTerrain;
 }
 
-bool wsquare::SignalSeen()
+truth wsquare::SignalSeen()
 {
   UpdateMemorizedDescription();
   LastSeen = 1;
@@ -167,12 +171,12 @@ int wsquare::GetWalkability() const
   return OWTerrain ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability() : GWTerrain->GetWalkability(); 
 }
 
-bool wsquare::CanBeSeenByPlayer(bool) const
+truth wsquare::CanBeSeenByPlayer(truth) const
 {
-  return !!LastSeen;
+  return LastSeen;
 }
 
-bool wsquare::CanBeSeenFrom(vector2d FromPos, long MaxDistance, bool) const
+truth wsquare::CanBeSeenFrom(v2 FromPos, long MaxDistance, truth) const
 {
   return (Pos - FromPos).GetLengthSquare() <= MaxDistance;
 }

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -37,13 +38,13 @@ void unconsciousness::Handle()
   if(!--Counter)
     Terminate(true);
   else
-    {
-      Actor->EditExperience(ARM_STRENGTH, -50, 1 << 2);
-      Actor->EditExperience(LEG_STRENGTH, -50, 1 << 2);
-    }
+  {
+    Actor->EditExperience(ARM_STRENGTH, -50, 1 << 2);
+    Actor->EditExperience(LEG_STRENGTH, -50, 1 << 2);
+  }
 }
 
-void unconsciousness::Terminate(bool Finished)
+void unconsciousness::Terminate(truth Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -75,37 +76,37 @@ void consume::Handle()
   item* Consuming = game::SearchItem(ConsumingID);
 
   if(!Consuming || !Consuming->Exists() || !Actor->IsOver(Consuming))
-    {
-      Terminate(false);
-      return;
-    }
+  {
+    Terminate(false);
+    return;
+  }
 
   character* Actor = GetActor();
 
   if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
     if(Actor->IsPlayer())
-      {
-	ADD_MESSAGE("You have a really hard time getting all this down your throat.");
+    {
+      ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
-	if(game::BoolQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
-	  ActivateInDNDMode();
-	else
-	  {
-	    Terminate(false);
-	    return;
-	  }
-      }
-    else
+      if(game::truthQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
+	ActivateInDNDMode();
+      else
       {
 	Terminate(false);
 	return;
       }
-
-  if(!Actor->IsPlayer() && !Consuming->CanBeEatenByAI(Actor)) // item may be spoiled after action was started
+    }
+    else
     {
       Terminate(false);
       return;
     }
+
+  if(!Actor->IsPlayer() && !Consuming->CanBeEatenByAI(Actor)) // item may be spoiled after action was started
+  {
+    Terminate(false);
+    return;
+  }
 
   /* Note: if backupped Actor has died of food effect,
      Action is deleted automatically, so we mustn't Terminate it */
@@ -113,13 +114,13 @@ void consume::Handle()
   if(Consuming->Consume(Actor, 500) && Actor->GetAction() == this && Actor->IsEnabled())
     Terminate(true);
   else if(Actor->GetHungerState() == OVER_FED)
-    {
-      Actor->DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
-      Actor->Vomit(Actor->GetPos(), 500 + RAND() % 500);
-    }
+  {
+    Actor->DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
+    Actor->Vomit(Actor->GetPos(), 500 + RAND() % 500);
+  }
 }
 
-void consume::Terminate(bool Finished)
+void consume::Terminate(truth Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -134,21 +135,21 @@ void consume::Terminate(bool Finished)
     ADD_MESSAGE("%s %s %s.", Actor->CHAR_NAME(DEFINITE), Finished ? "finishes" : "stops", Description.CStr());
 
   if(Finished)
+  {
+    if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
     {
-      if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
-	{
-	  Consuming->RemoveFromSlot();
-	  Actor->GetStackUnder()->AddItem(Consuming);
-	  Actor->DexterityAction(2);
-	}
+      Consuming->RemoveFromSlot();
+      Actor->GetStackUnder()->AddItem(Consuming);
+      Actor->DexterityAction(2);
     }
+  }
   else if(Consuming && Consuming->Exists())
-    {
-      material* ConsumeMaterial = Consuming->GetConsumeMaterial(Actor);
+  {
+    material* ConsumeMaterial = Consuming->GetConsumeMaterial(Actor);
 
-      if(ConsumeMaterial)
-	ConsumeMaterial->FinishConsuming(Actor);
-    }
+    if(ConsumeMaterial)
+      ConsumeMaterial->FinishConsuming(Actor);
+  }
 
   action::Terminate(Finished);
 }
@@ -168,16 +169,16 @@ void rest::Load(inputfile& SaveFile)
 void rest::Handle()
 {
   if((GoalHP && (GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP() || !GetActor()->CanHeal()))
-  || (MinToStop && game::GetTotalMinutes() >= MinToStop))
+     || (MinToStop && game::GetTotalMinutes() >= MinToStop))
     Terminate(true);
   else
-    {
-      GetActor()->EditExperience(DEXTERITY, -25, 1 << 1);
-      GetActor()->EditExperience(AGILITY, -25, 1 << 1);
-    }
+  {
+    GetActor()->EditExperience(DEXTERITY, -25, 1 << 1);
+    GetActor()->EditExperience(AGILITY, -25, 1 << 1);
+  }
 }
 
-void rest::Terminate(bool Finished)
+void rest::Terminate(truth Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -185,19 +186,19 @@ void rest::Terminate(bool Finished)
   Flags |= TERMINATING;
 
   if(Finished)
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish resting.");
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes resting.", GetActor()->CHAR_NAME(DEFINITE));
-    }
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You finish resting.");
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s finishes resting.", GetActor()->CHAR_NAME(DEFINITE));
+  }
   else
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop resting.");
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops resting.", GetActor()->CHAR_NAME(DEFINITE));
-    }
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You stop resting.");
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s stops resting.", GetActor()->CHAR_NAME(DEFINITE));
+  }
 
   action::Terminate(Finished);
 }
@@ -220,19 +221,19 @@ void dig::Handle()
   item* Digger = Actor->GetMainWielded();
 
   if(!Digger)
-    {
-      Terminate(false);
-      return;
-    }
+  {
+    Terminate(false);
+    return;
+  }
 
   lsquare* Square = Actor->GetNearLSquare(SquareDug);
   olterrain* Terrain = Square->GetOLTerrain();
 
   if(!Terrain || !Terrain->CanBeDestroyed() || !Terrain->GetMainMaterial()->CanBeDug(Digger->GetMainMaterial()))
-    {
-      Terminate(false);
-      return;
-    }
+  {
+    Terminate(false);
+    return;
+  }
 
   int Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
   Terrain->EditHP(-Max(Damage, 1));
@@ -241,43 +242,43 @@ void dig::Handle()
   Actor->EditNP(-500);
 
   if(Terrain->GetHP() <= 0)
+  {
+    if(Square->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s", Terrain->GetDigMessage().CStr());
+
+    Terrain->Break();
+
+    /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
+
+    if(!Actor->IsEnabled())
+      return;
+
+    if(MoveDigger && Actor->GetMainWielded())
+      Actor->GetMainWielded()->MoveTo(Actor->GetStack());
+
+    item* RightBackup = game::SearchItem(RightBackupID);
+
+    if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
     {
-      if(Square->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s", Terrain->GetDigMessage().CStr());
-
-      Terrain->Break();
-
-      /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
-
-      if(!Actor->IsEnabled())
-	return;
-
-      if(MoveDigger && Actor->GetMainWielded())
-	Actor->GetMainWielded()->MoveTo(Actor->GetStack());
-
-      item* RightBackup = game::SearchItem(RightBackupID);
-
-      if(RightBackup && RightBackup->Exists() && Actor->IsOver(RightBackup))
-	{
-	  RightBackup->RemoveFromSlot();
-	  Actor->SetRightWielded(RightBackup);
-	}
-
-      item* LeftBackup = game::SearchItem(LeftBackupID);
-
-      if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
-	{
-	  LeftBackup->RemoveFromSlot();
-	  Actor->SetLeftWielded(LeftBackup);
-	}
-
-      Terminate(true);
+      RightBackup->RemoveFromSlot();
+      Actor->SetRightWielded(RightBackup);
     }
+
+    item* LeftBackup = game::SearchItem(LeftBackupID);
+
+    if(LeftBackup && LeftBackup->Exists() && Actor->IsOver(LeftBackup))
+    {
+      LeftBackup->RemoveFromSlot();
+      Actor->SetLeftWielded(LeftBackup);
+    }
+
+    Terminate(true);
+  }
   else
     game::DrawEverything();
 }
 
-void dig::Terminate(bool Finished)
+void dig::Terminate(truth Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -285,12 +286,12 @@ void dig::Terminate(bool Finished)
   Flags |= TERMINATING;
 
   if(!Finished)
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop digging.");
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops digging.", GetActor()->CHAR_NAME(DEFINITE));
-    }
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You stop digging.");
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s stops digging.", GetActor()->CHAR_NAME(DEFINITE));
+  }
 
   action::Terminate(Finished);
 }
@@ -318,26 +319,26 @@ void study::Handle()
   item* Literature = game::SearchItem(LiteratureID);
 
   if(!Literature || !Literature->Exists() || !Actor->IsOver(Literature))
-    {
-      Terminate(false);
-      return;
-    }
+  {
+    Terminate(false);
+    return;
+  }
 
   if(GetActor()->GetLSquareUnder()->IsDark() && !game::GetSeeWholeMapCheatMode())
-    {
-      ADD_MESSAGE("It is too dark to read now.");
-      Terminate(false);
-      return;
-    }
+  {
+    ADD_MESSAGE("It is too dark to read now.");
+    Terminate(false);
+    return;
+  }
 
   if(game::CompareLightToInt(GetActor()->GetLSquareUnder()->GetLuminance(), 115) < 0)
     GetActor()->EditExperience(PERCEPTION, -50, 1 << 1);
 
   if(!Counter)
-    {
-      Terminate(true);
-      return;
-    }
+  {
+    Terminate(true);
+    return;
+  }
 
   if(GetActor()->GetAttribute(INTELLIGENCE) >= Counter)
     Counter = 0;
@@ -345,7 +346,7 @@ void study::Handle()
     Counter -= GetActor()->GetAttribute(INTELLIGENCE);
 }
 
-void study::Terminate(bool Finished)
+void study::Terminate(truth Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -354,32 +355,32 @@ void study::Terminate(bool Finished)
   item* Literature = game::SearchItem(LiteratureID);
 
   if(Finished)
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish reading %s.", Literature->CHAR_NAME(DEFINITE));
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You finish reading %s.", Literature->CHAR_NAME(DEFINITE));
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
 
-      character* Actor = GetActor();
-      Literature->FinishReading(Actor);
+    character* Actor = GetActor();
+    Literature->FinishReading(Actor);
 
-      if(!Actor->IsEnabled())
-	return;
-    }
+    if(!Actor->IsEnabled())
+      return;
+  }
   else if(Literature && Literature->Exists())
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop reading %s.", Literature->CHAR_NAME(DEFINITE));
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
-    }
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You stop reading %s.", Literature->CHAR_NAME(DEFINITE));
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s stops reading %s.", GetActor()->CHAR_NAME(DEFINITE), Literature->CHAR_NAME(DEFINITE));
+  }
   else
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop reading.");
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops reading.", GetActor()->CHAR_NAME(DEFINITE));
-    }
+  {
+    if(GetActor()->IsPlayer())
+      ADD_MESSAGE("You stop reading.");
+    else if(GetActor()->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s stops reading.", GetActor()->CHAR_NAME(DEFINITE));
+  }
 
   action::Terminate(Finished);
 }
@@ -396,15 +397,10 @@ void study::Load(inputfile& SaveFile)
   SaveFile >> Counter >> LiteratureID;
 }
 
-bool go::TryDisplace()
+truth go::TryDisplace()
 {
   Terminate(false);
   return true;
-}
-
-void dig::VirtualConstructor(bool)
-{
-  RightBackupID = LeftBackupID = 0;
 }
 
 void unconsciousness::RaiseCounterTo(int What)

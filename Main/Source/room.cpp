@@ -1,20 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through roomset.cpp */
 
-roomprototype::roomprototype(room* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
-
-room::room(donothing) : LastMasterSearchTick(0), MasterID(0) { }
-room::~room() { }
+roomprototype::roomprototype(roomspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<room>::Add(this); }
 
 void room::Save(outputfile& SaveFile) const
 {
@@ -27,9 +25,9 @@ void room::Load(inputfile& SaveFile)
   SaveFile >> Pos >> Size >> Index >> DivineMaster >> MasterID;
 }
 
-room* roomprototype::CloneAndLoad(inputfile& SaveFile) const
+room* roomprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  room* Room = Cloner(true);
+  room* Room = Spawner();
   Room->Load(SaveFile);
   return Room;
 }
@@ -45,37 +43,37 @@ void room::DestroyTerrain(character* Who)
 
 /* returns true if player agrees to continue */
 
-bool room::CheckDestroyTerrain(character* Infidel) 
+truth room::CheckDestroyTerrain(character* Infidel) 
 {
   if(!MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE)
     return true;
 
   ADD_MESSAGE("%s might not like this.", GetMaster()->CHAR_NAME(DEFINITE));
 
-  if(game::BoolQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
-    {
-      DestroyTerrain(Infidel);
-      return true;
-    }
+  if(game::truthQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
+  {
+    DestroyTerrain(Infidel);
+    return true;
+  }
   else
     return false; 
 }
 
-bool room::MasterIsActive() const
+truth room::MasterIsActive() const
 {
   character* Master = GetMaster();
   return Master && Master->IsEnabled();
 }
 
-bool room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) const
+truth room::CheckKickSquare(const character* Kicker, const lsquare* LSquare) const
 {
   if(!AllowKick(Kicker, LSquare))
-    {
-      ADD_MESSAGE("That would be vandalism.");
+  {
+    ADD_MESSAGE("That would be vandalism.");
 
-      if(!game::BoolQuestion(CONST_S("Do you still want to do this? [y/N]")))
-	return false;
-    }
+    if(!game::truthQuestion(CONST_S("Do you still want to do this? [y/N]")))
+      return false;
+  }
   return true;
 }
 
@@ -86,13 +84,13 @@ character* room::GetMaster() const
   if(LastMasterSearchTick == Tick)
     return Master;
   else
-    {
-      LastMasterSearchTick = Tick;
-      return Master = game::SearchCharacter(MasterID);
-    }
+  {
+    LastMasterSearchTick = Tick;
+    return Master = game::SearchCharacter(MasterID);
+  }
 }
 
-bool room::IsOKToDestroyWalls(const character* Infidel) const
+truth room::IsOKToDestroyWalls(const character* Infidel) const
 {
   return !MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE;
 }
@@ -100,12 +98,12 @@ bool room::IsOKToDestroyWalls(const character* Infidel) const
 void room::FinalProcessForBone()
 {
   if(MasterID)
-    {
-      boneidmap::iterator BI = game::GetBoneCharacterIDMap().find(MasterID);
+  {
+    boneidmap::iterator BI = game::GetBoneCharacterIDMap().find(MasterID);
 
-      if(BI != game::GetBoneCharacterIDMap().end())
-	MasterID = BI->second;
-      else
-	MasterID = 0;
-    }
+    if(BI != game::GetBoneCharacterIDMap().end())
+      MasterID = BI->second;
+    else
+      MasterID = 0;
+  }
 }

@@ -1,30 +1,26 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
 
-#include "felibdef.h"
+#include "v2.h"
 
 #define DOUBLE_BUFFER graphics::GetDoubleBuffer()
-#define RES_X graphics::GetResX()
-#define RES_Y graphics::GetResY()
+#define RES graphics::GetRes()
 #define FONT graphics::GetDefaultFont()
 
 class bitmap;
@@ -43,14 +39,14 @@ class graphics
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
-  static void SetMode(const char*, const char*, int, int, bool);
+  static void SetMode(const char*, const char*, v2, truth);
   static void BlitDBToScreen();
-  static int GetResX() { return ResX; }
-  static int GetResY() { return ResY; }
+  static v2 GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(const festring&);
   static rawbitmap* GetDefaultFont() { return DefaultFont; }
-  static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
+  static void SetSwitchModeHandler(void (*What)())
+  { SwitchModeHandler = What; }
  private:
   static void (*SwitchModeHandler)();
 #ifdef USE_SDL
@@ -109,8 +105,7 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static int ResX;
-  static int ResY;
+  static v2 Res;
   static int ColorDepth;
   static rawbitmap* DefaultFont;
 };

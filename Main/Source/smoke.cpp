@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -18,36 +19,36 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas
 {
   Gas->SetMotherEntity(this);
   Picture.resize(16);
-  packedcolor16 Color = Gas->GetColor();
-  bitmap Temp(16, 16, TRANSPARENT_COLOR);
+  packcol16 Color = Gas->GetColor();
+  bitmap Temp(TILE_V2, TRANSPARENT_COLOR);
   Temp.ActivateFastFlag();
   int Frame[16];
   int Flags[16];
 
   for(int c = 0; c < 16; ++c)
+  {
+    Picture[c] = new bitmap(TILE_V2, TRANSPARENT_COLOR);
+    Picture[c]->ActivateFastFlag();
+    Picture[c]->CreateAlphaMap(Alpha);
+    truth Correct = false;
+
+    while(!Correct)
     {
-      Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
-      Picture[c]->ActivateFastFlag();
-      Picture[c]->CreateAlphaMap(Alpha);
-      bool Correct = false;
+      Frame[c] = RAND() & 3;
+      Flags[c] = RAND() & 7;
+      Correct = true;
 
-      while(!Correct)
+      for(int i = 0; i < c; ++i)
+	if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
 	{
-	  Frame[c] = RAND() & 3;
-	  Flags[c] = RAND() & 7;
-	  Correct = true;
-
-	  for(int i = 0; i < c; ++i)
-	    if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
-	      {
-		Correct = false;
-		break;
-	      }
+	  Correct = false;
+	  break;
 	}
-
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, Frame[c] << 4, 32, 0, 0, 16, 16, &Color);
-      Temp.NormalBlit(Picture[c], Flags[c]);
     }
+
+    igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, v2(Frame[c] << 4, 32), ZERO_V2, TILE_V2, &Color);
+    Temp.NormalBlit(Picture[c], Flags[c]);
+  }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);
 }
@@ -63,22 +64,22 @@ smoke::~smoke()
 void smoke::Be()
 {
   if(!(RAND() & 7))
+  {
+    LSquareUnder->SendNewDrawRequest();
+    LSquareUnder->SignalSmokeAlphaChange(-1);
+
+    if(!--Alpha)
     {
-      LSquareUnder->SendNewDrawRequest();
-      LSquareUnder->SignalSmokeAlphaChange(-1);
-
-      if(!--Alpha)
-	{
-	  LSquareUnder->RemoveSmoke(this);
-	  SendToHell();
-	  return;
-	}
-
-      for(int c = 0; c < 16; ++c)
-	Picture[c]->FillAlpha(Alpha);
-
-      Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
+      LSquareUnder->RemoveSmoke(this);
+      SendToHell();
+      return;
     }
+
+    for(int c = 0; c < 16; ++c)
+      Picture[c]->FillAlpha(Alpha);
+
+    Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
+  }
 
   character* Char = LSquareUnder->GetCharacter();
 
@@ -86,9 +87,9 @@ void smoke::Be()
     Gas->BreatheEffect(Char);
 }
 
-void smoke::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
+void smoke::Draw(blitdata& BlitData) const
 {
-  Picture[(GET_TICK() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture[(GET_TICK() >> 1) & 3]->AlphaLuminanceBlit(BlitData);
 }
 
 void smoke::Save(outputfile& SaveFile) const
@@ -134,13 +135,13 @@ void smoke::Merge(gas* OtherGas)
   delete OtherGas;
 }
 
-bool smoke::IsDangerousForAIToBreathe(const character* Who) const
+truth smoke::IsDangerousForAIToBreathe(const character* Who) const
 {
   return !Who->StateIsActivated(GAS_IMMUNITY)
-      && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
+    && Who->GetAttribute(WISDOM) >= Gas->GetBreatheWisdomLimit();
 }
 
-bool smoke::IsScaryForAIToBreathe(const character* Who) const
+truth smoke::IsScaryForAIToBreathe(const character* Who) const
 {
-  return !Who->StateIsActivated(GAS_IMMUNITY) && Gas->IsScary();
+  return !Who->StateIsActivated(GAS_IMMUNITY) && Gas->GetCategoryFlags() & IS_SCARY;
 }

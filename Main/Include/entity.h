@@ -1,24 +1,21 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <list>
 
-#include "typedef.h"
+#include "felibdef.h"
 
 #define EXISTS 1
 #define HAS_BE 2
@@ -28,7 +25,7 @@ class square;
 class material;
 class character;
 class festring;
-struct vector2d;
+struct v2;
 
 class entity
 {
@@ -38,22 +35,22 @@ class entity
   entity(const entity&);
   virtual ~entity();
   virtual void Be() { }
-  bool Exists() const { return !!(Flags & EXISTS); }
+  truth Exists() const { return Flags & EXISTS; }
   void SendToHell();
-  bool IsEnabled() const { return !!(Flags & HAS_BE); }
+  truth IsEnabled() const { return Flags & HAS_BE; }
   void Enable();
   void Disable();
   virtual square* GetSquareUnderEntity(int = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() { }
-  color24 GetEmitation() const { return Emitation; }
-  virtual void SignalEmitationIncrease(color24) { }
-  virtual void SignalEmitationDecrease(color24) { }
-  virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
-  virtual bool AllowSpoil() const { return false; }
+  col24 GetEmitation() const { return Emitation; }
+  virtual void SignalEmitationIncrease(col24) { }
+  virtual void SignalEmitationDecrease(col24) { }
+  virtual truth ContentsCanBeSeenBy(const character*) const { return false; }
+  virtual truth AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
   virtual void SignalSpoilLevelChange(material*) { }
-  virtual bool IsOnGround() const = 0;
-  virtual bool AllowContentEmitation() const { return true; }
+  virtual truth IsOnGround() const = 0;
+  virtual truth AllowContentEmitation() const { return true; }
   virtual void SignalRustLevelChange() { }
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
@@ -64,10 +61,12 @@ class entity
   virtual void AddTrapName(festring&, int) const { }
   virtual void UnStick() { }
   virtual void UnStick(int) { }
-  virtual bool TryToUnStick(character*, vector2d);
+  virtual truth TryToUnStick(character*, v2);
   virtual int GetTrapType() const { return 0; }
+  void AddFlags(ulong What) { Flags |= What; }
+  void RemoveFlags(ulong What) { Flags &= ~What; }
  protected:
-  color24 Emitation;
+  col24 Emitation;
   ulong Flags;
  private:
   entity* Last;

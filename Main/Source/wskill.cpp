@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -37,7 +38,7 @@ const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
     "polearms",
     "whips",
     "shields"
-  };
+};
 
 int SWeaponSkillLevelMap[] = { 0, 500, 750, 1000, 1500, 2000, 3000, 5000,
 			       7500, 10000, 15000, 20000, 30000, 50000,
@@ -61,8 +62,8 @@ sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->G
 int sweaponskill::GetLevelMap(int I) const { return SWeaponSkillLevelMap[I]; }
 ulong sweaponskill::GetUnuseTickMap(int I) const { return SWeaponSkillUnuseTickMap[I]; }
 int sweaponskill::GetUnusePenaltyMap(int I) const { return SWeaponSkillUnusePenaltyMap[I]; }
-bool sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
-bool sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
+truth sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
+truth sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
@@ -74,7 +75,7 @@ void weaponskill::Load(inputfile& SaveFile)
   SaveFile >> (int&)Level >> (int&)Hits >> (int&)HitCounter;
 }
 
-bool weaponskill::AddHit(int AddHits)
+truth weaponskill::AddHit(int AddHits)
 {
   if(!AddHits)
     return false;
@@ -94,7 +95,7 @@ bool weaponskill::AddHit(int AddHits)
   return Level != OldLevel;
 }
 
-bool weaponskill::SubHit(int SubHits)
+truth weaponskill::SubHit(int SubHits)
 {
   if(!SubHits)
     return false;
@@ -144,15 +145,15 @@ void sweaponskill::Load(inputfile& SaveFile)
   SaveFile >> ID >> Weight >> (int&)Config;
 }
 
-bool weaponskill::Tick()
+truth weaponskill::Tick()
 {
   if(Hits && HitCounter++ >= GetUnuseTickMap(Level))
-    {
-      HitCounter -= GetUnuseTickMap(Level);
+  {
+    HitCounter -= GetUnuseTickMap(Level);
 
-      if(SubHit(GetUnusePenaltyMap(Level)))
-	return true;
-    }
+    if(SubHit(GetUnusePenaltyMap(Level)))
+      return true;
+  }
 
   return false;
 }

@@ -1,38 +1,44 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FEIO_H__
 #define __FEIO_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "vector2d.h"
+#include "v2.h"
 #include "festring.h"
 
 class bitmap;
 
-typedef bool (*stringkeyhandler)(int, festring&);
+typedef truth (*stringkeyhandler)(int, festring&);
 
 class iosystem
 {
  public:
-  static festring ContinueMenu(color16, color16, const festring&);
-  static int StringQuestion(festring&, const festring&, vector2d, color16, festring::sizetype, festring::sizetype, bool, bool, stringkeyhandler = 0);
-  static long NumberQuestion(const festring&, vector2d, color16, bool, bool = false);
-  static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, int, int, bool, void (*)(long) = 0);
-  static int Menu(const bitmap*, vector2d, const festring&, const festring&, color16, const festring& = CONST_S(""), const festring& = CONST_S(""));
-  static void TextScreen(const festring&, color16 = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
-  static bool IsAcceptableForStringQuestion(char);
+  static festring ContinueMenu(col16, col16, const festring&);
+  static int StringQuestion(festring&, const festring&, v2, col16,
+			    festring::sizetype, festring::sizetype,
+			    truth, truth, stringkeyhandler = 0);
+  static long NumberQuestion(const festring&, v2, col16,
+			     truth, truth = false);
+  static long ScrollBarQuestion(const festring&, v2, long, long, long,
+				long, long, col16, col16, col16, int,
+				int, truth, void (*)(long) = 0);
+  static int Menu(const bitmap*, v2, const festring&,
+		  const festring&, col16,
+		  const festring& = CONST_S(""),
+		  const festring& = CONST_S(""));
+  static void TextScreen(const festring&, col16 = 0xFFFF,
+			 truth = true, void (*)(bitmap*) = 0);
+  static truth IsAcceptableForStringQuestion(char);
 };
 
 #endif

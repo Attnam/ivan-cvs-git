@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -39,7 +40,7 @@ void stackslot::Empty()
 
 void bodypartslot::Empty()
 {
-  color24 Emitation = Item->GetEmitation();
+  col24 Emitation = Item->GetEmitation();
   static_cast<bodypart*>(Item)->SetMaster(0);
   Item = 0;
   GetMaster()->CalculateEquipmentState();
@@ -47,15 +48,15 @@ void bodypartslot::Empty()
   SignalEmitationDecrease(Emitation);
 
   if(!GetMaster()->IsInitializing())
-    {
-      GetMaster()->CalculateHP();
-      GetMaster()->CalculateMaxHP();
-    }
+  {
+    GetMaster()->CalculateHP();
+    GetMaster()->CalculateMaxHP();
+  }
 }
 
 void gearslot::Empty()
 {
-  color24 Emitation = Item->GetEmitation();
+  col24 Emitation = Item->GetEmitation();
   Item = 0;
   SignalVolumeAndWeightChange();
   GetBodyPart()->SignalEquipmentRemoval(this);
@@ -94,7 +95,7 @@ void gearslot::AddFriendItem(item* Item) const
     GetBodyPart()->GetMaster()->GetStack()->AddItem(Item);
 }
 
-bool stackslot::IsOnGround() const
+truth stackslot::IsOnGround() const
 {
   return GetMotherStack()->IsOnGround();
 }
@@ -120,11 +121,11 @@ void stackslot::PutInItem(item* What)
   Item = What;
 
   if(Item)
-    {
-      Item->SignalStackAdd(this, &stack::AddItem);
-      SignalVolumeAndWeightChange();
-      SignalEmitationIncrease(Item->GetEmitation());
-    }
+  {
+    Item->SignalStackAdd(this, &stack::AddItem);
+    SignalVolumeAndWeightChange();
+    SignalEmitationIncrease(Item->GetEmitation());
+  }
 }
 
 void bodypartslot::PutInItem(item* What)
@@ -132,19 +133,19 @@ void bodypartslot::PutInItem(item* What)
   Item = What;
 
   if(Item)
-    {
-      Item->SetMainSlot(this);
-      static_cast<bodypart*>(Item)->SetMaster(GetMaster());
+  {
+    Item->SetMainSlot(this);
+    static_cast<bodypart*>(Item)->SetMaster(GetMaster());
 
-      if(!GetMaster()->IsInitializing())
-	{
-	  SignalVolumeAndWeightChange();
-	  SignalEmitationIncrease(Item->GetEmitation());
-	  static_cast<bodypart*>(Item)->CalculateMaxHP(0);
-	  GetMaster()->CalculateHP();
-	  GetMaster()->CalculateMaxHP();
-	}
+    if(!GetMaster()->IsInitializing())
+    {
+      SignalVolumeAndWeightChange();
+      SignalEmitationIncrease(Item->GetEmitation());
+      static_cast<bodypart*>(Item)->CalculateMaxHP(0);
+      GetMaster()->CalculateHP();
+      GetMaster()->CalculateMaxHP();
     }
+  }
 }
 
 void gearslot::PutInItem(item* What)
@@ -152,12 +153,12 @@ void gearslot::PutInItem(item* What)
   Item = What;
 
   if(Item)
-    {
-      Item->SetMainSlot(this);
-      GetBodyPart()->SignalEquipmentAdd(this);
-      SignalVolumeAndWeightChange();
-      SignalEmitationIncrease(Item->GetEmitation());
-    }
+  {
+    Item->SetMainSlot(this);
+    GetBodyPart()->SignalEquipmentAdd(this);
+    SignalVolumeAndWeightChange();
+    SignalEmitationIncrease(Item->GetEmitation());
+  }
 }
 
 square* stackslot::GetSquareUnder(int) const
@@ -175,32 +176,32 @@ square* gearslot::GetSquareUnder(int) const
   return GetBodyPart()->GetSquareUnder();
 }
 
-void stackslot::SignalEmitationIncrease(color24 Emitation)
+void stackslot::SignalEmitationIncrease(col24 Emitation)
 {
   GetMotherStack()->SignalEmitationIncrease(Item->GetSquarePosition(), Emitation);
 }
 
-void bodypartslot::SignalEmitationIncrease(color24 Emitation)
+void bodypartslot::SignalEmitationIncrease(col24 Emitation)
 {
   GetMaster()->SignalEmitationIncrease(Emitation);
 }
 
-void gearslot::SignalEmitationIncrease(color24 Emitation)
+void gearslot::SignalEmitationIncrease(col24 Emitation)
 {
   GetBodyPart()->SignalEmitationIncrease(Emitation);
 }
 
-void stackslot::SignalEmitationDecrease(color24 Emitation)
+void stackslot::SignalEmitationDecrease(col24 Emitation)
 {
   GetMotherStack()->SignalEmitationDecrease(Item->GetSquarePosition(), Emitation);
 }
 
-void bodypartslot::SignalEmitationDecrease(color24 Emitation)
+void bodypartslot::SignalEmitationDecrease(col24 Emitation)
 {
   GetMaster()->SignalEmitationDecrease(Emitation);
 }
 
-void gearslot::SignalEmitationDecrease(color24 Emitation)
+void gearslot::SignalEmitationDecrease(col24 Emitation)
 {
   GetBodyPart()->SignalEmitationDecrease(Emitation);
 }
@@ -225,17 +226,17 @@ void stackslot::DonateTo(item* Item) // could be optimized
   Empty();
 }
 
-bool stackslot::CanBeSeenBy(const character* Viewer) const
+truth stackslot::CanBeSeenBy(const character* Viewer) const
 {
   return GetMotherStack()->CanBeSeenBy(Viewer, Item->GetSquarePosition());
 }
 
-bool bodypartslot::CanBeSeenBy(const character* Viewer) const
+truth bodypartslot::CanBeSeenBy(const character* Viewer) const
 {
   return GetMaster()->CanBeSeenBy(Viewer);
 }
 
-bool gearslot::CanBeSeenBy(const character* Viewer) const
+truth gearslot::CanBeSeenBy(const character* Viewer) const
 {
   return GetBodyPart()->CanBeSeenBy(Viewer);
 }
@@ -245,7 +246,7 @@ void gearslot::SignalEnchantmentChange()
   GetBodyPart()->SignalEnchantmentChange();
 }
 
-bool stackslot::IsVisible() const
+truth stackslot::IsVisible() const
 {
   return GetMotherStack()->IsVisible();
 }

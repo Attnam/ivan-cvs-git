@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -20,7 +21,7 @@ lsquare*** stackcontroller::Map;
 lsquare** stackcontroller::Stack;
 long stackcontroller::StackIndex;
 int stackcontroller::LevelXSize, stackcontroller::LevelYSize;
-vector2d stackcontroller::Center;
+v2 stackcontroller::Center;
 
 ulong tickcontroller::Tick;
 ulong tickcontroller::ShiftedTick[4];
@@ -29,15 +30,15 @@ ulong tickcontroller::ShiftedQuadriTick[4];
 void tickcontroller::PrepareShiftedTick()
 {
   for(int c = 0; c < 4; ++c)
-    {
-      ShiftedTick[c] = Tick << (c << 3);
-      ShiftedQuadriTick[c] = (Tick + 1) << (c << 3);
-    }
+  {
+    ShiftedTick[c] = Tick << (c << 3);
+    ShiftedQuadriTick[c] = (Tick + 1) << (c << 3);
+  }
 }
 
-bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
+truth lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos)
+lsquare::lsquare(level* LevelUnder, v2 Pos)
 : square(LevelUnder, Pos),
   Fluid(0), Smoke(0), Rain(0), Trap(0),
   GLTerrain(0), OLTerrain(0),
@@ -65,59 +66,60 @@ lsquare::~lsquare()
   delete [] Engraved;
 
   for(fluid* F = Fluid; F;)
-    {
-      fluid* ToDel = F;
-      F = F->Next;
-      delete ToDel;
-    }
+  {
+    fluid* ToDel = F;
+    F = F->Next;
+    delete ToDel;
+  }
 
   delete Memorized;
   delete FowMemorized;
+  delete StaticContentCache.Bitmap;
 
   for(smoke* S = Smoke; S;)
-    {
-      smoke* ToDel = S;
-      S = S->Next;
-      delete ToDel;
-    }
+  {
+    smoke* ToDel = S;
+    S = S->Next;
+    delete ToDel;
+  }
 
   for(rain* R = Rain; R;)
-    {
-      rain* ToDel = R;
-      R = R->Next;
-      delete ToDel;
-    }
+  {
+    rain* ToDel = R;
+    R = R->Next;
+    delete ToDel;
+  }
 
   for(trap* T = Trap; T;)
-    {
-      trap* ToDel = T;
-      T = T->Next;
-      delete ToDel;
-    }
+  {
+    trap* ToDel = T;
+    T = T->Next;
+    delete ToDel;
+  }
 }
 
-void lsquare::SignalEmitationIncrease(color24 EmitationUpdate)
+void lsquare::SignalEmitationIncrease(col24 EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) > 0 && !game::IsGenerating() && !(Flags & FREEZED))
-    {
-      CalculateEmitation(); // could this be optimized?
-      Emitate();
-    }
+  {
+    CalculateEmitation(); // could this be optimized?
+    Emitate();
+  }
 }
 
-void lsquare::SignalEmitationDecrease(color24 EmitationUpdate)
+void lsquare::SignalEmitationDecrease(col24 EmitationUpdate)
 {
   if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation && !game::IsGenerating() && !(Flags & FREEZED))
-    {
-      color24 Backup = Emitation;
-      CalculateEmitation();
+  {
+    col24 Backup = Emitation;
+    CalculateEmitation();
 
-      if(Backup != Emitation)
-	{
-	  Noxify(Backup);
-	  Emitate(Emitation, FORCE_ADD);
-	}
+    if(Backup != Emitation)
+    {
+      Noxify(Backup);
+      Emitate(Emitation, FORCE_ADD);
     }
+  }
 }
 
 void lsquare::CalculateEmitation()
@@ -126,12 +128,12 @@ void lsquare::CalculateEmitation()
   int c;
 
   for(c = 0; c < 4; ++c)
-    {
-      stack* Stack = GetStackOfAdjacentSquare(c);
+  {
+    stack* Stack = GetStackOfAdjacentSquare(c);
 
-      if(Stack)
-	game::CombineLights(Emitation, Stack->GetSideEmitation(3 - c));
-    }
+    if(Stack)
+      game::CombineLights(Emitation, Stack->GetSideEmitation(3 - c));
+  }
 
   if(Character)
     game::CombineLights(Emitation, Character->GetEmitation());
@@ -153,136 +155,179 @@ void lsquare::CalculateEmitation()
 void lsquare::UpdateMemorized()
 {
   if(Flags & MEMORIZED_UPDATE_REQUEST)
+  {
+    if(!IsDark() || CanBeFeltByPlayer())
     {
-      if(!IsDark() || CanBeFeltByPlayer())
-	{
-	  DrawStaticContents(Memorized, vector2d(0, 0), NORMAL_LUMINANCE, false);
-	  Memorized->FastBlit(FowMemorized);
-	  igraph::GetFOWGraphic()->NormalMaskedBlit(FowMemorized, 0, 0);
-	}
-      else
-	{
-	  Memorized->ClearToColor(0);
-	  igraph::GetFOWGraphic()->FastBlit(FowMemorized);
-	}
+      blitdata B = { Memorized,
+		     { 0, 0 },
+		     { 0, 0 },
+		     { TILE_SIZE, TILE_SIZE },
+		     NORMAL_LUMINANCE,
+		     TRANSPARENT_COLOR,
+		     ALLOW_ALPHA };
 
-      Flags &= ~MEMORIZED_UPDATE_REQUEST;
+      DrawStaticContents(B);
+      Memorized->FastBlit(FowMemorized);
+      B.Bitmap = FowMemorized;
+      B.Flags = 0;
+      B.MaskColor = 0;
+      igraph::GetFOWGraphic()->NormalMaskedBlit(B);
     }
+    else
+    {
+      Memorized->ClearToColor(0);
+      igraph::GetFOWGraphic()->FastBlit(FowMemorized);
+    }
+
+    if(!StaticContentCache.Bitmap)
+    {
+      StaticContentCache.Bitmap = new bitmap(TILE_V2);
+      StaticContentCache.Bitmap->ActivateFastFlag();
+    }
+
+    UpdateStaticContentCache(Luminance);
+    Flags &= ~MEMORIZED_UPDATE_REQUEST;
+  }
 }
 
-void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool RealDraw) const
+void lsquare::UpdateStaticContentCache(col24 Luminance) const
 {
-  if(RealDraw && !AnimatedEntities && Memorized && !game::GetSeeWholeMapCheatMode())
-    {
-      Memorized->LuminanceBlit(Bitmap, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
-      return;
-    }
+  blitdata B = { StaticContentCache.Bitmap,
+		 { 0, 0 },
+		 { 0, 0 },
+		 { TILE_SIZE, TILE_SIZE },
+		 Luminance,
+		 0,
+		 0 };
+
+  Memorized->LuminanceBlit(B);
+  StaticContentCache.Luminance = Luminance;
+}
+
+void lsquare::DrawStaticContents(blitdata& BlitData) const
+{
+  if(BlitData.CustomData & ALLOW_ANIMATE && !StaticAnimatedEntities && Memorized && !game::GetSeeWholeMapCheatMode())
+  {
+    if(StaticContentCache.Luminance != BlitData.Luminance)
+      UpdateStaticContentCache(BlitData.Luminance);
+
+    StaticContentCache.Bitmap->FastBlit(BlitData.Bitmap, BlitData.Dest);
+    return;
+  }
 
   if(!OLTerrain || OLTerrain->ShowThingsUnder())
-    GLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
+    GLTerrain->Draw(BlitData);
 
-  bool StackDrawn = false;
+  truth StackDrawn = false;
 
   if(OLTerrain && !IsFlyable())
+  {
+    if(OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder())
     {
-      if(OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder())
-	{
-	  StackDrawn = true;
-	  DrawStacks(Bitmap, Pos, Luminance, RealDraw);
-	}
-
-      OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
+      StackDrawn = true;
+      DrawStacks(BlitData);
     }
 
+    OLTerrain->Draw(BlitData);
+  }
+
   for(const fluid* F = Fluid; F; F = F->Next)
-    F->Draw(Bitmap, Pos, Luminance, RealDraw);
+    F->SimpleDraw(BlitData);
 
   if(OLTerrain && IsFlyable())
-    OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
+    OLTerrain->Draw(BlitData);
 
   if(!StackDrawn && Flags & IS_TRANSPARENT)
-    DrawStacks(Bitmap, Pos, Luminance, RealDraw);
+    DrawStacks(BlitData);
 
   int Partners = BorderPartnerInfo >> 24;
 
   for(const trap* T = Trap; T; T = T->Next)
-    T->Draw(Bitmap, Pos, Luminance);
+    T->Draw(BlitData);
 
   for(int c = 0; c < Partners; ++c)
-    BorderPartnerTerrain[c]->Draw(Bitmap, Pos, Luminance, 8 - (BorderPartnerInfo >> ((c << 1) + c) & 7), RealDraw);
+  {
+    BlitData.CustomData |= 8 - (BorderPartnerInfo >> ((c << 1) + c) & 7);
+    BorderPartnerTerrain[c]->Draw(BlitData);
+    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+  }
 }
 
-void lsquare::Draw()
+void lsquare::Draw(blitdata& BlitData)
 {
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
+  {
+    if(!IsDark() || game::GetSeeWholeMapCheatMode())
     {
-      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-
-      if(!IsDark() || game::GetSeeWholeMapCheatMode())
-	{
-	  long RealLuminance;
-
-	  if(game::GetSeeWholeMapCheatMode() == SHOW_MAP_IN_UNIFORM_LIGHT
-	  || (game::GetSeeWholeMapCheatMode()
-	  && !(Flags & IS_TRANSPARENT)))
-	    RealLuminance = ivanconfig::GetContrastLuminance();
-	  else
-	    RealLuminance = ivanconfig::ApplyContrastTo(Luminance);
-
-	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
-
-	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheatMode()))
-	    {
-	      int Index = Character->GetSquareIndex(Pos);
-
-	      if(Character->GetMoveType() & FLY)
-		{
-		  for(const smoke* S = Smoke; S; S = S->Next)
-		    S->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
-
-		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
-		}
-	      else
-		{
-		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
-
-		  for(const smoke* S = Smoke; S; S = S->Next)
-		    S->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
-		}
-	    }
-	  else
-	    for(const smoke* S = Smoke; S; S = S->Next)
-	      S->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
-
-	  for(const rain* R = Rain; R; R = R->Next)
-	    if(R->IsEnabled())
-	      R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
-	}
-      else if(CanBeFeltByPlayer())
-	{
-	  color24 RealLuminance = Luminance;
-	  game::CombineLights(RealLuminance, DIM_LUMINANCE);
-	  DrawStaticContents(DOUBLE_BUFFER, BitPos, ivanconfig::ApplyContrastTo(RealLuminance), true);
-
-	  for(const rain* R = Rain; R; R = R->Next)
-	    if(R->IsEnabled())
-	      R->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
-	}
+      if(game::GetSeeWholeMapCheatMode() == SHOW_MAP_IN_UNIFORM_LIGHT
+	 || (game::GetSeeWholeMapCheatMode()
+	     && !(Flags & IS_TRANSPARENT)))
+	BlitData.Luminance = ivanconfig::GetContrastLuminance();
       else
-	{
-	  DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+	BlitData.Luminance = ivanconfig::ApplyContrastTo(Luminance);
 
-	  if(Character && Character->CanBeSeenByPlayer())
-	    Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+      DrawStaticContents(BlitData);
+
+      if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheatMode()))
+      {
+	BlitData.CustomData |= Character->GetSquareIndex(Pos);
+
+	if(Character->GetMoveType() & FLY)
+	{
+	  for(const smoke* S = Smoke; S; S = S->Next)
+	    S->Draw(BlitData);
+
+	  Character->Draw(BlitData);
+	}
+	else
+	{
+	  Character->Draw(BlitData);
+
+	  for(const smoke* S = Smoke; S; S = S->Next)
+	    S->Draw(BlitData);
 	}
 
-      Flags &= ~STRONG_NEW_DRAW_REQUEST;
+	BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+      }
+      else
+	for(const smoke* S = Smoke; S; S = S->Next)
+	  S->Draw(BlitData);
+
+      for(const rain* R = Rain; R; R = R->Next)
+	if(R->IsEnabled())
+	  R->Draw(BlitData);
     }
+    else if(CanBeFeltByPlayer())
+    {
+      col24 L = Luminance;
+      game::CombineLights(L, DIM_LUMINANCE);
+      BlitData.Luminance = ivanconfig::ApplyContrastTo(L);
+      DrawStaticContents(BlitData);
+
+      for(const rain* R = Rain; R; R = R->Next)
+	if(R->IsEnabled())
+	  R->Draw(BlitData);
+    }
+    else
+    {
+      DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
+
+      if(Character && Character->CanBeSeenByPlayer())
+      {
+	BlitData.CustomData |= Character->GetSquareIndex(Pos);
+	BlitData.Luminance = ivanconfig::GetContrastLuminance();
+	Character->Draw(BlitData);
+	BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+      }
+    }
+
+    Flags &= ~STRONG_NEW_DRAW_REQUEST;
+  }
 }
 
 struct emitationcontroller : public tickcontroller, public stackcontroller
 {
-  static int Handler(int x, int y)
+  static truth Handler(int x, int y)
   {
     lsquare* Square = Map[x >> 1][y >> 1];
     const ulong SquareFlags = Square->Flags;
@@ -294,15 +339,15 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
       return ProcessSquare(x >> 1, y >> 1, Square);
 
     if(!(SquareFlags & IN_SQUARE_STACK))
-      {
-	Square->Flags |= IN_SQUARE_STACK;
-	Stack[StackIndex++] = Square;
-      }
+    {
+      Square->Flags |= IN_SQUARE_STACK;
+      Stack[StackIndex++] = Square;
+    }
 
     const int SquarePartIndex = (x & 1) + ((y & 1) << 1);
     Square->SquarePartEmitationTick = Square->SquarePartEmitationTick
-				    & ~SquarePartTickMask[SquarePartIndex]
-				    | ShiftedTick[SquarePartIndex];
+				      & ~SquarePartTickMask[SquarePartIndex]
+				      | ShiftedTick[SquarePartIndex];
 
     return false;
   }
@@ -313,18 +358,18 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
     const int MaxE = MaxLuxTable[X - EmitterPosXMinus16][Y - EmitterPosYMinus16];
 
     if(MaxE >= LIGHT_BORDER
-    && (SquareFlags & INSIDE
-     || (!(ID & SECONDARY_SUN_LIGHT)
-      && MaxE > MinNightAmbientLuminanceElement)))
-      {
-	Square->Flags |= ALLOW_EMITATION_CONTINUE | PERFECTLY_QUADRI_HANDLED;
-	return true;
-      }
+       && (SquareFlags & INSIDE
+	   || (!(ID & SECONDARY_SUN_LIGHT)
+	       && MaxE > MinNightAmbientLuminanceElement)))
+    {
+      Square->Flags |= ALLOW_EMITATION_CONTINUE | PERFECTLY_QUADRI_HANDLED;
+      return true;
+    }
     else
-      {
-	Square->Flags = SquareFlags & ~ALLOW_EMITATION_CONTINUE | PERFECTLY_QUADRI_HANDLED;
-	return false;
-      }
+    {
+      Square->Flags = SquareFlags & ~ALLOW_EMITATION_CONTINUE | PERFECTLY_QUADRI_HANDLED;
+      return false;
+    }
   }
   static ulong& GetTickReference(int X, int Y)
   {
@@ -333,25 +378,25 @@ struct emitationcontroller : public tickcontroller, public stackcontroller
   static void ProcessStack()
   {
     for(long c1 = 0; c1 < StackIndex; ++c1)
-      {
-	lsquare* Square = Stack[c1];
-	const ulong SquareTick = Square->SquarePartEmitationTick;
-	ulong TempID = ID;
+    {
+      lsquare* Square = Stack[c1];
+      const ulong SquareTick = Square->SquarePartEmitationTick;
+      ulong TempID = ID;
 
-	for(int c2 = 0; c2 < 4; ++c2)
-	  if((SquareTick & SquarePartTickMask[c2]) == ShiftedTick[c2])
-	    TempID |= 1 << EMITTER_SQUARE_PART_SHIFT << c2;
+      for(int c2 = 0; c2 < 4; ++c2)
+	if((SquareTick & SquarePartTickMask[c2]) == ShiftedTick[c2])
+	  TempID |= 1 << EMITTER_SQUARE_PART_SHIFT << c2;
 
-	Square->Flags &= ~(IN_SQUARE_STACK|PERFECTLY_QUADRI_HANDLED);
-	vector2d Pos = Square->Pos;
-	int XVal = Pos.X - EmitterPosXMinus16;
-	int YVal = Pos.Y - EmitterPosYMinus16;
+      Square->Flags &= ~(IN_SQUARE_STACK|PERFECTLY_QUADRI_HANDLED);
+      v2 Pos = Square->Pos;
+      int XVal = Pos.X - EmitterPosXMinus16;
+      int YVal = Pos.Y - EmitterPosYMinus16;
 
-	if(MaxLuxTable[XVal][YVal] >= LIGHT_BORDER)
-	  Square->AlterLuminance(TempID, MakeRGB24(RedLuxTable[XVal][YVal],
-						   GreenLuxTable[XVal][YVal],
-						   BlueLuxTable[XVal][YVal]));
-      }
+      if(MaxLuxTable[XVal][YVal] >= LIGHT_BORDER)
+	Square->AlterLuminance(TempID, MakeRGB24(RedLuxTable[XVal][YVal],
+						 GreenLuxTable[XVal][YVal],
+						 BlueLuxTable[XVal][YVal]));
+    }
   }
   static ulong ID;
   static int MinNightAmbientLuminanceElement;
@@ -372,7 +417,7 @@ uchar** emitationcontroller::RedLuxTable;
 uchar** emitationcontroller::GreenLuxTable;
 uchar** emitationcontroller::BlueLuxTable;
 
-void lsquare::Emitate(color24 Emitation, ulong IDFlags)
+void lsquare::Emitate(col24 Emitation, ulong IDFlags)
 {
   if(game::IsDark(Emitation))
     return;
@@ -404,18 +449,18 @@ void lsquare::Emitate(color24 Emitation, ulong IDFlags)
 
 struct noxifycontroller : public stackcontroller
 {
-  static bool Handler(int x, int y)
+  static truth Handler(int x, int y)
   {
     if(x >= 0 && y >= 0 && x < LevelXSize && y < LevelYSize)
-      {
-	lsquare* Square = Map[x][y];
+    {
+      lsquare* Square = Map[x][y];
 
-	if(Square->SquarePartEmitationTick != Tick)
-	  {
-	    Square->SquarePartEmitationTick = Tick;
-	    return Square->NoxifyEmitter(ID);
-	  }
+      if(Square->SquarePartEmitationTick != Tick)
+      {
+	Square->SquarePartEmitationTick = Tick;
+	return Square->NoxifyEmitter(ID);
       }
+    }
 
     return false;
   }
@@ -428,7 +473,7 @@ struct noxifycontroller : public stackcontroller
 ulong noxifycontroller::ID;
 ulong noxifycontroller::Tick;
 
-void lsquare::Noxify(color24 Emitation, ulong IDFlags)
+void lsquare::Noxify(col24 Emitation, ulong IDFlags)
 {
   if(game::IsDark(Emitation))
     return;
@@ -448,37 +493,37 @@ void lsquare::Noxify(color24 Emitation, ulong IDFlags)
   mapmath<noxifycontroller>::DoArea();
 }
 
-bool lsquare::NoxifyEmitter(ulong ID)
+truth lsquare::NoxifyEmitter(ulong ID)
 {
   emittervector::iterator i, End = Emitter.end();
 
   for(i = Emitter.begin(); i != End; ++i)
     if(!((i->ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
-      {
-	RemoveLuminance(i->Emitation);
-	Swap(*i, Emitter.back());
-	Emitter.pop_back();
-	return true;
-      }
+    {
+      RemoveLuminance(i->Emitation);
+      Swap(*i, Emitter.back());
+      Emitter.pop_back();
+      return true;
+    }
 
   return false;
 }
 
-void lsquare::AlterLuminance(ulong ID, color24 NewLuminance)
+void lsquare::AlterLuminance(ulong ID, col24 NewLuminance)
 {
   emittervector::iterator i, End = Emitter.end();
 
   if(!(ID & FORCE_ADD))
     for(i = Emitter.begin(); i != End; ++i)
       if(!((i->ID ^ ID) & (EMITTER_IDENTIFIER_BITS|SECONDARY_SUN_LIGHT)))
-	{
-	  i->ID |= ID;
+      {
+	i->ID |= ID;
 
-	  if(i->Emitation != NewLuminance)
-	    ChangeLuminance(i->Emitation, NewLuminance);
+	if(i->Emitation != NewLuminance)
+	  ChangeLuminance(i->Emitation, NewLuminance);
 
-	  return;
-	}
+	return;
+      }
 
   Emitter.push_back(emitter(ID, 0));
   ChangeLuminance(Emitter.back().Emitation, NewLuminance);
@@ -490,32 +535,32 @@ void lsquare::AddSunLightEmitter(ulong ID)
 
   for(i = SunEmitter.begin(); i != End; ++i)
     if(!((*i ^ ID) & EMITTER_IDENTIFIER_BITS))
-      {
-	if(ID & ~*i & RE_SUN_EMITATED)
-	  *i &= ~EMITTER_SHADOW_BITS;
+    {
+      if(ID & ~*i & RE_SUN_EMITATED)
+	*i &= ~EMITTER_SHADOW_BITS;
 
-	*i |= ID;
-	Swap(*i, SunEmitter.front());
-	return;
-      }
+      *i |= ID;
+      Swap(*i, SunEmitter.front());
+      return;
+    }
 
   SunEmitter.push_back(ID);
 }
 
-bool lsquare::Open(character* Opener)
+truth lsquare::Open(character* Opener)
 {
   return GetStack()->Open(Opener) || (OLTerrain && OLTerrain->Open(Opener)); 
 }
 
-bool lsquare::Close(character* Closer)
+truth lsquare::Close(character* Closer)
 {
   if(!GetStack()->GetItems() && !Character)
     return OLTerrain && OLTerrain->Close(Closer);
   else
-    {
-      ADD_MESSAGE("There's something in the way...");
-      return false;
-    }
+  {
+    ADD_MESSAGE("There's something in the way...");
+    return false;
+  }
 }
 
 void lsquare::Save(outputfile& SaveFile) const
@@ -546,9 +591,9 @@ void lsquare::Load(inputfile& SaveFile)
   SaveFile >> SmokeAlphaSum >> (uchar&)Flags >> Memorized;
   Flags &= INSIDE|DESCRIPTION_CHANGE; //only these flags are loaded
   Flags |= MEMORIZED_UPDATE_REQUEST;
-  SecondarySunLightEmitation = ReadType<color24>(SaveFile);
+  SecondarySunLightEmitation = ReadType<col24>(SaveFile);
   RoomIndex = ReadType<uchar>(SaveFile);
-  SunLightLuminance = ReadType<color24>(SaveFile);
+  SunLightLuminance = ReadType<col24>(SaveFile);
   LoadLinkedList(SaveFile, Fluid);
   LoadLinkedList(SaveFile, Smoke);
   LoadLinkedList(SaveFile, Rain);
@@ -556,12 +601,20 @@ void lsquare::Load(inputfile& SaveFile)
   CalculateIsTransparent();
 
   if(Memorized)
-    {
-      FowMemorized = new bitmap(16, 16);
-      FowMemorized->ActivateFastFlag();
-      Memorized->FastBlit(FowMemorized);
-      igraph::GetFOWGraphic()->NormalMaskedBlit(FowMemorized, 0, 0);
-    }
+  {
+    FowMemorized = new bitmap(TILE_V2);
+    FowMemorized->ActivateFastFlag();
+    Memorized->FastBlit(FowMemorized);
+    blitdata B = { FowMemorized,
+		   { 0, 0 },
+		   { 0, 0 },
+		   { TILE_SIZE, TILE_SIZE },
+		   0,
+		   0,
+		   0 };
+
+    igraph::GetFOWGraphic()->NormalMaskedBlit(B);
+  }
 }
 
 void lsquare::CalculateLuminance()
@@ -570,27 +623,27 @@ void lsquare::CalculateLuminance()
   emittervector::const_iterator i, End = Emitter.end();
 
   if(Flags & IS_TRANSPARENT)
-    {
-      game::CombineLights(Luminance, SunLightLuminance);
+  {
+    game::CombineLights(Luminance, SunLightLuminance);
 
-      for(i = Emitter.begin(); i != End; ++i)
-	game::CombineLights(Luminance, i->Emitation);
-    }
+    for(i = Emitter.begin(); i != End; ++i)
+      game::CombineLights(Luminance, i->Emitation);
+  }
   else
-    {
-      ulong BitMask = 0, LOSTick = game::GetLOSTick();
+  {
+    ulong BitMask = 0, LOSTick = game::GetLOSTick();
 
-      for(int c = 0; c < 4; ++c)
-	if((SquarePartLastSeen >> (c << 3) & 0xFF) == LOSTick)
-	  BitMask |= 1 << EMITTER_SQUARE_PART_SHIFT << c;
+    for(int c = 0; c < 4; ++c)
+      if((SquarePartLastSeen >> (c << 3) & 0xFF) == LOSTick)
+	BitMask |= 1 << EMITTER_SQUARE_PART_SHIFT << c;
 
-      CalculateSunLightLuminance(BitMask);
-      game::CombineLights(Luminance, SunLightLuminance);
+    CalculateSunLightLuminance(BitMask);
+    game::CombineLights(Luminance, SunLightLuminance);
 
-      for(i = Emitter.begin(); i != End; ++i)
-	if(BitMask & i->ID)
-	  game::CombineLights(Luminance, i->Emitation);
-    }
+    for(i = Emitter.begin(); i != End; ++i)
+      if(BitMask & i->ID)
+	game::CombineLights(Luminance, i->Emitation);
+  }
 }
 
 void lsquare::AddCharacter(character* Guy)
@@ -605,7 +658,7 @@ void lsquare::AddCharacter(character* Guy)
   SignalPossibleTransparencyChange();
 
   if(Guy->IsPlayer()
-  || (Guy->CanBeSeenByPlayer(true) && CanBeSeenByPlayer()))
+     || (Guy->CanBeSeenByPlayer(true) && CanBeSeenByPlayer()))
     Guy->SignalSeen();
 }
 
@@ -617,139 +670,139 @@ void lsquare::Clean()
 void lsquare::RemoveCharacter()
 {
   if(Character)
-    {
-      DecAnimatedEntities();
-      character* Backup = Character;
-      Character = 0;
-      SignalEmitationDecrease(Backup->GetEmitation());
-      Flags |= STRONG_NEW_DRAW_REQUEST;
-      SignalPossibleTransparencyChange();
-    }
+  {
+    DecAnimatedEntities();
+    character* Backup = Character;
+    Character = 0;
+    SignalEmitationDecrease(Backup->GetEmitation());
+    Flags |= STRONG_NEW_DRAW_REQUEST;
+    SignalPossibleTransparencyChange();
+  }
 }
 
-void lsquare::UpdateMemorizedDescription(bool Cheat)
+void lsquare::UpdateMemorizedDescription(truth Cheat)
 {
   if(Flags & DESCRIPTION_CHANGE || Cheat)
+  {
+    if(!IsDark() || Cheat)
     {
-      if(!IsDark() || Cheat)
+      MemorizedDescription.Empty();
+
+      if(!OLTerrain || (OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder()))
+      {
+	truth Anything = false;
+
+	if(OLTerrain && OLTerrain->GetNameSingular().GetSize())
 	{
-	  MemorizedDescription.Empty();
-
-	  if(!OLTerrain || (OLTerrain->IsTransparent() && OLTerrain->ShowThingsUnder()))
-	    {
-	      bool Anything = false;
-
-	      if(OLTerrain && OLTerrain->GetNameSingular().GetSize())
-		{
-		  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
-		  Anything = true;
-		}
-
-	      if(Flags & IS_TRANSPARENT)
-		{
-		  itemvectorvector PileVector;
-		  GetStack()->Pile(PileVector, PLAYER, CENTER);
-
-		  if(PileVector.size())
-		    {
-		      if(Anything)
-			MemorizedDescription << " and ";
-
-		      if(PileVector.size() == 1)
-			PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
-		      else
-			MemorizedDescription << "many items";
-
-		      MemorizedDescription << " on ";
-		      Anything = true;
-		    }
-		  else if(Anything)
-		    MemorizedDescription << " on ";
-
-		  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
-		  festring SideItems;
-		  GetSideItemDescription(SideItems, Cheat);
-
-		  if(!SideItems.IsEmpty())
-		    MemorizedDescription << " and " << SideItems;
-		}
-	      else
-		{
-		  if(Anything)
-		    MemorizedDescription << " on ";
-
-		  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
-		}
-	    }
-	  else
-	    OLTerrain->AddName(MemorizedDescription, INDEFINITE);
-
-	  if(FluidIsVisible())
-	    DisplayFluidInfo(MemorizedDescription);
-
-	  DisplayTrapInfo(MemorizedDescription);
-
-	  if(Cheat)
-	    MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << ")";
-	}
-      else if(CanBeFeltByPlayer())
-	{
-	  MemorizedDescription.Empty();
 	  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
-
-	  if(FluidIsVisible())
-	    DisplayFluidInfo(MemorizedDescription);
-
-	  DisplayTrapInfo(MemorizedDescription);
+	  Anything = true;
 	}
-      else
-	MemorizedDescription = CONST_S("darkness");
 
-      Flags &= ~DESCRIPTION_CHANGE;
+	if(Flags & IS_TRANSPARENT)
+	{
+	  itemvectorvector PileVector;
+	  GetStack()->Pile(PileVector, PLAYER, CENTER);
+
+	  if(PileVector.size())
+	  {
+	    if(Anything)
+	      MemorizedDescription << " and ";
+
+	    if(PileVector.size() == 1)
+	      PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
+	    else
+	      MemorizedDescription << "many items";
+
+	    MemorizedDescription << " on ";
+	    Anything = true;
+	  }
+	  else if(Anything)
+	    MemorizedDescription << " on ";
+
+	  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
+	  festring SideItems;
+	  GetSideItemDescription(SideItems, Cheat);
+
+	  if(!SideItems.IsEmpty())
+	    MemorizedDescription << " and " << SideItems;
+	}
+	else
+	{
+	  if(Anything)
+	    MemorizedDescription << " on ";
+
+	  GLTerrain->AddName(MemorizedDescription, INDEFINITE);
+	}
+      }
+      else
+	OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+
+      if(FluidIsVisible())
+	DisplayFluidInfo(MemorizedDescription);
+
+      DisplayTrapInfo(MemorizedDescription);
+
+      if(Cheat)
+	MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << ")";
     }
+    else if(CanBeFeltByPlayer())
+    {
+      MemorizedDescription.Empty();
+      OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+
+      if(FluidIsVisible())
+	DisplayFluidInfo(MemorizedDescription);
+
+      DisplayTrapInfo(MemorizedDescription);
+    }
+    else
+      MemorizedDescription = CONST_S("darkness");
+
+    Flags &= ~DESCRIPTION_CHANGE;
+  }
 }
 
-void lsquare::GetSideItemDescription(festring& String, bool Cheat) const
+void lsquare::GetSideItemDescription(festring& String, truth Cheat) const
 {
   int Items = 0;
 
   for(int c = 0; c < 4; ++c)
-    {
-      stack* Stack = GetStackOfAdjacentSquare(c);
+  {
+    stack* Stack = GetStackOfAdjacentSquare(c);
 
-      if(Stack)
-	Items += Cheat
+    if(Stack)
+      Items += Cheat
 	       ? Stack->GetSideItems(3 - c)
 	       : Stack->GetVisibleSideItems(PLAYER, 3 - c);
-    }
+  }
 
   if(Items > 1)
     String << "many items on the wall";
   else if(Items == 1)
+  {
+    for(int c = 0; c < 4; ++c)
     {
-      for(int c = 0; c < 4; ++c)
-	{
-	  stack* Stack = GetStackOfAdjacentSquare(c);
+      stack* Stack = GetStackOfAdjacentSquare(c);
 
-	  if(Stack
-	  && ((Cheat && Stack->GetSideItems(3 - c))
-	   || (!Cheat && Stack->GetVisibleSideItems(PLAYER, 3 - c))))
-	    Stack->GetBottomSideItem(PLAYER, 3 - c, Cheat)->AddName(String, INDEFINITE);
-	}
-
-      String << " on the wall";
+      if(Stack
+	 && ((Cheat && Stack->GetSideItems(3 - c))
+	     || (!Cheat && Stack->GetVisibleSideItems(PLAYER, 3 - c))))
+	Stack->GetBottomSideItem(PLAYER, 3 - c, Cheat)->AddName(String, INDEFINITE);
     }
+
+    String << " on the wall";
+  }
 }
 
-bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double KickDamage, double KickToHitValue, int Success, int Direction, bool Critical, bool ForceHit)
+truth lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double KickDamage, double KickToHitValue, int Success, int Direction, truth Critical, truth ForceHit)
 {
-  bool Return;
+  truth Return;
 
   if(GetCharacter())
-    {
-      GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
-      Return = true;
-    }
+  {
+    GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
+    Return = true;
+  }
   else
     Return = false;
 
@@ -764,13 +817,13 @@ bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double Kick
   return Return;
 }
 
-bool lsquare::CanBeDug() const
+truth lsquare::CanBeDug() const
 {
   if((!GetPos().X || !GetPos().Y || GetPos().X == GetLevel()->GetXSize() - 1 || GetPos().Y == GetLevel()->GetYSize() - 1) && !*GetLevel()->GetLevelScript()->IsOnGround())
-    {
-      ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
-      return false;
-    }
+  {
+    ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
+    return false;
+  }
   else
     return true;
 }
@@ -784,7 +837,7 @@ void lsquare::ChangeLTerrain(glterrain* NewGround, olterrain* NewOver)
 void lsquare::ChangeGLTerrain(glterrain* NewGround)
 {
   if(GLTerrain->IsAnimated())
-    DecAnimatedEntities();
+    DecStaticAnimatedEntities();
 
   delete GLTerrain;
   GLTerrain = NewGround;
@@ -794,15 +847,15 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 
   if(NewGround->IsAnimated())
-    IncAnimatedEntities();
+    IncStaticAnimatedEntities();
 }
 
 void lsquare::ChangeOLTerrain(olterrain* NewOver)
 {
   if(OLTerrain && OLTerrain->IsAnimated())
-    DecAnimatedEntities();
+    DecStaticAnimatedEntities();
 
-  bool WasUsingBorderTiles = OLTerrain && OLTerrain->UseBorderTiles();
+  truth WasUsingBorderTiles = OLTerrain && OLTerrain->UseBorderTiles();
   delete OLTerrain;
   OLTerrain = NewOver;
   Flags |= NEW_DRAW_REQUEST;
@@ -815,12 +868,12 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
     RequestForBorderPartnerUpdates();
 
   if(NewOver)
-    {
-      NewOver->SetLSquareUnder(this);
+  {
+    NewOver->SetLSquareUnder(this);
 
-      if(NewOver->IsAnimated())
-	IncAnimatedEntities();
-    }
+    if(NewOver->IsAnimated())
+      IncStaticAnimatedEntities();
+  }
 }
 
 void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
@@ -829,20 +882,20 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
   NewGround->SetLSquareUnder(this);
 
   if(NewGround->IsAnimated())
-    IncAnimatedEntities();
+    IncStaticAnimatedEntities();
 
   OLTerrain = NewOver;
 
   if(NewOver)
-    {
-      NewOver->SetLSquareUnder(this);
+  {
+    NewOver->SetLSquareUnder(this);
 
-      if(NewOver->IsAnimated())
-	IncAnimatedEntities();
+    if(NewOver->IsAnimated())
+      IncStaticAnimatedEntities();
 
-      if(!NewOver->IsTransparent())
-	Flags &= ~IS_TRANSPARENT;
-    }
+    if(!NewOver->IsTransparent())
+      Flags &= ~IS_TRANSPARENT;
+  }
 
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 }
@@ -860,88 +913,88 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   const contentscript<character>* CharacterScript = SquareScript->GetCharacter();
 
   if(CharacterScript)
-    {
-      character* Char = CharacterScript->Instantiate();
-      Char->SetGenerationDanger(GetLevel()->GetDifficulty());
+  {
+    character* Char = CharacterScript->Instantiate();
+    Char->SetGenerationDanger(GetLevel()->GetDifficulty());
 
-      if(!Char->GetTeam())
-	Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
+    if(!Char->GetTeam())
+      Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
 
-      if(CharacterScript->GetFlags() & IS_LEADER)
-	Char->GetTeam()->SetLeader(Char);
+    if(CharacterScript->GetFlags() & IS_LEADER)
+      Char->GetTeam()->SetLeader(Char);
 
-      Char->PutToOrNear(Pos);
-      Char->CreateHomeData();
+    Char->PutToOrNear(Pos);
+    Char->CreateHomeData();
 
-      if(Room && CharacterScript->GetFlags() & IS_MASTER)
-	Room->SetMasterID(Char->GetID());
-    }
+    if(Room && CharacterScript->GetFlags() & IS_MASTER)
+      Room->SetMasterID(Char->GetID());
+  }
 
   const fearray<contentscript<item> >* Items = SquareScript->GetItems();
 
   if(Items)
     for(uint c1 = 0; c1 < Items->Size; ++c1)
+    {
+      const interval* TimesPtr = Items->Data[c1].GetTimes();
+      int Times = TimesPtr ? TimesPtr->Randomize() : 1;
+
+      for(int c2 = 0; c2 < Times; ++c2)
       {
-	const interval* TimesPtr = Items->Data[c1].GetTimes();
-	int Times = TimesPtr ? TimesPtr->Randomize() : 1;
+	item* Item = Items->Data[c1].Instantiate();
 
-	for(int c2 = 0; c2 < Times; ++c2)
-	  {
-	    item* Item = Items->Data[c1].Instantiate();
+	if(Item)
+	{
+	  int SquarePosition = Items->Data[c1].GetSquarePosition();
 
-	    if(Item)
-	      {
-		int SquarePosition = Items->Data[c1].GetSquarePosition();
+	  if(SquarePosition != CENTER)
+	    Item->SignalSquarePositionChange(SquarePosition);
 
-		if(SquarePosition != CENTER)
-		  Item->SignalSquarePositionChange(SquarePosition);
-
-		GetStack()->AddItem(Item);
-		Item->SpecialGenerationHandler();
-	      }
-	  }
+	  GetStack()->AddItem(Item);
+	  Item->SpecialGenerationHandler();
+	}
       }
+    }
 
   const contentscript<glterrain>* GLTerrainScript = SquareScript->GetGTerrain();
 
   if(GLTerrainScript)
-    {
-      GetLevel()->AddFlag(Pos, FORBIDDEN);
-      ChangeGLTerrain(GLTerrainScript->Instantiate());
+  {
+    GetLevel()->AddFlag(Pos, FORBIDDEN);
+    ChangeGLTerrain(GLTerrainScript->Instantiate());
 
-      if(GLTerrainScript->IsInside())
-	if(*GLTerrainScript->IsInside())
-	  Flags |= INSIDE;
-	else
-	  Flags &= ~INSIDE;
-    }
+    if(GLTerrainScript->IsInside())
+      if(*GLTerrainScript->IsInside())
+	Flags |= INSIDE;
+      else
+	Flags &= ~INSIDE;
+  }
 
   const contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain();
 
   if(OLTerrainScript)
-    {
-      GetLevel()->AddFlag(Pos, FORBIDDEN);
-      ChangeOLTerrain(OLTerrainScript->Instantiate());
-    }
+  {
+    GetLevel()->AddFlag(Pos, FORBIDDEN);
+    ChangeOLTerrain(OLTerrainScript->Instantiate());
+  }
 }
 
-bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
+truth lsquare::CanBeSeenByPlayer(truth IgnoreDarkness) const
 {
   return (IgnoreDarkness || !IsDark()) && LastSeen == game::GetLOSTick();
 }
 
-bool lsquare::CanBeSeenFrom(vector2d FromPos, long MaxDistance, bool IgnoreDarkness) const
+truth lsquare::CanBeSeenFrom(v2 FromPos, long MaxDistance, truth IgnoreDarkness) const
 {
   if((Pos - FromPos).GetLengthSquare() <= MaxDistance
-  && (IgnoreDarkness || !IsDark()))
-    {
-      if(Character && Character->IsPlayer()
-      && GetNearLSquare(FromPos)->CanBeSeenByPlayer(true))
-	return true;
+     && (IgnoreDarkness || !IsDark()))
+  {
+    if(Character && Character->IsPlayer()
+       && GetNearLSquare(FromPos)->CanBeSeenByPlayer(true))
+      return true;
 
-      eyecontroller::Map = GetLevel()->GetMap();
-      return mapmath<eyecontroller>::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, SKIP_FIRST);
-    }
+    eyecontroller::Map = GetLevel()->GetMap();
+    return mapmath<eyecontroller>::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, SKIP_FIRST);
+  }
 
   return false;
 }
@@ -949,36 +1002,36 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, long MaxDistance, bool IgnoreDarkn
 void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 {
   if(RoomIndex)
-    {
-      bool WasInRoom = false;
+  {
+    truth WasInRoom = false;
 
-      if(ComingFrom)
-	for(int c = 0; c < Stepper->GetSquaresUnder(); ++c)
-	  if(ComingFrom[c]->GetRoomIndex() == RoomIndex)
-	    {
-	      WasInRoom = true;
-	      break;
-	    }
+    if(ComingFrom)
+      for(int c = 0; c < Stepper->GetSquaresUnder(); ++c)
+	if(ComingFrom[c]->GetRoomIndex() == RoomIndex)
+	{
+	  WasInRoom = true;
+	  break;
+	}
 
-      if(!WasInRoom)
-	GetLevel()->GetRoom(RoomIndex)->Enter(Stepper);
-    }
+    if(!WasInRoom)
+      GetLevel()->GetRoom(RoomIndex)->Enter(Stepper);
+  }
 
   GLTerrain->StepOn(Stepper);
 
   if(OLTerrain)
+  {
+    OLTerrain->StepOn(Stepper);
+
+    if(Stepper->DestroysWalls() && OLTerrain->WillBeDestroyedBy(Stepper))
     {
-      OLTerrain->StepOn(Stepper);
+      if(CanBeSeenByPlayer()) 
+	ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
 
-      if(Stepper->DestroysWalls() && OLTerrain->WillBeDestroyedBy(Stepper))
-	{
-	  if(CanBeSeenByPlayer()) 
-	    ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
-
-	  Stepper->EditAP(-100);
-	  OLTerrain->BeDestroyed();
-	}
+      Stepper->EditAP(-100);
+      OLTerrain->BeDestroyed();
     }
+  }
 
   std::vector<trap*> TrapVector;
 
@@ -987,12 +1040,12 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 
   for(uint c = 0; c < TrapVector.size(); ++c)
     if(TrapVector[c]->Exists())
-      {
-	TrapVector[c]->StepOnEffect(Stepper);
+    {
+      TrapVector[c]->StepOnEffect(Stepper);
 
-	if(!Stepper->IsEnabled())
-	  return;
-      }
+      if(!Stepper->IsEnabled())
+	return;
+    }
 
   if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);
@@ -1001,17 +1054,17 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 void lsquare::ReceiveVomit(character* Who, liquid* Liquid)
 {
   if(!GetOLTerrain() || !GetOLTerrain()->ReceiveVomit(Who, Liquid))
-    {
-      SpillFluid(Who, Liquid);
+  {
+    SpillFluid(Who, Liquid);
 
-      if(RoomIndex)
-	GetRoom()->ReceiveVomit(Who);
-    }
+    if(RoomIndex)
+      GetRoom()->ReceiveVomit(Who);
+  }
 }
 
-void lsquare::SetTemporaryEmitation(color24 What)
+void lsquare::SetTemporaryEmitation(col24 What)
 {
-  color24 Old = TemporaryEmitation;
+  col24 Old = TemporaryEmitation;
   TemporaryEmitation = 0;
   SignalEmitationDecrease(Old);
   TemporaryEmitation = What;
@@ -1020,15 +1073,15 @@ void lsquare::SetTemporaryEmitation(color24 What)
 
 void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 {
-  bool WasTransparent = !!(Flags & IS_TRANSPARENT), Noxified = false;
+  truth WasTransparent = Flags & IS_TRANSPARENT, Noxified = false;
   emittervector EmitterBackup;
 
   if(WasTransparent && NewTerrain && !NewTerrain->IsTransparent())
-    {
-      EmitterBackup = Emitter;
-      GetLevel()->ForceEmitterNoxify(EmitterBackup);
-      Noxified = true;
-    }
+  {
+    EmitterBackup = Emitter;
+    GetLevel()->ForceEmitterNoxify(EmitterBackup);
+    Noxified = true;
+  }
 
   long OldEmit = OLTerrain ? OLTerrain->GetEmitation() : 0;
   ChangeOLTerrain(NewTerrain);
@@ -1040,38 +1093,38 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   GetStack()->DropSideItems();
 
   if(!IsFlyable() && Smoke)
-    {
-      DecAnimatedEntities();
+  {
+    DecAnimatedEntities();
 
-      for(smoke* S = Smoke; S; S = S->Next)
-	S->SendToHell();
+    for(smoke* S = Smoke; S; S = S->Next)
+      S->SendToHell();
 
-      Smoke = 0;
-      SmokeAlphaSum = 0;
-    }
+    Smoke = 0;
+    SmokeAlphaSum = 0;
+  }
 
   if(WasTransparent == !CalculateIsTransparent())
-    {
-      if(Noxified)
-	GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
-      else
-	GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
+  {
+    if(Noxified)
+      GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
+    else
+      GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
 
-      CalculateLuminance();
+    CalculateLuminance();
 
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
-    }
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
 }
 
-void lsquare::DrawParticles(long Color, bool DrawHere)
+void lsquare::DrawParticles(long Color, truth DrawHere)
 {
   if(GetPos().X < game::GetCamera().X
-  || GetPos().Y < game::GetCamera().Y
-  || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
-  || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
-  || !CanBeSeenByPlayer(true)
-  || Color == TRANSPARENT_COLOR)
+     || GetPos().Y < game::GetCamera().Y
+     || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
+     || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
+     || !CanBeSeenByPlayer(true)
+     || Color == TRANSPARENT_COLOR)
     return;
 
   clock_t StartTime = clock();
@@ -1082,52 +1135,52 @@ void lsquare::DrawParticles(long Color, bool DrawHere)
   if(Color & RANDOM_COLOR)
     Color = MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190);
 
-  vector2d Pos = game::CalculateScreenCoordinates(GetPos());
+  v2 Pos = game::CalculateScreenCoordinates(GetPos());
 
   for(int c = 0; c < 10; ++c)
-    DOUBLE_BUFFER->PutPixel(Pos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
+    DOUBLE_BUFFER->PutPixel(Pos + v2(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   Flags |= STRONG_NEW_DRAW_REQUEST; // Clean the pixels from the screen afterwards
 
   if(DrawHere)
-    {
-      graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
-    }
+  {
+    graphics::BlitDBToScreen();
+    while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
+  }
 }
 
-bool lsquare::DipInto(item* Thingy, character* Dipper)
+truth lsquare::DipInto(item* Thingy, character* Dipper)
 {
   if(IsDipDestination())
-    {
-      room* Room = GetRoom();
+  {
+    room* Room = GetRoom();
 
-      if(Room && Room->HasDipHandler() && !Room->Dip(Dipper))
-	return false;
-
-      return (GLTerrain->IsDipDestination() && GLTerrain->DipInto(Thingy, Dipper)) || (OLTerrain && OLTerrain->IsDipDestination() && OLTerrain->DipInto(Thingy, Dipper));
-    }
-  else
-    {
-      if(Dipper->IsPlayer())
-	ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHAR_NAME(DEFINITE));
-
+    if(Room && Room->HasDipHandler() && !Room->Dip(Dipper))
       return false;
-    }
+
+    return (GLTerrain->IsDipDestination() && GLTerrain->DipInto(Thingy, Dipper)) || (OLTerrain && OLTerrain->IsDipDestination() && OLTerrain->DipInto(Thingy, Dipper));
+  }
+  else
+  {
+    if(Dipper->IsPlayer())
+      ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHAR_NAME(DEFINITE));
+
+    return false;
+  }
 }
 
 // return true if key fits someplace
 
-bool lsquare::TryKey(item* Key, character* Applier)
+truth lsquare::TryKey(item* Key, character* Applier)
 {
   if(GetOLTerrain() && GetOLTerrain()->TryKey(Key, Applier))
     return true;
 
   if((!GetOLTerrain() || !GetOLTerrain()->HasKeyHole()) && !GetStack()->TryKey(Key, Applier))
-    {
-      ADD_MESSAGE("There's no place here to put the key in!");
-      return false;
-    }
+  {
+    ADD_MESSAGE("There's no place here to put the key in!");
+    return false;
+  }
 
   return true;
 }
@@ -1141,29 +1194,29 @@ void lsquare::SignalSeen(ulong Tick)
   LastSeen = Tick;
 
   if(!(Flags & IS_TRANSPARENT))
+  {
+    col24 OldLuminance = Luminance;
+    CalculateLuminance();
+
+    if(OldLuminance != Luminance)
     {
-      color24 OldLuminance = Luminance;
-      CalculateLuminance();
+      Flags |= NEW_DRAW_REQUEST;
 
-      if(OldLuminance != Luminance)
-	{
-	  Flags |= NEW_DRAW_REQUEST;
-
-	  if(IsDark() != game::IsDark(OldLuminance))
-	    Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
-	}
+      if(IsDark() != game::IsDark(OldLuminance))
+	Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
     }
+  }
 
   if(IsDark())
-    {
-      vector2d Dist = Pos - PLAYER->GetPos();
+  {
+    v2 Dist = Pos - PLAYER->GetPos();
 
-      if(abs(Dist.X) > 1 || abs(Dist.Y) > 1)
-	{
-	  LastSeen -= 2;
-	  return;
-	}
+    if(abs(Dist.X) > 1 || abs(Dist.Y) > 1)
+    {
+      LastSeen -= 2;
+      return;
     }
+  }
 
   if(!Memorized)
     CreateMemorized();
@@ -1175,45 +1228,55 @@ void lsquare::SignalSeen(ulong Tick)
     Character->CheckIfSeen();
 }
 
-void lsquare::DrawMemorized()
+void lsquare::DrawMemorized(blitdata& BlitData)
 {
   LastSeen = 0;
   Flags &= ~STRONG_NEW_DRAW_REQUEST;
-  vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+  BlitData.Luminance = ivanconfig::GetContrastLuminance();
 
   if(FowMemorized)
-    FowMemorized->LuminanceBlit(DOUBLE_BUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ivanconfig::GetContrastLuminance());
+    FowMemorized->LuminanceBlit(BlitData);
   else
-    DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+    DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
 
-  if(Character && Character->CanBeSeenByPlayer())
-    Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
+  const character* C = Character;
+
+  if(C && C->CanBeSeenByPlayer())
+  {
+    BlitData.CustomData |= C->GetSquareIndex(Pos);
+    C->Draw(BlitData);
+    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+  }
 }
 
-void lsquare::DrawMemorizedCharacter()
+void lsquare::DrawMemorizedCharacter(blitdata& BlitData)
 {
-  if(Character && Character->CanBeSeenByPlayer())
-    {
-      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+  const character* C = Character;
 
-      if(FowMemorized)
-	FowMemorized->LuminanceBlit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, ivanconfig::GetContrastLuminance());
-      else
-	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+  if(C && C->CanBeSeenByPlayer())
+  {
+    BlitData.Luminance = ivanconfig::GetContrastLuminance();
 
-      Character->Draw(DOUBLE_BUFFER, BitPos, ivanconfig::GetContrastLuminance(), Character->GetSquareIndex(Pos), true);
-      Flags |= STRONG_NEW_DRAW_REQUEST;
-    }
+    if(FowMemorized)
+      FowMemorized->LuminanceBlit(BlitData);
+    else
+      DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
+
+    BlitData.CustomData |= C->GetSquareIndex(Pos);
+    C->Draw(BlitData);
+    BlitData.CustomData &= ~SQUARE_INDEX_MASK;
+    Flags |= STRONG_NEW_DRAW_REQUEST;
+  }
 }
 
-bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
+truth lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
   return (!(Who->GetMoveType() & FLY)
-       && Stack->IsDangerousForAIToStepOn(Who))
-      || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who);
+	  && Stack->IsDangerousForAIToStepOn(Who))
+    || IsDangerousForAIToBreathe(Who) || HasDangerousTraps(Who);
 }
 
-bool lsquare::IsScaryForAIToStepOn(const character* Who) const
+truth lsquare::IsScaryForAIToStepOn(const character* Who) const
 {
   return IsScaryForAIToBreathe(Who);
 }
@@ -1223,12 +1286,12 @@ stack* lsquare::GetStackOfAdjacentSquare(int I) const
   lsquare* Square = 0;
 
   switch(I)
-    {
-    case LEFT:  Square = NeighbourLSquare[3]; break;
-    case DOWN:  Square = NeighbourLSquare[6]; break;
-    case UP:    Square = NeighbourLSquare[1]; break;
-    case RIGHT: Square = NeighbourLSquare[4]; break;
-    }
+  {
+   case LEFT:  Square = NeighbourLSquare[3]; break;
+   case DOWN:  Square = NeighbourLSquare[6]; break;
+   case UP:    Square = NeighbourLSquare[1]; break;
+   case RIGHT: Square = NeighbourLSquare[4]; break;
+  }
 
   return Square ? Square->Stack : 0;
 }
@@ -1236,28 +1299,28 @@ stack* lsquare::GetStackOfAdjacentSquare(int I) const
 void lsquare::SendMemorizedUpdateRequest()
 {
   if(!(Flags & FREEZED))
+  {
+    Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
+
+    if(!game::IsGenerating() && (CanBeSeenByPlayer() || CanBeFeltByPlayer()))
     {
-      Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
+      if(!Memorized)
+	CreateMemorized();
 
-      if(!game::IsGenerating() && (CanBeSeenByPlayer() || CanBeFeltByPlayer()))
-	{
-	  if(!Memorized)
-	    CreateMemorized();
-
-	  UpdateMemorized();
-	  UpdateMemorizedDescription();
-	}
+      UpdateMemorized();
+      UpdateMemorizedDescription();
     }
+  }
 }
 
 void lsquare::KickAnyoneStandingHereAway()
 {
   if(Character)
-    {
-      character* Backup = Character;
-      Backup->Remove();
-      Backup->PutNear(Pos);
-    }
+  {
+    character* Backup = Character;
+    Backup->Remove();
+    Backup->PutNear(Pos);
+  }
 }
 
 outputfile& operator<<(outputfile& SaveFile, const emitter& Emitter)
@@ -1277,72 +1340,81 @@ void lsquare::AddItem(item* Item)
   Stack->AddItem(Item);
 }
 
-vector2d lsquare::DrawLightning(vector2d StartPos, long Color, int Direction, bool DrawHere)
+v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere)
 {
   if(GetPos().X < game::GetCamera().X
-  || GetPos().Y < game::GetCamera().Y
-  || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
-  || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
-  || !CanBeSeenByPlayer(true))
+     || GetPos().Y < game::GetCamera().Y
+     || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
+     || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
+     || !CanBeSeenByPlayer(true))
     switch(Direction)
-      {
-      case 1: return vector2d(RAND() & 15, 15);
-      case 3: return vector2d(15, RAND() & 15);
-      case 4: return vector2d(0, RAND() & 15);
-      case 6: return vector2d(RAND() & 15, 0);
-      default: return StartPos;
-      }
+    {
+     case 1: return v2(RAND() & 15, 15);
+     case 3: return v2(15, RAND() & 15);
+     case 4: return v2(0, RAND() & 15);
+     case 6: return v2(RAND() & 15, 0);
+     default: return StartPos;
+    }
 
   clock_t StartTime = clock();
-  bitmap Empty(16, 16, TRANSPARENT_COLOR);
+  bitmap Empty(TILE_V2, TRANSPARENT_COLOR);
   Empty.ActivateFastFlag();
 
   if(Color & RANDOM_COLOR)
     Color = MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190);
 
   if(Direction != YOURSELF)
+  {
+    while(!Empty.CreateLightning(StartPos, game::GetMoveVector(Direction), 16, Color));
+    v2 EndPos(0, 0);
+
+    switch(Direction)
     {
-      while(!Empty.CreateLightning(StartPos, game::GetMoveVector(Direction), 16, Color));
-      vector2d EndPos(0, 0);
-
-      switch(Direction)
-	{
-	case 0: EndPos = vector2d(0, 0); break;
-	case 1: EndPos = vector2d(RAND() & 15, 0); StartPos = vector2d(EndPos.X, 15); break;
-	case 2: EndPos = vector2d(15, 0); break;
-	case 3: EndPos = vector2d(0, RAND() & 15); StartPos = vector2d(15, EndPos.Y); break;
-	case 4: EndPos = vector2d(15, RAND() & 15); StartPos = vector2d(0, EndPos.Y); break;
-	case 5: EndPos = vector2d(0, 15); break;
-	case 6: EndPos = vector2d(RAND() & 15, 15); StartPos = vector2d(EndPos.X, 0); break;
-	case 7: EndPos = vector2d(15, 15); break;
-	}
-
-      while(!Empty.CreateLightning(EndPos, -game::GetMoveVector(Direction), NO_LIMIT, Color));
+     case 0: EndPos = v2(0, 0); break;
+     case 1: EndPos = v2(RAND() & 15, 0); StartPos = v2(EndPos.X, 15); break;
+     case 2: EndPos = v2(15, 0); break;
+     case 3: EndPos = v2(0, RAND() & 15); StartPos = v2(15, EndPos.Y); break;
+     case 4: EndPos = v2(15, RAND() & 15); StartPos = v2(0, EndPos.Y); break;
+     case 5: EndPos = v2(0, 15); break;
+     case 6: EndPos = v2(RAND() & 15, 15); StartPos = v2(EndPos.X, 0); break;
+     case 7: EndPos = v2(15, 15); break;
     }
+
+    while(!Empty.CreateLightning(EndPos, -game::GetMoveVector(Direction), NO_LIMIT, Color));
+  }
   else
-    {
-      static vector2d Dir[4] = { vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1) };
+  {
+    static v2 Dir[4] = { v2(0, -1), v2(-1, 0), v2(1, 0), v2(0, 1) };
 
-      for(int d = 0; d < 4; ++d)
-	while(!Empty.CreateLightning(StartPos + Dir[d], vector2d(0, 0), 10, Color));
-    }
+    for(int d = 0; d < 4; ++d)
+      while(!Empty.CreateLightning(StartPos + Dir[d], ZERO_V2, 10, Color));
+  }
 
   if(DrawHere)
     game::DrawEverythingNoBlit();
 
-  Empty.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, game::CalculateScreenCoordinates(GetPos()), 16, 16);
+  blitdata B = { DOUBLE_BUFFER,
+		 { 0, 0 },
+		 { 0, 0 },
+		 { TILE_SIZE, TILE_SIZE },
+		 0,
+		 TRANSPARENT_COLOR,
+		 0 };
+
+  B.Dest = game::CalculateScreenCoordinates(GetPos());
+  Empty.NormalMaskedBlit(B);
   Flags |= STRONG_NEW_DRAW_REQUEST;
 
   if(DrawHere)
-    {
-      graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
-    }
+  {
+    graphics::BlitDBToScreen();
+    while(clock() - StartTime < 0.02 * CLOCKS_PER_SEC);
+  }
 
   return StartPos;
 }
 
-bool lsquare::Polymorph(const beamdata& Beam)
+truth lsquare::Polymorph(const beamdata& Beam)
 {
   GetStack()->Polymorph(Beam.Owner);
 
@@ -1352,17 +1424,17 @@ bool lsquare::Polymorph(const beamdata& Beam)
   character* Character = GetCharacter();
 
   if(Character)
-    {
-      if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
-	Beam.Owner->Hostility(Character);
+  {
+    if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(Character);
 
-      Character->PolymorphRandomly(1, 999999, 5000 + RAND() % 5000);
-    }
+    Character->PolymorphRandomly(1, 999999, 5000 + RAND() % 5000);
+  }
 
   return false;
 }
 
-bool lsquare::Strike(const beamdata& Beam) 
+truth lsquare::Strike(const beamdata& Beam) 
 {
   int Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Beam.Owner, Damage, ENERGY, Beam.Direction);
@@ -1371,18 +1443,18 @@ bool lsquare::Strike(const beamdata& Beam)
   character* Char = GetCharacter();
 
   if(Char)
-    {
-      if(Char->IsPlayer())
-	ADD_MESSAGE("You are hit by a burst of energy!");
-      else if(Char->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
+  {
+    if(Char->IsPlayer())
+      ADD_MESSAGE("You are hit by a burst of energy!");
+    else if(Char->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
 
-      if(Beam.Owner)
-	Beam.Owner->Hostility(Char);
+    if(Beam.Owner)
+      Beam.Owner->Hostility(Char);
 
-      Char->ReceiveDamage(Beam.Owner, Damage, ENERGY, ALL);
-      Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
-    }
+    Char->ReceiveDamage(Beam.Owner, Damage, ENERGY, ALL);
+    Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
+  }
 
   if(GetOLTerrain())
     GetOLTerrain()->ReceiveDamage(Beam.Owner, Damage, ENERGY);
@@ -1390,26 +1462,26 @@ bool lsquare::Strike(const beamdata& Beam)
   return false;
 }
 
-bool lsquare::FireBall(const beamdata& Beam) 
+truth lsquare::FireBall(const beamdata& Beam) 
 { 
   if(!IsFlyable() || GetCharacter())
-    {
-      GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
-      return true;
-    }
+  {
+    GetLevel()->Explosion(Beam.Owner, Beam.DeathMsg, Pos, 75 + RAND() % 25 - RAND() % 25);
+    return true;
+  }
 
   return false;
 }
 
-bool lsquare::Teleport(const beamdata& Beam) 
+truth lsquare::Teleport(const beamdata& Beam) 
 { 
   if(GetCharacter())
-    {
-      if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
-	Beam.Owner->Hostility(GetCharacter());
+  {
+    if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(GetCharacter());
 
-      GetCharacter()->TeleportRandomly();
-    }
+    GetCharacter()->TeleportRandomly();
+  }
 
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->TeleportSquare(Beam.Owner, this);
@@ -1418,7 +1490,7 @@ bool lsquare::Teleport(const beamdata& Beam)
   return false;
 }
 
-bool lsquare::Haste(const beamdata&)
+truth lsquare::Haste(const beamdata&)
 {
   character* Dude = GetCharacter();
 
@@ -1428,22 +1500,22 @@ bool lsquare::Haste(const beamdata&)
   return false;
 }
 
-bool lsquare::Slow(const beamdata& Beam)
+truth lsquare::Slow(const beamdata& Beam)
 {
   character* Dude = GetCharacter();
 
   if(Dude)
-    {
-      if(Beam.Owner)
-	Beam.Owner->Hostility(Dude);
+  {
+    if(Beam.Owner)
+      Beam.Owner->Hostility(Dude);
 
-      Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
-    }
+    Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+  }
 
   return false;
 }
 
-bool lsquare::Resurrect(const beamdata& Beam)
+truth lsquare::Resurrect(const beamdata& Beam)
 {
   if(GetCharacter())
     return GetCharacter()->RaiseTheDead(Beam.Owner);
@@ -1451,7 +1523,7 @@ bool lsquare::Resurrect(const beamdata& Beam)
     return GetStack()->RaiseTheDead(Beam.Owner);
 }
 
-bool lsquare::Invisibility(const beamdata&) 
+truth lsquare::Invisibility(const beamdata&) 
 {
   if(GetCharacter())
     GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
@@ -1459,13 +1531,13 @@ bool lsquare::Invisibility(const beamdata&)
   return false;
 }
 
-bool lsquare::Duplicate(const beamdata& Beam)
+truth lsquare::Duplicate(const beamdata& Beam)
 {
-  bool DuplicatedSomething = false;
+  truth DuplicatedSomething = false;
   character* Character = GetCharacter();
 
   if(Character)
-    DuplicatedSomething = !!Character->DuplicateToNearestSquare(Beam.Owner, Beam.SpecialParameters);
+    DuplicatedSomething = truth(Character->DuplicateToNearestSquare(Beam.Owner, Beam.SpecialParameters));
 
   if(GetStack()->Duplicate(DuplicatedSomething ? 4 : 5, Beam.SpecialParameters))
     DuplicatedSomething = true;
@@ -1473,7 +1545,7 @@ bool lsquare::Duplicate(const beamdata& Beam)
   return DuplicatedSomething;
 }
 
-bool lsquare::Lightning(const beamdata& Beam)
+truth lsquare::Lightning(const beamdata& Beam)
 {
   int Damage = 20 + RAND() % 6 - RAND() % 6;
   GetStack()->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, Beam.Direction);
@@ -1482,18 +1554,18 @@ bool lsquare::Lightning(const beamdata& Beam)
   character* Char = GetCharacter();
 
   if(Char)
-    {
-      if(Char->IsPlayer())
-	ADD_MESSAGE("A massive burst of electricity runs through your body!");
-      else if(Char->CanBeSeenByPlayer())
-	ADD_MESSAGE("A massive burst of electricity runs through %s!", Char->CHAR_NAME(DEFINITE));
+  {
+    if(Char->IsPlayer())
+      ADD_MESSAGE("A massive burst of electricity runs through your body!");
+    else if(Char->CanBeSeenByPlayer())
+      ADD_MESSAGE("A massive burst of electricity runs through %s!", Char->CHAR_NAME(DEFINITE));
 
-      if(Beam.Owner)
-	Beam.Owner->Hostility(Char);
+    if(Beam.Owner)
+      Beam.Owner->Hostility(Char);
 
-      Char->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, ALL);
-      Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
-    }
+    Char->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY, ALL);
+    Char->CheckDeath(Beam.DeathMsg, Beam.Owner);
+  }
 
   if(GetOLTerrain())
     GetOLTerrain()->ReceiveDamage(Beam.Owner, Damage, ELECTRICITY);
@@ -1501,32 +1573,32 @@ bool lsquare::Lightning(const beamdata& Beam)
   return false;
 }
 
-bool lsquare::DoorCreation(const beamdata& Beam)
+truth lsquare::DoorCreation(const beamdata& Beam)
 {
   if((!GetOLTerrain()
-  ||  GetOLTerrain()->IsSafeToCreateDoor())
-  && !GetCharacter()
-  && (GetLevel()->IsOnGround()
-  || (Pos.X > 0 && Pos.Y > 0
-  &&  Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
-    {
-      if(Beam.Owner && GetRoom())
-	GetRoom()->HostileAction(Beam.Owner);
+      ||  GetOLTerrain()->IsSafeToCreateDoor())
+     && !GetCharacter()
+     && (GetLevel()->IsOnGround()
+	 || (Pos.X > 0 && Pos.Y > 0
+	     &&  Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
+  {
+    if(Beam.Owner && GetRoom())
+      GetRoom()->HostileAction(Beam.Owner);
 
-      door* Door = new door(0, NO_MATERIALS);
-      Door->InitMaterials(MAKE_MATERIAL(STEEL));
+    door* Door = door::Spawn(0, NO_MATERIALS);
+    Door->InitMaterials(MAKE_MATERIAL(STEEL));
 
-      if(RAND() % 10)
-	Door->Lock();
+    if(RAND() % 10)
+      Door->Lock();
 
-      ChangeOLTerrainAndUpdateLights(Door);
-      return true;
-    }
+    ChangeOLTerrainAndUpdateLights(Door);
+    return true;
+  }
 
   return false;
 }
 
-bool (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
+truth (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
 {
   &lsquare::Polymorph,
   &lsquare::Strike,
@@ -1543,12 +1615,12 @@ bool (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::Necromancy
 };
 
-bool (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
+truth (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
 {
   return BeamEffect[I];
 }
 
-bool lsquare::CheckKick(const character* Kicker) const
+truth lsquare::CheckKick(const character* Kicker) const
 {
   if(Character && Kicker->CheckIfTooScaredToHit(Character))
     return false;
@@ -1596,7 +1668,7 @@ int lsquare::GetSpoiledItems() const
   return GetStack()->GetSpoiledItems();
 }
 
-bool lsquare::LowerEnchantment(const beamdata& Beam)
+truth lsquare::LowerEnchantment(const beamdata& Beam)
 {
   character* Char = GetCharacter();
   itemvector AllItems;
@@ -1610,13 +1682,13 @@ bool lsquare::LowerEnchantment(const beamdata& Beam)
     return false;
 
   if(Char)
-    {
-      if(Char->IsPlayer())
-	ADD_MESSAGE("%s glows blue for a moment!", RandomItem->CHAR_NAME(DEFINITE));
+  {
+    if(Char->IsPlayer())
+      ADD_MESSAGE("%s glows blue for a moment!", RandomItem->CHAR_NAME(DEFINITE));
 
-      if(Beam.Owner)
-	Beam.Owner->Hostility(Char);
-    }
+    if(Beam.Owner)
+      Beam.Owner->Hostility(Char);
+  }
 
   if(RandomItem->GetEnchantment() > -5)
     RandomItem->EditEnchantment(-1);
@@ -1637,25 +1709,25 @@ void lsquare::RemoveSmoke(smoke* ToBeRemoved)
   smoke* S = Smoke;
 
   if(S == ToBeRemoved)
-    {
-      Smoke = S->Next;
+  {
+    Smoke = S->Next;
 
-      if(!S)
-	DecAnimatedEntities();
-    }
+    if(!S)
+      DecAnimatedEntities();
+  }
   else
+  {
+    smoke* LS;
+
+    do
     {
-      smoke* LS;
-
-      do
-	{
-	  LS = S;
-	  S = S->Next;
-	}
-      while(S != ToBeRemoved);
-
-      LS->Next = S->Next;
+      LS = S;
+      S = S->Next;
     }
+    while(S != ToBeRemoved);
+
+    LS->Next = S->Next;
+  }
 }
 
 void lsquare::AddSmoke(gas* ToBeAdded)
@@ -1663,29 +1735,29 @@ void lsquare::AddSmoke(gas* ToBeAdded)
   smoke* S = Smoke;
 
   if(!S)
-    {
-      Smoke = new smoke(ToBeAdded, this);
-      IncAnimatedEntities();
-    }
+  {
+    Smoke = new smoke(ToBeAdded, this);
+    IncAnimatedEntities();
+  }
   else
+  {
+    smoke* LS;
+
+    do
     {
-      smoke* LS;
+      if(ToBeAdded->IsSameAs(S->GetGas()))
+      {
+	S->Merge(ToBeAdded);
+	return;
+      }
 
-      do
-	{
-	  if(ToBeAdded->IsSameAs(S->GetGas()))
-	    {
-	      S->Merge(ToBeAdded);
-	      return;
-	    }
-
-	  LS = S;
-	  S = S->Next;
-	}
-      while(S);
-
-      LS->Next = new smoke(ToBeAdded, this);
+      LS = S;
+      S = S->Next;
     }
+    while(S);
+
+    LS->Next = new smoke(ToBeAdded, this);
+  }
 }
 
 void lsquare::ShowSmokeMessage() const
@@ -1724,12 +1796,12 @@ void lsquare::ReceiveEarthQuakeDamage()
     GetOLTerrain()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
 }
 
-bool lsquare::IsDangerous(character* ToWhom) const
+truth lsquare::IsDangerous(character* ToWhom) const
 {
   return (GetStack()->IsDangerous(ToWhom) || Smoke || HasDangerousTraps(ToWhom));
 }
 
-bool lsquare::CanBeFeltByPlayer() const
+truth lsquare::CanBeFeltByPlayer() const
 {
   return OLTerrain && !PLAYER->CanMoveOn(this) && Pos.IsAdjacent(PLAYER->GetPos());
 }
@@ -1743,21 +1815,21 @@ void lsquare::PreProcessForBone()
     OLTerrain->PreProcessForBone();
 
   if(Smoke)
-    {
-      DecAnimatedEntities();
+  {
+    DecAnimatedEntities();
 
-      for(smoke* S = Smoke; S; S = S->Next)
-	S->SendToHell();
+    for(smoke* S = Smoke; S; S = S->Next)
+      S->SendToHell();
 
-      Smoke = 0;
-      SmokeAlphaSum = 0;
-    }
+    Smoke = 0;
+    SmokeAlphaSum = 0;
+  }
 
   if(Character && !Character->PreProcessForBone())
-    {
-      Character->SendToHell();
-      Character->Remove();
-    }
+  {
+    Character->SendToHell();
+    Character->Remove();
+  }
 
   for(trap* T = Trap; T; T = T->Next)
     T->PreProcessForBone();
@@ -1771,10 +1843,10 @@ void lsquare::PostProcessForBone(double& DangerSum, int& Enemies)
     OLTerrain->PostProcessForBone();
 
   if(Character && !Character->PostProcessForBone(DangerSum, Enemies))
-    {
-      Character->SendToHell();
-      Character->Remove();
-    }
+  {
+    Character->SendToHell();
+    Character->Remove();
+  }
 
   for(trap* T = Trap; T; T = T->Next)
     T->PostProcessForBone();
@@ -1793,7 +1865,7 @@ void lsquare::FinalProcessForBone()
   GetStack()->FinalProcessForBone();
 }
 
-bool lsquare::EngravingsCanBeReadByPlayer()
+truth lsquare::EngravingsCanBeReadByPlayer()
 {
   return PLAYER->CanRead(); // Might be a good idea to improve sometime in the distant future.
 }
@@ -1803,7 +1875,7 @@ void lsquare::DisplayEngravedInfo(festring& Buffer) const
   Buffer << " There is a message engraved here: \"" << Engraved << '\"';
 }
 
-bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
+truth lsquare::IsDangerousForAIToBreathe(const character* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
     if(S->IsDangerousForAIToBreathe(Who))
@@ -1812,7 +1884,7 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
   return false;
 }
 
-bool lsquare::IsScaryForAIToBreathe(const character* Who) const
+truth lsquare::IsScaryForAIToBreathe(const character* Who) const
 {
   for(const smoke* S = Smoke; S; S = S->Next)
     if(S->IsScaryForAIToBreathe(Who))
@@ -1827,7 +1899,7 @@ struct borderpartner
   int SquareIndex;
 };
 
-bool BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
+truth BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
 {
   return BP1.Terrain->GetBorderTilePriority() < BP2.Terrain->GetBorderTilePriority();
 }
@@ -1839,31 +1911,31 @@ void lsquare::CalculateBorderPartners()
   int Priority = OLTerrain ? OLTerrain->GetBorderTilePriority() : 0;
 
   for(int d = 0; d < 8; ++d)
+  {
+    lsquare* Square = NeighbourLSquare[d];
+
+    if(Square)
     {
-      lsquare* Square = NeighbourLSquare[d];
+      olterrain* Terrain = Square->GetOLTerrain();
 
-      if(Square)
-	{
-	  olterrain* Terrain = Square->GetOLTerrain();
-
-	  if(Terrain && Terrain->UseBorderTiles()
-	  && Terrain->GetBorderTilePriority() > Priority)
-	    {
-	      BorderPartner[Index].Terrain = Terrain;
-	      BorderPartner[Index].SquareIndex = 7 - d;
-	      ++Index;
-	    }
-	}
+      if(Terrain && Terrain->UseBorderTiles()
+	 && Terrain->GetBorderTilePriority() > Priority)
+      {
+	BorderPartner[Index].Terrain = Terrain;
+	BorderPartner[Index].SquareIndex = 7 - d;
+	++Index;
+      }
     }
+  }
 
   std::sort(BorderPartner, BorderPartner + Index, BorderPartnerOrderer);
   BorderPartnerInfo = 0;
 
   for(int c = 0; c < Index; ++c)
-    {
-      BorderPartnerTerrain[c] = BorderPartner[c].Terrain;
-      BorderPartnerInfo |= BorderPartner[c].SquareIndex << ((c << 1) + c);
-    }
+  {
+    BorderPartnerTerrain[c] = BorderPartner[c].Terrain;
+    BorderPartnerInfo |= BorderPartner[c].SquareIndex << ((c << 1) + c);
+  }
 
   BorderPartnerInfo |= Index << 24;
 }
@@ -1872,27 +1944,27 @@ void lsquare::RequestForBorderPartnerUpdates()
 {
   if(!game::IsGenerating())
     for(int d = 0; d < 8; ++d)
-      {
-	lsquare* Square = NeighbourLSquare[d];
+    {
+      lsquare* Square = NeighbourLSquare[d];
 
-	if(Square)
-	  {
-	    Square->CalculateBorderPartners();
-	    Square->SendNewDrawRequest();
-	    Square->SendMemorizedUpdateRequest();
-	  }
+      if(Square)
+      {
+	Square->CalculateBorderPartners();
+	Square->SendNewDrawRequest();
+	Square->SendMemorizedUpdateRequest();
       }
+    }
 }
 
 int lsquare::GetWalkability() const
 {
   if(!GetLevel()->IsOnGround())
-    {
-      if(Pos.X >= 1 && Pos.Y >= 1 && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)
-	return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
-      else
-	return 0;
-    }
+  {
+    if(Pos.X >= 1 && Pos.Y >= 1 && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)
+      return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+    else
+      return 0;
+  }
   else
     return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
 }
@@ -1907,7 +1979,7 @@ void lsquare::RemoveFluid(fluid* ToRemove)
 struct fluidcomparer
 {
   fluidcomparer(const liquid* Liquid) : Liquid(Liquid) { }
-  bool operator()(const fluid* F) const { return Liquid->IsSameAs(F->GetLiquid()); }
+  truth operator()(const fluid* F) const { return Liquid->IsSameAs(F->GetLiquid()); }
   const liquid* Liquid;
 };
 
@@ -1916,15 +1988,15 @@ void lsquare::AddFluid(liquid* ToBeAdded)
   fluid*& F = ListFind(Fluid, fluidcomparer(ToBeAdded));
 
   if(F)
-    {
-      F->AddLiquidAndVolume(ToBeAdded->GetVolume());
-      delete ToBeAdded;
-    }
+  {
+    F->AddLiquidAndVolume(ToBeAdded->GetVolume());
+    delete ToBeAdded;
+  }
   else
-    {
-      F = new fluid(ToBeAdded, this);
-      SignalEmitationIncrease(ToBeAdded->GetEmitation());
-    }
+  {
+    F = new fluid(ToBeAdded, this);
+    SignalEmitationIncrease(ToBeAdded->GetEmitation());
+  }
 
   SendNewDrawRequest();
   SendMemorizedUpdateRequest();
@@ -1933,55 +2005,55 @@ void lsquare::AddFluid(liquid* ToBeAdded)
 void lsquare::DisplayFluidInfo(festring& Msg) const
 {
   if(Fluid)
-    {
-      Msg << ". There is ";
-      fluid::AddFluidInfo(Fluid, Msg);
+  {
+    Msg << ". There is ";
+    fluid::AddFluidInfo(Fluid, Msg);
 
-      /* Does this cause problems? */
+    /* Does this cause problems? */
 
-      if(IsFlyable())
-	Msg << " on the ground";
-      else
-	Msg << " on the wall";
-    }
+    if(IsFlyable())
+      Msg << " on the ground";
+    else
+      Msg << " on the wall";
+  }
 }
 
-void lsquare::SpillFluid(character* Spiller, liquid* Liquid, bool ForceHit, bool ShowMsg)
+void lsquare::SpillFluid(character* Spiller, liquid* Liquid, truth ForceHit, truth ShowMsg)
 {
   if(!Liquid->GetVolume())
-    {
-      delete Liquid;
-      return;
-    }
+  {
+    delete Liquid;
+    return;
+  }
 
   if(IsFlyable())
+  {
+    if(GetCharacter())
     {
-      if(GetCharacter())
+      if(Spiller && !GetCharacter()->IsAlly(Spiller))
+	Spiller->Hostility(GetCharacter());
+
+      long CharVolume = GetCharacter()->GetVolume();
+      double ChanceMultiplier = 1. / (300 + sqrt(GetStack()->GetVolume() + CharVolume));
+      double Root = sqrt(CharVolume);
+
+      if(ForceHit || Root > RAND() % 400 || Root > RAND() % 400)
+      {
+	long SpillVolume = long(Liquid->GetVolume() * Root * ChanceMultiplier);
+
+	if(SpillVolume)
 	{
-	  if(Spiller && !GetCharacter()->IsAlly(Spiller))
-	    Spiller->Hostility(GetCharacter());
+	  if(ShowMsg && (GetCharacter()->IsPlayer() || GetCharacter()->CanBeSeenByPlayer()))
+	    ADD_MESSAGE("%s is spilled all over %s.", Liquid->GetName(false, false).CStr(), GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
 
-	  long CharVolume = GetCharacter()->GetVolume();
-	  double ChanceMultiplier = 1. / (300 + sqrt(GetStack()->GetVolume() + CharVolume));
-	  double Root = sqrt(CharVolume);
-
-	  if(ForceHit || Root > RAND() % 400 || Root > RAND() % 400)
-	    {
-	      long SpillVolume = long(Liquid->GetVolume() * Root * ChanceMultiplier);
-
-	      if(SpillVolume)
-		{
-		  if(ShowMsg && (GetCharacter()->IsPlayer() || GetCharacter()->CanBeSeenByPlayer()))
-		    ADD_MESSAGE("%s is spilled all over %s.", Liquid->GetName(false, false).CStr(), GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
-
-		  Liquid->EditVolume(-SpillVolume);
-		  GetCharacter()->SpillFluid(Spiller, Liquid->CloneLiquid(SpillVolume), GetCharacter()->GetSquareIndex(GetPos()));
-		}
-	    }
+	  Liquid->EditVolume(-SpillVolume);
+	  GetCharacter()->SpillFluid(Spiller, Liquid->SpawnMoreLiquid(SpillVolume), GetCharacter()->GetSquareIndex(GetPos()));
 	}
-
-      GetStack()->SpillFluid(Spiller, Liquid, Liquid->GetVolume());
+      }
     }
+
+    GetStack()->SpillFluid(Spiller, Liquid, Liquid->GetVolume());
+  }
 
   if(Liquid->GetVolume())
     AddFluid(Liquid);
@@ -1989,17 +2061,17 @@ void lsquare::SpillFluid(character* Spiller, liquid* Liquid, bool ForceHit, bool
     delete Liquid;
 }
 
-void lsquare::DrawStacks(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool RealDraw) const
+void lsquare::DrawStacks(blitdata& BlitData) const
 {
-  Stack->Draw(PLAYER, Bitmap, Pos, Luminance, CENTER, RealDraw);
+  Stack->Draw(PLAYER, BlitData, CENTER);
 
   for(int c = 0; c < 4; ++c)
-    {
-      stack* Stack = GetStackOfAdjacentSquare(c);
+  {
+    stack* Stack = GetStackOfAdjacentSquare(c);
 
-      if(Stack)
-	Stack->Draw(PLAYER, Bitmap, Pos, Luminance, 3 - c, RealDraw);
-    }
+    if(Stack)
+      Stack->Draw(PLAYER, BlitData, 3 - c);
+  }
 }
 
 void lsquare::RemoveRain(rain* ToBeRemoved)
@@ -2013,23 +2085,23 @@ void lsquare::RemoveRain(rain* ToBeRemoved)
   if(R == ToBeRemoved)
     Rain = R->Next;
   else
+  {
+    rain* LR;
+
+    do
     {
-      rain* LR;
-
-      do
-	{
-	  LR = R;
-	  R = R->Next;
-	}
-      while(R != ToBeRemoved);
-
-      LR->Next = R->Next;
+      LR = R;
+      R = R->Next;
     }
+    while(R != ToBeRemoved);
+
+    LR->Next = R->Next;
+  }
 
   SignalEmitationDecrease(ToBeRemoved->GetEmitation());
 }
 
-void lsquare::AddRain(liquid* RainLiquid, vector2d Speed, int Team, bool OwnLiquid)
+void lsquare::AddRain(liquid* RainLiquid, v2 Speed, int Team, truth OwnLiquid)
 {
   rain* R = Rain, * NewRain = new rain(RainLiquid, this, Speed, Team, OwnLiquid);
 
@@ -2039,18 +2111,18 @@ void lsquare::AddRain(liquid* RainLiquid, vector2d Speed, int Team, bool OwnLiqu
   if(!R)
     Rain = NewRain;
   else
+  {
+    rain* LR;
+
+    do
     {
-      rain* LR;
-
-      do
-	{
-	  LR = R;
-	  R = R->Next;
-	}
-      while(R);
-
-      LR->Next = NewRain;
+      LR = R;
+      R = R->Next;
     }
+    while(R);
+
+    LR->Next = NewRain;
+  }
 }
 
 void lsquare::RemoveSunLight()
@@ -2061,39 +2133,39 @@ void lsquare::RemoveSunLight()
 
 void lsquare::CheckIfIsSecondarySunLightEmitter()
 {
-  color24 OldEmitation = SecondarySunLightEmitation;
+  col24 OldEmitation = SecondarySunLightEmitation;
 
   if(Flags & IS_TRANSPARENT && (!(Flags & INSIDE) || SunLightLuminance))
     for(int d = 0; d < 8; ++d)
+    {
+      lsquare* Neighbour = NeighbourLSquare[d];
+
+      if(Neighbour && Neighbour->Flags & INSIDE)
       {
-	lsquare* Neighbour = NeighbourLSquare[d];
+	col24 NewEmitation = GetLevel()->GetAmbientLuminance();
 
-	if(Neighbour && Neighbour->Flags & INSIDE)
+	if(OldEmitation != NewEmitation)
+	{
+	  SecondarySunLightEmitation = NewEmitation;
+
+	  if(game::CompareLights(NewEmitation, OldEmitation) >= 0)
+	    Emitate(NewEmitation, SECONDARY_SUN_LIGHT);
+	  else
 	  {
-	    color24 NewEmitation = GetLevel()->GetAmbientLuminance();
-
-	    if(OldEmitation != NewEmitation)
-	      {
-		SecondarySunLightEmitation = NewEmitation;
-
-		if(game::CompareLights(NewEmitation, OldEmitation) >= 0)
-		  Emitate(NewEmitation, SECONDARY_SUN_LIGHT);
-		else
-		  {
- 		    Noxify(OldEmitation, SECONDARY_SUN_LIGHT);
-		    Emitate(NewEmitation, SECONDARY_SUN_LIGHT|FORCE_ADD);
-		  }
-	      }
-
-	    return;
+	    Noxify(OldEmitation, SECONDARY_SUN_LIGHT);
+	    Emitate(NewEmitation, SECONDARY_SUN_LIGHT|FORCE_ADD);
 	  }
+	}
+
+	return;
       }
+    }
 
   if(OldEmitation)
-    {
-      Noxify(OldEmitation, SECONDARY_SUN_LIGHT);
-      SecondarySunLightEmitation = 0;
-    }
+  {
+    Noxify(OldEmitation, SECONDARY_SUN_LIGHT);
+    SecondarySunLightEmitation = 0;
+  }
 }
 
 void lsquare::CalculateNeighbourLSquares()
@@ -2102,103 +2174,103 @@ void lsquare::CalculateNeighbourLSquares()
   int YSize = GetLevel()->GetYSize();
 
   for(int d = 0; d < 8; ++d)
-    {
-      vector2d NPos = Pos + game::GetMoveVector(d);
+  {
+    v2 NPos = Pos + game::GetMoveVector(d);
 
-      if(NPos.X >= 0 && NPos.Y >= 0 && NPos.X < XSize && NPos.Y < YSize)
-	NeighbourLSquare[d] = GetLevel()->GetLSquare(NPos);
-      else
-	NeighbourLSquare[d] = 0;
-    }
+    if(NPos.X >= 0 && NPos.Y >= 0 && NPos.X < XSize && NPos.Y < YSize)
+      NeighbourLSquare[d] = GetLevel()->GetLSquare(NPos);
+    else
+      NeighbourLSquare[d] = 0;
+  }
 }
 
-void lsquare::RemoveLuminance(color24& Emitation)
+void lsquare::RemoveLuminance(col24& Emitation)
 {
-  color24 OldLuminance = Luminance;
-  color24 OldEmitation = Emitation;
+  col24 OldLuminance = Luminance;
+  col24 OldEmitation = Emitation;
   Emitation = 0;
 
   if(game::CompareLights(OldEmitation, OldLuminance) < 0)
     return;
 
   if(!(Flags & IS_TRANSPARENT))
-    {
-      Flags |= NEW_DRAW_REQUEST;
+  {
+    Flags |= NEW_DRAW_REQUEST;
 
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
-    }
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
   else
-    {
-      CalculateLuminance();
+  {
+    CalculateLuminance();
 
-      if(OldLuminance == Luminance)
-	return;
-
-      Flags |= NEW_DRAW_REQUEST;
-
-      if(!Luminance)
-	{
-	  Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
-
-	  if(LastSeen == game::GetLOSTick())
-	    game::SendLOSUpdateRequest();
-	}
-    }
-}
-
-void lsquare::ChangeLuminance(color24& Emitation, color24 NewLuminance)
-{
-  color24 OldLuminance = Luminance;
-
-  if(!(Flags & IS_TRANSPARENT))
-    {
-      Emitation = NewLuminance;
-      Flags |= NEW_DRAW_REQUEST;
-
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
-
+    if(OldLuminance == Luminance)
       return;
-    }
 
-  bool EmitationInsignificant = !Emitation
-			     || game::CompareLights(Emitation, OldLuminance) < 0;
-  Emitation = NewLuminance;
+    Flags |= NEW_DRAW_REQUEST;
 
-  if(game::CompareLights(NewLuminance, OldLuminance) > 0
-  && EmitationInsignificant)
-    game::CombineLights(Luminance, NewLuminance);
-  else
-    {
-      if(EmitationInsignificant)
-	return;
-
-      CalculateLuminance();
-
-      if(OldLuminance == Luminance)
-	return;
-    }
-
-  Flags |= NEW_DRAW_REQUEST;
-
-  if(!OldLuminance)
+    if(!Luminance)
     {
       Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
 
       if(LastSeen == game::GetLOSTick())
 	game::SendLOSUpdateRequest();
     }
+  }
+}
+
+void lsquare::ChangeLuminance(col24& Emitation, col24 NewLuminance)
+{
+  col24 OldLuminance = Luminance;
+
+  if(!(Flags & IS_TRANSPARENT))
+  {
+    Emitation = NewLuminance;
+    Flags |= NEW_DRAW_REQUEST;
+
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+
+    return;
+  }
+
+  truth EmitationInsignificant = !Emitation
+				 || game::CompareLights(Emitation, OldLuminance) < 0;
+  Emitation = NewLuminance;
+
+  if(game::CompareLights(NewLuminance, OldLuminance) > 0
+     && EmitationInsignificant)
+    game::CombineLights(Luminance, NewLuminance);
+  else
+  {
+    if(EmitationInsignificant)
+      return;
+
+    CalculateLuminance();
+
+    if(OldLuminance == Luminance)
+      return;
+  }
+
+  Flags |= NEW_DRAW_REQUEST;
+
+  if(!OldLuminance)
+  {
+    Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
+
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
 }
 
 void lsquare::EnableGlobalRain()
 {
   for(rain* R = Rain; R; R = R->Next)
     if(!R->HasOwnLiquid())
-      {
-	R->Enable();
-	IncAnimatedEntities();
-      }
+    {
+      R->Enable();
+      IncAnimatedEntities();
+    }
 }
 
 void lsquare::DisableGlobalRain()
@@ -2207,10 +2279,10 @@ void lsquare::DisableGlobalRain()
 
   for(rain* R = Rain; R; R = R->Next)
     if(!R->HasOwnLiquid())
-      {
-	R->Disable();
-	DecAnimatedEntities();
-      }
+    {
+      R->Disable();
+      DecAnimatedEntities();
+    }
 }
 
 void lsquare::InitLastSeen()
@@ -2219,16 +2291,16 @@ void lsquare::InitLastSeen()
   SquarePartLastSeen = 0;
 }
 
-bool lsquare::Engrave(const festring& What)
+truth lsquare::Engrave(const festring& What)
 {
   if(Engraved)
     delete [] Engraved;
 
   if(!What.IsEmpty())
-    {
-      Engraved = new char[What.GetSize() + 1];
-      strcpy(Engraved, What.CStr());
-    }
+  {
+    Engraved = new char[What.GetSize() + 1];
+    strcpy(Engraved, What.CStr());
+  }
   else
     Engraved = 0;
 
@@ -2238,30 +2310,30 @@ bool lsquare::Engrave(const festring& What)
 void lsquare::SendSunLightSignals()
 {
   if(Flags & IS_TRANSPARENT)
-    {
-      color24 OldLuminance = Luminance;
-      CalculateLuminance();
+  {
+    col24 OldLuminance = Luminance;
+    CalculateLuminance();
 
-      if(Luminance != OldLuminance)
-	{
-	  Flags |= NEW_DRAW_REQUEST;
-
-	  if(!Luminance != !OldLuminance)
-	    {
-	      Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
-
-	      if(LastSeen == game::GetLOSTick())
-		game::SendLOSUpdateRequest();
-	    }
-	}
-    }
-  else
+    if(Luminance != OldLuminance)
     {
       Flags |= NEW_DRAW_REQUEST;
 
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
+      if(!Luminance != !OldLuminance)
+      {
+	Flags |= MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE;
+
+	if(LastSeen == game::GetLOSTick())
+	  game::SendLOSUpdateRequest();
+      }
     }
+  }
+  else
+  {
+    Flags |= NEW_DRAW_REQUEST;
+
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
 }
 
 void lsquare::ZeroReSunEmitatedFlags()
@@ -2272,19 +2344,19 @@ void lsquare::ZeroReSunEmitatedFlags()
     *i &= ~RE_SUN_EMITATED;
 }
 
-bool lsquare::CalculateIsTransparent()
+truth lsquare::CalculateIsTransparent()
 {
   if((!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175
-  && (!Character || Character->IsTransparent()))
-    {
-      Flags |= IS_TRANSPARENT;
-      return true;
-    }
+     && (!Character || Character->IsTransparent()))
+  {
+    Flags |= IS_TRANSPARENT;
+    return true;
+  }
   else
-    {
-      Flags &= ~IS_TRANSPARENT;
-      return false;
-    }
+  {
+    Flags &= ~IS_TRANSPARENT;
+    return false;
+  }
 }
 
 void lsquare::CalculateSunLightLuminance(ulong SeenBitMask)
@@ -2293,73 +2365,73 @@ void lsquare::CalculateSunLightLuminance(ulong SeenBitMask)
   int S = 0, L = 0;
 
   for(i = SunEmitter.begin(); i != SunEnd; ++i)
-    {
-      ulong ShadowFlag = 1 << EMITTER_SHADOW_SHIFT;
-      ulong SquarePartFlag = 1 << EMITTER_SQUARE_PART_SHIFT;
+  {
+    ulong ShadowFlag = 1 << EMITTER_SHADOW_SHIFT;
+    ulong SquarePartFlag = 1 << EMITTER_SQUARE_PART_SHIFT;
 
-      for(int c = 0; c < 4; ++c, ShadowFlag <<= 1, SquarePartFlag <<= 1)
-	if(SeenBitMask & *i & SquarePartFlag)
-	  if(*i & ShadowFlag)
-	    ++S;
-	  else
-	    ++L;
-    }
+    for(int c = 0; c < 4; ++c, ShadowFlag <<= 1, SquarePartFlag <<= 1)
+      if(SeenBitMask & *i & SquarePartFlag)
+	if(*i & ShadowFlag)
+	  ++S;
+	else
+	  ++L;
+  }
 
   if(!L)
     SunLightLuminance = 0;
   else if(!S)
     SunLightLuminance = GetLevel()->GetSunLightEmitation();
   else
-    {
-      color24 ShadowColor = GetLevel()->GetAmbientLuminance();
-      color24 LightColor = GetLevel()->GetSunLightEmitation();
-      SunLightLuminance = MakeRGB24((GetRed24(LightColor) * L
+  {
+    col24 ShadowColor = GetLevel()->GetAmbientLuminance();
+    col24 LightColor = GetLevel()->GetSunLightEmitation();
+    SunLightLuminance = MakeRGB24((GetRed24(LightColor) * L
 				   + GetRed24(ShadowColor) * S) / (S + L),
-				    (GetGreen24(LightColor) * L
+				  (GetGreen24(LightColor) * L
 				   + GetGreen24(ShadowColor) * S) / (S + L),
-				    (GetBlue24(LightColor) * L
+				  (GetBlue24(LightColor) * L
 				   + GetBlue24(ShadowColor) * S) / (S + L));
-    }
+  }
 }
 
 void lsquare::CreateMemorized()
 {
-  Memorized = new bitmap(16, 16);
+  Memorized = new bitmap(TILE_V2);
   Memorized->ActivateFastFlag();
-  FowMemorized = new bitmap(16, 16);
+  FowMemorized = new bitmap(TILE_V2);
   FowMemorized->ActivateFastFlag();
 }
 
-bool lsquare::AcidRain(const beamdata& Beam) 
+truth lsquare::AcidRain(const beamdata& Beam) 
 { 
   if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
+  {
+    int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
+    lsquare** Stack = GetLevel()->GetSquareStack();
+    v2 Speed = v2(512, 512);
+    int Team = Beam.Owner ? Beam.Owner->GetTeam()->GetID() : MONSTER_TEAM;
+
+    for(int c = 0; c < StackSize; ++c)
     {
-      int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
-      lsquare** Stack = GetLevel()->GetSquareStack();
-      vector2d Speed = vector2d(512, 512);
-      int Team = Beam.Owner ? Beam.Owner->GetTeam()->GetID() : MONSTER_TEAM;
-
-      for(int c = 0; c < StackSize; ++c)
-	{
-	  Stack[c]->AddRain(new liquid(SULPHURIC_ACID, 300), Speed, Team, true);
-	  Stack[c]->Flags &= ~IN_SQUARE_STACK;
-	}
-
-      if(Beam.Owner && Character && Character->GetTeam() != Beam.Owner->GetTeam())
-	Beam.Owner->Hostility(Character);
-
-      return true;
+      Stack[c]->AddRain(liquid::Spawn(SULPHURIC_ACID, 300), Speed, Team, true);
+      Stack[c]->Flags &= ~IN_SQUARE_STACK;
     }
+
+    if(Beam.Owner && Character && Character->GetTeam() != Beam.Owner->GetTeam())
+      Beam.Owner->Hostility(Character);
+
+    return true;
+  }
 
   return false;
 }
 
-bool lsquare::DetectMaterial(const material* Material) const
+truth lsquare::DetectMaterial(const material* Material) const
 {
   if(GLTerrain->DetectMaterial(Material)
-  || OLTerrain && OLTerrain->DetectMaterial(Material)
-  || Stack->DetectMaterial(Material)
-  || Character && Character->DetectMaterial(Material))
+     || OLTerrain && OLTerrain->DetectMaterial(Material)
+     || Stack->DetectMaterial(Material)
+     || Character && Character->DetectMaterial(Material))
     return true;
 
   for(const fluid* F = Fluid; F; F = F->Next)
@@ -2377,7 +2449,7 @@ bool lsquare::DetectMaterial(const material* Material) const
   return false;
 }
 
-void lsquare::Reveal(ulong Tick, bool IgnoreDarkness)
+void lsquare::Reveal(ulong Tick, truth IgnoreDarkness)
 {
   if(!Memorized)
     CreateMemorized();
@@ -2387,18 +2459,18 @@ void lsquare::Reveal(ulong Tick, bool IgnoreDarkness)
   if(IgnoreDarkness)
     Luminance = NORMAL_LUMINANCE;
   else
-    {
-      SquarePartLastSeen = 0;
+  {
+    SquarePartLastSeen = 0;
 
-      for(int c = 0; c < 4; ++c)
-	SquarePartLastSeen |= (Tick << (c << 3));
+    for(int c = 0; c < 4; ++c)
+      SquarePartLastSeen |= (Tick << (c << 3));
 
-      CalculateLuminance();
-    }
+    CalculateLuminance();
+  }
 
   Flags |= NEW_DRAW_REQUEST
-	 | MEMORIZED_UPDATE_REQUEST
-	 | DESCRIPTION_CHANGE;
+	   | MEMORIZED_UPDATE_REQUEST
+	   | DESCRIPTION_CHANGE;
   UpdateMemorized();
   UpdateMemorizedDescription();
 }
@@ -2418,7 +2490,7 @@ void lsquare::SwapMemorized(lsquare* Square)
   MemorizedDescription.SwapData(Square->MemorizedDescription);
 }
 
-bool lsquare::Necromancy(const beamdata& Beam)
+truth lsquare::Necromancy(const beamdata& Beam)
 {
   return GetStack()->Necromancy(Beam.Owner);
 }
@@ -2431,12 +2503,12 @@ lsquare* lsquare::GetRandomAdjacentSquare() const
   int Index = 0;
 
   for(int c = 0; c < 8; ++c)
-    {
-      lsquare* Square = NeighbourLSquare[c];
+  {
+    lsquare* Square = NeighbourLSquare[c];
 
-      if(Square)
-	OK[Index++] = Square;
-    }
+    if(Square)
+      OK[Index++] = Square;
+  }
 
   if(Index)
     return OK[RAND_N(Index)];
@@ -2444,38 +2516,38 @@ lsquare* lsquare::GetRandomAdjacentSquare() const
     return 0;
 }
 
-bool pathcontroller::Handler(int x, int y)
+truth pathcontroller::Handler(int x, int y)
 {
   return Character->CanMoveOn(Map[x][y]);
 }
 
 void lsquare::SignalPossibleTransparencyChange()
 {
-  bool WasTransparent = IsTransparent();
+  truth WasTransparent = IsTransparent();
   CalculateIsTransparent();
 
   if(WasTransparent && !IsTransparent())
-    {
-      Flags |= IS_TRANSPARENT;
-      emittervector EmitterBackup = Emitter;
-      GetLevel()->ForceEmitterNoxify(EmitterBackup);
-      Flags &= ~IS_TRANSPARENT;
-      GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
-      CalculateLuminance();
-      Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
+  {
+    Flags |= IS_TRANSPARENT;
+    emittervector EmitterBackup = Emitter;
+    GetLevel()->ForceEmitterNoxify(EmitterBackup);
+    Flags &= ~IS_TRANSPARENT;
+    GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
+    CalculateLuminance();
+    Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
 
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
-    }
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
   else if(!WasTransparent && IsTransparent())
-    {
-      GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
-      CalculateLuminance();
-      Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
+  {
+    GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
+    CalculateLuminance();
+    Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
 
-      if(LastSeen == game::GetLOSTick())
-	game::SendLOSUpdateRequest();
-    }
+    if(LastSeen == game::GetLOSTick())
+      game::SendLOSUpdateRequest();
+  }
 }
 
 void lsquare::RemoveTrap(trap* ToRemove)
@@ -2489,19 +2561,19 @@ void lsquare::RemoveTrap(trap* ToRemove)
 struct trapcomparer
 {
   trapcomparer(int Type) : Type(Type) { }
-  bool operator()(const trap* T) const { return T->GetType() == Type; }
+  truth operator()(const trap* T) const { return T->GetType() == Type; }
   int Type;
 };
 
-bool lsquare::AddTrap(trap* ToBeAdded)
+truth lsquare::AddTrap(trap* ToBeAdded)
 {
   trap*& T = ListFind(Trap, trapcomparer(ToBeAdded->GetType()));
 
   if(T)
-    {
-      delete ToBeAdded;
-      return false;
-    }
+  {
+    delete ToBeAdded;
+    return false;
+  }
   else
     T = ToBeAdded;
 
@@ -2528,13 +2600,11 @@ void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Di
   std::vector<trap*> TrapVector;
   FillTrapVector(TrapVector);
 
-  for(int c = 0; c < TrapVector.size(); ++c)
-    {
-      TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
-    }
+  for(uint c = 0; c < TrapVector.size(); ++c)
+    TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
 }
  
-bool lsquare::HasDangerousTraps(const character* Who) const
+truth lsquare::HasDangerousTraps(const character* Who) const
 {
   for(trap* T = Trap; T; T = T->Next)
     if(T->IsDangerousFor(Who))

@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __MISCITEM_H__
 #define __MISCITEM_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <set>
 
@@ -22,22 +19,21 @@
 #include "game.h" /// check
 #include "trap.h"
 
-class ABSTRACT_ITEM
-(
-  materialcontainer,
-  item,
+ITEM(materialcontainer, item)
+{
  public:
+  materialcontainer() { }
   materialcontainer(const materialcontainer&);
   virtual ~materialcontainer();
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
   virtual void SetSecondaryMaterial(material*, int = 0);
   virtual void ChangeSecondaryMaterial(material*, int = 0);
-  void InitMaterials(material*, material*, bool = true);
+  void InitMaterials(material*, material*, truth = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual int GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
-  virtual bool CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(const item*, const character*) const;
   virtual void Be();
   virtual int GetSpoilLevel() const;
   virtual material* GetMaterial(int) const;
@@ -47,475 +43,399 @@ class ABSTRACT_ITEM
   material* RemoveMainMaterial();
   virtual material* RemoveSecondaryMaterial();
   virtual void CalculateEmitation();
-  virtual void InitMaterials(const materialscript*, const materialscript*, bool);
+  virtual void InitMaterials(const materialscript*, const materialscript*, truth);
+  virtual int GetSparkleFlags() const;
  protected:
   virtual long GetMaterialPrice() const;
-  virtual bool CalculateHasBe() const;
-  virtual bool IsSparkling(int) const;
+  virtual truth CalculateHasBe() const;
   virtual void GenerateMaterials();
-  virtual color16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorB(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual int GetRustDataB() const;
   material* SecondaryMaterial;
-);
+};
 
-class ITEM
-(
-  banana,
-  materialcontainer,
+ITEM(banana, materialcontainer)
+{
  public:
-  virtual bool Zap(character*, vector2d, int);
+  banana() : TimesUsed(0), Charges(6) { }
+  virtual truth Zap(character*, v2, int);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
-  virtual bool IsZappable(const character*) const { return true; }
-  virtual bool IsChargeable(const character*) const { return true; }
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsChargeable(const character*) const { return true; }
   virtual void SignalSpoil(material*);
-  virtual bool IsBanana() const { return true; }
+  virtual truth IsBanana() const { return true; }
   virtual material* RemoveSecondaryMaterial();
  protected:
-  virtual void VirtualConstructor(bool);
   int TimesUsed;
   int Charges;
-);
+};
 
-class ITEM
-(
-  holybanana,
-  banana,
+ITEM(holybanana, banana)
+{
  public:
-  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
-  virtual bool Zap(character*, vector2d, int);
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+  virtual truth Zap(character*, v2, int);
   virtual void Be() { }
   virtual int GetSpecialFlags() const;
-  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
-  virtual bool ReceiveDamage(character*, int, int, int);
-);
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
+  virtual truth ReceiveDamage(character*, int, int, int);
+};
 
-class ITEM
-(
-  lantern,
-  item,
+ITEM(lantern, item)
+{
  public:
   virtual void SignalSquarePositionChange(int);
-  virtual bool AllowAlphaEverywhere() const { return true; }
+  virtual truth AllowAlphaEverywhere() const { return true; }
   virtual int GetSpecialFlags() const;
-  virtual bool IsLanternOnWall() const { return GetSquarePosition() != CENTER; }
+  virtual truth IsLanternOnWall() const { return GetSquarePosition() != CENTER; }
  protected:
   virtual int GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
-  virtual color16 GetMaterialColorA(int) const;
-  virtual color16 GetMaterialColorB(int) const;
-  virtual color16 GetMaterialColorC(int) const;
-  virtual color16 GetMaterialColorD(int) const;
+  virtual col16 GetMaterialColorA(int) const;
+  virtual col16 GetMaterialColorB(int) const;
+  virtual col16 GetMaterialColorC(int) const;
+  virtual col16 GetMaterialColorD(int) const;
   virtual alpha GetAlphaA(int) const { return 255; }
   virtual alpha GetAlphaB(int) const;
   virtual alpha GetAlphaC(int) const;
   virtual alpha GetAlphaD(int) const;
-  virtual vector2d GetBitmapPos(int) const;
-);
+  virtual v2 GetBitmapPos(int) const;
+};
 
-class ITEM
-(
-  can,
-  materialcontainer,
+ITEM(can, materialcontainer)
+{
  public:
   virtual item* BetterVersion() const;
   virtual void DipInto(liquid*, character*);
-  virtual bool IsDippable(const character*) const { return !SecondaryMaterial; }
-  virtual bool IsDipDestination(const character*) const;
+  virtual truth IsDippable(const character*) const { return !SecondaryMaterial; }
+  virtual truth IsDipDestination(const character*) const;
   virtual liquid* CreateDipLiquid();
-  virtual bool AllowSpoil() const { return false; } // temporary
-  virtual bool WillSpoil() const { return false; } // temporary
-  virtual bool HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual truth AllowSpoil() const { return false; } // temporary
+  virtual truth WillSpoil() const { return false; } // temporary
+  virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
-  virtual bool AddAdjective(festring&, bool) const;
-  virtual vector2d GetBitmapPos(int) const;
-);
+  virtual truth AddAdjective(festring&, truth) const;
+  virtual v2 GetBitmapPos(int) const;
+};
 
-class ITEM
-(
-  lump,
-  item,
+ITEM(lump, item)
+{
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
-  virtual bool ShowMaterial() const { return false; }
-  virtual bool WeightIsIrrelevant() const { return true; }
-);
+  virtual truth ShowMaterial() const { return false; }
+  virtual truth WeightIsIrrelevant() const { return true; }
+};
 
-class ITEM
-(
-  potion,
-  materialcontainer,
+ITEM(potion, materialcontainer)
+{
  public:
   virtual item* BetterVersion() const;
   virtual void DipInto(liquid*, character*);
   virtual liquid* CreateDipLiquid();
-  virtual bool IsDippable(const character*) const { return !SecondaryMaterial; }
+  virtual truth IsDippable(const character*) const { return !SecondaryMaterial; }
   virtual void Break(character*, int);
-  virtual bool IsDipDestination(const character*) const;
-  virtual bool IsExplosive() const;
-  virtual bool ReceiveDamage(character*, int, int, int);
-  virtual bool HasBetterVersion() const { return !SecondaryMaterial; }
-  virtual bool EffectIsGood() const;
-  virtual bool IsKamikazeWeapon() const { return IsExplosive(); }
+  virtual truth IsDipDestination(const character*) const;
+  virtual truth IsExplosive() const;
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
+  virtual truth EffectIsGood() const;
+  virtual truth IsKamikazeWeapon() const { return IsExplosive(); }
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
-  virtual bool AddAdjective(festring&, bool) const;
-);
+  virtual truth AddAdjective(festring&, truth) const;
+};
 
-class ITEM
-(
-  bananapeels,
-  item,
+ITEM(bananapeels, item)
+{
  public:
   virtual item* BetterVersion() const;
-  virtual bool HasBetterVersion() const { return true; }
+  virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
-  virtual bool IsBananaPeel() const { return true; }
-  virtual bool IsDangerousForAI(const character*) const;
-  virtual bool RaiseTheDead(character*);
-);
+  virtual truth IsBananaPeel() const { return true; }
+  virtual truth IsDangerousForAI(const character*) const;
+  virtual truth RaiseTheDead(character*);
+};
 
-class ITEM
-(
-  brokenbottle,
-  item,
+ITEM(brokenbottle, item)
+{
  public:
-  virtual bool IsBroken() const { return true; }
+  virtual truth IsBroken() const { return true; }
   virtual item* BetterVersion() const;
-  virtual bool HasBetterVersion() const { return true; }
+  virtual truth HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual item* Fix();
-  virtual bool IsDangerousForAI(const character*) const;
-);
+  virtual truth IsDangerousForAI(const character*) const;
+};
 
-class ABSTRACT_ITEM
-(
-  scroll,
-  item,
+ITEM(scroll, item)
+{
  public:
-  virtual bool CanBeRead(character*) const;
-  virtual bool IsReadable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, int, int, int);
-);
+  virtual truth CanBeRead(character*) const;
+  virtual truth IsReadable(const character*) const { return true; }
+  virtual truth ReceiveDamage(character*, int, int, int);
+};
 
-class ITEM
-(
-  scrollofcreatemonster,
-  scroll,
+ITEM(scrollofcreatemonster, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  scrollofteleportation,
-  scroll,
+ITEM(scrollofteleportation, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  scrollofcharging,
-  scroll,
+ITEM(scrollofcharging, scroll)
+{
  public:
-  virtual bool Read(character*);
+  virtual truth Read(character*);
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  nut,
-  item,
-  ;
-);
+ITEM(nut, item)
+{
+};
 
-class ITEM
-(
-  leftnutofpetrus,
-  nut,
+ITEM(leftnutofpetrus, nut)
+{
  public:
   virtual void Be() { }
-  virtual bool IsPetrussNut() const { return true; }
-  virtual bool IsConsumable(const character*) const { return false; }
-);
+  virtual truth IsPetrussNut() const { return true; }
+  virtual truth IsConsumable() const { return false; }
+};
 
-class ITEM
-(
-  bone,
-  item,
+ITEM(bone, item)
+{
  public:
-  virtual bool DogWillCatchAndConsume(const character*) const;
-);
+  virtual truth DogWillCatchAndConsume(const character*) const;
+};
 
-class ITEM
-(
-  loaf,
-  item,
+ITEM(loaf, item)
+{
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
-  virtual bool ShowMaterial() const { return false; }
-);
+  virtual truth ShowMaterial() const { return false; }
+};
 
-class ITEM
-(
-  scrollofwishing,
-  scroll,
+ITEM(scrollofwishing, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  copyofleftnutofpetrus,
-  nut,
-  ;
-);
+ITEM(copyofleftnutofpetrus, nut)
+{
+};
 
-class ITEM
-(
-  wand,
-  item,
+ITEM(wand, item)
+{
  public:
-  virtual bool Apply(character*);
+  virtual truth Apply(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { TimesUsed = 0; }
-  virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool IsZappable(const character*) const { return true; }
-  virtual bool IsChargeable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, int, int, int);
-  virtual bool Zap(character*, vector2d, int);
-  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsZappable(const character*) const { return true; }
+  virtual truth IsChargeable(const character*) const { return true; }
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth Zap(character*, v2, int);
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
   virtual long GetPrice() const;
-  virtual bool IsExplosive() const { return true; }
+  virtual truth IsExplosive() const { return true; }
  protected:
-  virtual void VirtualConstructor(bool);
+  virtual void PostConstruct();
   void BreakEffect(character*, const festring&);
   ulong GetSpecialParameters() const;
   int Charges;
   int TimesUsed;
-);
+};
 
-class ITEM
-(
-  scrollofchangematerial,
-  scroll,
+ITEM(scrollofchangematerial, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  avatarofvalpurus,
-  item,
+ITEM(avatarofvalpurus, item)
+{
  public:
   virtual void Be() { }
-  virtual bool IsTheAvatar() const { return true; }
-  virtual bool IsConsumable(const character*) const { return false; }
-);
+  virtual truth IsTheAvatar() const { return true; }
+  virtual truth IsConsumable() const { return false; }
+};
 
-class ITEM
-(
-  kiwi,
-  item,
-  ;
-);
+ITEM(kiwi, item)
+{
+};
 
-class ITEM
-(
-  pineapple,
-  item,
-  ;
-);
+ITEM(pineapple, item)
+{
+};
 
-class ITEM
-(
-  palmbranch,
-  item,
+ITEM(palmbranch, item)
+{
  public:
-  virtual bool IsShield(const character*) const { return true; }
-);
+  virtual truth IsShield(const character*) const { return true; }
+};
 
-class ITEM
-(
-  backpack,
-  materialcontainer,
+ITEM(backpack, materialcontainer)
+{
  public:
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, int, int, int);
-  virtual bool IsExplosive() const;
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsExplosive() const;
   virtual long GetTotalExplosivePower() const;
   virtual void SpillFluid(character*, liquid*, int = 0);
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
-);
+};
 
-class ITEM
-(
-  holybook,
-  item,
+ITEM(holybook, item)
+{
  public:
-  virtual bool CanBeRead(character*) const;
-  virtual bool IsReadable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, int, int, int);
+  virtual truth CanBeRead(character*) const;
+  virtual truth IsReadable(const character*) const { return true; }
+  virtual truth ReceiveDamage(character*, int, int, int);
   virtual void FinishReading(character*);
  protected:
-  virtual color16 GetMaterialColorA(int) const;
-  virtual bool ShowMaterial() const { return false; }
-);
+  virtual col16 GetMaterialColorA(int) const;
+  virtual truth ShowMaterial() const { return false; }
+};
 
-class ITEM
-(
-  fiftymillionroubles,
-  item,
-  ;
-);
+ITEM(fiftymillionroubles, item)
+{
+};
 
-class ITEM
-(
-  oillamp,
-  item,
+ITEM(oillamp, item)
+{
  public:
+  oillamp();
   oillamp(const oillamp&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
-  virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
+  virtual truth GetInhabitedByGenie() const { return InhabitedByGenie; }
+  virtual void SetInhabitedByGenie(truth What) { InhabitedByGenie = What; }
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
  protected:
-  virtual void VirtualConstructor(bool);
-  bool InhabitedByGenie;
-);
+  truth InhabitedByGenie;
+};
 
-class ITEM
-(
-  stone,
-  item,
+ITEM(stone, item)
+{
  public:
   virtual long GetTruePrice() const;
  protected:
-  virtual bool WeightIsIrrelevant() const { return true; }
-);
+  virtual truth WeightIsIrrelevant() const { return true; }
+};
 
-class ITEM
-(
-  scrolloftaming,
-  scroll,
+ITEM(scrolloftaming, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  mine,
-  materialcontainer,
+ITEM(mine, materialcontainer)
+{
  public:
+  mine() : Active(false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void StepOnEffect(character*);
-  virtual bool ReceiveDamage(character*, int, int, int);
-  virtual bool IsActive() const { return Active; }
-  virtual void SetIsActive(bool);
-  virtual bool CanBeSeenBy(const character*) const;
-  virtual bool Apply(character* User);
-  virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool IsDangerousForAI(const character* Stepper) const { return WillExplode(Stepper); }
-  virtual bool WillExplode(const character*) const;
+  virtual truth ReceiveDamage(character*, int, int, int);
+  virtual truth IsActive() const { return Active; }
+  virtual void SetIsActive(truth);
+  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth Apply(character* User);
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsDangerousForAI(const character* Stepper) const { return WillExplode(Stepper); }
+  virtual truth WillExplode(const character*) const;
   virtual int GetTeam() const { return Team; }
   virtual void SetTeam(int What) { Team = What; }
-  virtual bool CheckPickUpEffect(character*);
+  virtual truth CheckPickUpEffect(character*);
   virtual void Search(const character*, int);
-  virtual bool IsDangerous() const { return IsActive(); }
+  virtual truth IsDangerous() const { return IsActive(); }
   virtual void FinalProcessForBone();
   virtual void TeleportRandomly();
  protected:
-  virtual bool AddAdjective(festring&, bool) const;
-  virtual void VirtualConstructor(bool);
-  bool Active;
+  virtual truth AddAdjective(festring&, truth) const;
+  truth Active;
   int Team;
   std::set<int> DiscoveredByTeam;
-);
+};
 
-class ITEM
-(
-  key,
-  item,
+ITEM(key, item)
+{
  public:
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool CanOpenDoors() const { return true; }
-  virtual bool CanOpenLockType(int AnotherLockType) const { return GetConfig() == AnotherLockType; }
-);
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth CanOpenDoors() const { return true; }
+  virtual truth CanOpenLockType(int AnotherLockType) const { return GetConfig() == AnotherLockType; }
+};
 
-class ITEM
-(
-  headofelpuri,
-  item, // can't wear equipment, so not "head"
+ITEM(headofelpuri, item) // can't wear equipment, so not "head"
+{
  public:
-  virtual bool IsHeadOfElpuri() const { return true; }
-  virtual bool IsConsumable(const character*) const { return false; }
+  virtual truth IsHeadOfElpuri() const { return true; }
+  virtual truth IsConsumable() const { return false; }
   virtual void Be() { }
-);
+};
 
-class ITEM
-(
-  whistle,
-  item,
+ITEM(whistle, item)
+{
  public:
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
   virtual void BlowEffect(character*);
  protected:
-  virtual color16 GetMaterialColorB(int) const;
-);
+  virtual col16 GetMaterialColorB(int) const;
+};
 
-class ITEM
-(
-  magicalwhistle,
-  whistle,
+ITEM(magicalwhistle, whistle)
+{
  public:
+  magicalwhistle() : LastUsed(0) { }
   virtual void BlowEffect(character*);
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void FinalProcessForBone();
  protected:
-  virtual void VirtualConstructor(bool);
   ulong LastUsed;
-);
+};
 
-class ITEM
-(
-  itemcontainer,
-  item,
+ITEM(itemcontainer, item)
+{
  public:
+  itemcontainer();
   itemcontainer(const itemcontainer&);
   virtual ~itemcontainer();
-  virtual bool Open(character*);
-  virtual bool IsOpenable(const character*) const { return true; }
-  virtual bool TryKey(item*, character*);
-  virtual bool HasLock(const character*) const { return true; }
+  virtual truth Open(character*);
+  virtual truth IsOpenable(const character*) const { return true; }
+  virtual truth TryKey(item*, character*);
+  virtual truth HasLock(const character*) const { return true; }
   virtual void Lock() { Locked = true; }
-  virtual bool IsLocked() const { return Locked; }
-  virtual void SetIsLocked(bool What) { Locked = What; }
+  virtual truth IsLocked() const { return Locked; }
+  virtual void SetIsLocked(truth What) { Locked = What; }
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual bool Polymorph(character*, stack*);
+  virtual truth Polymorph(character*, stack*);
   virtual void CalculateVolumeAndWeight();
-  virtual bool ContentsCanBeSeenBy(const character*) const;
+  virtual truth ContentsCanBeSeenBy(const character*) const;
   virtual long GetTruePrice() const;
-  virtual bool ReceiveDamage(character*, int, int, int);
+  virtual truth ReceiveDamage(character*, int, int, int);
   virtual void DrawContents(const character*);
-  virtual bool Apply(character* Applier) { return Open(Applier); }
-  virtual bool IsAppliable(const character*) const { return true; }
+  virtual truth Apply(character* Applier) { return Open(Applier); }
+  virtual truth IsAppliable(const character*) const { return true; }
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int);
-  virtual bool AllowContentEmitation() const { return false; }
-  virtual bool IsDestroyable(const character*) const;
+  virtual truth AllowContentEmitation() const { return false; }
+  virtual truth IsDestroyable(const character*) const;
   virtual int GetOfferValue(int) const;
   virtual void SortAllItems(const sortdata&) const;
   virtual void PreProcessForBone();
@@ -528,36 +448,35 @@ class ITEM
   virtual void SetParameters(int);
   virtual void Disappear();
  protected:
-  virtual color16 GetMaterialColorB(int) const;
-  virtual void VirtualConstructor(bool);
+  virtual col16 GetMaterialColorB(int) const;
+  virtual void PostConstruct();
   stack* Contained;
-  bool Locked;
-);
+  truth Locked;
+};
 
-class ITEM
-(
-  beartrap,
-  item,
+ITEM(beartrap, item)
+{
  public:
+  beartrap();
   beartrap(const beartrap&);
   virtual ~beartrap();
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void StepOnEffect(character*);
-  virtual bool CheckPickUpEffect(character*);
-  virtual bool IsPickable(character*) const;
-  virtual bool IsActive() const { return Active; }
-  virtual void SetIsActive(bool);
-  virtual bool CanBeSeenBy(const character*) const;
-  virtual bool Apply(character*);
-  virtual vector2d GetBitmapPos(int) const;
-  virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool IsDangerousForAI(const character*) const { return Active; }
+  virtual truth CheckPickUpEffect(character*);
+  virtual truth IsPickable(character*) const;
+  virtual truth IsActive() const { return Active; }
+  virtual void SetIsActive(truth);
+  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth Apply(character*);
+  virtual v2 GetBitmapPos(int) const;
+  virtual truth IsAppliable(const character*) const { return true; }
+  virtual truth IsDangerousForAI(const character*) const { return Active; }
   virtual int GetTeam() const { return Team; }
   virtual void SetTeam(int What) { Team = What; }
-  virtual bool ReceiveDamage(character*, int, int, int);
+  virtual truth ReceiveDamage(character*, int, int, int);
   virtual void Search(const character*, int);
-  virtual bool IsDangerous() const { return IsActive(); }
+  virtual truth IsDangerous() const { return IsActive(); }
   virtual void Fly(character*, int, int);
   virtual void FinalProcessForBone();
   virtual void TeleportRandomly();
@@ -565,151 +484,123 @@ class ITEM
   virtual ulong GetVictimID() const { return TrapData.VictimID; }
   virtual void UnStick() { TrapData.VictimID = 0; }
   virtual void UnStick(int I) { TrapData.BodyParts &= ~(1 << I); }
-  virtual bool TryToUnStick(character*, vector2d);
+  virtual truth TryToUnStick(character*, v2);
   virtual void RemoveFromSlot();
   virtual int GetTrapType() const { return GetType() | ITEM_TRAP; }
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void DonateSlotTo(item*);
  protected:
-  virtual bool AddAdjective(festring&, bool) const;
-  virtual void VirtualConstructor(bool);
-  bool IsStuck() const { return !!TrapData.VictimID; }
+  virtual truth AddAdjective(festring&, truth) const;
+  truth IsStuck() const { return TrapData.VictimID; }
   int GetBaseTrapDamage() const;
   int Team;
   std::set<int> DiscoveredByTeam;
   trapdata TrapData;
-  bool Active;
-);
+  truth Active;
+};
 
-class ITEM
-(
-  stethoscope,
-  item,
+ITEM(stethoscope, item)
+{
  public:
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; };
-);
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; };
+};
 
-class ITEM
-(
-  scrollofenchantweapon,
-  scroll,
+ITEM(scrollofenchantweapon, scroll)
+{
  public:
-  virtual bool Read(character*);
+  virtual truth Read(character*);
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  scrollofenchantarmor,
-  scroll,
+ITEM(scrollofenchantarmor, scroll)
+{
  public:
-  virtual bool Read(character*);
+  virtual truth Read(character*);
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  skull,
-  item,
-  ;
-);
+ITEM(skull, item)
+{
+};
 
-class ITEM
-(
-  scrollofrepair,
-  scroll,
+ITEM(scrollofrepair, scroll)
+{
  public:
-  virtual bool Read(character*);
+  virtual truth Read(character*);
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  encryptedscroll,
-  scroll,
+ITEM(encryptedscroll, scroll)
+{
  public:
   virtual void Be() { }
-  virtual bool Read(character*);
-  virtual bool ReceiveDamage(character*, int, int, int) { return false; }
-  virtual bool IsEncryptedScroll() const { return true; }
-);
+  virtual truth Read(character*);
+  virtual truth ReceiveDamage(character*, int, int, int) { return false; }
+  virtual truth IsEncryptedScroll() const { return true; }
+};
 
-class ITEM
-(
-  horn,
-  item,
+ITEM(horn, item)
+{
  public:
+  horn() : LastUsed(0) { }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
   virtual void FinalProcessForBone();
  protected:
-  virtual void VirtualConstructor(bool);
   ulong LastUsed;
-);
+};
 
-class ITEM
-(
-  carrot,
-  item,
+ITEM(carrot, item)
+{
  public:
-  virtual bool BunnyWillCatchAndConsume(const character*) const;
+  virtual truth BunnyWillCatchAndConsume(const character*) const;
  protected:
-  virtual color16 GetMaterialColorB(int) const;
-);
+  virtual col16 GetMaterialColorB(int) const;
+};
 
-class ITEM
-(
-  charmlyre,
-  item,
+ITEM(charmlyre, item)
+{
  public:
-  virtual bool Apply(character*);
-  virtual bool IsAppliable(const character*) const { return true; }
+  charmlyre();
+  virtual truth Apply(character*);
+  virtual truth IsAppliable(const character*) const { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void FinalProcessForBone();
  protected:
-  virtual color16 GetMaterialColorB(int) const;
-  virtual void VirtualConstructor(bool);
+  virtual col16 GetMaterialColorB(int) const;
   ulong LastUsed;
-);
+};
 
-class ITEM
-(
-  scrollofdetectmaterial,
-  scroll,
+ITEM(scrollofdetectmaterial, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  stick,
-  item,
+ITEM(stick, item)
+{
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
-  virtual bool ShowMaterial() const { return false; }
-  virtual bool WeightIsIrrelevant() const { return true; }
-);
+  virtual truth ShowMaterial() const { return false; }
+  virtual truth WeightIsIrrelevant() const { return true; }
+};
 
-class ITEM
-(
-  scrollofhardenmaterial,
-  scroll,
+ITEM(scrollofhardenmaterial, scroll)
+{
  public:
   virtual void FinishReading(character*);
-);
+};
 
-class ITEM
-(
-  scrollofgolemcreation,
-  scroll,
+ITEM(scrollofgolemcreation, scroll)
+{
  public:
-  virtual bool Read(character*);
+  virtual truth Read(character*);
   virtual void FinishReading(character*);
-);
+};
 
 #endif

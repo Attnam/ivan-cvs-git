@@ -1,22 +1,16 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through areaset.cpp */
-
-#include "allocate.h"
-#include "char.h"
-#include "team.h"
-#include "game.h"
-#include "graphics.h"
-#include "bitmap.h"
 
 area::area() { }
 
@@ -78,7 +72,7 @@ void area::SendNewDrawRequest()
   DOUBLE_BUFFER->Fill(16, 32, game::GetScreenXSize() << 4, game::GetScreenYSize() << 4, BLACK);
 }
 
-square* area::GetNeighbourSquare(vector2d Pos, int I) const
+square* area::GetNeighbourSquare(v2 Pos, int I) const
 {
   Pos += game::GetMoveVector(I);
 
@@ -88,7 +82,7 @@ square* area::GetNeighbourSquare(vector2d Pos, int I) const
     return 0;
 }
 
-void area::SetEntryPos(int I, vector2d Pos)
+void area::SetEntryPos(int I, v2 Pos)
 {
-  EntryMap.insert(std::pair<int, vector2d>(I, Pos));
+  EntryMap.insert(std::pair<int, v2>(I, Pos));
 }

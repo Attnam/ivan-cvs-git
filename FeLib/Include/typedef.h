@@ -1,34 +1,46 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __TYPEDEF_H__
 #define __TYPEDEF_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
+#include "pragmas.h"
 
-struct donothing { };
-
+typedef int truth;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
-typedef int color16;
-typedef ushort packedcolor16;
-typedef ulong color24;
+typedef int col16;
+typedef ushort packcol16;
+typedef ulong col24;
 typedef int alpha;
-typedef uchar packedalpha;
+typedef uchar packalpha;
 typedef int priority;
-typedef uchar packedpriority;
+typedef uchar packpriority;
 typedef uchar paletteindex;
+
+typedef const int ctruth;
+typedef const unsigned char cuchar;
+typedef const unsigned short cushort;
+typedef const unsigned int cuint;
+typedef const unsigned long culong;
+typedef const int ccol16;
+typedef const ushort cpackcol16;
+typedef const ulong ccol24;
+typedef const int calpha;
+typedef const uchar cpackalpha;
+typedef const int cpriority;
+typedef const uchar cpackpriority;
+typedef const uchar cpaletteindex;
 
 #endif

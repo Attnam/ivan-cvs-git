@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -15,38 +16,38 @@ void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 
 const char* liquid::GetConsumeVerb() const { return "drinking"; }
 
-bool powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
+truth powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 
-bool ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
+truth ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
 
 void organic::Be()
 {
   if(SpoilCheckCounter++ >= 50)
+  {
+    if(MotherEntity->AllowSpoil())
     {
-      if(MotherEntity->AllowSpoil())
+      if((SpoilCounter += 50) < GetSpoilModifier())
+      {
+	if(SpoilCounter << 1 >= GetSpoilModifier())
 	{
-	  if((SpoilCounter += 50) < GetSpoilModifier())
-	    {
-	      if(SpoilCounter << 1 >= GetSpoilModifier())
-		{
-		  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+	  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-		  if(NewSpoilLevel != SpoilLevel)
-		    {
-		      SpoilLevel = NewSpoilLevel;
-		      MotherEntity->SignalSpoilLevelChange(this);
-		    }
-		}
-	    }
-	  else
-	    {
-	      SpoilLevel = 8;
-	      MotherEntity->SignalSpoil(this);
-	    }
+	  if(NewSpoilLevel != SpoilLevel)
+	  {
+	    SpoilLevel = NewSpoilLevel;
+	    MotherEntity->SignalSpoilLevelChange(this);
+	  }
 	}
-
-      SpoilCheckCounter = 0;
+      }
+      else
+      {
+	SpoilLevel = 8;
+	MotherEntity->SignalSpoil(this);
+      }
     }
+
+    SpoilCheckCounter = 0;
+  }
 }
 
 void organic::Save(outputfile& SaveFile) const
@@ -61,24 +62,17 @@ void organic::Load(inputfile& SaveFile)
   SaveFile >> SpoilCounter >> SpoilCheckCounter >> SpoilLevel;
 }
 
-void organic::VirtualConstructor(bool Load)
+void organic::PostConstruct()
 {
-  if(!Load)
-    {
-      SpoilLevel = SpoilCheckCounter = 0;
-      SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
-    }
+  SpoilLevel = SpoilCheckCounter = 0;
+  SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
 }
 
-void flesh::VirtualConstructor(bool Load)
+void flesh::PostConstruct()
 {
-  organic::VirtualConstructor(Load);
-
-  if(!Load)
-    {
-      SkinColorSparkling = InfectedByLeprosy = false;
-      SkinColor = GetColor();
-    }
+  organic::PostConstruct();
+  SkinColorSparkling = InfectedByLeprosy = false;
+  SkinColor = GetColor();
 }
 
 void flesh::Save(outputfile& SaveFile) const
@@ -122,21 +116,22 @@ material* organic::EatEffect(character* Eater, long Amount)
     Eater->GainIntrinsic(LEPROSY);
 
   if(GetSpoilLevel() > 0)
-    {
-      Eater->BeginTemporaryState(CONFUSED, int(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
+  {
+    Eater->BeginTemporaryState(CONFUSED, int(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
 
-      if(CanHaveParasite() && !(RAND() % (250 / GetSpoilLevel())))
-	Eater->GainIntrinsic(PARASITIZED);
-    }
+    if(GetBodyFlags() & CAN_HAVE_PARASITE
+       && !(RAND() % (250 / GetSpoilLevel())))
+      Eater->GainIntrinsic(PARASITIZED);
+  }
 
   if(GetSpoilLevel() > 4)
     Eater->BeginTemporaryState(POISONED, int(Amount * (GetSpoilLevel() - 4) * sqrt(GetNutritionValue()) / 1000));
 
   if(Volume != Amount)
-    {
-      EditVolume(-Amount);
-      return 0;
-    }
+  {
+    EditVolume(-Amount);
+    return 0;
+  }
   else
     return MotherEntity->RemoveMaterial(this);
 }
@@ -144,12 +139,12 @@ material* organic::EatEffect(character* Eater, long Amount)
 void organic::AddConsumeEndMessage(character* Eater) const
 {
   if(Eater->IsPlayer())
-    {
-      if(GetSpoilLevel() > 0 && GetSpoilLevel() <= 4)
-	ADD_MESSAGE("Ugh. This stuff was slightly spoiled.");
-      else if(GetSpoilLevel() > 4)
-	ADD_MESSAGE("Ugh. This stuff was terribly spoiled!");
-    }
+  {
+    if(GetSpoilLevel() > 0 && GetSpoilLevel() <= 4)
+      ADD_MESSAGE("Ugh. This stuff was slightly spoiled.");
+    else if(GetSpoilLevel() > 4)
+      ADD_MESSAGE("Ugh. This stuff was terribly spoiled!");
+  }
 
   material::AddConsumeEndMessage(Eater);
 }
@@ -159,18 +154,18 @@ void organic::SetSpoilCounter(int What)
   SpoilCounter = What;
 
   if(SpoilCounter < GetSpoilModifier())
+  {
+    if(SpoilCounter << 1 >= GetSpoilModifier())
     {
-      if(SpoilCounter << 1 >= GetSpoilModifier())
-	{
-	  int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+      int NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
 
-	  if(NewSpoilLevel != SpoilLevel)
-	    {
-	      SpoilLevel = NewSpoilLevel;
-	      MotherEntity->SignalSpoilLevelChange(this);
-	    }
-	}
+      if(NewSpoilLevel != SpoilLevel)
+      {
+	SpoilLevel = NewSpoilLevel;
+	MotherEntity->SignalSpoilLevelChange(this);
+      }
     }
+  }
   else
     MotherEntity->SignalSpoil(this);
 }
@@ -178,17 +173,17 @@ void organic::SetSpoilCounter(int What)
 void ironalloy::SetRustLevel(int What)
 {
   if(GetRustLevel() != What)
-    {
-      if(!RustData)
-	RustData = RAND() & 0xFC | What;
-      else if(!What)
-	RustData = 0;
-      else
-	RustData = RustData & 0xFC | What;
+  {
+    if(!RustData)
+      RustData = RAND() & 0xFC | What;
+    else if(!What)
+      RustData = 0;
+    else
+      RustData = RustData & 0xFC | What;
 
-      if(MotherEntity)
-	MotherEntity->SignalRustLevelChange();
-    }
+    if(MotherEntity)
+      MotherEntity->SignalRustLevelChange();
+  }
 }
 
 int ironalloy::GetStrengthValue() const
@@ -196,17 +191,17 @@ int ironalloy::GetStrengthValue() const
   int Base = material::GetStrengthValue();
 
   switch(GetRustLevel())
-    {
-    case NOT_RUSTED: return Base;
-    case SLIGHTLY_RUSTED: return ((Base << 3) + Base) / 10;
-    case RUSTED: return ((Base << 1) + Base) >> 2;
-    case VERY_RUSTED: return Base >> 1;
-    }
+  {
+   case NOT_RUSTED: return Base;
+   case SLIGHTLY_RUSTED: return ((Base << 3) + Base) / 10;
+   case RUSTED: return ((Base << 1) + Base) >> 2;
+   case VERY_RUSTED: return Base >> 1;
+  }
 
   return 0; /* not possible */
 }
 
-bool ironalloy::AddRustLevelDescription(festring& Name, bool Articled) const
+truth ironalloy::AddRustLevelDescription(festring& Name, truth Articled) const
 {
   if(GetRustLevel() == NOT_RUSTED)
     return false;
@@ -215,17 +210,17 @@ bool ironalloy::AddRustLevelDescription(festring& Name, bool Articled) const
     Name << "a ";
 
   switch(GetRustLevel())
-    {
-    case SLIGHTLY_RUSTED:
-      Name << "sligthly rusted ";
-      break;
-    case RUSTED:
-      Name << "rusted ";
-      break;
-    case VERY_RUSTED:
-      Name << "very rusted ";
-      break;
-    }
+  {
+   case SLIGHTLY_RUSTED:
+    Name << "sligthly rusted ";
+    break;
+   case RUSTED:
+    Name << "rusted ";
+    break;
+   case VERY_RUSTED:
+    Name << "very rusted ";
+    break;
+  }
 
   return true;
 }
@@ -279,18 +274,18 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
 
 /* Doesn't do the actual rusting, just returns whether it should happen */
 
-bool ironalloy::TryToRust(long Modifier, long Volume)
+truth ironalloy::TryToRust(long Modifier, long Volume)
 {
   if(GetRustLevel() != VERY_RUSTED)
-    {
-      if(!Volume)
-	Volume = GetVolume();
+  {
+    if(!Volume)
+      Volume = GetVolume();
 
-      long Chance = long(30000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
+    long Chance = long(30000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
 
-      if(Chance <= 1 || !(RAND() % Chance))
-	return true;
-    }
+    if(Chance <= 1 || !(RAND() % Chance))
+      return true;
+  }
 
   return false;
 }

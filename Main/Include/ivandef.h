@@ -1,37 +1,93 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __IVANDEF_H__
 #define __IVANDEF_H__
 
-/* Global defines for the project IVAN.
-   This file is created to decrease the need of including headers in other
-   headers just for the sake of some silly macros, because it decreases
-   compilation efficiency and may cause cross-including
+/*
+ * Global defines for the project IVAN.
+ * This file is created to decrease the need of including headers in
+ * other headers just for the sake of some silly macros, because it
+ * decreases compilation efficiency and may cause cross-including
+ *
+ * List of macros that should be gathered here:
+ * 1. all numeric defines used in multiple .cpp or .h files
+ *    except those #defined in balance.h and confdef.h
+ * 2. all inline functions used in multiple .cpp or .h files
+ *    and independent enough (do not require other headers)
+ * 3. class construction macros used in multiple .h files
+ */
 
-   List of macros that should be gathered here:
-   1. all numeric defines used in multiple .cpp or .h files, except those
-      #defined in confdef.h
-   2. all inline functions used in multiple .cpp or .h files and independent
-      enough (do not require other headers)
-   3. class construction macros used in multiple .h files */
+#include "v2.h"
 
 #define IVAN_VERSION "0.50"
 
-struct databasebase { int Config; };
+struct databasebase
+{
+  int Config;
+  ulong CommonFlags;
+  ulong NameFlags;
+};
+
+template <class type, class base, class prototype>
+class sysbase : public base
+{
+ public:
+  typedef sysbase<type, base, prototype> mybase;
+  static type* Spawn(int Config = 0, int SpecialFlags = 0)
+  {
+    type* T = new type;
+    T->Initialize(Config, SpecialFlags);
+    return T;
+  }
+  static type* Clone(const type* T) { return new type(*T); }
+  virtual const prototype* FindProtoType() const { return &ProtoType; }
+  static const prototype ProtoType;
+};
+
+template <class type, class base, class prototype>
+class simplesysbase : public base
+{
+ public:
+  typedef simplesysbase<type, base, prototype> mybase;
+  static type* Spawn() { return new type; }
+  virtual const prototype* GetProtoType() const { return &ProtoType; }
+  static const prototype ProtoType;
+};
+
+#define SYSTEM_SPECIALIZATIONS(name)\
+name##prototype** name##_ProtoData;\
+valuemap name##_CodeNameMap;\
+int name##_ProtoSize;\
+\
+template<> name##prototype**& protocontainer<name>::GetProtoData()\
+{ return name##_ProtoData; }\
+template<> valuemap& protocontainer<name>::GetCodeNameMap()\
+{ return name##_CodeNameMap; }\
+template<> int& protocontainer<name>::GetSizeRef()\
+{ return name##_ProtoSize; }
+
+#define EXTENDED_SYSTEM_SPECIALIZATIONS(name)\
+SYSTEM_SPECIALIZATIONS(name)\
+databasecreator<name>::databasemembermap name##_DataBaseMemberMap;\
+template<> databasecreator<name>::databasemembermap&\
+databasecreator<name>::GetDataBaseMemberMap()\
+{ return name##_DataBaseMemberMap; }\
+const name##prototype name::ProtoType
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
-#define DATA_BASE_BOOL(data) bool data() const { return DataBase->data; }
-#define DATA_BASE_BOOL_WITH_PARAMETER(data, param) bool data(param) const { return DataBase->data; }
+#define DATA_BASE_TRUTH(data) truth data() const { return DataBase->data; }
+#define DATA_BASE_TRUTH_WITH_PARAMETER(data, param) truth data(param) const { return DataBase->data; }
 
 #define HAS_HIT 0
 #define HAS_BLOCKED 1
@@ -62,26 +118,26 @@ struct databasebase { int Config; };
 
 #define STATES 20
 
-#define POLYMORPHED 1
-#define HASTE 2
-#define SLOW 4
-#define POLYMORPH_CONTROL 8
-#define LIFE_SAVED 16
-#define LYCANTHROPY 32
-#define INVISIBLE 64
-#define INFRA_VISION 128
-#define ESP 256
-#define POISONED 512
-#define TELEPORT 1024
-#define POLYMORPH 2048
-#define TELEPORT_CONTROL 4096
-#define PANIC 8192
-#define CONFUSED 16384
-#define PARASITIZED 32768
-#define SEARCHING 65536
-#define GAS_IMMUNITY 131072
-#define LEVITATION 262144
-#define LEPROSY 524288
+#define POLYMORPHED (1 << 0)
+#define HASTE (1 << 1)
+#define SLOW (1 << 2)
+#define POLYMORPH_CONTROL (1 << 3)
+#define LIFE_SAVED (1 << 4)
+#define LYCANTHROPY (1 << 5)
+#define INVISIBLE (1 << 6)
+#define INFRA_VISION (1 << 7)
+#define ESP (1 << 8)
+#define POISONED (1 << 9)
+#define TELEPORT (1 << 10)
+#define POLYMORPH (1 << 11)
+#define TELEPORT_CONTROL (1 << 12)
+#define PANIC (1 << 13)
+#define CONFUSED (1 << 14)
+#define PARASITIZED (1 << 15)
+#define SEARCHING (1 << 16)
+#define GAS_IMMUNITY (1 << 17)
+#define LEVITATION (1 << 18)
+#define LEPROSY (1 << 19)
 
 #define TORSO 1
 #define HEAD 2
@@ -155,10 +211,6 @@ struct databasebase { int Config; };
 #define INDEFINE_BIT 4
 #define INDEFINITE 6
 
-#define NORMAL_ARTICLE 0
-#define NO_ARTICLE 1
-#define DEFINITE_ARTICLE 2
-
 #define TRANSPARENT_COLOR 0xF81F // pink
 
 #define RAW_TYPES 7
@@ -206,30 +258,29 @@ struct databasebase { int Config; };
 #define WOBBLE_FREQ_SHIFT 4
 #define WOBBLE_FREQ_RANGE (3 << WOBBLE_FREQ_SHIFT)
 
-#define SILHOUETTE_X_SIZE 48
-#define SILHOUETTE_Y_SIZE 64
+const v2 SILHOUETTE_SIZE(48, 64);
 
 #define ITEM_CATEGORIES 18
 
 #define ANY_CATEGORY 0x7FFFFFFF
-#define HELMET 1
-#define AMULET 2
-#define CLOAK 4
-#define BODY_ARMOR 8
-#define WEAPON 16
-#define SHIELD 32
-#define RING 64
-#define GAUNTLET 128
-#define BELT 256
-#define BOOT 512
-#define FOOD 1024
-#define POTION 2048
-#define SCROLL 4096
-#define BOOK 8192
-#define WAND 16384
-#define TOOL 32768
-#define VALUABLE 65536
-#define MISC 131072
+#define HELMET (1 << 0)
+#define AMULET (1 << 1)
+#define CLOAK (1 << 2)
+#define BODY_ARMOR (1 << 3)
+#define WEAPON (1 << 4)
+#define SHIELD (1 << 5)
+#define RING (1 << 6)
+#define GAUNTLET (1 << 7)
+#define BELT (1 << 8)
+#define BOOT (1 << 9)
+#define FOOD (1 << 10)
+#define POTION (1 << 11)
+#define SCROLL (1 << 12)
+#define BOOK (1 << 13)
+#define WAND (1 << 14)
+#define TOOL (1 << 15)
+#define VALUABLE (1 << 16)
+#define MISC (1 << 17)
 
 /*#define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
 
@@ -375,13 +426,23 @@ struct databasebase { int Config; };
 #define DEXTERITY 8
 #define AGILITY 9
 
+#define F_ENDURANCE (1 << ENDURANCE)
+#define F_PERCEPTION (1 << PERCEPTION)
+#define F_INTELLIGENCE (1 << INTELLIGENCE)
+#define F_WISDOM (1 << WISDOM)
+#define F_CHARISMA (1 << CHARISMA)
+#define F_MANA (1 << MANA)
+
+#define F_ARM_STRENGTH (1 << ARM_STRENGTH)
+#define F_LEG_STRENGTH (1 << LEG_STRENGTH)
+#define F_DEXTERITY (1 << DEXTERITY)
+#define F_AGILITY (1 << AGILITY)
+
 #define NO 0
 #define YES 1
 #define REQUIRES_ANSWER -1
 
 #define DIR_ERROR 0xFF
-
-#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0
 
 #define MAX_EQUIPMENT_SLOTS 13
 
@@ -562,6 +623,7 @@ struct databasebase { int Config; };
 #define UNIQUE 128
 #define BADLY_HURT 256
 #define STUCK 512
+#define BODYPART_SPARKLE_SHIFT 9
 
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
@@ -629,8 +691,8 @@ struct databasebase { int Config; };
 
 #define BODY_ARMOR_PARTS 6
 
-#define SUMO_ROOM_POS vector2d(25, 35)
-#define SUMO_ARENA_POS vector2d(19, 12)
+#define SUMO_ROOM_POS v2(25, 35)
+#define SUMO_ARENA_POS v2(19, 12)
 
 #define MAX_RAIN_DROPS 32
 
@@ -832,5 +894,187 @@ struct databasebase { int Config; };
 #define DISALLOW_MSG 8
 #define IGNORE_UNCONSCIOUSNESS 16
 #define IGNORE_TRAPS 32
+
+/* character flags */
+
+#define C_PLAYER 4
+#define C_INITIALIZING 8
+#define C_POLYMORPHED 16
+#define C_IN_NO_MSG_MODE 32
+#define C_PICTURE_UPDATES_FORBIDDEN 64
+
+/*************************/
+/* Common DataBase flags */
+/*************************/
+
+/* CommonFlags */
+#define IS_ABSTRACT 1
+#define HAS_SECONDARY_MATERIAL 2
+#define CREATE_DIVINE_CONFIGURATIONS 4
+#define CAN_BE_WISHED 8
+#define CAN_BE_DESTROYED 16
+#define IS_VALUABLE 32
+#define CAN_BE_MIRRORED 64
+
+/* NameFlags */
+#define USE_AN 1
+#define USE_ADJECTIVE_AN 2
+#define NO_ARTICLE 4 // for instance "Petrus's wive number 4"
+#define FORCE_THE 8
+#define SHOW_MATERIAL 16 // only works for terrains
+
+/****************************/
+/* Character DataBase flags */
+/****************************/
+
+/* CommonFlags */
+/* NameFlags */
+
+/* BodyFlags */
+#define HAS_HEAD
+#define HAS_EYES
+#define HAS_A_LEG
+#define SPILLS_BLOOD
+#define SWEATS
+#define USES_NUTRITION
+#define ALWAYS_USE_MATERIAL_ATTRIBUTES
+#define IS_ENORMOUS
+#define IS_EXTRA_FRAGILE
+#define IS_PLANT
+#define IS_ROOTED
+
+/* AbilityFlags */
+#define CAN_USE_EQUIPMENT
+#define CAN_KICK
+#define CAN_TALK
+#define CAN_READ
+#define CAN_OPEN
+#define CAN_ZAP
+#define CAN_THROW
+#define CAN_APPLY
+#define CAN_HEAR
+
+/* CopyrightFlags */
+#define IS_UNIQUE
+#define CAN_BE_GENERATED
+#define CAN_BE_NAMED
+
+/* EffectFlags; */
+#define BODY_PARTS_DISAPPEAR_WHEN_SEVERED
+#define DESTROYS_WALLS
+#define BITE_CAPTURES_BODY_PART
+
+/* ImmunityFlags */
+#define IMMUNITY_POLYMORPH
+#define IMMUNITY_CHARM
+#define IMMUNITY_CLONING
+#define IMMUNITY_CONFUSE
+#define IMMUNITY_LEPROSY
+#define IMMUNITY_ITEM_TELEPORT
+#define IMMUNITY_STICKINESS
+#define IMMUNITY_CHOKING
+#define IMMUNITY_UNCONSCIOUSNESS
+
+/* MiscFlags */
+#define CREATE_GOLEM_MATERIAL_CONFIGURATIONS 2
+#define IGNORE_DANGER 4
+#define AUTOMATICALLY_SEEN 8
+#define WILL_CARRY_ITEMS 16
+#define IS_EXTRA_COWARD 32
+
+/***********************/
+/* Item DataBase flags */
+/***********************/
+
+/* CommonFlags */
+/* NameFlags */
+/* AttributeAffectFlags */
+
+/* GenerationFlags*/
+#define CREATE_LOCK_CONFIGURATIONS 2
+#define CAN_BE_AUTO_INITIALIZED 4 // used only in WMode
+#define CAN_BE_GENERATED_IN_CONTAINER 8
+#define CAN_BE_SPAWNED_BY_POLYMORPH 16
+
+/* InteractionFlags */
+#define MATERIAL_CAN_BE_CHANGED
+#define CAN_BE_POLYMORPHED
+#define CAN_BE_CLONED
+#define CAN_BE_ENCHANTED
+#define CAN_BE_BROKEN
+#define AFFECTS_CARRYING_CAPACITY
+
+/* CategoryFlags */
+#define IS_QUEST_ITEM
+#define CAN_BE_USED_BY_SMITH
+#define IS_KAMIKAZE_WEAPON
+#define IS_TWO_HANDED
+#define IS_GOOD_WITH_PLANTS
+
+/* MiscFlags */
+#define HANDLE_IN_PAIRS
+#define PRICE_IS_PROPORTIONAL_TO_ENCHANTMENT
+#define FLEXIBILITY_IS_ESSENTIAL
+#define HAS_NORMAL_PICTURE_DIRECTION
+#define CAN_BE_PILED
+#define CAN_BE_PICKED_UP
+#define ALLOW_EQUIP
+
+/**************************/
+/* Terrain DataBase flags */
+/**************************/
+
+/* CommonFlags */
+/* NameFlags */
+
+/* OLTerrainFlags */
+#define CREATE_LOCK_CONFIGURATIONS 2
+#define CREATE_WINDOW_CONFIGURATIONS 4
+#define IS_UP_LINK
+#define IS_WALL
+#define USE_BORDER_TILES
+#define IS_ALWAYS_TRANSPARENT
+#define SHOW_THINGS_UNDER
+#define IS_SAFE_TO_CREATE_DOOR
+
+/***************************/
+/* Material DataBase flags */
+/***************************/
+
+/* CommonFlags */
+/* NameFlags (only USE_AN) */
+
+/* CategoryFlags */
+#define IS_METAL 1
+#define IS_BLOOD 2
+#define CAN_BE_TAILORED 4
+#define IS_SPARKLING 8
+#define IS_SCARY 16
+#define IS_GOLEM_MATERIAL 32
+
+/* BodyFlags */
+#define IS_ALIVE 1
+#define IS_WARM 2
+#define CAN_HAVE_PARASITE 4
+#define USE_MATERIAL_ATTRIBUTES 8
+#define CAN_REGENERATE 16
+
+/* InteractionFlags */
+#define CAN_BURN 1
+#define CAN_EXPLODE 2
+#define CAN_DISSOLVE 4
+#define AFFECT_INSIDE 8
+#define EFFECT_IS_GOOD 16
+
+/*************************/
+/* End of DataBase flags */
+/*************************/
+
+#define TILE_SIZE 16
+const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
+
+#define SQUARE_INDEX_MASK 0xFFFF
+#define ALLOW_ANIMATE 0x10000
+#define ALLOW_ALPHA 0x20000
 
 #endif

@@ -515,3 +515,5 @@ Altars should have special features like healing on Seges' altar.
 Golems' wisdom shouldn't rise.
 "Depressed" state.
 "Psycho" state.
+The holy kiwi of Oily Orpiv.
+The holy pineapple of Oily Orpiv.

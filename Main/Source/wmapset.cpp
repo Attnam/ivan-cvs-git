@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -14,12 +15,7 @@
 #include "proto.h"
 #include "wterra.h"
 
-gwterrain::prototype** protocontainer<gwterrain>::ProtoData;
-owterrain::prototype** protocontainer<owterrain>::ProtoData;
-valuemap protocontainer<gwterrain>::CodeNameMap;
-valuemap protocontainer<owterrain>::CodeNameMap;
-int protocontainer<gwterrain>::Size;
-int protocontainer<owterrain>::Size;
+SYSTEM_SPECIALIZATIONS(gwterrain) SYSTEM_SPECIALIZATIONS(owterrain)
 
 #include "wterras.h"
 

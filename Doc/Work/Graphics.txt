@@ -31,7 +31,7 @@ Oterrain border tiles.
 Skis.
 Female character.
 Tailor.
-Web.
+//Web.
 M-colored explosions.
 Iron maiden.
 Victory screen background, etc.

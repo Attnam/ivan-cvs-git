@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -14,23 +15,26 @@
 #include "god.h"
 #include "festring.h"
 
-void id::AddNameSingular(festring& String, bool Articled) const
+void id::AddNameSingular(festring& String, truth Articled) const
 {
   if(Articled)
-    String << GetArticle() << ' ';
+    if(UsesLongArticle())
+      String << "an ";
+    else
+      String << "a ";
 
   String << GetNameSingular();
 }
 
 void id::AddName(festring& Name, int Case) const
 {
-  bool Articled;
+  truth Articled;
 
-  if((Case & ARTICLE_BIT) && (GetArticleMode() == DEFINITE_ARTICLE || (GetArticleMode() == NORMAL_ARTICLE && !(Case & INDEFINE_BIT))))
-    {
-      Name << "the ";
-      Articled = false;
-    }
+  if((Case & ARTICLE_BIT) && (GetArticleMode() == FORCE_THE || (!GetArticleMode() && !(Case & INDEFINE_BIT))))
+  {
+    Name << "the ";
+    Articled = false;
+  }
   else
     Articled = !(Case & PLURAL) && (Case & ARTICLE_BIT) && (Case & INDEFINE_BIT) && GetArticleMode() != NO_ARTICLE;
 
@@ -64,13 +68,13 @@ void id::AddName(festring& Name, int Case, int Amount) const
   if(Amount == 1)
     AddName(Name, Case&~PLURAL);
   else
-    {
-      if((Case & ARTICLE_BIT) && (GetArticleMode() == DEFINITE_ARTICLE || (GetArticleMode() == NORMAL_ARTICLE && !(Case & INDEFINE_BIT))))
-	Name << "the ";
+  {
+    if((Case & ARTICLE_BIT) && (GetArticleMode() == FORCE_THE || (!GetArticleMode() && !(Case & INDEFINE_BIT))))
+      Name << "the ";
 
-      Name << Amount << ' ';
-      AddName(Name, Case&~ARTICLE_BIT|PLURAL);
-    }
+    Name << Amount << ' ';
+    AddName(Name, Case&~ARTICLE_BIT|PLURAL);
+  }
 }
 
 festring id::GetName(int Case, int Amount) const
@@ -81,16 +85,19 @@ festring id::GetName(int Case, int Amount) const
   return Name;
 }
 
-bool id::AddAdjective(festring& String, bool Articled) const
+truth id::AddAdjective(festring& String, truth Articled) const
 {
   if(GetAdjective().GetSize())
-    {
-      if(Articled)
-	String << GetAdjectiveArticle() << ' ';
+  {
+    if(Articled)
+      if(UsesLongAdjectiveArticle())
+	String << "an ";
+      else
+	String << "a ";
 
-      String << GetAdjective() << ' ';
-      return true;
-    }
+    String << GetAdjective() << ' ';
+    return true;
+  }
   else
     return false;
 }
@@ -101,12 +108,7 @@ void id::AddPostFix(festring& String) const
     String << ' ' << GetPostFix();
 }
 
-int id::GetArticleMode() const
-{
-  return NORMAL_ARTICLE;
-}
-
-bool id::AddActiveAdjective(festring& String, bool Articled) const
+truth id::AddActiveAdjective(festring& String, truth Articled) const
 {
   String << (Articled ? "an active " : "active ");
   return true;

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -14,9 +15,7 @@
 #include "proto.h"
 #include "action.h"
 
-action::prototype** protocontainer<action>::ProtoData;
-valuemap protocontainer<action>::CodeNameMap;
-int protocontainer<action>::Size;
+SYSTEM_SPECIALIZATIONS(action)
 
 #include "actions.h"
 

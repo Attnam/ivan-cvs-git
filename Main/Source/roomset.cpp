@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -14,9 +15,7 @@
 #include "proto.h"
 #include "room.h"
 
-room::prototype** protocontainer<room>::ProtoData;
-valuemap protocontainer<room>::CodeNameMap;
-int protocontainer<room>::Size;
+SYSTEM_SPECIALIZATIONS(room)
 
 #include "rooms.h"
 

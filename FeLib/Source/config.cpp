@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -19,49 +20,60 @@ festring configsystem::ConfigFileName;
 int configsystem::Options;
 
 void configsystem::AddOption(configoption* O) { Option[Options++] = O; }
-void configsystem::NormalStringChanger(stringoption* O, const festring& What) { O->Value = What; }
-void configsystem::NormalNumberChanger(numberoption* O, long What) { O->Value = What; }
-void configsystem::NormalBoolChanger(booloption* O, bool What) { O->Value = What; }
+void configsystem::NormalStringChanger(stringoption* O, const festring& What)
+{ O->Value = What; }
+void configsystem::NormalNumberChanger(numberoption* O, long What)
+{ O->Value = What; }
+void configsystem::NormalTruthChanger(truthoption* O, truth What)
+{ O->Value = What; }
 
-configoption::configoption(const char* Name, const char* Description) : Name(Name), Description(Description) { }
+configoption::configoption(const char* Name, const char* Description)
+: Name(Name), Description(Description) { }
 
-stringoption::stringoption(	  const char* Name, const char* Description, const festring& Value,
-				  void (*ValueDisplayer)(const stringoption*, festring&),
-				  bool (*ChangeInterface)(stringoption*),
-				  void (*ValueChanger)(stringoption*, const festring&)) :
-				  configoption(Name, Description),
-				  Value(Value), ValueDisplayer(ValueDisplayer),
-				  ChangeInterface(ChangeInterface),
-				  ValueChanger(ValueChanger) { }
+stringoption::stringoption(const char* Name, const char* Desc,
+			   const festring& Value,
+			   void (*ValueDisplayer)(const stringoption*,
+						  festring&),
+			   truth (*ChangeInterface)(stringoption*),
+			   void (*ValueChanger)(stringoption*,
+						const festring&))
+: configoption(Name, Desc),
+  Value(Value), ValueDisplayer(ValueDisplayer),
+  ChangeInterface(ChangeInterface),
+  ValueChanger(ValueChanger) { }
 
-numberoption::numberoption(	  const char* Name, const char* Description, long Value,
-				  void (*ValueDisplayer)(const numberoption*, festring&),
-				  bool (*ChangeInterface)(numberoption*),
-				  void (*ValueChanger)(numberoption*, long)) :
-				  configoption(Name, Description),
-				  Value(Value), ValueDisplayer(ValueDisplayer),
-				  ChangeInterface(ChangeInterface),
-				  ValueChanger(ValueChanger) { }
+numberoption::numberoption(const char* Name, const char* Desc, long Value,
+			   void (*ValueDisplayer)(const numberoption*,
+						  festring&),
+			   truth (*ChangeInterface)(numberoption*),
+			   void (*ValueChanger)(numberoption*, long))
+: configoption(Name, Desc),
+  Value(Value), ValueDisplayer(ValueDisplayer),
+  ChangeInterface(ChangeInterface),
+  ValueChanger(ValueChanger) { }
 
-scrollbaroption::scrollbaroption( const char* Name, const char* Description, long Value,
-				  void (*ValueDisplayer)(const numberoption*, festring&),
-				  bool (*ChangeInterface)(numberoption*),
-				  void (*ValueChanger)(numberoption*, long),
-				  void (*BarHandler)(long)) :
-				  numberoption(Name, Description, Value, ValueDisplayer, ChangeInterface, ValueChanger),
-				  BarHandler(BarHandler) { }
+scrollbaroption::scrollbaroption(const char* Name,
+				 const char* Desc, long Value,
+				 void (*ValueDisplayer)(const numberoption*,
+							festring&),
+				 truth (*ChangeInterface)(numberoption*),
+				 void (*ValueChanger)(numberoption*, long),
+				 void (*BarHandler)(long))
+: numberoption(Name, Desc, Value, ValueDisplayer,
+	       ChangeInterface, ValueChanger),
+  BarHandler(BarHandler) { }
 
 
-booloption::booloption(		  const char* Name, const char* Description, bool Value,
-				  void (*ValueDisplayer)(const booloption*, festring&),
-				  bool (*ChangeInterface)(booloption*),
-				  void (*ValueChanger)(booloption*, bool)) :
-				  configoption(Name, Description),
-				  Value(Value), ValueDisplayer(ValueDisplayer),
-				  ChangeInterface(ChangeInterface),
-				  ValueChanger(ValueChanger) { }
+truthoption::truthoption(const char* Name, const char* Desc, truth Value,
+			 void (*ValueDisplayer)(const truthoption*, festring&),
+			 truth (*ChangeInterface)(truthoption*),
+			 void (*ValueChanger)(truthoption*, truth))
+: configoption(Name, Desc),
+  Value(Value), ValueDisplayer(ValueDisplayer),
+  ChangeInterface(ChangeInterface),
+  ValueChanger(ValueChanger) { }
 
-bool configsystem::Save()
+truth configsystem::Save()
 {
   std::ofstream SaveFile(ConfigFileName.CStr(), std::ios::out);
 
@@ -69,16 +81,16 @@ bool configsystem::Save()
     return false;
 
   for(int c = 0; c < Options; ++c)
-    {
-      SaveFile << Option[c]->Name << " = ";
-      Option[c]->SaveValue(SaveFile);
-      SaveFile << ";\n";
-    }
+  {
+    SaveFile << Option[c]->Name << " = ";
+    Option[c]->SaveValue(SaveFile);
+    SaveFile << ";\n";
+  }
 
   return true;
 }
 
-bool configsystem::Load()
+truth configsystem::Load()
 {
   inputfile SaveFile(ConfigFileName, 0, false);
 
@@ -87,61 +99,67 @@ bool configsystem::Load()
 
   festring Word;
 
-  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
-    {
-      /* Inefficient, but speed is probably not an issue here */
+  for(SaveFile.ReadWord(Word, false);
+      !SaveFile.Eof();
+      SaveFile.ReadWord(Word, false))
+  {
+    /* Inefficient, but speed is probably not an issue here */
 
-      for(int c = 0; c < Options; ++c)
-	if(Word == Option[c]->Name)
-	  Option[c]->LoadValue(SaveFile);
-    }
+    for(int c = 0; c < Options; ++c)
+      if(Word == Option[c]->Name)
+	Option[c]->LoadValue(SaveFile);
+  }
 
   return true;
 }
 
-void configsystem::Show(void (*BackGroundDrawer)(), void (*ListAttributeInitializer)(felist&), bool SlaveScreen)
+void configsystem::Show(void (*BackGroundDrawer)(),
+			void (*ListAttributeInitializer)(felist&),
+			truth SlaveScreen)
 {
   int Chosen;
-  bool BoolChange = false;
+  truth truthChange = false;
 
   felist List(CONST_S("Which setting do you wish to configure?"));
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
 
   for(;;)
+  {
+    if(SlaveScreen)
+      BackGroundDrawer();
+
+    List.Empty();
+
+    for(int c = 0; c < Options; ++c)
     {
-      if(SlaveScreen)
-	BackGroundDrawer();
-
-      List.Empty();
-
-      for(int c = 0; c < Options; ++c)
-	{
-	  festring Entry = Option[c]->Description;
-	  Entry.Capitalize();
-	  Entry.Resize(60);
-	  Option[c]->DisplayeValue(Entry);
-	  List.AddEntry(Entry, LIGHT_GRAY);
-	}
-
-      if(SlaveScreen && ListAttributeInitializer)
-	ListAttributeInitializer(List);
-
-      List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)|(!SlaveScreen && !BoolChange ? FADE : 0));
-      Chosen = List.Draw();
-      festring String;
-
-      if(Chosen < Options)
-	BoolChange = Option[Chosen]->ActivateChangeInterface();
-      else
-	{
-	  Save();
-	  return;
-	}
+      festring Entry = Option[c]->Description;
+      Entry.Capitalize();
+      Entry.Resize(60);
+      Option[c]->DisplayeValue(Entry);
+      List.AddEntry(Entry, LIGHT_GRAY);
     }
+
+    if(SlaveScreen && ListAttributeInitializer)
+      ListAttributeInitializer(List);
+
+    List.SetFlags(SELECTABLE|(SlaveScreen ? DRAW_BACKGROUND_AFTERWARDS : 0)
+		  |(!SlaveScreen && !truthChange ? FADE : 0));
+    Chosen = List.Draw();
+    festring String;
+
+    if(Chosen < Options)
+      truthChange = Option[Chosen]->ActivateChangeInterface();
+    else
+    {
+      Save();
+      return;
+    }
+  }
 }
 
-void configsystem::NormalStringDisplayer(const stringoption* O, festring& Entry)
+void configsystem::NormalStringDisplayer(const stringoption* O,
+					 festring& Entry)
 {
   if(!O->Value.IsEmpty())
     Entry << O->Value;
@@ -149,35 +167,42 @@ void configsystem::NormalStringDisplayer(const stringoption* O, festring& Entry)
     Entry << '-';
 }
 
-void configsystem::NormalNumberDisplayer(const numberoption* O, festring& Entry)
+void configsystem::NormalNumberDisplayer(const numberoption* O,
+					 festring& Entry)
 {
   Entry << O->Value;
 }
 
-void configsystem::NormalBoolDisplayer(const booloption* O, festring& Entry)
+void configsystem::NormalTruthDisplayer(const truthoption* O,
+					festring& Entry)
 {
   Entry << (O->Value ? "yes" : "no");
 }
 
-bool configsystem::NormalBoolChangeInterface(booloption* O)
+truth configsystem::NormalTruthChangeInterface(truthoption* O)
 {
   O->ChangeValue(!O->Value);
   return true;
 }
 
-bool configsystem::NormalStringChangeInterface(stringoption* O)
+truth configsystem::NormalStringChangeInterface(stringoption* O)
 {
   festring String;
 
-  if(iosystem::StringQuestion(String, CONST_S("Set new ") + O->Description + ':', vector2d(30, 30), WHITE, 0, 80, true, true) == NORMAL_EXIT)
+  if(iosystem::StringQuestion(String, CONST_S("Set new ")
+			      + O->Description + ':',
+			      v2(30, 30), WHITE, 0, 80,
+			      true, true) == NORMAL_EXIT)
     O->ChangeValue(String);
 
   return false;
 }
 
-bool configsystem::NormalNumberChangeInterface(numberoption* O)
+truth configsystem::NormalNumberChangeInterface(numberoption* O)
 {
-  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new ") + O->Description + ':', vector2d(30, 30), WHITE, true));
+  O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new ")
+					  + O->Description + ':',
+					  v2(30, 30), WHITE, true));
   return false;
 }
 
@@ -194,7 +219,11 @@ void stringoption::LoadValue(inputfile& SaveFile)
 
 /* ??? */
 
-void numberoption::SaveValue(std::ofstream& SaveFile) const { SaveFile << Value; }
-void numberoption::LoadValue(inputfile& SaveFile) { Value = SaveFile.ReadNumber(); }
-void booloption::SaveValue(std::ofstream& SaveFile) const { SaveFile << Value; }
-void booloption::LoadValue(inputfile& SaveFile) { Value = SaveFile.ReadBool(); }
+void numberoption::SaveValue(std::ofstream& SaveFile) const
+{ SaveFile << Value; }
+void numberoption::LoadValue(inputfile& SaveFile)
+{ Value = SaveFile.ReadNumber(); }
+void truthoption::SaveValue(std::ofstream& SaveFile) const
+{ SaveFile << Value; }
+void truthoption::LoadValue(inputfile& SaveFile)
+{ Value = SaveFile.ReadNumber(); }

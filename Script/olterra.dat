@@ -1,19 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* 
  * NOTICE!!!
- * This file contains SPOILERS, which might ruin your IVAN experience totally.
- * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
- * don't know what you're doing. So from here on, proceed at your own risk!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
  */
 
 /* Numerical olterrain data loaded during game startup */
@@ -23,13 +26,13 @@
 olterrain
 {
 	/* Obligatory: BitmapPos */
-	Article = "a";
+	UsesLongArticle = false;
 	Adjective = "";
-	AdjectiveArticle = "a";
+	UsesLongAdjectiveArticle = false;
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
 	PostFix = "";
-	ArticleMode = NORMAL_ARTICLE;
+	ArticleMode = 0;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
@@ -100,7 +103,7 @@ wall
 	{
 		DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
 		MainMaterialConfig == GRANITE;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "old";
 		NameSingular = "wall";
 		BitmapPos = 16, 256;
@@ -459,7 +462,7 @@ altar /* olterrain-> */
 {
 	DigMessage = "An invisible wall stops your feeble attempt.";
 	MainMaterialConfig == GRANITE;
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "altar";
 	BitmapPos = 0, 368;
 	/* PostFix depends on Config */
@@ -580,7 +583,7 @@ earth
 	OKVisualEffects = MIRROR|FLIP|ROTATE;
 	DigMessage = "The ground is fairly easy to dig.";
 	MainMaterialConfig == MORAINE;
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "earth";
 	BitmapPos = 96, 416;
 	HPModifier = 50;

@@ -1,141 +1,127 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ACTIONS_H__
 #define __ACTIONS_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include "action.h"
-#include "vector2d.h"
+#include "festring.h"
+#include "v2.h"
 
-class ACTION
-(
-  unconsciousness,
-  action,
+ACTION(unconsciousness, action)
+{
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
   void SetCounter(int What) { Counter = What; }
-  virtual bool IsVoluntary() const { return false; }
-  virtual void Terminate(bool);
-  virtual bool AllowUnconsciousness() const { return false; }
+  virtual truth IsVoluntary() const { return false; }
+  virtual void Terminate(truth);
+  virtual truth AllowUnconsciousness() const { return false; }
   virtual const char* GetDescription() const;
   virtual const char* GetDeathExplanation() const;
-  virtual bool CanBeTalkedTo() const { return false; }
-  virtual bool IsUnconsciousness() const { return true; }
+  virtual truth CanBeTalkedTo() const { return false; }
+  virtual truth IsUnconsciousness() const { return true; }
   void RaiseCounterTo(int);
  protected:
   int Counter;
-);
+};
 
-class ACTION
-(
-  consume,
-  action,
+ACTION(consume, action)
+{
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual void Terminate(bool);
+  virtual void Terminate(truth);
   void SetConsumingID(ulong What) { ConsumingID = What; }
-  virtual bool AllowUnconsciousness() const { return false; }
-  virtual bool AllowFoodConsumption() const { return false; }
+  virtual truth AllowUnconsciousness() const { return false; }
+  virtual truth AllowFoodConsumption() const { return false; }
   virtual const char* GetDescription() const;
   virtual void SetDescription(const festring&);
  protected:
   festring Description;
   ulong ConsumingID;
-);
+};
 
-class ACTION
-(
-  rest,
-  action,
+ACTION(rest, action)
+{
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
   void SetGoalHP(int What) { GoalHP = What; }
-  virtual void Terminate(bool);
-  virtual bool IsRest() const { return true; }
+  virtual void Terminate(truth);
+  virtual truth IsRest() const { return true; }
   virtual const char* GetDescription() const;
   void SetMinToStop(int What) { MinToStop = What; }
  protected:
   int GoalHP;
   int MinToStop;
-);
+};
 
-class ACTION
-(
-  dig,
-  action,
+ACTION(dig, action)
+{
  public:
+  dig() : RightBackupID(0), LeftBackupID(0) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  void SetSquareDug(vector2d What) { SquareDug = What; }
-  virtual void Terminate(bool);
+  void SetSquareDug(v2 What) { SquareDug = What; }
+  virtual void Terminate(truth);
   void SetRightBackupID(ulong What) { RightBackupID = What; }
   void SetLeftBackupID(ulong What) { LeftBackupID = What; }
-  virtual bool TryDisplace() { return false; }
+  virtual truth TryDisplace() { return false; }
   virtual const char* GetDescription() const;
-  virtual bool ShowEnvironment() const { return false; }
-  void SetMoveDigger(bool What) { MoveDigger = What; }
+  virtual truth ShowEnvironment() const { return false; }
+  void SetMoveDigger(truth What) { MoveDigger = What; }
  protected:
-  virtual void VirtualConstructor(bool);
   ulong RightBackupID;
   ulong LeftBackupID;
-  vector2d SquareDug;
-  bool MoveDigger;
-);
+  v2 SquareDug;
+  truth MoveDigger;
+};
 
-class ACTION
-(
-  go,
-  action,
+ACTION(go, action)
+{
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
   int GetDirection() const { return Direction; }
   void SetDirection(int What) { Direction = What; }
-  bool IsWalkingInOpen() const { return WalkingInOpen; }
-  void SetIsWalkingInOpen(bool What) { WalkingInOpen = What; }
-  virtual bool TryDisplace();
+  truth IsWalkingInOpen() const { return WalkingInOpen; }
+  void SetIsWalkingInOpen(truth What) { WalkingInOpen = What; }
+  virtual truth TryDisplace();
   virtual const char* GetDescription() const;
-  virtual bool ShowEnvironment() const { return false; }
+  virtual truth ShowEnvironment() const { return false; }
  protected:
   int Direction;
-  bool WalkingInOpen;
-);
+  truth WalkingInOpen;
+};
 
-class ACTION
-(
-  study,
-  action,
+ACTION(study, action)
+{
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  virtual void Terminate(bool);
+  virtual void Terminate(truth);
   void SetLiteratureID(ulong What) { LiteratureID = What; }
   virtual const char* GetDescription() const;
   void SetCounter(int What) { Counter = What; }
  protected:
   ulong LiteratureID;
   int Counter;
-);
+};
 
 #endif

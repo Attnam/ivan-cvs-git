@@ -1,18 +1,21 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __CONFDEF_H__
 #define __CONFDEF_H__
 
-/* Configuration defines */
+/*
+ * Configuration defines of IVAN
+ */
 
 #define SOLID_ID (1 << 12)
 

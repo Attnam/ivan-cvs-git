@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -25,10 +26,10 @@ felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
 festring msgsystem::LastMessage;
 festring msgsystem::BigMessage;
 int msgsystem::Times;
-vector2d msgsystem::Begin, msgsystem::End;
-bool msgsystem::Enabled = true;
-bool msgsystem::BigMessageMode = false;
-bool msgsystem::MessagesChanged = true;
+v2 msgsystem::Begin, msgsystem::End;
+truth msgsystem::Enabled = true;
+truth msgsystem::BigMessageMode = false;
+truth msgsystem::MessagesChanged = true;
 bitmap* msgsystem::QuickDrawCache = 0;
 int msgsystem::LastMessageLines;
 
@@ -58,31 +59,31 @@ void msgsystem::AddMessage(const char* Format, ...)
     Buffer << '.';
 
   if(BigMessageMode)
-    {
-      if(BigMessage.GetSize())
-	BigMessage << ' ';
+  {
+    if(BigMessage.GetSize())
+      BigMessage << ' ';
 
-      BigMessage << Buffer;
-      return;
-    }
+    BigMessage << Buffer;
+    return;
+  }
 
   ivantime Time;
   game::GetTime(Time);
 
   if(Buffer == LastMessage)
-    {
-      for(int c = 0; c < LastMessageLines; ++c)
-	MessageHistory.Pop();
+  {
+    for(int c = 0; c < LastMessageLines; ++c)
+      MessageHistory.Pop();
 
-      ++Times;
-      End = vector2d(Time.Hour, Time.Min);
-    }
+    ++Times;
+    End = v2(Time.Hour, Time.Min);
+  }
   else
-    {
-      Times = 1;
-      Begin = End = vector2d(Time.Hour, Time.Min);
-      LastMessage = Buffer;
-    }
+  {
+    Times = 1;
+    Begin = End = v2(Time.Hour, Time.Min);
+    LastMessage = Buffer;
+  }
 
   festring Temp;
   Temp << Begin.X << ':';
@@ -93,14 +94,14 @@ void msgsystem::AddMessage(const char* Format, ...)
   Temp << Begin.Y;
 
   if(Begin != End)
-    {
-      Temp << '-' << End.X << ':';
+  {
+    Temp << '-' << End.X << ':';
 
-      if(End.Y < 10)
-	Temp << '0';
+    if(End.Y < 10)
+      Temp << '0';
 
-      Temp << End.Y;
-    }
+    Temp << End.Y;
+  }
 
   if(Times != 1)
     Temp << " (" << Times << "x)";
@@ -122,22 +123,29 @@ void msgsystem::AddMessage(const char* Format, ...)
 
 void msgsystem::Draw()
 {
-  bool WasInBigMessageMode = BigMessageMode;
+  truth WasInBigMessageMode = BigMessageMode;
   LeaveBigMessageMode();
 
   if(MessagesChanged)
-    {
-      MessageHistory.QuickDraw(QuickDrawCache, 8);
-      MessagesChanged = false;
-    }
+  {
+    MessageHistory.QuickDraw(QuickDrawCache, 8);
+    MessagesChanged = false;
+  }
 
-  vector2d Size = QuickDrawCache->GetSize();
-  int Y = RES_Y - 122;
-  QuickDrawCache->NormalBlit(DOUBLE_BUFFER, 0, 0, 13, Y, Size);
-  igraph::BlitBackGround(13, Y, 1, 1);
-  igraph::BlitBackGround(12 + Size.X, Y, 1, 1);
-  igraph::BlitBackGround(13, Y + Size.Y - 1, 1, 1);
-  igraph::BlitBackGround(12 + Size.X, Y + Size.Y - 1, 1, 1);
+  v2 Size = QuickDrawCache->GetSize();
+  int Y = RES.Y - 122;
+  blitdata B = { DOUBLE_BUFFER,
+		 { 0, 0 },
+		 { 13, Y },
+		 { Size.X, Size.Y },
+		 0,
+		 0,
+		 0 };
+  QuickDrawCache->NormalBlit(B);
+  igraph::BlitBackGround(v2(13, Y), v2(1, 1));
+  igraph::BlitBackGround(v2(12 + Size.X, Y), v2(1, 1));
+  igraph::BlitBackGround(v2(13, Y + Size.Y - 1), v2(1, 1));
+  igraph::BlitBackGround(v2(12 + Size.X, Y + Size.Y - 1), v2(1, 1));
 
   if(WasInBigMessageMode)
     EnterBigMessageMode();
@@ -171,19 +179,19 @@ void msgsystem::Load(inputfile& SaveFile)
 void msgsystem::ScrollDown()
 {
   if(MessageHistory.GetSelected() < MessageHistory.GetLastEntryIndex())
-    {
-      MessageHistory.EditSelected(1);
-      MessagesChanged = true;
-    }
+  {
+    MessageHistory.EditSelected(1);
+    MessagesChanged = true;
+  }
 }
 
 void msgsystem::ScrollUp()
 {
   if(MessageHistory.GetSelected())
-    {
-      MessageHistory.EditSelected(-1);
-      MessagesChanged = true;
-    }
+  {
+    MessageHistory.EditSelected(-1);
+    MessagesChanged = true;
+  }
 }
 
 void msgsystem::LeaveBigMessageMode()
@@ -191,15 +199,15 @@ void msgsystem::LeaveBigMessageMode()
   BigMessageMode = false;
 
   if(BigMessage.GetSize())
-    {
-      AddMessage("%s", BigMessage.CStr());
-      BigMessage.Empty();
-    }
+  {
+    AddMessage("%s", BigMessage.CStr());
+    BigMessage.Empty();
+  }
 }
 
 void msgsystem::Init()
 {
-  QuickDrawCache = new bitmap((game::GetScreenXSize() << 4) + 6, 106);
+  QuickDrawCache = new bitmap(v2((game::GetScreenXSize() << 4) + 6, 106));
   QuickDrawCache->ActivateFastFlag();
   game::SetStandardListAttributes(MessageHistory);
   MessageHistory.AddFlags(INVERSE_MODE);
@@ -210,6 +218,6 @@ void msgsystem::ThyMessagesAreNowOld()
   if(MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
     MessagesChanged = true;
 
-  for(int c = 0; c < MessageHistory.GetLength(); ++c)
+  for(uint c = 0; c < MessageHistory.GetLength(); ++c)
     MessageHistory.SetColor(c, LIGHT_GRAY);
 }

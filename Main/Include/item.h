@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ITEM_H__
 #define __ITEM_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <cmath>
 
@@ -25,14 +22,15 @@
 class felist;
 class head;
 class itemprototype;
-template <class type> class contentscript;
 template <class type> class databasecreator;
 
 typedef std::vector<item*> itemvector;
 typedef std::vector<fluid*> fluidvector;
-typedef bool (rawbitmap::*pixelpredicate)(vector2d) const;
-typedef bool (material::*materialpredicate)() const;
-typedef bool (item::*sorter)(const character*) const;
+typedef truth (rawbitmap::*pixelpredicate)(v2) const;
+typedef truth (material::*materialpredicate)() const;
+typedef truth (item::*sorter)(const character*) const;
+typedef item* (*itemspawner)(int, int);
+typedef item* (*itemcloner)(const item*);
 
 extern materialpredicate TrueMaterialPredicate;
 
@@ -47,23 +45,67 @@ struct sortdata
   sorter Sorter;
 };
 
+struct idholder
+{
+  idholder(ulong ID) : ID(ID) { }
+  idholder* Next;
+  ulong ID;
+};
+
+outputfile& operator<<(outputfile&, const idholder*);
+inputfile& operator>>(inputfile&, idholder*&);
+
 struct itemdatabase : public databasebase
 {
   typedef itemprototype prototype;
   void InitDefaults(const prototype*, int);
-  bool AllowRandomInstantiation() const;
+  truth AllowRandomInstantiation() const;
   void PostProcess() { }
   const prototype* ProtoType;
   /* Maintained by configcontainer */
   long PartialPossibilitySum;
   long PartialCategoryPossibilitySum;
   int Possibility;
-  bool IsDestroyable;
-  bool CanBeWished;
-  bool IsMaterialChangeable;
   int WeaponCategory;
-  bool IsPolymorphSpawnable;
-  bool IsAutoInitializable;
+  truth IsDestroyable;
+  truth CanBeWished;
+  truth IsMaterialChangeable;
+  truth IsPolymorphSpawnable;
+  truth IsAutoInitializable;
+  truth IsAbstract;
+  truth IsPolymorphable;
+  truth CanBeGeneratedInContainer;
+  truth IsTwoHanded;
+  truth CreateDivineConfigurations;
+  truth CanBeCloned;
+  truth CanBeMirrored;
+  truth AffectsArmStrength;
+  truth AffectsLegStrength;
+  truth AffectsDexterity;
+  truth AffectsAgility;
+  truth AffectsEndurance;
+  truth AffectsPerception;
+  truth AffectsIntelligence;
+  truth AffectsWisdom;
+  truth AffectsCharisma;
+  truth AffectsMana;
+  truth PriceIsProportionalToEnchantment;
+  truth CanBeUsedBySmith;
+  truth AffectsCarryingCapacity;
+  truth HandleInPairs;
+  truth CanBeEnchanted;
+  truth IsQuestItem;
+  truth IsGoodWithPlants;
+  truth CreateLockConfigurations;
+  truth CanBePickedUp;
+  truth HasSecondaryMaterial;
+  truth AllowEquip;
+  truth IsValuable;
+  truth HasNormalPictureDirection;
+  truth IsKamikazeWeapon;
+  truth FlexibilityIsEssential;
+  truth CanBeBroken;
+  truth CanBePiled;
   long Category;
   int FireResistance;
   int PoisonResistance;
@@ -74,12 +116,12 @@ struct itemdatabase : public databasebase
   int DefaultSize;
   long DefaultMainVolume;
   long DefaultSecondaryVolume;
-  vector2d BitmapPos;
+  v2 BitmapPos;
   long Price;
-  color24 BaseEmitation;
-  festring Article;
+  col24 BaseEmitation;
+  truth UsesLongArticle;
   festring Adjective;
-  festring AdjectiveArticle;
+  truth UsesLongAdjectiveArticle;
   festring NameSingular;
   festring NamePlural;
   festring PostFix;
@@ -88,85 +130,52 @@ struct itemdatabase : public databasebase
   fearray<long> SecondaryMaterialConfig;
   fearray<long> MaterialConfigChances;
   long MaterialConfigChanceSum;
-  bool IsAbstract;
-  bool IsPolymorphable;
   fearray<festring> Alias;
   int OKVisualEffects;
-  bool CanBeGeneratedInContainer;
   int ForcedVisualEffects;
   int Roundness;
   long GearStates;
-  bool IsTwoHanded;
-  bool CreateDivineConfigurations;
-  bool CanBeCloned;
-  bool CanBeMirrored;
   int BeamRange;
-  bool CanBeBroken;
-  vector2d WallBitmapPos;
+  v2 WallBitmapPos;
   festring FlexibleNameSingular;
   int MinCharges;
   int MaxCharges;
-  bool CanBePiled;
   long StorageVolume;
   int MaxGeneratedContainedItems;
-  bool AffectsArmStrength;
-  bool AffectsLegStrength;
-  bool AffectsDexterity;
-  bool AffectsAgility;
-  bool AffectsEndurance;
-  bool AffectsPerception;
-  bool AffectsIntelligence;
-  bool AffectsWisdom;
-  bool AffectsCharisma;
-  bool AffectsMana;
   int BaseEnchantment;
-  bool PriceIsProportionalToEnchantment;
   int InElasticityPenaltyModifier;
-  bool CanBeUsedBySmith;
-  bool AffectsCarryingCapacity;
   int DamageDivider;
-  bool HandleInPairs;
-  bool CanBeEnchanted;
-  color16 BeamColor;
+  col16 BeamColor;
   int BeamEffect;
   int BeamStyle;
   int WearWisdomLimit;
   int AttachedGod;
   int BreakEffectRangeSquare;
-  vector2d WieldedBitmapPos;
-  bool IsQuestItem;
-  bool IsGoodWithPlants;
-  bool CreateLockConfigurations;
-  bool CanBePickedUp;
+  v2 WieldedBitmapPos;
   int CoverPercentile;
-  vector2d TorsoArmorBitmapPos;
-  vector2d ArmArmorBitmapPos;
-  vector2d LegArmorBitmapPos;
-  vector2d HelmetBitmapPos;
-  vector2d CloakBitmapPos;
-  vector2d BeltBitmapPos;
-  vector2d GauntletBitmapPos;
-  vector2d BootBitmapPos;
-  bool HasSecondaryMaterial;
-  bool AllowEquip;
+  v2 TorsoArmorBitmapPos;
+  v2 ArmArmorBitmapPos;
+  v2 LegArmorBitmapPos;
+  v2 HelmetBitmapPos;
+  v2 CloakBitmapPos;
+  v2 BeltBitmapPos;
+  v2 GauntletBitmapPos;
+  v2 BootBitmapPos;
   int ReadDifficulty;
-  bool IsValuable;
   int EnchantmentMinusChance;
   int EnchantmentPlusChance;
   int TeleportPriority;
-  bool HasNormalPictureDirection;
   int DamageFlags;
-  bool IsKamikazeWeapon;
-  bool FlexibilityIsEssential;
 };
 
 class itemprototype
 {
  public:
   friend class databasecreator<item>;
-  itemprototype(itemprototype*, item* (*)(int, int), const char*);
-  item* Clone(int Config = 0, int SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
-  item* CloneAndLoad(inputfile&) const;
+  itemprototype(const itemprototype*, itemspawner, itemcloner, const char*);
+  item* Spawn(int Config = 0, int SpecialFlags = 0) const { return Spawner(Config, SpecialFlags); }
+  item* SpawnAndLoad(inputfile&) const;
+  item* Clone(const item* Item) const { return Cloner(Item); }
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
@@ -176,11 +185,12 @@ class itemprototype
   int GetConfigSize() const { return ConfigSize; }
  private:
   int Index;
-  itemprototype* Base;
+  const itemprototype* Base;
   itemdatabase** ConfigData;
   itemdatabase** ConfigTable[CONFIG_TABLE_SIZE];
   int ConfigSize;
-  item* (*Cloner)(int, int);
+  itemspawner Spawner;
+  itemcloner Cloner;
   const char* ClassID;
 };
 
@@ -190,35 +200,35 @@ class item : public object
   friend class databasecreator<item>;
   typedef itemprototype prototype;
   typedef itemdatabase database;
-  item(donothing);
+  item();
   item(const item&);
   virtual ~item();
   virtual double GetWeaponStrength() const;
-  virtual bool Open(character*);
-  bool Consume(character*, long);
-  virtual bool IsHeadOfElpuri() const { return false; }
-  virtual bool IsPetrussNut() const { return false; }
-  virtual bool IsGoldenEagleShirt() const { return false; }
-  virtual bool CanBeRead(character*) const { return false; }
-  virtual bool Read(character*);
+  virtual truth Open(character*);
+  truth Consume(character*, long);
+  virtual truth IsHeadOfElpuri() const { return false; }
+  virtual truth IsPetrussNut() const { return false; }
+  virtual truth IsGoldenEagleShirt() const { return false; }
+  virtual truth CanBeRead(character*) const { return false; }
+  virtual truth Read(character*);
   virtual void FinishReading(character*) { }
-  virtual bool HitEffect(character*, character*, vector2d, int, int, bool) { return false; }
+  virtual truth HitEffect(character*, character*, v2, int, int, truth) { return false; }
   virtual void DipInto(liquid*, character*) { }
   virtual liquid* CreateDipLiquid() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual int GetOfferValue(int) const;
   virtual void Fly(character*, int, int);
   int HitCharacter(character*, character*, int, double, int);
-  virtual bool DogWillCatchAndConsume(const character*) const { return false; }
-  virtual bool Apply(character*);
-  virtual bool Zap(character*, vector2d, int) { return false; }
-  virtual bool Polymorph(character*, stack*);
-  virtual bool CheckPickUpEffect(character*) { return true; }
+  virtual truth DogWillCatchAndConsume(const character*) const { return false; }
+  virtual truth Apply(character*);
+  virtual truth Zap(character*, v2, int) { return false; }
+  virtual truth Polymorph(character*, stack*);
+  virtual truth CheckPickUpEffect(character*) { return true; }
   virtual void StepOnEffect(character*) { }
-  virtual bool IsTheAvatar() const { return false; }
+  virtual truth IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(int);
-  virtual bool CanBeEatenByAI(const character*) const;
-  virtual bool IsExplosive() const { return false; }
+  virtual truth CanBeEatenByAI(const character*) const;
+  virtual truth IsExplosive() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
@@ -232,50 +242,50 @@ class item : public object
   void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   virtual void RemoveFromSlot();
   void MoveTo(stack*);
-  bool IsMainSlot(const slot* What) const { return Slot[0] == What; }
+  truth IsMainSlot(const slot* What) const { return Slot[0] == What; }
   static const char* GetItemCategoryName(long);
-  virtual bool IsConsumable(const character*) const;
-  bool IsEatable(const character*) const;
-  bool IsDrinkable(const character*) const;
-  virtual bool IsOpenable(const character*) const { return false; }
-  virtual bool IsReadable(const character*) const { return false; }
-  virtual bool IsDippable(const character*) const { return false; }
-  virtual bool IsDipDestination(const character*) const { return false; }
-  virtual bool IsAppliable(const character*) const { return false; }
-  virtual bool IsZappable(const character*) const { return false; }
-  virtual bool IsChargeable(const character*) const { return false; }
-  virtual bool IsHelmet(const character*) const { return false; }
-  virtual bool IsAmulet(const character*) const { return false; }
-  virtual bool IsCloak(const character*) const { return false; }
-  virtual bool IsBodyArmor(const character*) const { return false; }
-  virtual bool IsRing(const character*) const { return false; }
-  virtual bool IsGauntlet(const character*) const { return false; }
-  virtual bool IsBelt(const character*) const { return false; }
-  virtual bool IsBoot(const character*) const { return false; }
-  virtual bool IsShield(const character*) const { return false; }
-  virtual bool IsWeapon(const character*) const { return false; }
-  virtual bool IsArmor(const character*) const { return false; }
-  virtual bool IsEnchantable(const character*) const { return CanBeEnchanted(); }
-  virtual bool IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
-  virtual bool IsDecosAdShirt(const character*) const { return false; }
-  bool CanBeHardened(const character*) const;
-  virtual bool HasLock(const character*) const { return false; }
-  virtual bool IsOnGround() const;
+  virtual truth IsConsumable() const { return true; }
+  truth IsEatable(const character*) const;
+  truth IsDrinkable(const character*) const;
+  virtual truth IsOpenable(const character*) const { return false; }
+  virtual truth IsReadable(const character*) const { return false; }
+  virtual truth IsDippable(const character*) const { return false; }
+  virtual truth IsDipDestination(const character*) const { return false; }
+  virtual truth IsAppliable(const character*) const { return false; }
+  virtual truth IsZappable(const character*) const { return false; }
+  virtual truth IsChargeable(const character*) const { return false; }
+  virtual truth IsHelmet(const character*) const { return false; }
+  virtual truth IsAmulet(const character*) const { return false; }
+  virtual truth IsCloak(const character*) const { return false; }
+  virtual truth IsBodyArmor(const character*) const { return false; }
+  virtual truth IsRing(const character*) const { return false; }
+  virtual truth IsGauntlet(const character*) const { return false; }
+  virtual truth IsBelt(const character*) const { return false; }
+  virtual truth IsBoot(const character*) const { return false; }
+  virtual truth IsShield(const character*) const { return false; }
+  virtual truth IsWeapon(const character*) const { return false; }
+  virtual truth IsArmor(const character*) const { return false; }
+  virtual truth IsEnchantable(const character*) const { return CanBeEnchanted(); }
+  virtual truth IsRepairable(const character*) const { return IsBroken() || IsRusted(); }
+  virtual truth IsDecosAdShirt(const character*) const { return false; }
+  truth CanBeHardened(const character*) const;
+  virtual truth HasLock(const character*) const { return false; }
+  virtual truth IsOnGround() const;
   int GetResistance(int) const;
   virtual void Be();
   int GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ReceiveDamage(character*, int, int, int = YOURSELF);
-  virtual bool RaiseTheDead(character*) { return false; }
+  virtual truth ReceiveDamage(character*, int, int, int = YOURSELF);
+  virtual truth RaiseTheDead(character*) { return false; }
   virtual int GetBodyPartIndex() const { return 0xFF; }
-  virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  virtual bool CanOpenLockType(int) const { return false; }
-  virtual bool IsWhip() const { return false; }
+  virtual truth CanOpenLockType(int) const { return false; }
+  virtual truth IsWhip() const { return false; }
+  DATA_BASE_VALUE(const prototype*, ProtoType);
   DATA_BASE_VALUE(int, Config);
-  virtual DATA_BASE_BOOL_WITH_PARAMETER(IsDestroyable, const character*);
-  DATA_BASE_BOOL(IsMaterialChangeable);
+  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsDestroyable, const character*);
+  DATA_BASE_TRUTH(IsMaterialChangeable);
   DATA_BASE_VALUE(int, WeaponCategory);
-  DATA_BASE_BOOL(IsAutoInitializable);
+  DATA_BASE_TRUTH(IsAutoInitializable);
   DATA_BASE_VALUE(long, Category);
   DATA_BASE_VALUE(int, FireResistance);
   DATA_BASE_VALUE(int, PoisonResistance);
@@ -286,12 +296,12 @@ class item : public object
   DATA_BASE_VALUE(int, DefaultSize);
   DATA_BASE_VALUE(long, DefaultMainVolume);
   DATA_BASE_VALUE(long, DefaultSecondaryVolume);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, int);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(v2, BitmapPos, int);
   virtual DATA_BASE_VALUE(long, Price);
-  virtual DATA_BASE_VALUE(color24, BaseEmitation);
-  virtual DATA_BASE_VALUE(const festring&, Article);
+  virtual DATA_BASE_VALUE(col24, BaseEmitation);
+  virtual DATA_BASE_TRUTH(UsesLongArticle);
   virtual DATA_BASE_VALUE(const festring&, Adjective);
-  virtual DATA_BASE_VALUE(const festring&, AdjectiveArticle);
+  virtual DATA_BASE_TRUTH(UsesLongAdjectiveArticle);
   virtual DATA_BASE_VALUE(const festring&, NameSingular);
   virtual DATA_BASE_VALUE(const festring&, NamePlural);
   virtual DATA_BASE_VALUE(const festring&, PostFix);
@@ -300,112 +310,112 @@ class item : public object
   DATA_BASE_VALUE(const fearray<long>&, SecondaryMaterialConfig);
   virtual DATA_BASE_VALUE(const fearray<long>&, MaterialConfigChances);
   virtual DATA_BASE_VALUE(long, MaterialConfigChanceSum);
-  DATA_BASE_BOOL(IsPolymorphable);
+  DATA_BASE_TRUTH(IsPolymorphable);
   virtual DATA_BASE_VALUE(int, OKVisualEffects);
-  DATA_BASE_BOOL(CanBeGeneratedInContainer);
+  DATA_BASE_TRUTH(CanBeGeneratedInContainer);
   virtual DATA_BASE_VALUE(int, ForcedVisualEffects);
   DATA_BASE_VALUE(int, Roundness);
   DATA_BASE_VALUE(long, GearStates);
-  DATA_BASE_BOOL(IsTwoHanded);
-  DATA_BASE_BOOL(CanBeBroken);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, int);
+  DATA_BASE_TRUTH(IsTwoHanded);
+  DATA_BASE_TRUTH(CanBeBroken);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, WallBitmapPos, int);
   DATA_BASE_VALUE(const festring&, FlexibleNameSingular);
-  DATA_BASE_BOOL(CanBePiled);
-  DATA_BASE_BOOL(AffectsArmStrength);
-  DATA_BASE_BOOL(AffectsLegStrength);
-  DATA_BASE_BOOL(AffectsDexterity);
-  DATA_BASE_BOOL(AffectsAgility);
-  DATA_BASE_BOOL(AffectsEndurance);
-  DATA_BASE_BOOL(AffectsPerception);
-  DATA_BASE_BOOL(AffectsIntelligence);
-  DATA_BASE_BOOL(AffectsWisdom);
-  DATA_BASE_BOOL(AffectsCharisma);
-  DATA_BASE_BOOL(AffectsMana);
-  DATA_BASE_BOOL(AffectsCarryingCapacity);
+  DATA_BASE_TRUTH(CanBePiled);
+  DATA_BASE_TRUTH(AffectsArmStrength);
+  DATA_BASE_TRUTH(AffectsLegStrength);
+  DATA_BASE_TRUTH(AffectsDexterity);
+  DATA_BASE_TRUTH(AffectsAgility);
+  DATA_BASE_TRUTH(AffectsEndurance);
+  DATA_BASE_TRUTH(AffectsPerception);
+  DATA_BASE_TRUTH(AffectsIntelligence);
+  DATA_BASE_TRUTH(AffectsWisdom);
+  DATA_BASE_TRUTH(AffectsCharisma);
+  DATA_BASE_TRUTH(AffectsMana);
+  DATA_BASE_TRUTH(AffectsCarryingCapacity);
   DATA_BASE_VALUE(int, BaseEnchantment);
-  DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
+  DATA_BASE_TRUTH(PriceIsProportionalToEnchantment);
   DATA_BASE_VALUE(int, MaxCharges);
   DATA_BASE_VALUE(int, MinCharges);
   DATA_BASE_VALUE(int, InElasticityPenaltyModifier);
   DATA_BASE_VALUE(long, StorageVolume);
   DATA_BASE_VALUE(int, MaxGeneratedContainedItems);
-  virtual DATA_BASE_BOOL(CanBeCloned);
-  virtual DATA_BASE_BOOL(CanBeMirrored);
+  virtual DATA_BASE_TRUTH(CanBeCloned);
+  virtual DATA_BASE_TRUTH(CanBeMirrored);
   DATA_BASE_VALUE(int, BeamRange);
-  DATA_BASE_BOOL(CanBeUsedBySmith);
+  DATA_BASE_TRUTH(CanBeUsedBySmith);
   DATA_BASE_VALUE(int, DamageDivider);
-  DATA_BASE_BOOL(HandleInPairs);
-  DATA_BASE_BOOL(CanBeEnchanted);
+  DATA_BASE_TRUTH(HandleInPairs);
+  DATA_BASE_TRUTH(CanBeEnchanted);
   DATA_BASE_VALUE(long, BeamColor);
   DATA_BASE_VALUE(int, BeamEffect);
   DATA_BASE_VALUE(int, BeamStyle);
   DATA_BASE_VALUE(int, WearWisdomLimit);
   DATA_BASE_VALUE(int, BreakEffectRangeSquare);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, int);
-  DATA_BASE_BOOL(IsQuestItem);
-  DATA_BASE_BOOL(IsGoodWithPlants);
-  DATA_BASE_BOOL(CanBePickedUp);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(v2, WieldedBitmapPos, int);
+  DATA_BASE_TRUTH(IsQuestItem);
+  DATA_BASE_TRUTH(IsGoodWithPlants);
+  DATA_BASE_TRUTH(CanBePickedUp);
   DATA_BASE_VALUE(int, CoverPercentile);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, TorsoArmorBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, ArmArmorBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, LegArmorBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, HelmetBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, CloakBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BeltBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, GauntletBitmapPos, int);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BootBitmapPos, int);
-  DATA_BASE_BOOL(AllowEquip);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, TorsoArmorBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, ArmArmorBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, LegArmorBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, HelmetBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, CloakBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, BeltBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, GauntletBitmapPos, int);
+  DATA_BASE_VALUE_WITH_PARAMETER(v2, BootBitmapPos, int);
+  DATA_BASE_TRUTH(AllowEquip);
   DATA_BASE_VALUE(int, ReadDifficulty);
   DATA_BASE_VALUE(int, EnchantmentMinusChance);
   DATA_BASE_VALUE(int, EnchantmentPlusChance);
   virtual DATA_BASE_VALUE(int, TeleportPriority);
-  DATA_BASE_BOOL(HasNormalPictureDirection);
+  DATA_BASE_TRUTH(HasNormalPictureDirection);
   DATA_BASE_VALUE(int, DamageFlags);
-  DATA_BASE_BOOL(FlexibilityIsEssential);
-  bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
-  virtual bool TryKey(item*, character*) { return false; }
+  DATA_BASE_TRUTH(FlexibilityIsEssential);
+  truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
+  virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
-  bool IsSimiliarTo(item*) const;
-  virtual bool IsPickable(character*) const { return true; }
-  bool CanBeSeenByPlayer() const;
-  virtual bool CanBeSeenBy(const character*) const;
+  truth IsSimiliarTo(item*) const;
+  virtual truth IsPickable(character*) const { return true; }
+  truth CanBeSeenByPlayer() const;
+  virtual truth CanBeSeenBy(const character*) const;
   festring GetDescription(int) const;
   virtual square* GetSquareUnderEntity(int = 0) const;
   virtual square* GetSquareUnder(int = 0) const;
   virtual lsquare* GetLSquareUnder(int = 0) const;
   level* GetLevel() const { return static_cast<level*>(Slot[0]->GetSquareUnder()->GetArea()); }
   area* GetArea() const { return Slot[0]->GetSquareUnder()->GetArea(); }
-  vector2d GetPos(int I = 0) const { return Slot[I]->GetSquareUnder()->GetPos(); }
-  square* GetNearSquare(vector2d Pos) const { return Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos); }
+  v2 GetPos(int I = 0) const { return Slot[I]->GetSquareUnder()->GetPos(); }
+  square* GetNearSquare(v2 Pos) const { return Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos); }
   square* GetNearSquare(int x, int y) const { return Slot[0]->GetSquareUnder()->GetArea()->GetSquare(x, y); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(v2 Pos) const { return static_cast<lsquare*>(Slot[0]->GetSquareUnder()->GetArea()->GetSquare(Pos)); }
   lsquare* GetNearLSquare(int x, int y) const { return static_cast<lsquare*>(Slot[0]->GetSquareUnder()->GetArea()->GetSquare(x, y)); }
   virtual void SignalVolumeAndWeightChange();
   virtual void CalculateVolumeAndWeight();
   long GetVolume() const { return Volume; }
   long GetWeight() const { return Weight; }
-  virtual void SignalEmitationIncrease(color24);
-  virtual void SignalEmitationDecrease(color24);
+  virtual void SignalEmitationIncrease(col24);
+  virtual void SignalEmitationDecrease(col24);
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
-  virtual bool IsDangerousForAI(const character*) const { return false; } 
-  virtual bool IsDangerous() const { return false; } 
+  virtual truth IsDangerousForAI(const character*) const { return false; } 
+  virtual truth IsDangerous() const { return false; } 
   void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
   void SpecialGenerationHandler();
   item* Duplicate(ulong = 0);
-  virtual void SetIsActive(bool) { }
+  virtual void SetIsActive(truth) { }
   double GetBaseDamage() const;
   int GetBaseMinDamage() const;
   int GetBaseMaxDamage() const;
   int GetBaseToHitValue() const;
   int GetBaseBlockValue() const;
-  virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
+  virtual void AddInventoryEntry(const character*, festring&, int, truth) const;
   long GetNutritionValue() const;
   virtual void SignalSpoil(material*);
-  virtual bool AllowSpoil() const;
+  virtual truth AllowSpoil() const;
   item* DuplicateToStack(stack*, ulong = 0);
-  virtual bool CanBePiledWith(const item*, const character*) const;
+  virtual truth CanBePiledWith(const item*, const character*) const;
   virtual long GetTotalExplosivePower() const { return 0; }
   virtual void Break(character*, int = YOURSELF);
   virtual void SetEnchantment(int) { }
@@ -414,14 +424,14 @@ class item : public object
   virtual double GetTHVBonus() const { return 0.; }
   virtual double GetDamageBonus() const { return 0.; }
   virtual void DrawContents(const character*) { }
-  virtual bool IsBroken() const;
+  virtual truth IsBroken() const;
   virtual int GetEnchantment() const { return 0; }
   long GetEnchantedPrice(int) const;
   virtual item* Fix();
   int GetStrengthRequirement() const;
   virtual int GetInElasticityPenalty(int) const { return 0; }
-  virtual bool IsFixableBySmith(const character*) const { return false; }
-  virtual bool IsFixableByTailor(const character*) const { return false; }
+  virtual truth IsFixableBySmith(const character*) const { return false; }
+  virtual truth IsFixableByTailor(const character*) const { return false; }
   long GetFixPrice() const;
   virtual void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
@@ -429,25 +439,24 @@ class item : public object
   void ResetSpoiling();
   virtual void SetItemsInside(const fearray<contentscript<item> >&, int) { }
   virtual int GetCarryingBonus() const { return 0; }
-  virtual bool IsBanana() const { return false; }
-  virtual bool IsEncryptedScroll() const { return false; }
+  virtual truth IsBanana() const { return false; }
+  virtual truth IsEncryptedScroll() const { return false; }
   const char* GetStrengthValueDescription() const;
   const char* GetBaseToHitValueDescription() const;
   const char* GetBaseBlockValueDescription() const;
-  virtual bool IsInCorrectSlot(int) const;
-  bool IsInCorrectSlot() const;
+  virtual truth IsInCorrectSlot(int) const;
+  truth IsInCorrectSlot() const;
   int GetEquipmentIndex() const;
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
-  virtual bool HasBetterVersion() const { return false; }
+  virtual truth HasBetterVersion() const { return false; }
   virtual void SortAllItems(const sortdata&) const;
-  virtual bool AllowAlphaEverywhere() const { return false; }
+  virtual truth AllowAlphaEverywhere() const { return false; }
   virtual int GetAttachedGod() const;
   virtual long GetTruePrice() const;
   virtual void Search(const character*, int) { }
-  bool IsSparkling() const;
   virtual head* Behead() { return 0; }
-  virtual bool IsGorovitsFamilyRelic() const { return false; }
-  virtual bool EffectIsGood() const { return false; }
+  virtual truth IsGorovitsFamilyRelic() const { return false; }
+  virtual truth EffectIsGood() const { return false; }
 #ifdef WIZARD
   virtual void AddAttackInfo(felist&) const;
   void AddMiscellaneousInfo(felist&) const;
@@ -455,16 +464,16 @@ class item : public object
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone() { }
-  virtual bool SuckSoul(character*, character* = 0) { return false; }
+  virtual truth SuckSoul(character*, character* = 0) { return false; }
   void SetConfig(int, int = 0);
   god* GetMasterGod() const;
-  const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
-  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*,bool));
-  virtual int GetSquareIndex(vector2d) const { return 0; }
-  virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
-  vector2d GetLargeBitmapPos(vector2d, int) const;
-  void LargeDraw(bitmap*, vector2d, color24, int, bool, bool) const;
-  virtual bool BunnyWillCatchAndConsume(const character*) const { return false; }
+  idholder* GetCloneMotherID() const { return CloneMotherID; }
+  virtual void SignalStackAdd(stackslot*, void (stack::*)(item*,truth));
+  virtual int GetSquareIndex(v2) const { return 0; }
+  virtual void Draw(blitdata&) const;
+  v2 GetLargeBitmapPos(v2, int) const;
+  void LargeDraw(blitdata&) const;
+  virtual truth BunnyWillCatchAndConsume(const character*) const { return false; }
   void DonateIDTo(item*);
   virtual void SignalRustLevelChange();
   void SendNewDrawAndMemorizedUpdateRequest() const;
@@ -475,115 +484,90 @@ class item : public object
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
   void RemoveFluid(fluid*);
-  void AddFluid(liquid*, festring, int, bool);
-  virtual bool IsAnimated() const;
+  void AddFluid(liquid*, festring, int, truth);
+  virtual truth IsAnimated() const;
   const rawbitmap* GetRawPicture() const;
-  void DrawFluidGearPictures(bitmap*, vector2d, color24, int, bool) const;
-  void DrawFluidBodyArmorPictures(bitmap*, vector2d, color24, int, bool) const;
-  void CheckFluidGearPictures(vector2d, int, bool);
-  void DrawFluids(bitmap*, vector2d, color24, int, bool) const;
+  void DrawFluidGearPictures(blitdata&, int = 0) const;
+  void DrawFluidBodyArmorPictures(blitdata&, int) const;
+  void CheckFluidGearPictures(v2, int, truth);
+  void DrawFluids(blitdata&) const;
   virtual void ReceiveAcid(material*, const festring&, long);
-  virtual bool ShowFluids() const { return true; }
+  virtual truth ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
   void Destroy(character*, int);
-  virtual bool AllowFluidBe() const { return true; }
-  virtual bool IsRusted() const;
+  virtual truth AllowFluidBe() const { return true; }
+  virtual truth IsRusted() const;
   void RemoveRust();
-  virtual bool IsBananaPeel() const { return false; }
+  virtual truth IsBananaPeel() const { return false; }
   void SetSpoilPercentage(int);
   virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
   void RedistributeFluids();
   virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
   virtual material* RemoveMaterial(material*);
   virtual void Cannibalize();
-  void InitMaterials(material*, bool = true);
+  void InitMaterials(material*, truth = true);
   void SetMainMaterial(material*, int = 0);
   void ChangeMainMaterial(material*, int = 0);
   virtual void GenerateMaterials();
-  virtual void InitMaterials(const materialscript*, const materialscript*, bool);
+  virtual void InitMaterials(const materialscript*, const materialscript*, truth);
   int GetSquarePosition() const { return (Flags & SQUARE_POSITION_BITS) >> SQUARE_POSITION_SHIFT; }
-  virtual bool IsLanternOnWall() const { return false; }
+  virtual truth IsLanternOnWall() const { return false; }
   virtual void DestroyBodyPart(stack*) { SendToHell(); }
   int GetLifeExpectancy() const { return LifeExpectancy; }
   virtual void SetLifeExpectancy(int, int);
-  int NeedsBe() const { return !!LifeExpectancy; }
-  bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
-  bool IsVeryCloseToSpoiling() const;
-  virtual bool IsValuable() const;
-  virtual bool Necromancy(character*) { return false; }
+  int NeedsBe() const { return LifeExpectancy; }
+  truth IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
+  truth IsVeryCloseToSpoiling() const;
+  virtual truth IsValuable() const;
+  virtual truth Necromancy(character*) { return false; }
   virtual void CalculateEnchantment() { }
   virtual character* GetBodyPartMaster() const { return 0; }
-  virtual bool AllowFluids() const { return false; }
+  virtual truth AllowFluids() const { return false; }
   int GetHinderVisibilityBonus(const character*) const;
-  virtual DATA_BASE_BOOL(IsKamikazeWeapon);
+  virtual DATA_BASE_TRUTH(IsKamikazeWeapon);
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
-  bool HasID(ulong What) const { return ID == What; }
-  virtual bool WillSpoil() const;
+  truth HasID(ulong What) const { return ID == What; }
+  virtual truth WillSpoil() const;
   int GetMaxSpoilPercentage() const;
-  bool HasPrice() const;
+  truth HasPrice() const;
   virtual void Disappear();
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
-  virtual item* RawDuplicate() const = 0;
+  //virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
-  virtual void VirtualConstructor(bool) { }
+  virtual void PostConstruct() { }
   void Initialize(int, int);
   virtual int GetGraphicsContainerIndex() const;
-  virtual bool ShowMaterial() const;
-  virtual bool AllowSparkling() const { return !Fluid; }
-  virtual bool WeightIsIrrelevant() const { return false; }
+  virtual truth ShowMaterial() const;
+  virtual truth AllowSparkling() const { return !Fluid; }
+  virtual truth WeightIsIrrelevant() const { return false; }
+  virtual const prototype* FindProtoType() const { return &ProtoType; }
+  static const prototype ProtoType;
   slot** Slot;
   int Size;
   ulong ID;
   const database* DataBase;
   long Volume;
   long Weight;
-  std::vector<ulong> CloneMotherID;
+  idholder* CloneMotherID;
   fluid** Fluid;
   int SquaresUnder;
   int LifeExpectancy;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
-#define ITEM_PROTOTYPE(name, base, baseproto)\
-item* name##_Clone(int Config, int SpecialFlags) { return new name(Config, SpecialFlags); }\
-itemprototype name##_ProtoType(baseproto, &name##_Clone, #name);\
-name::name(int Config, int SpecialFlags) : base(donothing()) { Initialize(Config, SpecialFlags); }\
-name::name(donothing D) : base(D) { }\
-const itemprototype* name::GetProtoType() const { return &name##_ProtoType; }\
-item* name::RawDuplicate() const { return new name(*this); }
-#define ABSTRACT_ITEM_PROTOTYPE(name, base, baseproto)\
-itemprototype name##_ProtoType(baseproto, 0, #name);\
-name::name(donothing D) : base(D) { }\
-const itemprototype* name::GetProtoType() const { return &name##_ProtoType; }
+#define ITEM_PROTO(name, base)\
+template<> const itemprototype name##sysbase::ProtoType(&base::ProtoType, itemspawner(&name##sysbase::Spawn), itemcloner(&name##sysbase::Clone), #name);
 #else
-#define ITEM_PROTOTYPE(name, base, baseproto)
-#define ABSTRACT_ITEM_PROTOTYPE(name, base, baseproto)
+#define ITEM_PROTO(name, base)
 #endif
 
-#define ITEM(name, base, data)\
-\
-name : public base\
-{\
- public:\
-  name(int = 0, int = 0);\
-  name(donothing);\
-  virtual const prototype* GetProtoType() const;\
-  data\
- protected:\
-  virtual item* RawDuplicate() const;\
-}; ITEM_PROTOTYPE(name, base, &base##_ProtoType);
-
-#define ABSTRACT_ITEM(name, base, data)\
-\
-name : public base\
-{\
- public:\
-  name(donothing);\
-  virtual const prototype* GetProtoType() const;\
-  data\
-}; ABSTRACT_ITEM_PROTOTYPE(name, base, &base##_ProtoType);
+#define ITEM(name, base)\
+class name;\
+typedef sysbase<name, base, itemprototype> name##sysbase;\
+ITEM_PROTO(name, base)\
+class name : public name##sysbase
 
 #endif

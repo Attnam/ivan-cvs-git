@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -13,19 +14,15 @@
 
 #include "proto.h"
 #include "materia.h"
+#include "database.h"
 
-materialprototype** protocontainer<material>::ProtoData;
-valuemap protocontainer<material>::CodeNameMap;
-int protocontainer<material>::Size;
-materialprototype material_ProtoType(0, 0, "material");
-const materialprototype* material::GetProtoType() const { return &material_ProtoType; }
+EXTENDED_SYSTEM_SPECIALIZATIONS(material)(0, 0, 0, "material");
 
 #include "materias.h"
 
 #undef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 
 #include "char.h"
-#include "database.h"
 #include "confdef.h"
 #include "message.h"
 #include "save.h"

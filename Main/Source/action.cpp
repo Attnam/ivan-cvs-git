@@ -1,22 +1,20 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through actset.cpp */
 
-actionprototype::actionprototype(action* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
+actionprototype::actionprototype(actionspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
 
-action::action(donothing) : Actor(0), Flags(0) { }
-action::~action() { }
-
-void action::Terminate(bool)
+void action::Terminate(truth)
 {
   GetActor()->SetAction(0);
   delete this;
@@ -32,9 +30,9 @@ void action::Load(inputfile& SaveFile)
   SaveFile >> Flags;
 }
 
-action* actionprototype::CloneAndLoad(inputfile& SaveFile) const
+action* actionprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
-  action* Action = Cloner(true);
+  action* Action = Spawner(0);
   Action->Load(SaveFile);
   return Action;
 }

@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FESTRING_H__
 #define __FESTRING_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <vector>
 
@@ -32,8 +29,10 @@ class festring
   festring() : Data(0), Size(0), OwnsData(false) { }
   explicit festring(sizetype);
   festring(sizetype, char);
-  festring(const char* CStr) : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
-  festring(const char* CStr, sizetype N) : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
+  festring(const char* CStr)
+  : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
+  festring(const char* CStr, sizetype N)
+  : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
   festring(const festring&);
   ~festring();
   festring& Capitalize();
@@ -50,10 +49,10 @@ class festring
   festring& operator<<(long Int) { return Append(Int); }
   festring& operator<<(ulong Int) { return Append(Int); }
   bool operator<(const festring&) const;
-  bool operator==(const festring&) const;
-  bool operator!=(const festring&) const;
-  bool operator==(const char*) const;
-  bool operator!=(const char*) const;
+  truth operator==(const festring&) const;
+  truth operator!=(const festring&) const;
+  truth operator==(const char*) const;
+  truth operator!=(const char*) const;
   int Compare(const festring&) const;
   const char* CStr() const;
   sizetype GetSize() const { return Size; }
@@ -61,23 +60,32 @@ class festring
   void Assign(sizetype, char);
   void Resize(sizetype, char = ' ');
   sizetype Find(char, sizetype = 0) const;
-  sizetype Find(const char* CStr, sizetype Pos = 0) const { return Find(CStr, Pos, strlen(CStr)); }
+  sizetype Find(const char* CStr, sizetype Pos = 0) const
+  { return Find(CStr, Pos, strlen(CStr)); }
   sizetype Find(const char*, sizetype, sizetype) const;
-  sizetype Find(const festring& S, sizetype Pos = 0) const { return Find(S.Data, Pos, S.Size); }
+  sizetype Find(const festring& S, sizetype Pos = 0) const
+  { return Find(S.Data, Pos, S.Size); }
   sizetype FindLast(char, sizetype = NPos) const;
   void Erase(sizetype, sizetype);
-  void Insert(sizetype Pos, const char* CStr) { Insert(Pos, CStr, strlen(CStr)); }
+  void Insert(sizetype Pos, const char* CStr)
+  { Insert(Pos, CStr, strlen(CStr)); }
   void Insert(sizetype, const char*, sizetype);
-  void Insert(sizetype Pos, const festring& S) { Insert(Pos, S.Data, S.Size); }
-  festring& Append(const festring& Str, sizetype N) { return Append(Str.Data, N); }
+  void Insert(sizetype Pos, const festring& S)
+  { Insert(Pos, S.Data, S.Size); }
+  festring& Append(const festring& Str, sizetype N)
+  { return Append(Str.Data, N); }
   static const sizetype NPos;
   static void SplitString(festring&, festring&, sizetype);
-  static int SplitString(const festring&, std::vector<festring>&, sizetype, sizetype = 0);
-  static sizetype IgnoreCaseFind(const festring&, const festring&, sizetype = 0);
-  static void SearchAndReplace(festring&, const festring&, const festring&, sizetype = 0);
+  static int SplitString(const festring&, std::vector<festring>&,
+			 sizetype, sizetype = 0);
+  static sizetype IgnoreCaseFind(const festring&,
+				 const festring&, sizetype = 0);
+  static void SearchAndReplace(festring&, const festring&,
+			       const festring&, sizetype = 0);
   static bool IgnoreCaseCompare(const festring&, const festring&);
-  bool IsEmpty() const { return !Size; }
-  char& operator[](sizetype Index) const { return Data[Index]; } /// HORRIBLE ERROR!!!!
+  truth IsEmpty() const { return !Size; }
+  /* HORRIBLE ERROR!!!! */
+  char& operator[](sizetype Index) const { return Data[Index]; }
   void PreProcessForFebot();
   void PostProcessForFebot();
   void SwapData(festring&);
@@ -104,45 +112,43 @@ class festringpile
 {
  public:
   festringpile(const festring& String) : String(String) { }
-  festringpile& operator+(char What) { String << What; return *this; }
-  festringpile& operator+(const char* What) { String << What; return *this; }
-  festringpile& operator+(const festring& What) { String << What; return *this; }
-  festringpile& operator+(const festringpile& What) { String << What.String; return *this; }
-  festringpile& operator+(short What) { String << What; return *this; }
-  festringpile& operator+(ushort What) { String << What; return *this; }
-  festringpile& operator+(int What) { String << What; return *this; }
-  festringpile& operator+(uint What) { String << What; return *this; }
-  festringpile& operator+(long What) { String << What; return *this; }
-  festringpile& operator+(ulong What) { String << What; return *this; }
+  template <class type>
+  festringpile& operator+(type What) { String << What; return *this; }
+  festringpile& operator+(const festring& What)
+  { String << What; return *this; }
+  festringpile& operator+(const festringpile& What)
+  { String << What.String; return *this; }
   operator festring() const { return String; }
  private:
   festring String;
 };
 
-inline festringpile operator+(const festring& S, char What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, const char* What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, const festring& What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, const festringpile& What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, short What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, ushort What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, int What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, long What) { return festringpile(S) + What; }
-inline festringpile operator+(const festring& S, ulong What) { return festringpile(S) + What; }
+template <class type>
+inline festringpile operator+(const festring& S, type What)
+{ return festringpile(S) + What; }
+inline festringpile operator+(const festring& S, const festring& What)
+{ return festringpile(S) + What; }
+inline festringpile operator+(const festring& S, const festringpile& What)
+{ return festringpile(S) + What; }
 
-inline festring::festring(const festring& Str) : Data(Str.Data), Size(Str.Size), OwnsData(Str.OwnsData), Reserved(Str.Reserved)
+inline festring::festring(const festring& Str)
+: Data(Str.Data), Size(Str.Size),
+  OwnsData(Str.OwnsData), Reserved(Str.Reserved)
 {
   if(Data && OwnsData)
     ++REFS(Data);
 }
 
-inline festring::festring(sizetype N) : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
+inline festring::festring(sizetype N)
+: Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
   char* Ptr = 4 + new char[Reserved + 5];
   REFS(Ptr) = 0;
   Data = Ptr;
 }
 
-inline festring::festring(sizetype N, char C) : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
+inline festring::festring(sizetype N, char C)
+: Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
   char* Ptr = 4 + new char[Reserved + 5];
   REFS(Ptr) = 0;
@@ -153,12 +159,12 @@ inline festring::festring(sizetype N, char C) : Size(N), OwnsData(true), Reserve
 inline festring::~festring()
 {
   if(OwnsData)
-    {
-      char* Ptr = Data;
+  {
+    char* Ptr = Data;
 
-      if(Ptr && !REFS(Ptr)--)
-	delete [] &REFS(Ptr);
-    }
+    if(Ptr && !REFS(Ptr)--)
+      delete [] &REFS(Ptr);
+  }
 }
 
 inline bool festring::operator<(const festring& Str) const
@@ -167,33 +173,34 @@ inline bool festring::operator<(const festring& Str) const
   sizetype StrSize = Str.Size;
 
   if(ThisSize && StrSize)
-    {
-      int Comp = memcmp(Data, Str.Data, StrSize > ThisSize ? ThisSize : StrSize);
-      return Comp < 0 || (!Comp && StrSize > ThisSize);
-    }
+  {
+    int Comp = memcmp(Data, Str.Data,
+		      StrSize > ThisSize ? ThisSize : StrSize);
+    return Comp < 0 || (!Comp && StrSize > ThisSize);
+  }
   else
     return !ThisSize && StrSize;
 }
 
-inline bool festring::operator==(const festring& Str) const
+inline truth festring::operator==(const festring& Str) const
 {
   sizetype StrSize = Str.Size;
   return Size == StrSize && (!StrSize || !memcmp(Data, Str.Data, StrSize));
 }
 
-inline bool festring::operator!=(const festring& Str) const
+inline truth festring::operator!=(const festring& Str) const
 {
   sizetype StrSize = Str.Size;
   return Size != StrSize || (StrSize && memcmp(Data, Str.Data, StrSize));
 }
 
-inline bool festring::operator==(const char* CStr) const
+inline truth festring::operator==(const char* CStr) const
 {
   sizetype StrSize = strlen(CStr);
   return Size == StrSize && (!StrSize || !memcmp(Data, CStr, StrSize));
 }
 
-inline bool festring::operator!=(const char* CStr) const
+inline truth festring::operator!=(const char* CStr) const
 {
   sizetype StrSize = strlen(CStr);
   return Size != StrSize || (StrSize && memcmp(Data, CStr, StrSize));
@@ -208,12 +215,13 @@ inline int festring::Compare(const festring& Str) const
   sizetype StrSize = Str.Size;
 
   if(ThisSize && StrSize)
-    {
-      int Comp = memcmp(Data, Str.Data, StrSize > ThisSize ? ThisSize : StrSize);
+  {
+    int Comp = memcmp(Data, Str.Data,
+		      StrSize > ThisSize ? ThisSize : StrSize);
 
-      if(Comp)
-	return Comp;
-    }
+    if(Comp)
+      return Comp;
+  }
 
   return ThisSize < StrSize ? -1 : ThisSize != StrSize;
 }
@@ -223,12 +231,12 @@ inline const char* festring::CStr() const
   char* Ptr = Data;
 
   if(Ptr)
-    {
-      if(OwnsData)
-	Ptr[Size] = 0;
+  {
+    if(OwnsData)
+      Ptr[Size] = 0;
 
-      return Ptr;
-    }
+    return Ptr;
+  }
   else
     return EmptyString;
 }
@@ -238,15 +246,15 @@ inline void festring::Empty()
   Size = 0;
 
   if(OwnsData)
-    {
-      char* Ptr = Data;
+  {
+    char* Ptr = Data;
 
-      if(Ptr && REFS(Ptr))
-	{
-	  --REFS(Ptr);
-	  Data = 0;
-	}
+    if(Ptr && REFS(Ptr))
+    {
+      --REFS(Ptr);
+      Data = 0;
     }
+  }
   else
     Data = 0;
 }
@@ -257,10 +265,10 @@ inline festring& festring::operator<<(char Char)
   sizetype OldSize = Size;
 
   if(OwnsData && OldPtr && !REFS(OldPtr) && OldSize < Reserved)
-    {
-      OldPtr[OldSize] = Char;
-      ++Size;
-    }
+  {
+    OldPtr[OldSize] = Char;
+    ++Size;
+  }
   else
     SlowAppend(Char);
 
@@ -275,10 +283,10 @@ inline festring& festring::operator<<(const char* CStr)
   char* OldPtr = Data;
 
   if(OwnsData && OldPtr && !REFS(OldPtr) && NewSize <= Reserved)
-    {
-      memcpy(OldPtr + OldSize, CStr, N);
-      Size = NewSize;
-    }
+  {
+    memcpy(OldPtr + OldSize, CStr, N);
+    Size = NewSize;
+  }
   else
     SlowAppend(CStr, N);
 
@@ -294,10 +302,10 @@ inline festring& festring::operator<<(const festring& Str)
   char* OtherPtr = Str.Data;
 
   if(OwnsData && OldPtr && !REFS(OldPtr) && NewSize <= Reserved)
-    {
-      memcpy(OldPtr + OldSize, OtherPtr, N);
-      Size = NewSize;
-    }
+  {
+    memcpy(OldPtr + OldSize, OtherPtr, N);
+    Size = NewSize;
+  }
   else
     SlowAppend(OtherPtr, N);
 
@@ -307,23 +315,24 @@ inline festring& festring::operator<<(const festring& Str)
 struct charcomparer
 {
   bool operator()(const char* const& S1, const char* const& S2) const
-  {
-    return strcmp(S1, S2) < 0;
-  }
+  { return strcmp(S1, S2) < 0; }
 };
 
 struct ignorecaseorderer
 {
   bool operator()(const festring& S1, const festring& S2) const
-  {
-    return festring::IgnoreCaseCompare(S1, S2);
-  }
+  { return festring::IgnoreCaseCompare(S1, S2); }
 };
 
 #define CONST_S(str) festring(str, sizeof(str) - 1)
 
-/* This macro doesn't evaluate with if what is not found so it's often faster */
+/*
+ * This macro doesn't evaluate with if what
+ * is not found so it's often faster
+ */
 
-#define SEARCH_N_REPLACE(where, what, with) if(where.Find(what) != festring::NPos) festring::SearchAndReplace(where, what, with);
+#define SEARCH_N_REPLACE(where, what, with)\
+if(where.Find(what) != festring::NPos)\
+  festring::SearchAndReplace(where, what, with);
 
 #endif

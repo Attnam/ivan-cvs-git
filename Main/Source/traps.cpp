@@ -1,103 +1,104 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through trapset.cpp */
+
+web::web()
+{
+  if(!game::IsLoading())
+  {
+    TrapData.TrapID = game::CreateNewTrapID(this);
+    TrapData.VictimID = 0;
+    Picture = new bitmap(TILE_V2, TRANSPARENT_COLOR);
+    bitmap Temp(TILE_V2, TRANSPARENT_COLOR);
+    Temp.ActivateFastFlag();
+    packcol16 Color = MakeRGB16(250, 250, 250);
+    igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, v2(RAND_2 ? 64 : 80, 32), ZERO_V2, TILE_V2, &Color);
+    Temp.NormalBlit(Picture, Flags);
+  }
+}
 
 web::~web()
 {
   game::RemoveTrapID(TrapData.TrapID);
 }
 
-void web::VirtualConstructor(bool Load)
-{
-  if(!Load)
-    {
-      TrapData.TrapID = game::CreateNewTrapID(this);
-      TrapData.VictimID = 0;
-      Picture = new bitmap(16, 16, TRANSPARENT_COLOR);
-      bitmap Temp(16, 16, TRANSPARENT_COLOR);
-      Temp.ActivateFastFlag();
-      packedcolor16 Color = MakeRGB16(250, 250, 250);
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, RAND_2 ? 64 : 80, 32, 0, 0, 16, 16, &Color);
-      Temp.NormalBlit(Picture, Flags);
-    }
-}
-
-bool web::TryToUnStick(character* Victim, vector2d)
+truth web::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
   int Modifier = 7 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(Modifier <= 1 || !RAND_N(Modifier))
-    {
-      Victim->RemoveTrap(TrapID);
-      TrapData.VictimID = 0;
+  {
+    Victim->RemoveTrap(TrapID);
+    TrapData.VictimID = 0;
 
-      if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to free yourself from the web.");
-      else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s manages to free %sself from the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+    if(Victim->IsPlayer())
+      ADD_MESSAGE("You manage to free yourself from the web.");
+    else if(Victim->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s manages to free %sself from the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
-      Victim->EditAP(-500);
-      return true;
-    }
+    Victim->EditAP(-500);
+    return true;
+  }
 
   if(!Modifier || !RAND_N(Modifier << 1))
-    {
-      Victim->RemoveTrap(TrapID);
-      TrapData.VictimID = 0;
-      GetLSquareUnder()->RemoveTrap(this);
-      SendToHell();
+  {
+    Victim->RemoveTrap(TrapID);
+    TrapData.VictimID = 0;
+    GetLSquareUnder()->RemoveTrap(this);
+    SendToHell();
 
-      if(Victim->IsPlayer())
-	ADD_MESSAGE("You tear the web down.");
-      else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tears the web down.", Victim->CHAR_NAME(DEFINITE));
+    if(Victim->IsPlayer())
+      ADD_MESSAGE("You tear the web down.");
+    else if(Victim->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s tears the web down.", Victim->CHAR_NAME(DEFINITE));
 
-      Victim->EditAP(-500);
-      return true;
-    }
+    Victim->EditAP(-500);
+    return true;
+  }
 
   Modifier = Max(GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75, 2);
 
   if(Victim->CanChokeOnWeb(this) && !RAND_N(Modifier << 3))
-    {
-      if(Victim->IsPlayer())
-	ADD_MESSAGE("You manage to choke yourself on the web.");
-      else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+  {
+    if(Victim->IsPlayer())
+      ADD_MESSAGE("You manage to choke yourself on the web.");
+    else if(Victim->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
-      Victim->LoseConsciousness(250 + RAND_N(250));
+    Victim->LoseConsciousness(250 + RAND_N(250));
+    Victim->EditAP(-1000);
+    return true;
+  }
+
+  if(!RAND_N(Modifier))
+  {
+    int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
+
+    if(VictimBodyPart != NONE_INDEX)
+    {
+      TrapData.BodyParts |= 1 << VictimBodyPart;
+      Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
+
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You fail to free yourself from the web and your %s is stuck in it in the attempt.", Victim->GetBodyPartName(VictimBodyPart).CStr());
+      else if(Victim->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s tries to free %sself from the web but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+
       Victim->EditAP(-1000);
       return true;
     }
-
-  if(!RAND_N(Modifier))
-    {
-      int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
-
-      if(VictimBodyPart != NONE_INDEX)
-	{
-	  TrapData.BodyParts |= 1 << VictimBodyPart;
-	  Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
-
-	  if(Victim->IsPlayer())
-	    ADD_MESSAGE("You fail to free yourself from the web and your %s is stuck in it in the attempt.", Victim->GetBodyPartName(VictimBodyPart).CStr());
-	  else if(Victim->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s tries to free %sself from the web but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
-
-	  Victim->EditAP(-1000);
-	  return true;
-	}
-    }
+  }
 
   if(Victim->IsPlayer())
     ADD_MESSAGE("You are unable to escape from the web.");
@@ -149,17 +150,17 @@ void web::AddTrapName(festring& String, int) const
   String << "a spider web";
 }
 
-void web::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
+void web::Draw(blitdata& BlitData) const
 {
-  Picture->NormalMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture->LuminanceMaskedBlit(BlitData);
 }
 
-bool web::IsStuckToBodyPart(int I) const
+truth web::IsStuckToBodyPart(int I) const
 {
-  return !!(1 << I & TrapData.BodyParts);
+  return 1 << I & TrapData.BodyParts;
 }
 
-void web::ReceiveDamage(character* Damager, int Damage, int Type, int Direction)
+void web::ReceiveDamage(character*, int, int Type, int)
 {
   if(Type & (ACID|FIRE|ELECTRICITY|ENERGY))
     Destroy();
@@ -177,7 +178,7 @@ void web::Destroy()
   SendToHell();
 }
 
-bool web::CanBeSeenBy(const character* Who) const
+truth web::CanBeSeenBy(const character* Who) const
 {
   return GetLSquareUnder()->CanBeSeenBy(Who) && Who->GetAttribute(WISDOM) > 4;
 }

@@ -1,24 +1,23 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __FLUID_H__
 #define __FLUID_H__
 
-#include "vector2d.h"
-#include "entity.h"
 #include "lsquare.h"
 
 class bitmap;
 
-typedef bool (rawbitmap::*pixelpredicate)(vector2d) const;
+typedef truth (rawbitmap::*pixelpredicate)(v2) const;
 
 class fluid : public entity
 {
@@ -28,51 +27,52 @@ class fluid : public entity
  public:
   fluid();
   fluid(liquid*, lsquare*);
-  fluid(liquid*, item*, const festring&, bool);
+  fluid(liquid*, item*, const festring&, truth);
   virtual ~fluid();
   virtual void Be();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Draw(bitmap*, vector2d, color24, bool) const;
+  void SimpleDraw(blitdata&) const;
+  void Draw(blitdata&) const;
   liquid* GetLiquid() const { return Liquid; }
   virtual square* GetSquareUnderEntity(int = 0) const { return LSquareUnder; }
   square* GetSquareUnder() const { return LSquareUnder; }
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  virtual bool IsOnGround() const { return true; }
+  virtual truth IsOnGround() const { return true; }
   void AddLiquid(long);
   void AddLiquidAndVolume(long);
   virtual void SignalVolumeAndWeightChange();
   void SetMotherItem(item*);
   static void AddFluidInfo(const fluid*, festring&);
-  void CheckGearPicture(vector2d, int, bool);
-  void DrawGearPicture(bitmap*, vector2d, color24, int, bool) const;
-  bool FadePictures();
-  void DrawBodyArmorPicture(bitmap*, vector2d, color24, int, bool) const;
+  void CheckGearPicture(v2, int, truth);
+  void DrawGearPicture(blitdata&, int) const;
+  truth FadePictures();
+  void DrawBodyArmorPicture(blitdata&, int) const;
   void Redistribute();
   virtual material* RemoveMaterial(material*);
   void Destroy();
   const festring& GetLocationName() const { return LocationName; }
-  bool IsInside() const { return !!(Flags & FLUID_INSIDE); }
-  bool UseImage() const;
+  truth IsInside() const { return Flags & FLUID_INSIDE; }
+  truth UseImage() const;
  protected:
   struct imagedata
   {
-    imagedata(bool = true);
+    imagedata(truth = true);
     ~imagedata();
-    void Animate(bitmap*, vector2d, color24, int) const;
-    void AddLiquidToPicture(const rawbitmap*, long, long, color16, pixelpredicate);
+    void Animate(blitdata&, int) const;
+    void AddLiquidToPicture(const rawbitmap*, long, long, col16, pixelpredicate);
     void Save(outputfile&) const;
     void Load(inputfile&);
-    bool Fade();
-    void Clear(bool);
+    truth Fade();
+    void Clear(truth);
     /* Only pictures of fluids not on ground have their RandMaps initialized,
        since they are animated. Note that the picture is always unrotated. */
     bitmap* Picture;
     /* Used by Animate() */
     mutable int DripTimer;
-    mutable vector2d DripPos;
-    mutable color16 DripColor;
+    mutable v2 DripPos;
+    mutable col16 DripColor;
     mutable alpha DripAlpha;
     /* Sum of all alphas of Picture. The volume of the liquid is currently
        proportional to AlphaSum of the fluid's Image, limiting it
@@ -80,11 +80,11 @@ class fluid : public entity
     long AlphaSum;
     /* AlphaSum / (non-transparent pixels in Picture), used to synchronise
        gear pictures with the main image */
-    packedalpha AlphaAverage;
+    packalpha AlphaAverage;
     /* The position of a gear picture in humanoid.pcx which binds the fluid;
        remembered so that it can be easily determined whether the fluid needs
        to be redistributed due to a major graphics change */
-    vector2d ShadowPos;
+    v2 ShadowPos;
     /* Animation of gear items needs to know whether the raw picture is
        rotated somehow. Currently this is the case only for an item
        in the left hand of a character. */

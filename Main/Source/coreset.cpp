@@ -1,17 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #include "entity.h"
 #include "pool.h"
-#include "vector2d.h"
+#include "v2.h"
 
 #include "entity.cpp"
 #include "pool.cpp"

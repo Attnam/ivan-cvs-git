@@ -98,3 +98,4 @@ Graphics bug in vesana corpse.
 Light sources in glass chests don't work correctly.
 Digging walls with lanterns doesn't update memorized etc. correctly.
 Shopkeepers/librarians can buy items even if unconsciouss.
+If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.

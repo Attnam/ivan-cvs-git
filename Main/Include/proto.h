@@ -1,25 +1,21 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __PROTO_H__
 #define __PROTO_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <map>
 #include <vector>
 
-#include "festring.h"
 #include "ivandef.h"
 #include "save.h"
 
@@ -43,42 +39,47 @@ template <class type> class protocontainer
   friend class databasecreator<type>;
   typedef typename type::prototype prototype;
   static int Add(prototype*);
-  static const prototype* GetProto(int I) { return ProtoData[I]; }
-  static int GetSize() { return Size; }
+  static const prototype* GetProto(int I) { return GetProtoData()[I]; }
+  //static int GetSize() { return Size; }
   static int SearchCodeName(const festring&);
-  static const char* GetMainClassID() { return ProtoData[1]->GetClassID(); }
+  static const char* GetMainClassID() { return GetProtoData()[1]->GetClassID(); }
+  static int GetSize() { return GetSizeRef(); }
  private:
-  static prototype** ProtoData;
-  static valuemap CodeNameMap;
-  static int Size;
+  static prototype**& GetProtoData();
+  static valuemap& GetCodeNameMap();
+  static int& GetSizeRef();
 };
+
+/*template <class type> void** protocontainer<type>::ProtoData;
+  template <class type> valuemap protocontainer<type>::CodeNameMap;
+  template <class type> int protocontainer<type>::Size;*/
 
 template <class type> inline int protocontainer<type>::Add(prototype* Proto)
 {
-  if(!Size)
-    (ProtoData = new prototype*[1024])[Size++] = 0;
+  if(!GetSize())
+    (GetProtoData() = new prototype*[1024])[GetSizeRef()++] = 0;
 
-  int Index = Size++;
-  ProtoData[Index] = Proto;
-  CodeNameMap.insert(std::pair<festring, long>(Proto->GetClassID(), Index));
+  int Index = GetSizeRef()++;
+  GetProtoData()[Index] = Proto;
+  GetCodeNameMap().insert(std::pair<festring, long>(Proto->GetClassID(), Index));
   return Index;
 }
 
 template <class type> inline int protocontainer<type>::SearchCodeName(const festring& Name)
 {
-  valuemap::iterator I = CodeNameMap.find(Name);
-  return I != CodeNameMap.end() ? I->second : 0;
+  valuemap::iterator I = GetCodeNameMap().find(Name);
+  return I != GetCodeNameMap().end() ? I->second : 0;
 }
 
 class protosystem
 {
  public:
   static character* BalancedCreateMonster();
-  static item* BalancedCreateItem(long = 0, long = MAX_PRICE, long = ANY_CATEGORY, int = 0, int = 0, int = 0, bool = false);
+  static item* BalancedCreateItem(long = 0, long = MAX_PRICE, long = ANY_CATEGORY, int = 0, int = 0, int = 0, truth = false);
   static character* CreateMonster(int = 1, int = 999999, int = 0);
-  static character* CreateMonster(const festring&, int = 0, bool = true);
-  static item* CreateItem(const festring&, bool = true);
-  static material* CreateMaterial(const festring&, long = 0, bool = true);
+  static character* CreateMonster(const festring&, int = 0, truth = true);
+  static item* CreateItem(const festring&, truth = true);
+  static material* CreateMaterial(const festring&, long = 0, truth = true);
   static void CreateEveryNormalEnemy(charactervector&);
 #ifdef WIZARD
   static void CreateEveryCharacter(charactervector&);
@@ -114,7 +115,7 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 {
   int Type = 0;
   SaveFile >> (ushort&)Type;
-  Class = Type ? protocontainer<type>::GetProto(Type)->CloneAndLoad(SaveFile) : 0;
+  Class = Type ? protocontainer<type>::GetProto(Type)->SpawnAndLoad(SaveFile) : 0;
   return SaveFile;
 }
 

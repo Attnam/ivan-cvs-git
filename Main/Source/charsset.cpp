@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -13,12 +14,9 @@
 
 #include "proto.h"
 #include "char.h"
+#include "database.h"
 
-characterprototype** protocontainer<character>::ProtoData;
-valuemap protocontainer<character>::CodeNameMap;
-int protocontainer<character>::Size;
-characterprototype character_ProtoType(0, 0, "character");
-const characterprototype* character::GetProtoType() const { return &character_ProtoType; }
+EXTENDED_SYSTEM_SPECIALIZATIONS(character)(0, 0, 0, "character");
 
 #include "human.h"
 #include "nonhuman.h"
@@ -44,9 +42,9 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "bitmap.h"
 #include "lterras.h"
 #include "save.h"
-#include "database.h"
 #include "traps.h"
 #include "iloops.h"
+#include "balance.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

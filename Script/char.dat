@@ -1,19 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* 
  * NOTICE!!!
- * This file contains SPOILERS, which might ruin your IVAN experience totally.
- * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
- * don't know what you're doing. So from here on, proceed at your own risk!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
  */
 
 /* Numerical character data loaded during game startup */
@@ -41,7 +44,6 @@ character
 	CriticalModifier = 20;
 	StandVerb = "standing";
 	CanOpen = true;
-	CanBeDisplaced = true;
 	Frequency = 10000;
 	EnergyResistance = 0;
 	FireResistance = 0;
@@ -54,12 +56,12 @@ character
 	IsNameable = true;
 	BaseEmitation = 0;
 	/* Obligatory: TorsoBitmapPos */
-	Article = "a";
+	UsesLongArticle = false;
 	Adjective = "";
-	AdjectiveArticle = "a";
+	UsesLongAdjectiveArticle = false;
 	/* Obligatory: NameSingular */
 	/* NameSingular + "s" by default: NamePlural */
-	ArticleMode = NORMAL_ARTICLE;
+	ArticleMode = 0;
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
 	/* At least one of the following three is obligatory: */
@@ -101,7 +103,7 @@ character
 	CanBeConfused = true;
 	CanApply = false;
 	WieldedPosition = 0, 0;
-	SparklingFlags = 0;
+	NaturalSparkleFlags = 0;
 	BiteCapturesBodyPart = true;
 	IsPlant = false;
 	MoveType = WALK;
@@ -467,6 +469,7 @@ playerkind
 	}*/
 	/*Inventory == Random { MinPrice = 200; Category = POTION; Times = 10; }*/
 	/*Inventory = { 2, ring(RING_OF_TELEPORT_CONTROL), wand(WAND_OF_TELEPORTATION) { Times = 5; } }*/
+	/*Inventory = { 2, IRON BANANA_FLESH meleeweapon(HALBERD), IRON BANANA_FLESH meleeweapon(TWO_HANDED_SWORD); }*/
 }
 
 petrus
@@ -482,7 +485,6 @@ petrus
 	DefaultCharisma = 40;
 	DefaultMana = 40;
 	IsCharmable = false;
-	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
 	HairColor = rgb16(160, 160, 160);
@@ -648,7 +650,7 @@ guard
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL);
 		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
 		LeftWielded = STEEL shield;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "eunuch";
 		CWeaponSkillHits = { 2, 200, 200; }
 		RightSWeaponSkillHits = 20;
@@ -726,7 +728,7 @@ guard
 		RightBoot = MITHRIL boot { Enchantment = 2; }
 		RightRing = ring(RING_OF_INFRA_VISION);
 		LeftRing = ring(RING_OF_INVISIBILITY);
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "elite";
 		CWeaponSkillHits = { 2, 500, 500; }
 		RightSWeaponSkillHits = 50;
@@ -734,7 +736,7 @@ guard
 		PanicLevel = 10;
 		TotalVolume = 80000;
 		ClothColor = rgb16(220, 220, 220);
-		SparklingFlags = CLOTH_COLOR;
+		NaturalSparkleFlags = CLOTH_COLOR;
 		FriendlyReplies =
 		{
 			5,
@@ -769,12 +771,11 @@ guard
 		IsUnique = true;
 		DefaultName = "Sir Haedlac Galladon VII";
 		IsNameable = false;
-		CanBeDisplaced = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		ClothColor = rgb16(144, 144, 200);
 		CanBeConfused = false;
-		SparklingFlags = CLOTH_COLOR;
+		NaturalSparkleFlags = CLOTH_COLOR;
 		Inventory == key(HEXAGONAL_LOCK);
 		FriendlyReplies =
 		{
@@ -989,7 +990,6 @@ oree
 	DefaultCharisma = 3;
 	DefaultMana = 30;
 	IsCharmable = false;
-	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
 	HeadBitmapPos = 96, 32;
@@ -1111,7 +1111,7 @@ darkknight
 		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
 		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
 		RightBoot = STEEL boot { Enchantment = 2; }
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "elite";
 		KnownCWeaponSkills == LARGE_SWORDS;
 		CWeaponSkillHits == 1000;
@@ -1146,7 +1146,6 @@ darkknight
 		DefaultName = "Golgor Dhan";
 		DangerModifier = 1500;
 		IsNameable = false;
-		CanBeDisplaced = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		Inventory = { 2, scrollofenchantarmor { Times = 2; }, scrollofenchantweapon { Times = 2; } }
@@ -1184,7 +1183,7 @@ ennerbeast
 	TotalSize = 150;
 	Adjective = "enner";
 	NameSingular = "beast";
-	AdjectiveArticle = "an";
+	UsesLongAdjectiveArticle = true;
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 5000;
@@ -1650,7 +1649,7 @@ goblin
 		ClothColor = rgb16(200, 0, 0);
 		Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
 		CanBeConfused = false;
-		SparklingFlags = HAIR_COLOR;
+		NaturalSparkleFlags = HAIR_COLOR;
 		FireResistance = 30;
 		ElectricityResistance = 30;
 		EnergyResistance = 30;
@@ -2170,7 +2169,6 @@ dolphin
 	DefaultCharisma = 30;
 	DefaultMana = 0;
 	StandVerb = "rolling"; /* only shown if not swimming */
-	CanBeDisplaced = false;
 	CanOpen = false;
 	MoveType = SWIM;
 	TotalVolume = 150000;
@@ -2523,7 +2521,7 @@ imp
 	TotalVolume = 40000;
 	TotalSize = 100;
 	NameSingular = "imp";
-	Article = "an";
+	UsesLongArticle = true;
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
 	CanUseEquipment = false;
@@ -2699,7 +2697,6 @@ mistress
 		DefaultName = "Sherarax";
 		DangerModifier = 1500;
 		IsNameable = false;
-		CanBeDisplaced = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		Inventory = { 4, scrolloftaming, scrolloftaming, wand(WAND_OF_HASTE), wand(WAND_OF_HASTE); }
@@ -2995,7 +2992,7 @@ angel
 	TotalSize = 200;
 	CanRead = true;
 	NameSingular = "angel";
-	Article = "an";
+	UsesLongArticle = true;
 	ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
 	SkinColor = rgb16(200, 200, 200);
 	HairColor = rgb16(180, 180, 0);
@@ -3383,7 +3380,7 @@ orc
 	LegBitmapPos = 0, 240;
 	TotalVolume = 90000;
 	TotalSize = 180;
-	Article = "an";
+	UsesLongArticle = true;
 	NameSingular = "orc";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
@@ -3524,7 +3521,6 @@ orc
 		DefaultName = "Ur-Khan";
 		DangerModifier = 1500;
 		IsNameable = false;
-		CanBeDisplaced = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		TotalVolume = 150000;
@@ -3666,7 +3662,7 @@ imperialist
 	ArmBitmapPos = 80, 112;
 	LegBitmapPos = 0, 0;
 	ClothColor = rgb16(50, 50, 50);
-	Article = "an";
+	UsesLongArticle = true;
 	Inventory = { 6, stone, stone, stone, stone, stone, holybook(MELLIS); }
 	CanRead = true;
 	HostileReplies == "\"Die you communist pig!\"";
@@ -4016,7 +4012,6 @@ mushroom
 	AttachedGod = NEFAS;
 	DeathMessage = "@Dd is squashed.";
 	BaseUnarmedStrength = 200;
-	CanBeDisplaced = false;
 	PanicLevel = 0;
 	CanOpen = false;
 	StandVerb = "rooted";
@@ -4087,7 +4082,7 @@ darkmage
 		DefaultWisdom = 10;
 		DefaultCharisma = 10;
 		DefaultMana = 20;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "apprentice";
 		NameSingular = "dark mage";
 		TotalVolume = 60000;
@@ -4161,7 +4156,7 @@ darkmage
 		DefaultWisdom = 20;
 		DefaultCharisma = 20;
 		DefaultMana = 40;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "elder";
 		NameSingular = "dark mage";
 		ClassStates = INFRA_VISION|ESP;
@@ -4393,7 +4388,7 @@ invisiblestalker
 	NameSingular = "stalker";
 	NamePlural = "stalkers";
 	Adjective = "invisible";
-	AdjectiveArticle = "an";
+	UsesLongAdjectiveArticle = true;
 	AttackStyle = USE_ARMS;
 	CanBeGenerated = true;
 	FleshMaterial = MAGICAL_AIR;
@@ -4428,7 +4423,6 @@ elpuri
 	DefaultCharisma = 2;
 	DefaultMana = 35;
 	IsCharmable = false;
-	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
 	TotalVolume = 1000000;
@@ -4484,7 +4478,6 @@ genetrixvesana
 	CWeaponSkillHits == 100;
 	PanicLevel = 0;
 	IsCharmable = false;
-	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
 	DeathMessage = "@Dd is brutally destroyed.";
@@ -4710,7 +4703,7 @@ necromancer
 		DefaultWisdom = 10;
 		DefaultCharisma = 10;
 		DefaultMana = 20;
-		AdjectiveArticle = "an";
+		UsesLongAdjectiveArticle = true;
 		Adjective = "apprentice";
 		TotalVolume = 60000;
 		TotalSize = 180;
@@ -4997,7 +4990,6 @@ archangel
 	IsCharmable = false;
 	IsUnique = true;
 	IsNameable = false;
-	CanBeDisplaced = false;
 	CanBeCloned = false;
 	IsPolymorphable = false;
 	CanBeConfused = false;

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -13,24 +14,24 @@
 
 void meleeweapon::SetSecondaryMaterial(material* What, int SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::ChangeSecondaryMaterial(material* What, int SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void meleeweapon::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
+void meleeweapon::InitMaterials(material* M1, material* M2, truth CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
 double meleeweapon::GetTHVBonus() const { return Enchantment * .5; }
 double meleeweapon::GetDamageBonus() const { return Enchantment; }
-color16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
-bool meleeweapon::IsDippable(const character*) const { return !Fluid; }
-bool meleeweapon::AllowRegularColors() const { return !!SecondaryMaterial->GetVolume(); }
-vector2d meleeweapon::GetWieldedBitmapPos(int I) const { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : vector2d(160, 128); }
-void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, bool CUP) { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
+col16 meleeweapon::GetDripColor() const { return Fluid[0]->GetLiquid()->GetColor(); }
+truth meleeweapon::IsDippable(const character*) const { return !Fluid; }
+truth meleeweapon::AllowRegularColors() const { return SecondaryMaterial->GetVolume(); }
+v2 meleeweapon::GetWieldedBitmapPos(int I) const { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(I) : v2(160, 128); }
+void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, truth CUP) { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
 
-color16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
+col16 justifier::GetOutlineColor(int) const { return MakeRGB16(0, 255, 0); }
 
-color16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
+col16 neercseulb::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME_1; }
 
-color16 gorovitshammer::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
+col16 gorovitshammer::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
-color16 gorovitssickle::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
+col16 gorovitssickle::GetOutlineColor(int) const { return MakeRGB16(255, 0, 0); }
 
 int thunderhammer::GetSpecialFlags() const { return !IsBroken() ? meleeweapon::GetSpecialFlags()|ST_LIGHTNING : meleeweapon::GetSpecialFlags(); }
 
@@ -39,57 +40,57 @@ double armor::GetTHVBonus() const { return Enchantment * .5; }
 double armor::GetDamageBonus() const { return Enchantment; }
 
 long bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
-bool bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
+truth bodyarmor::IsInCorrectSlot(int I) const { return I == BODY_ARMOR_INDEX; }
 const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 const char* bodyarmor::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
 
-color16 goldeneagleshirt::GetOutlineColor(int) const { return MakeRGB16(0, 255, 255); }
+col16 goldeneagleshirt::GetOutlineColor(int) const { return MakeRGB16(0, 255, 255); }
 
 long cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
-bool cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
-color16 cloak::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
+truth cloak::IsInCorrectSlot(int I) const { return I == CLOAK_INDEX; }
+col16 cloak::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
 const char* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
-bool cloak::ReceiveDamage(character* Damager, int Damage,  int Type, int Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
+truth cloak::ReceiveDamage(character* Damager, int Damage,  int Type, int Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
 int cloak::GetSpecialFlags() const { return ST_CLOAK; }
 
 long boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
-bool boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }
+truth boot::IsInCorrectSlot(int I) const { return I == RIGHT_BOOT_INDEX || I == LEFT_BOOT_INDEX; }
 
 long gauntlet::GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
-bool gauntlet::IsInCorrectSlot(int I) const { return I == RIGHT_GAUNTLET_INDEX || I == LEFT_GAUNTLET_INDEX; }
+truth gauntlet::IsInCorrectSlot(int I) const { return I == RIGHT_GAUNTLET_INDEX || I == LEFT_GAUNTLET_INDEX; }
 
 long belt::GetPrice() const { return armor::GetPrice() * 5 + GetEnchantedPrice(Enchantment); }
-bool belt::IsInCorrectSlot(int I) const { return I == BELT_INDEX; }
+truth belt::IsInCorrectSlot(int I) const { return I == BELT_INDEX; }
 
-bool ring::IsInCorrectSlot(int I) const { return I == RIGHT_RING_INDEX || I == LEFT_RING_INDEX; }
-color16 ring::GetMaterialColorB(int) const { return MakeRGB16(200, 200, 200); }
+truth ring::IsInCorrectSlot(int I) const { return I == RIGHT_RING_INDEX || I == LEFT_RING_INDEX; }
+col16 ring::GetMaterialColorB(int) const { return MakeRGB16(200, 200, 200); }
 
-bool amulet::IsInCorrectSlot(int I) const { return I == AMULET_INDEX; }
-color16 amulet::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
+truth amulet::IsInCorrectSlot(int I) const { return I == AMULET_INDEX; }
+col16 amulet::GetMaterialColorB(int) const { return MakeRGB16(111, 64, 37); }
 
-bool helmet::IsGorovitsFamilyRelic() const { return GetConfig() == GOROVITS_FAMILY_GAS_MASK; }
+truth helmet::IsGorovitsFamilyRelic() const { return GetConfig() == GOROVITS_FAMILY_GAS_MASK; }
 long helmet::GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
-bool helmet::IsInCorrectSlot(int I) const { return I == HELMET_INDEX; }
-color16 helmet::GetMaterialColorB(int) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? (GetConfig() & ~BROKEN) ? MakeRGB16(140, 70, 70) : MakeRGB16(111, 64, 37) : MakeRGB16(0, 40, 0); }
-color16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
+truth helmet::IsInCorrectSlot(int I) const { return I == HELMET_INDEX; }
+col16 helmet::GetMaterialColorB(int) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? (GetConfig() & ~BROKEN) ? MakeRGB16(140, 70, 70) : MakeRGB16(111, 64, 37) : MakeRGB16(0, 40, 0); }
+col16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); }
 
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
-bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, int BodyPartIndex, int, bool BlockedByArmour)
+truth meleeweapon::HitEffect(character* Enemy, character*, v2, int BodyPartIndex, int, truth BlockedByArmour)
 {
   if(!BlockedByArmour && Fluid)
-    {
-      bool Success = false;
-      fluidvector FluidVector;
-      FillFluidVector(FluidVector);
+  {
+    truth Success = false;
+    fluidvector FluidVector;
+    FillFluidVector(FluidVector);
 
-      for(uint c = 0; c < FluidVector.size(); ++c)
-	if(FluidVector[c]->Exists()
-	&& FluidVector[c]->GetLiquid()->HitEffect(Enemy, Enemy->GetBodyPart(BodyPartIndex)))
-	  Success = true;
+    for(uint c = 0; c < FluidVector.size(); ++c)
+      if(FluidVector[c]->Exists()
+	 && FluidVector[c]->GetLiquid()->HitEffect(Enemy, Enemy->GetBodyPart(BodyPartIndex)))
+	Success = true;
 
-      return Success;
-    }
+    return Success;
+  }
   else
     return false;
 }
@@ -103,18 +104,18 @@ void meleeweapon::DipInto(liquid* Liquid, character* Dipper)
   Dipper->DexterityAction(10);
 }
 
-bool pickaxe::Apply(character* User)
+truth pickaxe::Apply(character* User)
 {
   if(IsBroken())
-    {
-      ADD_MESSAGE("%s is totally broken.",CHAR_NAME(DEFINITE));
-      return false;
-    }
+  {
+    ADD_MESSAGE("%s is totally broken.",CHAR_NAME(DEFINITE));
+    return false;
+  }
 
   int Dir = game::DirectionQuestion(CONST_S("What direction do you want to dig? [press a direction key]"), false);
 
-  vector2d Temp = game::GetMoveVector(Dir);
-  vector2d ToBeDug = User->GetPos() + Temp;
+  v2 Temp = game::GetMoveVector(Dir);
+  v2 ToBeDug = User->GetPos() + Temp;
   if(Dir == DIR_ERROR || !GetArea()->IsValidPos(ToBeDug))
     return false;
 
@@ -122,32 +123,32 @@ bool pickaxe::Apply(character* User)
   olterrain* Terrain = Square->GetOLTerrain();
 
   if(!Terrain)
-    {
-        ADD_MESSAGE("Nothing to dig there!");
-	return false;
-    }
+  {
+    ADD_MESSAGE("Nothing to dig there!");
+    return false;
+  }
 
   if(Square->CanBeDug())
-    {
-      if(Terrain->CanBeDestroyed())
-	if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
-	  {
-	    int RoomNumber = Square->GetRoomIndex();
+  {
+    if(Terrain->CanBeDestroyed())
+      if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+      {
+	int RoomNumber = Square->GetRoomIndex();
 
-	    if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
-	      {
-		User->SwitchToDig(this, ToBeDug);
-		User->DexterityAction(5);
-		return true;
-	      }
-	    else
-	      return false;
-	  }
+	if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
+	{
+	  User->SwitchToDig(this, ToBeDug);
+	  User->DexterityAction(5);
+	  return true;
+	}
 	else
-	  ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
+	  return false;
+      }
       else
-	ADD_MESSAGE(Terrain->GetDigMessage().CStr());
-    }
+	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
+    else
+      ADD_MESSAGE(Terrain->GetDigMessage().CStr());
+  }
 
   return false;
 }
@@ -159,7 +160,7 @@ long meleeweapon::GetPrice() const
   WeaponStrengthModifier *= GetMainMaterial()->GetWeight();
   WeaponStrengthModifier *= Max((10 + Enchantment) * 0.1, 0.1);
   return long(WeaponStrengthModifier / (20000000.0 * sqrt(GetWeight())))
-       + GetEnchantedPrice(Enchantment);
+    + GetEnchantedPrice(Enchantment);
 }
 
 int whip::GetFormModifier() const
@@ -167,7 +168,7 @@ int whip::GetFormModifier() const
   return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
-bool pickaxe::IsAppliable(const character* Who) const
+truth pickaxe::IsAppliable(const character* Who) const
 {
   return Who->CanWield();
 }
@@ -191,7 +192,7 @@ material* meleeweapon::GetMaterial(int I) const
   return !I ? MainMaterial : SecondaryMaterial;
 }
 
-color16 meleeweapon::GetMaterialColorB(int) const
+col16 meleeweapon::GetMaterialColorB(int) const
 {
   return SecondaryMaterial->GetVolume() ? SecondaryMaterial->GetColor() : TRANSPARENT_COLOR;
 }
@@ -201,89 +202,89 @@ alpha meleeweapon::GetAlphaB(int) const
   return SecondaryMaterial->GetAlpha();
 }
 
-bool flamingsword::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth flamingsword::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(Enemy->IsEnabled() && RAND() & 1)
-    {
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
-    }
+    return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
+  }
   else
     return BaseSuccess;
 }
 
-bool mjolak::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth mjolak::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
-    {
-      if(Hitter->IsPlayer())
-	game::DoEvilDeed(10);
+  {
+    if(Hitter->IsPlayer())
+      game::DoEvilDeed(10);
 
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
-    }
+    return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
+  }
   else
     return BaseSuccess;
 }
 
-bool vermis::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth vermis::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
-    {
-      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+  {
+    if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      Enemy->TeleportRandomly();
-      return true;
-    }
+    Enemy->TeleportRandomly();
+    return true;
+  }
   else
     return BaseSuccess;
 }
 
-bool turox::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth turox::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
-    {
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      Enemy->GetLevel()->Explosion(Hitter, CONST_S("burned @bkp Turox's explosion"), HitPos, 10 + RAND() % 100);
-      return true;
-    }
+    Enemy->GetLevel()->Explosion(Hitter, CONST_S("burned @bkp Turox's explosion"), HitPos, 10 + RAND() % 100);
+    return true;
+  }
   else
     return BaseSuccess;
 }
 
-bool whipofthievery::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth whipofthievery::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
+
+    if(Hitter->IsPlayer())
     {
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
-
-      if(Hitter->IsPlayer())
-	{
-	  game::DoEvilDeed(10);
-	  game::GetGod(10)->AdjustRelation(10);
-	}
-
-      Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
-      return true;
+      game::DoEvilDeed(10);
+      game::GetGod(10)->AdjustRelation(10);
     }
+
+    Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
+    return true;
+  }
   else
     return BaseSuccess;
 }
@@ -293,54 +294,54 @@ meleeweapon::~meleeweapon()
   delete SecondaryMaterial;
 }
 
-meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW), Enchantment(MW.Enchantment)
+meleeweapon::meleeweapon(const meleeweapon& MW) : mybase(MW), Enchantment(MW.Enchantment)
 {
   CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
 }
 
-extern character::prototype petrus_ProtoType;
+//extern character::prototype petrus_ProtoType;
 
-bool whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
+truth whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
   /* TERRIBLE gum solution! */
 
-  if(Enemy->GetType() == petrus_ProtoType.GetIndex())
+  if(Enemy->GetType() == petrus::ProtoType.GetIndex())
     return false;
 
   if(!Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)
     return false;
 
   if(Hitter->IsPlayer())
-    {
-      if(game::GetGod(10)->GetRelation() < 0)
-	return false;
-      else
-	return !(RAND() % (10 - game::GetGod(10)->GetRelation() / 200));
-    }
+  {
+    if(game::GetGod(10)->GetRelation() < 0)
+      return false;
+    else
+      return !(RAND() % (10 - game::GetGod(10)->GetRelation() / 200));
+  }
   else
     return !(RAND() % 10);
 }
 
-void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, int, bool ShowSpecialInfo) const // never piled
+void meleeweapon::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
-    {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
-      Entry << ", " << GetBaseToHitValueDescription();
+  {
+    Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << '-' << GetBaseMaxDamage();
+    Entry << ", " << GetBaseToHitValueDescription();
 
-      if(!IsBroken() && !IsWhip())
-	Entry << ", " << GetStrengthValueDescription();
+    if(!IsBroken() && !IsWhip())
+      Entry << ", " << GetStrengthValueDescription();
 
-      int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-      int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-      if(CWeaponSkillLevel || SWeaponSkillLevel)
-	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
+      Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
-      Entry << ']';
-    }
+    Entry << ']';
+  }
 }
 
 void meleeweapon::SignalSpoil(material* Material)
@@ -349,22 +350,22 @@ void meleeweapon::SignalSpoil(material* Material)
     return;
 
   if(Material == MainMaterial)
-    {
-      if(CanBeSeenByPlayer())
-	if(SecondaryMaterial->GetVolume())
-	  ADD_MESSAGE("The edge of %s spoils.", CHAR_NAME(DEFINITE));
-	else
-	  ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
+  {
+    if(CanBeSeenByPlayer())
+      if(SecondaryMaterial->GetVolume())
+	ADD_MESSAGE("The edge of %s spoils.", CHAR_NAME(DEFINITE));
+      else
+	ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
 
-      RemoveMainMaterial();
-    }
+    RemoveMainMaterial();
+  }
   else
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("The handle of %s spoils", CHAR_NAME(DEFINITE));
+  {
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("The handle of %s spoils", CHAR_NAME(DEFINITE));
 
-      delete RemoveSecondaryMaterial();
-    }
+    delete RemoveSecondaryMaterial();
+  }
 }
 
 void meleeweapon::AddPostFix(festring& String) const
@@ -372,10 +373,10 @@ void meleeweapon::AddPostFix(festring& String) const
   item::AddPostFix(String);
 
   if(Fluid)
-    {
-      String << " covered with ";
-      fluid::AddFluidInfo(Fluid[0], String);
-    }
+  {
+    String << " covered with ";
+    fluid::AddFluidInfo(Fluid[0], String);
+  }
 
   if(Enchantment > 0)
     String << " +" << Enchantment;
@@ -398,9 +399,10 @@ long whipofthievery::GetPrice() const
   return GetMainMaterial()->GetFlexibility() > 5 || IsBroken() ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
 
-bool meleeweapon::IsSparkling(int I) const
+int meleeweapon::GetSparkleFlags() const
 {
-  return (I == 0 && MainMaterial->IsSparkling()) || (I == 1 && SecondaryMaterial->IsSparkling());
+  return (MainMaterial->IsSparkling() ? SPARKLING_A|(SecondaryMaterial->GetVolume() ? SPARKLING_C : 0) : 0)
+    | (SecondaryMaterial->IsSparkling() ? SPARKLING_B : 0);
 }
 
 void meleeweapon::SetEnchantment(int Amount)
@@ -420,10 +422,9 @@ int meleeweapon::GetStrengthValue() const
   return Max<int>(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
 }
 
-void meleeweapon::VirtualConstructor(bool Load)
+void meleeweapon::PostConstruct()
 {
-  if(!Load)
-    Enchantment = GetBaseEnchantment();
+  Enchantment = GetBaseEnchantment();
 }
 
 int meleeweapon::GetSpoilLevel() const
@@ -436,34 +437,34 @@ int meleeweapon::GetSpoilLevel() const
     return MainSpoilLevel;
 }
 
-bool neercseulb::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth neercseulb::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
-    {
-      if(Hitter->IsPlayer())
-	game::DoEvilDeed(10);
+  {
+    if(Hitter->IsPlayer())
+      game::DoEvilDeed(10);
 
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s Neerc Se-ulb's life-draining energies swallow %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s Neerc Se-ulb's life-draining energies swallow %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction) || BaseSuccess;
-    }
+    return Enemy->ReceiveBodyPartDamage(Hitter, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction) || BaseSuccess;
+  }
   else
     return BaseSuccess;
 }
 
-bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth thunderhammer::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
-    {
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      beamdata Beam
+    beamdata Beam
       (
 	Hitter,
 	CONST_S("electrocuted @bkp thunder hammer"),
@@ -475,14 +476,14 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitP
 	0
       );
 
-      GetLevel()->LightningBeam(Beam);
-      return true;
-    }
+    GetLevel()->LightningBeam(Beam);
+    return true;
+  }
   else
-     return BaseSuccess;
+    return BaseSuccess;
 }
 
-bool thunderhammer::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
+truth thunderhammer::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
 {
   return Type & ELECTRICITY ? false : meleeweapon::ReceiveDamage(Damager, Damage, Type, Dir);
 }
@@ -498,42 +499,42 @@ int belt::GetFormModifier() const
   return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
-void armor::AddInventoryEntry(const character*, festring& Entry, int Amount, bool ShowSpecialInfo) const
+void armor::AddInventoryEntry(const character*, festring& Entry, int Amount, truth ShowSpecialInfo) const
 {
   if(Amount == 1)
     AddName(Entry, INDEFINITE);
   else
-    {
-      Entry << Amount << ' ';
-      AddName(Entry, PLURAL);
-    }
+  {
+    Entry << Amount << ' ';
+    AddName(Entry, PLURAL);
+  }
 
   if(ShowSpecialInfo)
     Entry << " [" << GetWeight() * Amount << "g, AV " << GetStrengthValue() << ']';
 }
 
-void shield::AddInventoryEntry(const character* Viewer, festring& Entry, int, bool ShowSpecialInfo) const // never piled
+void shield::AddInventoryEntry(const character* Viewer, festring& Entry, int, truth ShowSpecialInfo) const // never piled
 {
   AddName(Entry, INDEFINITE);
 
   if(ShowSpecialInfo)
-    {
-      Entry << " [" << GetWeight() << "g, "  << GetBaseBlockValueDescription();
+  {
+    Entry << " [" << GetWeight() << "g, "  << GetBaseBlockValueDescription();
 
-      if(!IsBroken())
-	Entry << ", " << GetStrengthValueDescription();
+    if(!IsBroken())
+      Entry << ", " << GetStrengthValueDescription();
 
-      int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-      int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+    int CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+    int SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-      if(CWeaponSkillLevel || SWeaponSkillLevel)
-	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+    if(CWeaponSkillLevel || SWeaponSkillLevel)
+      Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
-      Entry << ']';
-    }
+    Entry << ']';
+  }
 }
 
-bool armor::CanBePiledWith(const item* Item, const character* Viewer) const
+truth armor::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return item::CanBePiledWith(Item, Viewer) && Enchantment == static_cast<const armor*>(Item)->Enchantment;
 }
@@ -561,10 +562,10 @@ void armor::AddPostFix(festring& String) const
   item::AddPostFix(String);
 
   if(Fluid)
-    {
-      String << " covered with ";
-      fluid::AddFluidInfo(Fluid[0], String);
-    }
+  {
+    String << " covered with ";
+    fluid::AddFluidInfo(Fluid[0], String);
+  }
 
   if(Enchantment > 0)
     String << " +" << Enchantment;
@@ -589,10 +590,9 @@ int armor::GetStrengthValue() const
   return Max<long>(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
 }
 
-void armor::VirtualConstructor(bool Load)
+void armor::PostConstruct()
 {
-  if(!Load)
-    Enchantment = GetBaseEnchantment();
+  Enchantment = GetBaseEnchantment();
 }
 
 int armor::GetInElasticityPenalty(int Attribute) const
@@ -613,41 +613,41 @@ void meleeweapon::GenerateMaterials()
 	       GetDefaultSecondaryVolume());
 }
 
-bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth chameleonwhip::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && ScabiesHelps(Enemy, Hitter))
-    {
-      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+  {
+    if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
       ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.", Hitter->CHAR_PERSONAL_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      if(Hitter->IsPlayer())
-	{
-	  game::DoEvilDeed(20);
-	  game::GetGod(10)->AdjustRelation(10);
-	}
-
-      int CurrentDanger = int(Enemy->GetRelativeDanger(PLAYER) * 1000);
-      Enemy->PolymorphRandomly(CurrentDanger / 4, Min(CurrentDanger, 999999), 100 + RAND() % 400);
-      return true;
+    if(Hitter->IsPlayer())
+    {
+      game::DoEvilDeed(20);
+      game::GetGod(10)->AdjustRelation(10);
     }
+
+    int CurrentDanger = int(Enemy->GetRelativeDanger(PLAYER) * 1000);
+    Enemy->PolymorphRandomly(CurrentDanger / 4, Min(CurrentDanger, 999999), 100 + RAND() % 400);
+    return true;
+  }
   else
     return BaseSuccess;
 }
 
-bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter) const
+truth chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter) const
 {
   if(!Enemy->IsPolymorphable())
     return false;
 
   if(Hitter->IsPlayer())
-    {
-      if(game::GetGod(SCABIES)->GetRelation() < 0)
-	return false;
-      else
-	return !(RAND() % (20 - game::GetGod(SCABIES)->GetRelation() / 150));
-    }
+  {
+    if(game::GetGod(SCABIES)->GetRelation() < 0)
+      return false;
+    else
+      return !(RAND() % (20 - game::GetGod(SCABIES)->GetRelation() / 150));
+  }
   else
     return !(RAND() % 20);
 } 
@@ -685,110 +685,110 @@ alpha goldeneagleshirt::GetOutlineAlpha(int Frame) const
 alpha wondersmellstaff::GetOutlineAlpha(int Frame) const
 {
   if(!IsBroken())
-    {
-      Frame &= 31;
-      return Frame * (31 - Frame) >> 1;
-    }
+  {
+    Frame &= 31;
+    return Frame * (31 - Frame) >> 1;
+  }
   else
     return 255;
 }
 
-color16 wondersmellstaff::GetOutlineColor(int Frame) const
+col16 wondersmellstaff::GetOutlineColor(int Frame) const
 {
   if(!IsBroken())
     switch((Frame&127) >> 5)
-      {
-      case 0: return BLUE;
-      case 1: return GREEN;
-      case 2: return RED;
-      case 3: return YELLOW;
-      }
+    {
+     case 0: return BLUE;
+     case 1: return GREEN;
+     case 2: return RED;
+     case 3: return YELLOW;
+    }
 
   return TRANSPARENT_COLOR;
 }
 
-bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int BodyPartIndex, int Direction, bool BlockedByArmour)
+truth wondersmellstaff::HitEffect(character* Enemy, character* Hitter, v2 HitPos, int BodyPartIndex, int Direction, truth BlockedByArmour)
 {
-  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
+  truth BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, HitPos, BodyPartIndex, Direction, BlockedByArmour);
 
   if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
+  {
+    if(RAND() & 3)
     {
-      if(RAND() & 3)
+      truth Seen = false;
+      int Amount = 250 / Enemy->GetSquaresUnder();
+
+      for(int c = 0; c < Enemy->GetSquaresUnder(); ++c)
+      {
+	lsquare* Square = Enemy->GetLSquareUnder(c);
+
+	if(Square->IsFlyable())
 	{
-	  bool Seen = false;
-	  int Amount = 250 / Enemy->GetSquaresUnder();
+	  Square->AddSmoke(gas::Spawn(EVIL_WONDER_STAFF_VAPOUR, Amount));
 
-	  for(int c = 0; c < Enemy->GetSquaresUnder(); ++c)
-	    {
-	      lsquare* Square = Enemy->GetLSquareUnder(c);
-
-	      if(Square->IsFlyable())
-		{
-		  Square->AddSmoke(new gas(EVIL_WONDER_STAFF_VAPOUR, Amount));
-
-		  if(!Seen && Square->CanBeSeenByPlayer())
-		    Seen = true;
-		}
-	    }
-
-	  if(Seen)
-	    ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+	  if(!Seen && Square->CanBeSeenByPlayer())
+	    Seen = true;
 	}
-      else
-	{
-	  /* Can a multitiled creature ever be the hitter? */
+      }
 
-	  lsquare* Square = Hitter->GetLSquareUnder();
-
-	  if(Square->IsFlyable())
-	    {
-	      if(Square->CanBeSeenByPlayer())
-		ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
-
-	      Square->AddSmoke(new gas(GOOD_WONDER_STAFF_VAPOUR, 100));
-	    }
-	}
-
-      return true;
+      if(Seen)
+	ADD_MESSAGE("Strange red smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
     }
+    else
+    {
+      /* Can a multitiled creature ever be the hitter? */
+
+      lsquare* Square = Hitter->GetLSquareUnder();
+
+      if(Square->IsFlyable())
+      {
+	if(Square->CanBeSeenByPlayer())
+	  ADD_MESSAGE("Strange blue smoke billows out of %s staff.", Hitter->CHAR_POSSESSIVE_PRONOUN);
+
+	Square->AddSmoke(gas::Spawn(GOOD_WONDER_STAFF_VAPOUR, 100));
+      }
+    }
+
+    return true;
+  }
   else
     return BaseSuccess;
 }
 
-bool bodyarmor::AddAdjective(festring& String, bool Articled) const
+truth bodyarmor::AddAdjective(festring& String, truth Articled) const
 {
   if(IsBroken())
-    {
-      if(Articled)
-	String << "a ";
+  {
+    if(Articled)
+      String << "a ";
 
-      if(GetMainMaterial()->GetFlexibility() >= 5)
-	String << "torn";
-      else
-	String << "broken";
+    if(GetMainMaterial()->GetFlexibility() >= 5)
+      String << "torn";
+    else
+      String << "broken";
 
-      String << ' ';
-      return true;
-    }
+    String << ' ';
+    return true;
+  }
   else
     return false;
 }
 
-bool cloak::AddAdjective(festring& String, bool Articled) const
+truth cloak::AddAdjective(festring& String, truth Articled) const
 {
   if(IsBroken())
-    {
-      if(Articled)
-	String << "a ";
+  {
+    if(Articled)
+      String << "a ";
 
-      if(GetMainMaterial()->GetFlexibility() >= 5)
-	String << "torn";
-      else
-	String << "broken";
+    if(GetMainMaterial()->GetFlexibility() >= 5)
+      String << "torn";
+    else
+      String << "broken";
 
-      String << ' ';
-      return true;
-    }
+    String << ' ';
+    return true;
+  }
   else
     return false;
 }
@@ -809,8 +809,8 @@ void meleeweapon::TryToRust(long LiquidModifier)
 material* meleeweapon::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
 {
   if((SecondaryMaterial->*Predicate)()
-  && SecondaryMaterial->GetVolume()
-  && Consumer->CanConsume(SecondaryMaterial))
+     && SecondaryMaterial->GetVolume()
+     && Consumer->CanConsume(SecondaryMaterial))
     return SecondaryMaterial;
   else
     return item::GetConsumeMaterial(Consumer, Predicate);
@@ -826,15 +826,15 @@ material* meleeweapon::RemoveMaterial(material* Material)
 
 material* meleeweapon::RemoveMainMaterial()
 {
-  bool Equipped = PLAYER->Equips(this);
+  truth Equipped = PLAYER->Equips(this);
 
   if(SecondaryMaterial->GetVolume())
-    {
-      item* Lump = SecondaryMaterial->CreateNaturalForm(SecondaryMaterial->GetVolume());
-      DonateFluidsTo(Lump);
-      DonateIDTo(Lump);
-      DonateSlotTo(Lump);
-    }
+  {
+    item* Lump = SecondaryMaterial->CreateNaturalForm(SecondaryMaterial->GetVolume());
+    DonateFluidsTo(Lump);
+    DonateIDTo(Lump);
+    DonateSlotTo(Lump);
+  }
   else
     RemoveFromSlot();
 
@@ -852,11 +852,11 @@ material* meleeweapon::RemoveSecondaryMaterial()
   if(!IsBroken())
     Break(0);
   else
-    {
-      RedistributeFluids();
-      UpdatePictures();
-      SendNewDrawAndMemorizedUpdateRequest();
-    }
+  {
+    RedistributeFluids();
+    UpdatePictures();
+    SendNewDrawAndMemorizedUpdateRequest();
+  }
 
   return 0;
 }
@@ -880,13 +880,13 @@ void meleeweapon::CalculateEmitation()
     game::CombineLights(Emitation, SecondaryMaterial->GetEmitation());
 }
 
-bool meleeweapon::CalculateHasBe() const
+truth meleeweapon::CalculateHasBe() const
 {
   return LifeExpectancy
-      || (MainMaterial && MainMaterial->HasBe())
-      || (SecondaryMaterial
-       && SecondaryMaterial->GetVolume()
-       && SecondaryMaterial->HasBe());
+    || (MainMaterial && MainMaterial->HasBe())
+    || (SecondaryMaterial
+	&& SecondaryMaterial->GetVolume()
+	&& SecondaryMaterial->HasBe());
 }
 
 void decosadshirt::Be()
@@ -897,10 +897,8 @@ void decosadshirt::Be()
   bodyarmor::Be();
 }
 
-void decosadshirt::VirtualConstructor(bool Load)
+decosadshirt::decosadshirt() : EquippedTicks(0)
 {
-  bodyarmor::VirtualConstructor(Load);
-  EquippedTicks = 0;
   Enable();
 }
 
@@ -942,4 +940,9 @@ void armor::CalculateEnchantment()
   Enchantment += femath::LoopRoll(game::GetCurrentLevel()->GetEnchantmentPlusChance(), 5);
   Enchantment -= femath::LoopRoll(GetEnchantmentMinusChance(), 5);
   Enchantment += femath::LoopRoll(GetEnchantmentPlusChance(), 5);
+}
+
+col16 meleeweapon::GetMaterialColorC(int Frame) const
+{
+  return SecondaryMaterial->GetVolume() ? GetMaterialColorA(Frame) : TRANSPARENT_COLOR;
 }

@@ -1,39 +1,42 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ROOM_H__
 #define __ROOM_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "vector2d.h"
+#include "v2.h"
 
 class room;
+class item;
 class olterrain;
 class lsquare;
 class festring;
+class outputfile;
+class inputfile;
+class character;
+
+typedef room* (*roomspawner)();
 
 class roomprototype
 {
  public:
-  roomprototype(room* (*)(bool), const char*);
-  room* Clone() const { return Cloner(false); }
-  room* CloneAndLoad(inputfile&) const;
+  roomprototype(roomspawner, const char*);
+  room* Spawn() const { return Spawner(); }
+  room* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
-  room* (*Cloner)(bool);
+  roomspawner Spawner;
   const char* ClassID;
 };
 
@@ -41,78 +44,90 @@ class room
 {
  public:
   typedef roomprototype prototype;
-  room(donothing);
-  virtual ~room();
+  room() : LastMasterSearchTick(0), MasterID(0) { }
+  virtual ~room() { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Enter(character*) { }
-  vector2d GetPos() const { return Pos; }
-  void SetPos(vector2d What) { Pos = What; }
-  vector2d GetSize() const { return Size; }
-  void SetSize(vector2d What) { Size = What; }
+  v2 GetPos() const { return Pos; }
+  void SetPos(v2 What) { Pos = What; }
+  v2 GetSize() const { return Size; }
+  void SetSize(v2 What) { Size = What; }
   void SetIndex(int What) { Index = What; }
   int GetIndex() const { return Index; }
   character* GetMaster() const;
   void SetMasterID(ulong What) { MasterID = What; }
-  virtual bool PickupItem(character*, item*, int) { return true; }
-  virtual bool DropItem(character*, item*, int) { return true; }
+  virtual truth PickupItem(character*, item*, int) { return true; }
+  virtual truth DropItem(character*, item*, int) { return true; }
   int GetDivineMaster() const { return DivineMaster; }
   void SetDivineMaster(int What) { DivineMaster = What; }
   virtual void KickSquare(character*, lsquare*) { }
-  virtual bool ConsumeItem(character*, item*, int) { return true; }
-  virtual bool AllowDropGifts() const { return true; }
-  virtual bool Drink(character*) const { return true; }
-  virtual bool HasDrinkHandler() const { return false; }
-  virtual bool Dip(character*) const { return true; }
-  virtual bool HasDipHandler() const { return false; }
+  virtual truth ConsumeItem(character*, item*, int) { return true; }
+  virtual truth AllowDropGifts() const { return true; }
+  virtual truth Drink(character*) const { return true; }
+  virtual truth HasDrinkHandler() const { return false; }
+  virtual truth Dip(character*) const { return true; }
+  virtual truth HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void DestroyTerrain(character*);
-  virtual bool AllowSpoil(const item*) const { return true; }
-  virtual bool CheckDestroyTerrain(character*);
+  virtual truth AllowSpoil(const item*) const { return true; }
+  virtual truth CheckDestroyTerrain(character*);
   virtual int GetGodRelationAdjustment() const { return -50; }
-  virtual bool AllowKick(const character*, const lsquare*) const { return true; }
-  bool MasterIsActive() const;
-  bool CheckKickSquare(const character*, const lsquare*) const;
+  virtual truth AllowKick(const character*, const lsquare*) const { return true; }
+  truth MasterIsActive() const;
+  truth CheckKickSquare(const character*, const lsquare*) const;
   virtual void HostileAction(character*) const { }
-  virtual bool AllowAltarPolymorph() const { return true; }
-  virtual bool AllowFoodSearch() const { return true; }
+  virtual truth AllowAltarPolymorph() const { return true; }
+  virtual truth AllowFoodSearch() const { return true; }
   virtual void ReceiveVomit(character*) { }
-  virtual bool IsOKToDestroyWalls(const character*) const;
+  virtual truth IsOKToDestroyWalls(const character*) const;
   virtual void GetAddItemEffect(item*) { };
   void FinalProcessForBone();
  protected:
-  virtual void VirtualConstructor(bool) { }
   mutable character* Master;
   mutable ulong LastMasterSearchTick;
-  vector2d Pos;
-  vector2d Size;
+  v2 Pos;
+  v2 Size;
   ulong MasterID;
   int Index;
   int DivineMaster;
 };
 
-#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
-#define ROOM_PROTOTYPE(name, base)\
-room* name##_Clone(bool Load) { return new name(Load); }\
-roomprototype name##_ProtoType(&name##_Clone, #name);\
-name::name(bool Load) : base(donothing()) { VirtualConstructor(Load); }\
-name::name(donothing D) : base(D) { }\
-const roomprototype* name::GetProtoType() const { return &name##_ProtoType; }
-#else
-#define ROOM_PROTOTYPE(name, base)
-#endif
+/*#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
+  #define ROOM_PROTOTYPE(name, base)\
+  room* name##_Spawn(truth Load) { return new name(Load); }\
+  roomprototype name##_ProtoType(&name##_Spawn, #name);\
+  name::name(truth Load) : base(donothing()) { VirtualConstructor(Load); }\
+  name::name(donothing D) : base(D) { }\
+  const roomprototype* name::GetProtoType() const { return &name##_ProtoType; }
+  #else
+  #define ROOM_PROTOTYPE(name, base)
+  #endif
 
-#define ROOM(name, base, data)\
-\
-name : public base\
-{\
- public:\
-  name(bool = false);\
+  #define ROOM(name, base, data)\
+  \
+  class name : public base\
+  {\
+  public:\
+  name(truth = false);\
   name(donothing);\
   virtual const prototype* GetProtoType() const;\
   data\
-}; ROOM_PROTOTYPE(name, base);
+  }; ROOM_PROTOTYPE(name, base)*/
+
+#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
+#define ROOM_PROTO(name)\
+template<> const roomprototype name##sysbase::ProtoType(roomspawner(&name##sysbase::Spawn), #name);
+#else
+#define ROOM_PROTO(name)
+#endif
+
+#define ROOM(name, base)\
+class name;\
+typedef simplesysbase<name, base, roomprototype> name##sysbase;\
+ROOM_PROTO(name)\
+class name : public name##sysbase
 
 #endif

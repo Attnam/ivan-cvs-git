@@ -1,20 +1,20 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __RAIN_H__
 #define __RAIN_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
+#include "lsquare.h"
+#include "entity.h"
 
 class rain : public entity
 {
@@ -23,34 +23,35 @@ class rain : public entity
   rain* Next;
  public:
   rain() : entity(HAS_BE), Next(0), Drop(0), Drops(0), OwnLiquid(0) { }
-  rain(liquid*, lsquare*, vector2d, int, bool);
+  rain(liquid*, lsquare*, v2, int, truth);
   ~rain();
   virtual void Be();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Draw(bitmap*, vector2d, color24) const;
-  bool HasOwnLiquid() const { return !!OwnLiquid; }
+  void Draw(blitdata&) const;
+  truth HasOwnLiquid() const { return OwnLiquid; }
   void RandomizeDropPos(int) const;
   liquid* GetLiquid() const { return Liquid; }
   virtual square* GetSquareUnderEntity(int = 0) const { return LSquareUnder; }
   square* GetSquareUnder() const { return LSquareUnder; }
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  virtual bool IsOnGround() const { return true; }
+  virtual truth IsOnGround() const { return true; }
   int GetTeam() const { return Team; }
  protected:
   mutable struct drop
   {
-    packedvector2d StartPos;
+    packv2 StartPos;
     ushort StartTick;
     ushort MaxAge;
   }* Drop;
   liquid* Liquid;
   lsquare* LSquareUnder;
-  vector2d Speed;
+  v2 Speed;
   long SpeedAbs;
-  mutable int Drops : 15;
-  int OwnLiquid : 1;
+  mutable int Drops : 8;
+  int BeCounter : 7;
+  truth OwnLiquid : 1;
   int Team : 8;
 };
 

@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -24,14 +25,14 @@ void team::SetRelation(team* AnotherTeam, int Relation)
 int team::GetRelation(const team* AnotherTeam) const
 {
   if(AnotherTeam != this)
-    {
-      std::map<ulong, int>::const_iterator Iterator = Relation.find(AnotherTeam->ID);
+  {
+    std::map<ulong, int>::const_iterator Iterator = Relation.find(AnotherTeam->ID);
 
-      if(Iterator != Relation.end())
-	return Iterator->second;
-      else
-	ABORT("Team %d dismissed!", AnotherTeam->ID);
-    }
+    if(Iterator != Relation.end())
+      return Iterator->second;
+    else
+      ABORT("Team %lu dismissed!", AnotherTeam->ID);
+  }
 
   return FRIEND;
 }
@@ -39,66 +40,66 @@ int team::GetRelation(const team* AnotherTeam) const
 void team::Hostility(team* Enemy)
 {
   if(this != Enemy && GetRelation(Enemy) != HOSTILE)
+  {
+    if(ID == PLAYER_TEAM && game::IsSumoWrestling())
+      game::EndSumoWrestling(DISQUALIFIED);
+
+    /* This is a gum solution. The behaviour should come from the script. */
+
+    if(ID == COLONIST_TEAM && Enemy->ID == NEW_ATTNAM_TEAM)
+      return;
+
+    game::Hostility(this, Enemy);
+
+    if(ID == PLAYER_TEAM)
     {
-      if(ID == PLAYER_TEAM && game::IsSumoWrestling())
-	game::EndSumoWrestling(DISQUALIFIED);
+      if(Enemy->ID == ATTNAM_TEAM)
+      {
+	/* This is a gum solution. The message should come from the script. */
+	if(PLAYER->CanHear())
+	  ADD_MESSAGE("You hear an alarm ringing.");
 
-      /* This is a gum solution. The behaviour should come from the script. */
-
-      if(ID == COLONIST_TEAM && Enemy->ID == NEW_ATTNAM_TEAM)
-	return;
-
-      game::Hostility(this, Enemy);
-
-      if(ID == PLAYER_TEAM)
+	if(game::GetStoryState() != 2)
 	{
-	  if(Enemy->ID == ATTNAM_TEAM)
-	    {
-	      /* This is a gum solution. The message should come from the script. */
-	      if(PLAYER->CanHear())
-		ADD_MESSAGE("You hear an alarm ringing.");
+	  v2 AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : v2(28, 20);
+	  int Seen = 0;
+	  angel* Angel;
 
-	      if(game::GetStoryState() != 2)
-		{
-		  vector2d AngelPos = game::GetPetrus() ? game::GetPetrus()->GetPos() : vector2d(28, 20);
-		  int Seen = 0;
-		  angel* Angel;
+	  for(int c = 0; c < 3; ++c)
+	  {
+	    if(!c)
+	      Angel = archangel::Spawn(VALPURUS);
+	    else
+	      Angel = angel::Spawn(VALPURUS);
 
-		  for(int c = 0; c < 3; ++c)
-		    {
-		      if(!c)
-			Angel = new archangel(VALPURUS);
-		      else
-			Angel = new angel(VALPURUS);
+	    v2 Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
 
-		      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
+	    if(Where == ERROR_V2)
+	      Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
 
-		      if(Where == ERROR_VECTOR)
-			Where = game::GetCurrentLevel()->GetRandomSquare(Angel);
+	    Angel->SetTeam(Enemy);
+	    Angel->PutTo(Where);
 
-		      Angel->SetTeam(Enemy);
-		      Angel->PutTo(Where);
+	    if(Angel->CanBeSeenByPlayer())
+	      ++Seen;
+	  }
 
-		      if(Angel->CanBeSeenByPlayer())
-			++Seen;
-		    }
+	  if(Seen == 1)
+	    ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
+	  else if(Seen == 2)
+	    ADD_MESSAGE("Two %s materialize.", Angel->CHAR_NAME(PLURAL));
+	  else if(Seen == 3)
+	    ADD_MESSAGE("Three %s materialize.", Angel->CHAR_NAME(PLURAL));
 
-		  if(Seen == 1)
-		    ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
-		  else if(Seen == 2)
-		    ADD_MESSAGE("Two %s materialize.", Angel->CHAR_NAME(PLURAL));
-		  else if(Seen == 3)
-		    ADD_MESSAGE("Three %s materialize.", Angel->CHAR_NAME(PLURAL));
-
-		  ADD_MESSAGE("\"We will defend the Holy Order!\"");
-		}
-	    }
-
-	  ADD_MESSAGE("You have a feeling this wasn't a good idea...");
+	  ADD_MESSAGE("\"We will defend the Holy Order!\"");
 	}
+      }
 
-      SetRelation(Enemy, HOSTILE);
+      ADD_MESSAGE("You have a feeling this wasn't a good idea...");
     }
+
+    SetRelation(Enemy, HOSTILE);
+  }
 }
 
 void team::Save(outputfile& SaveFile) const
@@ -111,7 +112,7 @@ void team::Load(inputfile& SaveFile)
   SaveFile >> ID >> Relation >> KillEvilness;
 }
 
-bool team::HasEnemy() const
+truth team::HasEnemy() const
 {
   for(int c = 0; c < game::GetTeams(); ++c)
     if(!game::GetTeam(c)->GetMember().empty() && GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -148,14 +149,14 @@ void team::MoveMembersTo(charactervector& CVector)
 {
   for(std::list<character*>::iterator i = Member.begin(); i != Member.end(); ++i)
     if((*i)->IsEnabled())
-      {
-	if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
-	  (*i)->GetAction()->Terminate(false);
+    {
+      if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
+	(*i)->GetAction()->Terminate(false);
 
-	if(!(*i)->GetAction())
-	  {
-	    CVector.push_back(*i);
-	    (*i)->Remove();
-	  }
+      if(!(*i)->GetAction())
+      {
+	CVector.push_back(*i);
+	(*i)->Remove();
       }
+    }
 }

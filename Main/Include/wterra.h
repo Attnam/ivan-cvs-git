@@ -1,23 +1,25 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __WTERRA_H__
 #define __WTERRA_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include "terra.h"
 #include "wsquare.h"
+
+struct blitdata;
+
+typedef gwterrain* (*gwterrainspawner)();
+typedef owterrain* (*owterrainspawner)();
 
 class wterrain
 {
@@ -25,18 +27,17 @@ class wterrain
   wterrain() : WSquareUnder(0), AnimationFrames(1) { }
   virtual ~wterrain() { }
   virtual void Load(inputfile&);
-  vector2d GetPos() const { return WSquareUnder->GetPos(); }
+  v2 GetPos() const { return WSquareUnder->GetPos(); }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   worldmap* GetWorldMap() const { return WSquareUnder->GetWorldMap(); }
   void AddName(festring&, int) const;
   festring GetName(int) const;
-  bool IsAnimated() const { return AnimationFrames > 1; }
+  truth IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(int What) { AnimationFrames = What; }
   virtual const char* GetNameStem() const = 0;
  protected:
-  virtual void VirtualConstructor(bool) { }
-  virtual bool LongerArticle() const { return false; }
-  virtual vector2d GetBitmapPos(int) const = 0;
+  virtual truth UsesLongArticle() const { return false; }
+  virtual v2 GetBitmapPos(int) const = 0;
   wsquare* WSquareUnder;
   int AnimationFrames;
 };
@@ -44,14 +45,14 @@ class wterrain
 class gwterrainprototype
 {
  public:
-  gwterrainprototype(gwterrain* (*)(bool), const char*);
-  gwterrain* Clone() const { return Cloner(false); }
-  gwterrain* CloneAndLoad(inputfile&) const;
+  gwterrainprototype(gwterrainspawner, const char*);
+  gwterrain* Spawn() const { return Spawner(); }
+  gwterrain* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
-  gwterrain* (*Cloner)(bool);
+  gwterrainspawner Spawner;
   const char* ClassID;
 };
 
@@ -59,9 +60,8 @@ class gwterrain : public wterrain, public gterrain
 {
  public:
   typedef gwterrainprototype prototype;
-  gwterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  void Draw(bitmap*, vector2d, color24, bool) const;
+  void Draw(blitdata&) const;
   virtual int GetPriority() const = 0;
   virtual int GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
@@ -69,20 +69,20 @@ class gwterrain : public wterrain, public gterrain
   void CalculateNeighbourBitmapPoses();
   virtual int GetWalkability() const;
  protected:
-  std::pair<vector2d, int> Neighbour[8];
+  std::pair<v2, int> Neighbour[8];
 };
 
 class owterrainprototype
 {
  public:
-  owterrainprototype(owterrain* (*)(bool), const char*);
-  owterrain* Clone() const { return Cloner(false); }
-  owterrain* CloneAndLoad(inputfile&) const;
+  owterrainprototype(owterrainspawner, const char*);
+  owterrain* Spawn() const { return Spawner(); }
+  owterrain* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
  private:
   int Index;
-  owterrain* (*Cloner)(bool);
+  owterrainspawner Spawner;
   const char* ClassID;
 };
 
@@ -90,58 +90,31 @@ class owterrain : public wterrain, public oterrain
 {
  public:
   typedef owterrainprototype prototype;
-  owterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  virtual void Draw(bitmap*, vector2d, color24, bool) const;
+  void Draw(blitdata&) const;
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual int GetAttachedDungeon() const { return 0; }
   virtual int GetAttachedArea() const { return 0; }
   virtual int GetAttachedEntry() const;
-  virtual bool Enter(bool) const;
+  virtual truth Enter(truth) const;
   virtual int GetWalkability() const;
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
-#define WTERRAIN_PROTOTYPE(name, base, protobase)\
-protobase* name##_Clone(bool Load) { return new name(Load); }\
-protobase##prototype name##_ProtoType(&name##_Clone, #name);\
-name::name(bool Load) : base(donothing()) { VirtualConstructor(Load); }\
-name::name(donothing D) : base(D) { }\
-int name::StaticType() { return name##_ProtoType.GetIndex(); }\
-const protobase##prototype* name::GetProtoType() const { return &name##_ProtoType; }
+#define WTERRAIN_PROTO(name, protobase)\
+template<> const protobase##prototype name##sysbase::ProtoType(protobase##spawner(&name##sysbase::Spawn), #name);
 #else
-#define WTERRAIN_PROTOTYPE(name, base, protobase)
+#define WTERRAIN_PROTO(name, protobase)
 #endif
 
-#define WTERRAIN(name, base, protobase, data)\
-\
-name : public base\
-{\
- public:\
-  name(bool = false);\
-  name(donothing);\
-  static int StaticType();\
-  virtual const prototype* GetProtoType() const;\
-  data\
-}; WTERRAIN_PROTOTYPE(name, base, protobase);
+#define WTERRAIN(name, base, protobase)\
+class name;\
+typedef simplesysbase<name, base, protobase##prototype> name##sysbase;\
+WTERRAIN_PROTO(name, protobase)\
+class name : public name##sysbase
 
-#define GWTERRAIN(name, base, data)\
-\
-WTERRAIN(\
-  name,\
-  base,\
-  gwterrain,\
-  data\
-);
-
-#define OWTERRAIN(name, base, data)\
-\
-WTERRAIN(\
-  name,\
-  base,\
-  owterrain,\
-  data\
-);
+#define GWTERRAIN(name, base) WTERRAIN(name, base, gwterrain)
+#define OWTERRAIN(name, base) WTERRAIN(name, base, owterrain)
 
 #endif

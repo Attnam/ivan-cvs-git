@@ -1,22 +1,19 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __MESSAGE_H__
 #define __MESSAGE_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
-#include "vector2d.h"
+#include "v2.h"
 
 #define ADD_MESSAGE msgsystem::AddMessage
 
@@ -29,7 +26,7 @@ class festring;
 class msgsystem
 {
  public:
-  static void AddMessage(const char*, ...);
+  static void LIKE_PRINTF(1, 2) AddMessage(const char*, ...);
   static void Draw();
   static void DrawMessageHistory();
   static void Format();
@@ -49,10 +46,10 @@ class msgsystem
   static festring LastMessage;
   static festring BigMessage;
   static int Times;
-  static vector2d Begin, End;
-  static bool Enabled;
-  static bool BigMessageMode;
-  static bool MessagesChanged;
+  static v2 Begin, End;
+  static truth Enabled;
+  static truth BigMessageMode;
+  static truth MessagesChanged;
   static bitmap* QuickDrawCache;
   static int LastMessageLines;
 };

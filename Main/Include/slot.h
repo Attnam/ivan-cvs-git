@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __SLOT_H__
 #define __SLOT_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "typedef.h"
 
@@ -36,17 +33,17 @@ class slot
   item* operator->() const { return Item; }
   item* operator*() const { return Item; }
   virtual void AddFriendItem(item*) const = 0;
-  virtual bool IsOnGround() const { return false; }
+  virtual truth IsOnGround() const { return false; }
   virtual void PutInItem(item*) = 0;
   virtual square* GetSquareUnder(int = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() = 0;
-  virtual void SignalEmitationIncrease(color24) = 0;
-  virtual void SignalEmitationDecrease(color24) = 0;
+  virtual void SignalEmitationIncrease(col24) = 0;
+  virtual void SignalEmitationDecrease(col24) = 0;
   virtual void DonateTo(item*);
-  virtual bool CanBeSeenBy(const character*) const = 0;
+  virtual truth CanBeSeenBy(const character*) const = 0;
   virtual void SignalEnchantmentChange() { }
-  virtual bool IsVisible() const = 0;
-  virtual bool IsGearSlot() const { return false; }
+  virtual truth IsVisible() const = 0;
+  virtual truth IsGearSlot() const { return false; }
  protected:
   item* Item;
 };
@@ -59,16 +56,16 @@ class stackslot : public slot
   stackslot(stack* MotherStack, stackslot* Last) : MotherStack(MotherStack), Last(Last), Next(0) { }
   virtual void Empty();
   virtual void AddFriendItem(item*) const;
-  virtual bool IsOnGround() const;
+  virtual truth IsOnGround() const;
   virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(color24);
-  virtual void SignalEmitationDecrease(color24);
+  virtual void SignalEmitationIncrease(col24);
+  virtual void SignalEmitationDecrease(col24);
   virtual void DonateTo(item*);
-  virtual bool CanBeSeenBy(const character*) const;
+  virtual truth CanBeSeenBy(const character*) const;
   stack* GetMotherStack() const { return MotherStack; }
   void SetMotherStack(stack* What) { MotherStack = What; }
-  virtual bool IsVisible() const;
+  virtual truth IsVisible() const;
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
  protected:
@@ -86,12 +83,12 @@ class bodypartslot : public slot
   virtual void AddFriendItem(item*) const;
   virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(color24);
-  virtual void SignalEmitationDecrease(color24);
+  virtual void SignalEmitationIncrease(col24);
+  virtual void SignalEmitationDecrease(col24);
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
-  virtual bool CanBeSeenBy(const character*) const;
-  virtual bool IsVisible() const { return false; }
+  virtual truth CanBeSeenBy(const character*) const;
+  virtual truth IsVisible() const { return false; }
  protected:
   character* Master;
 };
@@ -109,12 +106,12 @@ class gearslot : public slot
   virtual void PutInItem(item*);
   virtual square* GetSquareUnder(int = 0) const;
   virtual void SignalVolumeAndWeightChange();
-  virtual void SignalEmitationIncrease(color24);
-  virtual void SignalEmitationDecrease(color24);
-  virtual bool CanBeSeenBy(const character*) const;
+  virtual void SignalEmitationIncrease(col24);
+  virtual void SignalEmitationDecrease(col24);
+  virtual truth CanBeSeenBy(const character*) const;
   virtual void SignalEnchantmentChange();
-  virtual bool IsVisible() const { return false; }
-  virtual bool IsGearSlot() const { return true; }
+  virtual truth IsVisible() const { return false; }
+  virtual truth IsGearSlot() const { return true; }
  protected:
   bodypart* BodyPart;
   int EquipmentIndex;

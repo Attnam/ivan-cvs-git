@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __IGRAPH_H__
 #define __IGRAPH_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include <map>
 
@@ -39,19 +36,19 @@ struct graphicid
   bool operator<(const graphicid&) const;
   ushort BitmapPosX NO_ALIGNMENT;
   ushort BitmapPosY NO_ALIGNMENT;
-  packedcolor16 Color[4] NO_ALIGNMENT;
+  packcol16 Color[4] NO_ALIGNMENT;
   uchar Frame NO_ALIGNMENT;
   uchar FileIndex NO_ALIGNMENT;
   ushort SpecialFlags NO_ALIGNMENT;
-  packedalpha Alpha[4] NO_ALIGNMENT;
-  packedalpha BaseAlpha NO_ALIGNMENT;
+  packalpha Alpha[4] NO_ALIGNMENT;
+  packalpha BaseAlpha NO_ALIGNMENT;
   uchar SparkleFrame NO_ALIGNMENT;
   uchar SparklePosX NO_ALIGNMENT;
   uchar SparklePosY NO_ALIGNMENT;
-  packedcolor16 OutlineColor NO_ALIGNMENT;
-  packedalpha OutlineAlpha NO_ALIGNMENT;
+  packcol16 OutlineColor NO_ALIGNMENT;
+  packalpha OutlineAlpha NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
-  vector2d Position NO_ALIGNMENT;
+  v2 Position NO_ALIGNMENT;
   uchar RustData[4] NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
   uchar WobbleData NO_ALIGNMENT;
@@ -104,7 +101,7 @@ class igraph
   static const rawbitmap* GetCursorRawGraphic() { return RawGraphic[GR_CURSOR]; }
   static const bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
-  static void DrawCursor(vector2d, int);
+  static void DrawCursor(v2, int);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
   static const rawbitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
@@ -118,14 +115,14 @@ class igraph
   static void UnLoadMenu();
   static bitmap* GetSilhouetteCache(int I1, int I2, int I3) { return SilhouetteCache[I1][I2][I3]; }
   static const bitmap* GetBackGround() { return BackGround; }
-  static void BlitBackGround(int, int, int, int);
+  static void BlitBackGround(v2, v2);
   static void CreateBackGround(int);
  private:
-  static void EditBodyPartTile(rawbitmap*, rawbitmap*, vector2d, int);
-  static vector2d RotateTile(rawbitmap*, rawbitmap*, vector2d, vector2d, int);
+  static void EditBodyPartTile(rawbitmap*, rawbitmap*, v2, int);
+  static v2 RotateTile(rawbitmap*, rawbitmap*, v2, v2, int);
   static void CreateBodyBitmapValidityMaps();
   static void CreateSilhouetteCaches();
-  static color16 GetBackGroundColor(int);
+  static col16 GetBackGroundColor(int);
   static rawbitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];
   static bitmap* TileBuffer;
@@ -139,7 +136,7 @@ class igraph
   static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
   static rawbitmap* ColorizeBuffer[2];
   static bitmap* Cursor[CURSOR_TYPES];
-  static color16 CursorColor[CURSOR_TYPES];
+  static col16 CursorColor[CURSOR_TYPES];
   static bitmap* BackGround;
   static int CurrentColorType;
 };

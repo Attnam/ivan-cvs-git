@@ -11,6 +11,8 @@
 #include "felist.h"
 
 #define STRETCH 5
+#define TILE_SIZE 16
+const v2 TILE_V2(TILE_SIZE, TILE_SIZE);
 
 int Main(int, char**)
 {
@@ -48,7 +50,7 @@ int Main(int, char**)
   OConfigFile.close();
 
   graphics::Init();
-  graphics::SetMode("IGOR 1.203", 0, 800, 600, true);
+  graphics::SetMode("IGOR 1.203", 0, v2(800, 600), false);
   graphics::LoadDefaultFont(Directory + "Font.pcx");
   DOUBLE_BUFFER->ClearToColor(0);
 
@@ -61,7 +63,7 @@ int Main(int, char**)
   List.AddEntry(CONST_S("OLTerra.pcx"), LIGHT_GRAY);
   ushort Selected;
   festring FileName;
-  List.SetPos(vector2d(300, 250));
+  List.SetPos(v2(300, 250));
   List.SetWidth(200);
 
   while((Selected = List.Draw()) & FELIST_ERROR_BIT)
@@ -80,16 +82,32 @@ int Main(int, char**)
   CBitmap = new rawbitmap(Directory + FileName);
   bitmap CursorBitmap(Directory + "Cursor.pcx");
   CursorBitmap.ActivateFastFlag();
-  vector2d Cursor(0, 0);
+  v2 Cursor(0, 0);
   int k = 0;
   Selected = 0;
-  packedcolor16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
-  std::vector<vector2d> DrawQueue;
+  packcol16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
+  std::vector<v2> DrawQueue;
   uchar TempBuffer[256];
+  blitdata B1 = { DOUBLE_BUFFER,
+		  { 0, 0 },
+		  { RES.X - STRETCH * 16 - 10, RES.Y - STRETCH * 16 - 10 },
+		  { TILE_SIZE, TILE_SIZE },
+		  STRETCH };
+  blitdata B2 = { DOUBLE_BUFFER,
+		  { 0, 0 },
+		  { RES.X - STRETCH * 32 - 20, RES.Y - STRETCH * 16 - 10 },
+		  { TILE_SIZE, TILE_SIZE },
+		  STRETCH };
+  blitdata B3 = { DOUBLE_BUFFER,
+		  { 0, 0 },
+		  { 0, 0 },
+		  { TILE_SIZE, TILE_SIZE },
+		  0,
+		  TRANSPARENT_COLOR };
 
   for(;;)
     {
-      static vector2d MoveVector[] = { vector2d(0, -16), vector2d(-16, 0), vector2d(0, 16), vector2d(16, 0) };
+      static v2 MoveVector[] = { v2(0, -16), v2(-16, 0), v2(0, 16), v2(16, 0) };
       static int Key[] = { 'w', 'a', 's', 'd' };
 
       int c;
@@ -98,9 +116,9 @@ int Main(int, char**)
 	{
 	  if(Key[c] == k)
 	    {
-	      vector2d NewPos = Cursor + MoveVector[c];
+	      v2 NewPos = Cursor + MoveVector[c];
 
-	      if(NewPos.X >= 0 && NewPos.X <= CBitmap->GetXSize() - 16 && NewPos.Y >= 0 && NewPos.Y <= CBitmap->GetYSize() - 16)
+	      if(NewPos.X >= 0 && NewPos.X <= CBitmap->GetSize().X - 16 && NewPos.Y >= 0 && NewPos.Y <= CBitmap->GetSize().Y - 16)
 		Cursor = NewPos;
 
 	      break;
@@ -108,9 +126,9 @@ int Main(int, char**)
 
 	  if((Key[c]&~0x20) == k)
 	    {
-	      vector2d NewPos = Cursor + (MoveVector[c] << 2);
+	      v2 NewPos = Cursor + (MoveVector[c] << 2);
 
-	      if(NewPos.X >= 0 && NewPos.X <= CBitmap->GetXSize() - 16 && NewPos.Y >= 0 && NewPos.Y <= CBitmap->GetYSize() - 16)
+	      if(NewPos.X >= 0 && NewPos.X <= CBitmap->GetSize().X - 16 && NewPos.Y >= 0 && NewPos.Y <= CBitmap->GetSize().Y - 16)
 		Cursor = NewPos;
 
 	      break;
@@ -120,36 +138,36 @@ int Main(int, char**)
       if(k >= 0x31 && k <= 0x34)
 	Selected = k - 0x31;
       else if(k == '+')
-	CBitmap->AlterGradient(Cursor, 16, 16, Selected, 1, false);
+	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, 1, false);
       else if(k == '-')
-	CBitmap->AlterGradient(Cursor, 16, 16, Selected, -1, false);
+	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, -1, false);
       else if(k == '>')
-	CBitmap->AlterGradient(Cursor, 16, 16, Selected, 1, true);
+	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, 1, true);
       else if(k == '<')
-	CBitmap->AlterGradient(Cursor, 16, 16, Selected, -1, true);
+	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, -1, true);
       else if(k == KEY_UP) 
-	CBitmap->Roll(Cursor, 16, 16, 0, -1, TempBuffer);
+	CBitmap->Roll(Cursor, TILE_V2, v2(0, -1), TempBuffer);
       else if(k == KEY_DOWN)
-	CBitmap->Roll(Cursor, 16, 16, 0, 1, TempBuffer);
+	CBitmap->Roll(Cursor, TILE_V2, v2(0, 1), TempBuffer);
       else if(k == KEY_RIGHT)
-	CBitmap->Roll(Cursor, 16, 16, 1, 0, TempBuffer);
+	CBitmap->Roll(Cursor, TILE_V2, v2(1, 0), TempBuffer);
       else if(k == KEY_LEFT)
-	CBitmap->Roll(Cursor, 16, 16, -1, 0, TempBuffer);
+	CBitmap->Roll(Cursor, TILE_V2, v2(-1, 0), TempBuffer);
       else if(k == '=')
 	{
-	  FONT->Printf(DOUBLE_BUFFER, 10, 460, RED, "Select color to swap with [1-4/ESC]");
+	  FONT->Printf(DOUBLE_BUFFER, v2(10, 460), RED, "Select col to swap with [1-4/ESC]");
 	  graphics::BlitDBToScreen();
 
 	  for(k = GET_KEY(); k != 0x1B; k = GET_KEY())
 	    if(k >= 0x31 && k <= 0x34)
 	      {
-		CBitmap->SwapColors(Cursor, 16, 16, Selected, k - 0x31);
+		CBitmap->SwapColors(Cursor, TILE_V2, Selected, k - 0x31);
 		break;
 	      }
 	}
       else if(k == 0x1B)
 	{
-	  FONT->Printf(DOUBLE_BUFFER, 10, 460, RED, "Save? [y/n/c]");
+	  FONT->Printf(DOUBLE_BUFFER, v2(10, 460), RED, "Save? [y/n/c]");
 	  graphics::BlitDBToScreen();
 
 	  for(;;)
@@ -175,7 +193,7 @@ int Main(int, char**)
 	}
       else if(k == 'p')
 	{
-	  std::vector<vector2d>::iterator i = std::find(DrawQueue.begin(), DrawQueue.end(), Cursor);
+	  std::vector<v2>::iterator i = std::find(DrawQueue.begin(), DrawQueue.end(), Cursor);
 
 	  if(i == DrawQueue.end())
 	    DrawQueue.push_back(Cursor);
@@ -187,28 +205,34 @@ int Main(int, char**)
 
       DOUBLE_BUFFER->ClearToColor(0);
       DOUBLE_BUFFER->Fill(0, 0, CBitmap->GetSize(), 0xF81F);
-      CBitmap->MaskedBlit(DOUBLE_BUFFER, 0, 0, 0, 0, CBitmap->GetSize(), Color);
-      DOUBLE_BUFFER->DrawRectangle(RES_X - STRETCH * 16 - 12, RES_Y - STRETCH * 16 - 12, RES_X - 9, RES_Y - 9, DARK_GRAY, true);
-      DOUBLE_BUFFER->DrawRectangle(RES_X - STRETCH * 32 - 22, RES_Y - STRETCH * 16 - 12, RES_X - STRETCH * 16 - 19, RES_Y - 9, DARK_GRAY, true);
-      DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, Cursor, RES_X - STRETCH * 16 - 10, RES_Y - STRETCH * 16 - 10, 16, 16, STRETCH);
-      FONT->Printf(DOUBLE_BUFFER, 10, 480, WHITE, "Control cursor: wasd and WASD");
-      FONT->Printf(DOUBLE_BUFFER, 10, 490, WHITE, "Select m-color: 1-4");
-      FONT->Printf(DOUBLE_BUFFER, 10, 500, WHITE, "Safely alter gradient: ±");
-      FONT->Printf(DOUBLE_BUFFER, 10, 510, WHITE, "Power alter gradient: <>");
-      FONT->Printf(DOUBLE_BUFFER, 10, 520, WHITE, "Swap m-colors: =");
-      FONT->Printf(DOUBLE_BUFFER, 10, 530, WHITE, "Push to / pop from draw queue: p");
-      FONT->Printf(DOUBLE_BUFFER, 10, 540, WHITE, "Clear draw queue: c");
-      FONT->Printf(DOUBLE_BUFFER, 10, 550, WHITE, "Roll picture: arrow keys");
-      FONT->Printf(DOUBLE_BUFFER, 10, 570, WHITE, "MColor selected: %d", Selected + 1);
-      FONT->Printf(DOUBLE_BUFFER, 10, 580, WHITE, "Current position: (%d, %d)", Cursor.X, Cursor.Y);
+      CBitmap->MaskedBlit(DOUBLE_BUFFER, v2(0, 0), v2(0, 0), CBitmap->GetSize(), Color);
+      DOUBLE_BUFFER->DrawRectangle(RES.X - STRETCH * 16 - 12, RES.Y - STRETCH * 16 - 12, RES.X - 9, RES.Y - 9, DARK_GRAY, true);
+      DOUBLE_BUFFER->DrawRectangle(RES.X - STRETCH * 32 - 22, RES.Y - STRETCH * 16 - 12, RES.X - STRETCH * 16 - 19, RES.Y - 9, DARK_GRAY, true);
+      B1.Src = Cursor;
+      DOUBLE_BUFFER->StretchBlit(B1);
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 480), WHITE, "Control cursor: wasd and WASD");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 490), WHITE, "Select m-col: 1-4");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 500), WHITE, "Safely alter gradient: ±");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 510), WHITE, "Power alter gradient: <>");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 520), WHITE, "Swap m-cols: =");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 530), WHITE, "Push to / pop from draw queue: p");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 540), WHITE, "Clear draw queue: c");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 550), WHITE, "Roll picture: arrow keys");
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 570), WHITE, "MColor selected: %d", Selected + 1);
+      FONT->Printf(DOUBLE_BUFFER, v2(10, 580), WHITE, "Current position: (%d, %d)", Cursor.X, Cursor.Y);
 
       for(c = 0; c < DrawQueue.size(); ++c)
 	{
-	  DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], RES_X - STRETCH * 32 - 20, RES_Y - STRETCH * 16 - 10, 16, 16, STRETCH);
-	  CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], 16, 16);
+	  B2.Src = DrawQueue[c];
+	  DOUBLE_BUFFER->StretchBlit(B2);
+	  B3.Dest = DrawQueue[c];
+	  CursorBitmap.NormalMaskedBlit(B3);
+	  //DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], , TILE_V2, STRETCH);
+	  //CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], TILE_V2);
 	}
 
-      CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, Cursor, 16, 16);
+      B3.Dest = Cursor;
+      CursorBitmap.NormalMaskedBlit(B3);
       graphics::BlitDBToScreen();
       k = GET_KEY();
     }

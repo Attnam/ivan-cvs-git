@@ -1,19 +1,22 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* 
  * NOTICE!!!
- * This file contains SPOILERS, which might ruin your IVAN experience totally.
- * Also, editing anything can DESTROY GAME BALANCE or CAUSE OBSCURE BUGS if you 
- * don't know what you're doing. So from here on, proceed at your own risk!
+ *
+ * This file contains SPOILERS, which might ruin your IVAN experience
+ * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
+ * OBSCURE BUGS if you don't know what you're doing. So from here on,
+ * proceed at your own risk!
  */
 
 /* Numerical defines for other script files */
@@ -37,25 +40,26 @@
 
 #define TRANSPARENT_COLOR 63519
 
-#define POLYMORPHED 1
-#define HASTE 2
-#define SLOW 4
-#define POLYMORPH_CONTROL 8
-#define LIFE_SAVED 16
-#define LYCANTHROPY 32
-#define INVISIBLE 64
-#define INFRA_VISION 128
-#define ESP 256
-#define POISONED 512
-#define TELEPORT 1024
-#define POLYMORPH 2048
-#define TELEPORT_CONTROL 4096
-#define PANIC 8192
-#define CONFUSED 16384
-#define PARASITIZED 32768
-#define SEARCHING 65536
-#define GAS_IMMUNITY 131072
-#define LEVITATION 262144
+#define POLYMORPHED (1 << 0)
+#define HASTE (1 << 1)
+#define SLOW (1 << 2)
+#define POLYMORPH_CONTROL (1 << 3)
+#define LIFE_SAVED (1 << 4)
+#define LYCANTHROPY (1 << 5)
+#define INVISIBLE (1 << 6)
+#define INFRA_VISION (1 << 7)
+#define ESP (1 << 8)
+#define POISONED (1 << 9)
+#define TELEPORT (1 << 10)
+#define POLYMORPH (1 << 11)
+#define TELEPORT_CONTROL (1 << 12)
+#define PANIC (1 << 13)
+#define CONFUSED (1 << 14)
+#define PARASITIZED (1 << 15)
+#define SEARCHING (1 << 16)
+#define GAS_IMMUNITY (1 << 17)
+#define LEVITATION (1 << 18)
+#define LEPROSY (1 << 19)
 
 #define HEAD 1
 #define TORSO 2
@@ -111,29 +115,25 @@
 #define INDEFINE_BIT 4
 #define INDEFINITE 6
 
-#define NORMAL_ARTICLE 0
-#define NO_ARTICLE 1
-#define DEFINITE_ARTICLE 2
-
 #define ANY_CATEGORY 2147483647
-#define HELMET 1
-#define AMULET 2
-#define CLOAK 4
-#define BODY_ARMOR 8
-#define WEAPON 16
-#define SHIELD 32
-#define RING 64
-#define GAUNTLET 128
-#define BELT 256
-#define BOOT 512
-#define FOOD 1024
-#define POTION 2048
-#define SCROLL 4096
-#define BOOK 8192
-#define WAND 16384
-#define TOOL 32768
-#define VALUABLE 65536
-#define MISC 131072
+#define HELMET (1 << 0)
+#define AMULET (1 << 1)
+#define CLOAK (1 << 2)
+#define BODY_ARMOR (1 << 3)
+#define WEAPON (1 << 4)
+#define SHIELD (1 << 5)
+#define RING (1 << 6)
+#define GAUNTLET (1 << 7)
+#define BELT (1 << 8)
+#define BOOT (1 << 9)
+#define FOOD (1 << 10)
+#define POTION (1 << 11)
+#define SCROLL (1 << 12)
+#define BOOK (1 << 13)
+#define WAND (1 << 14)
+#define TOOL (1 << 15)
+#define VALUABLE (1 << 16)
+#define MISC (1 << 17)
 
 #define GOOD 1
 #define NEUTRAL 2
@@ -445,6 +445,18 @@
 #define LEG_STRENGTH 7
 #define DEXTERITY 8
 #define AGILITY 9
+
+#define F_ENDURANCE (1 << ENDURANCE)
+#define F_PERCEPTION (1 << PERCEPTION)
+#define F_INTELLIGENCE (1 << INTELLIGENCE)
+#define F_WISDOM (1 << WISDOM)
+#define F_CHARISMA (1 << CHARISMA)
+#define F_MANA (1 << MANA)
+
+#define F_ARM_STRENGTH (1 << ARM_STRENGTH)
+#define F_LEG_STRENGTH (1 << LEG_STRENGTH)
+#define F_DEXTERITY (1 << DEXTERITY)
+#define F_AGILITY (1 << AGILITY)
 
 #define HELMET_INDEX 0
 #define AMULET_INDEX 1
@@ -839,5 +851,58 @@
 #define BLUNT 1
 #define SLASH 2
 #define PIERCE 4
+
+/*************************/
+/* Common DataBase flags */
+/*************************/
+
+/* CommonFlags */
+#define IS_ABSTRACT 1
+#define HAS_SECONDARY_MATERIAL 2
+#define CREATE_DIVINE_CONFIGURATIONS 4
+#define CAN_BE_WISHED 8
+#define CAN_BE_DESTROYED 16
+#define IS_VALUABLE 32
+#define CAN_BE_MIRRORED 64
+
+/* NameFlags */
+#define USE_AN 1
+#define USE_ADJECTIVE_AN 2
+#define NO_ARTICLE 4
+#define FORCE_THE 8
+#define SHOW_MATERIAL 16
+
+/***************************/
+/* Material DataBase flags */
+/***************************/
+
+/* CommonFlags */
+/* NameFlags (only USE_AN) */
+
+/* CategoryFlags */
+#define IS_METAL 1
+#define IS_BLOOD 2
+#define CAN_BE_TAILORED 4
+#define IS_SPARKLING 8
+#define IS_SCARY 16
+#define IS_GOLEM_MATERIAL 32
+
+/* BodyFlags */
+#define IS_ALIVE 1
+#define IS_WARM 2
+#define CAN_HAVE_PARASITE 4
+#define USE_MATERIAL_ATTRIBUTES 8
+#define CAN_REGENERATE 16
+
+/* InteractionFlags */
+#define CAN_BURN 1
+#define CAN_EXPLODE 2
+#define CAN_DISSOLVE 4
+#define AFFECT_INSIDE 8
+#define EFFECT_IS_GOOD 16
+
+/*************************/
+/* End of DataBase flags */
+/*************************/
 
 ; /* this line must be here */

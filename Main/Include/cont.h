@@ -1,28 +1,25 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __CONT_H__
 #define __CONT_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
-
 #include <vector>
 
-#include "vector2d.h"
+#include "v2.h"
+#include "festring.h"
 
 class outputfile;
 class inputfile;
-class festring;
 
 class continent
 {
@@ -31,7 +28,7 @@ class continent
   continent();
   continent(int);
   void AttachTo(continent*);
-  void Add(vector2d);
+  void Add(v2);
   void Save(outputfile&) const;
   void Load(inputfile&);
   long GetSize() const;
@@ -39,14 +36,14 @@ class continent
   void GenerateInfo();
   festring GetName() const { return Name; }
   int GetGTerrainAmount(int) const;
-  vector2d GetRandomMember(int);
-  vector2d GetMember(int) const;
+  v2 GetRandomMember(int);
+  v2 GetMember(int) const;
  private:
   static uchar** TypeBuffer;
   static short** AltitudeBuffer;
   static uchar** ContinentBuffer;
   festring Name;
-  std::vector<vector2d> Member;
+  std::vector<v2> Member;
   std::vector<long> GTerrainAmount;
   int Index;
 };

@@ -1,21 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __WSKILL_H__
 #define __WSKILL_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#pragma warning(disable : 4146)
-#endif
 
 #include "typedef.h"
 
@@ -29,9 +25,9 @@ class weaponskill
   weaponskill() : Level(0), Hits(0), HitCounter(0) { }
   int GetLevel() const { return Level; }
   int GetHits() const { return Hits; }
-  bool Tick();
-  bool AddHit(int);
-  bool SubHit(int);
+  truth Tick();
+  truth AddHit(int);
+  truth SubHit(int);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual int GetLevelMap(int) const = 0;
@@ -80,8 +76,8 @@ class sweaponskill : public weaponskill
   void AddLevelDownMessage(const char*) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  bool IsSkillOf(const item*) const;
-  bool IsSkillOfCloneMother(const item*, ulong) const;
+  truth IsSkillOf(const item*) const;
+  truth IsSkillOfCloneMother(const item*, ulong) const;
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
   void PreProcessForBone() { ID = -ID; }

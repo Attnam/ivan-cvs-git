@@ -1,20 +1,17 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __ID_H__
 #define __ID_H__
-
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
 
 #include "typedef.h"
 
@@ -30,21 +27,22 @@ class id
   virtual festring GetName(int, int) const;
   virtual void AddName(festring&, int) const;
   virtual festring GetName(int) const;
+  const char* GetArticle() const { return UsesLongArticle() ? "an" : "a"; }
  protected:
   virtual const festring& GetNameSingular() const = 0;
-  virtual void AddNameSingular(festring&, bool) const;
+  virtual void AddNameSingular(festring&, truth) const;
   virtual const festring& GetNamePlural() const = 0;
-  virtual const festring& GetArticle() const = 0;
-  virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
-  virtual bool AddAdjective(festring&, bool) const;
+  virtual truth UsesLongArticle() const = 0;
+  virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
+  virtual truth AddAdjective(festring&, truth) const;
   virtual const festring& GetAdjective() const = 0;
-  virtual const festring& GetAdjectiveArticle() const = 0;
-  virtual bool AddMaterialDescription(festring&, bool) const { return false; }
+  virtual truth UsesLongAdjectiveArticle() const = 0;
+  virtual truth AddMaterialDescription(festring&, truth) const { return false; }
   virtual const festring& GetPostFix() const = 0;
   virtual void AddPostFix(festring&) const;
-  virtual int GetArticleMode() const;
-  virtual bool ShowMaterial() const { return false; }
-  virtual bool AddActiveAdjective(festring&, bool) const;
+  virtual int GetArticleMode() const { return 0; }
+  virtual truth ShowMaterial() const { return false; }
+  virtual truth AddActiveAdjective(festring&, truth) const;
 };
 
 #endif

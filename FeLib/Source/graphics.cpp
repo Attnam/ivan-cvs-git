@@ -1,11 +1,12 @@
 /*
  *
- *  Iter Vehemens ad Necem
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
@@ -39,30 +40,29 @@ graphics::modeinfo graphics::ModeInfo;
 #endif
 
 bitmap* graphics::DoubleBuffer;
-int graphics::ResX;
-int graphics::ResY;
+v2 graphics::Res;
 int graphics::ColorDepth;
 rawbitmap* graphics::DefaultFont = 0;
 
 void graphics::Init()
 {
-  static bool AlreadyInstalled = false;
+  static truth AlreadyInstalled = false;
 
   if(!AlreadyInstalled)
-    {
-      AlreadyInstalled = true;
+  {
+    AlreadyInstalled = true;
 
 #ifdef USE_SDL
-      if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
-	ABORT("Can't initialize SDL.");
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
+      ABORT("Can't initialize SDL.");
 #endif
 
 #ifdef __DJGPP__
-      VesaInfo.Retrieve();
+    VesaInfo.Retrieve();
 #endif
 
-      atexit(graphics::DeInit);
-    }
+    atexit(graphics::DeInit);
+  }
 }
 
 void graphics::DeInit()
@@ -76,43 +76,44 @@ void graphics::DeInit()
 
 #ifdef __DJGPP__
   if(ScreenSelector)
-    {
-      __dpmi_free_ldt_descriptor(ScreenSelector);
-      ScreenSelector = 0;
-      textmode(0x3);
-    }
+  {
+    __dpmi_free_ldt_descriptor(ScreenSelector);
+    ScreenSelector = 0;
+    textmode(0x3);
+  }
 #endif
 }
 
 #ifdef USE_SDL
 
-void graphics::SetMode(const char* Title, const char* IconName, int NewResX, int NewResY, bool FullScreen)
+void graphics::SetMode(const char* Title, const char* IconName,
+		       v2 NewRes, truth FullScreen)
 {
   if(IconName)
-    {
-      SDL_Surface* Icon = SDL_LoadBMP(IconName);
-      SDL_SetColorKey(Icon, SDL_SRCCOLORKEY, SDL_MapRGB(Icon->format, 255, 255, 255));
-      SDL_WM_SetIcon(Icon, NULL);
-    }
+  {
+    SDL_Surface* Icon = SDL_LoadBMP(IconName);
+    SDL_SetColorKey(Icon, SDL_SRCCOLORKEY,
+		    SDL_MapRGB(Icon->format, 255, 255, 255));
+    SDL_WM_SetIcon(Icon, NULL);
+  }
 
   ulong Flags = SDL_SWSURFACE;
 
   if(FullScreen)
-    {
-      SDL_ShowCursor(SDL_DISABLE);
-      Flags |= SDL_FULLSCREEN;
-    }
+  {
+    SDL_ShowCursor(SDL_DISABLE);
+    Flags |= SDL_FULLSCREEN;
+  }
 
-  Screen = SDL_SetVideoMode(NewResX, NewResY, 16, Flags);
+  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
 
   if(!Screen)
     ABORT("Couldn't set video mode.");
 
   SDL_WM_SetCaption(Title, 0);
   globalwindowhandler::Init();
-  DoubleBuffer = new bitmap(NewResX, NewResY);
-  ResX = NewResX;
-  ResY = NewResY;
+  DoubleBuffer = new bitmap(NewRes);
+  Res = NewRes;
   ColorDepth = 16;
 }
 
@@ -121,18 +122,18 @@ void graphics::BlitDBToScreen()
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
 
-  packedcolor16* SrcPtr = DoubleBuffer->GetImage()[0];
-  packedcolor16* DestPtr = static_cast<packedcolor16*>(Screen->pixels);
+  packcol16* SrcPtr = DoubleBuffer->GetImage()[0];
+  packcol16* DestPtr = static_cast<packcol16*>(Screen->pixels);
   ulong ScreenYMove = (Screen->pitch >> 1);
-  ulong LineSize = ResX << 1;
+  ulong LineSize = Res.X << 1;
 
-  for(int y = 0; y < ResY; ++y, SrcPtr += ResX, DestPtr += ScreenYMove)
+  for(int y = 0; y < Res.Y; ++y, SrcPtr += Res.X, DestPtr += ScreenYMove)
     memcpy(DestPtr, SrcPtr, LineSize);
 
   if(SDL_MUSTLOCK(Screen))
     SDL_UnlockSurface(Screen);
 
-  SDL_UpdateRect(Screen, 0, 0, ResX, ResY);
+  SDL_UpdateRect(Screen, 0, 0, Res.X, Res.Y);
 }
 
 void graphics::SwitchMode()
@@ -140,20 +141,20 @@ void graphics::SwitchMode()
   ulong Flags;
 
   if(Screen->flags & SDL_FULLSCREEN)
-    {
-      SDL_ShowCursor(SDL_ENABLE);
-      Flags = SDL_SWSURFACE;
-    }
+  {
+    SDL_ShowCursor(SDL_ENABLE);
+    Flags = SDL_SWSURFACE;
+  }
   else
-    {
-      SDL_ShowCursor(SDL_DISABLE);
-      Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
-    }
+  {
+    SDL_ShowCursor(SDL_DISABLE);
+    Flags = SDL_SWSURFACE|SDL_FULLSCREEN;
+  }
 
   if(SwitchModeHandler)
     SwitchModeHandler();
 
-  Screen = SDL_SetVideoMode(ResX, ResY, ColorDepth, Flags);
+  Screen = SDL_SetVideoMode(Res.X, Res.Y, ColorDepth, Flags);
 
   if(!Screen)
     ABORT("Couldn't toggle fullscreen mode.");
@@ -170,34 +171,34 @@ void graphics::LoadDefaultFont(const festring& FileName)
 
 #ifdef __DJGPP__
 
-void graphics::SetMode(const char*, const char*, int NewResX, int NewResY, bool)
+void graphics::SetMode(const char*, const char*, v2 NewRes, truth)
 {
   ulong Mode;
 
   for(Mode = 0; Mode < 0x10000; ++Mode)
-    {
-      ModeInfo.Retrieve(Mode);
+  {
+    ModeInfo.Retrieve(Mode);
 
-      if(ModeInfo.Attribs1 & 0x01
-      && ModeInfo.Attribs1 & 0xFF
-      && ModeInfo.Width == NewResX
-      && ModeInfo.Height == NewResY
-      && ModeInfo.BitsPerPixel == 16)
-	  break;
-    }
+    if(ModeInfo.Attribs1 & 0x01
+       && ModeInfo.Attribs1 & 0xFF
+       && ModeInfo.Width == NewRes.X
+       && ModeInfo.Height == NewRes.Y
+       && ModeInfo.BitsPerPixel == 16)
+      break;
+  }
 
   if(Mode == 0x10000)
-    ABORT("Resolution %dx%d not supported!", NewResX, NewResY);
+    ABORT("Resolution %dx%d not supported!", NewRes.X, NewRes.Y);
 
   __dpmi_regs Regs;
   Regs.x.ax = 0x4F02;
   Regs.x.bx = Mode | 0x4000;
   __dpmi_int(0x10, &Regs);
-  ResX = ModeInfo.Width;
-  ResY = ModeInfo.Height;
-  BufferSize = ResY * ModeInfo.BytesPerLine;
+  Res.X = ModeInfo.Width;
+  Res.Y = ModeInfo.Height;
+  BufferSize = Res.Y * ModeInfo.BytesPerLine;
   delete DoubleBuffer;
-  DoubleBuffer = new bitmap(ResX, ResY);
+  DoubleBuffer = new bitmap(Res.X, Res.Y);
   __dpmi_meminfo MemoryInfo;
   MemoryInfo.size = BufferSize;
   MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
@@ -210,7 +211,8 @@ void graphics::SetMode(const char*, const char*, int NewResX, int NewResY, bool)
 
 void graphics::BlitDBToScreen()
 {
-  movedata(_my_ds(), ulong(DoubleBuffer->GetImage()[0]), ScreenSelector, 0, BufferSize);
+  movedata(_my_ds(), ulong(DoubleBuffer->GetImage()[0]),
+	   ScreenSelector, 0, BufferSize);
 }
 
 void graphics::vesainfo::Retrieve()

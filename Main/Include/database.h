@@ -1,20 +1,21 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 #ifndef __DATABASE_H__
 #define __DATABASE_H__
 
-#ifdef VC
-#pragma warning(disable : 4786)
-#endif
+#include <map>
+
+#include "typedef.h"
 
 class inputfile;
 class festring;
@@ -36,10 +37,11 @@ template <class type> class databasecreator
   static void CreateDataBaseMemberMap();
   static int CreateDivineConfigurations(const prototype*, database**, int);
  private:
-  static bool AnalyzeData(inputfile&, const festring&, database&);
+  static truth AnalyzeData(inputfile&, const festring&, database&);
   static void CheckDefaults(const festring&, database&);
   static void CreateLTerrainDataBaseMemberMap();
-  static databasemembermap DataBaseMemberMap;
+  static void SetBaseValue(const festring&, databasememberbase<database>*, database&);
+  static databasemembermap& GetDataBaseMemberMap();
 };
 
 class databasesystem

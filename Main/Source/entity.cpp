@@ -1,17 +1,18 @@
 /*
  *
- *  Iter Vehemens ad Necem 
+ *  Iter Vehemens ad Necem (IVAN)
  *  Copyright (C) Timo Kiviluoto
- *  Released under GNU General Public License
+ *  Released under the GNU General
+ *  Public License
  *
- *  See LICENSING which should included with 
- *  this file for more details
+ *  See LICENSING which should included
+ *  with this file for more details
  *
  */
 
 /* Compiled through coreset.cpp */
 
-bool entity::TryToUnStick(character*, vector2d) { return false; }
+truth entity::TryToUnStick(character*, v2) { return false; }
 
 entity::entity(const entity& Entity) : Emitation(Entity.Emitation), Flags(Entity.Flags)
 {
@@ -39,16 +40,16 @@ entity::~entity()
 void entity::SendToHell()
 {
   if(Flags & EXISTS)
+  {
+    if(Flags & HAS_BE)
     {
-      if(Flags & HAS_BE)
-	{
-	  pool::Remove(this);
-	  Flags ^= HAS_BE;
-	}
-
-      pool::AddToHell(this);
-      Flags ^= EXISTS;
+      pool::Remove(this);
+      Flags ^= HAS_BE;
     }
+
+    pool::AddToHell(this);
+    Flags ^= EXISTS;
+  }
 }
 
 /* These functions tell the poolsystem whether the Be() function of the entity
@@ -58,17 +59,17 @@ void entity::SendToHell()
 void entity::Enable()
 {
   if(!(Flags & HAS_BE))
-    {
-      pool::Add(this);
-      Flags |= HAS_BE;
-    }
+  {
+    pool::Add(this);
+    Flags |= HAS_BE;
+  }
 }
 
 void entity::Disable()
 {
   if(Flags & HAS_BE)
-    {
-      pool::Remove(this);
-      Flags ^= HAS_BE;
-    }
+  {
+    pool::Remove(this);
+    Flags ^= HAS_BE;
+  }
 }
