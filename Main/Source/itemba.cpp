@@ -270,3 +270,36 @@ void item::Teleport(stack* Start)
   Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
 }
+
+void item::DrawToTileBuffer(vector2d Pos) const
+{
+  ushort FromX, FromY, ToX, ToY, Width, Height;
+
+  if(Pos.X < 0)
+    {
+      FromX = -Pos.X;
+      ToX = 0;
+      Width = 16 + Pos.X;
+    }
+  else
+    {
+      FromX = 0;
+      ToX = Pos.X;
+      Width = 16 - Pos.X;
+    }
+
+  if(Pos.Y < 0)
+    {
+      FromY = -Pos.Y;
+      ToY = 0;
+      Height = 16 + Pos.Y;
+    }
+  else
+    {
+      FromY = 0;
+      ToY = Pos.Y;
+      Height = 16 - Pos.Y;
+    }
+
+  Picture->MaskedBlit(igraph::GetTileBuffer(), FromX, FromY, ToX, ToY, Width, Height);
+}

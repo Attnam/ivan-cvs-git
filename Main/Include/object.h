@@ -30,13 +30,14 @@ class object : public type, public unit
   virtual void Load(inputfile&);
   virtual void InitMaterials(ushort, ...);
   virtual void InitMaterials(material*);
-  virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual void SetMaterial(uchar, material*);
   virtual void ChangeMaterial(uchar, material*);
   virtual void UpdatePicture(bool = true);
   virtual ulong GetDefaultVolume(ushort Index) const = 0;
   //virtual void ColorChangeSpeciality(uchar, bool) { }
  protected:
+  virtual uchar GetSpecialType() const { return NORMAL; }
+  virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColor0() const;
   virtual ushort GetMaterialColor1() const;
   virtual ushort GetMaterialColor2() const;

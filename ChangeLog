@@ -1,3 +1,53 @@
+March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* New bodypart: groin
+	  * Modified files:
+	    * charde.cpp
+	      * ulong humanoid::GroinVolume() const added
+	      * void humanoid::CreateGroin() added
+	      * groin* humanoid::GetGroin() const added
+	      * void humanoid::SetGroin(groin* What) added
+	    * itemde.h
+	      * New class: groin
+	* Added SpecialType to graphicid. Arms, legs and groin are no more drawn multiple times.
+	  * Modified files:
+	    * worldmap.cpp
+	    * object.cpp
+	    * object.h
+	    * igraph.cpp
+	    * igraph.h
+	      * Some SpecialType definitions added
+	      * graphicid and handling functions updated
+	    * charde.cpp
+	      * return type of leftarm* humanoid::GetRightArm(), rightarm* humanoid::GetLeftArm(), rightleg* humanoid::GetRightLeg() and leftleg* humanoid::GetLeftLeg() changed
+	      * parameter type of humanoid::SetRightArm(rightarm* What), void humanoid::SetLeftArm(leftarm* What), void humanoid::SetRightLeg(rightleg* What) and void humanoid::SetLeftLeg(leftleg* What) changed
+	    * itemde.h
+	      * arm and leg are now abstract
+	      * New classes: rightarm, leftarm, rightleg, leftleg
+	      * virtual uchar xxx::GetSpecialType() consts overrided in rightarm, leftarm, groin, rightleg, leftleg
+	* Dwarf legs are now drawn correctly
+	  * Modified files:
+	    * itemba.cpp
+	      * void item::DrawToTileBuffer(vector2d Pos) const added
+	    * itemba.h
+	    * charde.cpp
+	      * void dwarf::DrawToTileBuffer() const added
+	* Werewolves are now drawn correctly
+	  * Modified files:
+	    * charde.cpp
+	      * void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture) added
+	      * void humanoid::UpdateHeadPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateTorsoPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateRightArmPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateGroinPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateRightLegPicture(bool CallUpdatePicture) added
+	      * void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture) added
+	    * charde.h
+	* charde.cpp: Bug in void humanoid::SetSize(ushort Size) fixed
+	* charde.h: Bodypart color tweaks
+	* lsquare.cpp: Extremely rare fatal bug in lsquare::CalculateEmitation() fixed
+
 March 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* charde.h: Bodypart color tweaks

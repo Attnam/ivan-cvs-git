@@ -29,6 +29,7 @@ class item : public object
   item(bool, bool, bool = true);
   virtual float GetWeaponStrength() const;
   virtual void DrawToTileBuffer() const;
+  virtual void DrawToTileBuffer(vector2d Pos) const;
   virtual void PositionedDrawToTileBuffer(uchar) const;
   virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual ushort GetEmitation() const;
@@ -69,7 +70,6 @@ class item : public object
   virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
   virtual bool ReceiveSound(float, bool, stack*) { return false; }
-  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
   virtual bool IsMaterialChangeable() const { return true; }
   virtual void ChangeMainMaterial(material*);
   virtual void CheckPickUpEffect(character*) { }
@@ -100,6 +100,7 @@ class item : public object
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport(stack*);
  protected:
+  virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }
   virtual float NPModifier() const { return 1.0f; }

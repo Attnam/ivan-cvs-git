@@ -1260,26 +1260,78 @@ class ITEM
   virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
 );
 
-class ITEM
+class ABSTRACT_ITEM
 (
   arm,
   bodypart,
-  ;,
-  ;,
- public:
- protected:
-  virtual std::string NameSingular() const { return "arm"; }
+  ;
 );
 
 class ITEM
 (
-  leg,
+  rightarm,
   bodypart,
   ;,
   ;,
  public:
  protected:
-  virtual std::string NameSingular() const { return "leg"; }
+    virtual uchar GetSpecialType() const { return RIGHTARM; }
+  virtual std::string NameSingular() const { return "right arm"; }
+);
+
+class ITEM
+(
+  leftarm,
+  bodypart,
+  ;,
+  ;,
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return LEFTARM; }
+  virtual std::string NameSingular() const { return "left arm"; }
+);
+
+class ITEM
+(
+  groin,
+  bodypart,
+  ;,
+  ;,
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return GROIN; }
+  virtual std::string NameSingular() const { return "groin"; }
+);
+
+class ABSTRACT_ITEM
+(
+  leg,
+  bodypart,
+  ;
+);
+
+class ITEM
+(
+  rightleg,
+  bodypart,
+  ;,
+  ;,
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return RIGHTLEG; }
+  virtual std::string NameSingular() const { return "right leg"; }
+);
+
+class ITEM
+(
+  leftleg,
+  bodypart,
+  ;,
+  ;,
+ public:
+ protected:
+  virtual uchar GetSpecialType() const { return LEFTLEG; }
+  virtual std::string NameSingular() const { return "left leg"; }
 );
 
 class ITEM

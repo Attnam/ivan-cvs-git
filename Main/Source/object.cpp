@@ -254,6 +254,7 @@ void object::UpdatePicture(bool RemoveOld)
   GraphicId.Color[3] = GetMaterialColor3();
   GraphicId.BitmapPos = GetBitmapPos();
   GraphicId.FileIndex = GetGraphicsContainerIndex();
+  GraphicId.SpecialType = GetSpecialType();
   Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 

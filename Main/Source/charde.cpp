@@ -904,7 +904,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
       break;
     case 3:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("\"Don't try anything. The High Priest is a LAN friend of mine.\"");
+	ADD_MESSAGE("\"Don't try anything. The High Priest is a friend of mine.\"");
       else
 	ADD_MESSAGE("\"The monsters don't attack me, because of our mutually profitable contract.\"");
       break;
@@ -930,7 +930,7 @@ void priest::BeTalkedTo(character* Talker)
 
 void oree::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void darkknight::BeTalkedTo(character*)
@@ -1366,7 +1366,7 @@ void librarian::BeTalkedTo(character* Talker)
 	}
       else
 	{
-	  ADD_MESSAGE("\"It is said that the wand of polymorph has dozens of uses.\"");
+	  ADD_MESSAGE("\"It is said that a wand of polymorph has dozens of uses.\"");
 	  break;
 	}
     case 1:
@@ -1541,17 +1541,13 @@ void werewolf::ChangeIntoHuman()
   SetStrength(15);
   SetEndurance(15);
   SetPerception(15);
-  /*SetLegType(11);
-  SetTorsoType(15);
-  SetArmType(0);
-  SetHeadType(24);
-  SetShieldType(0);*/
   SetIsWolf(false);
   SetStrengthExperience(0);
   SetEnduranceExperience(0);
   SetAgilityExperience(0);
   SetPerceptionExperience(0);
   SetHP(GetMaxHP());
+  UpdateBodyPartPictures();
 
   if(GetSquareUnder())
     GetSquareUnder()->SendNewDrawRequest();
@@ -1564,11 +1560,6 @@ void werewolf::ChangeIntoWolf()
   SetStrength(25);
   SetEndurance(25);
   SetPerception(24);
-  /*SetLegType(12);
-  SetTorsoType(16);
-  SetArmType(15);
-  SetHeadType(25);
-  SetShieldType(0);*/
   SetIsWolf(true);
   SetWielded(0);
   SetStrengthExperience(0);
@@ -1576,6 +1567,7 @@ void werewolf::ChangeIntoWolf()
   SetAgilityExperience(0);
   SetPerceptionExperience(0);
   SetHP(GetMaxHP());
+  UpdateBodyPartPictures();
 
   if(GetSquareUnder())
     GetSquareUnder()->SendNewDrawRequest();
@@ -1825,9 +1817,6 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-/*void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
-void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }*/
-
 void unicorn::RandomizeFleshMaterial()
 {
   /*SetAlignment(RAND() % 3);
@@ -1921,9 +1910,16 @@ void unicorn::CreateInitialEquipment()
 
 void humanoid::SetSize(ushort Size)
 {
-  GetHead()->SetSize(18 + RAND() % 5);
+  GetHead()->SetSize(20);
   GetTorso()->SetSize((Size - GetHead()->GetSize()) * 2 / 5);
-  GetTorso()->SetSize((Size - GetHead()->GetSize()) * 3 / 5);
+  GetGroin()->SetSize((Size - GetHead()->GetSize()) / 3);
+
+  ushort LimbSize = (Size - GetHead()->GetSize()) * 3 / 5;
+
+  GetRightArm()->SetSize(LimbSize);
+  GetLeftArm()->SetSize(LimbSize);
+  GetRightLeg()->SetSize(LimbSize);
+  GetLeftLeg()->SetSize(LimbSize);
 }
 
 ushort humanoid::GetSize() const
@@ -1938,10 +1934,15 @@ ulong humanoid::HeadVolume() const
 
 ulong humanoid::TorsoVolume() const
 {
-  return TotalVolume() - HeadVolume() - ArmVolume() * 2 - LegVolume() * 2;
+  return TotalVolume() - HeadVolume() - ArmVolume() * 2 - GroinVolume() - LegVolume() * 2;
 }
 
 ulong humanoid::ArmVolume() const
+{
+  return (TotalVolume() - HeadVolume()) >> 4;
+}
+
+ulong humanoid::GroinVolume() const
 {
   return (TotalVolume() - HeadVolume()) >> 4;
 }
@@ -1957,89 +1958,181 @@ void humanoid::CreateBodyParts()
   CreateTorso();
   CreateRightArm();
   CreateLeftArm();
+  CreateGroin();
   CreateRightLeg();
   CreateLeftLeg();
+}
+
+void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture)
+{
+  UpdateHeadPicture(CallUpdatePicture);
+  UpdateTorsoPicture(CallUpdatePicture);
+  UpdateRightArmPicture(CallUpdatePicture);
+  UpdateLeftArmPicture(CallUpdatePicture);
+  UpdateGroinPicture(CallUpdatePicture);
+  UpdateRightLegPicture(CallUpdatePicture);
+  UpdateLeftLegPicture(CallUpdatePicture);
 }
 
 void humanoid::CreateHead()
 {
   SetHead(new head(false, false));
+  UpdateHeadPicture(false);
+  GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+}
+
+void humanoid::UpdateHeadPicture(bool CallUpdatePicture)
+{
   GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
   GetHead()->SetColor(0, SkinColor());
   GetHead()->SetColor(1, CapColor());
   GetHead()->SetColor(2, HairColor());
   GetHead()->SetColor(3, EyeColor());
-  GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetHead()->UpdatePicture();
 }
 
 void humanoid::CreateTorso()
 {
   SetTorso(new humanoidtorso(false, false));
+  UpdateTorsoPicture(false);
+  GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+}
+
+void humanoid::UpdateTorsoPicture(bool CallUpdatePicture)
+{
   GetTorso()->SetBitmapPos(vector2d(32 + (GetTorsoType() / 16) * 16, (GetTorsoType() % 16) * 16));
   GetTorso()->SetColor(0, SkinColor());
   GetTorso()->SetColor(1, TorsoMainColor());
   GetTorso()->SetColor(2, BeltColor());
   GetTorso()->SetColor(3, TorsoSpecialColor());
-  GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetTorso()->UpdatePicture();
 }
 
 void humanoid::CreateRightArm()
 {
-  SetRightArm(new arm(false, false));
+  SetRightArm(new rightarm(false, false));
+  UpdateRightArmPicture(false);
+  GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+}
+
+void humanoid::UpdateRightArmPicture(bool CallUpdatePicture)
+{
   GetRightArm()->SetBitmapPos(vector2d(64 + (GetRightArmType() / 16) * 16, (GetRightArmType() % 16) * 16));
   GetRightArm()->SetColor(0, SkinColor());
   GetRightArm()->SetColor(1, ArmMainColor());
   GetRightArm()->SetColor(3, ArmSpecialColor());
-  GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetRightArm()->UpdatePicture();
 }
 
 void humanoid::CreateLeftArm()
 {
-  SetLeftArm(new arm(false, false));
+  SetLeftArm(new leftarm(false, false));
+  UpdateLeftArmPicture(false);
+  GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+}
+
+void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture)
+{
   GetLeftArm()->SetBitmapPos(vector2d(64 + (GetLeftArmType() / 16) * 16, (GetLeftArmType() % 16) * 16));
   GetLeftArm()->SetColor(0, SkinColor());
   GetLeftArm()->SetColor(1, ArmMainColor());
   GetLeftArm()->SetColor(3, ArmSpecialColor());
-  GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetLeftArm()->UpdatePicture();
+}
+
+void humanoid::CreateGroin()
+{
+  SetGroin(new groin(false, false));
+  UpdateGroinPicture(false);
+  GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
+}
+
+void humanoid::UpdateGroinPicture(bool CallUpdatePicture)
+{
+  GetGroin()->SetBitmapPos(vector2d((GetGroinType() / 16) * 16, (GetGroinType() % 16) * 16));
+  GetGroin()->SetColor(0, SkinColor());
+  GetGroin()->SetColor(1, LegMainColor());
+  GetGroin()->SetColor(3, LegSpecialColor());
+
+  if(CallUpdatePicture)
+    GetGroin()->UpdatePicture();
 }
 
 void humanoid::CreateRightLeg()
 {
-  SetRightLeg(new leg(false, false));
+  SetRightLeg(new rightleg(false, false));
+  UpdateRightLegPicture(false);
+  GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+}
+
+void humanoid::UpdateRightLegPicture(bool CallUpdatePicture)
+{
   GetRightLeg()->SetBitmapPos(vector2d((GetRightLegType() / 16) * 16, (GetRightLegType() % 16) * 16));
   GetRightLeg()->SetColor(0, SkinColor());
   GetRightLeg()->SetColor(1, LegMainColor());
   GetRightLeg()->SetColor(3, LegSpecialColor());
-  GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetRightLeg()->UpdatePicture();
 }
 
 void humanoid::CreateLeftLeg()
 {
-  SetLeftLeg(new leg(false, false));
+  SetLeftLeg(new leftleg(false, false));
+  UpdateLeftLegPicture(false);
+  GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+}
+
+void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture)
+{
   GetLeftLeg()->SetBitmapPos(vector2d((GetLeftLegType() / 16) * 16, (GetLeftLegType() % 16) * 16));
   GetLeftLeg()->SetColor(0, SkinColor());
   GetLeftLeg()->SetColor(1, LegMainColor());
   GetLeftLeg()->SetColor(3, LegSpecialColor());
-  GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+
+  if(CallUpdatePicture)
+    GetLeftLeg()->UpdatePicture();
 }
 
 head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
 void humanoid::SetHead(head* What) { SetBodyPart(1, What); }
-arm* humanoid::GetRightArm() const { return (arm*)GetBodyPart(2); }
-void humanoid::SetRightArm(arm* What) { SetBodyPart(2, What); }
-arm* humanoid::GetLeftArm() const { return (arm*)GetBodyPart(3); }
-void humanoid::SetLeftArm(arm* What) { SetBodyPart(3, What); }
-leg* humanoid::GetRightLeg() const { return (leg*)GetBodyPart(4); }
-void humanoid::SetRightLeg(leg* What) { SetBodyPart(4, What); }
-leg* humanoid::GetLeftLeg() const { return (leg*)GetBodyPart(5); }
-void humanoid::SetLeftLeg(leg* What) { SetBodyPart(5, What); }
+rightarm* humanoid::GetRightArm() const { return (rightarm*)GetBodyPart(2); }
+void humanoid::SetRightArm(rightarm* What) { SetBodyPart(2, What); }
+leftarm* humanoid::GetLeftArm() const { return (leftarm*)GetBodyPart(3); }
+void humanoid::SetLeftArm(leftarm* What) { SetBodyPart(3, What); }
+groin* humanoid::GetGroin() const { return (groin*)GetBodyPart(4); }
+void humanoid::SetGroin(groin* What) { SetBodyPart(4, What); }
+rightleg* humanoid::GetRightLeg() const { return (rightleg*)GetBodyPart(5); }
+void humanoid::SetRightLeg(rightleg* What) { SetBodyPart(5, What); }
+leftleg* humanoid::GetLeftLeg() const { return (leftleg*)GetBodyPart(6); }
+void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(6, What); }
 
 void humanoid::DrawToTileBuffer() const
 {
+  GetGroin()->DrawToTileBuffer();
   GetRightLeg()->DrawToTileBuffer();
   GetLeftLeg()->DrawToTileBuffer();
   GetTorso()->DrawToTileBuffer();
   GetRightArm()->DrawToTileBuffer();
   GetLeftArm()->DrawToTileBuffer();
   GetHead()->DrawToTileBuffer();
+}
+
+void dwarf::DrawToTileBuffer() const
+{
+  GetGroin()->DrawToTileBuffer(vector2d(0, -1));
+  GetRightLeg()->DrawToTileBuffer(vector2d(0, -1));
+  GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1));
+  GetTorso()->DrawToTileBuffer();
+  GetRightArm()->DrawToTileBuffer();
+  GetLeftArm()->DrawToTileBuffer();
+  GetHead()->DrawToTileBuffer(vector2d(0, 1));
 }

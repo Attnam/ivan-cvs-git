@@ -103,6 +103,54 @@ tile igraph::AddUser(graphic_id GI)
   else
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
+
+      if(GI.SpecialType == RIGHTARM)
+	{
+	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
+	}
+
+      if(GI.SpecialType == LEFTARM)
+	{
+	  Bitmap->Fill(0, 0, 8, 16, 0xF81F);
+	}
+
+      if(GI.SpecialType == GROIN)
+	{
+	  ushort Pixel[9], y, i;
+
+	  for(y = 10, i = 0; y < 13; ++y)
+	    for(ushort x = y - 5; x < 20 - y; ++x)
+	      Pixel[i++] = Bitmap->GetPixel(x, y);
+
+	  Bitmap->Fill(0, 10, 16, 6, 0xF81F);
+
+	  for(y = 10, i = 0; y < 13; ++y)
+	    for(ushort x = y - 5; x < 20 - y; ++x)
+	      Bitmap->PutPixel(x, y, Pixel[i++]);
+	}
+
+      if(GI.SpecialType == RIGHTLEG)
+	{
+	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
+	  Bitmap->PutPixel(5, 10, 0xF81F);
+	  Bitmap->PutPixel(6, 10, 0xF81F);
+	  Bitmap->PutPixel(7, 10, 0xF81F);
+	  Bitmap->PutPixel(6, 11, 0xF81F);
+	  Bitmap->PutPixel(7, 11, 0xF81F);
+	  Bitmap->PutPixel(7, 12, 0xF81F);
+	}
+
+      if(GI.SpecialType == LEFTLEG)
+	{
+	  Bitmap->Fill(0, 0, 7, 16, 0xF81F);
+	  Bitmap->PutPixel(7, 10, 0xF81F);
+	  Bitmap->PutPixel(8, 10, 0xF81F);
+	  Bitmap->PutPixel(9, 10, 0xF81F);
+	  Bitmap->PutPixel(7, 11, 0xF81F);
+	  Bitmap->PutPixel(8, 11, 0xF81F);
+	  Bitmap->PutPixel(7, 12, 0xF81F);
+	}
+
       tile Tile(Bitmap);
       TileMap[GI] = Tile;
       return Tile;

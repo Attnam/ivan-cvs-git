@@ -197,7 +197,7 @@ void worldmap::SmoothAltitude()
 #define ALTITUDE_EFFECT			0.02
 
 #define COLD				10
-#define NORMAL				12
+#define MEDIUM				12
 #define WARM				17
 #define HOT				19
 
@@ -230,13 +230,13 @@ void worldmap::GenerateClimate()
 	    else
 	      TypeBuffer[x][y] = glacier::StaticType();
 
-	  if(Temperature > COLD && Temperature <= NORMAL)
+	  if(Temperature > COLD && Temperature <= MEDIUM)
 	    if(Rainy)
 	      TypeBuffer[x][y] = evergreenforest::StaticType();
 	    else
 	      TypeBuffer[x][y] = snow::StaticType();
 
-	  if(Temperature > NORMAL && Temperature <= WARM)
+	  if(Temperature > MEDIUM && Temperature <= WARM)
 	    if(Rainy)
 	      TypeBuffer[x][y] = leafyforest::StaticType();
 	    else

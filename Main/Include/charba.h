@@ -202,7 +202,7 @@ class character : public type, public entity
   virtual void BeKicked(ushort, bool, uchar, character*);
   virtual void FallTo(vector2d, bool);
   virtual bool CheckCannibalism(ushort);
-  virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
+  //virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
   virtual void VirtualConstructor() { }
   virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateState(uchar Index) { State |= 1 << Index; }

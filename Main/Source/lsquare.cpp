@@ -52,7 +52,7 @@ ushort lsquare::CalculateEmitation() const
 {
   ushort Emitation = GetStack()->GetEmitation();
 
-#define NE(D, S) game::GetCurrentLevel()->GetLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
+#define NE(D, S) GetLevelUnder()->GetLSquare(Pos + D)->GetSideStack(S)->GetEmitation()
 
   if(GetPos().X)
     if(NE(vector2d(-1, 0), 1) > Emitation)

@@ -125,7 +125,7 @@ Intelligent polymorphed monsters should have unique replies?
 ***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
 *Dipping an empty bottle in a fountain should fill it with water.
 *The librarian should sell scrolls of charging.
-*Wand's explosive power should depend on its charges.
+/*Wand's explosive power should depend on its charges.
 Hirelings. (from JM)
 Books of <skill>. (from JM)
 Fighting tactics. (from JM)
@@ -154,3 +154,7 @@ Explosion level.
 Mirages.
 Breaking LTerrain in two parts.
 Worldmap LOS disabling.
+Symbolic inventory.
+Symbolic god menu.
+Lists, especially message history, should look better.
+*Hunters must be one-armed.

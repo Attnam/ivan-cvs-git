@@ -45,7 +45,6 @@ class lterrain : public object
   virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   virtual void HandleVisualEffects();
   virtual void Save(outputfile&) const;
-  virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
@@ -53,6 +52,7 @@ class lterrain : public object
   virtual bool GetIsLocked() const { return false; }
   virtual bool Polymorph(character*) { return false; }
  protected:
+  virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   uchar VisualFlags;
 };
 

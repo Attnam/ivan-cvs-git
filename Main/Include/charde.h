@@ -12,8 +12,11 @@
 #include "femath.h"
 
 class head;
-class arm;
-class leg;
+class rightarm;
+class leftarm;
+class groin;
+class rightleg;
+class leftleg;
 
 class ABSTRACT_CHARACTER
 (
@@ -53,14 +56,16 @@ class ABSTRACT_CHARACTER
 
   virtual head* GetHead() const;
   virtual void SetHead(head* What);
-  virtual arm* GetRightArm() const;
-  virtual void SetRightArm(arm* What);
-  virtual arm* GetLeftArm() const;
-  virtual void SetLeftArm(arm* What);
-  virtual leg* GetRightLeg() const;
-  virtual void SetRightLeg(leg* What);
-  virtual leg* GetLeftLeg() const;
-  virtual void SetLeftLeg(leg* What);
+  virtual rightarm* GetRightArm() const;
+  virtual void SetRightArm(rightarm* What);
+  virtual leftarm* GetLeftArm() const;
+  virtual void SetLeftArm(leftarm* What);
+  virtual groin* GetGroin() const;
+  virtual void SetGroin(groin* What);
+  virtual rightleg* GetRightLeg() const;
+  virtual void SetRightLeg(rightleg* What);
+  virtual leftleg* GetLeftLeg() const;
+  virtual void SetLeftLeg(leftleg* What);
   virtual void SetSize(ushort);
 
   virtual void DrawToTileBuffer() const;
@@ -72,35 +77,45 @@ class ABSTRACT_CHARACTER
   virtual uchar GetRightArmType() const { return GetArmType(); }
   virtual uchar GetLeftArmType() const { return GetArmType(); }
   virtual uchar GetArmType() const { return 0; } // = 0;
+  virtual uchar GetGroinType() const { return GetLegType(); }
   virtual uchar GetRightLegType() const { return GetLegType(); }
   virtual uchar GetLeftLegType() const { return GetLegType(); }
   virtual uchar GetLegType() const { return 0; } // = 0;
 
   virtual ushort SkinColor() const { return MAKE_RGB(180, 120, 90); }
 
-  virtual ushort CapColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort CapColor() const { return ClothColor(); }
   virtual ushort HairColor() const { return MAKE_RGB(160, 80, 0); }
   virtual ushort EyeColor() const { return MAKE_RGB(112, 72, 42); }
 
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(111, 74, 37); }
-  virtual ushort BeltColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort TorsoMainColor() const { return ClothColor(); }
+  virtual ushort BeltColor() const { return MAKE_RGB(48, 48, 48); }
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 0, 0); }
 
-  virtual ushort ArmMainColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort ArmMainColor() const { return ClothColor(); }
   virtual ushort ArmSpecialColor() const { return MAKE_RGB(0, 0, 0); }
 
-  virtual ushort LegMainColor() const { return MAKE_RGB(111, 74, 37); }
+  virtual ushort LegMainColor() const { return ClothColor(); }
   virtual ushort LegSpecialColor() const { return MAKE_RGB(0, 0, 0); }
-  
-  //virtual ushort ShieldColor() const { return MAKE_RGB(56, 56, 56); }
+
+  virtual ushort ClothColor() const { return MAKE_RGB(111, 74, 37); }
 
   virtual void CreateBodyParts();
   virtual void CreateHead();
   virtual void CreateTorso();
   virtual void CreateRightArm();
   virtual void CreateLeftArm();
+  virtual void CreateGroin();
   virtual void CreateRightLeg();
   virtual void CreateLeftLeg();
+  virtual void UpdateBodyPartPictures(bool = true);
+  virtual void UpdateHeadPicture(bool = true);
+  virtual void UpdateTorsoPicture(bool = true);
+  virtual void UpdateRightArmPicture(bool = true);
+  virtual void UpdateLeftArmPicture(bool = true);
+  virtual void UpdateGroinPicture(bool = true);
+  virtual void UpdateRightLegPicture(bool = true);
+  virtual void UpdateLeftLegPicture(bool = true);
   virtual material* CreateHeadFlesh(ulong Volume) const { return CreateTorsoFlesh(Volume); }
   virtual material* CreateHeadBone(ulong Volume) const { return CreateTorsoBone(Volume); }
   virtual material* CreateRightArmFlesh(ulong Volume) const { return CreateArmFlesh(Volume); }
@@ -109,6 +124,8 @@ class ABSTRACT_CHARACTER
   virtual material* CreateLeftArmBone(ulong Volume) const { return CreateArmBone(Volume); }
   virtual material* CreateArmFlesh(ulong Volume) const { return CreateTorsoFlesh(Volume); }
   virtual material* CreateArmBone(ulong Volume) const { return CreateTorsoBone(Volume); }
+  virtual material* CreateGroinFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
+  virtual material* CreateGroinBone(ulong Volume) const { return CreateLegBone(Volume); }
   virtual material* CreateRightLegFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
   virtual material* CreateRightLegBone(ulong Volume) const { return CreateLegBone(Volume); }
   virtual material* CreateLeftLegFlesh(ulong Volume) const { return CreateLegFlesh(Volume); }
@@ -121,6 +138,7 @@ class ABSTRACT_CHARACTER
   virtual uchar RightArmBonePercentile() const { return ArmBonePercentile(); }
   virtual uchar LeftArmBonePercentile() const { return ArmBonePercentile(); }
   virtual uchar ArmBonePercentile() const { return 30; }
+  virtual uchar GroinBonePercentile() const { return 40; }
   virtual uchar RightLegBonePercentile() const { return LegBonePercentile(); }
   virtual uchar LeftLegBonePercentile() const { return LegBonePercentile(); }
   virtual uchar LegBonePercentile() const { return 30; }
@@ -129,13 +147,14 @@ class ABSTRACT_CHARACTER
   virtual ulong RightArmVolume() const { return ArmVolume(); }
   virtual ulong LeftArmVolume() const { return ArmVolume(); }
   virtual ulong ArmVolume() const;
+  virtual ulong GroinVolume() const;
   virtual ulong RightLegVolume() const { return LegVolume(); }
   virtual ulong LeftLegVolume() const { return LegVolume(); }
   virtual ulong LegVolume() const;
 
-  virtual uchar BodyParts() const { return 6; }
+  virtual uchar BodyParts() const { return 7; }
 
-  virtual vector2d GetBitmapPos() const { return vector2d(0,0); }
+  virtual vector2d GetBitmapPos() const { return vector2d(0,0); } // remove this
   virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
   struct armor
@@ -243,9 +262,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual ushort ArmMainColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual ushort LegMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
   virtual uchar GetHeadType() const { return 9; }
   virtual uchar GetTorsoType() const { return 5; }
   virtual uchar GetArmType() const { return 1; }
@@ -277,7 +294,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
  protected:
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
-  virtual ushort HairColor() const { return RAND() % 2 ? MAKE_RGB(80, 0, 80) : MAKE_RGB(160, 160, 160); }
+  virtual ushort HairColor() const { return RAND() % 2 ? humanoid::HairColor() : MAKE_RGB(160, 160, 160); }
   virtual uchar GetHeadType() const { return 4 + RAND() % 2; }
   virtual uchar GetTorsoType() const { return 2; }
   virtual uchar GetArmType() const { return RAND() % 2; }
@@ -302,10 +319,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
-  virtual ushort CapColor() const { return MAKE_RGB(0, 128, 128); }
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(0, 128, 128); }
-  virtual ushort ArmMainColor() const { return MAKE_RGB(0, 128, 128); }
-  virtual ushort LegMainColor() const { return MAKE_RGB(0, 128, 128); }
+  virtual ushort ClothColor() const { return MAKE_RGB(0, 128, 128); }
   virtual uchar GetHeadType() const { return 7; }
   virtual uchar GetTorsoType() const { return 8; }
   virtual uchar GetArmType() const { return 5; }
@@ -828,6 +842,9 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
  protected:
+  virtual ushort BeltColor() const { return MAKE_RGB(0, 0, 0); }
+  virtual ushort ArmSpecialColor() const { return MAKE_RGB(160, 0, 0); }
+  virtual ushort ClothColor() const { return MAKE_RGB(64, 56, 24); }
   virtual uchar GetHeadType() const { return 11; }
   virtual uchar GetTorsoType() const { return 9; }
   virtual uchar GetArmType() const { return 7; }
@@ -853,7 +870,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(128, 80, 48); }
+  virtual ushort ClothColor() const { return MAKE_RGB(128, 80, 48); }
   virtual ushort BeltColor() const { return MAKE_RGB(144, 96, 60); }
   virtual uchar GetHeadType() const { return 12; }
   virtual uchar GetTorsoType() const { return 12; }
@@ -952,7 +969,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void GetAICommand();
  protected:
-  virtual ushort LegMainColor() const { return MAKE_RGB(56, 48, 20); }
+  virtual ushort ClothColor() const { return MAKE_RGB(56, 48, 20); }
   virtual uchar GetHeadType() const { return 0; }
   virtual uchar GetTorsoType() const { return 0; }
   virtual uchar GetArmType() const { return 0; }
@@ -978,10 +995,8 @@ class CHARACTER
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(150, 0, 0); }
+  virtual ushort ClothColor() const { return MAKE_RGB(150, 0, 0); }
   virtual ushort BeltColor() const { return MAKE_RGB(180, 180, 0); }
-  virtual ushort ArmMainColor() const { return MAKE_RGB(150, 0, 0); }
-  virtual ushort LegMainColor() const { return MAKE_RGB(150, 0, 0); }
   virtual uchar GetHeadType() const { return 16; }
   virtual uchar GetTorsoType() const { return 10; }
   virtual uchar GetArmType() const { return 10; }
@@ -1145,9 +1160,8 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual ushort ArmMainColor() const { return MAKE_RGB(128, 128, 128); }
-  virtual ushort LegMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(144, 144, 144); }
   virtual ushort CapColor() const { return MAKE_RGB(160, 160, 160); } // temporary
   virtual uchar GetHeadType() const { return 14; }
   virtual uchar GetTorsoType() const { return 5; }
@@ -1176,6 +1190,9 @@ class CHARACTER
   virtual void SpillBlood(uchar, vector2d);
   virtual float GetMeleeStrength() const { return 1500; }
  protected:
+  virtual ushort SkinColor() const { return MAKE_RGB(0, 120, 120); }
+  virtual ushort EyeColor() const { return MAKE_RGB(200, 0, 0); }
+  virtual ushort ClothColor() const { return MAKE_RGB(56, 16, 96); }
   virtual uchar GetHeadType() const { return 23; }
   virtual uchar GetTorsoType() const { return 14; }
   virtual uchar GetArmType() const { return 14; }
@@ -1249,9 +1266,7 @@ class CHARACTER
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(255, 212, 192); }
   virtual ushort HairColor() const { return MAKE_RGB(35, 35, 35); }
-  virtual ushort TorsoMainColor() const { return MAKE_RGB(35, 35, 35); }
-  virtual ushort ArmMainColor() const { return MAKE_RGB(35, 35, 35); }
-  virtual ushort LegMainColor() const { return MAKE_RGB(35, 35, 35); }
+  virtual ushort ClothColor() const { return MAKE_RGB(35, 35, 35); }
   virtual uchar GetHeadType() const { return 31; }
   virtual uchar GetTorsoType() const { return 22; }
   virtual uchar GetArmType() const { return 21; }
@@ -1288,6 +1303,13 @@ class CHARACTER
   virtual ulong MaxDanger();
   virtual bool CanWield() const { return !GetIsWolf(); } 
  protected:
+  virtual ushort SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(); }
+  virtual ushort EyeColor() const { return MAKE_RGB(160, 0, 0); }
+  virtual ushort ClothColor() const { return MAKE_RGB(96, 64, 32); }
+  virtual uchar GetHeadType() const { return IsWolf ? 25 : 0; }
+  virtual uchar GetTorsoType() const { return 16; }
+  virtual uchar GetArmType() const { return IsWolf ? 15 : 0; }
+  virtual uchar GetLegType() const { return IsWolf ? 12 : 11; }
   virtual ulong TotalVolume() const { return 80000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new werewolfflesh(Volume); }
   virtual std::string NameSingular() const { return "werewolf"; }
@@ -1421,8 +1443,7 @@ class ABSTRACT_CHARACTER
   dwarf,
   humanoid,
  public:
-  /*virtual void DrawLegs(vector2d) const;
-  virtual void DrawHead(vector2d) const;*/
+  virtual void DrawToTileBuffer() const;
  protected:
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new dwarfflesh(Volume); }
 );

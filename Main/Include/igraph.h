@@ -19,6 +19,13 @@
 #define GRCURSOR	2
 #define GRSYMBOL	3
 
+#define NORMAL		0
+#define RIGHTARM	1
+#define LEFTARM		2
+#define GROIN		3
+#define RIGHTLEG	4
+#define LEFTLEG		5
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -38,6 +45,7 @@ struct graphic_id
   vector2d BitmapPos;
   ushort Color[4];
   uchar FileIndex;
+  uchar SpecialType;
 };
 
 inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
@@ -50,6 +58,9 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 
   if(GI1.BitmapPos.Y != GI2.BitmapPos.Y)
     return GI1.BitmapPos.Y < GI2.BitmapPos.Y;
+
+  if(GI1.SpecialType != GI2.SpecialType)
+    return GI1.SpecialType < GI2.SpecialType;
 
   if(!GI1.Color || !GI2.Color)	// This shouldn't be possible, but if it is, it's better to behave oddly
     return false;		// than to crash horribly and undebuggablely
@@ -111,14 +122,14 @@ class igraph
 
 inline outputfile& operator<<(outputfile& SaveFile, graphic_id GI)
 {
-  SaveFile << GI.BitmapPos << GI.FileIndex;
+  SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialType;
   SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 {
-  SaveFile >> GI.BitmapPos >> GI.FileIndex;
+  SaveFile >> GI.BitmapPos >> GI.FileIndex >> GI.SpecialType;
   SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
   return SaveFile;
 }
