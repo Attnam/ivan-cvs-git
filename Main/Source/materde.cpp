@@ -61,7 +61,7 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 			ADD_MESSAGE("You feel like a hippie.");
 		else
 			if(GetMotherObject()->GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s barks to you happily.", Eater->CNAME(DEFINITE));
+				ADD_MESSAGE("%s barks happily.", Eater->CNAME(DEFINITE));
 	}
 
 	NormalFoodEffect(Eater, Amount, NPModifier);

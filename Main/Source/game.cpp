@@ -929,37 +929,86 @@ void game::InitDungeons()
 	}
 }
 
-void game::DoGoodDeed(short Amount)
+void game::DoGoodDeed(ushort Amount)
 {
-	if(!Amount) return;
+	if(!Amount)
+		return;
 	
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
-		float Change = Amount - float(2 * Amount / 10) * GetGod(c)->Alignment();
-		if(GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c) 
-			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) * 2 );
+		short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
+
+		if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
+			if(GetGod(c)->GetRelation() + Change * 2 < -750)
+			{
+				if(GetGod(c)->GetRelation() > -750)
+					GetGod(c)->SetRelation(-750);
+			}
+			else if(GetGod(c)->GetRelation() + Change * 2 > 750)
+			{
+				if(GetGod(c)->GetRelation() < 750)
+					GetGod(c)->SetRelation(750);
+			}
+			else
+				GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change * 2);
 		else
-			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change));
+			if(GetGod(c)->GetRelation() + Change < -500)
+			{
+				if(GetGod(c)->GetRelation() > -500)
+					GetGod(c)->SetRelation(-500);
+			}
+			else if(GetGod(c)->GetRelation() + Change > 500)
+			{
+				if(GetGod(c)->GetRelation() < 500)
+					GetGod(c)->SetRelation(500);
+			}
+			else
+				GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change);
 	}
 }
 
-void game::DoEvilDeed(short Amount)
+void game::DoEvilDeed(ushort Amount)
 {
-	if(!Amount) return;
+	if(!Amount)
+		return;
 
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
-		float Change = - Amount + float(2 * Amount / 10) * GetGod(c)->Alignment();
-		if(GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c) 
-			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) * 2 );
+		short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
+
+		if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
+			if(GetGod(c)->GetRelation() - Change * 2 < -750)
+			{
+				if(GetGod(c)->GetRelation() > -750)
+					GetGod(c)->SetRelation(-750);
+			}
+			else if(GetGod(c)->GetRelation() - Change * 2 > 750)
+			{
+				if(GetGod(c)->GetRelation() < 750)
+					GetGod(c)->SetRelation(750);
+			}
+			else
+				GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change * 2);
 		else
-			GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change));
+			if(GetGod(c)->GetRelation() - Change < -500)
+			{
+				if(GetGod(c)->GetRelation() > -500)
+					GetGod(c)->SetRelation(-500);
+			}
+			else if(GetGod(c)->GetRelation() - Change > 500)
+			{
+				if(GetGod(c)->GetRelation() < 500)
+					GetGod(c)->SetRelation(500);
+			}
+			else
+				GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change);
 	}
 }
 
-void game::DoNeutralDeed(short Amount)
+void game::DoNeutralDeed(ushort Amount)
 {
-	if(!Amount) return;
+	if(!Amount)
+		return;
 
 	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed!");
 }

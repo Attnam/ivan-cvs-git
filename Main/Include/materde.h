@@ -279,7 +279,7 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual short NutritionValue() const			{ return 30; }
-	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 0); }
 	virtual bool CanBeWished() const { return false; }
 	virtual ulong RawPrice() const { return GetVolume() >> 2; }
 protected:

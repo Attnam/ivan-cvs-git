@@ -34,13 +34,13 @@ public:
 	virtual uchar GetConsumeType() const { return ODD; }
 	virtual item* TryToOpen(stack*) { return 0; }
 	virtual ulong GetWeight() const;
-	virtual bool Consume(character*, float = 100) { return false; };
+	virtual bool Consume(character*, float) { return false; }
 	virtual ushort GetArmorValue() const { return 100; }
 	virtual bool IsHeadOfElpuri() const { return false; }
 	virtual bool IsPerttusNut() const { return false; }
 	virtual bool IsMaakotkaShirt() const { return false; }
-	virtual bool CanBeRead(character*) const { return false; };
-	virtual bool Read(character*) { return false; };
+	virtual bool CanBeRead(character*) const { return false; }
+	virtual bool Read(character*) { return false; }
 	virtual void ReceiveHitEffect(character*, character*) {}
 	virtual bool CanBeDippedInto(item*) const { return false; }
 	virtual void DipInto(item*) {}
@@ -80,6 +80,7 @@ public:
 	virtual ulong Price() const { return 0; }
 	virtual bool IsTheAvatar() const RET(false)
 	virtual void SignalSquarePositionChange(bool) {}
+	virtual ulong ConsumeLimit() const { return 0; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

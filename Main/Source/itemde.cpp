@@ -38,7 +38,6 @@ bool corpse::Consume(character* Eater, float Amount)
 	{
 		game::DoEvilDeed(10);
 		ADD_MESSAGE("You feel that this was an evil deed.");
-		Eater->EndEating();
 	}
 
 	return GetMaterial(0)->GetVolume() ? false : true;
@@ -71,10 +70,7 @@ bool potion::Consume(character* Eater, float Amount)
 	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
 	if(!GetMaterial(1)->GetVolume())
-	{
-		Eater->EndEating();
 		ChangeMaterial(1,0);
-	}
 	
 	return false;
 }
@@ -208,7 +204,6 @@ void potion::PositionedDrawToTileBuffer(uchar) const
 bool loaf::Consume(character* Eater, float Amount)
 {
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-	ulong p = GetMaterial(0)->GetVolume();
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
@@ -500,7 +495,6 @@ item* brokenbottle::BetterVersion(void) const
 	 return P;
 }
 
-
 bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
 	vector2d CurrentPos = Pos;
@@ -604,7 +598,6 @@ material* corpse::BeDippedInto()
 bool fruit::Consume(character* Eater, float Amount)
 {
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
 

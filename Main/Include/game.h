@@ -135,9 +135,9 @@ public:
 	static void InitDungeons();
 	static bool OnScreen(vector2d);
 	static gamescript& GetGameScript() { return GameScript; }
-	static void DoGoodDeed(short);
-	static void DoNeutralDeed(short);
-	static void DoEvilDeed(short);
+	static void DoGoodDeed(ushort);
+	static void DoNeutralDeed(ushort);
+	static void DoEvilDeed(ushort);
 	static void InitScript();
 	static void SaveWorldMap(std::string = SaveName(), bool = false);
 	static void LoadWorldMap(std::string = SaveName());

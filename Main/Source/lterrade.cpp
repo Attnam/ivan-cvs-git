@@ -334,23 +334,64 @@ void altar::StepOn(character* Stepper)
 
 void throne::SitOn(character* Sitter)
 {
-	if(Sitter->GetIsPlayer())
-		ADD_MESSAGE("You feel somehow out of place.");
+	if(Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() != 1000)
+	{
+		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
+		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
+		return;
+	}
+
+	if(Sitter->HasPerttusNut() && !Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	{
+		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
+		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
+		return;
+	}
+
+	if(!Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	{
+		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
+		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
+		return;
+	}
+
+	if(Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	{
+		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Perttu, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
+		game::RemoveSaves();
+		game::Quit();
+
+		if(!game::GetWizardMode())
+		{
+			game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
+			highscore HScore;
+			HScore.Draw();
+		}
+
+		return;
+	}
+
+	ADD_MESSAGE("You feel somehow out of place.");
 }
 
 void altar::Kick(ushort, bool ShowOnScreen, uchar)
 {
 	// This function does not currently support AI kicking altars when they are in player's LOS
+
 	if(ShowOnScreen)
-	{
 		ADD_MESSAGE("You feel like a sinner.");
-	}
+
 	game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerKickedAltar();
-	if(GetLevelSquareUnder()->GetDivineOwner() > 1) game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
-	if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber()) game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
+
+	if(GetLevelSquareUnder()->GetDivineOwner() > 1)
+		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
+
+	if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber())
+		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
 }
 
 void altar::ReceiveVomit(character* Who)
 {
-	if(Who->GetIsPlayer()) game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
+	if(Who->GetIsPlayer())
+		game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
 }

@@ -19,13 +19,14 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameSized(Case,"a", 15, 40))
 	virtual uchar GetConsumeType() const RET(Material[1]->GetConsumeType())
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 112))
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual std::string NameSingular() const RET("banana")
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,112)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; case 1: return 150; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1)->RawPrice(); }
+	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -119,7 +120,7 @@ public:
 	virtual ushort Possibility() const RET(200)
 	virtual std::string Name(uchar Case) const RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual void ReceiveHitEffect(character*, character*);
 	virtual bool CanBeDippedInto(item*) const RET(true)
 	virtual material* BeDippedInto();
@@ -129,6 +130,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,48)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
+	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 );
@@ -375,7 +377,7 @@ class ITEM
 public:
 	virtual ushort Possibility() const RET(10)
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual std::string NameSingular() const RET("corpse")
 	virtual float OfferModifier() const RET(0.01f)
 	virtual vector2d GetBitmapPos() const RETV(16,192)
@@ -384,6 +386,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60000; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
 	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
+	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 	virtual float NPModifier() const { return 0.01f; }
@@ -400,7 +403,7 @@ class ITEM
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual uchar GetConsumeType() const RET(Material[1] ? Material[1]->GetConsumeType() : ODD)
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
 	virtual std::string NameSingular() const RET("bottle")
 	virtual bool ImpactDamage(ushort, bool, stack*);
@@ -413,6 +416,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
 	virtual void ColorChangeSpeciality(uchar, bool);
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
+	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
@@ -598,13 +602,14 @@ public:
 	virtual std::string NameSingular() const RET("bone")
 	virtual std::string Name(uchar Case) const RET(NameSized(Case,"a", 15, 40))
 	virtual float OfferModifier() const RET(0.1f)
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual bool DogWillCatchAndConsume() const RET(true);
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType());
 	virtual vector2d GetBitmapPos() const RETV(16,240)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,32))
+	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(70)
 );
@@ -682,13 +687,14 @@ public:
 	virtual std::string NameSingular() const RET("loaf")
 	virtual std::string NamePlural() const RET("loaves")
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
 	virtual float OfferModifier() const RET(0.125)
 	virtual vector2d GetBitmapPos() const RETV(0,272)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
 	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
+	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -934,7 +940,8 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,384)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
-	virtual bool Consume(character*, float = 100);
+	virtual bool Consume(character*, float);
+	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );

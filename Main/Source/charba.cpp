@@ -24,13 +24,13 @@
 #include "graphics.h"
 #include "script.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(300), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
 
 	StateHandler[FAINTED] = &character::FaintHandler;
-	StateHandler[EATING] = &character::EatHandler;
+	StateHandler[CONSUMING] = &character::ConsumeHandler;
 	StateHandler[POLYMORPHED] = &character::PolymorphHandler;
 	StateHandler[RESTING] = &character::RestHandler;
 	StateHandler[DIGGING] = &character::DigHandler;
@@ -204,7 +204,7 @@ void character::Be()
 			if(GetHP() < GetMaxHP() / 3)
 				SpillBlood(rand() % 2);
 
-			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(EATING))
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
 				Faint();
 
 			switch(GetBurdenState())
@@ -229,16 +229,22 @@ void character::Be()
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
+
 				if(CanMove() && !game::GetInWilderness() && Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
 				}
+
 				CharacterSpeciality();
 				StateAutoDeactivation();
+
 				if(CanMove())
 					GetPlayerCommand();
-				Hunger();
+
+				if(!StateIsActivated(CONSUMING))
+					Hunger();
+
 				Regenerate();
 				game::Turn();
 				game::ApplyDivineTick();
@@ -246,8 +252,10 @@ void character::Be()
 			else
 			{
 				StateAutoDeactivation();
+
 				if(CanMove() && !game::GetInWilderness())
 					GetAICommand();
+
 				Regenerate();
 			}
 
@@ -440,8 +448,8 @@ bool character::ConsumeItem(item* ToBeEaten, stack* ItemsStack)
 		if(ToBeEaten = ToBeEaten->PrepareForConsuming(this, ItemsStack))
 		{
 			SetConsumingCurrently(ToBeEaten);
-			ActivateState(EATING);
-			StateCounter[EATING] = 500;
+			ActivateState(CONSUMING);
+			StateCounter[CONSUMING] = 0;
 			return true;
 		}
 	}
@@ -719,6 +727,22 @@ bool character::TryMove(vector2d MoveTo)
 		{
 			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
 			{
+				if(HasPerttusNut() && !HasMaakotkaShirt())
+				{
+					iosystem::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
+					game::RemoveSaves();
+					game::Quit();
+
+					if(!game::GetWizardMode())
+					{
+						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
+						highscore HScore;
+						HScore.Draw();
+					}
+
+					return true;
+				}
+
 				std::vector<character*> TempPlayerGroup;
 
 				DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
@@ -1296,7 +1320,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
 	SaveFile << State << Money << HomeRoom << WayPoint;
 
-	if(StateIsActivated(EATING))
+	if(StateIsActivated(CONSUMING))
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
 	else
 		SaveFile << ushort(0);
@@ -1315,7 +1339,7 @@ void character::Save(outputfile& SaveFile) const
 
 	SaveFile << Team->GetID();
 
-	if(StateIsActivated(EATING))
+	if(StateIsActivated(CONSUMING))
 	{
 		Index = GetStack()->SearchItem(GetConsumingCurrently());
 
@@ -1813,28 +1837,40 @@ void character::ReceivePepsiEffect(long SizeOfEffect)
 
 void character::Darkness(long SizeOfEffect)
 {
-	ushort x = 30 + rand() % SizeOfEffect;
-
 	if(GetIsPlayer())
 		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("Suddenly %s looks like a navastater.", CNAME(DEFINITE));
 
-	if(GetStrength() - x / 30 > 1) SetStrength(GetStrength() - x / 30); // Old comment was about eating... This
-	else SetStrength(1);                                        // can happen with drinkin, hitting etc.
-	if(GetEndurance() - x / 30 > 1) SetEndurance(GetEndurance() - x / 30);
-	else SetEndurance(1);
-	if(GetAgility() - x / 30 > 1) SetAgility(GetAgility() - x / 30);
-	else SetAgility(1);
-	if(GetHP() - x / 10 > 1) SetHP(GetHP() - x / 10);
-	else SetHP(1);
+	long Penalty = 1 + SizeOfEffect * (100 + rand() % 26 - rand() % 26) / 100000;
+
+	if(GetStrength() - Penalty > 1)
+		SetStrength(GetStrength() - Penalty);
+	else
+		SetStrength(1);
+
+	if(GetEndurance() - Penalty > 1)
+		SetEndurance(GetEndurance() - Penalty);
+	else
+		SetEndurance(1);
+
+	if(GetAgility() - Penalty > 1)
+		SetAgility(GetAgility() - Penalty);
+	else
+		SetAgility(1);
+
+	if(GetHP() - Penalty / 2 > 1)
+		SetHP(GetHP() - Penalty / 2);
+	else
+		SetHP(1);
+
 	if(GetIsPlayer())
 	{
-		game::DoEvilDeed(short(SizeOfEffect / 2));
+		game::DoEvilDeed(short(SizeOfEffect / 100));
 
 		if(game::GetWizardMode())
-			ADD_MESSAGE("Change in relation: %d.", short(SizeOfEffect / 2));
+			ADD_MESSAGE("Change in relation: %d.", short(SizeOfEffect / 100));
 	}
 }
 
@@ -2327,27 +2363,22 @@ void character::FaintHandler()
 	}
 }
 
-void character::EatHandler()
+void character::ConsumeHandler()
 {
-	if(GetConsumingCurrently()->Consume(this, 1000))
+	if((++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
 	{
-		item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
-
-		if(!ToBeDeleted)
-			ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
-
 		if(GetIsPlayer())
-			ADD_MESSAGE("You finish eating %s.", ToBeDeleted->CNAME(DEFINITE));
+			ADD_MESSAGE("You finish eating %s.", GetConsumingCurrently()->CNAME(DEFINITE));
 		else
 			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), ToBeDeleted->CNAME(DEFINITE));
+				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
-		EndEating();
+		EndConsuming();
 
-		delete ToBeDeleted;
+		return;
 	}
 
-	if(StateIsActivated(EATING) && !(StateCounter[EATING]--))
+	if(StateIsActivated(CONSUMING) && StateCounter[CONSUMING] == 200)
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You have eaten for a long time now. You stop eating.");
@@ -2355,7 +2386,7 @@ void character::EatHandler()
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
-		EndEating();
+		EndConsuming();
 	}
 }
 
@@ -2375,11 +2406,21 @@ void character::EndFainted()
 		DeActivateState(FAINTED);
 }
 
-void character::EndEating()
+void character::EndConsuming()
 {
-	if(StateIsActivated(EATING))
+	if(StateIsActivated(CONSUMING))
 	{
-		DeActivateState(EATING);
+		if(GetConsumingCurrently()->Consume(this, StateCounter[CONSUMING] * 500))
+		{
+			item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
+
+			if(!ToBeDeleted)
+				ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
+
+			delete ToBeDeleted;
+		}
+
+		DeActivateState(CONSUMING);
 
 		SetConsumingCurrently(0);
 	}
@@ -2412,7 +2453,7 @@ void character::EndPolymorph()
 
 bool character::CanMove()
 {
-	if(StateIsActivated(FAINTED) || StateIsActivated(EATING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING))
+	if(StateIsActivated(FAINTED) || StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING))
 		return false;
 	else
 		return true;
@@ -2422,10 +2463,10 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 {
 	if(GetIsPlayer())
 	{
-		if((StateIsActivated(EATING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING)) && Reason != "")
+		if((StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING)) && Reason != "")
 			ADD_MESSAGE("%s.", Reason.c_str());
 
-		if(StateIsActivated(EATING))
+		if(StateIsActivated(CONSUMING))
 			ADD_MESSAGE("You stop eating.");
 
 		if(StateIsActivated(RESTING))
@@ -2438,14 +2479,14 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 		}
 	}
 
-	EndEating();
+	EndConsuming();
 	EndRest();
 	EndDig();
 }
 
 void character::StateAutoDeactivation()
 {
-	if(!StateIsActivated(EATING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING))
+	if(!StateIsActivated(CONSUMING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING))
 		return;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),
@@ -2754,7 +2795,7 @@ bool character::GainDivineKnowledge()
 
 bool character::Displace(character* Who)
 {
-	if(Danger() > Who->Danger() && !Who->StateIsActivated(EATING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
+	if(Danger() > Who->Danger() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You displace %s!", Who->CNAME(DEFINITE));

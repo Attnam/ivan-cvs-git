@@ -829,7 +829,7 @@ void perttu::BeTalkedTo(character* Talker)
 						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
 			game::GetCurrentArea()->SendNewDrawRequest();
-			ADD_MESSAGE("Perttu hands you a couple of items. \"Thou migth need these.\"");
+			ADD_MESSAGE("Perttu hands you something. \"Thou migth need this.\"");
 			Talker->GetStack()->AddItem(new banana);
 			StoryState = 1;
 		}

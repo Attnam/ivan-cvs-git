@@ -22,8 +22,8 @@
 #define STATES			5
 
 #define FAINTED		0
-#define EATING			1
-#define POLYMORPHED		2
+#define CONSUMING	1
+#define POLYMORPHED	2
 #define RESTING		3
 #define DIGGING		4
 
@@ -202,13 +202,13 @@ public:
 	virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }
 	virtual void Faint();
 	virtual void FaintHandler();
-	virtual void EatHandler();
+	virtual void ConsumeHandler();
 	virtual void PolymorphHandler();
 	virtual void SetStateCounter(uchar Index, ushort What) { StateCounter[Index] = What; }
 	virtual bool CanMove();
 	virtual void DeActivateVoluntaryStates(std::string = "");
 	virtual void EndFainted();
-	virtual void EndEating();
+	virtual void EndConsuming();
 	virtual void EndPolymorph();
 	virtual void StruckByWandOfStriking();
 	virtual void StateAutoDeactivation();
