@@ -795,3 +795,11 @@ bool stack::IsOnGround() const
 {
   return !MotherEntity || MotherEntity->IsOnGround();
 }
+
+ushort stack::GetSpoiledItems() const
+{
+  ushort Counter;
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    Counter += (i->GetSpoilLevel() > 0);
+  return Counter;
+}

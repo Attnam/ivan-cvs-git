@@ -323,4 +323,31 @@ class CHARACTER
   virtual bodypart* MakeBodyPart(ushort) const;
 );
 
+class CHARACTER
+(
+  mushroom,
+  nonhumanoid,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void SetSpecies(ushort);
+  virtual ushort GetSpecies() const { return Species; }
+ protected:
+  virtual void GetAICommand();
+  virtual mushroom* GetChildMushroom() const;
+  virtual ushort GetTorsoMainColor() const;
+  virtual void VirtualConstructor(bool);
+  virtual void Reproduce();
+  ushort Species;
+);
+
+class CHARACTER
+(
+  mutatedmushroom,
+  mushroom,
+ protected:
+  virtual void GetAICommand();
+  virtual mushroom* GetChildMushroom() const;
+);
+
 #endif

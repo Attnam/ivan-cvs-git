@@ -200,3 +200,19 @@ void area::SetEntryPos(uchar Index, vector2d Pos)
 {
   EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
 }
+
+vector2d area::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, bool AllowCharacter) const
+{
+  ushort PossibleDir[8];
+  ushort Index = 0;
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetSquare(StartPos)->GetNeighbourSquare(d);
+
+      if(Square && Square->IsWalkable(Char) && (AllowCharacter || !Square->GetCharacter()))
+	PossibleDir[Index++] = d;
+    }
+
+  return Index ? StartPos + game::GetMoveVector(PossibleDir[RAND() % Index]) : ERROR_VECTOR;
+}

@@ -42,6 +42,7 @@ class area
   bool IsValidPos(short X, short Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   const rect& GetBorder() const { return Border; }
   void SetEntryPos(uchar, vector2d);
+  vector2d GetFreeAdjacentSquare(const character*, vector2d,bool) const;
  protected:
   square*** Map;
   ushort** FlagMap;

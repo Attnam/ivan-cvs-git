@@ -688,6 +688,7 @@ class character : public entity, public id
   void GetHitByExplosion(const explosion&, ushort);
   bool AllowPoisoned() const { return IsAlive(); }
   bool AllowParasitized() const { return IsAlive(); }
+  virtual ushort GetSpecies() const { return 0; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -1171,8 +1171,7 @@ bool eddy::Hit(character* Enemy, bool)
       else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engulfs %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      Enemy->GetLSquareUnder()->Teleport(this, "", game::GetDirectionForVector(Enemy->GetPos() - GetPos())); // Teleports also the on the square randomly
-													     // Um, what?
+      Enemy->GetLSquareUnder()->Teleport(this, "", game::GetDirectionForVector(Enemy->GetPos() - GetPos())); // Teleports also the items on the square randomly
     }
   else if(IsPlayer())
     ADD_MESSAGE("You miss %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -1181,3 +1180,103 @@ bool eddy::Hit(character* Enemy, bool)
   return true;  
 }
 
+void mushroom::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << Species;
+}
+
+void mushroom::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> Species;
+}
+
+void mushroom::GetAICommand()
+{
+  character* CharNear[8];
+  ushort CharIndex = 0;
+  ushort NearMushrooms = 0;
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char && (GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED)))
+	    CharNear[CharIndex++] = Char;
+	  if(Square->GetCharacter() && Square->GetCharacter()->GetSpecies() == GetSpecies())
+	    ++NearMushrooms;
+	}
+    }
+
+  if(CharIndex)
+    Hit(CharNear[RAND() % CharIndex]);
+
+  ushort SpoiledItems = GetLSquareUnder()->GetSpoiledItemsNear();
+
+  if((SpoiledItems && !(RAND() % 1000)) || !(RAND() % ((NearMushrooms + 1) * 1000)))
+  {
+      Reproduce();
+  }
+  EditAP(-1000);
+  return;
+}
+
+void mushroom::Reproduce()
+{
+  vector2d Where = GetArea()->GetFreeAdjacentSquare(this, GetPos(), false);
+  if(Where == ERROR_VECTOR)
+    return;
+  mushroom* Child = GetChildMushroom();
+  Child->SetSpecies(GetSpecies());
+  Child->SetTeam(GetTeam());
+  game::GetCurrentLevel()->GetLSquare(Where)->AddCharacter(Child);
+
+  if(Child->CanBeSeenByPlayer())
+    {
+      ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
+    }
+}
+
+void mushroom::VirtualConstructor(bool Load)
+{
+  nonhumanoid::VirtualConstructor(Load);
+  if(!Load)
+    {
+      SetSpecies(MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100));
+    }
+}
+
+void mutatedmushroom::GetAICommand()
+{
+  if(!(RAND() % 300))
+    TeleportRandomly();
+  else
+    mushroom::GetAICommand();
+}
+
+ushort mushroom::GetTorsoMainColor() const
+{
+  return Species;
+}
+
+void mushroom::SetSpecies(ushort What)
+{
+  Species = What;
+  UpdatePictures();
+}
+
+
+mushroom* mushroom::GetChildMushroom() const
+{
+  return new mushroom;
+}
+
+mushroom* mutatedmushroom::GetChildMushroom() const
+{
+  return new mutatedmushroom;
+}

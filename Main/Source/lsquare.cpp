@@ -1446,3 +1446,20 @@ void lsquare::GetHitByExplosion(const explosion& Explosion)
   Terrain = GetOLTerrain(); // might have changed
   Terrain->ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
 }
+
+ushort lsquare::GetSpoiledItemsNear() const
+{
+  ushort Counter = 0;
+  for(ushort d = 0; d < 9; ++d)
+    {
+      lsquare* LSquare = GetNeighbourLSquare(d);
+      if(LSquare)
+	Counter += LSquare->GetSpoiledItems();
+    }
+  return Counter;
+}
+
+ushort lsquare::GetSpoiledItems() const
+{
+  return GetStack()->GetSpoiledItems();
+}

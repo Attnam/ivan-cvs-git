@@ -5016,18 +5016,11 @@ vector2d character::ApplyStateModification(vector2d TryDirection) const
     return TryDirection;
   else
     {
-      ushort PossibleDir[8];
-      ushort Index = 0;
-
-      for(ushort d = 0; d < 8; ++d)
-	{
-	  square* Square = GetNeighbourSquare(d);
-
-	  if(Square && Square->IsWalkable(this))
-	    PossibleDir[Index++] = d;
-	}
-
-      return Index ? game::GetMoveVector(PossibleDir[RAND() % Index]) : TryDirection;
+      vector2d To = GetArea()->GetFreeAdjacentSquare(this, GetPos(), true);
+      if(To == ERROR_VECTOR)
+	return TryDirection;
+      else
+	return To - GetPos();
     }
 }
 

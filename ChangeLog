@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 17 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mushrooms added 
+	
 February 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a bug in the new C++ alpha blit code

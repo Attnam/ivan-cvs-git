@@ -1052,6 +1052,13 @@ flesh
 		Density = 1000;
 		Effect = EFFECT_ESP;
 	}
+	Config MUSHROOM_FLESH;
+	{
+		NameStem = "mushroom";
+		Density = 600;
+		Effect = EFFECT_CONFUSE;
+		ConsumeWisdomLimit = 5;
+	}
 }
 
 powder

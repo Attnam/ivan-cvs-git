@@ -3124,3 +3124,53 @@ eddy
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd disappears.";
 }
+
+
+mushroom
+{
+	DefaultArmStrength = 4;
+	DefaultAgility = 1;
+	DefaultEndurance = 10;
+	DefaultPerception = 5;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 3;
+	DefaultCharisma = 8;
+	DefaultMana = 4;
+	TotalVolume = 375; 
+	TorsoBitmapPos = 208, 16;
+	TotalSize = 30;
+	NameSingular = "mushroom";
+	HasEyes = false;
+	HasHead = false;
+	HasFeet = false;
+	UsesNutrition = false;
+	SpillsBlood = false;
+	FleshMaterial = MUSHROOM_FLESH;
+	SkinColor = rgb16(200,200,200);
+	CanBeGenerated = true;
+}
+
+mutatedmushroom
+{
+	DefaultArmStrength = 7;
+	DefaultAgility = 3;
+	DefaultEndurance = 15;
+	DefaultPerception = 20;
+	DefaultIntelligence = 8;
+	DefaultWisdom = 10;
+	DefaultCharisma = 9;
+	DefaultMana = 15;
+	TotalVolume = 375; 
+	TorsoBitmapPos = 192, 16;
+	TotalSize = 60;
+	Adjective = "mutated";
+	NameSingular = "mushroom";
+	HasEyes = false;
+	HasHead = false;
+	HasFeet = false;
+	UsesNutrition = false;
+	SpillsBlood = false;
+	FleshMaterial = MUSHROOM_FLESH;
+	SkinColor = rgb16(220,190,190);
+	CanBeGenerated = true;
+}
