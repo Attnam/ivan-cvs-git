@@ -61,7 +61,7 @@ class ABSTRACT_CHARACTER
   sweaponskill* CurrentSingleWeaponSkill;
 );
 
-inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ {}
+inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
 
 class ABSTRACT_CHARACTER
 (
@@ -148,7 +148,7 @@ class CHARACTER
   virtual void HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() { return HealTimer; }
-  virtual void ReceiveFireDamage(character*, std::string, long) {}
+  virtual void ReceiveFireDamage(character*, std::string, long) { }
   virtual void Save(outputfile&) const;
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph() { return false; }
@@ -354,7 +354,7 @@ class CHARACTER
   virtual ulong CurrentDanger() { return character::CurrentDanger() * 5; }
   virtual ulong MaxDanger() { return character::MaxDanger() * 5; }
  protected:
-  virtual std::string DeathMessage() { return Name(DEFINITE) + " dies and the world is finally freed from this terrible beast."; }
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual vector2d GetBitmapPos() const { return vector2d(96,0); }
   virtual std::string NameSingular() const { return "Enner Beast"; }
   virtual float GetMeleeStrength() const { return 100000; }
@@ -440,8 +440,8 @@ class CHARACTER
     SetPerception(27);
   },
  public:
-  virtual void SpillBlood(uchar) {}
-  virtual void SpillBlood(uchar, vector2d) {}
+  virtual void SpillBlood(uchar) { }
+  virtual void SpillBlood(uchar, vector2d) { }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual bool HasInfraVision() const { return true; }
@@ -452,7 +452,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(48,0); }
   virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
   virtual std::string NamePlural() const { return "pure masses of Bill's will"; }
-  virtual void CreateCorpse() {}
+  virtual void CreateCorpse() { }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonPSIVerb(Critical); }
@@ -474,8 +474,8 @@ class CHARACTER
   },
  public:
   virtual bool CanBeGenerated() const { return true; }
-  virtual void SpillBlood(uchar) {}
-  virtual void SpillBlood(uchar, vector2d) {}
+  virtual void SpillBlood(uchar) { }
+  virtual void SpillBlood(uchar, vector2d) { }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
@@ -583,8 +583,8 @@ class CHARACTER
   virtual bool MoveRandomly();
   virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual void DrawToTileBuffer() const;
-  virtual void SpillBlood(uchar) {}
-  virtual void SpillBlood(uchar, vector2d) {}
+  virtual void SpillBlood(uchar) { }
+  virtual void SpillBlood(uchar, vector2d) { }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
@@ -671,7 +671,7 @@ class CHARACTER
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() {}
+  virtual void CreateCorpse() { }
   virtual std::string TalkVerb() const { return "says nothing"; }
 );
 
@@ -732,7 +732,7 @@ class CHARACTER
   {
     SetSize(230);
     SetAgility(20);
-    SetStrength(30);
+    SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
     SetLegType(5);
@@ -1315,7 +1315,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(432,0); }
   virtual std::string NameSingular() const { return "angel"; }
   virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() {}
+  virtual void CreateCorpse() { }
   uchar Master;
 );
 
@@ -1361,7 +1361,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment();
-  virtual ushort Frequency() const { return 2500; }
+  virtual ushort Frequency() const { return 1000; }
  protected:
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies smiling."; }
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }
@@ -1432,8 +1432,8 @@ class CHARACTER
     SetPerception(18);
   },
  public:
-  virtual void SpillBlood(uchar) {}
-  virtual void SpillBlood(uchar, vector2d) {}
+  virtual void SpillBlood(uchar) { }
+  virtual void SpillBlood(uchar, vector2d) { }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 200000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual std::string StandVerb() const { return "floating"; }
@@ -1441,9 +1441,11 @@ class CHARACTER
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(416,0); }
   virtual std::string NameSingular() const { return "genie"; }
-  virtual void CreateCorpse() {}
+  virtual void CreateCorpse() { }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
   virtual float GetMeleeStrength() const { return 5000; }
 );
 
 #endif
+
+

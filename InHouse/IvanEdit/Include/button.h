@@ -14,9 +14,9 @@ class windowobject
  public:
   virtual vector2d GetPos() { return Pos; }
   virtual bool IsIn(vector2d What) { return(What.X > Pos.X && What.X < Pos.X + 16 && What.Y > Pos.Y && What.Y < Pos.Y + 16); }
-  virtual void Click() {}
-  virtual void Draw() {}
-  virtual void DeActivate() {}
+  virtual void Click() { }
+  virtual void Draw() { }
+  virtual void DeActivate() { }
   virtual void Move(vector2d What) { Pos = Pos + What;  }
   virtual rectangle GetRectangle() { return rectangle(Pos.Y, Pos.X, Pos.X + 16, Pos.Y + 16); }
  protected:
@@ -28,8 +28,8 @@ class button : public windowobject
  public:
   virtual void Draw();
   virtual void Click();
-  button(vector2d What) : Pos(What) {}
-  button() {}
+  button(vector2d What) : Pos(What) { }
+  button() { }
   virtual vector2d GetBitmapPos() const { return BitmapPos; }
   virtual vector2d GetSize() const { return vector2d(16,16); }
   virtual vector2d GetPos() const { return Pos; }
@@ -54,7 +54,7 @@ class textbox : public windowobject
 {
  public:
   textbox::textbox(std::string xText, vector2d What) : Text(xText) {Pos = What;}
-  textbox::textbox() {}
+  textbox::textbox() { }
   virtual void Draw();
   virtual void Click();
   virtual void SetText(std::string What) { Text = What; }
@@ -101,4 +101,5 @@ class toolbutton : public button
   toolwindow* MainWindow;
 };
 #endif
+
 

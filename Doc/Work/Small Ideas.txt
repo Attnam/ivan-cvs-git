@@ -15,7 +15,7 @@ Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistusongelmia
 Kloonaus.
 Size of player increases from eating.
 How can you change the window to the rigth size? (stickiness)
-Banana peals should be slippery.
+*Banana peals should be slippery.
 Weapons should break.
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
@@ -40,7 +40,6 @@ List of killed monsters and list of monsters killed by pets.
 Prepare bug-report function that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
-Checking exp balance.
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
@@ -74,8 +73,17 @@ Monsters should pray and occasionaly be punished by the gods for praying too oft
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
 WMap terrain height should be shown in WMode.
 Special "enemy sighted" rections.
-Attnam could be resized again?
 Vampires should be able to polymorph into a bat.
 Kicking a throne should yield precious stones.
 Weapon skills should affect attack AP costs as in ADOM.
-*RestMessages.
+Throw remake using linear extrapolation.
+Throw flipping.
+Throw speed to conf.
+Monsters that block light.
+Parasites.
+Savefile versions.
+Monster data in corpses + resurrection.
+Pets that resurrect the player.
+Compressed savefiles.
+Inventory screen could be categorised.
+Crash save.

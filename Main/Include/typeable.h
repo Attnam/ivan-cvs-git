@@ -16,7 +16,7 @@ class typeable
 {
  public:
   virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&) {}
+  virtual void Load(inputfile&) { }
   virtual typeable* CloneAndLoad(inputfile&) const = 0;
   virtual ushort GetType() { return Type(); }
   virtual std::string ClassName() const = 0;
@@ -25,3 +25,5 @@ class typeable
 };
 
 #endif
+
+

@@ -6,7 +6,7 @@ done (or understood) by anyone else than the writer.
 //done
 
 *Funktioiden verkottaminen.
-Assistenttioperaattorien integrointi?
+Assistenttioperaattorien integrointi? (<- osoitinluokat)
 *Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 Tilojen luokittaminen.
 *Tuonpuoleisen prototyypitys.
@@ -19,9 +19,11 @@ Dynarrayn eliminaatio.
 Osoitinluokat?
 Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
-Aliasten klarifikaatio.
+Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
 Merkkijonoviittausten regularisoiminen.
 Merkkitaulukoiden hävittäminen.
 *Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
 MS-koodin poisajo grafiikkakirjastosta.
+Kirjastoniputus.
+Esittelyjen uudelleenjärjesteleminen? (tosi tylsää)

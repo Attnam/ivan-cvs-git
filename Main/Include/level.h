@@ -30,8 +30,8 @@ class squarescript;
 class level : public area
 {
  public:
-  level() : Room(1, (room*)0) {}
-  virtual ~level() {}
+  level() : Room(1, (room*)0) { }
+  virtual ~level() { }
   virtual void Generate(levelscript*);
   virtual vector2d RandomSquare(character*, bool, bool = false) const;
   virtual void FastAddCharacter(vector2d, character*);
@@ -44,7 +44,6 @@ class level : public area
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Luxify();
-  virtual ushort GetPopulation() const { return Population; }
   virtual ushort GetIdealPopulation() const;
   virtual void GenerateNewMonsters(ushort, bool = true);
   virtual void AttachPos(vector2d);
@@ -80,8 +79,9 @@ class level : public area
   std::string LevelMessage;
   dynarray<vector2d, uchar> KeyPoint, Door;
   vector2d UpStairs, DownStairs, WorldMapEntry;
-  ushort Population;
   std::vector<room*> Room;
 };
 
 #endif
+
+

@@ -3,14 +3,14 @@
 #include "save.h"
 
 ushort gweaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
-ushort gweaponskill::UnuseTickMap[] = { 65535, 50000, 50000, 40000, 30000, 15000, 10000, 8000, 4000, 2000, 1000 };
-ushort gweaponskill::UnusePenaltyMap[] = { 0, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
+ushort gweaponskill::UnuseTickMap[] = { 50000, 50000, 50000, 40000, 30000, 15000, 10000, 8000, 4000, 2000, 1000 };
+ushort gweaponskill::UnusePenaltyMap[] = { 5, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
 
 std::string gweaponskill::SkillName[] = { "uncategorized", "unarmed combat", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears", "whips" };
 
 ushort sweaponskill::LevelMap[] = { 0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 65535 };
-ushort sweaponskill::UnuseTickMap[] = { 65535, 25000, 15000, 10000, 5000, 5000, 5000, 2500, 1250, 500, 250 };
-ushort sweaponskill::UnusePenaltyMap[] = { 0, 5, 10, 20, 25, 100, 200, 250, 500, 500, 500 };
+ushort sweaponskill::UnuseTickMap[] = { 50000, 25000, 15000, 10000, 5000, 5000, 5000, 2500, 1250, 500, 250 };
+ushort sweaponskill::UnusePenaltyMap[] = { 1, 5, 10, 20, 25, 100, 200, 250, 500, 500, 500 };
 
 weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0), HitMultiplier(1.0f)
 {
@@ -26,13 +26,13 @@ void weaponskill::Load(inputfile& SaveFile)
   SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
 }
 
-bool weaponskill::Turn()
+/*bool weaponskill::Turn()
 {
   if(HitCounter++ == GetUnuseTickMap(Level))
     return SubHit(GetUnusePenaltyMap(Level));
   else
     return false;
-}
+}*/
 
 bool weaponskill::Turn(ushort Turns)
 {
@@ -41,6 +41,8 @@ bool weaponskill::Turn(ushort Turns)
 
   while(HitCounter >= GetUnuseTickMap(Level))
     {
+      HitCounter -= GetUnuseTickMap(Level);
+
       if(SubHit(GetUnusePenaltyMap(Level)))
 	LevelChange = true;
     }

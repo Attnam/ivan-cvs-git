@@ -21,8 +21,8 @@ class character;
 class team
 {
  public:
-  team() : Leader(0) {}
-  team(ushort ID) : Leader(0), ID(ID), AttackEvilness(0) {}
+  team() : Leader(0) { }
+  team(ushort ID) : Leader(0), ID(ID), AttackEvilness(0) { }
   void SetRelation(team*, uchar);
   uchar GetRelation(team*);
   void Hostility(team*);
@@ -59,3 +59,5 @@ inline inputfile& operator>>(inputfile& SaveFile, team*& Team)
 }
 
 #endif
+
+

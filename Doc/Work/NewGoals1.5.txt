@@ -10,5 +10,5 @@ Outlook tweaks:
 //Kamikaze dwarf.
 //Holy books.
 Bonefiles.
-Fixing the door abuse.
+//Fixing the door abuse.
 //Broken & locked doors.

@@ -110,7 +110,6 @@ Dungeon 0;
 			Times=10;
 		}
 
-
 		Room 0;
 		{
 			Size=5,5;
@@ -242,7 +241,7 @@ Dungeon 0;
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
 
-		Square, Random { Walkable=true; InRoom=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=ivan { Team=7; }
 		}
@@ -499,7 +498,6 @@ Dungeon 1;
 				{
 					# = marble floor;
 					- = marble floor;
-					* = tilefloor;
 					o = pool;
 				}
 			}

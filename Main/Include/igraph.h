@@ -71,8 +71,8 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 
 struct tile
 {
-  tile() {}
-  tile(bitmap* Bitmap, ulong Users) : Bitmap(Bitmap), Users(Users) {}
+  tile() { }
+  tile(bitmap* Bitmap, ulong Users) : Bitmap(Bitmap), Users(Users) { }
   bitmap* Bitmap;
   ulong Users;
 };
@@ -124,3 +124,5 @@ inline inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 }
 
 #endif
+
+

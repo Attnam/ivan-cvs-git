@@ -59,9 +59,9 @@ class GROUNDLEVELTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
-  virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", grass::StaticType()); }
+  virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
  protected:
-  virtual std::string NameSingular() const { return "grassy ground"; }
+  virtual std::string NameSingular() const { return "ground"; }
   virtual vector2d GetBitmapPos() const { return vector2d(16, 336); }
 );
 
@@ -314,6 +314,8 @@ class OVERLEVELTERRAIN
   virtual std::string NameSingular() const { return "couch"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
 );
+
+/* Remove this in the next rel */
 
 class GROUNDLEVELTERRAIN
 (

@@ -31,7 +31,7 @@ class inputfile;
 class god
 {
  public:
-  god() : Relation(0), Timer(0), Known(false) {}
+  god() : Relation(0), Timer(0), Known(false) { }
   virtual void Pray();
   virtual std::string Name() const = 0;
   virtual std::string Description() const = 0;
@@ -285,3 +285,5 @@ class erado : public god
 };
 
 #endif
+
+

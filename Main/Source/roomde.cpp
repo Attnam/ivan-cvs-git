@@ -148,7 +148,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"I would pay you %d Petrusbucks for it, but I don't have so much. Sorry.\"", Price);
+	  ADD_MESSAGE("\"I would pay you %d squirrels for it, but I don't have so much. Sorry.\"", Price);
 	  return false;
 	}
     }

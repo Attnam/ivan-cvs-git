@@ -1,29 +1,35 @@
-#include "pool.h"
 #include "object.h"
 #include "game.h"
 
-std::list<object*> objectpool::Pool;
+std::list<objectinfo> objectpool::Pool;
 
 void objectpool::Be()
 {
-  for(std::list<object*>::iterator i = Pool.begin(); i != Pool.end(); ++i)
-    if((*i)->GetExists())
+  for(std::list<objectinfo>::iterator i = Pool.begin(); i != Pool.end();)
+    if(i->Exists)
       {
-	(*i)->Be();
+	if(i->HasBe)
+	    i->Object->Be();
 
-	if(!game::GetRunning())
-	  return;
+	++i;
+      }
+    else
+      {
+	std::list<objectinfo>::iterator Dirt = i++;
+	delete Dirt->Object;
       }
 }
 
 void objectpool::BurnTheDead()
 {
-  for(std::list<object*>::iterator i = Pool.begin(); i != Pool.end();)
-    if(!(*i)->GetExists())
+  for(std::list<objectinfo>::iterator i = Pool.begin(); i != Pool.end();)
+    if(i->Exists)
       {
-	std::list<object*>::iterator Dirt = i++;
-	delete (*Dirt);
+	++i;
       }
     else
-      ++i;
+      {
+	std::list<objectinfo>::iterator Dirt = i++;
+	delete Dirt->Object;
+      }
 }

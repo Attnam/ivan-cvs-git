@@ -9,15 +9,22 @@
 
 class object;
 
+struct objectinfo
+{
+  object* Object;
+  bool Exists;
+  bool HasBe;
+};
+
 class objectpool
 {
  public:
-  static std::list<object*>::iterator Add(object* Object) { return Pool.insert(Pool.end(), Object); }
-  static void Remove(std::list<object*>::iterator Iterator) { Pool.erase(Iterator); }
+  static std::list<objectinfo>::iterator Add(objectinfo ObjectInfo) { return Pool.insert(Pool.end(), ObjectInfo); }
+  static void Remove(std::list<objectinfo>::iterator Iterator) { Pool.erase(Iterator); }
   static void Be();
   static void BurnTheDead();
  private:
-  static std::list<object*> Pool;
+  static std::list<objectinfo> Pool;
 };
 
 #endif

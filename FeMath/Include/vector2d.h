@@ -9,8 +9,8 @@
 
 struct vector2d
 {
-  vector2d()				      {}
-  vector2d(short X, short Y) : X(X), Y(Y)     {}
+  vector2d()				      { }
+  vector2d(short X, short Y) : X(X), Y(Y)     { }
   vector2d  operator +   (vector2d H) const   { return vector2d(X + H.X, Y + H.Y); }
   vector2d& operator +=  (vector2d H)	      { X += H.X; Y += H.Y; return *this; }
   vector2d  operator -   (vector2d H) const   { return vector2d(X - H.X, Y - H.Y); }
@@ -33,3 +33,5 @@ struct vector2d
 };
 
 #endif
+
+

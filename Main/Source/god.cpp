@@ -137,7 +137,7 @@ void god::AdjustTimer(long Amount)
 
 void consummo::PrayGoodEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
+  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   ADD_MESSAGE("You teleport away!");
 
   game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true), true);
@@ -145,7 +145,7 @@ void consummo::PrayGoodEffect()
 
 void consummo::PrayBadEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturaly powerful quantum displacement!");
+  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   ADD_MESSAGE("Some parts of you teleport away!");
 
   game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());

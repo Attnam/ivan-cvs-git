@@ -12,7 +12,7 @@
 #include "wskill.h"
 #include "femath.h"
 
-item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool), Cannibalised(false)
+item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool, false), Cannibalised(false)
 {
   if(CreateMaterials || SetStats)
     ABORT("Boo!");

@@ -9,23 +9,28 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 {
   for(ushort c = 0;; ++c)
     {
-      ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+      float Difficulty = game::Difficulty();
 
-      const character* const Proto = protocontainer<character>::GetProto(Chosen);
-
-      if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
+      for(ushort i = 0; i < 10; ++i)
 	{
-	  character* Monster = Proto->Clone(true, true, CreateItems);
+	  ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 
-	  float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
+	  const character* const Proto = protocontainer<character>::GetProto(Chosen);
 
-	  if(c >= 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier / 3))
+	  if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
 	    {
-	      Monster->SetTeam(game::GetTeam(1));
-	      return Monster;
+	      character* Monster = Proto->Clone(true, true, CreateItems);
+
+	      float Danger = Monster->MaxDanger();
+
+	      if(c == 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
+		{
+		  Monster->SetTeam(game::GetTeam(1));
+		  return Monster;
+		}
+	      else
+		delete Monster;
 	    }
-	  else
-	    delete Monster;
 	}
     }
 }

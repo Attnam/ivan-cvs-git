@@ -52,8 +52,8 @@ class inputfile;
 class material : public typeable
 {
  public:
-  material() : Volume(0), MotherObject(0) {}
-  virtual ~material() {}
+  material() : Volume(0), MotherObject(0) { }
+  virtual ~material() { }
   virtual std::string Name(uchar = 0, bool = true) const;
   virtual ushort GetHitValue() const = 0;
   virtual uchar GetConsumeType() const   { return ODD; }
@@ -76,7 +76,7 @@ class material : public typeable
   virtual material* Clone() const = 0;
   virtual bool IsType(ushort QType) const { return Type() == QType; }
   virtual bool IsSolid() const { return false; }
-  virtual void Be() {}
+  virtual void Be() { }
   virtual ushort GetColor() const = 0;
   virtual bool CanBeWished() const { return true; }
   virtual material* CreateWishedMaterial(ulong) const;
@@ -127,7 +127,7 @@ name : public base\
 {\
  public:\
   name(ulong IVolume) { Volume = IVolume; }\
-  name() {}\
+  name() { }\
   virtual material* Clone(ulong Volume) const { return new name(Volume); }\
   virtual material* Clone() const { return new name; }\
   virtual typeable* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
@@ -140,3 +140,5 @@ name : public base\
 }; MATERIAL_PROTOINSTALLER(name, base)
 
 #endif
+
+

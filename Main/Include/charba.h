@@ -161,7 +161,7 @@ class character : public object
   virtual void Die(bool = false);
   virtual void DrawToTileBuffer() const;
   virtual void HasBeenHitByItem(item*, float);
-  virtual void HealFully(character*) {}
+  virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
@@ -201,8 +201,8 @@ class character : public object
   virtual void FallTo(vector2d, bool);
   virtual bool CheckCannibalism(ushort);
   virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
-  virtual void VirtualConstructor() {}
-  virtual void CharacterSpeciality(ushort = 1) {}
+  virtual void VirtualConstructor() { }
+  virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateState(uchar Index) { State |= 1 << Index; }
   virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
   virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }
@@ -246,13 +246,13 @@ class character : public object
   virtual uchar GetHomeRoom() const { return HomeRoom; }
   virtual bool Displace(character*);
   virtual bool Sit();
-  virtual void AddSpecialItemInfo(std::string&, item*) {}
-  virtual void AddSpecialItemInfoDescription(std::string&) {}
+  virtual void AddSpecialItemInfo(std::string&, item*) { }
+  virtual void AddSpecialItemInfoDescription(std::string&) { }
   virtual long StatScore() const;
   virtual bool CheckStarvationDeath(std::string);
   virtual void ShowNewPosInfo() const;
   virtual void Hostility(character*);
-  virtual void KickHit() {}
+  virtual void KickHit() { }
   virtual bool HasInfraVision() const { return false; }
   virtual uchar CriticalModifier() const { return 20; }
   virtual std::string StandVerb() const { return "standing"; }
@@ -272,7 +272,7 @@ class character : public object
   virtual uchar RandomizeReply(uchar, bool*);
   virtual ushort Frequency() const { return 10000; }
   virtual ushort DangerLevel();
-  virtual void CreateInitialEquipment() {}
+  virtual void CreateInitialEquipment() { }
   virtual void DisplayInfo();
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual bool CanWalk() const { return true; }
@@ -357,7 +357,7 @@ class character : public object
   static class name##_protoinstaller\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) {}\
+    name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) { }\
     ushort GetIndex() const { return Index; }\
    private:\
     ushort Index;\
@@ -406,3 +406,5 @@ name : public base\
 };
 
 #endif
+
+

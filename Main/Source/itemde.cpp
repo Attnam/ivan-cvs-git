@@ -946,7 +946,7 @@ bool oillamp::Apply(character* Applier, stack*)
 		{
 		  Genie->SetTeam(Applier->GetTeam());
 		  ADD_MESSAGE("I am deeply grateful. You deserve a generous reward.");
-		  ADD_MESSAGE("I may serve you for 1001 days or grant you a wish. Its your choice.\"");
+		  ADD_MESSAGE("I may serve you for 1001 nights or grant you a wish. Its your choice.\"");
 		  game::DrawEverything();
 		  GETKEY();
 

@@ -15,7 +15,7 @@ class terrain
 {
  public:
   virtual bool GetIsWalkable() const { return true; }
-  virtual void StepOn(character*) {}
+  virtual void StepOn(character*) { }
   virtual std::string SurviveMessage() const { return "somehow you survive"; }
   virtual std::string DeathMessage() const { return "strangely enough, you die"; }
   virtual std::string MonsterDeathVerb() const { return "dies"; }
@@ -39,3 +39,5 @@ class overterrain : public terrain
 };
 
 #endif
+
+

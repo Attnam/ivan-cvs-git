@@ -31,7 +31,7 @@ class inputfile;
 class levelterrain : public object
 {
  public:
-  levelterrain(bool AddToPool) : object(AddToPool) {}
+  levelterrain(bool AddToPool) : object(AddToPool, false) { }
   virtual void Load(inputfile&);
   virtual bool Open(character* Opener);
   virtual bool Close(character* Closer);
@@ -47,7 +47,7 @@ class levelterrain : public object
   virtual void Save(outputfile&) const;
   virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
-  virtual void ReceiveVomit(character*) {}
+  virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool ReceiveStrike() { return false; }
   virtual bool GetIsLocked() const { return false; }
@@ -59,7 +59,7 @@ class levelterrain : public object
 class groundlevelterrain : public levelterrain, public groundterrain
 {
  public:
-  groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+  groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
   virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
   virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
@@ -70,7 +70,7 @@ class groundlevelterrain : public levelterrain, public groundterrain
 class overlevelterrain : public levelterrain, public overterrain
 {
  public:
-  overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+  overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
@@ -78,12 +78,12 @@ class overlevelterrain : public levelterrain, public overterrain
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
   virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
-  virtual void Kick(ushort, bool, uchar) {}
+  virtual void Kick(ushort, bool, uchar) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
   virtual bool HasConsumeEffect() const { return false; } 
   virtual bool Consume(character*) { return false; }
-  virtual void Lock() {}
+  virtual void Lock() { }
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
@@ -93,7 +93,7 @@ class overlevelterrain : public levelterrain, public overterrain
   static class name##_protoinstaller\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false, false, false))) {}\
+    name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false, false, false))) { }\
     ushort GetIndex() const { return Index; }\
    private:\
     ushort Index;\
@@ -155,3 +155,5 @@ LEVELTERRAIN(\
 );
 
 #endif
+
+

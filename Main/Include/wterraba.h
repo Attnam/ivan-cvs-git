@@ -15,7 +15,7 @@ class worldmap;
 class worldmapterrain : public typeable
 {
  public:
-  worldmapterrain() : WorldMapSquareUnder(0) {}
+  worldmapterrain() : WorldMapSquareUnder(0) { }
   virtual vector2d GetPos() const;
   virtual worldmapsquare* GetWorldMapSquareUnder() const { return WorldMapSquareUnder; }
   virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
@@ -32,7 +32,7 @@ class worldmapterrain : public typeable
 class groundworldmapterrain : public worldmapterrain, public groundterrain
 {
  public:
-  groundworldmapterrain(bool = true) {}
+  groundworldmapterrain(bool = true) { }
   virtual void DrawToTileBuffer() const;
   virtual groundworldmapterrain* Clone(bool = true) const = 0;
   virtual uchar Priority() const = 0;
@@ -42,7 +42,7 @@ class groundworldmapterrain : public worldmapterrain, public groundterrain
 class overworldmapterrain : public worldmapterrain, public overterrain
 {
  public:
-  overworldmapterrain(bool = true) {}
+  overworldmapterrain(bool = true) { }
   virtual void DrawToTileBuffer() const;
   virtual overworldmapterrain* Clone(bool = true) const = 0;
   virtual bool GoUp(character*) const;
@@ -56,7 +56,7 @@ class overworldmapterrain : public worldmapterrain, public overterrain
   static class name##_protoinstaller\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false))) {}\
+    name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false))) { }\
     ushort GetIndex() const { return Index; }\
    private:\
     ushort Index;\
@@ -113,3 +113,5 @@ WORLDMAPTERRAIN(\
 );
 
 #endif
+
+

@@ -3,18 +3,18 @@
 #include "object.h"
 #include "error.h"
 #include "materba.h"
-#include "pool.h"
 #include "game.h"
 #include "lsquare.h"
 #include "god.h"
 
-object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), SquareUnder(0)
+object::object(bool AddToPool, bool HasBe) : InPool(AddToPool), Picture(0), SquareUnder(0)
 {
   *(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
 
   if(AddToPool)
     {
-      SetPoolIterator(objectpool::Add(this));
+      objectinfo ObjectInfo = { this, true, HasBe };
+      SetPoolIterator(objectpool::Add(ObjectInfo));
       ID = game::CreateNewObjectID();
     }
 }
@@ -369,4 +369,14 @@ material* object::GetMaterial(ushort Index) const
 std::string object::OwnerGodDescription(uchar OwnerGod) const
 {
   return std::string(" of ") + game::GetGod(OwnerGod)->Name();
+}
+
+bool object::GetExists() const
+{
+  return GetPoolIterator()->Exists;
+}
+
+void object::SetExists(bool What)
+{
+  GetPoolIterator()->Exists = What;
 }

@@ -692,17 +692,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 void level::HandleCharacters()
 {
-  Population = 0;
+  ushort Population = 0;
 
-  {
-    for(ushort x = 0; x < XSize; ++x)
-      for(ushort y = 0; y < YSize; ++y)
-	{	
-	  Population += Map[x][y]->GetPopulation();
-
-	  Map[x][y]->HandleFluids();
-	}
-  }
+  for(ushort c = 0; c < game::GetTeams(); ++c)
+    {
+      Population += game::GetTeam(c)->GetMember().size();
+    }
 
   if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
     if(!(RAND() % (2 << (11 - game::GetCurrent()))))

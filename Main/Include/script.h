@@ -60,7 +60,7 @@ class script
 class posscript : public script
 {
  public:
-  posscript() : Vector(0), IsWalkable(0), IsInRoom(0) {}
+  posscript() : Vector(0), IsWalkable(0), IsInRoom(0) { }
   void ReadFrom(inputfile&);
   vector2d* GetVector(bool AOE = true) const { SCRIPT_RETURN(Vector) }
   bool* GetIsWalkable(bool AOE = true) const { SCRIPT_RETURN(IsWalkable) }
@@ -76,8 +76,8 @@ class posscript : public script
 template <class type> class basecontentscript : public script
 {
  public:
-  basecontentscript() : ContentType(0) {}
-  virtual ~basecontentscript() {}
+  basecontentscript() : ContentType(0) { }
+  virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&);
   virtual void ReadParameters(inputfile&, std::string);
   virtual ushort* GetMaterialType(ushort, bool = true) const;
@@ -94,7 +94,7 @@ template <class type> class contentscript;
 class contentscript<character> : public basecontentscript<character>
 {
  public:
-  contentscript<character>() : Team(0) {}
+  contentscript<character>() : Team(0) { }
   virtual void ReadParameters(inputfile&, std::string);
   virtual character* Instantiate() const;
   virtual ushort* GetTeam(bool AOE = true) const { SCRIPT_RETURN(Team) }
@@ -108,7 +108,7 @@ class contentscript<groundlevelterrain> : public basecontentscript<groundlevelte
 class contentscript<overlevelterrain> : public basecontentscript<overlevelterrain>
 {
  public:
-  contentscript<overlevelterrain>() : Locked(0), VisualFlags(0) {}
+  contentscript<overlevelterrain>() : Locked(0), VisualFlags(0) { }
   virtual void ReadParameters(inputfile&, std::string);
   virtual overlevelterrain* Instantiate() const;
   virtual bool* GetLocked(bool AOE = true) const { SCRIPT_RETURN(Locked) }
@@ -121,7 +121,7 @@ class contentscript<overlevelterrain> : public basecontentscript<overlevelterrai
 class squarescript : public script
 {
  public:
-  squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) {}
+  squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) { }
   void ReadFrom(inputfile&);
   posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
   contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
@@ -147,7 +147,7 @@ class squarescript : public script
 template <class type> class contentmap : public script
 {
  public:
-  contentmap() : ContentScriptMap(0), Size(0), Pos(0) {}
+  contentmap() : ContentScriptMap(0), Size(0), Pos(0) { }
   void ReadFrom(inputfile&);
   contentscript<type>* GetContentScript(ushort X, ushort Y) { return ContentScriptMap[X][Y]; }
   vector2d* GetSize(bool AOE = true) const { SCRIPT_RETURN(Size) }
@@ -161,7 +161,7 @@ template <class type> class contentmap : public script
 class roomscript : public script
 {
  public:
-  roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) {}
+  roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) { }
   void ReadFrom(inputfile&, bool = false);
   void SetBase(roomscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
@@ -207,7 +207,7 @@ class roomscript : public script
 class levelscript : public script
 {
  public:
-  levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), OnGround(0), TeamDefault(0), AmbientLight(0), Description(0), LOSModifier(0), Base(0) {}
+  levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), OnGround(0), TeamDefault(0), AmbientLight(0), Description(0), LOSModifier(0), Base(0) { }
   void ReadFrom(inputfile&, bool = false);
   levelscript* GetBase() { return Base; }
   void SetBase(levelscript* What) { Base = What; }
@@ -250,7 +250,7 @@ class levelscript : public script
 class dungeonscript : public script
 {
  public:
-  dungeonscript() : LevelDefault(0), Levels(0), Base(0) {}
+  dungeonscript() : LevelDefault(0), Levels(0), Base(0) { }
   void ReadFrom(inputfile&);
   void SetBase(dungeonscript* What) { Base = What; }
   std::map<uchar, levelscript*>& GetLevel() { return Level; }
@@ -266,7 +266,7 @@ class dungeonscript : public script
 class teamscript : public script
 {
  public:
-  teamscript() : AttackEvilness(0) {}
+  teamscript() : AttackEvilness(0) { }
   void ReadFrom(inputfile&);
   std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
   ushort* GetAttackEvilness(bool AOE = true) const { SCRIPT_RETURN(AttackEvilness) }
@@ -278,7 +278,7 @@ class teamscript : public script
 class gamescript : public script
 {
  public:
-  gamescript() : DungeonDefault(0), Dungeons(0), Teams(0) {}
+  gamescript() : DungeonDefault(0), Dungeons(0), Teams(0) { }
   void ReadFrom(inputfile&);
   std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
   dungeonscript* GetDungeonDefault(bool AOE = true) const { SCRIPT_RETURN(DungeonDefault) }
@@ -294,3 +294,5 @@ class gamescript : public script
 };
 
 #endif
+
+

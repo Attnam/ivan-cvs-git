@@ -23,7 +23,7 @@ class area
 {
  public:
   area(ushort, ushort);
-  area() {}
+  area() { }
   virtual ~area();
   virtual void Draw() const;
   virtual void AddCharacter(vector2d, character*);
@@ -57,3 +57,5 @@ inline outputfile& operator<<(outputfile& SaveFile, area* Area)
 }
 
 #endif
+
+

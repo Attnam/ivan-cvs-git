@@ -42,9 +42,9 @@ class item : public object
   virtual bool IsGoldenEagleShirt() const { return false; }
   virtual bool CanBeRead(character*) const { return false; }
   virtual bool Read(character*) { return false; }
-  virtual void ReceiveHitEffect(character*, character*) {}
+  virtual void ReceiveHitEffect(character*, character*) { }
   virtual bool CanBeDippedInto(item*) const { return false; }
-  virtual void DipInto(item*) {}
+  virtual void DipInto(item*) { }
   virtual material* BeDippedInto() { return 0; }
   virtual bool CanBeDipped() const { return false; }
   virtual bool CanBeWorn() const { return false; }
@@ -72,7 +72,7 @@ class item : public object
   virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
   virtual bool IsMaterialChangeable() const { return true; }
   virtual void ChangeMainMaterial(material*);
-  virtual void CheckPickUpEffect(character*) {}
+  virtual void CheckPickUpEffect(character*) { }
   virtual uchar GetWeaponCategory() const;
   virtual bool StruckByWandOfStriking(character*, std::string, stack*);
   virtual float GetThrowStrengthModifier() const { return 1; }
@@ -80,7 +80,7 @@ class item : public object
   virtual bool GetStepOnEffect(character*) { return false; }
   virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
-  virtual void SignalSquarePositionChange(bool) {}
+  virtual void SignalSquarePositionChange(bool) { }
   virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
   virtual uchar GetConsumeType() const { return GetMaterial(0)->GetConsumeType(); }
   virtual bool IsBadFoodForAI(character*) const;
@@ -92,7 +92,7 @@ class item : public object
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void ChargeFully(character*) {}
+  virtual void ChargeFully(character*) { }
   virtual bool IsChargable() const { return false; }
  protected:
   virtual void SetDefaultStats() = 0;
@@ -108,7 +108,7 @@ class item : public object
   static class name##_protoinstaller\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) {}\
+    name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) { }\
     ushort GetIndex() const { return Index; }\
    private:\
     ushort Index;\
@@ -150,8 +150,10 @@ name : public base\
 name : public base\
 {\
  public:\
-  name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) {}\
+  name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) { }\
   data\
 };
 
 #endif
+
+

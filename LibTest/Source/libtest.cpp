@@ -20,10 +20,10 @@ int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)
   graphics::Init();
 
 #ifdef WIN32
-  graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false, NULL);
+  graphics::SetMode(hInst, hWnd, "Erno", 800, 600, 16, false, NULL);
 #endif
 #ifdef USE_SDL
-  graphics::SetMode("Esko", 800, 600, 16);
+  graphics::SetMode("Erno", 800, 600, 16);
 #endif
 #ifdef __DJGPP__
   graphics::SetMode(0x114);

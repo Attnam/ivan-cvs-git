@@ -542,6 +542,7 @@ class MATERIAL
   virtual ushort GetColor() const { return MAKE_RGB(32, 96, 32); }
   virtual bool IsFlammable() const { return true; }
  protected:
+  virtual std::string AdjectiveStem() const { return "grassy"; }
   virtual std::string NameStem() const { return "grass"; }
 );
 

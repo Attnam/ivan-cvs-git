@@ -106,8 +106,8 @@ class levelsquare : public square
   ushort CalculateEmitation() const;
   struct emitter
   {
-    emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) {}
-    emitter() {}
+    emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
+    emitter() { }
     bool operator==(emitter& AE) const { if(Pos == AE.Pos) return true; else return false; }
     emitter& operator=(emitter& AE) { Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
     vector2d Pos;
@@ -125,3 +125,5 @@ class levelsquare : public square
 };
 
 #endif
+
+

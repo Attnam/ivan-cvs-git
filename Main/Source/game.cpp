@@ -29,7 +29,6 @@
 #include "lterraba.h"
 #include "worldmap.h"
 #include "message.h"
-#include "pool.h"
 #include "dungeon.h"
 #include "feio.h"
 #include "script.h"
@@ -39,7 +38,7 @@
 #include "femath.h"
 #include "hscore.h"
 
-class quitrequest {};
+class quitrequest { };
 
 ushort game::Current;
 long game::BaseScore;
@@ -269,8 +268,6 @@ void game::Run()
 	  ApplyDivineTick();
 	}
       catch(quitrequest) { }
-
-      objectpool::BurnTheDead();
 
       if(!GetRunning())
 	break;
@@ -780,25 +777,35 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = game::GetPlayer()->MaxDanger() * (0.1f + float(GetCurrent()) / 40);
+  float Base = game::GetPlayer()->MaxDanger() * (0.05f + float(GetCurrent()) / 100);
 
   while(true)
     {
-      float Dice = float(RAND() % 5);
+      uchar Dice = RAND() % 25;
 
-      if(!Dice)
+      if(Dice == 0)
 	{
-	  Base /= 6;
+	  Base /= 5;
 	  continue;
 	}
 
-      if(Dice == 4)
+      if(Dice == 24)
 	{
-	  Base *= 6;
+	  Base *= 5;
 	  continue;
 	}
 
-      Base *= (6 + Dice) / 8;
+      if(Dice < 5)
+	{
+	  Base /= 2;
+	  continue;
+	}
+
+      if(Dice > 19)
+	{
+	  Base *= 2;
+	  continue;
+	}
 
       return Base;
     }

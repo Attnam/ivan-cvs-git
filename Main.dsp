@@ -74,7 +74,7 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Include" /I "Main/Include" /I "Main/Resource" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /I "FeMath/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
-# SUBTRACT CPP /Gf /Fr
+# SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "_DEBUG"
@@ -122,6 +122,10 @@ SOURCE=.\Main\Source\cont.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\dungeon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\fluid.cpp
 # End Source File
 # Begin Source File
 
@@ -273,6 +277,10 @@ SOURCE=.\Main\Include\dungeon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\fluid.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\game.h
 # End Source File
 # Begin Source File
@@ -391,13 +399,6 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # End Target
 # End Project

@@ -12,11 +12,11 @@ class window
  public:
   virtual void Draw();
   virtual void SetPos(rectangle What) { Pos = What; }
-  window(rectangle Pos, unsigned short BackgroundColor, unsigned short BorderColor, unsigned short BarColor) : Pos(Pos), BackgroundColor(BackgroundColor), BorderColor(BorderColor), BarColor(BarColor) {}
+  window(rectangle Pos, unsigned short BackgroundColor, unsigned short BorderColor, unsigned short BarColor) : Pos(Pos), BackgroundColor(BackgroundColor), BorderColor(BorderColor), BarColor(BarColor) { }
   void BringOnTop();
   virtual void Click(vector2d);
   virtual rectangle GetPos() { return Pos; }
-  window() {}
+  window() { }
   virtual void SetBackgroundColor(unsigned short What) { BackgroundColor = What; }
   virtual void DrawBackground();
   virtual vector<windowobject*>& GetWindowObjectList() { return WindowObjectList; }
@@ -87,4 +87,5 @@ class palettechooser : public window
 
 #endif
   
+
 

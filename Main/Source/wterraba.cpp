@@ -9,7 +9,7 @@
 
 struct prioritypair
 {
-  prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
+  prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) { }
   bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
   uchar Priority;
   vector2d BitmapPos;
@@ -91,3 +91,5 @@ void worldmapterrain::Load(inputfile& SaveFile)
 
   WorldMapSquareUnder = (worldmapsquare*)game::GetSquareInLoad();
 }
+
+

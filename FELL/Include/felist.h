@@ -18,8 +18,8 @@ class bitmap;
 
 struct felistentry
 {
-  felistentry() {}
-  felistentry(std::string String, ushort Color) : String(String), Color(Color) {}
+  felistentry() { }
+  felistentry(std::string String, ushort Color) : String(String), Color(Color) { }
   std::string String;
   ushort Color;
 };
@@ -27,7 +27,7 @@ struct felistentry
 class felist
 {
  public:
-  felist(ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) {}
+  felist(ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { }
   felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
   void AddEntry(std::string, ushort);
   void AddDescription(std::string Str, ushort Color = 0xFFFF) { Description.push_back(felistentry(Str, Color)); }
@@ -60,3 +60,5 @@ inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 }
 
 #endif
+
+

@@ -23,7 +23,7 @@ class worldmap : public area
 {
  public:
   worldmap(ushort, ushort);
-  worldmap() {}
+  worldmap() { }
   virtual ~worldmap();
   virtual void Generate();
   virtual void Save(outputfile&) const;
@@ -76,3 +76,5 @@ inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
 }
 
 #endif
+
+

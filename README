@@ -1,4 +1,4 @@
-Iter Vehems ad Necem (0.310)
+Iter Vehems ad Necem (0.311)
 ----------------------------
 
 (For news and updates view our homepage at ivan.sourceforge.net)
@@ -74,11 +74,12 @@ A: Describe the idea to us by sending it to
 ivan-users@sourceforge.net or report it at Ivan's
 SourceForge project page (see above).
 
-Q: I'm a programmer and I would like to help you. 
-What should I do?
+Q: I'm a programmer willing to help you. What should I do?
 
 A: Code and then send us (e-mail: ivan-devel@lists.sourceforge.net)
-your diff. If we like your code we will integrate it to the next 
-release. You will of course be credited for your code. 
+your diff. If we like your code we will integrate it to the next
+release. You will of course be credited for your code.
 
 OPEN SOURCE FOREVER!
+
+something

@@ -32,7 +32,6 @@ class weaponskill
 {
  public:
   weaponskill();
-  bool Turn();
   bool Turn(ushort);
   uchar GetLevel() const { return Level; }
   ulong GetHits() const { return Hits; }
@@ -57,7 +56,7 @@ class weaponskill
 class gweaponskill : public weaponskill
 {
  public:
-  gweaponskill(uchar Index) : Index(Index) {}
+  gweaponskill(uchar Index) : Index(Index) { }
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ushort GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
@@ -90,7 +89,7 @@ inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
  public:
-  sweaponskill() {}
+  sweaponskill() { }
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ushort GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
@@ -124,3 +123,5 @@ inline inputfile& operator>>(inputfile& SaveFile, sweaponskill*& WeaponSkill)
 }
 
 #endif
+
+

@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define VERSION			"0.310"
+#define VERSION			"0.311"
 
 #define DIRECTION_COMMAND_KEYS	8
 

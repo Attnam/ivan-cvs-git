@@ -21,10 +21,10 @@ class room : public typeable
 {
  public:
   room(bool);
-  virtual ~room() {}
+  virtual ~room() { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void Enter(character*) {}
+  virtual void Enter(character*) { }
   virtual room* Clone() const = 0;
   virtual vector2d GetPos() const { return Pos; }
   virtual void SetPos(vector2d What) { Pos = What; }
@@ -95,3 +95,5 @@ name : public base\
 }; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
+
+

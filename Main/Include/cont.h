@@ -20,8 +20,8 @@ class continent
 {
  public:
   friend class worldmap;
-  continent() {}
-  continent(uchar Index) : Index(Index) {}
+  continent() { }
+  continent(uchar Index) : Index(Index) { }
   void AttachTo(continent*);
   void Add(vector2d);
   void Save(outputfile&) const;
@@ -73,3 +73,5 @@ inline inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
 }
 
 #endif
+
+

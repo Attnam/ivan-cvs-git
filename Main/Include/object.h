@@ -23,6 +23,7 @@
 
 #include "igraph.h"
 #include "typeable.h"
+#include "pool.h"
 
 class material;
 class outputfile;
@@ -34,7 +35,7 @@ class square;
 class object : public typeable
 {
  public:
-  object(bool);
+  object(bool, bool);
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -49,11 +50,11 @@ class object : public typeable
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual std::string GetNameSingular() const { return NameSingular(); }
   virtual std::string GetNamePlural() const { return NamePlural(); }
-  virtual void Be() {}
-  virtual std::list<object*>::iterator GetPoolIterator() { return PoolIterator; }
-  virtual void SetPoolIterator(std::list<object*>::iterator What) { PoolIterator = What; }
-  virtual bool GetExists() const { return Exists; }
-  virtual void SetExists(bool What) { Exists = What; }
+  virtual void Be() { }
+  virtual std::list<objectinfo>::iterator GetPoolIterator() const { return PoolIterator; }
+  virtual void SetPoolIterator(std::list<objectinfo>::iterator What) { PoolIterator = What; }
+  virtual bool GetExists() const;
+  virtual void SetExists(bool);
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual void SetMaterial(uchar, material*);
   virtual void ChangeMaterial(uchar, material*);
@@ -68,7 +69,7 @@ class object : public typeable
   virtual void SetSquareUnder(square* What) { SquareUnder = What; }
   virtual levelsquare* GetLevelSquareUnder() const;
   virtual void SetLevelSquareUnder(levelsquare*);
-  virtual void ColorChangeSpeciality(uchar, bool) {}
+  virtual void ColorChangeSpeciality(uchar, bool) { }
  protected:
   virtual std::string NameSingular() const = 0;
   virtual std::string NamePlural() const { return NameSingular() + "s"; }
@@ -84,9 +85,9 @@ class object : public typeable
   virtual vector2d GetBitmapPos() const = 0;
   std::vector<material*> Material;
   std::vector<bool> PreserveBit;
-  std::list<object*>::iterator PoolIterator;
+  std::list<objectinfo>::iterator PoolIterator;
   ushort Size;
-  bool InPool, Exists;
+  bool InPool;
   bitmap* Picture;
   graphic_id GraphicId;
   ulong ID;

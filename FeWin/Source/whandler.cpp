@@ -125,6 +125,8 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 	if(Index == 0xFFFF)
 	  KeyBuffer.Add(wParam);
+
+	return 0;
       }
 
     case WM_KEYUP:

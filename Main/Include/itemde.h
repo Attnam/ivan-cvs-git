@@ -20,7 +20,7 @@ class ITEM
     SetCharges(6);
   },
  public:
-  virtual ushort Possibility() const { return 200; }
+  virtual ushort Possibility() const { return 100; }
   virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()); }
   virtual uchar GetConsumeType() const { return GetMaterial(1)->GetConsumeType(); }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 112); }
@@ -324,7 +324,7 @@ class ITEM
     SetSize(75);
   },
  public:
-  virtual ushort Possibility() const { return 5; }
+  virtual ushort Possibility() const { return 3; }
   virtual ushort GetArmorValue() const;
   virtual std::string NameSingular() const { return "plate mail"; }
   virtual float OfferModifier() const { return 0.5; }
@@ -451,7 +451,7 @@ class ITEM
     SetSize(20);
   },
  public:
-  virtual ushort Possibility() const { return 100; }
+  virtual ushort Possibility() const { return 50; }
   virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", bananapeal::StaticType()); }
   virtual std::string NameSingular() const { return "banana peal"; }
   virtual item* BetterVersion() const { return new banana; }
@@ -793,7 +793,7 @@ class ABSTRACT_ITEM
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
   virtual void Beam(character*, std::string, uchar, uchar);
-  virtual void BeamEffect(character*, std::string, uchar, levelsquare*) {};
+  virtual void BeamEffect(character*, std::string, uchar, levelsquare*) { };
   virtual ushort GetBeamColor() const = 0;
   virtual bool StruckByWandOfStriking(character*, std::string, stack*);
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
@@ -875,7 +875,7 @@ class ITEM
     UpdatePicture();
   },
  public:
-  virtual ushort Possibility() const { return 50; }
+  virtual ushort Possibility() const { return 25; }
   virtual std::string NameSingular() const { return "broken lantern"; }
   virtual item* BetterVersion() const { return new lantern; }
   virtual float OfferModifier() const { return 0; }
@@ -999,7 +999,7 @@ class ITEM
   },
  public:
   virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", kiwiflesh::StaticType()); }
-  virtual ushort Possibility() const { return 20; }
+  virtual ushort Possibility() const { return 25; }
   virtual std::string NameSingular() const { return "kiwi"; }
   virtual float OfferModifier() const { return 0.4f; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,384); }
@@ -1109,7 +1109,7 @@ class ITEM
   virtual bool CanBeRead(character*) const;
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a") + OwnerGodDescription(OwnerGod); }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 128); }
-  virtual ushort Possibility() const { return 5; }
+  virtual ushort Possibility() const { return 10; }
   virtual float OfferModifier() const { return 0.4f; }
   virtual vector2d GetBitmapPos() const { return vector2d(32,32); }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
@@ -1156,7 +1156,7 @@ class ITEM
     SetInhabitedByGenie(!(rand() % 4));
   },
  public:
-  virtual ushort Possibility() const { return 10; }
+  virtual ushort Possibility() const { return 25; }
   virtual ushort GetEmitation() const { return 256; }
   virtual std::string NameSingular() const { return "oil lamp"; }
   virtual float OfferModifier() const { return 1; }

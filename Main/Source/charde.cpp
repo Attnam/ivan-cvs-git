@@ -267,6 +267,7 @@ bool humanoid::WearArmor()
   if(Index == 0xFFFE)
     {
       Armor.Torso = 0;
+      EditAP(-5000);
       return true;
     }
   else
@@ -894,7 +895,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	  ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
 	}
       else
-	ADD_MESSAGE("\"The topmost reason why I work here is that the monsters around here devour tax collectors.\"");
+	ADD_MESSAGE("\"The topmost reason why I work here is that monsters devour tax collectors.\"");
       break;
     case 3:
       if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
@@ -1039,7 +1040,7 @@ void ivan::BeTalkedTo(character* Talker)
       return;
     }
 
-  if(GetTeam() == Talker->GetTeam() || Talker->MaxDanger() < 50000)
+  if(GetTeam() == Talker->GetTeam() || Talker->MaxDanger() < 100000)
     {
       static bool Said[11];
 
@@ -1609,6 +1610,8 @@ void werewolf::Be()
 ulong werewolf::MaxDanger()
 {
   bool BeforeThis = GetIsWolf();
+
+  /* This should perhaps be made more elegant... */
 
   ChangeIntoWolf();
   ulong AsWolf = complexhumanoid::MaxDanger();

@@ -21,7 +21,7 @@
 #include "femath.h"
 #include "strover.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool, true), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
 {
   if(CreateMaterials || SetStats || CreateEquipment)
     ABORT("BOOO!");
@@ -626,8 +626,8 @@ bool character::Wield()
   return true;
 }
 
-void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace.
-  // Shouldn't it be "Ignorance is strength", not "Love is hate"?
+void character::GetAICommand()	// Freedom is slavery. Love is hate. War is peace.
+				// Shouldn't it be "Ignorance is strength", not "Love is hate"?
 {
   SeekLeader();
 
@@ -932,7 +932,7 @@ void character::Die(bool ForceMsg)
 {
   // Note for programmers: This function MUST NOT delete any objects!
 
-  if(!Exists)
+  if(!GetExists())
     return;
 
   if(GetIsPlayer())
@@ -962,7 +962,7 @@ void character::Die(bool ForceMsg)
 
   SetExists(false);
 
-  if(HomeRoom)
+  if(HomeRoom && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
     GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(0);
 
   GetSquareUnder()->RemoveCharacter();
@@ -972,11 +972,13 @@ void character::Die(bool ForceMsg)
 
   if(GetIsPlayer())
     {
-      GetLevelSquareUnder()->SetTemporaryEmitation(GetEmitation());
+      if(!game::GetInWilderness())
+	GetLevelSquareUnder()->SetTemporaryEmitation(GetEmitation());
 
       game::DrawEverything(false);
 
-      GetLevelSquareUnder()->SetTemporaryEmitation(0);
+      if(!game::GetInWilderness())
+	GetLevelSquareUnder()->SetTemporaryEmitation(0);
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
@@ -988,11 +990,13 @@ void character::Die(bool ForceMsg)
 
   if(!game::GetInWilderness())
     {
-      stack* StackUnder = GetLevelSquareUnder()->GetStack();
+      levelsquare* Square = GetLevelSquareUnder();
       SetSquareUnder(0); // prevents light optimization
 
       while(GetStack()->GetItems())
-	GetStack()->MoveItem(0, StackUnder);
+	GetStack()->MoveItem(0, Square->GetStack());
+
+      SetSquareUnder(Square);
     }
   else
     while(GetStack()->GetItems())
@@ -1173,13 +1177,12 @@ void character::ApplyExperience()
   if(GetStrengthExperience() > pow(1.18, long(GetStrength())) * 193)
     {
       if(GetIsPlayer())
-	ADD_MESSAGE("You feel you could lift Bill with one hand!");
+	ADD_MESSAGE("You feel stronger!");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks stronger.", CNAME(DEFINITE));
 
       SetStrength(GetStrength() + 1);
-
       SetStrengthExperience(0);
     }
 
@@ -1188,11 +1191,10 @@ void character::ApplyExperience()
       if(GetIsPlayer())
 	ADD_MESSAGE("You collapse under your load.");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks weaker.", CNAME(DEFINITE));
 
       SetStrength(GetStrength() - 1);
-
       SetStrengthExperience(0);
     }
 
@@ -1201,24 +1203,22 @@ void character::ApplyExperience()
       if(GetIsPlayer())
 	ADD_MESSAGE("You feel Valpurus's toughness around you!");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
 
       SetEndurance(GetEndurance() + 1);
-
       SetEnduranceExperience(0);
     }
 
   if(GetEnduranceExperience() < -pow(1.18, long(100 - GetEndurance())) * 193)
     {
       if(GetIsPlayer())
-	ADD_MESSAGE("You seem as tough as Jari.");
+	ADD_MESSAGE("You feel less healthy.");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks less tough.", CNAME(DEFINITE));
 
       SetEndurance(GetEndurance() - 1);
-
       SetEnduranceExperience(0);
     }
 
@@ -1227,11 +1227,10 @@ void character::ApplyExperience()
       if(GetIsPlayer())
 	ADD_MESSAGE("Your agility challenges even Valpurus's angels!");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks faster.", CNAME(DEFINITE));
 
       SetAgility(GetAgility() + 1);
-
       SetAgilityExperience(0);
     }
 
@@ -1240,21 +1239,19 @@ void character::ApplyExperience()
       if(GetIsPlayer())
 	ADD_MESSAGE("You seem as fast as a flat mommo.");
       else
-	if(GetLevelSquareUnder()->CanBeSeen())
+	if(game::GetInWilderness() || GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("Suddenly %s looks slower.", CNAME(DEFINITE));
 
       SetAgility(GetAgility() - 1);
-
       SetAgilityExperience(0);
     }
 
   if(GetPerceptionExperience() > pow(1.18, long(GetPerception())) * 193)
     {
       if(GetIsPlayer())
-	ADD_MESSAGE("Your sight seem to sharpen. This is bad. Very bad.");
+	ADD_MESSAGE("Your don't feel as guru anymore.");
 
       SetPerception(GetPerception() + 1);
-
       SetPerceptionExperience(0);
     }
 
@@ -1264,9 +1261,7 @@ void character::ApplyExperience()
 	ADD_MESSAGE("You feel very guru.");
 
       SetPerception(GetPerception() - 1);
-
       SetPerceptionExperience(0);
-
       game::GetGod(1)->AdjustRelation(100);
     }
 }
@@ -1910,7 +1905,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
   if(CheckDeath("was poisoned by school food"))
     return;
 
-  if(!(RAND() % 5) && SizeOfEffect / 500)
+  if(!(RAND() % 3) && SizeOfEffect / 500)
     {
       if(GetIsPlayer())
 	ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
@@ -2597,6 +2592,8 @@ void character::EndPolymorph()
 
       while(GetStack()->GetItems())
 	GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
+
+      SetSquareUnder(game::GetPlayerBackup()->GetSquareUnder()); // might be used afterwards
 
       if(game::GetPlayerBackup()->CanWield())
 	game::GetPlayerBackup()->SetWielded(GetWielded());

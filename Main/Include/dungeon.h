@@ -23,7 +23,7 @@ class levelscript;
 class dungeon
 {
  public:
-  dungeon() {}
+  dungeon() { }
   dungeon(uchar);
   ~dungeon();
   void PrepareLevel(ushort = game::GetCurrent());
@@ -73,3 +73,5 @@ inline inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 }
 
 #endif
+
+
