@@ -521,9 +521,6 @@ void levelsquare::Load(inputfile& SaveFile)
 {
 	game::SetSquareInLoad(this);
 
-	if(GetPos().X == 7 && GetPos().Y == 31)
-		int esko = 2;
-
 	GetStack()->Load(SaveFile); // This must be before square::Load!
 
 	square::Load(SaveFile);

@@ -126,7 +126,7 @@ bool ennerbeast::Hit(character*)
 
 bool humanoid::Drop()
 {
-	ushort Index = GetStack()->DrawContents("What do you want to drop?");
+	ushort Index = GetStack()->DrawContents(this, "What do you want to drop?");
 
 	if(Index < GetStack()->GetItems() && GetStack()->GetItem(Index))
 		if(GetStack()->GetItem(Index) == GetWielded())
@@ -188,7 +188,7 @@ void humanoid::DrawToTileBuffer() const
 bool humanoid::Wield()
 {
 	ushort Index;
-	if((Index = GetStack()->DrawContents("What do you want to wield? or press '-' for hands")) == 0xFFFF)
+	if((Index = GetStack()->DrawContents(this, "What do you want to wield? or press '-' for hands")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to wield.");
 		return false;
@@ -243,7 +243,7 @@ bool humanoid::WearArmor()
 {
 	ushort Index;
 
-	if((Index = GetStack()->DrawContents("What do you want to wear? or press '-' for nothing")) == 0xFFFF)
+	if((Index = GetStack()->DrawContents(this, "What do you want to wear? or press '-' for nothing")) == 0xFFFF)
 		return false;
 
 	if(Index == 0xFFFE)
@@ -350,9 +350,21 @@ void ennerbeast::GetAICommand()
 
 void perttu::GetAICommand()
 {
+	SeekLeader();
+
 	SetHealTimer(GetHealTimer() + 1);
 
-	SeekLeader();
+	character* Char;
+
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	if(Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	{
+		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
+		{
+			HealFully(Char);
+			return;
+		}
+	})
 
 	if(CheckForEnemies())
 		return;
@@ -363,17 +375,7 @@ void perttu::GetAICommand()
 	if(CheckForUsefulItemsOnGround())
 		return;
 
-	if(FollowLeader())
-		return;
-
-	character* Char;
-
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
-	{
-		if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
-			HealFully(Char);
-	})
+	FollowLeader();
 }
 
 void perttu::HealFully(character* ToBeHealed)
@@ -384,6 +386,8 @@ void perttu::HealFully(character* ToBeHealed)
 
 	if(ToBeHealed->GetIsPlayer())
 		ADD_MESSAGE("%s heals you fully.", CNAME(DEFINITE));
+	else
+		ADD_MESSAGE("%s heals %s fully.", CNAME(DEFINITE), ToBeHealed->CNAME(DEFINITE));
 }
 
 void perttu::Save(outputfile& SaveFile) const
@@ -406,7 +410,7 @@ bool humanoid::Throw()
 {
 	ushort Index;
 
-	if((Index = GetStack()->DrawContents("What do you want to throw?")) == 0xFFFF)
+	if((Index = GetStack()->DrawContents(this, "What do you want to throw?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to throw.");
 		return false;
@@ -499,12 +503,12 @@ bool dog::ConsumeItemType(uchar Type) const     // We need a better system for t
 bool humanoid::Apply()
 {
 	ushort Index;
-	if((Index = GetStack()->DrawContents("What do you want to apply?")) == 0xFFFF)
+
+	if((Index = GetStack()->DrawContents(this, "What do you want to apply?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to apply.");
 		return false;
 	}
-
 
 	if(Index < GetStack()->GetItems())
 	{
@@ -516,6 +520,7 @@ bool humanoid::Apply()
 		
 		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
 			return false;
+
 		if(GetWielded() && !GetWielded()->GetExists()) 
 			SetWielded(0);
 	}
@@ -551,9 +556,11 @@ bool humanoid::Hit(character* Enemy)
 			GetWielded()->ReceiveHitEffect(Enemy, this);
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
-		GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer());
+		if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer()))
+			GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
 		if(GetWielded())
-			GetCurrentSingleWeaponSkill()->AddHit(GetIsPlayer());
+			if(GetCurrentSingleWeaponSkill()->AddHit(GetIsPlayer()))
+				GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
 	}
@@ -566,41 +573,51 @@ bool humanoid::Hit(character* Enemy)
 void humanoid::CharacterSpeciality()
 {
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-		GetCategoryWeaponSkill(c)->Turn(GetIsPlayer());
+		if(GetCategoryWeaponSkill(c)->Turn())
+			GetCategoryWeaponSkill(c)->AddLevelDownMessage();
 
-	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
 	{
-		(*i)->Turn(GetIsPlayer());
+		if((*i)->Turn())
+			for(ushort c = 0; c < GetStack()->GetItems(); ++c)
+				if((*i)->GetID() == GetStack()->GetItem(c)->GetID())
+				{
+					(*i)->AddLevelDownMessage(GetStack()->GetItem(c)->Name(UNARTICLED));
+					break;
+				}
 
 		if(!(*i)->GetHits() && *i != GetCurrentSingleWeaponSkill())
 		{
 			SingleWeaponSkill.erase(i);
 			i = SingleWeaponSkill.begin();
+			std::vector<sweaponskill*>::iterator p = SingleWeaponSkill.end();
 			continue;
 		}
+
+		++i;
 	}
 }
 
 bool humanoid::ShowWeaponSkills()
 {
 	{
-		felist List("Your experience in weapon categories");
+		felist List("Your experience in weapon categories", 0xFFFF, 0, false);
 
 		List.AddDescription("");
-		List.AddDescription("Category name       Level     Points    To next level");
+		List.AddDescription("Category name                 Level     Points    To next level");
 
 		for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
 		{
 			std::string Buffer;
 
 			Buffer += GetCategoryWeaponSkill(c)->Name();
-			Buffer.resize(20, ' ');
-
-			Buffer += GetCategoryWeaponSkill(c)->GetLevel();
 			Buffer.resize(30, ' ');
 
-			Buffer += int(GetCategoryWeaponSkill(c)->GetHits());
+			Buffer += GetCategoryWeaponSkill(c)->GetLevel();
 			Buffer.resize(40, ' ');
+
+			Buffer += int(GetCategoryWeaponSkill(c)->GetHits());
+			Buffer.resize(50, ' ');
 
 			if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
 				List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), RED);
@@ -608,10 +625,28 @@ bool humanoid::ShowWeaponSkills()
 				List.AddEntry(Buffer + '-', RED);
 		}
 
+		if(CurrentSingleWeaponSkill)
+		{
+			List.AddEntry("", RED);
+
+			std::string Buffer = "current single weapon skill:  ";
+
+			Buffer += CurrentSingleWeaponSkill->GetLevel();
+			Buffer.resize(40, ' ');
+
+			Buffer += int(CurrentSingleWeaponSkill->GetHits());
+			Buffer.resize(50, ' ');
+
+			if(CurrentSingleWeaponSkill->GetLevel() != 10)
+				List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
+			else
+				List.AddEntry(Buffer + '-', RED);
+		}
+
 		List.Draw();
 	}
 
-	if(SingleWeaponSkill.size())
+	/*if(SingleWeaponSkill.size())
 	{
 		felist List("Your experience in single weapons");
 
@@ -638,7 +673,7 @@ bool humanoid::ShowWeaponSkills()
 		}
 
 		List.Draw();
-	}
+	}*/
 
 	return false;
 }
@@ -667,7 +702,7 @@ void humanoid::SetWielded(item* Something)
 
 		if(!GetCurrentSingleWeaponSkill())
 		{
-			SetCurrentSingleWeaponSkill(new sweaponskill(Wielded->Name(UNARTICLED)));
+			SetCurrentSingleWeaponSkill(new sweaponskill);
 			GetCurrentSingleWeaponSkill()->SetID(Wielded->GetID());
 			SingleWeaponSkill.push_back(GetCurrentSingleWeaponSkill());
 		}
@@ -724,28 +759,6 @@ void perttu::AddHitMessage(character* Enemy, const bool Critical) const
 		else
 			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
-}
-
-void shopkeeper::GetAICommand()
-{
-	if(CheckForEnemies())
-		return;
-
-	if(CheckForDoors())
-		return;
-
-	CheckForUsefulItemsOnGround();
-}
-
-void priest::GetAICommand()
-{
-	if(CheckForEnemies())
-		return;
-
-	if(CheckForDoors())
-		return;
-
-	CheckForUsefulItemsOnGround();
 }
 
 void perttu::BeTalkedTo(character* Talker)
@@ -981,7 +994,7 @@ void golem::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
 
-long humanoid::Score() const
+long humanoid::StatScore() const
 {
 	long SkillScore = 0;
 	ushort c;
@@ -992,5 +1005,29 @@ long humanoid::Score() const
 	for(c = 0; c < SingleWeaponSkill.size(); ++c)
 		SkillScore += SingleWeaponSkill[c]->GetHits();
 
-	return (SkillScore >> 2) + character::Score();
+	return (SkillScore >> 2) + character::StatScore();
+}
+
+void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
+{
+	Description.resize(75, ' ');
+	Description += GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
+	Description.resize(80, ' ');
+
+	for(ushort c = 0; c < SingleWeaponSkill.size(); ++c)
+		if(Item->GetID() == SingleWeaponSkill[c]->GetID())
+		{
+			Description += SingleWeaponSkill[c]->GetLevel();
+			return;
+		}
+
+	Description += 0;
+}
+
+void humanoid::AddSpecialItemInfoDescription(std::string& Description)
+{
+	Description.resize(78, ' ');
+	Description += "GS";
+	Description.resize(83, ' ');
+	Description += "SS";
 }

@@ -710,8 +710,6 @@ void level::Load(inputfile& SaveFile)
 	for(ushort x = 0; x < XSize; ++x)
 		for(ulong y = 0; y < YSize; ++y)
 		{
-			if(x == 7 && y == 31)
-				int esko = 2;
 			Map[x][y] = new levelsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);
 		}

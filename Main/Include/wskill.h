@@ -27,14 +27,14 @@ class weaponskill
 {
 public:
 	weaponskill();
-	void Turn(bool = false);
+	bool Turn();
 	uchar GetLevel() const { return Level; }
 	ulong GetHits() const { return Hits; }
 	ulong GetHitCounter() const { return HitCounter; }
-	void AddHit(bool = false);
-	void AddHit(ulong, bool = false);
-	void SubHit(bool = false);
-	void SubHit(ulong, bool = false);
+	bool AddHit();
+	bool AddHit(ulong);
+	bool SubHit();
+	bool SubHit(ulong);
 	virtual ushort GetLevelMap(ushort Index) const = 0;
 	virtual ushort GetUnuseTurnMap(ushort Index) const = 0;
 	virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
@@ -42,8 +42,6 @@ public:
 	virtual void Load(inputfile&);
 	void SetHitMultiplier(float What) { HitMultiplier = What; }
 	float GetHitMultiplier() const { return HitMultiplier; }
-	virtual void AddLevelUpMessage() const = 0;
-	virtual void AddLevelDownMessage() const = 0;
 protected:
 	uchar Level;
 	ushort Hits, HitCounter;
@@ -87,23 +85,20 @@ class sweaponskill : public weaponskill
 {
 public:
 	sweaponskill() {}
-	sweaponskill(std::string WeaponName) : WeaponName(WeaponName) {}
 	ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
 	ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
 	ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
 	float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
-	void AddLevelUpMessage() const;
-	void AddLevelDownMessage() const;
+	void AddLevelUpMessage(std::string) const;
+	void AddLevelDownMessage(std::string) const;
 	void Save(outputfile&) const;
 	void Load(inputfile&);
 	void SetID(ulong What) { ID = What; }
 	ulong GetID() const { return ID; }
-	std::string Name() const { return WeaponName; }
 private:
 	static ushort LevelMap[];
 	static ushort UnuseTurnMap[];
 	static ushort UnusePenaltyMap[];
-	std::string WeaponName;
 	ulong ID;
 };
 

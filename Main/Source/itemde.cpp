@@ -430,7 +430,7 @@ bool scrollofchangematerial::Read(character* Reader)
 		return false;
 	}
 
-	if((Index = Reader->GetStack()->DrawContents("What item do you wish to change?")) == 0xFFFF)
+	if((Index = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to change.");
 		return false;

@@ -239,13 +239,16 @@ public:
 	virtual uchar GetHomeRoom() const { return HomeRoom; }
 	virtual bool Displace(character*);
 	virtual bool Sit();
+	virtual void AddSpecialItemInfo(std::string&, item*) {}
+	virtual void AddSpecialItemInfoDescription(std::string&) {}
+	virtual long StatScore() const;
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
 	virtual bool CheckForDoors();
 	virtual bool CheckForEnemies();
 	virtual bool FollowLeader();
-	virtual void SoldierAICommand();
+	virtual void StandIdleAI();
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
 	virtual void CreateInitialEquipment() {}

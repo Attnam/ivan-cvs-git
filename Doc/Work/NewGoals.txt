@@ -1,11 +1,11 @@
 New goals for version 0.30 alpha:
 
 -fixing all known bugs except the Great Surface Destruction Bug
- -single weapon's name not updated (Timo)
+D-single weapon's name not updated (Timo)
  -eating weapons made of an eatable material (Hex)
  -wrath of Seges (Timo)
- -score bug with polymorph (Timo)
- -money is temporarily lost in polymorph (Timo)
+D-score bug with polymorph (Timo)
+D-money is temporarily lost in polymorph (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features

@@ -161,9 +161,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 		return HAS_HIT;
 	}
 
-	ushort p = ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success));
-
-	if(rand() % p >= 100)
+	if(rand() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
 	{
 		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2000000) + (rand() % 3 ? 1 : 0);
 
@@ -351,7 +349,7 @@ bool character::Close()
 
 bool character::Drop()
 {
-	ushort Index = GetStack()->DrawContents("What do you want to drop?");
+	ushort Index = GetStack()->DrawContents(this, "What do you want to drop?");
 
 	if(Index < GetStack()->GetItems() && GetStack()->GetItem(Index))
 		if(GetStack()->GetItem(Index) == GetWielded())
@@ -371,7 +369,7 @@ bool character::Consume()
 {
 	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
 	{
-		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents("What do you wish to consume?", this);
+		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
 
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 		{
@@ -395,7 +393,7 @@ bool character::Consume()
 
 	if(GetStack()->ConsumableItems(this))
 	{
-		ushort Index = GetStack()->DrawConsumableContents("What do you wish to consume?", this);
+		ushort Index = GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
 
 		if(Index < GetStack()->GetItems())
 		{
@@ -563,7 +561,7 @@ bool character::Wield()
 		ADD_MESSAGE("This monster can not wield anything.");
 		return false;
 	}
-	if((Index = GetStack()->DrawContents("What do you want to wield? or press '-' for hands")) == 0xFFFF)
+	if((Index = GetStack()->DrawContents(this, "What do you want to wield? or press '-' for hands")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to wield.");
 		return false;
@@ -782,7 +780,7 @@ bool character::TryMove(vector2d MoveTo)
 
 bool character::ShowInventory()
 {
-	GetStack()->DrawContents("Character's Inventory, press ESC to exit");
+	GetStack()->DrawContents(this, "Character's Inventory, press ESC to exit");
 
 	return false;
 }
@@ -798,7 +796,7 @@ bool character::PickUp()
 
 			for(;;)
 			{
-				Index = GetLevelSquareUnder()->GetStack()->DrawContents("What do you want to pick up?");
+				Index = GetLevelSquareUnder()->GetStack()->DrawContents(this, "What do you want to pick up?");
 
 				if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 					if(GetLevelSquareUnder()->GetStack()->GetItem(Index))
@@ -895,7 +893,7 @@ void character::Die()
 		game::DrawEverything(false);
 
 		if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
-			GetStack()->DrawContents("Your inventory");
+			GetStack()->DrawContents(this, "Your inventory");
 
 		if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 			DrawMessageHistory();
@@ -936,7 +934,7 @@ void character::Die()
 
 bool character::OpenItem()
 {
-	ushort Index = Stack->DrawContents("What do you want to open?");
+	ushort Index = Stack->DrawContents(this, "What do you want to open?");
 
 	if(Index < GetStack()->GetItems())
 		if(GetStack()->GetItem(Index)->TryToOpen(Stack))
@@ -1224,7 +1222,7 @@ bool character::Save()
 
 bool character::Read()
 {
-	ushort Index = GetStack()->DrawContents("What do you want to read?");
+	ushort Index = GetStack()->DrawContents(this, "What do you want to read?");
 
 	if(Index < GetStack()->GetItems())
 		return ReadItem(Index, GetStack());
@@ -1275,24 +1273,23 @@ uchar character::GetBurdenState(ulong Mass) const
 
 bool character::Dip()
 {
-	ushort What = GetStack()->DrawContents("What do you want to dip?");
+	ushort What = GetStack()->DrawContents(this, "What do you want to dip?");
 
 	if(What < GetStack()->GetItems() && GetStack()->GetItem(What)->CanBeDipped())
 	{
 		game::DrawEverything();
-		ushort To = GetStack()->DrawContents("In what do you wish to dip it into?");
+
+		ushort To = GetStack()->DrawContents(this, "In what do you wish to dip it into?");
+
 		if(To < GetStack()->GetItems() && GetStack()->GetItem(To) && GetStack()->GetItem(What) != GetStack()->GetItem(To))
-		{
 			if(GetStack()->GetItem(To)->CanBeDippedInto(GetStack()->GetItem(What)))
 			{
 				GetStack()->GetItem(What)->DipInto(GetStack()->GetItem(To));
 				return true;
 			}
-		}
 	}
 
 	ADD_MESSAGE("Invalid selection!");
-
         return false;
 }
 
@@ -1881,7 +1878,8 @@ bool character::Offer()
 {
 	if(GetLevelSquareUnder()->GetOverLevelTerrain()->CanBeOffered())
 	{
-		ushort Index = GetStack()->DrawContents("What do you want to offer?");
+		ushort Index = GetStack()->DrawContents(this, "What do you want to offer?");
+
 		if(Index < GetStack()->GetItems())
 		{
 			if(GetStack()->GetItem(Index) == GetWielded())
@@ -1889,6 +1887,7 @@ bool character::Offer()
 				ADD_MESSAGE("You can't offer something that you wield.");
 				return false;
 			}
+
 			if(GetStack()->GetItem(Index) == GetTorsoArmor())
 			{
 				ADD_MESSAGE("You can't offer something that you wear.");
@@ -1914,14 +1913,14 @@ bool character::Offer()
 	return false;
 }
 
+long character::StatScore() const
+{
+	return GetHP() * 5 + GetEndurance() * 30 + (GetStrength() + GetAgility() + GetPerception()) * 40;
+}
+
 long character::Score() const
 {
-	long Score = GetHP() * 5 + GetEndurance() * 30 + (GetStrength() + GetAgility() + GetPerception()) * 40 + GetMoney();
-
-	Score += Stack->Score();
-	Score += game::GodScore();
-
-	return Score;
+	return (game::GetPlayerBackup() ? game::GetPlayerBackup()->StatScore() : StatScore()) + GetMoney() + Stack->Score() + game::GodScore();
 }
 
 void character::AddScoreEntry(std::string Description, float Multiplier) const
@@ -1958,7 +1957,8 @@ bool character::DrawMessageHistory()
 bool character::Throw()
 {
 	ushort Index;
-	if((Index = GetStack()->DrawContents("What do you want to throw?")) == 0xFFFF)
+
+	if((Index = GetStack()->DrawContents(this, "What do you want to throw?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to throw.");
 		return false;
@@ -2044,19 +2044,17 @@ void character::GetPlayerCommand()
 		game::DrawEverything();
 
 		int Key = GETKEY();
-
 		bool ValidKeyPressed = false;
+		uchar c;
 
-		{
-		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
+		for(c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(Key == game::GetMoveCommandKey(c))
 			{
 				HasActed = TryMove(GetPos() + game::GetMoveVector(c));
 				ValidKeyPressed = true;
 			}
-		}
 
-		for(uchar c = 1; game::GetCommand(c); ++c)
+		for(c = 1; game::GetCommand(c); ++c)
 			if(Key == game::GetCommand(c)->GetKey())
 			{
 				if(game::GetInWilderness() && !game::GetCommand(c)->GetCanBeUsedInWilderness())
@@ -2092,7 +2090,7 @@ bool character::Apply()
 {
 	ushort Index;
 
-	if((Index = GetStack()->DrawContents("What do you want to apply?")) == 0xFFFF)
+	if((Index = GetStack()->DrawContents(this, "What do you want to apply?")) == 0xFFFF)
 		return false;
 
 	if(Index < GetStack()->GetItems())
@@ -2102,11 +2100,11 @@ bool character::Apply()
 
 		if(!GetWielded()->GetExists()) 
 			SetWielded(0);
+
+		return true;
 	}
 	else
 		return false;
-
-	return true;
 }
 
 vector2d character::GetPos() const
@@ -2124,7 +2122,8 @@ bool character::ForceVomit()
 bool character::Zap()
 {
 	ushort Index;
-	if((Index = GetStack()->DrawContents("What do you want to zap with?")) == 0xFFFF)
+
+	if((Index = GetStack()->DrawContents(this, "What do you want to zap with?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to zap with.");
 		return false;
@@ -2137,15 +2136,16 @@ bool character::Zap()
 			ADD_MESSAGE("You can't zap that!");
 			return false;
 		}
+
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap? Press . to zap yourself.", 8, false, true);
+
 		if(Answer == 0xFF)
 			return false;
+
 		return GetStack()->GetItem(Index)->Zap(this, GetPos(), Answer);
 	}
 	else
 		return false;
-
-	return true;	
 }
 
 bool character::Polymorph()
@@ -2164,6 +2164,8 @@ bool character::Polymorph()
 
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, NewForm->GetStack());
+
+	NewForm->SetMoney(GetMoney());
 
 	if(NewForm->CanWield())
 		NewForm->SetWielded(GetWielded());
@@ -2271,7 +2273,7 @@ bool character::CheckCannibalism(ushort What)
 	return (GetMaterial(0)->GetType() == What); 
 }
 
-void character::SoldierAICommand()
+void character::StandIdleAI()
 {
 	SeekLeader();
 
@@ -2281,8 +2283,7 @@ void character::SoldierAICommand()
 	if(CheckForDoors())
 		return;
 
-	if(CheckForUsefulItemsOnGround())
-		return;
+	CheckForUsefulItemsOnGround();
 }
 
 bool character::ShowWeaponSkills()
@@ -2391,6 +2392,8 @@ void character::EndPolymorph()
 
 		while(GetStack()->GetItems())
 			GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
+
+		game::GetPlayerBackup()->SetMoney(GetMoney());
 
 		game::SetPlayer(game::GetPlayerBackup());
 		game::SetPlayerBackup(0);

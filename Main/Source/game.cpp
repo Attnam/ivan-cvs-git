@@ -179,6 +179,7 @@ void game::Init(std::string Name)
 
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
+		Player->GetStack()->FastAddItem(new wandofpolymorph);
 
 		Perttu = 0;
 

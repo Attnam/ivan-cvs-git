@@ -45,7 +45,9 @@ public:
 	virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
 	virtual float GetToHitValue() const;
 	virtual void ReceiveSound(char*, short, float);
-	virtual long Score() const;
+	virtual long StatScore() const;
+	virtual void AddSpecialItemInfo(std::string&, item*);
+	virtual void AddSpecialItemInfoDescription(std::string&);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(1000)
@@ -185,7 +187,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual void GetAICommand() { SoldierAICommand(); }
+	virtual void GetAICommand() { StandIdleAI(); }
 	virtual void CreateInitialEquipment();
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual void BeTalkedTo(character*);
@@ -211,7 +213,7 @@ class CHARACTER
 		SetMoney(3000 + rand() % 2001);
 	},
 public:
-	virtual void GetAICommand();
+	virtual void GetAICommand() { StandIdleAI(); }
 	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
@@ -238,7 +240,7 @@ class CHARACTER
 		SetTorsoType(0);
 	},
 public:
-	virtual void GetAICommand();
+	virtual void GetAICommand() { StandIdleAI(); }
 	virtual void CreateInitialEquipment();
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }

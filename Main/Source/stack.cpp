@@ -10,6 +10,7 @@
 #include "message.h"
 #include "save.h"
 #include "graphics.h"
+#include "charba.h"
 
 stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {
@@ -222,22 +223,25 @@ void stack::Optimize(ushort OptimizeBoundary)
 	}
 }
 
-ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the items in this stack on the screen
-{							// Displays Topic on the screen also...
+ushort stack::DrawContents(character* Viewer, std::string Topic) const 	// Draws a list of the items in this stack on the screen
+{									// Displays Topic on the screen also...
 	if(!GetItems()) return 0xFFFF;
 	felist ItemNames(Topic, WHITE, 0, true);
 	ItemNames.AddDescription("");
-	ItemNames.AddDescription("Name                                                 Weight       Armor  Strength");
+	std::string Buffer = "Name                                                 Weight       AV     Str";
+	Viewer->AddSpecialItemInfoDescription(Buffer);
+	ItemNames.AddDescription(Buffer);
 
 	for(ushort c = 0; c < GetItems(); ++c)
 	{
-		std::string Buffer = GetItem(c)->Name(INDEFINITE);
+		Buffer = GetItem(c)->Name(INDEFINITE);
 		Buffer.resize(50,' ');
 		Buffer += int(GetItem(c)->GetWeight());
 		Buffer.resize(63, ' ');
 		Buffer += int(GetItem(c)->GetArmorValue());
 		Buffer.resize(70, ' ');
 		Buffer += int(GetItem(c)->GetWeaponStrength() / 100);
+		Viewer->AddSpecialItemInfo(Buffer, GetItem(c));
 
 		ItemNames.AddEntry(Buffer, RED);
 	}
@@ -321,7 +325,7 @@ ushort stack::ConsumableItems(character* Eater)
 	return Counter;
 }
 
-ushort stack::DrawConsumableContents(const char* Topic, character* Eater) const
+ushort stack::DrawConsumableContents(character* Eater, std::string Topic) const
 {
 	stack ConsumableStack;
 	item* TheItem;
@@ -333,7 +337,7 @@ ushort stack::DrawConsumableContents(const char* Topic, character* Eater) const
 			ConsumableStack.FastAddItem(GetItem(c));
 	}
 
-	Key = ConsumableStack.DrawContents(Topic);
+	Key = ConsumableStack.DrawContents(Eater, Topic);
 
 	if(Key == 0xFFFF || Key == 0x1B || Key > ConsumableStack.GetItems())
 	{

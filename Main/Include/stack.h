@@ -35,7 +35,7 @@ public:
 	item* GetItem(ushort I) const	{ return Item[I]; }
 	ushort GetItems() const	{ return Items; }
 	void SetSquareUnder(square*);
-	ushort DrawContents(const char*) const;
+	ushort DrawContents(character*, std::string) const;
 	void DrawPartOfContents(ushort, ushort, bool, const char*) const;
 	item* MoveItem(ushort, stack*);
 	ushort GetEmitation() const;
@@ -52,7 +52,7 @@ public:
 	void SNonExistent(ushort What) { NonExistent = What; }
 	ushort ConsumableItems(character*);
 	void DrawItemData(ushort, ushort) const;
-	ushort DrawConsumableContents(const char*, character*) const;
+	ushort DrawConsumableContents(character*, std::string) const;
 	void DeletePointers();
 	void StackMerge(stack*);
 	ushort MultiselectDrawContents(const char*) const;
