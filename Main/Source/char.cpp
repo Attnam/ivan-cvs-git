@@ -4087,6 +4087,9 @@ void character::LycanthropyHandler()
 
 void character::SaveLife()
 {
+  if(GetAction())
+    GetAction()->Terminate(false);
+
   if(TemporaryStateIsActivated(LIFE_SAVED))
     {
       if(IsPlayer())
