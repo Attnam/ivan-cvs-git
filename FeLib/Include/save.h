@@ -30,8 +30,11 @@ class outputfile
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
   bool IsOpen() { return !!Buffer; }
   void Close() { fclose(Buffer); }
+  void Flush() { fflush(Buffer); }
+  void ReOpen();
  private:
   FILE* Buffer;
+  festring FileName;
 };
 
 class inputfile

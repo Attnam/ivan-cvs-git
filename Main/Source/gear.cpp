@@ -443,7 +443,7 @@ int meleeweapon::GetStrengthValue() const
 void meleeweapon::VirtualConstructor(bool Load)
 {
   if(!Load)
-    Enchantment = GetDefaultEnchantment();
+    Enchantment = GetBaseEnchantment();
 }
 
 int meleeweapon::GetSpoilLevel() const
@@ -617,7 +617,7 @@ int armor::GetStrengthValue() const
 void armor::VirtualConstructor(bool Load)
 {
   if(!Load)
-    Enchantment = GetDefaultEnchantment();
+    Enchantment = GetBaseEnchantment();
 }
 
 int armor::GetInElasticityPenalty(int Attribute) const
@@ -951,4 +951,20 @@ item* meleeweapon::Fix()
 long meleeweapon::GetMaterialPrice() const
 {
   return MainMaterial->GetRawPrice() + SecondaryMaterial->GetRawPrice();
+}
+
+void meleeweapon::CalculateEnchantment()
+{
+  Enchantment -= femath::LoopRoll(game::GetCurrentLevel()->GetEnchantmentMinusChance(), 5);
+  Enchantment += femath::LoopRoll(game::GetCurrentLevel()->GetEnchantmentPlusChance(), 5);
+  Enchantment -= femath::LoopRoll(GetEnchantmentMinusChance(), 5);
+  Enchantment += femath::LoopRoll(GetEnchantmentPlusChance(), 5);
+}
+
+void armor::CalculateEnchantment()
+{
+  Enchantment -= femath::LoopRoll(game::GetCurrentLevel()->GetEnchantmentMinusChance(), 5);
+  Enchantment += femath::LoopRoll(game::GetCurrentLevel()->GetEnchantmentPlusChance(), 5);
+  Enchantment -= femath::LoopRoll(GetEnchantmentMinusChance(), 5);
+  Enchantment += femath::LoopRoll(GetEnchantmentPlusChance(), 5);
 }

@@ -171,6 +171,7 @@ playerkind
 	AttachedGod = SEGES;
 	/* Replies overridden */
 	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
+	/*Inventory == belt(BELT_OF_LEVITATION);*/
 }
 
 petrus

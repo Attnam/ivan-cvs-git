@@ -145,29 +145,29 @@ ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 
 void game::AddCharacterID(character* Char, ulong ID) {
 if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char));
 }
 void game::RemoveCharacterID(ulong ID) {
 if(CharacterIDMap.find(ID) == CharacterIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID) {
 if(ItemIDMap.find(ID) != ItemIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
 }
 void game::RemoveItemID(ulong ID)
 {
 if(ID && ItemIDMap.find(ID) == ItemIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 
 if(ID) ItemIDMap.erase(ItemIDMap.find(ID));
 }
 void game::UpdateItemID(item* Item, ulong ID) {
 if(ItemIDMap.find(ID) == ItemIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 ItemIDMap.find(ID)->second = Item;
 }
 const dangermap& game::GetDangerMap() { return DangerMap; }
@@ -269,6 +269,7 @@ bool game::Init(const festring& Name)
 
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
+	InWilderness = true;
 	iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
 	NextCharacterID = 1;
 	NextItemID = 1;
@@ -289,7 +290,6 @@ bool game::Init(const festring& Name)
 	SetCurrentArea(WorldMap = new worldmap(128, 128));
 	CurrentWSquareMap = WorldMap->GetMap();
 	WorldMap->Generate();
-	InWilderness = true;
 	UpdateCamera();
 	SendLOSUpdateRequest();
 	Tick = 0;
@@ -1611,7 +1611,7 @@ void game::End(festring DeathMessage, bool Permanently, bool AndGoToMenu)
       if(HScore.LastAddFailed())
 	{
 	  iosystem::TextScreen(CONST_S("You didn't manage to get onto the high score list.\n\n\n\n")
-			       + GetPlayerName() + CONST_S(" ") + DeathMessage + "\nRIP");
+			       + GetPlayerName() + ", " + DeathMessage + "\nRIP");
 	}
       else
 	HScore.Draw();
@@ -2055,7 +2055,7 @@ ulong game::CreateNewCharacterID(character* NewChar)
   ulong ID = NextCharacterID++;
 
 if(CharacterIDMap.find(ID) != CharacterIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 
   CharacterIDMap.insert(std::pair<ulong, character*>(ID, NewChar));
   return ID;
@@ -2066,7 +2066,7 @@ ulong game::CreateNewItemID(item* NewItem)
   ulong ID = NextItemID++;
 
 if(ItemIDMap.find(ID) != ItemIDMap.end())
-  int esko = 2;
+  int esko = esko = 2;
 
   if(NewItem)
     ItemIDMap.insert(std::pair<ulong, item*>(ID, NewItem));
@@ -2858,7 +2858,7 @@ bool NameOrderer(character* C1, character* C2)
 
 bool game::PolymorphControlKeyHandler(int Key, festring& String)
 {
-  if(Key == '*')
+  if(Key == '?')
     {
       felist List(CONST_S("List of known creatures and their intelligence requirements"));
       SetStandardListAttributes(List);
@@ -2879,7 +2879,7 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
 	      festring Entry;
 	      Char->AddName(Entry, UNARTICLED);
 	      StringVector.push_back(Entry);
-	      int Req = Char->GetPolymorphIntelligenceRequirement(PLAYER);
+	      int Req = Char->GetPolymorphIntelligenceRequirement();
 
 	      if(Char->IsSameAs(PLAYER)
 	      || (PLAYER->GetPolymorphBackup()
@@ -3004,7 +3004,7 @@ vector2d game::CommandKeyHandler(vector2d CursorPos, int Key)
 {
   if(Key == '+')
     {
-      for(int c = 0; c < CommandVector.size(); ++c)
+      for(uint c = 0; c < CommandVector.size(); ++c)
 	if(CommandVector[c] == LastCharacterUnderCommandCursor)
 	  {
 	    if(++c == CommandVector.size())
@@ -3016,7 +3016,7 @@ vector2d game::CommandKeyHandler(vector2d CursorPos, int Key)
     }
   else if(Key == '-')
     {
-      for(int c = 0; c < CommandVector.size(); ++c)
+      for(uint c = 0; c < CommandVector.size(); ++c)
 	if(CommandVector[c] == LastCharacterUnderCommandCursor)
 	  {
 	    if(!c)
@@ -3104,7 +3104,7 @@ void game::CommandScreen(const festring& Topic, ulong PossibleFlags, ulong Const
 bool game::CommandAll()
 {
   ulong PossibleFlags = 0, ConstantFlags = ALL_COMMAND_FLAGS, VaryFlags = 0, OldFlags = 0;
-  int c1, c2;
+  uint c1, c2;
 
   for(c1 = 0; c1 < CommandVector.size(); ++c1)
     {

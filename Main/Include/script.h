@@ -430,6 +430,10 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceBase);
   SCRIPT_MEMBER_WITH_BASE(int, ItemMinPriceDelta);
   SCRIPT_MEMBER_WITH_BASE(int, Type);
+  SCRIPT_MEMBER_WITH_BASE(int, EnchantmentMinusChanceBase);
+  SCRIPT_MEMBER_WITH_BASE(int, EnchantmentMinusChanceDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceBase);
+  SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceDelta);
 };
 
 class dungeonscript : public script

@@ -1167,3 +1167,9 @@ bool stack::Necromancy(character* Necromancer)
 
   return false;
 }
+
+void stack::CalculateEnchantments()
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->CalculateEnchantment();
+}

@@ -75,7 +75,7 @@ item
 	AffectsWisdom = false;
 	AffectsCharisma = false;
 	AffectsMana = false;
-	DefaultEnchantment = 0;
+	BaseEnchantment = 0;
 	PriceIsProportionalToEnchantment = false;
 	CanBeUsedBySmith = false;
 	AffectsCarryingCapacity = false;
@@ -106,6 +106,8 @@ item
 	AllowEquip = true;
 	/* Obligatory if scroll: ReadDifficulty */
 	IsValuable = true;
+	EnchantmentMinusChance = 0;
+	EnchantmentPlusChance = 0;
 }
 
 materialcontainer
@@ -213,6 +215,7 @@ meleeweapon
 		Roundness = 10;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|LONG_SWORD;
@@ -223,6 +226,7 @@ meleeweapon
 		MainMaterialConfig = { 5, EBONY_WOOD, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig = { 5, EBONY_WOOD, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 5, 25, 100, 25, 25, 10; }
+		EnchantmentPlusChance = 10;
 	}
 
 	Config TWO_HANDED_SWORD;
@@ -243,6 +247,8 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
+		EnchantmentMinusChance = 5;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|TWO_HANDED_SWORD;
@@ -251,6 +257,8 @@ meleeweapon
 		BitmapPos = 32, 80;
 		WieldedBitmapPos = 176, 80;
 		MaterialConfigChances = { 4, 0, 250, 25, 25; }
+		EnchantmentMinusChance = 10;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config TWO_HANDED_SCIMITAR;
@@ -271,6 +279,8 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 176, 112;
+		EnchantmentMinusChance = 5;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|TWO_HANDED_SCIMITAR;
@@ -279,6 +289,8 @@ meleeweapon
 		BitmapPos = 32, 96;
 		WieldedBitmapPos = 176, 80;
 		MaterialConfigChances = { 4, 0, 250, 25, 25; }
+		EnchantmentMinusChance = 10;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config SPEAR;
@@ -299,6 +311,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 96;
+		EnchantmentPlusChance = 15;
 	}
 
 	Config BROKEN|SPEAR;
@@ -308,6 +321,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 96;
 		MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
 		MaterialConfigChances = { 7, 150, 25, 25, 5, 5, 5, 5; }
+		EnchantmentPlusChance = 30;
 	}
 
 	Config AXE;
@@ -329,6 +343,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 160, 176;
+		EnchantmentPlusChance = 15;
 	}
 
 	Config BROKEN|AXE;
@@ -338,6 +353,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 176;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 30;
 	}
 
 	Config HALBERD;
@@ -358,6 +374,8 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 256;
+		EnchantmentMinusChance = 5;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|HALBERD;
@@ -367,6 +385,8 @@ meleeweapon
 		WieldedBitmapPos = 176, 256;
 		MainMaterialConfig = { 3, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 3, 250, 25, 25; }
+		EnchantmentMinusChance = 10;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config MACE;
@@ -387,6 +407,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 192;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config BROKEN|MACE;
@@ -396,6 +417,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 192;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 20;
 	}
 
 	Config WAR_HAMMER;
@@ -417,6 +439,7 @@ meleeweapon
 		CanBeUsedBySmith = true;
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 176, 320;
+		EnchantmentPlusChance = 15;
 	}
 
 	Config BROKEN|WAR_HAMMER;
@@ -426,6 +449,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 336;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 30;
 	}
 
 	Config SICKLE;
@@ -446,6 +470,7 @@ meleeweapon
 		AttachedGod = SEGES;
 		WieldedBitmapPos = 176, 32;
 		IsGoodWithPlants = true;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BROKEN|SICKLE;
@@ -455,6 +480,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 240;
 		MainMaterialConfig = { 6, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
 		MaterialConfigChances = { 6, 25, 25, 5, 5, 5, 5; }
+		EnchantmentPlusChance = 40;
 	}
 
 	Config DAGGER;
@@ -474,6 +500,7 @@ meleeweapon
 		Roundness = 20;
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 288;
+		EnchantmentPlusChance = 25;
 	}
 
 	Config BROKEN|DAGGER;
@@ -484,6 +511,7 @@ meleeweapon
 		MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
 		SecondaryMaterialConfig = { 7, STEEL, METEORIC_STEEL, MITHRIL, SAPPHIRE, RUBY, DIAMOND, ADAMANT; }
 		MaterialConfigChances = { 7, 100, 25, 25, 5, 5, 5, 5; }
+		EnchantmentPlusChance = 50;
 	}
 
 	Config SHORT_SWORD;
@@ -503,6 +531,7 @@ meleeweapon
 		Roundness = 15;
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 32;
+		EnchantmentPlusChance = 15;
 	}
 
 	Config BROKEN|SHORT_SWORD;
@@ -513,6 +542,7 @@ meleeweapon
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 30;
 	}
 
 	Config BASTARD_SWORD;
@@ -533,6 +563,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|BASTARD_SWORD;
@@ -541,6 +572,7 @@ meleeweapon
 		BitmapPos = 64, 192;
 		WieldedBitmapPos = 176, 80;
 		MaterialConfigChances = { 4, 0, 250, 25, 25; }
+		EnchantmentPlusChance = 10;
 	}
 
 	Config BATTLE_AXE;
@@ -561,6 +593,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 160, 272;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config BROKEN|BATTLE_AXE;
@@ -570,6 +603,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 272;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 20;
 	}
 
 	Config SCYTHE;
@@ -591,6 +625,7 @@ meleeweapon
 		AttachedGod = MORTIFER;
 		WieldedBitmapPos = 176, 48;
 		IsGoodWithPlants = true;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BROKEN|SCYTHE;
@@ -600,6 +635,7 @@ meleeweapon
 		WieldedBitmapPos = 160, 48;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 50, 25, 25, 5; }
+		EnchantmentPlusChance = 40;
 	}
 
 	Config QUARTER_STAFF;
@@ -620,6 +656,7 @@ meleeweapon
 		IsTwoHanded = true;
 		AttachedGod = SILVA;
 		WieldedBitmapPos = 160, 304;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BROKEN|QUARTER_STAFF;
@@ -630,6 +667,7 @@ meleeweapon
 		MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
 		SecondaryMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
 		MaterialConfigChances = { 3, 500, 200, 25; }
+		EnchantmentPlusChance = 40;
 	}
 
 	Config HAMMER;
@@ -650,6 +688,7 @@ meleeweapon
 		CanBeUsedBySmith = true;
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 176, 16;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BROKEN|HAMMER;
@@ -659,6 +698,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 224;
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 100, 25, 25, 5; }
+		EnchantmentPlusChance = 40;
 	}
 }
 
@@ -742,7 +782,7 @@ justifier /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeMirrored = true;
 	CanBeBroken = false;
-	DefaultEnchantment = 16;
+	BaseEnchantment = 16;
 	CanBeEnchanted = false;
 	GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
 	AttachedGod = VALPURUS;
@@ -776,7 +816,7 @@ neercseulb /* meleeweapon-> */
 	CanBeCloned = false;
 	CanBeMirrored = true;
 	CanBeBroken = false;
-	DefaultEnchantment = 6;
+	BaseEnchantment = 6;
 	AttachedGod = MORTIFER;
 	WieldedBitmapPos = 160, 192;
 	IsQuestItem = true;
@@ -803,6 +843,7 @@ pickaxe /* meleeweapon-> */
 	Price = 50; /* bonus for being able to dig */
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 64;
+	EnchantmentPlusChance = 10;
 
 	Config BROKEN;
 	{
@@ -812,6 +853,7 @@ pickaxe /* meleeweapon-> */
 		WieldedBitmapPos = 176, 64;
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 4, 250, 100, 25, 25; }
+		EnchantmentPlusChance = 20;
 	}
 }
 
@@ -850,6 +892,7 @@ bodyarmor /* armor-> */
 		TorsoArmorBitmapPos = 32, 432;
 		ArmArmorBitmapPos = 64, 432;
 		LegArmorBitmapPos = 0, 432;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config BROKEN|CHAIN_MAIL;
@@ -860,13 +903,14 @@ bodyarmor /* armor-> */
 		StrengthModifier = 75;
 		MainMaterialConfig = { 6, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 6, 50, 25, 20, 25, 5, 5; }
+		EnchantmentPlusChance = 20;
 	}
 
 	Config PLATE_MAIL;
 	{
-		StrengthModifier = 200; 
-		DefaultSize = 75; 
-		DefaultMainVolume = 4000; 
+		StrengthModifier = 200;
+		DefaultSize = 75;
+		DefaultMainVolume = 4000;
 		BitmapPos = 16, 128;
 		Possibility = 250;
 		NameSingular = "plate mail";
@@ -874,6 +918,7 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 11, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, OMMEL_BONE, OMMEL_TOOTH; }
 		MaterialConfigChances = { 11, 5000, 2500, 250, 1000, 100, 200, 200, 100, 25, 10, 5; }
 		InElasticityPenaltyModifier = 20;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|PLATE_MAIL;
@@ -884,6 +929,7 @@ bodyarmor /* armor-> */
 		FormModifier = 20;
 		MainMaterialConfig = { 6, NYMPH_HAIR, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
 		MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
+		EnchantmentPlusChance = 10;
 	}
 
 	Config ARMOR_OF_GREAT_HEALTH;
@@ -899,10 +945,11 @@ bodyarmor /* armor-> */
 		MaterialConfigChances = { 7, 150, 75, 25, 50, 10, 25, 10; }
 		InElasticityPenaltyModifier = 40;
 		AffectsEndurance = true;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		Price = 500;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = SEGES;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
@@ -915,6 +962,7 @@ bodyarmor /* armor-> */
 		AffectsEndurance = false;
 		MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -936,7 +984,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	CanBeBroken = false;
 	CanBeCloned = false;
 	CanBeMirrored = true;
-	DefaultEnchantment = 10;
+	BaseEnchantment = 10;
 	InElasticityPenaltyModifier = 30;
 	CanBeEnchanted = false;
 	AttachedGod = VALPURUS;
@@ -1504,6 +1552,7 @@ whip /* meleeweapon-> */
 	CanBeBroken = false;
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 224;
+	EnchantmentPlusChance = 30;
 
 	Config RUNED_WHIP;
 	{
@@ -1514,6 +1563,7 @@ whip /* meleeweapon-> */
 		StrengthModifier = 20;
 		Adjective = "runed";
 		FormModifier = 20;
+		EnchantmentPlusChance = 20;
 	}
 }
 
@@ -1696,11 +1746,12 @@ shield /* armor-> */
 	FormModifier = 15;
 	NameSingular = "shield";
 	MainMaterialConfig = { 14, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
-	MaterialConfigChances = { 14, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25, 10000, 5; }
+	MaterialConfigChances = { 14, 350, 300, 250, 200, 150, 100, 1000, 750, 500, 100, 25, 25, 10, 5; }
 	Roundness = 95;
 	WeaponCategory = SHIELDS;
 	CanBeBroken = true;
 	WieldedBitmapPos = 128, 32;
+	EnchantmentPlusChance = 15;
 
 	Config BROKEN;
 	{
@@ -1711,6 +1762,7 @@ shield /* armor-> */
 		WieldedBitmapPos = 128, 48;
 		MainMaterialConfig = { 7, EBONY_WOOD, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 7, 100, 150, 25, 10, 25, 5, 5; }
+		EnchantmentPlusChance = 30;
 	}
 }
 
@@ -1733,6 +1785,7 @@ cloak /* armor-> */
 	WieldedBitmapPos = 160, 144;
 	CanBeBroken = true;
 	CloakBitmapPos = 48, 416;
+	EnchantmentPlusChance = 10;
 
 	Config BROKEN;
 	{
@@ -1741,6 +1794,7 @@ cloak /* armor-> */
 		InElasticityPenaltyModifier = 25;
 		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 4, 500, 250, 100, 25; }
+		EnchantmentPlusChance = 20;
 	}
 
 	Config CLOAK_OF_INVISIBILITY;
@@ -1751,6 +1805,7 @@ cloak /* armor-> */
 		Price = 2500;
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|CLOAK_OF_INVISIBILITY;
@@ -1760,6 +1815,7 @@ cloak /* armor-> */
 		InElasticityPenaltyModifier = 25;
 		Price = 500;
 		GearStates = 0;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config CLOAK_OF_FIRE_RESISTANCE;
@@ -1768,6 +1824,7 @@ cloak /* armor-> */
 		PostFix = "of fire resistance";
 		Price = 250;
 		FireResistance = 25;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|CLOAK_OF_FIRE_RESISTANCE;
@@ -1779,6 +1836,7 @@ cloak /* armor-> */
 		Price = 150;
 		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 4, 300, 200, 100, 50; }
+		EnchantmentPlusChance = 10;
 	}
 
 	Config CLOAK_OF_ELECTRICITY_RESISTANCE;
@@ -1787,6 +1845,7 @@ cloak /* armor-> */
 		PostFix = "of electricity resistance";
 		Price = 250;
 		ElectricityResistance = 25;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|CLOAK_OF_ELECTRICITY_RESISTANCE;
@@ -1798,6 +1857,7 @@ cloak /* armor-> */
 		Price = 150;
 		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 4, 300, 200, 100, 50; }
+		EnchantmentPlusChance = 10;
 	}
 
 	Config CLOAK_OF_ACID_RESISTANCE;
@@ -1806,6 +1866,7 @@ cloak /* armor-> */
 		PostFix = "of acid resistance";
 		Price = 250;
 		AcidResistance = 4;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|CLOAK_OF_ACID_RESISTANCE;
@@ -1817,6 +1878,7 @@ cloak /* armor-> */
 		Price = 150;
 		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 4, 300, 200, 100, 50; }
+		EnchantmentPlusChance = 10;
 	}
 }
 
@@ -1839,6 +1901,7 @@ boot /* armor-> */
 	WieldedBitmapPos = 160, 128;
 	BootBitmapPos = 16, 432;
 	CanBeBroken = true;
+	EnchantmentPlusChance = 10;
 
 	Config BROKEN;
 	{
@@ -1848,6 +1911,7 @@ boot /* armor-> */
 		Possibility = 25;
 		MainMaterialConfig = { 9, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 9, 100, 500, 100, 25, 10, 10, 25, 5, 1; }
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BOOT_OF_STRENGTH;
@@ -1858,8 +1922,9 @@ boot /* armor-> */
 		MaterialConfigChances == 100;
 		AffectsLegStrength = true;
 		Price = 50;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|BOOT_OF_STRENGTH;
@@ -1870,6 +1935,7 @@ boot /* armor-> */
 		Possibility = 20;
 		AffectsLegStrength = false;
 		Price = 10;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config BOOT_OF_AGILITY;
@@ -1880,9 +1946,10 @@ boot /* armor-> */
 		MaterialConfigChances == 100;
 		AffectsAgility = true;
 		Price = 75;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = CLEPTIA;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|BOOT_OF_AGILITY;
@@ -1893,6 +1960,7 @@ boot /* armor-> */
 		Possibility = 20;
 		AffectsAgility = false;
 		Price = 25;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config BOOT_OF_KICKING;
@@ -1903,6 +1971,7 @@ boot /* armor-> */
 		MaterialConfigChances == 100;
 		Price = 50;
 		FormModifier = 50;
+		EnchantmentPlusChance = 5;
 	}
 
 	Config BROKEN|BOOT_OF_KICKING;
@@ -1913,6 +1982,7 @@ boot /* armor-> */
 		Possibility = 20;
 		MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
+		EnchantmentPlusChance = 10;
 	}
 }
 
@@ -1935,6 +2005,7 @@ gauntlet /* armor-> */
 	WieldedBitmapPos = 160, 128;
 	GauntletBitmapPos = 80, 432;
 	CanBeBroken = true;
+	EnchantmentPlusChance = 10;
 
 	Config BROKEN;
 	{
@@ -1945,6 +2016,7 @@ gauntlet /* armor-> */
 		FormModifier = 30;
 		InElasticityPenaltyModifier = 10;
 		BitmapPos = 80, 400;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config GAUNTLET_OF_STRENGTH;
@@ -1955,9 +2027,10 @@ gauntlet /* armor-> */
 		MaterialConfigChances == 100;
 		AffectsArmStrength = true;
 		Price = 75;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = CRUENTUS;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|GAUNTLET_OF_STRENGTH;
@@ -1968,6 +2041,7 @@ gauntlet /* armor-> */
 		BitmapPos = 80, 400;
 		AffectsArmStrength = false;
 		Price = 25;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config GAUNTLET_OF_DEXTERITY;
@@ -1978,9 +2052,10 @@ gauntlet /* armor-> */
 		MaterialConfigChances == 100;
 		AffectsDexterity = true;
 		Price = 100;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = CLEPTIA;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|GAUNTLET_OF_DEXTERITY;
@@ -1991,6 +2066,7 @@ gauntlet /* armor-> */
 		BitmapPos = 80, 400;
 		AffectsDexterity = false;
 		Price = 25;
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -2011,6 +2087,7 @@ belt /* armor-> */
 	WieldedBitmapPos = 160, 224;
 	BeltBitmapPos = 48, 432;
 	CanBeBroken = true;
+	EnchantmentPlusChance = 10;
 
 	Config BROKEN;
 	{
@@ -2019,6 +2096,7 @@ belt /* armor-> */
 		MainMaterialConfig = { 5, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE, MITHRIL; }
 		MaterialConfigChances = { 5, 500, 250, 100, 25, 10; }
 		BitmapPos = 80, 384;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config BELT_OF_CARRYING;
@@ -2027,11 +2105,12 @@ belt /* armor-> */
 		PostFix = "of carrying";
 		AffectsCarryingCapacity = true;
 		Price = 75;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = MELLIS;
 		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|BELT_OF_CARRYING;
@@ -2041,6 +2120,7 @@ belt /* armor-> */
 		AffectsCarryingCapacity = false;
 		Price = 25;
 		BitmapPos = 80, 384;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config BELT_OF_LEVITATION;
@@ -2052,6 +2132,7 @@ belt /* armor-> */
 		AttachedGod = SILVA;
 		MainMaterialConfig == ANGEL_HAIR;
 		MaterialConfigChances == 100;
+		EnchantmentPlusChance = 0;
 	}
 
 	Config BROKEN|BELT_OF_LEVITATION;
@@ -2538,6 +2619,7 @@ helmet
 	WieldedBitmapPos = 160, 128;
 	CoverPercentile = 50;
 	HelmetBitmapPos = 112, 416;
+	EnchantmentPlusChance = 15;
 
 	Config BROKEN;
 	{
@@ -2546,6 +2628,7 @@ helmet
 		MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 7, 100, 25, 25, 25, 25, 10, 5; }
 		HelmetBitmapPos = 96, 448;
+		EnchantmentPlusChance = 30;
 	}
 
 	Config FULL_HELMET;
@@ -2561,6 +2644,7 @@ helmet
 		MaterialConfigChances = { 9, 750, 500, 250, 100, 25, 25, 25, 10, 5; }
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
+		EnchantmentPlusChance = 10;
 	}
 
 	Config BROKEN|FULL_HELMET;
@@ -2570,6 +2654,7 @@ helmet
 		MainMaterialConfig = { 7, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 7, 250, 100, 25, 25, 25, 10, 5; }
 		HelmetBitmapPos = 112, 448;
+		EnchantmentPlusChance = 20;
 	}
 
 	Config HELM_OF_PERCEPTION;
@@ -2584,12 +2669,13 @@ helmet
 		AffectsPerception = true;
 		MainMaterialConfig == ILLITHIUM;
 		MaterialConfigChances == 100;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = LEGIFER;
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|HELM_OF_PERCEPTION;
@@ -2599,6 +2685,7 @@ helmet
 		Price = 25;
 		AffectsPerception = false;
 		HelmetBitmapPos = 112, 448;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config HELM_OF_UNDERSTANDING;
@@ -2613,12 +2700,13 @@ helmet
 		AffectsWisdom = true;
 		MainMaterialConfig == UNICORN_HORN;
 		MaterialConfigChances == 100;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = SOPHOS;
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|HELM_OF_UNDERSTANDING;
@@ -2628,6 +2716,7 @@ helmet
 		Price = 25;
 		AffectsWisdom = false;
 		HelmetBitmapPos = 112, 448;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config HELM_OF_BRILLIANCE;
@@ -2642,11 +2731,12 @@ helmet
 		AffectsIntelligence = true;
 		MainMaterialConfig == ARCANITE;
 		MaterialConfigChances == 100;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|HELM_OF_BRILLIANCE;
@@ -2656,6 +2746,7 @@ helmet
 		Price = 25;
 		AffectsIntelligence = false;
 		HelmetBitmapPos = 112, 448;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config HELM_OF_ATTRACTIVITY;
@@ -2670,12 +2761,13 @@ helmet
 		AffectsCharisma = true;
 		MainMaterialConfig == GOLD;
 		MaterialConfigChances == 100;
-		DefaultEnchantment = 1;
+		BaseEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = MELLIS;
 		CoverPercentile = 90;
 		HelmetBitmapPos = 96, 432;
+		EnchantmentPlusChance = 2;
 	}
 
 	Config BROKEN|HELM_OF_ATTRACTIVITY;
@@ -2685,6 +2777,7 @@ helmet
 		Price = 25;
 		AffectsCharisma = false;
 		HelmetBitmapPos = 112, 448;
+		EnchantmentPlusChance = 4;
 	}
 
 	Config GOROVITS_FAMILY_GAS_MASK;
@@ -2708,6 +2801,7 @@ helmet
 		IsQuestItem = true;
 		CoverPercentile = 100;
 		HelmetBitmapPos = 112, 432;
+		EnchantmentPlusChance = 0;
 	}
 }
 
@@ -2748,6 +2842,7 @@ flamingsword /* meleeweapon-> */
 	Price = 250;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 16;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -2757,6 +2852,7 @@ flamingsword /* meleeweapon-> */
 		MainMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		SecondaryMaterialConfig = { 4, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
 		MaterialConfigChances = { 4, 250, 25, 25, 5; }
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -2784,6 +2880,7 @@ mjolak /* meleeweapon-> */
 	Price = 750;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 256;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -2791,6 +2888,7 @@ mjolak /* meleeweapon-> */
 		BitmapPos = 32, 144;
 		Price = 150;
 		WieldedBitmapPos = 176, 256;
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -2818,6 +2916,7 @@ vermis /* meleeweapon-> */
 	Price = 500;
 	AttachedGod = SOPHOS;
 	WieldedBitmapPos = 160, 96;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -2825,6 +2924,7 @@ vermis /* meleeweapon-> */
 		BitmapPos = 32, 224;
 		Price = 100;
 		WieldedBitmapPos = 176, 96;
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -2851,6 +2951,7 @@ turox /* meleeweapon-> */
 	Price = 250;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 192;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -2858,6 +2959,7 @@ turox /* meleeweapon-> */
 		BitmapPos = 32, 112;
 		Price = 50;		
 		WieldedBitmapPos = 176, 192;
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -2876,11 +2978,12 @@ whipofthievery /* meleeweapon->whip-> */
 	FormModifier = 30; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
 	AttachedGod = CLEPTIA;
+	EnchantmentPlusChance = 10;
 }
 
 scrollofenchantweapon /* scroll-> */
 {
-	Possibility = 50;
+	Possibility = 40;
 	Price = 250;
 	PostFix = "of enchant weapon";
 	AttachedGod = SOPHOS;
@@ -2890,7 +2993,7 @@ scrollofenchantweapon /* scroll-> */
 
 scrollofenchantarmor /* scroll-> */
 {
-	Possibility = 100;
+	Possibility = 80;
 	Price = 250;
 	PostFix = "of enchant armor";
 	AttachedGod = SOPHOS;
@@ -2935,7 +3038,7 @@ gorovitshammer
 	CanBeUsedBySmith = true;
 	CanBeBroken = false;
 	CanBeWished = false;
-	DefaultEnchantment = 3;
+	BaseEnchantment = 3;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = LORICATUS;
@@ -2960,7 +3063,7 @@ gorovitssickle
 	Roundness = 50;
 	CanBeBroken = false;
 	CanBeWished = false;
-	DefaultEnchantment = 3;
+	BaseEnchantment = 3;
 	ArticleMode = DEFINITE_ARTICLE;
 	Price = 250;
 	AttachedGod = SEGES;
@@ -3043,6 +3146,7 @@ thunderhammer /* meleeweapon-> */
 	BaseEmitation = rgb24(130, 130, 130);
 	AttachedGod = TERRA;
 	WieldedBitmapPos = 176, 16;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -3053,6 +3157,7 @@ thunderhammer /* meleeweapon-> */
 		MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 5, 250, 25, 25, 25, 5; }
 		BaseEmitation = 0;
+		EnchantmentPlusChance = 4;
 	}
 }
 
@@ -3080,6 +3185,7 @@ saalthul
 	Alias == "Saal'thul";
 	AttachedGod = CLEPTIA;
 	WieldedBitmapPos = 160, 32;
+	EnchantmentPlusChance = 2;
 
 	Config BROKEN;
 	{
@@ -3088,10 +3194,11 @@ saalthul
 		Price = 100;
 		GearStates = 0;
 		WieldedBitmapPos = 176, 208;
+		EnchantmentPlusChance = 4;
 	}
 }
 
-chameleonwhip
+chameleonwhip /* meleeweapon->whip-> */
 {
 	DefaultSize = 250;
 	Possibility = 10;
@@ -3106,6 +3213,8 @@ chameleonwhip
 	Price = 500;
 	AttachedGod = SCABIES;
 	WieldedBitmapPos = 160, 224;
+	EnchantmentMinusChance = 50;
+	EnchantmentPlusChance = 50;
 }
 
 carrot
@@ -3148,6 +3257,7 @@ wondersmellstaff
 	AttachedGod = INFUSCOR;
 	WieldedBitmapPos = 160, 304;
 	Price = 500;
+	EnchantmentPlusChance = 5;
 
 	Config BROKEN;
 	{
@@ -3156,6 +3266,7 @@ wondersmellstaff
 		WieldedBitmapPos = 176, 304;
 		MainMaterialConfig = { 3, EBONY_WOOD, ARCANITE, OCTIRON; }
 		MaterialConfigChances = { 3, 100, 50, 25; }
+		EnchantmentPlusChance = 10;
 	}
 }
 

@@ -21,7 +21,7 @@ class iosystem
   static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, int, int, bool, void (*)(long) = 0);
   static int Menu(const bitmap*, vector2d, const festring&, const festring&, color16, const festring& = CONST_S(""), const festring& = CONST_S(""));
   static void TextScreen(const festring&, color16 = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
-  static bool iosystem::IsAcceptableForStringQuestion(char);
+  static bool IsAcceptableForStringQuestion(char);
 };
 
 #endif

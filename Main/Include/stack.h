@@ -148,6 +148,7 @@ class stack
   bool DetectMaterial(const material*) const;
   void SetLifeExpectancy(int, int);
   bool Necromancy(character*);
+  void CalculateEnchantments();
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;

@@ -359,6 +359,7 @@ void level::CreateItems(int Amount)
 	{
 	  vector2d Pos = GetRandomSquare();
 	  item* Item = protosystem::BalancedCreateItem(MinPrice, MAX_PRICE, ANY_CATEGORY, 0, IGNORE_BROKEN_PRICE);
+	  Item->CalculateEnchantment();
 	  Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
 	  Item->SpecialGenerationHandler();
 	}
@@ -644,8 +645,13 @@ void level::Save(outputfile& SaveFile) const
   area::Save(SaveFile);
   SaveFile << Room << GlobalRainLiquid << GlobalRainSpeed;
 
-  for(ulong c = 0; c < XSizeTimesYSize; ++c)
-    Map[0][c]->Save(SaveFile);
+  for(int x = 0; x < XSize; ++x)
+    {
+      SaveFile.ReOpen();
+
+      for(int y = 0; y < YSize; ++y)
+	Map[x][y]->Save(SaveFile);
+    }
 
   SaveFile << Door << LevelMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
   SaveFile << SunLightEmitation << SunLightDirection << AmbientLuminance << NightAmbientLuminance;
@@ -720,6 +726,7 @@ void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
     {
       Pos = vector2d(0, 0);
       character* Char = protosystem::BalancedCreateMonster();
+      Char->CalculateEnchantments();
 
       for(int c2 = 0; c2 < 30; ++c2)
 	{
@@ -1695,6 +1702,8 @@ void level::GenerateDungeon(int Index)
     }
 
   Difficulty = 0.001 * (*LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index);
+  EnchantmentMinusChance = *LevelScript->GetEnchantmentMinusChanceBase() + *LevelScript->GetEnchantmentMinusChanceDelta() * Index;
+  EnchantmentPlusChance = *LevelScript->GetEnchantmentPlusChanceBase() + *LevelScript->GetEnchantmentPlusChanceDelta() * Index;
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   long Counter = 0;

@@ -1,3 +1,24 @@
+Version 0.440
+-------------
+
+- fluids can now cover items and characters and interact with them
+- items made of iron alloys can now rust
+- added directional light and day and night which use it
+- added some cosmetical weather effects
+- New Attnam has now many new NPCs, for instance a sumo wrestler who
+  can be challenged
+- polymorph control is now more interesting
+- added wands of acid rain, mirroring and necromancy
+- added scrolls of detect material, harden material and golem creation
+- added several new monsters, eg. named archangels for each god
+  and necromancers
+- one can now give pets tactical commands, change their equipment and
+  use them to carry extra stuff (these are accessed using 'C'hat and
+  'I'ssue commands keys)
+- the player can now panic if he gets hit too much
+- the player can now become exhausted if he fights for too long and/or
+  uses the new r'u'n command too much
+
 Version 0.430
 -------------
 

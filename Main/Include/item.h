@@ -105,7 +105,7 @@ struct itemdatabase : public databasebase
   bool AffectsWisdom;
   bool AffectsCharisma;
   bool AffectsMana;
-  int DefaultEnchantment;
+  int BaseEnchantment;
   bool PriceIsProportionalToEnchantment;
   int InElasticityPenaltyModifier;
   bool CanBeUsedBySmith;
@@ -137,6 +137,8 @@ struct itemdatabase : public databasebase
   bool AllowEquip;
   int ReadDifficulty;
   bool IsValuable;
+  int EnchantmentMinusChance;
+  int EnchantmentPlusChance;
 };
 
 class itemprototype
@@ -301,7 +303,7 @@ class item : public object
   DATA_BASE_BOOL(AffectsCharisma);
   DATA_BASE_BOOL(AffectsMana);
   DATA_BASE_BOOL(AffectsCarryingCapacity);
-  DATA_BASE_VALUE(int, DefaultEnchantment);
+  DATA_BASE_VALUE(int, BaseEnchantment);
   DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
   DATA_BASE_VALUE(int, MaxCharges);
   DATA_BASE_VALUE(int, MinCharges);
@@ -335,6 +337,8 @@ class item : public object
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BootBitmapPos, int);
   DATA_BASE_BOOL(AllowEquip);
   DATA_BASE_VALUE(int, ReadDifficulty);
+  DATA_BASE_VALUE(int, EnchantmentMinusChance);
+  DATA_BASE_VALUE(int, EnchantmentPlusChance);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   //virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -484,6 +488,7 @@ class item : public object
   bool IsVeryCloseToSpoiling() const;
   virtual bool IsValuable() const;
   virtual bool Necromancy(character*) { return false; }
+  virtual void CalculateEnchantment() { }
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

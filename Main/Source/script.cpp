@@ -536,7 +536,7 @@ item* contentscript<item>::Instantiate(int SpecialFlags) const
 {
   int Chance = GetChance();
 
-  if(Chance != 100 && Chance <= RAND() % 100)
+  if(Chance != 100 && Chance <= RAND_N(100))
     return 0;
 
   item* Instance;
@@ -855,6 +855,10 @@ void levelscript::InitDataMap()
   INIT_ENTRY(ItemMinPriceBase);
   INIT_ENTRY(ItemMinPriceDelta);
   INIT_ENTRY(Type);
+  INIT_ENTRY(EnchantmentMinusChanceBase);
+  INIT_ENTRY(EnchantmentMinusChanceDelta);
+  INIT_ENTRY(EnchantmentPlusChanceBase);
+  INIT_ENTRY(EnchantmentPlusChanceDelta);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)

@@ -855,7 +855,7 @@ class character : public entity, public id
   void CheckIfSeen();
   void SignalSeen();
   bool HasBeenSeen() const;
-  int GetPolymorphIntelligenceRequirement(const character*) const;
+  int GetPolymorphIntelligenceRequirement() const;
   void RemoveAllItems();
   int CalculateWeaponSkillHits(const character*) const;
   void DonateEquipmentTo(character*);
@@ -911,6 +911,7 @@ class character : public entity, public id
   void EndLevitation();
   DATA_BASE_VALUE(festring, ForceVomitMessage);
   virtual bool CanMove() const;
+  void CalculateEnchantments();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

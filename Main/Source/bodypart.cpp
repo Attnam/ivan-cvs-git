@@ -923,14 +923,17 @@ bool arm::EditAttribute(int Identifier, int Value)
     return false;
 
   if(Identifier == ARM_STRENGTH)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
-  else if(Identifier == DEXTERITY)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(DexterityExperience, Value);
-  else
     {
-      ABORT("Illegal arm attribute %d edit request!", Identifier);
-      return false;
+      if(!UseMaterialAttributes()
+      && Master->RawEditAttribute(StrengthExperience, Value))
+	Master->CalculateBattleInfo();
     }
+  else if(Identifier == DEXTERITY)
+    if(!UseMaterialAttributes()
+    && Master->RawEditAttribute(DexterityExperience, Value))
+      Master->CalculateBattleInfo();
+
+  return false;
 }
 
 void arm::EditExperience(int Identifier, double Value, double Speed)
@@ -1013,14 +1016,20 @@ bool leg::EditAttribute(int Identifier, int Value)
     return false;
 
   if(Identifier == LEG_STRENGTH)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(StrengthExperience, Value);
-  else if(Identifier == AGILITY)
-    return !UseMaterialAttributes() && Master->RawEditAttribute(AgilityExperience, Value);
-  else
     {
-      ABORT("Illegal leg attribute %d edit request!", Identifier);
-      return false;
+      if(!UseMaterialAttributes()
+      && Master->RawEditAttribute(StrengthExperience, Value))
+	{
+	  Master->CalculateBurdenState();
+	  Master->CalculateBattleInfo();
+	}
     }
+  else if(Identifier == AGILITY)
+    if(!UseMaterialAttributes()
+    && Master->RawEditAttribute(AgilityExperience, Value))
+      Master->CalculateBattleInfo();
+
+  return false;
 }
 
 void leg::EditExperience(int Identifier, double Value, double Speed)

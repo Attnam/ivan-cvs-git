@@ -1026,11 +1026,12 @@ organic /* substances that spoil but are not flesh */
 	{
 		StrengthValue = 250;
 		Flexibility = 2;
-		Density = 1250;
+		Density = 1500;
 		ConsumeType = CT_BONE;
 		Color = rgb16(210, 210, 210);
 		NutritionValue = 1000;
 		NameStem = "ommel bone";
+		Article = "an";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
@@ -1047,6 +1048,7 @@ organic /* substances that spoil but are not flesh */
 		Color = rgb16(200, 200, 255);
 		NutritionValue = 1000;
 		NameStem = "ommel tooth";
+		Article = "an";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;

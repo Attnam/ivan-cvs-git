@@ -46,10 +46,18 @@ void god::Pray()
 
 	    if(Gift)
 	      {
+		Gift->CalculateEnchantment();
 		PLAYER->GetStack()->AddItem(Gift);
 
 		if(Gift->IsBroken())
 		  Gift->Fix();
+
+		if(Relation == 1000)
+		  Gift->EditEnchantment(3);
+		else if(Relation >= 500)
+		  Gift->EditEnchantment(2);
+		else
+		  Gift->EditEnchantment(1);
 
 		ADD_MESSAGE("You notice %s in your inventory which you don't recall picking up anywhere.", Gift->CHAR_NAME(INDEFINITE));
 	      }

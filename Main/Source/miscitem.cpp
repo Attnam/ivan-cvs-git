@@ -722,20 +722,12 @@ void mine::StepOnEffect(character* Stepper)
 
   if(Stepper->IsPlayer())
     {
-      if(Stepper->CanHear())
-	{
-	  if(GetLSquareUnder()->IsDark())
-	    ADD_MESSAGE("You hear a faint thump. You try to look down, but it is too dark to see anything.");
-	  else
-	    ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
-	}
+      const char* SenseVerb = Stepper->CanHear() ? "hear" : "sense";
+
+      if(GetLSquareUnder()->IsDark())
+	ADD_MESSAGE("You %s a faint thump. You try to look down, but it is too dark to see anything.", SenseVerb);
       else
-	{
-	  if(GetLSquareUnder()->IsDark())
-	    ADD_MESSAGE("You sense a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
-	  else
-	    ADD_MESSAGE("You sense a faint thump. You try to look down, but it is too dark to see anything.", CHAR_NAME(INDEFINITE));
-	}
+	ADD_MESSAGE("You %s a faint thump. You look down. You see %s.", SenseVerb, CHAR_NAME(INDEFINITE));
     }
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
@@ -968,7 +960,8 @@ void itemcontainer::VirtualConstructor(bool Load)
 	  if(NewItem->HandleInPairs())
 	    Volume <<= 1;
 
-	  if(NewItem->CanBeGeneratedInContainer() && (GetStorageVolume() - GetContained()->GetVolume()) >= Volume)
+	  if(NewItem->CanBeGeneratedInContainer()
+	  && (GetStorageVolume() - GetContained()->GetVolume()) >= Volume)
 	    {
 	      GetContained()->AddItem(NewItem);
 	      NewItem->SpecialGenerationHandler();
@@ -2904,4 +2897,9 @@ void scrollofgolemcreation::FinishReading(character* Reader)
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
+}
+
+void itemcontainer::CalculateEnchantment()
+{
+  Contained->CalculateEnchantments();
 }

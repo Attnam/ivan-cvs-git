@@ -132,36 +132,6 @@ inline beamdata::beamdata
   SpecialParameters(SpecialParameters)
 { }
 
-/*struct duplicatedata : public beamdata
-{
-  duplicatedata(character*, const festring&, vector2d, color16, int, int, int, ulong);
-  ulong Flags;
-};
-
-inline duplicatedata::duplicatedata
-(
-  character* Owner,
-  const festring& DeathMsg,
-  vector2d StartPos,
-  color16 BeamColor,
-  int BeamEffect,
-  int Direction,
-  int Range,
-  ulong Flags
-) :
-  beamdata
-  (
-    Owner,
-    DeathMsg,
-    StartPos,
-    BeamColor,
-    BeamEffect,
-    Direction,
-    Range
-  ),
-  Flags(Flags)
-{ }*/
-
 class level : public area
 {
  public:
@@ -253,6 +223,8 @@ class level : public area
   void CalculateLuminances();
   int AddRadiusToSquareStack(vector2d, long) const;
   olterrain* GetRandomFountainWithWater(olterrain*) const;
+  int GetEnchantmentMinusChance() { return EnchantmentMinusChance; }
+  int GetEnchantmentPlusChance() { return EnchantmentPlusChance; }
  protected:
   bool GenerateLanterns(int, int, int) const;
   bool GenerateWindows(int, int) const;
@@ -284,6 +256,8 @@ class level : public area
   static ulong NextExplosionID;
   lsquare** SquareStack;
   color24 NightAmbientLuminance;
+  int EnchantmentMinusChance;
+  int EnchantmentPlusChance;
 };
 
 outputfile& operator<<(outputfile&, const level*);

@@ -3,7 +3,7 @@
 #include "save.h"
 #include "femath.h"
 
-outputfile::outputfile(const festring& FileName, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "wb"))
+outputfile::outputfile(const festring& FileName, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "wb")), FileName(FileName)
 {
   if(AbortOnErr && !IsOpen())
     ABORT("Can't open %s for output!", FileName.CStr());
@@ -13,6 +13,12 @@ outputfile::~outputfile()
 {
   if(Buffer)
     fclose(Buffer);
+}
+
+void outputfile::ReOpen()
+{
+  /*fclose(Buffer);
+  Buffer = fopen(FileName.CStr(), "wba");*/
 }
 
 inputfile::inputfile(const festring& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "rb")), FileName(FileName), ValueMap(ValueMap)

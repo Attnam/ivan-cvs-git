@@ -516,6 +516,7 @@ class ITEM
   virtual void FinalProcessForBone();
   virtual material* RemoveMaterial(material*);
   virtual void SetLifeExpectancy(int, int);
+  virtual void CalculateEnchantment();
  protected:
   virtual color16 GetMaterialColorB(int) const;
   virtual void VirtualConstructor(bool);

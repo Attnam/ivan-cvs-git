@@ -40,6 +40,7 @@ public:
   static void SaveSeed();
   static void LoadSeed();
   static long SumArray(const fearray<long>&);
+  static int LoopRoll(int, int);
 protected:
   static ulong mt[];
   static long mti;
@@ -266,6 +267,13 @@ inline void mapmath<controller>::DoQuadriArea(int OrigoX, int OrigoY, int Radius
 			(OrigoY << 1) + basequadricontroller::OrigoDeltaY[c]);
 
   mapmath<quadricontroller<controller> >::DoArea();
+}
+
+inline int femath::LoopRoll(int ContinueChance, int Max)
+{
+  int R;
+  for(R = 0; RAND_N(100) < ContinueChance && R < Max; ++R);
+  return R;
 }
 
 #endif

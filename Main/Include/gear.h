@@ -40,10 +40,8 @@ class ITEM
   virtual int GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(int);
   virtual void EditEnchantment(int);
-  //virtual double GetWeaponStrength() const;
   virtual int GetStrengthValue() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
-  //virtual int GetBonus() const;
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
@@ -58,6 +56,7 @@ class ITEM
   virtual void CalculateEmitation();
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
   virtual item* Fix();
+  virtual void CalculateEnchantment();
  protected:
   virtual long GetMaterialPrice() const;
   virtual bool CalculateHasBe() const;
@@ -82,7 +81,6 @@ class ITEM
  public:
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -96,7 +94,6 @@ class ITEM
   virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -173,7 +170,6 @@ class ITEM
   virtual bool IsGorovitsFamilyRelic() const { return true; }
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -187,7 +183,6 @@ class ITEM
   virtual bool IsGorovitsFamilyRelic() const { return true; }
   virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
-  //virtual void Be() { }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const;
@@ -229,6 +224,7 @@ class ABSTRACT_ITEM
   virtual int GetCarryingBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
   virtual bool AllowFluids() const { return true; }
+  virtual void CalculateEnchantment();
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
@@ -254,7 +250,6 @@ class ITEM
   goldeneagleshirt,
   bodyarmor,
  public:
-  //virtual void Be() { }
   virtual bool IsGoldenEagleShirt() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
   virtual bool AllowAlphaEverywhere() const { return true; }
@@ -272,7 +267,6 @@ class ITEM
   virtual long GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, festring&, int, bool) const;
-  //virtual int GetBonus() const;
   virtual double GetTHVBonus() const;
 );
 

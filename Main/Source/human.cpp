@@ -3967,9 +3967,6 @@ bool necromancer::TryToRaiseZombie()
 {
   for(int c = 0; c < game::GetTeams(); ++c)
     for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-      {
-      character* Char = *i;
-
       if(!(*i)->IsEnabled() && (*i)->GetMotherEntity() && (*i)->GetMotherEntity()->Exists() && (GetConfig() == MASTER_NECROMANCER || (*i)->GetMotherEntity()->GetSquareUnderEntity()->CanBeSeenBy(this)))
 	{
 	  character* Zombie = (*i)->GetMotherEntity()->TryNecromancy(this);
@@ -3985,7 +3982,6 @@ bool necromancer::TryToRaiseZombie()
 	      return true;
 	    }
 	}
-      }
 
   return false;
 }

@@ -107,6 +107,10 @@ Dungeon ELPURI_CAVE;
 		CanGenerateBone = true;
 		ItemMinPriceBase = 20;
 		ItemMinPriceDelta = 10;
+		EnchantmentMinusChanceBase = 0;
+		EnchantmentMinusChanceDelta = 0;
+		EnchantmentPlusChanceBase = 5;
+		EnchantmentPlusChanceDelta = 5;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
@@ -531,6 +535,7 @@ Dungeon ELPURI_CAVE;
 		DifficultyBase = 60;
 		MonsterAmountBase = 13;
 		ItemMinPriceBase = 45;
+		EnchantmentPlusChanceBase = 10;
 
 		Square, Random;
 		{
@@ -558,6 +563,7 @@ Dungeon ELPURI_CAVE;
 		DifficultyBase = 70;
 		MonsterAmountBase = 16;
 		ItemMinPriceBase = 70;
+		EnchantmentPlusChanceBase = 15;
 
 		Square, Random;
 		{
@@ -615,6 +621,7 @@ Dungeon ELPURI_CAVE;
 		IgnoreDefaultSpecialSquares = true;
 		CanGenerateBone = false;
 		DifficultyBase = 80;
+		EnchantmentPlusChanceBase = 20;
 
 		Room
 		{
@@ -688,6 +695,10 @@ Dungeon ATTNAM;
 		CanGenerateBone = false;
 		DifficultyBase = 150;
 		DifficultyDelta = 0;
+		EnchantmentMinusChanceBase = 0;
+		EnchantmentMinusChanceDelta = 0;
+		EnchantmentPlusChanceBase = 0;
+		EnchantmentPlusChanceDelta = 0;
 
 		RoomDefault
 		{
@@ -1381,6 +1392,10 @@ Dungeon NEW_ATTNAM;
 		CanGenerateBone = false;
 		DifficultyBase = 50;
 		DifficultyDelta = 0;
+		EnchantmentMinusChanceBase = -15;
+		EnchantmentMinusChanceDelta = 0;
+		EnchantmentPlusChanceBase = 0;
+		EnchantmentPlusChanceDelta = 0;
 
 		RoomDefault
 		{
@@ -1824,6 +1839,10 @@ Dungeon NEW_ATTNAM;
 		CanGenerateBone = false;
 		DifficultyBase = 50;
 		DifficultyDelta = 0;
+		EnchantmentMinusChanceBase = -15;
+		EnchantmentMinusChanceDelta = 0;
+		EnchantmentPlusChanceBase = 0;
+		EnchantmentPlusChanceDelta = 0;
 
 		Room
 		{
@@ -1916,6 +1935,10 @@ Dungeon UNDER_WATER_TUNNEL;
 		CanGenerateBone = true;
 		ItemMinPriceBase = 0;
 		ItemMinPriceDelta = 5;
+		EnchantmentMinusChanceBase = 10;
+		EnchantmentMinusChanceDelta = -5;
+		EnchantmentPlusChanceBase = 1;
+		EnchantmentPlusChanceDelta = 1;
 
 		Square, Random;
 		{
@@ -2164,6 +2187,10 @@ Dungeon UNDER_WATER_TUNNEL;
 		MonsterGenerationIntervalDelta = 0;
 		ItemMinPriceBase = 70;
 		ItemMinPriceDelta = 0;
+		EnchantmentMinusChanceBase = 0;
+		EnchantmentMinusChanceDelta = 0;
+		EnchantmentPlusChanceBase = 50;
+		EnchantmentPlusChanceDelta = 0;
 
 		RoomDefault
 		{

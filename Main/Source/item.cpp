@@ -334,7 +334,16 @@ void item::RemoveFromSlot()
   for(int c = 0; c < SquaresUnder; ++c)
     if(Slot[c])
       {
-	Slot[c]->Empty();
+	try
+	  {
+	    Slot[c]->Empty();
+	  }
+	catch(quitrequest)
+	  {
+	    SendToHell();
+	    throw;
+	  }
+
 	Slot[c] = 0;
       }
 }
@@ -983,7 +992,7 @@ void item::PostProcessForBone()
   else
     {
       if(game::SearchItem(BI->second))
-	int esko = 2;
+	int esko = esko = 2;
 
       ID = BI->second;
       game::AddItemID(this, ID);

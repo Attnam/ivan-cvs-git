@@ -62,7 +62,7 @@ Mirage puppies.
 If the whole level is full of monsters, the game won't work correctly.
 / Better gentoo packages. No root should be needed.
 Petrus's AI goes rather insane (he just runs around his throne) if he is severely wounded.
-// (hs) Headless zombies can vomit.
+(hs) Headless zombies can vomit.
 Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
 //(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
 // (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
@@ -73,7 +73,7 @@ It seems to be possible to occasionally find traps by saveloading next to them.
 // (hs) Mushrooms can be kicked around.
 If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.
 //Carnivorous plants can move by displacing pets.
-EditAttribute() probably doesn't update all caches correctly.
+//EditAttribute() probably doesn't update all caches correctly.
 //Polymorph default bugs if the string is very long.
 If you hit someone with one hand and either one of you teleports, you can still hit the opponent with the other hand.
 //Leprosy can cause player to become overloaded in world map and there is no way to drop items.

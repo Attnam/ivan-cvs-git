@@ -1120,8 +1120,9 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
 		  game::GetCurrentArea()->SendNewDrawRequest();
 		  game::DrawEverything();
 		  ShowAdventureInfo();
-		  PLAYER->AddScoreEntry(CONST_S("killed Petrus and became the Avatar of Chaos"), 3, false);
-		  game::End(CONST_S("killed Petrus and became the Avatar of Chaos"));
+		  festring Msg = CONST_S("killed Petrus and became the Avatar of Chaos");
+		  PLAYER->AddScoreEntry(Msg, 3, false);
+		  game::End(Msg);
 		  return true;
 		}
 
@@ -1979,6 +1980,12 @@ bool character::Polymorph(character* NewForm, int Counter)
     ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHAR_NAME(DEFINITE), GetPersonalPronoun().CStr(), NewForm->CHAR_NAME(INDEFINITE));
 
   InNoMsgMode = NewForm->InNoMsgMode = true;
+  NewForm->ChangeTeam(GetTeam());
+  NewForm->GenerationDanger = GenerationDanger;
+
+  if(GetTeam()->GetLeader() == this)
+    GetTeam()->SetLeader(NewForm);
+
   vector2d Pos = GetPos();
   Remove();
   NewForm->PutToOrNear(Pos);
@@ -2002,12 +2009,6 @@ bool character::Polymorph(character* NewForm, int Counter)
   GetStack()->MoveItemsTo(NewForm->GetStack());
   NewForm->SetMoney(GetMoney());
   DonateEquipmentTo(NewForm);
-  NewForm->ChangeTeam(GetTeam());
-  NewForm->GenerationDanger = GenerationDanger;
-
-  if(GetTeam()->GetLeader() == this)
-    GetTeam()->SetLeader(NewForm);
-
   InNoMsgMode = NewForm->InNoMsgMode = false;
   NewForm->CalculateAll();
 
@@ -2208,9 +2209,6 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   for(int c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	{
-	character* Char = *i;
-
 	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	  {
 	    long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
@@ -2224,7 +2222,6 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 		NearestDistance = ThisDistance;
 	      }
 	  }
-	}
 
   if(NearestChar)
     {
@@ -2694,7 +2691,7 @@ void character::GoOn(go* Go, bool FirstStep)
 void character::SetTeam(team* What)
 {
   if(Team)
-    int esko = 2;
+    int esko = esko = 2;
 
   Team = What;
   SetTeamIterator(What->Add(this));
@@ -2812,8 +2809,9 @@ void character::TestWalkability()
 	      SendToHell();
 	      festring DeathMsg = festring(SquareUnder->DeathMessage(this));
 	      game::AskForKeyPress(DeathMsg + ". [press any key to continue]");
-	      PLAYER->AddScoreEntry(DeathMsg);
-	      game::End(DeathMsg);
+	      festring Msg = SquareUnder->ScoreEntry(this);
+	      PLAYER->AddScoreEntry(Msg);
+	      game::End(Msg);
 	    }
 	  else
 	    {
@@ -4393,6 +4391,11 @@ character* character::ForceEndPolymorph()
   Remove();
   character* Char = GetPolymorphBackup();
   InNoMsgMode = Char->InNoMsgMode = true;
+  Char->ChangeTeam(GetTeam());
+
+  if(GetTeam()->GetLeader() == this)
+    GetTeam()->SetLeader(Char);
+
   SetPolymorphBackup(0);
   Char->PutToOrNear(Pos);
   Char->Enable();
@@ -4400,11 +4403,6 @@ character* character::ForceEndPolymorph()
   GetStack()->MoveItemsTo(Char->GetStack());
   DonateEquipmentTo(Char);
   Char->SetMoney(GetMoney());
-  Char->ChangeTeam(GetTeam());
-
-  if(GetTeam()->GetLeader() == this)
-    GetTeam()->SetLeader(Char);
-
   InNoMsgMode = Char->InNoMsgMode = false;
   Char->CalculateAll();
   Char->SetAssignedName(GetAssignedName());
@@ -4497,7 +4495,7 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 	{
 	  while(!NewForm)
 	    {
-	      festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '*' for a list]"),
+	      festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '?' for a list]"),
 						    game::GetDefaultPolymorphTo(),
 						    &game::PolymorphControlKeyHandler);
 	      NewForm = protosystem::CreateMonster(Temp);
@@ -4517,7 +4515,7 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 		      return ForceEndPolymorph();
 		    }
 
-		  if(NewForm->GetPolymorphIntelligenceRequirement(this)
+		  if(NewForm->GetPolymorphIntelligenceRequirement()
 		   > GetAttribute(INTELLIGENCE)
 		  && !game::WizardModeIsActive())
 		    {
@@ -7530,7 +7528,7 @@ void character::SignalSeen()
   const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
 }
 
-int character::GetPolymorphIntelligenceRequirement(const character* Polymorpher) const
+int character::GetPolymorphIntelligenceRequirement() const
 {
   if(DataBase->PolymorphIntelligenceRequirement == DEPENDS_ON_ATTRIBUTES)
     return Max(GetAttributeAverage() - 5, 0);
@@ -7975,7 +7973,7 @@ void character::Disappear(corpse* Corpse, const char* Verb, bool (item::*ClosePr
       itemvector ItemVector;
       GetStack()->FillItemVector(ItemVector);
 
-      for(c = 0; c < ItemVector.size(); ++c)
+      for(uint c = 0; c < ItemVector.size(); ++c)
 	if(ItemVector[c] && (ItemVector[c]->*ClosePredicate)())
 	  {
 	    ItemVector[c]->RemoveFromSlot();
@@ -8414,4 +8412,17 @@ void character::EndLevitation()
 bool character::CanMove() const
 {
   return !IsRooted() || StateIsActivated(LEVITATION);
+}
+
+void character::CalculateEnchantments()
+{
+  for(int c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->CalculateEnchantment();
+    }
+
+  GetStack()->CalculateEnchantments();
 }

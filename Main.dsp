@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib user32.lib /nologo /version:0.410 /subsystem:windows /profile /machine:I386 /nodefaultlib:"libc"
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib user32.lib /nologo /version:0.440 /subsystem:windows /profile /machine:I386 /nodefaultlib:"libc"
 # SUBTRACT LINK32 /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
@@ -86,8 +86,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Debug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib user32.lib /nologo /version:0.410 /subsystem:windows /incremental:no /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
-# SUBTRACT LINK32 /verbose /pdb:none /map /nodefaultlib
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib user32.lib /nologo /version:0.440 /subsystem:windows /profile /debug /machine:I386 /nodefaultlib:"msvcrt"
+# SUBTRACT LINK32 /verbose /map /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
@@ -119,7 +119,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Release/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # SUBTRACT BASE LINK32 /pdb:none /debug
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/FastDebug/FeLib.lib user32.lib /nologo /version:0.410 /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/FastDebug/FeLib.lib user32.lib /nologo /version:0.440 /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
 # SUBTRACT LINK32 /verbose /pdb:none /incremental:yes /map
 # Begin Special Build Tool
 SOURCE=$(InputPath)

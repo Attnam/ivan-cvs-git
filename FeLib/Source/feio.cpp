@@ -253,7 +253,18 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
       /* if LastKey is less than 20 it is a control character not available in the font */
 
       while(!(IsAcceptableForStringQuestion(LastKey)))
-	LastKey = GET_KEY(false);
+	{
+	  LastKey = GET_KEY(false);
+
+	  if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
+	    {
+	      LastKey = 0;
+	      break;
+	    }
+	}
+
+      if(!LastKey)
+	continue;
 
       if(LastKey == KEY_ESC && AllowExit)
 	return ABORTED;
@@ -274,9 +285,6 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 	    TooShort = true;
 	    continue;
 	  }
-
-      if(StringKeyHandler != 0 && StringKeyHandler(LastKey, Input))
-	continue;
 
       if(LastKey >= 0x20 && Input.GetSize() < MaxLetters && (LastKey != ' ' || !Input.IsEmpty()))
 	Input << char(LastKey);
@@ -575,11 +583,12 @@ festring iosystem::ContinueMenu(color16 TopicColor, color16 ListColor, const fes
 
 bool iosystem::IsAcceptableForStringQuestion(char Key)
 {
-  if(Key == '<' || Key == '>' || Key == '?' || Key == '*' 
-     || Key == '/' || Key == '\\' || Key == ':')
+  if(Key == '|' || Key == '<' || Key == '>' || Key == '?' || Key == '*' 
+  || Key == '/' || Key == '\\' || Key == ':')
     return false;
 
-  if(Key < 0x20 && !(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC))
+  if(Key < 0x20
+  && !(Key == KEY_BACK_SPACE || Key == KEY_ENTER || Key == KEY_ESC))
     return false;
 
   return true;

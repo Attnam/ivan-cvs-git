@@ -428,7 +428,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(AffectsWisdom);
   ADD_MEMBER(AffectsCharisma);
   ADD_MEMBER(AffectsMana);
-  ADD_MEMBER(DefaultEnchantment);
+  ADD_MEMBER(BaseEnchantment);
   ADD_MEMBER(PriceIsProportionalToEnchantment);
   ADD_MEMBER(InElasticityPenaltyModifier);
   ADD_MEMBER(CanBeUsedBySmith);
@@ -460,6 +460,8 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(AllowEquip);
   ADD_MEMBER(ReadDifficulty);
   ADD_MEMBER(IsValuable);
+  ADD_MEMBER(EnchantmentMinusChance);
+  ADD_MEMBER(EnchantmentPlusChance);
 }
 
 template<class type> void databasecreator<type>::CreateLTerrainDataBaseMemberMap()
