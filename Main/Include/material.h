@@ -53,9 +53,9 @@ public:
 	virtual uchar GetItemColor(void) const = 0;
 	virtual std::string Name(uchar Case = 0) const;
 	virtual ushort GetHitValue(void) const = 0;
-	virtual uchar GetConsumeType(void) const			{return ODD;}
-	virtual ulong GetVolume(void) const			{return Volume;}
-	virtual ulong GetWeight(void) const			{return ulong(float(Volume) * GetDensity() / 1000);}
+	virtual uchar GetConsumeType(void) const			{ return ODD; }
+	virtual ulong GetVolume(void) const			{ return Volume; }
+	virtual ulong GetWeight(void) const			{ return ulong(float(Volume) * GetDensity() / 1000); }
 	virtual ushort GetDensity(void) const = 0;
 	virtual ushort TakeDipVolumeAway(void);
 	virtual void Save(std::ofstream*) const;
@@ -134,9 +134,9 @@ class MATERIAL
 	iron,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 100;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const				{return 8000;}
+	virtual ushort GetHitValue(void) const				{ return 100; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const				{ return 8000; }
 	virtual ushort OfferValue(void) const				{ return 10; }
 	virtual uchar GetItemColor(void) const			{ return LGRAY; }
 	virtual bool IsSolid(void) const { return true; }
@@ -150,9 +150,9 @@ class MATERIAL
 	valpurium,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 400;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const				{return 3000;}
+	virtual ushort GetHitValue(void) const				{ return 400; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const				{ return 3000; }
 	virtual ushort OfferValue(void) const				{ return 100; }
 	virtual uchar Alignment(void) const				{ return GOOD; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
@@ -166,9 +166,9 @@ class MATERIAL
 	stone,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 50;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const				{return 3000;}
+	virtual ushort GetHitValue(void) const				{ return 50; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const				{ return 3000; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return DGRAY; }
 	virtual bool IsSolid(void) const { return true; }
@@ -181,9 +181,9 @@ class MATERIAL
 	bananaflesh,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 5;}
-	virtual uchar GetConsumeType(void) const				{return FRUIT;}
-	virtual ushort GetDensity(void) const				{return 1200;}
+	virtual ushort GetHitValue(void) const				{ return 5; }
+	virtual uchar GetConsumeType(void) const				{ return FRUIT; }
+	virtual ushort GetDensity(void) const				{ return 1200; }
 	virtual ushort OfferValue(void) const				{ return 10; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue(void) const			{ return 175; }
@@ -197,9 +197,9 @@ class MATERIAL
 	gravel,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 40;}
-	virtual uchar GetConsumeType(void) const				{return ODD;}
-	virtual ushort GetDensity(void) const				{return 2500;}
+	virtual ushort GetHitValue(void) const				{ return 40; }
+	virtual uchar GetConsumeType(void) const				{ return ODD; }
+	virtual ushort GetDensity(void) const				{ return 2500; }
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual uchar GetItemColor(void) const			{ return LGRAY; }
 protected:
@@ -212,9 +212,9 @@ class MATERIAL
 	material,
 public:
 	
-	virtual ushort GetHitValue(void) const				{return 25;}
-	virtual uchar GetConsumeType(void) const				{return ODD;}
-	virtual ushort GetDensity(void) const				{return 2500;}
+	virtual ushort GetHitValue(void) const				{ return 25; }
+	virtual uchar GetConsumeType(void) const				{ return ODD; }
+	virtual ushort GetDensity(void) const				{ return 2500; }
 	virtual ushort OfferValue(void) const				{ return 2; }
 	virtual uchar GetItemColor(void) const			{ return BROWN; }
 protected:
@@ -226,9 +226,9 @@ class MATERIAL
 	schoolfood,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 5;}
-	virtual uchar GetConsumeType(void) const				{return SCHOOLFOOD;}
-	virtual ushort GetDensity(void) const				{return 1500;}
+	virtual ushort GetHitValue(void) const				{ return 5; }
+	virtual uchar GetConsumeType(void) const				{ return SCHOOLFOOD; }
+	virtual ushort GetDensity(void) const				{ return 1500; }
 	virtual ushort OfferValue(void) const				{ return 20; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
 	virtual short NutritionValue(void) const			{ return 75; }
@@ -244,8 +244,8 @@ class MATERIAL
 	air,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 0;}
-	virtual ushort GetDensity(void) const				{return 1;}
+	virtual ushort GetHitValue(void) const				{ return 0; }
+	virtual ushort GetDensity(void) const				{ return 1; }
 	virtual ushort OfferValue(void) const				{ return 0; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 protected:
@@ -258,9 +258,9 @@ class MATERIAL
 	wood,
 	material,
 public:
-	virtual ushort GetHitValue(void) const				{return 20;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const				{return 500;}
+	virtual ushort GetHitValue(void) const				{ return 20; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const				{ return 500; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return BROWN; }
 	virtual bool IsSolid(void) const { return true; }
@@ -273,9 +273,9 @@ class MATERIAL
 	flesh,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
-	virtual ushort GetDensity(void) const				{return 1200;}
+	virtual ushort GetHitValue(void) const 				{ return 15; }
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
+	virtual ushort GetDensity(void) const				{ return 1200; }
 	virtual ushort OfferValue(void) const				{ return 15; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue(void) const			{ return 50; }
@@ -290,7 +290,7 @@ class MATERIAL
 	goblinoidflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 10; }
 	virtual uchar GetItemColor(void) const			{ return GREEN; }
 protected:
@@ -302,7 +302,7 @@ class MATERIAL
 	pork,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 20; }
 	virtual short NutritionValue(void) const			{ return 500; }
 	virtual uchar GetItemColor(void) const			{ return BROWN; }
@@ -315,7 +315,7 @@ class MATERIAL
 	beef,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 20; }
 	virtual short NutritionValue(void) const			{ return 500; }
 	virtual uchar GetItemColor(void) const			{ return BROWN; }
@@ -328,8 +328,8 @@ class MATERIAL
 	bone,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 25;}
-	virtual ushort GetDensity(void) const				{return 2000;}
+	virtual ushort GetHitValue(void) const 				{ return 25; }
+	virtual ushort GetDensity(void) const				{ return 2000; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetConsumeType(void) const				{ return BONE; }
 	virtual void EatEffect(character*, float, float);
@@ -345,7 +345,7 @@ class MATERIAL
 	darkfrogflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 50; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
@@ -360,8 +360,8 @@ class MATERIAL
 	elpuriflesh,
 	darkfrogflesh,
 public:
-	virtual ushort GetHitValue(void) const 				{return 30;}
-	virtual ushort GetDensity(void) const				{return 2400;}
+	virtual ushort GetHitValue(void) const 				{ return 30; }
+	virtual ushort GetDensity(void) const				{ return 2400; }
 	virtual ushort OfferValue(void) const				{ return 1; }
 protected:
 	virtual std::string NameStem(void) const	{ return "Elpuri's flesh"; }
@@ -373,9 +373,9 @@ class MATERIAL
 	glass,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 30;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const				{return 2500;}
+	virtual ushort GetHitValue(void) const 				{ return 30; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const				{ return 2500; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
@@ -388,9 +388,9 @@ class MATERIAL
 	omleurine,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 1;}
-	virtual uchar GetConsumeType(void) const				{return LIQUID;}
-	virtual ushort GetDensity(void) const				{return 1000;}
+	virtual ushort GetHitValue(void) const 				{ return 1; }
+	virtual uchar GetConsumeType(void) const				{ return LIQUID; }
+	virtual ushort GetDensity(void) const				{ return 1000; }
 	virtual ushort OfferValue(void) const				{ return 100; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
@@ -406,9 +406,9 @@ class MATERIAL
 	bananapeal,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 10;}
-	virtual uchar GetConsumeType(void) const				{return ODD;}
-	virtual ushort GetDensity(void) const				{return 500;}
+	virtual ushort GetHitValue(void) const 				{ return 10; }
+	virtual uchar GetConsumeType(void) const				{ return ODD; }
+	virtual ushort GetDensity(void) const				{ return 500; }
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual uchar GetItemColor(void) const			{ return YELLOW; }
 protected:
@@ -420,9 +420,9 @@ class MATERIAL
 	parchment,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar GetConsumeType(void) const				{return ODD;}
-	virtual ushort GetDensity(void) const				{return 600;}
+	virtual ushort GetHitValue(void) const 				{ return 15; }
+	virtual uchar GetConsumeType(void) const				{ return ODD; }
+	virtual ushort GetDensity(void) const				{ return 600; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
@@ -435,9 +435,9 @@ class MATERIAL
 	cloth,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar GetConsumeType(void) const				{return ODD;}
-	virtual ushort GetDensity(void) const				{return 100;}
+	virtual ushort GetHitValue(void) const 				{ return 15; }
+	virtual uchar GetConsumeType(void) const				{ return ODD; }
+	virtual ushort GetDensity(void) const				{ return 100; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return BLUE; }
 	virtual bool IsSolid(void) const { return true; }
@@ -450,7 +450,7 @@ class MATERIAL
 	humanflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort GetEmitation(void) const				{ return 192; }
 	virtual ushort OfferValue(void) const				{ return 30; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
@@ -464,9 +464,9 @@ class MATERIAL
 	slime,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 2;}
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
-	virtual ushort GetDensity(void) const 				{return 400;}
+	virtual ushort GetHitValue(void) const 				{ return 2; }
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
+	virtual ushort GetDensity(void) const 				{ return 400; }
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual short NutritionValue(void) const			{ return 25; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -481,7 +481,7 @@ class MATERIAL
 	brownslime,
 	slime,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual short NutritionValue(void) const			{ return 25; }
 	virtual uchar GetItemColor(void) const			{ return BROWN; }
@@ -494,7 +494,7 @@ class MATERIAL
 	wolfflesh,
 	flesh,
 public:
-	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{ return MEAT; }
 	virtual ushort OfferValue(void) const				{ return 15; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 protected:
@@ -517,8 +517,8 @@ class MATERIAL
 	ennerbeastflesh,
 	humanflesh, //???
 public:
-	virtual ushort GetHitValue(void) const 				{return 30;}
-	virtual ushort GetDensity(void) const				{return 2400;}
+	virtual ushort GetHitValue(void) const 				{ return 30; }
+	virtual ushort GetDensity(void) const				{ return 2400; }
 	virtual ushort OfferValue(void) const				{ return 5; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 protected:
@@ -531,9 +531,9 @@ class MATERIAL
 	pepsi,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 200;}
-	virtual uchar GetConsumeType(void) const				{return LIQUID;}
-	virtual ushort GetDensity(void) const 				{return 1500;}
+	virtual ushort GetHitValue(void) const 				{ return 200; }
+	virtual uchar GetConsumeType(void) const				{ return LIQUID; }
+	virtual ushort GetDensity(void) const 				{ return 1500; }
 	virtual ushort OfferValue(void) const				{ return 50; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
@@ -550,9 +550,9 @@ class MATERIAL
 	mithril,
 	material,
 public:
-	virtual ushort GetHitValue(void) const 				{return 200;}
-	virtual uchar GetConsumeType(void) const				{return HARD;}
-	virtual ushort GetDensity(void) const 				{return 5000;}
+	virtual ushort GetHitValue(void) const 				{ return 200; }
+	virtual uchar GetConsumeType(void) const				{ return HARD; }
+	virtual ushort GetDensity(void) const 				{ return 5000; }
 	virtual ushort OfferValue(void) const				{ return 25; }
 	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }

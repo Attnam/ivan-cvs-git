@@ -15,7 +15,7 @@ public:
 	virtual void Draw(void) const;
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
-	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
 protected:
 	worldmapsquare*** Map;
 };

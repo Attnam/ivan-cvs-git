@@ -78,4 +78,3 @@ void square::RemoveCharacter(void)
 {
 	SetCharacter(0);
 }
-

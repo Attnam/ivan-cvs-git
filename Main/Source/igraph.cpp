@@ -41,5 +41,3 @@ void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
 	else
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
-
-

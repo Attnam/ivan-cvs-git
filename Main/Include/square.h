@@ -28,15 +28,15 @@ public:
 	virtual void SetCharacter(character* What ) { Character = What; }
 	virtual void AddCharacter(character* Guy);
 	virtual void RemoveCharacter(void);
-	virtual character* CCharacter(void) const		{return Character;}
-	virtual bool GetKnown(void) const				{return Known;}
-	virtual vector GetPos(void) const			{return Pos;}
+	virtual character* CCharacter(void) const		{ return Character; }
+	virtual bool GetKnown(void) const				{ return Known; }
+	virtual vector GetPos(void) const			{ return Pos; }
 	virtual void SetKnown(bool What) { Known = What; }
 	virtual ushort GetPopulation(void) const { if(Character) return 1; else return 0; }
 	virtual area* GetMotherArea(void) const { return MotherArea; }
-	virtual void EmptyFlag(void)			{Flag = false;}
-	virtual void SetFlag(void)			{Flag = true;}
-	virtual bool RetrieveFlag(void) const		{return Flag;}
+	virtual void EmptyFlag(void)			{ Flag = false; }
+	virtual void SetFlag(void)			{ Flag = true; }
+	virtual bool RetrieveFlag(void) const		{ return Flag; }
 	virtual groundterrain* GetGroundTerrain(void) { return GroundTerrain; }
 	virtual void SetGroundTerrain(groundterrain* What) { GroundTerrain = What; }
 	virtual overterrain* GetOverTerrain(void) { return OverTerrain; }
@@ -51,6 +51,3 @@ protected:
 };
 
 #endif
-
-
-

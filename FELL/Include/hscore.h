@@ -9,7 +9,7 @@
 class highscore
 {
 public:
-	highscore(std::string File = "HScore.dat") {Load(File);}
+	highscore(std::string File = "HScore.dat") { Load(File); }
 	void Add(long, std::string);
 	void Draw(void) const;
 	void Save(std::string = "HScore.dat") const;

@@ -31,11 +31,11 @@ public:
 	virtual void AddCharacter(character* Guy);
 	virtual void HandleCharacters(void);
 	virtual void RemoveCharacter(void);
-	virtual stack* GetStack(void) const		{return Stack;}
+	virtual stack* GetStack(void) const		{ return Stack; }
 	virtual void AlterLuminance(vector, ushort);
 	virtual void Emitate(void);
 	virtual void ReEmitate(void);
-	virtual stack* GetSideStack(uchar Index) const	{return SideStack[Index];}
+	virtual stack* GetSideStack(uchar Index) const	{ return SideStack[Index]; }
 	virtual void Clean(void);
 	virtual bool Open(character*);
 	virtual bool Close(character*);
@@ -45,7 +45,7 @@ public:
 	virtual ushort GetLuminance(void) const;
 	virtual void SignalEmitationIncrease(ushort);
 	virtual void SignalEmitationDecrease(ushort);
-	virtual ushort GetEmitation(void) const			{return Emitation;}
+	virtual ushort GetEmitation(void) const			{ return Emitation; }
 	virtual void ForceEmitterNoxify(void);
 	virtual void ForceEmitterEmitation(void);
 	virtual void Noxify(void);
@@ -80,8 +80,8 @@ protected:
 	{
 		emitter(vector Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) {}
 		emitter(void) {}
-		bool operator==(emitter& AE) const {if(Pos == AE.Pos) return true; else return false;}
-		emitter& operator=(emitter& AE) {Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this;}
+		bool operator==(emitter& AE) const {if(Pos == AE.Pos) return true; else return false; }
+		emitter& operator=(emitter& AE) {Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
 		vector Pos;
 		ushort DilatedEmitation;
 	};
@@ -95,5 +95,3 @@ protected:
 };
 
 #endif
-
-

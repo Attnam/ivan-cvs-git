@@ -29,25 +29,25 @@ public:
 	virtual float GetWeaponStrength(void) const;
 	virtual void DrawToTileBuffer(void) const;
 	virtual void PositionedDrawToTileBuffer(uchar) const;
-	virtual std::string Name(uchar Case) const {return NameWithMaterial(Case);}
+	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
 	virtual ushort GetEmitation(void) const;
-	virtual vector GetInHandsPic(void) const {return vector(0,0);}
-	virtual uchar GetConsumeType(void) const {return ODD;}
-	virtual ushort TryToOpen(stack*) {return 0xFFFF;}
+	virtual vector GetInHandsPic(void) const { return vector(0,0); }
+	virtual uchar GetConsumeType(void) const { return ODD; }
+	virtual ushort TryToOpen(stack*) { return 0xFFFF; }
 	virtual ulong GetWeight(void) const;
 	virtual bool Consume(character*, float = 100) { return false; };
-	virtual ushort GetArmorValue(void) const {return 100;}
-	virtual bool IsHeadOfElpuri(void) const {return false;}
-	virtual bool IsPerttusNut(void) const {return false;}
-	virtual bool IsMaakotkaShirt(void) const {return false;}
+	virtual ushort GetArmorValue(void) const { return 100; }
+	virtual bool IsHeadOfElpuri(void) const { return false; }
+	virtual bool IsPerttusNut(void) const { return false; }
+	virtual bool IsMaakotkaShirt(void) const { return false; }
 	virtual bool CanBeRead(character*) const { return false; };
 	virtual bool Read(character*) { return false; };
 	virtual void ReceiveHitEffect(character*, character*) {}
-	virtual bool CanBeDippedInto(item*) const {return false;}
+	virtual bool CanBeDippedInto(item*) const { return false; }
 	virtual void DipInto(item*) {}
-	virtual material* BeDippedInto(void) {return 0;}
-	virtual bool CanBeDipped(void) const {return false;}
-	virtual bool CanBeWorn(void) const {return false;}
+	virtual material* BeDippedInto(void) { return 0; }
+	virtual bool CanBeDipped(void) const { return false; }
+	virtual bool CanBeWorn(void) const { return false; }
 	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
 	virtual bool Consumable(character*) const;
 	virtual item* BetterVersion(void) const { return 0; }
@@ -68,7 +68,7 @@ public:
 	virtual bool Apply(character*);
 protected:
 	virtual void SetDefaultStats(void) = 0;
-	virtual ushort GetFormModifier(void) const {return 0;}
+	virtual ushort GetFormModifier(void) const { return 0; }
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

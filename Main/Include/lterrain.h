@@ -305,5 +305,3 @@ protected:
 );
 
 #endif
-
-

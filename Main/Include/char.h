@@ -121,33 +121,33 @@ public:
 	virtual long Score(void) const;
 	virtual float GetAttackStrength(void) const;
 	virtual float GetDifficulty(void) const;
-	virtual item* GetTorsoArmor(void) const				{return 0;}
-	virtual item* GetWielded(void) const				{return Wielded;}
+	virtual item* GetTorsoArmor(void) const				{ return 0; }
+	virtual item* GetWielded(void) const				{ return Wielded; }
 	virtual levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
-	virtual long GetAgilityExperience(void) const {return AgilityExperience;}
+	virtual long GetAgilityExperience(void) const { return AgilityExperience; }
 	virtual long GetAP(void) const { return AP; }
 	virtual long GetAPsToBeEaten(void) const { return APsToBeEaten; }
-	virtual long GetEnduranceExperience(void) const {return EnduranceExperience;}
-	virtual long GetNP(void) const					{return NP;}
-	virtual long GetPerceptionExperience(void) const {return PerceptionExperience;}
-	virtual long GetStrengthExperience(void) const {return StrengthExperience;}
-	virtual short GetHP(void) const					{return HP;}
+	virtual long GetEnduranceExperience(void) const { return EnduranceExperience; }
+	virtual long GetNP(void) const					{ return NP; }
+	virtual long GetPerceptionExperience(void) const { return PerceptionExperience; }
+	virtual long GetStrengthExperience(void) const { return StrengthExperience; }
+	virtual short GetHP(void) const					{ return HP; }
 	virtual square* GetSquareUnder(void) const { return SquareUnder; }
-	virtual stack* GetStack(void) const				{return Stack;}
+	virtual stack* GetStack(void) const				{ return Stack; }
 	virtual uchar GetBurdenState(ulong = 0) const;
 	virtual uchar GetRelations(void) const { return Relations; }
-	virtual uchar GetSex(void) const {return UNDEFINED;}
+	virtual uchar GetSex(void) const { return UNDEFINED; }
 	virtual uchar TakeHit(ushort, short, float, character*);
 	virtual ulong Danger(void) const = 0;
 	virtual ulong GetBloodColor(void) const { return MAKE_RGB(100,0,0); }
 	virtual ushort CalculateArmorModifier(void) const;
 	virtual ushort CRegenerationCounter(void) const { return RegenerationCounter; }
-	virtual ushort GetAgility(void) const					{return Agility;}
+	virtual ushort GetAgility(void) const					{ return Agility; }
 	virtual ushort GetConsumingCurrently(void) const { return EatingCurrently; }
 	virtual ushort GetEmitation(void) const;
-	virtual ushort GetEndurance(void) const					{return Endurance;}
-	virtual ushort GetPerception(void) const				{return Perception;}
-	virtual ushort GetStrength(void) const					{return Strength;}
+	virtual ushort GetEndurance(void) const					{ return Endurance; }
+	virtual ushort GetPerception(void) const				{ return Perception; }
+	virtual ushort GetStrength(void) const					{ return Strength; }
 	virtual ushort LOSRange(void) const { return GetPerception() / 3; }
 	virtual ushort LOSRangeLevelSquare(void) const { return GetPerception() * GetPerception() / 9; }
 	virtual ushort Possibility(void) const = 0;
@@ -183,7 +183,7 @@ public:
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
 	virtual void SetFainted(bool To) { Fainted = To; }
-	virtual void SetHasActed(bool HA)				{HasActed = HA;}
+	virtual void SetHasActed(bool HA)				{HasActed = HA; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
@@ -207,7 +207,7 @@ protected:
 	virtual void GetPlayerCommand(void);
 	virtual void GetAICommand(void);
 	virtual void Charge(character*);
-	virtual float GetMeleeStrength(void) const				{return 0;}
+	virtual float GetMeleeStrength(void) const				{ return 0; }
 	virtual void HostileAICommand(void);
 	virtual void NeutralAICommand(void);
 	virtual void FriendAICommand(void);

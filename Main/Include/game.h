@@ -38,8 +38,8 @@ public:
 	static void DeInit(void);
 	static void Run(void);
 	static int Menu(std::string sMS); // hihi :-) (MENU)
-	static int* GetMoveCommandKey(void)	{return MoveCommandKey;}
-	static const vector* CMoveVector(void)	{return MoveVector;}
+	static int* GetMoveCommandKey(void)	{ return MoveCommandKey; }
+	static const vector* CMoveVector(void)	{ return MoveVector; }
 	static area* GetCurrentArea(void)	{ return !InWilderness ? (area*)Level[Current] : (area*)WorldMap; }
 	static level* GetCurrentLevel(void)	{ return Level[Current]; }
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
@@ -50,16 +50,16 @@ public:
 		void Draw(void) const;
 	private:
 	} Panel;
-	static ushort*** GetLuxTable(void)		{return LuxTable;}
-	static ushort* GetLuxTableSize(void)		{return LuxTableSize;}
+	static ushort*** GetLuxTable(void)		{ return LuxTable; }
+	static ushort* GetLuxTableSize(void)		{ return LuxTableSize; }
 	static void Quit(void);
-	static character* GetPlayer(void) {return Player;}
+	static character* GetPlayer(void) { return Player; }
 	static void SetPlayer(character*);
-	static vector CCamera(void) {return Camera;}
+	static vector CCamera(void) { return Camera; }
 	static void UpDateCameraX(void);
 	static void UpDateCameraY(void);
 	static bool Flag;
-	static level* GetLevel(ushort Index) {return Level[Index];}
+	static level* GetLevel(ushort Index) { return Level[Index]; }
 	static void InitLuxTable(void);
 	static void DeInitLuxTable(void);
 	static const char* Insult(void);
@@ -70,12 +70,12 @@ public:
 	static void StoryScreen(const char*, bool = true);
 	static bool Save(std::string = game::SaveName());
 	static bool Load(std::string = game::SaveName());
-	static bool GetRunning(void) {return Running;}
+	static bool GetRunning(void) { return Running; }
 	static void EnableWizardMode(void) { WizardMode = true; }
-	static bool GetWizardMode(void) {return WizardMode;}
+	static bool GetWizardMode(void) { return WizardMode; }
 	static void SeeWholeMap(void) { SeeWholeMapCheat = !SeeWholeMapCheat; }
-	static bool GetSeeWholeMapCheat(void) {return SeeWholeMapCheat;}
-	static uchar EditGamma(short Value) {if(Value > 255 - Gamma) Gamma = 255; else if(Value + Gamma < 0) Gamma = 0; else Gamma += Value; return Gamma;}
+	static bool GetSeeWholeMapCheat(void) { return SeeWholeMapCheat; }
+	static uchar EditGamma(short Value) {if(Value > 255 - Gamma) Gamma = 255; else if(Value + Gamma < 0) Gamma = 0; else Gamma += Value; return Gamma; }
 	static bool EmitationHandler(ushort, ushort, ushort, ushort);
 	static bool NoxifyHandler(ushort, ushort, ushort, ushort);
 	static bool GetGoThroughWallsCheat(void) { return GoThroughWallsCheat; }
@@ -155,6 +155,3 @@ private:
 };
 
 #endif
-
-
-

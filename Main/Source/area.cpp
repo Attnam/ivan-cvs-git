@@ -68,9 +68,9 @@ void area::UpdateLOS(void)
 
 	DO_BIG_RECTANGLE(0, 0, GetXSize() - 1, GetYSize() - 1,
 			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,		0,		game::FlagHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,		GetYSize() - 1,	game::FlagHandler);},
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,		GetYSize() - 1,	game::FlagHandler); },
 			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0,			YPointer,	game::FlagHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetXSize() - 1,	YPointer,	game::FlagHandler);})
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetXSize() - 1,	YPointer,	game::FlagHandler); })
 }
 
 void area::EmptyFlags(void)
