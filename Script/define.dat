@@ -359,6 +359,7 @@
 #define MOOSE_FLESH (FLESH_ID + 36)
 #define MAGPIE_FLESH (FLESH_ID + 37)
 #define SKUNK_FLESH (FLESH_ID + 38)
+#define STALKER_FLESH (FLESH_ID + 39)
 
 #define POWDER_ID (4096 * 6)
 

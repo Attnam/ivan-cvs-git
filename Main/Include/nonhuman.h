@@ -401,5 +401,12 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class CHARACTER
+(
+  invisiblestalker,
+  nonhumanoid,
+  ;
+);
+
 #endif
 

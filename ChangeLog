@@ -6,7 +6,15 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+April 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Added invisible stalker
+	* Bone files work in Linux
+	
+April 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Slight improvements to makefiles
+	
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Golems can now read

@@ -3613,3 +3613,36 @@ skunk
 	DangerModifier = 33;
 	ClassStates = GAS_IMMUNITY;
 }
+
+invisiblestalker
+{
+	DefaultArmStrength = 30;
+	DefaultAgility = 14;
+	DefaultEndurance = 12;
+	DefaultPerception = 24;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 5;
+	DefaultCharisma = 5;
+	DefaultMana = 0;
+	TotalVolume = 20000;
+	TorsoBitmapPos = 224, 16;
+	FriendlyReplies == "\"Gods are away on business.\"";
+	HostileReplies == "\"Misery is the river of the world.\"";
+	TotalSize = 170;
+	SkinColor = rgb16(40, 40, 40);
+	NameSingular = "stalker";
+	NamePlural = "stalkers";
+	Adjective = "invisible";
+	AttackStyle = USE_ARMS;
+	CanBeGenerated = true;
+	KnownCWeaponSkills == ARMS;
+	CWeaponSkillHits == 150;
+	FleshMaterial = STALKER_FLESH;
+	DeathMessage = "@Dd hisses.";
+	AttachedGod = CLEPTIA;
+	CanKick = true;
+	KnownCWeaponSkills == UNARMED;
+	CWeaponSkillHits == 350;
+	ClassStates = INVISIBLE;
+	PanicLevel = 15; 
+}

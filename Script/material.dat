@@ -1310,6 +1310,11 @@ flesh
 		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
 	}
+	Config STALKER_FLESH;
+	{
+		NameStem = "magpie flesh";
+		AttachedGod = MORTIFER;
+	}
 }
 
 powder

@@ -1914,7 +1914,7 @@ festring game::GetGameDir()
 festring game::GetBoneDir()
 {
 #ifdef LINUX
-  return DATADIR "/ivan/bones";
+  return LOCAL_STATE_DIR "/Bones/";
 #endif
 
 #if defined(WIN32) || defined(__DJGPP__)
