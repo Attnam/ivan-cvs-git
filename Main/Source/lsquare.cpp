@@ -396,7 +396,7 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 	{
 		if(AiL >= LIGHT_BORDER)
 		{
-			if(GetLuminance() < LIGHT_BORDER)
+			if(GetRawLuminance() < LIGHT_BORDER)
 				DescriptionChanged = true;
 
 			Emitter << DirEmitter;
@@ -408,7 +408,7 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 			if(Emitter.Access(Index).DilatedEmitation == AiL)
 				return;
 
-			if(GetLuminance() < LIGHT_BORDER)
+			if(GetRawLuminance() < LIGHT_BORDER)
 			{
 				Emitter.Access(Index) = DirEmitter;
 
@@ -419,17 +419,17 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 			{
 				Emitter.Access(Index) = DirEmitter;
 
-				if(AiL < LIGHT_BORDER && GetLuminance() < LIGHT_BORDER)
+				if(AiL < LIGHT_BORDER && GetRawLuminance() < LIGHT_BORDER)
 					DescriptionChanged = true;
 			}
 		}
 		else
 		{
-			if(GetLuminance() >= LIGHT_BORDER)
+			if(GetRawLuminance() >= LIGHT_BORDER)
 			{
 				Emitter.Remove(Index);
 
-				if(GetLuminance() < LIGHT_BORDER)
+				if(GetRawLuminance() < LIGHT_BORDER)
 					DescriptionChanged = true;
 			}
 			else
@@ -437,8 +437,6 @@ void levelsquare::AlterLuminance(vector2d Dir, ushort AiL)
 		}
 
 	NewDrawRequested = true;
-
-
 
 	if(GetLastSeen() == game::GetLOSTurns())
 		game::SendLOSUpdateRequest();
@@ -587,6 +585,17 @@ ushort levelsquare::GetLuminance() const
 			if(CalculateBitMask(Emitter.Access(c).Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
 				if(Emitter.Access(c).DilatedEmitation > Luminance)
 					Luminance = Emitter.Access(c).DilatedEmitation;
+
+	return Luminance > 511 ? 511 : Luminance;
+}
+
+ushort levelsquare::GetRawLuminance() const
+{
+	ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
+
+	for(ushort c = 0; c < Emitter.Length(); ++c)
+		if(Emitter.Access(c).DilatedEmitation > Luminance)
+			Luminance = Emitter.Access(c).DilatedEmitation;
 
 	return Luminance > 511 ? 511 : Luminance;
 }

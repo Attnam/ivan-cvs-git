@@ -345,18 +345,6 @@ void level::CreateItems(ushort Amount)
 	}
 }
 
-
-void level::CreateMonsters(ushort Amount)
-{
-	for(uchar x = 0; x < Amount; ++x)
-	{
-		vector2d Pos = RandomSquare(true);
-
-		if(!Map[Pos.X][Pos.Y]->Character)
-			Map[Pos.X][Pos.Y]->FastAddCharacter(protosystem::BalancedCreateMonster());
-	}
-}
-
 void level::CreateStairs(bool Up)
 {
 	vector2d Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
@@ -763,11 +751,12 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 		{
 			Pos = RandomSquare(true);
 			
-			if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6) && !Map[Pos.X][Pos.Y]->Character)
+			if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6))
 				break;
 		}
 
-		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(protosystem::BalancedCreateMonster());
+		if(!(Pos.X == 0 && Pos.Y == 0))
+			Map[Pos.X][Pos.Y]->AddCharacter(protosystem::BalancedCreateMonster());
 	}
 }
 
@@ -862,5 +851,5 @@ void level::MoveCharacter(vector2d From, vector2d To)
 
 ushort level::GetIdealPopulation() const 
 { 
-	return 10 + game::GetCurrent() * 4; 
+	return 10 + (game::GetCurrent() << 2); 
 }

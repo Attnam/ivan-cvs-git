@@ -46,7 +46,6 @@ public:
 	virtual void AttachPos(vector2d);
 	virtual void CreateRandomTunnel();
 	virtual void CreateItems(ushort);
-	virtual void CreateMonsters(ushort);
 	virtual void CreateStairs(bool);
 	virtual bool MakeRoom(roomscript*);
 	virtual vector2d GetUpStairs() { return UpStairs; }

@@ -85,7 +85,9 @@ void dungeon::PrepareLevel(ushort Index)
 		Level[Index]->Generate(GetLevelScript(Index));
 		
 		Generated[Index] = true;
-		Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
+
+		if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
+			Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 	}
 }
 

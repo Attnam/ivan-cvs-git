@@ -85,6 +85,7 @@ public:
 	virtual bool CanBeSeenFrom(vector2d, ulong) const;
 	virtual void MoveCharacter(levelsquare*);
 	virtual bool CanBeSeenIgnoreDarkness() const;
+	virtual ushort GetRawLuminance() const;
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

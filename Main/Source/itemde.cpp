@@ -97,7 +97,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 	{
-		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster());
+		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster(5));
 
 		if(Reader->GetIsPlayer())
 			ADD_MESSAGE("As you read the scroll a monster appears.");

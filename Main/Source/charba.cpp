@@ -826,14 +826,6 @@ void character::Die()
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
-	if(!game::GetInWilderness())
-		CreateCorpse();
-
-	
-	GetSquareUnder()->RemoveCharacter();
-
-
-	SetExists(false);
 
 	if(GetIsPlayer())
 	{
@@ -843,7 +835,6 @@ void character::Die()
 
 		if(game::BoolQuestion("Do you want to see your message history? [Y/N]", 2))
 			DrawMessageHistory();
-
 	}
 
 	if(!game::GetInWilderness())
@@ -2578,7 +2569,6 @@ float character::GetThrowStrengthModifier() const
 	else
 		return 1;
 }
-<<<<<<< charba.cpp
 
 ushort character::GetMeleeAttributeModifier() const
 {
