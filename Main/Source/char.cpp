@@ -1750,14 +1750,14 @@ bool character::Look(void)
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
 			if(Key == game::GetMoveCommandKey(c))
-				{
+			{
 				CursorPos += game::GetMoveVector(c);
 
-				if (short(CursorPos.X) > game::GetCurrentLevel()->GetXSize()-1)	CursorPos.X = 0;
-				if (short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentLevel()->GetXSize()-1;
-				if (short(CursorPos.Y) > game::GetCurrentLevel()->GetYSize()-1)	CursorPos.Y = 0;
-				if (short(CursorPos.Y) < 0)					CursorPos.Y = game::GetCurrentLevel()->GetYSize()-1;
-				}
+				if (short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
+				if (short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentArea()->GetXSize()-1;
+				if (short(CursorPos.Y) > game::GetCurrentArea()->GetYSize()-1)	CursorPos.Y = 0;
+				if (short(CursorPos.Y) < 0)					CursorPos.Y = game::GetCurrentArea()->GetYSize()-1;
+			}
 
 			if(GetIsPlayer())
 			{
@@ -1771,20 +1771,22 @@ bool character::Look(void)
 
 		if(game::GetSeeWholeMapCheat())
 		{
-			OldMemory = game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems();
-			game::GetCurrentLevel()->GetLevelSquare(CursorPos)->UpdateItemMemory();
+			OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+			game::GetCurrentArea()->GetSquare(CursorPos)->UpdateMemorizedDescription();
 		}
 
-		if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetKnown() || game::GetSeeWholeMapCheat())
+		if(game::GetCurrentArea()->GetSquare(CursorPos)->GetKnown() || game::GetSeeWholeMapCheat())
 		{
 			std::string Msg;
 
-			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat())
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat())
 				Msg = "You see here ";
 			else
 				Msg = "You remember here ";
 
-			bool Anything = false;
+			Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+
+			/*bool Anything = false;
 
 			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverLevelTerrain()->Name(INDEFINITE) != "an air atmosphere")
 			{
@@ -1817,15 +1819,18 @@ bool character::Look(void)
 				if(Anything)
 					Msg += std::string(" on ") + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE);
 				else
-					Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE));
+					Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE));*/
 
 			ADD_MESSAGE("%s.", Msg.c_str());
+
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
+				ADD_MESSAGE("%s is standing here.", game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()->CNAME(INDEFINITE));
 		}
 		else
 			ADD_MESSAGE("You have no idea what might lie here.");
 
 		if(game::GetSeeWholeMapCheat())
-			game::GetCurrentLevel()->GetLevelSquare(CursorPos)->SetRememberedItems(OldMemory);
+			game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 
 		game::DrawEverythingNoBlit();
 		igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16);
@@ -1835,6 +1840,7 @@ bool character::Look(void)
 
 		Key = GETKEY();
 	}
+
 	return false;
 }
 

@@ -838,8 +838,6 @@ public:
 	virtual vector GetBitmapPos(void) const RETV(144,176)
 	virtual bool Zap(vector, uchar);
 );
-	
-
 
 FINISH_PROTOTYPING(item)
 

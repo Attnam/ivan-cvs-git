@@ -377,7 +377,7 @@ bool scrollofwishing::Read(character* Reader)
 
 	if(TempItem)
 	{
-		Reader->GetLevelSquareUnder()->GetStack()->AddItem(TempItem);
+		Reader->GetStack()->AddItem(TempItem);
 		ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
 		return true;
 	}

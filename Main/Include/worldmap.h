@@ -17,6 +17,7 @@ public:
 	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual void GenerateClimate(void);
 	virtual void Load(std::ifstream&);
+	virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort**, ushort, ushort);
 protected:
 	worldmapsquare*** Map;
 	friend class worldmapterrain;

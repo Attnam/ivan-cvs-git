@@ -30,9 +30,11 @@ public:
 	virtual void SetAltitude(short What) { Altitude = What; }
 	virtual worldmap* GetMotherWorldMap(void) const { return (worldmap*)MotherArea; }
 	virtual void SetMotherWorldMap(worldmap* What) { MotherArea = (area*)What; }
+	virtual void UpdateMemorizedDescription(void);
 protected:
 	worldmap* MotherWorldMap;
 	short Altitude;
+	bool TerrainChanged;
 };
 
 #endif

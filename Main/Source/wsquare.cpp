@@ -55,6 +55,7 @@ void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, ove
 	SetGroundWorldMapTerrain(NewGround);
 	delete GetOverWorldMapTerrain();
 	SetOverWorldMapTerrain(NewOver);
+	TerrainChanged = true;
 }
 
 void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
@@ -83,3 +84,15 @@ overworldmapterrain* worldmapsquare::GetOverWorldMapTerrain(void) const
 	return (overworldmapterrain*)OverTerrain;
 }
 
+void worldmapsquare::UpdateMemorizedDescription(void)
+{
+	if(TerrainChanged)
+	{
+		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
+			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE));
+		else
+			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+
+		TerrainChanged = false;
+	}
+}

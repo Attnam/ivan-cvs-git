@@ -77,57 +77,52 @@ void worldmap::Draw(void) const
 
 void worldmap::Generate(void)
 {
-	short** Data;
-	short** Buffer;
-	Data = Alloc2D<short>(XSize, YSize);
-	Buffer = Alloc2D<short>(XSize, YSize);
-   
+	short** Data = Alloc2D<short>(XSize, YSize);
+	short** Buffer = Alloc2D<short>(XSize, YSize);
 
-	int placex, placey,change;
+	int placex, placey, change;
+
 	for(int x = 0; x < XSize; x++)
 		for(int y = 0; y < YSize; y++)
 			Data[x][y] = rand() % 1000 - rand() % 1000;
-	for(int timesgone = 0; timesgone < 3; timesgone++)
+
+	for(int timesgone = 0; timesgone < 6; timesgone++)
 	{
-		for(int c1 = 0; c1 < rand() % 10; c1++)
+		if(timesgone < 4)
 		{
-			placex = 5+rand() % (XSize-10);
-			placey = 5+rand() % (YSize-10);
-			change = rand() % 10000 - rand() % 10000;
-			for(int c2 = 0; c2 < rand() % 50; c2++)
+			for(int c1 = 0; c1 < rand() % 10; c1++)
 			{
-				Data[(placex + rand() % 5 - rand() % 5)][(placey + rand() % 5 - rand() % 5)] += change;
+				placex = 5 + rand() % (XSize-10);
+				placey = 5 + rand() % (YSize-10);
+				change = rand() % 10000 - rand() % 10000;
+
+				for(int c2 = 0; c2 < rand() % 50; c2++)
+					Data[(placex + rand() % 5 - rand() % 5)][(placey + rand() % 5 - rand() % 5)] += change;
 			}
 		}
+
 		for(int x = 0; x < XSize; x++)
 			for(int y = 0; y < YSize; y++)
 			{
-				ulong HeightNear = 0;
-				for(uchar c = 0; c < 8; c++)
-				{
-					vector Temp(vector(x,y) + game::GetMoveVector(c));
-						if(short(Temp.X) < XSize && short(Temp.Y) < YSize && short(Temp.X) > 0 && short(Temp.Y) > 0) 
-							HeightNear += Data[Temp.X][Temp.Y];
-					Buffer[x][y] = HeightNear >> 3;
-				}
+				long HeightNear = 0, SquaresNear = 0;
+
+				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, HeightNear += Data[DoX][DoY]; SquaresNear++;)
+
+				Buffer[x][y] = HeightNear / SquaresNear;
 			}
 
 		for(x = 0; x < XSize; x++)
 			for(int y = 0; y < YSize; y++)
-			{
 				Data[x][y] = Buffer[x][y];
-
-			}
 	}
+
 	for(x = 0; x < XSize; x++)
 		for(int y = 0; y < YSize; y++)
-		{
 			Map[x][y]->SetAltitude(Data[x][y]);
-		}
-
 
 	delete [] Buffer;
 	delete [] Data;
+
 	GenerateClimate();
 }
 
@@ -148,104 +143,122 @@ void worldmap::Generate(void)
 void worldmap::GenerateClimate(void)
 {
 	char rainfall = 0;
-	short** Buffer;
-	Buffer = Alloc2D<short>(XSize, YSize);
+	ushort** Data = Alloc2D<ushort>(XSize, YSize);
+	ushort** Buffer = Alloc2D<ushort>(XSize, YSize);
 	short temperature;
 
 	float altsum = 0, distance_from_equator;
 
-	for(unsigned short x = 0; x < XSize; x++)
-		for(unsigned short y = 0; y < YSize; y++)
+	for(ushort x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; y++)
 		{
-			distance_from_equator = (float)abs(y - (YSize / 2));
+			if (Map[x][y]->GetAltitude() <= 0)
+			{
+				Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
+				Data[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType() - groundworldmapterrain::GetProtoIndexBegin();
+				continue;
+			}
 
-			if (distance_from_equator / YSize * 2 <= 0.125)
-				if (rand() %10 < 10 * CLIMATE_RANDOMNESS) rainfall = 1; else rainfall = 0;
+			distance_from_equator = (float)abs(y - (YSize / 2)) / YSize;
 
-			if (distance_from_equator / YSize * 2 > 0.125 && distance_from_equator / YSize <= 0.375)
-				if (rand() %10 < 10 * CLIMATE_RANDOMNESS) rainfall = 0; else rainfall = 1;
+			if(distance_from_equator <= 0.08 || (distance_from_equator > 0.25 && distance_from_equator <= 0.42))
+				rainfall = 1;
+			else
+				rainfall = 0;
 
-			if (distance_from_equator / YSize * 2 > 0.375 && distance_from_equator / YSize <= 0.625)
-				if (rand() %10 < 10 * CLIMATE_RANDOMNESS) rainfall = 1; else rainfall = 0;
+			/*	if (rand() % 10 < 10 * CLIMATE_RANDOMNESS) rainfall = 1; else rainfall = 0;
 
-			if (distance_from_equator / YSize * 2 > 0.625)
-				if (rand() %10 < 10 * CLIMATE_RANDOMNESS) rainfall = 0; else rainfall = 1;
+			if (distance_from_equator > 0.125 && distance_from_equator <= 0.375)
+				if (rand() % 10 < 10 * CLIMATE_RANDOMNESS) rainfall = 0; else rainfall = 1;
 
-			unsigned char WaterNear = 0;
+			if (distance_from_equator > 0.375 && distance_from_equator <= 0.625)
+				if (rand() % 10 < 10 * CLIMATE_RANDOMNESS) rainfall = 1; else rainfall = 0;
+
+			if (distance_from_equator > 0.625)
+				if (rand() % 10 < 10 * CLIMATE_RANDOMNESS) rainfall = 0; else rainfall = 1;*/
+
+			if(rand() % 10 < 10 * CLIMATE_RANDOMNESS)
+				rainfall = !rainfall;
+
+			//uchar WaterNear = 0;
 			
-			for(char c = 0; c < 8; c++)
+			/*for(char c = 0; c < 8; c++)
 			{
 				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, 
 				{
 					if(Map[DoX][DoY]->GetAltitude() < 0) WaterNear++;
 				});
 				if(Map[x][y]->GetAltitude() < 0) WaterNear++;
-			}
+			}*/
 
-			if (WaterNear) rainfall = 1;
+			if(!rainfall)
+				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(Map[DoX][DoY]->GetAltitude() <= 0) rainfall = 1;)
 
-			temperature = (short)(MAX_TEMPERATURE - distance_from_equator * LATITUDE_EFFECT - Map[x][y]->GetAltitude() * ALTITUDE_EFFECT);
+			//if (WaterNear) rainfall = 1;
 
-			if (Map[x][y]->GetAltitude() <= 0)
-			{
-/*				if (Data[x][y].Height <= BORDER_OF_DARKNESS)
-					Data[x][y].Terrain = DARK_OCEAN;
-				else
-					Data[x][y].Terrain = LIGHT_OCEAN;*/
-					Map[x][y]->ChangeWorldMapTerrain(new ocean, new atmosphere);
+			temperature = (short)(MAX_TEMPERATURE - distance_from_equator * YSize * LATITUDE_EFFECT - Map[x][y]->GetAltitude() * ALTITUDE_EFFECT);
 
-		 	}
-			else
-			{
-				if (temperature <= COLD && rainfall == 0)
-					Map[x][y]->ChangeWorldMapTerrain(new glacier, new atmosphere);
+			if (temperature <= COLD && rainfall == 0)
+				Map[x][y]->ChangeWorldMapTerrain(new glacier, new atmosphere);
 
-				if (temperature <= COLD && rainfall == 1)
-					Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
+			if (temperature <= COLD && rainfall == 1)
+				Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
 
-				if (temperature > COLD && temperature <= NORMAL && rainfall == 0)
-					Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
+			if (temperature > COLD && temperature <= NORMAL && rainfall == 0)
+				Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
 
-				if (temperature > COLD && temperature <= NORMAL && rainfall == 1)
-					Map[x][y]->ChangeWorldMapTerrain(new evergreenforest, new atmosphere);
+			if (temperature > COLD && temperature <= NORMAL && rainfall == 1)
+				Map[x][y]->ChangeWorldMapTerrain(new evergreenforest, new atmosphere);
 
-				if (temperature > NORMAL && temperature <= WARM)
-					Map[x][y]->ChangeWorldMapTerrain(new leafyforest, new atmosphere);
+			if (temperature > NORMAL && temperature <= WARM)
+				Map[x][y]->ChangeWorldMapTerrain(new leafyforest, new atmosphere);
 
-				if (temperature > WARM && temperature <= HOT && rainfall == 0)
-					Map[x][y]->ChangeWorldMapTerrain(new steppe, new atmosphere);
+			if (temperature > WARM && temperature <= HOT && rainfall == 0)
+				Map[x][y]->ChangeWorldMapTerrain(new steppe, new atmosphere);
 
-				if (temperature > WARM && temperature <= HOT && rainfall == 1)
-					Map[x][y]->ChangeWorldMapTerrain(new leafyforest, new atmosphere);
+			if (temperature > WARM && temperature <= HOT && rainfall == 1)
+				Map[x][y]->ChangeWorldMapTerrain(new leafyforest, new atmosphere);
 
-				if (temperature > HOT && rainfall == 0)
-					Map[x][y]->ChangeWorldMapTerrain(new desert, new atmosphere);
+			if (temperature > HOT && rainfall == 0)
+				Map[x][y]->ChangeWorldMapTerrain(new desert, new atmosphere);
 
-				if (temperature > HOT && rainfall == 1)
-					Map[x][y]->ChangeWorldMapTerrain(new jungle, new atmosphere);
-	     	}
-			
+			if (temperature > HOT && rainfall == 1)
+				Map[x][y]->ChangeWorldMapTerrain(new jungle, new atmosphere);
+
+			Data[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType() - groundworldmapterrain::GetProtoIndexBegin();
 		}
-	for(x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
-			Buffer[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType();
 
-	for(ushort c = 0; c < 1000; c++)
+	for(ushort c = 0; c < 2; c++)
+	{
+		for(x = 0; x < XSize; x++)
+			for(ushort y = 0; y < YSize; y++)
+				Buffer[x][y] = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(Data, x, y);
+
+		for(x = 0; x < XSize; x++)
+			for(ushort y = 0; y < YSize; y++)
+				Data[x][y] = Buffer[x][y];
+	}
+
+	/*for(ushort c = 0; c < 1000; c++)
 	{
 		ushort x = rand() % XSize;
 		ushort y = rand() % YSize;
-		ushort Counter = 0, Biggest = -1;	
+		ushort Counter = 0, Biggest = -1;
+	
 		if(Map[x][y]->GetAltitude() > 0)
 		{
 			ushort NumberOfTypes = groundworldmapterrain::GetProtoAmount();
 												
 			ushort* Types = new ushort[NumberOfTypes];
+
 			for(ushort n = 0; n < NumberOfTypes; n++)
 				Types[n] = 0;
+
 			DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, 
 			{
 				Types[Buffer[DoX][DoX]]++;	
 			});
+
 			for(n = 0; n < NumberOfTypes; n++)
 			{
 				if(Biggest < Types[n] || (Biggest == Types[n] && rand() % 2))
@@ -256,17 +269,39 @@ void worldmap::GenerateClimate(void)
 				
 
 			}
+
 			Buffer[x][y] = n;
 		}
-	}
-		
-	
+	}*/
+
 	for(x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-		{
-			Map[x][y]->ChangeWorldMapTerrain(GetProtoType<groundworldmapterrain>(Buffer[x][y])->Clone(), new atmosphere);
-		}
-	delete [] Buffer;
+			Map[x][y]->ChangeWorldMapTerrain(GetProtoType<groundworldmapterrain>(Data[x][y] + groundworldmapterrain::GetProtoIndexBegin())->Clone(), new atmosphere);
 
+	delete [] Data;
+	delete [] Buffer;
 }
 
+ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort** Data, ushort x, ushort y)
+{
+	static ushort Types = groundworldmapterrain::GetProtoAmount();											
+	static uchar* Type = new uchar[Types];
+
+	for(ushort n = 0; n < Types; n++)
+		Type[n] = 0;
+
+	DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, 
+	{
+		Type[Data[DoX][DoY]]++;	
+	});
+
+	Type[Data[x][y]]++;
+
+	uchar MostCommon = Type[0];
+
+	for(ushort c = 1; c < Types; c++)
+		if(Type[c] > Type[MostCommon])
+			MostCommon = c;
+
+	return MostCommon;
+}

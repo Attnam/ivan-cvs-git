@@ -96,7 +96,7 @@ item* stack::RemoveItem(ushort Index)
 			GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
 
 		if(GetLevelSquareUnder()->CanBeSeen())
-			GetLevelSquareUnder()->UpdateItemMemory();
+			GetLevelSquareUnder()->UpdateMemorizedDescription();
 
 		return Removed;
 	}
@@ -143,7 +143,7 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 			FastRemoveItem(Index);
 
 			if(GetLevelSquareUnder()->CanBeSeen())
-				GetLevelSquareUnder()->UpdateItemMemory();
+				GetLevelSquareUnder()->UpdateMemorizedDescription();
 		}
 		else
 		{
@@ -151,10 +151,10 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 			RemoveItem(Index);
 
 			if(GetLevelSquareUnder()->CanBeSeen())
-				GetLevelSquareUnder()->UpdateItemMemory();
+				GetLevelSquareUnder()->UpdateMemorizedDescription();
 
 			if(MoveTo->GetLevelSquareUnder()->CanBeSeen())
-				MoveTo->GetLevelSquareUnder()->UpdateItemMemory();
+				MoveTo->GetLevelSquareUnder()->UpdateMemorizedDescription();
 		}
 
 	return ToBeReturned;

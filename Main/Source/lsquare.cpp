@@ -317,7 +317,7 @@ void levelsquare::Save(std::ofstream& SaveFile) const
 
 	SaveFile.write((char*)&Emitation, sizeof(Emitation));
 	SaveFile.write((char*)&DivineOwner, sizeof(DivineOwner));
-	SaveFile << Engraved << RememberedItems;
+	SaveFile << Engraved;// << RememberedItems;
 }
 
 void levelsquare::Load(std::ifstream& SaveFile)
@@ -353,7 +353,7 @@ void levelsquare::Load(std::ifstream& SaveFile)
 	SaveFile.read((char*)&Emitation, sizeof(Emitation));
 	SaveFile.read((char*)&DivineOwner, sizeof(DivineOwner));
 
-	SaveFile >> Engraved >> RememberedItems;
+	SaveFile >> Engraved;// >> RememberedItems;
 }
 
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -448,51 +448,70 @@ void levelsquare::RemoveCharacter(void)
 	}
 }
 
-void levelsquare::UpdateItemMemory(void)
+void levelsquare::UpdateMemorizedDescription(void)
 {
-	SetRememberedItems("");
+	//SetRememberedItems("");
 
 	bool Anything = false;
 
+	if(GetOverTerrain()->Name(UNARTICLED) != "air atmosphere")
+	{
+		SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE));
+		Anything = true;
+	}
+
 	if(GetStack()->GetItems())
+	{
+		//if(Anything)
+		//	SetMemorizedDescription(GetMemorizedDescription() + " and ");
+
+		if(Anything)
+			if(GetStack()->GetItems() == 1)
+				SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+			else
+				SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
+		else
+			if(GetStack()->GetItems() == 1)
+				SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+			else
+				SetMemorizedDescription("many items");
+
 		Anything = true;
 
-	if(GetStack()->GetItems() > 1)
-		SetRememberedItems("many items");
+		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+	}
 	else
-		if(GetStack()->GetItems() == 1)
-		{
-			SetRememberedItems(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
-		}
+		if(Anything)
+			SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+		else
+			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 
 	for(uchar c = 0; c < 4; c++)
 	{
 		if(GetSideStack(c)->GetItems() == 1)
 		{
-			if(Anything)
-				SetRememberedItems(std::string(GetRememberedItems() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE)));
-			else
-				SetRememberedItems(std::string(GetSideStack(c)->GetItem(0)->Name(INDEFINITE)));
+			if(!Anything)
+				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+
+			SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
 		}
 		else
 		if(GetSideStack(c)->GetItems() > 1)
 		{
-			if(Anything)
-				SetRememberedItems(GetRememberedItems());
+			if(!Anything)
+				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+
+			SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
+
+			/*if(Anything)
+				SetMemorizedDescription(GetRememberedItems());
 			else
-				SetRememberedItems("some items");
+				SetMemorizedDescription("some items");*/
 		}
 	}
-}
 
-bool levelsquare::CanBeSeen(void) const
-{
-	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
-
-	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
-		return true;
-	else
-		return false;
+	if(!Anything)
+		SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 }
 
 void levelsquare::Kick(ushort Strength, uchar KickWay)
@@ -505,10 +524,10 @@ bool levelsquare::CanBeSeenFrom(vector FromPos) const
 	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
 }
 
-void levelsquare::SetRememberedItems(std::string What)
+/*void levelsquare::SetRememberedItems(std::string What)
 {
 	RememberedItems = What; 
-}
+}*/
 
 bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {
@@ -588,4 +607,3 @@ overlevelterrain* levelsquare::GetOverLevelTerrain(void) const
 {
 	return (overlevelterrain*)OverTerrain;
 }
-

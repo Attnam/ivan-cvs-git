@@ -41,7 +41,12 @@ public:
 	virtual void SetGroundTerrain(groundterrain* What) { GroundTerrain = What; }
 	virtual overterrain* GetOverTerrain(void) { return OverTerrain; }
 	virtual void SetOverTerrain(overterrain* What) { OverTerrain = What; }
+	virtual std::string GetMemorizedDescription(void) { return MemorizedDescription; }
+	virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
+	virtual void UpdateMemorizedDescription(void) = 0;
+	virtual bool CanBeSeen(void) const;
 protected:
+	std::string MemorizedDescription;
 	groundterrain* GroundTerrain;
 	overterrain* OverTerrain;
 	area* MotherArea;

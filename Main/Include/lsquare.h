@@ -57,10 +57,10 @@ public:
 	virtual std::string GetEngraved(void) const { return Engraved; }
 	virtual bool Engrave(std::string What) { Engraved = What; return true; }
 	virtual void SetEmitation(ushort What) { Emitation = What; }
-	virtual std::string GetRememberedItems(void) const { return RememberedItems; }
-	virtual void SetRememberedItems(std::string);
-	virtual void UpdateItemMemory(void);
-	virtual bool CanBeSeen(void) const;
+	//virtual std::string GetRememberedItems(void) const { return RememberedItems; }
+	//virtual void SetRememberedItems(std::string);
+	//virtual void UpdateItemMemory(void);
+	virtual void UpdateMemorizedDescription(void);
 	virtual void Kick(ushort,uchar);
 	virtual bool CanBeSeenFrom(vector) const;
 	virtual uchar GetDivineOwner(void) const { return DivineOwner; }
@@ -92,7 +92,7 @@ protected:
 	stack* Stack, * SideStack[4];
 	ushort Emitation;
 	std::string Engraved;
-	std::string RememberedItems;
+	//std::string RememberedItems;
 	uchar DivineOwner;
 	bool Fluided;
 	ushort TimeFromSpill;

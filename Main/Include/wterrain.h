@@ -203,7 +203,6 @@ class GROUNDWORLDMAPTERRAIN
 	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
 );
 
-
 class GROUNDWORLDMAPTERRAIN
 (
 	steppe,
@@ -229,7 +228,26 @@ class OVERWORLDMAPTERRAIN
 	virtual vector GetBitmapPos(void) const { return vector(208, 256); }
 );
 
+class OVERWORLDMAPTERRAIN
+(
+	attnam,
+	overworldmapterrain,
+	{
+	},
+	virtual std::string NameStem(void) const { return "migthy cathedral reaching the clouds"; }
+	virtual vector GetBitmapPos(void) const { return vector(0, 48); }
+);
+
+class OVERWORLDMAPTERRAIN
+(
+	elpuricave,
+	overworldmapterrain,
+	{
+	},
+	virtual std::string NameStem(void) const { return "hideous cave entry radiating pure navastating"; }
+	virtual vector GetBitmapPos(void) const { return vector(16, 48); }
+);
+
 FINISH_PROTOTYPING(overworldmapterrain)
 
 #endif
-

@@ -5,6 +5,7 @@
 #include "level.h"
 #include "proto.h"
 #include "material.h"
+#include "strover.h"
 
 square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), OverTerrain(0), GroundTerrain(0), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
 {
@@ -29,6 +30,8 @@ void square::Save(std::ofstream& SaveFile) const
 		GetMotherArea()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.write((char*)&Flag, sizeof(Flag));
+
+	SaveFile << MemorizedDescription;
 }
 
 void square::Load(std::ifstream& SaveFile)
@@ -45,6 +48,8 @@ void square::Load(std::ifstream& SaveFile)
 		GetMotherArea()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile.read((char*)&Flag, sizeof(Flag));
+
+	SaveFile >> MemorizedDescription;
 }
 
 void square::DrawCheat(void) const
@@ -77,3 +82,12 @@ void square::RemoveCharacter(void)
 	SetCharacter(0);
 }
 
+bool square::CanBeSeen(void) const
+{
+	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
+
+	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
+		return true;
+	else
+		return false;
+}

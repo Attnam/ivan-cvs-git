@@ -121,6 +121,8 @@ void game::Init(std::string Name)
 	SeeWholeMapCheat = false;
 	GoThroughWallsCheat = false;
 	InWilderness = false;
+	PlayerBackup = 0;
+	PolymorphCounter = 0xFFFF;
 	srand(time(0));
 	game::CalculateGodNumber();
 
@@ -302,7 +304,7 @@ bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX =
 
 	//Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->SetFlag();
 	GetCurrentArea()->GetSquare(vector(CX, CY))->SetFlag();
-	//GGG Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
+	GetCurrentArea()->GetSquare(vector(CX, CY))->UpdateMemorizedDescription();
 
 	if(CX == OX && CY == OY)
 		return true;
@@ -379,7 +381,7 @@ void game::panel::Draw(void) const
 {
 	character* Player = game::GetPlayer();
 
-	FONTW->PrintfToDB(16, 524, "Name: %s", game::GetPlayerName().c_str());
+	FONTW->PrintfToDB(16, 524, "%s %s", game::GetPlayerName().c_str(), Player->CNAME(DEFINITE));
 
 	FONTW->PrintfToDB(16, 534, "Strength: %d", Player->GetStrength());
 	FONTW->PrintfToDB(16, 544, "Endurance: %d", Player->GetEndurance());
@@ -402,7 +404,7 @@ void game::panel::Draw(void) const
 	FONTW->PrintfToDB(320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
 	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
-	FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
+	//FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
 	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
 	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
 	FONTW->PrintfToDB(600, 564, "Turns: %d", game::GetTurns());
@@ -638,6 +640,7 @@ bool game::Save(std::string SaveName)
 	SaveFile.write((char*)&Turns, sizeof(Turns));
 	SaveFile.write((char*)&SoftGamma, sizeof(SoftGamma));
 	SaveFile.write((char*)&InWilderness, sizeof(InWilderness));
+	SaveFile.write((char*)&PolymorphCounter, sizeof(PolymorphCounter));
 
 	time_t Time = time(0);
 	srand(Time);
@@ -662,6 +665,8 @@ bool game::Save(std::string SaveName)
 	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 		SaveFile << LevelMsg[c];
 
+	SaveFile << PlayerBackup;
+
 	return true;
 }
 
@@ -684,6 +689,7 @@ bool game::Load(std::string SaveName)
 	SaveFile.read((char*)&Turns, sizeof(Turns));
 	SaveFile.read((char*)&SoftGamma, sizeof(SoftGamma));
 	SaveFile.read((char*)&InWilderness, sizeof(InWilderness));
+	SaveFile.read((char*)&PolymorphCounter, sizeof(PolymorphCounter));
 
 	time_t Time;
 	SaveFile.read((char*)&Time, sizeof(Time));
@@ -720,6 +726,8 @@ bool game::Load(std::string SaveName)
 
 	for(ushort c = 0; c < Dungeon->GetLevels(); c++)
 		SaveFile >> LevelMsg[c];
+
+	SaveFile >> PlayerBackup;
 
 	return true;
 }

@@ -43,3 +43,4 @@ Kloonaus.
 Rennen p‰‰.
 Garbage can.
 Size of player increases from eating.
+How can you change the window to the rigth size?
