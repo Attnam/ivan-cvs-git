@@ -126,7 +126,7 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 	CheckDeath("killed by an Enner Beast's scream");
 }
 
-void character::Hunger(ushort Turns)
+void character::Hunger(ushort Turns) 
 {
 	ulong BNP = CNP();
 
@@ -734,7 +734,7 @@ bool humanoid::Wield(void)
 	
 }
 
-void character::GetAICommand(void)
+void character::GetAICommand(void) // Freedom is slavery. Love is hate. War is peace.
 {
 	switch(CRelations())
 	{
