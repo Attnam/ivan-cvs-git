@@ -3312,3 +3312,32 @@ ghost
 	CanWalkThroughWalls = true;
 	AttachedGod = MORTIFER;
 }
+
+twoheadedmoose
+{
+	DefaultArmStrength = 20;
+	DefaultAgility = 15;
+	DefaultEndurance = 17;
+	DefaultPerception = 28;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 3;
+	DefaultMana = 0;
+	TotalVolume = 200000;
+	TorsoBitmapPos = 176,16;
+	HostileReplies == "Both heads of the moose snarl angrily at you.";
+	FriendlyReplies == "Both heads of the moose nod at you.";
+	TotalSize = 250;
+	SkinColor = rgb16(90, 85, 80);
+	NameSingular = "moose";
+	NamePlural = "moose";
+	Adjective = "two-headed";
+	AttackStyle = USE_HEAD;
+	CanBeGenerated = true;
+	KnownCWeaponSkills = { 1, BITE; }
+	CWeaponSkillHits = { 1, 50; }
+	PanicLevel = 25;
+	FleshMaterial = MOOSE_FLESH;
+	DeathMessage = "@Dd collapses and dies.";
+	AttachedGod = SCABIES;
+}

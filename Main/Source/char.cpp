@@ -5410,3 +5410,25 @@ void character::SortAllItems(std::vector<item*>& AllItems, const character* Char
     if(GetEquipment(c))
       GetEquipment(c)->SortAllItems(AllItems, Character, Sorter);
 }
+
+// surprisingly returns 0 if fails
+character* character::GetRandomNeighbourEnemy() const
+{
+  std::vector<character*> Chars;
+  character* Char;
+  lsquare* LSquare;
+  for(ushort c = 0; c < 8; ++c)
+    {
+      LSquare = GetNeighbourLSquare(c);
+      if(LSquare) 
+	{
+	  Char = LSquare->GetCharacter();
+	  if(Char && GetRelation(Char) == HOSTILE)
+	    Chars.push_back(Char);
+	}
+    }
+  if(!Chars.empty())
+    return Chars[RAND() % Chars.size()];
+  else
+    return 0;
+}

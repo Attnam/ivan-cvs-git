@@ -356,4 +356,11 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class CHARACTER
+(
+  twoheadedmoose,
+  nonhumanoid,
+ public:
+  virtual bool Hit(character*, bool = false);
+);
 #endif

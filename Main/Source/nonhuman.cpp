@@ -1267,3 +1267,12 @@ void ghost::GetAICommand()
 }
 
 
+bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
+{
+  nonhumanoid::Hit(Enemy, ForceHit);
+  character* ToBeHit = GetRandomNeighbourEnemy();
+  if(ToBeHit)
+    nonhumanoid::Hit(ToBeHit, ForceHit);
+
+  return true;
+}
