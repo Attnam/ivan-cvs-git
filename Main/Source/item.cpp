@@ -1217,10 +1217,12 @@ void item::SendNewDrawAndMemorizedUpdateRequest() const
 {
   if(!game::IsInWilderness())
     for(int c = 0; c < SquaresUnder; ++c)
-      {
-	GetLSquareUnder(c)->SendNewDrawRequest();
-	GetLSquareUnder(c)->SendMemorizedUpdateRequest();
-      }
+      if(Slot[c])
+	{
+	  lsquare* Square = GetLSquareUnder(c);
+	  Square->SendNewDrawRequest();
+	  Square->SendMemorizedUpdateRequest();
+	}
 }
 
 void item::CalculateEmitation()
