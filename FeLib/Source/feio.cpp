@@ -452,7 +452,7 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
 	  Buffer.Empty();
 	  Buffer << ep->d_name;
 
-	  if(Buffer.find(".sav") != Buffer.NPos)
+	  if(Buffer.Find(".sav") != Buffer.NPos)
 	    List.AddEntry(Buffer, ListColor);
 	}
 

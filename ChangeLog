@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 23 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	
+	* Now compiles in Linux. (some problems with festring)
+	* Engraved messages can be viewed in LookMode.
+	* Low dexterity characters can get caught in setting bear traps
+	* Cloning elpuri's head abuse prohibited
+	* Golems now engrave and don't chat
+	* Mellis gives just new bottles, that can be filled with other materials than ommel urine and banana flesh too.
+
 April 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Silva's boulders now destroy neither altars, stairs nor any other important

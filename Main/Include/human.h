@@ -134,6 +134,7 @@ class ABSTRACT_CHARACTER
   virtual void AddAttackInfo(felist&) const;
   virtual void AddDefenceInfo(felist&) const;
   virtual void DetachBodyPart();
+  virtual ushort GetRandomApplyBodyPart() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -290,6 +291,7 @@ class CHARACTER
  public:
   virtual bool MoveRandomly();
   virtual bool CheckForUsefulItemsOnGround() { return false; }
+  virtual void BeTalkedTo();
  protected:
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
 );

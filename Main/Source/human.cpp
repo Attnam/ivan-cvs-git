@@ -3401,6 +3401,33 @@ festring werewolfwolf::GetKillName() const
   return humanoid::GetKillName();
 }
 
+ushort humanoid::GetRandomApplyBodyPart() const
+{
+  if(GetRightArm() && GetLeftArm())
+    {
+      if(RAND_2)
+	return RIGHT_ARM_INDEX;
+      else
+	return LEFT_ARM_INDEX;
+    }
+  if(!GetRightArm() && GetLeftArm())
+    return LEFT_ARM_INDEX;
+  if(!GetLeftArm() && GetRightArm())
+    return RIGHT_ARM_INDEX;
+  return TORSO_INDEX; // Shouldn't never come to this at least when really applying
+}
+
+void golem::BeTalkedTo()
+{
+  static ulong Said;
+
+  if(GetRelation(PLAYER) == HOSTILE)
+    Engrave(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+  else
+    Engrave(GetFriendlyReplies()[RandomizeReply(Said, GetFriendlyReplies().size())]);
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s engraves something.", CHAR_NAME(DEFINITE));
+}
 #ifdef WIZARD
 
 void humanoid::AddAttributeInfo(festring& Entry) const

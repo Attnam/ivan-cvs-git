@@ -251,6 +251,7 @@ bool character::BodyPartColorAIsSparkling(ushort, bool) const { return SkinColor
 bool character::BodyPartColorBIsSparkling(ushort, bool) const { return TorsoMainColorIsSparkling(); }
 bool character::BodyPartColorCIsSparkling(ushort, bool) const { return 0; } // reserved for future use
 bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpecialColorIsSparkling(); }
+ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {

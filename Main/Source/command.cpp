@@ -628,9 +628,7 @@ bool commandsystem::Look(character* Char)
     Msg = CONST_S("Direction keys move cursor, ESC exits, 'c' examines a character.");
 
   game::PositionQuestion(Msg, Char->GetPos(), &game::LookHandler, &game::LookKeyHandler, configuration::GetLookZoom());
-  Char->EditExperience(PERCEPTION, 1);
-  Char->EditAP(-100);
-  return true;
+  return false;
 }
 
 bool commandsystem::WhatToEngrave(character* Char)

@@ -382,7 +382,7 @@ item* potion::BetterVersion() const
 {
   if(!GetContainedMaterial())
     {
-      material* Stuff;
+      /*      material* Stuff;
 
       if(RAND() % 5)
 	Stuff = MAKE_MATERIAL(BANANA_FLESH);
@@ -390,8 +390,8 @@ item* potion::BetterVersion() const
 	Stuff = MAKE_MATERIAL(OMMEL_URINE);
 
       potion* P = new potion(0, NO_MATERIALS); 
-      P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
-      return P;
+      P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);*/
+      return new potion;
     }
   else
     return 0;
@@ -1376,20 +1376,42 @@ bool beartrap::Apply(character* User)
 
       return false;
     }
-
-  if(User->IsPlayer())
-    ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
-
-  SetIsActive(!IsActive());
-  User->DexterityAction(10);
-
-  if(IsActive())
+  if(User->GetAttribute(DEXTERITY) < RAND() % 15)
     {
-      Team = User->GetTeam()->GetID();
-      RemoveFromSlot();
-      User->GetStackUnder()->AddItem(this);
-    }
+      if(User->IsPlayer())
+	ADD_MESSAGE("Somehow you manage to trap your arm in %s.", CHAR_NAME(DEFINITE));
+      else if(User->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s somehow traps %sself in %s.", User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
+      ushort StepperBodyPart = User->GetRandomApplyBodyPart();
+
+      User->SetStuckTo(this);
+      User->SetStuckToBodyPart(StepperBodyPart);
+
+      SetIsActive(false);
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+
+      if(User->IsPlayer())
+	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
+
+      User->ReceiveBodyPartDamage(0, 1 + RAND() % 2, PHYSICAL_DAMAGE, User->GetStuckToBodyPart(), YOURSELF, false, false, false);
+    }
+  else
+    {
+      if(User->IsPlayer())
+	ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
+
+      SetIsActive(!IsActive());
+      User->DexterityAction(10);
+
+      if(IsActive())
+	{
+	  Team = User->GetTeam()->GetID();
+	  RemoveFromSlot();
+	  User->GetStackUnder()->AddItem(this);
+	}
+    }
   return true;
 }
 
@@ -1850,14 +1872,14 @@ void scrollofrepair::FinishReading(character* Reader)
 
 item* brokenbottle::Fix()
 {
-  potion* Potion = new potion(0, NO_MATERIALS);
+  /*  potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
   Potion->SetID(BackupID);
   Potion->SetBackupID(ID);
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
-  SendToHell();
-  return Potion;
+  SendToHell(); */
+  return new potion;
 }
 
 bool encryptedscroll::Read(character*)

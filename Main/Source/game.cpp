@@ -1250,6 +1250,7 @@ void game::LookHandler(vector2d CursorPos)
 
       if(Square->CanBeSeenByPlayer(true) || GetSeeWholeMapCheatMode())
 	Square->DisplaySmokeInfo(Msg);
+
     }
   else
     Msg = CONST_S("You have never been here.");
@@ -1258,6 +1259,15 @@ void game::LookHandler(vector2d CursorPos)
 
   if(Character && (Character->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
     Character->DisplayInfo(Msg);
+
+  if(!IsInWilderness() && Square->CanBeSeenByPlayer() && Square->HasEngravings())
+      {
+	if(Square->EngravingsCanBeReadByPlayer() || GetSeeWholeMapCheatMode())
+	  Square->DisplayEngravedInfo(Msg);
+	else
+	  Msg << " Something has been engraved here.";
+      }
+
 
   if(!(RAND() % 10000))
     Msg << " You see here a frog eating a magnolia.";

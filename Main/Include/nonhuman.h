@@ -97,6 +97,8 @@ class CHARACTER
   virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool SpecialEnemySightedReaction(character*);
   virtual bool Faint(ushort, bool = false) { return false; }
+  virtual bool CanBeRaisedFromTheDead(corpse*) const; 
+  virtual void CompleteRiseFromTheDead();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();

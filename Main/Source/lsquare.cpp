@@ -1719,3 +1719,14 @@ bool lsquare::CanBeFeltByPlayer() const
 {
   return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
 }
+
+bool lsquare::EngravingsCanBeReadByCharacter(const character* Who)
+{
+  return !Engraved.IsEmpty() && Who == Character && Who->CanRead(); 
+  // Might be a good idea to improve sometime in the distant future.
+}
+
+void lsquare::DisplayEngravedInfo(festring& Buffer) const
+{
+  Buffer << " There is a message engraved here: \"" << Engraved << "\".";
+}

@@ -729,6 +729,9 @@ bool bodypart::IsSparkling(ushort Index) const
 
 bool corpse::RaiseTheDead(character* Summoner)
 {
+  if(!GetDeceased()->CanBeRaisedFromTheDead(this))
+    return false;
+
   if(Summoner->IsPlayer())
     game::DoEvilDeed(50);
 

@@ -156,6 +156,9 @@ class lsquare : public square
   void ReceiveEarthQuakeDamage();
   bool IsDangerous(character*) const;
   bool CanBeFeltByPlayer() const;
+  virtual bool EngravingsCanBeReadByCharacter(const character*);
+  virtual void DisplayEngravedInfo(festring&) const;
+  virtual bool HasEngravings() const { return !Engraved.IsEmpty(); }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

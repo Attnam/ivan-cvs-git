@@ -43,6 +43,7 @@ class configuration
   static bool GetLookZoom() { return LookZoom; }
   static const festring& GetDefaultPetName() { return DefaultPetName; }
   static void SetDefaultPetName(const festring&);
+  static festring GetConfigFileName();
  private:
   static void ContrastHandler(long);
   static festring DefaultName;

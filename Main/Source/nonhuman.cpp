@@ -1181,6 +1181,26 @@ ushort unicorn::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHi
   return Return;
 }
 
+bool elpuri::CanBeRaisedFromTheDead(corpse* Corpse) const
+{
+  for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsHeadOfElpuri())
+      return true;
+
+  return false;
+}
+
+void elpuri::CompleteRiseFromTheDead()
+{
+  for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsHeadOfElpuri())
+      {
+	item* Temp = *i;
+	Temp->RemoveFromSlot();
+	Temp->SendToHell();
+      }
+}
+
 #ifdef WIZARD
 
 void nonhumanoid::RaiseStats()

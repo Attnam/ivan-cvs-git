@@ -11,14 +11,6 @@
 #include "femath.h"
 #include "save.h"
 
-#if defined(WIN32) || defined(__DJGPP__)
-#define CONFIG_FILENAME "ivan.cfg"
-#endif
-
-#ifdef LINUX
-#define CONFIG_FILENAME (festring(getenv("HOME")) + "/.ivan.conf").CStr()
-#endif
-
 festring configuration::DefaultName;
 festring configuration::DefaultPetName = CONST_S("Kenny");
 ushort configuration::AutoSaveInterval = 100;
@@ -35,7 +27,7 @@ bool configuration::LookZoom = false;
 
 void configuration::Save()
 {
-  std::ofstream SaveFile(CONFIG_FILENAME, std::ios::out);
+  std::ofstream SaveFile(GetConfigFileName().CStr(), std::ios::out);
 
   if(!SaveFile.is_open())
     return;
@@ -55,7 +47,7 @@ void configuration::Save()
 
 void configuration::Load()
 {
-  inputfile SaveFile(CONFIG_FILENAME, 0, false);
+  inputfile SaveFile(GetConfigFileName(), 0, false);
 
   if(!SaveFile.IsOpen())
     return;
@@ -274,4 +266,12 @@ void configuration::ContrastHandler(long Value)
 ulong configuration::ApplyContrastTo(ulong L)
 {
   return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
+}
+
+festring configuration::GetConfigFileName()
+{
+#if defined(WIN32) || defined(__DJGPP__)
+  return "ivan.cfg";
+#endif
+  return festring(getenv("HOME")) + "/.ivan.conf";
 }

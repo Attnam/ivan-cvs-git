@@ -739,6 +739,7 @@ class character : public entity, public id
   void DrawBodyPartVector(std::vector<bitmap*>&) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
+  virtual ushort GetRandomApplyBodyPart() const;
 #ifdef WIZARD
   virtual void RaiseStats();
   virtual void LowerStats();
@@ -749,6 +750,7 @@ class character : public entity, public id
 #endif
   void ReceiveHolyBanana(long);
   void AddHolyBananaConsumeEndMessage() const;
+  virtual bool CanBeRaisedFromTheDead(corpse*) const { return true; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
