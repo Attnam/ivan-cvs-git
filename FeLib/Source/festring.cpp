@@ -573,7 +573,7 @@ ushort festring::SplitString(const festring& Source, std::vector<festring>& Stri
   SplitString(CopyOfSource, StringVector[0], Length);
   ushort Size = 1;
 
-  while(CopyOfSource.GetSize())
+  while(!CopyOfSource.IsEmpty())
     {
       if(StringVector.size() <= Size)
 	StringVector.push_back(festring());

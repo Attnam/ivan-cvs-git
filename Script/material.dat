@@ -132,6 +132,7 @@ material
 		NameStem = "parchment";
 		Flexibility = 10;
 		AttachedGod = SOPHOS;
+		PriceModifier = 100;
 	}
 
 	Config CLOTH;

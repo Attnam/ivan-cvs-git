@@ -14,7 +14,7 @@ void god::Pray()
 	PrayGoodEffect();
 	AdjustTimer(5000);
 	AdjustRelation(50);
-	game::ApplyDivineAlignmentBonuses(this, true);
+	game::ApplyDivineAlignmentBonuses(this, 10, true);
 	PLAYER->EditExperience(WISDOM, 250);
 
 	if(Relation > 500 && !(RAND() % 100))
@@ -33,7 +33,8 @@ void god::Pray()
 	ADD_MESSAGE("You feel %s is displeased today.", GetName());
 	PrayBadEffect();
 	AdjustTimer(10000);
-	game::ApplyDivineAlignmentBonuses(this, false);
+	AdjustRelation(-50);
+	game::ApplyDivineAlignmentBonuses(this, 10, false);
 	PLAYER->EditExperience(WISDOM, -250);
       }
   else
@@ -42,8 +43,8 @@ void god::Pray()
 	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
 	PrayGoodEffect();
 	AdjustTimer(25000);
-	AdjustRelation(-50);
-	game::ApplyDivineAlignmentBonuses(this, false);
+	AdjustRelation(-75);
+	game::ApplyDivineAlignmentBonuses(this, 15, false);
 	PLAYER->EditExperience(WISDOM, -250);
       }
     else
@@ -52,7 +53,7 @@ void god::Pray()
 	PrayBadEffect();
 	AdjustTimer(50000);
 	AdjustRelation(-100);
-	game::ApplyDivineAlignmentBonuses(this, false);
+	game::ApplyDivineAlignmentBonuses(this, 20, false);
 	PLAYER->EditExperience(WISDOM, -500);
 
 	if(Relation < -500 && !(RAND() % 50))
@@ -83,7 +84,7 @@ festring god::GetCompleteDescription() const
   return Desc;
 }
 
-void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
+void god::AdjustRelation(god* Competitor, short Multiplier, bool Good)
 {
   short Adjustment = (Multiplier << 1) - abs((schar)(GetAlignment()) - Competitor->GetAlignment()) * Multiplier;
 
@@ -199,7 +200,11 @@ bool god::ReceiveOffer(item* Sacrifice)
 	}
 
       AdjustRelation(OfferValue);
-      game::ApplyDivineAlignmentBonuses(this, OfferValue > 0);
+
+      if(OfferValue > 0)
+	game::ApplyDivineAlignmentBonuses(this, OfferValue / 5, true);
+      else
+	game::ApplyDivineAlignmentBonuses(this, -OfferValue / 5, false);
 
       if(OfferValue > 0)
 	PLAYER->EditExperience(WISDOM, 50);

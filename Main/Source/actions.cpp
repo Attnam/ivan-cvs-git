@@ -584,3 +584,9 @@ long read::GetScore() const
 {
   return *Literature ? Literature->GetScore() : 0;
 }
+
+bool go::TryDisplace()
+{
+  Terminate(false);
+  return true;
+}

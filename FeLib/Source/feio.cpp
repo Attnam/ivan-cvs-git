@@ -231,7 +231,7 @@ festring iosystem::StringQuestion(const festring& Topic, vector2d Pos, ushort Co
 		
       if(LastKey == KEY_BACK_SPACE)
 	{
-	  if(Input.GetSize())
+	  if(!Input.IsEmpty())
 	    Input.Resize(Input.GetSize() - 1);
 
 	  continue;
@@ -246,7 +246,7 @@ festring iosystem::StringQuestion(const festring& Topic, vector2d Pos, ushort Co
 	    continue;
 	  }
 
-      if(LastKey >= 0x20 && Input.GetSize() < MaxLetters && (LastKey != ' ' || Input.GetSize()))
+      if(LastKey >= 0x20 && Input.GetSize() < MaxLetters && (LastKey != ' ' || !Input.IsEmpty()))
 	Input << char(LastKey);
     }
 
@@ -279,12 +279,12 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color,
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && (LastKey != '-' || Input.GetSize()))
+      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && (LastKey != '-' || !Input.IsEmpty()))
 	LastKey = GET_KEY(false);
 
       if(LastKey == KEY_BACK_SPACE)
 	{
-	  if(Input.GetSize())
+	  if(!Input.IsEmpty())
 	    Input.Resize(Input.GetSize() - 1);
 
 	  continue;
@@ -366,7 +366,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
 
       if(LastKey == KEY_BACK_SPACE)
 	{
-	  if(Input.GetSize())
+	  if(!Input.IsEmpty())
 	    Input.Resize(Input.GetSize() - 1);
 
 	  continue;

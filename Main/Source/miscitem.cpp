@@ -446,7 +446,7 @@ void holybook::FinishReading(character* Reader)
 	{
 	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GetName());
 	  GetMasterGod()->AdjustRelation(75);
-	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
+	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), 15, true);
 	  PLAYER->EditExperience(WISDOM, 250);
 
 	  if(!(RAND() % 3))

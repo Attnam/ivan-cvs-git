@@ -40,7 +40,7 @@ class action
   virtual bool IsVoluntary() const { return true; }
   virtual bool AllowFaint() const { return true; }
   virtual bool AllowFoodConsumption() const { return true; }
-  virtual bool AllowDisplace() const { return true; }
+  virtual bool TryDisplace() { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsRest() const { return false; }

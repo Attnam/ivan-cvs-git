@@ -701,7 +701,7 @@ void valpurus::Pray()
       PrayGoodEffect();
       AdjustTimer(100000);
       AdjustRelation(-500);
-      game::ApplyDivineAlignmentBonuses(this, true);
+      game::ApplyDivineAlignmentBonuses(this, 100, true);
       PLAYER->EditExperience(WISDOM, 1000);
 
       if(Relation > 500 && !(RAND() % 5))
@@ -721,7 +721,7 @@ void valpurus::Pray()
       PrayBadEffect();
       AdjustTimer(50000);
       AdjustRelation(-100);
-      game::ApplyDivineAlignmentBonuses(this, false);
+      game::ApplyDivineAlignmentBonuses(this, 20, false);
       PLAYER->EditExperience(WISDOM, -250);
 
       if(Relation < -500 && !(RAND() % 25))
@@ -745,7 +745,7 @@ void mortifer::Pray()
       PrayGoodEffect();
       AdjustTimer(100000);
       AdjustRelation(-500);
-      game::ApplyDivineAlignmentBonuses(this, true);
+      game::ApplyDivineAlignmentBonuses(this, 100, true);
       PLAYER->EditExperience(WISDOM, 1000);
 
       if(Relation > 500 && !(RAND() % 5))
@@ -765,7 +765,7 @@ void mortifer::Pray()
       PrayBadEffect();
       AdjustTimer(50000);
       AdjustRelation(-100);
-      game::ApplyDivineAlignmentBonuses(this, false);
+      game::ApplyDivineAlignmentBonuses(this, 20, false);
       PLAYER->EditExperience(WISDOM, -250);
 
       if(Relation < -500 && !(RAND() % 5))

@@ -262,5 +262,5 @@ god* olterrain::GetMasterGod() const
 
 bool olterrain::CanBeDestroyed() const
 {
-  return DataBase->CanBeDestroyed && (GetPos().X != 0 && GetPos().Y != 0 && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround();
+  return DataBase->CanBeDestroyed && ((GetPos().X != 0 && GetPos().Y != 0 && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
 }

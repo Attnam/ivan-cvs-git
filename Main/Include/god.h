@@ -39,7 +39,7 @@ class god
   virtual uchar GetAlignment() const = 0;
   festring GetCompleteDescription() const;
   void ApplyDivineTick();
-  void AdjustRelation(god*, bool, short = 25);
+  void AdjustRelation(god*, short, bool);
   void AdjustRelation(short);
   void AdjustTimer(long);
   void Save(outputfile&) const;

@@ -66,7 +66,7 @@ void highscore::Draw() const
     }
 
   List.SetFlags(FADE);
-  List.SetPageLength(50);
+  List.SetPageLength(40);
   List.Draw();
 }
 

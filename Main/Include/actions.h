@@ -88,7 +88,7 @@ class ACTION
   virtual void Terminate(bool);
   void SetRightBackup(item*);
   void SetLeftBackup(item*);
-  virtual bool AllowDisplace() const { return false; }
+  virtual bool TryDisplace() { return false; }
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
@@ -118,7 +118,7 @@ class ACTION
   void SetDirection(uchar What) { Direction = What; }
   bool IsWalkingInOpen() const { return WalkingInOpen; }
   void SetIsWalkingInOpen(bool What) { WalkingInOpen = What; }
-  virtual bool AllowDisplace() const { return false; }
+  virtual bool TryDisplace();
   virtual const char* GetDescription() const;
   virtual bool ShowEnvironment() const { return false; }
  protected:

@@ -1005,7 +1005,7 @@ bool commandsystem::Go(character* Char)
   Go->SetIsWalkingInOpen(OKDirectionsCounter > 2);
   Char->SetAction(Go);
   Char->EditAP(Char->GetStateAPGain(100)); // gum solution
-  Char->GoOn(Go,true);
+  Char->GoOn(Go, true);
   return Char->GetAction() != 0;
 }
 

@@ -240,7 +240,7 @@ class olterrain : public lterrain, public oterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  virtual void ShowRestMessage(character*) const;
+  void ShowRestMessage(character*) const;
   DATA_BASE_VALUE(ushort, Config);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   DATA_BASE_VALUE(const festring&, Article);
@@ -263,14 +263,14 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
-  virtual DATA_BASE_VALUE(const festring&, DigMessage);
-  virtual bool CanBeDestroyed() const;
-  virtual DATA_BASE_VALUE(uchar, RestModifier);
-  virtual DATA_BASE_VALUE(const festring&, RestMessage);
-  virtual DATA_BASE_BOOL(IsUpLink);
-  virtual DATA_BASE_VALUE(ulong, StorageVolume);
+  DATA_BASE_VALUE(const festring&, DigMessage);
+  bool CanBeDestroyed() const;
+  DATA_BASE_VALUE(uchar, RestModifier);
+  DATA_BASE_VALUE(const festring&, RestMessage);
+  DATA_BASE_BOOL(IsUpLink);
+  DATA_BASE_VALUE(ulong, StorageVolume);
   DATA_BASE_VALUE(uchar, HPModifier);
-  virtual DATA_BASE_BOOL(IsSafeToCreateDoor);
+  DATA_BASE_BOOL(IsSafeToCreateDoor);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, ushort);
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }

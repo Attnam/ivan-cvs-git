@@ -53,3 +53,4 @@ Do psi waves damage armor?
 Do new bodyparts of player clones work properly?
 //Pickaxes can't dig squares on the edges but explosions can destroy them. 
 Chests in inventory cannot be unlocked.
+Healing liquid penetrates chests.

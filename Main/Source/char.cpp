@@ -2173,7 +2173,7 @@ bool character::Displace(character* Who, bool Forced)
       return true;
     }
 
-  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()) && GetLSquareUnder()->IsWalkable(Who))
+  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && GetLSquareUnder()->IsWalkable(Who))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -2336,6 +2336,7 @@ void character::GoOn(go* Go, bool FirstStep)
       Go->Terminate(false);
       return;
     }
+
   lsquare* MoveToSquare = GetNearLSquare(GetPos() + game::GetMoveVector(Go->GetDirection()));
 
   ushort OldRoomIndex = GetLSquareUnder()->GetRoomIndex();
@@ -2343,7 +2344,7 @@ void character::GoOn(go* Go, bool FirstStep)
 
   if(!MoveToSquare->IsWalkable(this)
   || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam())
-     ||  MoveToSquare->IsDangerous(this) || ((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep))
+  ||  MoveToSquare->IsDangerous(this) || ((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep))
     {
       Go->Terminate(false);
       return;
@@ -4087,9 +4088,6 @@ void character::LycanthropyHandler()
 
 void character::SaveLife()
 {
-  if(GetAction())
-    GetAction()->Terminate(false);
-
   if(TemporaryStateIsActivated(LIFE_SAVED))
     {
       if(IsPlayer())
@@ -4134,6 +4132,9 @@ void character::SaveLife()
     SetNP(SATIATED_LEVEL);
 
   GetSquareUnder()->SendNewDrawRequest();
+
+  if(GetAction())
+    GetAction()->Terminate(false);
 }
 
 character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, ushort Time)

@@ -704,11 +704,11 @@ void game::ApplyDivineTick()
     GetGod(c)->ApplyDivineTick();
 }
 
-void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Multiplier)
+void game::ApplyDivineAlignmentBonuses(god* CompareTarget, short Multiplier, bool Good)
 {
   for(ushort c = 1; c <= GODS; ++c)
     if(GetGod(c) != CompareTarget)
-      GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
+      GetGod(c)->AdjustRelation(CompareTarget, Multiplier, Good);
 }
 
 vector2d game::GetDirectionVectorForKey(int Key)

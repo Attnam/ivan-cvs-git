@@ -1224,13 +1224,14 @@ golem
 	HostileReplies == "Yes, master. Golem kill human. Golem then return."; /* No quotes! (golem engraves) */
 	FriendlyReplies == "Yes, master?";
 	/* FleshMaterial overridden */
-	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";
+	DeathMessage = "The Holy Words of @dd fly away. The monster's magic fades and it vanishes in seconds.";
 	UsesNutrition = false;
 	AttachedGod = NONE;
 	ClassStates = GAS_IMMUNITY;
 	Frequency = 1500;
 	CanTalk = false;
 	CanRead = true;
+	BodyPartsDisappearWhenSevered = true;
 
 	Config VALPURIUM;
 	{

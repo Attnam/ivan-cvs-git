@@ -130,7 +130,7 @@ class game
   static god* GetGod(ushort Index) { return God[Index]; }
   static const char* GetAlignment(ushort Index) { return Alignment[Index]; }
   static void ApplyDivineTick();
-  static void ApplyDivineAlignmentBonuses(god*, bool, short = 10);
+  static void ApplyDivineAlignmentBonuses(god*, short, bool);
   static vector2d GetDirectionVectorForKey(int);
   static festring SaveName(const festring& = CONST_S(""));
   static bool EyeHandler(long, long);

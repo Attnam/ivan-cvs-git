@@ -344,7 +344,7 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 	      FirstArm->Hit(Enemy, ForceHit);
 	    }
 
-	  if(IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
+	  if(!GetAction() && IsEnabled() && Enemy->IsEnabled() && SecondArm && SecondArm->GetDamage())
 	    {
 	      SecondAPCost = SecondArm->GetAPCost();
 	      SecondArm->Hit(Enemy, ForceHit);
