@@ -7,3 +7,5 @@ Stringquestion näyttää törkeältä jos se tulee scrollien päälle.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
 Camera should be updated after initial dungeon entering.
+Game starts with a black screen.
+Bill's Will dies and player dodges...

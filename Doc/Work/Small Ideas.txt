@@ -44,3 +44,10 @@ Rennen p‰‰.
 Garbage can.
 Size of player increases from eating.
 How can you change the window to the rigth size?
+Banana peals are slippery
+Walking on broken bottles should cause HP loss
+Weapons should break
+Space should = to esc in the inventory.
+Pickup all
+Last game should be highlighted in the high scores.
+
