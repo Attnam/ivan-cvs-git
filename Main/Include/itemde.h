@@ -846,8 +846,6 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,320)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
-	virtual void CheckPickUpEffect(character*);
-	virtual bool CanAIPickup() const { return false; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,112))
 protected:

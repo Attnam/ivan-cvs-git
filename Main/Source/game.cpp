@@ -125,15 +125,10 @@ void game::Init(std::string Name)
 {
 	static ushort Counter = 0;
 
-	FILE* Debug = fopen("Debug.txt", "w");
 	Turns = 0;
 	EMPTY_MESSAGES();
 	ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
 	globalmessagingsystem::Format();
-
-	fprintf(Debug, "Game: %d.", Counter);
-
-	fclose(Debug);
 
 	Running = true;
 	WizardMode = false;

@@ -446,17 +446,6 @@ bool scrollofchangematerial::Read(character* Reader)
 	return true;
 }
 
-void avatarofvalpuri::CheckPickUpEffect(character* Picker)
-{
-	if(Picker->GetIsPlayer())
-		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1 , game::GetCurrentLevel()->GetYSize() - 1, 30,
-		{
-			character* Temp;
-			if((Temp = game::GetCurrentLevel()->GetSquare(XPointer, YPointer)->GetCharacter()) && !Temp->GetIsPlayer())
-				Picker->GetTeam()->Hostility(Temp->GetTeam());
-		})
-}
-
 item* brokenbottle::BetterVersion(void) const
 {
 	material* Stuff;

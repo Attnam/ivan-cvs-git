@@ -33,4 +33,16 @@ public:
 	virtual void Enter(character*);
 );
 
+class ROOM
+(
+	cathedral,
+	room,
+public:
+	virtual void Enter(character*);
+	virtual bool PickupItem(character*, item*);
+	virtual bool DropItem(character*, item*);
+	virtual void KickSquare(character*, levelsquare*);
+	virtual bool ConsumeItem(character*, item*);
+);
+
 #endif

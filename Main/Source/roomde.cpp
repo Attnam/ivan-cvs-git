@@ -64,7 +64,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
 		if(Customer->GetMoney() >= Price)
 		{
-			ADD_MESSAGE("\"Ah! That %s costs %d Attnamian Perttubucks.", ForSale->CNAME(UNARTICLED), Price);
+			ADD_MESSAGE("\"Ah! That %s costs %d squirrels.", ForSale->CNAME(UNARTICLED), Price);
 			ADD_MESSAGE("No haggling, please.\"");
 
 			if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
@@ -78,7 +78,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 		}
 		else
 		{
-			ADD_MESSAGE("\"Don't touch that, beggar! It is worth %d Attnamian Perttubucks!\"", Price);
+			ADD_MESSAGE("\"Don't touch that, beggar! It is worth %d squirrels!\"", Price);
 			return false;
 		}
 	}
@@ -126,7 +126,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
 		if(Master->GetMoney() >= Price)
 		{
-			ADD_MESSAGE("\"What a fine %s. I'll pay %d Attnamian Perttubucks for it.\"", ForSale->CNAME(UNARTICLED), Price);
+			ADD_MESSAGE("\"What a fine %s. I'll pay %d squirrels for it.\"", ForSale->CNAME(UNARTICLED), Price);
 
 			if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 			{
@@ -207,4 +207,87 @@ bool shop::ConsumeItem(character* Customer, item*)
 		}
 		else
 			return false;
+}
+
+void cathedral::Enter(character* Visitor)
+{
+	if(Visitor->GetIsPlayer())
+	{
+		ADD_MESSAGE("The enormous Cathedral of Valpuri looms before you.");
+		ADD_MESSAGE("You watch it with respect.");
+	}
+}
+
+bool cathedral::PickupItem(character* Visitor, item* Item)
+{
+	if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
+		return true;
+
+	if(Visitor->GetIsPlayer())
+	{
+		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPerttusNut())
+			return true;
+
+		ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
+
+		if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+		{
+			Visitor->GetTeam()->Hostility(game::GetTeam(2));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool cathedral::DropItem(character* Visitor, item* Item)
+{
+	if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
+		return true;
+
+	if(Visitor->GetIsPlayer())
+	{
+		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPerttusNut() || Item->IsTheAvatar())
+		{
+			ADD_MESSAGE("Donating this to the Cathedral wouldn't be wise. You may still need it.");
+			return false;
+		}
+
+		if(game::BoolQuestion("Do you wish to donate this item to the Cathedral? [y/N]"))
+			return true;
+	}
+
+	return false;
+}
+
+void cathedral::KickSquare(character* Kicker, levelsquare* Square)
+{
+	if(game::GetTeam(2)->GetRelation(Kicker->GetTeam()) == HOSTILE)
+		return;
+
+	if(Kicker->GetIsPlayer() && Square->GetStack()->GetItems())
+	{
+		ADD_MESSAGE("You have harmed the property of the Cathedral!");
+
+		Kicker->GetTeam()->Hostility(game::GetTeam(2));
+	}
+}
+
+bool cathedral::ConsumeItem(character* HungryMan, item* Food)
+{
+	if(game::GetTeam(2)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
+		return true;
+
+	if(HungryMan->GetIsPlayer())
+	{
+		ADD_MESSAGE("Eating the property of the Cathedral is forbidden.");
+
+		if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+		{
+			HungryMan->GetTeam()->Hostility(game::GetTeam(2));
+			return true;
+		}
+	}
+
+	return false;
 }

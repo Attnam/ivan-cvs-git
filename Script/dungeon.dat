@@ -254,7 +254,7 @@ Dungeon 1;
 		FillSquare=floor,empty;
 		Size=64,64;
 		GenerateMonsters=false;
-		Rooms=25 + rand % 5;
+		Rooms=15 + rand % 6;
 		Items=0;
 		ReCalculate=false;
 		GenerateUpStairs=false;
@@ -396,6 +396,7 @@ Dungeon 1;
 			ReCalculate=false;
 			DivineOwner=1;
 			GenerateLamps=false;
+			Type=cathedral;
 
 			Square, Pos 12, 24;
 			{
@@ -576,12 +577,12 @@ Dungeon 1;
 					b = banana;
 					l = bananaflesh lump;
 					L = pork loaf;
-					P = potion;
+					P = glass omleurine potion;
 				}
 			}
 			{
-			    tsp.P
-			    blLcl
+			    tsp.b
+			    PlLcl
 			    tbbbL		
 			}
 		}
@@ -686,22 +687,25 @@ Dungeon 1;
 			}
 		}
 
+		Room 6;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=stone floor, wood wall;
+			DoorSquare=stone floor, door;
+		}
+
 		Room 7;
 		{
 			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
+			WallSquare=stone floor, wood wall;
+			DoorSquare=stone floor, door;
 		}
 
 		Room 8;
 		{
 			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
-		}
-
-		Room 9;
-		{
-			FloorSquare=stone floor,empty;
-			WallSquare=wood floor, wood wall;
+			WallSquare=stone floor, wood wall;
+			DoorSquare=stone floor, door;
 		}
 	}
 }
