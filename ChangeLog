@@ -1,3 +1,9 @@
+
+2002-04-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.h: Tweaked bitmap positions and colors for Oree, goblin, skeleton, imp, gibberling, kobold, enner beast and dark knight
+
+
 April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* felist.cpp/h & files with felist calls: Added more parameters (pos and width etc.) for felits

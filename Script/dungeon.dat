@@ -692,6 +692,14 @@ Dungeon 1;
 					5 = "petrusswife5";
 					6 = "petrusswife6";
 					k = kamikazedwarf;
+					A = oree;
+					B = goblin;
+					C = skeleton;
+					D = imp;
+					E = gibberling;
+					F = kobold;
+					G = ennerbeast;
+					H = darkknight;
 				}
 			}
 			{
@@ -728,7 +736,7 @@ Dungeon 1;
 				# . . . . 4 . 6 . # . . . . . . . . . . . . . # . . . . . . . . #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # . . . # #
 				. # # 2 . # . . . . . . . . . . . . . . . . . . . . . # . . # # .
-				. . # # # # . . . . . . . . . . . . . . . . . . . . . # # # # . .
+				. . # # # # A B C D E F . H . . . . . . . . . . . . . # # # # . .
 			}
 		}
 
