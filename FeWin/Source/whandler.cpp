@@ -1,7 +1,6 @@
 #include "whandler.h"
 #include "winuser.h"
 #include "graphics.h"
-#include "igraph.h"
 #include "error.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
