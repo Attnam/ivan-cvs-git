@@ -127,21 +127,14 @@ long material::CalculateOfferValue(char GodAlignment) const
   return Value;
 }
 
-material* materialprototype::Clone(ushort Config, ulong Volume) const
-{
-  material* Material = Clone(Config);
-  Material->SetVolume(Volume);
-  return Material;
-}
-
 material* materialprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  material* Material = Clone(0);
+  material* Material = Cloner(0, 0, true);
   Material->Load(SaveFile);
   return Material;
 }
 
-materialprototype::materialprototype(materialprototype* Base) : Base(Base)
+materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<material>::Add(this);
 }
@@ -167,11 +160,11 @@ material* material::MakeMaterial(ushort Config)
 
   switch(Config >> 12)
     {
-    case FIRSTMATERIAL >> 12: return new material(Config);
-    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config);
-    case FIRSTGAS >> 12: return new gas(Config);
-    case FIRSTLIQUID >> 12: return new liquid(Config);
-    case FIRSTFLESH >> 12: return new flesh(Config);
+    case FIRSTMATERIAL >> 12: return new material(Config, 0);
+    case FIRSTORGANICSUBSTANCE >> 12: return new organicsubstance(Config, 0);
+    case FIRSTGAS >> 12: return new gas(Config, 0);
+    case FIRSTLIQUID >> 12: return new liquid(Config, 0);
+    case FIRSTFLESH >> 12: return new flesh(Config, 0);
     default:
       ABORT("Odd material configuration number %d requested!", Config);
       return 0;
@@ -214,4 +207,15 @@ void material::SetConfig(ushort NewConfig)
 {
   Config = NewConfig;
   InstallDataBase();
+}
+
+void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
+{
+  if(!Load)
+    {
+      Config = NewConfig;
+      InstallDataBase();
+      Volume = InitVolume;
+      CalculateWeight();
+    }
 }

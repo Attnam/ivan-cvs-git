@@ -18,7 +18,6 @@ material
 	IsAlive = false;
 	IsBadFoodForAI = false;
 	IsFlammable = false;
-	IsFlexible = false;
 	IsExplosive = false;
 	/* Obligatory: NameStem */
 	/* NameStem by default: AdjectiveStem */
@@ -29,6 +28,7 @@ material
 	ExplosivePower = 0;
 	Alpha = 255;
 	CreateDivineConfigurations = false;
+	Flexibility = 1;
 
 	Config IRON;
 	{
@@ -138,6 +138,7 @@ material
 		Color = rgb(200, 200, 200);
 		IsFlammable = true;
 		NameStem = "parchment";
+		Flexibility = 10;
 	}
 
 	Config CLOTH;
@@ -150,6 +151,7 @@ material
 		Color = rgb(80, 80, 176);
 		IsFlammable = true;
 		NameStem = "cloth";
+		Flexibility = 15;
 	}
 
 	Config MITHRIL;
@@ -187,6 +189,7 @@ material
 		PriceModifier = 20000;
 		NameStem = "gold";
 		AdjectiveStem = "golden";
+		Flexibility = 2;
 	}
 
 	Config GRASS;
@@ -199,6 +202,7 @@ material
 		IsFlammable = true;
 		NameStem = "grass";
 		AdjectiveStem = "grassy";
+		Flexibility = 15;
 	}
 
 	Config LEATHER;
@@ -209,9 +213,9 @@ material
 		OfferValue = 10;
 		IsSolid = true;
 		Color = rgb(111, 64, 37);
-		IsFlexible = true;
 		IsFlammable = true;
 		NameStem = "leather";
+		Flexibility = 10;
 	}
 
 	Config LEAF;
@@ -219,12 +223,12 @@ material
 		StrengthValue = 5;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
-		OfferValue = 10;
 		IsSolid = true;
+		OfferValue = 10;
 		Color = rgb(0, 160, 0);
 		IsFlammable = true;
-		IsAlive = true;
 		NameStem = "leaf";
+		Flexibility = 10;
 	}
 
 	Config FABRIC;
@@ -237,6 +241,7 @@ material
 		IsFlammable = true;
 		Color = rgb(176, 0, 0);
 		NameStem = "fabric";
+		Flexibility = 10;
 	}
 
 	Config PALMLEAF;
@@ -248,8 +253,8 @@ material
 		IsSolid = true;
 		Color = rgb(0, 160, 0);
 		IsFlammable = true;
-		IsAlive = true;
 		NameStem = "palm leaf";
+		Flexibility = 10;
 	}
 
 	Config SULFUR;
@@ -288,6 +293,7 @@ material
 		Color = rgb(180, 96, 64);
 		PriceModifier = 600;
 		NameStem = "bread";
+		Flexibility = 5;
 	}
 
 	Config UNICORNHORN;
@@ -297,7 +303,6 @@ material
 		Density = 2000;
 		OfferValue = 10;
 		Color = rgb(180, 180, 180);
-		IsAlive = true;
 		NameStem = "unicorn horn";
 	}
 
@@ -388,6 +393,7 @@ material
 		PriceModifier = 15;
 		NameStem = "tin";
 	}
+
 	Config STEEL;
 	{
 		StrengthValue = 175;
@@ -402,8 +408,10 @@ material
 	}
 }
 
-organicsubstance
+organicsubstance /* substances that spoil but are not flesh */
 {
+	IsAlive = true;
+
 	Config BANANAFLESH;
 	{
 		StrengthValue = 5;
@@ -412,9 +420,9 @@ organicsubstance
 		OfferValue = 10;
 		NutritionValue = 200;
 		Color = rgb(240, 240, 0);
-		IsAlive = true;
 		PriceModifier = 600;
 		NameStem = "banana flesh";
+		Flexibility = 5;
 	}
 
 	Config SCHOOLFOOD;
@@ -427,11 +435,11 @@ organicsubstance
 		NutritionValue = 100;
 		Color = rgb(111, 74, 37);
 		IsBadFoodForAI = true;
-		IsAlive = true;
 		NameStem = "school food";
 		Effect = EPOISON;
 		ConsumeEndMessage = CEM_SCHOOLFOOD;
 		HitMessage = HM_SCHOOLFOOD;
+		Flexibility = 5;
 	}
 
 	Config BANANAPEAL;
@@ -441,8 +449,10 @@ organicsubstance
 		Density = 500;
 		OfferValue = 1;
 		Color = rgb(224, 224, 0);
-		IsAlive = true;
 		NameStem = "banana peal";
+		Flexibility = 10;
+		IsAlive = false;
+		IsSolid = true;
 	}
 
 	Config KIWIFLESH;
@@ -453,9 +463,9 @@ organicsubstance
 		OfferValue = 11;
 		NutritionValue = 150;
 		Color = rgb(160, 112, 32);
-		IsAlive = true;
 		PriceModifier = 600;
 		NameStem = "kiwi flesh";
+		Flexibility = 5;
 	}
 
 	Config PINEAPPLEFLESH;
@@ -466,9 +476,21 @@ organicsubstance
 		OfferValue = 12;
 		NutritionValue = 150;
 		Color = rgb(192, 112, 96);
-		IsAlive = true;
 		PriceModifier = 600;
 		NameStem = "pineapple flesh";
+		Flexibility = 5;
+	}
+
+	Config FIBER;
+	{
+		StrengthValue = 10;
+		ConsumeType = MISC_ORGANIC;
+		Density = 500;
+		OfferValue = 10;
+		Color = rgb(111, 64, 37);
+		IsFlammable = true;
+		NameStem = "fiber";
+		Flexibility = 10;
 	}
 }
 
@@ -476,13 +498,15 @@ gas
 {
 	Config AIR;
 	{
-		StrengthValue = 0;
+		StrengthValue = 1;
 		Density = 1;
 		OfferValue = 0;
 		Color = rgb(180, 180, 255);
 		ConsumeType = GAS;
 		NameStem = "air";
 		Article = "an";
+		Alpha = 150;
+		Flexibility = 50;
 	}
 }
 
@@ -491,7 +515,7 @@ liquid
 	ConsumeType = LIQUID;
 	CanBeWished = false;
 	Density = 1000;
-	IsAlive = true;
+	Flexibility = 25;
 
 	Config OMLEURINE;
 	{
@@ -558,6 +582,7 @@ liquid
 		Alignment = EVIL;
 		NameStem = "blood";
 		Alpha = 175;
+		Flexibility = 20;
 	}
 
 	Config BROWNSLIME;
@@ -570,6 +595,7 @@ liquid
 		Color = rgb(111, 74, 37);
 		NameStem = "brown slime";
 		Alpha = 200;
+		Flexibility = 10;
 	}
 }
 
@@ -583,6 +609,7 @@ flesh
 	Color = rgb(160, 32, 16);
 	IsAlive = true;
 	NameStem = "flesh";
+	Flexibility = 5;
 
 	Config GOBLINOIDFLESH;
 	{
@@ -639,20 +666,17 @@ flesh
 	Config HUMANFLESH;
 	{
 		OfferValue = 30;
-		/*Color = rgb(64, 64, 64);*/
 		Alignment = EVIL;
 		NameStem = "human flesh";
 	}
 
 	Config DOLPHINFLESH;
 	{
-		/*Color = rgb(64, 64, 64);*/
 		NameStem = "dolphin flesh";
 	}
 
 	Config POLARBEARFLESH;
 	{
-		/*Color = rgb(128, 128, 128);*/
 		PriceModifier = 600;
 		NameStem = "polar bear flesh";
 	}
@@ -660,7 +684,6 @@ flesh
 	Config WOLFFLESH;
 	{
 		OfferValue = 15;
-		/*Color = rgb(64, 64, 64);*/
 		PriceModifier = 600;
 		NameStem = "wolf flesh";
 	}
@@ -669,7 +692,6 @@ flesh
 	{
 		OfferValue = 15;
 		PriceModifier = 600;
-		/*Color = rgb(111, 74, 37);*/
 		Alignment = EVIL;
 		NameStem = "dog flesh";
 	}
@@ -679,7 +701,6 @@ flesh
 		StrengthValue = 30;
 		Density = 1800;
 		OfferValue = 5;
-		/*Color = rgb(112, 112, 64);*/
 		IsBadFoodForAI = true;
 		NameStem = "enner beast flesh";
 		Article = "an";
@@ -688,35 +709,30 @@ flesh
 	Config SPIDERFLESH;
 	{
 		OfferValue = 4;
-		/*Color = rgb(160, 160, 160);*/
 		NameStem = "spider flesh";
 	}
 
 	Config JACKALFLESH;
 	{
 		OfferValue = 6;
-		/*Color = rgb(224, 224, 224);*/
 		NameStem = "jackal flesh";
 	}
 
 	Config DONKEYFLESH;
 	{
 		OfferValue = 6;
-		/*Color = rgb(80, 80, 80);*/
 		NameStem = "donkey flesh";
 	}
 
 	Config BATFLESH;
 	{
 		OfferValue = 7;
-		/*Color = rgb(48, 48, 48);*/
 		NameStem = "bat flesh";
 	}
 
 	Config WEREWOLFFLESH;
 	{
 		OfferValue = 13;
-		/*Color = rgb(90, 64, 64);*/
 		NameStem = "werewolf flesh";
 		Effect = ELYCANTHROPY;
 	}
@@ -725,7 +741,6 @@ flesh
 	{
 		OfferValue = 14;
 		NutritionValue = 100;
-		/*Color = rgb(30, 100, 110);*/
 		IsBadFoodForAI = true;
 		NameStem = "kobold flesh";
 		Effect = EKOBOLDFLESH;
@@ -736,34 +751,29 @@ flesh
 	Config GIBBERLINGFLESH;
 	{
 		OfferValue = 12;
-		/*Color = rgb(100, 100, 200);*/
 		NameStem = "gibberling flesh";
 	}
 
 	Config CATFLESH;
 	{
 		OfferValue = 12;
-		/*Color = rgb(50, 50, 50);*/
 		NameStem = "cat flesh";
 	}
 
 	Config RATFLESH;
 	{
 		OfferValue = 8;
-		/*Color = rgb(180, 100, 40);*/
 		NameStem = "rat flesh";
 	}
 
 	Config ANGELFLESH;
 	{
 		OfferValue = 8;
-		/*Color = rgb(200, 200, 200);*/
 		NameStem = "angel flesh";
 	}
 
 	Config DWARFFLESH;
 	{
-		/*Color = rgb(180, 120, 90);*/
 		NameStem = "dwarf flesh";
 	}
 
@@ -775,7 +785,6 @@ flesh
 
 	Config MAMMOTHFLESH;
 	{
-		/*Color = rgb(100, 130, 160);*/
 		NameStem = "mammoth flesh";
 	}
 
@@ -783,7 +792,7 @@ flesh
 	{
 		OfferValue = 35;
 		Color = rgb(48, 48, 48);
-		/* Slightly strange. This means the the good gods like to receive this sacrifice */
+		/* Slightly strange. This means that the good gods like to receive this sacrifice */
 		Alignment = GOOD;
 		NameStem = "black unicorn flesh";
 	}
@@ -799,24 +808,23 @@ flesh
 	{
 		OfferValue = 35;
 		Color = rgb(160, 160, 160);
-		/* Slightly strange. This means the the evil gods like to receive this sacrifice */
+		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
 		Alignment = EVIL;
 		NameStem = "white unicorn flesh";
 	}
 
 	Config LIONFLESH;
 	{
-		/*Color = rgb(192, 160, 112);*/
 		PriceModifier = 600;
 		NameStem = "lion flesh";
 	}
 
 	Config BUFFALOFLESH;
 	{
-		/*Color = rgb(60, 55, 50);*/
 		PriceModifier = 600;
 		NameStem = "buffalo flesh";
 	}
+
 	Config SNAKEFLESH;
 	{
 		PriceModifier = 600;

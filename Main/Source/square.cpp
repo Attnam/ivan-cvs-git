@@ -91,7 +91,7 @@ bool square::CanBeSeenByPlayer(bool) const
     return false;
 }
 
-bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
+bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
 {
   ulong Distance = (GetPos() - FromPos).Length();
 

@@ -79,11 +79,10 @@ class itemprototype
 {
  public:
   friend class database<item>;
-  itemprototype(itemprototype*);
-  virtual ~itemprototype() { }
-  virtual item* Clone(ushort = 0, bool = true, bool = false) const = 0;
+  itemprototype(itemprototype*, item* (*)(ushort, bool, bool), const std::string&);
+  item* Clone(ushort Config = 0, bool CallGenerateMaterials = true) const { return Cloner(Config, CallGenerateMaterials, false); }
   item* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
   const itemdatabase* GetDataBase() const { return &DataBase; }
   const itemprototype* GetBase() const { return Base; }
@@ -103,9 +102,9 @@ class itemprototype
   itemdatabase DataBase;
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
+  item* (*Cloner)(ushort, bool, bool);
+  std::string ClassId;
 };
-
-/* Presentation of the item class */
 
 class item : public object
 {
@@ -207,11 +206,10 @@ class item : public object
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
-  virtual const prototype* GetProtoType() const;
+  virtual const prototype* GetProtoType() const { return &item_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-
   DATABASEVALUE(ushort, Possibility);
   DATABASEVALUE(vector2d, InHandsPic);
   DATABASEVALUE(ulong, OfferModifier);
@@ -259,7 +257,6 @@ class item : public object
   DATABASEVALUE(uchar, Roundness);
   DATABASEVALUE(ushort, GearStates);
   DATABASEBOOL(IsTwoHanded);
-
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -271,7 +268,6 @@ class item : public object
   virtual void EditWeight(long);
   virtual void EditCarriedWeight(long);
   virtual ulong GetBlockModifier(const character*) const;
-
   virtual ulong GetCarriedWeight() const { return CarriedWeight; }
   virtual void SetCarriedWeight(ulong What) { CarriedWeight = What; }
   virtual bool IsSimiliarTo(item*) const;
@@ -281,14 +277,12 @@ class item : public object
   virtual std::string Description(uchar) const;
   virtual bool IsVisible() const { return true; }
   virtual void SetIsVisible(bool) { }
-
   virtual square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const;
-
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
-  virtual void Initialize(uchar, bool, bool);
+  void Initialize(uchar, bool, bool);
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual bool ShowMaterial() const;
@@ -299,26 +293,13 @@ class item : public object
   graphic_id InHandsGraphicId;
   const database* DataBase;
   ulong CarriedWeight;
+  static prototype item_ProtoType;
 };
 
-#ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
-
-#define ITEM_PROTOTYPE(name, baseproto)\
-  \
-  class name##_prototype : public itemprototype\
-  {\
-   public:\
-    name##_prototype(itemprototype* Base) : itemprototype(Base) { }\
-    virtual item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) const { return name::Clone(Config, CallGenerateMaterials, Load); }\
-    virtual std::string ClassName() const { return #name; }\
-  } name##_ProtoType(baseproto);\
-  \
-  const item::prototype* name::GetProtoType() const { return &name##_ProtoType; }
-
+#ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
+#define ITEM_PROTOTYPE(name, baseproto) itemprototype name::name##_ProtoType(baseproto, &name::Clone, #name);
 #else
-
 #define ITEM_PROTOTYPE(name, baseproto)
-
 #endif
 
 #define ITEM(name, base, data)\
@@ -330,8 +311,10 @@ name : public base\
   name(ushort Config, material* FirstMaterial) : base(donothing()) { Initialize(Config, true, false); SetMainMaterial(FirstMaterial); }\
   name(material* FirstMaterial) : base(donothing()) { Initialize(0, true, false); SetMainMaterial(FirstMaterial); }\
   name(donothing D) : base(D) { }\
-  virtual const prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\
+ protected:\
+  static itemprototype name##_ProtoType;\
   data\
 }; ITEM_PROTOTYPE(name, &base##_ProtoType);
 
@@ -341,8 +324,10 @@ name : public base\
 {\
  public:\
   name(donothing D) : base(D) { }\
-  virtual const prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static item* Clone(ushort, bool, bool) { return 0; }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; ITEM_PROTOTYPE(name, &base##_ProtoType);
 

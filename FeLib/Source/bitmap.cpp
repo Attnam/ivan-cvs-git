@@ -912,9 +912,10 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
 
-	      for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
-		for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
-		  Bitmap->GetImage()[y2][x2] = Pixel;
+	      if(Pixel != DEFAULTTRANSPARENT)
+		for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
+		  for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
+		    Bitmap->GetImage()[y2][x2] = Pixel;
 	    }
 	}
 
@@ -931,7 +932,9 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	  for(ushort y1 = SourceY; y1 < SourceY + Height; y1 -= Stretch, ++ty)
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
-	      Bitmap->GetImage()[ty][tx] = Pixel;
+
+	      if(Pixel != DEFAULTTRANSPARENT)
+		Bitmap->GetImage()[ty][tx] = Pixel;
 	    }
 	}
 

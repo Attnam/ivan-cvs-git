@@ -138,11 +138,9 @@ class characterprototype
 {
  public:
   friend class database<character>;
-  characterprototype(characterprototype*);
-  virtual ~characterprototype() { }
-  virtual character* Clone(ushort = 0, bool = true, bool = false) const = 0;
+  characterprototype(characterprototype*, character* (*)(ushort, bool, bool), const std::string&);
+  character* Clone(ushort Config = 0, bool CreateEquipment = true) const { return Cloner(Config, CreateEquipment, false); }
   character* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
   const characterdatabase* GetDataBase() const { return &DataBase; }
   const characterprototype* GetBase() const { return Base; }
@@ -152,14 +150,15 @@ class characterprototype
   PROTODATABASEBOOL(CanBeWished);
   PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
+  const std::string& GetClassId() const { return ClassId; }
  protected:
   ushort Index;
   characterdatabase DataBase;
   characterprototype* Base;
   std::map<ushort, characterdatabase> Config;
+  character* (*Cloner)(ushort, bool, bool);
+  std::string ClassId;
 };
-
-/* Presentation of the character class */
 
 class character : public entity, public id
 {
@@ -171,7 +170,6 @@ class character : public entity, public id
   typedef std::map<ushort, characterdatabase> databasemap;
   character(donothing);
   virtual ~character();
-  virtual character* Clone(bool = true, bool = true) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
@@ -409,7 +407,7 @@ class character : public entity, public id
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
-  virtual const prototype* GetProtoType() const;
+  virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
   DATABASEVALUE(ushort, DefaultArmStrength);
@@ -603,8 +601,9 @@ class character : public entity, public id
   wsquare* GetWSquareUnder() const;
   virtual void PoisonedHandler();
  protected:
+  virtual void SpecialTurnHandler() { }
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
-  virtual void Initialize(uchar, bool, bool);
+  void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool);
   virtual void LoadDataBaseStats();
   void InstallDataBase();
@@ -652,6 +651,7 @@ class character : public entity, public id
   virtual std::string KickNoun() const { return "kick"; }
   virtual std::string BiteNoun() const { return "attack"; }
   virtual bool AttackIsBlockable(uchar) const { return true; }
+  virtual uchar GetSpecialBodyPartFlags(ushort, ushort) const { return STNORMAL; }
   stack* Stack;
   long NP, AP;
   bool Player;
@@ -682,27 +682,15 @@ class character : public entity, public id
   static void (character::*EndStateHandler[])();
   static void (character::*StateHandler[])();
   static std::string StateDescription[];
+  static bool StateIsSecret[];
   square* SquareUnder;
+  static prototype character_ProtoType;
 };
 
-#ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
-
-#define CHARACTER_PROTOTYPE(name, baseproto)\
-  \
-  class name##_prototype : public characterprototype\
-  {\
-   public:\
-    name##_prototype(characterprototype* Base) : characterprototype(Base) { }\
-    virtual character* Clone(ushort Config, bool CreateEquipment, bool Load) const { return name::Clone(Config, CreateEquipment, Load); }\
-    virtual std::string ClassName() const { return #name; }\
-  } name##_ProtoType(baseproto);\
-  \
-  const character::prototype* name::GetProtoType() const { return &name##_ProtoType; }
-
+#ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
+#define CHARACTER_PROTOTYPE(name, baseproto) characterprototype name::name##_ProtoType(baseproto, &name::Clone, #name);
 #else
-
 #define CHARACTER_PROTOTYPE(name, baseproto)
-
 #endif
 
 #define CHARACTER(name, base, data)\
@@ -712,8 +700,10 @@ name : public base\
  public:\
   name(ushort Config = 0, bool CreateEquipment = true, bool Load = false) : base(donothing()) { Initialize(Config, CreateEquipment, Load); }\
   name(donothing D) : base(D) { }\
-  virtual const prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static character* Clone(ushort Config, bool CreateEquipment, bool Load) { return new name(Config, CreateEquipment, Load); }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
@@ -723,8 +713,10 @@ name : public base\
 {\
  public:\
   name(donothing D) : base(D) { }\
-  virtual const prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const { return &name##_ProtoType; }\
   static character* Clone(ushort, bool, bool) { return 0; }\
+ protected:\
+  static prototype name##_ProtoType;\
   data\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 

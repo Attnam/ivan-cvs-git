@@ -652,6 +652,8 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsRing(const character*) const { return true; }
+ protected:
+  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(200, 200, 200); }
 );
 
 class ITEM
@@ -702,6 +704,7 @@ class ABSTRACT_ITEM
   virtual std::vector<ushort>& GetColorBVector() { return ColorB; }
   virtual std::vector<ushort>& GetColorCVector() { return ColorC; }
   virtual std::vector<ushort>& GetColorDVector() { return ColorD; }
+  virtual std::vector<uchar>& GetSpecialFlagsVector() { return SpecialFlags; }
   virtual void ApplyExperience() { }
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
@@ -722,11 +725,13 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterialColorC(ushort Frame) const { return ColorC[Frame]; }
   virtual ushort GetMaterialColorD(ushort Frame) const { return ColorD[Frame]; }
   virtual vector2d GetBitmapPos(ushort Frame) const { return BitmapPos[Frame]; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return SpecialFlags[Frame]; }
   std::string OwnerDescription;
   std::vector<vector2d> BitmapPos;
   std::vector<ushort> ColorB;
   std::vector<ushort> ColorC;
   std::vector<ushort> ColorD;
+  std::vector<uchar> SpecialFlags;
   short HP;
   bool Unique;
   ulong RegenerationCounter;
@@ -1133,5 +1138,6 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // Needs improving
   virtual bool IsHelmet(const character*) const { return true; }
 );
+
 #endif
 

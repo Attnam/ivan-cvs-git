@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "itemba.h"
@@ -11,7 +11,7 @@ ITEM_PROTOTYPE(item, 0);
 #include "femath.h"
 #include "itemde.h"
 
-#undef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 
 #include <cmath>
 
@@ -272,7 +272,7 @@ void scrollofwishing::FinishReading(character* Reader)
     }
 }
 
-bool lantern::ReceiveDamage(character*, short Damage, uchar DamageType)
+bool lantern::ReceiveDamage(character*, short Damage, uchar)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
     {
@@ -519,10 +519,7 @@ item* can::BetterVersion() const
 
 ushort whip::GetFormModifier() const
 {
-  if(GetMainMaterial()->IsFlexible())
-    return 1000;
-  else
-    return 70;
+  return 75 * GetMainMaterial()->GetFlexibility();
 }
 
 bool backpack::Apply(character* Terrorist)
@@ -877,7 +874,7 @@ void banana::Load(inputfile& SaveFile)
   SaveFile >> Charges;
 }
 
-bool banana::Zap(character* Zapper, vector2d, uchar)
+bool banana::Zap(character*, vector2d, uchar)
 {
   if(Charges)
     {
@@ -994,13 +991,13 @@ void scrolloftaming::FinishReading(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << HP << OwnerDescription << Unique << RegenerationCounter;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << RegenerationCounter;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1496,10 +1493,7 @@ humanoid* bodypart::GetHumanoidMaster() const
 
 ushort belt::GetFormModifier() const
 {
-  if(GetMainMaterial()->IsFlexible())
-    return 800;
-  else
-    return 60;
+  return 50 * GetMainMaterial()->GetFlexibility();
 }
 
 character* bodypart::GetMaster() const
@@ -2203,7 +2197,7 @@ const std::string& platemail::GetNameSingular() const
 {
   /* Fast, but really unelegant... */
 
-  if(GetMainMaterial() && GetMainMaterial()->IsFlexible())
+  if(GetMainMaterial() && GetMainMaterial()->GetFlexibility() > 5)
     {
       static std::string Armor = "armor";
       return Armor;
@@ -2427,7 +2421,7 @@ ushort arm::GetAttribute(ushort Identifier) const
       if(GetMainMaterial()->IsAlive())
 	return Dexterity;
       else
-	return GetMainMaterial()->IsFlexible() ? 10 : 1;
+	return GetMainMaterial()->GetFlexibility();
     }
   else
     {
@@ -2473,7 +2467,7 @@ ushort leg::GetAttribute(ushort Identifier) const
       if(GetMainMaterial()->IsAlive())
 	return Agility;
       else
-	return GetMainMaterial()->IsFlexible() ? 10 : 1;
+	return GetMainMaterial()->GetFlexibility();
     }
   else
     {
@@ -2989,7 +2983,7 @@ void can::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetStack());
 }
 
-uchar bodypart::GetMaxAlpha(ushort Frame) const
+uchar bodypart::GetMaxAlpha(ushort) const
 {
   if(GetMaster() && GetMaster()->StateIsActivated(INVISIBLE))
     return 150;
@@ -3018,7 +3012,7 @@ bool wandofinvisibility::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofinvisibility::BeamEffect(character* Who, const std::string& DeathMsg, uchar Dir, lsquare* Where) 
+bool wandofinvisibility::BeamEffect(character*, const std::string&, uchar, lsquare* Where) 
 {
   if(Where->GetCharacter())
     Where->GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
@@ -3045,3 +3039,4 @@ void bodypart::GetPostFix(std::string& String) const
 {
   String << " " << OwnerDescription;
 }
+

@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "godba.h"
@@ -8,7 +8,7 @@ valuemap protocontainer<god>::CodeNameMap;
 
 #include "godde.h"
 
-#undef __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 
 #include "message.h"
 #include "charde.h"

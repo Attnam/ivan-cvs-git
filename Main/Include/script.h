@@ -139,7 +139,7 @@ class basecontentscript : public script
   void ReadFrom(inputfile&);
   ushort GetContentType() const { return ContentType; }
  protected:
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
   DATAMEMBER(materialscript, MainMaterial);
   DATAMEMBER(materialscript, SecondaryMaterial);
@@ -151,9 +151,8 @@ class basecontentscript : public script
 
 template <class type> class contentscripttemplate : public basecontentscript
 {
- public:
-  virtual type* Instantiate() const;
  protected:
+  void BasicInstantiate(std::vector<type*>&, ulong) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
 
@@ -163,9 +162,10 @@ class contentscript<character> : public contentscripttemplate<character>
 {
  public:
   contentscript<character>();
-  virtual character* Instantiate() const;
+  void Instantiate(std::vector<character*>&, ulong) const;
+  character* Instantiate() const;
  protected:
-  virtual std::string ClassName() const { return "character"; }
+  virtual std::string GetClassId() const { return "character"; }
   DATAMEMBER(ushort, Team);
 };
 
@@ -173,25 +173,30 @@ class contentscript<item> : public contentscripttemplate<item>
 {
  public:
   contentscript<item>();
-  virtual item* Instantiate() const;
+  void Instantiate(std::vector<item*>&, ulong) const;
+  item* Instantiate() const;
  protected:
-  virtual std::string ClassName() const { return "item"; }
+  virtual std::string GetClassId() const { return "item"; }
   DATAMEMBER(bool, IsVisible);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
+ public:
+  void Instantiate(std::vector<glterrain*>&, ulong) const;
+  glterrain* Instantiate() const;
  protected:
-  virtual std::string ClassName() const { return "glterrain"; }
+  virtual std::string GetClassId() const { return "glterrain"; }
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
 {
  public:
   contentscript<olterrain>();
-  virtual olterrain* Instantiate() const;
+  void Instantiate(std::vector<olterrain*>&, ulong) const;
+  olterrain* Instantiate() const;
  protected:
-  virtual std::string ClassName() const { return "olterrain"; }
+  virtual std::string GetClassId() const { return "olterrain"; }
   DATAMEMBER(uchar, VisualEffects);
 };
 

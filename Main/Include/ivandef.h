@@ -22,9 +22,9 @@
 #define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return DataBase->data; }
 #define DATABASEBOOL(data) virtual bool data() const { return DataBase->data; }
 
-#define PROTODATABASEVALUE(type, data) virtual type Get##data() const { return DataBase.data; }
-#define PROTODATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return DataBase.data; }
-#define PROTODATABASEBOOL(data) virtual bool data() const { return DataBase.data; }
+#define PROTODATABASEVALUE(type, data) type Get##data() const { return DataBase.data; }
+#define PROTODATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase.data; }
+#define PROTODATABASEBOOL(data) bool data() const { return DataBase.data; }
 
 #define DATAVALUE(type, data)\
  public:\
@@ -337,6 +337,7 @@
 #define BANANAPEAL FIRSTORGANICSUBSTANCE + 3
 #define KIWIFLESH FIRSTORGANICSUBSTANCE + 4
 #define PINEAPPLEFLESH FIRSTORGANICSUBSTANCE + 5
+#define FIBER FIRSTORGANICSUBSTANCE + 6
 
 #define FIRSTGAS 4096 * 3
 
@@ -450,8 +451,8 @@
 #define AMULETOFLIFESAVING 1
 #define AMULETOFESP 2
 
-#define CONICALMOMMO 1
-#define FLATMOMMO 2
+#define CONICAL 1
+#define FLAT 2
 
 #define PARQUET 1
 #define FLOOR 2

@@ -38,6 +38,7 @@ class OLTERRAIN
   olterrain,
  public:
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const { }
+  virtual void UpdatePictures() { }
 );
 
 class OLTERRAIN

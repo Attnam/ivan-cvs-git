@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "materba.h"
@@ -10,7 +10,7 @@ MATERIAL_PROTOTYPE(material, 0);
 
 #include "materde.h"
 
-#undef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 
 #include "charba.h"
 #include "message.h"

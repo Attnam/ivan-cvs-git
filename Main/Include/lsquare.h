@@ -37,8 +37,6 @@ struct emitter
 outputfile& operator<<(outputfile&, const emitter&);
 inputfile& operator>>(inputfile&, emitter&);
 
-/* Presentation of the lsquare class */
-
 class lsquare : public square
 {
  public:

@@ -247,18 +247,26 @@ void level::Generate()
   if(LevelScript->GetLevelMessage(false))
     LevelMessage = *LevelScript->GetLevelMessage();
 
+  std::vector<glterrain*> FillGTerrain;
+  std::vector<olterrain*> FillOTerrain;
+  LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(FillGTerrain, XSizeTimesYSize);
+  LevelScript->GetFillSquare()->GetOTerrain()->Instantiate(FillOTerrain, XSizeTimesYSize);
+  ulong Counter = 0;
+
   for(ushort x = 0; x < XSize; ++x)
     {
       game::BusyAnimation();
 
-      for(ulong y = 0; y < YSize; ++y)
+      for(ushort y = 0; y < YSize; ++y, ++Counter)
 	{
 	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  Map[x][y]->SetLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
+	  Map[x][y]->SetLTerrain(FillGTerrain[Counter], FillOTerrain[Counter]);
+	  //Map[x][y]->SetLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
 	}
     }
 
   ushort c;
+  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 
   for(c = 0; c < *LevelScript->GetRooms(); ++c)
     {
@@ -273,10 +281,7 @@ void level::Generate()
 	      RoomScript = RoomIterator->second;
 
 	      if(*RoomScript->GetReCalculate())
-		{
-		  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
-		  RoomScript->ReadFrom(ScriptFile, true);
-		}
+		RoomScript->ReadFrom(ScriptFile, true);
 
 	      if(MakeRoom(RoomScript))
 		break;
@@ -289,10 +294,7 @@ void level::Generate()
 	      RoomScript = LevelScript->GetRoomDefault();
 
 	      if(*RoomScript->GetReCalculate())
-		{
-		  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
-		  RoomScript->ReadFrom(ScriptFile, true);
-		}
+		RoomScript->ReadFrom(ScriptFile, true);
 
 	      if(MakeRoom(RoomScript))
 		break;
@@ -422,6 +424,7 @@ bool level::MakeRoom(roomscript* RoomScript)
   game::BusyAnimation();
   ushort XPos = RoomScript->GetPos()->X, YPos = RoomScript->GetPos()->Y, Width = RoomScript->GetSize()->X, Height = RoomScript->GetSize()->Y;
   ushort BXPos = XPos, BYPos = YPos;
+  ushort x, y;
 
   if(XPos + Width > XSize - 2)
     return false;
@@ -429,117 +432,80 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(YPos + Height > YSize - 2)
     return false;
 
-  {
-    for(ushort x = XPos - 1; x <= XPos + Width; ++x)
-      for(ushort y = YPos - 1; y <= YPos + Height; ++y)
-	if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
-	  return false;
-  }
+  for(x = XPos - 1; x <= XPos + Width; ++x)
+    for(y = YPos - 1; y <= YPos + Height; ++y)
+      if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
+	return false;
 
   room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Clone();
   RoomClass->SetPos(vector2d(XPos, YPos));
   RoomClass->SetSize(vector2d(Width, Height));
-
   AddRoom(RoomClass);
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
-
   game::BusyAnimation();
+  std::vector<glterrain*> GTerrain;
+  std::vector<olterrain*> OTerrain;
+  RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(GTerrain, ((Width + Height) << 1) - 4);
+  RoomScript->GetWallSquare()->GetOTerrain()->Instantiate(OTerrain, ((Width + Height) << 1) - 4);
+  ulong Counter = 0;
+  uchar Room = RoomClass->GetIndex();
+  uchar DivineMaster = RoomScript->GetDivineMaster(false) ? *RoomScript->GetDivineMaster() : 0;
+  bool AllowLanterns = *RoomScript->GetGenerateLanterns();
 
-  {
-    for(ushort x = XPos; x < XPos + Width; ++x)
-      {
-	Map[x][YPos]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
-	FlagMap[x][YPos] |= FORBIDDEN;
-	Map[x][YPos + Height - 1]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
-	FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
-
-	if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
-	  {
-	    lantern* Lantern = new lantern;
-	    Lantern->SignalSquarePositionChange(2);
-	    Map[x][YPos]->GetSideStack(2)->FastAddItem(Lantern);
-	  }
-
-	if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
-	  {
-	    lantern* Lantern = new lantern;
-	    Lantern->SignalSquarePositionChange(0);
-	    Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lantern);
-	  }
-
-	if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
-	  {
-	    Map[x][YPos]->SetDivineMaster(*RoomScript->GetDivineMaster());
-	    Map[x][YPos + Height - 1]->SetDivineMaster(*RoomScript->GetDivineMaster());
-	  }
-
-	Map[x][YPos]->SetRoom(RoomClass->GetIndex());
-	Map[x][YPos + Height - 1]->SetRoom(RoomClass->GetIndex());
-      }
-  }
-
-  game::BusyAnimation();
-
-  for(ushort y = YPos; y < YPos + Height; ++y)
+  for(x = XPos; x < XPos + Width; ++x, Counter += 2)
     {
-      Map[XPos][y]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
-      FlagMap[XPos][y] |= FORBIDDEN;
-      Map[XPos + Width - 1][y]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
-      FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
+      CreateWallSquare(GTerrain[Counter], OTerrain[Counter], x, YPos, Room, DivineMaster);
+      CreateWallSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, YPos + Height - 1, Room, DivineMaster);
 
-      if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
+      if(AllowLanterns && x != XPos && x != XPos + Width - 1)
 	{
-	  lantern* Lantern = new lantern;
-	  Lantern->SignalSquarePositionChange(1);
-	  Map[XPos][y]->GetSideStack(1)->FastAddItem(Lantern);
+	  GenerateLanterns(x, YPos, 2);
+	  GenerateLanterns(x, YPos + Height - 1, 0);
 	}
-
-      if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
-	{
-	  lantern* Lantern = new lantern;
-	  Lantern->SignalSquarePositionChange(3);
-	  Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lantern);
-	}
-
-      if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
-	{
-	  Map[XPos][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
-	  Map[XPos + Width - 1][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
-	}
-
-      Map[XPos][y]->SetRoom(RoomClass->GetIndex());
-      Map[XPos + Width - 1][y]->SetRoom(RoomClass->GetIndex());
     }
 
   game::BusyAnimation();
 
-  for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
-    for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
-      {
-	Map[x][y]->ChangeLTerrain(RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate());
+  for(y = YPos + 1; y < YPos + Height - 1; ++y, Counter += 2)
+    {
+      CreateWallSquare(GTerrain[Counter], OTerrain[Counter], XPos, y, Room, DivineMaster);
+      CreateWallSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], XPos + Width - 1, y, Room, DivineMaster);
 
+      if(AllowLanterns)
+	{
+	  GenerateLanterns(XPos, y, 1);
+	  GenerateLanterns(XPos + Width - 1, y, 3);
+	}
+    }
+
+  game::BusyAnimation();
+
+  RoomScript->GetFloorSquare()->GetGTerrain()->Instantiate(GTerrain, (Width - 2) * (Height - 2));
+  RoomScript->GetFloorSquare()->GetOTerrain()->Instantiate(OTerrain, (Width - 2) * (Height - 2));
+  Counter = 0;
+
+  for(x = XPos + 1; x < XPos + Width - 1; ++x)
+    for(y = YPos + 1; y < YPos + Height - 1; ++y, ++Counter)
+      {
+	Map[x][y]->ChangeLTerrain(GTerrain[Counter], OTerrain[Counter]);
 	FlagMap[x][y] |= FORBIDDEN;
 
-	if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
-	  Map[x][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
+	if(DivineMaster)
+	  Map[x][y]->SetDivineMaster(DivineMaster);
 
-	Map[x][y]->SetRoom(RoomClass->GetIndex());
+	Map[x][y]->SetRoom(Room);
       }
 
   if(*RoomScript->GetGenerateFountains() && !(RAND() % 10))
-    {
-      vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
-      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new fountain);
-    }
+    Map[XPos + 1 + RAND() % (Width - 2)][YPos + 1 + RAND() % (Height - 2)]->ChangeOLTerrain(new fountain);
 
   if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
     {
-      vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
       uchar Owner = 1 + RAND() % (game::GetGods() - 1);
-      Map[Pos.X][Pos.Y]->ChangeOLTerrain(new altar(Owner));
+      Map[XPos + 1 + RAND() % (Width - 2)][YPos + 1 + RAND() % (Height - 2)]->ChangeOLTerrain(new altar(Owner));
 
-      for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
-	for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
+      for(ushort x = XPos; x < XPos + Width; ++x)
+	for(y = YPos; y < YPos + Height; ++y)
 	  Map[x][y]->SetDivineMaster(Owner);
     }
 
@@ -556,13 +522,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 	    Door->CreateBoobyTrap();
 
 	  Door->Lock();
-	}      
+	}
+
       Map[LXPos][LYPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[LXPos][LYPos]->Clean();
-
       FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
       FlagMap[LXPos][LYPos] |= PREFERRED;
-
       ushort BXPos = XPos, BYPos = YPos;
 
       if(RAND() % 2)
@@ -582,7 +547,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       FlagMap[XPos][YPos] &= ~FORBIDDEN;
       FlagMap[XPos][YPos] |= PREFERRED;
-
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
@@ -595,15 +559,11 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       Map[XPos][YPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[XPos][YPos]->Clean();
-
       GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() % 2 ? true : false);
-
       FlagMap[LXPos][LYPos] |= FORBIDDEN;
       FlagMap[LXPos][LYPos] &= ~PREFERRED;
-
       FlagMap[XPos][YPos] |= FORBIDDEN;
       FlagMap[XPos][YPos] &= ~PREFERRED;
-
       XPos = BXPos; YPos = BYPos;
     }
 
@@ -664,7 +624,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  game::BusyAnimation();
 
-	  for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
+	  for(y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
 	    if((CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y)))
 	      {
 		character* Char = CharacterScript->Instantiate();
@@ -688,7 +648,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  game::BusyAnimation();
 
-	  for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
+	  for(y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
 	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
 	      Map[XPos + x][YPos + y]->GetStack()->FastAddItem(ItemScript->Instantiate());
 	}
@@ -704,7 +664,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  game::BusyAnimation();
 
-	  for(ushort y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
+	  for(y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
 	    if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
 	      Map[XPos + x][YPos + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
 	}
@@ -720,7 +680,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  game::BusyAnimation();
 
-	  for(ushort y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
+	  for(y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
 	    if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
 	      {
 		olterrain* Terrain = OTerrainScript->Instantiate();
@@ -731,6 +691,27 @@ bool level::MakeRoom(roomscript* RoomScript)
     }
 
   return true;
+}
+
+void level::GenerateLanterns(ushort X, ushort Y, uchar SquarePos) const
+{
+  if(!(RAND() % 7))
+    {
+      lantern* Lantern = new lantern;
+      Lantern->SignalSquarePositionChange(SquarePos);
+      Map[X][Y]->GetSideStack(SquarePos)->FastAddItem(Lantern);
+    }
+}
+
+void level::CreateWallSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room, uchar DivineMaster) const
+{
+  Map[X][Y]->ChangeLTerrain(GLTerrain, OLTerrain);
+  FlagMap[X][Y] |= FORBIDDEN;
+
+  if(DivineMaster)
+    Map[X][Y]->SetDivineMaster(DivineMaster);
+
+  Map[X][Y]->SetRoom(Room);
 }
 
 void level::GenerateMonsters()

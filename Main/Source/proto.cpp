@@ -16,7 +16,7 @@
 template <class type> void protocontainer<type>::GenerateCodeNameMap()
 {
   for(ushort c = 1; c < GetProtoAmount(); ++c)
-    CodeNameMap[GetProto(c)->ClassName()] = c;
+    CodeNameMap[GetProto(c)->GetClassId()] = c;
 }
 
 character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems)
@@ -39,7 +39,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 		if(!--Chosen)
 		  {
-		    if(!i->second.IsAbstract && i->second.CanBeGenerated && i->second.Frequency > RAND() % 10000)
+		    if(i->second.CanBeGenerated && i->second.Frequency > RAND() % 10000)
 		      Monster = Proto->Clone(i->first, CreateItems);
 
 		    break;
@@ -77,8 +77,7 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
 	SumOfPossibilities += Proto->GetPossibility();
 
       for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
-	if(!i->second.IsAbstract)
-	  SumOfPossibilities += i->second.Possibility;
+	SumOfPossibilities += i->second.Possibility;
     }
 
   while(true)
@@ -102,17 +101,13 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
 
 	  for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
 	    {
-	    const item::database p = i->second;
-	    if(!i->second.IsAbstract)
-	      {
-		Counter += i->second.Possibility;
+	      Counter += i->second.Possibility;
 
-		if(Counter >= RandomOne)
-		  if(!Polymorph || i->second.IsPolymorphSpawnable)
-		    return Proto->Clone(i->first);
-		  else
-		    break;
-	      }
+	      if(Counter >= RandomOne)
+		if(!Polymorph || i->second.IsPolymorphSpawnable)
+		  return Proto->Clone(i->first);
+		else
+		  break;
 	    }
 	}
     }
@@ -120,6 +115,8 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
 
 character* protosystem::CreateMonster(bool CreateItems)
 {
+  /* Fix configs! */
+
   while(true)
     {
       ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
@@ -187,7 +184,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	{
 	  Correct = CountCorrectNameParts<type>(i->second, Identifier);
 
-	  if(!i->second.IsAbstract && Correct > Best)
+	  if(Correct > Best)
 	    if(i->second.CanBeWished || game::WizardModeActivated())
 	      {
 		Id.first = Proto;

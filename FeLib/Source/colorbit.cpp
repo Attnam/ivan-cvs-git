@@ -321,3 +321,37 @@ void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Heig
 	  Pixel += (Color1 - Color2) * 16;
       }
 }
+
+void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, short XMove, short YMove)
+{
+  if(!XMove && !YMove)
+    return;
+
+  uchar* TempBuffer = new uchar[Width * Height], x, y;
+
+  for(x = X; x < X + Width; ++x)
+    for(y = Y; y < Y + Height; ++y)
+      {
+	short XPos = x + XMove, YPos = y + YMove;
+
+	while(XPos < X)
+	  XPos += Width;
+
+	while(YPos < Y)
+	  YPos += Height;
+
+	while(XPos >= X + Width)
+	  XPos -= Width;
+
+	while(YPos >= Y + Height)
+	  YPos -= Height;
+
+	TempBuffer[(YPos - Y) * Width + XPos - X] = PaletteBuffer[y * XSize + x];
+      }
+
+  for(x = X; x < X + Width; ++x)
+    for(y = Y; y < Y + Height; ++y)
+      PaletteBuffer[y * XSize + x] = TempBuffer[(y - Y) * Width + x - X];
+
+  delete [] TempBuffer;
+}

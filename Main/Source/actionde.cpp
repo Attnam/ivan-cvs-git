@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "actionba.h"
@@ -8,7 +8,7 @@ valuemap protocontainer<action>::CodeNameMap;;
 
 #include "actionde.h"
 
-#undef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
 
 #include "message.h"
 #include "save.h"
@@ -474,3 +474,4 @@ void read::VirtualConstructor()
 {
   Literature.Init(this);
 }
+

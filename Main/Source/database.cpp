@@ -345,7 +345,6 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(IsAlive);
   ANALYZEDATA(IsBadFoodForAI);
   ANALYZEDATA(IsFlammable);
-  ANALYZEDATA(IsFlexible);
   ANALYZEDATA(IsExplosive);
   ANALYZEDATA(NameStem);
   ANALYZEDATAWITHDEFAULT(AdjectiveStem, NameStem);
@@ -356,6 +355,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(ExplosivePower);
   ANALYZEDATA(Alpha);
   ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(Flexibility);
 
   return Found;
 }

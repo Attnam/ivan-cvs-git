@@ -151,14 +151,14 @@ void olterrain::Break()
 
 glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  glterrain* Terrain = Clone(0, false, true);
+  glterrain* Terrain = Cloner(0, false, true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
 olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  olterrain* Terrain = Clone(0, false, true);
+  olterrain* Terrain = Cloner(0, false, true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
@@ -181,12 +181,12 @@ void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load
     UpdatePictures();
 }
 
-glterrainprototype::glterrainprototype(glterrainprototype* Base) : Base(Base)
+glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<glterrain>::Add(this);
 }
 
-olterrainprototype::olterrainprototype(olterrainprototype* Base) : Base(Base)
+olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<olterrain>::Add(this);
 }

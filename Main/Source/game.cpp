@@ -134,7 +134,7 @@ command* game::Command[] =
   0
 };
 
-int game::MoveCommandKey[] = { 0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.' };
+int game::MoveCommandKey[] = { KEYHOME, KEYUP, KEYPAGEUP, KEYLEFT, KEYRIGHT, KEYEND, KEYDOWN, KEYPAGEDOWN, '.' };
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 
 bool game::LOSUpdateRequested = false;
@@ -230,7 +230,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new werewolfhuman);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -251,7 +251,7 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	character* Doggie = new werewolfhuman;
+	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
@@ -1201,7 +1201,6 @@ void game::BusyAnimation(bitmap* Buffer)
 	Rotation -= 2 * PI;
 
       Elpuri.MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
-
       ushort x;
 
       for(x = 0; x < 10; ++x)

@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "lterraba.h"
@@ -14,7 +14,7 @@ LTERRAIN_PROTOTYPE(olterrain, 0, olterrain);
 #include "femath.h"
 #include "lterrade.h"
 
-#undef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DEFINITIONS__
 
 #include "message.h"
 #include "godba.h"
@@ -880,3 +880,4 @@ bool fountain::AddAdjective(std::string& String, bool Articled) const
   else
     return false;
 }
+

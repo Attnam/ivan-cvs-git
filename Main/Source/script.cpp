@@ -184,7 +184,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   if(ContentType || Word == "0")
     Word = SaveFile.ReadWord();
   else
-    ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), ClassName().c_str(), SaveFile.TellLine());
+    ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
 
   if(Word == "(")
     {
@@ -196,47 +196,55 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	if(!LoadData(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), ClassName().c_str(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script line %d!", Word.c_str(), ClassName().c_str(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
 }
 
-template <class type> type* contentscripttemplate<type>::Instantiate() const
+template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount) const
 {
-  ushort ChosenConfig;
+  const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
+  Instance.resize(Amount, 0);
 
-  if(!Config && protocontainer<type>::GetProto(ContentType)->IsAbstract())
+  if(!Config && Proto->IsAbstract())
     {
-      const typename type::databasemap& Config = protocontainer<type>::GetProto(ContentType)->GetConfig();
-      ChosenConfig = RAND() % Config.size();
+      const typename type::databasemap& Config = Proto->GetConfig();
 
-      for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!ChosenConfig--)
-	  {
-	    ChosenConfig = i->first;
-	    break;
-	  }
+      for(ulong c = 0; c < Amount; ++c)
+	{
+	  ushort ChosenConfig = RAND() % Config.size();
+
+	  for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	    if(!ChosenConfig--)
+	      {
+		Instance[c] = Proto->Clone(i->first);
+		break;
+	      }
+	}
     }
   else
-    ChosenConfig = Config;
-
-  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone(ChosenConfig);
+    {
+      for(ulong c = 0; c < Amount; ++c)
+	Instance[c] = Proto->Clone(Config);
+    }
 
   if(GetParameters(false))
-    Instance->SetParameters(*GetParameters());
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetParameters(*GetParameters());
 
   if(GetMainMaterial(false))
-    Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate());
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate());
 
   if(GetSecondaryMaterial(false))
-    Instance->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate());
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate());
 
   if(GetContainedMaterial(false))
-    Instance->ChangeContainedMaterial(GetContainedMaterial()->Instantiate());
-
-  return Instance;
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate());
 }
 
 template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
@@ -249,14 +257,20 @@ contentscript<character>::contentscript<character>()
   INITMEMBER(Team);
 }
 
-character* contentscript<character>::Instantiate() const
+void contentscript<character>::Instantiate(std::vector<character*>& Instance, ulong Amount) const
 {
-  character* Instance = contentscripttemplate<character>::Instantiate();
+  contentscripttemplate<character>::BasicInstantiate(Instance, Amount);
 
   if(GetTeam(false))
-    Instance->SetTeam(game::GetTeam(*GetTeam()));
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
+}
 
-  return Instance;
+character* contentscript<character>::Instantiate() const
+{
+  std::vector<character*> Instance;
+  Instantiate(Instance, 1);
+  return Instance[0];
 }
 
 contentscript<item>::contentscript<item>()
@@ -264,14 +278,32 @@ contentscript<item>::contentscript<item>()
   INITMEMBER(IsVisible);
 }
 
-item* contentscript<item>::Instantiate() const
+void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount) const
 {
-  item* Instance = contentscripttemplate<item>::Instantiate();
+  contentscripttemplate<item>::BasicInstantiate(Instance, Amount);
 
   if(GetIsVisible(false))
-    Instance->SetIsVisible(*GetIsVisible());
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetIsVisible(*GetIsVisible());
+}
 
-  return Instance;
+item* contentscript<item>::Instantiate() const
+{
+  std::vector<item*> Instance;
+  Instantiate(Instance, 1);
+  return Instance[0];
+}
+
+void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ulong Amount) const
+{
+  contentscripttemplate<glterrain>::BasicInstantiate(Instance, Amount);
+}
+
+glterrain* contentscript<glterrain>::Instantiate() const
+{
+  std::vector<glterrain*> Instance;
+  Instantiate(Instance, 1);
+  return Instance[0];
 }
 
 contentscript<olterrain>::contentscript<olterrain>()
@@ -279,17 +311,23 @@ contentscript<olterrain>::contentscript<olterrain>()
   INITMEMBER(VisualEffects);
 }
 
-olterrain* contentscript<olterrain>::Instantiate() const
+void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ulong Amount) const
 {
-  olterrain* Instance = contentscripttemplate<olterrain>::Instantiate();
+  contentscripttemplate<olterrain>::BasicInstantiate(Instance, Amount);
 
   if(GetVisualEffects(false))
-    {
-      Instance->SetVisualEffects(*GetVisualEffects());
-      Instance->UpdatePictures();
-    }
+    for(ulong c = 0; c < Amount; ++c)
+      {
+	Instance[c]->SetVisualEffects(*GetVisualEffects());
+	Instance[c]->UpdatePictures();
+      }
+}
 
-  return Instance;
+olterrain* contentscript<olterrain>::Instantiate() const
+{
+  std::vector<olterrain*> Instance;
+  Instantiate(Instance, 1);
+  return Instance[0];
 }
 
 squarescript::squarescript()

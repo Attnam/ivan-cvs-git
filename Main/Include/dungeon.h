@@ -8,8 +8,6 @@
 #include "typedef.h"
 #include "game.h"
 
-/* Presentation of the dungeon class */
-
 class level;
 class outputfile;
 class inputfile;

@@ -49,6 +49,15 @@ class colorizablebitmap
   void SwapColors(ushort X, ushort Y, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
   void SwapColors(vector2d Pos, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
 
+  void Roll(ushort, ushort, ushort, ushort, short, short);
+  void Roll(vector2d Pos, ushort Width, ushort Height, short XMove, short YMove) { Roll(Pos.X, Pos.Y, Width, Height, XMove, YMove); }
+  void Roll(ushort X, ushort Y, vector2d BlitSize, short XMove, short YMove) { Roll(X, Y, BlitSize.X, BlitSize.Y, XMove, YMove); }
+  void Roll(ushort X, ushort Y, ushort Width, ushort Height, vector2d Move) { Roll(X, Y, Width, Height, Move.X, Move.Y); }
+  void Roll(vector2d Pos, vector2d BlitSize, short XMove, short YMove) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, XMove, YMove); }
+  void Roll(vector2d Pos, ushort Width, ushort Height, vector2d Move) { Roll(Pos.X, Pos.Y, Width, Height, Move.X, Move.Y); }
+  void Roll(ushort X, ushort Y, vector2d BlitSize, vector2d Move) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
+  void Roll(vector2d Pos, vector2d BlitSize, vector2d Move) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
+
  protected:
   ushort XSize, YSize;
   uchar* Palette;

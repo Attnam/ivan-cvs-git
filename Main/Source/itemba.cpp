@@ -341,7 +341,7 @@ bool item::Open(character* Char)
 
 item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  item* Item = Clone(0, false, true);
+  item* Item = Cloner(0, false, true);
   Item->Load(SaveFile);
   return Item;
 }
@@ -371,7 +371,7 @@ void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
     UpdatePictures();
 }
 
-itemprototype::itemprototype(itemprototype* Base) : Base(Base)
+itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<item>::Add(this);
 }

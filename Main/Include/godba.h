@@ -24,7 +24,7 @@ class godprototype
   godprototype();
   virtual god* Clone() const = 0;
   god* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
@@ -70,7 +70,7 @@ class god
   bool Known;
 };
 
-#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 
 #define GOD_PROTOTYPE(name)\
   \
@@ -78,7 +78,7 @@ class god
   {\
    public:\
     virtual god* Clone() const { return new name; }\
-    virtual std::string ClassName() const { return #name; }\
+    virtual std::string GetClassId() const { return #name; }\
   } name##_ProtoType;\
   \
   const god::prototype* name::GetProtoType() const { return &name##_ProtoType; }

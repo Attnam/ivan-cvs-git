@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "charba.h"
@@ -12,7 +12,7 @@ CHARACTER_PROTOTYPE(character, 0);
 #include "itemde.h"
 #include "charde.h"
 
-#undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 
 #include <cmath>
 
@@ -983,7 +983,7 @@ void communist::BeTalkedTo(character* Talker)
 void communist::CreateInitialEquipment()
 {
   SetMainWielded(new meleeweapon(SPIKEDMACE, MAKE_MATERIAL(IRON)));
-  SetBodyArmor(new platemail);
+  SetBodyArmor(new platemail(0, MAKE_MATERIAL(IRON)));
   GetStack()->FastAddItem(new fiftymillionroubles);
 }
 
@@ -1476,7 +1476,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), PersonalPronoun().c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), CapitalizeCopy(PersonalPronoun()).c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -2087,13 +2087,6 @@ void carnivorousplant::GetAICommand()
   })
 }
 
-/*void carnivorousplant::CreateTorso()
-{
-  character::CreateTorso();
-  GetTorso()->SetColor(1, MAKE_RGB(40 + RAND() % 100, 40 + RAND() % 100, 40 + RAND() % 100));
-  GetTorso()->UpdatePictures();
-}*/
-
 vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
 {
   switch(Index)
@@ -2469,47 +2462,47 @@ void nonhumanoid::Load(inputfile& SaveFile)
 
 float nonhumanoid::CalculateUnarmedStrength() const
 {
-  return GetUnarmedStrength() * (Strength >> 1) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
+  return GetUnarmedStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
 float nonhumanoid::CalculateUnarmedToHitValue() const
 {
-  return ((Agility << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
+  return ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMoveEase() / 100;
 }
 
 long nonhumanoid::CalculateUnarmedAPCost() const
 {
-  return long(GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(Agility >> 1) - 200) * 500 / GetMoveEase());
+  return long(GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
 }
 
 float nonhumanoid::CalculateKickStrength() const
 {
-  return GetKickStrength() * (Strength >> 1) * GetCategoryWeaponSkill(KICK)->GetEffectBonus();
+  return GetKickStrength() * GetAttribute(LEGSTRENGTH) * GetCategoryWeaponSkill(KICK)->GetEffectBonus();
 }
 
 float nonhumanoid::CalculateKickToHitValue() const
 {
-  return ((Agility << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
+  return ((GetAttribute(AGILITY) << 2) + GetAttribute(LEGSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
 long nonhumanoid::CalculateKickAPCost() const
 {
-  return long(GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(Agility >> 1) - 200) * 1000 / GetMoveEase());
+  return long(GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMoveEase());
 }
 
 float nonhumanoid::CalculateBiteStrength() const
 {
-  return GetBiteStrength() * (Strength >> 1) * GetCategoryWeaponSkill(BITE)->GetEffectBonus();
+  return GetBiteStrength() * GetAttribute(ARMSTRENGTH) * GetCategoryWeaponSkill(BITE)->GetEffectBonus();
 }
 
 float nonhumanoid::CalculateBiteToHitValue() const
 {
-  return ((Agility << 1) + (Strength >> 1) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
+  return ((GetAttribute(DEXTERITY) << 2) + GetAttribute(ARMSTRENGTH) + GetAttribute(PERCEPTION)) * GetCategoryWeaponSkill(BITE)->GetEffectBonus() * GetMoveEase() / 200;
 }
 
 long nonhumanoid::CalculateBiteAPCost() const
 {
-  return long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(Agility >> 1) - 200) * 1000 / GetMoveEase());
+  return long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 1000 / GetMoveEase());
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -2887,9 +2880,19 @@ ushort nonhumanoid::GetAttribute(ushort Identifier) const
   if(Identifier < BASEATTRIBUTES)
     return character::GetAttribute(Identifier);
   else if(Identifier == ARMSTRENGTH || Identifier == LEGSTRENGTH)
-    return Strength >> 1;
+    {
+      if(GetTorso()->GetMainMaterial()->IsAlive())
+	return Strength >> 1;
+      else
+	return GetTorso()->GetMainMaterial()->GetStrengthValue();
+    }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    return Agility >> 1;
+    {
+      if(GetTorso()->GetMainMaterial()->IsAlive())
+	return Agility >> 1;
+      else
+	return GetTorso()->GetMainMaterial()->GetFlexibility();
+    }
   else
     {
       ABORT("Illegal nonhumanoid attribute %d request!", Identifier);
@@ -3027,8 +3030,8 @@ ushort nonhumanoid::DrawStats() const
 {
   ushort PanelPosX = RES.X - 96, PanelPosY = 3;
 
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", Strength >> 1);
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", Agility >> 1);
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", GetAttribute(ARMSTRENGTH));
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
@@ -3481,6 +3484,37 @@ void genie::CreateBodyPart(ushort Index)
     SetBodyPart(Index, 0);
   else
     character::CreateBodyPart(Index);
+}
+
+ushort housewife::GetHairColor(ushort) const
+{
+  static ushort HouseWifeHairColor[] = { MAKE_RGB(48, 40, 8), MAKE_RGB(60, 48, 24),  MAKE_RGB(200, 0, 0) };
+  return HouseWifeHairColor[RAND() % 3];
+}
+
+ushort angel::GetAttribute(ushort Identifier) const // temporary until wings are bodyparts
+{
+  if(Identifier == LEGSTRENGTH)
+    return GetDefaultLegStrength();
+  else if(Identifier == AGILITY)
+    return GetDefaultAgility();
+  else
+    return humanoid::GetAttribute(Identifier);
+}
+
+ushort genie::GetAttribute(ushort Identifier) const // temporary until someone invents a better way of doing this
+{
+  if(Identifier == LEGSTRENGTH)
+    return GetDefaultLegStrength();
+  else if(Identifier == AGILITY)
+    return 50; /* Air's flexibility */
+  else
+    return humanoid::GetAttribute(Identifier);
+}
+
+float billswill::CalculateUnarmedStrength() const
+{
+  return GetUnarmedStrength() * 5 * GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
 void spider::SpecialBiteEffect(character* Char)

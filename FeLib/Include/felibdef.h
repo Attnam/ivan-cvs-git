@@ -47,6 +47,14 @@
 #define KEYBACKSPACE 0x08
 #define KEYESC 0x1b
 #define KEYENTER 0x0d
+#define KEYUP 0x148
+#define KEYDOWN 0x150
+#define KEYRIGHT 0x14D
+#define KEYLEFT 0x14B
+#define KEYHOME 0x147
+#define KEYEND 0x14F
+#define KEYPAGEDOWN 0x151
+#define KEYPAGEUP 0x149
 
 #define NONE 0
 #define MIRROR 1

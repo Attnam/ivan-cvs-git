@@ -24,7 +24,7 @@ class roomprototype
   roomprototype();
   virtual room* Clone() const = 0;
   room* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
@@ -72,7 +72,7 @@ class room
   uchar Index, DivineMaster;
 };
 
-#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
 
 #define ROOM_PROTOTYPE(name)\
   \
@@ -80,7 +80,7 @@ class room
   {\
    public:\
     virtual room* Clone() const { return new name; }\
-    virtual std::string ClassName() const { return #name; }\
+    virtual std::string GetClassId() const { return #name; }\
   } name##_ProtoType;\
   \
   const room::prototype* name::GetProtoType() const { return &name##_ProtoType; }

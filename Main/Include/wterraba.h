@@ -42,7 +42,7 @@ class gwterrainprototype
   gwterrainprototype();
   virtual gwterrain* Clone() const = 0;
   gwterrain* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
@@ -66,7 +66,7 @@ class owterrainprototype
   owterrainprototype();
   virtual owterrain* Clone() const = 0;
   owterrain* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
@@ -84,7 +84,7 @@ class owterrain : public wterrain, public oterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
-#ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 
 #define WTERRAIN_PROTOTYPE(name, protobase)\
   \
@@ -92,7 +92,7 @@ class owterrain : public wterrain, public oterrain
   {\
    public:\
     virtual protobase* Clone() const { return new name; }\
-    virtual std::string ClassName() const { return #name; }\
+    virtual std::string GetClassId() const { return #name; }\
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\

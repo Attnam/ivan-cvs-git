@@ -140,14 +140,14 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
       {
 	int Key = 0;
 
-	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = 0x14B;
-	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = 0x147;
-	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = 0x148;
-	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = 0x149;	// page up! Believe it, or not!
-	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = 0x14D;
-	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = 0x151;	// page down! Believe it, or not!
-	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = 0x150;
-	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = 0x14F;
+	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = KEYLEFT;
+	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = KEYHOME;
+	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = KEYUP;
+	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEYPAGEUP;	  // page up! Believe it, or not!
+	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = KEYRIGHT;
+	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEYPAGEDOWN;  // page down! Believe it, or not!
+	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = KEYDOWN;
+	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = KEYEND;
 	if(wParam == VK_NUMPAD5) Key = '.';
 
 	if(Key && std::find(KeyBuffer.begin(), KeyBuffer.end(), Key) == KeyBuffer.end())
@@ -413,37 +413,38 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	  else
 	     KeyPressed = event->key.keysym.unicode;
 	  break;
+
 	case SDLK_DOWN:
 	case SDLK_KP2:
-	  KeyPressed = 0x150 + 0xE000;
+	  KeyPressed = KEYDOWN + 0xE000;
 	  break;
 	case SDLK_UP:
 	case SDLK_KP8:
-	  KeyPressed = 0x148 + 0xE000;
+	  KeyPressed = KEYUP + 0xE000;
 	  break;
 	case SDLK_RIGHT:
 	case SDLK_KP6:
-	  KeyPressed = 0x14D + 0xE000;
+	  KeyPressed = KEYRIGHT + 0xE000;
 	  break;
 	case SDLK_LEFT:
 	case SDLK_KP4:
-	  KeyPressed = 0x14B + 0xE000;
+	  KeyPressed = KEYLEFT + 0xE000;
 	  break;
 	case SDLK_HOME:
 	case SDLK_KP7:
-	  KeyPressed = 0x147 + 0xE000;
+	  KeyPressed = KEYHOME + 0xE000;
 	  break;
 	case SDLK_END:
 	case SDLK_KP1:
-	  KeyPressed = 0x14F + 0xE000;
+	  KeyPressed = KEYEND + 0xE000;
 	  break;
 	case SDLK_PAGEUP:
 	case SDLK_KP9:
-	  KeyPressed = 0x149 + 0xE000;
+	  KeyPressed = KEYPAGEUP + 0xE000;
 	  break;
 	case SDLK_KP3:
 	case SDLK_PAGEDOWN:
-	  KeyPressed = 0x151 + 0xE000;
+	  KeyPressed = KEYPAGEDOWN + 0xE000;
 	  break;
 	case SDLK_PRINT:
 	  DOUBLEBUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");

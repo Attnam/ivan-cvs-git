@@ -32,8 +32,6 @@ class bitmap;
 class petrus;
 class gamescript;
 
-/* Presentation of the game class */
-
 class game
 {
  public:

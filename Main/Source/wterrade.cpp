@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "wterraba.h"
@@ -10,7 +10,7 @@ valuemap protocontainer<owterrain>::CodeNameMap;
 
 #include "wterrade.h"
 
-#undef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 
 #include "message.h"
 #include "dungeon.h"

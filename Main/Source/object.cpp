@@ -129,8 +129,6 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
   return OldMaterial;
 }
 
-#include "lterrade.h"
-
 void object::UpdatePictures()
 {
   if(GraphicId.size())

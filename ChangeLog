@@ -1,3 +1,60 @@
+July 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected many warnings given by gcc 3.04 compilation
+	* Personal pronouns are now correct while looking at far away people while SeeWholeMapCheat is on
+	* Dolphins are now rotated and mirrored randomly every turn, which makes them seem more playful
+	* The second sentence of the kamikaze dwarf hymn message now starts correctly with an uppercase letter
+	* Macro system is yet again a bit shorter and more elegant
+	* Removed the unused function definitions of charde.h
+	* Bodypart pictures of farmers and housewives are again randomized correctly
+	* The flower color of the carnivorous plant is again randomized correctly
+	* Adjusted brightness levels of many bodyparts in humanoid.pcx
+	* Made some tiny corrections to the graphics in humanoid.pcx and char.pcx
+	  (for instance, enner beasts mouth is again black and white, not m-color 1 and white)
+	* Corrected all buggy bodypart BitmapPoses
+	* Fixed all IMO ugly bodypart colors
+	* There was also an attempt to optimize the level generation; as a result it's now somewhat slower
+	* Stretchblit is now masked (I needed this feature for IGOR 1.20 that now includes a CW-like draw queue system)
+	* Added colorizablebitmap::Roll(), which is able to simultaneously move the contents of a given rectangle
+	  by an arbitrary amount of pixels horizontally and/or vertically so that the clipped pixels appear on the
+	  opposite side (also needed for IGOR 1.20 as an option)
+	* Added #defines for the eight direction keys to felibdef.h
+	* Corrrected a typo in the monster polymorph message
+	* ESP no longer crashes in the world map
+	* Air is now transparent and thus are Bill's wills and the unclothed parts of genies, too
+	* Mommo configs can again be generated
+	* Added Flexibility material database value and removed the old IsFlexible boolean
+	  (non-living bodyparts now use this as their dexterity or agility and the FormModifiers of
+	  whips and belts are multiplied by it)
+	* The strengths and agilities of nonhumanoids made of non-living materials are now correct
+	* Characters with zero strength (eg. Bill's wills) can now move as long as they aren't carrying anything
+	* Skeletons are no longer considered as bone golems when calculating strengths, dexterity and agility,
+	  for IMO they draw their attributes from the necromantic magic that sustains them, not from the material
+	  (and, it seemed very odd that animated skeletons were thrice as strong as average humans with similiar
+	  skeletons inside them)
+	* Corrected an extremely fatal bug of utmost deep roots that allowed the player to enter the dolphin
+	  pool of the Cathedral by displacing a pet bat or angel flying over it, even though he couldn't swim
+	  nor float himself
+	* Added fiber material of which carnivorous plants are now made, instead of leaf (I firmly believe that the
+	  stem is more important than leaves. Someone with a deeper understanding of plant anatomy correct me
+	  if I'm wrong)
+	* A player controlled carnivorous plant can no longer move
+	* Banana peal golems are now allowed
+	* Forced Ivan's plate mail to be made of iron again
+	* Made a gum solution that allows angels and genies to have leg strengths and be able to carry things around
+	  despite the fact that they don't have legs
+	* Updated the Docs and moved the older files to the Obsolete directory
+	* Added some truly ancient files concerning the earliest incarnations of IVAN there, too,
+	  including even holydoc2.jpg, the legendary scanned documentation of RL1!
+	* Translated the Finnish entries of Small Ideas.txt and Great Ideas.txt.
+	  However, I did not touch Code Improvements.txt, since my English is not good enough to make them as
+	  cryptical and incomprehensible as they are now. There is a notice also in the beginning of the file
+	  explaining this. I didn't alter the entries of NextRelease.txt (former Remember2.txt) either,
+	  since that file is highly temporary and thus a translation would be a waste of time
+	* Added a bool character::StateIsSecret[] array that makes it possible to add secret states which
+	  are not shown on the panel
+	* Life saved and lycanthropy states are now secret
+
 July 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Poisoned state added

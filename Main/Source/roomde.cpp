@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
+#define __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
 
 #include "proto.h"
 #include "roomba.h"
@@ -8,7 +8,7 @@ valuemap protocontainer<room>::CodeNameMap;
 
 #include "roomde.h"
 
-#undef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
+#undef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
 
 #include "charba.h"
 #include "message.h"
@@ -194,7 +194,7 @@ void shop::KickSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool shop::ConsumeItem(character* Customer, item* Item)
+bool shop::ConsumeItem(character* Customer, item*)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
@@ -602,3 +602,4 @@ bool shop::DestroyTerrain(character* Infidel, olterrain* Terrain)
   else
     return false; 
 }
+

@@ -28,8 +28,6 @@ typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
 typedef std::vector<item*> itemvector;
 
-/* Presentation of the stack class */
-
 class stack
 {
  public:

@@ -22,7 +22,7 @@ class actionprototype
   actionprototype();
   virtual action* Clone() const = 0;
   action* CloneAndLoad(inputfile&) const;
-  virtual std::string ClassName() const = 0;
+  virtual std::string GetClassId() const = 0;
   ushort GetIndex() const { return Index; }
  protected:
   ushort Index;
@@ -69,7 +69,7 @@ class action
   bool DNDMode;
 };
 
-#ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
 
 #define ACTION_PROTOTYPE(name)\
   \
@@ -77,7 +77,7 @@ class action
   {\
    public:\
     virtual action* Clone() const { return new name; }\
-    virtual std::string ClassName() const { return #name; }\
+    virtual std::string GetClassId() const { return #name; }\
   } name##_ProtoType;\
   \
   const action::prototype* name::GetProtoType() const { return &name##_ProtoType; }

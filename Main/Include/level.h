@@ -22,8 +22,8 @@ class inputfile;
 class levelscript;
 class roomscript;
 class squarescript;
-
-/* Presentation of the level class */
+class glterrain;
+class olterrain;
 
 class level : public area
 {
@@ -73,6 +73,8 @@ class level : public area
   void ApplyLSquareScript(squarescript*);
   virtual void Draw() const;
  protected:
+  void GenerateLanterns(ushort, ushort, uchar) const;
+  void CreateWallSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
   lsquare*** Map;
   levelscript* LevelScript;
   std::string LevelMessage;

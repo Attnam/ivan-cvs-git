@@ -31,9 +31,10 @@
 
 /*
  * These arrays contain functions and values used for handling states. Remember to update them.
- * All normal states must have PrintBeginMessage and PrintEndMessage functions and a StateDescription string.
- * BeginHandler, EndHandler and StateHandler (called each tick) are optional,
- * enter zero if the state doesn't need one.
+ * All normal states must have PrintBeginMessage and PrintEndMessage functions, a StateDescription string
+ * and a StateIsSecret boolean (if true, StateDescription is not shown in the panel without magical means).
+ * BeginHandler, EndHandler and StateHandler (called each tick) are optional, enter zero if the state
+ * doesn't need one.
  */
 
 void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage };
@@ -42,6 +43,7 @@ void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &chara
 void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0 };
 void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler };
 std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
+bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
@@ -272,6 +274,7 @@ void character::Be()
   if(GetAP() >= 1000)
     {
       ApplyExperience();
+      SpecialTurnHandler();
 
       if(IsPlayer())
 	{
@@ -617,114 +620,126 @@ bool character::MoveTowards(vector2d TPos)
 bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 {
   if(!game::IsInWilderness())
-    if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
-      {
-	character* Character;
+    {
+      if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
+	{
+	  character* Character;
 
-	if((Character = game::GetCurrentLevel()->GetLSquare(MoveTo)->GetCharacter()))
-	  if(IsPlayer())
-	    if(GetTeam() != Character->GetTeam())
-	      return Hit(Character);
-	    else
-	      if(DisplaceAllowed)
+	  if((Character = game::GetCurrentLevel()->GetLSquare(MoveTo)->GetCharacter()))
+	    {
+	      if(IsPlayer())
 		{
-		  Displace(Character);
+		  if(GetTeam() != Character->GetTeam())
+		    return Hit(Character);
+		  else
+		    if(DisplaceAllowed && (game::GetCurrentLevel()->GetLSquare(MoveTo)->IsWalkable(this) || game::GetGoThroughWallsCheat()))
+		      {
+			Displace(Character);
+			return true;
+		      }
+		    else
+		      return false;
+		}
+	      else
+		{
+		  if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
+		    return Hit(Character);
+		  else
+		    if(GetTeam() == Character->GetTeam() && DisplaceAllowed && game::GetCurrentLevel()->GetLSquare(MoveTo)->IsWalkable(this))
+		      return Displace(Character);
+		    else
+		      return false;
+		}
+	    }
+	  else
+	    {
+	      if(game::GetCurrentLevel()->GetLSquare(MoveTo)->IsWalkable(this) || (game::GetGoThroughWallsCheat() && IsPlayer()))
+		{
+		  Move(MoveTo);
 		  return true;
 		}
 	      else
-		return false;
-	  else
-	    if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
-	      return Hit(Character);
-	    else
-	      if(GetTeam() == Character->GetTeam() && DisplaceAllowed)
-		return Displace(Character);
-	      else
-		return false;
-	else
-	  if(game::GetCurrentLevel()->GetLSquare(MoveTo)->IsWalkable(this) || (game::GetGoThroughWallsCheat() && IsPlayer()))
-	    {
-	      Move(MoveTo);
-	      return true;
-	    }
-	  else
-	    {
-	      olterrain* Terrain = game::GetCurrentLevel()->GetLSquare(MoveTo)->GetOLTerrain();
-
-	      if(IsPlayer() && Terrain->CanBeOpened())
 		{
-		  if(CanOpen())
+		  olterrain* Terrain = game::GetCurrentLevel()->GetLSquare(MoveTo)->GetOLTerrain();
+
+		  if(IsPlayer() && Terrain->CanBeOpened())
 		    {
-		      if(Terrain->IsLocked())
+		      if(CanOpen())
 			{
-			  ADD_MESSAGE("%s is locked.", Terrain->CHARNAME(DEFINITE));
-			  return false;
+			  if(Terrain->IsLocked())
+			    {
+			      ADD_MESSAGE("%s is locked.", Terrain->CHARNAME(DEFINITE));
+			      return false;
+			    }
+			  else
+			    {
+			      if(game::BoolQuestion("Do you want to open " + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(game::GetPlayer()->GetPos(), MoveTo)))
+				{
+				  OpenPos(MoveTo);
+				  return true;
+				}
+			      else
+				return false;
+			    }
 			}
 		      else
 			{
-			  if(game::BoolQuestion("Do you want to open " + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(game::GetPlayer()->GetPos(), MoveTo)))
-			    {
-			      OpenPos(MoveTo);
-			      return true;
-			    }
-			  else
-			    return false;
+			  ADD_MESSAGE("This monster type cannot open doors.");
+			  return false;
 			}
 		    }
 		  else
-		    {
-		      ADD_MESSAGE("This monster type cannot open doors.");
-		      return false;
-		    }
+		    return false;
 		}
-	      else
-		return false;
 	    }
-      }
-    else
-      {
-	if(IsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
-	  {
-	    if(HasPetrussNut() && !HasGoldenEagleShirt())
-	      {
-		game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
-		game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
-		game::End();
-		return true;
-	      }
-
-	    std::vector<character*> TempPlayerGroup;
-
-	    if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, this, false))
-	      return false;
-
-	    game::GetCurrentArea()->RemoveCharacter(GetPos());
-	    game::GetCurrentDungeon()->SaveLevel();
-	    game::LoadWorldMap();
-	    game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
-	    game::SetIsInWilderness(true);
-	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-	    game::SendLOSUpdateRequest();
-	    game::UpdateCamera();
-	    game::GetCurrentArea()->UpdateLOS();
-	    if(configuration::GetAutoSaveInterval())
-	      game::Save(game::GetAutoSaveFileName().c_str());
-	    return true;
-	  }
-
-	return false;
-      }
-  else
-    if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
-      if(game::GetCurrentArea()->GetSquare(MoveTo)->IsWalkable(this) || game::GetGoThroughWallsCheat())
-	{
-	  Move(MoveTo);
-	  return true;
 	}
       else
+	{
+	  if(IsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
+	    {
+	      if(HasPetrussNut() && !HasGoldenEagleShirt())
+		{
+		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
+		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
+		  game::End();
+		  return true;
+		}
+
+	      std::vector<character*> TempPlayerGroup;
+
+	      if(!GetLSquareUnder()->GetLevelUnder()->CollectCreatures(TempPlayerGroup, this, false))
+		return false;
+
+	      game::GetCurrentArea()->RemoveCharacter(GetPos());
+	      game::GetCurrentDungeon()->SaveLevel();
+	      game::LoadWorldMap();
+	      game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
+	      game::SetIsInWilderness(true);
+	      game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
+	      game::SendLOSUpdateRequest();
+	      game::UpdateCamera();
+	      game::GetCurrentArea()->UpdateLOS();
+	      if(configuration::GetAutoSaveInterval())
+		game::Save(game::GetAutoSaveFileName().c_str());
+	      return true;
+	    }
+
+	  return false;
+	}
+    }
+  else
+    {
+      if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
+	if(game::GetCurrentArea()->GetSquare(MoveTo)->IsWalkable(this) || game::GetGoThroughWallsCheat())
+	  {
+	    Move(MoveTo);
+	    return true;
+	  }
+	else
+	  return false;
+      else
 	return false;
-    else
-      return false;	
+    }
 }
 
 bool character::ShowInventory()
@@ -1289,11 +1304,11 @@ uchar character::GetBurdenState(ulong Mass) const
     SumOfMasses = GetWeight();
   else
     SumOfMasses = Mass;
-  if(SumOfMasses >= ulong(7500 * GetCarryingStrength()))
+  if(SumOfMasses > ulong(7500 * GetCarryingStrength()))
     return OVERLOADED;
-  if(SumOfMasses >= ulong(5000 * GetCarryingStrength()))
+  if(SumOfMasses > ulong(5000 * GetCarryingStrength()))
     return STRESSED;
-  if(SumOfMasses >= ulong(2500 * GetCarryingStrength()))
+  if(SumOfMasses > ulong(2500 * GetCarryingStrength()))
     return BURDENED;
   return UNBURDENED;
 }
@@ -1510,7 +1525,7 @@ bool character::GainAllItems()
 	GetStack()->AddItem(Proto->Clone());
 
       for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
-	if(!i->second.IsAbstract && i->second.IsAutoInitializable)
+	if(i->second.IsAutoInitializable)
 	  GetStack()->AddItem(Proto->Clone(i->first));
     }
 
@@ -2029,7 +2044,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(IsPlayer())
     ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHARNAME(INDEFINITE));
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s glows in a crimson light and %s transform into %s!", CHARNAME(DEFINITE), PersonalPronoun().c_str(), NewForm->CHARNAME(INDEFINITE));
+    ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHARNAME(DEFINITE), PersonalPronoun().c_str(), NewForm->CHARNAME(INDEFINITE));
 
   GetSquareUnder()->RemoveCharacter();
   GetSquareUnder()->AddCharacter(NewForm);
@@ -2539,7 +2554,7 @@ void character::ShowNewPosInfo() const
 
   game::SendLOSUpdateRequest();
 
-  if(StateIsActivated(ESP))
+  if(StateIsActivated(ESP) && !game::IsInWilderness())
     for(ushort c = 0; c < game::GetTeams(); ++c)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled())
@@ -3113,7 +3128,7 @@ std::string character::Description(uchar Case) const
 
 std::string character::PersonalPronoun() const
 {
-  if(GetSex() == UNDEFINED || !CanBeSeenByPlayer())
+  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
   else if(GetSex() == MALE)
     return "he";
@@ -3123,7 +3138,7 @@ std::string character::PersonalPronoun() const
 
 std::string character::PossessivePronoun() const
 {
-  if(GetSex() == UNDEFINED || !CanBeSeenByPlayer())
+  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "its";
   else if(GetSex() == MALE)
     return "his";
@@ -3133,7 +3148,7 @@ std::string character::PossessivePronoun() const
 
 std::string character::ObjectPronoun() const
 {
-  if(GetSex() == UNDEFINED || !CanBeSeenByPlayer())
+  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
   else if(GetSex() == MALE)
     return "him";
@@ -3563,11 +3578,13 @@ void character::UpdateBodyPartPicture(ushort Index)
       std::vector<ushort>& ColorB = GetBodyPart(Index)->GetColorBVector();
       std::vector<ushort>& ColorC = GetBodyPart(Index)->GetColorCVector();
       std::vector<ushort>& ColorD = GetBodyPart(Index)->GetColorDVector();
+      std::vector<uchar>& SpecialFlags = GetBodyPart(Index)->GetSpecialFlagsVector();
 
       BitmapPos.clear();
       ColorB.clear();
       ColorC.clear();
       ColorD.clear();
+      SpecialFlags.clear();
 
       for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
 	{
@@ -3575,6 +3592,7 @@ void character::UpdateBodyPartPicture(ushort Index)
 	  ColorB.push_back(GetBodyPartColorB(Index, c));
 	  ColorC.push_back(GetBodyPartColorC(Index, c));
 	  ColorD.push_back(GetBodyPartColorD(Index, c));
+	  SpecialFlags.push_back(GetSpecialBodyPartFlags(Index, c));
 	}
 
       material* Material = GetBodyPart(Index)->GetMainMaterial();
@@ -3604,14 +3622,9 @@ void character::LoadDataBaseStats()
   SetMoney(GetDefaultMoney());
 }
 
-character* character::Clone(bool MakeBodyParts, bool CreateEquipment) const
-{
-  return GetProtoType()->Clone(MakeBodyParts, CreateEquipment);
-}
-
 character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  character* Char = Clone(0, false, true);
+  character* Char = Cloner(0, false, true);
   Char->Load(SaveFile);
   return Char;
 }
@@ -3634,9 +3647,6 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 
   if(!Load)
     {
-      if(dynamic_cast<unicorn*>(this) != 0)
-	int esko = 2;
-
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
@@ -3662,7 +3672,7 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
     }
 }
 
-characterprototype::characterprototype(characterprototype* Base) : Base(Base)
+characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, bool, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId)
 {
   Index = protocontainer<character>::Add(this);
 }
@@ -4008,7 +4018,7 @@ void character::DrawPanel() const
     FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", CapitalizeCopy(GetAction()->GetDescription()).c_str());
 
   for(ushort c = 0; c < STATES; ++c)
-    if(StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
+    if(!StateIsSecret[c] && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & EquipmentState || !TemporaryStateCounter[c] ? BLUE : WHITE, "%s", StateDescription[c].c_str());
 
   if(GetHungerState() == VERYHUNGRY)
@@ -4689,7 +4699,6 @@ stackiterator character::FindRandomOwnBodyPart()
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
-	ushort OriginalID = GetOriginalBodyPartID(c);
 	for(stackiterator ii = GetStack()->GetBottomSlot(); ii != GetStack()->GetSlotAboveTop(); ++ii)
 	  {
 	    if(GetOriginalBodyPartID(c) == (**ii)->GetID())
@@ -4731,7 +4740,7 @@ bodypart* character::TryAttachRandomOldBodyPart()
 
 /* Attaches the OldOwnBodyPartIterator back to its place and removes it from FromStack. FromStack is the stack where the item currently is */ 
 
-bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIterator, stack* FromStack)
+bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIterator, stack*)
 {
   bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
   if(!OldOwnBodyPart)
@@ -4880,14 +4889,3 @@ wsquare* character::GetWSquareUnder() const
 {
   return static_cast<wsquare*>(SquareUnder);
 }
-
-/*void characterdatabase::characterdatabase(const characterdatabase& Base)
-{
-  *this = Base;
-  Article = AllocateCopyOf(Base.Article);
-  Adjective = AllocateCopyOf(Adjective.Article);
-  AdjectiveArticle = AllocateCopyOf(AdjectiveArticle.Article);
-  NameSingular = AllocateCopyOf(NameSingular.Article);
-  NamePlural = AllocateCopyOf(NamePlural.Article);
-  PostFix = AllocateCopyOf(PostFix.Article);
-}*/
