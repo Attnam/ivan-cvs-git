@@ -1070,52 +1070,142 @@ Dungeon NEW_ATTNAM;
 		ReCalculate=false;
 		OnGround=true;
 		TeamDefault=2;
-		AmbientLight=rgb24(150, 150, 150);
+		AmbientLight=rgb24(120, 120, 120);
 		LOSModifier=48;
 		IgnoreDefaultSpecialSquares = false;
 
 		RoomDefault
 		{
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
-			Size=4+rand%8,4+rand%8;
+			Size=4+rand%3,4+rand%3;
 			AltarPossible=false;
-			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare=solidterrain(PARQUET),empty;
-			DoorSquare=solidterrain(PARQUET),door;
+			WallSquare=solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
+			FloorSquare=solidterrain(FLOOR),empty;
+			DoorSquare=solidterrain(FLOOR), door;
 			GenerateDoor=true;
 			ReCalculate=true;
 			DivineMaster=0;
 			GenerateTunnel=false;
-			GenerateLanterns=true;
+			GenerateLanterns=false;
 			Type=normalroom;
 			GenerateFountains=false;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
 			Shape = ROUND_CORNERS;
 		}
-
-		Square, Random NOT_IN_ROOM;
+		Room 0;
 		{
-			Character=hunter;
-			Times=10;
+			Pos=10,10;
+			Size=20,20;
+			AltarPossible=false;
+			WallSquare=solidterrain(FLOOR),STONE wall(BRICK_FINE);
+			FloorSquare=solidterrain(FLOOR),empty;
+			GenerateDoor=true;
+			ReCalculate=false;
+			DivineMaster=silva;
+			GenerateLanterns=false;
+			OTerrainMap
+			{
+				Pos=2,2;
+				Size=16,16;
+				Types
+				{
+					# = GOLD wall(BRICK_FINE);
+				}
+			}
+			{
+				................
+				................
+				..############..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#####.######..
+				................
+				................
+			}
+			CharacterMap
+			{
+				Pos=2,2;
+				Size=16,16;
+				Types
+				{
+					# = 0;
+					I = imperialist;
+				}
+			}
+			{
+				................
+				................
+				..############..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#....I.....#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..#..........#..
+				..############..
+				................
+				................
+			}
+			GTerrainMap
+			{
+				Pos=2,2;
+				Size=16,16;
+				Types
+				{
+					# = 0;
+					_ = GOLD solidterrain(FLOOR);
+				}
+			}
+			{
+				................
+				................
+				..############..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..#__________#..
+				..############..
+				................
+				................				
+			}
 		}
-
-
 		Square, Random NOT_IN_ROOM;
-		{
-			Character=farmer;
-			Times=5;
-		}
-
-		Square, Random NOT_IN_ROOM;
-		{
-			Character=housewife;
-			Times=5;
-		}
-
-		Square, Pos 30,61;
 		{
 			EntryIndex = STAIRS_UP;
+		}
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain=boulder;
+			Times=50;
+		}
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain=decoration(PALM);
+			Times = 100;
+		}
+		Square, Random NOT_IN_ROOM;
+		{
+			Character=bananagrower;
+			Times=40;
 		}
 	}
 }

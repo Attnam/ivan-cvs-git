@@ -407,7 +407,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
       return;
-    case SDL_KEY_DOWN:
+    case SDL_KEYDOWN:
       switch(event->key.keysym.sym)
 	{
 	case SDLK_RETURN:
@@ -464,7 +464,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	  
       break;
 
-    case SDL_KEY_UP:
+    case SDL_KEYUP:
       break;
 
     default:

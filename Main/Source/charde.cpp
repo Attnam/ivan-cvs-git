@@ -549,7 +549,7 @@ void guard::BeTalkedTo(character* Talker)
       if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", CHAR_DESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", CHAR_DESCRIPTION(DEFINITE));
+	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as a shop guard.\"", CHAR_DESCRIPTION(DEFINITE));
       break;
     case 1:
       if(GetLevelUnder()->GetOnGround())
@@ -3652,4 +3652,120 @@ ulong angel::GetBaseEmitation() const
     case NEUTRAL: return MakeRGB24(120, 120, 150);
     default: return MakeRGB24(150, 110, 110);
     }
+}
+
+void bananagrower::BeTalkedTo(character* Talker)
+{
+  std::string ProfStr;
+  switch(Profession)
+    {
+    case 0:
+      ProfStr = "the president of Twerajf";
+      break;
+    case 1:
+      ProfStr = "a doctor";
+      break;
+    case 2:
+      ProfStr = "a computer engineer";
+      break;
+    case 3:
+      ProfStr = "a physicist";
+      break;
+    case 4:
+      ProfStr = "a journalist";
+      break;
+    case 5:
+      ProfStr = "a chemist";
+      break;
+    case 6:
+      ProfStr = "a quantum mechanic";
+      break;
+    case 7:
+      ProfStr = "a priest of Silva";
+      break;
+    }
+
+  if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    {
+      ADD_MESSAGE("\"Banana POWER!\"");
+      return;
+    }
+
+  static bool Said[5];
+
+  switch(RandomizeReply(5, Said))
+    {
+    case 0:
+      ADD_MESSAGE("\"I was %s before that darn Petrus invaded our peaceful land.\"", ProfStr.c_str());
+      break;
+    case 1:
+      ADD_MESSAGE("\"When this place was still called Twerajf, everybody was happy.\"");
+      break;
+    case 2:
+      ADD_MESSAGE("\"I hate bananas. I wish I still was %s.\"", ProfStr.c_str());
+      break;
+    case 3:
+      ADD_MESSAGE("\"1 + 1 = 3. I still don't belive it.\"");
+      break;
+    case 4:
+      if(Profession == 0)
+	ADD_MESSAGE("\"I'm glad that Petrus spared my life even though I was the president.\"");
+      else
+	ADD_MESSAGE("\"I wish it would rain soon, the bananas are starting to die.\"");
+    }
+}
+
+void bananagrower::VirtualConstructor(bool Load)
+{
+  humanoid::VirtualConstructor(Load);
+  if(!Load)
+    Profession = RAND() % 8;
+}
+
+void bananagrower::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> Profession;
+}
+
+void bananagrower::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << Profession;
+}
+
+void imperialist::CreateInitialEquipment(ushort SpecialFlags)
+{
+  for(ushort c = 0; c < 5; ++c)
+    GetStack()->AddItem(new stone(0, SpecialFlags));
+}
+
+void imperialist::BeTalkedTo(character* Talker)
+{
+  if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    {
+      ADD_MESSAGE("\"Die you communist pig!\"");
+      return;
+    }
+
+  static bool Said[5];
+
+  switch(RandomizeReply(5, Said))
+    {
+    case 0:
+      ADD_MESSAGE("\"They said that levitating ostriches had no future! HAHAHAAHHA!\"");
+      break;
+    case 1:
+      ADD_MESSAGE("\"Ostriches Corp. was a high risk investment, but more than worth it.\""); 
+      break;
+    case 2:
+      ADD_MESSAGE("\"I'm originally from Attnam, but I like the climate here in New Attnam more.\"");
+      break;
+    case 3:
+      ADD_MESSAGE("\"The tax laws of Attnam don't encourage free enterprise.\""); 
+      break;
+    case 4:
+      ADD_MESSAGE("\"Poor people shouldn't complain: after all it's their own fault.\"");
+      break;
+    }  
 }

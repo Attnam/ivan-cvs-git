@@ -196,4 +196,11 @@ class GLTERRAIN
   virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
 );
 
+class OLTERRAIN
+(
+  boulder,
+  olterrain,
+ public:
+  virtual void Break();
+);
 #endif

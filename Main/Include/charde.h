@@ -848,4 +848,26 @@ class CHARACTER
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Hope there's vodka in hell!"; }
 );
 
+class CHARACTER
+(
+  bananagrower,
+  humanoid,
+ public:
+  virtual void BeTalkedTo(character*);
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+ protected:
+  virtual void VirtualConstructor(bool);
+  uchar Profession;
+);
+
+class CHARACTER
+(
+  imperialist,
+  humanoid,
+ public:
+  virtual void BeTalkedTo(character*);
+  virtual void CreateInitialEquipment(ushort);
+);
+
 #endif

@@ -346,3 +346,4 @@ Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time)
 Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
+Picking VERY heavy items should be prohibited

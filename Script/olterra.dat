@@ -105,6 +105,17 @@ decoration
 		NameSingular = "spruce";
 		BitmapPos = 16, 352;
 	}
+	Config PALM;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDug = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(0, 50, 0);
+		NameSingular = "palm";
+		BitmapPos = 16, 368;
+	}
 
 	Config LINDEN;
 	{
@@ -275,3 +286,16 @@ brokendoor /* olterrain->door-> */
 	Adjective = "broken";
 	/* BitmapPos depends on being open or not */
 }
+
+boulder /* olterrain-> */
+{
+	DigMessage = "You smash the boulder to tiny bits.";
+	MainMaterialConfig == STONE;
+	DefaultMainVolume = 523500;
+	/* Uses ContainerPostFix() */
+	NameSingular = "boulder";
+	BitmapPos = 64, 304;
+	SitMessage = "The boulder is rather hard to sit on.";
+	CanBeDug = true;
+}
+

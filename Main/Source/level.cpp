@@ -31,9 +31,9 @@ level::~level()
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
-  #define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
+#define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
 
-  #define CALL_EXPAND(x, y)\
+#define CALL_EXPAND(x, y)\
     {\
       ExpandPossibleRoute(vector2d(x, y), Target, XMode);\
       \
@@ -49,17 +49,17 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 	if(CHECK(Origo.X - 1, Origo.Y))
 	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
-	    if(Target.X > Origo.X)
-	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(Target.X > Origo.X)
+	if(CHECK(Origo.X + 1, Origo.Y))
+	  CALL_EXPAND(Origo.X + 1, Origo.Y);
 
-		  if(Target.Y < Origo.Y)
-		    if(CHECK(Origo.X, Origo.Y - 1))
-		      CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(Target.Y < Origo.Y)
+	if(CHECK(Origo.X, Origo.Y - 1))
+	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
-			if(Target.Y > Origo.Y)
-			  if(CHECK(Origo.X, Origo.Y + 1))
-			    CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y > Origo.Y)
+	if(CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.X <= Origo.X)
 	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
@@ -83,21 +83,21 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 	if(CHECK(Origo.X, Origo.Y - 1))
 	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
-	    if(Target.Y > Origo.Y)
-	      if(CHECK(Origo.X, Origo.Y + 1))
-		CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y > Origo.Y)
+	if(CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
 	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
-	    if(Target.X > Origo.X)
-	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(Target.X > Origo.X)
+	if(CHECK(Origo.X + 1, Origo.Y))
+	  CALL_EXPAND(Origo.X + 1, Origo.Y);
 
-		  if(Target.Y <= Origo.Y)
-		    if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-		      CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y <= Origo.Y)
+	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.Y >= Origo.Y)
 	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
@@ -119,9 +119,9 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 
 void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
-  #define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
+#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
 
-  #define CALL_EXPAND(x, y) \
+#define CALL_EXPAND(x, y) \
     {\
       ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);\
       \
@@ -137,17 +137,17 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
 	if(CHECK(Origo.X - 1, Origo.Y))
 	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
-	    if(Target.X > Origo.X)
-	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(Target.X > Origo.X)
+	if(CHECK(Origo.X + 1, Origo.Y))
+	  CALL_EXPAND(Origo.X + 1, Origo.Y);
 
-		  if(Target.Y < Origo.Y)
-		    if(CHECK(Origo.X, Origo.Y - 1))
-		      CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(Target.Y < Origo.Y)
+	if(CHECK(Origo.X, Origo.Y - 1))
+	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
-			if(Target.Y > Origo.Y)
-			  if(CHECK(Origo.X, Origo.Y + 1))
-			    CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y > Origo.Y)
+	if(CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.X <= Origo.X)
 	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
@@ -171,21 +171,21 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
 	if(CHECK(Origo.X, Origo.Y - 1))
 	  CALL_EXPAND(Origo.X, Origo.Y - 1);
 
-	    if(Target.Y > Origo.Y)
-	      if(CHECK(Origo.X, Origo.Y + 1))
-		CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y > Origo.Y)
+	if(CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.X < Origo.X)
 	if(CHECK(Origo.X - 1, Origo.Y))
 	  CALL_EXPAND(Origo.X - 1, Origo.Y);
 
-	    if(Target.X > Origo.X)
-	      if(CHECK(Origo.X + 1, Origo.Y))
-		CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(Target.X > Origo.X)
+	if(CHECK(Origo.X + 1, Origo.Y))
+	  CALL_EXPAND(Origo.X + 1, Origo.Y);
 
-		  if(Target.Y <= Origo.Y)
-		    if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-		      CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(Target.Y <= Origo.Y)
+	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
+	  CALL_EXPAND(Origo.X, Origo.Y + 1);
 
       if(Target.Y >= Origo.Y)
 	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
@@ -711,14 +711,14 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
 	}
 
       if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOT_WALKABLE))
-      || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HAS_CHARACTER))
-      || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
+	 || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HAS_CHARACTER))
+	 || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
 	continue;
 
       uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
       if((RoomFlags == IN_ROOM && !Map[Pos.X][Pos.Y]->GetRoom())
-      || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoom()))
+	 || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoom()))
 	continue;
 
       return Pos;
@@ -1030,7 +1030,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       CreateRoomSquare(GTerrain[Counter + 1], OTerrain[Counter + 1], x, Pos.Y + Size.Y - 1, Room, DivineMaster);
 
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
-      || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
+	 || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
 	{
 	  OKForDoor.push_back(vector2d(x,Pos.Y));
 	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));

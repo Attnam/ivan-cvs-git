@@ -1,3 +1,10 @@
+October 14 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Compiles again on linux
+	* added imperialist and banana grower classes
+	* added rough outline of New Attnam
+	* added boulder
+	
 October 6 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Underscores now separate the words of all macros in the game

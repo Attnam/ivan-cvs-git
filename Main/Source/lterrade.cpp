@@ -850,3 +850,21 @@ void link::VirtualConstructor(bool Load)
 	AttachedEntry = STAIRS_UP;
       }
 }
+
+void boulder::Break()
+{
+  /* If this used the volume of the boulder the pieces would be huge or there would be just hundreds of them so I jsut use normal sized stones and just a few of them too... */
+  ushort HowManyParts = RAND() % 5 + 1;
+  for(ushort c = 0; c < HowManyParts; ++c)
+    {
+      material* StonesMaterial = GetMainMaterial()->Clone();
+      StonesMaterial->SetVolume(1000);
+      item* Stone = new stone(0, NO_MATERIALS);
+      Stone->InitMaterials(StonesMaterial);
+      GetLSquareUnder()->GetStack()->AddItem(Stone);
+      
+    }
+  olterrain::Break();
+}
+
+

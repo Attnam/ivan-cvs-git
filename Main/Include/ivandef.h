@@ -511,6 +511,7 @@
 #define DOUBLE_BED 6
 #define POOL_BORDER 7
 #define POOL_CORNER 8
+#define PALM 9
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
