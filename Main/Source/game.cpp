@@ -401,6 +401,9 @@ void game::panel::Draw() const
 	FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
 
+	if(GetWizardMode())
+		FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "NP: %d", Player->GetNP());
+
 	if(GetInWilderness())
 		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "Worldmap");
 	else

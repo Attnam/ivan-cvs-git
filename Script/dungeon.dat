@@ -105,13 +105,13 @@ Dungeon 0;
 
 		Room 1;
 		{
-			Size=10,10;
+			Size=7,7;
 			AltarPossible=false;
 
 			CharacterMap
 			{
 				Pos=1,1;
-				Size=8,8;
+				Size=5,5;
 
 				Types
 				{
@@ -119,14 +119,11 @@ Dungeon 0;
 				}
 			}
 			{
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
-				WWWWWWWW
+				WWWWW
+				WWWWW
+				WWWWW
+				WWWWW
+				WWWWW
 			}
 		}
 	}

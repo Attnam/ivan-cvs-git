@@ -390,11 +390,12 @@ public:
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual float OfferModifier() const RET(0.1f)
-	virtual vector2d GetBitmapPos() const RETV(0,144)
+	virtual vector2d GetBitmapPos() const RETV(0,160)
 	virtual bool ReceiveSound(float, bool, stack*);
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; case 1: return 1500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
+	virtual void ColorChangeSpeciality(uchar, bool);
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );

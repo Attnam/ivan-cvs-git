@@ -1606,10 +1606,29 @@ bool character::Look()
 
 			ADD_MESSAGE("%s.", Msg.c_str());
 
-			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
-				ADD_MESSAGE("%s is standing here.", game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()->CNAME(INDEFINITE));
+			character* Character;
 
-			/* This should also show whether the monster is hostile, neutral or friend! */
+			if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
+				if(Character->GetIsPlayer())
+					ADD_MESSAGE("You are standing here.", game::PersonalPronoun(Character->GetSex()));
+				else
+				{
+					ADD_MESSAGE("%s is standing here.", Character->CNAME(INDEFINITE));
+
+					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
+						ADD_MESSAGE("%s is tame.", game::PersonalPronoun(Character->GetSex()));
+					else
+					{
+						uchar Relation = Character->GetTeam()->GetRelation(game::GetPlayer()->GetTeam());
+
+						if(Relation == HOSTILE)
+							ADD_MESSAGE("%s is hostile.", game::PersonalPronoun(Character->GetSex()));
+						else if(Relation == NEUTRAL)
+							ADD_MESSAGE("%s is neutral.", game::PersonalPronoun(Character->GetSex()));
+						else if(Relation == FRIEND)
+							ADD_MESSAGE("%s is friendly.", game::PersonalPronoun(Character->GetSex()));
+					}
+				}
 		}
 		else
 			ADD_MESSAGE("You have no idea what might lie here.");
@@ -2436,7 +2455,7 @@ void character::StruckByWandOfStriking()
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
 	SetHP(GetHP() - 20 - rand() % 21);
-	
+
 	CheckDeath("killed by a wand of striking");
 }
 

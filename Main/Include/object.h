@@ -64,6 +64,7 @@ public:
 	virtual void SetSquareUnder(square* What) { SquareUnder = What; }
 	virtual levelsquare* GetLevelSquareUnder() const;
 	virtual void SetLevelSquareUnder(levelsquare*);
+	virtual void ColorChangeSpeciality(uchar, bool) {}
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const { return NameSingular() + "s"; }

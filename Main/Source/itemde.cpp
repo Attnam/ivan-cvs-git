@@ -173,7 +173,10 @@ material* lump::BeDippedInto()
 
 bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	ushort Index = ItemStack->AddItem(new brokenbottle);
+	item* Remains = new brokenbottle(false);
+	Remains->InitMaterials(GetMaterial(0));
+	SetMaterial(0, 0);
+	ushort Index = ItemStack->AddItem(Remains);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	SetExists(false);
@@ -568,4 +571,17 @@ void brokenbottle::GetStepOnEffect(character* Stepper)
 material* corpse::BeDippedInto()
 {
 	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
+}
+
+void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
+{
+	if(!Index)
+	{
+		for(uchar c = 1; c < 4 && c < Material.size(); ++c)
+			if(!Material[c])
+				GraphicId.Color[c] = GraphicId.Color[0];
+	}
+	else
+		if(EmptyMaterial)
+			GraphicId.Color[Index] = GraphicId.Color[0];
 }

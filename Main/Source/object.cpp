@@ -73,6 +73,9 @@ void object::InitMaterials(ushort Materials, ...)
 			if(c < 4)
 				GraphicId.Color[c] = Material[c]->GetColor();
 		}
+
+		if(c < 4)
+			ColorChangeSpeciality(c, Material[c] ? false : true);
 	}
 
 	va_end(AP);
@@ -96,6 +99,8 @@ void object::InitMaterials(material* FirstMaterial)
 		if(!Material[0]->GetVolume())
 			Material[0]->SetVolume(GetDefaultVolume(0));
 	}
+
+	ColorChangeSpeciality(0, Material[0] ? false : true);
 
 	GraphicId.BitmapPos = GetBitmapPos();
 	GraphicId.FileIndex = GetGraphicsContainerIndex();
@@ -299,10 +304,12 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 	}
 
 	if(Index < 4)
-		if((Material[Index] && NewMaterial && Material[Index]->GetColor() != NewMaterial->GetColor()) || (!Material[Index] && NewMaterial && NewMaterial->GetColor()) || (Material[Index] && !NewMaterial && Material[Index]->GetColor()))
+		if(( Material[Index] && NewMaterial && Material[Index]->GetColor() != NewMaterial->GetColor()) ||
+		   (!Material[Index] && NewMaterial) || (Material[Index] && !NewMaterial))
 		{
 			igraph::RemoveUser(GraphicId);
 			GraphicId.Color[Index] = NewMaterial ? NewMaterial->GetColor() : 0;
+			ColorChangeSpeciality(Index, NewMaterial ? false : true);
 			Picture = igraph::AddUser(GraphicId).Bitmap;
 		}
 

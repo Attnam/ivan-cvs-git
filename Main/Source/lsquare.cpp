@@ -970,8 +970,8 @@ void levelsquare::SwapCharacter(levelsquare* With)
 			MoveeOne->SetSquareUnder(With);
 			SignalEmitationIncrease(EmitTwo);
 			With->SignalEmitationIncrease(EmitOne);
-			SignalEmitationIncrease(EmitOne);
-			With->SignalEmitationIncrease(EmitTwo);
+			SignalEmitationDecrease(EmitOne);
+			With->SignalEmitationDecrease(EmitTwo);
 			NewDrawRequested = true;
 			With->NewDrawRequested = true;
 		}
