@@ -134,3 +134,4 @@ void sweaponskill::Load(inputfile& SaveFile)
 
 	SaveFile >> WeaponName >> ID;
 }
+

@@ -190,7 +190,7 @@ void game::Init(std::string Name)
 
 		UpdateCamera();
 
-		game::SendLOSUpdateRequest();
+		game::GetCurrentArea()->UpdateLOS();
 
 		for(ushort c = 1; GetGod(c); ++c)
 		{
@@ -440,7 +440,7 @@ void game::panel::Draw() const
 void game::UpdateCameraX()
 {
 	if(Player->GetPos().X < 25)
-		if(!Player->GetPos().X)
+		if(!Camera.X)
 			return;
 		else
 			Camera.X = 0;
@@ -456,7 +456,7 @@ void game::UpdateCameraX()
 void game::UpdateCameraY()
 {
 	if(Player->GetPos().Y < 18)
-		if(!Player->GetPos().Y)
+		if(!Camera.Y)
 			return;
 		else
 			Camera.Y = 0;
@@ -559,10 +559,7 @@ bool game::OnScreen(vector2d Pos)
 void game::DrawEverythingNoBlit(bool EmptyMsg)
 {
 	if(LOSUpdateRequested)
-	{
 		game::GetCurrentArea()->UpdateLOS();
-		LOSUpdateRequested = false;
-	}
 
 	game::GetCurrentArea()->Draw();
 	if(OnScreen(GetPlayer()->GetPos()))

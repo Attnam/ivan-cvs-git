@@ -775,7 +775,7 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 		ChangeOverLevelTerrain(new empty);
 		SignalEmitationDecrease(Emit);
 		ForceEmitterEmitation();
-		game::SendLOSUpdateRequest();
+		GetLevelUnder()->UpdateLOS();
 	}
 
 	for(uchar c = 0; c < 4; ++c)

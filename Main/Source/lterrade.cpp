@@ -123,7 +123,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 			game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetDownStairs()), *c);
 
 		game::GetCurrentLevel()->Luxify();
-		game::SendLOSUpdateRequest();
+		game::GetCurrentLevel()->UpdateLOS();
 		game::UpdateCamera();
 		return true;
 	}
@@ -161,7 +161,7 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 
 			game::SetInWilderness(true);
 			game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
-			game::SendLOSUpdateRequest();
+			game::GetCurrentArea()->UpdateLOS();
 			game::UpdateCamera();
 			return true;
 		}
@@ -259,7 +259,7 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		game::GetCurrentLevel()->Luxify();
 		game::ShowLevelMessage();
 		game::UpdateCamera();
-		game::SendLOSUpdateRequest();
+		game::GetCurrentLevel()->UpdateLOS();
 		return true;
 	}
 	else
@@ -300,7 +300,7 @@ void door::MakeWalkable()
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
-		game::SendLOSUpdateRequest();
+		game::GetCurrentLevel()->UpdateLOS();
 
 	UpdatePicture();
 }
@@ -316,7 +316,7 @@ void door::MakeNotWalkable()
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
-		game::SendLOSUpdateRequest();
+		game::GetCurrentLevel()->UpdateLOS();
 
 	UpdatePicture();
 }

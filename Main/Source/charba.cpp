@@ -226,12 +226,12 @@ void character::Be()
 		{
 			if(GetIsPlayer())
 			{
-				static ushort Timer = 0;
+				/*static ushort Timer = 0;
 				if(CanMove() && !game::GetInWilderness() && Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
-				}
+				}*/
 				CharacterSpeciality();
 				StateAutoDeactivation();
 				if(CanMove())
@@ -506,7 +506,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 			if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
 				game::UpdateCameraY();
 
-			game::SendLOSUpdateRequest();
+			game::GetCurrentArea()->UpdateLOS();
 
 			if(!game::GetInWilderness())
 			{
@@ -745,7 +745,7 @@ bool character::TryMove(vector2d MoveTo)
 				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-				game::SendLOSUpdateRequest();
+				game::GetCurrentArea()->UpdateLOS();
 				game::UpdateCamera();
 				return true;
 			}
@@ -1436,7 +1436,7 @@ bool character::RaiseStats()
 	Agility += 10;
 	Perception += 10;
 	HP = GetMaxHP();
-	game::SendLOSUpdateRequest();
+	game::GetCurrentArea()->UpdateLOS();
 
 	return false;
 }
@@ -1448,7 +1448,7 @@ bool character::LowerStats()
 	Agility -= 10;
 	Perception -= 10;
 	HP = GetMaxHP();
-	game::SendLOSUpdateRequest();
+	game::GetCurrentArea()->UpdateLOS();
 
 	return false;
 }
@@ -2497,6 +2497,7 @@ bool character::CheckForUsefulItemsOnGround()
 		if(CanWield() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED)
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
+
 				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
 				if(GetWielded())

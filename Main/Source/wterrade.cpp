@@ -32,13 +32,13 @@ bool attnam::GoDown(character* Who) const
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
 
 	game::GetCurrentLevel()->Luxify();
-	game::SendLOSUpdateRequest();
+	game::GetCurrentLevel()->UpdateLOS();
 	game::UpdateCamera();
 
 	if(Who->HasMaakotkaShirt() && game::GetPerttu() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPerttu()->GetStoryState() < 3)
 	{
-		game::GetCurrentLevel()->GetSquare(vector2d(28, 40))->KickAnyoneStandingHereAway();
-		game::GetPerttu()->Move(vector2d(28, 40), true);
+		game::GetCurrentLevel()->GetSquare(vector2d(23, 36))->KickAnyoneStandingHereAway();
+		game::GetPerttu()->Move(vector2d(23, 36), true);
 		game::GetPerttu()->SetTeam(game::GetTeam(3));
 		game::GetPerttu()->SetStoryState(3);
 	}
@@ -67,7 +67,7 @@ bool elpuricave::GoDown(character* Who) const
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
 
 	game::GetCurrentLevel()->Luxify();
-	game::SendLOSUpdateRequest();
+	game::GetCurrentLevel()->UpdateLOS();
 	game::UpdateCamera();
 	return true;
 }

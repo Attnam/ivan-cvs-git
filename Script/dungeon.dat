@@ -265,9 +265,9 @@ Dungeon 1;
 	{
 		Description=Attnam;
 		FillSquare=floor,empty;
-		Size=64,64;
+		Size=48,48;
 		GenerateMonsters=false;
-		Rooms=15 + rand % 6;
+		Rooms=25 + rand % 6;
 		Items=0;
 		ReCalculate=false;
 		GenerateUpStairs=false;
@@ -393,15 +393,15 @@ Dungeon 1;
 			Character=farmer;
 		}
 
-		Square, Pos 31,63;
+		Square, Pos 23,47;
 		{
 			IsWorldMapEntry=true;
 		}
 
 		Room 0;
 		{
-			Pos=15,15;
-			Size=27,25;
+			Pos=11,11;
+			Size=25,25;
 			AltarPossible=false;
 			WallSquare=grassterrain,wall;
 			FloorSquare=grassterrain,empty;
@@ -410,6 +410,11 @@ Dungeon 1;
 			DivineOwner=1;
 			GenerateLamps=false;
 			Type=cathedral;
+
+			Square, Pos 11, 24;
+			{
+				OverTerrain = empty;
+			}
 
 			Square, Pos 12, 24;
 			{
@@ -421,14 +426,9 @@ Dungeon 1;
 				OverTerrain = empty;
 			}
 
-			Square, Pos 14, 24;
-			{
-				OverTerrain = empty;
-			}
-
 			GroundTerrainMap
 			{
-				Pos = 5,3;
+				Pos = 4,4;
 				Size = 17,17;
 				Types
 				{
@@ -457,7 +457,7 @@ Dungeon 1;
 			
 			OverTerrainMap
 			{
-				Pos = 5,3;
+				Pos = 4,4;
 				Size = 17,17;
 				
 				Types
@@ -488,7 +488,7 @@ Dungeon 1;
 			
 			CharacterMap
 			{
-				Pos = 5,3;
+				Pos = 4,4;
 				Size = 17,17;
 				
 				Types
@@ -520,7 +520,7 @@ Dungeon 1;
 			
 			ItemMap
 			{
-				Pos = 5,3;
+				Pos = 4,4;
 				Size = 17,17;
 				
 				Types
@@ -554,7 +554,7 @@ Dungeon 1;
 
 		Room 1;
 		{
-			Pos=34,48;
+			Pos=25,37;
 			Size=7,5;
 			AltarPossible=false;
 			WallSquare=floor,wall;
@@ -602,6 +602,7 @@ Dungeon 1;
 
 		Room 2;
 		{
+			Pos=41,41;
 			Size=5,5;
 			WallSquare=floor,gold wall;
 			GenerateDoor=false;
@@ -627,6 +628,7 @@ Dungeon 1;
 
 		Room 3;
 		{
+			Pos=2,41;
 			Size=5,5;
 			WallSquare=floor,marble wall;
 			GenerateDoor=false;
@@ -652,6 +654,7 @@ Dungeon 1;
 
 		Room 4;
 		{
+			Pos=41,2;
 			Size=5,5;
 			WallSquare=floor,bananaflesh wall;
 			GenerateDoor=false;
@@ -677,6 +680,7 @@ Dungeon 1;
 
 		Room 5;
 		{
+			Pos=2,2;
 			Size=5,5;
 			WallSquare=floor,parchment wall;
 			GenerateDoor=false;

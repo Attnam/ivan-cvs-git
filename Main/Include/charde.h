@@ -132,7 +132,7 @@ public:
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();
-	virtual std::string DeathMessage() { return Name(DEFINITE) + " disappears in a bright light and his left nut is left behind."; }
+	virtual std::string DeathMessage() { return "The Überpriest disappears in a bright light and his left nut is left behind."; }
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(20000)
 	virtual void GetAICommand();

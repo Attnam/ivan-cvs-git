@@ -68,3 +68,4 @@ AI should not practise cannibalism.
 You should be able to read in dark when in WMode.
 Applying a pick-axe on a monster should be an attack.
 SWAT commandos shouldn't be burdened.
+Attnam should be smaller.

@@ -3,7 +3,6 @@ New goals for version 0.30 alpha:
 -fixing all known bugs except the Great Surface Destruction Bug
  -single weapon's name not updated (Timo)
  -eating weapons made of an eatable material (Hex)
- -odd hit message (Timo)
  -wrath of Seges (Timo)
  -score bug with polymorph (Timo)
  -others that may be found (Hex or Timo)
@@ -21,6 +20,7 @@ New goals for version 0.30 alpha:
  -adding pray effects for Silva (Hex or Timo)
  -making Venius burn only hostile creatures (Hex)
  -making Mellis fill also intact empty bottles and empty cans (Hex)
+ -making Loricatus fix broken plate mails (Hex)
  -adding relation effect limits to cannibalism and navastating (Timo)
  -adding Banana and Pick-axe logo to menu (Hex)
  -adding "Name too short!" message (Hex)

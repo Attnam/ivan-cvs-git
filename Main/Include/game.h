@@ -157,6 +157,7 @@ public:
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
 	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
+	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static perttu* GetPerttu() { return Perttu; }
 	static void SetPerttu(perttu* What) { Perttu = What; }
 private:

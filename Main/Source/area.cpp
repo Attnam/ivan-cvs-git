@@ -82,6 +82,8 @@ void area::UpdateLOS()
 		if(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer) <= RadiusSquare)
 			game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
 	})
+
+	game::RemoveLOSUpdateRequest();
 }
 
 void area::SendNewDrawRequest()

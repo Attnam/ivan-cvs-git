@@ -694,7 +694,7 @@ void god::AddPriestMessage() const
 void venius::AddPriestMessage() const
 {
 	ADD_MESSAGE("\"%s is the Great Protector of all Law and Order.", GOD_NAME);
-	ADD_MESSAGE("Prayeth upon, He may burn thy enemies with the Fire of Justice, if thee areth worthy.\"");
+	ADD_MESSAGE("Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"");
 }
 
 void dulcis::AddPriestMessage() const
@@ -718,18 +718,16 @@ void consummo::AddPriestMessage() const
 	ADD_MESSAGE("Alas, beware! Soon thou may find thyself in an even worse situation!\"");
 }
 
-
 void god::PlayerVomitedOnAltar()
 {
 	ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction and the vomit lands on your face.");
 	AdjustRelation(-200);
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - rand() % 2);
-	game::GetPlayer()->CheckDeath("chocked to death by own vomit.");
+	game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 }
 
 void scabies::PlayerVomitedOnAltar()
 {
 	ADD_MESSAGE("%s feels that you are indeed her follower.");
-	AdjustRelation(5);
+	AdjustRelation(1);
 }
-
