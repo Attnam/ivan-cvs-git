@@ -1,4 +1,4 @@
-dist_dungeondir = $(datadir)/ivan/Script/
-dist_dungeon_DATA = dungeon.dat
+dungeondir = $(datadir)/ivan/Script/
+dungeon_DATA = dungeon.dat
 
 
