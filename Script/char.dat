@@ -100,6 +100,7 @@ character
 	IsImmuneToLeprosy = true;
 	PolymorphIntelligenceRequirement = DEPENDS_ON_DANGER;
 	AutomaticallySeen = false;
+	CanHear = true;
 }
 
 humanoid
@@ -1296,6 +1297,7 @@ mommo
 		Adjective = "flat";
 		HPRequirementForGeneration = 60;
 		Frequency = 1000;
+		CanHear = false;
 	}
 }
 
@@ -3404,6 +3406,7 @@ floatingeye
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 0;
 	MoveType = FLY;
+	CanHear = false;
 }
 
 eddy
@@ -3445,6 +3448,7 @@ eddy
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 0;
 	IsCharmable = false;
+	CanHear = false;
 }
 
 mushroom

@@ -349,6 +349,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsImmuneToLeprosy);
   ADD_MEMBER(PolymorphIntelligenceRequirement);
   ADD_MEMBER(AutomaticallySeen);
+  ADD_MEMBER(CanHear);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

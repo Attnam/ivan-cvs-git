@@ -473,7 +473,7 @@ void silva::PrayGoodEffect()
 	  Wolf->PutTo(Pos);
 	}
 
-      if(!Created)
+      if(!Created && PLAYER->CanHear())
 	ADD_MESSAGE("You hear a sad howling of a wolf imprisoned in the earth.");
 
       if(Created == 1)
@@ -860,7 +860,11 @@ void nefas::PrayGoodEffect()
 
       if(Where == ERROR_VECTOR)
 	{
-	  ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+	  if(PLAYER->CanHear())
+	    ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+	  else
+	    ADD_MESSAGE("You feel the air vibrating.");
+
 	  delete Mistress;
 	}
       else

@@ -147,6 +147,7 @@ class ABSTRACT_CHARACTER
   virtual void DropRandomNonVitalBodypart();
   virtual void DropBodyPart(int);
   virtual void DuplicateEquipment(character*, ulong);
+  bool IsImmuneToLeprosy() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;

@@ -33,7 +33,7 @@ command* commandsystem::Command[] =
   new command(&Close, "close", 'c', false),
   new command(&Dip, "dip", '!', true),
   new command(&Drink, "drink", 'D', true),
-  new command(&Drop, "drop", 'd', false),
+  new command(&Drop, "drop", 'd', true),
   new command(&Eat, "eat", 'e', true),
   new command(&WhatToEngrave, "engrave", 'G', false),
   new command(&EquipmentScreen, "equipment menu", 'E', true),
@@ -234,7 +234,21 @@ bool commandsystem::Drop(character* Char)
       if(ToDrop.empty())
 	break;
 
-      if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
+      if(game::IsInWilderness())
+	{
+	  for(uint c = 0; c < ToDrop.size(); ++c)
+	    {
+	      if(game::BoolQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
+				    + CONST_S(" again! [y/N]")))
+	      {
+
+		ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
+		ToDrop[c]->RemoveFromSlot();
+		ToDrop[c]->SendToHell();
+	      }
+	    }
+	}
+      else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
 	{
 	  for(uint c = 0; c < ToDrop.size(); ++c)
 	    ToDrop[c]->MoveTo(Char->GetStackUnder());

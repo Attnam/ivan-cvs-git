@@ -713,7 +713,12 @@ void mine::StepOnEffect(character* Stepper)
     return;
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+    {
+      if(Stepper->CanHear())
+	ADD_MESSAGE("You hear a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+      else
+	ADD_MESSAGE("You sense a faint thump. You look down. You see %s.", CHAR_NAME(INDEFINITE));
+    }
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
   else if(GetSquareUnder()->CanBeSeenByPlayer())
@@ -817,6 +822,11 @@ void mine::VirtualConstructor(bool)
 
 bool whistle::Apply(character* Whistler) 
 {
+  if(!Whistler->HasHead())
+    {
+      ADD_MESSAGE("You must have a head to do this.");
+      return false;
+    }
   BlowEffect(Whistler);
   Whistler->EditAP(-1000);
   return true;
@@ -825,10 +835,20 @@ bool whistle::Apply(character* Whistler)
 void whistle::BlowEffect(character* Whistler)
 {
   if(Whistler->IsPlayer())
-    ADD_MESSAGE("You produce an interesting sound.");
+    {
+      if(Whistler->CanHear())
+       ADD_MESSAGE("You produce an interesting sound.");
+      else
+	ADD_MESSAGE("You blow %s", CHAR_NAME(DEFINITE));
+    }
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-  else 
+    {
+      if(PLAYER->CanHear())
+	ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      else
+	ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    }
+  else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear a whistle playing.");
 
   game::CallForAttention(GetPos(), 400);
@@ -853,10 +873,20 @@ void magicalwhistle::BlowEffect(character* Whistler)
     LastUsed = game::GetTick();
 
   if(Whistler->IsPlayer())
-    ADD_MESSAGE("You produce a peculiar sound.");
+    {
+      if(Whistler->CanHear())
+	ADD_MESSAGE("You produce a peculiar sound.");
+      else
+	ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
+    }
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-  else 
+    {
+    if(PLAYER->CanHear())
+      ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    else
+      ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+    }  
+  else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear a strange tune playing.");
 
   const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
@@ -1423,7 +1453,7 @@ void potion::Break(character* Breaker, int Dir)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
-  else
+  else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear something shattering.", CHAR_NAME(DEFINITE));
 
   if(Breaker && IsOnGround())
@@ -1805,16 +1835,33 @@ bool encryptedscroll::Read(character*)
 
 bool horn::Apply(character* Blower) 
 {
+  if(Blower->HasHead())
+    {
+      if(Blower->IsPlayer())
+	ADD_MESSAGE("You need a head to do this.");
+      return false;
+    }
+
   if(!LastUsed || game::GetTick() - LastUsed >= 2500)
     {
       LastUsed = game::GetTick();
       const char* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
 
       if(Blower->IsPlayer())
-	ADD_MESSAGE("You produce a %s sound.", SoundDescription);
+	{
+	  if(Blower->CanHear())
+	    ADD_MESSAGE("You produce a %s sound.", SoundDescription);
+	  else
+	    ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
+	}
       else if(Blower->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s blows %s and produces a %s sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
-      else 
+	{
+	  if(PLAYER->CanHear())
+	    ADD_MESSAGE("%s blows %s and produces a %s sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
+	  else
+	    ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	}
+      else if(PLAYER->CanHear())
 	ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
 
       rect Rect;
@@ -1827,7 +1874,8 @@ bool horn::Apply(character* Blower)
 
 	    if(Audience)
 	      {
-		if(GetConfig() == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->IsAlly(Audience))
+		if(GetConfig() == BRAVERY && Audience->CanHear() && Audience->TemporaryStateIsActivated(PANIC)
+		   && Blower->IsAlly(Audience))
 		  {
 		    if(Audience->IsPlayer())
 		      ADD_MESSAGE("You calm down.");
@@ -1836,7 +1884,8 @@ bool horn::Apply(character* Blower)
 
 		    Audience->DeActivateTemporaryState(PANIC);
 		  }
-		else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
+		else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) 
+			&& Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
 		  Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	      }
 	  }
@@ -1845,10 +1894,20 @@ bool horn::Apply(character* Blower)
   else
     {
       if(Blower->IsPlayer())
-	ADD_MESSAGE("You produce a mighty sound.");
+	{
+	  if(Blower->CanHear())
+	    ADD_MESSAGE("You produce a mighty sound.");
+	  else
+	    ADD_MESSAGE("You blow %s.", CHAR_NAME(DEFINITE));
+	}
       else if(Blower->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s blows %s and produces a mighty sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-      else 
+	{
+	  if(PLAYER->CanHear())
+	    ADD_MESSAGE("%s blows %s and produces a mighty sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	  else
+	    ADD_MESSAGE("%s blows %s.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	}
+      else if(PLAYER->CanHear())
 	ADD_MESSAGE("You hear a horn being blown.");
     }
 
@@ -2330,22 +2389,39 @@ bool charmlyre::Apply(character* Charmer)
   if(LastUsed && game::GetTick() - LastUsed < 10000)
     {
       if(Charmer->IsPlayer())
-	ADD_MESSAGE("You produce a highly alluring sound.");
+	{
+	  if(Charmer->CanHear())
+	    ADD_MESSAGE("You produce a highly alluring sound.");
+	  else
+	    ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
+	}
       else if(Charmer->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s plays %s and produces a highly alluring sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-      else 
+	{
+	  if(PLAYER->CanHear())
+	    ADD_MESSAGE("%s plays %s and produces a highly alluring sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	  else
+	    ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	}
+      else if(PLAYER->CanHear())
 	ADD_MESSAGE("You hear a lyre playing.");
     }
   else
     {
       LastUsed = game::GetTick();
-
       if(Charmer->IsPlayer())
-	ADD_MESSAGE("You produce a mesmerizing sound.");
+	{
+	  if(Charmer->CanHear())
+	    ADD_MESSAGE("You produce a mesmerizing sound.");
+	  else
+	    ADD_MESSAGE("You try to play something with the %s, but it is hard when you can't hear.", CHAR_NAME(DEFINITE));
+	}
       else if(Charmer->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s plays %s and produces a mesmerizing sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-      else 
-	ADD_MESSAGE("You hear a mesmerizing tune playing.");
+	{
+	  if(PLAYER->CanHear())
+	    ADD_MESSAGE("%s plays %s and produces a mesmerizing sound.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	  else
+	    ADD_MESSAGE("%s plays %s.", Charmer->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	}
 
       for(int d = 0; d < Charmer->GetNeighbourSquares(); ++d)
 	{
@@ -2356,20 +2432,22 @@ bool charmlyre::Apply(character* Charmer)
 	      character* Char = Square->GetCharacter();
 
 	      if(Char)
-		if(Char->IsCharmable())
-		  if(Charmer->GetRelativeDanger(Char) > 4.0)
-		    {
-		      if(Char->GetTeam() == Charmer->GetTeam())
-			ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
-		      else if(Char->GetRelation(Charmer) == HOSTILE)
-			ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
-		      else
-			ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
+		if(Char->IsCharmable() && Char->CanHear())
+		  {
+		    if(Charmer->GetRelativeDanger(Char) > 4.0)
+		      {
+			if(Char->GetTeam() == Charmer->GetTeam())
+			  ADD_MESSAGE("%s seems to be very happy.", Char->CHAR_NAME(DEFINITE));
+			else if(Char->GetRelation(Charmer) == HOSTILE)
+			  ADD_MESSAGE("%s stops fighting.", Char->CHAR_NAME(DEFINITE));
+			else
+			  ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHAR_NAME(DEFINITE));
 
-		      Char->ChangeTeam(Charmer->GetTeam());
-		    }
-		  else
-		    ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
+			Char->ChangeTeam(Charmer->GetTeam());
+		      }
+		    else
+		      ADD_MESSAGE("%s resists its charming call.", Char->CHAR_NAME(DEFINITE));
+		  }
 		else
 		  ADD_MESSAGE("%s seems not affected.", Char->CHAR_NAME(DEFINITE));
 	    }

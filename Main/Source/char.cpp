@@ -7396,8 +7396,13 @@ void character::ReceivePeaSoup(long)
 void character::AddPeaSoupConsumeEndMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Mmmh! The soup is very tasty. You hear a small puff.");
-  else if(CanBeSeenByPlayer()) // change someday
+    {
+      if(CanHear())
+	ADD_MESSAGE("Mmmh! The soup is very tasty. You hear a small puff.");
+      else
+	ADD_MESSAGE("Mmmh! The soup is very tasty.");
+    }
+  else if(CanBeSeenByPlayer() && PLAYER->CanHear()) // change someday
     ADD_MESSAGE("You hear a small puff.");
 }
 
@@ -7777,4 +7782,9 @@ void character::SignalDisappearance()
     GetMotherEntity()->SignalDisappearance();
   else
     Disappear(0, "disappear", &item::IsVeryCloseToDisappearance);
+}
+
+bool character::HornOfFearWorks() const
+{
+  return CanHear() && GetPanicLevel() >= RAND() % 33;
 }

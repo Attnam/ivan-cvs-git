@@ -44,8 +44,8 @@ void team::Hostility(team* Enemy)
 	  if(Enemy->ID == ATTNAM_TEAM)
 	    {
 	      /* This is a gum solution. The message should come from the script. */
-
-	      ADD_MESSAGE("You hear an alarm ringing.");
+	      if(PLAYER->CanHear())
+		ADD_MESSAGE("You hear an alarm ringing.");
 
 	      if(game::GetStoryState() != 2)
 		{

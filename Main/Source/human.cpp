@@ -4328,6 +4328,11 @@ void humanoid::DuplicateEquipment(character* Receiver, ulong Flags)
   EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, GetLeftWielded());
 }
 
+bool character::CanHear() const
+{
+  return DataBase->CanHear && HasHead();
+}
+
 color16 veterankamikazedwarf::GetTorsoMainColor() const
 {
   return GetMasterGod()->GetEliteColor();
@@ -4403,3 +4408,4 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
       GetLeftArm()->SetStrength(80);
     }
 }
+

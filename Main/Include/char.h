@@ -76,6 +76,7 @@ struct characterdatabase : public databasebase
   bool HasSecondaryMaterial;
   bool IsImmuneToLeprosy;
   bool AutomaticallySeen;
+  bool CanHear;
   int DefaultEndurance;
   int DefaultPerception;
   int DefaultIntelligence;
@@ -861,6 +862,8 @@ class character : public entity, public id
   void SetLifeExpectancy(int, int);
   virtual void DuplicateEquipment(character*, ulong);
   virtual void SignalDisappearance();
+  virtual bool HornOfFearWorks() const;
+  virtual bool CanHear() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
