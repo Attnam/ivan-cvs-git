@@ -172,6 +172,7 @@ void game::Init(std::string Name)
 
 		SetPlayer(new human);
 
+		Player->SetMoney(100 + rand() % 101);
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
 

@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include "script.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -1267,7 +1267,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << State;
+	SaveFile << State << Money;
 
 	if(StateIsActivated(EATING))
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
@@ -1333,7 +1333,7 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
 	SaveFile >> HP >> NP >> AP;
 	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> State;
+	SaveFile >> State >> Money;
 
 	SaveFile >> Index;
 

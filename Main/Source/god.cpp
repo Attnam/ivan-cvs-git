@@ -441,8 +441,10 @@ void pestifer::PrayGoodEffect()
 
 void pestifer::PrayBadEffect()
 {
-	game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
-	ADD_MESSAGE("You hear the shouts of a new enner beast!");
+	character* EnnerBeast = new ennerbeast;
+	EnnerBeast->SetTeam(game::GetTeam(1));
+	game::GetCurrentLevel()->GetLevelSquare(game::GetCurrentLevel()->RandomSquare(true))->AddCharacter(EnnerBeast);
+	ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
 
 void valpuri::Pray()

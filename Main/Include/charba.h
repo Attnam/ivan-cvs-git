@@ -232,6 +232,8 @@ public:
 	virtual bool RaiseGodRelations();
 	virtual bool LowerGodRelations();
 	virtual bool GainDivineKnowledge();
+	virtual ulong GetMoney() const { return Money; }
+	virtual void SetMoney(ulong What) { Money = What; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -286,6 +288,7 @@ protected:
 			item* OldWieldedItem;
 		} Digging;
 	} StateVariables;
+	ulong Money;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
