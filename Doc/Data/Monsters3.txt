@@ -42,7 +42,7 @@ kobold		90	10	5	5	12	2000		30000
 large cat	60	25	5	5	21	20000		15000
 large rat	30	10	3	2	12	20000		2000
 lion		300							150000
-mammoth		500							5000000
+mammoth		500	20	80	80	18	5000		5000000
 raven		60
 unicorn
 werewolf (h)	170	15	15	15	15	2000		80000

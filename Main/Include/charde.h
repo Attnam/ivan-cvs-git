@@ -1250,7 +1250,7 @@ class CHARACTER
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 15000; else return 0; }
-	virtual bool largecat::Catches(item*, float);
+	virtual bool Catches(item*, float);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(496,0)
 	virtual std::string NameSingular() const RET("large cat")
@@ -1357,6 +1357,27 @@ protected:
 	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("kamikaze dwarf")
 	uchar Master;
+);
+
+class CHARACTER	
+(				
+	mammoth,
+	character,
+	InitMaterials(new mammothflesh),
+	{
+		SetSize(500);
+		SetAgility(20);
+		SetStrength(80);
+		SetEndurance(80);
+		SetPerception(18);
+	},
+public:
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 5000000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(528,0)
+	virtual std::string NameSingular() const RET("mammoth")
+	virtual float GetMeleeStrength() const RET(5000)
+	virtual std::string TalkVerb() const { return "roars"; }
 );
 
 #endif

@@ -866,4 +866,14 @@ protected:
 	virtual std::string NameStem() const	{ return "blood"; }
 );
 
+class MATERIAL
+(
+	mammothflesh,
+	flesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(100, 130, 160); }
+protected:
+	virtual std::string NameStem() const	{ return "mammoth flesh"; }
+);
+
 #endif
