@@ -5761,6 +5761,8 @@ vector2d character::ApplyStateModification(vector2d TryDirection) const
   else
     {
       vector2d To = GetLevel()->GetFreeAdjacentSquare(this, GetPos(), true);
+      if(To != TryDirection && IsPlayer())
+	ADD_MESSAGE("Whoa! You somehow don't manage to walk straight.");
 
       if(To == ERROR_VECTOR)
 	return TryDirection;
