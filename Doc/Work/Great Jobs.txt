@@ -1,11 +1,14 @@
-Identify system.
-Gcc port.
-In-code documentation.
-Magic system.
-Genetic AI algorithms.
-Random towns and dungeons.
-Intercontinental transportation.
-Dungeon water tiles and swimming.
-Skill system.
-Player races and classes.
-Renewed god system.
+The greatest tasks that need to be done, in order of priority:
+
+1.  Gcc port.
+2.  In-code documentation.
+3.  Block AI system and genetic AI algorithms.
+4.  Renewed god system.
+5.  Identify system.
+6.  Player races and classes.
+7.  Skill system.
+8.  Magic system.
+9.  Dungeon water tiles and swimming.
+10. Wilderness encounters and other similiar events.
+11. Random towns, dungeons and quests.
+12. Intercontinental transportation.

@@ -112,7 +112,7 @@ bool KeyIsOK(char);
 std::string game::PlayerName;
 uchar game::GodNumber;
 ulong game::Turns;
-float game::SoftGamma = 1;
+float game::SoftGamma = 0.9f;
 bool game::OutlineItems = false, game::OutlineCharacters = false;
 ushort game::AutosaveInterval = 0;
 

@@ -51,3 +51,6 @@ Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 Parser to wishing.
+Chat, open and close should display some advice of pressing direction keys.
+Traps.
+Danger bonus to those monsters that are faster than the player.

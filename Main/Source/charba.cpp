@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include "script.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF), Money(0), HomeRoom(0)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -856,7 +856,7 @@ void character::CreateCorpse()
 	corpse* Corpse = new corpse(GetMaterial(0));
 	Corpse->SetBloodColor(GetBloodColor());
 	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
-	SetMaterial(0, 0);
+	PreserveMaterial(0);
 }
 
 void character::Die(bool ForceMsg)
