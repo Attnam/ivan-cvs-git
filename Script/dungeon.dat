@@ -74,6 +74,21 @@ Dungeon 0;
 				IsWorldMapEntry=true;
 				OverTerrain=stairsup;
 			}
+
+			Square, Pos 1,1;
+			{
+				Item=lamp;
+			}
+
+			Square, Pos 1,2;
+			{
+				Item=corpse;
+			}
+
+			Square, Pos 3,3;
+			{
+				Item=corpse;
+			}
 		}
 	}
 

@@ -9,10 +9,10 @@ New goals for version 0.30 alpha:
  -others that may be found (Hex or Timo)
 
 -adding new essential features
- -adding question to leaving city (Hex)
+D-adding question to leaving city (Hex)
  -fixing the message of wishing forbidden items (Hex)
- -making fluid spill from breaking potions (Hex)
- -adding more blood in criticals (Hex)
+D-making fluid spill from breaking potions (Hex)
+D-adding more blood in criticals (Hex)
  -making monsters think what they eat (Hex)
  -making rest stop when the player is hungry (Timo)
  -making weapon experience and money affect score and NP not affect it (Timo)
@@ -27,6 +27,7 @@ New goals for version 0.30 alpha:
  -adding "Name too short!" message (Hex)
  -adding grass, pines and spruces to Attnam once the pics are available (Timo)
  -removing the polymorph feature that multiplies items (Timo)
+ -adding config menu and autosave interval option (Hex)
 
 -fixing buggy graphics that are buggy due to code
  -can (Timo)

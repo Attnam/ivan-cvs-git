@@ -28,7 +28,7 @@ std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
 #include "error.h"
 
-character* protosystem::BalancedCreateMonster(float Multiplier)
+character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems)
 {
 	for(ushort c = 0;; ++c)
 	{
@@ -37,7 +37,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier)
 		if(!protocontainer<character>::GetProto(Chosen)->Possibility())
 			continue;
 
-		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone();
+		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
 
 		float Danger = Monster->Danger(), Difficulty = game::Difficulty();
 

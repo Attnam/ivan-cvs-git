@@ -50,7 +50,9 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 
 	SetHP(HP - Damage);
 	GetStack()->ReceiveSound(ScreamStrength);
+
 	CheckDeath("killed by an Enner Beast's scream");
+
 	if(GetWielded() && !GetWielded()->GetExists())
 		SetWielded(0);
 }
@@ -150,8 +152,6 @@ uchar character::TakeHit(character* Enemy, short Success)
 		{
 			SpillBlood(5 + rand() % 5, Where);
 		}
-		
-
 
 		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
 			return HAS_DIED;
@@ -2155,7 +2155,7 @@ bool character::Polymorph()
 		return true;
 	}
 
-	character* NewForm = protosystem::BalancedCreateMonster(5);
+	character* NewForm = protosystem::BalancedCreateMonster(5, false);
 
 	GetSquareUnder()->RemoveCharacter();
 	GetSquareUnder()->AddCharacter(NewForm);	// could be optimized?

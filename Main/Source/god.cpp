@@ -133,7 +133,6 @@ void consummo::PrayBadEffect()
 	ADD_MESSAGE("Some parts of you teleport away!");
 
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % game::GetPlayer()->GetMaxHP());
-
 	game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
 
@@ -141,6 +140,7 @@ void valpuri::PrayGoodEffect()
 {
 	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
 	ADD_MESSAGE("A sword glittering with holy might drops on to the ground.");
+
 	item* Reward = new curvedtwohandedsword(false);
 	Reward->InitMaterials(3, new valpurium, new iron, 0);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
@@ -157,6 +157,7 @@ void venius::PrayGoodEffect()
 {
 	ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\"");
 	ADD_MESSAGE("A huge divine fire sweeps the surrounding area.");
+
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
 	{
@@ -606,7 +607,6 @@ void cruentus::PrayBadEffect()
 		game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - rand() % 20);
 		game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
 	}
-
 }
 
 void cruentus::Pray()

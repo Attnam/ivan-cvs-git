@@ -201,6 +201,10 @@ void game::Init(std::string Name)
 		}
 
 		GetGod(1)->SetKnown(true);
+		GetGod(2)->SetKnown(true);
+		GetGod(4)->SetKnown(true);
+		GetGod(6)->SetKnown(true);
+		GetGod(7)->SetKnown(true);
 
 		Turns = 0;
 

@@ -59,6 +59,7 @@ class ITEM
 	{
 		SetSize(30);
 		SetOnWall(false);
+		UpdatePicture();
 	},
 public:
 	virtual ushort Possibility() const RET(50)

@@ -405,8 +405,8 @@ bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 		ImpactDamage(ushort(Strength), Shown, ItemsStack);
 		return true;
 	}
-	return false;
-	
+
+	return false;	
 }
 
 bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
@@ -418,25 +418,29 @@ bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 			ADD_MESSAGE("The potion is destroyed by the sound.");
 		return true;
 	}
-	return false;
-	
+
+	return false;	
 }
 
 bool scrollofchangematerial::Read(character* Reader)
 {
 	ushort Index;
+
 	if(!Reader->CanRead())
 	{
 		ADD_MESSAGE("This monster can't read anything.");
 		return false;
 	}
+
 	if((Index = Reader->GetStack()->DrawContents("What item do you wish to change?")) == 0xFFFF)
 	{
 		ADD_MESSAGE("You have nothing to change.");
 		return false;
 	}
+
 	if(Index == 0xFFFE)
 		return false;
+
 	else
 		if(!(Index < Reader->GetStack()->GetItems()))
 			return false;
@@ -540,8 +544,8 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 
 		return true;
 	}
-	return false;
-	
+
+	return false;	
 }
 
 bool platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
@@ -585,8 +589,6 @@ bool fruit::Consume(character* Eater, float Amount)
 
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
-
-
 
 void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 {

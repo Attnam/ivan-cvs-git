@@ -84,6 +84,7 @@ Favours:
 
 Punishments:
 -creates hostile wolves
+-polymorphs the player into a lousy animal monster
 
 N=	L-	Loricatus, god of fire, machines and weaponry
 -------------------------------------------------------------

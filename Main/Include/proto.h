@@ -60,7 +60,7 @@ template <class type> ushort protocontainer<type>::SearchCodeName(std::string Na
 class protosystem
 {
 public:
-	static character*		BalancedCreateMonster(float = 1);
+	static character*		BalancedCreateMonster(float = 1, bool = true);
 	static item*			BalancedCreateItem();
 	static character*		CreateMonster(ushort);
 	static item*			CreateItem(ushort);

@@ -817,7 +817,6 @@ void perttu::BeTalkedTo(character* Talker)
 
 			game::GetCurrentArea()->SendNewDrawRequest();
 			ADD_MESSAGE("Perttu hands you a couple of items. \"Thou migth need these.\"");
-			Talker->GetStack()->AddItem(new lamp);
 			Talker->GetStack()->AddItem(new banana);
 			StoryState = 1;
 		}
