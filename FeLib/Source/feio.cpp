@@ -72,7 +72,7 @@ ulong iosystem::CountChars(char cSF, const std::string& sSH)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected)
+int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected, const std::string& SmallText)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -117,7 +117,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	  else
 	    FONT->Printf(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
-
+      FONT->Printf(&Buffer, 5, RES.Y - 8, MAKE_RGB(100,100,100), "%s", SmallText.c_str());
       int k;
 
       if(c < 5)
