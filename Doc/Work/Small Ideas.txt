@@ -57,3 +57,4 @@ Golems shouldn't be able to eat anything else.
 Some kind of option screen.
 Autosave interval as a user-defined option.
 List of killed monsters and list of monsters killed by pets.
+Prepare bug-report fuctions that would make bug-reporting easier.
