@@ -287,14 +287,6 @@ long stack::Score() const
   return Score;
 }
 
-/*void stack::SetSquareUnder(square* Square)
-{
-  SquareUnder = Square;
-
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    (**i)->SetSquareUnder(Square);
-}*/
-
 void stack::Polymorph()
 {
   itemvector ItemVector;

@@ -120,6 +120,7 @@ class lsquare : public square
   void DrawMemorized();
   bitmap* GetMemorized() const { return Memorized; }
   void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
+  lsquare* GetNeighbourLSquare(ushort) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

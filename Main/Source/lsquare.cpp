@@ -1221,3 +1221,8 @@ void lsquare::DrawMemorized()
       NewDrawRequested = false;
     }
 }
+
+lsquare* lsquare::GetNeighbourLSquare(ushort Index) const
+{
+  return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index);
+}

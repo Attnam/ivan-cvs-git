@@ -53,6 +53,7 @@ class square
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(character*) const;
   ushort GetLuminance() const { return Luminance; }
+  square* GetNeighbourSquare(ushort) const;
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

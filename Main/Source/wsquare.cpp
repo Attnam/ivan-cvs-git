@@ -155,3 +155,8 @@ void wsquare::CalculateLuminance()
 {
   Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
 }
+
+wsquare* wsquare::GetNeighbourWSquare(ushort Index) const
+{
+  return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, Index);
+}

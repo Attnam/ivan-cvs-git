@@ -37,6 +37,8 @@ class area
   vector2d GetNearestFreeSquare(character*, vector2d);
   vector2d FreeSquareSeeker(character*, vector2d, vector2d, uchar);
   virtual ushort GetLOSModifier() const { return 16; }
+  square* GetNeighbourSquare(vector2d, ushort) const;
+  bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
  protected:
   square*** Map;
   ushort** FlagMap;

@@ -228,20 +228,23 @@ void ennerbeast::GetAICommand()
 void petrus::GetAICommand()
 {
   SeekLeader();
-
   SetHealTimer(GetHealTimer() + 1);
 
-  character* Char;
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			if((Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter()))
-  {
-    if(GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
-      {
-	HealFully(Char);
-	return;
-      }
-  })
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char && GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
+	    {
+	      HealFully(Char);
+	      return;
+	    }
+	}
+    }
 
   if(CheckForEnemies(true))
     return;
@@ -1115,20 +1118,24 @@ void slave::GetAICommand()
 
 bool elpuri::Hit(character* Enemy)
 {
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-  {
-    lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(DoX, DoY);
-    character* ByStander = Square->GetCharacter();
+  for(ushort d = 0; d < 8; ++d)
+    {
+      lsquare* Square = GetNeighbourLSquare(d);
 
-    if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
-      nonhumanoid::Hit(ByStander);
+      if(Square)
+	{
+	  character* ByStander = Square->GetCharacter();
 
-    Square->GetStack()->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+	  if(ByStander && (ByStander == Enemy || ByStander->GetTeam()->GetRelation(GetTeam()) == HOSTILE))
+	    nonhumanoid::Hit(ByStander);
 
-    for(ushort c = 0; c < 4; ++c)
-      if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	Square->GetSideStack(c)->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
-  });
+	  Square->GetStack()->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+
+	  for(ushort c = 0; c < 4; ++c)
+	    if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
+	      Square->GetSideStack(c)->ReceiveDamage(this, GetAttribute(ARMSTRENGTH), PHYSICALDAMAGE);
+	}
+    }
 
   SetAP(-1000);
   return true;
@@ -2077,16 +2084,21 @@ bool humanoid::CheckOffer() const
 
 void carnivorousplant::GetAICommand()
 {
-  character* Char;
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			if((Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter()))
-  {
-    if(GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
-      {
-	Hit(Char);
-	return;
-      }
-  })
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
+	    {
+	      Hit(Char);
+	      return;
+	    }
+	}
+    }
 }
 
 vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
@@ -2688,14 +2700,14 @@ float humanoid::GetAttackStrengthDanger() const
   ushort AttackStyles = 0;
   float DodgeValue = CalculateDodgeValue();
 
-  if(GetAttackStyle() & USE_ARMS && (CalculateRightAttackStrength() || CalculateLeftAttackStrength()))
+  if(IsUsingArms())
     {
       Danger += CalculateRightAttackStrength() * (CalculateRightToHitValue() + DodgeValue);
       Danger += CalculateLeftAttackStrength() * (CalculateLeftToHitValue() + DodgeValue);
       ++AttackStyles;
     }
 
-  if((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg())
+  if(IsUsingLegs())
     {
       if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
 	Danger += GetRightLeg()->CalculateKickStrength() * (GetRightLeg()->CalculateKickToHitValue() + DodgeValue);
@@ -2705,7 +2717,7 @@ float humanoid::GetAttackStrengthDanger() const
       ++AttackStyles;
     }
 
-  if((GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead())
+  if(IsUsingHead())
     {
       Danger += GetHead()->CalculateBiteStrength() * (GetHead()->CalculateBiteToHitValue() + DodgeValue);
       ++AttackStyles;
@@ -2994,7 +3006,7 @@ ushort humanoid::DrawStats() const
 	  }
     }
 
-  if((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg())
+  if(IsUsingLegs())
     {
       leg* Leg;
 
@@ -3008,7 +3020,7 @@ ushort humanoid::DrawStats() const
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "KAPC %d", -Leg->CalculateKickAPCost());
     }
 
-  if((GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead())
+  if(IsUsingHead())
     {
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BAS %.0f", GetHead()->CalculateBiteStrength() / 1000);
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "BTHV %.0f", GetHead()->CalculateBiteToHitValue());
@@ -3521,4 +3533,196 @@ float billswill::CalculateUnarmedStrength() const
 void spider::SpecialBiteEffect(character* Char)
 {
   Char->BeginTemporaryState(POISONED, 50);
+}
+
+/*float humanoid::CalculateArmStrength() const
+{
+  return CalculateRightAttackStrength() + CalculateLeftAttackStrength();
+}
+
+float humanoid::CalculateArmToHitValue() const
+{
+  return (CalculateRightToHitValue() + CalculateLeftToHitValue()) / 2;
+}
+
+long humanoid::CalculateArmAPCost() const
+{
+  return Min(CalculateRightAPCost(), CalculateLeftAPCost());
+}
+
+float humanoid::CalculateKickStrength() const
+{
+  return Max(GetRightLeg()->CalculateKickStrength(), GetLeftLeg()->CalculateKickStrength());
+}
+
+float humanoid::CalculateKickToHitValue() const
+{
+  if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+    return GetRightLeg()->CalculateKickToHitValue();
+  else
+    return GetLeftLeg()->CalculateKickToHitValue();
+}
+
+long humanoid::CalculateKickAPCost() const
+{
+  if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+    return GetRightLeg()->CalculateKickAPCost();
+  else
+    return GetLeftLeg()->CalculateKickAPCost();
+}
+
+float humanoid::CalculateBiteStrength() const
+{
+  return GetHead()->CalculateBiteStrength();
+}
+
+float humanoid::CalculateBiteToHitValue() const
+{
+  return GetHead()->CalculateBiteToHitValue();
+}
+
+long humanoid::CalculateBiteAPCost() const
+{
+  return GetHead()->CalculateBiteAPCost();
+}*/
+
+bool humanoid::IsUsingArms() const
+{
+  return GetAttackStyle() & USE_ARMS && (CalculateRightAttackStrength() || CalculateLeftAttackStrength());
+}
+
+bool humanoid::IsUsingLegs() const
+{
+  return (GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg();
+}
+
+bool humanoid::IsUsingHead() const
+{
+  return (GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead();
+}
+
+void humanoid::AddAttackInfo(felist& List) const
+{
+  if(GetAttackStyle() & USE_ARMS)
+    {
+      if(CalculateRightAttackStrength())
+	{
+	  std::string Entry = "   ";
+
+	  if(GetRightWielded())
+	    {
+	      GetRightWielded()->AddName(Entry, UNARTICLED);
+
+	      if(GetRightWielded()->IsTwoHanded() && GetLeftArm() && !GetLeftWielded())
+		Entry << " (b)";
+	      else
+		Entry << " (r)";
+	    }
+	  else
+	    Entry << "melee attack (r)";
+
+	  Entry.resize(50, ' ');
+	  Entry << int(CalculateRightAttackStrength() / 50000);
+	  Entry.resize(60, ' ');
+	  Entry << int(CalculateRightToHitValue());
+	  Entry.resize(70, ' ');
+	  Entry << -CalculateRightAPCost();
+	  List.AddEntry(Entry, LIGHTGRAY, 0, false);
+	}
+
+      if(CalculateLeftAttackStrength())
+	{
+	  std::string Entry = "   ";
+
+	  if(GetLeftWielded())
+	    {
+	      GetLeftWielded()->AddName(Entry, UNARTICLED);
+
+	      if(GetLeftWielded()->IsTwoHanded() && GetRightArm() && !GetRightWielded())
+		Entry << " (b)";
+	      else
+		Entry << " (l)";
+	    }
+	  else
+	    Entry << "melee attack (l)";
+
+	  Entry.resize(50, ' ');
+	  Entry << int(CalculateLeftAttackStrength() / 50000);
+	  Entry.resize(60, ' ');
+	  Entry << int(CalculateLeftToHitValue());
+	  Entry.resize(70, ' ');
+	  Entry << -CalculateLeftAPCost();
+	  List.AddEntry(Entry, LIGHTGRAY, 0, false);
+	}
+    }
+
+  if(IsUsingLegs())
+    {
+      leg* KickLeg;
+
+      if(GetRightLeg()->CalculateKickStrength() >= GetLeftLeg()->CalculateKickStrength())
+	KickLeg = GetRightLeg();
+      else
+	KickLeg = GetLeftLeg();
+
+      std::string Entry = "   kick attack";
+      Entry.resize(50, ' ');
+      Entry << int(KickLeg->CalculateKickStrength() / 50000);
+      Entry.resize(60, ' ');
+      Entry << int(KickLeg->CalculateKickToHitValue());
+      Entry.resize(70, ' ');
+      Entry << -KickLeg->CalculateKickAPCost();
+      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+    }
+
+  if(IsUsingHead())
+    {
+      std::string Entry = "   bite attack";
+      Entry.resize(50, ' ');
+      Entry << int(GetHead()->CalculateBiteStrength() / 50000);
+      Entry.resize(60, ' ');
+      Entry << int(GetHead()->CalculateBiteToHitValue());
+      Entry.resize(70, ' ');
+      Entry << -GetHead()->CalculateBiteAPCost();
+      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+    }
+}
+
+void nonhumanoid::AddAttackInfo(felist& List) const
+{
+  if(IsUsingArms())
+    {
+      std::string Entry = "   unarmed attack";
+      Entry.resize(50, ' ');
+      Entry << int(CalculateUnarmedStrength() / 50000);
+      Entry.resize(60, ' ');
+      Entry << int(CalculateUnarmedToHitValue());
+      Entry.resize(70, ' ');
+      Entry << -CalculateUnarmedAPCost();
+      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+    }
+
+  if(IsUsingLegs())
+    {
+      std::string Entry = "   kick attack";
+      Entry.resize(50, ' ');
+      Entry << int(CalculateKickStrength() / 50000);
+      Entry.resize(60, ' ');
+      Entry << int(CalculateKickToHitValue());
+      Entry.resize(70, ' ');
+      Entry << -CalculateKickAPCost();
+      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+    }
+
+  if(IsUsingHead())
+    {
+      std::string Entry = "   bite attack";
+      Entry.resize(50, ' ');
+      Entry << int(CalculateBiteStrength() / 50000);
+      Entry.resize(60, ' ');
+      Entry << int(CalculateBiteToHitValue());
+      Entry.resize(70, ' ');
+      Entry << -CalculateBiteAPCost();
+      List.AddEntry(Entry, LIGHTGRAY, 0, false);
+    }
 }

@@ -124,13 +124,18 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 {
   Neighbour.clear();
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
-  {
-    gwterrain* DoNeighbour = GetWorldMapUnder()->GetWSquare(DoX, DoY)->GetGWTerrain();
+  for(ushort d = 0; d < 8; ++d)
+    {
+      wsquare* NeighbourSquare = GetWorldMapUnder()->GetNeighbourWSquare(GetPos(), d);
 
-    if(DoNeighbour->Priority() > Priority())
-      Neighbour.push_back(std::pair<vector2d, uchar>(DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(DoIndex) << 4), DoNeighbour->Priority()));
-  });
+      if(NeighbourSquare)
+	{
+	  gwterrain* DoNeighbour = NeighbourSquare->GetGWTerrain();
+
+	  if(DoNeighbour->Priority() > Priority())
+	    Neighbour.push_back(std::pair<vector2d, uchar>(DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(d) << 4), DoNeighbour->Priority()));
+	}
+    }
 
   std::sort(Neighbour.begin(), Neighbour.end(), DrawOrderer);
 }

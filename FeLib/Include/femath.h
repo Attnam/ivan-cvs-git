@@ -16,7 +16,7 @@
 
 /* Boy these macros are evil :( */
 
-#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)\
+/*#define DO_FOR_SQUARES_AROUND(X, Y, BorderX, BorderY, Then)\
 {\
   while(true)\
   {\
@@ -182,7 +182,7 @@
     \
     break;\
   }\
-}
+}*/
 
 #define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRight, ClipBottom, Radius, DoWhat)\
 {\

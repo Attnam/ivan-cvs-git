@@ -608,6 +608,13 @@ class character : public entity, public id
   void PolymorphHandler();
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
+  virtual bool IsUsingArms() const { return GetAttackStyle() & USE_ARMS ? true : false; }
+  virtual bool IsUsingLegs() const { return GetAttackStyle() & USE_LEGS ? true : false; }
+  virtual bool IsUsingHead() const { return GetAttackStyle() & USE_HEAD ? true : false; }
+  virtual void AddAttackInfo(felist&) const = 0;
+  square* GetNeighbourSquare(ushort) const;
+  lsquare* GetNeighbourLSquare(ushort) const;
+  wsquare* GetNeighbourWSquare(ushort) const;
  protected:
   virtual void SpecialTurnHandler() { }
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }

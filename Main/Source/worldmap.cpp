@@ -185,8 +185,29 @@ void worldmap::SmoothAltitude()
 	    long HeightNear = 0;
 	    uchar SquaresNear = 0;
 	    OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
+	    ushort d;
 
-	    DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, HeightNear += OldAltitudeBuffer[DoX][DoY], HeightNear += AltitudeBuffer[DoX][DoY], ++SquaresNear)
+	    for(d = 0; d < 4; ++d)
+	      {
+		vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+
+		if(IsValidPos(Pos))
+		  {
+		    HeightNear += OldAltitudeBuffer[Pos.X][Pos.Y];
+		    ++SquaresNear;
+		  }
+	      }
+
+	    for(d = 4; d < 8; ++d)
+	      {
+		vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+
+		if(IsValidPos(Pos))
+		  {
+		    HeightNear += AltitudeBuffer[Pos.X][Pos.Y];
+		    ++SquaresNear;
+		  }
+	      }
 
 	    AltitudeBuffer[x][y] = HeightNear / SquaresNear;
 
@@ -217,7 +238,16 @@ void worldmap::GenerateClimate()
 	  bool Rainy = LatitudeRainy;
 
 	  if(!Rainy)
-	    DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(AltitudeBuffer[DoX][DoY] <= 0) { Rainy = true; break; });
+	    for(ushort d = 0; d < 8; ++d)
+	      {
+		vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+
+		if(IsValidPos(Pos) && AltitudeBuffer[Pos.X][Pos.Y] <= 0)
+		  {
+		    Rainy = true;
+		    break;
+		  }
+	      }
 
 	  char Temperature = char(MAX_TEMPERATURE - DistanceFromEquator * LATITUDE_EFFECT - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
 
@@ -285,7 +315,23 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
   for(ushort n = 0; n < Types; ++n)
     Type[n] = 0;
 
-  DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, ++Type[OldTypeBuffer[DoX][DoY]], ++Type[TypeBuffer[DoX][DoY]], ;)
+  ushort d;
+
+  for(d = 0; d < 4; ++d)
+    {
+      vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+
+      if(IsValidPos(Pos))
+	++Type[OldTypeBuffer[Pos.X][Pos.Y]];
+    }
+
+  for(d = 4; d < 8; ++d)
+    {
+      vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
+
+      if(IsValidPos(Pos))
+	++Type[TypeBuffer[Pos.X][Pos.Y]];
+    }
 
   ++Type[TypeBuffer[x][y]];
   uchar MostCommon = 0;
@@ -316,24 +362,26 @@ void worldmap::CalculateContinents()
 	    {
 	      bool Attached = false;
 
-	      DO_FOR_SQUARES_AROUND(x, y, XSize, YSize,
-	      {
-		if(ContinentBuffer[DoX][DoY])
-		  {
-		    if(ContinentBuffer[x][y])
-		      {
-			if(ContinentBuffer[x][y] != ContinentBuffer[DoX][DoY])
-			  if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[DoX][DoY]]->Size())
-			    Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[DoX][DoY]]);
-			  else
-			    Continent[ContinentBuffer[DoX][DoY]]->AttachTo(Continent[ContinentBuffer[x][y]]);
-		      }
-		    else
-		      Continent[ContinentBuffer[DoX][DoY]]->Add(vector2d(x, y));
+	      for(ushort d = 0; d < 8; ++d)
+		{
+		  vector2d Pos = vector2d(x, y) + game::GetMoveVector(d);
 
-		    Attached = true;
-		  }
-	      });
+		  if(IsValidPos(Pos) && ContinentBuffer[Pos.X][Pos.Y])
+		    {
+		      if(ContinentBuffer[x][y])
+			{
+			  if(ContinentBuffer[x][y] != ContinentBuffer[Pos.X][Pos.Y])
+			    if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[Pos.X][Pos.Y]]->Size())
+			      Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[Pos.X][Pos.Y]]);
+			    else
+			      Continent[ContinentBuffer[Pos.X][Pos.Y]]->AttachTo(Continent[ContinentBuffer[x][y]]);
+			}
+		      else
+			Continent[ContinentBuffer[Pos.X][Pos.Y]]->Add(vector2d(x, y));
+
+		      Attached = true;
+		    }
+		}
 
 	      if(!Attached)
 		{
@@ -402,4 +450,14 @@ void worldmap::CalculateNeighbourBitmapPoses()
 {
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->GetGWTerrain()->CalculateNeighbourBitmapPoses();
+}
+
+wsquare* worldmap::GetNeighbourWSquare(vector2d Pos, ushort Index) const
+{
+  Pos += game::GetMoveVector(Index);
+
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize)
+    return Map[Pos.X][Pos.Y];
+  else
+    return 0;
 }

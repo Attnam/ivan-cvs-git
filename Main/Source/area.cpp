@@ -115,27 +115,32 @@ void area::MoveCharacter(vector2d From, vector2d To)
 
 vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance)
 {
-  DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
-  {
-    vector2d Vector = vector2d(DoX, DoY);
+  ushort c;
 
-    if(GetSquare(Vector)->IsWalkable(Char) && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
-      return Vector;
-  });
+  for(c = 0; c < 8; ++c)
+    {
+      vector2d Pos = StartPos + game::GetMoveVector(c);
+
+      if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char) && !GetSquare(Pos)->GetCharacter() && Pos != Prohibited)
+	return Pos;
+    }
 
   if(MaxDistance)
-    DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
-    {
-      vector2d Vector = vector2d(DoX, DoY);
+    for(c = 0; c < 8; ++c)
+      {
+	vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(GetSquare(Vector)->IsWalkable(Char) && Vector != Prohibited)
-	{
-	  Vector = FreeSquareSeeker(Char, Vector, StartPos, MaxDistance - 1);
+	if(IsValidPos(Pos))
+	  {
+	    if(GetSquare(Pos)->IsWalkable(Char) && Pos != Prohibited)
+	      {
+		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
 
-	  if(Vector.X != -1)
-	    return Vector;
-	}
-    });
+		if(Pos.X != -1)
+		  return Pos;
+	      }
+	  }
+      }
 
   return vector2d(-1, -1);
 }
@@ -145,28 +150,40 @@ vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
   if(GetSquare(StartPos)->IsWalkable(Char) && !GetSquare(StartPos)->GetCharacter())
     return StartPos;
 
-  DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
-  {
-    vector2d Vector = vector2d(DoX, DoY);
+  ushort c;
 
-    if(GetSquare(Vector)->IsWalkable(Char) && !GetSquare(Vector)->GetCharacter())
-      return Vector;
-  });
-
-  for(ushort c = 0; c < 20; ++c)
-    DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
+  for(c = 0; c < 8; ++c)
     {
-      vector2d Vector = vector2d(DoX, DoY);
+      vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(GetSquare(Vector)->IsWalkable(Char))
-	{
-	  Vector = FreeSquareSeeker(Char, Vector, StartPos, c);
+      if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char) && !GetSquare(Pos)->GetCharacter())
+	return Pos;
+    }
 
-	  if(Vector.X != -1)
-	    return Vector;
-	}
-    });
+  for(ushort Dist = 0; Dist < 20; ++Dist)
+    for(c = 0; c < 8; ++c)
+      {
+	vector2d Pos = StartPos + game::GetMoveVector(c);
+
+	if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char))
+	  {
+	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
+
+	    if(Pos.X != -1)
+	      return Pos;
+	  }
+      }
 
   ABORT("No room for character. Character unhappy.");
   return vector2d(-1, -1);
+}
+
+square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
+{
+  Pos += game::GetMoveVector(Index);
+
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize)
+    return Map[Pos.X][Pos.Y];
+  else
+    return 0;
 }

@@ -1062,3 +1062,13 @@ void level::Draw() const
       for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
 	Map[x][y]->Draw();
 }
+
+lsquare* level::GetNeighbourLSquare(vector2d Pos, ushort Index) const
+{
+  Pos += game::GetMoveVector(Index);
+
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize)
+    return Map[Pos.X][Pos.Y];
+  else
+    return 0;
+}

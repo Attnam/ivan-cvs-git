@@ -37,13 +37,13 @@
  * doesn't need one.
  */
 
-void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage };
-void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage };
-void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0 };
-void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0 };
-void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0 };
-std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleport", "Polymorphing", "Telep. ctrl" };
-bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, false, true };
+void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage };
+void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage };
+void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0 };
+void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0 };
+void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0 };
+std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleport", "Polymorphing", "Telep. ctrl" };
+bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, false, true };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
@@ -1043,16 +1043,21 @@ bool character::Talk()
   character* ToTalk = 0;
   ushort Characters = 0;
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentArea()->GetXSize(), game::GetCurrentArea()->GetYSize(),
+  for(ushort d = 0; d < 8; ++d)
     {
-      character* Char = game::GetCurrentArea()->GetSquare(DoX, DoY)->GetCharacter();
+      lsquare* Square = GetNeighbourLSquare(d);
 
-      if(Char)
+      if(Square)
 	{
-	  ToTalk = Char;
-	  ++Characters;
+	  character* Char = Square->GetCharacter();
+
+	  if(Char)
+	    {
+	      ToTalk = Char;
+	      ++Characters;
+	    }
 	}
-    });
+    }
 
   if(!Characters)
     {
@@ -1517,19 +1522,11 @@ bool character::LowerStats()
 
 bool character::GainAllItems()
 {
-  return false;
+  std::vector<item*> AllItems;
+  protosystem::CreateEveryItem(AllItems);
 
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-    {
-      const item::prototype* Proto = protocontainer<item>::GetProto(c);
-
-      if(!Proto->IsAbstract() && Proto->IsAutoInitializable())
-	GetStack()->AddItem(Proto->Clone());
-
-      for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
-	if(i->second.IsAutoInitializable)
-	  GetStack()->AddItem(Proto->Clone(i->first));
-    }
+  for(ushort c = 0; c < AllItems.size(); ++c)
+    GetStack()->AddItem(AllItems[c]);
 
   return false;
 }
@@ -2291,11 +2288,15 @@ bool character::CheckForEnemies(bool CheckDoors)
 
 bool character::CheckForDoors()
 {
-  if(CanOpen())
+  if(!CanOpen())
+    return false;
+
+  for(ushort d = 0; d < 8; ++d)
     {
-      DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-			    if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOLTerrain()->CanBeOpenedByAI() && OpenPos(vector2d(DoX, DoY)))
-			    return true;);
+      lsquare* Square = GetNeighbourLSquare(d);
+
+      if(Square && Square->GetOLTerrain()->CanBeOpenedByAI() && OpenPos(Square->GetPos()))
+	return true;
     }
 
   return false;
@@ -2639,11 +2640,13 @@ bool character::Go()
   Go->SetDirection(Dir);
   uchar OKDirectionsCounter = 0;
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-  {
-    if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->IsWalkable(this))
-      OKDirectionsCounter++;	
-  });
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square && Square->IsWalkable(this))
+	++OKDirectionsCounter;
+    }
 
   Go->SetWalkingInOpen(OKDirectionsCounter > 2 ? true : false);
   SetAction(Go);
@@ -2669,11 +2672,13 @@ void character::GoOn(go* Go)
 
   uchar OKDirectionsCounter = 0;
 
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-  {
-    if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->IsWalkable(this))
-      OKDirectionsCounter++;	
-  });
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square && Square->IsWalkable(this))
+	++OKDirectionsCounter;
+    }
 
   if(!Go->GetWalkingInOpen())
     {
@@ -2803,22 +2808,17 @@ void character::TestWalkability()
     {
       bool Alive = false;
 
-      while(true)
+      for(ushort d = 0; d < 8; ++d)
 	{
-	  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentArea()->GetXSize(), game::GetCurrentArea()->GetYSize(),
-	  {
-	    vector2d Where(DoX, DoY);
+	  square* Square = GetNeighbourSquare(d);
 
-	    if(GetSquareUnder()->GetAreaUnder()->GetSquare(Where)->IsWalkable(this) && !GetSquareUnder()->GetAreaUnder()->GetSquare(Where)->GetCharacter()) 
-	      {
-		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this).c_str());
-		Move(Where, true); // actually, this shouldn't be a teleport move
-		Alive = true;
-		break;
-	      }
-	  });
-
-	  break;
+	  if(Square && Square->IsWalkable(this) && !Square->GetCharacter())
+	    {
+	      ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this).c_str());
+	      Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
+	      Alive = true;
+	      break;
+	    }
 	}
 
       if(!Alive)
@@ -2941,27 +2941,44 @@ void character::TeleportRandomly()
 
 bool character::SecretKnowledge()
 {
-  /*felist List("Knowledge of the ancients:", WHITE, 0);
+  felist List("Knowledge of the ancients", WHITE, 0);
 
-  std::string Buffer = "Name                                                 Weight       SV     Str";
-  List.AddDescription(Buffer);
+  List.AddEntry("Character attacks", LIGHTGRAY);
+  //List.AddEntry("Character attacks");
 
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->IsAutoInitializable())
-      {
-	item* Item = protocontainer<item>::GetProto(c)->Clone();
-	Buffer = Item->GetName(INDEFINITE);
-	Buffer.resize(50,' ');
-	Buffer += Item->GetWeight();
-	Buffer.resize(63, ' ');
-	Buffer += Item->GetStrengthValue();
-	Buffer.resize(70, ' ');
-	Buffer += ulong(Item->GetWeaponStrength() / 100);
-	List.AddEntry(Buffer, LIGHTGRAY);
-	delete Item;
-      }
+  ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16));
+  List.Empty();
 
-  List.Draw(vector2d(26, 42), 652, 10);*/
+  if(Chosen < 1)
+    {
+      std::vector<character*> Character;
+      protosystem::CreateEveryCharacter(Character);
+      bitmap Pic(16, 16);
+
+      switch(Chosen)
+	{
+	case 0:
+	  List.AddDescription("                                                  BD        THV       APC");
+
+	  for(c = 0; c < Character.size(); ++c)
+	    {
+	      std::string Entry;
+	      Character[c]->AddName(Entry, UNARTICLED);
+	      Pic.Fill(TRANSPARENTCOL);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
+	      Character[c]->AddAttackInfo(List);
+	    }
+
+	  break;
+	}
+
+      List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16), false);
+
+      for(c = 0; c < Character.size(); ++c)
+	delete Character[c];
+    }
+
   return false;
 }
 
@@ -3058,17 +3075,17 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
 	return false;
       }
 
-  if(Critical && AllowDamageTypeBloodSpill(Type))
+  if(Critical && AllowDamageTypeBloodSpill(Type) && !game::IsInWilderness())
     {
       SpillBlood(3 + RAND() % 3);
 
-      DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-      {
-	vector2d Where(DoX, DoY);
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  lsquare* Square = GetNeighbourLSquare(d);
 
-	if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->IsWalkable()) 
-	  SpillBlood(2 + RAND() % 2, Where);
-      });
+	  if(Square && Square->GetOLTerrain()->IsWalkable())
+	    SpillBlood(2 + RAND() % 2, Square->GetPos());
+	}
     }
 
   if(BodyPart->ReceiveDamage(Damager, Damage, Type) && DamageTypeCanSeverBodyPart(Type) && BodyPartCanBeSevered(BodyPartIndex))
@@ -4750,13 +4767,20 @@ stackiterator character::FindRandomOwnBodyPart()
 std::vector<character*> character::GetFriendsAround() const
 {
   std::vector<character*> ToBeReturned;
-  character* Char;
-  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), 
-  {
-    Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter();
-    if(Char && Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
-      ToBeReturned.push_back(Char);
-  });
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = GetNeighbourSquare(d);
+
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char && Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
+	    ToBeReturned.push_back(Char);
+	}
+    }
+
   return ToBeReturned;
 }
 
@@ -4923,17 +4947,6 @@ wsquare* character::GetWSquareUnder() const
   return static_cast<wsquare*>(SquareUnder);
 }
 
-/*void characterdatabase::characterdatabase(const characterdatabase& Base)
-{
-  *this = Base;
-  Article = AllocateCopyOf(Base.Article);
-  Adjective = AllocateCopyOf(Adjective.Article);
-  AdjectiveArticle = AllocateCopyOf(AdjectiveArticle.Article);
-  NameSingular = AllocateCopyOf(NameSingular.Article);
-  NamePlural = AllocateCopyOf(NamePlural.Article);
-  PostFix = AllocateCopyOf(PostFix.Article);
-}*/
-
 void character::PrintBeginTeleportMessage() const
 {
 
@@ -4976,4 +4989,19 @@ void character::PrintBeginTeleportControlMessage() const
 void character::PrintEndTeleportControlMessage() const
 {
 
+}
+
+square* character::GetNeighbourSquare(ushort Index) const
+{
+  return SquareUnder->GetNeighbourSquare(Index);
+}
+
+lsquare* character::GetNeighbourLSquare(ushort Index) const
+{
+  return static_cast<lsquare*>(SquareUnder)->GetNeighbourLSquare(Index);
+}
+
+wsquare* character::GetNeighbourWSquare(ushort Index) const
+{
+  return static_cast<wsquare*>(SquareUnder)->GetNeighbourWSquare(Index);
 }

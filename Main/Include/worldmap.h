@@ -44,6 +44,7 @@ class worldmap : public area
   virtual void Draw() const;
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
+  wsquare* GetNeighbourWSquare(vector2d, ushort) const;
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

@@ -137,6 +137,10 @@ class ABSTRACT_CHARACTER
   virtual void SignalEquipmentRemoval(ushort);
   virtual uchar GetBodyParts() const { return HUMANOID_BODYPARTS; }
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual bool IsUsingArms() const;
+  virtual bool IsUsingLegs() const;
+  virtual bool IsUsingHead() const;
+  virtual void AddAttackInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -186,6 +190,7 @@ class ABSTRACT_CHARACTER
   virtual bool RaiseStats();
   virtual bool LowerStats();
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH) << 1; }
+  virtual void AddAttackInfo(felist&) const;
  protected:
   ushort Strength;
   ushort Agility;

@@ -264,3 +264,5 @@ Allow animate and allow alpha blend options to configuration.
 Draw during automated action as an option.
 We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
 Look stretch config option.
+If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
+Bodyparts should be rotated when they are severed.

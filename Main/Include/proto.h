@@ -58,6 +58,8 @@ class protosystem
   static material* CreateRandomSolidMaterial(ulong);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
   static void GenerateCodeNameMaps();
+  static void CreateEveryCharacter(std::vector<character*>&);
+  static void CreateEveryItem(std::vector<item*>&);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)

@@ -1,0 +1,10 @@
+hp - high priority
+lp - low priority
+
+Stethoscope. (hp)
+Inhandspics of broken weapons. (lp)
+Hit symbol.
+Village Elder.
+Thief.
+Black Mage.
+Grave digger.

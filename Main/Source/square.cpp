@@ -139,3 +139,8 @@ bool square::CanBeSeenBy(character* Who) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
+
+square* square::GetNeighbourSquare(ushort Index) const
+{
+  return AreaUnder->GetNeighbourSquare(Pos, Index);
+}

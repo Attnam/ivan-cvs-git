@@ -42,6 +42,7 @@ class wsquare : public square
   void SetWTerrain(gwterrain*, owterrain*);
   void SetLastSeen(ulong);
   void CalculateLuminance();
+  wsquare* GetNeighbourWSquare(ushort) const;
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

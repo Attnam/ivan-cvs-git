@@ -69,28 +69,33 @@ void dulcis::PrayGoodEffect()
 {
   ADD_MESSAGE("A beautiful melody echoes around you.");
 
-  DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-  {
-    character* Char = game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter();
+  for(ushort d = 0; d < 8; ++d)
+    {
+      square* Square = game::GetPlayer()->GetNeighbourSquare(d);
 
-    if(Char)
-      if(Char->IsCharmable())
-	if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
-	  {
-	    if(Char->GetTeam() == game::GetPlayer()->GetTeam())
-	      ADD_MESSAGE("%s seems to be very happy.", Char->CHARNAME(DEFINITE));
-	    else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
-	      ADD_MESSAGE("%s stops fighting.", Char->CHARNAME(DEFINITE));
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char)
+	    if(Char->IsCharmable())
+	      if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
+		{
+		  if(Char->GetTeam() == game::GetPlayer()->GetTeam())
+		    ADD_MESSAGE("%s seems to be very happy.", Char->CHARNAME(DEFINITE));
+		  else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
+		    ADD_MESSAGE("%s stops fighting.", Char->CHARNAME(DEFINITE));
+		  else
+		    ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHARNAME(DEFINITE));
+
+		  Char->ChangeTeam(game::GetPlayer()->GetTeam());
+		}
+	      else
+		ADD_MESSAGE("%s resists its charming call.", Char->CHARNAME(DEFINITE));
 	    else
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHARNAME(DEFINITE));
-
-	    Char->ChangeTeam(game::GetPlayer()->GetTeam());
-	  }
-	else
-	  ADD_MESSAGE("%s resists its charming call.", Char->CHARNAME(DEFINITE));
-      else
-	ADD_MESSAGE("%s seems not affected.", Char->CHARNAME(DEFINITE));
-  });
+	      ADD_MESSAGE("%s seems not affected.", Char->CHARNAME(DEFINITE));
+	}
+    }
 }
 
 void dulcis::PrayBadEffect()
@@ -230,14 +235,16 @@ void silva::PrayGoodEffect()
 	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, false);
 	    bool Correct = false;
 
-	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	    {
-	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->IsWalkable())
-		{
-		  Correct = true;
-		  break;
-		}
-	    });
+	    for(ushort d = 0; d < 8; ++d)
+	      {
+		lsquare* Square = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
+
+		if(Square && Square->GetOLTerrain()->IsWalkable())
+		  {
+		    Correct = true;
+		    break;
+		  }
+	      }
 
 	    if(Correct)
 	      {
@@ -250,7 +257,7 @@ void silva::PrayGoodEffect()
 	      }
 	  }
 
-      uchar ToGround = 20 + RAND() % 21;
+      ushort ToGround = 20 + RAND() % 21;
 
       for(c = 0; c < ToGround; ++c)
 	for(ushort i = 0; i < 50; ++i)
@@ -262,13 +269,15 @@ void silva::PrayGoodEffect()
 	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
 	      continue;
 
-	    uchar Walkables = 0;
+	    ushort Walkables = 0;
 
-	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	    {
-	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->IsWalkable())
-		++Walkables;
-	    });
+	    for(ushort d = 0; d < 8; ++d)
+	      {
+		lsquare* Square = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
+
+		if(Square && Square->GetOLTerrain()->IsWalkable())
+		  ++Walkables;
+	      }
 
 	    if(Walkables > 6)
 	      {
@@ -316,19 +325,24 @@ void silva::PrayGoodEffect()
     {
       ushort Created = 0;
 
-      DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-      {
-	wolf* Wolf = new wolf;
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  square* Square = game::GetPlayer()->GetNeighbourSquare(d);
 
-	if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->IsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter())
-	  {
-	    Wolf->SetTeam(game::GetPlayer()->GetTeam());
-	    game::GetCurrentLevel()->GetLSquare(DoX, DoY)->AddCharacter(Wolf);
-	    ++Created;
-	  }
-	else
-	  delete Wolf;
-      });
+	  if(Square)
+	    {
+	      wolf* Wolf = new wolf;
+
+	      if(Square->IsWalkable(Wolf) && !Square->GetCharacter())
+		{
+		  Wolf->SetTeam(game::GetPlayer()->GetTeam());
+		  Square->AddCharacter(Wolf);
+		  ++Created;
+		}
+	      else
+		delete Wolf;
+	    }
+	}
 
       if(!Created)
 	ADD_MESSAGE("You hear a sad howling of a wolf inprisoned in the earth.");

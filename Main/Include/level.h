@@ -72,6 +72,7 @@ class level : public area
   bool CollectCreatures(std::vector<character*>&, character*, bool);
   void ApplyLSquareScript(squarescript*);
   virtual void Draw() const;
+  lsquare* GetNeighbourLSquare(vector2d, ushort) const;
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateWallSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;

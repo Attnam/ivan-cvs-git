@@ -284,3 +284,33 @@ void protosystem::GenerateCodeNameMaps()
   protocontainer<gwterrain>::GenerateCodeNameMap();
 }
 
+void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
+{
+  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c);
+      const character::databasemap& Config = Proto->GetConfig();
+
+      if(!Proto->IsAbstract())
+	Character.push_back(Proto->Clone());
+
+      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	Character.push_back(Proto->Clone(i->first));
+    }
+}
+
+void protosystem::CreateEveryItem(std::vector<item*>& Item)
+{
+  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+    {
+      const item::prototype* Proto = protocontainer<item>::GetProto(c);
+      const item::databasemap& Config = Proto->GetConfig();
+
+      if(!Proto->IsAbstract() && Proto->IsAutoInitializable())
+	Item.push_back(Proto->Clone());
+
+      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(i->second.IsAutoInitializable)
+	  Item.push_back(Proto->Clone(i->first));
+    }
+}
