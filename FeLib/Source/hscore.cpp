@@ -19,6 +19,7 @@
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 121
 
+
 const festring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
 long highscore::GetSize() const { return Entry.size(); }
@@ -28,6 +29,7 @@ highscore::highscore(const festring& File) : LastAdd(0xFF) { Load(File); }
 truth highscore::Add(long NewScore, const festring& NewEntry,
 		     time_t NewTime, long NewRandomID)
 {
+    
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
     {
@@ -70,6 +72,11 @@ void highscore::Draw() const
   {
     iosystem::TextScreen(CONST_S("There are no entries yet. "
 				 "Play a game to correct this."));
+    return;
+  }
+  if(GetVersion() != HIGH_SCORE_VERSION)
+  {
+      iosystem::TextScreen(CONST_S("The highscore file is for an other version of ivan. "));
     return;
   }
 
@@ -121,11 +128,10 @@ void highscore::Load(const festring& File)
   }
 
   inputfile HighScore(File, 0, false);
-  ushort HVersion;
-  HighScore >> HVersion;
 
-  if(HVersion == HIGH_SCORE_VERSION)
-    HighScore >> Score >> Entry >> Time >> RandomID >> LastAdd;
+  HighScore >> Version;
+  
+  HighScore >> Score >> Entry >> Time >> RandomID >> LastAdd;
 }
 
 truth highscore::MergeToFile(highscore* To) const
@@ -165,3 +171,18 @@ int highscore::Find(long AScore, const festring& AEntry,
 
 truth highscore::LastAddFailed() const
 { return LastAdd == MAX_HIGHSCORES; }
+
+void highscore::Clear() 
+{
+  Entry.clear();
+  Score.clear();
+  Time.clear();
+  RandomID.clear();
+  Version = HIGH_SCORE_VERSION;
+  LastAdd = 0xFF;
+}
+
+truth highscore::CheckVersion() const
+{
+  return Version == HIGH_SCORE_VERSION;
+}

@@ -43,6 +43,9 @@ class highscore
   const festring& GetEntry(int) const;
   long GetScore(int) const;
   long GetSize() const;
+  ushort GetVersion() const { return Version; }
+  void Clear();
+  truth CheckVersion() const;
  private:
   truth Add(long, const festring&, time_t, long);
   std::vector<festring> Entry;
@@ -50,6 +53,7 @@ class highscore
   std::vector<time_t> Time;
   std::vector<long> RandomID;
   int LastAdd;
+  ushort Version;
 };
 
 #endif

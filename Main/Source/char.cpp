@@ -1805,6 +1805,18 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
   if(!game::WizardModeIsReallyActive())
   {
     highscore HScore;
+    if(!HScore.CheckVersion()) {
+      game::AskForKeyPress("The highscore file is for an older version [press any key to continue]");
+      game::AskForKeyPress("Do you want to ERASE previous records or shall we not record this game? [press any key to continue]");
+      truth OK = game::TruthQuestion("ERASE previous records and record this game [y/n]", REQUIRES_ANSWER);
+
+
+      if(!OK)
+	return;
+	
+      HScore.Clear();
+	
+    }
     festring Desc = game::GetPlayerName();
     Desc << ", " << Description;
 

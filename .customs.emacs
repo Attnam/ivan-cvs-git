@@ -1,5 +1,5 @@
 (defconst ivan-style
- '((c-offsets-alist . ((substatement-open . 0)
+ '((c++-offsets-alist . ((substatement-open . 0)
 			(label . /)
 			(access-label . /)
 			(case-label . *)
@@ -12,9 +12,9 @@
 			(statement-case-open . *))))
  "The Standard IVAN Programming Style")
 
-(add-hook 'c-mode-common-hook 'ivan-mode-common-hook)
+(add-hook 'c++-mode-common-hook 'ivan-mode-common-hook)
 
 (defun ivan-mode-common-hook ()
  ;; add style and set it for the current buffer
- (c-add-style "IVAN" ivan-style t))
+ (c++-add-style "IVAN" ivan-style t))
 
