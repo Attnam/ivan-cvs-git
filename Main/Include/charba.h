@@ -607,10 +607,13 @@ class character : public entity, public id
   virtual std::vector<character*> GetFriendsAround() const;
   virtual bodypart* TryAttachRandomOldBodyPart();
   virtual bodypart* AttachOldBodyPartFromStack(stackiterator, stack*);
+  virtual void PrintBeginPoisonedMessage() const;
+  virtual void PrintEndPoisonedMessage() const;
   virtual bool IsWarm() const;
   virtual void CalculateEquipmentState();
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void PoisonedHandler();
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);

@@ -92,11 +92,9 @@ class ITEM
   can,
   materialcontainer,
  public:
-  virtual bool Open(character*);
-  virtual item* PrepareForConsuming(character*);
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual item* BetterVersion() const;
-  virtual bool IsOpenable(const character*) const { return true; }
+  virtual void GenerateLeftOvers(character*);
  protected:
   virtual std::string GetPostFix() const { return ContainerPostFix(); }
   virtual std::string GetAdjective() const { return !GetContainedMaterial() ? "empty" : ""; }

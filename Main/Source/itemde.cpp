@@ -32,31 +32,6 @@ ITEM_PROTOTYPE(item, 0);
 #include "team.h"
 #include "error.h"
 
-bool can::Open(character* Opener)
-{
-  /*if(Opener->GetAttribute(ARMSTRENGTH) > RAND() % 30)
-    {
-      item* Item = new lump(GetContainedMaterial());
-      DonateSlotTo(Item);
-
-      if(!game::IsInWilderness() && configuration::GetAutoDropLeftOvers())
-	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
-      else
-	  Item->GetSlot()->AddFriendItem(this);
-
-      SetContainedMaterial(0);
-      return Item;
-    }
-  else
-    {
-      if(Opener->IsPlayer())
-	ADD_MESSAGE("The can is shut tight.");
-
-      return 0;
-    }*/
-  return false;
-}
-
 void banana::GenerateLeftOvers(character* Eater)
 {
   item* Peals = new bananapeals(0, false);
@@ -209,14 +184,6 @@ material* lump::CreateDipMaterial()
   return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
 }
 
-item* can::PrepareForConsuming(character* Consumer)
-{
-  /*  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + GetName(DEFINITE) + " before eating it? [Y/n]", YES))
-    return TryToOpen(Consumer);
-    else*/
-    return 0;
-}
-
 bool pickaxe::Apply(character* User)
 {
   uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
@@ -328,7 +295,7 @@ void scrollofwishing::FinishReading(character* Reader)
     }
 }
 
-bool lantern::ReceiveDamage(character*, short Damage, uchar)
+bool lantern::ReceiveDamage(character*, short Damage, uchar DamageType)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
     {
@@ -1381,12 +1348,15 @@ bool mine::GetStepOnEffect(character* Stepper)
 {
   if(GetCharged())
     {
+      level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
+      RemoveFromSlot();
+      SendToHell();
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
-      Stepper->GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by a land mine", Stepper->GetPos(), 30);
+      GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by a land mine", Stepper->GetPos(), 30);
     }
 
   return false;
@@ -3264,6 +3234,16 @@ sweaponskill* leftarm::GetCurrentSingleWeaponSkill() const
   return GetHumanoidMaster()->GetCurrentLeftSingleWeaponSkill();
 }
 
+void can::GenerateLeftOvers(character* Eater)
+{
+  ChangeConsumeMaterial(0);
+
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
+    MoveTo(Eater->GetLSquareUnder()->GetStack());
+  else
+    MoveTo(Eater->GetStack());
+}
+
 uchar bodypart::GetMaxAlpha(ushort Frame) const
 {
   if(GetMaster() && GetMaster()->StateIsActivated(INVISIBLE))
@@ -3315,3 +3295,4 @@ uchar lantern::GetSpecialFlags(ushort) const
       return 0;
     }
 }
+

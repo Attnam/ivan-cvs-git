@@ -1,3 +1,8 @@
+July 6 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Poison state added.
+	* Now compiles under GCC 3.1. Again problems with typenames in proto.cpp
+
 July 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Temporary states whose counters are zero are now considered permanent intrinsics
@@ -34,6 +39,11 @@ July 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Redefined much of the keyboard layout
 	* Decreased reading times required when WMode is activated
 	* Skeleton's TotalVolume and FleshMaterial are now correct
+
+July 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Teleporting from a bear trap works ok
+	* Mine works (except is seen normally)
 
 July 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

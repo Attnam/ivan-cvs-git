@@ -520,6 +520,7 @@ scrollofteleportation /* scroll-> */
 	Possibility = 50;
 	Price = 50;
 	PostFix = "of teleportation";
+	Alias == "scroll of teleport";
 }
 
 
@@ -1254,6 +1255,11 @@ chest
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
 	IsTwoHanded = true;
+	FormModifier = 35;
+	DefaultSize = 100;
+	MainMaterialConfig == WOOD;
+	Roundness = 50;
+	DefaultMainVolume = 100000;
 }
 
 wandofdoorcreation /* wand-> */
@@ -1273,6 +1279,10 @@ beartrap
 	IsPickableByAI = false;
 	BitmapPos = 32, 304;
 	IsTwoHanded = true;
+	DefaultSize = 30;
+	DefaultMainVolume = 500;
+	FormModifier = 35;
+	Roundness = 50;
 }
 
 wandofinvisibility /* wand-> */

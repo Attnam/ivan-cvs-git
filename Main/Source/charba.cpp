@@ -33,7 +33,8 @@ void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, 
 void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP };
 void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0 };
 
-std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP" };
+std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
+
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0)
 {
@@ -1968,7 +1969,7 @@ void character::GetPlayerCommand()
 	ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
     }
 }
-
+/* What on earth is that ushort for? */
 void character::Vomit(ushort)
 {
   if(IsPlayer())
@@ -2979,6 +2980,7 @@ void character::ChangeContainedMaterial(material* NewMaterial)
 
 void character::TeleportRandomly()
 {
+  SetStuckToBodyPart(NONEINDEX);
   Move(game::GetCurrentLevel()->RandomSquare(this, true), true);
 }
 
@@ -4871,6 +4873,32 @@ bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIter
   AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
   GetStack()->RemoveItem(OldOwnBodyPartIterator);
   return OldOwnBodyPart;  
+}
+
+void character::PrintBeginPoisonedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You seem to be very ill.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks very ill.", CHARNAME(DEFINITE));
+    
+}
+
+void character::PrintEndPoisonedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel better again.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("Looks better.");
+    
+}
+
+void character::PoisonedHandler()
+{
+  if(!(RAND() % 100))
+    Vomit(3); 
+  if(!(RAND() % 20))
+    character::ReceiveDamage(this, 1, POISON, ALL, 0, false, true, false);
 }
 
 bool character::IsWarm() const
