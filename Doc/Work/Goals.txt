@@ -5,15 +5,15 @@
 ////Dark frogeista plussaa kaaottisille jumalille.
 ////Kannibalismi.
 ////Ennerscream hajottamaan potioneita sekä maasta että inventorioista.
-(läheltä huutaminen voisi hajottaa myös plate maileja)
+////(läheltä huutaminen voisi hajottaa myös plate maileja)
 Pimeydelle vaikutuksia.
 ////Kickille vielä muutakin käyttöä = ovien potkiminen.
 ////Avatut cannit.
-%Asetaidot.
+////%Asetaidot.
 %Tiimit.
 ////*Script.
 %*Attnam.
-*Player must not be the Only Son anymore.
+////*Player must not be the Only Son anymore.
 ////Garbage monsters.
 ////%*New material color system.
 Ääriviivat itemeille ja monsuille.

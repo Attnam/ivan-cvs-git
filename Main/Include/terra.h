@@ -7,24 +7,21 @@ class outputfile;
 class inputfile;
 class character;
 
-class groundterrain : virtual public typeable
+class terrain
 {
 public:
-	virtual void DrawToTileBuffer() const = 0;
+	virtual bool GetIsWalkable() const { return true; }
 };
 
-class overterrain : virtual public typeable
+class groundterrain : public terrain
+{
+};
+
+class overterrain : public terrain
 {
 public:
-	virtual void Save(outputfile&) const;
-	virtual void Load(inputfile&);
-	virtual void SetIsWalkable(bool What)			{ IsWalkable = What; }
-	virtual bool GetIsWalkable() const			{ return IsWalkable; }
 	virtual bool GoUp(character*) const = 0;
 	virtual bool GoDown(character*) const = 0;
-	virtual void DrawToTileBuffer() const = 0;
-protected:
-	bool IsWalkable;
 };
 
 #endif

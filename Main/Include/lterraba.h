@@ -52,8 +52,6 @@ public:
 	groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
 	virtual void DrawToTileBuffer() const;
 	virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
-	virtual void Save(outputfile& SaveFile) const { levelterrain::Save(SaveFile); }
-	virtual void Load(inputfile& SaveFile) { levelterrain::Load(SaveFile); };
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
 };
 
@@ -61,19 +59,14 @@ class overlevelterrain : public levelterrain, public overterrain
 {
 public:
 	overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
-	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
 	virtual bool GoUp(character*) const;
 	virtual bool GoDown(character*) const;
-	virtual void Save(outputfile&) const;
 	virtual uchar GetOwnerGod() const { return 0; }
 	virtual std::string DigMessage() { return "The ground is too hard to dig."; }
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
 	virtual void Kick(ushort, bool, uchar) {}
-protected:
-	virtual void MakeWalkable();
-	virtual void MakeNotWalkable();
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

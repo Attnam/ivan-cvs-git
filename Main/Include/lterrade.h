@@ -33,18 +33,34 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
 
+class GROUNDLEVELTERRAIN
+(
+	grassterrain,
+	groundlevelterrain,
+	InitMaterials(new grass(1)),
+	{
+	},
+public:
+	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", grass::StaticType()))
+protected:
+	virtual std::string NameSingular() const				{ return "grass"; }
+	virtual std::string NamePlural() const					{ return "grasses"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
+);
+
 class OVERLEVELTERRAIN
 (
 	earth,
 	overlevelterrain,
 	InitMaterials(new moraine(1)),
 	{
-		SetIsWalkable(false);
 	},
 public:
 	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
 	virtual bool CanBeDigged() const { return true; }
 	virtual std::string DigMessage() { return "The ground is fairly easy to dig."; }
+	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "earth"; }
 	virtual std::string NamePlural() const					{ return "earths"; }
@@ -57,12 +73,12 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone(1)),
 	{
-		SetIsWalkable(false);
 	},
 public:
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual bool CanBeDigged() const { return true; }
 	virtual std::string DigMessage() { return "The wall is pretty hard, but you still manage to go through it."; }
+	virtual bool GetIsWalkable() const { return false; }
 protected:
 	virtual std::string NameSingular() const				{ return "wall"; }
 	virtual std::string NamePlural() const					{ return "walls"; }
@@ -75,7 +91,6 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new air(1)),
 	{
-		SetIsWalkable(true);
 	},
 public:
 	virtual std::string DigMessage() { return "The square you are trying to dig is empty."; }
@@ -91,7 +106,7 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone(1)),
 	{
-		SetIsWalkable(false);
+		SetIsOpen(false);
 		UpdatePicture();
 	},
 public:
@@ -100,10 +115,17 @@ public:
 	virtual bool CanBeOpened() const { return !GetIsWalkable(); }
 	virtual std::string DigMessage() { return "The door is too hard to dig through."; }
 	virtual void Kick(ushort, bool, uchar);
+	virtual void SetIsOpen(bool What) { IsOpen = What; }
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual bool GetIsWalkable() const { return IsOpen; }
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual std::string NamePlural() const					{ return "doors"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }
+	virtual void MakeWalkable();
+	virtual void MakeNotWalkable();
+	bool IsOpen;
 );
 
 class OVERLEVELTERRAIN
@@ -112,7 +134,6 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone(1)),
 	{
-		SetIsWalkable(true);
 	},
 public:
 	virtual bool GoUp(character*) const;
@@ -130,7 +151,6 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone(1)),
 	{
-		SetIsWalkable(true);
 	},
 public:
 	virtual bool GoDown(character*) const;
@@ -148,7 +168,6 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new stone(1)),
 	{
-		SetIsWalkable(true);
 		SetOwnerGod(rand() % game::GetGodNumber() + 1);
 	},
 public:
@@ -174,7 +193,6 @@ class OVERLEVELTERRAIN
 	overlevelterrain,
 	InitMaterials(new gold(1)),
 	{
-		SetIsWalkable(true);
 	},
 public:
 	virtual bool CanBeDigged() const { return false; }
@@ -183,22 +201,6 @@ protected:
 	virtual std::string NameSingular() const				{ return "throne"; }
 	virtual std::string NamePlural() const					{ return "thrones"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 304); }
-);
-
-class GROUNDLEVELTERRAIN
-(
-	grassterrain,
-	groundlevelterrain,
-	InitMaterials(new grass(1)),
-	{
-	},
-public:
-	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
-	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", grass::StaticType()))
-protected:
-	virtual std::string NameSingular() const				{ return "grass"; }
-	virtual std::string NamePlural() const					{ return "grasses"; }
-	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
 );
 
 #endif

@@ -6,14 +6,11 @@
 #include "proto.h"
 
 class worldmapsquare;
-class outputfile;
-class inputfile;
-class dungeon;
+class worldmap;
 
-class worldmapterrain : virtual public typeable
+class worldmapterrain : public typeable
 {
 public:
-	friend class worldmap;
 	virtual vector2d GetPos() const;
 	virtual worldmapsquare* GetWorldMapSquareUnder() const;
 	virtual worldmap* GetWorldMapUnder() const;
@@ -28,8 +25,6 @@ class groundworldmapterrain : public worldmapterrain, public groundterrain
 {
 public:
 	groundworldmapterrain(bool = true) {}
-	virtual void Save(outputfile& SaveFile) const { typeable::Save(SaveFile); }
-	virtual void Load(inputfile& SaveFile) { typeable::Load(SaveFile); }
 	virtual void DrawToTileBuffer() const;
 	virtual groundworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
@@ -40,8 +35,6 @@ class overworldmapterrain : public worldmapterrain, public overterrain
 {
 public:
 	overworldmapterrain(bool = true) {}
-	virtual void Save(outputfile&) const;
-	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
 	virtual overworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }

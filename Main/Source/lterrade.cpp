@@ -74,14 +74,14 @@ void altar::DrawToTileBuffer() const
 
 void altar::Load(inputfile& SaveFile)
 {
-	overlevelterrain::Load(SaveFile);
+	levelterrain::Load(SaveFile);
 
 	SaveFile >> OwnerGod;
 }
 
 void altar::Save(outputfile& SaveFile) const
 {
-	overlevelterrain::Save(SaveFile);
+	levelterrain::Save(SaveFile);
 
 	SaveFile << OwnerGod;
 }
@@ -205,9 +205,50 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	}
 }
 
-
 void door::Kick(ushort, bool ShowOnScreen, uchar)
 {
 	if(!GetIsWalkable() && ShowOnScreen) ADD_MESSAGE("The door opens.");
 		MakeWalkable();
+}
+
+void door::Save(outputfile& SaveFile) const
+{
+	levelterrain::Save(SaveFile);
+
+	SaveFile << IsOpen;
+}
+
+void door::Load(inputfile& SaveFile)
+{
+	levelterrain::Load(SaveFile);
+
+	SaveFile >> IsOpen;
+}
+
+void door::MakeWalkable()
+{
+	IsOpen = true;
+
+	GetLevelSquareUnder()->SendNewDrawRequest();
+	GetLevelSquareUnder()->ForceEmitterEmitation();
+
+	if(GetLevelSquareUnder()->RetrieveFlag())
+		game::GetCurrentLevel()->UpdateLOS();
+
+	UpdatePicture();
+}
+
+void door::MakeNotWalkable()
+{
+	GetLevelSquareUnder()->ForceEmitterNoxify();
+
+	IsOpen = false;
+
+	GetLevelSquareUnder()->SendNewDrawRequest();
+	GetLevelSquareUnder()->ForceEmitterEmitation();
+
+	if(GetLevelSquareUnder()->RetrieveFlag())
+		game::GetCurrentLevel()->UpdateLOS();
+
+	UpdatePicture();
 }

@@ -25,7 +25,7 @@ class outputfile;
 class inputfile;
 class bitmap;
 
-class object : virtual public typeable
+class object : virtual public typeable // This must be virtual and I have NO idea why!
 {
 public:
 	object(bool);
@@ -49,12 +49,12 @@ public:
 	virtual bool GetExists() const { return Exists; }
 	virtual void SetExists(bool What) { Exists = What; }
 	virtual uchar GetGraphicsContainerIndex() const = 0;
-	virtual void DrawToTileBuffer() const = 0;
 	virtual void SetMaterial(uchar, material*);
 	virtual void ChangeMaterial(uchar, material*);
 	virtual void UpdatePicture();
 	virtual ulong GetID() const { return ID; }
 	virtual void SetID(ulong What) { ID = What; }
+	virtual void DrawToTileBuffer() const = 0;
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;

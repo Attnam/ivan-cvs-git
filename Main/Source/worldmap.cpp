@@ -11,7 +11,7 @@
 #include "error.h"
 #include "save.h"
 
-worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize), Continent(1, 0)
+worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
 	Map = (worldmapsquare***)area::Map;
 
@@ -24,7 +24,7 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize), Continent(1
 
 	TypeBuffer = Alloc2D<ushort>(XSize, YSize);
 	AltitudeBuffer = Alloc2D<short>(XSize, YSize);
-	ContinentBuffer = Alloc2D<uchar>(XSize, YSize, 0);
+	ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
 
 	continent::TypeBuffer = TypeBuffer;
 	continent::AltitudeBuffer = AltitudeBuffer;
@@ -36,6 +36,9 @@ worldmap::~worldmap()
 	delete [] TypeBuffer;
 	delete [] AltitudeBuffer;
 	delete [] ContinentBuffer;
+
+	for(uchar c = 1; c < Continent.size(); ++c)
+		delete Continent[c];
 }
 
 void worldmap::Save(outputfile& SaveFile) const
@@ -111,48 +114,59 @@ void worldmap::Draw() const
 
 void worldmap::Generate()
 {
-	RandomizeAltitude();
-	SmoothAltitude();
-	GenerateClimate();
-	SmoothClimate();
-	CalculateContinents();
-
-	std::vector<continent*> PerfectForAttnam;
-
-	for(uchar c = 1; c < Continent.size(); ++c)
-		if(Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) > 1)
-			PerfectForAttnam.push_back(Continent[c]);
-
-	vector2d AttnamPos, ElpuriCavePos;
-
-	for(ushort CounterOne = 0;;)
+	while(true)
 	{
-		continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
+		RandomizeAltitude();
+		SmoothAltitude();
+		GenerateClimate();
+		SmoothClimate();
+		CalculateContinents();
 
-		AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+		std::vector<continent*> PerfectForAttnam;
 
-		ushort CounterTwo = 0;
+		for(uchar c = 1; c < Continent.size(); ++c)
+			if(Continent[c]->Size() > 50 && Continent[c]->Size() < 200 && Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) > 1)
+				PerfectForAttnam.push_back(Continent[c]);
 
-		for(ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()))
+		if(!PerfectForAttnam.size())
+			continue;
+
+		vector2d AttnamPos, ElpuriCavePos;
+
+		for(ushort CounterOne = 0;;)
 		{
-			if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
+			continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
+
+			AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+
+			ushort CounterTwo = 0;
+
+			for(ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()))
+			{
+				if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
+					break;
+
+				if(++CounterTwo == 50)
+					break;
+			}
+
+			if(CounterTwo != 50)
 				break;
 
-			if(++CounterTwo == 50)
+			if(++CounterOne == 50)
 				break;
 		}
 
-		if(CounterTwo != 50)
-			break;
+		if(CounterOne == 50)
+			continue;
 
-		if(++CounterOne == 50)
-			ABORT("Perttu is homeless!");
+		GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
+		GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
+
+		GetWorldMapSquare(AttnamPos)->AddCharacter(game::GetPlayer());
+
+		break;
 	}
-
-	GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
-	GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
-
-	GetWorldMapSquare(AttnamPos)->AddCharacter(game::GetPlayer());
 }
 
 void worldmap::RandomizeAltitude()
@@ -305,6 +319,14 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
 void worldmap::CalculateContinents()
 {
+	uchar c;
+
+	for(c = 1; c < Continent.size(); ++c)
+		delete Continent[c];
+
+	Continent.resize(1, 0);
+	memset(ContinentBuffer[0], 0, XSize * YSize);
+
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
 			if(AltitudeBuffer[x][y] > 0)
@@ -348,7 +370,7 @@ void worldmap::CalculateContinents()
 
 	RemoveEmptyContinents();
 
-	for(uchar c = 1; c < Continent.size(); ++c)
+	for(c = 1; c < Continent.size(); ++c)
 		Continent[c]->GenerateInfo();
 }
 

@@ -70,18 +70,6 @@ void levelterrain::Load(inputfile& SaveFile)
 	SaveFile >> VisualFlags;
 }
 
-void overlevelterrain::Save(outputfile& SaveFile) const
-{
-	levelterrain::Save(SaveFile);
-	overterrain::Save(SaveFile);
-}
-
-void overlevelterrain::Load(inputfile& SaveFile)
-{
-	levelterrain::Load(SaveFile);
-	overterrain::Load(SaveFile);
-}
-
 void groundlevelterrain::DrawToTileBuffer() const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -106,34 +94,6 @@ bool levelterrain::Close(character* Closer)
 		ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
 
 	return false;
-}
-
-void overlevelterrain::MakeWalkable()
-{
-	IsWalkable = true;
-
-	GetLevelSquareUnder()->SendNewDrawRequest();
-	GetLevelSquareUnder()->ForceEmitterEmitation();
-
-	if(GetLevelSquareUnder()->RetrieveFlag())
-		game::GetCurrentLevel()->UpdateLOS();
-
-	UpdatePicture();
-}
-
-void overlevelterrain::MakeNotWalkable()
-{
-	GetLevelSquareUnder()->ForceEmitterNoxify();
-
-	IsWalkable = false;
-
-	GetLevelSquareUnder()->SendNewDrawRequest();
-	GetLevelSquareUnder()->ForceEmitterEmitation();
-
-	if(GetLevelSquareUnder()->RetrieveFlag())
-		game::GetCurrentLevel()->UpdateLOS();
-
-	UpdatePicture();
 }
 
 vector2d levelterrain::GetPos() const

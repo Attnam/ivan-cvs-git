@@ -477,9 +477,9 @@ void levelsquare::UpdateMemorizedDescription()
 	bool Anything = false;
 	if(GetLuminance() > 63 || game::GetSeeWholeMapCheat())
 	{
-		if(GetOverTerrain()->Name(UNARTICLED) != "air atmosphere")
+		if(GetOverLevelTerrain()->Name(UNARTICLED) != "air atmosphere")
 		{
-			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetOverLevelTerrain()->Name(INDEFINITE));
 			Anything = true;
 		}
 
@@ -498,20 +498,20 @@ void levelsquare::UpdateMemorizedDescription()
 
 			Anything = true;
 
-			SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
 		}
 		else
 			if(Anything)
-				SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+				SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundLevelTerrain()->Name(INDEFINITE));
 			else
-				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+				SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 
 		for(uchar c = 0; c < 4; ++c)
 		{
 			if(GetSideStack(c)->GetItems() == 1)
 			{
 				if(!Anything)
-					SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+					SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 
 				SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
 			}
@@ -519,7 +519,7 @@ void levelsquare::UpdateMemorizedDescription()
 			if(GetSideStack(c)->GetItems() > 1)
 			{
 				if(!Anything)
-					SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+					SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 
 				SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
 			}
@@ -530,8 +530,9 @@ void levelsquare::UpdateMemorizedDescription()
 		SetMemorizedDescription("darkness");
 		Anything = true;
 	}
+
 	if(!Anything)
-		SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+		SetMemorizedDescription(GetGroundLevelTerrain()->Name(INDEFINITE));
 }
 
 bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)

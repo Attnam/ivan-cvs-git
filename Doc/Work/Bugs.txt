@@ -19,3 +19,4 @@ Various graphics have become buggy after the Material Color Change.
 Game crashes when a brokable item hits a monster.
 Felist crashes when an empty list ougth to be drawn.
 Dark frog effect is far too high.
+Single weapon skill's name isn't updated when the name of the item changes.

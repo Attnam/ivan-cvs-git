@@ -583,10 +583,8 @@ bool humanoid::Hit(character* Enemy)
 
 void humanoid::CharacterSpeciality()
 {
-	{
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
 		GetCategoryWeaponSkill(c)->Turn(GetIsPlayer());
-	}
 
 	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
 	{

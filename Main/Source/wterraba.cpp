@@ -72,18 +72,6 @@ void overworldmapterrain::DrawToTileBuffer() const
 	igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
-void overworldmapterrain::Save(outputfile& SaveFile) const
-{
-	typeable::Save(SaveFile);
-	overterrain::Save(SaveFile);
-}
-
-void overworldmapterrain::Load(inputfile& SaveFile)
-{
-	typeable::Load(SaveFile);
-	overterrain::Load(SaveFile);
-}
-
 worldmapsquare* worldmapterrain::GetWorldMapSquareUnder() const
 {
 	return (worldmapsquare*)SquareUnder;

@@ -114,10 +114,10 @@ void worldmapsquare::UpdateMemorizedDescription()
 	{
 		std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? " of continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
 
-		if(GetOverTerrain()->Name(UNARTICLED) != "atmosphere")
-			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE) + " on " + GetGroundTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+		if(GetOverWorldMapTerrain()->Name(UNARTICLED) != "atmosphere")
+			SetMemorizedDescription(GetOverWorldMapTerrain()->Name(INDEFINITE) + " on " + GetGroundWorldMapTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
 		else
-			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
+			SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");
 
 		DescriptionChanged = false;
 	}

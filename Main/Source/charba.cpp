@@ -705,7 +705,7 @@ bool character::TryMove(vector2d MoveTo)
 		}
 	else
 		if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
-			if(true || (game::GetGoThroughWallsCheat() && GetIsPlayer())) //The player must not be the only son!
+			if(game::GetCurrentArea()->GetSquare(MoveTo)->GetGroundTerrain()->GetIsWalkable() || (game::GetGoThroughWallsCheat() && GetIsPlayer()))
 			{
 				Move(MoveTo);
 				return true;
@@ -2043,7 +2043,8 @@ void character::Vomit(ushort HowMuch)
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s vomits.", CNAME(DEFINITE));
-	SetNP(GetNP() - 100);
+
+	SetNP(GetNP() - 20 - rand() % 21);
 	GetLevelSquareUnder()->SpillFluid(HowMuch, MAKE_RGB(10,230,10),3,50);
 }
 
@@ -2080,13 +2081,13 @@ vector2d character::GetPos() const
 
 bool character::ForceVomit()
 {
-	ushort Amount = rand() % 3;
 	ADD_MESSAGE("You push your fingers down to your throat.");
+
 	if(Amount) 
 		Vomit(rand() % 3);
 	else
 		ADD_MESSAGE("You are not able to vomit.");
-	SetAP(GetAP() - 100);
+
 	return true;
 }
 

@@ -13,6 +13,7 @@ class GROUNDWORLDMAPTERRAIN
 	virtual std::string Article() const { return "an"; }
 	virtual vector2d GetBitmapPos() const { return vector2d(208, 64); }
 	virtual uchar Priority() const { return 10; }
+	virtual bool GetIsWalkable() const { return false; }
 );
 
 class GROUNDWORLDMAPTERRAIN

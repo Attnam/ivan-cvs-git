@@ -10,7 +10,6 @@ class area;
 class material;
 class bitmap;
 class character;
-class levelterrain;
 class groundterrain;
 class overterrain;
 class outputfile;
