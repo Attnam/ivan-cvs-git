@@ -1327,7 +1327,6 @@ Dungeon NEW_ATTNAM;
 		Square, Pos 0, 33;
 		{
 			EntryIndex = STAIRS_UP;
-			OTerrain = boulder;
 		}
 
 		Square, Random NOT_IN_ROOM;
