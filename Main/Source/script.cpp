@@ -53,8 +53,7 @@ bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 datamemberbase* posscript::GetData(const std::string& Identifier)
 {
   ANALYZEMEMBER(Vector);
-  ANALYZEMEMBER(Walkable);
-  ANALYZEMEMBER(InRoom);
+  ANALYZEMEMBER(Flags);
   return 0;
 }
 
@@ -72,13 +71,7 @@ void posscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "Random")
     {
       Random = true;
-
-      if(SaveFile.ReadWord() != "{")
-	ABORT("Bracket missing in position script line %d!", SaveFile.TellLine());
-
-      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-	if(!LoadData(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in position script line %d!", Word.c_str(), SaveFile.TellLine());
+      Flags.Load(SaveFile, ValueMap);
     }
 }
 
@@ -255,6 +248,9 @@ void contentscript<character>::Instantiate(std::vector<character*>& Instance, ul
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
       Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
+
+  for(ulong c = 0; c < Amount; ++c)
+    Instance[c]->RestoreHP();
 }
 
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
@@ -321,6 +317,8 @@ glterrain* contentscript<glterrain>::Instantiate(ushort SpecialFlags) const
 datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
 {
   ANALYZEMEMBER(VisualEffects);
+  ANALYZEMEMBER(AttachedArea);
+  ANALYZEMEMBER(AttachedEntry);
   return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
@@ -334,6 +332,14 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
 	Instance[c]->SetVisualEffects(*GetVisualEffects());
 	Instance[c]->UpdatePictures();
       }
+
+  if(GetAttachedArea(false))
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetAttachedArea(*GetAttachedArea());
+
+  if(GetAttachedEntry(false))
+    for(ulong c = 0; c < Amount; ++c)
+      Instance[c]->SetAttachedEntry(*GetAttachedEntry());
 }
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
@@ -353,10 +359,9 @@ datamemberbase* squarescript::GetData(const std::string& Identifier)
   ANALYZEMEMBER(Item);
   ANALYZEMEMBER(GTerrain);
   ANALYZEMEMBER(OTerrain);
-  ANALYZEMEMBER(IsUpStairs);
-  ANALYZEMEMBER(IsDownStairs);
-  ANALYZEMEMBER(IsWorldMapEntry);
   ANALYZEMEMBER(Times);
+  ANALYZEMEMBER(AttachRequired);
+  ANALYZEMEMBER(EntryIndex);
   return 0;
 }
 
@@ -556,13 +561,12 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZEMEMBER(Rooms);
   ANALYZEMEMBER(GenerateMonsters);
   ANALYZEMEMBER(ReCalculate);
-  ANALYZEMEMBER(GenerateUpStairs);
-  ANALYZEMEMBER(GenerateDownStairs);
   ANALYZEMEMBER(OnGround);
   ANALYZEMEMBER(TeamDefault);
   ANALYZEMEMBER(AmbientLight);
   ANALYZEMEMBER(Description);
   ANALYZEMEMBER(LOSModifier);
+  ANALYZEMEMBER(IgnoreDefaultSpecialSquares);
   return 0;
 }
 

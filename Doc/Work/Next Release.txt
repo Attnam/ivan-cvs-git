@@ -123,4 +123,5 @@ Raven.
 Kicking chests.
 Prohibit spoiling in shops and on the cathedral floor.
 Mellis should give information about unknown gods.
-Whips should really break when hitting armor.
+Whips shouldn't really break when hitting armor.
+Balancing Loricatus.

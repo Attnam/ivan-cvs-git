@@ -230,10 +230,17 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 	    continue;
 	  }
 
-      if(LastKey >= 0x20 && Input.length() < MaxLetters)
+      if(LastKey >= 0x20 && Input.length() < MaxLetters && (LastKey != ' ' || Input.length()))
 	Input += char(LastKey);
     }
 
+  long LastAlpha = -1;
+
+  for(long c = 0; c < Input.size(); ++c)
+    if(Input[c] != ' ')
+      LastAlpha = c;
+
+  Input.resize(LastAlpha + 1);
   return Input;
 }
 

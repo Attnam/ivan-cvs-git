@@ -45,6 +45,7 @@ class worldmap : public area
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
   wsquare* GetNeighbourWSquare(vector2d, ushort) const;
+  vector2d GetEntryPos(const character* Char, uchar Index) const { return EntryMap.find(Index)->second; }
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

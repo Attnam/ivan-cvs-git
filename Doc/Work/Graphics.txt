@@ -30,5 +30,9 @@ Anvil. (lp)
 Levitating ostrich.
 M-color for boots.
 Animation for mommos.
+Several types of key pictures. (lp)
+Harp.
+Nuts shouldn't be peeled.
+Teleport.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

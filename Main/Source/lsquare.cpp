@@ -762,6 +762,12 @@ oterrain* lsquare::GetOTerrain() const
 
 void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
+  if(SquareScript->GetAttachRequired(false) && *SquareScript->GetAttachRequired())
+    GetLevelUnder()->AttachPos(GetPos());
+
+  if(SquareScript->GetEntryIndex(false))
+    GetLevelUnder()->SetEntryPos(*SquareScript->GetEntryIndex(), GetPos());
+
   if(SquareScript->GetCharacter(false))
     {
       character* Char = SquareScript->GetCharacter()->Instantiate();
@@ -804,15 +810,6 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
       if(Room)
 	Room->HandleInstantiatedOLTerrain(Terrain);
     }
-
-  if(SquareScript->GetIsUpStairs(false) && *SquareScript->GetIsUpStairs())
-    GetLevelUnder()->SetUpStairs(Pos);
-
-  if(SquareScript->GetIsDownStairs(false) && *SquareScript->GetIsDownStairs())
-    GetLevelUnder()->SetDownStairs(Pos);
-
-  if(SquareScript->GetIsWorldMapEntry(false) && *SquareScript->GetIsWorldMapEntry())
-    GetLevelUnder()->SetWorldMapEntry(Pos);
 }
 
 bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
@@ -1267,7 +1264,7 @@ void lsquare::KickAnyoneStandingHereAway()
       vector2d Pos = GetLevelUnder()->GetNearestFreeSquare(Character, GetPos());
 
       if(Pos == DIR_ERROR_VECTOR)
-	Pos = GetLevelUnder()->RandomSquare(Character, true);
+	Pos = GetLevelUnder()->GetRandomSquare(Character);
 
       GetLevelUnder()->AddCharacter(Pos, Character);
       RemoveCharacter();

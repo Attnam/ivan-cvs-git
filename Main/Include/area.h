@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <map>
+
 #include "typedef.h"
 #include "femath.h"
 
@@ -40,12 +42,14 @@ class area
   square* GetNeighbourSquare(vector2d, ushort) const;
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
   const rect& GetBorder() const { return Border; }
+  void SetEntryPos(uchar Index, vector2d Pos) { EntryMap[Index] = Pos; }
  protected:
   square*** Map;
   ushort** FlagMap;
   ushort XSize, YSize;
   ulong XSizeTimesYSize;
   rect Border;
+  std::map<uchar, vector2d> EntryMap;
 };
 
 #endif

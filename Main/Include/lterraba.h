@@ -163,6 +163,7 @@ struct olterraindatabase : public terraindatabase
   bool IsSafeToDestroy;
   uchar RestModifier;
   std::string RestMessage;
+  bool IsUpLink;
 };
 
 class olterrainprototype
@@ -197,8 +198,7 @@ class olterrain : public lterrain, public oterrain
   olterrain(donothing) : HP(1000) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool GoUp(character*) const;
-  virtual bool GoDown(character*) const;
+  virtual bool Enter(bool) const;
   virtual void BeKicked(character*, ushort) { }
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
@@ -243,7 +243,10 @@ class olterrain : public lterrain, public oterrain
   virtual DATABASEBOOL(IsSafeToDestroy);
   virtual DATABASEVALUE(uchar, RestModifier);
   virtual DATABASEVALUE(const std::string&, RestMessage);
+  virtual DATABASEBOOL(IsUpLink);
   static olterrain* Clone(ushort, ushort) { return 0; }
+  virtual void SetAttachedArea(uchar) { }
+  virtual void SetAttachedEntry(uchar) { }
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const { return GROLTERRAIN; }

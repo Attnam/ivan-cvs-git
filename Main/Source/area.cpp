@@ -38,14 +38,14 @@ area::~area()
 
 void area::Save(outputfile& SaveFile) const
 {
-  SaveFile << XSize << YSize;
+  SaveFile << XSize << YSize << EntryMap;
   SaveFile.Write(reinterpret_cast<char*>(FlagMap[0]), sizeof(ushort) * XSizeTimesYSize);
 }
 
 void area::Load(inputfile& SaveFile)
 {
   game::SetAreaInLoad(this);
-  SaveFile >> XSize >> YSize;
+  SaveFile >> XSize >> YSize >> EntryMap;
   XSizeTimesYSize = XSize * YSize;
   Border = rect(0, 0, XSize - 1, YSize - 1);
   Alloc2D(Map, XSize, YSize);

@@ -373,7 +373,7 @@ void character::Be()
 
 bool character::GoUp()
 {
-  if(GetSquareUnder()->GetOTerrain()->GoUp(this))
+  if(GetSquareUnder()->GetOTerrain()->Enter(true))
     {
       EditExperience(LEGSTRENGTH, 50);
       EditNP(-20);
@@ -386,7 +386,7 @@ bool character::GoUp()
 
 bool character::GoDown()
 {
-  if(GetSquareUnder()->GetOTerrain()->GoDown(this))
+  if(GetSquareUnder()->GetOTerrain()->Enter(false))
     {
       EditExperience(AGILITY, 25);
       EditNP(-10);
@@ -584,7 +584,9 @@ void character::GetAICommand()
 
   EditAP(-1000);
 }
+
 /* TPos = Target Pos */
+
 bool character::MoveTowards(vector2d TPos)
 {
   vector2d MoveTo[3];
@@ -765,23 +767,13 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		  return true;
 		}
 
-	      std::vector<character*> TempPlayerGroup;
+	      std::vector<character*> Group;
 
-	      if(!GetLevelUnder()->CollectCreatures(TempPlayerGroup, this, false))
-		return false;
-
-	      GetAreaUnder()->RemoveCharacter(GetPos());
-	      game::GetCurrentDungeon()->SaveLevel();
-	      game::LoadWorldMap();
-	      game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
-	      game::SetIsInWilderness(true);
-	      game::GetWorldMap()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-	      game::SendLOSUpdateRequest();
-	      game::UpdateCamera();
-	      GetAreaUnder()->UpdateLOS();
-	      if(configuration::GetAutoSaveInterval())
-		game::Save(game::GetAutoSaveFileName());
-	      return true;
+	      if(game::LeaveLevel(Group, false))
+		{
+		  game::EnterArea(Group, WORLDMAP, game::GetCurrentDungeon()->GetIndex());
+		  return true;
+		}
 	    }
 
 	  return false;
@@ -3016,7 +3008,7 @@ void character::TeleportRandomly()
 	}
     }
 
-  Move(GetLevelUnder()->RandomSquare(this, true), true);
+  Move(GetLevelUnder()->GetRandomSquare(this), true);
 }
 
 bool character::SecretKnowledge()
@@ -4062,33 +4054,6 @@ void character::AddPepsiConsumeEndMessage() const
 
 void character::ReceiveDarkness(long SizeOfEffect)
 {
-  //long Penalty = 1 + SizeOfEffect * (100 + RAND() % 26 - RAND() % 26) / 100000;
-
-  /*if(GetStrength() - Penalty > 1)
-    SetStrength(GetStrength() - Penalty);
-  else
-    SetStrength(1);
-
-  if(GetEndurance() - Penalty > 1)
-    SetEndurance(GetEndurance() - Penalty);
-  else
-    SetEndurance(1);
-
-  if(GetAgility() - Penalty > 1)
-    SetAgility(GetAgility() - Penalty);
-  else
-    SetAgility(1);*/
-
-  /*ReceiveDamage(0, SizeOfEffect / 100, POISON, TORSO);
-
-  if(CheckDeath("was poisoned by pepsi"))
-    return;*/
-
-  /*if(GetHP() - Penalty / 2 > 1)
-    SetHP(GetHP() - Penalty / 2);
-  else
-    SetHP(1);*/
-
   EditAttribute(INTELLIGENCE, -1);
   EditAttribute(WISDOM, -1);
   EditAttribute(CHARISMA, -1);
@@ -4213,7 +4178,7 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	      if(Attribute > 1)
 		{
 		  Attribute -= 1;
-		  Experience += long(100 - Attribute) << 10;
+		  Experience += Max(long(100 - Attribute) << 10, 0L);
 		  Effect = true;
 		  continue;
 		}
@@ -4226,7 +4191,7 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	      if(Attribute > 2)
 		{
 		  Attribute -= 1;
-		  Experience += long(200 - Attribute) << 9;
+		  Experience += Max(long(200 - Attribute) << 9, 0L);
 		  Effect = true;
 		  continue;
 		}
@@ -5213,7 +5178,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      lump* Lump = new lump(0, NOMATERIALS); 
 	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
 	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
-	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack());
 	      if(IsPlayer())
 		ADD_MESSAGE("Parts of you teleport away.");
 	      else if(CanBeSeenByPlayer())
@@ -5224,7 +5189,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
       else
 	{
 	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
-	  GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack()->AddItem(SeveredBodyPart);
+	  GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack()->AddItem(SeveredBodyPart);
 	  SeveredBodyPart->DropEquipment();
 
 	  if(IsPlayer())
@@ -5621,6 +5586,7 @@ void character::AddDefenceInfo(felist& List) const
 }
 
 /* returns 0 if character cannot be cloned */
+
 character* character::Duplicate() const
 {
   if(!CanBeCloned())

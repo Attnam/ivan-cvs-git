@@ -208,9 +208,7 @@ void item::Load(inputfile& SaveFile)
 
 void item::TeleportRandomly()
 {
-  /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
-
-  MoveTo(GetNearLSquare(GetLevelUnder()->RandomSquare(0, true, false))->GetStack());
+  MoveTo(GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack());
 }
 
 ushort item::GetStrengthValue() const
@@ -437,11 +435,12 @@ void item::CalculateAll()
   CalculateEmitation();
 }
 
-/* Somewhat temporary. */
+/* Temporary and buggy. */
 
 void item::WeaponSkillHit()
 {
-  static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
+  if(Slot)
+    static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
 /* returns 0 if item cannot be cloned */

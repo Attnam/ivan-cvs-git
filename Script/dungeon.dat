@@ -14,7 +14,7 @@ Team 2; /* Residents of Attnam */
 	AttackEvilness=250;
 }
 
-Team 4; /* Enner Beasts */
+Team 4; /* Enner beasts */
 {
 	Relation 0, HOSTILE;
 	Relation 2, HOSTILE;
@@ -41,7 +41,7 @@ Team 7; /* Ivan */
 	AttackEvilness=100;
 }
 
-Dungeon 0;
+Dungeon ELPURICAVE;
 {
 	Levels=10;
 
@@ -57,29 +57,42 @@ Dungeon 0;
 		Items=25+rand%26;
 		GenerateMonsters=true;
 		ReCalculate=true;
-		GenerateUpStairs=true;
-		GenerateDownStairs=true;
 		OnGround=false;
 		TeamDefault=1;
 		AmbientLight=0;
 		LOSModifier=16;
+		IgnoreDefaultSpecialSquares = false;
 
-		Square, Random { Walkable=false; }
+		Square, Random NOTWALKABLE|NOTINROOM;
 		{
 			Item = stone;
 			Times = 25+rand%25;
 		}
 
-                Square, Random { Walkable=true; }
+                Square, Random;
 		{
 			Item = mine { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%4;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random;
 		{
 			Item = beartrap { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%4;
+		}
+
+		Square, Random NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP);
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
+		}
+
+		Square, Random NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSDOWN);
+			EntryIndex = STAIRSDOWN;
+			AttachRequired = true;
 		}
 
 		RoomDefault
@@ -104,23 +117,30 @@ Dungeon 0;
 
 	Level 0;
 	{
-		GenerateUpStairs=false;
+		IgnoreDefaultSpecialSquares = true;
 
 		RoomDefault
 		{
 			AltarPossible=false;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random;
 		{
 			Character=spider;
 			Times=20;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random;
 		{
 			Character=kobold;
 			Times=10;
+		}
+
+		Square, Random NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSDOWN);
+			EntryIndex = STAIRSDOWN;
+			AttachRequired = true;
 		}
 
 		Room 0;
@@ -131,8 +151,8 @@ Dungeon 0;
 
 			Square, Pos 2,2;
 			{
-				IsWorldMapEntry=true;
-				OTerrain=stairsup;
+				OTerrain = link(STAIRSUP);
+				EntryIndex = STAIRSUP;
 			}
 
 			Square, Pos 3,1;
@@ -253,10 +273,10 @@ Dungeon 0;
 
 	Level 4;
 	{
-		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
+		LevelMessage="You hear a wailing scream in the distance. An enner beast must dwell in the level!";
 		Rooms=10+rand%21;
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=ennerbeast { Team=4; }
 		}
@@ -267,19 +287,19 @@ Dungeon 0;
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=communist { Team=7; }
 		}
 	}
 
-	Level 6;
+	Level DARKLEVEL;
 	{
 		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
 		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Items=0;
-		GenerateDownStairs=false;
+		IgnoreDefaultSpecialSquares = true;
 
 		RoomDefault
 		{
@@ -289,9 +309,16 @@ Dungeon 0;
 			GenerateLanterns=false;
 		}
 
-		Square, Random { Walkable=true; InRoom=true; }
+		Square, Random INROOM;
 		{
 			Character=elpuri;
+		}
+
+		Square, Random NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP);
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
 		}
 	}
 
@@ -326,7 +353,14 @@ Dungeon 0;
 
 	Level 8;
 	{
-		GenerateDownStairs=false;
+		IgnoreDefaultSpecialSquares = true;
+
+		Square, Random NOTWALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRSUP);
+			EntryIndex = STAIRSUP;
+			AttachRequired = true;
+		}
 
 		Room 0;
 		{
@@ -338,27 +372,26 @@ Dungeon 0;
 
 			Square, Pos 3,3;
 			{
-				OTerrain=IRON stairsdown;
+				OTerrain = IRON link(STAIRSDOWN);
 			}
 
 			Square, Pos 3,5;
 			{
-				IsDownStairs=true;
+				EntryIndex = STAIRSDOWN;
 			}
 		}
 	}
 
-	Level 9;
+	Level OREELAIR;
 	{
 		Description=OreeLair;
 		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
 		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Rooms=1;
 		GenerateMonsters=false;
-		GenerateUpStairs=false;
-		GenerateDownStairs=false;
 		Items=0;
 		ReCalculate=false;
+		IgnoreDefaultSpecialSquares = true;
 
 		Room 0;
 		{
@@ -378,12 +411,12 @@ Dungeon 0;
 
 			Square, Pos 3,3;
 			{
-				IsUpStairs=true;
+				EntryIndex = STAIRSUP;
 			}
 
 			Square, Pos 3,5;
 			{
-				OTerrain=IRON stairsup;
+				OTerrain = IRON link(STAIRSUP);
 			}
 
 			CharacterMap
@@ -409,7 +442,7 @@ Dungeon 0;
 	}
 }
 
-Dungeon 1;
+Dungeon ATTNAM;
 {
 	Levels=1;
 
@@ -426,12 +459,11 @@ Dungeon 1;
 		Rooms=25 + rand % 6;
 		Items=0;
 		ReCalculate=false;
-		GenerateUpStairs=false;
-		GenerateDownStairs=false;
 		OnGround=true;
 		TeamDefault=2;
 		AmbientLight=225;
 		LOSModifier=48;
+		IgnoreDefaultSpecialSquares = false;
 
 		RoomDefault
 		{
@@ -452,37 +484,37 @@ Dungeon 1;
 			AllowBoobyTrappedDoors=false;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			OTerrain=decoration(PINE);
 			Times=50;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			OTerrain=decoration(SPRUCE);
 			Times=200;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=hunter;
 			Times=10;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=polarbear;
 			Times=5;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=farmer;
 			Times=5;
 		}
 
-		Square, Random { Walkable=true; InRoom=false; }
+		Square, Random NOTINROOM;
 		{
 			Character=housewife;
 			Times=5;
@@ -490,7 +522,7 @@ Dungeon 1;
 
 		Square, Pos 30,61;
 		{
-			IsWorldMapEntry=true;
+			EntryIndex = STAIRSUP;
 		}
 	
 		Room 0;

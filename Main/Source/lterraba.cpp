@@ -13,88 +13,6 @@
 #include "error.h"
 #include "database.h"
 
-bool olterrain::GoUp(character* Who) const // Try to go up
-{
-  if(game::GetCurrent() && game::GetCurrent() != 9 && game::WizardModeActivated())
-    {
-      GetLevelUnder()->RemoveCharacter(Who->GetPos());
-      game::GetCurrentDungeon()->SaveLevel();
-      game::SetCurrent(game::GetCurrent() - 1);
-      game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->FiatLux();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
-      game::GetCurrentArea()->AddCharacter(Pos, Who);
-      game::SendLOSUpdateRequest();
-      game::UpdateCamera();
-      game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutoSaveInterval())
-	game::Save(game::GetAutoSaveFileName().c_str());
-      return true;
-    }
-  else
-    if(!game::GetCurrent() && game::WizardModeActivated())
-      {
-	if(Who->IsPlayer())
-	  {
-	    std::vector<character*> TempPlayerGroup;
-
-	    if(!GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, true))
-	      return false;
-
-	    game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
-	    game::GetCurrentDungeon()->SaveLevel();
-	    game::LoadWorldMap();
-
-	    game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
-
-	    game::SetIsInWilderness(true);
-	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
-	    game::SendLOSUpdateRequest();
-	    game::UpdateCamera();
-	    game::GetCurrentArea()->UpdateLOS();
-	    if(configuration::GetAutoSaveInterval())
-	      game::Save(game::GetAutoSaveFileName().c_str());
-	    return true;
-	  }
-
-	return false;
-      }
-    else
-      {
-	if(Who->IsPlayer())
-	  ADD_MESSAGE("You can't go up.");
-
-	return false;
-      }
-}
-
-bool olterrain::GoDown(character* Who) const // Try to go down
-{
-  if(game::GetCurrent() < game::GetLevels() - 2 && game::WizardModeActivated())
-    {
-      GetLevelUnder()->RemoveCharacter(Who->GetPos());
-      game::GetCurrentDungeon()->SaveLevel();
-      game::SetCurrent(game::GetCurrent() + 1);
-      game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->FiatLux();
-      vector2d Pos = game::GetCurrentLevel()->RandomSquare(Who, true);
-      game::GetCurrentArea()->AddCharacter(Pos, Who);
-      game::SendLOSUpdateRequest();
-      game::UpdateCamera();
-      game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutoSaveInterval())
-	game::Save(game::GetAutoSaveFileName().c_str());
-      return true;
-    }
-  else
-    {
-      if(Who->IsPlayer())
-	ADD_MESSAGE("You can't go down.");
-
-      return false;
-    }
-}
-
 void lterrain::Load(inputfile& SaveFile)
 {
   LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
@@ -252,3 +170,28 @@ void lterrain::SignalEmitationDecrease(ushort EmitationUpdate)
     }
 }
 
+bool olterrain::Enter(bool DirectionUp) const
+{
+  /* "Temporary" gum solutions */
+
+  std::vector<character*> Group;
+
+  if(game::WizardModeActivated())
+    if(!DirectionUp && game::GetCurrent() < 8 && game::LeaveLevel(Group, true))
+      {
+	game::EnterArea(Group, game::GetCurrent() + 1, 0);
+	return true;
+      }
+    else if(DirectionUp && game::GetCurrent() >= 1 && game::LeaveLevel(Group, true))
+      {
+	game::EnterArea(Group, game::GetCurrent() - 1, 0);
+	return true;
+      }
+
+  if(DirectionUp)
+    ADD_MESSAGE("You can't go up.");
+  else
+    ADD_MESSAGE("You can't go down.");
+
+  return false;
+}

@@ -632,19 +632,19 @@ void priest::BeTalkedTo(character* Talker)
 	  {
 	    HasOld = true;
 
-	    if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+	    if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 	      {
 		if(!OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
 		  ADD_MESSAGE("Sorry, I cannot put back your severed %s, because it doesn't seem to fit properly.", Talker->GetBodyPartName(c).c_str());
 		else
 		  {
-		    ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+		    ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 
 		    if(game::BoolQuestion("Do you agree? [y/N]"))
 		      {
 			OldBodyPart->SetHP(1);
-			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
-			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 			OldBodyPart->RemoveFromSlot();
 			Talker->AttachBodyPart(OldBodyPart);
 			return;
@@ -652,29 +652,29 @@ void priest::BeTalkedTo(character* Talker)
 		  }
 	      }
 	    else
-	      ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and we'll help you too.\"", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+	      ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and we'll help you too.\"", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 	  }
 	else
 	  HasOld = false;
 
-	if(Talker->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR)
+	if(Talker->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR)
 	  {
 	    if(HasOld)
-	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 	    else
-	      ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+	      ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 
 	    if(game::BoolQuestion("Agreed? [y/N]"))
 	      {
-		Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
-		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+		Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 		Talker->CreateBodyPart(c);
 		Talker->GetBodyPart(c)->SetHP(1);
 		return;
 	      }
 	  }
 	else if(!HasOld)
-	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but %s is not a communist and you need %dgp first.\"", Talker->GetBodyPartName(c).c_str(), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GOD_NAME, PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but %s is not a communist and you need %dgp first.\"", Talker->GetBodyPartName(c).c_str(), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GOD_NAME, PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
       }
 
   if(!HomeRoom)
@@ -1416,7 +1416,7 @@ bool unicorn::SpecialEnemySightedReaction(character*)
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
 
-    Move(GetLevelUnder()->RandomSquare(this, true), true);
+    Move(GetLevelUnder()->GetRandomSquare(this), true);
 
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("Suddenly %s appears from nothing!", CHARNAME(INDEFINITE));
@@ -2755,14 +2755,6 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
   if(game::WizardModeActivated())
     FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
 
-  /*if(game::WizardModeActivated())
-    {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
-    }
-  else
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());*/
-
   return PanelPosY;
 }
 
@@ -2810,15 +2802,6 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
-
-  /*if(game::WizardModeActivated())
-    {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
-    }
-  else
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());*/
-
   return PanelPosY;
 }
 
@@ -3469,16 +3452,12 @@ void humanoid::AddSpecialEquipmentInfo(std::string& String, ushort Index) const
 
 /* Yes, this is evil. */
 
-#define INSTANTIATE(name)\
-{\
-  item* name = DataBase->name.Instantiate(SpecialFlags);\
-  \
-  if(name)\
-    Set##name(name);\
-}\
+#define INSTANTIATE(name) if((Item = DataBase->name.Instantiate(SpecialFlags))) Set##name(Item);
 
 void humanoid::CreateInitialEquipment(ushort SpecialFlags)
 {
+  item* Item;
+
   INSTANTIATE(Helmet);
   INSTANTIATE(Amulet);
   INSTANTIATE(Cloak);
@@ -3524,7 +3503,7 @@ void cossack::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"");
       break;
     case 1:
-      ADD_MESSAGE("\"It surely is cold on this island. Remembers me of my six years in Siberia after the burglary of that pub's booze cellar...\"");
+      ADD_MESSAGE("\"It surely is cold on this island. Remembers me of my six years in Siberia after breaking into the local pub's booze cellar...\"");
       break;
     case 2:
       ADD_MESSAGE("\"What, why have I no horse? Er, I lost it in poker.\"");
@@ -3662,7 +3641,7 @@ float kamikazedwarf::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
 void dog::BeTalkedTo(character* Char)
 {
-  if(RAND() % 100)
+  if(RAND() % 50)
     character::BeTalkedTo(Char);
   else
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");

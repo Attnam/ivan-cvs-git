@@ -206,6 +206,9 @@ class game
   static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "");
   static void InitDangerMap();
   static const dangermap& GetDangerMap() { return DangerMap; }
+  static bool LeaveLevel(std::vector<character*>&, bool);
+  static bool LeaveWorldMap(std::vector<character*>&);
+  static void EnterArea(std::vector<character*>&, uchar, uchar);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

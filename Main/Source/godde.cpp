@@ -26,7 +26,7 @@ valuemap protocontainer<god>::CodeNameMap;
 void sophos::PrayGoodEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! You teleport away!");
-  game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true), true);
+  game::GetPlayer()->Move(game::GetCurrentLevel()->GetRandomSquare(game::GetPlayer()), true);
 }
 
 void sophos::PrayBadEffect()
@@ -48,7 +48,6 @@ void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
   game::GetPlayer()->ReceiveDamage(0, 10, PHYSICALDAMAGE, HEAD, RAND() % 8);
-  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
   game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name());
 }
 
@@ -103,7 +102,6 @@ void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
-  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
   game::GetPlayer()->CheckDeath("became insane by listening " + Name() + " too much");
 }
 
@@ -225,14 +223,14 @@ void silva::PrayGoodEffect()
       ushort c, Tunnels = 2 + RAND() % 3;
 
       for(c = 0; c < Tunnels; ++c)
-	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(0, false));
+	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->GetRandomSquare(0, NOTWALKABLE|ATTACHABLE));
 
       uchar ToEmpty = 10 + RAND() % 11;
 
       for(c = 0; c < ToEmpty; ++c)
 	for(ushort i = 0; i < 50; ++i)
 	  {
-	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, false);
+	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, NOTWALKABLE);
 	    bool Correct = false;
 
 	    for(ushort d = 0; d < 8; ++d)
@@ -262,7 +260,7 @@ void silva::PrayGoodEffect()
       for(c = 0; c < ToGround; ++c)
 	for(ushort i = 0; i < 50; ++i)
 	  {
-	    vector2d Pos = game::GetCurrentLevel()->RandomSquare(0, true, RAND() & 1);
+	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HASCHARACTER);
 
 	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
@@ -289,7 +287,6 @@ void silva::PrayGoodEffect()
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHARNAME(DEFINITE));
 
 		    Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
-		    //Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
 		    Char->CheckDeath("killed by an earthquake");
 		  }
 
@@ -300,12 +297,7 @@ void silva::PrayGoodEffect()
 		for(p = 0; p < 4; ++p)
 		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
 
-		/*for(p = 0; p < game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItems();)
-		  if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()))
-		    ++p;*/
-
 		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICALDAMAGE);
-
 		break;
 	      }
 	  }
@@ -373,51 +365,6 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  /*for(stackiterator i = game::GetPlayer()->GetStack()->GetBottomSlot(); i != game::GetPlayer()->GetStack()->GetSlotAboveTop(); ++i)
-    {
-      item* Old = ***i;
-
-      if(Old->GetType() == brokenplatemail::StaticType())
-	{
-	  bool Worn = false, Wielded = false;
-
-	  if(Old == game::GetPlayer()->GetBodyArmor())
-	    Worn = true;
-	  else
-	    if(Old == game::GetPlayer()->GetWielded())
-	      Wielded = true;
-
-	  Old->RemoveFromSlot();
-	  //game::GetPlayer()->GetStack()->RemoveItem(c);
-	  ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
-	  Old->SendToHell();
-	  item* Plate = new platemail(false);
-	  Plate->InitMaterials(Old->GetMainMaterial());
-	  Old->PreserveMaterial(0);
-	  game::GetPlayer()->GetStack()->AddItem(Plate);
-
-	  if(Worn)
-	    game::GetPlayer()->SetBodyArmor(Plate);
-	  else
-	    if(Wielded)
-	      game::GetPlayer()->SetWielded(Plate);
-
-	  return;
-	}
-    }*/
-
-  /*item* Old = game::GetPlayer()->GetBodyArmor();
-
-  if(Old && Old->GetType() == brokenplatemail::StaticType())
-    {
-      ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
-      Old->RemoveFromSlot();
-      Old->SendToHell();
-      item* Plate = new platemail(0, false);
-      Plate->InitMaterials(Old->GetMainMaterial());
-      game::GetPlayer()->GetStack()->AddItem(Plate);
-    }*/
-
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
@@ -480,10 +427,7 @@ void mortifer::PrayGoodEffect()
 void mortifer::PrayBadEffect()
 {
   ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
-
-  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
-
   game::GetPlayer()->EditAttribute(AGILITY, -1);
   game::GetPlayer()->EditAttribute(ARMSTRENGTH, -1);
   game::GetPlayer()->EditAttribute(ENDURANCE, -1);
@@ -790,7 +734,6 @@ void cruentus::PrayBadEffect()
   else
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
-      //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
       game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
       game::GetPlayer()->CheckDeath("destroyed by " + Name());
     }

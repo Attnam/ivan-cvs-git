@@ -129,8 +129,7 @@ class posscript : public script
  protected:
   bool Random;
   DATAMEMBER(vector2d, Vector);
-  DATAMEMBER(bool, Walkable);
-  DATAMEMBER(bool, InRoom);
+  DATAMEMBER(uchar, Flags);
 };
 
 class materialscript : public script
@@ -212,6 +211,8 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(uchar, VisualEffects);
+  DATAMEMBER(uchar, AttachedArea);
+  DATAMEMBER(uchar, AttachedEntry);
 };
 
 class squarescript : public script
@@ -225,10 +226,9 @@ class squarescript : public script
   DATAMEMBER(contentscript<item>, Item);
   DATAMEMBER(contentscript<glterrain>, GTerrain);
   DATAMEMBER(contentscript<olterrain>, OTerrain);
-  DATAMEMBER(bool, IsUpStairs);
-  DATAMEMBER(bool, IsDownStairs);
-  DATAMEMBER(bool, IsWorldMapEntry);
   DATAMEMBER(uchar, Times);
+  DATAMEMBER(bool, AttachRequired);
+  DATAMEMBER(uchar, EntryIndex);
 };
 
 template <class type> class contentmap : public script
@@ -297,13 +297,12 @@ class levelscript : public script
   DATAMEMBER(uchar, Rooms);
   DATAMEMBER(bool, GenerateMonsters);
   DATAMEMBER(bool, ReCalculate);
-  DATAMEMBER(bool, GenerateUpStairs);
-  DATAMEMBER(bool, GenerateDownStairs);
   DATAMEMBER(bool, OnGround);
   DATAMEMBER(uchar, TeamDefault);
   DATAMEMBER(ushort, AmbientLight);
   DATAMEMBER(std::string, Description);
   DATAMEMBER(uchar, LOSModifier);
+  DATAMEMBER(bool, IgnoreDefaultSpecialSquares);
 };
 
 class dungeonscript : public script

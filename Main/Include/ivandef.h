@@ -314,7 +314,7 @@
 
 #define BANANAFLESH FIRSTORGANICSUBSTANCE + 1
 #define SCHOOLFOOD FIRSTORGANICSUBSTANCE + 2
-#define BANANAPEAL FIRSTORGANICSUBSTANCE + 3
+#define BANANAPEEL FIRSTORGANICSUBSTANCE + 3
 #define KIWIFLESH FIRSTORGANICSUBSTANCE + 4
 #define PINEAPPLEFLESH FIRSTORGANICSUBSTANCE + 5
 #define FIBER FIRSTORGANICSUBSTANCE + 6
@@ -496,14 +496,18 @@
 #define POOLBORDER 7
 #define POOLCORNER 8
 
+#define STAIRSUP 1
+#define STAIRSDOWN 2
+
 #define BOOKCASE 1
 
-/* Prices */
-/* The logic will go bad, if a new limb cost less than an old one */
-#define PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR 50
-#define PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR 100
+#define WORLDMAP 255
 
-/* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
+/* Prices */
+#define PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR 50
+#define PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR 100
+
+/* How many turns it takes for a angel to attach a bodypart again */
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
 /* Hard-coded Teams */
@@ -516,5 +520,16 @@
 #define NOMATERIALS 8
 #define NOEQUIPMENT 16
 
-#endif
+#define NOTWALKABLE 1
+#define HASCHARACTER 2
+#define INROOM 4
+#define NOTINROOM 8
+#define ATTACHABLE (16|NOTINROOM) /* overrides INROOM */
 
+#define ELPURICAVE 1
+#define ATTNAM 2
+
+#define DARKLEVEL 6
+#define OREELAIR 9
+
+#endif

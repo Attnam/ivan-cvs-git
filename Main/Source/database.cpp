@@ -349,6 +349,7 @@ bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(IsSafeToDestroy);
   ANALYZEDATA(RestModifier);
   ANALYZEDATA(RestMessage);
+  ANALYZEDATA(IsUpLink);
 
   return Found;
 }

@@ -85,20 +85,21 @@ class OLTERRAIN
 
 class OLTERRAIN
 (
-  stairsup,
+  link,
   olterrain,
  public:
-  virtual bool GoUp(character*) const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual bool Enter(bool) const;
   virtual void StepOn(character*);
-);
-
-class OLTERRAIN
-(
-  stairsdown,
-  olterrain,
- public:
-  virtual bool GoDown(character*) const;
-  virtual void StepOn(character*);
+  virtual void SetAttachedArea(uchar What) { AttachedArea = What; }
+  virtual void SetAttachedEntry(uchar What) { AttachedEntry = What; }
+  uchar GetAttachedArea() const { return AttachedArea; }
+  uchar GetAttachedEntry() const { return AttachedEntry; }
+ protected:
+  virtual void VirtualConstructor(bool);
+  uchar AttachedArea;
+  uchar AttachedEntry;
 );
 
 class OLTERRAIN

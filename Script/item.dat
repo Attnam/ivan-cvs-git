@@ -333,7 +333,7 @@ banana /* materialcontainer-> */
 	FormModifier = 50;
 	DefaultSize = 20;
 	NameSingular = "banana";
-	MainMaterialConfig == BANANAPEAL;
+	MainMaterialConfig == BANANAPEEL;
 	SecondaryMaterialConfig == BANANAFLESH;
 	Alias == "gun";
 	Roundness = 15;
@@ -568,7 +568,7 @@ potion /* materialcontainer-> */
 	CanBeBroken = true;
 }
 
-bananapeals
+bananapeels
 {
 	DefaultSize = 20;
 	Possibility = 100;
@@ -578,8 +578,8 @@ bananapeals
 	StrengthModifier = 50;
 	BitmapPos = 0, 128;
 	FormModifier = 70;
-	NameSingular = "banana peal";
-	MainMaterialConfig == BANANAPEAL;
+	NameSingular = "banana peel";
+	MainMaterialConfig == BANANAPEEL;
 	Roundness = 10;
 }
 

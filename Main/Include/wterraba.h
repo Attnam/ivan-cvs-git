@@ -7,8 +7,9 @@
 
 #include <string>
 
-#include "vector2d.h"
+#include "ivandef.h"
 #include "terra.h"
+#include "vector2d.h"
 
 class wsquare;
 class worldmap;
@@ -89,10 +90,12 @@ class owterrain : public wterrain, public oterrain
   owterrain(donothing) { }
   virtual void Save(outputfile&) const;
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
-  virtual bool GoUp(character*) const;
-  virtual bool GoDown(character*) const;
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual uchar GetAttachedDungeon() const { return 0; }
+  virtual uchar GetAttachedArea() const { return 0; }
+  virtual uchar GetAttachedEntry() const { return STAIRSUP; }
+  virtual bool Enter(bool) const;
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__

@@ -140,9 +140,9 @@ void worldmap::Generate()
 	continue;
 
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
-      game::GetDungeon(1)->SetWorldMapPos(AttnamPos);
+      SetEntryPos(ATTNAM, AttnamPos);
       GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
-      game::GetDungeon(0)->SetWorldMapPos(ElpuriCavePos);
+      SetEntryPos(ELPURICAVE, ElpuriCavePos);
       GetWSquare(AttnamPos)->AddCharacter(game::GetPlayer());
       CalculateLuminances();
       CalculateNeighbourBitmapPoses();

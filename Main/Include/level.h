@@ -31,7 +31,7 @@ class level : public area
   level() : Room(1, (room*)0) { }
   virtual ~level();
   void Generate();
-  vector2d RandomSquare(character*, bool, bool = false) const;
+  vector2d GetRandomSquare(const character* = 0, uchar = 0) const;
   void GenerateMonsters();
   lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }
@@ -44,16 +44,8 @@ class level : public area
   ushort GetIdealPopulation() const;
   void GenerateNewMonsters(ushort, bool = true);
   void AttachPos(vector2d);
-  void CreateRandomTunnel();
   void CreateItems(ushort);
-  void CreateStairs(bool);
   bool MakeRoom(roomscript*);
-  vector2d GetUpStairs() { return UpStairs; }
-  vector2d GetDownStairs() { return DownStairs; }
-  vector2d GetWorldMapEntry() { return WorldMapEntry; }
-  void SetUpStairs(vector2d What) { UpStairs = What; }
-  void SetDownStairs(vector2d What) { DownStairs = What; }
-  void SetWorldMapEntry(vector2d What) { WorldMapEntry = What; }
   void ParticleTrail(vector2d, vector2d);
   std::string GetLevelMessage() { return LevelMessage; }
   void SetLevelMessage(const std::string& What) { LevelMessage = What; }
@@ -71,6 +63,7 @@ class level : public area
   void ApplyLSquareScript(squarescript*);
   virtual void Draw() const;
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
+  vector2d GetEntryPos(const character*, uchar) const;
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateWallSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
@@ -78,7 +71,6 @@ class level : public area
   levelscript* LevelScript;
   std::string LevelMessage;
   std::vector<vector2d> Door;
-  vector2d UpStairs, DownStairs, WorldMapEntry;
   std::vector<room*> Room;
 };
 

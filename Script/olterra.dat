@@ -31,6 +31,7 @@ olterrain
 	DefaultSecondaryVolume = 0;
 	DefaultContainedVolume = 0;
 	ShowMaterial = true;
+	IsUpLink = false;
 }
 
 wall
@@ -194,24 +195,30 @@ door /* olterrain-> */
 	/* PostFix depends on LockType */
 }
 
-stairsup /* olterrain-> */
+link /* olterrain-> */
 {
-	DigMessage = "The stairs are too hard to dig.";
-	MainMaterialConfig == STONE;
-	MaterialColorB = rgb(160, 64, 0);
-	NameSingular = "stairway";
-	PostFix = "upwards";
-	BitmapPos = 0, 192;
-}
+	IsAbstract = true;
 
-stairsdown /* olterrain-> */
-{
-	DigMessage = "The stairs are too hard to dig.";
-	MainMaterialConfig == STONE;
-	MaterialColorB = rgb(160, 64, 0);
-	NameSingular = "stairway";
-	PostFix = "downwards";
-	BitmapPos = 0, 208;
+	Config STAIRSUP;
+	{
+		DigMessage = "The stairs are too hard to dig.";
+		MainMaterialConfig == STONE;
+		MaterialColorB = rgb(160, 64, 0);
+		NameSingular = "stairway";
+		PostFix = "upwards";
+		BitmapPos = 0, 192;
+		IsUpLink = true;
+	}
+
+	Config STAIRSDOWN;
+	{
+		DigMessage = "The stairs are too hard to dig.";
+		MainMaterialConfig == STONE;
+		MaterialColorB = rgb(160, 64, 0);
+		NameSingular = "stairway";
+		PostFix = "downwards";
+		BitmapPos = 0, 208;
+	}
 }
 
 altar /* olterrain-> */

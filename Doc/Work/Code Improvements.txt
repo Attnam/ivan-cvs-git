@@ -13,7 +13,7 @@ done nor understood by anyone else than the writer.
 //*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 //Tilojen luokittaminen.
 //*Tuonpuoleisen prototyypitys.
-*Tasovaihdosten funktionaalisuuden kohotus.
+//*Tasovaihdosten funktionaalisuuden kohotus.
 //Syöntisallimusten liputtaminen.
 (r) Karakterin atribuuttien kollektivointi?
 (r) Karakterin atribuuttien luokitus.
@@ -46,3 +46,4 @@ Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
 Charba.cpp:n resplittaus (controllit erilleen?).
 Lukufunktioden generalisoiminen.
+Säiliöluokka.

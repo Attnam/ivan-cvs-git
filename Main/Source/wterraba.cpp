@@ -64,18 +64,6 @@ worldmap* wterrain::GetWorldMapUnder() const
   return GetWSquareUnder()->GetWorldMapUnder();
 }
 
-bool owterrain::GoUp(character*) const
-{
-  ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
-  return false;
-}
-
-bool owterrain::GoDown(character*) const
-{
-  ADD_MESSAGE("There seems to be nothing of interest here.");
-  return false;
-}
-
 void wterrain::Load(inputfile&)
 {
   WSquareUnder = (wsquare*)game::GetSquareInLoad();
@@ -140,3 +128,35 @@ void gwterrain::CalculateNeighbourBitmapPoses()
   std::sort(Neighbour.begin(), Neighbour.end(), DrawOrderer);
 }
 
+bool owterrain::Enter(bool DirectionUp) const
+{
+  if(DirectionUp)
+    {
+      ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+      return false;
+    }
+
+  uchar AttachedDungeon = GetAttachedDungeon();
+
+  if(!AttachedDungeon)
+    {
+      ADD_MESSAGE("There seems to be nothing of interest here.");
+      return false;
+    }
+
+  std::vector<character*> Group;
+
+  /* These must be backupped, since LeaveWorldMap destroys the terrain */
+
+  uchar AttachedArea = GetAttachedArea();
+  uchar AttachedEntry = GetAttachedEntry();
+
+  if(game::LeaveWorldMap(Group))
+    {
+      game::SetCurrentDungeon(AttachedDungeon);
+      game::EnterArea(Group, AttachedArea, AttachedEntry);
+      return true;
+    }
+  else
+    return false;
+}

@@ -27,7 +27,7 @@
 #include "festring.h"
 #include "whandler.h"
 #include "lsquare.h"
-#include "lterraba.h"
+#include "lterrade.h"
 #include "worldmap.h"
 #include "message.h"
 #include "dungeon.h"
@@ -290,7 +290,7 @@ void game::DeInit()
   SetWorldMap(0);
   ushort c;
 
-  for(c = 0; c < Dungeon.size(); ++c)
+  for(c = 1; c < Dungeon.size(); ++c)
     delete Dungeon[c];
 
   Dungeon.clear();
@@ -764,14 +764,18 @@ void game::ShowLevelMessage()
 void game::TriggerQuestForGoldenEagleShirt()
 {
   BusyAnimationDisabled = true;
-  GetDungeon(0)->PrepareLevel(6, false);
+  GetDungeon(ELPURICAVE)->PrepareLevel(DARKLEVEL, false);
   BusyAnimationDisabled = false;
-  GetDungeon(0)->GetLevel(6)->CreateStairs(false);
+  level* DarkLevel = GetDungeon(ELPURICAVE)->GetLevel(DARKLEVEL);
+  olterrain* Stairs = new link(STAIRSDOWN);
+  Stairs->SetAttachedArea(DARKLEVEL + 1);
+  vector2d Pos = DarkLevel->GetRandomSquare(0, INROOM);
+  DarkLevel->GetLSquare(Pos)->ChangeOLTerrain(Stairs);
 
-  if(!GetDungeon(0)->GetLevel(6)->GetLevelMessage().length())
-    GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
+  if(!DarkLevel->GetLevelMessage().length())
+    DarkLevel->SetLevelMessage("You feel something has changed since you were last here...");
 
-  GetDungeon(0)->SaveLevel(SaveName(), 6);
+  GetDungeon(ELPURICAVE)->SaveLevel(SaveName(), DARKLEVEL);
 }
 
 uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
@@ -803,7 +807,7 @@ void game::RemoveSaves(bool RealSavesAlso)
   remove((AutoSaveFileName + ".sav").c_str());
   remove((AutoSaveFileName + ".wm").c_str());
 
-  for(ushort i = 0; i < Dungeon.size(); ++i)
+  for(ushort i = 1; i < Dungeon.size(); ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
 	/*
@@ -861,9 +865,10 @@ void game::SeeWholeMap()
 
 void game::InitDungeons()
 {
-  Dungeon.resize(*GetGameScript()->GetDungeons());
+  Dungeon.resize(*GetGameScript()->GetDungeons() + 1);
+  Dungeon[0] = 0;
 
-  for(ushort c = 0; c < Dungeon.size(); ++c)
+  for(ushort c = 1; c < Dungeon.size(); ++c)
     {
       Dungeon[c] = new dungeon(c);
       Dungeon[c]->SetIndex(c);
@@ -960,7 +965,10 @@ void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
   SaveFile << WorldMap;
 
   if(DeleteAfterwards)
-    delete WorldMap;
+    {
+      delete WorldMap;
+      WorldMap = 0;
+    }
 }
 
 void game::LoadWorldMap(const std::string& SaveName)
@@ -1626,3 +1634,67 @@ void game::CalculateNextDanger()
     ABORT("It is dangerous to go ice fishing in the summer.");
 }
 
+bool game::LeaveLevel(std::vector<character*>& Group, bool AllowHostiles)
+{
+  if(!GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
+    return false;
+
+  GetCurrentLevel()->RemoveCharacter(Player->GetPos());
+  GetCurrentDungeon()->SaveLevel();
+  return true;
+}
+
+bool game::LeaveWorldMap(std::vector<character*>& Group)
+{
+  GetWorldMap()->RemoveCharacter(Player->GetPos());
+  GetWorldMap()->GetPlayerGroup().swap(Group);
+  SaveWorldMap(SaveName(), true);
+  return true;
+}
+
+/* Used when the player enters an area. */
+
+void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryIndex)
+{
+  if(Area != WORLDMAP)
+    {
+      SetIsInWilderness(false);
+      SetCurrent(Area);
+      GetCurrentDungeon()->PrepareLevel(Area);
+      GetCurrentLevel()->FiatLux();
+      vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
+      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+      GetCurrentLevel()->AddCharacter(Pos, Player);
+
+      for(ushort c = 0; c < Group.size(); ++c)
+	{
+	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
+
+	  if(NPCPos == DIR_ERROR_VECTOR)
+	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
+
+	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
+	}
+
+      ShowLevelMessage();
+      SendLOSUpdateRequest();
+      UpdateCamera();
+      GetCurrentArea()->UpdateLOS();
+
+      if(configuration::GetAutoSaveInterval())
+	Save(GetAutoSaveFileName().c_str());
+    }
+  else
+    {
+      SetIsInWilderness(true);
+      LoadWorldMap();
+      GetWorldMap()->GetPlayerGroup().swap(Group);
+      GetCurrentArea()->AddCharacter(GetWorldMap()->GetEntryPos(Player, EntryIndex), Player);
+      SendLOSUpdateRequest();
+      UpdateCamera();
+      GetCurrentArea()->UpdateLOS();
+
+      if(configuration::GetAutoSaveInterval())
+	Save(GetAutoSaveFileName().c_str());
+    }
+}

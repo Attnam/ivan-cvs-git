@@ -803,7 +803,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
-  virtual ushort GetTorsoSpecialColor() const { return RAND() % WHITE; } // the flower
+  virtual ushort GetTorsoSpecialColor() const { return MakeRGB(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
   virtual void GetAICommand();
 );
 

@@ -34,13 +34,13 @@ ITEM_PROTOTYPE(item, 0);
 
 void banana::GenerateLeftOvers(character* Eater)
 {
-  item* Peals = new bananapeals(0, NOMATERIALS);
-  Peals->InitMaterials(GetMainMaterial());
+  item* Peel = new bananapeels(0, NOMATERIALS);
+  Peel->InitMaterials(GetMainMaterial());
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    Eater->GetStackUnder()->AddItem(Peals);
+    Eater->GetStackUnder()->AddItem(Peel);
   else
-    Eater->GetStack()->AddItem(Peals);
+    Eater->GetStack()->AddItem(Peel);
 
   RemoveFromSlot();
   SetMainMaterial(0, NOPICUPDATE);
@@ -134,7 +134,7 @@ bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByA
 
       bool Success = GetMainMaterial()->HitEffect(Enemy);
 
-      if(!GetContainedMaterial()->GetVolume())
+      if(!GetMainMaterial()->GetVolume())
 	{
 	  RemoveFromSlot();
 	  SendToHell();
@@ -839,7 +839,7 @@ bool banana::Zap(character*, vector2d, uchar)
   return true;
 }
 
-void bananapeals::StepOnEffect(character* Stepper)
+void bananapeels::StepOnEffect(character* Stepper)
 {
   if(Stepper->HasFeet() && !(RAND() % 3))
     {
@@ -851,7 +851,7 @@ void bananapeals::StepOnEffect(character* Stepper)
       /* Do damage against any random bodypart except legs */
 
       Stepper->ReceiveDamage(0, 2 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
-      Stepper->CheckDeath("slipped on a banana peal.");
+      Stepper->CheckDeath("slipped on a banana peel.");
       Stepper->EditAP(-1000);
     }
 }
@@ -3351,11 +3351,11 @@ void wand::AddInventoryEntry(const character*, std::string& Entry, ushort, bool 
       Entry << " [" << GetWeight();
 
       if(TimesUsed == 1)
-	Entry << ", used 1 time]";
+	Entry << "g, used 1 time]";
       else if(TimesUsed)
-	Entry << ", used " << TimesUsed << " times]";
+	Entry << "g, used " << TimesUsed << " times]";
       else
-	Entry << "]";
+	Entry << "g]";
     }
 }
 
@@ -3405,9 +3405,9 @@ void banana::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The inside of %s spoils completely.", CHARNAME(DEFINITE));
 
-      item* Peals = new bananapeals(0, NOMATERIALS);
-      Peals->InitMaterials(GetMainMaterial());
-      GetSlot()->DonateTo(Peals);
+      item* Peel = new bananapeels(0, NOMATERIALS);
+      Peel->InitMaterials(GetMainMaterial());
+      GetSlot()->DonateTo(Peel);
       SetMainMaterial(0, NOPICUPDATE);
       SendToHell();
     }

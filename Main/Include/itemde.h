@@ -268,7 +268,7 @@ class ITEM
 
 class ITEM
 (
-  bananapeals,
+  bananapeels,
   item,
  public:
   virtual item* BetterVersion() const { return new banana; }

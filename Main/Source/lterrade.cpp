@@ -107,129 +107,6 @@ void altar::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
-bool stairsup::GoUp(character* Who) const // Try to go up
-{
-  if(game::GetCurrent())
-    {
-      if(game::GetCurrent() == 9)
-	if(!game::BoolQuestion("Somehow you get the feeling you cannot return. Continue anyway? [y/N]"))
-	  return false;
-
-      std::vector<character*> MonsterList;
-
-      if(!GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
-	return false;
-
-      GetLevelUnder()->RemoveCharacter(Who->GetPos());
-      game::GetCurrentDungeon()->SaveLevel();
-      game::SetCurrent(game::GetCurrent() - 1);
-      game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->FiatLux();
-      game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
-      game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
-
-      for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	{
-	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs());
-
-	  if(Pos == DIR_ERROR_VECTOR)
-	    Pos = game::GetCurrentLevel()->RandomSquare(*c, true);
-
-	  game::GetCurrentLevel()->AddCharacter(Pos, *c);
-	}
-
-      game::SendLOSUpdateRequest();
-      game::UpdateCamera();
-      game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutoSaveInterval())
-	game::Save(game::GetAutoSaveFileName().c_str());
-      return true;
-    }
-  else
-    {
-      if(Who->IsPlayer())
-	{
-	  std::vector<character*> TempPlayerGroup;
-
-	  if(!GetLevelUnder()->CollectCreatures(TempPlayerGroup, Who, false))
-	    return false;
-
-	  game::GetCurrentArea()->RemoveCharacter(Who->GetPos());
-	  game::GetCurrentDungeon()->SaveLevel();
-	  game::LoadWorldMap();
-
-	  game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
-
-	  game::SetIsInWilderness(true);
-	  game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
-	  game::SendLOSUpdateRequest();
-	  game::UpdateCamera();
-	  game::GetCurrentArea()->UpdateLOS();
-	  if(configuration::GetAutoSaveInterval())
-	    game::Save(game::GetAutoSaveFileName().c_str());
-	  return true;
-	}
-
-      return false;
-    }
-}
-
-bool stairsdown::GoDown(character* Who) const // Try to go down
-{
-  if(game::GetCurrent() != game::GetLevels() - 1)
-    {
-      if(game::GetCurrent() == 8)
-	{
-	  ADD_MESSAGE("A great evil power seems to tremble under your feet.");
-	  ADD_MESSAGE("You feel you shouldn't wander any further.");
-
-	  if(!game::BoolQuestion("Continue anyway? [y/N]"))
-	    return false;
-	}
-
-      std::vector<character*> MonsterList;
-
-      if(!GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
-	return false;
-
-      if(game::GetCurrent() == 8)
-	Who->GetLSquareUnder()->ChangeLTerrain(new solidterrain(PARQUET), new empty);
-
-      game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-      game::GetCurrentDungeon()->SaveLevel();
-      game::SetCurrent(game::GetCurrent() + 1);
-      game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->FiatLux();
-      game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
-      game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
-
-      for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	{
-	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs());
-
-	  if(Pos == DIR_ERROR_VECTOR)
-	    Pos = game::GetCurrentLevel()->RandomSquare(*c, true);
-
-	  game::GetCurrentLevel()->AddCharacter(Pos, *c);
-	}
-
-      game::ShowLevelMessage();
-      game::SendLOSUpdateRequest();
-      game::UpdateCamera();
-      game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutoSaveInterval())
-	game::Save(game::GetAutoSaveFileName().c_str());
-      return true;
-    }
-  else
-    {
-      if(Who->IsPlayer())
-	ADD_MESSAGE("You are at the bottom.");
-
-      return false;
-    }
-}
-
 void door::BeKicked(character*, ushort KickDamage)
 {
   if(!IsWalkable()) 
@@ -388,18 +265,6 @@ bool door::AddAdjective(std::string& String, bool Articled) const
     String << " ";
 
   return true;
-}
-
-void stairsup::StepOn(character* Stepper)
-{
-  if(Stepper->IsPlayer()) 
-    ADD_MESSAGE("There is stairway leading upwards here.");
-}
-
-void stairsdown::StepOn(character* Stepper)
-{
-  if(Stepper->IsPlayer()) 
-    ADD_MESSAGE("There is stairway leading downwards here.");
 }
 
 bool fountain::SitOn(character* Sitter)
@@ -906,3 +771,82 @@ bool fountain::IsSparkling(ushort ColorIndex) const
   return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && ContainedMaterial && ContainedMaterial->IsSparkling());
 }
 
+void link::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  SaveFile << AttachedArea << AttachedEntry;
+}
+
+void link::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  SaveFile >> AttachedArea >> AttachedEntry;
+}
+
+bool link::Enter(bool DirectionUp) const
+{
+  if(DirectionUp != IsUpLink())
+    return olterrain::Enter(DirectionUp);
+
+  /* These must be backupped, since LeaveLevel destroys the link */
+
+  uchar AttachedArea = GetAttachedArea();
+  uchar AttachedEntry = GetAttachedEntry();
+
+  /* "Temporary" gum solutions */
+
+  if(!DirectionUp && AttachedArea == OREELAIR)
+    {
+      ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
+
+      if(!game::BoolQuestion("Continue anyway? [y/N]"))
+	return false;
+    }
+
+  if(DirectionUp && game::GetCurrent() == OREELAIR)
+    {
+      ADD_MESSAGE("Somehow you get the feeling you cannot return.");
+
+      if(!game::BoolQuestion("Continue anyway? [y/N]"))
+	return false;
+    }
+
+  std::vector<character*> Group;
+
+  if(game::LeaveLevel(Group, AttachedArea != WORLDMAP))
+    {
+      game::EnterArea(Group, AttachedArea, AttachedEntry);
+      return true;
+    }
+  else
+    return false;
+}
+
+void link::StepOn(character* Stepper)
+{
+  if(Stepper->IsPlayer()) 
+    ADD_MESSAGE("There is %s here.", CHARNAME(INDEFINITE));
+}
+
+void link::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    if(Config == STAIRSUP)
+      {
+	if(game::GetCurrent())
+	  {
+	    AttachedArea = game::GetCurrent() - 1;
+	    AttachedEntry = STAIRSDOWN;
+	  }
+	else
+	  {
+	    AttachedArea = WORLDMAP;
+	    AttachedEntry = game::GetCurrentDungeon()->GetIndex();
+	  }
+      }
+    else if(Config == STAIRSDOWN)
+      {
+	AttachedArea = game::GetCurrent() + 1;
+	AttachedEntry = STAIRSUP;
+      }
+}

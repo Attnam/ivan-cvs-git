@@ -393,13 +393,13 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 5;
 	}
 
-	Config BANANAPEAL;
+	Config BANANAPEEL;
 	{
 		StrengthValue = 10;
 		ConsumeType = MISC_ORGANIC;
 		Density = 500;
 		Color = rgb(224, 224, 0);
-		NameStem = "banana peal";
+		NameStem = "banana peel";
 		Flexibility = 10;
 		IsAlive = false;
 		IsSolid = true;

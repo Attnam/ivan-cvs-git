@@ -301,57 +301,45 @@ void level::Generate()
 
   game::BusyAnimation();
 
-  if(*LevelScript->GetGenerateUpStairs())
-    CreateStairs(true);
+  if(!*LevelScript->GetIgnoreDefaultSpecialSquares())
+    {
+      /* gum solution */
 
-  if(*LevelScript->GetGenerateDownStairs())
-    CreateStairs(false);
+      levelscript* LevelBase = static_cast<levelscript*>(LevelScript->GetBase());
 
-  CreateItems(*LevelScript->GetItems());
+      if(LevelBase)
+	for(c = 0; c < LevelBase->GetSquare().size(); ++c)
+	  {
+	    game::BusyAnimation();
+	    squarescript* Script = LevelBase->GetSquare()[c];
+	    ApplyLSquareScript(Script);
+	  }
+    }
 
   for(c = 0; c < LevelScript->GetSquare().size(); ++c)
     {
       game::BusyAnimation();
-      squarescript* Square = LevelScript->GetSquare()[c];
-      ApplyLSquareScript(Square);
+      squarescript* Script = LevelScript->GetSquare()[c];
+      ApplyLSquareScript(Script);
     }
 
-  /* gum solution */
-
-  levelscript* LevelBase = static_cast<levelscript*>(LevelScript->GetBase());
-
-  if(LevelBase)
-    for(c = 0; c < LevelBase->GetSquare().size(); ++c)
-      {
-	game::BusyAnimation();
-	squarescript* Square = LevelBase->GetSquare()[c];
-	ApplyLSquareScript(Square);
-      }
+  CreateItems(*LevelScript->GetItems());
 }
 
-void level::ApplyLSquareScript(squarescript* Square)
+void level::ApplyLSquareScript(squarescript* Script)
 {
-  uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
+  uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
 
   for(ushort c = 0; c < Times; ++c)
     {
       vector2d Pos;
 
-      if(Square->GetPosition()->GetRandom())
-	{
-	  if(Square->GetPosition()->GetInRoom(false))
-	    for(Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable());; Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable()))
-	      {
-		if((!GetLSquare(Pos)->GetRoom() && !*Square->GetPosition()->GetInRoom()) || (GetLSquare(Pos)->GetRoom() && *Square->GetPosition()->GetInRoom()))
-		  break;
-	      }
-	  else
-	    Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable());
-	}
+      if(Script->GetPosition()->GetRandom())
+	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags());
       else
-	Pos = *Square->GetPosition()->GetVector();
+	Pos = *Script->GetPosition()->GetVector();
 
-      Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
+      Map[Pos.X][Pos.Y]->ApplyScript(Script, 0);
     }
 }
 
@@ -371,7 +359,7 @@ void level::AttachPos(vector2d What)
   FlagMap[What.X][What.Y] &= ~PREFERRED;
 }
 
-void level::CreateRandomTunnel()
+/*void level::CreateRandomTunnel()
 {
   vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
@@ -384,20 +372,20 @@ void level::CreateRandomTunnel()
     T = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
   GenerateTunnel(Pos, T, RAND() & 1);
-}
+}*/
 
 void level::CreateItems(ushort Amount)
 {
   for(ushort x = 0; x < Amount; ++x)
     {
-      vector2d Pos = RandomSquare(0, true);
+      vector2d Pos = GetRandomSquare();
       item* Item = protosystem::BalancedCreateItem();
       Map[Pos.X][Pos.Y]->Stack->AddItem(Item);
       Item->SpecialGenerationHandler();
     }
 }
 
-void level::CreateStairs(bool Up)
+/*void level::CreateStairs(bool Up)
 {
   vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
@@ -420,7 +408,7 @@ void level::CreateStairs(bool Up)
 
   FlagMap[Pos.X][Pos.Y] |= FORBIDDEN;
   FlagMap[Pos.X][Pos.Y] &= ~PREFERRED;
-}
+}*/
 
 bool level::MakeRoom(roomscript* RoomScript)
 {
@@ -601,19 +589,19 @@ bool level::MakeRoom(roomscript* RoomScript)
   for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)
     {
       game::BusyAnimation();
-      squarescript* Square = RoomScript->GetSquare()[c];
-      uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
+      squarescript* Script = RoomScript->GetSquare()[c];
+      uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
 
       for(ushort c = 0; c < Times; ++c)
 	{
 	  vector2d Pos;
 
-	  if(Square->GetPosition()->GetRandom())
+	  if(Script->GetPosition()->GetRandom())
 	    ABORT("Illegal command: Random square positioning not supported in roomscript!");
 	  else
-	    Pos = *Square->GetPosition()->GetVector();
+	    Pos = *Script->GetPosition()->GetVector();
 
-	  Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square, RoomClass);
+	  Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Script, RoomClass);
 	}
     }
 
@@ -756,7 +744,7 @@ void level::Save(outputfile& SaveFile) const
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile << Door << UpStairs << DownStairs << WorldMapEntry << LevelMessage;
+  SaveFile << Door << LevelMessage;
 }
 
 void level::Load(inputfile& SaveFile)
@@ -773,7 +761,7 @@ void level::Load(inputfile& SaveFile)
 	Map[x][y]->Load(SaveFile);
       }
 
-  SaveFile >> Door >> UpStairs >> DownStairs >> WorldMapEntry >> LevelMessage;
+  SaveFile >> Door >> LevelMessage;
 }
 
 void level::FiatLux()
@@ -800,7 +788,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 
       for(ushort cc = 0; cc < 30; ++c)
 	{
-	  Pos = RandomSquare(Char, true);
+	  Pos = GetRandomSquare(Char);
 			
 	  if(!ConsiderPlayer || (abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6))
 	    break;
@@ -811,23 +799,31 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     }
 }
 
-vector2d level::RandomSquare(character* Char, bool Walkablility, bool HasCharacter) const
+vector2d level::GetRandomSquare(const character* Char, uchar Flags) const
 {
-  vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
-
-  for(ushort c = 0; Map[Pos.X][Pos.Y]->IsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter()); ++c)
+  for(ushort c = 0;; ++c)
     {
       if(c == 100)
 	Char = 0;
 
       if(c == 10000)
-	ABORT("RandomSquare request failed!");
+	ABORT("GetRandomSquare request failed!");
 
-      Pos.X = 1 + RAND() % (XSize - 2);
-      Pos.Y = 1 + RAND() % (YSize - 2);
+      vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
+
+      if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOTWALKABLE))
+      || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HASCHARACTER))
+      || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
+	continue;
+
+      uchar RoomFlags = Flags & (INROOM|NOTINROOM);
+
+      if((RoomFlags == INROOM && !Map[Pos.X][Pos.Y]->GetRoom())
+      || (RoomFlags == NOTINROOM && Map[Pos.X][Pos.Y]->GetRoom()))
+	continue;
+
+      return Pos;
     }
-
-  return Pos;
 }
 
 void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
@@ -1089,4 +1085,14 @@ lsquare* level::GetNeighbourLSquare(vector2d Pos, ushort Index) const
     return Map[Pos.X][Pos.Y];
   else
     return 0;
+}
+
+vector2d level::GetEntryPos(const character* Char, uchar Index) const
+{
+  std::map<uchar, vector2d>::const_iterator i = EntryMap.find(Index);
+
+  if(i == EntryMap.end())
+    int esko = 2;
+
+  return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }

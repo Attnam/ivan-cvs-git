@@ -102,7 +102,7 @@ Oil lamps should use oil as their fuel.
 Oil could have other uses as well.
 *Tuukka's alternative walls should be integrated.
 Fungi that grow around the player and paralyze him.
-Stat point based character generation? (from Antti & others)
+Stat point based character generation? (from Antti)
 //Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
 Guilds. (from Tapani Tiilikainen)
 Option to change the size of font. (from sturmkoenig2k)
@@ -306,13 +306,16 @@ Gold golems should be immune to acid.
 Mommos should do acid damage.
 "Character attributes" option to secret knowledge.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
+Potion of death. (from Atte Aholainen)
+Physical damage should be divided to slashing, blunt, piercing etc. damage. (from Atte Aholainen)
 Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
 Metal detector.
 More info about players' old games in highscore list (probably a sub menu).
-Potion of death.
-Physical damage should be divided.
 If the handle of a weapon is of the same material as the edge, change material should change it, too.
 Stressed state should slowly decrease player's size.
 Being satiated or bloated should decrease move ease.
 If HP == MaxHP, healing liquid should increase MaxHP a bit.
-Frost weapons should gradually develop ice which would increase damage .
+Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
+Healing liquid should cure poison.
+Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
+There should be a one-way teleport at the bottom of the dungeon linked to the first level.

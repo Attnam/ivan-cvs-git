@@ -29,6 +29,9 @@ sandals of Hermes - flying
 girdle of carrying - +x% carrying strength
 amulet of improbability - causes odd improbabilities
 
+Other equipment:
+
+amulet of unchanging - stats never change, immunity to polymorph (juts like in Nethack)
 
 Inside jokes:
 
