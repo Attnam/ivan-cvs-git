@@ -150,8 +150,8 @@ class item : public object
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual short GetOfferValue(char) const;
-  bool Fly(character*, uchar, ushort);
-  bool HitCharacter(character*, character*, float);
+  void Fly(character*, uchar, ushort);
+  uchar HitCharacter(character*, character*, ushort, float, uchar);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar) { return false; }

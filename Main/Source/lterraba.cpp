@@ -196,3 +196,41 @@ bool olterrain::Enter(bool DirectionUp) const
 
   return false;
 }
+
+void olterrain::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    CalculateHP();
+}
+
+ushort olterrain::GetStrengthValue() const
+{
+  return GetMainMaterial()->GetStrengthValue() / 20;
+}
+
+void olterrain::ReceiveDamage(character* Villain, ushort What, uchar Type)
+{
+  if(CanBeDestroyed() && What > GetStrengthValue())
+    {
+      EditHP(GetStrengthValue() - What);
+
+      if(HP <= 0)
+	{
+	  room* Room = GetLSquareUnder()->GetRoomClass();
+
+	  if(Room)
+	    Room->DestroyTerrain(Villain, this);
+
+	  Break();
+	}
+    }
+}
+
+void olterrain::CalculateHP()
+{
+  if(GetMainMaterial())
+    {
+      ulong SV = GetMainMaterial()->GetStrengthValue();
+      HP = SV * SV * GetHPModifier() / 5000;
+    }
+}

@@ -550,6 +550,8 @@ class ITEM
   item,
  public:
   virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() * 2 + item::GetPrice(); }
+ protected:
+  virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != STONE; } // gum solution
 );
 
 class ITEM

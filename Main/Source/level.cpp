@@ -920,16 +920,10 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
 	    Square->GetStack()->ReceiveDamage(Terrorist, Damage / 2, FIRE);
 	    Square->GetStack()->ReceiveDamage(Terrorist, Damage / 2, PHYSICAL_DAMAGE);
-
-	    if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
-	      {
-		room* Room = Square->GetRoomClass();
-
-		if(Room)
-		  Room->DestroyTerrain(Terrorist, Square->GetOLTerrain());
-
-		Square->GetOLTerrain()->Break();
-	      }
+	    olterrain* Terrain = Square->GetOLTerrain();
+	    Terrain->ReceiveDamage(Terrorist, Damage / 2, FIRE);
+	    Terrain = Square->GetOLTerrain(); // might have changed
+	    Terrain->ReceiveDamage(Terrorist, Damage / 2, PHYSICAL_DAMAGE);
 	  }
       }
 

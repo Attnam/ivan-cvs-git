@@ -1072,11 +1072,6 @@ void lsquare::RemoveFluid()
     }
 }
 
-void lsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection)
-{
-  GetOLTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection);
-}
-
 void lsquare::TeleportEverything(character* Teleporter)
 {
   if(GetCharacter())

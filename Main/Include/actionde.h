@@ -100,6 +100,7 @@ class ACTION
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;
   virtual long GetScore() const;
+  virtual bool ShowEnvironment() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;

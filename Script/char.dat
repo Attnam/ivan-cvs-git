@@ -712,6 +712,7 @@ frog
 	CanSwim = true;
 	KnownCWeaponSkills == BITE;
 	FleshMaterial = FROG_FLESH;
+	DangerModifier = 50;
 
 	Config DARK;
 	{
@@ -736,7 +737,7 @@ frog
 
 	Config GREATER_DARK;
 	{
-		DefaultArmStrength = 20;
+		DefaultArmStrength = 15;
 		DefaultAgility = 30;
 		DefaultEndurance = 15;
 		DefaultPerception = 36;
@@ -776,7 +777,7 @@ frog
 
 	Config GREATER_LIGHT;
 	{
-		DefaultArmStrength = 20;
+		DefaultArmStrength = 15;
 		DefaultAgility = 30;
 		DefaultEndurance = 15;
 		DefaultPerception = 36;
@@ -1012,6 +1013,7 @@ goblin
 		TorsoBitmapPos = 48, 208;
 		HairColor = rgb16(220, 220, 0);
 		ClothColor = rgb16(200, 0, 0);
+		Inventory == potion { ContainedMaterial = ANTIDOTE_LIQUID; Chance = 10; }
 	}
 
 	Config KING;
@@ -1344,7 +1346,7 @@ communist /* Ivan */
 	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
 	FriendlyReplies =
 	{
-		10,
+		9,
 		"\"Da, @nu like killing.\"",
 		"\"@Nu ruski specialist.\"",
 		"\"@Nu work. Else @nu get stapled.\"",
@@ -1352,7 +1354,6 @@ communist /* Ivan */
 		"\"CCCP roxxx.\"",
 		"\"@Nu like throw Ladas. You want compete?\"",
 		"\"Why is AK not invented?\"",
-		"\"@Nu like Attnam. Petrus communist too.\"",
 		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
 		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"";
 	}
@@ -1799,6 +1800,7 @@ bat
 	CWeaponSkillHits == 20;
 	PanicLevel = 75;
 	FleshMaterial = BAT_FLESH;
+	DangerModifier = 50;
 }
 
 mistress
@@ -1839,7 +1841,13 @@ mistress
 	PanicLevel = 20;
 	Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
 	HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
-	FriendlyReplies == "\"Just wait for the night, darling.\"";
+	FriendlyReplies =
+	{
+		3,
+		"\"What? You want more whip?\"",
+		"\"Even participated in the weekly orgy at Nefas's High Temple? I guess not. You woudn't have survived.\"",
+		"\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
+	}
 
 	Config TORTURING_CHIEF;
 	{
@@ -2053,22 +2061,22 @@ kobold
 	Config PATRIARCH;
 	{
 		AttributeBonus = 90;
-		Helmet = IRON helmet;
+		Helmet = STEEL helmet;
 		BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
 		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
 		Belt = TROLL_HIDE belt;
 		Cloak = TROLL_HIDE cloak;
 		RightGauntlet = TROLL_HIDE gauntlet;
 		RightBoot = TROLL_HIDE boot;
-		CWeaponSkillHits == 50;
-		RightSWeaponSkillHits = 20;
+		CWeaponSkillHits == 100;
+		RightSWeaponSkillHits = 50;
 		PostFix = "patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 2000;
+		DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
-		TotalVolume = 50000;
+		TotalVolume = 70000;
 		PanicLevel = 10;
 		TotalSize = 120;
 		ClothColor = rgb16(120, 0, 120);
@@ -2549,6 +2557,7 @@ orc
 		LeftSWeaponSkillHits = 50;
 		PostFix = "slaughterer";
 		PanicLevel = 40;
+		Inventory == potion { ContainedMaterial = TROLL_BLOOD; Chance = 10; }
 	}
 
 	Config SQUAD_LEADER;
@@ -2610,6 +2619,7 @@ orc
 		RightSWeaponSkillHits = 500;
 		PostFix = "general";
 		PanicLevel = 10;
+		Inventory == potion { ContainedMaterial = HEALING_LIQUID; Chance = 10; }
 	}
 
 	Config MARSHAL;

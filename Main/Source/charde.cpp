@@ -263,26 +263,26 @@ void petrus::Load(inputfile& SaveFile)
   game::SetPetrus(this);
 }
 
-bool dog::Catches(item* Thingy, float)
+bool dog::Catches(item* Thingy)
 {
   if(Thingy->DogWillCatchAndConsume())
     {
       if(ConsumeItem(Thingy))
-	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
-	else
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+	{
+	  if(IsPlayer())
+	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+	  else
+	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	    ChangeTeam(game::GetPlayer()->GetTeam());
-	  }
-      else
-	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
-	else
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+	      ChangeTeam(game::GetPlayer()->GetTeam());
+	    }
+	}
+      else if(IsPlayer())
+	ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
       return true;
     }
@@ -992,26 +992,26 @@ bool kamikazedwarf::Hit(character* Enemy, bool ForceHit)
     }
 }
 
-bool largecat::Catches(item* Thingy, float)
+bool largecat::Catches(item* Thingy)
 {
   if(Thingy->CatWillCatchAndConsume())
     {
       if(ConsumeItem(Thingy))
-	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
-	else
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+	{
+	  if(IsPlayer())
+	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+	  else
+	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
-	    ChangeTeam(game::GetPlayer()->GetTeam());
-	  }
-      else
-	if(IsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
-	else
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+	      ChangeTeam(game::GetPlayer()->GetTeam());
+	    }
+	}
+      else if(IsPlayer())
+	ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
 
       return true;
     }
@@ -4063,5 +4063,6 @@ void genetrixvesana::CreateCorpse()
 {
   for(ushort c = 0; c < 3; ++c)
     GetStackUnder()->AddItem(new pineapple);
+
   carnivorousplant::CreateCorpse();
 }

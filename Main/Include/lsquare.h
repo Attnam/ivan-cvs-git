@@ -107,7 +107,6 @@ class lsquare : public square
   fluid* GetFluid() const { return Fluid; }
   void SetFluid(fluid* What) { Fluid = What; }
   void RemoveFluid();
-  void HasBeenHitBy(item*, float, uchar);
   void TeleportEverything(character*);
   bool DipInto(item*, character*);
   bool LockEverything(character*);

@@ -211,12 +211,12 @@ bool pickaxe::Apply(character* User)
 
   lsquare* Square = GetNearLSquare(User->GetPos() + Temp);
 
-  if(Square->GetCharacter())
+  /*if(Square->GetCharacter())
     if(User->Hit(Square->GetCharacter()))
-      return true;
+      return true;*/
 
   if(Square->CanBeDug())
-    if(Square->GetOLTerrain()->CanBeDug())
+    if(Square->GetOLTerrain()->CanBeDestroyed())
       if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
 	{
 	  uchar RoomNumber = Square->GetRoom();
@@ -3302,6 +3302,7 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
       ADD_MESSAGE("Nothing happens.");
       return true;
     }
+
   std::string DeathMSG = "killed by " + GetName(INDEFINITE);
   Beam(Zapper, DeathMSG, Direction, GetBeamRange());
   SetTimesUsed(GetTimesUsed() + 1);
@@ -3325,7 +3326,7 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
       if(CWeaponSkillLevel || SWeaponSkillLevel)
-	Entry << ", Skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
       Entry << "]";
     }
@@ -3362,7 +3363,7 @@ void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
       if(CWeaponSkillLevel || SWeaponSkillLevel)
-	Entry << ", Skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
       Entry << "]";
     }

@@ -59,8 +59,7 @@ class OLTERRAIN
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual bool IsLocked() const { return Locked; }
   virtual bool CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
-  virtual bool ReceiveDamage(character*, short, uchar);
-  virtual void HasBeenHitBy(item*, float, uchar);
+  virtual void ReceiveDamage(character*, ushort, uchar);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
   virtual void SetLockType(uchar What) { LockType = What; }
@@ -68,6 +67,7 @@ class OLTERRAIN
   virtual bool TryKey(item*, character*);
   virtual void SetParameters(uchar);
   virtual void Lock() { SetIsLocked(true); }
+  virtual void HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
  protected:
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
@@ -189,8 +189,8 @@ class OLTERRAIN
   door,
  public:
   virtual void BeKicked(character*, ushort);
-  virtual bool ReceiveDamage(character*, short, uchar);
-  virtual void HasBeenHitBy(item*, float, uchar);
+  virtual void ReceiveDamage(character*, ushort, uchar);
+  virtual void HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
   virtual void Break() { olterrain::Break(); }
  protected:
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, IsWalkable() ? 48 : 160); }

@@ -66,7 +66,6 @@ class lterrain : public object
   virtual bool AcceptsOffers() const { return false; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
-  virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool Polymorph(character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
@@ -164,12 +163,13 @@ class glterrain : public lterrain, public gterrain
 struct olterraindatabase : public terraindatabase
 {
   std::string DigMessage;
-  bool CanBeDug;
+  bool CanBeDestroyed;
   bool IsSafeToDestroy;
   uchar RestModifier;
   std::string RestMessage;
   bool IsUpLink;
   ulong StorageVolume;
+  uchar HPModifier;
 };
 
 class olterrainprototype
@@ -201,7 +201,7 @@ class olterrain : public lterrain, public oterrain
   typedef olterrainprototype prototype;
   typedef olterraindatabase database;
   typedef std::map<ushort, olterraindatabase> databasemap;
-  olterrain(donothing) : HP(1000) { }
+  olterrain(donothing) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Enter(bool) const;
@@ -214,11 +214,11 @@ class olterrain : public lterrain, public oterrain
   virtual void Lock() { }
   virtual bool IsLocked() const { return false; }
   virtual void CreateBoobyTrap() { }
-  virtual void HasBeenHitBy(item*, float, uchar) { }
+  virtual void HasBeenHitByItem(character*, item*, ushort) { }
   virtual void Break();
   short GetHP() const { return HP; }
-  void SetHP(short What) { HP = What; }
   void EditHP(short What) { HP += What; }
+  virtual void ReceiveDamage(character*, ushort, uchar);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const { return &olterrain_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
@@ -245,19 +245,24 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
   virtual DATA_BASE_VALUE(const std::string&, DigMessage);
-  virtual DATA_BASE_BOOL(CanBeDug);
+  virtual DATA_BASE_BOOL(CanBeDestroyed);
   virtual DATA_BASE_BOOL(IsSafeToDestroy);
   virtual DATA_BASE_VALUE(uchar, RestModifier);
   virtual DATA_BASE_VALUE(const std::string&, RestMessage);
   virtual DATA_BASE_BOOL(IsUpLink);
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
+  DATA_BASE_VALUE(uchar, HPModifier);
   static olterrain* Clone(ushort, ushort) { return 0; }
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }
   virtual std::string GetText() const { return ""; }
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
+  ushort GetStrengthValue() const;
+  virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
+  void CalculateHP();
  protected:
+  virtual void VirtualConstructor(bool);
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
   const database* DataBase;

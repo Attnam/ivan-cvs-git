@@ -91,7 +91,7 @@ material
 
 	Config MORAINE;
 	{
-		StrengthValue = 20;
+		StrengthValue = 30;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
 		Color = rgb16(111, 74, 37);
@@ -159,6 +159,7 @@ material
 		IsSparkling = true;
 		IsMetal = true;
 		Flexibility = 2;
+		CanBeWished = false;
 	}
 		
 	Config MARBLE;
@@ -459,7 +460,7 @@ material
 
 	Config PHOENIX_FEATHER;
 	{
-		StrengthValue = 100;
+		StrengthValue = 80;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 200;
 		Color = rgb16(220, 220, 0);

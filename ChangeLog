@@ -1,8 +1,33 @@
+December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Confused people no longer tries to move against walls; there is no message and
+	  no time penalty, so this was a very unclear reason not to accept a key press
+	* Increased nutrition given by Seges
+	* Increased nutrition given by life saving
+	* Seges can now heal the player or cure his poison state if needed
+	* Nefas can now confuse enemies and give the player a pet mistress
+	* Scabies can now polymorph the player
+	* Mithril can no longer be wished; equipment made of it made the game boring,
+	  since no updating was virtually impossible
+	* Decreased phoenix feather's SV to the choice between steel and it more interesting
+	* Corrected the possibilities of broken helmets
+	* Decreased the overall difficulty values in the game by 25%
+	* Doubled all monster generation intervals in the game
+	* Decreased (greater) dark frogs' danger modifier a bit
+	* AI will not try to chase enemies seen by ESP anymore (this made angels rather useless)
+	* Throw system remade
+	* Terrain damage system remade
+	* Newton no longer rolls in his grave
+	* Since it was odd that the player could kick down locked stone doors so easily, the doors
+	  in the underwater tunnel are now made of wood
+	* Gain all items cheat now drops the items to the ground under the player, so he doesn't
+	  have to drop a thousand items to be able to move
+	* Added a fast gum solution to remove the material description of "stone stones"
+
 December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* "THUMB" -> "THUMP". Somebody might think it's a funny and somebody might think it's a typo.
 	* Zombies Endurance raised and dextrity and agility lowered to indicate even less brain function
-
 
 December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
@@ -19,7 +44,7 @@ December 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	 * Infuscor's effect changed
 	 * Corrected bug with Beartraps and CheckDeath
-	
+
 December 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a major bug in the score system

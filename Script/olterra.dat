@@ -28,7 +28,7 @@ olterrain
 	MaterialColorD = 0;
 	SitMessage = "You sit for some time. Nothing happens.";
 	/* Obligatory: DigMessage */
-	CanBeDug = false;
+	CanBeDestroyed = false;
 	IsSafeToDestroy = false;
 	RestModifier = 1;
 	RestMessage = "";
@@ -39,12 +39,13 @@ olterrain
 	IsUpLink = false;
 	CreateDivineConfigurations = false;
 	StorageVolume = 0;
+	HPModifier = 100;
 }
 
 wall
 {
 	IsAbstract = true;
-	CanBeDug = true;
+	CanBeDestroyed = true;
 
 	Config BRICK_FINE;
 	{
@@ -52,6 +53,7 @@ wall
 		MainMaterialConfig == STONE;
 		NameSingular = "wall";
 		BitmapPos = 64, 272;
+		HPModifier = 150;
 	}
 
 	Config BRICK_PROPAGANDA;
@@ -61,6 +63,7 @@ wall
 		NameSingular = "wall";
 		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamian Empire";
 		BitmapPos = 80, 272;
+		HPModifier = 150;
 	}
 
 	Config BRICK_OLD;
@@ -92,6 +95,7 @@ wall
 		Article = "an";
 		NameSingular = "earth";
 		BitmapPos = 0, 336;
+		HPModifier = 50;
 	}
 }
 
@@ -102,43 +106,46 @@ decoration
 	Config PINE;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "pine";
 		BitmapPos = 16, 320;
+		HPModifier = 25;
 	}
 
 	Config FIR;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "fir";
 		BitmapPos = 16, 352;
+		HPModifier = 25;
 	}
 
 	Config PALM;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
 		MaterialColorB = rgb16(32, 80, 32);
 		NameSingular = "palm";
 		BitmapPos = 16, 368;
+		HPModifier = 25;
 	}
 
 	Config LINDEN;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
@@ -146,11 +153,12 @@ decoration
 		Adjective = "lovely";
 		NameSingular = "linden";
 		BitmapPos = 32, 336;
+		HPModifier = 25;
 	}
 
 	Config HOLY_TREE;
 	{
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You ruthlessly chop the beautiful tree down.";
 		MainMaterialConfig == GOLD;
 		ShowMaterial = false;
@@ -159,6 +167,7 @@ decoration
 		NameSingular = "tree";
 		BitmapPos = 32, 336;
 		ShowMaterial = true;
+		HPModifier = 25;
 	}
 
 	Config CARPET;
@@ -172,7 +181,7 @@ decoration
 
 	Config COUCH;
 	{
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "The destroy the couch.";
 		MainMaterialConfig == FABRIC;
 		AdjectiveArticle = "an";
@@ -182,11 +191,12 @@ decoration
 		MaterialColorB = rgb16(200, 200, 0);
 		SitMessage = "The couch is extremely soft and confortable. You relax well.";
 		RestMessage = "You rest well on the soft sofa.";
+		HPModifier = 25;
 	}
 
 	Config DOUBLE_BED;
 	{
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You smash the bed into pieces.";
 		MainMaterialConfig == FABRIC;
 		Adjective = "luxurious";
@@ -197,6 +207,7 @@ decoration
 		RestModifier = 5;
 		SitMessage = "The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.";
 		RestMessage = "You lay yourself on the confortable bed.";
+		HPModifier = 25;
 	}
 
 	Config POOL_BORDER;
@@ -218,7 +229,7 @@ decoration
 	Config SNOW_PINE;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
@@ -226,12 +237,13 @@ decoration
 		NameSingular = "pine";
 		PostFix = "covered with snow";
 		BitmapPos = 16, 320;
+		HPModifier = 25;
 	}
 
 	Config SNOW_FIR;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
@@ -239,15 +251,18 @@ decoration
 		NameSingular = "fir";
 		PostFix = "covered with snow";
 		BitmapPos = 16, 352;
+		HPModifier = 25;
 	}
+
 	Config ANVIL;
 	{
 		OKVisualEffects = MIRROR;
-		CanBeDug = true;
-		DigMessage = "You brake the anvil.";
+		CanBeDestroyed = true;
+		DigMessage = "You break the anvil.";
 		MainMaterialConfig == IRON;
 		NameSingular = "anvil";
 		BitmapPos = 16, 432;
+		HPModifier = 25;
 	}
 }
 
@@ -263,11 +278,12 @@ empty /* olterrain-> */
 door /* olterrain-> */
 {
 	DigMessage = "You break the door.";
-	CanBeDug = true;
-	MainMaterialConfig == STONE;
+	CanBeDestroyed = true;
+	MainMaterialConfig == WOOD;
 	NameSingular = "door";
 	/* BitmapPos depends on being open or not */
 	/* PostFix depends on LockType */
+	HPModifier = 20;
 }
 
 link /* olterrain-> */
@@ -338,13 +354,14 @@ olterraincontainer /* olterrain->decoration-> */
 
 	Config BOOK_CASE;
 	{
-		CanBeDug = true;
+		CanBeDestroyed = true;
 		DigMessage = "You smash the bookcase into pieces.";
 		MainMaterialConfig == WOOD;
 		NameSingular = "bookcase";
 		BitmapPos = 16, 272;
 		SitMessage = "The bookcase is very unconfortable to sit on.";
 		StorageVolume = 100000;
+		HPModifier = 20;
 	}
 }
 
@@ -374,8 +391,9 @@ boulder /* olterrain-> */
 	DefaultMainVolume = 523500;
 	NameSingular = "boulder";
 	SitMessage = "The boulder is rather hard to sit on.";
-	CanBeDug = true;
+	CanBeDestroyed = true;
 	IsAbstract = true;
+	HPModifier = 50;
 
 	Config 1;
 	{
@@ -397,6 +415,7 @@ sign
 	NameSingular = "sign";
 	BitmapPos = 16, 336;
 	SitMessage = "You feel very weird sitting on the sign.";
-	CanBeDug = true;
+	CanBeDestroyed = true;
 	MaterialColorB = rgb16(48, 48, 48);
+	HPModifier = 10;
 }

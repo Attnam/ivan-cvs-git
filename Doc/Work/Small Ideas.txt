@@ -367,7 +367,7 @@ Reflecting items (mirror and shield of reflection).
 //Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
 Mellis could act as a small shop when prayed to.
 Rings appearing in fountains. (shouldn't be hard with the new system...)
-*Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
+//*Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
 Msg from hit should depend more on weapon and there should be more variation. ("the monsters STABS you with its wooden spear").
 Some monster types should taunt the player.
 Dragon scale material.
@@ -385,11 +385,17 @@ The Cathedral should employ a gardener whose duty is take care of the firs aroun
 An environmentalist character who would protest outside the Cathedral against the imprisonment of the dolphins.
 Monsters shouldn't drink antidote liquid if they don't need it.
 Ask for auto wear for picked up items.
-Teleport trap
+The spirit appearing in fountains should have a picture.
+Teleport trap.
+Town portal scroll.
 Small shadows for items. (one pixel right and down from the items graphic)
 Using sickle against plants should yield a bonus.
-"Select the direction you wish to enter Attnam from"
+"Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
-Food in can's should spoil _much_ slower
+Food in can's should spoil _much_ slower.
+Skeletons' stomachs shouldn't be able to contain liquids.
+Unlike their colleagues, Nefas's angels should have a groin.
+Priests, Petrus and angels should be able to resurrect dead pets.
+Wand of door creation should create doors to walls.
 Mushrooms in forest. Cause odd effects when eaten.
-Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
+(r) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)

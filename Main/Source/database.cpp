@@ -376,12 +376,13 @@ bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(ShowMaterial);
 
   ANALYZE_DATA(DigMessage);
-  ANALYZE_DATA(CanBeDug);
+  ANALYZE_DATA(CanBeDestroyed);
   ANALYZE_DATA(IsSafeToDestroy);
   ANALYZE_DATA(RestModifier);
   ANALYZE_DATA(RestMessage);
   ANALYZE_DATA(IsUpLink);
   ANALYZE_DATA(StorageVolume);
+  ANALYZE_DATA(HPModifier);
 
   return Found;
 }

@@ -197,7 +197,7 @@ class character : public entity, public id
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
-  virtual bool Catches(item*, float) { return false; }
+  virtual bool Catches(item*) { return false; }
   virtual bool CheckBulimia() const { return GetHungerState() == BLOATED; }
   bool CheckDeath(const std::string&, character*, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
@@ -206,7 +206,7 @@ class character : public entity, public id
   virtual bool OpenPos(vector2d);
   virtual bool ReadItem(item*);
   virtual bool TestForPickup(item*) const;
-  virtual bool ThrowItem(uchar, item*);
+  virtual void ThrowItem(uchar, item*);
   virtual bool TryMove(vector2d, bool = true);
   virtual bool HasHeadOfElpuri() const;
   virtual bool HasGoldenEagleShirt() const;
@@ -266,7 +266,7 @@ class character : public entity, public id
   virtual void BeTalkedTo();
   virtual void ReceiveDarkness(long);
   void Die(bool = false);
-  void HasBeenHitByItem(character*, item*, float);
+  void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
@@ -578,8 +578,8 @@ class character : public entity, public id
   virtual void PrintEndInfraVisionMessage() const;
   virtual void PrintBeginESPMessage() const;
   virtual void PrintEndESPMessage() const;
-  bool CanBeSeenByPlayer(bool = false) const;
-  bool CanBeSeenBy(const character*, bool = false) const;
+  bool CanBeSeenByPlayer(bool = false, bool = false) const;
+  bool CanBeSeenBy(const character*, bool = false, bool = false) const;
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   void AttachBodyPart(bodypart*);

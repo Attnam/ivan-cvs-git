@@ -118,7 +118,7 @@ It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more
 //Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
 //The Hideous RAM Boulder Monster Spawn Error.
-"The severed right leg of Petrus's wife number 6 hits the open, locked iron door with a triangular lock and the open, locked iron door with a triangular lock opens."
+//"The severed right leg of Petrus's wife number 6 hits the open, locked iron door with a triangular lock and the open, locked iron door with a triangular lock opens."
 Polymorphed into a mistress warlady and wielding the Justifier, I attacked Attnam. After killing a dozen citizens inside
   and outside the Cathedral, I noticed odd lagging, activated the see whole map cheat and discovered Petrus had gone mad
   and was killing everyone. I suppose some item kicked by guard hit him and he thought Attnam's folk had started a rebellion?
@@ -129,3 +129,4 @@ It seems that due to certain bitshift rounding errors, resting causes more exp m
 Can angry Atavus or Cruentus destroy a quest artifact inside a container?
 Items left on shop floor do not spoil even if the shopkeeper is dead.
 "A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
+Wand of locking doesn't update memorized description correctly.

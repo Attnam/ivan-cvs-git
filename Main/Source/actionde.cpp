@@ -39,8 +39,8 @@ void faint::Handle()
     Terminate(true);
   else
     {
-      GetActor()->EditExperience(ARM_STRENGTH, -3);
-      GetActor()->EditExperience(LEG_STRENGTH, -3);
+      GetActor()->EditExperience(ARM_STRENGTH, -2);
+      GetActor()->EditExperience(LEG_STRENGTH, -2);
     }
 }
 
@@ -233,7 +233,10 @@ void dig::Handle()
     }
 
   lsquare* Square = GetActor()->GetNearLSquare(SquareDug);
-  Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARM_STRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
+  ushort Damage = GetActor()->GetAttribute(ARM_STRENGTH) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / 500;
+  Square->GetOLTerrain()->EditHP(-Max<ushort>(Damage, 1));
+  GetActor()->EditExperience(ARM_STRENGTH, 10);
+  GetActor()->EditAP(-100000 / APBonus(GetActor()->GetAttribute(DEXTERITY)));
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {
@@ -267,6 +270,8 @@ void dig::Handle()
 
       Terminate(true);
     }
+  else
+    game::DrawEverything();
 }
 
 void dig::Terminate(bool Finished)

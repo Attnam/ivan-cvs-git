@@ -409,6 +409,7 @@
 #define WEAPON_ATTACK 1
 #define KICK_ATTACK 2
 #define BITE_ATTACK 3
+#define THROW_ATTACK 4
 
 #define USE_ARMS 1
 #define USE_LEGS 2
@@ -659,5 +660,9 @@
 
 #define EXISTS 1
 #define HAS_BE 2
+
+#define MISSED 0
+#define HIT 1
+#define CATCHED 2
 
 #endif

@@ -50,91 +50,96 @@ bool item::IsDrinkable(const character* Eater) const
   return IsConsumable(Eater) && GetConsumeMaterial()->IsLiquid();
 }
 
-bool item::Fly(character* Thrower, uchar Direction, ushort Force)
+void item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
+  MoveTo(GetLSquareUnder()->GetStack());
+  ushort Range = Force * 25UL / Max<ulong>(ulong(sqrt(GetWeight())), 1);
+
+  if(!Range)
+    return;
+
   if(Direction == RANDOM_DIR)
     Direction = RAND() % 8;
 
   vector2d StartingPos = GetPos();
   vector2d Pos = StartingPos;
+  vector2d DirVector = game::GetMoveVector(Direction);
   bool Breaks = false;
-  float Speed = float(Force) / GetWeight() * 1500;
+  float BaseDamage, BaseToHitValue;
 
-  for(;;)
+  if(Thrower)
     {
-      if(!GetLevelUnder()->IsValidPos(Pos + game::GetMoveVector(Direction)))
+      ushort Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 100;
+      BaseDamage = sqrt(5e-10f * GetWeaponStrength() * Force / Range) * Bonus;
+      BaseToHitValue = GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8f * Thrower->GetAttribute(PERCEPTION)) / Range;
+    }
+  else
+    {
+      BaseDamage = sqrt(5e-6f * GetWeaponStrength() * Force / Range);
+      BaseToHitValue = 10 * GetBonus() / (500 + GetWeight()) / Range;
+    }
+
+  for(ushort RangeLeft = Range; RangeLeft != 0; --RangeLeft)
+    {
+      if(!GetLevelUnder()->IsValidPos(Pos + DirVector))
 	break;
 
-      lsquare* JustHit = GetNearLSquare(Pos + game::GetMoveVector(Direction));
+      lsquare* JustHit = GetNearLSquare(Pos + DirVector);
 
       if(!(JustHit->GetOLTerrain()->IsWalkable()))
 	{
 	  Breaks = true;
-	  JustHit->HasBeenHitBy(this, Speed, Direction);
+	  JustHit->GetOLTerrain()->HasBeenHitByItem(Thrower, this, ushort(BaseDamage * sqrt(RangeLeft)));
 	  break;
 	}
       else
 	{
 	  clock_t StartTime = clock();
-
-	  Pos += game::GetMoveVector(Direction);
-	  Speed *= 0.7f;
-
-	  if(Speed < 0.5)
-	    break;
-
-	  MoveTo(GetNearLSquare(Pos)->GetStack());
+	  Pos += DirVector;
+	  MoveTo(JustHit->GetStack());
 	  game::DrawEverything();
 
-	  if(GetNearSquare(Pos)->GetCharacter())
+	  if(JustHit->GetCharacter())
 	    {
-	      if(HitCharacter(Thrower, GetNearSquare(Pos)->GetCharacter(), Speed))
-		{
-		  Breaks = true;
-		  break;
-		}
+	      ushort Damage = ushort(BaseDamage * sqrt(RangeLeft));
+	      float ToHitValue = BaseToHitValue * RangeLeft;
+	      uchar Returned = HitCharacter(Thrower, JustHit->GetCharacter(), Damage, ToHitValue, Direction);
+
+	      if(Returned == HIT)
+		Breaks = true;
+
+	      if(Returned != MISSED)
+		break;
 	    }
 
 	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
 	}
     }
 
-  //MoveTo(GetNearLSquare(Pos)->GetStack());
-
   if(Breaks)
-    ReceiveDamage(Thrower, short(Speed), PHYSICAL_DAMAGE);
-
-  if(Pos == StartingPos)
-    return false;
-  else
-    return true;
+    ReceiveDamage(Thrower, ushort(sqrt(GetWeight() * RangeLeft) / 10), PHYSICAL_DAMAGE);
 }
 
-bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
+uchar item::HitCharacter(character* Thrower, character* Dude, ushort Damage, float ToHitValue, uchar Direction)
 {
-  if(Dude->Catches(this, Speed))
-    return true;
+  if(Dude->Catches(this))
+    return CATCHED;
 
   if(Thrower)
     Thrower->Hostility(Dude);
 
-  if(Dude->DodgesFlyingItem(this, Speed)) 
+  if(Dude->DodgesFlyingItem(this, ToHitValue)) 
     {
       if(Dude->IsPlayer())
 	ADD_MESSAGE("%s misses you.", CHAR_NAME(DEFINITE));
       else if(Dude->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s misses %s.", CHAR_NAME(DEFINITE), Dude->CHAR_NAME(DEFINITE));
 
-      return false;
+      return MISSED;
     }
 
-  /* Fix! */
-
-  //if(RAND() & 1)
-    //HitEffect(Dude, Thrower);
-
-  Dude->HasBeenHitByItem(Thrower, this, Speed);
-  return true;
+  Dude->HasBeenHitByItem(Thrower, this, Damage, ToHitValue, Direction);
+  return HIT;
 }
 
 float item::GetWeaponStrength() const
@@ -497,7 +502,7 @@ bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
       if(!StrengthValue)
 	StrengthValue = 1;
 
-      if(Damage > StrengthValue << 2 && RAND() & 1 && RAND() % (25 * Damage / StrengthValue) >= 100)
+      if(Damage > StrengthValue << 2 && RAND() & 3 && RAND() % (25 * Damage / StrengthValue) >= 100)
 	{
 	  Break();
 	  return true;

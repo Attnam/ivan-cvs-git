@@ -116,14 +116,7 @@ void dulcis::PrayBadEffect()
 
 void seges::PrayGoodEffect()
 {
-  if(game::GetPlayer()->HasAllBodyParts() || game::GetPlayer()->GetNP() < HUNGER_LEVEL)
-    {
-      ADD_MESSAGE("Your stomach feels full again.");
-
-      if(game::GetPlayer()->GetNP() < 10000)
-	game::GetPlayer()->SetNP(10000);
-    }
-  else
+  if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* OldBodyPart = game::GetPlayer()->FindRandomOwnBodyPart();
 
@@ -140,6 +133,30 @@ void seges::PrayGoodEffect()
 	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
 	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
 	}
+
+      return;
+    }
+
+  if(game::GetPlayer()->IsInBadCondition())
+    {
+      ADD_MESSAGE("%s cures your wounds.", GOD_NAME);
+      game::GetPlayer()->RestoreHP();
+      return;
+    }
+
+  if(game::GetPlayer()->TemporaryStateIsActivated(POISONED))
+    {
+      ADD_MESSAGE("%s removes the foul liquid in your veins.", GOD_NAME);
+      game::GetPlayer()->DeActivateTemporaryState(POISONED);
+      return;
+    }
+
+  if(game::GetPlayer()->GetNP() < HUNGER_LEVEL)
+    {
+      ADD_MESSAGE("Your stomach feels full again.");
+
+      if(game::GetPlayer()->GetNP() < SATIATED_LEVEL)
+	game::GetPlayer()->SetNP(SATIATED_LEVEL);
     }
 }
 
@@ -182,8 +199,6 @@ void atavus::PrayBadEffect()
 	{
 	  ADD_MESSAGE("Your %s disappears.", Disappearing->CHAR_NAME(UNARTICLED));
 	  Disappearing->RemoveFromSlot();
-	  //if(game::GetPlayer()->GetWielded() == Disappearing) game::GetPlayer()->SetWielded(0);
-	  //if(game::GetPlayer()->GetBodyArmor() == Disappearing) game::GetPlayer()->SetBodyArmor(0);
 	  Disappearing->SendToHell();
 	}
       else
@@ -326,7 +341,8 @@ void silva::PrayGoodEffect()
 		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE);
 	      }
 	}
-      // Impact damage for items in the level
+
+      // Impact damage to items in the level
 
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
@@ -386,14 +402,6 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  for(ushort c = 0; c < game::GetPlayer()->GetEquipmentSlots(); ++c)
-    if(game::GetPlayer()->GetEquipment(c) && game::GetPlayer()->GetEquipment(c)->IsBroken())
-      {
-	ADD_MESSAGE("%s fixes your %s.", GOD_NAME, game::GetPlayer()->GetEquipment(c)->CHAR_NAME(UNARTICLED));
-	game::GetPlayer()->GetEquipment(c)->Fix();
-	return;
-      }
-
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
@@ -402,6 +410,14 @@ void loricatus::PrayGoodEffect()
       ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().c_str());
       return;
     }
+
+  for(ushort c = 0; c < game::GetPlayer()->GetEquipmentSlots(); ++c)
+    if(game::GetPlayer()->GetEquipment(c) && game::GetPlayer()->GetEquipment(c)->IsBroken())
+      {
+	ADD_MESSAGE("%s fixes your %s.", GOD_NAME, game::GetPlayer()->GetEquipment(c)->CHAR_NAME(UNARTICLED));
+	game::GetPlayer()->GetEquipment(c)->Fix();
+	return;
+      }
 	
   if(game::GetPlayer()->GetMainWielded())
     {
@@ -461,14 +477,16 @@ void cleptia::PrayGoodEffect()
       game::GetPlayer()->BeginTemporaryState(HASTE, 250);
       return;
     }
+
   if(!game::GetPlayer()->StateIsActivated(INVISIBLE))
     {
       ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GOD_NAME);
       game::GetPlayer()->BeginTemporaryState(INVISIBLE, 250);
       return;
     }
+
   ADD_MESSAGE("Cleptia helps you, but you really don't know how.");  
-  ushort StateToActivate = RAND() % 2 ? HASTE : INVISIBLE;
+  ushort StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
   game::GetPlayer()->BeginTemporaryState(StateToActivate, 250);
 }
 
@@ -691,11 +709,68 @@ void infuscor::PrayBadEffect()
 
 void nefas::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
-  potion* Reward = new potion(0, NO_MATERIALS);
-  Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMMEL_URINE));
-  game::GetPlayer()->GetGiftStack()->AddItem(Reward);
-  ADD_MESSAGE("%s drops on the ground.", Reward->CHAR_NAME(DEFINITE));
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), game::GetPlayer()->GetPos(), 10);
+  bool AudiencePresent = false;
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    {
+      for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	{
+	  character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+	  if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(CONFUSED) && game::GetPlayer()->GetRelation(Audience) == HOSTILE)
+	    {
+	      AudiencePresent = true;
+	      break;
+	    }
+	}
+
+      if(AudiencePresent)
+	break;
+    }
+
+  if(AudiencePresent)
+    {
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	  {
+	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+	    if(Audience && !Audience->TemporaryStateIsActivated(CONFUSED) && game::GetPlayer()->GetRelation(Audience) == HOSTILE)
+	      {
+		if(Audience->CanBeSeenByPlayer())
+		  ADD_MESSAGE("%s confuses %s with her sweet lies.", GOD_NAME, Audience->CHAR_NAME(DEFINITE));
+
+		Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
+	      }
+	  }
+    }
+  else if(RAND() % 5)
+    {
+      mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
+      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, game::GetPlayer()->GetPos());
+
+      if(Where == DIR_ERROR_VECTOR)
+	{
+	  ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
+	  delete Mistress;
+	}
+      else
+	{
+	  Mistress->SetTeam(game::GetPlayer()->GetTeam());
+	  game::GetCurrentLevel()->AddCharacter(Where, Mistress);
+	  ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+	}
+    }
+  else
+    {
+      ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
+      potion* Reward = new potion(0, NO_MATERIALS);
+      Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMMEL_URINE));
+      game::GetPlayer()->GetGiftStack()->AddItem(Reward);
+      ADD_MESSAGE("%s drops on the ground.", Reward->CHAR_NAME(DEFINITE));
+    }
 }
 
 void nefas::PrayBadEffect()
@@ -741,21 +816,26 @@ void scabies::PrayGoodEffect()
 	  Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOL_FOOD));
 	  game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 	}
-    }
-  else
-    {
-      for(ushort d = 0; d < 8; ++d)
-	{
-	  lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
 
-	  if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
-	    {
-	      ADD_MESSAGE("%s throws poison on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
-	      Square->SpillFluid(game::GetPlayer(), MAKE_MATERIAL(POISON_LIQUID, 500), 100);
-	    }
+      return;
+    }
+
+  bool Success = false;
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
+
+      if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
+	{
+	  ADD_MESSAGE("%s throws poison on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
+	  Square->SpillFluid(game::GetPlayer(), MAKE_MATERIAL(POISON_LIQUID, 500), 100);
+	  Success = true;
 	}
     }
 
+  if(!Success)
+    game::GetPlayer()->PolymorphRandomly(250, 1000, 1000 + RAND() % 1000);
 }
 
 void scabies::PrayBadEffect()
@@ -779,7 +859,8 @@ void scabies::PrayBadEffect()
 
 void infuscor::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s help you.", GOD_NAME);
+  ADD_MESSAGE("%s helps you.", GOD_NAME);
+
   if(!game::GetPlayer()->StateIsActivated(ESP))
     {
       game::GetPlayer()->BeginTemporaryState(ESP, 10000 + RAND() % 10000);
@@ -799,6 +880,7 @@ void infuscor::PrayGoodEffect()
     }    
 
   ADD_MESSAGE("Suddenly 5 scrolls appear almost under your feet.");
+
   for(ushort c = 0; c < 5; ++c)
     game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleportation);
 }

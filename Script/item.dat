@@ -911,7 +911,7 @@ wandofpolymorph /* wand-> */
 
 scrollofchangematerial /* scroll-> */
 {
-	Possibility = 5;
+	Possibility = 10;
 	Price = 1000;
 	PostFix = "of change material";
 	Alias == "SoCM";
@@ -1801,6 +1801,7 @@ helmet
 	Config BROKEN;
 	{
 		BitmapPos = 64, 64;
+		Possibility = 35;
 	}
 
 	Config FULL_HELMET;
@@ -1810,7 +1811,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 30;
+		Possibility = 35;
 		Adjective = "full";
 		MainMaterialConfig = { 5, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
 		MaterialConfigChances = { 5, 125, 100, 75, 25, 5; }
@@ -1819,6 +1820,7 @@ helmet
 	Config BROKEN|FULL_HELMET;
 	{
 		BitmapPos = 64, 32;
+		Possibility = 3;
 	}
 
 	Config HELM_OF_PERCEPTION;
@@ -1841,6 +1843,7 @@ helmet
 	Config BROKEN|HELM_OF_PERCEPTION;
 	{
 		BitmapPos = 64, 32;
+		Possibility = 1;
 	}
 
 	Config HELM_OF_UNDERSTANDING;
@@ -1850,7 +1853,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 15;
+		Possibility = 10;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
 		MainMaterialConfig == UNICORN_HORN;
@@ -1863,6 +1866,7 @@ helmet
 	Config BROKEN|HELM_OF_UNDERSTANDING;
 	{
 		BitmapPos = 64, 32;
+		Possibility = 1;
 	}
 
 	Config HELM_OF_BRILLIANCE;
@@ -1872,7 +1876,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 15;
+		Possibility = 10;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
 		MainMaterialConfig == MITHRIL;
@@ -1885,6 +1889,7 @@ helmet
 	Config BROKEN|HELM_OF_BRILLIANCE;
 	{
 		BitmapPos = 64, 32;
+		Possibility = 1;
 	}
 
 	Config HELM_OF_ATTRACTIVITY;
@@ -1907,6 +1912,7 @@ helmet
 	Config BROKEN|HELM_OF_ATTRACTIVITY;
 	{
 		BitmapPos = 64, 32;
+		Possibility = 1;
 	}
 }
 

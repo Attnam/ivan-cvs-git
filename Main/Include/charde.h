@@ -446,7 +446,7 @@ class CHARACTER
   dog,
   nonhumanoid,
  public:
-  virtual bool Catches(item*, float);
+  virtual bool Catches(item*);
   virtual void BeTalkedTo();
 );
 
@@ -626,7 +626,7 @@ class CHARACTER
   largecat,
   nonhumanoid,
  public:
-  virtual bool Catches(item*, float);
+  virtual bool Catches(item*);
   ;
 );
 

@@ -84,7 +84,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
+character::character(donothing) : entity(HAS_BE), NP(SATIATED_LEVEL), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -928,7 +928,7 @@ void character::Die(bool ForceMsg)
 	    {
 	      RestoreBodyParts();
 	      RestoreHP();
-	      SetNP(50000);
+	      SetNP(SATIATED_LEVEL);
 	      GetSquareUnder()->SendNewDrawRequest();
 	      return;
 	    }
@@ -1685,9 +1685,10 @@ bool character::GainAllItems()
 {
   std::vector<item*> AllItems;
   protosystem::CreateEveryItem(AllItems);
+  stack* Stack = game::IsInWilderness() ? GetStack() : GetStackUnder();
 
   for(ushort c = 0; c < AllItems.size(); ++c)
-    GetStack()->AddItem(AllItems[c]);
+    Stack->AddItem(AllItems[c]);
 
   return false;
 }
@@ -2038,36 +2039,40 @@ bool character::Throw()
     return false;
 }
 
-bool character::ThrowItem(uchar Direction, item* ToBeThrown)
+void character::ThrowItem(uchar Direction, item* ToBeThrown)
 {
   if(Direction > 7)
     ABORT("Throw in TOO odd direction...");
 
-  return ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH));
+  ToBeThrown->Fly(this, Direction, GetAttribute(ARM_STRENGTH));
 }
 
-void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
+void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage, float ToHitValue, uchar Direction)
 {
-  ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * sqrt(Speed) / 5000000000.0f) + (RAND() % 5 ? 1 : 0);
-
   if(IsPlayer())
     ADD_MESSAGE("%s hits you.", Thingy->CHAR_NAME(DEFINITE));
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s hits %s.", Thingy->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
-  ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE, ALL);
-  CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED), Thrower);
+  uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
+  ushort DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
+  bool Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, THROW_ATTACK, BodyPart, Direction, !DoneDamage)) || DoneDamage;
+
+  if(Succeeded)
+    Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
+
+  //if(DoneDamage < TrueDamage)
+  //Thingy->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
+
+  if(CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED), Thrower))
+    return;
+
+  DeActivateVoluntaryAction("The attack of " + Thrower->GetName(DEFINITE) + " interupts you.");
 }
 
-bool character::DodgesFlyingItem(item*, float Speed)
-{			// Formula requires a little bit of tweaking...
-  if(!(RAND() % 10))
-    return RAND() & 1;
-
-  if(!GetAttribute(AGILITY) || RAND() % ulong(sqrt(Speed) * GetSize() / GetAttribute(AGILITY) * 10 + 1) > 40)
-    return false;
-  else
-    return true;
+bool character::DodgesFlyingItem(item*, float ToHitValue)
+{
+  return RAND() % ushort(100 + ToHitValue / DodgeValue * 100) < 100;
 }
 
 void character::GetPlayerCommand()
@@ -2420,7 +2425,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    if(ThisDistance <= LOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true))
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
@@ -2455,7 +2460,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
     }
   else
     {
-      if(!GetTeam()->GetLeader() && WayPoint.X != -1)
+      if(!GetTeam()->GetLeader() && WayPoint.X != -1 && !StateIsActivated(PANIC))
 	{
 	  if(!MoveTowards(WayPoint))
 	    {
@@ -4860,8 +4865,8 @@ void character::SaveLife()
   RestoreBodyParts();
   RestoreHP();
 
-  if(GetNP() < 10000)
-    SetNP(10000);
+  if(GetNP() < SATIATED_LEVEL)
+    SetNP(SATIATED_LEVEL);
 
   GetSquareUnder()->SendNewDrawRequest();
 }
@@ -4926,11 +4931,11 @@ void character::DexterityAction(ushort Difficulty)
 }
 
 /* if Theretically true then Range is not a factor */
-bool character::CanBeSeenByPlayer(bool Theoretically) const
+bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
   bool Visible = !StateIsActivated(INVISIBLE) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm());
 
-  if((game::IsInWilderness() && Visible) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare())))
+  if((game::IsInWilderness() && Visible) || (!IgnoreESP && game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
@@ -4938,15 +4943,15 @@ bool character::CanBeSeenByPlayer(bool Theoretically) const
     return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm());
 }
 
-bool character::CanBeSeenBy(const character* Who, bool Theoretically) const
+bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
 {
   if(Who->IsPlayer())
-    return CanBeSeenByPlayer(Theoretically);
+    return CanBeSeenByPlayer(Theoretically, IgnoreESP);
   else
     {
       bool Visible = !StateIsActivated(INVISIBLE) || (Who->StateIsActivated(INFRA_VISION) && IsWarm());
 
-      if((game::IsInWilderness() && Visible) || (Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare())))
+      if((game::IsInWilderness() && Visible) || (!IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare())))
 	return true;
       else if(!Visible)
 	return false;
@@ -5612,6 +5617,10 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
     case BITE_ATTACK:
       Category = BITE;
       break;
+    case THROW_ATTACK:
+      if(!IsHumanoid()) return;
+      Category = Weapon->GetWeaponCategory();
+      break;
     default:
       ABORT("Illegal Type %d passed to character::WeaponSkillHit()!", Type);
       return;
@@ -6206,7 +6215,20 @@ vector2d character::ApplyStateModification(vector2d TryDirection) const
   if(!StateIsActivated(CONFUSED) || RAND() & 1)
     return TryDirection;
   else
-    return game::GetMoveVector(RAND() % 8);
+    {
+      ushort PossibleDir[8];
+      ushort Index = 0;
+
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  square* Square = GetNeighbourSquare(d);
+
+	  if(Square && Square->IsWalkable(this))
+	    PossibleDir[Index++] = d;
+	}
+
+      return Index ? game::GetMoveVector(PossibleDir[RAND() % Index]) : TryDirection;
+    }
 }
 
 void character::AddConfuseHitMessage() const

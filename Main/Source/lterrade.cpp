@@ -108,37 +108,58 @@ void altar::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha,
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetConfig() << 4, 0, Pos, 16, 16, Luminance);
 }
 
-void door::BeKicked(character*, ushort KickDamage)
+void door::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(!IsWalkable()) 
     {
-      if(!IsLocked() && KickDamage > RAND() % 3)
+      room* Room = GetLSquareUnder()->GetRoomClass();
+
+      if(Room)
+	Room->DestroyTerrain(Kicker, this);
+
+      if(!IsLocked() && KickDamage > (RAND() & 3))
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The door opens.");
 
 	  MakeWalkable();
+	  return;
 	}
-      else if(KickDamage > RAND() % 6)
-	{
-	  if(IsLocked() && RAND() & 1)	// _can't really think of a good formula for this... 
-	    {				//Strength isn't everything
-	      if(CanBeSeenByPlayer())
-		ADD_MESSAGE("The lock breaks and the door is damaged.");
 
-	      SetIsLocked(false);
-	    }
-	  else
+      if(KickDamage <= GetStrengthValue())
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("Your weak kick has no chance to affect this door.");
+	  
+	  return;
+	}
+
+      EditHP(GetStrengthValue() - KickDamage);
+      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      bool LockBreaks = IsLocked() && RAND() % (100 * KickDamage / SV) >= 100;
+
+      if(LockBreaks)
+	SetIsLocked(false);
+
+      if(GetHP() <= 0)
+	{
+	  if(CanBeSeenByPlayer())
 	    {
-	      if(CanBeSeenByPlayer())
+	      if(LockBreaks)
+		ADD_MESSAGE("The lock breaks and the door is damaged.");
+	      else
 		ADD_MESSAGE("The door is damaged.");
 	    }
 
 	  Break();
 	}
-      else
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("The door won't budge!");
+      else if(CanBeSeenByPlayer())
+	{
+	  if(LockBreaks)
+	    ADD_MESSAGE("The lock breaks.");
+	  else
+	    ADD_MESSAGE("The door won't budge!");
+	}
 
       // The door may have been destroyed here, so don't do anything!
     }
@@ -230,6 +251,11 @@ bool throne::SitOn(character* Sitter)
 
 void altar::BeKicked(character* Kicker, ushort)
 {
+  room* Room = GetLSquareUnder()->GetRoomClass();
+
+  if(Room)
+    Room->DestroyTerrain(Kicker, this);
+
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
   else if(Kicker->CanBeSeenByPlayer())
@@ -452,76 +478,48 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::BeKicked(character*, ushort KickDamage)
+void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 {
-  if(!IsWalkable())
-    if(IsLocked())
-      {
-	if(KickDamage > RAND() % 3)
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("The door opens from the force of your kick.");
+  if(!IsWalkable()) 
+    {
+      room* Room = GetLSquareUnder()->GetRoomClass();
 
-	    SetIsLocked(false);
-	    MakeWalkable();
-	  }
-	else if(KickDamage > RAND() % 3)
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("The lock breaks from the force of your kick.");
+      if(Room)
+	Room->DestroyTerrain(Kicker, this);
 
-	    SetIsLocked(false);
-	  }
-	else
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("The door won't budge!");
-      }
-    else
-      if(KickDamage > RAND() % 3)
+      if(!IsLocked() && KickDamage > (RAND() & 3))
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The broken door opens.");
 
 	  MakeWalkable();
+	  return;
 	}
-      else
-	if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("The door resists.");
-}
 
-bool door::ReceiveDamage(character*, short, uchar)
-{
-  if(RAND() & 1)
-    {
+      if(IsLocked())
+	{
+	  ushort SV = Max<ushort>(GetStrengthValue(), 1);
+
+	  if(KickDamage > SV && RAND() % (100 * KickDamage / SV) >= 100)
+	    {
+	      if(RAND() & 1)
+		{
+		  if(CanBeSeenByPlayer())
+		    ADD_MESSAGE("The broken door opens from the force of your kick.");
+
+		  MakeWalkable();
+		}
+	      else if(CanBeSeenByPlayer())
+		ADD_MESSAGE("The lock breaks from the force of your kick.");
+
+	      SetIsLocked(false);
+	      return;
+	    }
+	}
+
       if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s breaks.", CHAR_NAME(DEFINITE));
-
-      Break();
+	ADD_MESSAGE("The broken door won't budge!");
     }
-  else
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s opens.", CHAR_NAME(DEFINITE));
-		
-      MakeWalkable();
-      SetIsLocked(false);
-    }
-
-  return true;
-}
-
-bool brokendoor::ReceiveDamage(character*, short, uchar)
-{
-  if(RAND() & 1)
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s opens.", CHAR_NAME(DEFINITE));
-
-      MakeWalkable();
-      SetIsLocked(false);
-    }
-
-  return true;
 }
 
 bool altar::Polymorph(character*)
@@ -575,80 +573,6 @@ bool altar::SitOn(character* Sitter)
 bool liquidterrain::IsWalkable(const character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
-}
-
-void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
-{
-  if(!IsWalkable())
-    {
-      float Energy = Speed * Hitter->GetWeight() / 100;  
-      // Newton is rolling in his grave. 
-      if(CanBeSeenByPlayer() && game::WizardModeIsActive())
-	{
-	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
-	}
-
-      if(Energy > 400)
-	{
-	  // The door opens
-	  MakeWalkable();
-
-	  if(CanBeSeenByPlayer())
-	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    }
-	}
-      else if(Energy > 300)
-	{
-	  // The door breaks
-	  if(IsLocked())
-	    SetIsLocked(RAND() & 1);
-
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-
-	  Break();
-	} 
-      else
-	{
-	  // Nothing happens
-	  if(CanBeSeenByPlayer())
-	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    }
-	}
-    }
-}
-
-void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
-{
-  if(!IsWalkable())
-    {
-      float Energy = Speed * Hitter->GetWeight() / 100;  
-      // I hear Newton screaming in his grave.
-      if(CanBeSeenByPlayer() && game::WizardModeIsActive())
-	{
-	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
-	}
-      if(Energy > 200)
-	{
-	  // The door opens
-	  MakeWalkable();
-
-	  if(CanBeSeenByPlayer())
-	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    }
-	}
-      else
-	{
-	  // Nothing happens
-	  if(CanBeSeenByPlayer())
-	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    }
-	}
-    }
 }
 
 void door::Break()
@@ -753,9 +677,7 @@ void door::VirtualConstructor(bool Load)
       SetBoobyTrap(0);
       SetIsOpened(false);
       SetIsLocked(false);
-      SetBoobyTrap(0);
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
-      SetHP(500);
     }
 }
 
@@ -905,6 +827,8 @@ void link::StepOn(character* Stepper)
 
 void link::VirtualConstructor(bool Load)
 {
+  olterrain::VirtualConstructor(Load);
+
   if(!Load)
     if(Config == STAIRS_UP)
       {
@@ -1019,10 +943,12 @@ void olterraincontainer::SetItemsInside(const std::vector<contentscript<item> >&
 void wall::Break()
 {
   ushort DigProduct = GetMainMaterial()->GetDigProductMaterial();
+
   if(DigProduct)
     {
       material* StoneMaterial = MAKE_MATERIAL(DigProduct);
       ushort HowManyParts = 1 + RAND() % 4;
+
       for(ushort c = 0; c < HowManyParts; ++c)
 	{
 	  material* StonesMaterial = StoneMaterial->Clone();
@@ -1032,5 +958,89 @@ void wall::Break()
 	  GetLSquareUnder()->GetStack()->AddItem(Stone);
 	}
     }
+
   olterrain::Break();
+}
+
+void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
+{
+  if(!IsWalkable() && !IsLocked() && Damage > (RAND() & 3))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The door opens.");
+		
+      MakeWalkable();
+      return;
+    }
+
+  if(CanBeDestroyed() && Damage > GetStrengthValue())
+    {
+      EditHP(GetStrengthValue() - Damage);
+      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      bool LockBreaks = IsLocked() && RAND() % (100 * Damage / SV) >= 100;
+
+      if(LockBreaks)
+	SetIsLocked(false);
+
+      if(LockBreaks || HP <= 0)
+	{
+	  room* Room = GetLSquareUnder()->GetRoomClass();
+
+	  if(Room)
+	    Room->DestroyTerrain(Villain, this);
+	}
+
+      if(HP <= 0)
+	{
+	  if(CanBeSeenByPlayer())
+	    if(LockBreaks)
+	      ADD_MESSAGE("The door breaks and its lock is destroyed.");
+	    else
+	      ADD_MESSAGE("The door breaks.");
+
+	  Break();
+	}
+      else if(LockBreaks && CanBeSeenByPlayer())
+	ADD_MESSAGE("The door's lock is shattered.");
+    }
+}
+
+void brokendoor::ReceiveDamage(character* Villain, ushort Damage, uchar)
+{
+  if(!IsWalkable() && !IsLocked() && Damage > (RAND() & 3))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The broken door opens.");
+		
+      MakeWalkable();
+      return;
+    }
+
+  if(CanBeDestroyed() && Damage > GetStrengthValue())
+    {
+      EditHP(GetStrengthValue() - Damage);
+      ushort SV = Max<ushort>(GetStrengthValue(), 1);
+      bool LockBreaks = IsLocked() && RAND() % (100 * Damage / SV) >= 100;
+
+      if(LockBreaks)
+	SetIsLocked(false);
+
+      if(LockBreaks || HP <= 0)
+	{
+	  room* Room = GetLSquareUnder()->GetRoomClass();
+
+	  if(Room)
+	    Room->DestroyTerrain(Villain, this);
+	}
+
+      if(HP <= 0)
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("The broken door is completely destroyed.");
+
+	  Break();
+	}
+      else if(LockBreaks && CanBeSeenByPlayer())
+	ADD_MESSAGE("The broken door's lock is shattered.");
+    }
 }

@@ -85,12 +85,12 @@ Dungeon ELPURI_CAVE;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
-		DifficultyBase = 80;
-		DifficultyDelta = 20;
+		DifficultyBase = 60;
+		DifficultyDelta = 15;
 		MonsterAmountBase = 10;
 		MonsterAmountDelta = 4;
-		MonsterGenerationIntervalBase = 50;
-		MonsterGenerationIntervalDelta = -5;
+		MonsterGenerationIntervalBase = 100;
+		MonsterGenerationIntervalDelta = -10;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
@@ -131,7 +131,7 @@ Dungeon ELPURI_CAVE;
 			AltarPossible = true;
 			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
 			FloorSquare = solidterrain(PARQUET),empty;
-			DoorSquare = solidterrain(PARQUET),door;
+			DoorSquare = solidterrain(PARQUET),STONE door;
 			GenerateDoor = true;
 			ReCalculate = true;
 			DivineMaster = 0;
@@ -1172,7 +1172,7 @@ Dungeon NEW_ATTNAM;
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_PRIMITIVE);
 			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
-			DoorSquare = solidterrain(GRASS_TERRAIN), WOOD door;
+			DoorSquare = solidterrain(GRASS_TERRAIN), door;
 			GenerateDoor = true;
 			ReCalculate = true;
 			DivineMaster = 0;
@@ -1191,7 +1191,7 @@ Dungeon NEW_ATTNAM;
 			Size = 17,19;
 			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
 			FloorSquare = solidterrain(FLOOR),empty;
-			DoorSquare = solidterrain(FLOOR), WOOD door;
+			DoorSquare = solidterrain(FLOOR), door;
 			GenerateDoor = false;
 			ReCalculate = false;
 			DivineMaster = SILVA;
@@ -1306,7 +1306,7 @@ Dungeon NEW_ATTNAM;
 
 		Square, Pos 12, 22;
 		{
-			OTerrain = WOOD door;
+			OTerrain = door;
 		}
 
 		Square, Pos 0, 33;
@@ -1404,11 +1404,11 @@ Dungeon UNDER_WATER_TUNNEL;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
-		DifficultyBase = 20;
-		DifficultyDelta = 20;
+		DifficultyBase = 15;
+		DifficultyDelta = 15;
 		MonsterAmountDelta = 0;
-		MonsterGenerationIntervalBase = 100;
-		MonsterGenerationIntervalDelta = -25;
+		MonsterGenerationIntervalBase = 200;
+		MonsterGenerationIntervalDelta = -50;
 
 		Square, Random;
 		{
@@ -1497,6 +1497,11 @@ Dungeon UNDER_WATER_TUNNEL;
 			Square, Pos 2,1;
 			{
 				Items == lantern;
+			}
+
+			Square, Pos 2,3;
+			{
+				OTerrain = MITHRIL door;
 			}
 		}
 	}
