@@ -1934,7 +1934,7 @@ flamingsword /* meleeweapon-> */
 	SecondaryMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 3, 150, 50, 10; }
 	Roundness = 10;
-	BaseEmitation = rgb24(160, 130, 100);
+	BaseEmitation = rgb24(150, 120, 90);
 	Price = 250;
 
 	Config BROKEN;

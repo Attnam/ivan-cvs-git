@@ -240,6 +240,9 @@ bool pickaxe::Apply(character* User)
 
 bool wand::Apply(character* Terrorist)
 {
+  if(Terrorist->IsPlayer() && !game::BoolQuestion("Are you sure you want to break " + GetName(DEFINITE) + "? [y/N]")) 
+    return false;
+
   if(Terrorist->IsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CHAR_NAME(DEFINITE));
   else if(Terrorist->CanBeSeenByPlayer())

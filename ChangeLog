@@ -1,3 +1,10 @@
+December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Corrected fatal mistake in Makefile.am (thank Valpurus that I caught this before we release)
+	* Adjusted color of flaming sword.
+	* Added BoolQuestion confirmation for appling wands.
+	* License changed to GPL.
+	
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Fixed the Foul Iron Penetrating Light of Death Bug
