@@ -64,3 +64,5 @@ Lamps on walls.
 Teleport disabling.
 Teleport should bounce back from valpurium.
 Highscores should be crypted somehow.
+Wood types. (wood is a _bit_ generic)
+Script should be crypted

@@ -1434,7 +1434,7 @@ bool character::Look()
 
 			ADD_MESSAGE("%s.", Msg.c_str());
 
-			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && ((game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen()) || game::GetSeeWholeMapCheat()) && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() > 63))
 				ADD_MESSAGE("%s is standing here.", game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()->CNAME(INDEFINITE));
 		}
 		else
@@ -1445,6 +1445,8 @@ bool character::Look()
 			game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 			game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
 		}
+		if(game::GetWizardMode())
+			ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 
 		game::DrawEverythingNoBlit();
 		igraph::DrawCursor((CursorPos - game::GetCamera() + vector2d(0,2)) << 4);
@@ -1456,8 +1458,8 @@ bool character::Look()
 		Key = GETKEY();
 	}
 
-	DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 
+	DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 	return false;
 }
 
@@ -1556,7 +1558,7 @@ bool character::Pray()
 
 void character::SpillBlood(uchar HowMuch)
 {
-	GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),5,40);
+	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),5,40);
 }
 
 void character::NeutralAICommand()

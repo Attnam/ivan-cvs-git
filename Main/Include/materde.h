@@ -457,7 +457,7 @@ class MATERIAL
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 6; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 200); }
 protected:
 	virtual std::string NameStem() const	{ return "jackal flesh"; }
 );

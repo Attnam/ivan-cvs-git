@@ -494,6 +494,28 @@ Dungeon 1;
 				.................
 				.................
 			}
+
+			
+		}
+		Room 2;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
+		}
+		Room 3;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
+		}
+		Room 4;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
+		}
+		Room 5;
+		{
+			FloorSquare=stone floor,empty;
+			WallSquare=wood floor, wood wall;
 		}
 
 		Room 1;
@@ -539,6 +561,7 @@ Dungeon 1;
 			    blLcl
 			    tbbbL		
 			}
+
 		}
 	}
 }

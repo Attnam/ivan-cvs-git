@@ -475,55 +475,61 @@ void levelsquare::RemoveCharacter()
 void levelsquare::UpdateMemorizedDescription()
 {
 	bool Anything = false;
-
-	if(GetOverTerrain()->Name(UNARTICLED) != "air atmosphere")
+	if(GetLuminance() > 63 || game::GetSeeWholeMapCheat())
 	{
-		SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE));
-		Anything = true;
-	}
+		if(GetOverTerrain()->Name(UNARTICLED) != "air atmosphere")
+		{
+			SetMemorizedDescription(GetOverTerrain()->Name(INDEFINITE));
+			Anything = true;
+		}
 
-	if(GetStack()->GetItems())
-	{
-		if(Anything)
-			if(GetStack()->GetItems() == 1)
-				SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+		if(GetStack()->GetItems())
+		{
+			if(Anything)
+				if(GetStack()->GetItems() == 1)
+					SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+				else
+					SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
 			else
-				SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
+				if(GetStack()->GetItems() == 1)
+					SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+				else
+					SetMemorizedDescription("many items");
+
+			Anything = true;
+
+			SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+		}
 		else
-			if(GetStack()->GetItems() == 1)
-				SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+			if(Anything)
+				SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
 			else
-				SetMemorizedDescription("many items");
+				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 
-		Anything = true;
+		for(uchar c = 0; c < 4; ++c)
+		{
+			if(GetSideStack(c)->GetItems() == 1)
+			{
+				if(!Anything)
+					SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
+				SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
+			}
+			else
+			if(GetSideStack(c)->GetItems() > 1)
+			{
+				if(!Anything)
+					SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
+
+				SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
+			}
+		}
 	}
 	else
-		if(Anything)
-			SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGroundTerrain()->Name(INDEFINITE));
-		else
-			SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
-
-	for(uchar c = 0; c < 4; ++c)
 	{
-		if(GetSideStack(c)->GetItems() == 1)
-		{
-			if(!Anything)
-				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
-
-			SetMemorizedDescription(GetMemorizedDescription() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on the wall");
-		}
-		else
-		if(GetSideStack(c)->GetItems() > 1)
-		{
-			if(!Anything)
-				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
-
-			SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
-		}
+		SetMemorizedDescription("darkness");
+		Anything = true;
 	}
-
 	if(!Anything)
 		SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 }
