@@ -11,7 +11,6 @@ Ligths go off when polymorph happens.
 Ligths should be updated when terrain changes.
 If a monster is hitting you and your HPs are low (HP < 4) and you try to run back to world map the game crashes.
 Material volume is undefined in script created instances.
-"What direction do you wish to dig?" question stays on screen until save / load or quit.
 Messagebuffer is resized from the wrong direction.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 Various graphics have become buggy after the Material Color Change.
