@@ -14,13 +14,16 @@ May 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* All walls in New Attnam and in the underwater tunnel are now made of balsa,
 	  and fir dominates the northern architecture
 	* Arcanite's density reduced from 4000 to 800 g/cm^3 to make it suitable for
-	  staffs
+	  staves
 	* Added octiron, which is a light but extremely hard staff material
 	* Added staff of wondrous smells
 	* The dark archmage is no longer burdened
 	* Added cloaks of fire and electricity resistances
 	* Corrected a bug that allowed bonefiles to to be generated in levels where
 	  the player had already been
+	* Thunder hammer was perhaps little too good, so I increased its lightnings'
+	  range to 4, so that it will hit the player in some circumstances, which are
+	  however always easily recognisable and avoidable
 
 May 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
