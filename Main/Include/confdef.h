@@ -278,7 +278,7 @@
 #define BRICK_PROPAGANDA 2
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
-#define EARTH 5
+/*#define EARTH 5*/
 #define STONE_WALL 6
 #define ICE_WALL 7
 

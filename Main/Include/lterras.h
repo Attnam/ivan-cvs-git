@@ -222,4 +222,18 @@ class OLTERRAIN
   festring Text;
 );
 
+class OLTERRAIN
+(
+  earth,
+  olterrain,
+ public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void Break();
+ protected:
+  virtual void VirtualConstructor(bool);
+  virtual vector2d GetBitmapPos(ushort) const;
+  uchar PictureIndex;
+);
+
 #endif

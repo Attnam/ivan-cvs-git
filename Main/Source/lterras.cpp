@@ -1095,3 +1095,45 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
   ToBeDipped->DipInto(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway()), Who);
   return true;
 }
+
+void earth::Break()
+{
+  ushort DigProduct = GetMainMaterial()->GetDigProductMaterial();
+
+  if(DigProduct)
+    {
+      ushort HowManyParts = 1 + (RAND() & 3);
+
+      for(ushort c = 0; c < HowManyParts; ++c)
+	{
+	  item* Stone = new stone(0, NO_MATERIALS);
+	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
+	  GetLSquareUnder()->AddItem(Stone);
+	}
+    }
+
+  olterrain::Break();
+}
+
+void earth::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    PictureIndex = RAND() & 3;
+}
+
+void earth::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  SaveFile << PictureIndex;
+}
+
+void earth::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  SaveFile >> PictureIndex;
+}
+
+vector2d earth::GetBitmapPos(ushort Index) const
+{
+  return olterrain::GetBitmapPos(Index) + vector2d(PictureIndex * 48, 0);
+}

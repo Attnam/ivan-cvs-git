@@ -744,8 +744,7 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
   GLTerrain = NewGround;
   NewGround->SetLSquareUnder(this);
   NewDrawRequested = true;
-  MemorizedUpdateRequested = true;
-  DescriptionChanged = true;
+  SendMemorizedUpdateRequest();
   GetLevel()->SetWalkability(Pos, GetWalkability());
 
   if(NewGround->IsAnimated())
@@ -757,13 +756,16 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   if(OLTerrain && OLTerrain->IsAnimated())
     DecAnimatedEntities();
 
+  bool WasUsingBorderTiles = OLTerrain && OLTerrain->UseBorderTiles();
   delete OLTerrain;
   OLTerrain = NewOver;
   NewDrawRequested = true;
-  MemorizedUpdateRequested = true;
-  DescriptionChanged = true;
+  SendMemorizedUpdateRequest();
   GetLevel()->SetWalkability(Pos, GetWalkability());
-  RequestForBorderPartnerUpdates();
+  CalculateBorderPartners();
+
+  if(WasUsingBorderTiles || (NewOver && NewOver->UseBorderTiles()))
+    RequestForBorderPartnerUpdates();
 
   if(NewOver)
     {
@@ -779,7 +781,6 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
   SetGLTerrain(NewGround);
   SetOLTerrain(NewOver);
   GetLevel()->SetWalkability(Pos, GetWalkability());
-  RequestForBorderPartnerUpdates();
 }
 
 void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
@@ -1777,15 +1778,15 @@ void lsquare::CalculateBorderPartners()
 void lsquare::RequestForBorderPartnerUpdates()
 {
   if(!game::IsGenerating())
-    for(ushort d = 0; d < 9; ++d)
+    for(ushort d = 0; d < 8; ++d)
       {
 	lsquare* Square = GetNeighbourLSquare(d);
 
 	if(Square)
 	  {
 	    Square->CalculateBorderPartners();
-	    Square->NewDrawRequested = true;
-	    Square->MemorizedUpdateRequested = true;
+	    Square->SendNewDrawRequest();
+	    Square->SendMemorizedUpdateRequest();
 	  }
       }
 }

@@ -383,7 +383,7 @@ void silva::PrayGoodEffect()
 
 	    if(Walkables > 6)
 	      {
-		Square->ChangeOLTerrainAndUpdateLights(new wall(EARTH));
+		Square->ChangeOLTerrainAndUpdateLights(new earth);
 
 		if(Char)
 		  {

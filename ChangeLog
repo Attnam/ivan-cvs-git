@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+July 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed some ambiguous material definitions
+	* Corrected a small bug in the olterrain changing code
+	* Earth pictures modified somewhat by Kahvi
+
 July 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Monster invisibility works again correctly

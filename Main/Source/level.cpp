@@ -1714,7 +1714,7 @@ void level::GenerateJungle()
 	{
 	  while(Node)
 	    {
-	      Map[Node->Pos.X][Node->Pos.Y]->ChangeOLTerrain(new wall(EARTH));
+	      Map[Node->Pos.X][Node->Pos.Y]->ChangeOLTerrain(new earth);
 	      Node = Node->Last;
 	    }
 	  return;

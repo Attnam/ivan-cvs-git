@@ -534,3 +534,22 @@ sign
 	MaterialColorB = rgb16(48, 48, 48);
 	HPModifier = 10;
 }
+
+earth
+{
+	CanBeDestroyed = true;
+	IsSafeToCreateDoor = true;
+	Walkability = WALK_THROUGH_WALLS;
+	IsAlwaysTransparent = false;
+	BorderTilePriority = 100;
+	OKVisualEffects = MIRROR|FLIP|ROTATE;
+	DigMessage = "The ground is fairly easy to dig.";
+	MainMaterialConfig == MORAINE;
+	MaterialColorB = rgb16(56, 56, 56);
+	Article = "an";
+	NameSingular = "earth";
+	BitmapPos = 96, 416;
+	HPModifier = 50;
+	BorderTilePriority = 10;
+	UseBorderTiles = true;
+}
