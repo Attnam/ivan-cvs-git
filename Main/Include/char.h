@@ -15,13 +15,13 @@
 #define CHAR_POSSESSIVE_PRONOUN_THIRD_PERSON_VIEW GetPossessivePronoun(false).c_str()
 #define CHAR_OBJECT_PRONOUN_THIRD_PERSON_VIEW GetObjectPronoun(false).c_str()
 
-typedef std::vector<std::pair<float, ushort> > blockvector;
-
 class go;
 class team;
 class wsquare;
 class cweaponskill;
 struct homedata;
+
+typedef std::vector<std::pair<float, ushort> > blockvector;
 
 inline long APBonus(long Attribute) { return Attribute >= 10 ? 90 + Attribute : 50 + Attribute * 5; }
 
@@ -100,7 +100,7 @@ struct characterdatabase
   bool CanUseEquipment;
   bool CanKick;
   bool CanTalk;
-  ushort ClassStates;
+  ulong ClassStates;
   bool CanBeWished;
   std::vector<std::string> Alias;
   bool CreateDivineConfigurations;
@@ -419,7 +419,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanUseEquipment);
   DATA_BASE_BOOL(CanKick);
   DATA_BASE_BOOL(CanTalk);
-  DATA_BASE_VALUE(ushort, ClassStates);
+  DATA_BASE_VALUE(ulong, ClassStates);
   DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
   DATA_BASE_VALUE(short, AttributeBonus);
@@ -445,6 +445,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanWalkThroughWalls);
   DATA_BASE_BOOL(IsUnique);
   DATA_BASE_VALUE(uchar, AttachedGod);
+  DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -583,7 +584,7 @@ class character : public entity, public id
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
   bool ActivateRandomState(ushort);
-  ushort GetRandomNotActivatedState();
+  ulong GetRandomNotActivatedState(bool) const;
   bool GainRandomInstric();
   virtual void CalculateBattleInfo() = 0;
   void CalculateBurdenState();
@@ -660,7 +661,7 @@ class character : public entity, public id
   vector2d ApplyStateModification(vector2d) const;
   void AddConfuseHitMessage() const;
   item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
-  void SelectFromPossessions(std::vector<item*>&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
+  void SelectFromPossessions(itemvector&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
   bool EquipsSomething(bool (*)(const item*, const character*) = 0);
   bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return false; }
@@ -697,9 +698,10 @@ class character : public entity, public id
   bool AllowPoisoned() const { return IsAlive(); }
   bool AllowParasitized() const { return IsAlive(); }
   virtual ushort GetSpecies() const { return 0; }
-  virtual void SortAllItems(std::vector<item*>&, const character* = 0, bool (*)(const item*, const character*) = 0);
-  virtual character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
-  DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
+  void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
+  character* GetRandomNeighbourEnemy() const;
+  void Search(ushort);
+  character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
   virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;

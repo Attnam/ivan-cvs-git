@@ -8,10 +8,10 @@
 #include "lsquare.h"
 #include "slot.h"
 
-typedef std::vector<item*> itemvector;
-
 class felist;
 class entity;
+
+typedef std::vector<item*> itemvector;
 
 class stackiterator
 {
@@ -44,8 +44,8 @@ class stack
   ushort GetItems(const character*, bool) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
   item* DrawContents(const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(std::vector<item*>&, const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  ushort DrawContents(std::vector<item*>&, stack*, const character*, const std::string&, const std::string&, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(itemvector&, const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(itemvector&, stack*, const character*, const std::string&, const std::string&, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
   item* MoveItem(stackslot*, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);
@@ -64,7 +64,7 @@ class stack
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, const character*, const std::string&, uchar, bool (*)(const item*, const character*)) const;
-  ushort SearchChosen(std::vector<item*>&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
+  ushort SearchChosen(itemvector&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
   bool IsOnGround() const;
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
@@ -88,7 +88,7 @@ class stack
   void MoveItemsTo(slot*);
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;
-  void Pile(std::vector<std::vector<item*> >&, const character*, bool (*)(const item*, const character*) = 0) const;
+  void Pile(std::vector<itemvector>&, const character*, bool (*)(const item*, const character*) = 0) const;
   ulong GetTruePrice() const;
   ulong GetTotalExplosivePower() const;
   void ReceiveFluidSpill(material*);
@@ -99,6 +99,7 @@ class stack
   bool IsVisible() const { return !MotherEntity; }
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
+  void Search(const character*, ushort);
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

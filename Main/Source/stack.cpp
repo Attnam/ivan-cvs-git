@@ -32,8 +32,18 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
     }
 
-  if(SquarePosition == CENTER && VisibleItems > 1)
-    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 0, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+  if(SquarePosition == CENTER)
+    {
+      if(VisibleItems > 1)
+	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 0, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+
+      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+	if(i->IsDangerous() && i->CanBeSeenBy(Viewer))
+	  {
+	    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 160, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+	    break;
+	  }
+    }
 }
 
 void stack::AddItem(item* ToBeAdded)
@@ -308,19 +318,19 @@ ushort stack::SearchItem(item* ToBeSearched) const
 
 item* stack::DrawContents(const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
-  std::vector<item*> ReturnVector;
+  itemvector ReturnVector;
   DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags|NO_MULTI_SELECT, SorterFunction);
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
-ushort stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(itemvector& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   return DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-ushort stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   felist Contents(Topic);
 
@@ -379,7 +389,7 @@ ushort stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, 
 
 void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
-  std::vector<std::vector<item*> > PileVector;
+  std::vector<itemvector> PileVector;
   Pile(PileVector, Viewer, SorterFunction);
 
   bool DrawDesc = Desc.length() != 0;
@@ -411,11 +421,11 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
     }
 }
 
-ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   /* Not really efficient... :( */
 
-  std::vector<std::vector<item*> > PileVector;
+  std::vector<itemvector> PileVector;
   Pile(PileVector, Viewer, SorterFunction);
 
   for(ushort p = 0; p < PileVector.size(); ++p)
@@ -567,7 +577,7 @@ bool stack::CanBeSeenBy(const character* Viewer) const
 bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->CanBeSeenBy(Stepper) && i->DangerousToStepOn(Stepper))
+    if(i->CanBeSeenBy(Stepper) && i->IsDangerousForAI(Stepper))
       return true;
 
   return false;
@@ -636,12 +646,12 @@ item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) co
     return GetBottomVisibleItem(Char);
 }
 
-bool CategorySorter(const std::vector<item*>& V1, const std::vector<item*>& V2)
+bool CategorySorter(const itemvector& V1, const itemvector& V2)
 {
   return (*V1.begin())->GetCategory() < (*V2.begin())->GetCategory();
 }
 
-void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
+void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
   std::list<item*> List;
@@ -653,7 +663,7 @@ void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* 
   for(std::list<item*>::iterator i = List.begin(); i != List.end(); ++i)
     {
       PileVector.resize(PileVector.size() + 1);
-      std::vector<item*>& Pile = PileVector.back();
+      itemvector& Pile = PileVector.back();
       Pile.push_back(*i);
 
       if((*i)->CanBePiled())
@@ -716,7 +726,7 @@ bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName
 
   for(;;)
     {
-      std::vector<item*> ToTake;
+      itemvector ToTake;
       game::DrawEverythingNoBlit();
       DrawContents(ToTake, Opener, "What do you want to take from " + ContainerName + "?", REMEMBER_SELECTED);
 
@@ -750,7 +760,7 @@ bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, u
 
   for(;;)
     {
-      std::vector<item*> ToPut;
+      itemvector ToPut;
       game::DrawEverythingNoBlit();
       Opener->GetStack()->DrawContents(ToPut, Opener, "What do you want to put in " + ContainerName + "?", REMEMBER_SELECTED);
 
@@ -809,7 +819,11 @@ ushort stack::GetSpoiledItems() const
 void stack::SortAllItems(itemvector& ItemVector, const character* Character, bool (*Sorter)(const item*, const character*)) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    {
-      i->SortAllItems(ItemVector, Character, Sorter);
-    }
+    i->SortAllItems(ItemVector, Character, Sorter);
+}
+
+void stack::Search(const character* Char, ushort Perception)
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    i->Search(Char, Perception);
 }

@@ -1275,6 +1275,7 @@ bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
 {
   nonhumanoid::Hit(Enemy, ForceHit);
   character* ToBeHit = GetRandomNeighbour(HOSTILE);
+
   if(ToBeHit)
     nonhumanoid::Hit(ToBeHit, ForceHit);
 

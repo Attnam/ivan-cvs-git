@@ -34,7 +34,9 @@ ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); 
 ushort itemcontainer::GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
 void itemcontainer::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
 
-void beartrap::SetIsActive(bool What) { Active = What; UpdatePictures(); }
+bool mine::AddAdjective(std::string& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
+
+bool beartrap::AddAdjective(std::string& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
 void potion::GenerateLeftOvers(character* Eater)
 {
@@ -237,7 +239,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  std::vector<item*> Item;
+	  itemvector Item;
 	  Reader->SelectFromPossessions(Item, "What item do you wish to change?", NO_MULTI_SELECT|SELECT_PAIR);
 
 	  if(!Item.empty())
@@ -700,7 +702,7 @@ void scrollofcharging::FinishReading(character* Reader)
   else
     while(true)
       {
-	std::vector<item*> Item;
+	itemvector Item;
 	Reader->SelectFromPossessions(Item, "Which item do you wish to charge?", NO_MULTI_SELECT|SELECT_PAIR, &item::ChargeableSorter);
 
 	if(!Item.empty())
@@ -1336,13 +1338,13 @@ bool itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
 bool mine::CanBeSeenBy(const character* Viewer) const
 { 
   ushort ViewerTeam = Viewer->GetTeam()->GetID();
-  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer); 
+  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer);
 }
 
 bool beartrap::CanBeSeenBy(const character* Viewer) const
 {
   ushort ViewerTeam = Viewer->GetTeam()->GetID();
-  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && item::CanBeSeenBy(Viewer); 
+  return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && item::CanBeSeenBy(Viewer);
 }
 
 bool mine::Apply(character* User)
@@ -1577,7 +1579,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  std::vector<item*> Item;
+	  itemvector Item;
 	  Reader->SelectFromPossessions(Item, "Choose a weapon to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::WeaponSorter);
 
 	  if(!Item.empty())
@@ -1647,7 +1649,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     {
       while(true)
 	{
-	  std::vector<item*> Item;
+	  itemvector Item;
 	  Reader->SelectFromPossessions(Item, "Choose an armor to enchant:", NO_MULTI_SELECT|SELECT_PAIR, &item::ArmorSorter);
 
 	  if(!Item.empty())
@@ -1815,7 +1817,7 @@ void scrollofrepair::FinishReading(character* Reader)
   else
     while(true)
       {
-	std::vector<item*> Item;
+	itemvector Item;
 	Reader->SelectFromPossessions(Item, "Which item do you wish to repair?", NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
 
 	if(!Item.empty())
@@ -2103,4 +2105,43 @@ void itemcontainer::SortAllItems(itemvector& AllItems, const character* Characte
 uchar materialcontainer::GetAttachedGod() const
 {
   return DataBase->AttachedGod ? DataBase->AttachedGod : ContainedMaterial->GetAttachedGod();
+}
+
+void beartrap::Search(const character* Char, ushort Perception)
+{
+  ushort ViewerTeam = Char->GetTeam()->GetID();
+
+  if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
+    {
+      DiscoveredByTeam.insert(ViewerTeam);
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+    }
+}
+
+void mine::Search(const character* Char, ushort Perception)
+{
+  ushort ViewerTeam = Char->GetTeam()->GetID();
+
+  if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
+    {
+      DiscoveredByTeam.insert(ViewerTeam);
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+    }
+}
+
+void beartrap::SetIsActive(bool What)
+{
+  Active = What;
+  UpdatePictures();
+  DiscoveredByTeam.clear();
+}
+
+void mine::SetIsActive(bool What)
+{
+  Active = What;
+  DiscoveredByTeam.clear();
 }

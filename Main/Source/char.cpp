@@ -16,7 +16,8 @@ void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::Lycanth
 bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, 0, &character::AllowParasitized, 0 };
 std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized", "Searching" };
 bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false, false };
-bool StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, true, false, false };
+bool TemporaryStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false, false };
+bool PermanentStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, false, true, false };
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
@@ -198,6 +199,7 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
     DodgeValue *= 2;
 
   WayPoint = Enemy->GetPos();
+  Enemy->WayPoint = GetPos();
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
@@ -405,6 +407,9 @@ void character::Be()
 
 	  if(!StateIsActivated(POLYMORPHED))
 	    game::UpdatePlayerAttributeAverage();
+
+	  if(!game::IsInWilderness())
+	    Search(GetAttribute(PERCEPTION));
 
 	  if(!Action)
 	    GetPlayerCommand();
@@ -698,10 +703,15 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 void character::CreateCorpse(lsquare* Square)
 {
-  corpse* Corpse = new corpse(0, NO_MATERIALS);
-  Corpse->SetDeceased(this);
-  Square->AddItem(Corpse);
-  Disable();
+  if(!BodyPartsDisappearWhenSevered())
+    {
+      corpse* Corpse = new corpse(0, NO_MATERIALS);
+      Corpse->SetDeceased(this);
+      Square->AddItem(Corpse);
+      Disable();
+    }
+  else
+    SendToHell();
 }
 
 void character::Die(const std::string& Msg, bool ForceMsg)
@@ -2356,6 +2366,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->GetBodyPartName().c_str());
 
       item* Severed = SevereBodyPart(BodyPartIndex);
+
       if(Severed)
 	{
 	  GetSquareUnder()->SendNewDrawRequest();
@@ -3406,7 +3417,7 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 
   if(Equipment->IsInCorrectSlot(EquipmentIndex))
     {
-      ushort AddedStates = Equipment->GetGearStates();
+      ulong AddedStates = Equipment->GetGearStates();
 
       if(AddedStates)
 	for(ushort c = 0; c < STATES; ++c)
@@ -3439,7 +3450,8 @@ void character::SignalEquipmentRemoval(ushort)
 
 void character::CalculateEquipmentState()
 {
-  ushort c, Back = EquipmentState;
+  ushort c;
+  ulong Back = EquipmentState;
   EquipmentState = 0;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
@@ -3469,8 +3481,8 @@ void character::BeginTemporaryState(ulong State, ushort Counter)
   if(!Counter)
     return;
 
-  ulong Index;
-  
+  ushort  Index;
+
   if(State == POLYMORPHED)
     ABORT("No Polymorphing with BeginTemporaryState!");
 
@@ -3926,7 +3938,7 @@ bodypart* character::GenerateRandomBodyPart()
 
 bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
 {
-  std::vector<item*> LostAndFound;
+  itemvector LostAndFound;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
@@ -4350,7 +4362,7 @@ void character::EditExperience(ushort Identifier, long Value)
 
 bool character::ActivateRandomState(ushort Time)
 {
-  ushort ToBeActivated = GetRandomNotActivatedState();
+  ulong ToBeActivated = GetRandomNotActivatedState(false);
 
   if(ToBeActivated == 0)
     return false;
@@ -4361,7 +4373,7 @@ bool character::ActivateRandomState(ushort Time)
 
 bool character::GainRandomInstric()
 {
-  ushort ToBeActivated = GetRandomNotActivatedState();
+  ulong ToBeActivated = GetRandomNotActivatedState(true);
 
   if(ToBeActivated == 0)
     return false;
@@ -4377,19 +4389,16 @@ bool character::GainRandomInstric()
  * if no such state is found return 0
  */
 
-ushort character::GetRandomNotActivatedState()
+ulong character::GetRandomNotActivatedState(bool MayBePermanent) const
 {
-  ushort OKStates[STATES];
+  ulong OKStates[STATES];
   ushort NumberOfOKStates = 0;
 
   for(ushort c = 0; c < STATES; ++c)
-    if(StateCanBeRandomlyActivated[c])
+    if((!MayBePermanent && TemporaryStateCanBeRandomlyActivated[c]) || (MayBePermanent && PermanentStateCanBeRandomlyActivated[c]))
       OKStates[NumberOfOKStates++] = 1 << c;
-
-  if(NumberOfOKStates == 0)
-    return 0;
   
-  return OKStates[RAND() % NumberOfOKStates];
+  return NumberOfOKStates ? OKStates[RAND() % NumberOfOKStates] : 0;
 }
 
 void characterprototype::CreateSpecialConfigurations()
@@ -5087,12 +5096,12 @@ void character::AddConfuseHitMessage() const
 
 item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(const item*, const character*))
 {
-  std::vector<item*> ReturnVector;
+  itemvector ReturnVector;
   SelectFromPossessions(ReturnVector, Topic, NO_MULTI_SELECT, SorterFunction);
   return !ReturnVector.empty() ? ReturnVector[0] : 0;
 }
 
-void character::SelectFromPossessions(std::vector<item*>& ReturnVector, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*))
+void character::SelectFromPossessions(itemvector& ReturnVector, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*))
 {
   if(!CanUseEquipment())
     {
@@ -5107,7 +5116,7 @@ void character::SelectFromPossessions(std::vector<item*>& ReturnVector, const st
     List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
 
   bool Any = false, UseSorterFunction = (SorterFunction != 0);
-  std::vector<item*> Item;
+  itemvector Item;
   std::string Entry;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
@@ -5218,7 +5227,7 @@ bool character::TryToChangeEquipment(ushort Chosen)
   else
     {
       game::DrawEverythingNoBlit();
-      std::vector<item*> ItemVector;
+      itemvector ItemVector;
       ushort Return = GetStack()->DrawContents(ItemVector, this, "Choose " + GetEquipmentName(Chosen) + ":", NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
 
       if(Return == ESCAPED)
@@ -5453,7 +5462,7 @@ void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
   CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
 }
 
-void character::SortAllItems(std::vector<item*>& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
+void character::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
 {
   GetStack()->SortAllItems(AllItems, Character, Sorter);
 
@@ -5476,7 +5485,19 @@ void character::PrintEndSearchingMessage() const
 
 void character::SearchingHandler()
 {
-  
+  if(!game::IsInWilderness())
+    Search(15);
+}
+
+void character::Search(ushort Perception)
+{
+  for(ushort d = 0; d < 9; ++d)
+    {
+      lsquare* LSquare = GetNeighbourLSquare(d);
+
+      if(LSquare) 
+	LSquare->GetStack()->Search(this, Min<ushort>(Perception, 200));
+    }
 }
 
 // surprisingly returns 0 if fails

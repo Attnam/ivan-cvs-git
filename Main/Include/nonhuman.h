@@ -113,7 +113,6 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual std::string FirstPersonUnarmedHitVerb() const;
   virtual std::string FirstPersonCriticalUnarmedHitVerb() const;
   virtual std::string ThirdPersonUnarmedHitVerb() const;
@@ -160,8 +159,6 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
- protected:
-  virtual void CreateCorpse(lsquare*) { SendToHell(); }
 );
 
 class CHARACTER
@@ -315,7 +312,6 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Hit(character*, bool = false);
-  virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual bool IsAnimated() const { return true; }
   virtual bool MoveRandomly();
  protected:

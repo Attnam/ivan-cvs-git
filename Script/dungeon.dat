@@ -1177,6 +1177,18 @@ Dungeon NEW_ATTNAM;
 			Shape = ROUND_CORNERS;
 		}
 
+		Square, Random;
+		{
+			Items == mine { Team = MONSTER_TEAM; IsActive = true; }
+			Times = 100;
+		}
+
+		Square, Random;
+		{
+			Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
+			Times = 100;
+		}
+
 		Room
 		{
 			Pos = 4,4;

@@ -102,3 +102,9 @@ uchar id::GetArticleMode() const
 {
   return NORMAL_ARTICLE;
 }
+
+bool id::AddActiveAdjective(std::string& String, bool Articled) const
+{
+  String << (Articled ? "an active " : "active ");
+  return true;
+}

@@ -11,11 +11,11 @@
 #include "lsquare.h"
 #include "slot.h"
 
-typedef std::vector<item*> itemvector;
-
 class felist;
 template <class type> class contentscript;
 template <class type> class database;
+
+typedef std::vector<item*> itemvector;
 
 struct itemdatabase
 {
@@ -329,7 +329,8 @@ class item : public object
   virtual void SignalEmitationDecrease(ulong);
   void CalculateAll();
   virtual void DropEquipment() { }
-  virtual bool DangerousToStepOn(const character*) const { return false; } 
+  virtual bool IsDangerousForAI(const character*) const { return false; } 
+  virtual bool IsDangerous() const { return false; } 
   void WeaponSkillHit();
   virtual void SetTeam(ushort) { }
   void SpecialGenerationHandler();
@@ -385,6 +386,7 @@ class item : public object
   virtual bool AllowAlphaEverywhere() const { return false; }
   virtual uchar GetAttachedGod() const;
   virtual ulong GetTruePrice() const;
+  virtual void Search(const character*, ushort) { }
   virtual bool IsSparkling() const;
   virtual bool IsStupidToConsume() const;
  protected:

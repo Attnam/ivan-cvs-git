@@ -7,11 +7,16 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Searching now works correctly
+	* Restrictions of permanent states activated by fountain updated
+
 March 07 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* added magpie
 	
-February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+March 6 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Special monsters and items now determine their AttachedGod correctly
 	* Terrains now also have AttachedGods (mostly depends on material)

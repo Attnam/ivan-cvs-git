@@ -76,6 +76,7 @@ class igraph
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
   static colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
   static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
+  //static colorizablebitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
   static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
  private:
   static colorizablebitmap* RawGraphic[RAW_TYPES];

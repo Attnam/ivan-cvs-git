@@ -1470,7 +1470,7 @@ bool lsquare::LowerEnchantment(character* Zapper, const std::string& DeathMsg, u
 {
   character* Char = GetCharacter();
 
-  std::vector<item*> AllItems;
+  itemvector AllItems;
   SortAllItems(AllItems, Zapper, &item::EnchantableSorter);
   item* RandomItem;
   if(!AllItems.empty())
@@ -1492,8 +1492,7 @@ bool lsquare::LowerEnchantment(character* Zapper, const std::string& DeathMsg, u
   return true;
 }
 
-
-void lsquare::SortAllItems(std::vector<item*>& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
+void lsquare::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
 {
   if(GetCharacter())
     {

@@ -867,6 +867,7 @@ elpuri
 	FleshMaterial = ELPURI_FLESH;
 	DeathMessage = "@Dd groans horribly and drops @pp head.";
 	AttachedGod = SCABIES;
+	CanTalk = true;
 }
 
 billswill
@@ -907,6 +908,8 @@ billswill
 	HasHead = false;
 	UsesNutrition = false;
 	AttachedGod = MELLIS;
+	BodyPartsDisappearWhenSevered = true;
+	CanTalk = true;
 }
 
 skeleton
@@ -1301,6 +1304,7 @@ spider
 	CWeaponSkillHits == 50;
 	FleshMaterial = SPIDER_FLESH;
 	AttachedGod = SCABIES;
+	BodyPartsDisappearWhenSevered = true;
 }
 
 jackal
@@ -3201,8 +3205,8 @@ eddy
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd disappears.";
 	AttachedGod = SOPHOS;
+	BodyPartsDisappearWhenSevered = true;
 }
-
 
 mushroom
 {
@@ -3321,6 +3325,7 @@ ghost
 	UsesNutrition = false;
 	CanWalkThroughWalls = true;
 	AttachedGod = MORTIFER;
+	BodyPartsDisappearWhenSevered = true;
 }
 
 twoheadedmoose

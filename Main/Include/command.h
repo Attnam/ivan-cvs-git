@@ -87,6 +87,7 @@ private:
   static bool WieldInRightArm(character*);
   static bool WieldInLeftArm(character*);
   static bool AssignName(character*);
+  static bool Search(character*);
   static command* Command[];
 };
 

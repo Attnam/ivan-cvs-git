@@ -11,11 +11,10 @@
 #include "felibdef.h"
 
 class bitmap;
-
-typedef void (*bitmapeditor)(bitmap*);
-
 class outputfile;
 class inputfile;
+
+typedef void (*bitmapeditor)(bitmap*);
 
 class bitmap
 {

@@ -391,7 +391,7 @@ void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
     }
 }
 
-void protosystem::CreateEveryItem(std::vector<item*>& Item)
+void protosystem::CreateEveryItem(itemvector& Item)
 {
   for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     {

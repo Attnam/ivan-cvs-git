@@ -12,6 +12,8 @@ class item;
 class material;
 template <class type> class database;
 
+typedef std::vector<item*> itemvector;
+
 template <class type> class protocontainer
 {
  public:
@@ -55,7 +57,7 @@ class protosystem
   static item* CreateItem(const std::string&, bool = true);
   static material* CreateMaterial(const std::string&, ulong = 0, bool = true);
   static void CreateEveryCharacter(std::vector<character*>&);
-  static void CreateEveryItem(std::vector<item*>&);
+  static void CreateEveryItem(itemvector&);
   static void CreateEveryMaterial(std::vector<material*>&);
 };
 

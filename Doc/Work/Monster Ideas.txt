@@ -92,3 +92,7 @@ Skunk
 Hedgehog
 
 	Monster appearing in level 1 which causes damage to the attacker if he doesn't use a weapon.
+
+?
+
+	Guy who severs bodyparts from any corpse he encounters and laughs diabolically.

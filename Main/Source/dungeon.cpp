@@ -66,6 +66,7 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
       level* NewLevel = LoadLevel(game::SaveName(), Index);
       game::SetCurrentArea(NewLevel);
       game::SetCurrentLevel(NewLevel);
+      game::SetCurrentLSquareMap(NewLevel->GetMap());
       return true;
     }
   else

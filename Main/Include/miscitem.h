@@ -409,17 +409,20 @@ class ITEM
   virtual void StepOnEffect(character*);
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual bool IsActive() const { return Active; }
-  virtual void SetIsActive(bool What) { Active = What; }
+  virtual void SetIsActive(bool);
   virtual bool CanBeSeenBy(const character*) const;
   virtual bool Apply(character* User);
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool DangerousToStepOn(const character* Stepper) const { return WillExplode(Stepper); } 
+  virtual bool IsDangerousForAI(const character* Stepper) const { return WillExplode(Stepper); }
   virtual bool WillExplode(const character*) const;
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
   //virtual ulong GetPrice() const;
   virtual bool CheckPickUpEffect(character*);
+  virtual void Search(const character*, ushort);
+  virtual bool IsDangerous() const { return IsActive(); }
  protected:
+  virtual bool AddAdjective(std::string&, bool) const;
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
@@ -541,11 +544,14 @@ class ITEM
   virtual bool Apply(character*);
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool DangerousToStepOn(const character*) const { return true; } 
+  virtual bool IsDangerousForAI(const character*) const { return IsActive(); }
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
   virtual bool ReceiveDamage(character*, ushort, uchar) { return false; } // gum solution; all StuckTo code sucks
+  virtual void Search(const character*, ushort);
+  virtual bool IsDangerous() const { return IsActive(); }
  protected:
+  virtual bool AddAdjective(std::string&, bool) const;
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;

@@ -434,7 +434,6 @@ class CHARACTER
   virtual ushort GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
   virtual void CreateInitialEquipment(ushort);
-  virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual void AddPostFix(std::string&) const;
   virtual void GetAICommand();
   ushort LastHealed;
@@ -466,8 +465,6 @@ class CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual bool CanCreateBodyPart(ushort) const;
   virtual const std::string& GetStandVerb() const { return character::GetStandVerb(); }
- protected:
-  virtual void CreateCorpse(lsquare*) { SendToHell(); }
 );
 
 class CHARACTER

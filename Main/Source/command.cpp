@@ -32,7 +32,7 @@ command* commandsystem::Command[] =
   new command(&Quit, "quit", 'Q', true),
   new command(&Read, "read", 'r', false),
   new command(&RestUntilHealed, "rest/heal", 'h', true),
-  new command(&Save, "save game", 's', true),
+  new command(&Save, "save game", 'S', true),
   new command(&ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&ScrollMessagesUp, "scroll messages up", '-', true),
   new command(&ShowConfigScreen, "show config screen", '\\', true),
@@ -40,9 +40,10 @@ command* commandsystem::Command[] =
   new command(&ShowKeyLayout, "show key layout", '?', true),
   new command(&DrawMessageHistory, "show message history", 'M', true),
   new command(&ShowWeaponSkills, "show weapon skills", '@', true),
-  new command(&Sit, "sit", 'S', false),
+  new command(&Search, "search", 's', false),
+  new command(&Sit, "sit", '_', false),
   new command(&Throw, "throw", 't', false),
-  new command(&ForceVomit, "vomit", 'v', false),
+  new command(&ForceVomit, "vomit", 'V', false),
   new command(&NOP, "wait", '.', true),
   new command(&WieldInRightArm, "wield in right arm", 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', true),
@@ -158,7 +159,7 @@ bool commandsystem::Drop(character* Char)
       return false;
     }
 
-  std::vector<item*> ToDrop;
+  itemvector ToDrop;
   Char->GetStack()->DrawContents(ToDrop, Char, "What do you want to drop?");
 
   if(ToDrop.empty())
@@ -197,7 +198,7 @@ bool commandsystem::Eat(character* Char)
       return false;
     }
 
-  std::vector<item*> Item;
+  itemvector Item;
 
   if(!game::IsInWilderness() && Char->GetStackUnder()->SortedItems(Char, &item::EatableSorter))
     Char->GetStack()->DrawContents(Item, Char->GetStackUnder(), Char, "What do you wish to eat?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::EatableSorter);
@@ -227,7 +228,7 @@ bool commandsystem::Drink(character* Char)
       return false;
     }
 
-  std::vector<item*> Item;
+  itemvector Item;
 
   if(!game::IsInWilderness() && Char->GetStackUnder()->SortedItems(Char, &item::DrinkableSorter))
     Char->GetStack()->DrawContents(Item, Char->GetStackUnder(), Char, "What do you wish to drink?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::DrinkableSorter);
@@ -253,7 +254,7 @@ bool commandsystem::PickUp(character* Char)
       return false;
     }
 
-  std::vector<std::vector<item*> > PileVector;
+  std::vector<itemvector> PileVector;
   Char->GetStackUnder()->Pile(PileVector, Char);
 
   if(PileVector.size() == 1)
@@ -284,7 +285,7 @@ bool commandsystem::PickUp(character* Char)
 
   for(;;)
     {
-      std::vector<item*> ToPickup;
+      itemvector ToPickup;
       game::DrawEverythingNoBlit();
       Char->GetStackUnder()->DrawContents(ToPickup, Char, "What do you want to pick up?", REMEMBER_SELECTED);
 
@@ -527,7 +528,7 @@ bool commandsystem::LowerStats(character* Char)
 
 bool commandsystem::GainAllItems(character* Char)
 {
-  std::vector<item*> AllItems;
+  itemvector AllItems;
   protosystem::CreateEveryItem(AllItems);
   stack* Stack = game::IsInWilderness() ? Char->GetStack() : Char->GetStackUnder();
 
@@ -1068,7 +1069,7 @@ bool commandsystem::SecretKnowledge(character* Char)
     }
   else if(Chosen < 6)
     {
-      std::vector<item*> Item;
+      itemvector Item;
       protosystem::CreateEveryItem(Item);
       PageLength = 20;
 
@@ -1330,4 +1331,10 @@ bool commandsystem::ShowBattleInfo(character* Char)
 {
   Char->ShowBattleInfo();
   return false;
+}
+
+bool commandsystem::Search(character* Char)
+{
+  Char->Search(Char->GetAttribute(PERCEPTION) << 2);
+  return true;
 }

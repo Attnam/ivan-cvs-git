@@ -34,6 +34,7 @@ class id
   virtual bool ShowMaterial() const { return false; }
   virtual void AddDivineMasterDescription(std::string&, uchar) const;
   virtual void AddLockPostFix(std::string&, uchar) const;
+  virtual bool AddActiveAdjective(std::string&, bool) const;
 };
 
 #endif

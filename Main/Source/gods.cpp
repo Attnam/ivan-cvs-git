@@ -629,7 +629,7 @@ void mortifer::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   bool Success = false;
-  std::vector<item*> OKItems;
+  itemvector OKItems;
 
   for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
     {

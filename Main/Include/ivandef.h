@@ -147,6 +147,7 @@
 #define GR_ITEM 2
 #define GR_CHARACTER 3
 #define GR_HUMANOID 4
+#define GR_EFFECT 5
 
 #define GRAPHIC_TYPES 5
 
