@@ -48,7 +48,7 @@ Spreading fire.
 
 Dividing physical damage to slashing, blunt, piercing etc. damage.
 
-Balancing enchantment formulas.
+//Balancing enchantment formulas.
 
 Unusable state for bodyparts.
 
@@ -113,3 +113,6 @@ More vague weight descriptions.
 Rivers.
 
 Mounting.
+
+The tick based event engine copied from Adom should be replaced by more realistic and efficient
+    a method based on dynamic event handling.
