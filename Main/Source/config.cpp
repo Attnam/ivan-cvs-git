@@ -8,7 +8,11 @@
 #include "game.h"
 #include "message.h"
 #include "area.h"
-
+#ifdef WIN32
+#define CONFIG_FILENAME "ivan.cfg"
+#else
+#define CONFIG_FILENAME (std::string(getenv("HOME")) + std::string("/.ivan.conf")).c_str()
+#endif
 std::string configuration::DefaultName;
 ushort configuration::AutosaveInterval = 500;
 uchar configuration::Contrast = 100;
@@ -22,7 +26,7 @@ ushort configuration::ItemOutlineColor = GREEN;
 
 void configuration::Save()
 {
-	std::ofstream SaveFile("ivan.cfg", std::ios::out);
+	std::ofstream SaveFile(CONFIG_FILENAME, std::ios::out);
 
 	if(!SaveFile.is_open())
 		return;
@@ -41,7 +45,7 @@ void configuration::Save()
 
 void configuration::Load()
 {
-	inputfile SaveFile("ivan.cfg", false);
+	inputfile SaveFile(CONFIG_FILENAME, false);
 
 	if(!SaveFile.GetBuffer().is_open())
 		return;

@@ -16,9 +16,13 @@
 
 #ifdef WIN32
 #define GAME_DIR std::string("")
+#define SAVE_DIR std::string("Save/")
 #else
 
 #define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
+
+#define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))
+    // The program can only create directories to the deepness of 1 no more...
 #endif
 #include <string>
 #include <vector>

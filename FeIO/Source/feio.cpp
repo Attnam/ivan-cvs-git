@@ -305,6 +305,6 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 
 		return Buffer.GetEntry(Check);
 #else
-	return std::string("I have problems and I love Windows and I don't work in Linux");
+		
 #endif
 }

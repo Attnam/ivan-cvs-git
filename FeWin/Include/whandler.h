@@ -25,8 +25,10 @@ public:
 #ifdef WIN32
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static void Init(HINSTANCE, HWND*, const char*, LPCTSTR);
+	static void CheckMessages();
 #else
 	static void Init(const char*);
+	static void ProcessMessage(SDL_Event);
 #endif
 	static int GetKey(bool = true, bool = false);
 
@@ -34,7 +36,6 @@ public:
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
 	static void SetInitialized(bool What) { Initialized = What; }
-	static void CheckMessages();
 	static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
 private:
 	static dynarray<int> KeyBuffer;

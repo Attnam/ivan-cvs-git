@@ -5,8 +5,9 @@
 #include <windows.h>
 #else
 #include <stdlib.h>
-#define IDNO 0
-#define IDYES 1
+#include "sys/stat.h"
+#define IDNO 1
+#define IDYES 0
 #define IDCANCEL 2
 #endif
 
@@ -57,7 +58,7 @@ gamescript game::GameScript;
 bool game::IsLoading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
-std::string game::AutoSaveFileName = "Save/Autosave";
+std::string game::AutoSaveFileName = SAVE_DIR + "/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 
@@ -151,8 +152,11 @@ void game::Init(std::string Name)
 	game::CalculateGodNumber();
 	LOSTurns = 1;
 	WorldMap = 0;
-
-	////////MUST DOO DOOO DOOOD DOOOOD ODOOODDOD D00D!_mkdir("Save");
+	#ifdef WIN32
+	_mkdir("Save");
+	#else
+	mkdir((std::string(getenv("HOME")) + SAVE_DIR).c_str(), S_IRWXU | S_IRWXG);
+	#endif
 
 	if(Name == "")
 		if(configuration::GetDefaultName() == "")
@@ -550,11 +554,7 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 bool game::Save(std::string SaveName)
 {
   // if HOME is not defined this will probably fail... / - might also cause problem...
-  #ifdef WIN32
 	outputfile SaveFile(SaveName + ".sav");
-  #else
-	outputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".sav");
-  #endif
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << InWilderness << NextObjectID;
@@ -620,7 +620,7 @@ bool game::Load(std::string SaveName)
 
 std::string game::SaveName()
 {
-	std::string SaveName = std::string("Save/") + PlayerName;
+	std::string SaveName = SAVE_DIR + PlayerName;
 
 	for(ushort c = 0; c < SaveName.length(); ++c)
 		if(SaveName[c] == ' ')
@@ -1128,7 +1128,7 @@ bool game::HandleQuitMessage()
 		if(GetInGetCommand())
 		  {
 #ifndef WIN32
-		    switch(iosystem::Menu(0, "Do you want to save your game before quitting?","Yes\rNo\rCancel", BLUE, WHITE, false))
+		    switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
 #else
 		    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif

@@ -244,7 +244,9 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 {
   if(EmptyBuffer)
 	{
-		CheckMessages();
+	  SDL_Event event;
+	  while( SDL_PollEvent( &event ) )
+	    ProcessMessage(event);	     
 
 		while(KeyBuffer.Length())
 			KeyBuffer.Remove(0);
@@ -263,14 +265,29 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 			  return 0;
 		}
 		else
-		  CheckMessages();
+		  {
+		    SDL_Event event;
+		    SDL_WaitEvent(&event);
+		    ProcessMessage(event);		    
+
+
+		  }
 				
 }
 
 int globalwindowhandler::ReadKey()
 {
-  CheckMessages();
-
+  SDL_Event event;
+  if(!(SDL_GetAppState() & SDL_APPACTIVE))
+    {
+      SDL_WaitEvent(&event);
+      ProcessMessage(event);
+    }
+  else
+    {
+      while( SDL_PollEvent( &event ) )
+	ProcessMessage(event);
+    }
   if(KeyBuffer.Length())
     return GetKey(false, true);
   else
@@ -278,13 +295,18 @@ int globalwindowhandler::ReadKey()
 }
 
 
-void globalwindowhandler::CheckMessages()
+void globalwindowhandler::ProcessMessage(SDL_Event event)
 {
   ushort Index, KeyPressed;
-  SDL_Event event;
-  while( SDL_PollEvent( &event ) )
-     { 
-   switch( event.type ){
+
+      
+   switch( event.type )
+     {
+      case SDL_QUIT:
+	if(!QuitMessageHandler || QuitMessageHandler())
+	  exit(0);	
+     
+     
       case SDL_KEYDOWN:
 	switch(event.key.keysym.sym)
 	  {
@@ -343,7 +365,7 @@ void globalwindowhandler::CheckMessages()
       default:
         break;
     }
-  }
+  
 
 }
 #endif
