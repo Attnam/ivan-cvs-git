@@ -58,8 +58,6 @@ public:
 	virtual void DrawToTileBuffer(void) const;
 	virtual bool GoUp(character*);
 	virtual bool GoDown(character*);
-	//virtual void SetIsWalkable(bool What)			{ IsWalkable = What; }
-	//virtual bool GetIsWalkable(void) const			{ return IsWalkable; }
 	virtual void Save(std::ofstream*) const;
 	virtual uchar GetOwnerGod(void) const { return 0; }
 	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
@@ -67,7 +65,6 @@ public:
 protected:
 	virtual void MakeWalkable(void);
 	virtual void MakeNotWalkable(void);
-	//bool IsWalkable;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -88,7 +85,7 @@ protected:
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) : Index(game::AddProtoType(new name(false, false))) {}\
+		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\

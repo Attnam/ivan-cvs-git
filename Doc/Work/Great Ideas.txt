@@ -10,3 +10,4 @@ Vuodenajat.
 Moniruutuiset oliot.
 Smithing.
 Ghost-Überpriestit.
+Thougth Control.

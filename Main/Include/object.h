@@ -1,6 +1,16 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+#define CNAME(Case) Name(Case).c_str()
+
+#define	UNARTICLED		0	//0000000
+#define	PLURAL			1	//0000001
+#define	DEFINEBIT		2	//0000010
+#define	DEFINITE		2	//0000010
+#define	INDEFINEBIT		4	//0000100
+#define	INDEFINITE		6	//0000110
+
+#include <string>
 #include <fstream>
 #include <cstdarg>
 #include <vector>
@@ -8,11 +18,11 @@
 #include "typedef.h"
 
 #include "material.h"
-#include "independ.h"
 
 class material;
+class vector;
 
-class object : public independency
+class object
 {
 public:
 	object(void) {}
@@ -27,13 +37,23 @@ public:
 	virtual ushort GetSize(void) const { return Size; }
 	virtual void EraseMaterials(void);
 	virtual ushort GetMaterials(void) const { return Material.size(); }
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+	virtual void DrawToTileBuffer(void) const = 0;
+	virtual std::string GetNameSingular(void) const { return NameSingular(); }
+	virtual std::string GetNamePlural(void) const { return NamePlural(); }
 protected:
+	virtual std::string NameSingular(void) const = 0;
+	virtual std::string NamePlural(void) const = 0;
+	virtual std::string NameNormal(uchar, std::string) const;
+	virtual std::string NameProperNoun(uchar) const;
 	virtual std::string NameArtifact(uchar, uchar) const;
 	virtual std::string NameWithMaterial(uchar) const;
 	virtual std::string NameHandleDefaultMaterial(uchar, std::string, uchar) const;
 	virtual std::string NameContainer(uchar) const;
 	virtual std::string NameSized(uchar, std::string, ushort, ushort) const;
 	virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
+	virtual ushort Type(void) const = 0;
+	virtual vector GetBitmapPos(void) const = 0;
 	std::vector<material*> Material;
 	ushort Size;
 };

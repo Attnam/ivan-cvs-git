@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 
-#include "independ.h"
 #include "error.h"
 #include "char.h"
 #include "graphics.h"
@@ -15,12 +14,11 @@
 #include "strover.h"
 #include "lterrain.h"
 #include "whandler.h"
-#include "independ.h"
 #include "level.h"
 #include "bitmap.h"
 #include "item.h"
 
-levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), MotherLevel(MotherLevel), GroundLevelTerrain(0), OverLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false)
+levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), Emitation(0), DivineOwner(0), Fluided(false)
 {
 	Stack = new stack(this);
 	GetStack()->SetSquareUnder(this);
@@ -34,8 +32,8 @@ levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, P
 
 levelsquare::~levelsquare(void)
 {
-	delete GroundLevelTerrain;
-	delete OverLevelTerrain;
+	delete GetGroundLevelTerrain();
+	delete GetOverLevelTerrain();
 
 	delete Stack;
 
@@ -91,13 +89,12 @@ ushort levelsquare::CalculateEmitation(void) const
 
 void levelsquare::DrawToTileBuffer(void) const
 {
-	GroundLevelTerrain->DrawToTileBuffer();
+	GetGroundLevelTerrain()->DrawToTileBuffer();
 
 	if(Fluided)
-	{
 		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
-	}
-	OverLevelTerrain->DrawToTileBuffer();
+
+	GetOverLevelTerrain()->DrawToTileBuffer();
 	GetStack()->PositionedDrawToTileBuffer();
 
 	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
@@ -308,8 +305,8 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 {
 	square::Save(SaveFile);
 
-	GroundLevelTerrain->Save(SaveFile);
-	OverLevelTerrain->Save(SaveFile);
+	GetGroundLevelTerrain()->Save(SaveFile);
+	GetOverLevelTerrain()->Save(SaveFile);
 
 	GetStack()->Save(SaveFile);
 
@@ -341,14 +338,10 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 
 void levelsquare::Load(std::ifstream* SaveFile)
 {
-	//Stack = new stack(SaveFile);
-
 	square::Load(SaveFile);
 
-	GroundLevelTerrain = game::LoadGroundLevelTerrain(SaveFile);
-	GroundLevelTerrain->SetLevelSquareUnder(this);
-	OverLevelTerrain = game::LoadOverLevelTerrain(SaveFile);
-	OverLevelTerrain->SetLevelSquareUnder(this);
+	SetGroundLevelTerrain(prototypesystem::LoadGroundLevelTerrain(SaveFile));
+	SetOverLevelTerrain(prototypesystem::LoadOverLevelTerrain(SaveFile));
 
 	Stack->Load(SaveFile);
 
@@ -548,7 +541,7 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 
 	if(Result == 1)
 	{
-		delete OverLevelTerrain;
+		delete GetOverLevelTerrain();
 		SetOverLevelTerrain(new empty);
 		ForceEmitterEmitation();
 		game::GetCurrentLevel()->UpdateLOS();
@@ -584,10 +577,34 @@ void levelsquare::HandleFluids(void)
 
 void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)
 {
-	delete GroundLevelTerrain;
+	delete GetGroundLevelTerrain();
 	SetGroundLevelTerrain(NewGround);
-	GetGroundLevelTerrain()->SetLevelSquareUnder(this);
-	delete OverLevelTerrain;
+	delete GetOverLevelTerrain();
 	SetOverLevelTerrain(NewOver);
-	GetOverLevelTerrain()->SetLevelSquareUnder(this);
+}
+
+void levelsquare::SetGroundLevelTerrain(groundlevelterrain* What)
+{
+	GroundTerrain = What;
+
+	if(What)
+		What->SetLevelSquareUnder(this);
+}
+
+void levelsquare::SetOverLevelTerrain(overlevelterrain* What)
+{
+	OverTerrain = What;
+
+	if(What)
+		What->SetLevelSquareUnder(this);
+}
+
+groundlevelterrain* levelsquare::GetGroundLevelTerrain(void) const
+{
+	return (groundlevelterrain*)GroundTerrain;
+}
+
+overlevelterrain* levelsquare::GetOverLevelTerrain(void) const
+{
+	return (overlevelterrain*)OverTerrain;
 }

@@ -120,10 +120,6 @@ SOURCE=.\Main\Source\igraph.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\independ.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Source\item.cpp
 # End Source File
 # Begin Source File
@@ -149,6 +145,10 @@ SOURCE=.\Main\Source\material.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\object.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\proto.cpp
 # End Source File
 # Begin Source File
 
@@ -201,10 +201,6 @@ SOURCE=.\Main\Include\god.h
 # Begin Source File
 
 SOURCE=.\Main\Include\igraph.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Main\Include\independ.h
 # End Source File
 # Begin Source File
 

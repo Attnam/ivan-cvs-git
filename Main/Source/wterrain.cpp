@@ -2,6 +2,34 @@
 #include "wsquare.h"
 #include "igraph.h"
 #include "bitmap.h"
+#include "object.h"
+
+void worldmapterrain::Save(std::ofstream* SaveFile) const
+{
+	ushort TypeVar = Type();
+
+	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
+}
+
+std::string worldmapterrain::Name(uchar Case) const
+{
+	if(!(Case & PLURAL))
+		if(!(Case & DEFINEBIT))
+			return NameStem();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NameStem();
+			else
+				return Article() + " " + NameStem();
+	else
+		if(!(Case & DEFINEBIT))
+			return NameStem() + " terrains";
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NameStem() + " terrains";
+			else
+				return NameStem() + " terrains";
+}
 
 vector worldmapterrain::GetPos(void) const
 {
@@ -22,14 +50,10 @@ void overworldmapterrain::Save(std::ofstream* SaveFile) const
 {
 	worldmapterrain::Save(SaveFile);
 	overterrain::Save(SaveFile);
-
-	//SaveFile->write((char*)&IsWalkable, sizeof(IsWalkable));
 }
 
 void overworldmapterrain::Load(std::ifstream* SaveFile)
 {
 	worldmapterrain::Load(SaveFile);
 	overterrain::Load(SaveFile);
-
-	//SaveFile->read((char*)&IsWalkable, sizeof(IsWalkable));
 }

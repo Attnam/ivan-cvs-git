@@ -14,18 +14,20 @@ class area
 {
 public:
 	area(ushort, ushort);
-	area(std::ifstream*);
+	area(void) {}
+	//area(std::ifstream*);
 	~area(void);
 	virtual void Generate(void) = 0;
 	virtual void Draw(void) const = 0;
 	virtual void AddCharacter(vector, character*);
 	virtual void RemoveCharacter(vector);
 	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
 	virtual ushort GetFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
-	virtual square* operator [] (vector Pos) const {return Map[Pos.X][Pos.Y];}
-	virtual square* GetSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
-	virtual ushort GetXSize(void) const {return XSize;}
-	virtual ushort GetYSize(void) const {return YSize;}
+	virtual square* operator [] (vector Pos) const { return Map[Pos.X][Pos.Y]; }
+	virtual square* GetSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
+	virtual ushort GetXSize(void) const { return XSize; }
+	virtual ushort GetYSize(void) const { return YSize; }
 	virtual bitmap* GetMemorized(void) const { return Memorized; }
 	virtual void UpdateLOS(void);
 	virtual void EmptyFlags(void);

@@ -17,19 +17,17 @@ class worldmapsquare : public square
 public:
 	worldmapsquare(worldmap*, vector);
 	~worldmapsquare(void);
-	//virtual void Save(std::ofstream*) const;
-	//virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
 	virtual void DrawToTileBuffer(void) const;
 	virtual void UpdateMemorizedAndDraw(void);
-	virtual void SetGroundWorldMapTerrain(groundworldmapterrain* What) { GroundWorldMapTerrain = What; }
-	virtual void SetOverWorldMapTerrain(overworldmapterrain* What) { OverWorldMapTerrain = What; }
-	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const { return GroundWorldMapTerrain; }
-	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const { return OverWorldMapTerrain; }
+	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
+	virtual void SetOverWorldMapTerrain(overworldmapterrain*);
+	virtual groundworldmapterrain* GetGroundWorldMapTerrain(void) const;
+	virtual overworldmapterrain* GetOverWorldMapTerrain(void) const;
 	virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
-protected:
-	worldmap* MotherWorldMap;
-	groundworldmapterrain* GroundWorldMapTerrain;
-	overworldmapterrain* OverWorldMapTerrain;
+	virtual worldmap* GetMotherWorldMap(void) const { return (worldmap*)MotherArea; }
+	virtual void SetMotherWorldMap(worldmap* What) { MotherArea = (area*)What; }
 };
 
 #endif

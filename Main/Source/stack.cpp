@@ -251,7 +251,7 @@ void stack::Load(std::ifstream* SaveFile)
 		Item = new item*[Items];
 
 		for(ushort c = 0; c < Items; c++)
-			Item[c] = game::LoadItem(SaveFile);
+			Item[c] = prototypesystem::LoadItem(SaveFile);
 	}
 	else
 		Item = 0;

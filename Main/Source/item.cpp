@@ -138,13 +138,15 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->CCharacter() == 0)
 	{
-		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(game::BalancedCreateMonster());
-		if(Reader == game::GetPlayer()) ADD_MESSAGE("As you read the scroll a monster appears.");
+		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(prototypesystem::BalancedCreateMonster());
+
+		if(Reader == game::GetPlayer())
+			ADD_MESSAGE("As you read the scroll a monster appears.");
 	}
 	else
-	{
-		if(Reader == game::GetPlayer()) ADD_MESSAGE("You feel a lost soul fly by you.");
-	}
+		if(Reader == game::GetPlayer())
+			ADD_MESSAGE("You feel a lost soul fly by you.");
+
 	return true;
 }
 
@@ -372,7 +374,7 @@ float item::GetWeaponStrength(void) const
 bool scrollofwishing::Read(character* Reader)
 {
 	std::string Temp = game::StringQuestion("What do you want to wish for?", 256);
-	item* TempItem = game::CreateItem(Temp);
+	item* TempItem = prototypesystem::CreateItem(Temp);
 
 	if(TempItem)
 	{

@@ -37,7 +37,7 @@ void area::Save(std::ofstream* SaveFile) const
 	SaveFile->write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
-area::area(std::ifstream* SaveFile)
+void area::Load(std::ifstream* SaveFile)
 {
 	SaveFile->read((char*)&XSize, sizeof(XSize));
 	SaveFile->read((char*)&YSize, sizeof(YSize));

@@ -358,7 +358,7 @@ void level::CreateItems(ushort Amount)
 	{
 		vector Pos = RandomSquare(true);
 
-		Map[Pos.X][Pos.Y]->Stack->FastAddItem(game::BalancedCreateItem());
+		Map[Pos.X][Pos.Y]->Stack->FastAddItem(prototypesystem::BalancedCreateItem());
 	}
 }
 
@@ -370,7 +370,7 @@ void level::CreateMonsters(ushort Amount)
 		vector Pos = RandomSquare(true);
 
 		if(!Map[Pos.X][Pos.Y]->Character)
-			Map[Pos.X][Pos.Y]->FastAddCharacter(game::BalancedCreateMonster());
+			Map[Pos.X][Pos.Y]->FastAddCharacter(prototypesystem::BalancedCreateMonster());
 	}
 }
 
@@ -606,10 +606,16 @@ void level::Save(std::ofstream* SaveFile) const
 
 	for(c = 0; c < Length; c++)
 		SaveFile->write((char*)&Door.Access(c), sizeof(Door.Access(c)));
+
+	SaveFile->write((char*)&LevelIndex, sizeof(LevelIndex));
+	SaveFile->write((char*)&UpStairs, sizeof(UpStairs));
+	SaveFile->write((char*)&DownStairs, sizeof(DownStairs));
 }
 
-level::level(std::ifstream* SaveFile, ushort Index) : area(SaveFile), LevelIndex(Index)
+void level::Load(std::ifstream* SaveFile)//, ushort Index) : area(SaveFile), LevelIndex(Index)
 {
+	area::Load(SaveFile);
+
 	Map = (levelsquare***)area::Map;
 
 	FluidBuffer = new bitmap(XSize << 4, YSize << 4);
@@ -644,6 +650,10 @@ level::level(std::ifstream* SaveFile, ushort Index) : area(SaveFile), LevelIndex
 
 		Door.Add(Pos);
 	}
+
+	SaveFile->read((char*)&LevelIndex, sizeof(LevelIndex));
+	SaveFile->read((char*)&UpStairs, sizeof(UpStairs));
+	SaveFile->read((char*)&DownStairs, sizeof(DownStairs));
 }
 
 void level::Luxify(void)
@@ -690,17 +700,19 @@ void level::Draw(void) const
 void level::GenerateNewMonsters(ushort HowMany)
 {
 	vector Pos;
+
 	for(uchar c = 0; c < HowMany; c++)
 	{
                 Pos = vector(0,0);
+
 		for(uchar cc = 0; cc < 30; c++)
 		{
 			Pos = RandomSquare(true);
 			if(abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6 && !Map[Pos.X][Pos.Y]->Character)
 				break;
 		}
-		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(game::BalancedCreateMonster());
 
+		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(prototypesystem::BalancedCreateMonster());
 	}
 }
 

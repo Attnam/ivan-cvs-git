@@ -26,10 +26,10 @@
 #include "typedef.h"
 #include "vector.h"
 
-#include "game.h"
+#include "proto.h"
 #include "graphics.h"
 #include "object.h"
-#include "stack.h"
+#include "game.h"
 
 class square;
 class bitmap;
@@ -46,155 +46,154 @@ class character : public object
 public:
 	character(bool = true, bool = true, bool = true);
 	~character(void);
-	virtual void DrawToTileBuffer(void) const;
-	virtual void Act(void);
-	virtual bool Hit(character*);
-	virtual uchar TakeHit(ushort, short, float, character*);
-	virtual bool Consume(void);
-	virtual void Hunger(ushort = 1);
-	virtual bool TryMove(vector);
-	virtual bool Drop(void);
+	virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
+	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
+	virtual bool CanRead(void) const { return true; }
+	virtual bool CanWear(void) const { return false; }
+	virtual bool CanWield(void) const { return false; }
+	virtual bool Charmable(void) const { return true; }
+	virtual bool Catches(item*, float, bool) { return false; }
+	virtual bool CheckBulimia(void) const;
+	virtual bool CheckDeath(std::string);
+	virtual bool CheckIfConsumable(ushort) const;
 	virtual bool ConsumeItem(int, stack*);
-	virtual void Regenerate(ushort = 1);
-	virtual void Move(vector, bool = false);
-	virtual bool ShowInventory(void);
-	virtual bool PickUp(void);
-	virtual bool Quit(void);
-	virtual bool Wield(void);
-	virtual void Die(void);
+	virtual bool ConsumeItemType(uchar) const;
+	virtual bool DodgesFlyingItem(item*, float, bool);
+	virtual bool Hit(character*);
 	virtual bool OpenItem(void);
-	virtual void ReceiveSound(char*, short, float);
+	virtual bool OpenPos(vector);
+	virtual bool ReadItem(int, stack*);
+	virtual bool TestForPickup(item*) const;
+	virtual bool ThrowItem(uchar, item*);
+	virtual bool TryMove(vector);
+	virtual bool WearItem(item*) { return false; }
+	virtual bool HasHeadOfElpuri(void) const;
+	virtual bool HasMaakotkaShirt(void) const;
+	virtual bool HasPerttusNut(void) const;
+	virtual bool GetFainted(void) const { return Fainted; }
+	virtual bool GetHasActed(void) const { return HasActed; }
+	virtual bool GetIsPlayer(void) const { return IsPlayer; }
+	virtual bool Apply(void);
+	virtual bool Close(void);
+	virtual bool Consume(void);
+	virtual bool DecreaseGamma(void);
+	virtual bool DecreaseSoftGamma(void);
+	virtual bool Dip(void);
+	virtual bool DrawMessageHistory(void);
+	virtual bool Drop(void);
+	virtual bool Engrave(std::string);
+	virtual bool ForceVomit(void);
+	virtual bool GainAllItems(void);
+	virtual bool GoDown(void);
+	virtual bool GoUp(void);
+	virtual bool IncreaseGamma(void);
+	virtual bool IncreaseSoftGamma(void);
+	virtual bool Kick(void);
+	virtual bool Look(void);
+	virtual bool LowerStats(void);
+	virtual bool NOP(void);
+	virtual bool Offer(void);
+	virtual bool Open(void);
+	virtual bool PickUp(void);
+	virtual bool Pray(void);
+	virtual bool Quit(void);
+	virtual bool RaiseStats(void);
+	virtual bool Read(void);
+	virtual bool Save(void);
+	virtual bool ScreenShot(void);
+	virtual bool SeeWholeMap(void);
+	virtual bool ShowInventory(void);
+	virtual bool ShowKeyLayout(void);
+	virtual bool Talk(void);
+	virtual bool Throw(void);
+	virtual bool WalkThroughWalls(void);
+	virtual bool WearArmor(void);
+	virtual bool WhatToEngrave(void);
+	virtual bool Wield(void);
+	virtual bool WizardMode(void);
+	virtual long AddScoreEntry(std::string, float = 1) const;
+	virtual long Score(void) const;
+	virtual float GetAttackStrength(void) const;
+	virtual float GetDifficulty(void) const;
+	virtual item* GetTorsoArmor(void) const				{return 0;}
 	virtual item* GetWielded(void) const				{return Wielded;}
+	virtual levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	virtual long GetAgilityExperience(void) const {return AgilityExperience;}
+	virtual long GetAP(void) const { return AP; }
+	virtual long GetAPsToBeEaten(void) const { return APsToBeEaten; }
+	virtual long GetEnduranceExperience(void) const {return EnduranceExperience;}
+	virtual long GetNP(void) const					{return NP;}
+	virtual long GetPerceptionExperience(void) const {return PerceptionExperience;}
+	virtual long GetStrengthExperience(void) const {return StrengthExperience;}
+	virtual short GetHP(void) const					{return HP;}
+	virtual square* GetSquareUnder(void) const { return SquareUnder; }
 	virtual stack* GetStack(void) const				{return Stack;}
-	virtual ushort GetEmitation(void) const;
-	virtual vector GetPos(void) const;
-	virtual bool GetHasActed(void) const					{return HasActed;}
-	virtual ushort GetStrength(void) const					{return Strength;}
+	virtual uchar GetBurdenState(ulong = 0) const;
+	virtual uchar GetRelations(void) const { return Relations; }
+	virtual uchar GetSex(void) const {return UNDEFINED;}
+	virtual uchar TakeHit(ushort, short, float, character*);
+	virtual ulong Danger(void) const = 0;
+	virtual ulong GetBloodColor(void) const { return MAKE_RGB(100,0,0); }
+	virtual ushort CalculateArmorModifier(void) const;
+	virtual ushort CRegenerationCounter(void) const { return RegenerationCounter; }
 	virtual ushort GetAgility(void) const					{return Agility;}
+	virtual ushort GetConsumingCurrently(void) const { return EatingCurrently; }
+	virtual ushort GetEmitation(void) const;
 	virtual ushort GetEndurance(void) const					{return Endurance;}
 	virtual ushort GetPerception(void) const				{return Perception;}
-	virtual short GetHP(void) const					{return HP;}
-	virtual long GetNP(void) const					{return NP;}
-	virtual void SetSquareUnder(square* Square);
-	virtual void SetHasActed(bool HA)				{HasActed = HA;}
-	virtual bool WearArmor(void);
-	virtual item* GetTorsoArmor(void) const				{return 0;}
-	virtual bool ConsumeItemType(uchar) const;
-	virtual void ReceiveFireDamage(long);
-	virtual void ReceiveSchoolFoodEffect(long);
-	virtual void ReceiveNutrition(long);
-	virtual void ReceiveOmleUrineEffect(long);
-	virtual void ReceivePepsiEffect(long);
-	virtual void Darkness(long);
-	virtual void ReceiveBulimiaDamage(void);
-	virtual uchar GetRelations(void) const { return Relations; }
+	virtual ushort GetStrength(void) const					{return Strength;}
+	virtual ushort LOSRange(void) const { return GetPerception() / 3; }
+	virtual ushort LOSRangeLevelSquare(void) const { return GetPerception() * GetPerception() / 9; }
+	virtual ushort Possibility(void) const = 0;
+	virtual vector GetPos(void) const;
+	virtual void Act(void);
 	virtual void AddBlockMessage(character*) const;
 	virtual void AddDodgeMessage(character*) const;
 	virtual void AddHitMessage(character*, const bool = false) const;
-	virtual uchar GetSex(void) const {return UNDEFINED;}
-	virtual void BeTalkedTo(character*);
-	virtual bool Talk(void);
-	virtual bool GoUp(void);
-	virtual bool GoDown(void);
-	virtual bool Open(void);
-	virtual bool Close(void);
-	virtual bool NOP(void);
-	virtual ushort CalculateArmorModifier(void) const;
 	virtual void ApplyExperience(void);
-	virtual bool HasHeadOfElpuri(void) const;
-	virtual bool HasPerttusNut(void) const;
-	virtual bool HasMaakotkaShirt(void) const;
-	virtual bool Save(void);
-	virtual bool Read(void);
-	virtual bool ReadItem(int, stack*);
-	virtual bool CanRead(void) const { return true; } // for now everything and everybody can read...
-	virtual uchar GetBurdenState(ulong = 0) const;
-	virtual bool Dip(void);
-	virtual void Save(std::ofstream*) const;
-	virtual bool WizardMode(void);
-	virtual bool RaiseStats(void);
-	virtual bool LowerStats(void);
-	virtual bool SeeWholeMap(void);
-	virtual bool IncreaseGamma(void);
-	virtual bool DecreaseGamma(void);
-	virtual bool IncreaseSoftGamma(void);
-	virtual bool DecreaseSoftGamma(void);
-	virtual bool WalkThroughWalls(void);
-	virtual float CWeaponStrength(void) const;
-	virtual bool ShowKeyLayout(void);
-	virtual bool Look(void);
-	virtual long GetStrengthExperience(void) const {return StrengthExperience;}
-	virtual long GetEnduranceExperience(void) const {return EnduranceExperience;}
-	virtual long GetAgilityExperience(void) const {return AgilityExperience;}
-	virtual long GetPerceptionExperience(void) const {return PerceptionExperience;}
-	virtual float GetAttackStrength(void) const;
-	virtual float GetDifficulty(void) const;
-	virtual bool Engrave(std::string);
-	virtual bool WhatToEngrave(void);
-	virtual ushort CRegenerationCounter(void) const { return RegenerationCounter; }
-	virtual void MoveRandomly(void);
-	virtual void SetWielded(item* Something) { Wielded = Something; }
-	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
-	virtual void SetHP(short What) { HP = What; }
-	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
-	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
-	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
-	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
-	virtual square* GetSquareUnder(void) const { return SquareUnder; }
-	virtual levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
-	virtual void SetAP(long What) { AP = What; }
-	virtual bool GetFainted(void) const { return Fainted; }
-	virtual void SetFainted(bool To) { Fainted = To; }
-	virtual void SetNP(long What) { NP = What; }
-	virtual void SetRelations(uchar What) { Relations = What; }
-	virtual long GetAP(void) const { return AP; }
-	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
-	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
-	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
-	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
-	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
-	virtual bool TestForPickup(item*) const;
-	virtual bool CanWield(void) const { return false; }
-	virtual bool CanWear(void) const { return false; }
-	virtual bool WearItem(item*) { return false; }
-	virtual bool OpenPos(vector);
-	virtual bool Pray(void);
-	virtual void SpillBlood(uchar);
-	virtual void HealFully(character*) {}
-	virtual bool Kick(void);
-	virtual bool ScreenShot(void);
-	virtual bool Offer(void);
-	virtual ushort LOSRange(void) const { return GetPerception() / 3; }
-	virtual ushort LOSRangeLevelSquare(void) const { return GetPerception() * GetPerception() / 9; }
-	virtual long Score(void) const;
-	virtual long AddScoreEntry(std::string, float = 1) const;
-	virtual bool CheckDeath(std::string);
-	virtual ulong Danger(void) const = 0;
-	virtual bool Charmable(void) const { return true; }
-	virtual bool CheckBulimia(void) const;
-	virtual bool CheckIfConsumable(ushort) const;
-	virtual bool DrawMessageHistory(void);
-	virtual bool Throw(void);
-	virtual bool ThrowItem(uchar, item*);
-	virtual void HasBeenHitByItem(item*, float, bool);
-	virtual bool Catches(item*, float, bool) { return false; }
-	virtual bool DodgesFlyingItem(item*, float, bool);
-	virtual ulong GetBloodColor(void) const { return MAKE_RGB(100,0,0); }
-	virtual void SetConsumingCurrently(ushort What) { EatingCurrently = What; }
-	virtual ushort GetConsumingCurrently(void) const { return EatingCurrently; }
+	virtual void BeTalkedTo(character*);
 	virtual void ContinueEating(void);
-	virtual void StopEating(void);
+	virtual void Darkness(long);
+	virtual void Die(void);
+	virtual void DrawToTileBuffer(void) const;
+	virtual void HasBeenHitByItem(item*, float, bool);
+	virtual void HealFully(character*) {}
+	virtual void Hunger(ushort = 1);
+	virtual void Move(vector, bool = false);
+	virtual void MoveRandomly(void);
+	virtual void ReceiveBulimiaDamage(void);
+	virtual void ReceiveFireDamage(long);
+	virtual void ReceiveNutrition(long);
+	virtual void ReceiveOmleUrineEffect(long);
+	virtual void ReceivePepsiEffect(long);
+	virtual void ReceiveSchoolFoodEffect(long);
+	virtual void ReceiveSound(char*, short, float);
+	virtual void Regenerate(ushort = 1);
+	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
+	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
+	virtual void SetAP(long What) { AP = What; }
 	virtual void SetAPsToBeEaten(long What) { APsToBeEaten = What; }
-	virtual long GetAPsToBeEaten(void) const { return APsToBeEaten; }
-	virtual void Vomit(ushort);
-	virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
-	virtual void Load(std::ifstream*);
-	virtual ushort Possibility(void) const = 0;
-	virtual bool Apply(void);
-	virtual bool GainAllItems(void);
-	virtual bool ForceVomit(void);
-	virtual bool GetIsPlayer(void) const { return IsPlayer; }
+	virtual void SetConsumingCurrently(ushort What) { EatingCurrently = What; }
+	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
+	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
+	virtual void SetFainted(bool To) { Fainted = To; }
+	virtual void SetHasActed(bool HA)				{HasActed = HA;}
+	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
+	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
+	virtual void SetNP(long What) { NP = What; }
+	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
+	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
+	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
+	virtual void SetRelations(uchar What) { Relations = What; }
+	virtual void SetSquareUnder(square* Square);
+	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
+	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
+	virtual void SetWielded(item* Something) { Wielded = Something; }
+	virtual void SpillBlood(uchar);
+	virtual void StopEating(void);
+	virtual void Vomit(ushort);
 protected:
 	virtual void CreateCorpse(void);
 	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
@@ -256,7 +255,7 @@ protected:
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) : Index(game::AddProtoType(new name(false, false, false))) {}\
+		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -680,7 +679,7 @@ class CHARACTER
 (
 	golem,
 	character,
-	InitMaterials(game::CreateRandomSolidMaterial(100000)),
+	InitMaterials(prototypesystem::CreateRandomSolidMaterial(100000)),
 	{
 		SetSize(250);
 		SetAgility(5);

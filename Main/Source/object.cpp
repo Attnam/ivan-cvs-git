@@ -1,6 +1,6 @@
 #include "object.h"
-#include "game.h"
 #include "error.h"
+#include "proto.h"
 
 object::~object(void)
 {
@@ -9,7 +9,9 @@ object::~object(void)
 
 void object::Save(std::ofstream* SaveFile) const
 {
-	independency::Save(SaveFile);
+	ushort TypeVar = Type();
+
+	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
 
 	ushort Materials = Material.size();
 
@@ -35,7 +37,7 @@ void object::Load(std::ifstream* SaveFile)
 	SaveFile->read((char*)&Materials, sizeof(Materials));
 
 	for(ushort c = 0; c < Materials; c++)
-		Material.push_back(game::LoadMaterial(SaveFile));
+		Material.push_back(prototypesystem::LoadMaterial(SaveFile));
 
 	SaveFile->read((char*)&Size, sizeof(Size));
 }
@@ -67,6 +69,34 @@ ushort object::GetEmitation(void) const
 				Emitation = Material[c]->GetEmitation();
 
 	return Emitation;
+}
+
+std::string object::NameNormal(uchar Case, std::string Article) const
+{
+	if(!(Case & PLURAL))
+		if(!(Case & DEFINEBIT))
+			return NameSingular();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NameSingular();
+			else
+				return Article + " " + NameSingular();
+	else
+		if(!(Case & DEFINEBIT))
+			return NamePlural();
+		else
+			if(!(Case & INDEFINEBIT))
+				return std::string("the ") + NamePlural();
+			else
+				return NamePlural();
+}
+
+std::string object::NameProperNoun(uchar Case) const
+{
+	if(!(Case & PLURAL))
+		return NameSingular();
+	else
+		return NamePlural();
 }
 
 std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const

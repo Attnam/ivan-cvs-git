@@ -37,7 +37,7 @@
 
 #include "typedef.h"
 
-#include "independ.h"
+#include "object.h"
 
 /* Presentation of material class */
 
@@ -101,7 +101,7 @@ protected:
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) : Index(game::AddProtoType(new name)) {}\
+		proto_##name(void) : Index(prototypesystem::AddProtoType(new name)) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -189,7 +189,7 @@ public:
 	virtual short NutritionValue(void) const			{ return 175; }
 	virtual uchar GetItemColor(void) const			{ return YELLOW; }
 protected:
-	virtual std::string NameStem(void) const	{ return "a banana flesh"; }
+	virtual std::string NameStem(void) const	{ return "banana flesh"; }
 );
 
 class MATERIAL

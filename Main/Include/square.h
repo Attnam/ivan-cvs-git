@@ -11,14 +11,13 @@ class material;
 class bitmap;
 class character;
 class levelterrain;
-class groundlevelterrain;
-class overlevelterrain;
+class groundterrain;
+class overterrain;
 
 class square
 {
 public:
 	square(area*, vector);
-	//square(area*, std::ifstream*, vector);
 	~square(void);
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
@@ -38,7 +37,13 @@ public:
 	virtual void EmptyFlag(void)			{Flag = false;}
 	virtual void SetFlag(void)			{Flag = true;}
 	virtual bool RetrieveFlag(void) const		{return Flag;}
+	virtual groundterrain* GetGroundTerrain(void) { return GroundTerrain; }
+	virtual void SetGroundTerrain(groundterrain* What) { GroundTerrain = What; }
+	virtual overterrain* GetOverTerrain(void) { return OverTerrain; }
+	virtual void SetOverTerrain(overterrain* What) { OverTerrain = What; }
 protected:
+	groundterrain* GroundTerrain;
+	overterrain* OverTerrain;
 	area* MotherArea;
 	character* Rider, * Character, * Flyer;
 	vector Pos;

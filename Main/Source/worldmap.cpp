@@ -12,7 +12,7 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 		for(ulong y = 0; y < YSize; y++)
 		{
 			Map[x][y] = new worldmapsquare(this, vector(x, y));
-			Map[x][y]->ChangeWorldMapTerrain(new jungle, 0);
+			Map[x][y]->ChangeWorldMapTerrain(new jungle, new atmosphere);
 		}
 }
 
@@ -24,14 +24,14 @@ void worldmap::Save(std::ofstream* SaveFile) const
 {
 	area::Save(SaveFile);
 
-	{
 	for(ulong c = 0; c < XSizeTimesYSize; c++)
 		Map[0][c]->Save(SaveFile);
-	}
 }
 
-worldmap::worldmap(std::ifstream* SaveFile) : area(SaveFile)
+void worldmap::Load(std::ifstream* SaveFile)
 {
+	area::Load(SaveFile);
+
 	Map = (worldmapsquare***)area::Map;
 
 	for(ushort x = 0; x < XSize; x++)

@@ -8,6 +8,7 @@
 #include "typedef.h"
 #include "vector.h"
 
+#include "proto.h"
 #include "game.h"
 #include "object.h"
 
@@ -62,7 +63,7 @@ public:
 	virtual item* Clone(bool = true, bool = true) const = 0;
 	virtual ushort Possibility(void) const = 0;
 	virtual bool CanBeWished(void) const { return true; }
-	virtual item* CreateWishedItem(void) const { return game::GetItemPrototype(Type())->Clone(); }
+	virtual item* CreateWishedItem(void) const { return prototypesystem::GetItemPrototype(Type())->Clone(); }
 	virtual bool Apply(character*) { ADD_MESSAGE("You can't apply this!"); return false; }
 protected:
 	virtual void SetDefaultStats(void) = 0;
@@ -88,7 +89,7 @@ protected:
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) : Index(game::AddProtoType(new name(false, false))) {}\
+		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\

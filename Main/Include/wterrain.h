@@ -4,21 +4,26 @@
 #include <fstream>
 
 #include "game.h"
-#include "independ.h"
 #include "terrain.h"
 #include "vector.h"
 
 class worldmapsquare;
 
-class worldmapterrain : public independency
+class worldmapterrain
 {
 public:
-	virtual void Save(std::ofstream* SaveFile) const { independency::Save(SaveFile); }
+	friend class worldmap;
+	virtual void Save(std::ofstream* SaveFile) const;
 	virtual void Load(std::ifstream*) {}
 	virtual vector GetPos(void) const;
 	virtual worldmapsquare* GetWorldMapSquareUnder(void) const { return WorldMapSquareUnder; }
 	virtual void SetWorldMapSquareUnder(worldmapsquare* What) { WorldMapSquareUnder = What; }
+	virtual std::string Name(uchar = 0) const;
 protected:
+	virtual std::string NameStem(void) const = 0;
+	virtual std::string Article(void) const { return "a"; }
+	virtual vector GetBitmapPos(void) const = 0;
+	virtual ushort Type(void) const = 0;
 	worldmapsquare* WorldMapSquareUnder;
 };
 
@@ -37,11 +42,7 @@ public:
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
 	virtual void DrawToTileBuffer(void) const;
-	//virtual void SetIsWalkable(bool What)			{ IsWalkable = What; }
-	//virtual bool GetIsWalkable(void) const			{ return IsWalkable; }
 	virtual overworldmapterrain* Clone(bool = true) const = 0;
-//protected:
-//	bool IsWalkable;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -61,7 +62,7 @@ public:
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) : Index(game::AddProtoType(new name(false))) {}\
+		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
@@ -85,7 +86,7 @@ public:
 
 #endif
 
-#define WORLDMAPGROUNDTERRAIN(name, base, setstats, data)\
+#define GROUNDWORLDMAPTERRAIN(name, base, setstats, data)\
 \
 WORLDMAPTERRAIN(\
 	name,\
@@ -95,7 +96,7 @@ WORLDMAPTERRAIN(\
 	data\
 );
 
-#define WORLDMAPOVERTERRAIN(name, base, setstats, data)\
+#define OVERWORLDMAPTERRAIN(name, base, setstats, data)\
 \
 WORLDMAPTERRAIN(\
 	name,\
@@ -105,92 +106,96 @@ WORLDMAPTERRAIN(\
 	data\
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	glacier,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "glacier"; }
-	virtual std::string NamePlural(void) const { return "glaciers"; }
+	virtual std::string NameStem(void) const { return "glacier"; }
 	virtual vector GetBitmapPos(void) const { return vector(16, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	desert,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "desert"; }
-	virtual std::string NamePlural(void) const { return "deserts"; }
+	virtual std::string NameStem(void) const { return "desert"; }
 	virtual vector GetBitmapPos(void) const { return vector(64, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	snow,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "snowy terrain"; }
-	virtual std::string NamePlural(void) const { return "snowy terrains"; }
+	virtual std::string NameStem(void) const { return "tundra"; }
 	virtual vector GetBitmapPos(void) const { return vector(112, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	jungle,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "jungle"; }
-	virtual std::string NamePlural(void) const { return "jungles"; }
+	virtual std::string NameStem(void) const { return "jungle"; }
 	virtual vector GetBitmapPos(void) const { return vector(208, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	swamp,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "swamp"; }
-	virtual std::string NamePlural(void) const { return "swamps"; }
+	virtual std::string NameStem(void) const { return "swamp"; }
 	virtual vector GetBitmapPos(void) const { return vector(256, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	leafyforest,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "leafy forest"; }
-	virtual std::string NamePlural(void) const { return "leafy forests"; }
+	virtual std::string NameStem(void) const { return "leafy forest"; }
 	virtual vector GetBitmapPos(void) const { return vector(304, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	evergreenforest,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "evergreen forest"; }
-	virtual std::string NamePlural(void) const { return "evergreen forests"; }
+	virtual std::string NameStem(void) const { return "evergreen forest"; }
+	virtual std::string Article(void) const { return "an"; }
 	virtual vector GetBitmapPos(void) const { return vector(352, 16); }
 );
 
-class WORLDMAPGROUNDTERRAIN
+class GROUNDWORLDMAPTERRAIN
 (
 	ocean,
 	groundworldmapterrain,
 	{
 	},
-	virtual std::string NameSingular(void) const { return "ocean"; }
-	virtual std::string NamePlural(void) const { return "oceans"; }
+	virtual std::string NameStem(void) const { return "ocean"; }
 	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
+);
+
+class OVERWORLDMAPTERRAIN
+(
+	atmosphere,
+	overworldmapterrain,
+	{
+	},
+	virtual std::string NameStem(void) const { return "atmosphere"; }
+	virtual std::string Article(void) const { return "an"; }
+	virtual vector GetBitmapPos(void) const { return vector(208, 256); }
 );
 
 #endif

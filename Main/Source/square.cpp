@@ -7,7 +7,7 @@
 #include "area.h"
 #include "level.h"
 
-square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
+square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), OverTerrain(0), GroundTerrain(0), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
 {
 }
 
@@ -39,7 +39,7 @@ void square::Save(std::ofstream* SaveFile) const
 
 void square::Load(std::ifstream* SaveFile)
 {
-	Character = game::LoadCharacter(SaveFile);
+	Character = prototypesystem::LoadCharacter(SaveFile);
 	if(Character) Character->SetSquareUnder(this);
 
 	SaveFile->read((char*)&Known, sizeof(Known));
@@ -49,42 +49,6 @@ void square::Load(std::ifstream* SaveFile)
 
 	SaveFile->read((char*)&Flag, sizeof(Flag));
 }
-
-/*void square::Save(std::ofstream* SaveFile) const
-{
-	GroundLevelTerrain->Save(SaveFile);
-	OverLevelTerrain->Save(SaveFile);
-
-	if(Character)
-		Character->Save(SaveFile);
-	else
-	{
-		ushort Type = 0;
-
-		SaveFile->write((char*)&Type, sizeof(Type));
-	}
-
-	SaveFile->write((char*)&Known, sizeof(Known));
-
-	if(Known)
-		GetMotherArea()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
-}
-
-square::square(area* MotherArea, std::ifstream* SaveFile, vector Pos) : MotherArea(MotherArea), Rider(0), Flyer(0), Pos(Pos)
-{
-	GroundLevelTerrain = game::LoadGroundLevelTerrain(SaveFile);
-	GroundLevelTerrain->SetSquareUnder(this);
-	OverLevelTerrain = game::LoadOverLevelTerrain(SaveFile);
-	OverLevelTerrain->SetSquareUnder(this);
-
-	Character = game::LoadCharacter(SaveFile);
-	if(Character) Character->SetSquareUnder(this);
-
-	SaveFile->read((char*)&Known, sizeof(Known));
-
-	if(Known)
-		GetMotherArea()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
-}*/
 
 void square::DrawCheat(void) const
 {

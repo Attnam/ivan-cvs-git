@@ -7,22 +7,36 @@
 #include "worldmap.h"
 #include "wterrain.h"
 
-worldmapsquare::worldmapsquare(worldmap* MotherWorldMap, vector Pos) : square(MotherWorldMap, Pos), MotherWorldMap(MotherWorldMap), GroundWorldMapTerrain(0), OverWorldMapTerrain(0)
+worldmapsquare::worldmapsquare(worldmap* MotherWorldMap, vector Pos) : square(MotherWorldMap, Pos)
 {
 }
 
 worldmapsquare::~worldmapsquare(void)
 {
-	delete GroundWorldMapTerrain;
-	delete OverWorldMapTerrain;
+	delete GetGroundWorldMapTerrain();
+	delete GetOverWorldMapTerrain();
+}
+
+void worldmapsquare::Save(std::ofstream* SaveFile) const
+{
+	square::Save(SaveFile);
+
+	GetGroundWorldMapTerrain()->Save(SaveFile);
+	GetOverWorldMapTerrain()->Save(SaveFile);
+}
+
+void worldmapsquare::Load(std::ifstream* SaveFile)
+{
+	square::Load(SaveFile);
+
+	SetGroundWorldMapTerrain(prototypesystem::LoadGroundWorldMapTerrain(SaveFile));
+	SetOverWorldMapTerrain(prototypesystem::LoadOverWorldMapTerrain(SaveFile));
 }
 
 void worldmapsquare::DrawToTileBuffer(void) const
 {
-	GroundWorldMapTerrain->DrawToTileBuffer();
-
-	if(OverWorldMapTerrain)
-		OverWorldMapTerrain->DrawToTileBuffer();
+	GetGroundWorldMapTerrain()->DrawToTileBuffer();
+	GetOverWorldMapTerrain()->DrawToTileBuffer();
 }
 
 void worldmapsquare::UpdateMemorizedAndDraw(void)
@@ -42,11 +56,34 @@ void worldmapsquare::UpdateMemorizedAndDraw(void)
 
 void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, overworldmapterrain* NewOver)
 {
-	delete GroundWorldMapTerrain;
+	delete GetGroundWorldMapTerrain();
 	SetGroundWorldMapTerrain(NewGround);
-	GetGroundWorldMapTerrain()->SetWorldMapSquareUnder(this);
-	delete OverWorldMapTerrain;
+	delete GetOverWorldMapTerrain();
 	SetOverWorldMapTerrain(NewOver);
-	if(NewOver)
-		GetOverWorldMapTerrain()->SetWorldMapSquareUnder(this);
+}
+
+void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
+{
+	GroundTerrain = What;
+
+	if(What)
+		What->SetWorldMapSquareUnder(this);
+}
+
+void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
+{
+	OverTerrain = What;
+
+	if(What)
+		What->SetWorldMapSquareUnder(this);
+}
+
+groundworldmapterrain* worldmapsquare::GetGroundWorldMapTerrain(void) const
+{
+	return (groundworldmapterrain*)GroundTerrain;
+}
+
+overworldmapterrain* worldmapsquare::GetOverWorldMapTerrain(void) const
+{
+	return (overworldmapterrain*)OverTerrain;
 }

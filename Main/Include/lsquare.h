@@ -26,7 +26,6 @@ class levelsquare : public square
 public:
 	friend class level;
 	levelsquare(level*, vector);
-	//levelsquare(level*, std::ifstream*, vector);
 	~levelsquare(void);
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
@@ -65,19 +64,17 @@ public:
 	virtual void SetDivineOwner(uchar NDO) { DivineOwner = NDO; }
 	virtual void DrawToTileBuffer(void) const;
 	virtual void UpdateMemorizedAndDraw(void);
-	virtual level* GetMotherLevel(void) const { return MotherLevel; }
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids(void);
-	virtual void SetGroundLevelTerrain(groundlevelterrain* What) { GroundLevelTerrain = What; }
-	virtual void SetOverLevelTerrain(overlevelterrain* What) { OverLevelTerrain = What; }
-	virtual groundlevelterrain* GetGroundLevelTerrain(void) const	{return GroundLevelTerrain;}
-	virtual overlevelterrain* GetOverLevelTerrain(void) const		{return OverLevelTerrain;}
+	virtual void SetGroundLevelTerrain(groundlevelterrain*);
+	virtual void SetOverLevelTerrain(overlevelterrain*);
+	virtual groundlevelterrain* GetGroundLevelTerrain(void) const;
+	virtual overlevelterrain* GetOverLevelTerrain(void) const;
 	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
-private:
-	level* MotherLevel;
-	groundlevelterrain* GroundLevelTerrain;
-	overlevelterrain* OverLevelTerrain;
+	virtual level* GetMotherLevel(void) const { return (level*)MotherArea; }
+	virtual void SetMotherLevel(level* What) { MotherArea = (area*)What; }
+protected:
 	ushort CalculateEmitation(void) const;
 	struct emitter
 	{

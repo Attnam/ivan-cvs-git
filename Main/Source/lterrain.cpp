@@ -73,16 +73,12 @@ void overlevelterrain::Save(std::ofstream* SaveFile) const
 {
 	levelterrain::Save(SaveFile);
 	overterrain::Save(SaveFile);
-
-	//SaveFile->write((char*)&IsWalkable, sizeof(IsWalkable));
 }
 
 void overlevelterrain::Load(std::ifstream* SaveFile)
 {
 	levelterrain::Load(SaveFile);
 	overterrain::Load(SaveFile);
-
-	//SaveFile->read((char*)&IsWalkable, sizeof(IsWalkable));
 }
 
 void groundlevelterrain::DrawToTileBuffer(void) const

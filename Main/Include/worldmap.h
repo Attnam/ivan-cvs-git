@@ -9,11 +9,13 @@ class worldmap : public area
 {
 public:
 	worldmap(ushort, ushort);
-	worldmap(std::ifstream*);
+	worldmap(void) {}
+	//worldmap(std::ifstream*);
 	~worldmap(void);
 	virtual void Generate(void);
 	virtual void Draw(void) const;
 	virtual void Save(std::ofstream*) const;
+	virtual void Load(std::ifstream*);
 	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
 protected:
 	worldmapsquare*** Map;

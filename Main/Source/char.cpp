@@ -1574,8 +1574,8 @@ bool character::LowerStats(void)
 bool character::GainAllItems(void)
 {
 	if(game::GetWizardMode())
-		for(ushort c = 1; game::GetItemPrototype(c); c++)
-			Stack->AddItem(game::GetItemPrototype(c)->Clone());
+		for(ushort c = 1; prototypesystem::GetItemPrototype(c); c++)
+			Stack->AddItem(prototypesystem::GetItemPrototype(c)->Clone());
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
@@ -1649,11 +1649,6 @@ bool character::WalkThroughWalls(void)
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
 	return false;
-}
-
-float character::CWeaponStrength(void) const
-{
-	return GetWielded() ? GetWielded()->GetWeaponStrength() : GetMeleeStrength();
 }
 
 bool character::ShowKeyLayout(void)
@@ -1788,7 +1783,7 @@ float golem::GetMeleeStrength(void) const
 
 float character::GetDifficulty(void) const
 {
-	return float(GetStrength()) * GetEndurance() * GetAgility() * CWeaponStrength() / (float(CalculateArmorModifier()) * 25000);
+	return float(GetStrength()) * GetEndurance() * GetAgility() * GetAttackStrength() / (float(CalculateArmorModifier()) * 25000);
 }
 
 float character::GetAttackStrength(void) const
@@ -1948,7 +1943,7 @@ void character::NeutralAICommand(void)
 		for(ushort c = 0; c < GetStack()->GetItems(); c++)
 		{
 			if(CanWield())
-				if(GetStack()->GetItem(c)->GetWeaponStrength() > CWeaponStrength())
+				if(GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength())
 				{
 					SetWielded(GetStack()->GetItem(c));
 					break;
@@ -1968,7 +1963,7 @@ void character::NeutralAICommand(void)
 
 			for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); c++)
 			{
-				if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
+				if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
 				{
 					if(GetWielded())
 						GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
@@ -2052,7 +2047,7 @@ void character::HostileAICommand(void)
 		for(ushort c = 0; c < GetStack()->GetItems(); c++)
 		{
 			if(CanWield())
-				if(GetStack()->GetItem(c)->GetWeaponStrength() > CWeaponStrength())
+				if(GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength())
 				{
 					SetWielded(GetStack()->GetItem(c));
 					return;
@@ -2073,7 +2068,7 @@ void character::HostileAICommand(void)
 
 			for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); c++)
 			{
-				if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > CWeaponStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) && CanWield())
+				if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) && CanWield())
 				{
 					if(GetWielded())
 						GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());

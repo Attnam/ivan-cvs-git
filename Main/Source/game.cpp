@@ -1,15 +1,3 @@
-#define __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__ // for prototyping system
-
-#include "game.h"
-
-prototypecontainer<material> game::MaterialPrototype;
-prototypecontainer<character> game::CharacterPrototype;
-prototypecontainer<item> game::ItemPrototype;
-prototypecontainer<groundlevelterrain> game::GroundLevelTerrainPrototype;
-prototypecontainer<overlevelterrain> game::OverLevelTerrainPrototype;
-prototypecontainer<groundworldmapterrain> game::GroundWorldMapTerrainPrototype;
-prototypecontainer<overworldmapterrain> game::OverWorldMapTerrainPrototype;
-
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -18,6 +6,7 @@ prototypecontainer<overworldmapterrain> game::OverWorldMapTerrainPrototype;
 #include <string>
 #include <io.h>
 
+#include "game.h"
 #include "level.h"
 #include "char.h"
 #include "error.h"
@@ -598,8 +587,8 @@ void game::panel::Draw(void) const
 
 	FONTW->PrintfToDB(320, 534, "Speed: %d", Player->GetWielded() ? ushort(sqrt((ulong(Player->GetAgility() << 2) + Player->GetStrength()) * 20000 / Player->GetWielded()->GetWeight())) : ulong(Player->GetAgility() << 2) + Player->GetStrength());
 	FONTW->PrintfToDB(320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
-	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->CWeaponStrength());
-	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->CWeaponStrength() * Player->GetStrength() / 26667), ushort(Player->CWeaponStrength() * Player->GetStrength() / 16000 + 1));
+	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
+	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
 	FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
 	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::CCurrent() + 1);
 	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
@@ -635,66 +624,6 @@ void game::UpDateCameraY(void)
 		Camera.Y = 0;
 	else
 		Camera.Y = Player->GetPos().Y - 18;
-}
-
-character* game::BalancedCreateMonster(void)
-{
-	ushort Types = 0;
-
-	{
-	for(ushort c = 1; CharacterPrototype[c]; c++)
-		Types++;
-	}
-
-	for(ushort c = 0; ; c++)
-	{
-		ushort Chosen = 1 + rand() % Types;
-
-		if(!CharacterPrototype[Chosen]->Possibility())
-			continue;
-
-		character* Monster = CharacterPrototype[Chosen]->Clone();
-
-		if(c == 99 || (Monster->Danger() < Difficulty() * 1.5f && Monster->Danger() > Difficulty() * 0.5f))
-			return Monster;
-		else
-			delete Monster;
-	}
-}
-
-item* game::BalancedCreateItem(void)
-{
-	ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
-
-	{
-	for(ushort c = 1; ItemPrototype[c]; c++)
-	{
-		SumOfPossibilities += ItemPrototype[c]->Possibility();
-	}
-	}
-		
-	RandomOne = 1+ rand() % (SumOfPossibilities);
-	
-	for(ushort c = 1; ItemPrototype[c]; c++)
-	{
-		Counter += ItemPrototype[c]->Possibility();
-		if(Counter >= RandomOne)
-		{
-			return CreateItem(c);
-		}
-	}
-	ABORT("Balanced Create Item kaatuuu");
-	return 0;
-}
-
-character* game::CreateMonster(ushort Index)
-{
-	return CharacterPrototype[Index]->Clone();
-}
-
-item* game::CreateItem(ushort Index)
-{
-	return ItemPrototype[Index]->Clone();
 }
 
 const char* game::Insult(void)
@@ -902,6 +831,8 @@ bool game::Save(std::string SaveName)
 	srand(Time);
 	SaveFile->write((char*)&Time, sizeof(Time));
 
+	WorldMap->Save(SaveFile);
+
 	SaveLevel(SaveName, Current, false);
 
 	{
@@ -946,6 +877,9 @@ bool game::Load(std::string SaveName)
 	SaveFile->read((char*)&Time, sizeof(Time));
 	srand(Time);
 
+	WorldMap = new worldmap;
+	WorldMap->Load(SaveFile);
+
 	Level = new level*[Levels];
 
 	{
@@ -964,7 +898,7 @@ bool game::Load(std::string SaveName)
 
 	SaveFile->read((char*)&Pos, sizeof(Pos));
 
-	SetPlayer(Level[Current]->GetLevelSquare(Pos)->CCharacter());
+	SetPlayer(GetCurrentArea()->GetSquare(Pos)->CCharacter());
 
 	for(ushort c = 0; c < GetLevels(); c++)
 		*SaveFile -= LevelMsg[c];
@@ -986,132 +920,6 @@ std::string game::SaveName(void)
 		SaveName.resize(13);
 
 	return SaveName;
-}
-
-material* game::CreateRandomSolidMaterial(ulong Volume)
-{
-	for(ushort c = 1, Materials = 0; GetMaterialPrototype(c++); Materials++);
-
-	for(c = 1 + rand() % Materials;; c = 1 + rand() % Materials)
-		if(GetMaterialPrototype(c)->IsSolid())
-			return GetMaterialPrototype(c)->Clone(Volume);
-}
-
-material* game::CreateMaterial(ushort Index, ulong Volume)
-{
-	return MaterialPrototype[Index]->Clone(Volume);
-}
-
-material* game::LoadMaterial(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		material* Material = MaterialPrototype[Type]->Clone();
-		Material->Load(SaveFile);
-		return Material;
-	}
-	else
-		return 0;
-}
-
-item* game::LoadItem(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		item* Item = ItemPrototype[Type]->Clone(false, false);
-		Item->Load(SaveFile);
-		return Item;
-	}
-	else
-		return 0;
-}
-
-character* game::LoadCharacter(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		character* Character = CharacterPrototype[Type]->Clone(false, false, false);
-		Character->Load(SaveFile);
-		return Character;
-	}
-	else
-		return 0;
-}
-
-groundlevelterrain* game::LoadGroundLevelTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		groundlevelterrain* GroundLevelTerrain = GroundLevelTerrainPrototype[Type]->Clone(false, false);
-		GroundLevelTerrain->Load(SaveFile);
-		return GroundLevelTerrain;
-	}
-	else
-		return 0;
-}
-
-overlevelterrain* game::LoadOverLevelTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		overlevelterrain* OverLevelTerrain = OverLevelTerrainPrototype[Type]->Clone(false, false);
-		OverLevelTerrain->Load(SaveFile);
-		return OverLevelTerrain;
-	}
-	else
-		return 0;
-}
-
-groundworldmapterrain* game::LoadGroundWorldMapTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		groundworldmapterrain* GroundWorldMapTerrain = GroundWorldMapTerrainPrototype[Type]->Clone(false);
-		GroundWorldMapTerrain->Load(SaveFile);
-		return GroundWorldMapTerrain;
-	}
-	else
-		return 0;
-}
-
-overworldmapterrain* game::LoadOverWorldMapTerrain(std::ifstream* SaveFile)
-{
-	ushort Type;
-
-	SaveFile->read((char*)&Type, sizeof(Type));
-
-	if(Type)
-	{
-		overworldmapterrain* OverWorldMapTerrain = OverWorldMapTerrainPrototype[Type]->Clone(false);
-		OverWorldMapTerrain->Load(SaveFile);
-		return OverWorldMapTerrain;
-	}
-	else
-		return 0;
 }
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
@@ -1480,7 +1288,8 @@ void game::LoadLevel(std::string SaveName, ushort Index)
 	if(!SaveFile->is_open())
 		ABORT("Level gone!");
 
-	Level[Index] = new level(SaveFile, Index);
+	Level[Index] = new level;
+	Level[Index]->Load(SaveFile);
 
 	SaveFile->close();
 
@@ -1499,15 +1308,6 @@ void game::RemoveSaves(void)
 	}
 }
 
-item* game::CreateItem(std::string What)
-{
-	for(ushort x = 1; ItemPrototype[x]; x++)
-		if(ItemPrototype[x]->CanBeWished() && ItemPrototype[x]->GetNameSingular() == What)
-			return ItemPrototype[x]->CreateWishedItem();
-
-	return 0;
-}
-
 void game::SetPlayer(character* NP)
 {
 	Player = NP;
@@ -1515,11 +1315,3 @@ void game::SetPlayer(character* NP)
 	if(Player)
 		Player->SetIsPlayer(true);
 }
-
-ushort game::AddProtoType(material* What)		{ return MaterialPrototype.Add(What); }
-ushort game::AddProtoType(character* What)		{ return CharacterPrototype.Add(What); }
-ushort game::AddProtoType(item* What)			{ return ItemPrototype.Add(What); }
-ushort game::AddProtoType(overlevelterrain* What)	{ return OverLevelTerrainPrototype.Add(What); }
-ushort game::AddProtoType(groundlevelterrain* What)	{ return GroundLevelTerrainPrototype.Add(What); }
-ushort game::AddProtoType(overworldmapterrain* What)	{ return OverWorldMapTerrainPrototype.Add(What); }
-ushort game::AddProtoType(groundworldmapterrain* What)	{ return GroundWorldMapTerrainPrototype.Add(What); }
