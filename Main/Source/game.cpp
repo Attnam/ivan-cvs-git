@@ -200,7 +200,7 @@ void game::Init(std::string Name)
 
 		UpdateCamera();
 
-		game::GetCurrentArea()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 
 		for(ushort c = 1; GetGod(c); ++c)
 		{
@@ -1202,4 +1202,9 @@ uchar game::GetDirectionForVector(vector2d Vector)
 			return c;
 
 	return DIRECTION_COMMAND_KEYS;
+}
+
+void game::SendLOSUpdateRequest()
+{
+	LOSUpdateRequested = true;
 }

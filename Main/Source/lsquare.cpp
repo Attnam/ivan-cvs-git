@@ -1001,7 +1001,7 @@ void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTer
 	ChangeOverLevelTerrain(NewTerrain);
 	SignalEmitationDecrease(Emit);
 	ForceEmitterEmitation();
-	GetLevelUnder()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 
 	for(uchar c = 0; c < 4; ++c)
 		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)

@@ -148,7 +148,7 @@ public:
 	static long NumberQuestion(std::string, vector2d, ushort);
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
-	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
+	static void SendLOSUpdateRequest();// { LOSUpdateRequested = true; }
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static petrus* GetPetrus() { return Petrus; }
 	static void SetPetrus(petrus* What) { Petrus = What; }

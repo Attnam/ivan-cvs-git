@@ -4,6 +4,7 @@ Goals for IVAN version 0.40 alpha
 * = a high priority job
 ? = a low priority job
 & = an annoying job
+/ = partly done
 // = done
 
 Great Jobs:
@@ -31,7 +32,7 @@ Dungeon shops.
 Smithy to Attnam.
 Monster names.
 ?Some random encounters in the wilderness.
-*Various fountain effects & fountains to dungeons.
+/*Various fountain effects & fountains to dungeons.
 
 Smaller Jobs (see SourceForge for details):
 
@@ -52,14 +53,14 @@ Chemical warfare from afar
 Attacking Attnamians should be chaotic
 *Alignment to panel
 Possibility to break armor on criticals
-*Some realism to lampfighting
+//*Some realism to lampfighting
 Prohibition of WoS vandalism
 Forbidding shop polypiles
 Parchment should burn
 *Verbal danger level to panel
 ADD_MESSAGE parameter suggestion
 Honey
-*Pentagram safety
+//*Pentagram safety
 Size levels for corpses
 ?More versatile SeeWholeMapCheat
 The name of "a gold throne" is incorrect
@@ -73,10 +74,10 @@ Cats should have seven lives
 Uses for the librarian
 *Dolphin pools should be bigger
 Special eat effect for werewolf corpses
-*"Times used" value to wand description
+//*"Times used" value to wand description
 *Inventory weight should be shown
 Effect for critically hitting a golem
 Werewolves should gain exp
 Cats should devour rats
-Starting pet
-*Polypile balancement
+/Starting pet
+//*Polypile balancement

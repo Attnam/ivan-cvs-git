@@ -1419,7 +1419,7 @@ void ivan::MoveRandomly()
 /*		case 0:
 			Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
 			break;*/
-		// Currenlty too long
+		// Currently too long
 		case 1:
 			Engrave("Proletarians of all countries, unite!");
 			break;

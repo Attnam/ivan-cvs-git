@@ -808,7 +808,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 				game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-				game::GetCurrentArea()->UpdateLOS();
+				game::SendLOSUpdateRequest();
 				game::UpdateCamera();
 				return true;
 			}
@@ -945,6 +945,11 @@ void character::Die(bool ForceMsg)
 	if(HomeRoom)
 		GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(0);
 
+	GetSquareUnder()->RemoveCharacter();
+
+	if(!game::GetInWilderness())
+		CreateCorpse();
+
 	if(GetIsPlayer())
 	{
 		game::DrawEverything(false);
@@ -965,11 +970,6 @@ void character::Die(bool ForceMsg)
 			GetStack()->GetItem(0)->SetExists(false);
 			GetStack()->RemoveItem(0);
 		}
-
-	GetSquareUnder()->RemoveCharacter();
-
-	if(!game::GetInWilderness())
-		CreateCorpse();
 
 	if(GetTeam()->GetLeader() == this)
 		GetTeam()->SetLeader(0);
@@ -1541,7 +1541,7 @@ bool character::RaiseStats()
 	Agility += 10;
 	Perception += 10;
 	HP = GetMaxHP();
-	game::GetCurrentArea()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 
 	return false;
 }
@@ -1553,7 +1553,7 @@ bool character::LowerStats()
 	Agility -= 10;
 	Perception -= 10;
 	HP = GetMaxHP();
-	game::GetCurrentArea()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 
 	return false;
 }
@@ -2320,7 +2320,7 @@ bool character::Polymorph(character* NewForm)
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
 		NewForm->SetStateCounter(POLYMORPHED, 10000);
-		NewForm->GetLevelSquareUnder()->GetLevelUnder()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 	}
 	else
 	{
@@ -2454,8 +2454,6 @@ bool character::ShowWeaponSkills()
 
 void character::Faint()
 {
-	//DeActivateVoluntaryStates();
-
 	if(GetIsPlayer())
 		ADD_MESSAGE("You faint.");
 	else
@@ -2571,7 +2569,7 @@ void character::EndPolymorph()
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
 
-		game::GetPlayer()->GetSquareUnder()->GetAreaUnder()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 	}
 }
 
@@ -3012,7 +3010,7 @@ void character::ShowNewPosInfo() const
 	if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
 		game::UpdateCameraY();
 
-	game::GetCurrentArea()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 
 	if(!game::GetInWilderness())
 	{
@@ -3197,6 +3195,7 @@ void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
 bool character::ChangeRandomStat(short HowMuch)
 {
 	// Strength, Endurance, Agility, Perception
+
 	for(ushort c = 0; c < 15; c++)
 		switch(RAND() % 4)
 		{

@@ -33,7 +33,7 @@ bool attnam::GoDown(character* Who) const
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
 
 	game::GetCurrentLevel()->Luxify();
-	game::GetCurrentLevel()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 	game::UpdateCamera();
 
 	if(Who->HasMaakotkaShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
@@ -68,7 +68,7 @@ bool elpuricave::GoDown(character* Who) const
 		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Who->GetPos()), Temp[c]);
 
 	game::GetCurrentLevel()->Luxify();
-	game::GetCurrentLevel()->UpdateLOS();
+	game::SendLOSUpdateRequest();
 	game::UpdateCamera();
 	return true;
 }

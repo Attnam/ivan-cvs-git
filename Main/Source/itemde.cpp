@@ -17,6 +17,7 @@
 #include "config.h"
 #include "god.h"
 #include "strover.h"
+
 void can::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -787,8 +788,10 @@ bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long Siz
 
 std::string wand::Name(uchar Case) const 
 { 
-	if(TimesUsed)
-		return NameWithMaterial(Case) + " (used " + TimesUsed + " times)"; 
-	else
+	if(!TimesUsed)
 		return NameWithMaterial(Case);
+	else if(TimesUsed == 1)
+		return NameWithMaterial(Case) + " (used 1 time)"; 
+	else
+		return NameWithMaterial(Case) + " (used " + TimesUsed + " times)";
 }

@@ -952,24 +952,25 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 	{
 		levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
 		character* Char = Square->GetCharacter();
+		ushort Damage = Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y)));
 
 		if(Char)
 			if(Char->GetIsPlayer())
 			{
-				PlayerDamage = Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y)));
+				PlayerDamage = Damage;
 				PlayerHurt = true;
 			}
 			else
 			{
 				Terrorist->GetTeam()->Hostility(Char->GetTeam());
-				Char->GetStack()->ImpactDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))), Square->CanBeSeen());
-				Char->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
+				Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+				Char->ReceiveFireDamage(Terrorist, Damage);
 				Char->CheckGearExistence();
 				Char->CheckDeath("killed by an explosion");
 			}
 
-		Square->GetStack()->ImpactDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))), Square->CanBeSeen());
-		Square->GetStack()->ReceiveFireDamage(Terrorist, Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
+		Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+		Square->GetStack()->ReceiveFireDamage(Terrorist, Damage);
 
 		if(Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
 			Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
