@@ -166,7 +166,7 @@ void game::Init(std::string Name)
 					"goblins that roam freely in this area. Screams of Enner Beasts have\n"
 					"wailed in the distance and the cold air has almost freezed your body.\n"
 					"But now your eyes catch the destination: A small settlement of a few\n"
-					"houses build around a round, shining tower. The town has recently tried\n"
+					"houses build around a frog-shaped tower. The town has recently tried\n"
 					"to advertise itself as a perfect place for adventurous tourists who\n"
 					"seek to face an untouched nature. Unfortunately you were among those\n"
 					"few who didn't understand they really meant what they said.\n\n"
