@@ -27,7 +27,7 @@ public:
 	stack(square* = 0);
 	~stack();
 	void Load(inputfile&);
-	void PositionedDrawToTileBuffer(uchar = CENTER) const;
+	bool PositionedDrawToTileBuffer(uchar = CENTER) const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);
 	item* RemoveItem(ushort);

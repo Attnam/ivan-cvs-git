@@ -157,7 +157,7 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 	dwStyle |= WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
 	SetWindowLong( hWnd, GWL_STYLE, dwStyle );
 
-	// Aet window size
+	// Set window size
 	SetRect( &rc, 0, 0, 800, 600 );
 
 	AdjustWindowRectEx( &rc, GetWindowStyle(hWnd), GetMenu(hWnd) != NULL, GetWindowExStyle(hWnd) );
@@ -168,7 +168,7 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 	SetWindowPos( hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
 		SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
 
-	//  Make sure our window does not hang outside of the work area
+	// Make sure our window does not hang outside of the work area
 	SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
 	GetWindowRect( hWnd, &rc );
 	if( rc.left < rcWork.left ) rc.left = rcWork.left;

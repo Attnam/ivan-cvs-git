@@ -67,3 +67,6 @@ Lookmode should show player's name as char description, not "a human".
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor
  but the strongest player-obtainable weapon/armor ever generated.
+Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
+"Something dies" message would be nice when dark.
+Some variety to death messages, e.g. some messages influenced by the cause of death.

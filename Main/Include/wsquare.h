@@ -21,7 +21,8 @@ public:
 	virtual ~worldmapsquare();
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
-	virtual void DrawToTileBuffer() const;
+	virtual bool DrawTerrain() const;
+	virtual bool DrawCharacters() const;
 	virtual void UpdateMemorizedAndDraw();
 	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void SetOverWorldMapTerrain(overworldmapterrain*);

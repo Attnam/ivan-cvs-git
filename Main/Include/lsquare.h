@@ -60,7 +60,9 @@ public:
 	virtual bool Kick(ushort,uchar, character*);
 	virtual uchar GetDivineOwner() const { return DivineOwner; }
 	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
-	virtual void DrawToTileBuffer() const;
+	virtual bool DrawTerrain() const;
+	virtual bool DrawStacks() const;
+	virtual bool DrawCharacters() const;
 	virtual void UpdateMemorizedAndDraw();
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);

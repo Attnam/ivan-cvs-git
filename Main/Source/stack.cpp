@@ -20,11 +20,15 @@ stack::~stack()
 	Clean();
 }
 
-void stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
+bool stack::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
+	if(!GetItems())
+		return false;
+
 	for(ushort c = 0; c < GetItems(); ++c)
-		if(GetItem(c))
-			GetItem(c)->PositionedDrawToTileBuffer(LevelSquarePosition);
+		GetItem(c)->PositionedDrawToTileBuffer(LevelSquarePosition);
+
+	return true;
 }
 
 ushort stack::AddItem(item* ToBeAdded)

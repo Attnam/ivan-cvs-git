@@ -87,7 +87,6 @@ public:
 	static bitmap* GetHumanGraphic() { return Graphic[GHUMAN]; }
 	static bitmap* GetSymbolGraphic() { return Graphic[GSYMBOL]; }
 	static bitmap* GetTileBuffer() { return TileBuffer; }
-	static void BlitTileBuffer(vector2d, ushort = 256);
 	static void DrawCursor(vector2d);
 	static tile GetTile(graphic_id);
 	static tile AddUser(graphic_id);

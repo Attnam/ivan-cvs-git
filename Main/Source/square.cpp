@@ -53,10 +53,7 @@ void square::AddCharacter(character* Guy)
 void square::DrawMemorized() const
 {
 	if(GetKnown())
-	{
-		GetMemorized()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
-	}
+		GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, (GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4, 16, 16, ushort(256 * game::GetSoftGamma()));
 }
 
 void square::RemoveCharacter()

@@ -34,7 +34,6 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 
 		TileBuffer = new bitmap(16, 16);
 		OutlineBuffer = new bitmap(16, 16);
-		OutlineBuffer->ClearToColor(0xF81F);
 
 		atexit(igraph::DeInit);
 	}
@@ -49,23 +48,14 @@ void igraph::DeInit()
 
 	for(c = 0; c < GRAPHIC_TYPES; ++c)
 		delete Graphic[c];
-}
 
-void igraph::BlitTileBuffer(vector2d Pos, ushort Luminance)
-{
-	Luminance = ushort(Luminance * game::GetSoftGamma());
-
-	if(Luminance == 256)
-		TileBuffer->Blit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16);
-	else
-		TileBuffer->Blit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
+	delete TileBuffer;
+	delete OutlineBuffer;
 }
 
 void igraph::DrawCursor(vector2d Pos)
 {
-	ushort Luminance = ushort(256 * game::GetSoftGamma());
-
-	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
+	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256 * game::GetSoftGamma()));
 }
 
 tile igraph::GetTile(graphic_id GI)

@@ -16,7 +16,7 @@
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
-	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 item* can::TryToOpen(stack* Stack)
@@ -76,7 +76,7 @@ bool potion::Consume(character* Eater, float Amount)
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
-	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool scroll::CanBeRead(character* Reader) const
@@ -177,7 +177,7 @@ bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
-	Picture->MaskedBlit(game::GetOutlineItems() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool loaf::Consume(character* Eater, float Amount)

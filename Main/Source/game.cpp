@@ -582,6 +582,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
 	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;
+	SaveFile >> OutlineItems >> OutlineCharacters;
 
 	time_t Time;
 	SaveFile >> Time;

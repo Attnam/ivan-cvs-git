@@ -80,7 +80,7 @@ ushort levelsquare::CalculateEmitation() const
 	return Emitation;
 }
 
-void levelsquare::DrawToTileBuffer() const
+bool levelsquare::DrawTerrain() const
 {
 	GetGroundLevelTerrain()->DrawToTileBuffer();
 
@@ -88,21 +88,47 @@ void levelsquare::DrawToTileBuffer() const
 		GetFluidBuffer()->AlphaBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, 255 - TimeFromSpill);
 
 	GetOverLevelTerrain()->DrawToTileBuffer();
-	GetStack()->PositionedDrawToTileBuffer();
+
+	return true;
+}
+
+bool levelsquare::DrawStacks() const
+{
+	bool Items = false;
+
+	if(GetStack()->PositionedDrawToTileBuffer())
+		Items = true;
 
 	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
 
 	if(GetPos().X)
-		NS(vector2d(-1, 0), 1)->PositionedDrawToTileBuffer(1);
+		if(NS(vector2d(-1, 0), 1)->PositionedDrawToTileBuffer(1))
+			Items = true;
 
 	if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
-		NS(vector2d(1, 0), 3)->PositionedDrawToTileBuffer(3);
+		if(NS(vector2d(1, 0), 3)->PositionedDrawToTileBuffer(3))
+			Items = true;
 
 	if(GetPos().Y)
-		NS(vector2d(0, -1), 2)->PositionedDrawToTileBuffer(2);
+		if(NS(vector2d(0, -1), 2)->PositionedDrawToTileBuffer(2))
+			Items = true;
 
 	if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
-		NS(vector2d(0, 1), 0)->PositionedDrawToTileBuffer(0);
+		if(NS(vector2d(0, 1), 0)->PositionedDrawToTileBuffer(0))
+			Items = true;
+
+	return Items;
+}
+
+bool levelsquare::DrawCharacters() const
+{
+	if(GetCharacter())
+	{
+		GetCharacter()->DrawToTileBuffer();
+		return true;
+	}
+	else
+		return false;
 }
 
 void levelsquare::UpdateMemorizedAndDraw()
@@ -116,43 +142,114 @@ void levelsquare::UpdateMemorizedAndDraw()
 			SetKnown(true);
 		}
 
-		DrawToTileBuffer();
+		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
-		if(game::GetOutlineItems())
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+		ushort Luminance = GetLuminance();
 
-		if(GetStack()->GetItems() > 1)
-			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
-
-		ushort RealLuminance = GetLuminance();
-
-		igraph::GetTileBuffer()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16, RealLuminance);
-		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
-
-		if(game::GetOutlineItems())
+		if(Luminance >= 64)
 		{
-			igraph::GetOutlineBuffer()->Outline(ITEM_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+			ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
+			ushort RealLuminance = game::GetSeeWholeMapCheat() ? GammaLuminance : ushort(Luminance * game::GetSoftGamma());
+
+			if(!game::GetOutlineItems())
+			{
+				DrawTerrain();
+				DrawStacks();
+
+				igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+
+				if(GetStack()->GetItems() > 1)
+					igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
+
+				igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+
+				if(!game::GetOutlineCharacters())
+					if(GetStack()->GetItems() <= 1)
+					{
+						DrawCharacters();
+						igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+					}
+					else
+					{
+						igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+
+						if(GetCharacter())
+						{
+							igraph::GetTileBuffer()->ClearToColor(0xF81F);
+							DrawCharacters();
+							igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+						}
+					}
+				else
+				{
+					igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+
+					if(GetStack()->GetItems() > 1)
+						igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+
+					if(GetCharacter())
+					{
+						igraph::GetTileBuffer()->ClearToColor(0xF81F);
+
+						DrawCharacters();
+						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+
+						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
+						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+					}
+				}
+			}
+			else
+			{
+				DrawTerrain();
+
+				igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+				igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+				igraph::GetTileBuffer()->ClearToColor(0xF81F);
+
+				if(DrawStacks())
+				{
+					igraph::GetTileBuffer()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+
+					if(GetStack()->GetItems() > 1)
+						igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
+
+					igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+
+					igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), ITEM_OUTLINE_COLOR);
+
+					if(GetStack()->GetItems() > 1)
+						igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
+
+					igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+
+					if(GetCharacter())
+						igraph::GetTileBuffer()->ClearToColor(0xF81F);
+				}
+
+				igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+
+				if(!game::GetOutlineCharacters())
+				{
+					if(DrawCharacters())
+						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+				}
+				else
+					if(DrawCharacters())
+					{
+						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
+						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+					}
+			}
 		}
-
-		if(GetStack()->GetItems() > 1)
-			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
-
-		if(GetCharacter())
-			GetCharacter()->DrawToTileBuffer();
-
-		if(game::GetOutlineCharacters())
+		else
 		{
-			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+			Memorized->ClearToColor(0);
+			Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16);
+			igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 		}
-
-		if(game::GetSeeWholeMapCheat())
-			RealLuminance = 256;
-
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), RealLuminance);
 
 		NewDrawRequested = false;
 	}
@@ -676,29 +773,66 @@ void levelsquare::DrawCheat()
 {
 	if(NewDrawRequested || Fluided)
 	{
-		DrawToTileBuffer();
+		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
-		if(game::GetOutlineItems())
+		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
+
+		if(!game::GetOutlineItems())
 		{
-			igraph::GetOutlineBuffer()->Outline(ITEM_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+			DrawTerrain();
+			DrawStacks();
+
+			if(GetStack()->GetItems() > 1)
+				igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
+
+			if(!game::GetOutlineCharacters())
+			{
+				DrawCharacters();
+				igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+			}
+			else
+			{
+				igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+
+				if(GetCharacter())
+				{
+					igraph::GetTileBuffer()->ClearToColor(0xF81F);
+					DrawCharacters();
+					igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+					igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+				}
+			}
 		}
-
-		if(GetStack()->GetItems() > 1)
-			igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
-
-		if(GetCharacter())
-			GetCharacter()->DrawToTileBuffer();
-
-		if(game::GetOutlineCharacters())
+		else
 		{
-			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
-		}
+			DrawTerrain();
 
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+			igraph::GetTileBuffer()->ClearToColor(0xF81F);
+
+			if(DrawStacks())
+			{
+				igraph::GetTileBuffer()->Outline(ITEM_OUTLINE_COLOR);
+
+				if(GetStack()->GetItems() > 1)
+					igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
+
+				igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+				igraph::GetTileBuffer()->ClearToColor(0xF81F);
+			}
+
+			if(!game::GetOutlineCharacters())
+			{
+				if(DrawCharacters())
+					igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+			}
+			else
+				if(DrawCharacters())
+				{
+					igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+					igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+				}
+		}
 
 		NewDrawRequested = false;
 	}

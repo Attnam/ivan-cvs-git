@@ -42,13 +42,18 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	FONT->Printf(DOUBLEBUFFER, 212, 450, RED, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
 
-	CharRed->Outline(GREEN);
-	CharGreen->Outline(BLUE);
-	CharBlue->Outline(RED);
+	bitmap* OutRed = new bitmap(32, 32), * OutGreen = new bitmap(32, 32), * OutBlue = new bitmap(32, 32);
+
+	CharRed->CreateOutlineBitmap(OutRed, BLUE);
+	CharGreen->CreateOutlineBitmap(OutGreen, RED);
+	CharBlue->CreateOutlineBitmap(OutBlue, GREEN);
 
 	CharRed->MaskedBlit(DOUBLEBUFFER, 0, 0, 352, 308, 32, 32);
 	CharGreen->MaskedBlit(DOUBLEBUFFER, 0, 0, 384, 308, 32, 32);
 	CharBlue->MaskedBlit(DOUBLEBUFFER, 0, 0, 416, 308, 32, 32);
+	OutRed->MaskedBlit(DOUBLEBUFFER, 0, 0, 352, 308, 32, 32);
+	OutGreen->MaskedBlit(DOUBLEBUFFER, 0, 0, 384, 308, 32, 32);
+	OutBlue->MaskedBlit(DOUBLEBUFFER, 0, 0, 416, 308, 32, 32);
 
 	for(uchar x = 0; x < 8; ++x)
 	{

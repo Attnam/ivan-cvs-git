@@ -528,7 +528,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(game::GetOutlineCharacters() ? igraph::GetOutlineBuffer() :  igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool character::Wield()

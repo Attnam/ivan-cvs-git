@@ -34,10 +34,23 @@ void worldmapsquare::Load(inputfile& SaveFile)
 	SaveFile >> GroundWorldMapTerrain >> OverWorldMapTerrain;
 }
 
-void worldmapsquare::DrawToTileBuffer() const
+bool worldmapsquare::DrawTerrain() const
 {
 	GetGroundWorldMapTerrain()->DrawToTileBuffer();
 	GetOverWorldMapTerrain()->DrawToTileBuffer();
+
+	return true;
+}
+
+bool worldmapsquare::DrawCharacters() const
+{
+	if(GetCharacter())
+	{
+		GetCharacter()->DrawToTileBuffer();
+		return true;
+	}
+	else
+		return false;
 }
 
 void worldmapsquare::UpdateMemorizedAndDraw()
@@ -51,25 +64,34 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 			SetKnown(true);
 		}
 
-		DrawToTileBuffer();
+		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
+
+		DrawTerrain();
 
 		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
 		igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
-		if(GetCharacter())
-			GetCharacter()->DrawToTileBuffer();
-
-		if(game::GetOutlineCharacters())
+		if(!game::GetOutlineCharacters())
 		{
-			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+			DrawCharacters();
+			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 		}
+		else
+		{
+			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+			if(GetCharacter())
+			{
+				igraph::GetTileBuffer()->ClearToColor(0xF81F);
+				DrawCharacters();
+				igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+				igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+			}
+		}
 
 		NewDrawRequested = false;
 	}
@@ -146,23 +168,32 @@ void worldmapsquare::DrawCheat()
 {
 	if(NewDrawRequested)
 	{
-		DrawToTileBuffer();
+		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
+
+		DrawTerrain();
 
 		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
 
-		if(GetCharacter())
-			GetCharacter()->DrawToTileBuffer();
-
-		if(game::GetOutlineCharacters())
+		if(!game::GetOutlineCharacters())
 		{
-			igraph::GetOutlineBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
-			igraph::GetOutlineBuffer()->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-			igraph::GetOutlineBuffer()->ClearToColor(0xF81F);
+			DrawCharacters();
+			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 		}
+		else
+		{
+			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
 
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
+			if(GetCharacter())
+			{
+				igraph::GetTileBuffer()->ClearToColor(0xF81F);
+				DrawCharacters();
+				igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+				igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
+			}
+		}
 
 		NewDrawRequested = false;
 	}

@@ -25,7 +25,8 @@ public:
 	virtual void Load(inputfile&);
 	virtual void DrawMemorized() const;
 	virtual void UpdateMemorizedAndDraw() = 0;
-	virtual void DrawToTileBuffer() const = 0;
+	virtual bool DrawTerrain() const = 0;
+	virtual bool DrawCharacters() const = 0;
 	virtual void SetCharacter(character* What ) { Character = What; }
 	virtual void AddCharacter(character*);
 	virtual void RemoveCharacter();
