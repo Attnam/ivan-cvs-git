@@ -706,11 +706,10 @@ item* can::BetterVersion(void) const
 		return 0;
 }
 
-
 ushort whip::GetFormModifier() const
 {
 	if(GetMaterial(0)->IsFlexible())
-		return 110;
+		return 1000;
 	else
 		return 70;
 }

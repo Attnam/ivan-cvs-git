@@ -6,14 +6,14 @@ guard		180	15	25	30	24	2000
 shopkeeper	160	10	25	25	30	2000
 priest		180	10	20	15	18	1000
 oree		225	50	30	30	30	30000
-swatcommando	200	30	25	30	30	5000
+darkknight	200	30	25	30	30	5000
 ennerbeast	150	10	10	25	12	100000
 frog		25	30	5	5	18	20000
 elpuri		300	10	30	50	30	20000
 billswill	100	40	5	20	27	20000
-fallenvalpurist	150	10	5	10	15	1000
-fallenvalpurist	200	15	18	15	15	1000
-froggoblin	100	15	10	15	18	2000
+skeleton	150	10	5	10	15	1000
+skeleton	200	15	18	15	15	1000
+goblin		100	15	10	15	18	2000
 conicalmommo	100	2	4	50	9	20000
 flatmommo	50	4	2	25	9	20000
 golem		250	5	20	20	12	varies
@@ -32,22 +32,22 @@ housewife	160	15	10	15	24	500
 femaleslave	170	10	10	15	18	500
 librarian	170	5	5	5	12	500
 angel		180
-bat		20	45	2	1	25	3000
+bat		20	40	2	1	24	3000
 beholder
 genie
-gibberling	90	5	4	3	12	70000
+gibberling	90	20	5	5	15	70000
 gnoll
-imp		50	25	10	7	12	15000		80000
-kobold		70	12	8	6	12	15000		90000
-large cat	60	23	8	6	20	15000		30000
-large rat	20	8	3	2	10	4000		3000
+imp		50	15	10	10	15	15000		80000
+kobold		90	10	5	5	12	15000		90000
+large cat	60	25	5	5	21	15000		30000
+large rat	30	10	3	2	12	4000		3000
 lion		300							150000
 mammoth		500							5000000
 raven		60
 unicorn
 werewolf (h)	170	15	12	14	12	1000		80000
 werewolf (w)	120	25	22	24	20	9000		80000
-zombie		160	10	8	5	15	1000		1500
-mistress	180	20	25	50	10	1200		60000
+zombie		160	5	10	5	12	1000		1500
+mistress	180	35	25	50	30	1200		60000
 orc		160							50000
 troll		230							200000

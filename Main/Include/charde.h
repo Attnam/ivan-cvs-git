@@ -1045,10 +1045,10 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(160);
-		SetAgility(10);
-		SetStrength(8);
+		SetAgility(5);
+		SetStrength(10);
 		SetEndurance(5);
-		SetPerception(15);
+		SetPerception(12);
 		SetLegType(0);		// Needs GFX
 		SetTorsoType(0);	// Needs GFX
 		SetArmType(0);		// Needs GFX
@@ -1073,10 +1073,10 @@ class CHARACTER
 	InitMaterials(new impflesh),
 	{
 		SetSize(50);
-		SetAgility(25);
+		SetAgility(15);
 		SetStrength(10);
-		SetEndurance(7);
-		SetPerception(12);
+		SetEndurance(10);
+		SetPerception(15);
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
@@ -1093,10 +1093,10 @@ class CHARACTER
 	InitMaterials(new batflesh),
 	{
 		SetSize(20);
-		SetAgility(45);
+		SetAgility(40);
 		SetStrength(2);
 		SetEndurance(1);
-		SetPerception(25);
+		SetPerception(24);
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
@@ -1116,10 +1116,10 @@ class CHARACTER
 	InitMaterials(new humanflesh),
 	{
 		SetSize(180);
-		SetAgility(20);
+		SetAgility(35);
 		SetStrength(25);
 		SetEndurance(50);
-		SetPerception(10);
+		SetPerception(30);
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }
@@ -1173,10 +1173,10 @@ class CHARACTER
 	humanoid,
 	InitMaterials(new koboldflesh),
 	{
-		SetSize(70);
-		SetAgility(12);
-		SetStrength(8);
-		SetEndurance(6);
+		SetSize(90);
+		SetAgility(10);
+		SetStrength(5);
+		SetEndurance(5);
 		SetPerception(12);
 	},
 public:
@@ -1195,15 +1195,15 @@ class CHARACTER	// it should be noted that I no idea what
 	InitMaterials(new gibberlingflesh),
 	{
 		SetSize(90);
-		SetAgility(5);
-		SetStrength(4);
-		SetEndurance(3);
-		SetPerception(12);
+		SetAgility(20);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(15);
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 70000; else return 0; }
 protected:
-	virtual vector2d GetBitmapPos() const RETV(480,0)
+	virtual vector2d GetBitmapPos() const RETV(448,0)
 	virtual std::string NameSingular() const RET("gibberling")
 	virtual float GetMeleeStrength() const RET(5000)
 );
@@ -1215,10 +1215,10 @@ class CHARACTER
 	InitMaterials(new catflesh),
 	{
 		SetSize(60);
-		SetAgility(23);
-		SetStrength(8);
-		SetEndurance(6);
-		SetPerception(20);
+		SetAgility(25);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(21);
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
@@ -1234,11 +1234,11 @@ class CHARACTER
 	character,
 	InitMaterials(new ratflesh),
 	{
-		SetSize(20);
-		SetAgility(8);
+		SetSize(30);
+		SetAgility(10);
 		SetStrength(3);
 		SetEndurance(2);
-		SetPerception(10);
+		SetPerception(12);
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }

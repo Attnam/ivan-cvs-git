@@ -999,18 +999,18 @@ class ITEM
 	meleeweapon,
 	InitMaterials(new leather),
 	{
-		SetSize(150);
+		SetSize(200);
 	},
 public:
 	virtual ushort Possibility() const RET(25)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,224))
 	virtual std::string NameSingular() const RET("whip")
-	virtual float OfferModifier() const RET(0.5)
+	virtual float OfferModifier() const RET(0.5f)
 	virtual vector2d GetBitmapPos() const RETV(32,0)
 	virtual uchar GetWeaponCategory() const { return WHIPS; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 240; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const;
 );
-#endif
 
+#endif

@@ -1451,6 +1451,9 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 void mistress::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new whip)));
+
+	GetCategoryWeaponSkill(WHIPS)->AddHit(10000);
+	GetCurrentSingleWeaponSkill()->AddHit(10000);
 }
 
 void werewolf::ChangeIntoHuman()
@@ -1466,6 +1469,10 @@ void werewolf::ChangeIntoHuman()
 	SetHeadType(1);
 	SetShieldType(0);
 	SetIsWolf(false);
+	SetStrengthExperience(0);
+	SetEnduranceExperience(0);
+	SetAgilityExperience(0);
+	SetPerceptionExperience(0);
 }
 
 void werewolf::ChangeIntoWolf()
@@ -1482,6 +1489,10 @@ void werewolf::ChangeIntoWolf()
 	SetShieldType(0);
 	SetIsWolf(true);
 	SetWielded(0);
+	SetStrengthExperience(0);
+	SetEnduranceExperience(0);
+	SetAgilityExperience(0);
+	SetPerceptionExperience(0);
 }
 
 void werewolf::Be()
