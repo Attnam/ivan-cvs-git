@@ -304,7 +304,7 @@ void terrain::SSquareUnder(square* Square)
 void altar::DrawToTileBuffer(void) const
 {
 	igraph::CTerrainGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
-	igraph::CSymbolGraphic()->MaskedBlit(igraph::CTileBuffer(), (COwnerGod()-1) << 4, 0, 0, 0, 16, 16);
+	igraph::CSymbolGraphic()->MaskedBlit(igraph::CTileBuffer(), COwnerGod() << 4, 0, 0, 0, 16, 16);
 }
 
 void altar::Load(std::ifstream* SaveFile)
