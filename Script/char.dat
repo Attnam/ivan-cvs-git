@@ -4203,7 +4203,6 @@ sumowrestler
 	KnownCWeaponSkills = { 2, UNARMED, KICK; }
 	CWeaponSkillHits = { 2, 1000, 1000; }
 	AttackStyle = USE_ARMS|USE_LEGS;
-	Belt = belt(BELT_OF_LEVITATION);
 	IsUnique = true;
 	IsPolymorphable = false;
 	FriendlyReplies =

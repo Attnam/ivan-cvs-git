@@ -165,7 +165,7 @@ character* god::CreateAngel(int LifeBase)
 	{
 	  angel* Angel;
 
-	  if(LifeBase && !(RAND() % 5))
+	  if(LifeBase && (!(RAND() % 5) || Relation == 1000))
 	    Angel = new archangel(GetType());
 	  else
 	    Angel = new angel(GetType());

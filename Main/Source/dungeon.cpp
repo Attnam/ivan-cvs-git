@@ -184,28 +184,29 @@ level* dungeon::LoadLevel(inputfile& SaveFile, int Number)
 int dungeon::GetLevelTeleportDestination(int From) const
 {
   int To;
+
   if(Index == ELPURI_CAVE)
     {
       if(RAND_2)
 	{
 	  To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
+
 	  if(From > DARK_LEVEL)
-	    To = From;
-	    
+	    To = From;	    
 	}
       else
 	{
 	  To = From - RAND_2 - RAND_2 - RAND_2 - RAND_2 - 1;
+
 	  if(To < 0)
 	    To = 0;
 	}
+
       return To;
     }
 
-
   if(Index == UNDER_WATER_TUNNEL)
-    {
-      return RAND_N(3);
-    }
+    return RAND_N(3);
+
   return From;
 }

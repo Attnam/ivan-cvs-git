@@ -390,7 +390,7 @@ bool fountain::Drink(character* Drinker)
 		bool Created = false;
 		character* Monster = 0;
 
-		switch(RAND() & 3)
+		switch(RAND() % 5)
 		  {
 		  case 0:
 		    Monster = new snake;
@@ -402,7 +402,14 @@ bool fountain::Drink(character* Drinker)
 		    Monster = new spider;
 		    break;
 		  case 3:
-		    Monster = new frog(RAND() % 5 ? DARK : RAND() % 5 ? GREATER_DARK : GIANT_DARK);
+		    if(!RAND_N(50))
+		      Monster = new dolphin;
+		    else
+		      Monster = new frog(RAND() % 5 ? DARK : RAND() % 5 ? GREATER_DARK : GIANT_DARK);
+
+		    break;
+		  case 4:
+		    Monster = new largerat;
 		    break;
 		  }
 
@@ -410,7 +417,9 @@ bool fountain::Drink(character* Drinker)
 		  {
 		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-		    if(GetLevel()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
+		    if(GetLevel()->IsValidPos(TryToCreate)
+		    && GetNearLSquare(TryToCreate)->IsFlyable()
+		    && !GetNearLSquare(TryToCreate)->GetCharacter())//Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
 		      {
 			Created = true;
 			Monster->PutTo(TryToCreate);
@@ -456,6 +465,7 @@ bool fountain::Drink(character* Drinker)
 	    case 7:
 	      {
 		olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
+
 		if(Drinker->IsStuck())
 		  {
 		    Drinker->SetStuckTo(0);
@@ -472,6 +482,7 @@ bool fountain::Drink(character* Drinker)
 		  {
 		    int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
 		    int From = GetLevel()->GetIndex();
+
 		    if(To == From)
 		      game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);		   
 		    else
@@ -486,7 +497,7 @@ bool fountain::Drink(character* Drinker)
 		    else
 		      {
 			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
-			Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 10000 + RAND() % 5001), false, false);
+			Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 1000 + RAND() % 501), false, false);
 		      }
 		  }
 	      }

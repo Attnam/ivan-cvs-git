@@ -107,14 +107,14 @@ material* organic::EatEffect(character* Eater, long Amount)
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / (1000 * (GetSpoilLevel() + 1)));
 
-  if(IsInfectedByLeprosy() && Amount && !RAND_N(50000 / Amount))
+  if(IsInfectedByLeprosy() && Amount && !RAND_N(25000 / Amount))
     Eater->GainIntrinsic(LEPROSY);
 
   if(GetSpoilLevel() > 0)
     {
       Eater->BeginTemporaryState(CONFUSED, int(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
 
-      if(CanHaveParasite() && !(RAND() % (1000 / GetSpoilLevel())))
+      if(CanHaveParasite() && !(RAND() % (500 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 

@@ -2673,21 +2673,11 @@ bool game::EndSumoWrestling(int Result)
     {
       PlayerSumoChampion = true;
       character* Sumo = GetSumo();
-      item* Belt = Sumo && Sumo->IsHumanoid() ? static_cast<humanoid*>(Sumo)->GetBelt() : 0;
+      //item* Belt = Sumo && Sumo->IsHumanoid() ? static_cast<humanoid*>(Sumo)->GetBelt() : 0;
       festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
-
-      if(Belt)
-	{
-	  Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun() << " says and hands you " << Belt->GetName(INDEFINITE) << ".\n\"";
-	  Belt->MoveTo(PLAYER->GetStack());
-	}
-
-      Msg << "Allow me to ";
-
-      if(Belt)
-	Msg << "also ";
-
-      Msg << "teach you a few nasty martial art tricks the years have taught me.\"";
+      Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun() << " says and hands you a belt of levitation.\n\"";
+      (new belt(BELT_OF_LEVITATION))->MoveTo(PLAYER->GetStack());
+      Msg << "Allow me to also teach you a few nasty martial art tricks the years have taught me.\"";
       PLAYER->GetCWeaponSkill(UNARMED)->AddHit(100000);
       PLAYER->GetCWeaponSkill(KICK)->AddHit(100000);
       character* Imperialist = GetCurrentLevel()->GetLSquare(5, 5)->GetRoom()->GetMaster();
