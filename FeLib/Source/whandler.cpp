@@ -274,10 +274,9 @@ void globalwindowhandler::Init(const char* Title)
 
 int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
+  SDL_Event event;
   if(EmptyBuffer)
     {
-      SDL_Event event;
-
       while(SDL_PollEvent(&event))
 	ProcessMessage(event);	     
 
@@ -289,7 +288,6 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     if(KeyBuffer.Length())
       {
 	int Key =  KeyBuffer.Remove(0);
-	int BackUp = Key;
 
 	if(Key > 0xE000) 
 	  return Key - 0xE000;
@@ -299,10 +297,23 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
       }
     else
       {
-	SDL_Event event;
-	SDL_WaitEvent(&event);
-	ProcessMessage(event);
-      }				
+	if(SDL_PollEvent(&event))
+	  ProcessMessage(event);
+	else
+	  {
+	    if(ControlLoop)
+	      {
+		ControlLoop();
+		++Tick;
+		SDL_Delay(50);
+	      }
+	    else
+	      {
+		SDL_WaitEvent(&event);
+		ProcessMessage(event);
+	      }
+	  }
+      }
 }
 
 int globalwindowhandler::ReadKey()

@@ -1457,6 +1457,6 @@ void game::LookHandler(vector2d CursorPos)
 
 void game::AnimationController()
 {
-  if(GetRunning && GetInGetCommand())
+  if(GetRunning() && GetInGetCommand())
     game::DrawEverything();
 }

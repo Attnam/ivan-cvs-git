@@ -107,6 +107,7 @@ class lsquare : public square
   virtual bool ReceiveApply(item*, character*);
   virtual bool DipInto(item*, character*);
   virtual void DrawCharacterSymbols(vector2d, ushort);
+  virtual bool LockEverything(character*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

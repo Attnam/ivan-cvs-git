@@ -1381,7 +1381,7 @@ bool key::Apply(character* User)
       if(Dir == 0xFF)
 	return false;
 
-      vector2d ApplyPos = game::GetMoveVector(Dir);
+      vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
 
       if(game::IsValidPos(ApplyPos))
 	game::GetCurrentLevel()->GetLSquare(ApplyPos)->ReceiveApply(this, User);
@@ -2232,6 +2232,26 @@ item* corpse::PrepareForConsuming(character*)
   return this;
 }
 
+bool wandoflocking::BeamEffect(character* Who, std::string, uchar, lsquare* Where) 
+{ 
+  return Where->LockEverything(Who); 
+}
+
+bool wandoflocking::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a bug in the wand locking code", Direction, 10);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}
+
 void materialcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
@@ -2320,3 +2340,4 @@ ushort banana::GetMaterialColor0(ushort Frame) const
   else
     return MAKE_RGB(GET_RED(Color) * Frame / 20, GET_GREEN(Color) * Frame / 20, GET_BLUE(Color) * Frame / 20);
 }
+

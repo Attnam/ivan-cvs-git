@@ -2070,6 +2070,26 @@ class ITEM
   character* Deceased;
 );
 
+class ITEM
+(
+  wandoflocking,
+  wand,
+  InitMaterials(new copper),
+  {
+    SetSize(30);
+    SetCharges(2 + RAND() % 5);
+    SetTimesUsed(0);
+  },
+ public:
+  static ushort Possibility() { return 20; }
+  virtual std::string NameSingular() const { return "wand of locking"; }
+  virtual std::string NamePlural() const { return "wands of locking"; }
+  virtual float OfferModifier() const { return 10; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual ulong Price() const { return 70; }
+  virtual ushort GetBeamColor() const { return WHITE; }
+  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+);
 #endif
 
 

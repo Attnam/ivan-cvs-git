@@ -1204,3 +1204,13 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
     }
 }
 
+bool lsquare::LockEverything(character* Zapper)
+{
+  if(GetOLTerrain()->GetIsLocked())
+    {
+      GetOLTerrain()->Lock();
+      return true;
+    }
+  else
+    return false;
+}

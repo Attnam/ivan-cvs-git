@@ -536,7 +536,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
   if(DrawDiameters && !DrawSides)
     for(c = 0; c < Points.size(); ++c)
       for(ushort a = 0; a < Points.size(); ++a)
-	if(abs(long(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
+	if(abs(int(c - a)) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
 	  DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
 
   if(!DrawDiameters)

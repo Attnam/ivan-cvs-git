@@ -792,9 +792,8 @@ void door::CreateBoobyTrap()
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(Thingy->GetType() == key::StaticType())  // What the? EEEEEEEVVVVVVVVIIIIIIILLLLLLL HEX!!! Reply: Hey. It's worse than IsKey() function in item.
-					      // Reply: If you admit it's worse, why don't you fix it?
-    { 
+  if(Thingy->GetType() == key::StaticType())  
+    {
       if(IsOpen)
 	return false;
 
