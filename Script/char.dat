@@ -1,0 +1,25 @@
+/* Numeric character data loaded during game startup */
+
+/*human
+{
+	ReCalculate = true;
+	Agility = 15 + rand%11;
+	Strength = 10 + rand%6;
+	Endurance = 10 + rand%6;
+	Perception = 10 + rand%6;
+	Money = 200 + rand%101;
+	TotalVolume = 60000;
+	TotalSize = 180;
+}
+
+SkinColor
+CapColor
+HairColor
+TorsoMainColor
+BeltColor
+TorsoSpecialColor
+ArmMainColor
+ArmSpecialColor
+LegMainColor
+LegSpecialColor
+ClothColor*/

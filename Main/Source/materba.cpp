@@ -35,7 +35,7 @@ void material::Load(inputfile& SaveFile)
 
 void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier)
 {
-  Eater->ReceiveNutrition(long(NutritionValue() * (Volume > Amount ? Amount : Volume) * GetDensity() * NPModifier / 50000));
+  Eater->ReceiveNutrition(long(GetNutritionValue() * (Volume > Amount ? Amount : Volume) * GetDensity() * NPModifier / 50000));
 }
 
 void material::EatEffect(character*, float, float)
@@ -52,24 +52,24 @@ long material::CalculateOfferValue(char GodAlignment) const
 {
   long Value = 0;
 
-  if(Alignment() == EVIL)
+  if(GetAlignment() == EVIL)
     {
       if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-	Value += GetVolume() * OfferValue();
+	Value += GetVolume() * GetOfferValue();
       else
 	if(GodAlignment == GOOD)
-	  Value -= GetVolume() * OfferValue();
+	  Value -= GetVolume() * GetOfferValue();
     }
-  else if(Alignment() == GOOD)
+  else if(GetAlignment() == GOOD)
     {
       if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-	Value += GetVolume() * OfferValue();
+	Value += GetVolume() * GetOfferValue();
       else
 	if(GodAlignment == EVIL)
-	  Value -= GetVolume() * OfferValue();
+	  Value -= GetVolume() * GetOfferValue();
     }
   else
-    Value += GetVolume() * OfferValue();
+    Value += GetVolume() * GetOfferValue();
 
   return Value;
 }

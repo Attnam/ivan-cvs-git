@@ -52,6 +52,7 @@ class datamemberbase
 template <class type> class datamembertemplate : public datamemberbase
 {
  public:
+  ~datamembertemplate();
   datamembertemplate() : Base(0), Member(0) { }
   type* GetMember(bool) const;
   void SetMember(type* What) { Member = What; }
@@ -179,7 +180,9 @@ template <class type> class contentmap : public script
 {
  public:
   contentmap();
+  ~contentmap() { DeleteContents(); }
   void ReadFrom(inputfile&);
+  void DeleteContents();
   contentscript<type>* GetContentScript(ushort X, ushort Y) { return ContentScriptMap[X][Y]; }
  protected:
   contentscript<type>*** ContentScriptMap;
@@ -191,8 +194,9 @@ class roomscript : public scriptwithbase<roomscript>
 {
  public:
   roomscript();
+  ~roomscript();
   void ReadFrom(inputfile&, bool = false);
-  std::vector<squarescript*>& GetSquare() { return Square; }
+  const std::vector<squarescript*>& GetSquare() { return Square; }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -221,9 +225,10 @@ class levelscript : public scriptwithbase<levelscript>
 {
  public:
   levelscript();
+  ~levelscript();
   void ReadFrom(inputfile&, bool = false);
-  std::vector<squarescript*>& GetSquare() { return Square; }
-  std::map<uchar, roomscript*>& GetRoom() { return Room; }
+  const std::vector<squarescript*>& GetSquare() { return Square; }
+  const std::map<uchar, roomscript*>& GetRoom() { return Room; }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -249,8 +254,9 @@ class dungeonscript : public scriptwithbase<dungeonscript>
 {
  public:
   dungeonscript();
+  ~dungeonscript();
   void ReadFrom(inputfile&);
-  std::map<uchar, levelscript*>& GetLevel() { return Level; }
+  const std::map<uchar, levelscript*>& GetLevel() { return Level; }
  protected:
   std::map<uchar, levelscript*> Level;
   DATAMEMBER(levelscript, LevelDefault);
@@ -262,7 +268,7 @@ class teamscript : public script
  public:
   teamscript();
   void ReadFrom(inputfile&);
-  std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
+  const std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
   DATAMEMBER(ushort, AttackEvilness);
@@ -272,16 +278,77 @@ class gamescript : public script
 {
  public:
   gamescript();
+  ~gamescript();
   void ReadFrom(inputfile&);
-  std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
-  std::vector<std::pair<uchar, teamscript*> >& GetTeam() { return Team; }
+  const std::vector<std::pair<uchar, teamscript*> >& GetTeam() { return Team; }
+  const std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
  protected:
-  std::map<uchar, dungeonscript*> Dungeon;
   std::vector<std::pair<uchar, teamscript*> > Team;
+  std::map<uchar, dungeonscript*> Dungeon;
   DATAMEMBER(dungeonscript, DungeonDefault);
   DATAMEMBER(uchar, Dungeons);
   DATAMEMBER(uchar, Teams);
 };
 
-#endif
+template <class type> class basedata : public script
+{
+ public:
+  void ReadFrom(inputfile&);
+  ushort GetType() const { return Type; }
+  void SetType(ushort What) { Type = What; }
+ protected:
+  ushort Type;
+};
 
+template <class type> class data : public basedata<type> { };
+
+class data<character> : public basedata<character>
+{
+ public:
+  data<character>();
+ protected:
+};
+
+class data<item> : public basedata<item>
+{
+ public:
+  data<item>();
+ protected:
+};
+
+class data<material> : public basedata<material>
+{
+ public:
+  data<material>();
+ protected:
+  DATAMEMBER(ushort, StrengthValue);
+  DATAMEMBER(ushort, ConsumeType);
+  DATAMEMBER(ushort, Density);
+  DATAMEMBER(ushort, OfferValue);
+  DATAMEMBER(ushort, Color);
+  DATAMEMBER(ushort, PriceModifier);
+  DATAMEMBER(bool, IsSolid);
+  DATAMEMBER(ushort, Emitation);
+  DATAMEMBER(bool, CanBeWished);
+  DATAMEMBER(uchar, Alignment);
+  DATAMEMBER(ushort, NutritionValue);
+  DATAMEMBER(bool, IsAlive);
+  DATAMEMBER(bool, IsBadFoodForAI);
+  DATAMEMBER(ushort, ExplosivePower);
+  DATAMEMBER(bool, IsFlammable);
+  DATAMEMBER(bool, IsFlexible);
+  DATAMEMBER(bool, IsExplosive);
+};
+
+template <class type> class database
+{
+ public:
+  ~database();
+  void ReadFrom(inputfile&);
+  void Apply();
+  const std::map<std::string, data<type>*>& GetData() { return Data; }
+ protected:
+  std::map<std::string, data<type>*> Data;
+};
+
+#endif

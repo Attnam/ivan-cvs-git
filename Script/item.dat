@@ -1,0 +1,14 @@
+/* Numeric item data loaded during game startup */
+
+/*banana
+{
+	DefaultSize = 20;
+	Possibility = 100;
+	OfferModifier = 1;
+	Color = 56, 56, 56;
+	PriceModifier = 40;
+	StrengthModifier = 50;
+	FormModifier = 50;
+	DefaultMainVolume = 40;
+	DefaultContainedVolume = 150;
+}*/

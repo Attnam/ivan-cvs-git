@@ -68,7 +68,7 @@ class item : public object
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
   virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
-  virtual item* TryToOpen(character*) { return 0; }
+  virtual item* TryToOpen(character*);
   virtual bool Consume(character*, float);
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }

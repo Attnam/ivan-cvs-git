@@ -1199,7 +1199,7 @@ class ITEM
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual bool Apply(character*);
-  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->IsExplosive()) ? true : false; }
+  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
   virtual uchar GetCategory() const { return TOOL; }
   virtual bool IsAppliable(character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
@@ -1405,7 +1405,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   //virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
-  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->IsExplosive()) ? true : false; }
+  virtual bool IsExplosive() const { return (GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive()) ? true : false; }
   virtual uchar GetCharged() const { return Charged; }
   virtual void SetCharged(bool What) { Charged = What; }
   bool IsChargable() const { return true; }

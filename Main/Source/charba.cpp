@@ -888,10 +888,7 @@ bool character::OpenItem()
 	return true;
       }
     else
-      {
-	ADD_MESSAGE("You can't open %s.", Item->CHARNAME(DEFINITE));
-	return false;
-      }
+      return false;
 
   return false;
 }

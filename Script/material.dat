@@ -1,0 +1,33 @@
+/* Numeric material data loaded during game startup */
+
+/* Members (values marked with (*) are obligatory):
+
+   ushort StrengthValue; (*)
+   ushort ConsumeType; (*)
+   ushort Density; (*)
+   ushort OfferValue; (*)
+   ushort Color; (*)
+   ushort PriceModifier;
+   bool IsSolid;
+   ushort Emitation;
+   bool CanBeWished;
+   uchar Alignment;
+   ushort NutritionValue;
+   bool IsAlive;
+   bool IsBadFoodForAI;
+   ushort ExplosivePower;
+   bool IsFlammable;
+   bool IsFlexible;
+   bool IsExplosive;
+*/
+
+iron
+{
+	StrengthValue = 100;
+	ConsumeType = METAL;
+	Density = 8000;
+	OfferValue = 10;
+	Color = rgb(56, 56, 56);
+	PriceModifier = 40;
+	IsSolid = true;
+}

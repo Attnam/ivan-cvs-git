@@ -366,3 +366,11 @@ void item::GenerateLeftOvers(character*)
   RemoveFromSlot();
   SetExists(false);
 }
+
+item* item::TryToOpen(character* Char)
+{
+  if(Char->GetIsPlayer())
+    ADD_MESSAGE("You can't open %s.", CHARNAME(DEFINITE));
+
+  return 0;
+}

@@ -4,6 +4,7 @@
 #include "strover.h"
 #include "error.h"
 #include "femath.h"
+#include "graphics.h"
 
 outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
 {
@@ -291,6 +292,12 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       if(Word == "rand")
 	{
 	  Value = RAND();
+	  continue;
+	}
+
+      if(Word == "rgb")
+	{
+	  Value = MAKE_RGB(ReadNumber(ValueMap), ReadNumber(ValueMap), ReadNumber(ValueMap));
 	  continue;
 	}
 

@@ -28,10 +28,10 @@ class MATERIAL
  public:
   virtual ushort GetStrengthValue() const { return 100; }
   virtual ushort GetConsumeType() const { return METAL; }
-  virtual ushort GetDensity() const { return 8000; }
+  //virtual ushort GetDensity() const { return 8000; }
   virtual ushort OfferValue() const { return 10; }
   static bool IsSolid() { return true; }
-  virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
+  //virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
   virtual ulong RawPrice() const { return GetVolume() >> 8; }
  protected:
   virtual std::string NameStem() const { return "iron"; }
@@ -79,7 +79,7 @@ class MATERIAL
  public:
   virtual ushort GetStrengthValue() const { return 5; }
   virtual ushort GetConsumeType() const { return FRUIT; }
-  virtual ushort GetDensity() const { return 1200; }
+  //virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 10; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
   virtual short NutritionValue() const { return 200; }

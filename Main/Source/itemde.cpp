@@ -556,7 +556,7 @@ item* can::BetterVersion() const
 
 ushort whip::GetFormModifier() const
 {
-  if(GetMainMaterial()->IsFlexible())
+  if(GetMainMaterial()->GetIsFlexible())
     return 1000;
   else
     return 70;
@@ -564,7 +564,7 @@ ushort whip::GetFormModifier() const
 
 bool backpack::Apply(character* Terrorist)
 {
-  if(GetContainedMaterial() && GetContainedMaterial()->IsExplosive())
+  if(GetContainedMaterial() && GetContainedMaterial()->GetIsExplosive())
     {
       if(Terrorist->GetIsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
@@ -582,7 +582,7 @@ bool backpack::Apply(character* Terrorist)
       else
 	DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
 
-      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
+      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetExplosivePower());
       return true;
     }
   else
@@ -676,7 +676,7 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
       RemoveFromSlot();
       SetExists(false);
-      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->ExplosivePower());
+      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetExplosivePower());
       return true;
     }
 
@@ -695,7 +695,7 @@ std::string wand::PostFix() const
 
 bool scroll::ReceiveDamage(character*, short, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
+  if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->GetIsFlammable())
     {
       if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
@@ -759,7 +759,7 @@ bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uch
 
 bool holybook::ReceiveDamage(character*, short, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->IsFlammable())
+  if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->GetIsFlammable())
     {
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
@@ -1050,7 +1050,7 @@ bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, 
 
 ushort bodypart::GetStrengthValue() const
 {
-  if(GetMaster() && GetMainMaterial()->IsAlive())
+  if(GetMaster() && GetMainMaterial()->GetIsAlive())
     return ulong(GetStrengthModifier()) * GetMaster()->GetEndurance() / 1000;
   else
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
@@ -1062,7 +1062,7 @@ short bodypart::GetMaxHP() const
     {
       short HP = 0;
 
-      if(GetMainMaterial()->IsAlive())
+      if(GetMainMaterial()->GetIsAlive())
 	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMaster()->GetEndurance() / 10000;
       else
 	HP = (GetMainMaterial()->GetVolume() + GetContainedMaterial()->GetVolume()) * GetMainMaterial()->GetStrengthValue() / 10000;
@@ -1502,7 +1502,7 @@ humanoid* bodypart::GetHumanoidMaster() const
 
 ushort belt::GetFormModifier() const
 {
-  if(GetMainMaterial()->IsFlexible())
+  if(GetMainMaterial()->GetIsFlexible())
     return 800;
   else
     return 60;
@@ -1955,7 +1955,7 @@ void corpse::SetDeceased(character* What)
 
 void bodypart::Regenerate(ushort Turns)
 {
-  if(GetMainMaterial()->IsAlive())
+  if(GetMainMaterial()->GetIsAlive())
     {
       ulong RegenerationBonus = GetMaster()->GetEndurance() * Turns;
 

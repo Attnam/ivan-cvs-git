@@ -12,6 +12,11 @@
 #include "game.h"
 #include "proto.h"
 
+template <class type> datamembertemplate<type>::~datamembertemplate<type>()
+{
+  delete Member;
+}
+
 template <class type> type* datamembertemplate<type>::GetMember(bool AbortOnError) const
 {
   if(Member)
@@ -349,6 +354,22 @@ template <class type> contentmap<type>::contentmap<type>() : ContentScriptMap(0)
   INITMEMBER(Pos);
 }
 
+template <class type> void contentmap<type>::DeleteContents()
+{
+  for(ushort y1 = 0; y1 < GetSize()->Y; ++y1)
+    for(ushort x1 = 0; x1 < GetSize()->X; ++x1)
+      {
+	contentscript<type>* CS = ContentScriptMap[x1][y1];
+
+	for(ushort y2 = 0; y2 < GetSize()->Y; ++y2)
+	  for(ushort x2 = 0; x2 < GetSize()->X; ++x2)
+	    if(ContentScriptMap[x2][y2] == CS)
+	      ContentScriptMap[x2][y2] = 0;
+
+	delete CS;
+      }
+}
+
 template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 {
   if(SaveFile.ReadWord() != "{")
@@ -367,8 +388,6 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 
 	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	    {
-	      /* This may cause a memory leak if room's ReCalculate == true!!! */
-
 	      contentscript<type>* ContentScript = new contentscript<type>;
 	      ContentScript->SetValueMap(ValueMap);
 	      ContentScript->ReadFrom(SaveFile);
@@ -397,6 +416,8 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 
   if(!ContentScriptMap)
     Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
+  else
+    DeleteContents();
 
   if(SaveFile.ReadWord() != "{")
     ABORT("Missing bracket in content map script of %s!", typeid(type).name());
@@ -439,6 +460,12 @@ roomscript::roomscript()
   INITMEMBER(GenerateFountains);
   INITMEMBER(AllowLockedDoors);
   INITMEMBER(AllowBoobyTrappedDoors);
+}
+
+roomscript::~roomscript()
+{
+  for(std::vector<squarescript*>::iterator i = Square.begin(); i != Square.end(); ++i)
+    delete *i;
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
@@ -509,6 +536,15 @@ levelscript::levelscript()
   INITMEMBER(AmbientLight);
   INITMEMBER(Description);
   INITMEMBER(LOSModifier);
+}
+
+levelscript::~levelscript()
+{
+  for(std::vector<squarescript*>::iterator i1 = Square.begin(); i1 != Square.end(); ++i1)
+    delete *i1;
+
+  for(std::map<uchar, roomscript*>::iterator i2 = Room.begin(); i2 != Room.end(); ++i2)
+    delete i2->second;
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
@@ -594,6 +630,12 @@ dungeonscript::dungeonscript()
   INITMEMBER(Levels);
 }
 
+dungeonscript::~dungeonscript()
+{
+  for(std::map<uchar, levelscript*>::iterator i = Level.begin(); i != Level.end(); ++i)
+    delete i->second;
+}
+
 void dungeonscript::ReadFrom(inputfile& SaveFile)
 {
   if(SaveFile.ReadWord() != "{")
@@ -677,6 +719,15 @@ gamescript::gamescript()
   INITMEMBER(Teams);
 }
 
+gamescript::~gamescript()
+{
+  for(std::vector<std::pair<uchar, teamscript*> >::iterator i1 = Team.begin(); i1 != Team.end(); ++i1)
+    delete i1->second;
+
+  for(std::map<uchar, dungeonscript*>::iterator i2 = Dungeon.begin(); i2 != Dungeon.end(); ++i2)
+    delete i2->second;
+}
+
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
   std::string Word;
@@ -716,3 +767,148 @@ void gamescript::ReadFrom(inputfile& SaveFile)
     }
 }
 
+template <class type> void basedata<type>::ReadFrom(inputfile& SaveFile)
+{
+  if(SaveFile.ReadWord() != "{")
+    ABORT("Bracket missing in the data script of %s!", typeid(type).name());
+
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
+    {
+      ushort c;
+
+      for(c = 0; c < Data.size(); ++c)
+	if(Data[c]->Load(Word, SaveFile, ValueMap))
+	  break;
+
+      if(c == Data.size())
+	ABORT("Odd script term %s encountered in the data script of %s!", Word.c_str(), typeid(type).name());
+    }
+}
+
+data<character>::data<character>()
+{
+}
+
+data<item>::data<item>()
+{
+}
+
+data<material>::data<material>()
+{
+  INITMEMBER(StrengthValue);
+  INITMEMBER(ConsumeType);
+  INITMEMBER(Density);
+  INITMEMBER(OfferValue);
+  INITMEMBER(Color);
+  INITMEMBER(PriceModifier);
+  INITMEMBER(IsSolid);
+  INITMEMBER(Emitation);
+  INITMEMBER(CanBeWished);
+  INITMEMBER(Alignment);
+  INITMEMBER(NutritionValue);
+  INITMEMBER(IsAlive);
+  INITMEMBER(IsBadFoodForAI);
+  INITMEMBER(ExplosivePower);
+  INITMEMBER(IsFlammable);
+  INITMEMBER(IsFlexible);
+  INITMEMBER(IsExplosive);
+}
+
+template class database<character>;
+template class database<item>;
+template class database<material>;
+
+template <class type> database<type>::~database<type>()
+{
+  for(std::map<std::string, data<type>*>::iterator i = Data.begin(); i != Data.end(); ++i)
+    delete i->second;
+}
+
+template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
+{
+  std::string Word;
+  valuemap ValueMap;
+
+  ValueMap["ODD"] = ODD;
+  ValueMap["FRUIT"] = FRUIT;
+  ValueMap["MEAT"] = MEAT;
+  ValueMap["METAL"] = METAL;
+  ValueMap["MINERAL"] = MINERAL;
+  ValueMap["LIQUID"] = LIQUID;
+  ValueMap["BONE"] = BONE;
+  ValueMap["PROCESSED"] = PROCESSED;
+  ValueMap["MISC_ORGANIC"] = MISC_ORGANIC;
+  ValueMap["GAS"] = GAS;
+
+  ValueMap["GOOD"] = GOOD;
+  ValueMap["NEUTRAL"] = NEUTRAL;
+  ValueMap["EVIL"] = EVIL;
+
+  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
+    {
+      ushort Index = protocontainer<type>::SearchCodeName(Word);
+
+      if(!Index)
+	ABORT("Odd term %s encountered in %s datafile!", Word.c_str(), typeid(type).name());
+
+      data<type>* DataElement = new data<type>;
+      DataElement->SetType(Index);
+      DataElement->SetValueMap(ValueMap);
+      DataElement->ReadFrom(SaveFile);
+      Data[Word] = DataElement;
+    }
+}
+
+#define SETDATA(data)\
+{\
+  if(DataElement->Get##data(false))\
+    DataBase->data = *DataElement->Get##data();\
+  else\
+    ABORT("Obligatory data member " #data " missing!");\
+}
+
+#define SETDATAWITHDEFAULT(data, defaultvalue)\
+{\
+  if(DataElement->Get##data(false))\
+    DataBase->data = *DataElement->Get##data();\
+  else\
+    DataBase->data = defaultvalue;\
+}
+
+template <class type> void database<type>::Apply() { }
+
+void database<material>::Apply()
+{
+  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+    {
+      std::map<std::string, data<material>*>::iterator Iterator = Data.find(protocontainer<material>::GetProto(c)->ClassName());
+
+      if(Iterator != Data.end())
+	{
+	  data<material>* DataElement = Iterator->second;
+	  material_database* DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  SETDATA(StrengthValue);
+	  SETDATA(ConsumeType);
+	  SETDATA(Density);
+	  SETDATA(OfferValue);
+	  SETDATA(Color);
+	  SETDATAWITHDEFAULT(PriceModifier, 0);
+	  SETDATAWITHDEFAULT(IsSolid, false);
+	  SETDATAWITHDEFAULT(Emitation, 0);
+	  SETDATAWITHDEFAULT(CanBeWished, true);
+	  SETDATAWITHDEFAULT(Alignment, NEUTRAL);
+	  SETDATAWITHDEFAULT(NutritionValue, 0);
+	  SETDATAWITHDEFAULT(IsAlive, false);
+	  SETDATAWITHDEFAULT(IsBadFoodForAI, false);
+	  SETDATAWITHDEFAULT(ExplosivePower, 0);
+	  SETDATAWITHDEFAULT(IsFlammable, false);
+	  SETDATAWITHDEFAULT(IsFlexible, false);
+	  SETDATAWITHDEFAULT(IsExplosive, false);
+	}
+      else
+	{
+	}
+    }
+}

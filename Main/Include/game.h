@@ -62,6 +62,7 @@ class gamescript;
 class team;
 class bitmap;
 class petrus;
+template <class type> class database;
 
 /* Presentation of the game class */
 
@@ -147,7 +148,7 @@ class game
   static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
-  static gamescript& GetGameScript() { return GameScript; }
+  static gamescript* GetGameScript() { return GameScript; }
   static void DoGoodDeed(ushort);
   static void DoNeutralDeed(ushort);
   static void DoEvilDeed(ushort);
@@ -213,7 +214,10 @@ class game
   static square* SquareInLoad;
   static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
-  static gamescript GameScript;
+  static gamescript* GameScript;
+  static database<character>* CharacterDataBase;
+  static database<item>* ItemDataBase;
+  static database<material>* MaterialDataBase;
   static ulong NextItemID;
   static std::vector<team*> Team;
   static ulong LOSTurns;

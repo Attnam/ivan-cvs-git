@@ -207,8 +207,8 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
       material* Temp = protocontainer<material>::GetProto(c)->Clone();
 
       if(Temp->Name(UNARTICLED) == What)
-	if(protocontainer<material>::GetProto(c)->CanBeWished())
-	  return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
+	if(protocontainer<material>::GetProto(c)->GetCanBeWished())
+	  return protocontainer<material>::GetProto(c)->Clone(Volume);
 	else if(Output)
 	  {
 	    ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
@@ -225,7 +225,7 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
   for(ushort c = 1 + RAND() % protocontainer<material>::GetProtoAmount();; c = 1 + RAND() % protocontainer<material>::GetProtoAmount())
-    if(protocontainer<material>::GetProto(c)->IsSolid())
+    if(protocontainer<material>::GetProto(c)->GetIsSolid())
       return protocontainer<material>::GetProto(c)->Clone(Volume);
 }
 

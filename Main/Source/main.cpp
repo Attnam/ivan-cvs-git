@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+#include <ctime>
 
 #ifdef __DJGPP__
 #include <conio.h>
@@ -15,6 +16,7 @@
 #include "igraph.h"
 #include "graphics.h"
 #include "main.h"
+#include "femath.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -52,6 +54,7 @@ int Main(int argc, char **argv)
 
 #endif
 
+  femath::SetSeed(time(0));
   game::InitLuxTable();
   game::InitScript();
   configuration::Load();
