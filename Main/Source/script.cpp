@@ -765,6 +765,9 @@ void levelscript::ReadFrom(inputfile& SaveFile)
 
 void levelscript::Combine(levelscript& Script)
 {
+  if(!Base)
+    Base = Script.Base;
+
   Square.splice(Square.end(), Script.Square);
   Room.splice(Room.end(), Script.Room);
 

@@ -798,8 +798,10 @@ bool stack::IsOnGround() const
 
 ushort stack::GetSpoiledItems() const
 {
-  ushort Counter;
+  ushort Counter = 0;
+
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     Counter += (i->GetSpoilLevel() > 0);
+
   return Counter;
 }

@@ -26,6 +26,7 @@
 #include "materia.h"
 #include "wskill.h"
 #include "bitmap.h"
+#include "wterras.h"
 
 #include "char.cpp"
 #include "command.cpp"

@@ -480,8 +480,25 @@ bool commandsystem::WizardMode(character* Char)
 	  for(ushort x = 0; x < 5; ++x)
 	    Char->GetStack()->AddItem(new scrollofwishing);
 
+	  if(game::IsInWilderness())
+	    {
+	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+	      game::GetWorldMap()->SendNewDrawRequest();
+	    }
+	  else
+	    {
+	      game::LoadWorldMap();
+	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+	      game::SaveWorldMap();
+	    }
+
 	  game::Save();
 	  game::Save(game::GetAutoSaveFileName());
+
 	}
     }
   else

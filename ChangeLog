@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* A small bug in the key handling code fixed
+	* A fatal bug in the script code corrected
+
+February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* A fatal bug added by the last commit corrected
 	* A fatal bug in Mellis's pray effect corrected (thanks to the anonymous
 	  SourceForge user who reported it)

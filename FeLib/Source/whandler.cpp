@@ -168,7 +168,7 @@ int globalwindowhandler::ReadKey()
 
   if(SDL_GetAppState() & SDL_APPACTIVE)
     {
-      ProcessMessage(&Event);
+      //ProcessMessage(&Event);
 
       while(SDL_PollEvent(&Event))
 	ProcessMessage(&Event);
@@ -196,7 +196,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       break;
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
-	exit(0);	
+	exit(0);
+	
       return;
     case SDL_KEYDOWN:
       switch(Event->key.keysym.sym)
@@ -209,8 +210,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	    }
 	  else
 	    KeyPressed = Event->key.keysym.unicode;
-	  break;
 
+	  break;
 	case SDLK_DOWN:
 	case SDLK_KP2:
 	  KeyPressed = KEY_DOWN + 0xE000;
@@ -271,12 +272,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
       if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed) == KeyBuffer.end())
 	KeyBuffer.push_back(KeyPressed);
 	  
-      break;
-
-    case SDL_KEYUP:
-      break;
-
-    default:
       break;
     }
 }
