@@ -1374,7 +1374,7 @@ communist /* Ivan */
 	DefaultEndurance = 25;
 	DefaultPerception = 18;
 	DefaultIntelligence = 7;
-	DefaultWisdom = 5;
+	DefaultWisdom = 6;
 	DefaultCharisma = 10;
 	DefaultMana = 5;
 	CriticalModifier = 4;
@@ -3173,7 +3173,7 @@ floatingeye
 	CanFly = true;
 	HasHead = false;
 	UsesNutrition = false;
-	AttackWisdomLimit = 10;
+	AttackWisdomLimit = 8;
 	AttachedGod = LEGIFER;
 	ClassStates = INFRA_VISION|SEARCHING|GAS_IMMUNITY;
 }

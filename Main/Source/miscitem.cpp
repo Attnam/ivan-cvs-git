@@ -576,6 +576,7 @@ bool oillamp::Apply(character* Applier)
 
       if(FoundPlace)
 	{
+	  Genie->GetLSquareUnder()->AddSmoke(new gas(MAGICAL_AIR, 1000));
 	  if(!(RAND() % 5))
 	    {
 	      Genie->SetTeam(game::GetTeam(MONSTER_TEAM));

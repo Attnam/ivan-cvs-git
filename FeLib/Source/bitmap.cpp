@@ -893,7 +893,7 @@ void bitmap::DrawVerticalLine(ushort OrigX, ushort OrigFromY, ushort OrigToY, us
 	continue;
 
       FromY = Max<short>(FromY, 0);
-      ToY = Min<short>(ToY, YSize);
+      ToY = Min<short>(ToY, YSize-1);
       ushort* Ptr = &Image[FromY][X];
 
       for(short y = FromY; y <= ToY; ++y, Ptr += XSize)
@@ -925,7 +925,7 @@ void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, 
 	continue;
 
       FromX = Max<short>(FromX, 0);
-      ToX = Min<short>(ToX, XSize);
+      ToX = Min<short>(ToX, XSize-1);
       ushort* Ptr = &Image[Y][FromX];
 
       for(short x = FromX; x <= ToX; ++x, ++Ptr)
