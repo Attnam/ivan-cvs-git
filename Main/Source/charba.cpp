@@ -30,6 +30,7 @@ character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, 
 	StateHandler[FAINTED] = &character::FaintHandler;
 	StateHandler[EATING] = &character::EatHandler;
 	StateHandler[POLYMORPHED] = &character::PolymorphHandler;
+	StateHandler[RESTING] = &character::RestHandler;
 }
 
 character::~character()
@@ -1577,7 +1578,7 @@ bool character::OpenPos(vector2d APos)
 
 bool character::Pray()
 {
-	felist Panthenon("To Whom shall thee adress thine prayers?");
+	felist Panthenon("To Whom shall thee address thine prayers?");
 
 	if(!GetLevelSquareUnder()->GetDivineOwner())
 		for(ushort c = 1; game::GetGod(c); ++c)
@@ -2257,7 +2258,7 @@ void character::EndPolymorph()
 
 bool character::CanMove()
 {
-	if(StateIsActivated(FAINTED) || StateIsActivated(EATING))
+	if(StateIsActivated(FAINTED) || StateIsActivated(EATING) || StateIsActivated(RESTING))
 		return false;
 	else
 		return true;
@@ -2265,18 +2266,20 @@ bool character::CanMove()
 
 void character::DeActivateVoluntaryStates(std::string Reason)
 {
-	if(StateIsActivated(EATING) && Reason != "")
+	if((StateIsActivated(EATING) || StateIsActivated(RESTING)) && Reason != "")
 		ADD_MESSAGE("%s.", Reason.c_str());
 
 	if(StateIsActivated(EATING))
 		ADD_MESSAGE("You stop eating.");
-
+	if(StateIsActivated(RESTING))
+		ADD_MESSAGE("You stop resting.");
 	EndEating();
+	EndRest();
 }
 
 void character::StateAutoDeactivation()
 {
-	if(!StateIsActivated(EATING))
+	if(!StateIsActivated(EATING) && !StateIsActivated(RESTING))
 		return;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),
@@ -2398,4 +2401,31 @@ bool character::CheckForUsefulItemsOnGround()
 	}
 
 	return false;
+}
+
+bool character::RestUntilHealed(void)
+{
+	long HPToRest = game::NumberQuestion(FONTW, "Rest until X HP", vector2d(7,7));
+	if(HPToRest < GetHP())
+	{
+		ADD_MESSAGE("Your HP is already %d", GetHP());
+		return false;
+	}
+	if(HPToRest > GetEndurance() * 2)
+		HPToRest = GetEndurance() * 2;
+	StateCounter[RESTING] = HPToRest;
+	ActivateState(RESTING);
+	return true;
+}
+
+
+void character::RestHandler(void)
+{
+	if(GetHP() >= StateCounter[RESTING])
+		EndRest();
+}
+
+void character::EndRest(void)
+{
+	 DeActivateState(RESTING);
 }

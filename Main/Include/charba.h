@@ -19,11 +19,12 @@
 #define BURDENED		2
 #define UNBURDENED		3
 
-#define STATES			3
+#define STATES			4
 
-#define FAINTED			0
+#define FAINTED		0
 #define EATING			1
 #define POLYMORPHED		2
+#define RESTING		3
 
 #include "game.h"
 #include "object.h"
@@ -215,6 +216,9 @@ public:
 	virtual bool CheckForUsefulItemsOnGround();
 	virtual bool CheckForDoors();
 	virtual bool CheckForEnemies();
+	virtual bool RestUntilHealed();
+	virtual void RestHandler();
+	virtual void EndRest();
 protected:
 	virtual void SoldierAICommand();
 	virtual void CreateCorpse();

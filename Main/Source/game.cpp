@@ -86,6 +86,7 @@ command* game::Command[] = {	0,
 				new command(&character::Wield, "wield", 'w', true),
 				new command(&character::WizardMode, "wizard mode", 'X', true),
 				new command(&character::Zap, "zap", 'z', false),
+				new command(&character::RestUntilHealed, "rest until fully healed", 'h', true),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
