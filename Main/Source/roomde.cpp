@@ -46,7 +46,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->Price();
+  ulong Price = ForSale->GetPrice();
 
   if(!Customer->GetIsPlayer())
     if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
@@ -107,7 +107,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
-  ulong Price = (ForSale->Price() >> 1);
+  ulong Price = (ForSale->GetPrice() >> 1);
 
   if(!Customer->GetIsPlayer())
     if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
@@ -229,7 +229,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item)
 
   if(Visitor->GetIsPlayer())
     {
-      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->Price())
+      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetPrice())
 	return true;
 
       ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");

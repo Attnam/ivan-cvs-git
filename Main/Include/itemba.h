@@ -70,6 +70,7 @@ struct item_database
   ulong DefaultSecondaryVolume;
   ulong DefaultContainedVolume;
   vector2d BitmapPos;
+  ulong Price;
 };
 
 class item_prototype
@@ -138,7 +139,7 @@ class item : public object
   //virtual float GetThrowGetStrengthModifier() const { return 1; }
   //virtual bool UseThrowGetStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
-  virtual ulong Price() const { return 0; }
+  //virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
   virtual bool IsBadFoodForAI(character*) const;
@@ -251,6 +252,7 @@ class item : public object
   virtual ulong GetDefaultSecondaryVolume() const { return GetDataBase().DefaultSecondaryVolume; }
   virtual ulong GetDefaultContainedVolume() const { return GetDataBase().DefaultContainedVolume; }
   virtual vector2d GetBitmapPos(ushort) const { return GetDataBase().BitmapPos; }
+  virtual ulong GetPrice() const { return GetDataBase().Price; }
 
  protected:
   //virtual ushort GetStrengthModifier() const = 0;

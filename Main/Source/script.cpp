@@ -822,6 +822,7 @@ data<item>::data<item>()
   INITMEMBER(DefaultSecondaryVolume);
   INITMEMBER(DefaultContainedVolume);
   INITMEMBER(BitmapPos);
+  INITMEMBER(Price);
 }
 
 data<material>::data<material>()
@@ -979,6 +980,7 @@ void database<item>::Apply()
 	  SETDATAWITHDEFAULT(DefaultSecondaryVolume, 0);
 	  SETDATAWITHDEFAULT(DefaultContainedVolume, 0);
 	  SETDATA(BitmapPos);
+	  SETDATAWITHDEFAULT(Price, 0);
 	}
       else
 	{
@@ -1007,6 +1009,7 @@ void database<item>::Apply()
 	  DataBase.NPModifier = 10000;
 	  DataBase.DefaultSecondaryVolume = 0;
 	  DataBase.DefaultContainedVolume = 0;
+	  DataBase.Price = 0;
 	}
     }
 }

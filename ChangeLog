@@ -1,7 +1,12 @@
+May 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Price added to item database structure
+
 May 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Copied the materials to Script/material.dat (however with some problems.)
 	* Added ring of fire resistance
+
 May 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Very lousy item database structures added

@@ -211,7 +211,7 @@ elpuriflesh
 
 glass
 {
-	StrenghtValue = 30;
+	StrengthValue = 30;
 	ConsumeType = MINERAL;
 	Density = 2500;
 	OfferValue = 5;
@@ -242,7 +242,7 @@ bananapeal
 
 parchment
 {
-	StrenghtValue = 15;
+	StrengthValue = 15;
 	ConsumeType = MISC_ORGANIC;
 	Density = 600;
 	OfferValue = 5;
@@ -278,7 +278,7 @@ humanflesh
 	*/
 }
 
-negroid /* Have to hope that his is politically correct. */
+negroidflesh /* Have to hope that his is politically correct. */
 {
 	StrengthValue = 10;
 	ConsumeType = MEAT;
@@ -365,7 +365,7 @@ pepsi
 	Alignment = EVIL;
 	NutritionValue = 400;
 	Color = rgb(48,48,48);
-	IsBadFoodForAi = true;
+	IsBadFoodForAI = true;
 }
 
 mithril
@@ -559,7 +559,7 @@ palmleaf
 
 sulfur
 {
-	StrenthValue = 50;
+	StrengthValue = 50;
 	ConsumeType = MINERAL;
 	Density = 2000;
 	OfferValue = 10;
@@ -598,7 +598,7 @@ koboldflesh
 	NutritionValue = 100;
 	Color = rgb(30,100,110);
 	IsAlive = true;
-	IsBadFoodForAi = true;
+	IsBadFoodForAI = true;
 }
 
 gibberlingflesh
@@ -723,11 +723,11 @@ unicornhorn
 	IsAlive = true;
 }
 
-blackunicornhorn
+blackunicornflesh
 {
-	StrengthValue = 125;
-	ConsumeType = MISC_ORGANIC;
-	Density = 2000;
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(48,48,48);
 	IsAlive = true;
@@ -735,22 +735,21 @@ blackunicornhorn
 	/* Slightly strange. This means the the good gods like to receive this sacrifice */
 }
 
-grayunicornhorn
+grayunicornflesh
 {
-	StrengthValue = 125;
-	ConsumeType = MISC_ORGANIC;
-	Density = 2000;
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(112,112,112);
 	IsAlive = true;
-	/* Slightly strange. This means the the good gods like to receive this sacrifice */
 }
 
-whiteunicornhorn
+whiteunicornflesh
 {
-	StrengthValue = 125;
-	ConsumeType = MISC_ORGANIC;
-	Density = 2000;
+	StrengthValue = 10;
+	ConsumeType = MEAT;
+	Density = 1200;
 	OfferValue = 35;
 	Color = rgb(160,160,160);
 	IsAlive = true;

@@ -2195,7 +2195,7 @@ ulong corpse::Price() const
 
   for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
-      Price += GetDeceased()->GetBodyPart(c)->Price();
+      Price += GetDeceased()->GetBodyPart(c)->GetPrice();
 
   return Price;
 }

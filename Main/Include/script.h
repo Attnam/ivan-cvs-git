@@ -342,6 +342,7 @@ class data<item> : public basedata<item>
   DATAMEMBER(ulong, DefaultSecondaryVolume);
   DATAMEMBER(ulong, DefaultContainedVolume);
   DATAMEMBER(vector2d, BitmapPos);
+  DATAMEMBER(ulong, Price);
 };
 
 class data<material> : public basedata<material>

@@ -30,6 +30,7 @@
     ulong DefaultSecondaryVolume; (0)
     ulong DefaultContainedVolume; (0)
     vector2d BitmapPos; (*)
+    ulong Price; (0)
 */
 
 banana
