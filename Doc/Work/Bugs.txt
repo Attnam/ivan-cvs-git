@@ -93,8 +93,7 @@ Vladimir can now be teleported (example: magical whistle) to places where he des
 Funny colors with dexterity etc when going to change equipment and then pressing esc.
 // (hs) Smith not repairing equiped items.
 MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
-Graphics bug in vesana.
-Graphics bug in vesana corpse.
+//Graphics bug in vesana corpse.
 Light sources in glass chests don't work correctly.
 Digging walls with lanterns doesn't update memorized etc. correctly.
 Shopkeepers/librarians can buy items even if unconsciouss.
@@ -106,5 +105,9 @@ Charmed guards often block hallways when guarding them and the player who can't 
 //Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
 Small chest X fits in small chest Y, even though Y fits in X as well.
 Invisible golems block light.
-You can create a human flesh golem from your head, without even dying :-o
+You can create a human flesh golem from your head, without even dying.
+Then you can pray to a god and and get a new head made of eg. marble :-0
 You get stuck to slime even when flying.
+The patrol guard's AI works oddly if the player rests on one of his waypoints for a long time.
+You can probably give commands to unconscious monsters.
+Scroll of golem creation destroys chest contents.

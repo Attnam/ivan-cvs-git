@@ -7,7 +7,7 @@
 
 -----------------------------------------------------------------------------
 
-October 16 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+October 22 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* BugFix: offering on the Silva's altar in UT4 crashed
 	* BugFix: endurance exp wasn't gained if the player had a non-living
@@ -16,6 +16,7 @@ October 16 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 	* Corrected many problems in bodypart special effect draw order
 	* Angels might be a little more intelligent now
 	* Gods may be a little wiser when choosing gift bodypart materials
+	* Probably fixed an additional bug or two which I can't quite recall now
 
 October 13 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
