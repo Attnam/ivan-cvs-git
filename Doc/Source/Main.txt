@@ -1921,57 +1921,77 @@ square(area* MotherArea, vector Pos)
 	created in. Position is the square's position.
 
 Save(std::ofstream* SaveFile)
+
 	Saves the square to SafeFile.
 
 square(area* MotherArea, std::ifstream* SaveFile, vector Pos)
-	Constructor for square. MotherArea is the are in which the square is
+
+	Constructor for square. MotherArea is the area in which the square is
 	created in. SaveFile is the file from which the square should be
 	loaded from. Pos is the square's position.
 
 DrawCheat()
+
 	Blits the square to the tilebuffer using the "see whole map" cheat.
 
 DrawMemorized()
+
 	Draws the square from the players "memory".
 
 AddCharacter(character* Guy)
+
 	Guy points to a character that should be added to the square. The
 	name of this function is slightly misleading, because a square
 	can currently have only 1 character.
 
 RemoveCharacter()
+
 	Removes the character in the square. (however the character is not 
 	deleted, the pointer is only set to 0)
 
 ChangeTerrain(groundterrain* NewGround, overterrain* NewOver)
-	Changes the terrains of the square. 
+
+	Changes the terrains of the square.
 
 SCharacter(character* What )
+
 	Character is replaced with What.
 
 character* CCharacter(void)
-	returns Character.
+
+	Returns the Character currently standing (or whatever) on the square.
+	Zero means there is no one there.
 
 bool CKnown()
-	returns true if the square is known to the player otherwise the function
-	return false
+
+	Returns true if the square is known to the player otherwise the
+	function return false. If Known is false, the square will not be
+	drawn on the screen.
+
 vector CPos(void)
-	return the potion of the square as a vector.
+
+	Return the potion of the square as a vector.
 
 SKnown(bool What)
-	Changes the Known-status of the square to What
+
+	Changes the Known-status of the square to What. If Known is false,
+	the square will not be drawn on the screen.
 
 SGroundTerrain(groundterrain* What)
-	Changes the GroundTerrain to What
+
+	Changes the GroundTerrain to What.
 
 SOverTerrain(overterrain* What)
-	Changes the OverTerrain to What
+
+	Changes the OverTerrain to What.
 
 ushort CPopulation(void)
-	returns the amount of characters in the square. (currently 1 or 0)
+
+	Returns the amount of characters in the square. (currently 1 or 0)
 
 area* CMotherArea(void)
-	return the pointer to the mother area of the square
+
+	Return the pointer to the area where the square is.
 
 
 ----------------------------------------------------------------------------
