@@ -911,7 +911,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 				BPos.Y = 0;
 			}
 
-		if(BPos.X > XRES || BPos.Y > YRES)
+		if(BPos.X >= XRES || BPos.Y >= YRES)
 			break;
 
 		if(BPos.X + SizeVect.X > XRES)

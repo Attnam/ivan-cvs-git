@@ -28,7 +28,7 @@ void configuration::Save()
 	SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
 	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
 	SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
-	SaveFile << "FullScreenMode = " << FullScreenMode << ";";
+	SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
 	SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";

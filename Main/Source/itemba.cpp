@@ -246,4 +246,3 @@ bool item::IsBadFoodForAI(character* Eater) const
 	else
 		return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
 }
-

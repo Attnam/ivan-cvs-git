@@ -63,3 +63,5 @@ Drinking from the fountains of the Cathedral should be prohibited.
 Loaf of bread.
 Talking to a slave while wielding a whip should cause a special effect.
 Alt+Enter.
+Atavus should do something special on Christmas.
+A graphical equipment screen.
