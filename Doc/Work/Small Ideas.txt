@@ -60,3 +60,4 @@ Swatcommando, froggoblin, skeleton, Oree, etc. should be humanoids.
 There should be an option to show all text in the game in tengwar font.
 Scroll of charging.
 CanOpenDoors.
+Check polymorph!!!

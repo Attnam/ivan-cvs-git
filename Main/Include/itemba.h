@@ -36,7 +36,7 @@ public:
 	virtual bool Consume(character*, float);
 	virtual ushort GetArmorValue() const { return 100; }
 	virtual bool IsHeadOfElpuri() const { return false; }
-	virtual bool IsPerttusNut() const { return false; }
+	virtual bool IsPetrussNut() const { return false; }
 	virtual bool IsMaakotkaShirt() const { return false; }
 	virtual bool CanBeRead(character*) const { return false; }
 	virtual bool Read(character*) { return false; }
@@ -144,3 +144,4 @@ public:\
 };
 
 #endif
+

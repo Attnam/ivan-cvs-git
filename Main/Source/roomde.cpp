@@ -51,7 +51,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
 	if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	{
-		if(ForSale->IsHeadOfElpuri() || ForSale->IsMaakotkaShirt() || ForSale->IsPerttusNut() || ForSale->IsTheAvatar())
+		if(ForSale->IsHeadOfElpuri() || ForSale->IsMaakotkaShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 		{
 			ADD_MESSAGE("\"I think it is yours. Take it.\"");
 			return true;
@@ -114,7 +114,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
 	if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	{
-		if(ForSale->IsHeadOfElpuri() || ForSale->IsMaakotkaShirt() || ForSale->IsPerttusNut() || ForSale->IsTheAvatar())
+		if(ForSale->IsHeadOfElpuri() || ForSale->IsMaakotkaShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 		{
 			ADD_MESSAGE("\"Oh no! You need it far more than I!\"");
 			return false;
@@ -141,7 +141,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 		}
 		else
 		{
-			ADD_MESSAGE("\"I would pay you %d Perttubucks for it, but I don't have so much. Sorry.\"", Price);
+			ADD_MESSAGE("\"I would pay you %d Petrusbucks for it, but I don't have so much. Sorry.\"", Price);
 			return false;
 		}
 	}
@@ -221,7 +221,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item)
 
 	if(Visitor->GetIsPlayer())
 	{
-		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPerttusNut())
+		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPetrussNut())
 			return true;
 
 		ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");
@@ -243,7 +243,7 @@ bool cathedral::DropItem(character* Visitor, item* Item)
 
 	if(Visitor->GetIsPlayer())
 	{
-		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPerttusNut() || Item->IsTheAvatar())
+		if(Item->IsHeadOfElpuri() || Item->IsMaakotkaShirt() || Item->IsPetrussNut() || Item->IsTheAvatar())
 		{
 			ADD_MESSAGE("Donating this to the Cathedral wouldn't be wise. You may still need it.");
 			return false;
@@ -301,3 +301,4 @@ void cathedral::Load(inputfile& SaveFile)
 
 	SaveFile >> Entered;
 }
+

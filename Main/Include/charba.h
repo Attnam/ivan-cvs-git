@@ -80,7 +80,7 @@ public:
 	virtual bool TryMove(vector2d, bool = true);
 	virtual bool HasHeadOfElpuri() const;
 	virtual bool HasMaakotkaShirt() const;
-	virtual bool HasPerttusNut() const;
+	virtual bool HasPetrussNut() const;
 	virtual bool GetIsPlayer() const { return IsPlayer; }
 	virtual bool Apply();
 	virtual bool Close();

@@ -294,30 +294,30 @@ void altar::StepOn(character* Stepper)
 
 void throne::SitOn(character* Sitter)
 {
-	if(Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() != 1000)
+	if(Sitter->HasPetrussNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() != 1000)
 	{
 		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
 		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
 		return;
 	}
 
-	if(Sitter->HasPerttusNut() && !Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	if(Sitter->HasPetrussNut() && !Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
 	{
 		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
 		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
 		return;
 	}
 
-	if(!Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	if(!Sitter->HasPetrussNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
 	{
 		ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
 		ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
 		return;
 	}
 
-	if(Sitter->HasPerttusNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
+	if(Sitter->HasPetrussNut() && Sitter->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
 	{
-		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Perttu, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
+		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
 		game::RemoveSaves();
 		game::Quit();
 
@@ -412,3 +412,4 @@ void doublebed::SitOn(character*)
 {
 	ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
 }
+

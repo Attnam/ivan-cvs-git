@@ -20,9 +20,9 @@
 #include "lterraba.h"
 #include "rand.h"
 
-perttu::~perttu()
+petrus::~petrus()
 {
-	game::SetPerttu(0);
+	game::SetPetrus(0);
 }
 
 void humanoid::VirtualConstructor()
@@ -39,7 +39,7 @@ humanoid::~humanoid()
 		delete CategoryWeaponSkill[c];
 }
 
-void perttu::CreateInitialEquipment()
+void petrus::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurijustifier)));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail(new valpurium))));
@@ -63,7 +63,7 @@ void oree::CreateInitialEquipment()
 	}
 }
 
-void swatcommando::CreateInitialEquipment()
+void darkknight::CreateInitialEquipment()
 {
 	if(RAND() % 20)
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
@@ -225,9 +225,9 @@ void elpuri::CreateCorpse()
 	GetLevelSquareUnder()->GetStack()->AddItem(new headofelpuri);
 }
 
-void perttu::CreateCorpse()
+void petrus::CreateCorpse()
 {
-	GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofperttu);
+	GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
 }
 
 void ennerbeast::CreateCorpse()
@@ -339,7 +339,7 @@ void ennerbeast::GetAICommand()
 		MoveRandomly();
 }
 
-void perttu::GetAICommand()
+void petrus::GetAICommand()
 {
 	SeekLeader();
 
@@ -369,7 +369,7 @@ void perttu::GetAICommand()
 	FollowLeader();
 }
 
-void perttu::HealFully(character* ToBeHealed)
+void petrus::HealFully(character* ToBeHealed)
 {
 	SetHealTimer(0);
 
@@ -381,20 +381,20 @@ void perttu::HealFully(character* ToBeHealed)
 		ADD_MESSAGE("%s heals %s fully.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", ToBeHealed->GetSquareUnder()->CanBeSeen() ? ToBeHealed->CNAME(DEFINITE) : "something");
 }
 
-void perttu::Save(outputfile& SaveFile) const
+void petrus::Save(outputfile& SaveFile) const
 {
 	humanoid::Save(SaveFile);
 
 	SaveFile << HealTimer << StoryState;
 }
 
-void perttu::Load(inputfile& SaveFile)
+void petrus::Load(inputfile& SaveFile)
 {
 	humanoid::Load(SaveFile);
 
 	SaveFile >> HealTimer >> StoryState;
 
-	game::SetPerttu(this);
+	game::SetPetrus(this);
 }
 
 bool dog::Catches(item* Thingy, float)
@@ -636,14 +636,14 @@ void farmer::CreateInitialEquipment()
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new axe)));
 }
 
-void perttu::AddHitMessage(character* Enemy, const bool Critical) const
+void petrus::AddHitMessage(character* Enemy, const bool Critical) const
 {
 	/*
-	 * This function is temporary. It prevents Perttu's hit messages becoming too long,
+	 * This function is temporary. It prevents Petrus's hit messages becoming too long,
 	 * which would at present make the message history quite ugly.
 	 */
 
-	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? "Perttu" : "something";
+	std::string ThisDescription = GetLevelSquareUnder()->CanBeSeen() ? "Petrus" : "something";
 	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
 
 	if(Enemy->GetIsPlayer())
@@ -659,7 +659,7 @@ void perttu::AddHitMessage(character* Enemy, const bool Critical) const
 				ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
 }
 
-void perttu::BeTalkedTo(character* Talker)
+void petrus::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
@@ -669,12 +669,12 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasMaakotkaShirt())
 	{
-		ADD_MESSAGE("Perttu smiles. \"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
+		ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
 		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power! Return it now, please.\"");
 
-		if(game::BoolQuestion("Will you give the Maakotka Shirt to Perttu? [Y/n]", 'y'))
+		if(game::BoolQuestion("Will you give the Maakotka Shirt to Petrus? [Y/n]", 'y'))
 		{
-			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
+			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Petrus is happy!\n\nYou are victorious!");
 			game::RemoveSaves();
 			game::Quit();
 
@@ -689,7 +689,7 @@ void perttu::BeTalkedTo(character* Talker)
 		}
 		else
 		{
-			ADD_MESSAGE("Perttu's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
+			ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
 			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpuri bless him who is better.\"");
 			GetTeam()->Hostility(Talker->GetTeam());
 			return;
@@ -698,7 +698,7 @@ void perttu::BeTalkedTo(character* Talker)
 	else
 		if(StoryState >= 2)
 		{
-			ADD_MESSAGE("Perttu says: \"Bring me the Maakotka shirt and we'll talk.\"");
+			ADD_MESSAGE("Petrus says: \"Bring me the Maakotka shirt and we'll talk.\"");
 			return;
 		}
 
@@ -706,7 +706,7 @@ void perttu::BeTalkedTo(character* Talker)
 	{
 		if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 100000)
 		{
-			ADD_MESSAGE("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog!");
+			ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog!");
 			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
 
 			if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
@@ -723,7 +723,7 @@ void perttu::BeTalkedTo(character* Talker)
 			}
 		}
 
-		iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
+		iosystem::TextScreen("Thou hast slain Elpuri, and Petrus is happy!\n\nYou are victorious!");
 		game::RemoveSaves();
 		game::Quit();
 
@@ -737,20 +737,20 @@ void perttu::BeTalkedTo(character* Talker)
 	else
 		if(!StoryState)
 		{
-			iosystem::TextScreen(	"Perttu raises his hand as a salutation, and talks:\n"
+			iosystem::TextScreen(	"Petrus raises his hand as a salutation, and talks:\n"
 						"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
 						"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
 						"Valpuri hast told that this vile beast can be found in a nearby cave.\n"
 						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
 			game::GetCurrentArea()->SendNewDrawRequest();
-			ADD_MESSAGE("Perttu hands you something. \"Thou migth need this.\"");
+			ADD_MESSAGE("Petrus hands you something. \"Thou migth need this.\"");
 			ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
 			Talker->GetStack()->AddItem(new banana);
 			StoryState = 1;
 		}
 		else
-			ADD_MESSAGE("Perttu says: \"Bring me the head of Elpuri and we'll talk.\"");
+			ADD_MESSAGE("Petrus says: \"Bring me the head of Elpuri and we'll talk.\"");
 }
 
 void farmer::BeTalkedTo(character* Talker)
@@ -779,7 +779,7 @@ void farmer::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 3:
-		ADD_MESSAGE("\"The prices here are infamous. What a capitalist scum that shopkeeper is!\"");
+		ADD_MESSAGE("\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"");
 		break;
 	}
 }
@@ -866,7 +866,7 @@ void oree::BeTalkedTo(character*)
 	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink Pepsi!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
-void swatcommando::BeTalkedTo(character*)
+void darkknight::BeTalkedTo(character*)
 {
 	ADD_MESSAGE("%s yells: \"Microsoft powaah! Die Unix!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
@@ -1010,7 +1010,7 @@ void ivan::BeTalkedTo(character* Talker)
 			ADD_MESSAGE("\"Why is AK not invented?\"");
 			break;
 		case 7:
-			ADD_MESSAGE("\"Ivan like Attnam. Perttu communist too.\"");
+			ADD_MESSAGE("\"Ivan like Attnam. Petrus communist too.\"");
 			break;
 		case 8:
 			ADD_MESSAGE("\"Ivan buy kyber eyes. Ivan see in dark.\"");
@@ -1191,11 +1191,11 @@ bool elpuri::Hit(character* Enemy)
 	return true;
 }
 
-void perttuswife::BeTalkedTo(character* Talker)
+void petrusswife::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
-		ADD_MESSAGE("\"Murderer! Just wait until Perttu finds you!\"");
+		ADD_MESSAGE("\"Murderer! Just wait until Petrus finds you!\"");
 		return;
 	}
 
@@ -1209,10 +1209,10 @@ void perttuswife::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"I'm so sick jealous to those dolphins...\"");
 		break;
 	case 1:
-		ADD_MESSAGE("\"I'm Perttu's favorite, not she!\"");
+		ADD_MESSAGE("\"I'm Petrus's favorite, not she!\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"Why must Perttu stay in this forest? There isn't even a proper hairdresser here!\"");
+		ADD_MESSAGE("\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"");
 		break;
 	case 3:
 		ADD_MESSAGE("\"Being one of six wives is a dream job.");
@@ -1248,7 +1248,7 @@ void housewife::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("It'll take eight years to produce an equally good replacement worker.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"Perttu's wives are so arrogant towards us working class ones. Grr...\"");
+		ADD_MESSAGE("\"Petrus's wives are so arrogant towards us working class ones. Grr...\"");
 		break;
 	}
 }
@@ -1268,7 +1268,7 @@ void femaleslave::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"Praise our lord Perttu!\"");
+		ADD_MESSAGE("\"Praise our lord Petrus!\"");
 		break;
 	case 1:
 		ADD_MESSAGE("\"Does that toy frog really need us serving it?\"");
@@ -1277,7 +1277,7 @@ void femaleslave::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"I'm not a slave. I'm a high-ranking palm branch officer with a good career history.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"Palm leaves are good for health. Perttu loves their smell.\"");
+		ADD_MESSAGE("\"Palm leaves are good for health. Petrus loves their smell.\"");
 		break;
 	}
 }
@@ -1297,9 +1297,9 @@ void librarian::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		if(game::GetPerttu() && !game::GetPerttu()->GetStoryState())
+		if(game::GetPetrus() && !game::GetPetrus()->GetStoryState())
 		{
-			ADD_MESSAGE("\"Thou should visit Perttu if thou areth in need of adventure.\"");
+			ADD_MESSAGE("\"Thou should visit Petrus if thou areth in need of adventure.\"");
 			break;
 		}
 		else
@@ -1308,7 +1308,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 1:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 		{
 			ADD_MESSAGE("\"Thou are going to fight Elpuri? Beware! It is a powerful enemy.");
 			ADD_MESSAGE("Other monsters are very vulnerable if surrounded by thine party, but not that beast.");
@@ -1321,7 +1321,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 2:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 		{
 			ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");
 			break;
@@ -1332,7 +1332,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 3:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 		{
 			ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thine precious items.\"");
 			break;
@@ -1343,7 +1343,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 4:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 2)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 		{
 			ADD_MESSAGE("\"Thou wish to confront the Pepsi Daemon King? Heed my advice:");
 			ADD_MESSAGE("He is a cunning enemy and will try to ambush thee.");
@@ -1356,7 +1356,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 5:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 2)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 		{
 			ADD_MESSAGE("\"The Maakotka Shirt is a legendary artifact. Thou canst not find a better armor.\"");
 			break;
@@ -1369,13 +1369,13 @@ void librarian::BeTalkedTo(character* Talker)
 		}
 	case 6:
 		ADD_MESSAGE("\"Attnam is traditionally ruled by the Überpriest of the Great Frog.");
-		ADD_MESSAGE("The Überpriest is he who holds the holy Maakotka Shirt and kills the last Überpriest.\"");
+		ADD_MESSAGE("The Überpriest is he who holds the Holy Maakotka Shirt and kills the last Überpriest.\"");
 		break;
 	case 7:
-		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 3)
+		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
 		{
 			ADD_MESSAGE("\"Remember, the Maakotka Shirt is the armor the Überpriests.");
-			ADD_MESSAGE("Things will get *very* rough if one denies it from Perttu.\"");
+			ADD_MESSAGE("Things will get *very* rough if one denies it from Petrus.\"");
 			break;
 		}
 		else
@@ -1433,3 +1433,4 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 			game::GetCurrentLevel()->GetLevelSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
 	}
 }
+

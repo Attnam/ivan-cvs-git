@@ -111,13 +111,13 @@ void worldmap::Generate()
 
 		for(ushort CounterOne = 0;;)
 		{
-			continent* PerttuLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
+			continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 
-			AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+			AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::StaticType());
 
 			ushort CounterTwo = 0;
 
-			for(ElpuriCavePos = PerttuLikes->GetRandomMember(snow::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(snow::StaticType()))
+			for(ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());; ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType()))
 			{
 				if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
 					break;
@@ -370,3 +370,4 @@ void worldmap::RemoveEmptyContinents()
 					Continent.pop_back();
 				}
 }
+

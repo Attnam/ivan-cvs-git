@@ -689,7 +689,7 @@ void level::PutPlayerAround(vector2d Pos)
 {
 	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable() && !Map[DoX][DoY]->GetCharacter()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
 
-	ABORT("Perttu is too popular!");
+	ABORT("Petrus is too popular!");
 }
 
 void level::Save(outputfile& SaveFile) const
@@ -854,3 +854,4 @@ room* level::GetRoom(uchar Index) const
 
 	return Room[Index];
 }
+

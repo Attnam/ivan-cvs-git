@@ -100,7 +100,7 @@ protected:
                       
 class CHARACTER
 (
-	perttu,
+	petrus,
 	human,
 	InitMaterials(new humanflesh),
 	{
@@ -116,10 +116,10 @@ class CHARACTER
 		SetShieldType(0);
 		SetHealTimer(100);
 		SetStoryState(0);
-		game::SetPerttu(this);
+		game::SetPetrus(this);
 	},
 public:
-	virtual ~perttu();
+	virtual ~petrus();
 	virtual void Load(inputfile&);
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void BeTalkedTo(character*);
@@ -139,7 +139,7 @@ public:
 	virtual bool HasInfraVision() const { return true; }
 	virtual bool CanBeDisplaced() const { return false; }
 protected:
-	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
+	virtual std::string NameSingular() const RET("Petrus, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return "The Überpriest disappears in a bright light and his left nut is left behind."; }
 	virtual void CreateInitialEquipment();
@@ -297,7 +297,7 @@ protected:
 
 class CHARACTER
 (
-	swatcommando,
+	darkknight,
 	character,
 	InitMaterials(new humanflesh),
 	{
@@ -317,7 +317,7 @@ public:
 	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(128,0)
-	virtual std::string NameSingular() const RET("Bill's SWAT commando")
+	virtual std::string NameSingular() const RET("dark knight")
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(5000)
 );
@@ -873,7 +873,7 @@ protected:
 
 class CHARACTER
 (
-	perttuswife,
+	petrusswife,
 	human,
 	InitMaterials(new humanflesh),
 	{
@@ -896,86 +896,86 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void MoveRandomly() { MoveRandomlyInRoom(); }
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife")
+	virtual std::string NameSingular() const RET("Petrus's wife")
 	virtual float GetMeleeStrength() const RET(500)
 );
 
 class CHARACTER
 (
-	perttuswife1,
-	perttuswife,
+	petrusswife1,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(16);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 1")
+	virtual std::string NameSingular() const RET("Petrus's wife number 1")
 );
 
 class CHARACTER
 (
-	perttuswife2,
-	perttuswife,
+	petrusswife2,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(17);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 2")
+	virtual std::string NameSingular() const RET("Petrus's wife number 2")
 );
 
 class CHARACTER
 (
-	perttuswife3,
-	perttuswife,
+	petrusswife3,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(18);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 3")
+	virtual std::string NameSingular() const RET("Petrus's wife number 3")
 );
 
 class CHARACTER
 (
-	perttuswife4,
-	perttuswife,
+	petrusswife4,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(19);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 4")
+	virtual std::string NameSingular() const RET("Petrus's wife number 4")
 );
 
 class CHARACTER
 (
-	perttuswife5,
-	perttuswife,
+	petrusswife5,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(20);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 5")
+	virtual std::string NameSingular() const RET("Petrus's wife number 5")
 );
 
 class CHARACTER
 (
-	perttuswife6,
-	perttuswife,
+	petrusswife6,
+	petrusswife,
 	InitMaterials(new humanflesh),
 	{
-		perttuswife::SetDefaultStats();
+		petrusswife::SetDefaultStats();
 		SetHeadType(21);
 	},
 protected:
-	virtual std::string NameSingular() const RET("Perttu's wife number 6")
+	virtual std::string NameSingular() const RET("Petrus's wife number 6")
 );
 
 class CHARACTER
@@ -1132,3 +1132,4 @@ protected:
 );
 
 #endif
+

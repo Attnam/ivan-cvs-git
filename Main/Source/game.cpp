@@ -46,7 +46,7 @@ ulong game::LOSTurns;
 gamescript game::GameScript;
 
 bool game::Flag, game::InGetCommand = false;
-perttu* game::Perttu = 0;
+petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
@@ -189,7 +189,7 @@ void game::Init(std::string Name)
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
 
-		Perttu = 0;
+		Petrus = 0;
 
 		InitDungeons();
 

@@ -579,7 +579,7 @@ protected:
 
 class ITEM
 (
-	leftnutofperttu,
+	leftnutofpetrus,
 	nut,
 	InitMaterials(new humanflesh),
 	{
@@ -587,9 +587,9 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual bool IsPerttusNut() const RET(true)
+	virtual bool IsPetrussNut() const RET(true)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, humanflesh::StaticType()))
-	virtual std::string NameSingular() const RET("left nut of Perttu")
+	virtual std::string NameSingular() const RET("left nut of Petrus")
 	virtual long Score() const RET(5000)
 	virtual item* CreateWishedItem() const;
 	virtual bool Destroyable() const { return false; }
@@ -724,7 +724,7 @@ public:
 
 class ITEM
 (
-	cheapcopyofleftnutofperttu,
+	cheapcopyofleftnutofpetrus,
 	nut,
 	InitMaterials(new glass),
 	{
@@ -732,8 +732,8 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility() const RET(5)
-	virtual std::string NameSingular() const RET("cheap copy of the left nut of Perttu")
-	virtual std::string NamePlural() const RET("cheap copies of the left nut of Perttu")
+	virtual std::string NameSingular() const RET("cheap copy of the left nut of Petrus")
+	virtual std::string NamePlural() const RET("cheap copies of the left nut of Petrus")
 	virtual long Score() const RET(1)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual ulong Price() const { return 500; }
@@ -994,3 +994,4 @@ protected:
 );
 
 #endif
+

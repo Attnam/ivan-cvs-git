@@ -35,12 +35,12 @@ bool attnam::GoDown(character* Who) const
 	game::GetCurrentLevel()->UpdateLOS();
 	game::UpdateCamera();
 
-	if(Who->HasMaakotkaShirt() && game::GetPerttu() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPerttu()->GetStoryState() < 3)
+	if(Who->HasMaakotkaShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
 	{
 		game::GetCurrentLevel()->GetSquare(vector2d(30, 52))->KickAnyoneStandingHereAway();
-		game::GetPerttu()->Move(vector2d(30, 52), true);
-		game::GetPerttu()->ChangeTeam(game::GetTeam(3));
-		game::GetPerttu()->SetStoryState(3);
+		game::GetPetrus()->Move(vector2d(30, 52), true);
+		game::GetPetrus()->ChangeTeam(game::GetTeam(3));
+		game::GetPetrus()->SetStoryState(3);
 	}
 
 	return true;
@@ -71,3 +71,4 @@ bool elpuricave::GoDown(character* Who) const
 	game::UpdateCamera();
 	return true;
 }
+

@@ -35,7 +35,7 @@ class inputfile;
 class gamescript;
 class team;
 class bitmap;
-class perttu;
+class petrus;
 
 /* Presentation of the game class */
 
@@ -148,8 +148,8 @@ public:
 	static ulong GetLOSTurns() { return LOSTurns; }
 	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
-	static perttu* GetPerttu() { return Perttu; }
-	static void SetPerttu(perttu* What) { Perttu = What; }
+	static petrus* GetPetrus() { return Petrus; }
+	static void SetPetrus(petrus* What) { Petrus = What; }
 	static bool HandleQuitMessage();
 	static void Beep();
 	static uchar GetDirectionForVector(vector2d);
@@ -187,7 +187,7 @@ private:
 	static std::vector<team*> Team;
 	static ulong LOSTurns;
 	static bool LOSUpdateRequested;
-	static perttu* Perttu;
+	static petrus* Petrus;
 	static bool InGetCommand;
 };
 

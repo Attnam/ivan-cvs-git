@@ -2,7 +2,7 @@ Name		Size	Agil.	Str.	End.	Perc.	MelStr.		Volume
 player		150-200	15-25	10-15	10-15	10-15	20000
 perttu		225	75	75	75	75	1000
 farmer		170	10	15	20	18	1000
-cityguard	180	15	25	30	24	2000
+guard		180	15	25	30	24	2000
 shopkeeper	160	10	25	25	30	2000
 priest		180	10	20	15	18	1000
 oree		225	50	30	30	30	30000

@@ -722,7 +722,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		{
 			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
 			{
-				if(HasPerttusNut() && !HasMaakotkaShirt())
+				if(HasPetrussNut() && !HasMaakotkaShirt())
 				{
 					iosystem::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
 					game::RemoveSaves();
@@ -730,7 +730,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 					if(!game::GetWizardMode())
 					{
-						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 3, false);
+						game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
 						highscore HScore;
 						HScore.Draw();
 					}
@@ -1209,10 +1209,10 @@ bool character::HasHeadOfElpuri() const
 	return false;
 }
 
-bool character::HasPerttusNut() const
+bool character::HasPetrussNut() const
 {
 	for(ushort c = 0; c < GetStack()->GetItems(); ++c)
-		if(GetStack()->GetItem(c)->IsPerttusNut())
+		if(GetStack()->GetItem(c)->IsPetrussNut())
 			return true;
 
 	return false;
@@ -3134,3 +3134,4 @@ void character::ChangeTeam(team* What)
 
 	SetTeamIterator(GetTeam()->Add(this));
 }
+

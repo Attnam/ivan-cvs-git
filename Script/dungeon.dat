@@ -254,7 +254,7 @@ Dungeon 0;
 				Types
 				{
 					O=oree;
-					B=swatcommando;
+					B=darkknight;
 					G=pepsi golem;
 				}
 			}
@@ -547,7 +547,7 @@ Dungeon 1;
 				Types
 				{
 					# = 0;
-					P = perttu;
+					P = petrus;
 					c = guard;
 					p = priest;
 					d = dolphin;
@@ -555,12 +555,12 @@ Dungeon 1;
 					l = lightfrog;
 					8 = librarian;
 					s = femaleslave;
-					1 = "perttuswife1";
-					2 = "perttuswife2";
-					3 = "perttuswife3";
-					4 = "perttuswife4";
-					5 = "perttuswife5";
-					6 = "perttuswife6";
+					1 = "petrusswife1";
+					2 = "petrusswife2";
+					3 = "petrusswife3";
+					4 = "petrusswife4";
+					5 = "petrusswife5";
+					6 = "petrusswife6";
 				}
 			}
 			{

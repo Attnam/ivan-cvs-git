@@ -230,9 +230,9 @@ item* can::PrepareForConsuming(character* Consumer, stack* Stack)
 		return 0;
 }
 
-item* leftnutofperttu::CreateWishedItem() const
+item* leftnutofpetrus::CreateWishedItem() const
 {
-	return new cheapcopyofleftnutofperttu;
+	return new cheapcopyofleftnutofpetrus;
 }
 
 bool pickaxe::Apply(character* User, stack*)
@@ -705,3 +705,4 @@ item* can::BetterVersion(void) const
 	else
 		return 0;
 }
+
