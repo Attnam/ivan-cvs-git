@@ -23,7 +23,7 @@
 #include "colorbit.h"
 #include "graphics.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), ConsumingCurrently(0), Team(0), WayPoint(0xFFFF, 0xFFFF)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(0xFFFF, 0xFFFF)
 {
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
@@ -32,6 +32,7 @@ character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, 
 	StateHandler[EATING] = &character::EatHandler;
 	StateHandler[POLYMORPHED] = &character::PolymorphHandler;
 	StateHandler[RESTING] = &character::RestHandler;
+	StateHandler[DIGGING] = &character::DigHandler;
 }
 
 character::~character()
@@ -1222,18 +1223,18 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
 	SaveFile << State;
-
-	if(ConsumingCurrently)
-		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(ConsumingCurrently);
+/*
+	if(GetConsumingCurrently())
+		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently);
 	else
-		SaveFile << ushort(0);
+		SaveFile << ushort(0);*/
 
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile << StateCounter[c];
 
 	SaveFile << Team->GetID();
 
-	if(GetConsumingCurrently())
+/*	if(GetConsumingCurrently())
 	{
 		Index = GetStack()->SearchItem(GetConsumingCurrently());
 
@@ -1251,7 +1252,7 @@ void character::Save(outputfile& SaveFile) const
 		}
 	}
 	else
-		SaveFile << uchar(0);
+		SaveFile << uchar(0);*/
 
 	if(GetTeam()->GetLeader() == this)
 		SaveFile << uchar(1);
@@ -2290,7 +2291,7 @@ void character::EndPolymorph()
 
 bool character::CanMove()
 {
-	if(StateIsActivated(FAINTED) || StateIsActivated(EATING) || StateIsActivated(RESTING))
+	if(StateIsActivated(FAINTED) || StateIsActivated(EATING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING))
 		return false;
 	else
 		return true;
@@ -2308,10 +2309,17 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 
 		if(StateIsActivated(RESTING))
 			ADD_MESSAGE("You stop resting.");
+		if(StateIsActivated(DIGGING))
+		{
+			ADD_MESSAGE("You stop digging.");
+			SetAP(750);
+		}
+
 	}
 
 	EndEating();
 	EndRest();
+	EndDig();
 }
 
 void character::StateAutoDeactivation()
@@ -2501,4 +2509,22 @@ void character::RestHandler(void)
 void character::EndRest(void)
 {
 	 DeActivateState(RESTING);
+}
+
+void character::DigHandler(void)
+{
+	if(StateCounter[DIGGING] > 0)
+	{
+		StateCounter[DIGGING]--;
+	}
+	else
+		EndDig();
+}
+
+void character::EndDig(void)
+{
+	if(StateCounter[DIGGING] == 0)
+		StateVariables.Digging.SquareBeingDigged->Dig(this, GetWielded());
+	SetWielded(GetOldWieldedItem());
+	DeActivateState(DIGGING);
 }

@@ -19,12 +19,13 @@
 #define BURDENED		2
 #define UNBURDENED		3
 
-#define STATES			4
+#define STATES			5
 
 #define FAINTED		0
 #define EATING			1
 #define POLYMORPHED		2
 #define RESTING		3
+#define DIGGING		4
 
 #include "game.h"
 #include "object.h"
@@ -136,7 +137,7 @@ public:
 	virtual ushort CalculateArmorModifier() const;
 	virtual ushort CRegenerationCounter() const { return RegenerationCounter; }
 	virtual ushort GetAgility() const					{ return Agility; }
-	virtual item* GetConsumingCurrently() const { return ConsumingCurrently; }
+	virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
 	virtual ushort GetEmitation() const;
 	virtual ushort GetEndurance() const					{ return Endurance; }
 	virtual ushort GetPerception() const				{ return Perception; }
@@ -169,7 +170,7 @@ public:
 	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
 	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
 	virtual void SetAP(long What) { AP = What; }
-	virtual void SetConsumingCurrently(item* What) { ConsumingCurrently = What; }
+	virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
 	virtual void SetHP(short What) { HP = What; }
@@ -216,6 +217,12 @@ public:
 	virtual bool RestUntilHealed();
 	virtual void RestHandler();
 	virtual void EndRest();
+	virtual void DigHandler();
+	virtual void EndDig();
+	virtual levelsquare* GetSquareBeingDigged() { return StateVariables.Digging.SquareBeingDigged; }
+	virtual void SetSquareToBeDigged(levelsquare* What) { StateVariables.Digging.SquareBeingDigged = What; }
+	virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
+	virtual void SetOldWieldedItem(item* What) { StateVariables.Digging.OldWieldedItem = What; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -251,13 +258,24 @@ protected:
 	short HP;
 	long NP, AP;
 	long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
-	item* ConsumingCurrently;
 	bool IsPlayer;
 	uchar State;
 	ushort StateCounter[STATES];
 	void (character::*StateHandler[STATES])();
 	team* Team;
 	vector2d WayPoint;
+	union statevariables
+	{
+		struct consuming
+		{
+			item* ConsumingCurrently;
+		} Consuming;
+		struct digging
+		{
+			levelsquare* SquareBeingDigged;
+			item* OldWieldedItem;
+		} Digging;
+	} StateVariables;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
