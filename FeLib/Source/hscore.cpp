@@ -1,3 +1,14 @@
+/*
+ *
+ *  Iter Vehemens ad Necem 
+ *  Copyright (C) Timo Kiviluoto
+ *  Released under GNU General Public License
+ *
+ *  See LICENSING which should included with 
+ *  this file for more details
+ *
+ */
+
 #include "hscore.h"
 #include "save.h"
 #include "felist.h"
@@ -84,7 +95,13 @@ void highscore::Draw() const
 void highscore::Save(const festring& File) const
 {
   outputfile HighScore(File);
-  HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << Time << RandomID << LastAdd;
+  long CheckSum = HIGH_SCORE_VERSION + LastAdd;
+  for(ushort c = 0; c < Score.size(); ++c)
+    {
+      CheckSum += Score[c] + Entry[c].GetCheckSum() + RandomID[c];
+    }
+
+  HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << Time << RandomID << LastAdd << CheckSum;
 }
 
 void highscore::Load(const festring& File)

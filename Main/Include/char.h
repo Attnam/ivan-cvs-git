@@ -915,6 +915,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(festring, ForceVomitMessage);
   virtual bool CanMove() const;
   void CalculateEnchantments();
+  character* GetNewFormForPolymorphWithControl();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

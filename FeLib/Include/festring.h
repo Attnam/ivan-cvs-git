@@ -82,6 +82,7 @@ class festring
   void PostProcessForFebot();
   void SwapData(festring&);
   void ExtractWord(festring&);
+  long GetCheckSum() const;
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();

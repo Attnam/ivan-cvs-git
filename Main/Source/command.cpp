@@ -103,6 +103,8 @@ command* commandsystem::Command[] =
   new command(&SummonMonster, "summon monster", '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', false, true),
   new command(&Possess, "possess creature", '{', '{', false, true),
+  new command(&Polymorph, "polymorph", '[', '[', true, true),
+
 
 #endif
 
@@ -1531,4 +1533,12 @@ bool commandsystem::IssueCommand(character* Char)
     return false;
 
   return game::CommandQuestion();
+}
+
+bool commandsystem::Polymorph(character* Char)
+{
+  character* NewForm = Char->GetNewFormForPolymorphWithControl();
+  Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), 
+						vector2d(16, 6), WHITE));
+  return true;
 }

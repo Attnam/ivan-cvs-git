@@ -4496,47 +4496,10 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 
   if(StateIsActivated(POLYMORPH_CONTROL))
     {
-      festring Topic, Temp;
-
       if(IsPlayer())
-	{
-	  while(!NewForm)
-	    {
-	      festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '?' for a list]"),
-						    game::GetDefaultPolymorphTo(),
-						    &game::PolymorphControlKeyHandler);
-	      NewForm = protosystem::CreateMonster(Temp);
-
-	      if(NewForm)
-		{
-		  if(NewForm->IsSameAs(this))
-		    {
-		      delete NewForm;
-		      ADD_MESSAGE("You choose not to polymorph.");
-		      return this;
-		    }
-
-		  if(PolymorphBackup && NewForm->IsSameAs(PolymorphBackup))
-		    {
-		      delete NewForm;
-		      return ForceEndPolymorph();
-		    }
-
-		  if(NewForm->GetPolymorphIntelligenceRequirement()
-		   > GetAttribute(INTELLIGENCE)
-		  && !game::WizardModeIsActive())
-		    {
-		      ADD_MESSAGE("You feel your mind isn't yet powerful enough to call forth the form of %s.", NewForm->CHAR_NAME(INDEFINITE));
-		      delete NewForm;
-		      NewForm = 0;
-		    }
-		  else
-		    NewForm->RemoveAllItems();
-		}
-	    }
-	}
+	NewForm = GetNewFormForPolymorphWithControl();
       else
-	NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);
+	NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);  
     }
   else
     NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
@@ -8441,4 +8404,47 @@ void character::CalculateEnchantments()
     }
 
   GetStack()->CalculateEnchantments();
+}
+
+character* character::GetNewFormForPolymorphWithControl()
+{
+  festring Topic, Temp;
+  character* NewForm = 0;
+  while(!NewForm)
+    {
+      festring Temp = game::DefaultQuestion(CONST_S("What do you want to become? [press '?' for a list]"),
+					    game::GetDefaultPolymorphTo(),
+					    &game::PolymorphControlKeyHandler);
+      NewForm = protosystem::CreateMonster(Temp);
+
+      if(NewForm)
+	{
+	  if(NewForm->IsSameAs(this))
+	    {
+	      delete NewForm;
+	      ADD_MESSAGE("You choose not to polymorph.");
+	      return this;
+	    }
+
+	  if(PolymorphBackup && NewForm->IsSameAs(PolymorphBackup))
+	    {
+	      delete NewForm;
+	      return ForceEndPolymorph();
+	    }
+
+	  if(NewForm->GetPolymorphIntelligenceRequirement()
+	     > GetAttribute(INTELLIGENCE)
+	     && !game::WizardModeIsActive())
+	    {
+	      ADD_MESSAGE("You feel your mind isn't yet powerful enough to call forth the form of %s.", NewForm->CHAR_NAME(INDEFINITE));
+	      delete NewForm;
+	      NewForm = 0;
+	    }
+	  else
+	    NewForm->RemoveAllItems();
+	}
+    }
+
+
+  return NewForm;
 }

@@ -496,3 +496,4 @@ If the player is poisoned, he should be able to slow the poison's effect by stan
 He should be also able to call 112/911.  (from Henri Kiviluoto)
 The pictures of mirrored creatures should also be mirrored and their limbs swapped.
 Things less dense than a liquid should float in a square full of that liquid.
+Simple protection for changing highscore files. Needed if list of best scores is done.

@@ -101,6 +101,7 @@ private:
   static bool SummonMonster(character*);
   static bool LevelTeleport(character*);
   static bool Possess(character*);
+  static bool Polymorph(character*);
 #endif
   static bool ToggleRunning(character*);
   static bool IssueCommand(character*);
