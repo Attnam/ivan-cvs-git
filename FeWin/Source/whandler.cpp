@@ -5,7 +5,7 @@
 
 dynarray<int> globalwindowhandler::KeyBuffer;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
-bool globalwindowhandler::InGetKey = false;
+bool globalwindowhandler::Initialized = false;
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -22,7 +22,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 		{
 			graphics::UpdateBounds();
 
-			if(InGetKey)
+			if(Initialized)
 				graphics::BlitDBToScreen();
 
 			break;
@@ -30,7 +30,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_PAINT:
 		{
-			if(InGetKey)
+			if(Initialized)
 				graphics::BlitDBToScreen();
 
 			break;
@@ -68,7 +68,8 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				return 0;
 			}
 
-			KeyBuffer.Add(wParam);
+			//if(InGetKey)
+				KeyBuffer.Add(wParam);
 
 			return 0;
 		}
@@ -88,15 +89,25 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 }
 
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
-{	
-	if(EmptyBuffer)
-		while(KeyBuffer.Length())
-			KeyBuffer.Remove(0);	// Shift-key == 0x10
-						// So what?
-
-	InGetKey = true;
-
+{
 	MSG msg;
+
+	if(EmptyBuffer)
+	{
+		/*while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+			if(msg.message == WM_QUIT)
+				exit(0);
+			else
+			{
+				TranslateMessage(&msg);
+
+				if(msg.message != WM_SYSKEYUP)
+					DispatchMessage(&msg);
+			}*/
+
+		while(KeyBuffer.Length())
+			KeyBuffer.Remove(0);
+	}
 
 	while(true)
 		if(KeyBuffer.Length())
@@ -171,13 +182,15 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	*phWnd = hWnd;
 
 	GetKeyboardLayoutName(KeyboardLayoutName);
+
+	Initialized = true;
 }
 
 int globalwindowhandler::ReadKey()
 {
 	MSG msg;
 
-	if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
 		if(msg.message == WM_QUIT)
 			exit(0);
 		else

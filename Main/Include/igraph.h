@@ -30,10 +30,8 @@ class colorizablebitmap;
 
 struct graphic_id
 {
-	graphic_id() {}
-	graphic_id(vector2d BitmapPos, ushort* Color, uchar FileIndex) : BitmapPos(BitmapPos), Color(Color), FileIndex(FileIndex) {}
 	vector2d BitmapPos;
-	ushort* Color;
+	ushort Color[4];
 	uchar FileIndex;
 };
 

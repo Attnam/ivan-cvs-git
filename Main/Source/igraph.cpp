@@ -80,12 +80,7 @@ tile igraph::AddUser(graphic_id GI)
 
 		tile Tile(Bitmap, 1);
 
-		graphic_id NewGI(GI.BitmapPos, new ushort[4], GI.FileIndex);
-
-		for(uchar c = 0; c < 4; ++c)
-			NewGI.Color[c] = GI.Color[c];
-
-		TileMap[NewGI] = Tile;
+		TileMap[GI] = Tile;
 
 		return Tile;
 	}
@@ -101,7 +96,6 @@ void igraph::RemoveUser(graphic_id GI)
 		if(!--Iterator->second.Users)
 		{
 			delete Iterator->second.Bitmap;
-			delete [] Iterator->first.Color;
 			TileMap.erase(Iterator);
 		}
 }

@@ -293,6 +293,7 @@ void door::MakeWalkable()
 	IsOpen = true;
 
 	GetLevelSquareUnder()->SendNewDrawRequest();
+	GetLevelSquareUnder()->SendMemorizedUpdateRequest();
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
@@ -308,6 +309,7 @@ void door::MakeNotWalkable()
 	IsOpen = false;
 
 	GetLevelSquareUnder()->SendNewDrawRequest();
+	GetLevelSquareUnder()->SendMemorizedUpdateRequest();
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
 	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())

@@ -64,7 +64,8 @@ public:
 	virtual bool DrawTerrain() const;
 	virtual bool DrawStacks() const;
 	virtual bool DrawCharacters() const;
-	virtual void UpdateMemorizedAndDraw();
+	virtual void Draw();
+	virtual void UpdateMemorized();
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids();
@@ -77,7 +78,6 @@ public:
 	virtual void ChangeLevelTerrain(groundlevelterrain*, overlevelterrain*);
 	virtual level* GetLevelUnder() const { return (level*)AreaUnder; }
 	virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
-	virtual void DrawCheat();
 	virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
 	virtual void ChangeOverLevelTerrain(overlevelterrain*);
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }

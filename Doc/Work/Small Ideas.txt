@@ -44,8 +44,6 @@ Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 Golems shouldn't be able to eat anything else.
-Some kind of an option screen.
-Autosave interval as a user-defined option.
 Mellis should fill also intact empty bottles and empty cans.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
@@ -61,9 +59,3 @@ Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 Cannibalism and navastating should have relation effect limits.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-A special weaponskill to bow.
-Thrown items should also increase weaponskills, or they they should have own weaponskill(s).
-Kicking should increase Unarmed weapon skill.
-Bow shots should be far more powerful.
-"You displace the dog." !!!
-Indices should be shown in CW.

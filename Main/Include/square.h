@@ -24,7 +24,8 @@ public:
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual void DrawMemorized() const;
-	virtual void UpdateMemorizedAndDraw() = 0;
+	virtual void Draw() = 0;
+	virtual void UpdateMemorized() = 0;
 	virtual bool DrawTerrain() const = 0;
 	virtual bool DrawCharacters() const = 0;
 	virtual void SetCharacter(character* What ) { Character = What; }
@@ -44,18 +45,18 @@ public:
 	virtual bool CanBeSeen() const;
 	virtual bool CanBeSeenIgnoreDarkness() const { return CanBeSeen(); }
 	virtual bool CanBeSeenFrom(vector2d, ulong) const;
-	virtual void DrawCheat() = 0;
 	virtual void SendNewDrawRequest() { NewDrawRequested = true; }
 	virtual bitmap* GetMemorized() const { return Memorized; }
 	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
 	virtual void StepOn(character*, square*) {}
 	virtual void KickAnyoneStandingHereAway();
+	virtual void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
 protected:
 	std::string MemorizedDescription;
 	area* AreaUnder;
 	character* Character;
 	vector2d Pos;
-	bool NewDrawRequested;
+	bool NewDrawRequested, MemorizedUpdateRequested;
 	bitmap* Memorized;
 	ulong LastSeen;
 	bool DescriptionChanged;

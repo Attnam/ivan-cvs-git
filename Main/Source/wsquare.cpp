@@ -53,7 +53,22 @@ bool worldmapsquare::DrawCharacters() const
 		return false;
 }
 
-void worldmapsquare::UpdateMemorizedAndDraw()
+void worldmapsquare::UpdateMemorized()
+{
+	if(MemorizedUpdateRequested)
+	{
+		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+
+		DrawTerrain();
+
+		igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+
+		MemorizedUpdateRequested = false;
+	}
+}
+
+void worldmapsquare::Draw()
 {
 	if(NewDrawRequested)
 	{
@@ -65,8 +80,6 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 		DrawTerrain();
 
 		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
-		igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
-		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
 		if(!game::GetOutlineCharacters())
 		{
@@ -100,14 +113,14 @@ void worldmapsquare::ChangeGroundWorldMapTerrain(groundworldmapterrain* NewGroun
 {
 	delete GetGroundWorldMapTerrain();
 	SetGroundWorldMapTerrain(NewGround);
-	DescriptionChanged = NewDrawRequested = true;
+	DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
 }
 
 void worldmapsquare::ChangeOverWorldMapTerrain(overworldmapterrain* NewOver)
 {
 	delete GetOverWorldMapTerrain();
 	SetOverWorldMapTerrain(NewOver);
-	DescriptionChanged = NewDrawRequested = true;
+	DescriptionChanged = NewDrawRequested = MemorizedUpdateRequested = true;
 }
 
 void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
@@ -149,39 +162,4 @@ groundterrain* worldmapsquare::GetGroundTerrain() const
 overterrain* worldmapsquare::GetOverTerrain() const
 {
 	return OverWorldMapTerrain;
-}
-
-void worldmapsquare::DrawCheat()
-{
-	if(NewDrawRequested)
-	{
-		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
-
-		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
-		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
-
-		DrawTerrain();
-
-		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
-
-		if(!game::GetOutlineCharacters())
-		{
-			DrawCharacters();
-			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
-		}
-		else
-		{
-			igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
-
-			if(GetCharacter())
-			{
-				igraph::GetTileBuffer()->ClearToColor(0xF81F);
-				DrawCharacters();
-				igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
-				igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, GammaLuminance);
-			}
-		}
-
-		NewDrawRequested = false;
-	}
 }

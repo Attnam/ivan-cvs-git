@@ -23,7 +23,8 @@ public:
 	virtual void Load(inputfile&);
 	virtual bool DrawTerrain() const;
 	virtual bool DrawCharacters() const;
-	virtual void UpdateMemorizedAndDraw();
+	virtual void Draw();
+	virtual void UpdateMemorized();
 	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void SetOverWorldMapTerrain(overworldmapterrain*);
 	virtual groundworldmapterrain* GetGroundWorldMapTerrain() const { return GroundWorldMapTerrain; }
@@ -34,7 +35,6 @@ public:
 	virtual void UpdateMemorizedDescription(bool = false);
 	virtual groundterrain* GetGroundTerrain() const;
 	virtual overterrain* GetOverTerrain() const;
-	virtual void DrawCheat();
 	virtual void ChangeGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void ChangeOverWorldMapTerrain(overworldmapterrain*);
 protected:

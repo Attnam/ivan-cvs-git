@@ -9,10 +9,7 @@
 
 object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), SquareUnder(0)
 {
-	GraphicId.Color = new ushort[4];
-
-	for(uchar c = 0; c < 4; ++c)
-		GraphicId.Color[c] = 0;
+	*(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
 
 	if(AddToPool)
 	{
@@ -24,8 +21,6 @@ object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), Sq
 object::~object()
 {
 	EraseMaterials();
-
-	delete [] GraphicId.Color;
 
 	if(InPool)
 		objectpool::Remove(GetPoolIterator());
@@ -80,10 +75,11 @@ void object::InitMaterials(ushort Materials, ...)
 		}
 	}
 
-	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
-	Picture = igraph::AddUser(GraphicId).Bitmap;
-
 	va_end(AP);
+
+	GraphicId.BitmapPos = GetBitmapPos();
+	GraphicId.FileIndex = GetGraphicsContainerIndex();
+	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
 void object::InitMaterials(material* FirstMaterial)
@@ -101,7 +97,8 @@ void object::InitMaterials(material* FirstMaterial)
 			Material[0]->SetVolume(GetDefaultVolume(0));
 	}
 
-	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
+	GraphicId.BitmapPos = GetBitmapPos();
+	GraphicId.FileIndex = GetGraphicsContainerIndex();
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
@@ -330,7 +327,7 @@ void object::ChangeMaterial(uchar Index, material* NewMaterial)
 void object::UpdatePicture()
 {
 	igraph::RemoveUser(GraphicId);
-	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
+	GraphicId.BitmapPos = GetBitmapPos();
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 

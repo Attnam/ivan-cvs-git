@@ -21,7 +21,7 @@ public:
 private:
 	static dynarray<int> KeyBuffer;
 	static char KeyboardLayoutName[KL_NAMELENGTH];
-	static bool InGetKey;
+	static bool Initialized;
 };
 
 #endif

@@ -8,7 +8,7 @@
 #include "strover.h"
 #include "save.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), MemorizedUpdateRequested(true)
 {
 }
 
@@ -83,6 +83,7 @@ void square::SetLastSeen(ulong What)
 	if(GetLastSeen() < What - 1 || !GetOverTerrain()->GetIsWalkable())
 		SendNewDrawRequest();
 
+	UpdateMemorized();
 	UpdateMemorizedDescription();
 
 	LastSeen = What;

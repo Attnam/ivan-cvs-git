@@ -224,7 +224,7 @@ void game::DeInit()
 void game::Run()
 {
 	while(GetRunning())
-	{
+	{	
 		if(!InWilderness)
 			GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();	// Temporary
 

@@ -92,24 +92,17 @@ void worldmap::Draw() const
 	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
 	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
-	if(game::GetSeeWholeMapCheat())
+	if(!game::GetSeeWholeMapCheat())
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-			{
 				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-					Map[x][y]->UpdateMemorizedAndDraw();
+					Map[x][y]->Draw();
 				else
-					Map[x][y]->DrawCheat();
-			}
+					Map[x][y]->DrawMemorized();
 	else
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-			{
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-					Map[x][y]->UpdateMemorizedAndDraw();
-				else
-					Map[x][y]->DrawMemorized();
-			}
+				Map[x][y]->Draw();
 }
 
 void worldmap::Generate()
