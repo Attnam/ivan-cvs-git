@@ -808,6 +808,7 @@ class character : public entity, public id
   virtual bool CheckConsume(const festring&) const;
   virtual ushort GetTameSymbolSquareIndex() const { return 0; }
   virtual ushort GetFlySymbolSquareIndex() const { return 0; }
+  virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

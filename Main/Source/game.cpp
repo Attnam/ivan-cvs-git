@@ -1,4 +1,3 @@
-#include <ctime>
 #include <algorithm>
 #include <cstdarg>
 
@@ -1651,8 +1650,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       Player->SignalStepFrom(0);
 
       for(c = 0; c < Group.size(); ++c)
-	if(Group[c]->IsEnabled())
-	  Group[c]->SignalStepFrom(0);
+	Group[c]->SignalStepFrom(0);
 
       if(configuration::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());

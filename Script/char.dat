@@ -3955,6 +3955,7 @@ vladimir
 	IsUnique = true;
 	CanApply = true;
 	IsPolymorphable = false;
+	CanBeCloned = false;
 }
 
 hattifattener

@@ -657,6 +657,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
   if(!TeleportMove && IsStuck() && !TryToUnstuck(MoveTo - GetPos()))
     return;
 
+  SetStuckTo(0);
+  SetStuckToBodyPart(NONE_INDEX);
+
   if(GetBurdenState() != OVER_LOADED || TeleportMove)
     {
       lsquare* OldSquareUnder[MAX_SQUARES_UNDER];
@@ -668,12 +671,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
       Remove();
       PutTo(MoveTo);
 
-      if(!game::IsInWilderness())
-	SignalStepFrom(OldSquareUnder);
-
-      if(IsPlayer())
-	ShowNewPosInfo();
-
       if(!TeleportMove)
 	{
 	  /* Multitiled creatures should behave differently, maybe? */
@@ -682,6 +679,12 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 	  EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
 	  EditExperience(AGILITY, 8 * GetSquareUnder()->GetEntryDifficulty());
 	}
+
+      if(IsPlayer())
+	ShowNewPosInfo();
+
+      if(!game::IsInWilderness())
+	SignalStepFrom(OldSquareUnder);
     }
   else
     {
@@ -918,7 +921,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
 	    {
 	      Move(MoveTo);
 
-	      if(GetPos() == GoingTo)
+	      if(IsEnabled() && GetPos() == GoingTo)
 		TerminateGoingTo();
 
 	      return true;
@@ -1662,7 +1665,7 @@ void character::Load(inputfile& SaveFile)
 
   InstallDataBase(ReadType<ushort>(SaveFile));
 
-  if(IsEnabled())
+  if(IsEnabled() && !game::IsInWilderness())
     for(c = 1; c < GetSquaresUnder(); ++c)
       GetSquareUnder(c)->SetCharacter(this);
 }
@@ -2334,9 +2337,9 @@ bool character::Displace(character* Who, bool Forced)
       vector2d Pos = GetPos();
       PutTo(Who->GetPos());
       Who->PutTo(Pos);
-
-      SignalStepFrom(OldSquareUnder1);
-      Who->SignalStepFrom(OldSquareUnder2);
+      EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
+      EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
+      EditExperience(AGILITY, 8 * GetSquareUnder()->GetEntryDifficulty());
 
       if(IsPlayer())
 	ShowNewPosInfo();
@@ -2344,9 +2347,8 @@ bool character::Displace(character* Who, bool Forced)
       if(Who->IsPlayer())
 	Who->ShowNewPosInfo();
 
-      EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
-      EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
-      EditExperience(AGILITY, 8 * GetSquareUnder()->GetEntryDifficulty());
+      SignalStepFrom(OldSquareUnder1);
+      Who->SignalStepFrom(OldSquareUnder2);
       return true;
     }
   else
@@ -4399,16 +4401,22 @@ void character::DexterityAction(ushort Difficulty)
 
 bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
-  bool MayBeESPSeen = !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
-  bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
-  bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
-  if((game::IsInWilderness() && Visible)
-     || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
-    return true;
-  else if(!Visible)
-    return false;
+  if(IsEnabled())
+    {
+      bool MayBeESPSeen = !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+      bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
+      bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
+
+      if((game::IsInWilderness() && Visible)
+	 || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
+	return true;
+      else if(!Visible)
+	return false;
+      else
+	return Theoretically || SquareUnderCanBeSeenByPlayer(MayBeInfraSeen);
+    }
   else
-    return Theoretically || SquareUnderCanBeSeenByPlayer(MayBeInfraSeen);
+    return false;
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -4417,17 +4425,22 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
     return CanBeSeenByPlayer(Theoretically, IgnoreESP);
   else
     {
-      bool MayBeESPSeen = !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
-      bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
-      bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
+      if(IsEnabled())
+	{
+	  bool MayBeESPSeen = !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+	  bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
+	  bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-      if((game::IsInWilderness() && Visible)
-      || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(Who) <= Who->GetESPRangeSquare())))
-	return true;
-      else if(!Visible)
-	return false;
+	  if((game::IsInWilderness() && Visible)
+	  || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(Who) <= Who->GetESPRangeSquare())))
+	    return true;
+	  else if(!Visible)
+	    return false;
+	  else
+	    return Theoretically || SquareUnderCanBeSeenBy(Who, MayBeInfraSeen);
+	}
       else
-	return Theoretically || SquareUnderCanBeSeenBy(Who, MayBeInfraSeen);
+	return false;
     }
 }
 

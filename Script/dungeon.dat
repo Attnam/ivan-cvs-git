@@ -1377,19 +1377,19 @@ Dungeon ATTNAM;
 		Square, Random;
 		{
 			Items == Random { Category = WAND; }
-			Times = 1000;
+			Times = 5000;
 		}
 
 		Square, Random;
 		{
 			Items == mine { Team = MONSTER_TEAM; IsActive = true; }
-			Times = 50;
+			Times = 500;
 		}
 
 		Square, Random;
 		{
 			Items == beartrap { Team = ATTNAM_TEAM; IsActive = true; }
-			Times = 100;
+			Times = 500;
 		}*/
 	}
 }

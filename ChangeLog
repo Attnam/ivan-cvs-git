@@ -6,6 +6,22 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+	
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Polymorphing cloned multitiled items no longer crashes
+	* Vladimir can no longer be cloned
+	* Bear traps are no longer polymorphable, since this happening when they were
+	  trapping someone caused a crash
+	* Corrected two Yet Another Teleport on Mine, Polymorph and Crash Bugs
+	* Teleporting away from bear traps works again correctly
+	* Saving and loading while transporting Vladimir through the wilderness no
+	  longer crashes
+	* Highscores now store system time and a random 31-bit integer along with
+	  score information, which may be useful for MIHAIL
+	* Purified the source from a fatal bug which could cause removing of
+	  multitiled creatures from prescripted strategic locations to abort the game
+
 August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* When multi-squared monsters enters a square with a door. The door is destroyed.
@@ -13,7 +29,7 @@ August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 August 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* typo corrected "blah are/is too large to big up" -> pick up
-	
+
 August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
 	* Resurrecting monsters will now trigger StepOn effects under them

@@ -30,9 +30,9 @@ item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(
 {
   ID = game::CreateNewItemID(this);
   CloneMotherID.push_back(Item.ID);
-  Slot = new slot*[GetSquaresUnder()];
+  Slot = new slot*[Item.GetSquaresUnder()];
 
-  for(ushort c = 0; c < GetSquaresUnder(); ++c)
+  for(ushort c = 0; c < Item.GetSquaresUnder(); ++c)
     Slot[c] = 0;
 }
 

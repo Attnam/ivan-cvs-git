@@ -6,6 +6,7 @@
 #endif
 
 #include <vector>
+#include <ctime>
 
 #include "festring.h"
 
@@ -30,8 +31,11 @@ class highscore
   bool LastAddFailed() const { return LastAdd == 100; }
   void AddToFile(highscore*) const;
  private:
+  bool Add(long, const festring&, time_t, long);
   std::vector<festring> Entry;
   std::vector<long> Score;
+  std::vector<time_t> Time;
+  std::vector<long> RandomID;
   uchar LastAdd;
 };
 

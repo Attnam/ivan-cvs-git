@@ -26,7 +26,7 @@ class slot
   item* operator*() const { return Item; }
   virtual void AddFriendItem(item*) const = 0;
   virtual bool IsOnGround() const { return false; }
-  virtual void PutInItem(item*);
+  virtual void PutInItem(item*) = 0;
   virtual square* GetSquareUnder(ushort = 0) const = 0;
   virtual void SignalVolumeAndWeightChange() = 0;
   virtual void SignalEmitationIncrease(ulong) = 0;

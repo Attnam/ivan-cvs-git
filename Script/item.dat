@@ -2221,6 +2221,7 @@ beartrap
 	CanBeBroken = true;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 128;
+	IsPolymorphable = false;
 
 	Config BROKEN;
 	{

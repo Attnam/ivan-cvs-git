@@ -1,5 +1,4 @@
 #include <iostream>
-#include <ctime>
 
 #ifdef __DJGPP__
 #include <go32.h>

@@ -1411,7 +1411,7 @@ void (level::*level::GetBeam(ushort Index))(character*, const festring&, vector2
   return Beam[Index];
 }
 
-vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance) const
+vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance, bool AllowStartPos) const
 {
   ushort c;
 
@@ -1419,7 +1419,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && Pos != Prohibited)
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && Pos != Prohibited && (AllowStartPos || !Char->PlaceIsIllegal(Pos, Prohibited)))
 	return Pos;
     }
 
@@ -1432,7 +1432,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 	  {
 	    if(Char->CanMoveOn(GetLSquare(Pos)) && Pos != Prohibited)
 	      {
-		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
+		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1, AllowStartPos);
 
 		if(Pos != ERROR_VECTOR)
 		  return Pos;
@@ -1456,7 +1456,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, b
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)))
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && Char->IsFreeForMe(GetLSquare(Pos)) && (AllowStartPos || !Char->PlaceIsIllegal(Pos, StartPos)))
 	return Pos;
     }
 
@@ -1467,7 +1467,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos, b
 
 	if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)))
 	  {
-	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
+	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist, AllowStartPos);
 
 	    if(Pos != ERROR_VECTOR)
 	      return Pos;

@@ -103,18 +103,6 @@ void gearslot::SignalVolumeAndWeightChange()
   GetBodyPart()->SignalVolumeAndWeightChange();
 }
 
-void slot::PutInItem(item* What)
-{
-  Item = What;
-
-  if(Item)
-    {
-      Item->SetMainSlot(this);
-      SignalVolumeAndWeightChange();
-      SignalEmitationIncrease(Item->GetEmitation());
-    }
-}
-
 void stackslot::PutInItem(item* What)
 {
   Item = What;

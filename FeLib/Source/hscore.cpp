@@ -3,6 +3,7 @@
 #include "felist.h"
 #include "feio.h"
 #include "festring.h"
+#include "femath.h"
 
 #define HIGH_SCORE_VERSION 120 // Increment this if changes make highscores incompatible
 
@@ -11,18 +12,22 @@ highscore::highscore(const festring& File) : LastAdd(0xFF)
   Load(File);
 }
 
-bool highscore::Add(long NewScore, const festring& NewEntry)
+bool highscore::Add(long NewScore, const festring& NewEntry, time_t NewTime, long NewRandomID)
 {
   for(ushort c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
       {
 	Entry.insert(Entry.begin() + c, NewEntry);
 	Score.insert(Score.begin() + c, NewScore);
+	Time.insert(Time.begin() + c, NewTime);
+	RandomID.insert(RandomID.begin() + c, NewRandomID);
 
 	if(Score.size() > 100)
 	  {
 	    Entry.resize(100, festring());
 	    Score.resize(100);
+	    Time.resize(100);
+	    RandomID.resize(100);
 	  }
 
 	LastAdd = c;
@@ -34,6 +39,8 @@ bool highscore::Add(long NewScore, const festring& NewEntry)
       LastAdd = Score.size();
       Entry.push_back(NewEntry);
       Score.push_back(NewScore);
+      Time.push_back(NewTime);
+      RandomID.push_back(NewRandomID);
       return true;
     }
   else
@@ -73,7 +80,7 @@ void highscore::Draw() const
 void highscore::Save(const festring& File) const
 {
   outputfile HighScore(File);
-  HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << LastAdd;
+  HighScore << ushort(HIGH_SCORE_VERSION) << Score << Entry << Time << RandomID << LastAdd;
 }
 
 void highscore::Load(const festring& File)
@@ -95,13 +102,16 @@ void highscore::Load(const festring& File)
   HighScore >> HVersion;
 
   if(HVersion == HIGH_SCORE_VERSION)
-    HighScore >> Score >> Entry >> LastAdd;
+    HighScore >> Score >> Entry >> Time >> RandomID >> LastAdd;
 }
 
 void highscore::AddToFile(highscore* To) const
 {
   for(ushort c = 0; c < Score.size(); ++c)
-    {
-      To->Add(Score[c], Entry[c]); 
-    }
+    To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
+}
+
+bool highscore::Add(long NewScore, const festring& NewEntry)
+{
+  return Add(NewScore, NewEntry, time(0), RAND());
 }

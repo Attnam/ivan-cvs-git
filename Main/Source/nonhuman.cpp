@@ -1793,3 +1793,12 @@ bool bunny::Catches(item* Thingy)
   else
     return false;
 }
+
+bool largecreature::PlaceIsIllegal(vector2d Pos, vector2d Illegal) const
+{
+  for(ushort c = 0; c < 4; ++c)
+    if(Pos + game::GetLargeMoveVector(12 + c) == Illegal)
+      return true;
+
+  return false;
+}
