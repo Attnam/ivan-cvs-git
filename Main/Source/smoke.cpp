@@ -10,6 +10,7 @@
 #include "igraph.h"
 #include "colorbit.h"
 #include "message.h"
+#include "char.h"
 
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder)
 {
@@ -53,7 +54,7 @@ void smoke::Be()
       Gas->SetVolume(Gas->GetVolume() - Gas->GetVolume() / 50);
     }
   character* Char = LSquareUnder->GetCharacter();
-  if(Char)
+  if(Char && !Char->StateIsActivated(GAS_IMMUNITY))
     {
       Gas->BreatheEffect(Char);
     }

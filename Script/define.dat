@@ -59,6 +59,7 @@
 #define CONFUSED 16384
 #define PARASITIZED 32768
 #define SEARCHING 65536
+#define GAS_IMMUNITY 131072
 
 #define HEAD 1
 #define TORSO 2

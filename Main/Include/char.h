@@ -703,6 +703,8 @@ class character : public entity, public id
   void Search(ushort);
   character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
   virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
+  void PrintBeginGasImmunityMessage() const;
+  void PrintEndGasImmunityMessage() const;
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

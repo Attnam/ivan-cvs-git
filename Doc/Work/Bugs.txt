@@ -166,3 +166,8 @@ Game always crashes when one door is kicked with this trace.
 #7  0x080a0e4f in humanoid::Kick(lsquare*, bool) (this=0x891b9f0, 
     Square=0x8913000, ForceHit=false) at human.cpp:1628
 //////////
+
+(example) Even though the golem is not seen the message "The attack of the glass golem interrupts you." is displayed
+(might be a feature... But probably isn't even thought Timo may say so) Merka the shopkeeper walking around in the dungeon. 
+Dark wizards are too hard.
+TOO MANY KAMIKAZE DWARFS.

@@ -547,7 +547,7 @@ class ITEM
   virtual bool IsDangerousForAI(const character*) const { return IsActive(); }
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
-  virtual bool ReceiveDamage(character*, ushort, uchar) { return false; } // gum solution; all StuckTo code sucks
+  virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
  protected:

@@ -8,16 +8,16 @@
  * doesn't need one.
  */
 
-void (character::*PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage, &character::PrintBeginParasitizedMessage, &character::PrintBeginSearchingMessage };
-void (character::*PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage, &character::PrintEndParasitizedMessage, &character::PrintEndSearchingMessage };
-void (character::*BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler, &character::SearchingHandler };
-bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, 0, &character::AllowParasitized, 0 };
-std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized", "Searching" };
-bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false, false };
-bool TemporaryStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false, false };
-bool PermanentStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, false, true, false };
+void (character::*PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage, &character::PrintBeginParasitizedMessage, &character::PrintBeginSearchingMessage, &character::PrintBeginGasImmunityMessage };
+void (character::*PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage, &character::PrintEndParasitizedMessage, &character::PrintEndSearchingMessage, &character::PrintEndGasImmunityMessage };
+void (character::*BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler, &character::SearchingHandler, 0 };
+bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, 0, &character::AllowParasitized, 0, 0 };
+std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized", "Searching", "Gas immunity" };
+bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false, false, true };
+bool TemporaryStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false, false, true };
+bool PermanentStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, false, true, true, true, false, true, true, true, false, false, true, false, true };
 
 characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
@@ -286,9 +286,6 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
     }
 
   std::string DeathMsg = "killed by " + Enemy->GetKillName();
-  if(Action)
-    DeathMsg += Action->GetDeathExplanation();
-
   if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
@@ -1366,8 +1363,10 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s.", Msg.c_str());
-
-      Die(Msg, ForceMsg);
+      if(GetAction())
+	Die(Msg + GetAction()->GetDeathExplanation());
+      else
+	Die(Msg, ForceMsg);
 
       return true;
     }
@@ -1408,8 +1407,6 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
   if(Succeeded)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
   std::string DeathMsg = "killed by a flying " + Thingy->GetName(UNARTICLED);
-  if(Action)
-    DeathMsg += Action->GetDeathExplanation();
   if(CheckDeath(DeathMsg, Thrower))
     return;
 
@@ -5524,3 +5521,14 @@ character* character::GetRandomNeighbour(uchar RelationFlags) const
 }
 
 
+void character::PrintBeginGasImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("All smells fade away.");
+}
+
+void character::PrintEndGasImmunityMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Yuck! The world smells bad again.");
+}

@@ -45,7 +45,7 @@
 #define BLOATED 4
 #define OVER_FED 5
 
-#define STATES 17
+#define STATES 18
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -64,6 +64,7 @@
 #define CONFUSED 16384
 #define PARASITIZED 32768
 #define SEARCHING 65536
+#define GAS_IMMUNITY 131072
 
 #define TORSO 1
 #define HEAD 2

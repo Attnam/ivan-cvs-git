@@ -442,3 +442,4 @@ Ring of conflict should cause two-headed mooses to kill themselves.
 You should be able to wish for anything. (Very problematic, I know)
 Leash.
 Gas masks
+Eating only unspoiled food should require a bit of wisdom

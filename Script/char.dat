@@ -948,6 +948,7 @@ skeleton
 	SpillsBlood = false;
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
+	ClassStates = GAS_IMMUNITY;
 
 	Config WARRIOR;
 	{
@@ -1120,6 +1121,7 @@ mommo
 	HasEyes = false;
 	HasHead = false;
 	AttachedGod = SCABIES;
+	ClassStates = GAS_IMMUNITY;
 
 	Config CONICAL;
 	{
@@ -1186,6 +1188,7 @@ golem
 	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";
 	UsesNutrition = false;
 	AttachedGod = NONE;
+	ClassStates = GAS_IMMUNITY;
 
 	Config VALPURIUM;
 	{
@@ -1203,7 +1206,7 @@ golem
 		DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
-		ClassStates = HASTE|INFRA_VISION|INVISIBLE;
+		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
 		IsNameable = false;
 		CanBeWished = false;
 		CanBeCloned = false;
@@ -1818,6 +1821,7 @@ zombie
 	/* Replies overridden */
 	DeathMessage = "@Dd is slain (again).";
 	AttachedGod = MORTIFER;
+	ClassStates = GAS_IMMUNITY;
 }
 
 imp
@@ -1848,6 +1852,7 @@ imp
 	FleshMaterial = SULFUR;
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
+	ClassStates = GAS_IMMUNITY;
 }
 
 bat
@@ -2285,7 +2290,7 @@ angel
 	NameSingular = "angel";
 	Article = "an";
 	CanBeWished = false;
-	ClassStates = ESP;
+	ClassStates = ESP|GAS_IMMUNITY;
 	SkinColor = rgb16(200, 200, 200);
 	HairColor = rgb16(180, 180, 0);
 	EyeColor = rgb16(48, 48, 255);
@@ -2470,6 +2475,7 @@ genie
 	SpillsBlood = false;
 	AttachedGod = ATAVUS;
 	BodyPartsDisappearWhenSevered = true;
+	ClassStates = GAS_IMMUNITY;
 }
 
 lion
@@ -2643,7 +2649,7 @@ orc
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
 	LeftSWeaponSkillHits = 20;
-	ClassStates = INFRA_VISION;
+	ClassStates = GAS_IMMUNITY|INFRA_VISION;
 	PanicLevel = 50;
 	HostileReplies == "\"Nice scalp! Me want it!\"";
 	FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
@@ -3168,7 +3174,7 @@ floatingeye
 	UsesNutrition = false;
 	AttackWisdomLimit = 10;
 	AttachedGod = LEGIFER;
-	ClassStates == SEARCHING;
+	ClassStates == SEARCHING|GAS_IMMUNITY;
 }
 
 eddy
@@ -3206,6 +3212,7 @@ eddy
 	DeathMessage = "@Dd disappears.";
 	AttachedGod = SOPHOS;
 	BodyPartsDisappearWhenSevered = true;
+	ClassStates = GAS_IMMUNITY;
 }
 
 mushroom
@@ -3311,7 +3318,7 @@ ghost
 	NameSingular = "ghost";
 	BaseUnarmedStrength = 1500;
 	CanBeGenerated = true;
-	ClassStates = INFRA_VISION|ESP;
+	ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 100;
 	BaseEmitation = rgb24(110, 110, 110);
@@ -3415,4 +3422,5 @@ skunk
 	PanicLevel = 85;
 	TorsoMainColor = rgb16(255, 255, 255); 
 	PoisonResistance = 10;
+	ClassStates = GAS_IMMUNITY;
 }

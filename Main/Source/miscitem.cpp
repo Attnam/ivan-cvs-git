@@ -2145,3 +2145,25 @@ void mine::SetIsActive(bool What)
   Active = What;
   DiscoveredByTeam.clear();
 }
+
+bool beartrap::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+{
+  if(!IsBroken() && (Type == PHYSICAL_DAMAGE) && Damage)
+    {
+      if(Damage > 125 || !(RAND() % (250 / Damage)))
+	{
+	  Break();	  
+	  return true;
+	}
+      else
+	{
+	  if(IsActive())
+	    {
+	      ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
+	      SetIsActive(false);	  
+	      return true;
+	    }
+	}
+    }
+  return false;
+}
