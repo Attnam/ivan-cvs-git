@@ -1706,7 +1706,8 @@ Functions:
 levelsquare(level* MotherLevel, vector Pos)
 ~levelsquare()
 
-	Self-explanatory.
+	Construct and destruct the levelsquare. MotherLevel is the level
+	where the square is located and Pos is its position in it.
 
 HandleCharacters()
 
@@ -1723,6 +1724,7 @@ ForceEmitterEmitation()
 NoxifyEmitter()
 uchar CalculateBitMask(vector Dir)
 AlterLuminance(vector Dir, ushort AiL)
+ushort CLuminance()
 
 	See "ligth.txt".
 
@@ -1741,74 +1743,143 @@ bool Close(character* Closer)
 	Pass these commands to overterrain, and return whatever the return.
 
 bool Save(std::ofstream* SaveFile)
+
+	Saves the square to SaveFile.
+
 levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos)
 
-	At this point quite self-explanatory.
+	Creates and loads the levelsquare. See the normal constructor for
+	parameter info.
 
-SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation)
+SpillFluid(uchar Amount, ulong Color, ushort Lumpiness = 3,
+           ushort Variation = 32)
 
-ushort CLuminance(
+	Spills some liquid substance to the square, creating little
+	puddles of specified Color to its position in MotherLevel's
+	FluidBuffer. Amount is the amount of these puddles, Lumpiness
+	influences their size (bigger means, roughly, bigger, but in
+	no occasion larger than 3x3), and Variation affects the color
+	variation across them.
 
 AddCharacter(character* Guy)
 
+	Adds Guy onto the square and updates ligthning if necessary.
+
 FastAddCharacter(character* Guy)
 
-Clean(
+	Adds Guy onto the square but never updates ligths.
 
-RemoveCharacter(
+Clean()
 
-UpdateItemMemory(
+	Deletes the entire contents of the square's Stack and SideStacks.
 
-CanBeSeen(
+RemoveCharacter()
+
+	Removes the Character currently standing on the square, updating
+	ligth if necessary. (Character isn't deleted, just set to zero)
+
+UpdateItemMemory()
+
+	Updates RememberedItems, that is, a short text containing a
+	description of what is lying on the square, like "many items".
+
+CanBeSeen()
+
+	Returns whether this square can be seen by the player.
 
 Kick(ushort Strength, uchar KickWay)
 
+	Called when the contents of square is kicked. Forwards parameters
+	to Stack.
+
 bool CanBeSeenFrom(vector FromPos)
 
+	Self-explanatory.
+
 SRememberedItems(std::string What)
+std::string CRememberedItems()
+
+	Set RememberedItems (see UpdateItemMemory()) to What and
+	return them.
 
 bool Dig(character* DiggerCharacter, item* DiggerItem)
 
+	Called when DiggerCharacter tries to dig the square with
+	a pick-axe or similiar as DiggerItem. Returns whether
+	this was successful or not.
+
 char CanBeDigged(character* DiggerCharacter, item* DiggerItem)
 
-stack* CStack(
+	Quite obvious. Returns zero or two if it isn't, one if it is.
 
-EmptyFlag(
+stack* CStack()
 
-SetFlag(
+	Returns a pointer to the square's primary stack.
 
-RetrieveFlag(
+EmptyFlag()
+SetFlag()
+bool RetrieveFlag()
+
+	Flag handlers. Flag determines whether the player can
+	currently see the square.
 
 stack* CSideStack(uchar Index)
 
-ushort CEmitation(
+	Returns a pointer to the wanted SideStack, that is a stack
+	attached to the side of an impassable square. Index must
+	be either DOWN (0), LEFT (1), UP (2) or RIGHT (3).
 
-std::string CEngraved(
+ushort CEmitation()
+SEmitation(ushort What)
+
+	Returns and sets Emitation, which is used as a backup
+	emitation value from the last call to CalculateEmitation().
+	See "ligth.txt".
+
+std::string CEngraved()
+
+	Returns whatever is engraved here, or "" if there's nothing.
 
 bool Engrave(std::string What)
 
-SEmitation(ushort What)
+	Sets the Engraved string to What and returns true.
 
-std::string CRememberedItems(
-
-uchar CDivineOwner(
-
+uchar CDivineOwner()
 SDivineOwner(uchar NDO)
 
-level* CMotherLevel(
+	Return and set the DivineOwner, which is the index of the owner
+	deity in the divine god array, or zero for none. No other
+	god can be prayed upon on this particular square.
+
+level* CMotherLevel()
+
+	Return a pointer to the level where the square is.
 
 levelsquare::emitter (lsquare.h)
 --------------------------------
+
+Emitter is a simple struct that contains information about an emitter,
+which is shedding ligth upon a particular levelsquare. See "ligth.txt"
+for more knowledge about emitters.
 
 Functions:
 
 emitter(vector Pos, ushort DilatedEmitation)
 
-emitter(
+	Creates a new emitter with the given attributes.
+
+emitter()
+
+	Creates an unitialized new emitter.
 
 bool operator==(emitter& AE)
 
+	Operator for comparing two emitters. Doesn't care about anything
+	else than the Pos vector.
+
 emitter& operator=(emitter& AE)
+
+	Copies all data from AE to the emitter.
 
 terrain (terrain.h)
 -------------------
