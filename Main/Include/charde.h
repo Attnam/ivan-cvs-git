@@ -144,6 +144,7 @@ class ABSTRACT_CHARACTER
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
   void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
   virtual item* SevereBodyPart(ushort);
+  virtual void AddDefenceInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);

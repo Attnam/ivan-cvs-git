@@ -900,6 +900,9 @@ class ABSTRACT_ITEM
   float GetBlockChance(float) const;
   ushort GetBlockCapability() const;
   void WieldedSkillHit();
+  ushort GetBlockStrength() const { return GetWielded()->GetStrengthValue(); }
+  float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier(Master) / 10000; }
+  void AddDefenceInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;

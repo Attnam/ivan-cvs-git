@@ -2974,7 +2974,7 @@ bool character::SecretKnowledge()
 	  PageLength = 20;
 	  break;
 	case 1:
-	  List.AddDescription("                                                  DV        HP        AV");
+	  List.AddDescription("                                                  DV/BV     HP        AV/BS");
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
@@ -2987,28 +2987,13 @@ bool character::SecretKnowledge()
 	      Pic.Fill(TRANSPARENTCOL);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
 	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
-
-	      for(ushort b = 0; b < Character[c]->GetBodyParts(); ++b)
-		{
-		  bodypart* BodyPart = Character[c]->GetBodyPart(b);
-
-		  if(BodyPart)
-		    {
-		      std::string Entry = "   ";
-		      BodyPart->AddName(Entry, UNARTICLED);
-		      Entry.resize(60, ' ');
-		      Entry << BodyPart->GetMaxHP();
-		      Entry.resize(70, ' ');
-		      Entry << BodyPart->GetTotalResistance(PHYSICALDAMAGE);
-		      List.AddEntry(Entry, LIGHTGRAY);
-		    }
-		}
+	      Character[c]->AddDefenceInfo(List);
 	    }
 
 	  PageLength = 25;
 	  break;
 	case 2:
-	  List.AddDescription("                                                  Danger    Modifier");
+	  List.AddDescription("                                                  Danger    GModifier");
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
@@ -3372,7 +3357,7 @@ void character::SetBodyPart(ushort Index, bodypart* What)
 
 bool character::CanConsume(material* Material) const
 {
-  return GetConsumeFlags() & Material->GetConsumeType() != 0;
+  return (GetConsumeFlags() & Material->GetConsumeType()) != 0;
 }
 
 void character::SetTemporaryStateCounter(ushort State, ushort What)
@@ -3705,7 +3690,7 @@ void character::UpdateBodyPartPicture(ushort Index)
 
       if(Material->IsFlesh())
 	{
-          std::vector<ushort>& SkinColor = ((flesh*)Material)->GetSkinColorVector();
+          std::vector<ushort>& SkinColor = static_cast<flesh*>(Material)->GetSkinColorVector();
 	  SkinColor.clear();
 
 	  for(ushort c = 0; c < GetBodyPartAnimationFrames(Index); ++c)
@@ -5444,4 +5429,17 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
     }
 }
 
-
+void character::AddDefenceInfo(felist& List) const
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      {
+	std::string Entry = "   ";
+	GetBodyPart(c)->AddName(Entry, UNARTICLED);
+	Entry.resize(60, ' ');
+	Entry << GetBodyPart(c)->GetMaxHP();
+	Entry.resize(70, ' ');
+	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE);
+	List.AddEntry(Entry, LIGHTGRAY);
+      }
+}

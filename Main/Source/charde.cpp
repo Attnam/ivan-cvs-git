@@ -2761,8 +2761,8 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
       if(GetRightArm())
 	if(GetRightWielded() && GetRightWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDS %d", GetRightWielded()->GetStrengthValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDV %.0f", GetRightArm()->GetToHitValue() * GetRightWielded()->GetBlockModifier(this) / 10000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBS %d", GetRightArm()->GetBlockValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBV %.0f", GetRightArm()->GetBlockValue());
 	  }
 	else if(GetRightArm()->GetDamage())
 	  {
@@ -2774,8 +2774,8 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
       if(GetLeftArm())
 	if(GetLeftWielded() && GetLeftWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDS %d", GetLeftWielded()->GetStrengthValue());
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDV %.0f", GetLeftArm()->GetToHitValue() * GetLeftWielded()->GetBlockModifier(this) / 10000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBS %d", GetLeftArm()->GetBlockValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBV %.0f", GetLeftArm()->GetBlockValue());
 	  }
 	else if(GetLeftArm()->GetDamage())
 	  {
@@ -2802,6 +2802,9 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
+
+  if(game::WizardModeActivated())
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
 
   /*if(game::WizardModeActivated())
     {
@@ -3639,3 +3642,13 @@ void humanoid::CheckIfSWeaponSkillRemovalNeeded(sweaponskill* Skill)
 	}
 }
 
+void humanoid::AddDefenceInfo(felist& List) const
+{
+  character::AddDefenceInfo(List);
+
+  if(GetRightArm())
+    GetRightArm()->AddDefenceInfo(List);
+
+  if(GetLeftArm())
+    GetLeftArm()->AddDefenceInfo(List);
+}

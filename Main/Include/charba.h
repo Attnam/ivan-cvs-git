@@ -661,7 +661,6 @@ class character : public entity, public id
   virtual bool ReloadDatafiles();
   virtual std::string GetBodyPartName(ushort, bool = false) const;
   virtual item* SearchForItemWithID(ulong) const;
-  virtual std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
   virtual bool ContentsCanBeSeenBy(const character*) const;
   std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
   virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
@@ -670,6 +669,7 @@ class character : public entity, public id
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool) { return false; }
   virtual bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
   virtual void WeaponSkillHit(item*, uchar);
+  virtual void AddDefenceInfo(felist&) const;
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }

@@ -13,16 +13,9 @@
 #define CHARNAME(Case) GetName(Case).c_str()
 #define CHARDESCRIPTION(Case) GetDescription(Case).c_str()
 
-#ifdef VC
-typedef void YesThisIsNotAJoke;
-#endif
-
 class id
 {
  public:
-#ifdef VC
-  virtual void ThisFunctionIsHereBecauseMicrosoftIsEvilAndVCGeneratesAnInternalCompilerErrorIfGetNameIsTheFirstVirtualFunctionHere(YesThisIsNotAJoke) { }
-#endif
   virtual void AddName(std::string&, uchar) const;
   virtual std::string GetName(uchar) const;
  protected:

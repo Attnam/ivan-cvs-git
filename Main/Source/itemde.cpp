@@ -3154,6 +3154,20 @@ void arm::AddAttackInfo(felist& List) const
     }
 }
 
+void arm::AddDefenceInfo(felist& List) const
+{
+  if(GetWielded())
+    {
+      std::string Entry = "   ";
+      GetWielded()->AddName(Entry, UNARTICLED);
+      Entry.resize(50, ' ');
+      Entry << int(GetBlockValue());
+      Entry.resize(70, ' ');
+      Entry << GetBlockStrength();
+      List.AddEntry(Entry, LIGHTGRAY);
+    }
+}
+
 void arm::SignalVolumeAndWeightChange()
 {
   bodypart::SignalVolumeAndWeightChange();
@@ -3357,7 +3371,9 @@ bool mine::Apply(character* User)
     SetIsActive(false);
   else
     SetIsActive(true);
+
   User->DexterityAction(10);
+  return true;
 }
 
 bool beartrap::Apply(character* User)
@@ -3367,7 +3383,9 @@ bool beartrap::Apply(character* User)
     SetIsActive(false);
   else
     SetIsActive(true);
+
   User->DexterityAction(10);
+  return true;
 }
 
 float arm::GetBlockChance(float EnemyToHitValue) const
