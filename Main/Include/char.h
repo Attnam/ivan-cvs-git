@@ -533,6 +533,7 @@ class character : public entity, public id
   void PrintBeginSearchingMessage() const;
   void PrintEndSearchingMessage() const;
   void EndPolymorph();
+  character* ForceEndPolymorph();
   void LycanthropyHandler();
   void SearchingHandler();
   void SaveLife();
@@ -870,6 +871,7 @@ class character : public entity, public id
   void ReceiveOmmelSweat(long);
   void ReceiveOmmelTears(long);
   void ReceiveOmmelSnot(long);
+  bool IsSameAs(const character*) const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -69,7 +69,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Lycanthropy",
-    SECRET|SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_TEMPORARY,
+    SECRET|SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_FLAGS,
     &character::PrintBeginLycanthropyMessage,
     &character::PrintEndLycanthropyMessage,
     0,
@@ -293,11 +293,14 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
     {
       BodyPartSlot[c].SetMaster(this);
       bodypart* CharBodyPart = Char.GetBodyPart(c);
+      OriginalBodyPartID[c] = Char.OriginalBodyPartID[c];
 
       if(CharBodyPart)
-	SetBodyPart(c, static_cast<bodypart*>(CharBodyPart->Duplicate()));
-      else
-	OriginalBodyPartID[c] = Char.OriginalBodyPartID[c];
+	{
+	  bodypart* BodyPart = static_cast<bodypart*>(CharBodyPart->Duplicate());
+	  SetBodyPart(c, BodyPart);
+	  BodyPart->CalculateEmitation();
+	}
     }
 
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
@@ -4243,10 +4246,15 @@ void character::PrintEndSlowMessage() const
 
 void character::EndPolymorph()
 {
+  ForceEndPolymorph();
+}
+
+character* character::ForceEndPolymorph()
+{
   if(IsPlayer())
     ADD_MESSAGE("You return to your true form.");
   else if(game::IsInWilderness())
-    return; // fast gum solution, state ends when the player enters a dungeon
+    return this; // fast gum solution, state ends when the player enters a dungeon
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s returns to %s true form.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 
@@ -4287,12 +4295,19 @@ void character::EndPolymorph()
     }
 
   Char->TestWalkability();
+  return Char;
 }
 
 void character::LycanthropyHandler()
 {
   if(!(RAND() % 2000))
-    Polymorph(new werewolfwolf, 1000 + RAND() % 2000);
+    {
+      if(StateIsActivated(POLYMORPH_CONTROL)
+      && !game::BoolQuestion(CONST_S("Do you wish to change into a werewolf? [y/N]")))
+	return;
+
+      Polymorph(new werewolfwolf, 1000 + RAND() % 2000);
+    }
 }
 
 void character::SaveLife()
@@ -4366,16 +4381,31 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 	      NewForm = protosystem::CreateMonster(Temp);
 
 	      if(NewForm)
-		if(NewForm->GetPolymorphIntelligenceRequirement(this)
-		 > GetAttribute(INTELLIGENCE)
-		&& !game::WizardModeIsActive())
-		  {
-		    ADD_MESSAGE("You feel your mind isn't yet powerful enough to call forth the form of %s.", NewForm->CHAR_NAME(INDEFINITE));
-		    delete NewForm;
-		    NewForm = 0;
-		  }
-		else
-		  NewForm->RemoveAllItems();
+		{
+		  if(NewForm->IsSameAs(this))
+		    {
+		      delete NewForm;
+		      ADD_MESSAGE("You choose not to polymorph.");
+		      return this;
+		    }
+
+		  if(PolymorphBackup && NewForm->IsSameAs(PolymorphBackup))
+		    {
+		      delete NewForm;
+		      return ForceEndPolymorph();
+		    }
+
+		  if(NewForm->GetPolymorphIntelligenceRequirement(this)
+		   > GetAttribute(INTELLIGENCE)
+		  && !game::WizardModeIsActive())
+		    {
+		      ADD_MESSAGE("You feel your mind isn't yet powerful enough to call forth the form of %s.", NewForm->CHAR_NAME(INDEFINITE));
+		      delete NewForm;
+		      NewForm = 0;
+		    }
+		  else
+		    NewForm->RemoveAllItems();
+		}
 	    }
 	}
       else
@@ -5868,6 +5898,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
       game::SetStandardListAttributes(List);
       List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
       List.SetEntryDrawer(game::ItemEntryDrawer);
+      game::DrawEverythingNoBlit();
       int Chosen = List.Draw();
       game::ClearItemDrawVector();
 
@@ -7862,4 +7893,10 @@ void character::EndLeprosy()
       if(BodyPart)
 	BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(false);
     }
+}
+
+bool character::IsSameAs(const character* What) const
+{
+  return What->GetType() == GetType()
+      && What->GetConfig() == GetConfig();
 }

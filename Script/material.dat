@@ -982,6 +982,7 @@ organic /* substances that spoil but are not flesh */
 		EffectIsGood = true;
 		CanBeMirrored = false;
 		Density = 500;
+		ConsumeType = CT_PROCESSED;
 	}
 }
 

@@ -242,7 +242,9 @@ bool item::Consume(character* Eater, long Amount)
   item* NewConsuming = GetID() ? this : game::SearchItem(ID);
   material* NewConsumeMaterial = NewConsuming->GetConsumeMaterial(Eater);
 
-  if(!NewConsuming->Exists() || !NewConsumeMaterial || !NewConsumeMaterial->IsSameAs(ConsumeMaterial))
+  if(!NewConsuming->Exists()
+  || !NewConsumeMaterial
+  || !NewConsumeMaterial->IsSameAs(ConsumeMaterial))
     ConsumeMaterial->FinishConsuming(Eater);
 
   delete Garbage;
@@ -535,7 +537,10 @@ item* item::Duplicate(ulong Flags)
 {
   if(!(Flags & IGNORE_PROHIBITIONS)
   && ((!(Flags & MIRROR_IMAGE) && !CanBeCloned())
-   || (Flags & MIRROR_IMAGE && !CanBeMirrored())))
+   || (Flags & MIRROR_IMAGE && (!CanBeMirrored()
+    || !MainMaterial->CanBeMirrored()
+    || (GetSecondaryMaterial()
+     && !GetSecondaryMaterial()->CanBeMirrored())))))
     return 0;
 
   item* Clone = RawDuplicate();
@@ -548,6 +553,12 @@ item* item::Duplicate(ulong Flags)
   game::RemoveItemID(ID);
   ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
+
+  /*if(!(Flags & IGNORE_PROHIBITIONS)
+  && GetSecondaryMaterial()
+  && !GetSecondaryMaterial()->CanBeMirrored())
+    delete Clone->RemoveMaterial(GetSecondaryMaterial());*/
+
   return Clone;
 }
 

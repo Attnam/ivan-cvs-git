@@ -1424,7 +1424,7 @@ void materialcontainer::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
 
-      RemoveSecondaryMaterial();
+      delete RemoveSecondaryMaterial();
     }
 }
 
@@ -1996,7 +1996,7 @@ void banana::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The inside of %s spoils completely.", CHAR_NAME(DEFINITE));
 
-      RemoveSecondaryMaterial();
+      delete RemoveSecondaryMaterial();
     }
   else
     item::SignalSpoil(Material);
@@ -2795,7 +2795,7 @@ ulong wand::GetSpecialParameters() const
   switch(GetConfig())
     {
     case WAND_OF_MIRRORING:
-      return MIRROR_IMAGE|(10000 << LE_BASE_SHIFT)|(10000 << LE_RAND_SHIFT);
+      return MIRROR_IMAGE|(1000 << LE_BASE_SHIFT)|(1000 << LE_RAND_SHIFT);
     }
 
   return 0;

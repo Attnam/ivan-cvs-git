@@ -369,7 +369,7 @@ void meleeweapon::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The handle of %s spoils", CHAR_NAME(DEFINITE));
 
-      RemoveSecondaryMaterial();
+      delete RemoveSecondaryMaterial();
     }
 }
 
