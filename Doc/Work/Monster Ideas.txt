@@ -1,8 +1,12 @@
-Genie
+// done
+/ partly done or needs testing/balancing
+(r) rejected
+
+//Genie
 
 	The sprit that lives in a bottle. When freed grants a wish. When the Genie becomes hostile it makes a wish and wishes for a plate mail.
 
-Mammoth
+/Mammoth
 	
 	Pretty normal creatures except that when they die they drop an ivory horn. 
 
@@ -20,7 +24,7 @@ Hobbit
 
 Gnome
 
-Floating eye (or Beholder)
+//Floating eye (or Beholder)
 
 	 When you hit this monster you will fall asleep (a la Nethack)
 
@@ -32,12 +36,13 @@ Scorpion
 	Poisons.
 
 Lich
+
 	Preferably like in BG2.
 
 Cyclops
 Vampire
 	
-	Should be damaged by too much light.
+	Should be damaged by bright lights.
 
 Minotaur
 
@@ -53,7 +58,7 @@ Dark Bugs (work in progress-name)
      
 	These creatures normally are drawn towards darkness.
 
-Necromancer
+//Necromancer
 
 	Should raise corpses as skeletons and zombies.
 
@@ -61,13 +66,13 @@ Mutant tentacle
 
 	Purple skin. Low agility, but very high intelligence. Can use humanoid weapons.
 
-unnamed (maybe xorn or ghost)
+//unnamed (maybe xorn or ghost)
 	
 	Can go through walls
 
 Huge firefly
      
-	Flying. Emits light (might be a useful pet)
+	Flying. Emits light (might be a useful pet).
 
 Shaman
 
@@ -77,19 +82,19 @@ Monkey
 
 	(a la Nethack) Fights a short time and then steals one of your items and then tries to run away.
 
-Eddies in space-time continuum
+//Eddies in space-time continuum
 
-       These horrible "creatures" teleport the player randomly around and sometimes create weird couches. 
+       These horrible "creatures" teleport the player randomly around and sometimes create weird couches.
 
 Mutated giant mushroom
 	
 	Most of the time stand idle and sometimes teleport from place to place. Sometimes shoot spores at player. Sometimes the spores could grow to be mushrooms. (not too often though, so the level wouldn't be filled with mushrooms.)
 
-Skunk
+//Skunk
 
 	Smells really bad.
 
-Hedgehog
+//Hedgehog
 
 	Monster appearing in level 1 which causes damage to the attacker if he doesn't use a weapon.
 
@@ -101,9 +106,9 @@ Butterfly of storms
 
 	Causes small tornadoes and thunderstorms around the level by flapping its wings.
 
-Hattifattener
+//Hattifattener
 
-	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings. (always moving through the land without carrying about other monster than may or may not be on their way)
+	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings. (always moving through the land without caring about other monsters that may or may not be on their way)
 
 Grid feature
 
@@ -146,7 +151,7 @@ Spider queen
 
 	Named.
 
-Sumo wrestler
+//Sumo wrestler
 
 	Very fat.
 
@@ -410,13 +415,13 @@ Babel fish
 	to you in any form of language. The speech patterns you actually hear
 	decode the brainwave matrix which has been fed into your mind by your
 	Babel fish."
-	(The Hitchhiker's Guide to the Galaxy by Douglas Adams)
+	(The Hitchhiker's Guide to the Galaxy, by Douglas Adams)
 
 Mutant turtle (suggested by Henri Kiviluoto)
 
 	Very good in martial arts.
 
-Poison dart frog
+Poison dart frog (Dendrobates terribilis)
 
 	A frog whose skin contains deadly neuro-toxin. Used by the natives
 	of South America in production of poison arrows.
@@ -443,13 +448,9 @@ Piranha
 
 	Expert at devouring swimmers alive.
 
-Programmer
+IVAN developer
 
-	Configuration should specify alignment (dark or open source), language
-	(VB, C, C++, Assembler, ...) and ability (lame, apprentice,
-	experienced, Guru, Knuth). Of course, certain ability levels are
-	restricted by language. There's also an IVAN developer, who can
-	alter reality in the entire Universe as he wishes and is therefore
+	Can alter reality in the entire Universe as he wishes and is therefore
 	beyond gods in strength (he could also be named "a Creator").
 
 Banana Slug
@@ -470,3 +471,18 @@ Monkey, version II
 Giant anteater (Myrmecophaga tridactyla)
 
 	Eats ants. See Wikipedia for the boring details.
+
+Mog
+
+Chocobo
+
+	Can be catched and mounted.
+
+Cow
+
+	Not the brightest creature around, but by far the wisest above Valpurus.
+	After all, it has integrated Zen-Buddhism deep in its enlightened life style,
+	answering "MU" to every question you can think of.
+	(Again, an idea which the gods blessed me with in a dream; There was
+	a female shaman who could understand animal talk and she was walking
+	a leashed cow - holybanana)

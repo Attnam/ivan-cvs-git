@@ -529,7 +529,7 @@ A frog should be able to use its long, sticky tongue as a ranged weapon and catc
 Every 10000th new game or so IVAN should make a Nethack level 1 represented by ASCII characters and show it instead of the real one, print the standard Amulet of Yendor story, ask for key press, then print "Oh gosh. Wrong game, sorry!" and continue the original game.
 Go back -function to menus like ?-key.
 When there is vomit stuck to character, its charisma should be lowered.
-Mommos should follow the player more agressively; they are useless now as pets.
+Mommos should follow the player more agressively; as of now they are useless as pets.
 "Sulphuric acid is raining here." to look mode when appropriate.
 You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
 If the player is confused or has bad relations to Dulcis, using a magical whistle should sometimes fail, teleporting all monsters in the level around the player.
@@ -539,3 +539,5 @@ There could be a more interesting effect for trying to teleport over a monster; 
 Drinkin _lots_ of water should maybe help poisonings.
 Shopkeepers should dislike Cleptia. (for example they shouldn't buy or sell holy books of cleptia)
 Petrus's wives should wear chastity belts.
+SmileyWorm should be a hidden minigame somewhere in IVAN.
+Popup ads of Decos Bananas Co. in some areas of the game.
