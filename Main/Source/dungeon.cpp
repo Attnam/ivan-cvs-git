@@ -80,7 +80,6 @@ bool dungeon::PrepareLevel(int Index, bool Visual)
       if(Visual)
 	game::TextScreen(CONST_S("Entering ") + GetLevelDescription(Index) + CONST_S("...\n\nThis may take some time, please wait."), WHITE, false, &game::BusyAnimation);
 
-      game::SetIsGenerating(true);
       NewLevel->Generate(Index);
       game::SetCurrentLSquareMap(NewLevel->GetMap());
       Generated[Index] = true;
@@ -89,7 +88,6 @@ bool dungeon::PrepareLevel(int Index, bool Visual)
       if(*NewLevel->GetLevelScript()->GenerateMonsters())
 	NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
-      game::SetIsGenerating(false);
       return false;
     }
 }

@@ -679,7 +679,6 @@ class ITEM
  protected:
   virtual int GetClassAnimationFrames() const { return 64; }
   virtual vector2d GetBitmapPos(int) const;
-  virtual int GetSpecialFlags() const { return normaltorso::GetSpecialFlags()|ST_FLAME_2; }
 );
 
 class ITEM

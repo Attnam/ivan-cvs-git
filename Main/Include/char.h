@@ -653,7 +653,7 @@ class character : public entity, public id
   void PrintBeginPanicMessage() const;
   void PrintEndPanicMessage() const;
   void CheckPanic(int);
-  character* CloneToNearestSquare(character*) const;
+  character* CloneToNearestSquare(character*, bool) const;
   void SignalSpoil();
   void SignalSpoilLevelChange();
   virtual bool UseMaterialAttributes() const = 0;
@@ -851,6 +851,10 @@ class character : public entity, public id
   int GetMaxStamina() const { return MaxStamina; }
   void SetGenerationDanger(double What) { GenerationDanger = What; }
   double GetGenerationDanger() const { return GenerationDanger; }
+  void ReceiveBlackUnicorn(long);
+  void ReceiveGrayUnicorn(long);
+  void ReceiveWhiteUnicorn(long);
+  void DecreaseStateCounter(long, int);
   bool IsImmuneToLeprosy() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);

@@ -926,7 +926,13 @@ void item::PostProcessForBone()
       ID = NewID;
     }
   else
-    ID = BI->second;
+    {
+      if(game::SearchItem(BI->second))
+	int esko = 2;
+
+      ID = BI->second;
+      game::AddItemID(this, ID);
+    }
 
   for(uint c = 0; c < CloneMotherID.size(); ++c)
     {

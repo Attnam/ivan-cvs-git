@@ -74,4 +74,5 @@ If a pet polymorphs into an invisible stalker which the player can't see, the po
 Carnivorous plants can move by displacing pets.
 EditAttribute() probably doesn't update all caches correctly.
 Polymorph default bugs if the string is very long.
+If you hit someone with one hand and either one of you teleports, you can still hit the opponent with the other hand.
 Leprosy can cause player to become overloaded in world map and there is no way to drop items.

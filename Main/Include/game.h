@@ -92,10 +92,20 @@ struct ivantime
   int Min;
 };
 
+struct killdata
+{
+  killdata(int Amount = 0, double DangerSum = 0) : Amount(Amount), DangerSum(DangerSum) { }
+  int Amount;
+  double DangerSum;
+};
+
+outputfile& operator<<(outputfile&, const killdata&);
+inputfile& operator>>(inputfile&, killdata&);
+
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
 typedef std::map<ulong, item*> itemidmap;
-typedef std::map<configid, int> massacremap;
+typedef std::map<configid, killdata> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
 typedef std::vector<item*> itemvector;
 typedef std::vector<character*> charactervector;

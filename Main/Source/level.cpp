@@ -608,7 +608,7 @@ bool level::GenerateLanterns(int X, int Y, int SquarePos) const
     {
       lantern* Lantern = new lantern;
       Lantern->SignalSquarePositionChange(SquarePos);
-      Map[X][Y]->GetStack()->AddItem(Lantern);//GetSideStack(SquarePos)->AddItem(Lantern);
+      Map[X][Y]->GetStack()->AddItem(Lantern);
       return true;
     }
 
@@ -742,6 +742,18 @@ void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
 
 vector2d level::GetRandomSquare(const character* Char, int Flags, const rect* Borders) const
 {
+  rect LocalBorder;
+
+  if(Borders)
+    {
+      LocalBorder = *Borders;
+      Borders = &LocalBorder;
+      LimitRef(LocalBorder.X1, 0, XSize - 1);
+      LimitRef(LocalBorder.X2, 0, XSize - 1);
+      LimitRef(LocalBorder.Y1, 0, YSize - 1);
+      LimitRef(LocalBorder.Y2, 0, YSize - 1);
+    }
+
   lsquare* LSquare;
 
   for(int c = 0;; ++c)
@@ -1616,7 +1628,7 @@ bool level::PostProcessForBone()
     for(int y = 0; y < YSize; ++y)
       Map[x][y]->PostProcessForBone(DangerSum, Enemies);
 
-  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > double(Difficulty) / 100))
+  if(game::TooGreatDangerFound() || (Enemies && DangerSum / Enemies > Difficulty * 10))
     return false;
 
   return true;
@@ -1642,7 +1654,7 @@ void level::GenerateDungeon(int Index)
       IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
     }
 
-  Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
+  Difficulty = 0.001 * (*LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index);
   const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   long Counter = 0;

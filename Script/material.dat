@@ -1205,7 +1205,7 @@ liquid
 		ConsumeEndMessage = CEM_ANTIDOTE;
 		HitMessage = HM_ANTIDOTE;
 		Alpha = 170;
-		EffectStrength = 50;
+		EffectStrength = 100;
 		PriceModifier = 1000;
 		AttachedGod = SEGES;
 		EffectIsGood = true;
@@ -1551,6 +1551,8 @@ flesh
 		PriceModifier = 20;
 		AttachedGod = DULCIS;
 		IsWarm = false;
+		Effect = EFFECT_BLACK_UNICORN_FLESH;
+		ConsumeEndMessage = CEM_BLACK_UNICORN_FLESH;
 	}
 
 	Config GRAY_UNICORN_FLESH;
@@ -1559,6 +1561,8 @@ flesh
 		NameStem = "gray unicorn flesh";
 		PriceModifier = 20;
 		AttachedGod = LORICATUS;
+		Effect = EFFECT_GRAY_UNICORN_FLESH;
+		ConsumeEndMessage = CEM_GRAY_UNICORN_FLESH;
 	}
 
 	Config WHITE_UNICORN_FLESH;
@@ -1567,6 +1571,8 @@ flesh
 		NameStem = "white unicorn flesh";
 		PriceModifier = 20;
 		AttachedGod = MORTIFER;
+		Effect = EFFECT_WHITE_UNICORN_FLESH;
+		ConsumeEndMessage = CEM_WHITE_UNICORN_FLESH;
 	}
 
 	Config LION_FLESH;
@@ -1672,6 +1678,13 @@ flesh
 	{
 		NameStem = "hattifattener flesh";
 		AttachedGod = MORTIFER;
+	}
+
+	Config BLINK_DOG_FLESH;
+	{
+		NameStem = "blink dog flesh";
+		AttachedGod = MORTIFER;
+		Effect = EFFECT_TELEPORT_CONTROL;
 	}
 }
 

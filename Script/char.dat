@@ -155,7 +155,7 @@ playerkind
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	/* Replies overridden */
-	Inventory == scrollofteleportation { Times = 30; }
+	/*Inventory == scrollofteleportation { Times = 30; }*/
 }
 
 petrus
@@ -2623,7 +2623,7 @@ unicorn
 	DefaultMana = 25;
 	HostileReplies == "The furious @du neighs.";
 	FriendlyReplies == "The happy @du neighs.";
-	TotalVolume = 200000;
+	TotalVolume = 100000;
 	TorsoBitmapPos = 544, 0;
 	TotalSize = 200;
 	NameSingular = "unicorn";
@@ -4350,4 +4350,5 @@ blinkdog
 	CWeaponSkillHits == 100;
 	AttachedGod = SOPHOS;
 	DangerModifier = 50;
+	FleshMaterial = BLINK_DOG_FLESH;
 }

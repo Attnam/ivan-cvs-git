@@ -93,7 +93,7 @@ class level : public area
   void Load(inputfile&);
   void FiatLux();
   int GetIdealPopulation() const { return IdealPopulation; }
-  int GetDifficulty() const { return Difficulty; }
+  double GetDifficulty() const { return Difficulty; }
   void GenerateNewMonsters(int, bool = true);
   void AttachPos(int, int);
   void AttachPos(vector2d Pos) { AttachPos(Pos.X, Pos.Y); }
@@ -181,7 +181,7 @@ class level : public area
   std::vector<room*> Room;
   int IdealPopulation;
   int MonsterGenerationInterval;
-  int Difficulty;
+  double Difficulty;
   dungeon* Dungeon;
   int Index;
   std::vector<explosion*> ExplosionQueue;

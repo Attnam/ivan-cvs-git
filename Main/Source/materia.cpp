@@ -98,6 +98,10 @@ bool material::Effect(character* Eater, long Amount)
 	break;
       }
     case EFFECT_PEA_SOUP: Eater->ReceivePeaSoup(Amount); break;
+    case EFFECT_BLACK_UNICORN_FLESH: Eater->ReceiveBlackUnicorn(Amount); break;
+    case EFFECT_GRAY_UNICORN_FLESH: Eater->ReceiveGrayUnicorn(Amount); break;
+    case EFFECT_WHITE_UNICORN_FLESH: Eater->ReceiveWhiteUnicorn(Amount); break;
+    case EFFECT_TELEPORT_CONTROL: Eater->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
     default: return false;
     }
 
@@ -166,6 +170,9 @@ void material::AddConsumeEndMessage(character* Eater) const
     case CEM_ESP: Eater->AddESPConsumeMessage(); break;
     case CEM_HOLY_BANANA: Eater->AddHolyBananaConsumeEndMessage(); break;
     case CEM_PEA_SOUP: Eater->AddPeaSoupConsumeEndMessage(); break;
+    case CEM_BLACK_UNICORN_FLESH: break;
+    case CEM_GRAY_UNICORN_FLESH: break;
+    case CEM_WHITE_UNICORN_FLESH: break;
     }
 }
 

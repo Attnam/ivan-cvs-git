@@ -519,7 +519,8 @@ void lsquare::Load(inputfile& SaveFile)
   SaveFile >> Emitter >> SunEmitter;
   SaveFile >> Emitation >> Engraved >> Luminance;
   SaveFile >> SmokeAlphaSum >> (uchar&)Flags >> Memorized;
-  Flags &= INSIDE|MEMORIZED_UPDATE_REQUEST|DESCRIPTION_CHANGE; //only these flags are loaded
+  Flags &= INSIDE|DESCRIPTION_CHANGE; //only these flags are loaded
+  Flags |= MEMORIZED_UPDATE_REQUEST;
   SecondarySunLightEmitation = ReadType<color24>(SaveFile);
   RoomIndex = ReadType<uchar>(SaveFile);
   SunLightLuminance = ReadType<color24>(SaveFile);
@@ -1407,7 +1408,7 @@ bool lsquare::Clone(character* Zapper, const festring&, int)
   character* Character = GetCharacter();
 
   if(Character)
-    ClonedSomething = !!Character->CloneToNearestSquare(Zapper);
+    ClonedSomething = !!Character->CloneToNearestSquare(Zapper, false);
 
   if(GetStack()->Clone(ClonedSomething ? 4 : 5))
     ClonedSomething = true;

@@ -940,7 +940,7 @@ potion /* materialcontainer-> */
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
 	SecondaryMaterialConfig = { 8, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD; }
-	MaterialConfigChances = { 8, 100, 75, 50, 75, 1, 75, 5, 25; }
+	MaterialConfigChances = { 8, 100, 75, 25, 75, 1, 10, 5, 25; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;

@@ -368,7 +368,7 @@ character* protosystem::CreateMonster(const festring& What, int SpecialFlags, bo
     {
       character* Char = ID.first->Clone(ID.second, SpecialFlags);
 
-      if(false)//!Char->HasBeenSeen())// && !game::WizardModeIsActive())
+      if(!Char->HasBeenSeen() && !game::WizardModeIsActive())
 	{
 	  ADD_MESSAGE("You have no idea what this creature is like.");
 	  delete Char;

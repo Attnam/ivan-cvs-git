@@ -104,7 +104,7 @@ statedata StateData[STATES] =
     0
   }, {
     "Poisoned",
-    NO_FLAGS,
+    DUR_TEMPORARY,
     &character::PrintBeginPoisonedMessage,
     &character::PrintEndPoisonedMessage,
     0,
@@ -3528,14 +3528,14 @@ bool character::TeleportNear(character* Caller)
 
 void character::ReceiveHeal(long Amount)
 {
-  if(Amount >= 100 && StateIsActivated(PARASITIZED))
+  /*if(Amount >= 100 && StateIsActivated(PARASITIZED))
     {
       if(IsPlayer())
 	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
 
       DeActivateTemporaryState(PARASITIZED);
       Amount -= 100;
-    }
+    }*/
 
   int c;
 
@@ -5423,12 +5423,15 @@ void character::CheckPanic(int Ticks)
 
 /* returns 0 if fails else the newly created character */
 
-character* character::CloneToNearestSquare(character*) const
+character* character::CloneToNearestSquare(character* Cloner, bool ChangeTeam) const
 {
   character* NewlyCreated = Duplicate();
 
   if(!NewlyCreated)
     return 0;
+
+  if(ChangeTeam)
+    NewlyCreated->ChangeTeam(Cloner->GetTeam());
 
   NewlyCreated->PutNear(GetPos());
   return NewlyCreated;
@@ -6390,8 +6393,17 @@ bool character::PreProcessForBone()
   RestoreLivingHP();
   ResetStates();
   GetStack()->PreProcessForBone();
+  int c;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->PreProcessForBone();
+    }
+
+  for(c = 0; c < GetEquipmentSlots(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -7598,6 +7610,88 @@ int character::GetTirednessState() const
     return EXHAUSTED;
   else
     return FAINTING;
+}
+
+void character::ReceiveBlackUnicorn(long Amount)
+{
+  if(!(RAND() % 160))
+    game::DoEvilDeed(Amount / 50);
+
+  BeginTemporaryState(TELEPORT, Amount / 100);
+
+  for(int c = 0; c < STATES; ++c)
+    if(StateData[c].Flags & DUR_TEMPORARY)
+      {
+	BeginTemporaryState(1 << c, Amount / 100);
+
+	if(!IsEnabled())
+	  return;
+      }
+}
+
+void character::ReceiveGrayUnicorn(long Amount)
+{
+  if(!(RAND() % 80))
+    game::DoEvilDeed(Amount / 50);
+
+  BeginTemporaryState(TELEPORT, Amount / 100);
+
+  for(int c = 0; c < STATES; ++c)
+    if(1 << c != TELEPORT)
+      {
+	DecreaseStateCounter(1 << c, -Amount / 100);
+
+	if(!IsEnabled())
+	  return;
+      }
+}
+
+void character::ReceiveWhiteUnicorn(long Amount)
+{
+  if(!(RAND() % 40))
+    game::DoEvilDeed(Amount / 50);
+
+  BeginTemporaryState(TELEPORT, Amount / 100);
+  DecreaseStateCounter(LYCANTHROPY, -Amount / 100);
+  DecreaseStateCounter(POISONED, -Amount / 100);
+  DecreaseStateCounter(PARASITIZED, -Amount / 100);
+  DecreaseStateCounter(LEPROSY, -Amount / 100);
+}
+
+/* Counter should be negative. Removes intrinsics. */
+
+void character::DecreaseStateCounter(long State, int Counter)
+{
+  int Index;
+
+  for(Index = 0; Index < STATES; ++Index)
+    if(1 << Index == State)
+      break;
+
+  if(Index == STATES)
+    ABORT("DecreaseTemporaryStateCounter works only when State == 2 ^ n!");
+
+  if(TemporaryState & State)
+    {
+      if(TemporaryStateCounter[Index] == PERMANENT
+      || (TemporaryStateCounter[Index] += Counter) <= 0)
+	{
+	  TemporaryState &= ~State;
+
+	  if(!(EquipmentState & State))
+	    {
+	      if(StateData[Index].EndHandler)
+		{
+		  (this->*StateData[Index].EndHandler)();
+
+		  if(!IsEnabled())
+		    return;
+		}
+
+	      (this->*StateData[Index].PrintEndMessage)();
+	    }
+	}
+    }
 }
 
 bool character::IsImmuneToLeprosy() const

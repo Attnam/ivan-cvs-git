@@ -43,7 +43,6 @@ class ABSTRACT_CHARACTER
   virtual void UnarmedHit(character*, vector2d, int, bool = false);
   virtual void InitSpecialAttributes();
   virtual double GetTimeToKill(const character*, bool) const;
-  //virtual void ApplyExperience(bool = false);
   virtual int GetAttribute(int) const;
   virtual bool EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
@@ -502,12 +501,16 @@ class CHARACTER
   blinkdog,
   dog,
  public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
+  virtual void VirtualConstructor(bool);
   virtual bodypart* MakeBodyPart(int) const;
   void MonsterTeleport(const char*);
-  void SummonFriend();
+  bool SummonFriend();
+  int SummonModifier;
 );
 
 #endif

@@ -94,7 +94,7 @@ Shackles.
 Telephats in each town which would handle long distance communication.
 Gradual stoning/freezing system.
 Steam-powered vodka flame thrower.
-Stamina.
+//Stamina.
 Winds.
 Undead disko where multicolored lights flicker and skeletons sing "Hip bone is connected to the leg bone..."
 Sampo.
@@ -103,3 +103,4 @@ Strange drool jokes.
 Languages.
 Moksa state.
 Smells that could be used for tracking monsters.
+Leprosy asylums.

@@ -466,3 +466,5 @@ Maybe one should be able to polymorph into a creature only if he has seen one of
 Soap of brainwashing (applying charms monsters; potion of water needed also).
 Living mud.
 Scroll of omnipotence.
+Unicorn horn item.
+New snake types.

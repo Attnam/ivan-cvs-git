@@ -287,6 +287,10 @@ struct databasebase { int Config; };
 #define EFFECT_EVIL_WONDER_STAFF_VAPOUR 17
 #define EFFECT_GOOD_WONDER_STAFF_VAPOUR 18
 #define EFFECT_PEA_SOUP 19
+#define EFFECT_BLACK_UNICORN_FLESH 20
+#define EFFECT_GRAY_UNICORN_FLESH 21
+#define EFFECT_WHITE_UNICORN_FLESH 22
+#define EFFECT_TELEPORT_CONTROL 23
 
 /* CEM = Consume End Message */
 
@@ -302,6 +306,9 @@ struct databasebase { int Config; };
 #define CEM_ESP 9
 #define CEM_HOLY_BANANA 10
 #define CEM_PEA_SOUP 11
+#define CEM_BLACK_UNICORN_FLESH 12
+#define CEM_GRAY_UNICORN_FLESH 13
+#define CEM_WHITE_UNICORN_FLESH 14
 
 /* HM = Hit Message */
 

@@ -34,7 +34,6 @@
 #include "materias.h"
 #include "rain.h"
 #include "gear.h"
-//#include "wskill.h"
 
 #define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
@@ -264,12 +263,12 @@ bool game::Init(const festring& Name)
 	InitScript();
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new orc(SLAUGHTERER));
+	SetPlayer(new playerkind);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
 	// ///
-	Player->GainIntrinsic(LEPROSY);
+	//Player->GainIntrinsic(LEPROSY);
 	// ///
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
@@ -326,18 +325,6 @@ bool game::Init(const festring& Name)
 
 void game::DeInit()
 {
-  /*_CrtMemState sta;
-  _CrtMemCheckpoint(&sta);
-
-  InitDungeons();
-
-  for(int c = 1; c < Dungeons; ++c)
-    delete Dungeon[c];
-
-  delete [] Dungeon;
-  _CrtMemDumpAllObjectsSince(&sta);*/
-
-
   delete WorldMap;
   WorldMap = 0;
   int c;
@@ -789,7 +776,7 @@ vector2d game::GetDirectionVectorForKey(int Key)
 
 double game::GetMinDifficulty()
 {
-  double Base = double(CurrentLevel->GetDifficulty()) / 5000;
+  double Base = CurrentLevel->GetDifficulty() * 0.2;
   long MultiplierExponent = 0;
   ivantime Time;
   GetTime(Time);
@@ -1679,6 +1666,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 {
   if(Area != WORLD_MAP)
     {
+      Generating = true;
       SetIsInWilderness(false);
       CurrentLevelIndex = Area;
       bool New = !PrepareRandomBone(Area) && !GetCurrentDungeon()->PrepareLevel(Area);
@@ -1737,6 +1725,8 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 
       if(ivanconfig::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
+
+      Generating = false;
     }
   else
     {
@@ -1773,14 +1763,6 @@ void game::SetStandardListAttributes(felist& List)
   List.SetUpKey(game::GetMoveCommandKey(KEY_UP_INDEX));
   List.SetDownKey(game::GetMoveCommandKey(KEY_DOWN_INDEX));
 }
-
-/*void game::SignalGeneration(configid ConfigID)
-{
-  dangermap::iterator Iterator = DangerMap.find(ConfigID);
-
-  if(Iterator != DangerMap.end())
-    Iterator->second.Flags |= HAS_BEEN_GENERATED;
-}*/
 
 void game::InitPlayerAttributeAverage()
 {
@@ -2095,9 +2077,12 @@ void game::SignalDeath(const character* Ghost, const character* Murderer)
   massacremap::iterator i = MassacreMap->find(CI);
 
   if(i == MassacreMap->end())
-    MassacreMap->insert(std::pair<configid, int>(CI, 1));
+    MassacreMap->insert(std::pair<configid, killdata>(CI, killdata(1, Ghost->GetGenerationDanger())));
   else
-    ++i->second;
+    {
+      ++i->second.Amount;
+      i->second.DangerSum += Ghost->GetGenerationDanger();
+    }
 }
 
 void game::DisplayMassacreLists()
@@ -2129,7 +2114,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
       GraveYard.push_back(Victim);
       Entry.ImageKey = AddToCharacterDrawVector(Victim);
 
-      if(i1->second == 1)
+      if(i1->second.Amount == 1)
 	{
 	  Victim->AddName(Entry.Key, UNARTICLED);
 	  Victim->AddName(Entry.String, INDEFINITE);
@@ -2137,7 +2122,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
       else
 	{
 	  Victim->AddName(Entry.Key, PLURAL);
-	  Entry.String << i1->second << ' ' << Entry.Key;
+	  Entry.String << i1->second.Amount << ' ' << Entry.Key;
 	}
 
       if(First)
@@ -2217,7 +2202,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
     {
       int BoneIndex;
       festring BoneName;
@@ -2253,7 +2238,7 @@ bool game::PrepareRandomBone(int LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen() && !(RAND() & 7))
+      if(BoneFile.IsOpen())// && !(RAND() & 7))
 	{
 	  if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
 	    {
@@ -2373,13 +2358,17 @@ long game::GetScore()
   massacremap SumMap = PlayerMassacreMap;
 
   for(i = PetMassacreMap.begin(); i != PetMassacreMap.end(); ++i)
-    SumMap[i->first] += i->second;
+    {
+      killdata& KillData = SumMap[i->first];
+      KillData.Amount += i->second.Amount;
+      KillData.DangerSum += i->second.DangerSum;
+    }
 
   for(i = SumMap.begin(); i != SumMap.end(); ++i)
     {
       character* Char = protocontainer<character>::GetProto(i->first.Type)->Clone(i->first.Config);
       int SumOfAttributes = Char->GetSumOfAttributes();
-      Counter += sqrt(i->second) * SumOfAttributes * SumOfAttributes * Char->GetGenerationDanger() / DEFAULT_GENERATION_DANGER;
+      Counter += sqrt(i->second.DangerSum / DEFAULT_GENERATION_DANGER) * SumOfAttributes * SumOfAttributes;
       delete Char;
     }
 
@@ -2776,4 +2765,16 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
     }
 
   return false;
+}
+
+outputfile& operator<<(outputfile& SaveFile, const killdata& Value)
+{
+  SaveFile << Value.Amount << Value.DangerSum;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, killdata& Value)
+{
+  SaveFile >> Value.Amount >> Value.DangerSum;
+  return SaveFile;
 }

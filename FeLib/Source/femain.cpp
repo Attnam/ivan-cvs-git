@@ -22,8 +22,9 @@ int Main(int, char**);
 int main(int argc, char* argv[])
 {
   globalerrorhandler::Install();
+  return Main(argc, argv);
 
-  try
+  /*try
     {
       return Main(argc, argv);
     }
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
       std::cout << Msg << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
       exit(3);
-    }
+    }*/
 
   exit(0);
 }

@@ -3163,7 +3163,7 @@ void darkmage::GetAICommand()
 	    case 0:
 	    case 1:
 	    case 2: Square->DrawParticles(RED); Square->FireBall(this, DeathMsg, YOURSELF); break;
-	    case 3:
+	    case 3: NearestEnemy->CloneToNearestSquare(this, true); break;
 	    case 4:
 	    case 5: Square->DrawParticles(RED); Square->Slow(this, DeathMsg, YOURSELF); break;
 	    case 6: Square->DrawParticles(RED); Square->Teleport(this, DeathMsg, YOURSELF); break;
@@ -3225,7 +3225,7 @@ void darkmage::GetAICommand()
 	case ARCH_MAGE:
 	  if(!(RAND() & 31))
 	    {
-	      RandomFriend->CloneToNearestSquare(this);
+	      RandomFriend->CloneToNearestSquare(this, true);
 	      return;
 	    }
 	case ELDER:

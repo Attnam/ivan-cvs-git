@@ -730,8 +730,9 @@ void ostrich::Load(inputfile& SaveFile)
   SaveFile >> HasDroppedBananas;
 }
 
-void ostrich::VirtualConstructor(bool)
+void ostrich::VirtualConstructor(bool Load)
 {
+  nonhumanoid::VirtualConstructor(Load);
   HasDroppedBananas = false;
 }
 
@@ -1379,8 +1380,9 @@ bool ghost::RaiseTheDead(character* Summoner)
   return false;
 }
 
-void ghost::VirtualConstructor(bool)
+void ghost::VirtualConstructor(bool Load)
 {
+  nonhumanoid::VirtualConstructor(Load);
   Active = true;
 }
 
@@ -1609,8 +1611,9 @@ void genetrixvesana::Load(inputfile& SaveFile)
   SaveFile >> TurnsExisted;
 }
 
-void genetrixvesana::VirtualConstructor(bool)
+void genetrixvesana::VirtualConstructor(bool Load)
 {
+  nonhumanoid::VirtualConstructor(Load);
   TurnsExisted = 0;
 }
 
@@ -1882,11 +1885,8 @@ void dog::GetAICommand()
 
 bool blinkdog::SpecialEnemySightedReaction(character*)
 {
-  if(!(RAND() & 15))
-    {
-      SummonFriend();
-      return true;
-    }
+  if(!(RAND() & 15) && SummonFriend())
+    return true;
 
   if(!(RAND() & 31))
     {
@@ -1945,8 +1945,8 @@ int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
 
   if(Return != HAS_DIED)
     {
-      if(!(RAND() & 15))
-	SummonFriend();
+      if(!(RAND() & 15) && SummonFriend())
+	return Return;
 
       if((RAND() & 1 && StateIsActivated(PANIC))
        || (!(RAND() & 3) && IsInBadCondition())
@@ -1970,9 +1970,14 @@ void unicorn::MonsterTeleport(const char* NeighMsg)
   EditAP(-1000);
 }
 
-void blinkdog::SummonFriend()
+bool blinkdog::SummonFriend()
 {
+  if(!SummonModifier)
+    return false;
+
+  --SummonModifier;
   blinkdog* Buddy = new blinkdog;
+  Buddy->SummonModifier = SummonModifier;
   Buddy->SetTeam(GetTeam());
   Buddy->SetGenerationDanger(GetGenerationDanger());
   Buddy->PutNear(GetPos());
@@ -1988,6 +1993,7 @@ void blinkdog::SummonFriend()
     ADD_MESSAGE("%s appears!", Buddy->CHAR_NAME(INDEFINITE));
 
   EditAP(-1000);
+  return true;
 }
 
 const char* DolphinTalkAttribute[] =
@@ -2046,4 +2052,24 @@ void dolphin::BeTalkedTo()
     }
   else
     character::BeTalkedTo();
+}
+
+void blinkdog::VirtualConstructor(bool Load)
+{
+  dog::VirtualConstructor(Load);
+
+  if(!Load)
+    SummonModifier = RAND_2 + RAND_2 + RAND_2 + RAND_2 + RAND_2 + RAND_2 + RAND_2;
+}
+
+void blinkdog::Save(outputfile& SaveFile) const
+{
+  dog::Save(SaveFile);
+  SaveFile << SummonModifier;
+}
+
+void blinkdog::Load(inputfile& SaveFile)
+{
+  dog::Load(SaveFile);
+  SaveFile >> SummonModifier;
 }
