@@ -741,6 +741,7 @@ void door::Break()
     {
       brokendoor* Temp = new brokendoor(false);
       Temp->InitMaterials(GetMainMaterial());
+      SetMainMaterial(0);
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
@@ -897,3 +898,9 @@ void liquidterrain::VirtualConstructor(bool Load) // gum solution
   glterrain::VirtualConstructor(Load);
   SetAnimationFrames(16);
 }
+
+fountain::~fountain()
+{
+  delete ContainedMaterial;
+}
+

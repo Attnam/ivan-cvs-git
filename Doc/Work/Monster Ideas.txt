@@ -20,8 +20,6 @@ Hobbit
 
 	A Tolkien cliche, but don't mind about that. Maybe these creatures could carry more rings (especially rings of invisiblity)
 
-
-
 Gnome
 	
 
@@ -49,8 +47,12 @@ Kerberus
 
 Light Bugs (work in progress-name)
       
-     These creatures normally are drawn towards light sources.
+	These creatures normally are drawn towards light sources.
 
 Dark Bugs (work in progress-name)
      
-     These creatures normally are drawn towards darkness.
+	These creatures normally are drawn towards darkness.
+
+Necromancer
+
+	Should raise corpses as skeletons and zombies.

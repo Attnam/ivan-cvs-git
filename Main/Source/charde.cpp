@@ -2345,6 +2345,9 @@ void nonhumanoid::CalculateUnarmedToHitValue()
 void nonhumanoid::CalculateUnarmedAPCost()
 {
   UnarmedAPCost = long(GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
+
+  if(UnarmedAPCost > -100)
+    UnarmedAPCost = -100;
 }
 
 void nonhumanoid::CalculateKickStrength()
@@ -2360,6 +2363,9 @@ void nonhumanoid::CalculateKickToHitValue()
 void nonhumanoid::CalculateKickAPCost()
 {
   KickAPCost = long(GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMoveEase());
+
+  if(KickAPCost > -100)
+    KickAPCost = -100;
 }
 
 void nonhumanoid::CalculateBiteStrength()
@@ -2375,6 +2381,9 @@ void nonhumanoid::CalculateBiteToHitValue()
 void nonhumanoid::CalculateBiteAPCost()
 {
   BiteAPCost = long(GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetAttribute(DEXTERITY)) - 200) * 500 / GetMoveEase());
+
+  if(BiteAPCost > -100)
+    BiteAPCost = -100;
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -2551,60 +2560,78 @@ void nonhumanoid::UnarmedHit(character* Enemy)
   EditAP(GetUnarmedAPCost());
 }
 
-float humanoid::GetAttackStrengthDanger() const
+/* Returns the average number of APs required to kill Enemy */
+
+float humanoid::GetEffectivityAgainst(const character* Enemy, bool UseMaxHP) const
 {
-  float Danger = 0;
+  float Effectivity = 0;
   ushort AttackStyles = 0;
-  float DodgeValue = GetDodgeValue();
 
   if(IsUsingArms())
     {
-      //Danger += GetRightAttackStrength() * (GetRightToHitValue() + DodgeValue);
-      //Danger += GetLeftAttackStrength() * (GetLeftToHitValue() + DodgeValue);
+      float RightEffectivity, LeftEffectivity;
+      bool RightArmUsed = false, LeftArmUsed = false;
+
+      if(GetRightArm() && GetRightArm()->GetAttackStrength())
+	{
+	  Effectivity = RightEffectivity = Enemy->GetDurability(short(GetRightArm()->GetAttackStrength() / 50000), GetRightArm()->GetToHitValue(), UseMaxHP) * -GetRightArm()->GetAPCost();
+	  RightArmUsed = true;
+	}
+
+      if(GetLeftArm() && GetLeftArm()->GetAttackStrength())
+	{
+	  Effectivity = LeftEffectivity = Enemy->GetDurability(short(GetLeftArm()->GetAttackStrength() / 50000), GetLeftArm()->GetToHitValue(), UseMaxHP) * -GetLeftArm()->GetAPCost();
+	  LeftArmUsed = true;
+	}
+
+      if(RightArmUsed && LeftArmUsed)
+	Effectivity = 1 / (1 / RightEffectivity + 1 / LeftEffectivity);
+
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Danger += KickLeg->GetKickStrength() * (KickLeg->GetKickToHitValue() + DodgeValue);
+      Effectivity += Enemy->GetDurability(short(KickLeg->GetKickStrength() / 50000), KickLeg->GetKickToHitValue(), UseMaxHP) * -KickLeg->GetKickAPCost();
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Danger += GetHead()->GetBiteStrength() * (GetHead()->GetBiteToHitValue() + DodgeValue);
+      Effectivity += Enemy->GetDurability(short(GetHead()->GetBiteStrength() / 50000), GetHead()->GetBiteToHitValue(), UseMaxHP) * -GetHead()->GetBiteAPCost();
       ++AttackStyles;
     }
 
-  return AttackStyles ? Danger / AttackStyles : 0;
+  return AttackStyles ? Effectivity / AttackStyles : 1000;
 }
 
-float nonhumanoid::GetAttackStrengthDanger() const
+/* Returns the average number of APs required to kill Enemy */
+
+float nonhumanoid::GetEffectivityAgainst(const character* Enemy, bool UseMaxHP) const
 {
-  float Danger = 0;
+  float Effectivity = 0;
   ushort AttackStyles = 0;
-  float DodgeValue = GetDodgeValue();
 
-  if(GetAttackStyle() & USE_ARMS)
+  if(IsUsingArms())
     {
-      Danger += GetUnarmedStrength() * (GetUnarmedToHitValue() + DodgeValue);
+      Effectivity += Enemy->GetDurability(short(GetUnarmedStrength() / 50000), GetUnarmedToHitValue(), UseMaxHP) * -GetUnarmedAPCost();
       ++AttackStyles;
     }
 
-  if(GetAttackStyle() & USE_LEGS)
+  if(IsUsingLegs())
     {
-      Danger += GetKickStrength() * (GetKickToHitValue() + DodgeValue);
+      Effectivity += Enemy->GetDurability(short(GetKickStrength() / 50000), GetKickToHitValue(), UseMaxHP) * -GetKickAPCost();
       ++AttackStyles;
     }
 
-  if(GetAttackStyle() & USE_HEAD)
+  if(IsUsingHead())
     {
-      Danger += GetBiteStrength() * (GetBiteToHitValue() + DodgeValue);
+      Effectivity += Enemy->GetDurability(short(GetBiteStrength() / 50000), GetBiteToHitValue(), UseMaxHP) * -GetBiteAPCost();
       ++AttackStyles;
     }
 
-  return Danger / AttackStyles;
+  return Effectivity / AttackStyles;
 }
 
 void nonhumanoid::ApplyExperience(bool Edited)
@@ -3407,6 +3434,7 @@ bool humanoid::CanUseStethoscope(bool PrintReason) const
 	ADD_MESSAGE("You need an arm to use a stethoscope.");
       return false;
     }
+
   if(GetHead() == 0)
     {
       if(PrintReason)

@@ -233,8 +233,8 @@ bool game::Init(const std::string& Name)
 	CreateGods();
 	SetPlayer(new darkknight(0, false));
 	Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
-	Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
-	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);
+	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
+	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);*/
 	Player->CalculateAll();
 
 	Player->SetAssignedName(PlayerName);

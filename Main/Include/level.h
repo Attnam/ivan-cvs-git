@@ -41,7 +41,7 @@ class level : public area
   void ExpandStillPossibleRoute(vector2d, vector2d, bool);
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Luxify();
+  void FiatLux();
   ushort GetIdealPopulation() const;
   void GenerateNewMonsters(ushort, bool = true);
   void AttachPos(vector2d);

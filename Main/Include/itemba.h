@@ -159,7 +159,6 @@ class item : public object
   virtual void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
-  virtual void DonateSlotTo(item*);
   static std::string ItemCategoryName(uchar);
   static bool EatableSorter(item* Item, character* Char) { return Item->IsEatable(Char); }
   static bool DrinkableSorter(item* Item, character* Char) { return Item->IsDrinkable(Char); }

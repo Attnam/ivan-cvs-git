@@ -39,7 +39,6 @@ bool attnam::GoDown(character* Who) const
   for(ushort c = 0; c < Temp.size(); ++c)
     game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
-  game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
   game::GetCurrentArea()->UpdateLOS();
@@ -75,7 +74,6 @@ bool elpuricave::GoDown(character* Who) const
   for(ushort c = 0; c < Temp.size(); ++c)
     game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
 
-  game::GetCurrentLevel()->Luxify();
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
   game::GetCurrentArea()->UpdateLOS();

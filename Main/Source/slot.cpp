@@ -300,3 +300,15 @@ void characterslot::Load(inputfile& SaveFile)
   if(Item)
     static_cast<bodypart*>(Item)->SetMaster(GetMaster());
 }
+
+void slot::DonateTo(item* Item)
+{
+  Empty();
+  PutInItem(Item);
+}
+
+void stackslot::DonateTo(item* Item) // could be optimized
+{
+  AddFriendItem(Item);
+  Empty();
+}

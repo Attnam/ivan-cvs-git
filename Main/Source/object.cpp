@@ -15,6 +15,8 @@ object::~object()
 {
   for(ushort c = 0; c < GraphicId.size(); ++c)
     igraph::RemoveUser(GraphicId[c]);
+
+  delete MainMaterial;
 }
 
 void object::Save(outputfile& SaveFile) const
@@ -99,13 +101,14 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
   if(NewMaterial)
     {
       if(!NewMaterial->GetVolume())
-	if(OldMaterial)
-	  NewMaterial->SetVolume(OldMaterial->GetVolume());
-	else
-	  if(DefaultVolume)
+	{
+	  if(OldMaterial)
+	    NewMaterial->SetVolume(OldMaterial->GetVolume());
+	  else if(DefaultVolume)
 	    NewMaterial->SetVolume(DefaultVolume);
 	  else
 	    ABORT("Singularity spawn detected!");
+	}
 
       NewMaterial->SetMotherEntity(this);
       SignalEmitationIncrease(NewMaterial->GetEmitation());

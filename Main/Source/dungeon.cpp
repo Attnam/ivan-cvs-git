@@ -86,7 +86,7 @@ void dungeon::PrepareLevel(ushort Index)
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 
       game::SetIsGenerating(false);
-      Level[Index]->Luxify();
+      Level[Index]->FiatLux();
     }
 }
 

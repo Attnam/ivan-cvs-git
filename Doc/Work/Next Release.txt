@@ -90,3 +90,4 @@ Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
 Glitter effect.
 Fire effect.
+Monster mine triggering should be limited.

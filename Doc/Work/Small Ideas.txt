@@ -271,3 +271,4 @@ Weight should be the fundamental character of materials, not volume?
 Kicking should do more damage if metal boots are worn.
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
 Zombies should be able to continue even without a head, maybe even without a torso.
+Calamus should haste the player.

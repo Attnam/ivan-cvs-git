@@ -42,6 +42,7 @@ class slot
   virtual void SignalVolumeAndWeightChange() = 0;
   virtual void SignalEmitationIncrease(ushort) = 0;
   virtual void SignalEmitationDecrease(ushort) = 0;
+  virtual void DonateTo(item*);
  protected:
   item* Item;
 };
@@ -62,6 +63,7 @@ class stackslot : public slot
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
+  virtual void DonateTo(item*);
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;

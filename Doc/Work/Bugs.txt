@@ -46,3 +46,4 @@ One can kick mines.
 new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
 Doors close when they break.
 Can one block when fainted?
+DonateSlotTo bugs.

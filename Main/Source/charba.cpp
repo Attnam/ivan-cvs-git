@@ -2429,34 +2429,28 @@ uchar character::GetMoveEase() const
 
 ulong character::CurrentDanger() const
 {
-  ulong AttrDanger = ulong(GetAttackStrengthDanger() / 100000);
-  ulong TotalDanger = 0;
-  ushort TotalWeight = 0;
+  return 100;
+  /*float AttrDanger = GetAttackStrengthDanger() * sqrt(GetDodgeValue());
+  ulong BodyDanger = 0;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      {
-	TotalWeight += GetBodyPart(c)->DangerWeight();
-	TotalDanger += GetBodyPart(c)->Danger(AttrDanger, false);
-      }
+      BodyDanger += GetBodyPart(c)->Danger(AttrDanger, false);
 
-  return AttrDanger * TotalDanger / TotalWeight;
+  return ulong(AttrDanger * BodyDanger / 1000);*/
 }
 
 ulong character::MaxDanger() const
 {
-  ulong AttrDanger = ulong(GetAttackStrengthDanger() / 100000);
-  ulong TotalDanger = 0;
-  ushort TotalWeight = 0;
+  return 100;
+  /*float AttrDanger = GetAttackStrengthDanger() * sqrt(GetDodgeValue());
+  ulong BodyDanger = 0;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      {
-	TotalWeight += GetBodyPart(c)->DangerWeight();
-	TotalDanger += GetBodyPart(c)->Danger(AttrDanger, true);
-      }
+      BodyDanger += GetBodyPart(c)->Danger(AttrDanger, true);
 
-  return AttrDanger * TotalDanger / TotalWeight;
+  return ulong(AttrDanger * BodyDanger / 1000);*/
 }
 
 bool character::RaiseGodRelations()
@@ -2959,14 +2953,13 @@ void character::TeleportRandomly()
 bool character::SecretKnowledge()
 {
   felist List("Knowledge of the ancients", WHITE, 0);
-
   List.AddEntry("Character attack info", LIGHTGRAY);
   List.AddEntry("Character defence info", LIGHTGRAY);
-
+  List.AddEntry("Character danger values", LIGHTGRAY);
   ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16));
   List.Empty();
 
-  if(Chosen < 2)
+  if(Chosen < 3)
     {
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
@@ -3021,9 +3014,24 @@ bool character::SecretKnowledge()
 	    }
 
 	  break;
+	case 2:
+	  List.AddDescription("                                                  Relative danger");
+
+	  for(c = 0; c < Character.size(); ++c)
+	    {
+	      std::string Entry;
+	      Character[c]->AddName(Entry, UNARTICLED);
+	      Entry.resize(47, ' ');
+	      Entry << int(Character[c]->GetRelativeDanger(this, true) * 100);
+	      Pic.Fill(TRANSPARENTCOL);
+	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
+	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
+	    }
+
+	  break;
 	}
 
-      List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
+      List.Draw(vector2d(26, 42), 652, 15, MAKE_RGB(0, 0, 16), false);
       List.PrintToFile(GAME_DIR + "secret" + Chosen + ".txt");
       ADD_MESSAGE("Info written also to %ssecret%d.txt.", GAME_DIR.c_str(), Chosen);
 
@@ -3434,6 +3442,8 @@ void character::PrintInfo() const
 
   if(game::WizardModeActivated())
     {
+      Info.AddEntry(std::string("Relative danger: ") + int(GetRelativeDanger(game::GetPlayer(), true) * 100), LIGHTGRAY);
+      Info.AddEntry(std::string("HP: ") + GetHP() + '/' + GetMaxHP(), GetHP() < GetMaxHP() / 3 ? RED : LIGHTGRAY);
       Info.AddEntry(std::string("Endurance: ") + GetAttribute(ENDURANCE), LIGHTGRAY);
       Info.AddEntry(std::string("Perception: ") + GetAttribute(PERCEPTION), LIGHTGRAY);
       Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHTGRAY);
@@ -5322,4 +5332,20 @@ material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
       ABORT("Character materialization error detected!");
       return 0;
     }
+}
+
+float character::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) const
+{
+  float MinHits = 1000;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(BodyPartVital(c) && GetBodyPart(c))
+      {
+	float Hits = GetBodyPart(c)->GetDurability(Damage, ToHitValue, UseMaxHP);
+
+	if(Hits < MinHits)
+	  MinHits = Hits;
+      }
+
+  return MinHits;
 }

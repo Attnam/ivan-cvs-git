@@ -137,6 +137,7 @@ class OLTERRAIN
   fountain,
   olterrain,
  public:
+  virtual ~fountain();
   virtual bool SitOn(character*);
   virtual bool Drink(character*);
   virtual bool HasDrinkEffect() const { return true; } 

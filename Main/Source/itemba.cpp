@@ -232,13 +232,6 @@ void item::MoveTo(stack* Stack)
     Stack->AddItem(this);
 }
 
-void item::DonateSlotTo(item* Item)
-{
-  slot* Slot = this->Slot;
-  RemoveFromSlot();
-  Item->PlaceToSlot(Slot);
-}
-
 std::string item::ItemCategoryName(uchar Category)
 {
   switch(Category)

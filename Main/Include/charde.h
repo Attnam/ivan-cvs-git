@@ -98,7 +98,7 @@ class ABSTRACT_CHARACTER
   virtual bool HandleNoBodyPart(ushort);
   virtual bool CheckWearEquipment() const { return true; }
   virtual void Kick(lsquare*);
-  virtual float GetAttackStrengthDanger() const;
+  virtual float GetEffectivityAgainst(const character*, bool) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
@@ -184,7 +184,7 @@ class ABSTRACT_CHARACTER
   virtual bool Hit(character*);
   virtual void UnarmedHit(character*);
   virtual void InitSpecialAttributes();
-  virtual float GetAttackStrengthDanger() const;
+  virtual float GetEffectivityAgainst(const character*, bool) const;
   virtual void ApplyExperience(bool = false);
   virtual ushort GetAttribute(ushort) const;
   virtual bool EditAttribute(ushort, short);
@@ -334,8 +334,8 @@ class CHARACTER
  public:
   virtual bool Hit(character*);
   virtual void BeTalkedTo(character*);
-  virtual ulong CurrentDanger() const { return character::CurrentDanger() * 5; }
-  virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }
+  /*virtual ulong CurrentDanger() const { return character::CurrentDanger() * 5; }
+  virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }*/
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNERBEASTFLESH, Volume); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
@@ -725,8 +725,8 @@ class CHARACTER
   dwarf,
  public:
   virtual void BeTalkedTo(character*);
-  virtual ulong CurrentDanger() const { return character::CurrentDanger() * 50; }
-  virtual ulong MaxDanger() const { return character::MaxDanger() * 50; }
+  /*virtual ulong CurrentDanger() const { return character::CurrentDanger() * 50; }
+  virtual ulong MaxDanger() const { return character::MaxDanger() * 50; }*/
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();

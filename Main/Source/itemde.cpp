@@ -36,6 +36,7 @@ void banana::GenerateLeftOvers(character* Eater)
 {
   item* Peals = new bananapeals(0, false);
   Peals->InitMaterials(GetMainMaterial());
+  SetMainMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
     Eater->GetStackUnder()->AddItem(Peals);
@@ -283,8 +284,9 @@ bool lantern::ReceiveDamage(character*, short Damage, uchar)
 
       brokenlantern* Lantern = new brokenlantern(0, false);
       Lantern->InitMaterials(GetMainMaterial());
+      SetMainMaterial(0);
       Lantern->SignalSquarePositionChange(SquarePosition);
-      DonateSlotTo(Lantern);
+      GetSlot()->DonateTo(Lantern);
       SendToHell();
       return true;
     }
@@ -304,7 +306,7 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
 
       item* Remains = new brokenbottle(0, false);
       Remains->InitMaterials(GetMainMaterial());
-      DonateSlotTo(Remains);
+      GetSlot()->DonateTo(Remains);
       SendToHell();
       return true;
     }
@@ -395,7 +397,8 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
 
       item* Plate = new brokenplatemail(0, false);
       Plate->InitMaterials(GetMainMaterial());
-      DonateSlotTo(Plate);
+      SetMainMaterial(0);
+      GetSlot()->DonateTo(Plate);
       SendToHell();
       return true;
     }
@@ -1383,7 +1386,10 @@ void arm::CalculateAPCost()
   else if(PairArmAllowsMelee())
     APCost = GetUnarmedAPCost();
   else
-    APCost = 0;
+    APCost = -100;
+
+  if(APCost > -100)
+    APCost = -100;
 }
 
 bool arm::PairArmAllowsMelee() const
@@ -1464,6 +1470,9 @@ void head::CalculateAttackStrength()
 void head::CalculateAPCost()
 {
   BiteAPCost = long(GetMaster()->GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetMaster()->GetAttribute(AGILITY)) - 200) * 500 / GetMaster()->GetMoveEase());
+
+  if(BiteAPCost > -100)
+    BiteAPCost = -100;
 }
 
 void leg::CalculateAttackStrength()
@@ -1479,6 +1488,9 @@ void leg::CalculateToHitValue()
 void leg::CalculateAPCost()
 {
   KickAPCost = long(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(GetAttribute(AGILITY)) - 200) * 1000 / GetMaster()->GetMoveEase());
+
+  if(KickAPCost > -100)
+    KickAPCost = -100;
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -1637,7 +1649,7 @@ void bodypart::Regenerate()
       RegenerationCounter += RegenerationBonus;
       bool Increased = false;
 
-      while(RegenerationCounter > 100000)
+      while(RegenerationCounter > 500000)
 	{
 	  if(HP < MaxHP)
 	    {
@@ -1646,49 +1658,12 @@ void bodypart::Regenerate()
 	      Increased = true;
 	    }
 
-	  RegenerationCounter -= 100000;
+	  RegenerationCounter -= 500000;
 	}
 
       if(Increased)
 	Master->CalculateHP();
     }
-}
-
-ushort head::DangerWeight() const
-{
-  return 100;
-}
-
-ushort torso::DangerWeight() const
-{
-  return 100;
-}
-
-ushort arm::DangerWeight() const
-{
-  return 50;
-}
-
-ushort groin::DangerWeight() const
-{
-  return 100;
-}
-
-ushort leg::DangerWeight() const
-{
-  return 33;
-}
-
-ushort bodypart::Danger(ulong DangerEstimate, bool MaxDanger) const
-{
-  short HP = MaxDanger ? GetMaxHP() : GetHP();
-
-  ushort Damage = 100; //Temporary
-
-  if(GetResistance(PHYSICALDAMAGE) >= Damage)
-    Damage = GetResistance(PHYSICALDAMAGE) + 1;
-
-  return HP / (Damage - GetResistance(PHYSICALDAMAGE));
 }
 
 void head::DropEquipment()
@@ -2963,9 +2938,10 @@ uchar lantern::GetSpecialFlags(ushort) const
     }
 }
 
-void bodypart::GetPostFix(std::string& String) const
+void bodypart::AddPostFix(std::string& String) const
 {
-  String << " " << OwnerDescription;
+  if(OwnerDescription.length())
+    String << " " << OwnerDescription;
 }
 
 bool stethoscope::Apply(character* Doctor) 
@@ -3194,3 +3170,57 @@ bool arm::DualWieldIsActive() const
     return false;
 }
 
+float bodypart::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) const
+{
+  float Durability;
+  short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
+  short HP = UseMaxHP ? GetMaxHP() : GetHP();
+
+  if(TrueDamage > 0)
+    {
+      Durability = (Master->GetDodgeValue() / ToHitValue + 1) * Master->GetDodgeValue() * Master->GetBodyVolume() * 100 * HP / (TrueDamage * GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPartVolume());
+
+      if(Durability < 1)
+	Durability = 1;
+
+      if(Durability > 1000)
+	Durability = 1000;
+    }
+  else
+    Durability = 1000;
+
+  return Durability;
+}
+
+float torso::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) const
+{
+  float Durability;
+  short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
+  short HP = UseMaxHP ? GetMaxHP() : GetHP();
+
+  if(TrueDamage > 0)
+    {
+      Durability = (Master->GetDodgeValue() / ToHitValue + 1) * HP / TrueDamage;
+
+      if(Durability < 1)
+	Durability = 1;
+
+      if(Durability > 1000)
+	Durability = 1000;
+    }
+  else
+    Durability = 1000;
+
+  return Durability;
+}
+
+materialcontainer::~materialcontainer()
+{
+  delete ContainedMaterial;
+}
+
+meleeweapon::~meleeweapon()
+{
+  delete SecondaryMaterial;
+  delete ContainedMaterial;
+}

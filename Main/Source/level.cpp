@@ -758,14 +758,16 @@ void level::Load(inputfile& SaveFile)
   SaveFile >> Door >> UpStairs >> DownStairs >> WorldMapEntry >> LevelMessage;
 }
 
-void level::Luxify()
+void level::FiatLux()
 {
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       {
 	Map[x][y]->CalculateEmitation();
 	Map[x][y]->Emitate();
-	Map[x][y]->CalculateLuminance();
+
+	if(Map[x][y]->GetOLTerrain()->IsWalkable())
+	  Map[x][y]->CalculateLuminance();
       }
 }
 

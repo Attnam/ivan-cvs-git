@@ -22,6 +22,7 @@ class ABSTRACT_ITEM
   virtual void DipInto(material*, character*);
   virtual ulong Price() const;
   virtual bool IsDippable(character*) const { return true; }*/
+  virtual ~materialcontainer();
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
@@ -119,6 +120,7 @@ class ITEM
   meleeweapon,
   item,
  public:
+  virtual ~meleeweapon();
   virtual void ReceiveHitEffect(character*, character*);
   virtual void DipInto(material*, character*);
   virtual ulong Price() const;
@@ -695,8 +697,8 @@ class ABSTRACT_ITEM
   void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
   void EditRegenerationCounter(long What) { RegenerationCounter += What; }
   void Regenerate();
-  virtual ushort DangerWeight() const = 0;
-  virtual ushort Danger(ulong, bool) const;
+  //virtual ushort DangerWeight() const = 0;
+  //virtual ushort Danger(ulong, bool) const;
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
@@ -726,11 +728,12 @@ class ABSTRACT_ITEM
   virtual void CalculateToHitValue() { }
   virtual void CalculateAPCost() { }
   void CalculateAttackInfo();
+  virtual float GetDurability(short, float, bool) const;
  protected:
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
-  virtual void GetPostFix(std::string&) const;
+  virtual void AddPostFix(std::string&) const;
   virtual bool ShowMaterial() const { return false; }
   virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
   virtual ushort GetMaterialColorA(ushort) const;
@@ -767,7 +770,7 @@ class ITEM
   item* GetHelmet() const { return *HelmetSlot; }
   void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
   item* GetAmulet() const { return *AmuletSlot; }
-  virtual ushort DangerWeight() const;
+  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
   float GetBiteStrength() const { return BiteStrength; }
@@ -794,8 +797,9 @@ class ABSTRACT_ITEM
   torso,
   bodypart,
  public:
-  virtual ushort DangerWeight() const;
+  //virtual ushort DangerWeight() const;
   virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
+  virtual float GetDurability(short, float, bool) const;
  protected:
   virtual bool ReceiveDamage(character*, short, uchar);
 );
@@ -852,7 +856,7 @@ class ABSTRACT_ITEM
   item* GetGauntlet() const { return *GauntletSlot; }
   void SetRing(item* What) { RingSlot.PutInItem(What); }
   item* GetRing() const { return *RingSlot; }
-  virtual ushort DangerWeight() const;
+  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   float GetUnarmedToHitValue() const;
   float GetUnarmedStrength() const;
@@ -934,7 +938,7 @@ class ITEM
   bodypart,
  public:
   virtual ushort GetTotalResistance(uchar) const;
-  virtual ushort DangerWeight() const;
+  //virtual ushort DangerWeight() const;
   virtual uchar GetBodyPartIndex() const { return GROININDEX; }
  protected:
   virtual uchar GetSpecialFlags(ushort) const { return STGROIN; }
@@ -951,7 +955,7 @@ class ABSTRACT_ITEM
   virtual ushort GetTotalResistance(uchar) const;
   void SetBoot(item* What) { BootSlot.PutInItem(What); }
   item* GetBoot() const { return *BootSlot; }
-  virtual ushort DangerWeight() const;
+  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   float GetKickToHitValue() const { return KickToHitValue; }
   float GetKickStrength() const { return KickStrength; }

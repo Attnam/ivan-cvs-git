@@ -491,7 +491,6 @@ class character : public entity, public id
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*) = 0;
   virtual void SpecialBiteEffect(character*) { }
-  virtual float GetAttackStrengthDanger() const = 0;
   virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort Identifier, long Value) { BaseExperience[Identifier] += Value; }
@@ -637,6 +636,9 @@ class character : public entity, public id
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
+  virtual float GetRelativeDanger(const character* Enemy, bool UseMaxHP) const { return Enemy->GetEffectivityAgainst(this, UseMaxHP) / GetEffectivityAgainst(Enemy, UseMaxHP); }
+  virtual float GetDurability(short, float, bool) const;
+  virtual float GetEffectivityAgainst(const character*, bool) const = 0;
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }

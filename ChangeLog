@@ -1,3 +1,12 @@
+July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A really bad memory leak corrected: materials were never destroyed. I'm bottomlessly
+	  ashamed!
+	* The Ferocius Luxification Bug fixed
+	* level::Luxify() renamed as level::FiatLux()
+	* Slot donations work again, maybe
+	* Danger system is really mad
+
 July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Flaming sword added
