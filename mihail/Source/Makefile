@@ -40,10 +40,10 @@ pkgincludedir = $(includedir)/mihail
 
 top_builddir = ..
 
-ACLOCAL = ${SHELL} /home/hex/ivan/missing --run aclocal-1.6
-AUTOCONF = ${SHELL} /home/hex/ivan/missing --run autoconf
-AUTOMAKE = ${SHELL} /home/hex/ivan/missing --run automake-1.6
-AUTOHEADER = ${SHELL} /home/hex/ivan/missing --run autoheader
+ACLOCAL = ${SHELL} /home/hex/ivan/mihail/missing --run aclocal-1.7
+AUTOCONF = ${SHELL} /home/hex/ivan/mihail/missing --run autoconf
+AUTOMAKE = ${SHELL} /home/hex/ivan/mihail/missing --run automake-1.7
+AUTOHEADER = ${SHELL} /home/hex/ivan/mihail/missing --run autoheader
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL} $(AM_INSTALL_PROGRAM_FLAGS)
@@ -60,43 +60,45 @@ POST_UNINSTALL = :
 host_alias = 
 host_triplet = i686-pc-linux-gnu
 AMDEPBACKSLASH = \
-AMTAR = ${SHELL} /home/hex/ivan/missing --run tar
+AMTAR = ${SHELL} /home/hex/ivan/mihail/missing --run tar
 AWK = mawk
 CC = gcc
 CCAS = $(CC)
 CCASFLAGS = $(CFLAGS)
 CXX = g++
+CYGPATH_W = echo
 DEPDIR = .deps
 INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s
-MAKEINFO = ${SHELL} /home/hex/ivan/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/hex/ivan/mihail/missing --run makeinfo
 PACKAGE = mihail
 RANLIB = ranlib
 SDL_CFLAGS = -I/usr/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/bin/sdl-config
-SDL_LIBS = -lSDL -lpthread
+SDL_LIBS = -L/usr/lib -Wl,-rpath,/usr/lib -lSDL -lpthread
 STRIP = 
 VERSION = 0.91
 am__include = include
+am__leading_dot = .
 am__quote = 
-install_sh = /home/hex/ivan/install-sh
+install_sh = /home/hex/ivan/mihail/install-sh
 
 bin_PROGRAMS = mihail
-INCLUDES = -I../../FeLib/Include -I../Include
+INCLUDES = -I../FeLib/Include -I../Main/Include
 mihail_SOURCES = mihail.cpp
-mihail_LDADD = ..//../FeLib/Source/libFeLib.a
-mkinstalldirs = $(SHELL) $(top_srcdir)/../mkinstalldirs
+mihail_LDADD = ..//FeLib/Source/libFeLib.a
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(bin_PROGRAMS)
 
 
-DEFS = -DPACKAGE_NAME=\"mihail\" -DPACKAGE_TARNAME=\"mihail\" -DPACKAGE_VERSION=\"0.91\" -DPACKAGE_STRING=\"mihail\ 0.91\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"mihail\" -DVERSION=\"0.91\"  -I. -I$(srcdir) 
-CPPFLAGS =  -I/usr/include/SDL -D_REENTRANT -DLINUX -DUSE_SDL -DGCC -DLOCAL_STATE_DIR=\"@localstatedir@/ivan/\" -DDATADIR=\"${prefix}/share\"
+DEFS = -DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"mihail\" -DVERSION=\"0.91\"  -I. -I$(srcdir) 
+CPPFLAGS = -I/usr/include/SDL -D_REENTRANT -DLINUX -DLOCAL_STATE_DIR=\"${prefix}/var/ivan\" -DDATADIR=\"${prefix}/share\" -DUSE_SDL -DGCC
 LDFLAGS = 
-LIBS =  -lSDL -lpthread
+LIBS =  -L/usr/lib -Wl,-rpath,/usr/lib -lSDL -lpthread
 mihail_OBJECTS =  mihail.o
-mihail_DEPENDENCIES =  ..//../FeLib/Source/libFeLib.a
+mihail_DEPENDENCIES =  ..//FeLib/Source/libFeLib.a
 mihail_LDFLAGS = 
-CXXFLAGS = -g
+CXXFLAGS = -g -O2
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@

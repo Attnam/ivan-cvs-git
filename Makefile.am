@@ -1,6 +1,6 @@
 SUBDIRS = FeLib Main Script Graphics
 
-EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING
+EXTRA_DIST = IVAN.dsw FeLib.dsp Main.dsp ivandj.mak ivanmgw.mak LICENSING .customs.emacs
 
 install-data-local:
 	-./mkinstalldirs -p $(localstatedir) $(bindir) $(datadir)/ivan/Script/ $(datadir)/ivan/Graphics/ $(localstatedir)/ivan/Bones/
