@@ -10,7 +10,6 @@ Smithing.
 Ghost-Überpriestit.
 Thougth Control.
 Mikroaaltouuni.
-In-code documentation!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Different types of item enchantments.
 Random gods.
 Ego monsters.

@@ -108,6 +108,9 @@ Package=<4>
     Project_Dep_Name FELL
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name FeMath
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name FeIO
     End Project Dependency
     Begin Project Dependency
@@ -136,6 +139,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name FELL
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name FeMath
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name FeIO
