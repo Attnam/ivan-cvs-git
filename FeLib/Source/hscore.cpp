@@ -23,7 +23,7 @@ const festring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
 long highscore::GetSize() const { return Entry.size(); }
 
-highscore::highscore(const festring& File) : LastAdd(0xFF) { Load(File); }
+highscore::highscore(const festring& File) : LastAdd(0xFF), Version(HIGH_SCORE_VERSION) { Load(File); }
 
 truth highscore::Add(long NewScore, const festring& NewEntry,
 		     time_t NewTime, long NewRandomID)
@@ -72,9 +72,10 @@ void highscore::Draw() const
 				 "Play a game to correct this."));
     return;
   }
+
   if(GetVersion() != HIGH_SCORE_VERSION)
   {
-      iosystem::TextScreen(CONST_S("The highscore file is for an other version of ivan. "));
+    iosystem::TextScreen(CONST_S("The highscore file is for an other version of IVAN."));
     return;
   }
 

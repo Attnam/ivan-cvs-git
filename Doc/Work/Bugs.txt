@@ -125,3 +125,5 @@ Do you get strength bonus for digging?
 "You sense danger message" seen after genie comes up and wish is made.
 I think there *might* be a screen update problem when a non-animated monster, for instance a kobold, chokes itself in a spider web (the 'Z' symbol may not appear immediately).
 Changing resolutions, visiting programs that take control of the whole screen, etc. can sometimes cause IVAN's graphics system not to be able to open the window again, or fail to show anything on it.
+Earthquake always drops morraine, even though it may be incorrect in the respective level.
+No real need to correct this, but I'll mention because it's a bit funny: if a 1x1 water tile is surrounded by a massive continent in the world map, lookmode still shows "You see here ocean." as its description.

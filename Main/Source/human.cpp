@@ -4483,13 +4483,8 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
     Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
     Weapon->SetEnchantment(4);
     SetRightWielded(Weapon);
-    /*Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
-    Weapon->SetEnchantment(4);
-    SetLeftWielded(Weapon);*/
     GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500000);
     GetCurrentRightSWeaponSkill()->AddHit(200000);
-    //GetCurrentLeftSWeaponSkill()->AddHit(500000);
     SetEndurance(70);
     break;
    case EVIL:

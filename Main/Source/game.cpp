@@ -48,6 +48,7 @@
 #include "gear.h"
 #include "fetime.h"
 #include "balance.h"
+#include "confdef.h"
 
 #define SAVE_FILE_VERSION 118 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 105 // Increment this if changes make bonefiles incompatible
@@ -218,8 +219,6 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
 }
-
-#include "confdef.h"
 
 truth game::Init(const festring& Name)
 {

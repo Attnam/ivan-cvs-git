@@ -14,7 +14,7 @@ IVANGCH =
 IVANOBJ  = $(IVANDIR)/Source/actset.o $(IVANDIR)/Source/areaset.o $(IVANDIR)/Source/charset.o $(IVANDIR)/Source/charsset.o $(IVANDIR)/Source/command.o $(IVANDIR)/Source/coreset.o $(IVANDIR)/Source/dataset.o $(IVANDIR)/Source/dungeon.o $(IVANDIR)/Source/game.o $(IVANDIR)/Source/godset.o $(IVANDIR)/Source/iconf.o $(IVANDIR)/Source/id.o $(IVANDIR)/Source/igraph.o $(IVANDIR)/Source/itemset.o $(IVANDIR)/Source/levelset.o $(IVANDIR)/Source/main.o $(IVANDIR)/Source/materset.o $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/roomset.o $(IVANDIR)/Source/script.o $(IVANDIR)/Source/slotset.o $(IVANDIR)/Source/trapset.o $(IVANDIR)/Source/wmapset.o $(IVANDIR)/Source/wskill.o
 #FLAGS = -DGCC -DUSE_SDL -DWIZARD -IInclude -I$(FeLibDIR)/Include -pg -ffast-math -W -Wall -pedantic -march=athlon-xp -mrtd -maccumulate-outgoing-args -mwindows
 #FLAGS = -DGCC -DUSE_SDL -DWIZARD -IInclude -I$(FeLibDIR)/Include -pg -O3 -ffast-math -march=athlon-xp -mwindows
-FLAGS = -DGCC -DUSE_SDL -DWIZARD -IInclude -I$(FeLibDIR)/Include -g -W -Wall -pedantic -mwindows
+FLAGS = -DGCC -DUSE_SDL -DWIZARD -IInclude -I$(FeLibDIR)/Include -O3 -ffast-math -s -W -Wall -pedantic -mwindows
 LIBS =  -lmingw32 -lSDLmain -lSDL
 
 all:	$(IVANBIN)

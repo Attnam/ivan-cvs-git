@@ -1912,16 +1912,19 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
   if(!game::WizardModeIsReallyActive())
   {
     highscore HScore;
-    if(!HScore.CheckVersion()) {
-      game::AskForKeyPress("The highscore file is for an older version [press any key to continue]");
-      game::AskForKeyPress("Do you want to ERASE previous records or shall we not record this game? [press any key to continue]");
-      truth OK = game::TruthQuestion("ERASE previous records and record this game [y/n]", REQUIRES_ANSWER);
 
-      if(!OK)
+    if(!HScore.CheckVersion())
+    {
+      if(game::Menu(0, v2(RES.X >> 1, RES.Y >> 1), CONST_S("The highscore version doesn't match.\rDo you want to erase previous records and start a new file?\rNote, if you answer no, the score of your current game will be lost!\r"), CONST_S("Yes\rNo\r"), LIGHT_GRAY))
+      {
+      	/*GetCurrentArea()->SendNewDrawRequest();
+	DrawEverything();*/
 	return;
+      }
 
       HScore.Clear();
     }
+
     festring Desc = game::GetPlayerName();
     Desc << ", " << Description;
 
